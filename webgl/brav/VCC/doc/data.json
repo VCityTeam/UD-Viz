@@ -1,0 +1,1100 @@
+{
+    "project": {
+        "name": "Virtual City Client",
+        "description": "Virtual city client for CityGml visualisation in browser",
+        "version": "1.0.0"
+    },
+    "files": {
+        "VCC/js/src/Enum.js": {
+            "name": "VCC/js/src/Enum.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "VCC/js/src/FirstPersonControl.js": {
+            "name": "VCC/js/src/FirstPersonControl.js",
+            "modules": {},
+            "classes": {
+                "FirstPersonControls": 1
+            },
+            "fors": {},
+            "namespaces": {}
+        },
+        "VCC/js/src/Scheduler.js": {
+            "name": "VCC/js/src/Scheduler.js",
+            "modules": {},
+            "classes": {
+                "VCC.Scheduler": 1
+            },
+            "fors": {},
+            "namespaces": {}
+        },
+        "VCC/js/src/SchedulerTask.js": {
+            "name": "VCC/js/src/SchedulerTask.js",
+            "modules": {},
+            "classes": {
+                "VCC.SchedulerTask": 1
+            },
+            "fors": {},
+            "namespaces": {}
+        },
+        "VCC/js/src/TexturesManager.js": {
+            "name": "VCC/js/src/TexturesManager.js",
+            "modules": {},
+            "classes": {
+                "VCC.TexturesManager": 1
+            },
+            "fors": {},
+            "namespaces": {}
+        },
+        "VCC/js/src/Tile.js": {
+            "name": "VCC/js/src/Tile.js",
+            "modules": {},
+            "classes": {
+                "VCC.Tile": 1
+            },
+            "fors": {},
+            "namespaces": {}
+        },
+        "VCC/js/src/TileManager.js": {
+            "name": "VCC/js/src/TileManager.js",
+            "modules": {},
+            "classes": {
+                "VCC.TileManager": 1
+            },
+            "fors": {},
+            "namespaces": {}
+        },
+        "VCC/js/src/Utils.js": {
+            "name": "VCC/js/src/Utils.js",
+            "modules": {},
+            "classes": {
+                "VCC.Enum": 1
+            },
+            "fors": {},
+            "namespaces": {}
+        },
+        "VCC/js/src/VCC.js": {
+            "name": "VCC/js/src/VCC.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {
+                "VCC": 1
+            }
+        },
+        "VCC/js/src/ViewPort.js": {
+            "name": "VCC/js/src/ViewPort.js",
+            "modules": {},
+            "classes": {
+                "VCC.ViewPort": 1
+            },
+            "fors": {},
+            "namespaces": {}
+        }
+    },
+    "modules": {},
+    "classes": {
+        "VCC.Enum": {
+            "name": "VCC.Enum",
+            "shortname": "VCC.Enum",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "file": "VCC/js/src/Utils.js",
+            "line": 1,
+            "author": "Remi Baume"
+        },
+        "FirstPersonControls": {
+            "name": "FirstPersonControls",
+            "shortname": "FirstPersonControls",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "file": "VCC/js/src/FirstPersonControl.js",
+            "line": 1,
+            "description": "Camera movement contoler  \nModifed by Alexandre Vienne to call change lod method when displacing the camera",
+            "author": "paulirish / http://paulirish.com/"
+        },
+        "VCC.Scheduler": {
+            "name": "VCC.Scheduler",
+            "shortname": "VCC.Scheduler",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "file": "VCC/js/src/Scheduler.js",
+            "line": 2,
+            "description": "Handle priority FiFo list in order to load geometries and textures more fluently",
+            "author": "Alexandre Vienne Remi Baume",
+            "is_constructor": 1
+        },
+        "VCC.SchedulerTask": {
+            "name": "VCC.SchedulerTask",
+            "shortname": "VCC.SchedulerTask",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "file": "VCC/js/src/SchedulerTask.js",
+            "line": 2,
+            "author": "Remi Baume",
+            "is_constructor": 1
+        },
+        "VCC.TexturesManager": {
+            "name": "VCC.TexturesManager",
+            "shortname": "VCC.TexturesManager",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "file": "VCC/js/src/TexturesManager.js",
+            "line": 1,
+            "description": "Caches the images textures into memory using microcache library",
+            "author": "Alexandre Vienne, Remi Baume",
+            "is_constructor": 1
+        },
+        "VCC.Tile": {
+            "name": "VCC.Tile",
+            "shortname": "VCC.Tile",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "file": "VCC/js/src/Tile.js",
+            "line": 1,
+            "description": "Contain all tile informations",
+            "is_constructor": 1,
+            "author": "Alexandre Vienne"
+        },
+        "VCC.TileManager": {
+            "name": "VCC.TileManager",
+            "shortname": "VCC.TileManager",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "file": "VCC/js/src/TileManager.js",
+            "line": 1,
+            "description": "Class that will handle tile management witch means requests to get tiles, creating meshes, class textures...",
+            "author": "Alexandre Vienne",
+            "is_constructor": 1,
+            "params": [
+                {
+                    "name": "root",
+                    "description": "Parent object of the Scene Graph.",
+                    "type": "THREE.Object3D"
+                },
+                {
+                    "name": "sizetile",
+                    "description": "Size of the tile.",
+                    "type": "Int"
+                },
+                {
+                    "name": "rangeCameraTile",
+                    "description": "How far does we need to lead tiles wr to the main tile.",
+                    "type": "Int"
+                },
+                {
+                    "name": "mainTileX",
+                    "description": "X coordinates of the tile that we want to create first",
+                    "type": "Int"
+                },
+                {
+                    "name": "mainTileY",
+                    "description": "Y coordinates of the tile that we want to create first",
+                    "type": "Int"
+                },
+                {
+                    "name": "BBmin",
+                    "description": "Bounding Box minimum coordinate",
+                    "type": "Int"
+                },
+                {
+                    "name": "BBmax",
+                    "description": "Bounding Box maximum coordinate",
+                    "type": "Int"
+                }
+            ]
+        },
+        "VCC.ViewPort": {
+            "name": "VCC.ViewPort",
+            "shortname": "ViewPort",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "namespace": "VCC",
+            "file": "VCC/js/src/ViewPort.js",
+            "line": 2,
+            "description": "Main class, it will load and prepare the application and the scene",
+            "author": "Alexandre Vienne",
+            "is_constructor": 1
+        }
+    },
+    "classitems": [
+        {
+            "file": "VCC/js/src/FirstPersonControl.js",
+            "line": 42,
+            "class": "FirstPersonControls"
+        },
+        {
+            "file": "VCC/js/src/FirstPersonControl.js",
+            "line": 47,
+            "class": "FirstPersonControls"
+        },
+        {
+            "file": "VCC/js/src/Scheduler.js",
+            "line": 12,
+            "class": "VCC.Scheduler"
+        },
+        {
+            "file": "VCC/js/src/Scheduler.js",
+            "line": 17,
+            "description": "High priority FiFo, items in it will be loaded before the items in lowPriorityFifo",
+            "itemtype": "property",
+            "name": "highPriorityFifo",
+            "type": "Array",
+            "class": "VCC.Scheduler"
+        },
+        {
+            "file": "VCC/js/src/Scheduler.js",
+            "line": 24,
+            "description": "Low priority FiFo, items in it will be loaded after the items in highPriorityFifo",
+            "itemtype": "property",
+            "name": "lowPriorityFifo",
+            "type": "Array",
+            "class": "VCC.Scheduler"
+        },
+        {
+            "file": "VCC/js/src/Scheduler.js",
+            "line": 31,
+            "description": "Fifo of tasks to be deleted",
+            "itemtype": "property",
+            "name": "removeFifo",
+            "type": "Array",
+            "class": "VCC.Scheduler"
+        },
+        {
+            "file": "VCC/js/src/Scheduler.js",
+            "line": 42,
+            "description": "Add a task",
+            "itemtype": "method",
+            "name": "addToHighPriorityFifo",
+            "params": [
+                {
+                    "name": "task",
+                    "description": "task to execute",
+                    "type": "SchedulerTask"
+                },
+                {
+                    "name": "hasHighPriority",
+                    "description": "set priority",
+                    "type": "Bool"
+                }
+            ],
+            "class": "VCC.Scheduler"
+        },
+        {
+            "file": "VCC/js/src/Scheduler.js",
+            "line": 52,
+            "class": "VCC.Scheduler"
+        },
+        {
+            "file": "VCC/js/src/Scheduler.js",
+            "line": 117,
+            "description": "remove a task related to a tile from fifos and call the deleteTile function",
+            "itemtype": "method",
+            "name": "removeTasks",
+            "class": "VCC.Scheduler"
+        },
+        {
+            "file": "VCC/js/src/Scheduler.js",
+            "line": 130,
+            "description": "remove a task related to a tile from fifo",
+            "itemtype": "method",
+            "name": "removeTasks",
+            "params": [
+                {
+                    "name": "tileCoord",
+                    "description": "Array containing row and col corrdinate of the tile",
+                    "type": "Array"
+                },
+                {
+                    "name": "fifo",
+                    "description": "Fifo to where tasks have to be deleted",
+                    "type": "Array"
+                }
+            ],
+            "class": "VCC.Scheduler"
+        },
+        {
+            "file": "VCC/js/src/Scheduler.js",
+            "line": 146,
+            "description": "If scheduler is not busy, delete all tile in removeFifo and then load an object in either high or low priority fifo",
+            "itemtype": "method",
+            "name": "update",
+            "class": "VCC.Scheduler"
+        },
+        {
+            "file": "VCC/js/src/Scheduler.js",
+            "line": 155,
+            "class": "VCC.Scheduler"
+        },
+        {
+            "file": "VCC/js/src/TexturesManager.js",
+            "line": 24,
+            "description": "Array of materials needed for the Tile",
+            "itemtype": "property",
+            "name": "materialsArray",
+            "type": "Array",
+            "class": "VCC.TexturesManager"
+        },
+        {
+            "file": "VCC/js/src/TexturesManager.js",
+            "line": 30,
+            "description": "Array of texture name use for each material",
+            "itemtype": "property",
+            "name": "texturesNamesArray",
+            "type": "Array",
+            "class": "VCC.TexturesManager"
+        },
+        {
+            "file": "VCC/js/src/TexturesManager.js",
+            "line": 38,
+            "description": "Hold a texture Counter to know when all textures are loaded should be equal to materialsArray.lenght",
+            "itemtype": "property",
+            "name": "textureLoadedCount",
+            "type": "int",
+            "class": "VCC.TexturesManager"
+        },
+        {
+            "file": "VCC/js/src/TexturesManager.js",
+            "line": 48,
+            "description": "return the material index of the desired texture if it doesn't exists, will load the texture and returs its index",
+            "return": {
+                "description": "index for the desired texture",
+                "type": "Int"
+            },
+            "itemtype": "method",
+            "name": "getIndexMaterials",
+            "params": [
+                {
+                    "name": "textureName",
+                    "description": "name of texture found in Json",
+                    "type": "String"
+                },
+                {
+                    "name": "indexMaterialList",
+                    "description": "List of index Material used by the mesh (maps index to textureName)",
+                    "type": "Array"
+                }
+            ],
+            "class": "VCC.TexturesManager"
+        },
+        {
+            "file": "VCC/js/src/TexturesManager.js",
+            "line": 72,
+            "description": "initialise materails with empty texture",
+            "itemtype": "method",
+            "name": "createMaterial",
+            "class": "VCC.TexturesManager"
+        },
+        {
+            "file": "VCC/js/src/TexturesManager.js",
+            "line": 85,
+            "description": "generate the task and add them to scheduler to increase texture resolution\nWarning : bug can be espected with a reduce resolution function",
+            "itemtype": "method",
+            "name": "increaseResolution",
+            "params": [
+                {
+                    "name": "targetResolution",
+                    "description": "resolution we want to have",
+                    "type": "Int"
+                },
+                {
+                    "name": "priority",
+                    "description": "priority of the increase resolution request",
+                    "type": "SCHEDULER_PRIO"
+                }
+            ],
+            "class": "VCC.TexturesManager"
+        },
+        {
+            "file": "VCC/js/src/TexturesManager.js",
+            "line": 114,
+            "description": "not used ?",
+            "itemtype": "method",
+            "name": "needToDL",
+            "class": "VCC.TexturesManager"
+        },
+        {
+            "file": "VCC/js/src/TexturesManager.js",
+            "line": 123,
+            "description": "launch the load of the texture to the base resolution",
+            "itemtype": "method",
+            "name": "loadTextures",
+            "class": "VCC.TexturesManager"
+        },
+        {
+            "file": "VCC/js/src/TexturesManager.js",
+            "line": 139,
+            "description": "function call by the scheduler to increase resolution of texture\nif failled call sheduler.onAbort else lanch the load of new mipmaps in new textures",
+            "itemtype": "method",
+            "name": "loadMipmaps",
+            "params": [
+                {
+                    "name": "res",
+                    "description": "resolution in pixels",
+                    "type": "Int"
+                }
+            ],
+            "class": "VCC.TexturesManager"
+        },
+        {
+            "file": "VCC/js/src/TexturesManager.js",
+            "line": 158,
+            "description": "Dispose materials listed in disposeList if not present in exludeList, if exludeList is undefined, dispose all materials of disposeList",
+            "itemtype": "method",
+            "name": "disposeMaterials",
+            "params": [
+                {
+                    "name": "disposeList",
+                    "description": "array containing names of the texture to be disposed",
+                    "type": "Array"
+                },
+                {
+                    "name": "exludeList",
+                    "description": "array containing names of the texture not to be disposed",
+                    "type": "Array"
+                }
+            ],
+            "class": "VCC.TexturesManager"
+        },
+        {
+            "file": "VCC/js/src/TexturesManager.js",
+            "line": 187,
+            "description": "callback when first loading base resolution texture\ncall Scheduler.onTextureLoad when all texture havebeen loaded",
+            "itemtype": "method",
+            "name": "onTextureLoad",
+            "params": [
+                {
+                    "name": "tileId",
+                    "description": "Tile Identifier",
+                    "type": "String"
+                }
+            ],
+            "class": "VCC.TexturesManager"
+        },
+        {
+            "file": "VCC/js/src/TexturesManager.js",
+            "line": 193,
+            "class": "VCC.TexturesManager"
+        },
+        {
+            "file": "VCC/js/src/TexturesManager.js",
+            "line": 204,
+            "description": "callback when a higher resolution mipmap is load\nadd mipmap level to the mipmap chain of the texture.",
+            "itemtype": "method",
+            "name": "onMipmapLoad",
+            "params": [
+                {
+                    "name": "tileId,",
+                    "description": "Tile Identifier",
+                    "type": "String"
+                },
+                {
+                    "name": "texture",
+                    "description": "texture to modify",
+                    "type": "THREE.CompressedTexture"
+                },
+                {
+                    "name": "mipmap",
+                    "description": "texture where the new mipmaplevel is loaded",
+                    "type": "THREE.CompressedTexture"
+                }
+            ],
+            "class": "VCC.TexturesManager"
+        },
+        {
+            "file": "VCC/js/src/Tile.js",
+            "line": 9,
+            "description": "Tile bounding box Min used to load surrounding tiles",
+            "itemtype": "property",
+            "name": "BBMin",
+            "type": "Array[x,y,z]",
+            "class": "VCC.Tile"
+        },
+        {
+            "file": "VCC/js/src/Tile.js",
+            "line": 16,
+            "description": "Tile bounding box Max used to load surrounding tiles",
+            "itemtype": "property",
+            "name": "BBMax",
+            "type": "Array[x,y,z]",
+            "class": "VCC.Tile"
+        },
+        {
+            "file": "VCC/js/src/Tile.js",
+            "line": 23,
+            "description": "Array containing all indexes of Material and Texture name needed by meshTerrain to be corectly rendered used when disposing Textures in texturesManager",
+            "itemtype": "property",
+            "name": "indexTerrainMaterialList",
+            "type": "Array",
+            "class": "VCC.Tile"
+        },
+        {
+            "file": "VCC/js/src/Tile.js",
+            "line": 30,
+            "description": "Array containing all indexes of Material and Texture name needed by meshBuilding to be corectly rendered used when disposing Textures in texturesManager",
+            "itemtype": "property",
+            "name": "indexBuildingMaterialList",
+            "type": "Array",
+            "class": "VCC.Tile"
+        },
+        {
+            "file": "VCC/js/src/Tile.js",
+            "line": 37,
+            "description": "textures manager of the current tile",
+            "itemtype": "property",
+            "name": "texturesManager",
+            "type": "VCC.TexturesManager",
+            "class": "VCC.Tile"
+        },
+        {
+            "file": "VCC/js/src/Tile.js",
+            "line": 44,
+            "description": "Mesh containing all dem geometry and materials",
+            "itemtype": "property",
+            "name": "meshTerrain",
+            "type": "THREE.Mesh",
+            "class": "VCC.Tile"
+        },
+        {
+            "file": "VCC/js/src/Tile.js",
+            "line": 51,
+            "description": "Mesh containing all buildings geometry and materials",
+            "itemtype": "property",
+            "name": "meshBuilding",
+            "type": "THREE.Mesh",
+            "class": "VCC.Tile"
+        },
+        {
+            "file": "VCC/js/src/TileManager.js",
+            "line": 21,
+            "description": "Default URL parameters to construct the request getTile.",
+            "itemtype": "property",
+            "name": "urlParameters",
+            "type": "Object",
+            "class": "VCC.TileManager"
+        },
+        {
+            "file": "VCC/js/src/TileManager.js",
+            "line": 29,
+            "description": "Size of a tile",
+            "itemtype": "property",
+            "name": "sizeTile",
+            "type": "int",
+            "class": "VCC.TileManager"
+        },
+        {
+            "file": "VCC/js/src/TileManager.js",
+            "line": 36,
+            "description": "How far the tiles will be loaded",
+            "itemtype": "property",
+            "name": "rangeCameraTile",
+            "type": "int",
+            "class": "VCC.TileManager"
+        },
+        {
+            "file": "VCC/js/src/TileManager.js",
+            "line": 43,
+            "description": "X coordinate of the main tile (in Json file coordinates)",
+            "itemtype": "property",
+            "name": "mainTileX",
+            "type": "int",
+            "class": "VCC.TileManager"
+        },
+        {
+            "file": "VCC/js/src/TileManager.js",
+            "line": 50,
+            "description": "Y coordinate of the main tile (in Json file coordinates)",
+            "itemtype": "property",
+            "name": "mainTileY",
+            "type": "int",
+            "class": "VCC.TileManager"
+        },
+        {
+            "file": "VCC/js/src/TileManager.js",
+            "line": 57,
+            "class": "VCC.TileManager"
+        },
+        {
+            "file": "VCC/js/src/TileManager.js",
+            "line": 64,
+            "description": "Array containing all Tiles loadded",
+            "itemtype": "property",
+            "name": "tabTile",
+            "type": "Array<VCC.Tile>",
+            "class": "VCC.TileManager"
+        },
+        {
+            "file": "VCC/js/src/TileManager.js",
+            "line": 75,
+            "description": "Current LOD of the scene",
+            "itemtype": "property",
+            "name": "sceneLod",
+            "type": "int",
+            "class": "VCC.TileManager"
+        },
+        {
+            "file": "VCC/js/src/TileManager.js",
+            "line": 82,
+            "description": "Previous LOD of the scene",
+            "itemtype": "property",
+            "name": "previousLod",
+            "type": "int",
+            "class": "VCC.TileManager"
+        },
+        {
+            "file": "VCC/js/src/TileManager.js",
+            "line": 89,
+            "description": "Scheduler for request priorities",
+            "itemtype": "property",
+            "name": "scheduler",
+            "type": "VCC.Scheduler",
+            "class": "VCC.TileManager"
+        },
+        {
+            "file": "VCC/js/src/TileManager.js",
+            "line": 98,
+            "description": "Check if the tile exists",
+            "itemtype": "method",
+            "name": "tileExist",
+            "return": {
+                "description": "",
+                "type": "Bollean"
+            },
+            "class": "VCC.TileManager"
+        },
+        {
+            "file": "VCC/js/src/TileManager.js",
+            "line": 108,
+            "description": "Handle tiling management with respect to the range cameraTile property and LOD Strategy. Calls to the create Tile function",
+            "itemtype": "method",
+            "name": "tilePriorityManager",
+            "class": "VCC.TileManager"
+        },
+        {
+            "file": "VCC/js/src/TileManager.js",
+            "line": 150,
+            "description": "Computes the surrounding tiles of the camera",
+            "itemtype": "method",
+            "name": "getSurroundingTilesIds",
+            "return": {
+                "description": "tileRow and tileCol of the 3 surrounding tiles",
+                "type": "Array"
+            },
+            "class": "VCC.TileManager"
+        },
+        {
+            "file": "VCC/js/src/TileManager.js",
+            "line": 197,
+            "description": "rebuild scene with a new lod quality",
+            "todo": [
+                ": rewrite to make it work with the new scheduler"
+            ],
+            "itemtype": "method",
+            "name": "reloadWithNewLod",
+            "class": "VCC.TileManager"
+        },
+        {
+            "file": "VCC/js/src/TileManager.js",
+            "line": 212,
+            "description": "Request and create a textured Tile",
+            "itemtype": "method",
+            "name": "testTileTexture",
+            "params": [
+                {
+                    "name": "tileRow",
+                    "description": "identifier of the tile row (described in Json)",
+                    "type": "String"
+                },
+                {
+                    "name": "tileCol",
+                    "description": "identifier of the tile column (described in Json)",
+                    "type": "String"
+                },
+                {
+                    "name": "layer",
+                    "description": "layer wanted, here \"build\" or \"dem\"",
+                    "type": "String"
+                }
+            ],
+            "class": "VCC.TileManager"
+        },
+        {
+            "file": "VCC/js/src/TileManager.js",
+            "line": 293,
+            "description": "Create geometries and UV mapping for buildings",
+            "itemtype": "method",
+            "name": "createGeometries",
+            "params": [
+                {
+                    "name": "jsonDataList",
+                    "description": "Json List of items to be created",
+                    "type": "String"
+                },
+                {
+                    "name": "texturesManager",
+                    "description": "TexturesManager of the tile we are creating",
+                    "type": "VCC.TexturesManager"
+                },
+                {
+                    "name": "indexMaterialList",
+                    "description": "List of index material (from VCC.Tile)",
+                    "type": "Array"
+                }
+            ],
+            "return": {
+                "description": "geom Merged geometry of the tile layer",
+                "type": "THREE.Geometry"
+            },
+            "class": "VCC.TileManager"
+        },
+        {
+            "file": "VCC/js/src/TileManager.js",
+            "line": 307,
+            "class": "VCC.TileManager"
+        },
+        {
+            "file": "VCC/js/src/TileManager.js",
+            "line": 338,
+            "class": "VCC.TileManager"
+        },
+        {
+            "file": "VCC/js/src/TileManager.js",
+            "line": 351,
+            "description": "Delete a tile",
+            "itemtype": "method",
+            "name": "deleteTile",
+            "params": [
+                {
+                    "name": "idTile",
+                    "description": "Id of the tile we want to delete",
+                    "type": "Int"
+                }
+            ],
+            "class": "VCC.TileManager"
+        },
+        {
+            "file": "VCC/js/src/TileManager.js",
+            "line": 376,
+            "description": "Calculate the current LOD and trigger reloadWithNewLod()",
+            "itemtype": "method",
+            "name": "lodChange",
+            "class": "VCC.TileManager"
+        },
+        {
+            "file": "VCC/js/src/TileManager.js",
+            "line": 394,
+            "description": "Calculate the main tile (where the camera belongs) and triger the tilePriorityManager to remove far tiles",
+            "itemtype": "method",
+            "name": "updateMainTile",
+            "class": "VCC.TileManager"
+        },
+        {
+            "file": "VCC/js/src/TileManager.js",
+            "line": 422,
+            "description": "Check if the tile coordinates given in arguments are in view of the camera",
+            "itemtype": "method",
+            "name": "isInSquare",
+            "return": {
+                "description": "",
+                "type": "Boolean"
+            },
+            "class": "VCC.TileManager"
+        },
+        {
+            "file": "VCC/js/src/TileManager.js",
+            "line": 438,
+            "description": "Trigger the deleteTile function if a tile is detected as out of view",
+            "itemtype": "method",
+            "name": "isInSquare",
+            "class": "VCC.TileManager"
+        },
+        {
+            "file": "VCC/js/src/TileManager.js",
+            "line": 456,
+            "description": "Remove only Building of a tile",
+            "itemtype": "method",
+            "name": "cleanBuildings",
+            "params": [
+                {
+                    "name": "idTile",
+                    "description": "Id of the tile we want to clean buildings on.",
+                    "type": "String"
+                }
+            ],
+            "class": "VCC.TileManager"
+        },
+        {
+            "file": "VCC/js/src/Utils.js",
+            "line": 11,
+            "description": "Work only for natural number > 0",
+            "return": {
+                "description": "true if nb is a power of two",
+                "type": "Bool"
+            },
+            "itemtype": "method",
+            "name": "isPowerOfTwo",
+            "params": [
+                {
+                    "name": "number",
+                    "description": "to test",
+                    "type": "Int"
+                }
+            ],
+            "class": "VCC.Enum"
+        },
+        {
+            "file": "VCC/js/src/VCC.js",
+            "line": 1,
+            "description": "(2014)\nVirtual City Viewer namespace",
+            "author": "Alexandre Vienne",
+            "class": "VCC.ViewPort",
+            "namespace": "VCC"
+        },
+        {
+            "file": "VCC/js/src/ViewPort.js",
+            "line": 13,
+            "class": "VCC.ViewPort",
+            "namespace": "VCC"
+        },
+        {
+            "file": "VCC/js/src/ViewPort.js",
+            "line": 16,
+            "description": "Server base URL",
+            "itemtype": "property",
+            "name": "serverUrl",
+            "type": "String",
+            "class": "VCC.ViewPort",
+            "namespace": "VCC"
+        },
+        {
+            "file": "VCC/js/src/ViewPort.js",
+            "line": 23,
+            "description": "Root node",
+            "itemtype": "property",
+            "name": "root",
+            "type": "THREE.Object3D",
+            "class": "VCC.ViewPort",
+            "namespace": "VCC"
+        },
+        {
+            "file": "VCC/js/src/ViewPort.js",
+            "line": 30,
+            "class": "VCC.ViewPort",
+            "namespace": "VCC"
+        },
+        {
+            "file": "VCC/js/src/ViewPort.js",
+            "line": 32,
+            "description": "Scene of the application",
+            "itemtype": "property",
+            "name": "scene",
+            "type": "THREE.Scene",
+            "class": "VCC.ViewPort",
+            "namespace": "VCC"
+        },
+        {
+            "file": "VCC/js/src/ViewPort.js",
+            "line": 41,
+            "description": "WebGl renderer, will draw the scene in the canvas",
+            "itemtype": "property",
+            "name": "renderer",
+            "type": "THREE.WebGLRenderer",
+            "class": "VCC.ViewPort",
+            "namespace": "VCC"
+        },
+        {
+            "file": "VCC/js/src/ViewPort.js",
+            "line": 53,
+            "description": "Camera",
+            "itemtype": "property",
+            "name": "camera",
+            "type": "THREE.PerspectiveCamera",
+            "class": "VCC.ViewPort",
+            "namespace": "VCC"
+        },
+        {
+            "file": "VCC/js/src/ViewPort.js",
+            "line": 60,
+            "description": "Will handle camera displacement",
+            "itemtype": "property",
+            "name": "control",
+            "type": "THREE.FirstPersonControls",
+            "class": "VCC.ViewPort",
+            "namespace": "VCC"
+        },
+        {
+            "file": "VCC/js/src/ViewPort.js",
+            "line": 67,
+            "description": "Directionnal light of the scene",
+            "itemtype": "property",
+            "name": "dirLight",
+            "type": "THREE.DirectionalLight",
+            "class": "VCC.ViewPort",
+            "namespace": "VCC"
+        },
+        {
+            "file": "VCC/js/src/ViewPort.js",
+            "line": 83,
+            "class": "VCC.ViewPort",
+            "namespace": "VCC"
+        },
+        {
+            "file": "VCC/js/src/ViewPort.js",
+            "line": 92,
+            "class": "VCC.ViewPort",
+            "namespace": "VCC"
+        },
+        {
+            "file": "VCC/js/src/ViewPort.js",
+            "line": 99,
+            "class": "VCC.ViewPort",
+            "namespace": "VCC"
+        },
+        {
+            "file": "VCC/js/src/ViewPort.js",
+            "line": 101,
+            "description": "Stat object to have the FPS graph",
+            "itemtype": "property",
+            "name": "stats",
+            "type": "Stats",
+            "class": "VCC.ViewPort",
+            "namespace": "VCC"
+        },
+        {
+            "file": "VCC/js/src/ViewPort.js",
+            "line": 109,
+            "class": "VCC.ViewPort",
+            "namespace": "VCC"
+        },
+        {
+            "file": "VCC/js/src/ViewPort.js",
+            "line": 122,
+            "description": "Render the scene",
+            "itemtype": "method",
+            "name": "",
+            "class": "VCC.ViewPort",
+            "namespace": "VCC"
+        },
+        {
+            "file": "VCC/js/src/ViewPort.js",
+            "line": 134,
+            "description": "Animation loop function, update the tile management, process the camera displacement and call the render function.\nAlso log informations on the overlay",
+            "itemtype": "method",
+            "name": "animate",
+            "todo": [
+                "handle lighting"
+            ],
+            "class": "VCC.ViewPort",
+            "namespace": "VCC"
+        },
+        {
+            "file": "VCC/js/src/ViewPort.js",
+            "line": 157,
+            "description": "Show log text in the bottom left corner. There is max 10 line of log.",
+            "itemtype": "method",
+            "name": "log",
+            "class": "VCC.ViewPort",
+            "namespace": "VCC"
+        }
+    ],
+    "warnings": [
+        {
+            "message": "replacing incorrect tag: params with param",
+            "line": " VCC/js/src/Scheduler.js:42"
+        },
+        {
+            "message": "replacing incorrect tag: params with param",
+            "line": " VCC/js/src/Scheduler.js:42"
+        },
+        {
+            "message": "Missing item type",
+            "line": " VCC/js/src/FirstPersonControl.js:42"
+        },
+        {
+            "message": "Missing item type",
+            "line": " VCC/js/src/FirstPersonControl.js:47"
+        },
+        {
+            "message": "Missing item type",
+            "line": " VCC/js/src/Scheduler.js:12"
+        },
+        {
+            "message": "Missing item type",
+            "line": " VCC/js/src/Scheduler.js:52"
+        },
+        {
+            "message": "Missing item type",
+            "line": " VCC/js/src/Scheduler.js:155"
+        },
+        {
+            "message": "Missing item type",
+            "line": " VCC/js/src/TexturesManager.js:193"
+        },
+        {
+            "message": "Missing item type",
+            "line": " VCC/js/src/TileManager.js:57"
+        },
+        {
+            "message": "Missing item type",
+            "line": " VCC/js/src/TileManager.js:307"
+        },
+        {
+            "message": "Missing item type",
+            "line": " VCC/js/src/TileManager.js:338"
+        },
+        {
+            "message": "Missing item type\n(2014)\nVirtual City Viewer namespace",
+            "line": " VCC/js/src/VCC.js:1"
+        },
+        {
+            "message": "Missing item type",
+            "line": " VCC/js/src/ViewPort.js:13"
+        },
+        {
+            "message": "Missing item type",
+            "line": " VCC/js/src/ViewPort.js:30"
+        },
+        {
+            "message": "Missing item type",
+            "line": " VCC/js/src/ViewPort.js:83"
+        },
+        {
+            "message": "Missing item type",
+            "line": " VCC/js/src/ViewPort.js:92"
+        },
+        {
+            "message": "Missing item type",
+            "line": " VCC/js/src/ViewPort.js:99"
+        },
+        {
+            "message": "Missing item type",
+            "line": " VCC/js/src/ViewPort.js:109"
+        }
+    ]
+}
