@@ -1,16 +1,22 @@
+/**
+ * Copyright University of Lyon, 2012 - 2017
+ * Distributed under the GNU Lesser General Public License Version 2.1 (LGPLv2)
+ * (Refer to accompanying file License.md or copy at
+ *  https://www.gnu.org/licenses/old-licenses/lgpl-2.1.html )
+ */
+
  /**
- * Class that will handle tile management witch means requests to get tiles, creating meshes, class textures... *
- * @class VCC.TileManager
- * @author Alexandre Vienne
- * @constructor
- * @param {THREE.Object3D} root Parent object of the Scene Graph.
- * @param {int} sizetile Size of the tile.
- * @param {int} rangeCameraTile How far does we need to lead tiles wr to the main tile.
- * @param {int} mainTileX X coordinates of the tile that we want to create first
- * @param {int} mainTileY  Y coordinates of the tile that we want to create first
- * @param {int} BBmin Bounding Box minimum coordinate
- * @param {int} BBmax Bounding Box maximum coordinate
- **/
+  * Class that will handle tile management witch means requests to get tiles, creating meshes, class textures... *
+  * @class VCC.TileManager
+  * @constructor
+  * @param {THREE.Object3D} root Parent object of the Scene Graph.
+  * @param {int} sizetile Size of the tile.
+  * @param {int} rangeCameraTile How far does we need to lead tiles wr to the main tile.
+  * @param {int} mainTileX X coordinates of the tile that we want to create first
+  * @param {int} mainTileY  Y coordinates of the tile that we want to create first
+  * @param {int} BBmin Bounding Box minimum coordinate
+  * @param {int} BBmax Bounding Box maximum coordinate
+  **/
 VCC.TileManager = function (root,sizeTile,rangeCameraTile,mainTileRow,mainTileCol,BBMin,BBMax){
 	if(root == null){
 		return;
