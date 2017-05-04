@@ -7,7 +7,7 @@ Retrieve [UDV sources from github](https://github.com/MEPP-team/UDV) and proceed
    npm install throttle
    ````
    This should create a `node_modules` sub-directory with the installed packages.
- * Download a set of data e.g. [Lyon's 6sth burrough](http://liris.cnrs.fr/vcity/Data/UDV/GrandLyon.zip) and unzip it within the `ressources` sub-directory.  
+ * Download a set of data e.g. [Lyon(8Gb zip file)](http://liris.cnrs.fr/vcity/Data/UDV/GrandLyon.zip) and unzip it within the `ressources` sub-directory.  
 
 Launch the server:
   * linux : node index.js
@@ -17,7 +17,7 @@ Launch the client:
   * open `http://localhost:8080/` with your favorite web browser
   * select an available data set (by clicking on it)
   
-Note: The resulting installed directory is autonomous. You can place it on a removable media (e.g. a 64Go USB key) and handle it over or used it for demos...
+Note: The resulting installed directory is autonomous. You can place it on a removable media (e.g. a 64Gb USB key) and handle it over or used it for demos...
 
 ## OSX specific install
  - Install XCode and [Homebrew](https://brew.sh/)
