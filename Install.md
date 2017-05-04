@@ -7,7 +7,7 @@ Retrieve [UDV sources from github](https://github.com/MEPP-team/UDV) and proceed
    npm install throttle
    ````
    This should create a `node_modules` sub-directory with the installed packages.
- * Download a set of data e.g. [Lyon (8Gb zip file)](http://liris.cnrs.fr/vcity/Data/UDV/GrandLyon.zip) and unzip it within the `ressources` sub-directory.  
+ * Download a set of data e.g. [Lyon (8Gb zip file)](http://liris.cnrs.fr/vcity/Data/UDV/GrandLyon.zip) and unzip it (31Gb once decompressed) within the `ressources` sub-directory.  
 
 Launch the server:
   * linux : node index.js
@@ -16,8 +16,9 @@ Launch the server:
 Launch the client: 
   * open `http://localhost:8080/` with your favorite web browser
   * select an available data set (by clicking on it)
-  
-Note: The resulting installed directory is autonomous. You can place it on a removable media (e.g. a 64Gb USB key) and handle it over or used it for demos...
+
+### Building a stand alone USB key.
+If you need to handle over (or take with you for offline demos) a stand alone USB key (or another removable media), the resulting installed directory as obtained with the above installation process is not completely autonomous. You will need to copy the node.js executable (`node.exe` on WIndows) within the UDV directory. Otherwise if you try to use the USB key version of UDV on a machine that hasn't `node.js` already installed, you will fail to launch the server...  
 
 ## OSX specific install
  - Install XCode and [Homebrew](https://brew.sh/)
