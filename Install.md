@@ -7,7 +7,7 @@ Retrieve [UDV sources from github](https://github.com/MEPP-team/UDV) and proceed
    npm install throttle
    ````
    This should create a `node_modules` sub-directory with the installed packages.
- * Download a set of data e.g. [Lyon(8Gb zip file)](http://liris.cnrs.fr/vcity/Data/UDV/GrandLyon.zip) and unzip it within the `ressources` sub-directory.  
+ * Download a set of data e.g. [Lyon (8Gb zip file)](http://liris.cnrs.fr/vcity/Data/UDV/GrandLyon.zip) and unzip it within the `ressources` sub-directory.  
 
 Launch the server:
   * linux : node index.js
