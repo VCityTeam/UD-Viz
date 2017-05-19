@@ -10,8 +10,8 @@ Retrieve [UDV sources from github](https://github.com/MEPP-team/UDV) and proceed
  * Download a set of data e.g. [Lyon (8Gb zip file)](http://liris.cnrs.fr/vcity/Data/UDV/GrandLyon.zip) and unzip it (31Gb once decompressed) within the `ressources` sub-directory.  
 
 Launch the server:
-  * linux : node index.js
-  * on windows : node.exe index.js (or drag index.js over node.exe) or executes the [start.bat](https://github.com/MEPP-team/UDV/blob/master/start.bat) script
+  * linux : `node index.js`
+  * on windows : `node.exe index.js` (or drag index.js over node.exe) or executes the [start.bat](https://github.com/MEPP-team/UDV/blob/master/start.bat) script
 
 Launch the client: 
   * open `http://localhost:8080/` with your favorite web browser
