@@ -1,4 +1,8 @@
 
+THREE = itowns.THREE;
+
+var showBuildings = false;
+
 // # Planar (EPSG:3946) viewer
 
 document.getElementById("info").innerHTML = "Vilo3D v0.1";
@@ -16,6 +20,7 @@ const extent = new itowns.Extent(
 
 // ====================
 let renderer;
+let clock;
 // ====================
 
 // `viewerDiv` will contain iTowns' rendering area (`<canvas>`)
@@ -73,37 +78,120 @@ view.tileLayer.materialOptions = {
     colorTextureElevationMaxZ: 240,
 };
 
+// function use :
+// For preupdate Layer geomtry :
+var preUpdateGeo = function (context, layer) {
+    if(layer.root === undefined) {
+        itowns.init3dTilesLayer(context, layer);
+        return [];
+    }
+    itowns.pre3dTilesUpdate(context, layer);
+    return [layer.root];
+};
+
+// Create a new Layer 3d-tiles For DiscreteLOD
+// -------------------------------------------
+var $3dTilesLayerDiscreteLOD = new itowns.GeometryLayer('3d-tiles-discrete-lod', view.scene);
+
+$3dTilesLayerDiscreteLOD.preUpdate = preUpdateGeo;
+$3dTilesLayerDiscreteLOD.update = itowns.process3dTilesNode(
+    itowns.$3dTilesCulling,
+    itowns.$3dTilesSubdivisionControl
+);
+$3dTilesLayerDiscreteLOD.name = 'DiscreteLOD';
+$3dTilesLayerDiscreteLOD.url = 'http://localhost:9090/getCity?city=lyon';
+$3dTilesLayerDiscreteLOD.protocol = '3d-tiles'
+$3dTilesLayerDiscreteLOD.overrideMaterials = true;  // custom cesium shaders are not functional
+$3dTilesLayerDiscreteLOD.type = 'geometry';
+$3dTilesLayerDiscreteLOD.visible = true;
+$3dTilesLayerDiscreteLOD.lighting = {
+    enable: true,
+    position: { x: -0.5, y: 0.0, z: 1000.0 }
+};
+
+if(showBuildings){itowns.View.prototype.addLayer.call(view, $3dTilesLayerDiscreteLOD);}
+
+// Create a new Layer 3d-tiles For Viewer Request Volume
+   // -----------------------------------------------------
+   const $3dTilesLayerRequestVolume = new itowns.GeometryLayer('3d-tiles-request-volume', view.scene);
+
+   $3dTilesLayerRequestVolume.preUpdate = preUpdateGeo;
+   $3dTilesLayerRequestVolume.update = itowns.process3dTilesNode(
+       itowns.$3dTilesCulling,
+       itowns.$3dTilesSubdivisionControl
+   );
+
+   $3dTilesLayerRequestVolume.name = 'RequestVolume';
+   $3dTilesLayerRequestVolume.url = 'http://localhost:9090/getCity?city=lyon';
+   $3dTilesLayerRequestVolume.protocol = '3d-tiles'
+   $3dTilesLayerRequestVolume.overrideMaterials = true;  // custom cesium shaders are not functional
+   $3dTilesLayerRequestVolume.type = 'geometry';
+   $3dTilesLayerRequestVolume.visible = true;
+
+   if(showBuildings){itowns.View.prototype.addLayer.call(view, $3dTilesLayerRequestVolume);}
+
+   var light = new THREE.DirectionalLight(0xffffff,0.5);
+   view.scene.add(light);
+//$3dTilesLayerDiscreteLOD.object3d.add(light);
+
 //document.body.addEventListener("contextmenu", function(evt){evt.preventDefault();return false;});
 
-//camera control
-var control = new CameraControls(viewerDiv,view);
+clock = new THREE.Clock();
+
+var pos = extent.center().xyz();
+var offset1 = new THREE.Vector3(1000,1000,200);
+var offset2 = new THREE.Vector3(-3000,-3000,3000);
+var offset3 = new THREE.Vector3(000,000,1000);
+
+var target = extent.center().xyz().add(offset1);
+
+var control = new CameraControls(viewerDiv,view,clock,pos.add(offset2),target);
 
 
 
-// Position the camera at south-west corner
-//const c = new itowns.Coordinates('EPSG:3946', extent.west(), extent.south(), 2000);
+//view.scene.updateMatrixWorld();
 
-//var offset =new THREE.Vector3(3000,0,-7000);
+var geometry = new THREE.BoxGeometry( 50, 50, 50 );
+var material = new THREE.MeshBasicMaterial( {color: 0x00ff00, wireframe: true, wireframeLinewidth: 1} );
 
-//offset = c.xyz();
+var cube = new THREE.Mesh( geometry, material );
+
+cube.position.copy(target);
+//cube.updateMatrix();
+cube.updateMatrixWorld();
+view.scene.add(cube);
+console.log("cube matrix", cube.matrix.elements);
+console.log("cube matrixWorld", cube.matrixWorld.elements);
+
+console.log("cube pos : ",cube.position);
+console.log("cam target : ",control.lookTarget);
 
 
-control.target = extent.center().xyz();
+//var lyr = view.getLayers(layer => layer.type === 'geometry');
+//console.log(lyr);
+
+//$3dTilesLayerDiscreteLOD.object3d.add(cube);
+
+
+
+//lyr.add(cube);
+
+
+
 
 control.update();
-
-//control.camera.position.add(offset);
-
-//control.update();
-
-//control.camera.lookAt(scope.target);
-
-console.log(control.camera.position);
+//control.startTravel(pos.sub(offset3));
 
 
 
 
-// Request redraw
-//view.notifyChange(true);
+//old CameraControls
+/*
+var control = new CameraControls(viewerDiv,view,clock);
+control.target = pos;
+control.update();
+*/
 
-//exports.view = view;
+
+
+//console.log(control.camera.position);

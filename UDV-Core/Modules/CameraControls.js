@@ -24,278 +24,295 @@ var state = STATE.NONE;
 var isCtrlDown = false;
 var select = false;
 
-var rotateStart = new THREE.Vector2();
-var rotateEnd = new THREE.Vector2();
-var rotateDelta = new THREE.Vector2();
+var panCamStart = new THREE.Vector3();
+var panStart = new THREE.Vector3();
+var panEnd = new THREE.Vector3();
+var panDelta = new THREE.Vector3();
 
-var theta = 0;
-var phi = 0;
-var thetaDelta = 0;
-var phiDelta = 0;
+var targetPos = new THREE.Vector3();
+var targetLook = new THREE.Vector3();
 
-var panStart = new THREE.Vector2();
-var panEnd = new THREE.Vector2();
-var panDelta = new THREE.Vector2();
+var travelStartPos = new THREE.Vector3();
+var travelStartRot = new THREE.Quaternion();
 
-var panOffset = new THREE.Vector3();
-var panUpOffset = new THREE.Vector3();
+var travelAlpha = 0;
+var travelDuration = 1;
 
-var dollyStart = new THREE.Vector2();
+var travelTimeZoom = 0.5;
+var travelTimeMoveTo = 2.5;
 
 var scale = 1;
 var oldScale = 1;
 
-var changeEvent = { type: 'change' };
+var lastElapsedTime = 0;
 
-function CameraControls(domElement, view) {
-    // Constructor
+var travelling = false;
+var travelStarted = false;
 
-    scope = this;
+var targetReached = true;
 
-    this.camera = view.camera.camera3D;
-    this.domElement = domElement;
-    this.engine = view.mainLoop.engine;
-    this.view = view;
 
-    this.target = new THREE.Vector3();
 
-    this.minDistanceUp = 1000;
-    this.maxDistanceUp = Infinity;
+/**
+ * Constructor
+ * @param domElement :
+ * @param view :
+ * @param clock :
+ */
 
-    this.minScale = 0;
-    this.maxScale = Infinity;
+function CameraControls(domElement, view, clock, startpos, looktarget) {
 
-    this.minZoom = 0;
-    this.maxZoom = Infinity;
+  scope = this;
 
-    this.minZenithAngle = 0.0*Math.PI;
+  this.clock = clock;
+  this.camera = view.camera.camera3D;
+  this.domElement = domElement;
+  this.engine = view.mainLoop.engine;
+  this.view = view;
+  this.position = this.camera.position;
 
-    //
-    this.maxZenithAngle = 1.30;
+  this.lookTarget = looktarget;
 
-    this.zoomSpeed = Math.pow(0.95, 1.0);
+  this.minDistanceUp = 1000;
+  this.maxDistanceUp = Infinity;
 
-    //* *********************Keys***********************//
-    window.addEventListener('keydown', this.onKeyDown, false);
+  this.minScale = 0;
+  this.maxScale = Infinity;
 
-    //* *********************Mouse**********************//
-    this.domElement.addEventListener('mousedown', this.onMouseDown, false);
-    this.domElement.addEventListener('mousewheel', this.onMouseWheel, false);
-    this.domElement.addEventListener('contextmenu', this.onContextMenu, false);
-    // For firefox
-    this.domElement.addEventListener('MozMousePixelScroll', this.onMouseWheel, false);
+  this.minZoom = 0;
+  this.maxZoom = Infinity;
 
-    //* *********************Touch**********************//
+  this.zoomSpeed = 10;
 
-    this.update();
+  this.groundHeight = 200;
+
+
+  this.domElement.addEventListener('contextmenu', this.onContextMenu, false);
+
+
+  this.addInputListeners();
+
+  this.position.copy(startpos);
+
+  this.camera.lookAt(this.lookTarget);
+
+  this.update();
+
+
 }
 
 CameraControls.prototype = Object.create(THREE.EventDispatcher.prototype);
 CameraControls.prototype.constructor = CameraControls;
 
-CameraControls.prototype.updateCameraTransformation = function updateCameraTransformation() {};
+CameraControls.prototype.smooth = function smooth(x) {
 
-// Public functions
+  var smoothed = x*x * (3-2*x);
+  //smoothed = x;
 
-/**
- * Manage the rotation of the camera around the y and z axis. Change their offset values.
- * @param deltaX : the offset value of the mouse movement along the X axis.
- * @param deltaY : the offset value of the mouse movement along the Y axis.
- */
-CameraControls.prototype.rotate = function rotate(deltaX, deltaY) {
-    thetaDelta -= 2 * Math.PI * deltaX / scope.domElement.clientHeight;
-    phiDelta -= 2 * Math.PI * deltaY / scope.domElement.clientHeight;
-};
+  return smoothed;
 
-/**
- * Manage the translation of the camera along the horizontal (go left or right) line of the world.
- * @param distance : the distance to the target point depending of the windows height.
- * @param matrix : the matrix of the camera.
- */
-CameraControls.prototype.panLeft = function panLeft(distance, matrix) {
-    var vector = new THREE.Vector3();
+  }
 
-    vector.setFromMatrixColumn(matrix, 0);
-    vector.multiplyScalar(-distance);
+CameraControls.prototype.handleTravel = function handleTravel(dt) {
 
-    panOffset.add(vector);
-};
+  if(!travelStarted){
+    travelStarted = true;
+    return;
+  }
 
-/**
- * Manage the translation of the camera along the horizontal (go forward or backward) line of the world.
- * @param distance : the distance to the target point depending of the windows height.
- * @param matrix : the matrix of the camera.
- */
-CameraControls.prototype.panForward = function panForward(distance, matrix) {
-    var vector = new THREE.Vector3();
+  travelAlpha += dt / travelDuration;
 
-    if (theta === 0) {
-        vector.setFromMatrixColumn(matrix, 1);
-        vector.multiplyScalar(distance);
-    }
-    else {
-        vector.set(Math.sin(theta), Math.cos(theta), 0);
-        vector.multiplyScalar(-distance);
-    }
+  //console.log("dt ", dt  ," travelalpha ", travelAlpha, " position : ", scope.position);
+
+  scope.position.lerpVectors(travelStartPos, targetPos, scope.smooth(travelAlpha));
 
 
-    panOffset.add(vector);
-};
 
-/**
- * Manage the translation of the camera along the vertical (go up or down) line of the world.
- * @param deltaYX : the offset value of the mouse movement along the Y axis.
- */
-CameraControls.prototype.panUp = function panUp(deltaY) {
-    var offset = scope.camera.position.clone().sub(scope.target);
-    var targetDistance = offset.length();
-    targetDistance *= Math.tan((scope.camera.fov / 2) * Math.PI / 180.0);
+  if(travelAlpha > 1){
+    scope.endTravel();
+  }
 
-    var vector = new THREE.Vector3(0, 0, 1);
-    vector.multiplyScalar(2 * deltaY * targetDistance / scope.domElement.clientHeight);
+}
 
-    panUpOffset.add(vector);
-};
+CameraControls.prototype.startTravel = function startTravel(targetpos, traveltime) {
 
-/**
- * Manage the translation of the camera along the horizontal line of the world.
- * @param deltaX : the offset value of the mouse movement along the X axis.
- * @param deltaY : the offset value of the mouse movement along the Y axis.
- */
-CameraControls.prototype.pan = function pan(deltaX, deltaY) {
-    var position = scope.camera.position;
-    var offset = position.clone().sub(scope.target);
-    var targetDistance = offset.length();
 
-    targetDistance *= Math.tan((scope.camera.fov / 2) * Math.PI / 180.0);
+  scope.removeInputListeners();
 
-    scope.panLeft(2 * deltaX * targetDistance / scope.domElement.clientHeight, scope.camera.matrix);
-    scope.panForward(2 * deltaY * targetDistance / scope.domElement.clientHeight, scope.camera.matrix);
-};
+  view.addFrameRequester(control);
+    console.log("framerequesters : ",view._frameRequesters);
 
-/**
- * Manage the translation of the camera along the horizontal line of the world.
- * @param deltaX : the offset value of the mouse movement along the X axis.
- * @param deltaY : the offset value of the mouse movement along the Y axis.
- */
+        console.log("addingFrameRequesters");
+
+  travelDuration=traveltime;
+
+  targetPos.copy(targetpos);
+
+  travelling = true;
+  travelAlpha = 0;
+
+  travelStarted = false;
+
+  travelStartPos.copy(scope.position);
+  //travelStartRot =
+  scope.update();
+
+    console.log("start travel to ", targetpos, " from ", scope.position, " whith duration : ", travelDuration);
+
+
+
+
+}
+
+CameraControls.prototype.endTravel = function endTravel() {
+
+  travelling = false;
+  scope.addInputListeners();
+
+  view.removeFrameRequester(control);
+    console.log("framerequesters : ",view._frameRequesters);
+
+  console.log("end travel");
+
+
+
+
+
+
+
+}
+
+
+
+
 CameraControls.prototype.update = function update() {
-    var quat = new THREE.Quaternion().setFromUnitVectors(scope.camera.up, new THREE.Vector3(0, 0, 1));
-    var quatInverse = quat.clone().inverse();
 
-    var position = scope.camera.position;
-    var offset = new THREE.Vector3();
-    offset.copy(position).sub(scope.target);
+  //console.log("travelling : ",travelling);
 
-    // Handle dolly
-    scale = Math.max(scope.minScale, Math.min(scope.maxScale, scale));
+  var deltaTime = clock.getElapsedTime() - lastElapsedTime;
+  lastElapsedTime = clock.getElapsedTime();
+  //console.log(deltaTime);
 
+  //var animating = travelling;
+  //var animating = false;
 
-    // Handle rotation
-    if (thetaDelta !== 0 || phiDelta !== 0) {
-        if ((phi + phiDelta >= scope.minZenithAngle)
-            && (phi + phiDelta <= scope.maxZenithAngle)
-            && phiDelta !== 0) {
-            offset.applyQuaternion(quat);
-            phi += phiDelta;
-            //console.log(666);
+  var position = scope.position;
 
-            var rotationXQuaternion = new THREE.Quaternion();
-            var vector = new THREE.Vector3();
-            vector.setFromMatrixColumn(scope.camera.matrix, 0);
-            rotationXQuaternion.setFromAxisAngle(vector, phiDelta);
-            offset.applyQuaternion(rotationXQuaternion);
-            offset.applyQuaternion(quatInverse);
-        }
-
-        if (thetaDelta !== 0) {
-            theta = Math.atan2(offset.x, offset.y);
-            theta += thetaDelta;
-
-            var rotationZQuaternion = new THREE.Quaternion();
-            rotationZQuaternion.setFromAxisAngle(new THREE.Vector3(0, 0, 1), thetaDelta);
-            offset.applyQuaternion(rotationZQuaternion);
-        }
-    }
+  if(travelling){
+    scope.handleTravel(deltaTime);
+  }
 
 
-    // Handle dolly
-    var currentScale = scale / oldScale;
-    offset.multiplyScalar(currentScale);
+  // Handle dolly
+  scale = Math.max(scope.minScale, Math.min(scope.maxScale, scale));
 
-    // Move the target to the panned location
-    scope.target.add(panOffset);
-    if ((position.z + panUpOffset.z > scope.minDistanceUp) &&
-        (position.z + panUpOffset.z < scope.maxDistanceUp))
-        { scope.target.add(panUpOffset); }
+  // Handle dolly
+  var currentScale = scale / oldScale;
+  //offset.multiplyScalar(currentScale);
 
+  // Move the target to the panned location
+  //scope.target.add(panOffset);
+  /*
+  if ((position.z + panUpOffset.z > scope.minDistanceUp) &&
+      (position.z + panUpOffset.z < scope.maxDistanceUp))
+      { scope.target.add(panUpOffset); }
+      */
+  //var targetPanPos = position.clone().add(panDelta);
 
-    position.copy(scope.target).add(offset);
+  //var movedir = panDelta.clone();
+  //console.log("movedir :", movedir);
+  if(state === STATE.PAN) {
+    //console.log(movedir);
+    position.sub(panDelta.multiplyScalar(0.75));
+  }
 
-    // Handle pan up
-    /* if((position.z + panUpOffset.z > scope.minDistanceUp) && (position.z + panUpOffset.z < scope.maxDistanceUp))
-        position.add(panUpOffset);*/
+  /*
+    //console.log("dist :", position.distanceTo(targetPanPos));
+  if(!targetReached && position.distanceTo(targetPanPos)>2){
+    var movedir = panDelta;
+    console.log("movedir :", movedir);
+    position.add(movedir.multiplyScalar(0.75));
+    //panDelta.sub(movedir.multiplyScalar(deltaTime));
+    //updateAgain = true;
+  }
+  else if(!targetReached) {startTr
+    targetReached = true;
+    //position.copy(targetPanPos);
+    console.log("target reached");
+  }
+  */
+  //console.log("updt");
 
-    // Always look at the target
-    scope.camera.lookAt(scope.target);
+  //position.copy(scope.target).add(offset);
 
     view.camera.update();
-    view.notifyChange(true);
-    console.log(position);
 
+    view.notifyChange(true);
+
+    //console.log(clock.getElapsedTime());
 
     // Reset elements
-    thetaDelta = 0;
-    phiDelta = 0;
+    //thetaDelta = 0;
+    //phiDelta = 0;
     oldScale = scale;
-    panOffset.set(0, 0, 0);
-    panUpOffset.set(0, 0, 0);
+    //panOffset.set(0, 0, 0);
+    //panUpOffset.set(0, 0, 0);
 
-    scope.dispatchEvent(changeEvent);
+    //if(animating){window.setTimeout(function(){update()},1000/30);}
+
 };
 
-//* ************************************************************************************//
-//* *********************************** Event handlers *********************************//
-//* ************************************************************************************//
-
-//* *********************Keys***********************//
-
 /**
- * Manage the event when a key is down.
- * @param event: the current event
+ * returns the point under the mouse cursor in 3d space (world space)
+ * @param event : the mouse down event.
  */
-CameraControls.prototype.handleKeyDown = function handleKeyDown(event) {
-    switch (event.keyCode) {
-        case keys.CTRL:
-            if (!isCtrlDown)
-                { isCtrlDown = true; }
-            break;
-        case keys.R:
-            // Get the camera up
-            scope.panUp(3);
-            scope.update();
-            break;
-        case keys.F:
-            // Get the camera down
-            scope.panUp(-3);
-            scope.update();
-            break;
-        case keys.S:
-            if (!select)
-                { select = true; }
-            break;
-        default:
-    }
+CameraControls.prototype.get3DPointUnderCursor = function get3DPointUnderCursor(event) {
+
+  var vector = new THREE.Vector3();
+
+  vector.set(
+    ( event.clientX / window.innerWidth ) * 2 - 1,
+    - ( event.clientY / window.innerHeight ) * 2 + 1,
+    0.5 );
+
+  vector.unproject( scope.camera );
+
+  var dir = vector.sub( scope.position ).normalize();
+
+  var distance = - scope.position.z / dir.z;
+
+  var pos = scope.position.clone().add( dir.multiplyScalar( distance ) );
+
+  pos.set(pos.x,pos.y,this.groundHeight);
+
+  return pos;
+
 };
 
-//* *********************Mouse**********************//
+CameraControls.prototype.zoom = function zoom() {
 
-/**
- * Handle the left mouse down event mixed with the ctrl event. Get the specified datas from the movement of
- * the mouse along both x and y axis. Init the rotate value to the position of the mouse during the event.
- * @param event : the mouse down event mixed with the ctrl down event.
- */
-CameraControls.prototype.handleMouseDownRotate = function handleMouseDownRotate(event) {
-    rotateStart.set(event.clientX, event.clientY);
+  //var move = new THREE.Vector3(0,0,0);
+  //console.log("move : ", move);
+  //move.add(panDelta);
+  //console.log("move : ", move);
+
+  //scope.position.add(panDelta);
+
+  //console.log("camposafter : ",scope.position);
+
+};
+
+CameraControls.prototype.pan = function pan() {
+
+  //var move = new THREE.Vector3(0,0,0);
+  //console.log("move : ", move);
+  //move.add(panDelta);
+  //console.log("move : ", move);
+
+  //scope.position.add(panDelta);
+
+  //console.log("camposafter : ",scope.position);
+
 };
 
 /**
@@ -304,16 +321,64 @@ CameraControls.prototype.handleMouseDownRotate = function handleMouseDownRotate(
  * @param event : the mouse down event.
  */
 CameraControls.prototype.handleMouseDownPan = function handleMouseDownPan(event) {
-    panStart.set(event.clientX, event.clientY);
+
+
+    panStart.copy(scope.get3DPointUnderCursor(event));
+    panDelta.set(0,0,0);
+    panEnd.copy(panStart);
+    //panCamStart.copy(scope.position);
+    //targetReached = false;
+
+  //console.log("camstart : ",scope.position);
+    //scope.camera.lookAt(pos);
+
+    //scope.update();
+
+
 };
 
 /**
- * Handle the left mouse down event. Get the specified datas from the movement of the mouse along both x and y axis.
- * Init the dolly value to the position of the mouse during the event.
- * @param event : the mouse down event.
+ * Handle the mouse move event. Get the specified datas from the movement of the mouse along both x and y axis.
+ * Compute the pan value and update the camera controls.
+ * @param event : the mouse move event.
  */
-CameraControls.prototype.handleMouseDownDolly = function handleMouseDownDolly(event) {
-    dollyStart.set(event.clientX, event.clientY);
+CameraControls.prototype.handleMouseMovePan = function handleMouseMovePan(event) {
+
+    panEnd.copy(scope.get3DPointUnderCursor(event));
+
+    panDelta.subVectors(panEnd,panStart);
+
+    scope.pan();
+
+    //panStart.copy(panEnd);
+
+    //console.log("pan start : ", panStart);
+    //console.log("pan end : ", panEnd);
+    //console.log("pan delta : ", panDelta);
+
+    scope.update();
+};
+
+/**
+ * Handle the mouse wheel actionned event. Get the specified data from the movement of the wheel. compute the scale
+ * (zoom) value and update the camera controls.
+ * @param event : the mouse wheel event.
+ */
+CameraControls.prototype.handleMouseMiddle = function handleMouseMiddle(event) {
+
+  var mouse = new THREE.Vector2(event.clientX,event.clientY);
+
+    var pointUnderCursor = scope.view.getPickingPositionFromDepth(mouse);
+    //  console.log("pointundercursor ", pointUnderCursor);
+    var moveTarget = new THREE.Vector3();
+    moveTarget.lerpVectors(scope.position,pointUnderCursor,0.75);
+
+    scope.startTravel(moveTarget,travelTimeMoveTo);
+
+
+    //scope.startTravel
+
+    //scope.update();
 };
 
 /**
@@ -337,97 +402,90 @@ CameraControls.prototype.handleMouseWheel = function handleMouseWheel(event) {
         scale /= scope.zoomSpeed;
     }
 
-    scope.update();
+    var mouse = new THREE.Vector2(event.clientX,event.clientY);
+
+      var pointUnderCursor = scope.view.getPickingPositionFromDepth(mouse);
+      console.log("pointundercursor ", pointUnderCursor);
+    var zoomTarget = pointUnderCursor.sub(scope.position).normalize().multiplyScalar(delta).multiplyScalar(scope.zoomSpeed);
+
+    scope.startTravel(zoomTarget.add(scope.position),travelTimeZoom);
+
+
+    //scope.startTravel
+
+    //scope.update();
 };
+
 
 /**
- * Handle the mouse move event mixed with the ctrl event. Get the specified datas from the movement of the mouse
- * along both x and y axis. Compute the rotate value and update the camera controls.
- * @param event : the mouse move event mixed with the ctrl down event.
- */
-CameraControls.prototype.handleMouseMoveRotate = function handleMouseMoveRotate(event) {
-    rotateEnd.set(event.clientX, event.clientY);
-    rotateDelta.subVectors(rotateEnd, rotateStart);
-
-    scope.rotate(rotateDelta.x, rotateDelta.y);
-
-    rotateStart.copy(rotateEnd);
-
-    scope.update();
-};
-
-/**
- * Handle the mouse move event. Get the specified datas from the movement of the mouse along both x and y axis.
- * Compute the pan value and update the camera controls.
- * @param event : the mouse move event.
- */
-CameraControls.prototype.handleMouseMovePan = function handleMouseMovePan(event) {
-    panEnd.set(event.clientX, event.clientY);
-    panDelta.subVectors(panEnd, panStart);
-
-    if (state === STATE.PAN)
-        { scope.pan(panDelta.x, panDelta.y); }
-    else if (state === STATE.PANUP)
-        { scope.panUp(panDelta.y); }
-
-    panStart.copy(panEnd);
-
-    scope.update();
-};
-
-
-CameraControls.prototype.handlePick = function handlePick(event) {
-    var mouse = new THREE.Vector2(
-        event.clientX - event.target.offsetLeft, event.clientY - event.target.offsetTop);
-    scope.engine.selectNodeAt(mouse);
-    scope.engine.update();
-    //debug.log(scope.engine.)
-};
-
-//* *********************Touch**********************//
-
-//* ************************************************************************************//
-//* *********************************** Event catchers *********************************//
-//* ************************************************************************************//
-
-//* *********************Keys***********************//
-
-/**
- * Catch and manage the event when a key is down.
+ * Catch and manage the event when the mouse wheel is rolled.
  * @param event: the current event
  */
-CameraControls.prototype.onKeyDown = function onKeyDown(event) {
-    scope.handleKeyDown(event);
-    window.addEventListener('keyup', scope.onKeyUp, false);
-};
+CameraControls.prototype.onMouseWheel = function onMouseWheel(event) {
 
-/**
- * Catch and manage the event when a key is up.
- * @param event: the current event
- */
-CameraControls.prototype.onKeyUp = function onKeyUp(event) {
-    if (event.keyCode == keys.CTRL) {
-        isCtrlDown = false;
-        window.removeEventListener('keyup', scope.onKeyUp, false);
-    } else if (event.keyCode === keys.S) {
-        select = false;
-        window.removeEventListener('keyup', scope.onKeyUp, false);
-    }
-};
+    //console.log("mouse wheel event");
 
-//* *********************Mouse**********************//
+    event.preventDefault();
+    event.stopPropagation();
+
+    scope.handleMouseWheel(event);
+
+    //scope.update();
+
+
+};
 
 /**
  * Catch and manage the event when a touch on the mouse is down.
  * @param event: the current event (mouse left button clicked or mouse wheel button actionned)
  */
-CameraControls.prototype.onMouseDown = function onMouseDown(event) {
-    // Disable default action of this event
+CameraControls.prototype.onMouseDown= function onMouseDown (event) {
+
     event.preventDefault();
 
+    //console.log("mouse down event");
+
     if (event.button === mouseButtons.LEFTCLICK) {
+
+var mouse = new THREE.Vector2();
+mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+	mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+
+  mouse.x = ( event.clientX );
+  	mouse.y =  ( event.clientY);
+//
+  //console.log(mouse);
+
+  console.log(scope.view.getPickingPositionFromDepth(mouse));
+
+      var raycaster = new THREE.Raycaster();
+      raycaster.setFromCamera( mouse, scope.camera );
+      var intersects = raycaster.intersectObjects( view.scene.children );
+      for ( var i = 0; i < intersects.length; i++ ) {
+
+        //console.log(intersects[i].point);
+
+		intersects[ i ].object.material.color.set( 0xff0000 );
+
+  }
+/*
+
+
+    const imageryLayers = scope.view.getLayers(a => a.type == 'planar');
+        for (const node of layer.level0Nodes) {
+            node.traverse((n) => {
+                if (n.material && n.material.visible) {
+                  //  n.material.checkLayersConsistency(n, imageryLayers);
+                  console.log("test");
+                }
+}
+
+	}
+
+*/
+
         if (select) {
-            scope.handlePick(event);
+            //scope.handlePick(event);
         } else if (isCtrlDown) {
             //scope.handleMouseDownRotate(event);
             //state = STATE.ROTATE;
@@ -436,12 +494,13 @@ CameraControls.prototype.onMouseDown = function onMouseDown(event) {
             state = STATE.PAN;
         }
     } else if (event.button === mouseButtons.ZOOM) {
-        scope.handleMouseDownDolly(event);
-        state = STATE.DOLLY;
+
+      scope.handleMouseMiddle(event);
+        //scope.handleMouseDownDolly(event);
+        //state = STATE.DOLLY;
     } else if (event.button === mouseButtons.RIGHTCLICK) {
-        //scope.handleMouseDownPan(event);
-        //state = STATE.PANUP;
-        scope.handleMouseDownRotate(event);
+
+        //scope.handleMouseDownRotate(event);
         state = STATE.ROTATE;
     }
 
@@ -459,21 +518,14 @@ CameraControls.prototype.onMouseDown = function onMouseDown(event) {
 CameraControls.prototype.onMouseUp = function onMouseUp(event) {
     event.preventDefault();
 
+    //console.log("mouse up event");
+
     scope.domElement.removeEventListener('mousemove', scope.onMouseMove, false);
     scope.domElement.removeEventListener('mouseup', scope.onMouseUp, false);
 
+    panDelta.set(0,0,0);
+
     state = STATE.NONE;
-};
-
-/**
- * Catch and manage the event when the mouse wheel is rolled.
- * @param event: the current event
- */
-CameraControls.prototype.onMouseWheel = function onMouseWheel(event) {
-    event.preventDefault();
-    event.stopPropagation();
-
-    scope.handleMouseWheel(event);
 };
 
 /**
@@ -485,19 +537,53 @@ CameraControls.prototype.onMouseMove = function onMouseMove(event) {
     event.preventDefault();
 
     if (state === STATE.ROTATE)
-        { scope.handleMouseMoveRotate(event); }
+        { /*scope.handleMouseMoveRotate(event);*/ }
     else if (state === STATE.PAN)
         { scope.handleMouseMovePan(event); }
     else if (state === STATE.PANUP)
-        { scope.handleMouseMovePan(event); }
+        { /*scope.handleMouseMovePan(event);*/ }
 };
 
+/**
+ * Catch and manage the event when a key is down.
+ * @param event: the current event
+ */
+CameraControls.prototype.onKeyDown = function onKeyDown(event) {
+    //scope.handleKeyDown(event);
+
+    //console.log("key down event");
+
+    window.addEventListener('keyup', scope.onKeyUp, false);
+};
+
+/**
+ * Catch and manage the event when a key is up.
+ * @param event: the current event
+ */
+CameraControls.prototype.onKeyUp = function onKeyUp(event) {
+
+    //console.log("key up event");
+
+    if (event.keyCode == keys.CTRL) {
+        isCtrlDown = false;
+        window.removeEventListener('keyup', scope.onKeyUp, false);
+    } else if (event.keyCode === keys.S) {
+        //select = false;
+        window.removeEventListener('keyup', scope.onKeyUp, false);
+    }
+};
+
+/**
+ * Catch and manage the event when the context menu is called (by a right click on the window).
+ * We use this to prevent the context menu from appearing, so we can use right click for other inputs.
+ * @param event: the current event
+ */
 CameraControls.prototype.onContextMenu = function onContextMenu(event) {
     event.preventDefault();
 
 };
 
-CameraControls.prototype.blockInput = function blockInput() {
+CameraControls.prototype.removeInputListeners = function removeInputListeners() {
 
   //* *********************Keys***********************//
   window.removeEventListener('keydown', this.onKeyDown, false);
@@ -506,5 +592,17 @@ CameraControls.prototype.blockInput = function blockInput() {
   this.domElement.removeEventListener('mousewheel', this.onMouseWheel, false);
   // For firefox
   this.domElement.removeEventListener('MozMousePixelScroll', this.onMouseWheel, false);
+
+};
+
+CameraControls.prototype.addInputListeners = function addInputListeners() {
+
+  //* *********************Keys***********************//
+  window.addEventListener('keydown', this.onKeyDown, false);
+
+  this.domElement.addEventListener('mousedown', this.onMouseDown, false);
+  this.domElement.addEventListener('mousewheel', this.onMouseWheel, false);
+  // For firefox
+  this.domElement.addEventListener('MozMousePixelScroll', this.onMouseWheel, false);
 
 };
