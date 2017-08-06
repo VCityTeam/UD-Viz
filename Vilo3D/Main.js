@@ -131,10 +131,8 @@ if(showBuildings){itowns.View.prototype.addLayer.call(view, $3dTilesLayerDiscret
    if(showBuildings){itowns.View.prototype.addLayer.call(view, $3dTilesLayerRequestVolume);}
 
    var light = new THREE.DirectionalLight(0xffffff,0.5);
-   view.scene.add(light);
-//$3dTilesLayerDiscreteLOD.object3d.add(light);
+   //view.scene.add(light);
 
-//document.body.addEventListener("contextmenu", function(evt){evt.preventDefault();return false;});
 
 clock = new THREE.Clock();
 
@@ -148,50 +146,4 @@ var target = extent.center().xyz().add(offset1);
 var control = new CameraControls(viewerDiv,view,clock,pos.add(offset2),target);
 
 
-
-//view.scene.updateMatrixWorld();
-
-var geometry = new THREE.BoxGeometry( 50, 50, 50 );
-var material = new THREE.MeshBasicMaterial( {color: 0x00ff00, wireframe: true, wireframeLinewidth: 1} );
-
-var cube = new THREE.Mesh( geometry, material );
-
-cube.position.copy(target);
-//cube.updateMatrix();
-cube.updateMatrixWorld();
-view.scene.add(cube);
-console.log("cube matrix", cube.matrix.elements);
-console.log("cube matrixWorld", cube.matrixWorld.elements);
-
-console.log("cube pos : ",cube.position);
-console.log("cam target : ",control.lookTarget);
-
-
-//var lyr = view.getLayers(layer => layer.type === 'geometry');
-//console.log(lyr);
-
-//$3dTilesLayerDiscreteLOD.object3d.add(cube);
-
-
-
-//lyr.add(cube);
-
-
-
-
 control.update();
-//control.startTravel(pos.sub(offset3));
-
-
-
-
-//old CameraControls
-/*
-var control = new CameraControls(viewerDiv,view,clock);
-control.target = pos;
-control.update();
-*/
-
-
-
-//console.log(control.camera.position);

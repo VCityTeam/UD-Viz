@@ -18,38 +18,59 @@ var scope = null;
 var keys = { CTRL: 17, R: 82, F: 70, S: 83 };
 var mouseButtons = { LEFTCLICK: THREE.MOUSE.LEFT, ZOOM: THREE.MOUSE.MIDDLE, RIGHTCLICK: THREE.MOUSE.RIGHT };
 
-var STATE = { NONE: -1, ROTATE: 0, DOLLY: 1, PAN: 2, PANUP: 3, TRAVEL: 4 };
+var STATE = { NONE: -1, PAN: 0, ZOOM: 1, ROTATE: 2, PANUP: 3, TRAVEL: 4 };
 var state = STATE.NONE;
 
 var isCtrlDown = false;
 var select = false;
+
+var cameraGuide = new THREE.Object3D();
+
+var mousePos = new THREE.Vector2();
+var lastMousePos = new THREE.Vector2();
+var deltaMousePos = new THREE.Vector2(0,0);
+
 
 var panCamStart = new THREE.Vector3();
 var panStart = new THREE.Vector3();
 var panEnd = new THREE.Vector3();
 var panDelta = new THREE.Vector3();
 
+var centerPoint = new THREE.Vector3(0,0,0);
+var centerPointObj = new THREE.Object3D();
+
+var theta = 0.0;
+var phi = 0.0;
+var thetaDelta = 0;
+var phiDelta = 0;
+
+var debugCube = new THREE.Mesh();
+
 var targetPos = new THREE.Vector3();
 var targetLook = new THREE.Vector3();
 
 var travelStartPos = new THREE.Vector3();
 var travelStartRot = new THREE.Quaternion();
+var travelEndRot = new THREE.Quaternion();
 
 var travelAlpha = 0;
-var travelDuration = 1;
+var travelDuration = 0;
 
-var travelTimeZoom = 0.5;
-var travelTimeMoveTo = 2.5;
+//pref
+var travelTimeZoom = 0.33;
+var travelTimeMoveTo = 1.75;
+
+var travelUseLookAt = false;
 
 var scale = 1;
 var oldScale = 1;
 
+var deltaTime = 0;
 var lastElapsedTime = 0;
 
-var travelling = false;
 var travelStarted = false;
 
-var targetReached = true;
+var targetReached = false;
 
 
 
@@ -60,7 +81,7 @@ var targetReached = true;
  * @param clock :
  */
 
-function CameraControls(domElement, view, clock, startpos, looktarget) {
+function CameraControls(domElement, view, clock, startPos, startLook) {
 
   scope = this;
 
@@ -70,8 +91,9 @@ function CameraControls(domElement, view, clock, startpos, looktarget) {
   this.engine = view.mainLoop.engine;
   this.view = view;
   this.position = this.camera.position;
+  this.rotation = this.camera.rotation;
 
-  this.lookTarget = looktarget;
+  this.lookTarget = startLook;
 
   this.minDistanceUp = 1000;
   this.maxDistanceUp = Infinity;
@@ -84,7 +106,12 @@ function CameraControls(domElement, view, clock, startpos, looktarget) {
 
   this.zoomSpeed = 10;
 
-  this.groundHeight = 200;
+  this.groundHeight = 170;
+
+  this.minZenithAngle = 0.0*Math.PI;
+
+  //
+  this.maxZenithAngle = 1.425;
 
 
   this.domElement.addEventListener('contextmenu', this.onContextMenu, false);
@@ -92,9 +119,30 @@ function CameraControls(domElement, view, clock, startpos, looktarget) {
 
   this.addInputListeners();
 
-  this.position.copy(startpos);
+  this.position.copy(startPos);
 
   this.camera.lookAt(this.lookTarget);
+
+
+
+  this.view.scene.add(centerPointObj);
+  this.view.scene.add(cameraGuide);
+
+  //centerPointObj.add(cameraGuide);
+
+  var geometry = new THREE.BoxGeometry( 50, 50, 50 );
+  var material = new THREE.MeshBasicMaterial( {color: 0x00ff00, wireframe: true, wireframeLinewidth: 1} );
+
+  debugCube.material = material;
+  debugCube.geometry = geometry;
+  debugCube = new THREE.Mesh( geometry, material );
+  debugCube.position.copy(target);
+  debugCube.updateMatrixWorld();
+  this.view.scene.add(debugCube);
+
+    //scope.view.addFrameRequester(control);
+
+
 
   this.update();
 
@@ -122,9 +170,15 @@ CameraControls.prototype.handleTravel = function handleTravel(dt) {
 
   travelAlpha += dt / travelDuration;
 
-  //console.log("dt ", dt  ," travelalpha ", travelAlpha, " position : ", scope.position);
+
 
   scope.position.lerpVectors(travelStartPos, targetPos, scope.smooth(travelAlpha));
+
+  if(travelUseLookAt===true){
+      THREE.Quaternion.slerp(travelStartRot, travelEndRot, scope.camera.quaternion, scope.smooth(travelAlpha));
+  }
+
+
 
 
 
@@ -134,30 +188,42 @@ CameraControls.prototype.handleTravel = function handleTravel(dt) {
 
 }
 
-CameraControls.prototype.startTravel = function startTravel(targetpos, traveltime) {
+CameraControls.prototype.startTravel = function startTravel(targetpos, traveltime, useLookAt) {
 
+  state=STATE.TRAVEL;
+  scope.updateCursorType();
 
   scope.removeInputListeners();
 
   view.addFrameRequester(control);
-    console.log("framerequesters : ",view._frameRequesters);
 
-        console.log("addingFrameRequesters");
+  travelUseLookAt = useLookAt;
+
 
   travelDuration=traveltime;
 
+
+  travelStartRot.copy( scope.camera.quaternion );
+
+  scope.camera.lookAt( targetpos );
+  travelEndRot.copy( scope.camera.quaternion );
+
+  scope.camera.quaternion.copy(travelStartRot);
+
   targetPos.copy(targetpos);
 
-  travelling = true;
+
   travelAlpha = 0;
 
   travelStarted = false;
 
   travelStartPos.copy(scope.position);
+
+
   //travelStartRot =
   scope.update();
 
-    console.log("start travel to ", targetpos, " from ", scope.position, " whith duration : ", travelDuration);
+  //  console.log("start travel to ", targetpos, " from ", scope.position, " whith duration : ", travelDuration, " using LookAt : ", travelUseLookAt);
 
 
 
@@ -166,18 +232,15 @@ CameraControls.prototype.startTravel = function startTravel(targetpos, traveltim
 
 CameraControls.prototype.endTravel = function endTravel() {
 
-  travelling = false;
+
   scope.addInputListeners();
 
   view.removeFrameRequester(control);
-    console.log("framerequesters : ",view._frameRequesters);
-
-  console.log("end travel");
 
 
+  state = STATE.NONE;
 
-
-
+  scope.updateCursorType();
 
 
 }
@@ -185,80 +248,28 @@ CameraControls.prototype.endTravel = function endTravel() {
 
 
 
+
+
 CameraControls.prototype.update = function update() {
 
-  //console.log("travelling : ",travelling);
 
-  var deltaTime = clock.getElapsedTime() - lastElapsedTime;
+
+  deltaTime = clock.getElapsedTime() - lastElapsedTime;
   lastElapsedTime = clock.getElapsedTime();
-  //console.log(deltaTime);
-
-  //var animating = travelling;
-  //var animating = false;
 
   var position = scope.position;
 
-  if(travelling){
+  if(state===STATE.TRAVEL){
     scope.handleTravel(deltaTime);
   }
 
 
-  // Handle dolly
-  scale = Math.max(scope.minScale, Math.min(scope.maxScale, scale));
 
-  // Handle dolly
-  var currentScale = scale / oldScale;
-  //offset.multiplyScalar(currentScale);
+    view.camera.update(window.innerWidth, window.innerHeight);
 
-  // Move the target to the panned location
-  //scope.target.add(panOffset);
-  /*
-  if ((position.z + panUpOffset.z > scope.minDistanceUp) &&
-      (position.z + panUpOffset.z < scope.maxDistanceUp))
-      { scope.target.add(panUpOffset); }
-      */
-  //var targetPanPos = position.clone().add(panDelta);
-
-  //var movedir = panDelta.clone();
-  //console.log("movedir :", movedir);
-  if(state === STATE.PAN) {
-    //console.log(movedir);
-    position.sub(panDelta.multiplyScalar(0.75));
-  }
-
-  /*
-    //console.log("dist :", position.distanceTo(targetPanPos));
-  if(!targetReached && position.distanceTo(targetPanPos)>2){
-    var movedir = panDelta;
-    console.log("movedir :", movedir);
-    position.add(movedir.multiplyScalar(0.75));
-    //panDelta.sub(movedir.multiplyScalar(deltaTime));
-    //updateAgain = true;
-  }
-  else if(!targetReached) {startTr
-    targetReached = true;
-    //position.copy(targetPanPos);
-    console.log("target reached");
-  }
-  */
-  //console.log("updt");
-
-  //position.copy(scope.target).add(offset);
-
-    view.camera.update();
 
     view.notifyChange(true);
 
-    //console.log(clock.getElapsedTime());
-
-    // Reset elements
-    //thetaDelta = 0;
-    //phiDelta = 0;
-    oldScale = scale;
-    //panOffset.set(0, 0, 0);
-    //panUpOffset.set(0, 0, 0);
-
-    //if(animating){window.setTimeout(function(){update()},1000/30);}
 
 };
 
@@ -266,7 +277,7 @@ CameraControls.prototype.update = function update() {
  * returns the point under the mouse cursor in 3d space (world space)
  * @param event : the mouse down event.
  */
-CameraControls.prototype.get3DPointUnderCursor = function get3DPointUnderCursor(event) {
+CameraControls.prototype.get3DPointUnderCursor = function get3DPointUnderCursor(event, height) {
 
   var vector = new THREE.Vector3();
 
@@ -279,41 +290,69 @@ CameraControls.prototype.get3DPointUnderCursor = function get3DPointUnderCursor(
 
   var dir = vector.sub( scope.position ).normalize();
 
-  var distance = - scope.position.z / dir.z;
+  var distance = (height - scope.position.z) / dir.z;
+  //distance =
 
   var pos = scope.position.clone().add( dir.multiplyScalar( distance ) );
 
-  pos.set(pos.x,pos.y,this.groundHeight);
+  //pos.set(pos.x,pos.y,height);
+
+  //console.log(pos);
+
+  debugCube.position.copy(pos);
+  debugCube.updateMatrixWorld();
 
   return pos;
 
 };
 
-CameraControls.prototype.zoom = function zoom() {
 
-  //var move = new THREE.Vector3(0,0,0);
-  //console.log("move : ", move);
-  //move.add(panDelta);
-  //console.log("move : ", move);
+/**
+ * returns the point under the mouse cursor in 3d space (world space)
+ * @param  : the mouse down event.
+ */
+CameraControls.prototype.get3DPointAtScreenXY = function get3DPointAtScreenXY(posXY) {
 
-  //scope.position.add(panDelta);
 
-  //console.log("camposafter : ",scope.position);
+  var result = new THREE.Vector3();
+
+  if(typeof scope.view.getPickingPositionFromDepth(posXY) !== 'undefined'){
+
+    result.copy(scope.view.getPickingPositionFromDepth(posXY));
+  }
+
+  else{
+
+
+    var vector = new THREE.Vector3();
+
+    vector.set(
+        ( posXY.x / window.innerWidth ) * 2 - 1,
+        - ( posXY.y / window.innerHeight ) * 2 + 1,
+        0.5 );
+
+    vector.unproject( scope.camera );
+
+    var dir = vector.sub( scope.position ).normalize();
+
+    var distance = - scope.position.z / dir.z;
+
+    result.copy(scope.position).add( dir.multiplyScalar( distance ) );
+
+    result.set(result.x,result.y,this.groundHeight);
+
+  }
+
+  //console.log("start ",result);
+
+
+
+  return result;
 
 };
 
-CameraControls.prototype.pan = function pan() {
 
-  //var move = new THREE.Vector3(0,0,0);
-  //console.log("move : ", move);
-  //move.add(panDelta);
-  //console.log("move : ", move);
 
-  //scope.position.add(panDelta);
-
-  //console.log("camposafter : ",scope.position);
-
-};
 
 /**
  * Handle the left mouse down event. Get the specified datas from the movement of the mouse along both x and y axis.
@@ -322,17 +361,11 @@ CameraControls.prototype.pan = function pan() {
  */
 CameraControls.prototype.handleMouseDownPan = function handleMouseDownPan(event) {
 
-
-    panStart.copy(scope.get3DPointUnderCursor(event));
+panStart.copy(scope.get3DPointAtScreenXY(new THREE.Vector2(event.clientX,event.clientY)));
+    //panStart.copy(scope.get3DPointUnderCursor(event,this.groundHeight));
     panDelta.set(0,0,0);
-    panEnd.copy(panStart);
-    //panCamStart.copy(scope.position);
-    //targetReached = false;
+    //panEnd.copy(panStart);
 
-  //console.log("camstart : ",scope.position);
-    //scope.camera.lookAt(pos);
-
-    //scope.update();
 
 
 };
@@ -344,17 +377,18 @@ CameraControls.prototype.handleMouseDownPan = function handleMouseDownPan(event)
  */
 CameraControls.prototype.handleMouseMovePan = function handleMouseMovePan(event) {
 
-    panEnd.copy(scope.get3DPointUnderCursor(event));
+    panEnd.copy(scope.get3DPointUnderCursor(event,panStart.z));
+    //panEnd.copy(scope.get3DPointAtScreenXY(new THREE.Vector2(event.clientX,event.clientY)));
 
     panDelta.subVectors(panEnd,panStart);
 
-    scope.pan();
-
     //panStart.copy(panEnd);
 
-    //console.log("pan start : ", panStart);
-    //console.log("pan end : ", panEnd);
-    //console.log("pan delta : ", panDelta);
+    //scope.pan();
+
+    scope.position.sub(panDelta);
+
+
 
     scope.update();
 };
@@ -368,17 +402,67 @@ CameraControls.prototype.handleMouseMiddle = function handleMouseMiddle(event) {
 
   var mouse = new THREE.Vector2(event.clientX,event.clientY);
 
-    var pointUnderCursor = scope.view.getPickingPositionFromDepth(mouse);
-    //  console.log("pointundercursor ", pointUnderCursor);
+    var pointUnderCursor = scope.get3DPointAtScreenXY(mouse);
+
     var moveTarget = new THREE.Vector3();
     moveTarget.lerpVectors(scope.position,pointUnderCursor,0.75);
 
-    scope.startTravel(moveTarget,travelTimeMoveTo);
 
 
-    //scope.startTravel
+    scope.startTravel(moveTarget,travelTimeMoveTo, true);
 
-    //scope.update();
+};
+
+CameraControls.prototype.handleMouseMoveRotate = function handleMouseMoveRotate(event) {
+
+
+    thetaDelta = -3*deltaMousePos.x;
+    phiDelta = 3*deltaMousePos.y;
+
+    var offset = new THREE.Vector3();
+    offset.copy(scope.position).sub(centerPoint);
+    offset.multiplyScalar(1);
+
+
+    var quat = new THREE.Quaternion().setFromUnitVectors(scope.camera.up, new THREE.Vector3(0, 0, 1));
+    var quatInverse = quat.clone().inverse();
+
+    if (thetaDelta !== 0 || phiDelta !== 0) {
+        if ((phi + phiDelta >= scope.minZenithAngle)
+            && (phi + phiDelta <= scope.maxZenithAngle)
+            && phiDelta !== 0) {
+
+                phi += phiDelta;
+
+
+
+      offset.applyQuaternion(quat);
+
+
+                    var rotationXQuaternion = new THREE.Quaternion();
+                    var vector = new THREE.Vector3();
+                    vector.setFromMatrixColumn(scope.camera.matrix, 0);
+                    rotationXQuaternion.setFromAxisAngle(vector, phiDelta);
+                    offset.applyQuaternion(rotationXQuaternion);
+                    offset.applyQuaternion(quatInverse);
+
+    }
+    if (thetaDelta !== 0) {
+
+
+        var rotationZQuaternion = new THREE.Quaternion();
+        rotationZQuaternion.setFromAxisAngle(new THREE.Vector3(0, 0, 1), thetaDelta);
+        offset.applyQuaternion(rotationZQuaternion);
+    }
+  }
+
+
+    scope.position.copy(offset).add(centerPoint);
+
+    scope.camera.lookAt(centerPoint);
+
+    scope.update();
+
 };
 
 /**
@@ -386,8 +470,8 @@ CameraControls.prototype.handleMouseMiddle = function handleMouseMiddle(event) {
  * (zoom) value and update the camera controls.
  * @param event : the mouse wheel event.
  */
-CameraControls.prototype.handleMouseWheel = function handleMouseWheel(event) {
-    var delta = 0;
+CameraControls.prototype.startZoom = function startZoom(event) {
+
 
     if (event.wheelDelta !== undefined) {
         delta = event.wheelDelta;
@@ -395,26 +479,42 @@ CameraControls.prototype.handleMouseWheel = function handleMouseWheel(event) {
         delta = -event.detail;
     }
 
-    if (delta > 0) {
-        scale *= scope.zoomSpeed;
-    }
-    else {
-        scale /= scope.zoomSpeed;
-    }
+    var screenCenter = new THREE.Vector2();
+    screenCenter.x=0.5*window.innerWidth;
+    screenCenter.y=0.5*window.innerHeight;
+
+    var pointUnderScreenCenter = scope.get3DPointAtScreenXY(screenCenter);
 
     var mouse = new THREE.Vector2(event.clientX,event.clientY);
 
-      var pointUnderCursor = scope.view.getPickingPositionFromDepth(mouse);
-      console.log("pointundercursor ", pointUnderCursor);
-    var zoomTarget = pointUnderCursor.sub(scope.position).normalize().multiplyScalar(delta).multiplyScalar(scope.zoomSpeed);
+    var pointUnderCursor = scope.get3DPointAtScreenXY(mouse);
 
-    scope.startTravel(zoomTarget.add(scope.position),travelTimeZoom);
+    var zoomTarget = new THREE.Vector3();
+    zoomTarget.copy(pointUnderScreenCenter);
+    zoomTarget.copy(pointUnderCursor);
 
 
-    //scope.startTravel
+    var newPos = new THREE.Vector3();
 
-    //scope.update();
+    if(delta>0){
+
+      newPos.lerpVectors(scope.position,zoomTarget,0.3);
+      scope.startTravel(newPos,travelTimeZoom, false);
+
+    }
+    else if(delta<0){
+
+      newPos.lerpVectors(scope.position,zoomTarget,-0.4);
+      scope.startTravel(newPos,travelTimeZoom, false);
+
+    }
+
+
+
 };
+
+
+
 
 
 /**
@@ -423,17 +523,18 @@ CameraControls.prototype.handleMouseWheel = function handleMouseWheel(event) {
  */
 CameraControls.prototype.onMouseWheel = function onMouseWheel(event) {
 
-    //console.log("mouse wheel event");
 
     event.preventDefault();
     event.stopPropagation();
 
-    scope.handleMouseWheel(event);
-
-    //scope.update();
-
+    if(state===STATE.NONE){
+      scope.startZoom(event);
+    }
 
 };
+
+
+
 
 /**
  * Catch and manage the event when a touch on the mouse is down.
@@ -443,46 +544,37 @@ CameraControls.prototype.onMouseDown= function onMouseDown (event) {
 
     event.preventDefault();
 
-    //console.log("mouse down event");
+    mousePos.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+    mousePos.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+
+
 
     if (event.button === mouseButtons.LEFTCLICK) {
 
 var mouse = new THREE.Vector2();
-mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
-	mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+
 
   mouse.x = ( event.clientX );
-  	mouse.y =  ( event.clientY);
-//
-  //console.log(mouse);
+  mouse.y =  ( event.clientY);
 
-  console.log(scope.view.getPickingPositionFromDepth(mouse));
+
 
       var raycaster = new THREE.Raycaster();
+      mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+      	mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
       raycaster.setFromCamera( mouse, scope.camera );
       var intersects = raycaster.intersectObjects( view.scene.children );
       for ( var i = 0; i < intersects.length; i++ ) {
 
-        //console.log(intersects[i].point);
 
-		intersects[ i ].object.material.color.set( 0xff0000 );
+        if( typeof intersects[ i ].object.material.color !== 'undefined'){
+
+          intersects[ i ].object.material.color.set( 0xff0000 );
+        }
+
 
   }
-/*
 
-
-    const imageryLayers = scope.view.getLayers(a => a.type == 'planar');
-        for (const node of layer.level0Nodes) {
-            node.traverse((n) => {
-                if (n.material && n.material.visible) {
-                  //  n.material.checkLayersConsistency(n, imageryLayers);
-                  console.log("test");
-                }
-}
-
-	}
-
-*/
 
         if (select) {
             //scope.handlePick(event);
@@ -496,18 +588,36 @@ mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
     } else if (event.button === mouseButtons.ZOOM) {
 
       scope.handleMouseMiddle(event);
-        //scope.handleMouseDownDolly(event);
-        //state = STATE.DOLLY;
+
+
     } else if (event.button === mouseButtons.RIGHTCLICK) {
 
-        //scope.handleMouseDownRotate(event);
+
+        var screenCenter = new THREE.Vector2();
+        screenCenter.x=0.5*window.innerWidth;
+        screenCenter.y=0.5*window.innerHeight;
+        centerPoint.copy(scope.get3DPointAtScreenXY(screenCenter));
+
+
+        var r = scope.position.distanceTo(centerPoint);
+        phi = Math.acos((scope.position.z-centerPoint.z) / r);
+      //  console.log((scope.position.z-centerPoint.z) / r);
+
+      debugCube.position.copy(centerPoint);
+      debugCube.updateMatrixWorld();
+
+
+
+
         state = STATE.ROTATE;
     }
 
-    if (state != STATE.NONE) {
+    if (state !== STATE.NONE) {
         scope.domElement.addEventListener('mousemove', scope.onMouseMove, false);
         scope.domElement.addEventListener('mouseup', scope.onMouseUp, false);
     }
+
+      scope.updateCursorType();
 };
 
 /**
@@ -518,14 +628,18 @@ mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
 CameraControls.prototype.onMouseUp = function onMouseUp(event) {
     event.preventDefault();
 
-    //console.log("mouse up event");
+
 
     scope.domElement.removeEventListener('mousemove', scope.onMouseMove, false);
     scope.domElement.removeEventListener('mouseup', scope.onMouseUp, false);
 
     panDelta.set(0,0,0);
 
-    state = STATE.NONE;
+
+
+    state = (state===STATE.TRAVEL) ? state = STATE.TRAVEL : state = STATE.NONE;
+
+      scope.updateCursorType();
 };
 
 /**
@@ -536,8 +650,16 @@ CameraControls.prototype.onMouseUp = function onMouseUp(event) {
 CameraControls.prototype.onMouseMove = function onMouseMove(event) {
     event.preventDefault();
 
+    lastMousePos.copy(mousePos);
+
+    mousePos.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+    mousePos.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+
+    deltaMousePos.copy(mousePos).sub(lastMousePos);
+
+
     if (state === STATE.ROTATE)
-        { /*scope.handleMouseMoveRotate(event);*/ }
+        { scope.handleMouseMoveRotate(event); }
     else if (state === STATE.PAN)
         { scope.handleMouseMovePan(event); }
     else if (state === STATE.PANUP)
@@ -549,9 +671,7 @@ CameraControls.prototype.onMouseMove = function onMouseMove(event) {
  * @param event: the current event
  */
 CameraControls.prototype.onKeyDown = function onKeyDown(event) {
-    //scope.handleKeyDown(event);
 
-    //console.log("key down event");
 
     window.addEventListener('keyup', scope.onKeyUp, false);
 };
@@ -562,7 +682,8 @@ CameraControls.prototype.onKeyDown = function onKeyDown(event) {
  */
 CameraControls.prototype.onKeyUp = function onKeyUp(event) {
 
-    //console.log("key up event");
+
+
 
     if (event.keyCode == keys.CTRL) {
         isCtrlDown = false;
@@ -589,9 +710,9 @@ CameraControls.prototype.removeInputListeners = function removeInputListeners() 
   window.removeEventListener('keydown', this.onKeyDown, false);
 
   this.domElement.removeEventListener('mousedown', this.onMouseDown, false);
-  this.domElement.removeEventListener('mousewheel', this.onMouseWheel, false);
+this.domElement.removeEventListener('mousewheel', this.onMouseWheel, false);
   // For firefox
-  this.domElement.removeEventListener('MozMousePixelScroll', this.onMouseWheel, false);
+ this.domElement.removeEventListener('MozMousePixelScroll', this.onMouseWheel, false);
 
 };
 
@@ -601,8 +722,36 @@ CameraControls.prototype.addInputListeners = function addInputListeners() {
   window.addEventListener('keydown', this.onKeyDown, false);
 
   this.domElement.addEventListener('mousedown', this.onMouseDown, false);
-  this.domElement.addEventListener('mousewheel', this.onMouseWheel, false);
+
+ this.domElement.addEventListener('mousewheel', this.onMouseWheel, false);
   // For firefox
   this.domElement.addEventListener('MozMousePixelScroll', this.onMouseWheel, false);
+
+
+};
+
+CameraControls.prototype.updateCursorType = function updateCursorType() {
+
+  if(state===STATE.NONE){
+
+    scope.domElement.style.cursor = "auto";
+
+  }
+  else if(state===STATE.PAN){
+
+    scope.domElement.style.cursor = "move";
+
+  }
+  else if(state===STATE.TRAVEL){
+
+    scope.domElement.style.cursor = "wait";
+
+  }
+  else if(state===STATE.ROTATE){
+
+    scope.domElement.style.cursor = "help";
+
+  }
+
 
 };
