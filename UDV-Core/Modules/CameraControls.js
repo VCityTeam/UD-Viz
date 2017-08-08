@@ -12,8 +12,8 @@ THREE = itowns.THREE;
 
 
 //import * as THREE from 'three';
-
-var scope = null;
+//
+//var _this = null;
 
 var keys = { CTRL: 17, R: 82, F: 70, S: 83 };
 var mouseButtons = { LEFTCLICK: THREE.MOUSE.LEFT, ZOOM: THREE.MOUSE.MIDDLE, RIGHTCLICK: THREE.MOUSE.RIGHT };
@@ -24,9 +24,10 @@ var state = STATE.NONE;
 var isCtrlDown = false;
 var select = false;
 
-var cameraGuide = new THREE.Object3D();
+var cityCenter = new THREE.Vector3();
+var camStartPos = new THREE.Vector3();
 
-var mousePos = new THREE.Vector2();
+//var mousePos = new THREE.Vector2();
 var lastMousePos = new THREE.Vector2();
 var deltaMousePos = new THREE.Vector2(0,0);
 
@@ -46,7 +47,7 @@ var phiDelta = 0;
 
 var debugCube = new THREE.Mesh();
 
-var targetPos = new THREE.Vector3();
+var travelEndPos = new THREE.Vector3();
 var targetLook = new THREE.Vector3();
 
 var travelStartPos = new THREE.Vector3();
@@ -56,21 +57,15 @@ var travelEndRot = new THREE.Quaternion();
 var travelAlpha = 0;
 var travelDuration = 0;
 
-//pref
-var travelTimeZoom = 0.33;
-var travelTimeMoveTo = 1.75;
-
 var travelUseLookAt = false;
+var travelUseSmooth = false;
 
-var scale = 1;
-var oldScale = 1;
 
 var deltaTime = 0;
 var lastElapsedTime = 0;
 
 var travelStarted = false;
 
-var targetReached = false;
 
 
 
@@ -81,52 +76,65 @@ var targetReached = false;
  * @param clock :
  */
 
-function CameraControls(domElement, view, clock, startPos, startLook) {
+function CameraControls(domElement, view, clock, startPos, startLook, center) {
 
-  scope = this;
+  _this = this;
 
-  this.clock = clock;
-  this.camera = view.camera.camera3D;
-  this.domElement = domElement;
-  this.engine = view.mainLoop.engine;
-  this.view = view;
-  this.position = this.camera.position;
-  this.rotation = this.camera.rotation;
+  _this.clock = clock;
+  _this.camera = view.camera.camera3D;
+  _this.domElement = domElement;
+  _this.engine = view.mainLoop.engine;
+  _this.view = view;
+  _this.position = _this.camera.position;
+  _this.rotation = _this.camera.rotation;
 
-  this.lookTarget = startLook;
+  cityCenter.copy(center);
+  console.log("center",center);
 
-  this.minDistanceUp = 1000;
-  this.maxDistanceUp = Infinity;
+  //pref
+  _this.travelTimeZoom = 0.3;
+  _this.travelTimeMoveTo = 2.0;
 
-  this.minScale = 0;
-  this.maxScale = Infinity;
+  _this.zoomInSpeed = 0.3;
+  _this.zoomOutSpeed = 0.4;
 
-  this.minZoom = 0;
-  this.maxZoom = Infinity;
 
-  this.zoomSpeed = 10;
+  _this.minDistanceUp = 1000;
+  _this.maxDistanceUp = Infinity;
 
-  this.groundHeight = 170;
+  _this.minScale = 0;
+  _this.maxScale = Infinity;
 
-  this.minZenithAngle = 0.0*Math.PI;
+  _this.minZoom = 0;
+  _this.maxZoom = Infinity;
+
+  _this.zoomSpeed = 10;
+
+  _this.rotateSpeed = 3;
+
+  _this.groundHeight = 170;
+
+  _this.minZenithAngle = 0.0*Math.PI;
 
   //
-  this.maxZenithAngle = 1.425;
+  _this.maxZenithAngle = 1.425;
 
 
-  this.domElement.addEventListener('contextmenu', this.onContextMenu, false);
+  _this.domElement.addEventListener('contextmenu', _this.onContextMenu, false);
 
 
-  this.addInputListeners();
+  _this.addInputListeners();
 
-  this.position.copy(startPos);
+  _this.position.copy(startPos);
 
-  this.camera.lookAt(this.lookTarget);
+  _this.camera.lookAt(startLook);
+
+  //_this.camera.camera3D.far = 500;
 
 
 
-  this.view.scene.add(centerPointObj);
-  this.view.scene.add(cameraGuide);
+  _this.view.scene.add(centerPointObj);
+
 
   //centerPointObj.add(cameraGuide);
 
@@ -136,15 +144,18 @@ function CameraControls(domElement, view, clock, startPos, startLook) {
   debugCube.material = material;
   debugCube.geometry = geometry;
   debugCube = new THREE.Mesh( geometry, material );
-  debugCube.position.copy(target);
+  debugCube.position.copy(cityCenter);
   debugCube.updateMatrixWorld();
-  this.view.scene.add(debugCube);
-
-    //scope.view.addFrameRequester(control);
+  _this.view.scene.add(debugCube);
 
 
+    //_this.view.addFrameRequester(control);
 
-  this.update();
+
+
+
+
+  _this.update();
 
 
 }
@@ -161,69 +172,109 @@ CameraControls.prototype.smooth = function smooth(x) {
 
   }
 
+  CameraControls.prototype.getMousePos = function getMousePos(event) {
+
+
+
+    var mousePos = new THREE.Vector2();
+    mousePos.x = event.clientX;
+    mousePos.y = event.clientY;
+
+
+    return mousePos;
+
+    }
+
+
+
 CameraControls.prototype.handleTravel = function handleTravel(dt) {
+
+  console.log("travel");
+
+  var alpha = 0;
 
   if(!travelStarted){
     travelStarted = true;
     return;
   }
 
+
   travelAlpha += dt / travelDuration;
 
+  alpha = (travelUseSmooth) ? _this.smooth(travelAlpha) : travelAlpha;
 
 
-  scope.position.lerpVectors(travelStartPos, targetPos, scope.smooth(travelAlpha));
+
+  _this.position.lerpVectors(travelStartPos, travelEndPos, alpha);
+
+
+
 
   if(travelUseLookAt===true){
-      THREE.Quaternion.slerp(travelStartRot, travelEndRot, scope.camera.quaternion, scope.smooth(travelAlpha));
+      THREE.Quaternion.slerp(travelStartRot, travelEndRot, _this.camera.quaternion, alpha);
   }
-
 
 
 
 
   if(travelAlpha > 1){
-    scope.endTravel();
+    _this.endTravel();
   }
+
 
 }
 
-CameraControls.prototype.startTravel = function startTravel(targetpos, traveltime, useLookAt) {
+CameraControls.prototype.startTravel = function startTravel(targetPos, travelTime, useLookAt, targetLookAt, useSmooth) {
+
 
   state=STATE.TRAVEL;
-  scope.updateCursorType();
 
-  scope.removeInputListeners();
+  _this.updateCursorType();
+
+  _this.removeInputListeners();
 
   view.addFrameRequester(control);
 
   travelUseLookAt = useLookAt;
+  travelUseSmooth = useSmooth;
+
+  travelDuration=travelTime;
+
+  travelStartPos.copy(_this.position);
 
 
-  travelDuration=traveltime;
+  travelStartRot.copy( _this.camera.quaternion );
 
+  if(targetPos !== targetLookAt){
 
-  travelStartRot.copy( scope.camera.quaternion );
+    console.log("diff");
+    _this.position.copy(targetPos);
+  }
 
-  scope.camera.lookAt( targetpos );
-  travelEndRot.copy( scope.camera.quaternion );
+  _this.camera.lookAt( targetLookAt );
 
-  scope.camera.quaternion.copy(travelStartRot);
+  travelEndRot.copy( _this.camera.quaternion );
 
-  targetPos.copy(targetpos);
+  _this.camera.quaternion.copy(travelStartRot);
+
+  travelEndPos.copy(targetPos);
+
+  if(targetPos !== targetLookAt){
+    _this.position.copy(travelStartPos);
+  }
 
 
   travelAlpha = 0;
 
   travelStarted = false;
 
-  travelStartPos.copy(scope.position);
+
 
 
   //travelStartRot =
-  scope.update();
+  _this.update();
 
-  //  console.log("start travel to ", targetpos, " from ", scope.position, " whith duration : ", travelDuration, " using LookAt : ", travelUseLookAt);
+  //console.log("start travel to ", targetPos, " from ", _this.position, " whith duration : ", travelDuration, " using LookAt : ", travelUseLookAt);
 
 
 
@@ -233,14 +284,16 @@ CameraControls.prototype.startTravel = function startTravel(targetpos, traveltim
 CameraControls.prototype.endTravel = function endTravel() {
 
 
-  scope.addInputListeners();
+  _this.addInputListeners();
 
   view.removeFrameRequester(control);
 
 
   state = STATE.NONE;
 
-  scope.updateCursorType();
+  _this.updateCursorType();
+
+
 
 
 }
@@ -257,13 +310,11 @@ CameraControls.prototype.update = function update() {
   deltaTime = clock.getElapsedTime() - lastElapsedTime;
   lastElapsedTime = clock.getElapsedTime();
 
-  var position = scope.position;
+  var position = _this.position;
 
   if(state===STATE.TRAVEL){
-    scope.handleTravel(deltaTime);
+    _this.handleTravel(deltaTime);
   }
-
-
 
     view.camera.update(window.innerWidth, window.innerHeight);
 
@@ -286,14 +337,14 @@ CameraControls.prototype.get3DPointUnderCursor = function get3DPointUnderCursor(
     - ( event.clientY / window.innerHeight ) * 2 + 1,
     0.5 );
 
-  vector.unproject( scope.camera );
+  vector.unproject( _this.camera );
 
-  var dir = vector.sub( scope.position ).normalize();
+  var dir = vector.sub( _this.position ).normalize();
 
-  var distance = (height - scope.position.z) / dir.z;
+  var distance = (height - _this.position.z) / dir.z;
   //distance =
 
-  var pos = scope.position.clone().add( dir.multiplyScalar( distance ) );
+  var pos = _this.position.clone().add( dir.multiplyScalar( distance ) );
 
   //pos.set(pos.x,pos.y,height);
 
@@ -316,9 +367,9 @@ CameraControls.prototype.get3DPointAtScreenXY = function get3DPointAtScreenXY(po
 
   var result = new THREE.Vector3();
 
-  if(typeof scope.view.getPickingPositionFromDepth(posXY) !== 'undefined'){
+  if(typeof _this.view.getPickingPositionFromDepth(posXY) !== 'undefined'){
 
-    result.copy(scope.view.getPickingPositionFromDepth(posXY));
+    result.copy(_this.view.getPickingPositionFromDepth(posXY));
   }
 
   else{
@@ -331,15 +382,15 @@ CameraControls.prototype.get3DPointAtScreenXY = function get3DPointAtScreenXY(po
         - ( posXY.y / window.innerHeight ) * 2 + 1,
         0.5 );
 
-    vector.unproject( scope.camera );
+    vector.unproject( _this.camera );
 
-    var dir = vector.sub( scope.position ).normalize();
+    var dir = vector.sub( _this.position ).normalize();
 
-    var distance = - scope.position.z / dir.z;
+    var distance = - _this.position.z / dir.z;
 
-    result.copy(scope.position).add( dir.multiplyScalar( distance ) );
+    result.copy(_this.position).add( dir.multiplyScalar( distance ) );
 
-    result.set(result.x,result.y,this.groundHeight);
+    result.set(result.x,result.y,_this.groundHeight);
 
   }
 
@@ -361,8 +412,8 @@ CameraControls.prototype.get3DPointAtScreenXY = function get3DPointAtScreenXY(po
  */
 CameraControls.prototype.handleMouseDownPan = function handleMouseDownPan(event) {
 
-panStart.copy(scope.get3DPointAtScreenXY(new THREE.Vector2(event.clientX,event.clientY)));
-    //panStart.copy(scope.get3DPointUnderCursor(event,this.groundHeight));
+panStart.copy(_this.get3DPointAtScreenXY(new THREE.Vector2(event.clientX,event.clientY)));
+    //panStart.copy(_this.get3DPointUnderCursor(event,_this.groundHeight));
     panDelta.set(0,0,0);
     //panEnd.copy(panStart);
 
@@ -377,20 +428,20 @@ panStart.copy(scope.get3DPointAtScreenXY(new THREE.Vector2(event.clientX,event.c
  */
 CameraControls.prototype.handleMouseMovePan = function handleMouseMovePan(event) {
 
-    panEnd.copy(scope.get3DPointUnderCursor(event,panStart.z));
-    //panEnd.copy(scope.get3DPointAtScreenXY(new THREE.Vector2(event.clientX,event.clientY)));
+    panEnd.copy(_this.get3DPointUnderCursor(event,panStart.z));
+    //panEnd.copy(_this.get3DPointAtScreenXY(new THREE.Vector2(event.clientX,event.clientY)));
 
     panDelta.subVectors(panEnd,panStart);
 
     //panStart.copy(panEnd);
 
-    //scope.pan();
+    //_this.pan();
 
-    scope.position.sub(panDelta);
+    _this.position.sub(panDelta);
 
 
 
-    scope.update();
+    _this.update();
 };
 
 /**
@@ -402,34 +453,34 @@ CameraControls.prototype.handleMouseMiddle = function handleMouseMiddle(event) {
 
   var mouse = new THREE.Vector2(event.clientX,event.clientY);
 
-    var pointUnderCursor = scope.get3DPointAtScreenXY(mouse);
+    var pointUnderCursor = _this.get3DPointAtScreenXY(mouse);
 
     var moveTarget = new THREE.Vector3();
-    moveTarget.lerpVectors(scope.position,pointUnderCursor,0.75);
+    moveTarget.lerpVectors(_this.position,pointUnderCursor,0.75);
 
 
 
-    scope.startTravel(moveTarget,travelTimeMoveTo, true);
+    _this.startTravel(moveTarget,_this.travelTimeMoveTo, true, moveTarget, true);
 
 };
 
 CameraControls.prototype.handleMouseMoveRotate = function handleMouseMoveRotate(event) {
 
 
-    thetaDelta = -3*deltaMousePos.x;
-    phiDelta = 3*deltaMousePos.y;
+    thetaDelta = -this.rotateSpeed*deltaMousePos.x/window.innerWidth;
+    phiDelta = -this.rotateSpeed*deltaMousePos.y/window.innerHeight;
 
     var offset = new THREE.Vector3();
-    offset.copy(scope.position).sub(centerPoint);
+    offset.copy(_this.position).sub(centerPoint);
     offset.multiplyScalar(1);
 
 
-    var quat = new THREE.Quaternion().setFromUnitVectors(scope.camera.up, new THREE.Vector3(0, 0, 1));
+    var quat = new THREE.Quaternion().setFromUnitVectors(_this.camera.up, new THREE.Vector3(0, 0, 1));
     var quatInverse = quat.clone().inverse();
 
     if (thetaDelta !== 0 || phiDelta !== 0) {
-        if ((phi + phiDelta >= scope.minZenithAngle)
-            && (phi + phiDelta <= scope.maxZenithAngle)
+        if ((phi + phiDelta >= _this.minZenithAngle)
+            && (phi + phiDelta <= _this.maxZenithAngle)
             && phiDelta !== 0) {
 
                 phi += phiDelta;
@@ -441,7 +492,7 @@ CameraControls.prototype.handleMouseMoveRotate = function handleMouseMoveRotate(
 
                     var rotationXQuaternion = new THREE.Quaternion();
                     var vector = new THREE.Vector3();
-                    vector.setFromMatrixColumn(scope.camera.matrix, 0);
+                    vector.setFromMatrixColumn(_this.camera.matrix, 0);
                     rotationXQuaternion.setFromAxisAngle(vector, phiDelta);
                     offset.applyQuaternion(rotationXQuaternion);
                     offset.applyQuaternion(quatInverse);
@@ -457,13 +508,61 @@ CameraControls.prototype.handleMouseMoveRotate = function handleMouseMoveRotate(
   }
 
 
-    scope.position.copy(offset).add(centerPoint);
+    _this.position.copy(offset).add(centerPoint);
 
-    scope.camera.lookAt(centerPoint);
+    _this.camera.lookAt(centerPoint);
 
-    scope.update();
+    _this.update();
 
 };
+
+/**
+ * Handle the mouse wheel actionned event. Get the specified data from the movement of the wheel. compute the scale
+ * (zoom) value and update the camera controls.
+ * @param event : the mouse wheel event.
+ */
+CameraControls.prototype.goToTopView = function goToTopView() {
+
+
+
+  var topViewPos = new THREE.Vector3();
+  var lookTarget = new THREE.Vector3();
+
+  var topViewAltitude = 10000;
+
+  topViewPos.set(cityCenter.x, cityCenter.y, topViewAltitude);
+
+
+
+  _this.startTravel(topViewPos,this.travelTimeMoveTo*1.5,true,cityCenter, true);
+
+
+
+}
+
+/**
+ * Handle the mouse wheel actionned event. Get the specified data from the movement of the wheel. compute the scale
+ * (zoom) value and update the camera controls.
+ * @param event : the mouse wheel event.
+ */
+CameraControls.prototype.goToStartView = function goToStartView() {
+
+
+
+  var topViewPos = new THREE.Vector3();
+  var lookTarget = new THREE.Vector3();
+
+  var topViewAltitude = 10000;
+
+  topViewPos.set(cityCenter.x, cityCenter.y, topViewAltitude);
+
+
+
+  _this.startTravel(topViewPos,this.travelTimeMoveTo*1.5,true,cityCenter, true);
+
+
+
+}
 
 /**
  * Handle the mouse wheel actionned event. Get the specified data from the movement of the wheel. compute the scale
@@ -483,11 +582,11 @@ CameraControls.prototype.startZoom = function startZoom(event) {
     screenCenter.x=0.5*window.innerWidth;
     screenCenter.y=0.5*window.innerHeight;
 
-    var pointUnderScreenCenter = scope.get3DPointAtScreenXY(screenCenter);
+    var pointUnderScreenCenter = _this.get3DPointAtScreenXY(screenCenter);
 
     var mouse = new THREE.Vector2(event.clientX,event.clientY);
 
-    var pointUnderCursor = scope.get3DPointAtScreenXY(mouse);
+    var pointUnderCursor = _this.get3DPointAtScreenXY(mouse);
 
     var zoomTarget = new THREE.Vector3();
     zoomTarget.copy(pointUnderScreenCenter);
@@ -498,14 +597,14 @@ CameraControls.prototype.startZoom = function startZoom(event) {
 
     if(delta>0){
 
-      newPos.lerpVectors(scope.position,zoomTarget,0.3);
-      scope.startTravel(newPos,travelTimeZoom, false);
+      newPos.lerpVectors(_this.position,zoomTarget,_this.zoomInSpeed);
+      _this.startTravel(newPos,_this.travelTimeZoom, false, newPos, false);
 
     }
     else if(delta<0){
 
-      newPos.lerpVectors(scope.position,zoomTarget,-0.4);
-      scope.startTravel(newPos,travelTimeZoom, false);
+      newPos.lerpVectors(_this.position,zoomTarget,-1*_this.zoomOutSpeed);
+      _this.startTravel(newPos,_this.travelTimeZoom, false, newPos, false);
 
     }
 
@@ -528,7 +627,7 @@ CameraControls.prototype.onMouseWheel = function onMouseWheel(event) {
     event.stopPropagation();
 
     if(state===STATE.NONE){
-      scope.startZoom(event);
+      _this.startZoom(event);
     }
 
 };
@@ -543,9 +642,17 @@ CameraControls.prototype.onMouseWheel = function onMouseWheel(event) {
 CameraControls.prototype.onMouseDown= function onMouseDown (event) {
 
     event.preventDefault();
-
+/*
     mousePos.x = ( event.clientX / window.innerWidth ) * 2 - 1;
     mousePos.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+
+    mousePos.x =  event.clientX;
+    mousePos.y =  event.clientY;
+
+
+    */
+
+    lastMousePos.copy(_this.getMousePos(event));
 
 
 
@@ -562,7 +669,7 @@ var mouse = new THREE.Vector2();
       var raycaster = new THREE.Raycaster();
       mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
       	mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
-      raycaster.setFromCamera( mouse, scope.camera );
+      raycaster.setFromCamera( mouse, _this.camera );
       var intersects = raycaster.intersectObjects( view.scene.children );
       for ( var i = 0; i < intersects.length; i++ ) {
 
@@ -577,17 +684,17 @@ var mouse = new THREE.Vector2();
 
 
         if (select) {
-            //scope.handlePick(event);
+            //_this.handlePick(event);
         } else if (isCtrlDown) {
-            //scope.handleMouseDownRotate(event);
+            //_this.handleMouseDownRotate(event);
             //state = STATE.ROTATE;
         } else {
-            scope.handleMouseDownPan(event);
+            _this.handleMouseDownPan(event);
             state = STATE.PAN;
         }
     } else if (event.button === mouseButtons.ZOOM) {
 
-      scope.handleMouseMiddle(event);
+      _this.handleMouseMiddle(event);
 
 
     } else if (event.button === mouseButtons.RIGHTCLICK) {
@@ -596,12 +703,12 @@ var mouse = new THREE.Vector2();
         var screenCenter = new THREE.Vector2();
         screenCenter.x=0.5*window.innerWidth;
         screenCenter.y=0.5*window.innerHeight;
-        centerPoint.copy(scope.get3DPointAtScreenXY(screenCenter));
+        centerPoint.copy(_this.get3DPointAtScreenXY(screenCenter));
 
 
-        var r = scope.position.distanceTo(centerPoint);
-        phi = Math.acos((scope.position.z-centerPoint.z) / r);
-      //  console.log((scope.position.z-centerPoint.z) / r);
+        var r = _this.position.distanceTo(centerPoint);
+        phi = Math.acos((_this.position.z-centerPoint.z) / r);
+      //  console.log((_this.position.z-centerPoint.z) / r);
 
       debugCube.position.copy(centerPoint);
       debugCube.updateMatrixWorld();
@@ -613,11 +720,11 @@ var mouse = new THREE.Vector2();
     }
 
     if (state !== STATE.NONE) {
-        scope.domElement.addEventListener('mousemove', scope.onMouseMove, false);
-        scope.domElement.addEventListener('mouseup', scope.onMouseUp, false);
+        _this.domElement.addEventListener('mousemove', _this.onMouseMove, false);
+        _this.domElement.addEventListener('mouseup', _this.onMouseUp, false);
     }
 
-      scope.updateCursorType();
+      _this.updateCursorType();
 };
 
 /**
@@ -630,8 +737,8 @@ CameraControls.prototype.onMouseUp = function onMouseUp(event) {
 
 
 
-    scope.domElement.removeEventListener('mousemove', scope.onMouseMove, false);
-    scope.domElement.removeEventListener('mouseup', scope.onMouseUp, false);
+    _this.domElement.removeEventListener('mousemove', _this.onMouseMove, false);
+    _this.domElement.removeEventListener('mouseup', _this.onMouseUp, false);
 
     panDelta.set(0,0,0);
 
@@ -639,7 +746,7 @@ CameraControls.prototype.onMouseUp = function onMouseUp(event) {
 
     state = (state===STATE.TRAVEL) ? state = STATE.TRAVEL : state = STATE.NONE;
 
-      scope.updateCursorType();
+      _this.updateCursorType();
 };
 
 /**
@@ -650,20 +757,24 @@ CameraControls.prototype.onMouseUp = function onMouseUp(event) {
 CameraControls.prototype.onMouseMove = function onMouseMove(event) {
     event.preventDefault();
 
-    lastMousePos.copy(mousePos);
+    //lastMousePos.copy(_this.getMousePos(event));
 
-    mousePos.x = ( event.clientX / window.innerWidth ) * 2 - 1;
-    mousePos.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+    console.log(deltaMousePos);
 
-    deltaMousePos.copy(mousePos).sub(lastMousePos);
+
+    deltaMousePos.copy(_this.getMousePos(event)).sub(lastMousePos);
+
+    console.log(deltaMousePos);
+
+    lastMousePos.copy(_this.getMousePos(event));
 
 
     if (state === STATE.ROTATE)
-        { scope.handleMouseMoveRotate(event); }
+        { _this.handleMouseMoveRotate(event); }
     else if (state === STATE.PAN)
-        { scope.handleMouseMovePan(event); }
+        { _this.handleMouseMovePan(event); }
     else if (state === STATE.PANUP)
-        { /*scope.handleMouseMovePan(event);*/ }
+        { /*_this.handleMouseMovePan(event);*/ }
 };
 
 /**
@@ -672,8 +783,14 @@ CameraControls.prototype.onMouseMove = function onMouseMove(event) {
  */
 CameraControls.prototype.onKeyDown = function onKeyDown(event) {
 
+if (event.keyCode === keys.S) {
 
-    window.addEventListener('keyup', scope.onKeyUp, false);
+  console.log("s");
+    _this.goToTopView();
+
+}
+
+    window.addEventListener('keyup', _this.onKeyUp, false);
 };
 
 /**
@@ -682,21 +799,18 @@ CameraControls.prototype.onKeyDown = function onKeyDown(event) {
  */
 CameraControls.prototype.onKeyUp = function onKeyUp(event) {
 
-
-
-
     if (event.keyCode == keys.CTRL) {
         isCtrlDown = false;
-        window.removeEventListener('keyup', scope.onKeyUp, false);
+        window.removeEventListener('keyup', _this.onKeyUp, false);
     } else if (event.keyCode === keys.S) {
         //select = false;
-        window.removeEventListener('keyup', scope.onKeyUp, false);
+        window.removeEventListener('keyup', _this.onKeyUp, false);
     }
 };
 
 /**
  * Catch and manage the event when the context menu is called (by a right click on the window).
- * We use this to prevent the context menu from appearing, so we can use right click for other inputs.
+ * We use _this to prevent the context menu from appearing, so we can use right click for other inputs.
  * @param event: the current event
  */
 CameraControls.prototype.onContextMenu = function onContextMenu(event) {
@@ -707,25 +821,25 @@ CameraControls.prototype.onContextMenu = function onContextMenu(event) {
 CameraControls.prototype.removeInputListeners = function removeInputListeners() {
 
   //* *********************Keys***********************//
-  window.removeEventListener('keydown', this.onKeyDown, false);
+  window.removeEventListener('keydown', _this.onKeyDown, false);
 
-  this.domElement.removeEventListener('mousedown', this.onMouseDown, false);
-this.domElement.removeEventListener('mousewheel', this.onMouseWheel, false);
+  _this.domElement.removeEventListener('mousedown', _this.onMouseDown, false);
+_this.domElement.removeEventListener('mousewheel', _this.onMouseWheel, false);
   // For firefox
- this.domElement.removeEventListener('MozMousePixelScroll', this.onMouseWheel, false);
+ _this.domElement.removeEventListener('MozMousePixelScroll', _this.onMouseWheel, false);
 
 };
 
 CameraControls.prototype.addInputListeners = function addInputListeners() {
 
   //* *********************Keys***********************//
-  window.addEventListener('keydown', this.onKeyDown, false);
+  window.addEventListener('keydown', _this.onKeyDown, false);
 
-  this.domElement.addEventListener('mousedown', this.onMouseDown, false);
+  _this.domElement.addEventListener('mousedown', _this.onMouseDown, false);
 
- this.domElement.addEventListener('mousewheel', this.onMouseWheel, false);
+ _this.domElement.addEventListener('mousewheel', _this.onMouseWheel, false);
   // For firefox
-  this.domElement.addEventListener('MozMousePixelScroll', this.onMouseWheel, false);
+  _this.domElement.addEventListener('MozMousePixelScroll', _this.onMouseWheel, false);
 
 
 };
@@ -734,22 +848,22 @@ CameraControls.prototype.updateCursorType = function updateCursorType() {
 
   if(state===STATE.NONE){
 
-    scope.domElement.style.cursor = "auto";
+    _this.domElement.style.cursor = "auto";
 
   }
   else if(state===STATE.PAN){
 
-    scope.domElement.style.cursor = "move";
+    _this.domElement.style.cursor = "move";
 
   }
   else if(state===STATE.TRAVEL){
 
-    scope.domElement.style.cursor = "wait";
+    _this.domElement.style.cursor = "wait";
 
   }
   else if(state===STATE.ROTATE){
 
-    scope.domElement.style.cursor = "help";
+    _this.domElement.style.cursor = "move";
 
   }
 

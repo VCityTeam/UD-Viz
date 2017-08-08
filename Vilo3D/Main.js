@@ -1,7 +1,7 @@
 
 THREE = itowns.THREE;
 
-var showBuildings = false;
+var showBuildings = true;
 
 // # Planar (EPSG:3946) viewer
 
@@ -130,8 +130,11 @@ if(showBuildings){itowns.View.prototype.addLayer.call(view, $3dTilesLayerDiscret
 
    if(showBuildings){itowns.View.prototype.addLayer.call(view, $3dTilesLayerRequestVolume);}
 
-   var light = new THREE.DirectionalLight(0xffffff,0.5);
+  // var light = new THREE.DirectionalLight(0xffffff,0.5);
    //view.scene.add(light);
+
+   var light = new THREE.HemisphereLight( 0x0000ff, 0xff0000, 1 );
+view.scene.add( light );
 
 
 clock = new THREE.Clock();
@@ -143,7 +146,7 @@ var offset3 = new THREE.Vector3(000,000,1000);
 
 var target = extent.center().xyz().add(offset1);
 
-var control = new CameraControls(viewerDiv,view,clock,pos.add(offset2),target);
+var control = new CameraControls(viewerDiv,view,clock,pos.add(offset2),target,extent.center().xyz());
 
 
 control.update();
