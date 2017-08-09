@@ -94,8 +94,12 @@ function CameraController(domElement, view, clock, startPos, startLook, center) 
 
 
   //pref
-  _this.travelTimeZoom = 0.3;
-  _this.travelTimeMoveTo = 3.0;
+  _this.zoomTravelTime = 0.3;
+  _this.smartZoomTravelTimeMin = 1.5;
+  _this.smartZoomTravelTimeMax = 3.0;
+
+  _this.smartZoomHeightMin = 100;
+  _this.smartZoomHeightMax = 600;
 
   _this.zoomInFactor = 0.35;
   _this.zoomOutFactor = 0.7;
@@ -386,12 +390,14 @@ CameraController.prototype.smartZoom = function smartZoom(event) {
 
     //console.log(distanceToPoint);
 
+    var targetHeight = THREE.Math.lerp(this.smartZoomHeightMin, this.smartZoomHeightMax, Math.min(distanceToPoint/5000,1)); ;
+
     var moveTarget = new THREE.Vector3();
 
-    moveTarget.copy(pointUnderCursor).add(dir.multiplyScalar(-300));
-    moveTarget.z = pointUnderCursor.z + 200;
+    moveTarget.copy(pointUnderCursor).add(dir.multiplyScalar(-targetHeight*1.5));
+    moveTarget.z = pointUnderCursor.z + targetHeight;
 
-    var duration = _this.travelTimeMoveTo * (0.5+ Math.min( 0.5*distanceToPoint / 1000, 0.5)) ;
+    var duration = THREE.Math.lerp(this.smartZoomTravelTimeMin, this.smartZoomTravelTimeMax, Math.min(distanceToPoint/5000,1));
 
 
     _this.startTravel(moveTarget,duration, true, moveLook, true);
@@ -533,13 +539,13 @@ CameraController.prototype.startZoom = function startZoom(event) {
     if(delta>0){
 
       newPos.lerpVectors(_this.position,zoomTarget,_this.zoomInFactor);
-      _this.startTravel(newPos,_this.travelTimeZoom, false, newPos, false);
+      _this.startTravel(newPos,_this.zoomTravelTime, false, newPos, false);
 
     }
     else if(delta<0){
 
       newPos.lerpVectors(_this.position,zoomTarget,-1*_this.zoomOutFactor);
-      _this.startTravel(newPos,_this.travelTimeZoom, false, newPos, false);
+      _this.startTravel(newPos,_this.zoomTravelTime, false, newPos, false);
 
     }
 
