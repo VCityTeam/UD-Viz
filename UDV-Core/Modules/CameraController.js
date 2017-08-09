@@ -475,7 +475,7 @@ CameraController.prototype.goToTopView = function goToTopView() {
 
 
 
-  _this.startTravel(topViewPos,this.travelTimeMoveTo*1.5,true,cityCenter, true);
+  _this.startTravel(topViewPos,3,true,cityCenter, true);
 
 
 
