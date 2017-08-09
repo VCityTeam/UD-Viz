@@ -146,7 +146,9 @@ var offset3 = new THREE.Vector3(000,000,1000);
 
 var target = extent.center().xyz().add(offset1);
 
-var control = new CameraControls(viewerDiv,view,clock,pos.add(offset2),target,extent.center().xyz());
+var controls = new CameraController(viewerDiv,view,clock,pos.add(offset2),target,extent.center().xyz());
 
+view.addFrameRequester(controls);
 
-control.update();
+//
+//control.update();

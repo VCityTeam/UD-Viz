@@ -1,6 +1,6 @@
 /**
  * Generated On: 2016-05-18
- * Class: CameraControls
+ * Class: CameraController
  * Description: Camera controls adapted for a planar view.
  * Left mouse button translates the camera on the horizontal (xy) plane.
  * Ctrl + left mouse button rotates around the camera's focus point.
@@ -45,7 +45,7 @@ var phi = 0.0;
 var thetaDelta = 0;
 var phiDelta = 0;
 
-var debugCube = new THREE.Mesh();
+var debugCube = new THREE.Mesh( new THREE.BoxGeometry( 50, 50, 50 ), new THREE.MeshBasicMaterial( {color: 0x00ff00, wireframe: true} ) );
 
 var travelEndPos = new THREE.Vector3();
 var targetLook = new THREE.Vector3();
@@ -66,6 +66,8 @@ var lastElapsedTime = 0;
 
 var travelStarted = false;
 
+var hasChanged = false;
+
 
 
 
@@ -76,7 +78,7 @@ var travelStarted = false;
  * @param clock :
  */
 
-function CameraControls(domElement, view, clock, startPos, startLook, center) {
+function CameraController(domElement, view, clock, startPos, startLook, center) {
 
   _this = this;
 
@@ -89,39 +91,26 @@ function CameraControls(domElement, view, clock, startPos, startLook, center) {
   _this.rotation = _this.camera.rotation;
 
   cityCenter.copy(center);
-  console.log("center",center);
+
 
   //pref
   _this.travelTimeZoom = 0.3;
-  _this.travelTimeMoveTo = 2.0;
+  _this.travelTimeMoveTo = 3.0;
 
-  _this.zoomInSpeed = 0.3;
-  _this.zoomOutSpeed = 0.4;
+  _this.zoomInFactor = 0.35;
+  _this.zoomOutFactor = 0.7;
 
-
-  _this.minDistanceUp = 1000;
-  _this.maxDistanceUp = Infinity;
-
-  _this.minScale = 0;
-  _this.maxScale = Infinity;
-
-  _this.minZoom = 0;
-  _this.maxZoom = Infinity;
-
-  _this.zoomSpeed = 10;
+  //_this.smartZoomFactor = 0.85;
 
   _this.rotateSpeed = 3;
 
   _this.groundHeight = 170;
 
-  _this.minZenithAngle = 0.0*Math.PI;
+  _this.minZenithAngle = 0.0;
 
-  //
   _this.maxZenithAngle = 1.425;
 
-
   _this.domElement.addEventListener('contextmenu', _this.onContextMenu, false);
-
 
   _this.addInputListeners();
 
@@ -129,41 +118,20 @@ function CameraControls(domElement, view, clock, startPos, startLook, center) {
 
   _this.camera.lookAt(startLook);
 
-  //_this.camera.camera3D.far = 500;
-
-
-
   _this.view.scene.add(centerPointObj);
 
-
-  //centerPointObj.add(cameraGuide);
-
-  var geometry = new THREE.BoxGeometry( 50, 50, 50 );
-  var material = new THREE.MeshBasicMaterial( {color: 0x00ff00, wireframe: true, wireframeLinewidth: 1} );
-
-  debugCube.material = material;
-  debugCube.geometry = geometry;
-  debugCube = new THREE.Mesh( geometry, material );
-  debugCube.position.copy(cityCenter);
-  debugCube.updateMatrixWorld();
   _this.view.scene.add(debugCube);
 
 
-    //_this.view.addFrameRequester(control);
-
-
-
-
-
-  _this.update();
-
+  debugCube.position.copy(startLook);
+  debugCube.updateMatrixWorld();
 
 }
 
-CameraControls.prototype = Object.create(THREE.EventDispatcher.prototype);
-CameraControls.prototype.constructor = CameraControls;
+CameraController.prototype = Object.create(THREE.EventDispatcher.prototype);
+CameraController.prototype.constructor = CameraController;
 
-CameraControls.prototype.smooth = function smooth(x) {
+CameraController.prototype.smooth = function smooth(x) {
 
   var smoothed = x*x * (3-2*x);
   //smoothed = x;
@@ -172,7 +140,7 @@ CameraControls.prototype.smooth = function smooth(x) {
 
   }
 
-  CameraControls.prototype.getMousePos = function getMousePos(event) {
+  CameraController.prototype.getMousePos = function getMousePos(event) {
 
 
 
@@ -187,9 +155,9 @@ CameraControls.prototype.smooth = function smooth(x) {
 
 
 
-CameraControls.prototype.handleTravel = function handleTravel(dt) {
+CameraController.prototype.handleTravel = function handleTravel(dt) {
 
-  console.log("travel");
+
 
   var alpha = 0;
 
@@ -198,33 +166,25 @@ CameraControls.prototype.handleTravel = function handleTravel(dt) {
     return;
   }
 
-
   travelAlpha += dt / travelDuration;
 
   alpha = (travelUseSmooth) ? _this.smooth(travelAlpha) : travelAlpha;
 
 
-
   _this.position.lerpVectors(travelStartPos, travelEndPos, alpha);
-
-
 
 
   if(travelUseLookAt===true){
       THREE.Quaternion.slerp(travelStartRot, travelEndRot, _this.camera.quaternion, alpha);
   }
 
-
-
-
   if(travelAlpha > 1){
     _this.endTravel();
   }
 
-
 }
 
-CameraControls.prototype.startTravel = function startTravel(targetPos, travelTime, useLookAt, targetLookAt, useSmooth) {
+CameraController.prototype.startTravel = function startTravel(targetPos, travelTime, useLookAt, targetLookAt, useSmooth) {
 
 
   state=STATE.TRAVEL;
@@ -232,8 +192,6 @@ CameraControls.prototype.startTravel = function startTravel(targetPos, travelTim
   _this.updateCursorType();
 
   _this.removeInputListeners();
-
-  view.addFrameRequester(control);
 
   travelUseLookAt = useLookAt;
   travelUseSmooth = useSmooth;
@@ -247,7 +205,6 @@ CameraControls.prototype.startTravel = function startTravel(targetPos, travelTim
 
   if(targetPos !== targetLookAt){
 
-    console.log("diff");
     _this.position.copy(targetPos);
   }
 
@@ -268,59 +225,39 @@ CameraControls.prototype.startTravel = function startTravel(targetPos, travelTim
 
   travelStarted = false;
 
-
-
-
-  //travelStartRot =
   _this.update();
 
   //console.log("start travel to ", targetPos, " from ", _this.position, " whith duration : ", travelDuration, " using LookAt : ", travelUseLookAt);
 
-
-
-
 }
 
-CameraControls.prototype.endTravel = function endTravel() {
+CameraController.prototype.endTravel = function endTravel() {
 
 
   _this.addInputListeners();
-
-  view.removeFrameRequester(control);
-
 
   state = STATE.NONE;
 
   _this.updateCursorType();
 
-
-
-
 }
 
-
-
-
-
-
-CameraControls.prototype.update = function update() {
-
-
+CameraController.prototype.update = function update() {
 
   deltaTime = clock.getElapsedTime() - lastElapsedTime;
   lastElapsedTime = clock.getElapsedTime();
-
-  var position = _this.position;
 
   if(state===STATE.TRAVEL){
     _this.handleTravel(deltaTime);
   }
 
-    view.camera.update(window.innerWidth, window.innerHeight);
+  if(state!==STATE.NONE){
 
+    view.camera.update(window.innerWidth, window.innerHeight);
 
     view.notifyChange(true);
 
+  }
 
 };
 
@@ -328,13 +265,13 @@ CameraControls.prototype.update = function update() {
  * returns the point under the mouse cursor in 3d space (world space)
  * @param event : the mouse down event.
  */
-CameraControls.prototype.get3DPointUnderCursor = function get3DPointUnderCursor(event, height) {
+CameraController.prototype.get3DPointUnderCursor = function get3DPointUnderCursor(posXY, height) {
 
   var vector = new THREE.Vector3();
 
   vector.set(
-    ( event.clientX / window.innerWidth ) * 2 - 1,
-    - ( event.clientY / window.innerHeight ) * 2 + 1,
+    ( posXY.x / window.innerWidth ) * 2 - 1,
+    - ( posXY.y / window.innerHeight ) * 2 + 1,
     0.5 );
 
   vector.unproject( _this.camera );
@@ -362,7 +299,7 @@ CameraControls.prototype.get3DPointUnderCursor = function get3DPointUnderCursor(
  * returns the point under the mouse cursor in 3d space (world space)
  * @param  : the mouse down event.
  */
-CameraControls.prototype.get3DPointAtScreenXY = function get3DPointAtScreenXY(posXY) {
+CameraController.prototype.get3DPointAtScreenXY = function get3DPointAtScreenXY(posXY) {
 
 
   var result = new THREE.Vector3();
@@ -374,23 +311,7 @@ CameraControls.prototype.get3DPointAtScreenXY = function get3DPointAtScreenXY(po
 
   else{
 
-
-    var vector = new THREE.Vector3();
-
-    vector.set(
-        ( posXY.x / window.innerWidth ) * 2 - 1,
-        - ( posXY.y / window.innerHeight ) * 2 + 1,
-        0.5 );
-
-    vector.unproject( _this.camera );
-
-    var dir = vector.sub( _this.position ).normalize();
-
-    var distance = - _this.position.z / dir.z;
-
-    result.copy(_this.position).add( dir.multiplyScalar( distance ) );
-
-    result.set(result.x,result.y,_this.groundHeight);
+    result.copy(_this.get3DPointUnderCursor(posXY, _this.groundHeight));
 
   }
 
@@ -410,9 +331,9 @@ CameraControls.prototype.get3DPointAtScreenXY = function get3DPointAtScreenXY(po
  * Init the pan value to the position of the mouse during the event.
  * @param event : the mouse down event.
  */
-CameraControls.prototype.handleMouseDownPan = function handleMouseDownPan(event) {
+CameraController.prototype.handleMouseDownPan = function handleMouseDownPan(event) {
 
-panStart.copy(_this.get3DPointAtScreenXY(new THREE.Vector2(event.clientX,event.clientY)));
+panStart.copy(_this.get3DPointAtScreenXY(_this.getMousePos(event)));
     //panStart.copy(_this.get3DPointUnderCursor(event,_this.groundHeight));
     panDelta.set(0,0,0);
     //panEnd.copy(panStart);
@@ -426,9 +347,9 @@ panStart.copy(_this.get3DPointAtScreenXY(new THREE.Vector2(event.clientX,event.c
  * Compute the pan value and update the camera controls.
  * @param event : the mouse move event.
  */
-CameraControls.prototype.handleMouseMovePan = function handleMouseMovePan(event) {
+CameraController.prototype.handleMouseMovePan = function handleMouseMovePan(event) {
 
-    panEnd.copy(_this.get3DPointUnderCursor(event,panStart.z));
+    panEnd.copy(_this.get3DPointUnderCursor(_this.getMousePos(event),panStart.z));
     //panEnd.copy(_this.get3DPointAtScreenXY(new THREE.Vector2(event.clientX,event.clientY)));
 
     panDelta.subVectors(panEnd,panStart);
@@ -439,8 +360,7 @@ CameraControls.prototype.handleMouseMovePan = function handleMouseMovePan(event)
 
     _this.position.sub(panDelta);
 
-
-
+    //requestupdate
     _this.update();
 };
 
@@ -449,22 +369,36 @@ CameraControls.prototype.handleMouseMovePan = function handleMouseMovePan(event)
  * (zoom) value and update the camera controls.
  * @param event : the mouse wheel event.
  */
-CameraControls.prototype.handleMouseMiddle = function handleMouseMiddle(event) {
+CameraController.prototype.smartZoom = function smartZoom(event) {
 
-  var mouse = new THREE.Vector2(event.clientX,event.clientY);
 
-    var pointUnderCursor = _this.get3DPointAtScreenXY(mouse);
+    var pointUnderCursor = _this.get3DPointAtScreenXY(_this.getMousePos(event));
+
+    var moveLook = new THREE.Vector3();
+    moveLook.copy(pointUnderCursor);
+
+    var dir = new THREE.Vector3();
+    dir.copy(pointUnderCursor).sub(_this.position);
+    dir.z = 0;
+    dir.normalize();
+
+    var distanceToPoint = _this.position.distanceTo(pointUnderCursor);
+
+    //console.log(distanceToPoint);
 
     var moveTarget = new THREE.Vector3();
-    moveTarget.lerpVectors(_this.position,pointUnderCursor,0.75);
+
+    moveTarget.copy(pointUnderCursor).add(dir.multiplyScalar(-300));
+    moveTarget.z = pointUnderCursor.z + 200;
+
+    var duration = _this.travelTimeMoveTo * (0.5+ Math.min( 0.5*distanceToPoint / 1000, 0.5)) ;
 
 
-
-    _this.startTravel(moveTarget,_this.travelTimeMoveTo, true, moveTarget, true);
+    _this.startTravel(moveTarget,duration, true, moveLook, true);
 
 };
 
-CameraControls.prototype.handleMouseMoveRotate = function handleMouseMoveRotate(event) {
+CameraController.prototype.handleMouseMoveRotate = function handleMouseMoveRotate(event) {
 
 
     thetaDelta = -this.rotateSpeed*deltaMousePos.x/window.innerWidth;
@@ -512,7 +446,8 @@ CameraControls.prototype.handleMouseMoveRotate = function handleMouseMoveRotate(
 
     _this.camera.lookAt(centerPoint);
 
-    _this.update();
+    //requestupdate;
+        _this.update();
 
 };
 
@@ -521,7 +456,7 @@ CameraControls.prototype.handleMouseMoveRotate = function handleMouseMoveRotate(
  * (zoom) value and update the camera controls.
  * @param event : the mouse wheel event.
  */
-CameraControls.prototype.goToTopView = function goToTopView() {
+CameraController.prototype.goToTopView = function goToTopView() {
 
 
 
@@ -545,7 +480,7 @@ CameraControls.prototype.goToTopView = function goToTopView() {
  * (zoom) value and update the camera controls.
  * @param event : the mouse wheel event.
  */
-CameraControls.prototype.goToStartView = function goToStartView() {
+CameraController.prototype.goToStartView = function goToStartView() {
 
 
 
@@ -569,7 +504,7 @@ CameraControls.prototype.goToStartView = function goToStartView() {
  * (zoom) value and update the camera controls.
  * @param event : the mouse wheel event.
  */
-CameraControls.prototype.startZoom = function startZoom(event) {
+CameraController.prototype.startZoom = function startZoom(event) {
 
 
     if (event.wheelDelta !== undefined) {
@@ -597,13 +532,13 @@ CameraControls.prototype.startZoom = function startZoom(event) {
 
     if(delta>0){
 
-      newPos.lerpVectors(_this.position,zoomTarget,_this.zoomInSpeed);
+      newPos.lerpVectors(_this.position,zoomTarget,_this.zoomInFactor);
       _this.startTravel(newPos,_this.travelTimeZoom, false, newPos, false);
 
     }
     else if(delta<0){
 
-      newPos.lerpVectors(_this.position,zoomTarget,-1*_this.zoomOutSpeed);
+      newPos.lerpVectors(_this.position,zoomTarget,-1*_this.zoomOutFactor);
       _this.startTravel(newPos,_this.travelTimeZoom, false, newPos, false);
 
     }
@@ -620,7 +555,7 @@ CameraControls.prototype.startZoom = function startZoom(event) {
  * Catch and manage the event when the mouse wheel is rolled.
  * @param event: the current event
  */
-CameraControls.prototype.onMouseWheel = function onMouseWheel(event) {
+CameraController.prototype.onMouseWheel = function onMouseWheel(event) {
 
 
     event.preventDefault();
@@ -639,7 +574,7 @@ CameraControls.prototype.onMouseWheel = function onMouseWheel(event) {
  * Catch and manage the event when a touch on the mouse is down.
  * @param event: the current event (mouse left button clicked or mouse wheel button actionned)
  */
-CameraControls.prototype.onMouseDown= function onMouseDown (event) {
+CameraController.prototype.onMouseDown= function onMouseDown (event) {
 
     event.preventDefault();
 /*
@@ -689,15 +624,20 @@ var mouse = new THREE.Vector2();
             //_this.handleMouseDownRotate(event);
             //state = STATE.ROTATE;
         } else {
+
+          //view.removeFrameRequester(controls);
+
             _this.handleMouseDownPan(event);
             state = STATE.PAN;
         }
     } else if (event.button === mouseButtons.ZOOM) {
 
-      _this.handleMouseMiddle(event);
+      _this.smartZoom(event);
 
 
     } else if (event.button === mouseButtons.RIGHTCLICK) {
+
+      //view.removeFrameRequester(controls);
 
 
         var screenCenter = new THREE.Vector2();
@@ -732,7 +672,7 @@ var mouse = new THREE.Vector2();
  * the listener on the move mouse event.
  * @param event: the current event
  */
-CameraControls.prototype.onMouseUp = function onMouseUp(event) {
+CameraController.prototype.onMouseUp = function onMouseUp(event) {
     event.preventDefault();
 
 
@@ -744,7 +684,10 @@ CameraControls.prototype.onMouseUp = function onMouseUp(event) {
 
 
 
-    state = (state===STATE.TRAVEL) ? state = STATE.TRAVEL : state = STATE.NONE;
+    if(state!==STATE.TRAVEL){
+      state = STATE.NONE;
+      //view.addFrameRequester(controls);
+    }
 
       _this.updateCursorType();
 };
@@ -754,17 +697,15 @@ CameraControls.prototype.onMouseUp = function onMouseUp(event) {
  * Can be called when the state of the controller is different of NONE.
  * @param event: the current event
  */
-CameraControls.prototype.onMouseMove = function onMouseMove(event) {
+CameraController.prototype.onMouseMove = function onMouseMove(event) {
     event.preventDefault();
 
     //lastMousePos.copy(_this.getMousePos(event));
 
-    console.log(deltaMousePos);
+    //console.log(deltaMousePos);
 
 
     deltaMousePos.copy(_this.getMousePos(event)).sub(lastMousePos);
-
-    console.log(deltaMousePos);
 
     lastMousePos.copy(_this.getMousePos(event));
 
@@ -781,11 +722,10 @@ CameraControls.prototype.onMouseMove = function onMouseMove(event) {
  * Catch and manage the event when a key is down.
  * @param event: the current event
  */
-CameraControls.prototype.onKeyDown = function onKeyDown(event) {
+CameraController.prototype.onKeyDown = function onKeyDown(event) {
 
 if (event.keyCode === keys.S) {
 
-  console.log("s");
     _this.goToTopView();
 
 }
@@ -797,7 +737,7 @@ if (event.keyCode === keys.S) {
  * Catch and manage the event when a key is up.
  * @param event: the current event
  */
-CameraControls.prototype.onKeyUp = function onKeyUp(event) {
+CameraController.prototype.onKeyUp = function onKeyUp(event) {
 
     if (event.keyCode == keys.CTRL) {
         isCtrlDown = false;
@@ -813,12 +753,12 @@ CameraControls.prototype.onKeyUp = function onKeyUp(event) {
  * We use _this to prevent the context menu from appearing, so we can use right click for other inputs.
  * @param event: the current event
  */
-CameraControls.prototype.onContextMenu = function onContextMenu(event) {
+CameraController.prototype.onContextMenu = function onContextMenu(event) {
     event.preventDefault();
 
 };
 
-CameraControls.prototype.removeInputListeners = function removeInputListeners() {
+CameraController.prototype.removeInputListeners = function removeInputListeners() {
 
   //* *********************Keys***********************//
   window.removeEventListener('keydown', _this.onKeyDown, false);
@@ -830,7 +770,7 @@ _this.domElement.removeEventListener('mousewheel', _this.onMouseWheel, false);
 
 };
 
-CameraControls.prototype.addInputListeners = function addInputListeners() {
+CameraController.prototype.addInputListeners = function addInputListeners() {
 
   //* *********************Keys***********************//
   window.addEventListener('keydown', _this.onKeyDown, false);
@@ -844,7 +784,7 @@ CameraControls.prototype.addInputListeners = function addInputListeners() {
 
 };
 
-CameraControls.prototype.updateCursorType = function updateCursorType() {
+CameraController.prototype.updateCursorType = function updateCursorType() {
 
   if(state===STATE.NONE){
 
