@@ -132,8 +132,7 @@ if(showBuildings){itowns.View.prototype.addLayer.call(view, $3dTilesLayerDiscret
 
   // var light = new THREE.DirectionalLight(0xffffff,0.5);
    //view.scene.add(light);
-
-   var light = new THREE.HemisphereLight( 0x0000ff, 0xff0000, 1 );
+var light = new THREE.HemisphereLight( 0x0000ff, 0xff0000, 1 );
 view.scene.add( light );
 
 
@@ -145,10 +144,16 @@ var offset2 = new THREE.Vector3(-3000,-3000,3000);
 var offset3 = new THREE.Vector3(000,000,1000);
 
 var target = extent.center().xyz().add(offset1);
+var startpos = extent.center().xyz().add(offset2);
 
-var controls = new CameraController(viewerDiv,view,clock,pos.add(offset2),target,extent.center().xyz());
+var controls = new CameraController(viewerDiv,view,clock,startpos,target,extent.center().xyz());
+
+var documents = new DocumentsHandler(viewerDiv,view,controls);
+
+documents.addDocument(target);
 
 view.addFrameRequester(controls);
+view.addFrameRequester(documents);
 
 //
 //control.update();

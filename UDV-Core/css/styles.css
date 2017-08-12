@@ -61,17 +61,17 @@ body {
 
     margin : auto;
 
-    top: 100;
+    top: 100px;
     left: 0;
 
 
-    width: 300px;
+    width: 250px;
     height: 600px;
 
 
 
     color: white;
-    background-color: rgba(0,0,0,0.75);
+    background-color: rgba(0,0,0,0.67);
     font-size: 14;
 
     padding-left: 3px;
@@ -92,12 +92,12 @@ body {
     right : 0;
 
     width: 600px;
-    height: 100px;
+    height: 75px;
 
 
 
     color: white;
-    background-color: rgba(0,0,0,0.75);
+    background-color: rgba(0,0,0,0.67);
     font-size: 14;
 
     padding-left: 3px;

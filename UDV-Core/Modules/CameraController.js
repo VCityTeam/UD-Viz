@@ -13,7 +13,7 @@ THREE = itowns.THREE;
 
 //import * as THREE from 'three';
 //
-//var _this = null;
+var _this = null;
 
 var keys = { CTRL: 17, R: 82, F: 70, S: 83 };
 var mouseButtons = { LEFTCLICK: THREE.MOUSE.LEFT, ZOOM: THREE.MOUSE.MIDDLE, RIGHTCLICK: THREE.MOUSE.RIGHT };
@@ -65,9 +65,6 @@ var deltaTime = 0;
 var lastElapsedTime = 0;
 
 var travelStarted = false;
-
-var hasChanged = false;
-
 
 
 
@@ -616,6 +613,8 @@ var mouse = new THREE.Vector2();
 
 
         if( typeof intersects[ i ].object.material.color !== 'undefined'){
+
+          console.log(intersects[i].object.userData);
 
           intersects[ i ].object.material.color.set( 0xff0000 );
         }
