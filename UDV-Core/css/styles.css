@@ -80,21 +80,21 @@ body {
 
 }
 
-#timeSlider{
+#timeSliderContainer{
 
 
     position: absolute;
     z-index: 10;
+    text-align: center;
+
 
     margin : auto;
     bottom : 0;
     left: 0;
     right : 0;
 
-    width: 600px;
-    height: 75px;
-
-
+    width: 700px;
+    height: 70px;
 
     color: white;
     background-color: rgba(0,0,0,0.67);
@@ -104,4 +104,29 @@ body {
     padding-top: 3px;
 
 
+}
+
+#timeSlider {
+  width: 80%;
+
+}
+
+.outer {
+    display: table;
+    position: absolute;
+    height: 100%;
+    width: 100%;
+
+}
+
+.middle {
+    display: table-cell;
+    vertical-align: middle;
+
+}
+
+.inner {
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
 }

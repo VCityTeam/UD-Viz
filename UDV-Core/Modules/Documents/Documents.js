@@ -41,7 +41,7 @@ function DocumentsHandler(domElement, view, controls) {
  * @param clock :
  */
 
-function Document(billboardPosition) {
+function Document(imageSource,billboardPosition,data) {
 
   _this3 = this;
 
@@ -49,8 +49,7 @@ function Document(billboardPosition) {
 
   _this3.billboardPosition = billboardPosition;
 
-  var texture = new THREE.TextureLoader().load('test.png');
-  console.log(texture);
+  var texture = new THREE.TextureLoader().load(imageSource);
   var material = new THREE.MeshBasicMaterial({map: texture});
 
   _this3.billboardGeometry = new THREE.Mesh( new THREE.PlaneGeometry( 60, 40, 1 , 1), material );
@@ -59,7 +58,7 @@ function Document(billboardPosition) {
 
   _this3.billboardGeometry.updateMatrixWorld();
 
-  _this3.billboardGeometry.userData = "myawesomedata";
+  _this3.billboardGeometry.userData = data;
 
 }
 
@@ -68,9 +67,9 @@ function Document(billboardPosition) {
  *
  * @param event : the mouse down event.
  */
-DocumentsHandler.prototype.addDocument = function addDocument(position) {
+DocumentsHandler.prototype.addDocument = function addDocument(imageSource,billboardPosition,data) {
 
-  var doc = new Document(position);
+  var doc = new Document(imageSource,billboardPosition,data);
   AllDocuments.push(doc);
   _this2.view.scene.add(doc.billboardGeometry);
 

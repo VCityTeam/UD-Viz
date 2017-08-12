@@ -1,24 +1,33 @@
 <html>
-    <head>
-        <title>Itowns - UDV Test (from planar)</title>
-        <link rel="stylesheet" href="../UDV-Core/css/styles.css">
-        <meta charset="UTF-8">
+<head>
+  <title>UDV - Vilo3D Test</title>
+  <link rel="stylesheet" href="../UDV-Core/css/styles.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+  <div id="wrapper">
+    <div id="viewerDiv"></div>
+    <div id="info"></div>
+    <div id="timeSliderContainer">
+      <div class="outer">
+        <div class="middle">
+          <div class="inner">
+            <input id="timeSlider" type="range" name="points" min="0" max="10">
 
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    </head>
-    <body>
-        <div id="wrapper">
-        <div id="viewerDiv"></div>
-        <div id="info"></div>
-        <div id="timeSlider"></div>
-        <div id="docBrowser"></div>
+          </div>
         </div>
-        <script src="../../itowns/dist/itowns.js"></script>
-        <script src="../UDV-Core/Modules/CameraController.js"></script>
-        <script src="../UDV-Core/Modules/Documents.js"></script>
-        <script type="text/javascript">
-            //let renderer; let exports = {};
-        </script>
-        <script src="Main.js"></script>
-    </body>
+      </div>
+    </div>
+  </div>
+  <div id="docBrowser"></div>
+</div>
+<script src="../../itowns/dist/itowns.js"></script>
+<script src="../UDV-Core/Modules/CameraController/CameraController.js"></script>
+<script src="../UDV-Core/Modules/Documents/Documents.js"></script>
+<script type="text/javascript">
+//let renderer; let exports = {};
+</script>
+<script src="Main.js"></script>
+</body>
 </html>
