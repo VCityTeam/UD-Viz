@@ -1,11 +1,7 @@
 /**
  * Generated On: 2016-05-18
- * Class: CameraController
- * Description: Camera controls adapted for a planar view.
- * Left mouse button translates the camera on the horizontal (xy) plane.
- * Ctrl + left mouse button rotates around the camera's focus point.
- * Scroll wheel zooms and dezooms.
- * Right mouse (or R/F keys) moves the camera up and down.
+ * Class: Document Handler
+ * Description : TO DO
  */
 
 THREE = itowns.THREE;
@@ -21,7 +17,7 @@ var AllDocuments = [];
  * Constructor
  * @param domElement :
  * @param view :
- * @param clock :
+ * @param controls :
  */
 
 function DocumentsHandler(domElement, view, controls) {
