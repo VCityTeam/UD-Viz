@@ -12,6 +12,14 @@ Camera controls are about to be finished (google map quality !).
 * **Mousewheel click** (middle mouse button) : "Smart Zoom". Camera smoothly moves and rotates toward target ground point, at fixed orientation and adjusted distance.
 * **S** : moves and orients camera to a top view (high altitude and pointing toward the center of the city)
 
-From this, the **oriented camera mode for documents** should come soon.
-
 Preliminary tests for **document billboards** and **temporal slider** are also under way.
+
+## Document
+
+Basic support for billboard document : plane geometry with image as texture, oriented to face the camera (billboard behavior). Ability to access the document object by clicking on the billboard.
+
+## Time slider
+
+Work in progress
+
+
