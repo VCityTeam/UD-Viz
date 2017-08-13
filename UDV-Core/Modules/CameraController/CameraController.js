@@ -116,6 +116,8 @@ function CameraController(domElement, view, clock, center) {
   _this.minZenithAngle = options.minZenithAngle || 0.0;
   _this.maxZenithAngle = options.maxZenithAngle || 1.425;
 
+  _this.debug = options.debug || false;
+
   //starting camera position & rotation
   _this.position.copy(options.startPos || cityCenter.clone().add(new THREE.Vector3(5000,0,5000)));
   _this.camera.lookAt(options.startLook || cityCenter);
@@ -128,9 +130,11 @@ function CameraController(domElement, view, clock, center) {
   _this.addInputListeners();
 
   //DEBUG
-  _this.view.scene.add(debugCube);
-  debugCube.position.copy(options.startLook || cityCenter);
-  debugCube.updateMatrixWorld();
+  if(_this.debug===true){
+    _this.view.scene.add(debugCube);
+    debugCube.position.copy(options.startLook || cityCenter);
+    debugCube.updateMatrixWorld();
+  }
 
   //add this CameraController instance to the view's framerequesters
   //with this, CameraController.update() will be called each frame
@@ -325,9 +329,10 @@ CameraController.prototype.get3DPointUnderCursor = function get3DPointUnderCurso
     //pos.set(pos.x,pos.y,height);
 
     //console.log(pos);
-
-    debugCube.position.copy(pos);
-    debugCube.updateMatrixWorld();
+    if(_this.debug===true){
+      debugCube.position.copy(pos);
+      debugCube.updateMatrixWorld();
+    }
 
     return pos;
 
@@ -366,7 +371,7 @@ CameraController.prototype.get3DPointUnderCursor = function get3DPointUnderCurso
   * @param event : the mouse down event.
   */
   CameraController.prototype.handleMouseDownPan = function handleMouseDownPan(event) {
-    
+
     //the world point under mouse cursor when the pan movement is started
     panStart.copy(_this.get3DPointAtScreenXY(_this.getMousePos(event)));
 
@@ -390,7 +395,7 @@ CameraController.prototype.get3DPointUnderCursor = function get3DPointUnderCurso
 
     //the difference between start and end cursor position
     panDelta.subVectors(panEnd,panStart);
-    
+
     //new camera position
     _this.position.sub(panDelta);
 
@@ -433,15 +438,17 @@ CameraController.prototype.get3DPointUnderCursor = function get3DPointUnderCurso
     var duration = THREE.Math.lerp(this.smartZoomTravelTimeMin, this.smartZoomTravelTimeMax, Math.min(distanceToPoint/5000,1));
 
     //debug
-    debugCube.position.copy(moveLook);
-    debugCube.updateMatrixWorld();
+    if(_this.debug===true){
+      debugCube.position.copy(moveLook);
+      debugCube.updateMatrixWorld();
+    }
 
     //initiate the travel
     _this.startTravel(moveTarget,duration, true, moveLook, true);
 
   };
 
- /**
+  /**
   * Handle the rotate movement (orbit) when user moves the mouse
   * the movement is an orbit around "centerPoint", the camera focus point (ground point at screen center)
   * The rotate movement is previously initiated when user does a right-click
@@ -453,11 +460,11 @@ CameraController.prototype.get3DPointUnderCursor = function get3DPointUnderCurso
     //deltaMousePos is computed in onMouseMove / onMouseDown functions
     thetaDelta = -this.rotateSpeed*deltaMousePos.x/window.innerWidth;
     phiDelta = -this.rotateSpeed*deltaMousePos.y/window.innerHeight;
-    
+
     //the vector from centerPoint (focus point) to camera position
     var offset = new THREE.Vector3();
     offset.copy(_this.position).sub(centerPoint);
-    
+
     var quat = new THREE.Quaternion().setFromUnitVectors(_this.camera.up, new THREE.Vector3(0, 0, 1));
     var quatInverse = quat.clone().inverse();
 
@@ -467,14 +474,14 @@ CameraController.prototype.get3DPointUnderCursor = function get3DPointUnderCurso
       && phiDelta !== 0) {
 
         //rotation around X (altitude)
-        
+
         phi += phiDelta;
-        
+
         offset.applyQuaternion(quat);
 
         var rotationXQuaternion = new THREE.Quaternion();
         var vector = new THREE.Vector3();
-        
+
         vector.setFromMatrixColumn(_this.camera.matrix, 0);
         rotationXQuaternion.setFromAxisAngle(vector, phiDelta);
         offset.applyQuaternion(rotationXQuaternion);
@@ -482,15 +489,15 @@ CameraController.prototype.get3DPointUnderCursor = function get3DPointUnderCurso
 
       }
       if (thetaDelta !== 0) {
-        
+
         //rotation around Z (azimuth)
-        
+
         var rotationZQuaternion = new THREE.Quaternion();
         rotationZQuaternion.setFromAxisAngle(new THREE.Vector3(0, 0, 1), thetaDelta);
         offset.applyQuaternion(rotationZQuaternion);
       }
     }
-    
+
     //new camera position
     _this.position.copy(offset).add(centerPoint);
 
@@ -526,7 +533,7 @@ CameraController.prototype.get3DPointUnderCursor = function get3DPointUnderCurso
   */
   CameraController.prototype.goToStartView = function goToStartView() {
 
-/*    var topViewPos = new THREE.Vector3();
+    /*    var topViewPos = new THREE.Vector3();
     var lookTarget = new THREE.Vector3();
 
     var topViewAltitude = 10000;
@@ -537,7 +544,7 @@ CameraController.prototype.get3DPointUnderCursor = function get3DPointUnderCurso
 
     _this.startTravel(topViewPos,this.travelTimeMoveTo*1.5,true,cityCenter, true);
 
-*/
+    */
 
   }
 
@@ -546,12 +553,12 @@ CameraController.prototype.get3DPointUnderCursor = function get3DPointUnderCurso
   * The camera will be moved toward / away from the point under mouse cursor
   * The zoom intensity varies according to the distance to the point.
   * The closer to the ground, the lower the intensity
-  * This means that user can zoom infinitly closer to the ground, but cannot go through it 
+  * This means that user can zoom infinitly closer to the ground, but cannot go through it
   * Orientation will not change (TO DO : test with orientation change)
   * @param event : the mouse wheel event.
   */
   CameraController.prototype.startZoom = function startZoom(event) {
-    
+
     //mousewheel delta
     if (event.wheelDelta !== undefined) {
       delta = event.wheelDelta;
@@ -579,12 +586,14 @@ CameraController.prototype.get3DPointUnderCursor = function get3DPointUnderCurso
     if(delta>0){
 
       //debug
-      debugCube.position.copy(zoomTarget);
-      debugCube.updateMatrixWorld();
+      if(_this.debug===true){
+        debugCube.position.copy(zoomTarget);
+        debugCube.updateMatrixWorld();
+      }
 
       //target position
       newPos.lerpVectors(_this.position,zoomTarget,_this.zoomInFactor);
-      
+
       //initiate travel
       _this.startTravel(newPos,_this.zoomTravelTime, false, newPos, false);
 
@@ -593,13 +602,15 @@ CameraController.prototype.get3DPointUnderCursor = function get3DPointUnderCurso
     else if(delta<0){
 
       //debug
-      debugCube.position.copy(zoomTarget);
-      debugCube.updateMatrixWorld();
+      if(_this.debug===true){
+        debugCube.position.copy(zoomTarget);
+        debugCube.updateMatrixWorld();
+      }
 
       //target position
       newPos.lerpVectors(_this.position,zoomTarget,-1*_this.zoomOutFactor);
-      
-       //initiate travel
+
+      //initiate travel
       _this.startTravel(newPos,_this.zoomTravelTime, false, newPos, false);
 
     }
@@ -707,8 +718,10 @@ CameraController.prototype.get3DPointUnderCursor = function get3DPointUnderCurso
       phi = Math.acos((_this.position.z-centerPoint.z) / r);
       //  console.log((_this.position.z-centerPoint.z) / r);
 
-      debugCube.position.copy(centerPoint);
-      debugCube.updateMatrixWorld();
+      if(_this.debug===true){
+        debugCube.position.copy(centerPoint);
+        debugCube.updateMatrixWorld();
+      }
 
 
 

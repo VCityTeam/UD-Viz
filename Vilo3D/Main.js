@@ -1,7 +1,7 @@
 
 THREE = itowns.THREE;
 
-var showBuildings = false;
+var showBuildings = true;
 
 // # Planar (EPSG:3946) viewer
 
@@ -137,7 +137,7 @@ const extent = new itowns.Extent(
   var target = extent.center().xyz().add(offset1);
   var startpos = extent.center().xyz().add(offset2);
 
-  var controls = new CameraController(viewerDiv,view,clock,center);
+  var controls = new CameraController(viewerDiv,view,clock,center,{debug: true});
 
   var documents = new DocumentsHandler(viewerDiv,view,controls);
 
