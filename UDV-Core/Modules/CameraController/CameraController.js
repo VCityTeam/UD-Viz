@@ -335,87 +335,84 @@ CameraController.prototype.get3DPointUnderCursor = function get3DPointUnderCurso
 
 
   /**
-  * returns the point under the mouse cursor in 3d space (world space)
-  * @param  : the mouse down event.
+  * returns the point (xyz) under the mouse cursor in 3d space (world space)
+  * if geometry is under the cursor, the point in obtained with getPickingPositionFromDepth
+  * if no geometry is under the cursor, the point is obtained with get3DPointUnderCursor
+  * @param posXY : the mouse position in screen space (unit : pixel)
   */
   CameraController.prototype.get3DPointAtScreenXY = function get3DPointAtScreenXY(posXY) {
 
-
+    //the returned value
     var result = new THREE.Vector3();
 
+    //check if there is valid geometry under cursor
     if(typeof _this.view.getPickingPositionFromDepth(posXY) !== 'undefined'){
-
       result.copy(_this.view.getPickingPositionFromDepth(posXY));
     }
-
+    //if not, we use the mathematical plane at height = groundHeight
     else{
-
       result.copy(_this.get3DPointUnderCursor(posXY, _this.groundHeight));
-
     }
-
-    //console.log("start ",result);
-
-
 
     return result;
 
   };
 
 
-
-
   /**
-  * Handle the left mouse down event. Get the specified datas from the movement of the mouse along both x and y axis.
-  * Init the pan value to the position of the mouse during the event.
+  * Initiate a pan movement (translation on xy plane) when user does a left-click
+  * The movement value is derived from the actual world point under the mouse cursor
+  * This allows the user to "grab" a world point and drag it to move (eg : google map)
   * @param event : the mouse down event.
   */
   CameraController.prototype.handleMouseDownPan = function handleMouseDownPan(event) {
-
+    
+    //the world point under mouse cursor when the pan movement is started
     panStart.copy(_this.get3DPointAtScreenXY(_this.getMousePos(event)));
-    //panStart.copy(_this.get3DPointUnderCursor(event,_this.groundHeight));
+
+    //the difference between start and end cursor position
     panDelta.set(0,0,0);
-    //panEnd.copy(panStart);
-
-
 
   };
 
   /**
-  * Handle the mouse move event. Get the specified datas from the movement of the mouse along both x and y axis.
+  * Handle the pan movement (translation on xy plane) when user moves the mouse
+  * The pan movement is previously initiated when user does a left-click, by handleMouseDownPan()
   * Compute the pan value and update the camera controls.
+  * The movement value is derived from the actual world point under the mouse cursor
+  * This allows the user to "grab" a world point and drag it to move (eg : google map)
   * @param event : the mouse move event.
   */
   CameraController.prototype.handleMouseMovePan = function handleMouseMovePan(event) {
 
+    //the world point under the current mouse cursor position, at same height than panStart
     panEnd.copy(_this.get3DPointUnderCursor(_this.getMousePos(event),panStart.z));
-    //panEnd.copy(_this.get3DPointAtScreenXY(new THREE.Vector2(event.clientX,event.clientY)));
 
+    //the difference between start and end cursor position
     panDelta.subVectors(panEnd,panStart);
-
-    //panStart.copy(panEnd);
-
-    //_this.pan();
-
+    
+    //new camera position
     _this.position.sub(panDelta);
 
-    //requestupdate
+    //request update
     _this.update();
   };
 
   /**
-  * Handle the mouse wheel actionned event. Get the specified data from the movement of the wheel. compute the scale
-  * (zoom) value and update the camera controls.
-  * @param event : the mouse wheel event.
+  * Triggers a "smart zoom" animated movement (travel) toward the point under mouse cursor
+  * The camera will be smoothly moved and oriented close to the target, at a determined height and distance
+  * @param event : the mouse wheel click (middle mouse button) event.
   */
   CameraController.prototype.smartZoom = function smartZoom(event) {
 
-
+    //point under mouse cursor
     var pointUnderCursor = _this.get3DPointAtScreenXY(_this.getMousePos(event));
 
+    //camera focus point (the lookAt target) at the end of the travel
     var moveLook = new THREE.Vector3();
     moveLook.copy(pointUnderCursor);
 
+    //direction of the movement, projected on xy plane and normalized
     var dir = new THREE.Vector3();
     dir.copy(pointUnderCursor).sub(_this.position);
     dir.z = 0;
@@ -423,37 +420,44 @@ CameraController.prototype.get3DPointUnderCursor = function get3DPointUnderCurso
 
     var distanceToPoint = _this.position.distanceTo(pointUnderCursor);
 
-    //console.log(distanceToPoint);
-
+    //camera height (altitude) at the end of the travel
     var targetHeight = THREE.Math.lerp(this.smartZoomHeightMin, this.smartZoomHeightMax, Math.min(distanceToPoint/5000,1)); ;
 
+    //camera position at the end of the travel
     var moveTarget = new THREE.Vector3();
 
     moveTarget.copy(pointUnderCursor).add(dir.multiplyScalar(-targetHeight*1.5));
     moveTarget.z = pointUnderCursor.z + targetHeight;
 
+    //animated movement duration (proportional to the travel distance)
     var duration = THREE.Math.lerp(this.smartZoomTravelTimeMin, this.smartZoomTravelTimeMax, Math.min(distanceToPoint/5000,1));
 
-
+    //debug
     debugCube.position.copy(moveLook);
     debugCube.updateMatrixWorld();
 
+    //initiate the travel
     _this.startTravel(moveTarget,duration, true, moveLook, true);
-
 
   };
 
-  CameraController.prototype.handleMouseMoveRotate = function handleMouseMoveRotate(event) {
+ /**
+  * Handle the rotate movement (orbit) when user moves the mouse
+  * the movement is an orbit around "centerPoint", the camera focus point (ground point at screen center)
+  * The rotate movement is previously initiated when user does a right-click
+  * Compute the new position value and update the camera controls.
+  */
+  CameraController.prototype.handleMouseMoveRotate = function handleMouseMoveRotate() {
 
-
+    //angle deltas
+    //deltaMousePos is computed in onMouseMove / onMouseDown functions
     thetaDelta = -this.rotateSpeed*deltaMousePos.x/window.innerWidth;
     phiDelta = -this.rotateSpeed*deltaMousePos.y/window.innerHeight;
-
+    
+    //the vector from centerPoint (focus point) to camera position
     var offset = new THREE.Vector3();
     offset.copy(_this.position).sub(centerPoint);
-    offset.multiplyScalar(1);
-
-
+    
     var quat = new THREE.Quaternion().setFromUnitVectors(_this.camera.up, new THREE.Vector3(0, 0, 1));
     var quatInverse = quat.clone().inverse();
 
@@ -462,15 +466,15 @@ CameraController.prototype.get3DPointUnderCursor = function get3DPointUnderCurso
       && (phi + phiDelta <= _this.maxZenithAngle)
       && phiDelta !== 0) {
 
+        //rotation around X (altitude)
+        
         phi += phiDelta;
-
-
-
+        
         offset.applyQuaternion(quat);
-
 
         var rotationXQuaternion = new THREE.Quaternion();
         var vector = new THREE.Vector3();
+        
         vector.setFromMatrixColumn(_this.camera.matrix, 0);
         rotationXQuaternion.setFromAxisAngle(vector, phiDelta);
         offset.applyQuaternion(rotationXQuaternion);
@@ -478,17 +482,19 @@ CameraController.prototype.get3DPointUnderCursor = function get3DPointUnderCurso
 
       }
       if (thetaDelta !== 0) {
-
-
+        
+        //rotation around Z (azimuth)
+        
         var rotationZQuaternion = new THREE.Quaternion();
         rotationZQuaternion.setFromAxisAngle(new THREE.Vector3(0, 0, 1), thetaDelta);
         offset.applyQuaternion(rotationZQuaternion);
       }
     }
-
-
+    
+    //new camera position
     _this.position.copy(offset).add(centerPoint);
 
+    //new focus point
     _this.camera.lookAt(centerPoint);
 
     //requestupdate;
@@ -497,39 +503,30 @@ CameraController.prototype.get3DPointUnderCursor = function get3DPointUnderCurso
   };
 
   /**
-  * Handle the mouse wheel actionned event. Get the specified data from the movement of the wheel. compute the scale
-  * (zoom) value and update the camera controls.
-  * @param event : the mouse wheel event.
+  * Triggers an animated movement (travel) to set the camera to top view
+  * Camera will be moved above cityCenter at a 10km altitude, looking at cityCenter
   */
   CameraController.prototype.goToTopView = function goToTopView() {
-
-
 
     var topViewPos = new THREE.Vector3();
     var lookTarget = new THREE.Vector3();
 
     var topViewAltitude = 10000;
 
+    //the final position
     topViewPos.set(cityCenter.x, cityCenter.y, topViewAltitude);
 
-
-
+    //initiate the travel
     _this.startTravel(topViewPos,3,true,cityCenter, true);
-
-
 
   }
 
   /**
-  * Handle the mouse wheel actionned event. Get the specified data from the movement of the wheel. compute the scale
-  * (zoom) value and update the camera controls.
-  * @param event : the mouse wheel event.
+  * TO DO
   */
   CameraController.prototype.goToStartView = function goToStartView() {
 
-
-
-    var topViewPos = new THREE.Vector3();
+/*    var topViewPos = new THREE.Vector3();
     var lookTarget = new THREE.Vector3();
 
     var topViewAltitude = 10000;
@@ -540,69 +537,74 @@ CameraController.prototype.get3DPointUnderCursor = function get3DPointUnderCurso
 
     _this.startTravel(topViewPos,this.travelTimeMoveTo*1.5,true,cityCenter, true);
 
-
+*/
 
   }
 
   /**
-  * Handle the mouse wheel actionned event. Get the specified data from the movement of the wheel. compute the scale
-  * (zoom) value and update the camera controls.
+  * Triggers a Zoom animated movement (travel) toward the point under mouse cursor
+  * The camera will be moved toward / away from the point under mouse cursor
+  * The zoom intensity varies according to the distance to the point.
+  * The closer to the ground, the lower the intensity
+  * This means that user can zoom infinitly closer to the ground, but cannot go through it 
+  * Orientation will not change (TO DO : test with orientation change)
   * @param event : the mouse wheel event.
   */
   CameraController.prototype.startZoom = function startZoom(event) {
-
-
+    
+    //mousewheel delta
     if (event.wheelDelta !== undefined) {
       delta = event.wheelDelta;
     } else if (event.detail !== undefined) {
       delta = -event.detail;
     }
 
+    //center of the screen, in screen space (xy)
     var screenCenter = new THREE.Vector2();
     screenCenter.x=0.5*window.innerWidth;
     screenCenter.y=0.5*window.innerHeight;
 
+    //world point (xyz) under screen center
     var pointUnderScreenCenter = _this.get3DPointAtScreenXY(screenCenter);
 
-    var mouse = new THREE.Vector2(event.clientX,event.clientY);
-
-    var pointUnderCursor = _this.get3DPointAtScreenXY(mouse);
+    var pointUnderCursor = _this.get3DPointAtScreenXY(_this.getMousePos(event));
 
     var zoomTarget = new THREE.Vector3();
     zoomTarget.copy(pointUnderScreenCenter);
     zoomTarget.copy(pointUnderCursor);
 
-
     var newPos = new THREE.Vector3();
 
+    //Zoom IN
     if(delta>0){
 
+      //debug
       debugCube.position.copy(zoomTarget);
       debugCube.updateMatrixWorld();
 
+      //target position
       newPos.lerpVectors(_this.position,zoomTarget,_this.zoomInFactor);
+      
+      //initiate travel
       _this.startTravel(newPos,_this.zoomTravelTime, false, newPos, false);
 
-
-
     }
+    //Zoom OUT
     else if(delta<0){
 
+      //debug
       debugCube.position.copy(zoomTarget);
       debugCube.updateMatrixWorld();
 
+      //target position
       newPos.lerpVectors(_this.position,zoomTarget,-1*_this.zoomOutFactor);
+      
+       //initiate travel
       _this.startTravel(newPos,_this.zoomTravelTime, false, newPos, false);
 
     }
 
-
-
   };
-
-
-
-
 
   /**
   * Catch and manage the event when the mouse wheel is rolled.
