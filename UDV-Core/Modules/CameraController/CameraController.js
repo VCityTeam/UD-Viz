@@ -540,12 +540,9 @@ CameraController.prototype.get3DPointUnderCursor = function get3DPointUnderCurso
 
     topViewPos.set(cityCenter.x, cityCenter.y, topViewAltitude);
 
-
-
     _this.startTravel(topViewPos,this.travelTimeMoveTo*1.5,true,cityCenter, true);
 
     */
-
   }
 
   /**
@@ -623,7 +620,6 @@ CameraController.prototype.get3DPointUnderCursor = function get3DPointUnderCurso
   */
   CameraController.prototype.onMouseWheel = function onMouseWheel(event) {
 
-
     event.preventDefault();
     event.stopPropagation();
 
@@ -633,9 +629,6 @@ CameraController.prototype.get3DPointUnderCursor = function get3DPointUnderCurso
 
   };
 
-
-
-
   /**
   * Catch and manage the event when a touch on the mouse is down.
   * @param event: the current event (mouse left button clicked or mouse wheel button actionned)
@@ -643,29 +636,16 @@ CameraController.prototype.get3DPointUnderCursor = function get3DPointUnderCurso
   CameraController.prototype.onMouseDown= function onMouseDown (event) {
 
     event.preventDefault();
-    /*
-    mousePos.x = ( event.clientX / window.innerWidth ) * 2 - 1;
-    mousePos.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
-
-    mousePos.x =  event.clientX;
-    mousePos.y =  event.clientY;
-
-
-    */
 
     lastMousePos.copy(_this.getMousePos(event));
 
-
-
     if (event.button === mouseButtons.LEFTCLICK) {
 
+      //test
       var mouse = new THREE.Vector2();
-
 
       mouse.x = ( event.clientX );
       mouse.y =  ( event.clientY);
-
-
 
       var raycaster = new THREE.Raycaster();
       mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
@@ -674,7 +654,6 @@ CameraController.prototype.get3DPointUnderCursor = function get3DPointUnderCurso
       var intersects = raycaster.intersectObjects( view.scene.children );
       for ( var i = 0; i < intersects.length; i++ ) {
 
-
         if( typeof intersects[ i ].object.material.color !== 'undefined'){
 
           console.log(intersects[i].object.userData);
@@ -682,9 +661,7 @@ CameraController.prototype.get3DPointUnderCursor = function get3DPointUnderCurso
           //intersects[ i ].object.material.color.set( 0xff0000 );
         }
 
-
       }
-
 
       if (select) {
         //_this.handlePick(event);
@@ -707,12 +684,11 @@ CameraController.prototype.get3DPointUnderCursor = function get3DPointUnderCurso
 
       //view.removeFrameRequester(controls);
 
-
+      //initiate rotation
       var screenCenter = new THREE.Vector2();
       screenCenter.x=0.5*window.innerWidth;
       screenCenter.y=0.5*window.innerHeight;
       centerPoint.copy(_this.get3DPointAtScreenXY(screenCenter));
-
 
       var r = _this.position.distanceTo(centerPoint);
       phi = Math.acos((_this.position.z-centerPoint.z) / r);
@@ -722,9 +698,6 @@ CameraController.prototype.get3DPointUnderCursor = function get3DPointUnderCurso
         debugCube.position.copy(centerPoint);
         debugCube.updateMatrixWorld();
       }
-
-
-
 
       state = STATE.ROTATE;
     }
@@ -743,16 +716,13 @@ CameraController.prototype.get3DPointUnderCursor = function get3DPointUnderCurso
   * @param event: the current event
   */
   CameraController.prototype.onMouseUp = function onMouseUp(event) {
+    
     event.preventDefault();
-
-
 
     _this.domElement.removeEventListener('mousemove', _this.onMouseMove, false);
     _this.domElement.removeEventListener('mouseup', _this.onMouseUp, false);
 
     panDelta.set(0,0,0);
-
-
 
     if(state!==STATE.TRAVEL){
       state = STATE.NONE;
@@ -768,17 +738,12 @@ CameraController.prototype.get3DPointUnderCursor = function get3DPointUnderCurso
   * @param event: the current event
   */
   CameraController.prototype.onMouseMove = function onMouseMove(event) {
+    
     event.preventDefault();
-
-    //lastMousePos.copy(_this.getMousePos(event));
-
-    //console.log(deltaMousePos);
-
 
     deltaMousePos.copy(_this.getMousePos(event)).sub(lastMousePos);
 
     lastMousePos.copy(_this.getMousePos(event));
-
 
     if (state === STATE.ROTATE)
     { _this.handleMouseMoveRotate(event); }
@@ -801,6 +766,7 @@ CameraController.prototype.get3DPointUnderCursor = function get3DPointUnderCurso
     }
 
     window.addEventListener('keyup', _this.onKeyUp, false);
+    
   };
 
   /**
@@ -828,6 +794,9 @@ CameraController.prototype.get3DPointUnderCursor = function get3DPointUnderCurso
 
   };
 
+  /**
+  * Remove all input listeners (block user input)
+  */
   CameraController.prototype.removeInputListeners = function removeInputListeners() {
 
     //* *********************Keys***********************//
@@ -840,6 +809,9 @@ CameraController.prototype.get3DPointUnderCursor = function get3DPointUnderCurso
 
   };
 
+  /**
+  * Add all input listeners (enable user input)
+  */
   CameraController.prototype.addInputListeners = function addInputListeners() {
 
     //* *********************Keys***********************//
@@ -854,6 +826,9 @@ CameraController.prototype.get3DPointUnderCursor = function get3DPointUnderCurso
 
   };
 
+  /**
+  * update the cursor image according to the control state
+  */
   CameraController.prototype.updateCursorType = function updateCursorType() {
 
     if(state===STATE.NONE){
