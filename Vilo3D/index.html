@@ -6,18 +6,27 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
+
   <div id="wrapper">
     <div id="viewerDiv"></div>
+
     <div id="info"></div>
+    <div id="docFull">
+
+    <img id="docFullImg" src="test3.png" alt="" />
+    <button id="docFullClose" type=button>FERMER</button>
+    <label for="docOpaSlider">Opacity</label>
+    <input type="range" min="0" max="100" value="50" id="docOpaSlider"
+	step="1" oninput="outputUpdate(value)">
+<output for="docOpaSlider" id="opacity">50</output>
+  </div>
+
+
     <div id="timeSliderContainer">
-      <div class="outer">
-        <div class="middle">
-          <div class="inner">
+
             <input id="timeSlider" type="range" name="points" min="0" max="10">
 
-          </div>
-        </div>
-      </div>
+
     </div>
   </div>
   <div id="docBrowser"></div>

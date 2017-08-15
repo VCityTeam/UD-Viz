@@ -14,7 +14,7 @@ THREE = itowns.THREE;
 //scope
 var _this = null;
 
-var keys = { CTRL: 17, R: 82, F: 70, S: 83 };
+var keys = { CTRL: 17, R: 82, F: 70, S: 83, P: 80, M: 77, UP : 38, DOWN : 40, RIGHT : 39, LEFT : 37 };
 var mouseButtons = { LEFTCLICK: THREE.MOUSE.LEFT, ZOOM: THREE.MOUSE.MIDDLE, RIGHTCLICK: THREE.MOUSE.RIGHT };
 
 //control state
@@ -140,6 +140,8 @@ function CameraController(domElement, view, clock, center) {
   //with this, CameraController.update() will be called each frame
   _this.view.addFrameRequester(this);
 
+  console.log(_this.camera.quaternion);
+
 
 }
 
@@ -175,7 +177,7 @@ CameraController.prototype.getMousePos = function getMousePos(event) {
 }
 
 /**
-* triggers an animated movement & rotation for the camera
+* triggers an animated movement & rotation for the camera, using a xyz point for the end rotation
 * @param targetPos : the target position of the camera (reached at the end)
 * @param travelTime : the animation (travel) duration in seconds
 * @param useLookAt : if true, the camera will be oriented toward targetLookAt.
@@ -220,6 +222,63 @@ CameraController.prototype.startTravel = function startTravel(targetPos, travelT
   if(targetPos !== targetLookAt){
     _this.position.copy(travelStartPos);
   }
+
+  //end position
+  travelEndPos.copy(targetPos);
+
+
+  travelAlpha = 0;
+  travelStarted = false;
+
+  _this.update();
+
+}
+
+/**
+* triggers an animated movement & rotation for the camera, using quaternion for the end rotation
+* @param targetPos : the target position of the camera (reached at the end)
+* @param travelTime : the animation (travel) duration in seconds
+* @param useLookAt : if true, the camera will be oriented toward targetLookAt.
+* if false, camera will be oriented toward targetPos (direction of the movement)
+* @param targetLookAt : the camera target focus point if useLookAt is true
+* @param useSmooth : if true, movement is smoothed (slower at start & end)
+*/
+CameraController.prototype.startTravelQuat = function startTravelQuat(targetPos, travelTime, targetQuat, useSmooth) {
+
+  //control state
+  state=STATE.TRAVEL;
+
+  //update cursor
+  _this.updateCursorType();
+
+  //prevent input
+  _this.removeInputListeners();
+
+  travelUseSmooth = useSmooth;
+  travelUseLookAt = true;
+
+  travelDuration=travelTime;
+
+  //start position (current camera position)
+  travelStartPos.copy(_this.position);
+
+  //start rotation (current camera rotation)
+  travelStartRot.copy( _this.camera.quaternion );
+
+
+
+  targetQuatX = new THREE.Quaternion();
+  targetQuatX.setFromAxisAngle( new THREE.Vector3( 1, 0, 0 ), 0.4*Math.PI / 2 );
+  targetQuatZ = new THREE.Quaternion();
+  targetQuatZ.setFromAxisAngle( new THREE.Vector3( 0, 0, 1 ), 2*Math.PI / 2 );
+
+  console.log("lalala");
+
+  //setup the end rotation
+
+  //travelEndRot.setFromEuler(new THREE.Euler(0*Math.PI / 2,0.5*Math.PI / 2,1*Math.PI/2));
+    console.log(travelEndRot);
+  travelEndRot.copy(targetQuat);
 
   //end position
   travelEndPos.copy(targetPos);
@@ -549,6 +608,61 @@ CameraController.prototype.get3DPointUnderCursor = function get3DPointUnderCurso
   }
 
   /**
+  * zoom in or out (according to "dir") by a very slow amount
+  * used in "edit mode" for precise movement
+  * @param dist : positive to zoom in, negative to zoom out
+  * (movement = camera.forward * dist)
+  */
+  CameraController.prototype.preciseZoom = function preciseZoom(dist) {
+
+    state = STATE.ZOOM;
+
+    var vector = new THREE.Vector3();
+
+    vector.set(0,0,0.5).unproject(_this.camera);
+
+      //vector.unproject( _this.camera );
+
+      var dir = vector.sub( _this.position ).normalize();
+
+    _this.position.add(dir.multiplyScalar(dist));
+
+    _this.update();
+
+
+  }
+
+  /**
+  * zoom in or out (according to "dir") by a very slow amount
+  * used in "edit mode" for precise movement
+  * @param dist : positive to zoom in, negative to zoom out
+  * (movement = camera.forward * dist)
+  */
+  CameraController.prototype.preciseMove = function preciseMove(dist, axis) {
+
+    //dirty, but it works. create new state ? state.pan will not work
+    state = STATE.ZOOM;
+
+    console.log("precise1");
+
+    if(axis==="horizontal"){
+
+      _this.camera.translateX(dist)
+
+    }
+    else if(axis==="vertical"){
+
+       _this.position.add(new THREE.Vector3(0,0,dist)) ;
+
+
+    }
+
+    _this.update();
+
+
+  }
+
+  /**
   * Triggers a Zoom animated movement (travel) toward the point under mouse cursor
   * The camera will be moved toward / away from the point under mouse cursor
   * The zoom intensity varies according to the distance to the point.
@@ -665,6 +779,8 @@ CameraController.prototype.get3DPointUnderCursor = function get3DPointUnderCurso
       mouse.x = ( event.clientX );
       mouse.y =  ( event.clientY);
 
+      var onDoc = false;
+
 
 
       var raycaster = new THREE.Raycaster();
@@ -679,14 +795,24 @@ CameraController.prototype.get3DPointUnderCursor = function get3DPointUnderCurso
 
           console.log(intersects[i].object.userData);
 
+            document.getElementById('docFull').style.display = "block";
+
+            //_
+
+            onDoc = true;
+
           //intersects[ i ].object.material.color.set( 0xff0000 );
         }
 
 
       }
 
-
-      if (select) {
+      if(onDoc){
+        var someQuat = new THREE.Quaternion(0.27,0.27,0.67,0.67);
+        _this.startTravelQuat(_this.position.clone().add(new THREE.Vector3(1000,0,0)),3,someQuat,true);
+        //_this.startTravel(_this.position.clone().add(new THREE.Vector3(1000,0,0)),3,true,cityCenter,true);
+      }
+      else if (select) {
         //_this.handlePick(event);
       } else if (isCtrlDown) {
         //_this.handleMouseDownRotate(event);
@@ -799,6 +925,42 @@ CameraController.prototype.get3DPointUnderCursor = function get3DPointUnderCurso
       _this.goToTopView();
 
     }
+    if (event.keyCode === keys.P) {
+
+      //precise zoom in
+      _this.preciseZoom(5);
+
+    }
+    if (event.keyCode === keys.M) {
+
+      //precise zoom out
+      _this.preciseZoom(-5);
+
+    }
+    if (event.keyCode === keys.UP) {
+
+      //precise move
+      _this.preciseMove(5,"vertical");
+
+    }
+    if (event.keyCode === keys.DOWN) {
+
+      //precise move
+      _this.preciseMove(-5,"vertical");
+
+    }
+    if (event.keyCode === keys.RIGHT) {
+
+      //precise move
+      _this.preciseMove(5,"horizontal");
+
+    }
+    if (event.keyCode === keys.LEFT) {
+
+      //precise move
+      _this.preciseMove(-5,"horizontal");
+
+    }
 
     window.addEventListener('keyup', _this.onKeyUp, false);
   };
@@ -812,7 +974,13 @@ CameraController.prototype.get3DPointUnderCursor = function get3DPointUnderCurso
     if (event.keyCode == keys.CTRL) {
       isCtrlDown = false;
       window.removeEventListener('keyup', _this.onKeyUp, false);
-    } else if (event.keyCode === keys.S) {
+    } else if (event.keyCode === keys.P) {
+      //select = false;
+      window.removeEventListener('keyup', _this.onKeyUp, false);
+    }else if (event.keyCode === keys.M) {
+      //select = false;
+      window.removeEventListener('keyup', _this.onKeyUp, false);
+    }else if (event.keyCode === keys.S) {
       //select = false;
       window.removeEventListener('keyup', _this.onKeyUp, false);
     }

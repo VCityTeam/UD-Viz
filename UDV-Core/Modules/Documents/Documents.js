@@ -10,7 +10,7 @@ var _this2 = null;
 
 var _this3 = null;
 
-var AllDocuments = [];
+//var AllDocuments = [];
 
 
 /**
@@ -27,6 +27,8 @@ function DocumentsHandler(domElement, view, controls) {
   _this2.view = view;
 
   _this2.controls = controls;
+
+  _this2.AllDocuments = [];
 
 }
 
@@ -66,7 +68,7 @@ function Document(imageSource,billboardPosition,data) {
 DocumentsHandler.prototype.addDocument = function addDocument(imageSource,billboardPosition,data) {
 
   var doc = new Document(imageSource,billboardPosition,data);
-  AllDocuments.push(doc);
+  _this2.AllDocuments.push(doc);
   _this2.view.scene.add(doc.billboardGeometry);
 
 }
@@ -78,7 +80,7 @@ DocumentsHandler.prototype.addDocument = function addDocument(imageSource,billbo
  */
 DocumentsHandler.prototype.update = function update() {
 
-  AllDocuments.forEach(function(currentValue){
+  _this2.AllDocuments.forEach(function(currentValue){
     currentValue.billboardGeometry.lookAt(_this2.controls.position);
     currentValue.billboardGeometry.updateMatrixWorld();
   });

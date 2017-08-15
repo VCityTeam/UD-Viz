@@ -32,6 +32,8 @@ body {
 }
 
 
+
+
 #info{
 
 
@@ -61,12 +63,12 @@ body {
 
     margin : auto;
 
-    top: 100px;
+    top: 75px;
     left: 0;
 
 
-    width: 250px;
-    height: 600px;
+    width: 15%;
+    height: 60%;
 
 
 
@@ -80,7 +82,86 @@ body {
 
 }
 
+#docFull{
+  position: absolute;
+  z-index: 10;
+  text-align: center;
+
+
+
+
+  margin : auto;
+  top: 0;
+  bottom : 0;
+  left: 0;
+  right : 0;
+
+  width: 800px;
+  height: 600px;
+
+  display: none;
+
+  color: white;
+  background-color: rgba(0,0,0,0.0);
+  font-size: 14;
+
+  padding-left: 3px;
+  padding-top: 3px;
+
+      pointer-events: none;
+
+
+}
+
+#docFullImg{
+
+
+    width: 100%; /* or any custom size */
+    height: 100%;
+    object-fit: contain;
+    opacity: 0.5;
+
+
+
+}
+
+#docOpaSlider {
+  width: 80%;
+
+  position: absolute;
+  z-index: 10;
+  text-align: center;
+
+    pointer-events: auto;
+
+
+  margin : auto;
+
+  bottom : -30px;
+
+  right : 30px;
+
+}
+
+#docFullClose{
+
+  position: absolute;
+  z-index: 10;
+
+
+  pointer-events: auto;
+
+
+  margin : auto;
+
+  bottom : -30px;
+
+  left : 30px;
+
+}
+
 #timeSliderContainer{
+
 
 
     position: absolute;
@@ -93,8 +174,8 @@ body {
     left: 0;
     right : 0;
 
-    width: 700px;
-    height: 70px;
+    width: 35%;
+    height: 8%;
 
     color: white;
     background-color: rgba(0,0,0,0.67);
@@ -108,6 +189,17 @@ body {
 
 #timeSlider {
   width: 80%;
+
+  position: absolute;
+  z-index: 10;
+  text-align: center;
+
+
+  margin : auto;
+  top: 20px;
+  bottom : 0;
+  left: 0;
+  right : 0;
 
 }
 

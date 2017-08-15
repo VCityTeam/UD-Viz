@@ -137,7 +137,7 @@ const extent = new itowns.Extent(
   var target = extent.center().xyz().add(offset1);
   var startpos = extent.center().xyz().add(offset2);
 
-  var controls = new CameraController(viewerDiv,view,clock,center,{debug: true});
+  var controls = new CameraController(viewerDiv,view,clock,center,{debug: false});
 
   var documents = new DocumentsHandler(viewerDiv,view,controls);
 
@@ -148,5 +148,15 @@ const extent = new itowns.Extent(
   //view.addFrameRequester(controls);
   view.addFrameRequester(documents);
 
+  function outputUpdate(opa) {
+  	document.querySelector('#opacity').value = opa;
+    document.getElementById('docFullImg').style.opacity = opa/100;
+  }
+
+  document.getElementById("docFullClose").onclick = function () {
+      document.getElementById('docFull').style.display = "none";
+    console.log("exit");
+
+  };
   //
   //control.update();
