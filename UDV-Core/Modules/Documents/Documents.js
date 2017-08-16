@@ -47,7 +47,7 @@ function Document(imageSource,billboardPosition,data) {
 
   _this3.billboardPosition = billboardPosition;
 
-  var texture = new THREE.TextureLoader().load(imageSource);
+  var texture = new THREE.TextureLoader().setCrossOrigin("anonymous").load(imageSource);
   var material = new THREE.MeshBasicMaterial({map: texture});
 
   _this3.billboardGeometry = new THREE.Mesh( new THREE.PlaneGeometry( 60, 40, 1 , 1), material );

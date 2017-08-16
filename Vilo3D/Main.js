@@ -1,7 +1,7 @@
 
 THREE = itowns.THREE;
 
-var showBuildings = true;
+var showBuildings = false;
 
 // # Planar (EPSG:3946) viewer
 
@@ -143,13 +143,13 @@ const extent = new itowns.Extent(
 
   documents.addDocument('test.png',target,'doc 1 data');
   documents.addDocument('test.png',target.add(new THREE.Vector3(300,000,0)),'doc 2 data');
-  documents.addDocument('test.png',target.add(new THREE.Vector3(000,300,0)),'doc 3 data');
+  documents.addDocument("test3.png",target.add(new THREE.Vector3(000,300,0)),'doc 3 data');
 
   //view.addFrameRequester(controls);
   view.addFrameRequester(documents);
 
   function outputUpdate(opa) {
-  	document.querySelector('#opacity').value = opa;
+  	document.querySelector('#docOpacity').value = opa;
     document.getElementById('docFullImg').style.opacity = opa/100;
   }
 

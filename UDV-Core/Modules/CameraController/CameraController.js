@@ -14,7 +14,7 @@ THREE = itowns.THREE;
 //scope
 var _this = null;
 
-var keys = { CTRL: 17, R: 82, F: 70, S: 83, P: 80, M: 77, UP : 38, DOWN : 40, RIGHT : 39, LEFT : 37 };
+var keys = { CTRL: 17, R: 82, O: 79, F: 70, S: 83, P: 80, M: 77, UP : 38, DOWN : 40, RIGHT : 39, LEFT : 37 };
 var mouseButtons = { LEFTCLICK: THREE.MOUSE.LEFT, ZOOM: THREE.MOUSE.MIDDLE, RIGHTCLICK: THREE.MOUSE.RIGHT };
 
 //control state
@@ -755,19 +755,14 @@ CameraController.prototype.get3DPointUnderCursor = function get3DPointUnderCurso
 
     if (event.button === mouseButtons.LEFTCLICK) {
 
+      var onDoc = false;
+
       //test
       var mouse = new THREE.Vector2();
 
       mouse.x = ( event.clientX );
       mouse.y =  ( event.clientY);
 
-<<<<<<< HEAD
-      var onDoc = false;
-
-
-
-=======
->>>>>>> 7012abb90be77e55e5fca4a4032c2447cabe3313
       var raycaster = new THREE.Raycaster();
       mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
       mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
@@ -790,21 +785,19 @@ CameraController.prototype.get3DPointUnderCursor = function get3DPointUnderCurso
 
       }
 
-<<<<<<< HEAD
       if(onDoc){
-        var someQuat = new THREE.Quaternion(0.27,0.27,0.67,0.67);
-        _this.startTravelQuat(_this.position.clone().add(new THREE.Vector3(1000,0,0)),3,someQuat,true);
+        var someQuat = new THREE.Quaternion(0.625,0.105,0.128,0.762);
+        var somePos = new THREE.Vector3(1844789,5173976,628);
+        _this.startTravelQuat(somePos,3,someQuat,true);
         //_this.startTravel(_this.position.clone().add(new THREE.Vector3(1000,0,0)),3,true,cityCenter,true);
       }
       else if (select) {
-=======
-      if (select) {
->>>>>>> 7012abb90be77e55e5fca4a4032c2447cabe3313
-        //_this.handlePick(event);
+
       } else if (isCtrlDown) {
         //_this.handleMouseDownRotate(event);
         //state = STATE.ROTATE;
       } else {
+
 
         //view.removeFrameRequester(controls);
 
@@ -852,7 +845,7 @@ CameraController.prototype.get3DPointUnderCursor = function get3DPointUnderCurso
   * @param event: the current event
   */
   CameraController.prototype.onMouseUp = function onMouseUp(event) {
-    
+
     event.preventDefault();
 
     _this.domElement.removeEventListener('mousemove', _this.onMouseMove, false);
@@ -874,7 +867,7 @@ CameraController.prototype.get3DPointUnderCursor = function get3DPointUnderCurso
   * @param event: the current event
   */
   CameraController.prototype.onMouseMove = function onMouseMove(event) {
-    
+
     event.preventDefault();
 
     deltaMousePos.copy(_this.getMousePos(event)).sub(lastMousePos);
@@ -936,9 +929,17 @@ CameraController.prototype.get3DPointUnderCursor = function get3DPointUnderCurso
       _this.preciseMove(-5,"horizontal");
 
     }
+    if (event.keyCode === keys.CTRL) {
+      isCtrlDown = true;
+
+    }
+    if (event.keyCode === keys.O) {
+      console.log("position : ",_this.position," quaternion : ",_this.camera.quaternion);
+    }
+
 
     window.addEventListener('keyup', _this.onKeyUp, false);
-    
+
   };
 
   /**
@@ -949,15 +950,6 @@ CameraController.prototype.get3DPointUnderCursor = function get3DPointUnderCurso
 
     if (event.keyCode == keys.CTRL) {
       isCtrlDown = false;
-      window.removeEventListener('keyup', _this.onKeyUp, false);
-    } else if (event.keyCode === keys.P) {
-      //select = false;
-      window.removeEventListener('keyup', _this.onKeyUp, false);
-    }else if (event.keyCode === keys.M) {
-      //select = false;
-      window.removeEventListener('keyup', _this.onKeyUp, false);
-    }else if (event.keyCode === keys.S) {
-      //select = false;
       window.removeEventListener('keyup', _this.onKeyUp, false);
     }
   };

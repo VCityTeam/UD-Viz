@@ -1,34 +1,34 @@
 
 
 html {
-    font-family: sans-serif;
-    height: 100%;
-    width: 100%;
+  font-family: sans-serif;
+  height: 100%;
+  width: 100%;
 }
 
 body {
-    margin: 0;
-    background-color: black;
-    overflow: hidden;
-    height: 100%;
+  margin: 0;
+  background-color: black;
+  overflow: hidden;
+  height: 100%;
 }
 #wrapper {
-    width: 100%;
-    height: 100%;
-    position: relative;
+  width: 100%;
+  height: 100%;
+  position: relative;
 }
 
 #viewerDiv {
 
-    width: 100%;
-    height: 100%;
-    position: absolute;
+  width: 100%;
+  height: 100%;
+  position: absolute;
 
-    top: 0;
-    left: 0;
+  top: 0;
+  left: 0;
 
-    margin : auto auto;
-    padding: 0;
+  margin : auto auto;
+  padding: 0;
 }
 
 
@@ -37,20 +37,20 @@ body {
 #info{
 
 
-    position: absolute;
-    z-index: 99;
-    right: 0;
-    bottom: 0;
-    width: 110px;
-    height: 20px;
+  position: absolute;
+  z-index: 99;
+  right: 0;
+  bottom: 0;
+  width: 110px;
+  height: 20px;
 
-    color: white;
-    background-color: rgba(0,0,0,0.75);
-    font-size: 14;
-    text-align: center;
+  color: white;
+  background-color: rgba(0,0,0,0.75);
+  font-size: 14;
+  text-align: center;
 
-    padding-left: 3px;
-    padding-top: 3px;
+  padding-left: 3px;
+  padding-top: 3px;
 
 
 }
@@ -58,26 +58,57 @@ body {
 #docBrowser{
 
 
-    position: absolute;
-    z-index: 10;
+  position: absolute;
+  z-index: 10;
 
-    margin : auto;
+  margin : auto;
 
-    top: 75px;
-    left: 0;
-
-
-    width: 15%;
-    height: 60%;
+  top: 10%;
+  left: 0;
 
 
+  width: 20%;
+  height: 80%;
 
-    color: white;
-    background-color: rgba(0,0,0,0.67);
-    font-size: 14;
 
-    padding-left: 3px;
-    padding-top: 3px;
+
+  color: white;
+  background-color: rgba(0,0,0,0.67);
+  font-size: 14;
+
+  padding-left: 3px;
+  padding-top: 3px;
+
+    pointer-events: none;
+
+
+}
+
+#guidedTourText{
+
+
+  position: absolute;
+  z-index: 10;
+
+  margin : auto;
+
+  top: 10%;
+  right: 0;
+
+
+  width: 20%;
+  height: 80%;
+
+
+
+  color: white;
+  background-color: rgba(0,0,0,0.67);
+  font-size: 14;
+
+  padding-left: 3px;
+  padding-top: 3px;
+
+    pointer-events: none;
 
 
 }
@@ -96,8 +127,8 @@ body {
   left: 0;
   right : 0;
 
-  width: 800px;
-  height: 600px;
+  width: 50%;
+  height: 50%;
 
   display: none;
 
@@ -108,7 +139,9 @@ body {
   padding-left: 3px;
   padding-top: 3px;
 
-      pointer-events: none;
+  pointer-events: none;
+
+
 
 
 }
@@ -116,30 +149,59 @@ body {
 #docFullImg{
 
 
-    width: 100%; /* or any custom size */
-    height: 100%;
-    object-fit: contain;
-    opacity: 0.5;
-
+  width: 100%; /* or any custom size */
+  height: 100%;
+  object-fit: contain;
+  opacity: 0.5;
 
 
 }
 
 #docOpaSlider {
-  width: 80%;
+
+
+  width: 30%;
 
   position: absolute;
   z-index: 10;
   text-align: center;
 
-    pointer-events: auto;
-
+  pointer-events: auto;
 
   margin : auto;
 
-  bottom : -30px;
+  bottom : -40px;
 
-  right : 30px;
+  right : 0;
+  left : 10%;
+
+}
+
+#docOpacidty{
+
+  position: absolute;
+  z-index: 10;
+
+  margin : auto;
+
+  bottom : -25px;
+
+  right: 0;
+  left : 100px;
+
+}
+
+#docOpaLdabel{
+
+  position: absolute;
+  z-index: 10;
+
+  margin : auto;
+
+  bottom : -25px;
+
+  right: 0;
+  left : 0;
 
 }
 
@@ -154,9 +216,10 @@ body {
 
   margin : auto;
 
-  bottom : -30px;
+  bottom : -40px;
 
-  left : 30px;
+  right: 30%;
+  left : 0;
 
 }
 
@@ -164,25 +227,27 @@ body {
 
 
 
-    position: absolute;
-    z-index: 10;
-    text-align: center;
+  position: absolute;
+  z-index: 10;
+  text-align: center;
 
 
-    margin : auto;
-    bottom : 0;
-    left: 0;
-    right : 0;
+  margin : auto;
+  bottom : 0;
+  left: 0;
+  right : 0;
 
-    width: 35%;
-    height: 8%;
+  width: 35%;
+  height: 8%;
 
-    color: white;
-    background-color: rgba(0,0,0,0.67);
-    font-size: 14;
+  color: white;
+  background-color: rgba(0,0,0,0.67);
+  font-size: 14;
 
-    padding-left: 3px;
-    padding-top: 3px;
+  padding-left: 3px;
+  padding-top: 3px;
+
+    pointer-events: none;
 
 
 }
@@ -201,24 +266,26 @@ body {
   left: 0;
   right : 0;
 
+    pointer-events: auto;
+
 }
 
 .outer {
-    display: table;
-    position: absolute;
-    height: 100%;
-    width: 100%;
+  display: table;
+  position: absolute;
+  height: 100%;
+  width: 100%;
 
 }
 
 .middle {
-    display: table-cell;
-    vertical-align: middle;
+  display: table-cell;
+  vertical-align: middle;
 
 }
 
 .inner {
-    margin-left: auto;
-    margin-right: auto;
-    width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  width: 100%;
 }

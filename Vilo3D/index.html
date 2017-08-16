@@ -13,23 +13,24 @@
     <div id="info"></div>
     <div id="docFull">
 
-    <img id="docFullImg" src="test3.png" alt="" />
-    <button id="docFullClose" type=button>FERMER</button>
-    <label for="docOpaSlider">Opacity</label>
-    <input type="range" min="0" max="100" value="50" id="docOpaSlider"
-	step="1" oninput="outputUpdate(value)">
-<output for="docOpaSlider" id="opacity">50</output>
-  </div>
+      <img id="docFullImg" src="test3.png"/>
+      <button id="docFullClose" type=button>FERMER</button>
+      <label id="docOpaLabel" for="docOpaSlider">Opacity</label>
+      <input type="range" min="0" max="100" value="50" id="docOpaSlider"
+      step="1" oninput="outputUpdate(value)">
+      <output for="docOpaSlider" id="docOpacity">50</output>
+    </div>
 
 
     <div id="timeSliderContainer">
 
-            <input id="timeSlider" type="range" name="points" min="0" max="10">
+      <input id="timeSlider" type="range" name="points" min="0" max="10">
 
 
     </div>
   </div>
   <div id="docBrowser"></div>
+  <div id="guidedTourText"></div>
 </div>
 <script src="../../itowns/dist/itowns.js"></script>
 <script src="../UDV-Core/Modules/CameraController/CameraController.js"></script>
