@@ -73,7 +73,7 @@ body {
 
 
   color: white;
-  background-color: rgba(0,0,0,0.67);
+  background-color: rgba(0,0,0,0.5);
   font-size: 14;
 
   padding-left: 3px;
@@ -102,7 +102,7 @@ body {
 
 
   color: white;
-  background-color: rgba(0,0,0,0.67);
+  background-color: rgba(0,0,0,0.5);
   font-size: 14;
 
   padding-left: 3px;
@@ -157,10 +157,33 @@ body {
 
 }
 
+#docFullPanel{
+
+  width: 60%;
+  height: 50px;
+
+  background-color: rgba(0,0,0,0.5);
+
+  position: absolute;
+  z-index: 10;
+  text-align: center;
+
+  pointer-events: none;
+
+  margin : auto;
+
+  bottom : -50px;
+
+  right : 0;
+  left : 0;
+
+
+}
+
 #docOpaSlider {
 
 
-  width: 30%;
+  width: 25%;
 
   position: absolute;
   z-index: 10;
@@ -173,37 +196,45 @@ body {
   bottom : -40px;
 
   right : 0;
-  left : 10%;
+  left : 25%;
 
 }
 
-#docOpacidty{
+#docOpaLabel{
+
 
   position: absolute;
   z-index: 10;
+  text-align: center;
 
   margin : auto;
 
-  bottom : -25px;
+  bottom : -22px;
 
-  right: 0;
-  left : 100px;
+  right : 30px;
+  left : 25%;
 
 }
 
-#docOpaLdabel{
+
+
+#docOpacity{
+
 
   position: absolute;
   z-index: 10;
+  text-align: center;
 
   margin : auto;
 
-  bottom : -25px;
+  bottom : -22px;
 
-  right: 0;
-  left : 0;
+  right : -75px;
+  left : 25%;
 
 }
+
+
 
 #docFullClose{
 
@@ -218,7 +249,24 @@ body {
 
   bottom : -40px;
 
-  right: 30%;
+  right: 45%;
+  left : 0;
+
+}
+
+#docFullOrient{
+
+  position: absolute;
+  z-index: 10;
+
+  pointer-events: auto;
+
+
+  margin : auto;
+
+  bottom : -40px;
+
+  right: 20%;
   left : 0;
 
 }

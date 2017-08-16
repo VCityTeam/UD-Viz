@@ -14,11 +14,14 @@
     <div id="docFull">
 
       <img id="docFullImg" src="test3.png"/>
+      <div id="docFullPanel"></div>
       <button id="docFullClose" type=button>FERMER</button>
-      <label id="docOpaLabel" for="docOpaSlider">Opacity</label>
-      <input type="range" min="0" max="100" value="50" id="docOpaSlider"
+      <button id="docFullOrient" type=button>ORIENTER</button>
+      <label id="docOpaLabel" for="docOpaSlider">Opacité</label>
+      <input type="range" min="0" max="100" value="75" id="docOpaSlider"
       step="1" oninput="outputUpdate(value)">
       <output for="docOpaSlider" id="docOpacity">50</output>
+
     </div>
 
 
@@ -30,7 +33,10 @@
     </div>
   </div>
   <div id="docBrowser"></div>
-  <div id="guidedTourText"></div>
+  <div id="guidedTourText">
+  <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis augue velit, egestas eu posuere faucibus, aliquet sed eros. Donec vel dictum lorem. Sed sed commodo turpis. Vestibulum ornare sapien et purus sollicitudin egestas. Nunc rutrum ac dolor eu imperdiet. Cras lacinia, odio sit amet scelerisque porttitor, nisi mi pharetra tellus, non sagittis est lorem finibus nisi. Aliquam sed dolor quis est tempus finibus quis ut urna. Aenean commodo at sapien quis eleifend. Sed blandit nisi eu nisl dapibus, in efficitur mauris accumsan. Suspendisse potenti. Aenean lacus ex, aliquet at mauris a, vulputate tincidunt nibh. Interdum et malesuada fames ac ante ipsum primis in faucibus. Sed ut massa sed nibh mollis scelerisque.
+  </p>
+</div>
 </div>
 <script src="../../itowns/dist/itowns.js"></script>
 <script src="../UDV-Core/Modules/CameraController/CameraController.js"></script>

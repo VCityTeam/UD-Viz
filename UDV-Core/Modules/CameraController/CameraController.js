@@ -660,6 +660,21 @@ CameraController.prototype.get3DPointUnderCursor = function get3DPointUnderCurso
   }
 
   /**
+  * TO DO !!!!!!!!!!!!!! in dochandler instead of in controls ?
+  */
+  CameraController.prototype.orientToDoc = function orientToDoc() {
+
+    document.getElementById('docFullImg').style.opacity=0.75;
+    document.querySelector('#docOpacity').value = 75;
+
+    var someQuat = new THREE.Quaternion(0.625,0.105,0.128,0.762);
+    var somePos = new THREE.Vector3(1844789,5173976,628);
+    _this.startTravelQuat(somePos,3,someQuat,true);
+
+
+  }
+
+  /**
   * Triggers a Zoom animated movement (travel) toward the point under mouse cursor
   * The camera will be moved toward / away from the point under mouse cursor
   * The zoom intensity varies according to the distance to the point.
@@ -786,9 +801,7 @@ CameraController.prototype.get3DPointUnderCursor = function get3DPointUnderCurso
       }
 
       if(onDoc){
-        var someQuat = new THREE.Quaternion(0.625,0.105,0.128,0.762);
-        var somePos = new THREE.Vector3(1844789,5173976,628);
-        _this.startTravelQuat(somePos,3,someQuat,true);
+        _this.orientToDoc();
         //_this.startTravel(_this.position.clone().add(new THREE.Vector3(1000,0,0)),3,true,cityCenter,true);
       }
       else if (select) {

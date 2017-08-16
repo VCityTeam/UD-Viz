@@ -158,5 +158,11 @@ const extent = new itowns.Extent(
     console.log("exit");
 
   };
+
+  document.getElementById("docFullOrient").onclick = function () {
+      controls.orientToDoc();
+    console.log("exit");
+
+  };
   //
   //control.update();
