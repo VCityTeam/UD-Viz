@@ -16,7 +16,8 @@ Preliminary tests for **document billboards** and **temporal slider** are also u
 
 ## Document
 
-* Basic support for billboard document : plane geometry with image as texture, oriented to face the camera (billboard behavior). * * Ability to access the document object by clicking on the billboard.
+* Basic support for billboard document : plane geometry with image as texture, oriented to face the camera (billboard behavior).
+* Ability to access the document object by clicking on the billboard.
 * Full screen & oriented camera view when clicking on billboard.
 
 ## Time slider
