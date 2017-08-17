@@ -14,7 +14,8 @@ THREE = itowns.THREE;
 //scope
 var _this = null;
 
-var keys = { CTRL: 17, R: 82, O: 79, F: 70, S: 83, P: 80, M: 77, UP : 38, DOWN : 40, RIGHT : 39, LEFT : 37 };
+//event keycode
+var keys = { CTRL: 17, R: 82, O: 79, F: 70, S: 83, P: 80, T: 84, M: 77, UP : 38, DOWN : 40, RIGHT : 39, LEFT : 37 };
 var mouseButtons = { LEFTCLICK: THREE.MOUSE.LEFT, MIDDLECLICK: THREE.MOUSE.MIDDLE, RIGHTCLICK: THREE.MOUSE.RIGHT };
 
 //control state
@@ -70,6 +71,10 @@ var travelUseSmooth = false;
 var deltaTime = 0;
 var lastElapsedTime = 0;
 
+//document support
+var currentDocIndex;
+var currentDocData;
+
 /**
 * Constructor
 * @param domElement : the webgl div (city visualization)
@@ -100,11 +105,17 @@ function CameraController(domElement, view, clock, center) {
 
   //options
 
+
+
+  _this.startPosition = options.startPos || cityCenter.clone().add(new THREE.Vector3(5000,0,5000));
+_this.startLook = options.startLook || cityCenter;
+  _this.topViewAltitude = options.topViewAltitude || 13000;
+
   _this.smartZoomTravelTimeMin = options.smartZoomTravelTimeMin || 1.25;
   _this.smartZoomTravelTimeMax = options.smartZoomTravelTimeMax || 2.5;
 
   _this.smartZoomHeightMin = options.smartZoomHeightMin || 100;
-  _this.smartZoomHeightMax = options.smartZoomHeightMax || 600;
+  _this.smartZoomHeightMax = options.smartZoomHeightMax || 500;
 
   _this.zoomTravelTime = options.zoomTravelTime || 0.3;
   _this.zoomInFactor = options.zoomInFactor || 0.3;
@@ -122,8 +133,8 @@ function CameraController(domElement, view, clock, center) {
   _this.debug = options.debug || false;
 
   //starting camera position & rotation
-  _this.position.copy(options.startPos || cityCenter.clone().add(new THREE.Vector3(5000,0,5000)));
-  _this.camera.lookAt(options.startLook || cityCenter);
+  _this.position.copy(_this.startPosition);
+  _this.camera.lookAt(_this.startLook);
 
   //prevent the default contextmenu from appearing when right-clicking
   //this allows to use right-click for input without the menu appearing
@@ -299,11 +310,20 @@ CameraController.prototype.startTravelQuat = function startTravelQuat(targetPos,
 */
 CameraController.prototype.endTravel = function endTravel() {
 
+  _this.position.copy(travelEndPos);
+
+  if(travelUseLookAt){
+      _this.camera.quaternion.copy(travelEndRot);
+  }
+
+
   _this.addInputListeners();
 
   state = STATE.NONE;
 
   _this.updateCursorType();
+
+  _this.update();
 
 }
 
@@ -493,7 +513,7 @@ CameraController.prototype.get3DPointUnderCursor = function get3DPointUnderCurso
     //camera position at the end of the travel
     var moveTarget = new THREE.Vector3();
 
-    moveTarget.copy(pointUnderCursor).add(dir.multiplyScalar(-targetHeight*1.5));
+    moveTarget.copy(pointUnderCursor).add(dir.multiplyScalar(-targetHeight*2));
     moveTarget.z = pointUnderCursor.z + targetHeight;
 
     //animated movement duration (proportional to the travel distance)
@@ -607,15 +627,19 @@ CameraController.prototype.get3DPointUnderCursor = function get3DPointUnderCurso
     var topViewPos = new THREE.Vector3();
     var targetQuat = new THREE.Quaternion();
 
-    var topViewAltitude = 10000;
 
     targetQuat.setFromAxisAngle( new THREE.Vector3( 1, 0, 0 ), 0*Math.PI / 2 );
 
     //the final position
-    topViewPos.set(cityCenter.x, cityCenter.y, topViewAltitude);
+    topViewPos.set(cityCenter.x, cityCenter.y, _this.topViewAltitude);
+
+    //adjust travel time according to distance
+    var distToTarget = topViewPos.distanceTo(_this.position);
+
+    var travelTime = THREE.Math.lerp(1.5,3, distToTarget/10000);
 
     //initiate the travel
-    _this.startTravelQuat(topViewPos,3,targetQuat, true);
+    _this.startTravelQuat(topViewPos,travelTime,targetQuat, true);
 
   }
 
@@ -624,16 +648,14 @@ CameraController.prototype.get3DPointUnderCursor = function get3DPointUnderCurso
   */
   CameraController.prototype.goToStartView = function goToStartView() {
 
-    /*    var topViewPos = new THREE.Vector3();
-    var lookTarget = new THREE.Vector3();
+    //adjust travel time according to distance
+    var distToTarget = _this.startPosition.distanceTo(_this.position);
 
-    var topViewAltitude = 10000;
+    var travelTime = THREE.Math.lerp(1.5,3, distToTarget/10000);
 
-    topViewPos.set(cityCenter.x, cityCenter.y, topViewAltitude);
+    _this.startTravel(_this.startPosition,travelTime,true,_this.startLook, true);
 
-    _this.startTravel(topViewPos,this.travelTimeMoveTo*1.5,true,cityCenter, true);
-
-    */
+    
   }
 
   /**
@@ -691,15 +713,17 @@ CameraController.prototype.get3DPointUnderCursor = function get3DPointUnderCurso
   /**
   * TO DO !!!!!!!!!!!!!! in doc handler instead of in controls ?
   */
-  CameraController.prototype.orientToDoc = function orientToDoc() {
+  CameraController.prototype.orientViewToDoc = function orientViewToDoc() {
 
     document.getElementById('docFullImg').style.opacity=0.6;
     document.getElementById('docOpaSlider').value = 60;
     document.querySelector('#docOpacity').value = 60;
 
-    var someQuat = new THREE.Quaternion(0.625,0.105,0.128,0.762);
-    var somePos = new THREE.Vector3(1844789,5173976,628);
-    _this.startTravelQuat(somePos,2.5,someQuat,true);
+    document.getElementById('docFull').style.display = "block";
+    document.getElementById('docFullImg').src = currentDocData.imageSource;
+
+
+    _this.startTravelQuat(currentDocData.viewPosition,2.5,currentDocData.viewQuaternion,true);
 
 
   }
@@ -714,6 +738,8 @@ CameraController.prototype.get3DPointUnderCursor = function get3DPointUnderCurso
   * @param event : the mouse wheel event.
   */
   CameraController.prototype.startZoom = function startZoom(event) {
+
+    console.log(_this.position.z);
 
     //mousewheel delta
     if (event.wheelDelta !== undefined) {
@@ -755,7 +781,7 @@ CameraController.prototype.get3DPointUnderCursor = function get3DPointUnderCurso
 
     }
     //Zoom OUT
-    else if(delta<0){
+    else if(delta<0 && _this.position.z < _this.topViewAltitude){
 
       //debug
       if(_this.debug===true){
@@ -880,9 +906,14 @@ CameraController.prototype.get3DPointUnderCursor = function get3DPointUnderCurso
   */
   CameraController.prototype.onKeyDown = function onKeyDown(event) {
 
-    if (event.keyCode === keys.S) {
+    if (event.keyCode === keys.T) {
 
       _this.goToTopView();
+
+    }
+    if (event.keyCode === keys.S) {
+
+      _this.goToStartView();
 
     }
     if (event.keyCode === keys.P) {
@@ -1036,9 +1067,10 @@ CameraController.prototype.get3DPointUnderCursor = function get3DPointUnderCurso
 
       if( intersects[ i ].object.userData.type === 'billboard'){
 
-        console.log(intersects[i].object.userData);
+        //console.log(intersects[i].object.userData);
 
         onDoc = true;
+        currentDocData = intersects[i].object.userData;
 
         //intersects[ i ].object.material.color.set( 0xff0000 );
       }
@@ -1046,8 +1078,8 @@ CameraController.prototype.get3DPointUnderCursor = function get3DPointUnderCurso
     }
 
     if(onDoc){
-      document.getElementById('docFull').style.display = "block";
-      _this.orientToDoc();
+
+      _this.orientViewToDoc();
       //_this.startTravel(_this.position.clone().add(new THREE.Vector3(1000,0,0)),3,true,cityCenter,true);
     }
 

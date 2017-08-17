@@ -141,28 +141,36 @@ const extent = new itowns.Extent(
 
   var documents = new DocumentsHandler(viewerDiv,view,controls);
 
-  documents.addDocument('test.png',target,'doc 1 data');
-  documents.addDocument('test.png',target.add(new THREE.Vector3(300,000,0)),'doc 2 data');
-  documents.addDocument("test3.png",target.add(new THREE.Vector3(000,300,0)),'doc 3 data');
+  documents.addDocument(
+    1,
+    'test1.png',
+    target,
+    new THREE.Vector3(1844789,5173976,628),
+    new THREE.Quaternion(0.625,0.105,0.128,0.762),
+    'doc 1 data'
+  );
+
+  documents.addDocument(
+    2,
+    'test2.png',
+    target.add(new THREE.Vector3(300,000,0)),
+    new THREE.Vector3(1844789,5172976,628),
+    new THREE.Quaternion(0.625,0.105,0.128,0.762),
+    'doc 2 data'
+  );
+
+  documents.addDocument(
+    3,
+    'test3.png',
+    target.add(new THREE.Vector3(000,300,0)),
+    new THREE.Vector3(1842789,5173976,628),
+    new THREE.Quaternion(0.625,0.105,0.128,0.762),
+    'doc 3 data'
+  );
 
   //view.addFrameRequester(controls);
   view.addFrameRequester(documents);
 
-  function outputUpdate(opa) {
-  	document.querySelector('#docOpacity').value = opa;
-    document.getElementById('docFullImg').style.opacity = opa/100;
-  }
 
-  document.getElementById("docFullClose").onclick = function () {
-      document.getElementById('docFull').style.display = "none";
-    console.log("exit");
-
-  };
-
-  document.getElementById("docFullOrient").onclick = function () {
-      controls.orientToDoc();
-    console.log("exit");
-
-  };
   //
   //control.update();

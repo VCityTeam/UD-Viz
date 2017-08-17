@@ -39,7 +39,7 @@ function DocumentsHandler(domElement, view, controls) {
  * @param clock :
  */
 
-function Document(imageSource,billboardPosition,data) {
+function Document(docIndex,docImageSource,billboardPosition,docViewPosition,docViewQuaternion,data) {
 
   _this3 = this;
 
@@ -47,7 +47,7 @@ function Document(imageSource,billboardPosition,data) {
 
   _this3.billboardPosition = billboardPosition;
 
-  var texture = new THREE.TextureLoader().setCrossOrigin("anonymous").load(imageSource);
+  var texture = new THREE.TextureLoader().setCrossOrigin("anonymous").load(docImageSource);
   var material = new THREE.MeshBasicMaterial({map: texture});
 
   _this3.billboardGeometry = new THREE.Mesh( new THREE.PlaneGeometry( 60, 40, 1 , 1), material );
@@ -56,9 +56,16 @@ function Document(imageSource,billboardPosition,data) {
 
   _this3.billboardGeometry.updateMatrixWorld();
 
-  var docData = {type : "billboard", metadata : data};
+  var docBillboardData = {
+    type : "billboard",
+    index : docIndex,
+    imageSource : docImageSource,
+    viewPosition : docViewPosition,
+    viewQuaternion : docViewQuaternion,
+    metadata : data
+  };
 
-  _this3.billboardGeometry.userData = docData;
+  _this3.billboardGeometry.userData = docBillboardData;
 
 }
 
@@ -67,9 +74,9 @@ function Document(imageSource,billboardPosition,data) {
  *
  * @param event : the mouse down event.
  */
-DocumentsHandler.prototype.addDocument = function addDocument(imageSource,billboardPosition,data) {
+DocumentsHandler.prototype.addDocument = function addDocument(docIndex,docImageSource,billboardPosition,docViewPosition,docViewQuaternion,data) {
 
-  var doc = new Document(imageSource,billboardPosition,data);
+  var doc = new Document(docIndex,docImageSource,billboardPosition,docViewPosition,docViewQuaternion, data);
   _this2.AllDocuments.push(doc);
   _this2.view.scene.add(doc.billboardGeometry);
 
@@ -88,3 +95,22 @@ DocumentsHandler.prototype.update = function update() {
   });
 
 }
+
+// Document User Interface ===========================================================
+
+function outputUpdate(opa) {
+  document.querySelector('#docOpacity').value = opa;
+  document.getElementById('docFullImg').style.opacity = opa/100;
+}
+
+document.getElementById("docFullClose").onclick = function () {
+    document.getElementById('docFull').style.display = "none";
+  console.log("exit");
+
+};
+
+document.getElementById("docFullOrient").onclick = function () {
+    controls.orientViewToDoc();
+  console.log("exit");
+
+};
