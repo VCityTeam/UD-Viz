@@ -56,7 +56,9 @@ function Document(imageSource,billboardPosition,data) {
 
   _this3.billboardGeometry.updateMatrixWorld();
 
-  _this3.billboardGeometry.userData = data;
+  var docData = {type : "billboard", metadata : data};
+
+  _this3.billboardGeometry.userData = docData;
 
 }
 

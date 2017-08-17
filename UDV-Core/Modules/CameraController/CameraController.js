@@ -15,10 +15,10 @@ THREE = itowns.THREE;
 var _this = null;
 
 var keys = { CTRL: 17, R: 82, O: 79, F: 70, S: 83, P: 80, M: 77, UP : 38, DOWN : 40, RIGHT : 39, LEFT : 37 };
-var mouseButtons = { LEFTCLICK: THREE.MOUSE.LEFT, ZOOM: THREE.MOUSE.MIDDLE, RIGHTCLICK: THREE.MOUSE.RIGHT };
+var mouseButtons = { LEFTCLICK: THREE.MOUSE.LEFT, MIDDLECLICK: THREE.MOUSE.MIDDLE, RIGHTCLICK: THREE.MOUSE.RIGHT };
 
 //control state
-var STATE = { NONE: -1, PAN: 0, ZOOM: 1, ROTATE: 2, PANUP: 3, TRAVEL: 4 };
+var STATE = { NONE: -1, PAN: 0, TRANSLATE: 1, ROTATE: 2, PANUP: 3, TRAVEL: 4 };
 var state = STATE.NONE;
 var isCtrlDown = false;
 var select = false;
@@ -99,22 +99,25 @@ function CameraController(domElement, view, clock, center) {
 
 
   //options
-  _this.zoomTravelTime = options.zoomTravelTime || 0.3;
-  _this.smartZoomTravelTimeMin = options.smartZoomTravelTimeMin || 1.5;
-  _this.smartZoomTravelTimeMax = options.smartZoomTravelTimeMax || 3.0;
+
+  _this.smartZoomTravelTimeMin = options.smartZoomTravelTimeMin || 1.25;
+  _this.smartZoomTravelTimeMax = options.smartZoomTravelTimeMax || 2.5;
 
   _this.smartZoomHeightMin = options.smartZoomHeightMin || 100;
   _this.smartZoomHeightMax = options.smartZoomHeightMax || 600;
 
-  _this.zoomInFactor = options.zoomInFactor || 0.35;
-  _this.zoomOutFactor = options.zoomOutFactor || 0.7;
+  _this.zoomTravelTime = options.zoomTravelTime || 0.3;
+  _this.zoomInFactor = options.zoomInFactor || 0.3;
+  _this.zoomOutFactor = options.zoomOutFactor || 0.55;
 
-  _this.rotateSpeed = options.rotateSpeed || 3;
+  _this.rotateSpeed = options.rotateSpeed || 2;
 
   _this.groundHeight = options.groundHeight || 170;
 
-  _this.minZenithAngle = options.minZenithAngle || 0.0;
-  _this.maxZenithAngle = options.maxZenithAngle || 1.425;
+  _this.minZenithAngle = options.minZenithAngle || 0 * Math.PI / 180;
+
+  // should be less than 90 deg (90 = parallel to the ground)
+  _this.maxZenithAngle = options.maxZenithAngle || 80 * Math.PI / 180;
 
   _this.debug = options.debug || false;
 
@@ -508,9 +511,36 @@ CameraController.prototype.get3DPointUnderCursor = function get3DPointUnderCurso
   };
 
   /**
+  * Initiate a rotate (orbit) movement when user does a right-click or ctrl
+  * @param event : the mouse down event.
+  */
+  CameraController.prototype.initiateRotate = function initiateRotate() {
+
+    //view.removeFrameRequester(controls);
+
+    //initiate rotation
+    var screenCenter = new THREE.Vector2();
+    screenCenter.x=0.5*window.innerWidth;
+    screenCenter.y=0.5*window.innerHeight;
+    centerPoint.copy(_this.get3DPointAtScreenXY(screenCenter));
+
+    var r = _this.position.distanceTo(centerPoint);
+    phi = Math.acos((_this.position.z-centerPoint.z) / r);
+    //  console.log((_this.position.z-centerPoint.z) / r);
+
+    if(_this.debug===true){
+      debugCube.position.copy(centerPoint);
+      debugCube.updateMatrixWorld();
+    }
+
+    state = STATE.ROTATE;
+
+  };
+
+  /**
   * Handle the rotate movement (orbit) when user moves the mouse
   * the movement is an orbit around "centerPoint", the camera focus point (ground point at screen center)
-  * The rotate movement is previously initiated when user does a right-click
+  * The rotate movement is previously initiated in initiateRotate()
   * Compute the new position value and update the camera controls.
   */
   CameraController.prototype.handleMouseMoveRotate = function handleMouseMoveRotate() {
@@ -566,7 +596,7 @@ CameraController.prototype.get3DPointUnderCursor = function get3DPointUnderCurso
     //requestupdate;
     _this.update();
 
-  };
+  }
 
   /**
   * Triggers an animated movement (travel) to set the camera to top view
@@ -575,15 +605,17 @@ CameraController.prototype.get3DPointUnderCursor = function get3DPointUnderCurso
   CameraController.prototype.goToTopView = function goToTopView() {
 
     var topViewPos = new THREE.Vector3();
-    var lookTarget = new THREE.Vector3();
+    var targetQuat = new THREE.Quaternion();
 
     var topViewAltitude = 10000;
+
+    targetQuat.setFromAxisAngle( new THREE.Vector3( 1, 0, 0 ), 0*Math.PI / 2 );
 
     //the final position
     topViewPos.set(cityCenter.x, cityCenter.y, topViewAltitude);
 
     //initiate the travel
-    _this.startTravel(topViewPos,3,true,cityCenter, true);
+    _this.startTravelQuat(topViewPos,3,targetQuat, true);
 
   }
 
@@ -612,7 +644,7 @@ CameraController.prototype.get3DPointUnderCursor = function get3DPointUnderCurso
   */
   CameraController.prototype.preciseZoom = function preciseZoom(dist) {
 
-    state = STATE.ZOOM;
+    state = STATE.TRANSLATE;
 
     var vector = new THREE.Vector3();
 
@@ -626,21 +658,18 @@ CameraController.prototype.get3DPointUnderCursor = function get3DPointUnderCurso
 
     _this.update();
 
-
   }
 
   /**
-  * zoom in or out (according to "dir") by a very slow amount
+  * translate camera by a very slow amount
   * used in "edit mode" for precise movement
-  * @param dist : positive to zoom in, negative to zoom out
-  * (movement = camera.forward * dist)
+  * @param dist : movement amount
+  * @param axis : "horizontal" for local X (horizontal) axis, vertical for world up (vertical) axis
   */
   CameraController.prototype.preciseMove = function preciseMove(dist, axis) {
 
     //dirty, but it works. create new state ? state.pan will not work
-    state = STATE.ZOOM;
-
-    console.log("precise1");
+    state = STATE.TRANSLATE;
 
     if(axis==="horizontal"){
 
@@ -660,16 +689,17 @@ CameraController.prototype.get3DPointUnderCursor = function get3DPointUnderCurso
   }
 
   /**
-  * TO DO !!!!!!!!!!!!!! in dochandler instead of in controls ?
+  * TO DO !!!!!!!!!!!!!! in doc handler instead of in controls ?
   */
   CameraController.prototype.orientToDoc = function orientToDoc() {
 
-    document.getElementById('docFullImg').style.opacity=0.75;
-    document.querySelector('#docOpacity').value = 75;
+    document.getElementById('docFullImg').style.opacity=0.6;
+    document.getElementById('docOpaSlider').value = 60;
+    document.querySelector('#docOpacity').value = 60;
 
     var someQuat = new THREE.Quaternion(0.625,0.105,0.128,0.762);
     var somePos = new THREE.Vector3(1844789,5173976,628);
-    _this.startTravelQuat(somePos,3,someQuat,true);
+    _this.startTravelQuat(somePos,2.5,someQuat,true);
 
 
   }
@@ -770,78 +800,27 @@ CameraController.prototype.get3DPointUnderCursor = function get3DPointUnderCurso
 
     if (event.button === mouseButtons.LEFTCLICK) {
 
-      var onDoc = false;
-
-      //test
-      var mouse = new THREE.Vector2();
-
-      mouse.x = ( event.clientX );
-      mouse.y =  ( event.clientY);
-
-      var raycaster = new THREE.Raycaster();
-      mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
-      mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
-      raycaster.setFromCamera( mouse, _this.camera );
-      var intersects = raycaster.intersectObjects( view.scene.children );
-      for ( var i = 0; i < intersects.length; i++ ) {
-
-        if( typeof intersects[ i ].object.material.color !== 'undefined'){
-
-          console.log(intersects[i].object.userData);
-
-            document.getElementById('docFull').style.display = "block";
-
-            //_
-
-            onDoc = true;
-
-          //intersects[ i ].object.material.color.set( 0xff0000 );
-        }
-
+      if(_this.checkForObjectsUnderMouse(event)){
+        return;
       }
 
-      if(onDoc){
-        _this.orientToDoc();
-        //_this.startTravel(_this.position.clone().add(new THREE.Vector3(1000,0,0)),3,true,cityCenter,true);
-      }
       else if (select) {
 
       } else if (isCtrlDown) {
-        //_this.handleMouseDownRotate(event);
-        //state = STATE.ROTATE;
+          _this.initiateRotate();
       } else {
-
-
-        //view.removeFrameRequester(controls);
 
         _this.handleMouseDownPan(event);
         state = STATE.PAN;
       }
-    } else if (event.button === mouseButtons.ZOOM) {
+    } else if (event.button === mouseButtons.MIDDLECLICK) {
 
       _this.smartZoom(event);
 
 
     } else if (event.button === mouseButtons.RIGHTCLICK) {
 
-      //view.removeFrameRequester(controls);
-
-      //initiate rotation
-      var screenCenter = new THREE.Vector2();
-      screenCenter.x=0.5*window.innerWidth;
-      screenCenter.y=0.5*window.innerHeight;
-      centerPoint.copy(_this.get3DPointAtScreenXY(screenCenter));
-
-      var r = _this.position.distanceTo(centerPoint);
-      phi = Math.acos((_this.position.z-centerPoint.z) / r);
-      //  console.log((_this.position.z-centerPoint.z) / r);
-
-      if(_this.debug===true){
-        debugCube.position.copy(centerPoint);
-        debugCube.updateMatrixWorld();
-      }
-
-      state = STATE.ROTATE;
+      _this.initiateRotate();
     }
 
     if (state !== STATE.NONE) {
@@ -1037,3 +1016,40 @@ CameraController.prototype.get3DPointUnderCursor = function get3DPointUnderCurso
 
 
   };
+
+  /**
+  * Catch and manage the event when a touch on the mouse is down.
+  * @param event: the current event (mouse left button clicked or mouse wheel button actionned)
+  */
+  CameraController.prototype.checkForObjectsUnderMouse = function checkForObjectsUnderMouse (event) {
+
+    var onDoc = false;
+
+    var mouse = new THREE.Vector2();
+
+    var raycaster = new THREE.Raycaster();
+    mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+    mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+    raycaster.setFromCamera( mouse, _this.camera );
+    var intersects = raycaster.intersectObjects( view.scene.children );
+    for ( var i = 0; i < intersects.length; i++ ) {
+
+      if( intersects[ i ].object.userData.type === 'billboard'){
+
+        console.log(intersects[i].object.userData);
+
+        onDoc = true;
+
+        //intersects[ i ].object.material.color.set( 0xff0000 );
+      }
+
+    }
+
+    if(onDoc){
+      document.getElementById('docFull').style.display = "block";
+      _this.orientToDoc();
+      //_this.startTravel(_this.position.clone().add(new THREE.Vector3(1000,0,0)),3,true,cityCenter,true);
+    }
+
+    return onDoc;
+  }
