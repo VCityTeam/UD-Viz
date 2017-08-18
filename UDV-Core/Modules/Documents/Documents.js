@@ -55,7 +55,8 @@ function Document(docIndex,docImageSource,billboardPosition,docViewPosition,docV
 
   _this3.billboardGeometry = new THREE.Mesh( new THREE.PlaneGeometry( 80, 50, 1 , 1), billboardMaterial );
 
-  _this3.billboardGeometryFrame =  new THREE.Mesh( new THREE.PlaneGeometry( 80, 50, 1 , 1), frameMaterial );
+
+  _this3.billboardGeometryFrame =  new THREE.Mesh(new THREE.PlaneGeometry( 80, 50, 1 , 1), frameMaterial );
 
   _this3.billboardGeometry.position.copy(billboardPosition);
 
@@ -63,9 +64,8 @@ function Document(docIndex,docImageSource,billboardPosition,docViewPosition,docV
 
   _this3.billboardGeometry.updateMatrixWorld();
 
-  _this3.billboardGeometryFrame.updateMatrixWorld();
+ _this3.billboardGeometryFrame.updateMatrixWorld();
 
-//  _this3.billboardGeometry.add(_this3.billboardGeometryFrame);
 
 
 
@@ -122,12 +122,13 @@ function outputUpdate(opa) {
 
 document.getElementById("docFullClose").onclick = function () {
     document.getElementById('docFull').style.display = "none";
-  console.log("exit");
+    document.getElementById('docFullImg').src = null;
+
 
 };
 
 document.getElementById("docFullOrient").onclick = function () {
     controls.orientViewToDoc();
-  console.log("exit");
+
 
 };

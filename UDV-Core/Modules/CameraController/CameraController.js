@@ -166,13 +166,16 @@ CameraController.prototype.constructor = CameraController;
 
 
 /**
-* smoothing function (sigmoid) : h01 Hermite function
+* smoothing function (sigmoid) : based on h01 Hermite function
+* returns a value between 0 and 1
 * @param x : the value to be smoothed, between 0 and 1
 */
 CameraController.prototype.smooth = function smooth(x) {
 
-  var smoothed = x*x * (3-2*x);
-  //smoothed = x;
+  //between 1.0 and 1.5
+  var p = 1.33;
+
+  var smoothed = Math.pow((x*x*(3-2*x)),p);
 
   return smoothed;
 
@@ -203,7 +206,7 @@ CameraController.prototype.getMousePos = function getMousePos(event) {
 * if targetOrientation is a world point (Vector3) : the camera will lookAt() this point
 * if targetOrientation is a quaternion : this quaternion will define the final camera orientation
 */
-CameraController.prototype.startTravel = function startTravel(targetPos, travelTime, targetOrientation) {
+CameraController.prototype.startTravel = function startTravel(targetPos, travelTime, targetOrientation, useSmooth) {
 
   //control state
   state=STATE.TRAVEL;
@@ -215,6 +218,7 @@ CameraController.prototype.startTravel = function startTravel(targetPos, travelT
   _this.removeInputListeners();
 
   travelUseRotation = (targetOrientation==="none")? false : true ;
+  travelUseSmooth = useSmooth;
 
   //start position (current camera position)
   travelStartPos.copy(_this.position);
@@ -327,7 +331,7 @@ CameraController.prototype.handleTravel = function handleTravel(dt) {
   travelAlpha += dt / travelDuration;
 
   //the animation alpha, between 0 (start) and 1 (finish)
-  var alpha = _this.smooth(travelAlpha);
+  var alpha = (travelUseSmooth)? _this.smooth(travelAlpha) : travelAlpha;
 
   //new position
   _this.position.lerpVectors(travelStartPos, travelEndPos, alpha);
@@ -505,7 +509,7 @@ CameraController.prototype.get3DPointUnderCursor = function get3DPointUnderCurso
     }
 
     //initiate the travel
-    _this.startTravel(moveTarget,"auto", moveLook);
+    _this.startTravel(moveTarget,"auto", moveLook, true);
 
   };
 
@@ -612,7 +616,7 @@ CameraController.prototype.get3DPointUnderCursor = function get3DPointUnderCurso
     topViewPos.set(cityCenter.x, cityCenter.y, _this.topViewAltitude);
 
     //initiate the travel
-    _this.startTravel(topViewPos,"auto",targetQuat);
+    _this.startTravel(topViewPos,"auto",targetQuat,true);
 
   }
 
@@ -623,7 +627,7 @@ CameraController.prototype.get3DPointUnderCursor = function get3DPointUnderCurso
   CameraController.prototype.goToStartView = function goToStartView() {
 
 
-    _this.startTravel(_this.startPosition,"auto",_this.startLook);
+    _this.startTravel(_this.startPosition,"auto",_this.startLook,true);
 
 
   }
@@ -693,7 +697,7 @@ CameraController.prototype.get3DPointUnderCursor = function get3DPointUnderCurso
     document.getElementById('docFullImg').src = currentDocData.imageSource;
 
 
-    _this.startTravel(currentDocData.viewPosition,"auto",currentDocData.viewQuaternion);
+    _this.startTravel(currentDocData.viewPosition,"auto",currentDocData.viewQuaternion,true);
 
 
   }
@@ -745,7 +749,7 @@ CameraController.prototype.get3DPointUnderCursor = function get3DPointUnderCurso
       newPos.lerpVectors(_this.position,zoomTarget,_this.zoomInFactor);
 
       //initiate travel
-      _this.startTravel(newPos,_this.zoomTravelTime, "none");
+      _this.startTravel(newPos,_this.zoomTravelTime, "none", false);
 
     }
     //Zoom OUT
@@ -761,7 +765,7 @@ CameraController.prototype.get3DPointUnderCursor = function get3DPointUnderCurso
       newPos.lerpVectors(_this.position,zoomTarget,-1*_this.zoomOutFactor);
 
       //initiate travel
-      _this.startTravel(newPos,_this.zoomTravelTime, "none");
+      _this.startTravel(newPos,_this.zoomTravelTime, "none", false);
 
     }
 
