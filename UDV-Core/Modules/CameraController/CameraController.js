@@ -685,9 +685,9 @@ CameraController.prototype.get3DPointUnderCursor = function get3DPointUnderCurso
   */
   CameraController.prototype.orientViewToDoc = function orientViewToDoc() {
 
-    document.getElementById('docFullImg').style.opacity=0.6;
-    document.getElementById('docOpaSlider').value = 60;
-    document.querySelector('#docOpacity').value = 60;
+    document.getElementById('docFullImg').style.opacity=0.85;
+    document.getElementById('docOpaSlider').value = 85;
+    document.querySelector('#docOpacity').value = 85;
 
     document.getElementById('docFull').style.display = "block";
     document.getElementById('docFullImg').src = currentDocData.imageSource;
