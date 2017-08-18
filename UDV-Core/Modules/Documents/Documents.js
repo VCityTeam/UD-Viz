@@ -30,6 +30,8 @@ function DocumentsHandler(domElement, view, controls) {
 
   _this2.AllDocuments = [];
 
+  _this.view.addFrameRequester(this);
+
 }
 
 /**
@@ -43,18 +45,29 @@ function Document(docIndex,docImageSource,billboardPosition,docViewPosition,docV
 
   _this3 = this;
 
-  _this3.image = null;
+  _this3.image = docImageSource;
 
   _this3.billboardPosition = billboardPosition;
 
   var texture = new THREE.TextureLoader().setCrossOrigin("anonymous").load(docImageSource);
-  var material = new THREE.MeshBasicMaterial({map: texture});
+  var billboardMaterial = new THREE.MeshBasicMaterial({map: texture});
+  var frameMaterial = new THREE.MeshBasicMaterial( {color: 0x00ffaa,wireframe: true});
 
-  _this3.billboardGeometry = new THREE.Mesh( new THREE.PlaneGeometry( 60, 40, 1 , 1), material );
+  _this3.billboardGeometry = new THREE.Mesh( new THREE.PlaneGeometry( 80, 50, 1 , 1), billboardMaterial );
+
+  _this3.billboardGeometryFrame =  new THREE.Mesh( new THREE.PlaneGeometry( 80, 50, 1 , 1), frameMaterial );
 
   _this3.billboardGeometry.position.copy(billboardPosition);
 
+  _this3.billboardGeometryFrame.position.copy(billboardPosition);
+
   _this3.billboardGeometry.updateMatrixWorld();
+
+  _this3.billboardGeometryFrame.updateMatrixWorld();
+
+//  _this3.billboardGeometry.add(_this3.billboardGeometryFrame);
+
+
 
   var docBillboardData = {
     type : "billboard",
@@ -79,6 +92,8 @@ DocumentsHandler.prototype.addDocument = function addDocument(docIndex,docImageS
   var doc = new Document(docIndex,docImageSource,billboardPosition,docViewPosition,docViewQuaternion, data);
   _this2.AllDocuments.push(doc);
   _this2.view.scene.add(doc.billboardGeometry);
+  _this2.view.scene.add(doc.billboardGeometryFrame);
+
 
 }
 
@@ -91,7 +106,9 @@ DocumentsHandler.prototype.update = function update() {
 
   _this2.AllDocuments.forEach(function(currentValue){
     currentValue.billboardGeometry.lookAt(_this2.controls.position);
+    currentValue.billboardGeometryFrame.lookAt(_this2.controls.position);
     currentValue.billboardGeometry.updateMatrixWorld();
+    currentValue.billboardGeometryFrame.updateMatrixWorld();
   });
 
 }

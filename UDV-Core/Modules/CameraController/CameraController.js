@@ -6,7 +6,10 @@
 * Right mouse button rotates around the camera's focus point.
 * Scroll wheel zooms toward cursor position.
 * Middle mouse button (wheel click) "smart zooms" at cursor location.
+* S : go to start view
+* T : go to top view
 */
+
 
 THREE = itowns.THREE;
 
@@ -64,12 +67,13 @@ var travelEndRot = new THREE.Quaternion();
 var travelAlpha = 0;
 var travelDuration = 0;
 
-var travelUseLookAt = false;
+var travelUseRotation = false;
 var travelUseSmooth = false;
 
 //time management
 var deltaTime = 0;
 var lastElapsedTime = 0;
+var clock = new THREE.Clock();
 
 //document support
 var currentDocIndex;
@@ -85,14 +89,13 @@ var currentDocData;
 * example : var controls = new CameraController(domElement, view, clock, center, {zoomTravelTime: 0.4, groundHeight: 200});
 */
 
-function CameraController(domElement, view, clock, center) {
+function CameraController(domElement, view, center) {
 
   //extra options : some parameters have default value but can be modified with this
-  var options = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : {};
+  var options = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
 
   _this = this;
 
-  _this.clock = clock;
   _this.camera = view.camera.camera3D;
   _this.domElement = domElement;
   _this.engine = view.mainLoop.engine;
@@ -105,19 +108,19 @@ function CameraController(domElement, view, clock, center) {
 
   //options
 
-
-
   _this.startPosition = options.startPos || cityCenter.clone().add(new THREE.Vector3(5000,0,5000));
-_this.startLook = options.startLook || cityCenter;
+  _this.startLook = options.startLook || cityCenter;
   _this.topViewAltitude = options.topViewAltitude || 13000;
 
-  _this.smartZoomTravelTimeMin = options.smartZoomTravelTimeMin || 1.25;
-  _this.smartZoomTravelTimeMax = options.smartZoomTravelTimeMax || 2.5;
+  _this.autoTravelTimeMin = options.autoTravelTimeMin || 1.5;
+  _this.autoTravelTimeMax = options.autoTravelTimeMax || 5;
+  _this.autoTravelTimeDist = options.autoTravelTimeDist || 30000;
 
   _this.smartZoomHeightMin = options.smartZoomHeightMin || 100;
   _this.smartZoomHeightMax = options.smartZoomHeightMax || 500;
 
   _this.zoomTravelTime = options.zoomTravelTime || 0.3;
+
   _this.zoomInFactor = options.zoomInFactor || 0.3;
   _this.zoomOutFactor = options.zoomOutFactor || 0.55;
 
@@ -154,7 +157,6 @@ _this.startLook = options.startLook || cityCenter;
   //with this, CameraController.update() will be called each frame
   _this.view.addFrameRequester(this);
 
-  console.log(_this.camera.quaternion);
 
 
 }
@@ -191,15 +193,17 @@ CameraController.prototype.getMousePos = function getMousePos(event) {
 }
 
 /**
-* triggers an animated movement & rotation for the camera, using a xyz point for the end rotation
+* triggers an animated movement & rotation for the camera
 * @param targetPos : the target position of the camera (reached at the end)
-* @param travelTime : the animation (travel) duration in seconds
-* @param useLookAt : if true, the camera will be oriented toward targetLookAt.
-* if false, camera will be oriented toward targetPos (direction of the movement)
-* @param targetLookAt : the camera target focus point if useLookAt is true
-* @param useSmooth : if true, movement is smoothed (slower at start & end)
+* @param travelTime : set to "auto", or set to a duration in seconds.
+* if set to auto : travel time will be set to a duration between autoTravelTimeMin and autoTravelTimeMax
+* according to the distance and the angular difference between start and finish.
+* @param targetOrientation : define the target rotation of the camera
+* if targetOrientation is "none" : the camera will keep its starting orientation
+* if targetOrientation is a world point (Vector3) : the camera will lookAt() this point
+* if targetOrientation is a quaternion : this quaternion will define the final camera orientation
 */
-CameraController.prototype.startTravel = function startTravel(targetPos, travelTime, useLookAt, targetLookAt, useSmooth) {
+CameraController.prototype.startTravel = function startTravel(targetPos, travelTime, targetOrientation) {
 
   //control state
   state=STATE.TRAVEL;
@@ -210,10 +214,7 @@ CameraController.prototype.startTravel = function startTravel(targetPos, travelT
   //prevent input
   _this.removeInputListeners();
 
-  travelUseLookAt = useLookAt;
-  travelUseSmooth = useSmooth;
-
-  travelDuration=travelTime;
+  travelUseRotation = (targetOrientation==="none")? false : true ;
 
   //start position (current camera position)
   travelStartPos.copy(_this.position);
@@ -221,83 +222,68 @@ CameraController.prototype.startTravel = function startTravel(targetPos, travelT
   //start rotation (current camera rotation)
   travelStartRot.copy( _this.camera.quaternion );
 
-  //setup the end rotation
-  if(targetPos !== targetLookAt){
+  //setup the end rotation :
 
-    _this.position.copy(targetPos);
+  //case where targetOrientation is a quaternion
+  if(typeof targetOrientation.w !== 'undefined'){
+
+    travelEndRot.copy(targetOrientation);
+
   }
+  //case where targetOrientation is a vector3
+  else if(targetOrientation.isVector3){
 
-  _this.camera.lookAt( targetLookAt );
+    if(targetPos === targetOrientation){
 
-  travelEndRot.copy( _this.camera.quaternion );
+      _this.camera.lookAt( targetOrientation );
+      travelEndRot.copy( _this.camera.quaternion );
+      _this.camera.quaternion.copy(travelStartRot);
+    }
+    else {
 
-  _this.camera.quaternion.copy(travelStartRot);
+      _this.position.copy(targetPos);
+      _this.camera.lookAt( targetOrientation );
+      travelEndRot.copy( _this.camera.quaternion );
+      _this.camera.quaternion.copy(travelStartRot);
+      _this.position.copy(travelStartPos);
+    }
 
-  if(targetPos !== targetLookAt){
-    _this.position.copy(travelStartPos);
   }
 
   //end position
   travelEndPos.copy(targetPos);
 
+  //travel duration
+  //case where travelTime is set to "auto" : travelDuration will be a value between autoTravelTimeMin and autoTravelTimeMax
+  //depending on travel distance and travel angular difference
+  if(travelTime==="auto"){
 
-  travelAlpha = 0;
-  travelStarted = false;
+    //a value between 0 and 1 according to the travel distance. Adjusted by autoTravelTimeDist parameter
+    var normalizedDistance = Math.min(1,targetPos.distanceTo(_this.position)/_this.autoTravelTimeDist);
 
-  _this.update();
+    travelDuration = THREE.Math.lerp(_this.autoTravelTimeMin,_this.autoTravelTimeMax,normalizedDistance);
 
-}
+    //if travel changes camera orientation, travel duration is adjusted according to angularDifference
+    //this allows for a smoother travel (more time for the camera to rotate)
+    //final duration will not excede autoTravelTimeMax
+    if(travelUseRotation){
 
-/**
-* triggers an animated movement & rotation for the camera, using quaternion for the end rotation
-* @param targetPos : the target position of the camera (reached at the end)
-* @param travelTime : the animation (travel) duration in seconds
-* @param useLookAt : if true, the camera will be oriented toward targetLookAt.
-* if false, camera will be oriented toward targetPos (direction of the movement)
-* @param targetLookAt : the camera target focus point if useLookAt is true
-* @param useSmooth : if true, movement is smoothed (slower at start & end)
-*/
-CameraController.prototype.startTravelQuat = function startTravelQuat(targetPos, travelTime, targetQuat, useSmooth) {
+      //value is normalized between 0 and 1
+      var angularDifference = 0.5-0.5*(travelEndRot.normalize().dot(_this.camera.quaternion.normalize()));
 
-  //control state
-  state=STATE.TRAVEL;
+      travelDuration *= 1 + 2*angularDifference;
 
-  //update cursor
-  _this.updateCursorType();
+      travelDuration = Math.min(travelDuration,_this.autoTravelTimeMax);
 
-  //prevent input
-  _this.removeInputListeners();
+    }
 
-  travelUseSmooth = useSmooth;
-  travelUseLookAt = true;
+  }
+  //case where traveltime !== "auto" : travelTime is a duration in seconds given as parameter
+  else{
+      travelDuration = travelTime;
+  }
 
-  travelDuration=travelTime;
-
-  //start position (current camera position)
-  travelStartPos.copy(_this.position);
-
-  //start rotation (current camera rotation)
-  travelStartRot.copy( _this.camera.quaternion );
-
-
-
-  targetQuatX = new THREE.Quaternion();
-  targetQuatX.setFromAxisAngle( new THREE.Vector3( 1, 0, 0 ), 0.4*Math.PI / 2 );
-  targetQuatZ = new THREE.Quaternion();
-  targetQuatZ.setFromAxisAngle( new THREE.Vector3( 0, 0, 1 ), 2*Math.PI / 2 );
-
-  console.log("lalala");
-
-  //setup the end rotation
-
-  //travelEndRot.setFromEuler(new THREE.Euler(0*Math.PI / 2,0.5*Math.PI / 2,1*Math.PI/2));
-    console.log(travelEndRot);
-  travelEndRot.copy(targetQuat);
-
-  //end position
-  travelEndPos.copy(targetPos);
-
-
+  //final setup
   travelAlpha = 0;
   travelStarted = false;
 
@@ -312,8 +298,8 @@ CameraController.prototype.endTravel = function endTravel() {
 
   _this.position.copy(travelEndPos);
 
-  if(travelUseLookAt){
-      _this.camera.quaternion.copy(travelEndRot);
+  if(travelUseRotation){
+    _this.camera.quaternion.copy(travelEndRot);
   }
 
 
@@ -341,13 +327,13 @@ CameraController.prototype.handleTravel = function handleTravel(dt) {
   travelAlpha += dt / travelDuration;
 
   //the animation alpha, between 0 (start) and 1 (finish)
-  var alpha = (travelUseSmooth) ? _this.smooth(travelAlpha) : travelAlpha;
+  var alpha = _this.smooth(travelAlpha);
 
   //new position
   _this.position.lerpVectors(travelStartPos, travelEndPos, alpha);
 
   //new rotation
-  if(travelUseLookAt===true){
+  if(travelUseRotation===true){
     THREE.Quaternion.slerp(travelStartRot, travelEndRot, _this.camera.quaternion, alpha);
   }
 
@@ -404,13 +390,9 @@ CameraController.prototype.get3DPointUnderCursor = function get3DPointUnderCurso
     var dir = vector.sub( _this.position ).normalize();
 
     var distance = (height - _this.position.z) / dir.z;
-    //distance =
 
     var pos = _this.position.clone().add( dir.multiplyScalar( distance ) );
 
-    //pos.set(pos.x,pos.y,height);
-
-    //console.log(pos);
     if(_this.debug===true){
       debugCube.position.copy(pos);
       debugCube.updateMatrixWorld();
@@ -516,9 +498,6 @@ CameraController.prototype.get3DPointUnderCursor = function get3DPointUnderCurso
     moveTarget.copy(pointUnderCursor).add(dir.multiplyScalar(-targetHeight*2));
     moveTarget.z = pointUnderCursor.z + targetHeight;
 
-    //animated movement duration (proportional to the travel distance)
-    var duration = THREE.Math.lerp(this.smartZoomTravelTimeMin, this.smartZoomTravelTimeMax, Math.min(distanceToPoint/5000,1));
-
     //debug
     if(_this.debug===true){
       debugCube.position.copy(moveLook);
@@ -526,7 +505,7 @@ CameraController.prototype.get3DPointUnderCursor = function get3DPointUnderCurso
     }
 
     //initiate the travel
-    _this.startTravel(moveTarget,duration, true, moveLook, true);
+    _this.startTravel(moveTarget,"auto", moveLook);
 
   };
 
@@ -546,7 +525,6 @@ CameraController.prototype.get3DPointUnderCursor = function get3DPointUnderCurso
 
     var r = _this.position.distanceTo(centerPoint);
     phi = Math.acos((_this.position.z-centerPoint.z) / r);
-    //  console.log((_this.position.z-centerPoint.z) / r);
 
     if(_this.debug===true){
       debugCube.position.copy(centerPoint);
@@ -633,29 +611,21 @@ CameraController.prototype.get3DPointUnderCursor = function get3DPointUnderCurso
     //the final position
     topViewPos.set(cityCenter.x, cityCenter.y, _this.topViewAltitude);
 
-    //adjust travel time according to distance
-    var distToTarget = topViewPos.distanceTo(_this.position);
-
-    var travelTime = THREE.Math.lerp(1.5,3, distToTarget/10000);
-
     //initiate the travel
-    _this.startTravelQuat(topViewPos,travelTime,targetQuat, true);
+    _this.startTravel(topViewPos,"auto",targetQuat);
 
   }
 
-  /**
-  * TO DO
-  */
+
+    /**
+    * Triggers an animated movement (travel) to set the camera to starting view
+    */
   CameraController.prototype.goToStartView = function goToStartView() {
 
-    //adjust travel time according to distance
-    var distToTarget = _this.startPosition.distanceTo(_this.position);
 
-    var travelTime = THREE.Math.lerp(1.5,3, distToTarget/10000);
+    _this.startTravel(_this.startPosition,"auto",_this.startLook);
 
-    _this.startTravel(_this.startPosition,travelTime,true,_this.startLook, true);
 
-    
   }
 
   /**
@@ -672,9 +642,9 @@ CameraController.prototype.get3DPointUnderCursor = function get3DPointUnderCurso
 
     vector.set(0,0,0.5).unproject(_this.camera);
 
-      //vector.unproject( _this.camera );
+    //vector.unproject( _this.camera );
 
-      var dir = vector.sub( _this.position ).normalize();
+    var dir = vector.sub( _this.position ).normalize();
 
     _this.position.add(dir.multiplyScalar(dist));
 
@@ -700,7 +670,7 @@ CameraController.prototype.get3DPointUnderCursor = function get3DPointUnderCurso
     }
     else if(axis==="vertical"){
 
-       _this.position.add(new THREE.Vector3(0,0,dist)) ;
+      _this.position.add(new THREE.Vector3(0,0,dist)) ;
 
 
     }
@@ -723,7 +693,7 @@ CameraController.prototype.get3DPointUnderCursor = function get3DPointUnderCurso
     document.getElementById('docFullImg').src = currentDocData.imageSource;
 
 
-    _this.startTravelQuat(currentDocData.viewPosition,2.5,currentDocData.viewQuaternion,true);
+    _this.startTravel(currentDocData.viewPosition,"auto",currentDocData.viewQuaternion);
 
 
   }
@@ -738,8 +708,6 @@ CameraController.prototype.get3DPointUnderCursor = function get3DPointUnderCurso
   * @param event : the mouse wheel event.
   */
   CameraController.prototype.startZoom = function startZoom(event) {
-
-    console.log(_this.position.z);
 
     //mousewheel delta
     if (event.wheelDelta !== undefined) {
@@ -777,7 +745,7 @@ CameraController.prototype.get3DPointUnderCursor = function get3DPointUnderCurso
       newPos.lerpVectors(_this.position,zoomTarget,_this.zoomInFactor);
 
       //initiate travel
-      _this.startTravel(newPos,_this.zoomTravelTime, false, newPos, false);
+      _this.startTravel(newPos,_this.zoomTravelTime, "none");
 
     }
     //Zoom OUT
@@ -793,7 +761,7 @@ CameraController.prototype.get3DPointUnderCursor = function get3DPointUnderCurso
       newPos.lerpVectors(_this.position,zoomTarget,-1*_this.zoomOutFactor);
 
       //initiate travel
-      _this.startTravel(newPos,_this.zoomTravelTime, false, newPos, false);
+      _this.startTravel(newPos,_this.zoomTravelTime, "none");
 
     }
 
@@ -833,7 +801,7 @@ CameraController.prototype.get3DPointUnderCursor = function get3DPointUnderCurso
       else if (select) {
 
       } else if (isCtrlDown) {
-          _this.initiateRotate();
+        _this.initiateRotate();
       } else {
 
         _this.handleMouseDownPan(event);
@@ -1067,12 +1035,9 @@ CameraController.prototype.get3DPointUnderCursor = function get3DPointUnderCurso
 
       if( intersects[ i ].object.userData.type === 'billboard'){
 
-        //console.log(intersects[i].object.userData);
-
         onDoc = true;
         currentDocData = intersects[i].object.userData;
 
-        //intersects[ i ].object.material.color.set( 0xff0000 );
       }
 
     }
@@ -1080,7 +1045,7 @@ CameraController.prototype.get3DPointUnderCursor = function get3DPointUnderCurso
     if(onDoc){
 
       _this.orientViewToDoc();
-      //_this.startTravel(_this.position.clone().add(new THREE.Vector3(1000,0,0)),3,true,cityCenter,true);
+
     }
 
     return onDoc;

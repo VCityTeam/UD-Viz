@@ -20,7 +20,6 @@ const extent = new itowns.Extent(
 
   // ====================
   let renderer;
-  let clock;
   // ====================
 
   // `viewerDiv` will contain iTowns' rendering area (`<canvas>`)
@@ -126,9 +125,6 @@ const extent = new itowns.Extent(
   var light = new THREE.HemisphereLight( 0x0000ff, 0xff0000, 1 );
   view.scene.add( light );
 
-
-  clock = new THREE.Clock();
-
   var center = extent.center().xyz();
   var offset1 = new THREE.Vector3(1000,1000,200);
   var offset2 = new THREE.Vector3(-3000,-3000,3000);
@@ -137,7 +133,7 @@ const extent = new itowns.Extent(
   var target = extent.center().xyz().add(offset1);
   var startpos = extent.center().xyz().add(offset2);
 
-  var controls = new CameraController(viewerDiv,view,clock,center,{debug: true});
+  var controls = new CameraController(viewerDiv,view,center,{debug: true});
 
   var documents = new DocumentsHandler(viewerDiv,view,controls);
 
@@ -169,7 +165,7 @@ const extent = new itowns.Extent(
   );
 
   //view.addFrameRequester(controls);
-  view.addFrameRequester(documents);
+
 
 
   //
