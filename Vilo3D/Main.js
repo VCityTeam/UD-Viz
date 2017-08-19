@@ -133,9 +133,15 @@ const extent = new itowns.Extent(
   var target = extent.center().xyz().add(offset1);
   var startpos = extent.center().xyz().add(offset2);
 
-  var controls = new CameraController(viewerDiv,view,center,{debug: true});
 
-  var documents = new DocumentsHandler(viewerDiv,view,controls);
+
+  var controls = new CameraController(viewerDiv,view,extent,{debug: true});
+
+
+
+  var documents = new DocumentsHandler(view,controls);
+
+  var temporal = new TemporalController(view,controls,"2017-09-15");
 
   documents.addDocument(
     1,
@@ -166,6 +172,9 @@ const extent = new itowns.Extent(
 
   //view.addFrameRequester(controls);
 
+
+
+  document.getElementById("guidedTourWindow").innerHTML = "<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis augue velit, egestas eu posuere faucibus, aliquet sed eros. Donec vel dictum lorem. Sed sed commodo turpis.Vestibulum ornare sapien et purus sollicitudin egestas. Nunc rutrum ac dolor eu imperdiet. Cras lacinia, odio sitamet scelerisque porttitor, nisi mi pharetra tellus, non sagittis est lorem finibus nisi. Aliquam sed dolor quis esttempus finibus quis uturna.Aeneacommodoat sapien quis eleifend. Sed blandit nisi eu nisl dapibus, in efficitur mauris accumsan. Suspendisse potenti. Aenean lacus ex, aliquet at mauris a, vulputate tincidunt nibh. Interdum et malesuada fames ac ante ipsum primis in faucibus. Sed ut massa sed nibh mollis scelerisque.</p>"
 
 
   //

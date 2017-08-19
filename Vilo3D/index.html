@@ -13,33 +13,36 @@
     <div id="info"></div>
     <div id="docFull">
 
-      <img id="docFullImg" />
+      <img id="docFullImg"/>
       <div id="docFullPanel"></div>
       <button id="docFullClose" type=button>FERMER</button>
       <button id="docFullOrient" type=button>ORIENTER</button>
       <label id="docOpaLabel" for="docOpaSlider">Opacité</label>
-      <input type="range" min="0" max="100" value="75" id="docOpaSlider"
-      step="1" oninput="outputUpdate(value)">
+      <input id="docOpaSlider" type="range" min="0" max="100" value="75"
+      step="1" oninput="docOpaUpdate(value)">
       <output for="docOpaSlider" id="docOpacity">50</output>
 
     </div>
 
-
-    <div id="timeSliderContainer">
-
-      <input id="timeSlider" type="range" name="points" min="0" max="10">
+<button id="temporalTab">TEMPOREL</button>
+    <div id="temporalWindow">
+      <div id="timeSliderMinDate"></div>
+        <div id="timeSliderMaxDate"></div>
+      <input id="timeSlider" type="range">
+      <div id="timeDateDisplay">lalala</div>
+      <input id="timeDateSelector" type="date">
 
 
     </div>
   </div>
-  <div id="docBrowser"></div>
-  <div id="guidedTourText">
-  <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis augue velit, egestas eu posuere faucibus, aliquet sed eros. Donec vel dictum lorem. Sed sed commodo turpis. Vestibulum ornare sapien et purus sollicitudin egestas. Nunc rutrum ac dolor eu imperdiet. Cras lacinia, odio sit amet scelerisque porttitor, nisi mi pharetra tellus, non sagittis est lorem finibus nisi. Aliquam sed dolor quis est tempus finibus quis ut urna. Aenean commodo at sapien quis eleifend. Sed blandit nisi eu nisl dapibus, in efficitur mauris accumsan. Suspendisse potenti. Aenean lacus ex, aliquet at mauris a, vulputate tincidunt nibh. Interdum et malesuada fames ac ante ipsum primis in faucibus. Sed ut massa sed nibh mollis scelerisque.
-  </p>
-</div>
+  <button id="docBrowserTab">DOC</button>
+    <div id="docBrowserWindow"></div>
+    <button id="guidedTourTab">VISITE</button>
+  <div id="guidedTourWindow"></div>
 </div>
 <script src="../../itowns/dist/itowns.js"></script>
 <script src="../UDV-Core/Modules/CameraController/CameraController.js"></script>
+<script src="../UDV-Core/Modules/Temporal/Temporal.js"></script>
 <script src="../UDV-Core/Modules/Documents/Documents.js"></script>
 <script type="text/javascript">
 //let renderer; let exports = {};

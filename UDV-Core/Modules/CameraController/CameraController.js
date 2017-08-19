@@ -27,7 +27,6 @@ var state = STATE.NONE;
 var isCtrlDown = false;
 var select = false;
 
-var cityCenter = new THREE.Vector3();
 
 //starting camera position
 var camStartPos = new THREE.Vector3();
@@ -35,6 +34,9 @@ var camStartPos = new THREE.Vector3();
 //mouse movement
 var lastMousePos = new THREE.Vector2();
 var deltaMousePos = new THREE.Vector2(0,0);
+
+//new camera position when moving
+var nextPosition = new THREE.Vector3();
 
 //camera translation
 var panCamStart = new THREE.Vector3();
@@ -83,13 +85,12 @@ var currentDocData;
 * Constructor
 * @param domElement : the webgl div (city visualization)
 * @param view : the itowns view (planar view)
-* @param clock : THREE.js clock used for time
-* @param center : city center point
-* more parameters can be set by adding {param: value} after the 'center' param, when creating the instance.
-* example : var controls = new CameraController(domElement, view, clock, center, {zoomTravelTime: 0.4, groundHeight: 200});
+* @param extent : the itown extent
+* more parameters can be set by adding {param: value} after the 'extent' param, when creating the instance.
+* example : var controls = new CameraController(domElement, view, extent, {zoomTravelTime: 0.4, groundHeight: 200});
 */
 
-function CameraController(domElement, view, center) {
+function CameraController(domElement, view, extent) {
 
   //extra options : some parameters have default value but can be modified with this
   var options = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
@@ -103,13 +104,14 @@ function CameraController(domElement, view, center) {
   _this.position = _this.camera.position;
   _this.rotation = _this.camera.rotation;
 
-  cityCenter.copy(center);
+  _this.extent = extent;
 
+  _this.cityCenter = extent.center().xyz();
 
   //options
 
-  _this.startPosition = options.startPos || cityCenter.clone().add(new THREE.Vector3(5000,0,5000));
-  _this.startLook = options.startLook || cityCenter;
+  _this.startPosition = options.startPos || _this.cityCenter.clone().add(new THREE.Vector3(5000,0,5000));
+  _this.startLook = options.startLook || _this.cityCenter;
   _this.topViewAltitude = options.topViewAltitude || 13000;
 
   _this.autoTravelTimeMin = options.autoTravelTimeMin || 1.5;
@@ -149,7 +151,7 @@ function CameraController(domElement, view, center) {
   //DEBUG
   if(_this.debug===true){
     _this.view.scene.add(debugCube);
-    debugCube.position.copy(options.startLook || cityCenter);
+    debugCube.position.copy(options.startLook || _this.cityCenter);
     debugCube.updateMatrixWorld();
   }
 
@@ -284,7 +286,7 @@ CameraController.prototype.startTravel = function startTravel(targetPos, travelT
   }
   //case where traveltime !== "auto" : travelTime is a duration in seconds given as parameter
   else{
-      travelDuration = travelTime;
+    travelDuration = travelTime;
   }
 
   //final setup
@@ -305,7 +307,6 @@ CameraController.prototype.endTravel = function endTravel() {
   if(travelUseRotation){
     _this.camera.quaternion.copy(travelEndRot);
   }
-
 
   _this.addInputListeners();
 
@@ -348,7 +349,28 @@ CameraController.prototype.handleTravel = function handleTravel(dt) {
 
 }
 
+/**
+* CURRENTLY NOT IN USE
+* Check if the camera current and next position is within the city extent
+* Returns false if the user would be leaving the extent (current valid, next invalid)
+* Returns true otherwise.
+* Could be used to prevent user to leave the city extent, but still allow movement if the user
+* somehow got out of the extent and is trying to go back inside.
+*/
+CameraController.prototype.checkPosition = function checkPosition() {
 
+  var currentPosValidity = _this.position.x < extent.east() &&  _this.position.x > extent.west()
+  &&  _this.position.y < extent.north() &&  _this.position.y > extent.south();
+
+  var nextPosValidity = nextPosition.x < extent.east() && nextPosition.x > extent.west()
+  && nextPosition.y < extent.north() && nextPosition.y > extent.south();
+
+  var result = (currentPosValidity && !nextPosValidity)? false : true;
+
+  return result;
+
+
+}
 /**
 * CameraController update function : called each frame
 * also called
@@ -362,7 +384,20 @@ CameraController.prototype.update = function update() {
   if(state===STATE.TRAVEL){
     _this.handleTravel(deltaTime);
   }
+  else if(state===STATE.PAN || state===STATE.TRANSLATE || state===STATE.ROTATE){
 
+    //new camera position
+    _this.position.copy(nextPosition);
+
+    if(state===STATE.ROTATE)
+    {
+      //new focus point
+      _this.camera.lookAt(centerPoint);
+    }
+
+  }
+
+  //if something has changed
   if(state!==STATE.NONE){
 
     view.camera.update(window.innerWidth, window.innerHeight);
@@ -465,7 +500,7 @@ CameraController.prototype.get3DPointUnderCursor = function get3DPointUnderCurso
     panDelta.subVectors(panEnd,panStart);
 
     //new camera position
-    _this.position.sub(panDelta);
+    nextPosition.copy(_this.position.clone().sub(panDelta));
 
     //request update
     _this.update();
@@ -590,10 +625,9 @@ CameraController.prototype.get3DPointUnderCursor = function get3DPointUnderCurso
     }
 
     //new camera position
-    _this.position.copy(offset).add(centerPoint);
+    nextPosition.copy(offset).add(centerPoint);
 
-    //new focus point
-    _this.camera.lookAt(centerPoint);
+
 
     //requestupdate;
     _this.update();
@@ -613,7 +647,7 @@ CameraController.prototype.get3DPointUnderCursor = function get3DPointUnderCurso
     targetQuat.setFromAxisAngle( new THREE.Vector3( 1, 0, 0 ), 0*Math.PI / 2 );
 
     //the final position
-    topViewPos.set(cityCenter.x, cityCenter.y, _this.topViewAltitude);
+    topViewPos.set(_this.cityCenter.x, _this.cityCenter.y, _this.topViewAltitude);
 
     //initiate the travel
     _this.startTravel(topViewPos,"auto",targetQuat,true);
@@ -621,9 +655,9 @@ CameraController.prototype.get3DPointUnderCursor = function get3DPointUnderCurso
   }
 
 
-    /**
-    * Triggers an animated movement (travel) to set the camera to starting view
-    */
+  /**
+  * Triggers an animated movement (travel) to set the camera to starting view
+  */
   CameraController.prototype.goToStartView = function goToStartView() {
 
 
@@ -650,7 +684,8 @@ CameraController.prototype.get3DPointUnderCursor = function get3DPointUnderCurso
 
     var dir = vector.sub( _this.position ).normalize();
 
-    _this.position.add(dir.multiplyScalar(dist));
+    nextPosition.copy(_this.position.clone().add(dir.multiplyScalar(dist)));
+
 
     _this.update();
 
@@ -669,18 +704,17 @@ CameraController.prototype.get3DPointUnderCursor = function get3DPointUnderCurso
 
     if(axis==="horizontal"){
 
-      _this.camera.translateX(dist)
+      nextPosition.copy(_this.camera.localToWorld(new THREE.Vector3(dist,0,0))) ;
 
     }
     else if(axis==="vertical"){
 
-      _this.position.add(new THREE.Vector3(0,0,dist)) ;
+      nextPosition.copy(_this.position.clone().add(new THREE.Vector3(0,0,dist))) ;
 
 
     }
 
     _this.update();
-
 
   }
 

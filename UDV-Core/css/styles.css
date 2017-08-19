@@ -45,7 +45,7 @@ body {
   height: 20px;
 
   color: white;
-  background-color: rgba(0,0,0,0.75);
+  background-color: rgba(0,0,0,0.5);
   font-size: 14;
   text-align: center;
 
@@ -55,22 +55,43 @@ body {
 
 }
 
-#docBrowser{
+#docBrowserTab{
+
+  position: absolute;
+  z-index: 20;
+
+  margin : 3px;
+
+  border: 1px solid black;
+   background-color: white;
+   color: black;
+
+  height: 30px;
+  top: 0;
+  left: 5%;
+
+  pointer-events: auto
 
 
+}
+
+#docBrowserWindow{
+
+ display: none;
   position: absolute;
   z-index: 10;
 
-  margin : auto;
+  margin : 3px;
+  margin-left: 0px;
 
-  top: 10%;
+  top: 30px;
   left: 0;
+
+  border : 1px solid grey;
 
 
   width: 20%;
   height: 80%;
-
-
 
   color: white;
   background-color: rgba(0,0,0,0.5);
@@ -84,17 +105,41 @@ body {
 
 }
 
-#guidedTourText{
+#guidedTourTab{
+
+  position: absolute;
+  z-index: 20;
+
+  margin : 3px;
+
+  border: 1px solid black;
+   background-color: white;
+      color: black;
+
+  height: 30px;
+  top: 0;
+  right: 5%;
 
 
+
+  pointer-events: auto
+
+
+}
+
+#guidedTourWindow{
+
+ display: none;
   position: absolute;
   z-index: 10;
 
-  margin : auto;
+  margin : 3px;
+  margin-right: 0px;
 
-  top: 10%;
+  top: 30px;
   right: 0;
 
+  border : 1px solid grey;
 
   width: 20%;
   height: 80%;
@@ -133,7 +178,7 @@ body {
   display: none;
 
   color: white;
-  background-color: rgba(0,0,0,0.0);
+
   font-size: 14;
 
   padding-left: 3px;
@@ -167,6 +212,8 @@ body {
   position: absolute;
   z-index: 10;
   text-align: center;
+
+    border : 1px solid grey;
 
   pointer-events: none;
 
@@ -271,25 +318,50 @@ body {
 
 }
 
-#timeSliderContainer{
+#temporalTab{
+
+  position: absolute;
+  z-index: 20;
+
+  margin : auto;
+
+  border: 1px solid black;
+   background-color: white;
+      color: black;
+
+  height: 30px;
+  bottom: 2px;
+  left: 0;
+  right : 0;
 
 
+  pointer-events: auto
+
+
+}
+
+#temporalWindow{
+
+  display: none;
+
+  border : 1px solid grey;
 
   position: absolute;
   z-index: 10;
   text-align: center;
 
+  margin: auto;
 
-  margin : auto;
   bottom : 0;
-  left: 0;
+  left : 0;
   right : 0;
 
-  width: 35%;
-  height: 8%;
+
+  width: 40%;
+  height: 150px;
 
   color: white;
-  background-color: rgba(0,0,0,0.67);
+  background-color: rgba(0,0,0,0.5);
   font-size: 14;
 
   padding-left: 3px;
@@ -297,6 +369,25 @@ body {
 
     pointer-events: none;
 
+
+}
+
+#timeDateDisplay{
+
+  display: none;
+
+  position: absolute;
+  z-index: 20;
+  text-align: center;
+
+  margin : auto;
+
+  color : lightgreen;
+font-weight: bold;
+  bottom : 100px;
+
+  right : 0;
+  left : 0;
 
 }
 
@@ -316,6 +407,42 @@ body {
 
     pointer-events: auto;
 
+}
+
+#timeSliderMinDate {
+
+position: absolute;
+  left : 20px;
+  bottom : 55px;
+
+}
+
+#timeSliderMaxDate {
+
+position: absolute;
+  right : 20px;
+  bottom : 55px;
+
+}
+
+#timeDateSelector{
+
+  position: absolute;
+  z-index: 20;
+  text-align: center;
+
+  margin : auto;
+
+  color : black;
+
+  bottom : 100px;
+
+  right : 0;
+  left : 0;
+
+
+    pointer-events: auto;
+    width : 90px;
 }
 
 .outer {

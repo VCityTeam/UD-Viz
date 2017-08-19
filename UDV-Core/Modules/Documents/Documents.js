@@ -10,6 +10,10 @@ var _this2 = null;
 
 var _this3 = null;
 
+var docBrowserWindowIsActive = false;
+var guidedTourWindowIsActive = false;
+var temporalWindowIsActive = false;
+
 //var AllDocuments = [];
 
 
@@ -20,7 +24,7 @@ var _this3 = null;
  * @param controls :
  */
 
-function DocumentsHandler(domElement, view, controls) {
+function DocumentsHandler(view, controls) {
 
   _this2 = this;
 
@@ -30,7 +34,7 @@ function DocumentsHandler(domElement, view, controls) {
 
   _this2.AllDocuments = [];
 
-  _this.view.addFrameRequester(this);
+  _this2.view.addFrameRequester(this);
 
 }
 
@@ -115,7 +119,7 @@ DocumentsHandler.prototype.update = function update() {
 
 // Document User Interface ===========================================================
 
-function outputUpdate(opa) {
+function docOpaUpdate(opa){
   document.querySelector('#docOpacity').value = opa;
   document.getElementById('docFullImg').style.opacity = opa/100;
 }
@@ -129,6 +133,27 @@ document.getElementById("docFullClose").onclick = function () {
 
 document.getElementById("docFullOrient").onclick = function () {
     controls.orientViewToDoc();
+
+
+};
+
+document.getElementById("docBrowserTab").onclick = function () {
+    document.getElementById('docBrowserWindow').style.display = docBrowserWindowIsActive ? "none" : "block";
+    docBrowserWindowIsActive = docBrowserWindowIsActive ? false : true;
+
+
+};
+
+document.getElementById("guidedTourTab").onclick = function () {
+    document.getElementById('guidedTourWindow').style.display = guidedTourWindowIsActive ? "none" : "block";
+    guidedTourWindowIsActive = guidedTourWindowIsActive ? false : true;
+
+
+};
+
+document.getElementById("temporalTab").onclick = function () {
+    document.getElementById('temporalWindow').style.display = temporalWindowIsActive ? "none" : "block";
+    temporalWindowIsActive = temporalWindowIsActive ? false : true;
 
 
 };
