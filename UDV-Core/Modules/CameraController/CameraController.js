@@ -81,6 +81,8 @@ var clock = new THREE.Clock();
 var currentDocIndex;
 var currentDocData;
 
+console.log("test");
+
 /**
 * Constructor
 * @param domElement : the webgl div (city visualization)
@@ -91,6 +93,8 @@ var currentDocData;
 */
 
 function CameraController(domElement, view, extent) {
+
+  console.log("test2");
 
   //extra options : some parameters have default value but can be modified with this
   var options = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};

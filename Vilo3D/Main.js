@@ -130,14 +130,19 @@ const extent = new itowns.Extent(
   var offset2 = new THREE.Vector3(-3000,-3000,3000);
   var offset3 = new THREE.Vector3(000,000,1000);
 
-  var target = extent.center().xyz().add(offset1);
-  var startpos = extent.center().xyz().add(offset2);
+  var target = center.add(offset1);
+  var startpos = new THREE.Vector3(1845341,5174897,800);
+  var startlook = new THREE.Vector3(1843670,5175604,180);
 
 
 
-  var controls = new CameraController(viewerDiv,view,extent,{debug: true});
-
-
+  var controls = new CameraController(viewerDiv,view,extent,
+    {
+      debug: true,
+      startPos: startpos,
+      startLook: startlook
+    }
+  );
 
   var documents = new DocumentsHandler(view,controls);
 
