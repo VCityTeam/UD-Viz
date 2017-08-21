@@ -18,6 +18,7 @@ body {
   position: relative;
 }
 
+
 #viewerDiv {
 
   width: 100%;
@@ -103,6 +104,53 @@ body {
     pointer-events: none;
 
 
+
+}
+
+#docBrowserPreview{
+
+  position: absolute;
+  z-index: 10;
+  top: 0;
+  margin : 5px;
+  height: 40%;
+  right: 0;
+  left : 0;
+
+
+}
+
+#docBrowserPreviewImg{
+
+  width: 100%; /* or any custom size */
+  height: 100%;
+  object-fit: contain;
+
+
+}
+
+#docBrowserText{
+
+  position: absolute;
+  z-index: 10;
+
+  margin : auto;
+  margin-top: 20px;
+  top : 40%;
+  right : 0;
+  left : 0;
+
+  width: 90%;
+  height: 50%;
+
+  text-align: justify;
+
+
+    pointer-events: none;
+
+    overflow: hidden;
+
+
 }
 
 #guidedTourTab{
@@ -158,22 +206,43 @@ body {
 
 }
 
+#guidedTourText{
+
+  position: absolute;
+  z-index: 10;
+
+  margin : auto;
+  margin-top: 20px;
+  top : 40%;
+  right : 0;
+  left : 0;
+
+  width: 90%;
+  height: 50%;
+
+  text-align: justify;
+
+
+    pointer-events: none;
+
+    overflow: hidden;
+
+
+}
+
 #docFull{
   position: absolute;
   z-index: 10;
   text-align: center;
 
-
-
-
   margin : auto;
   top: 0;
-  bottom : 0;
+  bottom : 10%;
   left: 0;
   right : 0;
 
-  width: 50%;
-  height: 50%;
+  width: 55%;
+  height: 55%;
 
   display: none;
 
@@ -185,9 +254,6 @@ body {
   padding-top: 3px;
 
   pointer-events: none;
-
-
-
 
 }
 
@@ -249,7 +315,6 @@ body {
 
 #docOpaLabel{
 
-
   position: absolute;
   z-index: 10;
   text-align: center;
@@ -266,7 +331,6 @@ body {
 
 
 #docOpacity{
-
 
   position: absolute;
   z-index: 10;
@@ -357,8 +421,8 @@ body {
   right : 0;
 
 
-  width: 40%;
-  height: 150px;
+  width: 35%;
+  height: 12.5%;
 
   color: white;
   background-color: rgba(0,0,0,0.5);
@@ -372,24 +436,6 @@ body {
 
 }
 
-#timeDateDisplay{
-
-  display: none;
-
-  position: absolute;
-  z-index: 20;
-  text-align: center;
-
-  margin : auto;
-
-  color : lightgreen;
-font-weight: bold;
-  bottom : 100px;
-
-  right : 0;
-  left : 0;
-
-}
 
 #timeSlider {
   width: 80%;
@@ -400,7 +446,7 @@ font-weight: bold;
 
 
   margin : auto;
-  top: 20px;
+  top: 5%;
   bottom : 0;
   left: 0;
   right : 0;
@@ -413,7 +459,8 @@ font-weight: bold;
 
 position: absolute;
   left : 20px;
-  bottom : 55px;
+  bottom : 45%;
+  font-weight: bold;
 
 }
 
@@ -421,7 +468,8 @@ position: absolute;
 
 position: absolute;
   right : 20px;
-  bottom : 55px;
+  bottom : 45%;
+  font-weight: bold;
 
 }
 
@@ -435,7 +483,7 @@ position: absolute;
 
   color : black;
 
-  bottom : 100px;
+  bottom : 60%;
 
   right : 0;
   left : 0;
@@ -445,22 +493,38 @@ position: absolute;
     width : 90px;
 }
 
-.outer {
-  display: table;
-  position: absolute;
-  height: 100%;
-  width: 100%;
+#help {
+    position: absolute;
+    z-index: 100;
 
+    width: 300px;
+
+    margin: auto;
+    left : 0;
+    right: 0;
+
+    color: white;
+    color: #eee;
+    font: 11px 'Lucida Grande',sans-serif;
+    line-height: normal;
+    text-shadow: 0 -1px 0 #111;
+    padding: 0 1rem;
+    background: rgba(0,0,0,0.75);
+    border: 1px solid #2c2c2c;
+    opacity: 0.8;
+    pointer-events: none;
 }
 
-.middle {
-  display: table-cell;
-  vertical-align: middle;
-
+#help > p {
+    margin: 0.5rem 0;
 }
 
-.inner {
-  margin-left: auto;
-  margin-right: auto;
-  width: 100%;
+#help > ul {
+    padding: 0 1rem;
+}
+
+@media (max-width: 600px) {
+    #help {
+        display: none;
+    }
 }

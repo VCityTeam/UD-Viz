@@ -1,7 +1,7 @@
 
 THREE = itowns.THREE;
 
-var showBuildings = false;
+var showBuildings = true;
 
 // # Planar (EPSG:3946) viewer
 
@@ -79,27 +79,6 @@ const extent = new itowns.Extent(
     return [layer.root];
   };
 
-  // Create a new Layer 3d-tiles For DiscreteLOD
-  // -------------------------------------------
-  var $3dTilesLayerDiscreteLOD = new itowns.GeometryLayer('3d-tiles-discrete-lod', view.scene);
-
-  $3dTilesLayerDiscreteLOD.preUpdate = preUpdateGeo;
-  $3dTilesLayerDiscreteLOD.update = itowns.process3dTilesNode(
-    itowns.$3dTilesCulling,
-    itowns.$3dTilesSubdivisionControl
-  );
-  $3dTilesLayerDiscreteLOD.name = 'DiscreteLOD';
-  $3dTilesLayerDiscreteLOD.url = 'http://localhost:9090/getCity?city=lyon';
-  $3dTilesLayerDiscreteLOD.protocol = '3d-tiles'
-  $3dTilesLayerDiscreteLOD.overrideMaterials = true;  // custom cesium shaders are not functional
-  $3dTilesLayerDiscreteLOD.type = 'geometry';
-  $3dTilesLayerDiscreteLOD.visible = true;
-  $3dTilesLayerDiscreteLOD.lighting = {
-    enable: true,
-    position: { x: -0.5, y: 0.0, z: 1000.0 }
-  };
-
-  if(showBuildings){itowns.View.prototype.addLayer.call(view, $3dTilesLayerDiscreteLOD);}
 
   // Create a new Layer 3d-tiles For Viewer Request Volume
   // -----------------------------------------------------
@@ -114,7 +93,7 @@ const extent = new itowns.Extent(
   $3dTilesLayerRequestVolume.name = 'RequestVolume';
   $3dTilesLayerRequestVolume.url = 'http://localhost:9090/getCity?city=lyon';
   $3dTilesLayerRequestVolume.protocol = '3d-tiles'
-  $3dTilesLayerRequestVolume.overrideMaterials = true;  // custom cesium shaders are not functional
+  $3dTilesLayerRequestVolume.overrideMaterials = false;  // custom cesium shaders are not functional
   $3dTilesLayerRequestVolume.type = 'geometry';
   $3dTilesLayerRequestVolume.visible = true;
 
@@ -122,7 +101,7 @@ const extent = new itowns.Extent(
 
   //var light = new THREE.DirectionalLight(0xffffff,0.5);
   //view.scene.add(light);
-  var light = new THREE.HemisphereLight( 0x0000ff, 0xff0000, 1 );
+  var light = new THREE.HemisphereLight( 0xffffff, 0xffffff, 0.75 );
   view.scene.add( light );
 
   var center = extent.center().xyz();
@@ -151,9 +130,9 @@ const extent = new itowns.Extent(
   documents.addDocument(
     1,
     'test1.png',
-    target,
-    new THREE.Vector3(1844789,5173976,628),
-    new THREE.Quaternion(0.625,0.105,0.128,0.762),
+    target.add(new THREE.Vector3(200,-200,0)),
+    new THREE.Vector3(1844763,5174252,620),
+    new THREE.Quaternion(0.6081,0.10868,0.13836,0.77414),
     'doc 1 data'
   );
 
@@ -175,11 +154,21 @@ const extent = new itowns.Extent(
     'doc 3 data'
   );
 
+  documents.addDocument(
+    4,
+    'test4.png',
+    target.add(new THREE.Vector3(-600,-300,0)),
+    new THREE.Vector3(1844018,5175759,1908),
+    new THREE.Quaternion(0.000,0.0000,0.0800,1.0),
+    'doc 4 data'
+  );
+
   //view.addFrameRequester(controls);
 
 
 
-  document.getElementById("guidedTourWindow").innerHTML = "<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis augue velit, egestas eu posuere faucibus, aliquet sed eros. Donec vel dictum lorem. Sed sed commodo turpis.Vestibulum ornare sapien et purus sollicitudin egestas. Nunc rutrum ac dolor eu imperdiet. Cras lacinia, odio sitamet scelerisque porttitor, nisi mi pharetra tellus, non sagittis est lorem finibus nisi. Aliquam sed dolor quis esttempus finibus quis uturna.Aeneacommodoat sapien quis eleifend. Sed blandit nisi eu nisl dapibus, in efficitur mauris accumsan. Suspendisse potenti. Aenean lacus ex, aliquet at mauris a, vulputate tincidunt nibh. Interdum et malesuada fames ac ante ipsum primis in faucibus. Sed ut massa sed nibh mollis scelerisque.</p>"
+  document.getElementById("guidedTourText").innerHTML = "<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis augue velit, egestas eu posuere faucibus, aliquet sed eros. Donec vel dictum lorem. Sed sed commodo turpis.Vestibulum ornare sapien et purus sollicitudin egestas. Nunc rutrum ac dolor eu imperdiet. Cras lacinia, odio sitamet scelerisque porttitor, nisi mi pharetra tellus, non sagittis est lorem finibus nisi. Aliquam sed dolor quis esttempus finibus quis uturna.Aeneacommodoat sapien quis eleifend. Sed blandit nisi eu nisl dapibus, in efficitur mauris accumsan. Suspendisse potenti. Aenean lacus ex, aliquet at mauris a, vulputate tincidunt nibh. Interdum et malesuada fames ac ante ipsum primis in faucibus. Sed ut massa sed nibh mollis scelerisque.</p>";
+  document.getElementById("docBrowserText").innerHTML = "<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis augue velit, egestas eu posuere faucibus, aliquet sed eros. Donec vel dictum lorem. Sed sed commodo turpis.Vestibulum ornare sapien et purus sollicitudin egestas. Nunc rutrum ac dolor eu imperdiet. Cras lacinia, odio sitamet scelerisque porttitor, nisi mi pharetra tellus, non sagittis est lorem finibus nisi. Aliquam sed dolor quis esttempus finibus quis uturna.Aeneacommodoat sapien quis eleifend. Sed blandit nisi eu nisl dapibus, in efficitur mauris accumsan. Suspendisse potenti. Aenean lacus ex, aliquet at mauris a, vulputate tincidunt nibh. Interdum et malesuada fames ac ante ipsum primis in faucibus. Sed ut massa sed nibh mollis scelerisque.</p>";
 
 
   //

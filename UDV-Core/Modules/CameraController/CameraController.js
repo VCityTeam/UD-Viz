@@ -10,9 +10,7 @@
 * T : go to top view
 */
 
-
 THREE = itowns.THREE;
-
 
 //scope
 var _this = null;
@@ -81,7 +79,6 @@ var clock = new THREE.Clock();
 var currentDocIndex;
 var currentDocData;
 
-console.log("test");
 
 /**
 * Constructor
@@ -93,8 +90,6 @@ console.log("test");
 */
 
 function CameraController(domElement, view, extent) {
-
-  console.log("test2");
 
   //extra options : some parameters have default value but can be modified with this
   var options = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
@@ -114,7 +109,7 @@ function CameraController(domElement, view, extent) {
 
   //options
 
-  _this.startPosition = options.startPos || _this.cityCenter.clone().add(new THREE.Vector3(5000,0,5000));
+  _this.startPosition = options.startPos || _this.cityCenter.clone().add(new THREE.Vector3(3000,0,3000));
   _this.startLook = options.startLook || _this.cityCenter;
   _this.topViewAltitude = options.topViewAltitude || 13000;
 
@@ -139,6 +134,7 @@ function CameraController(domElement, view, extent) {
   // should be less than 90 deg (90 = parallel to the ground)
   _this.maxZenithAngle = options.maxZenithAngle || 80 * Math.PI / 180;
 
+  // if debug is true, a wireframe cube is displayed in the scene
   _this.debug = options.debug || false;
 
   //starting camera position & rotation
@@ -377,7 +373,6 @@ CameraController.prototype.checkPosition = function checkPosition() {
 }
 /**
 * CameraController update function : called each frame
-* also called
 * updates the view and camera if needed, and handles the animated travel
 */
 CameraController.prototype.update = function update() {
@@ -391,13 +386,7 @@ CameraController.prototype.update = function update() {
   else if(state===STATE.PAN || state===STATE.TRANSLATE || state===STATE.ROTATE){
 
     //new camera position
-    _this.position.copy(nextPosition);
-
-    if(state===STATE.ROTATE)
-    {
-      //new focus point
-      _this.camera.lookAt(centerPoint);
-    }
+    //_this.position.copy(nextPosition);
 
   }
 
@@ -485,6 +474,8 @@ CameraController.prototype.get3DPointUnderCursor = function get3DPointUnderCurso
     //the difference between start and end cursor position
     panDelta.set(0,0,0);
 
+    //nextPosition.copy(_this.position);
+
   };
 
   /**
@@ -504,7 +495,9 @@ CameraController.prototype.get3DPointUnderCursor = function get3DPointUnderCurso
     panDelta.subVectors(panEnd,panStart);
 
     //new camera position
-    nextPosition.copy(_this.position.clone().sub(panDelta));
+
+    _this.position.sub(panDelta);
+    //nextPosition.copy(_this.position.clone().sub(panDelta));
 
     //request update
     _this.update();
@@ -574,6 +567,8 @@ CameraController.prototype.get3DPointUnderCursor = function get3DPointUnderCurso
       debugCube.updateMatrixWorld();
     }
 
+    //nextPosition.copy(_this.position);
+
     state = STATE.ROTATE;
 
   };
@@ -629,9 +624,11 @@ CameraController.prototype.get3DPointUnderCursor = function get3DPointUnderCurso
     }
 
     //new camera position
-    nextPosition.copy(offset).add(centerPoint);
+    //nextPosition.copy(offset).add(centerPoint);
 
+    _this.position.copy(offset).add(centerPoint);
 
+      _this.camera.lookAt(centerPoint);
 
     //requestupdate;
     _this.update();
@@ -688,7 +685,9 @@ CameraController.prototype.get3DPointUnderCursor = function get3DPointUnderCurso
 
     var dir = vector.sub( _this.position ).normalize();
 
-    nextPosition.copy(_this.position.clone().add(dir.multiplyScalar(dist)));
+    //nextPosition.copy(_this.position.clone().add(dir.multiplyScalar(dist)));
+
+    _this.position.add(dir.multiplyScalar(dist));
 
 
     _this.update();
@@ -708,12 +707,15 @@ CameraController.prototype.get3DPointUnderCursor = function get3DPointUnderCurso
 
     if(axis==="horizontal"){
 
-      nextPosition.copy(_this.camera.localToWorld(new THREE.Vector3(dist,0,0))) ;
+      //nextPosition.copy(_this.camera.localToWorld(new THREE.Vector3(dist,0,0))) ;
+      _this.position.copy(_this.camera.localToWorld(new THREE.Vector3(dist,0,0))) ;
 
     }
     else if(axis==="vertical"){
 
-      nextPosition.copy(_this.position.clone().add(new THREE.Vector3(0,0,dist))) ;
+      //nextPosition.copy(_this.position.clone().add(new THREE.Vector3(0,0,dist))) ;
+      //_this.position.copy(_this.position.clone().add(new THREE.Vector3(0,0,dist))) ;
+        _this.position.copy(_this.camera.localToWorld(new THREE.Vector3(0,dist,0))) ;
 
 
     }
@@ -727,12 +729,15 @@ CameraController.prototype.get3DPointUnderCursor = function get3DPointUnderCurso
   */
   CameraController.prototype.orientViewToDoc = function orientViewToDoc() {
 
-    document.getElementById('docFullImg').style.opacity=0.85;
-    document.getElementById('docOpaSlider').value = 85;
-    document.querySelector('#docOpacity').value = 85;
+    document.getElementById('docFullImg').style.opacity=1;
+    document.getElementById('docOpaSlider').value = 100;
+    document.querySelector('#docOpacity').value = 100;
 
     document.getElementById('docFull').style.display = "block";
     document.getElementById('docFullImg').src = currentDocData.imageSource;
+    document.getElementById('docBrowserPreviewImg').src = currentDocData.imageSource;
+
+    //document.getElementById('docBrowserWindow').style.display = "block";
 
 
     _this.startTravel(currentDocData.viewPosition,"auto",currentDocData.viewQuaternion,true);

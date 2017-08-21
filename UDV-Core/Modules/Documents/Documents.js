@@ -59,7 +59,6 @@ function Document(docIndex,docImageSource,billboardPosition,docViewPosition,docV
 
   _this3.billboardGeometry = new THREE.Mesh( new THREE.PlaneGeometry( 80, 50, 1 , 1), billboardMaterial );
 
-
   _this3.billboardGeometryFrame =  new THREE.Mesh(new THREE.PlaneGeometry( 80, 50, 1 , 1), frameMaterial );
 
   _this3.billboardGeometry.position.copy(billboardPosition);

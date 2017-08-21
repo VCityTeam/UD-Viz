@@ -7,7 +7,20 @@
 </head>
 <body>
 
+
   <div id="wrapper">
+    <div id="help">
+        <p>Key bindings</p>
+        <ul>
+          <li>Mouse Left-Click + drag : camera translation</li>
+          <li>Mouse Right-Click + drag : camera rotation</li>
+          <li>Mouse Middle Click : smart zoom</li>
+          <li>Mouse Wheel : zoom in/out</li>
+          <li>S : orient camera to the start view</li>
+          <li>T : orient camera to a top view</li>
+        </ul>
+    </div>
+
     <div id="viewerDiv"></div>
 
     <div id="info"></div>
@@ -29,16 +42,19 @@
       <div id="timeSliderMinDate"></div>
         <div id="timeSliderMaxDate"></div>
       <input id="timeSlider" type="range">
-      <div id="timeDateDisplay">lalala</div>
       <input id="timeDateSelector" type="date">
 
 
     </div>
   </div>
   <button id="docBrowserTab">DOC</button>
-    <div id="docBrowserWindow"></div>
+    <div id="docBrowserWindow">
+<div id="docBrowserPreview"><img id="docBrowserPreviewImg" src = "test2.png"/></div>
+<div id="docBrowserText"></div>
+    </div>
     <button id="guidedTourTab">VISITE</button>
-  <div id="guidedTourWindow"></div>
+  <div id="guidedTourWindow">
+  <div id="guidedTourText"></div>
 </div>
 <script src="../../itowns/dist/itowns.js"></script>
 <script src="../UDV-Core/Modules/CameraController/CameraController.js"></script>
