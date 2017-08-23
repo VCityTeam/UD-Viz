@@ -11,3 +11,5 @@ Then, clone UDV alongside iTowns. UDV and iTowns must be in the same directory, 
 **Shorter install** : (should work to test CameraController) just clone UDV alongside iTowns, skipping the rest of the framework. Set "showBuildings" to false (line 4 in UDV/Vilo3D/Main.js).
 
 **Launch** : open UDV/Vilo3D/index.html
+
+**Use the Camera Controls for your project** : TO DO
