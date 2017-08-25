@@ -114,7 +114,7 @@ const extent = new itowns.Extent(
   var startlook = new THREE.Vector3(1843670,5175604,180);
 
 
-
+/*
   var controls = new CameraController(viewerDiv,view,extent,
     {
       debug: true,
@@ -122,6 +122,9 @@ const extent = new itowns.Extent(
       startLook: startlook
     }
   );
+  */
+
+  var controls = new PlanarControls(view, {});
 
   var documents = new DocumentsHandler(view,controls);
 

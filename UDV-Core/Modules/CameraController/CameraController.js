@@ -25,7 +25,6 @@ var state = STATE.NONE;
 var isCtrlDown = false;
 var select = false;
 
-
 //starting camera position
 var camStartPos = new THREE.Vector3();
 
@@ -109,21 +108,21 @@ function CameraController(domElement, view, extent) {
 
   //options
 
-  _this.startPosition = options.startPos || _this.cityCenter.clone().add(new THREE.Vector3(3000,0,3000));
+  _this.startPosition = options.startPos || _this.cityCenter.clone().add(new THREE.Vector3(1000,0,1000));
   _this.startLook = options.startLook || _this.cityCenter;
   _this.topViewAltitude = options.topViewAltitude || 13000;
 
   _this.autoTravelTimeMin = options.autoTravelTimeMin || 1.5;
-  _this.autoTravelTimeMax = options.autoTravelTimeMax || 5;
+  _this.autoTravelTimeMax = options.autoTravelTimeMax || 4;
   _this.autoTravelTimeDist = options.autoTravelTimeDist || 30000;
 
   _this.smartZoomHeightMin = options.smartZoomHeightMin || 100;
   _this.smartZoomHeightMax = options.smartZoomHeightMax || 500;
 
-  _this.zoomTravelTime = options.zoomTravelTime || 0.3;
+  _this.zoomTravelTime = options.zoomTravelTime || 0.2;
 
-  _this.zoomInFactor = options.zoomInFactor || 0.3;
-  _this.zoomOutFactor = options.zoomOutFactor || 0.55;
+  _this.zoomInFactor = options.zoomInFactor || 0.25;
+  _this.zoomOutFactor = options.zoomOutFactor || 0.4;
 
   _this.rotateSpeed = options.rotateSpeed || 2;
 
@@ -175,7 +174,7 @@ CameraController.prototype.constructor = CameraController;
 CameraController.prototype.smooth = function smooth(x) {
 
   //between 1.0 and 1.5
-  var p = 1.33;
+  var p = 1.25;
 
   var smoothed = Math.pow((x*x*(3-2*x)),p);
 
@@ -393,9 +392,9 @@ CameraController.prototype.update = function update() {
   //if something has changed
   if(state!==STATE.NONE){
 
-    view.camera.update(window.innerWidth, window.innerHeight);
+    _this.view.camera.update(window.innerWidth, window.innerHeight);
 
-    view.notifyChange(true);
+    _this.view.notifyChange(true);
 
   }
 
@@ -1077,7 +1076,7 @@ CameraController.prototype.get3DPointUnderCursor = function get3DPointUnderCurso
     mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
     mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
     raycaster.setFromCamera( mouse, _this.camera );
-    var intersects = raycaster.intersectObjects( view.scene.children );
+    var intersects = raycaster.intersectObjects( _this.view.scene.children );
     for ( var i = 0; i < intersects.length; i++ ) {
 
       if( intersects[ i ].object.userData.type === 'billboard'){

@@ -500,8 +500,9 @@ position: absolute;
     width: 300px;
 
     margin: auto;
-    left : 0;
+
     right: 0;
+    left: 0;
 
     color: white;
     color: #eee;
