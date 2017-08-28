@@ -59,7 +59,7 @@ function GuidedTour(docHandler) {
 
     this.goToNextStep = function goToNextStep(){
 
-        if(this.currentIndex === this.tourSteps.length -1){
+        if(this.currentIndex + 1 >= this.tourSteps.length){
             return;
         }
 

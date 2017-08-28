@@ -7,6 +7,7 @@
 THREE = itowns.THREE;
 
 var docBrowserWindowIsActive = false;
+var billboardsAreActive = true;
 
 
 
@@ -47,6 +48,12 @@ function DocumentsHandler(view, controls) {
 
     };
 
+    this.initialize = function initialize(){
+
+        this.currentDoc = this.AllDocuments[0];
+        this.updateBrowser();
+    }
+
     /**
     * adds a Document to the DocumentHandler.
     *
@@ -63,7 +70,50 @@ function DocumentsHandler(view, controls) {
 
     };
 
+    this.nextDoc = function nextDoc(){
+
+        const index = this.currentDoc.index;
+
+        if(index+1 >= this.AllDocuments.length){
+
+            return;
+        }
+        else {
+
+            this.currentDoc = this.AllDocuments[index+1];
+            this.updateBrowser();
+        }
+
+
+    }
+
+    this.previousDoc = function previousDoc(){
+
+        const index = this.currentDoc.index;
+        if(index === 0){
+            return;
+        }
+        else {
+
+            this.currentDoc = this.AllDocuments[index-1];
+            this.updateBrowser();
+        }
+
+
+    }
+
+
+    this.updateBrowser = function updateBrowser(){
+
+        // update text TO DO
+        document.getElementById('docBrowserPreviewImg').src = this.currentDoc.imageSourceBD;
+
+
+    }
+
     this.showBillboards = function showBillboards(){
+
+        document.getElementById("docBrowserToggleBillboard").innerHTML = "MASQUER DOCS";
 
         this.AllDocuments.forEach(function(element){
             this.view.scene.add(element.billboardGeometry);
@@ -71,9 +121,13 @@ function DocumentsHandler(view, controls) {
             element.billboardGeometry.updateMatrixWorld();
             element.billboardGeometryFrame.updateMatrixWorld();
         });
+
+        this.view.notifyChange(true);
     }
 
     this.hideBillboards = function hideBillboards(){
+
+        document.getElementById("docBrowserToggleBillboard").innerHTML = "AFFICHER DOCS";
 
         this.AllDocuments.forEach(function(element){
             this.view.scene.remove(element.billboardGeometry);
@@ -81,6 +135,22 @@ function DocumentsHandler(view, controls) {
             element.billboardGeometry.updateMatrixWorld();
             element.billboardGeometryFrame.updateMatrixWorld();
         });
+
+        this.view.notifyChange(true);
+    }
+
+    this.toggleBillboards = function toggleBillboards(){
+
+        billboardsAreActive = !billboardsAreActive;
+
+        if(billboardsAreActive){
+            this.showBillboards();
+
+        }
+        else{
+            this.hideBillboards();
+
+        }
     }
 
     /**
@@ -108,8 +178,55 @@ function DocumentsHandler(view, controls) {
     }
 
     this.domElement.addEventListener('mousedown', onMouseClick.bind(this), false);
+
     document.getElementById("docFullOrient").addEventListener('mousedown', this.orientViewToDoc.bind(this),false);
     document.getElementById("docFullClose").addEventListener('mousedown',this.closeDocFull.bind(this),false);
+    document.getElementById("docBrowserToggleBillboard").addEventListener('mousedown',this.toggleBillboards.bind(this),false);
+    document.getElementById("docBrowserNextButton").addEventListener('mousedown',this.nextDoc.bind(this),false);
+    document.getElementById("docBrowserPreviousButton").addEventListener('mousedown',this.previousDoc.bind(this),false);
+    document.getElementById("docBrowserOrientButton").addEventListener('mousedown', this.orientViewToDoc.bind(this),false);
+
+    this.addDocument(
+        0,
+        'test1.png',
+        'test1BD.png',
+        target.add(new THREE.Vector3(200,-200,0)),
+        new THREE.Vector3(1844763,5174252,620),
+        new THREE.Quaternion(0.6081,0.10868,0.13836,0.77414),
+        'doc 0 data'
+    );
+
+    this.addDocument(
+        1,
+        'test2.png',
+        'test2.png',
+        target.add(new THREE.Vector3(300,000,0)),
+        new THREE.Vector3(1844789,5172976,628),
+        new THREE.Quaternion(0.625,0.105,0.128,0.762),
+        'doc 1 data'
+    );
+
+    this.addDocument(
+        2,
+        'test3.png',
+        'test3.png',
+        target.add(new THREE.Vector3(000,300,0)),
+        new THREE.Vector3(1842789,5173976,628),
+        new THREE.Quaternion(0.625,0.105,0.128,0.762),
+        'doc 2 data'
+    );
+
+    this.addDocument(
+        3,
+        'test4.png',
+        'test4.png',
+        target.add(new THREE.Vector3(-600,-300,0)),
+        new THREE.Vector3(1844018,5175759,1908),
+        new THREE.Quaternion(0.000,0.0000,0.0800,1.0),
+        'doc 3 data'
+    );
+
+    this.initialize();
 
 
 

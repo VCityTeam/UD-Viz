@@ -1,7 +1,7 @@
 
 THREE = itowns.THREE;
 
-var showBuildings = false;
+var showBuildings = true;
 
 var helpIsActive = true;
 
@@ -135,7 +135,7 @@ const extent = new itowns.Extent(
 view.camera.setPosition(new itowns.Coordinates('EPSG:3946', extent.west(), extent.south(), 2000));
 view.camera.camera3D.lookAt(extent.center().xyz());
 
-var controls = new PlanarControls(view, {});
+var controls = new PlanarControls(view, {autoTravelTimeMin: 2.0});
 
 var documents = new DocumentsHandler(view,controls);
 
@@ -143,45 +143,7 @@ var temporal = new TemporalController(view,controls,"2017-09-15");
 
 
 
-documents.addDocument(
-    1,
-    'test1.png',
-    'test1BD.png',
-    target.add(new THREE.Vector3(200,-200,0)),
-    new THREE.Vector3(1844763,5174252,620),
-    new THREE.Quaternion(0.6081,0.10868,0.13836,0.77414),
-    'doc 1 data'
-);
 
-documents.addDocument(
-    2,
-    'test2.png',
-    'test2.png',
-    target.add(new THREE.Vector3(300,000,0)),
-    new THREE.Vector3(1844789,5172976,628),
-    new THREE.Quaternion(0.625,0.105,0.128,0.762),
-    'doc 2 data'
-);
-
-documents.addDocument(
-    3,
-    'test3.png',
-    'test3.png',
-    target.add(new THREE.Vector3(000,300,0)),
-    new THREE.Vector3(1842789,5173976,628),
-    new THREE.Quaternion(0.625,0.105,0.128,0.762),
-    'doc 3 data'
-);
-
-documents.addDocument(
-    4,
-    'test4.png',
-    'test4.png',
-    target.add(new THREE.Vector3(-600,-300,0)),
-    new THREE.Vector3(1844018,5175759,1908),
-    new THREE.Quaternion(0.000,0.0000,0.0800,1.0),
-    'doc 4 data'
-);
 
 documents.showBillboards();
 documents.hideBillboards();
