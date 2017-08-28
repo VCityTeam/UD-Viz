@@ -1,66 +1,75 @@
 <html>
 <head>
-  <title>UDV - Vilo3D Test</title>
-  <link rel="stylesheet" href="../UDV-Core/css/styles.css">
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UDV - Vilo3D Test</title>
+    <link rel="stylesheet" href="../UDV-Core/css/styles.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
 
 
-  <div id="wrapper">
-    <div id="help">
-        <p>Key bindings</p>
-        <ul>
-          <li>Mouse Left-Click + drag : camera translation</li>
-          <li>Mouse Right-Click + drag : camera rotation</li>
-          <li>Mouse Middle Click : smart zoom</li>
-          <li>Mouse Wheel : zoom in/out</li>
-          <li>S : orient camera to the start view</li>
-          <li>T : orient camera to a top view</li>
-        </ul>
+    <div id="wrapper">
+        <button id="helpTab">AIDE</button>
+        <div id="help">
+            <p>Contrôles caméra</p>
+            <ul>
+                <li>Clic-gauche : déplacement par rapport au sol</li>
+                <li>Clic-droit : déplacement vertical/latéral</li>
+                <li>Ctrl + Clic-gauche : rotation</li>
+                <li>Espace / Clic molette : zoom intelligent</li>
+                <li>Molette : zoom</li>
+                <li>T : vue de dessus</li>
+                <li>Y : retour à la vue de départ</li>
+            </ul>
+        </div>
+
+        <div id="viewerDiv"></div>
+
+        <div id="info"></div>
+        <div id="docFull">
+
+            <img id="docFullImg"/>
+            <div id="docFullPanel"></div>
+            <button id="docFullClose" type=button>FERMER</button>
+            <button id="docFullOrient" type=button>ORIENTER</button>
+            <label id="docOpaLabel" for="docOpaSlider">Opacité</label>
+            <input id="docOpaSlider" type="range" min="0" max="100" value="75"
+            step="1" oninput="docOpaUpdate(value)">
+            <output for="docOpaSlider" id="docOpacity">50</output>
+
+        </div>
+
+        <button id="temporalTab">TEMPOREL</button>
+        <div id="temporalWindow">
+            <div id="timeSliderMinDate"></div>
+            <div id="timeSliderMaxDate"></div>
+            <input id="timeSlider" type="range">
+            <input id="timeDateSelector" type="date">
+        </div>
     </div>
-
-    <div id="viewerDiv"></div>
-
-    <div id="info"></div>
-    <div id="docFull">
-
-      <img id="docFullImg"/>
-      <div id="docFullPanel"></div>
-      <button id="docFullClose" type=button>FERMER</button>
-      <button id="docFullOrient" type=button>ORIENTER</button>
-      <label id="docOpaLabel" for="docOpaSlider">Opacité</label>
-      <input id="docOpaSlider" type="range" min="0" max="100" value="75"
-      step="1" oninput="docOpaUpdate(value)">
-      <output for="docOpaSlider" id="docOpacity">50</output>
-
-    </div>
-
-<button id="temporalTab">TEMPOREL</button>
-    <div id="temporalWindow">
-      <div id="timeSliderMinDate"></div>
-        <div id="timeSliderMaxDate"></div>
-      <input id="timeSlider" type="range">
-      <input id="timeDateSelector" type="date">
-
-
-    </div>
-  </div>
-  <button id="docBrowserTab">DOC</button>
+    <button id="docBrowserTab">DOC</button>
     <div id="docBrowserWindow">
-<div id="docBrowserPreview"><img id="docBrowserPreviewImg" src = "test2.png"/></div>
-<div id="docBrowserText"></div>
+        <div id="docBrowserPreview"><img id="docBrowserPreviewImg" src = "test2.png"/></div>
+        <div id="docBrowserText"></div>
+        <button id="docBrowserNextButton" type=button>SUIVANT</button>
+        <button id="docBrowserPreviousButton" type=button>PRECEDENT</button>
     </div>
     <button id="guidedTourTab">VISITE</button>
-  <div id="guidedTourWindow">
-  <div id="guidedTourText"></div>
-</div>
-<script src="../../itowns/dist/itowns.js"></script>
-<script src="../UDV-Core/Modules/CameraController/PlanarControls.js"></script>
-<script src="../UDV-Core/Modules/Temporal/Temporal.js"></script>
-<script src="../UDV-Core/Modules/GuidedTour/GuidedTour.js"></script>
-<script src="../UDV-Core/Modules/Documents/Documents.js"></script>
-<script src="Main.js"></script>
+    <div id="guidedTourWindow">
+        <div id="guidedTourTitle"></div>
+        <div id="guidedTourText1"></div>
+        <div id="guidedTourDocPreview"><img id="guidedTourDocPreviewImg" src = "test2.png"/></div>
+        <div id="guidedTourText2"></div>
+        <button id="guidedTourNextButton" type=button>SUIVANT</button>
+        <button id="guidedTourPreviousButton" type=button>PRECEDENT</button>
+        <button id="guidedTourExitButton" type=button>SORTIE</button>
+        <button id="guidedTourStartButton" type=button>DEMARRER</button>
+    </div>
+    <script src="../../itowns/dist/itowns.js"></script>
+    <script src="../UDV-Core/Modules/CameraController/PlanarControls.js"></script>
+    <script src="../UDV-Core/Modules/Temporal/Temporal.js"></script>
+    <script src="../UDV-Core/Modules/GuidedTour/GuidedTour.js"></script>
+    <script src="../UDV-Core/Modules/Documents/Documents.js"></script>
+    <script src="Main.js"></script>
 </body>
 </html>

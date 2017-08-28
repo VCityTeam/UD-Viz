@@ -1,35 +1,36 @@
 
 
 html {
-  font-family: sans-serif;
-  height: 100%;
-  width: 100%;
+    font-family: sans-serif;
+    font-size: 14px;
+    height: 100%;
+    width: 100%;
 }
 
 body {
-  margin: 0;
-  background-color: black;
-  overflow: hidden;
-  height: 100%;
+    margin: 0;
+    background-color: black;
+    overflow: hidden;
+    height: 100%;
 }
 #wrapper {
-  width: 100%;
-  height: 100%;
-  position: relative;
+    width: 100%;
+    height: 100%;
+    position: relative;
 }
 
 
 #viewerDiv {
 
-  width: 100%;
-  height: 100%;
-  position: absolute;
+    width: 100%;
+    height: 100%;
+    position: absolute;
 
-  top: 0;
-  left: 0;
+    top: 0;
+    left: 0;
 
-  margin : auto auto;
-  padding: 0;
+    margin : auto auto;
+    padding: 0;
 }
 
 
@@ -38,68 +39,70 @@ body {
 #info{
 
 
-  position: absolute;
-  z-index: 99;
-  right: 0;
-  bottom: 0;
-  width: 110px;
-  height: 20px;
+    position: absolute;
+    z-index: 99;
+    right: 0;
+    bottom: 0;
+    width: 110px;
+    height: 20px;
 
-  color: white;
-  background-color: rgba(0,0,0,0.5);
-  font-size: 14;
-  text-align: center;
+    color: white;
+    background-color: rgba(30,30,30,0.4);
+    font-size: 14;
+    text-align: center;
 
-  padding-left: 3px;
-  padding-top: 3px;
+    padding-left: 3px;
+    padding-top: 3px;
 
 
 }
 
 #docBrowserTab{
 
-  position: absolute;
-  z-index: 20;
+    position: absolute;
+    z-index: 20;
 
-  margin : 3px;
+    margin : 3px;
 
-  border: 1px solid black;
-   background-color: white;
-   color: black;
+    border: 1px solid black;
+    background-color: white;
+    color: black;
 
-  height: 30px;
-  top: 0;
-  left: 5%;
+    height: 30px;
+    top: 0;
+    left: 5%;
 
-  pointer-events: auto
+    pointer-events: auto
 
 
 }
 
 #docBrowserWindow{
 
- display: none;
-  position: absolute;
-  z-index: 10;
+    display: none;
+    position: absolute;
+    z-index: 10;
 
-  margin : 3px;
-  margin-left: 0px;
+    margin : 3px;
+    margin-left: 0px;
 
-  top: 30px;
-  left: 0;
+    top: 30px;
+    left: 0;
 
-  border : 1px solid grey;
+    border : 1px solid rgb(50,50,50);
 
 
-  width: 20%;
-  height: 80%;
+text-align: center;
 
-  color: white;
-  background-color: rgba(0,0,0,0.5);
-  font-size: 14;
+    width: 20%;
+    height: 85%;
 
-  padding-left: 3px;
-  padding-top: 3px;
+    color: white;
+    background-color: rgba(30,30,30,0.4);
+    font-size: 14;
+
+    padding-left: 3px;
+    padding-top: 3px;
 
     pointer-events: none;
 
@@ -109,186 +112,375 @@ body {
 
 #docBrowserPreview{
 
-  position: absolute;
-  z-index: 10;
-  top: 0;
-  margin : 5px;
-  height: 40%;
-  right: 0;
-  left : 0;
+    z-index: 20;
+    height: 35%;
+    display:inline-block
+
+    margin-top: 20px;
+    margin: 10px;
 
 
 }
 
 #docBrowserPreviewImg{
 
-  width: 100%; /* or any custom size */
-  height: 100%;
-  object-fit: contain;
-
+    width: 100%; /* or any custom size */
+    height: 100%;
+    object-fit: contain;
 
 }
 
 #docBrowserText{
 
-  position: absolute;
-  z-index: 10;
+    display:inline-block;
 
-  margin : auto;
-  margin-top: 20px;
-  top : 40%;
-  right : 0;
-  left : 0;
+    margin-top: 20px;
+    margin: 10px;
+    padding: 5px;
+    padding-left: 10px;
+    padding-right: 10px;
 
-  width: 90%;
-  height: 50%;
+    line-height: 130%;
 
-  text-align: justify;
+    height: 40%;
+
+    color : black;
+    background-color: ivory ;
+
+    border : 1px solid rgb(50,50,50);
+
+    text-align: justify;
+
+    overflow: scroll;
+    pointer-events: auto;
+
+}
+
+#docBrowserNextButton{
+
+    position: absolute;
+    z-index: 20;
+
+    bottom : 0;
+    right : 0;
+
+    margin : 5px;
+
+    border: 1px solid black;
+    background-color: white;
+    color: black;
+
+    height: 30px;
+
+    pointer-events: auto;
+
+}
+
+#docBrowserPreviousButton{
 
 
-    pointer-events: none;
+        position: absolute;
+        z-index: 20;
 
-    overflow: hidden;
+        bottom : 0;
+        left : 0;
 
+        margin : 5px;
+
+        border: 1px solid black;
+        background-color: white;
+        color: black;
+
+        height: 30px;
+
+        pointer-events: auto;
 
 }
 
 #guidedTourTab{
 
-  position: absolute;
-  z-index: 20;
+    position: absolute;
+    z-index: 20;
 
-  margin : 3px;
+    margin : 3px;
 
-  border: 1px solid black;
-   background-color: white;
-      color: black;
+    border: 1px solid black;
+    background-color: white;
+    color: black;
 
-  height: 30px;
-  top: 0;
-  right: 5%;
+    height: 30px;
+    top: 0;
+    right: 5%;
 
-
-
-  pointer-events: auto
+    pointer-events: auto
 
 
 }
 
 #guidedTourWindow{
 
- display: none;
-  position: absolute;
-  z-index: 10;
+    display: none;
+    position: absolute;
+    z-index: 10;
 
-  margin : 3px;
-  margin-right: 0px;
+    margin : 3px;
+    margin-right: 0px;
 
-  top: 30px;
-  right: 0;
+    top: 30px;
+    right: 0;
 
-  border : 1px solid grey;
+    border : 1px solid rgb(50,50,50);
 
-  width: 20%;
-  height: 80%;
+    text-align: center;
 
+    color: white;
 
+    width: 20%;
+    height: 85%;
 
-  color: white;
-  background-color: rgba(0,0,0,0.5);
-  font-size: 14;
-
-  padding-left: 3px;
-  padding-top: 3px;
+    color : black;
+    background-color: rgba(30,30,30,0.4);
+    font-size: 14;
 
     pointer-events: none;
 
 
 }
 
-#guidedTourText{
+#guidedTourTitle{
 
-  position: absolute;
-  z-index: 10;
+    display:inline-block;
 
-  margin : auto;
-  margin-top: 20px;
-  top : 40%;
-  right : 0;
-  left : 0;
+    margin-top: 10px;
 
-  width: 90%;
-  height: 50%;
+    color: white;
 
-  text-align: justify;
+    text-align: center;
 
-
-    pointer-events: none;
+    font-weight: bold;
 
     overflow: hidden;
 
+}
+
+#guidedTourText1{
+
+    display:inline-block;
+
+    margin-top: 20px;
+    margin: 10px;
+    padding: 5px;
+    padding-left: 10px;
+    padding-right: 10px;
+
+    line-height: 130%;
+
+    height: 40%;
+
+    color : black;
+    background-color: ivory ;
+
+    border : 1px solid rgb(50,50,50);
+
+    text-align: justify;
+
+    overflow: scroll;
+    pointer-events: auto;
 
 }
 
+#guidedTourText2{
+
+    display:inline-block;
+
+    margin-top: 20px;
+    margin: 10px;
+    padding: 5px;
+    padding-left: 10px;
+    padding-right: 10px;
+
+    line-height: 130%;
+
+    height: 12%;
+
+    color : black;
+    background-color: ivory ;
+    border : 1px solid rgb(50,50,50);
+
+    text-align: justify;
+
+    overflow: scroll;
+    pointer-events: auto;
+
+}
+
+#guidedTourDocPreview{
+
+    z-index: 20;
+
+    height: 25%;
+    display:inline-block
+
+    margin-top: 10px;
+    margin: 10px;
+
+
+}
+
+#guidedTourDocPreviewImg{
+
+    width: 100%; /* or any custom size */
+    height: 100%;
+    object-fit: contain;
+
+}
+
+#guidedTourStartButton{
+
+
+    position: absolute;
+    z-index: 20;
+
+    bottom : 5px;
+    left: 0;
+    right: 0;
+
+    margin: auto;
+
+    border: 1px solid black;
+    background-color: white;
+    color: black;
+
+    height: 30px;
+
+    pointer-events: auto;
+
+}
+
+
+#guidedTourNextButton{
+
+    position: absolute;
+    z-index: 20;
+
+    bottom : 5px;
+    left: 0;
+    right: 0;
+
+    margin: auto;
+
+    border: 1px solid black;
+    background-color: white;
+    color: black;
+
+    height: 30px;
+
+    pointer-events: auto;
+
+}
+
+#guidedTourPreviousButton{
+
+
+        position: absolute;
+        z-index: 20;
+
+        bottom : 0;
+        left : 0;
+
+        margin : 5px;
+
+        border: 1px solid black;
+        background-color: white;
+        color: black;
+
+        height: 30px;
+
+        pointer-events: auto;
+
+}
+
+#guidedTourExitButton{
+
+
+        position: absolute;
+        z-index: 20;
+
+        bottom : 0;
+        right : 0;
+
+        margin : 5px;
+
+        border: 1px solid black;
+        background-color: white;
+        color: black;
+
+        height: 30px;
+
+        pointer-events: auto;
+
+}
+
+
 #docFull{
-  position: absolute;
-  z-index: 10;
-  text-align: center;
+    position: absolute;
+    z-index: 10;
+    text-align: center;
 
-  margin : auto;
-  top: 0;
-  bottom : 10%;
-  left: 0;
-  right : 0;
+    margin : auto;
+    top: 0;
+    bottom : 10%;
+    left: 0;
+    right : 0;
 
-  width: 55%;
-  height: 55%;
+    width: 55%;
+    height: 55%;
 
-  display: none;
+    display: none;
 
-  color: white;
+    color: white;
 
-  font-size: 14;
+    font-size: 14;
 
-  padding-left: 3px;
-  padding-top: 3px;
+    padding-left: 3px;
+    padding-top: 3px;
 
-  pointer-events: none;
+    pointer-events: none;
 
 }
 
 #docFullImg{
 
 
-  width: 100%; /* or any custom size */
-  height: 100%;
-  object-fit: contain;
-  opacity: 0.5;
+    width: 100%; /* or any custom size */
+    height: 100%;
+    object-fit: contain;
+    opacity: 0.5;
 
 
 }
 
 #docFullPanel{
 
-  width: 60%;
-  height: 50px;
+    width: 60%;
+    height: 50px;
 
-  background-color: rgba(0,0,0,0.5);
+    background-color: rgba(30,30,30,0.4);
 
-  position: absolute;
-  z-index: 10;
-  text-align: center;
+    position: absolute;
+    z-index: 10;
+    text-align: center;
 
-    border : 1px solid grey;
+    border : 1px solid black;
 
-  pointer-events: none;
+    pointer-events: none;
 
-  margin : auto;
+    margin : auto;
 
-  bottom : -50px;
+    bottom : -52px;
 
-  right : 0;
-  left : 0;
+    right : 0;
+    left : 0;
 
 
 }
@@ -296,35 +488,37 @@ body {
 #docOpaSlider {
 
 
-  width: 25%;
+    width: 25%;
 
-  position: absolute;
-  z-index: 10;
-  text-align: center;
+    position: absolute;
+    z-index: 10;
+    text-align: center;
 
-  pointer-events: auto;
+    pointer-events: auto;
 
-  margin : auto;
+    margin : auto;
 
-  bottom : -40px;
+    bottom : -40px;
 
-  right : 0;
-  left : 25%;
+    right : 0;
+    left : 25%;
 
 }
 
 #docOpaLabel{
 
-  position: absolute;
-  z-index: 10;
-  text-align: center;
+    position: absolute;
+    z-index: 10;
+    text-align: center;
 
-  margin : auto;
+    margin : auto;
 
-  bottom : -22px;
+    bottom : -22px;
 
-  right : 30px;
-  left : 25%;
+    color : white;
+
+    right : 30px;
+    left : 25%;
 
 }
 
@@ -332,16 +526,18 @@ body {
 
 #docOpacity{
 
-  position: absolute;
-  z-index: 10;
-  text-align: center;
+    position: absolute;
+    z-index: 10;
+    text-align: center;
 
-  margin : auto;
+    margin : auto;
 
-  bottom : -22px;
+    color : white;
 
-  right : -75px;
-  left : 25%;
+    bottom : -22px;
+
+    right : -75px;
+    left : 25%;
 
 }
 
@@ -349,87 +545,100 @@ body {
 
 #docFullClose{
 
-  position: absolute;
-  z-index: 10;
+    position: absolute;
+    z-index: 10;
 
 
-  pointer-events: auto;
+    margin : auto;
+
+    bottom : -40px;
+
+    right: 45%;
+    left : 0;
+
+    border: 1px solid black;
+    background-color: white;
+    color: black;
+
+    height: 30px;
+
+    pointer-events: auto;
 
 
-  margin : auto;
-
-  bottom : -40px;
-
-  right: 45%;
-  left : 0;
 
 }
 
 #docFullOrient{
 
-  position: absolute;
-  z-index: 10;
-
-  pointer-events: auto;
+    position: absolute;
+    z-index: 10;
 
 
-  margin : auto;
+    margin : auto;
 
-  bottom : -40px;
+    bottom : -40px;
 
-  right: 20%;
-  left : 0;
+    right: 20%;
+    left : 0;
+
+    border: 1px solid black;
+    background-color: white;
+    color: black;
+
+    height: 30px;
+
+    pointer-events: auto;
 
 }
 
 #temporalTab{
 
-  position: absolute;
-  z-index: 20;
+    position: absolute;
+    z-index: 20;
 
-  margin : auto;
+    margin : auto;
 
-  border: 1px solid black;
-   background-color: white;
-      color: black;
+    border: 1px solid black;
+    background-color: white;
+    color: black;
 
-  height: 30px;
-  bottom: 2px;
-  left: 0;
-  right : 0;
+    height: 30px;
+    bottom: 2px;
+    left: 0;
+    right : 0;
 
 
-  pointer-events: auto
+    pointer-events: auto
 
 
 }
 
 #temporalWindow{
 
-  display: none;
+    display: none;
 
-  border : 1px solid grey;
+    border : 1px solid rgb(50,50,50);
 
-  position: absolute;
-  z-index: 10;
-  text-align: center;
+    position: absolute;
+    z-index: 10;
+    text-align: center;
 
-  margin: auto;
+    margin: auto;
 
-  bottom : 0;
-  left : 0;
-  right : 0;
+    bottom : 0;
+    left : 0;
+    right : 0;
 
 
-  width: 35%;
-  height: 12.5%;
+    width: 35%;
+    height: 12.5%;
 
-  color: white;
-  background-color: rgba(0,0,0,0.5);
-  font-size: 14;
+    color: white;
+    background-color: rgba(30,30,30,0.4);
+    font-size: 14;
 
-  padding-left: 3px;
-  padding-top: 3px;
+    padding-left: 3px;
+    padding-top: 3px;
 
     pointer-events: none;
 
@@ -438,18 +647,18 @@ body {
 
 
 #timeSlider {
-  width: 80%;
+    width: 80%;
 
-  position: absolute;
-  z-index: 10;
-  text-align: center;
+    position: absolute;
+    z-index: 10;
+    text-align: center;
 
 
-  margin : auto;
-  top: 5%;
-  bottom : 0;
-  left: 0;
-  right : 0;
+    margin : auto;
+    top: 5%;
+    bottom : 0;
+    left: 0;
+    right : 0;
 
     pointer-events: auto;
 
@@ -457,40 +666,61 @@ body {
 
 #timeSliderMinDate {
 
-position: absolute;
-  left : 20px;
-  bottom : 45%;
-  font-weight: bold;
+    position: absolute;
+    left : 10px;
+    bottom : 40%;
+    font-weight: bold;
 
 }
 
 #timeSliderMaxDate {
 
-position: absolute;
-  right : 20px;
-  bottom : 45%;
-  font-weight: bold;
+    position: absolute;
+    right : 10px;
+    bottom : 40%;
+    font-weight: bold;
 
 }
 
 #timeDateSelector{
 
-  position: absolute;
-  z-index: 20;
-  text-align: center;
+    position: absolute;
+    z-index: 20;
+    text-align: center;
 
-  margin : auto;
+    margin : auto;
 
-  color : black;
+    color : black;
 
-  bottom : 60%;
+    bottom : 60%;
 
-  right : 0;
-  left : 0;
+    right : 0;
+    left : 0;
 
 
     pointer-events: auto;
     width : 90px;
+}
+
+#helpTab{
+
+    position: absolute;
+    z-index: 20;
+
+    margin : 3px;
+
+    border: 1px solid black;
+    background-color: white;
+    color: black;
+
+    height: 30px;
+    top: 0;
+    left: 37%;
+
+
+    pointer-events: auto
+
+
 }
 
 #help {
@@ -499,20 +729,16 @@ position: absolute;
 
     width: 300px;
 
-    margin: auto;
+    margin: 3px;
 
-    right: 0;
-    left: 0;
+    left : 40%;
+
 
     color: white;
-    color: #eee;
-    font: 11px 'Lucida Grande',sans-serif;
-    line-height: normal;
-    text-shadow: 0 -1px 0 #111;
+    font-size: 75%;
     padding: 0 1rem;
-    background: rgba(0,0,0,0.75);
-    border: 1px solid #2c2c2c;
-    opacity: 0.8;
+    background-color: rgba(30,30,30,0.4);
+    border : 1px solid rgb(50,50,50);
     pointer-events: none;
 }
 

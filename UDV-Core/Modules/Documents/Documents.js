@@ -7,8 +7,8 @@
 THREE = itowns.THREE;
 
 var docBrowserWindowIsActive = false;
-var guidedTourWindowIsActive = false;
-var temporalWindowIsActive = false;
+
+
 
 /**
 * Constructor
@@ -44,8 +44,6 @@ function DocumentsHandler(view, controls) {
 
         var doc = new Document(docIndex,docImageSourceHD,docImageSourceBD,billboardPosition,docViewPosition,docViewQuaternion, data);
         this.AllDocuments.push(doc);
-        this.view.scene.add(doc.billboardGeometry);
-        this.view.scene.add(doc.billboardGeometryFrame);
 
     };
 
@@ -64,6 +62,26 @@ function DocumentsHandler(view, controls) {
         });
 
     };
+
+    this.showBillboards = function showBillboards(){
+
+        this.AllDocuments.forEach(function(element){
+            this.view.scene.add(element.billboardGeometry);
+            this.view.scene.add(element.billboardGeometryFrame);
+            element.billboardGeometry.updateMatrixWorld();
+            element.billboardGeometryFrame.updateMatrixWorld();
+        });
+    }
+
+    this.hideBillboards = function hideBillboards(){
+
+        this.AllDocuments.forEach(function(element){
+            this.view.scene.remove(element.billboardGeometry);
+            this.view.scene.remove(element.billboardGeometryFrame);
+            element.billboardGeometry.updateMatrixWorld();
+            element.billboardGeometryFrame.updateMatrixWorld();
+        });
+    }
 
     /**
     * TO DO !!!!!!!!!!!!!! in doc handler instead of in controls ?
@@ -84,8 +102,14 @@ function DocumentsHandler(view, controls) {
 
     };
 
+    this.closeDocFull = function closeDocFull(){
+        document.getElementById('docFull').style.display = "none";
+        document.getElementById('docFullImg').src = null;
+    }
+
     this.domElement.addEventListener('mousedown', onMouseClick.bind(this), false);
     document.getElementById("docFullOrient").addEventListener('mousedown', this.orientViewToDoc.bind(this),false);
+    document.getElementById("docFullClose").addEventListener('mousedown',this.closeDocFull.bind(this),false);
 
 
 
@@ -176,14 +200,6 @@ function docOpaUpdate(opa){
     document.getElementById('docFullImg').style.opacity = opa/100;
 }
 
-document.getElementById("docFullClose").onclick = function () {
-    document.getElementById('docFull').style.display = "none";
-    document.getElementById('docFullImg').src = null;
-
-
-};
-
-
 
 document.getElementById("docBrowserTab").onclick = function () {
     document.getElementById('docBrowserWindow').style.display = docBrowserWindowIsActive ? "none" : "block";
@@ -192,16 +208,4 @@ document.getElementById("docBrowserTab").onclick = function () {
 
 };
 
-document.getElementById("guidedTourTab").onclick = function () {
-    document.getElementById('guidedTourWindow').style.display = guidedTourWindowIsActive ? "none" : "block";
-    guidedTourWindowIsActive = guidedTourWindowIsActive ? false : true;
-
-
-};
-
-document.getElementById("temporalTab").onclick = function () {
-    document.getElementById('temporalWindow').style.display = temporalWindowIsActive ? "none" : "block";
-    temporalWindowIsActive = temporalWindowIsActive ? false : true;
-
-
-};
+document.getElementById("docBrowserText").innerHTML = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis augue velit, egestas eu posuere faucibus, aliquet sed eros. Donec vel dictum lorem. Sed sed commodo turpis.Vestibulum ornare sapien et purus sollicitudin egestas. Nunc rutrum ac dolor eu imperdiet. Cras lacinia, odio sitamet scelerisque porttitor, nisi mi pharetra tellus, non sagittis est lorem finibus nisi. Aliquam sed dolor quis esttempus finibus quis uturna.Aeneacommodoat sapien quis eleifend. Sed blandit nisi eu nisl dapibus, in efficitur mauris accumsan. Suspendisse potenti. Aenean lacus ex, aliquet at mauris a, vulputate tincidunt nibh. Interdum et malesuada fames ac ante ipsum primis in faucibus.";

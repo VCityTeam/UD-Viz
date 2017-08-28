@@ -3,7 +3,7 @@
  * Class: Temporal Controller
  * Description : TO DO
  */
-
+var temporalWindowIsActive = false;
 
 
 /**
@@ -73,3 +73,10 @@ TemporalController.prototype.timeSelectionSlider = function timeSelectionSlider(
   }
 
 }
+
+document.getElementById("temporalTab").onclick = function () {
+    document.getElementById('temporalWindow').style.display = temporalWindowIsActive ? "none" : "block";
+    temporalWindowIsActive = temporalWindowIsActive ? false : true;
+
+
+};
