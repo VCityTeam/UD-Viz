@@ -77,7 +77,12 @@ function DocumentsHandler(view, controls) {
             docViewQuat.z = parseFloat(docData[9]);
             docViewQuat.w = parseFloat(docData[10]);
 
-            this.addDocument(docIndex,docImageSourceHD,docImageSourceBD,"none",docViewPos,docViewQuat,"");
+            var docBillboardPos = new THREE.Vector3();
+            docBillboardPos.x = parseFloat(docData[11]);
+            docBillboardPos.y = parseFloat(docData[12]);
+            docBillboardPos.z = parseFloat(docData[13]);
+
+            this.addDocument(docIndex,docImageSourceHD,docImageSourceBD,docBillboardPos,docViewPos,docViewQuat,"");
 
         }
 
@@ -85,6 +90,10 @@ function DocumentsHandler(view, controls) {
 
         this.updateBrowser();
         console.log("doc init : ",this.AllDocuments);
+
+        if(billboardsAreActive){
+            this.showBillboards();
+        }
 
         // target can be any Element or other EventTarget.
         window.dispatchEvent(this.event);
@@ -160,7 +169,7 @@ function DocumentsHandler(view, controls) {
 
     this.showBillboards = function showBillboards(){
 
-        document.getElementById("docBrowserToggleBillboard").innerHTML = "MASQUER DOCS";
+        document.getElementById("docBrowserToggleBillboard").innerHTML = "Masquer Billboards";
 
         this.AllDocuments.forEach(function(element){
             if(!element.useBillboard){
@@ -177,7 +186,7 @@ function DocumentsHandler(view, controls) {
 
     this.hideBillboards = function hideBillboards(){
 
-        document.getElementById("docBrowserToggleBillboard").innerHTML = "AFFICHER DOCS";
+        document.getElementById("docBrowserToggleBillboard").innerHTML = "Afficher Billboards";
 
         this.AllDocuments.forEach(function(element){
             if(!element.useBillboard){
@@ -226,11 +235,14 @@ function DocumentsHandler(view, controls) {
             this.controls.initiateTravel(this.currentDoc.viewPosition,"auto",this.currentDoc.viewQuaternion,true);
         }
 
+        this.hideBillboards();
+
     };
 
     this.closeDocFull = function closeDocFull(){
         document.getElementById('docFull').style.display = "none";
         document.getElementById('docFullImg').src = null;
+        this.showBillboards();
     }
 
     // check if clicking on a billboard document, if yes : orient view
@@ -340,7 +352,7 @@ function Document(docIndex,docImageSourceHD,docImageSourceBD,billboardPosition,d
     this.imageSourceHD = docImageSourceHD;
     this.imageSourceBD = docImageSourceBD;
 
-    this.useBillboard = (billboardPosition!=="none");
+    this.useBillboard = (!isNaN(billboardPosition.x) && !isNaN(billboardPosition.y) && !isNaN(billboardPosition.z));
 
     this.billboardPosition = billboardPosition;
 

@@ -22,7 +22,7 @@ function GuidedTour(docHandler) {
 
         console.log("tour init");
 
-        this.tourSteps.push(new TourStep(this.docs.AllDocuments[0],step1text,step1text2));
+        this.tourSteps.push(new TourStep(this.docs.AllDocuments[12],step1text,step1text2));
         this.tourSteps.push(new TourStep(this.docs.AllDocuments[2],step2text,step2text2));
         this.tourSteps.push(new TourStep(this.docs.AllDocuments[3],step3text,step3text2));
         this.tourSteps.push(new TourStep(this.docs.AllDocuments[1],step4text,step4text2));
