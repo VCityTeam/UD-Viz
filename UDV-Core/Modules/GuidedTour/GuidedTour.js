@@ -14,14 +14,18 @@ function GuidedTour(docHandler) {
 
     this.tourSteps = [];
 
-    this.tourSteps.push(new TourStep(this.docs.AllDocuments[0],step1text,step1text2));
-    this.tourSteps.push(new TourStep(this.docs.AllDocuments[2],step2text,step2text2));
-    this.tourSteps.push(new TourStep(this.docs.AllDocuments[3],step3text,step3text2));
-    this.tourSteps.push(new TourStep(this.docs.AllDocuments[1],step4text,step4text2));
+
 
     this.currentIndex = 0;
 
     this.initialize = function initialize(){
+
+        console.log("tour init");
+
+        this.tourSteps.push(new TourStep(this.docs.AllDocuments[0],step1text,step1text2));
+        this.tourSteps.push(new TourStep(this.docs.AllDocuments[2],step2text,step2text2));
+        this.tourSteps.push(new TourStep(this.docs.AllDocuments[3],step3text,step3text2));
+        this.tourSteps.push(new TourStep(this.docs.AllDocuments[1],step4text,step4text2));
 
         document.getElementById("guidedTourPreviousButton").style.display = "none";
         document.getElementById("guidedTourNextButton").style.display = "none";
@@ -65,7 +69,7 @@ function GuidedTour(docHandler) {
 
         this.currentIndex += 1;
         this.docs.currentDoc = this.tourSteps[this.currentIndex].doc;
-        this.docs.orientViewToDoc();
+        this.docs.focusOnDoc();
         document.getElementById("guidedTourDocPreviewImg").src = this.tourSteps[this.currentIndex].doc.imageSourceBD;
         document.getElementById("guidedTourText1").innerHTML = this.tourSteps[this.currentIndex].text1;
         document.getElementById("guidedTourText2").innerHTML = this.tourSteps[this.currentIndex].text2;
@@ -80,7 +84,7 @@ function GuidedTour(docHandler) {
 
         this.currentIndex += -1;
         this.docs.currentDoc = this.tourSteps[this.currentIndex].doc;
-        this.docs.orientViewToDoc();
+        this.docs.focusOnDoc();
         document.getElementById("guidedTourDocPreviewImg").src = this.tourSteps[this.currentIndex].doc.imageSourceBD;
         document.getElementById("guidedTourText1").innerHTML = this.tourSteps[this.currentIndex].text1;
         document.getElementById("guidedTourText2").innerHTML = this.tourSteps[this.currentIndex].text2;
@@ -92,7 +96,9 @@ function GuidedTour(docHandler) {
     document.getElementById("guidedTourPreviousButton").addEventListener('mousedown', this.goToPreviousStep.bind(this),false);
     document.getElementById("guidedTourExitButton").addEventListener('mousedown', this.exitGuidedTour.bind(this),false);
 
-    this.initialize();
+    // Listen for the event.
+window.addEventListener('docInit', this.initialize.bind(this), false);
+
 
 }
 

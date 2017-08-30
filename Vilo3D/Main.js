@@ -1,7 +1,7 @@
 
 THREE = itowns.THREE;
 
-var showBuildings = true;
+var showBuildings = false;
 
 var helpIsActive = true;
 

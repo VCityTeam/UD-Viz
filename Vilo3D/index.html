@@ -67,11 +67,14 @@
         <button id="guidedTourExitButton" type=button>SORTIE</button>
         <button id="guidedTourStartButton" type=button>DEMARRER</button>
     </div>
+    <input type="file" id="csvFileInput" onchange="handleFiles(this.files)"
+        accept=".csv">
     <script src="../../itowns/dist/itowns.js"></script>
     <script src="../UDV-Core/Modules/CameraController/PlanarControls.js"></script>
     <script src="../UDV-Core/Modules/Temporal/Temporal.js"></script>
     <script src="../UDV-Core/Modules/GuidedTour/GuidedTour.js"></script>
     <script src="../UDV-Core/Modules/Documents/Documents.js"></script>
+    <script src="../UDV-Core/Modules/CSVLoader.js"></script>
     <script src="Main.js"></script>
 </body>
 </html>
