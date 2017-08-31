@@ -1,78 +1,129 @@
 /**
- * Generated On: 2016-05-18
- * Class: Temporal Controller
- * Description : TO DO
- */
+* Generated On: 2016-05-18
+* Class: Temporal Controller
+* Description : TO DO
+*/
 var temporalWindowIsActive = false;
 
 
 /**
- * Constructor
- * @param domElement :
- * @param view :
- * @param controls :
- */
+* Constructor
+* @param domElement :
+* @param view :
+* @param controls :
+*/
 
-function TemporalController(view, controls, startDate) {
+function TemporalController(view, controls, buildingVersions, buildingDates, startDate) {
 
-  _this4 = this;
 
-  _this4.view = view;
+    this.view = view;
 
-  _this4.controls = controls;
+    this.controls = controls;
 
-  _this4.currentDate = new Date(startDate);
+    this.buildingVersions = buildingVersions;
+    this.buildingDates = buildingDates;
 
-  _this4.minDate = new Date( "1500-01-01" );
-  _this4.maxDate = new Date( "2050-01-01" );
-  _this4.startDate = new Date( "2017-08-20" );
+    this.currentDate = new Date(startDate);
+    this.lastVersionIndex = -1;
 
-  document.getElementById("timeDateSelector").value = _this4.currentDate.toISOString().substring(0,10);
+    this.minDate = new Date( "1700-01-01" );
+    this.maxDate = new Date( "2050-01-01" );
 
-  document.getElementById("timeSlider").min = _this4.minDate.getFullYear();
-  document.getElementById("timeSlider").max = _this4.maxDate.getFullYear();
-  document.getElementById("timeSlider").value = _this4.startDate.getFullYear();
+    this.initialize = function initialize(){
 
-  document.getElementById("timeDateSelector").addEventListener('input', _this4.timeSelection, false);
-  document.getElementById("timeSlider").addEventListener('input', _this4.timeSelectionSlider, false);
+        console.log("temporal init : ", this.buildingDates);
 
-  document.getElementById("timeSliderMinDate").innerHTML = _this4.minDate.getFullYear();
-  document.getElementById("timeSliderMaxDate").innerHTML = _this4.maxDate.getFullYear();
+        this.syncBuildingVersionToCurrentDate();
+
+        document.getElementById("timeDateSelector").value = this.currentDate.toISOString().substring(0,10);
+
+        document.getElementById("timeSlider").min = this.minDate.getFullYear();
+        document.getElementById("timeSlider").max = this.maxDate.getFullYear();
+        document.getElementById("timeSlider").value = this.currentDate.getFullYear();
+        document.getElementById("timeSliderMinDate").innerHTML = this.minDate.getFullYear();
+        document.getElementById("timeSliderMaxDate").innerHTML = this.maxDate.getFullYear();
+    };
+
+    this.syncBuildingVersionToCurrentDate = function syncBuildingVersionToCurrentDate(){
+
+        let currentVersionIndex = 0;
+
+        this.buildingDates.forEach((element,index)=>{
+
+            if(this.currentDate > element){
+                currentVersionIndex = index;
+            }
+
+        });
+
+        if(currentVersionIndex === this.lastVersionIndex){
+            return;
+        }
+
+
+        this.buildingVersions.forEach((element, index)=>{
+
+            if(index === currentVersionIndex){
+
+                this.view.scene.add(element);
+
+            }
+            else{
+                this.view.scene.remove(element);
+            }
+        });
+
+        this.lastVersionIndex = currentVersionIndex;
+
+    };
+
+
+
+    this.timeSelection = function timeSelection(){
+
+
+        var d = new Date(document.getElementById("timeDateSelector").value.toString());
+
+        if(!isNaN(d)){
+
+            document.getElementById("timeSlider").value = d.getFullYear();
+
+            this.currentDate = d;
+
+            this.syncBuildingVersionToCurrentDate();
+
+        }
+
+    };
+
+    this.timeSelectionSlider = function timeSelectionSlider() {
+
+        var d = new Date(document.getElementById("timeSlider").value.toString());
+
+        if(!isNaN(d)){
+
+            document.getElementById("timeDateSelector").value = d.toISOString().substring(0,10);
+
+            this.currentDate = d;
+
+            this.syncBuildingVersionToCurrentDate();
+
+        }
+
+    };
+
+    window.addEventListener('allModelsLoaded', this.initialize.bind(this), false);
+
+
+
+    document.getElementById("timeDateSelector").addEventListener('input', this.timeSelection.bind(this), false);
+    document.getElementById("timeSlider").addEventListener('input', this.timeSelectionSlider.bind(this), false);
 
 
 
 }
 
-TemporalController.prototype.timeSelection = function timeSelection(){
 
-
-  var d = new Date(this.value.toString());
-
-  if(!isNaN(d)){
-
-      document.getElementById("timeSlider").value = d.getFullYear();
-
-      _this4.currentDate = d;
-
-      console.log(_this4.currentDate);
-  }
-
-}
-
-TemporalController.prototype.timeSelectionSlider = function timeSelectionSlider() {
-
-  var d = new Date(this.value.toString());
-
-  if(!isNaN(d)){
-
-      document.getElementById("timeDateSelector").value = d.toISOString().substring(0,10);
-
-      _this4.currentDate = d;
-
-        console.log(_this4.currentDate);
-  }
-
-}
 
 document.getElementById("temporalTab").onclick = function () {
     document.getElementById('temporalWindow').style.display = temporalWindowIsActive ? "none" : "block";

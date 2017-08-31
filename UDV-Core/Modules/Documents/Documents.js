@@ -7,7 +7,7 @@
 THREE = itowns.THREE;
 
 var docBrowserWindowIsActive = false;
-var billboardsAreActive = true;
+var billboardsAreActive = false;
 
 
 
@@ -94,6 +94,9 @@ function DocumentsHandler(view, controls) {
         if(billboardsAreActive){
             this.showBillboards();
         }
+        else{
+            this.hideBillboards()
+        }
 
         // target can be any Element or other EventTarget.
         window.dispatchEvent(this.event);
@@ -114,7 +117,7 @@ function DocumentsHandler(view, controls) {
     */
     this.update = function update() {
 
-        this.AllDocuments.forEach(function(element){
+        this.AllDocuments.forEach((element)=>{
             if(!element.useBillboard){
                 return;
             }
@@ -171,7 +174,7 @@ function DocumentsHandler(view, controls) {
 
         document.getElementById("docBrowserToggleBillboard").innerHTML = "Masquer Billboards";
 
-        this.AllDocuments.forEach(function(element){
+        this.AllDocuments.forEach((element)=>{
             if(!element.useBillboard){
                 return;
             }
@@ -188,7 +191,7 @@ function DocumentsHandler(view, controls) {
 
         document.getElementById("docBrowserToggleBillboard").innerHTML = "Afficher Billboards";
 
-        this.AllDocuments.forEach(function(element){
+        this.AllDocuments.forEach((element)=>{
             if(!element.useBillboard){
                 return;
             }

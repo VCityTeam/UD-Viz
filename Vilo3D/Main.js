@@ -1,7 +1,7 @@
 
 THREE = itowns.THREE;
 
-var showBuildings = false;
+var showBuildings = true;
 
 var helpIsActive = true;
 
@@ -111,15 +111,77 @@ if(showBuildings){itowns.View.prototype.addLayer.call(view, $3dTilesLayerRequest
 
 
 
-var directionalLight = new THREE.DirectionalLight( 0xffffff, 0 );
-directionalLight.position.set( 1, 1, 20000 );
+var directionalLight = new THREE.DirectionalLight( 0xffffff, 0.5 );
+directionalLight.position.set( 5000, 5000, 20000 );
 directionalLight.updateMatrixWorld();
 view.scene.add( directionalLight );
 
-var AmbientLight = new THREE.AmbientLight( 0xffffff,0.85 );
+var AmbientLight = new THREE.AmbientLight( 0xffffff,0.5 );
 AmbientLight.position.set(449588.55700000003, 6200917.614, 3454.564500000003 + 1000 ).normalize();
 view.scene.add( AmbientLight );
 
+// LOADING COLLADA GEOMETRY ============================================================================================
+var idlBuildings = [];
+var loader = new THREE.ColladaLoader();
+var idlPosition = new THREE.Vector3(1844025, 5175788, 190);
+var idlPositionTemporal = idlPosition.clone().add(new THREE.Vector3(0,0,10));
+var amountToLoad;
+var amountLoaded = 0;
+var allLoadedEventSent = false;
+
+
+var onModelLoad = function onModelLoad(array, index, position, scale) {
+
+    const offset = new THREE.Vector3();
+    let object;
+
+    return ( collada ) => {
+        object = collada.scene;
+        object.scale.set( scale, scale, scale );
+
+        array[index] = object;
+
+        array[index].position.set(position.x, position.y, position.z);
+        array[index].rotation.x = 0 ;
+        array[index].updateMatrixWorld();
+
+        amountLoaded += 1;
+
+        if(amountLoaded === amountToLoad && !allLoadedEventSent){
+
+            window.dispatchEvent(allModelsLoadedEvent);
+            allLoadedEventSent = true;
+        }
+        //onModelLoadFinished();
+    };
+
+};
+
+var allModelsLoadedEvent = document.createEvent('Event');
+allModelsLoadedEvent.initEvent('allModelsLoaded', true, true);
+
+amountToLoad = 7;
+
+// array, index, position, scale
+loader.load('Models/IDL/Etape0/IDL_Etape0.dae', onModelLoad(idlBuildings,0,idlPositionTemporal,0.40) );
+loader.load('Models/IDL/Etape1/IDL_Etape1.dae', onModelLoad(idlBuildings,1,idlPositionTemporal,0.40) );
+loader.load('Models/IDL/Etape2/IDL_Etape2.dae', onModelLoad(idlBuildings,2,idlPositionTemporal,0.40) );
+loader.load('Models/IDL/Etape3/IDL_Etape3.dae', onModelLoad(idlBuildings,3,idlPositionTemporal,0.40) );
+loader.load('Models/IDL/Etape4/IDL_Etape4.dae', onModelLoad(idlBuildings,4,idlPositionTemporal,0.40) );
+loader.load('Models/IDL/Etape5/IDL_Etape5.dae', onModelLoad(idlBuildings,5,idlPositionTemporal,0.40) );
+loader.load('Models/IDL/Etape6/IDL_Etape6.dae', onModelLoad(idlBuildings,6,idlPosition,0.40) );
+//============================================================================================
+
+var idlDates = [];
+idlDates.push(new Date("1725-01-01"));
+idlDates.push(new Date("1851-01-01"));
+idlDates.push(new Date("1860-01-01"));
+idlDates.push(new Date("1880-01-01"));
+idlDates.push(new Date("1895-01-01"));
+idlDates.push(new Date("1968-01-01"));
+idlDates.push(new Date("1971-01-01"));
+
+console.log(idlDates);
 
 var center = extent.center().xyz();
 var offset1 = new THREE.Vector3(1000,1000,200);
@@ -139,51 +201,10 @@ view.camera.camera3D.lookAt(extent.center().xyz());
 // var controls = new itowns.PlanarControls(view, {zoomInFactor : 0.05, zoomOutFactor : 0.05, maxAltitude : 15000});
 
 // regular controls
-var controls = new itowns.PlanarControls(view, {maxAltitude : 15000});
+var ccontrols = new itowns.PlanarControls(view, {maxAltitude : 15000});
 
+var documents = new DocumentsHandler(view,ccontrols);
 
-var documents = new DocumentsHandler(view,controls);
-
-var temporal = new TemporalController(view,controls,"2017-09-15");
+var temporal = new TemporalController(view,ccontrols,idlBuildings,idlDates,"2017-09-15");
 
 var guidedtour = new GuidedTour(documents);
-
-
-
-// TEST ============= COMMENTER SI BESOIN ==================================================================
-
-/*
-
-var idl = [];
-
-var positionCollada = extent.center().xyz().clone().add(new THREE.Vector3(0,0,300));
-console.log("positioncollada" , positionCollada)
-
-//var ColladaLoader = require('three-collada-loader');
-var scale = 100;
-var object;
-var loadingManager = new THREE.LoadingManager( function() {      view.scene.add( object );    } );
-var loader = new THREE.ColladaLoader(loadingManager);
-//loader.options.convertUpAxis = false;
-loader.load('elf/elf.dae', function ( collada ) {
-    object = collada.scene;
-    object.scale.set( scale, scale, scale );
-    object.position.set(positionCollada.x, positionCollada.y, positionCollada.z);
-    console.log(positionCollada);
-    object.updateMatrixWorld();
-
-    object.rotation.x = 0;
-    object.updateMatrixWorld();
-
-    idl.push(object);
-    console.log(idl[0]);
-} );
-
-var geometry = new THREE.BoxGeometry( 200, 200, 200 );
-var material = new THREE.MeshBasicMaterial( {color: 0x00ff00, wireframe : true} );
-var cube = new THREE.Mesh( geometry, material );
-cube.position.copy(positionCollada);
-cube.updateMatrixWorld();
-view.scene.add( cube );
-
-*/
