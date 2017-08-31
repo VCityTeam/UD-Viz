@@ -111,10 +111,14 @@ if(showBuildings){itowns.View.prototype.addLayer.call(view, $3dTilesLayerRequest
 
 
 
-				var directionalLight = new THREE.DirectionalLight( 0xffffff, 1 );
-				directionalLight.position.set( 1, 1, 20000 );
-                directionalLight.updateMatrixWorld();
-				view.scene.add( directionalLight );
+var directionalLight = new THREE.DirectionalLight( 0xffffff, 0 );
+directionalLight.position.set( 1, 1, 20000 );
+directionalLight.updateMatrixWorld();
+view.scene.add( directionalLight );
+
+var AmbientLight = new THREE.AmbientLight( 0xffffff,0.85 );
+AmbientLight.position.set(449588.55700000003, 6200917.614, 3454.564500000003 + 1000 ).normalize();
+view.scene.add( AmbientLight );
 
 
 var center = extent.center().xyz();
@@ -126,64 +130,34 @@ var target = center.add(offset1);
 var startpos = new THREE.Vector3(1845341,5174897,800);
 var startlook = new THREE.Vector3(1843670,5175604,180);
 
-
-/*
-var controls = new CameraController(viewerDiv,view,extent,
-{
-debug: true,
-startPos: startpos,
-startLook: startlook
-}
-);
-*/
 view.camera.setPosition(new itowns.Coordinates('EPSG:3946', extent.west(), extent.south(), 2000));
 view.camera.camera3D.lookAt(extent.center().xyz());
 
-var controls = new itowns.PlanarControls(view, {zoomInFactor : 0.5, zoomOutFactor : 0.5});
+// instanciate only one controls !!! comment the one you dont use
+
+// controls for editing
+// var controls = new itowns.PlanarControls(view, {zoomInFactor : 0.05, zoomOutFactor : 0.05, maxAltitude : 15000});
+
+// regular controls
+var controls = new itowns.PlanarControls(view, {maxAltitude : 15000});
+
 
 var documents = new DocumentsHandler(view,controls);
 
 var temporal = new TemporalController(view,controls,"2017-09-15");
 
-
-
-
-
-documents.showBillboards();
-documents.hideBillboards();
-documents.showBillboards();
-
 var guidedtour = new GuidedTour(documents);
 
-// TEST collada
 
 
+// TEST ============= COMMENTER SI BESOIN ==================================================================
 
-//=========================================================================================================
+/*
 
-// Rotate an object around an arbitrary axis in world space
-function rotateAroundWorldAxis(object, axis, radians) {
-    rotWorldMatrix = new THREE.Matrix4();
-    rotWorldMatrix.makeRotationAxis(axis.normalize(), radians);
-
-    // old code for Three.JS pre r54:
-    //  rotWorldMatrix.multiply(object.matrix);
-    // new code for Three.JS r55+:
-    rotWorldMatrix.multiply(object.matrix);                // pre-multiply
-
-    object.matrix = rotWorldMatrix;
-
-    // old code for Three.js pre r49:
-    // object.rotation.getRotationFromMatrix(object.matrix, object.scale);
-    // old code for Three.js pre r59:
-    // object.rotation.setEulerFromRotationMatrix(object.matrix);
-    // code for r59+:
-    object.rotation.setFromRotationMatrix(object.matrix);
-}
+var idl = [];
 
 var positionCollada = extent.center().xyz().clone().add(new THREE.Vector3(0,0,300));
 console.log("positioncollada" , positionCollada)
-
 
 //var ColladaLoader = require('three-collada-loader');
 var scale = 100;
@@ -200,9 +174,10 @@ loader.load('elf/elf.dae', function ( collada ) {
 
     object.rotation.x = 0;
     object.updateMatrixWorld();
+
+    idl.push(object);
+    console.log(idl[0]);
 } );
-
-
 
 var geometry = new THREE.BoxGeometry( 200, 200, 200 );
 var material = new THREE.MeshBasicMaterial( {color: 0x00ff00, wireframe : true} );
@@ -211,8 +186,4 @@ cube.position.copy(positionCollada);
 cube.updateMatrixWorld();
 view.scene.add( cube );
 
-var AmbientLight = new THREE.AmbientLight( 0xffffff,0.25 );
-AmbientLight.position.set(449588.55700000003, 6200917.614, 3454.564500000003 + 1000 ).normalize();
-view.scene.add( AmbientLight );
-
-//guidedtour.startGuidedTour();
+*/
