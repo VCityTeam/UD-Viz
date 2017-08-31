@@ -157,7 +157,7 @@ var guidedtour = new GuidedTour(documents);
 
 // TEST collada
 
-/*
+
 
 //=========================================================================================================
 
@@ -204,8 +204,8 @@ loader.load('elf/elf.dae', function ( collada ) {
 
 
 
-var geometry = new THREE.BoxGeometry( 5, 5, 5 );
-var material = new THREE.MeshBasicMaterial( {color: 0x00ff00} );
+var geometry = new THREE.BoxGeometry( 200, 200, 200 );
+var material = new THREE.MeshBasicMaterial( {color: 0x00ff00, wireframe : true} );
 var cube = new THREE.Mesh( geometry, material );
 cube.position.copy(positionCollada);
 cube.updateMatrixWorld();
@@ -216,5 +216,3 @@ AmbientLight.position.set(449588.55700000003, 6200917.614, 3454.564500000003 + 1
 view.scene.add( AmbientLight );
 
 //guidedtour.startGuidedTour();
-
-*/
