@@ -5,8 +5,8 @@
       <author>Blender User</author>
       <authoring_tool>Blender 2.78.0 commit date:2017-02-24, commit time:14:33, hash:e92f235283</authoring_tool>
     </contributor>
-    <created>2017-08-31T15:43:59</created>
-    <modified>2017-08-31T15:43:59</modified>
+    <created>2017-09-01T12:10:04</created>
+    <modified>2017-09-01T12:10:04</modified>
     <unit name="meter" meter="1"/>
     <up_axis>Z_UP</up_axis>
   </asset>
@@ -31,76 +31,6 @@
       </extra>
     </camera>
   </library_cameras>
-  <library_lights>
-    <light id="Lamp-light" name="Lamp">
-      <technique_common>
-        <point>
-          <color sid="color">1 1 1</color>
-          <constant_attenuation>1</constant_attenuation>
-          <linear_attenuation>0</linear_attenuation>
-          <quadratic_attenuation>0.00111109</quadratic_attenuation>
-        </point>
-      </technique_common>
-      <extra>
-        <technique profile="blender">
-          <adapt_thresh>0.000999987</adapt_thresh>
-          <area_shape>1</area_shape>
-          <area_size>0.1</area_size>
-          <area_sizey>0.1</area_sizey>
-          <area_sizez>1</area_sizez>
-          <atm_distance_factor>1</atm_distance_factor>
-          <atm_extinction_factor>1</atm_extinction_factor>
-          <atm_turbidity>2</atm_turbidity>
-          <att1>0</att1>
-          <att2>1</att2>
-          <backscattered_light>1</backscattered_light>
-          <bias>1</bias>
-          <blue>1</blue>
-          <buffers>1</buffers>
-          <bufflag>0</bufflag>
-          <bufsize>2880</bufsize>
-          <buftype>2</buftype>
-          <clipend>30.002</clipend>
-          <clipsta>1.000799</clipsta>
-          <compressthresh>0.04999995</compressthresh>
-          <dist sid="blender_dist">29.99998</dist>
-          <energy sid="blender_energy">1</energy>
-          <falloff_type>2</falloff_type>
-          <filtertype>0</filtertype>
-          <flag>0</flag>
-          <gamma sid="blender_gamma">1</gamma>
-          <green>1</green>
-          <halo_intensity sid="blnder_halo_intensity">1</halo_intensity>
-          <horizon_brightness>1</horizon_brightness>
-          <mode>8192</mode>
-          <ray_samp>1</ray_samp>
-          <ray_samp_method>1</ray_samp_method>
-          <ray_samp_type>0</ray_samp_type>
-          <ray_sampy>1</ray_sampy>
-          <ray_sampz>1</ray_sampz>
-          <red>1</red>
-          <samp>3</samp>
-          <shadhalostep>0</shadhalostep>
-          <shadow_b sid="blender_shadow_b">0</shadow_b>
-          <shadow_g sid="blender_shadow_g">0</shadow_g>
-          <shadow_r sid="blender_shadow_r">0</shadow_r>
-          <sky_colorspace>0</sky_colorspace>
-          <sky_exposure>1</sky_exposure>
-          <skyblendfac>1</skyblendfac>
-          <skyblendtype>1</skyblendtype>
-          <soft>3</soft>
-          <spotblend>0.15</spotblend>
-          <spotsize>75</spotsize>
-          <spread>1</spread>
-          <sun_brightness>1</sun_brightness>
-          <sun_effect_type>0</sun_effect_type>
-          <sun_intensity>1</sun_intensity>
-          <sun_size>1</sun_size>
-          <type>0</type>
-        </technique>
-      </extra>
-    </light>
-  </library_lights>
   <library_images>
     <image id="Haies_D_jpg" name="Haies_D_jpg">
       <init_from>Haies_D.jpg</init_from>
@@ -108,14 +38,11 @@
     <image id="Mur_Diffuse_jpg" name="Mur_Diffuse_jpg">
       <init_from>Mur_Diffuse.jpg</init_from>
     </image>
-    <image id="Water_jpg" name="Water_jpg">
-      <init_from>Water.jpg</init_from>
-    </image>
-    <image id="Cheminees_D_jpg" name="Cheminees_D_jpg">
-      <init_from>Cheminees_D.jpg</init_from>
-    </image>
     <image id="Sol_D_jpg" name="Sol_D_jpg">
       <init_from>Sol_D.jpg</init_from>
+    </image>
+    <image id="Water_jpg" name="Water_jpg">
+      <init_from>Water.jpg</init_from>
     </image>
   </library_images>
   <library_effects>
@@ -132,7 +59,7 @@
           </sampler2D>
         </newparam>
         <technique sid="common">
-          <phong>
+          <lambert>
             <emission>
               <color sid="emission">0 0 0 1</color>
             </emission>
@@ -142,12 +69,6 @@
             <diffuse>
               <texture texture="Haies_D_jpg-sampler" texcoord="UVMap"/>
             </diffuse>
-            <specular>
-              <color sid="specular">0.5 0.5 0.5 1</color>
-            </specular>
-            <shininess>
-              <float sid="shininess">50</float>
-            </shininess>
             <reflective>
               <color>0 0 0 1</color>
             </reflective>
@@ -160,7 +81,7 @@
             <index_of_refraction>
               <float sid="index_of_refraction">1</float>
             </index_of_refraction>
-          </phong>
+          </lambert>
         </technique>
       </profile_COMMON>
     </effect>
@@ -177,7 +98,7 @@
           </sampler2D>
         </newparam>
         <technique sid="common">
-          <phong>
+          <lambert>
             <emission>
               <color sid="emission">0 0 0 1</color>
             </emission>
@@ -187,12 +108,6 @@
             <diffuse>
               <texture texture="Mur_Diffuse_jpg-sampler" texcoord="UVMap"/>
             </diffuse>
-            <specular>
-              <color sid="specular">0.5 0.5 0.5 1</color>
-            </specular>
-            <shininess>
-              <float sid="shininess">50</float>
-            </shininess>
             <reflective>
               <color>0 0 0 1</color>
             </reflective>
@@ -205,7 +120,76 @@
             <index_of_refraction>
               <float sid="index_of_refraction">1</float>
             </index_of_refraction>
-          </phong>
+          </lambert>
+        </technique>
+      </profile_COMMON>
+    </effect>
+    <effect id="Toit_MursSG-effect">
+      <profile_COMMON>
+        <newparam sid="Mur_Diffuse_jpg-surface">
+          <surface type="2D">
+            <init_from>Mur_Diffuse_jpg</init_from>
+          </surface>
+        </newparam>
+        <newparam sid="Mur_Diffuse_jpg-sampler">
+          <sampler2D>
+            <source>Mur_Diffuse_jpg-surface</source>
+          </sampler2D>
+        </newparam>
+        <technique sid="common">
+          <lambert>
+            <emission>
+              <color sid="emission">0 0 0 1</color>
+            </emission>
+            <ambient>
+              <color sid="ambient">0 0 0 1</color>
+            </ambient>
+            <diffuse>
+              <texture texture="Mur_Diffuse_jpg-sampler" texcoord="UVMap"/>
+            </diffuse>
+            <index_of_refraction>
+              <float sid="index_of_refraction">1</float>
+            </index_of_refraction>
+          </lambert>
+        </technique>
+      </profile_COMMON>
+    </effect>
+    <effect id="SolSG-effect">
+      <profile_COMMON>
+        <newparam sid="Sol_D_jpg-surface">
+          <surface type="2D">
+            <init_from>Sol_D_jpg</init_from>
+          </surface>
+        </newparam>
+        <newparam sid="Sol_D_jpg-sampler">
+          <sampler2D>
+            <source>Sol_D_jpg-surface</source>
+          </sampler2D>
+        </newparam>
+        <technique sid="common">
+          <lambert>
+            <emission>
+              <color sid="emission">0 0 0 1</color>
+            </emission>
+            <ambient>
+              <color sid="ambient">0 0 0 1</color>
+            </ambient>
+            <diffuse>
+              <texture texture="Sol_D_jpg-sampler" texcoord="UVMap"/>
+            </diffuse>
+            <reflective>
+              <color>0 0 0 1</color>
+            </reflective>
+            <reflectivity>
+              <float>1</float>
+            </reflectivity>
+            <transparent opaque="A_ONE">
+              <color>1 1 1 0</color>
+            </transparent>
+            <index_of_refraction>
+              <float sid="index_of_refraction">1</float>
+            </index_of_refraction>
+          </lambert>
         </technique>
       </profile_COMMON>
     </effect>
@@ -233,88 +217,7 @@
               <texture texture="Water_jpg-sampler" texcoord="UVMap"/>
             </diffuse>
             <specular>
-              <color sid="specular">0.5 0.5 0.5 1</color>
-            </specular>
-            <shininess>
-              <float sid="shininess">50</float>
-            </shininess>
-            <reflective>
-              <color>0 0 0 1</color>
-            </reflective>
-            <reflectivity>
-              <float>1</float>
-            </reflectivity>
-            <transparent opaque="A_ONE">
-              <color>1 1 1 0</color>
-            </transparent>
-            <index_of_refraction>
-              <float sid="index_of_refraction">1</float>
-            </index_of_refraction>
-          </phong>
-        </technique>
-      </profile_COMMON>
-    </effect>
-    <effect id="Toit_MursSG-effect">
-      <profile_COMMON>
-        <newparam sid="Cheminees_D_jpg-surface">
-          <surface type="2D">
-            <init_from>Cheminees_D_jpg</init_from>
-          </surface>
-        </newparam>
-        <newparam sid="Cheminees_D_jpg-sampler">
-          <sampler2D>
-            <source>Cheminees_D_jpg-surface</source>
-          </sampler2D>
-        </newparam>
-        <technique sid="common">
-          <phong>
-            <emission>
-              <color sid="emission">0 0 0 1</color>
-            </emission>
-            <ambient>
-              <color sid="ambient">0 0 0 1</color>
-            </ambient>
-            <diffuse>
-              <texture texture="Cheminees_D_jpg-sampler" texcoord="UVMap"/>
-            </diffuse>
-            <specular>
-              <color sid="specular">0.5 0.5 0.5 1</color>
-            </specular>
-            <shininess>
-              <float sid="shininess">50</float>
-            </shininess>
-            <index_of_refraction>
-              <float sid="index_of_refraction">1</float>
-            </index_of_refraction>
-          </phong>
-        </technique>
-      </profile_COMMON>
-    </effect>
-    <effect id="SolSG-effect">
-      <profile_COMMON>
-        <newparam sid="Sol_D_jpg-surface">
-          <surface type="2D">
-            <init_from>Sol_D_jpg</init_from>
-          </surface>
-        </newparam>
-        <newparam sid="Sol_D_jpg-sampler">
-          <sampler2D>
-            <source>Sol_D_jpg-surface</source>
-          </sampler2D>
-        </newparam>
-        <technique sid="common">
-          <phong>
-            <emission>
-              <color sid="emission">0 0 0 1</color>
-            </emission>
-            <ambient>
-              <color sid="ambient">0 0 0 1</color>
-            </ambient>
-            <diffuse>
-              <texture texture="Sol_D_jpg-sampler" texcoord="UVMap"/>
-            </diffuse>
-            <specular>
-              <color sid="specular">0.5 0.5 0.5 1</color>
+              <color sid="specular">0.2263158 0.2263158 0.2263158 1</color>
             </specular>
             <shininess>
               <float sid="shininess">50</float>
@@ -343,14 +246,14 @@
     <material id="MursSG-material" name="MursSG">
       <instance_effect url="#MursSG-effect"/>
     </material>
-    <material id="LacSG-material" name="LacSG">
-      <instance_effect url="#LacSG-effect"/>
-    </material>
     <material id="Toit_MursSG-material" name="Toit_MursSG">
       <instance_effect url="#Toit_MursSG-effect"/>
     </material>
     <material id="SolSG-material" name="SolSG">
       <instance_effect url="#SolSG-effect"/>
+    </material>
+    <material id="LacSG-material" name="LacSG">
+      <instance_effect url="#LacSG-effect"/>
     </material>
   </library_materials>
   <library_geometries>
@@ -440,49 +343,6 @@
         </polylist>
       </mesh>
     </geometry>
-    <geometry id="Lac-mesh" name="Lac">
-      <mesh>
-        <source id="Lac-mesh-positions">
-          <float_array id="Lac-mesh-positions-array" count="42">76.74024 -0.36479 24.2832 71.87305 -0.36479 55.48828 133.8359 -0.36479 36.2832 145.3848 -0.36479 -13.11133 89.19336 -0.36479 -24.86133 151.7168 -0.36479 -60.18359 97.8125 -0.36479 -71.25196 146.418 -0.36479 -97.09961 132.2715 -0.36479 -105.0078 102.8906 -0.36479 -99.85742 72.59961 -0.36479 64.08008 123.3633 -0.36479 72.62007 68.77539 -0.36479 79.72461 75.39453 -0.36479 82.79492</float_array>
-          <technique_common>
-            <accessor source="#Lac-mesh-positions-array" count="14" stride="3">
-              <param name="X" type="float"/>
-              <param name="Y" type="float"/>
-              <param name="Z" type="float"/>
-            </accessor>
-          </technique_common>
-        </source>
-        <source id="Lac-mesh-normals">
-          <float_array id="Lac-mesh-normals-array" count="30">0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0</float_array>
-          <technique_common>
-            <accessor source="#Lac-mesh-normals-array" count="10" stride="3">
-              <param name="X" type="float"/>
-              <param name="Y" type="float"/>
-              <param name="Z" type="float"/>
-            </accessor>
-          </technique_common>
-        </source>
-        <source id="Lac-mesh-map-0">
-          <float_array id="Lac-mesh-map-0-array" count="72">0.002879977 0.294838 0.01195698 0.1342329 0.300051 0.29602 0.300051 0.29602 0.01244896 0.552876 0.002879977 0.294838 0.01244896 0.552876 0.286121 0.795527 0.005858957 0.793113 0.005858957 0.793113 0.286121 0.795527 0.2203299 0.973729 0.2203299 0.973729 6.08e-4 0.940996 0.005858957 0.793113 0.01195698 0.1342329 0.288347 0.09608298 0.300051 0.29602 0.02474796 0.092215 0.02240496 0.01022797 0.288347 0.09608298 0.02240496 0.01022797 0.05863595 0.001991987 0.288347 0.09608298 0.300051 0.29602 0.304839 0.554342 0.01244896 0.552876 0.01244896 0.552876 0.304839 0.554342 0.286121 0.795527 0.2203299 0.973729 0.141439 0.998008 6.08e-4 0.940996 0.01195698 0.1342329 0.02474796 0.092215 0.288347 0.09608298</float_array>
-          <technique_common>
-            <accessor source="#Lac-mesh-map-0-array" count="36" stride="2">
-              <param name="S" type="float"/>
-              <param name="T" type="float"/>
-            </accessor>
-          </technique_common>
-        </source>
-        <vertices id="Lac-mesh-vertices">
-          <input semantic="POSITION" source="#Lac-mesh-positions"/>
-        </vertices>
-        <polylist material="LacSG-material" count="12">
-          <input semantic="VERTEX" source="#Lac-mesh-vertices" offset="0"/>
-          <input semantic="NORMAL" source="#Lac-mesh-normals" offset="1"/>
-          <input semantic="TEXCOORD" source="#Lac-mesh-map-0" offset="2" set="0"/>
-          <vcount>3 3 3 3 3 3 3 3 3 3 3 3 </vcount>
-          <p>0 0 0 1 1 1 2 2 2 2 2 3 4 3 4 0 0 5 4 3 6 5 4 7 6 5 8 6 5 9 5 4 10 7 6 11 7 6 12 9 7 13 6 5 14 1 1 15 11 1 16 2 2 17 10 1 18 12 1 19 11 1 20 12 1 21 13 1 22 11 1 23 2 2 24 3 8 25 4 3 26 4 3 27 3 8 28 5 4 29 7 6 30 8 9 31 9 7 32 1 1 33 10 1 34 11 1 35</p>
-        </polylist>
-      </mesh>
-    </geometry>
     <geometry id="Toit_Murs-mesh" name="Toit_Murs">
       <mesh>
         <source id="Toit_Murs-mesh-positions">
@@ -569,6 +429,49 @@
         </polylist>
       </mesh>
     </geometry>
+    <geometry id="Lac-mesh" name="Lac">
+      <mesh>
+        <source id="Lac-mesh-positions">
+          <float_array id="Lac-mesh-positions-array" count="42">76.74024 -0.36479 24.2832 71.87305 -0.36479 55.48828 133.8359 -0.36479 36.2832 145.3848 -0.36479 -13.11133 89.19336 -0.36479 -24.86133 151.7168 -0.36479 -60.18359 97.8125 -0.36479 -71.25196 146.418 -0.36479 -97.09961 132.2715 -0.36479 -105.0078 102.8906 -0.36479 -99.85742 72.59961 -0.36479 64.08008 123.3633 -0.36479 72.62007 68.77539 -0.36479 79.72461 75.39453 -0.36479 82.79492</float_array>
+          <technique_common>
+            <accessor source="#Lac-mesh-positions-array" count="14" stride="3">
+              <param name="X" type="float"/>
+              <param name="Y" type="float"/>
+              <param name="Z" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="Lac-mesh-normals">
+          <float_array id="Lac-mesh-normals-array" count="30">0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0</float_array>
+          <technique_common>
+            <accessor source="#Lac-mesh-normals-array" count="10" stride="3">
+              <param name="X" type="float"/>
+              <param name="Y" type="float"/>
+              <param name="Z" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="Lac-mesh-map-0">
+          <float_array id="Lac-mesh-map-0-array" count="72">0.002879977 0.294838 0.01195698 0.1342329 0.300051 0.29602 0.300051 0.29602 0.01244896 0.552876 0.002879977 0.294838 0.01244896 0.552876 0.286121 0.795527 0.005858957 0.793113 0.005858957 0.793113 0.286121 0.795527 0.2203299 0.973729 0.2203299 0.973729 6.08e-4 0.940996 0.005858957 0.793113 0.01195698 0.1342329 0.288347 0.09608298 0.300051 0.29602 0.02474796 0.092215 0.02240496 0.01022797 0.288347 0.09608298 0.02240496 0.01022797 0.05863595 0.001991987 0.288347 0.09608298 0.300051 0.29602 0.304839 0.554342 0.01244896 0.552876 0.01244896 0.552876 0.304839 0.554342 0.286121 0.795527 0.2203299 0.973729 0.141439 0.998008 6.08e-4 0.940996 0.01195698 0.1342329 0.02474796 0.092215 0.288347 0.09608298</float_array>
+          <technique_common>
+            <accessor source="#Lac-mesh-map-0-array" count="36" stride="2">
+              <param name="S" type="float"/>
+              <param name="T" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <vertices id="Lac-mesh-vertices">
+          <input semantic="POSITION" source="#Lac-mesh-positions"/>
+        </vertices>
+        <polylist material="LacSG-material" count="12">
+          <input semantic="VERTEX" source="#Lac-mesh-vertices" offset="0"/>
+          <input semantic="NORMAL" source="#Lac-mesh-normals" offset="1"/>
+          <input semantic="TEXCOORD" source="#Lac-mesh-map-0" offset="2" set="0"/>
+          <vcount>3 3 3 3 3 3 3 3 3 3 3 3 </vcount>
+          <p>0 0 0 1 1 1 2 2 2 2 2 3 4 3 4 0 0 5 4 3 6 5 4 7 6 5 8 6 5 9 5 4 10 7 6 11 7 6 12 9 7 13 6 5 14 1 1 15 11 1 16 2 2 17 10 1 18 12 1 19 11 1 20 12 1 21 13 1 22 11 1 23 2 2 24 3 8 25 4 3 26 4 3 27 3 8 28 5 4 29 7 6 30 8 9 31 9 7 32 1 1 33 10 1 34 11 1 35</p>
+        </polylist>
+      </mesh>
+    </geometry>
   </library_geometries>
   <library_controllers/>
   <library_visual_scenes>
@@ -576,10 +479,6 @@
       <node id="Camera" name="Camera" type="NODE">
         <matrix sid="transform">0.6859207 -0.3240135 0.6515582 7.481132 0.7276763 0.3054208 -0.6141704 -6.50764 0 0.8953956 0.4452714 5.343665 0 0 0 1</matrix>
         <instance_camera url="#Camera-camera"/>
-      </node>
-      <node id="Lamp" name="Lamp" type="NODE">
-        <matrix sid="transform">-0.2908646 -0.7711008 0.5663932 4.076245 0.9551712 -0.1998834 0.2183912 1.005454 -0.05518906 0.6045247 0.7946723 5.903862 0 0 0 1</matrix>
-        <instance_light url="#Lamp-light"/>
       </node>
       <node id="Haies" name="Haies" type="NODE">
         <matrix sid="transform">1 0 0 0 0 -1.62921e-7 -1 0 0 1 -1.62921e-7 0 0 0 0 1</matrix>
@@ -605,18 +504,6 @@
           </bind_material>
         </instance_geometry>
       </node>
-      <node id="Lac" name="Lac" type="NODE">
-        <matrix sid="transform">1 0 0 0 0 -1.62921e-7 -1 0 0 1 -1.62921e-7 0 0 0 0 1</matrix>
-        <instance_geometry url="#Lac-mesh" name="Lac">
-          <bind_material>
-            <technique_common>
-              <instance_material symbol="LacSG-material" target="#LacSG-material">
-                <bind_vertex_input semantic="UVMap" input_semantic="TEXCOORD" input_set="0"/>
-              </instance_material>
-            </technique_common>
-          </bind_material>
-        </instance_geometry>
-      </node>
       <node id="Toit_Murs" name="Toit_Murs" type="NODE">
         <matrix sid="transform">1 0 0 0 0 -1.62921e-7 -1 0 0 1 -1.62921e-7 0 0 0 0 1</matrix>
         <instance_geometry url="#Toit_Murs-mesh" name="Toit_Murs">
@@ -635,6 +522,18 @@
           <bind_material>
             <technique_common>
               <instance_material symbol="SolSG-material" target="#SolSG-material">
+                <bind_vertex_input semantic="UVMap" input_semantic="TEXCOORD" input_set="0"/>
+              </instance_material>
+            </technique_common>
+          </bind_material>
+        </instance_geometry>
+      </node>
+      <node id="Lac" name="Lac" type="NODE">
+        <matrix sid="transform">1 0 0 0 0 -1.62921e-7 -1 0 0 1 -1.62921e-7 0 0 0 0 1</matrix>
+        <instance_geometry url="#Lac-mesh" name="Lac">
+          <bind_material>
+            <technique_common>
+              <instance_material symbol="LacSG-material" target="#LacSG-material">
                 <bind_vertex_input semantic="UVMap" input_semantic="TEXCOORD" input_set="0"/>
               </instance_material>
             </technique_common>

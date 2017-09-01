@@ -703,7 +703,7 @@ border : 1px solid rgb(75,75,75);
 
 
     margin : auto;
-    top: 35%;
+    top: 40%;
     left: 0;
     right : 0;
 
@@ -715,7 +715,7 @@ border : 1px solid rgb(75,75,75);
 
     position: absolute;
     left : 10px;
-    top  : 35%;
+    top  : 40%;
     font-weight: bold;
 
 }
@@ -724,7 +724,7 @@ border : 1px solid rgb(75,75,75);
 
     position: absolute;
     right : 10px;
-    top  : 35%;
+    top  : 40%;
     font-weight: bold;
 
 }

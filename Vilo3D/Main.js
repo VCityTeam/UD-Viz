@@ -1,7 +1,7 @@
 
 THREE = itowns.THREE;
 
-var showBuildings = false;
+var showBuildings = true;
 
 var helpIsActive = true;
 
@@ -27,6 +27,8 @@ const extent = new itowns.Extent(
     1837816.94334, 1847692.32501,
     5170036.4587, 5178412.82698,
 );
+
+const center = extent.center().xyz();
 
 // ====================
 let renderer;
@@ -110,21 +112,21 @@ $3dTilesLayerRequestVolume.visible = true;
 if(showBuildings){itowns.View.prototype.addLayer.call(view, $3dTilesLayerRequestVolume);}
 
 
-
-var directionalLight = new THREE.DirectionalLight( 0xffffff, 0.5 );
-directionalLight.position.set( 10000, 10000, 15000 );
+var directionalLight = new THREE.DirectionalLight( 0xffffff, 0.45 );
+directionalLight.position.set( 0, 0, 20000 );
 directionalLight.updateMatrixWorld();
 view.scene.add( directionalLight );
 
-var AmbientLight = new THREE.AmbientLight( 0xffffff,0.25 );
-AmbientLight.position.set(449588.55700000003, 6200917.614, 3454.564500000003 + 1000 ).normalize();
+var AmbientLight = new THREE.AmbientLight( 0xffffff,0.4 );
+AmbientLight.position.set(0, 0, 3000 );
+directionalLight.updateMatrixWorld();
 view.scene.add( AmbientLight );
 
 // LOADING COLLADA GEOMETRY ============================================================================================
 var idlBuildings = [];
 var loader = new THREE.ColladaLoader();
 var idlPosition = new THREE.Vector3(1844025, 5175788, 191);
-var idlPositionTemporal = idlPosition.clone().add(new THREE.Vector3(0,0,7));
+var idlPosition2 = idlPosition.clone().sub(new THREE.Vector3(0,0,10));
 var amountToLoad;
 var amountLoaded = 0;
 var allLoadedEventSent = false;
@@ -142,6 +144,7 @@ var onModelLoad = function onModelLoad(array, index, position, scale) {
         array[index] = object;
 
         array[index].position.set(position.x, position.y, position.z);
+        console.log(array[index].rotation.x);
         array[index].rotation.x = 0 ;
         array[index].updateMatrixWorld();
 
@@ -163,12 +166,12 @@ allModelsLoadedEvent.initEvent('allModelsLoaded', true, true);
 amountToLoad = 7;
 
 // array, index, position, scale
-loader.load('Models/IDL/Etape0/IDL_Etape0.dae', onModelLoad(idlBuildings,0,idlPositionTemporal,0.40) );
-loader.load('Models/IDL/Etape1/IDL_Etape1.dae', onModelLoad(idlBuildings,1,idlPositionTemporal,0.40) );
-loader.load('Models/IDL/Etape2/IDL_Etape2.dae', onModelLoad(idlBuildings,2,idlPositionTemporal,0.40) );
-loader.load('Models/IDL/Etape3/IDL_Etape3.dae', onModelLoad(idlBuildings,3,idlPositionTemporal,0.40) );
-loader.load('Models/IDL/Etape4/IDL_Etape4.dae', onModelLoad(idlBuildings,4,idlPositionTemporal,0.40) );
-loader.load('Models/IDL/Etape5/IDL_Etape5.dae', onModelLoad(idlBuildings,5,idlPositionTemporal,0.40) );
+loader.load('Models/IDL/Etape0/IDL_Etape0.dae', onModelLoad(idlBuildings,0,idlPosition2,0.40) );
+loader.load('Models/IDL/Etape1/IDL_Etape1.dae', onModelLoad(idlBuildings,1,idlPosition2,0.40) );
+loader.load('Models/IDL/Etape2/IDL_Etape2.dae', onModelLoad(idlBuildings,2,idlPosition2,0.40) );
+loader.load('Models/IDL/Etape3/IDL_Etape3.dae', onModelLoad(idlBuildings,3,idlPosition2,0.40) );
+loader.load('Models/IDL/Etape4/IDL_Etape4.dae', onModelLoad(idlBuildings,4,idlPosition2,0.40) );
+loader.load('Models/IDL/Etape5/IDL_Etape5.dae', onModelLoad(idlBuildings,5,idlPosition2,0.40) );
 loader.load('Models/IDL/Etape6/IDL_Etape6.dae', onModelLoad(idlBuildings,6,idlPosition,0.40) );
 //============================================================================================
 
@@ -181,28 +184,19 @@ idlDates.push(new Date("1895-01-01"));
 idlDates.push(new Date("1968-01-01"));
 idlDates.push(new Date("1971-01-01"));
 
-var center = extent.center().xyz();
-var offset1 = new THREE.Vector3(1000,1000,200);
-var offset2 = new THREE.Vector3(-3000,-3000,3000);
-var offset3 = new THREE.Vector3(000,000,1000);
-
-var target = center.add(offset1);
-var startpos = new THREE.Vector3(1845341,5174897,800);
-var startlook = new THREE.Vector3(1843670,5175604,180);
-
 view.camera.setPosition(new itowns.Coordinates('EPSG:3946', extent.west(), extent.south(), 2000));
 view.camera.camera3D.lookAt(extent.center().xyz());
 
 // instanciate only one controls !!! comment the one you dont use
 
 // controls for editing
-// var controls = new itowns.PlanarControls(view, {zoomInFactor : 0.05, zoomOutFactor : 0.05, maxAltitude : 15000});
+ var controls = new itowns.PlanarControls(view, {zoomInFactor : 0.05, zoomOutFactor : 0.05, maxAltitude : 17000, maxZenithAngle: 88});
 
 // regular controls
-var ccontrols = new itowns.PlanarControls(view, {maxAltitude : 15000});
+//var controls = new itowns.PlanarControls(view, {maxAltitude : 15000});
 
-var documents = new DocumentsHandler(view,ccontrols);
+var temporal = new TemporalController(view,controls,idlBuildings,idlDates,"2017-09-15");
 
-var temporal = new TemporalController(view,ccontrols,idlBuildings,idlDates,"2017-09-15");
+var documents = new DocumentsHandler(view,controls,{temporal: temporal});
 
 var guidedtour = new GuidedTour(documents);

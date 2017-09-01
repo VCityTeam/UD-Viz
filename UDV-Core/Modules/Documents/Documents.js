@@ -18,7 +18,7 @@ var billboardsAreActive = false;
 * @param controls :
 */
 
-function DocumentsHandler(view, controls) {
+function DocumentsHandler(view, controls, options = {}) {
 
     this.view = view;
 
@@ -27,6 +27,8 @@ function DocumentsHandler(view, controls) {
     this.controls = controls;
 
     this.camera = view.camera.camera3D;
+
+    this.temporal = options.temporal;
 
     this.AllDocuments = [];
 
@@ -47,9 +49,11 @@ function DocumentsHandler(view, controls) {
     *
     * @param event : the mouse down event.
     */
-    this.addDocument = function addDocument(docIndex,docImageSourceHD,docImageSourceBD,billboardPosition,docViewPosition,docViewQuaternion,data) {
+    this.addDocument = function addDocument(docIndex,docImageSourceHD,docImageSourceBD,
+        billboardPosition,docViewPosition,docViewQuaternion,docStartDate,data) {
 
-        var doc = new Document(docIndex,docImageSourceHD,docImageSourceBD,billboardPosition,docViewPosition,docViewQuaternion, data);
+        var doc = new Document(docIndex,docImageSourceHD,docImageSourceBD,
+            billboardPosition,docViewPosition,docViewQuaternion,docStartDate,data);
         this.AllDocuments.push(doc);
 
     };
@@ -65,6 +69,9 @@ function DocumentsHandler(view, controls) {
             var docIndex = i;
             var docImageSourceHD = "Docs/"+docData[0];
             var docImageSourceBD = "Docs/"+docData[1];
+
+            var docStartDate = new Date(docData[3].toString());
+            console.log(docData[4]);
 
             var docViewPos = new THREE.Vector3();
             docViewPos.x = parseFloat(docData[4]);
@@ -82,20 +89,19 @@ function DocumentsHandler(view, controls) {
             docBillboardPos.y = parseFloat(docData[12]);
             docBillboardPos.z = parseFloat(docData[13]);
 
-            this.addDocument(docIndex,docImageSourceHD,docImageSourceBD,docBillboardPos,docViewPos,docViewQuat,"");
+            this.addDocument(docIndex,docImageSourceHD,docImageSourceBD,docBillboardPos,docViewPos,docViewQuat,docStartDate,"");
 
         }
 
         this.currentDoc = this.AllDocuments[0];
 
         this.updateBrowser();
-        console.log("doc init : ",this.AllDocuments);
 
         if(billboardsAreActive){
-            this.showBillboards();
+            this.showBillboards(true);
         }
         else{
-            this.hideBillboards()
+            this.hideBillboards(true)
         }
 
         // target can be any Element or other EventTarget.
@@ -104,9 +110,9 @@ function DocumentsHandler(view, controls) {
 
     }
 
-    this.loadDocsFromFile = function loadDocsFromFile(filePath){
+    this.loadDataFromFile = function loadDataFromFile(){
 
-        readCSVFile(filePath, this.initialize.bind(this));
+        readCSVFile("docs.csv", this.initialize.bind(this));
 
     }
 
@@ -170,7 +176,13 @@ function DocumentsHandler(view, controls) {
 
     }
 
-    this.showBillboards = function showBillboards(){
+    this.showBillboards = function showBillboards(forceShow){
+
+        if(!forceShow && !billboardsAreActive){
+            return;
+        }
+
+        billboardsAreActive = true;
 
         document.getElementById("docBrowserToggleBillboard").innerHTML = "Masquer Billboards";
 
@@ -187,7 +199,13 @@ function DocumentsHandler(view, controls) {
         this.view.notifyChange(true);
     }
 
-    this.hideBillboards = function hideBillboards(){
+    this.hideBillboards = function hideBillboards(forceHide){
+
+        if(!forceHide && billboardsAreActive){
+            return;
+        }
+
+        billboardsAreActive = false;
 
         document.getElementById("docBrowserToggleBillboard").innerHTML = "Afficher Billboards";
 
@@ -206,14 +224,12 @@ function DocumentsHandler(view, controls) {
 
     this.toggleBillboards = function toggleBillboards(){
 
-        billboardsAreActive = !billboardsAreActive;
-
         if(billboardsAreActive){
-            this.showBillboards();
+            this.hideBillboards(true);
 
         }
         else{
-            this.hideBillboards();
+            this.showBillboards(true);
 
         }
     }
@@ -234,18 +250,23 @@ function DocumentsHandler(view, controls) {
         //document.getElementById('docBrowserWindow').style.display = "block";
 
         if(!isNaN(this.currentDoc.viewPosition.x) && !isNaN(this.currentDoc.viewQuaternion.x)){
-            console.log(this.currentDoc.viewPosition);
+
             this.controls.initiateTravel(this.currentDoc.viewPosition,"auto",this.currentDoc.viewQuaternion,true);
         }
 
-        this.hideBillboards();
+        if(this.temporal){
+
+            temporal.changeDate(this.currentDoc.startDate);
+        }
+
+        this.hideBillboards(true);
 
     };
 
     this.closeDocFull = function closeDocFull(){
         document.getElementById('docFull').style.display = "none";
         document.getElementById('docFullImg').src = null;
-        this.showBillboards();
+        this.showBillboards(false);
     }
 
     // check if clicking on a billboard document, if yes : orient view
@@ -324,7 +345,7 @@ new THREE.Quaternion(0.625,0.105,0.128,0.762),
 
 this.addDocument(
 3,
-'test4.png',
+'test4.png',var temporal = new TemporalController(view,ccontrols,idlBuildings,idlDates,"2017-09-15");
 'test4.png',
 target.add(new THREE.Vector3(-600,-300,0)),
 new THREE.Vector3(1844018,5175759,1908),
@@ -335,7 +356,7 @@ new THREE.Quaternion(0.000,0.0000,0.0800,1.0),
 
 
 
-this.loadDocsFromFile("docs.csv");
+this.loadDataFromFile();
 
 
 
@@ -349,11 +370,13 @@ this.loadDocsFromFile("docs.csv");
 * @param clock :
 */
 
-function Document(docIndex,docImageSourceHD,docImageSourceBD,billboardPosition,docViewPosition,docViewQuaternion,data) {
+function Document(docIndex,docImageSourceHD,docImageSourceBD,billboardPosition,docViewPosition,docViewQuaternion,docDate,data) {
 
     this.index = docIndex;
     this.imageSourceHD = docImageSourceHD;
     this.imageSourceBD = docImageSourceBD;
+
+    this.startDate = docDate;
 
     this.useBillboard = (!isNaN(billboardPosition.x) && !isNaN(billboardPosition.y) && !isNaN(billboardPosition.z));
 

@@ -18,14 +18,26 @@ function GuidedTour(docHandler) {
 
     this.currentIndex = 0;
 
-    this.initialize = function initialize(){
+    this.initialize = function initialize(tourDataFromFile){
 
         console.log("tour init");
 
-        this.tourSteps.push(new TourStep(this.docs.AllDocuments[12],step1text,step1text2));
-        this.tourSteps.push(new TourStep(this.docs.AllDocuments[2],step2text,step2text2));
-        this.tourSteps.push(new TourStep(this.docs.AllDocuments[3],step3text,step3text2));
-        this.tourSteps.push(new TourStep(this.docs.AllDocuments[1],step4text,step4text2));
+        for (var i=0; i<tourDataFromFile.length; i++) {
+
+            var tourData = tourDataFromFile[i];
+            var docIndex = tourData[0];
+            var text1 = tourData[1].toString();
+            var text2 = tourData[2].toString();
+
+        this.tourSteps.push(new TourStep(this.docs.AllDocuments[docIndex],text1,text2));
+
+    }
+
+    this.setupIntro();
+
+    }
+
+    this.setupIntro = function setupIntro(){
 
         document.getElementById("guidedTourPreviousButton").style.display = "none";
         document.getElementById("guidedTourNextButton").style.display = "none";
@@ -35,6 +47,7 @@ function GuidedTour(docHandler) {
         document.getElementById("guidedTourDocPreviewImg").src = this.tourSteps[0].doc.imageSourceBD;
         document.getElementById("guidedTourText1").innerHTML = tourInitText1;
         document.getElementById("guidedTourText2").innerHTML = tourInitText2;
+
 
     }
 
@@ -47,7 +60,7 @@ function GuidedTour(docHandler) {
         document.getElementById("guidedTourStartButton").style.display = "none";
         document.getElementById("guidedTourDocPreviewImg").src = this.tourSteps[0].doc.imageSourceBD;
 
-        documents.hideBillboards();
+        documents.hideBillboards(true);
 
         this.currentIndex = -1; //index will become 0 in goToNextStep()
         this.goToNextStep();
@@ -55,8 +68,8 @@ function GuidedTour(docHandler) {
 
     this.exitGuidedTour = function exitGuidedTour(){
 
-        this.initialize(); //temporary
-        this.docs.showBillboards();
+        this.setupIntro(); 
+        this.docs.showBillboards(false);
         this.docs.closeDocFull();
     };
 
@@ -91,13 +104,19 @@ function GuidedTour(docHandler) {
 
     };
 
+    this.loadDataFromFile = function loadDataFromFile(){
+
+        readCSVFile("visite.csv", this.initialize.bind(this));
+
+    }
+
     document.getElementById("guidedTourStartButton").addEventListener('mousedown', this.startGuidedTour.bind(this),false);
     document.getElementById("guidedTourNextButton").addEventListener('mousedown', this.goToNextStep.bind(this),false);
     document.getElementById("guidedTourPreviousButton").addEventListener('mousedown', this.goToPreviousStep.bind(this),false);
     document.getElementById("guidedTourExitButton").addEventListener('mousedown', this.exitGuidedTour.bind(this),false);
 
-    // Listen for the event.
-window.addEventListener('docInit', this.initialize.bind(this), false);
+    // replace initi by load doc
+    window.addEventListener('docInit', this.loadDataFromFile.bind(this), false);
 
 
 }
