@@ -1,7 +1,7 @@
 
 THREE = itowns.THREE;
 
-var showBuildings = true;
+var showBuildings = false;
 
 var helpIsActive = true;
 
@@ -112,7 +112,7 @@ if(showBuildings){itowns.View.prototype.addLayer.call(view, $3dTilesLayerRequest
 
 
 var directionalLight = new THREE.DirectionalLight( 0xffffff, 0.5 );
-directionalLight.position.set( 5000, 5000, 20000 );
+directionalLight.position.set( 10000, 10000, 20000 );
 directionalLight.updateMatrixWorld();
 view.scene.add( directionalLight );
 

@@ -71,6 +71,8 @@ function TemporalController(view, controls, buildingVersions, buildingDates, sta
             else{
                 this.view.scene.remove(element);
             }
+
+            this.view.notifyChange(true);
         });
 
         this.lastVersionIndex = currentVersionIndex;
