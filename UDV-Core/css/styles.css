@@ -703,8 +703,7 @@ border : 1px solid rgb(75,75,75);
 
 
     margin : auto;
-    top: 5%;
-    bottom : 0;
+    top: 35%;
     left: 0;
     right : 0;
 
@@ -716,7 +715,7 @@ border : 1px solid rgb(75,75,75);
 
     position: absolute;
     left : 10px;
-    bottom : 40%;
+    top  : 35%;
     font-weight: bold;
 
 }
@@ -725,7 +724,7 @@ border : 1px solid rgb(75,75,75);
 
     position: absolute;
     right : 10px;
-    bottom : 40%;
+    top  : 35%;
     font-weight: bold;
 
 }
@@ -739,16 +738,92 @@ border : 1px solid rgb(75,75,75);
     margin : auto;
 
     color : black;
+    font-weight: bold;
+    font-size: 16px;
 
-    bottom : 60%;
+    top : 5px;
 
     right : 0;
     left : 0;
 
+    border: 1px solid black;
+    background-color: white;
+
+    height: 40px;
+    width : 135px;
 
     pointer-events: auto;
-    width : 90px;
+
 }
+
+#timeNextButton{
+
+    position: absolute;
+    z-index: 20;
+
+    top : 5px;
+    left: 200px;
+    right: 0;
+
+    margin: auto;
+
+    font-size: 30px;
+
+    border: 1px solid black;
+    background-color: white;
+    color: black;
+
+    height: 40px;
+
+    pointer-events: auto;
+
+}
+
+#timePreviousButton{
+
+    position: absolute;
+    z-index: 20;
+
+    top : 5px;
+    left: 0;
+    right: 200px;
+
+    margin: auto;
+
+    font-size: 30px;
+
+    border: 1px solid black;
+    background-color: white;
+    color: black;
+
+    height: 40px;
+
+    pointer-events: auto;
+
+}
+
+#timeConcurrentView{
+
+    position: absolute;
+    z-index: 20;
+
+    bottom : 0;
+    left : 0;
+
+    margin : 5px;
+
+    border: 1px solid black;
+    background-color: white;
+    color: black;
+
+    height: 30px;
+
+    pointer-events: auto;
+
+
+
+}
+
 
 #helpTab{
 

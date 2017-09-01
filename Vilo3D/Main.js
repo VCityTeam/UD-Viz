@@ -112,19 +112,19 @@ if(showBuildings){itowns.View.prototype.addLayer.call(view, $3dTilesLayerRequest
 
 
 var directionalLight = new THREE.DirectionalLight( 0xffffff, 0.5 );
-directionalLight.position.set( 10000, 10000, 20000 );
+directionalLight.position.set( 10000, 10000, 15000 );
 directionalLight.updateMatrixWorld();
 view.scene.add( directionalLight );
 
-var AmbientLight = new THREE.AmbientLight( 0xffffff,0.5 );
+var AmbientLight = new THREE.AmbientLight( 0xffffff,0.25 );
 AmbientLight.position.set(449588.55700000003, 6200917.614, 3454.564500000003 + 1000 ).normalize();
 view.scene.add( AmbientLight );
 
 // LOADING COLLADA GEOMETRY ============================================================================================
 var idlBuildings = [];
 var loader = new THREE.ColladaLoader();
-var idlPosition = new THREE.Vector3(1844025, 5175788, 190);
-var idlPositionTemporal = idlPosition.clone().add(new THREE.Vector3(0,0,10));
+var idlPosition = new THREE.Vector3(1844025, 5175788, 191);
+var idlPositionTemporal = idlPosition.clone().add(new THREE.Vector3(0,0,7));
 var amountToLoad;
 var amountLoaded = 0;
 var allLoadedEventSent = false;
@@ -180,8 +180,6 @@ idlDates.push(new Date("1880-01-01"));
 idlDates.push(new Date("1895-01-01"));
 idlDates.push(new Date("1968-01-01"));
 idlDates.push(new Date("1971-01-01"));
-
-console.log(idlDates);
 
 var center = extent.center().xyz();
 var offset1 = new THREE.Vector3(1000,1000,200);
