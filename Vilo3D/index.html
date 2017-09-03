@@ -25,9 +25,10 @@
 
         <div id="viewerDiv"></div>
 
-        <div id="info"></div>
-        <div id="docFull">
 
+        <div id="info"></div>
+        <div id="cartoDataSource"></div>
+        <div id="docFull">
             <img id="docFullImg"/>
             <div id="docFullPanel"></div>
             <button id="docFullClose" type=button>FERMER</button>
@@ -36,8 +37,9 @@
             <input id="docOpaSlider" type="range" min="0" max="100" value="75"
             step="1" oninput="docOpaUpdate(value)">
             <output for="docOpaSlider" id="docOpacity">50</output>
-
         </div>
+        <button id="miniMapTab">CARTE</button>
+        <div id="miniMap"></div>
 
         <button id="temporalTab">TEMPOREL</button>
         <div id="temporalWindow">
@@ -52,8 +54,10 @@
     </div>
     <button id="docBrowserTab">DOC</button>
     <div id="docBrowserWindow">
+        <div id="docBrowserTitle">doc title</div>
         <div id="docBrowserPreview"><img id="docBrowserPreviewImg" src = "test2.png"/></div>
-        <div id="docBrowserText"></div>
+        <div id="docBrowserMetaData">metadata</div>
+        <div id="docBrowserIndex">11/12</div>
         <button id="docBrowserToggleBillboard" type=button>MASQUER DOCS</button>
         <button id="docBrowserNextButton" type=button>⇨</button>
         <button id="docBrowserPreviousButton" type=button>⇦</button>
@@ -63,6 +67,7 @@
     <div id="guidedTourWindow">
         <div id="guidedTourTitle"></div>
         <div id="guidedTourText1"></div>
+            <div id="guidedTourDocTitle">[Service des domaines des Hospices, juin 1938, échelle : 1/7 500, HCL. D.].</div>
         <div id="guidedTourDocPreview"><img id="guidedTourDocPreviewImg" src = "test2.png"/></div>
         <div id="guidedTourText2"></div>
         <button id="guidedTourNextButton" type=button>SUIVANT</button>
@@ -70,8 +75,6 @@
         <button id="guidedTourExitButton" type=button>SORTIE</button>
         <button id="guidedTourStartButton" type=button>DEMARRER</button>
     </div>
-    <input type="file" id="csvFileInput" onchange="handleFiles(this.files)"
-        accept=".csv">
     <script src="../../itowns/dist/itowns.js"></script>
     <script src="../../itowns/node_modules/three/examples/js/loaders/ColladaLoader2.js"></script>
     <script src="../UDV-Core/Modules/CameraController/PlanarControls.js"></script>

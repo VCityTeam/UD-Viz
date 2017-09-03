@@ -20,16 +20,15 @@ function GuidedTour(docHandler) {
 
     this.initialize = function initialize(tourDataFromFile){
 
-        console.log("tour init");
-
         for (var i=0; i<tourDataFromFile.length; i++) {
 
             var tourData = tourDataFromFile[i];
             var docIndex = tourData[0];
-            var text1 = tourData[1].toString();
-            var text2 = tourData[2].toString();
+            var stepTitle = tourData[1];
+            var text1 = tourData[2].toString();
+            var text2 = tourData[3].toString();
 
-        this.tourSteps.push(new TourStep(this.docs.AllDocuments[docIndex],text1,text2));
+        this.tourSteps.push(new TourStep(this.docs.AllDocuments[docIndex],stepTitle,text1,text2));
 
     }
 
@@ -44,9 +43,12 @@ function GuidedTour(docHandler) {
         document.getElementById("guidedTourExitButton").style.display = "none";
         document.getElementById("guidedTourText2").style.display = "none";
         document.getElementById("guidedTourStartButton").style.display = "block";
-        document.getElementById("guidedTourDocPreviewImg").src = this.tourSteps[0].doc.imageSourceBD;
+        document.getElementById("guidedTourDocPreviewImg").src = this.tourSteps[12].doc.imageSourceBD;
+        document.getElementById("guidedTourDocTitle").innerHTML = "";
         document.getElementById("guidedTourText1").innerHTML = tourInitText1;
         document.getElementById("guidedTourText2").innerHTML = tourInitText2;
+        document.getElementById("guidedTourTitle").innerHTML = tourTitle;
+
 
 
     }
@@ -59,6 +61,7 @@ function GuidedTour(docHandler) {
         document.getElementById("guidedTourText2").style.display = "inline-block";
         document.getElementById("guidedTourStartButton").style.display = "none";
         document.getElementById("guidedTourDocPreviewImg").src = this.tourSteps[0].doc.imageSourceBD;
+        document.getElementById("guidedTourDocTitle").innerHTML = this.tourSteps[0].doc.title;
 
         documents.hideBillboards(true);
 
@@ -68,7 +71,7 @@ function GuidedTour(docHandler) {
 
     this.exitGuidedTour = function exitGuidedTour(){
 
-        this.setupIntro(); 
+        this.setupIntro();
         this.docs.showBillboards(false);
         this.docs.closeDocFull();
     };
@@ -82,10 +85,13 @@ function GuidedTour(docHandler) {
 
         this.currentIndex += 1;
         this.docs.currentDoc = this.tourSteps[this.currentIndex].doc;
+        this.docs.updateBrowser();
         this.docs.focusOnDoc();
         document.getElementById("guidedTourDocPreviewImg").src = this.tourSteps[this.currentIndex].doc.imageSourceBD;
+        document.getElementById("guidedTourDocTitle").innerHTML = this.tourSteps[this.currentIndex].doc.title;
         document.getElementById("guidedTourText1").innerHTML = this.tourSteps[this.currentIndex].text1;
         document.getElementById("guidedTourText2").innerHTML = this.tourSteps[this.currentIndex].text2;
+        document.getElementById("guidedTourTitle").innerHTML = this.tourSteps[this.currentIndex].stepTitle;
 
     };
 
@@ -121,10 +127,11 @@ function GuidedTour(docHandler) {
 
 }
 
-function TourStep(doc, text1, text2) {
+function TourStep(doc, stepTitle, text1, text2) {
 
 
     this.doc=doc;
+    this.stepTitle = stepTitle;
     this.text1 = text1;
     this.text2 = text2;
 
@@ -140,7 +147,7 @@ document.getElementById("guidedTourTab").onclick = function () {
 
 var tourTitle = "Les processus incrémentaux : l’exemple de l’îlot du lac (1725 à aujourd’hui)";
 
-document.getElementById("guidedTourTitle").innerHTML = tourTitle;
+
 
 var tourInitText1 = " L’histoire de l’îlot du lac pendant 300 ans est un parfait exemple de l’évolution spontanée d’un îlot urbain. Elle montre comment il nait, se développe, puis est rasé et reconstruit. Elle permet surtout de comprendre le mécanisme de la lente densification progressive, sans volonté planificatrice de quiconque, propriétaire foncier ou pouvoirs publiques. C’est ce que l’on appelle un « processus incrémental »: personne n’a décidé au départ que l’îlot devrait évoluer de cette façon, pourtant, des siècles plus tard, le résultat est bien là, logique et cohérent.";
 

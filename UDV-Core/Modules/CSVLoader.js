@@ -1,3 +1,6 @@
+// USE THE * (star) AS SEPARATOR SYMBOL FOR CSV FILES !!!
+// This can be changed for another symbol, but do not use "," or ";"
+// or something that can be found in a text
 
 function readCSVFile(file, onComplete)
 {
@@ -27,7 +30,7 @@ function processData(csv) {
     var allTextLines = csv.split(/\r\n|\n/);
     var lines = [];
     for (var i=1; i<allTextLines.length-1; i++) {
-        var data = allTextLines[i].split(',');
+        var data = allTextLines[i].split('*');
             var tarr = [];
             for (var j=0; j<data.length; j++) {
                 tarr.push(data[j]);

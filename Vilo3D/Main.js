@@ -5,13 +5,23 @@ var showBuildings = true;
 
 var helpIsActive = true;
 
+var miniMapIsActive = false;
+
 // # Planar (EPSG:3946) viewer
 
 document.getElementById("info").innerHTML = "UDV v0.2";
+document.getElementById("cartoDataSource").innerHTML = "données urbaines : https://data.grandlyon.com/";
 
 document.getElementById("helpTab").onclick = function () {
     document.getElementById('help').style.display = helpIsActive ? "none" : "block";
     helpIsActive = helpIsActive ? false : true;
+
+
+};
+
+document.getElementById("miniMapTab").onclick = function () {
+    document.getElementById('miniMap').style.display = miniMapIsActive ? "none" : "block";
+    miniMapIsActive = miniMapIsActive ? false : true;
 
 
 };
@@ -36,8 +46,11 @@ let renderer;
 
 // `viewerDiv` will contain iTowns' rendering area (`<canvas>`)
 const viewerDiv = document.getElementById('viewerDiv');
+const miniMap = document.getElementById('miniMap');
 // Instanciate PlanarView*
 var view = new itowns.PlanarView(viewerDiv, extent, { renderer });
+
+var mapView = new itowns.PlanarView(miniMap, extent, { renderer });
 
 view.tileLayer.disableSkirt = true;
 
@@ -75,6 +88,47 @@ view.addLayer({
 });
 // Since the elevation layer use color textures, specify min/max z
 view.tileLayer.materialOptions = {
+    useColorTextureElevation: true,
+    colorTextureElevationMinZ: 37,
+    colorTextureElevationMaxZ: 240,
+};
+
+mapView.tileLayer.disableSkirt = true;
+
+// Add an WMS imagery layer (see WMS_Provider* for valid options)
+mapView.addLayer({
+    url: 'https://download.data.grandlyon.com/wms/grandlyon',
+    networkOptions: { crossOrigin: 'anonymous' },
+    type: 'color',
+    protocol: 'wms',
+    version: '1.3.0',
+    id: 'wms_imagery',
+    name: 'Ortho2009_vue_ensemble_16cm_CC46',
+    projection: 'EPSG:3946',
+    axisOrder: 'wsen',
+    options: {
+        mimetype: 'image/jpeg',
+    },
+});
+
+// Add an WMS elevation layer (see WMS_Provider* for valid options)
+mapView.addLayer({
+    url: 'https://download.data.grandlyon.com/wms/grandlyon',
+    type: 'elevation',
+    protocol: 'wms',
+    networkOptions: { crossOrigin: 'anonymous' },
+    version: '1.3.0',
+    id: 'wms_elevation',
+    name: 'MNT2012_Altitude_10m_CC46',
+    projection: 'EPSG:3946',
+    axisOrder: 'wsen',
+    heightMapWidth: 256,
+    options: {
+        mimetype: 'image/jpeg',
+    },
+});
+// Since the elevation layer use color textures, specify min/max z
+mapView.tileLayer.materialOptions = {
     useColorTextureElevation: true,
     colorTextureElevationMinZ: 37,
     colorTextureElevationMaxZ: 240,
@@ -144,7 +198,6 @@ var onModelLoad = function onModelLoad(array, index, position, scale) {
         array[index] = object;
 
         array[index].position.set(position.x, position.y, position.z);
-        console.log(array[index].rotation.x);
         array[index].rotation.x = 0 ;
         array[index].updateMatrixWorld();
 
@@ -187,16 +240,50 @@ idlDates.push(new Date("1971-01-01"));
 view.camera.setPosition(new itowns.Coordinates('EPSG:3946', extent.west(), extent.south(), 2000));
 view.camera.camera3D.lookAt(extent.center().xyz());
 
+function MiniMapController(view, controls, extent) {
+    this.view = view;
+    this.controls = controls;
+    this.extent = extent;
+    this.cameraZ = 17000;
+
+    const indicatorScale = new THREE.Vector3();
+    const geometry = new THREE.BoxGeometry( 200, 200, 200 );
+    const material = new THREE.MeshBasicMaterial( {color: 0x00ff00} );
+    this.mapIndicator = new THREE.Mesh( geometry, material );
+    this.mapIndicator.position.z = 500;
+
+    this.view.camera.setPosition(new itowns.Coordinates('EPSG:3946',this.extent.center().xyz().x, this.extent.center().xyz().y, this.cameraZ));
+    this.view.camera.camera3D.quaternion.copy(new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(1, 0, 0), 0));
+
+    this.view.scene.add( this.mapIndicator );
+    this.view.addFrameRequester(this);
+    this.update = function update(){
+
+        this.mapIndicator.position.x = this.controls.camera.position.x;
+        this.mapIndicator.position.y = this.controls.camera.position.y;
+        this.mapIndicator.updateMatrixWorld();
+
+        this.view.notifyChange(true);
+    }
+}
+
+
 // instanciate only one controls !!! comment the one you dont use
 
 // controls for editing
- var controls = new itowns.PlanarControls(view, {zoomInFactor : 0.05, zoomOutFactor : 0.05, maxAltitude : 17000, maxZenithAngle: 88});
+ //var controls = new itowns.PlanarControls(view, {zoomInFactor : 0.05, zoomOutFactor : 0.05, maxAltitude : 17000, maxZenithAngle: 88});
+
+
 
 // regular controls
-//var controls = new itowns.PlanarControls(view, {maxAltitude : 15000});
+var controls = new itowns.PlanarControls(view, {maxAltitude : 15000, rotateSpeed : 2.5, autoTravelTimeMin: 2, autoTravelTimeMax: 5});
 
 var temporal = new TemporalController(view,controls,idlBuildings,idlDates,"2017-09-15");
 
 var documents = new DocumentsHandler(view,controls,{temporal: temporal});
 
 var guidedtour = new GuidedTour(documents);
+
+ var minimap = new MiniMapController(mapView, controls, extent);
+
+ document.getElementById("miniMap").style.display = (miniMapIsActive)? "block" : "none";

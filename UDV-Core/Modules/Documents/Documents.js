@@ -9,8 +9,6 @@ THREE = itowns.THREE;
 var docBrowserWindowIsActive = false;
 var billboardsAreActive = false;
 
-
-
 /**
 * Constructor
 * @param domElement :
@@ -49,11 +47,9 @@ function DocumentsHandler(view, controls, options = {}) {
     *
     * @param event : the mouse down event.
     */
-    this.addDocument = function addDocument(docIndex,docImageSourceHD,docImageSourceBD,
-        billboardPosition,docViewPosition,docViewQuaternion,docStartDate,data) {
+    this.addDocument = function addDocument(docTitle,docIndex,docImageSourceHD,docImageSourceBD,billboardPosition,docViewPosition,docViewQuaternion,docStartDate,metaData) {
 
-        var doc = new Document(docIndex,docImageSourceHD,docImageSourceBD,
-            billboardPosition,docViewPosition,docViewQuaternion,docStartDate,data);
+        var doc = new Document(docTitle,docIndex,docImageSourceHD,docImageSourceBD,billboardPosition,docViewPosition,docViewQuaternion,docStartDate,metaData);
         this.AllDocuments.push(doc);
 
     };
@@ -69,27 +65,29 @@ function DocumentsHandler(view, controls, options = {}) {
             var docIndex = i;
             var docImageSourceHD = "Docs/"+docData[0];
             var docImageSourceBD = "Docs/"+docData[1];
+            var docTitle = docData[2].toString();
 
             var docStartDate = new Date(docData[3].toString());
-            console.log(docData[4]);
+
+            var docMetaData = docData[4].toString();
 
             var docViewPos = new THREE.Vector3();
-            docViewPos.x = parseFloat(docData[4]);
-            docViewPos.y = parseFloat(docData[5]);
-            docViewPos.z = parseFloat(docData[6]);
+            docViewPos.x = parseFloat(docData[5]);
+            docViewPos.y = parseFloat(docData[6]);
+            docViewPos.z = parseFloat(docData[7]);
 
             var docViewQuat = new THREE.Quaternion();
-            docViewQuat.x = parseFloat(docData[7]);
-            docViewQuat.y = parseFloat(docData[8]);
-            docViewQuat.z = parseFloat(docData[9]);
-            docViewQuat.w = parseFloat(docData[10]);
+            docViewQuat.x = parseFloat(docData[8]);
+            docViewQuat.y = parseFloat(docData[9]);
+            docViewQuat.z = parseFloat(docData[10]);
+            docViewQuat.w = parseFloat(docData[11]);
 
             var docBillboardPos = new THREE.Vector3();
-            docBillboardPos.x = parseFloat(docData[11]);
-            docBillboardPos.y = parseFloat(docData[12]);
-            docBillboardPos.z = parseFloat(docData[13]);
+            docBillboardPos.x = parseFloat(docData[12]);
+            docBillboardPos.y = parseFloat(docData[13]);
+            docBillboardPos.z = parseFloat(docData[14]);
 
-            this.addDocument(docIndex,docImageSourceHD,docImageSourceBD,docBillboardPos,docViewPos,docViewQuat,docStartDate,"");
+            this.addDocument(docTitle,docIndex,docImageSourceHD,docImageSourceBD,docBillboardPos,docViewPos,docViewQuat,docStartDate,docMetaData);
 
         }
 
@@ -116,11 +114,7 @@ function DocumentsHandler(view, controls, options = {}) {
 
     }
 
-    /**
-    * adds a Document to the DocumentHandler.
-    *
-    * @param event : the mouse down event.
-    */
+
     this.update = function update() {
 
         this.AllDocuments.forEach((element)=>{
@@ -172,6 +166,10 @@ function DocumentsHandler(view, controls, options = {}) {
 
         // update text TO DO
         document.getElementById('docBrowserPreviewImg').src = this.currentDoc.imageSourceBD;
+        document.getElementById('docBrowserMetaData').innerHTML = this.currentDoc.metaData;
+        document.getElementById('docBrowserTitle').innerHTML = this.currentDoc.title;
+        document.getElementById('docBrowserIndex').innerHTML = "index : " + this.currentDoc.index;
+        console.log("testest");
 
 
     }
@@ -312,54 +310,8 @@ function DocumentsHandler(view, controls, options = {}) {
     document.getElementById("docBrowserPreviousButton").addEventListener('mousedown',this.previousDoc.bind(this),false);
     document.getElementById("docBrowserOrientButton").addEventListener('mousedown', this.focusOnDoc.bind(this),false);
 
-    /*
-    this.addDocument(
-    0,
-    'test1.png',
-    'test1BD.png',
-    target.add(new THREE.Vector3(200,-200,0)),
-    new THREE.Vector3(1844763,5174252,620),
-    new THREE.Quaternion(0.6081,0.10868,0.13836,0.77414),
-    'doc 0 data'
-);
 
-this.addDocument(
-1,
-'test2.png',
-'test2.png',
-target.add(new THREE.Vector3(300,000,0)),
-new THREE.Vector3(1844789,5172976,628),
-new THREE.Quaternion(0.625,0.105,0.128,0.762),
-'doc 1 data'
-);
-
-this.addDocument(
-2,
-'test3.png',
-'test3.png',
-"none",
-new THREE.Vector3(1842789,5173976,628),
-new THREE.Quaternion(0.625,0.105,0.128,0.762),
-'doc 2 data'
-);
-
-this.addDocument(
-3,
-'test4.png',var temporal = new TemporalController(view,ccontrols,idlBuildings,idlDates,"2017-09-15");
-'test4.png',
-target.add(new THREE.Vector3(-600,-300,0)),
-new THREE.Vector3(1844018,5175759,1908),
-new THREE.Quaternion(0.000,0.0000,0.0800,1.0),
-'doc 3 data'
-);
-*/
-
-
-
-this.loadDataFromFile();
-
-
-
+    this.loadDataFromFile();
 
 }
 
@@ -370,13 +322,17 @@ this.loadDataFromFile();
 * @param clock :
 */
 
-function Document(docIndex,docImageSourceHD,docImageSourceBD,billboardPosition,docViewPosition,docViewQuaternion,docDate,data) {
+function Document(docTitle,docIndex,docImageSourceHD,docImageSourceBD,billboardPosition,docViewPosition,docViewQuaternion,docDate,metaData) {
 
     this.index = docIndex;
     this.imageSourceHD = docImageSourceHD;
     this.imageSourceBD = docImageSourceBD;
 
+    this.metaData = metaData;
+
     this.startDate = docDate;
+
+    this.title = docTitle;
 
     this.useBillboard = (!isNaN(billboardPosition.x) && !isNaN(billboardPosition.y) && !isNaN(billboardPosition.z));
 
@@ -411,7 +367,7 @@ function Document(docIndex,docImageSourceHD,docImageSourceBD,billboardPosition,d
             imageSourceBD : docImageSourceBD,
             viewPosition : docViewPosition,
             viewQuaternion : docViewQuaternion,
-            metadata : data
+            metadata : metaData
         };
 
         this.billboardGeometry.userData = this.docBillboardData;
@@ -440,5 +396,3 @@ document.getElementById("docBrowserTab").onclick = function () {
 
 
 };
-
-document.getElementById("docBrowserText").innerHTML = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis augue velit, egestas eu posuere faucibus, aliquet sed eros. Donec vel dictum lorem. Sed sed commodo turpis.Vestibulum ornare sapien et purus sollicitudin egestas. Nunc rutrum ac dolor eu imperdiet. Cras lacinia, odio sitamet scelerisque porttitor, nisi mi pharetra tellus, non sagittis est lorem finibus nisi. Aliquam sed dolor quis esttempus finibus quis uturna.Aeneacommodoat sapien quis eleifend. Sed blandit nisi eu nisl dapibus, in efficitur mauris accumsan. Suspendisse potenti. Aenean lacus ex, aliquet at mauris a, vulputate tincidunt nibh. Interdum et malesuada fames ac ante ipsum primis in faucibus.";

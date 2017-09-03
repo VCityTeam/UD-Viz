@@ -96,8 +96,6 @@ function TemporalController(view, controls, buildingVersions, buildingDates, sta
 
         this.view.notifyChange(true);
 
-        console.log(this.currentVersionIndex);
-
     };
 
     this.toggleConcurrentView = function toggleConcurrentView(){
@@ -113,7 +111,7 @@ function TemporalController(view, controls, buildingVersions, buildingDates, sta
 
             this.buildingVersions.forEach((element, index)=>{
 
-                element.position.z += 25 * (this.buildingVersions.length-1 - index);
+                element.position.z += 40 * (this.buildingVersions.length-1 - index);
                 element.updateMatrixWorld();
 
                 this.view.scene.add(element);
