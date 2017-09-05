@@ -6,75 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
-
-
-    <div id="wrapper">
-        <button id="helpTab">AIDE</button>
-        <div id="help">
-            <p>Contrôles caméra</p>
-            <ul>
-                <li>Clic-gauche : déplacement par rapport au sol</li>
-                <li>Clic-droit : déplacement vertical/latéral</li>
-                <li>Ctrl + Clic-gauche : rotation</li>
-                <li>Espace / Clic molette : zoom intelligent</li>
-                <li>Molette : zoom</li>
-                <li>T : vue de dessus</li>
-                <li>Y : retour à la vue de départ</li>
-            </ul>
-        </div>
-
-        <div id="viewerDiv"></div>
-
-
-        <div id="info"></div>
-        <div id="cartoDataSource"></div>
-        <div id="docFull">
-            <img id="docFullImg"/>
-            <div id="docFullPanel"></div>
-            <button id="docFullClose" type=button>FERMER</button>
-            <button id="docFullOrient" type=button>ORIENTER</button>
-            <label id="docOpaLabel" for="docOpaSlider">Opacité</label>
-            <input id="docOpaSlider" type="range" min="0" max="100" value="75"
-            step="1" oninput="docOpaUpdate(value)">
-            <output for="docOpaSlider" id="docOpacity">50</output>
-        </div>
-        <button id="miniMapTab">CARTE</button>
-        <div id="miniMap"></div>
-
-        <button id="temporalTab">TEMPOREL</button>
-        <div id="temporalWindow">
-            <div id="timeSliderMinDate"></div>
-            <div id="timeSliderMaxDate"></div>
-            <input id="timeSlider" type="range">
-            <input id="timeDateSelector" type="date">
-            <button id="timeNextButton" type=button>⇨</button>
-            <button id="timePreviousButton" type=button>⇦</button>
-            <button id="timeConcurrentView" type=button>Vue superposée</button>
-        </div>
-    </div>
-    <button id="docBrowserTab">DOC</button>
-    <div id="docBrowserWindow">
-        <div id="docBrowserTitle">doc title</div>
-        <div id="docBrowserPreview"><img id="docBrowserPreviewImg" src = "test2.png"/></div>
-        <div id="docBrowserMetaData">metadata</div>
-        <div id="docBrowserIndex">11/12</div>
-        <button id="docBrowserToggleBillboard" type=button>MASQUER DOCS</button>
-        <button id="docBrowserNextButton" type=button>⇨</button>
-        <button id="docBrowserPreviousButton" type=button>⇦</button>
-        <button id="docBrowserOrientButton" type=button>ORIENTER</button>
-    </div>
-    <button id="guidedTourTab">VISITE</button>
-    <div id="guidedTourWindow">
-        <div id="guidedTourTitle"></div>
-        <div id="guidedTourText1"></div>
-            <div id="guidedTourDocTitle">[Service des domaines des Hospices, juin 1938, échelle : 1/7 500, HCL. D.].</div>
-        <div id="guidedTourDocPreview"><img id="guidedTourDocPreviewImg" src = "test2.png"/></div>
-        <div id="guidedTourText2"></div>
-        <button id="guidedTourNextButton" type=button>SUIVANT</button>
-        <button id="guidedTourPreviousButton" type=button>PRECEDENT</button>
-        <button id="guidedTourExitButton" type=button>SORTIE</button>
-        <button id="guidedTourStartButton" type=button>DEMARRER</button>
-    </div>
+    <div id="viewerDiv"></div>
+    <div id="info">UDV v0.3</div>
+    <div id="cartoDataSource">données urbaines : https://data.grandlyon.com/</div>
+    <img id="logoIMU" src="../UDV-Core/img/logo-imu.png"></img>
+    <img id="logoLIRIS" src="../UDV-Core/img/logo-liris.png"></img>
     <script src="../../itowns/dist/itowns.js"></script>
     <script src="../../itowns/node_modules/three/examples/js/loaders/ColladaLoader2.js"></script>
     <script src="../UDV-Core/Modules/CameraController/PlanarControls.js"></script>
@@ -82,6 +18,8 @@
     <script src="../UDV-Core/Modules/GuidedTour/GuidedTour.js"></script>
     <script src="../UDV-Core/Modules/Documents/Documents.js"></script>
     <script src="../UDV-Core/Modules/CSVLoader.js"></script>
+    <script src="../UDV-Core/Modules/MiniMap/MiniMap.js"></script>
+    <script src="../UDV-Core/Modules/Help/Help.js"></script>
     <script src="Main.js"></script>
 </body>
 </html>

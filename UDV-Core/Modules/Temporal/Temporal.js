@@ -3,7 +3,21 @@
 * Class: Temporal Controller
 * Description : TO DO
 */
-var temporalWindowIsActive = false;
+var temporalDiv = document.createElement("div");
+temporalDiv.id = 'temporal';
+document.body.appendChild(temporalDiv);
+
+document.getElementById("temporal").innerHTML = '<button id="temporalTab">TEMPOREL</button>\
+        <div id="temporalWindow">\
+            <div id="timeSliderMinDate"></div>\
+            <div id="timeSliderMaxDate"></div>\
+            <input id="timeSlider" type="range">\
+            <input id="timeDateSelector" type="date">\
+            <button id="timeNextButton" type=button>⇨</button>\
+            <button id="timePreviousButton" type=button>⇦</button>\
+            <button id="timeConcurrentView" type=button>Vue superposée</button>\
+        </div>\
+    </div>';
 
 
 /**
@@ -12,7 +26,7 @@ var temporalWindowIsActive = false;
 * @param view :
 * @param controls :
 */
-
+//=============================================================================
 function TemporalController(view, controls, buildingVersions, buildingDates, startDate) {
 
 
@@ -30,11 +44,14 @@ function TemporalController(view, controls, buildingVersions, buildingDates, sta
     this.lastVersionIndex = -2;
 
     this.minDate = new Date( "1700-01-01" );
-    this.maxDate = new Date( "2050-01-01" );
+    this.maxDate = new Date( "2018-01-01" );
 
     this.enabled = false;
     this.isInConcurrentView = false;
 
+    this.temporalWindowIsActive = false;
+
+    //=============================================================================
     this.initialize = function initialize(){
 
         this.buildingVersions.forEach((element)=>{
@@ -54,6 +71,7 @@ function TemporalController(view, controls, buildingVersions, buildingDates, sta
         document.getElementById("timeSliderMaxDate").innerHTML = this.maxDate.getFullYear();
     };
 
+    //=============================================================================
     this.syncBuildingVersionToCurrentDate = function syncBuildingVersionToCurrentDate(forceSync){
 
         if(!this.enabled){
@@ -98,6 +116,7 @@ function TemporalController(view, controls, buildingVersions, buildingDates, sta
 
     };
 
+    //=============================================================================
     this.toggleConcurrentView = function toggleConcurrentView(){
 
         if(!this.enabled){
@@ -135,6 +154,7 @@ function TemporalController(view, controls, buildingVersions, buildingDates, sta
 
     }
 
+    //=============================================================================
     this.timeSelection = function timeSelection(){
         if(!this.enabled){
             return;
@@ -150,6 +170,7 @@ function TemporalController(view, controls, buildingVersions, buildingDates, sta
 
     };
 
+    //=============================================================================
     this.timeSelectionSlider = function timeSelectionSlider() {
         if(!this.enabled){
             return;
@@ -165,6 +186,7 @@ function TemporalController(view, controls, buildingVersions, buildingDates, sta
 
     };
 
+    //=============================================================================
     this.goToNextDate = function goToNextDate(){
 
         if(this.currentVersionIndex === this.buildingVersions.length -1){
@@ -176,6 +198,7 @@ function TemporalController(view, controls, buildingVersions, buildingDates, sta
 
     }
 
+    //=============================================================================
     this.goToPreviousDate = function goToPreviousDate(){
 
         if(this.currentVersionIndex === 0){
@@ -186,6 +209,7 @@ function TemporalController(view, controls, buildingVersions, buildingDates, sta
 
     }
 
+    //=============================================================================
     this.changeDate = function changeDate(date){
 
         document.getElementById("timeSlider").value = date.getFullYear();
@@ -198,23 +222,37 @@ function TemporalController(view, controls, buildingVersions, buildingDates, sta
 
     }
 
+    //=============================================================================
+    this.startGuidedTourMode = function startGuidedTourMode(){
+
+        if(!this.temporalWindowIsActive){
+            this.toggleTemporalWindow();
+        }
+    }
+
+    //=============================================================================
+    this.exitGuidedTourMode = function exitGuidedTourMode(){
+        //nothing yet
+    }
+
+    //=============================================================================
+    this.toggleTemporalWindow = function toggleTemporalWindow(){
+
+        document.getElementById('temporalWindow').style.display = this.temporalWindowIsActive ? "none" : "block";
+        this.temporalWindowIsActive = this.temporalWindowIsActive ? false : true;
+
+
+    }
+
     window.addEventListener('allModelsLoaded', this.initialize.bind(this), false);
-
-
 
     document.getElementById("timeDateSelector").addEventListener('input', this.timeSelection.bind(this), false);
     document.getElementById("timeSlider").addEventListener('input', this.timeSelectionSlider.bind(this), false);
     document.getElementById("timeConcurrentView").addEventListener('mousedown', this.toggleConcurrentView.bind(this), false);
     document.getElementById("timeNextButton").addEventListener('mousedown', this.goToNextDate.bind(this), false);
     document.getElementById("timePreviousButton").addEventListener('mousedown', this.goToPreviousDate.bind(this), false);
+    document.getElementById("temporalTab").addEventListener('mousedown', this.toggleTemporalWindow.bind(this), false);
 
 
 
 }
-
-
-
-document.getElementById("temporalTab").onclick = function () {
-    document.getElementById('temporalWindow').style.display = temporalWindowIsActive ? "none" : "block";
-    temporalWindowIsActive = temporalWindowIsActive ? false : true;
-};

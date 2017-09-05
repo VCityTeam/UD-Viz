@@ -9,13 +9,46 @@ THREE = itowns.THREE;
 var docBrowserWindowIsActive = false;
 var billboardsAreActive = false;
 
+var hideBillboardButton = true;
+
+var imgToLoad;
+
+var docDiv = document.createElement("div");
+docDiv.id = 'doc';
+document.body.appendChild(docDiv);
+
+document.getElementById("doc").innerHTML ='<button id="docBrowserTab">DOC</button>\
+    <div id="docBrowserWindow">\
+        <div id="docBrowserTitle">doc title</div>\
+        <div id="docBrowserMetaData">metadata</div>\
+        <div id="docBrowserPreview"><img id="docBrowserPreviewImg" src = "test2.png"/></div>\
+        <div id="guidedTourText2"></div>\
+        <div id="docBrowserIndex">11/12</div>\
+        <button id="docBrowserNextButton" type=button>⇨</button>\
+        <button id="docBrowserPreviousButton" type=button>⇦</button>\
+        <button id="docBrowserOrientButton" type=button>ORIENTER</button>\
+        <button id="docBrowserToggleBillboard" type=button>Billboard</button>\
+    </div>\
+    <div id="docFull">\
+        <img id="docFullImg"/>\
+        <div id="docFullPanel">\
+            <button id="docFullClose" type=button>FERMER</button>\
+            <button id="docFullOrient" type=button>ORIENTER</button>\
+            <label id="docOpaLabel" for="docOpaSlider">Opacité</label>\
+            <input id="docOpaSlider" type="range" min="0" max="100" value="75"\
+            step="1" oninput="docOpaUpdate(value)">\
+            <output for="docOpaSlider" id="docOpacity">50</output>\
+        </div>\
+    </div>';
+
+
 /**
 * Constructor
 * @param domElement :
 * @param view :
 * @param controls :
 */
-
+//=============================================================================
 function DocumentsHandler(view, controls, options = {}) {
 
     this.view = view;
@@ -32,6 +65,14 @@ function DocumentsHandler(view, controls, options = {}) {
 
     this.currentDoc = null;
 
+    this.isOrientingDoc = false;
+
+    //doc fade-in animation duration, in milliseconds
+    this.fadeDuration = 2750;
+
+    this.isFadingDoc = false;
+    this.fadeAlpha = 0;
+
     this.view.addFrameRequester(this);
 
     // Create the event.
@@ -40,13 +81,12 @@ function DocumentsHandler(view, controls, options = {}) {
     // Define that the event name is 'build'.
     this.event.initEvent('docInit', true, true);
 
-
-
     /**
     * adds a Document to the DocumentHandler.
     *
     * @param event : the mouse down event.
     */
+    //=============================================================================
     this.addDocument = function addDocument(docTitle,docIndex,docImageSourceHD,docImageSourceBD,billboardPosition,docViewPosition,docViewQuaternion,docStartDate,metaData) {
 
         var doc = new Document(docTitle,docIndex,docImageSourceHD,docImageSourceBD,billboardPosition,docViewPosition,docViewQuaternion,docStartDate,metaData);
@@ -57,6 +97,7 @@ function DocumentsHandler(view, controls, options = {}) {
     // called by loadDocsFromFile() when loading is done
     // do not call by another way !
     // docDataFromFile is a data array obtained from the file
+    //=============================================================================
     this.initialize = function initialize(docDataFromFile){
 
         for (var i=0; i<docDataFromFile.length; i++) {
@@ -102,21 +143,64 @@ function DocumentsHandler(view, controls, options = {}) {
             this.hideBillboards(true)
         }
 
-        // target can be any Element or other EventTarget.
+        // target can be any Element or other EventTarget.    document.getElementById('docFullImg').src = this.currentDoc.imageSourceHD;
+        document.getElementById('docBrowserPreviewImg').src = this.currentDoc.imageSourceBD;
         window.dispatchEvent(this.event);
 
 
     }
 
+    //=============================================================================
     this.loadDataFromFile = function loadDataFromFile(){
 
         readCSVFile("docs.csv", this.initialize.bind(this));
 
     }
 
+    //=============================================================================
+    this.update = function update(dt,updateLoopRestarted) {
+        // dt will not be relevant when we just started rendering, we consider a 1-frame move in this case
+        if (updateLoopRestarted) {
+            dt = 16;
+        }
 
-    this.update = function update() {
 
+        if(this.isOrientingDoc && this.controls.state === STATE.NONE){
+
+            console.log("travel end");
+            this.isOrientingDoc = false;
+            this.isFadingDoc = true;
+            this.fadeAlpha = 0;
+
+            document.getElementById('docOpaSlider').value = 0;
+            document.querySelector('#docOpacity').value = 0;
+            document.getElementById('docFullImg').style.opacity=0;
+
+
+            document.getElementById('docFullPanel').style.display = "block";
+
+
+        }
+
+        if(this.isFadingDoc){
+
+            this.fadeAlpha += dt/this.fadeDuration;
+            if(this.fadeAlpha>=1){
+                this.isFadingDoc = false;
+                document.getElementById('docFullImg').style.opacity=1;
+                document.getElementById('docOpaSlider').value = 100;
+                document.querySelector('#docOpacity').value = 100;
+            }
+            document.getElementById('docFullImg').style.opacity=this.fadeAlpha;
+            document.getElementById('docOpaSlider').value = this.fadeAlpha*100;
+            document.querySelector('#docOpacity').value = Math.trunc(this.fadeAlpha*100);
+
+
+            this.view.notifyChange(false);
+
+        }
+
+        //billboards lookat camera
         this.AllDocuments.forEach((element)=>{
             if(!element.useBillboard){
                 return;
@@ -129,6 +213,7 @@ function DocumentsHandler(view, controls, options = {}) {
 
     };
 
+    //=============================================================================
     this.nextDoc = function nextDoc(){
 
         const index = this.currentDoc.index;
@@ -146,6 +231,7 @@ function DocumentsHandler(view, controls, options = {}) {
 
     }
 
+    //=============================================================================
     this.previousDoc = function previousDoc(){
 
         const index = this.currentDoc.index;
@@ -161,7 +247,7 @@ function DocumentsHandler(view, controls, options = {}) {
 
     }
 
-
+    //=============================================================================
     this.updateBrowser = function updateBrowser(){
 
         // update text TO DO
@@ -174,6 +260,7 @@ function DocumentsHandler(view, controls, options = {}) {
 
     }
 
+    //=============================================================================
     this.showBillboards = function showBillboards(forceShow){
 
         if(!forceShow && !billboardsAreActive){
@@ -197,6 +284,7 @@ function DocumentsHandler(view, controls, options = {}) {
         this.view.notifyChange(true);
     }
 
+    //=============================================================================
     this.hideBillboards = function hideBillboards(forceHide){
 
         if(!forceHide && billboardsAreActive){
@@ -220,6 +308,7 @@ function DocumentsHandler(view, controls, options = {}) {
         this.view.notifyChange(true);
     }
 
+    //=============================================================================
     this.toggleBillboards = function toggleBillboards(){
 
         if(billboardsAreActive){
@@ -232,25 +321,27 @@ function DocumentsHandler(view, controls, options = {}) {
         }
     }
 
-    /**
-    * TO DO !!!!!!!!!!!!!! in doc handler instead of in controls ?
-    */
+
+    //=============================================================================
     this.focusOnDoc = function focusOnDoc() {
 
-        document.getElementById('docFullImg').style.opacity=1;
-        document.getElementById('docOpaSlider').value = 100;
-        document.querySelector('#docOpacity').value = 100;
 
-        document.getElementById('docFull').style.display = "block";
         document.getElementById('docFullImg').src = this.currentDoc.imageSourceHD;
         document.getElementById('docBrowserPreviewImg').src = this.currentDoc.imageSourceBD;
+        document.getElementById('docFullImg').style.opacity=0;
+        document.getElementById('docOpaSlider').value = 0;
+        document.querySelector('#docOpacity').value = 0;
+        document.getElementById('docFull').style.display = "block";
+        document.getElementById('docFullPanel').style.display = "none";
 
-        //document.getElementById('docBrowserWindow').style.display = "block";
+        //imgToLoad = document.getElementById('docFullImg');
+        //imgToLoad.onload = this.startFadeIn();
 
         if(!isNaN(this.currentDoc.viewPosition.x) && !isNaN(this.currentDoc.viewQuaternion.x)){
 
             this.controls.initiateTravel(this.currentDoc.viewPosition,"auto",this.currentDoc.viewQuaternion,true);
         }
+
 
         if(this.temporal){
 
@@ -259,15 +350,52 @@ function DocumentsHandler(view, controls, options = {}) {
 
         this.hideBillboards(true);
 
+        this.isOrientingDoc = true;
+        this.isFadingDoc = false;
+        this.view.notifyChange(true);
+
+
+
     };
 
+    //=============================================================================
+    this.startFadeIn = function startFadeIn(){
+
+        // NOT USED
+        console.log("loaded");
+
+
+    }
+
+    //=============================================================================
     this.closeDocFull = function closeDocFull(){
         document.getElementById('docFull').style.display = "none";
         document.getElementById('docFullImg').src = null;
         this.showBillboards(false);
     }
 
+    //=============================================================================
+    this.startGuidedTourMode = function startGuidedTourMode(){
+
+        if(!docBrowserWindowIsActive){
+            docBrowserWindowIsActive = true;
+            document.getElementById('docBrowserWindow').style.display = "block";
+        }
+        document.getElementById('docBrowserPreviousButton').style.display = "none";
+        document.getElementById('docBrowserNextButton').style.display = "none";
+        document.getElementById('docBrowserIndex').style.display = "none";
+    }
+
+    //=============================================================================
+    this.exitGuidedTourMode = function exitGuidedTourMode(){
+
+        document.getElementById('docBrowserPreviousButton').style.display = "block";
+        document.getElementById('docBrowserNextButton').style.display = "block";
+        document.getElementById('docBrowserIndex').style.display = "block";
+    }
+
     // check if clicking on a billboard document, if yes : orient view
+    //=============================================================================
     this.onMouseClick = function onMouseClick(event){
 
         var onBillboard = false;
@@ -293,12 +421,15 @@ function DocumentsHandler(view, controls, options = {}) {
         }
     };
 
+    //output the camera position and quaternion in console with O (letter) key
+    //=============================================================================
     this.onKeyDown = function onKeyDown(event){
         if (event.keyCode === 79) {
             console.log("camera position : ",this.controls.camera.position);
             console.log("camera quaternion : ",this.controls.camera.quaternion);
         }
     }
+
 
     this.domElement.addEventListener('mousedown', this.onMouseClick.bind(this), false);
     window.addEventListener('keydown',this.onKeyDown.bind(this),false);
@@ -309,6 +440,8 @@ function DocumentsHandler(view, controls, options = {}) {
     document.getElementById("docBrowserNextButton").addEventListener('mousedown',this.nextDoc.bind(this),false);
     document.getElementById("docBrowserPreviousButton").addEventListener('mousedown',this.previousDoc.bind(this),false);
     document.getElementById("docBrowserOrientButton").addEventListener('mousedown', this.focusOnDoc.bind(this),false);
+
+    document.getElementById("docBrowserToggleBillboard").style.display = (hideBillboardButton)? "none" : "block";
 
 
     this.loadDataFromFile();
@@ -321,7 +454,7 @@ function DocumentsHandler(view, controls, options = {}) {
 * @param view :
 * @param clock :
 */
-
+//=============================================================================
 function Document(docTitle,docIndex,docImageSourceHD,docImageSourceBD,billboardPosition,docViewPosition,docViewQuaternion,docDate,metaData) {
 
     this.index = docIndex;
@@ -345,6 +478,7 @@ function Document(docTitle,docIndex,docImageSourceHD,docImageSourceBD,billboardP
     this.billboardGeometryFrame = null;
     this.docBillboardData = null;
 
+    //=============================================================================
     this.createBillboard = function createBillboard(){
 
         const texture = new THREE.TextureLoader().setCrossOrigin("anonymous").load(docImageSourceBD);
@@ -379,17 +513,15 @@ function Document(docTitle,docIndex,docImageSourceHD,docImageSourceBD,billboardP
 }
 
 
-
-
-
 // Document User Interface ===========================================================
 
+//=============================================================================
 function docOpaUpdate(opa){
     document.querySelector('#docOpacity').value = opa;
     document.getElementById('docFullImg').style.opacity = opa/100;
 }
 
-
+//=============================================================================
 document.getElementById("docBrowserTab").onclick = function () {
     document.getElementById('docBrowserWindow').style.display = docBrowserWindowIsActive ? "none" : "block";
     docBrowserWindowIsActive = docBrowserWindowIsActive ? false : true;
