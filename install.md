@@ -18,4 +18,4 @@ Then, clone the UDV repository alongside iTowns. UDV and iTowns must be in the s
 
 **Shorter install, no building geometry** : just clone UDV alongside iTowns, skipping the rest of the framework. Set "showBuildings" to false (line 4 in UDV/Vilo3D/Main.js).
 
-**Launch** : open UDV/Vilo3D/index.html in Firefox (Chrome should work but no guarantee).
+**Launch** : open UDV/Vilo3D/index.html in Firefox
