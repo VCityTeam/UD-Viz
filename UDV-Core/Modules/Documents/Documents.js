@@ -373,8 +373,8 @@ function DocumentsHandler(view, controls, options = {}) {
     //=============================================================================
     this.startGuidedTourMode = function startGuidedTourMode(){
 
-        if(!docBrowserWindowIsActive){
-            docBrowserWindowIsActive = true;
+        if(!this.docBrowserWindowIsActive){
+            this.docBrowserWindowIsActive = true;
             document.getElementById('docBrowserWindow').style.display = "block";
         }
         document.getElementById('docBrowserPreviousButton').style.display = "none";
