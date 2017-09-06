@@ -1,6 +1,6 @@
 
 
-
+//update the html with elements for this class (windows, buttons etc)
 var tourDiv = document.createElement("div");
 tourDiv.id = 'guidedtour';
 document.body.appendChild(tourDiv);
@@ -17,7 +17,6 @@ document.getElementById("guidedtour").innerHTML = '<button id="guidedTourTab">VI
     <button id="guidedTourStartButton" type=button>DEMARRER</button>\
 </div>';
 
-
 /**
 * Constructor
 * @param domElement :
@@ -29,7 +28,8 @@ function GuidedTour(docHandler, options={}) {
 
     this.docs = docHandler;
     this.temporal = options.temporal;
-    this.tourSteps = [];
+    this.tourStepsCurrent = null;
+    this.tours = [];
 
     this.guidedTourWindowIsActive = false;
 
@@ -42,18 +42,29 @@ function GuidedTour(docHandler, options={}) {
         for (var i=0; i<tourDataFromFile.length; i++) {
 
             var tourData = tourDataFromFile[i];
-            var docIndex = tourData[0];
-            var stepTitle = tourData[1];
-            var text1 = tourData[2].toString();
-            var text2 = tourData[3].toString();
+            var tourIndex = parseFloat(tourData[0]);
+            var docIndex = parseFloat(tourData[1]);
+            var stepTitle = tourData[2];
+            var text1 = tourData[3].toString();
+            var text2 = tourData[4].toString();
 
-        this.tourSteps.push(new TourStep(this.docs.AllDocuments[docIndex],stepTitle,text1,text2));
+            if(this.tours.length===tourIndex){
+                this.tours.push([]);
+            }
+
+            this.tours[tourIndex].push(new TourStep(this.docs.AllDocuments[docIndex],stepTitle,text1,text2));
 
         }
 
+        this.selectTour(0);
 
         this.setupIntro();
 
+    }
+
+    this.selectTour = function selectTour(index){
+
+        this.tourStepsCurrent = this.tours[index];
     }
 
     //=============================================================================
@@ -65,10 +76,10 @@ function GuidedTour(docHandler, options={}) {
         document.getElementById("guidedTourText2").style.display = "none";
         document.getElementById("guidedTourStartButton").style.display = "block";
         document.getElementById("guidedTourDocPreviewImg").style.display = "inline-block";
-        document.getElementById("guidedTourDocPreviewImg").src = this.tourSteps[12].doc.imageSourceBD;
+        document.getElementById("guidedTourDocPreviewImg").src = this.tourStepsCurrent[0].doc.imageSourceBD;
 
-        document.getElementById("guidedTourText1").innerHTML = tourInitText1;
-        document.getElementById("guidedTourTitle").innerHTML = tourTitle;
+        document.getElementById("guidedTourText1").innerHTML = this.tourStepsCurrent[0].text1;
+        document.getElementById("guidedTourTitle").innerHTML = this.tourStepsCurrent[0].stepTitle;
         document.getElementById("guidedTourStepTitle").innerHTML = null;
 
 
@@ -93,13 +104,14 @@ function GuidedTour(docHandler, options={}) {
 
         this.docs.startGuidedTourMode();
 
-        this.currentIndex = -1; //index will become 0 in goToNextStep()
+        this.currentIndex = 0; //index will become 1 in goToNextStep()
         this.goToNextStep();
     };
 
     //=============================================================================
     this.exitGuidedTour = function exitGuidedTour(){
 
+        this.selectTour(0);
         this.setupIntro();
         this.docs.showBillboards(false);
         this.docs.closeDocFull();
@@ -112,34 +124,34 @@ function GuidedTour(docHandler, options={}) {
     //=============================================================================
     this.goToNextStep = function goToNextStep(){
 
-        if(this.currentIndex + 1 >= this.tourSteps.length){
+        if(this.currentIndex + 1 >= this.tourStepsCurrent.length){
             return;
         }
 
         this.currentIndex += 1;
-        this.docs.currentDoc = this.tourSteps[this.currentIndex].doc;
+        this.docs.currentDoc = this.tourStepsCurrent[this.currentIndex].doc;
         this.docs.updateBrowser();
         this.docs.focusOnDoc();
         document.getElementById("guidedTourDocPreviewImg").style.display = "none";
-        document.getElementById("guidedTourText1").innerHTML = this.tourSteps[this.currentIndex].text1;
-        document.getElementById("guidedTourText2").innerHTML = this.tourSteps[this.currentIndex].text2;
-        document.getElementById("guidedTourStepTitle").innerHTML = this.tourSteps[this.currentIndex].stepTitle;
+        document.getElementById("guidedTourText1").innerHTML = this.tourStepsCurrent[this.currentIndex].text1;
+        document.getElementById("guidedTourText2").innerHTML = this.tourStepsCurrent[this.currentIndex].text2;
+        document.getElementById("guidedTourStepTitle").innerHTML = this.tourStepsCurrent[this.currentIndex].stepTitle;
 
     };
 
     //=============================================================================
     this.goToPreviousStep = function goToPreviousStep(){
 
-        if(this.currentIndex === 0){
+        if(this.currentIndex === 1){
             return;
         }
 
         this.currentIndex += -1;
-        this.docs.currentDoc = this.tourSteps[this.currentIndex].doc;
+        this.docs.currentDoc = this.tourStepsCurrent[this.currentIndex].doc;
         this.docs.focusOnDoc();
         document.getElementById("guidedTourDocPreviewImg").style.display = "none";
-        document.getElementById("guidedTourText1").innerHTML = this.tourSteps[this.currentIndex].text1;
-        document.getElementById("guidedTourText2").innerHTML = this.tourSteps[this.currentIndex].text2;
+        document.getElementById("guidedTourText1").innerHTML = this.tourStepsCurrent[this.currentIndex].text1;
+        document.getElementById("guidedTourText2").innerHTML = this.tourStepsCurrent[this.currentIndex].text2;
 
     };
 

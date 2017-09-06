@@ -6,13 +6,7 @@
 
 THREE = itowns.THREE;
 
-var docBrowserWindowIsActive = false;
-var billboardsAreActive = false;
-
-var hideBillboardButton = true;
-
-var imgToLoad;
-
+//update the html with elements for this class (windows, buttons etc)
 var docDiv = document.createElement("div");
 docDiv.id = 'doc';
 document.body.appendChild(docDiv);
@@ -41,6 +35,9 @@ document.getElementById("doc").innerHTML ='<button id="docBrowserTab">DOC</butto
         </div>\
     </div>';
 
+//dirty variables to test billboards
+var billboardsAreActive = false;
+var hideBillboardButton = true;
 
 /**
 * Constructor
@@ -61,6 +58,8 @@ function DocumentsHandler(view, controls, options = {}) {
 
     this.temporal = options.temporal;
 
+    this.docBrowserWindowIsActive = options.docBrowserWindowStartActive || false;
+
     this.AllDocuments = [];
 
     this.currentDoc = null;
@@ -68,7 +67,7 @@ function DocumentsHandler(view, controls, options = {}) {
     this.isOrientingDoc = false;
 
     //doc fade-in animation duration, in milliseconds
-    this.fadeDuration = 2750;
+    this.fadeDuration = options.docFadeDuration || 2750;
 
     this.isFadingDoc = false;
     this.fadeAlpha = 0;
@@ -164,10 +163,11 @@ function DocumentsHandler(view, controls, options = {}) {
             dt = 16;
         }
 
+        //controls.state === -1 corresponds to state === STATE.NONE
+        //if state is -1 this means the controls have finished the animated travel
+        //then we can begin the doc fade animation
+        if(this.isOrientingDoc && this.controls.state === -1){
 
-        if(this.isOrientingDoc && this.controls.state === STATE.NONE){
-
-            console.log("travel end");
             this.isOrientingDoc = false;
             this.isFadingDoc = true;
             this.fadeAlpha = 0;
@@ -175,27 +175,26 @@ function DocumentsHandler(view, controls, options = {}) {
             document.getElementById('docOpaSlider').value = 0;
             document.querySelector('#docOpacity').value = 0;
             document.getElementById('docFullImg').style.opacity=0;
-
-
             document.getElementById('docFullPanel').style.display = "block";
-
-
         }
 
+        //handle fade animation
         if(this.isFadingDoc){
 
             this.fadeAlpha += dt/this.fadeDuration;
             if(this.fadeAlpha>=1){
+                //animation is complete
                 this.isFadingDoc = false;
                 document.getElementById('docFullImg').style.opacity=1;
                 document.getElementById('docOpaSlider').value = 100;
                 document.querySelector('#docOpacity').value = 100;
             }
+            //if not complete :
             document.getElementById('docFullImg').style.opacity=this.fadeAlpha;
             document.getElementById('docOpaSlider').value = this.fadeAlpha*100;
             document.querySelector('#docOpacity').value = Math.trunc(this.fadeAlpha*100);
 
-
+            //request the framerequester for another call to this.update()
             this.view.notifyChange(false);
 
         }
@@ -334,9 +333,6 @@ function DocumentsHandler(view, controls, options = {}) {
         document.getElementById('docFull').style.display = "block";
         document.getElementById('docFullPanel').style.display = "none";
 
-        //imgToLoad = document.getElementById('docFullImg');
-        //imgToLoad.onload = this.startFadeIn();
-
         if(!isNaN(this.currentDoc.viewPosition.x) && !isNaN(this.currentDoc.viewQuaternion.x)){
 
             this.controls.initiateTravel(this.currentDoc.viewPosition,"auto",this.currentDoc.viewQuaternion,true);
@@ -394,6 +390,14 @@ function DocumentsHandler(view, controls, options = {}) {
         document.getElementById('docBrowserIndex').style.display = "block";
     }
 
+    //=============================================================================
+    this.toggleDocBrowserWindow = function toggleDocBrowserWindow(){
+
+        document.getElementById('docBrowserWindow').style.display = this.docBrowserWindowIsActive ? "none" : "block";
+        this.docBrowserWindowIsActive = this.docBrowserWindowIsActive ? false : true;
+
+    }
+
     // check if clicking on a billboard document, if yes : orient view
     //=============================================================================
     this.onMouseClick = function onMouseClick(event){
@@ -440,8 +444,10 @@ function DocumentsHandler(view, controls, options = {}) {
     document.getElementById("docBrowserNextButton").addEventListener('mousedown',this.nextDoc.bind(this),false);
     document.getElementById("docBrowserPreviousButton").addEventListener('mousedown',this.previousDoc.bind(this),false);
     document.getElementById("docBrowserOrientButton").addEventListener('mousedown', this.focusOnDoc.bind(this),false);
+    document.getElementById("docBrowserTab").addEventListener('mousedown', this.toggleDocBrowserWindow.bind(this), false);
 
     document.getElementById("docBrowserToggleBillboard").style.display = (hideBillboardButton)? "none" : "block";
+    document.getElementById("docBrowserWindow").style.display = (!this.docBrowserWindowIsActive)? "none" : "block";
 
 
     this.loadDataFromFile();
@@ -520,11 +526,3 @@ function docOpaUpdate(opa){
     document.querySelector('#docOpacity').value = opa;
     document.getElementById('docFullImg').style.opacity = opa/100;
 }
-
-//=============================================================================
-document.getElementById("docBrowserTab").onclick = function () {
-    document.getElementById('docBrowserWindow').style.display = docBrowserWindowIsActive ? "none" : "block";
-    docBrowserWindowIsActive = docBrowserWindowIsActive ? false : true;
-
-
-};

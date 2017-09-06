@@ -3,6 +3,8 @@
 * Class: Temporal Controller
 * Description : TO DO
 */
+
+//update the html with elements for this class (windows, buttons etc)
 var temporalDiv = document.createElement("div");
 temporalDiv.id = 'temporal';
 document.body.appendChild(temporalDiv);
@@ -207,7 +209,7 @@ function TemporalController(view, controls, buildingVersions, buildingDates, sta
 
         this.changeDate(this.buildingDates[this.currentVersionIndex-1]);
 
-    }
+    }//update the html with elements for this class (windows, buttons etc)
 
     //=============================================================================
     this.changeDate = function changeDate(date){

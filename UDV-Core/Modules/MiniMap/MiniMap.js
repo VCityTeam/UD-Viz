@@ -1,6 +1,6 @@
 
 
-
+//update the html with elements for this class (windows, buttons etc)
 var miniMapDiv = document.createElement("div");
 miniMapDiv.id = 'minimap';
 document.body.appendChild(miniMapDiv);

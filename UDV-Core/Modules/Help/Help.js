@@ -1,5 +1,6 @@
 var helpIsActive = false;
 
+//update the html with elements for this class (windows, buttons etc)
 var helpDiv = document.createElement("div");
 helpDiv.id = 'help';
 document.body.appendChild(helpDiv);
