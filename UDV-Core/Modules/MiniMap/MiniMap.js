@@ -8,13 +8,20 @@ document.body.appendChild(miniMapDiv);
 document.getElementById("minimap").innerHTML = '<button id="miniMapTab">CARTE</button>\
 <div id="miniMapViewer"></div>';
 
-
+// Constructor for MiniMapController
+// ===========================================================================================
 function MiniMapController(controls, extent, renderer) {
 
+    // instance of PlanarControls
     this.controls = controls;
+
+    // itowns extent
     this.extent = extent;
+
+    // camera height (zoom level)
     this.cameraZ = 16000;
 
+    // view setup
     const mapDiv = document.getElementById('miniMapViewer');
     this.view = new itowns.PlanarView(mapDiv, extent, { renderer });
 
@@ -35,20 +42,25 @@ function MiniMapController(controls, extent, renderer) {
         },
     });
 
+    // state of the minimap window (open/closed)
     this.miniMapIsActive = false;
 
-    const indicatorScale = new THREE.Vector3();
+    // indicator object
     const geometry = new THREE.BoxGeometry( 250, 250, 250 );
     const material = new THREE.MeshBasicMaterial( {color: 0xffffff} );
     this.mapIndicator = new THREE.Mesh( geometry, material );
     this.mapIndicator.position.z = 500;
 
+    // camera position at center of extent, looking at the ground, at altitude cameraZ, with north/south/east/west orientation
     this.view.camera.setPosition(new itowns.Coordinates('EPSG:3946',this.extent.center().xyz().x, this.extent.center().xyz().y, this.cameraZ));
     this.view.camera.camera3D.quaternion.copy(new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(1, 0, 0), 0));
 
     this.view.scene.add( this.mapIndicator );
     this.view.notifyChange(true);
     this.view.addFrameRequester(this);
+
+    // called by framerequester
+    //===================================================================
     this.update = function update(){
 
         this.mapIndicator.position.x = this.controls.camera.position.x;
@@ -57,7 +69,7 @@ function MiniMapController(controls, extent, renderer) {
 
         this.view.notifyChange(true);
     }
-
+    //===================================================================
     this.toggleMap = function toggleMap(){
 
         mapDiv.style.display = this.miniMapIsActive ? "none" : "block";

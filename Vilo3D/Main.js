@@ -18,7 +18,7 @@ const extent = new itowns.Extent(
     1837816.94334, 1847692.32501,
     5170036.4587, 5178412.82698,
 );
-const center = extent.center().xyz();
+
 // `viewerDiv` will contain iTowns' rendering area (`<canvas>`)
 const viewerDiv = document.getElementById('viewerDiv');
 // Instanciate PlanarView
@@ -93,12 +93,13 @@ $3dTilesLayerRequestVolume.overrideMaterials = false;  // custom cesium shaders 
 $3dTilesLayerRequestVolume.type = 'geometry';
 $3dTilesLayerRequestVolume.visible = true;
 
+// add the layer to the view
 if(showBuildings){itowns.View.prototype.addLayer.call(view, $3dTilesLayerRequestVolume);}
 
-//sky color
+// sky color
 view.mainLoop.gfxEngine.renderer.setClearColor( 0x6699cc, 1);
 
-//lights
+// lights
 var directionalLight = new THREE.DirectionalLight( 0xffffff, 0.5 );
 directionalLight.position.set( 0, 0, 20000 );
 directionalLight.updateMatrixWorld();
@@ -166,16 +167,20 @@ idlDates.push(new Date("1971-01-01"));
 
 // instanciate only one controls !!! comment the one you dont use
 
-// controls for editing
+// instanciate controls for editing
  //var controls = new itowns.PlanarControls(view, {zoomInFactor : 0.05, zoomOutFactor : 0.05, maxAltitude : 17000, maxZenithAngle: 88});
 
 // regular controls
 var controls = new itowns.PlanarControls(view, {maxAltitude : 15000, rotateSpeed : 2.5, autoTravelTimeMin: 1.5, autoTravelTimeMax: 5});
 
-var temporal = new TemporalController(view,controls,idlBuildings,idlDates,"2017-09-15");
+// instanciate temporal controller
+var temporal = new TemporalController(view,controls,{buildingVersions: idlBuildings, buildingDates: idlDates});
 
+// instanciate document handler
 var documents = new DocumentsHandler(view,controls,{temporal: temporal});
 
-var guidedtour = new GuidedTour(documents,{temporal:temporal});
+// instanciate guided tour controller
+var guidedtour = new GuidedTourController(documents,{temporal:temporal});
 
+// instanciate minimap
 var minimap = new MiniMapController(controls, extent, renderer);

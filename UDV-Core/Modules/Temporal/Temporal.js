@@ -10,62 +10,82 @@ temporalDiv.id = 'temporal';
 document.body.appendChild(temporalDiv);
 
 document.getElementById("temporal").innerHTML = '<button id="temporalTab">TEMPOREL</button>\
-        <div id="temporalWindow">\
-            <div id="timeSliderMinDate"></div>\
-            <div id="timeSliderMaxDate"></div>\
-            <input id="timeSlider" type="range">\
-            <input id="timeDateSelector" type="date">\
-            <button id="timeNextButton" type=button>⇨</button>\
-            <button id="timePreviousButton" type=button>⇦</button>\
-            <button id="timeConcurrentView" type=button>Vue superposée</button>\
-        </div>\
-    </div>';
+<div id="temporalWindow">\
+<div id="timeSliderMinDate"></div>\
+<div id="timeSliderMaxDate"></div>\
+<input id="timeSlider" type="range">\
+<input id="timeDateSelector" type="date">\
+<button id="timeNextButton" type=button>⇨</button>\
+<button id="timePreviousButton" type=button>⇦</button>\
+<button id="timeConcurrentView" type=button>Vue superposée</button>\
+</div>\
+</div>';
 
 
 /**
-* Constructor
-* @param domElement :
-* @param view :
-* @param controls :
+* Constructor for TemporalController
+* @param view : itowns planar view
+* @param controls : PlanarControls instance
 */
 //=============================================================================
-function TemporalController(view, controls, buildingVersions, buildingDates, startDate) {
-
+function TemporalController(view, controls, options={}) {
 
     this.view = view;
 
+    // PlanarControls instance (required)
     this.controls = controls;
 
-    this.buildingVersions = buildingVersions;
-    this.buildingDates = buildingDates;
+    // array 3d objects
+    this.buildingVersions = options.buildingVersions || [];
+
+    // array of dates corresponding to the 3d objects
+    this.buildingDates = options.buildingDates || [];
+
+    // array storing the positions of buildingVersions
     this.buildingPositions = [];
 
-    this.currentDate = new Date(startDate);
+    this.currentDate = new Date(options.startDate || "2017-09-15");
+
+    // currently active temporal version (3d object)
     this.currentVersion = null;
+
+    // the index to identify an element in the arrays (date, version, position)
+    // all arrays have same size and order, so index are valid for any array
     this.currentVersionIndex = -1;
     this.lastVersionIndex = -2;
 
+    // min and max date for the temporal slider
+    // (should be in options ? or set up by guided tour ?)
     this.minDate = new Date( "1700-01-01" );
     this.maxDate = new Date( "2018-01-01" );
 
+    // is the controller enabled
     this.enabled = false;
+
+    // concurrent view = all temporal versions on top of each other
     this.isInConcurrentView = false;
 
+    // is the temporal window open or not
     this.temporalWindowIsActive = false;
 
+    this.useBuildings = false;
+
+    // called after 3d objects have been loaded
     //=============================================================================
     this.initialize = function initialize(){
 
+        this.useBuildings = (this.buildingVersions.length!==0 && this.buildingDates.length!==0);
+
         this.buildingVersions.forEach((element)=>{
-                this.buildingPositions.push(element.position.clone());
+            this.buildingPositions.push(element.position.clone());
         });
 
         this.enabled = true;
 
         this.syncBuildingVersionToCurrentDate(true);
 
+        // setup the display
         document.getElementById("timeDateSelector").value = this.currentDate.toISOString().substring(0,10);
-
         document.getElementById("timeSlider").min = this.minDate.getFullYear();
         document.getElementById("timeSlider").max = this.maxDate.getFullYear();
         document.getElementById("timeSlider").value = this.currentDate.getFullYear();
@@ -73,10 +93,12 @@ function TemporalController(view, controls, buildingVersions, buildingDates, sta
         document.getElementById("timeSliderMaxDate").innerHTML = this.maxDate.getFullYear();
     };
 
+    // sync current version to current date
+    // this does nothing if the current version is already the right one, unless forceSync is true
     //=============================================================================
     this.syncBuildingVersionToCurrentDate = function syncBuildingVersionToCurrentDate(forceSync){
 
-        if(!this.enabled){
+        if(!this.enabled || !this.useBuildings){
             return;
         }
         if(this.isInConcurrentView){
@@ -84,55 +106,55 @@ function TemporalController(view, controls, buildingVersions, buildingDates, sta
             return;
         }
 
+        // get the version index corresponding to the current date
         this.buildingDates.forEach((element,index)=>{
 
             if(this.currentDate >= element){
                 this.currentVersionIndex = index;
             }
-
         });
 
+        // if the index is the same as before, exit the function, unless forceSync is true
         if(this.currentVersionIndex === this.lastVersionIndex && !forceSync){
             return;
         }
 
-
+        // for each version : add it to the scene if the index is the right one, remove it if not
         this.buildingVersions.forEach((element, index)=>{
 
             if(index === this.currentVersionIndex){
-
                 this.view.scene.add(element);
                 this.currentVersion = element;
-
             }
             else{
                 this.view.scene.remove(element);
             }
-
-
         });
 
         this.lastVersionIndex = this.currentVersionIndex;
 
+        // request a redraw of the scene
         this.view.notifyChange(true);
 
     };
 
+    // show or hide (toggle) the concurrent view of the temporal versions (all versions on top of each other)
     //=============================================================================
     this.toggleConcurrentView = function toggleConcurrentView(){
 
-        if(!this.enabled){
+        if(!this.enabled || !this.useBuildings){
             return;
         }
 
         this.isInConcurrentView = !this.isInConcurrentView;
 
+        // remove current version, display all the concurrent versions
         if(this.isInConcurrentView){
             this.view.scene.remove(this.currentVersion);
 
             this.buildingVersions.forEach((element, index)=>{
 
-                element.position.z += 40 * (this.buildingVersions.length-1 - index);
+                element.position.z += this.concurrentViewOffset * (this.buildingVersions.length-1 - index);
                 element.updateMatrixWorld();
 
                 this.view.scene.add(element);
@@ -140,7 +162,7 @@ function TemporalController(view, controls, buildingVersions, buildingDates, sta
             });
         }
         else{
-
+            //  remove all the concurrent versions, display the current version
             this.buildingVersions.forEach((element, index)=>{
 
                 element.position.copy(this.buildingPositions[index]);
@@ -152,10 +174,12 @@ function TemporalController(view, controls, buildingVersions, buildingDates, sta
 
         }
 
+        // request redraw of the scene
         this.view.notifyChange(true);
 
     }
 
+    // called when the user input a new date with the date selector
     //=============================================================================
     this.timeSelection = function timeSelection(){
         if(!this.enabled){
@@ -165,13 +189,11 @@ function TemporalController(view, controls, buildingVersions, buildingDates, sta
         var date = new Date(document.getElementById("timeDateSelector").value.toString());
 
         if(!isNaN(date)){
-
             this.changeDate(date);
-
         }
-
     };
 
+    // called when the user input a new date with the time slider
     //=============================================================================
     this.timeSelectionSlider = function timeSelectionSlider() {
         if(!this.enabled){
@@ -181,15 +203,16 @@ function TemporalController(view, controls, buildingVersions, buildingDates, sta
         var date = new Date(document.getElementById("timeSlider").value.toString());
 
         if(!isNaN(date)){
-
             this.changeDate(date);
-
         }
-
     };
 
+    // go to the next key date (next temporal version)
     //=============================================================================
     this.goToNextDate = function goToNextDate(){
+        if(!this.enabled || !this.useBuildings){
+            return;
+        }
 
         if(this.currentVersionIndex === this.buildingVersions.length -1){
             return;
@@ -200,8 +223,12 @@ function TemporalController(view, controls, buildingVersions, buildingDates, sta
 
     }
 
+    // go to the previous key date (previous temporal version)
     //=============================================================================
     this.goToPreviousDate = function goToPreviousDate(){
+        if(!this.enabled || !this.useBuildings){
+            return;
+        }
 
         if(this.currentVersionIndex === 0){
             return;
@@ -209,8 +236,9 @@ function TemporalController(view, controls, buildingVersions, buildingDates, sta
 
         this.changeDate(this.buildingDates[this.currentVersionIndex-1]);
 
-    }//update the html with elements for this class (windows, buttons etc)
+    }
 
+    // change the current date and sync the temporal version to this new date
     //=============================================================================
     this.changeDate = function changeDate(date){
 
@@ -220,10 +248,9 @@ function TemporalController(view, controls, buildingVersions, buildingDates, sta
         this.currentDate = date;
 
         this.syncBuildingVersionToCurrentDate(false);
-
-
     }
 
+    // enters a special behavior when in guidedtour mode (called by GuidedTourController)
     //=============================================================================
     this.startGuidedTourMode = function startGuidedTourMode(){
 
@@ -232,20 +259,21 @@ function TemporalController(view, controls, buildingVersions, buildingDates, sta
         }
     }
 
+    // resume normal behavior
     //=============================================================================
     this.exitGuidedTourMode = function exitGuidedTourMode(){
         //nothing yet
     }
 
+    // hide or show the temporal window
     //=============================================================================
     this.toggleTemporalWindow = function toggleTemporalWindow(){
 
         document.getElementById('temporalWindow').style.display = this.temporalWindowIsActive ? "none" : "block";
         this.temporalWindowIsActive = this.temporalWindowIsActive ? false : true;
-
-
     }
 
+    // event listener to trigger this.initialize after models are loaded
     window.addEventListener('allModelsLoaded', this.initialize.bind(this), false);
 
     document.getElementById("timeDateSelector").addEventListener('input', this.timeSelection.bind(this), false);
@@ -254,7 +282,5 @@ function TemporalController(view, controls, buildingVersions, buildingDates, sta
     document.getElementById("timeNextButton").addEventListener('mousedown', this.goToNextDate.bind(this), false);
     document.getElementById("timePreviousButton").addEventListener('mousedown', this.goToPreviousDate.bind(this), false);
     document.getElementById("temporalTab").addEventListener('mousedown', this.toggleTemporalWindow.bind(this), false);
-
-
 
 }

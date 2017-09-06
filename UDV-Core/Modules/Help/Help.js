@@ -19,8 +19,10 @@ document.getElementById("help").innerHTML = '    <button id="helpTab">AIDE</butt
 </ul>\
 </div>';
 
+// adjust display
 document.getElementById("helpWindow").style.display = (helpIsActive)? "block" : "none";
 
+// toggle window on click
 document.getElementById("helpTab").onclick = function () {
     document.getElementById('helpWindow').style.display = helpIsActive ? "none" : "block";
     helpIsActive = helpIsActive ? false : true;
