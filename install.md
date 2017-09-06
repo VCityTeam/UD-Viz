@@ -6,7 +6,7 @@ TO DO : auto install (install all dependencies with npm)
 
 **Full install** : First, the framework (itowns + building server etc) must be installed : follow all steps from https://github.com/MEPP-team/RICT/blob/master/Install.md
 
-Then we need to delete two buildings from the 'lyon' database (in psql) in order to make room for our handmade models (Îlot du Lac)
+Then we need to delete two buildings from the 'lyon 6ème' database (in psql) in order to make room for our handmade models (Îlot du Lac)
 -> in psql :
 ```
 (db_user)$ psql lyon
