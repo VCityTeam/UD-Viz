@@ -4,9 +4,16 @@ TO DO : auto install (install all dependencies with npm)
 
 # INSTALL NOTES
 
-**Full install** : First, the framework (itowns + building server etc) must be installed : https://github.com/MEPP-team/RICT/blob/master/Install.md
+**Full install** : First, the framework (itowns + building server etc) must be installed : follow all steps from https://github.com/MEPP-team/RICT/blob/master/Install.md
 
-To delete buildings from the building database in order to include another object :
+Then we need to delete two buildings from the 'lyon' database (in psql) in order to make room for our handmade models (Îlot du Lac)
+-> in psql :
+```
+(db_user)$ psql lyon
+lyon=# delete from lyon where gid in (173,503);
+```
+The two building gid (173 and 503) were found with this process :
+
 Example for Ilot du Lac :
 - open database in psql
 - open QGIS
