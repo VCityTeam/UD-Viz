@@ -20,7 +20,7 @@ Edit `UDV/Vilo3D/Main.js` and set the "showBuildings" to false on line 4.
 Open UDV/Vilo3D/index.html in Firefox (will fail for Chrome).
 
 
-## Installation with geometry of the buildings together some historical buildings 
+## Installation with geometry of the buildings and hand made textured historical buildings 
 
 ### (1) Install the database. 
 The following instructions are an adaptation of [JIGA adhoc building database](https://github.com/MEPP-team/RICT/blob/master/Install.md) (within the context of Ubuntu version as given by `lsb_release -a` yields `Description: Debian GNU/Linux 8.8 (jessie)`):
@@ -71,8 +71,14 @@ Delete those tow buildings from the DB:
 Refer above to the light install version.
 
 ### (4) Install an http server
+```
+  sudo apt install apache2
+  sudo cp /etc/apache2/sites-available/000-default.conf /etc/apache2/sites-available/rict.liris.cnrs.fr.conf
+  nano /etc/apache2/sites-available/rict.liris.cnrs.fr.conf
+```
 Notes and references: 
  * JGA discourages (within this context) the [usage of uWSGI](http://uwsgi-docs.readthedocs.io/en/latest/StaticFiles.html) as simple http server
+ * [Ubuntu Apache2 configuration](https://www.digitalocean.com/community/tutorials/how-to-set-up-apache-virtual-hosts-on-ubuntu-14-04-lts)
  * [Ubuntu Apache2 install](https://help.ubuntu.com/lts/serverguide/httpd.html)
 
 ### (5) Usage
