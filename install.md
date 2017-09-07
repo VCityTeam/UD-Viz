@@ -4,18 +4,74 @@ TO DO : auto install (install all dependencies with npm)
 
 # INSTALL NOTES
 
-**Full install** : First, the framework (itowns + building server etc) must be installed : follow all steps from https://github.com/MEPP-team/RICT/blob/master/Install.md
+## Ligh install (without building geometry)
 
-Then we need to delete two buildings from the 'lyon 6ème' database (in psql) in order to make room for our handmade models (Îlot du Lac)
--> in psql :
+Just (git) clone UDV and iTowns alongside (the two directories must be siblings):
 ```
-(db_user)$ psql lyon
-lyon=# delete from lyon where gid in (173,503);
+  mkdir Vilo3D    # Not really needed but cleaner with a containment directory
+  cd Vilo3d
+  git clone https://github.com/MEPP-team/UDV.git
+  git clone https://github.com/itowns/itowns.git
+  cd itowns/
+  npm install   # Might require some "sudo apt-get install npm"
 ```
-The two building gid (173 and 503) were obtained with [this process](FindBuildingGID.md).
+Edit `UDV/Vilo3D/Main.js` and set the "showBuildings" to false on line 4.
 
-Then, clone the UDV repository alongside iTowns. UDV and iTowns must be in the same directory, unless you change the path to itowns in your index.html.
+Open UDV/Vilo3D/index.html in Firefox (will fail for Chrome).
 
-**Shorter install, no building geometry** : just clone UDV alongside iTowns, skipping the rest of the framework. Set "showBuildings" to false (line 4 in UDV/Vilo3D/Main.js).
 
-**Launch** : open UDV/Vilo3D/index.html in Firefox
+## Installation with geometry of the buildings together some historical buildings 
+
+### (1) Install the database. 
+The following instructions are an adaptation of [JIGA adhoc building database](https://github.com/MEPP-team/RICT/blob/master/Install.md) (within the context of Ubuntu version as given by `lsb_release -a` yields `Description: Debian GNU/Linux 8.8 (jessie)`):
+```
+  sudo su citydb_user
+  (citydb_user)$ createdb -O citydb_user lyon6_buildings
+  (citydb_user)$ psql lyon6_buildings -c "create extension postgis;"
+  (citydb_user)$ psql lyon6_buildings -c "create table lyon(gid serial primary key, geom GEOMETRY('POLYHEDRALSURFACEZ', 3946));"
+```
+Proceed with feeding the DB:
+```
+  (citydb_user)$ cd
+  (citydb_user)$ mkdir Vilo3d
+  (citydb_user)$ cd Vilo3d
+  (citydb_user)$ git clone https://github.com/Oslandia/citygml2pgsql
+  (citydb_user)$ mv citygml2pgsql citygml2pgsql.git && cd citygml2pgsql.git
+  (citydb_user)$ wget http://liris.cnrs.fr/vcity/Data/iTowns2/LYON_6EME_BATI_2012_SplitBuildings.gml
+  (citydb_user)$ pip --version         # sudo apt-get install python-pip in case you miss pip on python2 !
+  (citydb_user)$ sudo pip install lxml # Refer below in case of failure on Python.h, libxml.h...
+  python ./citygml2pgsql.py -l LYON_6EME_BATI_2012_SplitBuildings.gml
+  python ./citygml2pgsql.py LYON_6EME_BATI_2012_SplitBuildings.gml 2 3946 geom lyon |  psql lyon6_buildings
+```
+
+Note: in case of trouble when install lxml python package with pip:
+```
+  # The following package install were required for pip install lxml to get through
+  (citydb_user)$ sudo apt-get install libxml2-dev libxslt1-dev python-dev
+  (citydb_user)$ sudo apt-get install zlib1g-dev    # because on 64 bit (uname-a)
+```
+
+Assert some content was indeed fed to the DB
+```
+  psql lyon6_buildings -c "select count(*) from lyon;"
+```
+which should return 511 buildings.
+
+### Manual edit of database
+Then we need to delete two buildings from the 'lyon 6ème' database (in psql) in order to make room for our handmade models (of so called "Îlot du Lac").
+
+Identifying the gid (`173` and `503`) of the buildings to be removed is achieved [through those geographical requests](FindBuildingGID.md).
+
+Delete those tow buildings from the DB:
+```
+  (db_user)$ psql lyon6_buildings -c "delete from lyon where gid in (173,503);"
+```
+
+### Install an http server
+References: [Ubuntu Apache2 install](https://help.ubuntu.com/lts/serverguide/httpd.html)
+
+### Install UDV and iTowns
+Refer above to the light install version.
+
+### Usage
+ * When on the http server, open `UDV/Vilo3D/index.html` in Firefox (Chrome not supported)
