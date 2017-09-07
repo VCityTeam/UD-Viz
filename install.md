@@ -71,7 +71,9 @@ Delete those tow buildings from the DB:
 Refer above to the light install version.
 
 ### (4) Install an http server
-References: [Ubuntu Apache2 install](https://help.ubuntu.com/lts/serverguide/httpd.html)
+Notes and references: 
+ * JGA discourages (within this context) the [usage of uWSGI](http://uwsgi-docs.readthedocs.io/en/latest/StaticFiles.html) as simple http server
+ * [Ubuntu Apache2 install](https://help.ubuntu.com/lts/serverguide/httpd.html)
 
 ### (5) Usage
  * When on the http server, open `UDV/Vilo3D/index.html` in Firefox (Chrome not supported)
