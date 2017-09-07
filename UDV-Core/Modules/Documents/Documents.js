@@ -21,7 +21,6 @@ document.getElementById("doc").innerHTML ='<button id="docBrowserTab">DOC</butto
         <button id="docBrowserNextButton" type=button>⇨</button>\
         <button id="docBrowserPreviousButton" type=button>⇦</button>\
         <button id="docBrowserOrientButton" type=button>ORIENTER</button>\
-        <button id="docBrowserToggleBillboard" type=button>Billboard</button>\
     </div>\
     <div id="docFull">\
         <img id="docFullImg"/>\
@@ -33,31 +32,40 @@ document.getElementById("doc").innerHTML ='<button id="docBrowserTab">DOC</butto
             step="1" oninput="docOpaUpdate(value)">\
             <output for="docOpaSlider" id="docOpacity">50</output>\
         </div>\
-    </div>';
+    </div>\
+    <button id="docBrowserToggleBillboard" type=button>Billboard</button>\
+    ';
 
 //dirty variables to test billboards
 var billboardsAreActive = false;
-var showBillboardButton = true;
+var showBillboardButton = false;
 
 /**
-* Constructor for DocumentsHandler
+* Constructor for DocumentsHandler Class
+* WHAT IS THIS FOR ?
 * @param view : itowns planar view
 * @param controls : PlanarControls instance
+* @param dataFile : TO DO
 * @param options : optional parameters (including TemporalController)
 */
 //=============================================================================
-function DocumentsHandler(view, controls, options = {}) {
+function DocumentsHandler(view, controls, dataFile, options = {}) {
 
+    // TO DO
     this.view = view;
 
+    // TO DO
     this.domElement = view.mainLoop.gfxEngine.renderer.domElement;
 
-    // PlanarControls instance, required
+    // PlanarControls instance, required for the oriented view TO DO
     this.controls = controls;
 
     this.camera = view.camera.camera3D;
 
-    // TemporalController instance (optional)
+    // path to the csv file holding the guided tour data
+    const CSVdataFile = dataFile;
+
+    // TemporalController instance (optional) WHY ?
     this.temporal = options.temporal;
 
     // state of the browser window (open / closed), intial state can be set via options
@@ -83,7 +91,6 @@ function DocumentsHandler(view, controls, options = {}) {
     this.initEvent = document.createEvent('Event');
     this.initEvent.initEvent('docInit', true, true);
 
-
     // adds a Document to the DocumentHandler.
     //=============================================================================
     this.addDocument = function addDocument(docTitle,docIndex,docImageSourceHD,docImageSourceBD,billboardPosition,docViewPosition,docViewQuaternion,docStartDate,metaData) {
@@ -93,8 +100,11 @@ function DocumentsHandler(view, controls, options = {}) {
 
     };
 
-    // called by loadDocsFromFile() when loading is done
-    // docDataFromFile is a data array obtained from the file
+    /**
+    * initialize the controller using data from the csv file
+    * this function is called after the completion of readCSVFile() in this.loadDataFromFile()
+    * @param docDataFromFile : contains the data loaded from the file
+    */
     //=============================================================================
     this.initialize = function initialize(docDataFromFile){
 
@@ -144,6 +154,7 @@ function DocumentsHandler(view, controls, options = {}) {
             this.hideBillboards(true)
         }
 
+        // TO DO : REVIEW HERE
         // target can be any Element or other EventTarget.    document.getElementById('docFullImg').src = this.currentDoc.imageSourceHD;
         document.getElementById('docBrowserPreviewImg').src = this.currentDoc.imageSourceBD;
         window.dispatchEvent(this.initEvent);
@@ -154,7 +165,7 @@ function DocumentsHandler(view, controls, options = {}) {
     //=============================================================================
     this.loadDataFromFile = function loadDataFromFile(){
 
-        readCSVFile("docs.csv", this.initialize.bind(this));
+        readCSVFile(CSVdataFile, this.initialize.bind(this));
 
     }
 
@@ -198,6 +209,7 @@ function DocumentsHandler(view, controls, options = {}) {
             document.querySelector('#docOpacity').value = Math.trunc(this.fadeAlpha*100);
 
             // request the framerequester for another call to this.update()
+            // TO DO : explain false
             this.view.notifyChange(false);
 
         }
@@ -355,7 +367,9 @@ function DocumentsHandler(view, controls, options = {}) {
 
         this.isOrientingDoc = true;
         this.isFadingDoc = false;
-        this.view.notifyChange(true);
+
+        //to request an update
+        this.view.notifyChange(false);
 
     };
 
@@ -365,28 +379,6 @@ function DocumentsHandler(view, controls, options = {}) {
         document.getElementById('docFull').style.display = "none";
         document.getElementById('docFullImg').src = null;
         this.showBillboards(false);
-    }
-
-    // enters a special behavior when in guidedtour mode (called by GuidedTourController)
-    //=============================================================================
-    this.startGuidedTourMode = function startGuidedTourMode(){
-
-        if(!this.docBrowserWindowIsActive){
-            this.docBrowserWindowIsActive = true;
-            document.getElementById('docBrowserWindow').style.display = "block";
-        }
-        document.getElementById('docBrowserPreviousButton').style.display = "none";
-        document.getElementById('docBrowserNextButton').style.display = "none";
-        document.getElementById('docBrowserIndex').style.display = "none";
-    }
-
-    // resume normal behavior
-    //=============================================================================
-    this.exitGuidedTourMode = function exitGuidedTourMode(){
-
-        document.getElementById('docBrowserPreviousButton').style.display = "block";
-        document.getElementById('docBrowserNextButton').style.display = "block";
-        document.getElementById('docBrowserIndex').style.display = "block";
     }
 
     // hide or show the doc browser
@@ -402,14 +394,13 @@ function DocumentsHandler(view, controls, options = {}) {
     //=============================================================================
     this.onMouseClick = function onMouseClick(event){
 
-        var onBillboard = false;
-
         var mouse = new THREE.Vector2();
 
         var raycaster = new THREE.Raycaster();
         mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
         mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
         raycaster.setFromCamera( mouse, this.camera );
+        // we could optimize here, parse the scene first and get the children which are billboards, then intersects
         var intersects = raycaster.intersectObjects( this.view.scene.children );
         for ( var i = 0; i < intersects.length; i++ ) {
 
@@ -417,15 +408,13 @@ function DocumentsHandler(view, controls, options = {}) {
             // the billboard "type" is in the userData of the geometry
             // (this is done in the Document constructor)
             if( intersects[ i ].object.userData.type === 'billboard'){
-                onBillboard = true;
                 this.currentDoc = intersects[i].object.userData.doc;
+                // trigger focusOnDoc (oriented camera view) if object is a billboard
+                this.focusOnDoc();
+                break;
             }
         }
 
-        // trigger focusOnDoc (oriented camera view) if object is a billboard
-        if(onBillboard){
-            this.focusOnDoc();
-        }
     };
 
     //output the camera position and quaternion in console with O (letter) key
@@ -455,7 +444,6 @@ function DocumentsHandler(view, controls, options = {}) {
     // setup display
     document.getElementById("docBrowserToggleBillboard").style.display = (showBillboardButton)? "block" : "none";
     document.getElementById("docBrowserWindow").style.display = (!this.docBrowserWindowIsActive)? "none" : "block";
-
 
     this.loadDataFromFile();
 
@@ -497,8 +485,12 @@ function Document(docTitle,docIndex,docImageSourceHD,docImageSourceBD,billboardP
     this.viewPosition = docViewPosition;
     this.viewQuaternion = docViewQuaternion;
 
+    // plane with the image
     this.billboardGeometry = null;
+    // plane with wireframe (better visibility for the billboard)
     this.billboardGeometryFrame = null;
+
+    // user data that will be given to the billboard object
     this.docBillboardData = null;
 
     // billboard geometry creation, only called if useBillboard is true

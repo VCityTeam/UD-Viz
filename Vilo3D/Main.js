@@ -76,25 +76,25 @@ var preUpdateGeo = function (context, layer) {
     return [layer.root];
 };
 
-// Create a new Layer 3d-tiles For Viewer Request Volume  => data sent from building-server (LYON 6)
+// Create a new Layer 3d-tiles  => data sent from building-server (LYON 6)
 // -----------------------------------------------------
-const $3dTilesLayerRequestVolume = new itowns.GeometryLayer('3d-tiles-request-volume', view.scene);
+const $3dTilesLayer = new itowns.GeometryLayer('3d-tiles-request-volume', view.scene);
 
-$3dTilesLayerRequestVolume.preUpdate = preUpdateGeo;
-$3dTilesLayerRequestVolume.update = itowns.process3dTilesNode(
+$3dTilesLayer.preUpdate = preUpdateGeo;
+$3dTilesLayer.update = itowns.process3dTilesNode(
     itowns.$3dTilesCulling,
     itowns.$3dTilesSubdivisionControl
 );
 
-$3dTilesLayerRequestVolume.name = 'RequestVolume';
-$3dTilesLayerRequestVolume.url = 'http://localhost:9090/getCity?city=lyon6';
-$3dTilesLayerRequestVolume.protocol = '3d-tiles'
-$3dTilesLayerRequestVolume.overrideMaterials = false;  // custom cesium shaders are not functional
-$3dTilesLayerRequestVolume.type = 'geometry';
-$3dTilesLayerRequestVolume.visible = true;
+$3dTilesLayer.name = 'RequestVolume';
+$3dTilesLayer.url = 'http://localhost:9090/getCity?city=lyon6';
+$3dTilesLayer.protocol = '3d-tiles'
+$3dTilesLayer.overrideMaterials = false;  // custom cesium shaders are not functional
+$3dTilesLayer.type = 'geometry';
+$3dTilesLayer.visible = true;
 
 // add the layer to the view
-if(showBuildings){itowns.View.prototype.addLayer.call(view, $3dTilesLayerRequestVolume);}
+if(showBuildings){itowns.View.prototype.addLayer.call(view, $3dTilesLayer);}
 
 // sky color
 view.mainLoop.gfxEngine.renderer.setClearColor( 0x6699cc, 1);
@@ -114,8 +114,8 @@ view.scene.add( ambientLight );
 view.camera.setPosition(new itowns.Coordinates('EPSG:3946', extent.west(), extent.south(), 2000));
 view.camera.camera3D.lookAt(extent.center().xyz());
 
-// SETUP BUILDINGS (IDL) ============================================================================================
-var idlBuildings = [];
+// SETUP & LOAD COLLADA BUILDINGS for Ilot du Lac (IDL) ============================================================================================
+var idlBuildings = []; //array of 3d objects
 var loader = new THREE.ColladaLoader();
 var idlPosition = new THREE.Vector3(1844025, 5175788, 191);
 var idlPosition2 = idlPosition.clone().sub(new THREE.Vector3(0,0,20));
@@ -135,12 +135,13 @@ var onModelLoad = function onModelLoad(array, index, position, scale) {
         array[index].updateMatrixWorld();
         amountLoaded += 1;
         if(amountLoaded === amountToLoad && !allLoadedEventSent){
+            // if all models have been loaded, dispatch the allModelsLoadedEvent
             window.dispatchEvent(allModelsLoadedEvent);
             allLoadedEventSent = true;
         }
     };
 };
-
+// event telling us that all models have been loaded
 var allModelsLoadedEvent = document.createEvent('Event');
 allModelsLoadedEvent.initEvent('allModelsLoaded', true, true);
 
@@ -177,10 +178,10 @@ var controls = new itowns.PlanarControls(view, {maxAltitude : 15000, rotateSpeed
 var temporal = new TemporalController(view,controls,{buildingVersions: idlBuildings, buildingDates: idlDates});
 
 // instanciate document handler
-var documents = new DocumentsHandler(view,controls,{temporal: temporal});
+var documents = new DocumentsHandler(view,controls,'docs.csv',{temporal: temporal});
 
 // instanciate guided tour controller
-var guidedtour = new GuidedTourController(documents,{temporal:temporal});
+var guidedtour = new GuidedTourController(documents,'visite.csv',{temporal: temporal, preventUserFromChangingTour : true});
 
 // instanciate minimap
 var minimap = new MiniMapController(controls, extent, renderer);

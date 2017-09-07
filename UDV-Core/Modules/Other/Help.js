@@ -7,6 +7,7 @@ document.body.appendChild(helpDiv);
 
 document.getElementById("help").innerHTML = '    <button id="helpTab">AIDE</button>\
 <div id="helpWindow">\
+<br>\
 <p>Contrôles caméra</p>\
 <ul>\
 <li>Clic-gauche : déplacement par rapport au sol</li>\
@@ -26,6 +27,4 @@ document.getElementById("helpWindow").style.display = (helpIsActive)? "block" : 
 document.getElementById("helpTab").onclick = function () {
     document.getElementById('helpWindow').style.display = helpIsActive ? "none" : "block";
     helpIsActive = helpIsActive ? false : true;
-
-
 };

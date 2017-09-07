@@ -73,4 +73,4 @@ view.camera.camera3D.lookAt(extent.center().xyz());
 
 var controls = new itowns.PlanarControls(view, {maxAltitude : 15000, rotateSpeed : 2.5, autoTravelTimeMin: 1.5, autoTravelTimeMax: 5});
 
-var documents = new DocumentsHandler(view,controls,{docBrowserWindowStartActive : true});
+var documents = new DocumentsHandler(view,controls,"docs.csv",{docBrowserWindowStartActive : true});

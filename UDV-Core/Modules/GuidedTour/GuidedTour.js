@@ -11,8 +11,10 @@ document.getElementById("guidedtour").innerHTML = '\
     <div id="guidedTourStepTitle"></div>\
     <div id="guidedTourText1"></div>\
     <div id="guidedTourDocPreview"><img id="guidedTourDocPreviewImg"/></div>\
-    <button id="guidedTourNextButton" type=button>SUIVANT</button>\
-    <button id="guidedTourPreviousButton" type=button>PRECEDENT</button>\
+    <button id="guidedTourNextStepButton" type=button>SUIVANT</button>\
+    <button id="guidedTourNextTourButton" type=button>⇨</button>\
+    <button id="guidedTourPreviousStepButton" type=button>PRECEDENT</button>\
+    <button id="guidedTourPreviousTourButton" type=button>⇦</button>\
     <button id="guidedTourExitButton" type=button>SORTIE</button>\
     <button id="guidedTourStartButton" type=button>DEMARRER</button>\
 </div>\
@@ -23,13 +25,13 @@ document.getElementById("guidedtour").innerHTML = '\
 * The controller reads data from a csv file to build one or more guided tours
 * Each guided tour is a succession of "steps"
 * Each step has a document + tour text + doc text (steps are instances of the TourStep class)
-* Multiple guided tours are supported but there is no way yet to choose a specific tour at runtime
-* The guided tour which will be accessible by the user is specified by startingTourIndex
+* Multiple guided tours are supported (only one tour is finished for the demo)
+* For the demo : options.preventUserFromChangingTour allows to hide the buttons for changing tour
 * This controller is initialized after DocumentHandler has finished initializing
 * @param docHandler : an instance of DocumentHandler (required)
 */
 //=============================================================================
-function GuidedTourController(docHandler, options={}) {
+function GuidedTourController(docHandler, dataFile, options={}) {
 
     // DocumentHandler instance, required
     this.docs = docHandler;
@@ -40,21 +42,28 @@ function GuidedTourController(docHandler, options={}) {
     // The tour steps of the currently active guided tour
     this.tourStepsCurrent = null;
 
+    // the current step index of the current tour
+    this.currentStepIndex = 0;
+
     // Array of all the guided tours loaded from the csv file
     this.tours = [];
+
+    // the current tour index
+    this.currentTourIndex = 0;
 
     // index of the tour accessible by the user (loaded by default)
     // as of now, there is no way to choose a specific tour at runtime
     const startingTourIndex = 0;
 
     // path to the csv file holding the guided tour data
-    const CSVdataFile = "visite.csv";
+    const CSVdataFile = dataFile;
 
     // boolean to control the state of the guided tour window (open/closed)
     this.guidedTourWindowIsActive = false;
 
-    // the current step index of the current tour
-    this.currentStepIndex = 0;
+    // for the demo : if this is true, hide the buttons for changing tour
+    this.preventUserFromChangingTour = options.preventUserFromChangingTour || false;
+
 
     /**
     * initialize the controller using data from the csv file
@@ -99,9 +108,6 @@ function GuidedTourController(docHandler, options={}) {
         // select the tour which will be accessible from the guided tour window
         this.selectTour(startingTourIndex);
 
-        // display the introduction (step 0) for the current tour
-        this.setupIntro();
-
     }
 
     // loads the steps from the chosen tour
@@ -109,6 +115,8 @@ function GuidedTourController(docHandler, options={}) {
     this.selectTour = function selectTour(index){
 
         this.tourStepsCurrent = this.tours[index];
+        this.currentTourIndex = index;
+        this.setupIntro();
     }
 
     // setup the display for the introduction (buttons, image, text...)
@@ -116,8 +124,18 @@ function GuidedTourController(docHandler, options={}) {
     this.setupIntro = function setupIntro(){
 
         // hide & show elements
-        document.getElementById("guidedTourPreviousButton").style.display = "none";
-        document.getElementById("guidedTourNextButton").style.display = "none";
+        document.getElementById("guidedTourPreviousTourButton").style.display = "block";
+        document.getElementById("guidedTourNextTourButton").style.display = "block";
+
+        // for the demo, until we have more than one finished guided tour
+        // we can prevent user from changing tour by hiding the buttons
+        if(this.preventUserFromChangingTour){
+            document.getElementById("guidedTourPreviousTourButton").style.display = "none";
+            document.getElementById("guidedTourNextTourButton").style.display = "none";
+        }
+
+        document.getElementById("guidedTourPreviousStepButton").style.display = "none";
+        document.getElementById("guidedTourNextStepButton").style.display = "none";
         document.getElementById("guidedTourExitButton").style.display = "none";
         document.getElementById("guidedTourText2").style.display = "none";
         document.getElementById("guidedTourStartButton").style.display = "block";
@@ -126,10 +144,9 @@ function GuidedTourController(docHandler, options={}) {
         // setup image & text
         document.getElementById("guidedTourDocPreviewImg").src = this.tourStepsCurrent[0].doc.imageSourceBD;
         document.getElementById("guidedTourText1").innerHTML = this.tourStepsCurrent[0].text1;
+        document.getElementById("guidedTourText1").style.height = "45%";
         document.getElementById("guidedTourTitle").innerHTML = this.tourStepsCurrent[0].stepTitle;
         document.getElementById("guidedTourStepTitle").innerHTML = null;
-
-
 
     }
 
@@ -138,22 +155,35 @@ function GuidedTourController(docHandler, options={}) {
     this.startGuidedTour = function startGuidedTour(){
 
         // setup the display (hide & show elements)
-        document.getElementById("guidedTourPreviousButton").style.display = "block";
-        document.getElementById("guidedTourNextButton").style.display = "block";
+        document.getElementById("guidedTourPreviousTourButton").style.display = "none";
+        document.getElementById("guidedTourNextTourButton").style.display = "none";
+        document.getElementById("guidedTourPreviousStepButton").style.display = "block";
+        document.getElementById("guidedTourNextStepButton").style.display = "block";
         document.getElementById("guidedTourExitButton").style.display = "block";
         document.getElementById("guidedTourText2").style.display = "inline-block";
         document.getElementById("guidedTourStartButton").style.display = "none";
         document.getElementById("guidedTourDocPreviewImg").style.display = "none";
 
+        // bigger text block
+        document.getElementById("guidedTourText1").style.height = "60%";
+
         documents.hideBillboards(true);
 
-        // order the TemporalController to enter "guidedtourmode" which can modifiy its behavior
+        // open temporal window if it is closed
         if(this.temporal){
-            this.temporal.startGuidedTourMode();
+            if(!this.temporal.temporalWindowIsActive){
+                this.temporal.toggleTemporalWindow();
+            }
         }
 
-        // order the DocumentsHandler to enter "guidedtourmode" which can modifiy its behavior
-        this.docs.startGuidedTourMode();
+        // open doc window and hide some buttons
+        if(!this.docs.docBrowserWindowIsActive){
+            this.docs.docBrowserWindowIsActive = true;
+            document.getElementById('docBrowserWindow').style.display = "block";
+        }
+        document.getElementById('docBrowserPreviousButton').style.display = "none";
+        document.getElementById('docBrowserNextButton').style.display = "none";
+        document.getElementById('docBrowserIndex').style.display = "none";
 
         this.currentStepIndex = 0; //index will become 1 in goToNextStep()
 
@@ -165,13 +195,13 @@ function GuidedTourController(docHandler, options={}) {
     this.exitGuidedTour = function exitGuidedTour(){
 
         this.selectTour(0);
-        this.setupIntro();
         this.docs.showBillboards(false);
         this.docs.closeDocFull();
-        if(this.temporal){
-            this.temporal.exitGuidedTourMode();
-        }
-        this.docs.exitGuidedTourMode();
+
+        // show the regular buttons for doc window
+        document.getElementById('docBrowserPreviousButton').style.display = "block";
+        document.getElementById('docBrowserNextButton').style.display = "block";
+        document.getElementById('docBrowserIndex').style.display = "block";
     };
 
     //=============================================================================
@@ -208,6 +238,30 @@ function GuidedTourController(docHandler, options={}) {
 
     };
 
+    //=============================================================================
+    this.goToNextTour = function goToNextTour(){
+
+        if(this.currentTourIndex + 1 >= this.tours.length){
+            return;
+        }
+
+        this.currentTourIndex += 1;
+        this.selectTour(this.currentTourIndex);
+
+    };
+
+    //=============================================================================
+    this.goToPreviousTour = function goToPreviousTour(){
+
+        if(this.currentTourIndex === 0){
+            return;
+        }
+
+        this.currentTourIndex += -1;
+        this.selectTour(this.currentTourIndex);
+
+    };
+
     // hide or show the guided tour window
     //=============================================================================
     this.toggleGuidedTourWindow = function toggleGuidedTourWindow(){
@@ -232,9 +286,11 @@ function GuidedTourController(docHandler, options={}) {
     }
 
     // event listeners (buttons)
+    document.getElementById("guidedTourNextTourButton").addEventListener('mousedown', this.goToNextTour.bind(this),false);
+    document.getElementById("guidedTourPreviousTourButton").addEventListener('mousedown', this.goToPreviousTour.bind(this),false);
     document.getElementById("guidedTourStartButton").addEventListener('mousedown', this.startGuidedTour.bind(this),false);
-    document.getElementById("guidedTourNextButton").addEventListener('mousedown', this.goToNextStep.bind(this),false);
-    document.getElementById("guidedTourPreviousButton").addEventListener('mousedown', this.goToPreviousStep.bind(this),false);
+    document.getElementById("guidedTourNextStepButton").addEventListener('mousedown', this.goToNextStep.bind(this),false);
+    document.getElementById("guidedTourPreviousStepButton").addEventListener('mousedown', this.goToPreviousStep.bind(this),false);
     document.getElementById("guidedTourExitButton").addEventListener('mousedown', this.exitGuidedTour.bind(this),false);
     document.getElementById("guidedTourTab").addEventListener('mousedown', this.toggleGuidedTourWindow.bind(this), false);
 

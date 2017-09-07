@@ -65,6 +65,8 @@ function TemporalController(view, controls, options={}) {
     // concurrent view = all temporal versions on top of each other
     this.isInConcurrentView = false;
 
+    this.concurrentViewOffset = options.concurrentViewOffset || 45;
+
     // is the temporal window open or not
     this.temporalWindowIsActive = false;
 
@@ -250,21 +252,6 @@ function TemporalController(view, controls, options={}) {
         this.syncBuildingVersionToCurrentDate(false);
     }
 
-    // enters a special behavior when in guidedtour mode (called by GuidedTourController)
-    //=============================================================================
-    this.startGuidedTourMode = function startGuidedTourMode(){
-
-        if(!this.temporalWindowIsActive){
-            this.toggleTemporalWindow();
-        }
-    }
-
-    // resume normal behavior
-    //=============================================================================
-    this.exitGuidedTourMode = function exitGuidedTourMode(){
-        //nothing yet
-    }
-
     // hide or show the temporal window
     //=============================================================================
     this.toggleTemporalWindow = function toggleTemporalWindow(){
@@ -273,14 +260,14 @@ function TemporalController(view, controls, options={}) {
         this.temporalWindowIsActive = this.temporalWindowIsActive ? false : true;
     }
 
-    // event listener to trigger this.initialize after models are loaded
-    window.addEventListener('allModelsLoaded', this.initialize.bind(this), false);
-
     document.getElementById("timeDateSelector").addEventListener('input', this.timeSelection.bind(this), false);
     document.getElementById("timeSlider").addEventListener('input', this.timeSelectionSlider.bind(this), false);
     document.getElementById("timeConcurrentView").addEventListener('mousedown', this.toggleConcurrentView.bind(this), false);
     document.getElementById("timeNextButton").addEventListener('mousedown', this.goToNextDate.bind(this), false);
     document.getElementById("timePreviousButton").addEventListener('mousedown', this.goToPreviousDate.bind(this), false);
     document.getElementById("temporalTab").addEventListener('mousedown', this.toggleTemporalWindow.bind(this), false);
+
+    // event listener to trigger this.initialize after models are loaded
+    window.addEventListener('allModelsLoaded', this.initialize.bind(this), false);
 
 }

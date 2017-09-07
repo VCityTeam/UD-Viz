@@ -122,8 +122,6 @@ body {
     padding-top: 3px;
 
     pointer-events: none;
-
-
 }
 
 #cartoDataSource{
@@ -188,7 +186,7 @@ body {
     color: white;
 
     width: 20%;
-    height: 65%;
+    height: 70%;
 
     color : black;
     background-color: rgba(30,30,30,0.6);
@@ -286,22 +284,21 @@ body {
 #docBrowserToggleBillboard{
 
     position: absolute;
-    z-index: 20;
+    z-index: 40;
 
-    bottom : 0;
-    right : 0;
-
-    margin : 5px;
-
-    font-size: 12px;
+    margin : 3px;
 
     border: 1px solid black;
     background-color: white;
     color: black;
 
-    height: 30px;
+    font-size: 12px;
 
-    pointer-events: auto;
+    height: 30px;
+    top: 0;
+    right: 15%;
+
+    pointer-events: auto
 
 }
 
@@ -311,7 +308,7 @@ body {
     z-index: 20;
 
     bottom : 0;
-    right : 35%;
+    right : 0;
 
 
     margin : 5px;
@@ -412,7 +409,7 @@ body {
     color: white;
 
     width: 20%;
-    height: 65%;
+    height: 70%;
 
     color : black;
     background-color: rgba(30,30,30,0.6);
@@ -463,13 +460,15 @@ body {
 
     display:inline-block;
 
-    margin-top: 20px;
     margin: 10px;
     padding: 5px;
     padding-left: 10px;
     padding-right: 10px;
 
     line-height: 130%;
+
+    /* height adjusted in GuidedTour.js, 45% or 60% */
+    height: 45%;
 
     color : black;
     background-color: ivory ;
@@ -478,7 +477,7 @@ body {
 
     text-align: justify;
 
-    overflow: hidden;
+    overflow: scroll;
     pointer-events: auto;
 
 }
@@ -528,10 +527,9 @@ body {
     z-index: 20;
 
     height: 25%;
-    display:inline-block
+    display:inline-block;
 
-    margin-top: 10px;
-    margin: 10px;
+    margin: 5% ;
 
 
 }
@@ -567,14 +565,58 @@ body {
 }
 
 
-#guidedTourNextButton{
+#guidedTourNextTourButton{
 
     position: absolute;
     z-index: 20;
 
     bottom : 5px;
-    left: 0;
-    right: 0;
+    right: 5px;
+
+    margin: auto;
+
+    font-size: 30px;
+
+    border: 1px solid black;
+    background-color: white;
+    color: black;
+
+    height: 40px;
+
+    pointer-events: auto;
+
+}
+
+#guidedTourPreviousTourButton{
+
+
+    position: absolute;
+    z-index: 20;
+
+    bottom : 5px;
+    left : 5px;
+
+    margin : auto;
+
+    font-size: 30px;
+
+    border: 1px solid black;
+    background-color: white;
+    color: black;
+
+    height: 40px;
+
+    pointer-events: auto;
+
+}
+
+#guidedTourNextStepButton{
+
+    position: absolute;
+    z-index: 20;
+
+    bottom : 5px;
+    right: 5px;
 
     margin: auto;
 
@@ -588,16 +630,16 @@ body {
 
 }
 
-#guidedTourPreviousButton{
+#guidedTourPreviousStepButton{
 
 
     position: absolute;
     z-index: 20;
 
-    bottom : 0;
-    left : 0;
+    bottom : 5px;
+    left : 5px;
 
-    margin : 5px;
+    margin : auto;
 
     border: 1px solid black;
     background-color: white;
@@ -615,10 +657,11 @@ body {
     position: absolute;
     z-index: 20;
 
-    bottom : 0;
-    right : 0;
+    bottom : 5px;
+    left: 0;
+    right: 0;
 
-    margin : 5px;
+    margin: auto;
 
     border: 1px solid black;
     background-color: white;
@@ -1035,4 +1078,44 @@ body {
     #helpWindow {
         display: none;
     }
+}
+#aboutTab{
+
+    position: absolute;
+    z-index: 40;
+
+    margin : 3px;
+
+    border: 1px solid black;
+    background-color: white;
+    color: black;
+
+    height: 30px;
+    top: 0;
+    right : 32.5%;
+
+
+    pointer-events: auto
+
+
+}
+
+
+#aboutWindow {
+    position: absolute;
+    z-index: 20;
+
+    width: 15%;
+
+    margin: 3px;
+
+    right : 25%;
+
+
+    color: white;
+    font-size: 75%;
+    padding: 0 1rem;
+    background-color: rgba(30,30,30,0.6);
+    border : 1px solid rgb(90,90,90);
+    pointer-events: none;
 }
