@@ -57,7 +57,7 @@ Assert some content was indeed fed to the DB
 ```
 which should return 511 buildings.
 
-### Manual edit of database
+### (2) Manual edit of database
 Then we need to delete two buildings from the 'lyon 6ème' database (in psql) in order to make room for our handmade models (of so called "Îlot du Lac").
 
 Identifying the gid (`173` and `503`) of the buildings to be removed is achieved [through those geographical requests](FindBuildingGID.md).
@@ -67,11 +67,11 @@ Delete those tow buildings from the DB:
   (db_user)$ psql lyon6_buildings -c "delete from lyon where gid in (173,503);"
 ```
 
-### Install an http server
-References: [Ubuntu Apache2 install](https://help.ubuntu.com/lts/serverguide/httpd.html)
-
-### Install UDV and iTowns
+### (3) Install UDV and iTowns
 Refer above to the light install version.
 
-### Usage
+### (4) Install an http server
+References: [Ubuntu Apache2 install](https://help.ubuntu.com/lts/serverguide/httpd.html)
+
+### (5) Usage
  * When on the http server, open `UDV/Vilo3D/index.html` in Firefox (Chrome not supported)
