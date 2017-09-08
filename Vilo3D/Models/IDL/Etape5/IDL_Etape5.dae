@@ -5,27 +5,48 @@
       <author>Blender User</author>
       <authoring_tool>Blender 2.78.0 commit date:2017-02-24, commit time:14:33, hash:e92f235283</authoring_tool>
     </contributor>
-    <created>2017-09-04T11:02:03</created>
-    <modified>2017-09-04T11:02:03</modified>
+    <created>2017-09-08T10:53:27</created>
+    <modified>2017-09-08T10:53:27</modified>
     <unit name="meter" meter="1"/>
     <up_axis>Z_UP</up_axis>
   </asset>
+  <library_cameras>
+    <camera id="Camera-camera" name="Camera">
+      <optics>
+        <technique_common>
+          <perspective>
+            <xfov sid="xfov">49.13434</xfov>
+            <aspect_ratio>1.777778</aspect_ratio>
+            <znear sid="znear">0.1</znear>
+            <zfar sid="zfar">100</zfar>
+          </perspective>
+        </technique_common>
+      </optics>
+      <extra>
+        <technique profile="blender">
+          <YF_dofdist>0</YF_dofdist>
+          <shiftx>0</shiftx>
+          <shifty>0</shifty>
+        </technique>
+      </extra>
+    </camera>
+  </library_cameras>
   <library_images>
-    <image id="Sol_D_jpg" name="Sol_D_jpg">
-      <init_from>Sol_D.jpg</init_from>
+    <image id="Chantier_JPG" name="Chantier_JPG">
+      <init_from>Chantier.JPG</init_from>
     </image>
   </library_images>
   <library_effects>
-    <effect id="IDL_Etape0_SolSG-effect">
+    <effect id="IDL_Etape5_SolSG-effect">
       <profile_COMMON>
-        <newparam sid="Sol_D_jpg-surface">
+        <newparam sid="Chantier_JPG-surface">
           <surface type="2D">
-            <init_from>Sol_D_jpg</init_from>
+            <init_from>Chantier_JPG</init_from>
           </surface>
         </newparam>
-        <newparam sid="Sol_D_jpg-sampler">
+        <newparam sid="Chantier_JPG-sampler">
           <sampler2D>
-            <source>Sol_D_jpg-surface</source>
+            <source>Chantier_JPG-surface</source>
           </sampler2D>
         </newparam>
         <technique sid="common">
@@ -37,7 +58,7 @@
               <color sid="ambient">0 0 0 1</color>
             </ambient>
             <diffuse>
-              <texture texture="Sol_D_jpg-sampler" texcoord="UVMap"/>
+              <texture texture="Chantier_JPG-sampler" texcoord="UVMap"/>
             </diffuse>
             <index_of_refraction>
               <float sid="index_of_refraction">1</float>
@@ -48,49 +69,49 @@
     </effect>
   </library_effects>
   <library_materials>
-    <material id="IDL_Etape0_SolSG-material" name="IDL_Etape0_SolSG">
-      <instance_effect url="#IDL_Etape0_SolSG-effect"/>
+    <material id="IDL_Etape5_SolSG-material" name="IDL_Etape5_SolSG">
+      <instance_effect url="#IDL_Etape5_SolSG-effect"/>
     </material>
   </library_materials>
   <library_geometries>
-    <geometry id="IDL_Etape0_Sol-mesh" name="IDL_Etape0:Sol">
+    <geometry id="IDL_Etape5_Sol-mesh" name="IDL_Etape5:Sol">
       <mesh>
-        <source id="IDL_Etape0_Sol-mesh-positions">
-          <float_array id="IDL_Etape0_Sol-mesh-positions-array" count="12">-150.3419 -0.570459 118.6411 183.4139 -0.570459 61.61829 148.6922 -0.570459 -108.2187 -182.0044 -0.570459 -56.87755</float_array>
+        <source id="IDL_Etape5_Sol-mesh-positions">
+          <float_array id="IDL_Etape5_Sol-mesh-positions-array" count="12">-149.9304 -0.1651459 112.7854 180.2884 -0.241738 62.54478 153.8539 -0.157487 -110.6224 -177.9527 -0.181466 -59.22119</float_array>
           <technique_common>
-            <accessor source="#IDL_Etape0_Sol-mesh-positions-array" count="4" stride="3">
+            <accessor source="#IDL_Etape5_Sol-mesh-positions-array" count="4" stride="3">
               <param name="X" type="float"/>
               <param name="Y" type="float"/>
               <param name="Z" type="float"/>
             </accessor>
           </technique_common>
         </source>
-        <source id="IDL_Etape0_Sol-mesh-normals">
-          <float_array id="IDL_Etape0_Sol-mesh-normals-array" count="12">0 1 0 0 1 0 0 1 0 0 1 0</float_array>
+        <source id="IDL_Etape5_Sol-mesh-normals">
+          <float_array id="IDL_Etape5_Sol-mesh-normals-array" count="12">3.24462e-5 1 7.8402e-5 1.8146e-4 1 2.81028e-4 -8.48254e-5 1 -8.10611e-5 2.99021e-4 0.9999999 4.40883e-4</float_array>
           <technique_common>
-            <accessor source="#IDL_Etape0_Sol-mesh-normals-array" count="4" stride="3">
+            <accessor source="#IDL_Etape5_Sol-mesh-normals-array" count="4" stride="3">
               <param name="X" type="float"/>
               <param name="Y" type="float"/>
               <param name="Z" type="float"/>
             </accessor>
           </technique_common>
         </source>
-        <source id="IDL_Etape0_Sol-mesh-map-0">
-          <float_array id="IDL_Etape0_Sol-mesh-map-0-array" count="12">0 0 1 1 0 1 0 0 1 0 1 1</float_array>
+        <source id="IDL_Etape5_Sol-mesh-map-0">
+          <float_array id="IDL_Etape5_Sol-mesh-map-0-array" count="12">0 0 1 1 0 1 0 0 1 0 1 1</float_array>
           <technique_common>
-            <accessor source="#IDL_Etape0_Sol-mesh-map-0-array" count="6" stride="2">
+            <accessor source="#IDL_Etape5_Sol-mesh-map-0-array" count="6" stride="2">
               <param name="S" type="float"/>
               <param name="T" type="float"/>
             </accessor>
           </technique_common>
         </source>
-        <vertices id="IDL_Etape0_Sol-mesh-vertices">
-          <input semantic="POSITION" source="#IDL_Etape0_Sol-mesh-positions"/>
+        <vertices id="IDL_Etape5_Sol-mesh-vertices">
+          <input semantic="POSITION" source="#IDL_Etape5_Sol-mesh-positions"/>
         </vertices>
-        <polylist material="IDL_Etape0_SolSG-material" count="2">
-          <input semantic="VERTEX" source="#IDL_Etape0_Sol-mesh-vertices" offset="0"/>
-          <input semantic="NORMAL" source="#IDL_Etape0_Sol-mesh-normals" offset="1"/>
-          <input semantic="TEXCOORD" source="#IDL_Etape0_Sol-mesh-map-0" offset="2" set="0"/>
+        <polylist material="IDL_Etape5_SolSG-material" count="2">
+          <input semantic="VERTEX" source="#IDL_Etape5_Sol-mesh-vertices" offset="0"/>
+          <input semantic="NORMAL" source="#IDL_Etape5_Sol-mesh-normals" offset="1"/>
+          <input semantic="TEXCOORD" source="#IDL_Etape5_Sol-mesh-map-0" offset="2" set="0"/>
           <vcount>3 3 </vcount>
           <p>0 0 0 2 1 1 3 2 2 0 0 3 1 3 4 2 1 5</p>
         </polylist>
@@ -100,12 +121,16 @@
   <library_controllers/>
   <library_visual_scenes>
     <visual_scene id="Scene" name="Scene">
-      <node id="IDL_Etape0_Sol" name="IDL_Etape0_Sol" type="NODE">
+      <node id="Camera" name="Camera" type="NODE">
+        <matrix sid="transform">0.6859207 -0.3240135 0.6515582 7.481132 0.7276763 0.3054208 -0.6141704 -6.50764 0 0.8953956 0.4452714 5.343665 0 0 0 1</matrix>
+        <instance_camera url="#Camera-camera"/>
+      </node>
+      <node id="IDL_Etape5_Sol" name="IDL_Etape5_Sol" type="NODE">
         <matrix sid="transform">1 0 0 0 0 -1.62921e-7 -1 0 0 1 -1.62921e-7 0 0 0 0 1</matrix>
-        <instance_geometry url="#IDL_Etape0_Sol-mesh" name="IDL_Etape0_Sol">
+        <instance_geometry url="#IDL_Etape5_Sol-mesh" name="IDL_Etape5_Sol">
           <bind_material>
             <technique_common>
-              <instance_material symbol="IDL_Etape0_SolSG-material" target="#IDL_Etape0_SolSG-material">
+              <instance_material symbol="IDL_Etape5_SolSG-material" target="#IDL_Etape5_SolSG-material">
                 <bind_vertex_input semantic="UVMap" input_semantic="TEXCOORD" input_set="0"/>
               </instance_material>
             </technique_common>

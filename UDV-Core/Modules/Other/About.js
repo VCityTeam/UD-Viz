@@ -5,13 +5,17 @@ var aboutDiv = document.createElement("div");
 aboutDiv.id = 'about';
 document.body.appendChild(aboutDiv);
 
-document.getElementById("about").innerHTML = '    <button id="aboutTab">À PROPOS</button>\
+document.getElementById("about").innerHTML = '<button id="aboutTab">À PROPOS</button>\
 <div id="aboutWindow">\
 <br><br><br>\
-<p>Vilo3D est une application %%%%%%%%%%%%%%%</p>\
-<p>Ce projet est une collaboration LIRIS CNRS</p>\
-<p>Framework itowns</p>\
-<p>Texte texte texte Texte texte texte</p>\
+<p>Ce projet de recherche a été effectué au sein du <a href="https://liris.cnrs.fr/vcity/wiki/doku.php">LIRIS</a>\
+ en collaboration avec le laboratoire <a href="http://umr5600.cnrs.fr/fr/accueil/">EVS</a>\
+  et supporté par le <a href=http://imu.universite-lyon.fr/>LabEx IMU</a>.</p>\
+<p>Ces développements s\'appuient sur <a href="http://www.itowns-project.org/">iTowns</a>\
+ et <a href=https://www.3dcitydb.org/3dcitydb/3dcitydbhomepage/>3DCityDB</a>.</p>\
+<p>La visite proposée est basée sur le livre \
+<a href="http://imu.universite-lyon.fr/le-livre-la-ville-ordinaire-medaille-dor-de-la-societe-francaise-dhistoire-des-hopitaux/">"La Ville Ordinaire"</a>\
+ d\'Anne-Sophie Clémençon.</p>\
 </div>';
 
 // adjust display

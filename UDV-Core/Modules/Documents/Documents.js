@@ -12,29 +12,29 @@ docDiv.id = 'doc';
 document.body.appendChild(docDiv);
 
 document.getElementById("doc").innerHTML ='<button id="docBrowserTab">DOC</button>\
-    <div id="docBrowserWindow">\
-        <div id="docBrowserTitle">doc title</div>\
-        <div id="docBrowserMetaData">metadata</div>\
-        <div id="docBrowserPreview"><img id="docBrowserPreviewImg" src = "test2.png"/></div>\
-        <div id="guidedTourText2"></div>\
-        <div id="docBrowserIndex">11/12</div>\
-        <button id="docBrowserNextButton" type=button>⇨</button>\
-        <button id="docBrowserPreviousButton" type=button>⇦</button>\
-        <button id="docBrowserOrientButton" type=button>ORIENTER</button>\
-    </div>\
-    <div id="docFull">\
-        <img id="docFullImg"/>\
-        <div id="docFullPanel">\
-            <button id="docFullClose" type=button>FERMER</button>\
-            <button id="docFullOrient" type=button>ORIENTER</button>\
-            <label id="docOpaLabel" for="docOpaSlider">Opacité</label>\
-            <input id="docOpaSlider" type="range" min="0" max="100" value="75"\
-            step="1" oninput="docOpaUpdate(value)">\
-            <output for="docOpaSlider" id="docOpacity">50</output>\
-        </div>\
-    </div>\
-    <button id="docBrowserToggleBillboard" type=button>Billboard</button>\
-    ';
+<div id="docBrowserWindow">\
+<div id="docBrowserTitle">doc title</div>\
+<div id="docBrowserMetaData">metadata</div>\
+<div id="docBrowserPreview"><img id="docBrowserPreviewImg" src = "test2.png"/></div>\
+<div id="guidedTourText2"></div>\
+<div id="docBrowserIndex">11/12</div>\
+<button id="docBrowserNextButton" type=button>⇨</button>\
+<button id="docBrowserPreviousButton" type=button>⇦</button>\
+<button id="docBrowserOrientButton" type=button>ORIENTER</button>\
+</div>\
+<div id="docFull">\
+<img id="docFullImg"/>\
+<div id="docFullPanel">\
+<button id="docFullClose" type=button>FERMER</button>\
+<button id="docFullOrient" type=button>ORIENTER</button>\
+<label id="docOpaLabel" for="docOpaSlider">Opacité</label>\
+<input id="docOpaSlider" type="range" min="0" max="100" value="75"\
+step="1" oninput="docOpaUpdate(value)">\
+<output for="docOpaSlider" id="docOpacity">50</output>\
+</div>\
+</div>\
+<button id="docBrowserToggleBillboard" type=button>Billboard</button>\
+';
 
 //dirty variables to test billboards
 var billboardsAreActive = false;
@@ -203,10 +203,12 @@ function DocumentsHandler(view, controls, dataFile, options = {}) {
                 document.getElementById('docOpaSlider').value = 100;
                 document.querySelector('#docOpacity').value = 100;
             }
-            // if not complete :
-            document.getElementById('docFullImg').style.opacity=this.fadeAlpha;
-            document.getElementById('docOpaSlider').value = this.fadeAlpha*100;
-            document.querySelector('#docOpacity').value = Math.trunc(this.fadeAlpha*100);
+            else{
+                // if not complete :
+                document.getElementById('docFullImg').style.opacity=this.fadeAlpha;
+                document.getElementById('docOpaSlider').value = this.fadeAlpha*100;
+                document.querySelector('#docOpacity').value = Math.trunc(this.fadeAlpha*100);
+            }
 
             // request the framerequester for another call to this.update()
             // TO DO : explain false

@@ -169,11 +169,14 @@ function GuidedTourController(docHandler, dataFile, options={}) {
 
         documents.hideBillboards(true);
 
-        // open temporal window if it is closed
+        // modify temporal
         if(this.temporal){
+            // open window if closed
             if(!this.temporal.temporalWindowIsActive){
                 this.temporal.toggleTemporalWindow();
             }
+            // hide concurrent view button
+            document.getElementById("timeConcurrentView").style.display = "none";
         }
 
         // open doc window and hide some buttons
@@ -198,6 +201,11 @@ function GuidedTourController(docHandler, dataFile, options={}) {
         this.docs.showBillboards(false);
         this.docs.closeDocFull();
 
+        if(this.temporal){
+            // show concurrent view button
+            document.getElementById("timeConcurrentView").style.display = "block";
+        }
+
         // show the regular buttons for doc window
         document.getElementById('docBrowserPreviousButton').style.display = "block";
         document.getElementById('docBrowserNextButton').style.display = "block";
@@ -215,7 +223,7 @@ function GuidedTourController(docHandler, dataFile, options={}) {
         this.docs.currentDoc = this.tourStepsCurrent[this.currentStepIndex].doc;
         this.docs.updateBrowser();
         this.docs.focusOnDoc();
-        document.getElementById("guidedTourDocPreviewImg").style.display = "none";
+
         document.getElementById("guidedTourText1").innerHTML = this.tourStepsCurrent[this.currentStepIndex].text1;
         document.getElementById("guidedTourText2").innerHTML = this.tourStepsCurrent[this.currentStepIndex].text2;
         document.getElementById("guidedTourStepTitle").innerHTML = this.tourStepsCurrent[this.currentStepIndex].stepTitle;
@@ -231,8 +239,9 @@ function GuidedTourController(docHandler, dataFile, options={}) {
 
         this.currentStepIndex += -1;
         this.docs.currentDoc = this.tourStepsCurrent[this.currentStepIndex].doc;
+        this.docs.updateBrowser();
         this.docs.focusOnDoc();
-        document.getElementById("guidedTourDocPreviewImg").style.display = "none";
+
         document.getElementById("guidedTourText1").innerHTML = this.tourStepsCurrent[this.currentStepIndex].text1;
         document.getElementById("guidedTourText2").innerHTML = this.tourStepsCurrent[this.currentStepIndex].text2;
 
