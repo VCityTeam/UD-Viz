@@ -318,8 +318,14 @@ function GuidedTourController(docHandler, dataFile, options={}) {
 
 
 }
-
-//TourStep constructor
+/**
+* Constructor for TourStep
+* TourSteps are object with properties : index, document, text1 and text2.
+* They are the individual steps of which guided tours are made.
+* @param docHandler : an instance of DocumentHandler (required)
+* @param dataFile : CSV file holding the Guided Tours data
+* @param options : optional parameters (including temporal) 
+*/
 //=============================================================================
 function TourStep(doc, stepTitle, text1, text2) {
 
