@@ -2,7 +2,7 @@
 * Classes: Document Handler & Document
 * Description :
 * The Document Handler is an object holding and managing Document objects
-* It handles the display of documents in the document browser window and the central window.
+* It handles the display of documents in the document browser window, the central window, and billboards.
 * Documents are objects with properties : source image, title, date, metadata, camera position,
 * camera quaternion (both for the oriented view) and billboard position
 */
@@ -71,7 +71,8 @@ function DocumentsHandler(view, controls, dataFile, options = {}) {
     // path to the csv file holding the guided tour data
     const CSVdataFile = dataFile;
 
-    // TemporalController instance (optional) WHY ?
+    // TemporalController instance (optional)
+    // this is used to set the current date according to the selected document
     this.temporal = options.temporal;
 
     // state of the browser window (open / closed), intial state can be set via options
@@ -83,16 +84,14 @@ function DocumentsHandler(view, controls, dataFile, options = {}) {
     // currently active document
     this.currentDoc = null;
 
-    //doc fade-in animation duration, in milliseconds
+    // doc fade-in animation duration, in milliseconds
     this.fadeDuration = options.docFadeDuration || 2750;
 
+    // fade animation handlers 
     this.isOrientingDoc = false;
     this.isFadingDoc = false;
     this.fadeAlpha = 0;
-
-    // itowns framerequester : will regularly call this.update()
-    this.view.addFrameRequester(this);
-
+    
     // event to be dispatched when this controller has finished initializing
     this.initEvent = document.createEvent('Event');
     this.initEvent.initEvent('docInit', true, true);
@@ -149,6 +148,7 @@ function DocumentsHandler(view, controls, dataFile, options = {}) {
 
         }
 
+        // load the first doc as current doc
         this.currentDoc = this.AllDocuments[0];
 
         this.updateBrowser();
@@ -159,10 +159,9 @@ function DocumentsHandler(view, controls, dataFile, options = {}) {
         else{
             this.hideBillboards(true)
         }
-
-        // TO DO : REVIEW HERE
-        // target can be any Element or other EventTarget.    document.getElementById('docFullImg').src = this.currentDoc.imageSourceHD;
-        document.getElementById('docBrowserPreviewImg').src = this.currentDoc.imageSourceBD;
+        
+        // dispatch the event to notify that Document Handler has finished its initialization
+        // classes that depends on Document Handler will catch the event and begin their own initialization
         window.dispatchEvent(this.initEvent);
 
 
@@ -433,6 +432,9 @@ function DocumentsHandler(view, controls, dataFile, options = {}) {
             console.log("camera quaternion : ",this.controls.camera.quaternion);
         }
     }
+    
+    // itowns framerequester : will regularly call this.update()
+    this.view.addFrameRequester(this);
 
     // event listener for a mouse click on the scene, used to detect click on billboard
     this.domElement.addEventListener('mousedown', this.onMouseClick.bind(this), false);
@@ -453,6 +455,7 @@ function DocumentsHandler(view, controls, dataFile, options = {}) {
     document.getElementById("docBrowserToggleBillboard").style.display = (showBillboardButton)? "block" : "none";
     document.getElementById("docBrowserWindow").style.display = (!this.docBrowserWindowIsActive)? "none" : "block";
 
+    // this will trigger the initialization, after file loading is complete
     this.loadDataFromFile();
 
 }
