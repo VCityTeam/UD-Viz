@@ -37,6 +37,7 @@ document.getElementById("guidedtour").innerHTML = '\
 * For the demo : options.preventUserFromChangingTour allows to hide the buttons for changing tour
 * This controller is initialized after DocumentHandler has finished initializing
 * @param docHandler : an instance of DocumentHandler (required)
+* @param dataFile : CSV file holding the Guided Tours data
 */
 //=============================================================================
 function GuidedTourController(docHandler, dataFile, options={}) {
