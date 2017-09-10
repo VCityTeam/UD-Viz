@@ -1,9 +1,13 @@
 /**
-* Generated On: 2016-05-18
-* Class: Document Handler
-* Description : TO DO
+* Classes: Document Handler & Document
+* Description :
+* The Document Handler is an object holding and managing Document objects.
+* It handles the display of documents in the document browser window and the central window.
+* Documents are objects with properties : source image, title, date, metadata, camera position,
+* camera quaternion (both for the oriented view) and billboard position
 */
 
+// we use the THREE.js library provided by itowns
 THREE = itowns.THREE;
 
 //update the html with elements for this class (windows, buttons etc)
