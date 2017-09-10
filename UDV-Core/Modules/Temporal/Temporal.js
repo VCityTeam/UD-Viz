@@ -35,6 +35,7 @@ document.getElementById("temporal").innerHTML = '<button id="temporalTab">TEMPOR
 * and Dates corresponding to these versions with options.buildingDates
 * @param view : itowns planar view
 * @param controls : PlanarControls instance
+* @param options : optional parameters (including buildingVersions & Dates)
 */
 //=============================================================================
 function TemporalController(view, controls, options={}) {
