@@ -178,7 +178,7 @@ idlDates.push(new Date("1971-01-01"));
 var controls = new itowns.PlanarControls(view, {maxAltitude : 15000, rotateSpeed : 3.0, autoTravelTimeMin: 2, autoTravelTimeMax: 6});
 
 // instanciate temporal controller
-var temporal = new TemporalController(view,controls,{buildingVersions: idlBuildings, buildingDates: idlDates});
+var temporal = new TemporalController(view,{buildingVersions: idlBuildings, buildingDates: idlDates});
 
 // instanciate document handler
 var documents = new DocumentsHandler(view,controls,'docs.csv',{temporal: temporal});
