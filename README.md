@@ -28,5 +28,17 @@ The camera controller has been merged into itowns ([PR](https://github.com/iTown
 * When we enter a document "oriented view", the date is updated to match the document's date
 * Key dates correspond to a temporal version of the 3d models for the "Îlot du Lac" 
 
+### Guided Tour
+
+* A Guided Tour is a succession of Steps (document + text) that the user can follow
+* Each step triggers the oriented view of its document, and opens this doc in the doc browser
+* Ability to navigate between steps of a tour (previous, next) and to start/exit a tour
+* Support for multiple guided tours, all loaded from a csv file (visite.csv)
+
+### GUI
+
+* Multiple windows (document browser, guided tour, temporal, minimap, help, about)
+* Each window can be open / closed by clicking on its button
+* The display is weakly responsive : best used with 16/9 or 16/10 resolution, and width > 1600px
 
 
