@@ -33,6 +33,7 @@ document.getElementById("temporal").innerHTML = '<button id="temporalTab">TEMPOR
 * Changes which 3d object is displayed according to the date
 * Versions of the 3d object are given as param with options.buildingVersions,
 * and Dates corresponding to these versions with options.buildingDates
+* This object is initialized after the loading of the 3d objects (asynchronous)
 * @param view : itowns planar view
 * @param controls : PlanarControls instance
 * @param options : optional parameters (including buildingVersions & Dates)
