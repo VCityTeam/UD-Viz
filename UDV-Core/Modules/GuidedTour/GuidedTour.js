@@ -38,6 +38,7 @@ document.getElementById("guidedtour").innerHTML = '\
 * This controller is initialized after DocumentHandler has finished initializing
 * @param docHandler : an instance of DocumentHandler (required)
 * @param dataFile : CSV file holding the Guided Tours data
+* @param options : optional parameters (including temporal) 
 */
 //=============================================================================
 function GuidedTourController(docHandler, dataFile, options={}) {
