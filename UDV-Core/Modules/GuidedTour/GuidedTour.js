@@ -1,4 +1,12 @@
-
+/**
+* Classes: GuidedTourController & TourStep
+* Description :
+* The GuidedTourController is an object holding TourSteps objects
+* It handles the display of guided tours in the guided tour window, and all the 
+* functionalities related to the guided tour (start, exit, next, previous...)
+* TourSteps are object with properties : index, document, text1 and text2.
+* They are the individual steps of which guided tours are made.
+*/
 
 // update the html with elements for this class (windows, buttons etc)
 var tourDiv = document.createElement("div");
