@@ -1,7 +1,7 @@
 /**
 * Classes: Document Handler & Document
 * Description :
-* The Document Handler is an object holding and managing Document objects.
+* The Document Handler is an object holding and managing Document objects
 * It handles the display of documents in the document browser window and the central window.
 * Documents are objects with properties : source image, title, date, metadata, camera position,
 * camera quaternion (both for the oriented view) and billboard position
@@ -48,9 +48,10 @@ var showBillboardButton = false;
 * Constructor for DocumentsHandler Class
 * The Document Handler is an object holding and managing Document objects.
 * It handles the display of documents in the document browser window and the central window.
+* Document data is loaded from a csv file, and initialization is only done after loading (asynchronous)
 * @param view : itowns planar view
 * @param controls : PlanarControls instance
-* @param dataFile : TO DO
+* @param dataFile : CSV file holding the documents data
 * @param options : optional parameters (including TemporalController)
 */
 //=============================================================================
