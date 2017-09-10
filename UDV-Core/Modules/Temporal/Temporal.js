@@ -1,8 +1,13 @@
 /**
-* Generated On: 2016-05-18
 * Class: Temporal Controller
-* Description : TO DO
+* This controller handles the temporal window inputs (slider, buttons, input field)
+* It holds the current date which can changed by the user input or by Document Handler
+* For the demo, the controller also has buildingVersions and buildingDates array
+* These are used to change the version of a 3d object according to the date
 */
+
+// we use the THREE.js library provided by itowns
+THREE = itowns.THREE;
 
 //update the html with elements for this class (windows, buttons etc)
 var temporalDiv = document.createElement("div");
@@ -23,7 +28,11 @@ document.getElementById("temporal").innerHTML = '<button id="temporalTab">TEMPOR
 
 
 /**
-* Constructor for TemporalController
+* Constructor for TemporalController Class
+* Handles the temporal window functionalities (date inputs)
+* Changes which 3d object is displayed according to the date
+* Versions of the 3d object are given as param with options.buildingVersions,
+* and Dates corresponding to these versions with options.buildingDates
 * @param view : itowns planar view
 * @param controls : PlanarControls instance
 */
@@ -35,15 +44,16 @@ function TemporalController(view, controls, options={}) {
     // PlanarControls instance (required)
     this.controls = controls;
 
-    // array 3d objects
+    // array of 3d objects
     this.buildingVersions = options.buildingVersions || [];
 
-    // array of dates corresponding to the 3d objects
+    // array of dates (js Date object) corresponding to the 3d objects
     this.buildingDates = options.buildingDates || [];
 
     // array storing the positions of buildingVersions
     this.buildingPositions = [];
 
+    // the currently active date (javascript Date object)
     this.currentDate = new Date(options.startDate || "2017-09-15");
 
     // currently active temporal version (3d object)
