@@ -46,7 +46,8 @@ var showBillboardButton = false;
 
 /**
 * Constructor for DocumentsHandler Class
-* WHAT IS THIS FOR ?
+* The Document Handler is an object holding and managing Document objects.
+* It handles the display of documents in the document browser window and the central window.
 * @param view : itowns planar view
 * @param controls : PlanarControls instance
 * @param dataFile : TO DO
