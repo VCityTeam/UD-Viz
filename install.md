@@ -4,11 +4,19 @@ TO DO : auto install (install all dependencies with npm)
 
 # INSTALL NOTES
 
-FIXME EBO: isntall nodejs and npm on Ubuntu
-sudo npm install -g n
-sudo n latest
+## Prerequisite: install nodejs and npm
 
-## Ligh install (without building geometry)
+* **Ubuntu**
+  - Install and update npm
+    ```
+    sudo apt-get install npm    ## Will pull NodeJS
+    sudo npm install -g n     
+    sudo n latest
+    ```
+  - References: [how can I update Nodejs](https://askubuntu.com/questions/426750/how-can-i-update-my-nodejs-to-the-latest-version), and [install Ubuntu](http://www.hostingadvice.com/how-to/install-nodejs-ubuntu-14-04/#ubuntu-package-manager)
+
+
+## Light install (without building geometry provide by DB)
 
 Just (git) clone UDV and iTowns alongside (the two directories must be siblings):
 ```
@@ -19,7 +27,13 @@ Just (git) clone UDV and iTowns alongside (the two directories must be siblings)
   cd itowns/
   npm install   # Might require some "sudo apt-get install npm"
 ```
+
 Edit `UDV/Vilo3D/Main.js` and set the "showBuildings" to false on line 4.
+
+Since Vilo3d demo uses ColladaLoader to import handmade buildings, add the following line at the start of `itowns/node_modules/three/examples/js/loaders/ColladaLoader2.js`:
+```
+THREE = itowns.THREE;
+```
 
 Open UDV/Vilo3D/index.html in Firefox (will fail for Chrome).
 
@@ -73,11 +87,6 @@ Delete those tow buildings from the DB:
 
 ### (3) Install UDV and iTowns
 Refer above to the light install version.
-
-If using ColladaLoader to import handmade buildings : add the following line at the start of itowns/node_modules/three/examples/js/loaders/ColladaLoader2.js :
-```
-THREE = itowns.THREE;
-```
 
 ### (4) Install an http server
 ```
