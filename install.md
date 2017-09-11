@@ -4,6 +4,10 @@ TO DO : auto install (install all dependencies with npm)
 
 # INSTALL NOTES
 
+FIXME EBO: isntall nodejs and npm on Ubuntu
+sudo npm install -g n
+sudo n latest
+
 ## Ligh install (without building geometry)
 
 Just (git) clone UDV and iTowns alongside (the two directories must be siblings):
