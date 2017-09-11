@@ -2,7 +2,7 @@
 * Classes: GuidedTourController & TourStep
 * Description :
 * The GuidedTourController is an object holding TourSteps objects
-* It handles the display of guided tours in the guided tour window, and all the 
+* It handles the display of guided tours in the guided tour window, and all the
 * functionalities related to the guided tour (start, exit, next, previous...)
 * TourSteps are object with properties : index, document, text1 and text2.
 * They are the individual steps of which guided tours are made.
@@ -19,9 +19,9 @@ document.getElementById("guidedtour").innerHTML = '\
     <div id="guidedTourStepTitle"></div>\
     <div id="guidedTourText1"></div>\
     <div id="guidedTourDocPreview"><img id="guidedTourDocPreviewImg"/></div>\
-    <button id="guidedTourNextStepButton" type=button>SUIVANT</button>\
+    <button id="guidedTourNextStepButton" type=button>⇨</button>\
     <button id="guidedTourNextTourButton" type=button>⇨</button>\
-    <button id="guidedTourPreviousStepButton" type=button>PRECEDENT</button>\
+    <button id="guidedTourPreviousStepButton" type=button>⇦</button>\
     <button id="guidedTourPreviousTourButton" type=button>⇦</button>\
     <button id="guidedTourExitButton" type=button>SORTIE</button>\
     <button id="guidedTourStartButton" type=button>DEMARRER</button>\
@@ -38,7 +38,7 @@ document.getElementById("guidedtour").innerHTML = '\
 * This controller is initialized after DocumentHandler has finished initializing
 * @param docHandler : an instance of DocumentHandler (required)
 * @param dataFile : CSV file holding the Guided Tours data
-* @param options : optional parameters (including temporal) 
+* @param options : optional parameters (including temporal)
 */
 //=============================================================================
 function GuidedTourController(docHandler, dataFile, options={}) {
@@ -324,7 +324,7 @@ function GuidedTourController(docHandler, dataFile, options={}) {
 * They are the individual steps of which guided tours are made.
 * @param docHandler : an instance of DocumentHandler (required)
 * @param dataFile : CSV file holding the Guided Tours data
-* @param options : optional parameters (including temporal) 
+* @param options : optional parameters (including temporal)
 */
 //=============================================================================
 function TourStep(doc, stepTitle, text1, text2) {

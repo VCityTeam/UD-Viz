@@ -1,9 +1,7 @@
 /**
 * Class : MiniMapController
 * adds a "minimap" window that can be open/closed with a button
-*
 */
-
 
 //update the html with elements for this class (windows, buttons etc)
 var miniMapDiv = document.createElement("div");
@@ -15,8 +13,10 @@ document.getElementById("minimap").innerHTML = '<button id="miniMapTab">CARTE</b
 
 /**
 * Constructor for MiniMapController
-*
-* @param controls : an instance of DocumentHandler
+* manages the 3d scene inside the minimap div, and the open/close button
+* in the minimap scene, we had an itowns view with the same extent as for the main view
+* an indicator object (THREE.BoxGeometry) follows the PlanarControls camera movement on x,y plane
+* @param controls : an instance of PlanarControls
 * @param extent : itowns extent object (city limits)
 * @param renderer : the global renderer
 */

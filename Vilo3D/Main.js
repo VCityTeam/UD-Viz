@@ -87,7 +87,7 @@ $3dTilesLayer.update = itowns.process3dTilesNode(
 );
 
 $3dTilesLayer.name = 'RequestVolume';
-$3dTilesLayer.url = 'http://localhost:9090/getCity?city=lyon6';
+$3dTilesLayer.url = 'http://localhost:9090/getCity?city=lyon';
 $3dTilesLayer.protocol = '3d-tiles'
 $3dTilesLayer.overrideMaterials = false;  // custom cesium shaders are not functional
 $3dTilesLayer.type = 'geometry';
