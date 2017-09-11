@@ -1,6 +1,6 @@
 # UDV Architecture
 
-UDV is build of several modules (UDV-Core/Modules) and is based on iTowns (itself based on THREE.js) for the display of city geometry.
+UDV consists of several modules (UDV-Core/Modules) and is based on iTowns (itself based on THREE.js) for the display of city geometry.
 
 ## Modules
 
