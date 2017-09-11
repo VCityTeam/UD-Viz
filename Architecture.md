@@ -2,6 +2,8 @@
 
 UDV is build of several modules (UDV-Core/Modules) and is based on iTowns (itself based on THREE.js) for the display of city geometry.
 
+## Modules
+
 UDV Modules are :
  * Documents : DocumentHandler class, Document class + related GUI elements
  * Guided Tour : GuidedTourController class, TourStep class + related GUI elements
@@ -16,4 +18,13 @@ To include a module :
  
 These modules are mostly independant from each other, with the exception of Documents and Guided Tour : GuidedTourController requires a DocumentHandler instance.
 
-TO DO : talk about asynchronous init
+## Asynchronous Initialization
+
+Modules relying on an external data file are asynchronously initialized : the file loaders (ColladaLoader, CSVLoader) use callback functions to initialize objects once the loading is complete. Custom events are also used to initialize some modules after others.
+
+For example in Vilo3D (main.js) :
+ * we instanciate a Document Handler instance and a Guided Tour Controller instance.
+ * The DocumentHandler constructor will begin to load the required csv file (loadDataFromFile() function with initialize() function as callback parameter).
+ * When loading in complete, the initialize() function is called (callback).
+ * At the end of the initialize() function, a custom event "docInit" is dispatched, signaling that Document Handler has finished initializing.
+ * GuidedTourController has an event listener for this event : it will call loadDataFromFile() upon receiving the docInit event, and procede with its own initialization.
