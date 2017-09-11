@@ -23,7 +23,7 @@ These modules are mostly independant from each other, with the exception of Docu
 Modules relying on an external data file are asynchronously initialized : the file loaders (ColladaLoader, CSVLoader) use callback functions to initialize objects once the loading is complete. Custom events are also used to initialize some modules after others.
 
 For example in Vilo3D (main.js) :
- * we instanciate a Document Handler instance and a Guided Tour Controller instance.
+ * we instanciate a DocumentHandler instance and a GuidedTourController instance.
  * The DocumentHandler constructor will begin to load the required csv file (loadDataFromFile() function with initialize() function as callback parameter).
  * When loading in complete, the initialize() function is called (callback).
  * At the end of the initialize() function, a custom event "docInit" is dispatched, signaling that Document Handler has finished initializing.
