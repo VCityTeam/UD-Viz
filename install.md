@@ -70,6 +70,11 @@ Delete those tow buildings from the DB:
 ### (3) Install UDV and iTowns
 Refer above to the light install version.
 
+If using ColladaLoader to import handmade buildings : add the following line at the start of itowns/node_modules/three/examples/js/loaders/ColladaLoader2.js :
+```
+THREE = itowns.THREE;
+```
+
 ### (4) Install an http server
 ```
   sudo apt install apache2
