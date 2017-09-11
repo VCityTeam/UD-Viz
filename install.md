@@ -4,7 +4,19 @@ TO DO : auto install (install all dependencies with npm)
 
 # INSTALL NOTES
 
-## Ligh install (without building geometry)
+## Prerequisite: install nodejs and npm
+
+* **Ubuntu**
+  - Install and update npm
+    ```
+    sudo apt-get install npm    ## Will pull NodeJS
+    sudo npm install -g n     
+    sudo n latest
+    ```
+  - References: [how can I update Nodejs](https://askubuntu.com/questions/426750/how-can-i-update-my-nodejs-to-the-latest-version), and [install Ubuntu](http://www.hostingadvice.com/how-to/install-nodejs-ubuntu-14-04/#ubuntu-package-manager)
+
+
+## Light install (without building geometry provide by DB)
 
 Just (git) clone UDV and iTowns alongside (the two directories must be siblings):
 ```
@@ -15,7 +27,13 @@ Just (git) clone UDV and iTowns alongside (the two directories must be siblings)
   cd itowns/
   npm install   # Might require some "sudo apt-get install npm"
 ```
+
 Edit `UDV/Vilo3D/Main.js` and set the "showBuildings" to false on line 4.
+
+Since Vilo3d demo uses ColladaLoader to import handmade buildings, add the following line at the start of `itowns/node_modules/three/examples/js/loaders/ColladaLoader2.js`:
+```
+THREE = itowns.THREE;
+```
 
 Open UDV/Vilo3D/index.html in Firefox (will fail for Chrome).
 
@@ -74,8 +92,38 @@ Refer above to the light install version.
 ```
   sudo apt install apache2
   sudo cp /etc/apache2/sites-available/000-default.conf /etc/apache2/sites-available/rict.liris.cnrs.fr.conf
-  nano /etc/apache2/sites-available/rict.liris.cnrs.fr.conf
 ```
+Edit the newly copied configuration file `/etc/apache2/sites-available/rict.liris.cnrs.fr.conf`: the following ad-hoc configuration should make it
+```
+<VirtualHost *:80>
+	ServerName rict.liris.cnrs.fr
+	ServerAlias www.rict.liris.cnrs.fr
+	ServerAdmin webmaster@localhost
+	DocumentRoot /home/citydb_user/Vilo3d
+  <Directory /home/citydb_user/Vilo3d>
+     Options Indexes FollowSymLinks MultiViews
+     AllowOverride all
+     Require all granted
+  </Directory>
+  ErrorLog ${APACHE_LOG_DIR}/error.log
+	CustomLog ${APACHE_LOG_DIR}/access.log combined
+</VirtualHost>
+```
+
+Remove the default server (to avoid collisions):
+```
+  sudo rm /etc/apache2/sites-enabled/000-default.conf   ## which is a symlink anyhow
+```
+```
+  sudo a2ensite rict.liris.cnrs.fr.conf   ## To enable the virtual site
+  sudo service apache2 restart            ## Relaunch the service 
+```
+Use Firefox to pop some requests on `http://rict.liris.cnrs.fr/UDV/Vilo3D/index.html`.
+
+Trouble shoot by looking at server's error and log files:
+  - `tail -f /var/log/apache2/error.log`
+  - `tail -f /var/log/apache2/access.log`
+
 Notes and references: 
  * JGA discourages (within this context) the [usage of uWSGI](http://uwsgi-docs.readthedocs.io/en/latest/StaticFiles.html) as simple http server
  * [Ubuntu Apache2 configuration](https://www.digitalocean.com/community/tutorials/how-to-set-up-apache-virtual-hosts-on-ubuntu-14-04-lts)
