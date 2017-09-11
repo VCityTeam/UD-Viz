@@ -18,6 +18,8 @@ To include a module :
  
 These modules are mostly independant from each other, with the exception of Documents and Guided Tour : GuidedTourController requires a DocumentHandler instance.
 
+All modules use the same css file : [UDV-Core/styles.css](https://github.com/MEPP-team/UDV/blob/master/UDV-Core/css/styles.css)
+
 ## Asynchronous Initialization
 
 Modules relying on an external data file are asynchronously initialized : the file loaders (ColladaLoader, CSVLoader) use callback functions to initialize objects once the loading is complete. Custom events are also used to initialize some modules after others.
