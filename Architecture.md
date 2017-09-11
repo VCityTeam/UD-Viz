@@ -25,6 +25,7 @@ Modules relying on an external data file are asynchronously initialized : the fi
 For example in Vilo3D (main.js) :
  * we instanciate a DocumentHandler instance and a GuidedTourController instance.
  * The DocumentHandler constructor will begin to load the required csv file (loadDataFromFile() function with initialize() function as callback parameter).
- * When loading in complete, the initialize() function is called (callback).
+ * When loading in complete, the initialize() function is called (callback) : the DocumentHandler instance is functional at the end of initialize().
  * At the end of the initialize() function, a custom event "docInit" is dispatched, signaling that Document Handler has finished initializing.
- * GuidedTourController has an event listener for this event : it will call loadDataFromFile() upon receiving the docInit event, and procede with its own initialization.
+ * GuidedTourController has an event listener for this event : it will call its own loadDataFromFile() (with its own initialize() as callback) upon receiving the docInit event.
+ * When loading is complete, the initialize() function is called : GuidedTourController instance is functional at the end of initialize().
