@@ -74,8 +74,38 @@ Refer above to the light install version.
 ```
   sudo apt install apache2
   sudo cp /etc/apache2/sites-available/000-default.conf /etc/apache2/sites-available/rict.liris.cnrs.fr.conf
-  nano /etc/apache2/sites-available/rict.liris.cnrs.fr.conf
 ```
+Edit the newly copied configuration file `/etc/apache2/sites-available/rict.liris.cnrs.fr.conf`: the following ad-hoc configuration should make it
+```
+<VirtualHost *:80>
+	ServerName rict.liris.cnrs.fr
+	ServerAlias www.rict.liris.cnrs.fr
+	ServerAdmin webmaster@localhost
+	DocumentRoot /home/citydb_user/Vilo3d
+  <Directory /home/citydb_user/Vilo3d>
+     Options Indexes FollowSymLinks MultiViews
+     AllowOverride all
+     Require all granted
+  </Directory>
+  ErrorLog ${APACHE_LOG_DIR}/error.log
+	CustomLog ${APACHE_LOG_DIR}/access.log combined
+</VirtualHost>
+```
+
+Remove the default server (to avoid collisions):
+```
+  sudo rm /etc/apache2/sites-enabled/000-default.conf   ## which is a symlink anyhow
+```
+```
+  sudo a2ensite rict.liris.cnrs.fr.conf   ## To enable the virtual site
+  sudo service apache2 restart            ## Relaunch the service 
+```
+Use Firefox to pop some requests on `http://rict.liris.cnrs.fr/UDV/Vilo3D/index.html`.
+
+Trouble shoot by looking at server's error and log files:
+  - `tail -f /var/log/apache2/error.log`
+  - `tail -f /var/log/apache2/access.log`
+
 Notes and references: 
  * JGA discourages (within this context) the [usage of uWSGI](http://uwsgi-docs.readthedocs.io/en/latest/StaticFiles.html) as simple http server
  * [Ubuntu Apache2 configuration](https://www.digitalocean.com/community/tutorials/how-to-set-up-apache-virtual-hosts-on-ubuntu-14-04-lts)
