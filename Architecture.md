@@ -4,6 +4,8 @@ UDV consists of several modules (UDV-Core/Modules) and is based on iTowns (itsel
 
 ## Modules
 
+Modules functionalities are detailed in [readme.md](https://github.com/MEPP-team/UDV/blob/master/README.md).
+
 UDV Modules are :
  * Documents : DocumentHandler class, Document class + related GUI elements
  * Guided Tour : GuidedTourController class, TourStep class + related GUI elements
