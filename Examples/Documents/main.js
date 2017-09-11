@@ -1,7 +1,6 @@
 
 THREE = itowns.THREE;
 
-
 // ====================
 let renderer;
 // ====================
@@ -71,6 +70,8 @@ view.mainLoop.gfxEngine.renderer.setClearColor( 0x6699cc, 1);
 view.camera.setPosition(new itowns.Coordinates('EPSG:3946', extent.west(), extent.south(), 2000));
 view.camera.camera3D.lookAt(extent.center().xyz());
 
+// instanciate controls
 var controls = new itowns.PlanarControls(view, {maxAltitude : 15000, rotateSpeed : 2.5, autoTravelTimeMin: 1.5, autoTravelTimeMax: 5});
 
+// instanciate document handler
 var documents = new DocumentsHandler(view,controls,"docs.csv",{docBrowserWindowStartActive : true});

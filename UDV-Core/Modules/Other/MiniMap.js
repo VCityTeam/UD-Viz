@@ -1,3 +1,8 @@
+/**
+* Class : MiniMapController
+* adds a "minimap" window that can be open/closed with a button
+*
+*/
 
 
 //update the html with elements for this class (windows, buttons etc)
@@ -8,7 +13,13 @@ document.body.appendChild(miniMapDiv);
 document.getElementById("minimap").innerHTML = '<button id="miniMapTab">CARTE</button>\
 <div id="miniMapViewer"></div>';
 
-// Constructor for MiniMapController
+/**
+* Constructor for MiniMapController
+*
+* @param controls : an instance of DocumentHandler
+* @param extent : itowns extent object (city limits)
+* @param renderer : the global renderer
+*/
 // ===========================================================================================
 function MiniMapController(controls, extent, renderer) {
 

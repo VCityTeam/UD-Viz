@@ -1,3 +1,8 @@
+/**
+* adds an "About" window that can be open/closed with a button
+* simply include this file in the html, no need to instanciate anything in main.js
+*/
+
 var aboutIsActive = false;
 
 //update the html with elements for this class (windows, buttons etc)

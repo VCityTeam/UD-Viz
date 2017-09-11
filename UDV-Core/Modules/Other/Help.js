@@ -1,3 +1,9 @@
+/**
+* adds a "Help" window that can be open/closed with a button
+* simply include this file in the html, no need to instanciate anything in main.js
+*/
+
+
 var helpIsActive = false;
 
 //update the html with elements for this class (windows, buttons etc)
