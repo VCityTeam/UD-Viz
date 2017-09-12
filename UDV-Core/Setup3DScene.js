@@ -1,9 +1,14 @@
+/**
+* Vilo3D 3d scene Setup
+*/
+
+
 THREE = itowns.THREE;
 
 /**
 * Call this to initialize the values of global var : view, extent and renderer (Main.js)
 * After this, the itowns view will contain itowns layers for city geometry
-* The view will be displayed in
+* the view will be displayed in the viewerDiv div
 * @param buildingServerRequest : the request sent to building-server
 * Example : http://localhost:9090/getCity?city=lyon for local server
 * Example : http://rict.liris.cnrs.fr:9090/getCity?city=lyon for distant server

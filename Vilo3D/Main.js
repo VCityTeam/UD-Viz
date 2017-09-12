@@ -24,7 +24,7 @@ var view;
 var extent;
 // ====================
 
-// this will initialize renderer, view and extent
+// this will initialize renderer, view and extent (UDV-Core/Setup3DScene.js)
 Setup3DScene(buildingServerRequest);
 
 // global variables for Ilot du Lac (IDL), initialized by SetupIlotDuLac()
@@ -35,7 +35,7 @@ var idlBuildings = [];
 var idlDates = [];
 // ====================
 
-// this will initialize idlBuildings and idlDates
+// this will initialize idlBuildings and idlDates (SetupIDL.js)
 SetupIlotDuLac();
 
 // camera starting position (south-west of the city, altitude 2000)
