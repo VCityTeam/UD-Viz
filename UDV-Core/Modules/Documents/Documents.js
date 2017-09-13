@@ -20,8 +20,9 @@ document.getElementById("doc").innerHTML ='<button id="docBrowserTab">DOC</butto
 <div id="docBrowserTitle">doc title</div>\
 <div id="docBrowserMetaData">metadata</div>\
 <div id="docBrowserPreview"><img id="docBrowserPreviewImg" src = "test2.png"/></div>\
+<div id="docBrowserDoc_ID"></div>\
 <div id="guidedTourText2"></div>\
-<div id="docBrowserIndex">11/12</div>\
+<div id="docBrowserIndex"></div>\
 <button id="docBrowserNextButton" type=button>⇨</button>\
 <button id="docBrowserPreviousButton" type=button>⇦</button>\
 <button id="docBrowserOrientButton" type=button>ORIENTER</button>\
@@ -87,21 +88,21 @@ function DocumentsHandler(view, controls, dataFile, options = {}) {
     // doc fade-in animation duration, in milliseconds
     this.fadeDuration = options.docFadeDuration || 2750;
 
-    // fade animation handlers 
+    // fade animation handlers
     this.isOrientingDoc = false;
     this.isFadingDoc = false;
     this.fadeAlpha = 0;
-    
+
     // event to be dispatched when this controller has finished initializing
     this.initEvent = document.createEvent('Event');
     this.initEvent.initEvent('docInit', true, true);
 
     // adds a Document to the DocumentHandler.
+    // for a detail of each parameter, see the Document constructor at the end of this file
     //=============================================================================
-    this.addDocument = function addDocument(docTitle,docIndex,docImageSourceHD,docImageSourceBD,billboardPosition,docViewPosition,docViewQuaternion,docStartDate,metaData) {
+    this.addDocument = function addDocument(docTitle,docIndex,doc_ID,docImageSourceHD,docImageSourceBD,billboardPosition,docViewPosition,docViewQuaternion,docStartDate,metaData) {
 
-        var doc = new Document(docTitle,docIndex,docImageSourceHD,docImageSourceBD,billboardPosition,docViewPosition,docViewQuaternion,docStartDate,metaData);
-        this.AllDocuments.push(doc);
+
 
     };
 
@@ -113,38 +114,48 @@ function DocumentsHandler(view, controls, dataFile, options = {}) {
     //=============================================================================
     this.initialize = function initialize(docDataFromFile){
 
+        // fill the AllDocuments array with Documents objects
+        // the Documents are placed in the order they are loaded, which is their line order in the csv file
+        // the docIndex property is specified to be 0,1,2,3 etc... in the csv
+        // therefore docIndex is equal to "i", but we specify it in the csv for clarity (we need docIndex for the guided tour csv)
+        // the difference between docIndex and doc_ID (used by historians) should be settled asap
         for (var i=0; i<docDataFromFile.length; i++) {
 
             var docData = docDataFromFile[i];
-            var docIndex = i;
-            var docImageSourceHD = "Docs/"+docData[0];
-            var docImageSourceBD = "Docs/"+docData[1];
-            var docTitle = docData[2].toString();
+            var docIndex = parseFloat(docData[0]);
+            var doc_ID = parseFloat(docData[1]);
+            var docImageSourceHD = "Docs/"+docData[2];
+            var docImageSourceBD = "Docs/"+docData[3];
+            var docTitle = docData[4].toString();
 
-            var docStartDate = new Date(docData[3].toString());
+            var docStartDate = new Date(docData[5].toString());
 
-            var docMetaData = docData[4].toString();
+            var docMetaData = docData[6].toString();
 
             // camera position for the oriented view
             var docViewPos = new THREE.Vector3();
-            docViewPos.x = parseFloat(docData[5]);
-            docViewPos.y = parseFloat(docData[6]);
-            docViewPos.z = parseFloat(docData[7]);
+            docViewPos.x = parseFloat(docData[7]);
+            docViewPos.y = parseFloat(docData[8]);
+            docViewPos.z = parseFloat(docData[9]);
 
             // camera orientation for the oriented view
             var docViewQuat = new THREE.Quaternion();
-            docViewQuat.x = parseFloat(docData[8]);
-            docViewQuat.y = parseFloat(docData[9]);
-            docViewQuat.z = parseFloat(docData[10]);
-            docViewQuat.w = parseFloat(docData[11]);
+            docViewQuat.x = parseFloat(docData[10]);
+            docViewQuat.y = parseFloat(docData[11]);
+            docViewQuat.z = parseFloat(docData[12]);
+            docViewQuat.w = parseFloat(docData[13]);
 
             // billboard position
             var docBillboardPos = new THREE.Vector3();
-            docBillboardPos.x = parseFloat(docData[12]);
-            docBillboardPos.y = parseFloat(docData[13]);
-            docBillboardPos.z = parseFloat(docData[14]);
+            docBillboardPos.x = parseFloat(docData[14]);
+            docBillboardPos.y = parseFloat(docData[15]);
+            docBillboardPos.z = parseFloat(docData[16]);
 
-            this.addDocument(docTitle,docIndex,docImageSourceHD,docImageSourceBD,docBillboardPos,docViewPos,docViewQuat,docStartDate,docMetaData);
+            var doc = new Document(docTitle,docIndex,doc_ID,docImageSourceHD,docImageSourceBD,docBillboardPos,docViewPos,docViewQuat,docStartDate,docMetaData);
+
+            // we fill the AllDocuments array with the new doc
+            // this doc is accessed using AllDocuments[docIndex]
+            this.AllDocuments.push(doc);
 
         }
 
@@ -159,7 +170,7 @@ function DocumentsHandler(view, controls, dataFile, options = {}) {
         else{
             this.hideBillboards(true)
         }
-        
+
         // dispatch the event to notify that Document Handler has finished its initialization
         // classes that depends on Document Handler will catch the event and begin their own initialization
         window.dispatchEvent(this.initEvent);
@@ -256,7 +267,7 @@ function DocumentsHandler(view, controls, dataFile, options = {}) {
     this.previousDoc = function previousDoc(){
 
         const index = this.currentDoc.index;
-        if(index === 0){
+        if(index ===0){
             return;
         }
         else {
@@ -274,6 +285,7 @@ function DocumentsHandler(view, controls, dataFile, options = {}) {
         document.getElementById('docBrowserMetaData').innerHTML = this.currentDoc.metaData;
         document.getElementById('docBrowserTitle').innerHTML = this.currentDoc.title;
         document.getElementById('docBrowserIndex').innerHTML = "index : " + this.currentDoc.index;
+        document.getElementById('docBrowserDoc_ID').innerHTML = "Doc_ID : " + this.currentDoc.doc_ID;
 
     }
 
@@ -432,7 +444,7 @@ function DocumentsHandler(view, controls, dataFile, options = {}) {
             console.log("camera quaternion : ",this.controls.camera.quaternion);
         }
     }
-    
+
     // itowns framerequester : will regularly call this.update()
     this.view.addFrameRequester(this);
 
@@ -462,15 +474,22 @@ function DocumentsHandler(view, controls, dataFile, options = {}) {
 
 /**
 * Constructor for Document
-* Currently, a document is an image with associated metadata (title, date, + other metadata...)
+* Currently, a document is an image with associated metadata (doc_ID, title, date, + other metadata...)
 * + associated viewPosition & viewQuaternion (used by focusOnDoc() to orient the camera
 * + associated billboard (optional)
 */
 //=============================================================================
-function Document(docTitle,docIndex,docImageSourceHD,docImageSourceBD,billboardPosition,docViewPosition,docViewQuaternion,docDate,metaData) {
+function Document(docTitle,docIndex,doc_ID,docImageSourceHD,docImageSourceBD,billboardPosition,docViewPosition,docViewQuaternion,docDate,metaData) {
 
     // unique ID for the doc, determined by the line in the doc csv file
+    // must be a consecutive list of index (0,1,2,3,4 etc)
+    // used internally by GuidedTourController and DocumentHandler
     this.index = docIndex;
+
+    // another unique ID, used by historians to indentify documents
+    // cannot be directly used internally, because the doc_ID list is not consecutive (gaps)
+    // not used in the code, only displayed
+    this.doc_ID = doc_ID;
 
     // path to the image (High Def & Bad Def)
     this.imageSourceHD = docImageSourceHD;

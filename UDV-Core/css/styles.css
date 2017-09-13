@@ -269,6 +269,26 @@ body {
 
 }
 
+#docBrowserDoc_ID{
+
+    display:inline-block;
+
+    margin-top : 10px;
+
+    color: white;
+
+    font-size: 14px;
+
+    left : 10px;
+
+    color : white;
+
+    font-weight: bold;
+
+    overflow: hidden;
+
+}
+
 #docBrowserIndex{
 
     position: absolute;
