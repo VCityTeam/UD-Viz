@@ -47,4 +47,4 @@ The camera controller has been merged into itowns ([PR](https://github.com/iTown
 
 * Multiple windows (document browser, guided tour, temporal, minimap, help, about)
 * Each window can be open / closed by clicking on its button
-* The display is weakly responsive : best used with 16/9 or 16/10 resolution, and width between 1400px and 1900px. Using browser zoom (ctrl + / ctrl -) can help.
+* The display is weakly responsive : best used with 16/9 or 16/10 resolution, and width between 1400px and 1900px. Using browser zoom (ctrl + / ctrl -) can help adjusting static elements (text and button size).
