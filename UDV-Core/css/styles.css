@@ -512,7 +512,7 @@ body {
 
 #guidedTourText2{
 
-    display:inline-block;
+    display: none;
 
     margin-top: 20px;
     margin: 10px;

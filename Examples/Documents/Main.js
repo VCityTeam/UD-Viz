@@ -1,8 +1,10 @@
 
-// This is a simple example app with only documents 
+// This is a simple example app with only documents
 
 // we use THREE.js provided by itowns
 THREE = itowns.THREE;
+
+const terrainAndElevationRequest = 'https://download.data.grandlyon.com/wms/grandlyon';
 
 // use this line for local building server
 // const buildingServerRequest = 'http://localhost:9090/getCity?city=lyon';
@@ -24,7 +26,7 @@ var extent;
 // ====================
 
 // this will initialize renderer, view and extent (UDV-Core/Setup3DScene.js)
-Setup3DScene(buildingServerRequest);
+Setup3DScene(terrainAndElevationRequest,buildingServerRequest);
 
 // camera starting position and orientation
 view.camera.setPosition(new itowns.Coordinates('EPSG:3946', extent.west(), extent.south(), 2000));
