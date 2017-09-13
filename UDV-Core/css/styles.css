@@ -93,8 +93,8 @@ body {
 
     z-index: 30;
 
-    width: 16vw;
-    height: 13vw;
+    width: 17vw;
+    height: 14vw;
     position: absolute;
 
     bottom: 0;
@@ -1031,9 +1031,7 @@ body {
     pointer-events: auto;
 
 
-
 }
-
 
 #compassWindow {
     position: absolute;

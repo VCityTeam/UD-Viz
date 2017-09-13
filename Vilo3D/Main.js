@@ -4,10 +4,10 @@ THREE = itowns.THREE;
 const terrainAndElevationRequest = 'https://download.data.grandlyon.com/wms/grandlyon';
 
 // use this line for local building server
- const buildingServerRequest = 'http://localhost:9090/getCity?city=lyon';
+// const buildingServerRequest = 'http://localhost:9090/getCity?city=lyon';
 
 // or this line for distant server
-//const buildingServerRequest = 'http://rict.liris.cnrs.fr:9090/getCity?city=lyon';
+const buildingServerRequest = 'http://rict.liris.cnrs.fr:9090/getCity?city=lyon';
 
 // if true, show building geometry sent by building-server (LYON 6)
 var showBuildings = true;
