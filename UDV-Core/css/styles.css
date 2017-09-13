@@ -93,12 +93,12 @@ body {
 
     z-index: 30;
 
-    width: 18vw;
-    height: 14vw;
+    width: 16vw;
+    height: 13vw;
     position: absolute;
 
     bottom: 0;
-    left: 0%;
+    left: 5%;
 
     margin : 3px;
     padding: 0;
@@ -1037,14 +1037,14 @@ body {
 
 #compassWindow {
     position: absolute;
-    z-index: 20;
+    z-index: 100;
 
-    width: 3%;
+    width: 4%;
     margin: auto;
 
-    top: 5px;
-    left : 0;
-    right : 0;
+    bottom: 5px;
+    left : 5px;
+
 
     pointer-events: none;
 }

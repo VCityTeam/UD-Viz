@@ -1,11 +1,12 @@
 /**
 * Class : Compass Controller
-* adds a "compass" window that can be open/closed with a button
+* adds a basic compass that rotates according to the orientation of the camera
+* imprecise when zenith angle close to 90 (camera close to the ground)
 */
 
 THREE = itowns.THREE;
 
-//update the html with elements for this class (windows, buttons etc)
+//update the html with elements for this class (compass image)
 var compassDiv = document.createElement("div");
 compassDiv.id = 'compass';
 document.body.appendChild(compassDiv);
@@ -14,9 +15,6 @@ document.getElementById("compass").innerHTML = '\
 <div id="compassWindow">\
 <img id="compassImg" src="../UDV-Core/img/compass.gif"></img>\
 </div>';
-
-//ctx.fillRect(50,20,100,50);
-
 
 /**
 * Constructor for CompassController
@@ -29,25 +27,17 @@ function CompassController(controls) {
     // instance of PlanarControls
     this.controls = controls;
 
-    this.view = this.controls.view;
-
-    this.domElement = this.view.mainLoop.gfxEngine.renderer.domElement;
-
+    // the compassImg html object
     const compass = document.getElementById("compassImg");
 
-    const euler = new THREE.Euler();
-
-    this.view.addFrameRequester(this);
+    // request update every active frame
+    this.controls.view.addFrameRequester(this);
 
     // called by framerequester
     //===================================================================
     this.update = function update(){
 
-        euler.setFromQuaternion(this.controls.camera.quaternion);
-
-        compass.style.transform = "rotate("+euler.z+"rad)";
+        // camera.rotation.z is the angle we need : we update the css style of the image to rotate it
+        compass.style.transform = "rotate("+this.controls.camera.rotation.z+"rad)";
     }
-
-    //this.domElement.addEventListener('mousedown', this.update.bind(this), false);
-
 }

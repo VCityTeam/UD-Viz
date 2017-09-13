@@ -2,7 +2,7 @@
 
 What is it ? FIX ME
 
-## Current features :
+## Current features (regrouped by Modules) :
 
 ### Camera Controller
 
@@ -10,7 +10,7 @@ What is it ? FIX ME
 * **Right-click + drag** : camera rotation around the focus point (ground point at the center of the screen), clamped to avoid going under ground level.
 * **Mousewheel** : smooth zoom toward the ground point under the mouse cursor, adjusted according to the ground distance (zoom is faster the further from the ground and cannot go through the ground).
 * **Mousewheel click** (middle mouse button) : "Smart Zoom". Camera smoothly moves and rotates toward target ground point, at fixed orientation and adjusted distance.
-* **S** : moves and orients camera to the start view 
+* **S** : moves and orients camera to the start view
 * **T** : moves and orients camera to top view (high altitude and pointing toward the center of the city)
 
 The camera controller has been merged into itowns ([PR](https://github.com/iTowns/itowns/pull/454)) and is now PlanarControls. It features an animation of camera movement and orientation (called "travel" in the code) which we use to orient the camera with a document (document **oriented view**).
@@ -28,7 +28,7 @@ The camera controller has been merged into itowns ([PR](https://github.com/iTown
 * Basic slider + input field to select a date
 * Ability to navigate between key dates (arrow buttons)
 * When we enter a document "oriented view", the date is updated to match the document's date
-* Key dates correspond to a temporal version of the 3d models for the "Îlot du Lac" 
+* Key dates correspond to a temporal version of the 3d models for the "Îlot du Lac"
 
 ### Guided Tour
 
@@ -37,10 +37,14 @@ The camera controller has been merged into itowns ([PR](https://github.com/iTown
 * Ability to navigate between steps of a tour (previous, next) and to start/exit a tour
 * Support for multiple guided tours, all loaded from a csv file (visite.csv)
 
+### Others
+
+* MiniMap : city (terrain only) viewed from a top view, with an indicator showing the position of the camera
+* Compass : a compass image that rotates according to the camera orientation
+* Help, About : windows with text and links
+
 ### GUI
 
 * Multiple windows (document browser, guided tour, temporal, minimap, help, about)
 * Each window can be open / closed by clicking on its button
 * The display is weakly responsive : best used with 16/9 or 16/10 resolution, and width between 1400px and 1900px. Using browser zoom (ctrl + / ctrl -) can help.
-
-
