@@ -93,8 +93,8 @@ body {
 
     z-index: 30;
 
-    width: 20vw;
-    height: 16vw;
+    width: 18vw;
+    height: 14vw;
     position: absolute;
 
     bottom: 0;
@@ -1033,6 +1033,29 @@ body {
 
 
 }
+
+
+#compassWindow {
+    position: absolute;
+    z-index: 20;
+
+    width: 3%;
+    margin: auto;
+
+    top: 5px;
+    left : 0;
+    right : 0;
+
+    pointer-events: none;
+}
+
+#compassImg{
+
+    width: 100%; /* or any custom size */
+    height: 100%;
+    object-fit: contain;
+}
+
 
 
 #helpTab{

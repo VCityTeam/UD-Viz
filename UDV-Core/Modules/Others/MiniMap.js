@@ -3,6 +3,8 @@
 * adds a "minimap" window that can be open/closed with a button
 */
 
+THREE = itowns.THREE;
+
 //update the html with elements for this class (windows, buttons etc)
 var miniMapDiv = document.createElement("div");
 miniMapDiv.id = 'minimap';

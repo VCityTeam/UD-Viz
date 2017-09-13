@@ -1,11 +1,13 @@
 // we use THREE.js provided by itowns
 THREE = itowns.THREE;
 
+const terrainAndElevationRequest = 'https://download.data.grandlyon.com/wms/grandlyon';
+
 // use this line for local building server
-// const buildingServerRequest = 'http://localhost:9090/getCity?city=lyon';
+ const buildingServerRequest = 'http://localhost:9090/getCity?city=lyon';
 
 // or this line for distant server
-const buildingServerRequest = 'http://rict.liris.cnrs.fr:9090/getCity?city=lyon';
+//const buildingServerRequest = 'http://rict.liris.cnrs.fr:9090/getCity?city=lyon';
 
 // if true, show building geometry sent by building-server (LYON 6)
 var showBuildings = true;
@@ -25,7 +27,7 @@ var extent;
 // ====================
 
 // this will initialize renderer, view and extent (UDV-Core/Setup3DScene.js)
-Setup3DScene(buildingServerRequest);
+Setup3DScene(terrainAndElevationRequest, buildingServerRequest);
 
 // global variables for Ilot du Lac (IDL), initialized by SetupIlotDuLac()
 // ====================
@@ -68,7 +70,7 @@ const optionsEditMode= {
 var controls = new itowns.PlanarControls(view, (useControlsForEditing)? optionsEditMode : optionsRegularMode);
 
 // instanciate temporal controller
-var temporal = new TemporalController(view,{buildingVersions: idlBuildings, buildingDates: idlDates});
+var temporal = new TemporalController(view,{buildingVersions: idlBuildings, buildingDates: idlDates, dateDisplayLength : 4});
 
 // instanciate document handler
 var documents = new DocumentsHandler(view,controls,'docs.csv',{temporal: temporal});
@@ -78,3 +80,6 @@ var guidedtour = new GuidedTourController(documents,'visite.csv',{temporal: temp
 
 // instanciate minimap controller
 var minimap = new MiniMapController(controls, extent, renderer);
+
+// instanciate compass controller
+var compass = new CompassController(controls);

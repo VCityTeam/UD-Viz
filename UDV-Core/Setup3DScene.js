@@ -14,7 +14,7 @@ THREE = itowns.THREE;
 * Example : http://rict.liris.cnrs.fr:9090/getCity?city=lyon for distant server
 */
 //=============================================================================
-var Setup3DScene = function Setup3DScene(buildingServerRequest){
+var Setup3DScene = function Setup3DScene(terrainAndElevationRequest, buildingServerRequest){
 
 // Define projection that we will use (taken from https://epsg.io/3946, Proj4js section)
 itowns.proj4.defs('EPSG:3946',
@@ -36,7 +36,7 @@ view.tileLayer.disableSkirt = true;
 
 // Add an WMS imagery layer (see WMS_Provider* for valid options)
 view.addLayer({
-    url: 'https://download.data.grandlyon.com/wms/grandlyon',
+    url: terrainAndElevationRequest,
     networkOptions: { crossOrigin: 'anonymous' },
     type: 'color',
     protocol: 'wms',
@@ -52,7 +52,7 @@ view.addLayer({
 
 // Add an WMS elevation layer (see WMS_Provider* for valid options)
 view.addLayer({
-    url: 'https://download.data.grandlyon.com/wms/grandlyon',
+    url: terrainAndElevationRequest,
     type: 'elevation',
     protocol: 'wms',
     networkOptions: { crossOrigin: 'anonymous' },

@@ -33,6 +33,7 @@ document.getElementById("temporal").innerHTML = '<button id="temporalTab">TEMPOR
 * Changes which 3d object is displayed according to the date
 * Versions of the 3d object are given as param with options.buildingVersions,
 * and Dates corresponding to these versions with options.buildingDates
+* This controller uses javascript Date object https://www.w3schools.com/jsref/jsref_obj_date.asp
 * This object is initialized after the loading of the 3d objects (asynchronous)
 * @param view : itowns planar view
 * @param controls : PlanarControls instance
@@ -71,9 +72,13 @@ function TemporalController(view, options={}) {
     // is the controller enabled
     this.enabled = false;
 
+    // number of character in the displayed date (use 4 for year only, 10 for yyyy-mm-dd)
+    this.dateDisplayLength = options.dateDisplayLength || 10;
+
     // concurrent view = all temporal versions on top of each other
     this.isInConcurrentView = false;
 
+    // Z offset between each concurrent version
     this.concurrentViewOffset = options.concurrentViewOffset || 45;
 
     // is the temporal window open or not
@@ -96,7 +101,7 @@ function TemporalController(view, options={}) {
         this.syncBuildingVersionToCurrentDate(true);
 
         // setup the display
-        document.getElementById("timeDateSelector").value = this.currentDate.toISOString().substring(0,10);
+        document.getElementById("timeDateSelector").value = this.currentDate.toISOString().substring(0,this.dateDisplayLength);
         document.getElementById("timeSlider").min = this.minDate.getFullYear();
         document.getElementById("timeSlider").max = this.maxDate.getFullYear();
         document.getElementById("timeSlider").value = this.currentDate.getFullYear();
@@ -254,7 +259,7 @@ function TemporalController(view, options={}) {
     this.changeDate = function changeDate(date){
 
         document.getElementById("timeSlider").value = date.getFullYear();
-        document.getElementById("timeDateSelector").value = date.toISOString().substring(0,10);
+        document.getElementById("timeDateSelector").value = date.toISOString().substring(0,this.dateDisplayLength);
 
         this.currentDate = date;
 
