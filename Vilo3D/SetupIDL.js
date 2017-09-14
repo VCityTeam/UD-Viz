@@ -20,11 +20,17 @@ var SetupIlotDuLac = function SetupIlotDuLac(){
     var amountLoaded = 0;
     var allLoadedEventSent = false;
 
+    // function called after a model is loaded
     var onModelLoad = function onModelLoad(array, index, position, scale) {
         const offset = new THREE.Vector3();
         let object;
         return ( collada ) => {
             object = collada.scene;
+            // all scene elements are set to the same layer than the other itowns building (layer 1)
+            object.traverse((obj) => {
+                obj.layers.set(1);
+            });
+
             object.scale.set( scale, scale, scale );
             array[index] = object;
             array[index].position.set(position.x, position.y, position.z);

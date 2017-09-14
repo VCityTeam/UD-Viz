@@ -43,7 +43,7 @@ step="1" oninput="docOpaUpdate(value)">\
 
 //dirty variables to test billboards
 var billboardsAreActive = false;
-var showBillboardButton = false;
+var showBillboardButton = true;
 
 /**
 * Constructor for DocumentsHandler Class
@@ -535,6 +535,10 @@ function Document(docTitle,docIndex,doc_ID,docImageSourceHD,docImageSourceBD,bil
 
         this.billboardGeometry = new THREE.Mesh( new THREE.PlaneGeometry( 80, 50, 1 , 1), billboardMaterial );
         this.billboardGeometryFrame =  new THREE.Mesh(new THREE.PlaneGeometry( 80, 50, 1 , 1), frameMaterial );
+
+        // set billboards to the same layers as other buildings (controls will bug if not)
+        this.billboardGeometry.layers.set(1);
+        this.billboardGeometryFrame.layers.set(1);
 
         this.billboardGeometry.position.copy(billboardPosition);
         this.billboardGeometryFrame.position.copy(billboardPosition);
