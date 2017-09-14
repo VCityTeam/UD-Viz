@@ -34,7 +34,7 @@ Since Vilo3d demo uses ColladaLoader to import handmade buildings, add the follo
 ```
 THREE = itowns.THREE;
 ```
-As of septembre 14, 2017, the current itowns version has made the camera controls a little bugged when clicking on a collada model (or rotating with a collada in center of screen). To return to a previous itowns version (commit) without this bug :
+As of septembre 14, 2017, the current itowns version has made the camera controls a little bugged when clicking on a collada model (or rotating with a collada in center of screen). To return to a previous itowns version (commit) without this bug, enter this command from the itowns directory : 
 ```
 git reset --hard 1e1a4468f1d30ed9b4c19dcf5474c360c15bb6e5
 ```
