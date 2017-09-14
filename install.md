@@ -80,10 +80,12 @@ Then we need to delete two buildings from the 'lyon 6ème' database (in psql) in
 
 Identifying the gid (`173` and `503`) of the buildings to be removed is achieved [through those geographical requests](FindBuildingGID.md).
 
-Delete those tow buildings from the DB:
+Delete those two buildings from the DB:
 ```
   (db_user)$ psql lyon6_buildings -c "delete from lyon where gid in (173,503);"
 ```
+
+Proceed, [mutatis mutandis](https://en.wikipedia.org/wiki/Mutatis_mutandis), with [adding the bounding boxes](https://github.com/MEPP-team/RICT/blob/master/Install.md#7-data-base-f-add-bounding-box-data-to-database-jga-specific--install-the-http-server).
 
 ### (3) Install UDV and iTowns
 Refer above to the light install version.
@@ -109,6 +111,7 @@ Edit the newly copied configuration file `/etc/apache2/sites-available/rict.liri
 	CustomLog ${APACHE_LOG_DIR}/access.log combined
 </VirtualHost>
 ```
+In case of [CORS](https://en.wikipedia.org/wiki/Cross-origin_resource_sharing) related errors refer to [Getting CORS to work with Apache](https://awesometoast.com/cors/) for further twitching.
 
 Remove the default server (to avoid collisions):
 ```
@@ -128,6 +131,8 @@ Notes and references:
  * JGA discourages (within this context) the [usage of uWSGI](http://uwsgi-docs.readthedocs.io/en/latest/StaticFiles.html) as simple http server
  * [Ubuntu Apache2 configuration](https://www.digitalocean.com/community/tutorials/how-to-set-up-apache-virtual-hosts-on-ubuntu-14-04-lts)
  * [Ubuntu Apache2 install](https://help.ubuntu.com/lts/serverguide/httpd.html)
+ 
+### (5) Install a building server
 
-### (5) Usage
+### (6) Usage
  * When on the http server, open `UDV/Vilo3D/index.html` in Firefox (Chrome not supported)
