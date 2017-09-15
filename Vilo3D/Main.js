@@ -6,8 +6,11 @@ const terrainAndElevationRequest = 'https://download.data.grandlyon.com/wms/gran
 // use this line for local building server
 // const buildingServerRequest = 'http://localhost:9090/getCity?city=lyon';
 
-// or this line for distant server
-const buildingServerRequest = 'http://rict.liris.cnrs.fr:9090/getCity?city=lyon';
+// use this line for distant building server
+// const buildingServerRequest = 'http://rict.liris.cnrs.fr:9090/getCity?city=lyon';
+
+// or this line for local tileset
+const buildingServerRequest = 'tileset.json';
 
 // if true, show building geometry sent by building-server (LYON 6)
 var showBuildings = true;
