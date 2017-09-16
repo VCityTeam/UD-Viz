@@ -17,6 +17,7 @@ TO DO : auto install (install all dependencies with npm)
 
 
 ## Light install (without building geometry provide by DB)
+With this install you will not have the building server to provide geometry, however the vilo3d demo has a local tileset which has the same geometry (lyon6). If you use this tileset (buildingServerRequest = 'tileset.json', in Main.js), you will still be able to have the lyon6 geometry in the demo.
 
 Just (git) clone UDV and iTowns alongside (the two directories must be siblings):
 ```
@@ -28,21 +29,15 @@ Just (git) clone UDV and iTowns alongside (the two directories must be siblings)
   npm install   # Might require some "sudo apt-get install npm"
 ```
 
-Edit `UDV/Vilo3D/Main.js` and set the "showBuildings" to false on line 4.
-
 Since Vilo3d demo uses ColladaLoader to import handmade buildings, add the following line at the start of `itowns/node_modules/three/examples/js/loaders/ColladaLoader2.js`:
 ```
 THREE = itowns.THREE;
-```
-As of septembre 14, 2017, the current itowns version has made the camera controls a little bugged when clicking on a collada model (or rotating with a collada in center of screen). To return to a previous itowns version (commit) without this bug, enter this command from the itowns directory : 
-```
-git reset --hard 1e1a4468f1d30ed9b4c19dcf5474c360c15bb6e5
 ```
 
 Open UDV/Vilo3D/index.html in Firefox (will fail for Chrome).
 
 
-## Installation with geometry of the buildings and hand made textured historical buildings 
+## Installation with building server to provide geometry (full install) 
 
 ### (1) Install the database. 
 The following instructions are an adaptation of [JIGA adhoc building database](https://github.com/MEPP-team/RICT/blob/master/Install.md) (within the context of Ubuntu version as given by `lsb_release -a` yields `Description: Debian GNU/Linux 8.8 (jessie)`):
