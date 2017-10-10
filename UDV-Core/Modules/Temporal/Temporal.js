@@ -6,9 +6,6 @@
 * These are used to change the version of a 3d object according to the date
 */
 
-// we use the THREE.js library provided by itowns
-THREE = itowns.THREE;
-
 //update the html with elements for this class (windows, buttons etc)
 var temporalDiv = document.createElement("div");
 temporalDiv.id = 'temporal';

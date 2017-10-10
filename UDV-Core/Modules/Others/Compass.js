@@ -4,8 +4,6 @@
 * imprecise when zenith angle close to 90 (camera close to the ground)
 */
 
-THREE = itowns.THREE;
-
 //update the html with elements for this class (compass image)
 var compassDiv = document.createElement("div");
 compassDiv.id = 'compass';
@@ -21,7 +19,7 @@ document.getElementById("compass").innerHTML = '\
 * manages the orientation of the compass image
 * @param controls : an instance of PlanarControls
 */
-// ===========================================================================================
+// =======================================================================
 function CompassController(controls) {
 
     // instance of PlanarControls
@@ -37,7 +35,8 @@ function CompassController(controls) {
     //===================================================================
     this.update = function update(){
 
-        // camera.rotation.z is the angle we need : we update the css style of the image to rotate it
+        // camera.rotation.z is the angle we need : we update the css style
+        // of the image to rotate it
         compass.style.transform = "rotate("+this.controls.camera.rotation.z+"rad)";
     }
 }
