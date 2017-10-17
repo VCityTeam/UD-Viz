@@ -1,7 +1,6 @@
 // When editing this file consider also modifying babel-loader configuration
 // in webpack.config.js
 {
-
     "presets": [
       ["env", { "modules": false }]
     ],

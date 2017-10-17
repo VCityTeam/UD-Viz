@@ -23,6 +23,28 @@ module.exports = {
         definePlugin,
         new webpack.optimize.CommonsChunkPlugin({ name: 'udvcore' }),
     ],
+    module: {
+        rules: [
+            {
+                test: /\.js$/,
+                include: [
+                    path.resolve(__dirname, 'Modules'),
+                    path.resolve(__dirname, 'Tools'),
+                    path.resolve(__dirname, '.'),
+                ],
+                loader: 'babel-loader',
+                // Please consider modifying .babelrc too
+                // .babelrc is used for transpiling src/ into lib/ in the prepublish
+                // phase, see package.json
+                options: {
+                    presets: ['env'],
+                    plugins: ['transform-runtime'],
+                    babelrc: false,
+                },
+            },
+            commonConfig.jsonLoader,
+        ],
+    },
     devServer: {
         publicPath: '/dist/',
     },
