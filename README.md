@@ -2,6 +2,9 @@
 
 What is it ? FIX ME
 
+## Demo
+The [online demo](http://rict.liris.cnrs.fr/UDV/Vilo3D/index.html) is alas only visible on the [Lyon1](https://sciences.univ-lyon1.fr/)/[INSA-Lyon](https://www.insa-lyon.fr/en/) campus.
+
 ## Current features (regrouped by Modules) :
 
 ### Camera Controller
