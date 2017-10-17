@@ -3,6 +3,9 @@
 * adds a "minimap" window that can be open/closed with a button
 */
 
+//import {itowns} from 'itowns';       // OK
+//import { Coordinates, PlanarView, THREE } from 'itowns';   // NOK
+import * as itowns from 'itowns';
 THREE = itowns.THREE;
 
 //update the html with elements for this class (windows, buttons etc)

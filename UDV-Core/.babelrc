@@ -1,0 +1,13 @@
+// When editing this file consider also modifying babel-loader configuration
+// in webpack.config.js
+{
+
+    "presets": [
+      ["env", { "modules": false }]
+    ],
+    "plugins": [
+        "transform-runtime",
+        [ "babel-plugin-webpack-loaders", { "config": "./webpack-babel.config.js", "verbose": false }],
+        ["minify-dead-code-elimination"]
+    ]
+}
