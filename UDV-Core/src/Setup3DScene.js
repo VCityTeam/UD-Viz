@@ -2,8 +2,8 @@
 * Vilo3D 3d scene Setup
 */
 
-
-THREE = itowns.THREE;
+import * as itowns from 'itowns';
+var THREE = itowns.THREE; // we use THREE.js provided by itowns
 
 /**
 * Call this to initialize the values of global var : view, extent and renderer (Main.js)
@@ -14,14 +14,17 @@ THREE = itowns.THREE;
 * Example : http://rict.liris.cnrs.fr:9090/getCity?city=lyon for distant server
 */
 //=============================================================================
-var Setup3DScene = function Setup3DScene(terrainAndElevationRequest, buildingServerRequest){
+export function Setup3DScene(terrainAndElevationRequest,
+                             buildingServerRequest,
+                             showBuildings = false )
+{
 
 // Define projection that we will use (taken from https://epsg.io/3946, Proj4js section)
 itowns.proj4.defs('EPSG:3946',
 '+proj=lcc +lat_1=45.25 +lat_2=46.75 +lat_0=46 +lon_0=3 +x_0=1700000 +y_0=5200000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs');
 
 // Define geographic extent: CRS, min/max X, min/max Y
-extent = new itowns.Extent(
+var extent = new itowns.Extent(
     'EPSG:3946',
     1837816.94334, 1847692.32501,
     5170036.4587, 5178412.82698,
@@ -30,7 +33,7 @@ extent = new itowns.Extent(
 // `viewerDiv` will contain iTowns' rendering area (`<canvas>`)
 const viewerDiv = document.getElementById('viewerDiv');
 // Instanciate PlanarView
-view = new itowns.PlanarView(viewerDiv, extent, { renderer });
+var view = new itowns.PlanarView(viewerDiv, extent);
 
 view.tileLayer.disableSkirt = true;
 
@@ -119,5 +122,7 @@ var ambientLight = new THREE.AmbientLight( 0xffffff,0.5 );
 ambientLight.position.set(0, 0, 3000 );
 directionalLight.updateMatrixWorld();
 view.scene.add( ambientLight );
+
+return [ view, extent ];
 
 }

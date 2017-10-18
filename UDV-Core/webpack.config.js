@@ -9,7 +9,7 @@ var definePlugin = new webpack.DefinePlugin({
 
 module.exports = {
     entry: {
-        udvcore: ['es6-promise', path.resolve(__dirname, 'Main.js')]
+        udvcore: ['es6-promise', path.resolve(__dirname, 'src/Main.js')]
     },
     devtool: 'source-map',
     output: {
@@ -28,9 +28,7 @@ module.exports = {
             {
                 test: /\.js$/,
                 include: [
-                    path.resolve(__dirname, 'Modules'),
-                    path.resolve(__dirname, 'Tools'),
-                    path.resolve(__dirname, '.'),
+                    path.resolve(__dirname, 'src'),
                 ],
                 loader: 'babel-loader',
                 // Please consider modifying .babelrc too

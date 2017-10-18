@@ -1,6 +1,10 @@
 import * as itowns from 'itowns';
-// we use THREE.js provided by itowns
-THREE = itowns.THREE;
+import { Setup3DScene }       from './Setup3DScene';
+import { TemporalController } from './Modules/Temporal/Temporal';
+import { MiniMapController }  from './Modules/Others/MiniMap';
+import { CompassController }  from './Modules/Others/Compass';
+
+var THREE = itowns.THREE; // we use THREE.js provided by itowns
 
 const terrainAndElevationRequest = 'https://download.data.grandlyon.com/wms/grandlyon';
 
@@ -13,17 +17,10 @@ const buildingServerRequest = 'http://rict.liris.cnrs.fr:9090/getCity?city=lyon'
 // or this line for local tileset
 // const buildingServerRequest = 'tileset.json';
 
-// if true, show building geometry sent by building-server (LYON 6)
-var showBuildings = true;
-
 // if true, replace regular controls by controls adapted to finding precise orientation for documents
 // use false for regular controls (generic user)
 var useControlsForEditing = false;
 
-// global variables, initialized by the Setup3DScene() function below
-// ====================
-// THREE.js renderer
-var renderer;
 // itowns view (3d scene)
 var view;
 // itowns extent (city limits)
@@ -31,7 +28,12 @@ var extent;
 // ====================
 
 // this will initialize renderer, view and extent (UDV-Core/Setup3DScene.js)
-Setup3DScene(terrainAndElevationRequest, buildingServerRequest);
+[ view, extent ] = Setup3DScene(terrainAndElevationRequest,
+                                buildingServerRequest,
+                                true );
+
+// THREE.js renderer
+var renderer = view.scene;
 
 // global variables for Ilot du Lac (IDL), initialized by SetupIlotDuLac()
 // ====================

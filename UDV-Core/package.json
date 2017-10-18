@@ -2,14 +2,14 @@
   "name": "UDV-Core",
   "version": "0.0.1",
   "description": "An iTowns based set of overlay display modules for City exploration",
-  "main": "Main.js",
+  "main": "src/Main.js",
   "scripts": {
-    "lint": "eslint \"Tools/*.js\" \"Modules/**/*.js\" \"Setup3DScene.js\"",
+    "lint": "eslint \"src/**/*.js\" \"Main.js\" \"Setup3DScene.js\"",
     "doc": "jsdoc Setup3DScene.js",
     "doclint": "npm run doc -- -t templates/silent",
     "test": "npm run lint",
     "build": "webpack -p",
-    "transpile": "cross-env BABEL_DISABLE_CACHE=1 babel . --out-dir lib",
+    "transpile": "cross-env BABEL_DISABLE_CACHE=1 babel src --out-dir lib",
     "start": "cross-env NODE_ENV=development webpack-dev-server -d --inline --hot",
     "//": "\"prepublish\": \"npm run build && npm run transpile\""
   },

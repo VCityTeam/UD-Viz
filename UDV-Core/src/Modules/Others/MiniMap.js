@@ -3,10 +3,7 @@
 * adds a "minimap" window that can be open/closed with a button
 */
 
-//import {itowns} from 'itowns';       // OK
-//import { Coordinates, PlanarView, THREE } from 'itowns';   // NOK
-import * as itowns from 'itowns';
-THREE = itowns.THREE;
+import { Coordinates, PlanarView, THREE } from 'itowns';
 
 //update the html with elements for this class (windows, buttons etc)
 var miniMapDiv = document.createElement("div");
@@ -25,8 +22,8 @@ document.getElementById("minimap").innerHTML = '<button id="miniMapTab">CARTE</b
 * @param extent : itowns extent object (city limits)
 * @param renderer : the global renderer
 */
-// ===========================================================================================
-function MiniMapController(controls, extent, renderer) {
+// ===========================================================================
+export function MiniMapController(controls, extent, renderer) {
 
     // instance of PlanarControls
     this.controls = controls;
@@ -39,7 +36,7 @@ function MiniMapController(controls, extent, renderer) {
 
     // view setup
     const mapDiv = document.getElementById('miniMapViewer');
-    this.view = new itowns.PlanarView(mapDiv, extent, { renderer });
+    this.view = new PlanarView(mapDiv, extent, { renderer });
 
     this.view.tileLayer.disableSkirt = true;
     // Add an WMS imagery layer (see WMS_Provider* for valid options)
@@ -68,7 +65,7 @@ function MiniMapController(controls, extent, renderer) {
     this.mapIndicator.position.z = 500;
 
     // camera position at center of extent, looking at the ground, at altitude cameraZ, with north/south/east/west orientation
-    this.view.camera.setPosition(new itowns.Coordinates('EPSG:3946',this.extent.center().xyz().x, this.extent.center().xyz().y, this.cameraZ));
+    this.view.camera.setPosition(new Coordinates('EPSG:3946',this.extent.center().xyz().x, this.extent.center().xyz().y, this.cameraZ));
     this.view.camera.camera3D.quaternion.copy(new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(1, 0, 0), 0));
 
     this.view.scene.add( this.mapIndicator );

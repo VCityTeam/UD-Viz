@@ -37,7 +37,7 @@ document.getElementById("temporal").innerHTML = '<button id="temporalTab">TEMPOR
 * @param options : optional parameters (including buildingVersions & Dates)
 */
 //=============================================================================
-function TemporalController(view, options={}) {
+export function TemporalController(view, options={}) {
 
     this.view = view;
 
