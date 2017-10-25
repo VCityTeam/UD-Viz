@@ -1,4 +1,4 @@
-
+THREE = udvcore.itowns.THREE;   // we use THREE.js provided by itowns
 
 // CALL TO SETUP DATES & LOAD COLLADA BUILDINGS for Ilot du Lac (IDL)
 var SetupIlotDuLac = function SetupIlotDuLac(){

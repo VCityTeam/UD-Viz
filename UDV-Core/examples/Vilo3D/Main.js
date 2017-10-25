@@ -1,6 +1,3 @@
-// we use THREE.js provided by itowns
-THREE = itowns.THREE;
-
 const terrainAndElevationRequest = 'https://download.data.grandlyon.com/wms/grandlyon';
 
 // use this line for local building server
@@ -30,7 +27,7 @@ var extent;
 // ====================
 
 // this will initialize renderer, view and extent (UDV-Core/Setup3DScene.js)
-Setup3DScene(terrainAndElevationRequest, buildingServerRequest);
+[ view, extent ] =  udvcore.Setup3DScene(terrainAndElevationRequest, buildingServerRequest);
 
 // global variables for Ilot du Lac (IDL), initialized by SetupIlotDuLac()
 // ====================
@@ -41,10 +38,10 @@ var idlDates = [];
 // ====================
 
 // this will initialize idlBuildings and idlDates (SetupIDL.js)
-SetupIlotDuLac();
+//SetupIlotDuLac();
 
 // camera starting position (south-west of the city, altitude 2000)
-view.camera.setPosition(new itowns.Coordinates('EPSG:3946', extent.west(), extent.south(), 2000));
+view.camera.setPosition(new udvcore.itowns.Coordinates('EPSG:3946', extent.west(), extent.south(), 2000));
 // camera starting orientation (looking at city center)
 view.camera.camera3D.lookAt(extent.center().xyz());
 
@@ -70,19 +67,19 @@ const optionsEditMode= {
 
 // instanciate PlanarControls (camera controller), from itowns/src/Renderer/ThreeExtended/PlanarControls.js
 // we use optionsEditMode or optionsRegularMode according to the state of the boolean useControlsForEditing
-var controls = new itowns.PlanarControls(view, (useControlsForEditing)? optionsEditMode : optionsRegularMode);
+var controls = new udvcore.itowns.PlanarControls(view, (useControlsForEditing)? optionsEditMode : optionsRegularMode);
 
 // instanciate temporal controller
-var temporal = new TemporalController(view,{buildingVersions: idlBuildings, buildingDates: idlDates, dateDisplayLength : 4});
+var temporal = new udvcore.TemporalController(view,{buildingVersions: idlBuildings, buildingDates: idlDates, dateDisplayLength : 4});
 
 // instanciate document handler
-var documents = new DocumentsHandler(view,controls,'docs.csv',{temporal: temporal});
+var documents = new udvcore.DocumentsHandler(view,controls,'docs.csv',{temporal: temporal});
 
 // instanciate guided tour controller
-var guidedtour = new GuidedTourController(documents,'visite.csv',{temporal: temporal, preventUserFromChangingTour : true});
+var guidedtour = new udvcore.GuidedTourController(documents,'visite.csv',{temporal: temporal, preventUserFromChangingTour : true});
 
 // instanciate minimap controller
-var minimap = new MiniMapController(controls, extent, renderer);
+var minimap = new udvcore.MiniMapController(controls, extent, renderer);
 
 // instanciate compass controller
-var compass = new CompassController(controls);
+var compass = new udvcore.CompassController(controls);

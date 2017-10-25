@@ -5,7 +5,7 @@
 // or something that can be found in a text
 
 //=============================================================================
-function readCSVFile(file, onComplete)
+export function readCSVFile(file, onComplete)
 {
     var result;
     var rawFile = new XMLHttpRequest();
@@ -16,8 +16,8 @@ function readCSVFile(file, onComplete)
         {
             if(rawFile.status === 200 || rawFile.status == 0)
             {
-                allText = rawFile.responseText;
-                AllText = allText;
+                var allText = rawFile.responseText;
+                var AllText = allText;       // FIXME remove useless variable
                 result = processData(allText);
                 onComplete(result);
             }

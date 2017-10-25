@@ -21,20 +21,24 @@ With this install you will not have the building server to provide geometry, how
 
 Just (git) clone UDV and iTowns alongside (the two directories must be siblings):
 ```
-  mkdir Vilo3D    # Not really needed but cleaner with a containment directory
-  cd Vilo3d
+  mkdir Vilo3D-Install # Not required but cleaner with a containment directory
+  cd Vilo3D-Install
   git clone https://github.com/MEPP-team/UDV.git
   git clone https://github.com/itowns/itowns.git
-  cd itowns/
+  pushd itowns/
+  git checkout tags/v2.1.0
   npm install   # Might require some "sudo apt-get install npm"
+  popd
 ```
 
 Since Vilo3d demo uses ColladaLoader to import handmade buildings, add the following line at the start of `itowns/node_modules/three/examples/js/loaders/ColladaLoader2.js`:
 ```
 THREE = itowns.THREE;
 ```
-
-Open UDV/Vilo3D/index.html in Firefox (will fail for Chrome).
+Then trigger Vilo3d
+```
+  open Vilo3D/index.html in Firefox (will fail for Chrome).
+```
 
 
 ## Installation with building server to provide geometry (full install) 

@@ -11,7 +11,7 @@ document.body.appendChild(compassDiv);
 
 document.getElementById("compass").innerHTML = '\
 <div id="compassWindow">\
-<img id="compassImg" src="img/compass.gif"></img>\
+<img id="compassImg" src="/img/compass.gif"></img>\
 </div>';
 
 /**

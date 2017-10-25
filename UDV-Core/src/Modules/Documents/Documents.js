@@ -8,7 +8,8 @@
 */
 
 // we use the THREE.js library provided by itowns
-THREE = itowns.THREE;
+import { THREE } from 'itowns';
+import { readCSVFile } from '../../Tools/CSVLoader.js';
 
 //update the html with elements for this class (windows, buttons etc)
 var docDiv = document.createElement("div");
@@ -59,7 +60,7 @@ var showBillboardButton = false;
 * @param options : optional parameters (including TemporalController)
 */
 //=============================================================================
-function DocumentsHandler(view, controls, dataFile, options = {}) {
+export function DocumentsHandler(view, controls, dataFile, options = {}) {
 
     // TO DO
     this.view = view;
@@ -114,7 +115,7 @@ function DocumentsHandler(view, controls, dataFile, options = {}) {
     * this function is called after the completion of readCSVFile() in this.loadDataFromFile()
     * @param docDataFromFile : contains the data loaded from the file
     */
-    //=============================================================================
+    //==========================================================================
     this.initialize = function initialize(docDataFromFile){
 
         // fill the AllDocuments array with Documents objects
@@ -181,7 +182,7 @@ function DocumentsHandler(view, controls, dataFile, options = {}) {
 
     }
 
-    //=============================================================================
+    //==========================================================================
     this.loadDataFromFile = function loadDataFromFile(){
 
         readCSVFile(CSVdataFile, this.initialize.bind(this));
@@ -266,7 +267,7 @@ function DocumentsHandler(view, controls, dataFile, options = {}) {
     }
 
     // go to previous document (by index) in the browser
-    //=============================================================================
+    //==========================================================================
     this.previousDoc = function previousDoc(){
 
         const index = this.currentDoc.index;
@@ -281,7 +282,7 @@ function DocumentsHandler(view, controls, dataFile, options = {}) {
     }
 
     // update doc browser (text, image, index)
-    //=============================================================================
+    //==========================================================================
     this.updateBrowser = function updateBrowser(){
 
         document.getElementById('docBrowserPreviewImg').src = this.currentDoc.imageSourceBD;
@@ -295,7 +296,7 @@ function DocumentsHandler(view, controls, dataFile, options = {}) {
     // show billboards
     // if forceShow is true, show
     // if forceShow is false and billboardsAreActive is false, do not show
-    //=============================================================================
+    //==========================================================================
     this.showBillboards = function showBillboards(forceShow){
 
         if(!forceShow && !billboardsAreActive){

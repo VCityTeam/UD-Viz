@@ -1,3 +1,4 @@
+import { readCSVFile } from '../../Tools/CSVLoader.js';
 /**
 * Classes: GuidedTourController & TourStep
 * Description :
@@ -41,7 +42,7 @@ document.getElementById("guidedtour").innerHTML = '\
 * @param options : optional parameters (including temporal)
 */
 //=============================================================================
-function GuidedTourController(docHandler, dataFile, options={}) {
+export function GuidedTourController(docHandler, dataFile, options={}) {
 
     // DocumentHandler instance, required
     this.docs = docHandler;
