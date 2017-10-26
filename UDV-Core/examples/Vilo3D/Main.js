@@ -9,9 +9,6 @@ const terrainAndElevationRequest = 'https://download.data.grandlyon.com/wms/gran
 // or this line for local tileset
 const buildingServerRequest = 'tileset.json';
 
-// if true, show building geometry sent by building-server (LYON 6)
-var showBuildings = true;
-
 // if true, replace regular controls by controls adapted to finding precise orientation for documents
 // use false for regular controls (generic user)
 var useControlsForEditing = false;
@@ -27,7 +24,9 @@ var extent;
 // ====================
 
 // this will initialize renderer, view and extent (UDV-Core/Setup3DScene.js)
-[ view, extent ] =  udvcore.Setup3DScene(terrainAndElevationRequest, buildingServerRequest);
+[ view, extent ] =  udvcore.Setup3DScene(terrainAndElevationRequest,
+                                         buildingServerRequest,
+                                         true);
 
 // global variables for Ilot du Lac (IDL), initialized by SetupIlotDuLac()
 // ====================

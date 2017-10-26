@@ -17,28 +17,24 @@ TO DO : auto install (install all dependencies with npm)
 
 
 ## Light install (without building geometry provide by DB)
-With this install you will not have the building server to provide geometry, however the vilo3d demo has a local tileset which has the same geometry (lyon6). If you use this tileset (buildingServerRequest = 'tileset.json', in Main.js), you will still be able to have the lyon6 geometry in the demo.
-
-Just (git) clone UDV and iTowns alongside (the two directories must be siblings):
 ```
-  mkdir Vilo3D-Install # Not required but cleaner with a containment directory
-  cd Vilo3D-Install
   git clone https://github.com/MEPP-team/UDV.git
-  git clone https://github.com/itowns/itowns.git
-  pushd itowns/
-  git checkout tags/v2.1.0
-  npm install   # Might require some "sudo apt-get install npm"
-  popd
+  cd UDV
+  npm install
+  npm start
 ```
 
-Since Vilo3d demo uses ColladaLoader to import handmade buildings, add the following line at the start of `itowns/node_modules/three/examples/js/loaders/ColladaLoader2.js`:
+Note: for the Vilo3d demo uses ColladaLoader to import handmade buildings, add the following line at the start of `itowns/node_modules/three/examples/js/loaders/ColladaLoader2.js`:
 ```
 THREE = itowns.THREE;
 ```
-Then trigger Vilo3d
-```
-  open Vilo3D/index.html in Firefox (will fail for Chrome).
-```
+
+They are currently two demos/examples:
+ - Vilo3D, demo is obtained by opening `http://localhost:8080/examples/Vilo3D/` (the port number `8080` might be different: refer to URL provided by `npm  install`). Vilo3d demo is configured by default such that the buildings come from locally encoded data (a tileset together with the geometry provided to the client as files). There is thus no requirement for a database server.
+ - UDV-core, demo obtained by opening `http://localhost:8080/examples/index.html` is configured by default to use a data base server accessed through ad-hoc web-services.
+
+For both demos the configuration for accessing the building data (Lyon 6 borough) is done within the `Main.js` file through the `buildingServerRequest` variable.
+
 
 
 ## Installation with building server to provide geometry (full install) 
