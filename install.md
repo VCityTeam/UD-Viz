@@ -19,7 +19,7 @@ TO DO : auto install (install all dependencies with npm)
 ## Light install (without building geometry provide by DB)
 ```
   git clone https://github.com/MEPP-team/UDV.git
-  cd UDV
+  cd UDV/UDV-Core
   npm install
   npm start
 ```
@@ -31,7 +31,7 @@ THREE = itowns.THREE;
 
 They are currently two demos/examples:
  - Vilo3D, demo is obtained by opening `http://localhost:8080/examples/Vilo3D/` (the port number `8080` might be different: refer to URL provided by `npm  install`). Vilo3d demo is configured by default such that the buildings come from locally encoded data (a tileset together with the geometry provided to the client as files). There is thus no requirement for a database server.
- - UDV-core, demo obtained by opening `http://localhost:8080/examples/index.html` is configured by default to use a data base server accessed through ad-hoc web-services.
+ - UDV-core, demo obtained by opening `http://localhost:8080/examples/Demo.html` is configured by default to use a data base server accessed through ad-hoc web-services.
 
 For both demos the configuration for accessing the building data (Lyon 6 borough) is done within the `Main.js` file through the `buildingServerRequest` variable.
 
