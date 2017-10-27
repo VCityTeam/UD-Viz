@@ -20,7 +20,7 @@ document.getElementById("doc").innerHTML ='<button id="docBrowserTab">DOC</butto
 <div id="docBrowserWindow">\
 <div id="docBrowserTitle">doc title</div>\
 <div id="docBrowserMetaData">metadata</div>\
-<div id="docBrowserPreview"><img id="docBrowserPreviewImg" src = "test.png"/></div>\
+<div id="docBrowserPreview"><img id="docBrowserPreviewImg" src = "/img/test.png"/></div>\
 <div id="docBrowserDoc_ID"></div>\
 <div id="guidedTourText2"></div>\
 <div id="docBrowserIndex"></div>\
