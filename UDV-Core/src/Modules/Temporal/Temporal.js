@@ -37,13 +37,6 @@ document.getElementById("temporal").innerHTML = '<button id="temporalTab">TEMPOR
 * @param options : optional parameters (including buildingVersions & Dates)
 */
 //=============================================================================
-/*
-Changer date en moment et casser le lien vers Vilo3D
-this.buildingDates deconne
-this.useBuildings
-this.buildingVersions
-this.syncBuildingVersionToCurrentDate()
-*/
 
 export function TemporalController(view, options={}) {
 
