@@ -1,0 +1,59 @@
+{
+  "name": "UDV-Core",
+  "version": "0.0.1",
+  "description": "An iTowns based set of overlay display modules for City exploration",
+  "main": "src/Main.js",
+  "scripts": {
+    "lint": "eslint \"src/**/*.js\" \"Main.js\" \"Setup3DScene.js\"",
+    "doc": "jsdoc Setup3DScene.js",
+    "doclint": "npm run doc -- -t templates/silent",
+    "test": "npm run lint",
+    "build": "webpack -p",
+    "transpile": "cross-env BABEL_DISABLE_CACHE=1 babel src --out-dir lib",
+    "start": "cross-env NODE_ENV=development webpack-dev-server -d --inline --hot",
+    "//": "\"prepublish\": \"npm run build && npm run transpile\""
+  },
+  "files": [
+    "Tools",
+    "Modules"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MEPP-team/UDV.git"
+  },
+  "license": "(LGPL-2.1)",
+  "bugs": {
+    "url": "https://github.com/MEPP-team/UDV/issues"
+  },
+  "homepage": "https://github.com/MEPP-team/UDV/",
+  "dependencies": {
+    "babel-runtime": "^6.20.0",
+    "es6-promise": "^4.0.5",
+    "moment": "^2.19.0",
+    "itowns": "^2.1.0"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.22.2",
+    "babel-core": "^6.22.1",
+    "babel-loader": "^7.0.0",
+    "babel-plugin-minify-dead-code-elimination": "^0.2.0",
+    "babel-plugin-transform-runtime": "^6.22.0",
+    "babel-plugin-webpack-loaders": "^0.9.0",
+    "babel-preset-env": "^1.6.0",
+    "chart.js": "^2.4.0",
+    "cross-env": "^3.1.4",
+    "eslint": "^3.14.0",
+    "eslint-config-airbnb-base": "^11.3.0",
+    "eslint-import-resolver-webpack": "^0.8.1",
+    "eslint-loader": "^1.7.1",
+    "eslint-plugin-import": "^2.2.0",
+    "imports-loader": "^0.7.1",
+    "jsdoc": "^3.4.3",
+    "mocha": "^3.4.2",
+    "node-fetch": "^1.7.0",
+    "raw-loader": "^0.5.1",
+    "require-from-string": "^1.2.1",
+    "webpack": "^2.6.1",
+    "webpack-dev-server": "^2.4.5"
+  }
+}

@@ -11,7 +11,7 @@ document.body.appendChild(compassDiv);
 
 document.getElementById("compass").innerHTML = '\
 <div id="compassWindow">\
-<img id="compassImg" src="../UDV-Core/img/compass.gif"></img>\
+<img id="compassImg" src="/img/compass.gif"></img>\
 </div>';
 
 /**
@@ -20,7 +20,7 @@ document.getElementById("compass").innerHTML = '\
 * @param controls : an instance of PlanarControls
 */
 // =======================================================================
-function CompassController(controls) {
+export function CompassController(controls) {
 
     // instance of PlanarControls
     this.controls = controls;
