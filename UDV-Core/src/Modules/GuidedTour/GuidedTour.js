@@ -184,7 +184,7 @@ export function GuidedTourController(docHandler, dataFile, options={}) {
         if(this.temporal){
             // open window if closed
             if(!this.temporal.temporalWindowIsActive){
-                this.temporal.toggleTemporalWindow();
+                this.temporal.activateWindow();
             }
             // hide concurrent view button
             document.getElementById("timeConcurrentView").style.display = "none";

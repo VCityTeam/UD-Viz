@@ -56,20 +56,53 @@ const optionsEditMode= {
 // optionsRegularMode depending on the value useControlsForEditing (boolean)
 var controls = new udvcore.itowns.PlanarControls(view, (useControlsForEditing)? optionsEditMode : optionsRegularMode);
 
-// instanciate temporal controller
-var options = {
-    startDate: new Date(1700,1,1),
-    endDate: new Date(2049,12,31),
-}
-var temporal = new udvcore.TemporalController(view, options);
+// Instanciate a temporal controller
+var temporal = new udvcore.TemporalController(
+                            view,
+                            {   // Various available constructor options
+                                minTime:   new moment( "1700-01-01" ),
+                                maxTime:   new moment( "2020-01-01" ),
+                                startTime: new moment().subtract(10, 'years'),
+                                endTime:   new moment().add(10, 'years'),
+                                timeStep:  new moment.duration( 1, 'years'),
+                                // or "YYYY-MMM" for Years followed months
+                                timeFormat: "YYYY",
+                                active:true
+                              });
+var about = new udvcore.AboutWindow({active:true});
+var help  = new udvcore.HelpWindow({active:true});
 
-// FIXME: clean up the following or make the example more complete ?
-// var temporal = new TemporalController(view,{buildingVersions: idlBuildings, buildingDates: idlDates, dateDisplayLength : 4});
+////////////////// Create and configure the layout controller
+var datDotGUI = new dat.GUI();
 
-// instanciate document handler
+// About subwindow
+aboutController = datDotGUI.add( about, 'windowIsActive'
+                               ).name( "About" ).listen();
+aboutController.onFinishChange( function(value) { about.refresh(); } );
+
+// About subwindow
+helpController = datDotGUI.add( help, 'windowIsActive'
+                              ).name( "Help" ).listen();
+helpController.onFinishChange( function(value) { help.refresh(); });
+
+// Temporal controller uses a folder
+var temporalFolder = datDotGUI.addFolder( "Temporal mode" );
+temporalActiveCtrl = temporalFolder.add( temporal, 'temporalIsActive'
+                                       ).name( "Active" ).listen();
+temporalActiveCtrl.onFinishChange(function(value) {
+  temporal.refresh();
+});
+
+temporalOverlayCtrl = temporalFolder.add( temporal, 'temporalUsesOverlay'
+                                        ).name("Use Overlay").listen();
+
+datDotGUI.close();     // By default the dat.GUI controls are rolled up
+
+
+// FIXME instanciate document handler
 // var documents = new DocumentsHandler(view,controls,'docs.csv',{temporal: temporal});
 
-// instanciate guided tour controller
+// FIXME instanciate guided tour controller
 // var guidedtour = new GuidedTourController(documents,'visite.csv',{temporal: temporal, preventUserFromChangingTour : true});
 
 // instanciate minimap controller
