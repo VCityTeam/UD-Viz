@@ -1,17 +1,4 @@
-/**
-* Class : MiniMapController
-* adds a "minimap" window that can be open/closed with a button
-*/
-
 import { Coordinates, PlanarView, THREE } from 'itowns';
-
-//update the html with elements for this class (windows, buttons etc)
-var miniMapDiv = document.createElement("div");
-miniMapDiv.id = 'minimap';
-document.body.appendChild(miniMapDiv);
-
-document.getElementById("minimap").innerHTML = '<button id="miniMapTab">CARTE</button>\
-<div id="miniMapViewer"></div>';
 
 /**
 * Constructor for MiniMapController
@@ -24,6 +11,22 @@ document.getElementById("minimap").innerHTML = '<button id="miniMapTab">CARTE</b
 */
 // ===========================================================================
 export function MiniMapController(controls, extent, renderer) {
+
+    //update the html with elements for this class (windows, buttons etc)
+    var miniMapDiv = document.createElement("div");
+    miniMapDiv.id = 'minimap';
+    document.body.appendChild(miniMapDiv);
+
+    document.getElementById("minimap").innerHTML =
+      '<button   id="miniMapTab">CARTE</button>\
+       <div id="miniMapViewer"></div>';
+
+    ///////////////// Associated stylesheet
+    var link = document.createElement('link');
+    link.setAttribute('rel', 'stylesheet');
+    link.setAttribute('type', 'text/css');
+    link.setAttribute('href', '/src/Modules/Others/Minimap.css');
+    document.getElementsByTagName('head')[0].appendChild(link);
 
     // instance of PlanarControls
     this.controls = controls;

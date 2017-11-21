@@ -39,7 +39,9 @@ step="1" oninput="docOpaUpdate(value)">\
 <output for="docOpaSlider" id="docOpacity">50</output>\
 </div>\
 </div>\
-<button id="docBrowserToggleBillboard" type=button>Billboard</button>\
+<button id="docBrowserToggleBillboard"\
+        type=button\
+        style="display:none;">Billboard</button>\
 ';
 
 //dirty variables to test billboards

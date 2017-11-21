@@ -86,15 +86,16 @@ helpController = datDotGUI.add( help, 'windowIsActive'
 helpController.onFinishChange( function(value) { help.refresh(); });
 
 // Temporal controller uses a folder
-var temporalFolder = datDotGUI.addFolder( "Temporal mode" );
-temporalActiveCtrl = temporalFolder.add( temporal, 'temporalIsActive'
+var temporalFolder     = datDotGUI.addFolder( "Temporal mode" );
+var temporalActiveCtrl = temporalFolder.add( temporal, 'temporalIsActive'
                                        ).name( "Active" ).listen();
 temporalActiveCtrl.onFinishChange(function(value) {
   temporal.refresh();
 });
 
-temporalOverlayCtrl = temporalFolder.add( temporal, 'temporalUsesOverlay'
-                                        ).name("Use Overlay").listen();
+var temporalOverlayCtrl = temporalFolder.add(
+                                         temporal, 'temporalUsesOverlay'
+                                         ).name("Use Overlay").listen();
 
 datDotGUI.close();     // By default the dat.GUI controls are rolled up
 
