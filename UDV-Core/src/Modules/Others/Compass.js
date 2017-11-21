@@ -4,23 +4,29 @@
 * imprecise when zenith angle close to 90 (camera close to the ground)
 */
 
-//update the html with elements for this class (compass image)
-var compassDiv = document.createElement("div");
-compassDiv.id = 'compass';
-document.body.appendChild(compassDiv);
-
-document.getElementById("compass").innerHTML = '\
-<div id="compassWindow">\
-<img id="compassImg" src="/img/compass.gif"></img>\
-</div>';
-
 /**
 * Constructor for CompassController
 * manages the orientation of the compass image
 * @param controls : an instance of PlanarControls
 */
-// =======================================================================
 export function CompassController(controls) {
+
+    //update the html with elements for this class (compass image)
+    var compassDiv = document.createElement("div");
+    compassDiv.id = 'compass';
+    document.body.appendChild(compassDiv);
+
+    document.getElementById("compass").innerHTML = '\
+    <div id="compassWindow">\
+    <img id="compassImg" src="/img/compass.gif"></img>\
+    </div>';
+
+    ///////////////// Associated stylesheet
+    var link = document.createElement('link');
+    link.setAttribute('rel', 'stylesheet');
+    link.setAttribute('type', 'text/css');
+    link.setAttribute('href', '/src/Modules/Others/Compass.css');
+    document.getElementsByTagName('head')[0].appendChild(link);
 
     // instance of PlanarControls
     this.controls = controls;

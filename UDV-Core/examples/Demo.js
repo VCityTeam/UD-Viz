@@ -100,8 +100,11 @@ var temporalOverlayCtrl = temporalFolder.add(
 datDotGUI.close();     // By default the dat.GUI controls are rolled up
 
 
-// FIXME instanciate document handler
-// var documents = new DocumentsHandler(view,controls,'docs.csv',{temporal: temporal});
+// FIXME For the time being this demo uses the Vilo3D data. Provide a
+// default document for the demo of DocumentHandler class and place it
+// within src/Modules/Documents... 
+var documents =
+  new udvcore.DocumentsHandler(view,controls,'Vilo3D/docs.csv',{temporal: temporal});
 
 // FIXME instanciate guided tour controller
 // var guidedtour = new GuidedTourController(documents,'visite.csv',{temporal: temporal, preventUserFromChangingTour : true});

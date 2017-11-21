@@ -9,26 +9,6 @@ import { readCSVFile } from '../../Tools/CSVLoader.js';
 * They are the individual steps of which guided tours are made.
 */
 
-// update the html with elements for this class (windows, buttons etc)
-var tourDiv = document.createElement("div");
-tourDiv.id = 'guidedtour';
-document.body.appendChild(tourDiv);
-document.getElementById("guidedtour").innerHTML = '\
-<button id="guidedTourTab">VISITE</button>\
-<div id="guidedTourWindow">\
-    <div id="guidedTourTitle"></div>\
-    <div id="guidedTourStepTitle"></div>\
-    <div id="guidedTourText1"></div>\
-    <div id="guidedTourDocPreview"><img id="guidedTourDocPreviewImg"/></div>\
-    <button id="guidedTourNextStepButton" type=button>⇨</button>\
-    <button id="guidedTourNextTourButton" type=button>⇨</button>\
-    <button id="guidedTourPreviousStepButton" type=button>⇦</button>\
-    <button id="guidedTourPreviousTourButton" type=button>⇦</button>\
-    <button id="guidedTourExitButton" type=button>SORTIE</button>\
-    <button id="guidedTourStartButton" type=button>DEMARRER</button>\
-</div>\
-';
-
 /**
 * Constructor for GuidedTourController
 * The controller reads data from a csv file to build one or more guided tours
@@ -43,6 +23,33 @@ document.getElementById("guidedtour").innerHTML = '\
 */
 //=============================================================================
 export function GuidedTourController(docHandler, dataFile, options={}) {
+
+    // update the html with elements for this class (windows, buttons etc)
+    var tourDiv = document.createElement("div");
+    tourDiv.id = 'guidedtour';
+    document.body.appendChild(tourDiv);
+    document.getElementById("guidedtour").innerHTML = '\
+    <button id="guidedTourTab">VISITE</button>\
+    <div id="guidedTourWindow">\
+    <div id="guidedTourTitle"></div>\
+    <div id="guidedTourStepTitle"></div>\
+    <div id="guidedTourText1"></div>\
+    <div id="guidedTourDocPreview"><img id="guidedTourDocPreviewImg"/></div>\
+    <button id="guidedTourNextStepButton" type=button>⇨</button>\
+    <button id="guidedTourNextTourButton" type=button>⇨</button>\
+    <button id="guidedTourPreviousStepButton" type=button>⇦</button>\
+    <button id="guidedTourPreviousTourButton" type=button>⇦</button>\
+    <button id="guidedTourExitButton" type=button>SORTIE</button>\
+    <button id="guidedTourStartButton" type=button>START</button>\
+    </div>\
+    ';
+
+    ///////////////// Associated stylesheet
+    var link = document.createElement('link');
+    link.setAttribute('rel', 'stylesheet');
+    link.setAttribute('type', 'text/css');
+    link.setAttribute('href', '/src/Modules/GuidedTour/GuidedTour.css');
+    document.getElementsByTagName('head')[0].appendChild(link);
 
     // DocumentHandler instance, required
     this.docs = docHandler;
