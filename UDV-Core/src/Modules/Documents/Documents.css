@@ -20,8 +20,6 @@
 }
 
 #docBrowserWindow{
-
-
     display: none;
     position: absolute;
     z-index: 10;
@@ -46,9 +44,6 @@
     font-size: 14;
 
     pointer-events: none;
-
-
-
 }
 
 #docBrowserPreview{

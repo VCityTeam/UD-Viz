@@ -41,8 +41,8 @@ body {
 
     position: absolute;
     z-index: 99;
-    right: 0;
-    bottom: 25px;
+    right: 5px;
+    bottom: 5px;
 
     max-height: 60px;
 
@@ -50,21 +50,19 @@ body {
     padding-top: 3px;
 
     pointer-events: none;
-
 }
 
 #logoLIRIS {
 
     position: absolute;
     z-index: 99;
-    right: 230px;
-    bottom: 25px;
+    right: 5px;
+    bottom: 55px;
 
-    max-height: 60px;
+    max-height: 55px;
 
     padding-left: 3px;
     padding-top: 3px;
 
     pointer-events: none;
-
 }
