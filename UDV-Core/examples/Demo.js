@@ -72,18 +72,14 @@ var temporal = new udvcore.TemporalController(
 var about = new udvcore.AboutWindow({active:true});
 var help  = new udvcore.HelpWindow({active:true});
 
-//////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
 //// Create and configure the layout controller
 
-// An html container is required in order to place the dat.GUI within the page
+// An html container is required in order to control the placement of the
+// dat.GUI object within the page.
 var datDotGUIDiv = document.createElement("div");
 datDotGUIDiv.id = 'datDotGUIDiv';
 document.body.appendChild(datDotGUIDiv);
-
-//document.getElementById("datDotGui").innerHTML = '\
-//<div id="compassWindow">\
-//<img id="compassImg" src="/img/compass.gif"></img>\
-//</div>';
 
 // Associate the stylesheet for layout configuration
 var link = document.createElement('link');

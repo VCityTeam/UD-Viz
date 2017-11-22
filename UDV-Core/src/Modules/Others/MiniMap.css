@@ -1,39 +1,26 @@
 
 #miniMapTab{
-
     position: absolute;
     z-index: 50;
-
     margin : 3px;
-
     border: 1px solid black;
     background-color: white;
     color: black;
-
     height: 30px;
     bottom: 0;
     left: 5%;
-
-    pointer-events: auto
-
-
+    pointer-events: auto;
 }
 
 #miniMapViewer {
-
     z-index: 30;
-
     width: 17vw;
     height: 14vw;
     position: absolute;
-
     bottom: 0;
     left: 5%;
-
     margin : 3px;
     padding: 0;
-
     border : 1px solid rgb(90,90,90);
-
     pointer-events: none;
 }
