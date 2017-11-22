@@ -1,285 +1,168 @@
-/**
-* Class: Temporal Controller
-* This controller handles the temporal window inputs (slider, buttons, input field)
-* It holds the current date which can changed by the user input or by Document Handler
-* For the demo, the controller also has buildingVersions and buildingDates array
-* These are used to change the version of a 3d object according to the date
-*/
-
-//update the html with elements for this class (windows, buttons etc)
-var temporalDiv = document.createElement("div");
-temporalDiv.id = 'temporal';
-document.body.appendChild(temporalDiv);
-
-document.getElementById("temporal").innerHTML = '<button id="temporalTab">TEMPOREL</button>\
-<div id="temporalWindow">\
-<div id="timeSliderMinDate"></div>\
-<div id="timeSliderMaxDate"></div>\
-<input id="timeSlider" type="range">\
-<input id="timeDateSelector" type="date">\
-<button id="timeNextButton" type=button>⇨</button>\
-<button id="timePreviousButton" type=button>⇦</button>\
-<button id="timeConcurrentView" type=button>Vue superposée</button>\
-</div>\
-</div>';
-
+import 'moment'; // Note that "import * as moment from 'moment';" fails
 
 /**
 * Constructor for TemporalController Class
-* Handles the temporal window functionalities (date inputs)
-* Changes which 3d object is displayed according to the date
-* Versions of the 3d object are given as param with options.buildingVersions,
-* and Dates corresponding to these versions with options.buildingDates
-* This controller uses javascript Date object https://www.w3schools.com/jsref/jsref_obj_date.asp
-* This object is initialized after the loading of the 3d objects (asynchronous)
+* Handles the GUI part enabling the user to specify the chosen "time" (moment or
+* date) of observation for displayal of the (3D) scene.
+* Note that it is not the Temporal Controller's responsability to
+* alter/modify/update the scene according to the user specify moment (but only
+* to trigger the possible hook-ups).
+* This controller represents a timestamp with the Moment.js library.
 * @param view : itowns planar view
-* @param controls : PlanarControls instance
-* @param options : optional parameters (including buildingVersions & Dates)
+* @param options : optional parameters (starting and ending times)
 */
-//=============================================================================
 
 export function TemporalController(view, options={}) {
 
+    ///////////// Html elements
+    var temporalDiv = document.createElement("div");
+    temporalDiv.id = 'temporal';
+    document.body.appendChild(temporalDiv);
+
+    document.getElementById("temporal").innerHTML =
+    '<div id="temporalWindow">\
+       <div id="timeSliderMinDate"></div>\
+       <div id="timeSliderMaxDate"></div>\
+       <button id="timePreviousButton" type=button>⇦</button>\
+       <input  id="timeDateSelector"   type="date">\
+       <button id="timeNextButton"     type=button>⇨</button>\
+       <input  id="timeSlider"         type="range">\
+       <button id="timeOverlayButton"  type=button>Overlay</button>\
+       <button id="timeCloseButton">Close</button>\
+    </div>';
+
+    ///////////////// Associated stylesheet
+    var link = document.createElement('link');
+    link.setAttribute('rel', 'stylesheet');
+    link.setAttribute('type', 'text/css');
+    link.setAttribute('href', '/src/Modules/Temporal/Temporal.css');
+    document.getElementsByTagName('head')[0].appendChild(link);
+
+    /////// Class attributes
     this.view = view;
 
-    // array of 3d objects
-    this.buildingVersions = options.buildingVersions || [];
+    // Whether the temporal sub window displaying controlling GUI elements
+    // is currently displayed or not.
+    this.temporalIsActive = options.active || true;
 
-    // array of dates (js Date object) corresponding to the 3d objects
-    this.buildingDates = options.buildingDates || [];
+    // The currently selected timestamp
+    this.currentTime = options.startTime || new moment();
 
-    // array storing the positions of buildingVersions
-    this.buildingPositions = [];
+    // Minimum and maximum times that can be displayed by this occurence
+    this.minTime = options.minTime || new moment( "1700-01-01" );
+    this.maxTime = options.maxTime || new moment( "2020-01-01" );
 
-    // the currently active date (javascript Date object)
-    this.currentDate = new Date(options.startDate || "2017-09-15");
+    // The timestep used to increment or decrement time with the slide buttons.
+    // Note that timeStep is a "duration" as opposed to a timestamp.
+    this.timeStep = options.timeStep || new moment.duration(1, 'years');
 
-    // currently active temporal version (3d object)
-    this.currentVersion = null;
+    // A moment.format() is used to encode the current mode of display of the
+    // represented times. For the time being we allow
+    //   - "YYYY"    to represent a display of times limited to their years
+    //   - "YYYY-MM" to represent a display of times limited to years
+    //     followed by the month of the year
+    this.timeFormat = options.timeFormat || "YYYY";
 
-    // the index to identify an element in the arrays (date, version, position)
-    // all arrays have same size and order, so index are valid for any array
-    this.currentVersionIndex = -1;
-    this.lastVersionIndex = -2;
+    // Whether temporal overlay (all CityObjects displayed independently from
+    // their creation/destruction dates) is selected or not
+    this.temporalUsesOverlay = false;
 
-    // min and max date for the temporal slider
-    // (should be in options ? or set up by guided tour ?)
-    this.minDate = new Date( "1700-01-01" );
-    this.maxDate = new Date( "2018-01-01" );
-
-    // is the controller enabled
-    this.enabled = false;
-
-    // number of character in the displayed date (use 4 for year only, 10 for yyyy-mm-dd)
-    this.dateDisplayLength = options.dateDisplayLength || 10;
-
-    // concurrent view = all temporal versions on top of each other
-    this.isInConcurrentView = false;
-
-    // Z offset between each concurrent version
-    this.concurrentViewOffset = options.concurrentViewOffset || 45;
-
-    // is the temporal window open or not
-    this.temporalWindowIsActive = false;
-
-    this.useBuildings = false;
-
-    // called after 3d objects have been loaded
-    //=============================================================================
-    this.initialize = function initialize(){
-
-        this.useBuildings = (this.buildingVersions.length!==0 && this.buildingDates.length!==0);
-
-        this.buildingVersions.forEach((element)=>{
-            this.buildingPositions.push(element.position.clone());
-        });
-
-        this.enabled = true;
-
-        this.syncBuildingVersionToCurrentDate(true);
-
-        // setup the display
-        document.getElementById("timeDateSelector").value = this.currentDate.toISOString().substring(0,this.dateDisplayLength);
-        document.getElementById("timeSlider").min = this.minDate.getFullYear();
-        document.getElementById("timeSlider").max = this.maxDate.getFullYear();
-        document.getElementById("timeSlider").value = this.currentDate.getFullYear();
-        document.getElementById("timeSliderMinDate").innerHTML = this.minDate.getFullYear();
-        document.getElementById("timeSliderMaxDate").innerHTML = this.maxDate.getFullYear();
-    };
-
-    // sync current version to current date
-    // this does nothing if the current version is already the right one, unless forceSync is true
-    //=============================================================================
-    this.syncBuildingVersionToCurrentDate = function syncBuildingVersionToCurrentDate(forceSync){
-
-        if(!this.enabled || !this.useBuildings){
-            return;
-        }
-        if(this.isInConcurrentView){
-            this.toggleConcurrentView();
-            return;
-        }
-
-        // get the version index corresponding to the current date
-        this.buildingDates.forEach((element,index)=>{
-
-            if(this.currentDate >= element){
-                this.currentVersionIndex = index;
-            }
-        });
-
-        // if the index is the same as before, exit the function, unless forceSync is true
-        if(this.currentVersionIndex === this.lastVersionIndex && !forceSync){
-            return;
-        }
-
-        // for each version : add it to the scene if the index is the right one, remove it if not
-        this.buildingVersions.forEach((element, index)=>{
-
-            if(index === this.currentVersionIndex){
-                this.view.scene.add(element);
-                this.currentVersion = element;
-            }
-            else{
-                this.view.scene.remove(element);
-            }
-        });
-
-        this.lastVersionIndex = this.currentVersionIndex;
-
-        // request a redraw of the scene
-        this.view.notifyChange(true);
-
-    };
-
-    // show or hide (toggle) the concurrent view of the temporal versions (all versions on top of each other)
-    //=============================================================================
-    this.toggleConcurrentView = function toggleConcurrentView(){
-
-        if(!this.enabled || !this.useBuildings){
-            return;
-        }
-
-        this.isInConcurrentView = !this.isInConcurrentView;
-
-        // remove current version, display all the concurrent versions
-        if(this.isInConcurrentView){
-            this.view.scene.remove(this.currentVersion);
-
-            this.buildingVersions.forEach((element, index)=>{
-
-                element.position.z += this.concurrentViewOffset * (this.buildingVersions.length-1 - index);
-                element.updateMatrixWorld();
-
-                this.view.scene.add(element);
-
-            });
-        }
-        else{
-            //  remove all the concurrent versions, display the current version
-            this.buildingVersions.forEach((element, index)=>{
-
-                element.position.copy(this.buildingPositions[index]);
-
-                element.updateMatrixWorld();
-            });
-
-            this.syncBuildingVersionToCurrentDate(true);
-
-        }
-
-        // request redraw of the scene
-        this.view.notifyChange(true);
-
+    //////////////// Behavior
+    // Toggle the overlay displaying option
+    this.toggleOverlayButton = function toggleOverlayButton(){
+        this.temporalUsesOverlay = !this.temporalUsesOverlay;
     }
 
-    // called when the user input a new date with the date selector
-    //=============================================================================
+    // Call back on new user input with the date selector
     this.timeSelection = function timeSelection(){
-        if(!this.enabled){
-            return;
-        }
+        var date = new moment(
+               document.getElementById("timeDateSelector").value.toString() );
 
-        var date = new Date(document.getElementById("timeDateSelector").value.toString());
-
-        if(!isNaN(date)){
-            this.changeDate(date);
+        if( date.isValid() ){
+            this.changeTime(date);
         }
     };
 
-    // called when the user input a new date with the time slider
-    //=============================================================================
+    // Call back on new user input with the time slider
     this.timeSelectionSlider = function timeSelectionSlider() {
-        if(!this.enabled){
-            return;
-        }
+        var timeFromSlider = new moment(
+                      document.getElementById("timeSlider").value.toString() );
 
-        var date = new Date(document.getElementById("timeSlider").value.toString());
-
-        if(!isNaN(date)){
-            this.changeDate(date);
+        if( timeFromSlider.isValid() ){
+            this.changeTime( timeFromSlider );
         }
     };
 
     // go to the next key date (next temporal version)
-    //=============================================================================
     this.goToNextDate = function goToNextDate(){
-        if(!this.enabled || !this.useBuildings){
-            return;
-        }
-
-        if(this.currentVersionIndex === this.buildingVersions.length -1){
-            return;
-        }
-
-        this.changeDate(this.buildingDates[this.currentVersionIndex+1]);
-
-
+       if( this.currentTime >= this.maxTime ){ return; }
+       this.changeTime( this.currentTime.add( this.timeStep ) );
     }
 
     // go to the previous key date (previous temporal version)
-    //=============================================================================
     this.goToPreviousDate = function goToPreviousDate(){
-        if(!this.enabled || !this.useBuildings){
-            return;
-        }
-
-        if(this.currentVersionIndex === 0){
-            return;
-        }
-
-        this.changeDate(this.buildingDates[this.currentVersionIndex-1]);
-
+       if( this.currentTime <= this.minTime ){ return; }
+       this.changeTime( this.currentTime.subtract(this.timeStep) );
     }
 
     // change the current date and sync the temporal version to this new date
-    //=============================================================================
-    this.changeDate = function changeDate(date){
-
-        document.getElementById("timeSlider").value = date.getFullYear();
-        document.getElementById("timeDateSelector").value = date.toISOString().substring(0,this.dateDisplayLength);
-
-        this.currentDate = date;
-
-        this.syncBuildingVersionToCurrentDate(false);
+    this.changeTime = function changeTime( time ){
+        document.getElementById("timeSlider").value =
+                                                time.format( this.timeFormat );
+        var newValue = "yyyy-MM-dd"; // Expected format of an html type range
+        switch( this.timeFormat ) {
+        case "YYYY":
+            newValue = time.format( this.timeFormat ) + "-01-01";
+        break;
+        case "YYYY-MM":
+            newValue = time.format( this.timeFormat ) + "-01";
+        break;
+        default:
+            newValue = "0000-00-00";
+        }
+        document.getElementById("timeDateSelector").value = newValue;
+        this.currentTime = time;
     }
 
-    // hide or show the temporal window
-    //=============================================================================
-    this.toggleTemporalWindow = function toggleTemporalWindow(){
-
-        document.getElementById('temporalWindow').style.display = this.temporalWindowIsActive ? "none" : "block";
-        this.temporalWindowIsActive = this.temporalWindowIsActive ? false : true;
+    // Display or hide this window
+    this.activateWindow = function activateWindow( active ){
+        if (typeof active != 'undefined') {
+          this.temporalIsActive = active;
+        }
+        document.getElementById( 'temporalWindow').style.display =
+                                 active ? "block" : "none";
     }
 
-    document.getElementById("timeDateSelector").addEventListener('input', this.timeSelection.bind(this), false);
-    document.getElementById("timeSlider").addEventListener('input', this.timeSelectionSlider.bind(this), false);
-    document.getElementById("timeConcurrentView").addEventListener('mousedown', this.toggleConcurrentView.bind(this), false);
-    document.getElementById("timeNextButton").addEventListener('mousedown', this.goToNextDate.bind(this), false);
-    document.getElementById("timePreviousButton").addEventListener('mousedown', this.goToPreviousDate.bind(this), false);
-    document.getElementById("temporalTab").addEventListener('mousedown', this.toggleTemporalWindow.bind(this), false);
+    this.refresh = function refresh( ){
+      this.activateWindow( this.temporalIsActive );
+      document.getElementById("timeDateSelector").value =
+                                   this.currentTime.format( this.timeFormat );
+      document.getElementById("timeSlider").min   =
+                                       this.minTime.format( this.timeFormat );
+      document.getElementById("timeSlider").max   =
+                                       this.maxTime.format( this.timeFormat );
+      document.getElementById("timeSlider").value =
+                                   this.currentTime.format( this.timeFormat );
+      document.getElementById("timeSliderMinDate").innerHTML =
+                                      this.minTime.format( this.timeFormat );
+      document.getElementById("timeSliderMaxDate").innerHTML =
+                                      this.maxTime.format( this.timeFormat );
+    }
 
-    // event listener to trigger this.initialize after models are loaded
-    window.addEventListener('allModelsLoaded', this.initialize.bind(this), false);
+    // Hook up the callbacks
+    document.getElementById("timeDateSelector").addEventListener(
+                                'input', this.timeSelection.bind(this), false);
+    document.getElementById("timeSlider").addEventListener(
+                          'input', this.timeSelectionSlider.bind(this), false);
+    document.getElementById("timeOverlayButton").addEventListener(
+                      'mousedown', this.toggleOverlayButton.bind(this), false);
+    document.getElementById("timeNextButton").addEventListener(
+                             'mousedown', this.goToNextDate.bind(this), false);
+    document.getElementById("timePreviousButton").addEventListener(
+                         'mousedown', this.goToPreviousDate.bind(this), false);
+    document.getElementById("timeCloseButton").addEventListener(
+                   'mousedown', this.activateWindow.bind(this, false ), false);
 
+    ///////////// Initialization
+    this.refresh( );
 }

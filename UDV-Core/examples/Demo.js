@@ -56,20 +56,76 @@ const optionsEditMode= {
 // optionsRegularMode depending on the value useControlsForEditing (boolean)
 var controls = new udvcore.itowns.PlanarControls(view, (useControlsForEditing)? optionsEditMode : optionsRegularMode);
 
-// instanciate temporal controller
-var options = {
-    startDate: new Date(1700,1,1),
-    endDate: new Date(2049,12,31),
-}
-var temporal = new udvcore.TemporalController(view, options);
+// Instanciate a temporal controller
+var temporal = new udvcore.TemporalController(
+                            view,
+                            {   // Various available constructor options
+                                minTime:   new moment( "1700-01-01" ),
+                                maxTime:   new moment( "2020-01-01" ),
+                                startTime: new moment().subtract(10, 'years'),
+                                endTime:   new moment().add(10, 'years'),
+                                timeStep:  new moment.duration( 1, 'years'),
+                                // or "YYYY-MMM" for Years followed months
+                                timeFormat: "YYYY",
+                                active:true
+                              });
+var about = new udvcore.AboutWindow({active:true});
+var help  = new udvcore.HelpWindow({active:true});
 
-// FIXME: clean up the following or make the example more complete ?
-// var temporal = new TemporalController(view,{buildingVersions: idlBuildings, buildingDates: idlDates, dateDisplayLength : 4});
+///////////////////////////////////////////////////////////////////////////////
+//// Create and configure the layout controller
 
-// instanciate document handler
-// var documents = new DocumentsHandler(view,controls,'docs.csv',{temporal: temporal});
+// An html container is required in order to control the placement of the
+// dat.GUI object within the page.
+var datDotGUIDiv = document.createElement("div");
+datDotGUIDiv.id = 'datDotGUIDiv';
+document.body.appendChild(datDotGUIDiv);
 
-// instanciate guided tour controller
+// Associate the stylesheet for layout configuration
+var link = document.createElement('link');
+link.setAttribute('rel', 'stylesheet');
+link.setAttribute('type', 'text/css');
+link.setAttribute('href', './Demo.css');
+document.getElementsByTagName('head')[0].appendChild(link);
+
+// Proceed with the creation of the dat.GUI with the above positionning
+var datDotGUI = new dat.GUI({ autoPlace: false });
+datDotGUI.domElement.id = 'datDotGUI';
+var datDotGUIContainer = document.getElementById('datDotGUIDiv');
+datDotGUIContainer.appendChild( datDotGUI.domElement );
+
+// About subwindow
+aboutController = datDotGUI.add( about, 'windowIsActive'
+                               ).name( "About" ).listen();
+aboutController.onFinishChange( function(value) { about.refresh(); } );
+
+// About subwindow
+helpController = datDotGUI.add( help, 'windowIsActive'
+                              ).name( "Help" ).listen();
+helpController.onFinishChange( function(value) { help.refresh(); });
+
+// Temporal controller uses a folder
+var temporalFolder     = datDotGUI.addFolder( "Temporal mode" );
+var temporalActiveCtrl = temporalFolder.add( temporal, 'temporalIsActive'
+                                       ).name( "Active" ).listen();
+temporalActiveCtrl.onFinishChange(function(value) {
+  temporal.refresh();
+});
+
+var temporalOverlayCtrl = temporalFolder.add(
+                                         temporal, 'temporalUsesOverlay'
+                                         ).name("Use Overlay").listen();
+
+datDotGUI.close();     // By default the dat.GUI controls are rolled up
+
+
+// FIXME For the time being this demo uses the Vilo3D data. Provide a
+// default document for the demo of DocumentHandler class and place it
+// within src/Modules/Documents...
+var documents =
+  new udvcore.DocumentsHandler(view,controls,'Vilo3D/docs.csv',{temporal: temporal});
+
+// FIXME instanciate guided tour controller
 // var guidedtour = new GuidedTourController(documents,'visite.csv',{temporal: temporal, preventUserFromChangingTour : true});
 
 // instanciate minimap controller

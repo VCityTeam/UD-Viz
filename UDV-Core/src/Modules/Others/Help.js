@@ -3,34 +3,61 @@
 * simply include this file in the html, no need to instanciate anything in main.js
 */
 
+export function HelpWindow( options={} ) {
 
-var helpIsActive = false;
+  ///////////// Html elements
+  var helpDiv = document.createElement("div");
+  helpDiv.id = 'helpWindow';
+  document.body.appendChild(helpDiv);
 
-//update the html with elements for this class (windows, buttons etc)
-var helpDiv = document.createElement("div");
-helpDiv.id = 'help';
-document.body.appendChild(helpDiv);
+  document.getElementById("helpWindow").innerHTML =
+    '<div id="text">\
+       <br>\
+       <p><a target="_blank"\
+       href="https://github.com/iTowns/itowns/blob/master/src/Renderer/ThreeExtended/PlanarControls.js">Camera key bindings</a>:</p>\
+       <ul>\
+         <li>Left-Click: camera translation (drag)</li>\
+         <li>Right-Click: camera translation (pan)</li>\
+         <li>Ctrl + Left-Click: camera rotation (orbit)</li>\
+         <li>Spacebar / Wheel-Click: smart zoom</li>\
+         <li>Mouse Wheel: zoom in/out</li>\
+         <li>T: orient camera to a top view</li>\
+         <li>Y: move camera to start position</li>\
+       </ul>\
+       <button id="helpCloseButton">Close</button>\
+    </div>\
+    ';
 
-document.getElementById("help").innerHTML = '    <button id="helpTab">AIDE</button>\
-<div id="helpWindow">\
-<br>\
-<p>Contrôles caméra</p>\
-<ul>\
-<li>Clic-gauche : déplacement par rapport au sol</li>\
-<li>Clic-droit : déplacement vertical/latéral</li>\
-<li>Ctrl + Clic-gauche : rotation</li>\
-<li>Espace / Clic molette : zoom intelligent</li>\
-<li>Molette : zoom</li>\
-<li>T : vue de dessus</li>\
-<li>Y : retour à la vue de départ</li>\
-</ul>\
-</div>';
+  ////////////// Associated stylesheet
+  var link = document.createElement('link');
+  link.setAttribute('rel', 'stylesheet');
+  link.setAttribute('type', 'text/css');
+  link.setAttribute('href', '/src/Modules/Others/Help.css');
+  document.getElementsByTagName('head')[0].appendChild(link);
 
-// adjust display
-document.getElementById("helpWindow").style.display = (helpIsActive)? "block" : "none";
+  ///////////// Class attributes
+  // Whether this window is currently displayed or not.
+  this.windowIsActive = options.active || true;
 
-// toggle window on click
-document.getElementById("helpTab").onclick = function () {
-    document.getElementById('helpWindow').style.display = helpIsActive ? "none" : "block";
-    helpIsActive = helpIsActive ? false : true;
-};
+  //////////// Behavior
+
+    // Display or hide this window
+    this.activateWindow = function activateWindow( active ){
+      if (typeof active != 'undefined') {
+        this.windowIsActive = active;
+      }
+      document.getElementById('helpWindow').style.display =
+                              active ? "block" : "none" ;
+    }
+
+    this.refresh = function refresh( ){
+      this.activateWindow( this.windowIsActive );
+    }
+
+    // Close the window...when close button is hit
+    document.getElementById("helpCloseButton").addEventListener(
+         'mousedown', this.activateWindow.bind(this, false ), false);
+
+    ///////////// Initialization
+    this.refresh( );
+}

@@ -3,8 +3,13 @@ import * as itowns from 'itowns';
 // containing our dependencies.
 export { itowns };
 export { Setup3DScene }         from './Setup3DScene';
-export { TemporalController }   from './Modules/Temporal/Temporal';
-export { MiniMapController }    from './Modules/Others/MiniMap';
-export { CompassController }    from './Modules/Others/Compass';
+
 export { DocumentsHandler }     from './Modules/Documents/Documents';
 export { GuidedTourController } from './Modules/GuidedTour/GuidedTour';
+
+export { AboutWindow }          from './Modules/Others/About';
+export { CompassController }    from './Modules/Others/Compass';
+export { HelpWindow }           from './Modules/Others/Help';
+export { MiniMapController }    from './Modules/Others/MiniMap';
+
+export { TemporalController }   from './Modules/Temporal/Temporal';

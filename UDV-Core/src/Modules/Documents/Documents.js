@@ -11,41 +11,6 @@
 import { THREE } from 'itowns';
 import { readCSVFile } from '../../Tools/CSVLoader.js';
 
-//update the html with elements for this class (windows, buttons etc)
-var docDiv = document.createElement("div");
-docDiv.id = 'doc';
-document.body.appendChild(docDiv);
-
-document.getElementById("doc").innerHTML ='<button id="docBrowserTab">DOC</button>\
-<div id="docBrowserWindow">\
-<div id="docBrowserTitle">doc title</div>\
-<div id="docBrowserMetaData">metadata</div>\
-<div id="docBrowserPreview"><img id="docBrowserPreviewImg" src = "/img/test.png"/></div>\
-<div id="docBrowserDoc_ID"></div>\
-<div id="guidedTourText2"></div>\
-<div id="docBrowserIndex"></div>\
-<button id="docBrowserNextButton" type=button>⇨</button>\
-<button id="docBrowserPreviousButton" type=button>⇦</button>\
-<button id="docBrowserOrientButton" type=button>ORIENTER</button>\
-</div>\
-<div id="docFull">\
-<img id="docFullImg"/>\
-<div id="docFullPanel">\
-<button id="docFullClose" type=button>FERMER</button>\
-<button id="docFullOrient" type=button>ORIENTER</button>\
-<label id="docOpaLabel" for="docOpaSlider">Opacité</label>\
-<input id="docOpaSlider" type="range" min="0" max="100" value="75"\
-step="1" oninput="docOpaUpdate(value)">\
-<output for="docOpaSlider" id="docOpacity">50</output>\
-</div>\
-</div>\
-<button id="docBrowserToggleBillboard" type=button>Billboard</button>\
-';
-
-//dirty variables to test billboards
-var billboardsAreActive = false;
-var showBillboardButton = false;
-
 // TO DO : pass showBillboardButton as an option to DocumentsHandler
 // currently, BILLBOARDS WILL BE ALWAYS HIDDEN if the showBillboardButton global var is set to false !!
 
@@ -61,6 +26,51 @@ var showBillboardButton = false;
 */
 //=============================================================================
 export function DocumentsHandler(view, controls, dataFile, options = {}) {
+
+    //update the html with elements for this class (windows, buttons etc)
+    var docDiv = document.createElement("div");
+    docDiv.id = 'doc';
+    document.body.appendChild(docDiv);
+
+    document.getElementById("doc").innerHTML ='<button id="docBrowserTab">DOC</button>\
+    <div id="docBrowserWindow">\
+    <div id="docBrowserTitle">doc title</div>\
+    <div id="docBrowserMetaData">metadata</div>\
+    <div id="docBrowserPreview"><img id="docBrowserPreviewImg" src = "/img/test.png"/></div>\
+    <div id="docBrowserDoc_ID"></div>\
+    <div id="guidedTourText2"></div>\
+    <div id="docBrowserIndex"></div>\
+    <button id="docBrowserNextButton" type=button>⇨</button>\
+    <button id="docBrowserPreviousButton" type=button>⇦</button>\
+    <button id="docBrowserOrientButton" type=button>ORIENTER</button>\
+    </div>\
+    <div id="docFull">\
+    <img id="docFullImg"/>\
+    <div id="docFullPanel">\
+    <button id="docFullClose" type=button>FERMER</button>\
+    <button id="docFullOrient" type=button>ORIENTER</button>\
+    <label id="docOpaLabel" for="docOpaSlider">Opacité</label>\
+    <input id="docOpaSlider" type="range" min="0" max="100" value="75"\
+    step="1" oninput="docOpaUpdate(value)">\
+    <output for="docOpaSlider" id="docOpacity">50</output>\
+    </div>\
+    </div>\
+    <button id="docBrowserToggleBillboard"\
+    type=button\
+    style="display:none;">Billboard</button>\
+    ';
+
+    ///////////////// Associated stylesheet
+    var link = document.createElement('link');
+    link.setAttribute('rel', 'stylesheet');
+    link.setAttribute('type', 'text/css');
+    link.setAttribute('href', '/src/Modules/Documents/Documents.css');
+    document.getElementsByTagName('head')[0].appendChild(link);
+
+     /////////////////////////////////////////////////////////////////////
+    //dirty variables to test billboards
+    var billboardsAreActive = false;
+    var showBillboardButton = false;
 
     // TO DO
     this.view = view;
@@ -106,8 +116,6 @@ export function DocumentsHandler(view, controls, dataFile, options = {}) {
     //=============================================================================
     this.addDocument = function addDocument(docTitle,docIndex,doc_ID,docImageSourceHD,docImageSourceBD,billboardPosition,docViewPosition,docViewQuaternion,docStartDate,metaData) {
 
-
-
     };
 
     /**
@@ -128,8 +136,8 @@ export function DocumentsHandler(view, controls, dataFile, options = {}) {
             var docData = docDataFromFile[i];
             var docIndex = parseFloat(docData[0]);
             var doc_ID = parseFloat(docData[1]);
-            var docImageSourceHD = "Docs/"+docData[2];
-            var docImageSourceBD = "Docs/"+docData[3];
+            var docImageSourceHD = "Vilo3D/Docs/"+docData[2];
+            var docImageSourceBD = "Vilo3D/Docs/"+docData[3];
             var docTitle = docData[4].toString();
 
             var docStartDate = new Date(docData[5].toString());
@@ -178,7 +186,6 @@ export function DocumentsHandler(view, controls, dataFile, options = {}) {
         // dispatch the event to notify that Document Handler has finished its initialization
         // classes that depends on Document Handler will catch the event and begin their own initialization
         window.dispatchEvent(this.initEvent);
-
 
     }
 
@@ -250,7 +257,7 @@ export function DocumentsHandler(view, controls, dataFile, options = {}) {
     };
 
     // go to next document (by index) in the browser
-    //=============================================================================
+    //==========================================================================
     this.nextDoc = function nextDoc(){
 
         const index = this.currentDoc.index;
