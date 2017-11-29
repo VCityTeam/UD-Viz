@@ -1,0 +1,4 @@
+Doc Index (0,1,2,3,4 etc…) à utiliser dans visite.csv*Doc_ID (identifiant historien)*NomHauteDef*NomBasseDef*titre*date*metadata*viewPosX*viewPosY*viewPosZ*viewQuatX*viewQuatY*viewQuatZ*viewQuatW*billboardX*billboardY*billboardZ
+0*24*1760versPlanHCL_HD.jpg*1760versPlanHCL_BD.jpg*Plan du domaine des Hospices Civils de Lyon de 1760*1760-01-01*HCL, 1760. Service des domaines des Hospices, juin 1938, échelle : 1/7 500, HCL. D.*1843582*5176414*12651*0.005*-0.004*-0.67998*0.7315*1843823.1*5174585.1*200
+1*6*1880PlanRiviereHCL_M166_HD.jpg*1880PlanRiviereHCL_M166_BD.jpg*Plan de la masse 166 vers 1880*1880-01-01*C. Rivière, 15 avril 1880, HCL. D., plans minutes*1844026*5175777*569*0*0*0.0782*1***
+2*10*1981PhotoASCIlot143_HD.jpg*1981PhotoASCIlot143_BD.jpg*Intérieur de l'îlot 143 vu depuis l'angle des rues Vendôme et Barrême.*1981-01-01*Photo : A.-S. Clémençon, 1981*1844149*5176070*359*0.118*0.487*0.84*0.2038***

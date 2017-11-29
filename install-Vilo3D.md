@@ -1,6 +1,8 @@
 
 
-# INSTALL NOTES
+# Vilod3D demo installation notes
+
+**Note**: Vilo3d demo is configured by default such that the buildings come from locally encoded data (a tileset together with the geometry provided to the client as files). There is thus no requirement for a database server.
 
 ## Prerequisite: install nodejs and npm
 
@@ -34,7 +36,4 @@
 ```
 
 ## Running the demo
-Open the `UDV/Vilo3D/index.html` file with your web browser. 
-
-## Notes
-Vilo3d demo is configured by default such that the buildings come from locally encoded data (a tileset together with the geometry provided to the client as files). There is thus no requirement for a database server.
+Open the `UDV/Vilo3D/index.html` file with your web browser.
