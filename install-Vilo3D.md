@@ -23,12 +23,10 @@
   git clone https://github.com/MEPP-team/UDV.git
   pushd UDV
   git checkout Vilo3D-Demo-1.0
-  Edit `UDV/Vilo3D/Main.js`
-     ---> set the "showBuildings" to false on line 4.
   popd
   git clone https://github.com/itowns/itowns.git
   cd itowns/
-  git checkout v2.1
+  git checkout v2.1.0
   Edit `itowns/node_modules/three/examples/js/loaders/ColladaLoader2.js`
      ---> insert the following line as first line
           `THREE = itowns.THREE;`
