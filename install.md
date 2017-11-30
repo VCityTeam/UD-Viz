@@ -15,31 +15,27 @@ TO DO : auto install (install all dependencies with npm)
     ```
   - References: [how can I update Nodejs](https://askubuntu.com/questions/426750/how-can-i-update-my-nodejs-to-the-latest-version), and [install Ubuntu](http://www.hostingadvice.com/how-to/install-nodejs-ubuntu-14-04/#ubuntu-package-manager)
 
-
-## Light install (without building geometry provide by DB)
+## Installation of the client side (with a developer use case)
 ```
   git clone https://github.com/MEPP-team/UDV.git
   cd UDV/UDV-Core
+  install.sh   # In order to pull the temporal branch of iTowns
   npm install
   npm start
 ```
 
-Note: for the Vilo3d demo uses ColladaLoader to import handmade buildings, add the following line at the start of `itowns/node_modules/three/examples/js/loaders/ColladaLoader2.js`:
-```
-THREE = itowns.THREE;
-```
+Use your web browser to open
+`http://localhost:8080/examples/Demo.html`.
 
-They are currently two demos/examples:
- - Vilo3D, demo is obtained by opening `http://localhost:8080/examples/Vilo3D/` (the port number `8080` might be different: refer to URL provided by `npm  install`). Vilo3d demo is configured by default such that the buildings come from locally encoded data (a tileset together with the geometry provided to the client as files). There is thus no requirement for a database server.
- - UDV-core, demo obtained by opening `http://localhost:8080/examples/Demo.html` is configured by default to use a data base server accessed through ad-hoc web-services.
-
-For both demos the configuration for accessing the building data (Lyon 6 borough) is done within the `Main.js` file through the `buildingServerRequest` variable.
+Not that this demos is configured by default to use a data base server accessed through ad-hoc web-services. Configuration of the accessed database is done within the `Main.js` file through the `buildingServerRequest` variable.
 
 
+## Installation of a temporal database to provide geometry
 
-## Installation with building server to provide geometry (full install) 
+FIXME
+Caveat emptor: the rest of this doc is not up-to-date.
 
-### (1) Install the database. 
+### (1) Install the database.
 The following instructions are an adaptation of [JIGA adhoc building database](https://github.com/MEPP-team/RICT/blob/master/Install.md) (within the context of Ubuntu version as given by `lsb_release -a` yields `Description: Debian GNU/Linux 8.8 (jessie)`):
 ```
   sudo su citydb_user
@@ -118,7 +114,7 @@ Remove the default server (to avoid collisions):
 ```
 ```
   sudo a2ensite rict.liris.cnrs.fr.conf   ## To enable the virtual site
-  sudo service apache2 restart            ## Relaunch the service 
+  sudo service apache2 restart            ## Relaunch the service
 ```
 Use Firefox to pop some requests on `http://rict.liris.cnrs.fr/UDV/Vilo3D/index.html`.
 
@@ -126,11 +122,11 @@ Trouble shoot by looking at server's error and log files:
   - `tail -f /var/log/apache2/error.log`
   - `tail -f /var/log/apache2/access.log`
 
-Notes and references: 
+Notes and references:
  * JGA discourages (within this context) the [usage of uWSGI](http://uwsgi-docs.readthedocs.io/en/latest/StaticFiles.html) as simple http server
  * [Ubuntu Apache2 configuration](https://www.digitalocean.com/community/tutorials/how-to-set-up-apache-virtual-hosts-on-ubuntu-14-04-lts)
  * [Ubuntu Apache2 install](https://help.ubuntu.com/lts/serverguide/httpd.html)
- 
+
 ### (5) Install a building server
 
 ### (6) Usage

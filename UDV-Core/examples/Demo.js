@@ -1,13 +1,7 @@
 const terrainAndElevationRequest = 'https://download.data.grandlyon.com/wms/grandlyon';
 
-// use this line for local building server
-// const buildingServerRequest = 'http://localhost:9090/getCity?city=citydb_temporal';
-
 // use this line for distant building server
-const buildingServerRequest = 'http://rict.liris.cnrs.fr:9090/getCity?city=lyon';
-
-// or this line for local tileset
-// const buildingServerRequest = 'tileset.json';
+const buildingServerRequest = 'http://rict.liris.cnrs.fr:9091/getCity?city=citydb_temporal';
 
 // if true, replace regular controls by controls adapted to finding precise orientation for documents
 // use false for regular controls (generic user)
