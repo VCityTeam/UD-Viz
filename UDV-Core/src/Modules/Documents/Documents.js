@@ -7,8 +7,8 @@
 * camera quaternion (both for the oriented view) and billboard position
 */
 
-// we use the THREE.js library provided by itowns
-import { THREE } from 'itowns';
+import * as THREE from 'three';
+import { MAIN_LOOP_EVENTS } from 'itowns';
 import { readCSVFile } from '../../Tools/CSVLoader.js';
 
 // TO DO : pass showBillboardButton as an option to DocumentsHandler
@@ -197,7 +197,7 @@ export function DocumentsHandler(view, controls, dataFile, options = {}) {
     }
 
     // called regularly by the itowns framerequester
-    //=============================================================================
+    //=========================================================================
     this.update = function update(dt,updateLoopRestarted) {
         // dt will not be relevant when we just started rendering, we consider a 1-frame move in this case
         if (updateLoopRestarted) {
@@ -404,7 +404,7 @@ export function DocumentsHandler(view, controls, dataFile, options = {}) {
     };
 
     // close the center window (oriented view / doc focus)
-    //=============================================================================
+    //=========================================================================
     this.closeDocFull = function closeDocFull(){
         document.getElementById('docFull').style.display = "none";
         document.getElementById('docFullImg').src = null;
@@ -412,7 +412,7 @@ export function DocumentsHandler(view, controls, dataFile, options = {}) {
     }
 
     // hide or show the doc browser
-    //=============================================================================
+    //=========================================================================
     this.toggleDocBrowserWindow = function toggleDocBrowserWindow(){
 
         document.getElementById('docBrowserWindow').style.display = this.docBrowserWindowIsActive ? "none" : "block";
@@ -421,7 +421,7 @@ export function DocumentsHandler(view, controls, dataFile, options = {}) {
     }
 
     // on mouseclick : check if user is clicking on a billboard document, if yes : orient view
-    //=============================================================================
+    //=========================================================================
     this.onMouseClick = function onMouseClick(event){
 
         var mouse = new THREE.Vector2();
@@ -448,7 +448,7 @@ export function DocumentsHandler(view, controls, dataFile, options = {}) {
     };
 
     //output the camera position and quaternion in console with O (letter) key
-    //=============================================================================
+    //=========================================================================
     this.onKeyDown = function onKeyDown(event){
         if (event.keyCode === 79) {
             console.log("camera position : ",this.controls.camera.position);
@@ -457,7 +457,8 @@ export function DocumentsHandler(view, controls, dataFile, options = {}) {
     }
 
     // itowns framerequester : will regularly call this.update()
-    this.view.addFrameRequester(this);
+    this.view.addFrameRequester( MAIN_LOOP_EVENTS.AFTER_CAMERA_UPDATE,
+                                 this.update.bind(this) );
 
     // event listener for a mouse click on the scene, used to detect click on billboard
     this.domElement.addEventListener('mousedown', this.onMouseClick.bind(this), false);

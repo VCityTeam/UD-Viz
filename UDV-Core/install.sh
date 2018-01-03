@@ -2,8 +2,13 @@
 cd "$(dirname "$0")" || exit
 
 mkdir dist
-cd dist
+pushd dist
 git clone https://github.com/jailln/itowns.git
-cd itowns
+pushd itowns
 git checkout 3dtiles-temporal
+npm install
+npm pack
+popd
+popd
+npm install dist/itowns/itowns-2.2.0.tgz
 npm install

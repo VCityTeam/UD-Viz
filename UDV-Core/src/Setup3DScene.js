@@ -4,8 +4,7 @@
 
 import * as itowns from 'itowns';
 import * as THREE from 'three';
-//import proj4 from 'proj4';
-// var THREE = itowns.THREE; // we use THREE.js provided by itowns
+import proj4 from 'proj4';
 
 /**
 * Call this to initialize the values of global var : view, extent and renderer (Main.js)
@@ -21,8 +20,8 @@ export function Setup3DScene(terrainAndElevationRequest,
                              showBuildings = false )
 {
 // Define projection that we will use (taken from https://epsg.io/3946, Proj4js section)
-itowns.proj4.defs('EPSG:3946',
-'+proj=lcc +lat_1=45.25 +lat_2=46.75 +lat_0=46 +lon_0=3 +x_0=1700000 +y_0=5200000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs');
+proj4.defs('EPSG:3946',
+    '+proj=lcc +lat_1=45.25 +lat_2=46.75 +lat_0=46 +lon_0=3 +x_0=1700000 +y_0=5200000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs');
 
 // Define geographic extent: CRS, min/max X, min/max Y
 var extent = new itowns.Extent(
@@ -106,6 +105,8 @@ $3dTilesTemporalLayer.protocol = '3d-tiles';
 // Require temporal management (considered as a special material handled
 // through culling by the shaders)
 $3dTilesTemporalLayer.TemporalExtension = true;
+// FIXME: The initial date should not be hardwired
+$3dTilesTemporalLayer.displayDate = new Date(2000, 0, 2);
 $3dTilesTemporalLayer.type = 'geometry';
 $3dTilesTemporalLayer.visible = true;
 
@@ -155,16 +156,19 @@ function retrieveBatchTablesAndChildren( node ) {
 
 // add the layer to the view
 if(showBuildings){
-  itowns.View.prototype.addLayer.call(view,$3dTilesTemporalLayer).then(
+  // Next line syntax might be simplified on acceptance of this PR
+  //    https://github.com/iTowns/itowns/pull/546
+  itowns.View.prototype.addLayer.call(view,$3dTilesTemporalLayer);
+  $3dTilesTemporalLayer.whenReady.then(
     function() {
      console.log("zzzzzzzzzzzzzzzzzz", $3dTilesTemporalLayer);
      var rootChildren = retrieveBatchTablesAndChildren(
-                                             $3dTilesTemporalLayer.object3d );
-     var dates = rootChildren.dates ;  // This should be an emply array...
+                                             $3dTilesTemporalLayer.root );
+     var dates = rootChildren.dates ;  // This should be an empty array...
      var nodes = rootChildren.nodes ;
      console.log("cccccccccccccccccccccc", nodes );
      while( nodes.length > 0 ) {
-       var newChildren = retrieveDatesOutOfBatchTables( nodes.shift() );
+       var newChildren = retrieveBatchTablesAndChildren( nodes.shift() );
        dates.push( newChildren.dates );
        nodes.push( newChildren.nodes );
      }
