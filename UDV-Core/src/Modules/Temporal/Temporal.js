@@ -107,21 +107,15 @@ export function TemporalController(view, options={}) {
 
     // change the current date and sync the temporal version to this new date
     this.changeTime = function changeTime( time ){
-        document.getElementById("timeSlider").value =
+      if( ! time instanceof moment ) {
+        throw new Error('Temporal.changeTime requires a moment argument');
+      }
+      this.currentTime = time;
+
+      document.getElementById("timeSlider").value =
                                                 time.format( this.timeFormat );
-        var newValue = "yyyy-MM-dd"; // Expected format of an html type range
-        switch( this.timeFormat ) {
-        case "YYYY":
-            newValue = time.format( this.timeFormat ) + "-01-01";
-        break;
-        case "YYYY-MM":
-            newValue = time.format( this.timeFormat ) + "-01";
-        break;
-        default:
-            newValue = "0000-00-00";
-        }
-        document.getElementById("timeDateSelector").value = newValue;
-        this.currentTime = time;
+      document.getElementById("timeDateSelector").value =
+                                                time.format( 'YYYY-MM-DD' );
     }
 
     // Display or hide this window
@@ -136,7 +130,7 @@ export function TemporalController(view, options={}) {
     this.refresh = function refresh( ){
       this.activateWindow( this.temporalIsActive );
       document.getElementById("timeDateSelector").value =
-                                   this.currentTime.format( this.timeFormat );
+                                   this.currentTime.format( 'YYYY-MM-DD' );
       document.getElementById("timeSlider").min   =
                                        this.minTime.format( this.timeFormat );
       document.getElementById("timeSlider").max   =

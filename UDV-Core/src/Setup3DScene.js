@@ -97,7 +97,7 @@ $3dTilesTemporalLayer.update = itowns.process3dTilesNode(
     itowns.$3dTilesSubdivisionControl
 );
 
-$3dTilesTemporalLayer.name = 'RequestVolume';
+$3dTilesTemporalLayer.name = '3d-tiles-temporal';
 
 $3dTilesTemporalLayer.url = buildingServerRequest;
 
@@ -110,70 +110,11 @@ $3dTilesTemporalLayer.displayDate = new Date(2000, 0, 2);
 $3dTilesTemporalLayer.type = 'geometry';
 $3dTilesTemporalLayer.visible = true;
 
-// A faire :
-//   - calculer la liste des dates interessantes d'un layers
-//   - initialiser le widget de dates avec le minimum et le maximum et
-//     un nombre de steps reguliers suffisant pour discriminer les dates
-//     significatives
-//   - prevoir un affichage
-// Top-down recursion (from root to children) on a 3DTiles hierarchy of
-// objects in order to extract the list of discrete time stamps
-//$3dTilesTemporalLayer.root est de type apparament de type object3D
-// mais lui n'a pas de batch table. Il faut donc amorcer la pompe avec ses
-// children de type object3D
-// Si o est un object3D alors:
-//  O.children[] est un array dont seulement certains items sont type Object3D
-//  O.batchTable.year_of_construction est un array de dates parfois nulles
-//  O.batchTable.year_of_demolition   est un array de dates parfois nulles
-function getObject3DChildren( node ) {
-  if( ! node.hasOwnProperty('children') ){
-    return [];
-  }
-  return node.children.filter( n => n.type == 'Object3D');
-}
-
-function isNodeATile( node ) {
-  return node.hasOwnProperty('layer') ? true: false;
-}
-
-function retrieveBatchTablesAndChildren( node ) {
-  var resultDates = [];
-  if( isNodeATile( node) ) {
-    if( ! node.hasOwnProperty('batchTable') ) {
-      console.log('Tiles are supposed to have batchTables');
-      return {dates : [], nodes : []};
-    }
-    batchTable = node.batchTable;
-    resultDates.push( batchTable.year_of_construction );
-    resultDates.push( batchTable.year_of_demolition );
-  }
-  // gltf-Scenes get represented as ThreeJS's scene objects, that themselves
-  // contains Object3D objects (that eventually contain the meshes per se).
-  // There is thus no need to recurse within children that are not themselves
-  // Object3D (which sets aside the gltf-Scenes):
-  return {dates : resultDates, nodes : getObject3DChildren( node )};
-}
-
 // add the layer to the view
 if(showBuildings){
   // Next line syntax might be simplified on acceptance of this PR
   //    https://github.com/iTowns/itowns/pull/546
   itowns.View.prototype.addLayer.call(view,$3dTilesTemporalLayer);
-  $3dTilesTemporalLayer.whenReady.then(
-    function() {
-     console.log("zzzzzzzzzzzzzzzzzz", $3dTilesTemporalLayer);
-     var rootChildren = retrieveBatchTablesAndChildren(
-                                             $3dTilesTemporalLayer.root );
-     var dates = rootChildren.dates ;  // This should be an empty array...
-     var nodes = rootChildren.nodes ;
-     console.log("cccccccccccccccccccccc", nodes );
-     while( nodes.length > 0 ) {
-       var newChildren = retrieveBatchTablesAndChildren( nodes.shift() );
-       dates.push( newChildren.dates );
-       nodes.push( newChildren.nodes );
-     }
-     console.log( "bbbbbbbbbbbbbbbbbbbbbb", dates);
-   });
 }
 
 // sky color
