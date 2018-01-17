@@ -76,6 +76,10 @@ layer.whenReady.then(
   // have at hand the tileindex that we can (equivalently for the result)
   // iterate on.
   function() {
+    // Store the layer for triggering scene updates when temporal slider
+    // will be changed by user:
+    temporal.layer = layer;
+
     const tiles = layer.tileIndex.index;
     var resultDates = [];
     const nbrTiles = Object.keys(tiles).length;

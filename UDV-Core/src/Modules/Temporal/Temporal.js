@@ -67,6 +67,9 @@ export function TemporalController(view, options={}) {
     // their creation/destruction dates) is selected or not
     this.temporalUsesOverlay = false;
 
+    // Layer to be informed when currentTime will change
+    this.layer = undefined;
+
     //////////////// Behavior
     // Toggle the overlay displaying option
     this.toggleOverlayButton = function toggleOverlayButton(){
@@ -116,6 +119,10 @@ export function TemporalController(view, options={}) {
                                                 time.format( this.timeFormat );
       document.getElementById("timeDateSelector").value =
                                                 time.format( 'YYYY-MM-DD' );
+      // Eventually inform the associated layer that the currentTime has
+      // changed:
+      layer.displayDate = this.currentTime.toDate();
+      view.notifyChange(true);
     }
 
     // Display or hide this window
