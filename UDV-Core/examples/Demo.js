@@ -50,9 +50,18 @@ const optionsEditMode= {
 // optionsRegularMode depending on the value useControlsForEditing (boolean)
 var controls = new udvcore.itowns.PlanarControls(view, (useControlsForEditing)? optionsEditMode : optionsRegularMode);
 
+//////////// Temporal controller section
+
+// Definition of the callback that is in charge of triggering a refresh
+// of the displayed layer when its (the layer) associated date has changed.
+function refreshDisplayLayerOnDate( date ) {
+  layer.displayDate = date;
+  view.notifyChange(true);
+}
+
 // Instanciate a temporal controller
 var temporal = new udvcore.TemporalController(
-                            view,
+                            refreshDisplayLayerOnDate,
                             {   // Various available constructor options
                                 minTime:   new moment( "1700-01-01" ),
                                 maxTime:   new moment( "2020-01-01" ),

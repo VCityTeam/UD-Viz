@@ -105,10 +105,11 @@ $3dTilesTemporalLayer.protocol = '3d-tiles';
 // Require temporal management (considered as a special material handled
 // through culling by the shaders)
 $3dTilesTemporalLayer.TemporalExtension = true;
-// FIXME: The initial date should not be hardwired
-$3dTilesTemporalLayer.displayDate = new Date(2000, 0, 2);
 $3dTilesTemporalLayer.type = 'geometry';
 $3dTilesTemporalLayer.visible = true;
+// For the record the layer initial date could be hardwired here with e.g.
+//    $3dTilesTemporalLayer.displayDate = new Date(2000, 0, 2);
+// but this initialization can also be the responsability of another component.
 
 // add the layer to the view
 if(showBuildings){

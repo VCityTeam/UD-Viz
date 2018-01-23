@@ -8,11 +8,11 @@ import 'moment'; // Note that "import * as moment from 'moment';" fails
 * alter/modify/update the scene according to the user specify moment (but only
 * to trigger the possible hook-ups).
 * This controller represents a timestamp with the Moment.js library.
-* @param view : itowns planar view
+* @param refreshCallback : callback to be called when the time has changed.
 * @param options : optional parameters (starting and ending times)
 */
 
-export function TemporalController(view, options={}) {
+export function TemporalController(refreshCallback, options={}) {
 
     ///////////// Html elements
     var temporalDiv = document.createElement("div");
@@ -39,7 +39,6 @@ export function TemporalController(view, options={}) {
     document.getElementsByTagName('head')[0].appendChild(link);
 
     /////// Class attributes
-    this.view = view;
 
     // Whether the temporal sub window displaying controlling GUI elements
     // is currently displayed or not.
@@ -66,9 +65,6 @@ export function TemporalController(view, options={}) {
     // Whether temporal overlay (all CityObjects displayed independently from
     // their creation/destruction dates) is selected or not
     this.temporalUsesOverlay = false;
-
-    // Layer to be informed when currentTime will change
-    this.layer = undefined;
 
     //////////////// Behavior
     // Toggle the overlay displaying option
@@ -119,10 +115,10 @@ export function TemporalController(view, options={}) {
                                                 time.format( this.timeFormat );
       document.getElementById("timeDateSelector").value =
                                                 time.format( 'YYYY-MM-DD' );
-      // Eventually inform the associated layer that the currentTime has
-      // changed:
-      layer.displayDate = this.currentTime.toDate();
-      view.notifyChange(true);
+
+      // Eventually inform who it may concern (e.g. an associated iTowns layer)
+      // that the currentTime has changed:
+      refreshCallback( this.currentTime.toDate() );
     }
 
     // Display or hide this window
