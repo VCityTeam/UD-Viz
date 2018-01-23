@@ -1,3 +1,5 @@
+import { MAIN_LOOP_EVENTS } from 'itowns';
+
 /**
 * Class : Compass Controller
 * adds a basic compass that rotates according to the orientation of the camera
@@ -34,9 +36,6 @@ export function CompassController(controls) {
     // the compassImg html object
     const compass = document.getElementById("compassImg");
 
-    // request update every active frame
-    this.controls.view.addFrameRequester(this);
-
     // called by framerequester
     //===================================================================
     this.update = function update(){
@@ -45,4 +44,9 @@ export function CompassController(controls) {
         // of the image to rotate it
         compass.style.transform = "rotate("+this.controls.camera.rotation.z+"rad)";
     }
+
+    // request update every active frame
+    this.controls.view.addFrameRequester( MAIN_LOOP_EVENTS.AFTER_CAMERA_UPDATE,
+                                          this.update.bind(this) );
+
 }

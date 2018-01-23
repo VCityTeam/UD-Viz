@@ -1,6 +1,5 @@
 
 #temporalWindow{
-
     display: none;
 
     border : 1px solid rgb(75,75,75);
@@ -15,9 +14,8 @@
     left : 0;
     right : 0;
 
-
     width: 35%;
-    height: 12.5%;
+    height: 80px;
 
     color: white;
     background-color: rgba(30,30,30,0.6);
@@ -26,26 +24,20 @@
     padding-top: 3px;
 
     pointer-events: none;
-
-
 }
 
 #timeSliderMinDate {
-
     position: absolute;
     left : 10px;
     top  : 50px;
     font-weight: bold;
-
 }
 
 #timeSliderMaxDate {
-
     position: absolute;
     right : 10px;
     top  : 50px;
     font-weight: bold;
-
 }
 
 #timePreviousButton{

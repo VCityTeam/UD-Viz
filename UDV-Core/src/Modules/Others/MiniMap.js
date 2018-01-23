@@ -1,5 +1,6 @@
-import { Coordinates, PlanarView, THREE } from 'itowns';
-
+import { Coordinates, PlanarView} from 'itowns';
+import { MAIN_LOOP_EVENTS } from 'itowns';
+import * as THREE from 'three';
 /**
 * Constructor for MiniMapController
 * manages the 3d scene inside the minimap div, and the open/close button
@@ -58,23 +59,6 @@ export function MiniMapController(controls, extent, renderer) {
         },
     });
 
-    // state of the minimap window (open/closed)
-    this.miniMapIsActive = false;
-
-    // indicator object
-    const geometry = new THREE.BoxGeometry( 250, 250, 250 );
-    const material = new THREE.MeshBasicMaterial( {color: 0xffffff} );
-    this.mapIndicator = new THREE.Mesh( geometry, material );
-    this.mapIndicator.position.z = 500;
-
-    // camera position at center of extent, looking at the ground, at altitude cameraZ, with north/south/east/west orientation
-    this.view.camera.setPosition(new Coordinates('EPSG:3946',this.extent.center().xyz().x, this.extent.center().xyz().y, this.cameraZ));
-    this.view.camera.camera3D.quaternion.copy(new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(1, 0, 0), 0));
-
-    this.view.scene.add( this.mapIndicator );
-    this.view.notifyChange(true);
-    this.view.addFrameRequester(this);
-
     // called by framerequester
     //===================================================================
     this.update = function update(){
@@ -93,6 +77,26 @@ export function MiniMapController(controls, extent, renderer) {
         this.view.notifyChange(true);
 
     }
+
+    // state of the minimap window (open/closed)
+    this.miniMapIsActive = false;
+
+    // indicator object
+    const geometry = new THREE.BoxGeometry( 250, 250, 250 );
+    const material = new THREE.MeshBasicMaterial( {color: 0xffffff} );
+    this.mapIndicator = new THREE.Mesh( geometry, material );
+    this.mapIndicator.position.z = 500;
+
+    // camera position at center of extent, looking at the ground, at altitude cameraZ, with north/south/east/west orientation
+    this.view.camera.setPosition(new Coordinates('EPSG:3946',this.extent.center().xyz().x, this.extent.center().xyz().y, this.cameraZ));
+    this.view.camera.camera3D.quaternion.copy(new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(1, 0, 0), 0));
+
+    this.view.scene.add( this.mapIndicator );
+    this.view.notifyChange(true);
+    this.view.addFrameRequester( MAIN_LOOP_EVENTS.AFTER_CAMERA_UPDATE,
+                                 this.update.bind(this) );
+
+
 
     document.getElementById("miniMapTab").addEventListener('mousedown', this.toggleMap.bind(this),false);
     mapDiv.style.display = (this.miniMapIsActive)? "block" : "none";

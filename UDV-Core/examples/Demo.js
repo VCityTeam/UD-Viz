@@ -50,9 +50,18 @@ const optionsEditMode= {
 // optionsRegularMode depending on the value useControlsForEditing (boolean)
 var controls = new udvcore.itowns.PlanarControls(view, (useControlsForEditing)? optionsEditMode : optionsRegularMode);
 
+//////////// Temporal controller section
+
+// Definition of the callback that is in charge of triggering a refresh
+// of the displayed layer when its (the layer) associated date has changed.
+function refreshDisplayLayerOnDate( date ) {
+  layer.displayDate = date;
+  view.notifyChange(true);
+}
+
 // Instanciate a temporal controller
 var temporal = new udvcore.TemporalController(
-                            view,
+                            refreshDisplayLayerOnDate,
                             {   // Various available constructor options
                                 minTime:   new moment( "1700-01-01" ),
                                 maxTime:   new moment( "2020-01-01" ),
@@ -63,6 +72,51 @@ var temporal = new udvcore.TemporalController(
                                 timeFormat: "YYYY",
                                 active:true
                               });
+
+// Retrieve the layer defined in Setup3DScene (we consider the first one
+// with the given name)
+var layer = view.getLayers(layer => layer.name === '3d-tiles-temporal')[0];
+layer.whenReady.then(
+  // In order to configure the temporal slide bar widget, we must
+  // retrieve the temporal events of displayed data. At this loading
+  // stage it could be that the b3dm with the actual dates (down to
+  // the building level) are not already loaded, but only their enclosing
+  // tiles are at hand. We could recurse on tile hierarchy, but we also
+  // have at hand the tileindex that we can (equivalently for the result)
+  // iterate on.
+  function() {
+    // Store the layer for triggering scene updates when temporal slider
+    // will be changed by user:
+    temporal.layer = layer;
+
+    const tiles = layer.tileIndex.index;
+    var resultDates = [];
+    const nbrTiles = Object.keys(tiles).length;
+    for( var i = 0; i < nbrTiles; i++) {
+      const start = tiles[i].boundingVolume.start_date;
+      if( start ) {
+        resultDates.push( start );
+      }
+      const end = tiles[i].boundingVolume.end_date;
+      if( end ) {
+        resultDates.push( end );
+      }
+    }
+
+    // When there is such thing as a minimum and maximum, inform the temporal
+    // widget of the data change and refresh the display.
+    // Note: when the dataset doesn't have a minimum of two dates the temporal
+    // widget remains with its default min/max values.
+    if( resultDates.length >= 2 ) {
+      resultDates.sort();
+      temporal.minTime = new moment( resultDates[0] );
+      temporal.maxTime = new moment( resultDates[resultDates.length-1] );
+      temporal.changeTime( temporal.minTime );
+      temporal.refresh();
+    }
+  }
+);
+
 var about = new udvcore.AboutWindow({active:true});
 var help  = new udvcore.HelpWindow({active:true});
 

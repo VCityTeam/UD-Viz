@@ -3,7 +3,8 @@
 */
 
 import * as itowns from 'itowns';
-var THREE = itowns.THREE; // we use THREE.js provided by itowns
+import * as THREE from 'three';
+import proj4 from 'proj4';
 
 /**
 * Call this to initialize the values of global var : view, extent and renderer (Main.js)
@@ -18,10 +19,9 @@ export function Setup3DScene(terrainAndElevationRequest,
                              buildingServerRequest,
                              showBuildings = false )
 {
-
 // Define projection that we will use (taken from https://epsg.io/3946, Proj4js section)
-itowns.proj4.defs('EPSG:3946',
-'+proj=lcc +lat_1=45.25 +lat_2=46.75 +lat_0=46 +lon_0=3 +x_0=1700000 +y_0=5200000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs');
+proj4.defs('EPSG:3946',
+    '+proj=lcc +lat_1=45.25 +lat_2=46.75 +lat_0=46 +lon_0=3 +x_0=1700000 +y_0=5200000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs');
 
 // Define geographic extent: CRS, min/max X, min/max Y
 var extent = new itowns.Extent(
@@ -89,25 +89,34 @@ var preUpdateGeo = function (context, layer) {
 
 // Create a new Layer 3d-tiles  => data sent from building-server (LYON 6)
 // -----------------------------------------------------
-const $3dTilesLayer = new itowns.GeometryLayer('3d-tiles-request-volume', view.scene);
+const $3dTilesTemporalLayer = new itowns.GeometryLayer('3d-tiles-request-volume', view.scene);
 
-$3dTilesLayer.preUpdate = preUpdateGeo;
-$3dTilesLayer.update = itowns.process3dTilesNode(
+$3dTilesTemporalLayer.preUpdate = preUpdateGeo;
+$3dTilesTemporalLayer.update = itowns.process3dTilesNode(
     itowns.$3dTilesCulling,
     itowns.$3dTilesSubdivisionControl
 );
 
-$3dTilesLayer.name = 'RequestVolume';
+$3dTilesTemporalLayer.name = '3d-tiles-temporal';
 
-$3dTilesLayer.url = buildingServerRequest;
+$3dTilesTemporalLayer.url = buildingServerRequest;
 
-$3dTilesLayer.protocol = '3d-tiles'
-$3dTilesLayer.overrideMaterials = false;  // custom cesium shaders are not functional
-$3dTilesLayer.type = 'geometry';
-$3dTilesLayer.visible = true;
+$3dTilesTemporalLayer.protocol = '3d-tiles';
+// Require temporal management (considered as a special material handled
+// through culling by the shaders)
+$3dTilesTemporalLayer.TemporalExtension = true;
+$3dTilesTemporalLayer.type = 'geometry';
+$3dTilesTemporalLayer.visible = true;
+// For the record the layer initial date could be hardwired here with e.g.
+//    $3dTilesTemporalLayer.displayDate = new Date(2000, 0, 2);
+// but this initialization can also be the responsability of another component.
 
 // add the layer to the view
-if(showBuildings){itowns.View.prototype.addLayer.call(view, $3dTilesLayer);}
+if(showBuildings){
+  // Next line syntax might be simplified on acceptance of this PR
+  //    https://github.com/iTowns/itowns/pull/546
+  itowns.View.prototype.addLayer.call(view,$3dTilesTemporalLayer);
+}
 
 // sky color
 view.mainLoop.gfxEngine.renderer.setClearColor( 0x6699cc, 1);
