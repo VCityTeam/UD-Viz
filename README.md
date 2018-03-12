@@ -5,7 +5,9 @@ UDV is a JavaScript client based on [iTowns](https://github.com/itowns/itowns) a
 Server-side tools can be found [here](https://github.com/MEPP-team/UDV-server).
 
 ## Demo
-The [online demo](http://rict.liris.cnrs.fr/UDV/Vilo3D/index.html) is alas only visible on the [Lyon1](https://sciences.univ-lyon1.fr/)/[INSA-Lyon](https://www.insa-lyon.fr/en/) campus.
+Online demos (alas only visible on the [Lyon1](https://sciences.univ-lyon1.fr/)/[INSA-Lyon](https://www.insa-lyon.fr/en/) campus):
+ - [Vilo3D](http://rict.liris.cnrs.fr/Vilo3D/UDV/Vilo3D/)
+ - TO BE FIXED [Temporal](http://rict.liris.cnrs.fr/FIXME)
 
 ## Current features (regrouped by Modules) :
 
