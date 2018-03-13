@@ -45,6 +45,17 @@ module.exports = {
                 test:/\.css$/,
                 use:['style-loader','css-loader']
             },
+            {
+                // (web)pack "small" images
+                test: /\.(png|gif)$/,  
+                use: [{
+                    loader: 'url-loader',
+                    options: { 
+                        limit: 100000, // Convert images < 100kb to base64 strings
+                        name: 'images/[hash]-[name].[ext]'
+                    } 
+                }]
+            },
             commonConfig.jsonLoader,
         ],
     },
