@@ -1,4 +1,5 @@
 import { MAIN_LOOP_EVENTS } from 'itowns';
+import './Compass.css';
 
 /**
 * Class : Compass Controller
@@ -22,13 +23,6 @@ export function CompassController(controls) {
     <div id="compassWindow">\
     <img id="compassImg" src="/img/compass.gif"></img>\
     </div>';
-
-    ///////////////// Associated stylesheet
-    var link = document.createElement('link');
-    link.setAttribute('rel', 'stylesheet');
-    link.setAttribute('type', 'text/css');
-    link.setAttribute('href', '/src/Modules/Others/Compass.css');
-    document.getElementsByTagName('head')[0].appendChild(link);
 
     // instance of PlanarControls
     this.controls = controls;

@@ -1,4 +1,6 @@
 import { readCSVFile } from '../../Tools/CSVLoader.js';
+import './GuidedTour.css'
+
 /**
 * Classes: GuidedTourController & TourStep
 * Description :
@@ -43,13 +45,6 @@ export function GuidedTourController(docHandler, dataFile, options={}) {
     <button id="guidedTourStartButton" type=button>START</button>\
     </div>\
     ';
-
-    ///////////////// Associated stylesheet
-    var link = document.createElement('link');
-    link.setAttribute('rel', 'stylesheet');
-    link.setAttribute('type', 'text/css');
-    link.setAttribute('href', '/src/Modules/GuidedTour/GuidedTour.css');
-    document.getElementsByTagName('head')[0].appendChild(link);
 
     // DocumentHandler instance, required
     this.docs = docHandler;

@@ -45,6 +45,7 @@
     "babel-preset-env": "^1.6.0",
     "chart.js": "^2.4.0",
     "cross-env": "^3.1.4",
+    "css-loader": "^0.28.10",
     "eslint": "^3.14.0",
     "eslint-config-airbnb-base": "^11.3.0",
     "eslint-import-resolver-webpack": "^0.8.1",
@@ -56,6 +57,7 @@
     "node-fetch": "^1.7.0",
     "raw-loader": "^0.5.1",
     "require-from-string": "^1.2.1",
+    "style-loader": "^0.20.3",
     "webpack": "^2.6.1",
     "webpack-dev-server": "^2.4.5"
   }

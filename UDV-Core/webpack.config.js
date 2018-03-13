@@ -40,6 +40,11 @@ module.exports = {
                     babelrc: false,
                 },
             },
+            {
+                // We also want to (web)pack the style files:
+                test:/\.css$/,
+                use:['style-loader','css-loader']
+            },
             commonConfig.jsonLoader,
         ],
     },

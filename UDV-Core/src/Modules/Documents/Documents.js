@@ -10,6 +10,7 @@
 import * as THREE from 'three';
 import { MAIN_LOOP_EVENTS } from 'itowns';
 import { readCSVFile } from '../../Tools/CSVLoader.js';
+import './Documents.css';
 
 // TO DO : pass showBillboardButton as an option to DocumentsHandler
 // currently, BILLBOARDS WILL BE ALWAYS HIDDEN if the showBillboardButton global var is set to false !!
@@ -59,13 +60,6 @@ export function DocumentsHandler(view, controls, dataFile, options = {}) {
     type=button\
     style="display:none;">Billboard</button>\
     ';
-
-    ///////////////// Associated stylesheet
-    var link = document.createElement('link');
-    link.setAttribute('rel', 'stylesheet');
-    link.setAttribute('type', 'text/css');
-    link.setAttribute('href', '/src/Modules/Documents/Documents.css');
-    document.getElementsByTagName('head')[0].appendChild(link);
 
      /////////////////////////////////////////////////////////////////////
     //dirty variables to test billboards

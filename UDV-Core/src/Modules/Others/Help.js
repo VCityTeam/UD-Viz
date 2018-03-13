@@ -1,3 +1,5 @@
+import './Help.css';
+
 /**
 * adds a "Help" window that can be open/closed with a button
 * simply include this file in the html, no need to instanciate anything in main.js
@@ -27,13 +29,6 @@ export function HelpWindow( options={} ) {
        <button id="helpCloseButton">Close</button>\
     </div>\
     ';
-
-  ////////////// Associated stylesheet
-  var link = document.createElement('link');
-  link.setAttribute('rel', 'stylesheet');
-  link.setAttribute('type', 'text/css');
-  link.setAttribute('href', '/src/Modules/Others/Help.css');
-  document.getElementsByTagName('head')[0].appendChild(link);
 
   ///////////// Class attributes
   // Whether this window is currently displayed or not.
