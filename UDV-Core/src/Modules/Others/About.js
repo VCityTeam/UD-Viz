@@ -1,3 +1,5 @@
+import './About.js';
+
 /**
 * adds an "About" window that can be open/closed with a button
 * simply include this file in the html, no need to instanciate anything in main.js
@@ -34,13 +36,6 @@ export function AboutWindow( options={} ) {
     </div>\
     <button id="aboutCloseButton">Close</button>\
     ';
-
-  ////////////// Associated stylesheet
-  var link = document.createElement('link');
-  link.setAttribute('rel', 'stylesheet');
-  link.setAttribute('type', 'text/css');
-  link.setAttribute('href', '/src/Modules/Others/About.css');
-  document.getElementsByTagName('head')[0].appendChild(link);
 
   ///////////// Class attributes
   // Whether this window is currently displayed or not.

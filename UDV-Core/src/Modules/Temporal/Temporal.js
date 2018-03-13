@@ -1,4 +1,5 @@
 import 'moment'; // Note that "import * as moment from 'moment';" fails
+import './Temporal.css';
 
 /**
 * Constructor for TemporalController Class
@@ -30,13 +31,6 @@ export function TemporalController(refreshCallback, options={}) {
        <button id="timeOverlayButton"  type=button>Overlay</button>\
        <button id="timeCloseButton">Close</button>\
     </div>';
-
-    ///////////////// Associated stylesheet
-    var link = document.createElement('link');
-    link.setAttribute('rel', 'stylesheet');
-    link.setAttribute('type', 'text/css');
-    link.setAttribute('href', '/src/Modules/Temporal/Temporal.css');
-    document.getElementsByTagName('head')[0].appendChild(link);
 
     /////// Class attributes
 

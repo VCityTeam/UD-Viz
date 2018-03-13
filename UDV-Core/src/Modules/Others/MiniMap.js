@@ -1,6 +1,8 @@
 import { Coordinates, PlanarView} from 'itowns';
 import { MAIN_LOOP_EVENTS } from 'itowns';
 import * as THREE from 'three';
+import './MiniMap.css';
+
 /**
 * Constructor for MiniMapController
 * manages the 3d scene inside the minimap div, and the open/close button
@@ -21,13 +23,6 @@ export function MiniMapController(controls, extent, renderer) {
     document.getElementById("minimap").innerHTML =
       '<button   id="miniMapTab">CARTE</button>\
        <div id="miniMapViewer"></div>';
-
-    ///////////////// Associated stylesheet
-    var link = document.createElement('link');
-    link.setAttribute('rel', 'stylesheet');
-    link.setAttribute('type', 'text/css');
-    link.setAttribute('href', '/src/Modules/Others/Minimap.css');
-    document.getElementsByTagName('head')[0].appendChild(link);
 
     // instance of PlanarControls
     this.controls = controls;

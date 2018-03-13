@@ -10,6 +10,8 @@
 import * as THREE from 'three';
 import { MAIN_LOOP_EVENTS } from 'itowns';
 import { readCSVFile } from '../../Tools/CSVLoader.js';
+import './Documents.css';
+import DefaultImage from './DefaultImage.png';
 
 // TO DO : pass showBillboardButton as an option to DocumentsHandler
 // currently, BILLBOARDS WILL BE ALWAYS HIDDEN if the showBillboardButton global var is set to false !!
@@ -36,7 +38,7 @@ export function DocumentsHandler(view, controls, dataFile, options = {}) {
     <div id="docBrowserWindow">\
     <div id="docBrowserTitle">doc title</div>\
     <div id="docBrowserMetaData">metadata</div>\
-    <div id="docBrowserPreview"><img id="docBrowserPreviewImg" src = "/img/test.png"/></div>\
+    <div id="docBrowserPreview"><img id="docBrowserPreviewImg"/></div>\
     <div id="docBrowserDoc_ID"></div>\
     <div id="guidedTourText2"></div>\
     <div id="docBrowserIndex"></div>\
@@ -60,14 +62,11 @@ export function DocumentsHandler(view, controls, dataFile, options = {}) {
     style="display:none;">Billboard</button>\
     ';
 
-    ///////////////// Associated stylesheet
-    var link = document.createElement('link');
-    link.setAttribute('rel', 'stylesheet');
-    link.setAttribute('type', 'text/css');
-    link.setAttribute('href', '/src/Modules/Documents/Documents.css');
-    document.getElementsByTagName('head')[0].appendChild(link);
+    // Importing the default image (when no document is present)
+    var defaultImage = document.getElementById('docBrowserPreviewImg');
+    defaultImage.src = DefaultImage;
 
-     /////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////
     //dirty variables to test billboards
     var billboardsAreActive = false;
     var showBillboardButton = false;
