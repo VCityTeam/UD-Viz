@@ -29,44 +29,52 @@ import DefaultImage from './DefaultImage.png';
 //=============================================================================
 export function DocumentsHandler(view, controls, dataFile, options = {}) {
 
-    //update the html with elements for this class (windows, buttons etc)
+    // FIXME: replace view with a refresh callback similarly to what's done for
+    // temporal controller
+
+    ///////////// Html elements
     var docDiv = document.createElement("div");
     docDiv.id = 'doc';
     document.body.appendChild(docDiv);
 
-    document.getElementById("doc").innerHTML ='<button id="docBrowserTab">DOC</button>\
-    <div id="docBrowserWindow">\
-    <div id="docBrowserTitle">doc title</div>\
-    <div id="docBrowserMetaData">metadata</div>\
-    <div id="docBrowserPreview"><img id="docBrowserPreviewImg"/></div>\
-    <div id="docBrowserDoc_ID"></div>\
-    <div id="guidedTourText2"></div>\
-    <div id="docBrowserIndex"></div>\
-    <button id="docBrowserNextButton" type=button>⇨</button>\
-    <button id="docBrowserPreviousButton" type=button>⇦</button>\
-    <button id="docBrowserOrientButton" type=button>ORIENTER</button>\
+    document.getElementById("doc").innerHTML =
+    '<div id="docBrowserWindow">\
+        <div id="docHead">Document Navigator</div>\
+        <div id="docBrowserTitle">doc title</div>\
+        <div id="docBrowserMetaData">metadata</div>\
+        <div id="docBrowserPreview"><img id="docBrowserPreviewImg"/></div>\
+        <div id="docDescription"></div>\
+        <div id="docBrowserIndex"></div>\
+        <button id="docBrowserNextButton" type=button>⇨</button>\
+        <button id="docBrowserPreviousButton" type=button>⇦</button>\
+        <button id="docBrowserOrientButton" type=button>Orient Document</button>\
     </div>\
     <div id="docFull">\
-    <img id="docFullImg"/>\
-    <div id="docFullPanel">\
-    <button id="docFullClose" type=button>FERMER</button>\
-    <button id="docFullOrient" type=button>ORIENTER</button>\
-    <label id="docOpaLabel" for="docOpaSlider">Opacité</label>\
-    <input id="docOpaSlider" type="range" min="0" max="100" value="75"\
-    step="1" oninput="docOpaUpdate(value)">\
-    <output for="docOpaSlider" id="docOpacity">50</output>\
-    </div>\
+        <img id="docFullImg"/>\
+        <div id="docFullPanel">\
+            <button id="docFullClose" type=button>Close</button>\
+            <button id="docFullOrient" type=button>Orient Document</button>\
+            <label id="docOpaLabel" for="docOpaSlider">Opacity</label>\
+            <input id="docOpaSlider" type="range" min="0" max="100" value="75"\
+            step="1" oninput="docOpaUpdate(value)">\
+            <output for="docOpaSlider" id="docOpacity">50</output>\
+        </div>\
     </div>\
     <button id="docBrowserToggleBillboard"\
     type=button\
     style="display:none;">Billboard</button>\
     ';
 
+    /////// Class attributes
+
+    // Whether the Document Handler sub window displaying controlling GUI elements
+    // is currently displayed or not.
+    this.docBrowserWindowIsActive = options.docBrowserWindowStartActive || false;
+
     // Importing the default image (when no document is present)
     var defaultImage = document.getElementById('docBrowserPreviewImg');
     defaultImage.src = DefaultImage;
 
-    /////////////////////////////////////////////////////////////////////
     //dirty variables to test billboards
     var billboardsAreActive = false;
     var showBillboardButton = false;
@@ -89,9 +97,6 @@ export function DocumentsHandler(view, controls, dataFile, options = {}) {
     // this is used to set the current date according to the selected document
     this.temporal = options.temporal;
 
-    // state of the browser window (open / closed), intial state can be set via options
-    this.docBrowserWindowIsActive = options.docBrowserWindowStartActive || false;
-
     // array containing all the documents loaded from the csv file
     this.AllDocuments = [];
 
@@ -109,6 +114,8 @@ export function DocumentsHandler(view, controls, dataFile, options = {}) {
     // event to be dispatched when this controller has finished initializing
     this.initEvent = document.createEvent('Event');
     this.initEvent.initEvent('docInit', true, true);
+
+    //////////// Behavior
 
     // adds a Document to the DocumentHandler.
     // for a detail of each parameter, see the Document constructor at the end of this file
@@ -295,8 +302,6 @@ export function DocumentsHandler(view, controls, dataFile, options = {}) {
         document.getElementById('docBrowserMetaData').innerHTML = this.currentDoc.metaData;
         document.getElementById('docBrowserTitle').innerHTML = this.currentDoc.title;
         document.getElementById('docBrowserIndex').innerHTML = "index : " + this.currentDoc.index;
-        document.getElementById('docBrowserDoc_ID').innerHTML = "Doc_ID : " + this.currentDoc.doc_ID;
-
     }
 
     // show billboards
@@ -414,8 +419,8 @@ export function DocumentsHandler(view, controls, dataFile, options = {}) {
     //=========================================================================
     this.toggleDocBrowserWindow = function toggleDocBrowserWindow(){
 
-        document.getElementById('docBrowserWindow').style.display = this.docBrowserWindowIsActive ? "none" : "block";
-        this.docBrowserWindowIsActive = this.docBrowserWindowIsActive ? false : true;
+        document.getElementById('docBrowserWindow').style.display = this.docBrowserWindowIsActive ? "block" : "none";
+        this.docBrowserWindowIsActive = this.docBrowserWindowIsActive ? true : false;
 
     }
 
@@ -472,7 +477,6 @@ export function DocumentsHandler(view, controls, dataFile, options = {}) {
     document.getElementById("docBrowserNextButton").addEventListener('mousedown',this.nextDoc.bind(this),false);
     document.getElementById("docBrowserPreviousButton").addEventListener('mousedown',this.previousDoc.bind(this),false);
     document.getElementById("docBrowserOrientButton").addEventListener('mousedown', this.focusOnDoc.bind(this),false);
-    document.getElementById("docBrowserTab").addEventListener('mousedown', this.toggleDocBrowserWindow.bind(this), false);
 
     // setup display
     document.getElementById("docBrowserToggleBillboard").style.display = (showBillboardButton)? "block" : "none";
