@@ -30,9 +30,6 @@ import DefaultImage from './DefaultImage.png';
 //=============================================================================
 export function DocumentsHandler(view, controls, dataFile, options = {}) {
 
-    // FIXME: replace view with a refresh callback similarly to what's done for
-    // temporal controller
-
     ///////////// Html elements
     var docDiv = document.createElement("div");
     docDiv.id = 'doc';
@@ -72,6 +69,7 @@ export function DocumentsHandler(view, controls, dataFile, options = {}) {
     // is currently displayed or not.
     this.docBrowserWindowIsActive = options.docBrowserWindowStartActive || false;
 
+    // FIXME: It would be better to display something like "no document to display"
     // Importing the default image (when no document is present)
     var defaultImage = document.getElementById('docBrowserPreviewImg');
     defaultImage.src = DefaultImage;
@@ -80,10 +78,13 @@ export function DocumentsHandler(view, controls, dataFile, options = {}) {
     var billboardsAreActive = false;
     var showBillboardButton = false;
 
-    // TO DO
+    // FIXME: iTowns view should not be an attribute of DocumentHandler.
+    // Instead, it should either have a list of callbacks or a emit events trapped
+    // by a controller
     this.view = view;
 
-    // TO DO
+    // FIXME: This seems to be used for Billboards. Why do we need to access
+    // the domElement of the renderer of iTowns to manage billboards ?
     this.domElement = view.mainLoop.gfxEngine.renderer.domElement;
 
     // PlanarControls instance, required for the oriented view TO DO
@@ -96,6 +97,8 @@ export function DocumentsHandler(view, controls, dataFile, options = {}) {
 
     // TemporalController instance (optional)
     // this is used to set the current date according to the selected document
+    // FIXME: Could this be replaced by the trigering of an event asking for a
+    // date change and trapped by a controller ?
     this.temporal = options.temporal;
 
     // array containing all the documents loaded from the csv file
@@ -112,18 +115,12 @@ export function DocumentsHandler(view, controls, dataFile, options = {}) {
     this.isFadingDoc = false;
     this.fadeAlpha = 0;
 
+    // FIXME: This should be handled using Promises
     // event to be dispatched when this controller has finished initializing
     this.initEvent = document.createEvent('Event');
     this.initEvent.initEvent('docInit', true, true);
 
     //////////// Behavior
-
-    // adds a Document to the DocumentHandler.
-    // for a detail of each parameter, see the Document constructor at the end of this file
-    //=============================================================================
-    this.addDocument = function addDocument(docTitle,docIndex,doc_ID,docImageSourceHD,docImageSourceBD,billboardPosition,docViewPosition,docViewQuaternion,docStartDate,metaData) {
-
-    };
 
     /**
     * initialize the controller using data from the csv file
@@ -147,7 +144,7 @@ export function DocumentsHandler(view, controls, dataFile, options = {}) {
             var docImageSourceBD = "Vilo3D/Docs/"+docData[3];
             var docTitle = docData[4].toString();
 
-            var docStartDate = new Date(docData[5].toString());
+            var docStartDate = new moment( docData[5].toString() );
 
             var docMetaData = docData[6].toString();
 
