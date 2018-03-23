@@ -1,4 +1,4 @@
-import './About.js';
+import './About.css';
 
 /**
 * adds an "About" window that can be open/closed with a button
