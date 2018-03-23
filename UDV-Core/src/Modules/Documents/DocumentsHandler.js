@@ -9,8 +9,9 @@
 
 import * as THREE from 'three';
 import { MAIN_LOOP_EVENTS } from 'itowns';
+import { Document } from './Document.js'
 import { readCSVFile } from '../../Tools/CSVLoader.js';
-import './Documents.css';
+import './DocumentsHandler.css';
 import DefaultImage from './DefaultImage.png';
 
 // TO DO : pass showBillboardButton as an option to DocumentsHandler
@@ -29,52 +30,61 @@ import DefaultImage from './DefaultImage.png';
 //=============================================================================
 export function DocumentsHandler(view, controls, dataFile, options = {}) {
 
-    //update the html with elements for this class (windows, buttons etc)
+    ///////////// Html elements
     var docDiv = document.createElement("div");
     docDiv.id = 'doc';
     document.body.appendChild(docDiv);
 
-    document.getElementById("doc").innerHTML ='<button id="docBrowserTab">DOC</button>\
-    <div id="docBrowserWindow">\
-    <div id="docBrowserTitle">doc title</div>\
-    <div id="docBrowserMetaData">metadata</div>\
-    <div id="docBrowserPreview"><img id="docBrowserPreviewImg"/></div>\
-    <div id="docBrowserDoc_ID"></div>\
-    <div id="guidedTourText2"></div>\
-    <div id="docBrowserIndex"></div>\
-    <button id="docBrowserNextButton" type=button>⇨</button>\
-    <button id="docBrowserPreviousButton" type=button>⇦</button>\
-    <button id="docBrowserOrientButton" type=button>ORIENTER</button>\
+    document.getElementById("doc").innerHTML =
+    '<div id="docBrowserWindow">\
+        <div id="docHead">Document Navigator</div>\
+        <div id="docBrowserTitle">doc title</div>\
+        <div id="docBrowserMetaData">metadata</div>\
+        <div id="docBrowserPreview"><img id="docBrowserPreviewImg"/></div>\
+        <div id="docDescription"></div>\
+        <div id="docBrowserIndex"></div>\
+        <button id="docBrowserNextButton" type=button>⇨</button>\
+        <button id="docBrowserPreviousButton" type=button>⇦</button>\
+        <button id="docBrowserOrientButton" type=button>Orient Document</button>\
     </div>\
     <div id="docFull">\
-    <img id="docFullImg"/>\
-    <div id="docFullPanel">\
-    <button id="docFullClose" type=button>FERMER</button>\
-    <button id="docFullOrient" type=button>ORIENTER</button>\
-    <label id="docOpaLabel" for="docOpaSlider">Opacité</label>\
-    <input id="docOpaSlider" type="range" min="0" max="100" value="75"\
-    step="1" oninput="docOpaUpdate(value)">\
-    <output for="docOpaSlider" id="docOpacity">50</output>\
-    </div>\
+        <img id="docFullImg"/>\
+        <div id="docFullPanel">\
+            <button id="docFullClose" type=button>Close</button>\
+            <button id="docFullOrient" type=button>Orient Document</button>\
+            <label id="docOpaLabel" for="docOpaSlider">Opacity</label>\
+            <input id="docOpaSlider" type="range" min="0" max="100" value="75"\
+            step="1" oninput="docOpaUpdate(value)">\
+            <output for="docOpaSlider" id="docOpacity">50</output>\
+        </div>\
     </div>\
     <button id="docBrowserToggleBillboard"\
     type=button\
     style="display:none;">Billboard</button>\
     ';
 
+    /////// Class attributes
+
+    // Whether the Document Handler sub window displaying controlling GUI elements
+    // is currently displayed or not.
+    this.docBrowserWindowIsActive = options.docBrowserWindowStartActive || false;
+
+    // FIXME: It would be better to display something like "no document to display"
     // Importing the default image (when no document is present)
     var defaultImage = document.getElementById('docBrowserPreviewImg');
     defaultImage.src = DefaultImage;
 
-    /////////////////////////////////////////////////////////////////////
     //dirty variables to test billboards
     var billboardsAreActive = false;
     var showBillboardButton = false;
 
-    // TO DO
+    // FIXME: iTowns view should not be an attribute of DocumentHandler.
+    // Instead, it should either have a list of callbacks or a emit events trapped
+    // by a controller
     this.view = view;
 
-    // TO DO
+    // FIXME: This seems to be used for Billboards. Why do we need to access
+    // the domElement of the renderer of iTowns to manage billboards ?
     this.domElement = view.mainLoop.gfxEngine.renderer.domElement;
 
     // PlanarControls instance, required for the oriented view TO DO
@@ -87,10 +97,9 @@ export function DocumentsHandler(view, controls, dataFile, options = {}) {
 
     // TemporalController instance (optional)
     // this is used to set the current date according to the selected document
+    // FIXME: Could this be replaced by the trigering of an event asking for a
+    // date change and trapped by a controller ?
     this.temporal = options.temporal;
-
-    // state of the browser window (open / closed), intial state can be set via options
-    this.docBrowserWindowIsActive = options.docBrowserWindowStartActive || false;
 
     // array containing all the documents loaded from the csv file
     this.AllDocuments = [];
@@ -106,16 +115,12 @@ export function DocumentsHandler(view, controls, dataFile, options = {}) {
     this.isFadingDoc = false;
     this.fadeAlpha = 0;
 
+    // FIXME: This should be handled using Promises
     // event to be dispatched when this controller has finished initializing
     this.initEvent = document.createEvent('Event');
     this.initEvent.initEvent('docInit', true, true);
 
-    // adds a Document to the DocumentHandler.
-    // for a detail of each parameter, see the Document constructor at the end of this file
-    //=============================================================================
-    this.addDocument = function addDocument(docTitle,docIndex,doc_ID,docImageSourceHD,docImageSourceBD,billboardPosition,docViewPosition,docViewQuaternion,docStartDate,metaData) {
-
-    };
+    //////////// Behavior
 
     /**
     * initialize the controller using data from the csv file
@@ -139,7 +144,7 @@ export function DocumentsHandler(view, controls, dataFile, options = {}) {
             var docImageSourceBD = "Vilo3D/Docs/"+docData[3];
             var docTitle = docData[4].toString();
 
-            var docStartDate = new Date(docData[5].toString());
+            var docStartDate = new moment( docData[5].toString() );
 
             var docMetaData = docData[6].toString();
 
@@ -295,8 +300,6 @@ export function DocumentsHandler(view, controls, dataFile, options = {}) {
         document.getElementById('docBrowserMetaData').innerHTML = this.currentDoc.metaData;
         document.getElementById('docBrowserTitle').innerHTML = this.currentDoc.title;
         document.getElementById('docBrowserIndex').innerHTML = "index : " + this.currentDoc.index;
-        document.getElementById('docBrowserDoc_ID').innerHTML = "Doc_ID : " + this.currentDoc.doc_ID;
-
     }
 
     // show billboards
@@ -389,7 +392,7 @@ export function DocumentsHandler(view, controls, dataFile, options = {}) {
         // adjust the current date if we use temporal
         if(this.temporal){
 
-            temporal.changeDate(this.currentDoc.startDate);
+            temporal.changeTime(this.currentDoc.startDate);
         }
 
         this.hideBillboards(true);
@@ -410,12 +413,13 @@ export function DocumentsHandler(view, controls, dataFile, options = {}) {
         this.showBillboards(false);
     }
 
+    // FIXME: Replace with a refresh function to be consistent with other Modules
     // hide or show the doc browser
     //=========================================================================
     this.toggleDocBrowserWindow = function toggleDocBrowserWindow(){
 
-        document.getElementById('docBrowserWindow').style.display = this.docBrowserWindowIsActive ? "none" : "block";
-        this.docBrowserWindowIsActive = this.docBrowserWindowIsActive ? false : true;
+        document.getElementById('docBrowserWindow').style.display = this.docBrowserWindowIsActive ? "block" : "none";
+        this.docBrowserWindowIsActive = this.docBrowserWindowIsActive ? true : false;
 
     }
 
@@ -472,7 +476,6 @@ export function DocumentsHandler(view, controls, dataFile, options = {}) {
     document.getElementById("docBrowserNextButton").addEventListener('mousedown',this.nextDoc.bind(this),false);
     document.getElementById("docBrowserPreviousButton").addEventListener('mousedown',this.previousDoc.bind(this),false);
     document.getElementById("docBrowserOrientButton").addEventListener('mousedown', this.focusOnDoc.bind(this),false);
-    document.getElementById("docBrowserTab").addEventListener('mousedown', this.toggleDocBrowserWindow.bind(this), false);
 
     // setup display
     document.getElementById("docBrowserToggleBillboard").style.display = (showBillboardButton)? "block" : "none";
@@ -482,98 +485,6 @@ export function DocumentsHandler(view, controls, dataFile, options = {}) {
     this.loadDataFromFile();
 
 }
-
-/**
-* Constructor for Document
-* Currently, a document is an image with associated metadata (doc_ID, title, date, + other metadata...)
-* + associated viewPosition & viewQuaternion (used by focusOnDoc() to orient the camera
-* + associated billboard (optional)
-*/
-//=============================================================================
-function Document(docTitle,docIndex,doc_ID,docImageSourceHD,docImageSourceBD,billboardPosition,docViewPosition,docViewQuaternion,docDate,metaData) {
-
-    // unique ID for the doc, determined by the line in the doc csv file
-    // must be a consecutive list of index (0,1,2,3,4 etc)
-    // used internally by GuidedTourController and DocumentHandler
-    this.index = docIndex;
-
-    // another unique ID, used by historians to indentify documents
-    // cannot be directly used internally, because the doc_ID list is not consecutive (gaps)
-    // not used in the code, only displayed
-    this.doc_ID = doc_ID;
-
-    // path to the image (High Def & Bad Def)
-    this.imageSourceHD = docImageSourceHD;
-    this.imageSourceBD = docImageSourceBD;
-
-    // other metadata (currently just a text)
-    this.metaData = metaData;
-
-    // date used by TemporalController : the date will become this date when the doc is focused
-    this.startDate = docDate;
-
-    this.title = docTitle;
-
-    // if false, no billboard will be created or displayed for this docTitle
-    // will be set to true if valid data is provided in the csv file
-    this.useBillboard = (!isNaN(billboardPosition.x) && !isNaN(billboardPosition.y) && !isNaN(billboardPosition.z));
-
-    // world position of the billboard (where it will be)
-    this.billboardPosition = billboardPosition;
-
-    // position & orientation of the camera when the doc is focused
-    // must be determined by hand in order to align the doc image with the 3d scene
-    this.viewPosition = docViewPosition;
-    this.viewQuaternion = docViewQuaternion;
-
-    // plane with the image
-    this.billboardGeometry = null;
-    // plane with wireframe (better visibility for the billboard)
-    this.billboardGeometryFrame = null;
-
-    // user data that will be given to the billboard object
-    this.docBillboardData = null;
-
-    // billboard geometry creation, only called if useBillboard is true
-    // billboards are made of billboardGeometry (a plane with the image)
-    // and billboardGeometryFrame which is only a wireframe to better see the billboard
-    // this is very dirty :-o
-    this.createBillboard = function createBillboard(){
-
-        const texture = new THREE.TextureLoader().setCrossOrigin("anonymous").load(docImageSourceBD);
-        const billboardMaterial = new THREE.MeshBasicMaterial({map: texture});
-        const frameMaterial = new THREE.MeshBasicMaterial( {color: 0x00ffaa,wireframe: true});
-
-        this.billboardGeometry = new THREE.Mesh( new THREE.PlaneGeometry( 80, 50, 1 , 1), billboardMaterial );
-        this.billboardGeometryFrame =  new THREE.Mesh(new THREE.PlaneGeometry( 80, 50, 1 , 1), frameMaterial );
-
-        // set billboards to the same layers as other buildings (controls will bug if not)
-        this.billboardGeometry.layers.set(1);
-        this.billboardGeometryFrame.layers.set(1);
-
-        this.billboardGeometry.position.copy(billboardPosition);
-        this.billboardGeometryFrame.position.copy(billboardPosition);
-        this.billboardGeometry.updateMatrixWorld();
-        this.billboardGeometryFrame.updateMatrixWorld();
-
-        // these data can be accessed when the user click on the billboard
-        // --type : "billboard"-- is used to identify when we click on a billboard
-        // --doc : this-- is a reference the actual document object, which holds all the relevant data
-        // other lines are mostly useless
-        this.docBillboardData = {
-            type : "billboard",
-            doc : this,
-        };
-
-        // the data is added to the THREE.js object3D : https://threejs.org/docs/#api/core/Object3D
-        this.billboardGeometry.userData = this.docBillboardData;
-    }
-
-    if(this.useBillboard){
-        this.createBillboard();
-    }
-}
-
 
 // in orientied view (focusOnDoc) this is called when the user changes the value of the opacity slider
 //=============================================================================

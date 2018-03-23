@@ -117,8 +117,16 @@ layer.whenReady.then(
   }
 );
 
+
 var about = new udvcore.AboutWindow({active:true});
 var help  = new udvcore.HelpWindow({active:true});
+
+//////////// Document Handler section
+// FIXME For the time being this demo uses the Vilo3D data. Provide a
+// default document for the demo of DocumentHandler class and place it
+// within src/Modules/Documents...
+var documents =
+  new udvcore.DocumentsHandler(view,controls,'Vilo3D/docs.csv',{temporal: temporal});
 
 ///////////////////////////////////////////////////////////////////////////////
 //// Create and configure the layout controller
@@ -164,14 +172,12 @@ var temporalOverlayCtrl = temporalFolder.add(
                                          temporal, 'temporalUsesOverlay'
                                          ).name("Use Overlay").listen();
 
+// Document subwindow
+documentController = datDotGUI.add( documents, 'docBrowserWindowIsActive'
+                                    ).name( "Documents" ).listen();
+documentController.onFinishChange( function(value) { documents.toggleDocBrowserWindow(); });
+
 datDotGUI.close();     // By default the dat.GUI controls are rolled up
-
-
-// FIXME For the time being this demo uses the Vilo3D data. Provide a
-// default document for the demo of DocumentHandler class and place it
-// within src/Modules/Documents...
-var documents =
-  new udvcore.DocumentsHandler(view,controls,'Vilo3D/docs.csv',{temporal: temporal});
 
 // FIXME instanciate guided tour controller
 // var guidedtour = new GuidedTourController(documents,'visite.csv',{temporal: temporal, preventUserFromChangingTour : true});
