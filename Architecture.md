@@ -16,11 +16,11 @@ To include a module :
  * add the js file to the index.html, no need to add html divs for the GUI. Each module handles its own GUI elements by adding a div to the html.
  * instanciate the required classes in your main js file.
  
- See examples here for Vilo3D : [index.html](https://github.com/MEPP-team/UDV/blob/master/Vilo3D/index.html) (include the js files) and [main.js](https://github.com/MEPP-team/UDV/blob/master/Vilo3D/Main.js) (instanciate the classes, at the end of the file).
+ See examples here for Vilo3D : [index.html](https://github.com/MEPP-team/UDV/blob/master/UDV-Core/examples/Vilo3D/index.html) (include the js files) and [main.js](https://github.com/MEPP-team/UDV/blob/master/UDV-Core/examples/Vilo3D/Main.js) (instanciate the classes, at the end of the file).
  
 These modules are mostly independant from each other, with the exception of Documents and Guided Tour : GuidedTourController requires a DocumentHandler instance.
 
-All modules use the same css file : [UDV-Core/styles.css](https://github.com/MEPP-team/UDV/blob/master/UDV-Core/css/styles.css)
+All modules have their own css file which is packed by npm.
 
 ## Asynchronous Initialization
 
