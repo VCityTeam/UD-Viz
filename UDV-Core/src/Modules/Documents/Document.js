@@ -33,6 +33,8 @@ export function Document(docTitle,docIndex,doc_ID,docImageSourceHD,docImageSourc
     // will be set to true if valid data is provided in the csv file
     this.useBillboard = (!isNaN(billboardPosition.x) && !isNaN(billboardPosition.y) && !isNaN(billboardPosition.z));
 
+    ///
+
     // world position of the billboard (where it will be)
     this.billboardPosition = billboardPosition;
 
