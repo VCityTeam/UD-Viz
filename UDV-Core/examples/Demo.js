@@ -128,6 +128,8 @@ var help  = new udvcore.HelpWindow({active:true});
 var documents =
   new udvcore.DocumentsHandler(view,controls,'Vilo3D/docs.csv',{temporal: temporal});
 
+var contri = new udvcore.Contribute();
+
 ///////////////////////////////////////////////////////////////////////////////
 //// Create and configure the layout controller
 
@@ -177,6 +179,11 @@ documentController = datDotGUI.add( documents, 'docBrowserWindowIsActive'
                                     ).name( "Documents" ).listen();
 documentController.onFinishChange( function(value) { documents.toggleDocBrowserWindow(); });
 
+contributeController = datDotGUI.add(contri,'windowIsActive'
+                                    ).name("Contribute").listen();
+
+contributeController.onFinishChange( function(value) { contri.refresh();});
+
 datDotGUI.close();     // By default the dat.GUI controls are rolled up
 
 // FIXME instanciate guided tour controller
@@ -187,6 +194,3 @@ var minimap = new udvcore.MiniMapController(controls, extent, renderer);
 
 // instanciate compass controller
 var compass = new udvcore.CompassController(controls);
-
-
-var contri = new udvcore.Contribute();

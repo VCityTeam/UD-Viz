@@ -14,6 +14,7 @@ import { readCSVFile } from '../../Tools/CSVLoader.js';
 import './DocumentsHandler.css';
 import DefaultImage from './DefaultImage.png';
 
+
 // TO DO : pass showBillboardButton as an option to DocumentsHandler
 // currently, BILLBOARDS WILL BE ALWAYS HIDDEN if the showBillboardButton global var is set to false !!
 

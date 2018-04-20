@@ -63,11 +63,31 @@ export function Contribute() {
   meta.setAttribute('charset', "UTF-8");
   document.getElementsByTagName('head')[0].appendChild(meta);
 
-  this.fContributeWindow = function fContributeWindow(){
-   document.getElementById("ContributeWindow").style.display = this.addDocWindowIsActive ? "none" : "block";
-   this.addDocWindowIsActive = this.addDocWindowIsActive ? false : true;
- }
+  ///////////// Class attributes
+  // Whether this window is currently displayed or not.
+  this.windowIsActive = options.active || false;
 
-  document.getElementById("ContributeTab").addEventListener('mousedown', this.fContributeWindow.bind(this),false);
+  //////////// Behavior
+
+  // Display or hide this window
+  this.activateWindow = function activateWindow( active ){
+    if (typeof active != 'undefined') {
+      this.windowIsActive = active;
+    }
+    document.getElementById('ContributeWindow').style.display =
+                            active ? "block" : "none" ;
+  }
+
+  this.refresh = function refresh( ){
+    this.activateWindow( this.windowIsActive );
+  }
+
+  // Close the window...when close button is hit
+  document.getElementById("aboutCloseButton").addEventListener(
+       'mousedown', this.activateWindow.bind(this, false ), false);
+
+  ///////////// Initialization
+  this.refresh( );
+
 
 }

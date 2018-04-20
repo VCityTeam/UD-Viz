@@ -1,5 +1,4 @@
 #ContributeWindow{
-  display: none;
   position: absolute;
   z-index: 10;
   margin : 3px;
@@ -13,22 +12,6 @@
   overflow: auto;
   background-color: rgba(30,30,30,0.6);
   font-size: 14;
-}
-
-#ContributeTab{
-  display: block;
-  position: relative;
-  left: 3px;
-  bottom: 40px;
-  margin : 3px;
-
-  border: 1px solid black;
-  background-color: white;
-  color: black;
-
-  height: 30px;
-  top: 0;
-  right: 5%;
 }
 
 .control-label alpaca-control-label{
