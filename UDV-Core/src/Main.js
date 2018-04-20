@@ -13,3 +13,5 @@ export { HelpWindow }           from './Modules/Others/Help';
 export { MiniMapController }    from './Modules/Others/MiniMap';
 
 export { TemporalController }   from './Modules/Temporal/Temporal';
+
+export { Contribute }           from './Modules/Contribute/Contribute';

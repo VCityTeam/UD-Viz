@@ -187,3 +187,6 @@ var minimap = new udvcore.MiniMapController(controls, extent, renderer);
 
 // instanciate compass controller
 var compass = new udvcore.CompassController(controls);
+
+
+var contri = new udvcore.Contribute();
