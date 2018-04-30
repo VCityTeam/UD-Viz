@@ -16,7 +16,7 @@ export function HelpWindow( options={} ) {
     '<div id="text">\
        <br>\
        <p><a target="_blank"\
-       href="https://github.com/iTowns/itowns/blob/master/src/Renderer/ThreeExtended/PlanarControls.js">Camera key bindings</a>:</p>\
+       href="PlanarControls.js">Camera key bindings</a>:</p>\
        <ul>\
          <li>Left-Click: camera translation (drag)</li>\
          <li>Right-Click: camera translation (pan)</li>\
@@ -40,6 +40,7 @@ export function HelpWindow( options={} ) {
     this.activateWindow = function activateWindow( active ){
       if (typeof active != 'undefined') {
         this.windowIsActive = active;
+        //console.log('coucou');
       }
       document.getElementById('helpWindow').style.display =
                               active ? "block" : "none" ;

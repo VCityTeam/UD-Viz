@@ -121,14 +121,17 @@ layer.whenReady.then(
 var about = new udvcore.AboutWindow({active:true});
 var help  = new udvcore.HelpWindow({active:true});
 
+
 //////////// Document Handler section
 // FIXME For the time being this demo uses the Vilo3D data. Provide a
 // default document for the demo of DocumentHandler class and place it
 // within src/Modules/Documents...
-var documents =
-  new udvcore.DocumentsHandler(view,controls,'Vilo3D/docs.csv',{temporal: temporal});
+//var documents =  new udvcore.DocumentsHandler(view,controls,'Vilo3D/docs.csv',{temporal: temporal});
+var documents = new udvcore.DocumentsHandler(view, controls, "http://rict.liris.cnrs.fr/DataStore/Vilo3Ddocs/docs.csv", {temporal: temporal} );
 
-var contri = new udvcore.Contribute();
+var contri = new udvcore.Contribute(view, controls, "http://rict.liris.cnrs.fr/DataStore/Vilo3Ddocs/docs.csv", {temporal: temporal});
+
+var pos = new udvcore.DocumentPositioner( view, controls, "http://rict.liris.cnrs.fr/DataStore/Vilo3Ddocs/docs.csv", {temporal: temporal} );
 
 ///////////////////////////////////////////////////////////////////////////////
 //// Create and configure the layout controller
@@ -183,6 +186,10 @@ contributeController = datDotGUI.add(contri,'windowIsActive'
                                     ).name("Contribute").listen();
 
 contributeController.onFinishChange( function(value) { contri.refresh();});
+
+positionner = datDotGUI.add(pos,'windowIsActive').name("Instructions").listen();
+
+positionner.onFinishChange( function(value){ pos.refresh();});
 
 datDotGUI.close();     // By default the dat.GUI controls are rolled up
 

@@ -141,8 +141,12 @@ export function DocumentsHandler(view, controls, dataFile, options = {}) {
             var docData = docDataFromFile[i];
             var docIndex = parseFloat(docData[0]);
             var doc_ID = parseFloat(docData[1]);
-            var docImageSourceHD = "Vilo3D/Docs/"+docData[2];
-            var docImageSourceBD = "Vilo3D/Docs/"+docData[3];
+            //this is a test to use the images stored in the RICT server and not in UDV
+
+            //var docImageSourceHD = "Vilo3D/Docs/"+docData[2];
+            //var docImageSourceBD = "Vilo3D/Docs/"+docData[3];
+            var docImageSourceHD = "http://rict.liris.cnrs.fr/DataStore/Vilo3Ddocs/"+docData[2];
+            var docImageSourceBD = "http://rict.liris.cnrs.fr/DataStore/Vilo3Ddocs/"+docData[3];
             var docTitle = docData[4].toString();
 
             var docStartDate = new moment( docData[5].toString() );
@@ -386,8 +390,9 @@ export function DocumentsHandler(view, controls, dataFile, options = {}) {
 
         // if we have valid data, initiate the animated travel to orient the camera
         if(!isNaN(this.currentDoc.viewPosition.x) && !isNaN(this.currentDoc.viewQuaternion.x)){
-
-            this.controls.initiateTravel(this.currentDoc.viewPosition,"auto",this.currentDoc.viewQuaternion,true);
+          console.log(this.currentDoc.viewPosition );
+          console.log(this.currentDoc.viewQuaternion);
+          this.controls.initiateTravel(this.currentDoc.viewPosition,"auto",this.currentDoc.viewQuaternion,true);
         }
 
         // adjust the current date if we use temporal
@@ -403,6 +408,7 @@ export function DocumentsHandler(view, controls, dataFile, options = {}) {
 
         //to request an update
         this.view.notifyChange(false);
+        this.view.camera
 
     };
 

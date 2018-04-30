@@ -11,6 +11,7 @@ export { AboutWindow }          from './Modules/Others/About';
 export { CompassController }    from './Modules/Others/Compass';
 export { HelpWindow }           from './Modules/Others/Help';
 export { MiniMapController }    from './Modules/Others/MiniMap';
+export { DocumentPositioner }   from './Modules/Contribute/DocumentPositioner';
 
 export { TemporalController }   from './Modules/Temporal/Temporal';
 
