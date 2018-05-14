@@ -14,5 +14,7 @@ export { MiniMapController }    from './Modules/Others/MiniMap';
 export { DocumentPositioner }   from './Modules/Contribute/DocumentPositioner';
 
 export { TemporalController }   from './Modules/Temporal/Temporal';
-
 export { Contribute }           from './Modules/Contribute/Contribute';
+//export { Contribute }           from './Modules/Contribute/ContributeDUR';
+
+export { FilterDocuments }           from './Modules/Contribute/FilterDocuments';

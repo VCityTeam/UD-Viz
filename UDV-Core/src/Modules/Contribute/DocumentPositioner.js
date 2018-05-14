@@ -24,18 +24,43 @@ export function DocumentPositioner(view, controls, dataFile, options = {}) {
      <p><a target="_blank"\
      href="PlanarControls.js">Camera key bindings</a>:</p>\
      <ul>\
-       <li>Left-Click: camera translation (drag)</li>\
-       <li>Right-Click: camera translation (pan)</li>\
-       <li>Ctrl + Left-Click: camera rotation (orbit)</li>\
-       <li>Spacebar / Wheel-Click: smart zoom</li>\
-       <li>Mouse Wheel: zoom in/out</li>\
-       <li>T: orient camera to a top view</li>\
-       <li>Y: move camera to start position</li>\
+       <li>Arrow keys: camera translation </li>\
+       <li>Another control</li>\
+       <li>Another control</li>\
+       <li>Another control</li>\
+       <li>Another control</li>\
+       <li>Another control</li>\
+       <li>Another control</li>\
      </ul>\
      <button id="instructionsCloseButton">Close</button>\
-     <button id ="showDoc">Preview</button>\
+     <button id ="showDocTab">Preview</button>\
   </div>\
   ';
+
+var posDiv = document.createElement("div");
+posDiv.id = 'pos';
+document.body.appendChild(posDiv);
+
+document.getElementById("pos").innerHTML =
+'<div id="docPositionerFull">\
+    <img id="docPositionerFullImg"/>\
+    <div id="docPositionerFullPanel">\
+        <button id="docPositionerClose" type=button>Close</button>\
+        <button id="CameraPositionTab" type=button>CameraPosition</button>\
+        <label id="docOpaLabel2" for="docOpaSlider2">Opacity</label>\
+        <input id="docOpaSlider2" type="range" min="0" max="100" value="75"\
+        step="1" oninput="docPositionerOpaUpdate(value)">\
+        <output for="docPositionerOpaSlider" id="docPositionedOpacity">50</output><br>\
+        <input id = "posX"><br>\
+        <input id = "posY"><br>\
+        <input id = "posZ"><br>\
+        <input id = "quatX"><br>\
+        <input id = "quatY"><br>\
+        <input id = "quatZ"><br>\
+        <input id = "quatW"><br>\
+    </div>\
+</div>\
+';
 
   var link = document.createElement('link');
   link.setAttribute('rel', 'stylesheet');
@@ -46,7 +71,6 @@ export function DocumentPositioner(view, controls, dataFile, options = {}) {
 
   // PlanarControls instance, required for the oriented view TO DO
   this.controls = controls;
-
 
   ///////////// Class attributes
   // Whether this window is currently displayed or not.
@@ -65,30 +89,43 @@ export function DocumentPositioner(view, controls, dataFile, options = {}) {
     this.activateWindow( this.windowIsActive );
   }
 
- function cameraPosition(){
-    console.log(view.camera.camera3D.position );
+this.getCameraPosition = function getCameraPosition(){
+//    console.log(view.camera.camera3D.position );
+    var cam = view.camera.camera3D;
+    var position = cam.position;
+    var quaternion = cam.quaternion;
+    document.getElementById("posX").value = position.x;
+    document.getElementById("posY").value = position.y;
+    document.getElementById("posZ").value = position.z;
+    document.getElementById("quatX").value = quaternion.x;
+    document.getElementById("quatY").value = quaternion.y;
+    document.getElementById("quatZ").value = quaternion.z;
+    document.getElementById("quatW").value = quaternion.w;
+    return view.camera.camera3D;
   }
 
-  this.showMyDoc = function showMyDoc() {
+  this.showDocPositioner = function showDocPositioner() {
+    console.log("displaying document in the center");
+    document.getElementById('docPositionerFull').style.display = "block";
+    //controls.goToTopView();
+    document.getElementById('docPositionerClose').addEventListener('mousedown', this.getCameraPosition.bind(this), false);
+  }
 
-      // display the image (begins loading) but with opacity 0 (hidden)
-      document.getElementById('docFull').style.display = "block";
-      document.getElementById('docFullImg').src = "http://rict.liris.cnrs.fr/DataStore/Vilo3Ddocs/1760versPlanHCL_BD.jpg";
-      console.log("displaying camera position");
-      console.log(view.camera.camera3D.position );
-      controls.goToTopView();
-      document.getElementById('docFullClose').addEventListener('mousedown', cameraPosition.bind(this), false);
+    // close the center window (oriented view / doc focus)
+    //=========================================================================
+    this.closeDocPositioner = function closeDocPositioner(){
+        document.getElementById('docPositionerFull').style.display = "none";
+        //document.getElementById('docFullImg').src = null;
     }
-
-
-
 
   // Close the window...when close button is hit
   document.getElementById("instructionsCloseButton").addEventListener(
        'mousedown', this.activateWindow.bind(this, false ), false);
 
 
-  document.getElementById("showDoc").addEventListener('mousedown', this.showMyDoc.bind(this),false);
+  document.getElementById("showDocTab").addEventListener('mousedown', this.showDocPositioner.bind(this),false);
+  document.getElementById("docPositionerClose").addEventListener('mousedown', this.closeDocPositioner.bind(this),false);
+  document.getElementById("CameraPositionTab").addEventListener('mousedown', this.getCameraPosition.bind(this),false);
   ///////////// Initialization
   this.refresh( );
 
@@ -109,8 +146,13 @@ export function DocumentPositioner(view, controls, dataFile, options = {}) {
   docViewQuat.w =
 */
 
-
 ///////////// Initialization
 this.refresh( );
 
+}
+// in orientied view (focusOnDoc) this is called when the user changes the value of the opacity slider
+//=============================================================================
+function docPositionerOpaUpdate(opa){
+    document.querySelector('#docPositionedOpacity').value = opa;
+    document.getElementById('docPositionerFullImg').style.opacity = opa/100;
 }

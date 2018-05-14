@@ -133,6 +133,8 @@ var contri = new udvcore.Contribute(view, controls, "http://rict.liris.cnrs.fr/D
 
 var pos = new udvcore.DocumentPositioner( view, controls, "http://rict.liris.cnrs.fr/DataStore/Vilo3Ddocs/docs.csv", {temporal: temporal} );
 
+var choice = new udvcore.FilterDocuments( view, controls, "http://rict.liris.cnrs.fr/DataStore/Vilo3Ddocs/docs.csv", {temporal: temporal} );
+
 ///////////////////////////////////////////////////////////////////////////////
 //// Create and configure the layout controller
 
@@ -187,9 +189,11 @@ contributeController = datDotGUI.add(contri,'windowIsActive'
 
 contributeController.onFinishChange( function(value) { contri.refresh();});
 
-positionner = datDotGUI.add(pos,'windowIsActive').name("Instructions").listen();
+instruc = datDotGUI.add(pos,'windowIsActive').name("Instructions").listen();
+instruc.onFinishChange( function(value){ pos.refresh();});
 
-positionner.onFinishChange( function(value){ pos.refresh();});
+requestController = datDotGUI.add(choice, 'windowIsActive').name("Show doc").listen();
+requestController.onFinishChange( function(value){choice.refresh();});
 
 datDotGUI.close();     // By default the dat.GUI controls are rolled up
 

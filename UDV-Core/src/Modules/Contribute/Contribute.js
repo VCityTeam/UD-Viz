@@ -8,92 +8,50 @@ import './DocumentPositioner.js';
 
 export function Contribute(view, controls, dataFile, options = {}) {
 
-  var positioner = new udvcore.DocumentPositioner(view, controls, dataFile, options = {});
   var formDiv = document.createElement("div");
   formDiv.id = 'aform';
   document.body.appendChild(formDiv);
-/*
+
+//formulaire en dur pour tests:
+//  <input type="file" accept="image/*" name="link" id="link" onchange="preview_image(event)"/>\
   document.getElementById("aform").innerHTML =
   '<div id="ContributeWindow">\
-  <div id="alpacaForm" name="alpacaForm"></div>\
-  <div id="server-results"><!-- For server results --></div>\
+  <div id="imageInfo" style="display:none">\
+      <table>\
+          <tbody><tr>\
+              <td class="imagePreview" style="width: 220px" nowrap="nowrap"> </td>\
+              <td class="imageProperties" width="100%"> </td> \
+          </tr>\
+      </tbody></table>\
   </div>\
-  ;'
-*/
-
-document.getElementById("aform").innerHTML =
-'<div id="ContributeWindow">\
-<label id="WindowTitle" >Document upload</label>\
-<p></p>\
-<div id="myFormDiv">\
-<p></p>\
-<label>Title</label>\
-<input type="text" name="docTitle" id="docTitle" />\
-<label>Subject</label>\
-<input type="text" name="docSubject" id="docSubject" />\
-<label>Referring date</label>\
-<input type="text" name="refDate" id="refDate"/>\
-<label>Publication date</label>\
-<input type="date" name="publicationDate" id="publicationDate"/>\
-<label>Description</label><p></p>\
-<p></p>\
-<textarea name = "docDescription" id="docDescription"   rows="7" cols="30"></textarea>\
-<p></p>\
-<input type="file" name="docUpload" id="docUpload"/>\
-<button id = "VisuDoc">Place doc</button>\
-<div id="server-results"><!-- For server results --></div>\
-</div>\
-</div>\
-';
-
-
-/*
-
-  document.getElementById("aform").innerHTML =
-  '<div id="ContributeWindow">\
   <label id="WindowTitle" >Document upload</label>\
   <p></p>\
-  <div id="myFormDiv">\
-  <form method="post" id="alpaca3">\
-  <p></p>\
-  <label>Title</label>\
-  <input type="text" name="docTitle" id="docTitle" />\
-  <label>Subject</label>\
-  <input type="text" name="docSubject" id="docSubject" />\
-  <label>Referring date</label>\
-  <input type="text" name="refDate" id="refDate"/>\
-  <label>Publication date</label>\
-  <input type="date" name="publicationDate" id="publicationDate"/>\
-  <label>Description</label><p></p>\
-  <p></p>\
-  <textarea name = "docDescription" id="docDescription"   rows="7" cols="30"></textarea>\
-  <p></p>\
-  <input type="file" name="docUpload" id="docUpload"/>\
-  <input type="submit" name="submit" value="Submit" id="submitButton"/>\
-  <div id="server-results"><!-- For server results --></div>\
+  <div id="alpacaForm" name = "alpacaForm">\
+  </div>\
+  <div id = "divButtons">\
+  <button id = "showDocTab">Place doc</button>\
+  <button id = "submitButton">Submit</button>\
   </div>\
   </div>\
   ';
 
-   var schema = "http://rict.liris.cnrs.fr/schema.json";
-   var options = "http://rict.liris.cnrs.fr/options.json";
-   $("#alpacaForm").alpaca({
-     "schemaSource": schema,
-     "optionsSource": options
-});
+  var schema = "http://rict.liris.cnrs.fr/schema.json";
+     var options = "http://rict.liris.cnrs.fr/options.json";
+     $("#alpacaForm").alpaca({
+       "schemaSource": schema,
+       "optionsSource": options
+  });
 
-   $("#alpaca3").submit(function(event){
-       event.preventDefault(); //prevent default action
-       var post_url = "http://rict.liris.cnrs.fr/py_script.py";
-       //var post_url = $(this).attr("action"); //get form action url
-       var form_data = $(this).serialize(); //Encode form elements for submission
+  var file = document.getElementById('link');
+//  file.setAttribute("onchange",function(){preview_image(event);});
 
-       $.post( post_url, form_data, function( response ) {
-         //$("#server-results").html( response );
-         alert('sent');
-         $("#alpaca3").get(0).reset() //clear fields
-       });
-   });
+/*
+  var input = document.createElement("input");
+  input.id = "submitButton";
+  input.name = "submit";
+  input.type="submit";
+  input.value ="Submit";
+  document.getElementById("alpaca2").appendChild(input);
 */
   var link = document.createElement('link');
   link.setAttribute('rel', 'stylesheet');
@@ -105,11 +63,11 @@ document.getElementById("aform").innerHTML =
   meta.setAttribute('charset', "UTF-8");
   document.getElementsByTagName('head')[0].appendChild(meta);
 
+  var positioner = new udvcore.DocumentPositioner(view, controls, dataFile, options = {});
+
   ///////////// Class attributes
   // Whether this window is currently displayed or not.
   this.windowIsActive = options.active || false;
-
-  //////////// Behavior
 
   // Display or hide this window
   this.activateWindow = function activateWindow( active ){
@@ -123,15 +81,56 @@ document.getElementById("aform").innerHTML =
     this.activateWindow( this.windowIsActive );
   }
 
-  // Close the window...when close button is hit
-  document.getElementById("aboutCloseButton").addEventListener(
-       'mousedown', this.activateWindow.bind(this, false ), false);
-
-  document.getElementById("VisuDoc").addEventListener('mousedown', positioner.showMyDoc.bind(this),false);
-
-
   ///////////// Initialization
   this.refresh( );
 
+  function ajaxPostCreateDoc(url, data, callback) {
+    var req = new XMLHttpRequest();
+    req.open("POST", url);
+    console.log(req.responseText);
+    req.addEventListener("load", function () {
+        if (req.status >= 200 && req.status < 400) {
+            callback(req.responseText);
+        } else {
+            console.error(req.status + " " + req.statusText + " " + url);
+        }
+    });
+    req.addEventListener("error", function () {
+        console.error("Network error with url: " + url);
+    });
+    req.send(data);
+  }
+
+//var form = document.getElementById("#alpacaForm");
+
+  //var form = document.querySelector("form");
+  document.getElementById('submitButton').addEventListener("mousedown", function(e){
+      e.preventDefault();
+      //gets form data
+//      var data = new FormData(form);
+      //var data = new FormData();
+      var data = new FormData(document.getElementById("alpaca2"));
+      var cam = positioner.getCameraPosition();
+      // update data with camera position
+      //data.append("positionX", cam.position.x);
+      data.append("positionY", cam.position.y);
+      //data.append("positionZ", cam.position.z);
+      data.append("quaternionX", cam.quaternion.x);
+      //data.append("quaternionY", cam.quaternion.y);
+      //data.append("quaternionZ", cam.quaternion.z);
+      //data.append("quaternionW", cam.quaternion.w);
+      // post data and execute script to process data
+    // ajaxPostCreateDoc("http://rict.liris.cnrs.fr/py_script.py",data, function() {});
+      //ajaxPostCreateDoc("http://rict.liris.cnrs.fr/APIVilo3D/APIExtendedDocument/web/app_dev.php/addDocument", data, function(){});
+      ajaxPostCreateDoc("http://rict.liris.cnrs.fr/py_script.py", data, function(){});
+      alert("posted");
+      //clear all form fields
+      $("#alpaca2").get(0).reset();
+
+      //close document positionner
+      document.getElementById('docPositionerFull').style.display = "none";
+      //close form
+      document.getElementById('ContributeWindow').style.display = "none";
+    });
 
 }
