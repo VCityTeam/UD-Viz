@@ -11,10 +11,12 @@ export { AboutWindow }          from './Modules/Others/About';
 export { CompassController }    from './Modules/Others/Compass';
 export { HelpWindow }           from './Modules/Others/Help';
 export { MiniMapController }    from './Modules/Others/MiniMap';
+
 export { DocumentPositioner }   from './Modules/Contribute/DocumentPositioner';
 
 export { TemporalController }   from './Modules/Temporal/Temporal';
+
 export { Contribute }           from './Modules/Contribute/Contribute';
-//export { Contribute }           from './Modules/Contribute/ContributeDUR';
+//export { Contribute }           from './Modules/Contribute/ContributeTEST';
 
 export { FilterDocuments }           from './Modules/Contribute/FilterDocuments';
