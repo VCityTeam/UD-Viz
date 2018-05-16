@@ -136,11 +136,12 @@ var help  = new udvcore.HelpWindow({active:true});
 // default document for the demo of DocumentHandler class and place it
 // within src/Modules/Documents...
 //var documents =  new udvcore.DocumentsHandler(view,controls,'Vilo3D/docs.csv',{temporal: temporal});
-var documents = new udvcore.DocumentsHandlerBIS(view, controls, storedData, {temporal: temporal} );
 
-//var documents = new udvcore.DocumentsHandler(view, controls, "http://rict.liris.cnrs.fr/DataStore/Vilo3Ddocs/docs.csv", {temporal: temporal} );
 
-var contri = new udvcore.Contribute(view, controls, "http://rict.liris.cnrs.fr/DataStore/Vilo3Ddocs/docs.csv", {temporal: temporal});
+var documents = new udvcore.DocumentsHandler(view, controls, "http://rict.liris.cnrs.fr/DataStore/Vilo3Ddocs/docs.csv", {temporal: temporal} );
+//var documents = new udvcore.DocumentsHandlerBIS(view, controls, storedData, {temporal: temporal} );
+
+var contri = new udvcore.Contribute(view, controls, storedData, {temporal: temporal});
 
 var pos = new udvcore.DocumentPositioner( view, controls, "http://rict.liris.cnrs.fr/DataStore/Vilo3Ddocs/docs.csv", {temporal: temporal} );
 

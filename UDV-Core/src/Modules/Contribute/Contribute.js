@@ -5,8 +5,9 @@ import $ from 'jquery';
 import 'alpaca';
 import 'bootstrap-datepicker'
 import './DocumentPositioner.js';
+import '../Documents/DocumentsHandlerBIS.js';
 
-export function Contribute(view, controls, dataFile, options = {}) {
+export function Contribute(view, controls, storedData, options = {}) {
 
   //Contribute Mode: start window
   var contriDiv = document.createElement("div");
@@ -120,15 +121,17 @@ export function Contribute(view, controls, dataFile, options = {}) {
   ///////////// Class attributes
   // Whether this window is currently displayed or not.
   this.windowIsActive = options.active || false;
-  this.storeddata;
+  //this.storeddata;
+  this.documents = new udvcore.DocumentsHandlerBIS(view, controls, storedData, {temporal: temporal} );
 
   var confirmDeleteButton = document.createElement("button");
   confirmDeleteButton.id = "confirmDelete";
   var text = document.createTextNode("Delete selected doc");
   confirmDeleteButton.appendChild(text);
+  document.getElementById('docBrowserWindow').appendChild(confirmDeleteButton);
 
   this.contributeMode = "default";
-  this.storedData = new Object();
+  //this.storedData = new Object();
 
   // Display or hide this window
   this.activateWindow = function activateWindow( active ){
@@ -141,6 +144,9 @@ export function Contribute(view, controls, dataFile, options = {}) {
   this.refresh = function refresh( ){
     this.activateWindow( this.windowIsActive );
   }
+
+  //var documents = new udvcore.DocumentsHandlerBIS(this.view, this.controls, this.storedData, {temporal: temporal} );
+
   this.initialize = function initialize(){
     var req = new XMLHttpRequest();
     var url = "http://rict.liris.cnrs.fr/APIVilo3D/APIExtendedDocument/web/app_dev.php/getDocuments";
@@ -155,11 +161,12 @@ export function Contribute(view, controls, dataFile, options = {}) {
       newEntree.text = this.storedData[i].metadata.id;
       x.add(newEntree);
     }
-  }
+}
 
   ///////////// Initialization
   this.refresh( );
-  this.initialize();
+  this.initialize(storedData);
+
   //
   this.handleDocCreation = function handleDocCreation(){
     this.contributeMode = "create";
@@ -177,26 +184,9 @@ export function Contribute(view, controls, dataFile, options = {}) {
     this.contributeMode = "delete";
     DisplayDocumentsInDeleteBrowser(this.storedData, this.contributeMode)
   }
-  function jSONtoCSV(objArray){
-    var array = typeof objArray != 'object' ? JSON.parse(objArray) : objArray;
-              var str = '';
-              for (var i = 0; i < array.length; i++) {
-                  var line = '';
-                  for (var index in array[i]) {
-                      if (line != '') line += ','
-                      line += array[i][index];
-                  }
-                  str += line + '\r\n';
-              }
-              return str;
-  }
 
   this.closeDocCreation = function closeDocCreation(){
-    console.log("closing create windw");
     document.getElementById('CreateDocWindow').style.display ="none";
-    var csv_test = jSONtoCSV(this.storedData);
-  console.log(csv_test);
-
   }
   this.closeUpdateWindow = function closeUpdateWindow(){
     document.getElementById('updateModeWindow').style.display = "none";
@@ -207,15 +197,14 @@ export function Contribute(view, controls, dataFile, options = {}) {
   document.getElementById("updateButton").addEventListener('mousedown', this.handleDocUpdate.bind(this),false);
   document.getElementById("deleteButton").addEventListener('mousedown', this.handleDocDeletion.bind(this),false);
   document.getElementById("closeCreateDoc").addEventListener('mousedown', this.closeDocCreation.bind(this),false);
-  //document.getElementById('closeUpdateForm').addEventListener("mousedown",this.closeUpdateWindow.bind(this),false);
+  document.getElementById('closeUpdateForm').addEventListener("mousedown",this.closeUpdateWindow.bind(this),false);
 
 
-  var positioner = new udvcore.DocumentPositioner(view, controls, dataFile, options = {});
+  var positioner = new udvcore.DocumentPositioner(view, controls, storedData, options = {});
 
   function PostCreateDoc(url, data, callback) {
     var req = new XMLHttpRequest();
     req.open("POST", url);
-    console.log(req.responseText);
     req.addEventListener("load", function () {
         if (req.status >= 200 && req.status < 400) {
             callback(req.responseText);
@@ -246,12 +235,7 @@ export function Contribute(view, controls, dataFile, options = {}) {
     req.send(data);
   }
 
-  function DeleteDoc(url, callback){
-    var req = new XMLHttpRequest();
-    req.open("POST", url);
-    req.send();
-  }
-
+/*
   this.GetAllStoredDocs = function GetAllStoredDocs(){
     //console.log(contributeMode);
     var req = new XMLHttpRequest();
@@ -268,18 +252,25 @@ export function Contribute(view, controls, dataFile, options = {}) {
       x.add(newEntree);
     }
     return stored_data;
-  }
+  }*/
 
-function ConfirmDeleteOneDocument(myid){
+this.ConfirmDeleteOneDocument = function ConfirmDeleteOneDocument(){
+var myid =   this.documents.currentDoc.doc_ID
   var url = "http://rict.liris.cnrs.fr/APIVilo3D/APIExtendedDocument/web/app_dev.php/deleteDocument/" + myid;
-  DeleteDoc(url, function(){});
+  var req = new XMLHttpRequest();
+  req.open("POST", url);
+  req.send();
+  alert("The document has been deleted successfully");
+  document.getElementById('docBrowserWindow').style.display = "none";
+  document.reload();
+
 }
 
 function DisplayDocumentsInUpdateForm(json_of_json, contributeMode){
+
   var id;
   $('#listOfDocuments').on('change', function() {
     id = parseInt(this.value);
-    console.log(id);
     for (var i = 0; i < json_of_json.length; i++) {
       if (json_of_json[i]['idDocument'] === id) {
         var  data = json_of_json[i].metadata;
@@ -300,30 +291,41 @@ function DisplayDocumentsInUpdateForm(json_of_json, contributeMode){
 
   }
 
+  document.getElementById('confirmDelete').addEventListener("mousedown", this.ConfirmDeleteOneDocument.bind(this),false);
+
+
   document.getElementById('submitButton').addEventListener("mousedown", function(e){
-        e.preventDefault();
+        //e.preventDefault();
         //gets form data
         var data = new FormData(document.getElementById("alpaca3"));
-        console.log(data);
+
+  //      var form_data = $("#alpacaForm").alpaca('Fields').getValue();
+/*
+        var data = new FormData();
+        for ( var key in form_data ) {
+          data.append(key, form_data[key]);
+        }*/
+
         var cam = positioner.getCameraPosition();
         // update data with camera position
         //data.append("positionX", cam.position.x);
         data.append("positionY", cam.position.y);
-        //data.append("type", document.getElementById("type").value);
         //data.append("positionZ", cam.position.z);
-        data.append("quaternionX", cam.quaternion.x);
+        data.append("quaternionX",cam.quaternion.y);
         //data.append("quaternionY", cam.quaternion.y);
         //data.append("quaternionZ", cam.quaternion.z);
         //data.append("quaternionW", cam.quaternion.w);
-        // post data and execute script to process data
+        //post data and execute script to process data
         PostCreateDoc("http://rict.liris.cnrs.fr/APIVilo3D/APIExtendedDocument/web/app_dev.php/addDocument", data, function(){});
-        alert("posted");
+      alert("posted");
         //clear all form fields
-        $("#alpaca3").get(0).reset();
+
+//        $("#alpacaForm").get(0).reset();
         //close document positionner
         document.getElementById('docPositionerFull').style.display = "none";
         //close form
         document.getElementById('CreateDocWindow').style.display = "none";
+
       });
 
       document.getElementById('saveUpdateButton').addEventListener("mousedown", function(e){
@@ -341,7 +343,8 @@ function DisplayDocumentsInUpdateForm(json_of_json, contributeMode){
           form_data.append("positionY", cam.position.y);
           form_data.append("quaternionX", cam.quaternion.x);
           PostUpdateDoc("http://rict.liris.cnrs.fr/APIVilo3D/APIExtendedDocument/web/app_dev.php/editDocument/" + id,form_data, function() {});
-          alert("posted");
+          alert("posted. Please reload webbrowser to see changes");
 //          closeUpdateWindow();
+
         });
 }
