@@ -5,6 +5,7 @@ export { itowns };
 export { Setup3DScene }         from './Setup3DScene';
 
 export { DocumentsHandler }     from './Modules/Documents/DocumentsHandler';
+export { DocumentsHandlerBIS }     from './Modules/Documents/DocumentsHandlerBIS';
 export { GuidedTourController } from './Modules/GuidedTour/GuidedTour';
 
 export { AboutWindow }          from './Modules/Others/About';

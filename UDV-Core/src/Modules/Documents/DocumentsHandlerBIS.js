@@ -29,7 +29,7 @@ import DefaultImage from './DefaultImage.png';
 * @param options : optional parameters (including TemporalController)
 */
 //=============================================================================
-export function DocumentsHandler(view, controls, dataFile, options = {}) {
+export function DocumentsHandlerBIS(view, controls, jsonDataFromDB, options = {}) {
 
     ///////////// Html elements
     var docDiv = document.createElement("div");
@@ -94,7 +94,7 @@ export function DocumentsHandler(view, controls, dataFile, options = {}) {
     this.camera = view.camera.camera3D;
 
     // path to the csv file holding the guided tour data
-    const CSVdataFile = dataFile;
+    //const CSVdataFile = dataFile;
 
     // TemporalController instance (optional)
     // this is used to set the current date according to the selected document
@@ -126,52 +126,58 @@ export function DocumentsHandler(view, controls, dataFile, options = {}) {
     /**
     * initialize the controller using data from the csv file
     * this function is called after the completion of readCSVFile() in this.loadDataFromFile()
-    * @param docDataFromFile : contains the data loaded from the file
+    * @param docDataFromDB : contains the data loaded from the database
     */
     //==========================================================================
-    this.initialize = function initialize(docDataFromFile){
-console.log("ini");
+    this.initialize = function initialize(docDataFromDB){
         // fill the AllDocuments array with Documents objects
         // the Documents are placed in the order they are loaded, which is their line order in the csv file
         // the docIndex property is specified to be 0,1,2,3 etc... in the csv
         // therefore docIndex is equal to "i", but we specify it in the csv for clarity (we need docIndex for the guided tour csv)
         // the difference between docIndex and doc_ID (used by historians) should be settled asap
-        for (var i=0; i<docDataFromFile.length; i++) {
 
-            var docData = docDataFromFile[i];
-            var docIndex = parseFloat(docData[0]);
-            var doc_ID = parseFloat(docData[1]);
+console.log("ini");
+console.log(docDataFromDB);
+
+        for (var i=0; i<docDataFromDB.length; i++) {
+
+            var docData = docDataFromDB[i];
+            //console.log("dans init test docData");
+            //console.log(docData);
+            var docIndex = i;
+
+
+            var doc_ID = docData.idDocument
             //this is a test to use the images stored in the RICT server and not in UDV
 
             //var docImageSourceHD = "Vilo3D/Docs/"+docData[2];
             //var docImageSourceBD = "Vilo3D/Docs/"+docData[3];
-            var docImageSourceHD = "http://rict.liris.cnrs.fr/DataStore/Vilo3Ddocs/"+docData[2];
-            console.log("coucou");
-            var docImageSourceBD = "http://rict.liris.cnrs.fr/DataStore/Vilo3Ddocs/"+docData[3];
-            var docTitle = docData[4].toString();
+            var docImageSourceHD =  "http://rict.liris.cnrs.fr/APIVilo3D/APIExtendedDocument/web/documentsDirectory/" + docData.metadata.link;
+            var docImageSourceBD ="http://rict.liris.cnrs.fr/APIVilo3D/APIExtendedDocument/web/documentsDirectory/" + docData.metadata.link;
+            var docTitle = docData.metadata.title;
 
-            var docStartDate = new moment( docData[5].toString() );
+            var docStartDate = moment('2016-01-01');
 
-            var docMetaData = docData[6].toString();
+            var docMetaData = docData.metadata.description;
 
             // camera position for the oriented view
             var docViewPos = new THREE.Vector3();
-            docViewPos.x = parseFloat(docData[7]);
-            docViewPos.y = parseFloat(docData[8]);
-            docViewPos.z = parseFloat(docData[9]);
+            docViewPos.x = docData.visualization.positionX;
+            docViewPos.y = docData.visualization.positionY;
+            docViewPos.z = docData.visualization.positionZ;
 
             // camera orientation for the oriented view
             var docViewQuat = new THREE.Quaternion();
-            docViewQuat.x = parseFloat(docData[10]);
-            docViewQuat.y = parseFloat(docData[11]);
-            docViewQuat.z = parseFloat(docData[12]);
-            docViewQuat.w = parseFloat(docData[13]);
+            docViewQuat.x = docData.visualization.quaternionX;
+            docViewQuat.y = docData.visualization.quaternionX;
+            docViewQuat.z = docData.visualization.quaternionX;
+            docViewQuat.w = docData.visualization.quaternionX;
 
             // billboard position
             var docBillboardPos = new THREE.Vector3();
-            docBillboardPos.x = parseFloat(docData[14]);
-            docBillboardPos.y = parseFloat(docData[15]);
-            docBillboardPos.z = parseFloat(docData[16]);
+            docBillboardPos.x = 1;
+            docBillboardPos.y = 1;
+            docBillboardPos.z = 1;
 
             var doc = new Document(docTitle,docIndex,doc_ID,docImageSourceHD,docImageSourceBD,docBillboardPos,docViewPos,docViewQuat,docStartDate,docMetaData);
 
@@ -183,6 +189,7 @@ console.log("ini");
 
         // load the first doc as current doc
         this.currentDoc = this.AllDocuments[0];
+        console.log(this.currentDoc);
 
         this.updateBrowser();
 
@@ -202,7 +209,8 @@ console.log("ini");
     //==========================================================================
     this.loadDataFromFile = function loadDataFromFile(){
 
-        readCSVFile(CSVdataFile, this.initialize.bind(this));
+        this.initialize(jsonDataFromDB);
+        //readCSVFile(CSVdataFile, this.initialize.bind(this));
 
     }
 

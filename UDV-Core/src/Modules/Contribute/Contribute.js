@@ -8,6 +8,7 @@ import './DocumentPositioner.js';
 
 export function Contribute(view, controls, dataFile, options = {}) {
 
+  //Contribute Mode: start window
   var contriDiv = document.createElement("div");
   contriDiv. id = "contributeModeWindow";
   document.body.appendChild(contriDiv);
@@ -21,8 +22,19 @@ export function Contribute(view, controls, dataFile, options = {}) {
   formDiv.id = 'aform';
   document.body.appendChild(formDiv);
 
+  var link = document.createElement('link');
+  link.setAttribute('rel', 'stylesheet');
+  link.setAttribute('type', 'text/css');
+  link.setAttribute('href', '/src/Modules/Contribute/Contribute.css');
+  document.getElementsByTagName('head')[0].appendChild(link);
+
+  var meta = document.createElement('meta');
+  meta.setAttribute('charset', "UTF-8");
+  document.getElementsByTagName('head')[0].appendChild(meta);
+
 
 //  <input type="file" accept="image/*" name="link" id="link" onchange="preview_image(event)"/>\
+  //Window CREATE MODE
   document.getElementById("aform").innerHTML =
   '<div id="CreateDocWindow">\
   <div id="imageInfo" style="display:none">\
@@ -40,19 +52,8 @@ export function Contribute(view, controls, dataFile, options = {}) {
   <div id = "divButtons">\
   <button id = "showDocTab">Place doc</button>\
   <button id = "submitButton">Submit</button>\
+  <button id = "closeCreateDoc">Close</button>\
   </div>\
-  </div>\
-  ';
-
-  var divList = document.createElement("div");
-  divList.id = 'divList';
-  document.body.appendChild(divList);
-
-  document.getElementById("divList").innerHTML = '<SELECT id ="listOfDocuments">\
-  </SELECT>\
-  <div id="newAlpacaForm" name = "newAlpacaForm">\
-  </div>\
-  <div id = "updateFormButtons">\
   </div>\
   ';
 
@@ -63,15 +64,58 @@ export function Contribute(view, controls, dataFile, options = {}) {
        "optionsSource": options
   });
 
-  var link = document.createElement('link');
-  link.setAttribute('rel', 'stylesheet');
-  link.setAttribute('type', 'text/css');
-  link.setAttribute('href', '/src/Modules/Contribute/Contribute.css');
-  document.getElementsByTagName('head')[0].appendChild(link);
+  //Window UPDATE MODE
+  var updateModeWindow = document.createElement("div");
+  updateModeWindow.id = 'updateModeWindow';
+  document.body.appendChild(updateModeWindow);
 
-  var meta = document.createElement('meta');
-  meta.setAttribute('charset', "UTF-8");
-  document.getElementsByTagName('head')[0].appendChild(meta);
+  document.getElementById("updateModeWindow").innerHTML = '<SELECT id ="listOfDocuments">\
+  </SELECT>\
+  <div id="newAlpacaForm" name = "newAlpacaForm">\
+  </div>\
+  <div id = "updateFormButtons">\
+    <button id = "saveUpdateButton">Save modifications</button>\
+    <button id = "closeUpdateForm">Cancel modifications</button>\
+  </div>\
+  ';
+
+  $("#newAlpacaForm").alpaca({
+    "schemaSource": {
+      "title": "Updating selecting file...",
+      "type": "object",
+      "properties": {
+          "description": {
+              "type": "string",
+              "title": "Description of the file"
+          },
+          "idDocument": {
+              "type": "string",
+              "title": "ID of the document"
+          },
+          "publicationDate":{
+            "title":"Publication date",
+            "type":"string"
+          },
+          "refDate":{
+            "title":"Referring date",
+            "type":"string"
+          },
+          "subject":{
+            "title":"Subject",
+            "type":"string"
+          },
+          "title":{
+            "title":"Title of the doc",
+            "type":"string"
+          },
+          "type":{
+            "title":"Type of the doc",
+            "type":"string"
+          }
+      }
+    }
+  });
+
 
   ///////////// Class attributes
   // Whether this window is currently displayed or not.
@@ -82,16 +126,6 @@ export function Contribute(view, controls, dataFile, options = {}) {
   confirmDeleteButton.id = "confirmDelete";
   var text = document.createTextNode("Delete selected doc");
   confirmDeleteButton.appendChild(text);
-
-  var cancelUpdateButton = document.createElement("button");
-  cancelUpdateButton.id = "closeUpdateForm";
-  var text = document.createTextNode("Cancel modifications");
-  cancelUpdateButton.appendChild(text);
-
-  var saveUpdateButton = document.createElement("button");
-  saveUpdateButton.id = "saveTab";
-  var text = document.createTextNode('Save modifications');
-  saveUpdateButton.appendChild(text);
 
   this.contributeMode = "default";
   this.storedData = new Object();
@@ -135,21 +169,45 @@ export function Contribute(view, controls, dataFile, options = {}) {
 
   this.handleDocUpdate = function handleDocUpdate(){
     this.contributeMode = "update";
-    document.getElementById("updateFormButtons").appendChild(cancelUpdateButton);
-    document.getElementById("updateFormButtons").appendChild(saveUpdateButton);
-    DisplayDocumentsInList(this.storedData, this.contributeMode);
+    DisplayDocumentsInUpdateForm(this.storedData, this.contributeMode);
     //GetAllDocuments(this.contributeMode);
   }
 
   this.handleDocDeletion = function handleDocDeletion(){
     this.contributeMode = "delete";
-    //DisplayDocumentsInList(this.storedData, this.contributeMode)
+    DisplayDocumentsInDeleteBrowser(this.storedData, this.contributeMode)
+  }
+  function jSONtoCSV(objArray){
+    var array = typeof objArray != 'object' ? JSON.parse(objArray) : objArray;
+              var str = '';
+              for (var i = 0; i < array.length; i++) {
+                  var line = '';
+                  for (var index in array[i]) {
+                      if (line != '') line += ','
+                      line += array[i][index];
+                  }
+                  str += line + '\r\n';
+              }
+              return str;
+  }
+
+  this.closeDocCreation = function closeDocCreation(){
+    console.log("closing create windw");
+    document.getElementById('CreateDocWindow').style.display ="none";
+    var csv_test = jSONtoCSV(this.storedData);
+  console.log(csv_test);
+
+  }
+  this.closeUpdateWindow = function closeUpdateWindow(){
+    document.getElementById('updateModeWindow').style.display = "none";
   }
 
   // event listeners for buttons
   document.getElementById("createButton").addEventListener('mousedown', this.handleDocCreation.bind(this),false);
   document.getElementById("updateButton").addEventListener('mousedown', this.handleDocUpdate.bind(this),false);
   document.getElementById("deleteButton").addEventListener('mousedown', this.handleDocDeletion.bind(this),false);
+  document.getElementById("closeCreateDoc").addEventListener('mousedown', this.closeDocCreation.bind(this),false);
+  //document.getElementById('closeUpdateForm').addEventListener("mousedown",this.closeUpdateWindow.bind(this),false);
 
 
   var positioner = new udvcore.DocumentPositioner(view, controls, dataFile, options = {});
@@ -157,6 +215,23 @@ export function Contribute(view, controls, dataFile, options = {}) {
   function PostCreateDoc(url, data, callback) {
     var req = new XMLHttpRequest();
     req.open("POST", url);
+    console.log(req.responseText);
+    req.addEventListener("load", function () {
+        if (req.status >= 200 && req.status < 400) {
+            callback(req.responseText);
+        } else {
+            console.error(req.status + " " + req.statusText + " " + url);
+        }
+    });
+    req.addEventListener("error", function () {
+        console.error("Network error with url: " + url);
+    });
+    req.send(data);
+  }
+
+  function PostUpdateDoc(url,data, callback){
+    var req = new XMLHttpRequest();
+    req.open('POST',url);
     console.log(req.responseText);
     req.addEventListener("load", function () {
         if (req.status >= 200 && req.status < 400) {
@@ -195,109 +270,40 @@ export function Contribute(view, controls, dataFile, options = {}) {
     return stored_data;
   }
 
-/*
-
-  function GetAllDocuments(contributeMode){
-    //var myArr= GetAllStoredDocs();
-    DisplayDocumentsInList(myArr, contributeMode);
-
-    for(var i= 0; i < myArr.length; i++)
-    {
-      var x = document.getElementById("listOfDocuments");
-      var newEntree = document.createElement("option");
-      newEntree.text = myArr[i].metadata.id;
-      x.add(newEntree);
-    }
-  }*/
-
 function ConfirmDeleteOneDocument(myid){
   var url = "http://rict.liris.cnrs.fr/APIVilo3D/APIExtendedDocument/web/app_dev.php/deleteDocument/" + myid;
   DeleteDoc(url, function(){});
 }
 
-function DisplayDocumentsInList(json_of_json, contributeMode){
-  if(contributeMode == "delete"){
-    document.getElementById("updateFormButtons").appendChild(confirmDeleteButton);
-    document.getElementById("updateFormButtons").appendChild(cancelUpdateButton);
-    document.getElementById('confirmDelete').addEventListener("mousedown", function(e){
-      var x=$("#listOfDocuments").val();
-      ConfirmDeleteOneDocument(x);
-      alert('The document was successfully deleted');
-      var y = document.getElementById("listOfDocuments");
-      y.remove(x);
-      alert('The document was successfully deleted');
-      document.getElementById('divList').style.display = "none";
-      contributeMode="default";
-    });
-  }
-
-  else{
-    if(contributeMode == "update"){
-      console.log("entering update mode");
-
-    }
-  }
-  $("#newAlpacaForm").alpaca({
-    "schemaSource": {
-      "title": "Updating selecting file...",
-      "type": "object",
-      "properties": {
-          "description": {
-              "type": "string",
-              "title": "Description of the file"
-          },
-          "idDocument": {
-              "type": "string",
-              "title": "ID of the document"
-          },
-          "publicationDate":{
-            "title":"Publication date",
-            "type":"string"
-          },
-          "refDate":{
-            "title":"Referring date",
-            "type":"string"
-          },
-          "subject":{
-            "title":"Subject",
-            "type":"string"
-          },
-          "title":{
-            "title":"Title of the doc",
-            "type":"string"
-          },
-          "type":{
-            "title":"Type of the doc",
-            "type":"string"
-          }
+function DisplayDocumentsInUpdateForm(json_of_json, contributeMode){
+  var id;
+  $('#listOfDocuments').on('change', function() {
+    id = parseInt(this.value);
+    console.log(id);
+    for (var i = 0; i < json_of_json.length; i++) {
+      if (json_of_json[i]['idDocument'] === id) {
+        var  data = json_of_json[i].metadata;
+        console.log(data);
+        break;
       }
     }
-  });
-    var id;
-    $('#listOfDocuments').on('change', function() {
-      id = parseInt(this.value);
-      console.log(id);
-      for (var i = 0; i < json_of_json.length; i++) {
-        if (json_of_json[i]['idDocument'] === id) {
-          var  data = json_of_json[i].metadata;
-          console.log(data);
-          break;
-        }
-      }
-      //dynamicaly update form data
-      $("#newAlpacaForm").alpaca('get').setValue(data);
-    })
+    //dynamicaly update form data
+    $("#newAlpacaForm").alpaca('get').setValue(data);
+  })
+  //display update form
+  document.getElementById('updateModeWindow').style.display = "block";
+  }
 
-    document.getElementById('divList').style.display = "block";
-    document.getElementById('closeUpdateForm').addEventListener("mousedown",this.closeUpdateWindow.bind(this),false);
-    //jquery => update browser with current doc (doc selected in the list)
-  } //end of function DisplayDocumentsInList
+  function DisplayDocumentsInDeleteBrowser(existingData, contributeMode){
 
+    document.getElementById('docBrowserWindow').style.display = "block";
+
+  }
 
   document.getElementById('submitButton').addEventListener("mousedown", function(e){
         e.preventDefault();
         //gets form data
-        var data = new FormData(document.getElementById("alpaca2"));
+        var data = new FormData(document.getElementById("alpaca3"));
         console.log(data);
         var cam = positioner.getCameraPosition();
         // update data with camera position
@@ -313,16 +319,14 @@ function DisplayDocumentsInList(json_of_json, contributeMode){
         PostCreateDoc("http://rict.liris.cnrs.fr/APIVilo3D/APIExtendedDocument/web/app_dev.php/addDocument", data, function(){});
         alert("posted");
         //clear all form fields
-        $("#alpaca2").get(0).reset();
+        $("#alpaca3").get(0).reset();
         //close document positionner
         document.getElementById('docPositionerFull').style.display = "none";
         //close form
         document.getElementById('CreateDocWindow').style.display = "none";
       });
 
-/*
-
-      document.getElementById('saveTab').addEventListener("mousedown", function(e){
+      document.getElementById('saveUpdateButton').addEventListener("mousedown", function(e){
           e.preventDefault();
           //gets form data
           var data = $("#newAlpacaForm").alpaca('Fields').getValue();
@@ -336,8 +340,8 @@ function DisplayDocumentsInList(json_of_json, contributeMode){
           var cam = positioner.getCameraPosition();
           form_data.append("positionY", cam.position.y);
           form_data.append("quaternionX", cam.quaternion.x);
-          PostUpdateDoc("http://rict.liris.cnrs.fr/APIVilo3D/APIExtendedDocument/web/app_dev.php/editDocument/",form_data, function() {});
+          PostUpdateDoc("http://rict.liris.cnrs.fr/APIVilo3D/APIExtendedDocument/web/app_dev.php/editDocument/" + id,form_data, function() {});
           alert("posted");
+//          closeUpdateWindow();
         });
-*/
 }

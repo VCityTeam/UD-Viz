@@ -40,7 +40,6 @@ export function HelpWindow( options={} ) {
     this.activateWindow = function activateWindow( active ){
       if (typeof active != 'undefined') {
         this.windowIsActive = active;
-        //console.log('coucou');
       }
       document.getElementById('helpWindow').style.display =
                               active ? "block" : "none" ;
