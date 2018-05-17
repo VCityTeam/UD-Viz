@@ -58,7 +58,7 @@ export function Contribute(view, controls, storedData, options = {}) {
   </div>\
   ';
 
-  var schema = "http://rict.liris.cnrs.fr/schema.json";
+  var schema = "http://rict.liris.cnrs.fr/schema.json.save";
      var options = "http://rict.liris.cnrs.fr/options.json";
      $("#alpacaForm").alpaca({
        "schemaSource": schema,
