@@ -80,6 +80,10 @@ export function Contribute(view, controls, storedData, options = {}) {
   </div>\
   ';
 
+  $('#newAlpacaForm').alpaca({
+    "schemaSource":schema
+  });
+/*
   $("#newAlpacaForm").alpaca({
     "schemaSource": {
       "title": "Updating selecting file...",
@@ -115,7 +119,7 @@ export function Contribute(view, controls, storedData, options = {}) {
           }
       }
     }
-  });
+  });*/
 
 
   ///////////// Class attributes
@@ -203,19 +207,27 @@ export function Contribute(view, controls, storedData, options = {}) {
   var positioner = new udvcore.DocumentPositioner(view, controls, storedData, options = {});
 
   function PostCreateDoc(url, data, callback) {
+    var stat = false; //1 of OK 0 if not ok
     var req = new XMLHttpRequest();
     req.open("POST", url);
     req.addEventListener("load", function () {
         if (req.status >= 200 && req.status < 400) {
+            stat = true;
             callback(req.responseText);
+            alert('Posted');
+
         } else {
             console.error(req.status + " " + req.statusText + " " + url);
+            console.log("problem");
+            stat = false;
         }
     });
     req.addEventListener("error", function () {
         console.error("Network error with url: " + url);
+        stat = false;
     });
     req.send(data);
+    return stat;
   }
 
   function PostUpdateDoc(url,data, callback){
@@ -235,25 +247,6 @@ export function Contribute(view, controls, storedData, options = {}) {
     req.send(data);
   }
 
-/*
-  this.GetAllStoredDocs = function GetAllStoredDocs(){
-    //console.log(contributeMode);
-    var req = new XMLHttpRequest();
-    var url = "http://rict.liris.cnrs.fr/APIVilo3D/APIExtendedDocument/web/app_dev.php/getDocuments";
-    req.open("GET", url);
-    req.send();
-    alert(req.statusText);
-    var stored_data = JSON.parse(req.responseText);
-    for(var i= 0; i < stored_data.length; i++)
-    {
-      var x = document.getElementById("listOfDocuments");
-      var newEntree = document.createElement("option");
-      newEntree.text = stored_data[i].metadata.id;
-      x.add(newEntree);
-    }
-    return stored_data;
-  }*/
-
 this.ConfirmDeleteOneDocument = function ConfirmDeleteOneDocument(){
 var myid =   this.documents.currentDoc.doc_ID
   var url = "http://rict.liris.cnrs.fr/APIVilo3D/APIExtendedDocument/web/app_dev.php/deleteDocument/" + myid;
@@ -267,7 +260,6 @@ var myid =   this.documents.currentDoc.doc_ID
 }
 
 function DisplayDocumentsInUpdateForm(json_of_json, contributeMode){
-
   var id;
   $('#listOfDocuments').on('change', function() {
     id = parseInt(this.value);
@@ -293,56 +285,54 @@ function DisplayDocumentsInUpdateForm(json_of_json, contributeMode){
 
   document.getElementById('confirmDelete').addEventListener("mousedown", this.ConfirmDeleteOneDocument.bind(this),false);
 
-
   document.getElementById('submitButton').addEventListener("mousedown", function(e){
-        //e.preventDefault();
         //gets form data
-        var data = new FormData(document.getElementById("alpaca3"));
-
-  //      var form_data = $("#alpacaForm").alpaca('Fields').getValue();
-/*
-        var data = new FormData();
-        for ( var key in form_data ) {
-          data.append(key, form_data[key]);
-        }*/
-
+        var form_data = new FormData(document.getElementById('myAlpacaForm'));
         var cam = positioner.getCameraPosition();
         // update data with camera position
         //data.append("positionX", cam.position.x);
-        data.append("positionY", cam.position.y);
+        form_data.append("positionY", cam.position.y);
         //data.append("positionZ", cam.position.z);
-        data.append("quaternionX",cam.quaternion.y);
+        form_data.append("quaternionX",cam.quaternion.y);
         //data.append("quaternionY", cam.quaternion.y);
         //data.append("quaternionZ", cam.quaternion.z);
         //data.append("quaternionW", cam.quaternion.w);
         //post data and execute script to process data
-        PostCreateDoc("http://rict.liris.cnrs.fr/APIVilo3D/APIExtendedDocument/web/app_dev.php/addDocument", data, function(){});
-      alert("posted");
-        //clear all form fields
-
-//        $("#alpacaForm").get(0).reset();
-        //close document positionner
-        document.getElementById('docPositionerFull').style.display = "none";
-        //close form
-        document.getElementById('CreateDocWindow').style.display = "none";
-
+        var creationStatus = PostCreateDoc("http://rict.liris.cnrs.fr/APIVilo3D/APIExtendedDocument/web/app_dev.php/addDocument",form_data, function(){});
+        console.log(creationStatus);
+        if (creationStatus==true){
+          //clear all form fields
+          $("#myAlpacaForm").get(0).reset();
+          //close document positionner
+          document.getElementById('docPositionerFull').style.display = "none";
+          //close form
+          document.getElementById('CreateDocWindow').style.display = "none";
+        }
+        else{
+                    alert('Document could not be created');
+        }
+//debug
+/*
+  for (var pair of form_data.entries()) {
+      console.log(pair[0]+ ', ' + pair[1]);
+  }*/
       });
 
       document.getElementById('saveUpdateButton').addEventListener("mousedown", function(e){
           e.preventDefault();
           //gets form data
           var data = $("#newAlpacaForm").alpaca('Fields').getValue();
-          var form_data = new FormData();
-          for ( var key in data ) {
+        //  var form_data = new FormData();
+          var form_data = new FormData(document.getElementById('newAlpacaForm'));
+          /*for ( var key in data ) {
             form_data.append(key, data[key]);
-          }
-
+          }*/
           var id = document.getElementById('listOfDocuments').value;          //console.log(form_data);
 
           var cam = positioner.getCameraPosition();
           form_data.append("positionY", cam.position.y);
           form_data.append("quaternionX", cam.quaternion.x);
-          PostUpdateDoc("http://rict.liris.cnrs.fr/APIVilo3D/APIExtendedDocument/web/app_dev.php/editDocument/" + id,form_data, function() {});
+    //      PostUpdateDoc("http://rict.liris.cnrs.fr/APIVilo3D/APIExtendedDocument/web/app_dev.php/editDocument/" + id,form_data, function() {});
           alert("posted. Please reload webbrowser to see changes");
 //          closeUpdateWindow();
 
