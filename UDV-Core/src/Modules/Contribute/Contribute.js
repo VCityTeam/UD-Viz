@@ -11,12 +11,12 @@ export function Contribute(view, controls, storedData, options = {}) {
 
   //Contribute Mode: start window
   var contriDiv = document.createElement("div");
-  contriDiv. id = "contributeModeWindow";
+  contriDiv. id = "startContributeWindow";
   document.body.appendChild(contriDiv);
-  document.getElementById("contributeModeWindow").innerHTML =
-  '<button id = "createButton">Create new doc</button>\
-  <button id = "updateButton">Update my docs</button>\
-  <button id = "deleteButton">Delete one of my docs</button>\
+  document.getElementById("startContributeWindow").innerHTML =
+  '<div id = "filtersWindow"></div>\
+  <button id = "docInBrowser">Browser</button>\
+  <button id = "docInBillboard">Billboards</button>\
   ';
 
   var formDiv = document.createElement("div");
@@ -65,6 +65,7 @@ export function Contribute(view, controls, storedData, options = {}) {
        "optionsSource": options
   });
 
+
   //Window UPDATE MODE
   var updateModeWindow = document.createElement("div");
   updateModeWindow.id = 'updateModeWindow';
@@ -83,44 +84,14 @@ export function Contribute(view, controls, storedData, options = {}) {
   $('#newAlpacaForm').alpaca({
     "schemaSource":schema
   });
-/*
-  $("#newAlpacaForm").alpaca({
-    "schemaSource": {
-      "title": "Updating selecting file...",
-      "type": "object",
-      "properties": {
-          "description": {
-              "type": "string",
-              "title": "Description of the file"
-          },
-          "idDocument": {
-              "type": "string",
-              "title": "ID of the document"
-          },
-          "publicationDate":{
-            "title":"Publication date",
-            "type":"string"
-          },
-          "refDate":{
-            "title":"Referring date",
-            "type":"string"
-          },
-          "subject":{
-            "title":"Subject",
-            "type":"string"
-          },
-          "title":{
-            "title":"Title of the doc",
-            "type":"string"
-          },
-          "type":{
-            "title":"Type of the doc",
-            "type":"string"
-          }
-      }
-    }
-  });*/
 
+
+  var schemaFilter = "http://rict.liris.cnrs.fr/schemaFilter.json";
+  var optionsFilter = "http://rict.liris.cnrs.fr/optionsFilter.json";
+  $('#filtersWindow').alpaca({
+    "schemaSource":schemaFilter,
+    "optionsSource":optionsFilter
+  });
 
   ///////////// Class attributes
   // Whether this window is currently displayed or not.
@@ -142,7 +113,7 @@ export function Contribute(view, controls, storedData, options = {}) {
     if (typeof active != 'undefined') {
       this.windowIsActive = active;
     }
-    document.getElementById('contributeModeWindow').style.display = active ? "block" : "none" ;
+    document.getElementById('startContributeWindow').style.display = active ? "block" : "none" ;
   }
 
   this.refresh = function refresh( ){
@@ -152,29 +123,30 @@ export function Contribute(view, controls, storedData, options = {}) {
   //var documents = new udvcore.DocumentsHandlerBIS(this.view, this.controls, this.storedData, {temporal: temporal} );
 
   this.initialize = function initialize(){
+
     var req = new XMLHttpRequest();
     var url = "http://rict.liris.cnrs.fr/APIVilo3D/APIExtendedDocument/web/app_dev.php/getDocuments";
     req.open("GET", url);
     req.send();
     alert(req.statusText);
     this.storedData = JSON.parse(req.responseText);
-    for(var i= 0; i < this.storedData.length; i++)
+    for(var i= 0; i < storedData.length; i++)
     {
       var x = document.getElementById("listOfDocuments");
       var newEntree = document.createElement("option");
-      newEntree.text = this.storedData[i].metadata.id;
+      newEntree.text = storedData[i].metadata.id;
       x.add(newEntree);
     }
 }
 
   ///////////// Initialization
   this.refresh( );
-  this.initialize(storedData);
+  this.initialize();
 
   //
   this.handleDocCreation = function handleDocCreation(){
     this.contributeMode = "create";
-    document.getElementById('contributeModeWindow').style.display = "none";
+    document.getElementById('startContributeWindow').style.display = "none";
     document.getElementById('CreateDocWindow').style.display ="block";
   }
 
@@ -186,7 +158,7 @@ export function Contribute(view, controls, storedData, options = {}) {
 
   this.handleDocDeletion = function handleDocDeletion(){
     this.contributeMode = "delete";
-    DisplayDocumentsInDeleteBrowser(this.storedData, this.contributeMode)
+    DisplayDocumentsInBrowser(this.storedData, this.contributeMode)
   }
 
   this.closeDocCreation = function closeDocCreation(){
@@ -196,15 +168,37 @@ export function Contribute(view, controls, storedData, options = {}) {
     document.getElementById('updateModeWindow').style.display = "none";
   }
 
+//  function GetAllDocuments() =
+
+  this.displayDocInBrowser = function displayDocInBrowser(){
+  //check what filters are activated
+  //  var data = $("#filterForm").alpaca('Fields').getValue();
+  var form_data = new FormData(document.getElementById('filterForm'));
+
+  //get documents with or without filters.
+  var req = new XMLHttpRequest();
+  var url = "http://rict.liris.cnrs.fr/APIVilo3D/APIExtendedDocument/web/app_dev.php/getDocuments";
+  req.open("GET", url);
+  req.send();
+  alert(req.statusText);
+//  console.log(req.responseText);
+  var filtered_data = JSON.parse(req.responseText);
+  //console.log(testData[0]);
+  //display doc in browser
+  var documents = new udvcore.DocumentsHandlerBIS(view, controls, filtered_data, {temporal: temporal} );
+  document.getElementById('docBrowserWindow').style.display = "block";
+//testing get doc with filter
+  }
+
   // event listeners for buttons
-  document.getElementById("createButton").addEventListener('mousedown', this.handleDocCreation.bind(this),false);
-  document.getElementById("updateButton").addEventListener('mousedown', this.handleDocUpdate.bind(this),false);
-  document.getElementById("deleteButton").addEventListener('mousedown', this.handleDocDeletion.bind(this),false);
+  document.getElementById("docInBrowser").addEventListener('mousedown', this.displayDocInBrowser.bind(this),false);
+  //document.getElementById("updateButton").addEventListener('mousedown', this.handleDocUpdate.bind(this),false);
+  //document.getElementById("deleteButton").addEventListener('mousedown', this.handleDocDeletion.bind(this),false);
   document.getElementById("closeCreateDoc").addEventListener('mousedown', this.closeDocCreation.bind(this),false);
   document.getElementById('closeUpdateForm').addEventListener("mousedown",this.closeUpdateWindow.bind(this),false);
 
 
-  var positioner = new udvcore.DocumentPositioner(view, controls, storedData, options = {});
+//  var positioner = new udvcore.DocumentPositioner(view, controls, storedData, options = {});
 
   function PostCreateDoc(url, data, callback) {
     var stat = false; //1 of OK 0 if not ok
@@ -248,6 +242,7 @@ export function Contribute(view, controls, storedData, options = {}) {
   }
 
 this.ConfirmDeleteOneDocument = function ConfirmDeleteOneDocument(){
+  if(confirm('Delete this document permanently?')){
 var myid =   this.documents.currentDoc.doc_ID
   var url = "http://rict.liris.cnrs.fr/APIVilo3D/APIExtendedDocument/web/app_dev.php/deleteDocument/" + myid;
   var req = new XMLHttpRequest();
@@ -255,7 +250,10 @@ var myid =   this.documents.currentDoc.doc_ID
   req.send();
   alert("The document has been deleted successfully");
   document.getElementById('docBrowserWindow').style.display = "none";
-  document.reload();
+}
+else{
+  alert('you changed your mind');
+}
 
 }
 
@@ -277,9 +275,9 @@ function DisplayDocumentsInUpdateForm(json_of_json, contributeMode){
   document.getElementById('updateModeWindow').style.display = "block";
   }
 
-  function DisplayDocumentsInDeleteBrowser(existingData, contributeMode){
+  function DisplayDocumentsInBrowser(existingData, contributeMode){
 
-    document.getElementById('docBrowserWindow').style.display = "block";
+  //  document.getElementById('docBrowserWindow').style.display = "block";
 
   }
 
@@ -321,7 +319,7 @@ function DisplayDocumentsInUpdateForm(json_of_json, contributeMode){
       document.getElementById('saveUpdateButton').addEventListener("mousedown", function(e){
           e.preventDefault();
           //gets form data
-          var data = $("#newAlpacaForm").alpaca('Fields').getValue();
+      //    var data = $("#newAlpacaForm").alpaca('Fields').getValue();
         //  var form_data = new FormData();
           var form_data = new FormData(document.getElementById('newAlpacaForm'));
           /*for ( var key in data ) {

@@ -136,8 +136,6 @@ export function DocumentsHandlerBIS(view, controls, jsonDataFromDB, options = {}
         // therefore docIndex is equal to "i", but we specify it in the csv for clarity (we need docIndex for the guided tour csv)
         // the difference between docIndex and doc_ID (used by historians) should be settled asap
 
-console.log("ini");
-console.log(docDataFromDB);
 
         for (var i=0; i<docDataFromDB.length; i++) {
 
@@ -189,7 +187,7 @@ console.log(docDataFromDB);
 
         // load the first doc as current doc
         this.currentDoc = this.AllDocuments[0];
-        console.log(this.currentDoc);
+        //console.log(this.currentDoc);
 
         this.updateBrowser();
 

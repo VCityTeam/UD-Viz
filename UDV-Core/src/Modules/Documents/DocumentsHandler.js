@@ -130,7 +130,7 @@ export function DocumentsHandler(view, controls, dataFile, options = {}) {
     */
     //==========================================================================
     this.initialize = function initialize(docDataFromFile){
-console.log("ini");
+//console.log("ini");
         // fill the AllDocuments array with Documents objects
         // the Documents are placed in the order they are loaded, which is their line order in the csv file
         // the docIndex property is specified to be 0,1,2,3 etc... in the csv
@@ -391,8 +391,6 @@ console.log("ini");
 
         // if we have valid data, initiate the animated travel to orient the camera
         if(!isNaN(this.currentDoc.viewPosition.x) && !isNaN(this.currentDoc.viewQuaternion.x)){
-          console.log(this.currentDoc.viewPosition );
-          console.log(this.currentDoc.viewQuaternion);
           this.controls.initiateTravel(this.currentDoc.viewPosition,"auto",this.currentDoc.viewQuaternion,true);
         }
 

@@ -138,7 +138,7 @@ var help  = new udvcore.HelpWindow({active:true});
 //var documents =  new udvcore.DocumentsHandler(view,controls,'Vilo3D/docs.csv',{temporal: temporal});
 
 
-var documents = new udvcore.DocumentsHandler(view, controls, "http://rict.liris.cnrs.fr/DataStore/Vilo3Ddocs/docs.csv", {temporal: temporal} );
+//var documents = new udvcore.DocumentsHandler(view, controls, "http://rict.liris.cnrs.fr/DataStore/Vilo3Ddocs/docs.csv", {temporal: temporal} );
 //var documents = new udvcore.DocumentsHandlerBIS(view, controls, storedData, {temporal: temporal} );
 
 var contri = new udvcore.Contribute(view, controls, storedData, {temporal: temporal});
@@ -192,9 +192,10 @@ var temporalOverlayCtrl = temporalFolder.add(
                                          ).name("Use Overlay").listen();
 
 // Document subwindow
+/*
 documentController = datDotGUI.add( documents, 'docBrowserWindowIsActive'
                                     ).name( "Documents" ).listen();
-documentController.onFinishChange( function(value) { documents.toggleDocBrowserWindow(); });
+documentController.onFinishChange( function(value) { documents.toggleDocBrowserWindow(); });*/
 
 contributeController = datDotGUI.add(contri,'windowIsActive'
                                     ).name("Contribute").listen();

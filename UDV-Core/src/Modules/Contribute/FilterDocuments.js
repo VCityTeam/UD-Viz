@@ -94,19 +94,5 @@ export function FilterDocuments(view, controls, dataFile, options = {}) {
     req.send();
   }
 
-  document.getElementById('docInBrowser').addEventListener("mousedown", function(e){
-      e.preventDefault();
-      //gets form data
-      var data = new FormData(document.getElementById("filterDocForm"));
-      // post data and execute script to process data
-      //ajaxGetDocs("http://rict.liris.cnrs.fr/py_script.py",data, function() {});
-      alert("getting docs");
-      //just to test:
-      document.getElementById("demo").innerHTML = data.get("startDate");
-
-       var docBrowser = new udvcore.DocumentsHandler(view, controls, "http://rict.liris.cnrs.fr/DataStore/Vilo3Ddocs/docs.csv", {temporal: temporal});
-
-       document.getElementById("docBrowserWindow").style.display = "block";
-    });
 
 }
