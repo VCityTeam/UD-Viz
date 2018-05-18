@@ -28,7 +28,7 @@ export function Contribute(view, controls, storedData, options = {}) {
   link.setAttribute('type', 'text/css');
   link.setAttribute('href', '/src/Modules/Contribute/Contribute.css');
   document.getElementsByTagName('head')[0].appendChild(link);
-
+//test
   var meta = document.createElement('meta');
   meta.setAttribute('charset', "UTF-8");
   document.getElementsByTagName('head')[0].appendChild(meta);
