@@ -16,9 +16,12 @@ var extent;
 
 var req = new XMLHttpRequest();
 var url = "http://rict.liris.cnrs.fr/APIVilo3D/APIExtendedDocument/web/app_dev.php/getDocuments";
-req.open("GET", url);
+req.open("GET", url,false);
 req.send();
-alert(req.statusText);
+req.onload = function () {
+  console.log('4 DONE', req.statusText);
+};
+//alert('Welcome');
 var storedData = JSON.parse(req.responseText);
 
 
@@ -136,10 +139,7 @@ var help  = new udvcore.HelpWindow({active:true});
 // default document for the demo of DocumentHandler class and place it
 // within src/Modules/Documents...
 //var documents =  new udvcore.DocumentsHandler(view,controls,'Vilo3D/docs.csv',{temporal: temporal});
-
-
 //var documents = new udvcore.DocumentsHandler(view, controls, "http://rict.liris.cnrs.fr/DataStore/Vilo3Ddocs/docs.csv", {temporal: temporal} );
-//var documents = new udvcore.DocumentsHandlerBIS(view, controls, storedData, {temporal: temporal} );
 
 var contri = new udvcore.Contribute(view, controls, storedData, {temporal: temporal});
 

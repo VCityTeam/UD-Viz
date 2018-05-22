@@ -47,6 +47,8 @@ export function DocumentsHandlerBIS(view, controls, jsonDataFromDB, options = {}
         <button id="docBrowserNextButton" type=button>⇨</button>\
         <button id="docBrowserPreviousButton" type=button>⇦</button>\
         <button id="docBrowserOrientButton" type=button>Orient Document</button>\
+        <button id="docDelete" type = button>Delete</button>\
+        <button id = "docOpaUpdate" type = button>Update</button>\
     </div>\
     <div id="docFull">\
         <img id="docFullImg"/>\
