@@ -6,23 +6,26 @@
 
 import '../Documents/DocumentsHandler.js';
 
-export function UpdateDoc(mydocument) {
+export function UpdateDoc(doc) {
 
-  this.docToUpdate = mydocument;
-  this.previewImage = mydocument.imageSourceBD;
-  this.id = mydocument.doc_ID;
+  this.previewImage = doc.imageSourceBD;
+  this.id = doc.doc_ID;
 
   this.initialize = function initialize(){
 
     document.getElementById('updateDocWindow').style.display = "block";
     document.getElementById('docBrowserWindow').style.display = "none";
 
-    $("#updateForm").alpaca('get').setValue(this.docToUpdate);
+    $("#updateForm").alpaca('get').setValue(doc);
     document.getElementById('filePreview').src = this.previewImage;
 
   }
+
   this.initialize();
 
+  // save documents update
+  // using function PostUpdateDoc
+  //=========================================================================
   this.saveUpdate = function saveUpdate(){
     var form_data = new FormData(document.getElementById('updateForm'));
     //debug
@@ -34,6 +37,9 @@ export function UpdateDoc(mydocument) {
     this.closeUpdateWindow();
   }
 
+
+  // close the updatewindow
+  //=========================================================================
   this.closeUpdateWindow = function closeUpdateWindow(){
     document.getElementById('updateDocWindow').style.display = "none";
   }
@@ -42,6 +48,9 @@ export function UpdateDoc(mydocument) {
   document.getElementById('saveUpdateButton').addEventListener("mousedown", this.saveUpdate.bind(this),false);
 
 }
+
+// POST document updates to a given URL (to the database)
+//=========================================================================
 
 function PostUpdateDoc(url,data, callback){
   var req = new XMLHttpRequest();

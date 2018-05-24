@@ -143,7 +143,7 @@ var help  = new udvcore.HelpWindow({active:true});
 
 var contri = new udvcore.Contribute(view, controls, storedData, {temporal: temporal}, mode);
 
-var pos = new udvcore.DocumentPositioner( view, controls, "http://rict.liris.cnrs.fr/DataStore/Vilo3Ddocs/docs.csv", {temporal: temporal} );
+//var pos = new udvcore.DocumentPositioner(view, controls, doc, options = {});
 
 var choice = new udvcore.FilterDocuments( view, controls, "http://rict.liris.cnrs.fr/DataStore/Vilo3Ddocs/docs.csv", {temporal: temporal} );
 
@@ -201,10 +201,10 @@ contributeController = datDotGUI.add(contri,'windowIsActive'
                                     ).name("Contribute").listen();
 
 contributeController.onFinishChange( function(value) { contri.refresh();});
-
+/*
 instruc = datDotGUI.add(pos,'windowIsActive').name("Instructions").listen();
 instruc.onFinishChange( function(value){ pos.refresh();});
-
+*/
 requestController = datDotGUI.add(choice, 'windowIsActive').name("Show doc").listen();
 requestController.onFinishChange( function(value){choice.refresh();});
 

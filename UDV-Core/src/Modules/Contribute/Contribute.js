@@ -66,18 +66,59 @@ export function Contribute(view, controls, storedData, options = {}, mode) {
   </div>\
   ';
 
-
   $("#alpacaForm").alpaca({
        "schemaSource": schema,
        "optionsSource": optionsCreate
   });
+
+  function readURL(input) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+
+            reader.onload = function (e) {
+                $('#docPositionerFullImg').attr('src', e.target.result);
+            }
+
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    $(":file").change(function(){
+console.log('hello');
+        readURL(this);
+    });
+
+  var posDiv = document.createElement("div");
+  posDiv.id = 'pos';
+  document.body.appendChild(posDiv);
+
+  document.getElementById("pos").innerHTML =
+  '<div id="docPositionerFull">\
+      <img id="docPositionerFullImg"/>\
+      <div id="docPositionerFullPanel">\
+          <button id="docPositionerClose" type=button>Close</button>\
+          <button id="CameraPositionTab" type=button>CameraPosition</button>\
+          <label id="docOpaLabel2" for="docOpaSlider2">Opacity</label>\
+          <input id="docOpaSlider2" type="range" min="0" max="100" value="75"\
+          step="1" oninput="docPositionerOpaUpdate(value)">\
+          <output for="docPositionerOpaSlider" id="docPositionedOpacity">50</output><br>\
+          <input id = "posX"><br>\
+          <input id = "posY"><br>\
+          <input id = "posZ"><br>\
+          <input id = "quatX"><br>\
+          <input id = "quatY"><br>\
+          <input id = "quatZ"><br>\
+          <input id = "quatW"><br>\
+      </div>\
+  </div>\
+  ';
 
   ///////////// Class attributes
   // Whether this window is currently displayed or not.
   this.windowIsActive = options.active || false;
   this.filtered_data = storedData;
   this.current;
-  var positioner = new udvcore.DocumentPositioner(view, controls, storedData, options = {});
+  //var positioner = new udvcore.DocumentPositioner(view, controls, storedData, options = {});
 
 //var mydocuments = new udvcore.DocumentsHandlerBIS(view, controls, storedData, {temporal: temporal} );
 
@@ -94,21 +135,48 @@ export function Contribute(view, controls, storedData, options = {}, mode) {
   }
 
   this.initialize = function initialize(){
-    /*
-    this.storedData = JSON.parse(req.responseText);
-    for(var i= 0; i < storedData.length; i++)
-    {
-      var x = document.getElementById("listOfDocuments");
-      var newEntree = document.createElement("option");
-      newEntree.text = storedData[i].metadata.id;
-      x.add(newEntree);
-    }
-    */
-}
+
+  }
 
   ///////////// Initialization
   this.refresh( );
   this.initialize();
+  this.getCameraPosition = function getCameraPosition(){
+  //    console.log(view.camera.camera3D.position );
+      var cam = view.camera.camera3D;
+      var position = cam.position;
+      var quaternion = cam.quaternion;
+      document.getElementById("posX").value = position.x;
+      document.getElementById("posY").value = position.y;
+      document.getElementById("posZ").value = position.z;
+      document.getElementById("quatX").value = quaternion.x;
+      document.getElementById("quatY").value = quaternion.y;
+      document.getElementById("quatZ").value = quaternion.z;
+      document.getElementById("quatW").value = quaternion.w;
+      return view.camera.camera3D;
+    }
+
+    this.showDocPositioner = function showDocPositioner() {
+
+      console.log("displaying document in the center");
+      document.getElementById('docPositionerFull').style.display = "block";
+      document.getElementById('docPositionerFullImg').src =
+      //controls.goToTopView();
+      document.getElementById('docPositionerClose').addEventListener('mousedown', this.getCameraPosition.bind(this), false);
+    }
+
+      // close the center window (oriented view / doc focus)
+      //=========================================================================
+      this.closeDocPositioner = function closeDocPositioner(){
+          document.getElementById('docPositionerFull').style.display = "none";
+          //document.getElementById('docFullImg').src = null;
+      }
+
+    // Close the window...when close button is hit
+    document.getElementById("showDocTab").addEventListener('mousedown', this.showDocPositioner.bind(this),false);
+    document.getElementById("docPositionerClose").addEventListener('mousedown', this.closeDocPositioner.bind(this),false);
+    document.getElementById("CameraPositionTab").addEventListener('mousedown', this.getCameraPosition.bind(this),false);
+
 
   this.handleDocCreation = function handleDocCreation(){
     this.contributeMode = "create";
@@ -153,7 +221,6 @@ export function Contribute(view, controls, storedData, options = {}, mode) {
       //add options billboard / browser in documentsHandler parameters
       var documents = new udvcore.DocumentsHandler(view, controls, this.filtered_data, {temporal: temporal} );
       document.getElementById('docBrowserWindow').style.display = "block";
-      document.getElementById('docDelete').addEventListener("mousedown", this.ConfirmDeleteOneDocument.bind(this),false);
       document.getElementById('docCreate').addEventListener("mousedown", this.handleDocCreation.bind(this),false);
   }
 }
@@ -187,24 +254,7 @@ export function Contribute(view, controls, storedData, options = {}, mode) {
     return stat;
   }
 
-this.ConfirmDeleteOneDocument = function ConfirmDeleteOneDocument(){
 
-  if(confirm('Delete this document permanently?')){
-    var myid =   this.documents.currentDoc.getDocID();
-    console.log("deletion");
-    console.log(myid);
-
-    var url = "http://rict.liris.cnrs.fr/APIVilo3D/APIExtendedDocument/web/app_dev.php/deleteDocument/" + myid;
-    var req = new XMLHttpRequest();
-    req.open("POST", url);
-    req.send();
-    alert("The document has been deleted successfully");
-    document.getElementById('docBrowserWindow').style.display = "none";
-  }
-  else {
-    alert('The document was not deleted');
-  }
-}
   document.getElementById('submitButton').addEventListener("mousedown", function(e){
         //gets form data
         var form_data = new FormData(document.getElementById('myCreationForm'));

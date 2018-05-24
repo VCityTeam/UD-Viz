@@ -4,7 +4,6 @@ import { MAIN_LOOP_EVENTS } from 'itowns';
 import { Document } from '../Documents/Document.js'
 import { readCSVFile } from '../../Tools/CSVLoader.js';
 import '../Documents/DocumentsHandler.css';
-import DefaultImage from '../Documents/DefaultImage.png';
 import './DocumentPositioner.css';
 
 ///help https://jsfiddle.net/vert3x/pv4oxrLd/

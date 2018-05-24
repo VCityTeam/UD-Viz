@@ -9,11 +9,11 @@ import './DocumentPositioner.css';
 
 
 
-export function DocumentPositioner(view, controls, dataFile, options = {}) {
+export function DocumentPositioner(view, controls, doc, options = {}) {
   // camera position for the oriented view
 
   this.view = view;
-
+/*
   var instructionDiv = document.createElement("div");
   instructionDiv.id = 'instruc';
   document.body.appendChild(instructionDiv);
@@ -36,7 +36,8 @@ export function DocumentPositioner(view, controls, dataFile, options = {}) {
      <button id ="showDocTab">Preview</button>\
   </div>\
   ';
-
+  */
+/*
 var posDiv = document.createElement("div");
 posDiv.id = 'pos';
 document.body.appendChild(posDiv);
@@ -60,14 +61,7 @@ document.getElementById("pos").innerHTML =
         <input id = "quatW"><br>\
     </div>\
 </div>\
-';
-
-  var link = document.createElement('link');
-  link.setAttribute('rel', 'stylesheet');
-  link.setAttribute('type', 'text/css');
-  link.setAttribute('href', '/src/Modules/Contribute/Contribute.css');
-  document.getElementsByTagName('head')[0].appendChild(link);
-
+';*/
 
   // PlanarControls instance, required for the oriented view TO DO
   this.controls = controls;
@@ -89,43 +83,7 @@ document.getElementById("pos").innerHTML =
     this.activateWindow( this.windowIsActive );
   }
 
-this.getCameraPosition = function getCameraPosition(){
-//    console.log(view.camera.camera3D.position );
-    var cam = view.camera.camera3D;
-    var position = cam.position;
-    var quaternion = cam.quaternion;
-    document.getElementById("posX").value = position.x;
-    document.getElementById("posY").value = position.y;
-    document.getElementById("posZ").value = position.z;
-    document.getElementById("quatX").value = quaternion.x;
-    document.getElementById("quatY").value = quaternion.y;
-    document.getElementById("quatZ").value = quaternion.z;
-    document.getElementById("quatW").value = quaternion.w;
-    return view.camera.camera3D;
-  }
 
-  this.showDocPositioner = function showDocPositioner() {
-    console.log("displaying document in the center");
-    document.getElementById('docPositionerFull').style.display = "block";
-    //controls.goToTopView();
-    document.getElementById('docPositionerClose').addEventListener('mousedown', this.getCameraPosition.bind(this), false);
-  }
-
-    // close the center window (oriented view / doc focus)
-    //=========================================================================
-    this.closeDocPositioner = function closeDocPositioner(){
-        document.getElementById('docPositionerFull').style.display = "none";
-        //document.getElementById('docFullImg').src = null;
-    }
-
-  // Close the window...when close button is hit
-  document.getElementById("instructionsCloseButton").addEventListener(
-       'mousedown', this.activateWindow.bind(this, false ), false);
-
-
-  document.getElementById("showDocTab").addEventListener('mousedown', this.showDocPositioner.bind(this),false);
-  document.getElementById("docPositionerClose").addEventListener('mousedown', this.closeDocPositioner.bind(this),false);
-  document.getElementById("CameraPositionTab").addEventListener('mousedown', this.getCameraPosition.bind(this),false);
   ///////////// Initialization
   this.refresh( );
 

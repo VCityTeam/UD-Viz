@@ -3,6 +3,7 @@
 * Description :
 * The Document Handler is an object holding and managing Document objects
 * It handles the display of documents in the document browser window, the central window, and billboards.
+*
 * Documents are objects with properties : source image, title, date, metadata, camera position,
 * camera quaternion (both for the oriented view) and billboard position
 */
@@ -13,6 +14,7 @@ import { Document } from './Document.js'
 import { readCSVFile } from '../../Tools/CSVLoader.js';
 import './DocumentsHandler.css';
 import DefaultImage from './DefaultImage.png';
+import '../Contribute/DocumentPositioner.js';
 
 
 // TO DO : pass showBillboardButton as an option to DocumentsHandler
@@ -79,8 +81,6 @@ export function DocumentsHandler(view, controls, jsonDataFromDB, options = {}) {
     </div>\
     ';
 
-
-
     var schema = "http://rict.liris.cnrs.fr/schemaType.json";
     var optionsUpdate = "http://rict.liris.cnrs.fr/optionsUpdate.json  ";
 
@@ -90,8 +90,9 @@ export function DocumentsHandler(view, controls, jsonDataFromDB, options = {}) {
     });
 
 
-    /////// Class attributes
 
+
+    /////// Class attributes
     // Whandleether the Document Handler sub window displaying controlling GUI elements
     // is currently displayed or not.
     this.docBrowserWindowIsActive = options.docBrowserWindowStartActive || false;
@@ -199,7 +200,6 @@ export function DocumentsHandler(view, controls, jsonDataFromDB, options = {}) {
             docBillboardPos.z = 1;
 
             var doc = new Document(docTitle,docIndex,doc_ID,docImageSourceHD,docImageSourceBD,docBillboardPos,docViewPos,docViewQuat,docRefDate, docPublicationDate,docDescription, docMetaData, docSubject);
-
             // we fill the AllDocuments array with the new doc
             // this doc is accessed using AllDocuments[docIndex]
             this.AllDocuments.push(doc);
@@ -412,6 +412,11 @@ export function DocumentsHandler(view, controls, jsonDataFromDB, options = {}) {
 
     }
 
+    this.handleDocDelete = function handleDocDelete(){
+      console.log('doc deletion');
+      var Delete = new udvcore.DeleteDoc(this.currentDoc);
+    }
+
     // triggers the "oriented view" of the current docIndex
     // this will display the doc image in the middle of the screen
     // and initiate the animated travel to orient the camera
@@ -523,6 +528,7 @@ export function DocumentsHandler(view, controls, jsonDataFromDB, options = {}) {
     document.getElementById("docBrowserPreviousButton").addEventListener('mousedown',this.previousDoc.bind(this),false);
     document.getElementById("docBrowserOrientButton").addEventListener('mousedown', this.focusOnDoc.bind(this),false);
     document.getElementById("docUpdate").addEventListener('mousedown', this.handleDocUpdate.bind(this),false);
+    document.getElementById("docDelete").addEventListener('mousedown', this.handleDocDelete.bind(this),false);
 
 
     // setup display
