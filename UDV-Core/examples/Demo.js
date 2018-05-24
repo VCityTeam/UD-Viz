@@ -12,6 +12,7 @@ var view;
 // itowns extent (city limits)
 var extent;
 // ====================
+var mode;
 
 
 var req = new XMLHttpRequest();
@@ -138,10 +139,9 @@ var help  = new udvcore.HelpWindow({active:true});
 // FIXME For the time being this demo uses the Vilo3D data. Provide a
 // default document for the demo of DocumentHandler class and place it
 // within src/Modules/Documents...
-//var documents =  new udvcore.DocumentsHandler(view,controls,'Vilo3D/docs.csv',{temporal: temporal});
-//var documents = new udvcore.DocumentsHandler(view, controls, "http://rict.liris.cnrs.fr/DataStore/Vilo3Ddocs/docs.csv", {temporal: temporal} );
+//var documents =  new udvcore.DocumentsHandlerEmmanuel(view,controls,'Vilo3D/docs.csv',{temporal: temporal});
 
-var contri = new udvcore.Contribute(view, controls, storedData, {temporal: temporal});
+var contri = new udvcore.Contribute(view, controls, storedData, {temporal: temporal}, mode);
 
 var pos = new udvcore.DocumentPositioner( view, controls, "http://rict.liris.cnrs.fr/DataStore/Vilo3Ddocs/docs.csv", {temporal: temporal} );
 

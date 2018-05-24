@@ -5,9 +5,9 @@ import $ from 'jquery';
 import 'alpaca';
 import 'bootstrap-datepicker'
 import './DocumentPositioner.js';
-import '../Documents/DocumentsHandlerBIS.js';
+import '../Documents/DocumentsHandler.js';
 
-export function Contribute(view, controls, storedData, options = {}) {
+export function Contribute(view, controls, storedData, options = {}, mode) {
 
   //Contribute Mode: start window
   var contriDiv = document.createElement("div");
@@ -18,6 +18,15 @@ export function Contribute(view, controls, storedData, options = {}) {
   <button id = "docInBrowser">Browser</button>\
   <button id = "docInBillboard">Billboards</button>\
   ';
+
+  var schemaFilter = "http://rict.liris.cnrs.fr/schemaFilter.json";
+  var optionsFilter = "http://rict.liris.cnrs.fr/optionsFilter.json";
+  var schema = "http://rict.liris.cnrs.fr/schemaType.json";
+  var optionsCreate = "http://rict.liris.cnrs.fr/optionsCreate.json";
+  $('#filtersWindow').alpaca({
+    "schemaSource":schema,
+    "optionsSource":optionsFilter
+  });
 
   var formDiv = document.createElement("div");
   formDiv.id = 'aform';
@@ -32,7 +41,6 @@ export function Contribute(view, controls, storedData, options = {}) {
   var meta = document.createElement('meta');
   meta.setAttribute('charset', "UTF-8");
   document.getElementsByTagName('head')[0].appendChild(meta);
-
 
 //  <input type="file" accept="image/*" name="link" id="link" onchange="preview_image(event)"/>\
   //Window CREATE MODE
@@ -58,55 +66,20 @@ export function Contribute(view, controls, storedData, options = {}) {
   </div>\
   ';
 
-  var schema = "http://rict.liris.cnrs.fr/schema.json.save";
-     var options = "http://rict.liris.cnrs.fr/options.json";
-     $("#alpacaForm").alpaca({
+
+  $("#alpacaForm").alpaca({
        "schemaSource": schema,
-       "optionsSource": options
-  });
-
-
-  //Window UPDATE MODE
-  var updateModeWindow = document.createElement("div");
-  updateModeWindow.id = 'updateModeWindow';
-  document.body.appendChild(updateModeWindow);
-
-  document.getElementById("updateModeWindow").innerHTML = '<SELECT id ="listOfDocuments">\
-  </SELECT>\
-  <div id="newAlpacaForm" name = "newAlpacaForm">\
-  </div>\
-  <div id = "updateFormButtons">\
-    <button id = "saveUpdateButton">Save modifications</button>\
-    <button id = "closeUpdateForm">Cancel modifications</button>\
-  </div>\
-  ';
-
-  $('#newAlpacaForm').alpaca({
-    "schemaSource":schema
-  });
-
-
-  var schemaFilter = "http://rict.liris.cnrs.fr/schemaFilter.json";
-  var optionsFilter = "http://rict.liris.cnrs.fr/optionsFilter.json";
-  $('#filtersWindow').alpaca({
-    "schemaSource":schemaFilter,
-    "optionsSource":optionsFilter
+       "optionsSource": optionsCreate
   });
 
   ///////////// Class attributes
   // Whether this window is currently displayed or not.
   this.windowIsActive = options.active || false;
-  //this.storeddata;
-  this.documents = new udvcore.DocumentsHandlerBIS(view, controls, storedData, {temporal: temporal} );
+  this.filtered_data = storedData;
+  this.current;
+  var positioner = new udvcore.DocumentPositioner(view, controls, storedData, options = {});
 
-  var confirmDeleteButton = document.createElement("button");
-  confirmDeleteButton.id = "confirmDelete";
-  var text = document.createTextNode("Delete selected doc");
-  confirmDeleteButton.appendChild(text);
-  document.getElementById('docBrowserWindow').appendChild(confirmDeleteButton);
-
-  this.contributeMode = "default";
-  //this.storedData = new Object();
+//var mydocuments = new udvcore.DocumentsHandlerBIS(view, controls, storedData, {temporal: temporal} );
 
   // Display or hide this window
   this.activateWindow = function activateWindow( active ){
@@ -120,15 +93,8 @@ export function Contribute(view, controls, storedData, options = {}) {
     this.activateWindow( this.windowIsActive );
   }
 
-  //var documents = new udvcore.DocumentsHandlerBIS(this.view, this.controls, this.storedData, {temporal: temporal} );
-
   this.initialize = function initialize(){
-
-    var req = new XMLHttpRequest();
-    var url = "http://rict.liris.cnrs.fr/APIVilo3D/APIExtendedDocument/web/app_dev.php/getDocuments";
-    req.open("GET", url);
-    req.send();
-    alert(req.statusText);
+    /*
     this.storedData = JSON.parse(req.responseText);
     for(var i= 0; i < storedData.length; i++)
     {
@@ -137,83 +103,80 @@ export function Contribute(view, controls, storedData, options = {}) {
       newEntree.text = storedData[i].metadata.id;
       x.add(newEntree);
     }
+    */
 }
 
   ///////////// Initialization
   this.refresh( );
   this.initialize();
 
-  //
   this.handleDocCreation = function handleDocCreation(){
     this.contributeMode = "create";
     document.getElementById('startContributeWindow').style.display = "none";
     document.getElementById('CreateDocWindow').style.display ="block";
   }
 
-  this.handleDocUpdate = function handleDocUpdate(){
-    this.contributeMode = "update";
-    DisplayDocumentsInUpdateForm(this.storedData, this.contributeMode);
-    //GetAllDocuments(this.contributeMode);
-  }
-
-  this.handleDocDeletion = function handleDocDeletion(){
-    this.contributeMode = "delete";
-    DisplayDocumentsInBrowser(this.storedData, this.contributeMode)
-  }
-
   this.closeDocCreation = function closeDocCreation(){
     document.getElementById('CreateDocWindow').style.display ="none";
   }
-  this.closeUpdateWindow = function closeUpdateWindow(){
-    document.getElementById('updateModeWindow').style.display = "none";
+
+  this.displayDocs = function displayDocs(){
+    //check which filters are activated
+    var form_data = new FormData(document.getElementById('filterForm'));
+    var entries = form_data.entries();
+
+    for (var pair of form_data.entries()){
+      console.log(pair[0]+ ', ' + pair[1]);
+    }
+    var chain = "http://rict.liris.cnrs.fr/APIVilo3D/APIExtendedDocument/web/app_dev.php/getDocuments?";
+
+    for(var pair of entries ){
+      if(pair[1]!=""){
+      chain+= pair[0] + "=" + pair[1];
+      chain+="&";
+    }
   }
-
-//  function GetAllDocuments() =
-
-  this.displayDocInBrowser = function displayDocInBrowser(){
-  //check what filters are activated
-  //  var data = $("#filterForm").alpaca('Fields').getValue();
-  var form_data = new FormData(document.getElementById('filterForm'));
-
-  //get documents with or without filters.
+  var chain = chain.slice('&',-1);
+  console.log(chain);
+  //get documents with or without filters
   var req = new XMLHttpRequest();
-  var url = "http://rict.liris.cnrs.fr/APIVilo3D/APIExtendedDocument/web/app_dev.php/getDocuments";
-  req.open("GET", url);
-  req.send();
-  alert(req.statusText);
-//  console.log(req.responseText);
-  var filtered_data = JSON.parse(req.responseText);
-  //console.log(testData[0]);
-  //display doc in browser
-  var documents = new udvcore.DocumentsHandlerBIS(view, controls, filtered_data, {temporal: temporal} );
-  document.getElementById('docBrowserWindow').style.display = "block";
-//testing get doc with filter
+    req.open("GET", chain,false);
+    req.send();
+    console.log(req.statusText);
+    this.filtered_data = JSON.parse(req.responseText);
+    //console.log(this.filtered_data);
+    //display doc in browser
+    if(this.filtered_data.length==0){
+      alert('No document found');
+    }
+    else{
+      //add options billboard / browser in documentsHandler parameters
+      var documents = new udvcore.DocumentsHandler(view, controls, this.filtered_data, {temporal: temporal} );
+      document.getElementById('docBrowserWindow').style.display = "block";
+      document.getElementById('docDelete').addEventListener("mousedown", this.ConfirmDeleteOneDocument.bind(this),false);
+      document.getElementById('docCreate').addEventListener("mousedown", this.handleDocCreation.bind(this),false);
   }
+}
 
   // event listeners for buttons
-  document.getElementById("docInBrowser").addEventListener('mousedown', this.displayDocInBrowser.bind(this),false);
-  //document.getElementById("updateButton").addEventListener('mousedown', this.handleDocUpdate.bind(this),false);
-  //document.getElementById("deleteButton").addEventListener('mousedown', this.handleDocDeletion.bind(this),false);
+  document.getElementById("docInBrowser").addEventListener('mousedown', this.displayDocs.bind(this),false);
   document.getElementById("closeCreateDoc").addEventListener('mousedown', this.closeDocCreation.bind(this),false);
-  document.getElementById('closeUpdateForm').addEventListener("mousedown",this.closeUpdateWindow.bind(this),false);
-
-
-//  var positioner = new udvcore.DocumentPositioner(view, controls, storedData, options = {});
 
   function PostCreateDoc(url, data, callback) {
-    var stat = false; //1 of OK 0 if not ok
+    console.log(data);
+    var stat = 0; //1 of OK 0 if not ok
     var req = new XMLHttpRequest();
     req.open("POST", url);
     req.addEventListener("load", function () {
         if (req.status >= 200 && req.status < 400) {
-            stat = true;
+            stat = 1;
             callback(req.responseText);
             alert('Posted');
 
         } else {
             console.error(req.status + " " + req.statusText + " " + url);
             console.log("problem");
-            stat = false;
+            stat = 0;
         }
     });
     req.addEventListener("error", function () {
@@ -224,68 +187,27 @@ export function Contribute(view, controls, storedData, options = {}) {
     return stat;
   }
 
-  function PostUpdateDoc(url,data, callback){
-    var req = new XMLHttpRequest();
-    req.open('POST',url);
-    console.log(req.responseText);
-    req.addEventListener("load", function () {
-        if (req.status >= 200 && req.status < 400) {
-            callback(req.responseText);
-        } else {
-            console.error(req.status + " " + req.statusText + " " + url);
-        }
-    });
-    req.addEventListener("error", function () {
-        console.error("Network error with url: " + url);
-    });
-    req.send(data);
-  }
-
 this.ConfirmDeleteOneDocument = function ConfirmDeleteOneDocument(){
+
   if(confirm('Delete this document permanently?')){
-var myid =   this.documents.currentDoc.doc_ID
-  var url = "http://rict.liris.cnrs.fr/APIVilo3D/APIExtendedDocument/web/app_dev.php/deleteDocument/" + myid;
-  var req = new XMLHttpRequest();
-  req.open("POST", url);
-  req.send();
-  alert("The document has been deleted successfully");
-  document.getElementById('docBrowserWindow').style.display = "none";
-}
-else{
-  alert('you changed your mind');
-}
+    var myid =   this.documents.currentDoc.getDocID();
+    console.log("deletion");
+    console.log(myid);
 
-}
-
-function DisplayDocumentsInUpdateForm(json_of_json, contributeMode){
-  var id;
-  $('#listOfDocuments').on('change', function() {
-    id = parseInt(this.value);
-    for (var i = 0; i < json_of_json.length; i++) {
-      if (json_of_json[i]['idDocument'] === id) {
-        var  data = json_of_json[i].metadata;
-        console.log(data);
-        break;
-      }
-    }
-    //dynamicaly update form data
-    $("#newAlpacaForm").alpaca('get').setValue(data);
-  })
-  //display update form
-  document.getElementById('updateModeWindow').style.display = "block";
+    var url = "http://rict.liris.cnrs.fr/APIVilo3D/APIExtendedDocument/web/app_dev.php/deleteDocument/" + myid;
+    var req = new XMLHttpRequest();
+    req.open("POST", url);
+    req.send();
+    alert("The document has been deleted successfully");
+    document.getElementById('docBrowserWindow').style.display = "none";
   }
-
-  function DisplayDocumentsInBrowser(existingData, contributeMode){
-
-  //  document.getElementById('docBrowserWindow').style.display = "block";
-
+  else {
+    alert('The document was not deleted');
   }
-
-  document.getElementById('confirmDelete').addEventListener("mousedown", this.ConfirmDeleteOneDocument.bind(this),false);
-
+}
   document.getElementById('submitButton').addEventListener("mousedown", function(e){
         //gets form data
-        var form_data = new FormData(document.getElementById('myAlpacaForm'));
+        var form_data = new FormData(document.getElementById('myCreationForm'));
         var cam = positioner.getCameraPosition();
         // update data with camera position
         //data.append("positionX", cam.position.x);
@@ -295,44 +217,27 @@ function DisplayDocumentsInUpdateForm(json_of_json, contributeMode){
         //data.append("quaternionY", cam.quaternion.y);
         //data.append("quaternionZ", cam.quaternion.z);
         //data.append("quaternionW", cam.quaternion.w);
+
+        //add data verification
+
         //post data and execute script to process data
         var creationStatus = PostCreateDoc("http://rict.liris.cnrs.fr/APIVilo3D/APIExtendedDocument/web/app_dev.php/addDocument",form_data, function(){});
         console.log(creationStatus);
-        if (creationStatus==true){
+        if (creationStatus==1){
           //clear all form fields
-          $("#myAlpacaForm").get(0).reset();
+          $("#myCreationForm").get(0).reset();
           //close document positionner
           document.getElementById('docPositionerFull').style.display = "none";
           //close form
           document.getElementById('CreateDocWindow').style.display = "none";
         }
         else{
-                    alert('Document could not be created');
+                    alert('Document could not be created, check information');
         }
 //debug
-/*
+
   for (var pair of form_data.entries()) {
       console.log(pair[0]+ ', ' + pair[1]);
-  }*/
-      });
-
-      document.getElementById('saveUpdateButton').addEventListener("mousedown", function(e){
-          e.preventDefault();
-          //gets form data
-      //    var data = $("#newAlpacaForm").alpaca('Fields').getValue();
-        //  var form_data = new FormData();
-          var form_data = new FormData(document.getElementById('newAlpacaForm'));
-          /*for ( var key in data ) {
-            form_data.append(key, data[key]);
-          }*/
-          var id = document.getElementById('listOfDocuments').value;          //console.log(form_data);
-
-          var cam = positioner.getCameraPosition();
-          form_data.append("positionY", cam.position.y);
-          form_data.append("quaternionX", cam.quaternion.x);
-    //      PostUpdateDoc("http://rict.liris.cnrs.fr/APIVilo3D/APIExtendedDocument/web/app_dev.php/editDocument/" + id,form_data, function() {});
-          alert("posted. Please reload webbrowser to see changes");
-//          closeUpdateWindow();
-
-        });
+  }
+});
 }

@@ -5,7 +5,7 @@ export { itowns };
 export { Setup3DScene }         from './Setup3DScene';
 
 export { DocumentsHandler }     from './Modules/Documents/DocumentsHandler';
-export { DocumentsHandlerBIS }     from './Modules/Documents/DocumentsHandlerBIS';
+export { UpdateDoc }             from './Modules/Documents/UpdateDoc';
 export { GuidedTourController } from './Modules/GuidedTour/GuidedTour';
 
 export { AboutWindow }          from './Modules/Others/About';
@@ -18,6 +18,5 @@ export { DocumentPositioner }   from './Modules/Contribute/DocumentPositioner';
 export { TemporalController }   from './Modules/Temporal/Temporal';
 
 export { Contribute }           from './Modules/Contribute/Contribute';
-//export { Contribute }           from './Modules/Contribute/ContributeTEST';
 
 export { FilterDocuments }           from './Modules/Contribute/FilterDocuments';
