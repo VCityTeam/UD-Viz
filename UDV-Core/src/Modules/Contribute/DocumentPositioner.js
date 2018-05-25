@@ -9,10 +9,9 @@ import './DocumentPositioner.css';
 
 
 
-export function DocumentPositioner(view, controls, doc, options = {}) {
+export function DocumentPositioner(mode) {
   // camera position for the oriented view
 
-  this.view = view;
 /*
   var instructionDiv = document.createElement("div");
   instructionDiv.id = 'instruc';
@@ -68,19 +67,19 @@ document.getElementById("pos").innerHTML =
 
   ///////////// Class attributes
   // Whether this window is currently displayed or not.
-  this.windowIsActive = options.active || false;
+  //this.windowIsActive = options.active || false;
 
   // Display or hide this window
-  this.activateWindow = function activateWindow( active ){
-    if (typeof active != 'undefined') {
-      this.windowIsActive = active;
-    }
-    document.getElementById('instructionWindow').style.display =
-                            active ? "block" : "none" ;
-  }
+  // this.activateWindow = function activateWindow( active ){
+  //   if (typeof active != 'undefined') {
+  //     this.windowIsActive = active;
+  //   }
+  //   document.getElementById('instructionWindow').style.display =
+  //                           active ? "block" : "none" ;
+  // }
 
   this.refresh = function refresh( ){
-    this.activateWindow( this.windowIsActive );
+    //this.activateWindow( this.windowIsActive );
   }
 
 

@@ -10,20 +10,24 @@ export function UpdateDoc(doc) {
 
   this.previewImage = doc.imageSourceBD;
   this.id = doc.doc_ID;
+  this.url = "http://rict.liris.cnrs.fr/APIVilo3D/APIExtendedDocument/web/app_dev.php/editDocument/";
 
+  // initialization
+  // The update window is displayed
+  // the update form is generated using alpaca
+  // the document image is shown
+  //=========================================================================
   this.initialize = function initialize(){
-
+    //setup display
     document.getElementById('updateDocWindow').style.display = "block";
     document.getElementById('docBrowserWindow').style.display = "none";
-
     $("#updateForm").alpaca('get').setValue(doc);
     document.getElementById('filePreview').src = this.previewImage;
-
   }
 
   this.initialize();
 
-  // save documents update
+  // SAVEUPDATE: save documents update
   // using function PostUpdateDoc
   //=========================================================================
   this.saveUpdate = function saveUpdate(){
@@ -33,7 +37,8 @@ export function UpdateDoc(doc) {
     for (var pair of form_data.entries()){
       console.log(pair[0]+ ', ' + pair[1]);
     }*/
-    PostUpdateDoc("http://rict.liris.cnrs.fr/APIVilo3D/APIExtendedDocument/web/app_dev.php/editDocument/" + this.id ,form_data, function() {});
+    this.url += this.id;
+    PostUpdateDoc(this.url ,form_data, function() {});
     this.closeUpdateWindow();
   }
 
@@ -44,14 +49,14 @@ export function UpdateDoc(doc) {
     document.getElementById('updateDocWindow').style.display = "none";
   }
 
+  // event listeners for buttons
   document.getElementById('closeUpdateForm').addEventListener("mousedown",this.closeUpdateWindow.bind(this),false);
   document.getElementById('saveUpdateButton').addEventListener("mousedown", this.saveUpdate.bind(this),false);
 
 }
 
-// POST document updates to a given URL (to the database)
+// FUNCTION POSTUPDATEDOC document updates to a given URL (to the database)
 //=========================================================================
-
 function PostUpdateDoc(url,data, callback){
   var req = new XMLHttpRequest();
   req.open('POST',url);

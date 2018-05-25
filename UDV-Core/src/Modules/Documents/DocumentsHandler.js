@@ -51,7 +51,6 @@ export function DocumentsHandler(view, controls, jsonDataFromDB, options = {}) {
         <button id="docBrowserOrientButton" type=button>Orient Document</button>\
         <button id="docDelete" type = button>Delete</button>\
         <button id = "docUpdate" type = button>Update</button>\
-        <button id="docCreate" type = button>Create</button>\
     </div>\
     <div id="docFull">\
         <img id="docFullImg"/>\

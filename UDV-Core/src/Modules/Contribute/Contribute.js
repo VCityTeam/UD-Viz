@@ -17,20 +17,82 @@ export function Contribute(view, controls, storedData, options = {}, mode) {
   '<div id = "filtersWindow"></div>\
   <button id = "docInBrowser">Browser</button>\
   <button id = "docInBillboard">Billboards</button>\
+  <button id="docCreate" type = button>Create</button>\
   ';
 
   var schemaFilter = "http://rict.liris.cnrs.fr/schemaFilter.json";
   var optionsFilter = "http://rict.liris.cnrs.fr/optionsFilter.json";
   var schema = "http://rict.liris.cnrs.fr/schemaType.json";
   var optionsCreate = "http://rict.liris.cnrs.fr/optionsCreate.json";
+  var optionsCreateDur = {
+  "form": {
+    "attributes":{
+      "id":"myCreationForm"
+    },
+    "buttons": {
+}
+},
+"fields":{
+  "title": {
+    "label":"Title of the document"
+  },
+  "refDate1": {
+    "name":"refDate",
+    "label":"Referring date",
+    "inputType": "date",
+    "id":"refDate",
+   "validate":true
+  },
+  "refDate2":{
+    "disabled":true,
+    "hidden":true
+  },
+  "publicationDate1":{
+    "inputType":"date",
+    "id":"publicationDate",
+    "required":true,
+    "name":"publicationDate"
+  },
+  "publicationDate2":{
+    "disabled":true,
+    "hidden":true
+  },
+  "keyword":{
+    "disabled":true,
+    "hidden":true
+  },
+  "type":{
+    "label":"Type",
+    "type":"select",
+    "id":"type"
+          },
+  "subject":{
+    "label":"Subject",
+    "type":"select",
+    "id":"subject"
+      },
+ "link":{
+   "label":"Upload your file",
+   "type":"file",
+   "styled":true,
+   "format":"uri",
+   "id":"uploadedFile",
+   "selectionHandler": function(files, data) {
+            document.getElementById('docPositionerFullImg').src = data[0];
+          }
+      },
+ "description":{
+   "input":"textarea",
+   "id":"description",
+   "label":"Describe your file:"
+      }
+}
+}
+
   $('#filtersWindow').alpaca({
     "schemaSource":schema,
     "optionsSource":optionsFilter
   });
-
-  var formDiv = document.createElement("div");
-  formDiv.id = 'aform';
-  document.body.appendChild(formDiv);
 
   var link = document.createElement('link');
   link.setAttribute('rel', 'stylesheet');
@@ -41,6 +103,14 @@ export function Contribute(view, controls, storedData, options = {}, mode) {
   var meta = document.createElement('meta');
   meta.setAttribute('charset', "UTF-8");
   document.getElementsByTagName('head')[0].appendChild(meta);
+
+
+
+  var formDiv = document.createElement("div");
+  formDiv.id = 'aform';
+  document.body.appendChild(formDiv);
+
+
 
 //  <input type="file" accept="image/*" name="link" id="link" onchange="preview_image(event)"/>\
   //Window CREATE MODE
@@ -60,6 +130,7 @@ export function Contribute(view, controls, storedData, options = {}, mode) {
   </div>\
   <div id = "divButtons">\
   <button id = "showDocTab">Place doc</button>\
+  <button id = "billboardSelectPosition">Pinpoint</button>\
   <button id = "submitButton">Submit</button>\
   <button id = "closeCreateDoc">Close</button>\
   </div>\
@@ -68,25 +139,8 @@ export function Contribute(view, controls, storedData, options = {}, mode) {
 
   $("#alpacaForm").alpaca({
        "schemaSource": schema,
-       "optionsSource": optionsCreate
+       "optionsSource": optionsCreateDur
   });
-
-  function readURL(input) {
-        if (input.files && input.files[0]) {
-            var reader = new FileReader();
-
-            reader.onload = function (e) {
-                $('#docPositionerFullImg').attr('src', e.target.result);
-            }
-
-            reader.readAsDataURL(input.files[0]);
-        }
-    }
-
-    $(":file").change(function(){
-console.log('hello');
-        readURL(this);
-    });
 
   var posDiv = document.createElement("div");
   posDiv.id = 'pos';
@@ -96,8 +150,8 @@ console.log('hello');
   '<div id="docPositionerFull">\
       <img id="docPositionerFullImg"/>\
       <div id="docPositionerFullPanel">\
-          <button id="docPositionerClose" type=button>Close</button>\
-          <button id="CameraPositionTab" type=button>CameraPosition</button>\
+          <button id="docPositionerClose" type=button>Save</button>\
+          <button id="CameraPositionTab" type=button>CameraPositionDebug</button>\
           <label id="docOpaLabel2" for="docOpaSlider2">Opacity</label>\
           <input id="docOpaSlider2" type="range" min="0" max="100" value="75"\
           step="1" oninput="docPositionerOpaUpdate(value)">\
@@ -117,10 +171,6 @@ console.log('hello');
   // Whether this window is currently displayed or not.
   this.windowIsActive = options.active || false;
   this.filtered_data = storedData;
-  this.current;
-  //var positioner = new udvcore.DocumentPositioner(view, controls, storedData, options = {});
-
-//var mydocuments = new udvcore.DocumentsHandlerBIS(view, controls, storedData, {temporal: temporal} );
 
   // Display or hide this window
   this.activateWindow = function activateWindow( active ){
@@ -135,12 +185,23 @@ console.log('hello');
   }
 
   this.initialize = function initialize(){
+    this.docPos = new THREE.Vector3();
+    this.docQuat =  new THREE.Quaternion();
+    // billboard position
+    this.docBillboardPos = new THREE.Vector3();
+    //the way the user chooses to place the doc (overlay / billboard)
+    this.modePlace = 1; //to handle as an option ??
+    this.newDocData = null;
 
+    this.creationStatus = 0; //status of the POST request to doc creation
   }
+
 
   ///////////// Initialization
   this.refresh( );
   this.initialize();
+
+  //Fonction DEBUG =>delete soon
   this.getCameraPosition = function getCameraPosition(){
   //    console.log(view.camera.camera3D.position );
       var cam = view.camera.camera3D;
@@ -156,138 +217,204 @@ console.log('hello');
       return view.camera.camera3D;
     }
 
-    this.showDocPositioner = function showDocPositioner() {
+    // UPDATEDOCDATA
+    // Handles the update of the document's metadatas by adding
+    // the documnet's visualization metadatas
+    // position : vec3(x,y,z) => camera position
+    // quaternion : quaternion(x,y,z,w) => camera quaternion
+    // billboard : vec3(x,y,z) => TODO
+    //=========================================================================
+    this.UpdateDocData = function UpdateDocData(){
 
-      console.log("displaying document in the center");
-      document.getElementById('docPositionerFull').style.display = "block";
-      document.getElementById('docPositionerFullImg').src =
-      //controls.goToTopView();
-      document.getElementById('docPositionerClose').addEventListener('mousedown', this.getCameraPosition.bind(this), false);
+        this.newDocData.append("positionX", this.docPos.x);
+        this.newDocData.append("positionY", this.docPos.y);
+        this.newDocData.append("positionZ", this.docPos.z);
+        this.newDocData.append("quaternionX",this.docQuat.x);
+        this.newDocData.append("quaternionY",this.docQuat.y);
+        this.newDocData.append("quaternionZ",this.docQuat.z);
+        this.newDocData.append("quaternionW",this.docQuat.w);
+
     }
 
-      // close the center window (oriented view / doc focus)
-      //=========================================================================
-      this.closeDocPositioner = function closeDocPositioner(){
-          document.getElementById('docPositionerFull').style.display = "none";
-          //document.getElementById('docFullImg').src = null;
+    // SAVEDOCPOSITON: saves the position of the document chosed by the user
+    // If the user chose the "OverlayMode": the billboard position is set by default
+    // If the user chose the "BillboardMode": the overlay position is set by default
+    //=========================================================================
+    this.SaveDocPosition = function SaveDocPosition(){
+      //DEBUG
+      console.log(this.modePlace);
+      //OverlayMode
+      if(this.modePlace==1){
+        var cam = view.camera.camera3D;
+        this.docPos = cam.position;
+        this.docQuat = cam.quaternion;
+        this.docBillboardPos = THREE.Vector3(0,0,0);
+        //this.billboard = new Vector3(0,0,0);
+      }
+      //BillboardMode
+      if(this.modePlace==2){
+        this.docPos = THREE.Vector3(0,0,0);
+        this.docQuat = THREE.Quaternion(0,0,0,0);
+        this.docBillboardPos = THREE.Vector3(1,2,3);
+      }
+      console.log("end of save doc position");
+    }
+
+
+    // SHOWDOCPOSITIONER
+    // Handles the tool used to placed documents in overlay to the scene
+    //=========================================================================
+    this.showDocPositioner = function showDocPositioner() {
+      console.log("displaying document in the center");
+      this.mode = 1; //the user chose to place its document in overlay
+      document.getElementById('docPositionerFull').style.display = "block";
+    }
+
+    // CLOSEDOCPOSITIONER
+    // Closes the tool to choose the position/orientation of the image in overlay
+    //=========================================================================
+    this.closeDocPositioner = function closeDocPositioner(){
+      document.getElementById('docPositionerFull').style.display = "none";
+      //document.getElementById('docFullImg').src = null;
+      this.SaveDocPosition();
+      this.modePlace = 0; //defaultMode reinitialization
+    }
+
+
+    // SELECTBILLBOARDPOSITION:
+    // Handles the selection of a position for the billboard
+    // 1. showinstructons
+    // 2. by user click
+    //    Display billboard with image, then offer the user the possiblity to drag and drop billboard
+    //    To begin => color the "selected position" on the map
+    // 3. save
+    // TODO
+    //=========================================================================
+    this.selectBillboardPosition = function selectBillboardPosition(){
+      console.log("billboard mode");
+      var mouse = new THREE.Vector2();
+      //  var raycaster = new THREE.Raycaster();
+      mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+      mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+      //raycaster.setFromCamera( mouse, this.camera );
+      // we could optimize here, parse the scene first and get the children which are billboards, then intersects
+      //console.log(mouse);
       }
 
-    // Close the window...when close button is hit
-    document.getElementById("showDocTab").addEventListener('mousedown', this.showDocPositioner.bind(this),false);
-    document.getElementById("docPositionerClose").addEventListener('mousedown', this.closeDocPositioner.bind(this),false);
-    document.getElementById("CameraPositionTab").addEventListener('mousedown', this.getCameraPosition.bind(this),false);
+
+      this.handleDocCreation = function handleDocCreation(){
+        this.contributeMode = "create";
+        document.getElementById('startContributeWindow').style.display = "none";
+        document.getElementById('CreateDocWindow').style.display ="block";
+      }
+
+      this.closeDocCreation = function closeDocCreation(){
+        document.getElementById('CreateDocWindow').style.display ="none";
+      }
 
 
-  this.handleDocCreation = function handleDocCreation(){
-    this.contributeMode = "create";
-    document.getElementById('startContributeWindow').style.display = "none";
-    document.getElementById('CreateDocWindow').style.display ="block";
-  }
+      this.displayDocs = function displayDocs(){
+        //check which filters are activated
+        var filters = new FormData(document.getElementById('filterForm'));
+        var entries = filters.entries();
 
-  this.closeDocCreation = function closeDocCreation(){
-    document.getElementById('CreateDocWindow').style.display ="none";
-  }
+        //DEBUG displaying filters
+        for (var pair of filters.entries()){
+          console.log(pair[0]+ ', ' + pair[1]);
+        }
+        var chain = "http://rict.liris.cnrs.fr/APIVilo3D/APIExtendedDocument/web/app_dev.php/getDocuments?";
+        for(var pair of entries ){
+          if(pair[1]!=""){
+            chain+= pair[0] + "=" + pair[1];
+            chain+="&";
+          }
+        }
+        var chain = chain.slice('&',-1);
+        console.log(chain);
+        //get documents with or without filters
+        var req = new XMLHttpRequest();
+        req.open("GET", chain,false);
+        req.send();
+        console.log(req.statusText);
+        this.filtered_data = JSON.parse(req.responseText);
+        //console.log(this.filtered_data);
+        //display doc in browser
+        if(this.filtered_data.length==0){
+          alert('No document found');
+        }
+        else {
+          //TODO add options billboard / browser in documentsHandler parameters
+          //create instance of DocumentsHandler with the selected documents according to the filters
+          var documents = new udvcore.DocumentsHandler(view, controls, this.filtered_data, {temporal: temporal} );
+          document.getElementById('docBrowserWindow').style.display = "block";
 
-  this.displayDocs = function displayDocs(){
-    //check which filters are activated
-    var form_data = new FormData(document.getElementById('filterForm'));
-    var entries = form_data.entries();
+        }
+      }
 
-    for (var pair of form_data.entries()){
-      console.log(pair[0]+ ', ' + pair[1]);
-    }
-    var chain = "http://rict.liris.cnrs.fr/APIVilo3D/APIExtendedDocument/web/app_dev.php/getDocuments?";
 
-    for(var pair of entries ){
-      if(pair[1]!=""){
-      chain+= pair[0] + "=" + pair[1];
-      chain+="&";
-    }
-  }
-  var chain = chain.slice('&',-1);
-  console.log(chain);
-  //get documents with or without filters
-  var req = new XMLHttpRequest();
-    req.open("GET", chain,false);
-    req.send();
-    console.log(req.statusText);
-    this.filtered_data = JSON.parse(req.responseText);
-    //console.log(this.filtered_data);
-    //display doc in browser
-    if(this.filtered_data.length==0){
-      alert('No document found');
-    }
-    else{
-      //add options billboard / browser in documentsHandler parameters
-      var documents = new udvcore.DocumentsHandler(view, controls, this.filtered_data, {temporal: temporal} );
-      document.getElementById('docBrowserWindow').style.display = "block";
-      document.getElementById('docCreate').addEventListener("mousedown", this.handleDocCreation.bind(this),false);
-  }
-}
+      this.PostNewDoc = function PostNewDoc(url, data, callback) {
+        //console.log(data);
+        var stat = 0; //1 of OK 0 if not ok
+        var req = new XMLHttpRequest();
+        req.open("POST", url);
 
-  // event listeners for buttons
-  document.getElementById("docInBrowser").addEventListener('mousedown', this.displayDocs.bind(this),false);
-  document.getElementById("closeCreateDoc").addEventListener('mousedown', this.closeDocCreation.bind(this),false);
-
-  function PostCreateDoc(url, data, callback) {
-    console.log(data);
-    var stat = 0; //1 of OK 0 if not ok
-    var req = new XMLHttpRequest();
-    req.open("POST", url);
-    req.addEventListener("load", function () {
-        if (req.status >= 200 && req.status < 400) {
-            stat = 1;
+        req.addEventListener("load", function () {
+          if (req.status >= 200 && req.status < 400) {
+            //update creation status
+            this.creationStatus = 1;
             callback(req.responseText);
             alert('Posted');
-
-        } else {
+          }
+          else {
+            this.creationStatus = 0;
             console.error(req.status + " " + req.statusText + " " + url);
-            console.log("problem");
-            stat = 0;
-        }
-    });
-    req.addEventListener("error", function () {
-        console.error("Network error with url: " + url);
-        stat = false;
-    });
-    req.send(data);
-    return stat;
-  }
+          }
+        });
+        req.addEventListener("error", function () {
+          console.error("Network error with url: " + url);
+          stat = false;
+        });
+        req.send(data);
+      }
 
+      // CREATENEWDOC
+      // Handles the creation of a new document in the database
+      //=========================================================================
+      this.CreateNewDoc = function CreateNewDoc(){
+        this.newDocData = new FormData(document.getElementById('myCreationForm'));
+        this.UpdateDocData();
+        //TODO: add data verification
+        //post data and execute script to process data if data verification OK
+        //TODO create new instance of Document ??
+        //var doc = new Document(docTitle,docIndex,doc_ID,docImageSourceHD,docImageSourceBD,billboardPosition,docViewPosition,docViewQuaternion,docRefDate, docPublicationDate, docDescription, docMetaData, docSubject)
 
-  document.getElementById('submitButton').addEventListener("mousedown", function(e){
-        //gets form data
-        var form_data = new FormData(document.getElementById('myCreationForm'));
-        var cam = positioner.getCameraPosition();
-        // update data with camera position
-        //data.append("positionX", cam.position.x);
-        form_data.append("positionY", cam.position.y);
-        //data.append("positionZ", cam.position.z);
-        form_data.append("quaternionX",cam.quaternion.y);
-        //data.append("quaternionY", cam.quaternion.y);
-        //data.append("quaternionZ", cam.quaternion.z);
-        //data.append("quaternionW", cam.quaternion.w);
+        this.PostNewDoc("http://rict.liris.cnrs.fr/APIVilo3D/APIExtendedDocument/web/app_dev.php/addDocument",this.newDocData, function(){});
 
-        //add data verification
-
-        //post data and execute script to process data
-        var creationStatus = PostCreateDoc("http://rict.liris.cnrs.fr/APIVilo3D/APIExtendedDocument/web/app_dev.php/addDocument",form_data, function(){});
-        console.log(creationStatus);
-        if (creationStatus==1){
+        if (this.creationStatus = 1){ //request succeeded
           //clear all form fields
           $("#myCreationForm").get(0).reset();
-          //close document positionner
+          //close document positionner and creation window
           document.getElementById('docPositionerFull').style.display = "none";
-          //close form
           document.getElementById('CreateDocWindow').style.display = "none";
         }
-        else{
-                    alert('Document could not be created, check information');
-        }
-//debug
 
-  for (var pair of form_data.entries()) {
-      console.log(pair[0]+ ', ' + pair[1]);
-  }
-});
-}
+        else { //request failed
+          alert('Document could not be created, check information');
+        }
+        // DEBUG
+        for (var pair of this.newDocData.entries()) {
+          console.log(pair[0]+ ', ' + pair[1]);
+        }
+
+      }
+
+      // event listeners for buttons
+      document.getElementById("showDocTab").addEventListener('mousedown', this.showDocPositioner.bind(this),false);
+      document.getElementById("billboardSelectPosition").addEventListener('mousedown', this.selectBillboardPosition.bind(this), false);
+      document.getElementById("docPositionerClose").addEventListener('mousedown', this.closeDocPositioner.bind(this),false);
+      document.getElementById("CameraPositionTab").addEventListener('mousedown', this.getCameraPosition.bind(this),false);
+      document.getElementById('submitButton').addEventListener("mousedown", this.CreateNewDoc.bind(this), false);
+      document.getElementById("docInBrowser").addEventListener('mousedown', this.displayDocs.bind(this),false);
+      document.getElementById("closeCreateDoc").addEventListener('mousedown', this.closeDocCreation.bind(this),false);
+      document.getElementById('docCreate').addEventListener("mousedown", this.handleDocCreation.bind(this),false);
+    }

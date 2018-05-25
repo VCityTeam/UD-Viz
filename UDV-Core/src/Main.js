@@ -6,6 +6,8 @@ export { Setup3DScene }         from './Setup3DScene';
 
 export { DocumentsHandler }     from './Modules/Documents/DocumentsHandler';
 export { UpdateDoc }             from './Modules/Documents/UpdateDoc';
+export { DeleteDoc }             from './Modules/Documents/DeleteDoc';
+
 export { GuidedTourController } from './Modules/GuidedTour/GuidedTour';
 
 export { AboutWindow }          from './Modules/Others/About';

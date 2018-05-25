@@ -4,19 +4,15 @@ export function DeleteDoc(doc) {
 
   this.id = doc.doc_ID;
 
-
-
   this.initialize = function initialize(){
     console.log("entering delete class");
   }
 
   this.ConfirmDeleteOneDocument = function ConfirmDeleteOneDocument(){
-console.log(this.id);
+    console.log(this.id);
     if(confirm('Delete this document permanently?')){
       console.log("deletion");
-
-
-      var url = "http://rict.liris.cnrs.fr/APIVilo3D/APIExtendedDocument/web/app_dev.php/deleteDocument/" + id;
+      var url = "http://rict.liris.cnrs.fr/APIVilo3D/APIExtendedDocument/web/app_dev.php/deleteDocument/" + this.id;
       var req = new XMLHttpRequest();
       req.open("POST", url);
       req.send();
@@ -28,7 +24,7 @@ console.log(this.id);
     }
   }
 
-
   this.initialize();
   this.ConfirmDeleteOneDocument();
+
 }
