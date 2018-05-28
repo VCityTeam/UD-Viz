@@ -65,6 +65,7 @@ export function Contribute(view, controls, storedData, options = {}, mode) {
     this.modePlace = 1; //to handle as an option ??
     this.newDocData = null;
     this.creationStatus = 0; //status of the POST request to doc creation
+    this.controls = controls;
   }
 
   ///////////// Initialization
@@ -110,7 +111,7 @@ export function Contribute(view, controls, storedData, options = {}, mode) {
 
       this.handleDocCreation = function handleDocCreation(){
         console.log("entering creation class");
-        var newDocCreation = new udvcore.CreateDoc();
+        var newDocCreation = new udvcore.CreateDoc(this.controls);
       }
 
       document.getElementById("docInBrowser").addEventListener('mousedown', this.displayDocs.bind(this),false);

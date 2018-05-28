@@ -331,3 +331,8 @@
 
     pointer-events: auto;
 }
+
+
+#debugCameraPostion{
+  display: none;
+}

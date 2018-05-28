@@ -5,7 +5,7 @@ import '../Contribute/DocumentPositioner.js';
 import './DocumentsHandler.js';
 
 
-export function CreateDoc(){
+export function CreateDoc(controls){
 
   var formDiv = document.createElement("div");
   formDiv.id = 'aform';
@@ -119,6 +119,7 @@ export function CreateDoc(){
           <input id="docOpaSlider2" type="range" min="0" max="100" value="75"\
           step="1" oninput="docPositionerOpaUpdate(value)">\
           <output for="docPositionerOpaSlider" id="docPositionedOpacity">50</output><br>\
+          <div id = "debugCameraPostion" >\
           <input id = "posX"><br>\
           <input id = "posY"><br>\
           <input id = "posZ"><br>\
@@ -126,6 +127,7 @@ export function CreateDoc(){
           <input id = "quatY"><br>\
           <input id = "quatZ"><br>\
           <input id = "quatW"><br>\
+          </div>\
       </div>\
   </div>\
   ';
@@ -143,15 +145,19 @@ export function CreateDoc(){
     this.newDocData = null;
 
     this.creationStatus = 0; //status of the POST request to doc creation
+
+
   }
 
 
   ///////////// Initialization
   this.initialize();
+  this.controls = controls;
 
   //Fonction DEBUG =>delete soon
   this.getCameraPosition = function getCameraPosition(){
   //    console.log(view.camera.camera3D.position );
+      document.getElementById('debugCameraPostion').style.display = "block";
       var cam = view.camera.camera3D;
       var position = cam.position;
       var quaternion = cam.quaternion;
@@ -228,6 +234,13 @@ export function CreateDoc(){
       this.modePlace = 0; //defaultMode reinitialization
     }
 
+    function onMouseDown(event) {
+    event.preventDefault();
+
+    if (this.modePlace === 2) {
+        return;
+    }
+  }
 
     // SELECTBILLBOARDPOSITION:
     // Handles the selection of a position for the billboard
@@ -238,46 +251,48 @@ export function CreateDoc(){
     // 3. save
     // TODO
     //=========================================================================
-    this.selectBillboardPosition = function selectBillboardPosition(){
+    this.selectBillboardPosition = function selectBillboardPosition(event){
+      event.preventDefault();
+      this.modePlace = 2; //billboard mode
       console.log("billboard mode");
       var mouse = new THREE.Vector2();
       //  var raycaster = new THREE.Raycaster();
       mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
       mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+      this.mousePosition = new THREE.Vector2(mouse.x, mouse.y);
+      var pos = this.controls.getWorldPointAtScreenXY(this.mousePosition);
+      //console.log(pos);
       //raycaster.setFromCamera( mouse, this.camera );
-      // we could optimize here, parse the scene first and get the children which are billboards, then intersects
+      //
       //console.log(mouse);
-      }
+      const _handlerOnMouseDown = onMouseDown.bind(this);
+    }
 
+    this.closeDocCreation = function closeDocCreation(){
+      document.getElementById('CreateDocWindow').style.display ="none";
+    }
 
-      this.closeDocCreation = function closeDocCreation(){
-        document.getElementById('CreateDocWindow').style.display ="none";
-      }
-
-      this.PostNewDoc = function PostNewDoc(url, data, callback) {
-        //console.log(data);
-        var stat = 0; //1 of OK 0 if not ok
-        var req = new XMLHttpRequest();
-        req.open("POST", url);
-
-        req.addEventListener("load", function () {
-          if (req.status >= 200 && req.status < 400) {
-            //update creation status
-            this.creationStatus = 1;
-            callback(req.responseText);
-            alert('Posted');
-          }
-          else {
-            this.creationStatus = 0;
-            console.error(req.status + " " + req.statusText + " " + url);
-          }
-        });
-        req.addEventListener("error", function () {
-          console.error("Network error with url: " + url);
-          stat = false;
-        });
-        req.send(data);
-      }
+    this.PostNewDoc = function PostNewDoc(url, data, callback) {
+      //console.log(data);
+      var req = new XMLHttpRequest();
+      req.open("POST", url);
+      req.addEventListener("load", function () {
+        if (req.status >= 200 && req.status < 400) {
+          //update creation status
+          this.creationStatus = 1;
+          callback(req.responseText);
+          alert('Posted');
+        }
+        else {
+          this.creationStatus = 0;
+          console.error(req.status + " " + req.statusText + " " + url);
+        }
+      });
+      req.addEventListener("error", function () {
+        console.error("Network error with url: " + url);
+      });
+      req.send(data);
+    }
 
       // CREATENEWDOC
       // Handles the creation of a new document in the database
@@ -316,9 +331,6 @@ export function CreateDoc(){
       document.getElementById("docPositionerClose").addEventListener('mousedown', this.closeDocPositioner.bind(this),false);
       document.getElementById("CameraPositionTab").addEventListener('mousedown', this.getCameraPosition.bind(this),false);
       document.getElementById('submitButton').addEventListener("mousedown", this.CreateNewDoc.bind(this), false);
-
       document.getElementById("closeCreateDoc").addEventListener('mousedown', this.closeDocCreation.bind(this),false);
-
-
 
 }
