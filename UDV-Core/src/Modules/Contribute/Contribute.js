@@ -14,7 +14,8 @@ export function Contribute(view, controls, storedData, options = {}, mode) {
   contriDiv. id = "startContributeWindow";
   document.body.appendChild(contriDiv);
   document.getElementById("startContributeWindow").innerHTML =
-  '<div id = "filtersWindow"></div>\
+  '<div id = "filtersTitle">Document research</div>\
+  <div id = "filtersWindow"></div>\
   <button id = "docInBrowser">Browser</button>\
   <button id = "docInBillboard">Billboards</button>\
   <button id="docCreate" type = button>Create</button>\
@@ -66,6 +67,8 @@ export function Contribute(view, controls, storedData, options = {}, mode) {
     this.newDocData = null;
     this.creationStatus = 0; //status of the POST request to doc creation
     this.controls = controls;
+    this.view = view;
+    this.objects = [];
   }
 
   ///////////// Initialization
@@ -76,10 +79,11 @@ export function Contribute(view, controls, storedData, options = {}, mode) {
     //check which filters are activated
     var filters = new FormData(document.getElementById('filterForm'));
     var entries = filters.entries();
-    //DEBUG displaying filters
+
+    /* DEBUG displaying filters
     for (var pair of filters.entries()){
       console.log(pair[0]+ ', ' + pair[1]);
-    }
+    }*/
         var chain = "http://rict.liris.cnrs.fr/APIVilo3D/APIExtendedDocument/web/app_dev.php/getDocuments?";
         for(var pair of entries ){
           if(pair[1]!=""){
@@ -95,7 +99,7 @@ export function Contribute(view, controls, storedData, options = {}, mode) {
         req.send();
         console.log(req.statusText);
         this.filtered_data = JSON.parse(req.responseText);
-        //console.log(this.filtered_data);
+        console.log(this.filtered_data);
         //display doc in browser
         if(this.filtered_data.length==0){
           alert('No document found');
@@ -103,18 +107,75 @@ export function Contribute(view, controls, storedData, options = {}, mode) {
         else {
           //TODO add options billboard / browser in documentsHandler parameters
           //create instance of DocumentsHandler with the selected documents according to the filters
-          var documents = new udvcore.DocumentsHandler(view, controls, this.filtered_data, {temporal: temporal} );
-          document.getElementById('docBrowserWindow').style.display = "block";
+          if (this.modePlace ==1){
+            this.showBrowser();
+          }
+          else{
+            if (this.modePlace == 2){
+              this.showBillboard();
+            }
+          }
 
         }
       }
 
-      this.handleDocCreation = function handleDocCreation(){
-        console.log("entering creation class");
-        var newDocCreation = new udvcore.CreateDoc(this.controls);
+      this.showBrowser = function showBrowser(){
+        var documents = new udvcore.DocumentsHandler(view, controls, this.filtered_data, {temporal: temporal} );
+        document.getElementById('docBrowserWindow').style.display = "block";
       }
 
-      document.getElementById("docInBrowser").addEventListener('mousedown', this.displayDocs.bind(this),false);
+      //TODO take this function into another class in charge of handling a set of objects
+      this.showBillboard = function showBillboard(){
+      document.addEventListener('mousedown', this.myfunctiontest.bind(this),false);
+        for (var i =0; i<this.filtered_data.length;i++){
+              var object, material;
+              var objGeometry = new THREE.PlaneGeometry(12,10);
+              var texture = new THREE.TextureLoader().load("http://rict.liris.cnrs.fr/APIVilo3D/APIExtendedDocument/web/documentsDirectory/" + this.filtered_data[i].metadata.link);
+              // immediately use the texture for material creation
+              material = new THREE.MeshBasicMaterial( { map: texture, side: THREE.DoubleSide } );
+
+              object = new THREE.Mesh(objGeometry.clone(), material);
+              this.objects.push(object);
+              object.scale.set(50,50,50);
+              //var q = new THREE.Quaternion(this.filtered_data[i].visualization.quaternionX,this.filtered_data[i].visualization.quaternionY,this.filtered_data[i].visualization.quaternionZ,this.filtered_data[i].visualization.quaternionW);
+            //  object.applyQuaternion(q);
+            object.rotation.x = Math.PI / 2; //rotates the object so it is "standing"
+              object.position.x=this.filtered_data[i].visualization.positionX;
+              object.position.y=	this.filtered_data[i].visualization.positionY;
+              object.position.z=	626;
+              object.updateMatrixWorld();
+              this.view.scene.add(object);
+            }
+
+            }
+
+this.myfunctiontest = function myfunctiontest(event){
+  var mouse = new THREE.Vector2();
+  mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+  mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+  const pointUnderCursor = this.controls.getWorldPointAtScreenXY(mouse);
+  console.log('mouse point screen');
+  console.log(pointUnderCursor);
+}
+
+      this.handleDocCreation = function handleDocCreation(){
+        console.log("entering creation class");
+        var newDocCreation = new udvcore.CreateDoc(this.controls, this.view);
+      }
+
+      this.setBrowserMode = function setBrowserMode(){
+        this.modePlace = 1;
+        console.log('browser mode');
+        this.displayDocs();
+      }
+      this.setBillboardMode = function setBillboardMode(){
+        this.modePlace = 2;
+        console.log('billboard mode');
+        this.displayDocs();
+      }
+
+      document.getElementById("docInBrowser").addEventListener('mousedown', this.setBrowserMode.bind(this),false);
       document.getElementById('docCreate').addEventListener("mousedown", this.handleDocCreation.bind(this),false);
+      document.getElementById('docInBillboard').addEventListener('mousedown', this.setBillboardMode.bind(this),false);
 
     }

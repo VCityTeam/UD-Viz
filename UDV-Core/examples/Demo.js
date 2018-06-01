@@ -38,6 +38,9 @@ var renderer = view.scene;
 view.camera.setPosition(new udvcore.itowns.Coordinates('EPSG:3946', extent.west(), extent.south(), 2000));
 // camera starting orientation (looking at city center)
 view.camera.camera3D.lookAt(extent.center().xyz());
+console.log("setup3D");
+console.log(extent.center().xyz())
+
 
 
 // PlanarControls (camera controller) options : regular mode (generic user) or edit mode

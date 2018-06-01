@@ -210,7 +210,6 @@ export function DocumentsHandler(view, controls, jsonDataFromDB, options = {}) {
         //console.log(this.currentDoc);
 
         this.updateBrowser();
-
         if(billboardsAreActive){
             this.showBillboards(true);
         }
@@ -342,6 +341,7 @@ export function DocumentsHandler(view, controls, jsonDataFromDB, options = {}) {
     // if forceShow is false and billboardsAreActive is false, do not show
     //==========================================================================
     this.showBillboards = function showBillboards(forceShow){
+      console.log('showBillboards');
 
         if(!forceShow && !billboardsAreActive){
             return;
@@ -440,8 +440,7 @@ export function DocumentsHandler(view, controls, jsonDataFromDB, options = {}) {
 
         // adjust the current date if we use temporal
         if(this.temporal){
-
-            temporal.changeTime(this.currentDoc.startDate);
+        //  temporal.changeTime(this.currentDoc.refDate1);
         }
 
         this.hideBillboards(true);

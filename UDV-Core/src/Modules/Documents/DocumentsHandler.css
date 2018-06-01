@@ -336,3 +336,7 @@
 #debugCameraPostion{
   display: none;
 }
+
+#setPositionFields{
+  display: none;
+}

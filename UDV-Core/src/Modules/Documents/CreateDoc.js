@@ -5,7 +5,8 @@ import '../Contribute/DocumentPositioner.js';
 import './DocumentsHandler.js';
 
 
-export function CreateDoc(controls){
+export function CreateDoc(controls, view){
+  this.myUploadedImage = null;
 
   var formDiv = document.createElement("div");
   formDiv.id = 'aform';
@@ -13,21 +14,17 @@ export function CreateDoc(controls){
 
   document.getElementById("aform").innerHTML =
   '<div id="CreateDocWindow">\
-  <div id="imageInfo" style="display:none">\
-      <table>\
-          <tbody><tr>\
-              <td class="imagePreview" style="width: 220px" nowrap="nowrap"> </td>\
-              <td class="imageProperties" width="100%"> </td> \
-          </tr>\
-      </tbody></table>\
-  </div>\
-  <label id="WindowTitle" >Document upload</label>\
+  <label id="WindowTitle" >Document creation</label>\
   <p></p>\
   <div id="alpacaForm" name = "alpacaForm">\
   </div>\
+  <div id="pickingInfo" style="display:none">\
+  <input id = "billboardX">\
+  <input id ="billboardY">\
+  </div>\
   <div id = "divButtons">\
   <button id = "showDocTab">Place doc</button>\
-  <button id = "billboardSelectPosition">Pinpoint</button>\
+  <button id = "billboardSelectPosition">Billboard</button>\
   <button id = "submitButton">Submit</button>\
   <button id = "closeCreateDoc">Close</button>\
   </div>\
@@ -36,51 +33,50 @@ export function CreateDoc(controls){
   var schema = "http://rict.liris.cnrs.fr/schemaType.json";
   var optionsCreate = "http://rict.liris.cnrs.fr/optionsCreate.json";
   var optionsCreateDur = {
-  "form": {
-    "attributes":{
-      "id":"myCreationForm"
+    "form": {
+      "attributes":{
+        "id":"myCreationForm"
+      }
     },
-    "buttons": {
-}
-},
-"fields":{
-  "title": {
-    "label":"Title of the document"
-  },
-  "refDate1": {
-    "name":"refDate",
-    "label":"Referring date",
-    "inputType": "date",
-    "id":"refDate",
-   "validate":true
-  },
-  "refDate2":{
-    "disabled":true,
-    "hidden":true
-  },
-  "publicationDate1":{
-    "inputType":"date",
-    "id":"publicationDate",
-    "required":true,
-    "name":"publicationDate"
-  },
-  "publicationDate2":{
-    "disabled":true,
-    "hidden":true
-  },
-  "keyword":{
-    "disabled":true,
-    "hidden":true
-  },
-  "type":{
-    "label":"Type",
-    "type":"select",
-    "id":"type"
-          },
-  "subject":{
-    "label":"Subject",
-    "type":"select",
-    "id":"subject"
+    "fields":{
+      "title": {
+        "label":"Title of the document"
+      },
+      "refDate1": {
+        "name":"refDate",
+        "label":"Referring date",
+        "inputType": "date",
+        "id":"refDate",
+        "validate":true
+      },
+      "refDate2":{
+        "disabled":true,
+        "hidden":true
+      },
+      "publicationDate1":{
+        "inputType":"date",
+        "id":"publicationDate",
+        "label": "Publication date",
+        "required":true,
+        "name":"publicationDate"
+      },
+      "publicationDate2":{
+        "disabled":true,
+        "hidden":true
+      },
+      "keyword":{
+        "disabled":true,
+        "hidden":true
+      },
+      "type":{
+        "label":"Type",
+        "type":"select",
+        "id":"type"
+      },
+      "subject":{
+        "label":"Subject",
+        "type":"select",
+        "id":"subject"
       },
  "link":{
    "label":"Upload your file",
@@ -90,13 +86,14 @@ export function CreateDoc(controls){
    "id":"uploadedFile",
    "selectionHandler": function(files, data) {
             document.getElementById('docPositionerFullImg').src = data[0];
+            this.myUploadedImage = data[0];
           }
       },
  "description":{
    "input":"textarea",
    "id":"description",
    "label":"Describe your file:"
-      }
+ }
 }
 }
 
@@ -114,7 +111,9 @@ export function CreateDoc(controls){
       <img id="docPositionerFullImg"/>\
       <div id="docPositionerFullPanel">\
           <button id="docPositionerClose" type=button>Save</button>\
+          <button id = "saveManualPosTEST" type = button>SAVEBIS</button>\
           <button id="CameraPositionTab" type=button>CameraPositionDebug</button>\
+          <button id = "setPositionManually" type = button>SetPositionManualy</button>\
           <label id="docOpaLabel2" for="docOpaSlider2">Opacity</label>\
           <input id="docOpaSlider2" type="range" min="0" max="100" value="75"\
           step="1" oninput="docPositionerOpaUpdate(value)">\
@@ -127,6 +126,15 @@ export function CreateDoc(controls){
           <input id = "quatY"><br>\
           <input id = "quatZ"><br>\
           <input id = "quatW"><br>\
+          </div>\
+          <div id = "setPositionFields" >\
+          <input id = "setPosX"><br>\
+          <input id = "setPosY"><br>\
+          <input id = "setPosZ"><br>\
+          <input id = "setQuatX"><br>\
+          <input id = "setQuatY"><br>\
+          <input id = "setQuatZ"><br>\
+          <input id = "setQuatW"><br>\
           </div>\
       </div>\
   </div>\
@@ -146,19 +154,20 @@ export function CreateDoc(controls){
 
     this.creationStatus = 0; //status of the POST request to doc creation
 
+    this.controls = controls;
+    this.view = view;
 
   }
-
-
   ///////////// Initialization
-  this.initialize();
-  this.controls = controls;
 
-  //Fonction DEBUG =>delete soon
+  this.initialize();
+
+
+  //Fonction used for DEBUG =>don't pay attention
   this.getCameraPosition = function getCameraPosition(){
   //    console.log(view.camera.camera3D.position );
       document.getElementById('debugCameraPostion').style.display = "block";
-      var cam = view.camera.camera3D;
+      var cam = this.view.camera.camera3D;
       var position = cam.position;
       var quaternion = cam.quaternion;
       document.getElementById("posX").value = position.x;
@@ -168,7 +177,28 @@ export function CreateDoc(controls){
       document.getElementById("quatY").value = quaternion.y;
       document.getElementById("quatZ").value = quaternion.z;
       document.getElementById("quatW").value = quaternion.w;
-      return view.camera.camera3D;
+      return this.view.camera.camera3D;
+    }
+
+    //SETMANUALPOSIITON
+    //Gives the user the possibility to give values for position and quaternion
+    //by writting them in HTML 'input' elements.
+    //By default, the values are set to the curretn camera position and quaternion
+    //=========================================================================
+    this.setManualPosition = function setManualPosition(){
+      //dispaly input fields
+      document.getElementById('setPositionFields').style.display = "block";
+      var cam = this.view.camera.camera3D;
+      var position = cam.position;
+      var quaternion = cam.quaternion;
+      //set values by default
+      document.getElementById('setPosX').value = position.x;
+      document.getElementById('setPosY').value = position.y;
+      document.getElementById('setPosZ').value = position.z;
+      document.getElementById('setQuatX').value = quaternion.x;
+      document.getElementById('setQuatY').value = quaternion.y;
+      document.getElementById('setQuatZ').value = quaternion.z;
+      document.getElementById('setQuatW').value = quaternion.w;
     }
 
     // UPDATEDOCDATA
@@ -199,20 +229,29 @@ export function CreateDoc(controls){
       console.log(this.modePlace);
       //OverlayMode
       if(this.modePlace==1){
-        var cam = view.camera.camera3D;
+        var cam = this.view.camera.camera3D;
         this.docPos = cam.position;
         this.docQuat = cam.quaternion;
-        this.docBillboardPos = THREE.Vector3(0,0,0);
-        //this.billboard = new Vector3(0,0,0);
       }
       //BillboardMode
       if(this.modePlace==2){
-        this.docPos = THREE.Vector3(0,0,0);
-        this.docQuat = THREE.Quaternion(0,0,0,0);
-        this.docBillboardPos = THREE.Vector3(1,2,3);
       }
       console.log("end of save doc position");
     }
+
+
+    this.SaveDocManualPosition = function SaveDocManualPosition(){
+
+      this.docPos.x = document.getElementById('setPosX').value;
+      this.docPos.y = document.getElementById('setPosY').value;
+      this.docPos.z = document.getElementById('setPosZ').value;
+      this.docQuat.x = document.getElementById('setQuatX').value;
+      this.docQuat.y = document.getElementById('setQuatY').value;
+      this.docQuat.z = document.getElementById('setQuatZ').value;
+      this.docQuat.w = document.getElementById('setQuatW').value;
+
+    }
+
 
 
     // SHOWDOCPOSITIONER
@@ -231,16 +270,15 @@ export function CreateDoc(controls){
       document.getElementById('docPositionerFull').style.display = "none";
       //document.getElementById('docFullImg').src = null;
       this.SaveDocPosition();
-      this.modePlace = 0; //defaultMode reinitialization
+//      this.SaveDocManualPosition();
+    //  this.modePlace = 0; //defaultMode reinitialization
     }
 
-    function onMouseDown(event) {
-    event.preventDefault();
-
-    if (this.modePlace === 2) {
-        return;
+    this.saveManualPosition = function saveManualPosition(){
+      console.log("saving manual position");
+      document.getElementById('docPositionerFull').style.display = "none";
+      this.SaveDocManualPosition();
     }
-  }
 
     // SELECTBILLBOARDPOSITION:
     // Handles the selection of a position for the billboard
@@ -265,13 +303,62 @@ export function CreateDoc(controls){
       //raycaster.setFromCamera( mouse, this.camera );
       //
       //console.log(mouse);
-      const _handlerOnMouseDown = onMouseDown.bind(this);
+    }
+
+    this.getPosition = function getPosition(event){
+      var mouse = new THREE.Vector2();
+      mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+      mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+      this.mousePosition = new THREE.Vector2(mouse.x, mouse.y);
+      var pos = this.controls.getWorldPointAtScreenXY(this.mousePosition);
+    }
+
+    this.updateBillboardPositionFromMousePicking = function updateBillboardPositionFromMousePicking(event){
+      document.getElementById('pickingInfo').style.display = "block";
+      var mouse = new THREE.Vector2();
+      mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+      mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+      var billboardPosition = this.controls.getWorldPointAtScreenXY(mouse);
+      console.log(billboardPosition);
+      $('#billboardX').val(billboardPosition.x);
+      $('#billboardY').val(billboardPosition.y);
+    }
+
+    // BILLBOARDPOSITIONER:
+    //
+    //=========================================================================
+    this.billboardPositioner = function billboardPositioner(event){
+
+      // DEBUG
+      console.log('billboard positioner');
+      this.modePlace = 2; //billboard mode
+  //     //create plane object
+  //     var object, material;
+  //     var objGeometry = new THREE.PlaneGeometry(12,10);
+  //     var texture = new THREE.TextureLoader().load("http://rict.liris.cnrs.fr/DataStore/1824marsPlanCadastralTerra_Bis_BD.jpg");
+  //     // immediately use the texture for material creation
+  //     material = new THREE.MeshBasicMaterial( { map: texture, side: THREE.DoubleSide } );
+  // //      object = new THREE.Mesh(objGeometry.clone(), material); clone if I want to have several similar objects
+  //     this.object = new THREE.Mesh(objGeometry, material);
+  //     this.object.scale.set(100,100,100);
+  //     this.object.position.x=1843489;
+  //     this.object.position.y=	5175421;
+  //     this.object.position.z=	228;
+  //     this.object.rotation.x = Math.PI / 2;
+  //     this.object.updateMatrixWorld();
+  //     this.view.scene.add(this.object);
+  //     //DEBUG log position
+  //     //this.getPosition(event);
+      document.addEventListener('mousedown', this.updateBillboardPositionFromMousePicking.bind(this),false);
     }
 
     this.closeDocCreation = function closeDocCreation(){
       document.getElementById('CreateDocWindow').style.display ="none";
     }
 
+    //POSTNEWDOC
+    //Sends Http request to create a new document in the DB
+    //=========================================================================
     this.PostNewDoc = function PostNewDoc(url, data, callback) {
       //console.log(data);
       var req = new XMLHttpRequest();
@@ -300,13 +387,13 @@ export function CreateDoc(controls){
       this.CreateNewDoc = function CreateNewDoc(){
         this.newDocData = new FormData(document.getElementById('myCreationForm'));
         this.UpdateDocData();
+        console.log("myNewDoc");
+        //console.log(this.newDocData);
         //TODO: add data verification
         //post data and execute script to process data if data verification OK
         //TODO create new instance of Document ??
         //var doc = new Document(docTitle,docIndex,doc_ID,docImageSourceHD,docImageSourceBD,billboardPosition,docViewPosition,docViewQuaternion,docRefDate, docPublicationDate, docDescription, docMetaData, docSubject)
-
         this.PostNewDoc("http://rict.liris.cnrs.fr/APIVilo3D/APIExtendedDocument/web/app_dev.php/addDocument",this.newDocData, function(){});
-
         if (this.creationStatus = 1){ //request succeeded
           //clear all form fields
           $("#myCreationForm").get(0).reset();
@@ -322,15 +409,16 @@ export function CreateDoc(controls){
         for (var pair of this.newDocData.entries()) {
           console.log(pair[0]+ ', ' + pair[1]);
         }
-
       }
 
-      // event listeners for buttons
-      document.getElementById("showDocTab").addEventListener('mousedown', this.showDocPositioner.bind(this),false);
-      document.getElementById("billboardSelectPosition").addEventListener('mousedown', this.selectBillboardPosition.bind(this), false);
-      document.getElementById("docPositionerClose").addEventListener('mousedown', this.closeDocPositioner.bind(this),false);
-      document.getElementById("CameraPositionTab").addEventListener('mousedown', this.getCameraPosition.bind(this),false);
-      document.getElementById('submitButton').addEventListener("mousedown", this.CreateNewDoc.bind(this), false);
-      document.getElementById("closeCreateDoc").addEventListener('mousedown', this.closeDocCreation.bind(this),false);
+    // event listeners for buttons
+    document.getElementById("showDocTab").addEventListener('mousedown', this.showDocPositioner.bind(this),false);
+    document.getElementById("billboardSelectPosition").addEventListener('mousedown', this.billboardPositioner.bind(this), false);
+    document.getElementById("docPositionerClose").addEventListener('mousedown', this.closeDocPositioner.bind(this),false);
+    document.getElementById("saveManualPosTEST").addEventListener('mousedonw', this.saveManualPosition.bind(this),false);
+    document.getElementById("CameraPositionTab").addEventListener('mousedown', this.getCameraPosition.bind(this),false);
+    document.getElementById("setPositionManually").addEventListener('mousedown', this.setManualPosition.bind(this),false);
+    document.getElementById('submitButton').addEventListener("mousedown", this.CreateNewDoc.bind(this), false);
+    document.getElementById("closeCreateDoc").addEventListener('mousedown', this.closeDocCreation.bind(this),false);
 
 }
