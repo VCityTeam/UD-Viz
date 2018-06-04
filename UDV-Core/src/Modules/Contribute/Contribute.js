@@ -16,6 +16,7 @@ export function Contribute(view, controls, storedData, options = {}, mode) {
   document.getElementById("startContributeWindow").innerHTML =
   '<div id = "filtersTitle">Document research</div>\
   <div id = "filtersWindow"></div>\
+  <div id="displayModeButtons"></div>\
   <button id = "docInBrowser">Browser</button>\
   <button id = "docInBillboard">Billboards</button>\
   <button id="docCreate" type = button>Create</button>\
@@ -39,6 +40,7 @@ export function Contribute(view, controls, storedData, options = {}, mode) {
   var meta = document.createElement('meta');
   meta.setAttribute('charset', "UTF-8");
   document.getElementsByTagName('head')[0].appendChild(meta);
+
 
   ///////////// Class attributes
   // Whether this window is currently displayed or not.

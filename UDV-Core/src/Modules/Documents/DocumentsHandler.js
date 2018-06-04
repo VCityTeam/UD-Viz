@@ -40,6 +40,8 @@ export function DocumentsHandler(view, controls, jsonDataFromDB, options = {}) {
 
     document.getElementById("doc").innerHTML =
     '<div id="docBrowserWindow">\
+      <button id="closeBrowserWindow" type=button>X</button><br/>\
+      <br/>\
         <div id="docHead">Document Navigator</div>\
         <div id="docBrowserTitle">doc title</div>\
         <div id="docBrowserMetaData">metadata</div>\
@@ -48,9 +50,12 @@ export function DocumentsHandler(view, controls, jsonDataFromDB, options = {}) {
         <div id="docBrowserIndex"></div>\
         <button id="docBrowserNextButton" type=button>⇨</button>\
         <button id="docBrowserPreviousButton" type=button>⇦</button>\
-        <button id="docBrowserOrientButton" type=button>Orient Document</button>\
+        <div id="operationsOnDoc">\
         <button id="docDelete" type = button>Delete</button>\
         <button id = "docUpdate" type = button>Update</button>\
+        <button id="docBrowserOrientButton" type=button>Orient Document</button>\
+        </div>\
+        <button id = "docCreateFromBrowser" type = button>Create new doc</button>\
     </div>\
     <div id="docFull">\
         <img id="docFullImg"/>\
@@ -333,7 +338,7 @@ export function DocumentsHandler(view, controls, jsonDataFromDB, options = {}) {
         document.getElementById('docBrowserTitle').innerHTML = this.currentDoc.title;
         document.getElementById('docDescription').innerHTML = this.currentDoc.description;
         //document.getElementById('docBrowserIndex').innerHTML = "index : " + this.currentDoc.index;
-        document.getElementById('docBrowserIndex').innerHTML = "index : " + this.currentDoc.doc_ID;
+      //  document.getElementById('docBrowserIndex').innerHTML = "index : " + this.currentDoc.doc_ID;
     }
 
     // show billboards
@@ -415,6 +420,12 @@ export function DocumentsHandler(view, controls, jsonDataFromDB, options = {}) {
       console.log('doc deletion');
       var Delete = new udvcore.DeleteDoc(this.currentDoc);
     }
+
+    this.handleDocCreation = function handleDocCreation(){
+      console.log("doc creation");
+      var Create = new udvcore.CreateDoc(this.controls, this.view);
+    }
+
 
     // triggers the "oriented view" of the current docIndex
     // this will display the doc image in the middle of the screen
@@ -527,6 +538,7 @@ export function DocumentsHandler(view, controls, jsonDataFromDB, options = {}) {
     document.getElementById("docBrowserOrientButton").addEventListener('mousedown', this.focusOnDoc.bind(this),false);
     document.getElementById("docUpdate").addEventListener('mousedown', this.handleDocUpdate.bind(this),false);
     document.getElementById("docDelete").addEventListener('mousedown', this.handleDocDelete.bind(this),false);
+    document.getElementById("docCreateFromBrowser").addEventListener('mousedown', this.handleDocCreation.bind(this),false);
 
 
     // setup display

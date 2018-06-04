@@ -152,19 +152,6 @@
 
 
 
-#docBrowserOrientButton{
-    position: absolute;
-    z-index: 20;
-    bottom : 0;
-    right : 0;
-    margin : 5px;
-    font-size: 14px;
-    border: 1px solid black;
-    background-color: white;
-    color: black;
-    height: 30px;
-    pointer-events: auto;
-}
 
 #docFull{
     position: absolute;
@@ -200,6 +187,7 @@
     height: 40%;
     object-fit: contain;
 }
+
 #updateDocWindow{
     display: none;
     position: absolute;
@@ -217,7 +205,6 @@
     background-color: rgba(30,30,30,0.6);
     font-size: 14;
 }
-
 
 
 #docFullPanel{
@@ -238,19 +225,13 @@
 #docFullClose{
     position: absolute;
     z-index: 10;
-
     margin : auto;
-
     bottom : 20%;
-
     left: 2%;
-
     border: 1px solid black;
     background-color: white;
     color: black;
-
     height: 30px;
-
     pointer-events: auto;
 }
 
@@ -332,6 +313,67 @@
     pointer-events: auto;
 }
 
+#operationsOnDoc{
+  margin: 10px;
+  /*  border: 3px solid green;*/
+
+}
+
+ #docDelete{
+
+  font-size: 14px;
+  border: 1px solid black;
+  background-color: white;
+  color: black;
+  height: 30px;
+  pointer-events: auto;
+}
+
+#docUpdate{
+font-size: 14px;
+  border: 1px solid black;
+  background-color: white;
+  color: black;
+  height: 30px;
+  pointer-events: auto;
+}
+#closeBrowserWindow{
+  position: absolute;
+  z-index: 20;
+  top : 0;
+  right : 0;
+  margin : 5px;
+  font-size: 14px;
+  border: 1px solid black;
+  background-color: white;
+  color: black;
+  height: 30px;
+  pointer-events: auto;
+
+}
+
+#docBrowserOrientButton{
+    font-size: 14px;
+    border: 1px solid black;
+    background-color: white;
+    color: black;
+    height: 30px;
+    pointer-events: auto;
+}
+
+#docCreateFromBrowser{
+  position: absolute;
+  z-index: 20;
+  right : 0;
+      bottom : 0;
+  margin : 5px;
+  font-size: 14px;
+  border: 2px solid #008CBA;
+  background-color: white;
+  color: black;
+  height: 30px;
+  pointer-events: auto;
+}
 
 #debugCameraPostion{
   display: none;

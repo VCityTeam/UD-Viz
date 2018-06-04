@@ -24,7 +24,7 @@ export function CreateDoc(controls, view){
   </div>\
   <div id = "divButtons">\
   <button id = "showDocTab">Place doc</button>\
-  <button id = "billboardSelectPosition">Billboard</button>\
+  <button id = "billboardSelectPosition">Choose billboard position</button>\
   <button id = "submitButton">Submit</button>\
   <button id = "closeCreateDoc">Close</button>\
   </div>\
