@@ -4,8 +4,10 @@
 import $ from 'jquery';
 import 'alpaca';
 import 'bootstrap-datepicker'
-import './DocumentPositioner.js';
-import '../Documents/DocumentsHandler.js';
+import { DocumentsBrowser } from './DocumentsBrowser.js';
+import { CreateDoc } from './CreateDoc.js';
+import './Contribute.css';
+
 
 export function Contribute(view, controls, storedData, options = {}, mode) {
 
@@ -71,11 +73,13 @@ export function Contribute(view, controls, storedData, options = {}, mode) {
     this.controls = controls;
     this.view = view;
     this.objects = [];
+
   }
 
   ///////////// Initialization
   this.refresh( );
   this.initialize();
+
 
   this.displayDocs = function displayDocs(){
     //check which filters are activated
@@ -86,7 +90,8 @@ export function Contribute(view, controls, storedData, options = {}, mode) {
     for (var pair of filters.entries()){
       console.log(pair[0]+ ', ' + pair[1]);
     }*/
-        var chain = "http://rict.liris.cnrs.fr/APIVilo3D/APIExtendedDocument/web/app_dev.php/getDocuments?";
+       var chain  = "http://127.0.0.1/APIExtendedDocument/web/app_dev.php/getDocuments?";
+    //    var chain = "http://rict.liris.cnrs.fr/APIVilo3D/APIExtendedDocument/web/app_dev.php/getDocuments?";
         for(var pair of entries ){
           if(pair[1]!=""){
             chain+= pair[0] + "=" + pair[1];
@@ -108,7 +113,7 @@ export function Contribute(view, controls, storedData, options = {}, mode) {
         }
         else {
           //TODO add options billboard / browser in documentsHandler parameters
-          //create instance of DocumentsHandler with the selected documents according to the filters
+          //create instance of DocumentsBrowser with the selected documents according to the filters
           if (this.modePlace ==1){
             this.showBrowser();
           }
@@ -122,13 +127,13 @@ export function Contribute(view, controls, storedData, options = {}, mode) {
       }
 
       this.showBrowser = function showBrowser(){
-        var documents = new udvcore.DocumentsHandler(view, controls, this.filtered_data, {temporal: temporal} );
+        var documents = new DocumentsBrowser(view, controls, this.filtered_data, {temporal: temporal} );
         document.getElementById('docBrowserWindow').style.display = "block";
       }
 
       //TODO take this function into another class in charge of handling a set of objects
       this.showBillboard = function showBillboard(){
-      document.addEventListener('mousedown', this.myfunctiontest.bind(this),false);
+      //document.addEventListener('mousedown', this.myfunctiontest.bind(this),false);
         for (var i =0; i<this.filtered_data.length;i++){
               var object, material;
               var objGeometry = new THREE.PlaneGeometry(12,10);
@@ -139,9 +144,10 @@ export function Contribute(view, controls, storedData, options = {}, mode) {
               object = new THREE.Mesh(objGeometry.clone(), material);
               this.objects.push(object);
               object.scale.set(50,50,50);
-              //var q = new THREE.Quaternion(this.filtered_data[i].visualization.quaternionX,this.filtered_data[i].visualization.quaternionY,this.filtered_data[i].visualization.quaternionZ,this.filtered_data[i].visualization.quaternionW);
+            //  var q = new THREE.Quaternion(this.filtered_data[i].visualization.quaternionX,this.filtered_data[i].visualization.quaternionY,this.filtered_data[i].visualization.quaternionZ,this.filtered_data[i].visualization.quaternionW);
+              object.quaternion.copy( this.view.camera.camera3D.quaternion );//face camera when created => to change
             //  object.applyQuaternion(q);
-            object.rotation.x = Math.PI / 2; //rotates the object so it is "standing"
+      //      object.rotation.x = Math.PI / 2; //rotates the object so it is "standing"
               object.position.x=this.filtered_data[i].visualization.positionX;
               object.position.y=	this.filtered_data[i].visualization.positionY;
               object.position.z=	626;
@@ -149,6 +155,27 @@ export function Contribute(view, controls, storedData, options = {}, mode) {
               this.view.scene.add(object);
             }
 
+
+            var spriteMaterial = new THREE.SpriteMaterial( {color: 0x1B00CE, side: THREE.DoubleSide } );
+            var sprite = new THREE.Sprite( spriteMaterial );
+        //    sprite.position.set( 1837816.94334, 5170036.4587, 626 );
+            sprite.position.x = 1837816.94334;
+            sprite.position.y = 5170036.4587;
+            sprite.position.z = 626;
+            //object.quaternion.copy(this.view.camera.camera3D.quaternion);
+            sprite.scale.set( 1000,1000, 1000 );
+            sprite.updateMatrixWorld();
+            console.log(sprite);
+            this.view.scene.add( sprite );
+/*
+            var crateTexture = THREE.ImageUtils.loadTexture( '1760versPlanHCL_BD.jpg' );
+var crateMaterial = new THREE.SpriteMaterial( { useScreenCoordinates: false, color: 0xff0000 } );
+            var sprite = new THREE.Sprite( crateMaterial );
+	sprite.position.set( 1844303.0711504966, 5194450.650447503, 625 );
+	sprite.scale.set( 1000,1000, 1000 ); // imageWidth, imageHeight
+  sprite.updateMatrixWorld();
+	this.view.scene.add( sprite );
+*/
             }
 
 this.myfunctiontest = function myfunctiontest(event){
@@ -162,7 +189,7 @@ this.myfunctiontest = function myfunctiontest(event){
 
       this.handleDocCreation = function handleDocCreation(){
         console.log("entering creation class");
-        var newDocCreation = new udvcore.CreateDoc(this.controls, this.view);
+        var newDocCreation = new CreateDoc(this.controls, this.view);
       }
 
       this.setBrowserMode = function setBrowserMode(){

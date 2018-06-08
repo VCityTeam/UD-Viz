@@ -1,4 +1,5 @@
-import '../Documents/DocumentsHandler.js';
+//import './DocumentsBrowser.js';
+//import './Contribute.css';
 
 export function DeleteDoc(doc) {
 
@@ -12,7 +13,8 @@ export function DeleteDoc(doc) {
     console.log(this.id);
     if(confirm('Delete this document permanently?')){
       console.log("deletion");
-      var url = "http://rict.liris.cnrs.fr/APIVilo3D/APIExtendedDocument/web/app_dev.php/deleteDocument/" + this.id;
+      var url = "http://127.0.0.1/APIExtendedDocument/web/app_dev.php/deleteDocument/" + this.id;
+    //  var url = "http://rict.liris.cnrs.fr/APIVilo3D/APIExtendedDocument/web/app_dev.php/deleteDocument/" + this.id;
       var req = new XMLHttpRequest();
       req.open("POST", url);
       req.send();

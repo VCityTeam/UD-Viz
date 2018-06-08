@@ -8,16 +8,17 @@ import '../Documents/DocumentsHandler.js';
 
 export function UpdateDoc(doc) {
 
-  this.previewImage = doc.imageSourceBD;
-  this.id = doc.doc_ID;
-  this.url = "http://rict.liris.cnrs.fr/APIVilo3D/APIExtendedDocument/web/app_dev.php/editDocument/";
-
   // initialization
   // The update window is displayed
   // the update form is generated using alpaca
   // the document image is shown
   //=========================================================================
   this.initialize = function initialize(){
+
+    this.previewImage = doc.imageSourceBD;
+    this.id = doc.doc_ID;
+    this.url = "http://127.0.0.1/APIExtendedDocument/web/app_dev.php/editDocument/";
+    //  this.url = "http://rict.liris.cnrs.fr/APIVilo3D/APIExtendedDocument/web/app_dev.php/editDocument/";
     //setup display
     document.getElementById('updateDocWindow').style.display = "block";
     document.getElementById('docBrowserWindow').style.display = "none";
@@ -27,7 +28,7 @@ export function UpdateDoc(doc) {
 
   this.initialize();
 
-  // SAVEUPDATE: save documents update
+  // SAVEUPDATE: save document's update
   // using function PostUpdateDoc
   //=========================================================================
   this.saveUpdate = function saveUpdate(){

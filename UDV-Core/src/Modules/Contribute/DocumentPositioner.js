@@ -3,9 +3,10 @@ import * as THREE from 'three';
 import { MAIN_LOOP_EVENTS } from 'itowns';
 import { Document } from '../Documents/Document.js'
 import { readCSVFile } from '../../Tools/CSVLoader.js';
-import '../Documents/DocumentsHandler.css';
+import './Contribute.css';
 import DefaultImage from '../Documents/DefaultImage.png';
-import './DocumentPositioner.css';
+
+
 
 
 

@@ -26,19 +26,6 @@
     color: black;
     pointer-events: auto;
 }
-/*
-#showDocTab{
-  position: absolute;
-  z-index: 40;
-  top: 0;
-  left: 3px;
-  margin : 3px;
-  border: 1px solid black;
-  background-color: white;
-  color: black;
-  pointer-events: auto;
-}
-*/
 
 #docPositionerWindow{
     display: none;

@@ -4,10 +4,10 @@ import * as itowns from 'itowns';
 export { itowns };
 export { Setup3DScene }         from './Setup3DScene';
 
+
+export { Contribute }             from './Modules/Contribute/Contribute';
+
 export { DocumentsHandler }     from './Modules/Documents/DocumentsHandler';
-export { UpdateDoc }             from './Modules/Documents/UpdateDoc';
-export { DeleteDoc }             from './Modules/Documents/DeleteDoc';
-export { CreateDoc }            from  './Modules/Documents/CreateDoc';
 
 export { GuidedTourController } from './Modules/GuidedTour/GuidedTour';
 
@@ -16,10 +16,4 @@ export { CompassController }    from './Modules/Others/Compass';
 export { HelpWindow }           from './Modules/Others/Help';
 export { MiniMapController }    from './Modules/Others/MiniMap';
 
-export { DocumentPositioner }   from './Modules/Contribute/DocumentPositioner';
-
 export { TemporalController }   from './Modules/Temporal/Temporal';
-
-export { Contribute }           from './Modules/Contribute/Contribute';
-
-export { FilterDocuments }           from './Modules/Contribute/FilterDocuments';

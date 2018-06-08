@@ -1,11 +1,10 @@
 import $ from 'jquery';
 import 'alpaca';
 import 'bootstrap-datepicker'
-import '../Contribute/DocumentPositioner.js';
-import './DocumentsHandler.js';
-
+import './Contribute.css';
 
 export function CreateDoc(controls, view){
+
   this.myUploadedImage = null;
 
   var formDiv = document.createElement("div");
@@ -95,7 +94,8 @@ export function CreateDoc(controls, view){
    "label":"Describe your file:"
  }
 }
-}
+};
+
 
   $("#alpacaForm").alpaca({
        "schemaSource": schema,
@@ -183,7 +183,7 @@ export function CreateDoc(controls, view){
     //SETMANUALPOSIITON
     //Gives the user the possibility to give values for position and quaternion
     //by writting them in HTML 'input' elements.
-    //By default, the values are set to the curretn camera position and quaternion
+    //By default, the values are set to the current camera position and quaternion
     //=========================================================================
     this.setManualPosition = function setManualPosition(){
       //dispaly input fields
@@ -241,7 +241,6 @@ export function CreateDoc(controls, view){
 
 
     this.SaveDocManualPosition = function SaveDocManualPosition(){
-
       this.docPos.x = document.getElementById('setPosX').value;
       this.docPos.y = document.getElementById('setPosY').value;
       this.docPos.z = document.getElementById('setPosZ').value;
@@ -249,10 +248,7 @@ export function CreateDoc(controls, view){
       this.docQuat.y = document.getElementById('setQuatY').value;
       this.docQuat.z = document.getElementById('setQuatZ').value;
       this.docQuat.w = document.getElementById('setQuatW').value;
-
     }
-
-
 
     // SHOWDOCPOSITIONER
     // Handles the tool used to placed documents in overlay to the scene
@@ -376,6 +372,8 @@ export function CreateDoc(controls, view){
         }
       });
       req.addEventListener("error", function () {
+        console.log(req.status);
+        console.log(req.statusText);
         console.error("Network error with url: " + url);
       });
       req.send(data);
@@ -385,15 +383,13 @@ export function CreateDoc(controls, view){
       // Handles the creation of a new document in the database
       //=========================================================================
       this.CreateNewDoc = function CreateNewDoc(){
+        //gets data from formular:
         this.newDocData = new FormData(document.getElementById('myCreationForm'));
+        //update doc information with position:
         this.UpdateDocData();
-        console.log("myNewDoc");
-        //console.log(this.newDocData);
         //TODO: add data verification
-        //post data and execute script to process data if data verification OK
-        //TODO create new instance of Document ??
-        //var doc = new Document(docTitle,docIndex,doc_ID,docImageSourceHD,docImageSourceBD,billboardPosition,docViewPosition,docViewQuaternion,docRefDate, docPublicationDate, docDescription, docMetaData, docSubject)
-        this.PostNewDoc("http://rict.liris.cnrs.fr/APIVilo3D/APIExtendedDocument/web/app_dev.php/addDocument",this.newDocData, function(){});
+        //post data and execute script to process data if data verification OK:
+        this.PostNewDoc("http://127.0.0.1/APIExtendedDocument/web/app_dev.php/addDocument",this.newDocData, function(){});
         if (this.creationStatus = 1){ //request succeeded
           //clear all form fields
           $("#myCreationForm").get(0).reset();
@@ -405,10 +401,10 @@ export function CreateDoc(controls, view){
         else { //request failed
           alert('Document could not be created, check information');
         }
-        // DEBUG
-        for (var pair of this.newDocData.entries()) {
-          console.log(pair[0]+ ', ' + pair[1]);
-        }
+        // // DEBUG
+        // for (var pair of this.newDocData.entries()) {
+        //   console.log(pair[0]+ ', ' + pair[1]);
+        // }
       }
 
     // event listeners for buttons

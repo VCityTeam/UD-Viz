@@ -3,8 +3,7 @@ import * as THREE from 'three';
 import { MAIN_LOOP_EVENTS } from 'itowns';
 import { Document } from '../Documents/Document.js'
 import { readCSVFile } from '../../Tools/CSVLoader.js';
-import '../Documents/DocumentsHandler.css';
-import './DocumentPositioner.css';
+import './Contribute.css';
 
 ///help https://jsfiddle.net/vert3x/pv4oxrLd/
 

@@ -4,8 +4,9 @@
 * + associated viewPosition & viewQuaternion (used by focusOnDoc() to orient the camera
 * + associated billboard (optional)
 */
+// before: docTitle,docIndex,doc_ID,docImageSourceHD,docImageSourceBD,billboardPosition,docViewPosition,docViewQuaternion,docDate,metaData
 //=============================================================================
-export function Document(docTitle,docIndex,doc_ID,docImageSourceHD,docImageSourceBD,billboardPosition,docViewPosition,docViewQuaternion,docDate,metaData) {
+export function ExtendedDocument(docTitle,docIndex,doc_ID,docImageSourceHD,docImageSourceBD,billboardPosition,docViewPosition,docViewQuaternion,docRefDate, docPublicationDate, docDescription, docMetaData, docSubject) {
 
     // unique ID for the doc, determined by the line in the doc csv file
     // must be a consecutive list of index (0,1,2,3,4 etc)
@@ -22,16 +23,24 @@ export function Document(docTitle,docIndex,doc_ID,docImageSourceHD,docImageSourc
     this.imageSourceBD = docImageSourceBD;
 
     // other metadata (currently just a text)
-    this.metaData = metaData;
+    this.description = docDescription;
+    this.metadata = docMetaData;
+    this.subject = docSubject;
+    //this.description = description;
 
     // date used by TemporalController : the date will become this date when the doc is focused
-    this.startDate = docDate;
+    //this.startDate = docDate;
+    this.refDate1 = docRefDate;
+    this.publicationDate1 = docPublicationDate;
+  //  console.log(this.publicationDate1);
 
     this.title = docTitle;
 
     // if false, no billboard will be created or displayed for this docTitle
     // will be set to true if valid data is provided in the csv file
     this.useBillboard = (!isNaN(billboardPosition.x) && !isNaN(billboardPosition.y) && !isNaN(billboardPosition.z));
+
+    ///
 
     // world position of the billboard (where it will be)
     this.billboardPosition = billboardPosition;
@@ -86,5 +95,9 @@ export function Document(docTitle,docIndex,doc_ID,docImageSourceHD,docImageSourc
 
     if(this.useBillboard){
         this.createBillboard();
+    }
+
+    this.getDocID = function getDocID(){
+      return this.doc_ID;
     }
 }
