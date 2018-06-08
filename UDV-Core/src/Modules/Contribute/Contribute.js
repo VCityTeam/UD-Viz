@@ -7,9 +7,10 @@ import 'bootstrap-datepicker'
 import { DocumentsBrowser } from './DocumentsBrowser.js';
 import { CreateDoc } from './CreateDoc.js';
 import './Contribute.css';
+import { MAIN_LOOP_EVENTS } from 'itowns';
 
 
-export function Contribute(view, controls, storedData, options = {}, mode) {
+export function Contribute(view, controls, options = {}, mode, url) {
 
   //Contribute Mode: start window
   var contriDiv = document.createElement("div");
@@ -47,7 +48,7 @@ export function Contribute(view, controls, storedData, options = {}, mode) {
   ///////////// Class attributes
   // Whether this window is currently displayed or not.
   this.windowIsActive = options.active || false;
-  this.filtered_data = storedData;
+//  this.filtered_data = storedData;
 
   // Display or hide this window
   this.activateWindow = function activateWindow( active ){
@@ -62,6 +63,8 @@ export function Contribute(view, controls, storedData, options = {}, mode) {
   }
 
   this.initialize = function initialize(){
+    this.url = url;//
+    this.filtered_data = "null";
     this.docPos = new THREE.Vector3();
     this.docQuat =  new THREE.Quaternion();
     // billboard position
@@ -72,139 +75,132 @@ export function Contribute(view, controls, storedData, options = {}, mode) {
     this.creationStatus = 0; //status of the POST request to doc creation
     this.controls = controls;
     this.view = view;
-    this.objects = [];
-
+    this.billboards = [];
   }
 
   ///////////// Initialization
   this.refresh( );
   this.initialize();
 
-
-  this.displayDocs = function displayDocs(){
+  this.getFilteredDocuments = function getFilteredDocuments(){
     //check which filters are activated
     var filters = new FormData(document.getElementById('filterForm'));
     var entries = filters.entries();
-
-    /* DEBUG displaying filters
+    /*
+    // DEBUG displaying filters
     for (var pair of filters.entries()){
       console.log(pair[0]+ ', ' + pair[1]);
     }*/
-       var chain  = "http://127.0.0.1/APIExtendedDocument/web/app_dev.php/getDocuments?";
-    //    var chain = "http://rict.liris.cnrs.fr/APIVilo3D/APIExtendedDocument/web/app_dev.php/getDocuments?";
-        for(var pair of entries ){
-          if(pair[1]!=""){
-            chain+= pair[0] + "=" + pair[1];
-            chain+="&";
-          }
-        }
-        var chain = chain.slice('&',-1);
-        console.log(chain);
-        //get documents with or without filters
-        var req = new XMLHttpRequest();
-        req.open("GET", chain,false);
-        req.send();
-        console.log(req.statusText);
-        this.filtered_data = JSON.parse(req.responseText);
-        console.log(this.filtered_data);
-        //display doc in browser
-        if(this.filtered_data.length==0){
-          alert('No document found');
-        }
-        else {
-          //TODO add options billboard / browser in documentsHandler parameters
-          //create instance of DocumentsBrowser with the selected documents according to the filters
-          if (this.modePlace ==1){
-            this.showBrowser();
-          }
-          else{
-            if (this.modePlace == 2){
-              this.showBillboard();
-            }
-          }
+    var url_with_filters = this.url +"app_dev.php/getDocuments?";
+    for(var pair of entries ){
+      if(pair[1]!=""){
+        url_with_filters+= pair[0] + "=" + pair[1];
+        url_with_filters+="&";
+      }
+    }
+    var url_with_filters = url_with_filters.slice('&',-1);
 
+    var req = new XMLHttpRequest();
+    req.open("GET", url_with_filters,false);
+    req.send();
+    this.filtered_data = JSON.parse(req.responseText);
+  }
+
+  this.displayDocs = function displayDocs(){
+    //get documents from database
+    this.getFilteredDocuments();
+    //display doc in browser
+    if(this.filtered_data.length==0){
+      alert('No document found');
+    }
+    else {
+      //TODO add options billboard / browser in documentsHandler parameters
+      //create instance of DocumentsBrowser with the selected documents according to the filters
+      if (this.modePlace ==1){
+        this.showBrowser();
+      }
+      else{
+        if (this.modePlace == 2){
+          this.showBillboards();
         }
       }
+    }
+  }
 
-      this.showBrowser = function showBrowser(){
-        var documents = new DocumentsBrowser(view, controls, this.filtered_data, {temporal: temporal} );
-        document.getElementById('docBrowserWindow').style.display = "block";
-      }
+  this.showBrowser = function showBrowser(){
+    var documents = new DocumentsBrowser(view, controls, this.filtered_data, {temporal: temporal} , this.url );
+    document.getElementById('docBrowserWindow').style.display = "block";
+  }
 
-      //TODO take this function into another class in charge of handling a set of objects
-      this.showBillboard = function showBillboard(){
-      //document.addEventListener('mousedown', this.myfunctiontest.bind(this),false);
-        for (var i =0; i<this.filtered_data.length;i++){
-              var object, material;
-              var objGeometry = new THREE.PlaneGeometry(12,10);
-              var texture = new THREE.TextureLoader().load("http://rict.liris.cnrs.fr/APIVilo3D/APIExtendedDocument/web/documentsDirectory/" + this.filtered_data[i].metadata.link);
-              // immediately use the texture for material creation
-              material = new THREE.MeshBasicMaterial( { map: texture, side: THREE.DoubleSide } );
-
-              object = new THREE.Mesh(objGeometry.clone(), material);
-              this.objects.push(object);
-              object.scale.set(50,50,50);
-            //  var q = new THREE.Quaternion(this.filtered_data[i].visualization.quaternionX,this.filtered_data[i].visualization.quaternionY,this.filtered_data[i].visualization.quaternionZ,this.filtered_data[i].visualization.quaternionW);
-              object.quaternion.copy( this.view.camera.camera3D.quaternion );//face camera when created => to change
-            //  object.applyQuaternion(q);
-      //      object.rotation.x = Math.PI / 2; //rotates the object so it is "standing"
-              object.position.x=this.filtered_data[i].visualization.positionX;
-              object.position.y=	this.filtered_data[i].visualization.positionY;
-              object.position.z=	626;
-              object.updateMatrixWorld();
-              this.view.scene.add(object);
-            }
+  this.createBillboard=function createBillboard(doc){
+    var object, material;
+    var objGeometry = new THREE.PlaneGeometry(12,10);
+    var texture = new THREE.TextureLoader().load(this.url + "documentsDirectory/" +  doc.metadata.link);
+    // immediately use the texture for material creation
+    material = new THREE.MeshBasicMaterial( { map: texture, side: THREE.DoubleSide } );
+    object = new THREE.Mesh(objGeometry.clone(), material);
+    this.billboards.push(object);
+    object.scale.set(50,50,50);
+    object.quaternion.copy( this.view.camera.camera3D.quaternion );//face camera when created => in fact, we want to object to always face the screen
+    object.position.x=doc.visualization.positionX;
+    object.position.y=	doc.visualization.positionY;
+    object.position.z=	626;
+    object.updateMatrixWorld();
+  }
 
 
-            var spriteMaterial = new THREE.SpriteMaterial( {color: 0x1B00CE, side: THREE.DoubleSide } );
-            var sprite = new THREE.Sprite( spriteMaterial );
-        //    sprite.position.set( 1837816.94334, 5170036.4587, 626 );
-            sprite.position.x = 1837816.94334;
-            sprite.position.y = 5170036.4587;
-            sprite.position.z = 626;
-            //object.quaternion.copy(this.view.camera.camera3D.quaternion);
-            sprite.scale.set( 1000,1000, 1000 );
-            sprite.updateMatrixWorld();
-            console.log(sprite);
-            this.view.scene.add( sprite );
-/*
-            var crateTexture = THREE.ImageUtils.loadTexture( '1760versPlanHCL_BD.jpg' );
-var crateMaterial = new THREE.SpriteMaterial( { useScreenCoordinates: false, color: 0xff0000 } );
-            var sprite = new THREE.Sprite( crateMaterial );
-	sprite.position.set( 1844303.0711504966, 5194450.650447503, 625 );
-	sprite.scale.set( 1000,1000, 1000 ); // imageWidth, imageHeight
-  sprite.updateMatrixWorld();
-	this.view.scene.add( sprite );
-*/
-            }
+  //TODO ??? take this function into another class in charge of handling a set of objects
+  this.showBillboards = function showBillboards(){
+    //document.addEventListener('mousedown', this.myfunctiontest.bind(this),false);
+    for (var i =0; i<this.filtered_data.length;i++){
+      var doc = this.filtered_data[i];
+      this.createBillboard(doc);
+      this.view.scene.add(this.billboards[i]);
+    }
 
-this.myfunctiontest = function myfunctiontest(event){
-  var mouse = new THREE.Vector2();
-  mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
-  mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
-  const pointUnderCursor = this.controls.getWorldPointAtScreenXY(mouse);
-  console.log('mouse point screen');
-  console.log(pointUnderCursor);
+  }
+
+
+  this.updateBillboardPosition = function updateBillboardPosition(){
+    for(var i = 0; i<this.billboards.length;i++){
+        this.billboards[i].quaternion.copy( this.view.camera.camera3D.quaternion );
+        this.billboards[i].updateMatrixWorld();
+    }
+  }
+
+  // request update every active frame
+  this.controls.view.addFrameRequester( MAIN_LOOP_EVENTS.AFTER_CAMERA_UPDATE,this.updateBillboardPosition.bind(this) );
+  /*
+  this.myfunctiontest = function myfunctiontest(event){
+    var mouse = new THREE.Vector2();
+    mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+    mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+    const pointUnderCursor = this.controls.getWorldPointAtScreenXY(mouse);
+    console.log('mouse point screen');
+    console.log(pointUnderCursor);
+  }*/
+
+  this.setBrowserMode = function setBrowserMode(){
+    this.modePlace = 1;
+    console.log('browser mode');
+    this.displayDocs();
+  }
+  this.setBillboardMode = function setBillboardMode(){
+    this.modePlace = 2;
+    console.log('billboard mode');
+    this.displayDocs();
+  }
+
+  //EventListeners for buttons
+  document.getElementById('docCreate').addEventListener("mousedown", function(){
+    handleDocCreation(this.controls, this.view);
+  }, false);
+  document.getElementById("docInBrowser").addEventListener('mousedown', this.setBrowserMode.bind(this),false);
+  document.getElementById('docInBillboard').addEventListener('mousedown', this.setBillboardMode.bind(this),false);
+
 }
 
-      this.handleDocCreation = function handleDocCreation(){
-        console.log("entering creation class");
-        var newDocCreation = new CreateDoc(this.controls, this.view);
-      }
-
-      this.setBrowserMode = function setBrowserMode(){
-        this.modePlace = 1;
-        console.log('browser mode');
-        this.displayDocs();
-      }
-      this.setBillboardMode = function setBillboardMode(){
-        this.modePlace = 2;
-        console.log('billboard mode');
-        this.displayDocs();
-      }
-
-      document.getElementById("docInBrowser").addEventListener('mousedown', this.setBrowserMode.bind(this),false);
-      document.getElementById('docCreate').addEventListener("mousedown", this.handleDocCreation.bind(this),false);
-      document.getElementById('docInBillboard').addEventListener('mousedown', this.setBillboardMode.bind(this),false);
-
-    }
+function handleDocCreation(controls, view){
+  console.log("entering creation class");
+  var newDocCreation = new CreateDoc(controls, view);
+}

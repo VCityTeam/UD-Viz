@@ -32,7 +32,7 @@ import { UpdateDoc } from './UpdateDoc.js';
 * @param options : optional parameters (including TemporalController)
 */
 //=============================================================================
-export function DocumentsBrowser(view, controls, jsonDataFromDB, options = {}) {
+export function DocumentsBrowser(view, controls, jsonDataFromDB, options = {},url) {
 
     ///////////// Html elements
     var docDiv = document.createElement("div");
@@ -150,8 +150,7 @@ export function DocumentsBrowser(view, controls, jsonDataFromDB, options = {}) {
     this.initEvent = document.createEvent('Event');
     this.initEvent.initEvent('docInit', true, true);
 
-    //////////// Behavior
-
+    this.url = url;
     /**
     * initialize the controller using data from the csv file
     * this function is called after the completion of readCSVFile() in this.loadDataFromDatabase()
@@ -165,21 +164,22 @@ export function DocumentsBrowser(view, controls, jsonDataFromDB, options = {}) {
         // the docIndex property is specified to be 0,1,2,3 etc... in the csv
         // therefore docIndex is equal to "i", but we specify it in the csv for clarity (we need docIndex for the guided tour csv)
         // the difference between docIndex and doc_ID (used by historians) should be settled asap
-        var url = "http://127.0.0.1/APIExtendedDocument/web/documentsDirectory/";
-//        var url = "http://rict.liris.cnrs.fr/APIVilo3D/APIExtendedDocument/web/documentsDirectory/";
+        var url = this.url + "/documentsDirectory/";
+
         for (var i=0; i<docDataFromDB.length; i++) {
 
             var docData = docDataFromDB[i];
+            var docDataMeta = docDataFromDB[i].metadata;
             var docIndex = i;
             var doc_ID = docData.idDocument
-            var docImageSourceHD =  url + docData.metadata.link;
-            var docImageSourceBD = url + docData.metadata.link;
-            var docTitle = docData.metadata.title;
+            var docImageSourceHD =  url + docDataMeta.link;
+            var docImageSourceBD = url + docDataMeta.link;
+            var docTitle = docDataMeta.title;
             var docDescription = docData.metadata.description;
             //var docStartDate = moment('2016-01-01');
-            var docRefDate = docData.metadata.refDate;
-            var docPublicationDate = docData.metadata.publicationDate;
-            var docSubject = docData.metadata.subject;
+            var docRefDate = docDataMeta.refDate;
+            var docPublicationDate = docDataMeta.publicationDate;
+            var docSubject = docDataMeta.subject;
             //var docRefDate = moment('2016-01-01');
             var docMetaData = "Referring date: " + docRefDate +" Publication date: " + docPublicationDate;
 
@@ -232,7 +232,6 @@ export function DocumentsBrowser(view, controls, jsonDataFromDB, options = {}) {
 
         this.initialize(jsonDataFromDB);
         //readCSVFile(CSVdataFile, this.initialize.bind(this));
-
     }
 
     // called regularly by the itowns framerequester
@@ -411,13 +410,13 @@ export function DocumentsBrowser(view, controls, jsonDataFromDB, options = {}) {
       //show window
       console.log("test update");
       //console.log(this.currentDoc.doc_ID);
-      var Update = new UpdateDoc(this.currentDoc);
+      var Update = new UpdateDoc(this.currentDoc, this.url);
 
     }
 
     this.handleDocDelete = function handleDocDelete(){
       console.log('doc deletion');
-      var Delete = new DeleteDoc(this.currentDoc);
+      var Delete = new DeleteDoc(this.currentDoc, "lyurl");
     }
 
     this.handleDocCreation = function handleDocCreation(){
@@ -547,7 +546,10 @@ export function DocumentsBrowser(view, controls, jsonDataFromDB, options = {}) {
     // this will trigger the initialization, after file loading is complete
     this.loadDataFromDatabase();
 
+
 }
+
+
 
 // in orientied view (focusOnDoc) this is called when the user changes the value of the opacity slider
 //=============================================================================

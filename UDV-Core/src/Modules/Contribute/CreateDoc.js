@@ -3,7 +3,7 @@ import 'alpaca';
 import 'bootstrap-datepicker'
 import './Contribute.css';
 
-export function CreateDoc(controls, view){
+export function CreateDoc(controls, view ,url){
 
   this.myUploadedImage = null;
 
@@ -141,6 +141,7 @@ export function CreateDoc(controls, view){
   ';
 
   this.initialize = function initialize(){
+    this.url = url + "app_dev.php/addDocument";
     this.contributeMode = "create";
     document.getElementById('startContributeWindow').style.display = "none";
     document.getElementById('CreateDocWindow').style.display ="block";
@@ -300,14 +301,14 @@ export function CreateDoc(controls, view){
       //
       //console.log(mouse);
     }
-
+/*
     this.getPosition = function getPosition(event){
       var mouse = new THREE.Vector2();
       mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
       mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
       this.mousePosition = new THREE.Vector2(mouse.x, mouse.y);
       var pos = this.controls.getWorldPointAtScreenXY(this.mousePosition);
-    }
+    }*/
 
     this.updateBillboardPositionFromMousePicking = function updateBillboardPositionFromMousePicking(event){
       document.getElementById('pickingInfo').style.display = "block";
@@ -355,10 +356,10 @@ export function CreateDoc(controls, view){
     //POSTNEWDOC
     //Sends Http request to create a new document in the DB
     //=========================================================================
-    this.PostNewDoc = function PostNewDoc(url, data, callback) {
+    this.PostNewDoc = function PostNewDoc(data, callback) {
       //console.log(data);
       var req = new XMLHttpRequest();
-      req.open("POST", url);
+      req.open("POST", this.url);
       req.addEventListener("load", function () {
         if (req.status >= 200 && req.status < 400) {
           //update creation status
@@ -389,7 +390,7 @@ export function CreateDoc(controls, view){
         this.UpdateDocData();
         //TODO: add data verification
         //post data and execute script to process data if data verification OK:
-        this.PostNewDoc("http://127.0.0.1/APIExtendedDocument/web/app_dev.php/addDocument",this.newDocData, function(){});
+        this.PostNewDoc(this.newDocData, function(){});
         if (this.creationStatus = 1){ //request succeeded
           //clear all form fields
           $("#myCreationForm").get(0).reset();

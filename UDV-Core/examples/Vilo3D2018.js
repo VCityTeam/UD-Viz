@@ -14,18 +14,6 @@ var extent;
 // ====================
 var mode;
 
-
-var req = new XMLHttpRequest();
-var url = "http://rict.liris.cnrs.fr/APIVilo3D/APIExtendedDocument/web/app_dev.php/getDocuments";
-req.open("GET", url,false);
-req.send();
-req.onload = function () {
-  console.log('4 DONE', req.statusText);
-};
-//alert('Welcome');
-var storedData = JSON.parse(req.responseText);
-
-
 // Initialization of the renderer, view and extent
 [ view, extent ] = udvcore.Setup3DScene(terrainAndElevationRequest,
                                         buildingServerRequest,
@@ -133,21 +121,13 @@ layer.whenReady.then(
   }
 );
 
-
 var about = new udvcore.AboutWindow({active:true});
 var help  = new udvcore.HelpWindow({active:true});
 
-
 //////////// Document Handler section
-// FIXME For the time being this demo uses the Vilo3D data. Provide a
-// default document for the demo of DocumentHandler class and place it
-// within src/Modules/Documents...
-
-var contri = new udvcore.Contribute(view, controls, storedData, {temporal: temporal}, mode);
-
-//var pos = new udvcore.DocumentPositioner(view, controls, doc, options = {});
-
-//var choice = new udvcore.FilterDocuments( view, controls, "http://rict.liris.cnrs.fr/DataStore/Vilo3Ddocs/docs.csv", {temporal: temporal} );
+var url = "http://rict.liris.cnrs.fr/APIVilo3D/APIExtendedDocument/web/";
+//var url ="http://127.0.0.1/APIExtendedDocument/web/";
+var contri = new udvcore.Contribute(view, controls, {temporal: temporal}, mode, url);
 
 ///////////////////////////////////////////////////////////////////////////////
 //// Create and configure the layout controller
@@ -200,12 +180,6 @@ var temporalOverlayCtrl = temporalFolder.add(temporal, 'temporalUsesOverlay').na
 contributeController = datDotGUI.add(contri,'windowIsActive').name("Documents").listen();
 
 contributeController.onFinishChange( function(value) { contri.refresh();});
-/*
-instruc = datDotGUI.add(pos,'windowIsActive').name("Instructions").listen();
-instruc.onFinishChange( function(value){ pos.refresh();});
-*/
-//requestController = datDotGUI.add(choice, 'windowIsActive').name("Show doc").listen();
-//requestController.onFinishChange( function(value){choice.refresh();});
 
 datDotGUI.close();     // By default the dat.GUI controls are rolled up
 

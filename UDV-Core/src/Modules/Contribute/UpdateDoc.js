@@ -6,7 +6,7 @@
 
 import '../Documents/DocumentsHandler.js';
 
-export function UpdateDoc(doc) {
+export function UpdateDoc(doc, url) {
 
   // initialization
   // The update window is displayed
@@ -17,7 +17,7 @@ export function UpdateDoc(doc) {
 
     this.previewImage = doc.imageSourceBD;
     this.id = doc.doc_ID;
-    this.url = "http://127.0.0.1/APIExtendedDocument/web/app_dev.php/editDocument/";
+    this.url = url + "app_dev.php/editDocument/";
     //  this.url = "http://rict.liris.cnrs.fr/APIVilo3D/APIExtendedDocument/web/app_dev.php/editDocument/";
     //setup display
     document.getElementById('updateDocWindow').style.display = "block";
