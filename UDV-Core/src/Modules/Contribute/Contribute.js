@@ -25,6 +25,7 @@ export function Contribute(view, controls, options = {}, mode, url) {
   <button id="docCreate" type = button>Create</button>\
   ';
 
+//should they .json be stored in "contribute" and not in server?
   var schemaFilter = "http://rict.liris.cnrs.fr/schemaFilter.json";
   var optionsFilter = "http://rict.liris.cnrs.fr/optionsFilter.json";
   var schema = "http://rict.liris.cnrs.fr/schemaType.json";
@@ -82,15 +83,13 @@ export function Contribute(view, controls, options = {}, mode, url) {
   this.refresh( );
   this.initialize();
 
+  //GETFILTEREDDOCUMENTS
+  // *
+  // all documents with filters chosen by the user
   this.getFilteredDocuments = function getFilteredDocuments(){
     //check which filters are activated
     var filters = new FormData(document.getElementById('filterForm'));
     var entries = filters.entries();
-    /*
-    // DEBUG displaying filters
-    for (var pair of filters.entries()){
-      console.log(pair[0]+ ', ' + pair[1]);
-    }*/
     var url_with_filters = this.url +"app_dev.php/getDocuments?";
     for(var pair of entries ){
       if(pair[1]!=""){
@@ -106,6 +105,9 @@ export function Contribute(view, controls, options = {}, mode, url) {
     this.filtered_data = JSON.parse(req.responseText);
   }
 
+//DISPLAYDOCS
+// shows documents / filtered documents
+// there is two modes : in borwser or in billboards
   this.displayDocs = function displayDocs(){
     //get documents from database
     this.getFilteredDocuments();
@@ -114,7 +116,7 @@ export function Contribute(view, controls, options = {}, mode, url) {
       alert('No document found');
     }
     else {
-      //TODO add options billboard / browser in documentsHandler parameters
+      //TODO add options billboard / browser in documentsHandler parameters?
       //create instance of DocumentsBrowser with the selected documents according to the filters
       if (this.modePlace ==1){
         this.showBrowser();
@@ -127,41 +129,54 @@ export function Contribute(view, controls, options = {}, mode, url) {
     }
   }
 
+//SHOWBROWSER
+// shows document browser if requested
+//
   this.showBrowser = function showBrowser(){
     var documents = new DocumentsBrowser(view, controls, this.filtered_data, {temporal: temporal} , this.url );
     document.getElementById('docBrowserWindow').style.display = "block";
   }
 
+
+/** CREATBILLBOARD
+* create billboard associated to an Extend Document
+*/
+//==========================================================================
+// FIXME this function is called each time the "Billboard" button is clicked,
+// and in that way, more 3D objects can be created than we need (if we click several times)
+// the creation of a document (in createDoc) should handle the creating of an associated 33Dobject
+// and here we just handle the display of them and not the creation
   this.createBillboard=function createBillboard(doc){
     var object, material;
     var objGeometry = new THREE.PlaneGeometry(12,10);
     var texture = new THREE.TextureLoader().load(this.url + "documentsDirectory/" +  doc.metadata.link);
-    // immediately use the texture for material creation
     material = new THREE.MeshBasicMaterial( { map: texture, side: THREE.DoubleSide } );
     object = new THREE.Mesh(objGeometry.clone(), material);
     this.billboards.push(object);
     object.scale.set(50,50,50);
-    object.quaternion.copy( this.view.camera.camera3D.quaternion );//face camera when created => in fact, we want to object to always face the screen
+    object.quaternion.copy( this.view.camera.camera3D.quaternion );//face camera when created. Theb
     object.position.x=doc.visualization.positionX;
     object.position.y=	doc.visualization.positionY;
     object.position.z=	626;
     object.updateMatrixWorld();
   }
 
-
   //TODO ??? take this function into another class in charge of handling a set of objects
   this.showBillboards = function showBillboards(){
-    //document.addEventListener('mousedown', this.myfunctiontest.bind(this),false);
     for (var i =0; i<this.filtered_data.length;i++){
       var doc = this.filtered_data[i];
       this.createBillboard(doc);
       this.view.scene.add(this.billboards[i]);
     }
-
   }
 
 
-  this.updateBillboardPosition = function updateBillboardPosition(){
+
+/** UPDATEBILLBOARDORIENTATION
+* called in the addFrameRequester so that billboards always face the screen
+*/
+//==========================================================================
+  this.updateBillboardOrientation = function updateBillboardOrientation(){
     for(var i = 0; i<this.billboards.length;i++){
         this.billboards[i].quaternion.copy( this.view.camera.camera3D.quaternion );
         this.billboards[i].updateMatrixWorld();
@@ -169,16 +184,8 @@ export function Contribute(view, controls, options = {}, mode, url) {
   }
 
   // request update every active frame
-  this.controls.view.addFrameRequester( MAIN_LOOP_EVENTS.AFTER_CAMERA_UPDATE,this.updateBillboardPosition.bind(this) );
-  /*
-  this.myfunctiontest = function myfunctiontest(event){
-    var mouse = new THREE.Vector2();
-    mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
-    mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
-    const pointUnderCursor = this.controls.getWorldPointAtScreenXY(mouse);
-    console.log('mouse point screen');
-    console.log(pointUnderCursor);
-  }*/
+  this.controls.view.addFrameRequester( MAIN_LOOP_EVENTS.AFTER_CAMERA_UPDATE,this.updateBillboardOrientation.bind(this) );
+
 
   this.setBrowserMode = function setBrowserMode(){
     this.modePlace = 1;
@@ -192,14 +199,13 @@ export function Contribute(view, controls, options = {}, mode, url) {
   }
 
   //EventListeners for buttons
-  document.getElementById('docCreate').addEventListener("mousedown", function(){
-    handleDocCreation(this.controls, this.view);
-  }, false);
+  document.getElementById('docCreate').addEventListener("mousedown", function(){    handleDocCreation(this.controls, this.view);
+    }, false);
   document.getElementById("docInBrowser").addEventListener('mousedown', this.setBrowserMode.bind(this),false);
   document.getElementById('docInBillboard').addEventListener('mousedown', this.setBillboardMode.bind(this),false);
 
 }
-
+//HANDLEDOCCREATION
 function handleDocCreation(controls, view){
   console.log("entering creation class");
   var newDocCreation = new CreateDoc(controls, view);
