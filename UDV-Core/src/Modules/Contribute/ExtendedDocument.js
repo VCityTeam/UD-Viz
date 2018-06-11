@@ -6,40 +6,36 @@
 */
 // before: docTitle,docIndex,doc_ID,docImageSourceHD,docImageSourceBD,billboardPosition,docViewPosition,docViewQuaternion,docDate,metaData
 //=============================================================================
-export function ExtendedDocument(docTitle,docIndex,doc_ID,docImageSourceHD,docImageSourceBD,billboardPosition,docViewPosition,docViewQuaternion,docRefDate, docPublicationDate, docDescription, docMetaData, docSubject) {
+export function ExtendedDocument(docTitle,docIndex,doc_ID,docImageSource,billboardPosition,docViewPosition,docViewQuaternion,docRefDate, docPublicationDate, docDescription, docMetaData, docSubject) {
 
-    // unique ID for the doc, determined by the line in the doc csv file
+    // unique index for the doc
     // must be a consecutive list of index (0,1,2,3,4 etc)
+    // It is the number of the Extend Document in a set of (filtered) documents
     // used internally by GuidedTourController and DocumentHandler
     this.index = docIndex;
 
-    // another unique ID, used by historians to indentify documents
-    // cannot be directly used internally, because the doc_ID list is not consecutive (gaps)
-    // not used in the code, only displayed
+    // unique ID of the document in the database
+    // not used in the code, only used to debug
     this.doc_ID = doc_ID;
 
-    // path to the image (High Def & Bad Def)
-    this.imageSourceHD = docImageSourceHD;
-    this.imageSourceBD = docImageSourceBD;
+    // path to the image
+    this.imageSource = docImageSource;
 
     // other metadata (currently just a text)
     this.description = docDescription;
     this.metadata = docMetaData;
     this.subject = docSubject;
-    //this.description = description;
 
     // date used by TemporalController : the date will become this date when the doc is focused
     //this.startDate = docDate;
     this.refDate1 = docRefDate;
     this.publicationDate1 = docPublicationDate;
-  //  console.log(this.publicationDate1);
 
     this.title = docTitle;
 
     // if false, no billboard will be created or displayed for this docTitle
     // will be set to true if valid data is provided in the csv file
     this.useBillboard = (!isNaN(billboardPosition.x) && !isNaN(billboardPosition.y) && !isNaN(billboardPosition.z));
-
     ///
 
     // world position of the billboard (where it will be)
@@ -64,7 +60,7 @@ export function ExtendedDocument(docTitle,docIndex,doc_ID,docImageSourceHD,docIm
     // this is very dirty :-o
     this.createBillboard = function createBillboard(){
 
-        const texture = new THREE.TextureLoader().setCrossOrigin("anonymous").load(docImageSourceBD);
+        const texture = new THREE.TextureLoader().setCrossOrigin("anonymous").load(docImageSource);
         const billboardMaterial = new THREE.MeshBasicMaterial({map: texture});
         const frameMaterial = new THREE.MeshBasicMaterial( {color: 0x00ffaa,wireframe: true});
 
@@ -80,7 +76,7 @@ export function ExtendedDocument(docTitle,docIndex,doc_ID,docImageSourceHD,docIm
         this.billboardGeometry.updateMatrixWorld();
         this.billboardGeometryFrame.updateMatrixWorld();
 
-        // these data can be accessed when the user click on the billboard
+        // these data can be accessed when the user clicks on the billboard
         // --type : "billboard"-- is used to identify when we click on a billboard
         // --doc : this-- is a reference the actual document object, which holds all the relevant data
         // other lines are mostly useless

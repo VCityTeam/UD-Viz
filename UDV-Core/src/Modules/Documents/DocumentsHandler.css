@@ -116,7 +116,7 @@
     height: 40px;
     pointer-events: auto;
 }
-
+/*
 #docBrowserOrientButton{
     position: absolute;
     z-index: 20;
@@ -129,7 +129,7 @@
     color: black;
     height: 30px;
     pointer-events: auto;
-}
+}*/
 
 #docFull{
     position: absolute;
