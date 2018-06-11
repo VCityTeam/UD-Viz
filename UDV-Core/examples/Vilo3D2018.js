@@ -12,6 +12,7 @@ var view;
 // itowns extent (city limits)
 var extent;
 // ====================
+var mode;
 
 // Initialization of the renderer, view and extent
 [ view, extent ] = udvcore.Setup3DScene(terrainAndElevationRequest,
@@ -25,6 +26,9 @@ var renderer = view.scene;
 view.camera.setPosition(new udvcore.itowns.Coordinates('EPSG:3946', extent.west(), extent.south(), 2000));
 // camera starting orientation (looking at city center)
 view.camera.camera3D.lookAt(extent.center().xyz());
+console.log("setup3D");
+console.log(extent.center().xyz())
+
 
 
 // PlanarControls (camera controller) options : regular mode (generic user) or edit mode
@@ -117,15 +121,13 @@ layer.whenReady.then(
   }
 );
 
-
 var about = new udvcore.AboutWindow({active:true});
 var help  = new udvcore.HelpWindow({active:true});
 
 //////////// Document Handler section
-// FIXME For the time being this demo uses the Vilo3D data. Provide a
-// default document for the demo of DocumentHandler class and place it
-// within src/Modules/Documents...
-var documents =  new udvcore.DocumentsHandler(view,controls,'Vilo3D/docs.csv',{temporal: temporal});
+var url = "http://rict.liris.cnrs.fr/APIVilo3D/APIExtendedDocument/web/";
+//var url ="http://127.0.0.1/APIExtendedDocument/web/";
+var contri = new udvcore.Contribute(view, controls, {temporal: temporal}, mode, url);
 
 ///////////////////////////////////////////////////////////////////////////////
 //// Create and configure the layout controller
@@ -167,14 +169,17 @@ temporalActiveCtrl.onFinishChange(function(value) {
   temporal.refresh();
 });
 
-var temporalOverlayCtrl = temporalFolder.add(
-                                         temporal, 'temporalUsesOverlay'
-                                         ).name("Use Overlay").listen();
+var temporalOverlayCtrl = temporalFolder.add(temporal, 'temporalUsesOverlay').name("Use Overlay").listen();
 
 // Document subwindow
-documentController = datDotGUI.add( documents, 'docBrowserWindowIsActive'
-                                    ).name( "Documents" ).listen();
-documentController.onFinishChange( function(value) { documents.toggleDocBrowserWindow(); });
+
+// documentController = datDotGUI.add( documents, 'docBrowserWindowIsActive'
+//                                     ).name( "Documents" ).listen();
+// documentController.onFinishChange( function(value) { documents.toggleDocBrowserWindow(); });
+
+contributeController = datDotGUI.add(contri,'windowIsActive').name("Documents").listen();
+
+contributeController.onFinishChange( function(value) { contri.refresh();});
 
 datDotGUI.close();     // By default the dat.GUI controls are rolled up
 

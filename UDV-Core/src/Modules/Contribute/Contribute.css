@@ -1,0 +1,548 @@
+label
+{
+  float:left;
+  padding: 0px;
+  font-weight:bold;
+  font-size:14px;
+}
+
+/* For start window */
+
+#startContributeWindow{
+  display:none;
+  position: absolute;
+  z-index: 10;
+  margin : 3px;
+  margin-right: 0px;
+  left: 0;
+  border : 1px solid rgb(90,90,90);
+  text-align: center;
+  width: 10%;
+  height: 45%;
+  overflow: auto;
+  background-color: rgba(30,30,30,0.6);
+  font-size: 14;
+}
+
+#filtersTitle{
+  display:inline-block;
+  padding: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin-top:5px;
+  width:90%;
+  color : black;
+  background-color: ivory ;
+  border : 1px solid rgb(90,90,90);
+  text-align: center;
+  pointer-events: auto;
+  font-weight: bold;
+}
+
+#displayModeButtons{
+margin: 10px;
+}
+
+#docInBrowser{
+  margin : 4px;
+  font-size: 14px;
+  border: 2px solid black;
+  background-color: white;
+  color: black;
+  height: 30px;
+  pointer-events: auto;
+}
+
+#docInBillboard{
+  margin : 4px;
+  font-size: 14px;
+  border: 2px solid black;
+  background-color: white;
+  color: black;
+  height: 30px;
+  pointer-events: auto;
+}
+
+#docCreate{
+  margin : 5px;
+  font-size: 14px;
+  border: 2px solid #008CBA;
+  background-color: white;
+  color: black;
+  height: 30px;
+  pointer-events: auto;
+}
+
+/* Create */
+
+#CreateDocWindow{
+  display:none;
+  position: absolute;
+  z-index: 10;
+  margin : 3px;
+  margin-right: 0px;
+  left: 0;
+  border : 1px solid rgb(90,90,90);
+  text-align: center;
+  width: 10%;
+  height: 45%;
+  overflow: auto;
+  background-color: rgba(30,30,30,0.6);
+  font-size: 14;
+}
+
+#WindowTitle{
+  display:inline-block;
+  padding: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin-top:5px;
+  width:90%;
+  color : black;
+  background-color: ivory ;
+  border : 1px solid rgb(90,90,90);
+  text-align: center;
+  pointer-events: auto;
+  font-weight: bold;
+}
+
+/* position of the doc */
+#docPositionerWindow{
+    display: none;
+    position: absolute;
+    z-index: 10;
+    margin : 1px;
+    margin-right: 1px;
+    top: 1px;
+    right: 0;
+    border : 1px solid rgb(90,90,90);
+    text-align: center;
+    color: white;
+    width: 22%;
+    height: 75%;
+    color : black;
+    background-color: rgba(30,30,30,0.6);
+    font-size: 14;
+}
+
+#docPositionerPreview{
+  z-index: 20;
+  height: 40%;
+  display:inline-block;
+  margin-top: 20px;
+  margin: 10px;
+}
+
+#docPositionerFull{
+    position: absolute;
+    z-index: 10;
+    text-align: center;
+
+    margin : auto;
+    top: 0;
+    bottom : 10%;
+    left: 0;
+    right : 0;
+
+    width: 25%;
+    height: 50%;
+
+    display: none;
+
+    padding-left: 3px;
+    padding-top: 3px;
+}
+
+#docPositionerFullImg{
+    width: 80%;
+    height: 100%;
+    object-fit: contain;
+    opacity: 0.5;
+}
+
+#docPositionerFullPanel{
+    width: 60%;
+    height: 50px;
+    background-color: rgba(30,30,30,0.6);
+    position: absolute;
+    z-index: 10;
+    text-align: center;
+    border : 1px solid black;
+    margin : auto;
+    bottom : -52px;
+    right : 0;
+    left : 0;
+}
+
+#docPositionerClose{
+    position: absolute;
+    z-index: 10;
+
+    margin : auto;
+
+    bottom : 20%;
+
+    left: 2%;
+
+    border: 1px solid black;
+    background-color: white;
+    color: black;
+
+    height: 30px;
+
+    pointer-events: auto;
+}
+
+
+#debugCameraPostion{
+  display: none;
+}
+
+#setPositionFields{
+  display: none;
+}
+
+/*browser*/
+
+#docBrowserWindow{
+    display: none;
+    position: absolute;
+    z-index: 10;
+    margin : 1px;
+    margin-right: 1px;
+    top: 1px;
+    right: 0;
+    border : 1px solid rgb(90,90,90);
+    text-align: center;
+    color: white;
+    width: 22%;
+    height: 75%;
+    color : black;
+    background-color: rgba(30,30,30,0.6);
+    font-size: 14;
+}
+
+#docHead{
+    display:inline-block;
+    margin-top: 3px;
+    color: white;
+    text-align: center;
+    font-size: 16px;
+    font-weight: bold;
+    overflow: hidden;
+}
+
+#docBrowserTitle{
+    display:inline-block;
+    margin-top: 20px;
+    color: black;
+    background-color: ivory;
+    text-align: center;
+    font-size: 16px;
+    font-weight: bold;
+    overflow: hidden;
+    width:95%
+}
+
+#docBrowserMetaData{
+  display:inline-block;
+  margin-top: 20px;
+  color: black;
+  background-color: ivory;
+  text-align: center;
+  font-size: 12px;
+  overflow: hidden;
+  width:95%
+}
+
+#docDescription{
+  display:inline-block;
+  margin-top: 20px;
+  color: black;
+  background-color: ivory;
+  text-align: center;
+  font-size: 12px;
+  overflow: hidden;
+  width:95%
+}
+
+#docBrowserPreview{
+    z-index: 20;
+    height: 40%;
+    display:inline-block;
+    margin-top: 20px;
+    margin: 10px;
+}
+
+#docBrowserPreviewImg{
+    width: 100%; /* or any custom size */
+    height: 100%;
+    object-fit: contain;
+}
+
+#docBrowserIndex{
+    position: absolute;
+    margin-top: 10px;
+    color: white;
+    left : 15px;
+    bottom : 50px;
+    font-size: 14px;
+    font-weight: bold;
+    overflow: hidden;
+}
+
+#docBrowserNextButton{
+    position: absolute;
+    z-index: 20;
+    bottom : 5px;
+    left: 60px;
+    margin: auto;
+    font-size: 30px;
+    border: 1px solid black;
+    background-color: white;
+    color: black;
+    height: 40px;
+    pointer-events: auto;
+}
+
+#docBrowserPreviousButton{
+    position: absolute;
+    z-index: 20;
+    bottom : 0;
+    left : 0;
+    margin : 5px;
+    font-size: 30px;
+    border: 1px solid black;
+    background-color: white;
+    color: black;
+    height: 40px;
+    pointer-events: auto;
+}
+
+#docFull{
+    position: absolute;
+    z-index: 10;
+    text-align: center;
+    margin : auto;
+    top: 0;
+    bottom : 10%;
+    left: 0;
+    right : 0;
+    width: 55%;
+    height: 55%;
+    display: none;
+    padding-left: 3px;
+    padding-top: 3px;
+    pointer-events: none;
+}
+
+#docFullImg{
+    width: 100%; /* or any custom size */
+    height: 100%;
+    object-fit: contain;
+    opacity: 0.5;
+}
+
+#docFullPanel{
+    width: 60%;
+    height: 50px;
+    background-color: rgba(30,30,30,0.6);
+    position: absolute;
+    z-index: 10;
+    text-align: center;
+    border : 1px solid black;
+    pointer-events: none;
+    margin : auto;
+    bottom : -52px;
+    right : 0;
+    left : 0;
+}
+
+#docFullClose{
+    position: absolute;
+    z-index: 10;
+    margin : auto;
+    bottom : 20%;
+    left: 2%;
+    border: 1px solid black;
+    background-color: white;
+    color: black;
+    height: 30px;
+    pointer-events: auto;
+}
+
+#docFullOrient{
+    position: absolute;
+    z-index: 10;
+    margin : auto;
+    bottom : 20%;
+    left: 22%;;
+    border: 1px solid black;
+    background-color: white;
+    color: black;
+    height: 30px;
+    pointer-events: auto;
+}
+
+#docOpaLabel{
+    position: absolute;
+    z-index: 10;
+    text-align: center;
+    margin : auto;
+    bottom : 55%;
+    color : white;
+    right : -25px;
+    left : 25%;
+}
+
+#docOpaSlider {
+    width:50%;
+    position: absolute;
+    z-index: 10;
+    text-align: center;
+    pointer-events: auto;
+    margin : auto;
+    bottom : 25%;
+    right : 5%;
+}
+
+#docOpacity{
+    position: absolute;
+    z-index: 10;
+    text-align: center;
+    margin : auto;
+    color : white;
+    bottom : 55%;
+    right : -125px;
+    left : 25%;
+}
+
+#docBrowserToggleBillboard{
+    position: absolute;
+    z-index: 40;
+    margin : 3px;
+    border: 1px solid black;
+    background-color: white;
+    color: black;
+    font-size: 12px;
+    height: 30px;
+    top: 0;
+    right: 15%;
+    pointer-events: auto;
+}
+
+#operationsOnDoc{
+  margin: 10px;
+}
+
+ #docDelete{
+  font-size: 14px;
+  border: 1px solid black;
+  background-color: white;
+  color: black;
+  height: 30px;
+  pointer-events: auto;
+}
+
+#closeBrowserWindow{
+  position: absolute;
+  z-index: 20;
+  top : 0;
+  right : 0;
+  margin : 5px;
+  font-size: 14px;
+  border: 1px solid black;
+  background-color: white;
+  color: black;
+  height: 30px;
+  pointer-events: auto;
+
+}
+
+#docBrowserOrientButton{
+    font-size: 14px;
+    border: 1px solid black;
+    background-color: white;
+    color: black;
+    height: 30px;
+    width: 130px;
+    bottom:35px;
+    pointer-events: auto;
+}
+
+#docCreateFromBrowser{
+  position: absolute;
+  z-index: 20;
+  right : 0;
+  bottom : 0;
+  margin : 5px;
+  font-size: 14px;
+  border: 2px solid #008CBA;
+  background-color: white;
+  color: black;
+  height: 30px;
+  width: 130px;
+  pointer-events: auto;
+}
+
+/*update*/
+#saveUpdateButton{
+    position: absolute;
+    z-index: 20;
+    bottom : 0;
+    left : 0;
+    margin : 5px;
+    font-size: 20px;
+    border: 1px solid black;
+    background-color: white;
+    color: black;
+    height: 40px;
+    pointer-events: auto;
+}
+
+#closeUpdateForm{
+    position: absolute;
+    z-index: 20;
+    bottom : 0;
+    right: 0;
+    margin : 5px;
+    font-size: 20px;
+    border: 1px solid black;
+    background-color: white;
+    color: black;
+    height: 40px;
+    pointer-events: auto;
+}
+
+#filePreview{
+    width: 80%;
+    height: 40%;
+    object-fit: contain;
+}
+
+#updateDocWindow{
+    display: none;
+    position: absolute;
+    z-index: 10;
+    margin : 1px;
+    margin-right: 1px;
+    top: 1px;
+    right: 0;
+    border : 1px solid rgb(90,90,90);
+    text-align: center;
+    color: white;
+    width: 22%;
+    height: 75%;
+    color : black;
+    background-color: rgba(30,30,30,0.6);
+    font-size: 14;
+}
+
+#docUpdate{
+font-size: 14px;
+  border: 1px solid black;
+  background-color: white;
+  color: black;
+  height: 30px;
+  pointer-events: auto;
+}
