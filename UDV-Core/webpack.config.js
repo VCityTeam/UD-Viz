@@ -22,6 +22,10 @@ module.exports = {
     plugins: [
         definePlugin,
         new webpack.optimize.CommonsChunkPlugin({ name: 'udvcore' }),
+        new webpack.ProvidePlugin({
+            $: "jquery",
+            jQuery: "jquery"
+        })
     ],
     module: {
         rules: [
@@ -47,13 +51,13 @@ module.exports = {
             },
             {
                 // (web)pack "small" images
-                test: /\.(png|gif)$/,  
+                test: /\.(png|gif)$/,
                 use: [{
                     loader: 'url-loader',
-                    options: { 
+                    options: {
                         limit: 100000, // Convert images < 100kb to base64 strings
                         name: 'images/[hash]-[name].[ext]'
-                    } 
+                    }
                 }]
             },
             commonConfig.jsonLoader,
@@ -62,4 +66,9 @@ module.exports = {
     devServer: {
         publicPath: '/dist/',
     },
+    resolve: {
+    alias: {
+       handlebars: 'handlebars/dist/handlebars.min.js'
+    }
+}
 };

@@ -16,7 +16,7 @@ export function HelpWindow( options={} ) {
     '<div id="text">\
        <br>\
        <p><a target="_blank"\
-       href="https://github.com/iTowns/itowns/blob/master/src/Renderer/ThreeExtended/PlanarControls.js">Camera key bindings</a>:</p>\
+       href="PlanarControls.js">Camera key bindings</a>:</p>\
        <ul>\
          <li>Left-Click: camera translation (drag)</li>\
          <li>Right-Click: camera translation (pan)</li>\

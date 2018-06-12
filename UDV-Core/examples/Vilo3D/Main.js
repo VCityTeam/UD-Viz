@@ -65,8 +65,6 @@ var controls = new udvcore.itowns.PlanarControls(view, (useControlsForEditing)? 
 // instanciate temporal controller
 var temporal = new udvcore.TemporalController(view,{buildingVersions: idlBuildings, buildingDates: idlDates, dateDisplayLength : 4});
 
-// instanciate document handler
-var documents = new udvcore.DocumentsHandler(view,controls,'docs.csv',{temporal: temporal});
 
 // instanciate guided tour controller
 var guidedtour = new udvcore.GuidedTourController(documents,'visite.csv',{temporal: temporal, preventUserFromChangingTour : true});

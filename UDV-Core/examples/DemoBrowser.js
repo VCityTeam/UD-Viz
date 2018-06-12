@@ -12,6 +12,7 @@ var view;
 // itowns extent (city limits)
 var extent;
 // ====================
+var mode;
 
 // Initialization of the renderer, view and extent
 [ view, extent ] = udvcore.Setup3DScene(terrainAndElevationRequest,
@@ -25,7 +26,6 @@ var renderer = view.scene;
 view.camera.setPosition(new udvcore.itowns.Coordinates('EPSG:3946', extent.west(), extent.south(), 2000));
 // camera starting orientation (looking at city center)
 view.camera.camera3D.lookAt(extent.center().xyz());
-
 
 // PlanarControls (camera controller) options : regular mode (generic user) or edit mode
 // edit mode is more precise but less ergonomic : used to determine precise orientation for documents
@@ -117,15 +117,21 @@ layer.whenReady.then(
   }
 );
 
-
 var about = new udvcore.AboutWindow({active:true});
 var help  = new udvcore.HelpWindow({active:true});
 
-//////////// Document Handler section
-// FIXME For the time being this demo uses the Vilo3D data. Provide a
-// default document for the demo of DocumentHandler class and place it
-// within src/Modules/Documents...
-var documents =  new udvcore.DocumentsHandler(view,controls,'Vilo3D/docs.csv',{temporal: temporal});
+
+var url = "http://rict.liris.cnrs.fr/APIVilo3D/APIExtendedDocument/web/";
+////////////Getting docs from database. As an independant module, we get all the documents
+// by sending a regular http request.
+// Plugged to "filter component", this component would be the same but take a different data
+// The next 6 lines will be deleted when the composant is integrated (after PR is accepted)
+var url_get_documents = url +"app_dev.php/getDocuments";
+var req = new XMLHttpRequest();
+req.open("GET", url_get_documents,false);
+req.send();
+var jsonDataFromDB= JSON.parse(req.responseText);
+var docBrowser = new udvcore.DocumentsBrowser(view, controls, jsonDataFromDB, options = {},url)
 
 ///////////////////////////////////////////////////////////////////////////////
 //// Create and configure the layout controller
@@ -167,14 +173,12 @@ temporalActiveCtrl.onFinishChange(function(value) {
   temporal.refresh();
 });
 
-var temporalOverlayCtrl = temporalFolder.add(
-                                         temporal, 'temporalUsesOverlay'
-                                         ).name("Use Overlay").listen();
+var temporalOverlayCtrl = temporalFolder.add(temporal, 'temporalUsesOverlay').name("Use Overlay").listen();
 
-// Document subwindow
-documentController = datDotGUI.add( documents, 'docBrowserWindowIsActive'
-                                    ).name( "Documents" ).listen();
-documentController.onFinishChange( function(value) { documents.toggleDocBrowserWindow(); });
+// Document browser
+browserController = datDotGUI.add(docBrowser,'docBrowserWindowIsActive').name("Documents").listen();
+
+browserController.onFinishChange( function(value) { docBrowser.toggleDocBrowserWindow();});
 
 datDotGUI.close();     // By default the dat.GUI controls are rolled up
 
@@ -186,3 +190,12 @@ var minimap = new udvcore.MiniMapController(controls, extent, renderer);
 
 // instanciate compass controller
 var compass = new udvcore.CompassController(controls);
+
+
+//blur and disable buttons in document browser in order to test this "module" on its one
+document.getElementById('docDelete').disabled = 'disabled';
+document.getElementById('docDelete').style.background = "#8D8A8B";
+document.getElementById('docUpdate').disabled = 'disabled';
+document.getElementById('docUpdate').style.background = "#8D8A8B";
+document.getElementById('docCreateFromBrowser').disabled = 'disabled';
+document.getElementById('docCreateFromBrowser').style.background = "#8D8A8B";

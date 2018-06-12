@@ -4,7 +4,10 @@ import * as itowns from 'itowns';
 export { itowns };
 export { Setup3DScene }         from './Setup3DScene';
 
-export { DocumentsHandler }     from './Modules/Documents/DocumentsHandler';
+export { DocumentsBrowser }     from './Modules/Contribute/DocumentsBrowser'; //used in DemoBrowser.html
+
+export { DocumentsHandler }     from './Modules/Documents/DocumentsHandler'; //used in Demo.js
+
 export { GuidedTourController } from './Modules/GuidedTour/GuidedTour';
 
 export { AboutWindow }          from './Modules/Others/About';
