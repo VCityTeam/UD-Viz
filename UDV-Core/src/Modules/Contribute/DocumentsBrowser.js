@@ -353,33 +353,9 @@ export function DocumentsBrowser(view, controls, jsonDataFromDB, options = {},ur
     document.getElementById("docBrowserPreviousButton").addEventListener('mousedown',this.previousDoc.bind(this),false);
     document.getElementById("docBrowserOrientButton").addEventListener('mousedown', this.focusOnDoc.bind(this),false);
     document.getElementById("docBrowserPreviewImg").addEventListener('mousedown', this.toggleDocBrowserWindow.bind(this),false);
-    //document.getElementById("docUpdate").addEventListener('mousedown', this.handleDocUpdate.bind(this),false);
-    //document.getElementById("docDelete").addEventListener('mousedown', this.handleDocDelete.bind(this),false);
-    //document.getElementById("docCreateFromBrowser").addEventListener('mousedown', this.handleDocCreation.bind(this),false);
-
-//Function to able / disable certan functionalities like update / delete
-//just to test the documentBrowser on its one, and make shorter pull request
-    $(function() {
-      var events = $._data(document.getElementById('docUpdate'), "events");
-      var update = (events != null);
-      if (!update){
-        document.getElementById('docUpdate').disabled = 'disabled';
-        $("#docUpdate").css("background","#8D8A8B");
-      }
-      var events = $._data(document.getElementById('docDelete'), "events");
-      var delete_func = (events != null);
-      if (!delete_func){
-        document.getElementById('docDelete').disabled = 'disabled';
-        $("#docDelete").css("background","#8D8A8B");
-      }
-
-      var events = $._data(document.getElementById('docCreateFromBrowser'), "events");
-      var create = (events != null);
-      if (!create){
-        document.getElementById('docCreateFromBrowser').disabled = 'disabled';
-        $("#docCreateFromBrowser").css("background","#8D8A8B");
-      }
-    });
+    document.getElementById("docUpdate").addEventListener('mousedown', this.handleDocUpdate.bind(this),false);
+    document.getElementById("docDelete").addEventListener('mousedown', this.handleDocDelete.bind(this),false);
+    document.getElementById("docCreateFromBrowser").addEventListener('mousedown', this.handleDocCreation.bind(this),false);
 
     // setup display
       document.getElementById("docBrowserWindow").style.display = (!this.docBrowserWindowIsActive)? "none" : "block";
