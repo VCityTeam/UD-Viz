@@ -8,14 +8,14 @@ import 'alpaca'; //A COMMENTER
 * @param
 */
 
-export function DocumentResearch( researchContainer ) {
+export function DocumentResearch( researchContainer, documentController ) {
 
+  this.documentController = documentController;
   researchContainer.innerHTML =
   '<div id = "filtersTitle">Document research</div>\
   <div id = "filtersWindow"></div>\
   <div id="displayModeButtons"></div>\
-  <button id = "docInBrowser">Browser</button>\
-  <button id = "docInBillboard">Billboards</button>\
+  <button id = "docResearch">Browser</button>\
   ';
 
   var optionsFilter = "http://rict.liris.cnrs.fr/optionsFilter.json";
@@ -26,5 +26,14 @@ export function DocumentResearch( researchContainer ) {
     "schemaSource":schema,
     "optionsSource":optionsFilter
   });
+
+this.research = function research(){
+  var filtersFormData = new FormData(document.getElementById('filterForm'));
+  this.documentController.getDocuments(filtersFormData);
+  //ajouter les controles d'affichage GUI
+
+
+}
+document.getElementById("docResearch").addEventListener('mousedown', this.research.bind(this),false);
 
 }
