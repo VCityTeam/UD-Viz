@@ -125,7 +125,7 @@ var help  = new udvcore.HelpWindow({active:true});
 // FIXME For the time being this demo uses the Vilo3D data. Provide a
 // default document for the demo of DocumentHandler class and place it
 // within src/Modules/Documents...
-var controller = new udvcore.DocumentController();
+var controller = new udvcore.DocumentController(controls);
 ///////////////////////////////////////////////////////////////////////////////
 //// Create and configure the layout controller
 
@@ -169,11 +169,20 @@ temporalActiveCtrl.onFinishChange(function(value) {
 var temporalOverlayCtrl = temporalFolder.add(
                                          temporal, 'temporalUsesOverlay'
                                          ).name("Use Overlay").listen();
-
-// Document subwindow
-var documentController = datDotGUI.add( controller, 'windowIsActive'
-                                    ).name( "Documents" ).listen();
-documentController.onFinishChange( function(value) { controller.refresh(); });
+//Document uses a folder
+var documentFolder = datDotGUI.addFolder("Documents");
+var docResearch = documentFolder.add( controller.documentResearch, 'windowIsActive').name("Research").listen();
+docResearch.onFinishChange(function(value){
+  controller.documentResearch.refresh();
+});
+var billboardOption = documentFolder.add( controller.documentBillboard, 'windowIsActive').name("Billboards").listen();
+billboardOption.onFinishChange(function(value){
+  controller.documentBillboard.refresh();
+});
+var browserOption = documentFolder.add( controller.documentBrowser, 'windowIsActive').name("Browser").listen();
+browserOption.onFinishChange(function(value){
+  controller.documentBrowser.refresh();
+});
 
 datDotGUI.close();     // By default the dat.GUI controls are rolled up
 

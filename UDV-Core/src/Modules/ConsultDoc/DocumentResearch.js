@@ -27,6 +27,23 @@ export function DocumentResearch( researchContainer, documentController ) {
     "optionsSource":optionsFilter
   });
 
+
+
+  this.windowIsActive = false;
+//  document.getElementById('researchContainer').style.display = "block";
+    // Display or hide this window
+  this.activateWindow = function activateWindow( active ){
+    if (typeof active != 'undefined') {
+      this.windowIsActive = active;
+    }
+    document.getElementById('researchContainer').style.display = active ? "block" : "none " ;
+  }
+
+  this.refresh = function refresh( ){
+    this.activateWindow( this.windowIsActive );
+  }
+
+
 this.research = function research(){
   var filtersFormData = new FormData(document.getElementById('filterForm'));
   this.documentController.getDocuments(filtersFormData);

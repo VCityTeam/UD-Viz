@@ -1,11 +1,14 @@
 import { DocumentResearch } from './DocumentResearch.js';
+import { DocumentBrowser } from './DocumentBrowser.js';
+import { DocumentBillboard } from './DocumentBillboard.js';
 import './ConsultDoc.css';
 
-export function DocumentController() {
+export function DocumentController(controls) {
 
   this.url = "http://rict.liris.cnrs.fr/APIVilo3D/APIExtendedDocument/web/";
-
+  this.controls = controls; //FIXME
   this.setOfDocuments = [];
+  this.index = 0;
 
   var researchContainer = document.createElement("div");
   researchContainer. id = "researchContainer";
@@ -19,21 +22,13 @@ export function DocumentController() {
 
   this.documentBillboard = new DocumentBillboard();
 
-  this.windowIsActive = true;
-
-  // Display or hide this window
-  this.activateWindow = function activateWindow( active ){
-    if (typeof active != 'undefined') {
-      this.windowIsActive = active;
+    this.updateDisplay = function updateDisplay(){
+      this.documentBrowser.update();
+      this.documentBillboard.update();
     }
-    document.getElementById('researchContainer').style.display = active ? "block" : "none" ;
-  }
-
-  this.refresh = function refresh( ){
-    this.activateWindow( this.windowIsActive );
-  }
 
   this.getDocuments = function getDocuments( filterFormData ){
+    var self = this;
     $.ajax({
       url : this.url + "app_dev.php/getDocuments",
       data : filterFormData,
@@ -42,22 +37,41 @@ export function DocumentController() {
       type : "GET"
     }).done(function(documents){
       //console.log('filtered documents :');
-      console.log(documents);
-      this.setOfDocuments = documents;
+      //console.log(documents);
+      self.setOfDocuments = documents;
+      console.log('#1', self.setOfDocuments);
+      self.index = 0;
+      self.updateDisplay();
+      console.log(self.getCurrentDoc);
     })
-
 //update display
-  this.updateDisplay();
   }
 
-  this.updateDisplay = function updateDisplay(){
 
-    this.documentBrowser.update(this.setOfDocuments);
-    this.documentBillboard.update(this.setOfDocuments);
+  this.getCurrentDoc = function getCurrentDoc(){
+    if(this.setOfDocuments.length != 0)
+      return this.setOfDocuments[this.index];
+    else{
+      return null;
+    }
   }
 
-  this.documentControllerHandler = function documentControllerHandler(){
+  this.getNextDoc = function getNextDoc(){
+    if(this.index < this.setOfDocuments.length-1 || this.setOfDocuments.length ==0)
+    this.index ++;
+    var currentDoc = this.getCurrentDoc();
+    console.log('next', currentDoc);
+    return this.getCurrentDoc();
+  }
 
+  this.getPreviousDoc = function getPreviousDoc(){
+    if(this.index > 0 || this.setOfDocuments.length ==0)
+    {
+      this.index --;
+      var currentDoc = this.getCurrentDoc();
+      console.log('previous', currentDoc);
+      return this.getCurrentDoc();//[this.index];
+    }
   }
 
 }
