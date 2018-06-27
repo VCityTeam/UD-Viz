@@ -1,14 +1,14 @@
 /**
-* Constructor for ExtendedDocument
-* FOR NOW UNUSED - DON'T PAY TOO MUCH ATTENTION
-* Currently, a document is an image with associated metadata (doc_ID, title, date, + other metadata...)
-* + associated viewPosition & viewQuaternion (used by focusOnDoc() to orient the camera
-* + associated billboard (optional)
-*/
+ * Constructor for ExtendedDocument
+ * FOR NOW UNUSED - DON'T PAY TOO MUCH ATTENTION
+ * Currently, a document is an image with associated metadata (doc_ID, title, date, + other metadata...)
+ * + associated viewPosition & viewQuaternion (used by focusOnDoc() to orient the camera
+ * + associated billboard (optional)
+ */
 // before: docTitle,docIndex,doc_ID,docImageSourceHD,docImageSourceBD,billboardPosition,docViewPosition,docViewQuaternion,docDate,metaData
 //=============================================================================
-export function ExtendedDocument(docTitle,docIndex,doc_ID,docImageSource,billboardPosition,docViewPosition,docViewQuaternion,docRefDate, docPublicationDate, docDescription, docMetaData, docSubject) {
-
+export function ExtendedDocument(docTitle, docIndex, doc_ID, docImageSource, billboardPosition, docViewPosition, docViewQuaternion, docRefDate, docPublicationDate, docDescription, docMetaData, docSubject)
+{
     // unique ID for the doc, determined by the line in the doc csv file
     // must be a consecutive list of index (0,1,2,3,4 etc)
     // used internally by GuidedTourController and DocumentHandler
@@ -32,7 +32,7 @@ export function ExtendedDocument(docTitle,docIndex,doc_ID,docImageSource,billboa
     //this.startDate = docDate;
     this.refDate1 = docRefDate;
     this.publicationDate1 = docPublicationDate;
-  //  console.log(this.publicationDate1);
+    //  console.log(this.publicationDate1);
 
     this.title = docTitle;
 
@@ -62,14 +62,15 @@ export function ExtendedDocument(docTitle,docIndex,doc_ID,docImageSource,billboa
     // billboards are made of billboardGeometry (a plane with the image)
     // and billboardGeometryFrame which is only a wireframe to better see the billboard
     // this is very dirty :-o
-    this.createBillboard = function createBillboard(){
+    this.createBillboard = function createBillboard()
+    {
 
         const texture = new THREE.TextureLoader().setCrossOrigin("anonymous").load(docImageSource);
         const billboardMaterial = new THREE.MeshBasicMaterial({map: texture});
-        const frameMaterial = new THREE.MeshBasicMaterial( {color: 0x00ffaa,wireframe: true});
+        const frameMaterial = new THREE.MeshBasicMaterial({color: 0x00ffaa, wireframe: true});
 
-        this.billboardGeometry = new THREE.Mesh( new THREE.PlaneGeometry( 80, 50, 1 , 1), billboardMaterial );
-        this.billboardGeometryFrame =  new THREE.Mesh(new THREE.PlaneGeometry( 80, 50, 1 , 1), frameMaterial );
+        this.billboardGeometry = new THREE.Mesh(new THREE.PlaneGeometry(80, 50, 1, 1), billboardMaterial);
+        this.billboardGeometryFrame = new THREE.Mesh(new THREE.PlaneGeometry(80, 50, 1, 1), frameMaterial);
 
         // set billboards to the same layers as other buildings (controls will bug if not)
         this.billboardGeometry.layers.set(1);
@@ -85,19 +86,21 @@ export function ExtendedDocument(docTitle,docIndex,doc_ID,docImageSource,billboa
         // --doc : this-- is a reference the actual document object, which holds all the relevant data
         // other lines are mostly useless
         this.docBillboardData = {
-            type : "billboard",
-            doc : this,
+            type: "billboard",
+            doc: this,
         };
 
         // the data is added to the THREE.js object3D : https://threejs.org/docs/#api/core/Object3D
         this.billboardGeometry.userData = this.docBillboardData;
     }
 
-    if(this.useBillboard){
+    if (this.useBillboard)
+    {
         this.createBillboard();
     }
 
-    this.getDocID = function getDocID(){
-      return this.doc_ID;
+    this.getDocID = function getDocID()
+    {
+        return this.doc_ID;
     }
 }
