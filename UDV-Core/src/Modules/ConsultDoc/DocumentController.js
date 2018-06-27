@@ -14,9 +14,10 @@ import './ConsultDoc.css';
 /**
 * Constructor for DocumentController Class
 * @param controls : PlanarControls instance
+* @param options : optional parameters (including TemporalController)
 */
 //=============================================================================
-export function DocumentController(controls) {
+export function DocumentController(controls, options ={}) {
 
   this.url = "http://rict.liris.cnrs.fr/APIVilo3D/APIExtendedDocument/web/"; //url of the server handling documents
   //FIXME: to put in a configuration file of the general application
@@ -27,6 +28,7 @@ export function DocumentController(controls) {
   this.documentResearch ;
   this.documentBrowser;
   this.documentBillboard;
+  this.temporal = options.temporal;
 
   /**
   * Create view container for the 3 different views

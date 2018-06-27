@@ -1,6 +1,13 @@
+/**
+* Class: DocumentBillboard
+* Description :
+* The DocumentBrowser is an object in charge of displaying documents in the form of billboards
+* WORK IN PROGRESS
+*/
+
 export function DocumentBillboard( browserContainer ) {
 
-this.windowIsActive =true;
+  this.windowIsActive =true;
 
   this.update = function update(){
   }

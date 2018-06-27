@@ -1,5 +1,6 @@
 /**
-* Constructor for Document
+* Constructor for ExtendedDocument
+* FOR NOW UNUSED - DON'T PAY TOO MUCH ATTENTION
 * Currently, a document is an image with associated metadata (doc_ID, title, date, + other metadata...)
 * + associated viewPosition & viewQuaternion (used by focusOnDoc() to orient the camera
 * + associated billboard (optional)
