@@ -1,7 +1,7 @@
 import DefaultImage from './DefaultImage.png';
 export function DocumentBrowser( browserContainer, documentController) {
 
-  this.documentsExist = true;
+  this.documentsExist = false;
   this.currentDoc = null;
   this.documentController = documentController;
   browserContainer.innerHTML =
@@ -38,7 +38,9 @@ export function DocumentBrowser( browserContainer, documentController) {
 
   this.update = function update(){
     //if option cochée
-    document.getElementById('docBrowserWindow').style.display = "block" ;
+    if(this.documentController.setOfDocuments.length >= 0){
+      this.documentsExist = true;
+    }
     this.updateBrowser();
   }
 
@@ -63,11 +65,18 @@ export function DocumentBrowser( browserContainer, documentController) {
   //==========================================================================
   this.updateBrowser = function updateBrowser(){
         this.currentDoc = this.documentController.getCurrentDoc(); //update currentDoc with current doc info
-        console.log('current doc',this.currentDoc);
-        document.getElementById('docBrowserPreviewImg').src = this.documentController.url + "/documentsDirectory/" + this.currentDoc.metadata.link;
-        document.getElementById('docBrowserMetaData').innerHTML = this.currentDoc.metadata.description;
-        document.getElementById('docBrowserTitle').innerHTML = this.currentDoc.metadata.title;
-        document.getElementById('docDescription').innerHTML = this.currentDoc.metadata.description;
+        if (this.currentDoc != null & this.documentsExist == true){
+          document.getElementById('docBrowserPreviewImg').src = this.documentController.url + "documentsDirectory/" + this.currentDoc.metadata.link;
+          document.getElementById('docBrowserMetaData').innerHTML = this.currentDoc.metadata.description;
+          document.getElementById('docBrowserTitle').innerHTML = this.currentDoc.metadata.title;
+          document.getElementById('docDescription').innerHTML = this.currentDoc.metadata.description;
+        }
+        else{
+          document.getElementById('docBrowserPreviewImg').src = DefaultImage;
+          document.getElementById('docBrowserMetaData').innerHTML = "no document to show";
+          document.getElementById('docBrowserTitle').innerHTML =" no document to show";
+          document.getElementById('docDescription').innerHTML = " no document to show";
+        }
     }
 
     this.focusOnDoc = function focusOnDoc() {
@@ -84,8 +93,8 @@ export function DocumentBrowser( browserContainer, documentController) {
         docBillboardPos.z = 1;
 
         // display the image (begins loading) but with opacity 0 (hidden)
-        document.getElementById('docFullImg').src = this.documentController.url + "/documentsDirectory/" + this.currentDoc.metadata.link;
-        document.getElementById('docBrowserPreviewImg').src = this.documentController.url + "/documentsDirectory/" + this.currentDoc.metadata.link;
+        document.getElementById('docFullImg').src = this.documentController.url + "documentsDirectory/" + this.currentDoc.metadata.link;
+        document.getElementById('docBrowserPreviewImg').src = this.documentController.url + "documentsDirectory/" + this.currentDoc.metadata.link;
         document.getElementById('docFullImg').style.opacity=50;
         document.getElementById('docOpaSlider').value = 0;
         document.querySelector('#docOpacity').value = 50;

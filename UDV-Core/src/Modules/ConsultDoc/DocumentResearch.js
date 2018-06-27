@@ -15,7 +15,7 @@ export function DocumentResearch( researchContainer, documentController ) {
   '<div id = "filtersTitle">Document research</div>\
   <div id = "filtersWindow"></div>\
   <div id="displayModeButtons"></div>\
-  <button id = "docResearch">Browser</button>\
+  <button id = "docResearch">Search</button>\
   ';
 
   var optionsFilter = "http://rict.liris.cnrs.fr/optionsFilter.json";
@@ -27,11 +27,9 @@ export function DocumentResearch( researchContainer, documentController ) {
     "optionsSource":optionsFilter
   });
 
-
-
   this.windowIsActive = false;
-//  document.getElementById('researchContainer').style.display = "block";
-    // Display or hide this window
+
+  // Display or hide this window
   this.activateWindow = function activateWindow( active ){
     if (typeof active != 'undefined') {
       this.windowIsActive = active;
@@ -47,9 +45,6 @@ export function DocumentResearch( researchContainer, documentController ) {
 this.research = function research(){
   var filtersFormData = new FormData(document.getElementById('filterForm'));
   this.documentController.getDocuments(filtersFormData);
-  //ajouter les controles d'affichage GUI
-
-
 }
 document.getElementById("docResearch").addEventListener('mousedown', this.research.bind(this),false);
 
