@@ -175,6 +175,7 @@ var docResearch = documentFolder.add( controller.documentResearch, 'windowIsActi
 docResearch.onFinishChange(function(value){
   controller.documentResearch.refresh();
 });
+
 var billboardOption = documentFolder.add( controller.documentBillboard, 'windowIsActive').name("Billboards").listen();
 billboardOption.onFinishChange(function(value){
   controller.documentBillboard.refresh();

@@ -1,10 +1,9 @@
 /**
 * Class: DocumentController
 * Description :
-* The Document Handler is an object holding and managing Document objects
-* It handles the display of documents in the document browser window, the central window, and billboards.
-* Documents are objects with properties : source image, title, date, metadata, camera position,
-* camera quaternion (both for the oriented view) and billboard position
+* The DocumentController is an object handling the views, interracting with the
+* server to get information and data (documents)
+*
 */
 
 import { DocumentResearch } from './DocumentResearch.js';
@@ -12,52 +11,61 @@ import { DocumentBrowser } from './DocumentBrowser.js';
 import { DocumentBillboard } from './DocumentBillboard.js';
 import './ConsultDoc.css';
 
-
-
-
-
-// TO DO : pass showBillboardButton as an option to DocumentsHandler
-// currently, BILLBOARDS WILL BE ALWAYS HIDDEN if the showBillboardButton global var is set to false !!
-
 /**
-* Constructor for DocumentsHandler Class
-* The Document Handler is an object holding and managing Document objects.
-* It handles the display of documents in the document browser window and the central window.
-* Document data is loaded from a csv file, and initialization is only done after loading (asynchronous)
-* @param view : itowns planar view
+* Constructor for DocumentController Class
 * @param controls : PlanarControls instance
-* @param dataFile : CSV file holding the documents data
-* @param options : optional parameters (including TemporalController)
 */
 //=============================================================================
 export function DocumentController(controls) {
 
-  this.url = "http://rict.liris.cnrs.fr/APIVilo3D/APIExtendedDocument/web/";
-  this.controls = controls; //FIXME
+  this.url = "http://rict.liris.cnrs.fr/APIVilo3D/APIExtendedDocument/web/"; //url of the server handling documents
+  //FIXME: to put in a configuration file of the general application
+
+  this.controls = controls;
   this.setOfDocuments = [];
-  this.index = 0;
+  this.docIndex = 0;
+  this.documentResearch ;
+  this.documentBrowser;
+  this.documentBillboard;
 
-  var researchContainer = document.createElement("div");
-  researchContainer. id = "researchContainer";
-  document.body.appendChild(researchContainer);
-  this.documentResearch = new DocumentResearch(researchContainer, this);
+  /**
+  * Create view container for the 3 different views
+  */
+  //=============================================================================
+  this.initialize = function initialize(){
 
-  var browserContainer = document.createElement("div");
-  browserContainer. id = "browserContainer";
-  document.body.appendChild(browserContainer);
-  this.documentBrowser = new DocumentBrowser(browserContainer, this);
+    var researchContainer = document.createElement("div");
+    researchContainer. id = "researchContainer";
+    document.body.appendChild(researchContainer);
+    this.documentResearch = new DocumentResearch(researchContainer, this);
 
-  this.documentBillboard = new DocumentBillboard();
+    var browserContainer = document.createElement("div");
+    browserContainer. id = "browserContainer";
+    document.body.appendChild(browserContainer);
+    this.documentBrowser = new DocumentBrowser(browserContainer, this);
 
-    this.updateDisplay = function updateDisplay(){
-      this.documentBrowser.update();
-      this.documentBillboard.update();
-    }
+    this.documentBillboard = new DocumentBillboard(this); //in process
 
+  }
+
+  /**
+  * Refreshes the view (for browser mode for billboard mode)
+  */
+  //=============================================================================
+  this.updateDisplay = function updateDisplay(){
+    this.documentBrowser.update();
+    //this.documentBillboard.update();
+  }
+
+
+  /**
+  * Gets the documents from a database, using filters
+  * @param {FormData} filterFormData - filters set by user to make a research
+  */
+  //=============================================================================
   this.getDocuments = function getDocuments( filterFormData ){
-    var self = this;
-    //console.log(filterFormData);
 
+    var self = this;
     $.ajax({
       url : this.url + "app_dev.php/getDocuments",
       data : filterFormData,
@@ -67,7 +75,7 @@ export function DocumentController(controls) {
       success:function(documents){
         self.setOfDocuments = documents;
         console.log('#1', self.setOfDocuments);
-        self.index = 0;
+        self.docIndex = 0;
         self.updateDisplay();
       },
       error: function(XMLHTTPRequest, textStatus, errorThrown){
@@ -76,30 +84,41 @@ export function DocumentController(controls) {
     });
   }
 
+  /**
+  * Returns the current document if there are documents
+  */
+  //=============================================================================
   this.getCurrentDoc = function getCurrentDoc(){
     if(this.setOfDocuments.length != 0)
-      return this.setOfDocuments[this.index];
+      return this.setOfDocuments[this.docIndex];
     else{
       return null;
     }
   }
 
+  /**
+  * Sets the current document to the next document and returns it.
+  */
+  //=============================================================================
   this.getNextDoc = function getNextDoc(){
-    if(this.index < this.setOfDocuments.length-1 || this.setOfDocuments.length ==0)
-    this.index ++;
+    if(this.docIndex < this.setOfDocuments.length-1 || this.setOfDocuments.length ==0)
+    this.docIndex ++;
     var currentDoc = this.getCurrentDoc();
-    //console.log('next', currentDoc);
     return this.getCurrentDoc();
   }
 
+  /**
+  * Sets the current document to the previous document and returns it.
+  */
+  //=============================================================================
   this.getPreviousDoc = function getPreviousDoc(){
-    if(this.index > 0 || this.setOfDocuments.length ==0)
+    if(this.docIndex > 0 || this.setOfDocuments.length ==0)
     {
-      this.index --;
+      this.docIndex --;
       var currentDoc = this.getCurrentDoc();
-      //console.log('previous', currentDoc);
-      return this.getCurrentDoc();//[this.index];
+      return this.getCurrentDoc();
     }
   }
 
+  this.initialize();
 }
