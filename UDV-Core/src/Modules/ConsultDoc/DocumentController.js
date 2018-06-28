@@ -6,9 +6,9 @@
  *
  */
 
-import {DocumentResearch} from './DocumentResearch.js';
-import {DocumentBrowser} from './DocumentBrowser.js';
-import {DocumentBillboard} from './DocumentBillboard.js';
+import { DocumentResearch }  from './DocumentResearch.js';
+import { DocumentBrowser }   from './DocumentBrowser.js';
+import { DocumentBillboard } from './DocumentBillboard.js';
 import './ConsultDoc.css';
 
 /**
@@ -17,7 +17,7 @@ import './ConsultDoc.css';
  * @param options : optional parameters (including TemporalController)
  */
 //=============================================================================
-export function DocumentController(controls, options = {})
+export function DocumentController(view, controls, options = {})
 {
     this.url = "http://rict.liris.cnrs.fr/APIVilo3D/APIExtendedDocument/web/"; //url of the server handling documents
     //FIXME: to put in a configuration file of the general application
@@ -28,7 +28,8 @@ export function DocumentController(controls, options = {})
     this.documentResearch;
     this.documentBrowser;
     this.documentBillboard;
-    this.temporal = options.temporal;
+    this.view = view;
+    this.options = options;
 
     /**
      * Create view container for the 3 different views
@@ -48,7 +49,6 @@ export function DocumentController(controls, options = {})
         this.documentBrowser = new DocumentBrowser(browserContainer, this);
 
         this.documentBillboard = new DocumentBillboard(this); //in process
-
     }
 
     /**
@@ -80,7 +80,6 @@ export function DocumentController(controls, options = {})
             success: function (documents)
             {
                 self.setOfDocuments = documents;
-                console.log('#1', self.setOfDocuments);
                 self.docIndex = 0;
                 self.updateDisplay();
             },
