@@ -27,7 +27,8 @@ export function DocumentBrowser(browserContainer, documentController)
           <br/>\
             <div id="docHead">Document Navigator</div>\
             <div id="docBrowserTitle">doc title</div>\
-            <div id="docBrowserMetaData">metadata</div>\
+            <div id="docRefDate">metadata</div>\
+            <div id="docPublicationDate">metadata</div>\
             <div id="docBrowserPreview"><img id="docBrowserPreviewImg"/></div>\
             <div id="docDescription"></div>\
             <div id="docBrowserIndex"></div>\
@@ -92,7 +93,8 @@ export function DocumentBrowser(browserContainer, documentController)
         if (this.currentDoc != null & this.documentsExist == true)
         {
             document.getElementById('docBrowserPreviewImg').src = this.documentController.url + "documentsDirectory/" + this.currentDoc.metadata.link;
-            document.getElementById('docBrowserMetaData').innerHTML = this.currentDoc.metadata.description;
+            document.getElementById('docRefDate').innerHTML = "Referring date:" + this.currentDoc.metadata.refDate;
+            document.getElementById('docPublicationDate').innerHTML = "Publication date:" + this.currentDoc.metadata.publicationDate;
             document.getElementById('docBrowserTitle').innerHTML = this.currentDoc.metadata.title;
             document.getElementById('docDescription').innerHTML = this.currentDoc.metadata.description;
         }
@@ -101,9 +103,10 @@ export function DocumentBrowser(browserContainer, documentController)
             var defaultImage = document.getElementById('docBrowserPreviewImg');
             defaultImage.src = DefaultImage;
             document.getElementById('docBrowserPreviewImg').src = DefaultImage;
-            document.getElementById('docBrowserMetaData').innerHTML = "no document to show";
-            document.getElementById('docBrowserTitle').innerHTML = " no document to show";
-            document.getElementById('docDescription').innerHTML = " no document to show";
+            document.getElementById('docRefDate').innerHTML = "Unknown";
+            document.getElementById('docPublicationDate').innerHTML = "Unknown";
+            document.getElementById('docBrowserTitle').innerHTML = "No document to show";
+            document.getElementById('docDescription').innerHTML = "No document to show";
         }
     }
 
