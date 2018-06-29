@@ -5,8 +5,10 @@
  * WORK IN PROGRESS
  */
 
-export function DocumentBillboard(browserContainer)
+export function DocumentBillboard(documentController)
 {
+  
+    this.documentController = documentController;
 
     this.windowIsActive = true;
 

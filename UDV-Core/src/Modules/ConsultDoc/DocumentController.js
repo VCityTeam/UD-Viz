@@ -9,7 +9,6 @@
 import { DocumentResearch }  from './DocumentResearch.js';
 import { DocumentBrowser }   from './DocumentBrowser.js';
 import { DocumentBillboard } from './DocumentBillboard.js';
-import './ConsultDoc.css';
 
 /**
  * Constructor for DocumentController Class
@@ -17,7 +16,7 @@ import './ConsultDoc.css';
  * @param options : optional parameters (including TemporalController)
  */
 //=============================================================================
-export function DocumentController(view, controls, options = {})
+export function DocumentController(view, controls, options = {}, docModel)
 {
     this.url = "http://rict.liris.cnrs.fr/APIVilo3D/APIExtendedDocument/web/"; //url of the server handling documents
     //FIXME: to put in a configuration file of the general application
@@ -30,6 +29,7 @@ export function DocumentController(view, controls, options = {})
     this.documentBillboard;
     this.view = view;
     this.options = options;
+    this.documentModel = docModel;
 
     /**
      * Create view container for the 3 different views
@@ -46,6 +46,7 @@ export function DocumentController(view, controls, options = {})
         var browserContainer = document.createElement("div");
         browserContainer.id = "browserContainer";
         document.body.appendChild(browserContainer);
+        //this.documentBrowser = new DocumentBrowser(browserContainer, this);
         this.documentBrowser = new DocumentBrowser(browserContainer, this);
 
         this.documentBillboard = new DocumentBillboard(this); //in process
@@ -61,7 +62,6 @@ export function DocumentController(view, controls, options = {})
         //this.documentBillboard.update();
     }
 
-
     /**
      * Gets the documents from a database, using filters
      * @param {FormData} filterFormData - filters set by user to make a research
@@ -69,7 +69,6 @@ export function DocumentController(view, controls, options = {})
     //=============================================================================
     this.getDocuments = function getDocuments(filterFormData)
     {
-
         var self = this;
         $.ajax({
             url: this.url + "app_dev.php/getDocuments",

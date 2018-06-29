@@ -125,7 +125,63 @@ var help  = new udvcore.HelpWindow({active:true});
 // FIXME For the time being this demo uses the Vilo3D data. Provide a
 // default document for the demo of DocumentHandler class and place it
 // within src/Modules/Documents...
-var controller = new udvcore.DocumentController(view,controls, {temporal: temporal});
+
+
+var documentModel = {
+  "title": {
+
+  },
+  "hello":{
+
+  },
+  "refDate": {
+
+  },
+  "publicationDate":{
+
+  },
+  "type":{
+
+  },
+  "subject":{
+
+  },
+  "link":{
+
+  },
+  "description":{
+
+  }
+};
+
+var extendedDocumentModel = {
+    "idDocument": "",
+    "metadata": {
+        "id": "",
+        "title":"" ,
+        "subject":"" ,
+        "description": "",
+        "refDate":"",
+        "publicationDate":"",
+        "type":"" ,
+        "link": "",
+        "originalName": ""
+    },
+    "visualization": {
+        "id": "",
+        "quaternionX": "",
+        "quaternionY": "",
+        "quaternionZ": "",
+        "quaternionW": "",
+        "positionX": "",
+        "positionY": "",
+        "positionZ": ""
+    }
+};
+
+
+
+var controller = new udvcore.DocumentController(view,controls, {temporal: temporal},extendedDocumentModel);
 ///////////////////////////////////////////////////////////////////////////////
 //// Create and configure the layout controller
 

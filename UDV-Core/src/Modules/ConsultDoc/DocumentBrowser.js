@@ -2,7 +2,7 @@
 import * as THREE from 'three';
 import { MAIN_LOOP_EVENTS } from 'itowns';
 import DefaultImage from './DefaultImage.png';
-
+import './documentBrowser.css';
 
 export function DocumentBrowser(browserContainer, documentController) {
 
@@ -22,13 +22,8 @@ export function DocumentBrowser(browserContainer, documentController) {
       '<div id="docBrowserWindow">\
         <button id="closeBrowserWindow" type=button>X</button>\
           <div id="docHead">Document Navigator</div>\
-          <div id="docBrowserTitle">doc title</div>\
-          <div id="docRefDate">metadata</div>\
-          <div id="docPublicationDate">metadata</div>\
+          <div id = "docBrowserInfo"></div>\
           <div id="docBrowserPreview"><img id="docBrowserPreviewImg"/></div>\
-          <div id="docDescription"></div>\
-          <div id = "docSubject"></div>\
-          <div id = "docType"></div>\
           <div id="docBrowserIndex"></div>\
           <button id="docBrowserNextButton" type=button>⇨</button>\
           <button id="docBrowserPreviousButton" type=button>⇦</button>\
@@ -49,7 +44,6 @@ export function DocumentBrowser(browserContainer, documentController) {
       type=button\
       style="display:none;">Billboard</button>\
       ';
-
 
     this.update = function update()
     {
@@ -143,34 +137,43 @@ export function DocumentBrowser(browserContainer, documentController) {
       this.updateBrowser();
     }
 
-    // Updates the DocumentBrowser with Document Metadata
+    // Updates the DocumentBrowser with Document static
+    // the document browser html is defined based on the documentModel metadata attributes
     //==========================================================================
     this.updateBrowser = function updateBrowser(){
-      console.log('update')
-
       this.currentDoc = this.documentController.getCurrentDoc(); //update currentDoc with current doc info
-      console.log(this.currentDoc);
       if (this.currentDoc != null & this.documentsExist == true)
       {
-          document.getElementById('docBrowserPreviewImg').src = this.documentController.url + "documentsDirectory/" + this.currentDoc.metadata.link;
-          document.getElementById('docRefDate').innerHTML = "Referring date:" + this.currentDoc.metadata.refDate;
-          document.getElementById('docPublicationDate').innerHTML = "Publication date:" + this.currentDoc.metadata.publicationDate;
-          document.getElementById('docBrowserTitle').innerHTML = this.currentDoc.metadata.title;
-          document.getElementById('docDescription').innerHTML = this.currentDoc.metadata.description;
-          document.getElementById('docSubject').innerHTML = "Subject: " + this.currentDoc.metadata.subject;
-          document.getElementById('docType').innerHTML = "Type: " + this.currentDoc.metadata.type;
-          document.getElementById('docBrowserIndex').innerHTML = "Document: " + this.docIndex + " out of " + this.documentController.setOfDocuments.length;
+        var jsonDocModel = JSON.stringify(this.documentController.documentModel.metadata);
+        var objectDocumentSchema = JSON.parse(jsonDocModel);
+        var documentRequiredMetada = []; //in this array, we have the information about the static metadata of a document configured my "documentModel.json"
+        for (var key in objectDocumentSchema){
+          documentRequiredMetada.push(key)
+        }
+        //building the HTML according to the "documentModel.json"
+        var docData = JSON.stringify(this.currentDoc.metadata);
+        var docu = JSON.parse(docData);
+        var txt="";
+        txt += "<div id ='docMetadata'>";
+        for (var i = 0; i<documentRequiredMetada.length; i++){
+          if(documentRequiredMetada[i]!="id" && documentRequiredMetada[i]!="link" && documentRequiredMetada[i]!="originalName"){
+            txt += "<div id =" + documentRequiredMetada[i] + ">" + docu[documentRequiredMetada[i]] + "</div>";
+          }
+        }
+        txt += "</div>";
+        document.getElementById("docBrowserInfo").innerHTML = txt;
+        document.getElementById('docBrowserPreviewImg').src = this.documentController.url + "documentsDirectory/" + this.currentDoc.metadata.link;
+        document.getElementById('docBrowserIndex').innerHTML = "Document: " + this.docIndex + " out of " + this.documentController.setOfDocuments.length;
       }
+
       else
-      { //sets browser with default information and image
-          var defaultImage = document.getElementById('docBrowserPreviewImg');
-          defaultImage.src = DefaultImage;
-          document.getElementById('docBrowserPreviewImg').src = DefaultImage;
-          document.getElementById('docRefDate').innerHTML = "Unknown";
-          document.getElementById('docPublicationDate').innerHTML = "Unknown";
-          document.getElementById('docBrowserTitle').innerHTML = "No document to show";
-          document.getElementById('docDescription').innerHTML = "No document to show";
-          //document.getElementById('docBrowserIndex').innerHTML = "No document found";
+      {
+        //sets browser with default information and image
+        var defaultImage = document.getElementById('docBrowserPreviewImg');
+        defaultImage.src = DefaultImage;
+        document.getElementById('docBrowserPreviewImg').src = DefaultImage;
+        document.getElementById('docBrowserInfo').innerHTML = "No document to display according to your research";
+        document.getElementById('docBrowserIndex').innerHTML = "No doc"
       }
     }
 

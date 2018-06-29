@@ -7,7 +7,7 @@
 
 import $ from 'jquery'; //to use Alpaca
 import 'alpaca';  //provides a simple way to generate HTML forms using jQuery
-
+import './ConsultDoc.css';
 /**
  *
  * @constructor
