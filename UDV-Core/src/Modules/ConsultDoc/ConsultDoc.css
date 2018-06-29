@@ -100,7 +100,28 @@
   text-align: left;
   padding-left: 20px;
 }
-
+#docSubject{
+  display:inline-block;
+  margin-top: 20px;
+  color: black;
+  background-color: ivory;
+  font-size: 14px;
+  overflow: hidden;
+  width: 90%;
+  text-align: left;
+  padding-left: 20px;
+}
+#docType{
+  display:inline-block;
+  margin-top: 20px;
+  color: black;
+  background-color: ivory;
+  font-size: 14px;
+  overflow: hidden;
+  width: 90%;
+  text-align: left;
+  padding-left: 20px;
+}
 #docBrowserPreview{
     z-index: 20;
     height: 40%;

@@ -27,6 +27,8 @@ export function DocumentBrowser(browserContainer, documentController) {
           <div id="docPublicationDate">metadata</div>\
           <div id="docBrowserPreview"><img id="docBrowserPreviewImg"/></div>\
           <div id="docDescription"></div>\
+          <div id = "docSubject"></div>\
+          <div id = "docType"></div>\
           <div id="docBrowserIndex"></div>\
           <button id="docBrowserNextButton" type=button>⇨</button>\
           <button id="docBrowserPreviousButton" type=button>⇦</button>\
@@ -155,6 +157,8 @@ export function DocumentBrowser(browserContainer, documentController) {
           document.getElementById('docPublicationDate').innerHTML = "Publication date:" + this.currentDoc.metadata.publicationDate;
           document.getElementById('docBrowserTitle').innerHTML = this.currentDoc.metadata.title;
           document.getElementById('docDescription').innerHTML = this.currentDoc.metadata.description;
+          document.getElementById('docSubject').innerHTML = "Subject: " + this.currentDoc.metadata.subject;
+          document.getElementById('docType').innerHTML = "Type: " + this.currentDoc.metadata.type;
           document.getElementById('docBrowserIndex').innerHTML = "Document: " + this.docIndex + " out of " + this.documentController.setOfDocuments.length;
       }
       else
