@@ -14,6 +14,8 @@ import { DocumentBillboard } from './DocumentBillboard.js';
  * Constructor for DocumentController Class
  * @param controls : PlanarControls instance
  * @param options : optional parameters (including TemporalController)
+ * @param view :  itowns planar view
+ * @param docModel : file holding document model
  */
 //=============================================================================
 export function DocumentController(view, controls, options = {}, docModel)

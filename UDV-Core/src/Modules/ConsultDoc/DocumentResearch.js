@@ -73,4 +73,5 @@ export function DocumentResearch(researchContainer, documentController)
     //Event listener for researh button
     document.getElementById("docResearch").addEventListener('mousedown', this.research.bind(this), false);
 
+
 }

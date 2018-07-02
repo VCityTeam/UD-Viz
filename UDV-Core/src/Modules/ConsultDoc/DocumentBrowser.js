@@ -27,6 +27,7 @@ export function DocumentBrowser(browserContainer, documentController) {
           <div id="docBrowserIndex"></div>\
           <button id="docBrowserNextButton" type=button>⇨</button>\
           <button id="docBrowserPreviousButton" type=button>⇦</button>\
+          <button id="resetFilters" type=button>Reset research</button>\
           <button id="docBrowserOrientButton" type=button>Orient Document</button>\
       </div>\
       <div id="docFull">\
@@ -141,6 +142,7 @@ export function DocumentBrowser(browserContainer, documentController) {
     // the document browser html is defined based on the documentModel metadata attributes
     //==========================================================================
     this.updateBrowser = function updateBrowser(){
+
       this.currentDoc = this.documentController.getCurrentDoc(); //update currentDoc with current doc info
       if (this.currentDoc != null & this.documentsExist == true)
       {
@@ -232,6 +234,13 @@ export function DocumentBrowser(browserContainer, documentController) {
 
     }
 
+    this.resetResearch = function resetResearch(){
+      this.docIndex = 1;
+      this.documentController.getDocuments();
+      this.updateBrowser();
+      this.closeDocFull();
+    }
+
     // itowns framerequester : will regularly call this.update()
     this.documentController.view.addFrameRequester( MAIN_LOOP_EVENTS.AFTER_CAMERA_UPDATE,this.updateScene.bind(this) );
 
@@ -242,6 +251,7 @@ export function DocumentBrowser(browserContainer, documentController) {
     document.getElementById("docBrowserPreviousButton").addEventListener('mousedown',this.previousDoc.bind(this),false);
     document.getElementById("docBrowserOrientButton").addEventListener('mousedown', this.focusOnDoc.bind(this),false);
     document.getElementById("closeBrowserWindow").addEventListener('mousedown', this.closeBrowser.bind(this),false);
+    document.getElementById("resetFilters").addEventListener('mousedown', this.resetResearch.bind(this),false);
 }
 
 // in orientied view (focusOnDoc) this is called when the user changes the value of the opacity slider

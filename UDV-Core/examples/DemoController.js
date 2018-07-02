@@ -126,38 +126,8 @@ var help  = new udvcore.HelpWindow({active:true});
 // default document for the demo of DocumentHandler class and place it
 // within src/Modules/Documents...
 
-
-var documentModel = {
-  "title": {
-
-  },
-  "hello":{
-
-  },
-  "refDate": {
-
-  },
-  "publicationDate":{
-
-  },
-  "type":{
-
-  },
-  "subject":{
-
-  },
-  "link":{
-
-  },
-  "description":{
-
-  }
-};
-
 var extendedDocumentModel = {
-    "idDocument": "",
     "metadata": {
-        "id": "",
         "title":"" ,
         "subject":"" ,
         "description": "",
@@ -168,7 +138,7 @@ var extendedDocumentModel = {
         "originalName": ""
     },
     "visualization": {
-        "id": "",
+
         "quaternionX": "",
         "quaternionY": "",
         "quaternionZ": "",
@@ -178,8 +148,6 @@ var extendedDocumentModel = {
         "positionZ": ""
     }
 };
-
-
 
 var controller = new udvcore.DocumentController(view,controls, {temporal: temporal},extendedDocumentModel);
 ///////////////////////////////////////////////////////////////////////////////
