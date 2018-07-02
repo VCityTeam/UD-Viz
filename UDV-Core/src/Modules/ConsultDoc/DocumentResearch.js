@@ -31,7 +31,9 @@ export function DocumentResearch(researchContainer, documentController)
         this.researchController.innerHTML =
             '<div id = "filtersTitle">Document research</div>\
             <div id = "filtersWindow"></div>\
+            <div id ="researchWindowTabs">\
             <button id = "docResearch">Search</button>\
+            </div>\
             ';
 
         var optionsFilter = "http://rict.liris.cnrs.fr/optionsFilter.json";
