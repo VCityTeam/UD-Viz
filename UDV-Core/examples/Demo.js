@@ -125,9 +125,31 @@ var help  = new udvcore.HelpWindow({active:true});
 // FIXME For the time being this demo uses the Vilo3D data. Provide a
 // default document for the demo of DocumentHandler class and place it
 // within src/Modules/Documents...
-var documents =
-  new udvcore.DocumentsHandler(view,controls,'Vilo3D/docs.csv',{temporal: temporal});
 
+var extendedDocumentModel = {
+    "metadata": {
+        "title":"" ,
+        "subject":"" ,
+        "description": "",
+        "refDate":"",
+        "publicationDate":"",
+        "type":"" ,
+        "link": "",
+        "originalName": ""
+    },
+    "visualization": {
+
+        "quaternionX": "",
+        "quaternionY": "",
+        "quaternionZ": "",
+        "quaternionW": "",
+        "positionX": "",
+        "positionY": "",
+        "positionZ": ""
+    }
+};
+
+var controller = new udvcore.DocumentController(view,controls, {temporal: temporal},extendedDocumentModel);
 ///////////////////////////////////////////////////////////////////////////////
 //// Create and configure the layout controller
 
@@ -171,11 +193,21 @@ temporalActiveCtrl.onFinishChange(function(value) {
 var temporalOverlayCtrl = temporalFolder.add(
                                          temporal, 'temporalUsesOverlay'
                                          ).name("Use Overlay").listen();
+//Document uses a folder
+var documentFolder = datDotGUI.addFolder("Documents");
+var docResearch = documentFolder.add( controller.documentResearch, 'windowIsActive').name("Research").listen();
+docResearch.onFinishChange(function(value){
+  controller.documentResearch.refresh();
+});
 
-// Document subwindow
-documentController = datDotGUI.add( documents, 'docBrowserWindowIsActive'
-                                    ).name( "Documents" ).listen();
-documentController.onFinishChange( function(value) { documents.toggleDocBrowserWindow(); });
+var billboardOption = documentFolder.add( controller.documentBillboard, 'windowIsActive').name("Billboard(soon)").listen();
+billboardOption.onFinishChange(function(value){
+  controller.documentBillboard.refresh();
+});
+var browserOption = documentFolder.add( controller.documentBrowser, 'windowIsActive').name("Browser").listen();
+browserOption.onFinishChange(function(value){
+  controller.documentBrowser.refresh();
+});
 
 datDotGUI.close();     // By default the dat.GUI controls are rolled up
 
