@@ -25,10 +25,12 @@ export function DocumentBrowser(browserContainer, documentController) {
           <div id = "docBrowserInfo"></div>\
           <div id="docBrowserPreview"><img id="docBrowserPreviewImg"/></div>\
           <div id="docBrowserIndex"></div>\
+          <div id = "browserWindowTabs">\
           <button id="docBrowserNextButton" type=button>⇨</button>\
           <button id="docBrowserPreviousButton" type=button>⇦</button>\
           <button id="resetFilters" type=button>Reset research</button>\
           <button id="docBrowserOrientButton" type=button>Orient Document</button>\
+          </div>\
       </div>\
       <div id="docFull">\
           <img id="docFullImg"/>\

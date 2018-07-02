@@ -14,3 +14,5 @@ export { MiniMapController }    from './Modules/Others/MiniMap';
 export { TemporalController }   from './Modules/Temporal/Temporal';
 
 export { DocumentController}    from './Modules/ConsultDoc/DocumentController';
+
+export { ContributeController}    from './Extensions/Contribute/src/ContributeController';

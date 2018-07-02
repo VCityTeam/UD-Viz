@@ -32,6 +32,8 @@ export function DocumentController(view, controls, options = {}, docModel)
     this.view = view;
     this.options = options;
     this.documentModel = docModel;
+    this.researchContainerId = "researchContainer";
+    this.browserContainerId = "browserContainer";
 
     /**
      * Create view container for the 3 different views
@@ -41,12 +43,12 @@ export function DocumentController(view, controls, options = {}, docModel)
     {
 
         var researchContainer = document.createElement("div");
-        researchContainer.id = "researchContainer";
+        researchContainer.id =   this.researchContainerId;
         document.body.appendChild(researchContainer);
         this.documentResearch = new DocumentResearch(researchContainer, this);
 
         var browserContainer = document.createElement("div");
-        browserContainer.id = "browserContainer";
+        browserContainer.id = this.browserContainerId;
         document.body.appendChild(browserContainer);
         //this.documentBrowser = new DocumentBrowser(browserContainer, this);
         this.documentBrowser = new DocumentBrowser(browserContainer, this);
