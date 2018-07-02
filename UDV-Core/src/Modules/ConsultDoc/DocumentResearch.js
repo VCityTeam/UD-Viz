@@ -8,6 +8,7 @@
 import $ from 'jquery'; //to use Alpaca
 import 'alpaca';  //provides a simple way to generate HTML forms using jQuery
 import './ConsultDoc.css';
+import './documentResearch.css';
 /**
  *
  * @constructor
@@ -30,6 +31,7 @@ export function DocumentResearch(researchContainer, documentController)
     {
         this.researchController.innerHTML =
             '<div id = "filtersTitle">Document research</div>\
+            <button id = "closeResearch">X</button>\
             <div id = "filtersWindow"></div>\
             <div id ="researchWindowTabs">\
             <button id = "docResearch">Search</button>\
@@ -68,12 +70,14 @@ export function DocumentResearch(researchContainer, documentController)
     {
         var filtersFormData = new FormData(document.getElementById('filterForm'));
         this.documentController.getDocuments(filtersFormData);
+        this.documentController.documentBrowser.activateWindow(true);
     }
 
     this.initialize();
 
     //Event listener for researh button
     document.getElementById("docResearch").addEventListener('mousedown', this.research.bind(this), false);
+    document.getElementById("closeResearch").addEventListener('mousedown', this.activateWindow.bind(this,false), false);
 
 
 }

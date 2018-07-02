@@ -8,13 +8,15 @@ export function DocumentBrowser(browserContainer, documentController) {
 
   //class attributes
   this.documentController = documentController;
-  this.documentsExist = false;
+  this.documentsExist = true;
   this.currentDoc = null;
   this.windowIsActive = false;
   this.isOrientingDoc = false;
   this.isFadingDoc = false;
   this.fadeAlpha = 0;
   this.docIndex = 1;
+  this.isStart = true; //dirty variable to test if we are in start mode
+
   // doc fade-in animation duration, in milliseconds
  this.fadeDuration = this.documentController.options.docFadeDuration || 2750;
 
@@ -57,6 +59,9 @@ export function DocumentBrowser(browserContainer, documentController) {
         this.updateBrowser();
     }
 
+    // Whether this window is currently displayed or not.
+    this.windowIsActive = this.documentController.options.active || false;
+
     // Display or hide this window
     this.activateWindow = function activateWindow(active)
     {
@@ -64,7 +69,13 @@ export function DocumentBrowser(browserContainer, documentController) {
         {
             this.windowIsActive = active;
         }
-        document.getElementById('docBrowserWindow').style.display = active & this.documentsExist ? "block" : "none ";
+        if(this.documentsExist && this.isStart){
+          this.documentController.getDocuments();
+          this.isStart = false;
+        }
+        this.update();
+        document.getElementById('docBrowserWindow').style.display = active  ? "block" : "none ";
+
     }
 
     this.refresh = function refresh()
@@ -140,7 +151,7 @@ export function DocumentBrowser(browserContainer, documentController) {
       this.updateBrowser();
     }
 
-    // Updates the DocumentBrowser with Document static
+    // Updates the DocumentBrowser with Document static metadata
     // the document browser html is defined based on the documentModel metadata attributes
     //==========================================================================
     this.updateBrowser = function updateBrowser(){
@@ -177,9 +188,11 @@ export function DocumentBrowser(browserContainer, documentController) {
         defaultImage.src = DefaultImage;
         document.getElementById('docBrowserPreviewImg').src = DefaultImage;
         document.getElementById('docBrowserInfo').innerHTML = "No document to display according to your research";
-        document.getElementById('docBrowserIndex').innerHTML = "No doc"
+        document.getElementById('docBrowserIndex').innerHTML = "No doc";
+
       }
     }
+
 
     // triggers the "oriented view" of the current docIndex
     // this will display the doc image in the middle of the screen
@@ -231,11 +244,6 @@ export function DocumentBrowser(browserContainer, documentController) {
         document.getElementById('docFullImg').src = null;
     }
 
-    this.closeBrowser = function closeBrowser(){
-      document.getElementById("docBrowserWindow").style.display = "none";
-
-    }
-
     this.resetResearch = function resetResearch(){
       this.docIndex = 1;
       this.documentController.getDocuments();
@@ -252,7 +260,7 @@ export function DocumentBrowser(browserContainer, documentController) {
     document.getElementById("docBrowserNextButton").addEventListener('mousedown',this.nextDoc.bind(this),false);
     document.getElementById("docBrowserPreviousButton").addEventListener('mousedown',this.previousDoc.bind(this),false);
     document.getElementById("docBrowserOrientButton").addEventListener('mousedown', this.focusOnDoc.bind(this),false);
-    document.getElementById("closeBrowserWindow").addEventListener('mousedown', this.closeBrowser.bind(this),false);
+    document.getElementById("closeBrowserWindow").addEventListener('mousedown', this.activateWindow.bind(this,false),false);
     document.getElementById("resetFilters").addEventListener('mousedown', this.resetResearch.bind(this),false);
 }
 
