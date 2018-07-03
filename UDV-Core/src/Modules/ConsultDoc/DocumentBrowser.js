@@ -2,7 +2,6 @@
 import * as THREE from 'three';
 import { MAIN_LOOP_EVENTS } from 'itowns';
 import DefaultImage from './DefaultImage.png';
-import './documentBrowser.css';
 
 export function DocumentBrowser(browserContainer, documentController) {
 

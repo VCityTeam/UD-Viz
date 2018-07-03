@@ -9,6 +9,7 @@
 import { DocumentResearch }  from './DocumentResearch.js';
 import { DocumentBrowser }   from './DocumentBrowser.js';
 import { DocumentBillboard } from './DocumentBillboard.js';
+import './ConsultDoc.css';
 
 /**
  * Constructor for DocumentController Class
