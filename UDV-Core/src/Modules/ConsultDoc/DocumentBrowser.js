@@ -21,8 +21,9 @@ export function DocumentBrowser(browserContainer, documentController) {
 
  browserContainer.innerHTML =
       '<div id="docBrowserWindow">\
-        <button id="closeBrowserWindow" type=button>X</button>\
-          <div id="docHead">Document Navigator</div>\
+        <button id="closeBrowserWindow" type=button>Close</button><br/>\
+          <div id="docHead">Document Navigator</div><br>\
+          <br/>\
           <div id = "docBrowserInfo"></div>\
           <div id="docBrowserPreview"><img id="docBrowserPreviewImg"/></div>\
           <div id="docBrowserIndex"></div>\
@@ -160,21 +161,37 @@ export function DocumentBrowser(browserContainer, documentController) {
       {
         var jsonDocModel = JSON.stringify(this.documentController.documentModel.metadata);
         var objectDocumentSchema = JSON.parse(jsonDocModel);
-        var documentRequiredMetada = []; //in this array, we have the information about the static metadata of a document configured my "documentModel.json"
+        var documentRequiredMetada = []; //in this array, we have the information about the static metadata of a document configured in "documentModel json"
         for (var key in objectDocumentSchema){
           documentRequiredMetada.push(key)
         }
-        //building the HTML according to the "documentModel.json"
+        //building the HTML according to the "documentModel json"
+        //will be handled from config file
         var docData = JSON.stringify(this.currentDoc.metadata);
         var docu = JSON.parse(docData);
         var txt="";
         txt += "<div id ='docMetadata'>";
         for (var i = 0; i<documentRequiredMetada.length; i++){
           if(documentRequiredMetada[i]!="id" && documentRequiredMetada[i]!="link" && documentRequiredMetada[i]!="originalName"){
-            txt += "<div id =" + documentRequiredMetada[i] + ">" + docu[documentRequiredMetada[i]] + "</div>";
+            if(documentRequiredMetada[i]=="subject"){
+              txt += "<div id = 'docSubject'>Subject: " +  docu[documentRequiredMetada[i]] + "</div>";
+
+            }
+            else{
+              if(documentRequiredMetada[i]=="title"){
+                txt += "<div id =" + documentRequiredMetada[i] + ">" + docu[documentRequiredMetada[i]] + "</div>";
+
+              }
+              else{
+                txt += "<div id =" + documentRequiredMetada[i] + ">" + documentRequiredMetada[i];
+                txt+= ": ";
+                txt  += docu[documentRequiredMetada[i]] + "</div>";}
+            }
           }
+
         }
         txt += "</div>";
+
         document.getElementById("docBrowserInfo").innerHTML = txt;
         document.getElementById('docBrowserPreviewImg').src = this.documentController.url + "documentsDirectory/" + this.currentDoc.metadata.link;
         document.getElementById('docBrowserIndex').innerHTML = "Document: " + this.docIndex + " out of " + this.documentController.setOfDocuments.length;
@@ -245,6 +262,8 @@ export function DocumentBrowser(browserContainer, documentController) {
 
     this.resetResearch = function resetResearch(){
       this.docIndex = 1;
+      $("#filterForm").get(0).reset(); //reset reserach parameters
+      this.documentController.url = "http://rict.liris.cnrs.fr/APIVilo3D/APIExtendedDocument/web/";
       this.documentController.getDocuments();
       this.updateBrowser();
       this.closeDocFull();

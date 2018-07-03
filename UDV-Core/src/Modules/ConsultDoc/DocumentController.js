@@ -8,7 +8,6 @@
 
 import { DocumentResearch }  from './DocumentResearch.js';
 import { DocumentBrowser }   from './DocumentBrowser.js';
-import { DocumentBillboard } from './DocumentBillboard.js';
 import './ConsultDoc.css';
 
 /**
@@ -35,6 +34,7 @@ export function DocumentController(view, controls, options = {}, docModel)
     this.documentModel = docModel;
     this.researchContainerId = "researchContainer";
     this.browserContainerId = "browserContainer";
+    this.urlFilters ="";
 
     /**
      * Create view container for the 3 different views
@@ -51,10 +51,9 @@ export function DocumentController(view, controls, options = {}, docModel)
         var browserContainer = document.createElement("div");
         browserContainer.id = this.browserContainerId;
         document.body.appendChild(browserContainer);
-        //this.documentBrowser = new DocumentBrowser(browserContainer, this);
         this.documentBrowser = new DocumentBrowser(browserContainer, this);
 
-        this.documentBillboard = new DocumentBillboard(this); //in process
+        //this.documentBillboard = new DocumentBillboard(this); //in process
     }
 
     /**
@@ -64,34 +63,28 @@ export function DocumentController(view, controls, options = {}, docModel)
     this.updateDisplay = function updateDisplay()
     {
         this.documentBrowser.update();
-        //this.documentBillboard.update();
     }
 
     /**
      * Gets the documents from a database, using filters
-     * @param {FormData} filterFormData - filters set by user to make a research
+     *
      */
     //=============================================================================
-    this.getDocuments = function getDocuments(filterFormData)
-    {
-        var self = this;
-        $.ajax({
-            url: this.url + "app_dev.php/getDocuments",
-            data: filterFormData,
-            processData: false,
-            contentType: false,
-            type: 'POST',
-            success: function (documents)
-            {
-                self.setOfDocuments = documents;
-                self.docIndex = 0;
-                self.updateDisplay();
-            },
-            error: function (XMLHTTPRequest, textStatus, errorThrown)
-            {
-                console.alert(textStatus);
-            }
-        });
+    this.getDocuments = function getDocuments(){
+      //check which filters are set
+      var filters = new FormData(document.getElementById('filterForm')).entries();
+      var urlFilters = this.url +"app_dev.php/getDocuments?";
+      for(var pair of filters ){ 
+        if(pair[1]!=""){
+          urlFilters+= pair[0] + "=" + pair[1];
+          urlFilters+="&";
+        }
+      }
+      urlFilters = urlFilters.slice('&',-1);
+      var req = new XMLHttpRequest();
+      req.open("GET", urlFilters,false);
+      req.send();
+      this.setOfDocuments = JSON.parse(req.responseText);
     }
 
     /**

@@ -22,6 +22,7 @@ export function DocumentResearch(researchContainer, documentController)
     this.researchController = researchContainer;
     this.windowIsActive = false;
 
+
     /**
      * Creates the research view
      */
@@ -29,8 +30,9 @@ export function DocumentResearch(researchContainer, documentController)
     this.initialize = function initialize()
     {
         this.researchController.innerHTML =
-            '<div id = "filtersTitle">Document research</div>\
-            <button id = "closeResearch">X</button>\
+            '<br/><div id = "filtersTitle">Document research</div><br/>\
+            <br/>\
+            <button id = "closeResearch">Close</button>\
             <div id = "filtersWindow"></div>\
             <div id ="researchWindowTabs">\
             <button id = "docResearch">Search</button>\
@@ -43,7 +45,7 @@ export function DocumentResearch(researchContainer, documentController)
         $('#filtersWindow').alpaca({
             "schemaSource": schema,
             "optionsSource": optionsFilter
-        });
+          });
     }
 
     // Display or hide this window
@@ -67,8 +69,14 @@ export function DocumentResearch(researchContainer, documentController)
     //=============================================================================
     this.research = function research()
     {
-        var filtersFormData = new FormData(document.getElementById('filterForm'));
-        this.documentController.getDocuments(filtersFormData);
+        // var filtersFormData = new FormData(document.getElementById('filterForm'));
+        //
+        // var entries = filtersFormData.entries();
+        // for (var pair of entries){
+        //   console.log(pair[0] + ":"+ pair[1]);
+        // }
+        this.documentController.getDocuments();
+
         this.documentController.documentBrowser.activateWindow(true);
     }
 

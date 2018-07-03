@@ -199,11 +199,11 @@ var docResearch = documentFolder.add( controller.documentResearch, 'windowIsActi
 docResearch.onFinishChange(function(value){
   controller.documentResearch.refresh();
 });
-
+/*
 var billboardOption = documentFolder.add( controller.documentBillboard, 'windowIsActive').name("Billboard(soon)").listen();
 billboardOption.onFinishChange(function(value){
   controller.documentBillboard.refresh();
-});
+});*/
 var browserOption = documentFolder.add( controller.documentBrowser, 'windowIsActive').name("Browser").listen();
 browserOption.onFinishChange(function(value){
   controller.documentBrowser.refresh();

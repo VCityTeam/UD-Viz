@@ -8,7 +8,7 @@
   border : 1px solid rgb(90,90,90);
   text-align: center;
   width: 10%;
-  height: 45%;
+  height: 55%;
   overflow: auto;
   background-color: rgba(30,30,30,0.6);
   font-size: 14;
@@ -37,12 +37,16 @@
     text-align: center;
     color: white;
     width: 22%;
-    height: 75%;
+    height: 80%;
     color : black;
     background-color: rgba(30,30,30,0.6);
     font-size: 14;
 
     pointer-events: none;
+}
+
+#browserWindowTabs{
+  bottom:0px;
 }
 
 #docHead{
@@ -71,22 +75,17 @@
 }
 
 #docBrowserIndex{
-  color: white;
-  font-weight: bold;
-  left:0;
+  position: absolute;
+      margin-top: 10px;
+      color: white;
+      left : 15px;
+      bottom : 50px;
+      font-size: 14px;
+      font-weight: bold;
+      overflow: hidden;
 
 }
-#filterswindow > #subject{
-  display:inline-block;
-  margin-top: 20px;
-  color: black;
-  font-size: 24px;
-  overflow: hidden;
-  width: 90%;
-  text-align: left;
-  padding-left: 20px;
-  font-weight: bold;
-}
+
 #docType{
   display:inline-block;
   margin-top: 20px;
@@ -97,6 +96,22 @@
   width: 90%;
   text-align: left;
   padding-left: 20px;
+}
+#subject{
+  width: 90%;
+}
+
+#refDate1{
+  width: 90%;
+}
+#refDate2{
+  width: 90%;
+}
+#publicationDate1{
+  width: 90%;
+}
+#publicationDate2{
+  width: 90%;
 }
 #docBrowserPreview{
     z-index: 20;
@@ -305,6 +320,7 @@
   text-align: left;
   padding-left: 20px;
 }
+
 #publicationDate{
   display:inline-block;
   margin-top: 20px;
@@ -327,27 +343,28 @@
   text-align: left;
   padding-left: 20px;
 }
-#subject{
+#docSubject{
   display:inline-block;
   margin-top: 20px;
   color: black;
   background-color: ivory;
+  text-align: center;
   font-size: 14px;
   overflow: hidden;
   width: 90%;
   text-align: left;
   padding-left: 20px;
 }
+
 #type{
   display:inline-block;
   margin-top: 20px;
   color: black;
-  background-color: ivory;
   font-size: 14px;
-  overflow: hidden;
   width: 90%;
   text-align: left;
   padding-left: 20px;
+  background-color: ivory;
 }
 
 #closeResearch{
@@ -373,4 +390,21 @@
   height: 30px;
   pointer-events: auto;
 
+}
+
+#documentType{
+  width: 90%;
+}
+label{
+  color:white;
+  left:3px
+}
+#keyword{
+  display:inline-block;
+  color: black;
+  text-align: center;
+  font-size: 14px;
+  width: 90%;
+  text-align: left;
+  padding-left: 20px;
 }
