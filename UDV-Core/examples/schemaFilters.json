@@ -14,7 +14,19 @@
 
     },
     "type":{
-      
+      "enum":
+      ["Drawing",
+        "Letter",
+        "Map"
+      ]
+
+    },
+    "subject":{
+      "enum":
+      ["Subject1",
+        "Subject2",
+        "Subject3"
+      ]
     }
   }
 
