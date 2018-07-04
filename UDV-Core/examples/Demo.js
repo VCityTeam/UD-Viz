@@ -126,30 +126,19 @@ var help  = new udvcore.HelpWindow({active:true});
 // default document for the demo of DocumentHandler class and place it
 // within src/Modules/Documents...
 
-var extendedDocumentModel = {
-    "metadata": {
-        "title":"" ,
-        "subject":"" ,
-        "description": "",
-        "refDate":"",
-        "publicationDate":"",
-        "type":"" ,
-        "link": "",
-        "originalName": ""
-    },
-    "visualization": {
 
-        "quaternionX": "",
-        "quaternionY": "",
-        "quaternionZ": "",
-        "quaternionW": "",
-        "positionX": "",
-        "positionY": "",
-        "positionZ": ""
-    }
-};
+var documentModel;
+$.ajax({
+  type: "GET",
+  url: "DocumentModel.json",
+  datatype: "json",
+  async: false,
+  success: function(data){
+    documentModel = data;
+  }
+});
 
-var controller = new udvcore.DocumentController(view,controls, {temporal: temporal},extendedDocumentModel);
+var controller = new udvcore.DocumentController(view,controls, {temporal: temporal}, documentModel);
 ///////////////////////////////////////////////////////////////////////////////
 //// Create and configure the layout controller
 

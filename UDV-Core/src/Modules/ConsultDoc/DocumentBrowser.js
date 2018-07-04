@@ -151,6 +151,7 @@ export function DocumentBrowser(browserContainer, documentController) {
       this.updateBrowser();
     }
 
+
     // Updates the DocumentBrowser with Document static metadata
     // the document browser html is defined based on the documentModel metadata attributes
     //==========================================================================
@@ -159,39 +160,22 @@ export function DocumentBrowser(browserContainer, documentController) {
       this.currentDoc = this.documentController.getCurrentDoc(); //update currentDoc with current doc info
       if (this.currentDoc != null & this.documentsExist == true)
       {
-        var jsonDocModel = JSON.stringify(this.documentController.documentModel.metadata);
-        var objectDocumentSchema = JSON.parse(jsonDocModel);
-        var documentRequiredMetada = []; //in this array, we have the information about the static metadata of a document configured in "documentModel json"
-        for (var key in objectDocumentSchema){
-          documentRequiredMetada.push(key)
-        }
-        //building the HTML according to the "documentModel json"
-        //will be handled from config file
-        var docData = JSON.stringify(this.currentDoc.metadata);
-        var docu = JSON.parse(docData);
         var txt="";
         txt += "<div id ='docMetadata'>";
-        for (var i = 0; i<documentRequiredMetada.length; i++){
-          if(documentRequiredMetada[i]!="id" && documentRequiredMetada[i]!="link" && documentRequiredMetada[i]!="originalName"){
-            if(documentRequiredMetada[i]=="subject"){
-              txt += "<div id = 'docSubject'>Subject: " +  docu[documentRequiredMetada[i]] + "</div>";
+        var metadata = this.documentController.documentModel.properties.metadata;
 
+        for (var key in metadata) {
+          var attribute = metadata[key]; //holds all metadata relative information
+          if(attribute['displayable'] == "true"){
+            if(attribute['label']!="false"){
+              txt +="<div id=" + attribute['displayID'] + ">" +attribute['label'] + ":" + this.currentDoc.metadata[attribute['name']] + "</div>";
             }
             else{
-              if(documentRequiredMetada[i]=="title"){
-                txt += "<div id =" + documentRequiredMetada[i] + ">" + docu[documentRequiredMetada[i]] + "</div>";
-
-              }
-              else{
-                txt += "<div id =" + documentRequiredMetada[i] + ">" + documentRequiredMetada[i];
-                txt+= ": ";
-                txt  += docu[documentRequiredMetada[i]] + "</div>";}
+              txt +="<div id=" + attribute['displayID'] + ">" + this.currentDoc.metadata[attribute['name']] + "</div>";
             }
           }
-
         }
-        txt += "</div>";
-
+        txt +="</div>";
         document.getElementById("docBrowserInfo").innerHTML = txt;
         document.getElementById('docBrowserPreviewImg').src = this.documentController.url + "documentsDirectory/" + this.currentDoc.metadata.link;
         document.getElementById('docBrowserIndex').innerHTML = "Document: " + this.docIndex + " out of " + this.documentController.setOfDocuments.length;
@@ -208,7 +192,6 @@ export function DocumentBrowser(browserContainer, documentController) {
 
       }
     }
-
 
     // triggers the "oriented view" of the current docIndex
     // this will display the doc image in the middle of the screen

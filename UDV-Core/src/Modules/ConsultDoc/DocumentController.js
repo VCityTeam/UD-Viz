@@ -18,8 +18,9 @@ import './ConsultDoc.css';
  * @param docModel : file holding document model
  */
 //=============================================================================
-export function DocumentController(view, controls, options = {}, docModel)
+export function DocumentController(view, controls, options = {},docModel)
 {
+
     this.url = "http://rict.liris.cnrs.fr/APIVilo3D/APIExtendedDocument/web/"; //url of the server handling documents
     //FIXME: to put in a configuration file of the general application
 
@@ -31,7 +32,15 @@ export function DocumentController(view, controls, options = {}, docModel)
     this.documentBillboard;
     this.view = view;
     this.options = options;
+
     this.documentModel = docModel;
+    this.modelTest;
+
+    var self = this;
+
+
+//console.log(this.documentModel['properties']);
+
     this.researchContainerId = "researchContainer";
     this.browserContainerId = "browserContainer";
     this.urlFilters ="";
@@ -71,10 +80,10 @@ export function DocumentController(view, controls, options = {}, docModel)
      */
     //=============================================================================
     this.getDocuments = function getDocuments(){
-      //check which filters are set
+      //check which filters are set. URL is built manually for more modularity. Could be improved
       var filters = new FormData(document.getElementById('filterForm')).entries();
       var urlFilters = this.url +"app_dev.php/getDocuments?";
-      for(var pair of filters ){ 
+      for(var pair of filters ){
         if(pair[1]!=""){
           urlFilters+= pair[0] + "=" + pair[1];
           urlFilters+="&";
@@ -82,9 +91,10 @@ export function DocumentController(view, controls, options = {}, docModel)
       }
       urlFilters = urlFilters.slice('&',-1);
       var req = new XMLHttpRequest();
-      req.open("GET", urlFilters,false);
+      req.open("POST", urlFilters,false);
       req.send();
       this.setOfDocuments = JSON.parse(req.responseText);
+      console.log(urlFilters)
     }
 
     /**

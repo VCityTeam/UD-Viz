@@ -22,7 +22,7 @@ module.exports = {
     plugins: [
         definePlugin,
         new webpack.optimize.CommonsChunkPlugin({ name: 'udvcore' }),
-        new webpack.ProvidePlugin({
+        new webpack.ProvidePlugin({ //used for Alpaca library
             $: "jquery",
             jQuery: "jquery"
         })
@@ -66,7 +66,7 @@ module.exports = {
     devServer: {
         publicPath: '/dist/',
     },
-    resolve: {
+    resolve: { //used for Alpaca library
     alias: {
        handlebars: 'handlebars/dist/handlebars.min.js'
     }
