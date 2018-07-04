@@ -167,7 +167,7 @@ export function DocumentBrowser(browserContainer, documentController) {
         for (var key in metadata) {
           var attribute = metadata[key]; //holds all metadata relative information
           if(attribute['displayable'] == "true"){
-            if(attribute['label']!="false"){
+            if(attribute['label']!="false"){ //dynamic building of the HTML browser
               txt +="<div id=" + attribute['displayID'] + ">" +attribute['label'] + ":" + this.currentDoc.metadata[attribute['name']] + "</div>";
             }
             else{

@@ -18,7 +18,7 @@ import './ConsultDoc.css';
  * @param docModel : file holding document model
  */
 //=============================================================================
-export function DocumentController(view, controls, options = {},docModel)
+export function DocumentController(view, controls, options = {},docModel, researchModel,optionsResearch)
 {
 
     this.url = "http://rict.liris.cnrs.fr/APIVilo3D/APIExtendedDocument/web/"; //url of the server handling documents
@@ -34,6 +34,9 @@ export function DocumentController(view, controls, options = {},docModel)
     this.options = options;
 
     this.documentModel = docModel;
+    this.researchModel = researchModel;
+    this.optionsResearch = optionsResearch;
+    console.log(this.optionsResearch)
     this.modelTest;
 
     var self = this;

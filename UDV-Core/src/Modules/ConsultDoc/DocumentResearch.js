@@ -39,8 +39,10 @@ export function DocumentResearch(researchContainer, documentController)
             </div>\
             ';
 
-        var optionsFilter = "http://rict.liris.cnrs.fr/optionsFilter.json";
-        var schema = "http://rict.liris.cnrs.fr/schemaType.json";
+        //var optionsFilter = "http://rict.liris.cnrs.fr/optionsFilter.json";
+        var optionsFilter = this.documentController.optionsResearch;
+        console.log(optionsFilter)
+        var schema = this.documentController.researchModel;
         //create HTML research form
         $('#filtersWindow').alpaca({
             "schemaSource": schema,

@@ -65,8 +65,18 @@
         }
       },
       "visualization":{
-        "positionX":"",
-        "positionY":""
+        "positionX":{
+          "type":"double",
+          "optional":"false",
+          "displayable":"false",
+          "researcheable":"false"
+        },
+        "positionY":{
+          "type":"double",
+          "optional":"false",
+          "displayable":"false",
+          "researcheable":"false"
+        }
       }
     }
 }

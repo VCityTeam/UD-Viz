@@ -126,7 +126,7 @@ var help  = new udvcore.HelpWindow({active:true});
 // default document for the demo of DocumentHandler class and place it
 // within src/Modules/Documents...
 
-
+//loading configuration files
 var documentModel;
 $.ajax({
   type: "GET",
@@ -138,7 +138,29 @@ $.ajax({
   }
 });
 
-var controller = new udvcore.DocumentController(view,controls, {temporal: temporal}, documentModel);
+var researchModel;
+$.ajax({
+  type: "GET",
+  url: "schemaFilters.json",
+  datatype: "json",
+  async: false,
+  success: function(data){
+    researchModel = data;
+  }
+});
+
+var optionsResearch;
+$.ajax({
+  type: "GET",
+  url: "optionsFilter.json",
+  datatype: "json",
+  async: false,
+  success: function(data){
+    optionsResearch = data;
+  }
+});
+
+var controller = new udvcore.DocumentController(view,controls, {temporal: temporal}, documentModel, researchModel, optionsResearch);
 ///////////////////////////////////////////////////////////////////////////////
 //// Create and configure the layout controller
 
