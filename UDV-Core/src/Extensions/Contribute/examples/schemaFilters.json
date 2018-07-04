@@ -1,0 +1,21 @@
+{
+  "type": "object",
+  "properties": {
+    "keyword":{
+    },
+    "refDate1": {
+    },
+    "refDate2":{
+
+    },
+    "publicationDate1":{
+    },
+    "publicationDate2":{
+
+    },
+    "type":{
+      
+    }
+  }
+
+}
