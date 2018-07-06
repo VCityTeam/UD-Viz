@@ -97,6 +97,15 @@ this.activateCreateWindow = function activateCreateWindow(active){
   document.getElementById(this.contributeController.creationContainerId).style.display = active  ? "block" : "none ";
 }
 
+this.activateDebugPosition = function activateDebugPosition(active){
+  if (typeof active != 'undefined')
+  {
+      this.windowIsActive = active;
+  }
+  document.getElementById('manualPos').style.display = active  ? "block" : "none ";
+
+}
+
   // Display or hide this window
   this.activateWindow = function activateWindow(active)
   {
@@ -190,6 +199,10 @@ this.activateCreateWindow = function activateCreateWindow(active){
   document.getElementById('docCreation').addEventListener('mousedown', this.contributeController.documentCreation.bind(this.contributeController),false);
   document.getElementById('closeCreation').addEventListener('mousedown', this.activateCreateWindow.bind(this,false),false);
   document.getElementById('documentPositioner').addEventListener('mousedown', this.showDocPositioner.bind(this), false);
+
+  document.getElementById('docPositionerSave').addEventListener('mousedown', this.contributeController.addVisualizationData.bind(this.contributeController), false);
+  document.getElementById('moveDocument').addEventListener('mousedown', this.contributeController.moveDoc.bind(this.contributeController), false);
+  document.getElementById('docPositionerCancel').addEventListener('mousedown', this.activateDebugPosition.bind(this,false), false);
 
 
 }

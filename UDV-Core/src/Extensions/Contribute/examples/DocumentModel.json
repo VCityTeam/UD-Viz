@@ -5,7 +5,7 @@
         "title": {
           "name":"title",
           "type": "string",
-          "optional": "true",
+          "optional": "false",
           "creationID":"title",
           "labelCreation":"Title of the document :",
           "updatable":"false",
