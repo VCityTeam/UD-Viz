@@ -5,12 +5,13 @@
         "title": {
           "name":"title",
           "type": "string",
-          "optional": "false",
+          "optional": "true",
+          "creationID":"title",
+          "labelCreation":"Title of the document :",
           "updatable":"false",
           "updateID":"titleUpdate",
           "displayable":"true",
           "displayID":"title",
-          "researcheable":"true",
           "label":"false"
         },
         "description": {
@@ -20,8 +21,9 @@
           "updatable":"true",
           "displayable":"true",
           "displayID":"description",
-          "researcheable":"true",
-          "label":"Description"
+          "label":"Description",
+          "creationID":"description",
+          "labelCreation":"Description :"
         },
         "subject":{
           "name":"subject",
@@ -30,8 +32,9 @@
           "updatable":"false",
           "displayable":"true",
           "displayID":"description",
-          "researcheable":"true",
-          "label":"Subject"
+          "label":"Subject",
+          "creationID":"subject",
+          "labelCreation":"Subject: "
         },
         "refDate":{
           "name":"refDate",
@@ -40,8 +43,9 @@
           "updatable":"true",
           "displayable":"true",
           "displayID":"refDate",
-          "researcheable":"true",
-          "label":"Referring date"
+          "label":"Referring date",
+          "creationID":"refDate",
+          "labelCreation":"Date of referrence: "
         },
         "publicationDate":{
           "name":"publicationDate",
@@ -50,8 +54,9 @@
           "updatable":"true",
           "displayable":"true",
           "displayID":"publicationDate",
-          "researcheable":"true",
-          "label":"Publication date"
+          "label":"Publication date",
+          "creationID":"publicationDate",
+          "labelCreation":"Date of publication: "
         },
         "type":{
           "name":"type",
@@ -60,22 +65,20 @@
           "updatable":"false",
           "displayable":"true",
           "displayID":"type",
-          "researcheable":"true",
-          "label":"Type"
+          "label":"Type",
+          "labelCreation":"Type: "
         }
       },
       "visualization":{
         "positionX":{
           "type":"double",
           "optional":"false",
-          "displayable":"false",
-          "researcheable":"false"
+          "displayable":"false"
         },
         "positionY":{
           "type":"double",
           "optional":"false",
-          "displayable":"false",
-          "researcheable":"false"
+          "displayable":"false"
         }
       }
     }

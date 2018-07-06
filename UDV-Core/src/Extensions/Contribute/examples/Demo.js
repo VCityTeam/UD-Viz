@@ -211,6 +211,12 @@ docResearch.onFinishChange(function(value){
   controller.documentResearch.refresh();
 });
 
+//replace the browser with upgraded browser
+var contributeOption = documentFolder.add(contributeController.documentCreate, 'windowIsActive').name("Browser").listen();
+contributeOption.onFinishChange(function(value){
+  contributeController.documentCreate.refresh();
+});
+
 
 datDotGUI.close();     // By default the dat.GUI controls are rolled up
 

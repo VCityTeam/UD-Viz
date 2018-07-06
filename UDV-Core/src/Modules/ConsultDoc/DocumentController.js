@@ -34,6 +34,7 @@ export function DocumentController(view, controls, options = {},docModel, resear
     this.options = options;
 
     this.documentModel = docModel;
+    console.log('docModel', this.documentModel)
     this.researchModel = researchModel;
     this.optionsResearch = optionsResearch;
     this.modelTest;
@@ -96,7 +97,6 @@ export function DocumentController(view, controls, options = {},docModel, resear
       req.open("POST", urlFilters,false);
       req.send();
       this.setOfDocuments = JSON.parse(req.responseText);
-      console.log(urlFilters)
     }
 
     /**
