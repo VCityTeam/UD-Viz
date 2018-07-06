@@ -34,6 +34,7 @@ export function DocumentController(view, controls, options = {},docModel, resear
     this.options = options;
 
     this.documentModel = docModel;
+    console.log('docModel', this.documentModel)
     this.researchModel = researchModel;
     this.optionsResearch = optionsResearch;
     this.modelTest;
