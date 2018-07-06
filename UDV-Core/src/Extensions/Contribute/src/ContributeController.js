@@ -16,6 +16,8 @@ export function ContributeController(documentController){
   this.newDocData = null;
   this.docPos = new THREE.Vector3();//DEBUG
   this.docQuat =  new THREE.Quaternion();//DEBUG
+  this.chosenPosition =  new THREE.Vector3()
+  this.chosenQuaternion =  new THREE.Quaternion();
 
   this.creationStatus = 0; //status of the POST request to doc creation DEBUG
 
@@ -33,19 +35,41 @@ export function ContributeController(documentController){
   }
 
   this.addVisualizationData = function addVisualizationData(){
-    this.docPos = new THREE.Vector3(0,0,0);
-    this.docQuat = new THREE.Quaternion(0,0,0,0);
+
+    //close debug window
+    //verify position
+    this.docPos = new THREE.Vector3(document.getElementById("setPosX").value,
+                                    document.getElementById("setPosY").value,
+                                    document.getElementById("setPosZ").value
+                                                                            );
+    this.docQuat = new THREE.Quaternion(document.getElementById("quatX").value,
+                                        document.getElementById("quatY").value,
+                                        document.getElementById("quatZ").value,
+                                        document.getElementById("quatW").value
+                                                                          );
+
+  }
+
+this.moveDoc = function moveDoc(){
+  this.chosenPosition.x = document.getElementById("setPosX").value;
+  this.chosenPosition.y = document.getElementById("setPosY").value;
+  this.chosenPosition.z = document.getElementById("setPosZ").value;
+  this.chosenQuaternion.x = document.getElementById("quatX").value;
+  this.chosenQuaternion.y = document.getElementById("quatY").value;
+  this.chosenQuaternion.z = document.getElementById("quatZ").value;
+  this.chosenQuaternion.w = document.getElementById("quatW").value;
+  this.documentController.controls.initiateTravel(this.chosenPosition,"auto",this.chosenQuaternion,true);
+}
+
+
+  this.documentCreation = function documentCreation(){
+    this.newDocData = new FormData(document.getElementById('creationForm'));
     this.newDocData.append("positionY", this.docPos.y);
     this.newDocData.append("positionZ", this.docPos.z);
     this.newDocData.append("quaternionX",this.docQuat.x);
     this.newDocData.append("quaternionY",this.docQuat.y);
     this.newDocData.append("quaternionZ",this.docQuat.z);
     this.newDocData.append("quaternionW",this.docQuat.w);
-  }
-
-  this.documentCreation = function documentCreation(){
-    this.newDocData = new FormData(document.getElementById('creationForm'));
-    this.addVisualizationData();
     this.addDocument(this.newDocData, function(){});
     if(this.creationStatus =1){
       console.log(this.creationStatus);
@@ -90,7 +114,7 @@ export function ContributeController(documentController){
         }
         else {
           this.creationStatus = 0;
-          console.error(req.status + " " + req.statusText + " " + url);
+          console.error(req.status + " " + req.statusText + " " + this.url);
         }
       });
       req.addEventListener("error", function () {
