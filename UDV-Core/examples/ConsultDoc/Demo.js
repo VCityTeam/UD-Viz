@@ -121,10 +121,10 @@ layer.whenReady.then(
 var about = new udvcore.AboutWindow({active:true});
 var help  = new udvcore.HelpWindow({active:true});
 
-//////////// Document Handler section
-// FIXME For the time being this demo uses the Vilo3D data. Provide a
-// default document for the demo of DocumentHandler class and place it
-// within src/Modules/Documents...
+//////////// ConsultDoc
+//the following lines are in charge of loading configuration files used to setup
+// different views.
+
 
 //loading configuration files
 var documentModel;
@@ -206,7 +206,8 @@ var temporalOverlayCtrl = temporalFolder.add(
                                          ).name("Use Overlay").listen();
 //Document uses a folder
 var documentFolder = datDotGUI.addFolder("Documents");
-var docResearch = documentFolder.add( controller.documentResearch, 'windowIsActive').name("Research").listen();
+var docResearch = documentFolder.add( controller.documentResearch, 'windowIsActive'
+                                        ).name("Research").listen();
 docResearch.onFinishChange(function(value){
   controller.documentResearch.refresh();
 });

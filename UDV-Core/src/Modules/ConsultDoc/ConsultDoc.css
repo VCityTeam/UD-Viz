@@ -72,6 +72,7 @@
     width: 90%;
     text-align: left;
     padding-left: 20px;
+    height: 10%;
 }
 
 #docBrowserIndex{
@@ -96,6 +97,8 @@
   width: 90%;
   text-align: left;
   padding-left: 20px;
+    height:10%;
+
 }
 #subject{
   width: 90%;
@@ -117,7 +120,6 @@
     z-index: 20;
     height: 40%;
     display:inline-block;
-    margin-top: 20px;
     margin: 10px;
 }
 
@@ -306,6 +308,7 @@
   text-align: left;
   padding-left: 20px;
   font-weight: bold;
+  height: 60px;
 }
 
 #refDate{
@@ -319,6 +322,7 @@
   width: 90%;
   text-align: left;
   padding-left: 20px;
+  height:20px;
 }
 
 #publicationDate{
@@ -331,6 +335,7 @@
   font-size: 14px;
   overflow: hidden;
   width: 90%;
+    height:20px;
 }
 #description{
   display:inline-block;
@@ -342,6 +347,8 @@
   width: 90%;
   text-align: left;
   padding-left: 20px;
+  height:50px;
+
 }
 #docSubject{
   display:inline-block;
@@ -354,6 +361,7 @@
   width: 90%;
   text-align: left;
   padding-left: 20px;
+    height:20px;
 }
 
 #type{
@@ -365,6 +373,7 @@
   text-align: left;
   padding-left: 20px;
   background-color: ivory;
+    height:20px;
 }
 
 #closeResearch{
@@ -377,6 +386,7 @@
   background-color: white;
   color: black;
   pointer-events: auto;
+    height:20px;
 }
 
 #docResearch{
@@ -394,6 +404,7 @@
 
 #documentType{
   width: 90%;
+    height:20px;
 }
 label{
   color:white;
