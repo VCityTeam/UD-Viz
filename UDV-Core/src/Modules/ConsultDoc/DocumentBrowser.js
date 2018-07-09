@@ -115,7 +115,8 @@ export function DocumentBrowser(browserContainer, documentController) {
                 // if not complete :
                 document.getElementById('docFullImg').style.opacity=this.fadeAlpha;
                 document.getElementById('docOpaSlider').value = this.fadeAlpha*100;
-                document.querySelector('#docOpacity').value = Math.trunc(this.fadeAlpha*100);
+                document.querySelector('#docOpacity').value =
+                                                  Math.trunc(this.fadeAlpha*100);
             }
 
             // request the framerequester for another call to this.update()
@@ -151,11 +152,12 @@ export function DocumentBrowser(browserContainer, documentController) {
 
 
     // Updates the DocumentBrowser with Document static metadata
-    // the document browser html is defined based on the documentModel metadata attributes
+    // the document browser html is defined based
+    // on the documentModel metadata attributes
     //==========================================================================
     this.updateBrowser = function updateBrowser(){
-
-      this.currentDoc = this.documentController.getCurrentDoc(); //update currentDoc with current doc info
+      //update currentDoc with current doc info
+      this.currentDoc = this.documentController.getCurrentDoc();
       if (this.currentDoc != null & this.documentsExist == true)
       {
         var txt="";
@@ -170,7 +172,8 @@ export function DocumentBrowser(browserContainer, documentController) {
                     + ":" + this.currentDoc.metadata[attribute['name']] + "</div>";
             }
             else{
-              txt +="<div id=" + attribute['displayID'] + ">" + this.currentDoc.metadata[attribute['name']] + "</div>";
+              txt +="<div id=" + attribute['displayID'] + ">" +
+                        this.currentDoc.metadata[attribute['name']] + "</div>";
             }
           }
         }
@@ -188,7 +191,8 @@ export function DocumentBrowser(browserContainer, documentController) {
         var defaultImage = document.getElementById('docBrowserPreviewImg');
         defaultImage.src = DefaultImage;
         document.getElementById('docBrowserPreviewImg').src = DefaultImage;
-        document.getElementById('docBrowserInfo').innerHTML = "No document to display according to your research";
+        document.getElementById('docBrowserInfo').innerHTML =
+                            "No document to display according to your research";
         document.getElementById('docBrowserIndex').innerHTML = "No doc";
 
       }
@@ -210,7 +214,8 @@ export function DocumentBrowser(browserContainer, documentController) {
       document.getElementById('docFullPanel').style.display = "block";
 
       // if we have valid data, initiate the animated travel to orient the camera
-      if(!isNaN(this.currentDoc.visualization.positionX) && !isNaN(this.currentDoc.visualization.quaternionX)){
+      if(!isNaN(this.currentDoc.visualization.positionX) &&
+                            !isNaN(this.currentDoc.visualization.quaternionX)){
           var docViewPos = new THREE.Vector3();
           docViewPos.x = parseFloat(this.currentDoc.visualization.positionX);
           docViewPos.y = parseFloat(this.currentDoc.visualization.positionY);
@@ -222,7 +227,8 @@ export function DocumentBrowser(browserContainer, documentController) {
           docViewQuat.y = parseFloat(this.currentDoc.visualization.quaternionY);
           docViewQuat.z = parseFloat(this.currentDoc.visualization.quaternionZ);
           docViewQuat.w = parseFloat(this.currentDoc.visualization.quaternionW);
-          this.documentController.controls.initiateTravel(docViewPos,"auto",docViewQuat,true);
+          this.documentController.controls.initiateTravel(docViewPos,"auto",
+                                                              docViewQuat,true);
         }
 
         // adjust the current date if we use temporal
@@ -249,23 +255,32 @@ export function DocumentBrowser(browserContainer, documentController) {
     this.resetResearch = function resetResearch(){
       this.docIndex = 1;
       $("#filterForm").get(0).reset(); //reset reserach parameters
-      this.documentController.url = "http://rict.liris.cnrs.fr/APIVilo3D/APIExtendedDocument/web/";
+      this.documentController.url =
+                  "http://rict.liris.cnrs.fr/APIVilo3D/APIExtendedDocument/web/";
       this.documentController.getDocuments();
       this.updateBrowser();
       this.closeDocFull();
     }
 
     // itowns framerequester : will regularly call this.update()
-    this.documentController.view.addFrameRequester( MAIN_LOOP_EVENTS.AFTER_CAMERA_UPDATE,this.updateScene.bind(this) );
+    this.documentController.view.addFrameRequester(
+              MAIN_LOOP_EVENTS.AFTER_CAMERA_UPDATE,this.updateScene.bind(this) );
 
     // event listeners for buttons
-    document.getElementById("docFullOrient").addEventListener('mousedown', this.focusOnDoc.bind(this),false);
-    document.getElementById("docFullClose").addEventListener('mousedown',this.closeDocFull.bind(this),false);
-    document.getElementById("docBrowserNextButton").addEventListener('mousedown',this.nextDoc.bind(this),false);
-    document.getElementById("docBrowserPreviousButton").addEventListener('mousedown',this.previousDoc.bind(this),false);
-    document.getElementById("docBrowserOrientButton").addEventListener('mousedown', this.focusOnDoc.bind(this),false);
-    document.getElementById("closeBrowserWindow").addEventListener('mousedown', this.activateWindow.bind(this,false),false);
-    document.getElementById("resetFilters").addEventListener('mousedown', this.resetResearch.bind(this),false);
+    document.getElementById("docFullOrient").addEventListener('mousedown',
+                                              this.focusOnDoc.bind(this),false);
+    document.getElementById("docFullClose").addEventListener('mousedown',
+                                            this.closeDocFull.bind(this),false);
+    document.getElementById("docBrowserNextButton").addEventListener('mousedown',
+                                                  this.nextDoc.bind(this),false);
+    document.getElementById("docBrowserPreviousButton").addEventListener('mousedown',
+                                              this.previousDoc.bind(this),false);
+    document.getElementById("docBrowserOrientButton").addEventListener('mousedown',
+                                              this.focusOnDoc.bind(this),false);
+    document.getElementById("closeBrowserWindow").addEventListener('mousedown',
+                                    this.activateWindow.bind(this,false),false);
+    document.getElementById("resetFilters").addEventListener('mousedown',
+                                            this.resetResearch.bind(this),false);
 }
 
 // in orientied view (focusOnDoc) this is called when the user changes the value of the opacity slider
