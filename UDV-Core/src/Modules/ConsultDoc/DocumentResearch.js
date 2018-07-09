@@ -61,6 +61,8 @@ export function DocumentResearch(researchContainer, documentController)
     this.refresh = function refresh()
     {
         this.activateWindow(this.windowIsActive);
+        this.documentController.documentBrowser.activateWindow(true);
+
     }
 
     /**
