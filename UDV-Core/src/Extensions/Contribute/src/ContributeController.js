@@ -64,12 +64,14 @@ this.moveDoc = function moveDoc(){
 
   this.documentCreation = function documentCreation(){
     this.newDocData = new FormData(document.getElementById('creationForm'));
+    this.newDocData.append("positionX", this.docPos.x);
     this.newDocData.append("positionY", this.docPos.y);
     this.newDocData.append("positionZ", this.docPos.z);
     this.newDocData.append("quaternionX",this.docQuat.x);
     this.newDocData.append("quaternionY",this.docQuat.y);
     this.newDocData.append("quaternionZ",this.docQuat.z);
     this.newDocData.append("quaternionW",this.docQuat.w);
+    this.newDocData.append("billboardX", this.docQuat.y);
     this.addDocument(this.newDocData, function(){});
     if(this.creationStatus =1){
       console.log(this.creationStatus);

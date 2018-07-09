@@ -82,7 +82,7 @@
   border : 1px solid rgb(90,90,90);
   text-align: center;
   width: 15%;
-  height: 50%;
+  height: 58%;
   overflow: auto;
   background-color: rgba(30,30,30,0.6);
   font-size: 14;
@@ -118,7 +118,6 @@
   color: black;
   height: 30px;
   pointer-events: auto;
-  bottom:20px;
 }
 
 #docCreation{
@@ -132,7 +131,6 @@
   color: black;
   height: 30px;
   pointer-events: auto;
-  bottom:20px;
 }
 #subject{
   display:inline-block;
@@ -209,7 +207,7 @@
   display: none;
   position:fixed;
   left: 0;
-  top:50%;
+  top:60%;
   width: 15%;
   height: 32%;
   background-color: rgba(30,30,30,0.6);
