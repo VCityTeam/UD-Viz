@@ -95,6 +95,11 @@ this.activateCreateWindow = function activateCreateWindow(active){
       this.windowIsActive = active;
   }
   document.getElementById(this.contributeController.creationContainerId).style.display = active  ? "block" : "none ";
+  document.getElementById('manualPos').style.display = active  ? "block" : "none ";
+
+  document.getElementById('browserContainer').style.display = active  ? "block" : "none ";
+  document.getElementById('positionerContainer').style.display = active  ? "block" : "none ";
+  this.contributeController.documentController.documentResearch.activateWindow(true);
 }
 
 this.activateDebugPosition = function activateDebugPosition(active){
@@ -114,6 +119,7 @@ this.activateDebugPosition = function activateDebugPosition(active){
           this.windowIsActive = active;
       }
       document.getElementById('docBrowserWindow').style.display = active  ? "block" : "none ";
+
 
   }
 
@@ -186,6 +192,8 @@ this.activateDebugPosition = function activateDebugPosition(active){
     document.getElementById('manualPos').style.display = "block";
 
     document.getElementById('inputFields').style.display = "block";
+
+    this.contributeController.documentController.documentBrowser.activateWindow(false);
 
     this.contributeController.documentShowPosition();
   }
