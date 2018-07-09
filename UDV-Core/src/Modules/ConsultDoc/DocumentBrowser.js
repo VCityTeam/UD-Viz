@@ -45,9 +45,6 @@ export function DocumentBrowser(browserContainer, documentController) {
               <output for="docOpaSlider" id="docOpacity">50</output>\
           </div>\
       </div>\
-      <button id="docBrowserToggleBillboard"\
-      type=button\
-      style="display:none;">Billboard</button>\
       ';
 
     this.update = function update()
