@@ -1,0 +1,88 @@
+/**
+ * Class: DocumentResearch
+ * Description :
+ * The DocumentResearch is an object handling the research view
+ *
+ */
+
+import $ from 'jquery'; //to use Alpaca
+import 'alpaca';  //provides a simple way to generate HTML forms using jQuery
+
+/**
+ *
+ * @constructor
+ * @param { HTML DOM Element object } researchContainer
+ * @param { documentController } documentController
+ */
+
+export function DocumentResearch(researchContainer, documentController)
+{
+    //Class attributes
+    this.documentController = documentController;
+    this.researchController = researchContainer;
+    this.windowIsActive = false;
+
+
+    /**
+     * Creates the research view
+     */
+    //===========================================================================
+    this.initialize = function initialize()
+    {
+        this.researchController.innerHTML =
+            '<br/><div id = "filtersTitle">Document research</div><br/>\
+            <br/>\
+            <button id = "closeResearch">Close</button>\
+            <div id = "filtersWindow"></div>\
+            <div id ="researchWindowTabs">\
+            <button id = "docResearch">Search</button>\
+            </div>\
+            ';
+
+        var optionsFilter = this.documentController.optionsResearch;
+        var schema = this.documentController.researchModel;
+        //create HTML research form
+        $('#filtersWindow').alpaca({
+            "schemaSource": schema,
+            "optionsSource": optionsFilter
+          });
+    }
+
+    // Display or hide this window
+    this.activateWindow = function activateWindow(active)
+    {
+        if (typeof active != 'undefined')
+        {
+            this.windowIsActive = active;
+        }
+        document.getElementById('researchContainer').style.display =
+                                                      active ? "block" : "none ";
+    }
+
+    this.refresh = function refresh()
+    {
+        this.activateWindow(this.windowIsActive);
+        this.documentController.documentBrowser.activateWindow(true);
+
+    }
+
+    /**
+     * Launch document research by clicking on the "Search" button
+     */
+    //=============================================================================
+    this.research = function research()
+    {
+        this.documentController.getDocuments();
+        this.documentController.documentBrowser.activateWindow(true);
+    }
+
+    this.initialize();
+
+    //Event listener for researh button
+    document.getElementById("docResearch").addEventListener('mousedown',
+                                               this.research.bind(this), false);
+    document.getElementById("closeResearch").addEventListener('mousedown',
+                                    this.activateWindow.bind(this,false), false);
+
+
+}

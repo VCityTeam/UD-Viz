@@ -16,7 +16,7 @@ var extent;
 // Initialization of the renderer, view and extent
 [ view, extent ] = udvcore.Setup3DScene(terrainAndElevationRequest,
                                         buildingServerRequest,
-                                        true );
+                                        false );
 
 // The renderer provided by THREE.js as handled over by itowns
 var renderer = view.scene;
@@ -55,7 +55,6 @@ var controls = new udvcore.itowns.PlanarControls(view, (useControlsForEditing)? 
 // Definition of the callback that is in charge of triggering a refresh
 // of the displayed layer when its (the layer) associated date has changed.
 function refreshDisplayLayerOnDate( date ) {
-  layer.displayDate = date;
   view.notifyChange(true);
 }
 
@@ -73,64 +72,18 @@ var temporal = new udvcore.TemporalController(
                                 active:true
                               });
 
-// Retrieve the layer defined in Setup3DScene (we consider the first one
-// with the given name)
-var layer = view.getLayers(layer => layer.name === '3d-tiles-temporal')[0];
-layer.whenReady.then(
-  // In order to configure the temporal slide bar widget, we must
-  // retrieve the temporal events of displayed data. At this loading
-  // stage it could be that the b3dm with the actual dates (down to
-  // the building level) are not already loaded, but only their enclosing
-  // tiles are at hand. We could recurse on tile hierarchy, but we also
-  // have at hand the tileindex that we can (equivalently for the result)
-  // iterate on.
-  function() {
-    // Store the layer for triggering scene updates when temporal slider
-    // will be changed by user:
-    temporal.layer = layer;
-
-    const tiles = layer.tileIndex.index;
-    var resultDates = [];
-    const nbrTiles = Object.keys(tiles).length;
-    for( var i = 0; i < nbrTiles; i++) {
-      const start = tiles[i].boundingVolume.start_date;
-      if( start ) {
-        resultDates.push( start );
-      }
-      const end = tiles[i].boundingVolume.end_date;
-      if( end ) {
-        resultDates.push( end );
-      }
-    }
-
-    // When there is such thing as a minimum and maximum, inform the temporal
-    // widget of the data change and refresh the display.
-    // Note: when the dataset doesn't have a minimum of two dates the temporal
-    // widget remains with its default min/max values.
-    if( resultDates.length >= 2 ) {
-      resultDates.sort();
-      temporal.minTime = new moment( resultDates[0] );
-      temporal.maxTime = new moment( resultDates[resultDates.length-1] );
-      temporal.changeTime( temporal.minTime );
-      temporal.refresh();
-    }
-  }
-);
-
-
 var about = new udvcore.AboutWindow({active:true});
 var help  = new udvcore.HelpWindow({active:true});
 
-//////////// ConsultDoc
-//the following lines are in charge of loading configuration files used to setup
-// different views.
 
+//the following lines are in charge of loading configuration files used to setup
+// different views of consultDoc module (research, browser).
 
 //loading configuration files
 var documentModel;
 $.ajax({
   type: "GET",
-  url: "data/config/DocumentModel.json",
+  url: "DocumentModel.json",
   datatype: "json",
   async: false,
   success: function(data){
@@ -141,7 +94,7 @@ $.ajax({
 var researchModel;
 $.ajax({
   type: "GET",
-  url: "data/config/schemaFilters.json",
+  url: "schemaFilters.json",
   datatype: "json",
   async: false,
   success: function(data){
@@ -152,7 +105,7 @@ $.ajax({
 var optionsResearch;
 $.ajax({
   type: "GET",
-  url: "data/config/optionsFilter.json",
+  url: "optionsFilter.json",
   datatype: "json",
   async: false,
   success: function(data){
@@ -200,17 +153,11 @@ helpController = datDotGUI.add( help, 'windowIsActive'
 helpController.onFinishChange( function(value) { help.refresh(); });
 
 
-// Temporal controller uses a folder
-var temporalFolder     = datDotGUI.addFolder( "Temporal mode" );
-var temporalActiveCtrl = temporalFolder.add( temporal, 'temporalIsActive'
+var temporalActiveCtrl = datDotGUI.add( temporal, 'temporalIsActive'
                                        ).name( "Active" ).listen();
 temporalActiveCtrl.onFinishChange(function(value) {
   temporal.refresh();
 });
-
-var temporalOverlayCtrl = temporalFolder.add(
-                                         temporal, 'temporalUsesOverlay'
-                                         ).name("Use Overlay").listen();
 
 //Document uses a folder
 var documentFolder = datDotGUI.addFolder("Documents");

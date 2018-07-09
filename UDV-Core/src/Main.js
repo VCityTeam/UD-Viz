@@ -4,7 +4,6 @@ import * as itowns from 'itowns';
 export { itowns };
 export { Setup3DScene }         from './Setup3DScene';
 
-export { DocumentsHandler }     from './Modules/Documents/DocumentsHandler';
 export { GuidedTourController } from './Modules/GuidedTour/GuidedTour';
 
 export { AboutWindow }          from './Modules/Others/About';
@@ -13,3 +12,5 @@ export { HelpWindow }           from './Modules/Others/Help';
 export { MiniMapController }    from './Modules/Others/MiniMap';
 
 export { TemporalController }   from './Modules/Temporal/Temporal';
+
+export { DocumentController}    from './Modules/ConsultDoc/DocumentController';
