@@ -175,7 +175,6 @@ export function DocumentBrowser(browserContainer, documentController) {
           }
         }
         txt +="</div>";
-        console.log(txt)
         document.getElementById("docBrowserInfo").innerHTML = txt;
         document.getElementById('docBrowserPreviewImg').src = this.documentController.url
                           + "documentsDirectory/" + this.currentDoc.metadata.link;
