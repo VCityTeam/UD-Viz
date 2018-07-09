@@ -14,7 +14,6 @@
 
     },
     "type":{
-<<<<<<< HEAD:UDV-Core/examples/data/config/schemaFilters.json
       "enum":[
         "Drawing",
         "Letter",
@@ -22,22 +21,10 @@
       ]
     },
     "subject":{
-      "enum":[
-        "Subject1",
-=======
       "enum":
-      ["Drawing",
+      ["Subject",
         "Letter",
         "Map"
-      ]
-
-    },
-    "subject":{
-      "enum":
-      ["Subject1",
->>>>>>> 51fd2da5f13b5eeeb7279281aa2e0a4ca37efd5d:UDV-Core/examples/schemaFilters.json
-        "Subject2",
-        "Subject3"
       ]
     }
   }

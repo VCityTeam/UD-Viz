@@ -1,0 +1,37 @@
+#create_title{
+  display:inline-block;
+  color: black;
+  font-size: 14px;
+  overflow: hidden;
+  width: 90%;
+  text-align: left;
+  padding-left: 20px;
+  margin-bottom: 12px;
+
+}
+
+#create_description{
+  display:inline-block;
+  color: black;
+  font-size: 14px;
+  overflow: hidden;
+  width: 90%;
+  height:60px;
+  text-align: left;
+  padding-left: 20px;
+  margin-bottom: 12px;
+}
+
+#uploadedFile{
+  margin-bottom: 12px;
+  margin-left: 15px;
+}
+
+#create_refDate, #create_publicationDate, #create_subject{
+  margin-bottom: 12px;
+}
+
+#create_type{
+    margin-bottom: 12px;
+    margin-left: 17px;
+}

@@ -14,7 +14,6 @@
 
     },
     "type":{
-<<<<<<< HEAD
       "enum":[
         "Drawing",
         "Letter",
@@ -27,9 +26,6 @@
         "Subject2",
         "Subject3"
       ]
-=======
-          "enum": ["Drawing", "Letter", "Plan"]      
->>>>>>> 51fd2da5f13b5eeeb7279281aa2e0a4ca37efd5d
     }
   }
 

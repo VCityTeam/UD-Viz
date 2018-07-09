@@ -1,6 +1,7 @@
 import { CreateDocument }  from './CreateDocument.js';
 import { UpdateDocument }   from './UpdateDocument.js';
 import "./Contribute.css";
+import "./creation.css";
 import { MAIN_LOOP_EVENTS } from 'itowns';
 
 export function ContributeController(documentController){
@@ -19,7 +20,7 @@ export function ContributeController(documentController){
   this.chosenPosition =  new THREE.Vector3()
   this.chosenQuaternion =  new THREE.Quaternion();
 
-  this.creationStatus = 0; //status of the POST request to doc creation DEBUG
+  this.validPosition = true;
 
   this.initialize = function initialize(){
     var updateContainer = document.createElement("div");
@@ -35,7 +36,6 @@ export function ContributeController(documentController){
   }
 
   this.addVisualizationData = function addVisualizationData(){
-
     //close debug window
     //verify position
     this.docPos = new THREE.Vector3(document.getElementById("setPosX").value,
@@ -47,6 +47,7 @@ export function ContributeController(documentController){
                                         document.getElementById("quatZ").value,
                                         document.getElementById("quatW").value
                                                                           );
+    document.getElementById('manualPos').style.display = "none";
 
   }
 
@@ -61,9 +62,45 @@ this.moveDoc = function moveDoc(){
   this.documentController.controls.initiateTravel(this.chosenPosition,"auto",this.chosenQuaternion,true);
 }
 
+this.colorField = function colorField(id){
+  document.getElementById(id).style.borderColor = "red";
+}
+
+this.formDataVerification = function formDataVerification(){
+
+  var dataIsValid = true;
+  var data = new FormData(document.getElementById('creationForm'));
+
+  var txt ="Please provide ";
+  for (var pair of data.entries() ){
+
+    if( pair[1] == ""){
+      if(pair[0] == "link"){
+        txt += "file ";
+
+        dataIsValid = false;
+      }
+      else{
+        txt += pair[0] + ", ";
+        var id = "create_"+pair[0];
+        this.colorField(id);
+        dataIsValid = false;
+
+      }
+    }
+
+  }
+  if(!dataIsValid){
+    alert(txt);
+  }
+  return dataIsValid;
+
+}
 
   this.documentCreation = function documentCreation(){
     this.newDocData = new FormData(document.getElementById('creationForm'));
+    if (this.docPos != null || this.docQuat != null){
+      this.validPosition = true;
     this.newDocData.append("positionX", this.docPos.x);
     this.newDocData.append("positionY", this.docPos.y);
     this.newDocData.append("positionZ", this.docPos.z);
@@ -72,19 +109,25 @@ this.moveDoc = function moveDoc(){
     this.newDocData.append("quaternionZ",this.docQuat.z);
     this.newDocData.append("quaternionW",this.docQuat.w);
     this.newDocData.append("billboardX", this.docQuat.y);
+  }
+  else{
+    this.validPosition = false;
+  }
+
     this.addDocument(this.newDocData, function(){});
-    if(this.creationStatus =1){
-      console.log(this.creationStatus);
+
+    if(this.dataIsValid & this.validPosition ){
       $("#creationForm").get(0).reset();
     }
+
     else{
       alert('Document could not be created, check information');
     }
-
+/*
     //DEBUG
     for (var pair of this.newDocData.entries() ){
       console.log(pair[0] + ":" + pair[1]);
-    }
+    }*/
 
   }
 
@@ -105,26 +148,33 @@ this.moveDoc = function moveDoc(){
   }
 
   this.addDocument = function addDocument(data, callback){
-    var req = new XMLHttpRequest();
-    req.open("POST", this.url);
-    req.addEventListener("load", function () {
-      if (req.status >= 200 && req.status < 400) {
-        //update creation status
-        this.creationStatus = 1;
-        callback(req.responseText);
-          alert('Posted');
-        }
-        else {
-          this.creationStatus = 0;
-          console.error(req.status + " " + req.statusText + " " + this.url);
-        }
-      });
-      req.addEventListener("error", function () {
-        console.log(req.status);
-        console.log(req.statusText);
-        console.error("Network error with url: " + url);
-      });
-      req.send(data);
+    //check if visualizationdata has been given
+    if (this.docPos == null || this.docQuat == null){
+      alert("You must place your document in the scene");
+      this.documentCreate.showDocPositioner();
+    }
+    else{
+      if(this.formDataVerification()==true){
+        var req = new XMLHttpRequest();
+        req.open("POST", this.url);
+
+        req.addEventListener("load", function () {
+
+          if (req.status >= 200 && req.status < 400) {
+            console.log(req.status)
+            //update creation status
+            callback(req.responseText);
+            alert('Your document was sucessfuly uploaded');
+          }
+          else {
+            console.error(req.status + " " + req.statusText + " " + this.url);
+          }
+        });
+        req.addEventListener("error", function () {
+          console.error("Network error with url: " + url);
+        });
+        req.send(data);
+      }}
   }
 
   this.updateCamPos = function updateCamPos(){

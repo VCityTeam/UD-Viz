@@ -20,8 +20,8 @@ import './ConsultDoc.css';
 //=============================================================================
 export function DocumentController(view, controls, options = {},docModel, researchModel,optionsResearch)
 {
-
-    this.url = "http://rict.liris.cnrs.fr/APIVilo3D/APIExtendedDocument/web/"; //url of the server handling documents
+    //url of the server handling documents
+    this.url = "http://rict.liris.cnrs.fr/APIVilo3D/APIExtendedDocument/web/";
     //FIXME: to put in a configuration file of the general application
 
     this.controls = controls;
@@ -83,7 +83,8 @@ export function DocumentController(view, controls, options = {},docModel, resear
      */
     //=============================================================================
     this.getDocuments = function getDocuments(){
-      //check which filters are set. URL is built manually for more modularity. Could be improved
+      //check which filters are set. URL is built manually for more modularity.
+      //Could be improved
       var filters = new FormData(document.getElementById('filterForm')).entries();
       var urlFilters = this.url +"app_dev.php/getDocuments?";
       for(var pair of filters ){

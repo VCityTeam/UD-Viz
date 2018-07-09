@@ -6,7 +6,7 @@
           "name":"title",
           "type": "string",
           "optional": "false",
-          "creationID":"title",
+          "creationID":"create_title",
           "labelCreation":"Title of the document :",
           "updatable":"false",
           "updateID":"titleUpdate",
@@ -22,19 +22,8 @@
           "displayable":"true",
           "displayID":"description",
           "label":"Description",
-          "creationID":"description",
+          "creationID":"create_description",
           "labelCreation":"Description :"
-        },
-        "subject":{
-          "name":"subject",
-          "type":"enum",
-          "optional":"false",
-          "updatable":"false",
-          "displayable":"true",
-          "displayID":"description",
-          "label":"Subject",
-          "creationID":"subject",
-          "labelCreation":"Subject: "
         },
         "refDate":{
           "name":"refDate",
@@ -44,7 +33,7 @@
           "displayable":"true",
           "displayID":"refDate",
           "label":"Referring date",
-          "creationID":"refDate",
+          "creationID":"create_refDate",
           "labelCreation":"Date of referrence: "
         },
         "publicationDate":{
@@ -55,18 +44,32 @@
           "displayable":"true",
           "displayID":"publicationDate",
           "label":"Publication date",
-          "creationID":"publicationDate",
+          "creationID":"create_publicationDate",
           "labelCreation":"Date of publication: "
         },
         "type":{
           "name":"type",
           "type":"enum",
+          "enum":["Drawing", "Map", "Letter"],
           "optional":"false",
           "updatable":"false",
           "displayable":"true",
           "displayID":"type",
           "label":"Type",
+          "creationID":"create_type",
           "labelCreation":"Type: "
+        },
+        "subject":{
+          "name":"subject",
+          "type":"enum",
+          "enum":["Subject1", "Subject2", "Subject3"],
+          "optional":"false",
+          "updatable":"false",
+          "displayable":"true",
+          "displayID":"description",
+          "label":"Subject",
+          "creationID":"create_subject",
+          "labelCreation":"Subject: "
         }
       },
       "visualization":{

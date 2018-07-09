@@ -26,7 +26,7 @@ export function DocumentResearch(researchContainer, documentController)
     /**
      * Creates the research view
      */
-    //=============================================================================
+    //===========================================================================
     this.initialize = function initialize()
     {
         this.researchController.innerHTML =
@@ -55,7 +55,8 @@ export function DocumentResearch(researchContainer, documentController)
         {
             this.windowIsActive = active;
         }
-        document.getElementById('researchContainer').style.display = active ? "block" : "none ";
+        document.getElementById('researchContainer').style.display =
+                                                      active ? "block" : "none ";
     }
 
     this.refresh = function refresh()
@@ -71,22 +72,17 @@ export function DocumentResearch(researchContainer, documentController)
     //=============================================================================
     this.research = function research()
     {
-        // var filtersFormData = new FormData(document.getElementById('filterForm'));
-        //
-        // var entries = filtersFormData.entries();
-        // for (var pair of entries){
-        //   console.log(pair[0] + ":"+ pair[1]);
-        // }
         this.documentController.getDocuments();
-
         this.documentController.documentBrowser.activateWindow(true);
     }
 
     this.initialize();
 
     //Event listener for researh button
-    document.getElementById("docResearch").addEventListener('mousedown', this.research.bind(this), false);
-    document.getElementById("closeResearch").addEventListener('mousedown', this.activateWindow.bind(this,false), false);
+    document.getElementById("docResearch").addEventListener('mousedown',
+                                               this.research.bind(this), false);
+    document.getElementById("closeResearch").addEventListener('mousedown',
+                                    this.activateWindow.bind(this,false), false);
 
 
 }

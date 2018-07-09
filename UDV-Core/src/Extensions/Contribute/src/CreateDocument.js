@@ -111,6 +111,13 @@ this.activateDebugPosition = function activateDebugPosition(active){
 
 }
 
+this.cancelPosition = function cancelPosition(){
+  this.contributeController.docPos = null;
+  this.contributeController.docQuat = null;
+  this.activateDebugPosition(false);
+  document.getElementById('docPositionerFull').style.display = "none ";
+}
+
   // Display or hide this window
   this.activateWindow = function activateWindow(active)
   {
@@ -164,15 +171,20 @@ this.activateDebugPosition = function activateDebugPosition(active){
     for (var key in metadata) {
       var attribute = metadata[key]; //holds all metadata relative information
       if(attribute['optional'] == "false"){//this metadata is required in the creation process
-         //dynamic building of the HTML browser
+         //dynamic building of the schema
           schemaType.properties[attribute['name']]={};
           optionsCreate.fields[attribute['name']] = {};
           optionsCreate.fields[attribute['name']]['id'] = attribute['creationID'];
           optionsCreate.fields[attribute['name']]['inputType'] = attribute['type'];
           optionsCreate.fields[attribute['name']]['label'] = attribute['labelCreation'];
           optionsCreate.fields[attribute['name']]['name'] = attribute['name'];
+          if(attribute['type'] == "enum"){
+            optionsCreate.fields[attribute['name']]['type'] = 'select';
+            schemaType.properties[attribute['name']]['enum'] = attribute['enum']
+          }
       }
     }
+
 
     $("#creationWindow").alpaca({
          "schemaSource": schemaType,
@@ -184,6 +196,7 @@ this.activateDebugPosition = function activateDebugPosition(active){
   this.updateCreationWindow = function updateCreationWindow(){
     document.getElementById('creationContainer').style.display ="block";
     this.contributeController.documentController.documentResearch.activateWindow(false);
+    this.contributeController.documentController.documentBrowser.activateWindow(false);
 
   }
 
@@ -192,8 +205,6 @@ this.activateDebugPosition = function activateDebugPosition(active){
     document.getElementById('manualPos').style.display = "block";
 
     document.getElementById('inputFields').style.display = "block";
-
-    this.contributeController.documentController.documentBrowser.activateWindow(false);
 
     this.contributeController.documentShowPosition();
   }
@@ -210,7 +221,7 @@ this.activateDebugPosition = function activateDebugPosition(active){
 
   document.getElementById('docPositionerSave').addEventListener('mousedown', this.contributeController.addVisualizationData.bind(this.contributeController), false);
   document.getElementById('moveDocument').addEventListener('mousedown', this.contributeController.moveDoc.bind(this.contributeController), false);
-  document.getElementById('docPositionerCancel').addEventListener('mousedown', this.activateDebugPosition.bind(this,false), false);
+  document.getElementById('docPositionerCancel').addEventListener('mousedown', this.cancelPosition.bind(this,false), false);
 
 
 }
