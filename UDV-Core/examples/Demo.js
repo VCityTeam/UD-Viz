@@ -130,7 +130,7 @@ var help  = new udvcore.HelpWindow({active:true});
 var documentModel;
 $.ajax({
   type: "GET",
-  url: "DocumentModel.json",
+  url: "data/config/DocumentModel.json",
   datatype: "json",
   async: false,
   success: function(data){
@@ -141,7 +141,7 @@ $.ajax({
 var researchModel;
 $.ajax({
   type: "GET",
-  url: "schemaFilters.json",
+  url: "data/config/schemaFilters.json",
   datatype: "json",
   async: false,
   success: function(data){
@@ -152,7 +152,7 @@ $.ajax({
 var optionsResearch;
 $.ajax({
   type: "GET",
-  url: "optionsFilter.json",
+  url: "data/config/optionsFilter.json",
   datatype: "json",
   async: false,
   success: function(data){
@@ -160,7 +160,13 @@ $.ajax({
   }
 });
 
-var controller = new udvcore.DocumentController(view,controls, {temporal: temporal}, documentModel, researchModel, optionsResearch);
+
+//The documentcontroller is in charge of handling the views (research, browser)
+// based on the parameter documentModel, it builds the browser view (what attribute does
+// a document have, what attributes do we want to display and how...)
+// The researchModel and optionsResearch parameters are used to build / paramatrize
+// the research view
+var controller = new udvcore.DocumentController(view, controls, {temporal: temporal}, documentModel, researchModel, optionsResearch);
 ///////////////////////////////////////////////////////////////////////////////
 //// Create and configure the layout controller
 
@@ -193,6 +199,7 @@ helpController = datDotGUI.add( help, 'windowIsActive'
                               ).name( "Help" ).listen();
 helpController.onFinishChange( function(value) { help.refresh(); });
 
+
 // Temporal controller uses a folder
 var temporalFolder     = datDotGUI.addFolder( "Temporal mode" );
 var temporalActiveCtrl = temporalFolder.add( temporal, 'temporalIsActive'
@@ -204,6 +211,7 @@ temporalActiveCtrl.onFinishChange(function(value) {
 var temporalOverlayCtrl = temporalFolder.add(
                                          temporal, 'temporalUsesOverlay'
                                          ).name("Use Overlay").listen();
+
 //Document uses a folder
 var documentFolder = datDotGUI.addFolder("Documents");
 var docResearch = documentFolder.add( controller.documentResearch, 'windowIsActive'

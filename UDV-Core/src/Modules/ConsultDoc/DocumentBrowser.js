@@ -228,7 +228,7 @@ export function DocumentBrowser(browserContainer, documentController) {
 
         // adjust the current date if we use temporal
         if(this.documentController.temporal){
-          var docDate = new moment(this.getCurrentDoc.metadata.refDate);
+          var docDate = new moment(this.currentDoc.metadata.refDate);
           this.documentController.temporal.changeTime(docDate);
         }
 

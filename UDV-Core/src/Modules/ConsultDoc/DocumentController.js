@@ -32,6 +32,7 @@ export function DocumentController(view, controls, options = {},docModel, resear
     this.documentBillboard;
     this.view = view;
     this.options = options;
+    this.temporal = options.temporal;
 
     this.documentModel = docModel;
     this.researchModel = researchModel;
