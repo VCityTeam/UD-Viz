@@ -29,7 +29,7 @@
           "optional":"false",
           "updatable":"false",
           "displayable":"true",
-          "displayID":"description",
+          "displayID":"docSubject",
           "researcheable":"true",
           "label":"Subject"
         },
