@@ -121,6 +121,8 @@ $.ajax({
 // the research view
 var controller = new udvcore.DocumentController(view, controls, {temporal: temporal}, documentModel, researchModel, optionsResearch);
 
+//the contributeController is in charge of handling the views of the contribute module,
+//that is to say: update, creation and delete
 var contributeController = new udvcore.ContributeController(controller);
 ///////////////////////////////////////////////////////////////////////////////
 //// Create and configure the layout controller

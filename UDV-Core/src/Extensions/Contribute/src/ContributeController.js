@@ -217,7 +217,8 @@ export function ContributeController(documentController){
     this.documentShowPosition();
   }
 
-  this.documentController.view.addFrameRequester( MAIN_LOOP_EVENTS.AFTER_CAMERA_UPDATE,this.updateCamPos.bind(this) );
+  this.documentController.view.addFrameRequester( MAIN_LOOP_EVENTS.AFTER_CAMERA_UPDATE,
+                                                  this.updateCamPos.bind(this) );
 
   this.initialize();
 

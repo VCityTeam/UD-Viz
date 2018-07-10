@@ -221,15 +221,23 @@ this.cancelPosition = function cancelPosition(){
   this.initialize();
 
   //Eventlisteners for buttons
-  document.getElementById('docCreateButton').addEventListener('mousedown', this.updateCreationWindow.bind(this),false);
-  document.getElementById('docBrowserCreateButton').addEventListener('mousedown', this.updateCreationWindow.bind(this),false);
-  document.getElementById('docCreation').addEventListener('mousedown', this.contributeController.documentCreation.bind(this.contributeController),false);
-  document.getElementById('closeCreation').addEventListener('mousedown', this.activateCreateWindow.bind(this,false),false);
-  document.getElementById('documentPositioner').addEventListener('mousedown', this.showDocPositioner.bind(this, true), false);
+  document.getElementById('docCreateButton').addEventListener('mousedown',
+                                    this.updateCreationWindow.bind(this),false);
+  document.getElementById('docBrowserCreateButton').addEventListener('mousedown',
+                                      this.updateCreationWindow.bind(this),false);
+  document.getElementById('docCreation').addEventListener('mousedown',
+    this.contributeController.documentCreation.bind(this.contributeController),false);
+  document.getElementById('closeCreation').addEventListener('mousedown',
+                                this.activateCreateWindow.bind(this,false),false);
+  document.getElementById('documentPositioner').addEventListener('mousedown',
+                                this.showDocPositioner.bind(this, true), false);
 
-  document.getElementById('docPositionerSave').addEventListener('mousedown', this.contributeController.getVisualizationData.bind(this.contributeController), false);
-  document.getElementById('moveDocument').addEventListener('mousedown', this.contributeController.moveDoc.bind(this.contributeController), false);
-  document.getElementById('docPositionerCancel').addEventListener('mousedown', this.cancelPosition.bind(this,false), false);
+  document.getElementById('docPositionerSave').addEventListener('mousedown',
+  this.contributeController.getVisualizationData.bind(this.contributeController), false);
+  document.getElementById('moveDocument').addEventListener('mousedown',
+        this.contributeController.moveDoc.bind(this.contributeController), false);
+  document.getElementById('docPositionerCancel').addEventListener('mousedown',
+                                    this.cancelPosition.bind(this,false), false);
 
 
 }
