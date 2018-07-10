@@ -21,10 +21,10 @@
       ]
     },
     "subject":{
-      "enum":
-      ["Subject",
-        "Letter",
-        "Map"
+      "enum":[
+        "Subject1",
+        "Subject2",
+        "Subject3"
       ]
     }
   }
