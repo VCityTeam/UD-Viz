@@ -162,7 +162,7 @@ export function DocumentBrowser(browserContainer, documentController) {
       {
         var txt="";
         txt += "<div id ='docMetadata'>";
-        var metadata = this.documentController.documentModel.properties.metadata;
+        var metadata = this.documentController.documentModel.metadata;
 
         for (var key in metadata) {
           var attribute = metadata[key]; //holds all metadata relative information
@@ -180,7 +180,7 @@ export function DocumentBrowser(browserContainer, documentController) {
         txt +="</div>";
         document.getElementById("docBrowserInfo").innerHTML = txt;
         document.getElementById('docBrowserPreviewImg').src = this.documentController.url
-                   + this.documentController.documentModel.server.documentsRepository
+                   + this.documentController.serverModel.documentsRepository
                    + this.currentDoc.metadata.link;
         document.getElementById('docBrowserIndex').innerHTML = "Document: "
           + this.docIndex + " out of " + this.documentController.setOfDocuments.length;
@@ -205,10 +205,10 @@ export function DocumentBrowser(browserContainer, documentController) {
     //=============================================================================
     this.focusOnDoc = function focusOnDoc() {
       document.getElementById('docFullImg').src = this.documentController.url
-                          + this.documentController.documentModel.server.documentsRepository
+                          + this.documentController.serverModel.documentsRepository
                           + this.currentDoc.metadata.link;
       document.getElementById('docBrowserPreviewImg').src = this.documentController.url
-                        + this.documentController.documentModel.server.documentsRepository
+                        + this.documentController.serverModel.documentsRepository
                         + this.currentDoc.metadata.link;
       document.getElementById('docFullImg').style.opacity = 50;
       document.getElementById('docOpaSlider').value = 0;
@@ -259,7 +259,7 @@ export function DocumentBrowser(browserContainer, documentController) {
       this.docIndex = 1;
       $("#filterForm").get(0).reset(); //reset reserach parameters
       //reset default url
-      this.documentController.url = this.url = this.documentController.documentModel.server.url;
+      this.documentController.url = this.url = this.documentController.serverModel.url;
       this.documentController.getDocuments();
       this.updateBrowser();
       this.closeDocFull();

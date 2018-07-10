@@ -15,10 +15,10 @@ import './ConsultDoc.css';
  * @param controls : PlanarControls instance
  * @param options : optional parameters (including TemporalController)
  * @param view :  itowns planar view
- * @param docModel : file holding document model
+ * @param config : file holding congiguration settings
  */
 //=============================================================================
-export function DocumentController(view, controls, options = {},docModel, researchModel,optionsResearch)
+export function DocumentController(view, controls, options = {},config, researchModel,optionsResearch)
 {
     this.controls = controls;
     this.setOfDocuments = [];
@@ -30,12 +30,13 @@ export function DocumentController(view, controls, options = {},docModel, resear
     this.options = options;
     this.temporal = options.temporal;
 
-    this.documentModel = docModel;
+    this.documentModel = config.properties;
+    this.serverModel = config.server;
     this.researchModel = researchModel;
     this.optionsResearch = optionsResearch;
     this.modelTest;
 
-    this.url = this.documentModel.server.url;
+    this.url = this.serverModel.url;
 
     this.researchContainerId = "researchContainer";
     this.browserContainerId = "browserContainer";
@@ -79,7 +80,7 @@ export function DocumentController(view, controls, options = {},docModel, resear
       //check which filters are set. URL is built manually for more modularity.
       //Could be improved
       var filters = new FormData(document.getElementById('filterForm')).entries();
-      var urlFilters = this.url + this.documentModel.server.getAll;
+      var urlFilters = this.url + this.serverModel.getAll;
       for(var pair of filters ){
         if(pair[1]!=""){
           urlFilters+= pair[0] + "=" + pair[1];
