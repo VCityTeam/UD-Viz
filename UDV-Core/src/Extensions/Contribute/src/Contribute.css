@@ -135,14 +135,10 @@
 
 #subject{
   display:inline-block;
-
-  color: black;
-
-  font-size: 14px;
   overflow: hidden;
   width: 90%;
   text-align: left;
-  padding-left: 20px;
+
 
 }
 
