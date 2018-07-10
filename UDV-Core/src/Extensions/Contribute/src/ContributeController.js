@@ -15,8 +15,9 @@ export function ContributeController(documentController){
   this.url = this.documentController.url + "app_dev.php/addDocument";
 
   this.newDocData = null;
-  this.docPos = new THREE.Vector3();//DEBUG
-  this.docQuat =  new THREE.Quaternion();//DEBUG
+  this.formData ;
+  this.docPos = null;
+  this.docQuat =  null;
   this.chosenPosition =  new THREE.Vector3()
   this.chosenQuaternion =  new THREE.Quaternion();
 
@@ -32,10 +33,13 @@ export function ContributeController(documentController){
     creationContainer.id = this.creationContainerId;
     document.body.appendChild(creationContainer);
     this.documentCreate = new CreateDocument(creationContainer, this);
-
   }
 
-  this.addVisualizationData = function addVisualizationData(){
+  /**
+   * Gets the current visualization data
+   */
+  //=============================================================================
+  this.getVisualizationData = function getVisualizationData(){
     //close debug window
     //verify position
     this.docPos = new THREE.Vector3(document.getElementById("setPosX").value,
@@ -47,91 +51,130 @@ export function ContributeController(documentController){
                                         document.getElementById("quatZ").value,
                                         document.getElementById("quatW").value
                                                                           );
-    document.getElementById('manualPos').style.display = "none";
+    this.documentCreate.showDocPositioner();
 
   }
 
-this.moveDoc = function moveDoc(){
-  this.chosenPosition.x = document.getElementById("setPosX").value;
-  this.chosenPosition.y = document.getElementById("setPosY").value;
-  this.chosenPosition.z = document.getElementById("setPosZ").value;
-  this.chosenQuaternion.x = document.getElementById("quatX").value;
-  this.chosenQuaternion.y = document.getElementById("quatY").value;
-  this.chosenQuaternion.z = document.getElementById("quatZ").value;
-  this.chosenQuaternion.w = document.getElementById("quatW").value;
-  this.documentController.controls.initiateTravel(this.chosenPosition,"auto",this.chosenQuaternion,true);
-}
+  /**
+   * Gets the current visualization data set by the user and
+   *  moves camera to this position
+   */
+  //=============================================================================
+  this.moveDoc = function moveDoc(){
+    this.chosenPosition.x = document.getElementById("setPosX").value;
+    this.chosenPosition.y = document.getElementById("setPosY").value;
+    this.chosenPosition.z = document.getElementById("setPosZ").value;
+    this.chosenQuaternion.x = document.getElementById("quatX").value;
+    this.chosenQuaternion.y = document.getElementById("quatY").value;
+    this.chosenQuaternion.z = document.getElementById("quatZ").value;
+    this.chosenQuaternion.w = document.getElementById("quatW").value;
+    this.documentController.controls.initiateTravel(this.chosenPosition,"auto",
+                                                    this.chosenQuaternion,true);
+  }
 
-this.colorField = function colorField(id){
-  document.getElementById(id).style.borderColor = "red";
-}
+  /**
+  * Colors the form fields if value is not set
+  */
+  //=============================================================================
+  this.colorField = function colorField(id, color){
+    if(color == true){
+    document.getElementById(id).style.border = "1px solid red";
+  }
+  else {
+    document.getElementById(id).style.border = "1px solid white";
+    }
+  }
 
-this.formDataVerification = function formDataVerification(){
+  /**
+   * Checks if visualization data is provided
+   */
+  //=============================================================================
+  this.visuDataVerification = function visuDataVerification(){
+    if(this.docPos == null || this.docQuat == null){
+      this.validPosition = false;
+      alert('Please chose document position and save');
+      this.documentCreate.showDocPositioner(false);
+    }
+    else {
+      this.validPosition = true;
+    }
+    return this.validPosition;
+  }
 
-  var dataIsValid = true;
-  var data = new FormData(document.getElementById('creationForm'));
 
-  var txt ="Please provide ";
-  for (var pair of data.entries() ){
+  /**
+   * Verifies form data
+   */
+  //=============================================================================
+  this.formDataVerification = function formDataVerification(){
+    var dataIsValid = true;
+    this.formData = new FormData(document.getElementById('creationForm'));
+    this.newDocData = this.formData;
+    var txt ="Please provide "; //error message if data unvalid
 
-    if( pair[1] == ""){
-      if(pair[0] == "link"){
+    for (var pair of this.formData.entries() ){
+      if( pair[1] == ""){
+        if(pair[0] == "link"){
         txt += "file ";
-
         dataIsValid = false;
       }
-      else{
+      else {
         txt += pair[0] + ", ";
         var id = "create_"+pair[0];
-        this.colorField(id);
+        this.colorField(id, true);
         dataIsValid = false;
-
       }
     }
-
   }
   if(!dataIsValid){
     alert(txt);
   }
   return dataIsValid;
-
 }
 
+/**
+  Post document if data is OK, reset all data to prepare next document creation
+ */
+//=============================================================================
   this.documentCreation = function documentCreation(){
-    this.newDocData = new FormData(document.getElementById('creationForm'));
-    if (this.docPos != null || this.docQuat != null){
-      this.validPosition = true;
-    this.newDocData.append("positionX", this.docPos.x);
-    this.newDocData.append("positionY", this.docPos.y);
-    this.newDocData.append("positionZ", this.docPos.z);
-    this.newDocData.append("quaternionX",this.docQuat.x);
-    this.newDocData.append("quaternionY",this.docQuat.y);
-    this.newDocData.append("quaternionZ",this.docQuat.z);
-    this.newDocData.append("quaternionW",this.docQuat.w);
-    this.newDocData.append("billboardX", this.docQuat.y);
-  }
-  else{
-    this.validPosition = false;
-  }
 
-    this.addDocument(this.newDocData, function(){});
+    if (this.formDataVerification() ==true & this.visuDataVerification() == true){
+      //add visualizationdata
+      this.newDocData.append("positionX", this.docPos.x);
+      this.newDocData.append("positionY", this.docPos.y);
+      this.newDocData.append("positionZ", this.docPos.z);
+      this.newDocData.append("quaternionX",this.docQuat.x);
+      this.newDocData.append("quaternionY",this.docQuat.y);
+      this.newDocData.append("quaternionZ",this.docQuat.z);
+      this.newDocData.append("quaternionW",this.docQuat.w);
+      this.newDocData.append("billboardX", this.docQuat.y);
 
-    if(this.dataIsValid & this.validPosition ){
+      //post document
+      this.addDocument(this.newDocData, function(){});
+      //reset formular
+      this.formData = new FormData(document.getElementById('creationForm'));
       $("#creationForm").get(0).reset();
+      for (var pair of this.formData.entries() ){
+        var id = "create_"+pair[0];
+        if(id != 'create_link'){
+          this.colorField(id, false);
+        }
+      }
+      //reset position
+      this.newDocData = new FormData();
+      this.docPos = null;
+      this.docQuat = null;
     }
 
-    else{
-      alert('Document could not be created, check information');
+    else {
+      alert('Document could not be created')
     }
-/*
-    //DEBUG
-    for (var pair of this.newDocData.entries() ){
-      console.log(pair[0] + ":" + pair[1]);
-    }*/
-
   }
 
-
+  /**
+   * Real time display of camera position ( = document position in overlay)
+   */
+  //=============================================================================
   this.documentShowPosition = function documentShowPosition(){
 
     var cam = this.documentController.view.camera.camera3D;
@@ -147,34 +190,27 @@ this.formDataVerification = function formDataVerification(){
 
   }
 
+  //POST document
   this.addDocument = function addDocument(data, callback){
     //check if visualizationdata has been given
-    if (this.docPos == null || this.docQuat == null){
-      alert("You must place your document in the scene");
-      this.documentCreate.showDocPositioner();
-    }
-    else{
-      if(this.formDataVerification()==true){
-        var req = new XMLHttpRequest();
-        req.open("POST", this.url);
-
-        req.addEventListener("load", function () {
-
-          if (req.status >= 200 && req.status < 400) {
-            console.log(req.status)
-            //update creation status
-            callback(req.responseText);
-            alert('Your document was sucessfuly uploaded');
-          }
-          else {
-            console.error(req.status + " " + req.statusText + " " + this.url);
-          }
+    var req = new XMLHttpRequest();
+    req.open("POST", this.url);
+    req.addEventListener("load", function () {
+      if (req.status >= 200 && req.status < 400) {
+        console.log(req.status)
+        //update creation status
+        callback(req.responseText);
+        alert('Your document was sucessfuly uploaded');
+      }
+      else {
+        console.error(req.status + " " + req.statusText + " " + this.url);
+      }
         });
         req.addEventListener("error", function () {
           console.error("Network error with url: " + url);
         });
         req.send(data);
-      }}
+
   }
 
   this.updateCamPos = function updateCamPos(){

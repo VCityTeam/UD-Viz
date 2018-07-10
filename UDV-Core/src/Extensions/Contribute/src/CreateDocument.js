@@ -96,10 +96,11 @@ this.activateCreateWindow = function activateCreateWindow(active){
   }
   document.getElementById(this.contributeController.creationContainerId).style.display = active  ? "block" : "none ";
   document.getElementById('manualPos').style.display = active  ? "block" : "none ";
-
-  document.getElementById('browserContainer').style.display = active  ? "block" : "none ";
   document.getElementById('positionerContainer').style.display = active  ? "block" : "none ";
+
+
   this.contributeController.documentController.documentResearch.activateWindow(true);
+  this.documentController.browserContainer.activateWindow(true);
 }
 
 this.activateDebugPosition = function activateDebugPosition(active){
@@ -138,7 +139,7 @@ this.cancelPosition = function cancelPosition(){
   this.docModelToSchema = function docModelToSchema(){
     //only use the metadata
     var metadata = this.contributeController.documentController.documentModel.properties.metadata;
-
+    //schema has at least a file input
     var schemaType =
     {
       "type": "object",
@@ -147,6 +148,7 @@ this.cancelPosition = function cancelPosition(){
       }
     }
 
+    //options have at least a file input, that can be displayed to the user
     var optionsCreate = {
       "form": {
         "attributes":{
@@ -171,7 +173,7 @@ this.cancelPosition = function cancelPosition(){
     for (var key in metadata) {
       var attribute = metadata[key]; //holds all metadata relative information
       if(attribute['optional'] == "false"){//this metadata is required in the creation process
-         //dynamic building of the schema
+         //dynamic build the schema
           schemaType.properties[attribute['name']]={};
           optionsCreate.fields[attribute['name']] = {};
           optionsCreate.fields[attribute['name']]['id'] = attribute['creationID'];
@@ -185,7 +187,7 @@ this.cancelPosition = function cancelPosition(){
       }
     }
 
-
+    //Create form using alpaca
     $("#creationWindow").alpaca({
          "schemaSource": schemaType,
          "options": optionsCreate
@@ -200,12 +202,18 @@ this.cancelPosition = function cancelPosition(){
 
   }
 
-  this.showDocPositioner = function showDocPositioner(){
-    document.getElementById('docPositionerFull').style.display = "block";
-    document.getElementById('manualPos').style.display = "block";
 
-    document.getElementById('inputFields').style.display = "block";
-
+  this.showDocPositioner = function showDocPositioner(show){
+    if(show){
+      document.getElementById('docPositionerFull').style.display = "block";
+      document.getElementById('manualPos').style.display = "block";
+      document.getElementById('inputFields').style.display = "block";
+    }
+    else {
+      document.getElementById('docPositionerFull').style.display = "none";
+      document.getElementById('manualPos').style.display = "none";
+      document.getElementById('inputFields').style.display = "none";
+    }
     this.contributeController.documentShowPosition();
   }
 
@@ -217,9 +225,9 @@ this.cancelPosition = function cancelPosition(){
   document.getElementById('docBrowserCreateButton').addEventListener('mousedown', this.updateCreationWindow.bind(this),false);
   document.getElementById('docCreation').addEventListener('mousedown', this.contributeController.documentCreation.bind(this.contributeController),false);
   document.getElementById('closeCreation').addEventListener('mousedown', this.activateCreateWindow.bind(this,false),false);
-  document.getElementById('documentPositioner').addEventListener('mousedown', this.showDocPositioner.bind(this), false);
+  document.getElementById('documentPositioner').addEventListener('mousedown', this.showDocPositioner.bind(this, true), false);
 
-  document.getElementById('docPositionerSave').addEventListener('mousedown', this.contributeController.addVisualizationData.bind(this.contributeController), false);
+  document.getElementById('docPositionerSave').addEventListener('mousedown', this.contributeController.getVisualizationData.bind(this.contributeController), false);
   document.getElementById('moveDocument').addEventListener('mousedown', this.contributeController.moveDoc.bind(this.contributeController), false);
   document.getElementById('docPositionerCancel').addEventListener('mousedown', this.cancelPosition.bind(this,false), false);
 

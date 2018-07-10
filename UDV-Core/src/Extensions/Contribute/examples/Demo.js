@@ -120,6 +120,8 @@ $.ajax({
 // The researchModel and optionsResearch parameters are used to build / paramatrize
 // the research view
 var controller = new udvcore.DocumentController(view, controls, {temporal: temporal}, documentModel, researchModel, optionsResearch);
+
+var contributeController = new udvcore.ContributeController(controller);
 ///////////////////////////////////////////////////////////////////////////////
 //// Create and configure the layout controller
 

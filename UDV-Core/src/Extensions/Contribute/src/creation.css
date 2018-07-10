@@ -8,6 +8,9 @@
   padding-left: 20px;
   margin-bottom: 12px;
 
+    border-radius: 4px;
+
+
 }
 
 #create_description{
@@ -20,6 +23,7 @@
   text-align: left;
   padding-left: 20px;
   margin-bottom: 12px;
+  border-radius: 4px;
 }
 
 #uploadedFile{
@@ -29,9 +33,11 @@
 
 #create_refDate, #create_publicationDate, #create_subject{
   margin-bottom: 12px;
+  border-radius: 4px;
 }
 
 #create_type{
     margin-bottom: 12px;
     margin-left: 17px;
+    border-radius: 4px;
 }
