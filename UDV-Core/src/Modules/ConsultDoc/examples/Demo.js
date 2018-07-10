@@ -80,14 +80,14 @@ var help  = new udvcore.HelpWindow({active:true});
 // different views of consultDoc module (research, browser).
 
 //loading configuration files
-var documentModel;
+var config;
 $.ajax({
   type: "GET",
-  url: "DocumentModel.json",
+  url: "config.json",
   datatype: "json",
   async: false,
   success: function(data){
-    documentModel = data;
+    config = data;
   }
 });
 
@@ -119,7 +119,7 @@ $.ajax({
 // a document have, what attributes do we want to display and how...)
 // The researchModel and optionsResearch parameters are used to build / paramatrize
 // the research view
-var controller = new udvcore.DocumentController(view, controls, {temporal: temporal}, documentModel, researchModel, optionsResearch);
+var controller = new udvcore.DocumentController(view, controls, {temporal: temporal}, config, researchModel, optionsResearch);
 ///////////////////////////////////////////////////////////////////////////////
 //// Create and configure the layout controller
 

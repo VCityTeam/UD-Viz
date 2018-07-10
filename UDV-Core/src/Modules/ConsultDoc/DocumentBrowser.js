@@ -180,7 +180,8 @@ export function DocumentBrowser(browserContainer, documentController) {
         txt +="</div>";
         document.getElementById("docBrowserInfo").innerHTML = txt;
         document.getElementById('docBrowserPreviewImg').src = this.documentController.url
-                          + "documentsDirectory/" + this.currentDoc.metadata.link;
+                   + this.documentController.documentModel.server.documentsRepository
+                   + this.currentDoc.metadata.link;
         document.getElementById('docBrowserIndex').innerHTML = "Document: "
           + this.docIndex + " out of " + this.documentController.setOfDocuments.length;
       }
@@ -204,9 +205,11 @@ export function DocumentBrowser(browserContainer, documentController) {
     //=============================================================================
     this.focusOnDoc = function focusOnDoc() {
       document.getElementById('docFullImg').src = this.documentController.url
-                          + "documentsDirectory/" + this.currentDoc.metadata.link;
+                          + this.documentController.documentModel.server.documentsRepository
+                          + this.currentDoc.metadata.link;
       document.getElementById('docBrowserPreviewImg').src = this.documentController.url
-                        + "documentsDirectory/" + this.currentDoc.metadata.link;
+                        + this.documentController.documentModel.server.documentsRepository
+                        + this.currentDoc.metadata.link;
       document.getElementById('docFullImg').style.opacity = 50;
       document.getElementById('docOpaSlider').value = 0;
       document.querySelector('#docOpacity').value = 50;
@@ -255,8 +258,8 @@ export function DocumentBrowser(browserContainer, documentController) {
     this.resetResearch = function resetResearch(){
       this.docIndex = 1;
       $("#filterForm").get(0).reset(); //reset reserach parameters
-      this.documentController.url =
-                  "http://rict.liris.cnrs.fr/APIVilo3D/APIExtendedDocument/web/";
+      //reset default url
+      this.documentController.url = this.url = this.documentController.documentModel.server.url;
       this.documentController.getDocuments();
       this.updateBrowser();
       this.closeDocFull();

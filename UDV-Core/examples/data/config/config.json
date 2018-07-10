@@ -1,0 +1,95 @@
+{
+    "type": "class",
+    "server":{
+      "url":"http://rict.liris.cnrs.fr/APIVilo3D/APIExtendedDocument/web/",
+      "documentsRepository":"documentsDirectory/",
+      "add":"",
+      "delete":"",
+      "update":""
+    },
+    "properties": {
+      "metadata":{
+        "title": {
+          "name":"title",
+          "type": "string",
+          "optional": "false",
+          "creationID":"create_title",
+          "labelCreation":"Title of the document :",
+          "updatable":"false",
+          "updateID":"titleUpdate",
+          "displayable":"true",
+          "displayID":"title",
+          "label":"false"
+        },
+        "description": {
+          "name":"description",
+          "type": "string",
+          "optional": "false",
+          "updatable":"true",
+          "displayable":"true",
+          "displayID":"description",
+          "label":"Description",
+          "creationID":"create_description",
+          "labelCreation":"Description :"
+        },
+        "refDate":{
+          "name":"refDate",
+          "type":"date",
+          "optional":"false",
+          "updatable":"true",
+          "displayable":"true",
+          "displayID":"refDate",
+          "label":"Referring date",
+          "creationID":"create_refDate",
+          "labelCreation":"Date of referrence: "
+        },
+        "publicationDate":{
+          "name":"publicationDate",
+          "type":"date",
+          "optional":"false",
+          "updatable":"true",
+          "displayable":"true",
+          "displayID":"publicationDate",
+          "label":"Publication date",
+          "creationID":"create_publicationDate",
+          "labelCreation":"Date of publication: "
+        },
+        "type":{
+          "name":"type",
+          "type":"enum",
+          "enum":["Drawing", "Map", "Letter"],
+          "optional":"false",
+          "updatable":"false",
+          "displayable":"true",
+          "displayID":"type",
+          "label":"Type",
+          "creationID":"create_type",
+          "labelCreation":"Type: "
+        },
+        "subject":{
+          "name":"subject",
+          "type":"enum",
+          "enum":["Subject1", "Subject2", "Subject3"],
+          "optional":"false",
+          "updatable":"false",
+          "displayable":"true",
+          "displayID":"description",
+          "label":"Subject",
+          "creationID":"create_subject",
+          "labelCreation":"Subject: "
+        }
+      },
+      "visualization":{
+        "positionX":{
+          "type":"double",
+          "optional":"false",
+          "displayable":"false"
+        },
+        "positionY":{
+          "type":"double",
+          "optional":"false",
+          "displayable":"false"
+        }
+      }
+    }
+}

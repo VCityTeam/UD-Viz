@@ -12,7 +12,7 @@ export function ContributeController(documentController){
   this.documentUpdate;
   this.creationContainerId = "creationContainer";
   this.updateContainerId = "updateContainer";
-  this.url = this.documentController.url + "app_dev.php/addDocument";
+  this.url = this.documentController.url + this.documentController.documentModel.server.add;
 
   this.newDocData = null;
   this.formData ;

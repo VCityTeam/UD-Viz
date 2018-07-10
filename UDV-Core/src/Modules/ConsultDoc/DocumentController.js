@@ -20,10 +20,6 @@ import './ConsultDoc.css';
 //=============================================================================
 export function DocumentController(view, controls, options = {},docModel, researchModel,optionsResearch)
 {
-    //url of the server handling documents
-    this.url = "http://rict.liris.cnrs.fr/APIVilo3D/APIExtendedDocument/web/";
-    //FIXME: to put in a configuration file of the general application
-
     this.controls = controls;
     this.setOfDocuments = [];
     this.docIndex = 0;
@@ -39,10 +35,7 @@ export function DocumentController(view, controls, options = {},docModel, resear
     this.optionsResearch = optionsResearch;
     this.modelTest;
 
-    var self = this;
-
-
-//console.log(this.documentModel['properties']);
+    this.url = this.documentModel.server.url;
 
     this.researchContainerId = "researchContainer";
     this.browserContainerId = "browserContainer";
@@ -86,7 +79,7 @@ export function DocumentController(view, controls, options = {},docModel, resear
       //check which filters are set. URL is built manually for more modularity.
       //Could be improved
       var filters = new FormData(document.getElementById('filterForm')).entries();
-      var urlFilters = this.url +"app_dev.php/getDocuments?";
+      var urlFilters = this.url + this.documentModel.server.getAll;
       for(var pair of filters ){
         if(pair[1]!=""){
           urlFilters+= pair[0] + "=" + pair[1];

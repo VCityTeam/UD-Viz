@@ -1,5 +1,13 @@
 {
     "type": "class",
+    "server":{
+      "url":"http://rict.liris.cnrs.fr/APIVilo3D/APIExtendedDocument/web/",
+      "documentsRepository":"documentsDirectory/",
+      "getAll": "app_dev.php/getDocuments?",
+      "add":"app_dev.php/addDocument",
+      "delete":"",
+      "update":""
+    },
     "properties": {
       "metadata":{
         "title": {
