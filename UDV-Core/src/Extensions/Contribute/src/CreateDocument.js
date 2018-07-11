@@ -100,7 +100,7 @@ this.activateCreateWindow = function activateCreateWindow(active){
 
 
   this.contributeController.documentController.documentResearch.activateWindow(true);
-  this.documentController.browserContainer.activateWindow(true);
+  this.contributeController.documentController.documentBrowser.activateWindow(true);
 }
 
 this.activateDebugPosition = function activateDebugPosition(active){

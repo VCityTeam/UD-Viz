@@ -18,7 +18,7 @@ import './ConsultDoc.css';
  * @param config : file holding congiguration settings
  */
 //=============================================================================
-export function DocumentController(view, controls, options = {},config, researchModel,optionsResearch)
+export function DocumentController(view, controls, options = {},config)
 {
     this.controls = controls;
     this.setOfDocuments = [];
@@ -32,8 +32,6 @@ export function DocumentController(view, controls, options = {},config, research
 
     this.documentModel = config.properties;
     this.serverModel = config.server;
-    this.researchModel = researchModel;
-    this.optionsResearch = optionsResearch;
     this.modelTest;
 
     this.url = this.serverModel.url;
@@ -83,11 +81,14 @@ export function DocumentController(view, controls, options = {},config, research
       var urlFilters = this.url + this.serverModel.getAll;
       for(var pair of filters ){
         if(pair[1]!=""){
+          console.log(pair[0] + ":" + pair[1])
           urlFilters+= pair[0] + "=" + pair[1];
           urlFilters+="&";
         }
       }
       urlFilters = urlFilters.slice('&',-1);
+
+      console.log(urlFilters)
       var req = new XMLHttpRequest();
       req.open("POST", urlFilters,false);
       req.send();

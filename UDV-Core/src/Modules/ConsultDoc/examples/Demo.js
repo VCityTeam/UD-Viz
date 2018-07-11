@@ -119,7 +119,7 @@ $.ajax({
 // a document have, what attributes do we want to display and how...)
 // The researchModel and optionsResearch parameters are used to build / paramatrize
 // the research view
-var controller = new udvcore.DocumentController(view, controls, {temporal: temporal}, config, researchModel, optionsResearch);
+var controller = new udvcore.DocumentController(view, controls, {temporal: temporal}, config);
 ///////////////////////////////////////////////////////////////////////////////
 //// Create and configure the layout controller
 

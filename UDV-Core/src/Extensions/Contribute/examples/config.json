@@ -17,67 +17,86 @@
           "creationID":"create_title",
           "labelCreation":"Title of the document :",
           "updatable":"false",
-          "updateID":"titleUpdate",
           "displayable":"true",
           "displayID":"title",
-          "label":"false"
+          "label":"false",
+          "queryable":"keyword",
+          "queryID" : "query_name"
         },
         "description": {
           "name":"description",
           "type": "string",
           "optional": "false",
-          "updatable":"true",
+          "creationID":"create_description",
+          "labelCreation":"Description :",
           "displayable":"true",
           "displayID":"description",
           "label":"Description",
-          "creationID":"create_description",
-          "labelCreation":"Description :"
+          "updatable":"true",
+          "updateID":"update_description",
+          "labelUpdate":"Description: ",
+          "queryable":"keyword"
+
         },
         "refDate":{
           "name":"refDate",
           "type":"date",
           "optional":"false",
-          "updatable":"true",
+          "creationID":"create_refDate",
+          "labelCreation":"Date of referrence: ",
           "displayable":"true",
           "displayID":"refDate",
           "label":"Referring date",
-          "creationID":"create_refDate",
-          "labelCreation":"Date of referrence: "
+          "updatable":"true",
+          "updateID":"update_refDate",
+          "labelUpdate":"Date of referrence: ",
+          "queryable":"true",
+          "labelQuery":"referring date"
         },
         "publicationDate":{
           "name":"publicationDate",
           "type":"date",
           "optional":"false",
-          "updatable":"true",
+          "creationID":"create_publicationDate",
+          "labelCreation":"Date of publication: ",
           "displayable":"true",
           "displayID":"publicationDate",
           "label":"Publication date",
-          "creationID":"create_publicationDate",
-          "labelCreation":"Date of publication: "
+          "updatable":"true",
+          "updateID":"update_publicationDate",
+          "labelUpdate":"Date of publication: ",
+          "queryable":"true",
+          "labelQuery":"publication date"
         },
         "type":{
           "name":"type",
           "type":"enum",
           "enum":["Drawing", "Map", "Letter"],
           "optional":"false",
-          "updatable":"false",
+          "creationID":"create_type",
+          "labelCreation":"Type: ",
           "displayable":"true",
           "displayID":"type",
           "label":"Type",
-          "creationID":"create_type",
-          "labelCreation":"Type: "
+          "updatable":"false",
+          "queryable":"true",
+          "queryID":"query_type",
+          "labelQuery":"Type: "
         },
         "subject":{
           "name":"subject",
           "type":"enum",
           "enum":["Subject1", "Subject2", "Subject3"],
           "optional":"false",
-          "updatable":"false",
-          "displayable":"true",
-          "displayID":"description",
-          "label":"Subject",
           "creationID":"create_subject",
-          "labelCreation":"Subject: "
+          "labelCreation":"Subject: ",
+          "displayable":"true",
+          "displayID":"subject",
+          "label":"Subject",
+          "updatable":"false",
+          "queryable":"true",
+          "queryID":"query_subject",
+          "labelQuery":"Subject: "
         }
       },
       "visualization":{
