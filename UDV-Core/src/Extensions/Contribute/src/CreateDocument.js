@@ -14,6 +14,7 @@ console.log(this.browserTabs)
 
   // Whether this window is currently displayed or not.
   this.windowIsActive = this.contributeController.documentController.options.active || false;
+  this.windowManualIsActive = false;
   /**
    * Creates the research view
    */
@@ -42,6 +43,10 @@ console.log(this.browserTabs)
       '<div id="docPositionerFull">\
       <img id="docPositionerFullImg"/></div>\
   ';
+
+  var overlay = document.createElement("div");
+  overlay.id = "overlay";
+  document.body.appendChild(overlay);
 
 
   var manualPositionsWindow = document.createElement("div");
@@ -89,29 +94,48 @@ this.activateCreateWindow = function activateCreateWindow(active){
   {
       this.windowIsActive = active;
   }
+
   document.getElementById(this.contributeController.creationContainerId).style.display = active  ? "block" : "none ";
   document.getElementById('manualPos').style.display = active  ? "block" : "none ";
   document.getElementById('positionerContainer').style.display = active  ? "block" : "none ";
 
 
-  this.contributeController.documentController.documentResearch.activateWindow(true);
-  this.contributeController.documentController.documentBrowser.activateWindow(true);
+
 }
 
 this.activateManualPosition = function activateManualPosition(active){
   if (typeof active != 'undefined')
   {
-      this.windowIsActive = active;
+      this.windowManualIsActive = active;
   }
   document.getElementById('manualPos').style.display = active  ? "block" : "none ";
-
+  this.contributeController.documentController.documentResearch.activateWindow(true);
+  this.contributeController.documentController.documentBrowser.activateWindow(true);
 }
 
+/**
+ * Verifies form data
+ */
+//=============================================================================
 this.cancelPosition = function cancelPosition(){
-  this.contributeController.docPos = null;
-  this.contributeController.docQuat = null;
+
+  this.contributeController.visuData = new FormData(); //reset to 0
   this.activateManualPosition(false);
   document.getElementById('docPositionerFull').style.display = "none ";
+  this.contributeController.documentController.documentResearch.activateWindow(false);
+  this.contributeController.documentController.documentBrowser.activateWindow(false);
+  this.blurMetadataWindow(false);
+}
+
+this.blurMetadataWindow = function blurMetadataWindow(blur){
+  if(blur ==true){
+    document.getElementById('overlay').style.display = "block";
+    document.getElementById('creationContainer').style.pointerEvents ="none";
+  }
+  else{
+    document.getElementById('overlay').style.display = "none";
+    document.getElementById('creationContainer').style.pointerEvents ="auto";
+  }
 }
 
   // Display or hide this window
@@ -159,7 +183,6 @@ this.cancelPosition = function cancelPosition(){
           "id":"uploadedFile",
           "selectionHandler": function(files, data) {
               document.getElementById('docPositionerFullImg').src = data[0];
-              this.myUploadedImage = data[0];
             }
           }
         }
@@ -209,12 +232,16 @@ this.cancelPosition = function cancelPosition(){
       document.getElementById('docPositionerFull').style.display = "block";
       document.getElementById('manualPos').style.display = "block";
       document.getElementById('inputFields').style.display = "block";
+      document.getElementById('overlay').style.display = "block";
+      document.getElementById('creationContainer').style.pointerEvents ="none";
+
     }
     else {
       document.getElementById('docPositionerFull').style.display = "none";
       document.getElementById('manualPos').style.display = "none";
       document.getElementById('inputFields').style.display = "none";
     }
+
     this.contributeController.documentShowPosition();
   }
 

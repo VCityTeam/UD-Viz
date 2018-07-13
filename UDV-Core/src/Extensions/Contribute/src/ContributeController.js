@@ -15,6 +15,9 @@ export function ContributeController(documentController){
 
   this.newDocData = null; //newly created document's data
   this.formData ; //document's static metadata
+  this.visuData = new FormData();
+  this.numberVisuData = 7; //number of visualization data (3 position, 4 quaternion)
+
   this.docPos = null; //document's position
   this.docQuat =  null; //document's quaternion
   this.chosenPosition =  new THREE.Vector3();  //manual document's position
@@ -35,16 +38,21 @@ export function ContributeController(documentController){
    */
   //=============================================================================
   this.getVisualizationData = function getVisualizationData(){
-    this.docPos = new THREE.Vector3(document.getElementById("setPosX").value,
-                                    document.getElementById("setPosY").value,
-                                    document.getElementById("setPosZ").value
-                                                                            );
-    this.docQuat = new THREE.Quaternion(document.getElementById("quatX").value,
-                                        document.getElementById("quatY").value,
-                                        document.getElementById("quatZ").value,
-                                        document.getElementById("quatW").value
-                                                                          );
+    var cam = this.documentController.view.camera.camera3D;
+    var position = cam.position;
+    var quaternion = cam.quaternion;
+
+    this.visuData.append("positionX", position.x);
+    this.visuData.append('positionY', cam.position.y);
+    this.visuData.append('positionZ', cam.position.z);
+    this.visuData.append('quaternionX', cam.quaternion.x);
+    this.visuData.append('quaternionY', cam.quaternion.y);
+    this.visuData.append('quaternionZ', cam.quaternion.z);
+    this.visuData.append('quaternionW', cam.quaternion.w);
+
     this.documentCreate.showDocPositioner();
+
+    this.documentCreate.blurMetadataWindow(false);
 
   }
 
@@ -83,10 +91,18 @@ export function ContributeController(documentController){
    */
   //=============================================================================
   this.visuDataVerification = function visuDataVerification(){
-    if(this.docPos == null || this.docQuat == null){
+    console.log('lengnth', this.visuData.entries().length);
+
+    var length = 0; //how many visu data are given?
+
+    for (var pair of this.visuData.entries()){
+      length +=1;
+    }
+    console.log('visu length', length)
+    if(length != this.numberVisuData ){ //7 visualisation data must be provided
       this.validPosition = false;
-      alert('Please chose document position and save');
-      this.documentCreate.showDocPositioner(false);
+      alert('Please choose document position and save');
+      this.documentCreate.showDocPositioner(true);
     }
     else {
       this.validPosition = true;
@@ -103,7 +119,6 @@ export function ContributeController(documentController){
     var dataIsValid = true;
     this.formData = new FormData(document.getElementById('creationForm'));
     this.newDocData = this.formData;
-    //var txt ="Please provide "; //error message if data unvalid
 
     for (var pair of this.formData.entries() ){
 
@@ -117,7 +132,7 @@ export function ContributeController(documentController){
           this.colorField(id, true);
           dataIsValid = false;
         }
-        if(pair[1] != ""){
+        if(pair[1] != ""){ //is provided
           var id = "create_"+pair[0];
           this.colorField(id, false);
         }
@@ -143,42 +158,21 @@ export function ContributeController(documentController){
 
     if (this.formDataVerification() ==true & this.visuDataVerification() == true){
       //add visualizationdata
-      this.newDocData.append("positionX", this.docPos.x);
-      this.newDocData.append("positionY", this.docPos.y);
-      this.newDocData.append("positionZ", this.docPos.z);
-      this.newDocData.append("quaternionX",this.docQuat.x);
-      this.newDocData.append("quaternionY",this.docQuat.y);
-      this.newDocData.append("quaternionZ",this.docQuat.z);
-      this.newDocData.append("quaternionW",this.docQuat.w);
-      this.newDocData.append("billboardX", this.docQuat.y);
-}
-      //post document
-      //this.addDocument(function(){});
-      //reset formular
-      this.formData = new FormData(document.getElementById('creationForm'));
-
-
-      /*$("#creationForm").get(0).reset();
-      for (var pair of this.formData.entries() ){
-        var id = "create_"+pair[0];
-        console.log(pair[0] +":" + pair[1])
-        if(id != 'create_link'){
-          this.colorField(id, false);
-        }
+      for (var pair of this.visuData.entries() ){ //concatenate metadata and visu data
+        this.newDocData.append(pair[0], pair[1]);
       }
-      //reset position
+
+      this.addDocument(function(){});
+      //reset formular
+      //this.formData = new FormData(document.getElementById('creationForm'));
+      $("#creationForm").get(0).reset();
+      //reset formData objects
       this.newDocData = new FormData();
-      this.docPos = null;
-      this.docQuat = null;
+      this.visuData = new FormData();
+
     }
 
-    else {
-      alert('Document could not be created')
-    }*/
   }
-
-
-
 
 
 
@@ -211,6 +205,8 @@ export function ContributeController(documentController){
         console.log(req.status)
         //update creation status
         callback(req.responseText);
+        this.documentController.getDocuments();
+        this.documentController.updateBrowser();
         alert('Your document was sucessfuly uploaded');
       }
       else {
@@ -218,7 +214,7 @@ export function ContributeController(documentController){
       }
         });
         req.addEventListener("error", function () {
-          console.error("Network error with url: " + url);
+          console.error("Network error with url: " + this.url);
         });
         req.send(this.newDocData);
 

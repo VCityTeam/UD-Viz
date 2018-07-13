@@ -97,18 +97,6 @@
           "queryable":"true",
           "queryID":"query_subject",
           "labelQuery":"Subject: "
-        },
-        "rightsHolder":{
-          "name":"rightsHolder",
-          "type":"string",
-          "optional":"true",
-          "creationID":"create_rightsHolder",
-          "labelCreation":"Rights holder",
-          "displayable":"true",
-          "displayID":"rightsHolder",
-          "label":"Rights holder",
-          "updatable":"false",
-          "queryable":"false"
         }
       },
       "visualization":{
