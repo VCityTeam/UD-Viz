@@ -16,8 +16,13 @@ export function DocumentBrowser(browserContainer, documentController) {
   this.docIndex = 1;
   this.isStart = true; //dirty variable to test if we are in start mode
 
+  this.browserTabID = "browserWindowTabs"; //ID of the html div holding buttons in the browser
+                                          //will be used by other classes as well to add extra buttons
+
+
   // doc fade-in animation duration, in milliseconds
  this.fadeDuration = this.documentController.options.docFadeDuration || 2750;
+
 
  browserContainer.innerHTML =
       '<div id="docBrowserWindow">\
@@ -27,14 +32,26 @@ export function DocumentBrowser(browserContainer, documentController) {
           <div id = "docBrowserInfo"></div>\
           <div id="docBrowserPreview"><img id="docBrowserPreviewImg"/></div>\
           <div id="docBrowserIndex"></div>\
-          <div id = "browserWindowTabs">\
-          <button id="docBrowserNextButton" type=button>⇨</button>\
-          <button id="docBrowserPreviousButton" type=button>⇦</button>\
-          <button id="resetFilters" type=button>Reset research</button>\
-          <button id="docBrowserOrientButton" type=button>Orient Document</button>\
-          </div>\
       </div>\
-      <div id="docFull">\
+      ';
+
+      var browserWindowTabs = document.createElement("div");
+      browserWindowTabs.id = this.browserTabID;
+      document.getElementById("docBrowserWindow").appendChild(browserWindowTabs);
+
+      browserWindowTabs.innerHTML =
+      '<button id="docBrowserNextButton" type=button>⇨</button>\
+      <button id="docBrowserPreviousButton" type=button>⇦</button>\
+      <button id="resetFilters" type=button>Reset research</button>\
+      <button id="docBrowserOrientButton" type=button>Orient Document</button>\
+      ';
+
+      var docFull = document.createElement("div");
+      docFull.id = "docFull";
+      document.getElementById("docBrowserWindow").appendChild(docFull);
+
+      docFull.innerHTML =
+      '<div id="docFull">\
           <img id="docFullImg"/>\
           <div id="docFullPanel">\
               <button id="docFullClose" type=button>Close</button>\
@@ -44,8 +61,8 @@ export function DocumentBrowser(browserContainer, documentController) {
               step="1" oninput="docOpaUpdate(value)">\
               <output for="docOpaSlider" id="docOpacity">50</output>\
           </div>\
-      </div>\
-      ';
+          ';
+
 
     this.update = function update()
     {
@@ -265,7 +282,7 @@ export function DocumentBrowser(browserContainer, documentController) {
       this.closeDocFull();
     }
 
-    // itowns framerequester : will regularly call this.update()
+    // itowns framerequester : will regularly call this.updateScene()
     this.documentController.view.addFrameRequester(
               MAIN_LOOP_EVENTS.AFTER_CAMERA_UPDATE,this.updateScene.bind(this) );
 

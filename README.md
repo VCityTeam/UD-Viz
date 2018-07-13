@@ -1,6 +1,6 @@
 # UDV : Urban Data Viewer
 
-UDV is a JavaScript client based on [iTowns](https://github.com/itowns/itowns) allowing to visualize, analyse and interact with urban data. 
+UDV is a JavaScript client based on [iTowns](https://github.com/itowns/itowns) allowing to visualize, analyse and interact with urban data.
 
 Server-side tools can be found [here](https://github.com/MEPP-team/UDV-server).
 
@@ -21,13 +21,13 @@ Online demos (alas only visible on the [Lyon1](https://sciences.univ-lyon1.fr/)/
 
 The camera controller has been merged into itowns ([PR](https://github.com/iTowns/itowns/pull/454)) and is now PlanarControls. It features an animation of camera movement and orientation (called "travel" in the code) which we use to orient the camera with a document (document **oriented view**).
 
-### Document
+### ConsultDoc
 
-* Basic support for **billboard** document : plane geometry with image as texture, oriented to face the camera (billboard behavior).
-* Ability to access document metadata by clicking on the billboard.
-* Orient the view when clicking on billboard.
-* Document properties : source image, name, date, metada (short text), oriented view position, oriented view quaternion, billboard position
-* All documents are loaded from a csv file (docs.csv) and can be accessed using the **Document Browser** window.
+* Display of documents in a 3D representation of the city, in superposition
+* Filtered research (research by keyword, attribute and/or temporal research)
+* All documents are loaded from an external data server and can be accessed using the **Document Browser** window.
+
+[Demo]()
 
 ### Temporal
 
@@ -42,6 +42,12 @@ The camera controller has been merged into itowns ([PR](https://github.com/iTown
 * Each step triggers the oriented view of its document, and opens this doc in the doc browser
 * Ability to navigate between steps of a tour (previous, next) and to start/exit a tour
 * Support for multiple guided tours, all loaded from a csv file (visite.csv)
+
+### Contribute
+* Possibility to create a new document
+* Possibility to edit and delete existing documents
+
+[Demo]()
 
 ### Others
 

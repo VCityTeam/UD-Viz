@@ -79,11 +79,13 @@ var help  = new udvcore.HelpWindow({active:true});
 //the following lines are in charge of loading configuration files used to setup
 // different views of consultDoc module (research, browser).
 
-//loading configuration files
+//loading configuration file
+//It is used to configure routes towards an external server
+// and several options on document's attributes, and options on v
 var config;
 $.ajax({
   type: "GET",
-  url: "config.json",
+  url: "contributeConfig.json",
   datatype: "json",
   async: false,
   success: function(data){

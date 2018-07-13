@@ -81,14 +81,11 @@ export function DocumentController(view, controls, options = {},config)
       var urlFilters = this.url + this.serverModel.getAll;
       for(var pair of filters ){
         if(pair[1]!=""){
-          console.log(pair[0] + ":" + pair[1])
           urlFilters+= pair[0] + "=" + pair[1];
           urlFilters+="&";
         }
       }
       urlFilters = urlFilters.slice('&',-1);
-
-      console.log(urlFilters)
       var req = new XMLHttpRequest();
       req.open("POST", urlFilters,false);
       req.send();

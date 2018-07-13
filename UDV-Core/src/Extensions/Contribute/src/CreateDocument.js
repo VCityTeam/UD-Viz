@@ -2,19 +2,13 @@ export function CreateDocument(creationContainer, contributeController){
 
   this.contributeController = contributeController;
   this.creationContainer = creationContainer;
-
-this.myUploadedImage;
-  var docCreateButton = document.createElement('button');
-  docCreateButton.id = "docCreateButton";
-  var text = document.createTextNode("Create");
-  docCreateButton.appendChild(text);
-  document.getElementById("researchWindowTabs").appendChild(docCreateButton);
-
+  this.browserTabs = this.contributeController.documentController.documentBrowser.browserTabID;
+console.log(this.browserTabs)
   var docBrowserCreateButton = document.createElement('button');
   docBrowserCreateButton.id = "docBrowserCreateButton";
   var word = document.createTextNode("Create");
   docBrowserCreateButton.appendChild(word);
-  document.getElementById("browserWindowTabs").appendChild(docBrowserCreateButton);
+  document.getElementById(this.browserTabs).appendChild(docBrowserCreateButton);
 
   this.contributeController.documentController.documentBrowser.refresh(); //original documentBrowser is updated with additional buttons
 
@@ -90,6 +84,7 @@ this.myUploadedImage;
 
 
 this.activateCreateWindow = function activateCreateWindow(active){
+
   if (typeof active != 'undefined')
   {
       this.windowIsActive = active;
@@ -103,7 +98,7 @@ this.activateCreateWindow = function activateCreateWindow(active){
   this.contributeController.documentController.documentBrowser.activateWindow(true);
 }
 
-this.activateDebugPosition = function activateDebugPosition(active){
+this.activateManualPosition = function activateManualPosition(active){
   if (typeof active != 'undefined')
   {
       this.windowIsActive = active;
@@ -115,7 +110,7 @@ this.activateDebugPosition = function activateDebugPosition(active){
 this.cancelPosition = function cancelPosition(){
   this.contributeController.docPos = null;
   this.contributeController.docQuat = null;
-  this.activateDebugPosition(false);
+  this.activateManualPosition(false);
   document.getElementById('docPositionerFull').style.display = "none ";
 }
 
@@ -172,19 +167,25 @@ this.cancelPosition = function cancelPosition(){
 
     for (var key in metadata) {
       var attribute = metadata[key]; //holds all metadata relative information
-      if(attribute['optional'] == "false"){//this metadata is required in the creation process
+
          //dynamic build the schema
           schemaType.properties[attribute['name']]={};
           optionsCreate.fields[attribute['name']] = {};
           optionsCreate.fields[attribute['name']]['id'] = attribute['creationID'];
           optionsCreate.fields[attribute['name']]['inputType'] = attribute['type'];
-          optionsCreate.fields[attribute['name']]['label'] = attribute['labelCreation'];
+          if(attribute['optional'] == "false"){//this metadata is required in the creation process
+            optionsCreate.fields[attribute['name']]['label'] = attribute['labelCreation'] + "* :";//start to show  field mandatory
+          }
+          else{
+            optionsCreate.fields[attribute['name']]['label'] = attribute['labelCreation'];
+          }
+
           optionsCreate.fields[attribute['name']]['name'] = attribute['name'];
           if(attribute['type'] == "enum"){
             optionsCreate.fields[attribute['name']]['type'] = 'select';
             schemaType.properties[attribute['name']]['enum'] = attribute['enum']
           }
-      }
+
     }
 
     //Create form using alpaca
@@ -221,8 +222,6 @@ this.cancelPosition = function cancelPosition(){
   this.initialize();
 
   //Eventlisteners for buttons
-  document.getElementById('docCreateButton').addEventListener('mousedown',
-                                    this.updateCreationWindow.bind(this),false);
   document.getElementById('docBrowserCreateButton').addEventListener('mousedown',
                                       this.updateCreationWindow.bind(this),false);
   document.getElementById('docCreation').addEventListener('mousedown',

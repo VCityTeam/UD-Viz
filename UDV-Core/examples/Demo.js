@@ -126,11 +126,13 @@ var help  = new udvcore.HelpWindow({active:true});
 // different views.
 
 
-//loading configuration files
+//loading configuration file
+//It is used to configure routes towards an external server
+// and several options on document's attributes, and options on views
 var config;
 $.ajax({
   type: "GET",
-  url: "data/config/config.json",
+  url: "data/config/generalDemoConfig.json",
   datatype: "json",
   async: false,
   success: function(data){

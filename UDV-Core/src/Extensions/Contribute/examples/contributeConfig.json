@@ -15,7 +15,7 @@
           "type": "string",
           "optional": "false",
           "creationID":"create_title",
-          "labelCreation":"Title of the document :",
+          "labelCreation":"Title of the document",
           "updatable":"false",
           "displayable":"true",
           "displayID":"title",
@@ -28,7 +28,7 @@
           "type": "string",
           "optional": "false",
           "creationID":"create_description",
-          "labelCreation":"Description :",
+          "labelCreation":"Description",
           "displayable":"true",
           "displayID":"description",
           "label":"Description",
@@ -43,13 +43,13 @@
           "type":"date",
           "optional":"false",
           "creationID":"create_refDate",
-          "labelCreation":"Date of referrence: ",
+          "labelCreation":"Date of referrence",
           "displayable":"true",
           "displayID":"refDate",
           "label":"Referring date",
           "updatable":"true",
           "updateID":"update_refDate",
-          "labelUpdate":"Date of referrence: ",
+          "labelUpdate":"Date of referrence",
           "queryable":"true",
           "labelQuery":"referring date"
         },
@@ -58,23 +58,23 @@
           "type":"date",
           "optional":"false",
           "creationID":"create_publicationDate",
-          "labelCreation":"Date of publication: ",
+          "labelCreation":"Date of publication",
           "displayable":"true",
           "displayID":"publicationDate",
           "label":"Publication date",
           "updatable":"true",
           "updateID":"update_publicationDate",
-          "labelUpdate":"Date of publication: ",
-          "queryable":"true",
+          "labelUpdate":"Date of publication",
+         "queryable":"true",
           "labelQuery":"publication date"
         },
         "type":{
           "name":"type",
           "type":"enum",
-          "enum":["Drawing", "Map", "Letter"],
+          "enum":["Picture", "Drawing", "Map", "Letter"],
           "optional":"false",
           "creationID":"create_type",
-          "labelCreation":"Type: ",
+          "labelCreation":"Type",
           "displayable":"true",
           "displayID":"type",
           "label":"Type",
@@ -89,7 +89,7 @@
           "enum":["Subject1", "Subject2", "Subject3"],
           "optional":"false",
           "creationID":"create_subject",
-          "labelCreation":"Subject: ",
+          "labelCreation":"Subject",
           "displayable":"true",
           "displayID":"subject",
           "label":"Subject",
@@ -97,6 +97,18 @@
           "queryable":"true",
           "queryID":"query_subject",
           "labelQuery":"Subject: "
+        },
+        "rightsHolder":{
+          "name":"rightsHolder",
+          "type":"string",
+          "optional":"true",
+          "creationID":"create_rightsHolder",
+          "labelCreation":"Rights holder",
+          "displayable":"true",
+          "displayID":"rightsHolder",
+          "label":"Rights holder",
+          "updatable":"false",
+          "queryable":"false"
         }
       },
       "visualization":{
@@ -108,6 +120,46 @@
         "positionY":{
           "type":"double",
           "optional":"false",
+          "displayable":"false"
+        },
+        "positionZ":{
+          "type":"double",
+          "optional":"false",
+          "displayable":"false"
+        },
+        "quaternionX":{
+          "type":"double",
+          "optional":"false",
+          "displayable":"false"
+        },
+        "quaternionY":{
+          "type":"double",
+          "optional":"false",
+          "displayable":"false"
+        },
+        "quaternionZ":{
+          "type":"double",
+          "optional":"false",
+          "displayable":"false"
+        },
+        "quaternionW":{
+          "type":"double",
+          "optional":"false",
+          "displayable":"false"
+        },
+        "billboardX":{
+          "type":"double",
+          "optional":"true",
+          "displayable":"false"
+        },
+        "billboardX":{
+          "type":"double",
+          "optional":"true",
+          "displayable":"false"
+        },
+        "billboardZ":{
+          "type":"double",
+          "optional":"true",
           "displayable":"false"
         }
       }

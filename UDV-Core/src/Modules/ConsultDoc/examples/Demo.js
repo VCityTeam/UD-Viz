@@ -83,7 +83,7 @@ var help  = new udvcore.HelpWindow({active:true});
 var config;
 $.ajax({
   type: "GET",
-  url: "config.json",
+  url: "consultDocConfig.json",
   datatype: "json",
   async: false,
   success: function(data){
@@ -91,27 +91,6 @@ $.ajax({
   }
 });
 
-var researchModel;
-$.ajax({
-  type: "GET",
-  url: "schemaFilters.json",
-  datatype: "json",
-  async: false,
-  success: function(data){
-    researchModel = data;
-  }
-});
-
-var optionsResearch;
-$.ajax({
-  type: "GET",
-  url: "optionsFilter.json",
-  datatype: "json",
-  async: false,
-  success: function(data){
-    optionsResearch = data;
-  }
-});
 
 
 //The documentcontroller is in charge of handling the views (research, browser)

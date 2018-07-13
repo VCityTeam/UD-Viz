@@ -1,5 +1,4 @@
 import { CreateDocument }  from './CreateDocument.js';
-import { UpdateDocument }   from './UpdateDocument.js';
 import "./Contribute.css";
 import "./creation.css";
 import { MAIN_LOOP_EVENTS } from 'itowns';
@@ -9,25 +8,21 @@ export function ContributeController(documentController){
   this.documentController = documentController;
 
   this.documentCreate;
-  this.documentUpdate;
-  this.creationContainerId = "creationContainer";
-  this.updateContainerId = "updateContainer";
+  this.creationContainerId = "creationContainer"; //create view
+
+  //url to create a document
   this.url = this.documentController.url + this.documentController.serverModel.add;
 
-  this.newDocData = null;
-  this.formData ;
-  this.docPos = null;
-  this.docQuat =  null;
-  this.chosenPosition =  new THREE.Vector3()
-  this.chosenQuaternion =  new THREE.Quaternion();
+  this.newDocData = null; //newly created document's data
+  this.formData ; //document's static metadata
+  this.docPos = null; //document's position
+  this.docQuat =  null; //document's quaternion
+  this.chosenPosition =  new THREE.Vector3();  //manual document's position
+  this.chosenQuaternion =  new THREE.Quaternion(); //manual document's quaternion
 
   this.validPosition = true;
 
   this.initialize = function initialize(){
-    var updateContainer = document.createElement("div");
-    updateContainer.id =   this.updateContainerId;
-    document.body.appendChild(updateContainer);
-    this.documentUpdate = new UpdateDocument(updateContainer, this);
 
     var creationContainer = document.createElement("div");
     creationContainer.id = this.creationContainerId;
@@ -36,12 +31,10 @@ export function ContributeController(documentController){
   }
 
   /**
-   * Gets the current visualization data
+   * Gets the document's position that has been chosen by user.
    */
   //=============================================================================
   this.getVisualizationData = function getVisualizationData(){
-    //close debug window
-    //verify position
     this.docPos = new THREE.Vector3(document.getElementById("setPosX").value,
                                     document.getElementById("setPosY").value,
                                     document.getElementById("setPosZ").value
@@ -110,24 +103,34 @@ export function ContributeController(documentController){
     var dataIsValid = true;
     this.formData = new FormData(document.getElementById('creationForm'));
     this.newDocData = this.formData;
-    var txt ="Please provide "; //error message if data unvalid
+    //var txt ="Please provide "; //error message if data unvalid
 
     for (var pair of this.formData.entries() ){
-      if( pair[1] == ""){
-        if(pair[0] == "link"){
-        txt += "file ";
-        dataIsValid = false;
+
+      var val = pair[0];
+      if( val != "link"){ //is not file filed
+        var attr = this.documentController.documentModel.metadata[val];
+        if( attr['optional'] == 'false'){//is mandatory
+          if(pair[1] == ""){  //but not provided
+          var id = "create_"+pair[0];
+          console.log('coucu')
+          this.colorField(id, true);
+          dataIsValid = false;
+        }
+        if(pair[1] != ""){
+          var id = "create_"+pair[0];
+          this.colorField(id, false);
+        }
       }
-      else {
-        txt += pair[0] + ", ";
-        var id = "create_"+pair[0];
-        this.colorField(id, true);
-        dataIsValid = false;
+      else{ //is file
+        if (pair[1] == ""){ //no file provided
+          dataIsValid = false;
+        }
       }
     }
   }
-  if(!dataIsValid){
-    alert(txt);
+    if(!dataIsValid){
+    console.log('not valid')
   }
   return dataIsValid;
 }
@@ -148,14 +151,17 @@ export function ContributeController(documentController){
       this.newDocData.append("quaternionZ",this.docQuat.z);
       this.newDocData.append("quaternionW",this.docQuat.w);
       this.newDocData.append("billboardX", this.docQuat.y);
-
+}
       //post document
-      this.addDocument(this.newDocData, function(){});
+      //this.addDocument(function(){});
       //reset formular
       this.formData = new FormData(document.getElementById('creationForm'));
-      $("#creationForm").get(0).reset();
+
+
+      /*$("#creationForm").get(0).reset();
       for (var pair of this.formData.entries() ){
         var id = "create_"+pair[0];
+        console.log(pair[0] +":" + pair[1])
         if(id != 'create_link'){
           this.colorField(id, false);
         }
@@ -168,8 +174,13 @@ export function ContributeController(documentController){
 
     else {
       alert('Document could not be created')
-    }
+    }*/
   }
+
+
+
+
+
 
   /**
    * Real time display of camera position ( = document position in overlay)
@@ -191,7 +202,7 @@ export function ContributeController(documentController){
   }
 
   //POST document
-  this.addDocument = function addDocument(data, callback){
+  this.addDocument = function addDocument(callback){
     //check if visualizationdata has been given
     var req = new XMLHttpRequest();
     req.open("POST", this.url);
@@ -209,16 +220,13 @@ export function ContributeController(documentController){
         req.addEventListener("error", function () {
           console.error("Network error with url: " + url);
         });
-        req.send(data);
+        req.send(this.newDocData);
 
   }
 
-  this.updateCamPos = function updateCamPos(){
-    this.documentShowPosition();
-  }
-
+    // itowns framerequester : will regularly call this.updateCamPos()
   this.documentController.view.addFrameRequester( MAIN_LOOP_EVENTS.AFTER_CAMERA_UPDATE,
-                                                  this.updateCamPos.bind(this) );
+                                                  this.documentShowPosition.bind(this) );
 
   this.initialize();
 
