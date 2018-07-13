@@ -27,7 +27,7 @@ The camera controller has been merged into itowns ([PR](https://github.com/iTown
 * Filtered research (research by keyword, attribute and/or temporal research)
 * All documents are loaded from an external data server and can be accessed using the **Document Browser** window.
 
-[Demo]()
+[Info](https://github.com/sophiaab/UDV/tree/new_contribute/UDV-Core/src/Modules/ConsultDoc)
 
 ### Temporal
 
@@ -44,10 +44,11 @@ The camera controller has been merged into itowns ([PR](https://github.com/iTown
 * Support for multiple guided tours, all loaded from a csv file (visite.csv)
 
 ### Contribute
+
 * Possibility to create a new document
 * Possibility to edit and delete existing documents
 
-[Demo]()
+[Demo](https://github.com/sophiaab/UDV/tree/new_contribute/UDV-Core/src/Extensions/Contribute)
 
 ### Others
 
