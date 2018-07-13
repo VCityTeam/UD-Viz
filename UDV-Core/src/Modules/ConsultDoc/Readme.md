@@ -3,4 +3,4 @@
  * Filtered research (research by keyword, attribute and/or temporal research)
  * All documents are loaded from an external data server and can be accessed using the Document Browser window.
 
-[Demo] 
+[Demo] (https://github.com/sophiaab/UDV/tree/new_contribute/UDV-Core/src/Modules/ConsultDoc/examples)
