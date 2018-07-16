@@ -66,6 +66,7 @@ export function DocumentResearch(researchContainer, documentController)
     //=============================================================================
     this.research = function research()
     {
+        document.getElementById('browserInfo').innerHTML = "The documents have been filtered."
         this.documentController.getDocuments();
         this.documentController.documentBrowser.activateWindow(true);
     }

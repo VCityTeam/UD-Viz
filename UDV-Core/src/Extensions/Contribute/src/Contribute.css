@@ -1,7 +1,7 @@
 /*Browser*/
 #docBrowserCreateButton{
   z-index: 20;
-  left: 100px;
+  left: 175px;
   position:absolute;
   margin : 5px;
   font-size: 14px;
@@ -14,49 +14,7 @@
 
 }
 
-#docDeleteButton{
-  z-index: 20;
-  left: 170px;
-  position:absolute;
-  margin : 5px;
-  font-size: 14px;
-  border: 1px solid black;
-  background-color: white;
-  color: black;
-  height: 30px;
-  pointer-events: auto;
-  bottom:50px;
-
-}
-
-#docUpdateButton{
-  z-index: 20;
-  left:240px;
-  position:absolute;
-  margin : 5px;
-  font-size: 14px;
-  border: 1px solid black;
-  background-color: white;
-  color: black;
-  height: 30px;
-  pointer-events: auto;
-  bottom:50px;
-
-}
 /*Research window*/
-#docCreateButton{
-  z-index: 20;
-  position:absolute;
-  margin : 5px;
-  font-size: 14px;
-  border: 1px solid black;
-  background-color: white;
-  color: black;
-  height: 30px;
-  pointer-events: auto;
-  bottom:35px;
-}
-
 #docResearch{
   position: absolute;
   z-index: 20;

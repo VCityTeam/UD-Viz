@@ -406,3 +406,9 @@ label{
   text-align: left;
   padding-left: 20px;
 }
+
+
+#browserInfo{
+display: block;
+  color:white;
+}

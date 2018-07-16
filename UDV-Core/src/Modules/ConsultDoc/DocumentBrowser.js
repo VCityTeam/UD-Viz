@@ -29,6 +29,7 @@ export function DocumentBrowser(browserContainer, documentController) {
         <button id="closeBrowserWindow" type=button>Close</button><br/>\
           <div id="docHead">Document Navigator</div><br>\
           <br/>\
+          <div id="browserInfo"></div>\
           <div id = "docBrowserInfo"></div>\
           <div id="docBrowserPreview"><img id="docBrowserPreviewImg"/></div>\
           <div id="docBrowserIndex"></div>\
@@ -275,6 +276,8 @@ export function DocumentBrowser(browserContainer, documentController) {
     this.resetResearch = function resetResearch(){
       this.docIndex = 1;
       $("#filterForm").get(0).reset(); //reset reserach parameters
+
+      document.getElementById('browserInfo').innerHTML = "Filters have been reset."
       //reset default url
       this.documentController.url = this.url = this.documentController.serverModel.url;
       this.documentController.getDocuments();

@@ -7,7 +7,7 @@ export function ContributeController(documentController){
 
   this.documentController = documentController;
 
-  this.documentCreate;
+  this.documentCreate; //CreateDocument object
   this.creationContainerId = "creationContainer"; //create view
 
   //url to create a document
@@ -15,11 +15,9 @@ export function ContributeController(documentController){
 
   this.newDocData = null; //newly created document's data
   this.formData ; //document's static metadata
-  this.visuData = new FormData();
+  this.visuData = new FormData(); //document's position data
   this.numberVisuData = 7; //number of visualization data (3 position, 4 quaternion)
 
-  this.docPos = null; //document's position
-  this.docQuat =  null; //document's quaternion
   this.chosenPosition =  new THREE.Vector3();  //manual document's position
   this.chosenQuaternion =  new THREE.Quaternion(); //manual document's quaternion
 
@@ -91,14 +89,12 @@ export function ContributeController(documentController){
    */
   //=============================================================================
   this.visuDataVerification = function visuDataVerification(){
-    console.log('lengnth', this.visuData.entries().length);
 
     var length = 0; //how many visu data are given?
 
     for (var pair of this.visuData.entries()){
       length +=1;
     }
-    console.log('visu length', length)
     if(length != this.numberVisuData ){ //7 visualisation data must be provided
       this.validPosition = false;
       alert('Please choose document position and save');
@@ -128,7 +124,6 @@ export function ContributeController(documentController){
         if( attr['optional'] == 'false'){//is mandatory
           if(pair[1] == ""){  //but not provided
           var id = "create_"+pair[0];
-          console.log('coucu')
           this.colorField(id, true);
           dataIsValid = false;
         }
@@ -137,44 +132,16 @@ export function ContributeController(documentController){
           this.colorField(id, false);
         }
       }
-      else{ //is file
+      else { //is file
         if (pair[1] == ""){ //no file provided
           dataIsValid = false;
         }
       }
     }
-  }
-    if(!dataIsValid){
-    console.log('not valid')
-  }
-  return dataIsValid;
-}
-
-/**
-  Post document if data is OK, reset all data to prepare next document creation
- */
-//=============================================================================
-  this.documentCreation = function documentCreation(){
-
-    if (this.formDataVerification() ==true & this.visuDataVerification() == true){
-      //add visualizationdata
-      for (var pair of this.visuData.entries() ){ //concatenate metadata and visu data
-        this.newDocData.append(pair[0], pair[1]);
-      }
-
-      this.addDocument(function(){});
-      //reset formular
-      //this.formData = new FormData(document.getElementById('creationForm'));
-      $("#creationForm").get(0).reset();
-      //reset formData objects
-      this.newDocData = new FormData();
-      this.visuData = new FormData();
-
     }
 
+    return dataIsValid;
   }
-
-
 
   /**
    * Real time display of camera position ( = document position in overlay)
@@ -195,32 +162,58 @@ export function ContributeController(documentController){
 
   }
 
-  //POST document
-  this.addDocument = function addDocument(callback){
-    //check if visualizationdata has been given
-    var req = new XMLHttpRequest();
-    req.open("POST", this.url);
-    req.addEventListener("load", function () {
-      if (req.status >= 200 && req.status < 400) {
-        console.log(req.status)
-        //update creation status
-        callback(req.responseText);
-        this.documentController.getDocuments();
-        this.documentController.updateBrowser();
-        alert('Your document was sucessfuly uploaded');
-      }
-      else {
-        console.error(req.status + " " + req.statusText + " " + this.url);
-      }
-        });
-        req.addEventListener("error", function () {
-          console.error("Network error with url: " + this.url);
-        });
-        req.send(this.newDocData);
+/**
+ *   Verifies if data is valid
+ *   If yes, posts the new document and resets data
+ */
+//=============================================================================
+  this.documentCreation = function documentCreation(){
 
+
+   if (this.formDataVerification() ==true & this.visuDataVerification() == true){
+      //add visualizationdata to document data
+      for (var pair of this.visuData.entries() ){ //concatenate metadata and visu data
+        this.newDocData.append(pair[0], pair[1]);
+      }
+
+      //new promess
+      var newDocUpload = new Promise((resolve, reject) => {
+
+        var req = new XMLHttpRequest();
+        req.open('POST', this.url);
+
+        req.onload = function() { //event executed once the request is over
+          console.log(req.status)
+          if (req.status == 200) {
+            resolve(req.response);
+          }
+           else {
+             reject(Error(req.statusText));
+           }
+        };
+
+        req.onerror = function() {
+          reject("Network Error");
+        };
+        req.send(this.newDocData);
+      });
+
+      var self = this;
+
+      newDocUpload.then( function(response){
+        console.log("Success!", response);
+        $("#creationForm").get(0).reset();
+        self.newDocData = new FormData();
+        self.visuData = new FormData();
+        self.documentController.getDocuments();
+      },
+      function(error) {
+        console.error("Failed!", error);
+      });
+    }
   }
 
-    // itowns framerequester : will regularly call this.updateCamPos()
+  // request update every active frame
   this.documentController.view.addFrameRequester( MAIN_LOOP_EVENTS.AFTER_CAMERA_UPDATE,
                                                   this.documentShowPosition.bind(this) );
 
