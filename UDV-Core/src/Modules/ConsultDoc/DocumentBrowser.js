@@ -285,7 +285,7 @@ export function DocumentBrowser(browserContainer, documentController) {
         document.getElementById('docFullImg').src = null;
     }
 
-    this.resetResearch = function resetResearch(){œ
+    this.resetResearch = function resetResearch(){
       this.docIndex = 1;
       $("#filterForm").get(0).reset(); //reset reserach parameters
 
