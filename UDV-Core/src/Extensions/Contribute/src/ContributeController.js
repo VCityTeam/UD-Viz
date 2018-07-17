@@ -193,7 +193,6 @@ export function ContributeController(documentController){
         req.open('POST', this.urlAdd);
 
         req.onload = function() { //event executed once the request is over
-          console.log(req.status)
           if (req.status == 200) {
             resolve(req.response);
           }
@@ -211,7 +210,7 @@ export function ContributeController(documentController){
       var self = this;
 
       newDocUpload.then( function(response){
-        console.log("Success!", response);
+        //DEBUG:  console.log("Success!", response);
         $("#creationForm").get(0).reset();
         self.newDocData = new FormData();
         self.visuData = new FormData();
