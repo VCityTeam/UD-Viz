@@ -1,7 +1,20 @@
+/**
+ * Class: ContributeController
+ * Description :
+ * The ContributeControler is an object handling the document related views
+ *
+ */
+
 import { CreateDocument }  from './CreateDocument.js';
 import "./Contribute.css";
 import "./creation.css";
 import { MAIN_LOOP_EVENTS } from 'itowns';
+
+/**
+ *
+ * @constructor
+ * @param { documentController } documentController
+ */
 
 export function ContributeController(documentController){
 
@@ -29,6 +42,7 @@ export function ContributeController(documentController){
     creationContainer.id = this.creationContainerId;
     document.body.appendChild(creationContainer);
     this.documentCreate = new CreateDocument(creationContainer, this);
+
   }
 
   /**
