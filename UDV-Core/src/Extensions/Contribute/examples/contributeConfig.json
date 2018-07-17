@@ -5,7 +5,7 @@
       "documentsRepository":"documentsDirectory/",
       "getAll": "app_dev.php/getDocuments?",
       "add":"app_dev.php/addDocument",
-      "delete":"",
+      "delete":"app_dev.php/deleteDocument",
       "update":"app_dev.php/editDocument"
     },
     "properties": {

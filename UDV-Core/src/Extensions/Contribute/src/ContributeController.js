@@ -19,6 +19,9 @@ export function ContributeController(documentController){
   //url to update a document
   this.urlUpdate = this.documentController.url + this.documentController.serverModel.update;
 
+  //url to delete a document
+  this.urlDelete = this.documentController.url + this.documentController.serverModel.delete;
+
   this.newDocData = null; //newly created document's data
   this.formData ; //document's static metadata
   this.visuData = new FormData(); //document's position data
@@ -226,17 +229,17 @@ export function ContributeController(documentController){
   this.documentUpdate = function documentUpdate(){
 
     this.updatedData = new FormData(document.getElementById('updateForm'));
-    var currentDoc = this.documentController.getCurrentDoc();
 
+    //get current doc data and id
+    var currentDoc = this.documentController.getCurrentDoc();
     var id = currentDoc.metadata['id'];
 
+    // //DEBUG
+    // for (var pair of this.updatedData.entries()){
+    //   console.log(pair[0] + ":" + pair[1]);
+    // }
 
-    //DEBUG
-    for (var pair of this.updatedData.entries()){
-      console.log(pair[0] + ":" + pair[1]);
-    }
-
-    //new promess
+    //new promise
       var newDocUpdate = new Promise((resolve, reject) => {
 
         var req = new XMLHttpRequest();
@@ -273,6 +276,68 @@ export function ContributeController(documentController){
       function(error) { //reject
         console.error("Failed!", error);
       });
+
+  }
+
+  this.documentDelete = function documentDelete(){
+
+    //make sure you want to delete
+    if(confirm('Delete this document permanently?')){
+      //get current doc data and id
+      var currentDoc = this.documentController.getCurrentDoc();
+      var id = currentDoc.metadata['id'];
+
+      console.log("deletion");
+
+      console.log(this.urlDelete + "/" + id);
+
+      var docDelete = new Promise((resolve, reject) => {
+
+        var req = new XMLHttpRequest();
+        req.open('POST', this.urlDelete + "/" + id);
+
+        req.onload = function() { //event executed once the request is over
+          console.log(req.status)
+          if (req.status == 200) {
+            resolve(req.response);
+          }
+           else {
+             reject(Error(req.statusText));
+           }
+        };
+
+        req.onerror = function() {
+          reject("Network Error");
+        };
+        req.send();
+      });
+
+      var self = this;
+
+      docDelete.then( function(response){//resolve
+        console.log("Success!", response);
+        alert("The document has been deleted successfully");
+
+        self.documentController.getDocuments(); //update documents
+        //self.documentController.documentBrowser.updateBrowser(); //update browser
+      //  self.documentController.documentBrowser.resetResearch(false);
+      },
+      function(error) { //reject
+        console.error("Failed!", error);
+      });
+
+
+    }
+    else {
+      alert('The document was not deleted');
+    }
+
+
+
+
+
+
+
 
   }
 

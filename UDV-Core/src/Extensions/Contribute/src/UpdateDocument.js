@@ -151,5 +151,6 @@ console.log(this.optionsUpdate)
   document.getElementById('updateCancel').addEventListener('mousedown', this.cancelUpdate.bind(this),false);
 
   document.getElementById('docUpdate').addEventListener('mousedown', this.contributeController.documentUpdate.bind(this.contributeController),false);
+  document.getElementById('docDeleteButton').addEventListener('mousedown', this.contributeController.documentDelete.bind(this.contributeController),false);  
 
 }
