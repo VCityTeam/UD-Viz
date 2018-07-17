@@ -49,11 +49,10 @@ export function DocumentBrowser(browserContainer, documentController) {
 
       var docFull = document.createElement("div");
       docFull.id = "docFull";
-      document.getElementById("docBrowserWindow").appendChild(docFull);
+      document.body.appendChild(docFull);
 
       docFull.innerHTML =
-      '<div id="docFull">\
-          <img id="docFullImg"/>\
+      '<img id="docFullImg"/>\
           <div id="docFullPanel">\
               <button id="docFullClose" type=button>Close</button>\
               <button id="docFullOrient" type=button>Orient Document</button>\
@@ -61,7 +60,6 @@ export function DocumentBrowser(browserContainer, documentController) {
               <input id="docOpaSlider" type="range" min="0" max="100" value="75"\
               step="1" oninput="docOpaUpdate(value)">\
               <output for="docOpaSlider" id="docOpacity">50</output>\
-          </div>\
           ';
 
 
@@ -222,6 +220,7 @@ export function DocumentBrowser(browserContainer, documentController) {
     // and initiate the animated travel to orient the camera
     //=============================================================================
     this.focusOnDoc = function focusOnDoc() {
+      document.getElementById('docFull').style.display = "block";
       document.getElementById('docFullImg').src = this.documentController.url
                           + this.documentController.serverModel.documentsRepository
                           + this.currentDoc.metadata.link;
@@ -273,7 +272,7 @@ export function DocumentBrowser(browserContainer, documentController) {
         document.getElementById('docFullImg').src = null;
     }
 
-    this.resetResearch = function resetResearch(){
+    this.resetResearch = function resetResearch(){œ
       this.docIndex = 1;
       $("#filterForm").get(0).reset(); //reset reserach parameters
 
