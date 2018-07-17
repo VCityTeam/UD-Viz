@@ -1,3 +1,17 @@
+/**
+ * Class: UpdateDocument
+ * Description :
+ * The UpdateDocument is an object handling the creation view
+ *
+ */
+
+ /**
+  *
+  * @constructor
+  * @param { HTML DOM Element object } creationContainer
+  * @param { contributeController } contributeController
+  */
+
 export function UpdateDocument(updateContainer, contributeController){
 
   this.contributeController = contributeController;

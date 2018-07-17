@@ -1,7 +1,20 @@
+/**
+ * Class: DocumentBrowser
+ * Description :
+ * The DocumentBrowser is an object handling the browser view
+ *
+ */
 
 import * as THREE from 'three';
 import { MAIN_LOOP_EVENTS } from 'itowns';
 import DefaultImage from './DefaultImage.png';
+
+/**
+ *
+ * @constructor
+ * @param { HTML DOM Element object } browserContainer
+ * @param { documentController } documentController
+ */
 
 export function DocumentBrowser(browserContainer, documentController) {
 

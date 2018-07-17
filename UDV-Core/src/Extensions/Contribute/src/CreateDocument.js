@@ -1,3 +1,17 @@
+/**
+ * Class: CreateDocument
+ * Description :
+ * The CreateDocument is an object handling the creation view
+ *
+ */
+
+ /**
+  *
+  * @constructor
+  * @param { HTML DOM Element object } creationContainer
+  * @param { contributeController } contributeController
+  */
+
 export function CreateDocument(creationContainer, contributeController){
 
   this.contributeController = contributeController;
