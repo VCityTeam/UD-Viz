@@ -6,7 +6,7 @@
       "getAll": "app_dev.php/getDocuments?",
       "add":"app_dev.php/addDocument",
       "delete":"",
-      "update":""
+      "update":"app_dev.php/editDocument"
     },
     "properties": {
       "metadata":{
@@ -17,6 +17,7 @@
           "creationID":"create_title",
           "labelCreation":"Title of the document",
           "updatable":"false",
+          "updateID":"update_title",
           "displayable":"true",
           "displayID":"title",
           "label":"false",
@@ -79,6 +80,7 @@
           "displayID":"type",
           "label":"Type",
           "updatable":"false",
+          "updateID":"update_type",
           "queryable":"true",
           "queryID":"query_type",
           "labelQuery":"Type: "
@@ -94,6 +96,7 @@
           "displayID":"subject",
           "label":"Subject",
           "updatable":"false",
+          "updateID":"update_subject",
           "queryable":"true",
           "queryID":"query_subject",
           "labelQuery":"Subject: "

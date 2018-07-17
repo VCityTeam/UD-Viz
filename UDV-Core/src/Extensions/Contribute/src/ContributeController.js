@@ -1,6 +1,6 @@
 import { CreateDocument }  from './CreateDocument.js';
+import { UpdateDocument }   from './UpdateDocument.js';
 import "./Contribute.css";
-import "./creation.css";
 import { MAIN_LOOP_EVENTS } from 'itowns';
 
 export function ContributeController(documentController){
@@ -8,10 +8,16 @@ export function ContributeController(documentController){
   this.documentController = documentController;
 
   this.documentCreate; //CreateDocument object
+  this.documentUpdate;
+
   this.creationContainerId = "creationContainer"; //create view
+  this.updateContainerId = "updateContainer";     //update view
 
   //url to create a document
-  this.url = this.documentController.url + this.documentController.serverModel.add;
+  this.urlAdd = this.documentController.url + this.documentController.serverModel.add;
+
+  //url to update a document
+  this.urlUpdate = this.documentController.url + this.documentController.serverModel.update;
 
   this.newDocData = null; //newly created document's data
   this.formData ; //document's static metadata
@@ -29,6 +35,12 @@ export function ContributeController(documentController){
     creationContainer.id = this.creationContainerId;
     document.body.appendChild(creationContainer);
     this.documentCreate = new CreateDocument(creationContainer, this);
+
+    var updateContainer = document.createElement("div");
+    updateContainer.id =   this.updateContainerId;
+    document.body.appendChild(updateContainer);
+    this.documentUpdate = new UpdateDocument(updateContainer, this);
+
   }
 
   /**
@@ -169,18 +181,16 @@ export function ContributeController(documentController){
 //=============================================================================
   this.documentCreation = function documentCreation(){
 
-
-   if (this.formDataVerification() ==true & this.visuDataVerification() == true){
+    if (this.formDataVerification() ==true & this.visuDataVerification() == true){
       //add visualizationdata to document data
       for (var pair of this.visuData.entries() ){ //concatenate metadata and visu data
         this.newDocData.append(pair[0], pair[1]);
       }
-
       //new promess
       var newDocUpload = new Promise((resolve, reject) => {
 
         var req = new XMLHttpRequest();
-        req.open('POST', this.url);
+        req.open('POST', this.urlAdd);
 
         req.onload = function() { //event executed once the request is over
           console.log(req.status)
@@ -211,6 +221,60 @@ export function ContributeController(documentController){
         console.error("Failed!", error);
       });
     }
+  }
+
+
+  this.documentUpdate = function documentUpdate(){
+
+    this.updatedData = new FormData(document.getElementById('updateForm'));
+    var currentDoc = this.documentController.getCurrentDoc();
+
+    var id = currentDoc.metadata['id'];
+
+
+    //DEBUG
+    for (var pair of this.updatedData.entries()){
+      console.log(pair[0] + ":" + pair[1]);
+    }
+
+    //new promess
+      var newDocUpdate = new Promise((resolve, reject) => {
+
+        var req = new XMLHttpRequest();
+        req.open('POST', this.urlUpdate + "/" + id);
+
+        req.onload = function() { //event executed once the request is over
+          console.log(req.status)
+          if (req.status == 200) {
+            resolve(req.response);
+          }
+           else {
+             reject(Error(req.statusText));
+           }
+        };
+
+        req.onerror = function() {
+          reject("Network Error");
+        };
+        req.send(this.updatedData);
+      });
+
+      var self = this;
+
+      newDocUpdate.then( function(response){//resolve
+        console.log("Success!", response);
+        $("#updateForm").get(0).reset(); //clear update formular
+        self.updatedData = new FormData(); //clear data
+        self.documentController.getDocuments(); //update documents
+
+        self.documentUpdate.activateWindow(false);
+        self.documentController.documentBrowser.activateWindow(true);
+
+      },
+      function(error) { //reject
+        console.error("Failed!", error);
+      });
+
   }
 
   // request update every active frame
