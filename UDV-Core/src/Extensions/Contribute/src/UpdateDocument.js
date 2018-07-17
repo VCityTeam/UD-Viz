@@ -3,7 +3,7 @@ export function UpdateDocument(updateContainer, contributeController){
   this.contributeController = contributeController;
   this.updateContainer = updateContainer;
   this.browser = this.contributeController.documentController.documentBrowser;
-  this.data;
+  this.data; //current document data (document shown in the browser)
 
   this.schemaType = { //schema defining the update form, using Alpaca
     "type": "object",
@@ -23,9 +23,6 @@ export function UpdateDocument(updateContainer, contributeController){
     }
   };
 
-
-
-
   this.initialize = function initialize()
   {
     var docUpdateButton = document.createElement('button');
@@ -41,11 +38,12 @@ export function UpdateDocument(updateContainer, contributeController){
     document.getElementById("browserWindowTabs").appendChild(docDeleteButton);
 
     this.updateContainer.innerHTML =
-    '<br/><div id = "updateTitle"Update document metadata</div><br/>\
+    '<br/><div id = "updateTitle">You can update following information:</div><br/>\
     <br/>\
     <button id = "closeUpdate">Close</button>\
     <div class="update">\
     <div id = "updateWindow" ></div></div>\
+    <div id="docUpdatePreview"><img id="docUpdatePreviewImg"/></div>\
     <div id ="updateTabs">\
     <button id = "docUpdate">Validate</button>\
     <button id = "updateCancel">Cancel</button>\
@@ -53,6 +51,8 @@ export function UpdateDocument(updateContainer, contributeController){
     ';
 
     this.docModelToSchema();
+
+
   }
 
   this.activateWindow = function activateWindow(active){
@@ -69,7 +69,7 @@ export function UpdateDocument(updateContainer, contributeController){
     var metadata = this.contributeController.documentController.documentModel.metadata;
 
     var view = { //so that the attribute that can not be modified are also displayed
-      "displayReadonly": true
+      "displayReadonly": false
     };
 
     for (var key in metadata) {
@@ -79,13 +79,17 @@ export function UpdateDocument(updateContainer, contributeController){
       this.optionsUpdate.fields[attribute['name']]['id'] = attribute['updateID'];
       this.optionsUpdate.fields[attribute['name']]['inputType'] = attribute['type'];
       this.optionsUpdate.fields[attribute['name']]['name'] = attribute['name'];
-      this.optionsUpdate.fields[attribute['name']]['label'] = attribute['label'];
 
-      if(attribute['updatable'] == "false"){
+      if(attribute['label'] != "false"){ //add label if required
+        this.optionsUpdate.fields[attribute['name']]['label'] = attribute['label'];
+      }
+
+      if(attribute['updatable'] == "false"){ //if not updatable, displayed in "readonly"
         this.optionsUpdate.fields[attribute['name']]['readonly'] = "true";
+
       }
     }
-
+console.log(this.optionsUpdate)
     //Creating an empty form using alpaca
     //The form will be filled with current document's data by calling fillUpdateForm
     $("#updateWindow").alpaca({
@@ -95,7 +99,6 @@ export function UpdateDocument(updateContainer, contributeController){
     });
 
   }
-
 
   this.updateDoc = function updateDoc(){
 
@@ -108,10 +111,20 @@ export function UpdateDocument(updateContainer, contributeController){
     //holds the current document's data (= the one currently shown in the browser)
     this.data =  this.contributeController.documentController.getCurrentDoc().metadata;
     $("#updateForm").alpaca('get').setValue(this.data);
+    document.getElementById('docUpdatePreviewImg').src =
+                 this.contributeController.documentController.url
+               + this.contributeController.documentController.serverModel.documentsRepository
+               + this.data.link;
   }
 
   this.deleteDoc = function deleteDoc(){
 
+
+  }
+
+  this.cancelUpdate = function cancelUpdate(){
+    this.activateWindow(false);
+    this.contributeController.documentController.documentBrowser.activateWindow(true);
 
   }
 
@@ -120,6 +133,8 @@ export function UpdateDocument(updateContainer, contributeController){
   document.getElementById('docUpdateButton').addEventListener('mousedown', this.updateDoc.bind(this),false);
   document.getElementById('docDeleteButton').addEventListener('mousedown', this.deleteDoc.bind(this),false);
   document.getElementById('closeUpdate').addEventListener('mousedown', this.activateWindow.bind(this,false),false);
+
+  document.getElementById('updateCancel').addEventListener('mousedown', this.cancelUpdate.bind(this),false);
 
   document.getElementById('docUpdate').addEventListener('mousedown', this.contributeController.documentUpdate.bind(this.contributeController),false);
 
