@@ -134,7 +134,7 @@ export function ContributeController(documentController){
 
       var val = pair[0];
       if( val != "link"){ //is not file filed
-        var attr = this.documentController.documentModel.metadata[val];
+        var attr = this.documentController.documentModel.metaData[val];
         if( attr['optional'] == 'false'){//is mandatory
           if(pair[1] == ""){  //but not provided
           var id = "create_"+pair[0];

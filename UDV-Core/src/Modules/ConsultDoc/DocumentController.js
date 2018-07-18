@@ -39,7 +39,7 @@ export function DocumentController(view, controls, options = {},config)
     this.researchContainerId = "researchContainer";
     this.browserContainerId = "browserContainer";
     this.urlFilters ="";
-
+    
     /**
      * Create view container for the 3 different views
      */
