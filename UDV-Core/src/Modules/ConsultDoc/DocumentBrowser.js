@@ -28,16 +28,17 @@ export function DocumentBrowser(browserContainer, documentController) {
   this.fadeAlpha = 0;
   this.docIndex = 1;
   this.isStart = true; //dirty variable to test if we are in start mode
+  this.currentMetadata;
 
   this.browserTabID = "browserWindowTabs"; //ID of the html div holding buttons in the browser
                                           //will be used by other classes as well to add extra buttons
 
 
   // doc fade-in animation duration, in milliseconds
- this.fadeDuration = this.documentController.options.docFadeDuration || 2750;
+  this.fadeDuration = this.documentController.options.docFadeDuration || 2750;
 
 
- browserContainer.innerHTML =
+  browserContainer.innerHTML =
       '<div id="docBrowserWindow">\
         <button id="closeBrowserWindow" type=button>Close</button><br/>\
           <div id="docHead">Document Navigator</div><br>\
@@ -187,22 +188,23 @@ export function DocumentBrowser(browserContainer, documentController) {
     this.updateBrowser = function updateBrowser(){
       //update currentDoc with current doc info
       this.currentDoc = this.documentController.getCurrentDoc();
-
+      this.currentMetadata = this.currentDoc.metaData;
       if (this.currentDoc != null & this.documentsExist == true)
       {
         var txt="";
         txt += "<div id ='docMetadata'>";
         var metadata = this.documentController.documentModel.metaData;
+
         for (var key in metadata) {
           var attribute = metadata[key]; //holds all metadata relative information
           if(attribute['displayable'] == "true"){
             if(attribute['label']!="false"){ //dynamic building of the HTML browser
               txt +="<div id=" + attribute['displayID'] + ">" +attribute['label']
-                    + ":" + this.currentDoc.metaData[attribute['name']] + "</div>";
+                    + ":" + this.currentMetadata[attribute['name']] + "</div>";
             }
             else{
               txt +="<div id=" + attribute['displayID'] + ">" +
-                        this.currentDoc.metaData[attribute['name']] + "</div>";
+                        this.currentMetadata[attribute['name']] + "</div>";
             }
           }
         }
@@ -210,7 +212,7 @@ export function DocumentBrowser(browserContainer, documentController) {
         document.getElementById("docBrowserInfo").innerHTML = txt;
         document.getElementById('docBrowserPreviewImg').src = this.documentController.url
                    + this.documentController.serverModel.documentsRepository
-                   + this.currentDoc.metaData.link;
+                   + this.currentMetadata.link;
         document.getElementById('docBrowserIndex').innerHTML = "Document: "
           + this.docIndex + " out of " + this.documentController.setOfDocuments.length;
       }
@@ -236,10 +238,10 @@ export function DocumentBrowser(browserContainer, documentController) {
       document.getElementById('docFull').style.display = "block";
       document.getElementById('docFullImg').src = this.documentController.url
                           + this.documentController.serverModel.documentsRepository
-                          + this.currentDoc.metaData.link;
+                          + this.currentMetadata.link;
       document.getElementById('docBrowserPreviewImg').src = this.documentController.url
                         + this.documentController.serverModel.documentsRepository
-                        + this.currentDoc.metaData.link;
+                        + this.currentMetadata.link;
       document.getElementById('docFullImg').style.opacity = 50;
       document.getElementById('docOpaSlider').value = 0;
       document.querySelector('#docOpacity').value = 50;
@@ -266,7 +268,7 @@ export function DocumentBrowser(browserContainer, documentController) {
 
         // adjust the current date if we use temporal
         if(this.documentController.temporal){
-          var docDate = new moment(this.currentDoc.metaData.refDate);
+          var docDate = new moment(this.currentMetadata.refDate);
           this.documentController.temporal.changeTime(docDate);
         }
 

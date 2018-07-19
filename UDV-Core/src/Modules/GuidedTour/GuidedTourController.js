@@ -1,5 +1,6 @@
 import { readCSVFile } from '../../Tools/CSVLoader.js';
-import './GuidedTour.css'
+import './GuidedTour.css';
+import { GuidedTour }   from './GuidedTour.js';
 
 /**
 * Classes: GuidedTourController & TourStep
@@ -26,54 +27,19 @@ import './GuidedTour.css'
 //=============================================================================
 export function GuidedTourController(documentController) {
 
-    // update the html with elements for this class (windows, buttons etc)
-    var tourDiv = document.createElement("div");
-    tourDiv.id = 'guidedtour';
-    document.body.appendChild(tourDiv);
-    document.getElementById("guidedtour").innerHTML = '\
-    <button id="guidedTourTab">VISITE</button>\
-    <div id="guidedTourWindow">\
-    <div id="guidedTourTitle"></div>\
-    <div id="guidedTourStepTitle"></div>\
-    <div id="guidedTourText1"></div>\
-    <div id="guidedTourDocPreview"><img id="guidedTourDocPreviewImg"/></div>\
-    <button id="guidedTourNextStepButton" type=button>⇨</button>\
-    <button id="guidedTourNextTourButton" type=button>⇨</button>\
-    <button id="guidedTourPreviousStepButton" type=button>⇦</button>\
-    <button id="guidedTourPreviousTourButton" type=button>⇦</button>\
-    <button id="guidedTourExitButton" type=button>SORTIE</button>\
-    <button id="guidedTourStartButton" type=button>START</button>\
-    </div>\
-    ';
-
-    //update browser window
-
+    this.guidedTourContainerId = "guidedTourContainer";
     // DocumentHandler instance, required
     this.docs;
 
     this.url; //= url get guided tour
 
-    this.guidedTour; //holds tour steps
+    this.guidedTour; //holds tour steps will be loaded by clicking on start
 
     this.documentController = documentController;
 
     this.browser = this.documentController.documentBrowser;
 
-    var guidedTourText2 = document.createElement('div');
-    guidedTourText2.id = 'guidedTourText2';
-    document.getElementById('docBrowserWindow').appendChild(guidedTourText2);
-
-    document.getElementById('guidedTourText2').innerHTML = "on remplira ici la description";
-    document.getElementById('guidedTourText2').style.display = "block";
-/*
-    var req = new XMLHttpRequest();
-    req.open("POST", this.url ,false);
-    req.send();
-    this.guidedTour = JSON.parse(req.responseText);
-    console.log(this.guidedTour);
-
-    this.setOfDocuments = this.guidedTour*/
-
+    this.stepIndex = 0; //step index of the current guidedtour
 
     // TemporalController instance, optional
     this.temporal = this.documentController.options.temporal;
@@ -85,69 +51,30 @@ export function GuidedTourController(documentController) {
     this.currentStepIndex = 0;
 
     // Array of all the guided tours loaded from the csv file
-    this.tours = [];
+    this.tours = []; //not good. We don't need to load every guided tour at the beginning.
+                      //maybe just if we go to "next tour" or if we choose the guided tour in a list, by it's name for example
 
     // the current tour index
-    this.currentTourIndex = 0;
+    this.currentTourIndex = 0; //useful if we load all guided tours
 
     // index of the tour accessible by the user (loaded by default)
     // as of now, there is no way to choose a specific tour at runtime
     const startingTourIndex = 0;
-
-    // path to the csv file holding the guided tour data
-    //const CSVdataFile = dataFile;
-    //console.log(CSVdataFile)
-
-    // boolean to control the state of the guided tour window (open/closed)
-    this.guidedTourWindowIsActive = false;
 
     // for the demo : if this is true, hide the buttons for changing tour
     //this.preventUserFromChangingTour = options.preventUserFromChangingTour || false;
 
 
     /**
-    * initialize the controller using data from the csv file
-    * this function is called after the completion of readCSVFile() in this.loadDataFromFile()
-    * @param tourDataFromFile : contains the data loaded from the file
+    * initialize the controller
     */
     //=============================================================================
     this.initialize = function initialize(){
 
-        // parse the data
-        for (var i=0; i<this.guidedTour.length; i++) {
-
-            // data of line (i) : each line is a tourstep
-            // step 0 of each tour is the intro
-            var stepData = tourDataFromFile[i];
-
-            // index of the tour (must be ordered in the file, 0 then 1 then 2...)
-            var tourIndex = parseFloat(stepData[0]);
-
-            // index of the document for this step
-            var docIndex = parseFloat(stepData[1]);
-
-            // step title
-            var stepTitle = stepData[2];
-
-            // text for this step (displayed in the guided tour window)
-            var text1 = stepData[3].toString();
-
-            // document text (context) for this step (displayed in doc browser window)
-            var text2 = stepData[4].toString();
-
-            // if this step belongs to a new tour, we add a new array in this.tours
-            if(this.tours.length===tourIndex){
-                this.tours.push([]);
-            }
-
-            // add the tourstep to the tour
-            this.tours[tourIndex].push(new TourStep(this.docs.AllDocuments[docIndex],stepTitle,text1,text2));
-
-        }
-
-        // select the tour which will be accessible from the guided tour window
-        this.selectTour(startingTourIndex);
-
+      var guidedTourContainer = document.createElement("div");
+      guidedTourContainer.id =   this.guidedTourContainerId;
+      document.body.appendChild(guidedTourContainer);
+      this.guidedTourContainer = new GuidedTour(guidedTourContainer, this);
     }
 
     // loads the steps from the chosen tour
@@ -189,68 +116,6 @@ export function GuidedTourController(documentController) {
         document.getElementById("guidedTourStepTitle").innerHTML = null;
 
     }
-
-    // Actual start of a guided tour, will modify behavior of other controllers
-    //=============================================================================
-    this.startGuidedTour = function startGuidedTour(){
-
-        // setup the display (hide & show elements)
-        document.getElementById("guidedTourPreviousTourButton").style.display = "none";
-        document.getElementById("guidedTourNextTourButton").style.display = "none";
-        document.getElementById("guidedTourPreviousStepButton").style.display = "block";
-        document.getElementById("guidedTourNextStepButton").style.display = "block";
-        document.getElementById("guidedTourExitButton").style.display = "block";
-        document.getElementById("guidedTourText2").style.display = "inline-block";
-        document.getElementById("guidedTourStartButton").style.display = "none";
-        document.getElementById("guidedTourDocPreviewImg").style.display = "none";
-
-        // bigger text block
-        document.getElementById("guidedTourText1").style.height = "60%";
-
-        documents.hideBillboards(true);
-
-        // modify temporal
-        if(this.temporal){
-            // open window if closed
-            if(!this.temporal.temporalWindowIsActive){
-                this.temporal.activateWindow();
-            }
-            // hide concurrent view button
-            document.getElementById("timeConcurrentView").style.display = "none";
-        }
-
-        // open doc window and hide some buttons
-        if(!this.docs.docBrowserWindowIsActive){
-            this.docs.docBrowserWindowIsActive = true;
-            document.getElementById('docBrowserWindow').style.display = "block";
-        }
-        document.getElementById('docBrowserPreviousButton').style.display = "none";
-        document.getElementById('docBrowserNextButton').style.display = "none";
-        document.getElementById('docBrowserIndex').style.display = "none";
-
-        this.currentStepIndex = 0; //index will become 1 in goToNextStep()
-
-        this.goToNextStep();
-    };
-
-    // resume normal behavior
-    //=============================================================================
-    this.exitGuidedTour = function exitGuidedTour(){
-
-        this.selectTour(0);
-        this.docs.showBillboards(false);
-        this.docs.closeDocFull();
-
-        if(this.temporal){
-            // show concurrent view button
-            document.getElementById("timeConcurrentView").style.display = "block";
-        }
-
-        // show the regular buttons for doc window
-        document.getElementById('docBrowserPreviousButton').style.display = "block";
-        document.getElementById('docBrowserNextButton').style.display = "block";
-        document.getElementById('docBrowserIndex').style.display = "block";
-    };
 
     //=============================================================================
     this.goToNextStep = function goToNextStep(){
@@ -311,41 +176,41 @@ export function GuidedTourController(documentController) {
 
     };
 
-    // hide or show the guided tour window
+    /**
+     * Returns the current tour step
+     */
     //=============================================================================
-    this.toggleGuidedTourWindow = function toggleGuidedTourWindow(){
-
-        document.getElementById('guidedTourWindow').style.display = this.guidedTourWindowIsActive ? "none" : "block";
-        this.guidedTourWindowIsActive = this.guidedTourWindowIsActive ? false : true;
-
-        if(!this.guidedTourWindowIsActive){
-            this.exitGuidedTour();
+    this.getCurrentTourStep = function getCurrentTourStep()
+    {
+        if (this.guidedTour.length != 0)
+            return this.guidedTour[this.stepIndex];
+        else
+        {
+            return null;
         }
+    }
 
+    this.getPreviousStep = function getPreviousStep(){
 
     }
 
-    // will be called after the DocumentsHandler has been initialized
-    //=============================================================================
-    this.loadDataFromFile = function loadDataFromFile(){
-
-        // read the data and loads it in an object given as parameter to this.initialize
-        readCSVFile(CSVdataFile, this.initialize.bind(this));
-
+    this.getNextStep = function getNextStep(){
+      if (this.stepIndex < this.guidedTour.length - 1 || this.guidedTour.length == 0)
+          this.stepIndex ++;
+      return this.getCurrentTourStep();
     }
 
-    // event listeners (buttons)
-    document.getElementById("guidedTourNextTourButton").addEventListener('mousedown', this.goToNextTour.bind(this),false);
-    document.getElementById("guidedTourPreviousTourButton").addEventListener('mousedown', this.goToPreviousTour.bind(this),false);
-    document.getElementById("guidedTourStartButton").addEventListener('mousedown', this.startGuidedTour.bind(this),false);
-    document.getElementById("guidedTourNextStepButton").addEventListener('mousedown', this.goToNextStep.bind(this),false);
-    document.getElementById("guidedTourPreviousStepButton").addEventListener('mousedown', this.goToPreviousStep.bind(this),false);
-    document.getElementById("guidedTourExitButton").addEventListener('mousedown', this.exitGuidedTour.bind(this),false);
-    document.getElementById("guidedTourTab").addEventListener('mousedown', this.toggleGuidedTourWindow.bind(this), false);
+    this.loadGuidedTour = function loadGuidedTour(id){
+      /*
+      var req = new XMLHttpRequest();
+      req.open("POST", this.url + '/' + id ,false);
+      req.send();
+      this.guidedTour = JSON.parse(req.responseText);
+      */
+      //console.log(this.guidedTour);
+    }
 
-    // event listener to trigger loadDataFromFile after DocumentsHandler has been initialized
-    window.addEventListener('docInit', this.loadDataFromFile.bind(this), false);
-
+    this.initialize();
 
 }
 /**
