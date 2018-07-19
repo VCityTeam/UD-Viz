@@ -188,6 +188,7 @@ export function DocumentBrowser(browserContainer, documentController) {
     this.updateBrowser = function updateBrowser(){
       //update currentDoc with current doc info
       this.currentDoc = this.documentController.getCurrentDoc();
+      console.log(this.currentDoc)
       this.currentMetadata = this.currentDoc.metadata;
       if (this.currentDoc != null & this.documentsExist == true)
       {
