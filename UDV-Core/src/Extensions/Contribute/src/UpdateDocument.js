@@ -80,7 +80,7 @@ export function UpdateDocument(updateContainer, contributeController){
 
   this.docModelToSchema = function docModelToSchema(){
 
-    var metadata = this.contributeController.documentController.documentModel.metadata;
+    var metadata = this.contributeController.documentController.documentModel.metaData;
 
     var view = { //so that the attribute that can not be modified are also displayed
       "displayReadonly": false
@@ -123,7 +123,7 @@ console.log(this.optionsUpdate)
 
   this.fillUpdateForm = function fillUpdateForm(){
     //holds the current document's data (= the one currently shown in the browser)
-    this.data =  this.contributeController.documentController.getCurrentDoc().metadata;
+    this.data =  this.contributeController.documentController.getCurrentDoc().metaData;
     $("#updateForm").alpaca('get').setValue(this.data);
     document.getElementById('docUpdatePreviewImg').src =
                  this.contributeController.documentController.url
@@ -151,6 +151,6 @@ console.log(this.optionsUpdate)
   document.getElementById('updateCancel').addEventListener('mousedown', this.cancelUpdate.bind(this),false);
 
   document.getElementById('docUpdate').addEventListener('mousedown', this.contributeController.documentUpdate.bind(this.contributeController),false);
-  document.getElementById('docDeleteButton').addEventListener('mousedown', this.contributeController.documentDelete.bind(this.contributeController),false);  
+  document.getElementById('docDeleteButton').addEventListener('mousedown', this.contributeController.documentDelete.bind(this.contributeController),false);
 
 }

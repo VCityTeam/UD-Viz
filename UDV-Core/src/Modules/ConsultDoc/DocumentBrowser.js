@@ -187,22 +187,22 @@ export function DocumentBrowser(browserContainer, documentController) {
     this.updateBrowser = function updateBrowser(){
       //update currentDoc with current doc info
       this.currentDoc = this.documentController.getCurrentDoc();
+
       if (this.currentDoc != null & this.documentsExist == true)
       {
         var txt="";
         txt += "<div id ='docMetadata'>";
-        var metadata = this.documentController.documentModel.metadata;
-
+        var metadata = this.documentController.documentModel.metaData;
         for (var key in metadata) {
           var attribute = metadata[key]; //holds all metadata relative information
           if(attribute['displayable'] == "true"){
             if(attribute['label']!="false"){ //dynamic building of the HTML browser
               txt +="<div id=" + attribute['displayID'] + ">" +attribute['label']
-                    + ":" + this.currentDoc.metadata[attribute['name']] + "</div>";
+                    + ":" + this.currentDoc.metaData[attribute['name']] + "</div>";
             }
             else{
               txt +="<div id=" + attribute['displayID'] + ">" +
-                        this.currentDoc.metadata[attribute['name']] + "</div>";
+                        this.currentDoc.metaData[attribute['name']] + "</div>";
             }
           }
         }
@@ -210,7 +210,7 @@ export function DocumentBrowser(browserContainer, documentController) {
         document.getElementById("docBrowserInfo").innerHTML = txt;
         document.getElementById('docBrowserPreviewImg').src = this.documentController.url
                    + this.documentController.serverModel.documentsRepository
-                   + this.currentDoc.metadata.link;
+                   + this.currentDoc.metaData.link;
         document.getElementById('docBrowserIndex').innerHTML = "Document: "
           + this.docIndex + " out of " + this.documentController.setOfDocuments.length;
       }
@@ -236,10 +236,10 @@ export function DocumentBrowser(browserContainer, documentController) {
       document.getElementById('docFull').style.display = "block";
       document.getElementById('docFullImg').src = this.documentController.url
                           + this.documentController.serverModel.documentsRepository
-                          + this.currentDoc.metadata.link;
+                          + this.currentDoc.metaData.link;
       document.getElementById('docBrowserPreviewImg').src = this.documentController.url
                         + this.documentController.serverModel.documentsRepository
-                        + this.currentDoc.metadata.link;
+                        + this.currentDoc.metaData.link;
       document.getElementById('docFullImg').style.opacity = 50;
       document.getElementById('docOpaSlider').value = 0;
       document.querySelector('#docOpacity').value = 50;
@@ -266,7 +266,7 @@ export function DocumentBrowser(browserContainer, documentController) {
 
         // adjust the current date if we use temporal
         if(this.documentController.temporal){
-          var docDate = new moment(this.currentDoc.metadata.refDate);
+          var docDate = new moment(this.currentDoc.metaData.refDate);
           this.documentController.temporal.changeTime(docDate);
         }
 

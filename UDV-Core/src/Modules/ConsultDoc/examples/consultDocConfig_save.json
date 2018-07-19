@@ -1,23 +1,22 @@
 {
     "type": "class",
     "server":{
-      "url":" http://127.0.0.1:5000/",
-      "documentsRepository":"documents_repository/",
-      "getAll": "getDocuments?",
-      "add":"addDocument",
-      "delete":"deleteDocument",
-      "update":"editDocument"
+      "url":"http://rict.liris.cnrs.fr/APIVilo3D/APIExtendedDocument/web/",
+      "documentsRepository":"documentsDirectory/",
+      "getAll": "app_dev.php/getDocuments?",
+      "add":"app_dev.php/addDocument",
+      "delete":"",
+      "update":""
     },
     "properties": {
-      "metaData":{
+      "metadata":{
         "title": {
           "name":"title",
           "type": "string",
           "optional": "false",
           "creationID":"create_title",
-          "labelCreation":"Title of the document",
+          "labelCreation":"Title of the document :",
           "updatable":"false",
-          "updateID":"update_title",
           "displayable":"true",
           "displayID":"title",
           "label":"false",
@@ -29,7 +28,7 @@
           "type": "string",
           "optional": "false",
           "creationID":"create_description",
-          "labelCreation":"Description",
+          "labelCreation":"Description :",
           "displayable":"true",
           "displayID":"description",
           "label":"Description",
@@ -44,13 +43,13 @@
           "type":"date",
           "optional":"false",
           "creationID":"create_refDate",
-          "labelCreation":"Date of referrence",
+          "labelCreation":"Date of referrence: ",
           "displayable":"true",
           "displayID":"refDate",
           "label":"Referring date",
           "updatable":"true",
           "updateID":"update_refDate",
-          "labelUpdate":"Date of referrence",
+          "labelUpdate":"Date of referrence: ",
           "queryable":"true",
           "labelQuery":"referring date"
         },
@@ -59,28 +58,27 @@
           "type":"date",
           "optional":"false",
           "creationID":"create_publicationDate",
-          "labelCreation":"Date of publication",
+          "labelCreation":"Date of publication: ",
           "displayable":"true",
           "displayID":"publicationDate",
           "label":"Publication date",
           "updatable":"true",
           "updateID":"update_publicationDate",
-          "labelUpdate":"Date of publication",
-         "queryable":"true",
+          "labelUpdate":"Date of publication: ",
+          "queryable":"true",
           "labelQuery":"publication date"
         },
         "type":{
           "name":"type",
           "type":"enum",
-          "enum":["Picture", "Drawing", "Map", "Letter"],
+          "enum":["Drawing", "Map", "Letter"],
           "optional":"false",
           "creationID":"create_type",
-          "labelCreation":"Type",
+          "labelCreation":"Type: ",
           "displayable":"true",
           "displayID":"type",
           "label":"Type",
           "updatable":"false",
-          "updateID":"update_type",
           "queryable":"true",
           "queryID":"query_type",
           "labelQuery":"Type: "
@@ -91,12 +89,11 @@
           "enum":["Subject1", "Subject2", "Subject3"],
           "optional":"false",
           "creationID":"create_subject",
-          "labelCreation":"Subject",
+          "labelCreation":"Subject: ",
           "displayable":"true",
           "displayID":"subject",
           "label":"Subject",
           "updatable":"false",
-          "updateID":"update_subject",
           "queryable":"true",
           "queryID":"query_subject",
           "labelQuery":"Subject: "
@@ -111,46 +108,6 @@
         "positionY":{
           "type":"double",
           "optional":"false",
-          "displayable":"false"
-        },
-        "positionZ":{
-          "type":"double",
-          "optional":"false",
-          "displayable":"false"
-        },
-        "quaternionX":{
-          "type":"double",
-          "optional":"false",
-          "displayable":"false"
-        },
-        "quaternionY":{
-          "type":"double",
-          "optional":"false",
-          "displayable":"false"
-        },
-        "quaternionZ":{
-          "type":"double",
-          "optional":"false",
-          "displayable":"false"
-        },
-        "quaternionW":{
-          "type":"double",
-          "optional":"false",
-          "displayable":"false"
-        },
-        "billboardX":{
-          "type":"double",
-          "optional":"true",
-          "displayable":"false"
-        },
-        "billboardX":{
-          "type":"double",
-          "optional":"true",
-          "displayable":"false"
-        },
-        "billboardZ":{
-          "type":"double",
-          "optional":"true",
           "displayable":"false"
         }
       }

@@ -152,6 +152,14 @@ browserOption.onFinishChange(function(value){
   controller.documentBrowser.refresh();
 });
 
+var billboardsOption = documentFolder.add( controller.documentBillboard, 'windowIsActive'
+                                          ).name("Billboards").listen();
+billboardsOption.onFinishChange(function(value){
+  controller.documentBillboard.activateBillboards();
+});
+
+
+
 datDotGUI.close();     // By default the dat.GUI controls are rolled up
 
 // FIXME instanciate guided tour controller

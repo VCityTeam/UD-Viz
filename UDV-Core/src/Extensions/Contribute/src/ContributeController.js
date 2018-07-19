@@ -135,7 +135,7 @@ export function ContributeController(documentController){
 
       var val = pair[0];
       if( val != "link"){ //is not file filed
-        var attr = this.documentController.documentModel.metadata[val];
+        var attr = this.documentController.documentModel.metaData[val];
         if( attr['optional'] == 'false'){//is mandatory
           if(pair[1] == ""){  //but not provided
           var id = "create_"+pair[0];
@@ -232,7 +232,7 @@ export function ContributeController(documentController){
 
     //get current doc data and id
     var currentDoc = this.documentController.getCurrentDoc();
-    var id = currentDoc.metadata['id'];
+    var id = currentDoc.metaData['id'];
 
     // //DEBUG
     // for (var pair of this.updatedData.entries()){
@@ -285,7 +285,7 @@ export function ContributeController(documentController){
     if(confirm('Delete this document permanently?')){
       //get current doc data and id
       var currentDoc = this.documentController.getCurrentDoc();
-      var id = currentDoc.metadata['id'];
+      var id = currentDoc.metaData['id'];
 
       console.log("deletion");
 
@@ -294,7 +294,7 @@ export function ContributeController(documentController){
       var docDelete = new Promise((resolve, reject) => {
 
         var req = new XMLHttpRequest();
-        req.open('POST', this.urlDelete + "/" + id);
+        req.open('GET', this.urlDelete + "/" + id);
 
         req.onload = function() { //event executed once the request is over
           console.log(req.status)

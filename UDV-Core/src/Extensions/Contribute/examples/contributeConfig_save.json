@@ -1,15 +1,15 @@
 {
     "type": "class",
     "server":{
-      "url":" http://127.0.0.1:5000/",
-      "documentsRepository":"documents_repository/",
-      "getAll": "getDocuments?",
-      "add":"addDocument",
-      "delete":"deleteDocument",
-      "update":"editDocument"
+      "url":"http://rict.liris.cnrs.fr/APIVilo3D/APIExtendedDocument/web/",
+      "documentsRepository":"documentsDirectory/",
+      "getAll": "app_dev.php/getDocuments?",
+      "add":"app_dev.php/addDocument",
+      "delete":"app_dev.php/deleteDocument",
+      "update":"app_dev.php/editDocument"
     },
     "properties": {
-      "metaData":{
+      "metadata":{
         "title": {
           "name":"title",
           "type": "string",
