@@ -24,7 +24,7 @@ import './GuidedTour.css'
 * @param options : optional parameters (including temporal)
 */
 //=============================================================================
-export function GuidedTourController(docHandler, dataFile, options={}) {
+export function GuidedTourController(documentController) {
 
     // update the html with elements for this class (windows, buttons etc)
     var tourDiv = document.createElement("div");
@@ -46,11 +46,37 @@ export function GuidedTourController(docHandler, dataFile, options={}) {
     </div>\
     ';
 
+    //update browser window
+
     // DocumentHandler instance, required
-    this.docs = docHandler;
+    this.docs;
+
+    this.url; //= url get guided tour
+
+    this.guidedTour; //holds tour steps
+
+    this.documentController = documentController;
+
+    this.browser = this.documentController.documentBrowser;
+
+    var guidedTourText2 = document.createElement('div');
+    guidedTourText2.id = 'guidedTourText2';
+    document.getElementById('docBrowserWindow').appendChild(guidedTourText2);
+
+    document.getElementById('guidedTourText2').innerHTML = "on remplira ici la description";
+    document.getElementById('guidedTourText2').style.display = "block";
+/*
+    var req = new XMLHttpRequest();
+    req.open("POST", this.url ,false);
+    req.send();
+    this.guidedTour = JSON.parse(req.responseText);
+    console.log(this.guidedTour);
+
+    this.setOfDocuments = this.guidedTour*/
+
 
     // TemporalController instance, optional
-    this.temporal = options.temporal;
+    this.temporal = this.documentController.options.temporal;
 
     // The tour steps of the currently active guided tour
     this.tourStepsCurrent = null;
@@ -69,13 +95,14 @@ export function GuidedTourController(docHandler, dataFile, options={}) {
     const startingTourIndex = 0;
 
     // path to the csv file holding the guided tour data
-    const CSVdataFile = dataFile;
+    //const CSVdataFile = dataFile;
+    //console.log(CSVdataFile)
 
     // boolean to control the state of the guided tour window (open/closed)
     this.guidedTourWindowIsActive = false;
 
     // for the demo : if this is true, hide the buttons for changing tour
-    this.preventUserFromChangingTour = options.preventUserFromChangingTour || false;
+    //this.preventUserFromChangingTour = options.preventUserFromChangingTour || false;
 
 
     /**
@@ -84,10 +111,10 @@ export function GuidedTourController(docHandler, dataFile, options={}) {
     * @param tourDataFromFile : contains the data loaded from the file
     */
     //=============================================================================
-    this.initialize = function initialize(tourDataFromFile){
+    this.initialize = function initialize(){
 
         // parse the data
-        for (var i=0; i<tourDataFromFile.length; i++) {
+        for (var i=0; i<this.guidedTour.length; i++) {
 
             // data of line (i) : each line is a tourstep
             // step 0 of each tour is the intro
