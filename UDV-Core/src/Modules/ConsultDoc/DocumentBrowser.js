@@ -35,10 +35,10 @@ export function DocumentBrowser(browserContainer, documentController) {
 
 
   // doc fade-in animation duration, in milliseconds
- this.fadeDuration = this.documentController.options.docFadeDuration || 2750;
+  this.fadeDuration = this.documentController.options.docFadeDuration || 2750;
 
 
- browserContainer.innerHTML =
+  browserContainer.innerHTML =
       '<div id="docBrowserWindow">\
         <button id="closeBrowserWindow" type=button>Close</button><br/>\
           <div id="docHead">Document Navigator</div><br>\
@@ -188,10 +188,10 @@ export function DocumentBrowser(browserContainer, documentController) {
     this.updateBrowser = function updateBrowser(){
       //update currentDoc with current doc info
       this.currentDoc = this.documentController.getCurrentDoc();
-      console.log(this.currentDoc)
-      this.currentMetadata = this.currentDoc.metadata;
+
       if (this.currentDoc != null & this.documentsExist == true)
       {
+        this.currentMetadata = this.currentDoc.metadata;
         var txt="";
         txt += "<div id ='docMetadata'>";
         var metadata = this.documentController.documentModel.metaData;
