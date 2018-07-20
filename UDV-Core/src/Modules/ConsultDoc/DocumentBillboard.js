@@ -59,7 +59,8 @@ export function DocumentBillboard(documentController)
 
     var object, material;
     var objGeometry = new THREE.PlaneGeometry(12,10);
-    var texture = new THREE.TextureLoader().load(this.documentController.url + this.documentController.folder +  doc.metaData.link);
+    console.log(doc.metadata.link)
+    var texture = new THREE.TextureLoader().load(this.documentController.url + this.documentController.serverModel.documentsRepository + '/'+   doc.metadata.link);
     material = new THREE.MeshBasicMaterial( { map: texture, side: THREE.DoubleSide } );
     object = new THREE.Mesh(objGeometry.clone(), material);
     this.billboards.push(object);
@@ -79,6 +80,7 @@ export function DocumentBillboard(documentController)
 
     this.documentController.setOfDocuments.forEach((document) => {
       this.createBillboard(document);
+      console.log(document)
     });
   }
 

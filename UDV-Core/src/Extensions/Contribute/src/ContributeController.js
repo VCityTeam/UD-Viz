@@ -135,7 +135,7 @@ export function ContributeController(documentController){
 
       var val = pair[0];
       if( val != "link"){ //is not file filed
-        var attr = this.documentController.documentModel.metaData[val];
+        var attr = this.documentController.documentModel.metadata[val];
         if( attr['optional'] == 'false'){//is mandatory
           if(pair[1] == ""){  //but not provided
           var id = "create_"+pair[0];
@@ -232,7 +232,7 @@ export function ContributeController(documentController){
 
     //get current doc data and id
     var currentDoc = this.documentController.getCurrentDoc();
-    var id = currentDoc.metaData['id'];
+    var id = currentDoc.metadata['id'];
 
     // //DEBUG
     // for (var pair of this.updatedData.entries()){
@@ -285,19 +285,13 @@ export function ContributeController(documentController){
     if(confirm('Delete this document permanently?')){
       //get current doc data and id
       var currentDoc = this.documentController.getCurrentDoc();
-      var id = currentDoc.metaData['id'];
-
-      console.log("deletion");
-
-      console.log(this.urlDelete + "/" + id);
-
+      var id = currentDoc.metadata['id'];
       var docDelete = new Promise((resolve, reject) => {
 
         var req = new XMLHttpRequest();
-        req.open('GET', this.urlDelete + "/" + id);
+        req.open('POST', this.urlDelete + "/" + id);
 
         req.onload = function() { //event executed once the request is over
-          console.log(req.status)
           if (req.status == 200) {
             resolve(req.response);
           }
@@ -315,12 +309,12 @@ export function ContributeController(documentController){
       var self = this;
 
       docDelete.then( function(response){//resolve
-        console.log("Success!", response);
         alert("The document has been deleted successfully");
 
         self.documentController.getDocuments(); //update documents
-        //self.documentController.documentBrowser.updateBrowser(); //update browser
-      //  self.documentController.documentBrowser.resetResearch(false);
+        self.documentController.docIndex = 0;//return to first doc
+        self.documentController.documentBrowser.docIndex = 1; //reset index in browser
+        self.documentController.documentBrowser.update();
       },
       function(error) { //reject
         console.error("Failed!", error);
@@ -331,14 +325,6 @@ export function ContributeController(documentController){
     else {
       alert('The document was not deleted');
     }
-
-
-
-
-
-
-
-
   }
 
   // request update every active frame

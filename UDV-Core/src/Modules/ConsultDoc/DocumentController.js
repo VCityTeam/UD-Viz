@@ -37,8 +37,6 @@ export function DocumentController(view, controls, options = {},config)
 
     this.url = this.serverModel.url;
 
-    this.folder = this.serverModel.documentsRepository;
-
     this.researchContainerId = "researchContainer";
     this.browserContainerId = "browserContainer";
     this.urlFilters ="";
@@ -60,7 +58,7 @@ export function DocumentController(view, controls, options = {},config)
         document.body.appendChild(browserContainer);
         this.documentBrowser = new DocumentBrowser(browserContainer, this);
 
-        this.documentBillboard = new DocumentBillboard(this); //in process
+        //this.documentBillboard = new DocumentBillboard(this); //in process
     }
 
     /**
@@ -93,7 +91,6 @@ export function DocumentController(view, controls, options = {},config)
       req.open("POST", urlFilters,false);
       req.send();
       this.setOfDocuments = JSON.parse(req.responseText);
-      console.log(this.setOfDocuments);
     }
 
     /**

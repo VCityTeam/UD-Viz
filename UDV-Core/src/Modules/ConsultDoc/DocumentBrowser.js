@@ -35,10 +35,10 @@ export function DocumentBrowser(browserContainer, documentController) {
 
 
   // doc fade-in animation duration, in milliseconds
-  this.fadeDuration = this.documentController.options.docFadeDuration || 2750;
+ this.fadeDuration = this.documentController.options.docFadeDuration || 2750;
 
 
-  browserContainer.innerHTML =
+ browserContainer.innerHTML =
       '<div id="docBrowserWindow">\
         <button id="closeBrowserWindow" type=button>Close</button><br/>\
           <div id="docHead">Document Navigator</div><br>\
@@ -188,12 +188,13 @@ export function DocumentBrowser(browserContainer, documentController) {
     this.updateBrowser = function updateBrowser(){
       //update currentDoc with current doc info
       this.currentDoc = this.documentController.getCurrentDoc();
-      this.currentMetadata = this.currentDoc.metaData;
+
       if (this.currentDoc != null & this.documentsExist == true)
       {
+        this.currentMetadata = this.currentDoc.metadata;
         var txt="";
         txt += "<div id ='docMetadata'>";
-        var metadata = this.documentController.documentModel.metaData;
+        var metadata = this.documentController.documentModel.metadata;
 
         for (var key in metadata) {
           var attribute = metadata[key]; //holds all metadata relative information
@@ -268,7 +269,7 @@ export function DocumentBrowser(browserContainer, documentController) {
 
         // adjust the current date if we use temporal
         if(this.documentController.temporal){
-          var docDate = new moment(this.currentMetadata.refDate);
+          var docDate = new moment(this.currentDoc.metadata.refDate);
           this.documentController.temporal.changeTime(docDate);
         }
 

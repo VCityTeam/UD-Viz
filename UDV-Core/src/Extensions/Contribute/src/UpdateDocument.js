@@ -80,7 +80,7 @@ export function UpdateDocument(updateContainer, contributeController){
 
   this.docModelToSchema = function docModelToSchema(){
 
-    var metadata = this.contributeController.documentController.documentModel.metaData;
+    var metadata = this.contributeController.documentController.documentModel.metadata;
 
     var view = { //so that the attribute that can not be modified are also displayed
       "displayReadonly": false
@@ -103,7 +103,6 @@ export function UpdateDocument(updateContainer, contributeController){
 
       }
     }
-console.log(this.optionsUpdate)
     //Creating an empty form using alpaca
     //The form will be filled with current document's data by calling fillUpdateForm
     $("#updateWindow").alpaca({
@@ -123,7 +122,7 @@ console.log(this.optionsUpdate)
 
   this.fillUpdateForm = function fillUpdateForm(){
     //holds the current document's data (= the one currently shown in the browser)
-    this.data =  this.contributeController.documentController.getCurrentDoc().metaData;
+    this.data =  this.contributeController.documentController.getCurrentDoc().metadata;
     $("#updateForm").alpaca('get').setValue(this.data);
     document.getElementById('docUpdatePreviewImg').src =
                  this.contributeController.documentController.url
