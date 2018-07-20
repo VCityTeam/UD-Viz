@@ -9,7 +9,7 @@
       "update":"app_dev.php/editDocument"
     },
     "properties": {
-      "metadata":{
+      "metaData":{
         "title": {
           "name":"title",
           "type": "string",

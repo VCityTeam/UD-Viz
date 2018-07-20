@@ -1,7 +1,20 @@
+/**
+ * Class: ContributeController
+ * Description :
+ * The ContributeControler is an object handling the document related views
+ *
+ */
+
 import { CreateDocument }  from './CreateDocument.js';
 import { UpdateDocument }   from './UpdateDocument.js';
 import "./Contribute.css";
 import { MAIN_LOOP_EVENTS } from 'itowns';
+
+/**
+ *
+ * @constructor
+ * @param { documentController } documentController
+ */
 
 export function ContributeController(documentController){
 
@@ -56,12 +69,12 @@ export function ContributeController(documentController){
     var quaternion = cam.quaternion;
 
     this.visuData.append("positionX", position.x);
-    this.visuData.append('positionY', cam.position.y);
-    this.visuData.append('positionZ', cam.position.z);
-    this.visuData.append('quaternionX', cam.quaternion.x);
-    this.visuData.append('quaternionY', cam.quaternion.y);
-    this.visuData.append('quaternionZ', cam.quaternion.z);
-    this.visuData.append('quaternionW', cam.quaternion.w);
+    this.visuData.append('positionY', position.y);
+    this.visuData.append('positionZ', position.z);
+    this.visuData.append('quaternionX', quaternion.x);
+    this.visuData.append('quaternionY', quaternion.y);
+    this.visuData.append('quaternionZ', quaternion.z);
+    this.visuData.append('quaternionW', quaternion.w);
 
     this.documentCreate.showDocPositioner();
 
@@ -135,7 +148,7 @@ export function ContributeController(documentController){
 
       var val = pair[0];
       if( val != "link"){ //is not file filed
-        var attr = this.documentController.documentModel.metadata[val];
+        var attr = this.documentController.documentModel.metaData[val];
         if( attr['optional'] == 'false'){//is mandatory
           if(pair[1] == ""){  //but not provided
           var id = "create_"+pair[0];

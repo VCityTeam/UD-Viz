@@ -9,7 +9,7 @@
       "update":""
     },
     "properties": {
-      "metadata":{
+      "metaData":{
         "title": {
           "name":"title",
           "type": "string",
