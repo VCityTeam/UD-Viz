@@ -200,7 +200,7 @@ export function ContributeController(documentController){
       //add visualizationdata to document data
       for (var pair of this.visuData.entries() ){ //concatenate metadata and visu data
         this.newDocData.append(pair[0], pair[1]);
-      
+
       //new promess
       var newDocUpload = new Promise((resolve, reject) => {
 
@@ -236,6 +236,7 @@ export function ContributeController(documentController){
       });
     }
   }
+}
 
   /**
    *   Updates document data
