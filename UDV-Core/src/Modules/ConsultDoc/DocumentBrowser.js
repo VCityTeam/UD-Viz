@@ -191,6 +191,8 @@ export function DocumentBrowser(browserContainer, documentController) {
 
       if (this.currentDoc != null & this.documentsExist == true)
       {
+        $('#docDeleteButton').show();
+        $('#docUpdateButton').show();
         this.currentMetadata = this.currentDoc.metaData;
         var txt="";
         txt += "<div id ='docMetadata'>";
@@ -227,7 +229,8 @@ export function DocumentBrowser(browserContainer, documentController) {
         document.getElementById('docBrowserInfo').innerHTML =
                             "No document to display according to your research";
         document.getElementById('docBrowserIndex').innerHTML = "No doc";
-
+        $('#docDeleteButton').hide();
+        $('#docUpdateButton').hide();
       }
     }
 
