@@ -22,6 +22,8 @@ export function DocumentResearch(researchContainer, documentController)
     this.researchController = researchContainer;
     this.windowIsActive = false;
 
+    this.filterFormId = "filterForm";
+
 
     /**
      * Creates the research view
@@ -87,7 +89,7 @@ export function DocumentResearch(researchContainer, documentController)
       var optionsFilters = {
         "form": {
           "attributes":{
-            "id":"filterForm"
+            "id":this.filterFormId
           }
         },
         "fields":{

@@ -19,6 +19,8 @@ export function UpdateDocument(updateContainer, contributeController){
   this.browser = this.contributeController.documentController.documentBrowser;
   this.data; //current document data (document shown in the browser)
 
+  this.updateFormId = "updateForm"; //update form ID.
+
   this.schemaType = { //schema defining the update form, using Alpaca
     "type": "object",
     "properties": {
@@ -29,7 +31,7 @@ export function UpdateDocument(updateContainer, contributeController){
   this.optionsUpdate = { //options to render the update form
     "form": {
       "attributes":{
-        "id":"updateForm"
+        "id": this.updateFormId
       }
     },
     "fields":{
@@ -43,13 +45,13 @@ export function UpdateDocument(updateContainer, contributeController){
     docUpdateButton.id = "docUpdateButton";
     var text = document.createTextNode("Update");
     docUpdateButton.appendChild(text);
-    document.getElementById("browserWindowTabs").appendChild(docUpdateButton);
+    document.getElementById(this.contributeController.documentController.documentBrowser.browserTabID).appendChild(docUpdateButton);
 
     var docDeleteButton = document.createElement('button');
     docDeleteButton.id = "docDeleteButton";
     var text = document.createTextNode("Delete");
     docDeleteButton.appendChild(text);
-    document.getElementById("browserWindowTabs").appendChild(docDeleteButton);
+    document.getElementById(this.contributeController.documentController.documentBrowser.browserTabID).appendChild(docDeleteButton);
 
     this.updateContainer.innerHTML =
     '<br/><div id = "updateTitle">You can update following information:</div><br/>\
@@ -78,6 +80,11 @@ export function UpdateDocument(updateContainer, contributeController){
 
   }
 
+  /**
+   * Create schema and options files used to generate the update view (html form
+   * using Alpaca )
+   */
+  //=============================================================================
   this.docModelToSchema = function docModelToSchema(){
 
     var metadata = this.contributeController.documentController.documentModel.metaData;
@@ -121,6 +128,10 @@ export function UpdateDocument(updateContainer, contributeController){
 
   }
 
+  /**
+   * Displays update form, hide browser
+   */
+  //=============================================================================
   this.updateDoc = function updateDoc(){
 
     this.activateWindow(true);
@@ -128,21 +139,24 @@ export function UpdateDocument(updateContainer, contributeController){
     this.contributeController.documentController.documentBrowser.activateWindow(false);
   }
 
+  /**
+   * Fills update form with current document data
+   */
+  //=============================================================================
   this.fillUpdateForm = function fillUpdateForm(){
     //holds the current document's data (= the one currently shown in the browser)
     this.data =  this.contributeController.documentController.getCurrentDoc().metaData;
-    $("#updateForm").alpaca('get').setValue(this.data);
+    $('#'+ this.updateFormId).alpaca('get').setValue(this.data);
     document.getElementById('docUpdatePreviewImg').src =
                  this.contributeController.documentController.url
                + this.contributeController.documentController.serverModel.documentsRepository
                + this.data.link;
   }
 
-  this.deleteDoc = function deleteDoc(){
-
-
-  }
-
+  /**
+   * Cancel update
+   */
+  //=============================================================================
   this.cancelUpdate = function cancelUpdate(){
     this.activateWindow(false);
     this.contributeController.documentController.documentBrowser.activateWindow(true);
@@ -152,7 +166,6 @@ export function UpdateDocument(updateContainer, contributeController){
   this.initialize();
 
   document.getElementById('docUpdateButton').addEventListener('mousedown', this.updateDoc.bind(this),false);
-  document.getElementById('docDeleteButton').addEventListener('mousedown', this.deleteDoc.bind(this),false);
   document.getElementById('closeUpdate').addEventListener('mousedown', this.activateWindow.bind(this,false),false);
 
   document.getElementById('updateCancel').addEventListener('mousedown', this.cancelUpdate.bind(this),false);
