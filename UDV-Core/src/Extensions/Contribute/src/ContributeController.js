@@ -43,7 +43,7 @@ export function ContributeController(documentController){
   this.chosenPosition =  new THREE.Vector3();  //manual document's position
   this.chosenQuaternion =  new THREE.Quaternion(); //manual document's quaternion
 
-  this.validPosition = true;
+  this.validPosition = false;
 
   this.initialize = function initialize(){
 
@@ -166,10 +166,10 @@ export function ContributeController(documentController){
         }
       }
     }
-    }
 
-    return dataIsValid;
   }
+  return dataIsValid;
+}
 
   /**
    * Real time display of camera position ( = document position in overlay)
