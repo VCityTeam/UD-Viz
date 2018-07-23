@@ -55,12 +55,12 @@ export function ContributeController(documentController){
     var quaternion = cam.quaternion;
 
     this.visuData.append("positionX", position.x);
-    this.visuData.append('positionY', cam.position.y);
-    this.visuData.append('positionZ', cam.position.z);
-    this.visuData.append('quaternionX', cam.quaternion.x);
-    this.visuData.append('quaternionY', cam.quaternion.y);
-    this.visuData.append('quaternionZ', cam.quaternion.z);
-    this.visuData.append('quaternionW', cam.quaternion.w);
+    this.visuData.append('positionY', position.y);
+    this.visuData.append('positionZ', position.z);
+    this.visuData.append('quaternionX', quaternion.x);
+    this.visuData.append('quaternionY', quaternion.y);
+    this.visuData.append('quaternionZ', quaternion.z);
+    this.visuData.append('quaternionW', quaternion.w);
 
     this.documentCreate.showDocPositioner();
 
@@ -214,7 +214,7 @@ export function ContributeController(documentController){
       var self = this;
 
       newDocUpload.then( function(response){
-        //DEBUG console.log("Success!", response);
+        
         $("#creationForm").get(0).reset();
         self.newDocData = new FormData();
         self.visuData = new FormData();
