@@ -156,8 +156,6 @@
   overflow: hidden;
   width: 90%;
   text-align: left;
-
-
 }
 
 #creationTitle{
@@ -225,8 +223,8 @@
 }
 
 #setPosX, #setPosY, #setPosZ, #quatX, #quatY, #quatZ, #quatW{
-    width:80%;
-      background-color: rgb(255,255,255);
+  width:80%;
+  background-color: rgb(255,255,255);
 }
 
 #inputFields{

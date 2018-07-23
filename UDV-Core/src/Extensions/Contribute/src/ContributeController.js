@@ -124,7 +124,6 @@ export function ContributeController(documentController){
       length +=1;
     }
     if(length != this.numberVisuData ){ //7 visualisation data must be provided
-      this.validPosition = false;
       alert('Please choose document position and save');
       this.documentCreate.showDocPositioner(true);
     }
@@ -201,14 +200,14 @@ export function ContributeController(documentController){
       //add visualizationdata to document data
       for (var pair of this.visuData.entries() ){ //concatenate metadata and visu data
         this.newDocData.append(pair[0], pair[1]);
-      }
+      
       //new promess
       var newDocUpload = new Promise((resolve, reject) => {
 
         var req = new XMLHttpRequest();
         req.open('POST', this.urlAdd);
 
-        req.onload = function() { //event executed once the request is over
+        req.onload = function() { //event executed once the request req is done
           if (req.status == 200) {
             resolve(req.response);
           }

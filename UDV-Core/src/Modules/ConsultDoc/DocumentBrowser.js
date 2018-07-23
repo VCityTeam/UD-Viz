@@ -191,6 +191,7 @@ export function DocumentBrowser(browserContainer, documentController) {
 
       if (this.currentDoc != null & this.documentsExist == true)
       {
+
         $('#docDeleteButton').show();
         $('#docUpdateButton').show();
         this.currentMetadata = this.currentDoc.metaData;
