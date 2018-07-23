@@ -190,13 +190,14 @@ export function ContributeController(documentController){
         this.newDocData.append(pair[0], pair[1]);
       }
 
-      //new promess
+      // Use promesses to ensure that the data has been uploaded before 
+      // reinitializing the form (in the .then below)
       var newDocUpload = new Promise((resolve, reject) => {
 
         var req = new XMLHttpRequest();
         req.open('POST', this.url);
 
-        req.onload = function() { //event executed once the request is over
+        req.onload = function() { //event executed once the request req is done
           if (req.status == 200) {
             resolve(req.response);
           }
