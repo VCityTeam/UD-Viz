@@ -77,7 +77,7 @@ export function DocumentController(view, controls, options = {},config)
     this.getDocuments = function getDocuments(){
       //check which filters are set. URL is built manually for more modularity.
       //Could be improved
-      var filters = new FormData(document.getElementById('filterForm')).entries();
+      var filters = new FormData(document.getElementById(this.documentResearch.filterFormId)).entries();
       var urlFilters = this.url + this.serverModel.getAll;
       for(var pair of filters ){
         if(pair[1]!=""){

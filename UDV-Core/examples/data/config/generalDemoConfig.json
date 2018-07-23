@@ -4,9 +4,9 @@
       "url":"http://rict.liris.cnrs.fr:9095/",
       "documentsRepository":"documents_repository/",
       "getAll": "getDocuments?",
-      "add":"addDocument",
-      "delete":"deleteDocument",
-      "update":"editDocument"
+      "add":"",
+      "delete":"",
+      "update":""
     },
     "properties": {
       "metaData":{

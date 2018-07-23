@@ -140,10 +140,11 @@ export function ContributeController(documentController){
   //=============================================================================
   this.formDataVerification = function formDataVerification(){
     var dataIsValid = true;
-    this.formData = new FormData(document.getElementById('creationForm'));
+    this.formData = new FormData(document.getElementById(this.documentCreate.creationFormId));
     this.newDocData = this.formData;
 
     for (var pair of this.formData.entries() ){
+      console.log(pair[0] + ":" + pair[1])
 
       var val = pair[0];
       if( val != "link"){ //is not file filed
@@ -200,7 +201,7 @@ export function ContributeController(documentController){
       //add visualizationdata to document data
       for (var pair of this.visuData.entries() ){ //concatenate metadata and visu data
         this.newDocData.append(pair[0], pair[1]);
-
+      }
       //new promess
       var newDocUpload = new Promise((resolve, reject) => {
 
@@ -226,7 +227,7 @@ export function ContributeController(documentController){
 
       newDocUpload.then( function(response){
 
-        $("#creationForm").get(0).reset();
+        $('#' + self.documentCreate.creationFormId ).get(0).reset();
         self.newDocData = new FormData();
         self.visuData = new FormData();
         self.documentController.getDocuments();
@@ -236,7 +237,7 @@ export function ContributeController(documentController){
       });
     }
   }
-}
+
 
   /**
    *   Updates document data
@@ -244,7 +245,7 @@ export function ContributeController(documentController){
   //=============================================================================
   this.documentUpdate = function documentUpdate(){
 
-    this.updatedData = new FormData(document.getElementById('updateForm'));
+    this.updatedData = new FormData(document.getElementById(this.documentUpdate.updateFormId));
 
     //get current doc data and id
     var currentDoc = this.documentController.getCurrentDoc();
@@ -274,7 +275,8 @@ export function ContributeController(documentController){
       var self = this;
 
       newDocUpdate.then( function(response){//resolve
-        $("#updateForm").get(0).reset(); //clear update formular
+      //  document.getElementById(this.documentUpdate.updateFormId).reset();
+        $('#'+self.documentUpdate.updateFormId).get(0).reset(); //clear update formular
         self.updatedData = new FormData(); //clear data
         self.documentController.getDocuments(); //update documents
 

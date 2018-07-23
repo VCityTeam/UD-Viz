@@ -294,7 +294,7 @@ export function DocumentBrowser(browserContainer, documentController) {
 
     this.resetResearch = function resetResearch(){
       this.docIndex = 1;
-      $("#filterForm").get(0).reset(); //reset reserach parameters
+      $("#" + this.documentController.documentResearch.filterFormId ).get(0).reset(); //reset reserach parameters
 
       document.getElementById('browserInfo').innerHTML = "Filters have been reset."
       //reset default url

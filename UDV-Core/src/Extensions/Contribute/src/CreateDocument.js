@@ -29,6 +29,8 @@ export function CreateDocument(creationContainer, contributeController){
   this.windowIsActive = this.contributeController.documentController.options.active || false;
   this.windowManualIsActive = false;
 
+  this.creationFormId = "creationForm"; //creation form ID.
+
   /**
    * Creates the creation view
    */
@@ -189,7 +191,7 @@ export function CreateDocument(creationContainer, contributeController){
     var optionsCreate = {
       "form": {
         "attributes":{
-          "id":"creationForm"
+          "id":this.creationFormId
         }
       },
       "fields":{
