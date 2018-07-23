@@ -34,7 +34,7 @@ export function ContributeController(documentController){
   this.chosenPosition =  new THREE.Vector3();  //manual document's position
   this.chosenQuaternion =  new THREE.Quaternion(); //manual document's quaternion
 
-  this.validPosition = true;
+  this.validPosition = false;
 
   this.initialize = function initialize(){
 
@@ -110,7 +110,6 @@ export function ContributeController(documentController){
       length +=1;
     }
     if(length != this.numberVisuData ){ //7 visualisation data must be provided
-      this.validPosition = false;
       alert('Please choose document position and save');
       this.documentCreate.showDocPositioner(true);
     }
@@ -190,7 +189,7 @@ export function ContributeController(documentController){
         this.newDocData.append(pair[0], pair[1]);
       }
 
-      // Use promesses to ensure that the data has been uploaded before 
+      // Use promesses to ensure that the data has been uploaded before
       // reinitializing the form (in the .then below)
       var newDocUpload = new Promise((resolve, reject) => {
 
@@ -215,7 +214,7 @@ export function ContributeController(documentController){
       var self = this;
 
       newDocUpload.then( function(response){
-        
+
         $("#creationForm").get(0).reset();
         self.newDocData = new FormData();
         self.visuData = new FormData();
