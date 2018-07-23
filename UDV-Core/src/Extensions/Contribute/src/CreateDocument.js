@@ -36,6 +36,7 @@ export function CreateDocument(creationContainer, contributeController){
   this.initialize = function initialize()
   {
 
+    // HTML container of the document creation pane
     this.creationContainer.innerHTML =
     '<br/><div id = "creationTitle">Add new document</div><br/>\
     <br/>\
@@ -50,7 +51,7 @@ export function CreateDocument(creationContainer, contributeController){
 
     this.docModelToSchema();
 
-
+    // HTML container of the pane allowing to place the document in the scene
     var positionerContainer = document.createElement("div");
     positionerContainer.id = "positionerContainer";
     document.body.appendChild(positionerContainer);
@@ -60,11 +61,14 @@ export function CreateDocument(creationContainer, contributeController){
     <img id="docPositionerFullImg"/></div>\
     ';
 
+    // HTML container to darken the creation window when plawing the document
+    // in the scene
     var overlay = document.createElement("div");
     overlay.id = "overlay";
     document.body.appendChild(overlay);
 
-
+    // HTML container of the pane displaying the current position of the
+    // document while in "place document mode"
     var manualPositionsWindow = document.createElement("div");
     manualPositionsWindow.id = "manualPos";
     document.body.appendChild(manualPositionsWindow);
@@ -134,12 +138,12 @@ export function CreateDocument(creationContainer, contributeController){
 
 
   /**
-   * Close position window, abord position selection
+   * Close position window, abort position selection
    */
   //=============================================================================
   this.cancelPosition = function cancelPosition(){
 
-    this.contributeController.visuData = new FormData(); //reset to 0
+    this.contributeController.visuData = new FormData(); //reset visuData form
     this.activateManualPosition(false);
     document.getElementById('docPositionerFull').style.display = "none ";
     this.contributeController.documentController.documentResearch.activateWindow(false);
@@ -149,7 +153,7 @@ export function CreateDocument(creationContainer, contributeController){
 
   /**
    * Blur and deactivate creation view to prevent modification while choosing
-   * document positions
+   * document position
    */
   //=============================================================================
   this.blurMetadataWindow = function blurMetadataWindow(blur){
@@ -268,7 +272,7 @@ export function CreateDocument(creationContainer, contributeController){
 
   this.initialize();
 
-  //Eventlisteners for buttons
+  //Event listeners for buttons
   document.getElementById('docBrowserCreateButton').addEventListener('mousedown',
                                       this.updateCreationWindow.bind(this),false);
   document.getElementById('docCreation').addEventListener('mousedown',
