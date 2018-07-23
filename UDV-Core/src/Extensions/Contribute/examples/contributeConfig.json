@@ -69,22 +69,6 @@
          "queryable":"true",
           "labelQuery":"publication date"
         },
-        "type":{
-          "name":"type",
-          "type":"enum",
-          "enum":["Picture", "Drawing", "Map", "Letter"],
-          "optional":"false",
-          "creationID":"create_type",
-          "labelCreation":"Type",
-          "displayable":"true",
-          "displayID":"type",
-          "label":"Type",
-          "updatable":"false",
-          "updateID":"update_type",
-          "queryable":"true",
-          "queryID":"query_type",
-          "labelQuery":"Type: "
-        },
         "subject":{
           "name":"subject",
           "type":"enum",
@@ -95,7 +79,7 @@
           "displayable":"true",
           "displayID":"subject",
           "label":"Subject",
-          "updatable":"false",
+          "updatable":"true",
           "updateID":"update_subject",
           "queryable":"true",
           "queryID":"query_subject",

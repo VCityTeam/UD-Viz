@@ -98,10 +98,18 @@ export function UpdateDocument(updateContainer, contributeController){
         this.optionsUpdate.fields[attribute['name']]['label'] = attribute['label'];
       }
 
-      if(attribute['updatable'] == "false"){ //if not updatable, displayed in "readonly"
-        this.optionsUpdate.fields[attribute['name']]['readonly'] = "true";
-
+      if(attribute['type'] == "enum"){
+        this.optionsUpdate.fields[attribute['name']]['type'] = 'select';
+        this.schemaType.properties[attribute['name']]['enum'] = attribute['enum'];
       }
+
+      if(attribute['updatable'] == "false"){
+        //if not updatable, displayed in "readonly"
+        //only displayed is displayReadonly is set to true
+        this.optionsUpdate.fields[attribute['name']]['readonly'] = "true";
+      }
+
+
     }
     //Creating an empty form using alpaca
     //The form will be filled with current document's data by calling fillUpdateForm

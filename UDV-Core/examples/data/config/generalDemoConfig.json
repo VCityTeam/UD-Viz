@@ -68,25 +68,10 @@
           "queryable":"true",
           "labelQuery":"publication date"
         },
-        "type":{
-          "name":"type",
-          "type":"enum",
-          "enum":["Drawing", "Map", "Letter"],
-          "optional":"false",
-          "creationID":"create_type",
-          "labelCreation":"Type: ",
-          "displayable":"true",
-          "displayID":"type",
-          "label":"Type",
-          "updatable":"false",
-          "queryable":"true",
-          "queryID":"query_type",
-          "labelQuery":"Type: "
-        },
         "subject":{
           "name":"subject",
           "type":"enum",
-          "enum":["Subject1", "Subject2", "Subject3"],
+          "enum":["Urbanism", "Architecture", "Tourism"],
           "optional":"false",
           "creationID":"create_subject",
           "labelCreation":"Subject: ",
