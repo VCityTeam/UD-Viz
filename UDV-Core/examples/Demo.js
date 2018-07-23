@@ -117,56 +117,28 @@ layer.whenReady.then(
   }
 );
 
-
 var about = new udvcore.AboutWindow({active:true});
 var help  = new udvcore.HelpWindow({active:true});
 
-//////////// ConsultDoc
-//the following lines are in charge of loading configuration files used to setup
-// different views.
-
-
-//loading configuration files
-var documentModel;
+//loading configuration file
+// see https://github.com/MEPP-team/VCity/wiki/Configuring-UDV
+var config;
 $.ajax({
   type: "GET",
-  url: "data/config/DocumentModel.json",
+  url: "data/config/generalDemoConfig.json",
   datatype: "json",
   async: false,
   success: function(data){
-    documentModel = data;
+    config = data;
   }
 });
-
-var researchModel;
-$.ajax({
-  type: "GET",
-  url: "data/config/schemaFilters.json",
-  datatype: "json",
-  async: false,
-  success: function(data){
-    researchModel = data;
-  }
-});
-
-var optionsResearch;
-$.ajax({
-  type: "GET",
-  url: "data/config/optionsFilter.json",
-  datatype: "json",
-  async: false,
-  success: function(data){
-    optionsResearch = data;
-  }
-});
-
 
 //The documentcontroller is in charge of handling the views (research, browser)
 // based on the parameter documentModel, it builds the browser view (what attribute does
 // a document have, what attributes do we want to display and how...)
 // The researchModel and optionsResearch parameters are used to build / paramatrize
 // the research view
-var controller = new udvcore.DocumentController(view, controls, {temporal: temporal}, documentModel, researchModel, optionsResearch);
+var controller = new udvcore.DocumentController(view, controls, {temporal: temporal}, config);
 ///////////////////////////////////////////////////////////////////////////////
 //// Create and configure the layout controller
 

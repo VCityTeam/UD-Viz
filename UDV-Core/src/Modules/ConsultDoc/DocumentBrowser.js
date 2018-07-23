@@ -1,7 +1,20 @@
+/**
+ * Class: DocumentBrowser
+ * Description :
+ * The DocumentBrowser is an object handling the browser view
+ *
+ */
 
 import * as THREE from 'three';
 import { MAIN_LOOP_EVENTS } from 'itowns';
 import DefaultImage from './DefaultImage.png';
+
+/**
+ *
+ * @constructor
+ * @param { HTML DOM Element object } browserContainer
+ * @param { documentController } documentController
+ */
 
 export function DocumentBrowser(browserContainer, documentController) {
 
@@ -15,27 +28,45 @@ export function DocumentBrowser(browserContainer, documentController) {
   this.fadeAlpha = 0;
   this.docIndex = 1;
   this.isStart = true; //dirty variable to test if we are in start mode
+  this.currentMetadata;
+
+  this.browserTabID = "browserWindowTabs"; //ID of the html div holding buttons in the browser
+                                          //will be used by other classes as well to add extra buttons
+
 
   // doc fade-in animation duration, in milliseconds
- this.fadeDuration = this.documentController.options.docFadeDuration || 2750;
+  this.fadeDuration = this.documentController.options.docFadeDuration || 2750;
 
- browserContainer.innerHTML =
+
+  browserContainer.innerHTML =
       '<div id="docBrowserWindow">\
         <button id="closeBrowserWindow" type=button>Close</button><br/>\
           <div id="docHead">Document Navigator</div><br>\
           <br/>\
+          <div id="browserInfo"></div>\
           <div id = "docBrowserInfo"></div>\
           <div id="docBrowserPreview"><img id="docBrowserPreviewImg"/></div>\
           <div id="docBrowserIndex"></div>\
-          <div id = "browserWindowTabs">\
-          <button id="docBrowserNextButton" type=button>⇨</button>\
-          <button id="docBrowserPreviousButton" type=button>⇦</button>\
-          <button id="resetFilters" type=button>Reset research</button>\
-          <button id="docBrowserOrientButton" type=button>Orient Document</button>\
-          </div>\
       </div>\
-      <div id="docFull">\
-          <img id="docFullImg"/>\
+      ';
+
+      var browserWindowTabs = document.createElement("div");
+      browserWindowTabs.id = this.browserTabID;
+      document.getElementById("docBrowserWindow").appendChild(browserWindowTabs);
+
+      browserWindowTabs.innerHTML =
+      '<button id="docBrowserNextButton" type=button>⇨</button>\
+      <button id="docBrowserPreviousButton" type=button>⇦</button>\
+      <button id="resetFilters" type=button>Reset research</button>\
+      <button id="docBrowserOrientButton" type=button>Orient Document</button>\
+      ';
+
+      var docFull = document.createElement("div");
+      docFull.id = "docFull";
+      document.body.appendChild(docFull);
+
+      docFull.innerHTML =
+      '<img id="docFullImg"/>\
           <div id="docFullPanel">\
               <button id="docFullClose" type=button>Close</button>\
               <button id="docFullOrient" type=button>Orient Document</button>\
@@ -43,9 +74,8 @@ export function DocumentBrowser(browserContainer, documentController) {
               <input id="docOpaSlider" type="range" min="0" max="100" value="75"\
               step="1" oninput="docOpaUpdate(value)">\
               <output for="docOpaSlider" id="docOpacity">50</output>\
-          </div>\
-      </div>\
-      ';
+          ';
+
 
     this.update = function update()
     {
@@ -158,29 +188,32 @@ export function DocumentBrowser(browserContainer, documentController) {
     this.updateBrowser = function updateBrowser(){
       //update currentDoc with current doc info
       this.currentDoc = this.documentController.getCurrentDoc();
+
       if (this.currentDoc != null & this.documentsExist == true)
       {
+        this.currentMetadata = this.currentDoc.metadata;
         var txt="";
         txt += "<div id ='docMetadata'>";
-        var metadata = this.documentController.documentModel.properties.metadata;
+        var metadata = this.documentController.documentModel.metaData;
 
         for (var key in metadata) {
           var attribute = metadata[key]; //holds all metadata relative information
           if(attribute['displayable'] == "true"){
             if(attribute['label']!="false"){ //dynamic building of the HTML browser
               txt +="<div id=" + attribute['displayID'] + ">" +attribute['label']
-                    + ":" + this.currentDoc.metadata[attribute['name']] + "</div>";
+                    + ":" + this.currentMetadata[attribute['name']] + "</div>";
             }
             else{
               txt +="<div id=" + attribute['displayID'] + ">" +
-                        this.currentDoc.metadata[attribute['name']] + "</div>";
+                        this.currentMetadata[attribute['name']] + "</div>";
             }
           }
         }
         txt +="</div>";
         document.getElementById("docBrowserInfo").innerHTML = txt;
         document.getElementById('docBrowserPreviewImg').src = this.documentController.url
-                          + "documentsDirectory/" + this.currentDoc.metadata.link;
+                   + this.documentController.serverModel.documentsRepository
+                   + this.currentMetadata.link;
         document.getElementById('docBrowserIndex').innerHTML = "Document: "
           + this.docIndex + " out of " + this.documentController.setOfDocuments.length;
       }
@@ -203,10 +236,13 @@ export function DocumentBrowser(browserContainer, documentController) {
     // and initiate the animated travel to orient the camera
     //=============================================================================
     this.focusOnDoc = function focusOnDoc() {
+      document.getElementById('docFull').style.display = "block";
       document.getElementById('docFullImg').src = this.documentController.url
-                          + "documentsDirectory/" + this.currentDoc.metadata.link;
+                          + this.documentController.serverModel.documentsRepository
+                          + this.currentMetadata.link;
       document.getElementById('docBrowserPreviewImg').src = this.documentController.url
-                        + "documentsDirectory/" + this.currentDoc.metadata.link;
+                        + this.documentController.serverModel.documentsRepository
+                        + this.currentMetadata.link;
       document.getElementById('docFullImg').style.opacity = 50;
       document.getElementById('docOpaSlider').value = 0;
       document.querySelector('#docOpacity').value = 50;
@@ -233,7 +269,7 @@ export function DocumentBrowser(browserContainer, documentController) {
 
         // adjust the current date if we use temporal
         if(this.documentController.temporal){
-          var docDate = new moment(this.currentDoc.metadata.refDate);
+          var docDate = new moment(this.currentMetadata.refDate);
           this.documentController.temporal.changeTime(docDate);
         }
 
@@ -255,14 +291,16 @@ export function DocumentBrowser(browserContainer, documentController) {
     this.resetResearch = function resetResearch(){
       this.docIndex = 1;
       $("#filterForm").get(0).reset(); //reset reserach parameters
-      this.documentController.url =
-                  "http://rict.liris.cnrs.fr/APIVilo3D/APIExtendedDocument/web/";
+
+      document.getElementById('browserInfo').innerHTML = "Filters have been reset."
+      //reset default url
+      this.documentController.url = this.url = this.documentController.serverModel.url;
       this.documentController.getDocuments();
       this.updateBrowser();
       this.closeDocFull();
     }
 
-    // itowns framerequester : will regularly call this.update()
+    // itowns framerequester : will regularly call this.updateScene()
     this.documentController.view.addFrameRequester(
               MAIN_LOOP_EVENTS.AFTER_CAMERA_UPDATE,this.updateScene.bind(this) );
 

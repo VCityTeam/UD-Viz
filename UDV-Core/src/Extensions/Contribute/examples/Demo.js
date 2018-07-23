@@ -80,7 +80,7 @@ var help  = new udvcore.HelpWindow({active:true});
 var config;
 $.ajax({
   type: "GET",
-  url: "consultDocConfig.json",
+  url: "contributeConfig.json",
   datatype: "json",
   async: false,
   success: function(data){
@@ -88,14 +88,16 @@ $.ajax({
   }
 });
 
-
-
 //The documentcontroller is in charge of handling the views (research, browser)
 // based on the parameter documentModel, it builds the browser view (what attribute does
 // a document have, what attributes do we want to display and how...)
 // The researchModel and optionsResearch parameters are used to build / paramatrize
 // the research view
 var controller = new udvcore.DocumentController(view, controls, {temporal: temporal}, config);
+
+//the contributeController is in charge of handling the views of the contribute module,
+//that is to say: update, creation and delete
+var contributeController = new udvcore.ContributeController(controller);
 ///////////////////////////////////////////////////////////////////////////////
 //// Create and configure the layout controller
 

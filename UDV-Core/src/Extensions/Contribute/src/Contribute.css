@@ -1,0 +1,235 @@
+/*Browser*/
+#docBrowserCreateButton{
+  z-index: 20;
+  left: 175px;
+  position:absolute;
+  margin : 5px;
+  font-size: 14px;
+  border: 1px solid black;
+  background-color: white;
+  color: black;
+  height: 30px;
+  pointer-events: auto;
+  bottom:50px;
+
+}
+
+/*Research window*/
+#docResearch{
+  position: absolute;
+  z-index: 20;
+  margin : 5px;
+  font-size: 14px;
+  border: 1px solid black;
+  background-color: white;
+  color: black;
+  height: 30px;
+  pointer-events: auto;
+  bottom:0px;
+
+}
+
+/*Creation window*/
+#creationContainer{
+  display:none;
+  position: absolute;
+  z-index: 10;
+  margin : 3px;
+  margin-right: 0px;
+  left: 0;
+  border : 1px solid rgb(90,90,90);
+  text-align: center;
+  width: 16%;
+  height: 58%;
+  overflow: auto;
+  background-color: rgba(30,30,30,0.6);
+  font-size: 14;
+}
+
+
+#overlay {
+  display:none;
+  position: absolute;
+  z-index: 10;
+  margin : 3px;
+  margin-right: 0px;
+  left: 0;
+  border : 1px solid rgb(90,90,90);
+  text-align: center;
+  width: 16%;
+  height: 58%;
+  overflow: auto;
+  background-color: rgba(30,30,30,0.6);
+  font-size: 14;
+}
+
+
+#closeCreation{
+  position: absolute;
+  z-index: 40;
+  top: 0;
+  right: 3px;
+  margin : 3px;
+  border: 1px solid black;
+  background-color: white;
+  color: black;
+  pointer-events: auto;
+
+}
+
+#creationTabs{
+  z-index: 10;
+  bottom : 0px;
+  margin-top: 20px;
+
+}
+
+#documentPositioner{
+  z-index: 20;
+  left: 50px;
+  position:absolute;
+  margin : 5px;
+  font-size: 14px;
+  border: 1px solid black;
+  background-color: white;
+  color: black;
+  height: 30px;
+  pointer-events: auto;
+}
+
+#docCreation{
+  z-index: 20;
+  left: 160px;
+  position:absolute;
+  margin : 5px;
+  font-size: 14px;
+  border: 1px solid black;
+  background-color: white;
+  color: black;
+  height: 30px;
+  pointer-events: auto;
+}
+
+#subject{
+  display:inline-block;
+  overflow: hidden;
+  width: 90%;
+  text-align: left;
+}
+
+#creationTitle{
+  display:inline-block;
+  margin-top: 20px;
+  color: white;
+  text-align: center;
+  font-size: 16px;
+  font-weight: bold;
+  overflow: hidden;
+  width: 90%;
+}
+/*Document Positioner*/
+#docPositionerFull{
+  position: absolute;
+  z-index: 10;
+  text-align: center;
+
+  margin : auto;
+  top: 0;
+  bottom : 10%;
+  left: 0;
+  right : 0;
+
+  width: 25%;
+  height: 50%;
+
+  display: none;
+
+  padding-left: 3px;
+  padding-top: 3px;
+
+}
+
+#docPositionerFullImg{
+    width: 80%; /* or any custom size */
+    height: 100%;
+    object-fit: contain;
+    opacity: 0.5;
+}
+/
+#docPositionerFullPanel{
+    bottom : 0px;
+    margin-top: 20px;
+
+}
+
+/*helper documetn position*/
+#manualPos{
+  display: none;
+  position:fixed;
+  left: 0;
+  top:60%;
+  width: 16%;
+  height: 32%;
+  background-color: rgba(30,30,30,0.6);
+  margin : 3px;
+  margin-right: 0px;
+  margin-top: 3px;
+
+}
+
+#xPosLab, #yPosLab, #zPosLab, #xQuatLab, #yQuatLab, #zQuatLab, #wQuatLab{
+  font-size: 12px;
+}
+
+#setPosX, #setPosY, #setPosZ, #quatX, #quatY, #quatZ, #quatW{
+  width:80%;
+  background-color: rgb(255,255,255);
+}
+
+#inputFields{
+  padding-top: 20%;
+  padding-left: 10%;
+  padding-bottom: 20%;
+}
+
+#docPositionerSave{
+  z-index: 20;
+  left: 200px;
+  position:absolute;
+  margin : 5px;
+  font-size: 14px;
+  border: 1px solid black;
+  background-color: white;
+  color: black;
+  height: 30px;
+  pointer-events: auto;
+  bottom:20px;
+}
+
+#docPositionerCancel{
+  z-index: 20;
+  left: 15px;
+  position:absolute;
+  margin : 5px;
+  font-size: 14px;
+  border: 1px solid black;
+  background-color: white;
+  color: black;
+  height: 30px;
+  pointer-events: auto;
+  bottom:20px;
+}
+
+#moveDocument{
+  z-index: 20;
+  left: 85px;
+  position:absolute;
+  margin : 5px;
+  font-size: 14px;
+  border: 1px solid black;
+  background-color: white;
+  color: black;
+  height: 30px;
+  pointer-events: auto;
+  bottom:20px;
+}

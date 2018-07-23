@@ -15,15 +15,11 @@ import './ConsultDoc.css';
  * @param controls : PlanarControls instance
  * @param options : optional parameters (including TemporalController)
  * @param view :  itowns planar view
- * @param docModel : file holding document model
+ * @param config : file holding congiguration settings
  */
 //=============================================================================
-export function DocumentController(view, controls, options = {},docModel, researchModel,optionsResearch)
+export function DocumentController(view, controls, options = {},config)
 {
-    //url of the server handling documents
-    this.url = "http://rict.liris.cnrs.fr/APIVilo3D/APIExtendedDocument/web/";
-    //FIXME: to put in a configuration file of the general application
-
     this.controls = controls;
     this.setOfDocuments = [];
     this.docIndex = 0;
@@ -34,20 +30,16 @@ export function DocumentController(view, controls, options = {},docModel, resear
     this.options = options;
     this.temporal = options.temporal;
 
-    this.documentModel = docModel;
-    this.researchModel = researchModel;
-    this.optionsResearch = optionsResearch;
+    this.documentModel = config.properties;
+    this.serverModel = config.server;
     this.modelTest;
 
-    var self = this;
-
-
-//console.log(this.documentModel['properties']);
+    this.url = this.serverModel.url;
 
     this.researchContainerId = "researchContainer";
     this.browserContainerId = "browserContainer";
     this.urlFilters ="";
-
+    
     /**
      * Create view container for the 3 different views
      */
@@ -86,7 +78,7 @@ export function DocumentController(view, controls, options = {},docModel, resear
       //check which filters are set. URL is built manually for more modularity.
       //Could be improved
       var filters = new FormData(document.getElementById('filterForm')).entries();
-      var urlFilters = this.url +"app_dev.php/getDocuments?";
+      var urlFilters = this.url + this.serverModel.getAll;
       for(var pair of filters ){
         if(pair[1]!=""){
           urlFilters+= pair[0] + "=" + pair[1];

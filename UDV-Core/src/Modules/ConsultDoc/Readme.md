@@ -1,12 +1,6 @@
-# List of configuration files.
-The configurations files are stored in "/examples" because they are used for the demo
+### ConsultDoc
+ * Display of documents in a 3D representation of the city, in superposition
+ * Filtered research (research by keyword, attribute and/or temporal research)
+ * All documents are loaded from an external data server and can be accessed using the Document Browser window.
 
-* DocumentModel.json
-This file holds the model used to describe a document
-More info here: https://github.com/MEPP-team/VCity/wiki/Configuring-UDV
-
-* schemaFilters.json
-This file hold the schema used to generate a research formular using JS Alpaca library.
-
-* optionsFilter.json
-This file hold the options used for the Alpaca formular generating using schemaFilters.json
+[Demo](https://github.com/sophiaab/UDV/tree/new_contribute/UDV-Core/src/Modules/ConsultDoc/examples)
