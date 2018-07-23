@@ -171,7 +171,7 @@ export function CreateDocument(creationContainer, contributeController){
   //=============================================================================
   this.docModelToSchema = function docModelToSchema(){
     //only use the metadata
-    var metadata = this.contributeController.documentController.documentModel.metadata;
+    var metadata = this.contributeController.documentController.documentModel.metaData;
     //schema has at least a file input
     var schemaType =
     {

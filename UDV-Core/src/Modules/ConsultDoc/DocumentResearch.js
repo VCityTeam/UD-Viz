@@ -74,7 +74,7 @@ export function DocumentResearch(researchContainer, documentController)
 
     this.docModelToSchema = function docModelToSchema(){
       //only use the metadata
-      var metadata = this.documentController.documentModel.metadata;
+      var metadata = this.documentController.documentModel.metaData;
       //schema has at least a file input
       var schema =
       {

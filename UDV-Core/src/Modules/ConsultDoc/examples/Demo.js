@@ -83,7 +83,7 @@ var help  = new udvcore.HelpWindow({active:true});
 var config;
 $.ajax({
   type: "GET",
-  url: "consultDocConfig_save.json",
+  url: "consultDocConfig.json",
   datatype: "json",
   async: false,
   success: function(data){
@@ -151,14 +151,6 @@ var browserOption = documentFolder.add( controller.documentBrowser, 'windowIsAct
 browserOption.onFinishChange(function(value){
   controller.documentBrowser.refresh();
 });
-/*
-var billboardsOption = documentFolder.add( controller.documentBillboard, 'windowIsActive'
-                                          ).name("Billboards").listen();
-
-billboardsOption.onFinishChange(function(value){
-  controller.documentBillboard.refresh();
-}); */
-
 
 datDotGUI.close();     // By default the dat.GUI controls are rolled up
 

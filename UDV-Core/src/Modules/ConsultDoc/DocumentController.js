@@ -80,6 +80,7 @@ export function DocumentController(view, controls, options = {},config)
       //Could be improved
       var filters = new FormData(document.getElementById('filterForm')).entries();
       var urlFilters = this.url + this.serverModel.getAll;
+      console.log(urlFilters)
       for(var pair of filters ){
         if(pair[1]!=""){
           urlFilters+= pair[0] + "=" + pair[1];
@@ -91,6 +92,7 @@ export function DocumentController(view, controls, options = {},config)
       req.open("POST", urlFilters,false);
       req.send();
       this.setOfDocuments = JSON.parse(req.responseText);
+      console.log(this.setOfDocuments)
     }
 
     /**

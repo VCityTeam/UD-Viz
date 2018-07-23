@@ -188,13 +188,14 @@ export function DocumentBrowser(browserContainer, documentController) {
     this.updateBrowser = function updateBrowser(){
       //update currentDoc with current doc info
       this.currentDoc = this.documentController.getCurrentDoc();
+      console.log(this.currentDoc)
 
       if (this.currentDoc != null & this.documentsExist == true)
       {
-        this.currentMetadata = this.currentDoc.metadata;
+        this.currentMetadata = this.currentDoc.metaData;
         var txt="";
         txt += "<div id ='docMetadata'>";
-        var metadata = this.documentController.documentModel.metadata;
+        var metadata = this.documentController.documentModel.metaData;
 
         for (var key in metadata) {
           var attribute = metadata[key]; //holds all metadata relative information

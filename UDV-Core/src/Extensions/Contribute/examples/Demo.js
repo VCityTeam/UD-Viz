@@ -85,7 +85,7 @@ var help  = new udvcore.HelpWindow({active:true});
 var config;
 $.ajax({
   type: "GET",
-  url: "contributeConfig_save.json",
+  url: "contributeConfig.json",
   datatype: "json",
   async: false,
   success: function(data){
