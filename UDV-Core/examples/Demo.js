@@ -205,10 +205,11 @@ browserOption.onFinishChange(function(value){
   controller.documentBrowser.refresh();
 });
 
+/*
 var billboardOption = documentFolder.add( controller.documentBillboard, 'windowIsActive').name("Billboard").listen();
 billboardOption.onFinishChange(function(value){
   controller.documentBillboard.showBillboards(true);
-});
+});*/
 
 
 
