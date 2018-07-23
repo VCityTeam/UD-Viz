@@ -190,7 +190,7 @@ export function DocumentBrowser(browserContainer, documentController) {
       this.currentDoc = this.documentController.getCurrentDoc();
       if (this.currentDoc != null & this.documentsExist == true)
       {
-        this.currentMetadata = this.currentDoc.metadata;
+        this.currentMetadata = this.currentDoc.metaData;
         var txt="";
         txt += "<div id ='docMetadata'>";
         var metadata = this.documentController.documentModel.metaData;

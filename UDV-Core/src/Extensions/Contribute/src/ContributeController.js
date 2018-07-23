@@ -226,7 +226,7 @@ export function ContributeController(documentController){
       var self = this;
 
       newDocUpload.then( function(response){
-        //DEBUG:  console.log("Success!", response);
+
         $("#creationForm").get(0).reset();
         self.newDocData = new FormData();
         self.visuData = new FormData();
@@ -238,19 +238,17 @@ export function ContributeController(documentController){
     }
   }
 
-
+  /**
+   *   Updates document data
+   */
+  //=============================================================================
   this.documentUpdate = function documentUpdate(){
 
     this.updatedData = new FormData(document.getElementById('updateForm'));
 
     //get current doc data and id
     var currentDoc = this.documentController.getCurrentDoc();
-    var id = currentDoc.metadata['id'];
-
-    // //DEBUG
-    // for (var pair of this.updatedData.entries()){
-    //   console.log(pair[0] + ":" + pair[1]);
-    // }
+    var id = currentDoc.metaData['id'];
 
     //new promise
       var newDocUpdate = new Promise((resolve, reject) => {
@@ -259,7 +257,6 @@ export function ContributeController(documentController){
         req.open('POST', this.urlUpdate + "/" + id);
 
         req.onload = function() { //event executed once the request is over
-          console.log(req.status)
           if (req.status == 200) {
             resolve(req.response);
           }
@@ -277,7 +274,6 @@ export function ContributeController(documentController){
       var self = this;
 
       newDocUpdate.then( function(response){//resolve
-        console.log("Success!", response);
         $("#updateForm").get(0).reset(); //clear update formular
         self.updatedData = new FormData(); //clear data
         self.documentController.getDocuments(); //update documents
@@ -292,25 +288,23 @@ export function ContributeController(documentController){
 
   }
 
+  /**
+   *   Deletes a document
+   */
+  //=============================================================================
+
   this.documentDelete = function documentDelete(){
 
     //make sure you want to delete
     if(confirm('Delete this document permanently?')){
       //get current doc data and id
       var currentDoc = this.documentController.getCurrentDoc();
-      var id = currentDoc.metadata['id'];
-
-      console.log("deletion");
-
-      console.log(this.urlDelete + "/" + id);
+      var id = currentDoc.metaData['id'];
 
       var docDelete = new Promise((resolve, reject) => {
-
         var req = new XMLHttpRequest();
-        req.open('POST', this.urlDelete + "/" + id);
-
+        req.open('GET', this.urlDelete + "/" + id);
         req.onload = function() { //event executed once the request is over
-          console.log(req.status)
           if (req.status == 200) {
             resolve(req.response);
           }
@@ -328,29 +322,21 @@ export function ContributeController(documentController){
       var self = this;
 
       docDelete.then( function(response){//resolve
-        console.log("Success!", response);
-        alert("The document has been deleted successfully");
 
+        alert("The document has been deleted successfully");
         self.documentController.getDocuments(); //update documents
-        //self.documentController.documentBrowser.updateBrowser(); //update browser
-      //  self.documentController.documentBrowser.resetResearch(false);
+        self.documentController.docIndex = 0;//return to first doc
+        self.documentController.documentBrowser.docIndex = 1; //reset index in browser
+        self.documentController.documentBrowser.update();
       },
       function(error) { //reject
         console.error("Failed!", error);
       });
 
-
     }
     else {
       alert('The document was not deleted');
     }
-
-
-
-
-
-
-
 
   }
 
