@@ -86,7 +86,7 @@
         "subject":{
           "name":"subject",
           "type":"enum",
-          "enum":["Subject1", "Subject2", "Subject3"],
+          "enum":["Urbanism", "Architecture", "Tourism"],
           "optional":"false",
           "creationID":"create_subject",
           "labelCreation":"Subject: ",

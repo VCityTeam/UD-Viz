@@ -8,7 +8,6 @@
 
 import { DocumentResearch }  from './DocumentResearch.js';
 import { DocumentBrowser }   from './DocumentBrowser.js';
-import { DocumentBillboard }   from './DocumentBillboard.js';
 import './ConsultDoc.css';
 
 /**
@@ -80,7 +79,6 @@ export function DocumentController(view, controls, options = {},config)
       //Could be improved
       var filters = new FormData(document.getElementById('filterForm')).entries();
       var urlFilters = this.url + this.serverModel.getAll;
-      console.log(urlFilters)
       for(var pair of filters ){
         if(pair[1]!=""){
           urlFilters+= pair[0] + "=" + pair[1];
@@ -90,6 +88,7 @@ export function DocumentController(view, controls, options = {},config)
       urlFilters = urlFilters.slice('&',-1);
       var req = new XMLHttpRequest();
       req.open("POST", urlFilters,false);
+      console.log(urlFilters)
       req.send();
       this.setOfDocuments = JSON.parse(req.responseText);
       console.log(this.setOfDocuments)

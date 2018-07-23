@@ -35,10 +35,10 @@ export function DocumentBrowser(browserContainer, documentController) {
 
 
   // doc fade-in animation duration, in milliseconds
- this.fadeDuration = this.documentController.options.docFadeDuration || 2750;
+  this.fadeDuration = this.documentController.options.docFadeDuration || 2750;
 
 
- browserContainer.innerHTML =
+  browserContainer.innerHTML =
       '<div id="docBrowserWindow">\
         <button id="closeBrowserWindow" type=button>Close</button><br/>\
           <div id="docHead">Document Navigator</div><br>\
@@ -188,10 +188,12 @@ export function DocumentBrowser(browserContainer, documentController) {
     this.updateBrowser = function updateBrowser(){
       //update currentDoc with current doc info
       this.currentDoc = this.documentController.getCurrentDoc();
-      console.log(this.currentDoc)
 
       if (this.currentDoc != null & this.documentsExist == true)
       {
+
+        $('#docDeleteButton').show();
+        $('#docUpdateButton').show();
         this.currentMetadata = this.currentDoc.metaData;
         var txt="";
         txt += "<div id ='docMetadata'>";
@@ -228,7 +230,8 @@ export function DocumentBrowser(browserContainer, documentController) {
         document.getElementById('docBrowserInfo').innerHTML =
                             "No document to display according to your research";
         document.getElementById('docBrowserIndex').innerHTML = "No doc";
-
+        $('#docDeleteButton').hide();
+        $('#docUpdateButton').hide();
       }
     }
 
@@ -270,7 +273,7 @@ export function DocumentBrowser(browserContainer, documentController) {
 
         // adjust the current date if we use temporal
         if(this.documentController.temporal){
-          var docDate = new moment(this.currentDoc.metadata.refDate);
+          var docDate = new moment(this.currentMetadata.refDate);
           this.documentController.temporal.changeTime(docDate);
         }
 

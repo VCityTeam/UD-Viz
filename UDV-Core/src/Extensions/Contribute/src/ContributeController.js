@@ -1,7 +1,20 @@
+/**
+ * Class: ContributeController
+ * Description :
+ * The ContributeControler is an object handling the document related views
+ *
+ */
+
 import { CreateDocument }  from './CreateDocument.js';
 import { UpdateDocument }   from './UpdateDocument.js';
 import "./Contribute.css";
 import { MAIN_LOOP_EVENTS } from 'itowns';
+
+/**
+ *
+ * @constructor
+ * @param { documentController } documentController
+ */
 
 export function ContributeController(documentController){
 
@@ -30,7 +43,7 @@ export function ContributeController(documentController){
   this.chosenPosition =  new THREE.Vector3();  //manual document's position
   this.chosenQuaternion =  new THREE.Quaternion(); //manual document's quaternion
 
-  this.validPosition = true;
+  this.validPosition = false;
 
   this.initialize = function initialize(){
 
@@ -56,12 +69,12 @@ export function ContributeController(documentController){
     var quaternion = cam.quaternion;
 
     this.visuData.append("positionX", position.x);
-    this.visuData.append('positionY', cam.position.y);
-    this.visuData.append('positionZ', cam.position.z);
-    this.visuData.append('quaternionX', cam.quaternion.x);
-    this.visuData.append('quaternionY', cam.quaternion.y);
-    this.visuData.append('quaternionZ', cam.quaternion.z);
-    this.visuData.append('quaternionW', cam.quaternion.w);
+    this.visuData.append('positionY', position.y);
+    this.visuData.append('positionZ', position.z);
+    this.visuData.append('quaternionX', quaternion.x);
+    this.visuData.append('quaternionY', quaternion.y);
+    this.visuData.append('quaternionZ', quaternion.z);
+    this.visuData.append('quaternionW', quaternion.w);
 
     this.documentCreate.showDocPositioner();
 
@@ -111,7 +124,6 @@ export function ContributeController(documentController){
       length +=1;
     }
     if(length != this.numberVisuData ){ //7 visualisation data must be provided
-      this.validPosition = false;
       alert('Please choose document position and save');
       this.documentCreate.showDocPositioner(true);
     }
@@ -153,10 +165,10 @@ export function ContributeController(documentController){
         }
       }
     }
-    }
 
-    return dataIsValid;
   }
+  return dataIsValid;
+}
 
   /**
    * Real time display of camera position ( = document position in overlay)
@@ -188,14 +200,14 @@ export function ContributeController(documentController){
       //add visualizationdata to document data
       for (var pair of this.visuData.entries() ){ //concatenate metadata and visu data
         this.newDocData.append(pair[0], pair[1]);
-      }
+
       //new promess
       var newDocUpload = new Promise((resolve, reject) => {
 
         var req = new XMLHttpRequest();
         req.open('POST', this.urlAdd);
 
-        req.onload = function() { //event executed once the request is over
+        req.onload = function() { //event executed once the request req is done
           if (req.status == 200) {
             resolve(req.response);
           }
@@ -213,7 +225,7 @@ export function ContributeController(documentController){
       var self = this;
 
       newDocUpload.then( function(response){
-        //DEBUG:  console.log("Success!", response);
+
         $("#creationForm").get(0).reset();
         self.newDocData = new FormData();
         self.visuData = new FormData();
@@ -224,20 +236,19 @@ export function ContributeController(documentController){
       });
     }
   }
+}
 
-
+  /**
+   *   Updates document data
+   */
+  //=============================================================================
   this.documentUpdate = function documentUpdate(){
 
     this.updatedData = new FormData(document.getElementById('updateForm'));
 
     //get current doc data and id
     var currentDoc = this.documentController.getCurrentDoc();
-    var id = currentDoc.metadata['id'];
-
-    // //DEBUG
-    // for (var pair of this.updatedData.entries()){
-    //   console.log(pair[0] + ":" + pair[1]);
-    // }
+    var id = currentDoc.metaData['id'];
 
     //new promise
       var newDocUpdate = new Promise((resolve, reject) => {
@@ -246,7 +257,6 @@ export function ContributeController(documentController){
         req.open('POST', this.urlUpdate + "/" + id);
 
         req.onload = function() { //event executed once the request is over
-          console.log(req.status)
           if (req.status == 200) {
             resolve(req.response);
           }
@@ -264,7 +274,6 @@ export function ContributeController(documentController){
       var self = this;
 
       newDocUpdate.then( function(response){//resolve
-        console.log("Success!", response);
         $("#updateForm").get(0).reset(); //clear update formular
         self.updatedData = new FormData(); //clear data
         self.documentController.getDocuments(); //update documents
@@ -279,18 +288,22 @@ export function ContributeController(documentController){
 
   }
 
+  /**
+   *   Deletes a document
+   */
+  //=============================================================================
+
   this.documentDelete = function documentDelete(){
 
     //make sure you want to delete
     if(confirm('Delete this document permanently?')){
       //get current doc data and id
       var currentDoc = this.documentController.getCurrentDoc();
-      var id = currentDoc.metadata['id'];
+      var id = currentDoc.metaData['id'];
+
       var docDelete = new Promise((resolve, reject) => {
-
         var req = new XMLHttpRequest();
-        req.open('POST', this.urlDelete + "/" + id);
-
+        req.open('GET', this.urlDelete + "/" + id);
         req.onload = function() { //event executed once the request is over
           if (req.status == 200) {
             resolve(req.response);
@@ -309,8 +322,8 @@ export function ContributeController(documentController){
       var self = this;
 
       docDelete.then( function(response){//resolve
-        alert("The document has been deleted successfully");
 
+        alert("The document has been deleted successfully");
         self.documentController.getDocuments(); //update documents
         self.documentController.docIndex = 0;//return to first doc
         self.documentController.documentBrowser.docIndex = 1; //reset index in browser
@@ -320,11 +333,11 @@ export function ContributeController(documentController){
         console.error("Failed!", error);
       });
 
-
     }
     else {
       alert('The document was not deleted');
     }
+
   }
 
   // request update every active frame

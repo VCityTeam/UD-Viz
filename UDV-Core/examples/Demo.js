@@ -117,18 +117,11 @@ layer.whenReady.then(
   }
 );
 
-
 var about = new udvcore.AboutWindow({active:true});
 var help  = new udvcore.HelpWindow({active:true});
 
-//////////// ConsultDoc
-//the following lines are in charge of loading configuration files used to setup
-// different views.
-
-
 //loading configuration file
-//It is used to configure routes towards an external server
-// and several options on document's attributes, and options on views
+// see https://github.com/MEPP-team/VCity/wiki/Configuring-UDV
 var config;
 $.ajax({
   type: "GET",
@@ -204,14 +197,6 @@ var browserOption = documentFolder.add( controller.documentBrowser, 'windowIsAct
 browserOption.onFinishChange(function(value){
   controller.documentBrowser.refresh();
 });
-
-/*
-var billboardOption = documentFolder.add( controller.documentBillboard, 'windowIsActive').name("Billboard").listen();
-billboardOption.onFinishChange(function(value){
-  controller.documentBillboard.showBillboards(true);
-});*/
-
-
 
 datDotGUI.close();     // By default the dat.GUI controls are rolled up
 

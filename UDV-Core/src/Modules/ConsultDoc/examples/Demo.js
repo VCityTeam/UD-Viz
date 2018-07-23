@@ -75,11 +75,8 @@ var temporal = new udvcore.TemporalController(
 var about = new udvcore.AboutWindow({active:true});
 var help  = new udvcore.HelpWindow({active:true});
 
-
-//the following lines are in charge of loading configuration files used to setup
-// different views of consultDoc module (research, browser).
-
-//loading configuration files
+//loading configuration file
+// see https://github.com/MEPP-team/VCity/wiki/Configuring-UDV
 var config;
 $.ajax({
   type: "GET",

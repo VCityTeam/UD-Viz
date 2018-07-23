@@ -80,7 +80,7 @@ export function UpdateDocument(updateContainer, contributeController){
 
   this.docModelToSchema = function docModelToSchema(){
 
-    var metadata = this.contributeController.documentController.documentModel.metadata;
+    var metadata = this.contributeController.documentController.documentModel.metaData;
 
     var view = { //so that the attribute that can not be modified are also displayed
       "displayReadonly": false
@@ -98,10 +98,18 @@ export function UpdateDocument(updateContainer, contributeController){
         this.optionsUpdate.fields[attribute['name']]['label'] = attribute['label'];
       }
 
-      if(attribute['updatable'] == "false"){ //if not updatable, displayed in "readonly"
-        this.optionsUpdate.fields[attribute['name']]['readonly'] = "true";
-
+      if(attribute['type'] == "enum"){
+        this.optionsUpdate.fields[attribute['name']]['type'] = 'select';
+        this.schemaType.properties[attribute['name']]['enum'] = attribute['enum'];
       }
+
+      if(attribute['updatable'] == "false"){
+        //if not updatable, displayed in "readonly"
+        //only displayed is displayReadonly is set to true
+        this.optionsUpdate.fields[attribute['name']]['readonly'] = "true";
+      }
+
+
     }
     //Creating an empty form using alpaca
     //The form will be filled with current document's data by calling fillUpdateForm
@@ -122,7 +130,7 @@ export function UpdateDocument(updateContainer, contributeController){
 
   this.fillUpdateForm = function fillUpdateForm(){
     //holds the current document's data (= the one currently shown in the browser)
-    this.data =  this.contributeController.documentController.getCurrentDoc().metadata;
+    this.data =  this.contributeController.documentController.getCurrentDoc().metaData;
     $("#updateForm").alpaca('get').setValue(this.data);
     document.getElementById('docUpdatePreviewImg').src =
                  this.contributeController.documentController.url
