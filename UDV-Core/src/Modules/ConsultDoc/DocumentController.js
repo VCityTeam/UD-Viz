@@ -88,10 +88,8 @@ export function DocumentController(view, controls, options = {},config)
       urlFilters = urlFilters.slice('&',-1);
       var req = new XMLHttpRequest();
       req.open("POST", urlFilters,false);
-      console.log(urlFilters)
       req.send();
       this.setOfDocuments = JSON.parse(req.responseText);
-      console.log(this.setOfDocuments)
     }
 
     /**
