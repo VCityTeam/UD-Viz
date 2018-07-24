@@ -144,8 +144,6 @@ export function ContributeController(documentController){
     this.newDocData = this.formData;
 
     for (var pair of this.formData.entries() ){
-      console.log(pair[0] + ":" + pair[1])
-
       var val = pair[0];
       if( val != "link"){ //is not file filed
         var attr = this.documentController.documentModel.metaData[val];
@@ -275,11 +273,11 @@ export function ContributeController(documentController){
       var self = this;
 
       newDocUpdate.then( function(response){//resolve
-        
+
         $('#'+self.documentUpdate.updateFormId).get(0).reset(); //clear update formular
         self.updatedData = new FormData(); //clear data
         self.documentController.getDocuments(); //update documents
-
+        self.documentController.reset();
         self.documentUpdate.activateWindow(false);
         self.documentController.documentBrowser.activateWindow(true);
 
@@ -341,6 +339,8 @@ export function ContributeController(documentController){
     }
 
   }
+
+
 
   // request update every active frame
   this.documentController.view.addFrameRequester( MAIN_LOOP_EVENTS.AFTER_CAMERA_UPDATE,

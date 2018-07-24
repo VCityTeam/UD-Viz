@@ -53,7 +53,6 @@ export function DocumentResearch(researchContainer, documentController)
         }
         document.getElementById('researchContainer').style.display =
                                                       active ? "block" : "none ";
-                                                      console.log(active)
 
           if (this.windowIsActive){
            this.documentController.documentBrowser.activateWindow(true);
@@ -73,8 +72,8 @@ export function DocumentResearch(researchContainer, documentController)
     //=============================================================================
     this.research = function research()
     {
-        document.getElementById('browserInfo').innerHTML = "The documents have been filtered."
         this.documentController.getDocuments();
+        document.getElementById('browserInfo').innerHTML = "The documents have been filtered."
         this.documentController.documentBrowser.activateWindow(true);
     }
 
