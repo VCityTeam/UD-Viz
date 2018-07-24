@@ -41,7 +41,7 @@ export function DocumentBrowser(browserContainer, documentController) {
   browserContainer.innerHTML =
       '<div id="docBrowserWindow">\
         <button id="closeBrowserWindow" type=button>Close</button><br/>\
-          <div id="docHead">Document Navigator</div><br>\
+          <div id="docHead">Document browser</div><br>\
           <br/>\
           <div id="browserInfo"></div>\
           <div id = "docBrowserInfo"></div>\

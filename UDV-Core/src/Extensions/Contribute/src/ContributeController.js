@@ -252,7 +252,7 @@ export function ContributeController(documentController){
     var id = currentDoc.metaData['id'];
 
     //new promise
-      var newDocUpdate = new Promise((resolve, reject) => {
+    var newDocUpdate = new Promise((resolve, reject) => {
 
         var req = new XMLHttpRequest();
         req.open('POST', this.urlUpdate + "/" + id);
@@ -275,7 +275,7 @@ export function ContributeController(documentController){
       var self = this;
 
       newDocUpdate.then( function(response){//resolve
-      //  document.getElementById(this.documentUpdate.updateFormId).reset();
+        
         $('#'+self.documentUpdate.updateFormId).get(0).reset(); //clear update formular
         self.updatedData = new FormData(); //clear data
         self.documentController.getDocuments(); //update documents

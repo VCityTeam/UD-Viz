@@ -53,13 +53,18 @@ export function DocumentResearch(researchContainer, documentController)
         }
         document.getElementById('researchContainer').style.display =
                                                       active ? "block" : "none ";
+                                                      console.log(active)
+
+          if (this.windowIsActive){
+           this.documentController.documentBrowser.activateWindow(true);
+        }
+
     }
 
     this.refresh = function refresh()
     {
         this.activateWindow(this.windowIsActive);
-        this.documentController.documentBrowser.activateWindow(true);
-
+        //this.documentController.documentBrowser.activateWindow(true);
     }
 
     /**
