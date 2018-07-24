@@ -27,43 +27,37 @@ import { GuidedTour }   from './GuidedTour.js';
 //=============================================================================
 export function GuidedTourController(documentController) {
 
+
+      // TemporalController instance, optional
+  //    this.temporal = this.documentController.options.temporal;
+
+      // The tour steps of the currently active guided tour
+    //  this.tourStepsCurrent = null;
+
+
     this.guidedTourContainerId = "guidedTourContainer";
     // DocumentHandler instance, required
     this.docs;
 
-    this.url; //= url get guided tour
-
-    this.guidedTour; //holds tour steps will be loaded by clicking on start
+    this.url = "http://rict.liris.cnrs.fr:9095/getGuidedTours";
 
     this.documentController = documentController;
 
     this.browser = this.documentController.documentBrowser;
 
-    this.stepIndex = 0; //step index of the current guidedtour
+    // Array of all the guided tours loaded from the csv file
+    this.guidedTours = []; //not good. We don't need to load every guided tour at the beginning.
+                      //maybe just if we go to "next tour" or if we choose the guided tour in a list, by it's name for example
 
-    // TemporalController instance, optional
-    this.temporal = this.documentController.options.temporal;
 
-    // The tour steps of the currently active guided tour
-    this.tourStepsCurrent = null;
+    this.currentTourIndex = 0;// the current tour index, default is 1
+
+    this.currentGuidedTour; //holds tour steps will be loaded by clicking on start
+
+    //this.currentStep = null;
 
     // the current step index of the current tour
     this.currentStepIndex = 0;
-
-    // Array of all the guided tours loaded from the csv file
-    this.tours = []; //not good. We don't need to load every guided tour at the beginning.
-                      //maybe just if we go to "next tour" or if we choose the guided tour in a list, by it's name for example
-
-    // the current tour index
-    this.currentTourIndex = 0; //useful if we load all guided tours
-
-    // index of the tour accessible by the user (loaded by default)
-    // as of now, there is no way to choose a specific tour at runtime
-    const startingTourIndex = 0;
-
-    // for the demo : if this is true, hide the buttons for changing tour
-    //this.preventUserFromChangingTour = options.preventUserFromChangingTour || false;
-
 
     /**
     * initialize the controller
@@ -75,15 +69,21 @@ export function GuidedTourController(documentController) {
       guidedTourContainer.id =   this.guidedTourContainerId;
       document.body.appendChild(guidedTourContainer);
       this.guidedTourContainer = new GuidedTour(guidedTourContainer, this);
+
     }
 
-    // loads the steps from the chosen tour
+    /**
+     * Gets the documents from a database, using filters
+     *
+     */
     //=============================================================================
-    this.selectTour = function selectTour(index){
+    this.getGuidedTours = function getGuidedTours(){
 
-        this.tourStepsCurrent = this.tours[index];
-        this.currentTourIndex = index;
-        this.setupIntro();
+      var req = new XMLHttpRequest();
+      req.open("GET", "http://rict.liris.cnrs.fr:9095/getGuidedTours",false);
+      req.send();
+      this.guidedTours = JSON.parse(req.responseText);
+
     }
 
     // setup the display for the introduction (buttons, image, text...)
@@ -117,80 +117,56 @@ export function GuidedTourController(documentController) {
 
     }
 
+    this.getCurrentTour = function getCurrentTour(){
+      if (this.guidedTours.length != 0){
+        this.currentGuidedTour = this.guidedTours[this.currentTourIndex];
+        return this.currentGuidedTour;
+      }
+      else
+      {
+        return null;
+      }
+    }
+
     //=============================================================================
-    this.goToNextStep = function goToNextStep(){
-
-        if(this.currentStepIndex + 1 >= this.tourStepsCurrent.length){
-            return;
-        }
-
-        this.currentStepIndex += 1;
-        this.docs.currentDoc = this.tourStepsCurrent[this.currentStepIndex].doc;
-        this.docs.updateBrowser();
-        this.docs.focusOnDoc();
-
-        document.getElementById("guidedTourText1").innerHTML = this.tourStepsCurrent[this.currentStepIndex].text1;
-        document.getElementById("guidedTourText2").innerHTML = this.tourStepsCurrent[this.currentStepIndex].text2;
-        document.getElementById("guidedTourStepTitle").innerHTML = this.tourStepsCurrent[this.currentStepIndex].stepTitle;
-
+    this.getNextTour = function getNextTour(){
+      if (this.currentTourIndex < this.guidedTours.length - 1 || this.guidedTours.length == 0){
+        this.currentTourIndex++;
+      }
+      return this.getCurrentTour();
     };
 
     //=============================================================================
-    this.goToPreviousStep = function goToPreviousStep(){
-
-        if(this.currentStepIndex === 1){
-            return;
-        }
-
-        this.currentStepIndex += -1;
-        this.docs.currentDoc = this.tourStepsCurrent[this.currentStepIndex].doc;
-        this.docs.updateBrowser();
-        this.docs.focusOnDoc();
-
-        document.getElementById("guidedTourText1").innerHTML = this.tourStepsCurrent[this.currentStepIndex].text1;
-        document.getElementById("guidedTourText2").innerHTML = this.tourStepsCurrent[this.currentStepIndex].text2;
-
-    };
-
-    //=============================================================================
-    this.goToNextTour = function goToNextTour(){
-
-        if(this.currentTourIndex + 1 >= this.tours.length){
-            return;
-        }
-
-        this.currentTourIndex += 1;
-        this.selectTour(this.currentTourIndex);
-
-    };
-
-    //=============================================================================
-    this.goToPreviousTour = function goToPreviousTour(){
-
-        if(this.currentTourIndex === 0){
-            return;
-        }
-
-        this.currentTourIndex += -1;
-        this.selectTour(this.currentTourIndex);
-
+    this.getPreviousTour = function getPreviousTour(){
+      if (this.currentTourIndex > 0 || this.currentTourIndex.length == 0)
+      {
+        this.currentTourIndex--;
+        return this.getCurrentTour();
+      }
     };
 
     /**
-     * Returns the current tour step
-     */
+    * Returns the current tour step
+    */
     //=============================================================================
-    this.getCurrentTourStep = function getCurrentTourStep()
-    {
-        if (this.guidedTour.length != 0)
-            return this.guidedTour[this.stepIndex];
-        else
-        {
-            return null;
-        }
+    this.getCurrentStep = function getCurrentStep(){
+      if (this.guidedTours[this.currentTourIndex].length != 0)
+          return this.currentGuidedTour[this.currentStepIndex];
+      else
+      {
+        console.log('no documents in guided tour');
+        return null;
+      }
     }
 
     this.getPreviousStep = function getPreviousStep(){
+
+      if (this.stepIndex > 0 || this.guidedTour.length == 0)
+      {
+          this.stepIndex--;
+          var currentDoc = this.getCurrentDoc();
+          return this.getCurrentDoc();
+      }
 
     }
 
@@ -211,29 +187,5 @@ export function GuidedTourController(documentController) {
     }
 
     this.initialize();
-
-}
-/**
-* Constructor for TourStep
-* TourSteps are object with properties : index, document, text1 and text2.
-* They are the individual steps of which guided tours are made.
-* @param docHandler : an instance of DocumentHandler (required)
-* @param dataFile : CSV file holding the Guided Tours data
-* @param options : optional parameters (including temporal)
-*/
-//=============================================================================
-function TourStep(doc, stepTitle, text1, text2) {
-
-    // document to show
-    this.doc=doc;
-
-    // step title
-    this.stepTitle = stepTitle;
-
-    // text for this step (displayed in the guided tour window)
-    this.text1 = text1;
-
-    // document text (context) for this step (displayed in doc browser window)
-    this.text2 = text2;
 
 }
