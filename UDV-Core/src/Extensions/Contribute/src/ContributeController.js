@@ -144,8 +144,6 @@ export function ContributeController(documentController){
     this.newDocData = this.formData;
 
     for (var pair of this.formData.entries() ){
-      console.log(pair[0] + ":" + pair[1])
-
       var val = pair[0];
       if( val != "link"){ //is not file filed
         var attr = this.documentController.documentModel.metaData[val];
@@ -252,7 +250,7 @@ export function ContributeController(documentController){
     var id = currentDoc.metaData['id'];
 
     //new promise
-      var newDocUpdate = new Promise((resolve, reject) => {
+    var newDocUpdate = new Promise((resolve, reject) => {
 
         var req = new XMLHttpRequest();
         req.open('POST', this.urlUpdate + "/" + id);
@@ -275,11 +273,11 @@ export function ContributeController(documentController){
       var self = this;
 
       newDocUpdate.then( function(response){//resolve
-      //  document.getElementById(this.documentUpdate.updateFormId).reset();
+
         $('#'+self.documentUpdate.updateFormId).get(0).reset(); //clear update formular
         self.updatedData = new FormData(); //clear data
         self.documentController.getDocuments(); //update documents
-
+        self.documentController.reset();
         self.documentUpdate.activateWindow(false);
         self.documentController.documentBrowser.activateWindow(true);
 
@@ -341,6 +339,8 @@ export function ContributeController(documentController){
     }
 
   }
+
+
 
   // request update every active frame
   this.documentController.view.addFrameRequester( MAIN_LOOP_EVENTS.AFTER_CAMERA_UPDATE,

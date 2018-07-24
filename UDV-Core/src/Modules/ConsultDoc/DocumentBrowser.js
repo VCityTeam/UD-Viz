@@ -26,9 +26,11 @@ export function DocumentBrowser(browserContainer, documentController) {
   this.isOrientingDoc = false;
   this.isFadingDoc = false;
   this.fadeAlpha = 0;
-  this.docIndex = 1;
+  this.docIndex=1;
   this.isStart = true; //dirty variable to test if we are in start mode
   this.currentMetadata;
+
+  this.numberDocs;
 
   this.browserTabID = "browserWindowTabs"; //ID of the html div holding buttons in the browser
                                           //will be used by other classes as well to add extra buttons
@@ -41,7 +43,7 @@ export function DocumentBrowser(browserContainer, documentController) {
   browserContainer.innerHTML =
       '<div id="docBrowserWindow">\
         <button id="closeBrowserWindow" type=button>Close</button><br/>\
-          <div id="docHead">Document Navigator</div><br>\
+          <div id="docHead">Document browser</div><br>\
           <br/>\
           <div id="browserInfo"></div>\
           <div id = "docBrowserInfo"></div>\
@@ -76,16 +78,6 @@ export function DocumentBrowser(browserContainer, documentController) {
               <output for="docOpaSlider" id="docOpacity">50</output>\
           ';
 
-
-    this.update = function update()
-    {
-        if (this.documentController.setOfDocuments.length >= 0)
-        {
-            this.documentsExist = true;
-        }
-        this.updateBrowser();
-    }
-
     // Whether this window is currently displayed or not.
     this.windowIsActive = this.documentController.options.active || false;
 
@@ -96,11 +88,12 @@ export function DocumentBrowser(browserContainer, documentController) {
         {
             this.windowIsActive = active;
         }
+
         if(this.documentsExist && this.isStart){
-          this.documentController.getDocuments();
+
+          this.startBrowser();
           this.isStart = false;
         }
-        this.update();
         document.getElementById('docBrowserWindow').style.display
                                                   = active  ? "block" : "none ";
 
@@ -161,9 +154,11 @@ export function DocumentBrowser(browserContainer, documentController) {
      */
     //=============================================================================
     this.nextDoc = function nextDoc(){
-      this.currentDoc = this.documentController.getNextDoc();
-      if(this.docIndex < this.documentController.setOfDocuments.length){
+
+
+      if(this.docIndex < this.numberDocs & this.currentDoc != null){
         this.docIndex ++;
+        this.currentDoc = this.documentController.getNextDoc();
       }
       this.updateBrowser();
     }
@@ -173,11 +168,15 @@ export function DocumentBrowser(browserContainer, documentController) {
      */
     //=============================================================================
     this.previousDoc = function previousDoc(){
-      this.currentDoc = this.documentController.getPreviousDoc();
-      if(this.docIndex > 1 ){
+
+
+      if(this.docIndex > 1 & this.currentDoc != null){
         this.docIndex --;
+        this.currentDoc = this.documentController.getPreviousDoc();
+
       }
       this.updateBrowser();
+
     }
 
 
@@ -186,14 +185,11 @@ export function DocumentBrowser(browserContainer, documentController) {
     // on the documentModel metadata attributes
     //==========================================================================
     this.updateBrowser = function updateBrowser(){
-      //update currentDoc with current doc info
-      this.currentDoc = this.documentController.getCurrentDoc();
-
-      if (this.currentDoc != null & this.documentsExist == true)
+      this.currentDoc = this.documentController.setOfDocuments[this.documentController.docIndex];
+      if (this.currentDoc != null & this.numberDocs > 0)
       {
+        this.documentController.toggleActionButtons(true);
 
-        $('#docDeleteButton').show();
-        $('#docUpdateButton').show();
         this.currentMetadata = this.currentDoc.metaData;
         var txt="";
         txt += "<div id ='docMetadata'>";
@@ -218,7 +214,7 @@ export function DocumentBrowser(browserContainer, documentController) {
                    + this.documentController.serverModel.documentsRepository
                    + this.currentMetadata.link;
         document.getElementById('docBrowserIndex').innerHTML = "Document: "
-          + this.docIndex + " out of " + this.documentController.setOfDocuments.length;
+          + this.docIndex + " out of " + this.numberDocs;
       }
 
       else
@@ -230,8 +226,7 @@ export function DocumentBrowser(browserContainer, documentController) {
         document.getElementById('docBrowserInfo').innerHTML =
                             "No document to display according to your research";
         document.getElementById('docBrowserIndex').innerHTML = "No doc";
-        $('#docDeleteButton').hide();
-        $('#docUpdateButton').hide();
+        this.documentController.toggleActionButtons(false);
       }
     }
 
@@ -292,6 +287,13 @@ export function DocumentBrowser(browserContainer, documentController) {
         document.getElementById('docFullImg').src = null;
     }
 
+    this.startBrowser = function startBrowser(){
+      this.documentController.getDocuments();
+      this.docIndex = 1;
+      this.currentDoc = this.documentController.setOfDocuments[0];
+      this.updateBrowser();
+    }
+
     this.resetResearch = function resetResearch(){
       this.docIndex = 1;
       $("#" + this.documentController.documentResearch.filterFormId ).get(0).reset(); //reset reserach parameters
@@ -299,8 +301,9 @@ export function DocumentBrowser(browserContainer, documentController) {
       document.getElementById('browserInfo').innerHTML = "Filters have been reset."
       //reset default url
       this.documentController.url = this.url = this.documentController.serverModel.url;
+
       this.documentController.getDocuments();
-      this.updateBrowser();
+      this.documentController.reset();
       this.closeDocFull();
     }
 
