@@ -1,7 +1,21 @@
 /*Browser*/
 #docBrowserCreateButton{
   z-index: 20;
-  left: 175px;
+  left: 100px;
+  position:absolute;
+  margin : 5px;
+  font-size: 14px;
+  border: 1px solid black;
+  background-color: white;
+  color: black;
+  height: 30px;
+  pointer-events: auto;
+  bottom:50px;
+}
+
+#docDeleteButton{
+  z-index: 20;
+  left: 170px;
   position:absolute;
   margin : 5px;
   font-size: 14px;
@@ -14,7 +28,34 @@
 
 }
 
+#docUpdateButton{
+  z-index: 20;
+  left:240px;
+  position:absolute;
+  margin : 5px;
+  font-size: 14px;
+  border: 1px solid black;
+  background-color: white;
+  color: black;
+  height: 30px;
+  pointer-events: auto;
+  bottom:50px;
+
+}
 /*Research window*/
+#docCreateButton{
+  z-index: 20;
+  position:absolute;
+  margin : 5px;
+  font-size: 14px;
+  border: 1px solid black;
+  background-color: white;
+  color: black;
+  height: 30px;
+  pointer-events: auto;
+  bottom:35px;
+}
+
 #docResearch{
   position: absolute;
   z-index: 20;
@@ -233,3 +274,230 @@
   pointer-events: auto;
   bottom:20px;
 }
+
+
+/*Creation window*/
+#create_title{
+  display:inline-block;
+  color: black;
+  font-size: 14px;
+  overflow: hidden;
+  width: 90%;
+  text-align: left;
+  padding-left: 20px;
+  margin-bottom: 12px;
+  border-radius: 4px;
+
+
+}
+
+#create_description{
+  display:inline-block;
+  color: black;
+  font-size: 14px;
+  overflow: hidden;
+  width: 90%;
+  height:60px;
+  text-align: left;
+  padding-left: 20px;
+  margin-bottom: 12px;
+  border-radius: 4px;
+}
+
+#uploadedFile{
+  margin-bottom: 12px;
+  margin-left: 15px;
+}
+
+#create_refDate, #create_publicationDate, #create_subject{
+  margin-bottom: 12px;
+  border-radius: 4px;
+}
+
+#create_type{
+    margin-bottom: 12px;
+    margin-left: 17px;
+    border-radius: 4px;
+}
+
+
+/*Update view*/
+#updateContainer{
+      display: none;
+      position: absolute;
+      z-index: 10;
+      margin : 1px;
+      margin-right: 1px;
+      top: 1px;
+      right: 0;
+      border : 1px solid rgb(90,90,90);
+      text-align: center;
+      color: white;
+      width: 22%;
+      height: 90%;
+      color : black;
+      background-color: rgba(30,30,30,0.6);
+      font-size: 14;
+  }
+
+  #browserWindowTabs{
+    bottom:0px;
+  }
+
+  #docBrowserIndex{
+    position: absolute;
+        margin-top: 10px;
+        color: white;
+        left : 15px;
+        bottom : 100px;
+        font-size: 14px;
+        font-weight: bold;
+        overflow: hidden;
+
+  }
+
+  #update_title{
+    display:inline-block;
+    margin-top: 20px;
+    color: black;
+    text-align: center;
+    font-size: 16px;
+    overflow: hidden;
+    width: 90%;
+    text-align: left;
+    padding-left: 20px;
+    font-weight: bold;
+    height: 60px;
+  }
+
+
+
+  #update_refDate{
+    display:inline-block;
+
+    color: black;
+
+    text-align: center;
+    font-size: 14px;
+    overflow: hidden;
+    width: 90%;
+    text-align: left;
+    padding-left: 20px;
+    height:50px;
+
+
+  }
+
+  #update_publicationDate{
+    display:inline-block;
+
+    color: black;
+
+    text-align: left;
+    padding-left: 20px;
+    font-size: 14px;
+    overflow: hidden;
+    width: 90%;
+      height:50px;
+  }
+
+  #update_description{
+    display:inline-block;
+    color: black;
+    font-size: 14px;
+    overflow: hidden;
+    width: 90%;
+    padding-left: 20px;
+    height:100px;
+  }
+
+
+  #update_subject{
+    display:inline-block;
+    color: black;
+    text-align: center;
+    font-size: 14px;
+    overflow: hidden;
+    width: 90%;
+    text-align: left;
+    padding-left: 20px;
+    height:30px;
+  }
+
+  #update_type{
+    display:inline-block;
+    color: black;
+    font-size: 14px;
+    width: 90%;
+    text-align: left;
+    padding-left: 20px;
+    height:30px;
+  }
+
+
+  #docUpdatePreview{
+      z-index: 20;
+      height: 40%;
+      display:inline-block;
+      margin: 10px;
+  }
+
+  #docUpdatePreviewImg{
+      width: 100%; /* or any custom size */
+      height: 100%;
+      object-fit: contain;
+  }
+
+#closeUpdate{
+    position: absolute;
+    z-index: 40;
+    top: 0;
+    right: 3px;
+    margin : 3px;
+    border: 1px solid black;
+    background-color: white;
+    color: black;
+    pointer-events: auto;
+
+  }
+
+  #docUpdate{
+    z-index: 20;
+    left: 100px;
+    position:absolute;
+    margin : 5px;
+    font-size: 14px;
+    border: 1px solid black;
+    background-color: white;
+    color: black;
+    height: 30px;
+    pointer-events: auto;
+    bottom:50px;
+
+  }
+
+  #updateCancel{
+    z-index: 20;
+    left:240px;
+    position:absolute;
+    margin : 5px;
+    font-size: 14px;
+    border: 1px solid black;
+    background-color: white;
+    color: black;
+    height: 30px;
+    pointer-events: auto;
+    bottom:50px;
+
+  }
+
+  #updateTitle{
+    display:inline-block;
+    margin-top: 20px;
+    color: white;
+    text-align: center;
+    font-size: 16px;
+    font-weight: bold;
+    overflow: hidden;
+    width: 90%;
+  }

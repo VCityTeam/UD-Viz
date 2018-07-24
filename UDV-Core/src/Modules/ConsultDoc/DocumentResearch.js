@@ -22,6 +22,8 @@ export function DocumentResearch(researchContainer, documentController)
     this.researchController = researchContainer;
     this.windowIsActive = false;
 
+    this.filterFormId = "filterForm";
+
 
     /**
      * Creates the research view
@@ -51,13 +53,17 @@ export function DocumentResearch(researchContainer, documentController)
         }
         document.getElementById('researchContainer').style.display =
                                                       active ? "block" : "none ";
+
+          if (this.windowIsActive){
+           this.documentController.documentBrowser.activateWindow(true);
+        }
+
     }
 
     this.refresh = function refresh()
     {
         this.activateWindow(this.windowIsActive);
-        this.documentController.documentBrowser.activateWindow(true);
-
+        //this.documentController.documentBrowser.activateWindow(true);
     }
 
     /**
@@ -66,8 +72,8 @@ export function DocumentResearch(researchContainer, documentController)
     //=============================================================================
     this.research = function research()
     {
-        document.getElementById('browserInfo').innerHTML = "The documents have been filtered."
         this.documentController.getDocuments();
+        document.getElementById('browserInfo').innerHTML = "The documents have been filtered."
         this.documentController.documentBrowser.activateWindow(true);
     }
 
@@ -87,7 +93,7 @@ export function DocumentResearch(researchContainer, documentController)
       var optionsFilters = {
         "form": {
           "attributes":{
-            "id":"filterForm"
+            "id":this.filterFormId
           }
         },
         "fields":{

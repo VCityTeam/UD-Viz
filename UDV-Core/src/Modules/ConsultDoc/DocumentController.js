@@ -39,7 +39,7 @@ export function DocumentController(view, controls, options = {},config)
     this.researchContainerId = "researchContainer";
     this.browserContainerId = "browserContainer";
     this.urlFilters ="";
-    
+
     /**
      * Create view container for the 3 different views
      */
@@ -77,7 +77,8 @@ export function DocumentController(view, controls, options = {},config)
     this.getDocuments = function getDocuments(){
       //check which filters are set. URL is built manually for more modularity.
       //Could be improved
-      var filters = new FormData(document.getElementById('filterForm')).entries();
+
+      var filters = new FormData(document.getElementById(this.documentResearch.filterFormId)).entries();
       var urlFilters = this.url + this.serverModel.getAll;
       for(var pair of filters ){
         if(pair[1]!=""){
@@ -90,6 +91,8 @@ export function DocumentController(view, controls, options = {},config)
       req.open("POST", urlFilters,false);
       req.send();
       this.setOfDocuments = JSON.parse(req.responseText);
+      this.documentBrowser.numberDocs = this.setOfDocuments.length;
+      this.reset();
     }
 
     /**
@@ -112,10 +115,11 @@ export function DocumentController(view, controls, options = {},config)
     //=============================================================================
     this.getNextDoc = function getNextDoc()
     {
-        if (this.docIndex < this.setOfDocuments.length - 1 || this.setOfDocuments.length == 0)
+        if (this.docIndex < this.setOfDocuments.length - 1 || this.setOfDocuments.length == 0){
             this.docIndex++;
-        var currentDoc = this.getCurrentDoc();
-        return this.getCurrentDoc();
+          }
+
+      return this.getCurrentDoc();
     }
 
     /**
@@ -127,9 +131,35 @@ export function DocumentController(view, controls, options = {},config)
         if (this.docIndex > 0 || this.setOfDocuments.length == 0)
         {
             this.docIndex--;
-            var currentDoc = this.getCurrentDoc();
-            return this.getCurrentDoc();
         }
+        return this.getCurrentDoc();
+
+    }
+
+    /**
+     * Reset browser at the begining of documents list
+     */
+    //=============================================================================
+    this.reset = function reset(){
+      this.docIndex = 0;
+      this.documentBrowser.docIndex = 1;
+      this.currentDoc = this.setOfDocuments[0];
+      this.documentBrowser.updateBrowser();
+    }
+
+    //show or hide delete/update button
+    //this two buttons are useful for the contribute mode.
+    //I an clean MVC architecture, they should be managed by the ContributeController.
+    this.toggleActionButtons = function toggleActionButtons(active){
+
+      if (active){
+      $('#docDeleteButton').show();
+      $('#docUpdateButton').show();}
+      else{
+        $('#docDeleteButton').hide();
+        $('#docUpdateButton').hide();
+      }
+
     }
 
     this.initialize();

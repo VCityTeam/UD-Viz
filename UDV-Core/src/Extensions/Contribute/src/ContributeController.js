@@ -6,8 +6,8 @@
  */
 
 import { CreateDocument }  from './CreateDocument.js';
+import { UpdateDocument }   from './UpdateDocument.js';
 import "./Contribute.css";
-import "./creation.css";
 import { MAIN_LOOP_EVENTS } from 'itowns';
 
 /**
@@ -21,10 +21,19 @@ export function ContributeController(documentController){
   this.documentController = documentController;
 
   this.documentCreate; //CreateDocument object
+  this.documentUpdate;
+
   this.creationContainerId = "creationContainer"; //create view
+  this.updateContainerId = "updateContainer";     //update view
 
   //url to create a document
-  this.url = this.documentController.url + this.documentController.serverModel.add;
+  this.urlAdd = this.documentController.url + this.documentController.serverModel.add;
+
+  //url to update a document
+  this.urlUpdate = this.documentController.url + this.documentController.serverModel.update;
+
+  //url to delete a document
+  this.urlDelete = this.documentController.url + this.documentController.serverModel.delete;
 
   this.newDocData = null; //newly created document's data
   this.formData ; //document's static metadata
@@ -42,6 +51,11 @@ export function ContributeController(documentController){
     creationContainer.id = this.creationContainerId;
     document.body.appendChild(creationContainer);
     this.documentCreate = new CreateDocument(creationContainer, this);
+
+    var updateContainer = document.createElement("div");
+    updateContainer.id =   this.updateContainerId;
+    document.body.appendChild(updateContainer);
+    this.documentUpdate = new UpdateDocument(updateContainer, this);
 
   }
 
@@ -126,11 +140,10 @@ export function ContributeController(documentController){
   //=============================================================================
   this.formDataVerification = function formDataVerification(){
     var dataIsValid = true;
-    this.formData = new FormData(document.getElementById('creationForm'));
+    this.formData = new FormData(document.getElementById(this.documentCreate.creationFormId));
     this.newDocData = this.formData;
 
     for (var pair of this.formData.entries() ){
-
       var val = pair[0];
       if( val != "link"){ //is not file filed
         var attr = this.documentController.documentModel.metaData[val];
@@ -151,10 +164,10 @@ export function ContributeController(documentController){
         }
       }
     }
-    }
 
-    return dataIsValid;
   }
+  return dataIsValid;
+}
 
   /**
    * Real time display of camera position ( = document position in overlay)
@@ -182,19 +195,16 @@ export function ContributeController(documentController){
 //=============================================================================
   this.documentCreation = function documentCreation(){
 
-
-   if (this.formDataVerification() ==true & this.visuDataVerification() == true){
+    if (this.formDataVerification() ==true & this.visuDataVerification() == true){
       //add visualizationdata to document data
       for (var pair of this.visuData.entries() ){ //concatenate metadata and visu data
         this.newDocData.append(pair[0], pair[1]);
       }
-
-      // Use promesses to ensure that the data has been uploaded before
-      // reinitializing the form (in the .then below)
+      //new promess
       var newDocUpload = new Promise((resolve, reject) => {
 
         var req = new XMLHttpRequest();
-        req.open('POST', this.url);
+        req.open('POST', this.urlAdd);
 
         req.onload = function() { //event executed once the request req is done
           if (req.status == 200) {
@@ -215,7 +225,7 @@ export function ContributeController(documentController){
 
       newDocUpload.then( function(response){
 
-        $("#creationForm").get(0).reset();
+        $('#' + self.documentCreate.creationFormId ).get(0).reset();
         self.newDocData = new FormData();
         self.visuData = new FormData();
         self.documentController.getDocuments();
@@ -225,6 +235,112 @@ export function ContributeController(documentController){
       });
     }
   }
+
+
+  /**
+   *   Updates document data
+   */
+  //=============================================================================
+  this.documentUpdate = function documentUpdate(){
+
+    this.updatedData = new FormData(document.getElementById(this.documentUpdate.updateFormId));
+
+    //get current doc data and id
+    var currentDoc = this.documentController.getCurrentDoc();
+    var id = currentDoc.metaData['id'];
+
+    //new promise
+    var newDocUpdate = new Promise((resolve, reject) => {
+
+        var req = new XMLHttpRequest();
+        req.open('POST', this.urlUpdate + "/" + id);
+
+        req.onload = function() { //event executed once the request is over
+          if (req.status == 200) {
+            resolve(req.response);
+          }
+           else {
+             reject(Error(req.statusText));
+           }
+        };
+
+        req.onerror = function() {
+          reject("Network Error");
+        };
+        req.send(this.updatedData);
+      });
+
+      var self = this;
+
+      newDocUpdate.then( function(response){//resolve
+
+        $('#'+self.documentUpdate.updateFormId).get(0).reset(); //clear update formular
+        self.updatedData = new FormData(); //clear data
+        self.documentController.getDocuments(); //update documents
+        self.documentController.reset();
+        self.documentUpdate.activateWindow(false);
+        self.documentController.documentBrowser.activateWindow(true);
+
+      },
+      function(error) { //reject
+        console.error("Failed!", error);
+      });
+
+  }
+
+  /**
+   *   Deletes a document
+   */
+  //=============================================================================
+
+  this.documentDelete = function documentDelete(){
+
+    //make sure you want to delete
+    if(confirm('Delete this document permanently?')){
+      //get current doc data and id
+      var currentDoc = this.documentController.getCurrentDoc();
+      var id = currentDoc.metaData['id'];
+
+      var docDelete = new Promise((resolve, reject) => {
+        var req = new XMLHttpRequest();
+        req.open('GET', this.urlDelete + "/" + id);
+        req.onload = function() { //event executed once the request is over
+          if (req.status == 200) {
+            resolve(req.response);
+          }
+           else {
+             reject(Error(req.statusText));
+           }
+        };
+
+        req.onerror = function() {
+          reject("Network Error");
+        };
+        req.send();
+      });
+
+      var self = this;
+
+      docDelete.then( function(response){//resolve
+
+        alert("The document has been deleted successfully");
+        self.documentController.getDocuments(); //update documents
+        self.documentController.docIndex = 0;//return to first doc
+        self.documentController.documentBrowser.docIndex = 1; //reset index in browser
+        self.documentController.documentBrowser.update();
+      },
+      function(error) { //reject
+        console.error("Failed!", error);
+      });
+
+    }
+    else {
+      alert('The document was not deleted');
+    }
+
+  }
+
+
 
   // request update every active frame
   this.documentController.view.addFrameRequester( MAIN_LOOP_EVENTS.AFTER_CAMERA_UPDATE,
