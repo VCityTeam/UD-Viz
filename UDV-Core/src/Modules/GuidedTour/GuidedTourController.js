@@ -83,6 +83,7 @@ export function GuidedTourController(documentController) {
       req.open("GET", "http://rict.liris.cnrs.fr:9095/getGuidedTours",false);
       req.send();
       this.guidedTours = JSON.parse(req.responseText);
+      console.log(this.guidedTours)
 
     }
 

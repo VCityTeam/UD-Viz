@@ -94,7 +94,9 @@ export function GuidedTour(guidedTourContainer, guidedTourController) {
   }
 
   this.updateStep = function updateStep(){
+    this.currentTourIndex = 1;
     this.currentStep = this.guidedTourController.getCurrentStep();
+    console.log(this.currentStep)
 
     this.updateBrowser();
     this.updateLeftwindow();
@@ -105,8 +107,10 @@ export function GuidedTour(guidedTourContainer, guidedTourController) {
   this.startGuidedTour = function startGuidedTour(){
 
     //loads guidedTour
-
+    this.currentTourIndex = 1;
+    this.guidedTourController.getCurrentTour();
     this.updateStep();
+
     // setup the display (hide & show elements)
     document.getElementById("guidedTourPreviousTourButton").style.display = "none";
     document.getElementById("guidedTourNextTourButton").style.display = "none";
