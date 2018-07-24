@@ -148,6 +148,8 @@ export function DocumentController(view, controls, options = {},config)
     }
 
     //show or hide delete/update button
+    //this two buttons are useful for the contribute mode.
+    //I an clean MVC architecture, they should be managed by the ContributeController.
     this.toggleActionButtons = function toggleActionButtons(active){
 
       if (active){

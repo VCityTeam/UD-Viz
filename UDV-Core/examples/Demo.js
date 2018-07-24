@@ -172,17 +172,11 @@ helpController = datDotGUI.add( help, 'windowIsActive'
 helpController.onFinishChange( function(value) { help.refresh(); });
 
 
-// Temporal controller uses a folder
-var temporalFolder     = datDotGUI.addFolder( "Temporal mode" );
-var temporalActiveCtrl = temporalFolder.add( temporal, 'temporalIsActive'
-                                       ).name( "Active" ).listen();
+var temporalActiveCtrl = datDotGUI.add( temporal, 'temporalIsActive'
+).name( "Temporal" ).listen();
 temporalActiveCtrl.onFinishChange(function(value) {
   temporal.refresh();
 });
-
-var temporalOverlayCtrl = temporalFolder.add(
-                                         temporal, 'temporalUsesOverlay'
-                                         ).name("Use Overlay").listen();
 
 //Document uses a folder
 var documentFolder = datDotGUI.addFolder("Documents");

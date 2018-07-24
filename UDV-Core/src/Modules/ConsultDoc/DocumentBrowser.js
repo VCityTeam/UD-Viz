@@ -90,7 +90,7 @@ export function DocumentBrowser(browserContainer, documentController) {
         }
 
         if(this.documentsExist && this.isStart){
-//        if(this.documentsExist && this.isStart){
+
           this.startBrowser();
           this.isStart = false;
         }
@@ -156,7 +156,7 @@ export function DocumentBrowser(browserContainer, documentController) {
     this.nextDoc = function nextDoc(){
 
 
-      if(this.docIndex < this.documentController.setOfDocuments.length & this.currentDoc != null){
+      if(this.docIndex < this.numberDocs & this.currentDoc != null){
         this.docIndex ++;
         this.currentDoc = this.documentController.getNextDoc();
       }
@@ -186,7 +186,7 @@ export function DocumentBrowser(browserContainer, documentController) {
     //==========================================================================
     this.updateBrowser = function updateBrowser(){
       this.currentDoc = this.documentController.setOfDocuments[this.documentController.docIndex];
-      if (this.currentDoc != null & this.documentController.setOfDocuments.length > 0)
+      if (this.currentDoc != null & this.numberDocs > 0)
       {
         this.documentController.toggleActionButtons(true);
 
@@ -289,7 +289,6 @@ export function DocumentBrowser(browserContainer, documentController) {
 
     this.startBrowser = function startBrowser(){
       this.documentController.getDocuments();
-      //this.activateWindow(true);
       this.docIndex = 1;
       this.currentDoc = this.documentController.setOfDocuments[0];
       this.updateBrowser();
@@ -305,7 +304,6 @@ export function DocumentBrowser(browserContainer, documentController) {
 
       this.documentController.getDocuments();
       this.documentController.reset();
-    //  this.updateBrowser();
       this.closeDocFull();
     }
 

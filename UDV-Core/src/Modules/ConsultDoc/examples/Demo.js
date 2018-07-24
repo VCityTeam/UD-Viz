@@ -130,7 +130,7 @@ helpController.onFinishChange( function(value) { help.refresh(); });
 
 
 var temporalActiveCtrl = datDotGUI.add( temporal, 'temporalIsActive'
-                                       ).name( "Active" ).listen();
+).name( "Temporal" ).listen();
 temporalActiveCtrl.onFinishChange(function(value) {
   temporal.refresh();
 });
