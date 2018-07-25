@@ -31,7 +31,7 @@
           "labelCreation":"Description :",
           "displayable":"true",
           "displayID":"description",
-          "label":"Description",
+          "label":"false",
           "updatable":"true",
           "updateID":"update_description",
           "labelUpdate":"Description: ",

@@ -40,6 +40,8 @@ export function GuidedTour(guidedTourContainer, guidedTourController) {
   this.currentTour = null;
   this.currentStep = null;
 
+  this.guidedTourMode = true;
+
   // update the html with elements for this class (windows, buttons etc)
   guidedTourContainer.innerHTML = '\
   <button id="guidedTourTab">VISITE</button>\
@@ -61,8 +63,6 @@ export function GuidedTour(guidedTourContainer, guidedTourController) {
   var guidedTourText2 = document.createElement('div');
   guidedTourText2.id = 'guidedTourText2';
   document.getElementById('docBrowserWindow').appendChild(guidedTourText2);
-
-  //document.getElementById('guidedTourText2').innerHTML = "on remplira ici la description";
   document.getElementById('guidedTourText2').style.display = "block";
 
   // hide or show the guided tour window
@@ -73,12 +73,20 @@ export function GuidedTour(guidedTourContainer, guidedTourController) {
       this.guidedTourWindowIsActive = this.guidedTourWindowIsActive ? false : true;
 
       if(this.isStart){
-        this.guidedTourController.getGuidedTours();
+        this.startBrowser();
+        this.isStart = false;
       }
+  }
 
-      if(!this.guidedTourWindowIsActive){
-          this.exitGuidedTour();
-      }
+  this.startBrowser = function startBrowser(){
+    this.guidedTourController.getGuidedTours();
+    this.previewTour();
+
+  }
+
+  this.previewTour = function previewTour(){
+    document.getElementById('guidedTourTitle').innerHTML = this.guidedTourController.getCurrentTour().name;
+    document.getElementById('guidedTourText1').innerHTML = this.guidedTourController.getCurrentTour().description;
   }
 
   //udpates the browser with text2
@@ -90,25 +98,30 @@ export function GuidedTour(guidedTourContainer, guidedTourController) {
   this.updateLeftwindow = function updateLeftwindow(){
 
     document.getElementById("guidedTourText1").innerHTML = this.currentStep.text1;
+    document.getElementById('guidedTourStepTitle').innerHTML = this.currentStep.title;
 
   }
 
   this.updateStep = function updateStep(){
     this.currentTourIndex = 1;
     this.currentStep = this.guidedTourController.getCurrentStep();
-    console.log(this.currentStep)
-
     this.updateBrowser();
     this.updateLeftwindow();
+    //DIRTY
+    this.guidedTourController.documentController.documentBrowser.currentMetadata = this.currentStep.document.metaData;
+    this.guidedTourController.documentController.documentBrowser.currentDoc = this.currentStep.document;
+    this.guidedTourController.documentController.documentBrowser.focusOnDoc();
   }
 
   //
   //=============================================================================
   this.startGuidedTour = function startGuidedTour(){
 
+    this.guidedTourMode = true;
+
     //loads guidedTour
     this.currentTourIndex = 1;
-    this.guidedTourController.getCurrentTour();
+    //this.guidedTourController.getCurrentStep();
     this.updateStep();
 
     // setup the display (hide & show elements)
@@ -124,7 +137,7 @@ export function GuidedTour(guidedTourContainer, guidedTourController) {
     // bigger text block
     document.getElementById("guidedTourText1").style.height = "60%";
   //  this.guidedTourController.documentController.documentBillboard.hideBillboards(true);
-    //  this.guidedTourController.documentController.documentBrowser.activateWindow(true);
+    this.guidedTourController.documentController.documentBrowser.activateWindow(true);
 
 
 /*
@@ -173,18 +186,19 @@ export function GuidedTour(guidedTourContainer, guidedTourController) {
 
   this.nextTour = function nextTour(){
 
-    this.currentTour = this.guidedTourController.getNextTour();
+    this.guidedTourController.getNextTour();
     if(this.tourIndex < this.guidedTourController.guidedTours.length){
       this.tourIndex ++;
     }
+    this.previewTour();
   }
 
   this.previousTour = function previousTour(){
-
-    this.currenTour = this.guidedTourController.getPreviousTour();
-    if(this.tourIndex < this.guidedTourController.guidedTours.length){
+    this.guidedTourController.getPreviousTour();
+    if(this.tourIndex > 1 ){
       this.tourIndex --;
     }
+    this.previewTour();
   }
 
   this.previousStep = function previousStep(){
@@ -193,10 +207,7 @@ export function GuidedTour(guidedTourContainer, guidedTourController) {
     if(this.stepIndex < this.guidedTourController.currentGuidedTour.length){
       this.stepIndex ++;
     }
-
     this.updateStep();
-    //this.guidedTourController.documentController.documentBrowser.focusOnDoc();
-
   }
 
   this.nextStep = function nextStep(){

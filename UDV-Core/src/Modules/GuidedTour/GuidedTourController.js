@@ -50,11 +50,12 @@ export function GuidedTourController(documentController) {
                       //maybe just if we go to "next tour" or if we choose the guided tour in a list, by it's name for example
 
 
-    this.currentTourIndex = 0;// the current tour index, default is 1
+    this.currentTourIndex = 0;// the current tour index, default is 0
 
-    this.currentGuidedTour; //holds tour steps will be loaded by clicking on start
+//    this.currentGuidedTour; //holds tour steps will be loaded by clicking on start
 
-    //this.currentStep = null;
+  //this.currentStep = null;
+    this.steps = [];
 
     // the current step index of the current tour
     this.currentStepIndex = 0;
@@ -69,21 +70,6 @@ export function GuidedTourController(documentController) {
       guidedTourContainer.id =   this.guidedTourContainerId;
       document.body.appendChild(guidedTourContainer);
       this.guidedTourContainer = new GuidedTour(guidedTourContainer, this);
-
-    }
-
-    /**
-     * Gets the documents from a database, using filters
-     *
-     */
-    //=============================================================================
-    this.getGuidedTours = function getGuidedTours(){
-
-      var req = new XMLHttpRequest();
-      req.open("GET", "http://rict.liris.cnrs.fr:9095/getGuidedTours",false);
-      req.send();
-      this.guidedTours = JSON.parse(req.responseText);
-      console.log(this.guidedTours)
 
     }
 
@@ -118,6 +104,18 @@ export function GuidedTourController(documentController) {
 
     }
 
+    /**
+     * Gets the documents from a database, using filters
+     *
+     */
+    //=============================================================================
+    this.getGuidedTours = function getGuidedTours(){
+      var req = new XMLHttpRequest();
+      req.open("GET", "http://127.0.0.1:5000/getGuidedTours",false);
+      req.send();
+      this.guidedTours = JSON.parse(req.responseText);
+    }
+
     this.getCurrentTour = function getCurrentTour(){
       if (this.guidedTours.length != 0){
         this.currentGuidedTour = this.guidedTours[this.currentTourIndex];
@@ -142,8 +140,8 @@ export function GuidedTourController(documentController) {
       if (this.currentTourIndex > 0 || this.currentTourIndex.length == 0)
       {
         this.currentTourIndex--;
-        return this.getCurrentTour();
       }
+      return this.getCurrentTour();
     };
 
     /**
@@ -151,8 +149,11 @@ export function GuidedTourController(documentController) {
     */
     //=============================================================================
     this.getCurrentStep = function getCurrentStep(){
-      if (this.guidedTours[this.currentTourIndex].length != 0)
-          return this.currentGuidedTour[this.currentStepIndex];
+
+      if (this.currentGuidedTour.length != 0){
+      //  console.log('current step: ',this.currentGuidedTour.extendedDocs[this.currentStepIndex]);
+        return this.currentGuidedTour.extendedDocs[this.currentStepIndex];
+      }
       else
       {
         console.log('no documents in guided tour');
@@ -162,19 +163,18 @@ export function GuidedTourController(documentController) {
 
     this.getPreviousStep = function getPreviousStep(){
 
-      if (this.stepIndex > 0 || this.guidedTour.length == 0)
+      if (this.currentStepIndex > 0 || this.currentGuidedTour.length == 0)
       {
-          this.stepIndex--;
-          var currentDoc = this.getCurrentDoc();
-          return this.getCurrentDoc();
+          this.currentStepIndex--;
       }
-
+      return this.getCurrentStep();
     }
 
     this.getNextStep = function getNextStep(){
-      if (this.stepIndex < this.guidedTour.length - 1 || this.guidedTour.length == 0)
-          this.stepIndex ++;
-      return this.getCurrentTourStep();
+      if (this.currentStepIndex < this.currentGuidedTour.length - 1 || this.currentGuidedTour.length == 0){
+          this.currentStepIndex ++;
+        }
+        return this.getCurrentStep();
     }
 
     this.loadGuidedTour = function loadGuidedTour(id){
