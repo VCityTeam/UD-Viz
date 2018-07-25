@@ -1,12 +1,13 @@
 {
     "type": "class",
     "server":{
-      "url":"http://127.0.0.1:5000/",
+      "url":"http://rict.liris.cnrs.fr:9095/",
       "documentsRepository":"documents_repository/",
       "getAll": "getDocuments?",
       "add":"addDocument",
       "delete":"deleteDocument",
-      "update":"editDocument"
+      "update":"editDocument",
+      "guidedTour": "getGuidedTours"
     },
     "properties": {
       "metaData":{

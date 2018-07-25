@@ -33,18 +33,21 @@ export function GuidedTour(guidedTourContainer, guidedTourController) {
   this.stepIndex = 1; //current step of the guidedtour. Defautt is 1 (start)
 
   // boolean to control the state of the guided tour window (open/closed)
-  this.guidedTourWindowIsActive = false;
+  this.guidedTourWindowIsActive = true;
 
   this.isStart = true;
 
   this.currentTour = null;
   this.currentStep = null;
 
+  //instance of document browser
+  this.documentBrowser =this.guidedTourController.browser;
+
   this.guidedTourMode = true;
 
   // update the html with elements for this class (windows, buttons etc)
   guidedTourContainer.innerHTML = '\
-  <button id="guidedTourTab">VISITE</button>\
+  <button id="guidedTourTab">EXPLORE</button>\
   <div id="guidedTourWindow">\
   <div id="guidedTourTitle"></div>\
   <div id="guidedTourStepTitle"></div>\
@@ -63,19 +66,26 @@ export function GuidedTour(guidedTourContainer, guidedTourController) {
   var guidedTourText2 = document.createElement('div');
   guidedTourText2.id = 'guidedTourText2';
   document.getElementById('docBrowserWindow').appendChild(guidedTourText2);
-  document.getElementById('guidedTourText2').style.display = "block";
+  //document.getElementById('guidedTourText2').style.display = "block";
 
   // hide or show the guided tour window
   //=============================================================================
   this.toggleGuidedTourWindow = function toggleGuidedTourWindow(){
 
-      document.getElementById('guidedTourWindow').style.display = this.guidedTourWindowIsActive ? "none" : "block";
-      this.guidedTourWindowIsActive = this.guidedTourWindowIsActive ? false : true;
+    // document.getElementById('docBrowserPreviousButton').style.display = this.guidedTourWindowIsActive ? "none":"block";
+    // document.getElementById('docBrowserNextButton').style.display = this.guidedTourWindowIsActive ? "none":"block";
+    //
+     document.getElementById('guidedTourWindow').style.display = this.guidedTourWindowIsActive ? "block" : "none";
+    // document.getElementById("guidedTourText2").style.dislay = this.guidedTourWindowIsActive ? "block" : "none";
+    this.guidedTourWindowIsActive = this.guidedTourWindowIsActive ? false : true;
 
-      if(this.isStart){
-        this.startBrowser();
-        this.isStart = false;
-      }
+
+
+    if(this.isStart){
+      this.startBrowser();
+      this.isStart = false;
+      this.guidedTourController.toggleGuidedTourButtons(true);
+    }
   }
 
   this.startBrowser = function startBrowser(){
@@ -85,12 +95,37 @@ export function GuidedTour(guidedTourContainer, guidedTourController) {
   }
 
   this.previewTour = function previewTour(){
+
+    document.getElementById("guidedTourPreviousTourButton").style.display = "block";
+    document.getElementById("guidedTourNextTourButton").style.display = "block";
+    // for the demo, until we have more than one finished guided tour
+    // we can prevent user from changing tour by hiding the buttons
+    if(this.guidedTourController.preventUserFromChangingTour){
+        document.getElementById("guidedTourPreviousTourButton").style.display = "none";
+        document.getElementById("guidedTourNextTourButton").style.display = "none";
+    }
+
+    document.getElementById("guidedTourPreviousStepButton").style.display = "none";
+    document.getElementById("guidedTourNextStepButton").style.display = "none";
+    document.getElementById("guidedTourExitButton").style.display = "none";
+    document.getElementById("guidedTourText2").style.display = "none";
+    document.getElementById("guidedTourStartButton").style.display = "block";
+
     document.getElementById('guidedTourTitle').innerHTML = this.guidedTourController.getCurrentTour().name;
     document.getElementById('guidedTourText1').innerHTML = this.guidedTourController.getCurrentTour().description;
+    document.getElementById("guidedTourText1").style.height = "45%";
+    document.getElementById("guidedTourStepTitle").innerHTML = null;
+
+    document.getElementById('docHead').style.display = "none";
+    document.getElementById('resetFilters').style.display = "none";
+    document.getElementById('docBrowserInfo').style.display = "none";
+
+
   }
 
   //udpates the browser with text2
   this.updateBrowser = function updateBrowser(){
+
 
     document.getElementById("guidedTourText2").innerHTML = this.currentStep.text2;
   }
@@ -103,28 +138,30 @@ export function GuidedTour(guidedTourContainer, guidedTourController) {
   }
 
   this.updateStep = function updateStep(){
+
     this.currentTourIndex = 1;
     this.currentStep = this.guidedTourController.getCurrentStep();
+    this.documentBrowser.currentMetadata = this.guidedTourController.getCurrentStep().document.metaData;
+
+    this.documentBrowser.currentDoc = this.guidedTourController.getCurrentStep().document;
+
+    this.documentBrowser.updateBrowser();
     this.updateBrowser();
     this.updateLeftwindow();
-    //DIRTY
-    this.guidedTourController.documentController.documentBrowser.currentMetadata = this.currentStep.document.metaData;
-    this.guidedTourController.documentController.documentBrowser.currentDoc = this.currentStep.document;
-    this.guidedTourController.documentController.documentBrowser.focusOnDoc();
+
+//    this.documentBrowser.currentMetadata = this.currentStep.document.metaData;
+  //  this.documentBrowser.currentDoc = this.currentStep.document;
+    this.documentBrowser.focusOnDoc();
   }
 
   //
   //=============================================================================
   this.startGuidedTour = function startGuidedTour(){
 
-    this.guidedTourMode = true;
-
-    //loads guidedTour
-    this.currentTourIndex = 1;
-    //this.guidedTourController.getCurrentStep();
+    this.tourIndex = 1;
     this.updateStep();
-
     // setup the display (hide & show elements)
+    this.guidedTourController.toggleGuidedTourButtons(false);
     document.getElementById("guidedTourPreviousTourButton").style.display = "none";
     document.getElementById("guidedTourNextTourButton").style.display = "none";
     document.getElementById("guidedTourPreviousStepButton").style.display = "block";
@@ -133,55 +170,30 @@ export function GuidedTour(guidedTourContainer, guidedTourController) {
     document.getElementById("guidedTourText2").style.display = "inline-block";
     document.getElementById("guidedTourStartButton").style.display = "none";
     document.getElementById("guidedTourDocPreviewImg").style.display = "none";
-    document.getElementById("resetFilters").style.display = "none";
-    // bigger text block
     document.getElementById("guidedTourText1").style.height = "60%";
-  //  this.guidedTourController.documentController.documentBillboard.hideBillboards(true);
-    this.guidedTourController.documentController.documentBrowser.activateWindow(true);
+
+    document.getElementById('docBrowserWindow').style.display = "block";
 
 
-/*
-      // modify temporal
-      if(this.temporal){
-          // open window if closed
-          if(!this.temporal.temporalWindowIsActive){
-              this.temporal.activateWindow();
-          }
-          // hide concurrent view button
-          document.getElementById("timeConcurrentView").style.display = "none";
-      }*/
-      /*
-      // open doc window and hide some buttons
-      if(!this.docs.docBrowserWindowIsActive){
-          this.docs.docBrowserWindowIsActive = true;
-          document.getElementById('docBrowserWindow').style.display = "block";
-      }*/
-      document.getElementById('docBrowserPreviousButton').style.display = "none";
-      document.getElementById('docBrowserNextButton').style.display = "none";
-      document.getElementById('docBrowserIndex').style.display = "none";
+  //  this.guidedTourController.documentController.documentBrowser.activateWindow(true);
 
-      this.currentStepIndex = 0; //index will become 1 in goToNextStep()
+    document.getElementById('docBrowserPreviousButton').style.display = "none";
+    document.getElementById('docBrowserNextButton').style.display = "none";
+    document.getElementById('docBrowserIndex').style.display = "none";
 
-  //    this.goToNextStep();
+    this.currentStepIndex = 1;
+
   };
 
   // resume normal behavior
   //=============================================================================
   this.exitGuidedTour = function exitGuidedTour(){
-      //
-      // this.selectTour(0);
-      // this.docs.showBillboards(false);
-      // this.docs.closeDocFull();
-      //
-      // if(this.temporal){
-      //     // show concurrent view button
-      //     document.getElementById("timeConcurrentView").style.display = "block";
-      // }
-      //
-      // // show the regular buttons for doc window
-      // document.getElementById('docBrowserPreviousButton').style.display = "block";
-      // document.getElementById('docBrowserNextButton').style.display = "block";
-      // document.getElementById('docBrowserIndex').style.display = "block";
+
+      this.guidedTourController.reset();
+      // show the regular buttons for doc window
+      document.getElementById('docBrowserPreviousButton').style.display = "block";
+      document.getElementById('docBrowserNextButton').style.display = "block";
+      document.getElementById('docBrowserIndex').style.display = "block";
   };
 
   this.nextTour = function nextTour(){
@@ -201,18 +213,18 @@ export function GuidedTour(guidedTourContainer, guidedTourController) {
     this.previewTour();
   }
 
-  this.previousStep = function previousStep(){
+  this.nextStep = function nextStep(){
 
-    this.currentStep = this.guidedTourController.getNextStep();
-    if(this.stepIndex < this.guidedTourController.currentGuidedTour.length){
+    this.guidedTourController.getNextStep();
+    if(this.stepIndex < this.guidedTourController.getCurrentTour().length){
       this.stepIndex ++;
     }
     this.updateStep();
   }
 
-  this.nextStep = function nextStep(){
+  this.previousStep = function previousStep(){
 
-    this.currentStep = this.guidedTourController.getPreviousStep();
+    this.guidedTourController.getPreviousStep();
     if( this.stepIndex > 1 ){
       this.stepIndex --;
     }
@@ -226,7 +238,7 @@ export function GuidedTour(guidedTourContainer, guidedTourController) {
   document.getElementById("guidedTourStartButton").addEventListener('mousedown', this.startGuidedTour.bind(this),false);
   document.getElementById("guidedTourNextStepButton").addEventListener('mousedown', this.nextStep.bind(this),false);
   document.getElementById("guidedTourPreviousStepButton").addEventListener('mousedown', this.previousStep.bind(this),false);
-  // document.getElementById("guidedTourExitButton").addEventListener('mousedown', this.exitGuidedTour.bind(this),false);
+  document.getElementById("guidedTourExitButton").addEventListener('mousedown', this.exitGuidedTour.bind(this),false);
   document.getElementById("guidedTourTab").addEventListener('mousedown', this.toggleGuidedTourWindow.bind(this), false);
 
 }

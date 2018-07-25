@@ -83,7 +83,7 @@ var help  = new udvcore.HelpWindow({active:true});
 var config;
 $.ajax({
   type: "GET",
-  url: "consultDocConfig.json",
+  url: "guidedTourConfig.json",
   datatype: "json",
   async: false,
   success: function(data){
@@ -130,33 +130,6 @@ aboutController.onFinishChange( function(value) { about.refresh(); } );
 helpController = datDotGUI.add( help, 'windowIsActive'
                               ).name( "Help" ).listen();
 helpController.onFinishChange( function(value) { help.refresh(); });
-
-
-var temporalActiveCtrl = datDotGUI.add( temporal, 'temporalIsActive'
-                                       ).name( "Active" ).listen();
-temporalActiveCtrl.onFinishChange(function(value) {
-  temporal.refresh();
-});
-
-//Document uses a folder
-var documentFolder = datDotGUI.addFolder("Documents");
-var docResearch = documentFolder.add( controller.documentResearch, 'windowIsActive'
-                                        ).name("Research").listen();
-docResearch.onFinishChange(function(value){
-  controller.documentResearch.refresh();
-});
-
-var browserOption = documentFolder.add( controller.documentBrowser, 'windowIsActive'
-                                       ).name("Browser").listen();
-browserOption.onFinishChange(function(value){
-  controller.documentBrowser.refresh();
-});
-/*
-var billboardsOption = documentFolder.add( controller.documentBillboard, 'windowIsActive'
-                                          ).name("Billboards").listen();
-billboardsOption.onFinishChange(function(value){
-  controller.documentBillboard.activateBillboards();
-});*/
 
 datDotGUI.close();     // By default the dat.GUI controls are rolled up
 

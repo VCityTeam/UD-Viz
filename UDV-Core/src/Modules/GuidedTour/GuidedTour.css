@@ -180,6 +180,7 @@
 #guidedTourExitButton{
     position: absolute;
     z-index: 20;
+    display:none;
     bottom : 5px;
     left: 0;
     right: 0;

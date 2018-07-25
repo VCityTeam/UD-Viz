@@ -160,6 +160,8 @@ export function DocumentBrowser(browserContainer, documentController) {
         this.docIndex ++;
         this.currentDoc = this.documentController.getNextDoc();
       }
+      this.currentDoc = this.documentController.setOfDocuments[this.documentController.docIndex];
+      this.currentMetadata = this.currentDoc.metaData;
       this.updateBrowser();
     }
 
@@ -175,6 +177,8 @@ export function DocumentBrowser(browserContainer, documentController) {
         this.currentDoc = this.documentController.getPreviousDoc();
 
       }
+      this.currentDoc = this.documentController.setOfDocuments[this.documentController.docIndex];
+      this.currentMetadata = this.currentDoc.metaData;
       this.updateBrowser();
 
     }
@@ -185,12 +189,12 @@ export function DocumentBrowser(browserContainer, documentController) {
     // on the documentModel metadata attributes
     //==========================================================================
     this.updateBrowser = function updateBrowser(){
-      this.currentDoc = this.documentController.setOfDocuments[this.documentController.docIndex];
-      if (this.currentDoc != null & this.numberDocs > 0)
+      if (this.currentDoc != null) // & this.numberDocs > 0)
       {
+
         this.documentController.toggleActionButtons(true);
 
-        this.currentMetadata = this.currentDoc.metaData;
+        //this.currentMetadata = this.currentDoc.metaData;
         var txt="";
         txt += "<div id ='docMetadata'>";
         var metadata = this.documentController.documentModel.metaData;
@@ -209,7 +213,8 @@ export function DocumentBrowser(browserContainer, documentController) {
           }
         }
         txt +="</div>";
-        document.getElementById("docBrowserInfo").innerHTML = txt;
+        console.log(txt)
+        document.getElementById("browserInfo").innerHTML = txt;
         document.getElementById('docBrowserPreviewImg').src = this.documentController.url
                    + this.documentController.serverModel.documentsRepository
                    + this.currentMetadata.link;
@@ -288,9 +293,11 @@ export function DocumentBrowser(browserContainer, documentController) {
     }
 
     this.startBrowser = function startBrowser(){
+
       this.documentController.getDocuments();
       this.docIndex = 1;
       this.currentDoc = this.documentController.setOfDocuments[0];
+      this.currentMetadata = this.currentDoc.metaData;
       this.updateBrowser();
     }
 
