@@ -149,8 +149,6 @@ export function GuidedTour(guidedTourContainer, guidedTourController) {
     this.updateBrowser();
     this.updateLeftwindow();
 
-//    this.documentBrowser.currentMetadata = this.currentStep.document.metaData;
-  //  this.documentBrowser.currentDoc = this.currentStep.document;
     this.documentBrowser.focusOnDoc();
   }
 
@@ -181,7 +179,7 @@ export function GuidedTour(guidedTourContainer, guidedTourController) {
     document.getElementById('docBrowserNextButton').style.display = "none";
     document.getElementById('docBrowserIndex').style.display = "none";
 
-    this.currentStepIndex = 1;
+    this.currentStepIndex = 0;
 
   };
 
@@ -218,8 +216,9 @@ export function GuidedTour(guidedTourContainer, guidedTourController) {
     this.guidedTourController.getNextStep();
     if(this.stepIndex < this.guidedTourController.getCurrentTour().length){
       this.stepIndex ++;
+      this.updateStep();
     }
-    this.updateStep();
+
   }
 
   this.previousStep = function previousStep(){

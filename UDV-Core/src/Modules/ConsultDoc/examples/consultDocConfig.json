@@ -2,7 +2,7 @@
     "type": "class",
     "server":{
       "url":"http://rict.liris.cnrs.fr:9095/",
-      "documentsRepository":"documents_repository/",
+      "documentsRepository":"getFile/",
       "getAll": "getDocuments?"
     },
     "properties": {

@@ -189,7 +189,7 @@ export function DocumentBrowser(browserContainer, documentController) {
     // on the documentModel metadata attributes
     //==========================================================================
     this.updateBrowser = function updateBrowser(){
-      if (this.currentDoc != null) // & this.numberDocs > 0)
+      if (this.currentDoc != null & this.numberDocs > 0)
       {
 
         this.documentController.toggleActionButtons(true);
@@ -228,8 +228,6 @@ export function DocumentBrowser(browserContainer, documentController) {
         var defaultImage = document.getElementById('docBrowserPreviewImg');
         defaultImage.src = DefaultImage;
         document.getElementById('docBrowserPreviewImg').src = DefaultImage;
-        document.getElementById('docBrowserInfo').innerHTML =
-                            "No document to display according to your research";
         document.getElementById('docBrowserIndex').innerHTML = "No doc";
         this.documentController.toggleActionButtons(false);
       }
