@@ -213,7 +213,6 @@ export function DocumentBrowser(browserContainer, documentController) {
           }
         }
         txt +="</div>";
-        console.log(txt)
         document.getElementById("browserInfo").innerHTML = txt;
         document.getElementById('docBrowserPreviewImg').src = this.documentController.url
                    + this.documentController.serverModel.documentsRepository

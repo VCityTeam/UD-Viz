@@ -80,12 +80,13 @@ export function GuidedTourController(documentController) {
       this.guidedTours = JSON.parse(req.responseText);
       this.documentController.documentBrowser.numberDocs = 1;
 
+      console.log(this.guidedTours)
+
     }
 
     this.getCurrentTour = function getCurrentTour(){
       if (this.guidedTours.length != 0){
-        console.log('current tour index', this.currentTourIndex)
-        return this.guidedTours[this.currentTourIndex];;
+       return this.guidedTours[this.currentTourIndex];
       }
       else
       {
@@ -116,7 +117,8 @@ export function GuidedTourController(documentController) {
     //=============================================================================
     this.getCurrentStep = function getCurrentStep(){
       if (this.getCurrentTour().length != 0){
-        return this.getCurrentTour().extendedDocs[this.currentStepIndex];
+        var steps = this.getCurrentTour().extendedDocs;
+        return steps[this.currentStepIndex];
       }
       else
       {
@@ -133,12 +135,11 @@ export function GuidedTourController(documentController) {
     }
 
     this.getNextStep = function getNextStep(){
-      console.log(this.getCurrentTour().extendedDocs.length)
-      if (this.currentStepIndex < this.getCurrentTour().extendedDocs.length -1){
+      if (this.currentStepIndex < this.getCurrentTour().extendedDocs.length ){
           this.currentStepIndex ++;
         }
         return this.getCurrentStep();
-    }
+      }
 
 
     /**
@@ -146,7 +147,7 @@ export function GuidedTourController(documentController) {
     */
     //=============================================================================
     this.reset = function reset(){
-      this.currentStepIndex =1;
+      this.currentStepIndex =0;
       this.currentTourIndex = 0;
       this.currentGuidedTour = this.guidedTours[this.currentTourIndex];
       this.guidedTour.currentStep = this.getCurrentStep();

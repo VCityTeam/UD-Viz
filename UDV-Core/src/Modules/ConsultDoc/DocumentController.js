@@ -91,6 +91,7 @@ export function DocumentController(view, controls, options = {},config)
       req.open("POST", urlFilters,false);
       req.send();
       this.setOfDocuments = JSON.parse(req.responseText);
+      console.log(this.setOfDocuments);
       this.documentBrowser.numberDocs = this.setOfDocuments.length;
       this.reset();
     }
