@@ -76,22 +76,11 @@ view.tileLayer.materialOptions = {
     colorTextureElevationMaxZ: 240,
 };
 
-// function use :
-// For preupdate Layer geomtry :
-var preUpdateGeo = function (context, layer) {
-    if(layer.root === undefined) {
-        itowns.init3dTilesLayer(context, layer);
-        return [];
-    }
-    itowns.pre3dTilesUpdate(context, layer);
-    return [layer.root];
-};
-
 // Create a new Layer 3d-tiles  => data sent from building-server (LYON 6)
 // -----------------------------------------------------
 const $3dTilesTemporalLayer = new itowns.GeometryLayer('3d-tiles-request-volume', view.scene);
 
-$3dTilesTemporalLayer.preUpdate = preUpdateGeo;
+$3dTilesTemporalLayer.preUpdate = itowns.pre3dTilesUpdate;
 $3dTilesTemporalLayer.update = itowns.process3dTilesNode(
     itowns.$3dTilesCulling,
     itowns.$3dTilesSubdivisionControl
