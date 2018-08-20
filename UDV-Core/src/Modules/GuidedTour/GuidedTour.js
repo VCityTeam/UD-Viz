@@ -27,7 +27,7 @@ export function GuidedTour(guidedTourContainer, guidedTourController) {
   this.currentStep = null; //current step of the current guided tour
 
   //instance of document browser
-  this.documentBrowser =this.guidedTourController.browser;
+  this.documentBrowser = this.guidedTourController.browser;
 
   // update the html with elements for this class (windows, buttons etc)
   guidedTourContainer.innerHTML = '\

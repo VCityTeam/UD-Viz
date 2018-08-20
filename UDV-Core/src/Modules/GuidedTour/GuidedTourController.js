@@ -46,7 +46,8 @@ export function GuidedTourController(documentController) {
 
   this.guidedTour; //instance of GuidedTour
 
-  this.preventUserFromChangingTour = false; //put to true to prevent user from  //changing guided tour
+  this.preventUserFromChangingTour = false; //put to true to prevent user from
+  // changing guided tour
 
   /**
   * initialize the controller
@@ -158,7 +159,7 @@ export function GuidedTourController(documentController) {
       this.documentController.documentBrowser.activateWindow(false);
       this.documentController.documentBrowser.closeDocFull();
       this.guidedTour.previewTour();
-      
+
     }
 
     //Hide or show previous / next buttons in browser window
