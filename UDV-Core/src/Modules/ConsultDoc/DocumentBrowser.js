@@ -189,12 +189,11 @@ export function DocumentBrowser(browserContainer, documentController) {
     // on the documentModel metadata attributes
     //==========================================================================
     this.updateBrowser = function updateBrowser(){
+      
       if (this.currentDoc != null & this.numberDocs > 0)
       {
 
         this.documentController.toggleActionButtons(true);
-
-        //this.currentMetadata = this.currentDoc.metaData;
         var txt="";
         txt += "<div id ='docMetadata'>";
         var metadata = this.documentController.documentModel.metaData;
@@ -290,7 +289,7 @@ export function DocumentBrowser(browserContainer, documentController) {
     }
 
     this.startBrowser = function startBrowser(){
-
+      
       this.documentController.getDocuments();
       this.docIndex = 1;
       this.currentDoc = this.documentController.setOfDocuments[0];
