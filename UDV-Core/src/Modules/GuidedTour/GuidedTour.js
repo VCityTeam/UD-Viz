@@ -6,8 +6,8 @@ import './GuidedTour.css'
  * The GuidedTour is an object handling the guidedtour view
  *
  *
- * @param { HTML DOM Element object } guidedTourContainer : an instance of DocumentHandler (required)
- * @param { guidedTourController } guidedTourController : CSV file holding the Guided Tours data
+ * @param { HTML DOM Element object } guidedTourContainer
+ * @param { guidedTourController } guidedTourController : instance of GuidedTourController
  *
 //=============================================================================*/
 export function GuidedTour(guidedTourContainer, guidedTourController) {
@@ -42,7 +42,7 @@ export function GuidedTour(guidedTourContainer, guidedTourController) {
   <button id="guidedTourNextTourButton" type=button>⇨</button>\
   <button id="guidedTourPreviousStepButton" type=button>⇦</button>\
   <button id="guidedTourPreviousTourButton" type=button>⇦</button>\
-  <button id="guidedTourExitButton" type=button>SORTIE</button>\
+  <button id="guidedTourExitButton" type=button>EXIT</button>\
   <button id="guidedTourStartButton" type=button>START</button>\
   </div>\
   ';
@@ -61,14 +61,14 @@ export function GuidedTour(guidedTourContainer, guidedTourController) {
     this.guidedTourWindowIsActive = this.guidedTourWindowIsActive ? false : true;
 
     if(this.isStart){
-      this.startBrowser();
+      this.startGuidedTourMode();
       this.isStart = false;
       this.guidedTourController.toggleGuidedTourButtons(true);
     }
   }
 
-  //initialise browser, guidedtour window
-  this.startBrowser = function startBrowser(){
+  //get all available guided tour from the database
+  this.startGuidedTourMode = function startGuidedTourMode(){
     this.guidedTourController.getGuidedTours();
     this.previewTour();
 
@@ -109,23 +109,8 @@ export function GuidedTour(guidedTourContainer, guidedTourController) {
 
   }
 
-  //udpates the browser with doc text
-  //
-  this.updateBrowser = function updateBrowser(){
 
-    document.getElementById("guidedTourText2").innerHTML = this.currentStep.text2;
-  }
-
-  // update left window with tour text
-  //=============================================================================
-  this.updateLeftwindow = function updateLeftwindow(){
-
-    document.getElementById("guidedTourText1").innerHTML = this.currentStep.text1;
-    document.getElementById('guidedTourStepTitle').innerHTML = this.currentStep.title;
-
-  }
-
-  // update step
+  // update step with current step data
   //=============================================================================
   this.updateStep = function updateStep(){
 
@@ -134,8 +119,9 @@ export function GuidedTour(guidedTourContainer, guidedTourController) {
                     this.guidedTourController.getCurrentStep().document.metaData;
     this.documentBrowser.currentDoc = this.guidedTourController.getCurrentStep().document;
     this.documentBrowser.updateBrowser();
-    this.updateBrowser();
-    this.updateLeftwindow();
+    document.getElementById("guidedTourText1").innerHTML = this.currentStep.text1;
+    document.getElementById('guidedTourStepTitle').innerHTML = this.currentStep.title;
+    document.getElementById("guidedTourText2").innerHTML = this.currentStep.text2;
     this.documentBrowser.focusOnDoc();
   }
 

@@ -79,7 +79,9 @@ var help  = new udvcore.HelpWindow({active:true});
 //the following lines are in charge of loading configuration files used to setup
 // different views of consultDoc module (research, browser).
 
-//loading configuration files
+//loading configuration file
+//this specific configuration file shows current information about a document:
+// title and description. This is only developer's choice for this specific demo
 var config;
 $.ajax({
   type: "GET",

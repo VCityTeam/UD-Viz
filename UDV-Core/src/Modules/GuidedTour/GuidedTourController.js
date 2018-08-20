@@ -8,9 +8,7 @@ import { GuidedTour }   from './GuidedTour.js';
 * server to get information and data (guided tours)
 * It handles the display of guided tours in the guided tour window, and all the
 * functionalities related to the guided tour (start, exit, next, previous...)
-* GuidedTours are object with properties : index, document, text1 and text2.
-* They are the individual steps of which guided tours are made.
-*/
+* GuidedTours are made of steps with properties : index, document, text1 and text2.
 
 /**
 * Constructor for GuidedTourController
@@ -68,7 +66,8 @@ export function GuidedTourController(documentController) {
     req.open("GET", this.url ,false);
     req.send(req.responseText);
     this.guidedTours = JSON.parse(req.responseText);
-    this.documentController.documentBrowser.numberDocs = 1;
+    this.documentController.documentBrowser.numberDocs = this.guidedTours[0].extendedDocs.length;
+
   }
 
     /**
@@ -90,7 +89,7 @@ export function GuidedTourController(documentController) {
      */
     //=============================================================================
     this.getNextTour = function getNextTour(){
-      if (this.currentTourIndex < this.guidedTours.length  || this.guidedTours.length == 0){
+      if (this.currentTourIndex < this.guidedTours.length ){
         this.currentTourIndex++;
       }
       return this.getCurrentTour();
@@ -101,7 +100,7 @@ export function GuidedTourController(documentController) {
      */
     //=============================================================================
     this.getPreviousTour = function getPreviousTour(){
-      if (this.currentTourIndex > 0 || this.currentTourIndex.length == 0)
+      if (this.currentTourIndex > 0 )
       {
         this.currentTourIndex--;
       }
@@ -128,7 +127,7 @@ export function GuidedTourController(documentController) {
     */
     //=============================================================================
     this.getPreviousStep = function getPreviousStep(){
-      if (this.currentStepIndex > 0 || this.getCurrentTour().extendedDocs.length == 0)
+      if (this.currentStepIndex > 0)
       {
           this.currentStepIndex--;
       }
