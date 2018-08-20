@@ -4,7 +4,7 @@ import * as itowns from 'itowns';
 export { itowns };
 export { Setup3DScene }         from './Setup3DScene';
 
-export { GuidedTourController } from './Modules/GuidedTour/GuidedTour';
+export { GuidedTourController } from './Modules/GuidedTour/GuidedTourController';
 
 export { AboutWindow }          from './Modules/Others/About';
 export { CompassController }    from './Modules/Others/Compass';
