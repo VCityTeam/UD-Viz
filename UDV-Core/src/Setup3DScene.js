@@ -32,79 +32,77 @@ var extent = new itowns.Extent(
 
 // `viewerDiv` will contain iTowns' rendering area (`<canvas>`)
 const viewerDiv = document.getElementById('viewerDiv');
-// Instanciate PlanarView
-var view = new itowns.PlanarView(viewerDiv, extent);
 
-view.tileLayer.disableSkirt = true;
-
-// Add an WMS imagery layer (see WMS_Provider* for valid options)
-view.addLayer({
-    url: terrainAndElevationRequest,
-    networkOptions: { crossOrigin: 'anonymous' },
-    type: 'color',
-    protocol: 'wms',
-    version: '1.3.0',
-    id: 'wms_imagery',
-    name: 'Ortho2009_vue_ensemble_16cm_CC46',
-    projection: 'EPSG:3946',
-    axisOrder: 'wsen',
-    options: {
-        mimetype: 'image/jpeg',
+// Since the elevation layer use color textures, specify min/max z which is in
+// gray scale. Normally a multiplicative factor should allow to get the data at
+// the right scale but it is not done by the Open Data Grand Lyon
+const config = {
+    materialOptions: {
+        useColorTextureElevation: true,
+        colorTextureElevationMinZ: 0,
+        colorTextureElevationMaxZ: 255,
     },
-});
-
-// Add an WMS elevation layer (see WMS_Provider* for valid options)
-view.addLayer({
-    url: terrainAndElevationRequest,
-    type: 'elevation',
-    protocol: 'wms',
-    networkOptions: { crossOrigin: 'anonymous' },
-    version: '1.3.0',
-    id: 'wms_elevation',
-    name: 'MNT2012_Altitude_10m_CC46',
-    projection: 'EPSG:3946',
-    axisOrder: 'wsen',
-    heightMapWidth: 256,
-    options: {
-        mimetype: 'image/jpeg',
-    },
-});
-// Since the elevation layer use color textures, specify min/max z
-view.tileLayer.materialOptions = {
-    useColorTextureElevation: true,
-    colorTextureElevationMinZ: 37,
-    colorTextureElevationMaxZ: 240,
+    disableSkirt: true,
 };
 
-// Create a new Layer 3d-tiles  => data sent from building-server (LYON 6)
+// Instanciate PlanarView*
+view = new itowns.PlanarView(viewerDiv, extent, config);
+
+// Add an WMS imagery layer (see WMSProvider* for valid options)
+view.addLayer({
+    type: 'color',
+    id: 'wms_imagery',
+    updateStrategy: {
+        type: itowns.STRATEGY_DICHOTOMY,
+        options: {},
+    },
+    source: {
+        extent: extent,
+        name: 'Ortho2009_vue_ensemble_16cm_CC46',
+        protocol: 'wms',
+        url: 'https://download.data.grandlyon.com/wms/grandlyon',
+        version: '1.3.0',
+        projection: 'EPSG:3946',
+        format: 'image/jpeg',
+    },
+});
+
+// Add an WMS elevation layer (see WMSProvider* for valid options)
+view.addLayer({
+    id: 'wms_elevation',
+    type: 'elevation',
+    source: {
+        extent: extent,
+        url: 'https://download.data.grandlyon.com/wms/grandlyon',
+        protocol: 'wms',
+        name: 'MNT2012_Altitude_10m_CC46',
+        projection: 'EPSG:3946',
+        heightMapWidth: 256,
+        format: 'image/jpeg',
+    },
+});
+
+// Create a new Layer 3d-tiles  => data from an apache service running rict.liris.cnrs.fr and serving a 3d tiles temporal
+// tileset of Villeurbanne
 // -----------------------------------------------------
-const $3dTilesTemporalLayer = new itowns.GeometryLayer('3d-tiles-request-volume', view.scene);
-
-$3dTilesTemporalLayer.preUpdate = itowns.pre3dTilesUpdate;
-$3dTilesTemporalLayer.update = itowns.process3dTilesNode(
-    itowns.$3dTilesCulling,
-    itowns.$3dTilesSubdivisionControl
-);
-
+const $3dTilesTemporalLayer = new itowns.GeometryLayer('3d-tiles-discrete-lod', new THREE.Group());
 $3dTilesTemporalLayer.name = '3d-tiles-temporal';
-
 $3dTilesTemporalLayer.url = buildingServerRequest;
-
 $3dTilesTemporalLayer.protocol = '3d-tiles';
 // Require temporal management (considered as a special material handled
 // through culling by the shaders)
 $3dTilesTemporalLayer.TemporalExtension = true;
-$3dTilesTemporalLayer.type = 'geometry';
 $3dTilesTemporalLayer.visible = true;
-// For the record the layer initial date could be hardwired here with e.g.
-//    $3dTilesTemporalLayer.displayDate = new Date(2000, 0, 2);
+// Hardwire minimum date in js (https://stackoverflow.com/questions/11526504/minimum-and-maximum-date). This date will
+// be updated with the minimum dates of the data of the layer in the example.
+$3dTilesTemporalLayer.displayDate = new Date(-8640000000000000);
 // but this initialization can also be the responsability of another component.
 
 // add the layer to the view
 if(showBuildings){
   // Next line syntax might be simplified on acceptance of this PR
   //    https://github.com/iTowns/itowns/pull/546
-  itowns.View.prototype.addLayer.call(view,$3dTilesTemporalLayer);
+  itowns.View.prototype.addLayer.call(view, $3dTilesTemporalLayer);
 }
 
 // sky color

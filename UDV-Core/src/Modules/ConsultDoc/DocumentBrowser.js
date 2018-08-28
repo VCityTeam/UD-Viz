@@ -142,9 +142,8 @@ export function DocumentBrowser(browserContainer, documentController) {
                                                   Math.trunc(this.fadeAlpha*100);
             }
 
-            // request the framerequester for another call to this.update()
-            // TO DO : explain false
-            this.documentController.view.notifyChange(false);
+            // request redraw of the scene
+            this.documentController.view.notifyChange();
 
         }
     };
@@ -189,7 +188,7 @@ export function DocumentBrowser(browserContainer, documentController) {
     // on the documentModel metadata attributes
     //==========================================================================
     this.updateBrowser = function updateBrowser(){
-      
+
       if (this.currentDoc != null & this.numberDocs > 0)
       {
 
@@ -276,8 +275,7 @@ export function DocumentBrowser(browserContainer, documentController) {
         this.isOrientingDoc = true;
         this.isFadingDoc = false;
 
-        //to request an update
-        this.documentController.view.notifyChange(false);
+        this.documentController.view.notifyChange();
 
     };
 
@@ -289,7 +287,7 @@ export function DocumentBrowser(browserContainer, documentController) {
     }
 
     this.startBrowser = function startBrowser(){
-      
+
       this.documentController.getDocuments();
       this.docIndex = 1;
       this.currentDoc = this.documentController.setOfDocuments[0];
