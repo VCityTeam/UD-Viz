@@ -52,11 +52,15 @@ var controls = new udvcore.itowns.PlanarControls(view, (useControlsForEditing)? 
 
 //////////// Temporal controller section
 
+// Retrieve the layer defined in Setup3DScene (we consider the first one
+// with the given name)
+const $3dTilesTemporalLayer = view.getLayers(layer => layer.name === '3d-tiles-temporal')[0];
+
 // Definition of the callback that is in charge of triggering a refresh
 // of the displayed layer when its (the layer) associated date has changed.
 function refreshDisplayLayerOnDate( date ) {
-  layer.displayDate = date;
-  view.notifyChange(true);
+  $3dTilesTemporalLayer.displayDate = date;
+  view.notifyChange($3dTilesTemporalLayer);
 }
 
 // Instanciate a temporal controller
@@ -65,18 +69,14 @@ var temporal = new udvcore.TemporalController(
                             {   // Various available constructor options
                                 minTime:   new moment( "1700-01-01" ),
                                 maxTime:   new moment( "2020-01-01" ),
-                                startTime: new moment().subtract(10, 'years'),
-                                endTime:   new moment().add(10, 'years'),
+                                currentTime: new moment().subtract(10, 'years'),
                                 timeStep:  new moment.duration( 1, 'years'),
                                 // or "YYYY-MMM" for Years followed months
                                 timeFormat: "YYYY",
                                 active:true
                               });
 
-// Retrieve the layer defined in Setup3DScene (we consider the first one
-// with the given name)
-var layer = view.getLayers(layer => layer.name === '3d-tiles-temporal')[0];
-layer.whenReady.then(
+$3dTilesTemporalLayer.whenReady.then(
   // In order to configure the temporal slide bar widget, we must
   // retrieve the temporal events of displayed data. At this loading
   // stage it could be that the b3dm with the actual dates (down to
@@ -87,22 +87,20 @@ layer.whenReady.then(
   function() {
     // Store the layer for triggering scene updates when temporal slider
     // will be changed by user:
-    temporal.layer = layer;
+    temporal.layer = $3dTilesTemporalLayer;
 
-    const tiles = layer.tileIndex.index;
+    const tiles = $3dTilesTemporalLayer.tileIndex.index;
     var resultDates = [];
-    const nbrTiles = Object.keys(tiles).length;
-    for( var i = 0; i < nbrTiles; i++) {
-      const start = tiles[i].boundingVolume.start_date;
+    for( var currentTileNb in tiles ) {
+      const start = tiles[currentTileNb].boundingVolume.start_date;
       if( start ) {
         resultDates.push( start );
       }
-      const end = tiles[i].boundingVolume.end_date;
+      const end = tiles[currentTileNb].boundingVolume.end_date;
       if( end ) {
         resultDates.push( end );
       }
     }
-
     // When there is such thing as a minimum and maximum, inform the temporal
     // widget of the data change and refresh the display.
     // Note: when the dataset doesn't have a minimum of two dates the temporal

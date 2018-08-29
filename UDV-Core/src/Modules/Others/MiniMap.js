@@ -2,6 +2,7 @@ import { Coordinates, PlanarView} from 'itowns';
 import { MAIN_LOOP_EVENTS } from 'itowns';
 import * as THREE from 'three';
 import './MiniMap.css';
+import * as itowns from "itowns";
 
 /**
 * Constructor for MiniMapController
@@ -21,7 +22,7 @@ export function MiniMapController(controls, extent, renderer) {
     document.body.appendChild(miniMapDiv);
 
     document.getElementById("minimap").innerHTML =
-      '<button   id="miniMapTab">CARTE</button>\
+      '<button   id="miniMapTab">Minimap</button>\
        <div id="miniMapViewer"></div>';
 
     // instance of PlanarControls
@@ -33,24 +34,42 @@ export function MiniMapController(controls, extent, renderer) {
     // camera height (zoom level)
     this.cameraZ = 16000;
 
+    // layer id
+    this.layerId = 'wms_imagery_minimap';
+
     // view setup
     const mapDiv = document.getElementById('miniMapViewer');
-    this.view = new PlanarView(mapDiv, extent, { renderer });
 
-    this.view.tileLayer.disableSkirt = true;
+    // Since the elevation layer use color textures, specify min/max z which is in
+    // gray scale. Normally a multiplicative factor should allow to get the data at
+    // the right scale but it is not done by the Open Data Grand Lyon
+    const config = {
+        materialOptions: {
+            useColorTextureElevation: true,
+            colorTextureElevationMinZ: 0,
+            colorTextureElevationMaxZ: 255,
+        },
+        disableSkirt: true,
+    };
+
+    this.view = new PlanarView(mapDiv, extent, config);
+
     // Add an WMS imagery layer (see WMS_Provider* for valid options)
     this.view.addLayer({
-        url: 'https://download.data.grandlyon.com/wms/grandlyon',
-        networkOptions: { crossOrigin: 'anonymous' },
         type: 'color',
-        protocol: 'wms',
-        version: '1.3.0',
-        id: 'wms_imagery',
-        name: 'Ortho2009_vue_ensemble_16cm_CC46',
-        projection: 'EPSG:3946',
-        axisOrder: 'wsen',
-        options: {
-            mimetype: 'image/jpeg',
+        id: this.layerId,
+        updateStrategy: {
+            type: itowns.STRATEGY_DICHOTOMY,
+            options: {},
+        },
+        source: {
+            extent: extent,
+            name: 'Ortho2009_vue_ensemble_16cm_CC46',
+            protocol: 'wms',
+            url: 'https://download.data.grandlyon.com/wms/grandlyon',
+            version: '1.3.0',
+            projection: 'EPSG:3946',
+            format: 'image/jpeg',
         },
     });
 
@@ -62,16 +81,17 @@ export function MiniMapController(controls, extent, renderer) {
         this.mapIndicator.position.y = this.controls.camera.position.y;
         this.mapIndicator.updateMatrixWorld();
 
-        this.view.notifyChange(true);
-    }
+        // Request redraw of the scene
+        this.view.notifyChange();
+    };
+
     //===================================================================
     this.toggleMap = function toggleMap(){
 
         mapDiv.style.display = this.miniMapIsActive ? "none" : "block";
         this.miniMapIsActive = this.miniMapIsActive ? false : true;
-        this.view.notifyChange(true);
-
-    }
+        this.view.notifyChange();
+    };
 
     // state of the minimap window (open/closed)
     this.miniMapIsActive = false;
@@ -87,7 +107,7 @@ export function MiniMapController(controls, extent, renderer) {
     this.view.camera.camera3D.quaternion.copy(new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(1, 0, 0), 0));
 
     this.view.scene.add( this.mapIndicator );
-    this.view.notifyChange(true);
+    this.view.notifyChange();
     this.view.addFrameRequester( MAIN_LOOP_EVENTS.AFTER_CAMERA_UPDATE,
                                  this.update.bind(this) );
 

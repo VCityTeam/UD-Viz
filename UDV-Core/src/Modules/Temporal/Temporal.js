@@ -10,7 +10,7 @@ import './Temporal.css';
 * to trigger the possible hook-ups).
 * This controller represents a timestamp with the Moment.js library.
 * @param refreshCallback : callback to be called when the time has changed.
-* @param options : optional parameters (starting and ending times)
+* @param options : optional parameters (min time, max time and current time)
 */
 
 export function TemporalController(refreshCallback, options={}) {
@@ -39,7 +39,7 @@ export function TemporalController(refreshCallback, options={}) {
     this.temporalIsActive = options.active || true;
 
     // The currently selected timestamp
-    this.currentTime = options.startTime || new moment();
+    this.currentTime = options.currentTime || new moment();
 
     // Minimum and maximum times that can be displayed by this occurence
     this.minTime = options.minTime || new moment( "1700-01-01" );

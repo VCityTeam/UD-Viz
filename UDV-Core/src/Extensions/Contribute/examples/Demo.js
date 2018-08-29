@@ -55,7 +55,7 @@ var controls = new udvcore.itowns.PlanarControls(view, (useControlsForEditing)? 
 // Definition of the callback that is in charge of triggering a refresh
 // of the displayed layer when its (the layer) associated date has changed.
 function refreshDisplayLayerOnDate( date ) {
-  view.notifyChange(true);
+  view.notifyChange();
 }
 
 // Instanciate a temporal controller
@@ -64,8 +64,7 @@ var temporal = new udvcore.TemporalController(
                             {   // Various available constructor options
                                 minTime:   new moment( "1700-01-01" ),
                                 maxTime:   new moment( "2020-01-01" ),
-                                startTime: new moment().subtract(10, 'years'),
-                                endTime:   new moment().add(10, 'years'),
+                                currentTime: new moment().subtract(10, 'years'),
                                 timeStep:  new moment.duration( 1, 'years'),
                                 // or "YYYY-MMM" for Years followed months
                                 timeFormat: "YYYY",
