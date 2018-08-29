@@ -1,0 +1,31 @@
+/**
+This file contains the css for the index.html file in UDV-Core
+*/
+html {
+    font-family: sans-serif;
+    font-size: 14px;
+    height: 100%;
+    width: 100%;
+}
+
+#logoLIRIS {
+    position: absolute;
+    z-index: 99;
+    left: 5px;
+    bottom: 5px;
+    max-height: 100px;
+    padding-left: 3px;
+    padding-top: 3px;
+    pointer-events: none;
+}
+
+#logoIMU {
+    position: absolute;
+    z-index: 99;
+    right: 5px;
+    bottom: 5px;
+    max-height: 100px;
+    padding-left: 3px;
+    padding-top: 3px;
+    pointer-events: none;
+}
