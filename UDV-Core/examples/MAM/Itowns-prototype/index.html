@@ -1,0 +1,45 @@
+<!doctype html>
+    <html>
+		<style type="text/css">
+            html {
+                height: 100%;
+            }
+
+            body {
+                margin: 0;
+                overflow: hidden;
+                height: 100%;
+            }
+
+            #viewerDiv {
+                margin : auto auto;
+                width: 100%;
+                padding: 0;
+                height: 100%
+            }
+            #menuDiv {
+				position: absolute;
+				top:0px;
+				margin-left: 0px;
+			}
+			@media (max-width: 600px) {
+				#menuDiv {
+					display: none;
+				}
+			}
+    </style>
+    <head>
+        <title>Eric Tutorial itowns</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+        <script src="../../../../dist/itowns/dist/itowns.js"></script>
+        <script src="../../../../dist/itowns/examples/GUI/dat.gui/dat.gui.min.js"></script>
+		<script src="../../../../dist/itowns/examples/GUI/GuiTools.js"></script>
+        <div id="viewerDiv">
+			<script src="globe.js"></script>
+			<script src="../../../../dist/itowns/node_modules/three/build/three.js"></script>
+        </div>
+    </body>
+    </html>

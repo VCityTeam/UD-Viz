@@ -1,0 +1,73 @@
+<html>
+	<style type="text/css">
+            html {
+                height: 100%;
+            }
+
+            body {
+                margin: 0;
+                overflow: hidden;
+                height: 100%;
+            }
+
+            #viewerDiv {
+                margin : auto auto;
+                width: 100%;
+                padding: 0;
+                height: 100%
+            }
+            #menuDiv {
+				position: absolute;
+				top:0px;
+				margin-left: 0px;
+			}
+			
+			#help {
+                position: absolute;
+                z-index: 0;
+                top: 0;
+                left: 0;
+                color: white;
+                color: #eee;
+                font: 11px 'Lucida Grande',sans-serif;
+                line-height: normal;
+                text-shadow: 0 -1px 0 #111;
+                padding: 0 1rem;
+                background: #1a1a1a;
+                border: 1px solid #2c2c2c;
+                opacity: 0.8;
+            }
+
+            #help > p {
+                margin: 0.5rem 0;
+            }
+
+            #help > ul {
+                padding: 0 1rem;
+            }
+			@media (max-width: 600px) {
+				#menuDiv {
+					display: none;
+				}
+				#help {
+                    display: none;
+                }
+			}
+    </style>
+    <head>
+        <title>Eric Tuto ITowns - Globe + WFS</title>
+
+        <meta charset="UTF-8">
+
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="../../../../../dist/itowns/examples/GUI/dat.gui/dat.gui.min.js"></script>
+    </head>
+    <body>
+        <div id="viewerDiv"></div>
+        <script src="../../../../../dist/itowns/examples/GUI/GuiTools.js"></script>
+        <script src="../../../../../dist/itowns/dist/itowns.js"></script>
+        <script src="../../../../../dist/itowns/dist/debug.js"></script>
+        <script src="wfs_menu.js"></script>
+    </body>
+</html>
+
