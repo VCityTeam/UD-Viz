@@ -1,5 +1,4 @@
-/* global itowns, document, renderer */
-// # Simple Globe viewer
+//Work in progress
 
 // Define initial camera position
 var positionOnGlobe = { longitude: 4.820, latitude: 45.7402, altitude: 2895};
@@ -12,24 +11,6 @@ var scaler;
 var renderer;
 var exports = {};
 
-// Action if E is press (Debug Tool)
-var keys = {
-    E: 69,
-};
-
-var _handlerOnKeyDown = onKeyDown.bind(this);
-
-this.addInputListeners = function () {
-        this.domElement.addEventListener('keydown', _handlerOnKeyDown, true);
-	}
-	
-function onKeyDown(event) {
-	if (event.keyCode === keys.E) {
-		console.log(globeView.controls.getCameraLocation());
-		}
-	}
-// End of Action if E is press (Debug Tool)
-
 // `viewerDiv` will contain iTowns' rendering area (`<canvas>`)
 var viewerDiv = document.getElementById('viewerDiv');
 
@@ -39,14 +20,12 @@ var globeView = new  itowns.GlobeView(viewerDiv, positionOnGlobe, { renderer: re
 function addLayerCb(layer) {
     return globeView.addLayer(layer);
 }
-//Le Top View et Zoom+Plus à refaire
-
-//new itowns.PlanarControls(globeView, {});
-
 
 // Define projection that we will use (taken from https://epsg.io/3946, Proj4js section)
 itowns.proj4.defs('EPSG:3946',
     '+proj=lcc +lat_1=45.25 +lat_2=46.75 +lat_0=46 +lon_0=3 +x_0=1700000 +y_0=5200000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs');
+itowns.proj4.defs('EPSG:2154',
+    '+proj=lcc +lat_1=49 +lat_2=44 +lat_0=46.5 +lon_0=3 +x_0=700000 +y_0=6600000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs');
 
 // Add one imagery layer to the scene
 // This layer is defined in a json file but it could be defined as a plain js

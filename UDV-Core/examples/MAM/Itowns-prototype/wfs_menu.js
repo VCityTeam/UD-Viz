@@ -12,28 +12,6 @@ var scaler;
 var renderer;
 var exports = {};
 
-/*
-var keys = {
-    CTRL: 17,
-    SPACE: 32,
-    E: 69,
-    T: 84,
-    Y: 89
-};
-
-var _handlerOnKeyDown = onKeyDown.bind(this);
-
-this.addInputListeners = function () {
-        this.domElement.addEventListener('keydown', _handlerOnKeyDown, true);
-	}
-	
-function onKeyDown(event) {
-	if (event.keyCode === keys.E) {
-		console.log(globeView.controls.getCameraLocation());
-		}
-	}
-*/
-
 // `viewerDiv` will contain iTowns' rendering area (`<canvas>`)
 var viewerDiv = document.getElementById('viewerDiv');
 
@@ -43,7 +21,6 @@ var globeView = new  itowns.GlobeView(viewerDiv, positionOnGlobe, { renderer: re
 function addLayerCb(layer) {
     return globeView.addLayer(layer);
 }
-//Le Top View et Zoom+Plus à refaire
 
 //new itowns.PlanarControls(globeView, {});
 
@@ -112,7 +89,8 @@ promises.push(itowns.Fetcher.json('../examples/layers/JSONLayers/IGN_MNT_HIGHRES
    
     //Flux WFS = borne de Velov : Function
     
-    //function colorPoint(/* properties */) {
+	/*
+    function colorPoint() {
 		/*return new itowns.THREE.Color(0xFF0000);
 	}
 	
