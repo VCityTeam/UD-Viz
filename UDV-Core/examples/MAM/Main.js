@@ -140,8 +140,8 @@ $.ajax({
 // The researchModel and optionsResearch parameters are used to build / paramatrize
 // the research view
 var controller = new udvcore.DocumentController(view, controls, {temporal: temporal}, config);
-///////////////////////////////////////////////////////////////////////////////
-//// Create and configure the layout controller
+
+//// Create and configure the layout controller ================================================================== 
 
 // An html container is required in order to control the placement of the
 // dat.GUI object within the page.
