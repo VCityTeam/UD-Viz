@@ -75,7 +75,7 @@ var temporal = new udvcore.TemporalController(
 
 // Retrieve the layer defined in Setup3DScene (we consider the first one
 // with the given name)
-/*var layer = view.getLayers(layer => layer.name === '3d-tiles-temporal')[0];
+var layer = view.getLayers(layer => layer.name === '3d-tiles-temporal')[0];
 layer.whenReady.then(
   // In order to configure the temporal slide bar widget, we must
   // retrieve the temporal events of displayed data. At this loading
@@ -116,7 +116,7 @@ layer.whenReady.then(
       temporal.refresh();
     }
   }
-);*/
+);
 
 var about = new udvcore.AboutWindow({active:true});
 var help  = new udvcore.HelpWindow({active:true});
@@ -140,8 +140,8 @@ $.ajax({
 // The researchModel and optionsResearch parameters are used to build / paramatrize
 // the research view
 var controller = new udvcore.DocumentController(view, controls, {temporal: temporal}, config);
-///////////////////////////////////////////////////////////////////////////////
-//// Create and configure the layout controller
+
+//// Create and configure the layout controller ================================================================== 
 
 // An html container is required in order to control the placement of the
 // dat.GUI object within the page.
