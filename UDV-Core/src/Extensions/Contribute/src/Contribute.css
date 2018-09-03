@@ -173,20 +173,23 @@
   position: absolute;
   z-index: 10;
   text-align: center;
-
-  margin : auto;
+  margin: auto;
   top: 0;
-  bottom : 10%;
-  left: 0;
-  right : 0;
+  bottom: 10%;  left: 0;
 
-  width: 25%;
-  height: 50%;
+  right: 0;
+
+  width: 55%;
+
+  height: 55%;
 
   display: none;
 
   padding-left: 3px;
+
   padding-top: 3px;
+
+  pointer-events: none;
 
 }
 
