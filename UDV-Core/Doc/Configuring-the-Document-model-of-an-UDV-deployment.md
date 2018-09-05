@@ -279,7 +279,7 @@ Note: this part is immature
 
 A file "DocumentModel.json" is created based on the properties set in the configuration file.
 The configuration file triggers (only one time) the generation of a "DocumentModel.json" file. 
-This JSON respects the model defined in the [[document model|https://github.com/MEPP-team/UDV-server/blob/master/API_Extended_Document/README.md]].
+This JSON respects the model defined in the [document model](https://github.com/MEPP-team/UDV-server/blob/master/API_Extended_Document/README.md).
 This model is used to (re)create the entity class and (re)generate the DataBase, using this class directly, thanks to the ORM setting up.
 
 No changes in the back-end will be needed when the document model evolves, but, if the model changes, the DataBase is recreated and data already existing in the DB is lost.
