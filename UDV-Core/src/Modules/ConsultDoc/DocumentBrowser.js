@@ -191,8 +191,7 @@ export function DocumentBrowser(browserContainer, documentController) {
 
       if (this.currentDoc != null & this.numberDocs > 0)
       {
-
-        this.documentController.toggleActionButtons(true);
+        
         var txt="";
         txt += "<div id ='docMetadata'>";
         var metadata = this.documentController.documentModel.metaData;
