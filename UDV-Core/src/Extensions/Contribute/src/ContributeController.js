@@ -276,9 +276,11 @@ export function ContributeController(documentController){
 
         $('#'+self.documentUpdate.updateFormId).get(0).reset(); //clear update formular
         self.updatedData = new FormData(); //clear data
-        self.documentController.getDocuments(); //update documents
         self.documentController.reset();
         self.documentUpdate.activateWindow(false);
+        self.documentController.docIndex = 0;//return to first doc
+        self.documentController.documentBrowser.docIndex = 1; //reset index in browser
+        self.documentController.documentBrowser.startBrowser();
         self.documentController.documentBrowser.activateWindow(true);
 
       },
@@ -327,7 +329,7 @@ export function ContributeController(documentController){
         self.documentController.getDocuments(); //update documents
         self.documentController.docIndex = 0;//return to first doc
         self.documentController.documentBrowser.docIndex = 1; //reset index in browser
-        self.documentController.documentBrowser.update();
+        self.documentController.documentBrowser.startBrowser();
       },
       function(error) { //reject
         console.error("Failed!", error);
