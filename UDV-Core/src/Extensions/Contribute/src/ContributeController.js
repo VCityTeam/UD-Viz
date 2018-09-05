@@ -276,10 +276,8 @@ export function ContributeController(documentController){
 
         $('#'+self.documentUpdate.updateFormId).get(0).reset(); //clear update formular
         self.updatedData = new FormData(); //clear data
-        //self.documentController.getDocuments(); //update documents
         self.documentController.reset();
         self.documentUpdate.activateWindow(false);
-        //self.documentController.documentBrowser.currentMetadata = self.documentController.getCurrentDoc().metaData;
         self.documentController.docIndex = 0;//return to first doc
         self.documentController.documentBrowser.docIndex = 1; //reset index in browser
         self.documentController.documentBrowser.startBrowser();
