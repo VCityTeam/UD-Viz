@@ -203,3 +203,8 @@ var minimap = new udvcore.MiniMapController(controls, extent, renderer);
 
 // instanciate compass controller
 var compass = new udvcore.CompassController(controls);
+/*
+for (const layer of view.getLayers()) {
+				console.info(layer.id);
+			}
+*/

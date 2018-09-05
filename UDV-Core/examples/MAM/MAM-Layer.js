@@ -1,6 +1,4 @@
-var extent;
 var viewerDiv;
-var view;
 var meshes;
 var p;
 
@@ -8,43 +6,7 @@ var p;
 itowns.proj4.defs('EPSG:3946',
 '+proj=lcc +lat_1=45.25 +lat_2=46.75 +lat_0=46 +lon_0=3 +x_0=1700000 +y_0=5200000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs');
 
-// Define geographic extent: CRS, min/max X, min/max Y
-extent = new itowns.Extent(
-'EPSG:3946',
-1837816.94334, 1847692.32501,
-5170036.4587, 5178412.82698);
-
-// `viewerDiv` will contain iTowns' rendering area (`<canvas>`)
-viewerDiv = document.getElementById('viewerDiv');
-
-// Instanciate PlanarView*
-view = new itowns.PlanarView(viewerDiv, extent, { disableSkirt: true });
-
-            // Add an WMS imagery layer (see WMSProvider* for valid options)
-            view.addLayer({
-                type: 'color',
-                id: 'wms_imagery',
-                transparent: false,
-                source: {
-                    url: 'https://download.data.grandlyon.com/wms/grandlyon',
-                    networkOptions: { crossOrigin: 'anonymous' },
-                    protocol: 'wms',
-                    version: '1.3.0',
-                    name: 'Ortho2009_vue_ensemble_16cm_CC46',
-                    projection: 'EPSG:3946',
-                    extent: extent,
-                    format: 'image/jpeg',
-                },
-            });
-
-            p = { coord: new itowns.Coordinates('EPSG:3946', 1840839, 5172718, 0), heading: -45, range: 1800, tilt: 30 };
-            itowns.CameraUtils.transformCameraToLookAtTarget(view, view.camera.camera3D, p);
-
-            // eslint-disable-next-line no-new
-            new itowns.PlanarControls(view, {});
-
-            // Request redraw
-            view.notifyChange();
+p = { coord: new itowns.Coordinates('EPSG:3946', 1840839, 5172718, 0), heading: -45, range: 1800, tilt: 30 };
 
             function setMaterialLineWidth(result) {
                 result.traverse(function _setLineWidth(mesh) {
@@ -61,6 +23,7 @@ view = new itowns.PlanarView(viewerDiv, extent, { disableSkirt: true });
 
             view.addLayer({
                 type: 'geometry',
+                id: 'WFS Bus lines',
                 name: 'lyon_tcl_bus',
                 update: itowns.FeatureProcessing.update,
                 convert: itowns.Feature2Mesh.convert({
@@ -115,7 +78,7 @@ view = new itowns.PlanarView(viewerDiv, extent, { disableSkirt: true });
 
             view.addFrameRequester(itowns.MAIN_LOOP_EVENTS.BEFORE_RENDER, scaler);
             view.addLayer({
-                id: 'wfsBuilding',
+                id: 'WFS Buildings',
                 type: 'geometry',
                 update: itowns.FeatureProcessing.update,
                 convert: itowns.Feature2Mesh.convert({
@@ -143,5 +106,72 @@ view = new itowns.PlanarView(viewerDiv, extent, { disableSkirt: true });
                     },
                 },
             });
+            
+// Add an WMS imagery layer (see WMSProvider* for valid options)
+            
+view.addLayer({
+	type: 'color',
+	id: 'WMS Image',
+	transparent: false,
+	source: {
+		url: 'https://download.data.grandlyon.com/wms/grandlyon',
+		networkOptions: { crossOrigin: 'anonymous' },
+		protocol: 'wms',
+		version: '1.3.0',
+		name: 'Ortho2009_vue_ensemble_16cm_CC46',
+		projection: 'EPSG:3946',
+		extent: extent,
+		format: 'image/jpeg',
+	},
+});
 
+// 
+
+view.addLayer({
+	type: 'color',
+	id: 'WMS Pollution Air',
+	transparent: false,
+	opacity : 0.33,
+	source: {
+		url: 'http://sig.atmo-auvergnerhonealpes.fr/geoserver/wms',
+		networkOptions: { crossOrigin: 'anonymous' },
+		protocol: 'wms',
+		version: '1.3.0',
+		name: 'moyan_no2_2017_3857_aura_gs',
+		projection: 'EPSG:3946',
+		extent: extent,
+		format: 'image/jpeg',
+	},
+});
+
+
+//Request redraw
+view.notifyChange();
+
+for (const layer of view.getLayers()) {
+	if (layer.id === 'WFS Bus lines') {
+		layer.whenReady.then( function _(layer) {
+			var gui = debug.GeometryDebug.createGeometryDebugUI(datDotGUI, view, layer);
+			debug.GeometryDebug.addMaterialLineWidth(gui, view, layer, 1, 10);
+		});
+	}
+	if (layer.id === 'WFS Buildings') {
+		layer.whenReady.then( function _(layer) {
+			var gui = debug.GeometryDebug.createGeometryDebugUI(datDotGUI, view, layer);
+			debug.GeometryDebug.addWireFrameCheckbox(gui, view, layer);
+		});
+	}
+	if (layer.id === 'WMS Image') {
+		layer.whenReady.then( function _(layer) {
+			var gui = debug.GeometryDebug.createGeometryDebugUI(datDotGUI, view, layer);
+			debug.GeometryDebug.addMaterialLineWidth(gui, view, layer, 1, 10);
+		});
+	}
+	if (layer.id === 'WMS Pollution Air') {
+		layer.whenReady.then( function _(layer) {
+			var gui = debug.GeometryDebug.createGeometryDebugUI(datDotGUI, view, layer);
+			debug.GeometryDebug.addMaterialLineWidth(gui, view, layer, 1, 10);
+		});
+	}
+}
 
