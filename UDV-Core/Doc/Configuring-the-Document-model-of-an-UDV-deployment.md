@@ -6,7 +6,7 @@ Providing UDV with a customizable/parameterizable Document model came in respons
 
 Having at hand such a "generic/super" application, that can be customized to answer specific and evolving requirements coming from distinct user communities, allows to share/re-use a whole set of code.
 
-On the UDV (frontend) side, the customization of an UDV front end is done through the edition of a configuration file that is to be realized by the [Deployment Responsible Person](https://github.com/MEPP-team/RICT/blob/master/Doc/Devel/Needs/Roles.md#deployment-responsible-person).It provides a lightweight and convenient configuration of an UDV frontend once the end user provides some version of what he/she needs. Such a configuration can thus be seen as a late statge of the development process.
+On the UDV (frontend) side, the customization of an UDV front end is done through the edition of a configuration file that is to be realized by the [Deployment Responsible Person](https://github.com/MEPP-team/RICT/blob/master/Doc/Devel/Needs/Roles.md#deployment-responsible-person). It provides a lightweight and convenient configuration of an UDV frontend once the end user provides some version of what he/she needs. Such a configuration can thus be seen as a late statge of the development process.
 
 
 # Configuring UDV
@@ -279,7 +279,7 @@ Note: this part is immature
 
 A file "DocumentModel.json" is created based on the properties set in the configuration file.
 The configuration file triggers (only one time) the generation of a "DocumentModel.json" file. 
-This JSON respects the model defined in the [[document model|https://github.com/MEPP-team/UDV-server/blob/master/API_Extended_Document/README.md]].
+This JSON respects the model defined in the [document model](https://github.com/MEPP-team/UDV-server/blob/master/API_Extended_Document/README.md).
 This model is used to (re)create the entity class and (re)generate the DataBase, using this class directly, thanks to the ORM setting up.
 
 No changes in the back-end will be needed when the document model evolves, but, if the model changes, the DataBase is recreated and data already existing in the DB is lost.
