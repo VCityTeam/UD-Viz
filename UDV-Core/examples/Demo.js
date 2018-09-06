@@ -1,7 +1,7 @@
 const terrainAndElevationRequest = 'https://download.data.grandlyon.com/wms/grandlyon';
 
 // use this line for distant building server
-const buildingServerRequest = 'http://rict.liris.cnrs.fr/TemporalDemo/Data/tileset.json';
+const buildingServerRequest = 'http://rict.liris.cnrs.fr/UDVDemo/Data/tileset.json';
 
 // if true, replace regular controls by controls adapted to finding precise orientation for documents
 // use false for regular controls (generic user)

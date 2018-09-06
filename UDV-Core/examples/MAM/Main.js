@@ -1,7 +1,7 @@
 const terrainAndElevationRequest = 'https://download.data.grandlyon.com/wms/grandlyon';
 
 // use this line for distant building server
-const buildingServerRequest = 'http://rict.liris.cnrs.fr/TemporalDemo/Data/tileset.json';
+const buildingServerRequest = 'http://rict.liris.cnrs.fr/UDVDemo/Data/tileset.json';
 
 // if true, replace regular controls by controls adapted to finding precise orientation for documents
 // use false for regular controls (generic user)
@@ -84,7 +84,7 @@ layer.whenReady.then(
   // tiles are at hand. We could recurse on tile hierarchy, but we also
   // have at hand the tileindex that we can (equivalently for the result)
   // iterate on.
-  
+
   function() {//-------------------------------------------------------------------------------------------------------------------------
     // Store the layer for triggering scene updates when temporal slider
     // will be changed by user:
@@ -141,7 +141,7 @@ $.ajax({
 // the research view
 var controller = new udvcore.DocumentController(view, controls, {temporal: temporal}, config);
 
-//// Create and configure the layout controller ================================================================== 
+//// Create and configure the layout controller ==================================================================
 
 // An html container is required in order to control the placement of the
 // dat.GUI object within the page.
