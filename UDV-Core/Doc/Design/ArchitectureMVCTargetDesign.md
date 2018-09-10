@@ -11,7 +11,7 @@ These components are :
 * **Extended document**
 * **Contribute**
 
-*A [[class diagram of udv-core|Pictures/UDVcoreClassDiagram.png]] can be find in the link below:*
+*A [[class diagram of udv-core|Pictures/UDVcoreClassDiagram.png]] can be found in the link below:*
 
 Modules are based on a **MVC architecture**. MVC stands for **Model-View-Controller**:
 * the **view** is in charge of displaying models and getting user's action;
