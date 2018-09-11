@@ -32,23 +32,22 @@ var renderer = view.scene;
 // Camera setting
 const optionsRegularMode = {
     maxAltitude : 15000,
-    enableRotation: true,
     rotateSpeed : 3.0,
     autoTravelTimeMin: 2,
     autoTravelTimeMax: 6,
 };
 const optionsEditMode= {
-    maxAltitude : 17000,
-    enableRotation: false,
+    maxAltitude : 5000,
     rotateSpeed : 1.5,
-    zoomInFactor : 0.04,
-    zoomOutFactor : 0.04,
-    maxPanSpeed : 5.0,
-    minPanSpeed : 0.01,
+    zoomInFactor : 0.005,
+    zoomOutFactor : 0.005,
+    maxPanSpeed : 2.5,
+    minPanSpeed : 0.005,
+    maxZenithAngle : 0.001,
+    minZenithAngle : 0,
 };
 
-var useControlsForEditing = false;
-//var positionOnGlobe = { longitude: 4.820, latitude: 45.7402, altitude: 2895};
+var useControlsForEditing = true;
 
 var controls = new itowns.PlanarControls(view, (useControlsForEditing)? optionsEditMode : optionsRegularMode);
 
@@ -69,8 +68,6 @@ view.addLayer({
     },
 });
 
-
-//longitude: 4.820, latitude: 45.7402, altitude: 2895
 p = { coord: new itowns.Coordinates('EPSG:3946', 1840839, 5172718, 0), heading: 0, range: 2845, tilt: 90 };
 itowns.CameraUtils.transformCameraToLookAtTarget(view, view.camera.camera3D, p);
 
@@ -195,6 +192,9 @@ view.addLayer({
 	},
 });
 
+//Request redraw
+view.notifyChange();
+
 var about = new udvcore.AboutWindow({active:true});
 var help  = new udvcore.HelpWindow({active:true});
 
@@ -245,8 +245,6 @@ document.addEventListener('keydown', (event) => {
 		  if (layer.id === 'WFS Bus Lines') {
 			console.log(event.key);
 			layer.visible = !layer.visible;
-			//Request redraw
-			view.notifyChange();
 		}
 	}
     return;
@@ -258,8 +256,6 @@ document.addEventListener('keydown', (event) => {
 		  if (layer.id === 'WFS Buildings') {
 			  console.log(event.key);
 			  layer.visible = !layer.visible;
-			//Request redraw
-			view.notifyChange();
 		}
 	}
     return;
@@ -271,8 +267,6 @@ document.addEventListener('keydown', (event) => {
 		  if (layer.id === 'WMS Pollution Air') {
 			  console.log(event.key);
 			  layer.visible = !layer.visible;
-			//Request redraw
-			view.notifyChange();
 		}
 	}
     return;
@@ -283,8 +277,7 @@ document.addEventListener('keydown', (event) => {
     if (confirm('Do you want to switch controller option ?\n Current Option '+((useControlsForEditing)? "Edit Setting" : "Regular Setting"))) {
 		useControlsForEditing = !useControlsForEditing; //Change Option
     alert((useControlsForEditing)? "Edit Setting Activate" : "Regular Setting Activate");//Inform about new setting
-    } else {
-    // Do nothing!
+    controls = new itowns.PlanarControls(view, (useControlsForEditing)? optionsEditMode : optionsRegularMode);//New Setting
     }
   }
   if (event.key === '5') {
