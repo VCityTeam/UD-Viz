@@ -21,11 +21,6 @@ viewerDiv = document.getElementById('viewerDiv');
 // gray scale. Normally a multiplicative factor should allow to get the data at
 // the right scale but it is not done by the Open Data Grand Lyon
 const config = {
-    // materialOptions: {
-    //     useColorTextureElevation: true,
-    //     colorTextureElevationMinZ: 0,
-    //     colorTextureElevationMaxZ: 255,
-    // },
     disableSkirt: true,
 };
 
@@ -35,6 +30,7 @@ view = new itowns.PlanarView(viewerDiv, extent, config);
 // Camera setting
 const optionsRegularMode = {
     maxAltitude : 15000,
+    enableRotation: true,
     rotateSpeed : 3.0,
     autoTravelTimeMin: 2,
     autoTravelTimeMax: 6,
@@ -52,7 +48,7 @@ const optionsEditMode= {
 var useControlsForEditing = false;
 //var positionOnGlobe = { longitude: 4.820, latitude: 45.7402, altitude: 2895};
 
-var controls = new udvcore.itowns.PlanarControls(view, (useControlsForEditing)? optionsEditMode : optionsRegularMode);
+var controls = new itowns.PlanarControls(view, (useControlsForEditing)? optionsEditMode : optionsRegularMode);
 
 // Add an WMS imagery layer (see WMSProvider* for valid options)
 view.addLayer({
@@ -71,12 +67,11 @@ view.addLayer({
     },
 });
 
+
 //longitude: 4.820, latitude: 45.7402, altitude: 2895
 p = { coord: new itowns.Coordinates('EPSG:3946', 1840839, 5172718, 0), heading: 0, range: 2845, tilt: 90 };
 itowns.CameraUtils.transformCameraToLookAtTarget(view, view.camera.camera3D, p);
 
-// eslint-disable-next-line no-new
-new itowns.PlanarControls(view, {});
 
 // Request redraw
 view.notifyChange();
@@ -301,7 +296,7 @@ document.addEventListener('keydown', (event) => {
 	  //Advanced controller (etiding option)
     if (confirm('Do you want to switch controller option ?\n Current Option '+((useControlsForEditing)? "Edit Setting" : "Regular Setting"))) {
 		useControlsForEditing = !useControlsForEditing; //Change Option
-    alert((useControlsForEditing)? "Edit Setting" : "Regular Setting");//Inform about new setting
+    alert((useControlsForEditing)? "Edit Setting Activate" : "Regular Setting Activate");//Inform about new setting
     } else {
     // Do nothing!
     }
