@@ -233,8 +233,8 @@ helpController.onFinishChange( function(value) { help.refresh(); });
 for (const layer of view.getLayers()) {
   if (layer.id != "planar"){
     layer.whenReady.then( function _(layer) {
-      var gui = debug.GeometryDebug.createGeometryDebugUI(datDotGUI, view, layer);
-      debug.GeometryDebug.addMaterialLineWidth(gui, view, layer, 1, 10);
+      var gui = datDotGUI.add( layer, 'visible').name( layer.id).listen();
+      helpController.onFinishChange( function(value) { /*layer.refresh();*/view.notifyChange(); });
     });
   }
 }
