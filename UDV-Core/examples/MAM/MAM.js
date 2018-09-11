@@ -1,5 +1,3 @@
-//Working
-
 var extent;
 var viewerDiv;
 var view;
@@ -34,6 +32,28 @@ const config = {
 // Instanciate PlanarView*
 view = new itowns.PlanarView(viewerDiv, extent, config);
 
+// Camera setting
+const optionsRegularMode = {
+    maxAltitude : 15000,
+    rotateSpeed : 3.0,
+    autoTravelTimeMin: 2,
+    autoTravelTimeMax: 6,
+};
+const optionsEditMode= {
+    maxAltitude : 17000,
+    enableRotation: false,
+    rotateSpeed : 1.5,
+    zoomInFactor : 0.04,
+    zoomOutFactor : 0.04,
+    maxPanSpeed : 5.0,
+    minPanSpeed : 0.01,
+};
+
+var useControlsForEditing = false;
+//var positionOnGlobe = { longitude: 4.820, latitude: 45.7402, altitude: 2895};
+
+var controls = new udvcore.itowns.PlanarControls(view, (useControlsForEditing)? optionsEditMode : optionsRegularMode);
+
 // Add an WMS imagery layer (see WMSProvider* for valid options)
 view.addLayer({
     type: 'color',
@@ -51,24 +71,8 @@ view.addLayer({
     },
 });
 
-// // Add an WMS elevation layer (see WMSProvider* for valid options)
-// view.addLayer({
-//     id: 'wms_elevation',
-//     type: 'elevation',
-//     source: {
-//         extent: extent,
-//         url: 'https://download.data.grandlyon.com/wms/grandlyon',
-//         networkOptions: { crossOrigin: 'anonymous' },
-//         protocol: 'wms',
-//         name: 'MNT2012_Altitude_10m_CC46',
-//         projection: 'EPSG:3946',
-//         heightMapWidth: 256,
-//         format: 'image/jpeg',
-//     },
-// });
-
-
-p = { coord: new itowns.Coordinates('EPSG:3946', 1840839, 5172718, 0), heading: -45, range: 1800, tilt: 30 };
+//longitude: 4.820, latitude: 45.7402, altitude: 2895
+p = { coord: new itowns.Coordinates('EPSG:3946', 1840839, 5172718, 0), heading: 0, range: 2845, tilt: 90 };
 itowns.CameraUtils.transformCameraToLookAtTarget(view, view.camera.camera3D, p);
 
 // eslint-disable-next-line no-new
@@ -90,28 +94,8 @@ function colorLine(properties) {
     return new itowns.THREE.Color(rgb[0] / 255, rgb[1] / 255, rgb[2] / 255);
 }
 
-// function altitudeLine(properties, contour) {
-//     var altitudes = [];
-//     var i = 0;
-//     var result;
-//     var tile;
-//     var layer = view.tileLayer;
-//     if (contour.length && contour.length > 0) {
-//         for (; i < contour.length; i++) {
-//             result = itowns.DEMUtils.getElevationValueAt(layer, contour[i], 0, tile);
-//             if (!result) {
-//                 result = itowns.DEMUtils.getElevationValueAt(layer, contour[i], 0);
-//             }
-//             tile = [result.tile];
-//             altitudes.push(result.z + 2);
-//         }
-//         return altitudes;
-//     }
-//     return 0;
-// }
-
 view.addLayer({
-    id:'WFS Bus',
+    id:'WFS Bus Lines',
     type: 'geometry',
     name: 'lyon_tcl_bus',
     update: itowns.FeatureProcessing.update,
@@ -168,7 +152,7 @@ function scaler(/* dt */) {
 
 view.addFrameRequester(itowns.MAIN_LOOP_EVENTS.BEFORE_RENDER, scaler);
 view.addLayer({
-    id: 'WFS Building',
+    id: 'WFS Buildings',
     type: 'geometry',
     update: itowns.FeatureProcessing.update,
     convert: itowns.Feature2Mesh.convert({
@@ -187,7 +171,7 @@ view.addLayer({
         projection: 'EPSG:4326',
         ipr: 'IGN',
         format: 'application/json',
-        zoom: { min: 5, max: 5 },
+        zoom: { min: 5, max: 25 },
         extent: {
             west: 4.568,
             east: 5.18,
@@ -245,8 +229,7 @@ helpController = datDotGUI.add( help, 'windowIsActive'
 helpController.onFinishChange( function(value) { help.refresh(); });
 
 for (const layer of view.getLayers()) {
-  console.log(layer.id);
-	if (layer.id === 'WFS Bus lines') {
+	if (layer.id === 'WFS Bus Lines') {
 		layer.whenReady.then( function _(layer) {
 			var gui = debug.GeometryDebug.createGeometryDebugUI(datDotGUI, view, layer);
 			debug.GeometryDebug.addMaterialLineWidth(gui, view, layer, 1, 10);
@@ -275,12 +258,14 @@ for (const layer of view.getLayers()) {
 }
 
 document.addEventListener('keydown', (event) => {
-console.log(event.key);
   if (event.key === '1') {
 	  //Switch the 3D building Layer visibility
 	  for (const layer of view.getLayers()) {
-		  if (layer.id === 'WFS Bus lines') {
-			  layer.visible = !layer.visible;
+		  if (layer.id === 'WFS Bus Lines') {
+			console.log(event.key);
+			layer.visible = !layer.visible;
+			//Request redraw
+			view.notifyChange();
 		}
 	}
     return;
@@ -290,7 +275,10 @@ console.log(event.key);
 	  //Switch the BusLine Layer visibility
 	  for (const layer of view.getLayers()) {
 		  if (layer.id === 'WFS Buildings') {
+			  console.log(event.key);
 			  layer.visible = !layer.visible;
+			//Request redraw
+			view.notifyChange();
 		}
 	}
     return;
@@ -300,17 +288,26 @@ console.log(event.key);
 	  //Switch the BusLine Layer visibility
 	  for (const layer of view.getLayers()) {
 		  if (layer.id === 'WMS Pollution Air') {
+			  console.log(event.key);
 			  layer.visible = !layer.visible;
+			//Request redraw
+			view.notifyChange();
 		}
 	}
     return;
   }
 
-/*  if (event.ctrlKey) {
-    // Même si event.key n'est pas 'Control' (par ex., 'a' is pressed),
-    // event.ctrlKey peut être true si la touche Ctrl est pressée dans le même temps.
-    alert(`Combinaison de ctrlKey + ${nomTouche}`);
-  } else {
-    alert(`Touche pressée ${nomTouche}`);
-  }*/
+  if (event.key === 'a') {
+	  //Advanced controller (etiding option)
+    if (confirm('Do you want to switch controller option ?\n Current Option '+((useControlsForEditing)? "Edit Setting" : "Regular Setting"))) {
+		useControlsForEditing = !useControlsForEditing; //Change Option
+    alert((useControlsForEditing)? "Edit Setting" : "Regular Setting");//Inform about new setting
+    } else {
+    // Do nothing!
+    }
+  }
+  if (event.key === '5') {
+	  //Advanced controller (etiding option)
+	  console.log(itowns.CameraUtils.getTransformCameraLookingAtTarget(view, view.camera.camera3D));
+  }
 }, false);
