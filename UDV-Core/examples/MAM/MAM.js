@@ -27,6 +27,8 @@ const config = {
 // Instanciate PlanarView*
 view = new itowns.PlanarView(viewerDiv, extent, config);
 
+var renderer = view.scene;
+
 // Camera setting
 const optionsRegularMode = {
     maxAltitude : 15000,
@@ -96,7 +98,7 @@ view.addLayer({
     update: itowns.FeatureProcessing.update,
     convert: itowns.Feature2Mesh.convert({
         color: colorLine,
-      /*altitude: altitudeLine*/ }),
+        }),
     onMeshCreated: setMaterialLineWidth,
     source: {
         url: 'https://download.data.grandlyon.com/wfs/rdata?',
@@ -196,6 +198,8 @@ view.addLayer({
 var about = new udvcore.AboutWindow({active:true});
 var help  = new udvcore.HelpWindow({active:true});
 
+// An html container is required in order to control the placement of the
+// dat.GUI object within the page.
 var datDotGUIDiv = document.createElement("div");
 datDotGUIDiv.id = 'datDotGUIDiv';
 document.body.appendChild(datDotGUIDiv);
@@ -204,7 +208,7 @@ document.body.appendChild(datDotGUIDiv);
 var link = document.createElement('link');
 link.setAttribute('rel', 'stylesheet');
 link.setAttribute('type', 'text/css');
-link.setAttribute('href', './Demo.css');
+link.setAttribute('href', './MAM.css');
 document.getElementsByTagName('head')[0].appendChild(link);
 
 // Proceed with the creation of the dat.GUI with the above positionning
@@ -223,35 +227,17 @@ helpController = datDotGUI.add( help, 'windowIsActive'
                               ).name( "Help" ).listen();
 helpController.onFinishChange( function(value) { help.refresh(); });
 
+//datDotGUI.close();     // By default the dat.GUI controls are rolled up
+
+
 for (const layer of view.getLayers()) {
-	if (layer.id === 'WFS Bus Lines') {
-		layer.whenReady.then( function _(layer) {
-			var gui = debug.GeometryDebug.createGeometryDebugUI(datDotGUI, view, layer);
-			debug.GeometryDebug.addMaterialLineWidth(gui, view, layer, 1, 10);
-		});
-	}
-	if (layer.id === 'WFS Buildings') {
-		layer.whenReady.then( function _(layer) {
-			var gui = debug.GeometryDebug.createGeometryDebugUI(datDotGUI, view, layer);
-			debug.GeometryDebug.addWireFrameCheckbox(gui, view, layer);
-		});
-	}
-
-	if (layer.id === 'wms_imagery') {
-		layer.whenReady.then( function _(layer) {
-			var gui = debug.GeometryDebug.createGeometryDebugUI(datDotGUI, view, layer);
-			debug.GeometryDebug.addMaterialLineWidth(gui, view, layer, 1, 10);
-		});
-	}
-
-	if (layer.id === 'WMS Pollution Air') {
-		layer.whenReady.then( function _(layer) {
-			var gui = debug.GeometryDebug.createGeometryDebugUI(datDotGUI, view, layer);
-			debug.GeometryDebug.addMaterialLineWidth(gui, view, layer, 1, 10);
-		});
-	}
+	layer.whenReady.then( function _(layer) {
+		var gui = debug.GeometryDebug.createGeometryDebugUI(datDotGUI, view, layer);
+		debug.GeometryDebug.addMaterialLineWidth(gui, view, layer, 1, 10);
+	})
 }
 
+// Keyboard Controller
 document.addEventListener('keydown', (event) => {
   if (event.key === '1') {
 	  //Switch the 3D building Layer visibility
