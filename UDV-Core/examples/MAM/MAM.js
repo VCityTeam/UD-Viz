@@ -48,7 +48,7 @@ const optionsEditMode= {
   minZenithAngle : 0,
 };
 
-var useControlsForEditing = true;
+var useControlsForEditing = false;
 
 var controls = new itowns.PlanarControls(view, (useControlsForEditing)? optionsEditMode : optionsRegularMode);
 
@@ -111,7 +111,7 @@ view.addLayer({
       south: 5138876.75,
       north: 5205890.19,
     },
-    zoom: { min: 2, max: 2 },
+    zoom: { min: 2, max: 5 },
     format: 'geojson',
   },
 });
@@ -166,7 +166,7 @@ view.addLayer({
     projection: 'EPSG:4326',
     ipr: 'IGN',
     format: 'application/json',
-    zoom: { min: 5, max: 25 },
+    zoom: { min: 2, max: 5 },
     extent: {
       west: 4.568,
       east: 5.18,
@@ -192,9 +192,6 @@ view.addLayer({
     format: 'image/jpeg',
   },
 });
-
-//Request redraw
-view.notifyChange();
 
 
 // UI required Udvcore, on this exemple only to cast subwindow, however it should be used to make a time cortroller
@@ -247,6 +244,8 @@ document.addEventListener('keydown', (event) => {
       if (layer.id === 'WFS Bus Lines') {
         console.log(event.key);
         layer.visible = !layer.visible;
+        //Request redraw
+        view.notifyChange(layer);
       }
     }
     return;
@@ -258,6 +257,8 @@ document.addEventListener('keydown', (event) => {
       if (layer.id === 'WFS Buildings') {
         console.log(event.key);
         layer.visible = !layer.visible;
+        //Request redraw
+        view.notifyChange(layer);
       }
     }
     return;
@@ -269,6 +270,8 @@ document.addEventListener('keydown', (event) => {
       if (layer.id === 'WMS Pollution Air') {
         console.log(event.key);
         layer.visible = !layer.visible;
+        //Request redraw
+        view.notifyChange(layer);
       }
     }
     return;
@@ -281,10 +284,5 @@ document.addEventListener('keydown', (event) => {
       alert((useControlsForEditing)? "Edit Setting Activate" : "Regular Setting Activate");//Inform about new setting
       controls = new itowns.PlanarControls(view, (useControlsForEditing)? optionsEditMode : optionsRegularMode);//New Setting
     }
-  }
-
-  if (event.key === '5') {
-    //Advanced controller (etiding option)
-    console.log(itowns.CameraUtils.getTransformCameraLookingAtTarget(view, view.camera.camera3D));
   }
 }, false);
