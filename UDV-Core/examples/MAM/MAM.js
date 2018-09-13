@@ -9,6 +9,7 @@ var p;
 // Define projection that we will use (taken from https://epsg.io/3946, Proj4js section)
 itowns.proj4.defs('EPSG:3946',
   '+proj=lcc +lat_1=45.25 +lat_2=46.75 +lat_0=46 +lon_0=3 +x_0=1700000 +y_0=5200000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs');
+
 // Define geographic extent: CRS, min/max X, min/max Y
 extent = new itowns.Extent(
   'EPSG:3946',
@@ -40,8 +41,8 @@ const optionsRegularMode = {
 const optionsEditMode= {
   maxAltitude : 5000,
   rotateSpeed : 1.5,
-  zoomInFactor : 0.005,
-  zoomOutFactor : 0.005,
+  zoomInFactor : 0.015,
+  zoomOutFactor : 0.015,
   maxPanSpeed : 2.5,
   minPanSpeed : 0.005,
   maxZenithAngle : 0.001,
@@ -193,6 +194,63 @@ view.addLayer({
   },
 });
 
+//Add Mesh Point
+
+function addMeshToScene() {
+    // creation of the new mesh (a cylinder)
+    var THREE = itowns.THREE;
+    var geometry = new THREE.CylinderGeometry(0, 30, 120, 16);
+    var material = new THREE.MeshBasicMaterial({ color: 0xffff00 });
+    var mesh = new THREE.Mesh(geometry, material);
+
+    // position of the mesh
+    var cameraTargetPosition = itowns.CameraUtils.getTransformCameraLookingAtTarget(view,view.camera.camera3D);
+    // position of the mesh
+    var meshCoord = new itowns.Coordinates('EPSG:4326',4.8251, 45.7478, 20);
+
+    // position and orientation of the mesh
+    mesh.position.copy(meshCoord.as(view.referenceCrs).xyz());
+    mesh.lookAt(new THREE.Vector3(0, 0, 0));
+    mesh.rotateX(Math.PI);
+
+    // update coordinate of the mesh
+    mesh.updateMatrixWorld();
+
+    // add the mesh to the scene
+    view.scene.add(mesh);
+
+    // make the object usable from outside of the function
+    view.mesh = mesh;
+}
+
+function addMeshToScene2() {
+    // creation of the new mesh (a cylinder)
+    var THREE = itowns.THREE;
+    var geometry = new THREE.CylinderGeometry(0, 30, 120, 16);
+    var material = new THREE.MeshBasicMaterial({ color: 0xff00ff });
+    var mesh = new THREE.Mesh(geometry, material);
+
+    // position of the mesh
+    var cameraTargetPosition = itowns.CameraUtils.getTransformCameraLookingAtTarget(view,view.camera.camera3D);
+    // position of the mesh
+    var meshCoord = new itowns.Coordinates('EPSG:4326',4.8271, 45.7500, 20);
+
+    // position and orientation of the mesh
+    mesh.position.copy(meshCoord.as(view.referenceCrs).xyz());
+    mesh.lookAt(new THREE.Vector3(0, 0, 0));
+    mesh.rotateX(Math.PI);
+
+    // update coordinate of the mesh
+    mesh.updateMatrixWorld();
+
+    // add the mesh to the scene
+    view.scene.add(mesh);
+
+    // make the object usable from outside of the function
+    view.mesh = mesh;
+}
+
+addMeshToScene();
 
 // UI required Udvcore, on this exemple only to cast subwindow, however it should be used to make a time cortroller
 var about = new udvcore.AboutWindow({active:true});
@@ -200,6 +258,7 @@ var help  = new udvcore.HelpWindow({active:true});
 
 // An html container is required in order to control the placement of the
 // dat.GUI object within the page.
+
 var datDotGUIDiv = document.createElement("div");
 datDotGUIDiv.id = 'datDotGUIDiv';
 document.body.appendChild(datDotGUIDiv);
@@ -277,12 +336,41 @@ document.addEventListener('keydown', (event) => {
     return;
   }
 
+  if (event.key === '4') {
+    //Switch the Pollution Air Layer visibility
+    for (const layer of view.getLayers()) {
+      if (layer.id === 'WMS Image') {
+        console.log(event.key);
+        layer.visible = !layer.visible;
+        for (const l of view.getLayers()) {
+          if (l.id === 'WMS Pollution Air') {
+            if (layer.visible){
+              l.opacity = 0.33;
+            }else{
+              l.opacity = 0.66;
+            }
+          }
+        }
+        //Request redraw
+        view.notifyChange(layer);
+      }
+    }
+    return;
+  }
+
+  if (event.key === '5') {
+    //Switch the Pollution Air Layer visibility
+    addMeshToScene2();
+    return;
+  }
+
   if (event.key === 'a') {
     //Advanced controller (etiding option)
     if (confirm('Do you want to switch controller option ?\n Current Option '+((useControlsForEditing)? "Edit Setting" : "Regular Setting"))) {
       useControlsForEditing = !useControlsForEditing; //Change Option
-      alert((useControlsForEditing)? "Edit Setting Activate" : "Regular Setting Activate");//Inform about new setting
+      //alert((useControlsForEditing)? "Edit Setting Activate" : "Regular Setting Activate");//Inform about new setting
       controls = new itowns.PlanarControls(view, (useControlsForEditing)? optionsEditMode : optionsRegularMode);//New Setting
+      console.log(controls);
     }
   }
 }, false);
