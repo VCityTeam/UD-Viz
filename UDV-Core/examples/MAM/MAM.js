@@ -194,64 +194,6 @@ view.addLayer({
   },
 });
 
-//Add Mesh Point
-
-function addMeshToScene() {
-    // creation of the new mesh (a cylinder)
-    var THREE = itowns.THREE;
-    var geometry = new THREE.CylinderGeometry(0, 30, 120, 16);
-    var material = new THREE.MeshBasicMaterial({ color: 0xffff00 });
-    var mesh = new THREE.Mesh(geometry, material);
-
-    // position of the mesh
-    var cameraTargetPosition = itowns.CameraUtils.getTransformCameraLookingAtTarget(view,view.camera.camera3D);
-    // position of the mesh
-    var meshCoord = new itowns.Coordinates('EPSG:4326',4.8251, 45.7478, 20);
-
-    // position and orientation of the mesh
-    mesh.position.copy(meshCoord.as(view.referenceCrs).xyz());
-    mesh.lookAt(new THREE.Vector3(0, 0, 0));
-    mesh.rotateX(Math.PI);
-
-    // update coordinate of the mesh
-    mesh.updateMatrixWorld();
-
-    // add the mesh to the scene
-    view.scene.add(mesh);
-
-    // make the object usable from outside of the function
-    view.mesh = mesh;
-}
-
-function addMeshToScene2() {
-    // creation of the new mesh (a cylinder)
-    var THREE = itowns.THREE;
-    var geometry = new THREE.CylinderGeometry(0, 30, 120, 16);
-    var material = new THREE.MeshBasicMaterial({ color: 0xff00ff });
-    var mesh = new THREE.Mesh(geometry, material);
-
-    // position of the mesh
-    var cameraTargetPosition = itowns.CameraUtils.getTransformCameraLookingAtTarget(view,view.camera.camera3D);
-    // position of the mesh
-    var meshCoord = new itowns.Coordinates('EPSG:4326',4.8271, 45.7500, 20);
-
-    // position and orientation of the mesh
-    mesh.position.copy(meshCoord.as(view.referenceCrs).xyz());
-    mesh.lookAt(new THREE.Vector3(0, 0, 0));
-    mesh.rotateX(Math.PI);
-
-    // update coordinate of the mesh
-    mesh.updateMatrixWorld();
-
-    // add the mesh to the scene
-    view.scene.add(mesh);
-
-    // make the object usable from outside of the function
-    view.mesh = mesh;
-}
-
-addMeshToScene();
-
 // UI required Udvcore, on this exemple only to cast subwindow, however it should be used to make a time cortroller
 var about = new udvcore.AboutWindow({active:true});
 var help  = new udvcore.HelpWindow({active:true});
@@ -355,12 +297,6 @@ document.addEventListener('keydown', (event) => {
         view.notifyChange(layer);
       }
     }
-    return;
-  }
-
-  if (event.key === '5') {
-    //Switch the Pollution Air Layer visibility
-    addMeshToScene2();
     return;
   }
 
