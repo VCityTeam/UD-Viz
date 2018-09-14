@@ -35,8 +35,10 @@ var renderer = view.scene;
 const optionsRegularMode = {
   maxAltitude : 15000,
   rotateSpeed : 3.0,
-  autoTravelTimeMin: 2,
-  autoTravelTimeMax: 6,
+  zoomInFactor : 0.03,
+  zoomOutFactor : 0.03,
+  maxZenithAngle : 90,
+  minZenithAngle : 0,
 };
 const optionsEditMode= {
   maxAltitude : 5000,
@@ -52,6 +54,9 @@ const optionsEditMode= {
 var useControlsForEditing = false;
 
 var controls = new itowns.PlanarControls(view, (useControlsForEditing)? optionsEditMode : optionsRegularMode);
+
+p = { coord: new itowns.Coordinates('EPSG:3946', 1840839, 5172718, 0), heading: 0, range: 2845, tilt: 90 };
+itowns.CameraUtils.transformCameraToLookAtTarget(view, view.camera.camera3D, p);
 
 // Add an WMS imagery layer (see WMSProvider* for valid options)
 view.addLayer({
@@ -70,9 +75,22 @@ view.addLayer({
   },
 });
 
-p = { coord: new itowns.Coordinates('EPSG:3946', 1840839, 5172718, 0), heading: 0, range: 2845, tilt: 90 };
-itowns.CameraUtils.transformCameraToLookAtTarget(view, view.camera.camera3D, p);
-
+view.addLayer({
+  type: 'color',
+  id: 'WMS Pollution Air',
+  transparent: false,
+  opacity : 0.33,
+  source: {
+    url: 'http://sig.atmo-auvergnerhonealpes.fr/geoserver/wms',
+    networkOptions: { crossOrigin: 'anonymous' },
+    protocol: 'wms',
+    version: '1.3.0',
+    name: 'moyan_no2_2017_3857_aura_gs',
+    projection: 'EPSG:3946',
+    extent: extent,
+    format: 'image/jpeg',
+  },
+});
 
 // Request redraw
 view.notifyChange();
@@ -177,23 +195,6 @@ view.addLayer({
   },
 });
 
-view.addLayer({
-  type: 'color',
-  id: 'WMS Pollution Air',
-  transparent: false,
-  opacity : 0.33,
-  source: {
-    url: 'http://sig.atmo-auvergnerhonealpes.fr/geoserver/wms',
-    networkOptions: { crossOrigin: 'anonymous' },
-    protocol: 'wms',
-    version: '1.3.0',
-    name: 'moyan_no2_2017_3857_aura_gs',
-    projection: 'EPSG:3946',
-    extent: extent,
-    format: 'image/jpeg',
-  },
-});
-
 // UI required Udvcore, on this exemple only to cast subwindow, however it should be used to make a time cortroller
 var about = new udvcore.AboutWindow({active:true});
 var help  = new udvcore.HelpWindow({active:true});
@@ -218,13 +219,13 @@ datDotGUI.domElement.id = 'datDotGUI';
 var datDotGUIContainer = document.getElementById('datDotGUIDiv');
 datDotGUIContainer.appendChild( datDotGUI.domElement );
 
-// About subwindow
-aboutController = datDotGUI.add( about, 'windowIsActive').name( "About" ).listen();
-aboutController.onFinishChange( function(value) { about.refresh(); } );
-
-// About subwindow
-helpController = datDotGUI.add( help, 'windowIsActive').name( "Help" ).listen();
-helpController.onFinishChange( function(value) { help.refresh(); });
+// // About subwindow
+// aboutController = datDotGUI.add( about, 'windowIsActive').name( "About" ).listen();
+// aboutController.onFinishChange( function(value) { about.refresh(); } );
+//
+// // About subwindow
+// helpController = datDotGUI.add( help, 'windowIsActive').name( "Help" ).listen();
+// helpController.onFinishChange( function(value) { help.refresh(); });
 
 //datDotGUI.close();     // By default the dat.GUI controls are rolled up
 
@@ -232,7 +233,24 @@ for (const layer of view.getLayers()) {
   if (layer.id != "planar"){
     layer.whenReady.then( function _(layer) {
       var gui = datDotGUI.add( layer, 'visible').name( layer.id).listen();
-      helpController.onFinishChange( function(value) { /*layer.refresh();*/view.notifyChange(); });
+      gui.onFinishChange( function(value) {
+
+        layer.visible = value;
+
+        //WMS Pollution Air isn't an opaque layer, it's opacity is linked to WMS Image
+        for (const l of view.getLayers()) {
+          if (l.id === 'WMS Pollution Air' && layer.id === 'WMS Image') {
+            if (layer.visible){
+              l.opacity = 0.33;
+            }else{
+              l.opacity = 0.66;
+            }
+          }
+        }
+
+        //Actualize the view with or without the layer
+        view.notifyChange(layer);
+      });
     });
   }
 }
@@ -243,7 +261,6 @@ document.addEventListener('keydown', (event) => {
   //Switch the BusLine Layer visibility
     for (const layer of view.getLayers()) {
       if (layer.id === 'WFS Bus Lines') {
-        console.log(event.key);
         layer.visible = !layer.visible;
         //Request redraw
         view.notifyChange(layer);
@@ -256,7 +273,6 @@ document.addEventListener('keydown', (event) => {
     //Switch the 3D building Layer visibility
     for (const layer of view.getLayers()) {
       if (layer.id === 'WFS Buildings') {
-        console.log(event.key);
         layer.visible = !layer.visible;
         //Request redraw
         view.notifyChange(layer);
@@ -269,7 +285,6 @@ document.addEventListener('keydown', (event) => {
     //Switch the Pollution Air Layer visibility
     for (const layer of view.getLayers()) {
       if (layer.id === 'WMS Pollution Air') {
-        console.log(event.key);
         layer.visible = !layer.visible;
         //Request redraw
         view.notifyChange(layer);
@@ -282,7 +297,6 @@ document.addEventListener('keydown', (event) => {
     //Switch the Pollution Air Layer visibility
     for (const layer of view.getLayers()) {
       if (layer.id === 'WMS Image') {
-        console.log(event.key);
         layer.visible = !layer.visible;
         for (const l of view.getLayers()) {
           if (l.id === 'WMS Pollution Air') {
@@ -300,13 +314,19 @@ document.addEventListener('keydown', (event) => {
     return;
   }
 
+  // Change Controller cause a lot of problem /!\
   if (event.key === 'a') {
     //Advanced controller (etiding option)
     if (confirm('Do you want to switch controller option ?\n Current Option '+((useControlsForEditing)? "Edit Setting" : "Regular Setting"))) {
       useControlsForEditing = !useControlsForEditing; //Change Option
       //alert((useControlsForEditing)? "Edit Setting Activate" : "Regular Setting Activate");//Inform about new setting
       controls = new itowns.PlanarControls(view, (useControlsForEditing)? optionsEditMode : optionsRegularMode);//New Setting
-      console.log(controls);
+
+      var pexact = view.camera.position().xyz();
+      var parrondi = { x: Math.round(pexact.x), y: Math.round(pexact.y), z: Math.round(pexact.z)}
+
+      var pfinal = { coord: new itowns.Coordinates('EPSG:3946', parrondi.x, parrondi.y, parrondi.z)}
+      itowns.CameraUtils.transformCameraToLookAtTarget(view, view.camera.camera3D, pfinal);
     }
   }
 }, false);
