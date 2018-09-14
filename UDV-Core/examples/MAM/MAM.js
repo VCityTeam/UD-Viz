@@ -40,6 +40,7 @@ const optionsRegularMode = {
   maxZenithAngle : 90,
   minZenithAngle : 0,
 };
+//option to assist the calibration
 const optionsEditMode= {
   maxAltitude : 5000,
   rotateSpeed : 1.5,
@@ -51,6 +52,7 @@ const optionsEditMode= {
   minZenithAngle : 0,
 };
 
+// If True then the setting are adapt to calibration
 var useControlsForEditing = false;
 
 var controls = new itowns.PlanarControls(view, (useControlsForEditing)? optionsEditMode : optionsRegularMode);
@@ -75,6 +77,7 @@ view.addLayer({
   },
 });
 
+//Add a WMS imagery layer represent the air pollution
 view.addLayer({
   type: 'color',
   id: 'WMS Pollution Air',
@@ -196,9 +199,6 @@ view.addLayer({
 });
 
 // UI required Udvcore, on this exemple only to cast subwindow, however it should be used to make a time cortroller
-var about = new udvcore.AboutWindow({active:true});
-var help  = new udvcore.HelpWindow({active:true});
-
 // An html container is required in order to control the placement of the
 // dat.GUI object within the page.
 
@@ -219,15 +219,7 @@ datDotGUI.domElement.id = 'datDotGUI';
 var datDotGUIContainer = document.getElementById('datDotGUIDiv');
 datDotGUIContainer.appendChild( datDotGUI.domElement );
 
-// // About subwindow
-// aboutController = datDotGUI.add( about, 'windowIsActive').name( "About" ).listen();
-// aboutController.onFinishChange( function(value) { about.refresh(); } );
 //
-// // About subwindow
-// helpController = datDotGUI.add( help, 'windowIsActive').name( "Help" ).listen();
-// helpController.onFinishChange( function(value) { help.refresh(); });
-
-//datDotGUI.close();     // By default the dat.GUI controls are rolled up
 
 for (const layer of view.getLayers()) {
   if (layer.id != "planar"){
