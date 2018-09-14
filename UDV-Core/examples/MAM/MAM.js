@@ -313,20 +313,4 @@ document.addEventListener('keydown', (event) => {
     }
     return;
   }
-
-  // Change Controller cause a lot of problem /!\
-  if (event.key === 'a') {
-    //Advanced controller (etiding option)
-    if (confirm('Do you want to switch controller option ?\n Current Option '+((useControlsForEditing)? "Edit Setting" : "Regular Setting"))) {
-      useControlsForEditing = !useControlsForEditing; //Change Option
-      //alert((useControlsForEditing)? "Edit Setting Activate" : "Regular Setting Activate");//Inform about new setting
-      controls = new itowns.PlanarControls(view, (useControlsForEditing)? optionsEditMode : optionsRegularMode);//New Setting
-
-      var pexact = view.camera.position().xyz();
-      var parrondi = { x: Math.round(pexact.x), y: Math.round(pexact.y), z: Math.round(pexact.z)}
-
-      var pfinal = { coord: new itowns.Coordinates('EPSG:3946', parrondi.x, parrondi.y, parrondi.z)}
-      itowns.CameraUtils.transformCameraToLookAtTarget(view, view.camera.camera3D, pfinal);
-    }
-  }
 }, false);
