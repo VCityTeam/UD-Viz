@@ -1,4 +1,4 @@
-// This code is inspired from iTowns exemple : Globe_wfs_extruded
+// This code is inspired from iTowns exemple : WFS data with reprojection
 // Which is available from this link.
 // http://www.itowns-project.org/itowns/examples/wfs.html
 
