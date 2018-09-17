@@ -309,4 +309,11 @@ document.addEventListener('keydown', (event) => {
     }
     return;
   }
+
+  }
+  if (event.key ==='a'){
+    //currentCoordinate
+    view.camera.camera3D.position.set(1841655.7645,5172858.86615,2718.8415);
+    view.camera.camera3D.quaternion.set(0,0,-0.8630883,0.5050519);
+  }
 }, false);
