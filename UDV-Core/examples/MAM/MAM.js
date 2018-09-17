@@ -1,3 +1,7 @@
+// This code is inspired from iTowns exemple : Globe_wfs_extruded
+// Which is available from this link.
+// http://www.itowns-project.org/itowns/examples/globe_wfs_extruded.html
+
 var extent;
 var viewerDiv;
 var view;
@@ -53,7 +57,7 @@ const optionsEditMode= {
 };
 
 // If True then the setting are adapt to calibration
-var useControlsForEditing = false;
+var useControlsForEditing = true;
 
 var controls = new itowns.PlanarControls(view, (useControlsForEditing)? optionsEditMode : optionsRegularMode);
 
