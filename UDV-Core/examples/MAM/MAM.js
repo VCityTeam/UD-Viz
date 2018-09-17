@@ -309,6 +309,10 @@ document.addEventListener('keydown', (event) => {
     }
     return;
   }
+  if (event.key ==='q'){
+    //currentCoordinate
+    console.log(view.camera.camera3D.position);
+    console.log(view.camera.camera3D.quaternion);
 
   }
   if (event.key ==='a'){
