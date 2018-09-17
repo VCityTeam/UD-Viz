@@ -1,6 +1,6 @@
 // This code is inspired from iTowns exemple : Globe_wfs_extruded
 // Which is available from this link.
-// http://www.itowns-project.org/itowns/examples/globe_wfs_extruded.html
+// http://www.itowns-project.org/itowns/examples/wfs.html
 
 var extent;
 var viewerDiv;
