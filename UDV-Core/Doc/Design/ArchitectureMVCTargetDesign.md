@@ -11,7 +11,7 @@ These components are :
 * **Extended document**
 * **Contribute**
 
-*A [class diagram of udv-core](https://github.com/MEPP-team/RICT/upload/master/Doc/Devel/Architecture/UDVcoreClassDiagram.jpg) can be found in the link below:*
+*A [class diagram of udv-core](https://github.com/MEPP-team/RICT/tree/master/Doc/Devel/Architecture/Diagrams/UDVcoreClassDiagram.jpg) can be found in the link below:*
 
 Modules are based on a **MVC architecture**. MVC stands for **Model-View-Controller**:
 * the **view** is in charge of displaying models and getting user's action;
