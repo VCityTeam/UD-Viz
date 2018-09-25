@@ -309,10 +309,13 @@ document.addEventListener('keydown', (event) => {
     }
     return;
   }
+<<<<<<< HEAD
   if (event.key ==='q'){
     //currentCoordinate
     console.log(view.camera.camera3D.position);
     console.log(view.camera.camera3D.quaternion);
+=======
+>>>>>>> master
 
   }
   if (event.key ==='a'){
