@@ -223,7 +223,9 @@ datDotGUI.domElement.id = 'datDotGUI';
 var datDotGUIContainer = document.getElementById('datDotGUIDiv');
 datDotGUIContainer.appendChild( datDotGUI.domElement );
 
-//
+// By default the dat.GUI controls are rolled up
+// datDotGUI.close();
+
 
 for (const layer of view.getLayers()) {
   if (layer.id != "planar"){
@@ -309,13 +311,10 @@ document.addEventListener('keydown', (event) => {
     }
     return;
   }
-<<<<<<< HEAD
   if (event.key ==='q'){
     //currentCoordinate
     console.log(view.camera.camera3D.position);
     console.log(view.camera.camera3D.quaternion);
-=======
->>>>>>> master
 
   }
   if (event.key ==='a'){
