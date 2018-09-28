@@ -96,7 +96,7 @@ As for add the layer you have to change the input in capital letter :
     - KEYBOARD_KEY : change it by the key code of the key you want to use to control this.
     - ID_LAYER : it's the id of the new controlled layer
 
-    In case you want to show more than one map, you should change the opacity by adding an extra line (you can use a function in order to control layer opacity):
+   In case you want to show more than one map, you should change the opacity by adding an extra line (you can use a function in order to control layer opacity):
 
     ```
     if (event.key === KEYBOARD_KEY) {
