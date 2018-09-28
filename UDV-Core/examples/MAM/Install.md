@@ -35,13 +35,13 @@ After you finished to set the projection mod, you can add layers to show data. H
     ```
     You have to change all line write in capital letter, I explain each line to change :
       -  id : The id of layer use to control which layer is visible
-      -  url : url of site where the data is stored
-      -  protocol : enter the procotol used to transfert this data
+      -  url : url of website where the data is stored
+      -  protocol : enter the protocol used to load this data
       -  version : the version of the protocol
       -  name : the name use to stored the map
       -  projection : the same CRS projection code use to set the model
 
-    In case you want to show more than one map, you can change the opacity, you have to add an extra option
+    In case you want to show more than one map, you should change the opacity by adding an extra option
       - opacity : define the ocacity of the map, set by an float in range 0 and 1, this number represent the percent of ocacity, at 0 it's transparent and at 1 it's opaque.
 
     * In case you got other thing than a map the block of line change :
@@ -79,12 +79,11 @@ You have to change all line write in capital letter, I explain each line to chan
     -  zoom : minimum and maximum range to show data.
     -  format : different of protocol, the format is in which form the data is available after being loaded.
 
-* Now you got a new layer, you have to had several lines of code if you want to control it visibility by an controller like an keyboard.
-  * Add a new condition in document.addEventListener('keydown', (event))
+* Now you got a new layer, you have to add several lines of code if you want to control it's visibility by a controller like a keyboard. In MAM.js there is an event listener (line 257 by default), inside of it add a block of line based on this exemple :
   ```
-  if (event.key === 'KEYBOARD_KEY') {
+  if (event.key === KEYBOARD_KEY) {
     for (const layer of view.getLayers()) {
-      if (layer.id === 'ID_LAYER') {
+      if (layer.id === ID_LAYER) {
         layer.visible = !layer.visible;
         //Request redraw
         view.notifyChange(layer);
@@ -93,10 +92,57 @@ You have to change all line write in capital letter, I explain each line to chan
     return;
   }
   ```
-### How change the camera preset
+As for add the layer you have to change the input in capital letter :
+    - KEYBOARD_KEY : change it by the key code of the key you want to use to control this.
+    - ID_LAYER : it's the id of the new controlled layer
 
-By default the only prefab allow you to switch in a view only adapt to an specific model. One solution to solve this problem is to change this options. The first step is to open MAM, and manually set the camera to the Model. After this open your debugger tool and press **Q**, this input will show the camera position and rotation, change the setting link to the key A, by modify the Position and Quaternion by the ones you get earlier (Quarternion is the Rotation).
+    In case you want to show more than one map, you should change the opacity by adding an extra line (you can use a function in order to control layer opacity):
 
+    ```
+    if (event.key === KEYBOARD_KEY) {
+      //Switch LAYER_A visibility
+      for (const layer of view.getLayers()) {
+        if (layer.id === ID_LAYER_A) {
+          layer.visible = !layer.visible;
+          // checking if LAYER_B is visible
+          for (const l of view.getLayers()) {
+            if (l.id === ID_LAYER_B) {
+              if (layer.visible){
+                //When both layer are visible
+                l.opacity = 0.33;
+              }else{
+                when LAYER_B is hidden (or when LAYER_A is visible)
+                l.opacity = 0.66;
+              }
+            }
+          }
+          //Request redraw
+          view.notifyChange(layer);
+        }
+      }
+    ```
 ## Launch MAM
 
-First you have to start npm, then open the following page :  http://localhost:8080/examples/MAM/Demo.html
+After the setting end, in order to launch MAM you have to execute some commands :
+### For Ubuntu
+      - Open a console command in the root of MAM (UDV/UDV-Core/exemple/MAM path inside UDV folder)
+      - execute ```npm start``` in the console command
+      - with a navigator web go into : http://localhost:8080/examples/MAM/Demo.html
+
+NOTE : if you launch more than one npm, the loacalhost will change (as an exemple localhost:8080 will be localhost:8081)
+
+### For Windows
+      - Open Windows Powershell and this ```cd``` go into the root of MAM (UDV/UDV-Core/exemple/MAM path inside UDV folder)
+      - execute ```npm start``` in the console command
+      - with a navigator web go into : http://localhost:8080/examples/MAM/Demo.html
+
+NOTE : if you launch more than one npm, the loacalhost will change (as an exemple localhost:8080 will be localhost:8081)
+
+## How change the camera preset
+
+By now you got an model with an default set and some layers to show extra data about this model. With the [iTowns Contoler](https://www.itowns-project.org/itowns/API_Doc/PlanarControls.html) you can move around your model while stay in top view. You can save preset position to your project.
+- The first step is to launch and position the projection at the right place, the objective is to match the model and the projection of the city.
+- After that, press **Q** and open a debbuger tool, you will see two data : position and quaternion, save this data for next step.
+- Open MAM.js at the end you find two events, one for Keyboard key Q and an another for A. reset the position and quaternion setting with your saved data.
+
+Now to test if your preset is working you have to refresh the web application after saved your modification, when you press **A** the projection will return to the matching setting.
