@@ -125,16 +125,16 @@ As for add the layer you have to change the input in capital letter :
 
 After the setting end, in order to launch MAM you have to execute some commands :
 ### For Ubuntu
-      - Open a console command in the root of MAM (UDV/UDV-Core/exemple/MAM path inside UDV folder)
-      - execute ```npm start``` in the console command
-      - with a navigator web go into : http://localhost:8080/examples/MAM/Demo.html
+   - Open a console command in the root of MAM (UDV/UDV-Core/exemple/MAM path inside UDV folder)
+   - execute `npm start` in the console command
+   - with a navigator web go into : http://localhost:8080/examples/MAM/Demo.html
 
 NOTE : if you launch more than one npm, the loacalhost will change (as an exemple localhost:8080 will be localhost:8081)
 
 ### For Windows
-      - Open Windows Powershell and this ```cd``` go into the root of MAM (UDV/UDV-Core/exemple/MAM path inside UDV folder)
-      - execute ```npm start``` in the console command
-      - with a navigator web go into : http://localhost:8080/examples/MAM/Demo.html
+   - Open Windows Powershell and this `cd` go into the root of MAM (UDV/UDV-Core/exemple/MAM path inside UDV folder)
+   - execute `npm start` in the console command
+   - with a navigator web go into : http://localhost:8080/examples/MAM/Demo.html
 
 NOTE : if you launch more than one npm, the loacalhost will change (as an exemple localhost:8080 will be localhost:8081)
 
