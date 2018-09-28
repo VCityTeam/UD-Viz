@@ -34,23 +34,57 @@ After you finished to set the projection mod, you can add layers to show data. H
     });
     ```
     You have to change all line write in capital letter, I explain each line to change :
-    -  id : The id of layer use to control which layer is invisible
+      -  id : The id of layer use to control which layer is visible
+      -  url : url of site where the data is stored
+      -  protocol : enter the procotol used to transfert this data
+      -  version : the version of the protocol
+      -  name : the name use to stored the map
+      -  projection : the same CRS projection code use to set the model
+
+    In case you want to show more than one map, you can change the opacity, you have to add an extra option
+      - opacity : define the ocacity of the map, set by an float in range 0 and 1, this number represent the percent of ocacity, at 0 it's transparent and at 1 it's opaque.
+
+    * In case you got other thing than a map the block of line change :
+```
+    view.addLayer({
+      type: 'geometry',
+      id: ID_LAYER,',
+      name: NAME_OF_DATA_SET,
+      update: itowns.FeatureProcessing.update,
+      convert: itowns.Feature2Mesh.convert({
+        ELEMENT : FUNCTION,
+      }),
+      onMeshCreated: FUNCTION_MESH,
+      source: {
+        url: 'https://download.data.grandlyon.com/wfs/rdata?',
+        protocol: PROTOCOL_USED,
+        version: VERSION_USED,
+        typeName: NAME_OF_DATA_SET,
+        projection: CRS CODE,
+        extent: extent,
+        zoom: { min: 2, max: 5 },
+        format: FORMAT_OF_DATA,
+      },
+    });
+```
+You have to change all line write in capital letter, I explain each line to change :
+  -  type : change to became geometry, a geometry layer can change the mesh, and by this way create line, and volume.
+  -  id : The id of layer use to control which layer is visible
+  -  source : regroup all information to load the data :
     -  url : url of site where the data is stored
     -  protocol : enter the procotol used to transfert this data
     -  version : the version of the protocol
-    -  name : the name use to stored the map
+    -  typename : the name use to stored the data
     -  projection : the same CRS projection code use to set the model
+    -  zoom : minimum and maximum range to show data.
+    -  format : different of protocol, the format is in which form the data is available after being loaded.
 
-    In case you want to show more than one map, you can change the opacity, you have to add an extra option
-    - opacity : define the ocacity of the map, set by an float in range 0 and 1, this number represent the percent of ocacity, at 0 it's transparent
-
-    * To show more than one map at the time, you must change the opacity of the layer by added an extra line while import it ( opacity = float) the opacity is an float in range 0 to 1 (at 0 the layer is invisible)
-* Add the command layer by  following this method :
+* Now you got a new layer, you have to had several lines of code if you want to control it visibility by an controller like an keyboard.
   * Add a new condition in document.addEventListener('keydown', (event))
   ```
-  if (event.key === 'Keyboard_key') {
+  if (event.key === 'KEYBOARD_KEY') {
     for (const layer of view.getLayers()) {
-      if (layer.id === 'your_id_layer') {
+      if (layer.id === 'ID_LAYER') {
         layer.visible = !layer.visible;
         //Request redraw
         view.notifyChange(layer);
