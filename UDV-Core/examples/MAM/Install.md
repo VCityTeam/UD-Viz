@@ -1,13 +1,13 @@
-#Installation
+# Installation
 
-Once the UDV is installed you can install MAM. You can deploy this actual software to get a demonstration of MAM.
+Once that UDV is installed you can install MAM. You can deploy this actual software to get a demonstration of MAM.
 
-##Setting before launch MAM
+## Setting before launch MAM
 
-If you want to observe a city you have to make sure of several thing :
-*  redefine projection use by Proj4 & extent, limits of projection
+If you want to observe a city you have to make sure of several things :
+ * adjust the projection mode by Proj4 & extent, limits of projection
 
-###How added en extra layers
+### How to add en extra layers
 
 * Import new layer by following iTowns method
     * To show more than one map at the time, you must change the opacity of the layer by added an extra line while import it ( opacity = float) the opacity is an float in range 0 to 1 (at 0 the layer is invisible)
