@@ -1,7 +1,7 @@
 {
     "type": "class",
     "server":{
-      "url":"http://rict.liris.cnrs.fr:9095/",
+      "url":"http://rict.liris.cnrs.fr:1525/",
       "documentsRepository":"getFile/",
       "getAll": "getDocuments?"
     },
