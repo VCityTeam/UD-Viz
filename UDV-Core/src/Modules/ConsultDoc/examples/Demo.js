@@ -136,12 +136,15 @@ temporalActiveCtrl.onFinishChange(function(value) {
 
 //Document uses a folder
 var documentFolder = datDotGUI.addFolder("Documents");
+
+controller.documentResearch.activateWindow(true);
 var docResearch = documentFolder.add( controller.documentResearch, 'windowIsActive'
                                         ).name("Research").listen();
 docResearch.onFinishChange(function(value){
   controller.documentResearch.refresh();
 });
 
+controller.documentBrowser.activateWindow(true);
 var browserOption = documentFolder.add( controller.documentBrowser, 'windowIsActive'
                                        ).name("Browser").listen();
 browserOption.onFinishChange(function(value){
