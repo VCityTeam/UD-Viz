@@ -1,9 +1,8 @@
-
 #helpWindow {
     position: absolute;
     z-index: 20;
     width: 15%;
-    margin: 3px;
+    top: 50px;
     left : 22.5%;
     color: white;
     font-size: 75%;

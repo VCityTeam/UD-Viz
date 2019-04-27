@@ -10,7 +10,7 @@ export function HelpWindow( options={} ) {
   ///////////// Html elements
   var helpDiv = document.createElement("div");
   helpDiv.id = 'helpWindow';
-  document.body.appendChild(helpDiv);
+  $("#contentSection").append(helpDiv);
 
   document.getElementById("helpWindow").innerHTML =
     '<div id="text">\
@@ -38,11 +38,13 @@ export function HelpWindow( options={} ) {
 
     // Display or hide this window
     this.activateWindow = function activateWindow( active ){
-      if (typeof active != 'undefined') {
-        this.windowIsActive = active;
-      }
-      document.getElementById('helpWindow').style.display =
-                              active ? "block" : "none" ;
+        if (active === undefined){
+            this.windowIsActive = !this.windowIsActive;
+        } else {
+            this.windowIsActive = active;
+        }
+      //document.getElementById('helpWindow').style.display =
+      //                        this.windowIsActive ? "block" : "none" ;
     }
 
     this.refresh = function refresh( ){

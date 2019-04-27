@@ -9,7 +9,7 @@ export function AboutWindow( options={} ) {
   ///////////// Html elements
   var aboutDiv = document.createElement("div");
   aboutDiv.id = 'aboutWindow';
-  document.body.appendChild(aboutDiv);
+  $("#contentSection").append(aboutDiv);
 
   document.getElementById("aboutWindow").innerHTML =
     '<div id="text">\
@@ -45,11 +45,13 @@ export function AboutWindow( options={} ) {
 
   // Display or hide this window
   this.activateWindow = function activateWindow( active ){
-    if (typeof active != 'undefined') {
+    if (active === undefined){
+      this.windowIsActive = !this.windowIsActive;
+    } else {
       this.windowIsActive = active;
     }
-    document.getElementById('aboutWindow').style.display =
-                            active ? "block" : "none" ;
+    //document.getElementById('aboutWindow').style.display =
+    //                        this.windowIsActive ? "block" : "none" ;
   }
 
   this.refresh = function refresh( ){

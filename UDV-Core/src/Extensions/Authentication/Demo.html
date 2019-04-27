@@ -1,0 +1,44 @@
+<html>
+<head>
+    <title>UDV-Core</title>
+    <link rel="stylesheet" href="../../css/styles.css">
+    <link rel="stylesheet" href="Demo.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+<input type="checkbox" id="activateAbout">
+<input type="checkbox" id="activateHelp">
+<input type="checkbox" id="activateMore">
+<header>
+    <div class="header">
+        <img id="logoIMU" src="../../../examples/data/img/logo-imu.png"/>
+        <img id="logoLIRIS" src="../../../examples/data/img/logo-liris.png"/>
+    </div>
+    <input type="checkbox" id="openSidebar">
+    <label id="closeHamburger" for="openSidebar">&#x2630</label>
+    <div id="menu">
+        <div id="navMenu"></div>
+        <label id="openHamburger" for="openSidebar">&#x2716</label>
+        <div id="profileMenu">
+            <img src="Icons/profile.svg" id="profileIcon">
+            <div id="name">Gilles Gesquières</div>
+            <div id="login" class="logInOut">Login</div>
+            <div id="logout" class="logInOut">Logout</div>
+        </div>
+        <label for="activateAbout" id="aboutMenu" class="choiceMenu">About</label>
+        <label for="activateHelp" id="helpMenu" class="choiceMenu">Help</label>
+        <label for="activateMore" id="moreMenu" class="choiceMenu">More</label>
+    </div>
+</header>
+<section id="contentSection">
+    <div id="viewerDiv"></div>
+</section>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+<script src="../../../dist/udvcore.js"></script>
+<script src="../../../node_modules/moment/moment.js"></script>
+<script src="../../../node_modules/three/build/three.js"></script>
+<script src="../../Externals/dat.gui/dat.gui.min.js"></script>
+<script src="Demo.js"></script>
+</body>
+</html>
