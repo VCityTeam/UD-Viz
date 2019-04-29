@@ -23,6 +23,9 @@ body {
     height: 100%;
 }
 
+button:hover {
+    cursor: pointer;
+}
 
 #viewerDiv {
     width: 100%;
@@ -155,7 +158,7 @@ input {
     content: url("Icons/help.svg");
 }
 
-#moreMenu:before {
+#temporalMenu:before {
     content: url("Icons/more.svg");
 }
 
@@ -178,11 +181,11 @@ input {
     color: #f31eb4;
 }
 
-#activateMore:checked ~ header #moreMenu {
+#activateTemporal:checked ~ header #temporalMenu {
     color: #f31eb4;
 }
 
-#aboutWindow, #helpWindow {
+#aboutWindow, #helpWindow, #temporal {
     display: none;
 }
 
@@ -191,5 +194,9 @@ input {
 }
 
 #activateHelp:checked ~ #contentSection #helpWindow {
+    display: block;
+}
+
+#activateTemporal:checked ~ #contentSection #temporal {
     display: block;
 }

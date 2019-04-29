@@ -30,31 +30,10 @@ export function HelpWindow( options={} ) {
     </div>\
     ';
 
-  ///////////// Class attributes
-  // Whether this window is currently displayed or not.
-  this.windowIsActive = options.active || true;
-
-  //////////// Behavior
-
-    // Display or hide this window
-    this.activateWindow = function activateWindow( active ){
-        if (active === undefined){
-            this.windowIsActive = !this.windowIsActive;
-        } else {
-            this.windowIsActive = active;
-        }
-      //document.getElementById('helpWindow').style.display =
-      //                        this.windowIsActive ? "block" : "none" ;
-    }
-
-    this.refresh = function refresh( ){
-      this.activateWindow( this.windowIsActive );
-    }
-
     // Close the window...when close button is hit
     document.getElementById("helpCloseButton").addEventListener(
-         'mousedown', this.activateWindow.bind(this, false ), false);
-
-    ///////////// Initialization
-    this.refresh( );
+        'mousedown', () => {
+            let activate = document.getElementById('activateHelp');
+            activate.checked = !activate.checked;
+        }, false);
 }
