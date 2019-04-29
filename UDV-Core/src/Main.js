@@ -6,6 +6,8 @@ export { Setup3DScene }         from './Setup3DScene';
 
 export { GuidedTourController } from './Modules/GuidedTour/GuidedTourController';
 
+export { LoginRegistrationWindow }          from './Extensions/Authentication/LoginRegistration';
+
 export { AboutWindow }          from './Modules/Others/About';
 export { CompassController }    from './Modules/Others/Compass';
 export { HelpWindow }           from './Modules/Others/Help';

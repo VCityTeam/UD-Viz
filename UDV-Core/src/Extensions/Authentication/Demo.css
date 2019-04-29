@@ -71,9 +71,7 @@ label:hover {
     cursor: pointer;
 }
 
-input {
-    display: none;
-}
+
 
 #menu {
     position: fixed;
@@ -185,7 +183,7 @@ input {
     color: #f31eb4;
 }
 
-#aboutWindow, #helpWindow, #temporal {
+#aboutWindow, #helpWindow, #temporal,#loginRegistrationWindow {
     display: none;
 }
 
@@ -198,5 +196,9 @@ input {
 }
 
 #activateTemporal:checked ~ #contentSection #temporal {
+    display: block;
+}
+
+#activateLoginRegistration:checked ~ #contentSection #loginRegistrationWindow {
     display: block;
 }
