@@ -112,9 +112,10 @@ $3dTilesTemporalLayer.whenReady.then(
     }
 );
 
+const authenticationController = new udvcore.AuthenticationController();
 const about = new udvcore.AboutWindow({active:true});
 const help  = new udvcore.HelpWindow({active:true});
-const loginRegistration= new udvcore.LoginRegistrationWindow({active:true});
+const loginRegistration= new udvcore.LoginRegistrationWindow(authenticationController);
 
 //loading configuration file
 // see https://github.com/MEPP-team/VCity/wiki/Configuring-UDV
