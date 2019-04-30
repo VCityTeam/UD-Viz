@@ -1,0 +1,62 @@
+#loginRegistrationWindow {
+    position: absolute;
+    z-index: 20;
+    top: 50px;
+
+    height: 94%;
+    left: 260px;
+    right:10px;
+    color: white;
+    font-size: 75%;
+    /*padding: 0 1rem;*/
+    background-color: rgba(30,30,30,0.6);
+    border : 1px solid rgb(90,90,90);
+    pointer-events: auto;
+}
+
+#loginRegistrationWindow > div > ul {
+    padding-left: 5px;
+}
+
+#loginRegistrationCloseButton{
+    position: absolute;
+    z-index: 40;
+    top: 0;
+    right: 3px;
+    margin : 3px;
+    border: 1px solid black;
+    background-color: white;
+    color: black;
+    pointer-events: auto;
+}
+.RegistrationForm{
+    position: absolute;
+    z-index: 40;
+    top: 80px;
+    right: 150px;
+    margin : 3px;
+    width: 30%;
+    height: 60%;
+    border: 3px black solid;
+    vertical-align: bottom;
+
+
+}
+.LoginForm{
+    position: absolute;
+    z-index: 40;
+    top: 80px;
+    margin : 3px;
+    left: 150px;
+    width: 30%;
+    height: 60%;
+    border: 3px black solid;
+
+}
+
+label
+{
+    display: block;
+    width: 200px;
+    float: left;
+}

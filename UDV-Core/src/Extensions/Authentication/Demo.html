@@ -6,9 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
-<input type="checkbox" id="activateAbout">
-<input type="checkbox" id="activateHelp">
-<input type="checkbox" id="activateTemporal">
+<input type="checkbox" id="activateAbout" class ="nonVisible" >
+<input type="checkbox" id="activateHelp" class ="nonVisible">
+<input type="checkbox" id="activateTemporal" class ="nonVisible">
+<input type="checkbox" id="activateLoginRegistration" class ="nonVisible">
 <header>
     <div class="header">
         <img id="logoIMU" src="../../../examples/data/img/logo-imu.png"/>
@@ -22,8 +23,7 @@
         <div id="profileMenu">
             <img src="Icons/profile.svg" id="profileIcon">
             <div id="name">Gilles Gesquières</div>
-            <div id="login" class="logInOut">Login</div>
-            <div id="logout" class="logInOut">Logout</div>
+            <label for="activateLoginRegistration" id="loginRegistration" class="logInOut">Sign In</label>
         </div>
         <label for="activateAbout" id="aboutMenu" class="choiceMenu">About</label>
         <label for="activateHelp" id="helpMenu" class="choiceMenu">Help</label>
@@ -39,5 +39,6 @@
 <script src="../../../node_modules/three/build/three.js"></script>
 <script src="../../Externals/dat.gui/dat.gui.min.js"></script>
 <script src="Demo.js"></script>
+<script src="LoginRegistration.js"></script>
 </body>
 </html>
