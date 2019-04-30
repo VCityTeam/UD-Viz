@@ -6,12 +6,13 @@ export function AuthenticationController() {
     this.login = function login(params) {
         console.log('login !');
         //mock request
-        jwt = /*request*/ 'test.jwt.test';
-        console.log(params);
+        const jwt = /*request*/ 'test.jwt.test';
+        window.sessionStorage.setItem('token', jwt);
     }
 
     this.logout = function logout() {
         console.log('logout !');
+        window.sessionStorage.removeItem('token');
     }
 
     this.register = function register(params) {

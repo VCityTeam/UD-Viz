@@ -1,4 +1,5 @@
 import './LoginRegistration.css';
+import { RequestService } from '../../Modules/Request/RequestService';
 
 /**
  * adds an "About" window that can be open/closed with a button
@@ -17,28 +18,52 @@ export function LoginRegistrationWindow(authenticationController, options = {}) 
         // Create HMTL
         document.getElementById("loginRegistrationWindow").innerHTML =
             ' <button id="loginRegistrationCloseButton">Close</button>\
-        \<fieldset class="RegistrationForm">\
-             <legend align="left"> Registration: </legend> \
-             <label for="Firstname" >Name *</label> <input type="text" id="Firstname"/><br>\
-             <label for="Lastname" >Lastname *</label> <input type="text" id="Lastname"/><br>\
-             <label for="Username">Username *</label>         <input type="text" id="Username"  /><br>\
-             <label for="Email">Email *</label>         <input type="text" id="Email"  /><br>\
-             <label for=PasswordRegistration> Password*</label> <input type="password" id="PasswordRegistration"  /><br>\
-             <label for="ConfirmPasswordRegistration"> Confirm Password*</label> <input type="password" id="ConfirmPasswordRegistration" /><br> <br>\
-             <div align="center"><button  id="Register"  >Register</button></div> \
-             <p id="RegisterError" class="ErrorBox"></p>\
-        </fieldset>\
+        <form id="RegistrationForm">\
+            <fieldset class="RegistrationForm">\
+                <legend align="left"> Registration: </legend> \
+                <label for="Firstname" >Name *</label> <input type="text" name="firstname" id="Firstname"/><br>\
+                <label for="Lastname" >Lastname *</label> <input type="text" name="lastname" id="Lastname"/><br>\
+                <label for="Username">Username *</label>         <input type="text" name="username" id="Username"  /><br>\
+                <label for="Email">Email *</label>         <input type="text" name="email" id="Email"  /><br>\
+                <label for=PasswordRegistration> Password*</label> <input type="password" name="password" id="PasswordRegistration"  /><br>\
+                <label for="ConfirmPasswordRegistration"> Confirm Password*</label>\
+                <input type="password" name="confirmPassword" id="ConfirmPasswordRegistration" /><br> <br>\
+                <div align="center"><button type="button" name="register" id="Register">Register</button></div> \
+                <p id="RegisterError" class="ErrorBox"></p>\
+            </fieldset>\
+        </form>\
         \
-        <fieldset class="LoginForm">\
-           <legend align="left"> Login: </legend>\
-           <label for="Login"> Username * </label> <input type="text" id="login" name="login" /><br>\
-           <label for=PasswordLogin>Password * </label> <input type="password" id="PasswordLogin" name="password"  /><br> <br>\
-           <div align="center"><button id="LoginButton">Login</button></div>\
-           <p id="LoginError" class="ErrorBox"></p>\
-        </fieldset>\
+        <form id="LoginForm">\
+            <fieldset id="LoginForm" class="LoginForm">\
+            <legend align="left"> Login: </legend>\
+            <label for="Login"> Username * </label> <input type="text" id="login" name="login" /><br>\
+            <label for=PasswordLogin>Password * </label> <input type="password" id="PasswordLogin" name="password"  /><br> <br>\
+            <div align="center"><button type="button" id="LoginButton">Login</button></div>\
+            <p id="LoginError" class="ErrorBox"></p>\
+            <button type="button" id="TEST">TEST</button>\
+            </fieldset>\
+        </form>\
         ';
 
         this.initializeForms();
+
+        document.getElementById('TEST').onclick = () => {
+            console.log('test');
+
+            const formData = new FormData();
+            formData.append("title", "Test Title");
+            formData.append("subject", "Test Subject");
+            formData.append("description", "Test Description");
+
+            const requestService = new RequestService();
+            requestService.send('POST', 'http://0.0.0.0:5000/addDocument', formData).then((result) => {
+                console.log('Résultat :');
+                console.log(result);
+            }, (reason) => {
+                console.log('Reject :');
+                console.log(reason);
+            });
+        }
 
         // Close the window...when close button is hit
         document.getElementById("loginRegistrationCloseButton").addEventListener(
