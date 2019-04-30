@@ -15,23 +15,22 @@ export function LoginRegistrationWindow(options = {}) {
     document.getElementById("loginRegistrationWindow").innerHTML =
         ' <button id="loginRegistrationCloseButton">Close</button>\
         \<fieldset class="RegistrationForm">\
-         <legend align="left"> Registration: </legend> \
-         <label for="Nom" >Name*</label> <input type="text" id="Nom"/><br>\
-         <label for="Surname">Surname*</label>         <input type="text" id="Surname"  /><br>\
-         <label for=PasswordRegistration> Password*</label> <input type="password" id="PasswordRegistration"  /><br>\
-         <label for="ConfirmPasswordRegistration"> Confirm Password*</label> <input type="password" id="ConfirmPasswordRegistration" /><br> <br>\
-         <div align="center"><button  id="Register"  >Register</button></div> \
+             <legend align="left"> Registration: </legend> \
+             <label for="Firstname" >Name *</label> <input type="text" id="Firstname"/><br>\
+             <label for="Lastname" >Lastname *</label> <input type="text" id="Lastname"/><br>\
+             <label for="Surname">Surname *</label>         <input type="text" id="Surname"  /><br>\
+             <label for="Email">Email *</label>         <input type="text" id="Email"  /><br>\
+             <label for=PasswordRegistration> Password*</label> <input type="password" id="PasswordRegistration"  /><br>\
+             <label for="ConfirmPasswordRegistration"> Confirm Password*</label> <input type="password" id="ConfirmPasswordRegistration" /><br> <br>\
+             <div align="center"><button  id="Register"  >Register</button></div> \
         </fieldset>\
         \
         <fieldset class="LoginForm">\
-        <legend align="left"> Login: </legend>\
-        <div align="center">\
-            <input type="text" id="login" name="login" placeholder="mail" /><br>\
-            <input type="password" id="PasswordLogin" name="password" placeholder="password" /><br> <br>\
-            <button id="LoginButton">Login</button>\
-        <div id="message"></div>\
-            </div>\
-            </fieldset>\
+           <legend align="left"> Login: </legend>\
+           <label for="Login"> Surname * </label> <input type="text" id="login" name="login" /><br>\
+           <label for=PasswordLogin>Password * </label> <input type="password" id="PasswordLogin" name="password"  /><br> <br>\
+           <div align="center"><button id="LoginButton">Login</button></div>\
+        </fieldset>\
         ';
 
     // Close the window...when close button is hit
