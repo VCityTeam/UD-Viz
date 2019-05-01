@@ -140,10 +140,22 @@ document.getElementById('logout').onclick = () => {
     }
 };
 
-authenticationService.onLogin = () => {
+const updateView = () => {
+    if (authenticationService.isUserLoggedIn()) {
+        const user = authenticationService.getUser();
+        document.getElementById('profileMenuLoggedIn').hidden = false;
+        document.getElementById('profileMenuLoggedOut').hidden = true;
+        document.getElementById('name').innerHTML = `${user.firstname} ${user.lastname}`;
+    } else {
+        document.getElementById('profileMenuLoggedIn').hidden = true;
+        document.getElementById('profileMenuLoggedOut').hidden = false;
+    }
+};
+
+authenticationService.onLogin = (user) => {
     console.log('Connected');
-    document.getElementById('profileMenuLoggedIn').hidden = false;
-    document.getElementById('profileMenuLoggedOut').hidden = true;
+    console.log(user);
+    updateView();
 }
 
 authenticationService.onRegister = () => {
@@ -152,9 +164,10 @@ authenticationService.onRegister = () => {
 
 authenticationService.onLogout = () => {
     console.log('Logout');
-    document.getElementById('profileMenuLoggedIn').hidden = true;
-    document.getElementById('profileMenuLoggedOut').hidden = false;
+    updateView();
 }
+
+updateView();
 
 //The documentcontroller is in charge of handling the views (research, browser)
 // based on the parameter documentModel, it builds the browser view (what attribute does

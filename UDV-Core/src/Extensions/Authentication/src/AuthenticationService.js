@@ -31,17 +31,21 @@ export function AuthenticationService(config, requestService) {
         console.log(obj);
         const jwt = obj.token;
         if (jwt !== undefined && jwt !== null) {
-            this.storeUser({
+            const user = {
                 token: jwt,
                 firstname: 'Firstname',
                 lastname: 'Lastname',
                 username: 'Username',
                 email: 'email@example.com'
-            });
-        }
+            };
 
-        if (typeof this.onLogin === "function") {
-            this.onLogin();
+            this.storeUser(user);
+
+            if (typeof this.onLogin === "function") {
+                this.onLogin(user);
+            }
+        } else {
+            throw 'Could not log in';
         }
     }
 
