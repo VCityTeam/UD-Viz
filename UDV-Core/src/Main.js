@@ -4,6 +4,8 @@ import * as itowns from 'itowns';
 export { itowns };
 export { Setup3DScene }             from './Setup3DScene';
 
+export { RequestService }           from './Modules/Request/RequestService';
+
 export { GuidedTourController }     from './Modules/GuidedTour/GuidedTourController';
 
 export { AuthenticationController } from './Extensions/Authentication/src/AuthenticationController';
@@ -20,4 +22,3 @@ export { DocumentController}        from './Modules/ConsultDoc/DocumentControlle
 
 export { ContributeController }     from './Extensions/Contribute/src/ContributeController';
 
-export { RequestService }           from './Modules/Request/RequestService';

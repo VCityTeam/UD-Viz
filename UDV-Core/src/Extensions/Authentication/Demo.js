@@ -112,23 +112,23 @@ $3dTilesTemporalLayer.whenReady.then(
     }
 );
 
-const authenticationController = new udvcore.AuthenticationController();
-const about = new udvcore.AboutWindow({active:true});
-const help  = new udvcore.HelpWindow({active:true});
-const loginRegistration= new udvcore.LoginRegistrationWindow(authenticationController);
-
 //loading configuration file
 // see https://github.com/MEPP-team/VCity/wiki/Configuring-UDV
 let config;
 $.ajax({
     type: "GET",
-    url: "../data/config/generalDemoConfig.json",
+    url: "AuthenticationConfig.json",
     datatype: "json",
     async: false,
     success: function(data){
         config = data;
     }
 });
+
+const authenticationController = new udvcore.AuthenticationController(config);
+const about = new udvcore.AboutWindow({active:true});
+const help  = new udvcore.HelpWindow({active:true});
+const loginRegistration= new udvcore.LoginRegistrationWindow(authenticationController);
 
 //The documentcontroller is in charge of handling the views (research, browser)
 // based on the parameter documentModel, it builds the browser view (what attribute does

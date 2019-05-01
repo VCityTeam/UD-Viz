@@ -2,22 +2,19 @@ export function RequestService() {
     this.useAuthentication;
 
     this.initialize = function () {
-        try {
-            const authenticationController = new udvcore.AuthenticationController();
-            console.log('Requests use authentication');
+        if (typeof udvcore.AuthenticationController !== 'undefined') {
             this.useAuthentication = true;
-        } catch (e) {
-            console.log('Requests don\'t use authentication');
+        } else {
             this.useAuthentication = false;
         }
     }
 
-    this.send = function (method, url, body = '') {
+    this.send = function (method, url, body = '', authenticate = true) {
         return new Promise((resolve, reject) => {
             let req = new XMLHttpRequest();
             req.open(method, url);
 
-            if (this.useAuthentication) {
+            if (this.useAuthentication && authenticate) {
                 const token = window.sessionStorage.getItem('token');
                 if (token === null) {
                     reject('Login needed for this request');
@@ -28,7 +25,7 @@ export function RequestService() {
 
             if (method === 'GET' || method === 'DELETE') {
                 req.send(null);
-            } else if (method === 'POST' || method === 'PUT') {
+            } else if (method === 'POST' || method === 'PUT' || method === 'UPDATE') {
                 req.send(body);
             }
 
@@ -36,7 +33,7 @@ export function RequestService() {
                 if (req.status === 200) {
                     resolve(req.response);
                 } else {
-                    reject(req.statusText);
+                    reject(req.status);
                 }
             }
         });

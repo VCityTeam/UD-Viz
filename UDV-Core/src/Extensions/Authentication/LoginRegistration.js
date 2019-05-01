@@ -1,5 +1,4 @@
 import './LoginRegistration.css';
-import { RequestService } from '../../Modules/Request/RequestService';
 
 /**
  * adds an "About" window that can be open/closed with a button
@@ -21,8 +20,8 @@ export function LoginRegistrationWindow(authenticationController, options = {}) 
         <form id="RegistrationForm">\
             <fieldset class="RegistrationForm">\
                 <legend align="left"> Registration: </legend> \
-                <label for="Firstname" >Name *</label> <input type="text" name="firstname" id="Firstname"/><br>\
-                <label for="Lastname" >Lastname *</label> <input type="text" name="lastname" id="Lastname"/><br>\
+                <label for="Firstname" >Name *</label> <input type="text" name="firstName" id="Firstname"/><br>\
+                <label for="Lastname" >Lastname *</label> <input type="text" name="lastName" id="Lastname"/><br>\
                 <label for="Username">Username *</label>         <input type="text" name="username" id="Username"  /><br>\
                 <label for="Email">Email *</label>         <input type="text" name="email" id="Email"  /><br>\
                 <label for=PasswordRegistration> Password*</label> <input type="password" name="password" id="PasswordRegistration"  /><br>\
@@ -36,7 +35,7 @@ export function LoginRegistrationWindow(authenticationController, options = {}) 
         <form id="LoginForm">\
             <fieldset id="LoginForm" class="LoginForm">\
             <legend align="left"> Login: </legend>\
-            <label for="Login"> Username * </label> <input type="text" id="login" name="login" /><br>\
+            <label for="Login"> Username * </label> <input type="text" id="login" name="username" /><br>\
             <label for=PasswordLogin>Password * </label> <input type="password" id="PasswordLogin" name="password"  /><br> <br>\
             <div align="center"><button type="button" id="LoginButton">Login</button></div>\
             <p id="LoginError" class="ErrorBox"></p>\
@@ -55,7 +54,7 @@ export function LoginRegistrationWindow(authenticationController, options = {}) 
             formData.append("subject", "Test Subject");
             formData.append("description", "Test Description");
 
-            const requestService = new RequestService();
+            const requestService = new udvcore.RequestService();
             requestService.send('POST', 'http://0.0.0.0:5000/addDocument', formData).then((result) => {
                 console.log('Résultat :');
                 console.log(result);
@@ -84,29 +83,32 @@ export function LoginRegistrationWindow(authenticationController, options = {}) 
     }
 
     this.initializeForms = function () {
-        document.getElementById('LoginButton').onclick = () => {
-            const params = {
-                login: document.getElementById('login').value,
-                password: document.getElementById('PasswordLogin').value
-            };
-            this.authenticationController.login(params);
+        document.getElementById('LoginButton').onclick = async () => {
+            this.displayLoginError('');
+            const loginForm = document.getElementById('LoginForm');
+            const formData = new FormData(loginForm);
+            try {
+                await this.authenticationController.login(formData);
+            } catch (e) {
+                this.displayLoginError(e);
+            }
         };
 
-        document.getElementById('Register').onclick = () => {
+        document.getElementById('Register').onclick = async () => {
+            this.displayRegisterError('');
             const password = document.getElementById('PasswordRegistration').value;
             const confirmPassword = document.getElementById('ConfirmPasswordRegistration').value;
             if (password !== confirmPassword) {
                 this.displayRegisterError('Passwords must be identical.');
                 return;
             }
-            const params = {
-                firstname: document.getElementById('Firstname').value,
-                lastname: document.getElementById('Lastname').value,
-                username: document.getElementById('Username').value,
-                email: document.getElementById('Email').value,
-                password: password
-            };
-            this.authenticationController.register(params);
+            const registerForm = document.getElementById('RegistrationForm');
+            const formData = new FormData(registerForm);
+            try {
+                await this.authenticationController.register(formData);
+            } catch (e) {
+                this.displayRegisterError(e);
+            }
         };
     }
 
