@@ -32,7 +32,7 @@
     width: 5vw;
 }
 
-.RegistrationForm {
+#RegistrationForm {
     margin: 2vw 0 auto auto;
     display: grid;
     grid-row: 1;
@@ -46,7 +46,7 @@
     border-right: 0.15vw solid #2c2c2c;
 }
 
-.LoginForm {
+#LoginForm {
     margin: 2vw auto auto 0;
     width: 30vw;
     height: 42vw;
@@ -81,46 +81,46 @@
     background-color: #168f48;
 }
 
-.RegistrationForm label {
+#RegistrationForm label {
     font-size: 1.5vw;
     margin: auto 0 1% 1% ;
 }
 
-.RegistrationForm label::after {
+#RegistrationForm label::after {
     content: "*";
     color: red;
     margin-left: 0.2vw;
 }
 
-.RegistrationForm input {
+#RegistrationForm input {
     font-size: 1.5vw;
     padding: 2%;
     background-color: #eeeeef;
     border: 0.05vw solid black;
 }
 
-.RegistrationForm button {
+#RegistrationForm button {
     margin: 1.5vw auto auto;
 }
 
-.LoginForm label {
+#LoginForm label {
     font-size: 2.5vw;
     margin: auto 0 1% 1% ;
 }
 
-.LoginForm input {
+#LoginForm input {
     font-size: 2vw;
     padding: 2%;
     background-color: #eeeeef;
     border: 0.05vw solid black;
 }
 
-.LoginForm div {
+#LoginForm div {
     font-size: 2vw;
     margin: 2vw auto;
 }
 
-.LoginForm button {
+#LoginForm button {
     margin: 3vw auto auto;
 }
 

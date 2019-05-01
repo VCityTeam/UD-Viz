@@ -32,7 +32,7 @@ export function LoginRegistrationWindow(authenticationController, requestService
             <input type="password" name="password" id="PasswordRegistration"/>\
             <!--<label for="ConfirmPasswordRegistration"> Confirm Password*</label>\
             <input type="password" name="confirmPassword" id="ConfirmPasswordRegistration"/>-->\
-            <button type="button" name="register" id="Register">Register</button>\
+            <button type="button" name="register" id="RegisterButton">Register</button>\
             <p id="RegisterError" class="ErrorBox"></p>\
         </form>\
         \
@@ -97,14 +97,14 @@ export function LoginRegistrationWindow(authenticationController, requestService
             }
         };
 
-        document.getElementById('Register').onclick = async () => {
+        document.getElementById('RegisterButton').onclick = async () => {
             this.displayRegisterError('');
-            const password = document.getElementById('PasswordRegistration').value;
-            const confirmPassword = document.getElementById('ConfirmPasswordRegistration').value;
-            if (password !== confirmPassword) {
-                this.displayRegisterError('Passwords must be identical.');
-                return;
-            }
+            // const password = document.getElementById('PasswordRegistration').value;
+            // const confirmPassword = document.getElementById('ConfirmPasswordRegistration').value;
+            // if (password !== confirmPassword) {
+            //     this.displayRegisterError('Passwords must be identical.');
+            //     return;
+            // }
             const registerForm = document.getElementById('RegistrationForm');
             const formData = new FormData(registerForm);
             try {

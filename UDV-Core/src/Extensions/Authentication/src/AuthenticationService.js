@@ -22,7 +22,7 @@ export function AuthenticationService(config, requestService) {
     this.initialize = function initialize() {
         this.requestService.setAuthenticationService(this);
         console.log('Authentication service initialized');
-    }
+    };
     
     this.login = async function login(formData) {
         console.log('login3');
@@ -47,7 +47,7 @@ export function AuthenticationService(config, requestService) {
         } else {
             throw 'Could not log in';
         }
-    }
+    };
 
     this.logout = function logout() {
         this.removeUser();
@@ -55,7 +55,7 @@ export function AuthenticationService(config, requestService) {
         if (typeof this.onLogout === 'function') {
             this.onLogout();
         }
-    }
+    };
 
     this.register = async function register(formData) {
         const result = await this.requestService.send('POST', this.registerUrl, formData, false);
@@ -64,7 +64,7 @@ export function AuthenticationService(config, requestService) {
         if (typeof this.onRegister === 'function') {
             this.onRegister();
         }
-    }
+    };
 
     this.formCheck = function formCheck(formData, requiredKeys) {
         for (var key of requiredKeys) {
@@ -74,7 +74,7 @@ export function AuthenticationService(config, requestService) {
             }
         }
         return true;
-    }
+    };
 
     this.removeUser = function removeUser() {
         window.sessionStorage.removeItem(this.storageKeys.token);
@@ -82,7 +82,7 @@ export function AuthenticationService(config, requestService) {
         window.sessionStorage.removeItem(this.storageKeys.lastname);
         window.sessionStorage.removeItem(this.storageKeys.username);
         window.sessionStorage.removeItem(this.storageKeys.email);
-    }
+    };
 
     this.storeUser = function storeUser(user) {
         window.sessionStorage.setItem(this.storageKeys.token, user.token);
@@ -90,7 +90,7 @@ export function AuthenticationService(config, requestService) {
         window.sessionStorage.setItem(this.storageKeys.lastname, user.lastname);
         window.sessionStorage.setItem(this.storageKeys.username, user.username);
         window.sessionStorage.setItem(this.storageKeys.email, user.email);
-    }
+    };
 
     this.getUser = function getUser() {
         let user = {};
@@ -103,7 +103,7 @@ export function AuthenticationService(config, requestService) {
         user.username = window.sessionStorage.getItem(this.storageKeys.username);
         user.email = window.sessionStorage.getItem(this.storageKeys.email);
         return user;
-    }
+    };
 
     this.isUserLoggedIn = function isUserLoggedIn() {
         try {
@@ -114,7 +114,7 @@ export function AuthenticationService(config, requestService) {
             console.error(e);
             return false;
         }
-    }
+    };
 
     this.initialize();
 }
