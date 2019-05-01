@@ -4,7 +4,7 @@ export function RequestService() {
 
     this.initialize = function () {
         console.log('Request service initialized');
-    }
+    };
 
     this.send = function (method, url, body = '', authenticate = true) {
         return new Promise((resolve, reject) => {
@@ -34,12 +34,12 @@ export function RequestService() {
                 }
             }
         });
-    }
+    };
 
     this.setAuthenticationService = function (authenticationService) {
         this.authenticationService = authenticationService;
         this.useAuthentication = true;
-    }
+    };
 
     this.initialize();
 }

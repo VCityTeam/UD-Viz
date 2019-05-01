@@ -1,8 +1,8 @@
 export function AuthenticationController(authenticationService) {
     this.authenticationService = authenticationService;
-    
+
     this.initialize = function initialize() {
-    }
+    };
 
     this.login = async function login(formData) {
         if (!this.authenticationService.formCheck(formData, this.authenticationService.loginRequiredKeys)) {
@@ -14,7 +14,7 @@ export function AuthenticationController(authenticationService) {
         }
 
         await this.authenticationService.login(formData);
-    }
+    };
 
     this.logout = function logout() {
         if (!this.authenticationService.isUserLoggedIn()) {
@@ -22,7 +22,7 @@ export function AuthenticationController(authenticationService) {
         }
 
         this.authenticationService.logout();
-    }
+    };
 
     this.register = async function register(formData) {
         if (!this.authenticationService.formCheck(formData, this.authenticationService.registerRequiredKeys)) {
@@ -34,7 +34,7 @@ export function AuthenticationController(authenticationService) {
         }
 
         await this.authenticationService.register(formData);
-    }
+    };
 
     this.initialize();
 }
