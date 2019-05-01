@@ -112,22 +112,62 @@ $3dTilesTemporalLayer.whenReady.then(
     }
 );
 
-const about = new udvcore.AboutWindow({active:true});
-const help  = new udvcore.HelpWindow({active:true});
-const loginRegistration= new udvcore.LoginRegistrationWindow({active:true});
-
 //loading configuration file
 // see https://github.com/MEPP-team/VCity/wiki/Configuring-UDV
 let config;
 $.ajax({
     type: "GET",
-    url: "../data/config/generalDemoConfig.json",
+    url: "AuthenticationConfig.json",
     datatype: "json",
     async: false,
     success: function(data){
         config = data;
     }
 });
+
+const requestService = new udvcore.RequestService();
+const authenticationService = new udvcore.AuthenticationService(config, requestService);
+const authenticationController = new udvcore.AuthenticationController(authenticationService);
+const about = new udvcore.AboutWindow({active:true});
+const help  = new udvcore.HelpWindow({active:true});
+const loginRegistration= new udvcore.LoginRegistrationWindow(authenticationController, requestService);
+
+document.getElementById('logout').onclick = () => {
+    try {
+        authenticationService.logout();
+    } catch (e) {
+        console.error(e);
+    }
+};
+
+const updateView = () => {
+    if (authenticationService.isUserLoggedIn()) {
+        const user = authenticationService.getUser();
+        document.getElementById('profileMenuLoggedIn').hidden = false;
+        document.getElementById('profileMenuLoggedOut').hidden = true;
+        document.getElementById('name').innerHTML = `${user.firstname} ${user.lastname}`;
+    } else {
+        document.getElementById('profileMenuLoggedIn').hidden = true;
+        document.getElementById('profileMenuLoggedOut').hidden = false;
+    }
+};
+
+authenticationService.onLogin = (user) => {
+    console.log('Connected');
+    console.log(user);
+    updateView();
+}
+
+authenticationService.onRegister = () => {
+    console.log('Registered');
+}
+
+authenticationService.onLogout = () => {
+    console.log('Logout');
+    updateView();
+}
+
+updateView();
 
 //The documentcontroller is in charge of handling the views (research, browser)
 // based on the parameter documentModel, it builds the browser view (what attribute does

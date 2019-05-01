@@ -21,9 +21,14 @@
         <div id="navMenu"></div>
         <label id="openHamburger" for="openSidebar">&#x2716</label>
         <div id="profileMenu">
-            <img src="Icons/profile.svg" id="profileIcon">
-            <div id="name">Gilles Gesquières</div>
-            <label for="activateLoginRegistration" id="loginRegistration" class="logInOut">Sign In</label>
+            <div id="profileMenuLoggedIn">
+                <img src="Icons/profile.svg" id="profileIcon">
+                <div id="name">Gilles Gesquières</div>
+                <button type="button" id="logout" class="logInOut">Logout</button>
+            </div>
+            <div id="profileMenuLoggedOut">
+                <label for="activateLoginRegistration" id="loginRegistration" class="logInOut">Sign In</label>
+            </div>
         </div>
         <label for="activateAbout" id="aboutMenu" class="choiceMenu">About</label>
         <label for="activateHelp" id="helpMenu" class="choiceMenu">Help</label>
