@@ -19,29 +19,33 @@ export function LoginRegistrationWindow(authenticationController, requestService
         document.getElementById("loginRegistrationWindow").innerHTML =
             ' <button id="loginRegistrationCloseButton">Close</button>\
         <form id="RegistrationForm">\
-            <fieldset class="RegistrationForm">\
-                <legend align="left"> Registration: </legend> \
-                <label for="Firstname" >Name *</label> <input type="text" name="firstName" id="Firstname"/><br>\
-                <label for="Lastname" >Lastname *</label> <input type="text" name="lastName" id="Lastname"/><br>\
-                <label for="Username">Username *</label>         <input type="text" name="username" id="Username"  /><br>\
-                <label for="Email">Email *</label>         <input type="text" name="email" id="Email"  /><br>\
-                <label for=PasswordRegistration> Password*</label> <input type="password" name="password" id="PasswordRegistration"  /><br>\
-                <label for="ConfirmPasswordRegistration"> Confirm Password*</label>\
-                <input type="password" name="confirmPassword" id="ConfirmPasswordRegistration" /><br> <br>\
-                <div align="center"><button type="button" name="register" id="Register">Register</button></div> \
-                <p id="RegisterError" class="ErrorBox"></p>\
-            </fieldset>\
+            <h2>Registration</h2> \
+            <label for="Firstname">Firstname</label>\
+            <input type="text" name="firstName" id="Firstname"/>\
+            <label for="Lastname">Lastname</label>\
+            <input type="text" name="lastName" id="Lastname"/>\
+            <label for="Username">Username</label>\
+            <input type="text" name="username" id="Username"/>\
+            <label for="Email">Email</label>\
+            <input type="text" name="email" id="Email"/>\
+            <label for=PasswordRegistration>Password</label>\
+            <input type="password" name="password" id="PasswordRegistration"/>\
+            <!--<label for="ConfirmPasswordRegistration"> Confirm Password*</label>\
+            <input type="password" name="confirmPassword" id="ConfirmPasswordRegistration"/>-->\
+            <button type="button" name="register" id="Register">Register</button>\
+            <p id="RegisterError" class="ErrorBox"></p>\
         </form>\
         \
         <form id="LoginForm">\
-            <fieldset id="LoginForm" class="LoginForm">\
-            <legend align="left"> Login: </legend>\
-            <label for="Login"> Username * </label> <input type="text" id="login" name="username" /><br>\
-            <label for=PasswordLogin>Password * </label> <input type="password" id="PasswordLogin" name="password"  /><br> <br>\
-            <div align="center"><button type="button" id="LoginButton">Login</button></div>\
+            <h2>Login</h2>\
+            <label for="Login">Username</label>\
+            <input type="text" id="login" name="username"/>\
+            <label for=PasswordLogin>Password</label>\
+            <input type="password" id="PasswordLogin" name="password"/>\
+            <div>Forgot your password?</div>\
+            <button type="button" id="LoginButton">Login</button>\
             <p id="LoginError" class="ErrorBox"></p>\
             <button type="button" id="TEST">TEST</button>\
-            </fieldset>\
         </form>\
         ';
 
@@ -60,7 +64,7 @@ export function LoginRegistrationWindow(authenticationController, requestService
                 console.log('Reject :');
                 console.log(reason);
             });
-        }
+        };
 
         // Close the window...when close button is hit
         document.getElementById("loginRegistrationCloseButton").addEventListener(
@@ -68,17 +72,17 @@ export function LoginRegistrationWindow(authenticationController, requestService
                 let activate = document.getElementById('activateLoginRegistration');
                 activate.checked = !activate.checked;
             }, false);
-    }
+    };
 
     this.displayRegisterError = function (msg) {
         let errorField = document.getElementById('RegisterError');
         errorField.innerHTML = msg;
-    }
+    };
 
     this.displayLoginError = function (msg) {
         let errorField = document.getElementById('LoginError');
         errorField.innerHTML = msg;
-    }
+    };
 
     this.initializeForms = function () {
         document.getElementById('LoginButton').onclick = async () => {
@@ -109,7 +113,7 @@ export function LoginRegistrationWindow(authenticationController, requestService
                 this.displayRegisterError(e);
             }
         };
-    }
+    };
 
     this.initialize();
 }
