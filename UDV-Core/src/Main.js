@@ -4,6 +4,8 @@ import * as itowns from 'itowns';
 export { itowns };
 export { Setup3DScene }             from './Setup3DScene';
 
+export { AuthenticationService }    from './Extensions/Authentication/src/AuthenticationService';
+
 export { RequestService }           from './Modules/Request/RequestService';
 
 export { GuidedTourController }     from './Modules/GuidedTour/GuidedTourController';

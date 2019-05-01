@@ -4,8 +4,9 @@ import './LoginRegistration.css';
  * adds an "About" window that can be open/closed with a button
  * simply include this file in the html, no need to instanciate anything in main.js
  */
-export function LoginRegistrationWindow(authenticationController, options = {}) {
+export function LoginRegistrationWindow(authenticationController, requestService) {
 
+    this.requestService = requestService;
     this.authenticationController = authenticationController;
 
     this.initialize = function initialize() {
@@ -47,15 +48,12 @@ export function LoginRegistrationWindow(authenticationController, options = {}) 
         this.initializeForms();
 
         document.getElementById('TEST').onclick = () => {
-            console.log('test');
-
             const formData = new FormData();
             formData.append("title", "Test Title");
             formData.append("subject", "Test Subject");
             formData.append("description", "Test Description");
 
-            const requestService = new udvcore.RequestService();
-            requestService.send('POST', 'http://0.0.0.0:5000/addDocument', formData).then((result) => {
+            this.requestService.send('POST', 'http://0.0.0.0:5000/addDocument', formData).then((result) => {
                 console.log('Résultat :');
                 console.log(result);
             }, (reason) => {
@@ -84,6 +82,7 @@ export function LoginRegistrationWindow(authenticationController, options = {}) 
 
     this.initializeForms = function () {
         document.getElementById('LoginButton').onclick = async () => {
+            console.log('Login1');
             this.displayLoginError('');
             const loginForm = document.getElementById('LoginForm');
             const formData = new FormData(loginForm);

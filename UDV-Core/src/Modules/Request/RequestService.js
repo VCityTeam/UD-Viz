@@ -1,12 +1,9 @@
 export function RequestService() {
-    this.useAuthentication;
+    this.authenticationService;
+    this.useAuthentication = false;
 
     this.initialize = function () {
-        if (typeof udvcore.AuthenticationController !== 'undefined') {
-            this.useAuthentication = true;
-        } else {
-            this.useAuthentication = false;
-        }
+        console.log('Request service initialized');
     }
 
     this.send = function (method, url, body = '', authenticate = true) {
@@ -15,7 +12,7 @@ export function RequestService() {
             req.open(method, url);
 
             if (this.useAuthentication && authenticate) {
-                const token = window.sessionStorage.getItem('token');
+                const token = window.sessionStorage.getItem('user.token');
                 if (token === null) {
                     reject('Login needed for this request');
                     return;
@@ -37,6 +34,11 @@ export function RequestService() {
                 }
             }
         });
+    }
+
+    this.setAuthenticationService = function (authenticationService) {
+        this.authenticationService = authenticationService;
+        this.useAuthentication = true;
     }
 
     this.initialize();

@@ -125,10 +125,36 @@ $.ajax({
     }
 });
 
-const authenticationController = new udvcore.AuthenticationController(config);
+const requestService = new udvcore.RequestService();
+const authenticationService = new udvcore.AuthenticationService(config, requestService);
+const authenticationController = new udvcore.AuthenticationController(authenticationService);
 const about = new udvcore.AboutWindow({active:true});
 const help  = new udvcore.HelpWindow({active:true});
-const loginRegistration= new udvcore.LoginRegistrationWindow(authenticationController);
+const loginRegistration= new udvcore.LoginRegistrationWindow(authenticationController, requestService);
+
+document.getElementById('logout').onclick = () => {
+    try {
+        authenticationService.logout();
+    } catch (e) {
+        console.error(e);
+    }
+};
+
+authenticationService.onLogin = () => {
+    console.log('Connected');
+    document.getElementById('profileMenuLoggedIn').hidden = false;
+    document.getElementById('profileMenuLoggedOut').hidden = true;
+}
+
+authenticationService.onRegister = () => {
+    console.log('Registered');
+}
+
+authenticationService.onLogout = () => {
+    console.log('Logout');
+    document.getElementById('profileMenuLoggedIn').hidden = true;
+    document.getElementById('profileMenuLoggedOut').hidden = false;
+}
 
 //The documentcontroller is in charge of handling the views (research, browser)
 // based on the parameter documentModel, it builds the browser view (what attribute does
