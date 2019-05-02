@@ -1,4 +1,4 @@
-export function AuthenticationService(config, requestService) {
+export function AuthenticationService(requestService, config) {
     this.config = config;
     this.loginUrl = `${config.server.url}${config.server.login}`;
     this.registerUrl = `${config.server.url}${config.server.register}`;
@@ -25,6 +25,15 @@ export function AuthenticationService(config, requestService) {
     };
     
     this.login = async function login(formData) {
+        if (!this.formCheck(formData, this.loginRequiredKeys)) {
+            throw 'Invalid form';
+        }
+
+        if (this.isUserLoggedIn()) {
+            throw 'Already logged in';
+        }
+
+
         console.log('login3');
         const result = await this.requestService.send('POST', this.loginUrl, formData, false);
         const obj = JSON.parse(result);
@@ -50,6 +59,9 @@ export function AuthenticationService(config, requestService) {
     };
 
     this.logout = function logout() {
+        if (!this.isUserLoggedIn()) {
+            throw 'Not logged in';
+        }
         this.removeUser();
 
         if (typeof this.onLogout === 'function') {
@@ -58,6 +70,13 @@ export function AuthenticationService(config, requestService) {
     };
 
     this.register = async function register(formData) {
+        if (!this.formCheck(formData, this.registerRequiredKeys)) {
+            throw 'Invalid form';
+        }
+
+        if (this.isUserLoggedIn()) {
+            throw 'Already logged in';
+        }
         const result = await this.requestService.send('POST', this.registerUrl, formData, false);
         const obj = JSON.parse(result);
 
@@ -115,6 +134,19 @@ export function AuthenticationService(config, requestService) {
             return false;
         }
     };
+
+
+    // Observers
+    this.addObserver = function (observerFunction) {
+        this.observers.push(observerFunction);
+    }
+
+    this.notifyObservers = function () {
+        for (let observer of this.observers) {
+            observer();
+        }
+    }
+
 
     this.initialize();
 }

@@ -1,13 +1,13 @@
-import './LoginRegistration.css';
+import './AuthenticationView.css';
 
 /**
  * adds an "About" window that can be open/closed with a button
  * simply include this file in the html, no need to instanciate anything in main.js
  */
-export function LoginRegistrationWindow(authenticationController, requestService) {
+export function LoginRegistrationWindow(authenticationService, requestService) {
 
     this.requestService = requestService;
-    this.authenticationController = authenticationController;
+    this.authenticationService = authenticationService;
 
     this.initialize = function initialize() {
         // Create DOM element
@@ -91,7 +91,7 @@ export function LoginRegistrationWindow(authenticationController, requestService
             const loginForm = document.getElementById('LoginForm');
             const formData = new FormData(loginForm);
             try {
-                await this.authenticationController.login(formData);
+                await this.authenticationService.login(formData);
             } catch (e) {
                 this.displayLoginError(e);
             }
@@ -108,7 +108,7 @@ export function LoginRegistrationWindow(authenticationController, requestService
             const registerForm = document.getElementById('RegistrationForm');
             const formData = new FormData(registerForm);
             try {
-                await this.authenticationController.register(formData);
+                await this.authenticationService.register(formData);
             } catch (e) {
                 this.displayRegisterError(e);
             }
