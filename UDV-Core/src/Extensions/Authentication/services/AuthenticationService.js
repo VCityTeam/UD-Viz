@@ -1,4 +1,5 @@
 export function AuthenticationService(requestService, config) {
+    this.observers = [];
     this.config = config;
     this.loginUrl = `${config.server.url}${config.server.login}`;
     this.registerUrl = `${config.server.url}${config.server.register}`;

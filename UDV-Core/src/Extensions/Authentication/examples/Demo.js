@@ -135,6 +135,7 @@ const loginRegistration= new udvcore.LoginRegistrationWindow(authenticationServi
 document.getElementById('logout').onclick = () => {
     try {
         authenticationService.logout();
+        authenticationService.notifyObservers();
     } catch (e) {
         console.error(e);
     }
@@ -152,20 +153,8 @@ const updateView = () => {
     }
 };
 
-authenticationService.onLogin = (user) => {
-    console.log('Connected');
-    console.log(user);
-    updateView();
-}
+authenticationService.addObserver(updateView);
 
-authenticationService.onRegister = () => {
-    console.log('Registered');
-}
-
-authenticationService.onLogout = () => {
-    console.log('Logout');
-    updateView();
-}
 
 updateView();
 

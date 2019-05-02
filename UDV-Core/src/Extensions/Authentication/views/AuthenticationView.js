@@ -92,6 +92,7 @@ export function LoginRegistrationWindow(authenticationService, requestService) {
             const formData = new FormData(loginForm);
             try {
                 await this.authenticationService.login(formData);
+                this.authenticationService.notifyObservers();
             } catch (e) {
                 this.displayLoginError(e);
             }
@@ -109,6 +110,7 @@ export function LoginRegistrationWindow(authenticationService, requestService) {
             const formData = new FormData(registerForm);
             try {
                 await this.authenticationService.register(formData);
+                this.authenticationService.notifyObservers();
             } catch (e) {
                 this.displayRegisterError(e);
             }

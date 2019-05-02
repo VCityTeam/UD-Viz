@@ -10,7 +10,7 @@ export { RequestService }           from './Modules/Request/RequestService';
 
 export { GuidedTourController }     from './Modules/GuidedTour/GuidedTourController';
 
-export { AuthenticationController } from './Extensions/Authentication/services/AuthenticationController';
+//export { AuthenticationController } from './Extensions/Authentication/services/AuthenticationController';
 export { LoginRegistrationWindow }  from './Extensions/Authentication/views/AuthenticationView';
 
 export { DocToValidateService }     from './Extensions/DocToValidate/services/DocToValidateService';
