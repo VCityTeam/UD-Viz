@@ -1,4 +1,4 @@
-#docToValidate_Window {
+.docToValidate_Window {
     position: absolute;
     width: 380px;
     max-height: 90%;
@@ -11,17 +11,19 @@
     overflow: auto;
 }
 
-#docToValidate_Window .innerWindow {
+.docToValidate_Window .innerWindow {
     padding: 5px;
 }
 
-#docToValidate_Window_header {
+.docToValidate_Window_header {
     position: relative;
     background-color: rgba(0, 0, 0, 0.6);
+    padding-left: 10px;
 }
 
-#docToValidate_Window_header h2 {
+.docToValidate_Window_header h2 {
     margin-top: 0;
+    margin-bottom: 0;
 }
 
 #docToValidate_buttonClose {
@@ -32,7 +34,7 @@
     height: 80%;
 }
 
-#docToValidate_Window input {
+.docToValidate_Window input {
     width: 100%;
 }
 
@@ -45,7 +47,12 @@
     padding-right: 20px;
 }
 
-#docToValidate_Browser h5 {
+#docToValidate_Browser h3 {
+    margin-bottom: 2px;
+    margin-top: 2px;
+}
+
+#docToValidate_Browser h4 {
     margin-bottom: 0;
     margin-top: 2px;
 }

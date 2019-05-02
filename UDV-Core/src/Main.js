@@ -14,7 +14,7 @@ export { AuthenticationController } from './Extensions/Authentication/src/Authen
 export { LoginRegistrationWindow }  from './Extensions/Authentication/LoginRegistration';
 
 export { DocToValidateService }     from './Extensions/DocToValidate/services/DocToValidateService';
-export { DocToValidateWindow }      from './Extensions/DocToValidate/views/DocToValidateWindow';
+export { DocToValidateView }      from './Extensions/DocToValidate/views/DocToValidateView';
 
 export { AboutWindow }              from './Modules/Others/About';
 export { CompassController }        from './Modules/Others/Compass';

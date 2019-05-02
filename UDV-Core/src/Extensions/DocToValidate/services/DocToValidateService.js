@@ -5,6 +5,8 @@ export function DocToValidateService(requestService, config) {
     this.documents = [];
     this.currentDocumentId = 0;
 
+    this.observers = [];
+
     this.initialize = function () {
         console.log('Doc To Validate Service initialized.');
     }
@@ -41,6 +43,18 @@ export function DocToValidateService(requestService, config) {
         this.currentDocumentId = 0;
     }
 
+    // Observers
+
+    this.addObserver = function (observerFunction) {
+        this.observers.push(observerFunction);
+    }
+
+    this.notifyObservers = function () {
+        for (let observer of this.observers) {
+            observer();
+        }
+    }
+
     // Fetched documents management
 
     this.getDocuments = function () {
@@ -56,7 +70,6 @@ export function DocToValidateService(requestService, config) {
     }
 
     this.getCurrentDocumentId = function() {
-        console.log('hello : ' + this.currentDocumentId);
         return this.currentDocumentId;
     }
 

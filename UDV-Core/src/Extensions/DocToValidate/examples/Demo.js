@@ -175,13 +175,13 @@ updateView();
 //////////// DocToValidate extension
 
 const docToValidateService = new udvcore.DocToValidateService(requestService, config);
-const docToValidateWindow = new udvcore.DocToValidateWindow(docToValidateService);
+const docToValidateView = new udvcore.DocToValidateView(docToValidateService);
 
 document.getElementById('documentToValidateMenu').onclick = () => {
-    if (docToValidateWindow.isVisible()) {
-        docToValidateWindow.dispose();
+    if (docToValidateView.isVisible()) {
+        docToValidateView.dispose();
     } else {
-        docToValidateWindow.appendToElement(document.getElementById('contentSection'));
+        docToValidateView.appendToElement(document.getElementById('contentSection'));
     }
 }
 
