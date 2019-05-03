@@ -16,10 +16,6 @@ export function AuthenticationService(requestService, config) {
 
     this.requestService = requestService;
 
-    this.onLogin;
-    this.onRegister;
-    this.onLogout;
-
     this.initialize = function initialize() {
         this.requestService.setAuthenticationService(this);
         console.log('Authentication service initialized');

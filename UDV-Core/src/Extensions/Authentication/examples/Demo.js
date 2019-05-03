@@ -132,6 +132,13 @@ const about = new udvcore.AboutWindow({active:true});
 const help  = new udvcore.HelpWindow({active:true});
 const loginRegistration= new udvcore.LoginRegistrationWindow(authenticationService, requestService);
 
+
+document.getElementById('loginRegistration').onclick = () => {
+    console.log("hey");
+    loginRegistration.appendToElement(document.getElementById('contentSection'));
+    console.log("lol");
+};
+
 document.getElementById('logout').onclick = () => {
     try {
         authenticationService.logout();

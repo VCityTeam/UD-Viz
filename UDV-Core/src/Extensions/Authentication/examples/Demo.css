@@ -180,7 +180,7 @@ header {
     color: #f31eb4;
 }
 
-#aboutWindow, #helpWindow, #temporal,#loginRegistrationWindow {
+#aboutWindow, #helpWindow, #temporal {
     display: none;
 }
 
@@ -194,8 +194,4 @@ header {
 
 #activateTemporal:checked ~ #contentSection #temporal {
     display: block;
-}
-
-#activateLoginRegistration:checked ~ #contentSection #loginRegistrationWindow {
-    display: grid;
 }

@@ -178,6 +178,7 @@ const docToValidateService = new udvcore.DocToValidateService(requestService, co
 const docToValidateView = new udvcore.DocToValidateView(docToValidateService);
 
 document.getElementById('documentToValidateMenu').onclick = () => {
+    console.log("salut");
     if (docToValidateView.isVisible()) {
         docToValidateView.dispose();
     } else {
