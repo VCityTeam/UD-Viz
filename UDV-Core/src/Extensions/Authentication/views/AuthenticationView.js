@@ -53,11 +53,10 @@ export function LoginRegistrationWindow(authenticationService, requestService) {
         div.innerHTML = this.html();
         div.id = "loginRegistrationWindow";
         htmlElement.appendChild(div);
-        console.log('hello');
         document.getElementById('loginRegistrationCloseButton').onclick = () => { this.dispose() };
         console.log(document.getElementById('loginRegistrationCloseButton'));
-        document.getElementById('LoginButton').onclick = this.logInFunction;
-        document.getElementById('RegisterButton').onclick = this.registerFunction;
+        document.getElementById('LoginButton').onclick = () => { this.logInFunction() };
+        document.getElementById('RegisterButton').onclick = () => { this.registerFunction() };
 
     }
 
@@ -77,39 +76,42 @@ export function LoginRegistrationWindow(authenticationService, requestService) {
         errorField.innerHTML = msg;
     };
 
-    this.logInFunction = function () {
-        document.getElementById('LoginButton').onclick = async () => {
-            console.log('Login1');
-            this.displayLoginError('');
-            const loginForm = document.getElementById('LoginForm');
-            const formData = new FormData(loginForm);
-            try {
-                await this.authenticationService.login(formData);
-                this.authenticationService.notifyObservers();
-            } catch (e) {
-                this.displayLoginError(e);
-            }
-        };
+    this.isVisible = function () {
+        let div = document.getElementById('loginRegistrationWindow');
+        return div !== undefined && div !== null;
     }
 
-     this.registerFunction  = function () {
-        document.getElementById('RegisterButton').onclick = async () => {
-            this.displayRegisterError('');
-            // const password = document.getElementById('PasswordRegistration').value;
-            // const confirmPassword = document.getElementById('ConfirmPasswordRegistration').value;
-            // if (password !== confirmPassword) {
-            //     this.displayRegisterError('Passwords must be identical.');
-            //     return;
-            // }
-            const registerForm = document.getElementById('RegistrationForm');
-            const formData = new FormData(registerForm);
-            try {
-                await this.authenticationService.register(formData);
-                this.authenticationService.notifyObservers();
-            } catch (e) {
-                this.displayRegisterError(e);
-            }
-        };
+    this.logInFunction = async function () {
+        console.log('Login1');
+        this.displayLoginError('');
+        const loginForm = document.getElementById('LoginForm');
+        const formData = new FormData(loginForm);
+        try {
+            await this.authenticationService.login(formData);
+            this.authenticationService.notifyObservers();
+            this.dispose();
+        } catch (e) {
+            this.displayLoginError(e);
+        }
+    }
+
+     this.registerFunction  = async function () {
+        console.log("test");
+        this.displayRegisterError('');
+        // const password = document.getElementById('PasswordRegistration').value;
+        // const confirmPassword = document.getElementById('ConfirmPasswordRegistration').value;
+        // if (password !== confirmPassword) {
+        //     this.displayRegisterError('Passwords must be identical.');
+        //     return;
+        // }
+        const registerForm = document.getElementById('RegistrationForm');
+        const formData = new FormData(registerForm);
+        try {
+            await this.authenticationService.register(formData);
+            this.authenticationService.notifyObservers();
+        } catch (e) {
+            this.displayRegisterError(e);
+        }
     };
 
     this.initialize();

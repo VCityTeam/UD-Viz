@@ -134,9 +134,11 @@ const loginRegistration= new udvcore.LoginRegistrationWindow(authenticationServi
 
 
 document.getElementById('loginRegistration').onclick = () => {
-    console.log("hey");
-    loginRegistration.appendToElement(document.getElementById('contentSection'));
-    console.log("lol");
+    if(loginRegistration.isVisible() === false) {
+        loginRegistration.appendToElement(document.getElementById('contentSection'));
+    } else {
+        loginRegistration.dispose();
+    }
 };
 
 document.getElementById('logout').onclick = () => {
