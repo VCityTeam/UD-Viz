@@ -31,10 +31,10 @@ export function AuthenticationService(requestService, config) {
         }
 
 
-        console.log('login3');
         const result = await this.requestService.send('POST', this.loginUrl, formData, false);
         const obj = JSON.parse(result);
-        console.log(obj);
+        if(obj){}
+        else {throw 'Username or password is incorrect'}
         const jwt = obj.token;
         if (jwt !== undefined && jwt !== null) {
             const user = {
@@ -51,7 +51,7 @@ export function AuthenticationService(requestService, config) {
                 this.onLogin(user);
             }
         } else {
-            throw 'Could not log in';
+            throw 'Username or password is incorrect';
         }
     };
 
@@ -70,7 +70,6 @@ export function AuthenticationService(requestService, config) {
         if (!this.formCheck(formData, this.registerRequiredKeys)) {
             throw 'Invalid form';
         }
-
         if (this.isUserLoggedIn()) {
             throw 'Already logged in';
         }

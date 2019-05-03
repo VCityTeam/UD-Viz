@@ -110,7 +110,12 @@ export function LoginRegistrationWindow(authenticationService, requestService) {
             await this.authenticationService.register(formData);
             this.authenticationService.notifyObservers();
         } catch (e) {
-            this.displayRegisterError(e);
+            console.log(e);
+            if(e == '422'){
+                this.displayRegisterError('The user already exist');
+            } else{
+                this.displayRegisterError(e);
+            }
         }
     };
 
