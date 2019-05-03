@@ -1,8 +1,9 @@
 import { dragElement } from './Draggable';
 
-export function DocToValidateBrowserWindow(docToValidateService) {
+export function DocToValidateBrowserWindow(docToValidateView, docToValidateService) {
 
     this.docToValidateService = docToValidateService;
+    this.docToValidateView = docToValidateView;
 
     this.initialize = function () {
     }
@@ -31,6 +32,8 @@ export function DocToValidateBrowserWindow(docToValidateService) {
                 <button type="button" id="docToValidate_Browser_buttonNext">⇨</button>
                 <button type="button" id="docToValidate_Browser_buttonReset">Reset research</button>
                 <button type="button" id="docToValidate_Browser_buttonOrient">Orient document</button>
+                <button type="button" id="docToValidate_Browser_buttonDelete">Delete</button>
+                <button type="button" id="docToValidate_Browser_buttonValidate">Validate</button>
             </div>
         </div>
         `;
@@ -45,7 +48,10 @@ export function DocToValidateBrowserWindow(docToValidateService) {
         document.getElementById('docToValidate_Browser_buttonPrev').onclick = this.prevDocument.bind(this);
         document.getElementById('docToValidate_Browser_buttonNext').onclick = this.nextDocument.bind(this);
         document.getElementById('docToValidate_Browser_buttonReset').onclick = this.resetResearch.bind(this);
+        document.getElementById('docToValidate_Browser_buttonDelete').onclick = this.deleteDocument.bind(this);
+        document.getElementById('docToValidate_Browser_buttonValidate').onclick = this.validateDocument.bind(this);
         dragElement(div);
+        this.update;
     }
 
     this.dispose = function () {
@@ -76,6 +82,8 @@ export function DocToValidateBrowserWindow(docToValidateService) {
             document.getElementById('docToValidate_Browser_buttonNext').disabled = false;
             document.getElementById('docToValidate_Browser_buttonReset').disabled = false;
             document.getElementById('docToValidate_Browser_buttonOrient').disabled = false;
+            document.getElementById('docToValidate_Browser_buttonDelete').disabled = false;
+            document.getElementById('docToValidate_Browser_buttonValidate').disabled = false;
 
             document.getElementById('docToValidate_Browser_currentDocument').innerHTML = `Document ${currentDocumentId + 1} out of ${documentsCount}`;
         } else {
@@ -91,6 +99,8 @@ export function DocToValidateBrowserWindow(docToValidateService) {
             document.getElementById('docToValidate_Browser_buttonNext').disabled = true;
             document.getElementById('docToValidate_Browser_buttonReset').disabled = true;
             document.getElementById('docToValidate_Browser_buttonOrient').disabled = true;
+            document.getElementById('docToValidate_Browser_buttonDelete').disabled = true;
+            document.getElementById('docToValidate_Browser_buttonValidate').disabled = true;
 
             document.getElementById('docToValidate_Browser_currentDocument').innerHTML = `No documents found.`;
         }
@@ -109,6 +119,22 @@ export function DocToValidateBrowserWindow(docToValidateService) {
     this.resetResearch = function () {
         this.docToValidateService.clearSearch();
         this.docToValidateService.notifyObservers();
+    }
+
+    this.deleteDocument = function () {
+        let confirmDeletion = confirm('You are about to delete this document. This operation cannot be undone. Are you sure ?');
+        if (confirmDeletion) {
+            this.docToValidateService.delete();
+            this.docToValidateService.notifyObservers();
+        }
+    }
+
+    this.validateDocument = function () {
+        let confirmValidation = confirm('Do you want to validate this document ? It will disapear from the documents to validate, and appear in the documents list.');
+        if (confirmValidation) {
+            this.docToValidateService.validate();
+            this.docToValidateService.notifyObservers();
+        }
     }
 
     this.initialize();

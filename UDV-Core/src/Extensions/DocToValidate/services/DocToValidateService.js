@@ -2,9 +2,14 @@ export function DocToValidateService(requestService, config) {
 
     this.requestService = requestService;
 
+    this.documentToValidateUrl = `${config.server.url}${config.server.documentToValidate}`;
+    this.documentUrl = `${config.server.url}${config.server.document}`;
+    this.fileRoute = config.server.file;
+
     this.documents = [];
     this.sampleDocuments = []; 
     this.currentDocumentId = 0;
+    this.prevFilters;
 
     this.observers = [];
 
@@ -34,9 +39,26 @@ export function DocToValidateService(requestService, config) {
         ];
     }
 
-    this.search = function (filterFormData) {
+    this.search = async function (filterFormData) {
         //request to fetch docs
-        this.documents = this.sampleDocuments;
+        let response = await this.requestService.send('GET', this.documentToValidateUrl);
+        let docs = JSON.parse(response);
+        this.documents = [];
+        for (let doc of docs) {
+            let document = {
+                id: doc.id,
+                title: doc.metaData.title,
+                subject: doc.metaData.subject,
+                description: doc.metaData.description,
+                type: doc.metaData.type,
+                referringDate: doc.metaData.refDate,
+                publicationDate: doc.metaData.publicationDate,
+                imgUrl: `${this.documentUrl}/${doc.id}/${this.fileRoute}`
+            };
+            this.documents.push(document);
+        }
+
+        this.prevFilters = filterFormData;
 
         //Code by mazine
         const keywordFilter = filterFormData.get("keyword"); 
@@ -54,7 +76,18 @@ export function DocToValidateService(requestService, config) {
 
         this.documents = result;
         this.currentDocumentId = 0; 
+    }
 
+    this.delete = function() {
+        //request to delete
+        this.documents.splice(this.currentDocumentId, 1);
+        //refetch documents
+        this.prevDocument(); //update index
+    }
+
+    this.validate = function() {
+        //route doesnt exists yet ^^
+        this.delete();
     }
 
     this.clearSearch = function () {

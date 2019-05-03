@@ -4,7 +4,10 @@
       "url":"http://localhost:5000/",
       "documentsRepository":"getFile/",
       "login": "login",
-      "register": "addUser"
+      "register": "addUser",
+      "documentToValidate": "getDocuments_to_validate",
+      "document": "document",
+      "file": "file"
     },
     "properties": {
       "metaData":{

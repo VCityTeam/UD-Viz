@@ -1,8 +1,9 @@
 import { dragElement } from './Draggable';
 
-export function DocToValidateSearchWindow(docToValidateService) {
+export function DocToValidateSearchWindow(docToValidateView, docToValidateService) {
 
     this.docToValidateService = docToValidateService;
+    this.docToValidateView = docToValidateView;
 
     this.initialize = function () {
     }
@@ -37,7 +38,8 @@ export function DocToValidateSearchWindow(docToValidateService) {
         div.id = "docToValidate_Search";
         div.className = "docToValidate_Window";
         htmlElement.appendChild(div);
-        document.getElementById('docToValidate_buttonClose').onclick = this.dispose.bind(this);
+        document.getElementById('docToValidate_buttonClose').onclick = this.docToValidateView.dispose;
+        console.log(this.docToValidateView.dispose);
         document.getElementById('docToValidate_searchForm_submit').onclick = this.search.bind(this);
         dragElement(div);
     }
@@ -55,8 +57,10 @@ export function DocToValidateSearchWindow(docToValidateService) {
     this.search = function () {
         const form = document.getElementById('docToValidate_searchForm');
         const formData = new FormData(form);
-        this.docToValidateService.search(formData);
-        this.docToValidateService.notifyObservers();
+        this.docToValidateService.search(formData)
+            .then((result) => {
+                this.docToValidateService.notifyObservers();
+            });
     }
 
     this.initialize();

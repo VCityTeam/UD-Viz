@@ -9,8 +9,8 @@ export function DocToValidateView(docToValidateService) {
     this.browserWindow;
 
     this.initialize = function () {
-        this.searchWindow = new DocToValidateSearchWindow(this.docToValidateService);
-        this.browserWindow = new DocToValidateBrowserWindow(this.docToValidateService);
+        this.searchWindow = new DocToValidateSearchWindow(this, this.docToValidateService);
+        this.browserWindow = new DocToValidateBrowserWindow(this, this.docToValidateService);
         this.docToValidateService.addObserver(this.browserWindow.update);
     }
 
@@ -19,7 +19,8 @@ export function DocToValidateView(docToValidateService) {
         this.browserWindow.appendToElement(htmlElement);
     }
 
-    this.dispose = function () {
+    this.dispose = () => {
+        console.log('dispose');
         this.searchWindow.dispose();
         this.browserWindow.dispose();
     }
