@@ -4,14 +4,14 @@ import * as itowns from 'itowns';
 export { itowns };
 export { Setup3DScene }             from './Setup3DScene';
 
-export { AuthenticationService }    from './Extensions/Authentication/src/AuthenticationService';
+export { AuthenticationService }    from './Extensions/Authentication/services/AuthenticationService';
 
 export { RequestService }           from './Modules/Request/RequestService';
 
 export { GuidedTourController }     from './Modules/GuidedTour/GuidedTourController';
 
-export { AuthenticationController } from './Extensions/Authentication/src/AuthenticationController';
-export { LoginRegistrationWindow }  from './Extensions/Authentication/LoginRegistration';
+//export { AuthenticationController } from './Extensions/Authentication/services/AuthenticationController';
+export { LoginRegistrationWindow }  from './Extensions/Authentication/views/AuthenticationView';
 
 export { DocToValidateService }     from './Extensions/DocToValidate/services/DocToValidateService';
 export { DocToValidateView }      from './Extensions/DocToValidate/views/DocToValidateView';

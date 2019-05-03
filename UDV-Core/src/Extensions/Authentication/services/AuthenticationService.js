@@ -1,4 +1,5 @@
-export function AuthenticationService(config, requestService) {
+export function AuthenticationService(requestService, config) {
+    this.observers = [];
     this.config = config;
     this.loginUrl = `${config.server.url}${config.server.login}`;
     this.registerUrl = `${config.server.url}${config.server.register}`;
@@ -15,20 +16,25 @@ export function AuthenticationService(config, requestService) {
 
     this.requestService = requestService;
 
-    this.onLogin;
-    this.onRegister;
-    this.onLogout;
-
     this.initialize = function initialize() {
         this.requestService.setAuthenticationService(this);
         console.log('Authentication service initialized');
     };
     
     this.login = async function login(formData) {
-        console.log('login3');
+        if (!this.formCheck(formData, this.loginRequiredKeys)) {
+            throw 'Invalid form';
+        }
+
+        if (this.isUserLoggedIn()) {
+            throw 'Already logged in';
+        }
+
+
         const result = await this.requestService.send('POST', this.loginUrl, formData, false);
         const obj = JSON.parse(result);
-        console.log(obj);
+        if(obj){}
+        else {throw 'Username or password is incorrect'}
         const jwt = obj.token;
         if (jwt !== undefined && jwt !== null) {
             const user = {
@@ -45,11 +51,14 @@ export function AuthenticationService(config, requestService) {
                 this.onLogin(user);
             }
         } else {
-            throw 'Could not log in';
+            throw 'Username or password is incorrect';
         }
     };
 
     this.logout = function logout() {
+        if (!this.isUserLoggedIn()) {
+            throw 'Not logged in';
+        }
         this.removeUser();
 
         if (typeof this.onLogout === 'function') {
@@ -58,6 +67,12 @@ export function AuthenticationService(config, requestService) {
     };
 
     this.register = async function register(formData) {
+        if (!this.formCheck(formData, this.registerRequiredKeys)) {
+            throw 'Invalid form';
+        }
+        if (this.isUserLoggedIn()) {
+            throw 'Already logged in';
+        }
         const result = await this.requestService.send('POST', this.registerUrl, formData, false);
         const obj = JSON.parse(result);
 
@@ -115,6 +130,19 @@ export function AuthenticationService(config, requestService) {
             return false;
         }
     };
+
+
+    // Observers
+    this.addObserver = function (observerFunction) {
+        this.observers.push(observerFunction);
+    }
+
+    this.notifyObservers = function () {
+        for (let observer of this.observers) {
+            observer();
+        }
+    }
+
 
     this.initialize();
 }

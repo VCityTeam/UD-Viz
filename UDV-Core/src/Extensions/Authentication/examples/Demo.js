@@ -126,15 +126,25 @@ $.ajax({
 });
 
 const requestService = new udvcore.RequestService();
-const authenticationService = new udvcore.AuthenticationService(config, requestService);
-const authenticationController = new udvcore.AuthenticationController(authenticationService);
+const authenticationService = new udvcore.AuthenticationService(requestService, config);
+//const authenticationController = new udvcore.AuthenticationController(authenticationService);
 const about = new udvcore.AboutWindow({active:true});
 const help  = new udvcore.HelpWindow({active:true});
-const loginRegistration= new udvcore.LoginRegistrationWindow(authenticationController, requestService);
+const loginRegistration= new udvcore.LoginRegistrationWindow(authenticationService, requestService);
+
+
+document.getElementById('loginRegistration').onclick = () => {
+    if(loginRegistration.isVisible() === false) {
+        loginRegistration.appendToElement(document.getElementById('contentSection'));
+    } else {
+        loginRegistration.dispose();
+    }
+};
 
 document.getElementById('logout').onclick = () => {
     try {
         authenticationService.logout();
+        authenticationService.notifyObservers();
     } catch (e) {
         console.error(e);
     }
@@ -152,20 +162,8 @@ const updateView = () => {
     }
 };
 
-authenticationService.onLogin = (user) => {
-    console.log('Connected');
-    console.log(user);
-    updateView();
-}
+authenticationService.addObserver(updateView);
 
-authenticationService.onRegister = () => {
-    console.log('Registered');
-}
-
-authenticationService.onLogout = () => {
-    console.log('Logout');
-    updateView();
-}
 
 updateView();
 
