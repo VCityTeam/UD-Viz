@@ -13,6 +13,9 @@ export { GuidedTourController }     from './Modules/GuidedTour/GuidedTourControl
 export { AuthenticationController } from './Extensions/Authentication/src/AuthenticationController';
 export { LoginRegistrationWindow }  from './Extensions/Authentication/LoginRegistration';
 
+export { DocToValidateService }     from './Extensions/DocToValidate/services/DocToValidateService';
+export { DocToValidateView }      from './Extensions/DocToValidate/views/DocToValidateView';
+
 export { AboutWindow }              from './Modules/Others/About';
 export { CompassController }        from './Modules/Others/Compass';
 export { HelpWindow }               from './Modules/Others/Help';
