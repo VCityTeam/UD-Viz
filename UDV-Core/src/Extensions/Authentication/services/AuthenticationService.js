@@ -31,7 +31,7 @@ export function AuthenticationService(requestService, config) {
         }
 
 
-        const result = await this.requestService.send('POST', this.loginUrl, formData, false);
+        const result = (await this.requestService.send('POST', this.loginUrl, formData, false)).response;
         const obj = JSON.parse(result);
         if(obj){}
         else {throw 'Username or password is incorrect'}

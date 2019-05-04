@@ -125,19 +125,30 @@ $.ajax({
     }
 });
 
+console.log('config :');
+console.log(config);
+
 //////////// Request service
 
 const requestService = new udvcore.RequestService();
 
 //////////// Authentication extension
 
-const authenticationService = new udvcore.AuthenticationService(config, requestService);
-const authenticationController = new udvcore.AuthenticationController(authenticationService);
-const loginRegistration= new udvcore.LoginRegistrationWindow(authenticationController, requestService);
+const authenticationService = new udvcore.AuthenticationService(requestService, config);
+const loginRegistration= new udvcore.LoginRegistrationWindow(authenticationService, requestService);
+
+document.getElementById('loginRegistration').onclick = () => {
+    if(loginRegistration.isVisible() === false) {
+        loginRegistration.appendToElement(document.getElementById('contentSection'));
+    } else {
+        loginRegistration.dispose();
+    }
+};
 
 document.getElementById('logout').onclick = () => {
     try {
         authenticationService.logout();
+        authenticationService.notifyObservers();
     } catch (e) {
         console.error(e);
     }
@@ -155,20 +166,7 @@ const updateView = () => {
     }
 };
 
-authenticationService.onLogin = (user) => {
-    console.log('Connected');
-    console.log(user);
-    updateView();
-}
-
-authenticationService.onRegister = () => {
-    console.log('Registered');
-}
-
-authenticationService.onLogout = () => {
-    console.log('Logout');
-    updateView();
-}
+authenticationService.addObserver(updateView);
 
 updateView();
 
@@ -178,6 +176,7 @@ const docToValidateService = new udvcore.DocToValidateService(requestService, co
 const docToValidateView = new udvcore.DocToValidateView(docToValidateService);
 
 document.getElementById('documentToValidateMenu').onclick = () => {
+    console.log('Hello');
     if (docToValidateView.isVisible()) {
         docToValidateView.dispose();
     } else {

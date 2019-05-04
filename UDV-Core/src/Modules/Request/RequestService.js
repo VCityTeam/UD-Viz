@@ -28,9 +28,9 @@ export function RequestService() {
 
             req.onload = () => {
                 if (req.status >= 200 && req.status < 300) {
-                    resolve(req.response);
+                    resolve(req);
                 } else {
-                    reject(req.status);
+                    reject(req);
                 }
             }
         });
