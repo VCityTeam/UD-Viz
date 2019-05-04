@@ -38,6 +38,10 @@
     width: 100%;
 }
 
+#docToValidate_Browser {
+    left: 700px;
+}
+
 #docToValidate_Browser p {
     background-color: white;
     color: black;

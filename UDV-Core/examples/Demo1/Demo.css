@@ -1,0 +1,216 @@
+a {
+    color : lightgreen;
+}
+
+html {
+    font-family: sans-serif;
+    font-size: 14px;
+    height: 100%;
+    width: 100%;
+}
+
+body {
+    margin: 0;
+    background-color: black;
+    overflow: hidden;
+    height: 100%;
+}
+
+button:hover {
+    cursor: pointer;
+}
+
+#viewerDiv {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 50px;
+    left: 0;
+    margin : auto auto;
+    padding: 0;
+}
+
+header {
+    display: block;
+}
+
+.header {
+    position: fixed;
+    display: flex;
+    flex-direction: row-reverse;
+    z-index: 11;
+    height: 50px;
+    width: 100%;
+    background-color: #333333;
+}
+
+#openSidebar {
+    display: none;
+}
+
+#logoIMU, #logoLIRIS {
+    height: 40px;
+    margin: 5px 10px 5px 5px;
+}
+
+#openHamburger, #closeHamburger {
+    margin: 0 10px;
+    box-sizing: border-box;
+    position: absolute;
+    font-size: 35px;
+    color: white;
+    z-index: 11;
+    top: 0;
+    left: 0;
+}
+
+.choiceMenu:hover, #openSidebar:hover, #openHamburger:hover, #closeHamburger:hover {
+    cursor: pointer;
+}
+
+#menu {
+    position: fixed;
+    left: 0;
+    height: 100%;
+    width: 300px;
+    z-index: 12;
+    transform: translateX(-300px);
+    transition: transform 250ms ease-in-out;
+    background-color: #2c2c2c;
+}
+
+#navMenu {
+    height: 50px;
+    width: 100%;
+    background-color: #1e1e1e;
+}
+
+#profileMenu {
+    position: relative;
+    min-height: 80px;
+    background-color: black;
+    margin-bottom: 20px;
+}
+
+#profileIcon {
+    width: 100px;
+    margin: 15px 10px 5px;
+}
+
+#name {
+    box-sizing: border-box;
+    color: white;
+    padding: 5px 15px;
+    font-size: 25px;
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.logInOut {
+    position: relative;
+    bottom: 0;
+    left: 25%;
+    width: 50%;
+    font-size: 24px;
+    border-radius: 10px;
+    margin: 20px auto;
+    text-align: center;
+    color: white;
+    background-color: #333333;
+    border: 2px solid gray;
+    height: 33px;
+}
+
+.logInOut:hover {
+    cursor: pointer;
+}
+
+.choiceMenu {
+    display: flex;
+    flex-wrap: nowrap;
+    vertical-align: middle;
+    color: white;
+    font-size: 30px;
+    border-radius: 5px;
+    margin: 10px;
+    padding: 10px 0;
+    width: 250px;
+}
+.nonVisible{
+    display: none;
+}
+
+#menu .choiceMenu:hover {
+    cursor: pointer;
+    background-color: #3c3c3c;
+}
+
+#aboutMenu:before {
+    content: url("Icons/about.svg");
+}
+
+#helpMenu:before {
+    content: url("Icons/help.svg");
+}
+
+#temporalMenu:before {
+    content: url("Icons/more.svg");
+}
+
+#documentMenu:before {
+    flex-shrink: 0;
+    content: url("Icons/file.svg");
+}
+
+#documentToValidateMenu:before {
+    flex-shrink: 0;
+    content: url("Icons/writing.svg");
+}
+
+.choiceMenu:before {
+    display: inline-block;
+    width: 35px;
+    margin: 0 20px 0 10px;
+}
+
+#openSidebar:checked ~ #menu {
+    display: block;
+    transform: translateX(0);
+}
+
+#activateAbout:checked ~ header #aboutMenu {
+    color: #f31eb4;
+}
+
+#activateHelp:checked ~ header #helpMenu {
+    color: #f31eb4;
+}
+
+#activateTemporal:checked ~ header #temporalMenu {
+    color: #f31eb4;
+}
+
+#aboutWindow, #helpWindow, #temporal {
+    display: none;
+}
+
+#activateAbout:checked ~ #contentSection #aboutWindow {
+    display: block;
+}
+
+#activateHelp:checked ~ #contentSection #helpWindow {
+    display: block;
+}
+
+#activateTemporal:checked ~ #contentSection #temporal {
+    display: block;
+}
+
+#researchContainer {
+    top: 50px;
+}
+
+#docBrowserWindow {
+    top: 50px;
+}
