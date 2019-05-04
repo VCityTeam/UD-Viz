@@ -58,17 +58,15 @@ export function DocToValidateService(requestService, config) {
 
     this.delete = async function() {
         //request to delete
-        //let response = await this.requestService.send('DELETE', `${this.documentUrl}/${this.currentDocument().id}`)
-        let response = await this.requestService.send('GET', `http://localhost:5000/deleteDocument/${this.currentDocument().id}`);
+        let response = await this.requestService.send('DELETE', `${this.documentUrl}/${this.currentDocument().id}`)
         //refetch documents
         await this.search(this.prevFilters);
     }
 
     this.validate = async function() {
-        //let response = await this.requestService.send('POST', this.validateUrl);
-        let response = await this.requestService.send('GET', `${this.validateUrl}/${this.currentDocument().id}`)
-        console.log('validate');
-        console.log(response);
+        let formData = new FormData();
+        formData.append('id', this.currentDocument().id);
+        let response = await this.requestService.send('POST', this.validateUrl, formData);
         await this.search(this.prevFilters);
     }
 

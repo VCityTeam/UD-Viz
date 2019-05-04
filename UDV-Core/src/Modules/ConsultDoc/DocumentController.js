@@ -102,7 +102,7 @@ export function DocumentController(view, controls, options = {},config)
       //Could be improved
 
       var filters = new FormData(document.getElementById(this.documentResearch.filterFormId)).entries();
-      var urlFilters = this.url + this.serverModel.getAll;
+      var urlFilters = this.url + this.serverModel.document + '?';
       console.log(urlFilters);
       for(var pair of filters ){
         if(pair[1]!=""){
@@ -113,7 +113,7 @@ export function DocumentController(view, controls, options = {},config)
       urlFilters = urlFilters.slice('&',-1);
       var req = new XMLHttpRequest();
 
-      req.open("POST", urlFilters,false);
+      req.open("GET", urlFilters,false);
       req.send();
       this.setOfDocuments = JSON.parse(req.responseText);
       this.documentBrowser.numberDocs = this.setOfDocuments.length;

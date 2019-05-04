@@ -198,8 +198,9 @@ export function DocumentBrowser(browserContainer, documentController) {
             txt += '</div>';
             document.getElementById('browserInfo').innerHTML = txt;
             document.getElementById('docBrowserPreviewImg').src = this.documentController.url
-                   + this.documentController.serverModel.documentsRepository
-                   + this.currentMetadata.link;
+                            + this.documentController.serverModel.document + '/'
+                            + this.currentMetadata.id + '/'
+                            + this.documentController.serverModel.file;
             document.getElementById('docBrowserIndex').innerHTML = `Document: ${
            this.docIndex} out of ${this.numberDocs}`;
         }
@@ -221,12 +222,19 @@ export function DocumentBrowser(browserContainer, documentController) {
     //= ============================================================================
     this.focusOnDoc = function focusOnDoc() {
         document.getElementById('docFull').style.display = 'block';
+        console.log('----------------');
+        console.log(this.documentController.serverModel);
+        console.log(this.currentMetadata);
+        let src = this.documentController.url + this.documentController.serverModel.document + '/' + this.currentMetadata.id + '/' + this.documentController.serverModel.file;
+        console.log(src);
         document.getElementById('docFullImg').src = this.documentController.url
-                          + this.documentController.serverModel.documentsRepository
-                          + this.currentMetadata.link;
+                          + this.documentController.serverModel.document + '/'
+                          + this.currentMetadata.id + '/'
+                          + this.documentController.serverModel.file;
         document.getElementById('docBrowserPreviewImg').src = this.documentController.url
-                        + this.documentController.serverModel.documentsRepository
-                        + this.currentMetadata.link;
+                        + this.documentController.serverModel.document + '/'
+                        + this.currentMetadata.id + '/'
+                        + this.documentController.serverModel.file;
         document.getElementById('docFullImg').style.opacity = 50;
         document.getElementById('docOpaSlider').value = 0;
         document.querySelector('#docOpacity').value = 50;

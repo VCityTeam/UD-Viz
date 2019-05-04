@@ -2,7 +2,8 @@ export function AuthenticationService(requestService, config) {
     this.observers = [];
     this.config = config;
     this.loginUrl = `${config.server.url}${config.server.login}`;
-    this.registerUrl = `${config.server.url}${config.server.register}`;
+    this.userUrl = `${config.server.url}${config.server.user}`;
+    this.userMeUrl = `${config.server.url}${config.server.userMe}`
     this.requestService = new udvcore.RequestService();
     this.loginRequiredKeys = ['username', 'password'];
     this.registerRequiredKeys = ['username', 'firstName', 'lastName', 'password', 'email'];
@@ -73,7 +74,7 @@ export function AuthenticationService(requestService, config) {
         if (this.isUserLoggedIn()) {
             throw 'Already logged in';
         }
-        const result = await this.requestService.send('POST', this.registerUrl, formData, false);
+        const result = await this.requestService.send('POST', this.userUrl, formData, false);
         const obj = JSON.parse(result);
 
         if (typeof this.onRegister === 'function') {
@@ -123,7 +124,6 @@ export function AuthenticationService(requestService, config) {
     this.isUserLoggedIn = function isUserLoggedIn() {
         try {
             let user = this.getUser();
-            console.log(user);
             return user !== null && user !== undefined;
         } catch (e) {
             console.error(e);

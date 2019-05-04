@@ -82,7 +82,6 @@ export function LoginRegistrationWindow(authenticationService, requestService) {
     }
 
     this.logInFunction = async function () {
-        console.log('Login1');
         this.displayLoginError('');
         const loginForm = document.getElementById('LoginForm');
         const formData = new FormData(loginForm);
@@ -96,7 +95,6 @@ export function LoginRegistrationWindow(authenticationService, requestService) {
     }
 
      this.registerFunction  = async function () {
-        console.log("test");
         this.displayRegisterError('');
         // const password = document.getElementById('PasswordRegistration').value;
         // const confirmPassword = document.getElementById('ConfirmPasswordRegistration').value;

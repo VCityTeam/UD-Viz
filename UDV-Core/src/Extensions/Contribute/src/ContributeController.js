@@ -29,13 +29,7 @@ export function ContributeController(documentController, requestService){
   this.updateContainerId = "updateContainer";     //update view
 
   //url to create a document
-  this.urlAdd = this.documentController.url + this.documentController.serverModel.add;
-
-  //url to update a document
-  this.urlUpdate = this.documentController.url + this.documentController.serverModel.update;
-
-  //url to delete a document
-  this.urlDelete = this.documentController.url + this.documentController.serverModel.delete;
+  this.documentUrl = this.documentController.url + this.documentController.serverModel.document;
 
   this.newDocData = null; //newly created document's data
   this.formData ; //document's static metadata
@@ -205,7 +199,7 @@ export function ContributeController(documentController, requestService){
         this.newDocData.append(pair[0], pair[1]);
       }
       //new promess
-      this.requestService.send('POST', this.urlAdd, this.newDocData)
+      this.requestService.send('POST', this.documentUrl, this.newDocData)
         .then((response) => {
           $('#' + self.documentCreate.creationFormId ).get(0).reset();
           this.newDocData = new FormData();
@@ -234,7 +228,7 @@ export function ContributeController(documentController, requestService){
     var newDocUpdate = new Promise((resolve, reject) => {
 
         var req = new XMLHttpRequest();
-        req.open('POST', this.urlUpdate + "/" + id);
+        req.open('POST', this.documentUrl + "/" + id);
 
         req.onload = function() { //event executed once the request is over
           if (req.status == 200) {
@@ -286,7 +280,7 @@ export function ContributeController(documentController, requestService){
 
       var docDelete = new Promise((resolve, reject) => {
         var req = new XMLHttpRequest();
-        req.open('GET', this.urlDelete + "/" + id);
+        req.open('GET', this.documentUrl + "/" + id);
         req.onload = function() { //event executed once the request is over
           if (req.status == 200) {
             resolve(req.response);
