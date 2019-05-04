@@ -88,8 +88,10 @@ export function DocumentBrowser(browserContainer, documentController) {
             this.startBrowser();
             this.isStart = false;
         }
+        document.getElementById('browserContainer').style.display
+                                                  = active ? 'block' : 'none';
         document.getElementById('docBrowserWindow').style.display
-                                                  = active  ? 'block' : 'none ';
+                                                  = active  ? 'block' : 'none';
     };
 
     this.refresh = function refresh()
@@ -305,7 +307,7 @@ export function DocumentBrowser(browserContainer, documentController) {
     document.getElementById('docBrowserOrientButton').addEventListener('mousedown',
                                               this.focusOnDoc.bind(this), false);
     document.getElementById('closeBrowserWindow').addEventListener('mousedown',
-                                    this.activateWindow.bind(this, false), false);
+                                    this.documentController.toggle, false);
     document.getElementById('resetFilters').addEventListener('mousedown',
                                             this.resetResearch.bind(this), false);
     document.getElementById('docOpaSlider').addEventListener('input',

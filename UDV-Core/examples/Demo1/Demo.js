@@ -183,6 +183,14 @@ document.getElementById('documentToValidateMenu').onclick = () => {
     }
 }
 
+docToValidateView.onopen = () => {
+    document.getElementById('documentToValidateMenu').className = 'choiceMenu choiceMenuSelected';
+}
+
+docToValidateView.onclose = () => {
+    document.getElementById('documentToValidateMenu').className = 'choiceMenu';
+}
+
 //////////// About & Help modules
 
 const about = new udvcore.AboutWindow({active:true});
@@ -193,10 +201,18 @@ const help  = new udvcore.HelpWindow({active:true});
 // a document have, what attributes do we want to display and how...)
 // The researchModel and optionsResearch parameters are used to build / paramatrize
 // the research view
-const controller = new udvcore.DocumentController(view, controls, {temporal: temporal, active: true}, config);
+const controller = new udvcore.DocumentController(view, controls, {temporal: temporal, active: false}, config);
 
 document.getElementById('documentMenu').onclick = () => {
     controller.toggle();
+}
+
+controller.onclose = () => {
+    document.getElementById('documentMenu').className = 'choiceMenu';
+}
+
+controller.onopen = () => {
+    document.getElementById('documentMenu').className = 'choiceMenu choiceMenuSelected';
 }
 
 var contributeController = new udvcore.ContributeController(controller, requestService);

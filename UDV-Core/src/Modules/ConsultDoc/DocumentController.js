@@ -41,6 +41,9 @@ export function DocumentController(view, controls, options = {},config)
     this.browserContainerId = "browserContainer";
     this.urlFilters ="";
 
+    this.onclose;
+    this.onopen;
+
     /**
      * Create view container for the 3 different views
      */
@@ -63,14 +66,20 @@ export function DocumentController(view, controls, options = {},config)
         //this.documentBillboard = new DocumentBillboard(this); //in process
     }
 
-    this.toggle = function toggle() {
+    this.toggle = () => {
         this.visible = ! this.visible;
         if (this.visible) {
-            document.getElementById(this.researchContainerId).style = 'display: block';
-            document.getElementById(this.browserContainerId).style = 'display: block';
+            this.documentResearch.activateWindow(true);
+            this.documentBrowser.activateWindow(true);
+            if (typeof this.onopen === 'function') {
+              this.onopen();
+            }
         } else {
-            document.getElementById(this.researchContainerId).style = 'display: none';
-            document.getElementById(this.browserContainerId).style = 'display: none';
+            this.documentResearch.activateWindow(false);
+            this.documentBrowser.activateWindow(false);
+            if (typeof this.onclose === 'function') {
+              this.onclose();
+            }
         }
     }
 

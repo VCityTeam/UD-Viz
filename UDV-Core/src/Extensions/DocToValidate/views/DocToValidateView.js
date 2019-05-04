@@ -8,6 +8,9 @@ export function DocToValidateView(docToValidateService) {
     this.searchWindow;
     this.browserWindow;
 
+    this.onopen;
+    this.onclose;
+
     this.initialize = function () {
         this.searchWindow = new DocToValidateSearchWindow(this, this.docToValidateService);
         this.browserWindow = new DocToValidateBrowserWindow(this, this.docToValidateService);
@@ -17,12 +20,18 @@ export function DocToValidateView(docToValidateService) {
     this.appendToElement = function (htmlElement) {
         this.searchWindow.appendToElement(htmlElement);
         this.browserWindow.appendToElement(htmlElement);
+        if (typeof this.onopen === 'function') {
+            this.onopen();
+        }
     }
 
     this.dispose = () => {
         console.log('dispose');
         this.searchWindow.dispose();
         this.browserWindow.dispose();
+        if (typeof this.onclose === 'function') {
+            this.onclose();
+        }
     }
 
     this.isVisible = function () {

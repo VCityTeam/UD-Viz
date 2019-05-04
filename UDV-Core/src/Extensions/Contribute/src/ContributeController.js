@@ -84,6 +84,8 @@ export function ContributeController(documentController, requestService){
 
   }
 
+  
+
   /**
    * Gets the current visualization data set by the user and
    *  moves camera to this position

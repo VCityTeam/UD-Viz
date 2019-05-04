@@ -137,6 +137,11 @@ header {
     padding: 10px 0;
     width: 250px;
 }
+
+.choiceMenuSelected {
+    color: #f31eb4;
+}
+
 .nonVisible{
     display: none;
 }
