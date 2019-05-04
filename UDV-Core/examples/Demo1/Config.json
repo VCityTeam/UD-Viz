@@ -2,12 +2,12 @@
     "type": "class",
     "server":{
       "url":"http://localhost:5000/",
-      "documentsRepository":"getFile/",
       "login": "login",
-      "register": "addUser",
-      "documentToValidate": "getDocuments_to_validate",
+      "user": "user",
+      "userMe": "user/me",
       "document": "document",
-      "validate": "validateDocument",
+      "documentToValidate": "document/in_validation",
+      "validate": "document/validate",
       "file": "file"
     },
     "properties": {

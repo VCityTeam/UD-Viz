@@ -88,8 +88,10 @@ export function DocumentBrowser(browserContainer, documentController) {
             this.startBrowser();
             this.isStart = false;
         }
+        document.getElementById('browserContainer').style.display
+                                                  = active ? 'block' : 'none';
         document.getElementById('docBrowserWindow').style.display
-                                                  = active  ? 'block' : 'none ';
+                                                  = active  ? 'block' : 'none';
     };
 
     this.refresh = function refresh()
@@ -196,8 +198,9 @@ export function DocumentBrowser(browserContainer, documentController) {
             txt += '</div>';
             document.getElementById('browserInfo').innerHTML = txt;
             document.getElementById('docBrowserPreviewImg').src = this.documentController.url
-                   + this.documentController.serverModel.documentsRepository
-                   + this.currentMetadata.link;
+                            + this.documentController.serverModel.document + '/'
+                            + this.currentMetadata.id + '/'
+                            + this.documentController.serverModel.file;
             document.getElementById('docBrowserIndex').innerHTML = `Document: ${
            this.docIndex} out of ${this.numberDocs}`;
         }
@@ -219,12 +222,19 @@ export function DocumentBrowser(browserContainer, documentController) {
     //= ============================================================================
     this.focusOnDoc = function focusOnDoc() {
         document.getElementById('docFull').style.display = 'block';
+        console.log('----------------');
+        console.log(this.documentController.serverModel);
+        console.log(this.currentMetadata);
+        let src = this.documentController.url + this.documentController.serverModel.document + '/' + this.currentMetadata.id + '/' + this.documentController.serverModel.file;
+        console.log(src);
         document.getElementById('docFullImg').src = this.documentController.url
-                          + this.documentController.serverModel.documentsRepository
-                          + this.currentMetadata.link;
+                          + this.documentController.serverModel.document + '/'
+                          + this.currentMetadata.id + '/'
+                          + this.documentController.serverModel.file;
         document.getElementById('docBrowserPreviewImg').src = this.documentController.url
-                        + this.documentController.serverModel.documentsRepository
-                        + this.currentMetadata.link;
+                        + this.documentController.serverModel.document + '/'
+                        + this.currentMetadata.id + '/'
+                        + this.documentController.serverModel.file;
         document.getElementById('docFullImg').style.opacity = 50;
         document.getElementById('docOpaSlider').value = 0;
         document.querySelector('#docOpacity').value = 50;
@@ -305,7 +315,7 @@ export function DocumentBrowser(browserContainer, documentController) {
     document.getElementById('docBrowserOrientButton').addEventListener('mousedown',
                                               this.focusOnDoc.bind(this), false);
     document.getElementById('closeBrowserWindow').addEventListener('mousedown',
-                                    this.activateWindow.bind(this, false), false);
+                                    this.documentController.toggle, false);
     document.getElementById('resetFilters').addEventListener('mousedown',
                                             this.resetResearch.bind(this), false);
     document.getElementById('docOpaSlider').addEventListener('input',

@@ -16,7 +16,9 @@ import { MAIN_LOOP_EVENTS } from 'itowns';
  * @param { documentController } documentController
  */
 
-export function ContributeController(documentController){
+export function ContributeController(documentController, requestService){
+
+  this.requestService = requestService;
 
   this.documentController = documentController;
 
@@ -27,13 +29,7 @@ export function ContributeController(documentController){
   this.updateContainerId = "updateContainer";     //update view
 
   //url to create a document
-  this.urlAdd = this.documentController.url + this.documentController.serverModel.add;
-
-  //url to update a document
-  this.urlUpdate = this.documentController.url + this.documentController.serverModel.update;
-
-  //url to delete a document
-  this.urlDelete = this.documentController.url + this.documentController.serverModel.delete;
+  this.documentUrl = this.documentController.url + this.documentController.serverModel.document;
 
   this.newDocData = null; //newly created document's data
   this.formData ; //document's static metadata
@@ -81,6 +77,8 @@ export function ContributeController(documentController){
     this.documentCreate.blurMetadataWindow(false);
 
   }
+
+  
 
   /**
    * Gets the current visualization data set by the user and
@@ -201,38 +199,15 @@ export function ContributeController(documentController){
         this.newDocData.append(pair[0], pair[1]);
       }
       //new promess
-      var newDocUpload = new Promise((resolve, reject) => {
-
-        var req = new XMLHttpRequest();
-        req.open('POST', this.urlAdd);
-
-        req.onload = function() { //event executed once the request req is done
-          if (req.status == 200) {
-            resolve(req.response);
-          }
-           else {
-             reject(Error(req.statusText));
-           }
-        };
-
-        req.onerror = function() {
-          reject("Network Error");
-        };
-        req.send(this.newDocData);
-      });
-
-      var self = this;
-
-      newDocUpload.then( function(response){
-
-        $('#' + self.documentCreate.creationFormId ).get(0).reset();
-        self.newDocData = new FormData();
-        self.visuData = new FormData();
-        self.documentController.getDocuments();
-      },
-      function(error) {
-        console.error("Failed!", error);
-      });
+      this.requestService.send('POST', this.documentUrl, this.newDocData)
+        .then((response) => {
+          $('#' + self.documentCreate.creationFormId ).get(0).reset();
+          this.newDocData = new FormData();
+          this.visuData = new FormData();
+          this.documentController.getDocuments();
+        }, (error) => {
+          console.error(error);
+        });
     }
   }
 
@@ -253,7 +228,7 @@ export function ContributeController(documentController){
     var newDocUpdate = new Promise((resolve, reject) => {
 
         var req = new XMLHttpRequest();
-        req.open('POST', this.urlUpdate + "/" + id);
+        req.open('POST', this.documentUrl + "/" + id);
 
         req.onload = function() { //event executed once the request is over
           if (req.status == 200) {
@@ -305,7 +280,7 @@ export function ContributeController(documentController){
 
       var docDelete = new Promise((resolve, reject) => {
         var req = new XMLHttpRequest();
-        req.open('GET', this.urlDelete + "/" + id);
+        req.open('GET', this.documentUrl + "/" + id);
         req.onload = function() { //event executed once the request is over
           if (req.status == 200) {
             resolve(req.response);

@@ -176,12 +176,19 @@ const docToValidateService = new udvcore.DocToValidateService(requestService, co
 const docToValidateView = new udvcore.DocToValidateView(docToValidateService);
 
 document.getElementById('documentToValidateMenu').onclick = () => {
-    console.log('Hello');
     if (docToValidateView.isVisible()) {
         docToValidateView.dispose();
     } else {
         docToValidateView.appendToElement(document.getElementById('contentSection'));
     }
+}
+
+docToValidateView.onopen = () => {
+    document.getElementById('documentToValidateMenu').className = 'choiceMenu choiceMenuSelected';
+}
+
+docToValidateView.onclose = () => {
+    document.getElementById('documentToValidateMenu').className = 'choiceMenu';
 }
 
 //////////// About & Help modules
@@ -194,7 +201,21 @@ const help  = new udvcore.HelpWindow({active:true});
 // a document have, what attributes do we want to display and how...)
 // The researchModel and optionsResearch parameters are used to build / paramatrize
 // the research view
-const controller = new udvcore.DocumentController(view, controls, {temporal: temporal}, config);
+const controller = new udvcore.DocumentController(view, controls, {temporal: temporal, active: false}, config);
+
+document.getElementById('documentMenu').onclick = () => {
+    controller.toggle();
+}
+
+controller.onclose = () => {
+    document.getElementById('documentMenu').className = 'choiceMenu';
+}
+
+controller.onopen = () => {
+    document.getElementById('documentMenu').className = 'choiceMenu choiceMenuSelected';
+}
+
+var contributeController = new udvcore.ContributeController(controller, requestService);
 ///////////////////////////////////////////////////////////////////////////////
 //// Create and configure the layout controller
 

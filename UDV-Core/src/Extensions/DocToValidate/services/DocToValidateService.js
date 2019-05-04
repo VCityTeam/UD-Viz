@@ -4,10 +4,10 @@ export function DocToValidateService(requestService, config) {
 
     this.documentToValidateUrl = `${config.server.url}${config.server.documentToValidate}`;
     this.documentUrl = `${config.server.url}${config.server.document}`;
+    this.validateUrl = `${config.server.url}${config.server.validate}`;
     this.fileRoute = config.server.file;
 
     this.documents = [];
-    this.sampleDocuments = []; 
     this.currentDocumentId = 0;
     this.prevFilters;
 
@@ -15,33 +15,11 @@ export function DocToValidateService(requestService, config) {
 
     this.initialize = function () {
         console.log('Doc To Validate Service initialized.');
-        this.sampleDocuments = [
-            {
-                id: '1',
-                title: 'Title 1',
-                subject: 'Subject 1',
-                description: 'Description 1',
-                type: 'type 1',
-                referringDate: '2017-01-01',
-                publicationDate: '2018-07-11',
-                imgUrl: '../services/pikachu.png'
-            },
-            {
-                id: '2',
-                title: 'Title 2',
-                subject: 'Subject 2',
-                description: 'Description 2',
-                type: 'Type 2',
-                referringDate: '2020-01-01',
-                publicationDate: '2021-07-11',
-                imgUrl: '../services/sonic.jpg'
-            }
-        ];
     }
 
     this.search = async function (filterFormData) {
         //request to fetch docs
-        let response = await this.requestService.send('GET', this.documentToValidateUrl);
+        let response = (await this.requestService.send('GET', this.documentToValidateUrl)).response;
         let docs = JSON.parse(response);
         this.documents = [];
         for (let doc of docs) {
@@ -78,16 +56,18 @@ export function DocToValidateService(requestService, config) {
         this.currentDocumentId = 0; 
     }
 
-    this.delete = function() {
+    this.delete = async function() {
         //request to delete
-        this.documents.splice(this.currentDocumentId, 1);
+        let response = await this.requestService.send('DELETE', `${this.documentUrl}/${this.currentDocument().id}`)
         //refetch documents
-        this.prevDocument(); //update index
+        await this.search(this.prevFilters);
     }
 
-    this.validate = function() {
-        //route doesnt exists yet ^^
-        this.delete();
+    this.validate = async function() {
+        let formData = new FormData();
+        formData.append('id', this.currentDocument().id);
+        let response = await this.requestService.send('POST', this.validateUrl, formData);
+        await this.search(this.prevFilters);
     }
 
     this.clearSearch = function () {
