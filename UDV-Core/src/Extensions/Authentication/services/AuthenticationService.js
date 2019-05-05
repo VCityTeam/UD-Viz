@@ -1,3 +1,4 @@
+
 export function AuthenticationService(requestService, config) {
     this.observers = [];
     this.config = config;
