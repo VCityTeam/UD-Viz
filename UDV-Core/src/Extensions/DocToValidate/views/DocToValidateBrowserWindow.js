@@ -74,7 +74,7 @@ export function DocToValidateBrowserWindow(docToValidateView, docToValidateServi
             const author = await this.docToValidateService.getAuthor();
             console.log(author);
             document.getElementById('docToValidate_Browser_title').innerHTML = currentDocument.title;
-            document.getElementById('docToValidate_Browser_author_name').innerHTML = author.firstName + " " + author.lastName + " " + (author.email);
+            document.getElementById('docToValidate_Browser_author_name').innerHTML = author.firstName + " " + author.lastName + " (" + author.email +")";
             document.getElementById('docToValidate_Browser_description').innerHTML = currentDocument.description;
             document.getElementById('docToValidate_Browser_referringDate').innerHTML = currentDocument.referringDate;
             document.getElementById('docToValidate_Browser_publicationDate').innerHTML = currentDocument.publicationDate;
