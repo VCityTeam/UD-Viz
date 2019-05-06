@@ -44,12 +44,14 @@ export function DocToValidateService(requestService, config) {
         const endReferringDateFilter = filterFormData.get("endReferringDate");
         const startPublicationDateFilter = filterFormData.get("startPublicationDate");
         const endPublicationDateFilter = filterFormData.get("endPublicationDate");
+        const subjectFiler = filterFormData.get("subject");
         
         const result = this.documents.filter(document => (keywordFilter === undefined || keywordFilter === null || keywordFilter === '' ||document.title.includes(keywordFilter)) &&
         (startReferringDateFilter === undefined || startReferringDateFilter === null || startReferringDateFilter === '' || document.referringDate > startReferringDateFilter) && 
         (endReferringDateFilter === undefined || endReferringDateFilter === null || endReferringDateFilter === '' || document.referringDate < endReferringDateFilter) &&
         (startPublicationDateFilter === undefined || startPublicationDateFilter === null ||startPublicationDateFilter === '' ||  document.publicationDate > startPublicationDateFilter) && 
-        (endPublicationDateFilter === undefined || endPublicationDateFilter === null || endPublicationDateFilter === '' || document.publicationDate < endPublicationDateFilter) 
+        (endPublicationDateFilter === undefined || endPublicationDateFilter === null || endPublicationDateFilter === '' || document.publicationDate < endPublicationDateFilter) &&
+        (subjectFiler === undefined || subjectFiler === null || subjectFiler === '' || document.subject === subjectFiler)
         );
 
         this.documents = result;
@@ -109,11 +111,13 @@ export function DocToValidateService(requestService, config) {
 
     this.nextDocument = function () {
         this.currentDocumentId = (this.currentDocumentId + 1) % this.documents.length;
+        this.notifyObservers();
         return this.currentDocument();
     }
 
     this.prevDocument = function () {
         this.currentDocumentId = (this.documents.length + this.currentDocumentId - 1) % this.documents.length;
+        this.notifyObservers();
         return this.currentDocument();
     }
 

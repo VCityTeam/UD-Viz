@@ -159,9 +159,13 @@ const updateView = () => {
         document.getElementById('profileMenuLoggedIn').hidden = false;
         document.getElementById('profileMenuLoggedOut').hidden = true;
         document.getElementById('name').innerHTML = `${user.firstname} ${user.lastname}`;
+        document.getElementById('documentMenu').style = '';
+        document.getElementById('documentToValidateMenu').style = '';
     } else {
         document.getElementById('profileMenuLoggedIn').hidden = true;
         document.getElementById('profileMenuLoggedOut').hidden = false;
+        document.getElementById('documentMenu').style = 'display: None;';
+        document.getElementById('documentToValidateMenu').style = 'display: None;';
     }
 };
 

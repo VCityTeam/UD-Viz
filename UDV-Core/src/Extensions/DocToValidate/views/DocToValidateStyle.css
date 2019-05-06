@@ -34,7 +34,7 @@
     height: 80%;
 }
 
-.docToValidate_Window input {
+.docToValidate_Window input, .docToValidate_Window select {
     width: 100%;
 }
 
