@@ -132,12 +132,18 @@
 }
 
 
-label
+#loginRegistrationWindow label
 {
     display: block;
     width: 200px;
     float: left;
 }
+
+#profileMenu label {
+    display: block;
+    float: left;
+}
+
 .SuccessBox{
     color: green;
     text-align: center;

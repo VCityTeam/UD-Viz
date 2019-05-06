@@ -12,7 +12,7 @@ export function DocToValidateSearchWindow(docToValidateView, docToValidateServic
         return `
             <div id="docToValidate_Search_header" class="docToValidate_Window_header">
                 <h2>Research</h2>
-                <button id="docToValidate_buttonClose">Close</button>
+                <button id="docToValidate_buttonClose" class="docToValidate_buttonClose">Close</button>
             </div>
             <div class="innerWindow">
                 <form id="docToValidate_searchForm">
