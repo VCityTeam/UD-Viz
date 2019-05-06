@@ -15,6 +15,8 @@ export function DocToValidateBrowserWindow(docToValidateView, docToValidateServi
         </div>
         <div class="innerWindow">
             <h3 id="docToValidate_Browser_title">Title<h3>
+            <h4>Author</h4>
+            <p id="docToValidate_Browser_author_name"></p>
             <h4>Description</h4>
             <p id="docToValidate_Browser_description"></p>
             <h4>Referring date</h4>
@@ -51,7 +53,7 @@ export function DocToValidateBrowserWindow(docToValidateView, docToValidateServi
         document.getElementById('docToValidate_Browser_buttonDelete').onclick = this.deleteDocument.bind(this);
         document.getElementById('docToValidate_Browser_buttonValidate').onclick = this.validateDocument.bind(this);
         dragElement(div);
-        this.update;
+        this.update();
     }
 
     this.dispose = function () {
@@ -64,13 +66,15 @@ export function DocToValidateBrowserWindow(docToValidateView, docToValidateServi
         return div !== undefined && div !== null;
     }
 
-    this.update = () => {
+    this.update = async () => {
         const currentDocument = this.docToValidateService.currentDocument();
         const currentDocumentId = this.docToValidateService.getCurrentDocumentId();
         const documentsCount = this.docToValidateService.getDocumentsCount();
-
         if (currentDocument !== undefined && currentDocument !== null) {
+            const author = await this.docToValidateService.getAuthor();
+            console.log(author);
             document.getElementById('docToValidate_Browser_title').innerHTML = currentDocument.title;
+            document.getElementById('docToValidate_Browser_author_name').innerHTML = author.firstName + " " + author.lastName + " " + (author.email);
             document.getElementById('docToValidate_Browser_description').innerHTML = currentDocument.description;
             document.getElementById('docToValidate_Browser_referringDate').innerHTML = currentDocument.referringDate;
             document.getElementById('docToValidate_Browser_publicationDate').innerHTML = currentDocument.publicationDate;
