@@ -57,6 +57,11 @@ export function DocumentResearch(researchContainer, documentController)
           if (this.windowIsActive){
            this.documentController.documentBrowser.activateWindow(true);
         }
+        if (active) {
+            this.documentController.open();
+        } else {
+            this.documentController.close();
+        }
 
     }
 

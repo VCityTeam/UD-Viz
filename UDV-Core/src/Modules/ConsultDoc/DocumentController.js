@@ -71,16 +71,26 @@ export function DocumentController(view, controls, options = {},config)
         if (this.visible) {
             this.documentResearch.activateWindow(true);
             this.documentBrowser.activateWindow(true);
-            if (typeof this.onopen === 'function') {
-              this.onopen();
-            }
+            this.open();
         } else {
             this.documentResearch.activateWindow(false);
             this.documentBrowser.activateWindow(false);
-            if (typeof this.onclose === 'function') {
-              this.onclose();
-            }
+            this.close();
         }
+    }
+
+    this.open = function () {
+      this.visible = true;
+      if (typeof this.onopen === 'function') {
+        this.onopen();
+      }
+    }
+
+    this.close = function () {
+      this.visible = false;
+      if (typeof this.onclose === 'function') {
+        this.onclose();
+      }
     }
 
     /**
