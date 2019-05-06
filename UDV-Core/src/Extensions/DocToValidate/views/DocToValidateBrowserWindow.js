@@ -108,34 +108,27 @@ export function DocToValidateBrowserWindow(docToValidateView, docToValidateServi
 
     this.nextDocument = function() {
         this.docToValidateService.nextDocument();
-        this.docToValidateService.notifyObservers();
     }
 
     this.prevDocument = function() {
         this.docToValidateService.prevDocument();
-        this.docToValidateService.notifyObservers();
     }
 
     this.resetResearch = function () {
         this.docToValidateService.clearSearch();
-        this.docToValidateService.notifyObservers();
     }
 
     this.deleteDocument = function () {
         let confirmDeletion = confirm('You are about to delete this document. This operation cannot be undone. Are you sure ?');
         if (confirmDeletion) {
-            this.docToValidateService.delete().then((result) => {
-                this.docToValidateService.notifyObservers();
-            });
+            this.docToValidateService.delete();
         }
     }
 
     this.validateDocument = function () {
         let confirmValidation = confirm('Do you want to validate this document ? It will disapear from the documents to validate, and appear in the documents list.');
         if (confirmValidation) {
-            this.docToValidateService.validate().then((result) => {
-                this.docToValidateService.notifyObservers();
-            });
+            this.docToValidateService.validate();
         }
     }
 

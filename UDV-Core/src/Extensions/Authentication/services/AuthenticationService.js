@@ -50,9 +50,7 @@ export function AuthenticationService(requestService, config) {
 
             this.storeUser(user);
 
-            if (typeof this.onLogin === "function") {
-                this.onLogin(user);
-            }
+            this.notifyObservers();
         } else {
             throw 'Username or password is incorrect';
         }
@@ -64,9 +62,7 @@ export function AuthenticationService(requestService, config) {
         }
         this.removeUser();
 
-        if (typeof this.onLogout === 'function') {
-            this.onLogout();
-        }
+        this.notifyObservers();
     };
 
     this.register = async function register(formData) {
@@ -79,9 +75,7 @@ export function AuthenticationService(requestService, config) {
         const result = (await this.requestService.send('POST', this.userUrl, formData, false)).response;
         const obj = JSON.parse(result);
 
-        if (typeof this.onRegister === 'function') {
-            this.onRegister();
-        }
+        this.notifyObservers();
     };
 
     this.formCheck = function formCheck(formData, requiredKeys) {

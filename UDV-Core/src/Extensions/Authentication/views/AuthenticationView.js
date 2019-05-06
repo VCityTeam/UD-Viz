@@ -122,7 +122,6 @@ export function LoginRegistrationWindow(authenticationService) {
         if (this.verifyNotEmptyValuesForm(formIds)){
             try {
                 await this.authenticationService.login(formData);
-                this.authenticationService.notifyObservers();
                 this.dispose();
             } catch (e) {
                 if(e==401){
@@ -148,7 +147,6 @@ export function LoginRegistrationWindow(authenticationService) {
         if (this.verifyNotEmptyValuesForm(formIds) & this.verifymail()) {
             try {
                 await this.authenticationService.register(formData);
-                this.authenticationService.notifyObservers();
                 this.displayRegisterSuccess("Your registration succeed");
 
             } catch (e) {

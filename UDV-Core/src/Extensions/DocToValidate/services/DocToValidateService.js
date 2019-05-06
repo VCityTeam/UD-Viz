@@ -53,7 +53,8 @@ export function DocToValidateService(requestService, config) {
         );
 
         this.documents = result;
-        this.currentDocumentId = 0; 
+        this.currentDocumentId = 0;
+        this.notifyObservers();
     }
 
     this.delete = async function() {
@@ -73,6 +74,7 @@ export function DocToValidateService(requestService, config) {
     this.clearSearch = function () {
         this.documents = [];
         this.currentDocumentId = 0;
+        this.notifyObservers();
     }
 
     // Observers

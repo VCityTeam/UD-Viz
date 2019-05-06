@@ -20,6 +20,7 @@ export function DocToValidateView(docToValidateService) {
     this.appendToElement = function (htmlElement) {
         this.searchWindow.appendToElement(htmlElement);
         this.browserWindow.appendToElement(htmlElement);
+        this.docToValidateService.search(new FormData());
         if (typeof this.onopen === 'function') {
             this.onopen();
         }

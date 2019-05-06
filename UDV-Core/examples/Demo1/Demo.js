@@ -148,7 +148,6 @@ document.getElementById('loginRegistration').onclick = () => {
 document.getElementById('logout').onclick = () => {
     try {
         authenticationService.logout();
-        authenticationService.notifyObservers();
     } catch (e) {
         console.error(e);
     }
