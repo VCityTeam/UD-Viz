@@ -5,6 +5,7 @@ export function DocToValidateService(requestService, config) {
     this.documentToValidateUrl = `${config.server.url}${config.server.documentToValidate}`;
     this.documentUrl = `${config.server.url}${config.server.document}`;
     this.validateUrl = `${config.server.url}${config.server.validate}`;
+    this.authorUrl = `${config.server.url}${config.server.user}`
     this.fileRoute = config.server.file;
 
     this.documents = [];
@@ -50,6 +51,17 @@ export function DocToValidateService(requestService, config) {
         this.notifyObservers();
     }
 
+    this.getAuthor = async () => {
+        if (this.getDocumentsCount() > 0) {
+            var idAuthor=this.currentDocument().authorId;
+            var url= this.authorUrl+"/"+idAuthor;
+            let response = (await this.requestService.send('GET',url)).response;
+            let author = JSON.parse(response);
+            return author;
+        } else {
+            throw 'No current document';
+        }
+    }
     this.delete = async function() {
         //request to delete
         let response = await this.requestService.send('DELETE', `${this.documentUrl}/${this.currentDocument().id}`)
