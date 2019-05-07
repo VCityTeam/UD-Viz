@@ -89,6 +89,13 @@ export function DocToValidateService(requestService, config) {
             throw 'No current document';
         }
     }
+
+    this.update = async function (formData) {
+        let response = (await this.requestService.send('PUT', `${this.documentUrl}/${this.currentDocument().id}`, formData)).response;
+        this.notifyObservers();
+        return response;
+    }
+
     this.delete = async function() {
         //request to delete
         let response = await this.requestService.send('DELETE', `${this.documentUrl}/${this.currentDocument().id}`)

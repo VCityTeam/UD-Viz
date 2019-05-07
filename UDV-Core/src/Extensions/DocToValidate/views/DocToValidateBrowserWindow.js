@@ -15,7 +15,7 @@ export function DocToValidateBrowserWindow(docToValidateView, docToValidateServi
         <div id="docToValidate_Browser_header" class="docToValidate_Window_header">
             <h2>Document navigator</h2>
         </div>
-        <div class="innerWindow">
+        <div class="innerWindow" id="docToValidate_Browser_innerWindow">
             <h3 id="docToValidate_Browser_title">Title<h3>
             <h4>Author</h4>
             <p id="docToValidate_Browser_author_name"></p>
@@ -35,6 +35,7 @@ export function DocToValidateBrowserWindow(docToValidateView, docToValidateServi
                 <button type="button" id="docToValidate_Browser_buttonPrev">⇦</button>
                 <button type="button" id="docToValidate_Browser_buttonNext">⇨</button>
                 <button type="button" id="docToValidate_Browser_buttonReset">Reset research</button>
+                <button type="button" id="docToValidate_Browser_buttonUpdate">Update</button>
                 <button type="button" id="docToValidate_Browser_buttonOrient">Orient document</button>
                 <button type="button" id="docToValidate_Browser_buttonDelete">Delete</button>
                 <button type="button" id="docToValidate_Browser_buttonValidate">Validate</button>
@@ -51,15 +52,20 @@ export function DocToValidateBrowserWindow(docToValidateView, docToValidateServi
         div.id = "docToValidate_Browser";
         div.className = "docToValidate_Window";
         htmlElement.appendChild(div);
+        this.browserButtonBinding();
+        dragElement(div);
+        this.update();
+    }
+
+    this.browserButtonBinding = function() {
         document.getElementById('docToValidate_Browser_buttonPrev').onclick = this.prevDocument.bind(this);
         document.getElementById('docToValidate_Browser_buttonNext').onclick = this.nextDocument.bind(this);
         document.getElementById('docToValidate_Browser_buttonReset').onclick = this.resetResearch.bind(this);
+        document.getElementById('docToValidate_Browser_buttonUpdate').onclick = this.displayUpdate.bind(this);
         document.getElementById('docToValidate_Browser_buttonOrient').onclick = this.orientDocument.bind(this);
         document.getElementById('docToValidate_Browser_buttonDelete').onclick = this.deleteDocument.bind(this);
         document.getElementById('docToValidate_Browser_buttonValidate').onclick = this.validateDocument.bind(this);
         document.getElementById('docToValidate_Browser_buttonComment').onclick = this.commentDocument.bind(this);
-        dragElement(div);
-        this.update();
     }
 
     this.dispose = function () {
@@ -195,6 +201,81 @@ export function DocToValidateBrowserWindow(docToValidateView, docToValidateServi
         } else {
             this.docToValidateView.commentWindow.appendTo(this.parent);
         }
+    }
+
+    this.displayUpdate = function () {
+        let div = document.getElementById('docToValidate_Browser_innerWindow');
+        div.innerHTML = `
+        <form id="docToValidate_udpateForm">
+            <label for="docToValidate_updateForm_description">Description</label>
+            <input type="text" id="docToValidate_updateForm_description" name="description">
+            <label for="docToValidate_updateForm_referringDate">Referring date</label>
+            <input type="date" id="docToValidate_updateForm_referringDate" name="refDate">
+            <label for="docToValidate_updateForm_publicationDate">Publication date</label>
+            <input type="date" id="docToValidate_updateForm_publicationDate" name="publicationDate">
+            <label for="docToValidate_updateForm_subject">Subject</label>
+            <select id="docToValidate_updateForm_subject" name="subject" form="docToValidate_updateForm">
+                <option value>None</option>
+                <option value="Architecture">Architecture</option>
+                <option value="Tourism">Tourism</option>
+                <option value="Urbanism">Urbanism</option>
+            </select>
+            <hr>
+            <button type="button" id="docToValidate_updateFrom_cancel">Cancel</button>
+            <button type="button" id="docToValidate_updateForm_submit">Update</button>
+        </form>
+        `;
+
+        document.getElementById('docToValidate_updateFrom_cancel').onclick = this.displayBrowser.bind(this);
+        document.getElementById('docToValidate_updateForm_submit').onclick = this.updateDocument.bind(this);
+        let doc = this.docToValidateService.currentDocument();
+        console.log(doc);
+        document.getElementById('docToValidate_updateForm_description').value = doc.metaData.description;
+        document.getElementById('docToValidate_updateForm_referringDate').value = doc.metaData.refDate;
+        document.getElementById('docToValidate_updateForm_publicationDate').value = doc.metaData.publicationDate;
+        document.getElementById('docToValidate_updateForm_subject').value = doc.metaData.subject;
+    }
+
+    this.displayBrowser = function () {
+        let div = document.getElementById('docToValidate_Browser_innerWindow');
+        div.innerHTML = `
+            <h3 id="docToValidate_Browser_title">Title<h3>
+            <h4>Author</h4>
+            <p id="docToValidate_Browser_author_name"></p>
+            <h4>Description</h4>
+            <p id="docToValidate_Browser_description"></p>
+            <h4>Referring date</h4>
+            <p id="docToValidate_Browser_referringDate"></p>
+            <h4>Publication date</h4>
+            <p id="docToValidate_Browser_publicationDate"></p>
+            <h4>Type</h4>
+            <p id="docToValidate_Browser_type"></p>
+            <h4>Subject</h4>
+            <p id="docToValidate_Browser_subject"></p>
+            <img id="docToValidate_Browser_file"></img>
+            <div id="docToValidate_Browser_navigation">
+                <div id="docToValidate_Browser_currentDocument"></div>
+                <button type="button" id="docToValidate_Browser_buttonPrev">⇦</button>
+                <button type="button" id="docToValidate_Browser_buttonNext">⇨</button>
+                <button type="button" id="docToValidate_Browser_buttonReset">Reset research</button>
+                <button type="button" id="docToValidate_Browser_buttonUpdate">Update</button>
+                <button type="button" id="docToValidate_Browser_buttonOrient">Orient document</button>
+                <button type="button" id="docToValidate_Browser_buttonDelete">Delete</button>
+                <button type="button" id="docToValidate_Browser_buttonValidate">Validate</button>
+                <button type ="button" id="docToValidate_Browser_buttonComment">Comments</button>
+            </div>
+        `;
+        this.browserButtonBinding();
+        this.docToValidateView.searchWindow.search();
+    }
+
+    this.updateDocument = function () {
+        let form = document.getElementById('docToValidate_udpateForm');
+        let formData = new FormData(form);
+
+        this.docToValidateService.update(formData);
+
+        this.displayBrowser();
     }
 
     this.initialize();
