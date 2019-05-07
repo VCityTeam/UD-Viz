@@ -104,20 +104,28 @@
 }
 
 #docToValidateComment_right{
-  background-color: black;
+  /*background-color: black;*/
   vertical-align:top;
 }
 
 #docToValidateComment_inputComment{
-  position: relative;
-  max-height: 200px;
-  min-height: 100px;
-  margin: 5px;
+  height: 80px;
+  width: 90%;
+  margin: auto;
+  border-radius: 3px;
+  resize: none;
+  margin-top: 5px;
+  font-size: 11pt;
 }
 
 #docToValidateComment_inputButton{
   margin: 10%;
   width: 70%;
+}
+
+.commentRow {
+    width: 100%;
+    text-align: center;
 }
 
 .talk-bubble {

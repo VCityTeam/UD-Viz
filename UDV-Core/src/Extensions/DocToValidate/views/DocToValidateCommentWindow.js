@@ -16,8 +16,12 @@ export class DocToValidateCommentWindow extends Window {
         </div>
         <div id ="docToValidateComment_right">
           <form id="docToValidateComment_inputForm">
-            <textarea id="docToValidateComment_inputComment" name="description" ></textarea>
-            <button type="button" id ="docToValidateComment_inputButton"> add comment </button>
+            <div class="commentRow">
+                <textarea placeholder="Enter your comment here." id="docToValidateComment_inputComment" name="description" ></textarea>
+            </div>
+            <div class="commentRow">
+                <button type="button" id ="docToValidateComment_inputButton">Comment</button>
+            </div>
           </form>
         </div>
         `;
@@ -28,14 +32,15 @@ export class DocToValidateCommentWindow extends Window {
             document.getElementById('docToValidateComment_left').innerHTML = '';
             console.log(comments);
             for (let comment of comments.reverse()) {
+                let text = (typeof comment.description === 'string') ? comment.description.replace(/(?:\r\n|\r|\n)/g, '<br>') : '';
                 let div = document.createElement('div');
                 div.className = 'talk-bubble';
                 div.innerHTML = `
-            <div class="talktext">
-               <p class="talktext-author">${comment.author.firstName}  ${comment.author.lastName}</p>
-               <p class="talktext-comment"> ${comment.description} </p>
-            </div>
-            `;
+                    <div class="talktext">
+                    <p class="talktext-author">${comment.author.firstName} ${comment.author.lastName}</p>
+                    <p class="talktext-comment">${text}</p>
+                    </div>
+                `;
                 document.getElementById('docToValidateComment_left').appendChild(div);
             }
         });
@@ -56,6 +61,7 @@ export class DocToValidateCommentWindow extends Window {
         let form_data = new FormData(form);
         console.log(form_data);
         this.docToValidateService.publishComment(form_data).then(() => {
+            document.getElementById('docToValidateComment_inputComment').value = '';
             this.getComment();
         });
     }
