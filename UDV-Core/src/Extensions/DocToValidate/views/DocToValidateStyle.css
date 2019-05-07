@@ -124,7 +124,9 @@
   margin: 3%;
   position: relative;
   width: 95%;
-  background-color: grey;
+  background-color: #e3dfff;
+  border-radius: 5px;
+  margin: 5px;
 }
 
 .talktext{
@@ -132,10 +134,19 @@
   text-align: left;
   line-height: 0.9em;
 }
-.talktext p{
+
+.talktext-comment {
   /* remove webkit p margins */
-  color: white;
+  color: #2f2d2e;
+  padding-left: 10px;
+  padding-right: 10px;
   font-size: 90%;
-  -webkit-margin-before: 0em;
-  -webkit-margin-after: 0em;
+}
+
+.talktext-author {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.3);
+    margin-top: 0;
+    padding: 5px;
+    font-weight: bold;
+    color: #41292c;
 }
