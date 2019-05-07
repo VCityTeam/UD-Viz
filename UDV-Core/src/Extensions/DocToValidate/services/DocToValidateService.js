@@ -53,7 +53,7 @@ export function DocToValidateService(requestService, config) {
 
     this.getAuthor = async () => {
         if (this.getDocumentsCount() > 0) {
-            var idAuthor=this.currentDocument().authorId;
+            var idAuthor=this.currentDocument().user_id;
             var url= this.authorUrl+"/"+idAuthor;
             let response = (await this.requestService.send('GET',url)).response;
             let author = JSON.parse(response);

@@ -12,7 +12,7 @@ export function LoginRegistrationWindow(authenticationService) {
     this.initialize = function initialize() {
     };
 
-     this.html = function () {
+    this.html = function () {
         return `
               <button id="loginRegistrationCloseButton">Close</button>\
             <form id="RegistrationForm">\
@@ -47,28 +47,38 @@ export function LoginRegistrationWindow(authenticationService) {
         `;
     }
 
-    this.appendToElement = function(htmlElement) {
+    this.appendToElement = function (htmlElement) {
         let div = document.createElement('div');
         div.innerHTML = this.html();
         div.id = "loginRegistrationWindow";
         htmlElement.appendChild(div);
-        document.getElementById('loginRegistrationCloseButton').onclick = () => { this.dispose() };
+        document.getElementById('loginRegistrationCloseButton').onclick = () => {
+            this.dispose()
+        };
         console.log(document.getElementById('loginRegistrationCloseButton'));
-        document.getElementById('LoginButton').onclick = () => { this.logInFunction() };
-        document.getElementById('RegisterButton').onclick = () => { this.registerFunction() };
-        document.getElementById('PasswordRegistration').onkeypress = () => {if((event.key)=="Enter") this.registerFunction() };
-        document.getElementById('PasswordLogin').onkeypress = () => {if((event.key)=="Enter") this.logInFunction() };
+        document.getElementById('LoginButton').onclick = () => {
+            this.logInFunction()
+        };
+        document.getElementById('RegisterButton').onclick = () => {
+            this.registerFunction()
+        };
+        document.getElementById('PasswordRegistration').onkeypress = () => {
+            if ((event.key) == "Enter") this.registerFunction()
+        };
+        document.getElementById('PasswordLogin').onkeypress = () => {
+            if ((event.key) == "Enter") this.logInFunction()
+        };
     }
 
 
-    this.dispose = function(){
+    this.dispose = function () {
         let div = document.getElementById('loginRegistrationWindow');
         return div.parentNode.removeChild(div);
     }
 
     this.displayRegisterError = function (msg) {
         let errorField = document.getElementById('RegisterInfo');
-        errorField.className="ErrorBox"
+        errorField.className = "ErrorBox"
         errorField.innerHTML = msg;
     };
 
@@ -77,9 +87,9 @@ export function LoginRegistrationWindow(authenticationService) {
         errorField.innerHTML = msg;
     };
 
-    this.displayRegisterSuccess=function(msg) {
+    this.displayRegisterSuccess = function (msg) {
         let successField = document.getElementById('RegisterInfo');
-        successField.className="SuccessBox";
+        successField.className = "SuccessBox";
         successField.innerHTML = msg;
     }
 
@@ -87,27 +97,27 @@ export function LoginRegistrationWindow(authenticationService) {
         let div = document.getElementById('loginRegistrationWindow');
         return div !== undefined && div !== null;
     }
-    this.verifyNotEmptyValuesForm =function (formIds) {
-        var validate=true;
-        for (var id in formIds){
-            let element= document.getElementById(formIds[id]);
+    this.verifyNotEmptyValuesForm = function (formIds) {
+        var validate = true;
+        for (var id in formIds) {
+            let element = document.getElementById(formIds[id]);
             element.setAttribute("style", "");
-            if(element.value== "") {
+            if (element.value == "") {
                 element.setAttribute("style", " border: 3px solid red");
-                validate=false;
+                validate = false;
             }
         }
         return validate;
     }
-    this.verifymail=function(){
+    this.verifymail = function () {
         var RegularExpression = /^(([^<>()[]\.,;:s@]+(.[^<>()[]\.,;:s@]+)*)|(.+))@(([[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}])|(([a-zA-Z-0-9]+.)+[a-zA-Z]{2,}))$/;
-        let element=document.getElementById("Email");
-        if(RegularExpression.test(element.value)){
+        let element = document.getElementById("Email");
+        if (RegularExpression.test(element.value)) {
             element.setAttribute("style", "");
             this.displayRegisterError("");
             return true;
         }
-        else{
+        else {
             element.setAttribute("style", " border: 3px solid red");
             this.displayRegisterError("Please insert a valid mail");
             return false;
@@ -118,22 +128,21 @@ export function LoginRegistrationWindow(authenticationService) {
         this.displayLoginError('');
         const loginForm = document.getElementById('LoginForm');
         const formData = new FormData(loginForm);
-        var formIds=['login','PasswordLogin'];
-        if (this.verifyNotEmptyValuesForm(formIds)){
+        var formIds = ['login', 'PasswordLogin'];
+        if (this.verifyNotEmptyValuesForm(formIds)) {
             try {
                 await this.authenticationService.login(formData);
                 this.dispose();
             } catch (e) {
-                if(e==401){
+                if (e.status === 401) {
                     this.displayLoginError("Login or password invalid");
                 }
 
             }
         }
-
     }
 
-     this.registerFunction  = async function () {
+    this.registerFunction = async function () {
         this.displayRegisterError('');
         // const password = document.getElementById('PasswordRegistration').value;
         // const confirmPassword = document.getElementById('ConfirmPasswordRegistration').value;
@@ -143,22 +152,21 @@ export function LoginRegistrationWindow(authenticationService) {
         // }
         const registerForm = document.getElementById('RegistrationForm');
         const formData = new FormData(registerForm);
-        var formIds=['Firstname','Lastname','Username','Email','PasswordRegistration'];
+        var formIds = ['Firstname', 'Lastname', 'Username', 'Email', 'PasswordRegistration'];
         if (this.verifyNotEmptyValuesForm(formIds) & this.verifymail()) {
             try {
                 await this.authenticationService.register(formData);
                 this.displayRegisterSuccess("Your registration succeed");
 
             } catch (e) {
-                console.log(e);
-                if(e.status == '422'){
+                if (e.status == '422') {
                     this.displayRegisterError('The user already exist');
-                } else{
+                }
+                else {
                     this.displayRegisterError(e.response);
                 }
             }
         }
-
 
 
     };
