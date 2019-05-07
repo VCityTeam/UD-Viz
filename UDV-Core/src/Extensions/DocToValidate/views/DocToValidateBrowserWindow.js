@@ -93,6 +93,7 @@ export function DocToValidateBrowserWindow(docToValidateView, docToValidateServi
             document.getElementById('docToValidate_Browser_buttonOrient').disabled = false;
             document.getElementById('docToValidate_Browser_buttonDelete').disabled = false;
             document.getElementById('docToValidate_Browser_buttonValidate').disabled = false;
+            document.getElementById('docToValidate_Browser_buttonComment').disabled = false;
 
             document.getElementById('docToValidate_Browser_currentDocument').innerHTML = `Document ${currentDocumentId + 1} out of ${documentsCount}`;
         } else {
@@ -110,6 +111,7 @@ export function DocToValidateBrowserWindow(docToValidateView, docToValidateServi
             document.getElementById('docToValidate_Browser_buttonOrient').disabled = true;
             document.getElementById('docToValidate_Browser_buttonDelete').disabled = true;
             document.getElementById('docToValidate_Browser_buttonValidate').disabled = true;
+            document.getElementById('docToValidate_Browser_buttonComment').disabled = true;
 
             document.getElementById('docToValidate_Browser_currentDocument').innerHTML = `No documents found.`;
         }

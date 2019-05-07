@@ -58,7 +58,13 @@ export function DocToValidateService(requestService, config) {
         {
           let url = this.documentUrl+"/"+currentDocument.id+"/"+this.commentRoute;
           let response = (await this.requestService.send('GET',url)).response;
-          return JSON.parse(response);
+          let jsonResponse = JSON.parse(response);
+          for(let element of jsonResponse){
+            var url= this.authorUrl+"/"+element.user_id;
+            let responseAuthor = (await this.requestService.send('GET',url)).response;
+            element.author = JSON.parse(responseAuthor);
+          }
+          return jsonResponse;
         }
         return [];
     }

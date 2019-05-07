@@ -32,8 +32,9 @@ export class DocToValidateCommentWindow extends Window {
                 div.className = 'talk-bubble';
                 div.innerHTML = `
             <div class="talktext">
+               <b style="color:red">${comment.author.firstName}  ${comment.author.lastName}</b>
+               <p> ${comment.description} </p>
             </div>
-            <p> ${comment.description} </p>
             `;
                 document.getElementById('docToValidateComment_left').appendChild(div);
             }
