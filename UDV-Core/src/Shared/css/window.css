@@ -1,0 +1,49 @@
+.window {
+    position: absolute;
+    top: 100px;
+    left: 100px;
+    min-width: 200px;
+    min-height: 200px;
+    width: 200px;
+    height: 200px;
+    padding: 0;
+    resize: both;
+    overflow: hidden;
+    border-radius: 4px;
+    display: grid;
+    grid-template-rows: 40px auto;
+    box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.75);
+}
+
+.window-header {
+    background-color: rgb(0, 0, 0, 0.75);
+    color: #cccccc;
+    margin: 0;
+    padding: 5px;
+    overflow-x: hidden;
+    overflow-y: unset;
+}
+
+.window-header .window-title {
+    margin: 0;
+    margin-left: 5px;
+    font-size: 24px;
+}
+
+.window-close-button {
+    position: absolute;
+    height: 30px;
+    right: 5px;
+    top: 5px;
+}
+
+.window-content {
+    background-color: rgba(30,30,30,0.6);
+    border: 5px solid gray;
+    overflow-y: auto;
+    margin: 0;
+}
+
+.window-inner-content {
+    color: #dddddd;
+}
