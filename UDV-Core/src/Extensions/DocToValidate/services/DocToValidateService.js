@@ -23,17 +23,8 @@ export function DocToValidateService(requestService, config) {
         let docs = JSON.parse(response);
         this.documents = [];
         for (let doc of docs) {
-            let document = {
-                id: doc.id,
-                title: doc.metaData.title,
-                subject: doc.metaData.subject,
-                description: doc.metaData.description,
-                type: doc.metaData.type,
-                referringDate: doc.metaData.refDate,
-                publicationDate: doc.metaData.publicationDate,
-                imgUrl: `${this.documentUrl}/${doc.id}/${this.fileRoute}`
-            };
-            this.documents.push(document);
+            doc.imgUrl = `${this.documentUrl}/${doc.id}/${this.fileRoute}`;
+            this.documents.push(doc);
         }
 
         this.prevFilters = filterFormData;
@@ -46,12 +37,12 @@ export function DocToValidateService(requestService, config) {
         const endPublicationDateFilter = filterFormData.get("endPublicationDate");
         const subjectFiler = filterFormData.get("subject");
         
-        const result = this.documents.filter(document => (keywordFilter === undefined || keywordFilter === null || keywordFilter === '' ||document.title.includes(keywordFilter)) &&
-        (startReferringDateFilter === undefined || startReferringDateFilter === null || startReferringDateFilter === '' || document.referringDate > startReferringDateFilter) && 
-        (endReferringDateFilter === undefined || endReferringDateFilter === null || endReferringDateFilter === '' || document.referringDate < endReferringDateFilter) &&
-        (startPublicationDateFilter === undefined || startPublicationDateFilter === null ||startPublicationDateFilter === '' ||  document.publicationDate > startPublicationDateFilter) && 
-        (endPublicationDateFilter === undefined || endPublicationDateFilter === null || endPublicationDateFilter === '' || document.publicationDate < endPublicationDateFilter) &&
-        (subjectFiler === undefined || subjectFiler === null || subjectFiler === '' || document.subject === subjectFiler)
+        const result = this.documents.filter(document => (keywordFilter === undefined || keywordFilter === null || keywordFilter === '' ||document.metaData.title.includes(keywordFilter)) &&
+        (startReferringDateFilter === undefined || startReferringDateFilter === null || startReferringDateFilter === '' || document.metaData.referringDate > startReferringDateFilter) && 
+        (endReferringDateFilter === undefined || endReferringDateFilter === null || endReferringDateFilter === '' || document.metaData.refDate < endReferringDateFilter) &&
+        (startPublicationDateFilter === undefined || startPublicationDateFilter === null ||startPublicationDateFilter === '' ||  document.metaData.publicationDate > startPublicationDateFilter) && 
+        (endPublicationDateFilter === undefined || endPublicationDateFilter === null || endPublicationDateFilter === '' || document.metaData.publicationDate < endPublicationDateFilter) &&
+        (subjectFiler === undefined || subjectFiler === null || subjectFiler === '' || document.metaData.subject === subjectFiler)
         );
 
         this.documents = result;

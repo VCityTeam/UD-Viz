@@ -39,7 +39,9 @@ export function DocToValidateCommentWindow(docToValidateView, docToValidateServi
 
     this.dispose = function () {
         let div = document.getElementById('docToValidate_Comment');
-        div.parentNode.removeChild(div);
+        if (div) {
+            div.parentNode.removeChild(div);
+        }
     }
 
     this.isVisible = function () {
