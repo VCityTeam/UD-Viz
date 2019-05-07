@@ -11,7 +11,7 @@
     overflow: hidden;
     border-radius: 4px;
     display: grid;
-    grid-template-rows: 40px auto;
+    grid-template-rows: 30px auto;
     box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.75);
 }
 
@@ -22,19 +22,20 @@
     padding: 5px;
     overflow-x: hidden;
     overflow-y: unset;
+    cursor: pointer;
 }
 
 .window-header .window-title {
     margin: 0;
     margin-left: 5px;
-    font-size: 24px;
+    font-size: 18px;
 }
 
 .window-close-button {
     position: absolute;
-    height: 30px;
-    right: 5px;
-    top: 5px;
+    height: 26px;
+    right: 2px;
+    top: 2px;
 }
 
 .window-content {
