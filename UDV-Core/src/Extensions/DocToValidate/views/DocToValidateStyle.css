@@ -95,36 +95,27 @@
   margin: 0;
   vertical-align:top;
   display: grid;
-  min-width: 400px;
-  min-height: 200px;
   grid-template-columns: 60% 40%;
-  /*grid-gap: 5px;
-  grid-auto-rows: minmax(100px, auto);*/
 }
 
-#left{
-  /*grid-column: 1;*/
-  height: 100%;
+#docToValidateComment_left{
   vertical-align:top;
+  overflow-y: auto;
 }
 
-#right{
-  /*grid-column: 4;*/
+#docToValidateComment_right{
   background-color: black;
-  height: 100%;
   vertical-align:top;
 }
 
-#inputComment{
+#docToValidateComment_inputComment{
   position: relative;
-  max-width: 96%;
-  min-width: 96%;
   max-height: 200px;
   min-height: 100px;
-  margin: 2%;
+  margin: 5px;
 }
 
-#inputButton{
+#docToValidateComment_inputButton{
   margin: 10%;
   width: 70%;
 }
