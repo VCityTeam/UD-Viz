@@ -159,36 +159,19 @@ const updateView = () => {
         document.getElementById('profileMenuLoggedIn').hidden = false;
         document.getElementById('profileMenuLoggedOut').hidden = true;
         document.getElementById('name').innerHTML = `${user.firstname} ${user.lastname}`;
+        document.getElementById('documentMenu').style = '';
+        document.getElementById('documentToValidateMenu').style = '';
     } else {
         document.getElementById('profileMenuLoggedIn').hidden = true;
         document.getElementById('profileMenuLoggedOut').hidden = false;
+        document.getElementById('documentMenu').style = 'display: None;';
+        document.getElementById('documentToValidateMenu').style = 'display: None;';
     }
 };
 
 authenticationService.addObserver(updateView);
 
 updateView();
-
-//////////// DocToValidate extension
-
-const docToValidateService = new udvcore.DocToValidateService(requestService, config);
-const docToValidateView = new udvcore.DocToValidateView(docToValidateService);
-
-document.getElementById('documentToValidateMenu').onclick = () => {
-    if (docToValidateView.isVisible()) {
-        docToValidateView.dispose();
-    } else {
-        docToValidateView.appendToElement(document.getElementById('contentSection'));
-    }
-}
-
-docToValidateView.onopen = () => {
-    document.getElementById('documentToValidateMenu').className = 'choiceMenu choiceMenuSelected';
-}
-
-docToValidateView.onclose = () => {
-    document.getElementById('documentToValidateMenu').className = 'choiceMenu';
-}
 
 //////////// About & Help modules
 
@@ -217,12 +200,12 @@ controller.onopen = () => {
 var contributeController = new udvcore.ContributeController(controller, requestService);
 ///////////////////////////////////////////////////////////////////////////////
 //// Create and configure the layout controller
-
+/*
 const browserOption = documentFolder.add( controller.documentBrowser, 'windowIsActive'
 ).name("Browser").listen();
 browserOption.onFinishChange(function(value){
     controller.documentBrowser.refresh();
-});
+});*/
 
 // FIXME instanciate guided tour controller
 // const guidedtour = new GuidedTourController(documents,'visite.csv',{temporal: temporal, preventUserFromChangingTour : true});
@@ -232,3 +215,28 @@ const minimap = new udvcore.MiniMapController(controls, extent, renderer);
 
 // instanciate compass controller
 const compass = new udvcore.CompassController(controls);
+
+
+
+//////////// DocToValidate extension
+
+const docToValidateService = new udvcore.DocToValidateService(requestService, config);
+console.log('helelo');
+const docToValidateView = new udvcore.DocToValidateView(docToValidateService, controller);
+console.log('lkdj');
+
+document.getElementById('documentToValidateMenu').onclick = () => {
+    if (docToValidateView.isVisible()) {
+        docToValidateView.dispose();
+    } else {
+        docToValidateView.appendToElement(document.getElementById('contentSection'));
+    }
+}
+
+docToValidateView.onopen = () => {
+    document.getElementById('documentToValidateMenu').className = 'choiceMenu choiceMenuSelected';
+}
+
+docToValidateView.onclose = () => {
+    document.getElementById('documentToValidateMenu').className = 'choiceMenu';
+}

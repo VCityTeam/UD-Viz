@@ -12,7 +12,7 @@ export function DocToValidateSearchWindow(docToValidateView, docToValidateServic
         return `
             <div id="docToValidate_Search_header" class="docToValidate_Window_header">
                 <h2>Research</h2>
-                <button id="docToValidate_buttonClose">Close</button>
+                <button id="docToValidate_buttonClose" class="docToValidate_buttonClose">Close</button>
             </div>
             <div class="innerWindow">
                 <form id="docToValidate_searchForm">
@@ -26,6 +26,14 @@ export function DocToValidateSearchWindow(docToValidateView, docToValidateServic
                     <input type="date" id="docToValidate_searchForm_startPublicationDate" name="startPublicationDate">
                     <label for="docToValidate_searchForm_endPublicationDate">End publication date</label>
                     <input type="date" id="docToValidate_searchForm_endPublicationDate" name="endPublicationDate">
+                    <label for="docToValidate_searchForm_subject">Subject</label>
+                    <select id="docToValidate_searchForm_subject" name="subject" form="docToValidate_searchForm">
+                        <option value>None</option>
+                        <option value="Architecture">Architecture</option>
+                        <option value="Tourism">Tourism</option>
+                        <option value="Urbanism">Urbanism</option>
+                    </select>
+                    <hr>
                     <button type="button" id="docToValidate_searchForm_submit">Search</button>
                 </form>
             </div>
@@ -57,6 +65,9 @@ export function DocToValidateSearchWindow(docToValidateView, docToValidateServic
     this.search = function () {
         const form = document.getElementById('docToValidate_searchForm');
         const formData = new FormData(form);
+        for (let entry of formData.entries()) {
+            console.log(entry);
+        }
         this.docToValidateService.search(formData);
     }
 

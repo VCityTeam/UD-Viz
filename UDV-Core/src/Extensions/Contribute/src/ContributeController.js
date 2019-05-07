@@ -201,7 +201,7 @@ export function ContributeController(documentController, requestService){
       //new promess
       this.requestService.send('POST', this.documentUrl, this.newDocData)
         .then((response) => {
-          $('#' + self.documentCreate.creationFormId ).get(0).reset();
+          $('#' + this.documentCreate.creationFormId ).get(0).reset();
           this.newDocData = new FormData();
           this.visuData = new FormData();
           this.documentController.getDocuments();

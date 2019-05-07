@@ -1,12 +1,15 @@
 import "./DocToValidateStyle.css"
 import { DocToValidateSearchWindow } from "./DocToValidateSearchWindow";
 import { DocToValidateBrowserWindow } from "./DocToValidateBrowserWindow";
+import { DocToValidateCommentWindow } from "./DocToValidateCommentWindow"
 
-export function DocToValidateView(docToValidateService) {
+export function DocToValidateView(docToValidateService, documentController) {
 
     this.docToValidateService = docToValidateService;
+    this.documentController = documentController;
     this.searchWindow;
     this.browserWindow;
+    this.commentWindow;
 
     this.onopen;
     this.onclose;
@@ -14,6 +17,7 @@ export function DocToValidateView(docToValidateService) {
     this.initialize = function () {
         this.searchWindow = new DocToValidateSearchWindow(this, this.docToValidateService);
         this.browserWindow = new DocToValidateBrowserWindow(this, this.docToValidateService);
+        this.commentWindow = new DocToValidateCommentWindow(this, this.docToValidateService);
         this.docToValidateService.addObserver(this.browserWindow.update);
     }
 
@@ -30,6 +34,7 @@ export function DocToValidateView(docToValidateService) {
         console.log('dispose');
         this.searchWindow.dispose();
         this.browserWindow.dispose();
+        this.commentWindow.dispose();
         if (typeof this.onclose === 'function') {
             this.onclose();
         }
