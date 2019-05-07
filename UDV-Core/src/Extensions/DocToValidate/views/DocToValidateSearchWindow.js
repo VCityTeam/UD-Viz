@@ -57,10 +57,7 @@ export function DocToValidateSearchWindow(docToValidateView, docToValidateServic
     this.search = function () {
         const form = document.getElementById('docToValidate_searchForm');
         const formData = new FormData(form);
-        this.docToValidateService.search(formData)
-            .then((result) => {
-                this.docToValidateService.notifyObservers();
-            });
+        this.docToValidateService.search(formData);
     }
 
     this.initialize();

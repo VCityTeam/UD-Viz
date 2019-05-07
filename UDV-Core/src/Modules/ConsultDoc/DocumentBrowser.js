@@ -92,6 +92,11 @@ export function DocumentBrowser(browserContainer, documentController) {
                                                   = active ? 'block' : 'none';
         document.getElementById('docBrowserWindow').style.display
                                                   = active  ? 'block' : 'none';
+        if (active) {
+            this.documentController.open();
+        } else {
+            this.documentController.close();
+        }
     };
 
     this.refresh = function refresh()

@@ -5,9 +5,8 @@ import {dragElement} from "../../DocToValidate/views/Draggable";
  * adds an "About" window that can be open/closed with a button
  * simply include this file in the html, no need to instanciate anything in main.js
  */
-export function LoginRegistrationWindow(authenticationService, requestService) {
+export function LoginRegistrationWindow(authenticationService) {
 
-    this.requestService = requestService;
     this.authenticationService = authenticationService;
 
     this.initialize = function initialize() {
@@ -44,7 +43,6 @@ export function LoginRegistrationWindow(authenticationService, requestService) {
                 <input type="password" id="PasswordLogin" name="password"/>\
                 <div>Forgot your password?</div>\
                 <button type="button" id="LoginButton">Login</button>\
-                <button type="button" id="TEST">TEST</button>\
             </form>\
         `;
     }
@@ -124,7 +122,6 @@ export function LoginRegistrationWindow(authenticationService, requestService) {
         if (this.verifyNotEmptyValuesForm(formIds)){
             try {
                 await this.authenticationService.login(formData);
-                this.authenticationService.notifyObservers();
                 this.dispose();
             } catch (e) {
                 if(e==401){
@@ -147,18 +144,17 @@ export function LoginRegistrationWindow(authenticationService, requestService) {
         const registerForm = document.getElementById('RegistrationForm');
         const formData = new FormData(registerForm);
         var formIds=['Firstname','Lastname','Username','Email','PasswordRegistration'];
-        if (this.verifyNotEmptyValuesForm(formIds)&&this.verifymail()) {
+        if (this.verifyNotEmptyValuesForm(formIds) & this.verifymail()) {
             try {
                 await this.authenticationService.register(formData);
-                this.authenticationService.notifyObservers();
                 this.displayRegisterSuccess("Your registration succeed");
 
             } catch (e) {
                 console.log(e);
-                if(e == '422'){
+                if(e.status == '422'){
                     this.displayRegisterError('The user already exist');
                 } else{
-                    this.displayRegisterError(e);
+                    this.displayRegisterError(e.response);
                 }
             }
         }

@@ -15,6 +15,8 @@ export function DocToValidateBrowserWindow(docToValidateView, docToValidateServi
         </div>
         <div class="innerWindow">
             <h3 id="docToValidate_Browser_title">Title<h3>
+            <h4>Author</h4>
+            <p id="docToValidate_Browser_author_name"></p>
             <h4>Description</h4>
             <p id="docToValidate_Browser_description"></p>
             <h4>Referring date</h4>
@@ -51,7 +53,7 @@ export function DocToValidateBrowserWindow(docToValidateView, docToValidateServi
         document.getElementById('docToValidate_Browser_buttonDelete').onclick = this.deleteDocument.bind(this);
         document.getElementById('docToValidate_Browser_buttonValidate').onclick = this.validateDocument.bind(this);
         dragElement(div);
-        this.update;
+        this.update();
     }
 
     this.dispose = function () {
@@ -64,13 +66,15 @@ export function DocToValidateBrowserWindow(docToValidateView, docToValidateServi
         return div !== undefined && div !== null;
     }
 
-    this.update = () => {
+    this.update = async () => {
         const currentDocument = this.docToValidateService.currentDocument();
         const currentDocumentId = this.docToValidateService.getCurrentDocumentId();
         const documentsCount = this.docToValidateService.getDocumentsCount();
-
         if (currentDocument !== undefined && currentDocument !== null) {
+            const author = await this.docToValidateService.getAuthor();
+            console.log(author);
             document.getElementById('docToValidate_Browser_title').innerHTML = currentDocument.title;
+            document.getElementById('docToValidate_Browser_author_name').innerHTML = author.firstName + " " + author.lastName + " (" + author.email +")";
             document.getElementById('docToValidate_Browser_description').innerHTML = currentDocument.description;
             document.getElementById('docToValidate_Browser_referringDate').innerHTML = currentDocument.referringDate;
             document.getElementById('docToValidate_Browser_publicationDate').innerHTML = currentDocument.publicationDate;
@@ -108,34 +112,27 @@ export function DocToValidateBrowserWindow(docToValidateView, docToValidateServi
 
     this.nextDocument = function() {
         this.docToValidateService.nextDocument();
-        this.docToValidateService.notifyObservers();
     }
 
     this.prevDocument = function() {
         this.docToValidateService.prevDocument();
-        this.docToValidateService.notifyObservers();
     }
 
     this.resetResearch = function () {
         this.docToValidateService.clearSearch();
-        this.docToValidateService.notifyObservers();
     }
 
     this.deleteDocument = function () {
         let confirmDeletion = confirm('You are about to delete this document. This operation cannot be undone. Are you sure ?');
         if (confirmDeletion) {
-            this.docToValidateService.delete().then((result) => {
-                this.docToValidateService.notifyObservers();
-            });
+            this.docToValidateService.delete();
         }
     }
 
     this.validateDocument = function () {
         let confirmValidation = confirm('Do you want to validate this document ? It will disapear from the documents to validate, and appear in the documents list.');
         if (confirmValidation) {
-            this.docToValidateService.validate().then((result) => {
-                this.docToValidateService.notifyObservers();
-            });
+            this.docToValidateService.validate();
         }
     }
 

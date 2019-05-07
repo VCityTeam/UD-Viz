@@ -135,7 +135,7 @@ const requestService = new udvcore.RequestService();
 //////////// Authentication extension
 
 const authenticationService = new udvcore.AuthenticationService(requestService, config);
-const loginRegistration= new udvcore.LoginRegistrationWindow(authenticationService, requestService);
+const loginRegistration= new udvcore.LoginRegistrationWindow(authenticationService);
 
 document.getElementById('loginRegistration').onclick = () => {
     if(loginRegistration.isVisible() === false) {
@@ -148,7 +148,6 @@ document.getElementById('loginRegistration').onclick = () => {
 document.getElementById('logout').onclick = () => {
     try {
         authenticationService.logout();
-        authenticationService.notifyObservers();
     } catch (e) {
         console.error(e);
     }

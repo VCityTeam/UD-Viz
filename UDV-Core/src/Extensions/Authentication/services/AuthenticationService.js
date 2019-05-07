@@ -39,19 +39,18 @@ export function AuthenticationService(requestService, config) {
         else {throw 'Username or password is incorrect'}
         const jwt = obj.token;
         if (jwt !== undefined && jwt !== null) {
+            this.storeToken(jwt);
+            let response = JSON.parse((await this.requestService.send('GET', this.userMeUrl)).response);
             const user = {
-                token: jwt,
-                firstname: 'Firstname',
-                lastname: 'Lastname',
-                username: 'Username',
-                email: 'email@example.com'
+                firstname: response.firstName,
+                lastname: response.lastName,
+                username: response.username,
+                email: response.email
             };
 
             this.storeUser(user);
 
-            if (typeof this.onLogin === "function") {
-                this.onLogin(user);
-            }
+            this.notifyObservers();
         } else {
             throw 'Username or password is incorrect';
         }
@@ -63,9 +62,7 @@ export function AuthenticationService(requestService, config) {
         }
         this.removeUser();
 
-        if (typeof this.onLogout === 'function') {
-            this.onLogout();
-        }
+        this.notifyObservers();
     };
 
     this.register = async function register(formData) {
@@ -75,12 +72,10 @@ export function AuthenticationService(requestService, config) {
         if (this.isUserLoggedIn()) {
             throw 'Already logged in';
         }
-        const result = await this.requestService.send('POST', this.userUrl, formData, false);
+        const result = (await this.requestService.send('POST', this.userUrl, formData, false)).response;
         const obj = JSON.parse(result);
 
-        if (typeof this.onRegister === 'function') {
-            this.onRegister();
-        }
+        this.notifyObservers();
     };
 
     this.formCheck = function formCheck(formData, requiredKeys) {
@@ -101,8 +96,11 @@ export function AuthenticationService(requestService, config) {
         window.sessionStorage.removeItem(this.storageKeys.email);
     };
 
+    this.storeToken = function (token) {
+        window.sessionStorage.setItem(this.storageKeys.token, token);
+    }
+
     this.storeUser = function storeUser(user) {
-        window.sessionStorage.setItem(this.storageKeys.token, user.token);
         window.sessionStorage.setItem(this.storageKeys.firstname, user.firstname);
         window.sessionStorage.setItem(this.storageKeys.lastname, user.lastname);
         window.sessionStorage.setItem(this.storageKeys.username, user.username);
