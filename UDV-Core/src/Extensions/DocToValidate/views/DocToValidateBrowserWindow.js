@@ -188,11 +188,10 @@ export function DocToValidateBrowserWindow(docToValidateView, docToValidateServi
     }
 
     this.commentDocument = function () {
-        console.log("c'est bon je marche");
-        if(this.docToValidateView.commentWindow.isVisible()){
+        if(this.docToValidateView.commentWindow.isVisible) {
             this.docToValidateView.commentWindow.dispose();
         } else {
-            this.docToValidateView.commentWindow.appendToElement(this.parent);
+            this.docToValidateView.commentWindow.appendTo(this.parent);
         }
     }
 

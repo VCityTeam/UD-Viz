@@ -38,8 +38,8 @@
 }
 
 .window-content {
-    background-color: rgba(30,30,30,0.6);
-    border: 5px solid gray;
+    background-color: rgba(30,30,30,0.7);
+    border: 5px solid rgba(30,30,30,0.1);
     overflow-y: auto;
     margin: 0;
 }

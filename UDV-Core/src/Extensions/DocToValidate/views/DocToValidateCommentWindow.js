@@ -1,54 +1,21 @@
-import { dragElement } from './Draggable';
+import { Window } from '../../../Shared/js/Window';
+import '../../../Shared/css/window.css';
 
-export function DocToValidateCommentWindow(docToValidateView, docToValidateService) {
+export class DocToValidateCommentWindow extends Window {
 
-    this.docToValidateService = docToValidateService;
-    this.docToValidateView = docToValidateView;
-
-    this.initialize = function () {
+    constructor() {
+        super('docToValidateComment', 'Commentaires', false);
     }
 
-    this.html = function () {
+    get innerContentHtml() {
         return `
-        <div id="docToValidate_Comment_header" class="docToValidate_Window_header">
-            <h2>Document Comments</h2>
-            <button class="docToValidate_buttonClose" id="docToValidate_Comment_buttonClose">Close</button>
-        </div>
-        <div class="innerWindow">
-            <div id = "allComments_Window"> </div>
-            <div id = "addComment_Window"> 
-                <!--form id = "commentForm" >
-                    salut 
-                    tu vas bien 
-                    </br>
-                </form--> 
-            </div>
-        </div>
+            <p>
+                Fenêtre de commentaires
+            </p>
         `;
     }
 
-    this.appendToElement = function(htmlElement) {
-        let div = document.createElement('div');
-        div.innerHTML = this.html();
-        div.id = "docToValidate_Comment";
-        div.className = "docToValidate_Window";
-        htmlElement.appendChild(div);
-        document.getElementById('docToValidate_Comment_buttonClose').onclick = this.dispose;
-        dragElement(div);
+    windowCreated() {
+        // évènements des boutons gérés ici
     }
-
-    this.dispose = function () {
-        let div = document.getElementById('docToValidate_Comment');
-        if (div) {
-            div.parentNode.removeChild(div);
-        }
-    }
-
-    this.isVisible = function () {
-        let div = document.getElementById('docToValidate_Comment');
-        return div !== undefined && div !== null;
-    }
-
-
-    this.initialize();
 }

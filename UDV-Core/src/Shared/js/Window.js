@@ -32,40 +32,48 @@ export class Window {
     //////////////////////////////////////////
 
     appendTo(htmlElement) {
-        this.parentElement = htmlElement;
-        let windowDiv = document.createElement('div');
-        windowDiv.innerHTML = this.html;
-        windowDiv.id = this.windowId;
-        windowDiv.className = "window";
-        htmlElement.appendChild(windowDiv);
-        dragElement(windowDiv, this.header);
+        if (!this.isCreated) {
+            this.parentElement = htmlElement;
+            let windowDiv = document.createElement('div');
+            windowDiv.innerHTML = this.html;
+            windowDiv.id = this.windowId;
+            windowDiv.className = "window";
+            htmlElement.appendChild(windowDiv);
+            dragElement(windowDiv, this.header);
 
-        if (this.hideOnClose) {
-            this.headerCloseButton.onclick = this.hide.bind(this);
-        } else {
-            this.headerCloseButton.onclick = this.dispose.bind(this);
+            if (this.hideOnClose) {
+                this.headerCloseButton.onclick = this.hide.bind(this);
+            } else {
+                this.headerCloseButton.onclick = this.dispose.bind(this);
+            }
+
+            this.windowCreated();
+            this.notifyListener(Window.EVENT_CREATED);
+            this.notifyListener(Window.EVENT_SHOWED);
         }
-
-        this.windowCreated();
-        this.notifyListener(Window.EVENT_CREATED);
-        this.notifyListener(Window.EVENT_SHOWED);
     }
 
     dispose() {
-        this.parentElement.removeChild(this.window);
+        if (this.isCreated) {
+            this.parentElement.removeChild(this.window);
 
-        this.windowDestroyed();
-        this.notifyListener(Window.EVENT_DESTROYED);
+            this.windowDestroyed();
+            this.notifyListener(Window.EVENT_DESTROYED);
+        }
     }
 
     show() {
-        this.window.style.setProperty('display', 'grid');
-        this.notifyListener(Window.EVENT_SHOWED);
+        if (this.isCreated && !this.isVisible) {
+            this.window.style.setProperty('display', 'grid');
+            this.notifyListener(Window.EVENT_SHOWED);
+        }
     }
 
     hide() {
-        this.window.style.setProperty('display', 'none');
-        this.notifyListener(Window.EVENT_HIDDEN);
+        if (this.isVisible) {
+            this.window.style.setProperty('display', 'none');
+            this.notifyListener(Window.EVENT_HIDDEN);
+        }
     }
 
     get html() {
@@ -80,6 +88,15 @@ export class Window {
                 </div>
             </div>
         `;
+    }
+
+    get isCreated() {
+        let windowDiv = this.window;
+        return windowDiv !== null && windowDiv !== undefined;
+    }
+
+    get isVisible() {
+        return this.isCreated && window.getComputedStyle(this.window).getPropertyValue('display') === 'grid';
     }
 
     get windowId() {
