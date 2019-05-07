@@ -8,7 +8,7 @@
     border : 1px solid rgb(90,90,90);
     color: white;
     resize: both;
-    overflow: auto;  
+    overflow: auto;
 }
 
 .docToValidate_Window .innerWindow {
@@ -63,7 +63,7 @@
 
 #docToValidate_Comment {
     min-height:500px;
-    min-width: 500px; 
+    min-width: 500px;
     overflow: unset;
 }
 
@@ -85,4 +85,66 @@
     margin-left: 0;
     padding: 5px;
     background-color:red;
+}
+
+
+#innerWindowComment {
+  width: 100%;
+  height: 100%;
+  padding : 0;
+  margin: 0;
+  vertical-align:top;
+  display: grid;
+  min-width: 400px;
+  min-height: 200px;
+  grid-template-columns: 60% 40%;
+  /*grid-gap: 5px;
+  grid-auto-rows: minmax(100px, auto);*/
+}
+
+#left{
+  /*grid-column: 1;*/
+  height: 100%;
+  vertical-align:top;
+}
+
+#right{
+  /*grid-column: 4;*/
+  background-color: black;
+  height: 100%;
+  vertical-align:top;
+}
+
+#inputComment{
+  position: relative;
+  max-width: 96%;
+  min-width: 96%;
+  max-height: 200px;
+  min-height: 100px;
+  margin: 2%;
+}
+
+#inputButton{
+  margin: 10%;
+  width: 70%;
+}
+
+.talk-bubble {
+  margin: 3%;
+  position: relative;
+  width: 95%;
+  background-color: grey;
+}
+
+.talktext{
+  padding: 0.3em;
+  text-align: left;
+  line-height: 0.9em;
+}
+.talktext p{
+  /* remove webkit p margins */
+  color: white;
+  font-size: 90%;
+  -webkit-margin-before: 0em;
+  -webkit-margin-after: 0em;
 }

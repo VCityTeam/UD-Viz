@@ -17,7 +17,7 @@ export function DocToValidateView(docToValidateService, documentController) {
     this.initialize = function () {
         this.searchWindow = new DocToValidateSearchWindow(this, this.docToValidateService);
         this.browserWindow = new DocToValidateBrowserWindow(this, this.docToValidateService);
-        this.commentWindow = new DocToValidateCommentWindow(this, this.docToValidateService);
+        this.commentWindow = new DocToValidateCommentWindow(this.docToValidateService);
         this.docToValidateService.addObserver(this.browserWindow.update);
     }
 
