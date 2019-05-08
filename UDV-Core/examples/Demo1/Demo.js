@@ -240,3 +240,9 @@ docToValidateView.onopen = () => {
 docToValidateView.onclose = () => {
     document.getElementById('documentToValidateMenu').className = 'choiceMenu';
 }
+
+
+//////////// DocumentComments extension
+
+const docCommentsService = new udvcore.DocumentCommentsService(controller, requestService, config);
+const docCommentsWindow = new udvcore.DocumentCommentsWindow(controller, docCommentsService);

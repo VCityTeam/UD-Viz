@@ -25,3 +25,6 @@ export { TemporalController }       from './Modules/Temporal/Temporal';
 export { DocumentController}        from './Modules/ConsultDoc/DocumentController';
 
 export { ContributeController }     from './Extensions/Contribute/src/ContributeController';
+
+export { DocumentCommentsService }  from './Extensions/DocumentComments/services/DocumentCommentsService';
+export { DocumentCommentsWindow }   from './Extensions/DocumentComments/views/DocumentCommentsWindow';

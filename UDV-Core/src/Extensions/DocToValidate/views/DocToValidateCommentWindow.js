@@ -60,7 +60,6 @@ export class DocToValidateCommentWindow extends Window {
         console.log('enter')
         let form = document.getElementById('docToValidateComment_inputForm');
         let form_data = new FormData(form);
-        console.log(form_data);
         this.docToValidateService.publishComment(form_data).then(() => {
             document.getElementById('docToValidateComment_inputComment').value = '';
             this.getComment();
