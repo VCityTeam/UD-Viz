@@ -1,21 +1,24 @@
 import { dragElement } from './Draggable';
 import * as THREE from 'three';
+import { Window } from '../../../Shared/js/Window';
+import '../../../Shared/css/window.css';
 
-export function DocToValidateBrowserWindow(docToValidateView, docToValidateService) {
+export class DocToValidateBrowserWindow extends Window {
 
-    this.docToValidateService = docToValidateService;
-    this.docToValidateView = docToValidateView;
-    this.parent;
-
-    this.initialize = function () {
+    constructor(docToValidateView, docToValidateService) {
+        super('docToValidateBrowser', 'Document navigator', false);
+        this.docToValidateService = docToValidateService;
+        this.docToValidateView = docToValidateView;
+        this.docToValidateService.addObserver(this.update.bind(this));
+        this.addListener((event) => {
+            if (event === Window.EVENT_DESTROYED) {
+                this.docToValidateView.dispose();
+            }
+        });
     }
 
-    this.html = function () {
+    get innerContentHtml() {
         return `
-        <div id="docToValidate_Browser_header" class="docToValidate_Window_header">
-            <h2>Document navigator</h2>
-        </div>
-        <div class="innerWindow" id="docToValidate_Browser_innerWindow">
             <h3 id="docToValidate_Browser_title">Title<h3>
             <h4>Author</h4>
             <p id="docToValidate_Browser_author_name"></p>
@@ -41,23 +44,18 @@ export function DocToValidateBrowserWindow(docToValidateView, docToValidateServi
                 <button type="button" id="docToValidate_Browser_buttonValidate">Validate</button>
                 <button type ="button" id="docToValidate_Browser_buttonComment">Comments</button>
             </div>
-        </div>
         `;
     }
 
-    this.appendToElement = function(htmlElement) {
-        this.parent = htmlElement;
-        let div = document.createElement('div');
-        div.innerHTML = this.html();
-        div.id = "docToValidate_Browser";
-        div.className = "docToValidate_Window";
-        htmlElement.appendChild(div);
+    windowCreated() {
+        this.window.style.setProperty('left', '700px');
+        this.window.style.setProperty('top', '80px');
+        this.window.style.setProperty('width', '390px');
         this.browserButtonBinding();
-        dragElement(div);
         this.update();
     }
 
-    this.browserButtonBinding = function() {
+    browserButtonBinding() {
         document.getElementById('docToValidate_Browser_buttonPrev').onclick = this.prevDocument.bind(this);
         document.getElementById('docToValidate_Browser_buttonNext').onclick = this.nextDocument.bind(this);
         document.getElementById('docToValidate_Browser_buttonReset').onclick = this.resetResearch.bind(this);
@@ -68,17 +66,7 @@ export function DocToValidateBrowserWindow(docToValidateView, docToValidateServi
         document.getElementById('docToValidate_Browser_buttonComment').onclick = this.commentDocument.bind(this);
     }
 
-    this.dispose = function () {
-        let div = document.getElementById('docToValidate_Browser');
-        div.parentNode.removeChild(div);
-    }
-
-    this.isVisible = function () {
-        let div = document.getElementById('docToValidate_Browser');
-        return div !== undefined && div !== null;
-    }
-
-    this.update = async () => {
+    async update() {
         const currentDocument = this.docToValidateService.currentDocument();
         const currentDocumentId = this.docToValidateService.getCurrentDocumentId();
         const documentsCount = this.docToValidateService.getDocumentsCount();
@@ -87,7 +75,7 @@ export function DocToValidateBrowserWindow(docToValidateView, docToValidateServi
             document.getElementById('docToValidate_Browser_title').innerHTML = currentDocument.metaData.title;
             document.getElementById('docToValidate_Browser_description').innerHTML = currentDocument.metaData.description;
             document.getElementById('docToValidate_Browser_referringDate').innerHTML = currentDocument.metaData.refDate;
-            document.getElementById('docToValidate_Browser_author_name').innerHTML = author.firstName + " " + author.lastName + " (" + author.email +")";
+            document.getElementById('docToValidate_Browser_author_name').innerHTML = author.firstName + " " + author.lastName + " (" + author.email + ")";
             document.getElementById('docToValidate_Browser_publicationDate').innerHTML = currentDocument.metaData.publicationDate;
             document.getElementById('docToValidate_Browser_type').innerHTML = currentDocument.metaData.type;
             document.getElementById('docToValidate_Browser_subject').innerHTML = currentDocument.metaData.subject;
@@ -126,7 +114,7 @@ export function DocToValidateBrowserWindow(docToValidateView, docToValidateServi
         }
     }
 
-    this.orientDocument = function() {
+    orientDocument() {
         document.getElementById('docFull').style.display = 'block';
         console.log('----------------');
         console.log(this.docToValidateView.documentController.serverModel);
@@ -142,22 +130,22 @@ export function DocToValidateBrowserWindow(docToValidateView, docToValidateServi
         document.getElementById('docFull').style.display = 'block';
         document.getElementById('docFullPanel').style.display = 'block';
 
-      // if we have valid data, initiate the animated travel to orient the camera
+        // if we have valid data, initiate the animated travel to orient the camera
         if (!isNaN(currentDocument.visualization.positionX) &&
-                            !isNaN(currentDocument.visualization.quaternionX)) {
+            !isNaN(currentDocument.visualization.quaternionX)) {
             var docViewPos = new THREE.Vector3();
             docViewPos.x = parseFloat(currentDocument.visualization.positionX);
             docViewPos.y = parseFloat(currentDocument.visualization.positionY);
             docViewPos.z = parseFloat(currentDocument.visualization.positionZ);
 
-          // camera orientation for the oriented view
+            // camera orientation for the oriented view
             var docViewQuat = new THREE.Quaternion();
             docViewQuat.x = parseFloat(currentDocument.visualization.quaternionX);
             docViewQuat.y = parseFloat(currentDocument.visualization.quaternionY);
             docViewQuat.z = parseFloat(currentDocument.visualization.quaternionZ);
             docViewQuat.w = parseFloat(currentDocument.visualization.quaternionW);
             this.docToValidateView.documentController.controls.initiateTravel(docViewPos, 'auto',
-                                                              docViewQuat, true);
+                docViewQuat, true);
         }
 
         // adjust the current date if we use temporal
@@ -172,61 +160,61 @@ export function DocToValidateBrowserWindow(docToValidateView, docToValidateServi
         this.docToValidateView.documentController.view.notifyChange();
     }
 
-    this.nextDocument = function() {
+    nextDocument() {
         this.docToValidateService.nextDocument();
     }
 
-    this.prevDocument = function() {
+    prevDocument() {
         this.docToValidateService.prevDocument();
     }
 
-    this.resetResearch = function () {
+    resetResearch() {
         this.docToValidateService.clearSearch();
     }
 
-    this.deleteDocument = function () {
+    deleteDocument() {
         let confirmDeletion = confirm('You are about to delete this document. This operation cannot be undone. Are you sure ?');
         if (confirmDeletion) {
             this.docToValidateService.delete();
         }
     }
 
-    this.validateDocument = function () {
+    validateDocument() {
         let confirmValidation = confirm('Do you want to validate this document ? It will disapear from the documents to validate, and appear in the documents list.');
         if (confirmValidation) {
             this.docToValidateService.validate();
         }
     }
 
-    this.commentDocument = function () {
-        if(this.docToValidateView.commentWindow.isVisible) {
+    commentDocument() {
+        if (this.docToValidateView.commentWindow.isVisible) {
             this.docToValidateView.commentWindow.dispose();
         } else {
-            this.docToValidateView.commentWindow.appendTo(this.parent);
+            this.docToValidateView.commentWindow.appendTo(this.parentElement);
         }
     }
 
-    this.displayUpdate = function () {
+    displayUpdate() {
         let div = document.getElementById('docToValidate_Browser_innerWindow');
         div.innerHTML = `
-        <form id="docToValidate_udpateForm">
-            <label for="docToValidate_updateForm_description">Description</label>
-            <input type="text" id="docToValidate_updateForm_description" name="description">
-            <label for="docToValidate_updateForm_referringDate">Referring date</label>
-            <input type="date" id="docToValidate_updateForm_referringDate" name="refDate">
-            <label for="docToValidate_updateForm_publicationDate">Publication date</label>
-            <input type="date" id="docToValidate_updateForm_publicationDate" name="publicationDate">
-            <label for="docToValidate_updateForm_subject">Subject</label>
-            <select id="docToValidate_updateForm_subject" name="subject" form="docToValidate_updateForm">
-                <option value>None</option>
-                <option value="Architecture">Architecture</option>
-                <option value="Tourism">Tourism</option>
-                <option value="Urbanism">Urbanism</option>
-            </select>
-            <hr>
-            <button type="button" id="docToValidate_updateFrom_cancel">Cancel</button>
-            <button type="button" id="docToValidate_updateForm_submit">Update</button>
-        </form>
+            <form id="docToValidate_udpateForm">
+                <label for="docToValidate_updateForm_description">Description</label>
+                <input type="text" id="docToValidate_updateForm_description" name="description">
+                <label for="docToValidate_updateForm_referringDate">Referring date</label>
+                <input type="date" id="docToValidate_updateForm_referringDate" name="refDate">
+                <label for="docToValidate_updateForm_publicationDate">Publication date</label>
+                <input type="date" id="docToValidate_updateForm_publicationDate" name="publicationDate">
+                <label for="docToValidate_updateForm_subject">Subject</label>
+                <select id="docToValidate_updateForm_subject" name="subject" form="docToValidate_updateForm">
+                    <option value>None</option>
+                    <option value="Architecture">Architecture</option>
+                    <option value="Tourism">Tourism</option>
+                    <option value="Urbanism">Urbanism</option>
+                </select>
+                <hr>
+                <button type="button" id="docToValidate_updateFrom_cancel">Cancel</button>
+                <button type="button" id="docToValidate_updateForm_submit">Update</button>
+            </form>
         `;
 
         document.getElementById('docToValidate_updateFrom_cancel').onclick = this.displayBrowser.bind(this);
@@ -239,7 +227,7 @@ export function DocToValidateBrowserWindow(docToValidateView, docToValidateServi
         document.getElementById('docToValidate_updateForm_subject').value = doc.metaData.subject;
     }
 
-    this.displayBrowser = function () {
+    displayBrowser() {
         let div = document.getElementById('docToValidate_Browser_innerWindow');
         div.innerHTML = `
             <h3 id="docToValidate_Browser_title">Title<h3>
@@ -272,7 +260,7 @@ export function DocToValidateBrowserWindow(docToValidateView, docToValidateServi
         this.docToValidateView.searchWindow.search();
     }
 
-    this.updateDocument = function () {
+    updateDocument() {
         let form = document.getElementById('docToValidate_udpateForm');
         let formData = new FormData(form);
 
@@ -280,6 +268,4 @@ export function DocToValidateBrowserWindow(docToValidateView, docToValidateServi
             this.displayBrowser();
         });
     }
-
-    this.initialize();
 }

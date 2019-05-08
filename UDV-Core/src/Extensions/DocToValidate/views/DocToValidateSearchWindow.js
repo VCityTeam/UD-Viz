@@ -4,7 +4,7 @@ import '../../../Shared/css/window.css';
 export class DocToValidateSearchWindow extends Window {
 
     constructor(docToValidateView, docToValidateService) {
-        super('searchDocToValidate', 'Research', false);
+        super('docToValidateSearch', 'Research', false);
         this.docToValidateService = docToValidateService;
         this.docToValidateView = docToValidateView;
         this.addListener((event) => {
