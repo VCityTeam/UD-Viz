@@ -28,8 +28,6 @@ export class DocToValidateBrowserWindow extends Window {
             <p id="docToValidate_Browser_referringDate"></p>
             <h4>Publication date</h4>
             <p id="docToValidate_Browser_publicationDate"></p>
-            <h4>Type</h4>
-            <p id="docToValidate_Browser_type"></p>
             <h4>Subject</h4>
             <p id="docToValidate_Browser_subject"></p>
             <img id="docToValidate_Browser_file"></img>
@@ -77,7 +75,6 @@ export class DocToValidateBrowserWindow extends Window {
             document.getElementById('docToValidate_Browser_referringDate').innerHTML = currentDocument.metaData.refDate;
             document.getElementById('docToValidate_Browser_author_name').innerHTML = author.firstName + " " + author.lastName + " (" + author.email + ")";
             document.getElementById('docToValidate_Browser_publicationDate').innerHTML = currentDocument.metaData.publicationDate;
-            document.getElementById('docToValidate_Browser_type').innerHTML = currentDocument.metaData.type;
             document.getElementById('docToValidate_Browser_subject').innerHTML = currentDocument.metaData.subject;
             document.getElementById('docToValidate_Browser_file').src = currentDocument.imgUrl;
 
@@ -97,7 +94,6 @@ export class DocToValidateBrowserWindow extends Window {
             document.getElementById('docToValidate_Browser_referringDate').innerHTML = '';
             document.getElementById('docToValidate_Browser_author_name').innerHTML = '';
             document.getElementById('docToValidate_Browser_publicationDate').innerHTML = '';
-            document.getElementById('docToValidate_Browser_type').innerHTML = '';
             document.getElementById('docToValidate_Browser_subject').innerHTML = '';
             document.getElementById('docToValidate_Browser_file').src = '';
 
@@ -195,7 +191,7 @@ export class DocToValidateBrowserWindow extends Window {
     }
 
     displayUpdate() {
-        let div = document.getElementById('docToValidate_Browser_innerWindow');
+        let div = this.innerContent;
         div.innerHTML = `
             <form id="docToValidate_udpateForm">
                 <label for="docToValidate_updateForm_description">Description</label>
@@ -228,7 +224,7 @@ export class DocToValidateBrowserWindow extends Window {
     }
 
     displayBrowser() {
-        let div = document.getElementById('docToValidate_Browser_innerWindow');
+        let div = this.innerContent;
         div.innerHTML = `
             <h3 id="docToValidate_Browser_title">Title<h3>
             <h4>Author</h4>
@@ -239,8 +235,6 @@ export class DocToValidateBrowserWindow extends Window {
             <p id="docToValidate_Browser_referringDate"></p>
             <h4>Publication date</h4>
             <p id="docToValidate_Browser_publicationDate"></p>
-            <h4>Type</h4>
-            <p id="docToValidate_Browser_type"></p>
             <h4>Subject</h4>
             <p id="docToValidate_Browser_subject"></p>
             <img id="docToValidate_Browser_file"></img>
