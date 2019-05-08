@@ -7,6 +7,7 @@ export function DocToValidateService(requestService, config) {
     this.validateUrl = `${config.server.url}${config.server.validate}`;
     this.authorUrl = `${config.server.url}${config.server.user}`
     this.fileRoute = config.server.file;
+    this.commentRoute = config.server.comment;
 
     this.documents = [];
     this.currentDocumentId = 0;
@@ -31,17 +32,17 @@ export function DocToValidateService(requestService, config) {
         this.prevFilters = filterFormData;
 
         //Code by mazine
-        const keywordFilter = filterFormData.get("keyword"); 
+        const keywordFilter = filterFormData.get("keyword");
         const startReferringDateFilter = filterFormData.get("startReferringDate");
         const endReferringDateFilter = filterFormData.get("endReferringDate");
         const startPublicationDateFilter = filterFormData.get("startPublicationDate");
         const endPublicationDateFilter = filterFormData.get("endPublicationDate");
         const subjectFiler = filterFormData.get("subject");
-        
+
         const result = this.documents.filter(document => (keywordFilter === undefined || keywordFilter === null || keywordFilter === '' ||document.metaData.title.includes(keywordFilter)) &&
-        (startReferringDateFilter === undefined || startReferringDateFilter === null || startReferringDateFilter === '' || document.metaData.referringDate > startReferringDateFilter) && 
+        (startReferringDateFilter === undefined || startReferringDateFilter === null || startReferringDateFilter === '' || document.metaData.referringDate > startReferringDateFilter) &&
         (endReferringDateFilter === undefined || endReferringDateFilter === null || endReferringDateFilter === '' || document.metaData.refDate < endReferringDateFilter) &&
-        (startPublicationDateFilter === undefined || startPublicationDateFilter === null ||startPublicationDateFilter === '' ||  document.metaData.publicationDate > startPublicationDateFilter) && 
+        (startPublicationDateFilter === undefined || startPublicationDateFilter === null ||startPublicationDateFilter === '' ||  document.metaData.publicationDate > startPublicationDateFilter) &&
         (endPublicationDateFilter === undefined || endPublicationDateFilter === null || endPublicationDateFilter === '' || document.metaData.publicationDate < endPublicationDateFilter) &&
         (subjectFiler === undefined || subjectFiler === null || subjectFiler === '' || document.metaData.subject === subjectFiler)
         );
@@ -49,6 +50,32 @@ export function DocToValidateService(requestService, config) {
         this.documents = result;
         this.currentDocumentId = 0;
         this.notifyObservers();
+    }
+
+    this.getComments = async function () {
+        let currentDocument = this.currentDocument();
+        if(currentDocument !== null && currentDocument !== undefined)
+        {
+          let url = this.documentUrl+"/"+currentDocument.id+"/"+this.commentRoute;
+          let response = (await this.requestService.send('GET',url)).response;
+          let jsonResponse = JSON.parse(response);
+          for(let element of jsonResponse){
+            var url= this.authorUrl+"/"+element.user_id;
+            let responseAuthor = (await this.requestService.send('GET',url)).response;
+            element.author = JSON.parse(responseAuthor);
+          }
+          return jsonResponse;
+        }
+        return [];
+    }
+
+    this.publishComment = async function (form_data) {
+      let currentDocument = this.currentDocument();
+      if(currentDocument !== null && currentDocument !== undefined)
+      {
+        let url = this.documentUrl+"/"+currentDocument.id+"/"+this.commentRoute;
+        let response = (await this.requestService.send('POST',url,form_data)).response;
+      }
     }
 
     this.getAuthor = async () => {
@@ -62,6 +89,13 @@ export function DocToValidateService(requestService, config) {
             throw 'No current document';
         }
     }
+
+    this.update = async function (formData) {
+        let response = (await this.requestService.send('PUT', `${this.documentUrl}/${this.currentDocument().id}`, formData)).response;
+        this.notifyObservers();
+        return response;
+    }
+
     this.delete = async function() {
         //request to delete
         let response = await this.requestService.send('DELETE', `${this.documentUrl}/${this.currentDocument().id}`)

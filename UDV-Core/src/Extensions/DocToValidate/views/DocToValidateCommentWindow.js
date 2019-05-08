@@ -1,54 +1,69 @@
-import { dragElement } from './Draggable';
+import { Window } from '../../../Shared/js/Window';
+import '../../../Shared/css/window.css';
 
-export function DocToValidateCommentWindow(docToValidateView, docToValidateService) {
+export class DocToValidateCommentWindow extends Window {
 
-    this.docToValidateService = docToValidateService;
-    this.docToValidateView = docToValidateView;
-
-    this.initialize = function () {
+    constructor(docToValidateService) {
+        super('docToValidateComment', 'Commentaires', false);
+        this.docToValidateService = docToValidateService;
     }
 
-    this.html = function () {
+    get innerContentHtml() {
         return `
-        <div id="docToValidate_Comment_header" class="docToValidate_Window_header">
-            <h2>Document Comments</h2>
-            <button class="docToValidate_buttonClose" id="docToValidate_Comment_buttonClose">Close</button>
+        <div class="innerClass" id="innerWindowComment">
+        <div id ="docToValidateComment_left">
+
         </div>
-        <div class="innerWindow">
-            <div id = "allComments_Window"> </div>
-            <div id = "addComment_Window"> 
-                <!--form id = "commentForm" >
-                    salut 
-                    tu vas bien 
-                    </br>
-                </form--> 
+        <div id ="docToValidateComment_right">
+          <form id="docToValidateComment_inputForm">
+            <div class="commentRow">
+                <textarea placeholder="Enter your comment here." id="docToValidateComment_inputComment" name="description" ></textarea>
             </div>
+            <div class="commentRow">
+                <button type="button" id ="docToValidateComment_inputButton">Comment</button>
+            </div>
+          </form>
         </div>
         `;
     }
 
-    this.appendToElement = function(htmlElement) {
-        let div = document.createElement('div');
-        div.innerHTML = this.html();
-        div.id = "docToValidate_Comment";
-        div.className = "docToValidate_Window";
-        htmlElement.appendChild(div);
-        document.getElementById('docToValidate_Comment_buttonClose').onclick = this.dispose;
-        dragElement(div);
+    getComment() {
+        this.docToValidateService.getComments().then((comments) => {
+            document.getElementById('docToValidateComment_left').innerHTML = '';
+            console.log(comments);
+            for (let comment of comments.reverse()) {
+                let text = (typeof comment.description === 'string') ? comment.description.replace(/(?:\r\n|\r|\n)/g, '<br>') : '';
+                let div = document.createElement('div');
+                div.className = 'talk-bubble';
+                div.innerHTML = `
+                    <div class="talktext">
+                    <p class="talktext-author">${comment.author.firstName} ${comment.author.lastName}</p>
+                    <p class="talktext-comment">${text}</p>
+                    </div>
+                `;
+                document.getElementById('docToValidateComment_left').appendChild(div);
+            }
+        });
     }
 
-    this.dispose = function () {
-        let div = document.getElementById('docToValidate_Comment');
-        if (div) {
-            div.parentNode.removeChild(div);
-        }
+    windowCreated() {
+        this.window.style.setProperty('width', '500px');
+        this.window.style.setProperty('height', '500px');
+        this.window.style.setProperty('left', '1100px');
+        this.window.style.setProperty('top', '80px');
+        this.window.style.setProperty('resize', 'both');
+        document.getElementById('docToValidateComment_inputButton').onclick = this.publishComment.bind(this);
+        this.getComment();
     }
 
-    this.isVisible = function () {
-        let div = document.getElementById('docToValidate_Comment');
-        return div !== undefined && div !== null;
+    publishComment() {
+        console.log('enter')
+        let form = document.getElementById('docToValidateComment_inputForm');
+        let form_data = new FormData(form);
+        console.log(form_data);
+        this.docToValidateService.publishComment(form_data).then(() => {
+            document.getElementById('docToValidateComment_inputComment').value = '';
+            this.getComment();
+        });
     }
-
-
-    this.initialize();
 }

@@ -22,7 +22,7 @@ export function AuthenticationService(requestService, config) {
         this.requestService.setAuthenticationService(this);
         console.log('Authentication service initialized');
     };
-    
+
     this.login = async function login(formData) {
         if (!this.formCheck(formData, this.loginRequiredKeys)) {
             throw 'Invalid form';
@@ -32,11 +32,11 @@ export function AuthenticationService(requestService, config) {
             throw 'Already logged in';
         }
 
-
         const result = (await this.requestService.send('POST', this.loginUrl, formData, false)).response;
         const obj = JSON.parse(result);
-        if(obj){}
-        else {throw 'Username or password is incorrect'}
+        if (!obj) {
+            throw 'Username or password is incorrect'
+        }
         const jwt = obj.token;
         if (jwt !== undefined && jwt !== null) {
             this.storeToken(jwt);
