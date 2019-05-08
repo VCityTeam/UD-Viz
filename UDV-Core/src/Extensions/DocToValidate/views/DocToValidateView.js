@@ -22,7 +22,7 @@ export function DocToValidateView(docToValidateService, documentController) {
     }
 
     this.appendToElement = function (htmlElement) {
-        this.searchWindow.appendToElement(htmlElement);
+        this.searchWindow.appendTo(htmlElement);
         this.browserWindow.appendToElement(htmlElement);
         this.docToValidateService.search(new FormData());
         if (typeof this.onopen === 'function') {
@@ -41,7 +41,7 @@ export function DocToValidateView(docToValidateService, documentController) {
     }
 
     this.isVisible = function () {
-        return this.searchWindow.isVisible();
+        return this.searchWindow.isVisible;
     }
 
     this.initialize();

@@ -1,68 +1,54 @@
-import { dragElement } from './Draggable';
+import { Window } from '../../../Shared/js/Window';
+import '../../../Shared/css/window.css';
 
-export function DocToValidateSearchWindow(docToValidateView, docToValidateService) {
+export class DocToValidateSearchWindow extends Window {
 
-    this.docToValidateService = docToValidateService;
-    this.docToValidateView = docToValidateView;
-
-    this.initialize = function () {
+    constructor(docToValidateView, docToValidateService) {
+        super('searchDocToValidate', 'Research', false);
+        this.docToValidateService = docToValidateService;
+        this.docToValidateView = docToValidateView;
+        this.addListener((event) => {
+            if (event === Window.EVENT_DESTROYED) {
+                this.docToValidateView.dispose();
+            }
+        });
     }
 
-    this.html = function () {
+    get innerContentHtml() {
         return `
-            <div id="docToValidate_Search_header" class="docToValidate_Window_header">
-                <h2>Research</h2>
-                <button id="docToValidate_buttonClose" class="docToValidate_buttonClose">Close</button>
-            </div>
-            <div class="innerWindow">
-                <form id="docToValidate_searchForm">
-                    <label for="docToValidate_searchForm_keyword">Keyword</label>
-                    <input type="text" id="docToValidate_searchForm_keyword" name="keyword">
-                    <label for="docToValidate_searchForm_startReferringDate">Start referring date</label>
-                    <input type="date" id="docToValidate_searchForm_startReferringDate" name="startReferringDate">
-                    <label for="docToValidate_searchForm_endReferringDate">End referring date</label>
-                    <input type="date" id="docToValidate_searchForm_endReferringDate" name="endReferringDate">
-                    <label for="docToValidate_searchForm_startPublicationDate">Start publication date</label>
-                    <input type="date" id="docToValidate_searchForm_startPublicationDate" name="startPublicationDate">
-                    <label for="docToValidate_searchForm_endPublicationDate">End publication date</label>
-                    <input type="date" id="docToValidate_searchForm_endPublicationDate" name="endPublicationDate">
-                    <label for="docToValidate_searchForm_subject">Subject</label>
-                    <select id="docToValidate_searchForm_subject" name="subject" form="docToValidate_searchForm">
-                        <option value>None</option>
-                        <option value="Architecture">Architecture</option>
-                        <option value="Tourism">Tourism</option>
-                        <option value="Urbanism">Urbanism</option>
-                    </select>
-                    <hr>
-                    <button type="button" id="docToValidate_searchForm_submit">Search</button>
-                </form>
-            </div>
+            <form id="docToValidate_searchForm">
+                <label for="docToValidate_searchForm_keyword">Keyword</label>
+                <input type="text" id="docToValidate_searchForm_keyword" name="keyword">
+                <label for="docToValidate_searchForm_startReferringDate">Start referring date</label>
+                <input type="date" id="docToValidate_searchForm_startReferringDate" name="startReferringDate">
+                <label for="docToValidate_searchForm_endReferringDate">End referring date</label>
+                <input type="date" id="docToValidate_searchForm_endReferringDate" name="endReferringDate">
+                <label for="docToValidate_searchForm_startPublicationDate">Start publication date</label>
+                <input type="date" id="docToValidate_searchForm_startPublicationDate" name="startPublicationDate">
+                <label for="docToValidate_searchForm_endPublicationDate">End publication date</label>
+                <input type="date" id="docToValidate_searchForm_endPublicationDate" name="endPublicationDate">
+                <label for="docToValidate_searchForm_subject">Subject</label>
+                <select id="docToValidate_searchForm_subject" name="subject" form="docToValidate_searchForm">
+                    <option value>None</option>
+                    <option value="Architecture">Architecture</option>
+                    <option value="Tourism">Tourism</option>
+                    <option value="Urbanism">Urbanism</option>
+                </select>
+                <hr>
+                <button type="button" id="docToValidate_searchForm_submit">Search</button>
+            </form>
         `;
     }
 
-    this.appendToElement = function(htmlElement) {
-        let div = document.createElement('div');
-        div.innerHTML = this.html();
-        div.id = "docToValidate_Search";
-        div.className = "docToValidate_Window";
-        htmlElement.appendChild(div);
-        document.getElementById('docToValidate_buttonClose').onclick = this.docToValidateView.dispose;
-        console.log(this.docToValidateView.dispose);
+    windowCreated() {
         document.getElementById('docToValidate_searchForm_submit').onclick = this.search.bind(this);
-        dragElement(div);
+        this.window.style.setProperty('top', '80px');
+        this.window.style.setProperty('left', '310px');
+        this.window.style.setProperty('width', '380px');
+        this.window.style.setProperty('height', '360px');
     }
 
-    this.dispose = function () {
-        let div = document.getElementById('docToValidate_Search');
-        div.parentNode.removeChild(div);
-    }
-
-    this.isVisible = function () {
-        let div = document.getElementById('docToValidate_Search');
-        return div !== undefined && div !== null;
-    }
-
-    this.search = function () {
+    search() {
         const form = document.getElementById('docToValidate_searchForm');
         const formData = new FormData(form);
         for (let entry of formData.entries()) {
@@ -70,6 +56,4 @@ export function DocToValidateSearchWindow(docToValidateView, docToValidateServic
         }
         this.docToValidateService.search(formData);
     }
-
-    this.initialize();
 }

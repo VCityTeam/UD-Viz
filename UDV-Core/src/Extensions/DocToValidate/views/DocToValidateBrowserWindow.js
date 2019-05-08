@@ -107,6 +107,7 @@ export function DocToValidateBrowserWindow(docToValidateView, docToValidateServi
             document.getElementById('docToValidate_Browser_title').innerHTML = '';
             document.getElementById('docToValidate_Browser_description').innerHTML = '';
             document.getElementById('docToValidate_Browser_referringDate').innerHTML = '';
+            document.getElementById('docToValidate_Browser_author_name').innerHTML = '';
             document.getElementById('docToValidate_Browser_publicationDate').innerHTML = '';
             document.getElementById('docToValidate_Browser_type').innerHTML = '';
             document.getElementById('docToValidate_Browser_subject').innerHTML = '';

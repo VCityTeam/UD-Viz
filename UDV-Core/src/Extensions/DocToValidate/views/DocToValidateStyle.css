@@ -34,7 +34,7 @@
     height: 80%;
 }
 
-.docToValidate_Window input, .docToValidate_Window select {
+.window-inner-content input, .window-inner-content select {
     width: 100%;
 }
 
@@ -66,33 +66,6 @@
     width: 100%;
     margin-bottom: 10px;
 }
-
-#docToValidate_Comment {
-    min-height:500px;
-    min-width: 500px;
-    overflow: unset;
-}
-
-#allComments_Window {
-    display: inline-block;
-    height: 100%;
-    width: 60%;
-    margin: -5px;
-    margin-right: 0;
-    padding: 5px;
-    background-color: blue;
-}
-
-#addComment_Window {
-    display: inline-block;
-    height: 100%;
-    width: 40%;
-    margin: -5px;
-    margin-left: 0;
-    padding: 5px;
-    background-color:red;
-}
-
 
 #innerWindowComment {
   width: 100%;
