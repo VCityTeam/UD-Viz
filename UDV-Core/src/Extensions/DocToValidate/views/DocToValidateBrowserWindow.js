@@ -96,6 +96,7 @@ export function DocToValidateBrowserWindow(docToValidateView, docToValidateServi
             document.getElementById('docToValidate_Browser_buttonPrev').disabled = false;
             document.getElementById('docToValidate_Browser_buttonNext').disabled = false;
             document.getElementById('docToValidate_Browser_buttonReset').disabled = false;
+            document.getElementById('docToValidate_Browser_buttonUpdate').disabled = false;
             document.getElementById('docToValidate_Browser_buttonOrient').disabled = false;
             document.getElementById('docToValidate_Browser_buttonDelete').disabled = false;
             document.getElementById('docToValidate_Browser_buttonValidate').disabled = false;
@@ -114,6 +115,7 @@ export function DocToValidateBrowserWindow(docToValidateView, docToValidateServi
             document.getElementById('docToValidate_Browser_buttonPrev').disabled = true;
             document.getElementById('docToValidate_Browser_buttonNext').disabled = true;
             document.getElementById('docToValidate_Browser_buttonReset').disabled = true;
+            document.getElementById('docToValidate_Browser_buttonUpdate').disabled = true;
             document.getElementById('docToValidate_Browser_buttonOrient').disabled = true;
             document.getElementById('docToValidate_Browser_buttonDelete').disabled = true;
             document.getElementById('docToValidate_Browser_buttonValidate').disabled = true;
@@ -273,9 +275,9 @@ export function DocToValidateBrowserWindow(docToValidateView, docToValidateServi
         let form = document.getElementById('docToValidate_udpateForm');
         let formData = new FormData(form);
 
-        this.docToValidateService.update(formData);
-
-        this.displayBrowser();
+        this.docToValidateService.update(formData).then((result) => {
+            this.displayBrowser();
+        });
     }
 
     this.initialize();

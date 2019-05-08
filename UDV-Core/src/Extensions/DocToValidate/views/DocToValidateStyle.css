@@ -61,6 +61,12 @@
     margin-top: 2px;
 }
 
+#docToValidate_Browser_file {
+    margin-top: 10px;
+    width: 100%;
+    margin-bottom: 10px;
+}
+
 #docToValidate_Comment {
     min-height:500px;
     min-width: 500px;
@@ -95,7 +101,7 @@
   margin: 0;
   vertical-align:top;
   display: grid;
-  grid-template-columns: 60% 40%;
+  grid-template-columns: 55% 45%;
 }
 
 #docToValidateComment_left{
@@ -109,13 +115,13 @@
 }
 
 #docToValidateComment_inputComment{
-  height: 80px;
+  height: 150px;
   width: 90%;
   margin: auto;
   border-radius: 3px;
   resize: none;
   margin-top: 5px;
-  font-size: 11pt;
+  font-size: 10pt;
 }
 
 #docToValidateComment_inputButton{
