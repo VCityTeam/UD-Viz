@@ -38,7 +38,6 @@
     display: grid;
     grid-row: 1;
     grid-column: 1;
-    /*grid-template-rows: 5vw repeat(5, 3vw 2.5vw) 1fr;*/
     width: 30vw;
     height: 42vw;
     padding: 1.5vw 6%;

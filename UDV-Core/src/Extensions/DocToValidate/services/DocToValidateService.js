@@ -39,50 +39,49 @@ export function DocToValidateService(requestService, config) {
         const endPublicationDateFilter = filterFormData.get("endPublicationDate");
         const subjectFiler = filterFormData.get("subject");
 
-        const result = this.documents.filter(document => (keywordFilter === undefined || keywordFilter === null || keywordFilter === '' ||document.metaData.title.includes(keywordFilter)) &&
-        (startReferringDateFilter === undefined || startReferringDateFilter === null || startReferringDateFilter === '' || document.metaData.referringDate > startReferringDateFilter) &&
-        (endReferringDateFilter === undefined || endReferringDateFilter === null || endReferringDateFilter === '' || document.metaData.refDate < endReferringDateFilter) &&
-        (startPublicationDateFilter === undefined || startPublicationDateFilter === null ||startPublicationDateFilter === '' ||  document.metaData.publicationDate > startPublicationDateFilter) &&
-        (endPublicationDateFilter === undefined || endPublicationDateFilter === null || endPublicationDateFilter === '' || document.metaData.publicationDate < endPublicationDateFilter) &&
-        (subjectFiler === undefined || subjectFiler === null || subjectFiler === '' || document.metaData.subject === subjectFiler)
+        //Filters the fetched documents with the form filters
+        const filtered = this.documents.filter(document => (keywordFilter === undefined || keywordFilter === null || keywordFilter === '' || document.metaData.title.includes(keywordFilter)) &&
+            (startReferringDateFilter === undefined || startReferringDateFilter === null || startReferringDateFilter === '' || document.metaData.referringDate > startReferringDateFilter) &&
+            (endReferringDateFilter === undefined || endReferringDateFilter === null || endReferringDateFilter === '' || document.metaData.refDate < endReferringDateFilter) &&
+            (startPublicationDateFilter === undefined || startPublicationDateFilter === null || startPublicationDateFilter === '' || document.metaData.publicationDate > startPublicationDateFilter) &&
+            (endPublicationDateFilter === undefined || endPublicationDateFilter === null || endPublicationDateFilter === '' || document.metaData.publicationDate < endPublicationDateFilter) &&
+            (subjectFiler === undefined || subjectFiler === null || subjectFiler === '' || document.metaData.subject === subjectFiler)
         );
 
-        this.documents = result;
+        this.documents = filtered;
         this.currentDocumentId = 0;
         this.notifyObservers();
     }
 
     this.getComments = async function () {
         let currentDocument = this.currentDocument();
-        if(currentDocument !== null && currentDocument !== undefined)
-        {
-          let url = this.documentUrl+"/"+currentDocument.id+"/"+this.commentRoute;
-          let response = (await this.requestService.send('GET',url)).response;
-          let jsonResponse = JSON.parse(response);
-          for(let element of jsonResponse){
-            var url= this.authorUrl+"/"+element.user_id;
-            let responseAuthor = (await this.requestService.send('GET',url)).response;
-            element.author = JSON.parse(responseAuthor);
-          }
-          return jsonResponse;
+        if (currentDocument !== null && currentDocument !== undefined) {
+            let url = this.documentUrl + "/" + currentDocument.id + "/" + this.commentRoute;
+            let response = (await this.requestService.send('GET', url)).response;
+            let jsonResponse = JSON.parse(response);
+            for (let element of jsonResponse) {
+                var url = this.authorUrl + "/" + element.user_id;
+                let responseAuthor = (await this.requestService.send('GET', url)).response;
+                element.author = JSON.parse(responseAuthor);
+            }
+            return jsonResponse;
         }
         return [];
     }
 
     this.publishComment = async function (form_data) {
-      let currentDocument = this.currentDocument();
-      if(currentDocument !== null && currentDocument !== undefined)
-      {
-        let url = this.documentUrl+"/"+currentDocument.id+"/"+this.commentRoute;
-        let response = (await this.requestService.send('POST',url,form_data)).response;
-      }
+        let currentDocument = this.currentDocument();
+        if (currentDocument !== null && currentDocument !== undefined) {
+            let url = this.documentUrl + "/" + currentDocument.id + "/" + this.commentRoute;
+            let response = (await this.requestService.send('POST', url, form_data)).response;
+        }
     }
 
     this.getAuthor = async () => {
         if (this.getDocumentsCount() > 0) {
-            var idAuthor=this.currentDocument().user_id;
-            var url= this.authorUrl+"/"+idAuthor;
-            let response = (await this.requestService.send('GET',url)).response;
+            var idAuthor = this.currentDocument().user_id;
+            var url = this.authorUrl + "/" + idAuthor;
+            let response = (await this.requestService.send('GET', url)).response;
             let author = JSON.parse(response);
             return author;
         } else {
@@ -96,14 +95,14 @@ export function DocToValidateService(requestService, config) {
         return response;
     }
 
-    this.delete = async function() {
+    this.delete = async function () {
         //request to delete
         let response = await this.requestService.send('DELETE', `${this.documentUrl}/${this.currentDocument().id}`)
         //refetch documents
         await this.search(this.prevFilters);
     }
 
-    this.validate = async function() {
+    this.validate = async function () {
         let formData = new FormData();
         formData.append('id', this.currentDocument().id);
         let response = await this.requestService.send('POST', this.validateUrl, formData);
@@ -142,7 +141,7 @@ export function DocToValidateService(requestService, config) {
         return this.documents[this.currentDocumentId];
     }
 
-    this.getCurrentDocumentId = function() {
+    this.getCurrentDocumentId = function () {
         return this.currentDocumentId;
     }
 

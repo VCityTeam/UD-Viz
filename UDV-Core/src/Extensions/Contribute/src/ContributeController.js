@@ -17,7 +17,7 @@ import { MAIN_LOOP_EVENTS } from 'itowns';
  */
 
 export function ContributeController(documentController, requestService){
-
+  // Service to make HTTP requests (see Modules/Request)
   this.requestService = requestService;
 
   this.documentController = documentController;

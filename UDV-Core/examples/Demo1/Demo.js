@@ -125,9 +125,6 @@ $.ajax({
     }
 });
 
-console.log('config :');
-console.log(config);
-
 //////////// Request service
 
 const requestService = new udvcore.RequestService();
@@ -137,6 +134,7 @@ const requestService = new udvcore.RequestService();
 const authenticationService = new udvcore.AuthenticationService(requestService, config);
 const loginRegistration= new udvcore.LoginRegistrationWindow(authenticationService);
 
+// Binds the left menu button to the activation of the extension
 document.getElementById('loginRegistration').onclick = () => {
     if(loginRegistration.isVisible() === false) {
         loginRegistration.appendToElement(document.getElementById('contentSection'));
@@ -145,6 +143,7 @@ document.getElementById('loginRegistration').onclick = () => {
     }
 };
 
+// Binds the left menu button to the activation of the extension
 document.getElementById('logout').onclick = () => {
     try {
         authenticationService.logout();
@@ -153,6 +152,7 @@ document.getElementById('logout').onclick = () => {
     }
 };
 
+// Updates the profile view
 const updateView = () => {
     if (authenticationService.isUserLoggedIn()) {
         const user = authenticationService.getUser();
@@ -221,10 +221,9 @@ const compass = new udvcore.CompassController(controls);
 //////////// DocToValidate extension
 
 const docToValidateService = new udvcore.DocToValidateService(requestService, config);
-console.log('helelo');
 const docToValidateView = new udvcore.DocToValidateView(docToValidateService, controller);
-console.log('lkdj');
 
+// Binds the left menu button to the activation of the extension
 document.getElementById('documentToValidateMenu').onclick = () => {
     if (docToValidateView.isVisible()) {
         docToValidateView.dispose();
@@ -233,6 +232,7 @@ document.getElementById('documentToValidateMenu').onclick = () => {
     }
 }
 
+// Updates the left menu button with the extension's events
 docToValidateView.onopen = () => {
     document.getElementById('documentToValidateMenu').className = 'choiceMenu choiceMenuSelected';
 }

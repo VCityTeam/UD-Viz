@@ -1,10 +1,5 @@
 import './AuthenticationView.css';
-import {dragElement} from "../../DocToValidate/views/Draggable";
 
-/**
- * adds an "About" window that can be open/closed with a button
- * simply include this file in the html, no need to instanciate anything in main.js
- */
 export function LoginRegistrationWindow(authenticationService) {
 
     this.authenticationService = authenticationService;
@@ -110,7 +105,8 @@ export function LoginRegistrationWindow(authenticationService) {
         return validate;
     }
     this.verifymail = function () {
-        var RegularExpression = /^(([^<>()[]\.,;:s@]+(.[^<>()[]\.,;:s@]+)*)|(.+))@(([[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}])|(([a-zA-Z-0-9]+.)+[a-zA-Z]{2,}))$/;
+        // This regular expression checks an email in the form of 'name@example.com'
+        let RegularExpression = /^(([^<>()[]\.,;:s@]+(.[^<>()[]\.,;:s@]+)*)|(.+))@(([[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}])|(([a-zA-Z-0-9]+.)+[a-zA-Z]{2,}))$/;
         let element = document.getElementById("Email");
         if (RegularExpression.test(element.value)) {
             element.setAttribute("style", "");
@@ -144,12 +140,6 @@ export function LoginRegistrationWindow(authenticationService) {
 
     this.registerFunction = async function () {
         this.displayRegisterError('');
-        // const password = document.getElementById('PasswordRegistration').value;
-        // const confirmPassword = document.getElementById('ConfirmPasswordRegistration').value;
-        // if (password !== confirmPassword) {
-        //     this.displayRegisterError('Passwords must be identical.');
-        //     return;
-        // }
         const registerForm = document.getElementById('RegistrationForm');
         const formData = new FormData(registerForm);
         var formIds = ['Firstname', 'Lastname', 'Username', 'Email', 'PasswordRegistration'];

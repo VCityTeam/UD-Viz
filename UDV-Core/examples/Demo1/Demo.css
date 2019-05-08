@@ -151,6 +151,7 @@ header {
     background-color: #3c3c3c;
 }
 
+/* The :before option allows to put an icon left to the label in the menu */
 #aboutMenu:before {
     content: url("Icons/about.svg");
 }
