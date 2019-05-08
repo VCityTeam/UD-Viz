@@ -180,6 +180,10 @@ export function DocumentController(view, controls, options = {},config)
       this.docIndex = 0;
       this.documentBrowser.docIndex = 1;
       this.currentDoc = this.setOfDocuments[0];
+      if (this.currentDoc !== null && this.currentDoc !== undefined) {
+        this.documentBrowser.currentDoc = this.currentDoc;
+        this.documentBrowser.currentMetadata = this.currentDoc.metaData;
+      }
       this.documentBrowser.updateBrowser();
     }
 
