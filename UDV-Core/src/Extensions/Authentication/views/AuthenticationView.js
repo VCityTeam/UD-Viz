@@ -104,6 +104,12 @@ export function LoginRegistrationWindow(authenticationService) {
         }
         return validate;
     }
+    this.deleteValuesForm = function (formIds) {
+        for (var id in formIds) {
+            let element = document.getElementById(formIds[id]);
+            element.value ="";
+        }
+    }
     this.verifymail = function () {
         // This regular expression checks an email in the form of 'name@example.com'
         let RegularExpression = /^(([^<>()[]\.,;:s@]+(.[^<>()[]\.,;:s@]+)*)|(.+))@(([[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}])|(([a-zA-Z-0-9]+.)+[a-zA-Z]{2,}))$/;
@@ -146,6 +152,7 @@ export function LoginRegistrationWindow(authenticationService) {
         if (this.verifyNotEmptyValuesForm(formIds) & this.verifymail()) {
             try {
                 await this.authenticationService.register(formData);
+                this.deleteValuesForm(formIds);
                 this.displayRegisterSuccess("Your registration succeed");
 
             } catch (e) {
