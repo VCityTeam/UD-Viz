@@ -10,7 +10,6 @@ export { RequestService }           from './Modules/Request/RequestService';
 
 export { GuidedTourController }     from './Modules/GuidedTour/GuidedTourController';
 
-//export { AuthenticationController } from './Extensions/Authentication/services/AuthenticationController';
 export { LoginRegistrationWindow }  from './Extensions/Authentication/views/AuthenticationView';
 
 export { DocToValidateService }     from './Extensions/DocToValidate/services/DocToValidateService';
@@ -26,3 +25,6 @@ export { TemporalController }       from './Modules/Temporal/Temporal';
 export { DocumentController}        from './Modules/ConsultDoc/DocumentController';
 
 export { ContributeController }     from './Extensions/Contribute/src/ContributeController';
+
+export { DocumentCommentsService }  from './Extensions/DocumentComments/services/DocumentCommentsService';
+export { DocumentCommentsWindow }   from './Extensions/DocumentComments/views/DocumentCommentsWindow';

@@ -90,6 +90,7 @@ header {
     min-height: 80px;
     background-color: black;
     margin-bottom: 20px;
+    text-align: center;
 }
 
 #profileIcon {
@@ -110,7 +111,6 @@ header {
 .logInOut {
     position: relative;
     bottom: 0;
-    left: 25%;
     width: 50%;
     font-size: 24px;
     border-radius: 10px;
@@ -120,6 +120,10 @@ header {
     background-color: #333333;
     border: 2px solid gray;
     height: 33px;
+}
+
+#loginRegistration {
+    left: 23%;
 }
 
 .logInOut:hover {
@@ -151,6 +155,7 @@ header {
     background-color: #3c3c3c;
 }
 
+/* The :before option allows to put an icon left to the label in the menu */
 #aboutMenu:before {
     content: url("Icons/about.svg");
 }

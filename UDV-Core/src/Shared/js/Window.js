@@ -1,6 +1,8 @@
-//import '../css/window.css';
 import { dragElement } from './Draggable.js';
 
+// Documentation is on the Wiki
+// URL : https://github.com/MEPP-team/UDV/wiki/Window-Framework
+// You can see an example in UDV-Core/examples/DemoWindow
 export class Window {
     constructor(uniqueName, title, hideOnClose = true) {
         this.name = uniqueName;

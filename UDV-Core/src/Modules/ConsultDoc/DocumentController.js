@@ -41,6 +41,8 @@ export function DocumentController(view, controls, options = {},config)
     this.browserContainerId = "browserContainer";
     this.urlFilters ="";
 
+    // If these are defines as function, they are triggered when the window is opened or closed.
+    // It would be better to replace it with an observer or a listener list
     this.onclose;
     this.onopen;
 
@@ -113,7 +115,6 @@ export function DocumentController(view, controls, options = {},config)
 
       var filters = new FormData(document.getElementById(this.documentResearch.filterFormId)).entries();
       var urlFilters = this.url + this.serverModel.document + '?';
-      console.log(urlFilters);
       for(var pair of filters ){
         if(pair[1]!=""){
           urlFilters+= pair[0] + "=" + pair[1];
@@ -179,6 +180,10 @@ export function DocumentController(view, controls, options = {},config)
       this.docIndex = 0;
       this.documentBrowser.docIndex = 1;
       this.currentDoc = this.setOfDocuments[0];
+      if (this.currentDoc !== null && this.currentDoc !== undefined) {
+        this.documentBrowser.currentDoc = this.currentDoc;
+        this.documentBrowser.currentMetadata = this.currentDoc.metaData;
+      }
       this.documentBrowser.updateBrowser();
     }
 

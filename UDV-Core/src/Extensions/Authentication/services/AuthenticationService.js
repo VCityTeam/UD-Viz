@@ -3,8 +3,10 @@ export function AuthenticationService(requestService, config) {
     this.observers = [];
     this.config = config;
     this.loginUrl = `${config.server.url}${config.server.login}`;
+    //route to manage users (register)
     this.userUrl = `${config.server.url}${config.server.user}`;
-    this.userMeUrl = `${config.server.url}${config.server.userMe}`
+    //route to get personal information
+    this.userMeUrl = `${config.server.url}${config.server.userMe}`;
     this.requestService = new udvcore.RequestService();
     this.loginRequiredKeys = ['username', 'password'];
     this.registerRequiredKeys = ['username', 'firstName', 'lastName', 'password', 'email'];
@@ -33,11 +35,11 @@ export function AuthenticationService(requestService, config) {
         }
 
         const result = (await this.requestService.send('POST', this.loginUrl, formData, false)).response;
-        const obj = JSON.parse(result);
-        if (!obj) {
+        const resultJson = JSON.parse(result);
+        if (!resultJson) {
             throw 'Username or password is incorrect'
         }
-        const jwt = obj.token;
+        const jwt = resultJson.token;
         if (jwt !== undefined && jwt !== null) {
             this.storeToken(jwt);
             let response = JSON.parse((await this.requestService.send('GET', this.userMeUrl)).response);
@@ -60,7 +62,7 @@ export function AuthenticationService(requestService, config) {
         if (!this.isUserLoggedIn()) {
             throw 'Not logged in';
         }
-        this.removeUser();
+        this.removeUserFromSession();
 
         this.notifyObservers();
     };
@@ -88,7 +90,7 @@ export function AuthenticationService(requestService, config) {
         return true;
     };
 
-    this.removeUser = function removeUser() {
+    this.removeUserFromSession = function removeUserFromSession() {
         window.sessionStorage.removeItem(this.storageKeys.token);
         window.sessionStorage.removeItem(this.storageKeys.firstname);
         window.sessionStorage.removeItem(this.storageKeys.lastname);
@@ -129,7 +131,6 @@ export function AuthenticationService(requestService, config) {
             return false;
         }
     };
-
 
     // Observers
     this.addObserver = function (observerFunction) {

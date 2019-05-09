@@ -1,3 +1,5 @@
+// Service used to make HTTP requests and manage authentication
+// Wiki : https://github.com/MEPP-team/UDV/wiki/Request-Service#request-service
 export function RequestService() {
     this.authenticationService;
     this.useAuthentication = false;

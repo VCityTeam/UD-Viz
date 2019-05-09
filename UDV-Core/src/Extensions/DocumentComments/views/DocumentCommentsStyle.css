@@ -1,0 +1,84 @@
+#docBrowserCommentButton {
+    z-index: 20;
+    left: 10px;
+    position: absolute;
+    margin: 5px;
+    font-size: 14px;
+    border: 1px solid black;
+    background-color: white;
+    color: black;
+    height: 30px;
+    pointer-events: auto;
+    bottom: 50px;
+}
+
+#documentComments_innerWindow {
+    width: 100%;
+    height: 100%;
+    padding : 0;
+    margin: 0;
+    vertical-align:top;
+    display: grid;
+    grid-template-columns: 55% 45%;
+  }
+  
+  #documentComments_left{
+    vertical-align:top;
+    overflow-y: auto;
+  }
+  
+  #documentComments_right{
+    /*background-color: black;*/
+    vertical-align:top;
+  }
+  
+  #documentComments_inputComment{
+    height: 150px;
+    width: 90%;
+    margin: auto;
+    border-radius: 3px;
+    resize: none;
+    margin-top: 5px;
+    font-size: 10pt;
+  }
+  
+  #documentComments_inputButton{
+    margin: 10%;
+    width: 70%;
+  }
+  
+  .commentRow {
+      width: 100%;
+      text-align: center;
+  }
+  
+  .talk-bubble {
+    margin: 3%;
+    position: relative;
+    width: 95%;
+    background-color: #e3dfff;
+    border-radius: 5px;
+    margin: 5px;
+  }
+  
+  .talktext{
+    padding: 0.3em;
+    text-align: left;
+    line-height: 0.9em;
+  }
+  
+  .talktext-comment {
+    /* remove webkit p margins */
+    color: #2f2d2e;
+    padding-left: 10px;
+    padding-right: 10px;
+    font-size: 90%;
+  }
+  
+  .talktext-author {
+      border-bottom: 1px solid rgba(0, 0, 0, 0.3);
+      margin-top: 0;
+      padding: 5px;
+      font-weight: bold;
+      color: #41292c;
+  }

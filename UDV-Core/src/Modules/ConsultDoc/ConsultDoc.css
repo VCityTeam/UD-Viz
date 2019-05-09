@@ -202,7 +202,7 @@
 
 
 #docFullImg{
-    width: 100%; /* or any custom size */
+    width: 80%; /* or any custom size */
     height: 100%;
     object-fit: contain;
     opacity: 0.5;

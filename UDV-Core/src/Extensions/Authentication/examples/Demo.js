@@ -127,7 +127,6 @@ $.ajax({
 
 const requestService = new udvcore.RequestService();
 const authenticationService = new udvcore.AuthenticationService(requestService, config);
-//const authenticationController = new udvcore.AuthenticationController(authenticationService);
 const about = new udvcore.AboutWindow({active:true});
 const help  = new udvcore.HelpWindow({active:true});
 const loginRegistration= new udvcore.LoginRegistrationWindow(authenticationService, requestService);
