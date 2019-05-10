@@ -1,0 +1,144 @@
+{
+    "type": "class",
+    "server":{
+      "url":"http://localhost:5000/",
+      "documentsRepository":"getFile/",
+      "login": "login",
+      "register": "addUser",
+      "documentToValidate": "getDocuments_to_validate",
+      "document": "document",
+      "validate": "validateDocument",
+      "file": "file"
+    },
+    "properties": {
+      "metaData":{
+        "title": {
+          "name":"title",
+          "type": "string",
+          "optional": "false",
+          "creationID":"create_title",
+          "labelCreation":"Title of the document",
+          "updatable":"false",
+          "updateID":"update_title",
+          "displayable":"true",
+          "displayID":"title",
+          "label":"false",
+          "queryable":"keyword",
+          "queryID" : "query_name"
+        },
+        "description": {
+          "name":"description",
+          "type": "string",
+          "optional": "false",
+          "creationID":"create_description",
+          "labelCreation":"Description",
+          "displayable":"true",
+          "displayID":"description",
+          "label":"Description",
+          "updatable":"true",
+          "updateID":"update_description",
+          "labelUpdate":"Description: ",
+          "queryable":"keyword"
+
+        },
+        "refDate":{
+          "name":"refDate",
+          "type":"date",
+          "optional":"false",
+          "creationID":"create_refDate",
+          "labelCreation":"Date of referrence",
+          "displayable":"true",
+          "displayID":"refDate",
+          "label":"Referring date",
+          "updatable":"true",
+          "updateID":"update_refDate",
+          "labelUpdate":"Date of referrence",
+          "queryable":"true",
+          "labelQuery":"referring date"
+        },
+        "publicationDate":{
+          "name":"publicationDate",
+          "type":"date",
+          "optional":"false",
+          "creationID":"create_publicationDate",
+          "labelCreation":"Date of publication",
+          "displayable":"true",
+          "displayID":"publicationDate",
+          "label":"Publication date",
+          "updatable":"true",
+          "updateID":"update_publicationDate",
+          "labelUpdate":"Date of publication",
+         "queryable":"true",
+          "labelQuery":"publication date"
+        },
+        "subject":{
+          "name":"subject",
+          "type":"enum",
+          "enum":["Urbanism", "Architecture", "Tourism"],
+          "optional":"false",
+          "creationID":"create_subject",
+          "labelCreation":"Subject",
+          "displayable":"true",
+          "displayID":"subject",
+          "label":"Subject",
+          "updatable":"true",
+          "updateID":"update_subject",
+          "queryable":"true",
+          "queryID":"query_subject",
+          "labelQuery":"Subject: "
+        }
+      },
+      "visualization":{
+        "positionX":{
+          "type":"double",
+          "optional":"false",
+          "displayable":"false"
+        },
+        "positionY":{
+          "type":"double",
+          "optional":"false",
+          "displayable":"false"
+        },
+        "positionZ":{
+          "type":"double",
+          "optional":"false",
+          "displayable":"false"
+        },
+        "quaternionX":{
+          "type":"double",
+          "optional":"false",
+          "displayable":"false"
+        },
+        "quaternionY":{
+          "type":"double",
+          "optional":"false",
+          "displayable":"false"
+        },
+        "quaternionZ":{
+          "type":"double",
+          "optional":"false",
+          "displayable":"false"
+        },
+        "quaternionW":{
+          "type":"double",
+          "optional":"false",
+          "displayable":"false"
+        },
+        "billboardX":{
+          "type":"double",
+          "optional":"true",
+          "displayable":"false"
+        },
+        "billboardX":{
+          "type":"double",
+          "optional":"true",
+          "displayable":"false"
+        },
+        "billboardZ":{
+          "type":"double",
+          "optional":"true",
+          "displayable":"false"
+        }
+      }
+    }
+}

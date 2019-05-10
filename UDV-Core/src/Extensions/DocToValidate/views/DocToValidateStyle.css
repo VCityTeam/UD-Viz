@@ -1,0 +1,134 @@
+.docToValidate_Window {
+    position: absolute;
+    width: 380px;
+    max-height: 90%;
+    top: 80px;
+    left: 300px;
+    background-color: rgba(30,30,30,0.6);
+    border : 1px solid rgb(90,90,90);
+    color: white;
+    resize: both;
+    overflow: auto;
+}
+
+.docToValidate_Window .innerWindow {
+    padding: 5px;
+}
+
+.docToValidate_Window_header {
+    position: relative;
+    background-color: rgba(0, 0, 0, 0.6);
+    padding-left: 10px;
+}
+
+.docToValidate_Window_header h2 {
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+.docToValidate_buttonClose {
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin: 3px;
+    height: 80%;
+}
+
+.window-inner-content input, .window-inner-content select {
+    width: 100%;
+}
+
+#_window_docToValidateBrowser p {
+    background-color: white;
+    color: black;
+    margin-bottom: 3px;
+    margin-top: 3px;
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+#_window_docToValidateBrowser h3 {
+    margin-bottom: 2px;
+    margin-top: 2px;
+}
+
+#_window_docToValidateBrowser h4 {
+    margin-bottom: 0;
+    margin-top: 2px;
+}
+
+#docToValidate_Browser_file {
+    margin-top: 10px;
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+#innerWindowComment {
+  width: 100%;
+  height: 100%;
+  padding : 0;
+  margin: 0;
+  vertical-align:top;
+  display: grid;
+  grid-template-columns: 55% 45%;
+}
+
+#docToValidateComment_left{
+  vertical-align:top;
+  overflow-y: auto;
+}
+
+#docToValidateComment_right{
+  vertical-align:top;
+}
+
+#docToValidateComment_inputComment{
+  height: 150px;
+  width: 90%;
+  margin: auto;
+  border-radius: 3px;
+  resize: none;
+  margin-top: 5px;
+  font-size: 10pt;
+}
+
+#docToValidateComment_inputButton{
+  margin: 10%;
+  width: 70%;
+}
+
+.commentRow {
+    width: 100%;
+    text-align: center;
+}
+
+.talk-bubble {
+  margin: 3%;
+  position: relative;
+  width: 95%;
+  background-color: #e3dfff;
+  border-radius: 5px;
+  margin: 5px;
+}
+
+.talktext{
+  padding: 0.3em;
+  text-align: left;
+  line-height: 0.9em;
+}
+
+.talktext-comment {
+  /* remove webkit p margins */
+  color: #2f2d2e;
+  padding-left: 10px;
+  padding-right: 10px;
+  font-size: 90%;
+}
+
+.talktext-author {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.3);
+    margin-top: 0;
+    padding: 5px;
+    font-weight: bold;
+    color: #41292c;
+}

@@ -57,6 +57,11 @@ export function DocumentResearch(researchContainer, documentController)
           if (this.windowIsActive){
            this.documentController.documentBrowser.activateWindow(true);
         }
+        if (active) {
+            this.documentController.open();
+        } else {
+            this.documentController.close();
+        }
 
     }
 
@@ -169,7 +174,7 @@ export function DocumentResearch(researchContainer, documentController)
     document.getElementById("docResearch").addEventListener('mousedown',
                                                this.research.bind(this), false);
     document.getElementById("closeResearch").addEventListener('mousedown',
-                                    this.activateWindow.bind(this,false), false);
+                                    this.documentController.toggle, false);
 
 
 }

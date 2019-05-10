@@ -147,10 +147,10 @@ export function UpdateDocument(updateContainer, contributeController){
     //holds the current document's data (= the one currently shown in the browser)
     this.data =  this.contributeController.documentController.getCurrentDoc().metaData;
     $('#'+ this.updateFormId).alpaca('get').setValue(this.data);
-    document.getElementById('docUpdatePreviewImg').src =
-                 this.contributeController.documentController.url
-               + this.contributeController.documentController.serverModel.documentsRepository
-               + this.data.link;
+    document.getElementById('docUpdatePreviewImg').src = this.contributeController.documentController.url
+                + this.contributeController.documentController.serverModel.document + '/'
+                + this.data.id + '/'
+                + this.contributeController.documentController.serverModel.file;
   }
 
   /**

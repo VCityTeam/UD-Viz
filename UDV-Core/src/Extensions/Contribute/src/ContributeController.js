@@ -16,7 +16,9 @@ import { MAIN_LOOP_EVENTS } from 'itowns';
  * @param { documentController } documentController
  */
 
-export function ContributeController(documentController){
+export function ContributeController(documentController, requestService){
+  // Service to make HTTP requests (see Modules/Request)
+  this.requestService = requestService;
 
   this.documentController = documentController;
 
@@ -27,13 +29,7 @@ export function ContributeController(documentController){
   this.updateContainerId = "updateContainer";     //update view
 
   //url to create a document
-  this.urlAdd = this.documentController.url + this.documentController.serverModel.add;
-
-  //url to update a document
-  this.urlUpdate = this.documentController.url + this.documentController.serverModel.update;
-
-  //url to delete a document
-  this.urlDelete = this.documentController.url + this.documentController.serverModel.delete;
+  this.documentUrl = this.documentController.url + this.documentController.serverModel.document;
 
   this.newDocData = null; //newly created document's data
   this.formData ; //document's static metadata
@@ -81,6 +77,8 @@ export function ContributeController(documentController){
     this.documentCreate.blurMetadataWindow(false);
 
   }
+
+  
 
   /**
    * Gets the current visualization data set by the user and
@@ -201,38 +199,15 @@ export function ContributeController(documentController){
         this.newDocData.append(pair[0], pair[1]);
       }
       //new promess
-      var newDocUpload = new Promise((resolve, reject) => {
-
-        var req = new XMLHttpRequest();
-        req.open('POST', this.urlAdd);
-
-        req.onload = function() { //event executed once the request req is done
-          if (req.status == 200) {
-            resolve(req.response);
-          }
-           else {
-             reject(Error(req.statusText));
-           }
-        };
-
-        req.onerror = function() {
-          reject("Network Error");
-        };
-        req.send(this.newDocData);
-      });
-
-      var self = this;
-
-      newDocUpload.then( function(response){
-
-        $('#' + self.documentCreate.creationFormId ).get(0).reset();
-        self.newDocData = new FormData();
-        self.visuData = new FormData();
-        self.documentController.getDocuments();
-      },
-      function(error) {
-        console.error("Failed!", error);
-      });
+      this.requestService.send('POST', this.documentUrl, this.newDocData)
+        .then((response) => {
+          $('#' + this.documentCreate.creationFormId ).get(0).reset();
+          this.newDocData = new FormData();
+          this.visuData = new FormData();
+          this.documentController.getDocuments();
+        }, (error) => {
+          console.error(error);
+        });
     }
   }
 
@@ -250,44 +225,19 @@ export function ContributeController(documentController){
     var id = currentDoc.metaData['id'];
 
     //new promise
-    var newDocUpdate = new Promise((resolve, reject) => {
-
-        var req = new XMLHttpRequest();
-        req.open('POST', this.urlUpdate + "/" + id);
-
-        req.onload = function() { //event executed once the request is over
-          if (req.status == 200) {
-            resolve(req.response);
-          }
-           else {
-             reject(Error(req.statusText));
-           }
-        };
-
-        req.onerror = function() {
-          reject("Network Error");
-        };
-        req.send(this.updatedData);
-      });
-
-      var self = this;
-
-      newDocUpdate.then( function(response){//resolve
-
-        $('#'+self.documentUpdate.updateFormId).get(0).reset(); //clear update formular
-        self.updatedData = new FormData(); //clear data
-        self.documentController.reset();
-        self.documentUpdate.activateWindow(false);
-        self.documentController.docIndex = 0;//return to first doc
-        self.documentController.documentBrowser.docIndex = 1; //reset index in browser
-        self.documentController.documentBrowser.startBrowser();
-        self.documentController.documentBrowser.activateWindow(true);
-
-      },
-      function(error) { //reject
+    this.requestService.send('PUT', this.documentUrl + '/' + id, this.updatedData)
+      .then((response) => {
+        $('#'+this.documentUpdate.updateFormId).get(0).reset(); //clear update formular
+        this.updatedData = new FormData(); //clear data
+        this.documentController.reset();
+        this.documentUpdate.activateWindow(false);
+        this.documentController.docIndex = 0;//return to first doc
+        this.documentController.documentBrowser.docIndex = 1; //reset index in browser
+        this.documentController.documentBrowser.startBrowser();
+        this.documentController.documentBrowser.activateWindow(true);
+      }, (error) => {
         console.error("Failed!", error);
       });
-
   }
 
   /**
@@ -303,40 +253,18 @@ export function ContributeController(documentController){
       var currentDoc = this.documentController.getCurrentDoc();
       var id = currentDoc.metaData['id'];
 
-      var docDelete = new Promise((resolve, reject) => {
-        var req = new XMLHttpRequest();
-        req.open('GET', this.urlDelete + "/" + id);
-        req.onload = function() { //event executed once the request is over
-          if (req.status == 200) {
-            resolve(req.response);
-          }
-           else {
-             reject(Error(req.statusText));
-           }
-        };
-
-        req.onerror = function() {
-          reject("Network Error");
-        };
-        req.send();
-      });
-
-      var self = this;
-
-      docDelete.then( function(response){//resolve
-
-        alert("The document has been deleted successfully");
-        self.documentController.getDocuments(); //update documents
-        self.documentController.docIndex = 0;//return to first doc
-        self.documentController.documentBrowser.docIndex = 1; //reset index in browser
-        self.documentController.documentBrowser.startBrowser();
-      },
-      function(error) { //reject
-        console.error("Failed!", error);
-      });
-
-    }
-    else {
+      this.requestService.send('DELETE', this.documentUrl + "/" + id)
+        .then((response) => {
+          alert("The document has been deleted successfully");
+          this.documentController.getDocuments(); //update documents
+          this.documentController.docIndex = 0;//return to first doc
+          this.documentController.documentBrowser.docIndex = 1; //reset index in browser
+          this.documentController.documentBrowser.startBrowser();
+        }, (error) => {
+          console.error("Failed!", error);
+          alert('The document was not deleted');
+        });
+    } else {
       alert('The document was not deleted');
     }
 

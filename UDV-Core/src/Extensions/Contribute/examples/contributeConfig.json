@@ -1,7 +1,7 @@
 {
     "type": "class",
     "server":{
-      "url":"http://rict.liris.cnrs.fr:1525/",
+      "url":"http://localhost:5000/",
       "documentsRepository":"getFile/",
       "getAll": "getDocuments?",
       "add":"addDocument",

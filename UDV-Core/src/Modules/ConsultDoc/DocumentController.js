@@ -29,6 +29,7 @@ export function DocumentController(view, controls, options = {},config)
     this.view = view;
     this.options = options;
     this.temporal = options.temporal;
+    this.visible = false;
 
     this.documentModel = config.properties;
     this.serverModel = config.server;
@@ -40,6 +41,11 @@ export function DocumentController(view, controls, options = {},config)
     this.browserContainerId = "browserContainer";
     this.urlFilters ="";
 
+    // If these are defines as function, they are triggered when the window is opened or closed.
+    // It would be better to replace it with an observer or a listener list
+    this.onclose;
+    this.onopen;
+
     /**
      * Create view container for the 3 different views
      */
@@ -49,15 +55,44 @@ export function DocumentController(view, controls, options = {},config)
 
         var researchContainer = document.createElement("div");
         researchContainer.id =   this.researchContainerId;
-        document.body.appendChild(researchContainer);
+        researchContainer.style = 'display: none;';
+        document.getElementById('contentSection').appendChild(researchContainer);
         this.documentResearch = new DocumentResearch(researchContainer, this);
 
         var browserContainer = document.createElement("div");
         browserContainer.id = this.browserContainerId;
-        document.body.appendChild(browserContainer);
+        browserContainer.style = 'display: none;';
+        document.getElementById('contentSection').appendChild(browserContainer);
         this.documentBrowser = new DocumentBrowser(browserContainer, this);
 
         //this.documentBillboard = new DocumentBillboard(this); //in process
+    }
+
+    this.toggle = () => {
+        this.visible = ! this.visible;
+        if (this.visible) {
+            this.documentResearch.activateWindow(true);
+            this.documentBrowser.activateWindow(true);
+            this.open();
+        } else {
+            this.documentResearch.activateWindow(false);
+            this.documentBrowser.activateWindow(false);
+            this.close();
+        }
+    }
+
+    this.open = function () {
+      this.visible = true;
+      if (typeof this.onopen === 'function') {
+        this.onopen();
+      }
+    }
+
+    this.close = function () {
+      this.visible = false;
+      if (typeof this.onclose === 'function') {
+        this.onclose();
+      }
     }
 
     /**
@@ -79,7 +114,7 @@ export function DocumentController(view, controls, options = {},config)
       //Could be improved
 
       var filters = new FormData(document.getElementById(this.documentResearch.filterFormId)).entries();
-      var urlFilters = this.url + this.serverModel.getAll;
+      var urlFilters = this.url + this.serverModel.document + '?';
       for(var pair of filters ){
         if(pair[1]!=""){
           urlFilters+= pair[0] + "=" + pair[1];
@@ -88,7 +123,8 @@ export function DocumentController(view, controls, options = {},config)
       }
       urlFilters = urlFilters.slice('&',-1);
       var req = new XMLHttpRequest();
-      req.open("POST", urlFilters,false);
+
+      req.open("GET", urlFilters,false);
       req.send();
       this.setOfDocuments = JSON.parse(req.responseText);
       this.documentBrowser.numberDocs = this.setOfDocuments.length;
@@ -144,6 +180,10 @@ export function DocumentController(view, controls, options = {},config)
       this.docIndex = 0;
       this.documentBrowser.docIndex = 1;
       this.currentDoc = this.setOfDocuments[0];
+      if (this.currentDoc !== null && this.currentDoc !== undefined) {
+        this.documentBrowser.currentDoc = this.currentDoc;
+        this.documentBrowser.currentMetadata = this.currentDoc.metaData;
+      }
       this.documentBrowser.updateBrowser();
     }
 

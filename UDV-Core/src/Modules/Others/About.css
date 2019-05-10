@@ -1,11 +1,9 @@
 
 #aboutWindow {
     position: absolute;
-    z-index: 20;
-    top:1px;
+    top: 50px;
     width: 15%;
     right : 22.5%;
-    margin: 1px;
     color: white;
     font-size: 75%;
     padding: 0 1rem;

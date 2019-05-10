@@ -16,9 +16,9 @@ import './Temporal.css';
 export function TemporalController(refreshCallback, options={}) {
 
     ///////////// Html elements
-    var temporalDiv = document.createElement("div");
+    let temporalDiv = document.createElement("div");
     temporalDiv.id = 'temporal';
-    document.body.appendChild(temporalDiv);
+    $("#contentSection").append(temporalDiv);
 
     document.getElementById("temporal").innerHTML =
     '<div id="temporalWindow">\
@@ -122,7 +122,7 @@ export function TemporalController(refreshCallback, options={}) {
         }
         document.getElementById( 'temporalWindow').style.display =
                                  active ? "block" : "none";
-    }
+    };
 
     this.refresh = function refresh( ){
       this.activateWindow( this.temporalIsActive );
