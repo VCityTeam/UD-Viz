@@ -5,7 +5,7 @@ export function DocToValidateService(requestService, config) {
     this.documentToValidateUrl = `${config.server.url}${config.server.documentToValidate}`;
     this.documentUrl = `${config.server.url}${config.server.document}`;
     this.validateUrl = `${config.server.url}${config.server.validate}`;
-    this.authorUrl = `${config.server.url}${config.server.user}`
+    this.authorUrl = `${config.server.url}${config.server.user}`;
     this.fileRoute = config.server.file;
     this.commentRoute = config.server.comment;
 
@@ -17,7 +17,7 @@ export function DocToValidateService(requestService, config) {
 
     this.initialize = function () {
         console.log('Doc To Validate Service initialized.');
-    }
+    };
 
     this.search = async function (filterFormData) {
         //request to fetch docs
@@ -31,7 +31,7 @@ export function DocToValidateService(requestService, config) {
 
         this.prevFilters = filterFormData;
 
-        //Code by mazine
+        // Get values from the fields of the search form
         const keywordFilter = filterFormData.get("keyword");
         const startReferringDateFilter = filterFormData.get("startReferringDate");
         const endReferringDateFilter = filterFormData.get("endReferringDate");
@@ -39,7 +39,8 @@ export function DocToValidateService(requestService, config) {
         const endPublicationDateFilter = filterFormData.get("endPublicationDate");
         const subjectFiler = filterFormData.get("subject");
 
-        //Filters the fetched documents with the form filters
+        // Filters the fetched documents according to the fields of the
+        // search form
         const filtered = this.documents.filter(document => (keywordFilter === undefined || keywordFilter === null || keywordFilter === '' || document.metaData.title.includes(keywordFilter)) &&
             (startReferringDateFilter === undefined || startReferringDateFilter === null || startReferringDateFilter === '' || document.metaData.referringDate > startReferringDateFilter) &&
             (endReferringDateFilter === undefined || endReferringDateFilter === null || endReferringDateFilter === '' || document.metaData.refDate < endReferringDateFilter) &&
@@ -51,7 +52,7 @@ export function DocToValidateService(requestService, config) {
         this.documents = filtered;
         this.currentDocumentId = 0;
         this.notifyObservers();
-    }
+    };
 
     this.getComments = async function () {
         let currentDocument = this.currentDocument();
@@ -67,7 +68,7 @@ export function DocToValidateService(requestService, config) {
             return jsonResponse;
         }
         return [];
-    }
+    };
 
     this.publishComment = async function (form_data) {
         let currentDocument = this.currentDocument();
@@ -75,7 +76,7 @@ export function DocToValidateService(requestService, config) {
             let url = this.documentUrl + "/" + currentDocument.id + "/" + this.commentRoute;
             let response = (await this.requestService.send('POST', url, form_data)).response;
         }
-    }
+    };
 
     this.getAuthor = async () => {
         if (this.getDocumentsCount() > 0) {
@@ -87,75 +88,75 @@ export function DocToValidateService(requestService, config) {
         } else {
             throw 'No current document';
         }
-    }
+    };
 
     this.update = async function (formData) {
         let response = (await this.requestService.send('PUT', `${this.documentUrl}/${this.currentDocument().id}`, formData)).response;
         this.notifyObservers();
         return response;
-    }
+    };
 
     this.delete = async function () {
         //request to delete
         let response = await this.requestService.send('DELETE', `${this.documentUrl}/${this.currentDocument().id}`)
         //refetch documents
         await this.search(this.prevFilters);
-    }
+    };
 
     this.validate = async function () {
         let formData = new FormData();
         formData.append('id', this.currentDocument().id);
         let response = await this.requestService.send('POST', this.validateUrl, formData);
         await this.search(this.prevFilters);
-    }
+    };
 
     this.clearSearch = function () {
         this.documents = [];
         this.currentDocumentId = 0;
         this.notifyObservers();
-    }
+    };
 
     // Observers
 
     this.addObserver = function (observerFunction) {
         this.observers.push(observerFunction);
-    }
+    };
 
     this.notifyObservers = function () {
         for (let observer of this.observers) {
             observer();
         }
-    }
+    };
 
     // Fetched documents management
 
     this.getDocuments = function () {
         return this.documents;
-    }
+    };
 
     this.getDocumentsCount = function () {
         return this.documents.length;
-    }
+    };
 
     this.currentDocument = function () {
         return this.documents[this.currentDocumentId];
-    }
+    };
 
     this.getCurrentDocumentId = function () {
         return this.currentDocumentId;
-    }
+    };
 
     this.nextDocument = function () {
         this.currentDocumentId = (this.currentDocumentId + 1) % this.documents.length;
         this.notifyObservers();
         return this.currentDocument();
-    }
+    };
 
     this.prevDocument = function () {
         this.currentDocumentId = (this.documents.length + this.currentDocumentId - 1) % this.documents.length;
         this.notifyObservers();
         return this.currentDocument();
-    }
+    };
 
     this.initialize();
-};
+}

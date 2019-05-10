@@ -21,17 +21,16 @@
     display: grid;
     grid-template-columns: 55% 45%;
   }
-  
+
   #documentComments_left{
     vertical-align:top;
     overflow-y: auto;
   }
-  
+
   #documentComments_right{
-    /*background-color: black;*/
     vertical-align:top;
   }
-  
+
   #documentComments_inputComment{
     height: 150px;
     width: 90%;
@@ -41,17 +40,17 @@
     margin-top: 5px;
     font-size: 10pt;
   }
-  
+
   #documentComments_inputButton{
     margin: 10%;
     width: 70%;
   }
-  
+
   .commentRow {
       width: 100%;
       text-align: center;
   }
-  
+
   .talk-bubble {
     margin: 3%;
     position: relative;
@@ -60,13 +59,13 @@
     border-radius: 5px;
     margin: 5px;
   }
-  
+
   .talktext{
     padding: 0.3em;
     text-align: left;
     line-height: 0.9em;
   }
-  
+
   .talktext-comment {
     /* remove webkit p margins */
     color: #2f2d2e;
@@ -74,7 +73,7 @@
     padding-right: 10px;
     font-size: 90%;
   }
-  
+
   .talktext-author {
       border-bottom: 1px solid rgba(0, 0, 0, 0.3);
       margin-top: 0;
