@@ -9,6 +9,7 @@ export function DocToValidateService(requestService, config) {
     this.fileRoute = config.server.file;
     this.commentRoute = config.server.comment;
 
+    this.allDocuments = [];
     this.documents = [];
     this.currentDocumentId = 0;
     this.prevFilters;
@@ -19,15 +20,22 @@ export function DocToValidateService(requestService, config) {
         console.log('Doc To Validate Service initialized.');
     };
 
-    this.search = async function (filterFormData) {
+    this.getDocumentsToValidate = async function() {
         //request to fetch docs
         let response = (await this.requestService.send('GET', this.documentToValidateUrl)).response;
         let docs = JSON.parse(response);
-        this.documents = [];
+        this.allDocuments = [];
         for (let doc of docs) {
             doc.imgUrl = `${this.documentUrl}/${doc.id}/${this.fileRoute}`;
-            this.documents.push(doc);
+            this.allDocuments.push(doc);
         }
+        this.documents = this.allDocuments;
+        this.currentDocumentId = 0;
+        this.notifyObservers();
+    }
+
+    this.search = async function (filterFormData) {
+        this.documents = this.allDocuments;
 
         this.prevFilters = filterFormData;
 
@@ -111,9 +119,7 @@ export function DocToValidateService(requestService, config) {
     };
 
     this.clearSearch = function () {
-        this.documents = [];
-        this.currentDocumentId = 0;
-        this.notifyObservers();
+        this.getDocumentsToValidate();
     };
 
     // Observers
