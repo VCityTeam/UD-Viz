@@ -62,8 +62,8 @@ The code is separated in two main parts : the view and the service. It ressemble
 * The service makes the appropriate request to the server, and processes the received data
 * It then notifies the listeners. The service follows a simple implementation of the [Observer pattern](https://en.wikipedia.org/wiki/Observer_pattern) where observers are just callbacks without arguments (called listeners). The view has subscribed to the service when it was created, so it received the notification of the service and can update itself.
 
-//Include here image of architecture
+![](Pictures/ViewServiceArchitecture.png)
 
 ### Services
 
-The service can be used by other module to retrieve information about the logged in user. It is for example useful to make requests (with the authorization token) or display data (like the name). For instance, the [Request Service](https://github.com/MEPP-team/UDV/wiki/Request-Service) can use the Authorization Service to inject the JWT in HTTP requests.
+The service can be used by other modules to retrieve information about the logged in user. It is for example useful to make requests (with the authorization token) or display data (like the name). For instance, the [Request Service](https://github.com/MEPP-team/UDV/wiki/Request-Service) can use the Authorization Service to inject the JWT in HTTP requests.
