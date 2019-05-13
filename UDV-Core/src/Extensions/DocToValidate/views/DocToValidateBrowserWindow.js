@@ -1,7 +1,7 @@
 import { dragElement } from './Draggable';
 import * as THREE from 'three';
-import { Window } from '../../../Shared/js/Window';
-import '../../../Shared/css/window.css';
+import { Window } from '../../../Utils/GUI/js/Window';
+import '../../../Utils/GUI/css/window.css';
 
 export class DocToValidateBrowserWindow extends Window {
 

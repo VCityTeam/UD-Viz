@@ -3,10 +3,9 @@ import { DocToValidateSearchWindow } from "./DocToValidateSearchWindow";
 import { DocToValidateBrowserWindow } from "./DocToValidateBrowserWindow";
 import { DocToValidateCommentWindow } from "./DocToValidateCommentWindow"
 
-export function DocToValidateView(docToValidateService, documentController) {
+export function DocToValidateView(docToValidateService) {
 
     this.docToValidateService = docToValidateService;
-    this.documentController = documentController;
     this.searchWindow;
     this.browserWindow;
     this.commentWindow;

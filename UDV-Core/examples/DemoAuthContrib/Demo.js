@@ -221,7 +221,7 @@ const compass = new udvcore.CompassController(controls);
 //////////// DocToValidate extension
 
 const docToValidateService = new udvcore.DocToValidateService(requestService, config);
-const docToValidateView = new udvcore.DocToValidateView(docToValidateService, controller);
+const docToValidateView = new udvcore.DocToValidateView(docToValidateService);
 
 // Binds the left menu button to the activation of the extension
 document.getElementById('documentToValidateMenu').onclick = () => {
