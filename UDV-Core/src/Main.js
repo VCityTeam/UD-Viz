@@ -6,7 +6,7 @@ export { Setup3DScene }             from './Setup3DScene';
 
 export { AuthenticationService }    from './Extensions/Authentication/services/AuthenticationService';
 
-export { RequestService }           from './Modules/Request/RequestService';
+export { RequestService }           from './Utils/Request/RequestService';
 
 export { GuidedTourController }     from './Modules/GuidedTour/GuidedTourController';
 

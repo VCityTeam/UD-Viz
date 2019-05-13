@@ -1,4 +1,4 @@
-import { Window } from '../../src/Shared/js/Window.js';
+import { Window } from '../../src/Utils/GUI/js/Window.js';
 
 export class CustomWindow extends Window {
 
