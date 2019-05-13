@@ -20,7 +20,7 @@ export function DocToValidateService(requestService, config) {
         console.log('Doc To Validate Service initialized.');
     };
 
-    this.getDocumentsToValidate = async function() {
+    this.getDocumentsToValidate = async function () {
         //request to fetch docs
         let response = (await this.requestService.send('GET', this.documentToValidateUrl)).response;
         let docs = JSON.parse(response);
@@ -40,22 +40,30 @@ export function DocToValidateService(requestService, config) {
         this.prevFilters = filterFormData;
 
         // Get values from the fields of the search form
-        const keywordFilter = filterFormData.get("keyword");
-        const startReferringDateFilter = filterFormData.get("startReferringDate");
-        const endReferringDateFilter = filterFormData.get("endReferringDate");
-        const startPublicationDateFilter = filterFormData.get("startPublicationDate");
-        const endPublicationDateFilter = filterFormData.get("endPublicationDate");
-        const subjectFiler = filterFormData.get("subject");
+        let filters = [];
+        filters.push({ text: filterFormData.get("keyword"), type: 'includes', property: 'title' });
+        filters.push({ text: filterFormData.get("startReferringDate"), type: 'greater', property: 'refDate' });
+        filters.push({ text: filterFormData.get("endReferringDate"), type: 'smaller', property: 'refDate' });
+        filters.push({ text: filterFormData.get("startPublicationDate"), type: 'greater', property: 'publicationDate' });
+        filters.push({ text: filterFormData.get("endPublicationDate"), type: 'smaller', property: 'publicationDate' });
+        filters.push({ text: filterFormData.get("subject"), type: 'equals', property: 'subject' });
 
         // Filters the fetched documents according to the fields of the
         // search form
-        const filtered = this.documents.filter(document => (keywordFilter === undefined || keywordFilter === null || keywordFilter === '' || document.metaData.title.includes(keywordFilter)) &&
-            (startReferringDateFilter === undefined || startReferringDateFilter === null || startReferringDateFilter === '' || document.metaData.referringDate > startReferringDateFilter) &&
-            (endReferringDateFilter === undefined || endReferringDateFilter === null || endReferringDateFilter === '' || document.metaData.refDate < endReferringDateFilter) &&
-            (startPublicationDateFilter === undefined || startPublicationDateFilter === null || startPublicationDateFilter === '' || document.metaData.publicationDate > startPublicationDateFilter) &&
-            (endPublicationDateFilter === undefined || endPublicationDateFilter === null || endPublicationDateFilter === '' || document.metaData.publicationDate < endPublicationDateFilter) &&
-            (subjectFiler === undefined || subjectFiler === null || subjectFiler === '' || document.metaData.subject === subjectFiler)
-        );
+        const filtered = this.documents.filter((document) => {
+            for (let filter of filters) {
+                if (filter.text !== undefined && filter.text !== null && filter.text !== '') {
+                    let documentProp = document.metaData[filter.property];
+                    if (filter.type === 'includes' && !documentProp.toLowerCase().includes(filter.text.toLowerCase()) ||
+                        filter.type === 'greater'  && !(documentProp >= filter.text) ||
+                        filter.type === 'smaller'  && !(documentProp <= filter.text) ||
+                        filter.type === 'equals'   && !(documentProp == filter.text)) {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        });
 
         this.documents = filtered;
         this.currentDocumentId = 0;
