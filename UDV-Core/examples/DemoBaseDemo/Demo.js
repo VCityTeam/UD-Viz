@@ -2,10 +2,11 @@ import { BaseDemo } from '../../src/Utils/BaseDemo/js/BaseDemo.js'
 
 let baseDemo = new BaseDemo();
 
-const requestService = new udvcore.RequestService();
-
 baseDemo.appendTo(document.body);
-baseDemo.loadConfigFile('./Config.json').then(() => { 
+baseDemo.loadConfigFile('./Config.json').then(() => {
+    ////// REQUEST SERVICE
+    const requestService = new udvcore.RequestService();
+
     ////// ABOUT MODULE
     const about = new udvcore.AboutWindow();
     baseDemo.addModule('About', 'about', about);
