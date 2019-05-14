@@ -5,7 +5,7 @@ import './Help.css';
 * simply include this file in the html, no need to instanciate anything in main.js
 */
 
-export function HelpWindow( options={} ) {
+export function HelpWindow(options = {}) {
 
   ///////////// Html elements
   var helpDiv = document.createElement("div");
@@ -30,10 +30,43 @@ export function HelpWindow( options={} ) {
     </div>\
     ';
 
-    // Close the window...when close button is hit
-    document.getElementById("helpCloseButton").addEventListener(
-        'mousedown', () => {
-            let activate = document.getElementById('activateHelp');
-            activate.checked = !activate.checked;
-        }, false);
+  // Close the window...when close button is hit
+  document.getElementById("helpCloseButton").addEventListener(
+    'mousedown', () => {
+      this.disable();
+    }, false);
+
+
+  /////// MODULE MANAGEMENT FOR BASE DEMO
+
+  this.enable = () => {
+    document.getElementById('helpWindow').style.setProperty('display', 'block');
+    this.sendEvent('ENABLED');
+  }
+
+  this.disable = () => {
+    document.getElementById('helpWindow').style.setProperty('display', 'none');
+    this.sendEvent('DISABLED');
+  }
+
+  this.eventListeners = {};
+
+  this.addListener = (event, action) => {
+    if (this.eventListeners[event]) {
+      this.eventListeners[event].push(action);
+    } else {
+      this.eventListeners[event] = [
+        action
+      ];
+    }
+  }
+
+  this.sendEvent = (event) => {
+    let listeners = this.eventListeners[event];
+    if (listeners !== undefined && listeners !== null) {
+        for (let listener of listeners) {
+            listener();
+        }
+    }
+  }
 }

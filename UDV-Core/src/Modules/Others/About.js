@@ -70,8 +70,10 @@ export function AboutWindow(options = {}) {
 
    this.sendEvent = (event) => {
       let listeners = this.eventListeners[event];
-      for (let listener of listeners) {
-         listener();
+      if (listeners !== undefined && listeners !== null) {
+          for (let listener of listeners) {
+              listener();
+          }
       }
    }
 }

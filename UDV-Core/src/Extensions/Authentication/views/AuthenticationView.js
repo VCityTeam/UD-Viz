@@ -3,6 +3,7 @@ import './AuthenticationView.css';
 export function LoginRegistrationWindow(authenticationService) {
 
     this.authenticationService = authenticationService;
+    this.parentElement;
 
     this.initialize = function initialize() {
     };
@@ -48,9 +49,8 @@ export function LoginRegistrationWindow(authenticationService) {
         div.id = "loginRegistrationWindow";
         htmlElement.appendChild(div);
         document.getElementById('loginRegistrationCloseButton').onclick = () => {
-            this.dispose()
+            this.disable()
         };
-        console.log(document.getElementById('loginRegistrationCloseButton'));
         document.getElementById('LoginButton').onclick = () => {
             this.logInFunction()
         };
@@ -107,7 +107,7 @@ export function LoginRegistrationWindow(authenticationService) {
     this.deleteValuesForm = function (formIds) {
         for (var id in formIds) {
             let element = document.getElementById(formIds[id]);
-            element.value ="";
+            element.value = "";
         }
     }
     this.verifymail = function () {
@@ -134,7 +134,7 @@ export function LoginRegistrationWindow(authenticationService) {
         if (this.verifyNotEmptyValuesForm(formIds)) {
             try {
                 await this.authenticationService.login(formData);
-                this.dispose();
+                this.disable();
             } catch (e) {
                 if (e.status === 401) {
                     this.displayLoginError("Login or password invalid");
@@ -169,4 +169,40 @@ export function LoginRegistrationWindow(authenticationService) {
     };
 
     this.initialize();
+
+
+    /////// MODULE MANAGEMENT FOR BASE DEMO
+
+    this.enable = () => {
+        //document.getElementById('loginRegistrationWindow').style.setProperty('display', 'grid');
+        this.appendToElement(this.parentElement);
+        this.sendEvent('ENABLED');
+    }
+
+    this.disable = () => {
+        //document.getElementById('loginRegistrationWindow').style.setProperty('display', 'none');
+        this.dispose();
+        this.sendEvent('DISABLED');
+    }
+
+    this.eventListeners = {};
+
+    this.addListener = (event, action) => {
+        if (this.eventListeners[event]) {
+            this.eventListeners[event].push(action);
+        } else {
+            this.eventListeners[event] = [
+                action
+            ];
+        }
+    }
+
+    this.sendEvent = (event) => {
+        let listeners = this.eventListeners[event];
+        if (listeners !== undefined && listeners !== null) {
+            for (let listener of listeners) {
+                listener();
+            }
+        }
+    }
 }
