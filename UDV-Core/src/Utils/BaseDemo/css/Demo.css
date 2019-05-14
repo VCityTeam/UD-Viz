@@ -135,15 +135,15 @@ header {
     flex-wrap: nowrap;
     vertical-align: middle;
     color: white;
-    font-size: 30px;
+    font-size: 25px;
     border-radius: 5px;
     margin: 10px;
     padding: 10px 0;
-    width: 250px;
 }
 
-.choiceMenuSelected {
-    color: #f31eb4;
+.choiceMenuSelected, #activateTemporal:checked ~ header #temporalMenu {
+    background-color: rgba(255, 255, 255, 0.1);
+    box-shadow: inset 0px 0px 10px 0px rgb(0, 0, 0);
 }
 
 .nonVisible{
@@ -152,22 +152,19 @@ header {
 
 #_base_demo_menu .choiceMenu:hover {
     cursor: pointer;
-    background-color: #3c3c3c;
+    background-color: rgba(255, 255, 255, 0.2);
 }
 
-.choiceMenu:before {
+.menuIcon {
     display: inline-block;
-    width: 35px;
+    width: 30px;
     margin: 0 20px 0 10px;
+    flex-shrink: 0;
 }
 
 #openSidebar:checked ~ #_base_demo_menu {
     display: block;
     transform: translateX(0);
-}
-
-#activateTemporal:checked ~ header #temporalMenu {
-    color: #f31eb4;
 }
 
 #temporal {

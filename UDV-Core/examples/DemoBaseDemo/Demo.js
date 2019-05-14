@@ -2,6 +2,7 @@ import { BaseDemo } from '../../src/Utils/BaseDemo/js/BaseDemo.js'
 
 let baseDemo = new BaseDemo();
 
+baseDemo.iconFolder = '../data/icons';
 baseDemo.appendTo(document.body);
 baseDemo.loadConfigFile('./Config.json').then(() => {
     ////// REQUEST SERVICE
@@ -27,7 +28,7 @@ baseDemo.loadConfigFile('./Config.json').then(() => {
 
     ////// GUIDED TOURS MODULE
     const guidedtour = new udvcore.GuidedTourController(documents);
-    baseDemo.addModule('Guided Tours', 'guidedTours', guidedtour);
+    baseDemo.addModule('Guided Tours', 'guidedTour', guidedtour);
 
     ////// CONTRIBUTE EXTENSION
     const contributeController = new udvcore.ContributeController(documents, requestService);
