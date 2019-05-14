@@ -1,19 +1,22 @@
 import './About.css';
+import { ModuleView } from '../../Utils/ModuleView/ModuleView';
 
 /**
  * adds an "About" window that can be open/closed with a button
  * simply include this file in the html, no need to instanciate anything in main.js
  */
-export function AboutWindow(options = {}) {
+export class AboutWindow extends ModuleView {
 
-    // Create DOM element
-    let aboutDiv = document.createElement("div");
-    aboutDiv.id = 'aboutWindow';
-    $("#contentSection").append(aboutDiv);
+   constructor(options = {}) {
+      super();
+      // Create DOM element
+      let aboutDiv = document.createElement("div");
+      aboutDiv.id = 'aboutWindow';
+      $("#contentSection").append(aboutDiv);
 
-    // Create HMTL
-    document.getElementById("aboutWindow").innerHTML =
-        '<div id="text">\
+      // Create HMTL
+      document.getElementById("aboutWindow").innerHTML =
+         '<div id="text">\
              <br>\
              <p>This UDV-Core demo is part of the \
              <a target="_blank"\
@@ -38,42 +41,19 @@ export function AboutWindow(options = {}) {
         <button id="aboutCloseButton">Close</button>\
         ';
 
-    // Close the window...when close button is hit
-    document.getElementById("aboutCloseButton").addEventListener(
-        'mousedown', () => {
-           this.disable();
-        }, false);
+      // Close the window...when close button is hit
+      document.getElementById("aboutCloseButton").addEventListener(
+         'mousedown', () => {
+            this.disable();
+         }, false);
+   }
 
-   /////// MODULE MANAGEMENT FOR BASE DEMO
-
-   this.enable = () => {
+   /////// MODULE VIEW MANAGEMENT
+   enableView() {
       document.getElementById('aboutWindow').style.setProperty('display', 'block');
-      this.sendEvent('ENABLED');
    }
 
-   this.disable = () => {
+   disableView() {
       document.getElementById('aboutWindow').style.setProperty('display', 'none');
-      this.sendEvent('DISABLED');
-   }
-
-   this.eventListeners = {};
-
-   this.addListener = (event, action) => {
-      if (this.eventListeners[event]) {
-         this.eventListeners[event].push(action);
-      } else {
-         this.eventListeners[event] = [
-            action
-         ];
-      }
-   }
-
-   this.sendEvent = (event) => {
-      let listeners = this.eventListeners[event];
-      if (listeners !== undefined && listeners !== null) {
-          for (let listener of listeners) {
-              listener();
-          }
-      }
    }
 }

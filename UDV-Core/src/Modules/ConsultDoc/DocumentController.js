@@ -219,7 +219,7 @@ export function DocumentController(view, controls, options = {},config)
 
     this.eventListeners = {};
 
-    this.addListener = (event, action) => {
+    this.addEventListener = (event, action) => {
         if (this.eventListeners[event]) {
           this.eventListeners[event].push(action);
         } else {

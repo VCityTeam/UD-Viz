@@ -40,6 +40,11 @@ export function DocToValidateService(requestService, config) {
         this.prevFilters = filterFormData;
 
         // Get values from the fields of the search form
+        // A filter is an object with three properties : {
+        //    text: the content of the field in the form = the filter value
+        //    type: the method of comparison (can be 'includes', 'greater', 'smaller', 'equals')
+        //    property: the name of the metadata field that will be compared to the filter value
+        // }
         let filters = [];
         filters.push({ text: filterFormData.get("keyword"), type: 'includes', property: 'title' });
         filters.push({ text: filterFormData.get("startReferringDate"), type: 'greater', property: 'refDate' });
