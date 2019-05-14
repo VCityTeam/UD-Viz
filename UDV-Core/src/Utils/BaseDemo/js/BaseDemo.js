@@ -10,6 +10,7 @@ export class BaseDemo {
         this.renderer;
         this.controls;
         this.temporal;
+        this.iconFolder = 'Icons';
     }
 
     get html() {
@@ -17,6 +18,9 @@ export class BaseDemo {
             <input type="checkbox" id="activateTemporal" class="nonVisible">
             <header>
                 <div class="header">
+                    <div>
+                        Icons made by <a href="https://www.freepik.com/" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a>
+                    </div>
                     <img id="logoIMU" src="../data/img/logo-imu.png" />
                     <img id="logoLIRIS" src="../data/img/logo-liris.png" />
                 </div>
@@ -39,7 +43,7 @@ export class BaseDemo {
     get authenticationFrameHtml() {
         return /*html*/`
             <div id="${this.authenticationMenuLoggedInId}">
-                <img src="Icons/profile.svg" id="profileIcon">
+                <img src="${this.iconFolder}/profile.svg" id="profileIcon">
                 <div id="${this.authenticationUserNameId}"></div>
                 <button type="button" id="${this.authenticationLogoutButtonId}" class="logInOut">Logout</button>
             </div>
@@ -62,7 +66,7 @@ export class BaseDemo {
 
     // Add a new module
     addModule(moduleName, moduleId, moduleClass, type = BaseDemo.MODULE_VIEW) {
-        if ((typeof(moduleClass.enable) !== 'function') || (typeof(moduleClass.disable) !== 'function')) {
+        if ((typeof (moduleClass.enable) !== 'function') || (typeof (moduleClass.disable) !== 'function')) {
             throw 'A module must implement at least an enable() and a disable() methods';
         }
 
@@ -99,10 +103,20 @@ export class BaseDemo {
         button.id = this.getModuleButtonId(moduleId);
         button.innerText = buttonText;
         this.menuElement.appendChild(button);
+        let icon = document.createElement('img');
+
+        //creating an icon
+        icon.setAttribute('src', `${this.iconFolder}/${moduleId}.svg`)
+        icon.className = 'menuIcon';
+        button.insertBefore(icon, button.firstChild);
+
+        //define button behavior
         button.onclick = (() => {
             this.toggleModule(moduleId);
         }).bind(this);
         let moduleClass = this.getModuleById(moduleId);
+
+        //dynamically color the button
         moduleClass.parentElement = this.contentSectionElement;
         moduleClass.addListener('ENABLED', () => {
             button.className = 'choiceMenu choiceMenuSelected';
@@ -122,7 +136,6 @@ export class BaseDemo {
         this.menuElement.insertBefore(frame, document.getElementById('openHamburger').nextSibling);
         const authView = this.getModuleById(authModuleId);
         authView.parentElement = this.contentSectionElement;
-        //authView.disable();
         const authService = authView.authenticationService;
         this.authenticationLoginButtonElement.onclick = () => {
             if (this.isModuleActive(authModuleId)) {
@@ -255,6 +268,13 @@ export class BaseDemo {
                 timeFormat: "YYYY",
                 active: true
             });
+
+        let temporalButton = document.getElementById('temporalMenu');
+        //creating an icon
+        let icon = document.createElement('img');
+        icon.setAttribute('src', `${this.iconFolder}/temporal.svg`)
+        icon.className = 'menuIcon';
+        temporalButton.insertBefore(icon, temporalButton.firstChild);
 
         $3dTilesTemporalLayer.whenReady.then(
             // In order to configure the temporal slide bar widget, we must
