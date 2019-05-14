@@ -1,3 +1,5 @@
+import { ModuleView } from '../../ModuleView/ModuleView.js';
+
 export class BaseDemo {
     constructor() {
         this.modules = {};
@@ -74,12 +76,12 @@ export class BaseDemo {
         this.moduleNames[moduleName] = moduleId;
         this.moduleActivation[moduleId] = false;
 
-        moduleClass.addListener('ENABLED', () => {
+        moduleClass.addEventListener(ModuleView.EVENT_ENABLED, () => {
             console.log(`${moduleName} is enabled`);
             this.moduleActivation[moduleId] = true;
 
         });
-        moduleClass.addListener('DISABLED', () => {
+        moduleClass.addEventListener(ModuleView.EVENT_DISABLED, () => {
             console.log(`${moduleName} is disabled`);
             this.moduleActivation[moduleId] = false;
         });
@@ -118,11 +120,11 @@ export class BaseDemo {
 
         //dynamically color the button
         moduleClass.parentElement = this.contentSectionElement;
-        moduleClass.addListener('ENABLED', () => {
+        moduleClass.addEventListener(ModuleView.EVENT_ENABLED, () => {
             button.className = 'choiceMenu choiceMenuSelected';
 
         });
-        moduleClass.addListener('DISABLED', () => {
+        moduleClass.addEventListener(ModuleView.EVENT_DISABLED, () => {
             button.className = 'choiceMenu';
         });
         moduleClass.disable();
