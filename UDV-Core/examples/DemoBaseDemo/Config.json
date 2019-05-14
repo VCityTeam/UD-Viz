@@ -9,7 +9,8 @@
       "documentToValidate": "document/in_validation",
       "comment" : "comment",
       "validate": "document/validate",
-      "file": "file"
+      "file": "file",
+      "guidedTour": "guidedTour"
     },
     "properties": {
       "metaData":{

@@ -85,7 +85,7 @@ header {
     background-color: #1e1e1e;
 }
 
-#profileMenu {
+#_base_demo_profile {
     position: relative;
     min-height: 80px;
     background-color: black;
@@ -98,7 +98,7 @@ header {
     margin: 15px 10px 5px;
 }
 
-#name {
+#_base_demo_profile_name {
     box-sizing: border-box;
     color: white;
     padding: 5px 15px;

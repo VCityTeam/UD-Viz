@@ -5,39 +5,47 @@ export class BaseDemo {
         this.moduleActivation = {};
         this.config = {};
         this.parentElement;
+        this.view;  // itowns view (3d scene)
+        this.extent;  // itowns extent (city limits)
+        this.renderer;
+        this.controls;
+        this.temporal;
     }
 
     get html() {
         return /*html*/`
-        <input type="checkbox" id="activateTemporal" class="nonVisible">
-        <header>
-            <div class="header">
-                <img id="logoIMU" src="../data/img/logo-imu.png" />
-                <img id="logoLIRIS" src="../data/img/logo-liris.png" />
-            </div>
-            <input type="checkbox" id="openSidebar">
-            <!-- The HTML code corresponds to an hamburger menu icon -->
-            <label id="closeHamburger" for="openSidebar">&#x2630</label>
-            <div id="${this.menuId}">
-                <div id="navMenu"></div>
-                <!-- This one corresponds to a cross icon -->
-                <label id="openHamburger" for="openSidebar">&#x2716</label>
-                <div id="profileMenu">
-                    <div id="profileMenuLoggedIn" hidden=true>
-                        <img src="Icons/profile.svg" id="profileIcon">
-                        <div id="name"></div>
-                        <button type="button" id="logout" class="logInOut">Logout</button>
-                    </div>
-                    <div id="profileMenuLoggedOut">
-                        <label for="activateLoginRegistration" id="loginRegistration" class="logInOut">Sign In</label>
-                    </div>
+            <input type="checkbox" id="activateTemporal" class="nonVisible">
+            <header>
+                <div class="header">
+                    <img id="logoIMU" src="../data/img/logo-imu.png" />
+                    <img id="logoLIRIS" src="../data/img/logo-liris.png" />
                 </div>
-                <label for="activateTemporal" id="temporalMenu" class="choiceMenu">Temporal</label>
+                <input type="checkbox" id="openSidebar">
+                <!-- The HTML code corresponds to an hamburger menu icon -->
+                <label id="closeHamburger" for="openSidebar">&#x2630</label>
+                <div id="${this.menuId}">
+                    <div id="navMenu"></div>
+                    <!-- This one corresponds to a cross icon -->
+                    <label id="openHamburger" for="openSidebar">&#x2716</label>
+                    <label for="activateTemporal" id="temporalMenu" class="choiceMenu">Temporal</label>
+                </div>
+            </header>
+            <section id="contentSection">
+                <div id="viewerDiv"></div>
+            </section>
+        `;
+    }
+
+    get authenticationFrameHtml() {
+        return /*html*/`
+            <div id="${this.authenticationMenuLoggedInId}">
+                <img src="Icons/profile.svg" id="profileIcon">
+                <div id="${this.authenticationUserNameId}"></div>
+                <button type="button" id="${this.authenticationLogoutButtonId}" class="logInOut">Logout</button>
             </div>
-        </header>
-        <section id="contentSection">
-            <div id="viewerDiv"></div>
-        </section>
+            <div id="${this.authenticationMenuLoggedOutId}">
+                <button type="button" id="${this.authenticationLoginButtonId}" class="logInOut">Sign in</button>
+            </div>
         `;
     }
 
@@ -53,7 +61,7 @@ export class BaseDemo {
     //////// MODULE MANAGEMENT
 
     // Add a new module
-    addModule(moduleName, moduleId, moduleClass) {
+    addModule(moduleName, moduleId, moduleClass, type = BaseDemo.MODULE_VIEW) {
         if ((typeof(moduleClass.enable) !== 'function') || (typeof(moduleClass.disable) !== 'function')) {
             throw 'A module must implement at least an enable() and a disable() methods';
         }
@@ -62,24 +70,86 @@ export class BaseDemo {
         this.moduleNames[moduleName] = moduleId;
         this.moduleActivation[moduleId] = false;
 
-        //create a new button in the menu
+        moduleClass.addListener('ENABLED', () => {
+            console.log(`${moduleName} is enabled`);
+            this.moduleActivation[moduleId] = true;
+
+        });
+        moduleClass.addListener('DISABLED', () => {
+            console.log(`${moduleName} is disabled`);
+            this.moduleActivation[moduleId] = false;
+        });
+
+        switch (type) {
+            case BaseDemo.MODULE_VIEW:
+                //create a new button in the menu
+                this.createMenuButton(moduleId, moduleName);
+                break;
+            case BaseDemo.AUTHENTICATION_MODULE:
+                this.createAuthenticationFrame(moduleId);
+                break;
+            default:
+                throw `Unknown module type : ${type}`;
+        }
+    }
+
+    // Create a menu button
+    createMenuButton(moduleId, buttonText) {
         let button = document.createElement('label');
         button.id = this.getModuleButtonId(moduleId);
-        button.innerText = moduleName;
+        button.innerText = buttonText;
         this.menuElement.appendChild(button);
         button.onclick = (() => {
             this.toggleModule(moduleId);
         }).bind(this);
+        let moduleClass = this.getModuleById(moduleId);
         moduleClass.addListener('ENABLED', () => {
-            this.moduleActivation[moduleId] = true;
             button.className = 'choiceMenu choiceMenuSelected';
 
         });
         moduleClass.addListener('DISABLED', () => {
-            this.moduleActivation[moduleId] = false;
             button.className = 'choiceMenu';
         });
         moduleClass.disable();
+    }
+
+    // Create the authentication frame
+    createAuthenticationFrame(authModuleId) {
+        let frame = document.createElement('div');
+        frame.id = this.authenticationFrameId;
+        frame.innerHTML = this.authenticationFrameHtml;
+        this.menuElement.insertBefore(frame, document.getElementById('openHamburger').nextSibling);
+        const authView = this.getModuleById(authModuleId);
+        authView.parentElement = this.contentSectionElement;
+        //authView.disable();
+        const authService = authView.authenticationService;
+        this.authenticationLoginButtonElement.onclick = () => {
+            if (this.isModuleActive(authModuleId)) {
+                authView.disable();
+            } else {
+                authView.enable();
+            }
+        };
+        this.authenticationLogoutButtonElement.onclick = () => {
+            try {
+                authService.logout();
+            } catch (e) {
+                console.error(e);
+            }
+        };
+        const updateFrame = () => {
+            if (authService.isUserLoggedIn()) {
+                const user = authService.getUser();
+                this.authenticationMenuLoggedInElement.hidden = false;
+                this.authenticationMenuLoggedOutElement.hidden = true;
+                this.authenticationUserNameElement.innerHTML = `${user.firstname} ${user.lastname}`;
+            } else {
+                this.authenticationMenuLoggedInElement.hidden = true;
+                this.authenticationMenuLoggedOutElement.hidden = false;
+            }
+        };
+        authService.addObserver(updateFrame.bind(this));
+        updateFrame();
     }
 
     // Is a module visible ?
@@ -121,22 +191,19 @@ export class BaseDemo {
         // use false for regular controls (generic user)
         let useControlsForEditing = false;
 
-        let view;  // itowns view (3d scene)
-        let extent;  // itowns extent (city limits)
-
         // Initialization of the renderer, view and extent
-        [view, extent] = udvcore.Setup3DScene(terrainAndElevationRequest,
+        [this.view, this.extent] = udvcore.Setup3DScene(terrainAndElevationRequest,
             buildingServerRequest,
             true,
-            view);
+            this.view);
 
         // The renderer provided by THREE.js as handled over by itowns
-        const renderer = view.scene;
+        this.renderer = this.view.scene;
 
         // camera starting position (south-west of the city, altitude 2000)
-        view.camera.setPosition(new udvcore.itowns.Coordinates('EPSG:3946', extent.west(), extent.south(), 2000));
+        this.view.camera.setPosition(new udvcore.itowns.Coordinates('EPSG:3946', this.extent.west(), this.extent.south(), 2000));
         // camera starting orientation (looking at city center)
-        view.camera.camera3D.lookAt(extent.center().xyz());
+        this.view.camera.camera3D.lookAt(this.extent.center().xyz());
 
 
         // PlanarControls (camera controller) options : regular mode (generic user) or edit mode
@@ -160,23 +227,23 @@ export class BaseDemo {
 
         // itowns' PlanarControls (camera controller) uses optionsEditMode or
         // optionsRegularMode depending on the value useControlsForEditing (boolean)
-        const controls = new udvcore.itowns.PlanarControls(view, (useControlsForEditing) ? optionsEditMode : optionsRegularMode);
+        this.controls = new udvcore.itowns.PlanarControls(this.view, (useControlsForEditing) ? optionsEditMode : optionsRegularMode);
 
         //////////// Temporal controller section
 
         // Retrieve the layer defined in Setup3DScene (we consider the first one
         // with the given name)
-        const $3dTilesTemporalLayer = view.getLayers(layer => layer.name === '3d-tiles-temporal')[0];
+        const $3dTilesTemporalLayer = this.view.getLayers(layer => layer.name === '3d-tiles-temporal')[0];
 
         // Definition of the callback that is in charge of triggering a refresh
         // of the displayed layer when its (the layer) associated date has changed.
-        function refreshDisplayLayerOnDate(date) {
+        let refreshDisplayLayerOnDate = (date) => {
             $3dTilesTemporalLayer.displayDate = date;
-            view.notifyChange($3dTilesTemporalLayer);
+            this.view.notifyChange($3dTilesTemporalLayer);
         }
 
         // Instanciate a temporal controller
-        const temporal = new udvcore.TemporalController(
+        this.temporal = new udvcore.TemporalController(
             refreshDisplayLayerOnDate,
             {   // Various available constructor options
                 minTime: new moment("1700-01-01"),
@@ -196,10 +263,10 @@ export class BaseDemo {
             // tiles are at hand. We could recurse on tile hierarchy, but we also
             // have at hand the tileindex that we can (equivalently for the result)
             // iterate on.
-            function () {
+            () => {
                 // Store the layer for triggering scene updates when temporal slider
                 // will be changed by user:
-                temporal.layer = $3dTilesTemporalLayer;
+                this.temporal.layer = $3dTilesTemporalLayer;
 
                 const tiles = $3dTilesTemporalLayer.tileIndex.index;
                 const resultDates = [];
@@ -219,10 +286,10 @@ export class BaseDemo {
                 // widget remains with its default min/max values.
                 if (resultDates.length >= 2) {
                     resultDates.sort();
-                    temporal.minTime = new moment(resultDates[0]);
-                    temporal.maxTime = new moment(resultDates[resultDates.length - 1]);
-                    temporal.changeTime(temporal.minTime);
-                    temporal.refresh();
+                    this.temporal.minTime = new moment(resultDates[0]);
+                    this.temporal.maxTime = new moment(resultDates[resultDates.length - 1]);
+                    this.temporal.changeTime(this.temporal.minTime);
+                    this.temporal.refresh();
                 }
             }
         );
@@ -245,11 +312,75 @@ export class BaseDemo {
         return '_base_demo';
     }
 
+    get contentSectionId() {
+        return 'contentSection';
+    }
+
+    get contentSectionElement() {
+        return document.getElementById(this.contentSectionId);
+    }
+
     get menuId() {
         return '_base_demo_menu';
     }
 
     get menuElement() {
         return document.getElementById(this.menuId);
+    }
+
+    get authenticationFrameId() {
+        return '_base_demo_profile';
+    }
+
+    get authenticationFrameElement() {
+        return document.getElementById(this.authenticationFrameId);
+    }
+
+    get authenticationLogoutButtonId() {
+        return '_base_demo_button_logout';
+    }
+
+    get authenticationLogoutButtonElement() {
+        return document.getElementById(this.authenticationLogoutButtonId);
+    }
+
+    get authenticationLoginButtonId() {
+        return '_base_demo_button_login';
+    }
+
+    get authenticationLoginButtonElement() {
+        return document.getElementById(this.authenticationLoginButtonId);
+    }
+
+    get authenticationMenuLoggedInId() {
+        return '_base_demo_profile_menu_logged_in';
+    }
+
+    get authenticationMenuLoggedInElement() {
+        return document.getElementById(this.authenticationMenuLoggedInId);
+    }
+
+    get authenticationMenuLoggedOutId() {
+        return '_base_demo_profile_menu_logged_out';
+    }
+
+    get authenticationMenuLoggedOutElement() {
+        return document.getElementById(this.authenticationMenuLoggedOutId);
+    }
+
+    get authenticationUserNameId() {
+        return '_base_demo_profile_name';
+    }
+
+    get authenticationUserNameElement() {
+        return document.getElementById(this.authenticationUserNameId);
+    }
+
+    static get MODULE_VIEW() {
+        return 'MODULE_VIEW';
+    }
+
+    static get AUTHENTICATION_MODULE() {
+        return 'AUTHENTICATION_MODULE';
     }
 }

@@ -175,4 +175,37 @@ export function GuidedTourController(documentController) {
 
     this.initialize();
 
+    /////// MODULE MANAGEMENT FOR BASE DEMO
+
+    this.enable = () => {
+      document.getElementById(this.guidedTourContainerId).style.setProperty('display', 'block');
+      this.sendEvent('ENABLED');
+    }
+
+    this.disable = () => {
+      document.getElementById(this.guidedTourContainerId).style.setProperty('display', 'none');
+      this.sendEvent('DISABLED');
+    }
+
+    this.eventListeners = {};
+
+    this.addListener = (event, action) => {
+      if (this.eventListeners[event]) {
+        this.eventListeners[event].push(action);
+      } else {
+        this.eventListeners[event] = [
+          action
+        ];
+      }
+    }
+
+    this.sendEvent = (event) => {
+      let listeners = this.eventListeners[event];
+      if (listeners !== undefined && listeners !== null) {
+          for (let listener of listeners) {
+              listener();
+          }
+      }
+    }
+
 }

@@ -71,13 +71,9 @@ export function DocumentController(view, controls, options = {},config)
     this.toggle = () => {
         this.visible = ! this.visible;
         if (this.visible) {
-            this.documentResearch.activateWindow(true);
-            this.documentBrowser.activateWindow(true);
-            this.open();
+          this.enable();
         } else {
-            this.documentResearch.activateWindow(false);
-            this.documentBrowser.activateWindow(false);
-            this.close();
+          this.disable();
         }
     }
 
@@ -203,4 +199,42 @@ export function DocumentController(view, controls, options = {},config)
     }
 
     this.initialize();
+
+
+   /////// MODULE MANAGEMENT FOR BASE DEMO
+
+   this.enable = () => {
+        this.documentResearch.activateWindow(true);
+        this.documentBrowser.activateWindow(true);
+        this.open();
+        this.sendEvent('ENABLED');
+    }
+
+    this.disable = () => {
+        this.documentResearch.activateWindow(false);
+        this.documentBrowser.activateWindow(false);
+        this.close();
+        this.sendEvent('DISABLED');
+    }
+
+    this.eventListeners = {};
+
+    this.addListener = (event, action) => {
+        if (this.eventListeners[event]) {
+          this.eventListeners[event].push(action);
+        } else {
+          this.eventListeners[event] = [
+              action
+          ];
+        }
+    }
+
+    this.sendEvent = (event) => {
+      let listeners = this.eventListeners[event];
+      if (listeners !== undefined && listeners !== null) {
+          for (let listener of listeners) {
+              listener();
+          }
+      }
+    }
 }
