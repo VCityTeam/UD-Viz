@@ -13,7 +13,7 @@ export { GuidedTourController }     from './Modules/GuidedTour/GuidedTourControl
 export { LoginRegistrationWindow }  from './Extensions/Authentication/views/AuthenticationView';
 
 export { DocToValidateService }     from './Extensions/DocToValidate/services/DocToValidateService';
-export { DocToValidateView }      from './Extensions/DocToValidate/views/DocToValidateView';
+export { DocToValidateView }        from './Extensions/DocToValidate/views/DocToValidateView';
 
 export { AboutWindow }              from './Modules/Others/About';
 export { CompassController }        from './Modules/Others/Compass';
