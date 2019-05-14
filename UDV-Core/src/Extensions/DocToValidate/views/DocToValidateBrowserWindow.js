@@ -12,7 +12,7 @@ export class DocToValidateBrowserWindow extends Window {
         this.docToValidateService.addObserver(this.update.bind(this));
         this.addListener((event) => {
             if (event === Window.EVENT_DESTROYED) {
-                this.docToValidateView.dispose();
+                this.docToValidateView.disable();
             }
         });
     }
@@ -112,8 +112,6 @@ export class DocToValidateBrowserWindow extends Window {
 
     orientDocument() {
         document.getElementById('docFull').style.display = 'block';
-        console.log('----------------');
-        console.log(this.docToValidateView.documentController.serverModel);
         let currentDocument = this.docToValidateService.currentDocument();
         let currentMetadata = currentDocument.metaData;
         console.log(currentMetadata);

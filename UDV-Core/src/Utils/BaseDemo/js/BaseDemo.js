@@ -103,6 +103,7 @@ export class BaseDemo {
             this.toggleModule(moduleId);
         }).bind(this);
         let moduleClass = this.getModuleById(moduleId);
+        moduleClass.parentElement = this.contentSectionElement;
         moduleClass.addListener('ENABLED', () => {
             button.className = 'choiceMenu choiceMenuSelected';
 
