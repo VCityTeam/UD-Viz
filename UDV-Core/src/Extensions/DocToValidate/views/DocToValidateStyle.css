@@ -35,6 +35,7 @@
 }
 
 .window-inner-content input, .window-inner-content select {
+    box-sizing: border-box;
     width: 100%;
 }
 

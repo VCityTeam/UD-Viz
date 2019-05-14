@@ -166,28 +166,12 @@ header {
     transform: translateX(0);
 }
 
-#activateAbout:checked ~ header #aboutMenu {
-    color: #f31eb4;
-}
-
-#activateHelp:checked ~ header #helpMenu {
-    color: #f31eb4;
-}
-
 #activateTemporal:checked ~ header #temporalMenu {
     color: #f31eb4;
 }
 
-#aboutWindow, #helpWindow, #temporal {
+#temporal {
     display: none;
-}
-
-#activateAbout:checked ~ #contentSection #aboutWindow {
-    display: block;
-}
-
-#activateHelp:checked ~ #contentSection #helpWindow {
-    display: block;
 }
 
 #activateTemporal:checked ~ #contentSection #temporal {
