@@ -35,4 +35,13 @@ baseDemo.loadConfigFile('./Config.json').then(() => {
     const authenticationService = new udvcore.AuthenticationService(requestService, baseDemo.config);
     const authenticationView= new udvcore.LoginRegistrationWindow(authenticationService);
     baseDemo.addModule('Authentication', 'authentication', authenticationView, BaseDemo.AUTHENTICATION_MODULE);
+
+    ////// DOCUMENTS TO VALIDATE
+    const docToValidateService = new udvcore.DocToValidateService(requestService, baseDemo.config);
+    const docToValidateView = new udvcore.DocToValidateView(docToValidateService, documents);
+    baseDemo.addModule('Documents in Validation', 'docToValidate', docToValidateView);
+
+    ////// DOCUMENTS COMMENTS EXTENSION
+    const docCommentsService = new udvcore.DocumentCommentsService(documents, requestService, baseDemo.config);
+    const docCommentsWindow = new udvcore.DocumentCommentsWindow(documents, docCommentsService);
 });

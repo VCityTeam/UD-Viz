@@ -9,7 +9,7 @@ export class DocToValidateSearchWindow extends Window {
         this.docToValidateView = docToValidateView;
         this.addListener((event) => {
             if (event === Window.EVENT_DESTROYED) {
-                this.docToValidateView.dispose();
+                this.docToValidateView.disable();
             }
         });
     }
