@@ -2,28 +2,34 @@ import "./DocToValidateStyle.css"
 import { DocToValidateSearchWindow } from "./DocToValidateSearchWindow";
 import { DocToValidateBrowserWindow } from "./DocToValidateBrowserWindow";
 import { DocToValidateCommentWindow } from "./DocToValidateCommentWindow"
+import { ModuleView } from "../../../Utils/ModuleView/ModuleView";
 
-export function DocToValidateView(docToValidateService, documentController) {
+export class DocToValidateView extends ModuleView{
 
-    this.docToValidateService = docToValidateService;
-    this.searchWindow;
-    this.browserWindow;
-    this.commentWindow;
+    constructor(docToValidateService, documentController) {
+        super();
+        this.docToValidateService = docToValidateService;
+        this.searchWindow;
+        this.browserWindow;
+        this.commentWindow;
 
-    this.documentController = documentController;
+        this.documentController = documentController;
 
-    this.parentElement;
+        this.parentElement;
 
-    this.onopen;
-    this.onclose;
+        this.onopen;
+        this.onclose;
 
-    this.initialize = function () {
+        this.initialize();
+    }
+
+    initialize() {
         this.searchWindow = new DocToValidateSearchWindow(this, this.docToValidateService);
         this.browserWindow = new DocToValidateBrowserWindow(this, this.docToValidateService);
         this.commentWindow = new DocToValidateCommentWindow(this.docToValidateService);
     }
 
-    this.appendToElement = function (htmlElement) {
+    appendToElement(htmlElement) {
         this.searchWindow.appendTo(htmlElement);
         this.browserWindow.appendTo(htmlElement);
         this.docToValidateService.search(new FormData());
@@ -32,7 +38,7 @@ export function DocToValidateView(docToValidateService, documentController) {
         }
     }
 
-    this.dispose = () => {
+    dispose() {
         this.searchWindow.dispose();
         this.browserWindow.dispose();
         this.commentWindow.dispose();
@@ -41,42 +47,17 @@ export function DocToValidateView(docToValidateService, documentController) {
         }
     }
 
-    this.isVisible = function () {
+    isVisible() {
         return this.searchWindow.isVisible;
     }
 
-    this.initialize();
-
     /////// MODULE MANAGEMENT FOR BASE DEMO
 
-    this.enable = () => {
+    enableView() {
         this.appendToElement(this.parentElement);
-        this.sendEvent('ENABLED');
     }
 
-    this.disable = () => {
+    disableView() {
         this.dispose();
-        this.sendEvent('DISABLED');
     }
-
-    this.eventListeners = {};
-
-    this.addEventListener = (event, action) => {
-        if (this.eventListeners[event]) {
-            this.eventListeners[event].push(action);
-        } else {
-            this.eventListeners[event] = [
-                action
-            ];
-        }
-    }
-
-    this.sendEvent = (event) => {
-        let listeners = this.eventListeners[event];
-        if (listeners !== undefined && listeners !== null) {
-            for (let listener of listeners) {
-                listener();
-            }
-        }
-    }
-};
+}

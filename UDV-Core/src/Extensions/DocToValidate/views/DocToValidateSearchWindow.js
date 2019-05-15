@@ -51,9 +51,6 @@ export class DocToValidateSearchWindow extends Window {
     search() {
         const form = document.getElementById('docToValidate_searchForm');
         const formData = new FormData(form);
-        for (let entry of formData.entries()) {
-            console.log(entry);
-        }
         this.docToValidateService.search(formData);
     }
 }

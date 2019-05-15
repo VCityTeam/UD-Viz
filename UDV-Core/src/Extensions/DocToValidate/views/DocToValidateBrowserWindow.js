@@ -113,7 +113,6 @@ export class DocToValidateBrowserWindow extends Window {
         document.getElementById('docFull').style.display = 'block';
         let currentDocument = this.docToValidateService.currentDocument();
         let currentMetadata = currentDocument.metaData;
-        console.log(currentMetadata);
         let src = this.docToValidateView.documentController.url + this.docToValidateView.documentController.serverModel.document + '/' + currentMetadata.id + '/' + this.docToValidateView.documentController.serverModel.file;
         document.getElementById('docFullImg').src = currentDocument.imgUrl;
         document.getElementById('docBrowserPreviewImg').src = currentDocument.imgUrl;
@@ -213,7 +212,6 @@ export class DocToValidateBrowserWindow extends Window {
         document.getElementById('docToValidate_updateFrom_cancel').onclick = this.displayBrowser.bind(this);
         document.getElementById('docToValidate_updateForm_submit').onclick = this.updateDocument.bind(this);
         let doc = this.docToValidateService.currentDocument();
-        console.log(doc);
         document.getElementById('docToValidate_updateForm_description').value = doc.metaData.description;
         document.getElementById('docToValidate_updateForm_referringDate').value = doc.metaData.refDate;
         document.getElementById('docToValidate_updateForm_publicationDate').value = doc.metaData.publicationDate;
