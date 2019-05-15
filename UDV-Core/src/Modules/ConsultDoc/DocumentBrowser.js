@@ -319,7 +319,7 @@ export function DocumentBrowser(browserContainer, documentController) {
     document.getElementById('docBrowserOrientButton').addEventListener('mousedown',
         this.focusOnDoc.bind(this), false);
     document.getElementById('closeBrowserWindow').addEventListener('mousedown',
-        this.documentController.toggle, false);
+        this.documentController.disable.bind(this.documentController), false);
     document.getElementById('resetFilters').addEventListener('mousedown',
         this.resetResearch.bind(this), false);
     document.getElementById('docOpaSlider').addEventListener('input',

@@ -174,7 +174,5 @@ export function DocumentResearch(researchContainer, documentController)
     document.getElementById("docResearch").addEventListener('mousedown',
                                                this.research.bind(this), false);
     document.getElementById("closeResearch").addEventListener('mousedown',
-                                    this.documentController.toggle, false);
-
-
+                                    this.documentController.disable.bind(this.documentController), false);
 }

@@ -67,7 +67,7 @@
     font-weight: 700;
 }
 
-#loginButton, #registerButton {
+#LoginButton, #RegisterButton {
     font-size: 2vw;
     height: 4vw;
     padding: 0 20%;
@@ -77,7 +77,7 @@
     border: 0.2vw solid #168f48;
 }
 
-#loginButton:hover, #registerButton:hover {
+#LoginButton:hover, #RegisterButton:hover {
     background-color: #168f48;
 }
 
