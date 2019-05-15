@@ -9,6 +9,8 @@ export class BaseDemo {
         this.modules = {};
         this.moduleNames = {};
         this.moduleActivation = {};
+        this.requireAuthModules = [];
+        this.authService;
         this.config = {};
         this.parentElement;
         this.view;  // itowns view (3d scene)
@@ -28,7 +30,13 @@ export class BaseDemo {
             <header>
                 <div class="header">
                     <div>
-                        Icons made by <a href="https://www.freepik.com/" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a>
+                        Icons made by <a href="https://www.freepik.com/"
+                        title="Freepik">Freepik</a> from
+                        <a href="https://www.flaticon.com/"
+                        title="Flaticon">www.flaticon.com</a> is licensed by
+                        <a href="http://creativecommons.org/licenses/by/3.0/"
+                        title="Creative Commons BY 3.0" target="_blank">
+                        CC 3.0 BY</a>
                     </div>
                     <img id="logoIMU" src="../data/img/logo-imu.png" />
                     <img id="logoLIRIS" src="../data/img/logo-liris.png" />
@@ -40,7 +48,8 @@ export class BaseDemo {
                     <div id="navMenu"></div>
                     <!-- This one corresponds to a cross icon -->
                     <label id="openHamburger" for="openSidebar">&#x2716</label>
-                    <label for="activateTemporal" id="temporalMenu" class="choiceMenu">Temporal</label>
+                    <label for="activateTemporal" id="temporalMenu"
+                    class="choiceMenu">Temporal</label>
                 </div>
             </header>
             <section id="contentSection">
@@ -50,7 +59,8 @@ export class BaseDemo {
     }
 
     /**
-     * Returns the html element representing the upper-left frame of the UI, which contains informations
+     * Returns the html element representing the upper-left frame of the UI,
+     * which contains informations
      * about the logged in user.
      */
     get authenticationFrameHtml() {
@@ -58,19 +68,23 @@ export class BaseDemo {
             <div id="${this.authenticationMenuLoggedInId}">
                 <img src="${this.iconFolder}/profile.svg" id="profileIcon">
                 <div id="${this.authenticationUserNameId}"></div>
-                <button type="button" id="${this.authenticationLogoutButtonId}" class="logInOut">Logout</button>
+                <button type="button" id="${this.authenticationLogoutButtonId}"
+                class="logInOut">Logout</button>
             </div>
             <div id="${this.authenticationMenuLoggedOutId}">
-                <button type="button" id="${this.authenticationLoginButtonId}" class="logInOut">Sign in</button>
+                <button type="button" id="${this.authenticationLoginButtonId}"
+                class="logInOut">Sign in</button>
             </div>
         `;
     }
 
     /**
      * Appends the demo HTML to an HTML element.
-     * 
-     * @param htmlElement The parent node to add the demo into. The recommended way of implementing the demo is simply
-     * to have an empty body and call this method with `document.body` as parameter.
+     *
+     * @param htmlElement The parent node to add the demo into. The
+     * recommended way of implementing the demo is simply to have an
+     * empty body and call this method with `document.body` as
+     * parameter.
      */
     appendTo(htmlElement) {
         this.parentElement = htmlElement;
@@ -85,20 +99,60 @@ export class BaseDemo {
 
     /**
      * Adds a new module view to the demo.
-     * 
-     * @param moduleName A unique name for the module. It will for instance be used as text for the toggle button corresponding
-     * to the module view.
-     * @param moduleId A unique id. Must be a string without spaces. It will be used to generate some HTML ids in the page.
-     * @param moduleClass The module view class. Must implement some methods (`enable`, `disable` and `addEventListener`).
-     * The recommended way of implementing them is to extend the `ModuleView` class, as explained [on the wiki](https://github.com/MEPP-team/UDV/wiki/Generic-demo-and-modules-with-ModuleView-&-BaseDemo).
-     * @param type The type of the module view that defines how it is added to the demo.
-     * The default value is `MODULE_VIEW`, which simply adds a toggle button to the side menu.
-     * If set to `AUTHENTICATION_MODULE`, an authentication frame will be created in the upper left corner of the page
-     * to contain informations about the user.
+     *
+     * @param moduleId A unique id. Must be a string without spaces. It
+     * will be used to generate some HTML ids in the page. It will also
+     * be used to look for an icon to put with the button
+     * @param moduleClass The module view class. Must implement some
+     * methods (`enable`, `disable` and `addEventListener`). The
+     * recommended way of implementing them is to extend the
+     * `ModuleView` class, as explained [on the
+     * wiki](https://github.com/MEPP-team/UDV/wiki/Generic-demo-and-modules-with-ModuleView-&-BaseDemo).
+     * @param options An object used to specify various options.
+     * `options.name` allows you to specify the name that will be
+     * displayed in the toggle button. By default, it makes a
+     * transformation of the id (like this : myModule -> My Module).
+     * `options.type` is the "type" of the module view that defines how
+     * it is added to the demo. The default value is `MODULE_VIEW`,
+     * which simply adds a toggle button to the side menu. If set to
+     * `AUTHENTICATION_MODULE`, an authentication frame will be created
+     * in the upper left corner of the page to contain informations
+     * about the user. `options.requireAuth` allows you to
+     * specify if this module can be shown without authentication (ie.
+     * if no user is logged in). The default value is `false`. If set to
+     * `true`, and no athentication module was loaded, it has no effect
+     * (the module view will be shown)
      */
-    addModule(moduleName, moduleId, moduleClass, type = BaseDemo.MODULE_VIEW) {
-        if ((typeof (moduleClass.enable) !== 'function') || (typeof (moduleClass.disable) !== 'function')) {
+    addModuleView(moduleId, moduleClass, options = {}) {
+        if ((typeof (moduleClass.enable) !== 'function')
+         || (typeof (moduleClass.disable) !== 'function')) {
             throw 'A module must implement at least an enable() and a disable() methods';
+        }
+
+        //Default name is the id transformed this way :
+        // myModule -> My Module
+        // my_module -> My module
+        let moduleName = moduleId
+        .replace(/([A-Z])/g, ' $1')
+        .replace(/_/g, ' ')
+        .replace(/^./, (str) => str.toUpperCase());
+        let type = BaseDemo.MODULE_VIEW;
+        let requireAuth = false;
+        if (!!options) {
+            if (!!options.type) {
+                if (options.type === BaseDemo.MODULE_VIEW
+                    || options.type === BaseDemo.AUTHENTICATION_MODULE) {
+                    type = options.type;
+                } else {
+                    throw `Invalid value for option 'type' : '${options.type}'`;
+                }
+            }
+            if (!!options.name) {
+                moduleName = options.name;
+            }
+            if (!!options.requireAuth) {
+                requireAuth = options.requireAuth;
+            }
         }
 
         this.modules[moduleId] = moduleClass;
@@ -125,6 +179,11 @@ export class BaseDemo {
                 break;
             default:
                 throw `Unknown module type : ${type}`;
+        }
+
+        if (requireAuth) {
+            this.requireAuthModules.push(moduleId);
+            this.updateAuthentication();
         }
     }
 
@@ -171,7 +230,8 @@ export class BaseDemo {
         let frame = document.createElement('div');
         frame.id = this.authenticationFrameId;
         frame.innerHTML = this.authenticationFrameHtml;
-        this.menuElement.insertBefore(frame, document.getElementById('openHamburger').nextSibling);
+        this.menuElement.insertBefore(frame,
+            document.getElementById('openHamburger').nextSibling);
         const authView = this.getModuleById(authModuleId);
         authView.parentElement = this.contentSectionElement;
         const authService = authView.authenticationService;
@@ -189,19 +249,32 @@ export class BaseDemo {
                 console.error(e);
             }
         };
-        const updateFrame = () => {
-            if (authService.isUserLoggedIn()) {
-                const user = authService.getUser();
+        
+        authService.addObserver(this.updateAuthentication.bind(this));
+        this.authService = authService;
+        this.updateAuthentication();
+    }
+
+    updateAuthentication() {
+        if (!!this.authService) {
+            if (this.authService.isUserLoggedIn()) {
+                const user = this.authService.getUser();
                 this.authenticationMenuLoggedInElement.hidden = false;
                 this.authenticationMenuLoggedOutElement.hidden = true;
-                this.authenticationUserNameElement.innerHTML = `${user.firstname} ${user.lastname}`;
+                this.authenticationUserNameElement.innerHTML =
+                    `${user.firstname} ${user.lastname}`;
+                for (let mid of this.requireAuthModules) {
+                    this.getModuleButton(mid).style.removeProperty('display');
+                }
             } else {
                 this.authenticationMenuLoggedInElement.hidden = true;
                 this.authenticationMenuLoggedOutElement.hidden = false;
+                for (let mid of this.requireAuthModules) {
+                    this.getModuleButton(mid).style.setProperty('display',
+                        'none');
+                }
             }
-        };
-        authService.addObserver(updateFrame.bind(this));
-        updateFrame();
+        }
     }
 
     /**
@@ -220,7 +293,6 @@ export class BaseDemo {
         return this.modules[moduleId];
     }
 
-    
     /**
      * If the module view is enabled, disables it, else, enables it.
      * @param moduleId The module id. 
@@ -382,6 +454,10 @@ export class BaseDemo {
             }
         });
     }
+
+    ////////////////////////////////////////////////////////
+    // GETTERS FOR HTML IDS AND ELEMENTS OF THE DEMO PAGE //
+    ////////////////////////////////////////////////////////
 
     get mainDivId() {
         return '_base_demo';
