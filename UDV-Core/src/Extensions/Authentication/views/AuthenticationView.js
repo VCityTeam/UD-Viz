@@ -1,14 +1,14 @@
 import './AuthenticationView.css';
+import { ModuleView } from '../../../Utils/ModuleView/ModuleView';
 
-export function LoginRegistrationWindow(authenticationService) {
+export class LoginRegistrationWindow extends ModuleView {
 
-    this.authenticationService = authenticationService;
-    this.parentElement;
+    constructor(authenticationService) {
+        super();
+        this.authenticationService = authenticationService;
+    }
 
-    this.initialize = function initialize() {
-    };
-
-    this.html = function () {
+    html() {
         return `
               <button id="loginRegistrationCloseButton">Close</button>\
             <form id="RegistrationForm">\
@@ -43,7 +43,7 @@ export function LoginRegistrationWindow(authenticationService) {
         `;
     }
 
-    this.appendToElement = function (htmlElement) {
+    appendToElement(htmlElement) {
         let div = document.createElement('div');
         div.innerHTML = this.html();
         div.id = "loginRegistrationWindow";
@@ -66,33 +66,33 @@ export function LoginRegistrationWindow(authenticationService) {
     }
 
 
-    this.dispose = function () {
+    dispose() {
         let div = document.getElementById('loginRegistrationWindow');
         return div.parentNode.removeChild(div);
     }
 
-    this.displayRegisterError = function (msg) {
+    displayRegisterError(msg) {
         let errorField = document.getElementById('RegisterInfo');
         errorField.className = "ErrorBox"
         errorField.innerHTML = msg;
     };
 
-    this.displayLoginError = function (msg) {
+    displayLoginError(msg) {
         let errorField = document.getElementById('LoginInfo');
         errorField.innerHTML = msg;
     };
 
-    this.displayRegisterSuccess = function (msg) {
+    displayRegisterSuccess(msg) {
         let successField = document.getElementById('RegisterInfo');
         successField.className = "SuccessBox";
         successField.innerHTML = msg;
     }
 
-    this.isVisible = function () {
+    isVisible() {
         let div = document.getElementById('loginRegistrationWindow');
         return div !== undefined && div !== null;
     }
-    this.verifyNotEmptyValuesForm = function (formIds) {
+    verifyNotEmptyValuesForm(formIds) {
         var validate = true;
         for (var id in formIds) {
             let element = document.getElementById(formIds[id]);
@@ -104,13 +104,13 @@ export function LoginRegistrationWindow(authenticationService) {
         }
         return validate;
     }
-    this.deleteValuesForm = function (formIds) {
+    deleteValuesForm(formIds) {
         for (var id in formIds) {
             let element = document.getElementById(formIds[id]);
             element.value = "";
         }
     }
-    this.verifymail = function () {
+    verifymail() {
         // This regular expression checks an email in the form of 'name@example.com'
         let RegularExpression = /^(([^<>()[]\.,;:s@]+(.[^<>()[]\.,;:s@]+)*)|(.+))@(([[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}])|(([a-zA-Z-0-9]+.)+[a-zA-Z]{2,}))$/;
         let element = document.getElementById("Email");
@@ -126,7 +126,7 @@ export function LoginRegistrationWindow(authenticationService) {
         }
     }
 
-    this.logInFunction = async function () {
+    async logInFunction() {
         this.displayLoginError('');
         const loginForm = document.getElementById('LoginForm');
         const formData = new FormData(loginForm);
@@ -144,7 +144,7 @@ export function LoginRegistrationWindow(authenticationService) {
         }
     }
 
-    this.registerFunction = async function () {
+    async registerFunction() {
         this.displayRegisterError('');
         const registerForm = document.getElementById('RegistrationForm');
         const formData = new FormData(registerForm);
@@ -167,42 +167,15 @@ export function LoginRegistrationWindow(authenticationService) {
 
 
     };
-
-    this.initialize();
-
-
     /////// MODULE MANAGEMENT FOR BASE DEMO
 
-    this.enable = () => {
+    enableView() {
         //document.getElementById('loginRegistrationWindow').style.setProperty('display', 'grid');
         this.appendToElement(this.parentElement);
-        this.sendEvent('ENABLED');
     }
 
-    this.disable = () => {
+    disableView() {
         //document.getElementById('loginRegistrationWindow').style.setProperty('display', 'none');
         this.dispose();
-        this.sendEvent('DISABLED');
-    }
-
-    this.eventListeners = {};
-
-    this.addEventListener = (event, action) => {
-        if (this.eventListeners[event]) {
-            this.eventListeners[event].push(action);
-        } else {
-            this.eventListeners[event] = [
-                action
-            ];
-        }
-    }
-
-    this.sendEvent = (event) => {
-        let listeners = this.eventListeners[event];
-        if (listeners !== undefined && listeners !== null) {
-            for (let listener of listeners) {
-                listener();
-            }
-        }
     }
 }
