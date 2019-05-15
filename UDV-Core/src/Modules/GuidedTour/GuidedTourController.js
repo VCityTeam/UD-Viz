@@ -1,5 +1,6 @@
 import './GuidedTour.css';
-import { GuidedTour }   from './GuidedTour.js';
+import { GuidedTour } from './GuidedTour.js';
+import { ModuleView } from '../../Utils/ModuleView/ModuleView';
 
 /**
 * Class: GuidedTourController
@@ -23,37 +24,43 @@ import { GuidedTour }   from './GuidedTour.js';
  *
  ======================================================================
  */
-export function GuidedTourController(documentController) {
+export class GuidedTourController extends ModuleView {
 
-  this.guidedTourContainerId = "guidedTourContainer";
+  constructor(documentController) {
+    super();
 
-  this.documentController = documentController; //instance of DocumentController
+    this.guidedTourContainerId = "guidedTourContainer";
 
-  this.url = this.documentController.serverModel.url + this.documentController.serverModel.guidedTour;
+    this.documentController = documentController; //instance of DocumentController
 
-  this.browser = this.documentController.documentBrowser;
+    this.url = this.documentController.serverModel.url + this.documentController.serverModel.guidedTour;
 
-  this.guidedTours = [];
+    this.browser = this.documentController.documentBrowser;
 
-  this.currentTourIndex = 0;
+    this.guidedTours = [];
 
-  this.steps = [];
+    this.currentTourIndex = 0;
 
-  // the current step index of the current tour
-  this.currentStepIndex = 0;
+    this.steps = [];
 
-  this.guidedTour; //instance of GuidedTour
+    // the current step index of the current tour
+    this.currentStepIndex = 0;
 
-  this.preventUserFromChangingTour = false; //put to true to prevent user from
-  // changing guided tour
+    this.guidedTour; //instance of GuidedTour
+
+    this.preventUserFromChangingTour = false; //put to true to prevent user from
+    // changing guided tour
+
+    this.initialize();
+  }
 
   /**
   * initialize the controller
   */
   //=============================================================================
-  this.initialize = function initialize(){
+  initialize() {
     var guidedTourContainer = document.createElement("div");
-    guidedTourContainer.id =   this.guidedTourContainerId;
+    guidedTourContainer.id = this.guidedTourContainerId;
     document.body.appendChild(guidedTourContainer);
     this.guidedTour = new GuidedTour(guidedTourContainer, this);
   }
@@ -61,151 +68,122 @@ export function GuidedTourController(documentController) {
   /**
   * Get all guided tour from a database */
   //=============================================================================
-  this.getGuidedTours = function getGuidedTours(){
+  getGuidedTours() {
     var req = new XMLHttpRequest();
-    req.open("GET", this.url ,false);
+    req.open("GET", this.url, false);
     req.send(req.responseText);
     this.guidedTours = JSON.parse(req.responseText);
     this.documentController.documentBrowser.numberDocs = this.guidedTours[0].extendedDocs.length;
 
   }
 
-    /**
-     * Returns the current guided tour if there are any
-     */
-    //=============================================================================
-    this.getCurrentTour = function getCurrentTour(){
-      if (this.guidedTours.length != 0){
-       return this.guidedTours[this.currentTourIndex];
-      }
-      else
-      {
-        return null;
-      }
+  /**
+   * Returns the current guided tour if there are any
+   */
+  //=============================================================================
+  getCurrentTour() {
+    if (this.guidedTours.length != 0) {
+      return this.guidedTours[this.currentTourIndex];
     }
-
-    /**
-     * Sets the current guided tour to the next guided tour and returns it.
-     */
-    //=============================================================================
-    this.getNextTour = function getNextTour(){
-      if (this.currentTourIndex < this.guidedTours.length ){
-        this.currentTourIndex++;
-      }
-      return this.getCurrentTour();
-    };
-
-    /**
-     * Sets the current guided tour to the previous guided tour and returns it.
-     */
-    //=============================================================================
-    this.getPreviousTour = function getPreviousTour(){
-      if (this.currentTourIndex > 0 )
-      {
-        this.currentTourIndex--;
-      }
-      return this.getCurrentTour();
-    };
-
-    /**
-    * Returns the current tour step
-    */
-    //=============================================================================
-    this.getCurrentStep = function getCurrentStep(){
-      if (this.getCurrentTour().length != 0){
-        var steps = this.getCurrentTour().extendedDocs;
-        return steps[this.currentStepIndex];
-      }
-      else
-      {
-        return null;
-      }
+    else {
+      return null;
     }
+  }
 
-    /**
-    * Sets the current step to the previous step and returns it.
-    */
-    //=============================================================================
-    this.getPreviousStep = function getPreviousStep(){
-      if (this.currentStepIndex > 0)
-      {
-          this.currentStepIndex--;
-      }
-      return this.getCurrentStep();
+  /**
+   * Sets the current guided tour to the next guided tour and returns it.
+   */
+  //=============================================================================
+  getNextTour() {
+    if (this.currentTourIndex < this.guidedTours.length) {
+      this.currentTourIndex++;
     }
+    return this.getCurrentTour();
+  };
 
-    /**
-    * Sets the current step to the next step and returns it.
-    */
-    //=============================================================================
-    this.getNextStep = function getNextStep(){
-      if (this.currentStepIndex < this.getCurrentTour().extendedDocs.length ){
-          this.currentStepIndex ++;
-        }
-        return this.getCurrentStep();
-      }
-
-
-    /**
-    * Reset browser at the begining of the guided tours
-    */
-    //=============================================================================
-    this.reset = function reset(){
-      this.currentStepIndex =0;
-      this.currentTourIndex = 0;
-      this.currentGuidedTour = this.guidedTours[this.currentTourIndex];
-      this.guidedTour.currentStep = this.getCurrentStep();
-      this.documentController.documentBrowser.activateWindow(false);
-      this.documentController.documentBrowser.closeDocFull();
-      this.guidedTour.previewTour();
-
+  /**
+   * Sets the current guided tour to the previous guided tour and returns it.
+   */
+  //=============================================================================
+  getPreviousTour() {
+    if (this.currentTourIndex > 0) {
+      this.currentTourIndex--;
     }
+    return this.getCurrentTour();
+  };
 
-    //Hide or show previous / next buttons in browser window
-    //=============================================================================
-    this.toggleGuidedTourButtons = function toggleGuidedTourButtons(active){
-        document.getElementById("guidedTourPreviousTourButton").style.display = active ? "block" : "none";
-        document.getElementById("guidedTourNextTourButton").style.display = active ? "block" : "none";
-        document.getElementById("guidedTourPreviousStepButton").style.display = active ? "none" : "block";
-        document.getElementById("guidedTourNextStepButton").style.display = active ? "none" : "block";
-        document.getElementById('guidedTourStartButton').style.display = active ? "block" : "none";
-        document.getElementById("guidedTourExitButton").style.display = active ? "none":"block";
-
+  /**
+  * Returns the current tour step
+  */
+  //=============================================================================
+  getCurrentStep() {
+    if (this.getCurrentTour().length != 0) {
+      var steps = this.getCurrentTour().extendedDocs;
+      return steps[this.currentStepIndex];
     }
-
-    this.initialize();
-
-    /////// MODULE MANAGEMENT FOR BASE DEMO
-
-    this.enable = () => {
-      document.getElementById(this.guidedTourContainerId).style.setProperty('display', 'block');
-      this.sendEvent('ENABLED');
+    else {
+      return null;
     }
+  }
 
-    this.disable = () => {
-      document.getElementById(this.guidedTourContainerId).style.setProperty('display', 'none');
-      this.sendEvent('DISABLED');
+  /**
+  * Sets the current step to the previous step and returns it.
+  */
+  //=============================================================================
+  getPreviousStep() {
+    if (this.currentStepIndex > 0) {
+      this.currentStepIndex--;
     }
+    return this.getCurrentStep();
+  }
 
-    this.eventListeners = {};
-
-    this.addEventListener = (event, action) => {
-      if (this.eventListeners[event]) {
-        this.eventListeners[event].push(action);
-      } else {
-        this.eventListeners[event] = [
-          action
-        ];
-      }
+  /**
+  * Sets the current step to the next step and returns it.
+  */
+  //=============================================================================
+  getNextStep() {
+    if (this.currentStepIndex < this.getCurrentTour().extendedDocs.length) {
+      this.currentStepIndex++;
     }
+    return this.getCurrentStep();
+  }
 
-    this.sendEvent = (event) => {
-      let listeners = this.eventListeners[event];
-      if (listeners !== undefined && listeners !== null) {
-          for (let listener of listeners) {
-              listener();
-          }
-      }
-    }
+
+  /**
+  * Reset browser at the begining of the guided tours
+  */
+  //=============================================================================
+  reset() {
+    this.currentStepIndex = 0;
+    this.currentTourIndex = 0;
+    this.currentGuidedTour = this.guidedTours[this.currentTourIndex];
+    this.guidedTour.currentStep = this.getCurrentStep();
+    this.documentController.documentBrowser.activateWindow(false);
+    this.documentController.documentBrowser.closeDocFull();
+    this.guidedTour.previewTour();
+
+  }
+
+  //Hide or show previous / next buttons in browser window
+  //=============================================================================
+  toggleGuidedTourButtons(active) {
+    document.getElementById("guidedTourPreviousTourButton").style.display = active ? "block" : "none";
+    document.getElementById("guidedTourNextTourButton").style.display = active ? "block" : "none";
+    document.getElementById("guidedTourPreviousStepButton").style.display = active ? "none" : "block";
+    document.getElementById("guidedTourNextStepButton").style.display = active ? "none" : "block";
+    document.getElementById('guidedTourStartButton').style.display = active ? "block" : "none";
+    document.getElementById("guidedTourExitButton").style.display = active ? "none" : "block";
+
+  }
+
+  /////// MODULE MANAGEMENT FOR BASE DEMO
+
+  enableView() {
+    document.getElementById(this.guidedTourContainerId).style.setProperty('display', 'block');
+  }
+
+  disableView() {
+    document.getElementById(this.guidedTourContainerId).style.setProperty('display', 'none');
+  }
 
 }

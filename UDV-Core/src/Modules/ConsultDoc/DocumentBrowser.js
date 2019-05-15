@@ -222,9 +222,6 @@ export function DocumentBrowser(browserContainer, documentController) {
     //= ============================================================================
     this.focusOnDoc = function focusOnDoc() {
         document.getElementById('docFull').style.display = 'block';
-        console.log('----------------');
-        console.log(this.documentController.serverModel);
-        console.log(this.currentMetadata);
         let src = this.documentController.url + this.documentController.serverModel.document + '/' + this.currentMetadata.id + '/' + this.documentController.serverModel.file;
         console.log(src);
         document.getElementById('docFullImg').src = this.documentController.url
