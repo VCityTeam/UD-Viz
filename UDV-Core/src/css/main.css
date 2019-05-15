@@ -8,25 +8,38 @@ html {
     width: 100%;
 }
 
+body {
+    display: grid;
+    grid-template-columns: auto;
+    grid-template-rows: auto 120px;
+    height: 100%;
+    margin: 0;
+}
+
+section {
+    overflow-y: auto;
+    padding: 20px;
+}
+
+footer {
+    box-shadow: 0 0px 3px 3px rgba(0, 0, 0, 0.2);
+    position: relative;
+    background-color: #fafafa;
+}
+
 #logoLIRIS {
     position: absolute;
-    z-index: 99;
-    left: 5px;
-    bottom: 5px;
-    max-height: 100px;
-    padding-left: 3px;
-    padding-top: 3px;
+    left: 10px;
+    bottom: 10px;
+    height: 100px;
     pointer-events: none;
 }
 
 #logoIMU {
     position: absolute;
-    z-index: 99;
-    right: 5px;
-    bottom: 5px;
-    max-height: 100px;
-    padding-left: 3px;
-    padding-top: 3px;
+    right: 10px;
+    bottom: 10px;
+    height: 100px;
     pointer-events: none;
 }
 
