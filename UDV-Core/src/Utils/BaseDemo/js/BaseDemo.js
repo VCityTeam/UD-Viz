@@ -1,5 +1,9 @@
 import { ModuleView } from '../../ModuleView/ModuleView.js';
 
+/**
+ * Represents the base HTML content of a demo for UDV and provides methods to dynamically
+ * add module views.
+ */
 export class BaseDemo {
     constructor() {
         this.modules = {};
@@ -15,6 +19,9 @@ export class BaseDemo {
         this.iconFolder = 'Icons';
     }
 
+    /**
+     * Returns the basic html content of the demo
+     */
     get html() {
         return /*html*/`
             <input type="checkbox" id="activateTemporal" class="nonVisible">
@@ -42,6 +49,10 @@ export class BaseDemo {
         `;
     }
 
+    /**
+     * Returns the html element representing the upper-left frame of the UI, which contains informations
+     * about the logged in user.
+     */
     get authenticationFrameHtml() {
         return /*html*/`
             <div id="${this.authenticationMenuLoggedInId}">
@@ -55,6 +66,12 @@ export class BaseDemo {
         `;
     }
 
+    /**
+     * Appends the demo HTML to an HTML element.
+     * 
+     * @param htmlElement The parent node to add the demo into. The recommended way of implementing the demo is simply
+     * to have an empty body and call this method with `document.body` as parameter.
+     */
     appendTo(htmlElement) {
         this.parentElement = htmlElement;
         let div = document.createElement('div');
@@ -66,7 +83,19 @@ export class BaseDemo {
 
     //////// MODULE MANAGEMENT
 
-    // Add a new module
+    /**
+     * Adds a new module view to the demo.
+     * 
+     * @param moduleName A unique name for the module. It will for instance be used as text for the toggle button corresponding
+     * to the module view.
+     * @param moduleId A unique id. Must be a string without spaces. It will be used to generate some HTML ids in the page.
+     * @param moduleClass The module view class. Must implement some methods (`enable`, `disable` and `addEventListener`).
+     * The recommended way of implementing them is to extend the `ModuleView` class, as explained [on the wiki](https://github.com/MEPP-team/UDV/wiki/Generic-demo-and-modules-with-ModuleView-&-BaseDemo).
+     * @param type The type of the module view that defines how it is added to the demo.
+     * The default value is `MODULE_VIEW`, which simply adds a toggle button to the side menu.
+     * If set to `AUTHENTICATION_MODULE`, an authentication frame will be created in the upper left corner of the page
+     * to contain informations about the user.
+     */
     addModule(moduleName, moduleId, moduleClass, type = BaseDemo.MODULE_VIEW) {
         if ((typeof (moduleClass.enable) !== 'function') || (typeof (moduleClass.disable) !== 'function')) {
             throw 'A module must implement at least an enable() and a disable() methods';
@@ -99,7 +128,11 @@ export class BaseDemo {
         }
     }
 
-    // Create a menu button
+    /**
+     * Creates a new button in the side menu.
+     * @param moduleId The module id.
+     * @param buttonText The text to display in the button.
+     */
     createMenuButton(moduleId, buttonText) {
         let button = document.createElement('label');
         button.id = this.getModuleButtonId(moduleId);
@@ -130,7 +163,10 @@ export class BaseDemo {
         moduleClass.disable();
     }
 
-    // Create the authentication frame
+    /**
+     * Creates an authentication frame for the authentication module.
+     * @param authModuleId The id of the authentication module.
+     */
     createAuthenticationFrame(authModuleId) {
         let frame = document.createElement('div');
         frame.id = this.authenticationFrameId;
@@ -168,17 +204,27 @@ export class BaseDemo {
         updateFrame();
     }
 
-    // Is a module visible ?
+    /**
+     * Returns if the module view is currently enabled or not.
+     * @param moduleId The module id.
+     */
     isModuleActive(moduleId) {
         return this.moduleActivation[moduleId];
     }
 
-    // Get a module by id
+    /**
+     * Returns the module view class by its id.
+     * @param moduleId The module id. 
+     */
     getModuleById(moduleId) {
         return this.modules[moduleId];
     }
 
-    // Toggle a module
+    
+    /**
+     * If the module view is enabled, disables it, else, enables it.
+     * @param moduleId The module id. 
+     */
     toggleModule(moduleId) {
         if (!this.isModuleActive(moduleId)) {
             this.getModuleById(moduleId).enable();
@@ -187,7 +233,6 @@ export class BaseDemo {
         }
     }
 
-    // Get module button id
     getModuleButtonId(moduleId) {
         return `_base_demo_menu_button${moduleId}`;
     }
@@ -197,6 +242,9 @@ export class BaseDemo {
         return document.getElementById(this.getModuleButtonId(moduleId));
     }
 
+    /**
+     * Initialize the iTowns 3D view.
+     */
     initViewer() {
         const terrainAndElevationRequest = 'https://download.data.grandlyon.com/wms/grandlyon';
 
@@ -318,6 +366,10 @@ export class BaseDemo {
         );
     }
 
+    /**
+     * Loads a config file. Module views should only be added after calling this method.
+     * @param filePath The path to the config file.
+     */
     async loadConfigFile(filePath) {
         //loading configuration file
         // see https://github.com/MEPP-team/VCity/wiki/Configuring-UDV
