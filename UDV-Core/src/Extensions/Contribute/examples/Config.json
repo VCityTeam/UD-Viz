@@ -131,7 +131,7 @@
           "optional":"true",
           "displayable":"false"
         },
-        "billboardX":{
+        "billboardY":{
           "type":"double",
           "optional":"true",
           "displayable":"false"
