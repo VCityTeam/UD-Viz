@@ -71,6 +71,7 @@ export class DocToValidateBrowserWindow extends Window {
             .onclick = this.commentDocument.bind(this);
     }
 
+    // Need refacto
     async update() {
         const currentDocument = this.docToValidateService.currentDocument();
         const currentDocumentId = this.docToValidateService

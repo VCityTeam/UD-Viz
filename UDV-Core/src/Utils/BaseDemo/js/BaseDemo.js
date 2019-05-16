@@ -18,7 +18,11 @@ export class BaseDemo {
         this.renderer;
         this.controls;
         this.temporal;
-        this.iconFolder = 'Icons';
+        // Config values for some file paths
+        this.iconFolder = '../data/icons';
+        this.imageFolder = '../data/img';
+        this.logoIMUFile = 'logo-imu.png';
+        this.logoLIRISFile = 'logo-liris.png';
     }
 
     /**
@@ -38,8 +42,8 @@ export class BaseDemo {
                         title="Creative Commons BY 3.0" target="_blank">
                         CC 3.0 BY</a>
                     </div>
-                    <img id="logoIMU" src="../data/img/logo-imu.png" />
-                    <img id="logoLIRIS" src="../data/img/logo-liris.png" />
+                    <img id="logoIMU" src="${this.imageFolder}/${this.logoIMUFile}" />
+                    <img id="logoLIRIS" src="${this.imageFolder}/${this.logoLIRISFile}" />
                 </div>
                 <input type="checkbox" id="openSidebar">
                 <!-- The HTML code corresponds to an hamburger menu icon -->
