@@ -1,8 +1,10 @@
 import { BaseDemo } from '../../src/Utils/BaseDemo/js/BaseDemo.js'
 
-let baseDemo = new BaseDemo();
+let baseDemo = new BaseDemo({
+    iconFolder: '../data/icons',
+    imageFolder: '../data/img'
+});
 
-baseDemo.iconFolder = '../data/icons';
 baseDemo.appendTo(document.body);
 baseDemo.loadConfigFile('./Config.json').then(() => {
     ////// REQUEST SERVICE

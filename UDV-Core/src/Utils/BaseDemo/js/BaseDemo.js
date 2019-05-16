@@ -5,7 +5,7 @@ import { ModuleView } from '../../ModuleView/ModuleView.js';
  * add module views.
  */
 export class BaseDemo {
-    constructor() {
+    constructor(config = {}) {
         this.modules = {};
         this.moduleNames = {};
         this.moduleActivation = {};
@@ -19,10 +19,11 @@ export class BaseDemo {
         this.controls;
         this.temporal;
         // Config values for some file paths
-        this.iconFolder = '../data/icons';
-        this.imageFolder = '../data/img';
-        this.logoIMUFile = 'logo-imu.png';
-        this.logoLIRISFile = 'logo-liris.png';
+        config = config || {};
+        this.iconFolder = config.iconFolder || 'icon';
+        this.imageFolder = config.imageFolder || 'img';
+        this.logoIMUFile = config.logoIMUFile || 'logo-imu.png';
+        this.logoLIRISFile = config.logoLIRISFile || 'logo-liris.png';
     }
 
     /**
