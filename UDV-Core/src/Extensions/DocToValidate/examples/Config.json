@@ -2,13 +2,15 @@
     "type": "class",
     "server":{
       "url":"http://localhost:5000/",
-      "documentsRepository":"getFile/",
       "login": "login",
-      "register": "addUser",
-      "documentToValidate": "getDocuments_to_validate",
+      "user": "user",
+      "userMe": "user/me",
       "document": "document",
-      "validate": "validateDocument",
-      "file": "file"
+      "documentToValidate": "document/in_validation",
+      "comment" : "comment",
+      "validate": "document/validate",
+      "file": "file",
+      "guidedTour": "guidedTour"
     },
     "properties": {
       "metaData":{
