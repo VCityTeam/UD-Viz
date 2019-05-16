@@ -204,9 +204,15 @@ export function DocumentBrowser(browserContainer, documentController) {
                 + this.documentController.serverModel.file;
             document.getElementById('docBrowserIndex').innerHTML = `Document: ${
                 this.docIndex} out of ${this.numberDocs}`;
+            this.documentController.toggleActionButtons(true);
         }
 
         else {
+            // If there is no document, clear the fields.
+            let metadataNode = document.getElementById('docMetadata');
+            if (!!metadataNode) {
+                metadataNode.parentElement.removeChild(metadataNode);
+            }
             // sets browser with default information and image
             var defaultImage = document.getElementById('docBrowserPreviewImg');
             defaultImage.src = DefaultImage;
