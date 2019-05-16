@@ -41,7 +41,7 @@ baseDemo.loadConfigFile('./Config.json').then(() => {
     const authenticationService =
         new udvcore.AuthenticationService(requestService, baseDemo.config);
     const authenticationView =
-        new udvcore.LoginRegistrationWindow(authenticationService);
+        new udvcore.AuthenticationView(authenticationService);
     baseDemo.addModuleView('authentication', authenticationView,
         {type: BaseDemo.AUTHENTICATION_MODULE});
 

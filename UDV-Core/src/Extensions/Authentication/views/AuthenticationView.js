@@ -1,7 +1,7 @@
 import './AuthenticationView.css';
 import { ModuleView } from '../../../Utils/ModuleView/ModuleView';
 
-export class LoginRegistrationWindow extends ModuleView {
+export class AuthenticationView extends ModuleView {
 
     constructor(authenticationService) {
         super();
