@@ -120,6 +120,12 @@ export function CreateDocument(creationContainer, contributeController){
     document.getElementById(this.contributeController.creationContainerId).style.display = active  ? "block" : "none ";
     document.getElementById('manualPos').style.display = active  ? "block" : "none ";
     document.getElementById('positionerContainer').style.display = active  ? "block" : "none ";
+    if (!active) {
+      this.contributeController.documentController.documentResearch
+        .activateWindow(true);
+      this.contributeController.documentController.documentBrowser
+        .activateWindow(true);
+    }
   }
 
   /**

@@ -183,7 +183,6 @@ export function ContributeController(documentController, requestService){
     document.getElementById("quatY").value = quaternion.y;
     document.getElementById("quatZ").value = quaternion.z;
     document.getElementById("quatW").value = quaternion.w;
-
   }
 
 /**
@@ -205,6 +204,8 @@ export function ContributeController(documentController, requestService){
           this.newDocData = new FormData();
           this.visuData = new FormData();
           this.documentController.getDocuments();
+          (this.documentCreate.activateCreateWindow.bind(this.documentCreate))
+            (false);
         }, (error) => {
           console.error(error);
         });
