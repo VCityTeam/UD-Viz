@@ -113,7 +113,7 @@ export function DocToValidateService(requestService, config) {
 
     this.update = async function (formData) {
         let response = (await this.requestService.send('PUT', `${this.documentUrl}/${this.currentDocument().id}`, formData)).response;
-        this.notifyObservers();
+        this.getDocumentsToValidate();
         return response;
     };
 
@@ -121,14 +121,14 @@ export function DocToValidateService(requestService, config) {
         //request to delete
         let response = await this.requestService.send('DELETE', `${this.documentUrl}/${this.currentDocument().id}`)
         //refetch documents
-        await this.search(this.prevFilters);
+        this.getDocumentsToValidate();
     };
 
     this.validate = async function () {
         let formData = new FormData();
         formData.append('id', this.currentDocument().id);
         let response = await this.requestService.send('POST', this.validateUrl, formData);
-        await this.search(this.prevFilters);
+        this.getDocumentsToValidate();
     };
 
     this.clearSearch = function () {
