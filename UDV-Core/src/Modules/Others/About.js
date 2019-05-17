@@ -1,19 +1,22 @@
 import './About.css';
+import { ModuleView } from '../../Utils/ModuleView/ModuleView';
 
 /**
  * adds an "About" window that can be open/closed with a button
  * simply include this file in the html, no need to instanciate anything in main.js
  */
-export function AboutWindow(options = {}) {
+export class AboutWindow extends ModuleView {
 
-    // Create DOM element
-    let aboutDiv = document.createElement("div");
-    aboutDiv.id = 'aboutWindow';
-    $("#contentSection").append(aboutDiv);
+   constructor(options = {}) {
+      super();
+      // Create DOM element
+      let aboutDiv = document.createElement("div");
+      aboutDiv.id = 'aboutWindow';
+      $("#contentSection").append(aboutDiv);
 
-    // Create HMTL
-    document.getElementById("aboutWindow").innerHTML =
-        '<div id="text">\
+      // Create HMTL
+      document.getElementById("aboutWindow").innerHTML =
+         '<div id="text">\
              <br>\
              <p>This UDV-Core demo is part of the \
              <a target="_blank"\
@@ -38,10 +41,19 @@ export function AboutWindow(options = {}) {
         <button id="aboutCloseButton">Close</button>\
         ';
 
-    // Close the window...when close button is hit
-    document.getElementById("aboutCloseButton").addEventListener(
-        'mousedown', () => {
-            let activate = document.getElementById('activateAbout');
-            activate.checked = !activate.checked;
-        }, false);
+      // Close the window...when close button is hit
+      document.getElementById("aboutCloseButton").addEventListener(
+         'mousedown', () => {
+            this.disable();
+         }, false);
+   }
+
+   /////// MODULE VIEW MANAGEMENT
+   enableView() {
+      document.getElementById('aboutWindow').style.setProperty('display', 'block');
+   }
+
+   disableView() {
+      document.getElementById('aboutWindow').style.setProperty('display', 'none');
+   }
 }

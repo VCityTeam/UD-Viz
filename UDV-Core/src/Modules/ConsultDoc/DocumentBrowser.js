@@ -204,9 +204,15 @@ export function DocumentBrowser(browserContainer, documentController) {
                 + this.documentController.serverModel.file;
             document.getElementById('docBrowserIndex').innerHTML = `Document: ${
                 this.docIndex} out of ${this.numberDocs}`;
+            this.documentController.toggleActionButtons(true);
         }
 
         else {
+            // If there is no document, clear the fields.
+            let metadataNode = document.getElementById('docMetadata');
+            if (!!metadataNode) {
+                metadataNode.parentElement.removeChild(metadataNode);
+            }
             // sets browser with default information and image
             var defaultImage = document.getElementById('docBrowserPreviewImg');
             defaultImage.src = DefaultImage;
@@ -222,9 +228,6 @@ export function DocumentBrowser(browserContainer, documentController) {
     //= ============================================================================
     this.focusOnDoc = function focusOnDoc() {
         document.getElementById('docFull').style.display = 'block';
-        console.log('----------------');
-        console.log(this.documentController.serverModel);
-        console.log(this.currentMetadata);
         let src = this.documentController.url + this.documentController.serverModel.document + '/' + this.currentMetadata.id + '/' + this.documentController.serverModel.file;
         console.log(src);
         document.getElementById('docFullImg').src = this.documentController.url
@@ -319,7 +322,7 @@ export function DocumentBrowser(browserContainer, documentController) {
     document.getElementById('docBrowserOrientButton').addEventListener('mousedown',
         this.focusOnDoc.bind(this), false);
     document.getElementById('closeBrowserWindow').addEventListener('mousedown',
-        this.documentController.toggle, false);
+        this.documentController.disable.bind(this.documentController), false);
     document.getElementById('resetFilters').addEventListener('mousedown',
         this.resetResearch.bind(this), false);
     document.getElementById('docOpaSlider').addEventListener('input',

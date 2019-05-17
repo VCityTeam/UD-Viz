@@ -9,7 +9,8 @@
       "documentToValidate": "document/in_validation",
       "comment" : "comment",
       "validate": "document/validate",
-      "file": "file"
+      "file": "file",
+      "guidedTour": "guidedTour"
     },
     "properties": {
       "metaData":{
@@ -130,7 +131,7 @@
           "optional":"true",
           "displayable":"false"
         },
-        "billboardX":{
+        "billboardY":{
           "type":"double",
           "optional":"true",
           "displayable":"false"

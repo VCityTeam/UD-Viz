@@ -17,7 +17,7 @@ import proj4 from 'proj4';
 //=============================================================================
 export function Setup3DScene(terrainAndElevationRequest,
                              buildingServerRequest,
-                             showBuildings = false )
+                             showBuildings = false)
 {
 // Define projection that we will use (taken from https://epsg.io/3946, Proj4js section)
 proj4.defs('EPSG:3946',
@@ -46,7 +46,7 @@ const config = {
 };
 
 // Instanciate PlanarView*
-view = new itowns.PlanarView(viewerDiv, extent, config);
+let view = new itowns.PlanarView(viewerDiv, extent, config);
 
 // Add an WMS imagery layer (see WMSProvider* for valid options)
 view.addLayer({

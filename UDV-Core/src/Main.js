@@ -6,14 +6,14 @@ export { Setup3DScene }             from './Setup3DScene';
 
 export { AuthenticationService }    from './Extensions/Authentication/services/AuthenticationService';
 
-export { RequestService }           from './Modules/Request/RequestService';
+export { RequestService }           from './Utils/Request/RequestService';
 
 export { GuidedTourController }     from './Modules/GuidedTour/GuidedTourController';
 
-export { LoginRegistrationWindow }  from './Extensions/Authentication/views/AuthenticationView';
+export { AuthenticationView }  from './Extensions/Authentication/views/AuthenticationView';
 
 export { DocToValidateService }     from './Extensions/DocToValidate/services/DocToValidateService';
-export { DocToValidateView }      from './Extensions/DocToValidate/views/DocToValidateView';
+export { DocToValidateView }        from './Extensions/DocToValidate/views/DocToValidateView';
 
 export { AboutWindow }              from './Modules/Others/About';
 export { CompassController }        from './Modules/Others/Compass';

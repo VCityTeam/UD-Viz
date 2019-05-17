@@ -9,9 +9,15 @@ export function DocToValidateService(requestService, config) {
     this.fileRoute = config.server.file;
     this.commentRoute = config.server.comment;
 
-    this.documents = [];
+    //All documents represents all the document the user can potentially access
+    // with its current permission (ie. its own submissions or all submissions
+    // if it's an admin)
+    this.allDocuments = [];
+    //Filtered documents is the filtered version of all documents. To avoid
+    // requesting the server each time the user want to filter its documents,
+    // we store them in allDocuments and filter this locally stored data.
+    this.filteredDocuments = [];
     this.currentDocumentId = 0;
-    this.prevFilters;
 
     this.observers = [];
 
@@ -19,37 +25,61 @@ export function DocToValidateService(requestService, config) {
         console.log('Doc To Validate Service initialized.');
     };
 
-    this.search = async function (filterFormData) {
+    this.getDocumentsToValidate = async function () {
         //request to fetch docs
         let response = (await this.requestService.send('GET', this.documentToValidateUrl)).response;
         let docs = JSON.parse(response);
-        this.documents = [];
+        this.allDocuments = [];
         for (let doc of docs) {
             doc.imgUrl = `${this.documentUrl}/${doc.id}/${this.fileRoute}`;
-            this.documents.push(doc);
+            this.allDocuments.push(doc);
         }
+        this.filteredDocuments = this.allDocuments;
+        this.currentDocumentId = 0;
+        this.notifyObservers();
+    }
 
-        this.prevFilters = filterFormData;
+    this.search = async function (filterFormData) {
+        this.filteredDocuments = this.allDocuments;
 
         // Get values from the fields of the search form
-        const keywordFilter = filterFormData.get("keyword");
-        const startReferringDateFilter = filterFormData.get("startReferringDate");
-        const endReferringDateFilter = filterFormData.get("endReferringDate");
-        const startPublicationDateFilter = filterFormData.get("startPublicationDate");
-        const endPublicationDateFilter = filterFormData.get("endPublicationDate");
-        const subjectFiler = filterFormData.get("subject");
+        // A filter is an object with three properties : {
+        //    text: the content of the field in the form = the filter value
+        //    type: the method of comparison (can be 'includes', 'greater', 'smaller', 'equals')
+        //    property: the name of the metadata field that will be compared to the filter value
+        // }
+        let filters = [];
+        filters.push({ text: filterFormData.get("keyword"), type: 'includes', property: 'title' });
+        filters.push({ text: filterFormData.get("startReferringDate"), type: 'greater', property: 'refDate' });
+        filters.push({ text: filterFormData.get("endReferringDate"), type: 'smaller', property: 'refDate' });
+        filters.push({ text: filterFormData.get("startPublicationDate"), type: 'greater', property: 'publicationDate' });
+        filters.push({ text: filterFormData.get("endPublicationDate"), type: 'smaller', property: 'publicationDate' });
+        filters.push({ text: filterFormData.get("subject"), type: 'equals', property: 'subject' });
 
         // Filters the fetched documents according to the fields of the
         // search form
-        const filtered = this.documents.filter(document => (keywordFilter === undefined || keywordFilter === null || keywordFilter === '' || document.metaData.title.includes(keywordFilter)) &&
-            (startReferringDateFilter === undefined || startReferringDateFilter === null || startReferringDateFilter === '' || document.metaData.referringDate > startReferringDateFilter) &&
-            (endReferringDateFilter === undefined || endReferringDateFilter === null || endReferringDateFilter === '' || document.metaData.refDate < endReferringDateFilter) &&
-            (startPublicationDateFilter === undefined || startPublicationDateFilter === null || startPublicationDateFilter === '' || document.metaData.publicationDate > startPublicationDateFilter) &&
-            (endPublicationDateFilter === undefined || endPublicationDateFilter === null || endPublicationDateFilter === '' || document.metaData.publicationDate < endPublicationDateFilter) &&
-            (subjectFiler === undefined || subjectFiler === null || subjectFiler === '' || document.metaData.subject === subjectFiler)
-        );
+        const filtered = this.filteredDocuments.filter((document) => {
+            for (let filter of filters) {
+                if (filter.text !== undefined && filter.text !== null && filter.text !== '') {
+                    let documentProp = document.metaData[filter.property];
+                    if (filter.type === 'includes'
+                            && (typeof(documentProp) !== 'string'
+                            || !documentProp.toLowerCase()
+                                .includes(filter.text.toLowerCase())) ||
+                        filter.type === 'greater'
+                            && !(documentProp >= filter.text) ||
+                        filter.type === 'smaller'  
+                            && !(documentProp <= filter.text) ||
+                        filter.type === 'equals'   
+                            && !(documentProp == filter.text)) {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        });
 
-        this.documents = filtered;
+        this.filteredDocuments = filtered;
         this.currentDocumentId = 0;
         this.notifyObservers();
     };
@@ -92,7 +122,7 @@ export function DocToValidateService(requestService, config) {
 
     this.update = async function (formData) {
         let response = (await this.requestService.send('PUT', `${this.documentUrl}/${this.currentDocument().id}`, formData)).response;
-        this.notifyObservers();
+        this.getDocumentsToValidate();
         return response;
     };
 
@@ -100,20 +130,18 @@ export function DocToValidateService(requestService, config) {
         //request to delete
         let response = await this.requestService.send('DELETE', `${this.documentUrl}/${this.currentDocument().id}`)
         //refetch documents
-        await this.search(this.prevFilters);
+        this.getDocumentsToValidate();
     };
 
     this.validate = async function () {
         let formData = new FormData();
         formData.append('id', this.currentDocument().id);
         let response = await this.requestService.send('POST', this.validateUrl, formData);
-        await this.search(this.prevFilters);
+        this.getDocumentsToValidate();
     };
 
     this.clearSearch = function () {
-        this.documents = [];
-        this.currentDocumentId = 0;
-        this.notifyObservers();
+        this.getDocumentsToValidate();
     };
 
     // Observers
@@ -131,15 +159,15 @@ export function DocToValidateService(requestService, config) {
     // Fetched documents management
 
     this.getDocuments = function () {
-        return this.documents;
+        return this.filteredDocuments;
     };
 
     this.getDocumentsCount = function () {
-        return this.documents.length;
+        return this.filteredDocuments.length;
     };
 
     this.currentDocument = function () {
-        return this.documents[this.currentDocumentId];
+        return this.filteredDocuments[this.currentDocumentId];
     };
 
     this.getCurrentDocumentId = function () {
@@ -147,13 +175,13 @@ export function DocToValidateService(requestService, config) {
     };
 
     this.nextDocument = function () {
-        this.currentDocumentId = (this.currentDocumentId + 1) % this.documents.length;
+        this.currentDocumentId = (this.currentDocumentId + 1) % this.filteredDocuments.length;
         this.notifyObservers();
         return this.currentDocument();
     };
 
     this.prevDocument = function () {
-        this.currentDocumentId = (this.documents.length + this.currentDocumentId - 1) % this.documents.length;
+        this.currentDocumentId = (this.filteredDocuments.length + this.currentDocumentId - 1) % this.filteredDocuments.length;
         this.notifyObservers();
         return this.currentDocument();
     };

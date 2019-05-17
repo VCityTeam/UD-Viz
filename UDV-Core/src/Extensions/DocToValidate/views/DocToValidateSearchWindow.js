@@ -1,5 +1,5 @@
-import { Window } from '../../../Shared/js/Window';
-import '../../../Shared/css/window.css';
+import { Window } from '../../../Utils/GUI/js/Window';
+import '../../../Utils/GUI/css/window.css';
 
 export class DocToValidateSearchWindow extends Window {
 
@@ -9,7 +9,7 @@ export class DocToValidateSearchWindow extends Window {
         this.docToValidateView = docToValidateView;
         this.addListener((event) => {
             if (event === Window.EVENT_DESTROYED) {
-                this.docToValidateView.dispose();
+                this.docToValidateView.disable();
             }
         });
     }
@@ -51,9 +51,6 @@ export class DocToValidateSearchWindow extends Window {
     search() {
         const form = document.getElementById('docToValidate_searchForm');
         const formData = new FormData(form);
-        for (let entry of formData.entries()) {
-            console.log(entry);
-        }
         this.docToValidateService.search(formData);
     }
 }

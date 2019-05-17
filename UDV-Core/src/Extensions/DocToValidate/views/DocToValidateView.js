@@ -2,25 +2,34 @@ import "./DocToValidateStyle.css"
 import { DocToValidateSearchWindow } from "./DocToValidateSearchWindow";
 import { DocToValidateBrowserWindow } from "./DocToValidateBrowserWindow";
 import { DocToValidateCommentWindow } from "./DocToValidateCommentWindow"
+import { ModuleView } from "../../../Utils/ModuleView/ModuleView";
 
-export function DocToValidateView(docToValidateService, documentController) {
+export class DocToValidateView extends ModuleView{
 
-    this.docToValidateService = docToValidateService;
-    this.documentController = documentController;
-    this.searchWindow;
-    this.browserWindow;
-    this.commentWindow;
+    constructor(docToValidateService, documentController) {
+        super();
+        this.docToValidateService = docToValidateService;
+        this.searchWindow;
+        this.browserWindow;
+        this.commentWindow;
 
-    this.onopen;
-    this.onclose;
+        this.documentController = documentController;
 
-    this.initialize = function () {
+        this.parentElement;
+
+        this.onopen;
+        this.onclose;
+
+        this.initialize();
+    }
+
+    initialize() {
         this.searchWindow = new DocToValidateSearchWindow(this, this.docToValidateService);
         this.browserWindow = new DocToValidateBrowserWindow(this, this.docToValidateService);
         this.commentWindow = new DocToValidateCommentWindow(this.docToValidateService);
     }
 
-    this.appendToElement = function (htmlElement) {
+    appendToElement(htmlElement) {
         this.searchWindow.appendTo(htmlElement);
         this.browserWindow.appendTo(htmlElement);
         this.docToValidateService.search(new FormData());
@@ -29,7 +38,7 @@ export function DocToValidateView(docToValidateService, documentController) {
         }
     }
 
-    this.dispose = () => {
+    dispose() {
         this.searchWindow.dispose();
         this.browserWindow.dispose();
         this.commentWindow.dispose();
@@ -38,9 +47,17 @@ export function DocToValidateView(docToValidateService, documentController) {
         }
     }
 
-    this.isVisible = function () {
+    isVisible() {
         return this.searchWindow.isVisible;
     }
 
-    this.initialize();
-};
+    /////// MODULE MANAGEMENT FOR BASE DEMO
+
+    enableView() {
+        this.appendToElement(this.parentElement);
+    }
+
+    disableView() {
+        this.dispose();
+    }
+}
