@@ -9,10 +9,15 @@ export function DocToValidateService(requestService, config) {
     this.fileRoute = config.server.file;
     this.commentRoute = config.server.comment;
 
+    //All documents represents all the document the user can potentially access
+    // with its current permission (ie. its own submissions or all submissions
+    // if it's an admin)
     this.allDocuments = [];
-    this.documents = [];
+    //Filtered documents is the filtered version of all documents. To avoid
+    // requesting the server each time the user want to filter its documents,
+    // we store them in allDocuments and filter this locally stored data.
+    this.filteredDocuments = [];
     this.currentDocumentId = 0;
-    this.prevFilters;
 
     this.observers = [];
 
@@ -29,15 +34,13 @@ export function DocToValidateService(requestService, config) {
             doc.imgUrl = `${this.documentUrl}/${doc.id}/${this.fileRoute}`;
             this.allDocuments.push(doc);
         }
-        this.documents = this.allDocuments;
+        this.filteredDocuments = this.allDocuments;
         this.currentDocumentId = 0;
         this.notifyObservers();
     }
 
     this.search = async function (filterFormData) {
-        this.documents = this.allDocuments;
-
-        this.prevFilters = filterFormData;
+        this.filteredDocuments = this.allDocuments;
 
         // Get values from the fields of the search form
         // A filter is an object with three properties : {
@@ -55,14 +58,21 @@ export function DocToValidateService(requestService, config) {
 
         // Filters the fetched documents according to the fields of the
         // search form
-        const filtered = this.documents.filter((document) => {
+        const filtered = this.filteredDocuments.filter((document) => {
+            console.log('document : ', document.metaData.title);
             for (let filter of filters) {
                 if (filter.text !== undefined && filter.text !== null && filter.text !== '') {
                     let documentProp = document.metaData[filter.property];
-                    if (filter.type === 'includes' && !documentProp.toLowerCase().includes(filter.text.toLowerCase()) ||
-                        filter.type === 'greater'  && !(documentProp >= filter.text) ||
-                        filter.type === 'smaller'  && !(documentProp <= filter.text) ||
-                        filter.type === 'equals'   && !(documentProp == filter.text)) {
+                    if (filter.type === 'includes'
+                            && (typeof(documentProp) !== 'string'
+                            || !documentProp.toLowerCase()
+                                .includes(filter.text.toLowerCase())) ||
+                        filter.type === 'greater'
+                            && !(documentProp >= filter.text) ||
+                        filter.type === 'smaller'  
+                            && !(documentProp <= filter.text) ||
+                        filter.type === 'equals'   
+                            && !(documentProp == filter.text)) {
                         return false;
                     }
                 }
@@ -70,7 +80,7 @@ export function DocToValidateService(requestService, config) {
             return true;
         });
 
-        this.documents = filtered;
+        this.filteredDocuments = filtered;
         this.currentDocumentId = 0;
         this.notifyObservers();
     };
@@ -150,15 +160,15 @@ export function DocToValidateService(requestService, config) {
     // Fetched documents management
 
     this.getDocuments = function () {
-        return this.documents;
+        return this.filteredDocuments;
     };
 
     this.getDocumentsCount = function () {
-        return this.documents.length;
+        return this.filteredDocuments.length;
     };
 
     this.currentDocument = function () {
-        return this.documents[this.currentDocumentId];
+        return this.filteredDocuments[this.currentDocumentId];
     };
 
     this.getCurrentDocumentId = function () {
@@ -166,13 +176,13 @@ export function DocToValidateService(requestService, config) {
     };
 
     this.nextDocument = function () {
-        this.currentDocumentId = (this.currentDocumentId + 1) % this.documents.length;
+        this.currentDocumentId = (this.currentDocumentId + 1) % this.filteredDocuments.length;
         this.notifyObservers();
         return this.currentDocument();
     };
 
     this.prevDocument = function () {
-        this.currentDocumentId = (this.documents.length + this.currentDocumentId - 1) % this.documents.length;
+        this.currentDocumentId = (this.filteredDocuments.length + this.currentDocumentId - 1) % this.filteredDocuments.length;
         this.notifyObservers();
         return this.currentDocument();
     };

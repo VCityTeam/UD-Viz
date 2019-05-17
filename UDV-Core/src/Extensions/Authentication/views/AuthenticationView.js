@@ -170,12 +170,10 @@ export class AuthenticationView extends ModuleView {
     /////// MODULE MANAGEMENT FOR BASE DEMO
 
     enableView() {
-        //document.getElementById('loginRegistrationWindow').style.setProperty('display', 'grid');
         this.appendToElement(this.parentElement);
     }
 
     disableView() {
-        //document.getElementById('loginRegistrationWindow').style.setProperty('display', 'none');
         this.dispose();
     }
 }
