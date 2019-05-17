@@ -68,8 +68,6 @@ export class DocumentController extends ModuleView {
     browserContainer.style = 'display: none;';
     document.getElementById('contentSection').appendChild(browserContainer);
     this.documentBrowser = new DocumentBrowser(browserContainer, this);
-
-    //this.documentBillboard = new DocumentBillboard(this); //in process
   }
 
   toggle() {

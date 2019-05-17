@@ -71,7 +71,9 @@ export class DocToValidateBrowserWindow extends Window {
             .onclick = this.commentDocument.bind(this);
     }
 
-    // Need refacto
+    // Need refactoring
+    // Dynamically construct the field according to the config file
+    // (like for the ConsultDoc module) : see issue #79
     async update() {
         const currentDocument = this.docToValidateService.currentDocument();
         const currentDocumentId = this.docToValidateService

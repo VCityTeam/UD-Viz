@@ -59,7 +59,6 @@ export function DocToValidateService(requestService, config) {
         // Filters the fetched documents according to the fields of the
         // search form
         const filtered = this.filteredDocuments.filter((document) => {
-            console.log('document : ', document.metaData.title);
             for (let filter of filters) {
                 if (filter.text !== undefined && filter.text !== null && filter.text !== '') {
                     let documentProp = document.metaData[filter.property];

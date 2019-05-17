@@ -18,7 +18,11 @@ export class BaseDemo {
         this.renderer;
         this.controls;
         this.temporal;
-        // Config values for some file paths
+        ///// Config values for some file paths
+        // iconFolder    : folder for icons (for the modules menu)
+        // imageFolder   : folder for the logo files (for LIRIS and IMU)
+        // logoIMUFile   : filename for IMU logo
+        // logoLIRISFile : filename for LIRIS logo
         config = config || {};
         this.iconFolder = config.iconFolder || 'icon';
         this.imageFolder = config.imageFolder || 'img';
@@ -260,6 +264,15 @@ export class BaseDemo {
         this.updateAuthentication();
     }
 
+    /**
+     * This method should be called when the authentication state changes
+     *  (ie. a user log in / out), or when a module is added. It has two
+     *  purposes :
+     *  1. To update the upper-left square of the side menu (which contains
+     *     use informations)
+     *  2. To show / hide the modules that require authentication (as defined
+     *     by the `options` parameter in the method `addModuleView`
+     */
     updateAuthentication() {
         if (!!this.authService) {
             if (this.authService.isUserLoggedIn()) {
@@ -335,8 +348,7 @@ export class BaseDemo {
         // Initialization of the renderer, view and extent
         [this.view, this.extent] = udvcore.Setup3DScene(terrainAndElevationRequest,
             buildingServerRequest,
-            true,
-            this.view);
+            true);
 
         // The renderer provided by THREE.js as handled over by itowns
         this.renderer = this.view.scene;
