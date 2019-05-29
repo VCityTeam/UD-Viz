@@ -285,6 +285,15 @@ export class DocToValidateBrowserWindow extends Window {
     updateDocument() {
         let form = document.getElementById('docToValidate_udpateForm');
         let formData = new FormData(form);
+        let emptyKeys = [];
+        formData.forEach((value, key) => {
+            if (!value) {
+                emptyKeys.push(key)
+            }
+        });
+        emptyKeys.forEach((key) => {
+            formData.delete(key);
+        });
 
         this.docToValidateService.update(formData).then((result) => {
             this.displayBrowser();
