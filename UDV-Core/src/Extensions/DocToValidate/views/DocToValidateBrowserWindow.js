@@ -96,8 +96,10 @@ export class DocToValidateBrowserWindow extends Window {
                              .toLocaleDateString();
             document.getElementById('docToValidate_Browser_subject')
                 .innerHTML = currentDocument.metaData.subject;
+            //getting the image
+            let imgData = await this.docToValidateService.getImageData();
             document.getElementById('docToValidate_Browser_file')
-                .src = currentDocument.imgUrl;
+                .src = imgData;
 
             document.getElementById('docToValidate_Browser_buttonPrev')
                 .disabled = false;

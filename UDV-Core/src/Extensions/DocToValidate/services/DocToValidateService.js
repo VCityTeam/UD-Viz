@@ -120,6 +120,34 @@ export function DocToValidateService(requestService, config) {
         }
     };
 
+    this.getImageData = async () => {
+        let currentDocument = this.currentDocument();
+        if (!!currentDocument) {
+            let req = await this.requestService.request('GET',
+                        currentDocument.imgUrl, {responseType: 'arraybuffer'});
+            if (req.status >= 200 && req.status < 300) {
+                // The response is a raw file, we need to convert it to base64
+                // File -> Byte array -> String -> Base64 string
+                let responseArray = new Uint8Array(req.response);
+
+                // Make a string from the response array. As the array can be
+                // too long (each value will be passed as an argument to
+                // String.fromCharCode), we need to split it into chunks
+                const chunkSize = 8 * 1024;
+                let responseAsString = '';
+                for (let i = 0; i < responseArray.length / chunkSize; i++) {
+                    responseAsString += String.fromCharCode.apply(null, responseArray.slice(i * chunkSize, (i + 1) * chunkSize));
+                }
+
+                let b64data = 'data:' + req.getResponseHeader('Content-Type')
+                            + ';base64,' + btoa(responseAsString);
+                return b64data;
+            }
+            throw 'Could not get the file';
+        }
+        throw 'No document is loaded';
+    }
+
     this.update = async function (formData) {
         let response = (await this.requestService.send('PUT', `${this.documentUrl}/${this.currentDocument().id}`, formData)).response;
         this.getDocumentsToValidate();
