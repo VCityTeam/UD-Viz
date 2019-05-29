@@ -19,7 +19,7 @@ export function RequestService() {
                     reject('Login needed for this request');
                     return;
                 }
-                req.setRequestHeader('Authorization', token);
+                req.setRequestHeader('Authorization', `Bearer ${token}`);
             }
 
             if (method === 'GET' || method === 'DELETE') {
