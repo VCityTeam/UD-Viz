@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { Window } from '../../../Utils/GUI/js/Window';
 import '../../../Utils/GUI/css/window.css';
+import { removeEmptyValues } from '../../../Utils/DataProcessing/DataProcessing'
 
 export class DocToValidateBrowserWindow extends Window {
 
@@ -285,15 +286,7 @@ export class DocToValidateBrowserWindow extends Window {
     updateDocument() {
         let form = document.getElementById('docToValidate_udpateForm');
         let formData = new FormData(form);
-        let emptyKeys = [];
-        formData.forEach((value, key) => {
-            if (!value) {
-                emptyKeys.push(key)
-            }
-        });
-        emptyKeys.forEach((key) => {
-            formData.delete(key);
-        });
+        formData = removeEmptyValues(formData);
 
         this.docToValidateService.update(formData).then((result) => {
             this.displayBrowser();
