@@ -189,7 +189,7 @@ export function CreateDocument(creationContainer, contributeController){
     {
       "type": "object",
       "properties": {
-        "link":{}
+        "file":{}
       }
     }
 
@@ -201,7 +201,7 @@ export function CreateDocument(creationContainer, contributeController){
         }
       },
       "fields":{
-        "link":{
+        "file":{
           "label":"Upload your file",
           "type":"file",
           "styled":true,

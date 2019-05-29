@@ -86,12 +86,14 @@ export class DocToValidateBrowserWindow extends Window {
             document.getElementById('docToValidate_Browser_description')
                 .innerHTML = currentDocument.metaData.description;
             document.getElementById('docToValidate_Browser_referringDate')
-                .innerHTML = currentDocument.metaData.refDate;
+                .innerHTML = (new Date(currentDocument.metaData.refDate))
+                             .toLocaleDateString();
             document.getElementById('docToValidate_Browser_author_name')
                 .innerHTML = author.firstName + " " + author.lastName
                             + " (" + author.email + ")";
             document.getElementById('docToValidate_Browser_publicationDate')
-                .innerHTML = currentDocument.metaData.publicationDate;
+                .innerHTML = (new Date(currentDocument.metaData.publicationDate))
+                             .toLocaleDateString();
             document.getElementById('docToValidate_Browser_subject')
                 .innerHTML = currentDocument.metaData.subject;
             document.getElementById('docToValidate_Browser_file')

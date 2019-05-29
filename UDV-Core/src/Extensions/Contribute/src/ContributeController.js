@@ -143,7 +143,7 @@ export function ContributeController(documentController, requestService){
 
     for (var pair of this.formData.entries() ){
       var val = pair[0];
-      if( val != "link"){ //is not file filed
+      if( val != "file"){ //is not file filed
         var attr = this.documentController.documentModel.metaData[val];
         if( attr['optional'] == 'false'){//is mandatory
           if(pair[1] == ""){  //but not provided

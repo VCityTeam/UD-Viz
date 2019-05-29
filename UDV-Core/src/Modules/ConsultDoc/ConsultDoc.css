@@ -321,7 +321,6 @@
   width: 90%;
   text-align: left;
   padding-left: 20px;
-  height:20px;
 }
 
 #publicationDate{
@@ -334,7 +333,6 @@
   font-size: 14px;
   overflow: hidden;
   width: 90%;
-    height:20px;
 }
 #description{
   display:inline-block;
@@ -360,7 +358,6 @@
   width: 90%;
   text-align: left;
   padding-left: 20px;
-    height:20px;
 }
 
 #type{
