@@ -30,7 +30,6 @@ export class DocToValidateCommentWindow extends Window {
     getComment() {
         this.docToValidateService.getComments().then((comments) => {
             document.getElementById('docToValidateComment_left').innerHTML = '';
-            console.log(comments);
             for (let comment of comments) {
                 let text = (typeof comment.description === 'string') ? comment.description.replace(/(?:\r\n|\r|\n)/g, '<br>') : '';
                 let div = document.createElement('div');

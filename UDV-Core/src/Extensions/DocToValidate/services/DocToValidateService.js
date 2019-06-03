@@ -1,4 +1,4 @@
-import { imageToBase64 } from '../../../Utils/DataProcessing/DataProcessing';
+import { imageToDataURI } from '../../../Utils/DataProcessing/DataProcessing';
 
 export function DocToValidateService(requestService, config) {
 
@@ -128,7 +128,7 @@ export function DocToValidateService(requestService, config) {
             let req = await this.requestService.request('GET',
                         currentDocument.imgUrl, {responseType: 'arraybuffer'});
             if (req.status >= 200 && req.status < 300) {
-                return imageToBase64(req.response,
+                return imageToDataURI(req.response,
                                      req.getResponseHeader('Content-Type'));
             }
             throw 'Could not get the file';
