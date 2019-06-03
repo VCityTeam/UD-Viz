@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { Window } from '../../../Utils/GUI/js/Window';
 import '../../../Utils/GUI/css/window.css';
+import { removeEmptyValues } from '../../../Utils/DataProcessing/DataProcessing'
 
 export class DocToValidateBrowserWindow extends Window {
 
@@ -86,16 +87,20 @@ export class DocToValidateBrowserWindow extends Window {
             document.getElementById('docToValidate_Browser_description')
                 .innerHTML = currentDocument.metaData.description;
             document.getElementById('docToValidate_Browser_referringDate')
-                .innerHTML = currentDocument.metaData.refDate;
+                .innerHTML = (new Date(currentDocument.metaData.refDate))
+                             .toLocaleDateString();
             document.getElementById('docToValidate_Browser_author_name')
                 .innerHTML = author.firstName + " " + author.lastName
                             + " (" + author.email + ")";
             document.getElementById('docToValidate_Browser_publicationDate')
-                .innerHTML = currentDocument.metaData.publicationDate;
+                .innerHTML = (new Date(currentDocument.metaData.publicationDate))
+                             .toLocaleDateString();
             document.getElementById('docToValidate_Browser_subject')
                 .innerHTML = currentDocument.metaData.subject;
+            //getting the image
+            let imgData = await this.docToValidateService.getImageData();
             document.getElementById('docToValidate_Browser_file')
-                .src = currentDocument.imgUrl;
+                .src = imgData;
 
             document.getElementById('docToValidate_Browser_buttonPrev')
                 .disabled = false;
@@ -281,6 +286,7 @@ export class DocToValidateBrowserWindow extends Window {
     updateDocument() {
         let form = document.getElementById('docToValidate_udpateForm');
         let formData = new FormData(form);
+        formData = removeEmptyValues(formData);
 
         this.docToValidateService.update(formData).then((result) => {
             this.displayBrowser();

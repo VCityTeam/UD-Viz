@@ -50,7 +50,7 @@ export class DocumentCommentsWindow extends Window {
     getComments() {
         this.documentCommentsService.getComments().then((comments) => {
             document.getElementById('documentComments_left').innerHTML = '';
-            for (let comment of comments.reverse()) {
+            for (let comment of comments) {
                 let text = (typeof comment.description === 'string') ? comment.description.replace(/(?:\r\n|\r|\n)/g, '<br>') : '';
                 let div = document.createElement('div');
                 div.className = 'talk-bubble';
@@ -58,6 +58,7 @@ export class DocumentCommentsWindow extends Window {
                     <div class="talktext">
                     <p class="talktext-author">${comment.author.firstName} ${comment.author.lastName}</p>
                     <p class="talktext-comment">${text}</p>
+                    <p class="talktext-date">${(new Date(comment.date)).toLocaleString()}</p>
                     </div>
                 `;
                 document.getElementById('documentComments_left').appendChild(div);
@@ -71,6 +72,7 @@ export class DocumentCommentsWindow extends Window {
         this.window.style.setProperty('left', '310px');
         this.window.style.setProperty('top', '80px');
         this.window.style.setProperty('resize', 'both');
+        this.innerContent.style.setProperty('height', '100%');
         document.getElementById('documentComments_inputButton').onclick = this.publishComment.bind(this);
         this.getComments();
     }

@@ -9,9 +9,22 @@ export function RequestService() {
     };
 
     this.send = function (method, url, body = '', authenticate = true) {
+        return this.request(method, url, {
+            body: body,
+            authenticate: authenticate
+        });
+    };
+
+    this.request = (method, url, options = {}) => {
+        let args = options || {};
+        let body = args.body || '';
+        let authenticate = (args.authenticate !== null
+                            && args.authenticate !== undefined)?
+                            args.authenticate : true;
+        let responseType = args.responseType || null;
         return new Promise((resolve, reject) => {
             let req = new XMLHttpRequest();
-            req.open(method, url);
+            req.open(method, url, true);
 
             if (this.useAuthentication && authenticate) {
                 const token = window.sessionStorage.getItem('user.token');
@@ -19,12 +32,16 @@ export function RequestService() {
                     reject('Login needed for this request');
                     return;
                 }
-                req.setRequestHeader('Authorization', token);
+                req.setRequestHeader('Authorization', `Bearer ${token}`);
+            }
+
+            if (!!responseType) {
+                req.responseType = responseType;
             }
 
             if (method === 'GET' || method === 'DELETE') {
                 req.send(null);
-            } else if (method === 'POST' || method === 'PUT' || method === 'UPDATE') {
+            } else if (method === 'POST' || method === 'PUT') {
                 req.send(body);
             }
 

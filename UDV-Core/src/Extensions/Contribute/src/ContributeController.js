@@ -9,6 +9,7 @@ import { CreateDocument }  from './CreateDocument.js';
 import { UpdateDocument }   from './UpdateDocument.js';
 import "./Contribute.css";
 import { MAIN_LOOP_EVENTS } from 'itowns';
+import { removeEmptyValues } from '../../../Utils/DataProcessing/DataProcessing';
 
 /**
  *
@@ -143,7 +144,7 @@ export function ContributeController(documentController, requestService){
 
     for (var pair of this.formData.entries() ){
       var val = pair[0];
-      if( val != "link"){ //is not file filed
+      if( val != "file"){ //is not file filed
         var attr = this.documentController.documentModel.metaData[val];
         if( attr['optional'] == 'false'){//is mandatory
           if(pair[1] == ""){  //but not provided
@@ -220,6 +221,7 @@ export function ContributeController(documentController, requestService){
   this.documentUpdate = function documentUpdate(){
 
     this.updatedData = new FormData(document.getElementById(this.documentUpdate.updateFormId));
+    this.updatedData = removeEmptyValues(this.updatedData);
 
     //get current doc data and id
     var currentDoc = this.documentController.getCurrentDoc();

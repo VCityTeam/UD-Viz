@@ -71,7 +71,7 @@
     color: #2f2d2e;
     padding-left: 10px;
     padding-right: 10px;
-    font-size: 90%;
+    font-size: 100%;
   }
 
   .talktext-author {
@@ -80,4 +80,11 @@
       padding: 5px;
       font-weight: bold;
       color: #41292c;
+  }
+
+  .talktext-date {
+    color: #7d7d7d;
+    margin-bottom: 0;
+    text-align: right;
+    font-size: 90%;
   }

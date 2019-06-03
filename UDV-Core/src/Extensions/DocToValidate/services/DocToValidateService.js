@@ -1,3 +1,5 @@
+import { imageToDataURI } from '../../../Utils/DataProcessing/DataProcessing';
+
 export function DocToValidateService(requestService, config) {
 
     this.requestService = requestService;
@@ -119,6 +121,20 @@ export function DocToValidateService(requestService, config) {
             throw 'No current document';
         }
     };
+
+    this.getImageData = async () => {
+        let currentDocument = this.currentDocument();
+        if (!!currentDocument) {
+            let req = await this.requestService.request('GET',
+                        currentDocument.imgUrl, {responseType: 'arraybuffer'});
+            if (req.status >= 200 && req.status < 300) {
+                return imageToDataURI(req.response,
+                                     req.getResponseHeader('Content-Type'));
+            }
+            throw 'Could not get the file';
+        }
+        throw 'No document is loaded';
+    }
 
     this.update = async function (formData) {
         let response = (await this.requestService.send('PUT', `${this.documentUrl}/${this.currentDocument().id}`, formData)).response;
