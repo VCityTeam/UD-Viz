@@ -1,5 +1,7 @@
 import { GeocodingService } from "../services/GeocodingService";
 import { ModuleView } from "../../../Utils/ModuleView/ModuleView";
+import * as THREE from 'three';
+import proj4 from 'proj4';
 
 import './GeocodingStyle.css';
 
@@ -10,10 +12,14 @@ export class GeocodingView extends ModuleView {
   /**
    * Instantiates the view.
    * @param {GeocodingService} geocodingService The geocoding service.
+   * @param {udvcore.itowns.PlanarControls} cameraControls The camera controls.
+   * @param {udvcore.itowns.PlanarView} planarView The iTowns view.
    */
-  constructor(geocodingService) {
+  constructor(geocodingService, cameraControls, planarView) {
     super();
     this.geocodingService = geocodingService;
+    this.cameraControls = cameraControls;
+    this.planarView = planarView;
   }
 
   get html() {
@@ -57,7 +63,26 @@ export class GeocodingView extends ModuleView {
     let coords = this.geocodingService.getCoordinates(searchString);
     let {lat, long} = coords;
     
-    //focus the camera !
+    console.log(`Focus on (${lat}, ${long})`)
+    //first step : convert the lat/long to coordinates used by itowns
+    let [targetX, targetY] = proj4('EPSG:3946').forward([long, lat]);
+    //second step : find the Z value
+    let elevationLayer = this.planarView.getLayers()
+      .filter((layer) => layer.type === "elevation")[0];
+    //console.log(elevationLayer);
+    let targetZ = 200; // todo : trouver comment faire ^^
+
+    //third step : make the camera look at these coordinates
+    console.log(`Looking at (${targetX}, ${targetY}, ${targetZ})`);
+    let targetPos = new THREE.Vector3(targetX, targetY, targetZ);
+    let cameraPos = this.planarView.camera.camera3D.position.clone();
+    const deltaZ = 1000;
+    const dist = cameraPos.distanceTo(targetPos);
+    const direction = (new THREE.Vector3()).subVectors(targetPos, cameraPos);
+    cameraPos.addScaledVector(direction, (1-deltaZ/dist));
+    cameraPos.z = targetPos.z + deltaZ;
+    console.log(cameraPos);
+    this.cameraControls.initiateTravel(cameraPos, 'auto', targetPos, true);
   }
 
   //////////// Helpful getters
