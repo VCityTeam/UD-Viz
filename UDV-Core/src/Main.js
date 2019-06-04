@@ -28,3 +28,6 @@ export { ContributeController }     from './Extensions/Contribute/src/Contribute
 
 export { DocumentCommentsService }  from './Extensions/DocumentComments/services/DocumentCommentsService';
 export { DocumentCommentsWindow }   from './Extensions/DocumentComments/views/DocumentCommentsWindow';
+
+export { GeocodingService }         from './Extensions/Geocoding/services/GeocodingService';
+export { GeocodingView }            from './Extensions/Geocoding/views/GeocodingView';
