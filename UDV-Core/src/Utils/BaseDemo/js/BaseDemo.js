@@ -9,6 +9,7 @@ export class BaseDemo {
         this.modules = {};
         this.moduleNames = {};
         this.moduleActivation = {};
+        this.moduleBindings = {};
         this.requireAuthModules = [];
         this.authService;
         this.config = {};
@@ -130,7 +131,8 @@ export class BaseDemo {
      * specify if this module can be shown without authentication (ie.
      * if no user is logged in). The default value is `false`. If set to
      * `true`, and no athentication module was loaded, it has no effect
-     * (the module view will be shown)
+     * (the module view will be shown). `options.binding` is the shortcut
+     * key code to toggle the module. By default, no shortcut is created.
      */
     addModuleView(moduleId, moduleClass, options = {}) {
         if ((typeof (moduleClass.enable) !== 'function')
@@ -163,6 +165,7 @@ export class BaseDemo {
                 requireAuth = options.requireAuth;
             }
         }
+        const binding = options.binding;
 
         this.modules[moduleId] = moduleClass;
         this.moduleNames[moduleName] = moduleId;
@@ -181,7 +184,7 @@ export class BaseDemo {
         switch (type) {
             case BaseDemo.MODULE_VIEW:
                 //create a new button in the menu
-                this.createMenuButton(moduleId, moduleName);
+                this.createMenuButton(moduleId, moduleName, binding);
                 break;
             case BaseDemo.AUTHENTICATION_MODULE:
                 this.createAuthenticationFrame(moduleId);
@@ -194,17 +197,25 @@ export class BaseDemo {
             this.requireAuthModules.push(moduleId);
             this.updateAuthentication();
         }
+
+        if (!!binding) {
+            this.moduleBindings[binding] = moduleId;
+        }
     }
 
     /**
      * Creates a new button in the side menu.
      * @param moduleId The module id.
      * @param buttonText The text to display in the button.
+     * @param {String} [accessKey] The key binding for the module.
      */
-    createMenuButton(moduleId, buttonText) {
+    createMenuButton(moduleId, buttonText, accessKey) {
         let button = document.createElement('label');
         button.id = this.getModuleButtonId(moduleId);
         button.innerText = buttonText;
+        if (!!accessKey) {
+            button.accessKey = accessKey;
+        }
         this.menuElement.appendChild(button);
         let icon = document.createElement('img');
 
