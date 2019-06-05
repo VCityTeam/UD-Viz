@@ -52,37 +52,49 @@ export class GeocodingView extends ModuleView {
   dispose() {
     if (this.isCreated) {
       let div = this.viewElement;
-      div.parentElement.removeChild(div);
+      let input = this.searchInputElement;
+      input.style.transition = 'width 0.5s ease-out, opacity 0.6s ease-out'
+      input.style.width = '0';
+      input.style.opacity = '0';
+      input.ontransitionend = (event) => {
+        if (event.propertyName === "opacity") {
+          div.parentElement.removeChild(div);
+        }
+      }
     }
   }
 
-  doGeocoding() {
+  async doGeocoding() {
     let searchString = this.searchInputElement.value;
 
-    //might change; but we need at the end a lat/long
-    let coords = this.geocodingService.getCoordinates(searchString);
-    let {lat, long} = coords;
-    
-    console.log(`Focus on (${lat}, ${long})`)
-    //first step : convert the lat/long to coordinates used by itowns
-    let [targetX, targetY] = proj4('EPSG:3946').forward([long, lat]);
-    //second step : find the Z value
-    let elevationLayer = this.planarView.getLayers()
-      .filter((layer) => layer.type === "elevation")[0];
-    //console.log(elevationLayer);
-    let targetZ = 200; // todo : trouver comment faire ^^
+    try {
+      //might change; but we need at the end a lat/long
+      let coords = await this.geocodingService.getCoordinates(searchString);
+      let {lat, lng} = coords;
+      
+      console.log(`Focus on (${lat}, ${lng})`)
+      //first step : convert the lat/long to coordinates used by itowns
+      let [targetX, targetY] = proj4('EPSG:3946').forward([lng, lat]);
+      //second step : find the Z value
+      let elevationLayer = this.planarView.getLayers()
+        .filter((layer) => layer.type === "elevation")[0];
+      //console.log(elevationLayer);
+      let targetZ = 200; // todo : trouver comment faire ^^
 
-    //third step : make the camera look at these coordinates
-    console.log(`Looking at (${targetX}, ${targetY}, ${targetZ})`);
-    let targetPos = new THREE.Vector3(targetX, targetY, targetZ);
-    let cameraPos = this.planarView.camera.camera3D.position.clone();
-    const deltaZ = 1000;
-    const dist = cameraPos.distanceTo(targetPos);
-    const direction = (new THREE.Vector3()).subVectors(targetPos, cameraPos);
-    cameraPos.addScaledVector(direction, (1-deltaZ/dist));
-    cameraPos.z = targetPos.z + deltaZ;
-    console.log(cameraPos);
-    this.cameraControls.initiateTravel(cameraPos, 'auto', targetPos, true);
+      //third step : make the camera look at these coordinates
+      console.log(`Looking at (${targetX}, ${targetY}, ${targetZ})`);
+      let targetPos = new THREE.Vector3(targetX, targetY, targetZ);
+      let cameraPos = this.planarView.camera.camera3D.position.clone();
+      const deltaZ = 1000;
+      const dist = cameraPos.distanceTo(targetPos);
+      const direction = (new THREE.Vector3()).subVectors(targetPos, cameraPos);
+      cameraPos.addScaledVector(direction, (1-deltaZ/dist));
+      cameraPos.z = targetPos.z + deltaZ;
+      console.log(cameraPos);
+      this.cameraControls.initiateTravel(cameraPos, 'auto', targetPos, true);
+    } catch (e) {
+      console.log('No result found');
+    }
   }
 
   //////////// Helpful getters
