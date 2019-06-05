@@ -85,10 +85,11 @@ export class GeocodingView extends ModuleView {
       console.log(`Looking at (${targetX}, ${targetY}, ${targetZ})`);
       let targetPos = new THREE.Vector3(targetX, targetY, targetZ);
       let cameraPos = this.planarView.camera.camera3D.position.clone();
-      const deltaZ = 1000;
+      const deltaZ = 800;
+      const horizontalDistance = 1.3*deltaZ;
       const dist = cameraPos.distanceTo(targetPos);
       const direction = (new THREE.Vector3()).subVectors(targetPos, cameraPos);
-      cameraPos.addScaledVector(direction, (1-deltaZ/dist));
+      cameraPos.addScaledVector(direction, (1-horizontalDistance/dist));
       cameraPos.z = targetPos.z + deltaZ;
       console.log(cameraPos);
       this.cameraControls.initiateTravel(cameraPos, 'auto', targetPos, true);
