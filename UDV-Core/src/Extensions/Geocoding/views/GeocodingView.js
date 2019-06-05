@@ -33,7 +33,8 @@ export class GeocodingView extends ModuleView {
   }
 
   /**
-   * Appends the view div to the DOM;
+   * Appends the view div to the DOM.
+   * 
    * @param {HTMLElement} htmlElement An HTML element
    */
   appendToElement(htmlElement) {
@@ -50,6 +51,9 @@ export class GeocodingView extends ModuleView {
     }
   }
 
+  /**
+   * Destroys the view.
+   */
   dispose() {
     if (this.isCreated) {
       let div = this.viewElement;
@@ -66,6 +70,11 @@ export class GeocodingView extends ModuleView {
     }
   }
 
+  /**
+   * Removes places pins, then makes a new search geocoding query. If at least
+   * one result is found, places pins at appropriate places and focuses the
+   * camera on the first result.
+   */
   async doGeocoding() {
     this.removePins();
     let searchString = this.searchInputElement.value;
@@ -73,37 +82,59 @@ export class GeocodingView extends ModuleView {
     try {
       //might change; but we need at the end a lat/long
       let coords = await this.geocodingService.getCoordinates(searchString);
-      let {lat, lng} = coords;
-      console.log(`Focus on (${lat}, ${lng})`)
-
-      //first step : convert the lat/long to coordinates used by itowns
-      let [targetX, targetY] = proj4('EPSG:3946').forward([lng, lat]);
-
-      //second step : find the Z value
-      let elevationLayer = this.planarView.getLayers()
-        .filter((layer) => layer.type === "elevation")[0];
-      let targetZ = 200; // todo : trouver comment faire ^^
-
-      //third step : calculate camera position based on target coordinates
-      let targetPos = new THREE.Vector3(targetX, targetY, targetZ);
-      let cameraPos = this.planarView.camera.camera3D.position.clone();
-      const deltaZ = 800;
-      const horizontalDistance = 1.3*deltaZ;
-      const dist = cameraPos.distanceTo(targetPos);
-      const direction = (new THREE.Vector3()).subVectors(targetPos, cameraPos);
-      cameraPos.addScaledVector(direction, (1-horizontalDistance/dist));
-      cameraPos.z = targetPos.z + deltaZ;
-
-      //last step : add a pin and travel the camera
-      this.addPin(targetPos);
-      this.cameraControls.initiateTravel(cameraPos, 'auto', targetPos, true);
+      coords.forEach((c, i) => {
+        let {lat, lng} = c;
+        //first step : convert the lat/long to coordinates used by itowns
+        let targetPos = this.getWorldCoordinates(lat, lng);
+        //last step : add a pin and travel the camera
+        this.addPin(targetPos);
+        //if first result, focus the camera
+        if (i === 0) {
+          this.focusCameraOn(targetPos);
+        }
+      })
     } catch (e) {
+      console.error(e);
       console.log('No result found');
     }
   }
 
   /**
-   * Adds a pin mesh to the scene.
+   * Make the camera look at the given position. Computes an appropriate
+   * position for the camera to see the target.
+   * 
+   * @param {THREE.Vector3} targetPos Target posiition.
+   */
+  focusCameraOn(targetPos) {
+    let cameraPos = this.planarView.camera.camera3D.position.clone();
+    const deltaZ = 800;
+    const horizontalDistance = 1.3*deltaZ;
+    const dist = cameraPos.distanceTo(targetPos);
+    const direction = (new THREE.Vector3()).subVectors(targetPos, cameraPos);
+    cameraPos.addScaledVector(direction, (1-horizontalDistance/dist));
+    cameraPos.z = targetPos.z + deltaZ;
+    this.cameraControls.initiateTravel(cameraPos, 'auto', targetPos, true);
+  }
+
+  /**
+   * Converts a lat/long position into world coordinates, usable in the scene.
+   * 
+   * @param {number} lat Latitude.
+   * @param {number} lng Longitude.
+   * @returns {THREE.Vector3} World coordinates.
+   */
+  getWorldCoordinates(lat, lng) {
+    let [targetX, targetY] = proj4('EPSG:3946').forward([lng, lat]);
+    //find the Z value
+    let elevationLayer = this.planarView.getLayers()
+      .filter((layer) => layer.type === "elevation")[0];
+    let targetZ = 200; // todo : trouver comment faire ^^ au lieu de hardcoder
+    return new THREE.Vector3(targetX, targetY, targetZ);
+  }
+
+  /**
+   * Adds a pin to the scene. A pin is made of two meshes : a sphere and a
+   * cylinder.
    * 
    * @param {THREE.Vector3} position Position of the pin.
    */
@@ -120,6 +151,12 @@ export class GeocodingView extends ModuleView {
     this.addMeshToScene(sphereMesh, position);
   }
 
+  /**
+   * Places the given mesh into the scene, orienting it towards the bottom.
+   * 
+   * @param {THREE.Mesh} mesh 
+   * @param {THREE.Vector3} position 
+   */
   async addMeshToScene(mesh, position) {
     mesh.position.copy(position);
     mesh.lookAt(new THREE.Vector3(0, 0, 0));

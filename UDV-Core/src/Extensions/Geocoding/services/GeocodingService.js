@@ -21,9 +21,12 @@ export class GeocodingService {
     const url = `${this.geocodingUrl}&q=${queryString}`;
     const req = await this.requestService.request('GET', url);
     const response = JSON.parse(req.response);
-    console.log(response);
-    if (response.results.length > 0) {
-      return response.results[0].geometry;
+    console.log(response.results);
+    const results = response.results
+      .filter(res => res.confidence > 7)
+      .map(res => res.geometry);
+    if (results.length > 0) {
+      return results;
     } else {
       throw 'No result found';
     }
