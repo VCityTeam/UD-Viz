@@ -479,6 +479,9 @@ export class BaseDemo {
             datatype: "json",
             success: (data) => {
                 this.config = data;
+            },
+            error: (e) => {
+                throw 'Could not load config file : ' + filePath;
             }
         });
     }
