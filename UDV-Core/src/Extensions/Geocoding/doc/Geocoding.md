@@ -8,6 +8,8 @@ The module view adds a search bar to the main content div, centered at the top. 
 
 ## Installation and configuration
 
+### Installation
+
 To install the module in your demo, you must first create the service and then the view.
 
 The service takes 3 parameters : a `RequestService` used to perform the REST call, the view extent and the global configuration (both provided by the `BaseDemo`).
@@ -20,12 +22,22 @@ The view can then be added in the `BaseDemo`.
 const geocodingService = new udvcore.GeocodingService(requestService, baseDemo.extent, baseDemo.config);
 const geocodingView = new udvcore.GeocodingView(geocodingService, baseDemo.controls, baseDemo.view);
 
-baseDemo.addModuleView('geocoding', geocodingView);
+// You can specify a more explicit name than 'geocoding' for the menu button
+baseDemo.addModuleView('geocoding', geocodingView, {name: 'Address search'});
 ```
 
 ### Configuration
 
-In order to make geocoding requests, the global configuration must contains information about the web service. It must have at least the following structure :
+The geocoding module will use REST calls to a web service to compute coordinates from query strings. The module was tested with two different services ([Google](https://developers.google.com/maps/documentation/geocoding/start) and [OpenCage](https://opencagedata.com/api)), and is theoritically compatible with most service providers. In order to configure the module, you should specify informations about the web service you want to call. This information includes :
+
+- URL of the geocoding service endpoint
+- URL parameters to add to the request
+
+For example, the Google geocoding service uses the base URL https://maps.googleapis.com/maps/api/geocode/json, and takes two mandatory parameters : `address`, which contains the query string and `key`, which contains the API key for authentication.
+
+A request to their service takes the form : https://maps.googleapis.com/maps/api/geocode/json?address=QUERY_STRING&key=API_KEY. However, other service providers may name their parameters differently. So, in order to make well-formed requests, the global configuration must contains information about the web service.
+
+The configuration file must have at least the following structure :
 
 ```json
 {
@@ -61,4 +73,34 @@ The `parameters` dictionary represents query parameters that will be added to th
 |`"query"`|Fills the parameter with the query string, formatted as a URI component.|
 |`"extent"`|Fills the parameter with the extent bounds, with EPSG:4326 coordinates. The string format is `"west,south\|east,north"`.|
 
-An example configuration is provided in the `generalDemoCongif.json` file (under `examples/data/config`)
+An example configuration for the Google service is provided in the `generalDemoConfig.json` file (under `examples/data/config`). You can find a extract below :
+
+```json
+"geocoding":{
+  "url":"https://maps.googleapis.com/maps/api/geocode/json",
+  "parameters":{
+    "address":{
+      "fill": "query",
+      "optional": "false"
+    },
+    "key":{
+      "fill": "value",
+      "optional": "false",
+      "value": "YOUR-API-KEY"
+    },
+    "bounds":{
+      "fill": "extent",
+      "optional": "true"
+    },
+    "region":{
+      "fill": "value",
+      "optional": "true",
+      "value": "fr"
+    }
+  }
+}
+```
+
+With this configuration, the request takes two mandatory parameters : `address` which contains the query string (because of the `"fill": "query"`) and `key` which represents the API key (which is directly defined in the config file, under the `value` field).
+
+The request also takes two optional arguments : `bounds` is the viewport extent and `region` is country code, directly passed as value in the config file.
