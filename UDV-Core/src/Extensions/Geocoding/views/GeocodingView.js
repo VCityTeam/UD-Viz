@@ -83,8 +83,9 @@ export class GeocodingView extends ModuleView {
 
     try {
       let coords = await this.geocodingService.getCoordinates(searchString);
-      coords.forEach((c, i) => {
+      coords.forEach(c => {
         let {lat, lng} = c;
+        let i = 0;
         //step 1 : convert the lat/lng to coordinates used by itowns
         let targetPos = this.getWorldCoordinates(lat, lng);
         if (!!targetPos.z) {
@@ -95,9 +96,11 @@ export class GeocodingView extends ModuleView {
           if (i === 0) {
             this.focusCameraOn(targetPos);
           }
+          i += 1;
         }
       })
     } catch (e) {
+      console.error(e);
       console.log('No result found');
     }
   }
@@ -129,7 +132,8 @@ export class GeocodingView extends ModuleView {
   getWorldCoordinates(lat, lng) {
     const [targetX, targetY] = proj4('EPSG:3946').forward([lng, lat]);
     const coords = new Coordinates('EPSG:3946', targetX, targetY, 0);
-    const targetZ = itowns.DEMUtils.getElevationValueAt(this.planarView.tileLayer, coords).z;
+    const elevation = itowns.DEMUtils.getElevationValueAt(this.planarView.tileLayer, coords);
+    const targetZ = (!!elevation) ? elevation.z : undefined;
     return new THREE.Vector3(targetX, targetY, targetZ);
   }
 
