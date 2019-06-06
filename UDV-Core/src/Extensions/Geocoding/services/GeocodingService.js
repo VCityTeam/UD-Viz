@@ -6,9 +6,11 @@ export class GeocodingService {
    * @param {RequestService} requestService 
    * @param {*} config 
    */
-  constructor(requestService, config) {
+  constructor(requestService, extent, config) {
     this.requestService = requestService;
-    this.geocodingUrl = 'https://api.opencagedata.com/geocode/v1/json?key=fdef3b663bb243d19bffbe475c4dc230';
+    this.extent = extent.as('EPSG:4326');
+    this.geocodingUrl = config.geocoding.url;
+    this.parameters = config.geocoding.parameters;
   }
 
   /**
@@ -17,13 +19,27 @@ export class GeocodingService {
    * @param {String} searchString Either an address or the name of a place.
    */
   async getCoordinates(searchString) {
+    //URL parameters
     const queryString = encodeURIComponent(searchString);
-    const url = `${this.geocodingUrl}&q=${queryString}`;
+    const bounds = `${this.extent.west()},${this.extent.south()}|${this.extent.east()},${this.extent.north()}`;
+
+    //build the URL according to parameter description (in config file)
+    let url = this.geocodingUrl + '?';
+    for (let [paramName, param] of Object.entries(this.parameters)) {
+      if (param.fill === "value") {
+        url += `${paramName}=${param.value}&`;
+      } else if (param.fill === "query") {
+        url += `${paramName}=${queryString}&`;
+      } else if (param.fill === "extent") {
+        url += `${paramName}=${bounds}&`;
+      }
+    }
+
+    //make the request
     const req = await this.requestService.request('GET', url);
     const response = JSON.parse(req.response);
     const results = response.results
-      .filter(res => res.confidence > 7)
-      .map(res => res.geometry);
+      .map(res => res.geometry.location);
     if (results.length > 0) {
       return results;
     } else {

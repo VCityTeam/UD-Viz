@@ -11,7 +11,7 @@ baseDemo.loadConfigFile('../../../../examples/data/config/generalDemoConfig.json
     const requestService = new udvcore.RequestService();
 
     ////// GEOCODING
-    const geocodingService = new udvcore.GeocodingService(requestService);
+    const geocodingService = new udvcore.GeocodingService(requestService, baseDemo.extent, baseDemo.config);
     const geocodingView = new udvcore.GeocodingView(geocodingService, baseDemo.controls, baseDemo.view);
     baseDemo.addModuleView('geocoding', geocodingView, {binding: 's'});
 });

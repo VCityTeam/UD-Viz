@@ -12,6 +12,29 @@
     "file": "file",
     "guidedTour": "guidedTour"
   },
+  "geocoding":{
+    "url":"https://maps.googleapis.com/maps/api/geocode/json",
+    "parameters":{
+      "address":{
+        "fill": "query",
+        "optional": "false"
+      },
+      "bounds":{
+        "fill": "extent",
+        "optional": "true"
+      },
+      "key":{
+        "fill": "value",
+        "optional": "false",
+        "value": "AIzaSyD4jwH8PZivr7Blqf8HEPDe45np2URk42Y"
+      },
+      "region":{
+        "fill": "value",
+        "optional": "true",
+        "value": "fr"
+      }
+    }
+  },
   "properties": {
     "metaData":{
       "title": {
