@@ -1,9 +1,11 @@
 import { GeocodingService } from "../services/GeocodingService";
 import { ModuleView } from "../../../Utils/ModuleView/ModuleView";
 import * as THREE from 'three';
+import * as itowns from 'itowns';
 import proj4 from 'proj4';
 
 import './GeocodingStyle.css';
+import Coordinates from "itowns/lib/Core/Geographic/Coordinates";
 
 /**
  * @member {String} test test
@@ -80,21 +82,22 @@ export class GeocodingView extends ModuleView {
     let searchString = this.searchInputElement.value;
 
     try {
-      //might change; but we need at the end a lat/long
       let coords = await this.geocodingService.getCoordinates(searchString);
       coords.forEach((c, i) => {
         let {lat, lng} = c;
-        //first step : convert the lat/long to coordinates used by itowns
+        //step 1 : convert the lat/lng to coordinates used by itowns
         let targetPos = this.getWorldCoordinates(lat, lng);
-        //last step : add a pin and travel the camera
-        this.addPin(targetPos);
-        //if first result, focus the camera
-        if (i === 0) {
-          this.focusCameraOn(targetPos);
+        if (!!targetPos.z) {
+          //if we could convert the coords (ie. they are on the map)
+          //step 2 : add a mesh representing a pin
+          this.addPin(targetPos);
+          //step 3 : if the first result, focus on it (move the camera)
+          if (i === 0) {
+            this.focusCameraOn(targetPos);
+          }
         }
       })
     } catch (e) {
-      console.error(e);
       console.log('No result found');
     }
   }
@@ -124,11 +127,9 @@ export class GeocodingView extends ModuleView {
    * @returns {THREE.Vector3} World coordinates.
    */
   getWorldCoordinates(lat, lng) {
-    let [targetX, targetY] = proj4('EPSG:3946').forward([lng, lat]);
-    //find the Z value
-    let elevationLayer = this.planarView.getLayers()
-      .filter((layer) => layer.type === "elevation")[0];
-    let targetZ = 200; // todo : trouver comment faire ^^ au lieu de hardcoder
+    const [targetX, targetY] = proj4('EPSG:3946').forward([lng, lat]);
+    const coords = new Coordinates('EPSG:3946', targetX, targetY, 0);
+    const targetZ = itowns.DEMUtils.getElevationValueAt(this.planarView.tileLayer, coords).z;
     return new THREE.Vector3(targetX, targetY, targetZ);
   }
 
@@ -143,6 +144,7 @@ export class GeocodingView extends ModuleView {
     const cylGeom = new THREE.CylinderGeometry(1, 8, pinHeight, 8);
     const cylMat = new THREE.MeshToonMaterial({color: 0xff0000});
     const cylMesh = new THREE.Mesh(cylGeom, cylMat);
+    position.z += pinHeight / 2;
     this.addMeshToScene(cylMesh, position);
     const sphereGeom = new THREE.SphereGeometry(10, 16, 16);
     const sphereMat = new THREE.MeshToonMaterial({color: 0xff00000});
