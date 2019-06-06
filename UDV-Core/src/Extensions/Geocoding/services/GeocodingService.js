@@ -2,9 +2,11 @@ import { RequestService } from "../../../Utils/Request/RequestService";
 
 export class GeocodingService {
   /**
+   * Instantiates the geocoding service.
    * 
-   * @param {RequestService} requestService 
-   * @param {*} config 
+   * @param {RequestService} requestService The request service.
+   * @param {*} extent The iTwons extent.
+   * @param {*} config Global configuration.
    */
   constructor(requestService, extent, config) {
     this.requestService = requestService;

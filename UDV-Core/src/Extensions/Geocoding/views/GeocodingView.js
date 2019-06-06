@@ -7,9 +7,6 @@ import proj4 from 'proj4';
 import './GeocodingStyle.css';
 import Coordinates from "itowns/lib/Core/Geographic/Coordinates";
 
-/**
- * @member {String} test test
- */
 export class GeocodingView extends ModuleView {
   /**
    * Instantiates the view.
