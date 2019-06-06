@@ -59,6 +59,6 @@ The `parameters` dictionary represents query parameters that will be added to th
 |----------|------|
 |`"value"`|Fills the parameter with a given value. The value is specified in the `value` field of the descriptor.|
 |`"query"`|Fills the parameter with the query string, formatted as a URI component.|
-|`"extent"`|Fills the parameter with the extent bounds, with EPSG:4326 coordinates. The string format is `"west,south|east,north"`.|
+|`"extent"`|Fills the parameter with the extent bounds, with EPSG:4326 coordinates. The string format is `"west,south\|east,north"`.|
 
 An example configuration is provided in the `generalDemoCongif.json` file (under `examples/data/config`)
