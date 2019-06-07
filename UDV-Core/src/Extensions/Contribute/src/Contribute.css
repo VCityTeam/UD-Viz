@@ -56,20 +56,6 @@
   bottom:35px;
 }
 
-#docResearch{
-  position: absolute;
-  z-index: 20;
-  margin : 5px;
-  font-size: 14px;
-  border: 1px solid black;
-  background-color: white;
-  color: black;
-  height: 30px;
-  pointer-events: auto;
-  bottom:0px;
-
-}
-
 /*Creation window*/
 #creationContainer{
   display:none;

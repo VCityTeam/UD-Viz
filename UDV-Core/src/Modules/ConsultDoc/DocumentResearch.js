@@ -7,6 +7,7 @@
 
 import $ from 'jquery'; //to use Alpaca
 import 'alpaca';  //provides a simple way to generate HTML forms using jQuery
+import { Window } from '../../Utils/GUI/js/Window';
 
 /**
  *
@@ -15,37 +16,39 @@ import 'alpaca';  //provides a simple way to generate HTML forms using jQuery
  * @param { documentController } documentController
  */
 
-export function DocumentResearch(researchContainer, documentController)
+export class DocumentResearch extends Window
 {
+  constructor(researchContainer, documentController) {
+    super('consultDocSearch', 'Document Research', false);
+
     //Class attributes
     this.documentController = documentController;
     this.researchController = researchContainer;
     this.windowIsActive = false;
 
     this.filterFormId = "filterForm";
+  }
 
+    get innerContentHtml() {
+      return `
+        <div id = "filtersWindow"></div>
+        <div id ="researchWindowTabs">
+          <button id = "docResearch">Search</button>
+        </div>
+      `;
+    }
 
-    /**
-     * Creates the research view
-     */
-    //===========================================================================
-    this.initialize = function initialize()
-    {
-        this.researchController.innerHTML =
-            '<br/><div id = "filtersTitle">Document research</div><br/>\
-            <br/>\
-            <button id = "closeResearch">Close</button>\
-            <div id = "filtersWindow"></div>\
-            <div id ="researchWindowTabs">\
-            <button id = "docResearch">Search</button>\
-            </div>\
-            ';
-
-        this.docModelToSchema();
+    windowCreated() {
+      this.window.style.width = '270px';
+      this.window.style.height = '350px';
+      this.window.style.top = '60px';
+      this.window.style.left = '310px';
+      this.docModelToSchema();
+      this.initializeButtons();
     }
 
     // Display or hide this window
-    this.activateWindow = function activateWindow(active)
+    activateWindow(active)
     {
         if (typeof active != 'undefined')
         {
@@ -65,7 +68,7 @@ export function DocumentResearch(researchContainer, documentController)
 
     }
 
-    this.refresh = function refresh()
+    refresh()
     {
         this.activateWindow(this.windowIsActive);
         //this.documentController.documentBrowser.activateWindow(true);
@@ -75,7 +78,7 @@ export function DocumentResearch(researchContainer, documentController)
      * Launch document research by clicking on the "Search" button
      */
     //=============================================================================
-    this.research = function research()
+    research()
     {
         this.documentController.getDocuments();
         document.getElementById('browserInfo').innerHTML = "The documents have been filtered."
@@ -84,7 +87,7 @@ export function DocumentResearch(researchContainer, documentController)
     }
 
 
-    this.docModelToSchema = function docModelToSchema(){
+    docModelToSchema(){
       //only use the metadata
       var metadata = this.documentController.documentModel.metaData;
       //schema has at least a file input
@@ -167,12 +170,9 @@ export function DocumentResearch(researchContainer, documentController)
      });
    }
 
-
-    this.initialize();
-
     //Event listener for researh button
-    document.getElementById("docResearch").addEventListener('mousedown',
-                                               this.research.bind(this), false);
-    document.getElementById("closeResearch").addEventListener('mousedown',
-                                    this.documentController.disable.bind(this.documentController), false);
+    initializeButtons() {
+      document.getElementById("docResearch").addEventListener('mousedown',
+                                                this.research.bind(this), false);
+    }
 }

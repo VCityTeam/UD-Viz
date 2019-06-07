@@ -122,7 +122,7 @@ export function CreateDocument(creationContainer, contributeController){
     document.getElementById('positionerContainer').style.display = active  ? "block" : "none ";
     if (!active) {
       this.contributeController.documentController.documentResearch
-        .activateWindow(true);
+        .show();
       this.contributeController.documentController.documentBrowser
         .activateWindow(true);
     }
@@ -140,7 +140,7 @@ export function CreateDocument(creationContainer, contributeController){
     }
 
     document.getElementById('manualPos').style.display = active  ? "block" : "none ";
-    this.contributeController.documentController.documentResearch.activateWindow(true);
+    this.contributeController.documentController.documentResearch.show();
     this.contributeController.documentController.documentBrowser.activateWindow(true);
   }
 
@@ -154,7 +154,7 @@ export function CreateDocument(creationContainer, contributeController){
     this.contributeController.visuData = new FormData(); //reset visuData form
     this.activateManualPosition(false);
     document.getElementById('docPositionerFull').style.display = "none ";
-    this.contributeController.documentController.documentResearch.activateWindow(false);
+    this.contributeController.documentController.documentResearch.hide();
     this.contributeController.documentController.documentBrowser.activateWindow(false);
     this.blurMetadataWindow(false);
   }
@@ -250,7 +250,7 @@ export function CreateDocument(creationContainer, contributeController){
   //=============================================================================
   this.updateCreationWindow = function updateCreationWindow(){
     document.getElementById('creationContainer').style.display ="block";
-    this.contributeController.documentController.documentResearch.activateWindow(false);
+    this.contributeController.documentController.documentResearch.hide();
     this.contributeController.documentController.documentBrowser.activateWindow(false);
 
   }

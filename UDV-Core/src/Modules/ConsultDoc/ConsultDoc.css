@@ -24,6 +24,10 @@
   width: 90%;
 }
 
+#filtersWindow {
+  margin-bottom: 10px;
+}
+
 #docBrowserWindow{
     position: absolute;
     z-index: 10;
@@ -389,19 +393,10 @@
   width: 90%;
     height:20px;
 }
+
 label{
   left:3px
 }
-#keyword{
-  display:inline-block;
-  color: black;
-  text-align: center;
-  font-size: 14px;
-  width: 90%;
-  text-align: left;
-  padding-left: 20px;
-}
-
 
 #browserInfo{
 display: block;

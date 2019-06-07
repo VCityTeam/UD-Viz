@@ -62,6 +62,9 @@ export class DocumentController extends ModuleView {
     researchContainer.style = 'display: none;';
     document.getElementById('contentSection').appendChild(researchContainer);
     this.documentResearch = new DocumentResearch(researchContainer, this);
+    this.documentResearch.addEventListener(DocumentResearch.EVENT_DESTROYED, () => {
+      this.disable();
+    });
 
     var browserContainer = document.createElement("div");
     browserContainer.id = this.browserContainerId;
@@ -198,13 +201,13 @@ export class DocumentController extends ModuleView {
   /////// MODULE MANAGEMENT FOR BASE DEMO
 
   enableView() {
-    this.documentResearch.activateWindow(true);
+    this.documentResearch.appendTo(this.parentElement);
     this.documentBrowser.activateWindow(true);
     this.open();
   }
 
   disableView() {
-    this.documentResearch.activateWindow(false);
+    this.documentResearch.disable();
     this.documentBrowser.activateWindow(false);
     this.close();
   }

@@ -282,7 +282,12 @@ export function DocumentBrowser(browserContainer, documentController) {
     };
 
     this.startBrowser = function startBrowser() {
-        this.documentController.getDocuments();
+        try {
+            this.documentController.getDocuments();
+        } catch (e) {
+            //view is not created ?
+            return;
+        }
         this.docIndex = 1;
         this.currentDoc = this.documentController.setOfDocuments[0];
         try {
