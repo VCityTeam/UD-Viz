@@ -1,31 +1,81 @@
 import { dragElement } from './Draggable.js';
+import { ModuleView } from '../../ModuleView/ModuleView.js';
 
 // Documentation is on the Wiki
 // URL : https://github.com/MEPP-team/UDV/wiki/Window-Framework
 // You can see an example in UDV-Core/examples/DemoWindow
-export class Window {
+/**
+ * A simple GUI class to represent a window.
+ * 
+ * @extends ModuleView
+ */
+export class Window extends ModuleView {
+    /**
+     * Creates a window.
+     * 
+     * @param {string} uniqueName The name used to generate HTML ids.
+     * @param {string} title The title of the window.
+     * @param {boolean} hideOnClose Specifies the behaviour of the window when
+     * the 'close' button is hit. If set to true, the window will `hide`. If set
+     * to false, the window will `dispose`.
+     */
     constructor(uniqueName, title, hideOnClose = true) {
+        super();
+
+        /**
+         * Name of the window. Used to generate unique ids.
+         * 
+         * @member {string}
+         */
         this.name = uniqueName;
+        /**
+         * Title displayed on the window.
+         * 
+         * @member {string}
+         */
         this.title = title;
+        /**
+         * Behaviour of the window when the 'close' button is hit. If set to
+         * true, the window will `hide`. If set to false, the window will
+         * `dispose`.
+         * 
+         * @member {boolean}
+         */
         this.hideOnClose = hideOnClose;
-        this.parentElement;
-        this.listeners = []
+
+        this.registerEvent(Window.EVENT_CREATED);
+        this.registerEvent(Window.EVENT_DESTROYED);
+        this.registerEvent(Window.EVENT_SHOWN);
+        this.registerEvent(Window.EVENT_HIDDEN);
     }
 
     //////////// Methods to override
     ////////////////////////////////
 
-    // HTML string representing the inner content of the window
+    /**
+     * HTML string representing the inner content of the window.
+     * 
+     * @abstract
+     */
     get innerContentHtml() {
         return null;
     };
 
-    // Method called when the window is created during the call and after, all HTML properties are not null
+    /** 
+     * Method called when the window is created. During and after the call,
+     * all HTML properties are not null.
+     * 
+     * @abstract
+     */
     windowCreated() {
 
     };
 
-    // Method called when the window is destroyed
+    /**
+     * Method called when the window is destroyed.
+     * 
+     * @abstract
+     */
     windowDestroyed() {
 
     };
@@ -33,6 +83,13 @@ export class Window {
     //////////// Do NOT override these methods
     //////////////////////////////////////////
 
+    /**
+     * Creates the HTML elements of the window and add them to the given parent
+     * node. Calls the `windowCreated` hook method and sends two events,
+     * `EVENT_CREATED` and `EVENT_SHOWN`.
+     * 
+     * @param {HTMLElement} htmlElement 
+     */
     appendTo(htmlElement) {
         if (!this.isCreated) {
             this.parentElement = htmlElement;
@@ -43,38 +100,44 @@ export class Window {
             htmlElement.appendChild(windowDiv);
             dragElement(windowDiv, this.header);
 
-            if (this.hideOnClose) {
-                this.headerCloseButton.onclick = this.hide.bind(this);
-            } else {
-                this.headerCloseButton.onclick = this.dispose.bind(this);
-            }
+            this.headerCloseButton.onclick = this.disable.bind(this);
 
             this.windowCreated();
-            this.notifyListener(Window.EVENT_CREATED);
-            this.notifyListener(Window.EVENT_SHOWED);
+            this.sendEvent(Window.EVENT_CREATED);
+            this.sendEvent(Window.EVENT_SHOWN);
         }
     }
 
+    /**
+     * Destroys the window. Calls the `windowDestroyed` hook method and sends an
+     * `EVENT_DESTROYED` event.
+     */
     dispose() {
         if (this.isCreated) {
             this.parentElement.removeChild(this.window);
 
             this.windowDestroyed();
-            this.notifyListener(Window.EVENT_DESTROYED);
+            this.sendEvent(Window.EVENT_DESTROYED);
         }
     }
 
+    /**
+     * Shows the window. Sends an `EVENT_SHOWN` event.
+     */
     show() {
         if (this.isCreated && !this.isVisible) {
             this.window.style.setProperty('display', 'grid');
-            this.notifyListener(Window.EVENT_SHOWED);
+            this.sendEvent(Window.EVENT_SHOWN);
         }
     }
 
+    /**
+     * Hides the window. Sends an `EVENT_DESTROYED` event.
+     */
     hide() {
         if (this.isVisible) {
             this.window.style.setProperty('display', 'none');
-            this.notifyListener(Window.EVENT_HIDDEN);
+            this.sendEvent(Window.EVENT_HIDDEN);
         }
     }
 
@@ -91,6 +154,35 @@ export class Window {
             </div>
         `;
     }
+
+    //////////// Module view overrides
+    //////////////////////////////////
+
+    /**
+     * Creates and show the window.
+     * 
+     * @override
+     */
+    async enableView() {
+        this.appendTo(this.parentElement);
+        this.show();
+    }
+
+    /**
+     * If `hideOnClose` is `true`, hides the window. Else, destroys it.
+     * 
+     * @override
+     */
+    async disableView() {
+        if (this.hideOnClose) {
+            this.hide();
+        } else {
+            this.dispose();
+        }
+    }
+
+    //////////// IDs, HTML and other getters
+    ////////////////////////////////////////
 
     get isCreated() {
         let windowDiv = this.window;
@@ -149,26 +241,19 @@ export class Window {
         return document.getElementById(this.innerContentId);
     }
 
-    addListener(listenerFunc) {
-        this.listeners.push(listenerFunc);
-    }
-
-    notifyListener(event) {
-        for (let listener of this.listeners) {
-            listener(event);
-        }
-    }
+    //////////// Events
+    ///////////////////
 
     static get EVENT_CREATED() {
-        return 'EVENT_CREATED';
+        return 'WINDOW_CREATED';
     }
     static get EVENT_DESTROYED() { 
-        return 'EVENT_DESTROYED'; 
+        return 'WINDOW_DESTROYED'; 
     }
     static get EVENT_HIDDEN() { 
-        return 'EVENT_HIDDEN'; 
+        return 'WINDOW_HIDDEN'; 
     }
-    static get EVENT_SHOWED() { 
-        return 'EVENT_SHOWED'; 
+    static get EVENT_SHOWN() { 
+        return 'WINDOW_SHOWN'; 
     }
 }
