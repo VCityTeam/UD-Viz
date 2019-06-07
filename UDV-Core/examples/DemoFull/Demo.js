@@ -6,7 +6,7 @@ let baseDemo = new BaseDemo({
 });
 
 baseDemo.appendTo(document.body);
-baseDemo.loadConfigFile('./Config.json').then(() => {
+baseDemo.loadConfigFile('../data/config/generalDemoConfig.json').then(() => {
     ////// REQUEST SERVICE
     const requestService = new udvcore.RequestService();
 
