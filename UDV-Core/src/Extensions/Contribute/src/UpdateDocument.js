@@ -86,7 +86,11 @@ export function UpdateDocument(updateContainer, contributeController){
       this.windowIsActive = active;
     }
     document.getElementById(this.contributeController.updateContainerId).style.display = active  ? "block" : "none ";
-
+    if (!active) {
+      this.contributeController.documentController.documentBrowser.show();
+    } else {
+      this.contributeController.documentController.documentBrowser.hide();
+    }
   }
 
   /**
