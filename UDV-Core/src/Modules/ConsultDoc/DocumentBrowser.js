@@ -53,6 +53,11 @@ export class DocumentBrowser extends Window {
                 <output for="docOpaSlider" id="docOpacity">50</output>\
             ';
 
+        document.getElementById('docFullOrient').addEventListener('mousedown',
+        this.focusOnDoc.bind(this), false);
+        document.getElementById('docFullClose').addEventListener('mousedown',
+        this.closeDocFull.bind(this), false);
+
         // Whether this window is currently displayed or not.
         this.windowIsActive = this.documentController.options.active || false;
 
@@ -112,45 +117,43 @@ export class DocumentBrowser extends Window {
     // called regularly by the itowns framerequester
     //= ========================================================================
     updateScene(dt, updateLoopRestarted) {
-        if (this.isCreated) {
-            // dt will not be relevant when we just started rendering, we consider a 1-frame move in this case
-            if (updateLoopRestarted) {
-                dt = 16;
+        // dt will not be relevant when we just started rendering, we consider a 1-frame move in this case
+        if (updateLoopRestarted) {
+            dt = 16;
+        }
+        // controls.state === -1 corresponds to state === STATE.NONE
+        // if state is -1 this means the controls have finished the animated travel
+        // then we can begin the doc fade animation
+        if (this.isOrientingDoc && this.documentController.controls.state === -1) {
+            this.isOrientingDoc = false;
+            this.isFadingDoc = true;
+            this.fadeAlpha = 0;
+            document.getElementById('docOpaSlider').value = 0;
+            document.querySelector('#docOpacity').value = 0;
+            document.getElementById('docFullImg').style.opacity = 0;
+            document.getElementById('docFullPanel').style.display = 'block';
+        }
+
+        // handle fade animation
+        if (this.isFadingDoc) {
+            this.fadeAlpha += dt / this.fadeDuration;
+            if (this.fadeAlpha >= 1) {
+                // animation is complete
+                this.isFadingDoc = false;
+                document.getElementById('docFullImg').style.opacity = 1;
+                document.getElementById('docOpaSlider').value = 100;
+                document.querySelector('#docOpacity').value = 100;
             }
-            // controls.state === -1 corresponds to state === STATE.NONE
-            // if state is -1 this means the controls have finished the animated travel
-            // then we can begin the doc fade animation
-            if (this.isOrientingDoc && this.documentController.controls.state === -1) {
-                this.isOrientingDoc = false;
-                this.isFadingDoc = true;
-                this.fadeAlpha = 0;
-                document.getElementById('docOpaSlider').value = 0;
-                document.querySelector('#docOpacity').value = 0;
-                document.getElementById('docFullImg').style.opacity = 0;
-                document.getElementById('docFullPanel').style.display = 'block';
+            else {
+                // if not complete :
+                document.getElementById('docFullImg').style.opacity = this.fadeAlpha;
+                document.getElementById('docOpaSlider').value = this.fadeAlpha * 100;
+                document.querySelector('#docOpacity').value =
+                    Math.trunc(this.fadeAlpha * 100);
             }
 
-            // handle fade animation
-            if (this.isFadingDoc) {
-                this.fadeAlpha += dt / this.fadeDuration;
-                if (this.fadeAlpha >= 1) {
-                    // animation is complete
-                    this.isFadingDoc = false;
-                    document.getElementById('docFullImg').style.opacity = 1;
-                    document.getElementById('docOpaSlider').value = 100;
-                    document.querySelector('#docOpacity').value = 100;
-                }
-                else {
-                    // if not complete :
-                    document.getElementById('docFullImg').style.opacity = this.fadeAlpha;
-                    document.getElementById('docOpaSlider').value = this.fadeAlpha * 100;
-                    document.querySelector('#docOpacity').value =
-                        Math.trunc(this.fadeAlpha * 100);
-                }
-
-                // request redraw of the scene
-                this.documentController.view.notifyChange();
-            }
+            // request redraw of the scene
+            this.documentController.view.notifyChange();
         }
     }
 
@@ -247,10 +250,6 @@ export class DocumentBrowser extends Window {
             + this.documentController.serverModel.document + '/'
             + this.currentMetadata.id + '/'
             + this.documentController.serverModel.file;
-        document.getElementById('docBrowserPreviewImg').src = this.documentController.url
-            + this.documentController.serverModel.document + '/'
-            + this.currentMetadata.id + '/'
-            + this.documentController.serverModel.file;
         document.getElementById('docFullImg').style.opacity = 50;
         document.getElementById('docOpaSlider').value = 0;
         document.querySelector('#docOpacity').value = 50;
@@ -327,10 +326,6 @@ export class DocumentBrowser extends Window {
 
     initializeButtons() {
         // event listeners for buttons
-        document.getElementById('docFullOrient').addEventListener('mousedown',
-            this.focusOnDoc.bind(this), false);
-        document.getElementById('docFullClose').addEventListener('mousedown',
-            this.closeDocFull.bind(this), false);
         document.getElementById('docBrowserNextButton').addEventListener('mousedown',
             this.nextDoc.bind(this), false);
         document.getElementById('docBrowserPreviousButton').addEventListener('mousedown',

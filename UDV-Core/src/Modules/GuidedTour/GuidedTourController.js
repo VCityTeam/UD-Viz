@@ -158,8 +158,6 @@ export class GuidedTourController extends ModuleView {
     this.currentTourIndex = 0;
     this.currentGuidedTour = this.guidedTours[this.currentTourIndex];
     this.guidedTour.currentStep = this.getCurrentStep();
-    this.documentController.documentBrowser.activateWindow(false);
-    this.documentController.documentBrowser.closeDocFull();
     this.guidedTour.previewTour();
 
   }

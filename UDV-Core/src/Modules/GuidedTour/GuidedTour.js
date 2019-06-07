@@ -108,7 +108,7 @@ export class GuidedTour extends Window {
     document.getElementById("guidedTourPreviousStepButton").style.display = "none";
     document.getElementById("guidedTourNextStepButton").style.display = "none";
     document.getElementById("guidedTourExitButton").style.display = "none";
-    document.getElementById("guidedTourText2").style.display = "none";
+    //document.getElementById("guidedTourText2").style.display = "none";
     document.getElementById("guidedTourStartButton").style.display = "block";
 
     document.getElementById('guidedTourTitle').innerHTML =
@@ -117,10 +117,6 @@ export class GuidedTour extends Window {
                            this.guidedTourController.getCurrentTour().description;
     document.getElementById("guidedTourText1").style.height = "45%";
     document.getElementById("guidedTourStepTitle").innerHTML = null;
-
-    document.getElementById('docHead').style.display = "none";
-    document.getElementById('resetFilters').style.display = "none";
-    document.getElementById('docBrowserInfo').style.display = "none";
 
   }
 
@@ -136,7 +132,6 @@ export class GuidedTour extends Window {
     this.documentBrowser.updateBrowser();
     document.getElementById("guidedTourText1").innerHTML = this.currentStep.text1;
     document.getElementById('guidedTourStepTitle').innerHTML = this.currentStep.title;
-    document.getElementById("guidedTourText2").innerHTML = this.currentStep.text2;
     this.documentBrowser.focusOnDoc();
   }
 
@@ -150,13 +145,12 @@ export class GuidedTour extends Window {
       this.updateStep();
       // setup the display (hide & show elements)
       this.guidedTourController.toggleGuidedTourButtons(false);
-      document.getElementById("guidedTourText2").style.display = "inline-block";
       document.getElementById("guidedTourDocPreviewImg").style.display = "none";
       document.getElementById("guidedTourText1").style.height = "60%";
-      document.getElementById('docBrowserWindow').style.display = "block";
+      /*
       document.getElementById('docBrowserPreviousButton').style.display = "none";
       document.getElementById('docBrowserNextButton').style.display = "none";
-      document.getElementById('docBrowserIndex').style.display = "none";
+      document.getElementById('docBrowserIndex').style.display = "none";*/
       document.getElementById('tourCpt').style.display = "none";
     }
     else {
@@ -171,9 +165,10 @@ export class GuidedTour extends Window {
 
       this.guidedTourController.reset();
       // show the regular buttons for doc window
+      /*
       document.getElementById('docBrowserPreviousButton').style.display = "block";
       document.getElementById('docBrowserNextButton').style.display = "block";
-      document.getElementById('docBrowserIndex').style.display = "block";
+      document.getElementById('docBrowserIndex').style.display = "block";*/
   };
 
   /**

@@ -26,6 +26,12 @@ export class DocumentCommentsWindow extends Window {
                     }
                 };
         });
+
+        documentController.addEventListener(
+            Window.EVENT_DISABLED, () => {
+                this.disable();
+            }
+        );
         
         this.appendTo(document.getElementById('contentSection'));
         this.hide();
@@ -73,8 +79,8 @@ export class DocumentCommentsWindow extends Window {
     windowCreated() {
         this.window.style.setProperty('width', '500px');
         this.window.style.setProperty('height', '500px');
-        this.window.style.setProperty('left', '310px');
-        this.window.style.setProperty('top', '80px');
+        this.window.style.setProperty('left', '990px');
+        this.window.style.setProperty('top', '60px');
         this.window.style.setProperty('resize', 'both');
         this.innerContent.style.setProperty('height', '100%');
         document.getElementById('documentComments_inputButton').onclick = this.publishComment.bind(this);
