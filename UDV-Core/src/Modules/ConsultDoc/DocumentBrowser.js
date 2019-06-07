@@ -144,40 +144,16 @@ export class DocumentBrowser extends Window {
                 document.getElementById('docOpaSlider').value = 100;
                 document.querySelector('#docOpacity').value = 100;
             }
-            // controls.state === -1 corresponds to state === STATE.NONE
-            // if state is -1 this means the controls have finished the animated travel
-            // then we can begin the doc fade animation
-            if (this.isOrientingDoc && this.documentController.controls.state === -1) {
-                this.isOrientingDoc = false;
-                this.isFadingDoc = true;
-                this.fadeAlpha = 0;
-                document.getElementById('docOpaSlider').value = 0;
-                document.querySelector('#docOpacity').value = 0;
-                document.getElementById('docFullImg').style.opacity = 0;
-                document.getElementById('docFullPanel').style.display = 'block';
+            else {
+                // if not complete :
+                document.getElementById('docFullImg').style.opacity = this.fadeAlpha;
+                document.getElementById('docOpaSlider').value = this.fadeAlpha * 100;
+                document.querySelector('#docOpacity').value =
+                    Math.trunc(this.fadeAlpha * 100);
             }
 
-            // handle fade animation
-            if (this.isFadingDoc) {
-                this.fadeAlpha += dt / this.fadeDuration;
-                if (this.fadeAlpha >= 1) {
-                    // animation is complete
-                    this.isFadingDoc = false;
-                    document.getElementById('docFullImg').style.opacity = 1;
-                    document.getElementById('docOpaSlider').value = 100;
-                    document.querySelector('#docOpacity').value = 100;
-                }
-                else {
-                    // if not complete :
-                    document.getElementById('docFullImg').style.opacity = this.fadeAlpha;
-                    document.getElementById('docOpaSlider').value = this.fadeAlpha * 100;
-                    document.querySelector('#docOpacity').value =
-                        Math.trunc(this.fadeAlpha * 100);
-                }
-
-                // request redraw of the scene
-                this.documentController.view.notifyChange();
-            }
+            // request redraw of the scene
+            this.documentController.view.notifyChange();
         }
     }
 
