@@ -1,3 +1,5 @@
+import { Window } from "../../../Utils/GUI/js/Window";
+
 /**
  * Class: UpdateDocument
  * Description :
@@ -41,17 +43,24 @@ export function UpdateDocument(updateContainer, contributeController){
 
   this.initialize = function initialize()
   {
-    var docUpdateButton = document.createElement('button');
-    docUpdateButton.id = "docUpdateButton";
-    var text = document.createTextNode("Update");
-    docUpdateButton.appendChild(text);
-    document.getElementById(this.contributeController.documentController.documentBrowser.browserTabID).appendChild(docUpdateButton);
+    this.contributeController.documentController.documentBrowser.addEventListener(
+      Window.EVENT_CREATED, () => {
+        var docUpdateButton = document.createElement('button');
+        docUpdateButton.id = "docUpdateButton";
+        var text = document.createTextNode("Update");
+        docUpdateButton.appendChild(text);
+        document.getElementById(this.contributeController.documentController.documentBrowser.browserTabID).appendChild(docUpdateButton);
 
-    var docDeleteButton = document.createElement('button');
-    docDeleteButton.id = "docDeleteButton";
-    var text = document.createTextNode("Delete");
-    docDeleteButton.appendChild(text);
-    document.getElementById(this.contributeController.documentController.documentBrowser.browserTabID).appendChild(docDeleteButton);
+        var docDeleteButton = document.createElement('button');
+        docDeleteButton.id = "docDeleteButton";
+        var text = document.createTextNode("Delete");
+        docDeleteButton.appendChild(text);
+        document.getElementById(this.contributeController.documentController.documentBrowser.browserTabID).appendChild(docDeleteButton);
+
+        document.getElementById('docUpdateButton').addEventListener('mousedown', this.updateDoc.bind(this),false);
+        document.getElementById('docDeleteButton').addEventListener('mousedown', this.contributeController.documentDelete.bind(this.contributeController),false);
+      }
+    );
 
     this.updateContainer.innerHTML =
     '<br/><div id = "updateTitle">You can update following information:</div><br/>\
@@ -136,7 +145,7 @@ export function UpdateDocument(updateContainer, contributeController){
 
     this.activateWindow(true);
     this.fillUpdateForm();
-    this.contributeController.documentController.documentBrowser.activateWindow(false);
+    this.contributeController.documentController.documentBrowser.hide();
   }
 
   /**
@@ -159,18 +168,16 @@ export function UpdateDocument(updateContainer, contributeController){
   //=============================================================================
   this.cancelUpdate = function cancelUpdate(){
     this.activateWindow(false);
-    this.contributeController.documentController.documentBrowser.activateWindow(true);
+    this.contributeController.documentController.documentBrowser.show();
 
   }
 
   this.initialize();
 
-  document.getElementById('docUpdateButton').addEventListener('mousedown', this.updateDoc.bind(this),false);
+
+  document.getElementById('docUpdate').addEventListener('mousedown', this.contributeController.documentUpdate.bind(this.contributeController),false);
   document.getElementById('closeUpdate').addEventListener('mousedown', this.activateWindow.bind(this,false),false);
 
   document.getElementById('updateCancel').addEventListener('mousedown', this.cancelUpdate.bind(this),false);
-
-  document.getElementById('docUpdate').addEventListener('mousedown', this.contributeController.documentUpdate.bind(this.contributeController),false);
-  document.getElementById('docDeleteButton').addEventListener('mousedown', this.contributeController.documentDelete.bind(this.contributeController),false);
 
 }

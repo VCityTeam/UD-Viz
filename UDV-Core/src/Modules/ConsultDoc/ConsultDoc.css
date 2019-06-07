@@ -76,15 +76,9 @@
 }
 
 #docBrowserIndex{
-  position: absolute;
-      margin-top: 10px;
-      color: white;
-      left : 15px;
-      bottom : 100px;
-      font-size: 14px;
-      font-weight: bold;
-      overflow: hidden;
-
+  color: white;
+  font-size: 14px;
+  font-weight: bold;
 }
 
 #docType{
@@ -127,62 +121,6 @@
     width: 100%; /* or any custom size */
     height: 100%;
     object-fit: contain;
-}
-
-#docBrowserNextButton{
-    position: absolute;
-    z-index: 20;
-    bottom : 5px;
-    left: 60px;
-    margin: auto;
-    font-size: 30px;
-    border: 1px solid black;
-    background-color: white;
-    color: black;
-    height: 40px;
-    pointer-events: auto;
-}
-
-#docBrowserPreviousButton{
-    position: absolute;
-    z-index: 20;
-    bottom : 0;
-    left : 0;
-    margin : 5px;
-    font-size: 30px;
-    border: 1px solid black;
-    background-color: white;
-    color: black;
-    height: 40px;
-    pointer-events: auto;
-}
-
-#docBrowserOrientButton{
-    position: absolute;
-    z-index: 20;
-    bottom : 0;
-    right : 0;
-    margin : 5px;
-    font-size: 14px;
-    border: 1px solid black;
-    background-color: white;
-    color: black;
-    height: 30px;
-    pointer-events: auto;
-}
-
-#resetFilters{
-    z-index: 20;
-    bottom : 0;
-    left: 130px;
-    position:absolute;
-    margin : 5px;
-    font-size: 14px;
-    border: 1px solid black;
-    background-color: white;
-    color: black;
-    height: 30px;
-    pointer-events: auto;
 }
 
 #docFull{

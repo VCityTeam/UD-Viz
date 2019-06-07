@@ -9,20 +9,24 @@ export class DocumentCommentsWindow extends Window {
         this.documentCommentsService = documentCommentsService;
         this.documentController = documentController;
 
-        let browserTabs = documentController.documentBrowser.browserTabID;
-        let docBrowserCreateButton = document.createElement('button');
-        docBrowserCreateButton.id = "docBrowserCommentButton";
-        let word = document.createTextNode("Comment");
-        docBrowserCreateButton.appendChild(word);
-        document.getElementById(browserTabs).appendChild(docBrowserCreateButton);
-        docBrowserCreateButton.onclick = () => {
-            if (this.isVisible) {
-                this.hide();
-            } else {
-                this.show();
-                this.getComments();
-            }
-        };
+        documentController.documentBrowser.addEventListener(
+            Window.EVENT_CREATED, () => {
+                let browserTabs = documentController.documentBrowser.browserTabID;
+                let docBrowserCreateButton = document.createElement('button');
+                docBrowserCreateButton.id = "docBrowserCommentButton";
+                let word = document.createTextNode("Comment");
+                docBrowserCreateButton.appendChild(word);
+                document.getElementById(browserTabs).appendChild(docBrowserCreateButton);
+                docBrowserCreateButton.onclick = () => {
+                    if (this.isVisible) {
+                        this.hide();
+                    } else {
+                        this.show();
+                        this.getComments();
+                    }
+                };
+        });
+        
         this.appendTo(document.getElementById('contentSection'));
         this.hide();
     }

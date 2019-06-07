@@ -82,7 +82,6 @@ export class DocumentResearch extends Window
     {
         this.documentController.getDocuments();
         document.getElementById('browserInfo').innerHTML = "The documents have been filtered."
-        this.documentController.documentBrowser.activateWindow(true);
         this.documentController.documentBrowser.updateBrowser();
     }
 

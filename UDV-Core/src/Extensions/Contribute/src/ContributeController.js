@@ -237,7 +237,7 @@ export function ContributeController(documentController, requestService){
         this.documentController.docIndex = 0;//return to first doc
         this.documentController.documentBrowser.docIndex = 1; //reset index in browser
         this.documentController.documentBrowser.startBrowser();
-        this.documentController.documentBrowser.activateWindow(true);
+        this.documentController.documentBrowser.show();
       }, (error) => {
         console.error("Failed!", error);
       });

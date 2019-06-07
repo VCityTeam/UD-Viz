@@ -71,6 +71,9 @@ export class DocumentController extends ModuleView {
     browserContainer.style = 'display: none;';
     document.getElementById('contentSection').appendChild(browserContainer);
     this.documentBrowser = new DocumentBrowser(browserContainer, this);
+    this.documentBrowser.addEventListener(DocumentResearch.EVENT_DESTROYED, () => {
+      this.disable();
+    });
   }
 
   toggle() {
@@ -202,13 +205,13 @@ export class DocumentController extends ModuleView {
 
   enableView() {
     this.documentResearch.appendTo(this.parentElement);
-    this.documentBrowser.activateWindow(true);
+    this.documentBrowser.appendTo(this.parentElement);
     this.open();
   }
 
   disableView() {
     this.documentResearch.disable();
-    this.documentBrowser.activateWindow(false);
+    this.documentBrowser.disable();
     this.close();
   }
 }

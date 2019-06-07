@@ -1,3 +1,5 @@
+import { Window } from "../../../Utils/GUI/js/Window";
+
 /**
  * Class: CreateDocument
  * Description :
@@ -17,13 +19,22 @@ export function CreateDocument(creationContainer, contributeController){
   this.contributeController = contributeController;
   this.creationContainer = creationContainer;
   this.browserTabs = this.contributeController.documentController.documentBrowser.browserTabID;
-  var docBrowserCreateButton = document.createElement('button');
-  docBrowserCreateButton.id = "docBrowserCreateButton";
-  var word = document.createTextNode("Create");
-  docBrowserCreateButton.appendChild(word);
-  document.getElementById(this.browserTabs).appendChild(docBrowserCreateButton);
 
-  this.contributeController.documentController.documentBrowser.refresh(); //original documentBrowser is updated with additional buttons
+  this.contributeController.documentController.documentBrowser.addEventListener(
+    Window.EVENT_CREATED, () => {
+      var docBrowserCreateButton = document.createElement('button');
+      docBrowserCreateButton.id = "docBrowserCreateButton";
+      var word = document.createTextNode("Create");
+      docBrowserCreateButton.appendChild(word);
+      document.getElementById(this.browserTabs).appendChild(docBrowserCreateButton);
+
+      this.contributeController.documentController.documentBrowser.refresh(); //original documentBrowser is updated with additional buttons
+
+      document.getElementById('docBrowserCreateButton').addEventListener('mousedown',
+      this.updateCreationWindow.bind(this),false);
+    }
+  );
+  
 
   // Whether this window is currently displayed or not.
   this.windowIsActive = this.contributeController.documentController.options.active || false;
@@ -124,7 +135,7 @@ export function CreateDocument(creationContainer, contributeController){
       this.contributeController.documentController.documentResearch
         .show();
       this.contributeController.documentController.documentBrowser
-        .activateWindow(true);
+        .show();
     }
   }
 
@@ -141,7 +152,7 @@ export function CreateDocument(creationContainer, contributeController){
 
     document.getElementById('manualPos').style.display = active  ? "block" : "none ";
     this.contributeController.documentController.documentResearch.show();
-    this.contributeController.documentController.documentBrowser.activateWindow(true);
+    this.contributeController.documentController.documentBrowser.show();
   }
 
 
@@ -155,7 +166,7 @@ export function CreateDocument(creationContainer, contributeController){
     this.activateManualPosition(false);
     document.getElementById('docPositionerFull').style.display = "none ";
     this.contributeController.documentController.documentResearch.hide();
-    this.contributeController.documentController.documentBrowser.activateWindow(false);
+    this.contributeController.documentController.documentBrowser.hide();
     this.blurMetadataWindow(false);
   }
 
@@ -251,7 +262,7 @@ export function CreateDocument(creationContainer, contributeController){
   this.updateCreationWindow = function updateCreationWindow(){
     document.getElementById('creationContainer').style.display ="block";
     this.contributeController.documentController.documentResearch.hide();
-    this.contributeController.documentController.documentBrowser.activateWindow(false);
+    this.contributeController.documentController.documentBrowser.hide();
 
   }
 
@@ -281,8 +292,6 @@ export function CreateDocument(creationContainer, contributeController){
   this.initialize();
 
   //Event listeners for buttons
-  document.getElementById('docBrowserCreateButton').addEventListener('mousedown',
-                                      this.updateCreationWindow.bind(this),false);
   document.getElementById('docCreation').addEventListener('mousedown',
     this.contributeController.documentCreation.bind(this.contributeController),false);
   document.getElementById('closeCreation').addEventListener('mousedown',
