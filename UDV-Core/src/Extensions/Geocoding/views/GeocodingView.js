@@ -284,6 +284,7 @@ export class GeocodingView extends ModuleView {
    * @override
    */
   async disableView() {
+    
     await this.dispose();
   }
 }
