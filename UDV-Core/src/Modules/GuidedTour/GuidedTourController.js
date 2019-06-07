@@ -59,10 +59,10 @@ export class GuidedTourController extends ModuleView {
   */
   //=============================================================================
   initialize() {
-    var guidedTourContainer = document.createElement("div");
-    guidedTourContainer.id = this.guidedTourContainerId;
-    document.body.appendChild(guidedTourContainer);
-    this.guidedTour = new GuidedTour(guidedTourContainer, this);
+    this.guidedTour = new GuidedTour(this);
+    this.guidedTour.addEventListener(GuidedTour.EVENT_DESTROYED, () => {
+      this.disable();
+    });
   }
 
   /**
@@ -179,11 +179,11 @@ export class GuidedTourController extends ModuleView {
   /////// MODULE MANAGEMENT FOR BASE DEMO
 
   enableView() {
-    document.getElementById(this.guidedTourContainerId).style.setProperty('display', 'block');
+    this.guidedTour.appendTo(this.parentElement);
   }
 
   disableView() {
-    document.getElementById(this.guidedTourContainerId).style.setProperty('display', 'none');
+    this.guidedTour.dispose();
   }
 
 }
