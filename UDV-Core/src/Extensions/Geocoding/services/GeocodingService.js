@@ -18,6 +18,8 @@ export class GeocodingService {
     this.latPath = config.geocoding.result.lat;
     this.lngPath = config.geocoding.result.lng;
     this.credit = config.geocoding.credit;
+    this.requestTimeIntervalMs = config.geocoding.requestTimeIntervalMs;
+    this.canDoRequest = true;
   }
 
   /**
@@ -26,6 +28,10 @@ export class GeocodingService {
    * @param {String} searchString Either an address or the name of a place.
    */
   async getCoordinates(searchString) {
+    if ((!!this.requestTimeIntervalMs) && !this.canDoRequest) {
+      throw 'Cannot perform a request for now.';
+    }
+
     //URL parameters
     const queryString = encodeURIComponent(searchString);
 
@@ -58,6 +64,14 @@ export class GeocodingService {
           lng: Number(getAttributeByPath(res, this.lngPath))
         };
       });
+
+    if (!!this.requestTimeIntervalMs) {
+      this.canDoRequest = false;
+      setTimeout(() => {
+        this.canDoRequest = true;
+      }, Number(this.requestTimeIntervalMs));
+    }
+
     if (results.length > 0) {
       return results;
     } else {

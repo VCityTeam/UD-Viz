@@ -14,13 +14,14 @@
   },
   "geocoding":{
     "url":"https://nominatim.openstreetmap.org/search",
+    "credit": "© OpenStreetMap contributors under <a href=\"https://www.openstreetmap.org/copyright\">ODbL</a>",
+    "requestTimeIntervalMs": "1000",
     "result":{
       "format": "json",
       "basePath": "",
       "lng": "lon",
       "lat": "lat"
     },
-    "credit": "© OpenStreetMap contributors under <a href=\"https://www.openstreetmap.org/copyright\">ODbL</a>",
     "parameters":{
       "q":{
         "fill": "query"

@@ -42,13 +42,14 @@ The configuration file must have the following structure :
   "type": "class",
   "geocoding":{
     "url":"",
+    "credit": "© ...",
+    "requestTimeIntervalMs": "",
     "result":{
       "format": "json",
       "basePath": "",
       "lng": "",
       "lat": ""
     },
-    "credit": "© ...",
     "parameters":{
       "param_name_1":{
         "fill": "value",
@@ -72,6 +73,8 @@ The `url` field represents the base URL of geocoding requests. For example, to u
 
 The `credit` field is the string that will be displayed under the search bar in the web application. It is used to clearly display attribution for the third party service. For OpenStreetMap's Nominatim for example, you should use "© OpenStreetMap contributors" as specified on their [copyright page](https://www.openstreetmap.org/copyright).
 
+The `requestTimeIntervalMs` is an optional parameter used to specify a minimal time interval between requests (value must be a number of milliseconds). It can be used to avoid doing too many requests to a server in a short time. For example, the usage policy of Nominatim specifies that an application is allowed to make at most one request per second.
+
 The `result` object describes how the result should be interpreted. The goal is for the geocoding service to find the different geographical coordinates from the query's response. It assumes that the response will be a json object which either is or contains an array of results. It will search for the array in the `basePath` attribute path (nested attributes should be separated by dots). If the response itself is an array, `basePath` should be an empty string.  
 The two other fields, `lat` and `lng`, specify the path of the coordinates in each array item.
 
@@ -89,28 +92,29 @@ An example configuration for the Nominatim service is provided in the `generalDe
 
 ```json
 "geocoding":{
-    "url":"https://nominatim.openstreetmap.org/search",
-    "result":{
-      "format": "json",
-      "basePath": "",
-      "lng": "lon",
-      "lat": "lat"
+  "url":"https://nominatim.openstreetmap.org/search",
+  "credit": "© OpenStreetMap contributors under <a href=\"https://www.openstreetmap.org/copyright\">ODbL</a>",
+  "requestTimeIntervalMs": "1000",
+  "result":{
+    "format": "json",
+    "basePath": "",
+    "lng": "lon",
+    "lat": "lat"
+  },
+  "parameters":{
+    "q":{
+      "fill": "query"
     },
-    "credit": "© OpenStreetMap contributors under <a href=\"https://www.openstreetmap.org/copyright\">ODbL</a>",
-    "parameters":{
-      "q":{
-        "fill": "query"
-      },
-      "format":{
-        "fill": "value",
-        "value": "json"
-      },
-      "viewbox":{
-        "fill": "extent",
-        "format": "WEST,SOUTH,EAST,NORTH"
-      }
+    "format":{
+      "fill": "value",
+      "value": "json"
+    },
+    "viewbox":{
+      "fill": "extent",
+      "format": "WEST,SOUTH,EAST,NORTH"
     }
   }
+}
 ```
 
 With this configuration, the request takes three parameters :
