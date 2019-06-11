@@ -28,18 +28,14 @@ baseDemo.addModuleView('geocoding', geocodingView, {name: 'Address search'});
 
 ### Configuration
 
-The geocoding module will use REST calls to a web service to compute coordinates from query strings. The module was tested with two different services ([Google](https://developers.google.com/maps/documentation/geocoding/start), [OpenCage](https://opencagedata.com/api) and [Nominatim](https://nominatim.openstreetmap.org/)), and is theoritically compatible with most service providers. In order to configure the module, you should specify informations about the web service you want to call. This information includes :
+The geocoding module will use REST calls to a web service to compute coordinates from query strings. The module was tested with three different services ([Google](https://developers.google.com/maps/documentation/geocoding/start), [OpenCage](https://opencagedata.com/api) and [Nominatim](https://nominatim.openstreetmap.org/)), and is theoritically compatible with most service providers. In order to configure the module, you should specify informations about the web service you want to call. This information includes :
 
 - URL of the geocoding service endpoint
 - URL parameters to add to the request
 - Credit to the service provider
 - Description of the result.
 
-For example, the Nominatim geocoding service uses the base URL https://nominatim.openstreetmap.org/search, and takes a mandatory parameter : `q`, which contains the query string and `key`. The results is displayed in a JSON array where the coordinates are stored under "lat" and "lon" attributes.
-
-A request to their service takes the form : https://nominatim.openstreetmap.org/search?q=QUERY_STRING. However, other service providers may name their parameters differently. So, in order to make well-formed requests, the global configuration must contains information about the web service.
-
-The configuration file must have at least the following structure :
+The configuration file must have the following structure :
 
 ```json
 {
@@ -85,7 +81,7 @@ The `parameters` dictionary represents query parameters that will be added to th
 |----------|------|
 |`"value"`|Fills the parameter with a given value. The value is specified in the `value` field of the descriptor.|
 |`"query"`|Fills the parameter with the query string, formatted as a URI component.|
-|`"extent"`|Fills the parameter with the extent bounds, with EPSG:4326 coordinates. The string format is specified by the `format` field of the descriptor, which is a string is which the substrings `SOUTH`, `WEST`, `NORTH` and `EAST` will be replaced with the corresponding coordinates.|
+|`"extent"`|Fills the parameter with the extent bounds, with EPSG:4326 coordinates. The string format is specified by the `format` field of the descriptor, which is a string in which the substrings `SOUTH`, `WEST`, `NORTH` and `EAST` will be replaced with the corresponding coordinates.|
 
 ### Example configuration
 
@@ -100,7 +96,7 @@ An example configuration for the Nominatim service is provided in the `generalDe
       "lng": "lon",
       "lat": "lat"
     },
-    "credit": "© OpenStreetMap contributors",
+    "credit": "© OpenStreetMap contributors under <a href=\"https://www.openstreetmap.org/copyright\">ODbL</a>",
     "parameters":{
       "q":{
         "fill": "query"
