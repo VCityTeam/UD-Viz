@@ -53,3 +53,29 @@ export function imageToDataURI(arrayBuffer, mimeType, chunkSize = 8 * 1024) {
               + ';base64,' + btoa(responseAsString);
   return b64data;
 }
+
+/**
+ * Gets an attribute of an object from the given path. To get nested attributes,
+ * the path qualifiers must be separated by dots ('.'). If the path is not
+ * nested (does not contain any dot), the function is equivalent to `obj[path]`.
+ * 
+ * 
+ * @param {object} obj 
+ * @param {string} path 
+ * 
+ * @example
+ * const obj = {test: {msg: "Hello world !"}};
+ * console.log(getAttributeByPath(obj, "test.msg")); // prints "Hello world !";
+ * console.log(getAttributeByPath(obj, "other")); // undefined
+ */
+export function getAttributeByPath(obj, path) {
+  const segs = path.split('.');
+  let val = obj;
+  for (let seg of segs) {
+    val = val[seg];
+    if (val === undefined) {
+      break;
+    }
+  }
+  return val;
+}

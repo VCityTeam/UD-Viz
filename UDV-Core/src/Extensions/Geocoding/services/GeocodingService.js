@@ -1,4 +1,5 @@
 import { RequestService } from "../../../Utils/Request/RequestService";
+import { getAttributeByPath } from "../../../Utils/DataProcessing/DataProcessing";
 
 export class GeocodingService {
   /**
@@ -13,6 +14,10 @@ export class GeocodingService {
     this.extent = extent.as('EPSG:4326');
     this.geocodingUrl = config.geocoding.url;
     this.parameters = config.geocoding.parameters;
+    this.basePath = config.geocoding.basePath;
+    this.latPath = config.geocoding.result.lat;
+    this.lngPath = config.geocoding.result.lng;
+    this.credit = config.geocoding.result.credit;
   }
 
   /**
@@ -23,25 +28,38 @@ export class GeocodingService {
   async getCoordinates(searchString) {
     //URL parameters
     const queryString = encodeURIComponent(searchString);
-    const bounds = `${this.extent.west()},${this.extent.south()}|${this.extent.east()},${this.extent.north()}`;
 
     //build the URL according to parameter description (in config file)
     let url = this.geocodingUrl + '?';
     for (let [paramName, param] of Object.entries(this.parameters)) {
       if (param.fill === "value") {
-        url += `${paramName}=${param.value}&`;
+        url += `${paramName}=${param.value}`;
       } else if (param.fill === "query") {
-        url += `${paramName}=${queryString}&`;
+        url += `${paramName}=${queryString}`;
       } else if (param.fill === "extent") {
-        url += `${paramName}=${bounds}&`;
+        url += paramName + '=' + param.format
+          .replace('SOUTH', this.extent.south())
+          .replace('WEST', this.extent.west())
+          .replace('NORTH', this.extent.north())
+          .replace('EAST', this.extent.east());
       }
+      url += "&";
     }
+
+    console.log('request : ' + url);
 
     //make the request
     const req = await this.requestService.request('GET', url);
     const response = JSON.parse(req.response);
-    const results = response.results
-      .map(res => res.geometry.location);
+    console.log(response);
+    const results = ((!!this.basePath) ? response[this.basePath] : response)
+      .map(res => {
+        return {
+          lat: Number(getAttributeByPath(res, this.latPath)),
+          lng: Number(getAttributeByPath(res, this.lngPath))
+        };
+      });
+    console.log(results);
     if (results.length > 0) {
       return results;
     } else {
