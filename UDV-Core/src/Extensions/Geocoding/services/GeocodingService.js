@@ -46,12 +46,11 @@ export class GeocodingService {
       url += "&";
     }
 
-    console.log('request : ' + url);
-
     //make the request
-    const req = await this.requestService.request('GET', url);
+    const req = await this.requestService.request('GET', url, {
+      authenticate: false
+    });
     const response = JSON.parse(req.response);
-    console.log(response);
     const results = ((!!this.basePath) ? response[this.basePath] : response)
       .map(res => {
         return {
@@ -59,7 +58,6 @@ export class GeocodingService {
           lng: Number(getAttributeByPath(res, this.lngPath))
         };
       });
-    console.log(results);
     if (results.length > 0) {
       return results;
     } else {
