@@ -35,3 +35,13 @@
   20% { width: 0; opacity: 1; }
   100% { width: 300px; }
 }
+
+#_geocoding_view_centered {
+  display: inline-block;
+}
+
+#_geocoding_view_centered_credit {
+  text-align: right;
+  color: white;
+  margin: 3px;
+}

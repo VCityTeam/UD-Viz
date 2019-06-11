@@ -28,14 +28,16 @@ baseDemo.addModuleView('geocoding', geocodingView, {name: 'Address search'});
 
 ### Configuration
 
-The geocoding module will use REST calls to a web service to compute coordinates from query strings. The module was tested with two different services ([Google](https://developers.google.com/maps/documentation/geocoding/start) and [OpenCage](https://opencagedata.com/api)), and is theoritically compatible with most service providers. In order to configure the module, you should specify informations about the web service you want to call. This information includes :
+The geocoding module will use REST calls to a web service to compute coordinates from query strings. The module was tested with two different services ([Google](https://developers.google.com/maps/documentation/geocoding/start), [OpenCage](https://opencagedata.com/api) and [Nominatim](https://nominatim.openstreetmap.org/)), and is theoritically compatible with most service providers. In order to configure the module, you should specify informations about the web service you want to call. This information includes :
 
 - URL of the geocoding service endpoint
 - URL parameters to add to the request
+- Credit to the service provider
+- Description of the result.
 
-For example, the Google geocoding service uses the base URL https://maps.googleapis.com/maps/api/geocode/json, and takes two mandatory parameters : `address`, which contains the query string and `key`, which contains the API key for authentication.
+For example, the Nominatim geocoding service uses the base URL https://nominatim.openstreetmap.org/search, and takes a mandatory parameter : `q`, which contains the query string and `key`. The results is displayed in a JSON array where the coordinates are stored under "lat" and "lon" attributes.
 
-A request to their service takes the form : https://maps.googleapis.com/maps/api/geocode/json?address=QUERY_STRING&key=API_KEY. However, other service providers may name their parameters differently. So, in order to make well-formed requests, the global configuration must contains information about the web service.
+A request to their service takes the form : https://nominatim.openstreetmap.org/search?q=QUERY_STRING. However, other service providers may name their parameters differently. So, in order to make well-formed requests, the global configuration must contains information about the web service.
 
 The configuration file must have at least the following structure :
 
@@ -44,6 +46,13 @@ The configuration file must have at least the following structure :
   "type": "class",
   "geocoding":{
     "url":"",
+    "result":{
+      "format": "json",
+      "basePath": "",
+      "lng": "",
+      "lat": ""
+    },
+    "credit": "© ...",
     "parameters":{
       "param_name_1":{
         "fill": "value",
@@ -65,42 +74,72 @@ The configuration file must have at least the following structure :
 
 The `url` field represents the base URL of geocoding requests. For example, to use the Google API services, https://maps.googleapis.com/maps/api/geocode/json is the base URL.
 
+The `credit` field is the string that will be displayed under the search bar in the web application. It is used to clearly display attribution for the third party service. For OpenStreetMap's Nominatim for example, you should use "© OpenStreetMap contributors" as specified on their [copyright page](https://www.openstreetmap.org/copyright).
+
+The `result` object describes how the result should be interpreted. The goal is for the geocoding service to find the different geographical coordinates from the query's response. It assumes that the response will be a json object which either is or contains an array of results. It will search for the array in the `basePath` attribute path (nested attributes should be separated by dots). If the response itself is an array, `basePath` should be an empty string.  
+The two other fields, `lat` and `lng`, specify the path of the coordinates in each array item.
+
 The `parameters` dictionary represents query parameters that will be added to the URL to perform the appropriate geocoding request. Each parameter is described as a `"name": descriptor` pair, where `name` will be the name of the parameter in the request and `descriptor` describes how the value will be filled. To do that, the descriptor must contain a field named `fill` which can take 3 different values :
 
 |Fill value|Description|
 |----------|------|
 |`"value"`|Fills the parameter with a given value. The value is specified in the `value` field of the descriptor.|
 |`"query"`|Fills the parameter with the query string, formatted as a URI component.|
-|`"extent"`|Fills the parameter with the extent bounds, with EPSG:4326 coordinates. The string format is `"west,south\|east,north"`.|
+|`"extent"`|Fills the parameter with the extent bounds, with EPSG:4326 coordinates. The string format is specified by the `format` field of the descriptor, which is a string is which the substrings `SOUTH`, `WEST`, `NORTH` and `EAST` will be replaced with the corresponding coordinates.|
 
-An example configuration for the Google service is provided in the `generalDemoConfig.json` file (under `examples/data/config`). You can find a extract below :
+### Example configuration
+
+An example configuration for the Nominatim service is provided in the `generalDemoConfig.json` file (under `examples/data/config`). You can find a extract below :
 
 ```json
 "geocoding":{
-  "url":"https://maps.googleapis.com/maps/api/geocode/json",
-  "parameters":{
-    "address":{
-      "fill": "query",
-      "optional": "false"
+    "url":"https://nominatim.openstreetmap.org/search",
+    "result":{
+      "format": "json",
+      "basePath": "",
+      "lng": "lon",
+      "lat": "lat"
     },
-    "key":{
-      "fill": "value",
-      "optional": "false",
-      "value": "YOUR-API-KEY"
-    },
-    "bounds":{
-      "fill": "extent",
-      "optional": "true"
-    },
-    "region":{
-      "fill": "value",
-      "optional": "true",
-      "value": "fr"
+    "credit": "© OpenStreetMap contributors",
+    "parameters":{
+      "q":{
+        "fill": "query"
+      },
+      "format":{
+        "fill": "value",
+        "value": "json"
+      },
+      "viewbox":{
+        "fill": "extent",
+        "format": "WEST,SOUTH,EAST,NORTH"
+      }
     }
   }
-}
 ```
 
-With this configuration, the request takes two mandatory parameters : `address` which contains the query string (because of the `"fill": "query"`) and `key` which represents the API key (which is directly defined in the config file, under the `value` field).
+With this configuration, the request takes three parameters :
 
-The request also takes two optional arguments : `bounds` is the viewport extent and `region` is country code, directly passed as value in the config file.
+- `q` contains the query string.
+- `format` contains the value `json`. It specifies the output format for the Nominatim service.
+- `viewbox` sets a result preference extent. As specified on their [api documentation](https://nominatim.org/release-docs/develop/api/Search/), the string must match the following format : `viewbox=<x1>,<y1>,<x2>,<y2>`, which translates to `WEST,SOUTH,EAST,NORTH` in our configuration file.
+
+Here is a sample result of a request for the query "charpennes" (some fields are eluded):
+
+```json
+[
+  {
+    "place_id": 18301952,
+    "lat": "45.7711641",
+    "lon": "4.8658947",
+    ...
+  },
+  {
+    "place_id": 7155630,
+    "lat": "45.7701877",
+    "lon": "4.8631919",
+    ...
+  }
+]
+```
+
+As you can see, the response is a JSON array containing the results, hence the `"basePath": ""` configuration. In each query result, the latitude is stored unter a `lat` field, and the longitude under `lon`. We specify that in our configuration file with `"lat": "lat"` and `"lng": "lon"`.

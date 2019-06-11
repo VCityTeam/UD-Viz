@@ -25,8 +25,11 @@ export class GeocodingView extends ModuleView {
   get html() {
     return /*html*/`
       <form id="${this.formId}">
-        <input id="${this.searchInputId}" type="text"
-        name="geocoding_searchstring" placeholder="Search address, location...">
+        <div id="${this.centeredDivId}">
+          <input id="${this.searchInputId}" type="text"
+          name="geocoding_searchstring" placeholder="Search address, location...">
+          <p id="${this.creditId}"></p>
+        </div>
       </form>
     `;
   }
@@ -42,6 +45,8 @@ export class GeocodingView extends ModuleView {
       div.innerHTML = this.html;
       div.id = this.viewId;
       htmlElement.append(div);
+
+      this.creditElement.innerHTML = this.geocodingService.credit;
 
       this.formElement.onsubmit = () => {
         this.doGeocoding();
@@ -208,6 +213,22 @@ export class GeocodingView extends ModuleView {
 
   get searchInputElement() {
     return document.getElementById(this.searchInputId);
+  }
+
+  get centeredDivId() {
+    return `${this.viewId}_centered`;
+  }
+
+  get centeredDivElement() {
+    return document.getElementById(this.centeredDivId);
+  }
+
+  get creditId() {
+    return `${this.centeredDivId}_credit`;
+  }
+
+  get creditElement() {
+    return document.getElementById(this.creditId);
   }
 
   //////////// MODULE VIEW METHODS

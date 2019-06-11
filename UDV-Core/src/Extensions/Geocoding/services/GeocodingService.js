@@ -17,7 +17,7 @@ export class GeocodingService {
     this.basePath = config.geocoding.basePath;
     this.latPath = config.geocoding.result.lat;
     this.lngPath = config.geocoding.result.lng;
-    this.credit = config.geocoding.result.credit;
+    this.credit = config.geocoding.credit;
   }
 
   /**
