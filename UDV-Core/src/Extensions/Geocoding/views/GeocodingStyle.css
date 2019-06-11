@@ -41,6 +41,7 @@
 }
 
 #_geocoding_view_centered_credit {
+  text-shadow: 0px 0px 2px black;
   text-align: right;
   color: white;
   margin: 3px;

@@ -20,7 +20,7 @@
       "lng": "lon",
       "lat": "lat"
     },
-    "credit": "© OpenStreetMap contributors",
+    "credit": "© OpenStreetMap contributors under <a href=\"https://www.openstreetmap.org/copyright\">ODbL</a>",
     "parameters":{
       "q":{
         "fill": "query"
