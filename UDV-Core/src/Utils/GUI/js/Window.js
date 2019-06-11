@@ -1,5 +1,6 @@
 import { dragElement } from './Draggable.js';
 import { ModuleView } from '../../ModuleView/ModuleView.js';
+import { windowManager } from "./WindowManager";
 
 // Documentation is on the Wiki
 // URL : https://github.com/MEPP-team/UDV/wiki/Window-Framework
@@ -47,6 +48,8 @@ export class Window extends ModuleView {
         this.registerEvent(Window.EVENT_DESTROYED);
         this.registerEvent(Window.EVENT_SHOWN);
         this.registerEvent(Window.EVENT_HIDDEN);
+
+        windowManager.registerWindow(this);
     }
 
     //////////// Methods to override
