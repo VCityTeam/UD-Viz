@@ -59,15 +59,26 @@ export class CreateDocument extends Window {
   initialize()
   {
     this.docModelToSchema();
+
+    // HTML container of the pane allowing to place the document in the scene
+    var positionerContainer = document.createElement("div");
+    positionerContainer.id = "positionerContainer";
+    document.body.appendChild(positionerContainer);
+
+    positionerContainer.innerHTML =
+    '<div id="docPositionerFull">\
+    <img id="docPositionerFullImg"/></div>\
+    ';
   }
 
   get innerContentHtml() {
     return `
-    <div class="creation">
-    <div id = "creationWindow" ></div></div>
+    <div class="creation" id="creationWholePanel">
+    <div id = "creationWindow"></div>
     <div id ="creationTabs">
     <button id = "docCreation">Send</button>
     <button id = "documentPositioner">Place doc</button>
+    </div>
     </div>
     <div id="docPositionWindow">
       <div id = "inputFields" >
@@ -112,26 +123,6 @@ export class CreateDocument extends Window {
   }
 
   /**
-   * Display or hide creation view (formular)
-   */
-  //=============================================================================
-  activateCreateWindow(active){
-    if (typeof active != 'undefined')
-    {
-      this.windowIsActive = active;
-    }
-    document.getElementById(this.contributeController.creationContainerId).style.display = active  ? "block" : "none ";
-    document.getElementById('manualPos').style.display = active  ? "block" : "none ";
-    document.getElementById('positionerContainer').style.display = active  ? "block" : "none ";
-    if (!active) {
-      this.contributeController.documentController.documentResearch
-        .show();
-      this.contributeController.documentController.documentBrowser
-        .show();
-    }
-  }
-
-  /**
    * Display or hide creation view, second window (document positions)
    */
   //=============================================================================
@@ -155,10 +146,8 @@ export class CreateDocument extends Window {
   cancelPosition(){
 
     this.contributeController.visuData = new FormData(); //reset visuData form
-    this.activateManualPosition(false);
-    document.getElementById('docPositionerFull').style.display = "none ";
-    this.contributeController.documentController.documentResearch.hide();
-    this.contributeController.documentController.documentBrowser.hide();
+    document.getElementById('docPositionWindow').style.display = 'none';
+    document.getElementById('docPositionerFull').style.display = 'none';
     this.blurMetadataWindow(false);
   }
 
@@ -170,12 +159,10 @@ export class CreateDocument extends Window {
   blurMetadataWindow(blur){
 
     if(blur ==true){
-      document.getElementById('overlay').style.display = "block";
-      document.getElementById('creationContainer').style.pointerEvents ="none";
+      document.getElementById('creationWholePanel').style.pointerEvents ="none";
     }
     else{
-      document.getElementById('overlay').style.display = "none";
-      document.getElementById('creationContainer').style.pointerEvents ="auto";
+      document.getElementById('creationWholePanel').style.pointerEvents ="auto";
     }
   }
 
@@ -265,11 +252,14 @@ export class CreateDocument extends Window {
   //=============================================================================
   showDocPositioner(show){
     if(show){
+      document.getElementById('docPositionerFull').style.display = "block";
       document.getElementById('docPositionWindow').style.display = "block";
-      document.getElementById('creationWindow').style.pointerEvents ="none";
+      document.getElementById('creationWholePanel').style.pointerEvents ="none";
     }
     else {
+      document.getElementById('docPositionerFull').style.display = "none";
       document.getElementById('docPositionWindow').style.display = "none";
+      document.getElementById('creationWholePanel').style.pointerEvents ="auto";
     }
 
     this.contributeController.documentShowPosition();
