@@ -4,7 +4,7 @@ import '../../../Utils/GUI/css/window.css';
 export class DocToValidateCommentWindow extends Window {
 
     constructor(docToValidateService) {
-        super('docToValidateComment', 'Commentaires', false);
+        super('docToValidateComment', 'Comments', false);
         this.docToValidateService = docToValidateService;
     }
 

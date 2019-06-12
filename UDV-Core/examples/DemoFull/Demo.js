@@ -29,7 +29,9 @@ baseDemo.loadConfigFile('../data/config/generalDemoConfig.json').then(() => {
     const documents = new udvcore.DocumentController(baseDemo.view,
         baseDemo.controls, {temporal: baseDemo.temporal, active: false},
         baseDemo.config);
-    baseDemo.addModuleView('documents', documents);
+    baseDemo.addModuleView('documents', documents, {
+        binding: 'd'
+    });
 
     ////// GUIDED TOURS MODULE
     const guidedtour = new udvcore.GuidedTourController(documents);
@@ -53,7 +55,7 @@ baseDemo.loadConfigFile('../data/config/generalDemoConfig.json').then(() => {
     const docToValidateView =
         new udvcore.DocToValidateView(docToValidateService, documents);
     baseDemo.addModuleView('docToValidate', docToValidateView,
-        {name: 'Documents in validation', requireAuth: true});
+        {name: 'Documents in validation', requireAuth: true, binding: 'v'});
 
     ////// DOCUMENTS COMMENTS EXTENSION
     const docCommentsService = new udvcore.DocumentCommentsService(documents,

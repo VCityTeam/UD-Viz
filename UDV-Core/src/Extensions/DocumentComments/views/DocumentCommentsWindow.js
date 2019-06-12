@@ -5,7 +5,7 @@ import './DocumentCommentsStyle.css';
 export class DocumentCommentsWindow extends Window {
 
     constructor(documentController, documentCommentsService) {
-        super('documentComments', 'Commentaires');
+        super('documentComments', 'Comments');
         this.documentCommentsService = documentCommentsService;
         this.documentController = documentController;
 

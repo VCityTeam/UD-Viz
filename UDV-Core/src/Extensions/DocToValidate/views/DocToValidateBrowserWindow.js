@@ -6,7 +6,7 @@ import { removeEmptyValues } from '../../../Utils/DataProcessing/DataProcessing'
 export class DocToValidateBrowserWindow extends Window {
 
     constructor(docToValidateView, docToValidateService) {
-        super('docToValidateBrowser', 'Document navigator', false);
+        super('docToValidateBrowser', 'Validation - Browser', false);
         this.docToValidateService = docToValidateService;
         this.docToValidateView = docToValidateView;
         this.docToValidateService.addObserver(this.update.bind(this));

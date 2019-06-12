@@ -19,7 +19,7 @@ import { Window } from '../../Utils/GUI/js/Window';
 
 export class DocumentBrowser extends Window {
     constructor(browserContainer, documentController) {
-        super('consultDocBrowser', 'Document Browser', false);
+        super('consultDocBrowser', 'Document - Browser', false);
         // class attributes
         this.documentController = documentController;
         this.documentsExist = true;

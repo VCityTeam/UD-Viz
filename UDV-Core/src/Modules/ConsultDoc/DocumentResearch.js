@@ -19,7 +19,7 @@ import { Window } from '../../Utils/GUI/js/Window';
 export class DocumentResearch extends Window
 {
   constructor(researchContainer, documentController) {
-    super('consultDocSearch', 'Document Research', false);
+    super('consultDocSearch', 'Document - Search', false);
 
     //Class attributes
     this.documentController = documentController;

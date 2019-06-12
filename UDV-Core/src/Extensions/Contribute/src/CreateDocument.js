@@ -17,7 +17,7 @@ import { Window } from "../../../Utils/GUI/js/Window";
 export class CreateDocument extends Window {
 
   constructor(creationContainer, contributeController) {
-    super('create_doc', 'Create Document');
+    super('create_doc', 'Document - Creation');
 
     this.contributeController = contributeController;
     this.creationContainer = creationContainer;

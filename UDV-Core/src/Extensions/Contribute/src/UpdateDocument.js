@@ -17,7 +17,7 @@ import { Window } from "../../../Utils/GUI/js/Window";
 export class UpdateDocument extends Window {
 
   constructor(updateContainer, contributeController) {
-    super('update_doc', 'Update Document')
+    super('update_doc', 'Document - Update')
     this.contributeController = contributeController;
     this.updateContainer = updateContainer;
     this.browser = this.contributeController.documentController.documentBrowser;
