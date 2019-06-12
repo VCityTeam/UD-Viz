@@ -8,6 +8,9 @@ export function RequestService() {
 
     };
 
+    /**
+     * @deprecated Prefer using `RequestService.request` instead.
+     */
     this.send = function (method, url, body = '', authenticate = true) {
         return this.request(method, url, {
             body: body,
@@ -15,6 +18,20 @@ export function RequestService() {
         });
     };
 
+    /**
+     * Performs an HTTP request.
+     * 
+     * @async
+     * @param {string} method The HTTP method. Accepted methods include `GET`,
+     * `DELETE`, `POST` and `PUT`.
+     * @param {string} url The requested URL.
+     * @param {object} options A dictionnary of optional parameters. These
+     * options include  
+     * - `body` : the request body
+     * - `authenticate` : set to false if you don't want the request to use
+     * authentication
+     * - `responseType` : the expected response type
+     */
     this.request = (method, url, options = {}) => {
         let args = options || {};
         let body = args.body || '';
@@ -29,7 +46,7 @@ export function RequestService() {
             if (this.useAuthentication && authenticate) {
                 const token = window.sessionStorage.getItem('user.token');
                 if (token === null) {
-                    reject('Login needed for this request');
+                    reject(new AuthNeededError());
                     return;
                 }
                 req.setRequestHeader('Authorization', `Bearer ${token}`);
@@ -61,4 +78,11 @@ export function RequestService() {
     };
 
     this.initialize();
+}
+
+export class AuthNeededError extends Error {
+    constructor() {
+        super('Login needed for this request');
+        this.name = 'AuthNeededError';
+    }
 }

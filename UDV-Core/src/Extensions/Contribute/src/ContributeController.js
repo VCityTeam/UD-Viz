@@ -10,6 +10,7 @@ import { UpdateDocument }   from './UpdateDocument.js';
 import "./Contribute.css";
 import { MAIN_LOOP_EVENTS } from 'itowns';
 import { removeEmptyValues } from '../../../Utils/DataProcessing/DataProcessing';
+import { AuthNeededError } from '../../../Utils/Request/RequestService.js';
 
 /**
  *
@@ -208,6 +209,9 @@ export function ContributeController(documentController, requestService){
           (this.documentCreate.activateCreateWindow.bind(this.documentCreate))
             (false);
         }, (error) => {
+          if (error.name === 'AuthNeededError') {
+            alert("You should be logged in to create a document.");
+          }
           console.error(error);
         });
     }
@@ -239,7 +243,10 @@ export function ContributeController(documentController, requestService){
         this.documentController.documentBrowser.startBrowser();
         this.documentController.documentBrowser.show();
       }, (error) => {
-        console.error("Failed!", error);
+        if (error.name === 'AuthNeededError') {
+          alert("You should be logged in to update a document.");
+        }
+        console.error(error);
       });
   }
 
