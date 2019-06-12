@@ -8,10 +8,9 @@
     padding: 0;
     resize: both;
     overflow: hidden;
-    border-radius: 4px;
     display: grid;
     grid-template-rows: 30px auto;
-    box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.75);
+    box-shadow: 0px 0px 2px 0px rgba(0,0,0,0.75);
 }
 
 .window-header {
@@ -36,6 +35,16 @@
     height: 26px;
     right: 2px;
     top: 2px;
+    background-color: transparent;
+    color: white;
+    border: none;
+    font-size: 20px;
+    font-weight: bold;
+    transition: background-color 0.2s ease;
+}
+
+.window-close-button:hover {
+    background-color: #f95a5a;
 }
 
 .window-content {

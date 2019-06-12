@@ -25,8 +25,16 @@ export function dragElement(elmnt, dragelmnt) {
         pos3 = e.clientX;
         pos4 = e.clientY;
         // set the element's new position:
-        elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
-        elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
+        let newTop = (elmnt.offsetTop - pos2);
+        if (newTop < 0) {
+            newTop = 0;
+        }
+        let newLeft = (elmnt.offsetLeft - pos1);
+        if (newLeft < 0) {
+            newLeft = 0;
+        }
+        elmnt.style.top = newTop + "px";
+        elmnt.style.left = newLeft + "px";
     }
 
     function closeDragElement() {

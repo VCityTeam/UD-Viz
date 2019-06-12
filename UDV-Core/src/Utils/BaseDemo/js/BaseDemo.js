@@ -62,8 +62,8 @@ export class BaseDemo {
                     class="choiceMenu">Temporal</label>
                 </div>
             </header>
-            <section id="contentSection">
-                <div id="viewerDiv"></div>
+            <section id="${this.contentSectionId}">
+                <div id="${this.viewerDivId}"></div>
             </section>
         `;
     }
@@ -231,7 +231,7 @@ export class BaseDemo {
         let moduleClass = this.getModuleById(moduleId);
 
         //dynamically color the button
-        moduleClass.parentElement = this.contentSectionElement;
+        moduleClass.parentElement = this.viewerDivElement;
         moduleClass.addEventListener(ModuleView.EVENT_ENABLED, () => {
             button.className = 'choiceMenu choiceMenuSelected';
 
@@ -253,7 +253,7 @@ export class BaseDemo {
         this.menuElement.insertBefore(frame,
             document.getElementById('openHamburger').nextSibling);
         const authView = this.getModuleById(authModuleId);
-        authView.parentElement = this.contentSectionElement;
+        authView.parentElement = this.viewerDivElement;
         const authService = authView.authenticationService;
         this.authenticationLoginButtonElement.onclick = () => {
             if (this.isModuleActive(authModuleId)) {
@@ -500,6 +500,14 @@ export class BaseDemo {
 
     get contentSectionElement() {
         return document.getElementById(this.contentSectionId);
+    }
+
+    get viewerDivId() {
+        return 'viewerDiv';
+    }
+
+    get viewerDivElement() {
+        return document.getElementById(this.viewerDivId);
     }
 
     get menuId() {

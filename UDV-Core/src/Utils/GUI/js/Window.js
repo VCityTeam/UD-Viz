@@ -148,7 +148,7 @@ export class Window extends ModuleView {
         return `
             <div class="window-header" id="${this.headerId}">
                 <h1 class="window-title" id="${this.headerTitleId}">${this.title}</h1>
-                <button class="window-close-button" id="${this.headerCloseButtonId}">CLOSE</button>
+                <button class="window-close-button" id="${this.headerCloseButtonId}">&#10799;</button>
             </div>
             <div class="window-content" id="${this.contentId}">
                 <div class="window-inner-content" id="${this.innerContentId}">
