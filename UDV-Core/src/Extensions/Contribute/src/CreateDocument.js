@@ -59,70 +59,46 @@ export class CreateDocument extends Window {
   initialize()
   {
     this.docModelToSchema();
-
-    // HTML container of the pane allowing to place the document in the scene
-    var positionerContainer = document.createElement("div");
-    positionerContainer.id = "positionerContainer";
-    document.body.appendChild(positionerContainer);
-
-    positionerContainer.innerHTML =
-    '<div id="docPositionerFull">\
-    <img id="docPositionerFullImg"/></div>\
-    ';
-
-    // HTML container to darken the creation window when plawing the document
-    // in the scene
-    var overlay = document.createElement("div");
-    overlay.id = "overlay";
-    document.body.appendChild(overlay);
-
-    // HTML container of the pane displaying the current position of the
-    // document while in "place document mode"
-    var manualPositionsWindow = document.createElement("div");
-    manualPositionsWindow.id = "manualPos";
-    document.body.appendChild(manualPositionsWindow);
-
-    manualPositionsWindow.innerHTML=
-    '<div id = "inputFields" >\
-    <table>\
-    <tr><td><label id = "xPosLab" for="setPosX">XPosition </label></td>\
-    <td><input id = "setPosX"></label></td>\
-    </tr>\
-    <tr><td><label id = "yPosLab" for="setPosY">YPosition</label></td>\
-    <td><input id = "setPosY"></label></td>\
-    </tr>\
-    <tr><td><label id = "zPosLab" for="setPosZ">ZPosition</label></td>\
-    <td><input id = "setPosZ"></label></td>\
-    </tr>\
-    <tr><td><label id = "xQuatLab" for="quatX">XQuaternion</label></td>\
-    <td><input id = "quatX"></label></td>\
-    </tr>\
-    <tr><td><label id = "yQuatLab" for="quatY">YQuaternion</label></td>\
-    <td><input id = "quatY"></label></td>\
-    <tr><td><label id = "zQuatLab" for="quatZ">ZQuaternion</label></td>\
-    <td><input id = "quatZ"></label></td>\
-    </tr>\
-    <tr><td><label id = "wQuatLab" for="quatW">WQuaternion</label></td>\
-    <td><input id = "quatW"></label></td>\
-    </tr>\
-    </table>\
-    </div>\
-    <div id="docPositionerFullPanel">\
-        <button id="docPositionerSave" type=button>Save</button>\
-        <button id="moveDocument" type=button>Go to position</button>\
-        <button id = "docPositionerCancel" type=button>Cancel</button>\
-    </div>\
-    ';
   }
 
   get innerContentHtml() {
     return `
-    <div id = "creationTitle">Add new document</div>
     <div class="creation">
     <div id = "creationWindow" ></div></div>
     <div id ="creationTabs">
     <button id = "docCreation">Send</button>
     <button id = "documentPositioner">Place doc</button>
+    </div>
+    <div id="docPositionWindow">
+      <div id = "inputFields" >
+      <table>
+      <tr><td><label id = "xPosLab" for="setPosX">XPosition </label></td>
+      <td><input id = "setPosX"></label></td>
+      </tr>
+      <tr><td><label id = "yPosLab" for="setPosY">YPosition</label></td>
+      <td><input id = "setPosY"></label></td>
+      </tr>
+      <tr><td><label id = "zPosLab" for="setPosZ">ZPosition</label></td>
+      <td><input id = "setPosZ"></label></td>
+      </tr>
+      <tr><td><label id = "xQuatLab" for="quatX">XQuaternion</label></td>
+      <td><input id = "quatX"></label></td>
+      </tr>
+      <tr><td><label id = "yQuatLab" for="quatY">YQuaternion</label></td>
+      <td><input id = "quatY"></label></td>
+      <tr><td><label id = "zQuatLab" for="quatZ">ZQuaternion</label></td>
+      <td><input id = "quatZ"></label></td>
+      </tr>
+      <tr><td><label id = "wQuatLab" for="quatW">WQuaternion</label></td>
+      <td><input id = "quatW"></label></td>
+      </tr>
+      </table>
+      </div>
+      <div id="docPositionerFullPanel">
+        <button id="docPositionerSave" type=button>Save</button>
+        <button id="moveDocument" type=button>Go to position</button>
+        <button id = "docPositionerCancel" type=button>Cancel</button>
+      </div>
     </div>
     `;
   }
@@ -132,6 +108,7 @@ export class CreateDocument extends Window {
     this.initializeButtons();
     this.window.style.setProperty('left', '590px');
     this.window.style.setProperty('top', '10px');
+    this.window.style.setProperty('width', '390px');
   }
 
   /**
@@ -288,17 +265,11 @@ export class CreateDocument extends Window {
   //=============================================================================
   showDocPositioner(show){
     if(show){
-      document.getElementById('docPositionerFull').style.display = "block";
-      document.getElementById('manualPos').style.display = "block";
-      document.getElementById('inputFields').style.display = "block";
-      document.getElementById('overlay').style.display = "block";
-      document.getElementById('creationContainer').style.pointerEvents ="none";
-
+      document.getElementById('docPositionWindow').style.display = "block";
+      document.getElementById('creationWindow').style.pointerEvents ="none";
     }
     else {
-      document.getElementById('docPositionerFull').style.display = "none";
-      document.getElementById('manualPos').style.display = "none";
-      document.getElementById('inputFields').style.display = "none";
+      document.getElementById('docPositionWindow').style.display = "none";
     }
 
     this.contributeController.documentShowPosition();

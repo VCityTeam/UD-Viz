@@ -61,32 +61,9 @@
   text-align: left;
 }
 
-#creationTitle{
-  display:inline-block;
-  margin-top: 20px;
-  color: white;
-  text-align: center;
-  font-size: 16px;
-  font-weight: bold;
-  overflow: hidden;
-  width: 90%;
-}
 /*Document Positioner*/
-#docPositionerFull{
-  position: absolute;
-  z-index: 10;
-  text-align: center;
-  margin: auto;
-  top: 0;
-  bottom: 10%;  left: 0;
-  right: 0;
-  width: 55%;
-  height: 55%;
+#docPositionWindow {
   display: none;
-  padding-left: 3px;
-  padding-top: 3px;
-  pointer-events: none;
-
 }
 
 #docPositionerFullImg{
@@ -120,104 +97,6 @@
 #xPosLab, #yPosLab, #zPosLab, #xQuatLab, #yQuatLab, #zQuatLab, #wQuatLab{
   font-size: 12px;
 }
-
-#setPosX, #setPosY, #setPosZ, #quatX, #quatY, #quatZ, #quatW{
-  width:80%;
-  background-color: rgb(255,255,255);
-}
-
-#inputFields{
-  padding-top: 20%;
-  padding-left: 10%;
-  padding-bottom: 20%;
-}
-
-#docPositionerSave{
-  z-index: 20;
-  left: 200px;
-  position:absolute;
-  margin : 5px;
-  font-size: 14px;
-  border: 1px solid black;
-  background-color: white;
-  color: black;
-  height: 30px;
-  pointer-events: auto;
-  bottom:20px;
-}
-
-#docPositionerCancel{
-  z-index: 20;
-  left: 15px;
-  position:absolute;
-  margin : 5px;
-  font-size: 14px;
-  border: 1px solid black;
-  background-color: white;
-  color: black;
-  height: 30px;
-  pointer-events: auto;
-  bottom:20px;
-}
-
-#moveDocument{
-  z-index: 20;
-  left: 85px;
-  position:absolute;
-  margin : 5px;
-  font-size: 14px;
-  border: 1px solid black;
-  background-color: white;
-  color: black;
-  height: 30px;
-  pointer-events: auto;
-  bottom:20px;
-}
-
-
-/*Creation window*/
-#create_title{
-  display:inline-block;
-  color: black;
-  font-size: 14px;
-  overflow: hidden;
-  width: 90%;
-  text-align: left;
-  padding-left: 20px;
-  margin-bottom: 12px;
-  border-radius: 4px;
-
-
-}
-
-#create_description{
-  display:inline-block;
-  color: black;
-  font-size: 14px;
-  overflow: hidden;
-  width: 90%;
-  height:60px;
-  text-align: left;
-  padding-left: 20px;
-  margin-bottom: 12px;
-  border-radius: 4px;
-}
-
-#uploadedFile{
-  margin-bottom: 12px;
-}
-
-#create_refDate, #create_publicationDate, #create_subject{
-  margin-bottom: 12px;
-  border-radius: 4px;
-}
-
-#create_type{
-    margin-bottom: 12px;
-    margin-left: 17px;
-    border-radius: 4px;
-}
-
 
 /*Update view*/
 #updateContainer{

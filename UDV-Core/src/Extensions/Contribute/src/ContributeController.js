@@ -66,6 +66,8 @@ export function ContributeController(documentController, requestService){
     var position = cam.position;
     var quaternion = cam.quaternion;
 
+    this.visuData = new FormData();
+
     this.visuData.append("positionX", position.x);
     this.visuData.append('positionY', position.y);
     this.visuData.append('positionZ', position.z);
@@ -123,6 +125,7 @@ export function ContributeController(documentController, requestService){
     for (var pair of this.visuData.entries()){
       length +=1;
     }
+    console.log(`${length} vs ${this.numberVisuData}`)
     if(length != this.numberVisuData ){ //7 visualisation data must be provided
       alert('Please choose document position and save');
       this.documentCreate.showDocPositioner(true);
@@ -206,8 +209,7 @@ export function ContributeController(documentController, requestService){
           this.newDocData = new FormData();
           this.visuData = new FormData();
           this.documentController.getDocuments();
-          (this.documentCreate.activateCreateWindow.bind(this.documentCreate))
-            (false);
+          this.documentCreate.disable();
         }, (error) => {
           if (error.name === 'AuthNeededError') {
             alert("You should be logged in to create a document.");
