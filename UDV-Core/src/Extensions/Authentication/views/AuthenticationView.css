@@ -6,7 +6,7 @@
     grid-template-columns: 1fr 1fr;
     box-sizing: border-box;
     position: absolute;
-    top: 50px;
+    top: 0;
     z-index: 10;
     height: calc(100% - 50px);
     width: 100%;
