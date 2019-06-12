@@ -33,6 +33,7 @@ export class DocumentResearch extends Window
       return `
         <div id = "filtersWindow"></div>
         <div id ="researchWindowTabs">
+          <hr>
           <button id = "docResearch">Search</button>
         </div>
       `;
@@ -40,7 +41,6 @@ export class DocumentResearch extends Window
 
     windowCreated() {
       this.window.style.width = '270px';
-      this.window.style.height = '350px';
       this.window.style.top = '10px';
       this.window.style.left = '310px';
       this.docModelToSchema();

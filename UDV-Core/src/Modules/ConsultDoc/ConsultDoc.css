@@ -24,10 +24,6 @@
   width: 90%;
 }
 
-#filtersWindow {
-  margin-bottom: 10px;
-}
-
 #docBrowserWindow{
     position: absolute;
     z-index: 10;
