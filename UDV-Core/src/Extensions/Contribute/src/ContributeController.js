@@ -237,7 +237,7 @@ export function ContributeController(documentController, requestService){
         $('#'+this.documentUpdate.updateFormId).get(0).reset(); //clear update formular
         this.updatedData = new FormData(); //clear data
         this.documentController.reset();
-        this.documentUpdate.activateWindow(false);
+        this.documentUpdate.disable();
         this.documentController.docIndex = 0;//return to first doc
         this.documentController.documentBrowser.docIndex = 1; //reset index in browser
         this.documentController.documentBrowser.startBrowser();
