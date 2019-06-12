@@ -224,7 +224,6 @@ export class DocumentBrowser extends Window {
     focusOnDoc() {
         document.getElementById('docFull').style.display = 'block';
         let src = this.documentController.url + this.documentController.serverModel.document + '/' + this.currentMetadata.id + '/' + this.documentController.serverModel.file;
-        console.log(src);
         document.getElementById('docFullImg').src = this.documentController.url
             + this.documentController.serverModel.document + '/'
             + this.currentMetadata.id + '/'

@@ -88,7 +88,6 @@ export class DocumentCommentsWindow extends Window {
     }
 
     publishComment() {
-        console.log('enter')
         let form = document.getElementById('documentComments_inputForm');
         let form_data = new FormData(form);
         this.documentCommentsService.publishComment(form_data).then(() => {

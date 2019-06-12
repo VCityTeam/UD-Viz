@@ -24,7 +24,7 @@ export function DocToValidateService(requestService, config) {
     this.observers = [];
 
     this.initialize = function () {
-        console.log('Doc To Validate Service initialized.');
+
     };
 
     this.getDocumentsToValidate = async function () {

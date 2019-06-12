@@ -5,7 +5,7 @@ export function RequestService() {
     this.useAuthentication = false;
 
     this.initialize = function () {
-        console.log('Request service initialized');
+
     };
 
     this.send = function (method, url, body = '', authenticate = true) {

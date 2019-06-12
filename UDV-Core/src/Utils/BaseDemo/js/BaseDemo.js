@@ -172,12 +172,10 @@ export class BaseDemo {
         this.moduleActivation[moduleId] = false;
 
         moduleClass.addEventListener(ModuleView.EVENT_ENABLED, () => {
-            console.log(`${moduleName} is enabled`);
             this.moduleActivation[moduleId] = true;
 
         });
         moduleClass.addEventListener(ModuleView.EVENT_DISABLED, () => {
-            console.log(`${moduleName} is disabled`);
             this.moduleActivation[moduleId] = false;
         });
 

@@ -18,7 +18,6 @@ class WindowManager {
     this.createdWindows = {};
 
     this.highestZIndex = BASE_Z_INDEX;
-    console.log('Window manager initialized');
   }
 
   /**
