@@ -33,7 +33,7 @@ export class DocumentCommentsWindow extends Window {
             }
         );
         
-        this.appendTo(document.getElementById('contentSection'));
+        this.appendTo(documentController.parentElement);
         this.hide();
     }
 
@@ -80,7 +80,7 @@ export class DocumentCommentsWindow extends Window {
         this.window.style.setProperty('width', '500px');
         this.window.style.setProperty('height', '500px');
         this.window.style.setProperty('left', '990px');
-        this.window.style.setProperty('top', '60px');
+        this.window.style.setProperty('top', '10px');
         this.window.style.setProperty('resize', 'both');
         this.innerContent.style.setProperty('height', '100%');
         document.getElementById('documentComments_inputButton').onclick = this.publishComment.bind(this);

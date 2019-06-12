@@ -50,7 +50,7 @@ export class DocToValidateCommentWindow extends Window {
         this.window.style.setProperty('width', '500px');
         this.window.style.setProperty('height', '500px');
         this.window.style.setProperty('left', '1010px');
-        this.window.style.setProperty('top', '80px');
+        this.window.style.setProperty('top', '10px');
         this.window.style.setProperty('resize', 'both');
         this.innerContent.style.setProperty('height', '100%');
         document.getElementById('docToValidateComment_inputButton').onclick = this.publishComment.bind(this);

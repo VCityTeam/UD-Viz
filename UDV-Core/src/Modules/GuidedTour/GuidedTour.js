@@ -62,7 +62,7 @@ export class GuidedTour extends Window {
     this.startGuidedTourMode();
     this.window.style.width = '500px';
     this.window.style.height = '500px';
-    this.window.style.top = '60px';
+    this.window.style.top = '10px';
     this.window.style.left = '310px';
     this.innerContent.style.height = '100%';
   }

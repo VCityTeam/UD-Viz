@@ -47,7 +47,7 @@ export class DocToValidateBrowserWindow extends Window {
 
     windowCreated() {
         this.window.style.setProperty('left', '610px');
-        this.window.style.setProperty('top', '80px');
+        this.window.style.setProperty('top', '10px');
         this.window.style.setProperty('width', '390px');
         this.browserButtonBinding();
         this.docToValidateService.getDocumentsToValidate();
