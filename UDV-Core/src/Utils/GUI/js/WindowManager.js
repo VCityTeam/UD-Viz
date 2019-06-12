@@ -40,7 +40,6 @@ class WindowManager {
     });
     window.addEventListener(Window.EVENT_DESTROYED, () => {
       delete this.createdWindows[window.name];
-      console.log(this.createdWindows);
       if (Object.keys(this.createdWindows).length === 0) {
         this.highestZIndex = BASE_Z_INDEX;
       }

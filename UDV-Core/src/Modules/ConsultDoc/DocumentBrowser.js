@@ -88,30 +88,9 @@ export class DocumentBrowser extends Window {
         this.initializeButtons();
         this.resetResearch();
     }
-/*
-    // Display or hide this window
-    activateWindow(active) {
-        if (typeof active != 'undefined') {
-            this.windowIsActive = active;
-        }
-
-        if (this.documentsExist && this.isStart) {
-            this.startBrowser();
-            this.isStart = false;
-        }
-        document.getElementById('browserContainer').style.display
-            = active ? 'block' : 'none';
-        document.getElementById('docBrowserWindow').style.display
-            = active ? 'block' : 'none';
-        if (active) {
-            this.documentController.open();
-        } else {
-            this.documentController.close();
-        }
-    };*/
 
     refresh() {
-        //this.activateWindow(this.windowIsActive);
+        
     };
 
     // called regularly by the itowns framerequester
@@ -250,9 +229,9 @@ export class DocumentBrowser extends Window {
             + this.documentController.serverModel.document + '/'
             + this.currentMetadata.id + '/'
             + this.documentController.serverModel.file;
-        document.getElementById('docFullImg').style.opacity = 50;
+        document.getElementById('docFullImg').style.opacity = 0;
         document.getElementById('docOpaSlider').value = 0;
-        document.querySelector('#docOpacity').value = 50;
+        document.querySelector('#docOpacity').value = 0;
         document.getElementById('docFull').style.display = 'block';
         document.getElementById('docFullPanel').style.display = 'block';
 

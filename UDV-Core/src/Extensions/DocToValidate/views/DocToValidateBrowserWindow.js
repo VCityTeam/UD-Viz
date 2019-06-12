@@ -163,12 +163,11 @@ export class DocToValidateBrowserWindow extends Window {
         document.getElementById('docFull').style.display = 'block';
         let currentDocument = this.docToValidateService.currentDocument();
         let currentMetadata = currentDocument.metaData;
-        let src = this.docToValidateView.documentController.url + this.docToValidateView.documentController.serverModel.document + '/' + currentMetadata.id + '/' + this.docToValidateView.documentController.serverModel.file;
-        document.getElementById('docFullImg').src = currentDocument.imgUrl;
-        document.getElementById('docBrowserPreviewImg').src = currentDocument.imgUrl;
-        document.getElementById('docFullImg').style.opacity = 50;
+        let src = document.getElementById('docToValidate_Browser_file').src;
+        document.getElementById('docFullImg').src = src;
+        document.getElementById('docFullImg').style.opacity = 0;
         document.getElementById('docOpaSlider').value = 0;
-        document.querySelector('#docOpacity').value = 50;
+        document.querySelector('#docOpacity').value = 0;
         document.getElementById('docFull').style.display = 'block';
         document.getElementById('docFullPanel').style.display = 'block';
 
@@ -196,8 +195,8 @@ export class DocToValidateBrowserWindow extends Window {
             this.docToValidateView.documentController.temporal.changeTime(docDate);
         }
 
-        this.isOrientingDoc = true;
-        this.isFadingDoc = false;
+        this.docToValidateView.documentController.documentBrowser.isOrientingDoc = true;
+        this.docToValidateView.documentController.documentBrowser.isFadingDoc = false;
 
         this.docToValidateView.documentController.view.notifyChange();
     }
