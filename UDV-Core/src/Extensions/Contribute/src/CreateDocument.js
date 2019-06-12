@@ -14,54 +14,50 @@ import { Window } from "../../../Utils/GUI/js/Window";
   * @param { contributeController } contributeController
   */
 
-export function CreateDocument(creationContainer, contributeController){
+export class CreateDocument extends Window {
 
-  this.contributeController = contributeController;
-  this.creationContainer = creationContainer;
-  this.browserTabs = this.contributeController.documentController.documentBrowser.browserTabID;
+  constructor(creationContainer, contributeController) {
+    super('create_doc', 'Create Document');
 
-  this.contributeController.documentController.documentBrowser.addEventListener(
-    Window.EVENT_CREATED, () => {
-      var docBrowserCreateButton = document.createElement('button');
-      docBrowserCreateButton.id = "docBrowserCreateButton";
-      var word = document.createTextNode("Create");
-      docBrowserCreateButton.appendChild(word);
-      document.getElementById(this.browserTabs).appendChild(docBrowserCreateButton);
+    this.contributeController = contributeController;
+    this.creationContainer = creationContainer;
+    this.browserTabs = this.contributeController.documentController.documentBrowser.browserTabID;
 
-      this.contributeController.documentController.documentBrowser.refresh(); //original documentBrowser is updated with additional buttons
+    this.contributeController.documentController.documentBrowser.addEventListener(
+      Window.EVENT_CREATED, () => {
+        var docBrowserCreateButton = document.createElement('button');
+        docBrowserCreateButton.id = "docBrowserCreateButton";
+        var word = document.createTextNode("Create");
+        docBrowserCreateButton.appendChild(word);
+        document.getElementById(this.browserTabs).appendChild(docBrowserCreateButton);
 
-      document.getElementById('docBrowserCreateButton').addEventListener('mousedown',
-      this.updateCreationWindow.bind(this),false);
-    }
-  );
-  
+        this.contributeController.documentController.documentBrowser.refresh(); //original documentBrowser is updated with additional buttons
 
-  // Whether this window is currently displayed or not.
-  this.windowIsActive = this.contributeController.documentController.options.active || false;
-  this.windowManualIsActive = false;
+        document.getElementById('docBrowserCreateButton').addEventListener('mousedown',
+        this.updateCreationWindow.bind(this),false);
+      }
+    );
+    
+    // Whether this window is currently displayed or not.
+    this.windowIsActive = this.contributeController.documentController.options.active || false;
+    this.windowManualIsActive = false;
 
-  this.creationFormId = "creationForm"; //creation form ID.
+    this.creationFormId = "creationForm"; //creation form ID.
+
+    this.appendTo(this.contributeController.documentController.parentElement);
+    this.hide();
+    this.addEventListener(Window.EVENT_HIDDEN, () => {
+      this.contributeController.documentController.documentResearch.show();
+      this.contributeController.documentController.documentBrowser.show();
+    });
+  }
 
   /**
    * Creates the creation view
    */
   //=============================================================================
-  this.initialize = function initialize()
+  initialize()
   {
-
-    // HTML container of the document creation pane
-    this.creationContainer.innerHTML =
-    '<br/><div id = "creationTitle">Add new document</div><br/>\
-    <br/>\
-    <button id = "closeCreation">Close</button>\
-    <div class="creation">\
-    <div id = "creationWindow" ></div></div>\
-    <div id ="creationTabs">\
-    <button id = "docCreation">Send</button>\
-    <button id = "documentPositioner">Place doc</button>\
-    </div>\
-    ';
-
     this.docModelToSchema();
 
     // HTML container of the pane allowing to place the document in the scene
@@ -119,11 +115,30 @@ export function CreateDocument(creationContainer, contributeController){
     ';
   }
 
+  get innerContentHtml() {
+    return `
+    <div id = "creationTitle">Add new document</div>
+    <div class="creation">
+    <div id = "creationWindow" ></div></div>
+    <div id ="creationTabs">
+    <button id = "docCreation">Send</button>
+    <button id = "documentPositioner">Place doc</button>
+    </div>
+    `;
+  }
+
+  windowCreated() {
+    this.initialize();
+    this.initializeButtons();
+    this.window.style.setProperty('left', '590px');
+    this.window.style.setProperty('top', '10px');
+  }
+
   /**
    * Display or hide creation view (formular)
    */
   //=============================================================================
-  this.activateCreateWindow = function activateCreateWindow(active){
+  activateCreateWindow(active){
     if (typeof active != 'undefined')
     {
       this.windowIsActive = active;
@@ -143,7 +158,7 @@ export function CreateDocument(creationContainer, contributeController){
    * Display or hide creation view, second window (document positions)
    */
   //=============================================================================
-  this.activateManualPosition = function activateManualPosition(active){
+  activateManualPosition(active){
 
     if (typeof active != 'undefined')
     {
@@ -160,7 +175,7 @@ export function CreateDocument(creationContainer, contributeController){
    * Close position window, abort position selection
    */
   //=============================================================================
-  this.cancelPosition = function cancelPosition(){
+  cancelPosition(){
 
     this.contributeController.visuData = new FormData(); //reset visuData form
     this.activateManualPosition(false);
@@ -175,7 +190,7 @@ export function CreateDocument(creationContainer, contributeController){
    * document position
    */
   //=============================================================================
-  this.blurMetadataWindow = function blurMetadataWindow(blur){
+  blurMetadataWindow(blur){
 
     if(blur ==true){
       document.getElementById('overlay').style.display = "block";
@@ -192,7 +207,7 @@ export function CreateDocument(creationContainer, contributeController){
    * using Alpaca )
    */
   //=============================================================================
-  this.docModelToSchema = function docModelToSchema(){
+  docModelToSchema(){
     //only use the metadata
     var metadata = this.contributeController.documentController.documentModel.metaData;
     //schema has at least a file input
@@ -259,8 +274,8 @@ export function CreateDocument(creationContainer, contributeController){
    * Displays creation and hide other views
    */
   //=============================================================================
-  this.updateCreationWindow = function updateCreationWindow(){
-    document.getElementById('creationContainer').style.display ="block";
+  updateCreationWindow(){
+    this.enable();
     this.contributeController.documentController.documentResearch.hide();
     this.contributeController.documentController.documentBrowser.hide();
 
@@ -271,7 +286,7 @@ export function CreateDocument(creationContainer, contributeController){
    *
    */
   //=============================================================================
-  this.showDocPositioner = function showDocPositioner(show){
+  showDocPositioner(show){
     if(show){
       document.getElementById('docPositionerFull').style.display = "block";
       document.getElementById('manualPos').style.display = "block";
@@ -289,21 +304,19 @@ export function CreateDocument(creationContainer, contributeController){
     this.contributeController.documentShowPosition();
   }
 
-  this.initialize();
+  initializeButtons() {
+    //Event listeners for buttons
+    document.getElementById('docCreation').addEventListener('mousedown',
+      this.contributeController.documentCreation.bind(this.contributeController),false);
+    document.getElementById('documentPositioner').addEventListener('mousedown',
+                                  this.showDocPositioner.bind(this, true), false);
 
-  //Event listeners for buttons
-  document.getElementById('docCreation').addEventListener('mousedown',
-    this.contributeController.documentCreation.bind(this.contributeController),false);
-  document.getElementById('closeCreation').addEventListener('mousedown',
-                                this.activateCreateWindow.bind(this,false),false);
-  document.getElementById('documentPositioner').addEventListener('mousedown',
-                                this.showDocPositioner.bind(this, true), false);
-
-  document.getElementById('docPositionerSave').addEventListener('mousedown',
-  this.contributeController.getVisualizationData.bind(this.contributeController), false);
-  document.getElementById('moveDocument').addEventListener('mousedown',
-        this.contributeController.moveDoc.bind(this.contributeController), false);
-  document.getElementById('docPositionerCancel').addEventListener('mousedown',
-                                    this.cancelPosition.bind(this,false), false);
+    document.getElementById('docPositionerSave').addEventListener('mousedown',
+    this.contributeController.getVisualizationData.bind(this.contributeController), false);
+    document.getElementById('moveDocument').addEventListener('mousedown',
+          this.contributeController.moveDoc.bind(this.contributeController), false);
+    document.getElementById('docPositionerCancel').addEventListener('mousedown',
+                                      this.cancelPosition.bind(this,false), false);
+  }
 
 }

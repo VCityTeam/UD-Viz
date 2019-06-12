@@ -54,32 +54,6 @@
 
 }
 
-#documentPositioner{
-  z-index: 20;
-  left: 50px;
-  position:absolute;
-  margin : 5px;
-  font-size: 14px;
-  border: 1px solid black;
-  background-color: white;
-  color: black;
-  height: 30px;
-  pointer-events: auto;
-}
-
-#docCreation{
-  z-index: 20;
-  left: 160px;
-  position:absolute;
-  margin : 5px;
-  font-size: 14px;
-  border: 1px solid black;
-  background-color: white;
-  color: black;
-  height: 30px;
-  pointer-events: auto;
-}
-
 #subject{
   display:inline-block;
   overflow: hidden;
@@ -105,19 +79,12 @@
   margin: auto;
   top: 0;
   bottom: 10%;  left: 0;
-
   right: 0;
-
   width: 55%;
-
   height: 55%;
-
   display: none;
-
   padding-left: 3px;
-
   padding-top: 3px;
-
   pointer-events: none;
 
 }
@@ -238,7 +205,6 @@
 
 #uploadedFile{
   margin-bottom: 12px;
-  margin-left: 15px;
 }
 
 #create_refDate, #create_publicationDate, #create_subject{
