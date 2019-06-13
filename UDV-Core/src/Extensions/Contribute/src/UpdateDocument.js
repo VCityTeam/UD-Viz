@@ -47,6 +47,7 @@ export class UpdateDocument extends Window {
     this.hide();
     this.addEventListener(Window.EVENT_HIDDEN, () => {
       this.contributeController.documentController.documentBrowser.show();
+      this.contributeController.documentController.documentResearch.show();
     });
     this.initialize();
   }
@@ -151,6 +152,7 @@ export class UpdateDocument extends Window {
     this.enable();
     this.fillUpdateForm();
     this.contributeController.documentController.documentBrowser.hide();
+    this.contributeController.documentController.documentResearch.hide();
   }
 
   /**

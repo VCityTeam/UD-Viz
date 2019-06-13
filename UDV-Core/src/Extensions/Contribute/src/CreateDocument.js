@@ -72,38 +72,38 @@ export class CreateDocument extends Window {
   }
 
   get innerContentHtml() {
-    return `
-    <div class="creation" id="creationWholePanel">
-    <div id = "creationWindow"></div>
-    <div id ="creationTabs">
-    <button id = "docCreation">Send</button>
-    <button id = "documentPositioner">Place doc</button>
-    </div>
+    return /*html*/`
+    <div class="creation" id="${this.creationWholePanelId}">
+      <div id = "creationWindow"></div>
+      <div id ="creationTabs">
+        <button id = "docCreation">Send</button>
+        <button id = "documentPositioner">Place doc</button>
+      </div>
     </div>
     <div id="docPositionWindow">
       <div id = "inputFields" >
-      <table>
-      <tr><td><label id = "xPosLab" for="setPosX">XPosition </label></td>
-      <td><input id = "setPosX"></label></td>
-      </tr>
-      <tr><td><label id = "yPosLab" for="setPosY">YPosition</label></td>
-      <td><input id = "setPosY"></label></td>
-      </tr>
-      <tr><td><label id = "zPosLab" for="setPosZ">ZPosition</label></td>
-      <td><input id = "setPosZ"></label></td>
-      </tr>
-      <tr><td><label id = "xQuatLab" for="quatX">XQuaternion</label></td>
-      <td><input id = "quatX"></label></td>
-      </tr>
-      <tr><td><label id = "yQuatLab" for="quatY">YQuaternion</label></td>
-      <td><input id = "quatY"></label></td>
-      <tr><td><label id = "zQuatLab" for="quatZ">ZQuaternion</label></td>
-      <td><input id = "quatZ"></label></td>
-      </tr>
-      <tr><td><label id = "wQuatLab" for="quatW">WQuaternion</label></td>
-      <td><input id = "quatW"></label></td>
-      </tr>
-      </table>
+        <table>
+          <tr><td><label id = "xPosLab" for="setPosX">XPosition </label></td>
+          <td><input id = "setPosX"></label></td>
+          </tr>
+          <tr><td><label id = "yPosLab" for="setPosY">YPosition</label></td>
+          <td><input id = "setPosY"></label></td>
+          </tr>
+          <tr><td><label id = "zPosLab" for="setPosZ">ZPosition</label></td>
+          <td><input id = "setPosZ"></label></td>
+          </tr>
+          <tr><td><label id = "xQuatLab" for="quatX">XQuaternion</label></td>
+          <td><input id = "quatX"></label></td>
+          </tr>
+          <tr><td><label id = "yQuatLab" for="quatY">YQuaternion</label></td>
+          <td><input id = "quatY"></label></td>
+          <tr><td><label id = "zQuatLab" for="quatZ">ZQuaternion</label></td>
+          <td><input id = "quatZ"></label></td>
+          </tr>
+          <tr><td><label id = "wQuatLab" for="quatW">WQuaternion</label></td>
+          <td><input id = "quatW"></label></td>
+          </tr>
+        </table>
       </div>
       <div id="docPositionerFullPanel">
         <button id="docPositionerSave" type=button>Save</button>
@@ -160,9 +160,11 @@ export class CreateDocument extends Window {
 
     if(blur ==true){
       document.getElementById('creationWholePanel').style.pointerEvents ="none";
+      this.creationWholePanelElement.style.opacity = '0.5';
     }
     else{
       document.getElementById('creationWholePanel').style.pointerEvents ="auto";
+      this.creationWholePanelElement.style.opacity = '1';
     }
   }
 
@@ -245,6 +247,14 @@ export class CreateDocument extends Window {
 
   }
 
+  get creationWholePanelId() {
+    return 'creationWholePanel';
+  }
+
+  get creationWholePanelElement() {
+    return document.getElementById(this.creationWholePanelId);
+  }
+
   /**
    * Show or hide document positioner tool
    *
@@ -254,12 +264,12 @@ export class CreateDocument extends Window {
     if(show){
       document.getElementById('docPositionerFull').style.display = "block";
       document.getElementById('docPositionWindow').style.display = "block";
-      document.getElementById('creationWholePanel').style.pointerEvents ="none";
+      this.blurMetadataWindow(true);
     }
     else {
       document.getElementById('docPositionerFull').style.display = "none";
       document.getElementById('docPositionWindow').style.display = "none";
-      document.getElementById('creationWholePanel').style.pointerEvents ="auto";
+      this.blurMetadataWindow(false);
     }
 
     this.contributeController.documentShowPosition();
