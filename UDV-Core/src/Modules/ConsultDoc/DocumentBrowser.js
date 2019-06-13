@@ -82,7 +82,8 @@ export class DocumentBrowser extends Window {
     }
 
     windowCreated() {
-        this.window.style.setProperty('left', '590px');
+        this.window.style.setProperty('left', 'unset');
+        this.window.style.setProperty('right', '10px');
         this.window.style.setProperty('top', '10px');
         this.window.style.setProperty('width', '390px');
         this.initializeButtons();

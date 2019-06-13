@@ -42,7 +42,7 @@ export class DocToValidateSearchWindow extends Window {
 
     windowCreated() {
         document.getElementById('docToValidate_searchForm_submit').onclick = this.search.bind(this);
-        this.window.style.setProperty('left', '310px');
+        this.window.style.setProperty('left', '10px');
         this.window.style.setProperty('top', '10px');
         this.window.style.setProperty('width', '270px');
     }

@@ -137,6 +137,8 @@ section {
     color: white;
     visibility: hidden;
     opacity: 0;
+    text-shadow: 1px 1px 1px #0009;
+    box-shadow: 1px 0px 1px -1px #0009, 0px 1px 1px -1px #0009, 0px -1px 1px -1px #0009;
 }
 
 .choiceMenu:hover > ._base_demo_menu_hint {

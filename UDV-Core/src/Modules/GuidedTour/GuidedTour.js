@@ -60,10 +60,10 @@ export class GuidedTour extends Window {
   windowCreated() {
     this.initializeButtons();
     this.startGuidedTourMode();
-    this.window.style.width = '500px';
-    this.window.style.height = '500px';
-    this.window.style.top = '10px';
-    this.window.style.left = '310px';
+    this.window.style.width = '440px';
+    this.window.style.height = '470px';
+    this.window.style.top = '375px';
+    this.window.style.left = '10px';
     this.innerContent.style.height = '100%';
   }
 

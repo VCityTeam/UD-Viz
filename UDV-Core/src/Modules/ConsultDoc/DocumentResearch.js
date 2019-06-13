@@ -42,7 +42,7 @@ export class DocumentResearch extends Window
     windowCreated() {
       this.window.style.width = '270px';
       this.window.style.top = '10px';
-      this.window.style.left = '310px';
+      this.window.style.left = '10px';
       this.docModelToSchema();
       this.initializeButtons();
     }
