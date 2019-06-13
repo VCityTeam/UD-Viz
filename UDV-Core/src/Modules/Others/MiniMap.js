@@ -19,7 +19,7 @@ export function MiniMapController(controls, extent, renderer) {
     //update the html with elements for this class (windows, buttons etc)
     var miniMapDiv = document.createElement("div");
     miniMapDiv.id = 'minimap';
-    document.body.appendChild(miniMapDiv);
+    document.getElementById('viewerDiv').appendChild(miniMapDiv);
 
     document.getElementById("minimap").innerHTML =
       '<button   id="miniMapTab">Minimap</button>\

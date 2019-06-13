@@ -18,7 +18,7 @@ export function CompassController(controls) {
     //update the html with elements for this class (compass image)
     var compassDiv = document.createElement("div");
     compassDiv.id = 'compass';
-    document.body.appendChild(compassDiv);
+    document.getElementById('viewerDiv').appendChild(compassDiv);
 
     document.getElementById("compass").innerHTML = '\
     <div id="compassWindow">\
