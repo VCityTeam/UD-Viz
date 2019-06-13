@@ -10,7 +10,6 @@ export class AuthenticationView extends ModuleView {
 
     html() {
         return `
-              <button id="loginRegistrationCloseButton">Close</button>\
             <form id="RegistrationForm">\
                 <h2>Registration</h2> \
                 <h3 id="RegisterInfo" class=""></h3>
@@ -40,6 +39,7 @@ export class AuthenticationView extends ModuleView {
                 <div>Forgot your password?</div>\
                 <button type="button" id="LoginButton">Login</button>\
             </form>\
+            <button id="loginRegistrationCloseButton">Close</button>\
         `;
     }
 

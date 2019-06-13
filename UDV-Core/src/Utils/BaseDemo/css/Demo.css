@@ -11,6 +11,7 @@ html {
     font-size: 14px;
     height: 100%;
     width: 100%;
+    overflow: hidden;
 }
 
 body {
@@ -36,10 +37,17 @@ canvas {
 
 header {
     background-color: #333333;
+    display: grid;
+    grid-template-columns: auto auto;
 }
 
 header * {
     vertical-align: top;
+}
+
+#_base_demo_struct_header_panel {
+    text-align: right;
+    padding-right: 10px;
 }
 
 #_base_demo_stuct_main_panel {
@@ -89,6 +97,7 @@ section {
 #_base_demo_profile_name em {
     font-style: normal;
     font-weight: bold;
+    font-variant: small-caps;
 }
 
 .logInOut {
@@ -147,7 +156,7 @@ section {
 }
 
 .choiceMenuSelected > ._base_demo_menu_hint {
-    background-color: #35a2ff;
+    background-color: #f09f45;
 }
 
 #activateTemporal:checked ~ header #temporalMenu {
@@ -160,7 +169,7 @@ section {
     right: 0;
     top: 0;
     width: 5px;
-    background-color: #35a2ff;;
+    background-color: #f09f45;
     content: "";
     z-index: inherit;
 }
@@ -178,6 +187,7 @@ section {
     width: 36px;
     margin: 12px 12px 12px 12px;
     flex-shrink: 0;
+    opacity: 0.9;
 }
 
 #openSidebar:checked ~ #_base_demo_menu {

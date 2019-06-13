@@ -38,17 +38,19 @@ export class BaseDemo {
         return /*html*/`
             <header id="${this.headerId}">
                 <div id="${this.authFrameLocationId}"></div>
-                <img id="logoIMU" src="${this.imageFolder}/${this.logoIMUFile}" />
-                <img id="logoLIRIS" src="${this.imageFolder}/${this.logoLIRISFile}" />
-                <p style="display: inline-block; color: white;">
-                    Icons made by <a href="https://www.freepik.com/"
-                    title="Freepik">Freepik</a> from
-                    <a href="https://www.flaticon.com/"
-                    title="Flaticon">www.flaticon.com</a> is licensed by
-                    <a href="http://creativecommons.org/licenses/by/3.0/"
-                    title="Creative Commons BY 3.0" target="_blank">
-                    CC 3.0 BY</a>
-                </p>
+                <div id="_base_demo_struct_header_panel">
+                    <img id="logoIMU" src="${this.imageFolder}/${this.logoIMUFile}" />
+                    <img id="logoLIRIS" src="${this.imageFolder}/${this.logoLIRISFile}" />
+                    <p style="display: inline-block; color: white; margin: 0;">
+                        Icons made by <a href="https://www.freepik.com/"
+                        title="Freepik">Freepik</a> from
+                        <a href="https://www.flaticon.com/"
+                        title="Flaticon">www.flaticon.com</a><br> is licensed by
+                        <a href="http://creativecommons.org/licenses/by/3.0/"
+                        title="Creative Commons BY 3.0" target="_blank">
+                        CC 3.0 BY</a>
+                    </p>
+                </div>
             </header>
             <div id="_base_demo_stuct_main_panel">
                 <nav>
