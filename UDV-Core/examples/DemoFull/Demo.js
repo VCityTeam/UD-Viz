@@ -35,7 +35,7 @@ baseDemo.loadConfigFile('../data/config/generalDemoConfig.json').then(() => {
 
     ////// GUIDED TOURS MODULE
     const guidedtour = new udvcore.GuidedTourController(documents);
-    baseDemo.addModuleView('guidedTour', guidedtour, {name: 'Guided Tours'});
+    baseDemo.addModuleView('guidedTour', guidedtour, {name: 'Guided tours'});
 
     ////// CONTRIBUTE EXTENSION
     const contributeController = new udvcore.ContributeController(documents,

@@ -37,7 +37,10 @@ export class BaseDemo {
     get html() {
         return /*html*/`
             <header id="${this.headerId}">
-                <div id="${this.authFrameLocationId}"></div>
+                <div>
+                    <h1>UDV &bull;</h1>
+                    <div id="${this.authFrameLocationId}"></div>
+                </div>
                 <div id="_base_demo_struct_header_panel">
                     <img id="logoIMU" src="${this.imageFolder}/${this.logoIMUFile}" />
                     <img id="logoLIRIS" src="${this.imageFolder}/${this.logoLIRISFile}" />

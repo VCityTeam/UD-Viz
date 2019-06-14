@@ -1,6 +1,6 @@
 import { dragElement } from './Draggable.js';
 import { ModuleView } from '../../ModuleView/ModuleView.js';
-import { windowManager } from "./WindowManager";
+import { windowManager } from "./WindowManager.js";
 
 // Documentation is on the Wiki
 // URL : https://github.com/MEPP-team/UDV/wiki/Window-Framework

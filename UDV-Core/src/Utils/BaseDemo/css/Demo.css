@@ -45,6 +45,14 @@ header * {
     vertical-align: top;
 }
 
+header h1 {
+    display: inline-block;
+    color: white;
+    margin: 5px;
+    font-size: 28px;
+    height: 100%;
+}
+
 #_base_demo_struct_header_panel {
     text-align: right;
     padding-right: 10px;
