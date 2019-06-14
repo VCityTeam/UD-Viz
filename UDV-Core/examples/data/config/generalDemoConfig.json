@@ -13,25 +13,26 @@
     "guidedTour": "guidedTour"
   },
   "geocoding":{
-    "url":"https://maps.googleapis.com/maps/api/geocode/json",
+    "url":"https://nominatim.openstreetmap.org/search",
+    "credit": "© OpenStreetMap contributors under <a href=\"https://www.openstreetmap.org/copyright\">ODbL</a>",
+    "requestTimeIntervalMs": "1000",
+    "result":{
+      "format": "json",
+      "basePath": "",
+      "lng": "lon",
+      "lat": "lat"
+    },
     "parameters":{
-      "address":{
-        "fill": "query",
-        "optional": "false"
+      "q":{
+        "fill": "query"
       },
-      "bounds":{
+      "format":{
+        "fill": "value",
+        "value": "json"
+      },
+      "viewbox":{
         "fill": "extent",
-        "optional": "true"
-      },
-      "key":{
-        "fill": "value",
-        "optional": "false",
-        "value": "YOUR-API-KEY"
-      },
-      "region":{
-        "fill": "value",
-        "optional": "true",
-        "value": "fr"
+        "format": "WEST,SOUTH,EAST,NORTH"
       }
     }
   },
