@@ -1,6 +1,7 @@
 # UDV : Urban Data Viewer
 
 UDV is a JavaScript client based on [iTowns](https://github.com/itowns/itowns) allowing to visualize, analyse and interact with urban data.
+You can find install notes [here](https://github.com/yannlaurickabe/UDV/blob/master/install.md).
 
 Server-side tools can be found [here](https://github.com/MEPP-team/UDV-server).
 
