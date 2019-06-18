@@ -103,7 +103,6 @@ export class BaseDemo {
         div.innerHTML = this.html;
         div.id = this.mainDivId;
         htmlElement.appendChild(div);
-        this.initViewer();
     }
 
     //////// MODULE MANAGEMENT
@@ -267,7 +266,7 @@ export class BaseDemo {
                 console.error(e);
             }
         };
-        
+
         authService.addObserver(this.updateAuthentication.bind(this));
         this.authService = authService;
         this.updateAuthentication();
@@ -314,7 +313,7 @@ export class BaseDemo {
 
     /**
      * Returns the module view class by its id.
-     * @param moduleId The module id. 
+     * @param moduleId The module id.
      */
     getModuleById(moduleId) {
         return this.modules[moduleId];
@@ -322,7 +321,7 @@ export class BaseDemo {
 
     /**
      * If the module view is enabled, disables it, else, enables it.
-     * @param moduleId The module id. 
+     * @param moduleId The module id.
      */
     toggleModule(moduleId) {
         if (!this.isModuleActive(moduleId)) {
@@ -344,7 +343,7 @@ export class BaseDemo {
     /**
      * Initialize the iTowns 3D view.
      */
-    initViewer() {
+    init3DView() {
         const terrainAndElevationRequest = 'https://download.data.grandlyon.com/wms/grandlyon';
 
         // use this line for distant building server
