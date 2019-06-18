@@ -7,11 +7,15 @@ export class EventSender {
     constructor() {
         /**
          * The listeners attached to a specific event.
+         * 
+         * @member
          */
         this.eventListeners = {};
         /**
          * The listeners attached to no particular event. They will receive
          * all notifications.
+         * 
+         * @member
          */
         this.allEventsListeners = [];
     }
@@ -27,10 +31,11 @@ export class EventSender {
     }
 
     /**
-     * Registers an event listener attached to a specific event. The `action` function will
-     * be called only when `event` is fired.
+     * Registers an event listener attached to a specific event. The `action`
+     * function will be called only when `event` is fired.
+     * 
      * @param event The event to listen to.
-     * @param action The function to call. Can take an argument (`data`).
+     * @param {(data: any)} action The function to call.
      */
     addEventListener(event, action) {
         if (this.eventListeners[event]) {
@@ -41,9 +46,10 @@ export class EventSender {
     }
 
     /**
-     * Registers an event listener attached to no specific event. The `action` function will
-     * be called when any event is fired.
-     * @param action The function to call. Can take an argument (`data`).
+     * Registers an event listener attached to no specific event. The `action`
+     * function will be called when any event is fired.
+     * 
+     * @param {(event: any, data: any)} action The function to call.
      */
     addListener(action) {
         if (typeof(action) !== 'function') {
@@ -55,6 +61,7 @@ export class EventSender {
     /**
      * Sends an event to the listeners. `event` must be first registers through the `registerEvent`
      * method. An argument can be passed but is optional.
+     * 
      * @param event The event to fire. Must be first registered. 
      * @param data The optional data to pass as parameter.
      */

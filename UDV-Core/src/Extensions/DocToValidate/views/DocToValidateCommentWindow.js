@@ -4,7 +4,7 @@ import '../../../Utils/GUI/css/window.css';
 export class DocToValidateCommentWindow extends Window {
 
     constructor(docToValidateService) {
-        super('docToValidateComment', 'Commentaires', false);
+        super('docToValidateComment', 'Comments', false);
         this.docToValidateService = docToValidateService;
     }
 
@@ -49,8 +49,8 @@ export class DocToValidateCommentWindow extends Window {
     windowCreated() {
         this.window.style.setProperty('width', '500px');
         this.window.style.setProperty('height', '500px');
-        this.window.style.setProperty('left', '1100px');
-        this.window.style.setProperty('top', '80px');
+        this.window.style.setProperty('left', '290px');
+        this.window.style.setProperty('top', '10px');
         this.window.style.setProperty('resize', 'both');
         this.innerContent.style.setProperty('height', '100%');
         document.getElementById('docToValidateComment_inputButton').onclick = this.publishComment.bind(this);
@@ -58,7 +58,6 @@ export class DocToValidateCommentWindow extends Window {
     }
 
     publishComment() {
-        console.log('enter')
         let form = document.getElementById('docToValidateComment_inputForm');
         let form_data = new FormData(form);
         this.docToValidateService.publishComment(form_data).then(() => {

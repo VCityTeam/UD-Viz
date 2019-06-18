@@ -1,75 +1,3 @@
-/*Browser*/
-#docBrowserCreateButton{
-  z-index: 20;
-  left: 100px;
-  position:absolute;
-  margin : 5px;
-  font-size: 14px;
-  border: 1px solid black;
-  background-color: white;
-  color: black;
-  height: 30px;
-  pointer-events: auto;
-  bottom:50px;
-}
-
-#docDeleteButton{
-  z-index: 20;
-  left: 170px;
-  position:absolute;
-  margin : 5px;
-  font-size: 14px;
-  border: 1px solid black;
-  background-color: white;
-  color: black;
-  height: 30px;
-  pointer-events: auto;
-  bottom:50px;
-
-}
-
-#docUpdateButton{
-  z-index: 20;
-  left:240px;
-  position:absolute;
-  margin : 5px;
-  font-size: 14px;
-  border: 1px solid black;
-  background-color: white;
-  color: black;
-  height: 30px;
-  pointer-events: auto;
-  bottom:50px;
-
-}
-/*Research window*/
-#docCreateButton{
-  z-index: 20;
-  position:absolute;
-  margin : 5px;
-  font-size: 14px;
-  border: 1px solid black;
-  background-color: white;
-  color: black;
-  height: 30px;
-  pointer-events: auto;
-  bottom:35px;
-}
-
-#docResearch{
-  position: absolute;
-  z-index: 20;
-  margin : 5px;
-  font-size: 14px;
-  border: 1px solid black;
-  background-color: white;
-  color: black;
-  height: 30px;
-  pointer-events: auto;
-  bottom:0px;
-
-}
-
 /*Creation window*/
 #creationContainer{
   display:none;
@@ -87,24 +15,6 @@
   background-color: rgba(30,30,30,0.6);
   font-size: 14;
 }
-
-
-#overlay {
-  display:none;
-  position: absolute;
-  z-index: 10;
-  margin : 3px;
-  margin-right: 0px;
-  left: 0;
-  border : 1px solid rgb(90,90,90);
-  text-align: center;
-  width: 16%;
-  height: 58%;
-  overflow: auto;
-  background-color: rgba(30,30,30,0.6);
-  font-size: 14;
-}
-
 
 #closeCreation{
   position: absolute;
@@ -126,32 +36,6 @@
 
 }
 
-#documentPositioner{
-  z-index: 20;
-  left: 50px;
-  position:absolute;
-  margin : 5px;
-  font-size: 14px;
-  border: 1px solid black;
-  background-color: white;
-  color: black;
-  height: 30px;
-  pointer-events: auto;
-}
-
-#docCreation{
-  z-index: 20;
-  left: 160px;
-  position:absolute;
-  margin : 5px;
-  font-size: 14px;
-  border: 1px solid black;
-  background-color: white;
-  color: black;
-  height: 30px;
-  pointer-events: auto;
-}
-
 #subject{
   display:inline-block;
   overflow: hidden;
@@ -159,17 +43,11 @@
   text-align: left;
 }
 
-#creationTitle{
-  display:inline-block;
-  margin-top: 20px;
-  color: white;
-  text-align: center;
-  font-size: 16px;
-  font-weight: bold;
-  overflow: hidden;
-  width: 90%;
-}
 /*Document Positioner*/
+#docPositionWindow {
+  display: none;
+}
+
 #docPositionerFull{
   position: absolute;
   z-index: 10;
@@ -177,21 +55,13 @@
   margin: auto;
   top: 0;
   bottom: 10%;  left: 0;
-
   right: 0;
-
   width: 55%;
-
   height: 55%;
-
   display: none;
-
   padding-left: 3px;
-
   padding-top: 3px;
-
   pointer-events: none;
-
 }
 
 #docPositionerFullImg{
@@ -200,7 +70,7 @@
     object-fit: contain;
     opacity: 0.5;
 }
-/
+
 #docPositionerFullPanel{
     bottom : 0px;
     margin-top: 20px;
@@ -226,105 +96,6 @@
   font-size: 12px;
 }
 
-#setPosX, #setPosY, #setPosZ, #quatX, #quatY, #quatZ, #quatW{
-  width:80%;
-  background-color: rgb(255,255,255);
-}
-
-#inputFields{
-  padding-top: 20%;
-  padding-left: 10%;
-  padding-bottom: 20%;
-}
-
-#docPositionerSave{
-  z-index: 20;
-  left: 200px;
-  position:absolute;
-  margin : 5px;
-  font-size: 14px;
-  border: 1px solid black;
-  background-color: white;
-  color: black;
-  height: 30px;
-  pointer-events: auto;
-  bottom:20px;
-}
-
-#docPositionerCancel{
-  z-index: 20;
-  left: 15px;
-  position:absolute;
-  margin : 5px;
-  font-size: 14px;
-  border: 1px solid black;
-  background-color: white;
-  color: black;
-  height: 30px;
-  pointer-events: auto;
-  bottom:20px;
-}
-
-#moveDocument{
-  z-index: 20;
-  left: 85px;
-  position:absolute;
-  margin : 5px;
-  font-size: 14px;
-  border: 1px solid black;
-  background-color: white;
-  color: black;
-  height: 30px;
-  pointer-events: auto;
-  bottom:20px;
-}
-
-
-/*Creation window*/
-#create_title{
-  display:inline-block;
-  color: black;
-  font-size: 14px;
-  overflow: hidden;
-  width: 90%;
-  text-align: left;
-  padding-left: 20px;
-  margin-bottom: 12px;
-  border-radius: 4px;
-
-
-}
-
-#create_description{
-  display:inline-block;
-  color: black;
-  font-size: 14px;
-  overflow: hidden;
-  width: 90%;
-  height:60px;
-  text-align: left;
-  padding-left: 20px;
-  margin-bottom: 12px;
-  border-radius: 4px;
-}
-
-#uploadedFile{
-  margin-bottom: 12px;
-  margin-left: 15px;
-}
-
-#create_refDate, #create_publicationDate, #create_subject{
-  margin-bottom: 12px;
-  border-radius: 4px;
-}
-
-#create_type{
-    margin-bottom: 12px;
-    margin-left: 17px;
-    border-radius: 4px;
-}
-
-
 /*Update view*/
 #updateContainer{
       display: none;
@@ -342,22 +113,6 @@
       color : black;
       background-color: rgba(30,30,30,0.6);
       font-size: 14;
-  }
-
-  #browserWindowTabs{
-    bottom:0px;
-  }
-
-  #docBrowserIndex{
-    position: absolute;
-        margin-top: 10px;
-        color: white;
-        left : 15px;
-        bottom : 100px;
-        font-size: 14px;
-        font-weight: bold;
-        overflow: hidden;
-
   }
 
   #update_title{
@@ -450,49 +205,6 @@
       width: 100%; /* or any custom size */
       height: 100%;
       object-fit: contain;
-  }
-
-#closeUpdate{
-    position: absolute;
-    z-index: 40;
-    top: 0;
-    right: 3px;
-    margin : 3px;
-    border: 1px solid black;
-    background-color: white;
-    color: black;
-    pointer-events: auto;
-
-  }
-
-  #docUpdate{
-    z-index: 20;
-    left: 100px;
-    position:absolute;
-    margin : 5px;
-    font-size: 14px;
-    border: 1px solid black;
-    background-color: white;
-    color: black;
-    height: 30px;
-    pointer-events: auto;
-    bottom:50px;
-
-  }
-
-  #updateCancel{
-    z-index: 20;
-    left:240px;
-    position:absolute;
-    margin : 5px;
-    font-size: 14px;
-    border: 1px solid black;
-    background-color: white;
-    color: black;
-    height: 30px;
-    pointer-events: auto;
-    bottom:50px;
-
   }
 
   #updateTitle{

@@ -5,25 +5,35 @@ import './DocumentCommentsStyle.css';
 export class DocumentCommentsWindow extends Window {
 
     constructor(documentController, documentCommentsService) {
-        super('documentComments', 'Commentaires');
+        super('documentComments', 'Comments');
         this.documentCommentsService = documentCommentsService;
         this.documentController = documentController;
 
-        let browserTabs = documentController.documentBrowser.browserTabID;
-        let docBrowserCreateButton = document.createElement('button');
-        docBrowserCreateButton.id = "docBrowserCommentButton";
-        let word = document.createTextNode("Comment");
-        docBrowserCreateButton.appendChild(word);
-        document.getElementById(browserTabs).appendChild(docBrowserCreateButton);
-        docBrowserCreateButton.onclick = () => {
-            if (this.isVisible) {
-                this.hide();
-            } else {
-                this.show();
-                this.getComments();
+        documentController.documentBrowser.addEventListener(
+            Window.EVENT_CREATED, () => {
+                let browserTabs = documentController.documentBrowser.browserTabID;
+                let docBrowserCreateButton = document.createElement('button');
+                docBrowserCreateButton.id = "docBrowserCommentButton";
+                let word = document.createTextNode("Comment");
+                docBrowserCreateButton.appendChild(word);
+                document.getElementById(browserTabs).appendChild(docBrowserCreateButton);
+                docBrowserCreateButton.onclick = () => {
+                    if (this.isVisible) {
+                        this.hide();
+                    } else {
+                        this.show();
+                        this.getComments();
+                    }
+                };
+        });
+
+        documentController.addEventListener(
+            Window.EVENT_DISABLED, () => {
+                this.disable();
             }
-        };
-        this.appendTo(document.getElementById('contentSection'));
+        );
+        
+        this.appendTo(documentController.parentElement);
         this.hide();
     }
 
@@ -69,8 +79,8 @@ export class DocumentCommentsWindow extends Window {
     windowCreated() {
         this.window.style.setProperty('width', '500px');
         this.window.style.setProperty('height', '500px');
-        this.window.style.setProperty('left', '310px');
-        this.window.style.setProperty('top', '80px');
+        this.window.style.setProperty('left', '290px');
+        this.window.style.setProperty('top', '10px');
         this.window.style.setProperty('resize', 'both');
         this.innerContent.style.setProperty('height', '100%');
         document.getElementById('documentComments_inputButton').onclick = this.publishComment.bind(this);
@@ -78,7 +88,6 @@ export class DocumentCommentsWindow extends Window {
     }
 
     publishComment() {
-        console.log('enter')
         let form = document.getElementById('documentComments_inputForm');
         let form_data = new FormData(form);
         this.documentCommentsService.publishComment(form_data).then(() => {

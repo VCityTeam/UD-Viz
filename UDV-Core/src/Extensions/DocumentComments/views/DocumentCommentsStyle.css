@@ -1,17 +1,3 @@
-#docBrowserCommentButton {
-    z-index: 20;
-    left: 10px;
-    position: absolute;
-    margin: 5px;
-    font-size: 14px;
-    border: 1px solid black;
-    background-color: white;
-    color: black;
-    height: 30px;
-    pointer-events: auto;
-    bottom: 50px;
-}
-
 #documentComments_innerWindow {
     width: 100%;
     height: 100%;

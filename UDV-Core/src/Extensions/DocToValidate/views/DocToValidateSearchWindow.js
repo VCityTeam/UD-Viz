@@ -4,7 +4,7 @@ import '../../../Utils/GUI/css/window.css';
 export class DocToValidateSearchWindow extends Window {
 
     constructor(docToValidateView, docToValidateService) {
-        super('docToValidateSearch', 'Research', false);
+        super('docToValidateSearch', 'Validation - Search', false);
         this.docToValidateService = docToValidateService;
         this.docToValidateView = docToValidateView;
         this.addListener((event) => {
@@ -42,10 +42,9 @@ export class DocToValidateSearchWindow extends Window {
 
     windowCreated() {
         document.getElementById('docToValidate_searchForm_submit').onclick = this.search.bind(this);
-        this.window.style.setProperty('top', '80px');
-        this.window.style.setProperty('left', '310px');
-        this.window.style.setProperty('width', '380px');
-        this.window.style.setProperty('height', '360px');
+        this.window.style.setProperty('left', '10px');
+        this.window.style.setProperty('top', '10px');
+        this.window.style.setProperty('width', '270px');
     }
 
     search() {

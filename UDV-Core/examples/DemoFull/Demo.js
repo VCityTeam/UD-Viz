@@ -29,11 +29,13 @@ baseDemo.loadConfigFile('../data/config/generalDemoConfig.json').then(() => {
     const documents = new udvcore.DocumentController(baseDemo.view,
         baseDemo.controls, {temporal: baseDemo.temporal, active: false},
         baseDemo.config);
-    baseDemo.addModuleView('documents', documents);
+    baseDemo.addModuleView('documents', documents, {
+        binding: 'd'
+    });
 
     ////// GUIDED TOURS MODULE
     const guidedtour = new udvcore.GuidedTourController(documents);
-    baseDemo.addModuleView('guidedTour', guidedtour, {name: 'Guided Tours'});
+    baseDemo.addModuleView('guidedTour', guidedtour, {name: 'Guided tours'});
 
     ////// CONTRIBUTE EXTENSION
     const contributeController = new udvcore.ContributeController(documents,
@@ -53,7 +55,7 @@ baseDemo.loadConfigFile('../data/config/generalDemoConfig.json').then(() => {
     const docToValidateView =
         new udvcore.DocToValidateView(docToValidateService, documents);
     baseDemo.addModuleView('docToValidate', docToValidateView,
-        {name: 'Documents in validation', requireAuth: true});
+        {name: 'Documents in validation', requireAuth: true, binding: 'v'});
 
     ////// DOCUMENTS COMMENTS EXTENSION
     const docCommentsService = new udvcore.DocumentCommentsService(documents,
@@ -61,8 +63,11 @@ baseDemo.loadConfigFile('../data/config/generalDemoConfig.json').then(() => {
     const docCommentsWindow = new udvcore.DocumentCommentsWindow(documents,
         docCommentsService);
 
-    ////// GEOCODING
-    const geocodingService = new udvcore.GeocodingService(requestService, baseDemo.extent, baseDemo.config);
-    const geocodingView = new udvcore.GeocodingView(geocodingService, baseDemo.controls, baseDemo.view);
-    baseDemo.addModuleView('geocoding', geocodingView, {binding: 's', name: 'Address Search'});
+    ////// GEOCODING EXTENSION
+    const geocodingService = new udvcore.GeocodingService(requestService,
+        baseDemo.extent, baseDemo.config);
+    const geocodingView = new udvcore.GeocodingView(geocodingService,
+        baseDemo.controls, baseDemo.view);
+    baseDemo.addModuleView('geocoding', geocodingView, {binding: 's',
+                                name: 'Address Search'});
 });

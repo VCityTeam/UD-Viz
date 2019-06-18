@@ -22,7 +22,6 @@ export function AuthenticationService(requestService, config) {
 
     this.initialize = function initialize() {
         this.requestService.setAuthenticationService(this);
-        console.log('Authentication service initialized');
     };
 
     this.login = async function login(formData) {

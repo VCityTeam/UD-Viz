@@ -8,6 +8,7 @@
 import * as THREE from 'three';
 import { MAIN_LOOP_EVENTS } from 'itowns';
 import DefaultImage from './DefaultImage.png';
+import { Window } from '../../Utils/GUI/js/Window';
 
 /**
  *
@@ -16,94 +17,86 @@ import DefaultImage from './DefaultImage.png';
  * @param { documentController } documentController
  */
 
-export function DocumentBrowser(browserContainer, documentController) {
-    // class attributes
-    this.documentController = documentController;
-    this.documentsExist = true;
-    this.currentDoc = null;
-    this.windowIsActive = false;
-    this.isOrientingDoc = false;
-    this.isFadingDoc = false;
-    this.fadeAlpha = 0;
-    this.docIndex = 1;
-    this.isStart = true; // dirty variable to test if we are in start mode
-    this.currentMetadata;
-    this.numberDocs;
-    // ID of the html div holding buttons in the browser
-    // will be used by other classes as well to add extra buttons
-    this.browserTabID = 'browserWindowTabs';
-    // doc fade-in animation duration, in milliseconds
-    this.fadeDuration = this.documentController.options.docFadeDuration || 2750;
+export class DocumentBrowser extends Window {
+    constructor(browserContainer, documentController) {
+        super('consultDocBrowser', 'Document - Browser', false);
+        // class attributes
+        this.documentController = documentController;
+        this.documentsExist = true;
+        this.currentDoc = null;
+        this.windowIsActive = false;
+        this.isOrientingDoc = false;
+        this.isFadingDoc = false;
+        this.fadeAlpha = 0;
+        this.docIndex = 1;
+        this.isStart = true; // dirty variable to test if we are in start mode
+        this.currentMetadata;
+        this.numberDocs;
+        // ID of the html div holding buttons in the browser
+        // will be used by other classes as well to add extra buttons
+        this.browserTabID = 'browserWindowTabs';
+        // doc fade-in animation duration, in milliseconds
+        this.fadeDuration = this.documentController.options.docFadeDuration || 2750;
 
-    browserContainer.innerHTML =
-        '<div id="docBrowserWindow">\
-        <button id="closeBrowserWindow" type=button>Close</button><br/>\
-          <div id="docHead">Document browser</div><br>\
-          <br/>\
-          <div id="browserInfo"></div>\
-          <div id = "docBrowserInfo"></div>\
-          <div id="docBrowserPreview"><img id="docBrowserPreviewImg"/></div>\
-          <div id="docBrowserIndex"></div>\
-      </div>\
-      ';
+        var docFull = document.createElement('div');
+        docFull.id = 'docFull';
+        document.body.appendChild(docFull);
 
-    var browserWindowTabs = document.createElement('div');
-    browserWindowTabs.id = this.browserTabID;
-    document.getElementById('docBrowserWindow').appendChild(browserWindowTabs);
+        docFull.innerHTML =
+            '<img id="docFullImg"/>\
+            <div id="docFullPanel">\
+                <button id="docFullClose" type=button>Close</button>\
+                <button id="docFullOrient" type=button>Orient Document</button>\
+                <label id="docOpaLabel" for="docOpaSlider">Opacity</label>\
+                <input id="docOpaSlider" type="range" min="0" max="100" value="75"\
+                step="1">\
+                <output for="docOpaSlider" id="docOpacity">50</output>\
+            ';
 
-    browserWindowTabs.innerHTML =
-        '<button id="docBrowserNextButton" type=button>⇨</button>\
-      <button id="docBrowserPreviousButton" type=button>⇦</button>\
-      <button id="resetFilters" type=button>Reset research</button>\
-      <button id="docBrowserOrientButton" type=button>Orient Document</button>\
-      ';
+        document.getElementById('docFullOrient').addEventListener('mousedown',
+        this.focusOnDoc.bind(this), false);
+        document.getElementById('docFullClose').addEventListener('mousedown',
+        this.closeDocFull.bind(this), false);
 
-    var docFull = document.createElement('div');
-    docFull.id = 'docFull';
-    document.body.appendChild(docFull);
+        // Whether this window is currently displayed or not.
+        this.windowIsActive = this.documentController.options.active || false;
 
-    docFull.innerHTML =
-        '<img id="docFullImg"/>\
-          <div id="docFullPanel">\
-              <button id="docFullClose" type=button>Close</button>\
-              <button id="docFullOrient" type=button>Orient Document</button>\
-              <label id="docOpaLabel" for="docOpaSlider">Opacity</label>\
-              <input id="docOpaSlider" type="range" min="0" max="100" value="75"\
-              step="1">\
-              <output for="docOpaSlider" id="docOpacity">50</output>\
-          ';
+        // itowns framerequester : will regularly call this.updateScene()
+        this.documentController.view.addFrameRequester(
+            MAIN_LOOP_EVENTS.AFTER_CAMERA_UPDATE, this.updateScene.bind(this));
+    }
 
-    // Whether this window is currently displayed or not.
-    this.windowIsActive = this.documentController.options.active || false;
+    get innerContentHtml() {
+        return `
+            <div id="browserInfo"></div>
+            <div id="docBrowserInfo"></div>
+            <div id="docBrowserPreview"><img id="docBrowserPreviewImg"/></div>
+            <div id="docBrowserIndex"></div>
+            <div id="${this.browserTabID}">
+                <button id="docBrowserPreviousButton" type=button>⇦</button>
+                <button id="docBrowserNextButton" type=button>⇨</button>
+                <button id="resetFilters" type=button>Reset research</button>
+                <button id="docBrowserOrientButton" type=button>Orient Document</button>
+            </div>
+        `;
+    }
 
-    // Display or hide this window
-    this.activateWindow = function activateWindow(active) {
-        if (typeof active != 'undefined') {
-            this.windowIsActive = active;
-        }
+    windowCreated() {
+        this.window.style.setProperty('left', 'unset');
+        this.window.style.setProperty('right', '10px');
+        this.window.style.setProperty('top', '10px');
+        this.window.style.setProperty('width', '390px');
+        this.initializeButtons();
+        this.resetResearch();
+    }
 
-        if (this.documentsExist && this.isStart) {
-            this.startBrowser();
-            this.isStart = false;
-        }
-        document.getElementById('browserContainer').style.display
-            = active ? 'block' : 'none';
-        document.getElementById('docBrowserWindow').style.display
-            = active ? 'block' : 'none';
-        if (active) {
-            this.documentController.open();
-        } else {
-            this.documentController.close();
-        }
-    };
-
-    this.refresh = function refresh() {
-        this.activateWindow(this.windowIsActive);
+    refresh() {
+        
     };
 
     // called regularly by the itowns framerequester
     //= ========================================================================
-    this.updateScene = function updateScene(dt, updateLoopRestarted) {
+    updateScene(dt, updateLoopRestarted) {
         // dt will not be relevant when we just started rendering, we consider a 1-frame move in this case
         if (updateLoopRestarted) {
             dt = 16;
@@ -142,13 +135,13 @@ export function DocumentBrowser(browserContainer, documentController) {
             // request redraw of the scene
             this.documentController.view.notifyChange();
         }
-    };
+    }
 
     /**
      * Updates browser by clicking on "nextDoc" button
      */
     //= ============================================================================
-    this.nextDoc = function nextDoc() {
+    nextDoc() {
         if (this.docIndex < this.numberDocs & this.currentDoc != null) {
             this.docIndex++;
             this.currentDoc = this.documentController.getNextDoc();
@@ -162,7 +155,7 @@ export function DocumentBrowser(browserContainer, documentController) {
      * Updates browser by click on "previousDoc" button
      */
     //= ============================================================================
-    this.previousDoc = function previousDoc() {
+    previousDoc() {
         if (this.docIndex > 1 & this.currentDoc != null) {
             this.docIndex--;
             this.currentDoc = this.documentController.getPreviousDoc();
@@ -177,7 +170,10 @@ export function DocumentBrowser(browserContainer, documentController) {
     // the document browser html is defined based
     // on the documentModel metadata attributes
     //= =========================================================================
-    this.updateBrowser = function updateBrowser() {
+    updateBrowser() {
+        if (!this.isCreated) {
+            return;
+        }
         if (this.currentDoc != null & this.numberDocs > 0) {
             var txt = '';
             txt += "<div id ='docMetadata'>";
@@ -226,21 +222,16 @@ export function DocumentBrowser(browserContainer, documentController) {
     // this will display the doc image in the middle of the screen
     // and initiate the animated travel to orient the camera
     //= ============================================================================
-    this.focusOnDoc = function focusOnDoc() {
+    focusOnDoc() {
         document.getElementById('docFull').style.display = 'block';
         let src = this.documentController.url + this.documentController.serverModel.document + '/' + this.currentMetadata.id + '/' + this.documentController.serverModel.file;
-        console.log(src);
         document.getElementById('docFullImg').src = this.documentController.url
             + this.documentController.serverModel.document + '/'
             + this.currentMetadata.id + '/'
             + this.documentController.serverModel.file;
-        document.getElementById('docBrowserPreviewImg').src = this.documentController.url
-            + this.documentController.serverModel.document + '/'
-            + this.currentMetadata.id + '/'
-            + this.documentController.serverModel.file;
-        document.getElementById('docFullImg').style.opacity = 50;
+        document.getElementById('docFullImg').style.opacity = 0;
         document.getElementById('docOpaSlider').value = 0;
-        document.querySelector('#docOpacity').value = 50;
+        document.querySelector('#docOpacity').value = 0;
         document.getElementById('docFull').style.display = 'block';
         document.getElementById('docFullPanel').style.display = 'block';
 
@@ -276,13 +267,19 @@ export function DocumentBrowser(browserContainer, documentController) {
 
     // close the central window superposition view
     //= ========================================================================
-    this.closeDocFull = function closeDocFull() {
+    closeDocFull() {
         document.getElementById('docFull').style.display = 'none';
         // document.getElementById('docFullImg').src = null;
     };
 
-    this.startBrowser = function startBrowser() {
-        this.documentController.getDocuments();
+    startBrowser() {
+        try {
+            this.documentController.getDocuments();
+        } catch (e) {
+            //view is not created ?
+            console.error(e);
+            return;
+        }
         this.docIndex = 1;
         this.currentDoc = this.documentController.setOfDocuments[0];
         try {
@@ -293,7 +290,7 @@ export function DocumentBrowser(browserContainer, documentController) {
         this.updateBrowser();
     };
 
-    this.resetResearch = function resetResearch() {
+    resetResearch() {
         this.docIndex = 1;
         $(`#${this.documentController.documentResearch.filterFormId}`).get(0).reset(); // reset reserach parameters
 
@@ -306,27 +303,20 @@ export function DocumentBrowser(browserContainer, documentController) {
         this.closeDocFull();
     };
 
-    // itowns framerequester : will regularly call this.updateScene()
-    this.documentController.view.addFrameRequester(
-        MAIN_LOOP_EVENTS.AFTER_CAMERA_UPDATE, this.updateScene.bind(this));
 
-    // event listeners for buttons
-    document.getElementById('docFullOrient').addEventListener('mousedown',
-        this.focusOnDoc.bind(this), false);
-    document.getElementById('docFullClose').addEventListener('mousedown',
-        this.closeDocFull.bind(this), false);
-    document.getElementById('docBrowserNextButton').addEventListener('mousedown',
-        this.nextDoc.bind(this), false);
-    document.getElementById('docBrowserPreviousButton').addEventListener('mousedown',
-        this.previousDoc.bind(this), false);
-    document.getElementById('docBrowserOrientButton').addEventListener('mousedown',
-        this.focusOnDoc.bind(this), false);
-    document.getElementById('closeBrowserWindow').addEventListener('mousedown',
-        this.documentController.disable.bind(this.documentController), false);
-    document.getElementById('resetFilters').addEventListener('mousedown',
-        this.resetResearch.bind(this), false);
-    document.getElementById('docOpaSlider').addEventListener('input',
-        docOpaUpdate, false);
+    initializeButtons() {
+        // event listeners for buttons
+        document.getElementById('docBrowserNextButton').addEventListener('mousedown',
+            this.nextDoc.bind(this), false);
+        document.getElementById('docBrowserPreviousButton').addEventListener('mousedown',
+            this.previousDoc.bind(this), false);
+        document.getElementById('docBrowserOrientButton').addEventListener('mousedown',
+            this.focusOnDoc.bind(this), false);
+        document.getElementById('resetFilters').addEventListener('mousedown',
+            this.resetResearch.bind(this), false);
+        document.getElementById('docOpaSlider').addEventListener('input',
+            docOpaUpdate, false);
+    }
 }
 
 // In oriented view (focusOnDoc) this is called when the user changes the value

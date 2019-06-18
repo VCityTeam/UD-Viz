@@ -59,19 +59,24 @@ export class GeocodingView extends ModuleView {
    * Destroys the view.
    */
   dispose() {
-    if (this.isCreated) {
-      let div = this.viewElement;
-      let input = this.searchInputElement;
-      input.style.transition = 'width 0.3s ease-out, opacity 0.4s ease-out'
-      input.style.width = '0';
-      input.style.opacity = '0';
-      input.ontransitionend = (event) => {
-        if (event.propertyName === "opacity") {
-          div.parentElement.removeChild(div);
-          this.removePins();
+    return new Promise((resolve, reject) => {
+      if (this.isCreated) {
+        let div = this.viewElement;
+        let input = this.searchInputElement;
+        input.style.transition = 'width 0.3s ease-out, opacity 0.4s ease-out'
+        input.style.width = '0';
+        input.style.opacity = '0';
+        input.ontransitionend = (event) => {
+          if (event.propertyName === "opacity") {
+            div.parentElement.removeChild(div);
+            this.removePins();
+            resolve();
+          }
         }
+      } else {
+        resolve();
       }
-    }
+    });
   }
 
   /**
@@ -268,11 +273,18 @@ export class GeocodingView extends ModuleView {
   //////////// MODULE VIEW METHODS
   ////////////////////////////////
 
-  enableView() {
+  /**
+   * @override
+   */
+  async enableView() {
     this.appendToElement(this.parentElement);
   }
 
-  disableView() {
-    this.dispose();
+  /**
+   * @override
+   */
+  async disableView() {
+    
+    await this.dispose();
   }
 }

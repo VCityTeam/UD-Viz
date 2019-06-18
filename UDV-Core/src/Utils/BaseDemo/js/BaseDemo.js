@@ -36,35 +36,37 @@ export class BaseDemo {
      */
     get html() {
         return /*html*/`
-            <input type="checkbox" id="activateTemporal" class="nonVisible">
-            <header>
-                <div class="header">
-                    <div>
+            <header id="${this.headerId}">
+                <div>
+                    <h1>UDV &bull;</h1>
+                    <div id="${this.authFrameLocationId}"></div>
+                </div>
+                <div id="_base_demo_struct_header_panel">
+                    <img id="logoIMU" src="${this.imageFolder}/${this.logoIMUFile}" />
+                    <img id="logoLIRIS" src="${this.imageFolder}/${this.logoLIRISFile}" />
+                    <p style="display: inline-block; color: white; margin: 0;">
                         Icons made by <a href="https://www.freepik.com/"
                         title="Freepik">Freepik</a> from
                         <a href="https://www.flaticon.com/"
-                        title="Flaticon">www.flaticon.com</a> is licensed by
+                        title="Flaticon">www.flaticon.com</a><br> is licensed by
                         <a href="http://creativecommons.org/licenses/by/3.0/"
                         title="Creative Commons BY 3.0" target="_blank">
                         CC 3.0 BY</a>
-                    </div>
-                    <img id="logoIMU" src="${this.imageFolder}/${this.logoIMUFile}" />
-                    <img id="logoLIRIS" src="${this.imageFolder}/${this.logoLIRISFile}" />
-                </div>
-                <input type="checkbox" id="openSidebar">
-                <!-- The HTML code corresponds to an hamburger menu icon -->
-                <label id="closeHamburger" for="openSidebar">&#x2630</label>
-                <div id="${this.menuId}">
-                    <div id="navMenu"></div>
-                    <!-- This one corresponds to a cross icon -->
-                    <label id="openHamburger" for="openSidebar">&#x2716</label>
-                    <label for="activateTemporal" id="temporalMenu"
-                    class="choiceMenu">Temporal</label>
+                    </p>
                 </div>
             </header>
-            <section id="contentSection">
-                <div id="viewerDiv"></div>
-            </section>
+            <div id="_base_demo_stuct_main_panel">
+                <nav>
+                    <ul id="${this.menuId}">
+                        <li class="choiceMenu" id="temporalMenu">
+                            <p class="_base_demo_menu_hint">Temporal</p>
+                        </li>
+                    </ul>
+                </nav>
+                <section id="${this.contentSectionId}">
+                    <div id="${this.viewerDivId}"></div>
+                </section>
+            </div>
         `;
     }
 
@@ -76,7 +78,6 @@ export class BaseDemo {
     get authenticationFrameHtml() {
         return /*html*/`
             <div id="${this.authenticationMenuLoggedInId}">
-                <img src="${this.iconFolder}/profile.svg" id="profileIcon">
                 <div id="${this.authenticationUserNameId}"></div>
                 <button type="button" id="${this.authenticationLogoutButtonId}"
                 class="logInOut">Logout</button>
@@ -172,12 +173,10 @@ export class BaseDemo {
         this.moduleActivation[moduleId] = false;
 
         moduleClass.addEventListener(ModuleView.EVENT_ENABLED, () => {
-            console.log(`${moduleName} is enabled`);
             this.moduleActivation[moduleId] = true;
 
         });
         moduleClass.addEventListener(ModuleView.EVENT_DISABLED, () => {
-            console.log(`${moduleName} is disabled`);
             this.moduleActivation[moduleId] = false;
         });
 
@@ -210,9 +209,9 @@ export class BaseDemo {
      * @param {String} [accessKey] The key binding for the module.
      */
     createMenuButton(moduleId, buttonText, accessKey) {
-        let button = document.createElement('label');
+        let button = document.createElement('li');
         button.id = this.getModuleButtonId(moduleId);
-        button.innerText = buttonText;
+        button.innerHTML = `<p class="_base_demo_menu_hint">${buttonText}</p>`;
         if (!!accessKey) {
             button.accessKey = accessKey;
         }
@@ -231,7 +230,7 @@ export class BaseDemo {
         let moduleClass = this.getModuleById(moduleId);
 
         //dynamically color the button
-        moduleClass.parentElement = this.contentSectionElement;
+        moduleClass.parentElement = this.viewerDivElement;
         moduleClass.addEventListener(ModuleView.EVENT_ENABLED, () => {
             button.className = 'choiceMenu choiceMenuSelected';
 
@@ -250,10 +249,9 @@ export class BaseDemo {
         let frame = document.createElement('div');
         frame.id = this.authenticationFrameId;
         frame.innerHTML = this.authenticationFrameHtml;
-        this.menuElement.insertBefore(frame,
-            document.getElementById('openHamburger').nextSibling);
+        this.authFrameLocationElement.appendChild(frame);
         const authView = this.getModuleById(authModuleId);
-        authView.parentElement = this.contentSectionElement;
+        authView.parentElement = this.viewerDivElement;
         const authService = authView.authenticationService;
         this.authenticationLoginButtonElement.onclick = () => {
             if (this.isModuleActive(authModuleId)) {
@@ -291,7 +289,7 @@ export class BaseDemo {
                 this.authenticationMenuLoggedInElement.hidden = false;
                 this.authenticationMenuLoggedOutElement.hidden = true;
                 this.authenticationUserNameElement.innerHTML =
-                    `${user.firstname} ${user.lastname}`;
+                    `Logged in as <em>${user.firstname} ${user.lastname}</em>`;
                 for (let mid of this.requireAuthModules) {
                     this.getModuleButton(mid).style.removeProperty('display');
                 }
@@ -420,6 +418,17 @@ export class BaseDemo {
             });
 
         let temporalButton = document.getElementById('temporalMenu');
+        temporalButton.onclick = () => {
+            let tmp = document.getElementById('temporal');
+            let disp = window.getComputedStyle(tmp).display;
+            if (disp === 'none') {
+                tmp.style.display = 'block';
+                temporalButton.className = 'choiceMenu choiceMenuSelected';
+            } else {
+                tmp.style.display = 'none';
+                temporalButton.className = 'choiceMenu';
+            }
+        }
         //creating an icon
         let icon = document.createElement('img');
         icon.setAttribute('src', `${this.iconFolder}/temporal.svg`)
@@ -494,12 +503,36 @@ export class BaseDemo {
         return '_base_demo';
     }
 
+    get headerId() {
+        return '_base_demo_header';
+    }
+
+    get headerElement() {
+        return document.getElementById(this.headerId);
+    }
+
+    get authFrameLocationId() {
+        return '_base_demo_auth_frame_location';
+    }
+
+    get authFrameLocationElement() {
+        return document.getElementById(this.authFrameLocationId);
+    }
+
     get contentSectionId() {
         return 'contentSection';
     }
 
     get contentSectionElement() {
         return document.getElementById(this.contentSectionId);
+    }
+
+    get viewerDivId() {
+        return 'viewerDiv';
+    }
+
+    get viewerDivElement() {
+        return document.getElementById(this.viewerDivId);
     }
 
     get menuId() {

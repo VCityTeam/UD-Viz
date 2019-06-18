@@ -10,6 +10,7 @@ import { UpdateDocument }   from './UpdateDocument.js';
 import "./Contribute.css";
 import { MAIN_LOOP_EVENTS } from 'itowns';
 import { removeEmptyValues } from '../../../Utils/DataProcessing/DataProcessing';
+import { AuthNeededError } from '../../../Utils/Request/RequestService.js';
 
 /**
  *
@@ -64,6 +65,8 @@ export function ContributeController(documentController, requestService){
     var cam = this.documentController.view.camera.camera3D;
     var position = cam.position;
     var quaternion = cam.quaternion;
+
+    this.visuData = new FormData();
 
     this.visuData.append("positionX", position.x);
     this.visuData.append('positionY', position.y);
@@ -205,9 +208,11 @@ export function ContributeController(documentController, requestService){
           this.newDocData = new FormData();
           this.visuData = new FormData();
           this.documentController.getDocuments();
-          (this.documentCreate.activateCreateWindow.bind(this.documentCreate))
-            (false);
+          this.documentCreate.disable();
         }, (error) => {
+          if (error.name === 'AuthNeededError') {
+            alert("You should be logged in to create a document.");
+          }
           console.error(error);
         });
     }
@@ -233,13 +238,16 @@ export function ContributeController(documentController, requestService){
         $('#'+this.documentUpdate.updateFormId).get(0).reset(); //clear update formular
         this.updatedData = new FormData(); //clear data
         this.documentController.reset();
-        this.documentUpdate.activateWindow(false);
+        this.documentUpdate.disable();
         this.documentController.docIndex = 0;//return to first doc
         this.documentController.documentBrowser.docIndex = 1; //reset index in browser
         this.documentController.documentBrowser.startBrowser();
-        this.documentController.documentBrowser.activateWindow(true);
+        this.documentController.documentBrowser.show();
       }, (error) => {
-        console.error("Failed!", error);
+        if (error.name === 'AuthNeededError') {
+          alert("You should be logged in to update a document.");
+        }
+        console.error(error);
       });
   }
 
