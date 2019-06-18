@@ -147,10 +147,6 @@ export class GuidedTour extends Window {
       this.guidedTourController.toggleGuidedTourButtons(false);
       document.getElementById("guidedTourDocPreviewImg").style.display = "none";
       document.getElementById("guidedTourText1").style.height = "60%";
-      /*
-      document.getElementById('docBrowserPreviousButton').style.display = "none";
-      document.getElementById('docBrowserNextButton').style.display = "none";
-      document.getElementById('docBrowserIndex').style.display = "none";*/
       document.getElementById('tourCpt').style.display = "none";
     }
     else {
@@ -162,13 +158,7 @@ export class GuidedTour extends Window {
   // Quit current guided tour
   //=============================================================================
   exitGuidedTour(){
-
       this.guidedTourController.reset();
-      // show the regular buttons for doc window
-      /*
-      document.getElementById('docBrowserPreviousButton').style.display = "block";
-      document.getElementById('docBrowserNextButton').style.display = "block";
-      document.getElementById('docBrowserIndex').style.display = "block";*/
   };
 
   /**

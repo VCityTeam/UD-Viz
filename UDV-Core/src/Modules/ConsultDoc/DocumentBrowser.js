@@ -277,6 +277,7 @@ export class DocumentBrowser extends Window {
             this.documentController.getDocuments();
         } catch (e) {
             //view is not created ?
+            console.error(e);
             return;
         }
         this.docIndex = 1;

@@ -125,7 +125,6 @@ export function ContributeController(documentController, requestService){
     for (var pair of this.visuData.entries()){
       length +=1;
     }
-    console.log(`${length} vs ${this.numberVisuData}`)
     if(length != this.numberVisuData ){ //7 visualisation data must be provided
       alert('Please choose document position and save');
       this.documentCreate.showDocPositioner(true);
