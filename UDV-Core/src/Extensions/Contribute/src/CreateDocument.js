@@ -232,7 +232,6 @@ export class CreateDocument extends Window {
       }
     }
 
-    console.log(schemaType);
     //Create form using alpaca
     $("#creationWindow").alpaca({
          "schemaSource": schemaType,
