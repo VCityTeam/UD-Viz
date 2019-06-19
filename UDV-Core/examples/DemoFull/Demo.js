@@ -22,10 +22,6 @@ baseDemo.loadConfigFile('../data/config/generalDemoConfig.json').then(() => {
     const help  = new udvcore.HelpWindow();
     baseDemo.addModuleView('help', help);
 
-    ////// MINIMAP MODULE
-    const minimap = new udvcore.MiniMapController(baseDemo.controls,
-        baseDemo.extent, baseDemo.renderer);
-
     ////// COMPASS MODULE
     const compass = new udvcore.CompassController(baseDemo.controls);
 
