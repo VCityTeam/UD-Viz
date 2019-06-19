@@ -17,7 +17,9 @@ export class BaseDemo {
         this.view;  // itowns view (3d scene)
         this.extent;  // itowns extent (city limits)
         this.controls;
-        this.temporal;
+        // Temporal is currently disabled and will be reintroduced in a new
+        // version based on a 3D Tiles extension
+        this.temporal = false;
         ///// Config values for some file paths
         // iconFolder    : folder for icons (for the modules menu)
         // imageFolder   : folder for the logo files (for LIRIS and IMU)

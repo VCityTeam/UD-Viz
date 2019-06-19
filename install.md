@@ -15,18 +15,15 @@
 ```
   git clone https://github.com/MEPP-team/UDV.git
   cd UDV/UDV-Core
-  ./install.sh   # Pulls the temporal branch of iTowns and install UDV
+  npm install
   npm start
 ```
 
 Use your web browser to open
-`http://localhost:8080/examples/Demo.html`.
+`http://localhost:8080/`.
 
 ## Notes
 
-* this demo is configured by default to use a data base server accessed
-through ad-hoc web-services. Configuration of the accessed database is done
-within the `Main.js` file through the `buildingServerRequest` variable.
 * For an install of the full pipeline of our application refer to
 [these install notes](https://github.com/MEPP-team/RICT/blob/master/Install.md)
 
@@ -36,10 +33,6 @@ within the `Main.js` file through the `buildingServerRequest` variable.
     iex (new-object net.webclient).downstring(‘https://get.scoop.sh’)
     scoop install nodejs
     cd UDV/UDV-Core
-    ./install.sh   # Pulls the temporal branch of iTowns and install UDV
+    npm install
     npm start
     ```
-
-## Notes
-
-* If an extra command is required by Powershell execute this command before continue.

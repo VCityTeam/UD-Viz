@@ -4,8 +4,8 @@
   "description": "An iTowns based set of overlay display modules for City exploration",
   "main": "src/Main.js",
   "scripts": {
-    "lint": "eslint \"src/**/*.js\" \"Main.js\" \"Setup3DScene.js\"",
-    "doc": "jsdoc Setup3DScene.js",
+    "lint": "eslint \"src/**/*.js\" \"Main.js\"",
+    "doc": "jsdoc Main.js",
     "doclint": "npm run doc -- -t templates/silent",
     "test": "npm run lint",
     "build": "webpack -p",

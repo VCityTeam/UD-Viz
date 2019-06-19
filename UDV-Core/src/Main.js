@@ -4,9 +4,6 @@ import proj4 from 'proj4';
 // This is temporary, until we're able to build a vendor.js
 // containing our dependencies.
 export { itowns };
-export { proj4 };
-
-export { Setup3DScene }             from './Setup3DScene';
 
 export { AuthenticationService }    from './Extensions/Authentication/services/AuthenticationService';
 
@@ -20,9 +17,7 @@ export { DocToValidateService }     from './Extensions/DocToValidate/services/Do
 export { DocToValidateView }        from './Extensions/DocToValidate/views/DocToValidateView';
 
 export { AboutWindow }              from './Modules/Others/About';
-export { CompassController }        from './Modules/Others/Compass';
 export { HelpWindow }               from './Modules/Others/Help';
-export { MiniMapController }        from './Modules/Others/MiniMap';
 
 export { TemporalController }       from './Modules/Temporal/Temporal';
 

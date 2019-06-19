@@ -5,9 +5,7 @@
 UDV-Core is split in several components, independent to each other, in order to create an application as modular as possible.
 These components are : 
 * **GuidedTour controller**
-* **MiniMap controller**
 * **Temporal controller**
-* **Compass controller**
 * **Extended document**
 * **Contribute**
 

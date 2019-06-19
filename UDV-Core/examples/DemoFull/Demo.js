@@ -22,9 +22,6 @@ baseDemo.loadConfigFile('../data/config/generalDemoConfig.json').then(() => {
     const help  = new udvcore.HelpWindow();
     baseDemo.addModuleView('help', help);
 
-    ////// COMPASS MODULE
-    const compass = new udvcore.CompassController(baseDemo.controls);
-
     ////// DOCUMENTS MODULE
     const documents = new udvcore.DocumentController(baseDemo.view,
         baseDemo.controls, {temporal: baseDemo.temporal, active: false},

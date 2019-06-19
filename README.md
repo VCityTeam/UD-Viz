@@ -52,12 +52,10 @@ More information about this module can be found [here](https://github.com/sophia
 
 ### Others
 
-* MiniMap : city (terrain only) viewed from a top view, with an indicator showing the position of the camera
-* Compass : a compass image that rotates according to the camera orientation
 * Help, About : windows with text and links
 
 ### GUI
 
-* Multiple windows (document browser, guided tour, temporal, minimap, help, about)
+* Multiple windows (document browser, guided tour, temporal, help, about)
 * Each window can be open / closed by clicking on its button
 * The display is weakly responsive : best used with 16/9 or 16/10 resolution, and width between 1400px and 1900px. Using browser zoom (ctrl + / ctrl -) can help adjusting static elements (text and button size).
