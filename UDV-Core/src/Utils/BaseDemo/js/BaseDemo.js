@@ -340,16 +340,9 @@ export class BaseDemo {
      * Initialize the iTowns 3D view.
      */
     init3DView() {
-        // Initialization of the renderer, view and extent
-        /*
-        [this.view, this.extent] = udvcore.Setup3DScene(terrainAndElevationRequest,
-            buildingServerRequest,
-            true);
-         */
+        // ********* INIT ITOWNS VIEW
         // Define projection used in iTowns viewer (taken from
         // https://epsg.io/3946, Proj4js section)
-
-        // ********* INIT ITOWNS VIEW
         itowns.proj4.defs('EPSG:3946', '+proj=lcc +lat_1=45.25 +lat_2=46.75' +
             ' +lat_0=46 +lon_0=3 +x_0=1700000 +y_0=5200000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs');
 
@@ -411,7 +404,7 @@ export class BaseDemo {
         // This building layer represents Lyon in 2015 and is served from
         // grand lyon alpha server
         let $3dTilesLayer = new itowns.GeometryLayer(
-            '3d-tiles-layer', new itowns.THREE.Group());
+            '3d-tiles-layer', new THREE.Group());
         $3dTilesLayer.name = 'Lyon-2015';
         $3dTilesLayer.url =
             'https://threedtilesets.alpha.grandlyon.com/TileSet_Lyon_2015_full/tileset.json';
@@ -422,18 +415,17 @@ export class BaseDemo {
 
         // ********* 3D Elements
         // Lights
-        let directionalLight = new itowns.THREE.DirectionalLight( 0xffffff, 0.5 );
+        let directionalLight = new THREE.DirectionalLight( 0xffffff, 0.5 );
         directionalLight.position.set( 0, 0, 20000 );
         directionalLight.updateMatrixWorld();
         this.view.scene.add( directionalLight );
 
-        let ambientLight = new itowns.THREE.AmbientLight( 0xffffff,0.5 );
+        let ambientLight = new THREE.AmbientLight( 0xffffff,0.5 );
         ambientLight.position.set(0, 0, 3000 );
         directionalLight.updateMatrixWorld();
         this.view.scene.add( ambientLight );
 
         // Camera
-        // camera starting position (south-west of the city, altitude 2000)
         let p = { coord: this.extent.center(), heading: -49.6, range: 3000, tilt:
                 17 };
         itowns.CameraUtils.transformCameraToLookAtTarget(this.view, this.view.camera.camera3D, p);

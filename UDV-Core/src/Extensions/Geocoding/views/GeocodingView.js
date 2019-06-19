@@ -20,6 +20,13 @@ export class GeocodingView extends ModuleView {
     this.cameraControls = cameraControls;
     this.planarView = planarView;
     this.meshes = [];
+
+    // Define EPSG:3946 projection which is the projection used in the 3D view
+    // (planarView of iTowns). It is indeed needed in getWorldCoordinates()
+    // to convert the coordinates received from the geocoding service (WGS84)
+    // to this coordinate system.
+    proj4.defs('EPSG:3946', '+proj=lcc +lat_1=45.25 +lat_2=46.75' +
+          ' +lat_0=46 +lon_0=3 +x_0=1700000 +y_0=5200000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs');
   }
 
   get html() {
@@ -36,7 +43,7 @@ export class GeocodingView extends ModuleView {
 
   /**
    * Appends the view div to the DOM.
-   * 
+   *
    * @param {HTMLElement} htmlElement An HTML element
    */
   appendToElement(htmlElement) {
@@ -115,7 +122,7 @@ export class GeocodingView extends ModuleView {
   /**
    * Make the camera look at the given position. Computes an appropriate
    * position for the camera to see the target.
-   * 
+   *
    * @param {THREE.Vector3} targetPos Target posiition.
    */
   focusCameraOn(targetPos) {
@@ -131,7 +138,7 @@ export class GeocodingView extends ModuleView {
 
   /**
    * Converts a lat/long position into world coordinates, usable in the scene.
-   * 
+   *
    * @param {number} lat Latitude.
    * @param {number} lng Longitude.
    * @returns {THREE.Vector3} World coordinates.
@@ -147,7 +154,7 @@ export class GeocodingView extends ModuleView {
   /**
    * Adds a pin to the scene. A pin is made of two meshes : a sphere and a
    * cylinder.
-   * 
+   *
    * @param {THREE.Vector3} position Position of the pin.
    */
   async addPin(position) {
@@ -166,9 +173,9 @@ export class GeocodingView extends ModuleView {
 
   /**
    * Places the given mesh into the scene, orienting it towards the bottom.
-   * 
-   * @param {THREE.Mesh} mesh 
-   * @param {THREE.Vector3} position 
+   *
+   * @param {THREE.Mesh} mesh
+   * @param {THREE.Vector3} position
    */
   async addMeshToScene(mesh, position) {
     mesh.position.copy(position);
@@ -191,7 +198,7 @@ export class GeocodingView extends ModuleView {
 
   /**
    * Displays an error info box under the search bar.
-   * 
+   *
    * @param {string} errorMsg The error message.
    * @param {number} timeout The timeout of the message in ms.
    */
@@ -284,7 +291,7 @@ export class GeocodingView extends ModuleView {
    * @override
    */
   async disableView() {
-    
+
     await this.dispose();
   }
 }
