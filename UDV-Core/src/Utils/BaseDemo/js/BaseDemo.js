@@ -1,8 +1,8 @@
 import { ModuleView } from '../../ModuleView/ModuleView.js';
 
 /**
- * Represents the base HTML content of a demo for UDV and provides methods to dynamically
- * add module views.
+ * Represents the base HTML content of a demo for UDV and provides methods to
+ * dynamically add module views.
  */
 export class BaseDemo {
     constructor(config = {}) {
@@ -16,9 +16,10 @@ export class BaseDemo {
         this.parentElement;
         this.view;  // itowns view (3d scene)
         this.extent;  // itowns extent (city limits)
-        this.renderer;
         this.controls;
-        this.temporal;
+        // Temporal is currently disabled and will be reintroduced in a new
+        // version based on a 3D Tiles extension
+        this.temporal = false;
         ///// Config values for some file paths
         // iconFolder    : folder for icons (for the modules menu)
         // imageFolder   : folder for the logo files (for LIRIS and IMU)
@@ -58,9 +59,6 @@ export class BaseDemo {
             <div id="_base_demo_stuct_main_panel">
                 <nav>
                     <ul id="${this.menuId}">
-                        <li class="choiceMenu" id="temporalMenu">
-                            <p class="_base_demo_menu_hint">Temporal</p>
-                        </li>
                     </ul>
                 </nav>
                 <section id="${this.contentSectionId}">
@@ -103,7 +101,6 @@ export class BaseDemo {
         div.innerHTML = this.html;
         div.id = this.mainDivId;
         htmlElement.appendChild(div);
-        this.initViewer();
     }
 
     //////// MODULE MANAGEMENT
@@ -267,7 +264,7 @@ export class BaseDemo {
                 console.error(e);
             }
         };
-        
+
         authService.addObserver(this.updateAuthentication.bind(this));
         this.authService = authService;
         this.updateAuthentication();
@@ -314,7 +311,7 @@ export class BaseDemo {
 
     /**
      * Returns the module view class by its id.
-     * @param moduleId The module id. 
+     * @param moduleId The module id.
      */
     getModuleById(moduleId) {
         return this.modules[moduleId];
@@ -322,7 +319,7 @@ export class BaseDemo {
 
     /**
      * If the module view is enabled, disables it, else, enables it.
-     * @param moduleId The module id. 
+     * @param moduleId The module id.
      */
     toggleModule(moduleId) {
         if (!this.isModuleActive(moduleId)) {
@@ -344,139 +341,110 @@ export class BaseDemo {
     /**
      * Initialize the iTowns 3D view.
      */
-    initViewer() {
-        const terrainAndElevationRequest = 'https://download.data.grandlyon.com/wms/grandlyon';
+    init3DView() {
+        // ********* INIT ITOWNS VIEW
+        // Define projection used in iTowns viewer (taken from
+        // https://epsg.io/3946, Proj4js section)
+        itowns.proj4.defs('EPSG:3946', '+proj=lcc +lat_1=45.25 +lat_2=46.75' +
+            ' +lat_0=46 +lon_0=3 +x_0=1700000 +y_0=5200000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs');
 
-        // use this line for distant building server
-        const buildingServerRequest = 'http://rict.liris.cnrs.fr/UDVDemo/Data/tileset.json';
+        // Define geographic extent: CRS, min/max X, min/max Y
+        this.extent = new itowns.Extent(
+            'EPSG:3946',
+            1837860.980127206, 1847648.6685636174,
+            5169347.42659997, 5180280.0400808845);
 
-        // if true, replace regular controls by controls adapted to finding precise orientation for documents
-        // use false for regular controls (generic user)
-        let useControlsForEditing = false;
+        // `viewerDiv` will contain iTowns' rendering area (`<canvas>`)
+        let viewerDiv = document.getElementById('viewerDiv');
+        // Instantiate PlanarView (iTowns' view that will hold the layers)
+        // The skirt allows to remove the cracks between the terrain tiles
+        this.view = new itowns.PlanarView(viewerDiv, this.extent, {
+            disableSkirt: false
+        });
 
-        // Initialization of the renderer, view and extent
-        [this.view, this.extent] = udvcore.Setup3DScene(terrainAndElevationRequest,
-            buildingServerRequest,
-            true);
+        // ********* ADD TERRAIN LAYERS (WMS imagery and WMS elevation)
+        // These layer are served by the grandLyon
+        // Add a WMS imagery source
+        let wmsImagerySource = new itowns.WMSSource({
+            extent: this.extent,
+            name: 'Ortho2009_vue_ensemble_16cm_CC46',
+            url: 'https://download.data.grandlyon.com/wms/grandlyon',
+            version: '1.3.0',
+            projection: 'EPSG:3946',
+            format: 'image/jpeg',
+        });
+        // Add a WMS imagery layer
+        let wmsImageryLayer = new itowns.ColorLayer('wms_imagery', {
+            updateStrategy: {
+                type: itowns.STRATEGY_DICHOTOMY,
+                options: {},
+            },
+            source: wmsImagerySource,
+        });
+        this.view.addLayer(wmsImageryLayer);
 
-        // The renderer provided by THREE.js as handled over by itowns
-        this.renderer = this.view.scene;
+        // Add a WMS elevation source
+        let wmsElevationSource = new itowns.WMSSource({
+            extent: this.extent,
+            url: 'https://download.data.grandlyon.com/wms/grandlyon',
+            name: 'MNT2012_Altitude_10m_CC46',
+            projection: 'EPSG:3946',
+            heightMapWidth: 256,
+            format: 'image/jpeg',
+        });
+        // Add a WMS elevation layer
+        let wmsElevationLayer = new
+        itowns.ElevationLayer('wms_elevation', {
+            useColorTextureElevation: true,
+            colorTextureElevationMinZ: 37,
+            colorTextureElevationMaxZ: 240,
+            source: wmsElevationSource,
+        });
+        this.view.addLayer(wmsElevationLayer);
 
-        // camera starting position (south-west of the city, altitude 2000)
-        this.view.camera.setPosition(new udvcore.itowns.Coordinates('EPSG:3946', this.extent.west(), this.extent.south(), 2000));
-        // camera starting orientation (looking at city center)
-        this.view.camera.camera3D.lookAt(this.extent.center().xyz());
+        // ********* ADD 3D BUILDING LAYER (3D Tiles)
+        // This building layer represents Lyon in 2015 and is served from
+        // grand lyon alpha server
+        let $3dTilesLayer = new itowns.GeometryLayer(
+            '3d-tiles-layer', new THREE.Group());
+        $3dTilesLayer.name = 'Lyon-2015';
+        $3dTilesLayer.url =
+            'https://threedtilesets.alpha.grandlyon.com/TileSet_Lyon_2015_full/tileset.json';
+        $3dTilesLayer.protocol = '3d-tiles';
+        $3dTilesLayer.overrideMaterials = true;
 
+        itowns.View.prototype.addLayer.call(this.view, $3dTilesLayer);
 
-        // PlanarControls (camera controller) options : regular mode (generic user) or edit mode
-        // edit mode is more precise but less ergonomic : used to determine precise orientation for documents
-        // see itowns/src/Renderer/ThreeExtended/PlanarControls.js for options parameters
-        const optionsRegularMode = {
-            maxAltitude: 15000,
-            rotateSpeed: 3.0,
-            autoTravelTimeMin: 2,
-            autoTravelTimeMax: 6,
-        };
-        const optionsEditMode = {
-            maxAltitude: 17000,
-            rotateSpeed: 1.5,
-            zoomInFactor: 0.04,
-            zoomOutFactor: 0.04,
-            maxPanSpeed: 5.0,
-            minPanSpeed: 0.01,
-            maxZenithAngle: 88,
-        };
+        // ********* 3D Elements
+        // Lights
+        let directionalLight = new THREE.DirectionalLight( 0xffffff, 0.5 );
+        directionalLight.position.set( 0, 0, 20000 );
+        directionalLight.updateMatrixWorld();
+        this.view.scene.add( directionalLight );
 
-        // itowns' PlanarControls (camera controller) uses optionsEditMode or
-        // optionsRegularMode depending on the value useControlsForEditing (boolean)
-        this.controls = new udvcore.itowns.PlanarControls(this.view, (useControlsForEditing) ? optionsEditMode : optionsRegularMode);
+        let ambientLight = new THREE.AmbientLight( 0xffffff,0.5 );
+        ambientLight.position.set(0, 0, 3000 );
+        directionalLight.updateMatrixWorld();
+        this.view.scene.add( ambientLight );
 
-        //////////// Temporal controller section
+        // Camera
+        let p = { coord: this.extent.center(), heading: -49.6, range: 3000, tilt:
+                17 };
+        itowns.CameraUtils.transformCameraToLookAtTarget(this.view, this.view.camera.camera3D, p);
 
-        // Retrieve the layer defined in Setup3DScene (we consider the first one
-        // with the given name)
-        const $3dTilesTemporalLayer = this.view.getLayers(layer => layer.name === '3d-tiles-temporal')[0];
+        // Controls
+        this.controls = new itowns.PlanarControls(this.view, {});
 
-        // Definition of the callback that is in charge of triggering a refresh
-        // of the displayed layer when its (the layer) associated date has changed.
-        let refreshDisplayLayerOnDate = (date) => {
-            $3dTilesTemporalLayer.displayDate = date;
-            this.view.notifyChange($3dTilesTemporalLayer);
-        }
+        // Set sky color to blue
+        this.view.mainLoop.gfxEngine.renderer.setClearColor( 0x6699cc, 1);
 
-        // Instanciate a temporal controller
-        this.temporal = new udvcore.TemporalController(
-            refreshDisplayLayerOnDate,
-            {   // Various available constructor options
-                minTime: new moment("1700-01-01"),
-                maxTime: new moment("2020-01-01"),
-                currentTime: new moment().subtract(10, 'years'),
-                timeStep: new moment.duration(1, 'years'),
-                // or "YYYY-MMM" for Years followed months
-                timeFormat: "YYYY",
-                active: true
-            });
-
-        let temporalButton = document.getElementById('temporalMenu');
-        temporalButton.onclick = () => {
-            let tmp = document.getElementById('temporal');
-            let disp = window.getComputedStyle(tmp).display;
-            if (disp === 'none') {
-                tmp.style.display = 'block';
-                temporalButton.className = 'choiceMenu choiceMenuSelected';
-            } else {
-                tmp.style.display = 'none';
-                temporalButton.className = 'choiceMenu';
-            }
-        }
-        //creating an icon
-        let icon = document.createElement('img');
-        icon.setAttribute('src', `${this.iconFolder}/temporal.svg`)
-        icon.className = 'menuIcon';
-        temporalButton.insertBefore(icon, temporalButton.firstChild);
-
-        $3dTilesTemporalLayer.whenReady.then(
-            // In order to configure the temporal slide bar widget, we must
-            // retrieve the temporal events of displayed data. At this loading
-            // stage it could be that the b3dm with the actual dates (down to
-            // the building level) are not already loaded, but only their enclosing
-            // tiles are at hand. We could recurse on tile hierarchy, but we also
-            // have at hand the tileindex that we can (equivalently for the result)
-            // iterate on.
-            () => {
-                // Store the layer for triggering scene updates when temporal slider
-                // will be changed by user:
-                this.temporal.layer = $3dTilesTemporalLayer;
-
-                const tiles = $3dTilesTemporalLayer.tileIndex.index;
-                const resultDates = [];
-                for (const currentTileNb in tiles) {
-                    const start = tiles[currentTileNb].boundingVolume.start_date;
-                    if (start) {
-                        resultDates.push(start);
-                    }
-                    const end = tiles[currentTileNb].boundingVolume.end_date;
-                    if (end) {
-                        resultDates.push(end);
-                    }
-                }
-                // When there is such thing as a minimum and maximum, inform the temporal
-                // widget of the data change and refresh the display.
-                // Note: when the dataset doesn't have a minimum of two dates the temporal
-                // widget remains with its default min/max values.
-                if (resultDates.length >= 2) {
-                    resultDates.sort();
-                    this.temporal.minTime = new moment(resultDates[0]);
-                    this.temporal.maxTime = new moment(resultDates[resultDates.length - 1]);
-                    this.temporal.changeTime(this.temporal.minTime);
-                    this.temporal.refresh();
-                }
-            }
-        );
+        // Request itowns view redraw
+        this.view.notifyChange();
     }
 
     /**
-     * Loads a config file. Module views should only be added after calling this method.
+     * Loads a config file. Module views should only be added after calling
+     * this method.
      * @param filePath The path to the config file.
      */
     async loadConfigFile(filePath) {

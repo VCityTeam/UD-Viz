@@ -16,7 +16,7 @@ import { ModuleView } from '../../Utils/ModuleView/ModuleView.js';
  * @param controls : PlanarControls instance
  * @param options : optional parameters (including TemporalController)
  * @param view :  itowns planar view
- * @param config : file holding congiguration settings
+ * @param config : file holding configuration settings
  */
 //=============================================================================
 export class DocumentController extends ModuleView {

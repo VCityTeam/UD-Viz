@@ -10,7 +10,7 @@ UDV Modules are :
  * Documents : DocumentHandler class, Document class + related GUI elements
  * Guided Tour : GuidedTourController class, TourStep class + related GUI elements
  * Temporal : TemporalController class + related GUI elements
- * Other : minimap, help, about (basic functionalities with their GUI elements)
+ * Other : help, about (basic functionalities with their GUI elements)
  
 To include a module : 
  * add the js file to the index.html, no need to add html divs for the GUI. Each module handles its own GUI elements by adding a div to the html.

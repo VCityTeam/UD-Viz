@@ -6,6 +6,10 @@ let baseDemo = new BaseDemo({
 });
 
 baseDemo.appendTo(document.body);
+
+// Initialize iTowns 3D view
+baseDemo.init3DView();
+
 baseDemo.loadConfigFile('../data/config/generalDemoConfig.json').then(() => {
     ////// REQUEST SERVICE
     const requestService = new udvcore.RequestService();
@@ -17,13 +21,6 @@ baseDemo.loadConfigFile('../data/config/generalDemoConfig.json').then(() => {
     ////// HELP MODULE
     const help  = new udvcore.HelpWindow();
     baseDemo.addModuleView('help', help);
-
-    ////// MINIMAP MODULE
-    const minimap = new udvcore.MiniMapController(baseDemo.controls,
-        baseDemo.extent, baseDemo.renderer);
-
-    ////// COMPASS MODULE
-    const compass = new udvcore.CompassController(baseDemo.controls);
 
     ////// DOCUMENTS MODULE
     const documents = new udvcore.DocumentController(baseDemo.view,
