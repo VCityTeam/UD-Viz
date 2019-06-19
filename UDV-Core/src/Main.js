@@ -1,5 +1,4 @@
 import * as itowns from 'itowns';
-import proj4 from 'proj4';
 
 // This is temporary, until we're able to build a vendor.js
 // containing our dependencies.
