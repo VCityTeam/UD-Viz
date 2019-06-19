@@ -127,7 +127,7 @@ export class GuidedTour extends Window {
 
     this.currentStep = this.guidedTourController.getCurrentStep();
     this.documentBrowser.currentMetadata =
-                    this.guidedTourController.getCurrentStep().document.metaData;
+                    this.guidedTourController.getCurrentStep().document;
     this.documentBrowser.currentDoc = this.guidedTourController.getCurrentStep().document;
     this.documentBrowser.updateBrowser();
     document.getElementById("guidedTourText1").innerHTML = this.currentStep.text1;

@@ -147,7 +147,7 @@ export class DocumentBrowser extends Window {
             this.currentDoc = this.documentController.getNextDoc();
         }
         this.currentDoc = this.documentController.setOfDocuments[this.documentController.docIndex];
-        this.currentMetadata = this.currentDoc.metaData;
+        this.currentMetadata = this.currentDoc;
         this.updateBrowser();
     };
 
@@ -161,7 +161,7 @@ export class DocumentBrowser extends Window {
             this.currentDoc = this.documentController.getPreviousDoc();
         }
         this.currentDoc = this.documentController.setOfDocuments[this.documentController.docIndex];
-        this.currentMetadata = this.currentDoc.metaData;
+        this.currentMetadata = this.currentDoc;
         this.updateBrowser();
     };
 
@@ -177,7 +177,7 @@ export class DocumentBrowser extends Window {
         if (this.currentDoc != null & this.numberDocs > 0) {
             var txt = '';
             txt += "<div id ='docMetadata'>";
-            var metadata = this.documentController.documentModel.metaData;
+            var metadata = this.documentController.documentModel;
 
             for (var key in metadata) {
                 var attribute = metadata[key]; // holds all metadata relative information
@@ -283,7 +283,7 @@ export class DocumentBrowser extends Window {
         this.docIndex = 1;
         this.currentDoc = this.documentController.setOfDocuments[0];
         try {
-            this.currentMetadata = this.currentDoc.metaData;
+            this.currentMetadata = this.currentDoc;
         } catch (e) {
             console.error(e);
         }

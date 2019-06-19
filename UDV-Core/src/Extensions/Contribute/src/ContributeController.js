@@ -148,7 +148,7 @@ export function ContributeController(documentController, requestService){
     for (var pair of this.formData.entries() ){
       var val = pair[0];
       if( val != "file"){ //is not file filed
-        var attr = this.documentController.documentModel.metaData[val];
+        var attr = this.documentController.documentModel[val];
         if( attr['optional'] == 'false'){//is mandatory
           if(pair[1] == ""){  //but not provided
           var id = "create_"+pair[0];
@@ -230,7 +230,7 @@ export function ContributeController(documentController, requestService){
 
     //get current doc data and id
     var currentDoc = this.documentController.getCurrentDoc();
-    var id = currentDoc.metaData['id'];
+    var id = currentDoc['id'];
 
     //new promise
     this.requestService.send('PUT', this.documentUrl + '/' + id, this.updatedData)
@@ -262,7 +262,7 @@ export function ContributeController(documentController, requestService){
     if(confirm('Delete this document permanently?')){
       //get current doc data and id
       var currentDoc = this.documentController.getCurrentDoc();
-      var id = currentDoc.metaData['id'];
+      var id = currentDoc['id'];
 
       this.requestService.send('DELETE', this.documentUrl + "/" + id)
         .then((response) => {

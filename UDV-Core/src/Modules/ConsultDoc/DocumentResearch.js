@@ -88,7 +88,7 @@ export class DocumentResearch extends Window
 
     docModelToSchema(){
       //only use the metadata
-      var metadata = this.documentController.documentModel.metaData;
+      var metadata = this.documentController.documentModel;
       //schema has at least a file input
       var schema =
       {

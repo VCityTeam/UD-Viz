@@ -63,7 +63,7 @@ export function DocToValidateService(requestService, config) {
         const filtered = this.filteredDocuments.filter((document) => {
             for (let filter of filters) {
                 if (filter.text !== undefined && filter.text !== null && filter.text !== '') {
-                    let documentProp = document.metaData[filter.property];
+                    let documentProp = document[filter.property];
                     if (filter.type === 'includes'
                             && (typeof(documentProp) !== 'string'
                             || !documentProp.toLowerCase()

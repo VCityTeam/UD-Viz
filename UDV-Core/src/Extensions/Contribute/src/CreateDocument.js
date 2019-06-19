@@ -176,7 +176,7 @@ export class CreateDocument extends Window {
   //=============================================================================
   docModelToSchema(){
     //only use the metadata
-    var metadata = this.contributeController.documentController.documentModel.metaData;
+    var metadata = this.contributeController.documentController.documentModel;
     //schema has at least a file input
     var schemaType =
     {
@@ -210,6 +210,8 @@ export class CreateDocument extends Window {
     for (var key in metadata) {
       var attribute = metadata[key]; //holds all metadata relative information
 
+      //if the name exists
+      if (!!attribute['name']) {
          //dynamic build the schema
           schemaType.properties[attribute['name']]={};
           optionsCreate.fields[attribute['name']] = {};
@@ -227,9 +229,10 @@ export class CreateDocument extends Window {
             optionsCreate.fields[attribute['name']]['type'] = 'select';
             schemaType.properties[attribute['name']]['enum'] = attribute['enum']
           }
-
+      }
     }
 
+    console.log(schemaType);
     //Create form using alpaca
     $("#creationWindow").alpaca({
          "schemaSource": schemaType,

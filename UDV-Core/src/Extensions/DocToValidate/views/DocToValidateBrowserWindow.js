@@ -84,20 +84,20 @@ export class DocToValidateBrowserWindow extends Window {
         if (currentDocument !== undefined && currentDocument !== null) {
             const author = await this.docToValidateService.getAuthor();
             document.getElementById('docToValidate_Browser_title')
-                .innerHTML = currentDocument.metaData.title;
+                .innerHTML = currentDocument.title;
             document.getElementById('docToValidate_Browser_description')
-                .innerHTML = currentDocument.metaData.description;
+                .innerHTML = currentDocument.description;
             document.getElementById('docToValidate_Browser_referringDate')
-                .innerHTML = (new Date(currentDocument.metaData.refDate))
+                .innerHTML = (new Date(currentDocument.refDate))
                              .toLocaleDateString();
             document.getElementById('docToValidate_Browser_author_name')
                 .innerHTML = author.firstName + " " + author.lastName
                             + " (" + author.email + ")";
             document.getElementById('docToValidate_Browser_publicationDate')
-                .innerHTML = (new Date(currentDocument.metaData.publicationDate))
+                .innerHTML = (new Date(currentDocument.publicationDate))
                              .toLocaleDateString();
             document.getElementById('docToValidate_Browser_subject')
-                .innerHTML = currentDocument.metaData.subject;
+                .innerHTML = currentDocument.subject;
             //getting the image
             let imgData = await this.docToValidateService.getImageData();
             document.getElementById('docToValidate_Browser_file')
@@ -163,7 +163,7 @@ export class DocToValidateBrowserWindow extends Window {
     orientDocument() {
         document.getElementById('docFull').style.display = 'block';
         let currentDocument = this.docToValidateService.currentDocument();
-        let currentMetadata = currentDocument.metaData;
+        let currentMetadata = currentDocument;
         let src = document.getElementById('docToValidate_Browser_file').src;
         document.getElementById('docFullImg').src = src;
         document.getElementById('docFullImg').style.opacity = 0;
@@ -267,13 +267,13 @@ export class DocToValidateBrowserWindow extends Window {
             .onclick = this.updateDocument.bind(this);
         let doc = this.docToValidateService.currentDocument();
         document.getElementById('docToValidate_updateForm_description')
-            .value = doc.metaData.description;
+            .value = doc.description;
         document.getElementById('docToValidate_updateForm_referringDate')
-            .value = doc.metaData.refDate;
+            .value = doc.refDate;
         document.getElementById('docToValidate_updateForm_publicationDate')
-            .value = doc.metaData.publicationDate;
+            .value = doc.publicationDate;
         document.getElementById('docToValidate_updateForm_subject')
-            .value = doc.metaData.subject;
+            .value = doc.subject;
     }
 
     displayBrowser() {
