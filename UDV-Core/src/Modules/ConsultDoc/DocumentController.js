@@ -180,7 +180,7 @@ export class DocumentController extends ModuleView {
     this.currentDoc = this.setOfDocuments[0];
     if (this.currentDoc !== null && this.currentDoc !== undefined) {
       this.documentBrowser.currentDoc = this.currentDoc;
-      this.documentBrowser.currentMetadata = this.currentDoc.metaData;
+      this.documentBrowser.currentMetadata = this.currentDoc;
     }
     this.documentBrowser.updateBrowser();
   }

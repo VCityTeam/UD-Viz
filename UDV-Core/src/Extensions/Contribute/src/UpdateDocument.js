@@ -104,7 +104,7 @@ export class UpdateDocument extends Window {
   //=============================================================================
   docModelToSchema(){
 
-    var metadata = this.contributeController.documentController.documentModel.metaData;
+    var metadata = this.contributeController.documentController.documentModel;
 
     var view = { //so that the attribute that can not be modified are also displayed
       "displayReadonly": false
@@ -112,27 +112,28 @@ export class UpdateDocument extends Window {
 
     for (var key in metadata) {
       var attribute = metadata[key]; //holds all metadata relative information
-      this.schemaType.properties[attribute['name']]={};
-      this.optionsUpdate.fields[attribute['name']] = {};
-      this.optionsUpdate.fields[attribute['name']]['id'] = attribute['updateID'];
-      this.optionsUpdate.fields[attribute['name']]['inputType'] = attribute['type'];
-      this.optionsUpdate.fields[attribute['name']]['name'] = attribute['name'];
+      if (!!attribute['name']) {
+        this.schemaType.properties[attribute['name']]={};
+        this.optionsUpdate.fields[attribute['name']] = {};
+        this.optionsUpdate.fields[attribute['name']]['id'] = attribute['updateID'];
+        this.optionsUpdate.fields[attribute['name']]['inputType'] = attribute['type'];
+        this.optionsUpdate.fields[attribute['name']]['name'] = attribute['name'];
 
-      if(attribute['label'] != "false"){ //add label if required
-        this.optionsUpdate.fields[attribute['name']]['label'] = attribute['label'];
+        if(attribute['label'] != "false"){ //add label if required
+          this.optionsUpdate.fields[attribute['name']]['label'] = attribute['label'];
+        }
+
+        if(attribute['type'] == "enum"){
+          this.optionsUpdate.fields[attribute['name']]['type'] = 'select';
+          this.schemaType.properties[attribute['name']]['enum'] = attribute['enum'];
+        }
+
+        if(attribute['updatable'] == "false"){
+          //if not updatable, displayed in "readonly"
+          //only displayed is displayReadonly is set to true
+          this.optionsUpdate.fields[attribute['name']]['readonly'] = "true";
+        }
       }
-
-      if(attribute['type'] == "enum"){
-        this.optionsUpdate.fields[attribute['name']]['type'] = 'select';
-        this.schemaType.properties[attribute['name']]['enum'] = attribute['enum'];
-      }
-
-      if(attribute['updatable'] == "false"){
-        //if not updatable, displayed in "readonly"
-        //only displayed is displayReadonly is set to true
-        this.optionsUpdate.fields[attribute['name']]['readonly'] = "true";
-      }
-
 
     }
     //Creating an empty form using alpaca
@@ -162,7 +163,7 @@ export class UpdateDocument extends Window {
   //=============================================================================
   fillUpdateForm(){
     //holds the current document's data (= the one currently shown in the browser)
-    this.data =  this.contributeController.documentController.getCurrentDoc().metaData;
+    this.data =  this.contributeController.documentController.getCurrentDoc();
     $('#'+ this.updateFormId).alpaca('get').setValue(this.data);
     document.getElementById('docUpdatePreviewImg').src = this.contributeController.documentController.url
                 + this.contributeController.documentController.serverModel.document + '/'
