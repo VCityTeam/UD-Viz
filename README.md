@@ -6,6 +6,7 @@ Server-side tools can be found [here](https://github.com/MEPP-team/UDV-server).
 
 ## Demo
 Online demos (alas only visible on the [Lyon1](https://sciences.univ-lyon1.fr/)/[INSA-Lyon](https://www.insa-lyon.fr/en/) campus):
+ - [UDV](http://rict.liris.cnrs.fr/UDVDemo-2/UDV/UDV-Core/)
  - [Vilo3D](http://rict.liris.cnrs.fr/Vilo3D/UDV/Vilo3D/)
 
 ## Current features (regrouped by Modules) :
