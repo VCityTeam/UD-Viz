@@ -10,7 +10,8 @@
     "comment" : "comment",
     "validate": "document/validate",
     "file": "file",
-    "guidedTour": "guidedTour"
+    "guidedTour": "guidedTour",
+    "link": "link"
   },
   "geocoding":{
     "url":"https://nominatim.openstreetmap.org/search",

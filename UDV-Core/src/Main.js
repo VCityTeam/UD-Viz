@@ -29,3 +29,6 @@ export { DocumentCommentsWindow }   from './Extensions/DocumentComments/views/Do
 
 export { GeocodingService }         from './Extensions/Geocoding/services/GeocodingService';
 export { GeocodingView }            from './Extensions/Geocoding/views/GeocodingView';
+
+export { LinkVisualizationService } from './Extensions/LinkVisualization/services/LinkVisualizationService';
+export { LinkVisualizationWindow }    from './Extensions/LinkVisualization/views/LinkVisualizationWindow';
