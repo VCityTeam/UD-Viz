@@ -1,5 +1,6 @@
 import { Window } from "../../../Utils/GUI/js/Window";
 import { LinkVisualizationService } from "../services/LinkVisualizationService";
+import * as utils from "../../../Utils/3DTiles/3DTilesUtils";
 
 import './LinksVisualizationStyle.css';
 
@@ -67,8 +68,14 @@ export class LinkVisualizationWindow extends Window {
   async createLink() {
     window.addEventListener('mousedown', (event) => {
       let intersects = this.itownsView.pickObjectsAt(event, 5);
-      console.log('Intersect !');
       console.log(intersects);
+      let inter = utils.getFirst3dObjectIntersection(intersects);
+      let buildingId = utils.getBuildingIdFromIntersection(inter);
+      console.log(buildingId); 
+      let buildingInfo = utils.searchBuildingInfo(this.itownsView.getLayerById('3d-tiles-layer'), buildingId);
+      console.log(buildingInfo);
+      utils.colorBuilding(buildingInfo, [1, 0, 0]);
+      this.itownsView.notifyChange();
     });
   }
 
