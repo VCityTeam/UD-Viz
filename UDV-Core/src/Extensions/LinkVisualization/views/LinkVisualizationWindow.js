@@ -8,16 +8,19 @@ export class LinkVisualizationWindow extends Window {
    * Creates a new link visualization window.
    * 
    * @param {LinkVisualizationService} linkVisualizationService 
+   * @param {View} itownsView The iTowns view.
    */
-  constructor(linkVisualizationService) {
+  constructor(linkVisualizationService, itownsView) {
     super('link_visu', 'Link Visualization', false);
     this.linkVisualizationService = linkVisualizationService;
+    this.itownsView = itownsView;
   }
 
   get innerContentHtml() {
     return `
       <div>
         <button id="${this.fetchLinksButtonId}">Fetch</button>
+        <button id="${this.createLinkButtonId}">Create</button>
       </div>
       <div id="${this.linksDivId}">
 
@@ -27,6 +30,7 @@ export class LinkVisualizationWindow extends Window {
 
   windowCreated() {
     this.fetchLinksButtonElement.onclick = () => { this.fetchLinks() };
+    this.createLinkButtonElement.onclick = () => { this.createLink() };
   }
 
   async fetchLinks() {
@@ -60,12 +64,28 @@ export class LinkVisualizationWindow extends Window {
     console.log(link);
   }
 
+  async createLink() {
+    window.addEventListener('mousedown', (event) => {
+      let intersects = this.itownsView.pickObjectsAt(event, 5);
+      console.log('Intersect !');
+      console.log(intersects);
+    });
+  }
+
   get fetchLinksButtonId() {
     return `${this.windowId}_button_fetch`;
   }
 
   get fetchLinksButtonElement() {
     return document.getElementById(this.fetchLinksButtonId);
+  }
+
+  get createLinkButtonId() {
+    return `${this.windowId}_button_create`;
+  }
+
+  get createLinkButtonElement() {
+    return document.getElementById(this.createLinkButtonId);
   }
 
   get linksDivId() {

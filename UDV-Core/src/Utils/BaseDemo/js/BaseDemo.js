@@ -409,11 +409,13 @@ export class BaseDemo {
             '3d-tiles-layer', new THREE.Group());
         $3dTilesLayer.name = 'Lyon-2015';
         $3dTilesLayer.url =
-            'https://threedtilesets.alpha.grandlyon.com/TileSet_Lyon_2015_full/tileset.json';
+            this.config['3DTilesLayerURL'];
         $3dTilesLayer.protocol = '3d-tiles';
         $3dTilesLayer.overrideMaterials = true;
 
         itowns.View.prototype.addLayer.call(this.view, $3dTilesLayer);
+
+        console.log($3dTilesLayer);
 
         // ********* 3D Elements
         // Lights

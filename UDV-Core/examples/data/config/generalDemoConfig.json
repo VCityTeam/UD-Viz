@@ -13,6 +13,7 @@
     "guidedTour": "guidedTour",
     "link": "link"
   },
+  "3DTilesLayerURL": "http://localhost:8003/tilesets/Lyon/tileset.json",
   "geocoding":{
     "url":"https://nominatim.openstreetmap.org/search",
     "credit": "© OpenStreetMap contributors under <a href=\"https://www.openstreetmap.org/copyright\">ODbL</a>",

@@ -17,7 +17,6 @@
 
 .links-lister .link-selector {
   cursor: pointer;
-  user-select: none;
 }
 
 .links-lister .link-selector:hover {
