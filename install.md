@@ -37,7 +37,7 @@ You will then be able to run the full module demo of UDV.
 ## Notes
 
 * For an install of the full pipeline of our application refer to
-[these install notes](https://github.com/MEPP-team/RICT/blob/master/Install.md)
+[these install notes](https://github.com/MEPP-team/RICT/blob/master/Install.md).
 
 * **Windows**
   - Install and update npm which Windows Powershell
