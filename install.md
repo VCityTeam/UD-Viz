@@ -22,6 +22,18 @@
 Use your web browser to open
 `http://localhost:8080/`.
 
+If the server-side component is not installed on your computer, you will not be able to run the full module demo of Urban Data Viewer.
+
+Thus, you can choose one of those solutions to do so:
+
+  * Either you install all the tools necessary for the server-side [here](https://github.com/MEPP-team/RICT/blob/master/Install.md) in order to be able to run the app locally;
+
+  * Or you can also modify the attribute _server.url_ of the file `<path-to-UDV>/UDV-Core/examples/data/config/generalDemoConfig.json` as described below:
+```
+"url":"http://rict.liris.cnrs.fr:5000/",
+```
+You will then be able to run the full module demo of UDV.
+
 ## Notes
 
 * For an install of the full pipeline of our application refer to
