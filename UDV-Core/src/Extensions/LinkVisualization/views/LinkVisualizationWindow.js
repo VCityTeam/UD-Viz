@@ -1,6 +1,7 @@
 import { Window } from "../../../Utils/GUI/js/Window";
 import { LinkVisualizationService } from "../services/LinkVisualizationService";
-import * as utils from "../../../Utils/3DTiles/3DTilesUtils";
+import { } from '../../../Utils/3DTiles/3DTilesUtils'
+import { getTilesBuildingInfo, colorBuilding } from '../../../Utils/3DTiles/3DTilesBuildingUtils'
 
 import './LinksVisualizationStyle.css';
 
@@ -15,6 +16,10 @@ export class LinkVisualizationWindow extends Window {
     super('link_visu', 'Link Visualization', false);
     this.linkVisualizationService = linkVisualizationService;
     this.itownsView = itownsView;
+
+    this.layer = itownsView.getLayerById('3d-tiles-layer');
+    this.tbi = null;
+    this.selectedColor = [1, 0, 0];
   }
 
   get innerContentHtml() {
@@ -61,22 +66,21 @@ export class LinkVisualizationWindow extends Window {
   }
 
   async selectLink(link) {
-    console.log('Selected link : ');
-    console.log(link);
+    this.tbi = getTilesBuildingInfo(this.layer);
+    console.log(this.tbi);
+    let buildingId = link.target_id;
+    console.log(buildingId);
+    let buildingInfo = this.tbi.buildings[buildingId];
+    console.log(buildingInfo);
+    console.log(this.layer);
+    if (!!buildingInfo) {
+      colorBuilding(this.layer, buildingInfo, [0, 1, 0]);
+      this.itownsView.notifyChange();
+    }
   }
 
   async createLink() {
-    window.addEventListener('mousedown', (event) => {
-      let intersects = this.itownsView.pickObjectsAt(event, 5);
-      console.log(intersects);
-      let inter = utils.getFirstTileIntersection(intersects);
-      let buildingId = utils.getBuildingIdFromIntersection(inter);
-      console.log(buildingId); 
-      let buildingInfo = utils.searchBuildingInfo(this.itownsView.getLayerById('3d-tiles-layer'), buildingId);
-      console.log(buildingInfo);
-      utils.colorBuilding(buildingInfo, [1, 0, 0]);
-      this.itownsView.notifyChange();
-    });
+    console.log('Create link !!');
   }
 
   get fetchLinksButtonId() {

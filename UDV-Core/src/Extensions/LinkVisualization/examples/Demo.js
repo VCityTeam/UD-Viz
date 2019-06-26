@@ -19,4 +19,10 @@ baseDemo.loadConfigFile('../../../../examples/data/config/generalDemoConfig.json
     const linkVisualizationService = new udvcore.LinkVisualizationService(requestService, baseDemo.config);
     const linkVisualizationWindow = new udvcore.LinkVisualizationWindow(linkVisualizationService, baseDemo.view);
     baseDemo.addModuleView('linkVisualization', linkVisualizationWindow);
+
+    ////// 3DTILES DEBUG
+    const debug3dTilesWindow = new udvcore.Debug3DTilesWindow(baseDemo.view);
+    baseDemo.addModuleView('3dtilesDebug', debug3dTilesWindow, {
+        name: '3DTiles Debug'
+    });
 });
