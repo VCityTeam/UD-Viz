@@ -1,5 +1,6 @@
 import { Window } from "../../../Utils/GUI/js/Window";
-import * as utils from '../../../Utils/3DTiles/3DTilesUtils';
+import { getFirst3dObjectIntersection, getVisibleTileCount, removeTileVerticesColor } from '../../../Utils/3DTiles/3DTilesUtils';
+import { colorBuilding, getBuildingIdFromIntersection, getTilesBuildingInfo} from '../../../Utils/3DTiles/3DTilesBuildingUtils';
 
 export class Debug3DTilesWindow extends Window {
   constructor(itownsView) {
@@ -32,7 +33,7 @@ export class Debug3DTilesWindow extends Window {
       window.removeEventListener('mousedown', clickListener);
       window.removeEventListener('mousemove', moveListener);
       if (!!this.selectedBuildingInfo) {
-        utils.removeTileVerticesColor(this.selectedBuildingInfo.tile);
+        removeTileVerticesColor(this.selectedBuildingInfo.tile);
         this.itownsView.notifyChange();
       }
     });
@@ -76,7 +77,7 @@ export class Debug3DTilesWindow extends Window {
   }
 
   updateTBI() {
-    this.tbi = utils.getTilesBuildingInfo(this.layer, this.tbi);
+    this.tbi = getTilesBuildingInfo(this.layer, this.tbi);
     this.TBIInfoParagraphElement.innerText = `${this.tbi.loadedTileCount} / ${this.tbi.totalTileCount} tiles loaded.`;
   }
 
@@ -85,13 +86,13 @@ export class Debug3DTilesWindow extends Window {
   }
 
   onMouseMove(event) {
-    let visibleTileCount = utils.getVisibleTileCount(this.layer);
+    let visibleTileCount = getVisibleTileCount(this.layer);
     this.visibleTilesParagraphElement.innerText = `${visibleTileCount} tiles visible.`
     if (event.target.nodeName.toUpperCase() === 'CANVAS') {
       let intersections = this.itownsView.pickObjectsAt(event, 5);
-      let firstInter = utils.getFirst3dObjectIntersection(intersections);
+      let firstInter = getFirst3dObjectIntersection(intersections);
       if (!!firstInter) {
-        let buildingId = utils.getBuildingIdFromIntersection(firstInter);
+        let buildingId = getBuildingIdFromIntersection(firstInter);
         this.hoveredBuildingId = buildingId;
         this.hoverDivElement.innerText = `Building ID : ${buildingId}`;
       } else {
@@ -121,9 +122,9 @@ export class Debug3DTilesWindow extends Window {
             Tile ID : ${buildingInfo.tile.tileId}
           `;
           if (!!this.selectedBuildingInfo) {
-            utils.removeTileVerticesColor(this.selectedBuildingInfo.tile);
+            removeTileVerticesColor(this.selectedBuildingInfo.tile);
           }
-          utils.colorBuilding(buildingInfo, this.selectedColor);
+          colorBuilding(buildingInfo, this.selectedColor);
           this.itownsView.notifyChange();
           this.selectedBuildingInfo = buildingInfo;
         } else {
