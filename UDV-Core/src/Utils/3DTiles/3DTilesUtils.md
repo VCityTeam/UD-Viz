@@ -136,3 +136,68 @@ This function gets building information from its ID. It searches in every displa
 Sets the specified color to the building in parameter.
 
 ## Code examples
+
+A working code example can be found with the `3DTilesDebug` extension. In this section, we are going to take pieces of code from the source files to illustrate the use of some of the utility functions.
+
+### Get a tile under the mouse
+
+Using the iTowns `View` object, it is possible to get objects from the mouse positions. We can for example fetch a 3DTiles' tile under the mouse :
+
+```js
+let intersections = this.itownsView.pickObjectsAt(event, 5);
+let tileIntersection = getFirstTileIntersection(intersections);
+let tile = tileIntersection.object;
+```
+
+In the actual code, we fetch the building ID from the intersection :
+
+```js
+let intersections = this.itownsView.pickObjectsAt(event, 5);
+let tileIntersection = getFirstTileIntersection(intersections);
+if (!!tileIntersection) {
+  let buildingId = getBuildingIdFromIntersection(tileIntersection);
+  //...
+}
+```
+
+### Get and maintain a TBI
+
+In our class, we keep a TBI object with the `tbi` field. In the constructor, we set it to `null` and we create a function called `updateTBI`, that will be triggered when clicking a button.
+
+```js
+constructor(itownsView) {
+  //...
+  this.layer = itownsView.getLayerById('3d-tiles-layer');
+  this.tbi = null;
+  //...
+}
+
+updateTBI() {
+  this.tbi = getTilesBuildingInfo(this.layer, this.tbi);
+}
+```
+
+The first time `updateTBI` runs, the `tbi` parameter passed to `getTilesBuildingInfo` is null, so the function returns a brand new TBI. When the function is called afterwards, it will update the TBI with tiles that hasn't been added yet, preventing it to reload completely.
+
+### Get building info and color a building
+
+We want to color a building when we click on it. We have seen how to get its building ID, now let's see how to color it :
+
+```js
+let buildingInfo = this.tbi.buildings[buildingId]; //get building info
+if (!!buildingInfo) {
+  if (!!this.previousBuilding) {
+    //un-color the previous selected building
+    let tile = getTileInTileset(this.tbi.tileset,
+                                this.previousBuilding.tileId);
+    removeTileVerticesColor(tile);
+  }
+  colorBuilding(this.layer, buildingInfo, this.selectedColor);
+  this.itownsView.notifyChange();
+  this.previousBuilding = buildingInfo;
+}
+```
+
+If we had previously colored another building, we want to un-color it. We do that by removing vertex colors from the tile.
+
+We have to call iTowns' function `notifyChange` in order to the view to be redrawn. Otherwise, the color changes won't appear in the scene.
