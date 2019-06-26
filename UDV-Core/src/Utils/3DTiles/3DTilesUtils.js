@@ -30,34 +30,55 @@ export function getFirst3dObjectIntersection(intersects) {
   return undefined;
 }
 
-export function getBuildingInfoDict(layer) {
-  let dict = {};
-  console.log('Analyzing the 3DTiles layer...');
-  console.log(layer);
+export function getVisibleTileCount(layer) {
+  let tsroot = layer.object3d.children[0];
+  return Object.keys(tsroot.children).length;
+}
+
+/**
+ * Creates a Tile Building Info (TBI) dictionnary from a 3DTiles Layer.
+ * The TBI is an object containing associations between Building Ids and
+ * building-specific elements (mainly, the associated tile and the set of
+ * batch array indexes).
+ * 
+ * @param {*} layer The 3DTiles layer.
+ * @param {*} tbi An existing TBI for this layer. Tiles that are currently
+ * loaded in the layer will be added to the TBI if they're not already present.
+ * If no TBI is provided, a brand new one will be instantiated with currently
+ * loaded tiles.
+ */
+export function getTilesBuildingInfo(layer, tbi = null) {
+  // Instantiate the TBI if it does not exist
+  if (!tbi) {
+    tbi = {};
+    tbi.totalTileCount = 0;
+    tbi.loadedTileCount = 0;
+    tbi.loadedTiles = {};
+    tbi.buildings = {};
+  }
   let tileIndex = layer.tileIndex;
   let tileCount = tileIndex.index['1'].children.length;
-  console.log('Number of tiles (with root) : ' + tileCount);
+  tbi.totalTileCount = tileCount;
   let tsroot = layer.object3d.children[0];
-  console.log('Root of the tileset : ');
-  console.log(tsroot);
-  console.log(`${tsroot.children.length} tiles are loaded`);
   for (let tile of tsroot.children) {
-    console.log('--- tile ' + tile.tileId);
-    let batchTable = tile.batchTable;
-    let attributes = tile.children[0].children[0].geometry.attributes;
-    console.log(batchTable);
-    console.log(attributes);
-    attributes._BATCHID.array.forEach((batchId, arrayIndex) => {
-      let buildingId = batchTable.content['cityobject.database_id'][batchId];
-      if (!dict[buildingId]) {
-        dict[buildingId] = {};
-        dict[buildingId].arrayIndexes = [];
-        dict[buildingId].tile = tile;
-      }
-      dict[buildingId].arrayIndexes.push(arrayIndex);
-    });
+    let tileId = tile.tileId;
+    if (!tbi.loadedTiles[tileId]) {
+      let batchTable = tile.batchTable;
+      let attributes = tile.children[0].children[0].geometry.attributes;
+      attributes._BATCHID.array.forEach((batchId, arrayIndex) => {
+        let buildingId = batchTable.content['cityobject.database_id'][batchId];
+        if (!tbi.buildings[buildingId]) {
+          tbi.buildings[buildingId] = {};
+          tbi.buildings[buildingId].arrayIndexes = [];
+          tbi.buildings[buildingId].tile = tile;
+        }
+        tbi.buildings[buildingId].arrayIndexes.push(arrayIndex);
+      });
+      tbi.loadedTiles[tileId] = tile;
+      tbi.loadedTileCount += 1;
+    }
   }
-  return dict;
+  return tbi;
 }
 
 export function searchBuildingInfo(layer, buildingId) {
@@ -100,6 +121,10 @@ export function setTileVerticesColor(tile, newColor, indexArray = null) {
     tile = tile.children[0];
   }
 
+  if (!tile.geometry) {
+    throw 'Tile not loaded in view';
+  }
+
   if (!tile.geometry.attributes._BATCHID) {
     throw 'Invalid tile';
   }
@@ -127,15 +152,43 @@ export function setTileVerticesColor(tile, newColor, indexArray = null) {
     colors[i * 3 + 2 ] = vertexColor[2];
   }
 
+  //We need to use the color of the vertices, not the material
+  tile.material.vertexColors = THREE.VertexColors;
+
   if (!tile.geometry.attributes.color) {
     //If no vertex color is present, we need to add the BufferAttribute
-    tile.material.vertexColors = THREE.VertexColors;
     tile.geometry.addAttribute('color', new THREE.BufferAttribute(colors, 3));
   } else {
     //Else we need to update the existing attribute
     tile.geometry.attributes.color.set(colors);
     tile.geometry.attributes.color.needsUpdate = true;
   }
+}
+
+/**
+ * 
+ * @param {*} tile 
+ */
+export function removeTileVerticesColor(tile) {
+  //Find the 'Mesh' part of the tile
+  while (!!tile.children[0] && !(tile.type === 'Mesh')) {
+    tile = tile.children[0];
+  }
+
+  if (!tile.geometry) {
+    throw 'Tile not loaded in view';
+  }
+
+  if (!tile.geometry.attributes._BATCHID) {
+    throw 'Invalid tile';
+  }
+
+  if (tile.geometry.type !== 'BufferGeometry') {
+    throw 'Cannot change vertices color';
+  }
+
+  //We go back to the color of the material
+  tile.material.vertexColors = THREE.NoColors;
 }
 
 export function colorBuilding(buildingInfo, color) {

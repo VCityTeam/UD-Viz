@@ -31,4 +31,6 @@ export { GeocodingService }         from './Extensions/Geocoding/services/Geocod
 export { GeocodingView }            from './Extensions/Geocoding/views/GeocodingView';
 
 export { LinkVisualizationService } from './Extensions/LinkVisualization/services/LinkVisualizationService';
-export { LinkVisualizationWindow }    from './Extensions/LinkVisualization/views/LinkVisualizationWindow';
+export { LinkVisualizationWindow }  from './Extensions/LinkVisualization/views/LinkVisualizationWindow';
+
+export { Debug3DTilesWindow }       from './Extensions/3DTilesDebug/views/3DTilesDebugWindow';

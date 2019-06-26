@@ -1,5 +1,4 @@
 import { ModuleView } from '../../ModuleView/ModuleView.js';
-import { getBuildingInfoDict } from '../../3DTiles/3DTilesUtils.js';
 
 /**
  * Represents the base HTML content of a demo for UDV and provides methods to
