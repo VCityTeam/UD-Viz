@@ -8,7 +8,15 @@ export class Debug3DTilesWindow extends Window {
     this.itownsView = itownsView;
     this.layer = itownsView.getLayerById('3d-tiles-layer');
     this.tbi = null;
-    this.loadedTileColor = [0, 1, 0.5];
+    this.selectedColor = [1, 0, 0];
+    /**
+     * Building info of the selected building.
+     */
+    this.selectedBuildingInfo;
+    /**
+     * Building id of the hovered building.
+     */
+    this.hoveredBuildingId;
 
     let clickListener = (event) => {
       this.onMouseClick(event);
@@ -23,6 +31,10 @@ export class Debug3DTilesWindow extends Window {
     this.addEventListener(Window.EVENT_DISABLED, () => {
       window.removeEventListener('mousedown', clickListener);
       window.removeEventListener('mousemove', moveListener);
+      if (!!this.selectedBuildingInfo) {
+        utils.removeTileVerticesColor(this.selectedBuildingInfo.tile);
+        this.itownsView.notifyChange();
+      }
     });
   }
 
@@ -109,9 +121,9 @@ export class Debug3DTilesWindow extends Window {
             Tile ID : ${buildingInfo.tile.tileId}
           `;
           if (!!this.selectedBuildingInfo) {
-            utils.colorBuilding(this.selectedBuildingInfo, [1, 1, 1]);
+            utils.removeTileVerticesColor(this.selectedBuildingInfo.tile);
           }
-          utils.colorBuilding(buildingInfo, [1, 0, 0]);
+          utils.colorBuilding(buildingInfo, this.selectedColor);
           this.itownsView.notifyChange();
           this.selectedBuildingInfo = buildingInfo;
         } else {

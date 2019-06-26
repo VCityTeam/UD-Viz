@@ -1,25 +1,52 @@
 import * as THREE from '../../../node_modules/three/src/Three.js';
 
-export function getBatchTableFrom3dObject(obj) {
-  if (!!obj.batchTable) {
-    return obj.batchTable;
-  } else if (!!obj.parent) {
-    return getBatchTableFrom3dObject(obj.parent);
+/**
+ * Search a batch table in a tile. A tile is a THREE.js 3DObject with a 
+ * 3-level hierarchy : Object3D > Scene > Mesh. This function searches into the
+ * for the batch table (which is located in the Object3D level).
+ * 
+ * @param {*} tile A 3DTiles tile object from THREE.js.
+ */
+export function getBatchTableFromTile(tile) {
+  if (!!tile.batchTable) {
+    return tile.batchTable;
+  } else if (!!tile.parent) {
+    return getBatchTableFromTile(tile.parent);
   }
   return undefined;
 }
 
+/**
+ * Gets an object's batch ID from an intersection. This methods takes one of the
+ * 3 points of the intersections' triangle and retrieves the corresponding batch
+ * ID in the intersection tile.
+ * 
+ * @param {*} inter An intersection
+ */
 export function getBatchIdFromIntersection(inter) {
   let index = inter.face.a;
   return inter.object.geometry.attributes._BATCHID.array[index];
 }
 
+/**
+ * Gets a building ID from an intersection. The intersection's object must
+ * be a "Mesh" object with a batch id.
+ * 
+ * @param {*} inter An intersection
+ */
 export function getBuildingIdFromIntersection(inter) {
-  let table = getBatchTableFrom3dObject(inter.object);
+  let table = getBatchTableFromTile(inter.object);
   let bid = getBatchIdFromIntersection(inter);
   return table.content['cityobject.database_id'][bid];
 }
 
+/**
+ * Get the first intersection object where the target is a 3D object with
+ * a batch id.
+ * 
+ * @param {Array<any>} intersects The array of intersections, provided by
+ * itowns.View.pickObjectsAt
+ */
 export function getFirst3dObjectIntersection(intersects) {
   for (let inter of intersects) {
     let geomAttributes = inter.object.geometry.attributes;
@@ -30,6 +57,11 @@ export function getFirst3dObjectIntersection(intersects) {
   return undefined;
 }
 
+/**
+ * Counts the number of 3DTiles tiles displayed by the view.
+ * 
+ * @param {*} layer The 3DTiles layer.
+ */
 export function getVisibleTileCount(layer) {
   let tsroot = layer.object3d.children[0];
   return Object.keys(tsroot.children).length;
@@ -46,6 +78,24 @@ export function getVisibleTileCount(layer) {
  * loaded in the layer will be added to the TBI if they're not already present.
  * If no TBI is provided, a brand new one will be instantiated with currently
  * loaded tiles.
+ * 
+ * @example
+ * let layer = view.getLayerById('3d-tiles-layer');
+ * //Fetch the TBI
+ * let tbi = getTilesBuildingInfo(layer);
+ * //Get a building ID from the mouse position
+ * let intersections = view.pickObjectsAt(mouseEvent, 5);
+ * let buildingId = getBuildingIdFromIntersection(
+ *                   getFirst3dObjectIntersection(intersections));
+ * //Display the building's infos
+ * console.log(tbi.buildings[buildingId]);
+ * 
+ * @example
+ * let layer = view.getLayerById('3d-tiles-layer');
+ * //Initialize the TBI
+ * let tbi = getTilesBuildingInfo(layer);
+ * //When the visible tiles change, update the TBI
+ * tbi = getTilesBuildingInfo(layer, tbi);
  */
 export function getTilesBuildingInfo(layer, tbi = null) {
   // Instantiate the TBI if it does not exist
@@ -81,6 +131,19 @@ export function getTilesBuildingInfo(layer, tbi = null) {
   return tbi;
 }
 
+/**
+ * Searches buiding information in the 3DTiles layer, from a building ID.
+ * This function searches for all batch attributes in the layer that matches
+ * the building ID. The search is done tile by tile, and once a matching
+ * building ID is found, the search stops after the current tile.
+ * 
+ * This function is extremely unefficient. You may prefer using a TBI to
+ * store building information and using it when needed. See
+ * `getTilesBuildingInfo`.
+ * 
+ * @param {*} layer The 3DTiles layer.
+ * @param {*} buildingId The building ID.
+ */
 export function searchBuildingInfo(layer, buildingId) {
   let buildingInfo = undefined;
   let tsroot = layer.object3d.children[0];
@@ -167,6 +230,7 @@ export function setTileVerticesColor(tile, newColor, indexArray = null) {
 
 /**
  * 
+ * 
  * @param {*} tile 
  */
 export function removeTileVerticesColor(tile) {
@@ -186,6 +250,9 @@ export function removeTileVerticesColor(tile) {
   if (tile.geometry.type !== 'BufferGeometry') {
     throw 'Cannot change vertices color';
   }
+
+  //Remove color attribute
+  tile.geometry.removeAttribute('color');
 
   //We go back to the color of the material
   tile.material.vertexColors = THREE.NoColors;
