@@ -30,12 +30,12 @@ export function getBatchIdFromIntersection(inter) {
 
 /**
  * Get the first intersection object where the target is a 3D object with
- * a batch id.
+ * a batch id (a.k.a. the "Mesh" of a tile).
  * 
  * @param {Array<any>} intersects The array of intersections, provided by
  * itowns.View.pickObjectsAt
  */
-export function getFirst3dObjectIntersection(intersects) {
+export function getFirstTileIntersection(intersects) {
   for (let inter of intersects) {
     let geomAttributes = inter.object.geometry.attributes;
     if (!!geomAttributes && !!geomAttributes._BATCHID) {
@@ -53,6 +53,31 @@ export function getFirst3dObjectIntersection(intersects) {
 export function getVisibleTileCount(layer) {
   let tsroot = layer.object3d.children[0];
   return Object.keys(tsroot.children).length;
+}
+
+/**
+ * Finds the tile in the tileset with the specific ID.
+ * 
+ * @param {*} tileset The 3DTiles tileset.
+ * @param {*} tileId The tile id.
+ */
+export function getTileInTileset(tileset, tileId) {
+  let tile = tileset.children.find((tile) => {
+    return tile.tileId === tileId;
+  });
+  return tile;
+}
+
+/**
+ * Find the tile in the 3DTiles layer with the specifid ID.
+ * 
+ * @param {*} layer The 3DTiles layer.
+ * @param {*} tileId The tile id.
+ */
+export function getTileInLayer(layer, tileId) {
+  let tsroot = layer.object3d.children[0];
+  let tile = getTileInTileset(tsroot, tileId);
+  return tile;
 }
 
 /**

@@ -1,5 +1,5 @@
 import { Window } from "../../../Utils/GUI/js/Window";
-import { getFirst3dObjectIntersection, getVisibleTileCount, removeTileVerticesColor } from '../../../Utils/3DTiles/3DTilesUtils';
+import { getFirstTileIntersection, getVisibleTileCount, removeTileVerticesColor, getTileInTileset, getTileInLayer } from '../../../Utils/3DTiles/3DTilesUtils';
 import { colorBuilding, getBuildingIdFromIntersection, getTilesBuildingInfo} from '../../../Utils/3DTiles/3DTilesBuildingUtils';
 
 export class Debug3DTilesWindow extends Window {
@@ -33,7 +33,8 @@ export class Debug3DTilesWindow extends Window {
       window.removeEventListener('mousedown', clickListener);
       window.removeEventListener('mousemove', moveListener);
       if (!!this.selectedBuildingInfo) {
-        removeTileVerticesColor(this.selectedBuildingInfo.tile);
+        let tile = getTileInLayer(this.layer, this.selectedBuildingInfo.tileId);
+        removeTileVerticesColor(tile);
         this.itownsView.notifyChange();
       }
     });
@@ -57,15 +58,15 @@ export class Debug3DTilesWindow extends Window {
       <div>
         This debug window uses the 3DTilesUtils methods. Use it to find
         information about buildings and city objects.<br>
-        The tool use a data structure, called the 'Tiles Building Information'
-        (TBI for short), which can only be constructed from visible tiles on the
-        screen. To retrieve information about a building, please make sure
-        that you click 'Update TBI' once it is visible on the screen.
+        See the <a href="../docs/3DTilesDebug.md">documentation
+        of the tool</a> and the <a href="../../../Utils/3DTiles/3DTilesUtils.md">documentation about utility
+        functions for 3DTiles and buildings</a>.
       </div>
     `;
   }
 
   windowCreated() {
+    this.window.style.width = '300px';
     this.loadTBIButtonElement.onclick = () => {
       this.updateTBI();
     };
@@ -90,7 +91,7 @@ export class Debug3DTilesWindow extends Window {
     this.visibleTilesParagraphElement.innerText = `${visibleTileCount} tiles visible.`
     if (event.target.nodeName.toUpperCase() === 'CANVAS') {
       let intersections = this.itownsView.pickObjectsAt(event, 5);
-      let firstInter = getFirst3dObjectIntersection(intersections);
+      let firstInter = getFirstTileIntersection(intersections);
       if (!!firstInter) {
         let buildingId = getBuildingIdFromIntersection(firstInter);
         this.hoveredBuildingId = buildingId;
@@ -118,13 +119,16 @@ export class Debug3DTilesWindow extends Window {
         if (!!buildingInfo) {
           console.log(buildingInfo);
           this.clickDivElement.innerHTML = /*html*/`
+            Building ID : ${buildingId}<br>
             ${buildingInfo.arrayIndexes.length} array indexes<br>
-            Tile ID : ${buildingInfo.tile.tileId}
+            Tile ID : ${buildingInfo.tileId}
           `;
           if (!!this.selectedBuildingInfo) {
-            removeTileVerticesColor(this.selectedBuildingInfo.tile);
+            let tile = getTileInTileset(this.tbi.tileset,
+                                        this.selectedBuildingInfo.tileId);
+            removeTileVerticesColor(tile);
           }
-          colorBuilding(buildingInfo, this.selectedColor);
+          colorBuilding(this.layer, buildingInfo, this.selectedColor);
           this.itownsView.notifyChange();
           this.selectedBuildingInfo = buildingInfo;
         } else {

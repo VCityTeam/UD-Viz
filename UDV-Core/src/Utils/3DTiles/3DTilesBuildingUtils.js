@@ -1,5 +1,6 @@
 import { setTileVerticesColor, getBatchIdFromIntersection,
-  getBatchTableFromTile } from "./3DTilesUtils";
+  getBatchTableFromTile, 
+  getTileInLayer} from "./3DTilesUtils";
 
 /**
  * Gets a building ID from an intersection. The intersection's object must
@@ -51,11 +52,13 @@ export function getTilesBuildingInfo(layer, tbi = null) {
     tbi.loadedTileCount = 0;
     tbi.loadedTiles = {};
     tbi.buildings = {};
+    tbi.tileset;
   }
   let tileIndex = layer.tileIndex;
   let tileCount = tileIndex.index['1'].children.length;
   tbi.totalTileCount = tileCount;
   let tsroot = layer.object3d.children[0];
+  tbi.tileset = tsroot;
   for (let tile of tsroot.children) {
     let tileId = tile.tileId;
     if (!tbi.loadedTiles[tileId]) {
@@ -66,11 +69,11 @@ export function getTilesBuildingInfo(layer, tbi = null) {
         if (!tbi.buildings[buildingId]) {
           tbi.buildings[buildingId] = {};
           tbi.buildings[buildingId].arrayIndexes = [];
-          tbi.buildings[buildingId].tile = tile;
+          tbi.buildings[buildingId].tileId = tile.tileId;
         }
         tbi.buildings[buildingId].arrayIndexes.push(arrayIndex);
       });
-      tbi.loadedTiles[tileId] = tile;
+      tbi.loadedTiles[tileId] = true;
       tbi.loadedTileCount += 1;
     }
   }
@@ -102,7 +105,7 @@ export function searchBuildingInfo(layer, buildingId) {
         if (!buildingInfo) {
           buildingInfo = {};
           buildingInfo.arrayIndexes = [];
-          buildingInfo.tile = tile;
+          buildingInfo.tileId = tileId;
         }
         buildingInfo.arrayIndexes.push(arrayIndex);
       }
@@ -118,9 +121,11 @@ export function searchBuildingInfo(layer, buildingId) {
 /**
  * Sets the color of one building in the scene.
  * 
- * @param {*} buildingInfo The building info
- * @param {Array<number>} color 
+ * @param {*} layer The 3DTiles layer.
+ * @param {*} buildingInfo The building info.
+ * @param {Array<number>} color The color.
  */
-export function colorBuilding(buildingInfo, color) {
-  setTileVerticesColor(buildingInfo.tile, color, buildingInfo.arrayIndexes);
+export function colorBuilding(layer, buildingInfo, color) {
+  let tile = getTileInLayer(layer, buildingInfo.tileId);
+  setTileVerticesColor(tile, color, buildingInfo.arrayIndexes);
 }

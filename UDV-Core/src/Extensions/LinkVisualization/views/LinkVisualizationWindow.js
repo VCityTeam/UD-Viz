@@ -69,7 +69,7 @@ export class LinkVisualizationWindow extends Window {
     window.addEventListener('mousedown', (event) => {
       let intersects = this.itownsView.pickObjectsAt(event, 5);
       console.log(intersects);
-      let inter = utils.getFirst3dObjectIntersection(intersects);
+      let inter = utils.getFirstTileIntersection(intersects);
       let buildingId = utils.getBuildingIdFromIntersection(inter);
       console.log(buildingId); 
       let buildingInfo = utils.searchBuildingInfo(this.itownsView.getLayerById('3d-tiles-layer'), buildingId);
