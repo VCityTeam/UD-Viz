@@ -1,0 +1,7 @@
+.link-selector {
+  cursor: pointer;
+}
+
+.link-selector:hover {
+  font-weight: bold;
+}

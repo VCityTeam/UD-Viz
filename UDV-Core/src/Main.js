@@ -34,3 +34,5 @@ export { LinkVisualizationService } from './Extensions/LinkVisualization/service
 export { LinkVisualizationWindow }  from './Extensions/LinkVisualization/views/LinkVisualizationWindow';
 
 export { Debug3DTilesWindow }       from './Extensions/3DTilesDebug/views/3DTilesDebugWindow';
+
+export { DocumentLinkWindow }       from './Extensions/DocumentLinks/views/DocumentLinkWindow';
