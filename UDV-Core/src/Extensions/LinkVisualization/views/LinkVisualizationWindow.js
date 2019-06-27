@@ -54,7 +54,7 @@ export class LinkVisualizationWindow extends Window {
   }
 
   /**
-   * Retrieve all link categories, and all links in each category. For each
+   * Retrieve all link types, and all links in each type. For each
    * link type, a table is created to display the source and target IDs of the
    * links. Each row of the created table listen to mouse clicks and call the
    * method `selectLink` when clicked.
