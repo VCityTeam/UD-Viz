@@ -1,5 +1,5 @@
 import { Window } from "../../../Utils/GUI/js/Window";
-import { getFirstTileIntersection, getVisibleTileCount, removeTileVerticesColor, getTileInTileset, getTileInLayer } from '../../../Utils/3DTiles/3DTilesUtils';
+import { getFirstTileIntersection, getVisibleTileCount, removeTileVerticesColor, getTileInTileset, getTileInLayer, updateITownsView } from '../../../Utils/3DTiles/3DTilesUtils';
 import { colorBuilding, getBuildingIdFromIntersection, getTilesBuildingInfo} from '../../../Utils/3DTiles/3DTilesBuildingUtils';
 
 export class Debug3DTilesWindow extends Window {
@@ -35,7 +35,7 @@ export class Debug3DTilesWindow extends Window {
       if (!!this.selectedBuildingInfo) {
         let tile = getTileInLayer(this.layer, this.selectedBuildingInfo.tileId);
         removeTileVerticesColor(tile);
-        this.itownsView.notifyChange();
+        updateITownsView(this.itownsView);
       }
     });
   }
@@ -129,7 +129,7 @@ export class Debug3DTilesWindow extends Window {
             removeTileVerticesColor(tile);
           }
           colorBuilding(this.layer, buildingInfo, this.selectedColor);
-          this.itownsView.notifyChange();
+          updateITownsView(this.itownsView);
           this.selectedBuildingInfo = buildingInfo;
         } else {
           this.clickDivElement.innerText = 'No building info (maybe update TBI ?)';

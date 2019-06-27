@@ -3,7 +3,7 @@ import { setTileVerticesColor, getBatchIdFromIntersection,
   getTileInLayer} from "./3DTilesUtils";
 
 /**
- * Gets a building ID from an intersection. The intersection's object must
+ * Gets a building ID from an intersection. The intersecting object must
  * be a "Mesh" object with a batch id.
  * 
  * @param {*} inter An intersection
@@ -105,7 +105,7 @@ export function searchBuildingInfo(layer, buildingId) {
         if (!buildingInfo) {
           buildingInfo = {};
           buildingInfo.arrayIndexes = [];
-          buildingInfo.tileId = tileId;
+          buildingInfo.tileId = tile.tileId;
         }
         buildingInfo.arrayIndexes.push(arrayIndex);
       }
@@ -127,5 +127,8 @@ export function searchBuildingInfo(layer, buildingId) {
  */
 export function colorBuilding(layer, buildingInfo, color) {
   let tile = getTileInLayer(layer, buildingInfo.tileId);
+  if (!tile) {
+    throw 'Building not in the view - tile is not loaded';
+  }
   setTileVerticesColor(tile, color, buildingInfo.arrayIndexes);
 }

@@ -17,8 +17,8 @@ export function getBatchTableFromTile(tile) {
 }
 
 /**
- * Gets an object's batch ID from an intersection. This methods takes one of the
- * 3 points of the intersections' triangle and retrieves the corresponding batch
+ * Gets an object batch ID from an intersection. This methods takes one of the
+ * 3 points of the intersection triangle and retrieves the corresponding batch
  * ID in the intersection tile.
  * 
  * @param {*} inter An intersection
@@ -168,4 +168,19 @@ export function removeTileVerticesColor(tile) {
 
   //We go back to the color of the material
   tile.material.vertexColors = THREE.NoColors;
+}
+
+/**
+ * Tells the iTowns view to update the scene. If you made changes to some colors
+ * for example, you need to call this function to actually see the changes.
+ * 
+ * @param {*} view The iTowns view.
+ */
+export function updateITownsView(view) {
+  // We need to call this function before `notifyChange`. I don't know why,
+  // because if you look at the code it cannot do anything with the provided
+  // arguments. The only thing I know is that if you remove the call, the view
+  // will not update.
+  view.pickObjectsAt({}, 0);
+  view.notifyChange();
 }

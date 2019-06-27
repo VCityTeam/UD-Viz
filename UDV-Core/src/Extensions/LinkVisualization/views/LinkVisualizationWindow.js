@@ -1,6 +1,6 @@
 import { Window } from "../../../Utils/GUI/js/Window";
 import { LinkVisualizationService } from "../services/LinkVisualizationService";
-import { } from '../../../Utils/3DTiles/3DTilesUtils'
+import { getTileInLayer, removeTileVerticesColor, updateITownsView } from '../../../Utils/3DTiles/3DTilesUtils'
 import { getTilesBuildingInfo, colorBuilding } from '../../../Utils/3DTiles/3DTilesBuildingUtils'
 
 import './LinksVisualizationStyle.css';
@@ -16,10 +16,22 @@ export class LinkVisualizationWindow extends Window {
     super('link_visu', 'Link Visualization', false);
     this.linkVisualizationService = linkVisualizationService;
     this.itownsView = itownsView;
+    this.selectedBuildingInfo = null;
 
     this.layer = itownsView.getLayerById('3d-tiles-layer');
     this.tbi = null;
-    this.selectedColor = [1, 0, 0];
+    this.selectedColor = [0, 1, 0];
+
+    this.addEventListener(Window.EVENT_DISABLED, () => {
+      if (!!this.selectedBuildingInfo) {
+        let tile = getTileInLayer(this.layer, this.selectedBuildingInfo.tileId);
+        if (!!tile) {
+          removeTileVerticesColor(tile);
+          updateITownsView(this.itownsView);
+        }
+        this.selectedBuildingInfo = null;
+      }
+    });
   }
 
   get innerContentHtml() {
@@ -66,16 +78,24 @@ export class LinkVisualizationWindow extends Window {
   }
 
   async selectLink(link) {
-    this.tbi = getTilesBuildingInfo(this.layer);
-    console.log(this.tbi);
+    this.tbi = getTilesBuildingInfo(this.layer, this.tbi);
     let buildingId = link.target_id;
-    console.log(buildingId);
     let buildingInfo = this.tbi.buildings[buildingId];
-    console.log(buildingInfo);
-    console.log(this.layer);
     if (!!buildingInfo) {
-      colorBuilding(this.layer, buildingInfo, [0, 1, 0]);
-      this.itownsView.notifyChange();
+      if (!!this.selectedBuildingInfo) {
+        let tile = getTileInLayer(this.layer, this.selectedBuildingInfo.tileId);
+        if (!!tile) {
+          removeTileVerticesColor(tile);
+        }
+      }
+
+      try {
+        colorBuilding(this.layer, buildingInfo, this.selectedColor);
+        updateITownsView(this.itownsView);
+        this.selectedBuildingInfo = buildingInfo;
+      } catch (_) {
+        alert('Building is not currently in the view.');
+      }
     }
   }
 

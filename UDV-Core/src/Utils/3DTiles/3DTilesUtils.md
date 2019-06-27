@@ -18,7 +18,7 @@ The functions are segregated in two files :
 
 ### Tile
 
-A 3DTiles' tile is represented in THREE.js (thus in iTowns) by a THREE.js "Object3D". It contains one child of type "Scene", which contains another child of type "Mesh".
+A 3DTiles tile is represented in THREE.js (thus in iTowns) by a THREE.js "Object3D". It contains one child of type "Scene", which contains another child of type "Mesh".
 
 The useful data about the Tile are located in the "Object3D" and the "Mesh" nodes of the hierarchy.
 
@@ -39,7 +39,7 @@ Object3D
 
 ### Layer
 
-A layer is used by iTowns to group together similar type of data. In our case, the only layer we care about is the 3DTiles one. It can be fetched from the iTowns' `View` object with the `getLayerById` method :
+A layer is used by iTowns to group together similar type of data. In our case, the only layer we care about is the 3DTiles one. It can be fetched from the iTowns `View` object with the `getLayerById` method :
 
 ```js
 let layer = view.getLayerById('3d-tiles-layer');
@@ -51,7 +51,7 @@ The layer also has a `tileIndex` property which describes all tiles. Every tile 
 
 ### Batch Table
 
-The batch table objects represent a 3DTiles' batch table. It has two attributes :
+The batch table objects represent a 3DTiles batch table. It has two attributes :
 
 - `batchLength` refers to the total number of different batch IDs in the tile.
 - `content` is a dictonnary mapping each attribute of the batch table to an array of values, where the indexes of the array are the batch IDs of the corresponding objects.
@@ -62,7 +62,7 @@ Below is an example batch table with one attribute, called "cityobject.database_
 
 ### Geometry attributes
 
-In the "Mesh" node of the tile hierarchy is stored the geometry of the tile, along with "geometry attributes". These attributes are actually THREE.js' BufferAttributes used to describe the geometry. They are represented by arrays of size N * S, where N is the number of vertices in the scene and S is the size of the attribute items.
+In the "Mesh" node of the tile hierarchy is stored the geometry of the tile, along with "geometry attributes". These attributes are actually THREE.js BufferAttributes used to describe the geometry. They are represented by arrays of size N * S, where N is the number of vertices in the scene and S is the size of the attribute items.
 
 For example, to represent the position of each vertex, an item of size 3 is used (because a position is described by 3 values : x, y and z). If our tile contains 10 vertices, the `position` attribute has an array of size 30. The position of the first vertex is described by the elements at index 0, 1 and 2 of the attribute array (respectively for x, y and z values).
 
@@ -74,7 +74,7 @@ The commonly used attributes are the following :
 
 ### Building
 
-A building is a set of 3DTiles' vertices, characterized by a common building ID. It often represents a "real life building".
+A building is a set of 3DTiles vertices, characterized by a common building ID. It often represents a "real life building".
 
 ### Tiles Building Information (TBI)
 
@@ -83,7 +83,7 @@ In our application, we often need to interact with buildings rather than whole t
 The TBI has serveral useful properties :
 
 - `buildings` is a dictionnary that maps each building ID with its specific data (what we call 'Building Information'). A building information object contains 2 properties : `arrayIndexes`, whichs stores the indexes of the vertices of the building, and `tileId`, referencing the tile in which the building is stored (we need to store the tileId and not the whole tile, because tile objects are destroyed and re-created when unloaded / loaded).
-- `loadedTiles` store each tile that was explored by the TBI. As we mentioned before, the 3DTiles' layer does not contains every tile of the tileset, but only the ones that are currently rendered. In order to keep in mind which tile we have analyzed, we keep them in the `loadedTiles` dictionnary.
+- `loadedTiles` store each tile that was explored by the TBI. As we mentioned before, the 3DTiles layer does not contains every tile of the tileset, but only the ones that are currently rendered. In order to keep in mind which tile we have analyzed, we keep them in the `loadedTiles` dictionnary.
 - `loadedTileCount` is the size of `loadedTiles`.
 - `totalTileCount` is the total number of tiles in the tileset.
 
@@ -101,21 +101,25 @@ The function allows to find a batch ID corresponding to the intersecting object 
 
 ### `getFirstTileIntersection(intersections)` - Gets a tile from an intersection array
 
-The function iterates over an array of intersections and return the first one where the intersecting object is a 3DTiles' tile.  
+The function iterates over an array of intersections and return the first one where the intersecting object is a 3DTiles tile.  
 The `View.pickObjectsAt` method is handy but returns an array of intersections, where intersecting objects are not always 3DTiles elements. In this case, this function may be convenient to get the first interesting intersection.
 
 ### `getVisibleTileCount(layer)` - Counts how many tiles are displayed on the scene
 
 This function is relatively straightforward. It simply counts the number of tiles are currently rendered on the scene.
 
-### `setTileVerticesColor(tile, newColor, indexArray)` - Colors a tile's vertices
+### `setTileVerticesColor(tile, newColor, indexArray)` - Colors vertices of a tile
 
-This function is used to set the color of the vertices of a tile. It does not affect the material's color, but rather the geometry 'color' attribute. The default color rendering method is also changed (the `vertexColors` property of the material is set to `THREE.VertexColors`).  
+This function is used to set the color of the vertices of a tile. It does not affect the material color, but rather the geometry 'color' attribute. The default color rendering method is also changed (the `vertexColors` property of the material is set to `THREE.VertexColors`).  
 It is possible to change the color of specific vertices of the tile. They are specified in the optional `indexArray` parameter, which is an array of indexes for the vertices (same indexes used in the `_BATCHID` attribute, for example).
 
-### `removeTileVerticesColor(tile)` - Remove the color from a tile's vertices
+### `removeTileVerticesColor(tile)` - Remove the color from tile vertices
 
-This function removes the `color` attribute from the geometry of the tile and sets the `vertexColors` property of the material to `THREE.NoColor`, meaning that the tile color will be determined by only the material's color.
+This function removes the `color` attribute from the geometry of the tile and sets the `vertexColors` property of the material to `THREE.NoColor`, meaning that the tile color will be determined by only the material color.
+
+### `updateITownsView(view)` - Updates the scene
+
+The purpose of this function is to tell the iTowns view to update the scene. It is necessary to call this function when you make changes to the color of some tiles, for example.
 
 ## 3DTilesBuildingUtils
 
@@ -125,7 +129,7 @@ This function looks for a batch ID in the interseting object of the intersection
 
 ### `getTilesBuildingInfo(layer, tbi)` - Gets or update the TBI
 
-This function is either used to create a TBI for the 3DTiles' layer, exploring each displayed tile, or to update an existing TBI by exploring the displayed tiles that have not been visited.
+This function is either used to create a TBI for the 3DTiles layer, exploring each displayed tile, or to update an existing TBI by exploring the displayed tiles that have not been visited.
 
 ### `searchBuildingInfo(layer, buildingId)` - Gets building information from its ID
 
@@ -141,7 +145,7 @@ A working code example can be found with the `3DTilesDebug` extension. In this s
 
 ### Get a tile under the mouse
 
-Using the iTowns `View` object, it is possible to get objects from the mouse positions. We can for example fetch a 3DTiles' tile under the mouse :
+Using the iTowns `View` object, it is possible to get objects from the mouse positions. We can for example fetch a 3DTiles tile under the mouse :
 
 ```js
 let intersections = this.itownsView.pickObjectsAt(event, 5);
@@ -193,11 +197,11 @@ if (!!buildingInfo) {
     removeTileVerticesColor(tile);
   }
   colorBuilding(this.layer, buildingInfo, this.selectedColor);
-  this.itownsView.notifyChange();
+  updateITownsView(this.iTownsView);
   this.previousBuilding = buildingInfo;
 }
 ```
 
 If we had previously colored another building, we want to un-color it. We do that by removing vertex colors from the tile.
 
-We have to call iTowns' function `notifyChange` in order to the view to be redrawn. Otherwise, the color changes won't appear in the scene.
+We have to call the function `updateITownsView` in order to the view to be redrawn. Otherwise, the color changes won't appear in the scene.
