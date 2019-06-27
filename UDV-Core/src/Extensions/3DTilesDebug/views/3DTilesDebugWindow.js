@@ -8,6 +8,7 @@ export class Debug3DTilesWindow extends Window {
 
     this.itownsView = itownsView;
     this.layer = itownsView.getLayerById(config['3DTilesLayerID']);
+    // Tiles Building Information object (see Utils/3DTiles/3DTilesUtils.md)
     this.tbi = null;
     this.selectedColor = [1, 0, 0];
     /**

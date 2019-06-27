@@ -55,7 +55,8 @@ export function getTilesBuildingInfo(layer, tbi = null) {
     tbi.tileset;
   }
   let tileIndex = layer.tileIndex;
-  let tileCount = tileIndex.index['1'].children.length;
+  let tileCount = Object.keys(tileIndex.index).length - 1; // -1 because of the
+                                                           // root tile
   tbi.totalTileCount = tileCount;
   let rootTile = layer.object3d.children[0];
   tbi.tileset = rootTile;

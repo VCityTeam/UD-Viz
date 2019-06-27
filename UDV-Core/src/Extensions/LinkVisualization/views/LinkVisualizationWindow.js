@@ -40,7 +40,6 @@ export class LinkVisualizationWindow extends Window {
     return `
       <div>
         <button id="${this.fetchLinksButtonId}">Fetch</button>
-        <button id="${this.createLinkButtonId}">Create</button>
       </div>
       <div id="${this.linksDivId}">
 
@@ -50,7 +49,6 @@ export class LinkVisualizationWindow extends Window {
 
   windowCreated() {
     this.fetchLinksButtonElement.onclick = () => { this.fetchLinks() };
-    this.createLinkButtonElement.onclick = () => { this.createLink() };
   }
 
   /**
@@ -117,24 +115,12 @@ export class LinkVisualizationWindow extends Window {
     }
   }
 
-  async createLink() {
-    
-  }
-
   get fetchLinksButtonId() {
     return `${this.windowId}_button_fetch`;
   }
 
   get fetchLinksButtonElement() {
     return document.getElementById(this.fetchLinksButtonId);
-  }
-
-  get createLinkButtonId() {
-    return `${this.windowId}_button_create`;
-  }
-
-  get createLinkButtonElement() {
-    return document.getElementById(this.createLinkButtonId);
   }
 
   get linksDivId() {
