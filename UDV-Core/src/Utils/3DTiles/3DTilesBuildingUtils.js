@@ -57,20 +57,27 @@ export function getTilesBuildingInfo(layer, tbi = null) {
   let tileIndex = layer.tileIndex;
   let tileCount = tileIndex.index['1'].children.length;
   tbi.totalTileCount = tileCount;
-  let tsroot = layer.object3d.children[0];
-  tbi.tileset = tsroot;
-  for (let tile of tsroot.children) {
+  let rootTile = layer.object3d.children[0];
+  tbi.tileset = rootTile;
+  // rootTile contains every tile currently loaded in the scene. We iterate
+  // over them to visit the ones that we have not visited yet.
+  for (let tile of rootTile.children) {
     let tileId = tile.tileId;
+    // Check if this tile is already loaded (visited) in the TBI
     if (!tbi.loadedTiles[tileId]) {
       let batchTable = tile.batchTable;
       let attributes = tile.children[0].children[0].geometry.attributes;
+      // For each vertex (ie. each batch ID), retrieve the associated building
+      // ID.
       attributes._BATCHID.array.forEach((batchId, arrayIndex) => {
         let buildingId = batchTable.content['cityobject.database_id'][batchId];
+        // Creates a dict entry for the building ID
         if (!tbi.buildings[buildingId]) {
           tbi.buildings[buildingId] = {};
           tbi.buildings[buildingId].arrayIndexes = [];
           tbi.buildings[buildingId].tileId = tile.tileId;
         }
+        // Associates the vertex to the corresponding building ID
         tbi.buildings[buildingId].arrayIndexes.push(arrayIndex);
       });
       tbi.loadedTiles[tileId] = true;
@@ -95,8 +102,8 @@ export function getTilesBuildingInfo(layer, tbi = null) {
  */
 export function searchBuildingInfo(layer, buildingId) {
   let buildingInfo = undefined;
-  let tsroot = layer.object3d.children[0];
-  for (let tile of tsroot.children) {
+  let rootTile = layer.object3d.children[0];
+  for (let tile of rootTile.children) {
     let batchTable = tile.batchTable;
     let attributes = tile.children[0].children[0].geometry.attributes;
     attributes._BATCHID.array.forEach((batchId, arrayIndex) => {

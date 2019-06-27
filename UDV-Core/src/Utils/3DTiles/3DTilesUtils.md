@@ -1,3 +1,8 @@
+This document is about the following files :
+
+* [3DTilesUtils](./3DTilesUtils.js)
+* [3DTilesBuildingUtils](./3DTilesBuildingUtils.js)
+
 # Helper functions for 3DTiles
 
 In order to easily access the 3DTiles tiles in the scene, along with the objects within them, we provide a utility file containing helper functions. These functions allow for example to easily retrieve a tile and access the batche table and IDs when the user clicks somewhere.

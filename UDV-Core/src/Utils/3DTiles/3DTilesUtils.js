@@ -51,8 +51,8 @@ export function getFirstTileIntersection(intersects) {
  * @param {*} layer The 3DTiles layer.
  */
 export function getVisibleTileCount(layer) {
-  let tsroot = layer.object3d.children[0];
-  return Object.keys(tsroot.children).length;
+  let rootTile = layer.object3d.children[0];
+  return Object.keys(rootTile.children).length;
 }
 
 /**
@@ -75,8 +75,8 @@ export function getTileInTileset(tileset, tileId) {
  * @param {*} tileId The tile id.
  */
 export function getTileInLayer(layer, tileId) {
-  let tsroot = layer.object3d.children[0];
-  let tile = getTileInTileset(tsroot, tileId);
+  let rootTile = layer.object3d.children[0];
+  let tile = getTileInTileset(rootTile, tileId);
   return tile;
 }
 
