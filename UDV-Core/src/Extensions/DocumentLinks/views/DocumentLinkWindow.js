@@ -75,9 +75,9 @@ export class DocumentLinkWindow extends Window {
       <hr>
       <div>
         <h3>Create a new link</h3>
-        <button>Select building</button>
-        <p>No building selected</p>
-        <button>Create link</button>
+        <button id="${this.selectBuildingButtonId}">Select building</button>
+        <p id="${this.selectedBuildingParagraphId}">No building selected</p>
+        <button id="${this.createLinkButtonId}">Create link</button>
       </div>
     `;
   }
@@ -92,6 +92,12 @@ export class DocumentLinkWindow extends Window {
     }
   }
 
+  /**
+   * Retrieves all link types, and for each type retrieves the links were the
+   * source id is the same as the current document. The links are then displayed
+   * in the window. Each link listen to momuse clicks and call the `selectLink`
+   * method when clicked.
+   */
   async fetchLinks() {
     let currentDocument = this.documentController.currentDoc;
     console.log(currentDocument);
@@ -124,6 +130,14 @@ export class DocumentLinkWindow extends Window {
     }
   }
 
+  /**
+   * If the target of the link is a city object, highlights it by changing its
+   * color. If a building was previously selected, its color is removed first.
+   * 
+   * @param {string} type The link target type.
+   * @param {any} link The actual link, with `id`, `source_id` and `target_id`
+   * properties.
+   */
   async selectLink(type, link) {
     if (type === 'city_object') {
       this.tbi = getTilesBuildingInfo(this.layer, this.tbi);
@@ -164,5 +178,29 @@ export class DocumentLinkWindow extends Window {
 
   linkSelectorId(type, link) {
     return `${this.linkTablesDivId}_${type}_${link.id}`;
+  }
+
+  get selectBuildingButtonId() {
+    return `${this.windowId}_button_select_building`;
+  }
+
+  get selectBuildingButtonElement() {
+    return document.getElementById(this.selectBuildingButtonId);
+  }
+
+  get selectedBuildingParagraphId() {
+    return `${this.windowId}_selected_building_p`;
+  }
+
+  get selectedBuildingParagraphElement() {
+    return document.getElementById(this.selectedBuildingParagraphId);
+  }
+
+  get createLinkButtonId() {
+    return `${this.windowId}_button_create_link`;
+  }
+
+  get createLinkButtonElement() {
+    return document.getElementById(this.createLinkButtonId);
   }
 }
