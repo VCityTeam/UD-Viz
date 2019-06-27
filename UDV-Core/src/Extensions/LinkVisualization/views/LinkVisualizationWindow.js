@@ -100,7 +100,7 @@ export class LinkVisualizationWindow extends Window {
   }
 
   async createLink() {
-    console.log('Create link !!');
+    
   }
 
   get fetchLinksButtonId() {

@@ -426,8 +426,6 @@ export class BaseDemo {
             }
         }
 
-        console.log($3dTilesLayer);
-
         // ********* 3D Elements
         // Lights
         let directionalLight = new THREE.DirectionalLight( 0xffffff, 0.5 );

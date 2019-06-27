@@ -7,7 +7,6 @@ let baseDemo = new BaseDemo({
 
 baseDemo.appendTo(document.body);
 
-
 baseDemo.loadConfigFile('../../../../examples/data/config/generalDemoConfig.json').then(() => {
     // Initialize iTowns 3D view
     baseDemo.init3DView();
