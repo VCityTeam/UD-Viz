@@ -77,15 +77,27 @@ export class Debug3DTilesWindow extends Window {
     this.updateTBI();
   }
 
+  /**
+   * Updates the TBI.
+   */
   updateTBI() {
     this.tbi = getTilesBuildingInfo(this.layer, this.tbi);
     this.TBIInfoParagraphElement.innerText = `${this.tbi.loadedTileCount} / ${this.tbi.totalTileCount} tiles loaded.`;
   }
 
+  /**
+   * Logs the TBI in the console.
+   */
   logTBI() {
     console.log(this.tbi);
   }
 
+  /**
+   * If the user is currently hovering a building, fetches the building ID and
+   * displays it in the window.
+   * 
+   * @param {MouseEvent} event The mouse event.
+   */
   onMouseMove(event) {
     let visibleTileCount = getVisibleTileCount(this.layer);
     this.visibleTilesParagraphElement.innerText = `${visibleTileCount} tiles visible.`
@@ -104,8 +116,11 @@ export class Debug3DTilesWindow extends Window {
   }
 
   /**
+   * If the user is currently hovering a building, fetches the building info
+   * and colors the building. If a building was already selected, it returns to
+   * its original coloring.
    * 
-   * @param {MouseEvent} event 
+   * @param {MouseEvent} event The mouse event.
    */
   onMouseClick(event) {
     if (event.target.nodeName.toUpperCase() === 'CANVAS') {
@@ -137,6 +152,8 @@ export class Debug3DTilesWindow extends Window {
       }
     }
   }
+
+  ////// GETTERS
 
   get hoverDivId() {
     return `${this.windowId}_hover_info`;

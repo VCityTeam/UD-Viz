@@ -17,7 +17,6 @@ export class BaseDemo {
         this.view;  // itowns view (3d scene)
         this.extent;  // itowns extent (city limits)
         this.controls;
-        this.cityObjects = {};
         // Temporal is currently disabled and will be reintroduced in a new
         // version based on a 3D Tiles extension
         this.temporal = false;
@@ -415,16 +414,6 @@ export class BaseDemo {
         $3dTilesLayer.overrideMaterials = true;
 
         itowns.View.prototype.addLayer.call(this.view, $3dTilesLayer);
-
-        // constructs the city objects association
-        let addToCityObjects = (object) => {
-            // association buildingId -> path_in_tiles_tree ?
-            //                           batch table + batch id ?
-            //                           metadata in batch table [batch id] ?
-            if (object.type === 'Mesh') {
-
-            }
-        }
 
         // ********* 3D Elements
         // Lights
