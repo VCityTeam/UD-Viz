@@ -27,7 +27,7 @@ export class LinkVisualizationWindow extends Window {
         let tile = getTileInLayer(this.layer, this.selectedBuildingInfo.tileId);
         if (!!tile) {
           removeTileVerticesColor(tile);
-          updateITownsView(this.itownsView);
+          updateITownsView(this.itownsView, this.layer);
         }
         this.selectedBuildingInfo = null;
       }
@@ -106,7 +106,7 @@ export class LinkVisualizationWindow extends Window {
 
         try {
           colorBuilding(this.layer, buildingInfo, this.selectedColor);
-          updateITownsView(this.itownsView);
+          updateITownsView(this.itownsView, this.layer);
           this.selectedBuildingInfo = buildingInfo;
         } catch (_) {
           alert('Building is not currently in the view.');

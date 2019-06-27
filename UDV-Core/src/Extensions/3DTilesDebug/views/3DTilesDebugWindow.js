@@ -35,7 +35,7 @@ export class Debug3DTilesWindow extends Window {
       if (!!this.selectedBuildingInfo) {
         let tile = getTileInLayer(this.layer, this.selectedBuildingInfo.tileId);
         removeTileVerticesColor(tile);
-        updateITownsView(this.itownsView);
+        updateITownsView(this.itownsView, this.layer);
       }
     });
   }
@@ -144,7 +144,7 @@ export class Debug3DTilesWindow extends Window {
             removeTileVerticesColor(tile);
           }
           colorBuilding(this.layer, buildingInfo, this.selectedColor);
-          updateITownsView(this.itownsView);
+          updateITownsView(this.itownsView, this.layer);
           this.selectedBuildingInfo = buildingInfo;
         } else {
           this.clickDivElement.innerText = 'No building info (maybe update TBI ?)';

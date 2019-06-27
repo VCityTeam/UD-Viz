@@ -87,7 +87,8 @@ export function getTileInLayer(layer, tileId) {
  * @param {*} tile The 3DTiles tile object from THREE.js
  * @param {Array<Number>} newColor An array of RGB value between 0 and 1.
  * @param {Array<Number>} [indexArray] Optional. The indexes of vertices to
- * change the color. By default, all vertices has their color changed.
+ * change the color. By default, all vertices has their color changed. The array
+ * is assumed to be **sorted** and **contiguous**.
  */
 export function setTileVerticesColor(tile, newColor, indexArray = null) {
   //Find the 'Mesh' part of the tile
@@ -111,13 +112,15 @@ export function setTileVerticesColor(tile, newColor, indexArray = null) {
   let indexCount = tile.geometry.attributes._BATCHID.count;
   let colors = new Float32Array(indexCount * 3);
 
+  let lowerBound = indexArray[0];
+  let upperBound = indexArray[indexArray.length - 1];
   for (let i = 0; i < indexCount; i++) {
     let vertexColor = newColor;
-    if (!!indexArray && !indexArray.includes(i)) {
+    if (!!indexArray && (lowerBound > i || upperBound < i)) {
       //If i is not one of the selected indexes, we keep the previous color
       let previousColor = (tile.geometry.attributes.color) ?
-                           tile.geometry.attributes.color.array.slice(i * 3 , i * 3 + 3) :
-                           tile.material.color.toArray();
+                          tile.geometry.attributes.color.array.slice(i * 3 , i * 3 + 3) :
+                          tile.material.color.toArray();
       vertexColor = previousColor;
     }
 
@@ -176,11 +179,14 @@ export function removeTileVerticesColor(tile) {
  * 
  * @param {*} view The iTowns view.
  */
-export function updateITownsView(view) {
-  // We need to call this function before `notifyChange`. I don't know why,
-  // because if you look at the code it cannot do anything with the provided
-  // arguments. The only thing I know is that if you remove the call, the view
-  // will not update.
-  view.pickObjectsAt({}, 0);
-  view.notifyChange();
+export function updateITownsView(view, layer) {
+  try {
+    view.mainLoop.gfxEngine.renderViewToBuffer({
+      scene: layer.object3d,
+      camera: view.camera
+    }, { x: 0, y: 0, width: 0, height: 0 });
+    view.notifyChange();
+  } catch (e) {
+    console.error(e);
+  }
 }
