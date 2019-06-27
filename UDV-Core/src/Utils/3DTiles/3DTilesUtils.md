@@ -42,7 +42,7 @@ Object3D
 A layer is used by iTowns to group together similar type of data. In our case, the only layer we care about is the 3DTiles one. It can be fetched from the iTowns `View` object with the `getLayerById` method :
 
 ```js
-let layer = view.getLayerById('3d-tiles-layer');
+let layer = view.getLayerById(config['3DTilesLayerID']);
 ```
 
 The 3DTiles layer has an `object3d` which contains exactly one child of type "Object3D". This child is actually the tileset root, and contains the tiles that are currently displayed in the scene.
@@ -171,7 +171,7 @@ In our class, we keep a TBI object with the `tbi` field. In the constructor, we 
 ```js
 constructor(itownsView) {
   //...
-  this.layer = itownsView.getLayerById('3d-tiles-layer');
+  this.layer = itownsView.getLayerById(config['3DTilesLayerID']);
   this.tbi = null;
   //...
 }

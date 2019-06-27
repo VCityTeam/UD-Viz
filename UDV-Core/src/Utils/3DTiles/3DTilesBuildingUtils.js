@@ -27,7 +27,7 @@ export function getBuildingIdFromIntersection(inter) {
  * loaded tiles.
  * 
  * @example
- * let layer = view.getLayerById('3d-tiles-layer');
+ * let layer = view.getLayerById(config['3DTilesLayerID']);
  * //Fetch the TBI
  * let tbi = getTilesBuildingInfo(layer);
  * //Get a building ID from the mouse position
@@ -38,7 +38,7 @@ export function getBuildingIdFromIntersection(inter) {
  * console.log(tbi.buildings[buildingId]);
  * 
  * @example
- * let layer = view.getLayerById('3d-tiles-layer');
+ * let layer = view.getLayerById(config['3DTilesLayerID']);
  * //Initialize the TBI
  * let tbi = getTilesBuildingInfo(layer);
  * //When the visible tiles change, update the TBI

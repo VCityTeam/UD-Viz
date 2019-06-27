@@ -3,11 +3,11 @@ import { getFirstTileIntersection, getVisibleTileCount, removeTileVerticesColor,
 import { colorBuilding, getBuildingIdFromIntersection, getTilesBuildingInfo} from '../../../Utils/3DTiles/3DTilesBuildingUtils';
 
 export class Debug3DTilesWindow extends Window {
-  constructor(itownsView) {
+  constructor(itownsView, config) {
     super('3d_tiles_debug', '3DTiles Debug', false);
 
     this.itownsView = itownsView;
-    this.layer = itownsView.getLayerById('3d-tiles-layer');
+    this.layer = itownsView.getLayerById(config['3DTilesLayerID']);
     this.tbi = null;
     this.selectedColor = [1, 0, 0];
     /**
