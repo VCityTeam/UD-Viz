@@ -99,12 +99,16 @@ export class Debug3DTilesWindow extends Window {
    * @param {MouseEvent} event The mouse event.
    */
   onMouseMove(event) {
+    // Update the current visible tile count
     let visibleTileCount = getVisibleTileCount(this.layer);
     this.visibleTilesParagraphElement.innerText = `${visibleTileCount} tiles visible.`
     if (event.target.nodeName.toUpperCase() === 'CANVAS') {
+      // Get the intersecting objects where our mouse pointer is
       let intersections = this.itownsView.pickObjectsAt(event, 5);
+      // Get the first intersecting tile
       let firstInter = getFirstTileIntersection(intersections);
       if (!!firstInter) {
+        // Find the building ID we clicked on
         let buildingId = getBuildingIdFromIntersection(firstInter);
         this.hoveredBuildingId = buildingId;
         this.hoverDivElement.innerText = `Building ID : ${buildingId}`;
@@ -124,30 +128,35 @@ export class Debug3DTilesWindow extends Window {
    */
   onMouseClick(event) {
     if (event.target.nodeName.toUpperCase() === 'CANVAS') {
-      if (!this.tbi) {
-        return;
-      }
+      this.updateTBI();
 
+      // The building ID was retrieved by the `onMouseMove` method
       let buildingId = this.hoveredBuildingId;
       if (!!buildingId) {
+        // If we have a building ID, we check if the building has associated
+        // info
         let buildingInfo = this.tbi.buildings[buildingId];
         if (!!buildingInfo) {
+          // Log the building info in the console to debug
           console.log(buildingInfo);
+          // Fill a div with the info
           this.clickDivElement.innerHTML = /*html*/`
             Building ID : ${buildingId}<br>
             ${buildingInfo.arrayIndexes.length} array indexes<br>
             Tile ID : ${buildingInfo.tileId}
           `;
+          // If a building was already selected, un-color its tile
           if (!!this.selectedBuildingInfo) {
             let tile = getTileInTileset(this.tbi.tileset,
                                         this.selectedBuildingInfo.tileId);
             removeTileVerticesColor(tile);
           }
+          // We can color our building and notify the view
           colorBuilding(this.layer, buildingInfo, this.selectedColor);
           updateITownsView(this.itownsView, this.layer);
           this.selectedBuildingInfo = buildingInfo;
         } else {
-          this.clickDivElement.innerText = 'No building info (maybe update TBI ?)';
+          this.clickDivElement.innerText = 'No building info';
         }
       }
     }

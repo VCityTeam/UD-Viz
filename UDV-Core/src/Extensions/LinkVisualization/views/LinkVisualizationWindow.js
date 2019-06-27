@@ -19,6 +19,8 @@ export class LinkVisualizationWindow extends Window {
     this.selectedBuildingInfo = null;
 
     this.layer = itownsView.getLayerById(config['3DTilesLayerID']);
+    //The Tiles Building Information object
+    // (described in Utils/3DTiles/3DTilesUtils.md)
     this.tbi = null;
     this.selectedColor = [0, 1, 0];
 
