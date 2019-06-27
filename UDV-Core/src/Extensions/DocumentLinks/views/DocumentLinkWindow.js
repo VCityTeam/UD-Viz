@@ -32,6 +32,12 @@ export class DocumentLinkWindow extends Window {
     this.selectedColor = [0, 0.8, 1];
     this.selectedBuildingInfo = null;
 
+    // Building selection
+    this.isSelectingBuilding = false;
+    this.hoveredBuildingId = null;
+    this.mouseMoveListener = (event) => { this.onMouseMove(event) };
+    this.mouseClickListener = (event) => { this.onMouseClick(event) };
+
     // Add a button in the document browser to enable this window
     this.documentController.documentBrowser.addEventListener(
       Window.EVENT_CREATED, () => {
@@ -90,6 +96,9 @@ export class DocumentLinkWindow extends Window {
       this.window.style.top = reference.top;
       this.window.style.width = reference.width;
     }
+    this.createLinkButtonElement.onclick = () => {
+      this.toggleBuildingSelection();
+    };
   }
 
   /**
@@ -157,6 +166,79 @@ export class DocumentLinkWindow extends Window {
           this.selectedBuildingInfo = buildingInfo;
         } catch (_) {
           alert('Building is not currently in the view.');
+        }
+      }
+    }
+  }
+
+  toggleBuildingSelection() {
+    this.isSelectingBuilding = !this.isSelectingBuilding;
+    if (this.isSelectingBuilding) {
+      this.linkTablesDivElement.style.opacity = 0.5;
+      this.linkTablesDivElement.style.pointerEvents = 'none';
+      this.createLinkButtonElement.innerText = 'Cancel';
+      window.addEventListener('mousemove', this.mouseMoveListener);
+      window.addEventListener('mousedown', this.mouseClickListener);
+    } else {
+      this.linkTablesDivElement.style.opacity = 1;
+      this.linkTablesDivElement.style.pointerEvents = 'auto';
+      this.createLinkButtonElement.innerText = 'Select building';
+      window.removeEventListener('mousemove', this.mouseMoveListener);
+      window.removeEventListener('mousedown', this.mouseClickListener);
+    }
+  }
+
+  /**
+   * If the user is currently hovering a building, fetches the building ID and
+   * displays it in the window.
+   * 
+   * @param {MouseEvent} event The mouse event.
+   */
+  onMouseMove(event) {
+    if (event.target.nodeName.toUpperCase() === 'CANVAS') {
+      let intersections = this.itownsView.pickObjectsAt(event, 5);
+      let firstInter = getFirstTileIntersection(intersections);
+      if (!!firstInter) {
+        let buildingId = getBuildingIdFromIntersection(firstInter);
+        this.hoveredBuildingId = buildingId;
+        this.selectedBuildingParagraphElement.innerText =
+          `Building ID : ${buildingId}`;
+      } else {
+        this.hoveredBuildingId = null;
+        this.selectedBuildingParagraphElement.innerText = 'No building';
+      }
+    }
+  }
+
+  /**
+   * If the user is currently hovering a building, fetches the building info
+   * and colors the building. If a building was already selected, it returns to
+   * its original coloring.
+   * 
+   * @param {MouseEvent} event The mouse event.
+   */
+  onMouseClick(event) {
+    if (event.target.nodeName.toUpperCase() === 'CANVAS') {
+      let buildingId = this.hoveredBuildingId;
+      if (!!buildingId) {
+        let buildingInfo = this.tbi.buildings[buildingId];
+        if (!!buildingInfo) {
+          console.log(buildingInfo);
+          this.clickDivElement.innerHTML = /*html*/`
+            Building ID : ${buildingId}<br>
+            ${buildingInfo.arrayIndexes.length} array indexes<br>
+            Tile ID : ${buildingInfo.tileId}
+          `;
+          if (!!this.selectedBuildingInfo) {
+            let tile = getTileInTileset(this.tbi.tileset,
+                                        this.selectedBuildingInfo.tileId);
+            removeTileVerticesColor(tile);
+          }
+          colorBuilding(this.layer, buildingInfo, this.selectedColor);
+          updateITownsView(this.itownsView);
+          this.selectedBuildingInfo = buildingInfo;
+        } else {
+          this.clickDivElement.innerText = 'No building info (maybe update TBI ?)';
         }
       }
     }
