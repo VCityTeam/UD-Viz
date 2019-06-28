@@ -46,13 +46,38 @@ export function getFirstTileIntersection(intersects) {
 }
 
 /**
+ * Retrieve all visible 3DTiles visible tiles (ie. those that are currently
+ * rendered in the scene). This function recursively explores the tileset to
+ * find all tiles and return them in a flattened array.
+ * 
+ * @param {*} layer The 3DTiles layer.
+ */
+export function getVisibleTiles(layer) {
+  let rootTile = layer.object3d.children[0];
+  let tiles = [];
+  let exploreTree = (node) => {
+    if (!!node.batchTable) {
+      // It's an actual tile
+      tiles.push(node);
+    };
+    node.children.forEach((child) => {
+      if (child.type === 'Object3D') {
+        //This child can be a tile or contain tiles so we explore it too
+        exploreTree(child);
+      }
+    });
+  };
+  exploreTree(rootTile);
+  return tiles;
+}
+
+/**
  * Counts the number of 3DTiles tiles displayed by the view.
  * 
  * @param {*} layer The 3DTiles layer.
  */
 export function getVisibleTileCount(layer) {
-  let rootTile = layer.object3d.children[0];
-  return Object.keys(rootTile.children).length;
+  return getVisibleTiles(layer).length;
 }
 
 /**
@@ -91,13 +116,13 @@ export function getTileInLayer(layer, tileId) {
  * is assumed to be **sorted** and **contiguous**.
  */
 export function setTileVerticesColor(tile, newColor, indexArray = null) {
+  if (!tile) {
+    throw 'Tile not loaded in view';
+  }
+
   //Find the 'Mesh' part of the tile
   while (!!tile.children[0] && !(tile.type === 'Mesh')) {
     tile = tile.children[0];
-  }
-
-  if (!tile.geometry) {
-    throw 'Tile not loaded in view';
   }
 
   if (!tile.geometry.attributes._BATCHID) {
@@ -149,13 +174,13 @@ export function setTileVerticesColor(tile, newColor, indexArray = null) {
  * @param {*} tile The 3DTiles tile.
  */
 export function removeTileVerticesColor(tile) {
+  if (!tile) {
+    throw 'Tile not loaded in view';
+  }
+
   //Find the 'Mesh' part of the tile
   while (!!tile.children[0] && !(tile.type === 'Mesh')) {
     tile = tile.children[0];
-  }
-
-  if (!tile.geometry) {
-    throw 'Tile not loaded in view';
   }
 
   if (!tile.geometry.attributes._BATCHID) {

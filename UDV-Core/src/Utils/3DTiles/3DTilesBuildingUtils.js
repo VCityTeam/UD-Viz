@@ -1,6 +1,7 @@
 import { setTileVerticesColor, getBatchIdFromIntersection,
   getBatchTableFromTile, 
-  getTileInLayer} from "./3DTilesUtils";
+  getTileInLayer,
+  getVisibleTiles} from "./3DTilesUtils";
 
 /**
  * Gets a building ID from an intersection. The intersecting object must
@@ -60,9 +61,10 @@ export function getTilesBuildingInfo(layer, tbi = null) {
   tbi.totalTileCount = tileCount;
   let rootTile = layer.object3d.children[0];
   tbi.tileset = rootTile;
-  // rootTile contains every tile currently loaded in the scene. We iterate
+  let tiles = getVisibleTiles(layer);
+  // tiles contains every tile currently loaded in the scene. We iterate
   // over them to visit the ones that we have not visited yet.
-  for (let tile of rootTile.children) {
+  for (let tile of tiles) {
     let tileId = tile.tileId;
     // Check if this tile is already loaded (visited) in the TBI
     if (!tbi.loadedTiles[tileId]) {
@@ -86,44 +88,6 @@ export function getTilesBuildingInfo(layer, tbi = null) {
     }
   }
   return tbi;
-}
-
-/**
- * Searches buiding information in the 3DTiles layer, from a building ID.
- * This function searches for all batch attributes in the layer that matches
- * the building ID. The search is done tile by tile, and once a matching
- * building ID is found, the search stops after the current tile.
- * 
- * This function is extremely unefficient. You may prefer using a TBI to
- * store building information and using it when needed. See
- * `getTilesBuildingInfo`.
- * 
- * @param {*} layer The 3DTiles layer.
- * @param {*} buildingId The building ID.
- */
-export function searchBuildingInfo(layer, buildingId) {
-  let buildingInfo = undefined;
-  let rootTile = layer.object3d.children[0];
-  for (let tile of rootTile.children) {
-    let batchTable = tile.batchTable;
-    let attributes = tile.children[0].children[0].geometry.attributes;
-    attributes._BATCHID.array.forEach((batchId, arrayIndex) => {
-      let bId = batchTable.content['cityobject.database_id'][batchId];
-      if (buildingId === bId) {
-        if (!buildingInfo) {
-          buildingInfo = {};
-          buildingInfo.arrayIndexes = [];
-          buildingInfo.tileId = tile.tileId;
-        }
-        buildingInfo.arrayIndexes.push(arrayIndex);
-      }
-    });
-    // A building is only present in one tile
-    if (!!buildingInfo && !!buildingInfo.tile) {
-      return buildingInfo;
-    }
-  }
-  return buildingInfo;
 }
 
 /**

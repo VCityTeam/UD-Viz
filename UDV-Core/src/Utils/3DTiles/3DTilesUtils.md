@@ -109,6 +109,10 @@ The function allows to find a batch ID corresponding to the intersecting object 
 The function iterates over an array of intersections and return the first one where the intersecting object is a 3DTiles tile.  
 The `View.pickObjectsAt` method is handy but returns an array of intersections, where intersecting objects are not always 3DTiles elements. In this case, this function may be convenient to get the first interesting intersection.
 
+### `getVisibleTiles(layer)` - Returns all tiles currently rendered on the scene
+
+This function explores the tileset tree to find all tiles that are currently rendered. The result is returned as an array rather than a tree (the parent-child structure is however kept thanks to the `parent` and `children` properties of the tiles).
+
 ### `getVisibleTileCount(layer)` - Counts how many tiles are displayed on the scene
 
 This function is relatively straightforward. It simply counts the number of tiles are currently rendered on the scene.
@@ -135,10 +139,6 @@ This function looks for a batch ID in the interseting object of the intersection
 ### `getTilesBuildingInfo(layer, tbi)` - Gets or update the TBI
 
 This function is either used to create a TBI for the 3DTiles layer, exploring each displayed tile, or to update an existing TBI by exploring the displayed tiles that have not been visited.
-
-### `searchBuildingInfo(layer, buildingId)` - Gets building information from its ID
-
-This function gets building information from its ID. It searches in every displayed tile of the layer to find the matching building ID. It is quite inefficient, so if you need to access building information often, constructing a TBI and accessing its properties is faster.
 
 ### `colorBuilding(layer, buildingInfo, color)` - Colors a building
 

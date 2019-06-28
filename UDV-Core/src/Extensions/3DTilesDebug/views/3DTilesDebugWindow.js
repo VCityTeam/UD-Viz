@@ -150,7 +150,14 @@ export class Debug3DTilesWindow extends Window {
           if (!!this.selectedBuildingInfo) {
             let tile = getTileInTileset(this.tbi.tileset,
                                         this.selectedBuildingInfo.tileId);
-            removeTileVerticesColor(tile);
+            try {
+              removeTileVerticesColor(tile);
+            } catch (_) {
+              // Tile not loaded in the view, cannot change its color
+              // For the moment, no problem because when a tile unloads the
+              // color data of the vertices is lost (same effect as removing the
+              // color).
+            }
           }
           // We can color our building and notify the view
           colorBuilding(this.layer, buildingInfo, this.selectedColor);
