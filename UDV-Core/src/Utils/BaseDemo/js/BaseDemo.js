@@ -406,10 +406,10 @@ export class BaseDemo {
         // This building layer represents Lyon in 2015 and is served from
         // grand lyon alpha server
         let $3dTilesLayer = new itowns.GeometryLayer(
-            '3d-tiles-layer', new THREE.Group());
+            this.config['3DTilesLayerID'], new THREE.Group());
         $3dTilesLayer.name = 'Lyon-2015';
         $3dTilesLayer.url =
-            'https://threedtilesets.alpha.grandlyon.com/TileSet_Lyon_2015_full/tileset.json';
+            this.config['3DTilesLayerURL'];
         $3dTilesLayer.protocol = '3d-tiles';
         $3dTilesLayer.overrideMaterials = true;
 

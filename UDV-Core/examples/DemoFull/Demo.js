@@ -7,10 +7,11 @@ let baseDemo = new BaseDemo({
 
 baseDemo.appendTo(document.body);
 
-// Initialize iTowns 3D view
-baseDemo.init3DView();
-
 baseDemo.loadConfigFile('../data/config/generalDemoConfig.json').then(() => {
+
+    // Initialize iTowns 3D view
+    baseDemo.init3DView();
+    
     ////// REQUEST SERVICE
     const requestService = new udvcore.RequestService();
 
@@ -67,4 +68,18 @@ baseDemo.loadConfigFile('../data/config/generalDemoConfig.json').then(() => {
         baseDemo.controls, baseDemo.view);
     baseDemo.addModuleView('geocoding', geocodingView, {binding: 's',
                                 name: 'Address Search'});
+
+    ////// LINK VISU
+    const linkVisualizationService = new udvcore.LinkVisualizationService(
+        requestService, baseDemo.config);
+    const linkVisualizationWindow = new udvcore.LinkVisualizationWindow(
+        linkVisualizationService, baseDemo.view, baseDemo.config);
+    baseDemo.addModuleView('linkVisualization', linkVisualizationWindow);
+
+    ////// 3DTILES DEBUG
+    const debug3dTilesWindow = new udvcore.Debug3DTilesWindow(baseDemo.view,
+        baseDemo.config);
+    baseDemo.addModuleView('3dtilesDebug', debug3dTilesWindow, {
+        name: '3DTiles Debug'
+    });
 });

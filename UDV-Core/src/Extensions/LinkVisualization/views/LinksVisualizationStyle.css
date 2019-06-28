@@ -1,0 +1,25 @@
+.links-lister {
+  padding: 5px;
+}
+
+.links-lister h3 {
+  border-top: 1px solid white;
+  margin: 0;
+}
+
+.links-lister table {
+  border-collapse: collapse;
+}
+
+.links-lister th {
+  border-bottom: 1px solid;
+}
+
+.links-lister .link-selector {
+  cursor: pointer;
+}
+
+.links-lister .link-selector:hover {
+  background-color: rgba(255, 255, 255, 0.25);
+  color: white;
+}

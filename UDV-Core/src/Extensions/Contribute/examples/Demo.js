@@ -7,11 +7,12 @@ let baseDemo = new BaseDemo({
 
 baseDemo.appendTo(document.body);
 
-// Initialize iTowns 3D view
-baseDemo.init3DView();
-
 baseDemo.loadConfigFile(
     '../../../../examples/data/config/generalDemoConfig.json').then(() => {
+
+    // Initialize iTowns 3D view
+    baseDemo.init3DView();
+    
     ////// REQUEST SERVICE
     const requestService = new udvcore.RequestService();
 
