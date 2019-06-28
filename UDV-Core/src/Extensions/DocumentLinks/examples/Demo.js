@@ -38,5 +38,5 @@ baseDemo.loadConfigFile(
     const linkVisualizationService = new udvcore.LinkVisualizationService(
         requestService, baseDemo.config);
     const documentLinkWindow = new udvcore.DocumentLinkWindow(
-        linkVisualizationService, documents, baseDemo.view);
+        linkVisualizationService, documents, baseDemo.view, baseDemo.controls);
 });

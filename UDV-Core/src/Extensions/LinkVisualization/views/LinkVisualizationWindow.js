@@ -12,10 +12,11 @@ export class LinkVisualizationWindow extends Window {
    * @param {LinkVisualizationService} linkVisualizationService 
    * @param {View} itownsView The iTowns view.
    */
-  constructor(linkVisualizationService, itownsView, config) {
+  constructor(linkVisualizationService, itownsView, controls, config) {
     super('link_visu', 'Link Visualization', false);
     this.linkVisualizationService = linkVisualizationService;
     this.itownsView = itownsView;
+    this.controls = controls;
     this.selectedBuildingInfo = null;
 
     this.layer = itownsView.getLayerById(config['3DTilesLayerID']);

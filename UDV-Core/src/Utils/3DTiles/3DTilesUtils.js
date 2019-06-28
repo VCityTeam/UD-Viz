@@ -215,3 +215,42 @@ export function updateITownsView(view, layer) {
     console.error(e);
   }
 }
+
+/**
+ * Computes and returns the centroid of the vertices given as parameter.
+ * 
+ * @param {*} tile The 3DTiles tile.
+ * @param {*} indexArray The indexes of the vertices. It is assumed to be
+ * **sorted** and **contiguous**.
+ * 
+ * @returns {THREE.Vector3} The centroid of the vertices.
+ */
+export function getVerticesCentroid(tile, indexArray) {
+  if (!tile) {
+    throw 'Tile not loaded in view';
+  }
+
+  //Find the 'Mesh' part of the tile
+  while (!!tile.children[0] && !(tile.type === 'Mesh')) {
+    tile = tile.children[0];
+  }
+
+  if (!tile.geometry.attributes._BATCHID) {
+    throw 'Invalid tile';
+  }
+
+  if (tile.geometry.type !== 'BufferGeometry') {
+    throw 'Cannot change vertices color';
+  }
+
+  let vertexSum = new THREE.Vector3(0, 0, 0);
+  let positionArray = tile.geometry.attributes.position.array;
+  for (let i = indexArray[0]; i <= indexArray[indexArray.length - 1]; ++i) {
+    vertexSum.x += positionArray[i * 3    ];
+    vertexSum.y += positionArray[i * 3 + 1];
+    vertexSum.z += positionArray[i * 3 + 2];
+  }
+  let vertexCount = indexArray.length;
+  let vertexCentroid = vertexSum.divideScalar(vertexCount).applyMatrix4(tile.matrixWorld);
+  return vertexCentroid;
+}

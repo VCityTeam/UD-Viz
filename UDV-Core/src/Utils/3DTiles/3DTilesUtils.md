@@ -130,6 +130,10 @@ This function removes the `color` attribute from the geometry of the tile and se
 
 The purpose of this function is to tell the iTowns view to update the scene. It is necessary to call this function when you make changes to the color of some tiles, for example.
 
+### `getVerticesCentroid(tile, indexArray)` - Computes the centroid of the vertices
+
+This function computes the centroid of the given vertices. `indexArray` is the array of indexes used to specify which vertices in the tile should be considered. This array is assumed to be contiguous and sorted.
+
 ## 3DTilesBuildingUtils
 
 ### `getBuildingIdFromIntersection(inter)` - Gets a building ID from an intersection

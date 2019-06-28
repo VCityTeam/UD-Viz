@@ -2,10 +2,12 @@ import { Window } from "../../../Utils/GUI/js/Window";
 import { LinkVisualizationService } from '../../LinkVisualization/services/LinkVisualizationService';
 import { DocumentController } from "../../../Modules/ConsultDoc/DocumentController";
 import { getTileInLayer, getTileInTileset, removeTileVerticesColor,
-  updateITownsView, getFirstTileIntersection } from '../../../Utils/3DTiles/3DTilesUtils'
+  updateITownsView, getFirstTileIntersection, getVerticesCentroid } from '../../../Utils/3DTiles/3DTilesUtils'
 import { getTilesBuildingInfo, colorBuilding, getBuildingIdFromIntersection } from '../../../Utils/3DTiles/3DTilesBuildingUtils'
 
 import './DocumentLink.css';
+import { Vector3 } from "three";
+import { focusCameraOn } from "../../../Utils/Camera/CameraUtils";
 
 export class DocumentLinkWindow extends Window {
   /**
@@ -21,7 +23,7 @@ export class DocumentLinkWindow extends Window {
    * visualization service.
    * @param { DocumentController } documentController The document controller.
    */
-  constructor(linkVisualizationService, documentController, itownsView) {
+  constructor(linkVisualizationService, documentController, itownsView, controls) {
     super('document-links', 'Document - Links', false);
 
     this.linkVisualizationService = linkVisualizationService;
@@ -33,6 +35,7 @@ export class DocumentLinkWindow extends Window {
 
     // Elements to manipulate iTowns and 3DTiles
     this.itownsView = itownsView;
+    this.controls = controls;
     this.layer = itownsView.getLayerById('3d-tiles-layer');
     this.tbi = null;
     this.highlightColor = [0, 0.9, 1];
@@ -134,18 +137,25 @@ export class DocumentLinkWindow extends Window {
                           <ul>`;
         let links = await this.linkVisualizationService.getLinks(type, filters);
         for (let link of links) {
-          let linkSelectorId = this.linkSelectorId(type, link);
-          newDivHtml += `<li id="${linkSelectorId}" class="link-selector">
+          newDivHtml += `<li>
                            ID : ${link.target_id}
+                           <span id="${this.linkHighlighterId(type, link)}" class="link-selector">
+                            highlight
+                           </span>
+                           <span id="${this.linkTravelerId(type, link)}" class="link-selector">
+                            travel
+                           </span>
                          </li>`;
         }
         newDivHtml += '</ul>';
         newDiv.innerHTML = newDivHtml;
         this.linkTablesDivElement.appendChild(newDiv);
         for (let link of links) {
-          let linkSelectorId = this.linkSelectorId(type, link);
-          document.getElementById(linkSelectorId).onclick = () => {
-            this.selectLink(type, link);
+          document.getElementById(this.linkHighlighterId(type, link)).onclick = () => {
+            this.highlightLink(type, link);
+          };
+          document.getElementById(this.linkTravelerId(type, link)).onclick = () => {
+            this.travelToLink(type, link);
           };
         }
       }
@@ -160,7 +170,7 @@ export class DocumentLinkWindow extends Window {
    * @param {any} link The actual link, with `id`, `source_id` and `target_id`
    * properties.
    */
-  async selectLink(type, link) {
+  async highlightLink(type, link) {
     if (type === 'city_object') {
       this.tbi = getTilesBuildingInfo(this.layer, this.tbi);
       let buildingId = link.target_id;
@@ -172,8 +182,26 @@ export class DocumentLinkWindow extends Window {
           updateITownsView(this.itownsView);
           this.highlightedBuildingInfo = buildingInfo;
         } catch (_) {
-          alert('Building is not currently in the view.');
+          alert('Building is not currently in the view. Travel to it first');
         }
+      }
+    }
+  }
+
+  /**
+   * If the target is a city object, moves the camera to focus on its centroid.
+   * 
+   * @param {string} type The link target type.
+   * @param {any} link The actual link, with `id`, `source_id` and `target_id`
+   */
+  async travelToLink(type, link) {
+    if (type === 'city_object') {
+      this.tbi = getTilesBuildingInfo(this.layer, this.tbi);
+      let buildingId = link.target_id;
+      let buildingInfo = this.tbi.buildings[buildingId];
+      if (!!buildingInfo) {
+        let centroid = getVerticesCentroid(getTileInLayer(this.layer, buildingInfo.tileId), buildingInfo.arrayIndexes);
+        await focusCameraOn(this.itownsView, this.controls, centroid, 1);
       }
     }
   }
@@ -328,8 +356,12 @@ export class DocumentLinkWindow extends Window {
     return document.getElementById(this.linkTablesDivId);
   }
 
-  linkSelectorId(type, link) {
-    return `${this.linkTablesDivId}_${type}_${link.id}`;
+  linkHighlighterId(type, link) {
+    return `${this.linkTablesDivId}_${type}_${link.id}_highlight`;
+  }
+
+  linkTravelerId(type, link) {
+    return `${this.linkTablesDivId}_${type}_${link.id}_travel`;
   }
 
   get selectBuildingButtonId() {

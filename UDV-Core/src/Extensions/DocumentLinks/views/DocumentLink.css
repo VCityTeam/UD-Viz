@@ -1,7 +1,8 @@
 .link-selector {
+  margin-left: 5px;
   cursor: pointer;
 }
 
 .link-selector:hover {
-  font-weight: bold;
+  text-decoration: underline;
 }
