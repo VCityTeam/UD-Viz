@@ -55,5 +55,21 @@ export class LinkVisualizationService {
     return links;
   }
 
-
+  /**
+   * Creates a new link with the given type.
+   * 
+   * @param {string} linkType A supported link type.
+   * @param {FormData} formData Properties of the created link. It must include
+   * `source_id` (the document id) and `target_id` (ID of the target of type
+   * `linkType`)
+   */
+  async createLink(linkType, formData) {
+    const url = `${this.linkURL}/${linkType}`;
+    let req = await this.requestService.request('POST', url, {
+      authenticate: false,
+      body: formData
+    });
+    let created = JSON.parse(req.response);
+    return created;
+  }
 }
