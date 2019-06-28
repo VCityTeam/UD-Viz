@@ -30,7 +30,8 @@ export function RequestService() {
      * - `body` : the request body
      * - `authenticate` : set to false if you don't want the request to use
      * authentication
-     * - `responseType` : the expected response type
+     * - `responseType` : the expected response type.
+     * - `urlParameters` : A dictionnary of url parameters.
      */
     this.request = (method, url, options = {}) => {
         let args = options || {};
@@ -39,8 +40,15 @@ export function RequestService() {
                             && args.authenticate !== undefined)?
                             args.authenticate : true;
         let responseType = args.responseType || null;
+        let urlParameters = args.urlParameters || null;
         return new Promise((resolve, reject) => {
             let req = new XMLHttpRequest();
+            if (!!urlParameters) {
+                url += '?';
+                for (let [paramKey, paramValue] of Object.entries(urlParameters)) {
+                    url += `${encodeURIComponent(paramKey)}=${encodeURIComponent(paramValue)}&`;
+                }
+            }
             req.open(method, url, true);
 
             if (this.useAuthentication && authenticate) {
@@ -55,12 +63,8 @@ export function RequestService() {
             if (!!responseType) {
                 req.responseType = responseType;
             }
-
-            if (method === 'GET' || method === 'DELETE') {
-                req.send(null);
-            } else if (method === 'POST' || method === 'PUT') {
-                req.send(body);
-            }
+            
+            req.send(body);
 
             req.onload = () => {
                 if (req.status >= 200 && req.status < 300) {

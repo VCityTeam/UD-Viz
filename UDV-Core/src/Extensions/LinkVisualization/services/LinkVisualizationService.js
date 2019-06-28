@@ -49,7 +49,7 @@ export class LinkVisualizationService {
     const url = `${this.linkURL}/${linkType}`;
     let req = await this.requestService.request('GET', url, {
       authenticate: false,
-      body: filters
+      urlParameters: filters
     });
     let links = JSON.parse(req.response);
     return links;

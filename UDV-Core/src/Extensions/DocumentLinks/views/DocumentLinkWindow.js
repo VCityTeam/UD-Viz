@@ -123,10 +123,11 @@ export class DocumentLinkWindow extends Window {
    * method when clicked.
    */
   async fetchLinks() {
-    let currentDocument = this.documentController.currentDoc;
+    let currentDocument = this.documentController.getCurrentDoc();
     if (!!currentDocument) {
-      let filters = new FormData();
-      filters.append('source_id', currentDocument.id);
+      let filters = {
+        source_id: currentDocument.id
+      };
 
       this.linkTablesDivElement.innerHTML = '';
 
