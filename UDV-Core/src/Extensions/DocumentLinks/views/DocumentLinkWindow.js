@@ -1,8 +1,8 @@
 import { Window } from "../../../Utils/GUI/js/Window";
 import { LinkVisualizationService } from '../../LinkVisualization/services/LinkVisualizationService';
 import { DocumentController } from "../../../Modules/ConsultDoc/DocumentController";
-import { getTileInLayer, getTileInTileset, removeTileVerticesColor,
-  updateITownsView, getFirstTileIntersection, getVerticesCentroid } from '../../../Utils/3DTiles/3DTilesUtils'
+import { getTileInTileset, removeTileVerticesColor,
+  updateITownsView, getFirstTileIntersection } from '../../../Utils/3DTiles/3DTilesUtils'
 import { getTilesBuildingInfo, colorBuilding, getBuildingIdFromIntersection } from '../../../Utils/3DTiles/3DTilesBuildingUtils'
 
 import './DocumentLink.css';
@@ -201,8 +201,8 @@ export class DocumentLinkWindow extends Window {
       let buildingId = link.target_id;
       let buildingInfo = this.tbi.buildings[buildingId];
       if (!!buildingInfo) {
-        let centroid = getVerticesCentroid(getTileInLayer(this.layer, buildingInfo.tileId), buildingInfo.arrayIndexes);
-        await focusCameraOn(this.itownsView, this.controls, centroid, 1);
+        await focusCameraOn(this.itownsView, this.controls,
+          buildingInfo.centroid, 1);
       }
     }
   }

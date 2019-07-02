@@ -1,7 +1,8 @@
 import { setTileVerticesColor, getBatchIdFromIntersection,
   getBatchTableFromTile, 
   getTileInLayer,
-  getVisibleTiles} from "./3DTilesUtils";
+  getVisibleTiles,
+  getVerticesCentroid} from "./3DTilesUtils";
 
 /**
  * Gets a building ID from an intersection. The intersecting object must
@@ -70,6 +71,7 @@ export function getTilesBuildingInfo(layer, tbi = null) {
     if (!tbi.loadedTiles[tileId]) {
       let batchTable = tile.batchTable;
       let attributes = tile.children[0].children[0].geometry.attributes;
+      let newBuildingIds = [];
       // For each vertex (ie. each batch ID), retrieve the associated building
       // ID.
       attributes._BATCHID.array.forEach((batchId, arrayIndex) => {
@@ -79,10 +81,17 @@ export function getTilesBuildingInfo(layer, tbi = null) {
           tbi.buildings[buildingId] = {};
           tbi.buildings[buildingId].arrayIndexes = [];
           tbi.buildings[buildingId].tileId = tile.tileId;
+          tbi.buildings[buildingId].centroid = null;
+
+          newBuildingIds.push(buildingId);
         }
         // Associates the vertex to the corresponding building ID
         tbi.buildings[buildingId].arrayIndexes.push(arrayIndex);
       });
+      for (let buildingId of newBuildingIds) {
+        tbi.buildings[buildingId].centroid = getVerticesCentroid(tile,
+          tbi.buildings[buildingId].arrayIndexes);
+      }
       tbi.loadedTiles[tileId] = true;
       tbi.loadedTileCount += 1;
     }

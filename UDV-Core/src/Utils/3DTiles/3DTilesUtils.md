@@ -87,7 +87,10 @@ In our application, we often need to interact with buildings rather than whole t
 
 The TBI has serveral useful properties :
 
-- `buildings` is a dictionnary that maps each building ID with its specific data (what we call 'Building Information'). A building information object contains 2 properties : `arrayIndexes`, whichs stores the indexes of the vertices of the building, and `tileId`, referencing the tile in which the building is stored (we need to store the tileId and not the whole tile, because tile objects are destroyed and re-created when unloaded / loaded).
+- `buildings` is a dictionnary that maps each building ID with its specific data (what we call 'Building Information'). A building information object contains a few properties :
+  - `arrayIndexes` stores the indexes of the vertices of the building
+  - `tileId` references the tile in which the building is stored (we need to store the tileId and not the whole tile, because tile objects are destroyed and re-created when unloaded / loaded).
+  - `centroid` contains the centroid of the geometry.
 - `loadedTiles` store each tile that was explored by the TBI. As we mentioned before, the 3DTiles layer does not contains every tile of the tileset, but only the ones that are currently rendered. In order to keep in mind which tile we have analyzed, we keep them in the `loadedTiles` dictionnary.
 - `loadedTileCount` is the size of `loadedTiles`.
 - `totalTileCount` is the total number of tiles in the tileset.
