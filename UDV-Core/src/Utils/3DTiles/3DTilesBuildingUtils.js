@@ -88,6 +88,7 @@ export function getTilesBuildingInfo(layer, tbi = null) {
         // Associates the vertex to the corresponding building ID
         tbi.buildings[buildingId].arrayIndexes.push(arrayIndex);
       });
+      // For each newly added building, compute the centroid
       for (let buildingId of newBuildingIds) {
         tbi.buildings[buildingId].centroid = getVerticesCentroid(tile,
           tbi.buildings[buildingId].arrayIndexes);

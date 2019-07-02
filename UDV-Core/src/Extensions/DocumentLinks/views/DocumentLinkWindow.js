@@ -22,6 +22,8 @@ export class DocumentLinkWindow extends Window {
    * @param {LinkVisualizationService} linkVisualizationService The link
    * visualization service.
    * @param { DocumentController } documentController The document controller.
+   * @param {*} itownsView The iTowns view.
+   * @param {*} controls The iTowns planar controls.
    */
   constructor(linkVisualizationService, documentController, itownsView, controls) {
     super('document-links', 'Document - Links', false);
@@ -119,8 +121,10 @@ export class DocumentLinkWindow extends Window {
   /**
    * Retrieves all link types, and for each type retrieves the links were the
    * source id is the same as the current document. The links are then displayed
-   * in the window. Each link listen to momuse clicks and call the `selectLink`
-   * method when clicked.
+   * in the window. Two buttons are created for each link, called "highlight"
+   * and "travel". Clicking on the "highlight" button triggers the
+   * `highlightLink` method, while the "travel" button calls the `travelToLink`
+   * method.
    */
   async fetchLinks() {
     let currentDocument = this.documentController.getCurrentDoc();
@@ -185,6 +189,9 @@ export class DocumentLinkWindow extends Window {
         } catch (_) {
           alert('Building is not currently in the view. Travel to it first');
         }
+      } else {
+        alert('Building was not loaded by iTowns. Please navigate in the city' +
+          ' to make sure the building has been loaded at least once.');
       }
     }
   }
@@ -203,6 +210,9 @@ export class DocumentLinkWindow extends Window {
       if (!!buildingInfo) {
         await focusCameraOn(this.itownsView, this.controls,
           buildingInfo.centroid, {duration: 1});
+      } else {
+        alert('Building was not loaded by iTowns. Please navigate in the city' +
+          ' to make sure the building has been loaded at least once.');
       }
     }
   }
