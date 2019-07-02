@@ -24,6 +24,7 @@ baseDemo.loadConfigFile(
     //baseDemo.addModuleView('documents', documents);
 
     ////// GUIDED TOURS MODULE
-    const guidedtour = new udvcore.GuidedTourController(documents);
+    const guidedtour = new udvcore.GuidedTourController(documents,
+        requestService);
     baseDemo.addModuleView('guidedTour', guidedtour, {name: 'Guided Tours'});
 });

@@ -1,6 +1,7 @@
 import './GuidedTour.css';
 import { GuidedTour } from './GuidedTour.js';
 import { ModuleView } from '../../Utils/ModuleView/ModuleView';
+import { RequestService } from "../../Utils/Request/RequestService";
 
 /**
 * Class: GuidedTourController
@@ -10,23 +11,22 @@ import { ModuleView } from '../../Utils/ModuleView/ModuleView';
 * It handles the display of guided tours in the guided tour window, and all the
 * functionalities related to the guided tour (start, exit, next, previous...)
 * GuidedTours are made of steps with properties : index, document, text1 and text2.
-
-/**
-* Constructor for GuidedTourController
-* The controller reads data from a database to build one or more guided tours
-* Each guided tour is a succession of "steps"
-* Each step has a document + tour text + doc text (steps are instances of the TourStep class)
-* Multiple guided tours are supported (only one tour is finished for the demo)
-* For the demo : options.preventUserFromChangingTour allows to hide the buttons for changing tour
-/**
- * Constructor for GuidedTourControllerClass
-* @param { documentController } documentController
- *
- ======================================================================
- */
+*/
 export class GuidedTourController extends ModuleView {
-
-  constructor(documentController) {
+  /**
+  * Constructor for GuidedTourController
+  * The controller reads data from a database to build one or more guided tours
+  * Each guided tour is a succession of "steps"
+  * Each step has a document + tour text + doc text (steps are instances of the TourStep class)
+  * Multiple guided tours are supported (only one tour is finished for the demo)
+  * For the demo : options.preventUserFromChangingTour allows to hide the buttons for changing tour
+  *
+  * @param { documentController } documentController
+  * @param { RequestService } requestService The request service
+  *
+  ======================================================================
+  */
+  constructor(documentController, requestService) {
     super();
 
     this.guidedTourContainerId = "guidedTourContainer";
@@ -42,6 +42,8 @@ export class GuidedTourController extends ModuleView {
     this.currentTourIndex = 0;
 
     this.steps = [];
+
+    this.requestService = requestService;
 
     // the current step index of the current tour
     this.currentStepIndex = 0;
@@ -68,13 +70,15 @@ export class GuidedTourController extends ModuleView {
   /**
   * Get all guided tour from a database */
   //=============================================================================
-  getGuidedTours() {
-    var req = new XMLHttpRequest();
-    req.open("GET", this.url, false);
-    req.send(req.responseText);
+  async getGuidedTours() {
+    let req = await this.requestService.request('GET', this.url, {
+      authenticate: false
+    });
     this.guidedTours = JSON.parse(req.responseText);
-    this.documentController.documentBrowser.numberDocs = this.guidedTours[0].extendedDocs.length;
 
+    if (this.guidedTours.length > 0) {
+      this.documentController.documentBrowser.numberDocs = this.guidedTours[0].extendedDocs.length;
+    }
   }
 
   /**

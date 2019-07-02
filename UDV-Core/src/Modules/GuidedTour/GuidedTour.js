@@ -84,9 +84,9 @@ export class GuidedTour extends Window {
 
   //get all available guided tour from the database
   startGuidedTourMode(){
-    this.guidedTourController.getGuidedTours();
-    this.previewTour();
-
+    this.guidedTourController.getGuidedTours().then(() => {
+      this.previewTour();
+    });
   }
 
   /**
@@ -111,10 +111,13 @@ export class GuidedTour extends Window {
     //document.getElementById("guidedTourText2").style.display = "none";
     document.getElementById("guidedTourStartButton").style.display = "block";
 
-    document.getElementById('guidedTourTitle').innerHTML =
-                                  this.guidedTourController.getCurrentTour().name;
+    let currentTour = this.guidedTourController.getCurrentTour();
+    document.getElementById('guidedTourTitle').innerHTML = 
+                                  currentTour ? currentTour.name
+                                              : 'No guided tour';
     document.getElementById('guidedTourText1').innerHTML =
-                           this.guidedTourController.getCurrentTour().description;
+                                  currentTour ? currentTour.description
+                                              : 'Please add guided tours';
     document.getElementById("guidedTourText1").style.height = "45%";
     document.getElementById("guidedTourStepTitle").innerHTML = null;
 

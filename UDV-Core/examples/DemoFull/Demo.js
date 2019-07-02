@@ -32,7 +32,8 @@ baseDemo.loadConfigFile('../data/config/generalDemoConfig.json').then(() => {
     });
 
     ////// GUIDED TOURS MODULE
-    const guidedtour = new udvcore.GuidedTourController(documents);
+    const guidedtour = new udvcore.GuidedTourController(documents,
+        requestService);
     baseDemo.addModuleView('guidedTour', guidedtour, {name: 'Guided tours'});
 
     ////// CONTRIBUTE EXTENSION
