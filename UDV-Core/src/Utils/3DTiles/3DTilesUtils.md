@@ -126,7 +126,7 @@ It is possible to change the color of specific vertices of the tile. They are sp
 
 This function removes the `color` attribute from the geometry of the tile and sets the `vertexColors` property of the material to `THREE.NoColor`, meaning that the tile color will be determined by only the material color.
 
-### `updateITownsView(view)` - Updates the scene
+### `updateITownsView(view, layer)` - Updates the scene
 
 The purpose of this function is to tell the iTowns view to update the scene. It is necessary to call this function when you make changes to the color of some tiles, for example.
 
@@ -206,7 +206,7 @@ if (!!buildingInfo) {
     removeTileVerticesColor(tile);
   }
   colorBuilding(this.layer, buildingInfo, this.selectedColor);
-  updateITownsView(this.iTownsView);
+  updateITownsView(this.iTownsView, this.layer);
   this.previousBuilding = buildingInfo;
 }
 ```

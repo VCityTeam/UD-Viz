@@ -180,7 +180,7 @@ export class DocumentLinkWindow extends Window {
         this.clearHighlightedBuilding();
         try {
           colorBuilding(this.layer, buildingInfo, this.highlightColor);
-          updateITownsView(this.itownsView);
+          updateITownsView(this.itownsView, this.layer);
           this.highlightedBuildingInfo = buildingInfo;
         } catch (_) {
           alert('Building is not currently in the view. Travel to it first');
@@ -282,7 +282,7 @@ export class DocumentLinkWindow extends Window {
           `;
           this.clearSelectedBuilding();
           colorBuilding(this.layer, buildingInfo, this.selectionColor);
-          updateITownsView(this.itownsView);
+          updateITownsView(this.itownsView, this.layer);
           this.selectedBuildingId = buildingId;
           this.selectedBuildingInfo = buildingInfo;
         }
@@ -321,7 +321,7 @@ export class DocumentLinkWindow extends Window {
         this.highlightedBuildingInfo.tileId);
       if (!!tile) {
         removeTileVerticesColor(tile);
-        updateITownsView(this.itownsView);
+        updateITownsView(this.itownsView, this.layer);
       }
       this.highlightedBuildingInfo = null;
     }
@@ -336,7 +336,7 @@ export class DocumentLinkWindow extends Window {
         this.selectedBuildingInfo.tileId);
       if (!!tile) {
         removeTileVerticesColor(tile);
-        updateITownsView(this.itownsView);
+        updateITownsView(this.itownsView, this.layer);
       }
       this.selectedBuildingId = null;
       this.selectedBuildingInfo = null;

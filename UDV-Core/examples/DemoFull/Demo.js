@@ -73,7 +73,7 @@ baseDemo.loadConfigFile('../data/config/generalDemoConfig.json').then(() => {
     const linkVisualizationService = new udvcore.LinkVisualizationService(
         requestService, baseDemo.config);
     const linkVisualizationWindow = new udvcore.LinkVisualizationWindow(
-        linkVisualizationService, baseDemo.view, baseDemo.config);
+        linkVisualizationService, baseDemo.view, baseDemo.controls, baseDemo.config);
     baseDemo.addModuleView('linkVisualization', linkVisualizationWindow);
 
     ////// 3DTILES DEBUG
