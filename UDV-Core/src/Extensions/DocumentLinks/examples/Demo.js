@@ -35,8 +35,7 @@ baseDemo.loadConfigFile(
         requestService);
 
     ////// DOCUMENT LINK EXTENSION
-    const linkVisualizationService = new udvcore.LinkVisualizationService(
-        requestService, baseDemo.config);
+    const linkService = new udvcore.LinkService(requestService, baseDemo.config);
     const documentLinkWindow = new udvcore.DocumentLinkWindow(
-        linkVisualizationService, documents, baseDemo.view, baseDemo.controls);
+        linkService, documents, baseDemo.view, baseDemo.controls);
 });

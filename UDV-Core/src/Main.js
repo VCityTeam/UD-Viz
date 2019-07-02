@@ -30,9 +30,7 @@ export { DocumentCommentsWindow }   from './Extensions/DocumentComments/views/Do
 export { GeocodingService }         from './Extensions/Geocoding/services/GeocodingService';
 export { GeocodingView }            from './Extensions/Geocoding/views/GeocodingView';
 
-export { LinkVisualizationService } from './Extensions/LinkVisualization/services/LinkVisualizationService';
-export { LinkVisualizationWindow }  from './Extensions/LinkVisualization/views/LinkVisualizationWindow';
-
 export { Debug3DTilesWindow }       from './Extensions/3DTilesDebug/views/3DTilesDebugWindow';
 
+export { LinkService }              from './Extensions/DocumentLinks/services/LinkService';
 export { DocumentLinkWindow }       from './Extensions/DocumentLinks/views/DocumentLinkWindow';

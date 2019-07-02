@@ -1,6 +1,6 @@
 import { RequestService } from "../../../Utils/Request/RequestService";
 
-export class LinkVisualizationService {
+export class LinkService {
   /**
    * Creates a Link Visualization Service
    * 

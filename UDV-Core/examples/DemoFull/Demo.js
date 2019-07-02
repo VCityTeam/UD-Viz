@@ -70,13 +70,6 @@ baseDemo.loadConfigFile('../data/config/generalDemoConfig.json').then(() => {
     baseDemo.addModuleView('geocoding', geocodingView, {binding: 's',
                                 name: 'Address Search'});
 
-    ////// LINK VISU
-    const linkVisualizationService = new udvcore.LinkVisualizationService(
-        requestService, baseDemo.config);
-    const linkVisualizationWindow = new udvcore.LinkVisualizationWindow(
-        linkVisualizationService, baseDemo.view, baseDemo.controls, baseDemo.config);
-    baseDemo.addModuleView('linkVisualization', linkVisualizationWindow);
-
     ////// 3DTILES DEBUG
     const debug3dTilesWindow = new udvcore.Debug3DTilesWindow(baseDemo.view,
         baseDemo.config);
@@ -85,6 +78,7 @@ baseDemo.loadConfigFile('../data/config/generalDemoConfig.json').then(() => {
     });
 
     ////// DOCUMENT LINK EXTENSION
+    const linkService = new udvcore.LinkService(requestService, baseDemo.config);
     const documentLinkWindow = new udvcore.DocumentLinkWindow(
-        linkVisualizationService, documents, baseDemo.view, baseDemo.controls);
+        linkService, documents, baseDemo.view, baseDemo.controls);
 });
