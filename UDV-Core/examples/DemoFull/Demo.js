@@ -83,4 +83,8 @@ baseDemo.loadConfigFile('../data/config/generalDemoConfig.json').then(() => {
     baseDemo.addModuleView('3dtilesDebug', debug3dTilesWindow, {
         name: '3DTiles Debug'
     });
+
+    ////// DOCUMENT LINK EXTENSION
+    const documentLinkWindow = new udvcore.DocumentLinkWindow(
+        linkVisualizationService, documents, baseDemo.view, baseDemo.controls);
 });

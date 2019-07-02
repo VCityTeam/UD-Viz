@@ -297,7 +297,7 @@ export class DocumentLinkWindow extends Window {
   async createLink() {
     if (!!this.selectedBuildingId) {
       let formData = new FormData();
-      formData.append('source_id', this.documentController.currentDoc.id);
+      formData.append('source_id', this.documentController.getCurrentDoc().id);
       formData.append('target_id', this.selectedBuildingId);
       try {
         await this.linkVisualizationService.createLink('city_object', formData);
