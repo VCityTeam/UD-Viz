@@ -1,7 +1,7 @@
 {
   "type": "class",
   "server":{
-    "url":"http://localhost:5000/",
+    "url":"http://localhost:1525/",
     "login": "login",
     "user": "user",
     "userMe": "user/me",
