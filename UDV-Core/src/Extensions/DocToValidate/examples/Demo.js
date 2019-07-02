@@ -27,7 +27,7 @@ baseDemo.loadConfigFile(
     ////// DOCUMENTS MODULE
     const documents = new udvcore.DocumentController(baseDemo.view,
         baseDemo.controls, { temporal: baseDemo.temporal, active: false },
-        baseDemo.config);
+        baseDemo.config, requestService);
     baseDemo.addModuleView('documents', documents);
 
     ////// CONTRIBUTE EXTENSION
