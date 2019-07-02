@@ -65,10 +65,23 @@ export class CreateDocument extends Window {
     positionerContainer.id = "positionerContainer";
     document.body.appendChild(positionerContainer);
 
-    positionerContainer.innerHTML =
-    '<div id="docPositionerFull">\
-    <img id="docPositionerFullImg"/></div>\
-    ';
+    positionerContainer.innerHTML =`
+    <div id="docPositionerFull">
+      <img id="docPositionerFullImg"/>
+      <div id="docPositionerControlPanel">
+        <label for="docPositionerOpacity">Opacity</label>
+        <div class="center-helper">
+          <input id="docPositionerOpacity" type="range" min="0" max="100" value="50" step="1">
+        <div>
+      </div>
+    </div>
+    `;
+
+    document.getElementById('docPositionerOpacity').addEventListener('input', (event) => {
+      let value = event.currentTarget.value;
+      document.getElementById('docPositionerFullImg').style.opacity = `${value/100}`;
+      return true;
+    });
   }
 
   get innerContentHtml() {
