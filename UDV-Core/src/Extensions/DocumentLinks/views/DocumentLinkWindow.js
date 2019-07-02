@@ -202,7 +202,7 @@ export class DocumentLinkWindow extends Window {
       let buildingInfo = this.tbi.buildings[buildingId];
       if (!!buildingInfo) {
         await focusCameraOn(this.itownsView, this.controls,
-          buildingInfo.centroid, 1);
+          buildingInfo.centroid, {duration: 1});
       }
     }
   }

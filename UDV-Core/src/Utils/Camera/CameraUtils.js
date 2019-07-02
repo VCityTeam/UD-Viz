@@ -4,22 +4,32 @@
  * @param {itowns.View} view The iTowns view.
  * @param {itowns.PlanarControls} controls The camera controls.
  * @param {THREE.Vector3} targetPos The target position.
- * @param {number} [duration] The duration of travel, in seconds. If not specified
- * the value 'auto' is used for `initiateTravel` and the promise resolves
- * without waiting for the travel to be finished.
+ * @param {*} [options] Optional parameters for the travel. Accepted entries
+ * are :
+ * - `duration` : the duration of the movement, in seconds. The promise will
+ * resolve after this value. If not specified, the value `auto` is used for
+ * the movement (see the `PlanarControls.initateTravel` method), and the promise
+ * resolves imediatly.
+ * - `verticalDistance` : Desired height of the camera relative to the target
+ * position.
+ * - `horizontalDistance` : Desired distance of the camera from the target
+ * position.
  */
-export function focusCameraOn(view, controls, targetPos, duration) {
+export function focusCameraOn(view, controls, targetPos, options = {}) {
   return new Promise((resolve, reject) => {
     try {
+      const duration = options.duration || null;
+      const verticalDist = options.verticalDistance || 800;
+      const horizontalDist = options.horizontalDistance || 1000;
+
       let cameraPos = view.camera.camera3D.position.clone();
-      const deltaZ = 800;
-      const horizontalDistance = 1.3 * deltaZ;
-      const dist = cameraPos.distanceTo(targetPos);
       const direction = (new THREE.Vector3()).subVectors(targetPos, cameraPos);
-      cameraPos.addScaledVector(direction, (1 - horizontalDistance / dist));
-      cameraPos.z = targetPos.z + deltaZ;
-      let travelDuration = duration ? duration : 'auto';
-      let timeoutDuration = duration ? duration * 1000 : 0;
+      const currentDist = Math.sqrt(direction.x * direction.x +
+        direction.y * direction.y);
+      cameraPos.addScaledVector(direction, (1 - horizontalDist / currentDist));
+      cameraPos.z = targetPos.z + verticalDist;
+      const travelDuration = duration ? duration : 'auto';
+      const timeoutDuration = duration ? duration * 1000 : 0;
       controls.initiateTravel(cameraPos, travelDuration, targetPos, true);
       setTimeout(resolve, timeoutDuration);
     } catch (e) {
