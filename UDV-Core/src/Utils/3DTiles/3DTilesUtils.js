@@ -1,4 +1,4 @@
-import * as THREE from '../../../node_modules/three/src/Three.js';
+import * as THREE from '../../../node_modules/three/build/three.js';
 
 /**
  * Search a batch table in a tile. A tile is a THREE.js 3DObject with a 
