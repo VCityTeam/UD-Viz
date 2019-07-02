@@ -3,8 +3,9 @@ cd "$(dirname "$0")" || exit
 
 mkdir dist
 pushd dist
-git clone https://github.com/iTowns/itowns.git
+git clone https://github.com/jailln/itowns.git
 pushd itowns
+git checkout 3dtiles_refactoring
 npm install
 # The following command was automatically launched by 'npm install' as the
 # 'prepublish' script. However, Itowns moved this command  to the 
