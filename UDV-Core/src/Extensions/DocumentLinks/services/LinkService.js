@@ -72,4 +72,19 @@ export class LinkService {
     let created = JSON.parse(req.response);
     return created;
   }
+
+  /**
+   * Deletes a link of the given type with the given ID.
+   * 
+   * @param {string} linkType A supported link type.
+   * @param {number} linkId ID of the link to delete.
+   */
+  async deleteLink(linkType, linkId) {
+    const url = `${this.linkURL}/${linkType}/${linkId}`;
+    let req = await this.requestService.request('DELETE', url, {
+      authenticate: false
+    });
+    let deleted = JSON.parse(req.response);
+    return deleted;
+  }
 }

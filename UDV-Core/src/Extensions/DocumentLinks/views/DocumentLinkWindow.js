@@ -1,5 +1,5 @@
 import { Window } from "../../../Utils/GUI/js/Window";
-import { LinkVisualizationService } from '../../LinkVisualization/services/LinkVisualizationService';
+import { LinkService } from "../services/LinkService";
 import { DocumentController } from "../../../Modules/ConsultDoc/DocumentController";
 import { getTileInTileset, removeTileVerticesColor,
   updateITownsView, getFirstTileIntersection } from '../../../Utils/3DTiles/3DTilesUtils'
@@ -12,23 +12,24 @@ import { focusCameraOn } from "../../../Utils/Camera/CameraUtils";
 export class DocumentLinkWindow extends Window {
   /**
    * Creates a document link window to extend functionnalities of the consult
-   * doc module. This window has two main functionnalities :
+   * doc module. This window has several functionnalities :
    * 
    * 1. Visualize all links where the source is the current document. For links
    * with city objects, highlight the target buildings with a different color.
    * 2. Create new links between the current document and city objects. The
    * selection is done with the mouse.
+   * 3. Delete an existing link associated to the current document.
    * 
-   * @param {LinkVisualizationService} linkVisualizationService The link
+   * @param {LinkService} linkService The link service.
    * visualization service.
    * @param { DocumentController } documentController The document controller.
    * @param {*} itownsView The iTowns view.
    * @param {*} controls The iTowns planar controls.
    */
-  constructor(linkVisualizationService, documentController, itownsView, controls) {
+  constructor(linkService, documentController, itownsView, controls) {
     super('document-links', 'Document - Links', false);
 
-    this.linkVisualizationService = linkVisualizationService;
+    this.linkService = linkService;
     this.documentController = documentController;
 
     // Adds the window to the view and hide it
@@ -137,12 +138,12 @@ export class DocumentLinkWindow extends Window {
 
       this.linkTablesDivElement.innerHTML = '';
 
-      let linkTypes = await this.linkVisualizationService.getSupportedLinkTypes();
+      let linkTypes = await this.linkService.getSupportedLinkTypes();
       for (let type of linkTypes) {
         let newDiv = document.createElement('div');
         let newDivHtml = `<h3>Type : ${type}</h3>
                           <ul>`;
-        let links = await this.linkVisualizationService.getLinks(type, filters);
+        let links = await this.linkService.getLinks(type, filters);
         for (let link of links) {
           newDivHtml += `<li>
                            ID : ${link.target_id}
@@ -151,6 +152,9 @@ export class DocumentLinkWindow extends Window {
                            </span>
                            <span id="${this.linkTravelerId(type, link)}" class="link-selector">
                             travel
+                           </span>
+                           <span id="${this.linkDeleterId(type, link)}" class="link-selector">
+                            delete
                            </span>
                          </li>`;
         }
@@ -163,6 +167,9 @@ export class DocumentLinkWindow extends Window {
           };
           document.getElementById(this.linkTravelerId(type, link)).onclick = () => {
             this.travelToLink(type, link);
+          };
+          document.getElementById(this.linkDeleterId(type, link)).onclick = () => {
+            this.deleteLink(type, link);
           };
         }
       }
@@ -216,6 +223,21 @@ export class DocumentLinkWindow extends Window {
         alert('Building was not loaded by iTowns. Please navigate in the city' +
           ' to make sure the building has been loaded at least once.');
       }
+    }
+  }
+
+  /**
+   * Deletes the link.
+   * 
+   * @param {string} type The link target type.
+   * @param {any} link The actual link, with `id`, `source_id` and `target_id`.
+   */
+  async deleteLink(type, link) {
+    try {
+      this.linkService.deleteLink(type, link.id);
+      this.fetchLinks();
+    } catch (e) {
+      alert(`Failed to detete link : ${e}`);
     }
   }
 
@@ -316,7 +338,7 @@ export class DocumentLinkWindow extends Window {
       formData.append('source_id', this.documentController.getCurrentDoc().id);
       formData.append('target_id', this.selectedBuildingId);
       try {
-        await this.linkVisualizationService.createLink('city_object', formData);
+        await this.linkService.createLink('city_object', formData);
         this.fetchLinks();
         this.toggleBuildingSelection();
       } catch (e) {
@@ -379,6 +401,10 @@ export class DocumentLinkWindow extends Window {
 
   linkTravelerId(type, link) {
     return `${this.linkTablesDivId}_${type}_${link.id}_travel`;
+  }
+
+  linkDeleterId(type, link) {
+    return `${this.linkTablesDivId}_${type}_${link.id}_delete`;
   }
 
   get selectBuildingButtonId() {
