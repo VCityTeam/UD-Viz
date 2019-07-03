@@ -39,6 +39,8 @@ export class DocumentLinkWindow extends Window {
     this.itownsView = itownsView;
     this.controls = controls;
     this.layer = itownsView.getLayerById('3d-tiles-layer');
+    // See the file at `Utils/3DTiles/3DTilesUtils.md` for documentation
+    // about TilesBuildingInformation
     this.tbi = null;
     this.highlightColor = [0, 0.9, 1];
     this.highlightedBuildingInfo = null;
@@ -257,6 +259,8 @@ export class DocumentLinkWindow extends Window {
    * @param {MouseEvent} event The mouse event.
    */
   onMouseMove(event) {
+    // Check if the mouse is in the canvas (ie. the iTowns view). This will
+    // avoid unnecessary computations.
     if (event.target.nodeName.toUpperCase() === 'CANVAS') {
       let intersections = this.itownsView.pickObjectsAt(event, 5);
       let firstInter = getFirstTileIntersection(intersections);
@@ -280,6 +284,8 @@ export class DocumentLinkWindow extends Window {
    * @param {MouseEvent} event The mouse event.
    */
   onMouseClick(event) {
+    // Check if the mouse is in the canvas (ie. the iTowns view). This will
+    // avoid unnecessary computations.
     if (event.target.nodeName.toUpperCase() === 'CANVAS') {
       let buildingId = this.hoveredBuildingId;
       if (!!buildingId) {
