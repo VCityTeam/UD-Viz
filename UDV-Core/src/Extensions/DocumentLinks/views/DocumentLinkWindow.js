@@ -44,6 +44,7 @@ export class DocumentLinkWindow extends Window {
     // about TilesBuildingInformation
     this.tbi = null;
     this.highlightColor = [0, 0.9, 1];
+    this.highlightedBuildingId = null;
     this.highlightedBuildingInfo = null;
 
     // Building selection
@@ -194,6 +195,7 @@ export class DocumentLinkWindow extends Window {
         try {
           colorBuilding(this.layer, buildingInfo, this.highlightColor);
           updateITownsView(this.itownsView, this.layer);
+          this.highlightedBuildingId = buildingId;
           this.highlightedBuildingInfo = buildingInfo;
         } catch (_) {
           alert('Building is not currently in the view. Travel to it first');
@@ -214,15 +216,10 @@ export class DocumentLinkWindow extends Window {
   async travelToLink(type, link) {
     if (type === 'city_object') {
       this.tbi = getTilesBuildingInfo(this.layer, this.tbi);
-      let buildingId = link.target_id;
-      let buildingInfo = this.tbi.buildings[buildingId];
-      if (!!buildingInfo) {
-        await focusCameraOn(this.itownsView, this.controls,
-          buildingInfo.centroid, {duration: 1});
-      } else {
-        alert('Building was not loaded by iTowns. Please navigate in the city' +
-          ' to make sure the building has been loaded at least once.');
-      }
+      let centroid = new THREE.Vector3(link.centroid_x, link.centroid_y,
+        link.centroid_z);
+      await focusCameraOn(this.itownsView, this.controls, centroid,
+        {duration: 1});
     }
   }
 
@@ -233,11 +230,16 @@ export class DocumentLinkWindow extends Window {
    * @param {any} link The actual link, with `id`, `source_id` and `target_id`.
    */
   async deleteLink(type, link) {
-    try {
-      this.linkService.deleteLink(type, link.id);
-      this.fetchLinks();
-    } catch (e) {
-      alert(`Failed to detete link : ${e}`);
+    if (confirm('Are you sure you want to delete this link ?')) {
+      try {
+        await this.linkService.deleteLink(type, link.id);
+        if (this.highlightedBuildingId === link.target_id) {
+          this.clearHighlightedBuilding();
+        }
+        await this.fetchLinks();
+      } catch (e) {
+        alert(`Failed to detete link : ${e}`);
+      }
     }
   }
 
@@ -337,6 +339,10 @@ export class DocumentLinkWindow extends Window {
       let formData = new FormData();
       formData.append('source_id', this.documentController.getCurrentDoc().id);
       formData.append('target_id', this.selectedBuildingId);
+      let centroid = this.selectedBuildingInfo.centroid;
+      formData.append('centroid_x', centroid.x);
+      formData.append('centroid_y', centroid.y);
+      formData.append('centroid_z', centroid.z);
       try {
         await this.linkService.createLink('city_object', formData);
         this.fetchLinks();
