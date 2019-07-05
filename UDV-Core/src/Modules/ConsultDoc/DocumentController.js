@@ -10,17 +10,19 @@ import { DocumentResearch } from './DocumentResearch.js';
 import { DocumentBrowser } from './DocumentBrowser.js';
 import './ConsultDoc.css';
 import { ModuleView } from '../../Utils/ModuleView/ModuleView.js';
+import { RequestService } from "../../Utils/Request/RequestService";
 
-/**
- * Constructor for DocumentController Class
- * @param controls : PlanarControls instance
- * @param options : optional parameters (including TemporalController)
- * @param view :  itowns planar view
- * @param config : file holding configuration settings
- */
-//=============================================================================
 export class DocumentController extends ModuleView {
-  constructor(view, controls, options = {}, config) {
+  /**
+   * Constructor for DocumentController Class
+   * @param view :  itowns planar view
+   * @param controls : PlanarControls instance
+   * @param options : optional parameters (including TemporalController)
+   * @param config : file holding configuration settings
+   * @param {RequestService} requestService The request service.
+   */
+  //=============================================================================
+  constructor(view, controls, options = {}, config, requestService) {
     super();
     this.controls = controls;
     this.setOfDocuments = [];
@@ -32,6 +34,7 @@ export class DocumentController extends ModuleView {
     this.options = options;
     this.temporal = options.temporal;
     this.visible = false;
+    this.requestService = requestService;
 
     this.documentModel = config.properties;
     this.serverModel = config.server;
@@ -112,7 +115,7 @@ export class DocumentController extends ModuleView {
    *
    */
   //=============================================================================
-  getDocuments() {
+  async getDocuments() {
     //check which filters are set. URL is built manually for more modularity.
     //Could be improved
 
@@ -125,10 +128,9 @@ export class DocumentController extends ModuleView {
       }
     }
     urlFilters = urlFilters.slice('&', -1);
-    var req = new XMLHttpRequest();
-
-    req.open("GET", urlFilters, false);
-    req.send();
+    var req = await this.requestService.request('GET', urlFilters, {
+      authenticate: false
+    });
     this.setOfDocuments = JSON.parse(req.responseText);
     this.documentBrowser.numberDocs = this.setOfDocuments.length;
     this.reset();

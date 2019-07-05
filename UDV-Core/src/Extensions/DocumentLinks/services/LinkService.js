@@ -1,6 +1,6 @@
 import { RequestService } from "../../../Utils/Request/RequestService";
 
-export class LinkVisualizationService {
+export class LinkService {
   /**
    * Creates a Link Visualization Service
    * 
@@ -49,11 +49,42 @@ export class LinkVisualizationService {
     const url = `${this.linkURL}/${linkType}`;
     let req = await this.requestService.request('GET', url, {
       authenticate: false,
-      body: filters
+      urlParameters: filters
     });
     let links = JSON.parse(req.response);
     return links;
   }
 
+  /**
+   * Creates a new link with the given type.
+   * 
+   * @param {string} linkType A supported link type.
+   * @param {FormData} formData Properties of the created link. It must include
+   * `source_id` (the document id) and `target_id` (ID of the target of type
+   * `linkType`)
+   */
+  async createLink(linkType, formData) {
+    const url = `${this.linkURL}/${linkType}`;
+    let req = await this.requestService.request('POST', url, {
+      authenticate: false,
+      body: formData
+    });
+    let created = JSON.parse(req.response);
+    return created;
+  }
 
+  /**
+   * Deletes a link of the given type with the given ID.
+   * 
+   * @param {string} linkType A supported link type.
+   * @param {number} linkId ID of the link to delete.
+   */
+  async deleteLink(linkType, linkId) {
+    const url = `${this.linkURL}/${linkType}/${linkId}`;
+    let req = await this.requestService.request('DELETE', url, {
+      authenticate: false
+    });
+    let deleted = JSON.parse(req.response);
+    return deleted;
+  }
 }

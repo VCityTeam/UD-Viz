@@ -87,7 +87,10 @@ In our application, we often need to interact with buildings rather than whole t
 
 The TBI has serveral useful properties :
 
-- `buildings` is a dictionnary that maps each building ID with its specific data (what we call 'Building Information'). A building information object contains 2 properties : `arrayIndexes`, whichs stores the indexes of the vertices of the building, and `tileId`, referencing the tile in which the building is stored (we need to store the tileId and not the whole tile, because tile objects are destroyed and re-created when unloaded / loaded).
+- `buildings` is a dictionnary that maps each building ID with its specific data (what we call 'Building Information'). A building information object contains a few properties :
+  - `arrayIndexes` stores the indexes of the vertices of the building
+  - `tileId` references the tile in which the building is stored (we need to store the tileId and not the whole tile, because tile objects are destroyed and re-created when unloaded / loaded).
+  - `centroid` contains the centroid of the geometry.
 - `loadedTiles` store each tile that was explored by the TBI. As we mentioned before, the 3DTiles layer does not contains every tile of the tileset, but only the ones that are currently rendered. In order to keep in mind which tile we have analyzed, we keep them in the `loadedTiles` dictionnary.
 - `loadedTileCount` is the size of `loadedTiles`.
 - `totalTileCount` is the total number of tiles in the tileset.
@@ -126,9 +129,13 @@ It is possible to change the color of specific vertices of the tile. They are sp
 
 This function removes the `color` attribute from the geometry of the tile and sets the `vertexColors` property of the material to `THREE.NoColor`, meaning that the tile color will be determined by only the material color.
 
-### `updateITownsView(view)` - Updates the scene
+### `updateITownsView(view, layer)` - Updates the scene
 
 The purpose of this function is to tell the iTowns view to update the scene. It is necessary to call this function when you make changes to the color of some tiles, for example.
+
+### `getVerticesCentroid(tile, indexArray)` - Computes the centroid of the vertices
+
+This function computes the centroid of the given vertices. `indexArray` is the array of indexes used to specify which vertices in the tile should be considered. This array is assumed to be contiguous and sorted.
 
 ## 3DTilesBuildingUtils
 
@@ -202,7 +209,7 @@ if (!!buildingInfo) {
     removeTileVerticesColor(tile);
   }
   colorBuilding(this.layer, buildingInfo, this.selectedColor);
-  updateITownsView(this.iTownsView);
+  updateITownsView(this.iTownsView, this.layer);
   this.previousBuilding = buildingInfo;
 }
 ```

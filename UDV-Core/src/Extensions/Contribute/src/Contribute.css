@@ -74,7 +74,30 @@
 #docPositionerFullPanel{
     bottom : 0px;
     margin-top: 20px;
+}
 
+#docPositionerControlPanel {
+  width: 60%;
+  height: 50px;
+  background-color: rgba(30,30,30,0.6);
+  border: 1px solid black;
+  pointer-events: none;
+  margin: 0 20% 0 20%;
+}
+
+#docPositionerControlPanel label {
+  display: block;
+  color: white;
+}
+
+#docPositionerControlPanel .center-helper {
+  text-align: center;
+  width: 100%;
+}
+
+#docPositionerControlPanel input {
+  pointer-events: auto;
+  width: 50%;
 }
 
 /*helper documetn position*/

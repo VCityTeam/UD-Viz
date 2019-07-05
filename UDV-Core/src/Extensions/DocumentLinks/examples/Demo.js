@@ -22,11 +22,11 @@ baseDemo.loadConfigFile(
     const authenticationView =
         new udvcore.AuthenticationView(authenticationService);
     baseDemo.addModuleView('authentication', authenticationView,
-        { type: BaseDemo.AUTHENTICATION_MODULE });
+        {type: BaseDemo.AUTHENTICATION_MODULE});
 
     ////// DOCUMENTS MODULE
     const documents = new udvcore.DocumentController(baseDemo.view,
-        baseDemo.controls, { temporal: baseDemo.temporal, active: false },
+        baseDemo.controls, {temporal: baseDemo.temporal, active: false},
         baseDemo.config, requestService);
     baseDemo.addModuleView('documents', documents);
 
@@ -34,17 +34,8 @@ baseDemo.loadConfigFile(
     const contributeController = new udvcore.ContributeController(documents,
         requestService);
 
-    ////// DOCUMENTS TO VALIDATE
-    const docToValidateService =
-        new udvcore.DocToValidateService(requestService, baseDemo.config);
-    const docToValidateView =
-        new udvcore.DocToValidateView(docToValidateService, documents);
-    baseDemo.addModuleView('docToValidate', docToValidateView,
-        { name: 'Documents in validation', requireAuth: true });
-
-    ////// DOCUMENTS COMMENTS EXTENSION
-    const docCommentsService = new udvcore.DocumentCommentsService(documents,
-        requestService, baseDemo.config);
-    const docCommentsWindow = new udvcore.DocumentCommentsWindow(documents,
-        docCommentsService);
+    ////// DOCUMENT LINK EXTENSION
+    const linkService = new udvcore.LinkService(requestService, baseDemo.config);
+    const documentLinkWindow = new udvcore.DocumentLinkWindow(
+        linkService, documents, baseDemo.view, baseDemo.controls);
 });

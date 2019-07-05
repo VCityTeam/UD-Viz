@@ -19,11 +19,12 @@ baseDemo.loadConfigFile(
     ////// DOCUMENTS MODULE
     const documents = new udvcore.DocumentController(baseDemo.view,
         baseDemo.controls, {temporal: baseDemo.temporal, active: false},
-        baseDemo.config);
+        baseDemo.config, requestService);
     //// We coule add it to the view but it is not necessary
     //baseDemo.addModuleView('documents', documents);
 
     ////// GUIDED TOURS MODULE
-    const guidedtour = new udvcore.GuidedTourController(documents);
+    const guidedtour = new udvcore.GuidedTourController(documents,
+        requestService);
     baseDemo.addModuleView('guidedTour', guidedtour, {name: 'Guided Tours'});
 });

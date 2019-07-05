@@ -6,6 +6,7 @@ import proj4 from 'proj4';
 
 import './GeocodingStyle.css';
 import Coordinates from "itowns/lib/Core/Geographic/Coordinates";
+import { focusCameraOn } from "../../../Utils/Camera/CameraUtils";
 
 export class GeocodingView extends ModuleView {
   /**
@@ -108,32 +109,15 @@ export class GeocodingView extends ModuleView {
           this.addPin(targetPos);
           //step 3 : if the first result, focus on it (move the camera)
           if (i === 0) {
-            this.focusCameraOn(targetPos);
+            focusCameraOn(this.planarView, this.cameraControls, targetPos);
           }
           i += 1;
         }
-      })
+      });
     } catch (e) {
       console.error(e);
       this.displayError(e);
     }
-  }
-
-  /**
-   * Make the camera look at the given position. Computes an appropriate
-   * position for the camera to see the target.
-   *
-   * @param {THREE.Vector3} targetPos Target posiition.
-   */
-  focusCameraOn(targetPos) {
-    let cameraPos = this.planarView.camera.camera3D.position.clone();
-    const deltaZ = 800;
-    const horizontalDistance = 1.3*deltaZ;
-    const dist = cameraPos.distanceTo(targetPos);
-    const direction = (new THREE.Vector3()).subVectors(targetPos, cameraPos);
-    cameraPos.addScaledVector(direction, (1-horizontalDistance/dist));
-    cameraPos.z = targetPos.z + deltaZ;
-    this.cameraControls.initiateTravel(cameraPos, 'auto', targetPos, true);
   }
 
   /**
