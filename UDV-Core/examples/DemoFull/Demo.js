@@ -1,6 +1,4 @@
-import { BaseDemo } from '../../src/Utils/BaseDemo/js/BaseDemo.js'
-
-let baseDemo = new BaseDemo({
+let baseDemo = new udvcore.BaseDemo({
     iconFolder: '../data/icons',
     imageFolder: '../data/img'
 });
@@ -11,7 +9,7 @@ baseDemo.loadConfigFile('../data/config/generalDemoConfig.json').then(() => {
 
     // Initialize iTowns 3D view
     baseDemo.init3DView();
-    
+
     ////// REQUEST SERVICE
     const requestService = new udvcore.RequestService();
 
@@ -46,7 +44,7 @@ baseDemo.loadConfigFile('../data/config/generalDemoConfig.json').then(() => {
     const authenticationView =
         new udvcore.AuthenticationView(authenticationService);
     baseDemo.addModuleView('authentication', authenticationView,
-        {type: BaseDemo.AUTHENTICATION_MODULE});
+        {type: udvcore.BaseDemo.AUTHENTICATION_MODULE});
 
     ////// DOCUMENTS TO VALIDATE
     const docToValidateService =

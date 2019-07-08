@@ -1,6 +1,4 @@
-import { BaseDemo } from '../../src/Utils/BaseDemo/js/BaseDemo.js'
-
-let baseDemo = new BaseDemo({
+let baseDemo = new udvcore.BaseDemo({
     iconFolder: '../data/icons',
     imageFolder: '../data/img'
 });
@@ -10,7 +8,7 @@ baseDemo.appendTo(document.body);
 baseDemo.loadConfigFile('../data/config/generalDemoConfig.json').then(() => {
 
     // Initialize iTowns 3D view
-    baseDemo.init3DView();
+    baseDemo.init4DView();
 
     ////// REQUEST SERVICE
     const requestService = new udvcore.RequestService();
