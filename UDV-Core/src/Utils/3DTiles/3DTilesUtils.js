@@ -179,40 +179,25 @@ export function setTileVerticesColor(tile, newColor, indexArray = null) {
  * vertex of the range and count is the number of vertices in the range.
  */
 export function createTileGroups(tile, groupColor = 0xff00ff, groupOpacity = 1, ranges = []) {
-  if (!tile) {
-    throw 'Tile not loaded in view';
-  }
+  let mesh = getMesh(tile);
 
-  //Find the 'Mesh' part of the tile
-  while (!!tile.children[0] && !(tile.type === 'Mesh')) {
-    tile = tile.children[0];
-  }
-
-  if (!tile.geometry.attributes._BATCHID) {
-    throw 'Invalid tile';
-  }
-
-  if (tile.geometry.type !== 'BufferGeometry') {
-    throw 'Cannot change vertices color';
-  }
-
-  if (!Array.isArray(tile.material)) {
+  if (!Array.isArray(mesh.material)) {
     //need to create the array
-    tile.material = [ tile.material ];
+    mesh.material = [ mesh.material ];
   } else {
     //erase the other materials
-    tile.material = [ tile.material[0] ];
+    mesh.material = [ mesh.material[0] ];
   }
 
   // Clear the existing groups
-  tile.geometry.groups = [];
+  mesh.geometry.groups = [];
 
   // Total of vertices in the tile
-  let total = tile.geometry.attributes._BATCHID.count;
+  let total = mesh.geometry.attributes._BATCHID.count;
 
   if (ranges.length > 0) {
     // Create the new material
-    tile.material.push(new THREE.MeshLambertMaterial({
+    mesh.material.push(new THREE.MeshLambertMaterial({
       color: groupColor,
       opacity: groupOpacity,
       transparent: true
@@ -227,37 +212,33 @@ export function createTileGroups(tile, groupColor = 0xff00ff, groupOpacity = 1, 
 
     // Adding groups for the new material
     for (let range of ranges) {
-      tile.geometry.addGroup(range[0], range[1], 1);
+      mesh.geometry.addGroup(range[0], range[1], 1);
     }
 
     if (ranges[0][0] > 0) {
-      tile.geometry.addGroup(0, ranges[0][0], 0);
+      mesh.geometry.addGroup(0, ranges[0][0], 0);
     }
     for (let i = 0; i < ranges.length - 1; ++i) {
       let start = ranges[i][0] + ranges[i][1];
       let count = ranges[i+1][0] - start;
       if (count > 0) {
-        tile.geometry.addGroup(start, count, 0);
+        mesh.geometry.addGroup(start, count, 0);
       }
     }
     if (ranges[ranges.length - 1][0] + ranges[ranges.length - 1][1] < total) {
       let start = ranges[ranges.length - 1][0] + ranges[ranges.length - 1][1];
-      tile.geometry.addGroup(start, total - start, 0);
+      mesh.geometry.addGroup(start, total - start, 0);
     }
   } else {
     // If no ranges array is specified, just add a group containing all vertices
-    tile.geometry.addGroup(0, total, 0);
+    mesh.geometry.addGroup(0, total, 0);
   }
 }
 
 export function createTileGroupsFromBatchIDs(tile, groupColor, groupOpacity, batchIDs) {
   let ranges = [];
-  if (!Array.isArray(tile.material)) {
-    //need to create the array
-    tile.material = [ tile.material ];
-  } else {
-    tile.material = [ tile.material[0] ];
-  }
+
+  let mesh = getMesh(tile);
 
   batchIDs.sort((a, b) => {
     return a - b;
@@ -267,30 +248,28 @@ export function createTileGroupsFromBatchIDs(tile, groupColor, groupOpacity, bat
   let searchingBatchID = batchIDs[searchingIndex];
   let addingRange = [];
 
-  for (let index = 0; index < tile.geometry.attributes._BATCHID.count; index++) {
-    let batchID = tile.geometry.attributes._BATCHID.array[index];
+  for (let index = 0; index < mesh.geometry.attributes._BATCHID.count; index++) {
+    let batchID = mesh.geometry.attributes._BATCHID.array[index];
 
     if (batchID > searchingBatchID) {
-      addingRange.push(index - 1);
+      addingRange.push(index - addingRange[0]);
       ranges.push(addingRange);
       addingRange = [];
       searchingIndex += 1;
       searchingBatchID = batchIDs[searchingIndex];
     }
 
-    if (batchID === searchingBatchID) {
-      if (addingRange.length === 0) {
-        addingRange.push(index);
-      }
+    if (batchID === searchingBatchID && addingRange.length === 0) {
+      addingRange.push(index);
     }
 
-    if (index === tile.geometry.attributes._BATCHID.count - 1 && addingRange.length === 1) {
-      addingRange.push(index);
+    if (index === mesh.geometry.attributes._BATCHID.count - 1 && addingRange.length === 1) {
+      addingRange.push(index - addingRange[0] + 1);
       ranges.push(addingRange);
     }
   }
 
-  createTileGroups(tile, groupColor, groupOpacity, ranges);
+  createTileGroups(mesh, groupColor, groupOpacity, ranges);
 }
 
 /**
@@ -379,4 +358,25 @@ export function getVerticesCentroid(tile, indexArray) {
   let vertexCount = indexArray.length;
   let vertexCentroid = vertexSum.divideScalar(vertexCount).applyMatrix4(tile.matrixWorld);
   return vertexCentroid;
+}
+
+function getMesh(tile) {
+  if (!tile) {
+    throw 'Tile not loaded in view';
+  }
+
+  //Find the 'Mesh' part of the tile
+  while (!!tile.children[0] && !(tile.type === 'Mesh')) {
+    tile = tile.children[0];
+  }
+
+  if (!tile.geometry.attributes._BATCHID) {
+    throw 'Invalid tile';
+  }
+
+  if (tile.geometry.type !== 'BufferGeometry') {
+    throw 'Tile has no buffer geometry';
+  }
+
+  return tile;
 }
