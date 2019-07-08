@@ -179,7 +179,7 @@ export function setTileVerticesColor(tile, newColor, indexArray = null) {
  * vertex of the range and count is the number of vertices in the range.
  */
 export function createTileGroups(tile, groupColor = 0xff00ff, groupOpacity = 1, ranges = []) {
-  let mesh = getMesh(tile);
+  let mesh = getMeshFromTile(tile);
 
   if (!Array.isArray(mesh.material)) {
     //need to create the array
@@ -238,7 +238,7 @@ export function createTileGroups(tile, groupColor = 0xff00ff, groupOpacity = 1, 
 export function createTileGroupsFromBatchIDs(tile, groupColor, groupOpacity, batchIDs) {
   let ranges = [];
 
-  let mesh = getMesh(tile);
+  let mesh = getMeshFromTile(tile);
 
   batchIDs.sort((a, b) => {
     return a - b;
@@ -360,7 +360,7 @@ export function getVerticesCentroid(tile, indexArray) {
   return vertexCentroid;
 }
 
-function getMesh(tile) {
+export function getMeshFromTile(tile) {
   if (!tile) {
     throw 'Tile not loaded in view';
   }
@@ -376,6 +376,23 @@ function getMesh(tile) {
 
   if (tile.geometry.type !== 'BufferGeometry') {
     throw 'Tile has no buffer geometry';
+  }
+
+  return tile;
+}
+
+export function getObject3DFromTile(tile) {
+  if (!tile) {
+    throw 'Tile not loaded in view';
+  }
+
+  //Find the 'Object3D' part of the tile
+  while (!!tile.parent && !(tile.type === 'Object3D')) {
+    tile = tile.parent;
+  }
+
+  if (!tile.batchTable) {
+    throw 'Invalid tile : no batch table';
   }
 
   return tile;

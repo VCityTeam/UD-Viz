@@ -1,6 +1,6 @@
 import { Window } from "../../../Utils/GUI/js/Window";
-import { getFirstTileIntersection, getVisibleTileCount, removeTileVerticesColor, getTileInTileset, getTileInLayer, updateITownsView } from '../../../Utils/3DTiles/3DTilesUtils';
-import { colorBuilding, getBuildingIdFromIntersection, getTilesBuildingInfo} from '../../../Utils/3DTiles/3DTilesBuildingUtils';
+import { getFirstTileIntersection, getBatchTableFromTile, getBatchIdFromIntersection, getVisibleTileCount, removeTileVerticesColor, getTileInTileset, getTileInLayer, updateITownsView, getObject3DFromTile, createTileGroupsFromBatchIDs } from '../../../Utils/3DTiles/3DTilesUtils';
+import { colorBuilding, getTilesBuildingInfo} from '../../../Utils/3DTiles/3DTilesBuildingUtils';
 
 export class Debug3DTilesWindow extends Window {
   constructor(itownsView, config) {
@@ -55,6 +55,23 @@ export class Debug3DTilesWindow extends Window {
       <div id="${this.clickDivId}">
         No building.
       </div>
+      <h3>Color groups</h3>
+      <div>
+        <form id="${this.groupColorFormId}">
+          <label for="${this.groupColorTileInputId}">Tile ID</label>
+          <input id="${this.groupColorTileInputId}" type="text">
+          <label for="${this.groupColorBatchInputId}">Batch IDs
+            (separated by comas)</label>
+          <input id="${this.groupColorBatchInputId}" type="text">
+          <label for="${this.groupColorColorInputId}">Color</label>
+          <input id="${this.groupColorColorInputId}" type="color">
+          <label for="${this.groupColorOpacityInputId}">Opacity :
+            <span id="${this.groupColorOpacitySpanId}">1</span></label>
+          <input type="range" min="0" max="1" value="1" step="0.01"
+            id="${this.groupColorOpacityInputId}">
+          <input type="submit" value="Color">
+        </form>
+      </div>
       <h3>About this tool</h3>
       <div>
         This debug window uses the 3DTilesUtils methods. Use it to find
@@ -73,6 +90,14 @@ export class Debug3DTilesWindow extends Window {
     };
     this.logTBIButtonElement.onclick = () => {
       this.logTBI();
+    };
+    this.groupColorOpacityInputElement.oninput = () => {
+      this.groupColorOpacitySpanElement.innerText =
+        this.groupColorOpacityInputElement.value;
+    };
+    this.groupColorFormElement.onsubmit = () => {
+      this.submitGroupColor();
+      return false;
     };
     this.tbi = null;
     this.updateTBI();
@@ -110,9 +135,15 @@ export class Debug3DTilesWindow extends Window {
       let firstInter = getFirstTileIntersection(intersections);
       if (!!firstInter) {
         // Find the building ID we clicked on
-        let buildingId = getBuildingIdFromIntersection(firstInter);
+        let table = getBatchTableFromTile(firstInter.object);
+        let batchId = getBatchIdFromIntersection(firstInter);
+        let buildingId = table.content['cityobject.database_id'][batchId];
+        let tileId = getObject3DFromTile(firstInter.object).tileId;
+
         this.hoveredBuildingId = buildingId;
-        this.hoverDivElement.innerText = `Building ID : ${buildingId}`;
+        this.hoverDivElement.innerHTML = `Building ID : ${buildingId}<br>
+                                          Batch ID : ${batchId}<br>
+                                          Tile ID : ${tileId}`;
       } else {
         this.hoveredBuildingId = null;
         this.hoverDivElement.innerText = 'No building';
@@ -144,6 +175,7 @@ export class Debug3DTilesWindow extends Window {
           this.clickDivElement.innerHTML = /*html*/`
             Building ID : ${buildingId}<br>
             ${buildingInfo.arrayIndexes.length} array indexes<br>
+            Batch ID : ${buildingInfo.batchId}<br>
             Tile ID : ${buildingInfo.tileId}
           `;
           // If a building was already selected, un-color its tile
@@ -167,6 +199,20 @@ export class Debug3DTilesWindow extends Window {
           this.clickDivElement.innerText = 'No building info';
         }
       }
+    }
+  }
+
+  submitGroupColor() {
+    try {
+      let tileId = Number.parseInt(this.groupColorTileInputElement.value);
+      let batchIds = JSON.parse('[' + this.groupColorBatchInputElement.value + ']');
+      let color = new THREE.Color(this.groupColorColorInputElement.value);
+      let opacity = Number.parseFloat(this.groupColorOpacityInputElement.value);
+      createTileGroupsFromBatchIDs(getTileInLayer(this.layer, tileId), color,
+        opacity, batchIds);
+      updateITownsView(this.itownsView, this.layer);
+    } catch (e) {
+      alert(e);
     }
   }
 
@@ -218,5 +264,53 @@ export class Debug3DTilesWindow extends Window {
 
   get visibleTilesParagraphElement() {
     return document.getElementById(this.visibleTilesParagraphId);
+  }
+
+  get groupColorFormId() {
+    return `${this.windowId}_form_groups`;
+  }
+
+  get groupColorFormElement() {
+    return document.getElementById(this.groupColorFormId);
+  }
+
+  get groupColorTileInputId() {
+    return `${this.windowId}_form_groups_tileid`;
+  }
+
+  get groupColorTileInputElement() {
+    return document.getElementById(this.groupColorTileInputId);
+  }
+  
+  get groupColorBatchInputId() {
+    return `${this.windowId}_form_groups_batchid`;
+  }
+
+  get groupColorBatchInputElement() {
+    return document.getElementById(this.groupColorBatchInputId);
+  }
+  
+  get groupColorColorInputId() {
+    return `${this.windowId}_form_groups_color`;
+  }
+
+  get groupColorColorInputElement() {
+    return document.getElementById(this.groupColorColorInputId);
+  }
+
+  get groupColorOpacityInputId() {
+    return `${this.windowId}_form_groups_opacity`;
+  }
+
+  get groupColorOpacityInputElement() {
+    return document.getElementById(this.groupColorOpacityInputId);
+  }
+
+  get groupColorOpacitySpanId() {
+    return `${this.windowId}_form_groups_opacity_span`;
+  }
+
+  get groupColorOpacitySpanElement() {
+    return document.getElementById(this.groupColorOpacitySpanId);
   }
 }
