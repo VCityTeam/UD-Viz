@@ -171,22 +171,36 @@ export function setTileVerticesColor(tile, newColor, indexArray = null) {
  * Creates tile groups.
  * 
  * @param {*} tile The 3DTiles tile.
- * @param {*} groupColor The color for the specified vertices.
- * @param {number} groupOpacity The opacity for the specified verticies. It must
- * be a number between 0 and 1.
- * @param {Array<Array<number>>} ranges An array of ranges. A range is an array
- * of size two in the form [start, count], where start is the index of the first
- * vertex of the range and count is the number of vertices in the range.
+ * @param {Array<any>} materials An array of material parameters. Each entry
+ * should be an object that will be passed as parameter in the THREE.Material
+ * constructor. Accepted values are for example `color` or `opacity` (see
+ * THREE.js documentation).
+ * @param {Array<any>} ranges An array of ranges. A range is an object with 3
+ * propeties :
+ * - `start`: the start index of the group of vertices
+ * - `count`: the number of vertices of the group
+ * - `material`: the index of the material in the materials array
  */
-export function createTileGroups(tile, groupColor = 0xff00ff, groupOpacity = 1, ranges = []) {
+export function createTileGroups(tile, materials, ranges) {
   let mesh = getMeshFromTile(tile);
 
-  if (!Array.isArray(mesh.material)) {
-    //need to create the array
-    mesh.material = [ mesh.material ];
-  } else {
-    //erase the other materials
-    mesh.material = [ mesh.material[0] ];
+  let defaultMaterial = Array.isArray(mesh.material) ?
+                        mesh.material[0] :
+                        mesh.material;
+
+  // Reset the materials
+  mesh.material = [ defaultMaterial ];
+
+  // Material index table (index in materials -> index in mesh.material)
+  let materialIndexTable = {};
+
+  // Create the materials
+  for (let [materialIndex, material] of materials.entries()) {
+    if (material.transparent === undefined) {
+      material.transparent = true;
+    }
+    materialIndexTable[materialIndex] = mesh.material.length;
+    mesh.material.push(new THREE.MeshLambertMaterial(material));
   }
 
   // Clear the existing groups
@@ -196,37 +210,30 @@ export function createTileGroups(tile, groupColor = 0xff00ff, groupOpacity = 1, 
   let total = mesh.geometry.attributes._BATCHID.count;
 
   if (ranges.length > 0) {
-    // Create the new material
-    mesh.material.push(new THREE.MeshLambertMaterial({
-      color: groupColor,
-      opacity: groupOpacity,
-      transparent: true
-    }));
-
     // Sort the ranges by increasing start index
     ranges.sort((a, b) => {
-      return a[0] - b[0];
+      return a.start - b.start;
     });
     // Check for overlapping
     // TODO later
 
     // Adding groups for the new material
     for (let range of ranges) {
-      mesh.geometry.addGroup(range[0], range[1], 1);
+      mesh.geometry.addGroup(range.start, range.count, materialIndexTable[range.material]);
     }
 
-    if (ranges[0][0] > 0) {
-      mesh.geometry.addGroup(0, ranges[0][0], 0);
+    if (ranges[0].start > 0) {
+      mesh.geometry.addGroup(0, ranges[0].start, 0);
     }
     for (let i = 0; i < ranges.length - 1; ++i) {
-      let start = ranges[i][0] + ranges[i][1];
-      let count = ranges[i+1][0] - start;
+      let start = ranges[i].start + ranges[i].count;
+      let count = ranges[i+1].start - start;
       if (count > 0) {
         mesh.geometry.addGroup(start, count, 0);
       }
     }
-    if (ranges[ranges.length - 1][0] + ranges[ranges.length - 1][1] < total) {
-      let start = ranges[ranges.length - 1][0] + ranges[ranges.length - 1][1];
+    if (ranges[ranges.length - 1].start + ranges[ranges.length - 1].count < total) {
+      let start = ranges[ranges.length - 1].start + ranges[ranges.length - 1].count;
       mesh.geometry.addGroup(start, total - start, 0);
     }
   } else {
@@ -235,41 +242,82 @@ export function createTileGroups(tile, groupColor = 0xff00ff, groupOpacity = 1, 
   }
 }
 
-export function createTileGroupsFromBatchIDs(tile, groupColor, groupOpacity, batchIDs) {
+/**
+ * Create groups in the tile mesh from the given batch IDs and materials.
+ * 
+ * @todo This function needs optimization (combine consecutive IDs in groups +
+ * parse the vertices only once)
+ * 
+ * @param {*} tile The 3DTiles tile.
+ * @param {Array<any>} groups An array of group descriptors. A group descriptor
+ * is a dictionnary containing two entries :
+ * - `material` contains the material parameters, such as `color` or `opacity`.
+ * - `batchIDs` contains the batch IDs to be applied the given material.
+ * 
+ * @example
+ * let tile = getTileInLayer(layer, 6);
+ * createTileGroupsFromBatchIDs(tile, [
+ *   {
+ *     material: {color: 0xff0000},
+ *     batchIDs: [64, 67]
+ *   },
+ *   {
+ *     material: {opacity: 0},
+ *     batchIDs: [66]
+ *   }
+ * ]);
+ */
+export function createTileGroupsFromBatchIDs(tile, groups) {
+  let materials = [];
   let ranges = [];
 
   let mesh = getMeshFromTile(tile);
 
-  batchIDs.sort((a, b) => {
-    return a - b;
-  });
+  // For each group, add the material and the ranges
+  for (let group of groups) {
+    // Push the material
+    let materialIndex = materials.length;
+    materials.push(group.material)
 
-  let searchingIndex = 0;
-  let searchingBatchID = batchIDs[searchingIndex];
-  let addingRange = [];
+    group.batchIDs.sort((a, b) => {
+      return a - b;
+    });
 
-  for (let index = 0; index < mesh.geometry.attributes._BATCHID.count; index++) {
-    let batchID = mesh.geometry.attributes._BATCHID.array[index];
+    let searchingIndex = 0;
+    let searchingBatchID = group.batchIDs[searchingIndex];
+    let addingRange = [];
 
-    if (batchID > searchingBatchID) {
-      addingRange.push(index - addingRange[0]);
-      ranges.push(addingRange);
-      addingRange = [];
-      searchingIndex += 1;
-      searchingBatchID = batchIDs[searchingIndex];
-    }
+    for (let index = 0; index < mesh.geometry.attributes._BATCHID.count; index++) {
+      let batchID = mesh.geometry.attributes._BATCHID.array[index];
 
-    if (batchID === searchingBatchID && addingRange.length === 0) {
-      addingRange.push(index);
-    }
+      if (batchID > searchingBatchID) {
+        addingRange.push(index - addingRange[0]);
+        ranges.push({
+          start: addingRange[0],
+          count: addingRange[1],
+          material: materialIndex
+        });
+        addingRange = [];
+        searchingIndex += 1;
+        searchingBatchID = group.batchIDs[searchingIndex];
+      }
 
-    if (index === mesh.geometry.attributes._BATCHID.count - 1 && addingRange.length === 1) {
-      addingRange.push(index - addingRange[0] + 1);
-      ranges.push(addingRange);
+      if (batchID === searchingBatchID && addingRange.length === 0) {
+        addingRange.push(index);
+      }
+
+      if (index === mesh.geometry.attributes._BATCHID.count - 1 && addingRange.length === 1) {
+        addingRange.push(index - addingRange[0] + 1);
+        ranges.push({
+          start: addingRange[0],
+          count: addingRange[1],
+          material: materialIndex
+        });
+      }
     }
   }
 
-  createTileGroups(mesh, groupColor, groupOpacity, ranges);
+  createTileGroups(mesh, materials, ranges);
 }
 
 /**
