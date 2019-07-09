@@ -1,30 +1,3 @@
-.docToValidate_Window {
-    position: absolute;
-    width: 380px;
-    max-height: 90%;
-    left: 300px;
-    background-color: rgba(30,30,30,0.6);
-    border : 1px solid rgb(90,90,90);
-    color: white;
-    resize: both;
-    overflow: auto;
-}
-
-.docToValidate_Window .innerWindow {
-    padding: 5px;
-}
-
-.docToValidate_Window_header {
-    position: relative;
-    background-color: rgba(0, 0, 0, 0.6);
-    padding-left: 10px;
-}
-
-.docToValidate_Window_header h2 {
-    margin-top: 0;
-    margin-bottom: 0;
-}
-
 .docToValidate_buttonClose {
     position: absolute;
     top: 0;
@@ -33,7 +6,8 @@
     height: 80%;
 }
 
-.window-inner-content input, .window-inner-content select {
+#docToValidate_udpateForm input, #docToValidate_updateForm select,
+#docToValidate_searchForm input, #docToValidate_searchForm select {
     box-sizing: border-box;
     width: 100%;
 }

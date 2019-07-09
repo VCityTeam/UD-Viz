@@ -58,17 +58,17 @@ export class Debug3DTilesWindow extends Window {
       <h3>Color groups</h3>
       <div>
         <form id="${this.groupColorFormId}">
-          <label for="${this.groupColorTileInputId}">Tile ID</label>
-          <input id="${this.groupColorTileInputId}" type="text">
+          <label for="${this.groupColorTileInputId}">Tile ID</label><br>
+          <input id="${this.groupColorTileInputId}" type="text"><br>
           <label for="${this.groupColorBatchInputId}">Batch IDs
-            (separated by comas)</label>
-          <input id="${this.groupColorBatchInputId}" type="text">
-          <label for="${this.groupColorColorInputId}">Color</label>
-          <input id="${this.groupColorColorInputId}" type="color">
+            (separated by comas)</label><br>
+          <input id="${this.groupColorBatchInputId}" type="text"><br>
+          <label for="${this.groupColorColorInputId}">Color</label><br>
+          <input id="${this.groupColorColorInputId}" type="color"><br>
           <label for="${this.groupColorOpacityInputId}">Opacity :
-            <span id="${this.groupColorOpacitySpanId}">1</span></label>
+            <span id="${this.groupColorOpacitySpanId}">1</span></label><br>
           <input type="range" min="0" max="1" value="1" step="0.01"
-            id="${this.groupColorOpacityInputId}">
+            id="${this.groupColorOpacityInputId}"><br>
           <input type="submit" value="Color">
         </form>
       </div>
