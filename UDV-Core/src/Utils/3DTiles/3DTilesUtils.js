@@ -60,12 +60,13 @@ export function getVisibleTiles(layer) {
       // It's an actual tile
       tiles.push(node);
     };
-    node.children.forEach((child) => {
+    for (let childIndex = 0; childIndex < node.children.length; childIndex++) {
+      let child = node.children[childIndex];
       if (child.type === 'Object3D') {
         //This child can be a tile or contain tiles so we explore it too
         exploreTree(child);
       }
-    });
+    }
   };
   exploreTree(rootTile);
   return tiles;
@@ -195,7 +196,8 @@ export function createTileGroups(tile, materials, ranges) {
   let materialIndexTable = {};
 
   // Create the materials
-  for (let [materialIndex, material] of materials.entries()) {
+  for (let materialIndex = 0; materialIndex < materials.length; materialIndex++) {
+    let material = materials[materialIndex];
     if (material.transparent === undefined) {
       material.transparent = true;
     }
@@ -217,7 +219,8 @@ export function createTileGroups(tile, materials, ranges) {
     
     // Merge consecutive ranges with the same material
     let mergedRanges = [];
-    for (let [index, range] of ranges.entries()) {
+    for (let index = 0; index < ranges.length; index++) {
+      let range = ranges[index];
       if (index === 0) {
         mergedRanges.push(range);
       } else {
@@ -233,7 +236,8 @@ export function createTileGroups(tile, materials, ranges) {
     ranges = mergedRanges;
 
     // Add the new groups
-    for (let range of ranges) {
+    for (let rangeIndex = 0; rangeIndex < ranges.length; rangeIndex++) {
+      let range = ranges[rangeIndex];
       mesh.geometry.addGroup(range.start, range.count, materialIndexTable[range.material]);
     }
 
@@ -290,16 +294,19 @@ export function createTileGroupsFromBatchIDs(tile, groups) {
   // to associate batchIDs with their material
   let batchIDs = [];
   let materialIndexTable = {};
-  for (let group of groups) {
+  for (let groupIndex = 0; groupIndex < groups.length; groupIndex++) {
+    let group = groups[groupIndex];
+
     // Push the material
     let materialIndex = materials.length;
     materials.push(group.material)
 
     // Push the batch IDs and remember their material
-    group.batchIDs.forEach((batchID) => {
+    for (let batchIDIndex = 0; batchIDIndex < group.batchIDs.length; batchIDIndex++) {
+      let batchID = group.batchIDs[batchIDIndex];
       batchIDs.push(batchID);
       materialIndexTable[batchID] = materialIndex;
-    });
+    }
   }
 
   // Sort the batch IDs
@@ -315,7 +322,7 @@ export function createTileGroupsFromBatchIDs(tile, groups) {
   };
 
   // Loop once over all vertices to find the ranges
-  for (let index = 0; index < mesh.geometry.attributes._BATCHID.count; index++) {
+  for (let index = 0, total = mesh.geometry.attributes._BATCHID.count; index < total; index++) {
     let batchID = mesh.geometry.attributes._BATCHID.array[index];
 
     // If we found a batch ID that is greater than the one we're searching, it
