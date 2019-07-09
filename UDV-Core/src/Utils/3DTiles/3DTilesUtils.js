@@ -273,47 +273,56 @@ export function createTileGroupsFromBatchIDs(tile, groups) {
 
   let mesh = getMeshFromTile(tile);
 
-  // For each group, add the material and the ranges
+  // Create an array we can loop on to search all batchIDs, plus a stucture
+  // to associate batchIDs with their material
+  let batchIDs = [];
+  let materialIndexTable = {};
   for (let group of groups) {
     // Push the material
     let materialIndex = materials.length;
     materials.push(group.material)
 
-    group.batchIDs.sort((a, b) => {
-      return a - b;
+    // Push the batch IDs and remember their material
+    group.batchIDs.forEach((batchID) => {
+      batchIDs.push(batchID);
+      materialIndexTable[batchID] = materialIndex;
     });
+  }
 
-    let searchingIndex = 0;
-    let searchingBatchID = group.batchIDs[searchingIndex];
-    let addingRange = [];
+  // Sort the batch IDs
+  batchIDs.sort((a, b) => {
+    return a - b;
+  });
 
-    for (let index = 0; index < mesh.geometry.attributes._BATCHID.count; index++) {
-      let batchID = mesh.geometry.attributes._BATCHID.array[index];
+  // We need to find the ranges of the various batch IDs
+  let searchingIndex = 0;
+  let searchingBatchID = batchIDs[searchingIndex];
+  let addingRange = {
+    material: materialIndexTable[searchingBatchID]
+  };
 
-      if (batchID > searchingBatchID) {
-        addingRange.push(index - addingRange[0]);
-        ranges.push({
-          start: addingRange[0],
-          count: addingRange[1],
-          material: materialIndex
-        });
-        addingRange = [];
-        searchingIndex += 1;
-        searchingBatchID = group.batchIDs[searchingIndex];
-      }
+  // Loop once over all vertices to find the ranges
+  for (let index = 0; index < mesh.geometry.attributes._BATCHID.count; index++) {
+    let batchID = mesh.geometry.attributes._BATCHID.array[index];
 
-      if (batchID === searchingBatchID && addingRange.length === 0) {
-        addingRange.push(index);
-      }
+    if (batchID > searchingBatchID) {
+      addingRange.count = index - addingRange.start;
+      ranges.push(addingRange);
+      searchingIndex += 1;
+      searchingBatchID = batchIDs[searchingIndex];
+      addingRange = {
+        material: materialIndexTable[searchingBatchID]
+      };
+    }
 
-      if (index === mesh.geometry.attributes._BATCHID.count - 1 && addingRange.length === 1) {
-        addingRange.push(index - addingRange[0] + 1);
-        ranges.push({
-          start: addingRange[0],
-          count: addingRange[1],
-          material: materialIndex
-        });
-      }
+    if (batchID === searchingBatchID && !addingRange.start) {
+      addingRange.start = index;
+    }
+
+    if (index === mesh.geometry.attributes._BATCHID.count - 1
+        && !!addingRange.start && !addingRange.count) {
+      addingRange.count = index - addingRange.start + 1;
+      ranges.push(addingRange);
     }
   }
 

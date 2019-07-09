@@ -206,7 +206,7 @@ export class Debug3DTilesWindow extends Window {
     try {
       let tileId = Number.parseInt(this.groupColorTileInputElement.value);
       let batchIds = JSON.parse('[' + this.groupColorBatchInputElement.value + ']');
-      let color = new THREE.Color(this.groupColorColorInputElement.value)
+      let color = new THREE.Color(this.groupColorColorInputElement.value);
       let opacity = Number.parseFloat(this.groupColorOpacityInputElement.value);
       createTileGroupsFromBatchIDs(getTileInLayer(this.layer, tileId), [{
           material: {color, opacity},
