@@ -232,11 +232,12 @@ export function createTileGroups(tile, materials, ranges) {
     }
     ranges = mergedRanges;
 
-    // Adding groups for the new material
+    // Add the new groups
     for (let range of ranges) {
       mesh.geometry.addGroup(range.start, range.count, materialIndexTable[range.material]);
     }
 
+    // Fill the "blanks" between the ranges with the default material
     if (ranges[0].start > 0) {
       mesh.geometry.addGroup(0, ranges[0].start, 0);
     }
