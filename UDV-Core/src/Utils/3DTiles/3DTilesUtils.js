@@ -1,4 +1,5 @@
 import * as THREE from '../../../node_modules/three/build/three.js';
+import { objectEquals } from '../DataProcessing/DataProcessing.js';
 
 /**
  * Search a batch table in a tile. A tile is a THREE.js 3DObject with a 
@@ -317,9 +318,15 @@ export function createTileGroupsFromBatchIDs(tile, groups) {
   for (let groupIndex = 0; groupIndex < groups.length; groupIndex++) {
     let group = groups[groupIndex];
 
-    // Push the material
-    let materialIndex = materials.length;
-    materials.push(group.material)
+    // Check if a similar material has been added
+    let materialIndex = materials.findIndex((mat) => {
+      return objectEquals(mat, group.material);
+    });
+    if (materialIndex < 0) {
+      // If the material is new, push it
+      materialIndex = materials.length;
+      materials.push(group.material)
+    }
 
     // Push the batch IDs and remember their material
     for (let batchIDIndex = 0; batchIDIndex < group.batchIDs.length; batchIDIndex++) {

@@ -79,3 +79,28 @@ export function getAttributeByPath(obj, path) {
   }
   return val;
 }
+
+/**
+ * Checks the equality of two objects by their properties. For two objects to
+ * be equal, they must have the same keys and the same values.
+ * 
+ * @param {any} a An object.
+ * @param {any} b An object.
+ */
+export function objectEquals(a, b) {
+  // Set of a's keys
+  let keys = new Set(Object.keys(a));
+  for (let key of Object.keys(b)) {
+  	if (!keys.has(key)) {
+      // If b has a key unknown to a, they aren't equal
+    	return false;
+    }
+  }
+  for (let key of keys) {
+    // For each key of a, b must also have the key and the values must be equal
+    if (b[key] === undefined || a[key] !== b[key]) {
+    	return false;
+    }
+  }
+  return true;
+};
