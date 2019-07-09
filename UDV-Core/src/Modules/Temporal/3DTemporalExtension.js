@@ -75,9 +75,9 @@ class TemporalExtension_BoundingVolume {
         this.endDate = json.endDate;
     }
 
-    culling(displayDate) {
+    culling(currentTime) {
         // Bounding volume culling
-        if (this.startDate > displayDate || this.endDate < displayDate) {
+        if (this.startDate > currentTime || this.endDate < currentTime) {
             return true;
         }
     }
@@ -135,9 +135,9 @@ class TemporalExtension_BatchTable {
 
     /* *** Culling with transactions and colors management     */
     // Rules for culling:
-    //   * If the feature exists at the displayDate we display it in
+    //   * If the feature exists at the currentTime we display it in
     //   * If there is a transaction between the feature and another
-    //   feature at the displayDate:
+    //   feature at the currentTime:
     //      * the displayed geometry is the one of the old feature for the
     //      first half duration of the transaction
     //      * the displayed geometry is the one of the new feature for the
@@ -146,14 +146,14 @@ class TemporalExtension_BatchTable {
     //      * the color is set depending on the transaction type (defined in
     //      transactionsColors)
     //   * else we hide the feature.
-    culling(displayDate) {
+    culling(currentTime) {
         // featuresMaterial is an array of object that will be used to color
         // and change the opacity of features according to their batchIDs.
         // Its structure is as follow:
         // { <opacity> : { <color> : [batchIds] } }
         const featuresDisplayStates = [];
         for (let i = 0; i < this.featureIds.length; i++) {
-            if (displayDate >= this.startDates[i] && displayDate <=
+            if (currentTime >= this.startDates[i] && currentTime <=
                 this.endDates[i]) {
                 // ** FEATURE EXISTS
                 this.pushFeatureDisplayState(featuresDisplayStates,
@@ -165,7 +165,7 @@ class TemporalExtension_BatchTable {
                 if (newTransac) {
                     const newTransacHalfDuration = (newTransac.endDate -
                         newTransac.startDate) / 2;
-                    if (displayDate > newTransac.startDate && displayDate <=
+                    if (currentTime > newTransac.startDate && currentTime <=
                         newTransac.startDate + newTransacHalfDuration) {
                         hasTransac = true;
                         const displayState = this.getDisplayStateFromTags(
@@ -179,8 +179,8 @@ class TemporalExtension_BatchTable {
                     hasTransac = true;
                     const oldTransacHalfDuration = (oldTransac.endDate -
                         oldTransac.startDate) / 2;
-                    if (displayDate > oldTransac.startDate +
-                        oldTransacHalfDuration && displayDate <
+                    if (currentTime > oldTransac.startDate +
+                        oldTransacHalfDuration && currentTime <
                         oldTransac.endDate) {
                         const displayState = this.getDisplayStateFromTags(
                             oldTransac.tags);
@@ -278,11 +278,11 @@ export class $3DTemporalExtension extends $3DTAbstractExtension {
     culling(layer, node) {
         // TODO: la displaydate pourrait plutot etre stockée dans l'extension
         //  temporelle ?
-        if (!('displayDate' in layer)) {
+        if (!('currentTime' in layer)) {
             throw new Error(`You must define a property named
-            displayDate in the 3D Tiles layer with time_evolving_cities
+            currentTime in the 3D Tiles layer with time_evolving_cities
             extension to use this extension. To do so, use
-            layer.defineProperty(). displayDate must store the current date of
+            layer.defineProperty(). currentTime must store the current date of
             display of the scene.`);
         }
         // TODO: Quand on parse les oldFeatureTransactions, on pourrait
@@ -293,7 +293,7 @@ export class $3DTemporalExtension extends $3DTAbstractExtension {
             console.log('Temporal bounding volume culling for node :');
             console.log(node);
             const BV_ext = node.boundingVolume.extensions['3DTILES_temporal'];
-            if (BV_ext.culling(layer.displayDate)) {
+            if (BV_ext.culling(layer.currentTime)) {
                 // if the display date is outside the temporal bounding volume
                 // of the tile; we don't cull the tile directly. This is
                 // because we need to display the features of the tile that
@@ -311,7 +311,7 @@ export class $3DTemporalExtension extends $3DTAbstractExtension {
             // console.log('Temporal batch table culling for node :');
             // console.log(node);
             const BT_ext = node.batchTable.extensions['3DTILES_temporal'];
-            const featuresDisplayStates = BT_ext.culling(layer.displayDate);
+            const featuresDisplayStates = BT_ext.culling(layer.currentTime);
 
             // TODO: call VRI function to update node display state
         }

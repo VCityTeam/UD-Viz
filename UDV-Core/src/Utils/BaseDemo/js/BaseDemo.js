@@ -27,6 +27,7 @@ export class BaseDemo {
         this.tilesManager;
         // Temporal is currently disabled and will be reintroduced in a new
         // version based on a 3D Tiles extension
+        // TODO: Mind this
         this.temporal = false;
         ///// Config values for some file paths
         // iconFolder    : folder for icons (for the modules menu)
@@ -490,7 +491,7 @@ export class BaseDemo {
             this.view.getLayerById(this.config['3DTilesLayerID']));
     }
 
-    init4DView(displayDate) {
+    init4DView(currentTime) {
         // initialize itowns planar view
         this.initPlanarView();
         // Add terrain layers (raster and elevation)
@@ -498,18 +499,17 @@ export class BaseDemo {
         // Add camera, lights, controls, set sky color to blue
         this.addRenderingElements();
 
-        // TODO: add temporal slider (in temporal module ?)
-
+        // TODO: this should be in the
         // Create a new 3D tiles layer with temporal extension
         let $3dTilesLayerTemporal = new itowns.GeometryLayer(
-            '3d-tiles-temporal', new itowns.THREE.Group());
+            this.config['3DTilesTemporalLayerID'], new itowns.THREE.Group());
         $3dTilesLayerTemporal.name = '3DTiles-temporal';
         $3dTilesLayerTemporal.url =
-            'http://localhost:8003/tilesets/3DTiles_temporal_extension/V25_FullLyonBigTiles/tileset.json';
+            this.config['3DTilesLayerURL'];
         $3dTilesLayerTemporal.protocol = '3d-tiles';
 
-        $3dTilesLayerTemporal.defineLayerProperty('displayDate',
-            displayDate);
+        $3dTilesLayerTemporal.defineLayerProperty('currentTime',
+            currentTime);
 
         // Register temporal extension and add it to the layer
         // using defineLayerProperty method
