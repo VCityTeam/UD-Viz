@@ -172,7 +172,7 @@ export function setTileVerticesColor(tile, newColor, indexArray = null) {
  * Creates tile groups and associate them with the given materials.
  * 
  * @param {*} tile The 3DTiles tile.
- * @param {Array<any>} materialProps An array of material parameters. Each entry
+ * @param {Array<any>} materialsProps An array of material parameters. Each entry
  * should be an object that will be passed as parameter in the THREE.Material
  * constructor. Accepted values are for example `color` or `opacity`; actually
  * any property of the `MeshLambertMaterial` class is valid (see [THREE.js
@@ -199,7 +199,7 @@ export function setTileVerticesColor(tile, newColor, indexArray = null) {
  * ];
  * createTileGroups(tile, materialProps, ranges);
  */
-export function createTileGroups(tile, materialProps, ranges) {
+export function createTileGroups(tile, materialsProps, ranges) {
   let mesh = getMeshFromTile(tile);
 
   let defaultMaterial = Array.isArray(mesh.material) ?
@@ -213,13 +213,13 @@ export function createTileGroups(tile, materialProps, ranges) {
   let materialIndexTable = {};
 
   // Create the materials
-  for (let materialIndex = 0; materialIndex < materialProps.length; materialIndex++) {
-    let material = materialProps[materialIndex];
-    if (material.transparent === undefined) {
-      material.transparent = true;
+  for (let materialIndex = 0; materialIndex < materialsProps.length; materialIndex++) {
+    let props = materialsProps[materialIndex];
+    if (props.transparent === undefined) {
+      props.transparent = true;
     }
     materialIndexTable[materialIndex] = mesh.material.length;
-    mesh.material.push(new THREE.MeshLambertMaterial(material));
+    mesh.material.push(new THREE.MeshLambertMaterial(props));
   }
 
   // Clear the existing groups
