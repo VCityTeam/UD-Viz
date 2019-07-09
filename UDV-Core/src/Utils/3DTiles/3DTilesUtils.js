@@ -172,17 +172,34 @@ export function setTileVerticesColor(tile, newColor, indexArray = null) {
  * Creates tile groups and associate them with the given materials.
  * 
  * @param {*} tile The 3DTiles tile.
- * @param {Array<any>} materials An array of material parameters. Each entry
+ * @param {Array<any>} materialProps An array of material parameters. Each entry
  * should be an object that will be passed as parameter in the THREE.Material
- * constructor. Accepted values are for example `color` or `opacity` (see
- * THREE.js documentation).
+ * constructor. Accepted values are for example `color` or `opacity`; actually
+ * any property of the `MeshLambertMaterial` class is valid (see [THREE.js
+ * documentation](https://threejs.org/docs/#api/en/materials/MeshLambertMaterial)).
  * @param {Array<any>} ranges An array of ranges. A range is an object with 3
  * propeties :
  * - `start`: the start index of the group of vertices
  * - `count`: the number of vertices of the group
  * - `material`: the index of the material in the materials array
+ * 
+ * @example
+ * // Fetch the tile
+ * let tile = getTileInLayer(this.layer, 6);
+ * // Define 2 materials : #0 is red and a bit transparent, #1 is invisible
+ * let materialProps = [
+ *   { color: 0xff0000, opacity: 0.8},
+ *   { opacity: 0}
+ * ];
+ * // Define 3 ranges associated with the materials
+ * let ranges = [
+ *   { start: 34629, count: 102, material: 1 },
+ *   { start: 34131, count: 174, material: 0 },
+ *   { start: 34731, count: 462, material: 0 }
+ * ];
+ * createTileGroups(tile, materialProps, ranges);
  */
-export function createTileGroups(tile, materials, ranges) {
+export function createTileGroups(tile, materialProps, ranges) {
   let mesh = getMeshFromTile(tile);
 
   let defaultMaterial = Array.isArray(mesh.material) ?
@@ -192,12 +209,12 @@ export function createTileGroups(tile, materials, ranges) {
   // Reset the materials
   mesh.material = [ defaultMaterial ];
 
-  // Material index table (index in materials -> index in mesh.material)
+  // Material index table (index in materialProps -> index in mesh.material)
   let materialIndexTable = {};
 
   // Create the materials
-  for (let materialIndex = 0; materialIndex < materials.length; materialIndex++) {
-    let material = materials[materialIndex];
+  for (let materialIndex = 0; materialIndex < materialProps.length; materialIndex++) {
+    let material = materialProps[materialIndex];
     if (material.transparent === undefined) {
       material.transparent = true;
     }
@@ -272,10 +289,13 @@ export function createTileGroups(tile, materials, ranges) {
  * - `batchIDs` contains the batch IDs to be applied the given material.
  * 
  * @example
+ * // Fetch the tile
  * let tile = getTileInLayer(layer, 6);
+ * // Create groups for two types of objects : the first type has a red,
+ * // transparent material. The second one is invisible.
  * createTileGroupsFromBatchIDs(tile, [
  *   {
- *     material: {color: 0xff0000},
+ *     material: {color: 0xff0000, opacity: 0.8},
  *     batchIDs: [64, 67]
  *   },
  *   {
