@@ -19,8 +19,9 @@ export { AboutWindow }              from './Modules/Others/About';
 export { HelpWindow }               from './Modules/Others/Help';
 
 export { TemporalController }       from './Modules/Temporal/Temporal';
+export { $3DTemporalExtension }     from './Modules/Temporal/3DTemporalExtension';
 
-export { DocumentController}        from './Modules/ConsultDoc/DocumentController';
+export { DocumentController }        from './Modules/ConsultDoc/DocumentController';
 
 export { ContributeController }     from './Extensions/Contribute/src/ContributeController';
 

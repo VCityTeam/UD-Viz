@@ -1,5 +1,6 @@
 import { ModuleView } from '../../ModuleView/ModuleView.js';
 import { TilesManager } from '../../3DTiles/TilesManager.js';
+import { $3DTemporalExtension } from '../../../Modules/Temporal/3DTemporalExtension.js'
 
 /**
  * Represents the base HTML content of a demo for UDV and provides methods to
@@ -346,10 +347,32 @@ export class BaseDemo {
     }
 
     /**
-     * Initialize the iTowns 3D view.
+     * Loads a config file. Module views should only be added after calling
+     * this method.
+     * @param filePath The path to the config file.
      */
-    init3DView() {
-        // ********* INIT ITOWNS VIEW
+    async loadConfigFile(filePath) {
+        //loading configuration file
+        // see https://github.com/MEPP-team/VCity/wiki/Configuring-UDV
+        return $.ajax({
+            type: "GET",
+            url: filePath,
+            datatype: "json",
+            success: (data) => {
+                this.config = data;
+            },
+            error: (e) => {
+                throw 'Could not load config file : ' + filePath;
+            }
+        });
+    }
+
+
+    ////////////////////////////////////////////////////////
+    //               iTowns Initializers                  //
+    ////////////////////////////////////////////////////////
+
+    initPlanarView() {
         // Define projection used in iTowns viewer (taken from
         // https://epsg.io/3946, Proj4js section)
         itowns.proj4.defs('EPSG:3946', '+proj=lcc +lat_1=45.25 +lat_2=46.75' +
@@ -368,7 +391,9 @@ export class BaseDemo {
         this.view = new itowns.PlanarView(viewerDiv, this.extent, {
             disableSkirt: false
         });
+    }
 
+    addIGNTerrainLayers() {
         // ********* ADD TERRAIN LAYERS (WMS imagery and WMS elevation)
         // These layer are served by the grandLyon
         // Add a WMS imagery source
@@ -408,21 +433,9 @@ export class BaseDemo {
             source: wmsElevationSource,
         });
         this.view.addLayer(wmsElevationLayer);
+    }
 
-        // ********* ADD 3D BUILDING LAYER (3D Tiles)
-        // This building layer represents Lyon in 2015 and is served from
-        // grand lyon alpha server
-        let $3dTilesLayer = new itowns.GeometryLayer(
-            this.config['3DTilesLayerID'], new THREE.Group());
-        $3dTilesLayer.name = 'Lyon-2015';
-        $3dTilesLayer.url =
-            this.config['3DTilesLayerURL'];
-        $3dTilesLayer.protocol = '3d-tiles';
-        $3dTilesLayer.overrideMaterials = true;
-
-        itowns.View.prototype.addLayer.call(this.view, $3dTilesLayer);
-
-        // ********* 3D Elements
+    addRenderingElements() {
         // Lights
         let directionalLight = new THREE.DirectionalLight( 0xffffff, 0.5 );
         directionalLight.position.set( 0, 0, 20000 );
@@ -444,6 +457,30 @@ export class BaseDemo {
 
         // Set sky color to blue
         this.view.mainLoop.gfxEngine.renderer.setClearColor( 0x6699cc, 1);
+    }
+
+    /**
+     * Initialize the iTowns 3D view.
+     */
+    init3DView() {
+        // initialize itowns planar view
+        this.initPlanarView();
+        // Add terrain layers (raster and elevation)
+        this.addIGNTerrainLayers();
+        // Add camera, lights, controls, set sky color to blue
+        this.addRenderingElements();
+
+        // Add 3D Tiles Building layer of Lyon in 2015
+        // grand lyon alpha server
+        let $3dTilesLayer = new itowns.GeometryLayer(
+            this.config['3DTilesLayerID'], new THREE.Group());
+        $3dTilesLayer.name = 'Lyon-2015';
+        $3dTilesLayer.url =
+            this.config['3DTilesLayerURL'];
+        $3dTilesLayer.protocol = '3d-tiles';
+        $3dTilesLayer.overrideMaterials = true;
+
+        itowns.View.prototype.addLayer.call(this.view, $3dTilesLayer);
 
         // Request itowns view redraw
         this.view.notifyChange();
@@ -453,25 +490,42 @@ export class BaseDemo {
             this.view.getLayerById(this.config['3DTilesLayerID']));
     }
 
-    /**
-     * Loads a config file. Module views should only be added after calling
-     * this method.
-     * @param filePath The path to the config file.
-     */
-    async loadConfigFile(filePath) {
-        //loading configuration file
-        // see https://github.com/MEPP-team/VCity/wiki/Configuring-UDV
-        return $.ajax({
-            type: "GET",
-            url: filePath,
-            datatype: "json",
-            success: (data) => {
-                this.config = data;
-            },
-            error: (e) => {
-                throw 'Could not load config file : ' + filePath;
-            }
-        });
+    init4DView(displayDate) {
+        // initialize itowns planar view
+        this.initPlanarView();
+        // Add terrain layers (raster and elevation)
+        this.addIGNTerrainLayers();
+        // Add camera, lights, controls, set sky color to blue
+        this.addRenderingElements();
+
+        // TODO: add temporal slider (in temporal module ?)
+
+        // Create a new 3D tiles layer with temporal extension
+        let $3dTilesLayerTemporal = new itowns.GeometryLayer(
+            '3d-tiles-temporal', new itowns.THREE.Group());
+        $3dTilesLayerTemporal.name = '3DTiles-temporal';
+        $3dTilesLayerTemporal.url =
+            'http://localhost:8003/tilesets/3DTiles_temporal_extension/V25_FullLyonBigTiles/tileset.json';
+        $3dTilesLayerTemporal.protocol = '3d-tiles';
+
+        $3dTilesLayerTemporal.defineLayerProperty('displayDate',
+            displayDate);
+
+        // Register temporal extension and add it to the layer
+        // using defineLayerProperty method
+        const extensions = new itowns.$3DTExtensions();
+        extensions.registerExtension('3DTILES_temporal',
+            new $3DTemporalExtension());
+        $3dTilesLayerTemporal.defineLayerProperty('registeredExtensions', extensions);
+
+        itowns.View.prototype.addLayer.call(this.view, $3dTilesLayerTemporal);
+
+        // Request itowns view redraw
+        this.view.notifyChange();
+
+        // Initialize the 3DTiles manager
+        this.tilesManager = new TilesManager(this.view,
+            this.view.getLayerById(this.config['3DTilesTemporalLayerID']));
     }
 
     ////////////////////////////////////////////////////////
