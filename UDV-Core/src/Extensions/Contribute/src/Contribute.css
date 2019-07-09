@@ -16,6 +16,11 @@
   font-size: 14;
 }
 
+#creationForm input, #creationForm select {
+  box-sizing: border-box;
+  width: 100%;
+}
+
 #closeCreation{
   position: absolute;
   z-index: 40;

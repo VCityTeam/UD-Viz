@@ -81,6 +81,7 @@ export function getTilesBuildingInfo(layer, tbi = null) {
           tbi.buildings[buildingId] = {};
           tbi.buildings[buildingId].arrayIndexes = [];
           tbi.buildings[buildingId].tileId = tile.tileId;
+          tbi.buildings[buildingId].batchId = batchId;
           tbi.buildings[buildingId].centroid = null;
 
           newBuildingIds.push(buildingId);

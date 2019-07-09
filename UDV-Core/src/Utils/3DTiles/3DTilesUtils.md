@@ -125,6 +125,15 @@ This function is relatively straightforward. It simply counts the number of tile
 This function is used to set the color of the vertices of a tile. It does not affect the material color, but rather the geometry 'color' attribute. The default color rendering method is also changed (the `vertexColors` property of the material is set to `THREE.VertexColors`).  
 It is possible to change the color of specific vertices of the tile. They are specified in the optional `indexArray` parameter, which is an array of indexes for the vertices (same indexes used in the `_BATCHID` attribute, for example).
 
+### `createTileGroups(tile, materials, ranges)` - Create tile groups and set materials
+
+This function is used to group the vertices of the tile into different "groups". A group is a set of consecutive vertices with the same material. This function can be used to change the material (color, opacity, etc.) of different parts of the tile.  
+Different materials can be used at the same time.
+
+### `createTileGroupsFromBatchIDs(tile, groups)` - Create tile groups from batch IDs
+
+This function serves as a convenient helper to create tile groups without specifying vertex ranges, but rather batch IDs. Batch IDs are much simpler to manipulate and retrieve, with for example the `pickObjectsAt` function.
+
 ### `removeTileVerticesColor(tile)` - Remove the color from tile vertices
 
 This function removes the `color` attribute from the geometry of the tile and sets the `vertexColors` property of the material to `THREE.NoColor`, meaning that the tile color will be determined by only the material color.
@@ -136,6 +145,14 @@ The purpose of this function is to tell the iTowns view to update the scene. It 
 ### `getVerticesCentroid(tile, indexArray)` - Computes the centroid of the vertices
 
 This function computes the centroid of the given vertices. `indexArray` is the array of indexes used to specify which vertices in the tile should be considered. This array is assumed to be contiguous and sorted.
+
+### `getMeshFromTile(tile)` - Gets the mesh component of a tile
+
+Search for the last child of a tile in its hierarchy, which should be an object of type "Mesh". It should have a geometry.
+
+### `getObject3DFromTile(tile)` - Gets the root component of a tile
+
+Search for the root component of a tile in its hierarchy, which should be an object of type "Object3D". It should have a batch table.
 
 ## 3DTilesBuildingUtils
 
@@ -217,3 +234,20 @@ if (!!buildingInfo) {
 If we had previously colored another building, we want to un-color it. We do that by removing vertex colors from the tile.
 
 We have to call the function `updateITownsView` in order to the view to be redrawn. Otherwise, the color changes won't appear in the scene.
+
+### Create tile groups to apply materials
+
+Let's say we want to apply different styles to different parts of a tile (like buildings). Some buildings will be drawn in red, and other will be hidden. We can do that by defining tile groups :
+
+```js
+let tile = getTileInLayer(this.layer, 6);
+createTileGroupsFromBatchIDs(tile, [{
+  material: {color: 0xff0000},
+  batchIDs: [64, 66]
+}, {
+  material: {opacity: 0},
+  batchIDs: [65, 67]
+}]);
+```
+
+In this example, the city objects 64 and 66 from the tile 6 will be drawn in red, whereas the city objects 65 and 67 will be invisible.
