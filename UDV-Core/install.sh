@@ -3,9 +3,8 @@ cd "$(dirname "$0")" || exit
 
 mkdir dist
 pushd dist
-git clone https://github.com/Crejak/itowns.git
+git clone https://github.com/iTowns/itowns.git
 pushd itowns
-git checkout fix/material
 npm install
 # The following command was automatically launched by 'npm install' as the
 # 'prepublish' script. However, Itowns moved this command  to the 

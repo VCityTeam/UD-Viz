@@ -168,7 +168,7 @@ export function setTileVerticesColor(tile, newColor, indexArray = null) {
 }
 
 /**
- * Creates tile groups.
+ * Creates tile groups and associate them with the given materials.
  * 
  * @param {*} tile The 3DTiles tile.
  * @param {Array<any>} materials An array of material parameters. Each entry
@@ -214,8 +214,23 @@ export function createTileGroups(tile, materials, ranges) {
     ranges.sort((a, b) => {
       return a.start - b.start;
     });
-    // Check for overlapping
-    // TODO later
+    
+    // Merge consecutive ranges with the same material
+    let mergedRanges = [];
+    for (let [index, range] of ranges.entries()) {
+      if (index === 0) {
+        mergedRanges.push(range);
+      } else {
+        let currentMergingRange = mergedRanges[mergedRanges.length - 1];
+        if (currentMergingRange.start + currentMergingRange.count === range.start
+            && currentMergingRange.material === range.material) {
+          currentMergingRange.count += range.count;
+        } else {
+          mergedRanges.push(range);
+        }
+      }
+    }
+    ranges = mergedRanges;
 
     // Adding groups for the new material
     for (let range of ranges) {
@@ -244,9 +259,6 @@ export function createTileGroups(tile, materials, ranges) {
 
 /**
  * Create groups in the tile mesh from the given batch IDs and materials.
- * 
- * @todo This function needs optimization (combine consecutive IDs in groups +
- * parse the vertices only once)
  * 
  * @param {*} tile The 3DTiles tile.
  * @param {Array<any>} groups An array of group descriptors. A group descriptor
@@ -305,9 +317,17 @@ export function createTileGroupsFromBatchIDs(tile, groups) {
   for (let index = 0; index < mesh.geometry.attributes._BATCHID.count; index++) {
     let batchID = mesh.geometry.attributes._BATCHID.array[index];
 
+    // If we found a batch ID that is greater than the one we're searching, it
+    // means we found the end of the range.
     if (batchID > searchingBatchID) {
       addingRange.count = index - addingRange.start;
       ranges.push(addingRange);
+      
+      if (searchingBatchID === undefined) {
+        // No more batch IDs to search
+        break;
+      }
+
       searchingIndex += 1;
       searchingBatchID = batchIDs[searchingIndex];
       addingRange = {
@@ -315,6 +335,7 @@ export function createTileGroupsFromBatchIDs(tile, groups) {
       };
     }
 
+    // If we find the correct batch ID, store the start index
     if (batchID === searchingBatchID && !addingRange.start) {
       addingRange.start = index;
     }
@@ -326,6 +347,7 @@ export function createTileGroupsFromBatchIDs(tile, groups) {
     }
   }
 
+  // Create the tile groups
   createTileGroups(mesh, materials, ranges);
 }
 
