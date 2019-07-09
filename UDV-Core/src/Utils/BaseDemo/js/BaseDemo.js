@@ -505,7 +505,7 @@ export class BaseDemo {
             this.config['3DTilesTemporalLayerID'], new itowns.THREE.Group());
         $3dTilesLayerTemporal.name = '3DTiles-temporal';
         $3dTilesLayerTemporal.url =
-            this.config['3DTilesLayerURL'];
+            this.config['3DTilesTemporalLayerURL'];
         $3dTilesLayerTemporal.protocol = '3d-tiles';
 
         $3dTilesLayerTemporal.defineLayerProperty('currentTime',

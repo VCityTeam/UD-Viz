@@ -5,6 +5,7 @@ import {
     $3DTileset,
 } from 'itowns';
 import * as THREE from 'three';
+import { createTileGroupsFromBatchIDs } from '../../Utils/3DTiles/3DTilesUtils';
 
 // TODO: Complex transactions ? Et en particulier les
 //  subdivision/fusion+modified
@@ -242,6 +243,34 @@ export class $3DTemporalExtension extends $3DTAbstractExtension {
      */
     // eslint-disable-next-line class-methods-use-this
     parse(json, context) {
+        if (json.transactions) {
+            this.temporal_tileset = new TemporalExtension_Tileset(json);
+            return this.temporal_tileset;
+        } else if (json.featureIds) {
+            const temporal_batchTable = new TemporalExtension_BatchTable(json);
+            // Fill this.temporal_batchTable.oldFeaturesTransaction which is
+            // then used for optimization later on (e.g. in culling).
+            // TODO : This could be simplified so we directly store the
+            //  featureTransacs instead of having two arrays.
+            for (let i = 0; i < temporal_batchTable.featureIds.length; i++) {
+                const featureId = temporal_batchTable.featureIds[i];
+                if (this.temporal_tileset.FeaturesTransactions[featureId] !== undefined) {
+                    const featureTransacs = this.temporal_tileset.FeaturesTransactions[featureId];
+                    temporal_batchTable.oldFeaturesTransaction[i] = featureTransacs.transactionsAsOldFeature;
+                    temporal_batchTable.newFeaturesTransaction[i] = featureTransacs.transactionsAsNewFeature;
+                } else {
+                    temporal_batchTable.oldFeaturesTransaction[i] = {};
+                    temporal_batchTable.newFeaturesTransaction[i] = {};
+                }
+            }
+            return temporal_batchTable;
+        } else if (context.box) {
+            return new TemporalExtension_BoundingVolume(json);
+        } else {
+            return undefined;
+        }
+    }
+    /*    parse(json, context) {
         if (context instanceof $3DTileset) {
             this.temporal_tileset = new TemporalExtension_Tileset(json);
             return this.temporal_tileset;
@@ -268,7 +297,7 @@ export class $3DTemporalExtension extends $3DTAbstractExtension {
         } else {
             return undefined;
         }
-    }
+    } */
 
     // TODO: si on avait une 3DTilesbaseclass on pourrait mettre une
     //  fonction hasExtension dedans qui ferait le check si un obj a
@@ -308,10 +337,31 @@ export class $3DTemporalExtension extends $3DTAbstractExtension {
         */
         if (node.batchTable && node.batchTable.extensions &&
             node.batchTable.extensions['3DTILES_temporal']) {
-            // console.log('Temporal batch table culling for node :');
-            // console.log(node);
             const BT_ext = node.batchTable.extensions['3DTILES_temporal'];
             const featuresDisplayStates = BT_ext.culling(layer.currentTime);
+
+            // Flatten Object
+            // code taken from https://gist.github.com/penguinboy/762197
+            const flattenObject = function(ob) {
+                let toReturn = {};
+
+                for (let i in ob) {
+                    if (!ob.hasOwnProperty(i)) continue;
+
+                    if ((typeof ob[i]) == 'object') {
+                        let flatObject = flattenObject(ob[i]);
+                        for (let x in flatObject) {
+                            if (!flatObject.hasOwnProperty(x)) continue;
+
+                            toReturn[i + '.' + x] = flatObject[x];
+                        }
+                    } else {
+                        toReturn[i] = ob[i];
+                    }
+                }
+                return toReturn;
+            };
+            flattenObject(featuresDisplayStates);
 
             // TODO: call VRI function to update node display state
         }
