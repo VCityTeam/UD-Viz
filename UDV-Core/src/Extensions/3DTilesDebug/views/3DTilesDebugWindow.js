@@ -128,7 +128,7 @@ export class Debug3DTilesWindow extends Window {
    */
   onMouseMove(event) {
     // Update the current visible tile count
-    let visibleTileCount = getVisibleTileCount(this.tilesManager.layer);
+    let visibleTileCount = getVisibleTileCount(this.layer);
     this.visibleTilesParagraphElement.innerText = `${visibleTileCount} tiles visible.`
   }
 
@@ -140,6 +140,7 @@ export class Debug3DTilesWindow extends Window {
    * @param {MouseEvent} event The mouse event.
    */
   onMouseClick(event) {
+    this.tilesManager.update();
     let cityObject = this.tilesManager.pickCityObject(event);
     if (cityObject !== undefined) {
       this.clickDivElement.innerHTML = /*html*/`
@@ -158,8 +159,7 @@ export class Debug3DTilesWindow extends Window {
 
       this.selectedCityObject = cityObject;
       this.tilesManager.setStyle(this.selectedCityObject.cityObjectId, 'selected');
-      this.tilesManager.applyStyles({updateFunction:
-        this.tilesManager.view.notifyChange.bind(this.tilesManager.view)});
+      this.tilesManager.applyStyles();
     }
   }
 
@@ -170,13 +170,9 @@ export class Debug3DTilesWindow extends Window {
     try {
       let tileId = Number.parseInt(this.groupColorTileInputElement.value);
       let batchIds = JSON.parse('[' + this.groupColorBatchInputElement.value + ']');
-      let cityObjectIds = [];
-      for (let batchId of batchIds) {
-        cityObjectIds.push(new CityObjectID(tileId, batchId));
-      }
       let color = new THREE.Color(this.groupColorColorInputElement.value);
       let opacity = Number.parseFloat(this.groupColorOpacityInputElement.value);
-      this.tilesManager.setStyle(cityObjectIds, 
+      this.tilesManager.setStyle(new CityObjectID(tileId, batchIds),
         {materialProps: {color, opacity}});
       this.tilesManager.applyStyles();
     } catch (e) {

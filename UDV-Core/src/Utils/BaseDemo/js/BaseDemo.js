@@ -515,7 +515,7 @@ export class BaseDemo {
         // using defineLayerProperty method
         const extensions = new itowns.$3DTExtensions();
         extensions.registerExtension('3DTILES_temporal',
-            new $3DTemporalExtension());
+            new $3DTemporalExtension(this.view));
         $3dTilesLayerTemporal.defineLayerProperty('registeredExtensions', extensions);
 
         itowns.View.prototype.addLayer.call(this.view, $3dTilesLayerTemporal);

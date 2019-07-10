@@ -23,14 +23,14 @@ baseDemo.loadConfigFile('../data/config/generalDemoConfig.json').then(() => {
     baseDemo.addModuleView('help', help);
 
     ////// TEMPORAL MODULE
-    function updateLayerDisplayDate(newDate) {
+    function updateLayerCurrentTime(newDate) {
         const numberDate = Number(newDate);
         const $3DTilesTemporalLayer = this.view.getLayerById(this.config['3DTilesTemporalLayerID']);
         $3DTilesTemporalLayer.currentTime = numberDate;
         this.view.notifyChange($3DTilesTemporalLayer);
     }
 
-    const temporalCallback = updateLayerDisplayDate.bind(baseDemo);
+    const temporalCallback = updateLayerCurrentTime.bind(baseDemo);
 
     const temporalOptions = {
         minTime: 2009,
@@ -53,7 +53,7 @@ baseDemo.loadConfigFile('../data/config/generalDemoConfig.json').then(() => {
 
     ////// 3DTILES DEBUG
     const debug3dTilesWindow = new udvcore.Debug3DTilesWindow(baseDemo.view,
-        baseDemo.config);
+        baseDemo.config['3DTilesTemporalLayerID']);
     baseDemo.addModuleView('3dtilesDebug', debug3dTilesWindow, {
         name: '3DTiles Debug'
     });

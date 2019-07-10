@@ -1,11 +1,11 @@
 import {
     $3DTAbstractExtension,
-    $3DTBatchTable,
-    $3DTBoundingVolume,
-    $3DTileset,
 } from 'itowns';
 import * as THREE from 'three';
-import { createTileGroupsFromBatchIDs } from '../../Utils/3DTiles/3DTilesUtils';
+import {
+    createTileGroupsFromBatchIDs,
+    updateITownsView
+} from '../../Utils/3DTiles/3DTilesUtils';
 
 // TODO: Complex transactions ? Et en particulier les
 //  subdivision/fusion+modified
@@ -24,7 +24,6 @@ const opacities = {
     hide: 0,
 };
 
-
 class TemporalExtension_Tileset {
     constructor(json) {
         // TODO: pour l'instant les dates sont des années, les gérer ensuite
@@ -36,37 +35,36 @@ class TemporalExtension_Tileset {
         this.versionTransitions = json.versionTransitions;
         this.transactions = json.transactions;
 
-        // TODO: this.FeaturesTransactions = this.findFeaturesTransactions
-        // + Découper en petites taches pour eviter de freeze l'interface ?
-        this.FeaturesTransactions = {};
-        this.findFeaturesTransactions();
+        this.FeaturesTransactions = this.findFeaturesTransactions();
     }
 
     // TODO: on prend ici seulement la prmeière transaction. Il devrait
     //  normalement en avoir qu'une. Faire des cas en fonction des types
     //  de transactions ?
     findFeaturesTransactions() {
+        const featuresTransactions = {};
         for (let i = 0; i < this.transactions.length; i++) {
             const transaction = this.transactions[i];
             for (let j = 0; j < transaction.oldFeatures.length; j++) {
                 const oldFeature = transaction.oldFeatures[j];
-                if (this.FeaturesTransactions[oldFeature] === undefined) {
-                    this.FeaturesTransactions[oldFeature] = {};
+                if (featuresTransactions[oldFeature] === undefined) {
+                    featuresTransactions[oldFeature] = {};
                 }
-                if (this.FeaturesTransactions[oldFeature].transactionsAsOldFeature === undefined) {
-                    this.FeaturesTransactions[oldFeature].transactionsAsOldFeature = transaction;
+                if (featuresTransactions[oldFeature].transactionsAsOldFeature === undefined) {
+                    featuresTransactions[oldFeature].transactionsAsOldFeature = transaction;
                 }
             }
             for (let j = 0; j < transaction.newFeatures.length; j++) {
                 const newFeature = transaction.newFeatures[j];
-                if (this.FeaturesTransactions[newFeature] === undefined) {
-                    this.FeaturesTransactions[newFeature] = {};
+                if (featuresTransactions[newFeature] === undefined) {
+                    featuresTransactions[newFeature] = {};
                 }
-                if (this.FeaturesTransactions[newFeature].transactionsAsNewFeature === undefined) {
-                    this.FeaturesTransactions[newFeature].transactionsAsNewFeature = transaction;
+                if (featuresTransactions[newFeature].transactionsAsNewFeature === undefined) {
+                    featuresTransactions[newFeature].transactionsAsNewFeature = transaction;
                 }
             }
         }
+        return featuresTransactions;
     }
 }
 
@@ -99,23 +97,12 @@ class TemporalExtension_BatchTable {
         this.newFeaturesTransaction = [];
     }
 
-    pushFeatureDisplayState(featuresDisplayStates, opacity, color, featureID) {
-        if (!featuresDisplayStates[opacity]) {
-            featuresDisplayStates[opacity] = color;
-        }
-        if (!featuresDisplayStates[opacity][color]) {
-            featuresDisplayStates[opacity][color] = [featureID];
-        } else {
-            featuresDisplayStates[opacity][color].push(featureID);
-        }
-    }
-
-    // Should be there if the implementation followed the current version of
+    // Should not exist if the implementation followed the current version of
     // the extension + for demonstration purposes if there is two
     // tags (fusion + modification or subdivision + modification) we display
     // the features in grey. These cases are indeed mostly between 2012 and 2015
     // and are due to the data
-    getDisplayStateFromTags(tags) {
+    static getDisplayStateFromTags(tags) {
         const displayState = {};
         if (tags.length === 1) {
             displayState.opacity = opacities.uncertain;
@@ -149,16 +136,29 @@ class TemporalExtension_BatchTable {
     //   * else we hide the feature.
     culling(currentTime) {
         // featuresMaterial is an array of object that will be used to color
-        // and change the opacity of features according to their batchIDs.
+        // and change the opacity of features according to their batchIDs by
+        // using the function createTileGroupsFromBatchIDs() from 3DTilesUtils.
         // Its structure is as follow:
-        // { <opacity> : { <color> : [batchIds] } }
+        //   [{
+        //     material: {color: 0xff0000, opacity: 0.8},
+        //     batchIDs: [64, 67]
+        //   },
+        //   {
+        //     material: {color: 0xff000f, opacity: 0},
+        //     batchIDs: [66]
+        //   }]
         const featuresDisplayStates = [];
         for (let i = 0; i < this.featureIds.length; i++) {
             if (currentTime >= this.startDates[i] && currentTime <=
                 this.endDates[i]) {
                 // ** FEATURE EXISTS
-                this.pushFeatureDisplayState(featuresDisplayStates,
-                    opacities.certain, transactionsColors.noTransaction, i);
+                featuresDisplayStates.push({
+                    material: {
+                        color: transactionsColors.noTransaction,
+                        opacity: opacities.certain,
+                    },
+                    batchIDs: [i],
+                });
             } else {
                 // ** TRANSACTION OR FEATURE DOESN'T EXISTS
                 const newTransac = this.newFeaturesTransaction[i];
@@ -169,34 +169,48 @@ class TemporalExtension_BatchTable {
                     if (currentTime > newTransac.startDate && currentTime <=
                         newTransac.startDate + newTransacHalfDuration) {
                         hasTransac = true;
-                        const displayState = this.getDisplayStateFromTags(
+                        const displayState = TemporalExtension_BatchTable.getDisplayStateFromTags(
                             newTransac.tags);
-                        this.pushFeatureDisplayState(featuresDisplayStates,
-                            displayState.opacity, displayState.color, i);
+                        featuresDisplayStates.push({
+                            material: {
+                                color: displayState.color,
+                                opacity: displayState.opacity,
+                            },
+                            batchIDs: [i],
+                        });
                     }
                 }
                 const oldTransac = this.oldFeaturesTransaction[i];
                 if (oldTransac) {
-                    hasTransac = true;
                     const oldTransacHalfDuration = (oldTransac.endDate -
                         oldTransac.startDate) / 2;
                     if (currentTime > oldTransac.startDate +
                         oldTransacHalfDuration && currentTime <
                         oldTransac.endDate) {
-                        const displayState = this.getDisplayStateFromTags(
+                        hasTransac = true;
+                        const displayState = TemporalExtension_BatchTable.getDisplayStateFromTags(
                             oldTransac.tags);
-                        this.pushFeatureDisplayState(featuresDisplayStates,
-                            displayState.opacity, displayState.color, i);
+                        featuresDisplayStates.push({
+                            material: {
+                                color: displayState.color,
+                                opacity: displayState.opacity,
+                            },
+                            batchIDs: [i],
+                        });
                     }
                 }
 
                 if (!hasTransac) {
-                    this.pushFeatureDisplayState(featuresDisplayStates,
-                        opacities.hide, transactionsColors.noTransaction, i);
+                    featuresDisplayStates.push({
+                        material: {
+                            color: transactionsColors.noTransaction,
+                            opacity: opacities.hide,
+                        },
+                        batchIDs: [i],
+                    });
                 }
             }
         }
-
         return featuresDisplayStates;
     }
 
@@ -219,13 +233,14 @@ class TemporalExtension_BatchTable {
 /**
  * @module TemporalExtension
  */
-// TODO: ajouter un constructeur et un attribut extensionName
+// TODO: ajouter un attribut extensionName
 export class $3DTemporalExtension extends $3DTAbstractExtension {
     // we only store the temporal_tileset because we need to access it (more
     // precisely, we need to access the transactions) for culling
-    constructor() {
+    constructor(itownsView) {
         super();
         this.temporal_tileset = {};
+        this.itownsView = itownsView;
     }
 
     /**
@@ -340,30 +355,8 @@ export class $3DTemporalExtension extends $3DTAbstractExtension {
             const BT_ext = node.batchTable.extensions['3DTILES_temporal'];
             const featuresDisplayStates = BT_ext.culling(layer.currentTime);
 
-            // Flatten Object
-            // code taken from https://gist.github.com/penguinboy/762197
-            const flattenObject = function(ob) {
-                let toReturn = {};
-
-                for (let i in ob) {
-                    if (!ob.hasOwnProperty(i)) continue;
-
-                    if ((typeof ob[i]) == 'object') {
-                        let flatObject = flattenObject(ob[i]);
-                        for (let x in flatObject) {
-                            if (!flatObject.hasOwnProperty(x)) continue;
-
-                            toReturn[i + '.' + x] = flatObject[x];
-                        }
-                    } else {
-                        toReturn[i] = ob[i];
-                    }
-                }
-                return toReturn;
-            };
-            flattenObject(featuresDisplayStates);
-
-            // TODO: call VRI function to update node display state
+            createTileGroupsFromBatchIDs(node, featuresDisplayStates);
+            updateITownsView(this.itownsView, layer);
         }
         return false;
     }
