@@ -1,6 +1,6 @@
 import { Window } from "../../../Utils/GUI/js/Window";
-import { getFirstTileIntersection, getBatchTableFromTile, getBatchIdFromIntersection, getVisibleTileCount, removeTileVerticesColor, getTileInTileset, getTileInLayer, updateITownsView, getObject3DFromTile, createTileGroupsFromBatchIDs } from '../../../Utils/3DTiles/3DTilesUtils';
-import { colorBuilding, getTilesBuildingInfo} from '../../../Utils/3DTiles/3DTilesBuildingUtils';
+import { getTilesInfo, getFirstTileIntersection, getBatchTableFromTile, getBatchIdFromIntersection, getVisibleTileCount, removeTileVerticesColor, getTileInTileset, getTileInLayer, updateITownsView, getObject3DFromTile, createTileGroupsFromBatchIDs } from '../../../Utils/3DTiles/3DTilesUtils';
+import { colorBuilding } from '../../../Utils/3DTiles/3DTilesBuildingUtils';
 
 export class Debug3DTilesWindow extends Window {
   constructor(itownsView, config) {
@@ -9,16 +9,17 @@ export class Debug3DTilesWindow extends Window {
     this.itownsView = itownsView;
     this.layer = itownsView.getLayerById(config['3DTilesLayerID']);
     // Tiles Building Information object (see Utils/3DTiles/3DTilesUtils.md)
-    this.tbi = null;
+    this.tilesInfo = null;
     this.selectedColor = [1, 0, 0];
     /**
      * Building info of the selected building.
      */
     this.selectedBuildingInfo;
     /**
-     * Building id of the hovered building.
+     * Id of the hovered building.
      */
-    this.hoveredBuildingId;
+    this.hoveredTileId;
+    this.hoveredBatchId;
 
     let clickListener = (event) => {
       this.onMouseClick(event);
@@ -43,8 +44,8 @@ export class Debug3DTilesWindow extends Window {
 
   get innerContentHtml() {
     return /*html*/`
-      <button id="${this.loadTBIButtonId}">Update TBI</button>
-      <button id="${this.logTBIButtonId}">Log TBI</button>
+      <button id="${this.loadTBIButtonId}">Update TI</button>
+      <button id="${this.logTBIButtonId}">Log TI</button>
       <p id="${this.TBIInfoParagraphId}">0 / ? tiles loaded.</p>
       <p id="${this.visibleTilesParagraphId}">0 tiles visible.</p>
       <h3>Building under mouse</h3>
@@ -86,10 +87,10 @@ export class Debug3DTilesWindow extends Window {
   windowCreated() {
     this.window.style.width = '300px';
     this.loadTBIButtonElement.onclick = () => {
-      this.updateTBI();
+      this.updateTI();
     };
     this.logTBIButtonElement.onclick = () => {
-      this.logTBI();
+      this.logTI();
     };
     this.groupColorOpacityInputElement.oninput = () => {
       this.groupColorOpacitySpanElement.innerText =
@@ -99,23 +100,23 @@ export class Debug3DTilesWindow extends Window {
       this.submitGroupColor();
       return false;
     };
-    this.tbi = null;
-    this.updateTBI();
+    this.tilesInfo = null;
+    this.updateTI();
   }
 
   /**
    * Updates the TBI.
    */
-  updateTBI() {
-    this.tbi = getTilesBuildingInfo(this.layer, this.tbi);
-    this.TBIInfoParagraphElement.innerText = `${this.tbi.loadedTileCount} / ${this.tbi.totalTileCount} tiles loaded.`;
+  updateTI() {
+    this.tilesInfo = getTilesInfo(this.layer, this.tilesInfo);
+    this.TBIInfoParagraphElement.innerText = `${this.tilesInfo.loadedTileCount} / ${this.tilesInfo.totalTileCount} tiles loaded.`;
   }
 
   /**
    * Logs the TBI in the console.
    */
-  logTBI() {
-    console.log(this.tbi);
+  logTI() {
+    console.log(this.tilesInfo);
   }
 
   /**
@@ -140,12 +141,14 @@ export class Debug3DTilesWindow extends Window {
         let buildingId = table.content['cityobject.database_id'][batchId];
         let tileId = getObject3DFromTile(firstInter.object).tileId;
 
-        this.hoveredBuildingId = buildingId;
+        this.hoveredTileId = tileId;
+        this.hoveredBatchId = batchId;
         this.hoverDivElement.innerHTML = `Building ID : ${buildingId}<br>
                                           Batch ID : ${batchId}<br>
                                           Tile ID : ${tileId}`;
       } else {
-        this.hoveredBuildingId = null;
+        this.hoveredTileId = null;
+        this.hoveredBatchId = null;
         this.hoverDivElement.innerText = 'No building';
       }
     }
@@ -160,27 +163,28 @@ export class Debug3DTilesWindow extends Window {
    */
   onMouseClick(event) {
     if (event.target.nodeName.toUpperCase() === 'CANVAS') {
-      this.updateTBI();
+      this.updateTI();
 
       // The building ID was retrieved by the `onMouseMove` method
-      let buildingId = this.hoveredBuildingId;
-      if (!!buildingId) {
+      let tileId = this.hoveredTileId;
+      let batchId = this.hoveredBatchId;
+      if (!!batchId) {
         // If we have a building ID, we check if the building has associated
         // info
-        let buildingInfo = this.tbi.buildings[buildingId];
+        let buildingInfo = this.tilesInfo.tiles[tileId][batchId];
         if (!!buildingInfo) {
           // Log the building info in the console to debug
           console.log(buildingInfo);
           // Fill a div with the info
           this.clickDivElement.innerHTML = /*html*/`
-            Building ID : ${buildingId}<br>
+            Building ID : ${buildingInfo.props['cityobject.database_id']}<br>
             ${buildingInfo.arrayIndexes.length} array indexes<br>
             Batch ID : ${buildingInfo.batchId}<br>
             Tile ID : ${buildingInfo.tileId}
           `;
           // If a building was already selected, un-color its tile
           if (!!this.selectedBuildingInfo) {
-            let tile = getTileInTileset(this.tbi.tileset,
+            let tile = getTileInTileset(this.tilesInfo.tileset,
                                         this.selectedBuildingInfo.tileId);
             try {
               removeTileVerticesColor(tile);
