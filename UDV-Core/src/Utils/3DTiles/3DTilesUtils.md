@@ -81,17 +81,18 @@ The commonly used attributes are the following :
 
 A building is a set of 3DTiles vertices, characterized by a common building ID. It often represents a "real life building".
 
-### Tiles Building Information (TBI)
+### Tiles Information (TI)
 
-In our application, we often need to interact with buildings rather than whole tiles. To do that, we have building IDs stored in batch tables, used to link buildings with actual vertices of the tiles. The Tiles Building Information object (short : TBI) is used to easily access building-specific information without searching in every tile.
+In our application, we often need to interact with buildings rather than whole tiles. To do that, we have batch IDs identifiying specific parts of a tile (which has a tile ID). We also have building IDs in batch tables, used to link buildings with actual vertices of the tiles. The Tiles Information object (short : TI) is used to easily access building-specific information without searching in every tile.
 
-The TBI has serveral useful properties :
+The TI has serveral useful properties :
 
-- `buildings` is a dictionnary that maps each building ID with its specific data (what we call 'Building Information'). A building information object contains a few properties :
+- `tiles` store each tile that was explored by the TI. Each tile is an array, mapping batch IDs to building information. A building information object contains a few properties :
   - `arrayIndexes` stores the indexes of the vertices of the building
-  - `tileId` references the tile in which the building is stored (we need to store the tileId and not the whole tile, because tile objects are destroyed and re-created when unloaded / loaded).
-  - `centroid` contains the centroid of the geometry.
-- `loadedTiles` store each tile that was explored by the TBI. As we mentioned before, the 3DTiles layer does not contains every tile of the tileset, but only the ones that are currently rendered. In order to keep in mind which tile we have analyzed, we keep them in the `loadedTiles` dictionnary.
+  - `tileId` references the tile in which the building is stored
+  - `batchId` is the batch ID of the building
+  - `centroid` contains the centroid of the geometry
+  - `props` is a dictionnary that contains the same information as the batch table, related to this building. For example, what we call a building ID is stored here under the name "cityobject.database_id".
 - `loadedTileCount` is the size of `loadedTiles`.
 - `totalTileCount` is the total number of tiles in the tileset.
 
@@ -154,15 +155,19 @@ Search for the last child of a tile in its hierarchy, which should be an object 
 
 Search for the root component of a tile in its hierarchy, which should be an object of type "Object3D". It should have a batch table.
 
+### `getTilesInfo(layer, ti)` - Gets or update the TI
+
+This function is either used to create a TI for the 3DTiles layer, exploring each displayed tile, or to update an existing TI by exploring the displayed tiles that have not been visited.
+
 ## 3DTilesBuildingUtils
 
 ### `getBuildingIdFromIntersection(inter)` - Gets a building ID from an intersection
 
 This function looks for a batch ID in the interseting object of the intersection and match it with a building ID in the batch table of the tile.
 
-### `getTilesBuildingInfo(layer, tbi)` - Gets or update the TBI
+### `getBuildingInfoFromBuildingId(tilesInfo, buildingId)` - Gets a building info from a building ID
 
-This function is either used to create a TBI for the 3DTiles layer, exploring each displayed tile, or to update an existing TBI by exploring the displayed tiles that have not been visited.
+This function explores a TI to find the building information related to the specified building ID.
 
 ### `colorBuilding(layer, buildingInfo, color)` - Colors a building
 
@@ -188,40 +193,42 @@ In the actual code, we fetch the building ID from the intersection :
 let intersections = this.itownsView.pickObjectsAt(event, 5);
 let tileIntersection = getFirstTileIntersection(intersections);
 if (!!tileIntersection) {
+  let tileId = getObject3DFromTile(tileIntersection.object).tileId;
+  let batchId = getBatchIdFromIntersection(tileIntersection);
   let buildingId = getBuildingIdFromIntersection(tileIntersection);
   //...
 }
 ```
 
-### Get and maintain a TBI
+### Get and maintain a TI
 
-In our class, we keep a TBI object with the `tbi` field. In the constructor, we set it to `null` and we create a function called `updateTBI`, that will be triggered when clicking a button.
+In our class, we keep a TI object with the `tilesInfo` field. In the constructor, we set it to `null` and we create a function called `updateTI`, that will be triggered when clicking a button.
 
 ```js
 constructor(itownsView) {
   //...
   this.layer = itownsView.getLayerById(config['3DTilesLayerID']);
-  this.tbi = null;
+  this.tilesInfo = null;
   //...
 }
 
-updateTBI() {
-  this.tbi = getTilesBuildingInfo(this.layer, this.tbi);
+updateTI() {
+  this.tilesInfo = getTilesInfo(this.layer, this.tilesInfo);
 }
 ```
 
-The first time `updateTBI` runs, the `tbi` parameter passed to `getTilesBuildingInfo` is null, so the function returns a brand new TBI. When the function is called afterwards, it will update the TBI with tiles that hasn't been added yet, preventing it to reload completely.
+The first time `updateTI` runs, the `tilesInfo` parameter passed to `getTilesInfo` is null, so the function returns a brand new TI. When the function is called afterwards, it will update the TI with tiles that hasn't been added yet, preventing it to reload completely.
 
 ### Get building info and color a building
 
 We want to color a building when we click on it. We have seen how to get its building ID, now let's see how to color it :
 
 ```js
-let buildingInfo = this.tbi.buildings[buildingId]; //get building info
+let buildingInfo = this.tilesInfo.tiles[tileId][batchId]; //get building info
 if (!!buildingInfo) {
   if (!!this.previousBuilding) {
     //un-color the previous selected building
-    let tile = getTileInTileset(this.tbi.tileset,
+    let tile = getTileInTileset(this.tilesInfo.tileset,
                                 this.previousBuilding.tileId);
     removeTileVerticesColor(tile);
   }
