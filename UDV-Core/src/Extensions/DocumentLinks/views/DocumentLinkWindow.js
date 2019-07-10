@@ -1,9 +1,10 @@
 import { Window } from "../../../Utils/GUI/js/Window";
 import { LinkService } from "../services/LinkService";
 import { DocumentController } from "../../../Modules/ConsultDoc/DocumentController";
-import { getTileInTileset, removeTileVerticesColor,
-  updateITownsView, getFirstTileIntersection } from '../../../Utils/3DTiles/3DTilesUtils'
-import { getTilesBuildingInfo, colorBuilding, getBuildingIdFromIntersection } from '../../../Utils/3DTiles/3DTilesBuildingUtils'
+import { getTilesInfo, getTileInTileset, removeTileVerticesColor,
+  updateITownsView, getFirstTileIntersection, getObject3DFromTile,
+  getBatchIdFromIntersection } from '../../../Utils/3DTiles/3DTilesUtils'
+import { colorBuilding, getBuildingIdFromIntersection, getBuildingInfoFromBuildingId } from '../../../Utils/3DTiles/3DTilesBuildingUtils'
 
 import './DocumentLink.css';
 import { Vector3 } from "three";
@@ -41,17 +42,20 @@ export class DocumentLinkWindow extends Window {
     this.controls = controls;
     this.layer = itownsView.getLayerById('3d-tiles-layer');
     // See the file at `Utils/3DTiles/3DTilesUtils.md` for documentation
-    // about TilesBuildingInformation
-    this.tbi = null;
+    // about TilesInformation
+    this.tilesInfo = null;
     this.highlightColor = [0, 0.9, 1];
-    this.highlightedBuildingId = null;
+    this.highlightedTileId = null;
+    this.highlightedBatchId = null;
     this.highlightedBuildingInfo = null;
 
     // Building selection
     this.isSelectingBuilding = false;
-    this.hoveredBuildingId = null;
+    this.hoveredTileId = null;
+    this.hoveredBatchId = null;
     this.selectionColor = [1, 0.6, 0];
-    this.selectedBuildingId = null;
+    this.selectedTileId = null;
+    this.selectedBatchId = null;
     this.selectedBuildingInfo = null;
     this.mouseMoveListener = (event) => { this.onMouseMove(event) };
     this.mouseClickListener = (event) => { this.onMouseClick(event) };
@@ -187,15 +191,17 @@ export class DocumentLinkWindow extends Window {
    */
   async highlightLink(type, link) {
     if (type === 'city_object') {
-      this.tbi = getTilesBuildingInfo(this.layer, this.tbi);
+      this.tilesInfo = getTilesInfo(this.layer, this.tilesInfo);
       let buildingId = link.target_id;
-      let buildingInfo = this.tbi.buildings[buildingId];
+      let buildingInfo = getBuildingInfoFromBuildingId(this.tilesInfo,
+        Number.parseInt(buildingId));
       if (!!buildingInfo) {
         this.clearHighlightedBuilding();
         try {
           colorBuilding(this.layer, buildingInfo, this.highlightColor);
           updateITownsView(this.itownsView, this.layer);
-          this.highlightedBuildingId = buildingId;
+          this.highlightedTileId = buildingInfo.tileId;
+          this.highlightedBatchId = buildingInfo.batchId;
           this.highlightedBuildingInfo = buildingInfo;
         } catch (_) {
           alert('Building is not currently in the view. Travel to it first');
@@ -215,7 +221,7 @@ export class DocumentLinkWindow extends Window {
    */
   async travelToLink(type, link) {
     if (type === 'city_object') {
-      this.tbi = getTilesBuildingInfo(this.layer, this.tbi);
+      this.tilesInfo = getTilesInfo(this.layer, this.tilesInfo);
       let centroid = new THREE.Vector3(link.centroid_x, link.centroid_y,
         link.centroid_z);
       await focusCameraOn(this.itownsView, this.controls, centroid,
@@ -233,7 +239,7 @@ export class DocumentLinkWindow extends Window {
     if (confirm('Are you sure you want to delete this link ?')) {
       try {
         await this.linkService.deleteLink(type, link.id);
-        if (this.highlightedBuildingId === link.target_id) {
+        if (this.highlightedTileId === link.target_id) {
           this.clearHighlightedBuilding();
         }
         await this.fetchLinks();
@@ -289,12 +295,16 @@ export class DocumentLinkWindow extends Window {
       let intersections = this.itownsView.pickObjectsAt(event, 5);
       let firstInter = getFirstTileIntersection(intersections);
       if (!!firstInter) {
+        let tileId = getObject3DFromTile(firstInter.object).tileId;
+        let batchId = getBatchIdFromIntersection(firstInter);
         let buildingId = getBuildingIdFromIntersection(firstInter);
-        this.hoveredBuildingId = buildingId;
+        this.hoveredTileId = tileId;
+        this.hoveredBatchId = batchId;
         this.hoveredBuildingParagraphElement.innerText =
           `Building ID : ${buildingId}`;
       } else {
-        this.hoveredBuildingId = null;
+        this.hoveredTileId = null;
+        this.hoveredBatchId = null;
         this.hoveredBuildingParagraphElement.innerText = 'No building';
       }
     }
@@ -311,19 +321,22 @@ export class DocumentLinkWindow extends Window {
     // Check if the mouse is in the canvas (ie. the iTowns view). This will
     // avoid unnecessary computations.
     if (event.target.nodeName.toUpperCase() === 'CANVAS') {
-      let buildingId = this.hoveredBuildingId;
-      if (!!buildingId) {
-        this.tbi = getTilesBuildingInfo(this.layer, this.tbi);
-        let buildingInfo = this.tbi.buildings[buildingId];
+      let tileId = this.hoveredTileId;
+      let batchId = this.hoveredBatchId;
+      if (!!tileId) {
+        this.tilesInfo = getTilesInfo(this.layer, this.tilesInfo);
+        let buildingInfo = this.tilesInfo.tiles[tileId][batchId];
         if (!!buildingInfo) {
           this.selectedBuildingParagraphElement.innerHTML = /*html*/`
-            Selected building ID : ${buildingId}<br>
-            Tile ID : ${buildingInfo.tileId}
+            Selected building ID : ${buildingInfo.props['cityobject.database_id']}<br>
+            Tile ID : ${buildingInfo.tileId}<br>
+            Batch ID : ${buildingInfo.batchId}
           `;
           this.clearSelectedBuilding();
           colorBuilding(this.layer, buildingInfo, this.selectionColor);
           updateITownsView(this.itownsView, this.layer);
-          this.selectedBuildingId = buildingId;
+          this.selectedTileId = tileId;
+          this.selectedBatchId = batchId;
           this.selectedBuildingInfo = buildingInfo;
         }
       }
@@ -335,10 +348,12 @@ export class DocumentLinkWindow extends Window {
    * building ID.
    */
   async createLink() {
-    if (!!this.selectedBuildingId) {
+    if (!!this.selectedTileId) {
       let formData = new FormData();
       formData.append('source_id', this.documentController.getCurrentDoc().id);
-      formData.append('target_id', this.selectedBuildingId);
+      formData.append('target_id', this.tilesInfo
+        .tiles[this.selectedTileId][this.selectedBatchId]
+        .props['cityobject.database_id']);
       let centroid = this.selectedBuildingInfo.centroid;
       formData.append('centroid_x', centroid.x);
       formData.append('centroid_y', centroid.y);
@@ -361,12 +376,14 @@ export class DocumentLinkWindow extends Window {
    */
   clearHighlightedBuilding() {
     if (!!this.highlightedBuildingInfo) {
-      let tile = getTileInTileset(this.tbi.tileset,
+      let tile = getTileInTileset(this.tilesInfo.tileset,
         this.highlightedBuildingInfo.tileId);
       if (!!tile) {
         removeTileVerticesColor(tile);
         updateITownsView(this.itownsView, this.layer);
       }
+      this.highlightedTileId = null;
+      this.highlightedBatchId = null;
       this.highlightedBuildingInfo = null;
     }
   }
@@ -375,14 +392,15 @@ export class DocumentLinkWindow extends Window {
    * Removes the coloring of the current selected building.
    */
   clearSelectedBuilding() {
-    if (!!this.selectedBuildingId) {
-      let tile = getTileInTileset(this.tbi.tileset,
+    if (!!this.selectedTileId) {
+      let tile = getTileInTileset(this.tilesInfo.tileset,
         this.selectedBuildingInfo.tileId);
       if (!!tile) {
         removeTileVerticesColor(tile);
         updateITownsView(this.itownsView, this.layer);
       }
-      this.selectedBuildingId = null;
+      this.selectedTileId = null;
+      this.selectedBatchId = null;
       this.selectedBuildingInfo = null;
     }
   }

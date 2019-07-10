@@ -14,6 +14,18 @@ export function getBuildingIdFromIntersection(inter) {
   return table.content['cityobject.database_id'][bid];
 }
 
+export function getBuildingInfoFromBuildingId(tilesInfo, buildingId) {
+  for (let tileId of Object.keys(tilesInfo.tiles)) {
+    let tile = tilesInfo.tiles[tileId];
+    for (let batchId of Object.keys(tile)) {
+      let buildingInfo = tile[batchId];
+      if (buildingInfo.props['cityobject.database_id'] === buildingId) {
+        return buildingInfo;
+      }
+    }
+  }
+}
+
 /**
  * Sets the color of one building in the scene.
  * 
