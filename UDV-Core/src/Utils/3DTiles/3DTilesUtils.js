@@ -511,3 +511,97 @@ export function getObject3DFromTile(tile) {
 
   return tile;
 }
+
+/**
+ * Creates a Tiles Info (TI) object from a 3DTiles Layer.
+ * The TI is an object containing associations between tile, batch IDs and
+ * data specific to the batched geometry (vertex indexes, centroid, properties
+ * from the batch table).
+ * 
+ * @param {*} layer The 3DTiles layer.
+ * @param {*} tilesInfo An existing TI for this layer. Tiles that are currently
+ * loaded in the layer will be added to the TI if they're not already present.
+ * If no TI is provided, a brand new one will be instantiated with currently
+ * loaded tiles.
+ * 
+ * @example
+ * let layer = view.getLayerById(config['3DTilesLayerID']);
+ * //Fetch the TI
+ * let tilesInfo = getTilesBatchInfo(layer);
+ * // Get intersections from mouse position
+ * let intersections = view.pickObjectsAt(mouseEvent, 5);
+ * // Get the first intersecting tile
+ * let firstInter = getFirstTileIntersection(intersections);
+ * // Retrieve the object's ID
+ * let tileId = getObject3DFromTile(firstInter.object).tileId;
+ * let batchId = getBatchIdFromIntersection(firstInter);
+ * //Display the building's infos
+ * console.log(tilesInfo.tiles[tileId][batchId]);
+ * 
+ * @example
+ * let layer = view.getLayerById(config['3DTilesLayerID']);
+ * //Initialize the TI
+ * let tilesInfo = getTilesBatchInfo(layer);
+ * //When the visible tiles change, update the TI
+ * tilesInfo = getTilesBatchInfo(layer, tilesInfo);
+ */
+export function getTilesInfo(layer, tilesInfo = null) {
+  // Instantiate the TI if it does not exist
+  if (!tilesInfo) {
+    tilesInfo = {};
+    tilesInfo.totalTileCount = 0;
+    tilesInfo.loadedTileCount = 0;
+    tilesInfo.tiles = {};
+    tilesInfo.tileset;
+  }
+  let tileIndex = layer.tileIndex;
+  let tileCount = Object.keys(tileIndex.index).length - 1; // -1 because of the
+                                                           // root tile
+  tilesInfo.totalTileCount = tileCount;
+  let rootTile = layer.object3d.children[0];
+  tilesInfo.tileset = rootTile;
+  let tiles = getVisibleTiles(layer);
+  // tiles contains every tile currently loaded in the scene. We iterate
+  // over them to visit the ones that we have not visited yet.
+  for (let tile of tiles) {
+    let tileId = tile.tileId;
+    // Check if this tile is already loaded (visited) in the TI
+    if (!tilesInfo.tiles[tileId]) {
+      let batchTable = tile.batchTable;
+      let attributes = tile.children[0].children[0].geometry.attributes;
+
+      // Map batchId -> object info
+      tilesInfo.tiles[tileId] = {};
+
+      let newbatchIds = [];
+      // For each vertex get the corresponding batch ID
+      attributes._BATCHID.array.forEach((batchId, arrayIndex) => {
+        // Creates a dict entry for the batch ID
+        if (!tilesInfo.tiles[tileId][batchId]) {
+          tilesInfo.tiles[tileId][batchId] = {};
+          tilesInfo.tiles[tileId][batchId].arrayIndexes = [];
+          tilesInfo.tiles[tileId][batchId].tileId = tile.tileId;
+          tilesInfo.tiles[tileId][batchId].batchId = batchId;
+          tilesInfo.tiles[tileId][batchId].centroid = null;
+          tilesInfo.tiles[tileId][batchId].props = {};
+
+          for (let key of Object.keys(batchTable.content)) {
+            tilesInfo.tiles[tileId][batchId].props[key] =
+              batchTable.content[key][batchId];
+          }
+
+          newbatchIds.push(batchId);
+        }
+        // Associates the vertex to the corresponding building ID
+        tilesInfo.tiles[tileId][batchId].arrayIndexes.push(arrayIndex);
+      });
+      // For each newly added building, compute the centroid
+      for (let batchId of newbatchIds) {
+        tilesInfo.tiles[tileId][batchId].centroid = getVerticesCentroid(tile,
+          tilesInfo.tiles[tileId][batchId].arrayIndexes);
+      }
+      tilesInfo.loadedTileCount += 1;
+    }
+  }
+  return tilesInfo;
+}
