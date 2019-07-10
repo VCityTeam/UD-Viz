@@ -327,8 +327,12 @@ export class DocumentLinkWindow extends Window {
         this.tilesInfo = getTilesInfo(this.layer, this.tilesInfo);
         let buildingInfo = this.tilesInfo.tiles[tileId][batchId];
         if (!!buildingInfo) {
+          let buildingId = buildingInfo.props['cityobject.database_id'];
+          if (buildingId === undefined) {
+            throw 'No building ID in the city object.';
+          }
           this.selectedBuildingParagraphElement.innerHTML = /*html*/`
-            Selected building ID : ${buildingInfo.props['cityobject.database_id']}<br>
+            Selected building ID : ${buildingId}<br>
             Tile ID : ${buildingInfo.tileId}<br>
             Batch ID : ${buildingInfo.batchId}
           `;
@@ -351,9 +355,13 @@ export class DocumentLinkWindow extends Window {
     if (!!this.selectedTileId) {
       let formData = new FormData();
       formData.append('source_id', this.documentController.getCurrentDoc().id);
-      formData.append('target_id', this.tilesInfo
+      let buildingId = this.tilesInfo
         .tiles[this.selectedTileId][this.selectedBatchId]
-        .props['cityobject.database_id']);
+        .props['cityobject.database_id'];
+      if (buildingId === undefined) {
+        throw 'No building ID in the city object.';
+      }
+      formData.append('target_id', buildingId);
       let centroid = this.selectedBuildingInfo.centroid;
       formData.append('centroid_x', centroid.x);
       formData.append('centroid_y', centroid.y);
