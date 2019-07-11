@@ -1,6 +1,7 @@
 import { Window } from "../../../Utils/GUI/js/Window";
 import { getTilesInfo, getFirstTileIntersection, getBatchTableFromTile, getBatchIdFromIntersection, getVisibleTileCount, removeTileVerticesColor, getTileInTileset, getTileInLayer, updateITownsView, getObject3DFromTile, createTileGroupsFromBatchIDs } from '../../../Utils/3DTiles/3DTilesUtils';
 import { colorBuilding } from '../../../Utils/3DTiles/3DTilesBuildingUtils';
+import { TilesManager } from "../../../Utils/3DTiles/TilesManager";
 
 export class Debug3DTilesWindow extends Window {
   constructor(itownsView, config) {
@@ -8,8 +9,8 @@ export class Debug3DTilesWindow extends Window {
 
     this.itownsView = itownsView;
     this.layer = itownsView.getLayerById(config['3DTilesLayerID']);
-    // Tiles Building Information object (see Utils/3DTiles/3DTilesUtils.md)
-    this.tilesInfo = null;
+    // Tiles Manager
+    this.tilesManager = new TilesManager(this.itownsView, this.layer)
     this.selectedColor = [1, 0, 0];
     /**
      * Building info of the selected building.
@@ -100,7 +101,6 @@ export class Debug3DTilesWindow extends Window {
       this.submitGroupColor();
       return false;
     };
-    this.tilesInfo = null;
     this.updateTI();
   }
 
@@ -108,15 +108,15 @@ export class Debug3DTilesWindow extends Window {
    * Updates the TBI.
    */
   updateTI() {
-    this.tilesInfo = getTilesInfo(this.layer, this.tilesInfo);
-    this.TBIInfoParagraphElement.innerText = `${this.tilesInfo.loadedTileCount} / ${this.tilesInfo.totalTileCount} tiles loaded.`;
+    this.tilesManager.update();
+    this.TBIInfoParagraphElement.innerText = `${this.tilesManager.loadedTileCount} / ${this.tilesManager.totalTileCount} tiles loaded.`;
   }
 
   /**
    * Logs the TBI in the console.
    */
   logTI() {
-    console.log(this.tilesInfo);
+    console.log(this.tilesManager);
   }
 
   /**
@@ -128,7 +128,7 @@ export class Debug3DTilesWindow extends Window {
   onMouseMove(event) {
     // Update the current visible tile count
     let visibleTileCount = getVisibleTileCount(this.layer);
-    this.visibleTilesParagraphElement.innerText = `${visibleTileCount} tiles visible.`
+    this.visibleTilesParagraphElement.innerText = `${visibleTileCount} tiles visible.`/*
     if (event.target.nodeName.toUpperCase() === 'CANVAS') {
       // Get the intersecting objects where our mouse pointer is
       let intersections = this.itownsView.pickObjectsAt(event, 5);
@@ -149,7 +149,7 @@ export class Debug3DTilesWindow extends Window {
         this.hoveredBatchId = null;
         this.hoverDivElement.innerText = 'No building';
       }
-    }
+    }*/
   }
 
   /**
