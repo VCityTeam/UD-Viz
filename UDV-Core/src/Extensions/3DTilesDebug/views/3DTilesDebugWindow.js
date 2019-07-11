@@ -138,13 +138,11 @@ export class Debug3DTilesWindow extends Window {
         // Find the building ID we clicked on
         let table = getBatchTableFromTile(firstInter.object);
         let batchId = getBatchIdFromIntersection(firstInter);
-        let buildingId = table.content['cityobject.database_id'][batchId];
         let tileId = getObject3DFromTile(firstInter.object).tileId;
 
         this.hoveredTileId = tileId;
         this.hoveredBatchId = batchId;
-        this.hoverDivElement.innerHTML = `Building ID : ${buildingId}<br>
-                                          Batch ID : ${batchId}<br>
+        this.hoverDivElement.innerHTML = `Batch ID : ${batchId}<br>
                                           Tile ID : ${tileId}`;
       } else {
         this.hoveredTileId = null;
@@ -177,11 +175,13 @@ export class Debug3DTilesWindow extends Window {
           console.log(buildingInfo);
           // Fill a div with the info
           this.clickDivElement.innerHTML = /*html*/`
-            Building ID : ${buildingInfo.props['cityobject.database_id']}<br>
             ${buildingInfo.arrayIndexes.length} array indexes<br>
             Batch ID : ${buildingInfo.batchId}<br>
             Tile ID : ${buildingInfo.tileId}
           `;
+          for (let [key, value] of Object.entries(buildingInfo.props)) {
+            this.clickDivElement.innerHTML += `<br>${key} : ${value}`;
+          }
           // If a building was already selected, un-color its tile
           if (!!this.selectedBuildingInfo) {
             let tile = getTileInTileset(this.tilesInfo.tileset,
