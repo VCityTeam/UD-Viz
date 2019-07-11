@@ -6,9 +6,9 @@ import { getTileInLayer } from '../3DTilesUtils';
  * Represents a tile from 3DTiles. It holds a reference to the tile ID and the
  * root of all tiles (which should always be loaded in the view ?).
  */
-export class TileWrapper {
+export class Tile {
   /**
-   * Constructs a TileWrapper from the layer and a tile ID. The tile should 
+   * Constructs a Tile from the layer and a tile ID. The tile should 
    * not necessarily be loaded in the view when calling the constructor.
    * 
    * @param {*} layer The layer.

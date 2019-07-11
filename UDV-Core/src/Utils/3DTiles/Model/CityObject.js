@@ -1,4 +1,4 @@
-import { TileWrapper } from "./TileWrapper";
+import { Tile } from "./Tile";
 import * as THREE from 'three';
 
 /**
@@ -8,7 +8,7 @@ export class CityObject {
   /**
    * Constructs a city object from the given parameters.
    * 
-   * @param {TileWrapper} tileWrapper Tile wrapper for the parent tile.
+   * @param {Tile} tileWrapper Tile wrapper for the parent tile.
    * @param {number} batchId Batch ID of the city object in the parent tile.
    * @param {number} indexStart Start index of the vertex array in the parent
    * tile.
@@ -21,7 +21,7 @@ export class CityObject {
     /**
      * Tile wrapper for the parent tile.
      * 
-     * @type {TileWrapper}
+     * @type {Tile}
      */
     this.tileWrapper = tileWrapper;
 

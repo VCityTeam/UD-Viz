@@ -1,7 +1,8 @@
-import { TileWrapper } from "./Model/TileWrapper";
+import { Tile } from "./Model/Tile";
 import { getVisibleTiles, createTileGroups, updateITownsView, createTileGroupsFromBatchIDs } from "./3DTilesUtils";
 import { CityObjectID, CityObject } from "./Model/CityObject";
 import { CityObjectStyle } from "./Model/CityObjectStyle";
+import { StyleManager } from "./StyleManager";
 
 /**
  * Manages the tiles and the style for city objects.
@@ -27,7 +28,7 @@ export class TilesManager {
     /**
      * The set of tile wrappers that have been loaded.
      * 
-     * @type {Array<TileWrapper>}
+     * @type {Array<Tile>}
      */
     this.tiles = [];
 
@@ -54,11 +55,11 @@ export class TilesManager {
     ///////////
 
     /**
-     * Stores the style associated to city objects in the view.
+     * Manages the styles of the city objects.
      * 
-     * @type {Object.<number, Object.<number, CityObjectStyle>>}
+     * @type {StyleManager}
      */
-    this.cityObjectStyle = {};
+    this.styleManager = new StyleManager();
 
     /**
      * Keep tracks of the update of tiles. Associate each tile with the UUID of
@@ -82,7 +83,7 @@ export class TilesManager {
     let tiles = getVisibleTiles(this.layer);
     for (let tile of tiles) {
       if (this.tiles[tile.tileId] === undefined) {
-        this.tiles[tile.tileId] = new TileWrapper(this.layer, tile.tileId);
+        this.tiles[tile.tileId] = new Tile(this.layer, tile.tileId);
         this.tiles[tile.tileId].loadParts();
         this.loadedTileCount += 1;
       }
@@ -106,14 +107,21 @@ export class TilesManager {
    * Sets the style of a particular city object.
    * 
    * @param {CityObjectID} cityObjectId The city object identifier.
-   * @param {CityObjectStyle} style The desired style.
+   * @param {CityObjectStyle | string} style The desired style.
    */
   setStyle(cityObjectId, style) {
-    if (this.cityObjectStyle[cityObjectId.tileId] === undefined) {
-      this.cityObjectStyle[cityObjectId.tileId] = {};
-    }
-    this.cityObjectStyle[cityObjectId.tileId][cityObjectId.batchId] = style;
+    this.styleManager.setStyle(cityObjectId, style);
     this.markTileToUpdate(this.tiles[cityObjectId.tileId]);
+  }
+
+  registerStyle(name, style) {
+    let needUpdate = this.styleManager.registerStyle(name, style);
+    if (needUpdate) {
+      let usage = this.styleManager.getStyleUsage(name);
+      for (let tileId of Object.keys(usage)) {
+        this.markTileToUpdate(this.tiles[tileId]);
+      }
+    }
   }
 
   /**
@@ -122,11 +130,19 @@ export class TilesManager {
    * @param {CityObjectID} cityObjectId The city object identifier.
    */
   removeStyle(cityObjectId) {
-    if (this.cityObjectStyle[cityObjectId.tileId] === undefined) {
-      return;
-    }
-    this.cityObjectStyle[cityObjectId.tileId][cityObjectId.batchId] = undefined;
+    this.styleManager.removeStyle(cityObjectId);
     this.markTileToUpdate(this.tiles[cityObjectId.tileId]);
+  }
+
+  /**
+   * Gets the style applied to a given object ID.
+   * 
+   * @param {CityObjectID} cityObjectId The city object ID.
+   * 
+   * @returns {CityObjectStyle}
+   */
+  getStyleAppliedTo(cityObjectId) {
+    return this.styleManager.getStyleAppliedTo(cityObjectId);
   }
 
   /**
@@ -138,40 +154,37 @@ export class TilesManager {
         continue;
       }
 
-      if (this.shouldTileBeUpdated(tile)) {
-        console.log('Time to update tile ' + tile.tileId);
-
-        if (this.cityObjectStyle[tile.tileId] !== undefined) {
-          let groups = [];
-          for (let batchId of Object.keys(this.cityObjectStyle[tile.tileId])) {
-            let style = this.cityObjectStyle[tile.tileId][batchId];
-            if (style !== undefined) { // If the style has been removed, it is
-                                       // undefined
-              groups.push({
-                material: style.materialProps,
-                batchIDs: [ Number(batchId) ]
-              });
-            }
-          }
-          if (groups.length > 0) {
-            createTileGroupsFromBatchIDs(tile.getObject3D(), groups);
-          }
-        } else {
-          // Clear the tile
-          createTileGroups(tile.getMesh(), [], []);
-        }
-
-        this.markTileAsUpdated(tile);
-      }
+      // Set to false so we update the view only once
+      this.applyStyleToTile(tile, false);
     }
     updateITownsView(this.view, this.layer);
+  }
+
+  /**
+   * Apply the saved style to the tile given in parameter.
+   * 
+   * @param {Tile} tile The tile to apply the style to.
+   * @param {boolean} updateView If true, will call `updateITownsView` after
+   * applying the style.
+   */
+  applyStyleToTile(tile, updateView = true) {
+    if (this.shouldTileBeUpdated(tile)) {
+      console.log('Time to update tile ' + tile.tileId);
+
+      this.styleManager.applyToTile(tile);
+      this.markTileAsUpdated(tile);
+
+      if (updateView) {
+        updateITownsView(this.view, this.layer);
+      }
+    }
   }
 
   /**
    * Sets the saved UUID of the tile, so that it should be updated in the next
    * `applyStyles` call.
    * 
-   * @param {TileWrapper} tile The tile to update.
+   * @param {Tile} tile The tile to update.
    */
   markTileToUpdate(tile) {
     this.upToDateTileIds[tile.tileId] = undefined;
@@ -181,7 +194,7 @@ export class TilesManager {
   /**
    * Updates the saved UUID of the tile.
    * 
-   * @param {TileWrapper} tile The tile to mark.
+   * @param {Tile} tile The tile to mark.
    */
   markTileAsUpdated(tile) {
     let object3d = tile.getObject3D();
@@ -197,7 +210,7 @@ export class TilesManager {
   /**
    * Checks if the style of the tile should be updated.
    * 
-   * @param {TileWrapper} tile The tile.
+   * @param {Tile} tile The tile.
    */
   shouldTileBeUpdated(tile) {
     let object3d = tile.getObject3D();
