@@ -93,8 +93,7 @@ class TemporalExtension_BatchTable {
         // for which the current feature is an oldFeature (i.e. the source of
         // the transaction) if it exists. This array is filled in the parse
         // method of the TemporalExtension class
-        this.oldFeaturesTransaction = [];
-        this.newFeaturesTransaction = [];
+        this.featuresTransacs = [];
     }
 
     // Should not exist if the implementation followed the current version of
@@ -118,6 +117,7 @@ class TemporalExtension_BatchTable {
             displayState.opacity = opacities.certain;
             displayState.color = transactionsColors.noTransaction;
         }
+        return displayState;
     }
 
 
@@ -149,6 +149,7 @@ class TemporalExtension_BatchTable {
         //   }]
         const featuresDisplayStates = [];
         for (let i = 0; i < this.featureIds.length; i++) {
+            const featureId = this.featureIds[i];
             if (currentTime >= this.startDates[i] && currentTime <=
                 this.endDates[i]) {
                 // ** FEATURE EXISTS
@@ -159,34 +160,15 @@ class TemporalExtension_BatchTable {
                     },
                     batchIDs: [i],
                 });
-            } else {
-                // ** TRANSACTION OR FEATURE DOESN'T EXISTS
-                const newTransac = this.newFeaturesTransaction[i];
+            } else if (this.featuresTransacs[featureId]) {
+                // ** TRANSACTION CASE
                 let hasTransac = false;
-                if (newTransac) {
-                    const newTransacHalfDuration = (newTransac.endDate -
-                        newTransac.startDate) / 2;
-                    if (currentTime > newTransac.startDate && currentTime <=
-                        newTransac.startDate + newTransacHalfDuration) {
-                        hasTransac = true;
-                        const displayState = TemporalExtension_BatchTable.getDisplayStateFromTags(
-                            newTransac.tags);
-                        featuresDisplayStates.push({
-                            material: {
-                                color: displayState.color,
-                                opacity: displayState.opacity,
-                            },
-                            batchIDs: [i],
-                        });
-                    }
-                }
-                const oldTransac = this.oldFeaturesTransaction[i];
+                const oldTransac = this.featuresTransacs[featureId].transactionsAsOldFeature;
                 if (oldTransac) {
                     const oldTransacHalfDuration = (oldTransac.endDate -
                         oldTransac.startDate) / 2;
-                    if (currentTime > oldTransac.startDate +
-                        oldTransacHalfDuration && currentTime <
-                        oldTransac.endDate) {
+                    if (currentTime > oldTransac.startDate  && currentTime <=
+                        oldTransac.startDate + oldTransacHalfDuration) {
                         hasTransac = true;
                         const displayState = TemporalExtension_BatchTable.getDisplayStateFromTags(
                             oldTransac.tags);
@@ -199,12 +181,73 @@ class TemporalExtension_BatchTable {
                         });
                     }
                 }
+                const newTransac = this.featuresTransacs[featureId].transactionsAsNewFeature;
+                if (newTransac) {
+                    const newTransacHalfDuration = (newTransac.endDate -
+                        newTransac.startDate) / 2;
+                    if (currentTime > newTransac.startDate +
+                        newTransacHalfDuration && currentTime <=
+                        newTransac.endDate) {
+                        hasTransac = true;
+                        const displayState = TemporalExtension_BatchTable.getDisplayStateFromTags(
+                            newTransac.tags);
+                        featuresDisplayStates.push({
+                            material: {
+                                color: displayState.color,
+                                opacity: displayState.opacity,
+                            },
+                            batchIDs: [i],
+                        });
+                    }
+                }
 
                 if (!hasTransac) {
+                    // ** TRANSACTION NOT AT THE RIGHT DATE
                     featuresDisplayStates.push({
                         material: {
                             color: transactionsColors.noTransaction,
                             opacity: opacities.hide,
+                            alphaTest: 0.3,
+                        },
+                        batchIDs: [i],
+                    });
+                }
+            } else {
+                // ** FEATURE DOES NOT EXIST AND THERE IS NO TRANSACTION
+
+                // ** MANAGE CREATIONS AND DEMOLITIONS (this step must be
+                // done because the creation and demolitions transactions
+                // are currently not in the tileset. However, the tileset
+                // should have them later on.
+                const halfVintage = 1.5;
+
+                if (currentTime + halfVintage >= this.startDates[i] &&
+                    currentTime < this.startDates[i]) {
+                    // ** CREATION
+                    featuresDisplayStates.push({
+                        material: {
+                            color: transactionsColors.creation,
+                            opacity: opacities.uncertain,
+                        },
+                        batchIDs: [i],
+                    });
+                } else if (currentTime - halfVintage < this.endDates[i] &&
+                    currentTime > this.endDates[i]) {
+                    // ** DEMOLITION
+                    featuresDisplayStates.push({
+                        material: {
+                            color: transactionsColors.demolition,
+                            opacity: opacities.uncertain,
+                        },
+                        batchIDs: [i],
+                    });
+                } else {
+                    // ** FEATURE DOES NOT EXIST
+                    featuresDisplayStates.push({
+                        material: {
+                            color: transactionsColors.noTransaction,
+                            opacity: opacities.hide,
+                            alphaTest: 0.3,
                         },
                         batchIDs: [i],
                     });
@@ -269,14 +312,7 @@ export class $3DTemporalExtension extends $3DTAbstractExtension {
             //  featureTransacs instead of having two arrays.
             for (let i = 0; i < temporal_batchTable.featureIds.length; i++) {
                 const featureId = temporal_batchTable.featureIds[i];
-                if (this.temporal_tileset.FeaturesTransactions[featureId] !== undefined) {
-                    const featureTransacs = this.temporal_tileset.FeaturesTransactions[featureId];
-                    temporal_batchTable.oldFeaturesTransaction[i] = featureTransacs.transactionsAsOldFeature;
-                    temporal_batchTable.newFeaturesTransaction[i] = featureTransacs.transactionsAsNewFeature;
-                } else {
-                    temporal_batchTable.oldFeaturesTransaction[i] = {};
-                    temporal_batchTable.newFeaturesTransaction[i] = {};
-                }
+                temporal_batchTable.featuresTransacs[featureId] = this.temporal_tileset.FeaturesTransactions[featureId];
             }
             return temporal_batchTable;
         } else if (context.box) {
@@ -354,9 +390,9 @@ export class $3DTemporalExtension extends $3DTAbstractExtension {
             node.batchTable.extensions['3DTILES_temporal']) {
             const BT_ext = node.batchTable.extensions['3DTILES_temporal'];
             const featuresDisplayStates = BT_ext.culling(layer.currentTime);
-
             createTileGroupsFromBatchIDs(node, featuresDisplayStates);
-            updateITownsView(this.itownsView, layer);
+            this.itownsView.notifyChange();
+            // updateITownsView(this.itownsView, layer);
         }
         return false;
     }

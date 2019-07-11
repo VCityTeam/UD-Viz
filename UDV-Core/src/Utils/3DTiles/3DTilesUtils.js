@@ -2,10 +2,10 @@ import * as THREE from '../../../node_modules/three/build/three.module.js';
 import { objectEquals } from '../DataProcessing/DataProcessing.js';
 
 /**
- * Search a batch table in a tile. A tile is a THREE.js 3DObject with a 
+ * Search a batch table in a tile. A tile is a THREE.js 3DObject with a
  * 3-level hierarchy : Object3D > Scene > Mesh. This function searches into the
  * for the batch table (which is located in the Object3D level).
- * 
+ *
  * @param {*} tile A 3DTiles tile object from THREE.js.
  */
 export function getBatchTableFromTile(tile) {
@@ -21,7 +21,7 @@ export function getBatchTableFromTile(tile) {
  * Gets an object batch ID from an intersection. This methods takes one of the
  * 3 points of the intersection triangle and retrieves the corresponding batch
  * ID in the intersection tile.
- * 
+ *
  * @param {*} inter An intersection
  */
 export function getBatchIdFromIntersection(inter) {
@@ -32,7 +32,7 @@ export function getBatchIdFromIntersection(inter) {
 /**
  * Get the first intersection object where the target is a 3D object with
  * a batch id (a.k.a. the "Mesh" of a tile).
- * 
+ *
  * @param {Array<any>} intersects The array of intersections, provided by
  * itowns.View.pickObjectsAt
  */
@@ -50,7 +50,7 @@ export function getFirstTileIntersection(intersects) {
  * Retrieve all visible 3DTiles visible tiles (ie. those that are currently
  * rendered in the scene). This function recursively explores the tileset to
  * find all tiles and return them in a flattened array.
- * 
+ *
  * @param {*} layer The 3DTiles layer.
  */
 export function getVisibleTiles(layer) {
@@ -75,7 +75,7 @@ export function getVisibleTiles(layer) {
 
 /**
  * Counts the number of 3DTiles tiles displayed by the view.
- * 
+ *
  * @param {*} layer The 3DTiles layer.
  */
 export function getVisibleTileCount(layer) {
@@ -84,7 +84,7 @@ export function getVisibleTileCount(layer) {
 
 /**
  * Finds the tile in the tileset with the specific ID.
- * 
+ *
  * @param {*} tileset The 3DTiles tileset.
  * @param {*} tileId The tile id.
  */
@@ -97,7 +97,7 @@ export function getTileInTileset(tileset, tileId) {
 
 /**
  * Find the tile in the 3DTiles layer with the specifid ID.
- * 
+ *
  * @param {*} layer The 3DTiles layer.
  * @param {*} tileId The tile id.
  */
@@ -110,7 +110,7 @@ export function getTileInLayer(layer, tileId) {
 /**
  * Changes the color of a tile, or specific vertices of the tile, using the
  * BufferGeometry.
- * 
+ *
  * @param {*} tile The 3DTiles tile object from THREE.js
  * @param {Array<Number>} newColor An array of RGB value between 0 and 1.
  * @param {Array<Number>} [indexArray] Optional. The indexes of vertices to
@@ -171,7 +171,7 @@ export function setTileVerticesColor(tile, newColor, indexArray = null) {
 
 /**
  * Creates tile groups and associate them with the given materials.
- * 
+ *
  * @param {*} tile The 3DTiles tile.
  * @param {Array<any>} materialsProps An array of material parameters. Each entry
  * should be an object that will be passed as parameter in the THREE.Material
@@ -183,7 +183,7 @@ export function setTileVerticesColor(tile, newColor, indexArray = null) {
  * - `start`: the start index of the group of vertices
  * - `count`: the number of vertices of the group
  * - `material`: the index of the material in the materials array
- * 
+ *
  * @example
  * // Fetch the tile
  * let tile = getTileInLayer(this.layer, 6);
@@ -234,7 +234,7 @@ export function createTileGroups(tile, materialsProps, ranges) {
     ranges.sort((a, b) => {
       return a.start - b.start;
     });
-    
+
     // Merge consecutive ranges with the same material
     let mergedRanges = [];
     for (let index = 0; index < ranges.length; index++) {
@@ -282,13 +282,13 @@ export function createTileGroups(tile, materialsProps, ranges) {
 
 /**
  * Create groups in the tile mesh from the given batch IDs and materials.
- * 
+ *
  * @param {*} tile The 3DTiles tile.
  * @param {Array<any>} groups An array of group descriptors. A group descriptor
  * is a dictionnary containing two entries :
  * - `material` contains the material parameters, such as `color` or `opacity`.
  * - `batchIDs` contains the batch IDs to be applied the given material.
- * 
+ *
  * @example
  * // Fetch the tile
  * let tile = getTileInLayer(layer, 6);
@@ -357,7 +357,7 @@ export function createTileGroupsFromBatchIDs(tile, groups) {
     if (batchID > searchingBatchID) {
       addingRange.count = index - addingRange.start;
       ranges.push(addingRange);
-      
+
       if (searchingBatchID === undefined) {
         // No more batch IDs to search
         break;
@@ -371,7 +371,7 @@ export function createTileGroupsFromBatchIDs(tile, groups) {
     }
 
     // If we find the correct batch ID, store the start index
-    if (batchID === searchingBatchID && !addingRange.start) {
+    if (batchID === searchingBatchID && addingRange.start === undefined) {
       addingRange.start = index;
     }
 
@@ -389,7 +389,7 @@ export function createTileGroupsFromBatchIDs(tile, groups) {
 /**
  * Removes vertex-specific colors of the tile and switch back to the material's
  * color.
- * 
+ *
  * @param {*} tile The 3DTiles tile.
  */
 export function removeTileVerticesColor(tile) {
@@ -420,7 +420,7 @@ export function removeTileVerticesColor(tile) {
 /**
  * Tells the iTowns view to update the scene. If you made changes to some colors
  * for example, you need to call this function to actually see the changes.
- * 
+ *
  * @param {*} view The iTowns view.
  */
 export function updateITownsView(view, layer) {
@@ -437,11 +437,11 @@ export function updateITownsView(view, layer) {
 
 /**
  * Computes and returns the centroid of the vertices given as parameter.
- * 
+ *
  * @param {*} tile The 3DTiles tile.
  * @param {*} indexArray The indexes of the vertices. It is assumed to be
  * **sorted** and **contiguous**.
- * 
+ *
  * @returns {THREE.Vector3} The centroid of the vertices.
  */
 export function getVerticesCentroid(tile, indexArray) {
@@ -517,13 +517,13 @@ export function getObject3DFromTile(tile) {
  * The TI is an object containing associations between tile, batch IDs and
  * data specific to the batched geometry (vertex indexes, centroid, properties
  * from the batch table).
- * 
+ *
  * @param {*} layer The 3DTiles layer.
  * @param {*} tilesInfo An existing TI for this layer. Tiles that are currently
  * loaded in the layer will be added to the TI if they're not already present.
  * If no TI is provided, a brand new one will be instantiated with currently
  * loaded tiles.
- * 
+ *
  * @example
  * let layer = view.getLayerById(config['3DTilesLayerID']);
  * //Fetch the TI
@@ -537,7 +537,7 @@ export function getObject3DFromTile(tile) {
  * let batchId = getBatchIdFromIntersection(firstInter);
  * //Display the building's infos
  * console.log(tilesInfo.tiles[tileId][batchId]);
- * 
+ *
  * @example
  * let layer = view.getLayerById(config['3DTilesLayerID']);
  * //Initialize the TI
@@ -555,8 +555,7 @@ export function getTilesInfo(layer, tilesInfo = null) {
     tilesInfo.tileset;
   }
   let tileIndex = layer.tileIndex;
-  let tileCount = Object.keys(tileIndex.index).length - 1; // -1 because of the
-                                                           // root tile
+  let tileCount = tileIndex.index.length - 1; // -1 because of the root tile
   tilesInfo.totalTileCount = tileCount;
   let rootTile = layer.object3d.children[0];
   tilesInfo.tileset = rootTile;
