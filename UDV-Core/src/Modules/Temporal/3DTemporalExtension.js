@@ -1,26 +1,23 @@
-import {
-    $3DTAbstractExtension,
-} from 'itowns';
+import { $3DTAbstractExtension } from 'itowns';
 import * as THREE from 'three';
 import {
-    createTileGroupsFromBatchIDs,
-    updateITownsView
+    createTileGroupsFromBatchIDs
 } from '../../Utils/3DTiles/3DTilesUtils';
 
 // TODO: Complex transactions ? Et en particulier les
 //  subdivision/fusion+modified
 const transactionsColors = {
-    noTransaction: new THREE.Color(0xffffff), // white
-    creation: new THREE.Color(0x009900), // green
-    demolition: new THREE.Color(0xff0000), // red
-    modified: new THREE.Color(0xFFD700), // yellow
-    subdivision: new THREE.Color(0x0000ff), // dark blue
-    fusion: new THREE.Color(0x0000ff), // dark blue
+    noTransaction: 0xffffff, // white
+    creation: 0x009900, // green
+    demolition: 0xff0000, // red
+    modified: 0xFFD700, // yellow
+    subdivision: 0x0000ff, // dark blue
+    fusion: 0x0000ff, // dark blue
 };
 
 const opacities = {
     certain: 1.0,
-    uncertain: 0.5,
+    uncertain: 0.6,
     hide: 0,
 };
 
@@ -94,6 +91,10 @@ class TemporalExtension_BatchTable {
         // the transaction) if it exists. This array is filled in the parse
         // method of the TemporalExtension class
         this.featuresTransacs = [];
+        // Store the displayStates of Features of this tile depending on the
+        // date once it has been computed. Its an object structured as follows:
+        // { date: { featureDisplayStates } }
+        this.datedDisplayStates = {};
     }
 
     // Should not exist if the implementation followed the current version of
@@ -134,6 +135,8 @@ class TemporalExtension_BatchTable {
     //      * the color is set depending on the transaction type (defined in
     //      transactionsColors)
     //   * else we hide the feature.
+    // TODO: it seems weird to do the culling here, it might be done in the
+    //  extension using the information of the batch table for more clarity ?
     culling(currentTime) {
         // featuresMaterial is an array of object that will be used to color
         // and change the opacity of features according to their batchIDs by
@@ -147,6 +150,11 @@ class TemporalExtension_BatchTable {
         //     material: {color: 0xff000f, opacity: 0},
         //     batchIDs: [66]
         //   }]
+        // If it has already been computed, don't do it again
+        if (this.datedDisplayStates[currentTime]) {
+            return this.datedDisplayStates[currentTime];
+        }
+
         const featuresDisplayStates = [];
         for (let i = 0; i < this.featureIds.length; i++) {
             const featureId = this.featureIds[i];
@@ -254,7 +262,10 @@ class TemporalExtension_BatchTable {
                 }
             }
         }
-        return featuresDisplayStates;
+
+        // store displayState to avoid computing it again
+        this.datedDisplayStates[currentTime] = featuresDisplayStates;
+        return this.datedDisplayStates[currentTime];
     }
 
     getPickingInfo(featureId) {
@@ -391,8 +402,9 @@ export class $3DTemporalExtension extends $3DTAbstractExtension {
             const BT_ext = node.batchTable.extensions['3DTILES_temporal'];
             const featuresDisplayStates = BT_ext.culling(layer.currentTime);
             createTileGroupsFromBatchIDs(node, featuresDisplayStates);
+            // Note: view doesn't seem to need to be updated with
+            // updateITownsView()
             this.itownsView.notifyChange();
-            // updateITownsView(this.itownsView, layer);
         }
         return false;
     }

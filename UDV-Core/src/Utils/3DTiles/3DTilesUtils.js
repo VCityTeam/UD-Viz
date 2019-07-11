@@ -201,6 +201,7 @@ export function setTileVerticesColor(tile, newColor, indexArray = null) {
  * createTileGroups(tile, materialProps, ranges);
  */
 export function createTileGroups(tile, materialsProps, ranges) {
+    console.log('createTileGroups');
   let mesh = getMeshFromTile(tile);
 
   let defaultMaterial = Array.isArray(mesh.material) ?
@@ -306,6 +307,8 @@ export function createTileGroups(tile, materialsProps, ranges) {
  * ]);
  */
 export function createTileGroupsFromBatchIDs(tile, groups) {
+    console.log('createTileGroupsFromBatchIDs');
+    console.log(tile.tileId);
   let materials = [];
   let ranges = [];
 
@@ -318,10 +321,12 @@ export function createTileGroupsFromBatchIDs(tile, groups) {
   for (let groupIndex = 0; groupIndex < groups.length; groupIndex++) {
     let group = groups[groupIndex];
 
-    // Check if a similar material has been added
+    /* Check if a similar material has been added
     let materialIndex = materials.findIndex((mat) => {
       return objectEquals(mat, group.material);
     });
+     */
+    let materialIndex = -1;
     if (materialIndex < 0) {
       // If the material is new, push it
       materialIndex = materials.length;
