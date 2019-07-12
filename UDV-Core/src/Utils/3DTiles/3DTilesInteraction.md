@@ -1,9 +1,28 @@
-# Tiles Manager
+# 3DTiles interaction : model, tiles manager & style manager
+
+In this document, we will present some utility classes used to manage 3DTiles interaction. The entry point of all these class is the `TilesManager` object. This document contains a few code examples, along with a presentation of the model. Detailled documentation about the `TilesManager` and the `StyleManager` are also referenced in the [Logic](#Logic) section.
 
 The `TilesManager` utility class, located in `TilesManager.js` is a useful tool for accessing and manipulating a 3DTiles layer. It has, for the moment, two major functionnalities :
 
 - Retrieve and store tiles and city objects in an accessible way. The main problem with the 3DTiles layer in iTowns is that its structure is not easy to navigate or manipulate. The `TilesManager` solves this problem by analyzing the layer and wrapping the objects in interfaces.
 - Manage the styles of city objects. Setting or removing styles for specific city objects can be easily done with the tiles manager. The big advantage is that it stores the style configuration, so that it doesn't depend on the tile being actually present in the view or not. This allow for example to keep the style of a tile that has been unloaded, then reloaded by iTowns.
+
+## Summary
+
+1. [Code examples](#code-examples)
+    1. [Create and update the manager](#Create-and-update-the-manager)
+    2. [Pick a city object](#Pick-a-city-object)
+    3. [Set the style for one or many city objects](#Set-the-style-for-one-or-many-city-objects)
+    4. [Define named styles](#Define-named-styles)
+    5. [Remove styles](#Remove-styles)
+2. [Model](#Model)
+    1. [Tile](#Tile)
+    2. [City object](#city-object)
+        1. [City object identifier](#City-object-identifier)
+    3. [City object style](#city-object-style)
+3. [Logic](#Logic)
+    1. [Tiles management](#Tiles-management)
+    1. [Style management](#Style-management)
 
 ## Code examples
 
@@ -122,6 +141,14 @@ Below is a summary of the methods in the `Tile` class. These methods, excepted `
 |`isLoaded`|`boolean`|Returns wether the `cityObjects` attribute has been filled with the city objects of the tile, ie. the method `loadCityObjects` has been called when the tile was visible.|
 |`loadCityObjects`||If the tile is visible, parse the Object3D and the Mesh node to create the city objects.|
 
+The constructors has the following signature :
+
+```js
+constructor(layer, tileId)
+```
+
+`layer` is the 3DTiles layer, and tile ID is the ID of the tile.
+
 ### City object
 
 [Model/CityObject.js](./Model/CityObject.js)
@@ -130,8 +157,89 @@ The `CityObject` class represents a city object. It contains useful geometry pro
 
 The file also exports a `CityObjectID` class to represent a single or a set of city objects in a tile.
 
+|Attribute|Type|Description|
+|---------|----|-----------|
+|`tile`|`Tile`|A reference to the parent tile.|
+|`batchId`|`number`|The batch ID of the city object.|
+|`cityObjectId`|`CityObjectID`|The city object identifier for this city object.|
+|`indexStart`|`number`|The start index of the city object vertices in the vertex array of the tile.|
+|`indexCount`|`number`|The total count of vertices in the vertex array of the tile that belongs to this city object.|
+|`centroid`|`THREE.Vector3`|The centroid of the geometry.|
+|`props`|`object`|The properties in the batch table referring to this object.|
+
+The `CityObject` class also has an additional property :
+
+|Property|Type|Description|
+|--------|----|-----------|
+|`indexEnd`|`number`|The last index of the vertices in the vertex array of the tile that belongs to this city object.|
+
+The class has no own method. The constructor has the following signature :
+
+```js
+constructor(tile, batchId, indexStart, indexCount, centroid, props)
+```
+
+Each argument correspond to their attribute counterpart. Only the tile is mandatory during the instantiation.
+
+#### City object identifier
+
+The `CityObjectID` represents an identfier for one or many city objects. The class has the following attributes :
+
+|Attribute|Type|Description|
+|---------|----|-----------|
+|`tileId`|`number`|The tile ID.|
+|`batchId`|`number` or `number[]`|Represents either a single batch ID or an array of batch IDs.|
+
+Two methods returns information about the nature of the city object id :
+
+|Method|Returns|Description|
+|------|-------|-----------|
+|`isSingleCityObject`|`boolean`|Returns wether the city object ID identifies a single city object (ie. `batchId` is a number).|
+|`isMultipleCityObjects`|`boolean`|Returns wether the city object ID identifies many city objects (ie. `batchId` is an array).|
+
+The object has a constructor that has the following signature :
+
+```js
+constructor(tileId, batchId)
+```
+
+You can also instantiate a city object id from an object with the same properties thanks to the `createCityObjectID` helper function :
+
+```js
+let cityObjectId = createCityObjectID({tileId: 6, batchId: 64});
+```
+
 ### City object style
 
 [Model/CityObjectStyle.js](./Model/CityObjectStyle.js)
 
 The `CityObjectStyle` object represents a style that can be applied to a city object. For the moment, the only option available is to change the material. In order to to that, the `materialProps` property stores THREE.js material parameters, as defined in [the THREE.js documentation](https://threejs.org/docs/index.html#api/en/materials/MeshLambertMaterial).
+
+|Attribute|Type|Description|
+|---------|----|-----------|
+|materialProps|`object`|The parameters that will be used to construct a THREE.js material. See the [THREE.js documentation](https://threejs.org/docs/index.html#api/en/materials/MeshLambertMaterial) for more information.|
+
+The objects has two methods that are used to check equality. When comparing city object styles, use the `equals` method rather than comparing the keys, for example.
+
+|Method|Arguments|Returns|Description|
+|------|---------|-------|-----------|
+|`equals`|`otherStyle: CityObjectStyle`|`boolean`|Returns wether the `otherStyle` object is equivalent to this style.|
+|`materialPropsEquals`|`otherProps: object`|`boolean`|Returns wether the material properties passed in parameters are equivalent to the ones of this style.|
+
+The constructor has the following signature :
+
+```js
+constructor(params)
+```
+
+`params` is an object that can have the same properties as a `CityObjectStyle`. For the moment, only the `materialProps` property is supported.
+
+## Logic
+
+### Tiles management
+
+See [the document about how the TilesManager work](./TilesManager.md).
+
+### Style management
+
+See [the document about how the StyleManager work](./StyleManager.md).
