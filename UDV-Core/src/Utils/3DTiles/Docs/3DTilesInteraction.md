@@ -118,7 +118,7 @@ There are two main object representing the 3DTiles hierarchy : `Tile` and `CityO
 
 ### Tile
 
-[Model/Tile.js](./Model/Tile.js)
+[Model/Tile.js](../Model/Tile.js)
 
 The `Tile` object represents a tile. It contains the batch table and the reference to its city objects.
 
@@ -151,7 +151,7 @@ constructor(layer, tileId)
 
 ### City object
 
-[Model/CityObject.js](./Model/CityObject.js)
+[Model/CityObject.js](../Model/CityObject.js)
 
 The `CityObject` class represents a city object. It contains useful geometry properties, such as the vertex indexes or the centroid. It also contains the properties of the batch table.
 
@@ -211,7 +211,7 @@ let cityObjectId = createCityObjectID({tileId: 6, batchId: 64});
 
 ### City object style
 
-[Model/CityObjectStyle.js](./Model/CityObjectStyle.js)
+[Model/CityObjectStyle.js](../Model/CityObjectStyle.js)
 
 The `CityObjectStyle` object represents a style that can be applied to a city object. For the moment, the only option available is to change the material. In order to to that, the `materialProps` property stores THREE.js material parameters, as defined in [the THREE.js documentation](https://threejs.org/docs/index.html#api/en/materials/MeshLambertMaterial).
 

@@ -8,4 +8,4 @@ Capabilities :
 - Get information about a specific building by clicking on it. Also change its style.
 - Apply color and opacity to city objects in a tile.
 
-This tool also serves as a demonstration for 3DTiles utility functions. See their documentation [here (TilesManager)](../../../Utils/3DTiles/TilesManager.md) and [here (3DTilesUtils)](../../../Utils/3DTiles/3DTilesUtils.md).
+This tool also serves as a demonstration for 3DTiles utility classes and functions. You can find their documentation [here](src/Utils/3DTiles/Docs/3DTilesInteraction.md).
