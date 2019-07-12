@@ -1,5 +1,5 @@
 import { Tile } from "./Model/Tile";
-import { getVisibleTiles, createTileGroups, updateITownsView, createTileGroupsFromBatchIDs, getFirstTileIntersection, getBatchIdFromIntersection, getObject3DFromTile } from "./3DTilesUtils";
+import { getVisibleTiles, updateITownsView, getFirstTileIntersection, getBatchIdFromIntersection, getObject3DFromTile } from "./3DTilesUtils";
 import { CityObjectID, CityObject, createCityObjectID } from "./Model/CityObject";
 import { CityObjectStyle } from "./Model/CityObjectStyle";
 import { StyleManager } from "./StyleManager";
@@ -157,15 +157,21 @@ export class TilesManager {
       cityObjectId = createCityObjectID(cityObjectId);
     }
     this.styleManager.setStyle(cityObjectId, style);
-    this.markTileToUpdate(this.tiles[cityObjectId.tileId]);
+    this._markTileToUpdate(this.tiles[cityObjectId.tileId]);
   }
 
+  /**
+   * Register a new or modify an existing registered style.
+   * 
+   * @param {string} name A name to identify the style.
+   * @param {CityObjectStyle} style The style to register.
+   */
   registerStyle(name, style) {
     let needUpdate = this.styleManager.registerStyle(name, style);
     if (needUpdate) {
       let usage = this.styleManager.getStyleUsage(name);
       for (let tileId of Object.keys(usage)) {
-        this.markTileToUpdate(this.tiles[tileId]);
+        this._markTileToUpdate(this.tiles[tileId]);
       }
     }
   }
@@ -180,7 +186,7 @@ export class TilesManager {
       cityObjectId = createCityObjectID(cityObjectId);
     }
     this.styleManager.removeStyle(cityObjectId);
-    this.markTileToUpdate(this.tiles[cityObjectId.tileId]);
+    this._markTileToUpdate(this.tiles[cityObjectId.tileId]);
   }
 
   /**
@@ -190,7 +196,7 @@ export class TilesManager {
    */
   removeStyleFromTile(tileId) {
     this.styleManager.removeStyleFromTile(tileId);
-    this.markTileToUpdate(this.tiles[tileId]);
+    this._markTileToUpdate(this.tiles[tileId]);
   }
 
   /**
@@ -200,7 +206,7 @@ export class TilesManager {
     let tileIds = this.styleManager.getStyledTiles();
     this.styleManager.removeAllStyles();
     for (let tileId of tileIds) {
-      this.markTileToUpdate(this.tiles[tileId]);
+      this._markTileToUpdate(this.tiles[tileId]);
     }
   }
 
@@ -241,11 +247,9 @@ export class TilesManager {
    * applying the style.
    */
   applyStyleToTile(tile, updateView = true) {
-    if (this.shouldTileBeUpdated(tile)) {
-      console.log('Time to update tile ' + tile.tileId);
-
+    if (this._shouldTileBeUpdated(tile)) {
       this.styleManager.applyToTile(tile);
-      this.markTileAsUpdated(tile);
+      this._markTileAsUpdated(tile);
 
       if (updateView) {
         updateITownsView(this.view, this.layer);
@@ -257,19 +261,22 @@ export class TilesManager {
    * Sets the saved UUID of the tile, so that it should be updated in the next
    * `applyStyles` call.
    * 
+   * @private
+   * 
    * @param {Tile} tile The tile to update.
    */
-  markTileToUpdate(tile) {
+  _markTileToUpdate(tile) {
     this.upToDateTileIds[tile.tileId] = undefined;
-    console.log('Tile ' + tile.tileId + ' should be updated.');
   }
 
   /**
    * Updates the saved UUID of the tile.
    * 
+   * @private
+   * 
    * @param {Tile} tile The tile to mark.
    */
-  markTileAsUpdated(tile) {
+  _markTileAsUpdated(tile) {
     let object3d = tile.getObject3D();
     if (object3d === undefined) {
       throw 'The tile is not currently loaded and cannot be marked as updated.';
@@ -277,15 +284,16 @@ export class TilesManager {
 
     let uuid = object3d.uuid;
     this.upToDateTileIds[tile.tileId] = uuid;
-    console.log('Tile ' + tile.tileId + ' has been updated.');
   }
 
   /**
    * Checks if the style of the tile should be updated.
    * 
+   * @private
+   * 
    * @param {Tile} tile The tile.
    */
-  shouldTileBeUpdated(tile) {
+  _shouldTileBeUpdated(tile) {
     let object3d = tile.getObject3D();
     if (object3d === undefined) {
       // Tile is not visible, cannot be updated

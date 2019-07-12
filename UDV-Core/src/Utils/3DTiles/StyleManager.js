@@ -1,7 +1,6 @@
 import { CityObjectStyle } from "./Model/CityObjectStyle";
 import { CityObjectID } from "./Model/CityObject";
-import { objectEquals } from "../DataProcessing/DataProcessing";
-import { createTileGroupsFromBatchIDs, createTileGroups } from "./3DTilesUtils";
+import { createTileGroups } from "./3DTilesUtils";
 import { Tile } from "./Model/Tile";
 
 /**
@@ -17,7 +16,8 @@ export class StyleManager {
     this.registeredStyles = {};
 
     /**
-     * An array of anonymous styles.
+     * An array of anonymous styles. These are the style that are passed are
+     * parameters to `setStyle` without beeing registered first.
      * 
      * @type {Array<CityObjectStyle>}
      */
@@ -192,7 +192,11 @@ export class StyleManager {
       bufferedMaterialIndex = this.tileBufferedMaterials[tileId].length;
       this.tileBufferedMaterials[tileId].push(style.materialProps);
     }
-    style._bufferedMaterialIndex = bufferedMaterialIndex;
+
+    if (style._bufferedMaterialIndex === undefined) {
+      style._bufferedMaterialIndex = {};
+    }
+    style._bufferedMaterialIndex[tileId] = bufferedMaterialIndex;
   }
 
   /**
@@ -231,6 +235,7 @@ export class StyleManager {
       batchIds.push(Number(batchId));
     }
     
+    delete this.tileBufferedMaterials[tileId];
     this.removeStyle(new CityObjectID(tileId, batchIds));
   }
 
@@ -243,6 +248,7 @@ export class StyleManager {
     this.anonymousStyleUsage = {};
     this.registeredStyleUsage = {};
     this.anonymousStyles = [];
+    this.tileBufferedMaterials = {};
   }
 
   /**
@@ -252,21 +258,22 @@ export class StyleManager {
    */
   applyToTile(tile) {
     if (this.styleTable[tile.tileId] !== undefined) {
-      let groups = [];
+      let materials = this.tileBufferedMaterials[tile.tileId];
+      let ranges = [];
       for (let batchId of Object.keys(this.styleTable[tile.tileId])) {
-        console.log('APPLY for ' + batchId);
         let styleIdentifier = this.styleTable[tile.tileId][batchId];
         let style = this.getStyle(styleIdentifier);
+        let cityObject = tile.cityObjects[Number(batchId)];
 
-        groups.push({
-          material: style.materialProps,
-          batchIDs: [ Number(batchId) ]
+        ranges.push({
+          start: cityObject.indexStart,
+          count: cityObject.indexCount,
+          material: style._bufferedMaterialIndex[tile.tileId]
         });
       }
       
-      createTileGroupsFromBatchIDs(tile.getObject3D(), groups);
+      createTileGroups(tile.getObject3D(), materials, ranges);
     } else {
-      console.log('CLEAR');
       // Clear the tile
       createTileGroups(tile.getMesh(), [], []);
     }

@@ -3,7 +3,7 @@
 The `TilesManager` utility class, located in `TilesManager.js` is a useful tool for accessing and manipulating a 3DTiles layer. It has, for the moment, two major functionnalities :
 
 - Retrieve and store tiles and city objects in an accessible way. The main problem with the 3DTiles layer in iTowns is that its structure is not easy to navigate or manipulate. The `TilesManager` solves this problem by analyzing the layer and wrapping the objects in interfaces.
-- Manage the styles of city objects. Setting or removing styles for specific city objects can be easily done with the tiles manager.
+- Manage the styles of city objects. Setting or removing styles for specific city objects can be easily done with the tiles manager. The big advantage is that it stores the style configuration, so that it doesn't depend on the tile being actually present in the view or not. This allow for example to keep the style of a tile that has been unloaded, then reloaded by iTowns.
 
 ## Code examples
 
