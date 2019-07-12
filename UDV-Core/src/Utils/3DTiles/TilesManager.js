@@ -1,5 +1,5 @@
 import { Tile } from "./Model/Tile";
-import { getVisibleTiles, createTileGroups, updateITownsView, createTileGroupsFromBatchIDs } from "./3DTilesUtils";
+import { getVisibleTiles, createTileGroups, updateITownsView, createTileGroupsFromBatchIDs, getFirstTileIntersection, getBatchIdFromIntersection, getObject3DFromTile } from "./3DTilesUtils";
 import { CityObjectID, CityObject, createCityObjectID } from "./Model/CityObject";
 import { CityObjectStyle } from "./Model/CityObjectStyle";
 import { StyleManager } from "./StyleManager";
@@ -88,6 +88,32 @@ export class TilesManager {
         this.loadedTileCount += 1;
       }
     }
+  }
+
+  /**
+   * Returns the city object under the mouse cursor.
+   * 
+   * @param {MouseEvent} event The mouse event.
+   * 
+   * @returns {CityObject | undefined}
+   */
+  pickCityObject(event) {
+    if (event.target.nodeName.toUpperCase() === 'CANVAS') {
+      // Get the intersecting objects where our mouse pointer is
+      let intersections = this.view.pickObjectsAt(event, 5);
+      // Get the first intersecting tile
+      let firstInter = getFirstTileIntersection(intersections);
+      if (!!firstInter) {
+        let batchId = getBatchIdFromIntersection(firstInter);
+        let tileId = getObject3DFromTile(firstInter.object).tileId;
+
+        if (this.tiles[tileId] !== undefined) {
+          return this.tiles[tileId].cityObjects[batchId];
+        }
+      }
+    }
+
+    return undefined;
   }
 
   /**

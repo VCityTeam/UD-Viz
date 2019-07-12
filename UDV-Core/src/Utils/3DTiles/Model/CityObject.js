@@ -8,7 +8,7 @@ export class CityObject {
   /**
    * Constructs a city object from the given parameters.
    * 
-   * @param {Tile} tileWrapper Tile wrapper for the parent tile.
+   * @param {Tile} tile The parent tile.
    * @param {number} batchId Batch ID of the city object in the parent tile.
    * @param {number} indexStart Start index of the vertex array in the parent
    * tile.
@@ -17,13 +17,13 @@ export class CityObject {
    * @param {THREE.Vector3} [centroid] Centroid of the geometry.
    * @param {Object} [props] Properties from the batch table.
    */
-  constructor(tileWrapper, batchId, indexStart, indexCount, centroid, props) {
+  constructor(tile, batchId, indexStart, indexCount, centroid, props) {
     /**
-     * Tile wrapper for the parent tile.
+     * The parent tile.
      * 
      * @type {Tile}
      */
-    this.tileWrapper = tileWrapper;
+    this.tile = tile;
 
     /**
      * Batch ID of the city object in the parent tile.
@@ -37,7 +37,7 @@ export class CityObject {
      * 
      * @type {CityObjectID}
      */
-    this.cityObjectId = new CityObjectID(this.tileWrapper.tileId, this.batchId);
+    this.cityObjectId = new CityObjectID(this.tile.tileId, this.batchId);
 
     /**
      * Start index of the vertex array in the parent tile.
