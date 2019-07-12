@@ -34,7 +34,8 @@ export class Tile {
     this.tileId = tileId;
 
     /**
-     * Array of city objects contained by the tile. It should
+     * Array of city objects contained by the tile. It is `null` by default and
+     * should be instantiated by calling `loadCityObjects`.
      * 
      * @type {Array<CityObject>}
      */
@@ -91,7 +92,7 @@ export class Tile {
    * If visible, parse the Object3D and the Mesh of the tile to create the
    * city objects.
    */
-  loadParts() {
+  loadCityObjects() {
     if (this.isLoaded()) {
       // The city objects have already been loaded, nothing to do.
       return;

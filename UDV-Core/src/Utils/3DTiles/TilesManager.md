@@ -105,6 +105,23 @@ The `Tile` object represents a tile. It contains the batch table and the referen
 
 This class is responsible of parsing the 3DTiles tileset in order to fetch and construct the city objects within itself.
 
+|Attribute|Type|Description|
+|---------|----|-----------|
+|`layer`|`iTowns.Layer`|The 3DTiles layer.|
+|`tileId`|`number`|The tile ID in the tileset.|
+|`cityObjects`|`CityObject[]`|An array of the city objects contained in the tile. It is `null` by default and can by instantiated with the `loadCityObjects` method.|
+|`batchTable`|`BatchTable`|A reference to the batch table contained in the `Object3D` root of the tile.|
+
+Below is a summary of the methods in the `Tile` class. These methods, excepted `loadCityObjects`, are convenient getters. None of the methods take any argument.
+
+|Method|Returns|Description|
+|------|-------|-----------|
+|`getObject3D`|`THREE.Object3D`|Returns the root node of the tile. This is the node that contains the batch table and the tile ID.|
+|`getMesh`|`THREE.Mesh`|Returns the Mesh node of the tile. This is the node that contains the geometry (with batch IDs and other attributes) and the materials.|
+|`isVisible`|`boolean`|Returns wether the tile is currently laoded in the scene, ie. wether an Object3D with the same tile ID is present in the tileset.|
+|`isLoaded`|`boolean`|Returns wether the `cityObjects` attribute has been filled with the city objects of the tile, ie. the method `loadCityObjects` has been called when the tile was visible.|
+|`loadCityObjects`||If the tile is visible, parse the Object3D and the Mesh node to create the city objects.|
+
 ### City object
 
 [Model/CityObject.js](./Model/CityObject.js)

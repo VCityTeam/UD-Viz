@@ -90,7 +90,7 @@ export class TilesManager {
     for (let tile of tiles) {
       if (this.tiles[tile.tileId] === undefined) {
         this.tiles[tile.tileId] = new Tile(this.layer, tile.tileId);
-        this.tiles[tile.tileId].loadParts();
+        this.tiles[tile.tileId].loadCityObjects();
         this.loadedTileCount += 1;
       }
     }
