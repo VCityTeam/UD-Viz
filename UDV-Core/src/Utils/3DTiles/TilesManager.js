@@ -70,6 +70,12 @@ export class TilesManager {
     this.upToDateTileIds = {};
   }
 
+  /**
+   * Constructs the tiles that have not been loaded yet. This function should be
+   * called before accessing or modifying city objects to be sure that they have
+   * been loaded once. In the future, this function should be replaced by
+   * listeners to events of the 3DTiles layer (tile loading / unloading).
+   */
   update() {
     if (this.totalTileCount === 0) {
       this.totalTileCount = Object.keys(this.layer.tileIndex.index).length - 1;

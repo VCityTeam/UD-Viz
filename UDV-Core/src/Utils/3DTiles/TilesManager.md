@@ -20,6 +20,8 @@ this.tilesManager.update();
 
 The creation and update of the tiles manager is pretty straightforward. You just need to provide it the iTowns view and the 3DTiles layer.
 
+The update is necessary for the moment before accessing or modifying city objects, to be sure that they are currently loaded. However in the future, this function should be replaced by listeners to events of the 3DTiles layer (such as loading / unloading of tiles).
+
 ### Pick a city object
 
 ```js

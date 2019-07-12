@@ -45,6 +45,15 @@ export class StyleManager {
      * @type {Object.<number, Object.<number, number | string>>}
      */
     this.styleTable = {};
+
+    /**
+     * Optimization : store the materials in an array for each tile. This allows
+     * us to call `createTileGroups` instead of the less efficient
+     * `createTileGroupsFromBatchIDs`.
+     * 
+     * @type {Object.<number, Array<any>>}
+     */
+    this.tileBufferedMaterials = {};
   }
 
   /**
@@ -154,7 +163,36 @@ export class StyleManager {
     } else {
       throw 'Invalid city object Identifier';
     }
+    this._bufferStyleMaterial(cityObjectId.tileId, styleIdentifier);
     this._registerUsage(styleIdentifier, cityObjectId);
+  }
+
+  /**
+   * Stores the material of the style in the buffer.
+   * 
+   * @private
+   * 
+   * @param {number} tileId The tile ID.
+   * @param {number | string} styleIdentifier The style identifier.
+   */
+  _bufferStyleMaterial(tileId, styleIdentifier) {
+    if (this.tileBufferedMaterials[tileId] === undefined) {
+      this.tileBufferedMaterials[tileId] = [];
+    }
+    let style = this.getStyle(styleIdentifier);
+    let bufferedMaterialIndex;
+    for (let index = 0; index < this.tileBufferedMaterials[tileId].length; index++) {
+      let bufferedMaterial = this.tileBufferedMaterials[tileId][index];
+      if (style.materialPropsEquals(bufferedMaterial)) {
+        bufferedMaterialIndex = index;
+        break;
+      }
+    }
+    if (bufferedMaterialIndex === undefined) {
+      bufferedMaterialIndex = this.tileBufferedMaterials[tileId].length;
+      this.tileBufferedMaterials[tileId].push(style.materialProps);
+    }
+    style._bufferedMaterialIndex = bufferedMaterialIndex;
   }
 
   /**
