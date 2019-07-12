@@ -77,14 +77,35 @@ export class CityObject {
 }
 
 /**
- * Represents a unique identifier for a city object.
+ * Creates a CityObjectID from an anonymous object.
+ * 
+ * @param {{tileId: number, batchId: number | Array<number>}} object A
+ * dictionnary with two keys, `tileId` and `batchId`.
+ * 
+ * @returns {CityObjectID}
+ */
+export function createCityObjectID(object) {
+  if (object === undefined || typeof(object.tileId) !== 'number'
+    || (typeof(object.batchId) !== 'number' && !Array.isArray(object.batchId))) {
+    throw 'A city object must have a tileId and a batchId';
+  }
+
+  return new CityObjectID(object.tileId, object.batchId);
+}
+
+/**
+ * Represents an identifier for one or more city objects. This class can be used
+ * to represent :
+ * 
+ * - a single city object.
+ * - a set of city objects in a same tile.
  */
 export class CityObjectID {
   /**
    * Constructs a city object ID.
    * 
    * @param {number} tileId The parent tile ID.
-   * @param {number} batchId The batch ID in the tile.
+   * @param {number | Array<number>} batchId The batch ID in the tile.
    */
   constructor(tileId, batchId) {
     /**
@@ -100,6 +121,21 @@ export class CityObjectID {
      * @type {number}
      */
     this.batchId = batchId;
+  }
+
+  /**
+   * Checks wether the city object ID identifies a single city object.
+   */
+  isSingleCityObject() {
+    return typeof(this.batchId) === 'number';
+  }
+
+  /**
+   * Checks wether the city object ID identifies an array of city objects in a
+   * tile.
+   */
+  isMultipleCityObjects() {
+    return Array.isArray(this.batchId);
   }
 
   /**

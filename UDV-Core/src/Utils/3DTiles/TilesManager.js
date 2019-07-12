@@ -1,6 +1,6 @@
 import { Tile } from "./Model/Tile";
 import { getVisibleTiles, createTileGroups, updateITownsView, createTileGroupsFromBatchIDs } from "./3DTilesUtils";
-import { CityObjectID, CityObject } from "./Model/CityObject";
+import { CityObjectID, CityObject, createCityObjectID } from "./Model/CityObject";
 import { CityObjectStyle } from "./Model/CityObjectStyle";
 import { StyleManager } from "./StyleManager";
 
@@ -93,14 +93,25 @@ export class TilesManager {
   /**
    * Returns the city object, if the tile is loaded.
    * 
-   * @param {CityObjectID} cityObjectId The city object identifier.
+   * @param {CityObjectID} cityObjectId The city object identifier. If multiple
+   * city objects are identified, the first one is returned.
+   * 
+   * @return {CityObject}
    */
   getCityObject(cityObjectId) {
     if (this.tiles[cityObjectId.tileId] === undefined) {
       return undefined;
     }
 
-    return this.tiles[cityObjectId.tileId].cityObjects[cityObjectId.batchId];
+    if (! (cityObjectId instanceof CityObjectID)) {
+      cityObjectId = createCityObjectID(cityObjectId);
+    }
+
+    let batchId = cityObjectId.isSingleCityObject() ?
+      cityObjectId.batchId :
+      cityObjectId.batchId[0];
+
+    return this.tiles[cityObjectId.tileId].cityObjects[batchId];
   }
 
   /**
@@ -110,6 +121,9 @@ export class TilesManager {
    * @param {CityObjectStyle | string} style The desired style.
    */
   setStyle(cityObjectId, style) {
+    if (! (cityObjectId instanceof CityObjectID)) {
+      cityObjectId = createCityObjectID(cityObjectId);
+    }
     this.styleManager.setStyle(cityObjectId, style);
     this.markTileToUpdate(this.tiles[cityObjectId.tileId]);
   }
@@ -130,8 +144,32 @@ export class TilesManager {
    * @param {CityObjectID} cityObjectId The city object identifier.
    */
   removeStyle(cityObjectId) {
+    if (! (cityObjectId instanceof CityObjectID)) {
+      cityObjectId = createCityObjectID(cityObjectId);
+    }
     this.styleManager.removeStyle(cityObjectId);
     this.markTileToUpdate(this.tiles[cityObjectId.tileId]);
+  }
+
+  /**
+   * Removes all styles for the given tile.
+   * 
+   * @param {number} tileId The tile ID.
+   */
+  removeStyleFromTile(tileId) {
+    this.styleManager.removeStyleFromTile(tileId);
+    this.markTileToUpdate(this.tiles[tileId]);
+  }
+
+  /**
+   * Removes all styles currently registered.
+   */
+  removeAllStyles() {
+    let tileIds = this.styleManager.getStyledTiles();
+    this.styleManager.removeAllStyles();
+    for (let tileId of tileIds) {
+      this.markTileToUpdate(this.tiles[tileId]);
+    }
   }
 
   /**
@@ -142,6 +180,9 @@ export class TilesManager {
    * @returns {CityObjectStyle}
    */
   getStyleAppliedTo(cityObjectId) {
+    if (! (cityObjectId instanceof CityObjectID)) {
+      cityObjectId = createCityObjectID(cityObjectId);
+    }
     return this.styleManager.getStyleAppliedTo(cityObjectId);
   }
 
