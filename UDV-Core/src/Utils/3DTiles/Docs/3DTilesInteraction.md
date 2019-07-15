@@ -39,7 +39,7 @@ this.tilesManager.update();
 
 The creation and update of the tiles manager is pretty straightforward. You just need to provide it the iTowns view and the 3DTiles layer.
 
-The update is necessary for the moment before accessing or modifying city objects, to be sure that they are currently loaded. However in the future, this function should be replaced by listeners to events of the 3DTiles layer (such as loading / unloading of tiles).
+The update is necessary for the moment before accessing or modifying city objects, to be sure that they are currently loaded. However in the future, this function should be replaced by listeners to events of the 3DTiles layer (such as loading / unloading of tiles). The corresponding iTowns issue can be accessed [here](https://github.com/iTowns/itowns/issues/1165)
 
 ### Pick a city object
 
@@ -139,9 +139,9 @@ Below is a summary of the methods in the `Tile` class. These methods, excepted `
 |`getMesh`|`THREE.Mesh`|Returns the Mesh node of the tile. This is the node that contains the geometry (with batch IDs and other attributes) and the materials.|
 |`isVisible`|`boolean`|Returns wether the tile is currently laoded in the scene, ie. wether an Object3D with the same tile ID is present in the tileset.|
 |`isLoaded`|`boolean`|Returns wether the `cityObjects` attribute has been filled with the city objects of the tile, ie. the method `loadCityObjects` has been called when the tile was visible.|
-|`loadCityObjects`||If the tile is visible, parse the Object3D and the Mesh node to create the city objects.|
+|`loadCityObjects`| |If the tile is visible, parse the Object3D and the Mesh node to create the city objects.|
 
-The constructors has the following signature :
+The constructor has the following signature :
 
 ```js
 constructor(layer, tileId)
