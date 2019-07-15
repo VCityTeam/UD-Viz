@@ -163,9 +163,13 @@ export class Debug3DTilesWindow extends Window {
     try {
       let tileId = Number.parseInt(this.groupColorTileInputElement.value);
       let batchIds = JSON.parse('[' + this.groupColorBatchInputElement.value + ']');
+      let cityObjectIds = [];
+      for (let batchId of batchIds) {
+        cityObjectIds.push(new CityObjectID(tileId, batchId));
+      }
       let color = new THREE.Color(this.groupColorColorInputElement.value);
       let opacity = Number.parseFloat(this.groupColorOpacityInputElement.value);
-      this.tilesManager.setStyle(new CityObjectID(tileId, batchIds),
+      this.tilesManager.setStyle(cityObjectIds, 
         {materialProps: {color, opacity}});
       this.tilesManager.applyStyles();
     } catch (e) {

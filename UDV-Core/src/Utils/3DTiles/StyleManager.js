@@ -115,8 +115,8 @@ export class StyleManager {
   /**
    * Sets the style of the given city object.
    * 
-   * @param {CityObjectID | Array<CityObjectID>} cityObjectId The ID of the city
-   * object.
+   * @param {CityObjectID | Array<CityObjectID>} cityObjectId One or many IDs of 
+   * the city objects.
    * @param {CityObjectStyle | string} style The style to apply. Can be a
    * `CityObjectStyle` or a `string` refering a registered style.
    */
@@ -140,7 +140,6 @@ export class StyleManager {
    * @private
    * 
    * @param {CityObjectStyle} style The style to register.
-   * 
    * @returns {number} The index of the style in the anonymous style array.
    */
   _registerAnonymousStyle(style) {
@@ -172,7 +171,7 @@ export class StyleManager {
    * @private
    * 
    * @param {CityObjectID | Array<CityObjectID>} cityObjectId The city object
-   * identifier.
+   * identifier, or an array of city object identifiers.
    * @param {number | string} styleIdentifier The style identifier.
    */
   _setStyleInTable(cityObjectId, styleIdentifier) {
