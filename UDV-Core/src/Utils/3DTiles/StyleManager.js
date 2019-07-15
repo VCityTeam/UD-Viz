@@ -67,9 +67,32 @@ export class StyleManager {
    * re-applied.
    */
   registerStyle(name, style) {
+    this._updateBufferedMaterials(name, style);
+
     let existing = this.registeredStyles[name] !== undefined;
     this.registeredStyles[name] = style;
     return existing;
+  }
+
+  /**
+   * Updates the buffer material when a named style is updated.
+   * 
+   * @private
+   * 
+   * @param {string} name Name of the registered style.
+   * @param {CityObjectStyle} style The style to register.
+   */
+  _updateBufferedMaterials(name, style) {
+    let previousStyle = this.registeredStyles[name];
+    if (previousStyle !== undefined &&
+      previousStyle._bufferedMaterialIndex !== undefined) {
+      // Need to keep the buffered material
+      style._bufferedMaterialIndex = previousStyle._bufferedMaterialIndex;
+      for (let tileId of Object.keys(style._bufferedMaterialIndex)) {
+        let index = style._bufferedMaterialIndex[tileId];
+        this.tileBufferedMaterials[tileId][index] = style.materialProps;
+      }
+    }
   }
 
   /**
