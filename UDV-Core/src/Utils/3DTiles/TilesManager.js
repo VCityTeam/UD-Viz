@@ -125,8 +125,7 @@ export class TilesManager {
   /**
    * Returns the city object, if the tile is loaded.
    * 
-   * @param {CityObjectID} cityObjectId The city object identifier. If multiple
-   * city objects are identified, the first one is returned.
+   * @param {CityObjectID} cityObjectId The city object identifier.
    * 
    * @return {CityObject}
    */
@@ -139,25 +138,35 @@ export class TilesManager {
       cityObjectId = createCityObjectID(cityObjectId);
     }
 
-    let batchId = cityObjectId.isSingleCityObject() ?
-      cityObjectId.batchId :
-      cityObjectId.batchId[0];
-
-    return this.tiles[cityObjectId.tileId].cityObjects[batchId];
+    return this.tiles[cityObjectId.tileId].cityObjects[cityObjectId.batchId];
   }
 
   /**
    * Sets the style of a particular city object.
    * 
-   * @param {CityObjectID} cityObjectId The city object identifier.
+   * @param {CityObjectID | Array<CityObjectID>} cityObjectId The city object
+   * identifier.
    * @param {CityObjectStyle | string} style The desired style.
    */
   setStyle(cityObjectId, style) {
-    if (! (cityObjectId instanceof CityObjectID)) {
-      cityObjectId = createCityObjectID(cityObjectId);
+    let tilesToUpdate = new Set();
+    if (Array.isArray(cityObjectId)) {
+      for (let i = 0; i < cityObjectId.length; i++) {
+        if (! (cityObjectId[i] instanceof CityObjectID)) {
+          cityObjectId[i] = createCityObjectID(cityObjectId[i]);
+        }
+        tilesToUpdate.add(cityObjectId[i].tileId);
+      }
+    } else {
+      if (! (cityObjectId instanceof CityObjectID)) {
+        cityObjectId = createCityObjectID(cityObjectId);
+      }
+      tilesToUpdate.add(cityObjectId.tileId);
     }
     this.styleManager.setStyle(cityObjectId, style);
-    this._markTileToUpdate(this.tiles[cityObjectId.tileId]);
+    for (let tileId of tilesToUpdate) {
+      this._markTileToUpdate(tileId);
+    }
   }
 
   /**
@@ -167,11 +176,14 @@ export class TilesManager {
    * @param {CityObjectStyle} style The style to register.
    */
   registerStyle(name, style) {
+    if (! (style instanceof CityObjectStyle)) {
+      style = new CityObjectStyle(style);
+    }
     let needUpdate = this.styleManager.registerStyle(name, style);
     if (needUpdate) {
       let usage = this.styleManager.getStyleUsage(name);
       for (let tileId of Object.keys(usage)) {
-        this._markTileToUpdate(this.tiles[tileId]);
+        this._markTileToUpdate(tileId);
       }
     }
   }
@@ -179,14 +191,30 @@ export class TilesManager {
   /**
    * Removes the style of a particular city object.
    * 
-   * @param {CityObjectID} cityObjectId The city object identifier.
+   * @param {CityObjectID | Array<CityObjectID>} cityObjectId The city object
+   * identifier.
    */
   removeStyle(cityObjectId) {
-    if (! (cityObjectId instanceof CityObjectID)) {
-      cityObjectId = createCityObjectID(cityObjectId);
+    let tilesToUpdate = new Set();
+
+    if (Array.isArray(cityObjectId)) {
+      for (let i = 0; i < cityObjectId.length; i++) {
+        if (! (cityObjectId[i] instanceof CityObjectID)) {
+          cityObjectId[i] = createCityObjectID(cityObjectId[i]);
+        }
+        tilesToUpdate.add(cityObjectId[i].tileId);
+      }
+    } else {
+      if (! (cityObjectId instanceof CityObjectID)) {
+        cityObjectId = createCityObjectID(cityObjectId);
+      }
+      tilesToUpdate.add(cityObjectId.tileId);
     }
+
     this.styleManager.removeStyle(cityObjectId);
-    this._markTileToUpdate(this.tiles[cityObjectId.tileId]);
+    for (let tileId of tilesToUpdate) {
+      this._markTileToUpdate(tileId);
+    }
   }
 
   /**
@@ -196,7 +224,7 @@ export class TilesManager {
    */
   removeStyleFromTile(tileId) {
     this.styleManager.removeStyleFromTile(tileId);
-    this._markTileToUpdate(this.tiles[tileId]);
+    this._markTileToUpdate(tileId);
   }
 
   /**
@@ -206,7 +234,7 @@ export class TilesManager {
     let tileIds = this.styleManager.getStyledTiles();
     this.styleManager.removeAllStyles();
     for (let tileId of tileIds) {
-      this._markTileToUpdate(this.tiles[tileId]);
+      this._markTileToUpdate(tileId);
     }
   }
 
@@ -264,10 +292,10 @@ export class TilesManager {
    * 
    * @private
    * 
-   * @param {Tile} tile The tile to update.
+   * @param {number} tileId The ID of the tile to update.
    */
-  _markTileToUpdate(tile) {
-    this.upToDateTileIds[tile.tileId] = undefined;
+  _markTileToUpdate(tileId) {
+    this.upToDateTileIds[tileId] = undefined;
   }
 
   /**

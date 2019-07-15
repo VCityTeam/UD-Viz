@@ -8,25 +8,24 @@ export class CityObject {
   /**
    * Constructs a city object from the given parameters.
    * 
-   * @param {Tile} tile The parent tile.
-   * @param {number} batchId Batch ID of the city object in the parent tile.
-   * @param {number} indexStart Start index of the vertex array in the parent
-   * tile.
+   * @param {Tile} tile The tile holding the city object.
+   * @param {number} batchId Batch ID of the city object in the tile.
+   * @param {number} indexStart Start index of the vertex array in the tile.
    * @param {number} [indexCount] Number of vertices corresponding to this batch
-   * ID in the parent tile.
+   * ID in the tile.
    * @param {THREE.Vector3} [centroid] Centroid of the geometry.
    * @param {Object} [props] Properties from the batch table.
    */
   constructor(tile, batchId, indexStart, indexCount, centroid, props) {
     /**
-     * The parent tile.
+     * The tile holding the city object.
      * 
      * @type {Tile}
      */
     this.tile = tile;
 
     /**
-     * Batch ID of the city object in the parent tile.
+     * Batch ID of the city object in the tile.
      * 
      * @type {number}
      */
@@ -40,14 +39,14 @@ export class CityObject {
     this.cityObjectId = new CityObjectID(this.tile.tileId, this.batchId);
 
     /**
-     * Start index of the vertex array in the parent tile.
+     * Start index of the vertex array in the tile.
      * 
      * @type {number}
      */
     this.indexStart = indexStart;
 
     /**
-     * Number of vertices corresponding to this batch ID in the parent tile.
+     * Number of vertices corresponding to this batch ID in the tile.
      * 
      * @type {number}
      */
@@ -105,7 +104,7 @@ export class CityObjectID {
    * Constructs a city object ID.
    * 
    * @param {number} tileId The parent tile ID.
-   * @param {number | Array<number>} batchId The batch ID in the tile.
+   * @param {number} batchId The batch ID in the tile.
    */
   constructor(tileId, batchId) {
     /**
@@ -121,21 +120,6 @@ export class CityObjectID {
      * @type {number}
      */
     this.batchId = batchId;
-  }
-
-  /**
-   * Checks wether the city object ID identifies a single city object.
-   */
-  isSingleCityObject() {
-    return typeof(this.batchId) === 'number';
-  }
-
-  /**
-   * Checks wether the city object ID identifies an array of city objects in a
-   * tile.
-   */
-  isMultipleCityObjects() {
-    return Array.isArray(this.batchId);
   }
 
   /**
