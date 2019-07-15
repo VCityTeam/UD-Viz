@@ -22,6 +22,12 @@ baseDemo.loadConfigFile('../data/config/generalDemoConfig.json').then(() => {
     const help  = new udvcore.HelpWindow();
     baseDemo.addModuleView('help', help);
 
+    ////// 3DTILES DEBUG
+    const debug3dTilesWindow = new udvcore.Debug3DTilesWindow(baseDemo.tilesManager);
+    baseDemo.addModuleView('3dtilesDebug', debug3dTilesWindow, {
+        name: '3DTiles Debug'
+    });
+
     ////// TEMPORAL MODULE
     function updateLayerCurrentTime(newDate) {
         const numberDate = Number(newDate);
@@ -50,11 +56,4 @@ baseDemo.loadConfigFile('../data/config/generalDemoConfig.json').then(() => {
         baseDemo.controls, baseDemo.view);
     baseDemo.addModuleView('geocoding', geocodingView, {binding: 's',
         name: 'Address Search'});
-
-    ////// 3DTILES DEBUG
-    const debug3dTilesWindow = new udvcore.Debug3DTilesWindow(baseDemo.view,
-        baseDemo.config['3DTilesTemporalLayerID']);
-    baseDemo.addModuleView('3dtilesDebug', debug3dTilesWindow, {
-        name: '3DTiles Debug'
-    });
 });

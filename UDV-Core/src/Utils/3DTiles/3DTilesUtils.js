@@ -201,7 +201,6 @@ export function setTileVerticesColor(tile, newColor, indexArray = null) {
  * createTileGroups(tile, materialProps, ranges);
  */
 export function createTileGroups(tile, materialsProps, ranges) {
-    console.log('createTileGroups');
   let mesh = getMeshFromTile(tile);
 
   let defaultMaterial = Array.isArray(mesh.material) ?
@@ -307,8 +306,6 @@ export function createTileGroups(tile, materialsProps, ranges) {
  * ]);
  */
 export function createTileGroupsFromBatchIDs(tile, groups) {
-    console.log('createTileGroupsFromBatchIDs');
-    console.log(tile.tileId);
   let materials = [];
   let ranges = [];
 

@@ -1,8 +1,6 @@
 import { $3DTAbstractExtension } from 'itowns';
-import * as THREE from 'three';
-import {
-    createTileGroupsFromBatchIDs
-} from '../../Utils/3DTiles/3DTilesUtils';
+import { CityObjectStyle } from '../../Utils/3DTiles/Model/CityObjectStyle';
+import { CityObjectID } from '../../Utils/3DTiles/Model/CityObject';
 
 // TODO: Complex transactions ? Et en particulier les
 //  subdivision/fusion+modified
@@ -103,22 +101,11 @@ class TemporalExtension_BatchTable {
     // the features in grey. These cases are indeed mostly between 2012 and 2015
     // and are due to the data
     static getDisplayStateFromTags(tags) {
-        const displayState = {};
         if (tags.length === 1) {
-            displayState.opacity = opacities.uncertain;
-            const transactionTag = tags[0];
-            if (transactionsColors[transactionTag]) {
-                displayState.color = transactionsColors[transactionTag];
-            } else {
-                console.warn(
-                    `Temporal transaction tag ${transactionTag} unknown, defaulting color to white.`);
-                displayState.color = transactionsColors.noTransaction;
-            }
+            return tags[0];
         } else {
-            displayState.opacity = opacities.certain;
-            displayState.color = transactionsColors.noTransaction;
+            return 'noTransaction';
         }
-        return displayState;
     }
 
 
@@ -161,13 +148,7 @@ class TemporalExtension_BatchTable {
             if (currentTime >= this.startDates[i] && currentTime <=
                 this.endDates[i]) {
                 // ** FEATURE EXISTS
-                featuresDisplayStates.push({
-                    material: {
-                        color: transactionsColors.noTransaction,
-                        opacity: opacities.certain,
-                    },
-                    batchIDs: [i],
-                });
+                featuresDisplayStates.push('noTransaction');
             } else if (this.featuresTransacs[featureId]) {
                 // ** TRANSACTION CASE
                 let hasTransac = false;
@@ -180,13 +161,7 @@ class TemporalExtension_BatchTable {
                         hasTransac = true;
                         const displayState = TemporalExtension_BatchTable.getDisplayStateFromTags(
                             oldTransac.tags);
-                        featuresDisplayStates.push({
-                            material: {
-                                color: displayState.color,
-                                opacity: displayState.opacity,
-                            },
-                            batchIDs: [i],
-                        });
+                        featuresDisplayStates.push(displayState);
                     }
                 }
                 const newTransac = this.featuresTransacs[featureId].transactionsAsNewFeature;
@@ -199,26 +174,13 @@ class TemporalExtension_BatchTable {
                         hasTransac = true;
                         const displayState = TemporalExtension_BatchTable.getDisplayStateFromTags(
                             newTransac.tags);
-                        featuresDisplayStates.push({
-                            material: {
-                                color: displayState.color,
-                                opacity: displayState.opacity,
-                            },
-                            batchIDs: [i],
-                        });
+                        featuresDisplayStates.push(displayState);
                     }
                 }
 
                 if (!hasTransac) {
                     // ** TRANSACTION NOT AT THE RIGHT DATE
-                    featuresDisplayStates.push({
-                        material: {
-                            color: transactionsColors.noTransaction,
-                            opacity: opacities.hide,
-                            alphaTest: 0.3,
-                        },
-                        batchIDs: [i],
-                    });
+                    featuresDisplayStates.push('hide');
                 }
             } else {
                 // ** FEATURE DOES NOT EXIST AND THERE IS NO TRANSACTION
@@ -232,33 +194,14 @@ class TemporalExtension_BatchTable {
                 if (currentTime + halfVintage >= this.startDates[i] &&
                     currentTime < this.startDates[i]) {
                     // ** CREATION
-                    featuresDisplayStates.push({
-                        material: {
-                            color: transactionsColors.creation,
-                            opacity: opacities.uncertain,
-                        },
-                        batchIDs: [i],
-                    });
+                    featuresDisplayStates.push('creation');
                 } else if (currentTime - halfVintage < this.endDates[i] &&
                     currentTime > this.endDates[i]) {
                     // ** DEMOLITION
-                    featuresDisplayStates.push({
-                        material: {
-                            color: transactionsColors.demolition,
-                            opacity: opacities.uncertain,
-                        },
-                        batchIDs: [i],
-                    });
+                    featuresDisplayStates.push('demolition');
                 } else {
                     // ** FEATURE DOES NOT EXIST
-                    featuresDisplayStates.push({
-                        material: {
-                            color: transactionsColors.noTransaction,
-                            opacity: opacities.hide,
-                            alphaTest: 0.3,
-                        },
-                        batchIDs: [i],
-                    });
+                    featuresDisplayStates.push('hide');
                 }
             }
         }
@@ -291,10 +234,38 @@ class TemporalExtension_BatchTable {
 export class $3DTemporalExtension extends $3DTAbstractExtension {
     // we only store the temporal_tileset because we need to access it (more
     // precisely, we need to access the transactions) for culling
-    constructor(itownsView) {
+    constructor() {
         super();
         this.temporal_tileset = {};
-        this.itownsView = itownsView;
+        this.tilesManager = {};
+    }
+
+    // TODO: chicken egg (on doit instancier l'extension pour instancier le
+    //  layer et instancier le layer pour instancier le tileManager).
+    initTilesManager(tilesManager) {
+        this.tilesManager = tilesManager;
+
+        // Set styles
+        this.tilesManager.registerStyle('noTransaction', new CityObjectStyle({
+            materialProps: { opacity: 1.0, color: 0xffffff } })); // white
+
+        this.tilesManager.registerStyle('creation', new CityObjectStyle({
+            materialProps: { opacity: 0.6, color: 0x009900 } })); // green
+
+        this.tilesManager.registerStyle('demolition', new CityObjectStyle({
+            materialProps: { opacity: 0.6, color: 0xff0000 } })); // red
+
+        this.tilesManager.registerStyle('modified', new CityObjectStyle({
+            materialProps: { opacity: 0.6, color: 0xFFD700 } })); // yellow
+
+        this.tilesManager.registerStyle('subdivision', new CityObjectStyle({
+            materialProps: { opacity: 0.6, color: 0x0000ff } })); // dark blue
+
+        this.tilesManager.registerStyle('fusion', new CityObjectStyle({
+            materialProps: { opacity: 0.6, color: 0x0000ff } })); // dark blue
+
+        this.tilesManager.registerStyle('hide', new CityObjectStyle({
+            materialProps: { opacity: 0, color: 0xffffff, alphaTest: 0.3 } })); // hidden
     }
 
     /**
@@ -401,6 +372,15 @@ export class $3DTemporalExtension extends $3DTAbstractExtension {
             node.batchTable.extensions['3DTILES_temporal']) {
             const BT_ext = node.batchTable.extensions['3DTILES_temporal'];
             const featuresDisplayStates = BT_ext.culling(layer.currentTime);
+
+            for (let i = 0; i < featuresDisplayStates.length ; i++) {
+                this.tilesManager.setStyle(new CityObjectID(node.tileId, i), featuresDisplayStates[i]);
+            }
+
+            /* this.tilesManager.applyStyleToTile(node.tileId,
+                { updateView: true, updateFunction:
+                 this.tilesManager.view.notifyChange(this.tilesManager.layer) }); */
+
             // Calling this method outside of the culling would be better.
             // For instance we might would want to call it before rendering.
             // However, there is no event in iTowns allowing to call it just
@@ -411,7 +391,7 @@ export class $3DTemporalExtension extends $3DTAbstractExtension {
             // doesn't work either because of the following issue: https://github.com/mrdoob/three.js/issues/11306
             // Adding it as a callback to the mesh however works but slows
             // down a lot the rendering.
-            createTileGroupsFromBatchIDs(node, featuresDisplayStates);
+            // createTileGroupsFromBatchIDs(node, featuresDisplayStates);
         }
         return false;
     }

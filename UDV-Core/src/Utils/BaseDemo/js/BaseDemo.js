@@ -21,7 +21,7 @@ export class BaseDemo {
         this.controls;
         /**
          * Object used to manage the 3DTiles layer.
-         * 
+         *
          * @type {TilesManager}
          */
         this.tilesManager;
@@ -526,6 +526,12 @@ export class BaseDemo {
         // Initialize the 3DTiles manager
         this.tilesManager = new TilesManager(this.view,
             this.view.getLayerById(this.config['3DTilesTemporalLayerID']));
+
+        extensions.getExtension('3DTILES_temporal').initTilesManager(this.tilesManager);
+
+        this.tilesManager.view.addFrameRequester(
+            itowns.MAIN_LOOP_EVENTS.BEFORE_RENDER,
+            this.tilesManager.applyStyles.bind(this.tilesManager));
     }
 
     ////////////////////////////////////////////////////////
