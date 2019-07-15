@@ -1,6 +1,6 @@
-import * as THREE from 'three';
-import { CityObject } from './CityObject';
-import { getTileInLayer } from '../3DTilesUtils';
+import * as THREE from '../../../../node_modules/three/build/three.module.js';
+import { CityObject } from './CityObject.js';
+import { getTileInLayer } from '../3DTilesUtils.js';
 
 /**
  * Represents a tile from 3DTiles. It holds a reference to the tile ID and the

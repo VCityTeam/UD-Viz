@@ -1,5 +1,5 @@
-import { Tile } from "./Tile";
-import * as THREE from 'three';
+import { Tile } from "./Tile.js";
+import * as THREE from '../../../../node_modules/three/build/three.js';
 
 /**
  * Represents a city object.

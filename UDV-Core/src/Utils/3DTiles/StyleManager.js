@@ -1,7 +1,7 @@
-import { CityObjectStyle } from "./Model/CityObjectStyle";
-import { CityObjectID } from "./Model/CityObject";
-import { createTileGroups } from "./3DTilesUtils";
-import { Tile } from "./Model/Tile";
+import { CityObjectStyle } from "./Model/CityObjectStyle.js";
+import { CityObjectID } from "./Model/CityObject.js";
+import { createTileGroups } from "./3DTilesUtils.js";
+import { Tile } from "./Model/Tile.js";
 
 /**
  * Class used to manage the styles of city objects.

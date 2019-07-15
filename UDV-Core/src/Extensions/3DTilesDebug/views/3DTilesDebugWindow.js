@@ -6,13 +6,20 @@ import { CityObjectStyle } from "../../../Utils/3DTiles/Model/CityObjectStyle";
 import { CityObjectID } from "../../../Utils/3DTiles/Model/CityObject";
 
 export class Debug3DTilesWindow extends Window {
-  constructor(itownsView, config) {
+  /**
+   * Creates the debug window.
+   * 
+   * @param {TilesManager} tilesManager The tiles manager.
+   */
+  constructor(tilesManager) {
     super('3d_tiles_debug', '3DTiles Debug', false);
 
-    this.itownsView = itownsView;
-    this.layer = itownsView.getLayerById(config['3DTilesLayerID']);
-    // Tiles Manager
-    this.tilesManager = new TilesManager(this.itownsView, this.layer)
+    /**
+     * The tiles manager.
+     * 
+     * @type {TilesManager}
+     */
+    this.tilesManager = tilesManager;
 
     // Selection
     this.tilesManager.registerStyle('selected', new CityObjectStyle({
@@ -121,7 +128,7 @@ export class Debug3DTilesWindow extends Window {
    */
   onMouseMove(event) {
     // Update the current visible tile count
-    let visibleTileCount = getVisibleTileCount(this.layer);
+    let visibleTileCount = getVisibleTileCount(this.tilesManager.layer);
     this.visibleTilesParagraphElement.innerText = `${visibleTileCount} tiles visible.`
   }
 
@@ -133,7 +140,6 @@ export class Debug3DTilesWindow extends Window {
    * @param {MouseEvent} event The mouse event.
    */
   onMouseClick(event) {
-    this.tilesManager.update();
     let cityObject = this.tilesManager.pickCityObject(event);
     if (cityObject !== undefined) {
       this.clickDivElement.innerHTML = /*html*/`
@@ -152,7 +158,8 @@ export class Debug3DTilesWindow extends Window {
 
       this.selectedCityObject = cityObject;
       this.tilesManager.setStyle(this.selectedCityObject.cityObjectId, 'selected');
-      this.tilesManager.applyStyles();
+      this.tilesManager.applyStyles({updateFunction:
+        this.tilesManager.view.notifyChange.bind(this.tilesManager.view)});
     }
   }
 

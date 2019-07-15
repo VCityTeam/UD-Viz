@@ -1,8 +1,8 @@
-import { Tile } from "./Model/Tile";
-import { getVisibleTiles, updateITownsView, getFirstTileIntersection, getBatchIdFromIntersection, getObject3DFromTile } from "./3DTilesUtils";
-import { CityObjectID, CityObject, createCityObjectID } from "./Model/CityObject";
-import { CityObjectStyle } from "./Model/CityObjectStyle";
-import { StyleManager } from "./StyleManager";
+import { Tile } from "./Model/Tile.js";
+import { getVisibleTiles, updateITownsView, getFirstTileIntersection, getBatchIdFromIntersection, getObject3DFromTile } from "./3DTilesUtils.js";
+import { CityObjectID, CityObject, createCityObjectID } from "./Model/CityObject.js";
+import { CityObjectStyle } from "./Model/CityObjectStyle.js";
+import { StyleManager } from "./StyleManager.js";
 
 /**
  * Manages the tiles and the style for city objects.
@@ -77,6 +77,11 @@ export class TilesManager {
    * listeners to events of the 3DTiles layer (tile loading / unloading).
    */
   update() {
+    if (this.layer.tileIndex === undefined) {
+      // Cannot update yet because the layer is not fully loaded.
+      return;
+    }
+
     if (this.totalTileCount === 0) {
       this.totalTileCount = Object.keys(this.layer.tileIndex.index).length - 1;
     }
@@ -105,6 +110,7 @@ export class TilesManager {
    */
   pickCityObject(event) {
     if (event.target.nodeName.toUpperCase() === 'CANVAS') {
+      this.update();
       // Get the intersecting objects where our mouse pointer is
       let intersections = this.view.pickObjectsAt(event, 5);
       // Get the first intersecting tile
@@ -138,6 +144,7 @@ export class TilesManager {
       cityObjectId = createCityObjectID(cityObjectId);
     }
 
+    this.update();
     return this.tiles[cityObjectId.tileId].cityObjects[cityObjectId.batchId];
   }
 
@@ -254,34 +261,51 @@ export class TilesManager {
 
   /**
    * Applies the current styles added with `setStyle` or `addStyle`.
+   * 
+   * @param {object} options Options of the method.
+   * @param {() => any} [options.updateFunction] The function used to update the
+   * view. Default is `udpateITownsView(view, layer)`.
    */
-  applyStyles() {
+  applyStyles(options = {}) {
+    this.update();
+    let updateFunction = options.updateFunction || (() => {
+      updateITownsView(this.view, this.layer);
+    });
     for (let tile of this.tiles) {
       if (tile === undefined) {
         continue;
       }
 
       // Set to false so we update the view only once
-      this.applyStyleToTile(tile.tileId, false);
+      this.applyStyleToTile(tile.tileId, {updateView: false});
     }
-    updateITownsView(this.view, this.layer);
+    updateFunction();
   }
 
   /**
    * Apply the saved style to the tile given in parameter.
    * 
    * @param {number} tileId The ID of the tile to apply the style to.
-   * @param {boolean} updateView If true, will call `updateITownsView` after
-   * applying the style.
+   * @param {object} options Options of the apply function.
+   * @param {boolean} [options.updateView] Whether the view should update at the
+   * end of the method. Default value is `true`.
+   * @param {() => any} [options.updateFunction] The function used to update the
+   * view. Default is `udpateITownsView(view, layer)`.
    */
-  applyStyleToTile(tileId, updateView = true) {
+  applyStyleToTile(tileId, options = {}) {
+    let updateView = (options.updateView !== undefined) ?
+      options.updateView : true;
+    let updateFunction = options.updateFunction || (() => {
+      updateITownsView(this.view, this.layer);
+    });
+
     let tile = this.tiles[tileId];
     if (this._shouldTileBeUpdated(tile)) {
       this.styleManager.applyToTile(tile);
       this._markTileAsUpdated(tile);
 
       if (updateView) {
-        updateITownsView(this.view, this.layer);
+        updateFunction();
       }
     }
   }
