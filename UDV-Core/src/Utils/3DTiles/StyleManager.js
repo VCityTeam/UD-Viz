@@ -1,7 +1,7 @@
-import { CityObjectStyle } from "./Model/CityObjectStyle";
-import { CityObjectID } from "./Model/CityObject";
-import { createTileGroups } from "./3DTilesUtils";
-import { Tile } from "./Model/Tile";
+import { CityObjectStyle } from "./Model/CityObjectStyle.js";
+import { CityObjectID } from "./Model/CityObject.js";
+import { createTileGroups } from "./3DTilesUtils.js";
+import { Tile } from "./Model/Tile.js";
 
 /**
  * Class used to manage the styles of city objects.
@@ -67,9 +67,32 @@ export class StyleManager {
    * re-applied.
    */
   registerStyle(name, style) {
+    this._updateBufferedMaterials(name, style);
+
     let existing = this.registeredStyles[name] !== undefined;
     this.registeredStyles[name] = style;
     return existing;
+  }
+
+  /**
+   * Updates the buffer material when a named style is updated.
+   * 
+   * @private
+   * 
+   * @param {string} name Name of the registered style.
+   * @param {CityObjectStyle} style The style to register.
+   */
+  _updateBufferedMaterials(name, style) {
+    let previousStyle = this.registeredStyles[name];
+    if (previousStyle !== undefined &&
+      previousStyle._bufferedMaterialIndex !== undefined) {
+      // Need to keep the buffered material
+      style._bufferedMaterialIndex = previousStyle._bufferedMaterialIndex;
+      for (let tileId of Object.keys(style._bufferedMaterialIndex)) {
+        let index = style._bufferedMaterialIndex[tileId];
+        this.tileBufferedMaterials[tileId][index] = style.materialProps;
+      }
+    }
   }
 
   /**
@@ -92,7 +115,8 @@ export class StyleManager {
   /**
    * Sets the style of the given city object.
    * 
-   * @param {CityObjectID} cityObjectId The ID of the city object.
+   * @param {CityObjectID | Array<CityObjectID>} cityObjectId One or many IDs of 
+   * the city objects.
    * @param {CityObjectStyle | string} style The style to apply. Can be a
    * `CityObjectStyle` or a `string` refering a registered style.
    */
@@ -113,8 +137,9 @@ export class StyleManager {
    * the index if this is the case. Else, push the style in the anonymous style
    * array and returns the index.
    * 
-   * @param {CityObjectStyle} style The style to register.
+   * @private
    * 
+   * @param {CityObjectStyle} style The style to register.
    * @returns {number} The index of the style in the anonymous style array.
    */
   _registerAnonymousStyle(style) {
@@ -145,26 +170,35 @@ export class StyleManager {
    * 
    * @private
    * 
-   * @param {CityObjectID} cityObjectId The city object identifier.
+   * @param {CityObjectID | Array<CityObjectID>} cityObjectId The city object
+   * identifier, or an array of city object identifiers.
    * @param {number | string} styleIdentifier The style identifier.
    */
   _setStyleInTable(cityObjectId, styleIdentifier) {
-    let tileId = cityObjectId.tileId;
-
-    if (this.styleTable[tileId] === undefined) {
-      this.styleTable[tileId] = {};
-    }
-    if (cityObjectId.isSingleCityObject()) {
+    if (cityObjectId instanceof CityObjectID) {
+      let tileId = cityObjectId.tileId;
+  
+      if (this.styleTable[tileId] === undefined) {
+        this.styleTable[tileId] = {};
+      }
       this.styleTable[tileId][cityObjectId.batchId] = styleIdentifier;
-    } else if (cityObjectId.isMultipleCityObjects()) {
-      for (let batchId of cityObjectId.batchId) {
-        this.styleTable[tileId][batchId] = styleIdentifier;
+      this._bufferStyleMaterial(cityObjectId.tileId, styleIdentifier);
+      this._registerUsage(styleIdentifier, cityObjectId);
+    } else if (Array.isArray(cityObjectId)) {
+      cityObjectId.sort((idA, idB) => {
+        return idA.tileId - idB.tileId
+      });
+      for (let id of cityObjectId) {
+        if (this.styleTable[id.tileId] === undefined) {
+          this.styleTable[id.tileId] = {};
+        }
+        this.styleTable[id.tileId][id.batchId] = styleIdentifier;
+        this._bufferStyleMaterial(id.tileId, styleIdentifier);
+        this._registerUsage(styleIdentifier, id);
       }
     } else {
       throw 'Invalid city object Identifier';
     }
-    this._bufferStyleMaterial(cityObjectId.tileId, styleIdentifier);
-    this._registerUsage(styleIdentifier, cityObjectId);
   }
 
   /**
@@ -202,22 +236,24 @@ export class StyleManager {
   /**
    * Removes the style associated with this city object.
    * 
-   * @param {CityObjectID} cityObjectId The city object ID.
+   * @param {CityObjectID | Array<CityObjectID>} cityObjectId The city object
+   * ID.
    */
   removeStyle(cityObjectId) {
-    if (this.styleTable[cityObjectId.tileId] === undefined) {
-      return;
-    }
-    if (cityObjectId.isSingleCityObject()) {
+    if (cityObjectId instanceof CityObjectID) {
+      if (this.styleTable[cityObjectId.tileId] === undefined) {
+        return;
+      }
       this._removeUsage(this.styleTable[cityObjectId.tileId][cityObjectId.batchId],
         cityObjectId);
       delete this.styleTable[cityObjectId.tileId][cityObjectId.batchId];
-    } else {
-      for (let batchId of cityObjectId.batchId) {
-        this._removeUsage(this.styleTable[cityObjectId.tileId][batchId],
-          new CityObjectID(cityObjectId.tileId, batchId));
-        delete this.styleTable[cityObjectId.tileId][batchId];
+    } else if (Array.isArray(cityObjectId)) {
+      for (let id of cityObjectId) {
+        this._removeUsage(this.styleTable[id.tileId][id.batchId], id);
+        delete this.styleTable[id.tileId][id.batchId];
       }
+    } else {
+      throw 'Invalid City Object Identifier';
     }
   }
 
@@ -230,13 +266,13 @@ export class StyleManager {
     if (this.styleTable[tileId] === undefined) {
       return;
     }
-    let batchIds = [];
+    let cityObjectIds = [];
     for (let batchId of Object.keys(this.styleTable[tileId])) {
-      batchIds.push(Number(batchId));
+      cityObjectIds.push(new CityObjectID(tileId, Number(batchId)));
     }
     
     delete this.tileBufferedMaterials[tileId];
-    this.removeStyle(new CityObjectID(tileId, batchIds));
+    this.removeStyle(cityObjectIds);
   }
 
   /**
@@ -258,7 +294,7 @@ export class StyleManager {
    */
   applyToTile(tile) {
     if (this.styleTable[tile.tileId] !== undefined) {
-      let materials = this.tileBufferedMaterials[tile.tileId];
+      let materials = this.tileBufferedMaterials[tile.tileId] || [];
       let ranges = [];
       for (let batchId of Object.keys(this.styleTable[tile.tileId])) {
         let styleIdentifier = this.styleTable[tile.tileId][batchId];
@@ -325,10 +361,6 @@ export class StyleManager {
       return undefined;
     }
 
-    let batchId = cityObjectId.isSingleCityObject() ?
-      cityObjectId.batchId :
-      cityObjectId.batchId[0];
-
     if (this.styleTable[cityObjectId.tileId][cityObjectId.batchId]
       === undefined) {
       return undefined;
@@ -357,11 +389,7 @@ export class StyleManager {
       if (this.registeredStyleUsage[styleIdentifier][tileId] === undefined) {
         this.registeredStyleUsage[styleIdentifier][tileId] = [];
       }
-      if (cityObjectId.isSingleCityObject()) {
-        this.registeredStyleUsage[styleIdentifier][tileId].push(batchId);
-      } else {
-        this.registeredStyleUsage[styleIdentifier][tileId].push(...batchId);
-      }
+      this.registeredStyleUsage[styleIdentifier][tileId].push(batchId);
     } else if (typeof(styleIdentifier) === 'number') {
       if (this.anonymousStyleUsage[styleIdentifier] === undefined) {
         this.anonymousStyleUsage[styleIdentifier] = {};
@@ -369,11 +397,7 @@ export class StyleManager {
       if (this.anonymousStyleUsage[styleIdentifier][tileId] === undefined) {
         this.anonymousStyleUsage[styleIdentifier][tileId] = [];
       }
-      if (cityObjectId.isSingleCityObject()) {
-        this.anonymousStyleUsage[styleIdentifier][tileId].push(batchId);
-      } else {
-        this.anonymousStyleUsage[styleIdentifier][tileId].push(...batchId);
-      }
+      this.anonymousStyleUsage[styleIdentifier][tileId].push(batchId);
     } else {
       throw 'A style identifier must be a string or a number.';
     }
@@ -385,15 +409,18 @@ export class StyleManager {
    * @private
    * 
    * @param {string | number} styleIdentifier The style identifier.
-   * @param {CityObjectID} cityObjectId The city object ID.
+   * @param {CityObjectID | Array<CityObjectID>} cityObjectId The city object
+   * ID.
    */
   _removeUsage(styleIdentifier, cityObjectId) {
-    if (cityObjectId.isSingleCityObject()) {
-      this._removeUsageInTables(styleIdentifier, cityObjectId.tileId, cityObjectId.batchId);
-    } else {
-      for (let batchId of cityObjectId.batchId) {
-        this._removeUsageInTables(styleIdentifier, cityObjectId.tileId, batchId);
+    if (cityObjectId instanceof CityObjectID) {
+      this._removeUsageInTables(styleIdentifier, cityObjectId);
+    } else if (Array.isArray(cityObjectId)) {
+      for (let id of cityObjectId) {
+        this._removeUsageInTables(styleIdentifier, id);
       }
+    } else {
+      throw 'Invalid City Object Identifier';
     }
   }
   
@@ -401,10 +428,11 @@ export class StyleManager {
    * Removes the track of the style for one single city object.
    * 
    * @param {string | number} styleIdentifier The style identifier
-   * @param {number} tileId The tile ID.
-   * @param {number} batchId The batch ID.
+   * @param {CityObjectID} cityObjectId The city object ID.
    */
-  _removeUsageInTables(styleIdentifier, tileId, batchId) {
+  _removeUsageInTables(styleIdentifier, cityObjectId) {
+    let tileId = cityObjectId.tileId;
+    let batchId = cityObjectId.batchId;
     if (typeof(styleIdentifier) === 'string') {
       let index = this.registeredStyleUsage[styleIdentifier][tileId].findIndex(
         bId => bId === batchId);

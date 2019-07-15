@@ -1,4 +1,4 @@
-import * as THREE from '../../../node_modules/three/build/three.js';
+import * as THREE from '../../../node_modules/three/build/three.module.js';
 import { objectEquals } from '../DataProcessing/DataProcessing.js';
 
 /**

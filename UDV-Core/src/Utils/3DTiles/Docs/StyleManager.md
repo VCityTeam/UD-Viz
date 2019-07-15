@@ -99,7 +99,39 @@ for (let tileId of tilesToUpdate) {
 
 ### Storage of styles
 
+In a `StyleManager`, a style can be either _anonymous_ or _registered_ (also called _named_). A named style is a style that was first associated with a name by using the `registerStyle` method. On the other hand, an anonymous style is a `CityObjectStyle` that has been passed directly as the second parameter of the `setStyle` method :
+
+```js
+// Named style
+styleManager.registerStyle('red', new CityObjectStyle({materialProps: {color: 0xff0000}}));
+styleManager.setStyle(new CityObjectID(6, 64), 'red');
+
+// Anonymous style
+styleManager.setStyle(new CityObjectID(6, 64), new CityObjectStyle({materialProps: {color: 0xff0000}}));
+```
+
+The `StyleManager` uses two types of storage for these styles. The named styles are kept in a dictionnary called `registeredStyles` where the keys are the names of the styles, and the values the styles themselves. The anonymous styles are stored in an array called `anonymousStyles`.
+
+Using two different structures allows the style manager to use a generic identifier to reference the stored styles. If a string is used as an identifier, we know that it references a named style, whereas if a number is used, we know that it represents an index in the anonymous styles array.
+
+The structure used to associated city objects with their respective style is a field called `styleTable`. The style table is a dictionnary where the key is a tile ID, and the value is another dictionnary that associates batch IDs of the tile to style identifiers. Style identifiers, as said before, are strings or numbers depending on wether they refer to anonymous or named styles.
+
+There are a few things to know about anonymous and named styles when using them :
+
+- When using an anonymous style in the `setStyle` method, the `StyleManager` will parse the `anonymousStyles` array to determine wether a similar style has already been registered. This is done by calling the `equals` method of `CityObjectStyle`. If an equivalent anonymous style is found, the style identifier associated to the city object will be the index of the matching style. Otherwise, the style will be pushed into the anonymous array and its new index will be used as a style identifier.
+- When registering a style with the `registerStyle` method, two cases can happen : either a style with the same name already exist or not. If the style was already registered, it is simply updated with the new values. This means that the city objects associated with this name will be applied the new style.
+- When adding a named style in the `registeredStyles` structure, the `StyleManager` does not check if a style with the same properties already exist. This mean you can have duplicate named style.
+
+Some methods of `StyleManager` allow to access styles :
+
+- `getStyle(styleIdentifier)` returns a style identified by the argument. It can either be a string or a number, depending on the style being _named_ or _anonymous_.
+- `getStyleAppliedTo(cityObjectId)` returns the style associated to the city object in argument.
+
 ### Reverse storage for finding usage
+
+The `StyleManager` also allows its user to access city objects associated with specific styles. This is the role of the `getStyleUsage(styleIdentifier)` function : by passing a style identifier (can be theorically a string or a number, however the user does not have access to anonymous style indexes so the main use case will be with registered styles), this function returns a dictionnary that maps tile IDs to arrays of batch IDs. This structure represents all city objects that have the given style.
+
+To do that efficiently, the `StyleManger` stores two structures, respectively called `registeredStyleUsage` and `anonymousStyleUsage`. They work the same way : 
 
 ### Applying styles
 

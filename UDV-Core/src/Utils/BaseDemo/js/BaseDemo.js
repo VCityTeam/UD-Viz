@@ -1,4 +1,5 @@
 import { ModuleView } from '../../ModuleView/ModuleView.js';
+import { TilesManager } from '../../3DTiles/TilesManager.js';
 
 /**
  * Represents the base HTML content of a demo for UDV and provides methods to
@@ -17,6 +18,12 @@ export class BaseDemo {
         this.view;  // itowns view (3d scene)
         this.extent;  // itowns extent (city limits)
         this.controls;
+        /**
+         * Object used to manage the 3DTiles layer.
+         * 
+         * @type {TilesManager}
+         */
+        this.tilesManager;
         // Temporal is currently disabled and will be reintroduced in a new
         // version based on a 3D Tiles extension
         this.temporal = false;
@@ -440,6 +447,10 @@ export class BaseDemo {
 
         // Request itowns view redraw
         this.view.notifyChange();
+
+        // Initialize the 3DTiles manager
+        this.tilesManager = new TilesManager(this.view,
+            this.view.getLayerById(this.config['3DTilesLayerID']));
     }
 
     /**

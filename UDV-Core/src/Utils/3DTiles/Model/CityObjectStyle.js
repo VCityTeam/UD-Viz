@@ -1,5 +1,3 @@
-import { objectEquals } from "../../DataProcessing/DataProcessing";
-
 /**
  * Represents the style of a tile part. Accepted parameters are :
  * 
