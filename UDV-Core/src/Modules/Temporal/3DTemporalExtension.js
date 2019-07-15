@@ -377,6 +377,13 @@ export class $3DTemporalExtension extends $3DTAbstractExtension {
                 this.tilesManager.setStyle(new CityObjectID(node.tileId, i), featuresDisplayStates[i]);
             }
 
+            if (node.tileId === 208) {
+                const featureId = BT_ext.featureIds[8]
+                console.log(featureId);
+                console.log(BT_ext.featuresTransacs);
+                console.log(featuresDisplayStates[8]);
+            }
+
             /* this.tilesManager.applyStyleToTile(node.tileId,
                 { updateView: true, updateFunction:
                  this.tilesManager.view.notifyChange(this.tilesManager.layer) }); */
