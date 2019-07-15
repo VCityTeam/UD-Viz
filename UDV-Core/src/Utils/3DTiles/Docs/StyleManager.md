@@ -9,7 +9,7 @@ The `StyleManager` object serves as an interface to store and apply styles for c
     1. [Storage of styles](#Storage-of-styles)
     2. [Reverse storage for finding usage](#Reverse-storage-for-finding-usage)
     3. [Applying styles](#Applying-styles)
-        1. [Optimization: buffering the materials](#Optimization:-buffering-the-materials)
+        1. [Optimization: buffering the materials](#Optimization-buffering-the-materials)
 3. [Detailed documentation](#Detailed-documentation)
     1. [Properties](#Properties)
     2. [Methods](#Methods)
@@ -69,7 +69,30 @@ let tile = new Tile(view.getLayerById('3dtiles-layer'), 6);
 tile.loadCityObjects();
 
 // Now update the tile so that it has the style we defined with `setStyle`
-tile.applyToTile(tile);
+sm.applyToTile(tile);
+```
+
+It is also possible to remove styles from objects. To do that, three different methods exist depending on what exaclty you want to remove :
+
+```js
+// Remove a style associated with specific city objects
+sm.removeStyle(new CityObjectID(6, 64));
+
+// Remove styles associated with all city objects in a specific tile
+sm.removeStyleFromTile(6)
+
+// Resets the `StyleManager`. Please note that registered styles will persist
+sm.removeAllStyles();
+
+// Remove all styles that exist. Before actually removing the styles, we store
+// the styles that had at least one style applied to them.
+let tilesToUpdate = sm.getStyledTiles();
+sm.applyToTile()
+
+// Apply the changes on these tiles
+for (let tileId of tilesToUpdate) {
+    sm.applyToTile(tileId);
+}
 ```
 
 ## Processes and data structures

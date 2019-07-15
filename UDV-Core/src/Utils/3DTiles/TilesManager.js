@@ -234,7 +234,7 @@ export class TilesManager {
       }
 
       // Set to false so we update the view only once
-      this.applyStyleToTile(tile, false);
+      this.applyStyleToTile(tile.tileId, false);
     }
     updateITownsView(this.view, this.layer);
   }
@@ -242,11 +242,12 @@ export class TilesManager {
   /**
    * Apply the saved style to the tile given in parameter.
    * 
-   * @param {Tile} tile The tile to apply the style to.
+   * @param {number} tileId The ID of the tile to apply the style to.
    * @param {boolean} updateView If true, will call `updateITownsView` after
    * applying the style.
    */
-  applyStyleToTile(tile, updateView = true) {
+  applyStyleToTile(tileId, updateView = true) {
+    let tile = this.tiles[tileId];
     if (this._shouldTileBeUpdated(tile)) {
       this.styleManager.applyToTile(tile);
       this._markTileAsUpdated(tile);
