@@ -401,10 +401,17 @@ export class $3DTemporalExtension extends $3DTAbstractExtension {
             node.batchTable.extensions['3DTILES_temporal']) {
             const BT_ext = node.batchTable.extensions['3DTILES_temporal'];
             const featuresDisplayStates = BT_ext.culling(layer.currentTime);
+            // Calling this method outside of the culling would be better.
+            // For instance we might would want to call it before rendering.
+            // However, there is no event in iTowns allowing to call it just
+            // before rendering for instance (i.e. when the culling is
+            // done). Trying to add it as a callback to the node with
+            // THREEJS' Object3D.OnBeforeRender
+            // (https://threejs.org/docs/index.html#api/en/core/Object3D.onBeforeRender)
+            // doesn't work either because of the following issue: https://github.com/mrdoob/three.js/issues/11306
+            // Adding it as a callback to the mesh however works but slows
+            // down a lot the rendering.
             createTileGroupsFromBatchIDs(node, featuresDisplayStates);
-            // Note: view doesn't seem to need to be updated with
-            // updateITownsView()
-            this.itownsView.notifyChange();
         }
         return false;
     }
