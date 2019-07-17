@@ -1,0 +1,21 @@
+/* Generic for document windows */
+
+
+
+/* Search window */
+
+.search-form label {
+  display: block;
+}
+
+.search-form input[type="text"],
+.search-form select {
+  box-sizing: border-box;
+  width: 100%;
+}
+
+/* Browser window */
+
+.browser-doc-img {
+  width: 100%;
+}

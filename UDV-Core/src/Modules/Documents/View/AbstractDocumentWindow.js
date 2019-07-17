@@ -1,5 +1,8 @@
 import { Window } from "../../../Utils/GUI/js/Window";
 import { DocumentProvider } from "../ViewModel/DocumentProvider";
+import { DocumentView } from "./DocumentView";
+
+import './CSS/DocumentWindow.css'
 
 export class AbstractDocumentWindow extends Window {
   constructor(name) {
@@ -11,27 +14,37 @@ export class AbstractDocumentWindow extends Window {
      * @type {DocumentProvider}
      */
     this.provider = undefined;
-  }
 
+    /**
+     * The document view.
+     * 
+     * @type {DocumentView}
+     */
+    this.view = undefined;
+  }
+  
   /**
-   * Function called when the document provider has been passed by the view.
-   * Operations on documents can be performed in this function.
+   * Function called when the document provider  and the view have been set up.
+   * Operations that depends on them can be performed in this function.
    * 
    * @override
    */
-  documentProviderReady() {
+  documentWindowReady() {
 
   }
 
   /**
-   * Sets the document provider. Should be called by `DocumentView`. Calls the
-   * method `
+   * Sets the provider and the view. Should be called by `DocumentView`. Once
+   * this is done, the window is actually usable ; this triggers the
+   * `documentWindowReady` method.
    * 
+   * @param {DocumentView} view The document view.
    * @param {DocumentProvider} provider The document provider.
    */
-  setDocumentProvider(provider) {
+  setupDocumentWindow(view, provider) {
+    this.view = view;
     this.provider = provider;
 
-    this.documentProviderReady();
+    this.documentWindowReady();
   }
 }

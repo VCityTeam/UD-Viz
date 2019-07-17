@@ -12,10 +12,11 @@ export class DocumentBrowserWindow extends AbstractDocumentWindow {
 
   get innerContentHtml() {
     return /*html*/`
-      <div>
-        <h3 id="${this.docTitleId}"></h3>
+      <div class="box-section">
+        <h3 id="${this.docTitleId}" class="section-title"></h3>
         <div>
-          <img src="" alt="Document image" id="${this.docImageId}">
+          <img class="browser-doc-img" src="" alt="Document image"
+            id="${this.docImageId}">
           <p id="${this.docSubjectId}"></p>
           <p id="${this.docDescriptionId}"></p>
           <p>Reffering date : <span id="${this.docRefDateId}"></span></p>
@@ -29,11 +30,16 @@ export class DocumentBrowserWindow extends AbstractDocumentWindow {
   }
 
   windowCreated() {
+    this.window.style.left = 'unset';
+    this.window.style.right = '10px';
+    this.window.style.top = '10px';
+    this.window.style.width = '390px';
+
     //TODO : move in a CSS file
     this.docImageElement.style.width = '100%';
   }
 
-  documentProviderReady() {
+  documentWindowReady() {
     this.provider.addEventListener(DocumentProvider.EVENT_DISPLAYED_DOC_CHANGED,
       (doc) => this.onDisplayedDocumentChange(doc));
   }
@@ -59,6 +65,27 @@ export class DocumentBrowserWindow extends AbstractDocumentWindow {
     this.docRefDateElement.innerHTML =
       (new Date(newDocument.refDate)).toLocaleDateString();
     this.docImageElement.src = await this.provider.getDisplayedDocumentImage();
+  }
+
+  ////////////////////////
+  ///// DOCUMENT EXTENSION
+
+  /**
+   * Adds a command (button) in the browser window. The callback will be called
+   * when the user presses the button. The current document will be passed as
+   * parameter.
+   * 
+   * @param {string} label The button label.
+   * @param {(doc: Document) => any} callback The callback to call when the
+   * button is pressed. The current displayed document is passed as parameter.
+   */
+  addDocumentCommand(label, callback) {
+    let button = document.createElement('button');
+    button.innerText = label;
+    button.onclick = () => {
+      callback(this.provider.getDisplayedDocument());
+    };
+    this.commandPanelElement.appendChild(button);
   }
 
   /////////////

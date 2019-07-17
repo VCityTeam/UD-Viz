@@ -40,4 +40,29 @@ export class DocumentModule {
      */
     this.view = new DocumentView(this.provider);
   }
+
+  ///////////////
+  ///// EXTENSION
+
+  /**
+   * Adds a new window to display information about documents.
+   * 
+   * @param {AbstractDocumentWindow} newWindow The window to add.
+   */
+  addDocumentWindow(newWindow) {
+    this.view.addDocumentWindow(newWindow);
+  }
+  
+  /**
+   * Adds a command (button) in the browser window. The callback will be called
+   * when the user presses the button. The current document will be passed as
+   * parameter.
+   * 
+   * @param {string} label The button label.
+   * @param {(doc: Document) => any} callback The callback to call when the
+   * button is pressed. The current displayed document is passed as parameter.
+   */
+  addDisplayedDocumentCommand(label, callback) {
+    this.view.browserWindow.addDocumentCommand(label, callback);
+  }
 }

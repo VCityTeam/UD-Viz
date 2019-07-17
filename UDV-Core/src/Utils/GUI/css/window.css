@@ -49,12 +49,76 @@
 }
 
 .window-content {
-    background-color: rgba(30,30,30,0.7);
+    background-color: rgba(30,30,30,0.8);
     border: 5px solid rgba(30,30,30,0.1);
     overflow-y: auto;
     margin: 0;
 }
 
 .window-inner-content {
-    color: #dddddd;
+    color: #f2f2f2;
+}
+
+/* Useful styles that can be used in windows */
+
+    /* A box arround a section */
+.window-inner-content .box-section {
+    background: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 0 1px 1px inset #00000080;
+    padding: 5px;
+}
+
+.window-inner-content .section-title {
+    margin: 5px 0 5px 10px;
+    padding: 0;
+    font-size: 20px;
+    font-weight: bold;
+    display: block;
+}
+
+    /* Clickable text */
+.window-inner-content .clickable-text {
+    cursor: pointer;
+}
+
+.window-inner-content .clickable-text:hover {
+    text-decoration: underline;
+}
+
+    /* Some styles for a working "spoiler" div
+     * The expected structure should be the following :
+     * <input type="checkbox" class="spoiler-check" id="checkid">
+     * <label for="checkid">Click here do show the spoiler !</label>
+     * <div class="spoiler-box>
+     * </div>
+     */
+.window-inner-content .spoiler-check {
+    display: none;
+}
+
+.window-inner-content .spoiler-check ~
+label {
+    cursor: pointer;
+}
+
+.window-inner-content .spoiler-check ~
+label:after {
+    content: " \25C2";
+    margin-left: 10px;
+    color: rgb(185, 185, 185);
+}
+
+.window-inner-content .spoiler-check:checked ~
+label:after {
+    content: " \25BE";
+}
+
+.window-inner-content .spoiler-check ~
+.spoiler-box {
+    display: none;
+}
+
+.window-inner-content .spoiler-check:checked ~
+.spoiler-box {
+    display: block;
 }

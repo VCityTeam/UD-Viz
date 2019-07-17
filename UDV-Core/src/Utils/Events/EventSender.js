@@ -8,14 +8,14 @@ export class EventSender {
         /**
          * The listeners attached to a specific event.
          * 
-         * @member
+         * @type {Array<(data: any) => any>}
          */
         this.eventListeners = {};
         /**
          * The listeners attached to no particular event. They will receive
          * all notifications.
          * 
-         * @member
+         * @type {Array<(data: any) => any>}
          */
         this.allEventsListeners = [];
     }
@@ -76,6 +76,24 @@ export class EventSender {
             }
         } else {
             throw `This event must be registered before being sent : ${event}`;
+        }
+    }
+
+    /**
+     * Removes a specific event listener.
+     * 
+     * @param {(data: any) => any} action The event listener to remove. This
+     * should be the same reference that was used to register it.
+     */
+    removeEventListener(action) {
+        let index = this.eventListeners.findIndex((list) => action === list);
+        if (index >= 0) {
+            this.eventListeners.splice(index, 1);
+        }
+
+        index = this.allEventsListeners.findIndex((list) => action === list);
+        if (index >= 0) {
+            this.allEventsListeners.splice(index, 1);
         }
     }
 }
