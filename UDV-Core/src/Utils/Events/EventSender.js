@@ -65,7 +65,7 @@ export class EventSender {
      * @param event The event to fire. Must be first registered. 
      * @param data The optional data to pass as parameter.
      */
-    sendEvent(event, data = null) {
+    async sendEvent(event, data = null) {
         let listeners = this.eventListeners[event];
         if (!!listeners) {
             for (let action of listeners) {

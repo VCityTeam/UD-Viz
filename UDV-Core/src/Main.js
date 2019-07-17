@@ -34,3 +34,5 @@ export { Debug3DTilesWindow }       from './Extensions/3DTilesDebug/views/3DTile
 
 export { LinkService }              from './Extensions/DocumentLinks/services/LinkService';
 export { DocumentLinkWindow }       from './Extensions/DocumentLinks/views/DocumentLinkWindow';
+
+export { DocumentModule }           from './Modules/Documents/DocumentModule';
