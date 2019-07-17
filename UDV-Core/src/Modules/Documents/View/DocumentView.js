@@ -36,6 +36,7 @@ export class DocumentView extends ModuleView {
 
   enableView() {
     this.searchWindow.appendTo(this.parentElement);
+    this.provider.refreshDocumentList();
   }
 
   disableView() {

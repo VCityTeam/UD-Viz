@@ -2,6 +2,7 @@ import { Window } from "../../../Utils/GUI/js/Window";
 import { DocumentProvider } from "../ViewModel/DocumentProvider";
 import { Document } from "../Model/Document";
 import { DocumentFilter } from "../ViewModel/DocumentFilter";
+import { DocumentSearchFilter } from "../ViewModel/DocumentSearchFilter";
 
 /**
  * Represents the search window for the documents. It contains the filters on
@@ -23,7 +24,8 @@ export class DocumentSearchWindow extends Window {
      */
     this.provider = provider;
 
-    this.provider.addFilter(new DocumentFilter(this.filterDocument.bind(this)));
+    this.searchFilter = new DocumentSearchFilter();
+    this.provider.addFilter(this.searchFilter);
 
     this.provider.addEventListener(DocumentProvider.DOCUMENT_LIST_UPDATED,
       (documents) => this.onFilteredDocumentsUpdate(documents));
@@ -32,7 +34,25 @@ export class DocumentSearchWindow extends Window {
   get innerContentHtml() {
     return /*html*/`
       <div>
-        <button id="${this.searchButtonId}">Filter</button>
+        <form id="${this.inputFormId}">
+          <label for="${this.inputKeywordsId}">Keywords</label>
+          <input type="text" id="${this.inputKeywordsId}">
+          <label for="${this.inputSubjectId}">Subject</label>
+          <select id="${this.inputSubjectId}">
+            <option value="">All subjects</option>
+            <option value="">Architecture</option>
+            <option value="">Tourism</option>
+            <option value="">Urbanism</option>
+          </select>
+          <label for="${this.inputPubDateStartId}">Publication date</label>
+          <input type="date" id="${this.inputPubDateStartId}">
+          <input type="date" id="${this.inputPubDateEndId}">
+          <label for="${this.inputRefDateStartId}">Refering date</label>
+          <input type="date" id="${this.inputRefDateStartId}">
+          <input type="date" id="${this.inputRefDateEndId}">
+        </form>
+        <input type="submit" value="Filter">
+        <button id="${this.clearButtonId}">Clear</button>
       </div>
       <div>
         <h3>Documents</h3>
@@ -44,8 +64,12 @@ export class DocumentSearchWindow extends Window {
   }
 
   windowCreated() {
-    this.searchButtonElement.onclick = () => {
+    this.inputFormElement.onsubmit = () => {
       this.search();
+      return false;
+    };
+    this.clearButtonElement.onclick = () => {
+      this.clear();
     };
   }
 
@@ -59,6 +83,7 @@ export class DocumentSearchWindow extends Window {
    */
   onFilteredDocumentsUpdate(documents) {
     let list = this.documentListElement;
+    list.innerHTML = '';
     for (let doc of documents) {
       let item = document.createElement('li');
       item.innerHTML = doc.title;
@@ -71,31 +96,45 @@ export class DocumentSearchWindow extends Window {
   ///// SEARCH AND FILTERS
   
   /**
-   * The filter function to use on the fetched documents, depending on the
-   * fields.
-   * 
-   * @param {Document} doc The document to filter.
-   */
-  filterDocument(doc) {
-    return doc.title.startsWith('P');
-  }
-
-  /**
    * Event on the 'search' button click.
    */
   async search() {
+    let keywords = this.inputKeywordsElement.value.split(/[ ,;]/)
+      .filter((k) => k !== "").map((k) => k.toLowerCase());
+    this.searchFilter.keywords = keywords;
+    this.provider.refreshDocumentList();
+  }
+
+  /**
+   * Clears the research fields.
+   */
+  clear() {
+    this.inputSubjectElement.value = '';
+    this.inputKeywordsElement.value = '';
+    this.inputRefDateEndElement.value = '';
+    this.inputRefDateStartElement.value = '';
+    this.inputPubDateEndElement.value = '';
+    this.inputPubDateStartElement.value = '';
     this.provider.refreshDocumentList();
   }
 
   ////////////
   //// GETTERS
 
-  get searchButtonId() {
-    return `${this.windowId}_button_search`;
+  get inputFormId() {
+    return `${this.windowId}_form`;
   }
 
-  get searchButtonElement() {
-    return document.getElementById(this.searchButtonId);
+  get inputFormElement() {
+    return document.getElementById(this.inputFormId);
+  }
+
+  get clearButtonId() {
+    return `${this.windowId}_button_clear`;
+  }
+
+  get clearButtonElement() {
+    return document.getElementById(this.clearButtonId);
   }
 
   get documentListId() {
@@ -104,5 +143,53 @@ export class DocumentSearchWindow extends Window {
 
   get documentListElement() {
     return document.getElementById(this.documentListId);
+  }
+
+  get inputKeywordsId() {
+    return `${this.windowId}_input_Keywords`;
+  }
+
+  get inputKeywordsElement() {
+    return document.getElementById(this.inputKeywordsId);
+  }
+
+  get inputSubjectId() {
+    return `${this.windowId}_input_Subject`;
+  }
+
+  get inputSubjectElement() {
+    return document.getElementById(this.inputSubjectId);
+  }
+
+  get inputPubDateStartId() {
+    return `${this.windowId}_input_Publication`;
+  }
+
+  get inputPubDateStartElement() {
+    return document.getElementById(this.inputPubDateStartId);
+  }
+
+  get inputPubDateEndId() {
+    return `${this.windowId}_input_Publication_End`;
+  }
+
+  get inputPubDateEndElement() {
+    return document.getElementById(this.inputPubDateEndId);
+  }
+
+  get inputRefDateStartId() {
+    return `${this.windowId}_input_Reference`;
+  }
+
+  get inputRefDateStartElement() {
+    return document.getElementById(this.inputRefDateStartId);
+  }
+
+  get inputRefDateEndId() {
+    return `${this.windowId}_input_Reference_End`;
+  }
+
+  get inputRefDateEndElement() {
+    return document.getElementById(this.inputRefDateEndId);
   }
 }
