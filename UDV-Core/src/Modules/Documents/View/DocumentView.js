@@ -56,6 +56,13 @@ export class DocumentView extends ModuleView {
 
     this.addDocumentWindow(this.searchWindow);
     this.addDocumentWindow(this.browserWindow);
+
+    this.searchWindow.addEventListener(Window.EVENT_DISABLED, () => {
+      this.disable();
+    });
+    this.browserWindow.addEventListener(Window.EVENT_DISABLED, () => {
+      this.disable();
+    });
   }
 
   /**
@@ -72,9 +79,6 @@ export class DocumentView extends ModuleView {
 
     this.windows.push(newWindow);
     newWindow.setupDocumentWindow(this, this.provider);
-    newWindow.addEventListener(Window.EVENT_DISABLED, () => {
-      this.disable();
-    });
   }
 
   /**
@@ -100,9 +104,8 @@ export class DocumentView extends ModuleView {
       }
 
       let listener = () => {
-        console.log("hello");
+        console.log("mylistener");
         windowToDisplay.removeEventListener(listener);
-        windowToDisplay.hide();
         for (let window of this.hiddenWindows) {
           window.show();
         }

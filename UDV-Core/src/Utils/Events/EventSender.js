@@ -8,7 +8,7 @@ export class EventSender {
         /**
          * The listeners attached to a specific event.
          * 
-         * @type {Array<(data: any) => any>}
+         * @type {Object.<string, Array<(data: any) => any>>}
          */
         this.eventListeners = {};
         /**
@@ -86,12 +86,14 @@ export class EventSender {
      * should be the same reference that was used to register it.
      */
     removeEventListener(action) {
-        let index = this.eventListeners.findIndex((list) => action === list);
-        if (index >= 0) {
-            this.eventListeners.splice(index, 1);
+        for (let eventListeners of Object.values(this.eventListeners)) {
+            let index = eventListeners.findIndex((list) => action === list);
+            if (index >= 0) {
+                eventListeners.splice(index, 1);
+            }
         }
 
-        index = this.allEventsListeners.findIndex((list) => action === list);
+        let index = this.allEventsListeners.findIndex((list) => action === list);
         if (index >= 0) {
             this.allEventsListeners.splice(index, 1);
         }

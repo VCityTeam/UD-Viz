@@ -8,6 +8,14 @@ export class DocumentBrowserWindow extends AbstractDocumentWindow {
    */
   constructor() {
     super('Browser');
+
+    /**
+     * @type {Array<{
+     *   label: string,
+     *   callback: (doc: Document) => any
+     * }>}
+     */
+    this.extensionCommands = [];
   }
 
   get innerContentHtml() {
@@ -35,8 +43,10 @@ export class DocumentBrowserWindow extends AbstractDocumentWindow {
     this.window.style.top = '10px';
     this.window.style.width = '390px';
 
-    //TODO : move in a CSS file
-    this.docImageElement.style.width = '100%';
+    // Add extension commands
+    for (let command of this.extensionCommands) {
+      this._createCommandButton(command.label, command.callback);
+    }
   }
 
   documentWindowReady() {
@@ -80,6 +90,24 @@ export class DocumentBrowserWindow extends AbstractDocumentWindow {
    * button is pressed. The current displayed document is passed as parameter.
    */
   addDocumentCommand(label, callback) {
+    this.extensionCommands.push({
+      label, callback
+    });
+    if (this.isCreated) {
+      this._createCommandButton(label, callback);
+    }
+  }
+
+  /**
+   * Creates the command button.
+   * 
+   * @private
+   * 
+   * @param {string} label The button label.
+   * @param {(doc: Document) => any} callback The callback to call when the
+   * button is pressed.
+   */
+  _createCommandButton(label, callback) {
     let button = document.createElement('button');
     button.innerText = label;
     button.onclick = () => {

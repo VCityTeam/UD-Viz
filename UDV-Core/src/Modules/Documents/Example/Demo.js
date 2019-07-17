@@ -20,4 +20,7 @@ baseDemo.loadConfigFile(
     const documentModule = new udvcore.DocumentModule(requestService,
         baseDemo.config)
     baseDemo.addModuleView('documents', documentModule.view);
+
+    ////// DOCUMENTS VISUALIZER (to orient the document)
+    const documentVisualizer = new udvcore.DocumentVisualizer(documentModule);
 });
