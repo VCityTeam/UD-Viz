@@ -45,8 +45,8 @@ export class DocumentProvider extends EventSender {
      */
     this.displayedDocumentIndex = undefined;
 
-    this.registerEvent(DocumentProvider.DOCUMENT_LIST_UPDATED);
-    this.registerEvent(DocumentProvider.DISPLAYED_DOCUMENT_CHANGED);
+    this.registerEvent(DocumentProvider.EVENT_FILTERED_DOCS_UPDATED);
+    this.registerEvent(DocumentProvider.EVENT_DISPLAYED_DOC_CHANGED);
   }
 
   /**
@@ -66,9 +66,9 @@ export class DocumentProvider extends EventSender {
     } else {
       this.displayedDocumentIndex = undefined;
     }
-    await this.sendEvent(DocumentProvider.DOCUMENT_LIST_UPDATED,
+    await this.sendEvent(DocumentProvider.EVENT_FILTERED_DOCS_UPDATED,
       this.getFilteredDocuments());
-    await this.sendEvent(DocumentProvider.DISPLAYED_DOCUMENT_CHANGED,
+    await this.sendEvent(DocumentProvider.EVENT_DISPLAYED_DOC_CHANGED,
       this.getDisplayedDocument());
   }
 
@@ -82,6 +82,22 @@ export class DocumentProvider extends EventSender {
       throw 'addFilter() expects a DocumentFilter parameter';
     }
     this.filters.push(newFilter);
+  }
+
+  /**
+   * Sets the given document as the displayed one.
+   * 
+   * @param {Document} doc The document.
+   */
+  setDisplayedDocument(doc) {
+    let index = this.filteredDocuments.findIndex((filteredDoc) =>
+      doc.id === filteredDoc.id);
+
+    if (index < 0) {
+      throw 'Document not found.';
+    }
+
+    this.setDisplayedDocumentIndex(index);
   }
 
   /**
@@ -101,7 +117,7 @@ export class DocumentProvider extends EventSender {
     }
 
     this.displayedDocumentIndex = index;
-    this.sendEvent(DocumentProvider.DISPLAYED_DOCUMENT_CHANGED,
+    this.sendEvent(DocumentProvider.EVENT_DISPLAYED_DOC_CHANGED,
       this.getDisplayedDocument());
   }
 
@@ -122,7 +138,7 @@ export class DocumentProvider extends EventSender {
     this.displayedDocumentIndex = (this.filteredDocuments.length +
       this.displayedDocumentIndex + offset) % this.filteredDocuments.length;
     
-    this.sendEvent(DocumentProvider.DISPLAYED_DOCUMENT_CHANGED,
+    this.sendEvent(DocumentProvider.EVENT_DISPLAYED_DOC_CHANGED,
       this.getDisplayedDocument());
   }
 
@@ -148,14 +164,29 @@ export class DocumentProvider extends EventSender {
     return this.filteredDocuments[this.displayedDocumentIndex];
   }
 
+  /**
+   * Returns the image corresponding to the displayed document. It is a string
+   * that can be put into the `src` attribute of an `img` tag (so either an
+   * URL or a base64 encoded file).
+   * 
+   * @returns {string | undefined}
+   */
+  async getDisplayedDocumentImage() {
+    if (this.displayedDocumentIndex === undefined) {
+      return undefined;
+    }
+
+    return await this.fetcher.fetchDocumentImage(this.getDisplayedDocument());
+  }
+
   ////////////
   ///// EVENTS
 
-  static get DOCUMENT_LIST_UPDATED() {
-    return 'DOCUMENT_LIST_UDPATED';
+  static get EVENT_FILTERED_DOCS_UPDATED() {
+    return 'EVENT_FILTERED_DOCS_UPDATED';
   }
 
-  static get DISPLAYED_DOCUMENT_CHANGED() {
-    return 'DISPLAYED_DOCUMENT_CHANGED';
+  static get EVENT_DISPLAYED_DOC_CHANGED() {
+    return 'EVENT_DISPLAYED_DOC_CHANGED';
   }
 }

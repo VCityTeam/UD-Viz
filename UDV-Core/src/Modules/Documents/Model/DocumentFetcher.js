@@ -1,5 +1,6 @@
 import { RequestService } from "../../../Utils/Request/RequestService";
 import { Document } from "./Document";
+import { imageToDataURI } from "../../../Utils/DataProcessing/DataProcessing";
 
 export class DocumentFetcher {
   /**
@@ -10,6 +11,7 @@ export class DocumentFetcher {
    * @param {object} config.server The server configuration.
    * @param {string} config.server.url The server url.
    * @param {string} config.server.document The base route for documents.
+   * @param {string} config.server.file The route for document files.
    */
   constructor(requestService, config) {
     /**
@@ -25,6 +27,14 @@ export class DocumentFetcher {
      * @type {string}
      */
     this.documentUrl;
+
+    /**
+     * The route to fetch the document images.
+     * 
+     * @type {string}
+     */
+    this.fileRoute;
+
     this.setConfig(config);
 
     /**
@@ -42,15 +52,17 @@ export class DocumentFetcher {
    * @param {object} config.server The server configuration.
    * @param {string} config.server.url The server url.
    * @param {string} config.server.document The base route for documents.
+   * @param {string} config.server.file The route for document files.
    */
   setConfig(config) {
     if (!!config && !!config.server && !!config.server.url &&
-      !!config.server.document) {
+      !!config.server.document && !!config.server.file) {
       this.documentUrl = config.server.url;
       if (this.documentUrl.slice(-1) !== "/") {
         this.documentUrl += "/";
       }
       this.documentUrl += config.server.document;
+      this.fileRoute = config.server.file;
     } else {
       throw 'The given configuration is incorrect.';
     }
@@ -80,5 +92,24 @@ export class DocumentFetcher {
     this.documents = JSON.parse(req.responseText);
 
     return this.documents;
+  }
+
+  /**
+   * Fetches the image corresponding to the given document.
+   * 
+   * @param {Document} doc The document to fetch the image.
+   * 
+   * @returns {string} The data string of the image.
+   */
+  async fetchDocumentImage(doc) {
+    let imgUrl = this.documentUrl + '/' + doc.id + '/' + this.fileRoute;
+    let req = await this.requestService.request('GET', imgUrl, {
+      responseType: 'arraybuffer'
+    });
+    if (req.status >= 200 && req.status < 300) {
+      return imageToDataURI(req.response,
+        req.getResponseHeader('Content-Type'));
+    }
+    throw 'Could not get the file';
   }
 }

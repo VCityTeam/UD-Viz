@@ -27,7 +27,7 @@ export class DocumentSearchWindow extends Window {
     this.searchFilter = new DocumentSearchFilter();
     this.provider.addFilter(this.searchFilter);
 
-    this.provider.addEventListener(DocumentProvider.DOCUMENT_LIST_UPDATED,
+    this.provider.addEventListener(DocumentProvider.EVENT_FILTERED_DOCS_UPDATED,
       (documents) => this.onFilteredDocumentsUpdate(documents));
   }
 
@@ -40,9 +40,9 @@ export class DocumentSearchWindow extends Window {
           <label for="${this.inputSubjectId}">Subject</label>
           <select id="${this.inputSubjectId}">
             <option value="">All subjects</option>
-            <option value="">Architecture</option>
-            <option value="">Tourism</option>
-            <option value="">Urbanism</option>
+            <option value="Architecture">Architecture</option>
+            <option value="Tourism">Tourism</option>
+            <option value="Urbanism">Urbanism</option>
           </select>
           <label for="${this.inputPubDateStartId}">Publication date</label>
           <input type="date" id="${this.inputPubDateStartId}">
@@ -50,9 +50,9 @@ export class DocumentSearchWindow extends Window {
           <label for="${this.inputRefDateStartId}">Refering date</label>
           <input type="date" id="${this.inputRefDateStartId}">
           <input type="date" id="${this.inputRefDateEndId}">
+          <input type="submit" value="Filter">
+          <button id="${this.clearButtonId}">Clear</button>
         </form>
-        <input type="submit" value="Filter">
-        <button id="${this.clearButtonId}">Clear</button>
       </div>
       <div>
         <h3>Documents</h3>
@@ -87,6 +87,9 @@ export class DocumentSearchWindow extends Window {
     for (let doc of documents) {
       let item = document.createElement('li');
       item.innerHTML = doc.title;
+      item.onclick = () => {
+        this.provider.setDisplayedDocument(doc);
+      };
       list.appendChild(item);
     }
   }
@@ -102,6 +105,26 @@ export class DocumentSearchWindow extends Window {
     let keywords = this.inputKeywordsElement.value.split(/[ ,;]/)
       .filter((k) => k !== "").map((k) => k.toLowerCase());
     this.searchFilter.keywords = keywords;
+
+    let subject = this.inputSubjectElement.value.toLowerCase();
+    this.searchFilter.subject = (subject !== "") ? subject : undefined;
+
+    let pubStartDate = this.inputPubDateStartElement.value;
+    this.searchFilter.pubStartDate = (!!pubStartDate) ? new Date(pubStartDate)
+      : undefined;
+
+    let pubEndDate = this.inputPubDateEndElement.value;
+    this.searchFilter.pubEndDate = (!!pubEndDate) ? new Date(pubEndDate)
+      : undefined;
+
+    let refStartDate = this.inputRefDateStartElement.value;
+    this.searchFilter.refStartDate = (!!refStartDate) ? new Date(refStartDate)
+      : undefined;
+
+    let refEndDate = this.inputRefDateEndElement.value;
+    this.searchFilter.refEndDate = (!!refEndDate) ? new Date(refEndDate)
+      : undefined;
+
     this.provider.refreshDocumentList();
   }
 

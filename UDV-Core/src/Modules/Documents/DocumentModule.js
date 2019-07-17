@@ -15,6 +15,7 @@ export class DocumentModule {
    * @param {object} config.server The server configuration.
    * @param {string} config.server.url The server url.
    * @param {string} config.server.document The base route for documents.
+   * @param {string} config.server.file The route for document files.
    */
   constructor(requestService, config) {
     /**

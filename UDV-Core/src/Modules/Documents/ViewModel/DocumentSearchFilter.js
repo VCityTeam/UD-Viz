@@ -12,10 +12,40 @@ export class DocumentSearchFilter extends DocumentFilter {
      * @type {Array<string>}
      */
     this.keywords = [];
+
+    /**
+     * A string representing the subject. Should be in lowercase.
+     * 
+     * @type {string}
+     */
     this.subject = undefined;
+
+    /**
+     * The lower bound of the publication date.
+     * 
+     * @type {Date}
+     */
     this.pubStartDate = undefined;
+
+    /**
+     * The upper bound of the publication date.
+     * 
+     * @type {Date}
+     */
     this.pubEndDate = undefined;
+
+    /**
+     * The lower bound of the refering date.
+     * 
+     * @type {Date}
+     */
     this.refStartDate = undefined;
+
+    /**
+     * The upper bound of the refering date.
+     * 
+     * @type {Date}
+     */
     this.refEndDate = undefined;
   }
 
@@ -33,6 +63,27 @@ export class DocumentSearchFilter extends DocumentFilter {
         }
       }
     }
+
+    if (!!this.subject && this.subject !== doc.subject.toLowerCase()) {
+      return false;
+    }
+
+    if (!!this.pubStartDate && !(this.pubStartDate <= new Date(doc.publicationDate))) {
+      return false;
+    }
+
+    if (!!this.pubEndDate && !(this.pubEndDate >= new Date(doc.publicationDate))) {
+      return false;
+    }
+
+    if (!!this.refStartDate && !(this.refStartDate <= new Date(doc.refDate))) {
+      return false;
+    }
+
+    if (!!this.refEndDate && !(this.refEndDate >= new Date(doc.refDate))) {
+      return false;
+    }
+    
     return true;
   }
 
