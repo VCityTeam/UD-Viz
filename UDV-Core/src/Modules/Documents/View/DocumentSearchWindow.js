@@ -1,34 +1,25 @@
-import { Window } from "../../../Utils/GUI/js/Window";
 import { DocumentProvider } from "../ViewModel/DocumentProvider";
 import { Document } from "../Model/Document";
-import { DocumentFilter } from "../ViewModel/DocumentFilter";
 import { DocumentSearchFilter } from "../ViewModel/DocumentSearchFilter";
+import { AbstractDocumentWindow } from "./AbstractDocumentWindow";
 
 /**
  * Represents the search window for the documents. It contains the filters on
  * the fields of a document.
  */
-export class DocumentSearchWindow extends Window {
+export class DocumentSearchWindow extends AbstractDocumentWindow {
   /**
    * Creates a document search window.
-   * 
-   * @param {DocumentProvider} provider The document provider.
    */
-  constructor(provider) {
-    super('document2-search', 'Document - Search', true);
+  constructor() {
+    super('Search');
 
     /**
-     * The document provider.
+     * The filter corresponding to the research fields.
      * 
-     * @type {DocumentProvider}
+     * @type {DocumentSearchFilter}
      */
-    this.provider = provider;
-
     this.searchFilter = new DocumentSearchFilter();
-    this.provider.addFilter(this.searchFilter);
-
-    this.provider.addEventListener(DocumentProvider.EVENT_FILTERED_DOCS_UPDATED,
-      (documents) => this.onFilteredDocumentsUpdate(documents));
   }
 
   get innerContentHtml() {
@@ -71,6 +62,13 @@ export class DocumentSearchWindow extends Window {
     this.clearButtonElement.onclick = () => {
       this.clear();
     };
+  }
+
+  documentProviderReady() {
+    this.provider.addFilter(this.searchFilter);
+
+    this.provider.addEventListener(DocumentProvider.EVENT_FILTERED_DOCS_UPDATED,
+      (documents) => this.onFilteredDocumentsUpdate(documents));
   }
 
   //////////////////////////////

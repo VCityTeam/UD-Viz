@@ -4,6 +4,7 @@ import { DocumentSearchWindow } from "./DocumentSearchWindow";
 import { Document } from "../Model/Document";
 import { DocumentBrowserWindow } from "./DocumentBrowserWindow";
 import { Window } from "../../../Utils/GUI/js/Window";
+import { AbstractDocumentWindow } from "./AbstractDocumentWindow";
 
 /**
  * The entry point of the document view. It holds the two main windows, browser
@@ -30,19 +31,35 @@ export class DocumentView extends ModuleView {
      * 
      * @type {DocumentSearchWindow}
      */
-    this.searchWindow = new DocumentSearchWindow(this.provider);
+    this.searchWindow = new DocumentSearchWindow();
 
     /**
      * The browser window.
      * 
      * @type {DocumentBrowserWindow}
      */
-    this.browserWindow = new DocumentBrowserWindow(this.provider);
+    this.browserWindow = new DocumentBrowserWindow();
 
-    this.searchWindow.addEventListener(Window.EVENT_DISABLED, () => {
-      this.disable();
-    });
-    this.browserWindow.addEventListener(Window.EVENT_DISABLED, () => {
+    /**
+     * The different windows of the view.
+     * 
+     * @type {Array<AbstractDocumentWindow>}
+     */
+    this.windows = []
+
+    this.addDocumentWindow(this.searchWindow);
+    this.addDocumentWindow(this.browserWindow);
+  }
+
+  addDocumentWindow(newWindow) {
+    if (! (newWindow instanceof AbstractDocumentWindow)) {
+      throw 'Only instances of AbstractDocumentWindow can be added to the ' +
+        'document view';
+    }
+
+    this.windows.push(newWindow);
+    newWindow.setDocumentProvider(this.provider);
+    newWindow.addEventListener(Window.EVENT_DISABLED, () => {
       this.disable();
     });
   }
@@ -51,13 +68,15 @@ export class DocumentView extends ModuleView {
   ///// MODULE VIEW
 
   enableView() {
-    this.searchWindow.appendTo(this.parentElement);
-    this.browserWindow.appendTo(this.parentElement);
+    for (let window of this.windows) {
+      window.appendTo(this.parentElement);
+    }
     this.provider.refreshDocumentList();
   }
 
   disableView() {
-    this.searchWindow.dispose();
-    this.browserWindow.dispose();
+    for (let window of this.windows) {
+      window.dispose();
+    }
   }
 }

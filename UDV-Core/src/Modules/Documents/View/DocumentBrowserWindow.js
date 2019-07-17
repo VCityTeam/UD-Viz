@@ -1,25 +1,13 @@
-import { Window } from "../../../Utils/GUI/js/Window";
 import { DocumentProvider } from "../ViewModel/DocumentProvider";
 import { Document } from "../Model/Document";
+import { AbstractDocumentWindow } from "./AbstractDocumentWindow";
 
-export class DocumentBrowserWindow extends Window {
+export class DocumentBrowserWindow extends AbstractDocumentWindow {
   /**
    * Constructs a documents browser window.
-   * 
-   * @param {DocumentProvider} provider The document provider.
    */
-  constructor(provider) {
-    super('document2-browser', 'Document - Browser', true);
-
-    /**
-     * The document provider.
-     * 
-     * @type {DocumentProvider}
-     */
-    this.provider = provider;
-
-    this.provider.addEventListener(DocumentProvider.EVENT_DISPLAYED_DOC_CHANGED,
-      (doc) => this.onDisplayedDocumentChange(doc));
+  constructor() {
+    super('Browser');
   }
 
   get innerContentHtml() {
@@ -34,7 +22,7 @@ export class DocumentBrowserWindow extends Window {
           <p>Published on <span id="${this.docPubDateId}"></span></p>
         </div>
       </div>
-      <div>
+      <div id="${this.commandPanelId}">
 
       </div>
     `;
@@ -43,6 +31,11 @@ export class DocumentBrowserWindow extends Window {
   windowCreated() {
     //TODO : move in a CSS file
     this.docImageElement.style.width = '100%';
+  }
+
+  documentProviderReady() {
+    this.provider.addEventListener(DocumentProvider.EVENT_DISPLAYED_DOC_CHANGED,
+      (doc) => this.onDisplayedDocumentChange(doc));
   }
 
   ///////////////////////
@@ -117,5 +110,13 @@ export class DocumentBrowserWindow extends Window {
 
   get docImageElement() {
     return document.getElementById(this.docImageId);
+  }
+
+  get commandPanelId() {
+    return `${this.windowId}_commands`
+  }
+
+  get commandPanelElement() {
+    return document.getElementById(this.commandPanelId);
   }
 }
