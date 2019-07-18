@@ -104,4 +104,23 @@ export class ContributeService {
       throw response.statusText;
     }
   }
+
+  /**
+   * Sends the request to delete the current document.
+   */
+  async deleteDocument() {
+    let currentDoc = this.provider.getDisplayedDocument();
+    let id = currentDoc.id;
+
+    let url = this.documentUrl + '/' + id;
+
+    let response = await this.requestService.request('DELETE', url);
+
+    if (response.status >= 200 && response.status < 300) {
+      await this.provider.refreshDocumentList();
+      return;
+    } else {
+      throw response.statusText;
+    }
+  }
 }

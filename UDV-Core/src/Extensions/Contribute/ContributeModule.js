@@ -3,10 +3,12 @@ import { DocumentCreationWindow } from "./View/DocumentCreationWindow";
 import { DocumentUpdateWindow } from "./View/DocumentUpdateWindow";
 import { ContributeService } from "./Service/ContributeService";
 import { RequestService } from "../../Utils/Request/RequestService";
+import { DocumentDeletionInterface } from "./View/DocumentDeletionInterface";
 
 /**
- * This module is used to manage the update and creation of documents. It holds
- * two windows that extend the document module.
+ * This module is used to manage the update, deletion and creation of documents.
+ * It holds two windows that extend the document module, and creates a button
+ * for the document deletion.
  */
 export class ContributeModule {
   /**
@@ -30,6 +32,7 @@ export class ContributeModule {
     this.creationWindow = new DocumentCreationWindow(this.contributeService,
       itownsView, cameraControls, documentImageOrienter);
     this.updateWindow = new DocumentUpdateWindow(this.contributeService);
+    new DocumentDeletionInterface(documentModule, this.contributeService);
 
     documentModule.addDocumentWindow(this.creationWindow);
     documentModule.addDocumentWindow(this.updateWindow);
