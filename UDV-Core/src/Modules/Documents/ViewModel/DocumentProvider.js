@@ -169,7 +169,9 @@ export class DocumentProvider extends EventSender {
    * that can be put into the `src` attribute of an `img` tag (so either an
    * URL or a base64 encoded file).
    * 
-   * @returns {string | undefined}
+   * @async
+   * 
+   * @returns {Promise<string | undefined>}
    */
   async getDisplayedDocumentImage() {
     if (this.displayedDocumentIndex === undefined) {

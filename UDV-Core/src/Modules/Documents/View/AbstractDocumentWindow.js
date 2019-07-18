@@ -5,8 +5,14 @@ import { DocumentView } from "./DocumentView";
 import './CSS/DocumentWindow.css'
 
 export class AbstractDocumentWindow extends Window {
+  /**
+   * Constructs an abstract document window from a name.
+   * 
+   * @param {string} name The name of the window.
+   */
   constructor(name) {
-    super(`document2-${name}`, `Document - ${name}`, true);
+    super(`document2-${name.replace(/ +/, "-").toLowerCase()}`,
+      `Document - ${name}`, true);
 
     /**
      * The document provider.

@@ -22,5 +22,6 @@ baseDemo.loadConfigFile(
     baseDemo.addModuleView('documents', documentModule.view);
 
     ////// DOCUMENTS VISUALIZER (to orient the document)
-    const documentVisualizer = new udvcore.DocumentVisualizer(documentModule);
+    const imageOrienter = new udvcore.DocumentImageOrienter(documentModule,
+        baseDemo.view, baseDemo.controls);
 });

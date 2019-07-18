@@ -36,4 +36,4 @@ export { LinkService }              from './Extensions/DocumentLinks/services/Li
 export { DocumentLinkWindow }       from './Extensions/DocumentLinks/views/DocumentLinkWindow';
 
 export { DocumentModule }           from './Modules/Documents/DocumentModule';
-export { DocumentVisualizer }       from './Modules/DocumentVisualizer/DocumentVisualizer';
+export { DocumentImageOrienter }    from './Modules/DocumentVisualizer/View/DocumentImageOrienter';
