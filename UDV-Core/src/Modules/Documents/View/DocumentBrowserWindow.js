@@ -2,6 +2,11 @@ import { DocumentProvider } from "../ViewModel/DocumentProvider";
 import { Document } from "../Model/Document";
 import { AbstractDocumentWindow } from "./AbstractDocumentWindow";
 
+/**
+ * The window responsible for displaying the currently displayed document, as
+ * defined in the document provider. It also serves as a container to add
+ * extension buttons.
+ */
 export class DocumentBrowserWindow extends AbstractDocumentWindow {
   /**
    * Constructs a documents browser window.
@@ -31,7 +36,7 @@ export class DocumentBrowserWindow extends AbstractDocumentWindow {
           <p>Published on <span id="${this.docPubDateId}"></span></p>
         </div>
       </div>
-      <div id="${this.commandPanelId}">
+      <div id="${this.commandPanelId}" class="box-section">
 
       </div>
     `;
@@ -58,7 +63,7 @@ export class DocumentBrowserWindow extends AbstractDocumentWindow {
   ///// DOCUMENT HANDLING
 
   /**
-   * Triggered when the displayed document change.
+   * Triggered when the displayed document change. Updates the HTML fields.
    * 
    * @param {Document} newDocument The new displayed document.
    */

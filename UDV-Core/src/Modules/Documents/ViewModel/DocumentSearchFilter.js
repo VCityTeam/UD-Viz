@@ -1,9 +1,18 @@
 import { DocumentFilter } from "./DocumentFilter";
 import { Document } from "../Model/Document";
 
+/**
+ * A document filter to use with the search window. It filters the documents
+ * depending on some of their attributes (keywords for title and description,
+ * subject, publication and refering dates).
+ */
 export class DocumentSearchFilter extends DocumentFilter {
+  /**
+   * Creates a new document search filter.
+   */
   constructor() {
     super((doc) => this.filterDocument(doc));
+    // The filter function is our 'filterDocument' method.
 
     /**
      * A list of keywords to search in the title or the description of the

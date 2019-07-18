@@ -6,7 +6,9 @@ import { DocumentFilter } from "./DocumentFilter";
 /**
  * Represents the set of documents that is displayed in the view. This includes
  * the list of filtered documents, as well as the currently displayed one. It
- * uses a `DocumentFetcher` to retrieve documents from the server.
+ * uses a `DocumentFetcher` to retrieve documents from the server. It also emits
+ * events when the filtered documents, or the currently displayed document
+ * change.
  */
 export class DocumentProvider extends EventSender {
   /**

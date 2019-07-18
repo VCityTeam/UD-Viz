@@ -8,7 +8,8 @@ import { AbstractDocumentWindow } from "./AbstractDocumentWindow";
 
 /**
  * The entry point of the document view. It holds the two main windows, browser
- * and search.
+ * and search. It also accepts instances of `AbstractDocumentWindow` as
+ * extension windows.
  */
 export class DocumentView extends ModuleView {
   /**

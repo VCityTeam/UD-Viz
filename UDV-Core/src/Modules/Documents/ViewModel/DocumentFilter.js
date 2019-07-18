@@ -1,7 +1,8 @@
 import { Document } from "../Model/Document";
 
 /**
- * A filter for documents.
+ * A filter for documents. It is essentially a function that determines if a
+ * document is acceptable or not.
  */
 export class DocumentFilter {
   /**

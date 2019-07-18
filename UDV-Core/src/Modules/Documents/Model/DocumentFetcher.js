@@ -2,6 +2,10 @@ import { RequestService } from "../../../Utils/Request/RequestService";
 import { Document } from "./Document";
 import { imageToDataURI } from "../../../Utils/DataProcessing/DataProcessing";
 
+/**
+ * This class is responsible of fetching the documents from the server. It is
+ * configured by an object containing the server URL and routes.
+ */
 export class DocumentFetcher {
   /**
    * Constructs a new document fetcher.

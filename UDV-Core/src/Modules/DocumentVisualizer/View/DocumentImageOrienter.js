@@ -5,6 +5,11 @@ import './DocumentImageOrienter.css';
 import { DocumentProvider } from "../../Documents/ViewModel/DocumentProvider";
 import { DocumentModule } from "../../Documents/DocumentModule";
 
+/**
+ * Represents the document visualizer, under the form of an oriented image. It
+ * is a window without its default style, centered in the view with an opacity
+ * control.
+ */
 export class DocumentImageOrienter extends AbstractDocumentWindow {
   /**
    * Creates a new document image orienter.
@@ -15,6 +20,7 @@ export class DocumentImageOrienter extends AbstractDocumentWindow {
    */
   constructor(documentModule, itownsView, cameraControls) {
     super('Image Orienter');
+    // Remove the default style of the window
     this.defaultStyle = false;
     this.windowDisplayWhenVisible = 'block';
 
@@ -24,7 +30,18 @@ export class DocumentImageOrienter extends AbstractDocumentWindow {
       this.startTravel();
     });
 
+    /**
+     * The iTowns view.
+     * 
+     * @type {any}
+     */
     this.itownsView = itownsView;
+
+    /**
+     * The camera controls.
+     * 
+     * @type {any}
+     */
     this.cameraControls = cameraControls;
   }
 
@@ -69,6 +86,15 @@ export class DocumentImageOrienter extends AbstractDocumentWindow {
       () => this.disable());
   }
 
+  //////////////////////
+  ///// TRAVEL & OPACITY
+
+  /**
+   * Triggered when the opacity of the slider changes. This method apply the
+   * change on the image and the output element.
+   * 
+   * @private
+   */
   _onOpacityChange() {
     let opacity = this.opacitySliderElement.value;
     this.opacityElement.value = opacity;
