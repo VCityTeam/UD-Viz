@@ -1,8 +1,10 @@
-/* Update */
+/* forms */
 
-.doc-update-form input[type="date"],
-.doc-update-form textarea,
-.doc-update-form select {
+.doc-update-creation-form input[type="date"],
+.doc-update-creation-form input[type="text"],
+.doc-update-creation-form input[type="file"],
+.doc-update-creation-form textarea,
+.doc-update-creation-form select {
   display: block;
   width: 100%;
   max-width: 100%;

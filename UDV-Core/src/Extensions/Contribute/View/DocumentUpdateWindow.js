@@ -33,7 +33,7 @@ export class DocumentUpdateWindow extends AbstractDocumentWindow {
         <div>
           <img class="browser-doc-img" src="" alt="Document image"
             id="${this.docImageId}">
-          <form id="${this.formId}" class="doc-update-form">
+          <form id="${this.formId}" class="doc-update-creation-form">
             <label for="${this.subjectId}">Subject</label>
             <select name="subject" id="${this.subjectId}">
               <option value="">All subjects</option>

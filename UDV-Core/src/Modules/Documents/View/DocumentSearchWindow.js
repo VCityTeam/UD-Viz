@@ -20,6 +20,14 @@ export class DocumentSearchWindow extends AbstractDocumentWindow {
      * @type {DocumentSearchFilter}
      */
     this.searchFilter = new DocumentSearchFilter();
+
+    /**
+     * @type {Array<{
+      *   label: string,
+      *   callback: (doc: Array<Document>) => any
+      * }>}
+      */
+     this.extensionCommands = [];
   }
 
   get innerContentHtml() {
@@ -62,6 +70,11 @@ export class DocumentSearchWindow extends AbstractDocumentWindow {
           </ul>
         </div>
       </div>
+      <div class="box-section">
+        <div id="${this.commandPanelId}">
+          
+        </div>
+      </div>
     `;
   }
 
@@ -69,6 +82,11 @@ export class DocumentSearchWindow extends AbstractDocumentWindow {
     this.window.style.width = '270px';
     this.window.style.top = '10px';
     this.window.style.left = '10px';
+
+    // Add extension commands
+    for (let command of this.extensionCommands) {
+      this._createCommandButton(command.label, command.callback);
+    }
 
     this.inputFormElement.onsubmit = () => {
       this.search();
@@ -156,6 +174,46 @@ export class DocumentSearchWindow extends AbstractDocumentWindow {
     this.provider.refreshDocumentList();
   }
 
+  ////////////////////////
+  ///// DOCUMENT EXTENSION
+
+  /**
+   * Adds a command (button) in the search window. The callback will be called
+   * when the user presses the button. The current filtered documents are passed
+   * as parameter.
+   * 
+   * @param {string} label The button label.
+   * @param {(doc: Array<Document>) => any} callback The callback to call when
+   * the button is pressed. The current filtered documents are passed as
+   * parameter.
+   */
+  addDocumentsCommand(label, callback) {
+    this.extensionCommands.push({
+      label, callback
+    });
+    if (this.isCreated) {
+      this._createCommandButton(label, callback);
+    }
+  }
+
+  /**
+   * Creates the command button.
+   * 
+   * @private
+   * 
+   * @param {string} label The button label.
+   * @param {(doc: Array<Document>) => any} callback The callback to call when
+   * the button is pressed.
+   */
+  _createCommandButton(label, callback) {
+    let button = document.createElement('button');
+    button.innerText = label;
+    button.onclick = () => {
+      callback(this.provider.getFilteredDocuments());
+    };
+    this.commandPanelElement.appendChild(button);
+  }
+
   ////////////
   //// GETTERS
 
@@ -237,5 +295,13 @@ export class DocumentSearchWindow extends AbstractDocumentWindow {
 
   get docCountElement() {
     return document.getElementById(this.docCountId);
+  }
+
+  get commandPanelId() {
+    return `${this.windowId}_commands`
+  }
+
+  get commandPanelElement() {
+    return document.getElementById(this.commandPanelId);
   }
 }

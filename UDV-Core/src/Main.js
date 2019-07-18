@@ -38,4 +38,6 @@ export { DocumentLinkWindow }       from './Extensions/DocumentLinks/views/Docum
 export { DocumentModule }           from './Modules/Documents/DocumentModule';
 export { DocumentImageOrienter }    from './Modules/DocumentVisualizer/View/DocumentImageOrienter';
 
+export { CameraPositioner }         from './Modules/CameraPositioner/CameraPositioner';
+
 export { ContributeModule }         from './Extensions/Contribute/ContributeModule';

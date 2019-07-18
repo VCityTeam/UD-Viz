@@ -65,4 +65,18 @@ export class DocumentModule {
   addDisplayedDocumentCommand(label, callback) {
     this.view.browserWindow.addDocumentCommand(label, callback);
   }
+
+  /**
+   * Adds a command (button) in the search window. The callback will be called
+   * when the user presses the button. The current filtered documents are passed
+   * as parameter.
+   * 
+   * @param {string} label The button label.
+   * @param {(doc: Array<Document>) => any} callback The callback to call when
+   * the button is pressed. The current filtered documents are passed as
+   * parameter.
+   */
+  addFilteredDocumentsCommand(label, callback) {
+    this.view.searchWindow.addDocumentsCommand(label, callback);
+  }
 }
