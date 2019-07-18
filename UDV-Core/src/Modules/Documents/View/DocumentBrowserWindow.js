@@ -36,8 +36,23 @@ export class DocumentBrowserWindow extends AbstractDocumentWindow {
           <p>Published on <span id="${this.docPubDateId}"></span></p>
         </div>
       </div>
-      <div id="${this.commandPanelId}" class="box-section">
+      <div class="box-section">
+        <div id="${this.commandPanelId}">
 
+        </div>
+        <hr>
+        <div class="browser-arrows-panel">
+          <div class="left-arrow">
+            <span class="clickable-text" id="${this.leftArrowId}">
+              &#9666 <span id="${this.leftArrowTextId}"></span>
+            </span>
+          </div>
+          <div class="right-arrow">
+            <span class="clickable-text" id="${this.rightArrowId}">
+              <span id="${this.rightArrowTextId}"></span> &#9656
+            </span>
+          </div>
+        </div>
       </div>
     `;
   }
@@ -74,10 +89,34 @@ export class DocumentBrowserWindow extends AbstractDocumentWindow {
    * @param {Document} newDocument The new displayed document.
    */
   async onDisplayedDocumentChange(newDocument) {
-    if (newDocument === undefined) {
+    if (!newDocument) {
+      this._setDefaultFieldValues();
+      this._updateNavigationArrows(undefined);
       return;
     }
 
+    this._fillFieldsFromDocument(newDocument);
+    this._updateNavigationArrows(newDocument);
+  }
+
+  /**
+   * Sets the default values for the HTML fields.
+   */
+  _setDefaultFieldValues() {
+    this.docTitleElement.innerText = 'No document found';
+    this.docDescriptionElement.innerText = '';
+    this.docSubjectElement.innerText = '';
+    this.docPubDateElement.innerText = '';
+    this.docRefDateElement.innerText = '';
+    this.docImageElement.src = '';
+  }
+
+  /**
+   * Updates the HTML fields so that they describe the new displayed document.
+   * 
+   * @param {Document} newDocument The new displayed document.
+   */
+  async _fillFieldsFromDocument(newDocument) {
     this.docTitleElement.innerText = newDocument.title;
     this.docDescriptionElement.innerText = newDocument.description;
     this.docSubjectElement.innerText = newDocument.subject;
@@ -86,6 +125,37 @@ export class DocumentBrowserWindow extends AbstractDocumentWindow {
     this.docRefDateElement.innerText =
       (new Date(newDocument.refDate)).toLocaleDateString();
     this.docImageElement.src = await this.provider.getDisplayedDocumentImage();
+  }
+
+  /**
+   * Updates the navigation arrows so that they point to the next / previous
+   * documents. If there isn't a displayed document, of if this is the only
+   * document, the arrows are disabled.
+   * 
+   * @param {Document} currentDocument The current document.
+   */
+  _updateNavigationArrows(currentDocument) {
+    let docs = this.provider.getFilteredDocuments();
+
+    if (!currentDocument || docs.length <= 1) {
+      this.leftArrowTextElement.innerText = '';
+      this.rightArrowTextElement.innerText = '';
+      this.leftArrowElement.onclick = undefined;
+      this.rightArrowElement.onclick = undefined;
+      return;
+    }
+
+    let currentDocId = docs.findIndex((doc) => doc.id === currentDocument.id);
+    let nextDocId = (docs.length + (currentDocId + 1)) % docs.length;
+    let prevDocId = (docs.length + (currentDocId - 1)) % docs.length;
+
+    this.leftArrowTextElement.innerText = docs[prevDocId].title;
+    this.rightArrowTextElement.innerText = docs[nextDocId].title;
+
+    this.leftArrowElement.onclick = () =>
+      this.provider.shiftDisplayedDocumentIndex(-1);
+    this.rightArrowElement.onclick = () =>
+      this.provider.shiftDisplayedDocumentIndex(1);
   }
 
   ////////////////////////
@@ -184,5 +254,37 @@ export class DocumentBrowserWindow extends AbstractDocumentWindow {
 
   get commandPanelElement() {
     return document.getElementById(this.commandPanelId);
+  }
+
+  get leftArrowId() {
+    return `${this.windowId}_left_arrow`;
+  }
+
+  get leftArrowElement() {
+    return document.getElementById(this.leftArrowId);
+  }
+
+  get leftArrowTextId() {
+    return `${this.windowId}_left_arrow_text`;
+  }
+
+  get leftArrowTextElement() {
+    return document.getElementById(this.leftArrowTextId);
+  }
+
+  get rightArrowId() {
+    return `${this.windowId}_right_arrow`;
+  }
+
+  get rightArrowElement() {
+    return document.getElementById(this.rightArrowId);
+  }
+
+  get rightArrowTextId() {
+    return `${this.windowId}_right_arrow_text`;
+  }
+
+  get rightArrowTextElement() {
+    return document.getElementById(this.rightArrowTextId);
   }
 }

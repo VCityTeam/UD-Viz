@@ -27,3 +27,23 @@
   box-shadow: 0 0 1px 1px #0003;
   border-radius: 4px;
 }
+
+.browser-arrows-panel {
+  display: grid;
+  grid-template-columns: auto auto;
+  margin: 10px;
+  font-size: 15px;
+  font-weight: bold;
+}
+
+.browser-arrows-panel .clickable-text:hover{
+  text-decoration: none;
+}
+
+.browser-arrows-panel .left-arrow {
+  text-align: left;
+}
+
+.browser-arrows-panel .right-arrow {
+  text-align: right;
+}
