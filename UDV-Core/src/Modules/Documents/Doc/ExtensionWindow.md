@@ -23,7 +23,7 @@ export class DocumentExtension extends AbstractDocumentWindow {
     });
   }
 
-  get html() {
+  get innerContentHtml() {
     return /*html*/`
 
     `;

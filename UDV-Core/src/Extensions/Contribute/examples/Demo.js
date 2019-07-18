@@ -25,12 +25,15 @@ baseDemo.loadConfigFile(
         {type: BaseDemo.AUTHENTICATION_MODULE});
 
     ////// DOCUMENTS MODULE
-    const documents = new udvcore.DocumentController(baseDemo.view,
-        baseDemo.controls, {temporal: baseDemo.temporal, active: false},
-        baseDemo.config, requestService);
-    baseDemo.addModuleView('documents', documents);
+    const documentModule = new udvcore.DocumentModule(requestService,
+        baseDemo.config)
+    baseDemo.addModuleView('documents', documentModule.view);
+
+    ////// DOCUMENTS VISUALIZER (to orient the document)
+    const imageOrienter = new udvcore.DocumentImageOrienter(documentModule,
+        baseDemo.view, baseDemo.controls);
 
     ////// CONTRIBUTE EXTENSION
-    const contributeController = new udvcore.ContributeController(documents,
-        requestService);
+    const contribute = new udvcore.ContributeModule(documentModule,
+        requestService, baseDemo.config);
 });

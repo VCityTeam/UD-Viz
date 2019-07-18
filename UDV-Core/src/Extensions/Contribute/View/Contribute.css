@@ -1,0 +1,10 @@
+/* Update */
+
+.doc-update-form input[type="date"],
+.doc-update-form textarea,
+.doc-update-form select {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}

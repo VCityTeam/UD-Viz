@@ -105,7 +105,6 @@ export class DocumentView extends ModuleView {
       }
 
       let listener = () => {
-        console.log("mylistener");
         windowToDisplay.removeEventListener(listener);
         for (let window of this.hiddenWindows) {
           window.show();

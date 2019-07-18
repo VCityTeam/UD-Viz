@@ -16,6 +16,8 @@ export class DocumentFetcher {
    * @param {string} config.server.url The server url.
    * @param {string} config.server.document The base route for documents.
    * @param {string} config.server.file The route for document files.
+   * @param {boolean} [config.server.authenticate] If authentication should be
+   * used for the request.
    */
   constructor(requestService, config) {
     /**
@@ -39,6 +41,13 @@ export class DocumentFetcher {
      */
     this.fileRoute;
 
+    /**
+     * If authentication should be used for the request.
+     * 
+     * @type {boolean}
+     */
+    this.authenticate;
+
     this.setConfig(config);
 
     /**
@@ -57,6 +66,8 @@ export class DocumentFetcher {
    * @param {string} config.server.url The server url.
    * @param {string} config.server.document The base route for documents.
    * @param {string} config.server.file The route for document files.
+   * @param {boolean} [config.server.authenticate] If authentication should be
+   * used for the request.
    */
   setConfig(config) {
     if (!!config && !!config.server && !!config.server.url &&
@@ -67,6 +78,11 @@ export class DocumentFetcher {
       }
       this.documentUrl += config.server.document;
       this.fileRoute = config.server.file;
+      if (config.server.authenticate !== undefined) {
+        this.authenticate = config.server.authenticate;
+      } else {
+        this.authenticate = false;
+      }
     } else {
       throw 'The given configuration is incorrect.';
     }
@@ -86,7 +102,7 @@ export class DocumentFetcher {
     }
 
     let req = await this.requestService.request('GET', this.documentUrl, {
-      authenticate: false
+      authenticate: this.authenticate
     });
 
     if (req.status !== 200) {
@@ -108,7 +124,8 @@ export class DocumentFetcher {
   async fetchDocumentImage(doc) {
     let imgUrl = this.documentUrl + '/' + doc.id + '/' + this.fileRoute;
     let req = await this.requestService.request('GET', imgUrl, {
-      responseType: 'arraybuffer'
+      responseType: 'arraybuffer',
+      authenticate: this.authenticate
     });
     if (req.status >= 200 && req.status < 300) {
       return imageToDataURI(req.response,
