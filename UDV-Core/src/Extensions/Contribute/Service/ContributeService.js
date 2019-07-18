@@ -1,8 +1,14 @@
 import { DocumentProvider } from "../../../Modules/Documents/ViewModel/DocumentProvider";
 import { RequestService } from "../../../Utils/Request/RequestService";
+import { Document } from "../../../Modules/Documents/Model/Document";
 
+/**
+ * This class performs the requests on the server to update and create
+ * documents.
+ */
 export class ContributeService {
   /**
+   * Creates a contribute service.
    * 
    * @param {RequestService} requestService The request service.
    * @param {DocumentProvider} provider The document provider.
@@ -54,10 +60,10 @@ export class ContributeService {
    * Sends the request to update the document.
    * 
    * @param {FormData} updatedData The updated document data.
+   * 
+   * @returns {Document} The updated document.
    */
   async updateDocument(updatedData) {
-    updatedData = removeEmptyValues(this.updatedData);
-
     //get current doc data and id
     let currentDoc = this.provider.getDisplayedDocument();
     let id = currentDoc.id;
@@ -65,11 +71,13 @@ export class ContributeService {
     let url = this.documentUrl + '/' + id;
 
     let response = await this.requestService.request('PUT', url, {
-      body: this.updatedData
+      body: updatedData
     });
 
     if (response.status >= 200 && response.status < 300) {
-      this.provider.refreshDocumentList();
+      let updated = JSON.parse(response.responseText);
+      await this.provider.refreshDocumentList();
+      this.provider.setDisplayedDocument(updated);
     }
   }
 }

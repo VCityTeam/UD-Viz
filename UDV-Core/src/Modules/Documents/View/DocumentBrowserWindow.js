@@ -29,7 +29,7 @@ export class DocumentBrowserWindow extends AbstractDocumentWindow {
         <h3 id="${this.docTitleId}" class="section-title"></h3>
         <div>
           <img class="browser-doc-img" src="" alt="Document image"
-            id="${this.docImageId}">
+            id="${this.docImageId}" title="CTRL + Click to open the image">
           <p id="${this.docSubjectId}"></p>
           <p id="${this.docDescriptionId}"></p>
           <p>Reffering date : <span id="${this.docRefDateId}"></span></p>
@@ -52,6 +52,12 @@ export class DocumentBrowserWindow extends AbstractDocumentWindow {
     for (let command of this.extensionCommands) {
       this._createCommandButton(command.label, command.callback);
     }
+
+    this.docImageElement.onclick = (event) => {
+      if (event.ctrlKey) {
+        window.open(this.docImageElement.src);
+      }
+    };
   }
 
   documentWindowReady() {
@@ -72,12 +78,12 @@ export class DocumentBrowserWindow extends AbstractDocumentWindow {
       return;
     }
 
-    this.docTitleElement.innerHTML = newDocument.title;
-    this.docDescriptionElement.innerHTML = newDocument.description;
-    this.docSubjectElement.innerHTML = newDocument.subject;
-    this.docPubDateElement.innerHTML =
+    this.docTitleElement.innerText = newDocument.title;
+    this.docDescriptionElement.innerText = newDocument.description;
+    this.docSubjectElement.innerText = newDocument.subject;
+    this.docPubDateElement.innerText =
       (new Date(newDocument.publicationDate)).toLocaleDateString();
-    this.docRefDateElement.innerHTML =
+    this.docRefDateElement.innerText =
       (new Date(newDocument.refDate)).toLocaleDateString();
     this.docImageElement.src = await this.provider.getDisplayedDocumentImage();
   }

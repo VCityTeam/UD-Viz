@@ -2,7 +2,12 @@ import { AbstractDocumentWindow } from "../../../Modules/Documents/View/Abstract
 import { ContributeService } from "../Service/ContributeService";
 
 import "./Contribute.css";
+import { DocumentProvider } from "../../../Modules/Documents/ViewModel/DocumentProvider";
 
+/**
+ * This window is used to update a document. It contains a form that allows to
+ * manipulate 
+ */
 export class DocumentUpdateWindow extends AbstractDocumentWindow {
   /**
    * Creates a new document update window.
@@ -29,18 +34,18 @@ export class DocumentUpdateWindow extends AbstractDocumentWindow {
           <img class="browser-doc-img" src="" alt="Document image"
             id="${this.docImageId}">
           <form id="${this.formId}" class="doc-update-form">
-            <label for="">Subject</label>
+            <label for="${this.subjectId}">Subject</label>
             <select name="subject" id="${this.subjectId}">
               <option value="">All subjects</option>
               <option value="Architecture">Architecture</option>
               <option value="Tourism">Tourism</option>
               <option value="Urbanism">Urbanism</option>
             </select>
-            <label for="">Description</label>
+            <label for="${this.descriptionId}">Description</label>
             <textarea name="description" id="${this.descriptionId}"></textarea>
-            <label for="">Publication date</label>
+            <label for="${this.pubDateId}">Publication date</label>
             <input name="publicationDate" type="date" id="${this.pubDateId}">
-            <label for="">Refering date</label>
+            <label for="${this.refDateId}">Refering date</label>
             <input name="refDate" type="date" id="${this.refDateId}">
             <hr>
             <input type="submit" value="Update">
@@ -68,11 +73,22 @@ export class DocumentUpdateWindow extends AbstractDocumentWindow {
     this.view.browserWindow.addDocumentCommand('Update', () => {
       this._initWindow();
     });
+
+    this.provider.addEventListener(DocumentProvider.EVENT_DISPLAYED_DOC_CHANGED,
+      () => this.disable());
   }
 
   ///////////////////////
   ///// WINDOW APPEARANCE
 
+  /**
+   * This function is called when the user clicks on the 'Update' button in a
+   * document. It requests the document view to display this window, and
+   * change its position to match the document browser. It also updates the
+   * field values.
+   * 
+   * @private
+   */
   async _initWindow() {
     // Request the display
     this.view.requestWindowDisplay(this, true);
@@ -100,6 +116,11 @@ export class DocumentUpdateWindow extends AbstractDocumentWindow {
   /////////////////
   ///// FORM SUBMIT
 
+  /**
+   * Called when the user submits the update form. Updates the document.
+   * 
+   * @private
+   */
   async _submitUpdate() {
     let data = new FormData(this.formElement);
     try {

@@ -38,11 +38,16 @@ export class DocumentSearchWindow extends AbstractDocumentWindow {
             <option value="Urbanism">Urbanism</option>
           </select>
           <label for="${this.inputPubDateStartId}">Publication date</label>
-          From <input type="date" id="${this.inputPubDateStartId}">
-          To <input type="date" id="${this.inputPubDateEndId}">
+          <div class="date-wrapper">
+            <span>From</span><input type="date" id="${this.inputPubDateStartId}"><br>
+            <span>To</span><input type="date" id="${this.inputPubDateEndId}">
+          </div>
           <label for="${this.inputRefDateStartId}">Refering date</label>
-          From <input type="date" id="${this.inputRefDateStartId}">
-          To <input type="date" id="${this.inputRefDateEndId}">
+          <div class="date-wrapper">
+            <span>From</span><input type="date" id="${this.inputRefDateStartId}"><br>
+            <span>To</span><input type="date" id="${this.inputRefDateEndId}">
+          </div>
+          <hr>
           <input type="submit" value="Filter">
           <button id="${this.clearButtonId}">Clear</button>
         </form>

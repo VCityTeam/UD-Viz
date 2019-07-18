@@ -5,7 +5,8 @@ import { ContributeService } from "./Service/ContributeService";
 import { RequestService } from "../../Utils/Request/RequestService";
 
 /**
- * This module is used to manage the update and creation of documents.
+ * This module is used to manage the update and creation of documents. It holds
+ * two windows that extend the document module.
  */
 export class ContributeModule {
   /**
@@ -23,7 +24,7 @@ export class ContributeModule {
       documentModule.provider, config)
 
     this.creationWindow = new DocumentCreationWindow(this.contributeService);
-    this.updateWindow = new DocumentUpdateWindow();
+    this.updateWindow = new DocumentUpdateWindow(this.contributeService);
 
     documentModule.addDocumentWindow(this.creationWindow);
     documentModule.addDocumentWindow(this.updateWindow);
