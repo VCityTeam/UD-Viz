@@ -13,17 +13,22 @@ export class ContributeModule {
    * Constructs a new contribute module.
    * 
    * @param {DocumentModule} documentModule The document module.
+   * @param {DocumentImageOrienter} documentImageOrienter The document image
+   * orienter module.
    * @param {RequestService} requestService The request service.
+   * @param {*} itownsView The iTowns view.
+   * @param {*} cameraControls The planar camera controls.
    * @param {object} config The UDV config.
    * @param {object} config.server The server configuration.
    * @param {string} config.server.url The server url.
    * @param {string} config.server.document The base route for documents.
    */
-  constructor(documentModule, requestService, config) {
+  constructor(documentModule, documentImageOrienter, requestService, itownsView, cameraControls, config) {
     this.contributeService = new ContributeService(requestService,
       documentModule.provider, config)
 
-    this.creationWindow = new DocumentCreationWindow(this.contributeService);
+    this.creationWindow = new DocumentCreationWindow(this.contributeService,
+      itownsView, cameraControls, documentImageOrienter);
     this.updateWindow = new DocumentUpdateWindow(this.contributeService);
 
     documentModule.addDocumentWindow(this.creationWindow);

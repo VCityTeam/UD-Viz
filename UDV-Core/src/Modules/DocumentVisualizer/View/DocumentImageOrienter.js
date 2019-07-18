@@ -27,7 +27,8 @@ export class DocumentImageOrienter extends AbstractDocumentWindow {
     // Add the image orienter as a document window
     documentModule.addDocumentWindow(this);
     documentModule.addDisplayedDocumentCommand('Orient', () => {
-      this.startTravel();
+      this.startTravelToDisplayedDocument();
+      this.view.requestWindowDisplay(this);
     });
 
     /**
@@ -43,6 +44,20 @@ export class DocumentImageOrienter extends AbstractDocumentWindow {
      * @type {any}
      */
     this.cameraControls = cameraControls;
+
+    /**
+     * The visualization camera position.
+     * 
+     * @type {THREE.Vector3}
+     */
+    this.position = undefined;
+
+    /**
+     * The visualization camera orientation.
+     * 
+     * @type {THREE.Quaternion}
+     */
+    this.quaternion = undefined;
   }
 
   get html() {
@@ -50,13 +65,12 @@ export class DocumentImageOrienter extends AbstractDocumentWindow {
       <img id="${this.imageId}"/>
       <div class="controls-panel">
         <button id="${this.closeButtonId}">Close</button>
-        <button id="${this.orientButtonId}">Orient Document</button>
         <div class="slider-container">
           <div class="slider-label">
             <label for="${this.opacitySliderId}">Opacity : </label>
-            <output for="${this.opacitySliderId}" id="${this.opacityId}">0.5</output>
+            <output for="${this.opacitySliderId}" id="${this.opacityId}">1</output>
           </div>
-          <input type="range" min="0" max="1" value="0.5" step="0.01" id="${this.opacitySliderId}">
+          <input type="range" min="0" max="1" value="1" step="0.01" id="${this.opacitySliderId}">
         </div>
       </div>
     `;
@@ -69,10 +83,6 @@ export class DocumentImageOrienter extends AbstractDocumentWindow {
 
     this.closeButtonElement.onclick = () => {
       this.disable();
-    };
-
-    this.orientButtonElement.onclick = () => {
-      this.startTravel();
     };
 
     this.opacitySliderElement.oninput = () => {
@@ -102,11 +112,39 @@ export class DocumentImageOrienter extends AbstractDocumentWindow {
   }
 
   /**
-   * Starts the document orientation. The processes first assign the correct src
-   * to the image, then sets the opacity to 0. After the travel is finished,
-   * the opacity is gradually restored.
+   * Sets the orientation for the camera. `startTravel` should be called after
+   * this method to apply the new position.
+   * 
+   * @param {THREE.Vector3} position The visualization camera position.
    */
-  async startTravel() {
+  setTargetPosition(position) {
+    this.position = position;
+  }
+
+  /**
+   * Sets the orientation for the camera. `startTravel` should be called after
+   * this method to apply the new orientation.
+   * 
+   * @param {THREE.Quaternion} position The visualization camera orientation.
+   */
+  setTargetQuaternion(quaternion) {
+    this.quaternion = quaternion;
+  }
+
+  /**
+   * Sets the image source.
+   * 
+   * @param {string} newSrc The image source.
+   */
+  setImageSrc(newSrc) {
+    this.imageElement.src = newSrc;
+  }
+
+  /**
+   * Retrieve the displayed document and start a travel to its visualization
+   * location.
+   */
+  async startTravelToDisplayedDocument() {
     let currentDoc = this.provider.getDisplayedDocument();
 
     if (!currentDoc) {
@@ -114,46 +152,59 @@ export class DocumentImageOrienter extends AbstractDocumentWindow {
     }
 
     let imageSrc = await this.provider.getDisplayedDocumentImage();
-    
+
+    if (isNaN(currentDoc.visualization.positionX) ||
+      isNaN(currentDoc.visualization.quaternionX)) {
+        return;
+    }
+
+    var docViewPos = new THREE.Vector3();
+    docViewPos.x = parseFloat(currentDoc.visualization.positionX);
+    docViewPos.y = parseFloat(currentDoc.visualization.positionY);
+    docViewPos.z = parseFloat(currentDoc.visualization.positionZ);
+    this.setTargetPosition(docViewPos);
+
+    var docViewQuat = new THREE.Quaternion();
+    docViewQuat.x = parseFloat(currentDoc.visualization.quaternionX);
+    docViewQuat.y = parseFloat(currentDoc.visualization.quaternionY);
+    docViewQuat.z = parseFloat(currentDoc.visualization.quaternionZ);
+    docViewQuat.w = parseFloat(currentDoc.visualization.quaternionW);
+    this.setTargetQuaternion(docViewQuat);
+
+    this.setImageSrc(imageSrc);
+
+    await this.startTravel();
+  }
+
+  /**
+   * Starts the document orientation. The processes first assign the correct src
+   * to the image, then sets the opacity to 0. After the travel is finished,
+   * the opacity is gradually restored.  
+   * To call this function, the `position`, `quaternion` and `imageSrc`
+   * attributes must all have been set beforehand.
+   */
+  async startTravel() {    
     this.imageElement.style.opacity = 0;
     this.opacitySliderElement.value = 0;
     this.opacityElement.value = 0;
-    this.imageElement.src = imageSrc;
 
-    this.view.requestWindowDisplay(this);
+    this.cameraControls.initiateTravel(this.position, 2,
+        this.quaternion, true);
+    this.itownsView.notifyChange();
 
-    // if we have valid data, initiate the animated travel to orient the camera
-    if (!isNaN(currentDoc.visualization.positionX) &&
-      !isNaN(currentDoc.visualization.quaternionX)) {
-      var docViewPos = new THREE.Vector3();
-      docViewPos.x = parseFloat(currentDoc.visualization.positionX);
-      docViewPos.y = parseFloat(currentDoc.visualization.positionY);
-      docViewPos.z = parseFloat(currentDoc.visualization.positionZ);
-
-      // camera orientation for the oriented view
-      var docViewQuat = new THREE.Quaternion();
-      docViewQuat.x = parseFloat(currentDoc.visualization.quaternionX);
-      docViewQuat.y = parseFloat(currentDoc.visualization.quaternionY);
-      docViewQuat.z = parseFloat(currentDoc.visualization.quaternionZ);
-      docViewQuat.w = parseFloat(currentDoc.visualization.quaternionW);
-      this.cameraControls.initiateTravel(docViewPos, 2,
-          docViewQuat, true);
-      this.itownsView.notifyChange();
-
-      setTimeout(() => {
-        let intervalHandle;
-        let increaseOpacity = () => {
-          let nextValue = Number(this.opacitySliderElement.value) + 0.01;
-          if (nextValue >= 1) {
-            nextValue = 1;
-            clearInterval(intervalHandle)
-          }
-          this.opacitySliderElement.value = nextValue;
-          this._onOpacityChange();
-        };
-        intervalHandle = setInterval(increaseOpacity, 15);
-      }, 2000);
-    }
+    setTimeout(() => {
+      let intervalHandle;
+      let increaseOpacity = () => {
+        let nextValue = Number(this.opacitySliderElement.value) + 0.01;
+        if (nextValue >= 1) {
+          nextValue = 1;
+          clearInterval(intervalHandle)
+        }
+        this.opacitySliderElement.value = nextValue;
+        this._onOpacityChange();
+      };
+      intervalHandle = setInterval(increaseOpacity, 15);
+    }, 2000);
   }
 
   /////////////
@@ -165,14 +216,6 @@ export class DocumentImageOrienter extends AbstractDocumentWindow {
 
   get closeButtonElement() {
     return document.getElementById(this.closeButtonId);
-  }
-  
-  get orientButtonId() {
-    return `${this.windowId}_orient_button`
-  }
-
-  get orientButtonElement() {
-    return document.getElementById(this.orientButtonId);
   }
 
   get opacitySliderId() {
