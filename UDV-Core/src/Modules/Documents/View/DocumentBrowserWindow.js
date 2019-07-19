@@ -179,6 +179,21 @@ export class DocumentBrowserWindow extends AbstractDocumentWindow {
     }
   }
 
+  removeDocumentCommand(label) {
+    let index = this.extensionCommands.findIndex((command) =>
+      command.label === label);
+    if (index < 0) {
+      throw 'Cannot remove command: label does not exist (' + label + ')';
+    }
+
+    this.extensionCommands.splice(index, 1);
+    if (this.isCreated) {
+      let buttonId = label.replace(/ +/, '_').toLowerCase();
+      let button = this.commandPanelElement.querySelector(`#${buttonId}`);
+      this.commandPanelElement.removeChild(button);
+    }
+  }
+
   /**
    * Creates the command button.
    * 
@@ -190,6 +205,7 @@ export class DocumentBrowserWindow extends AbstractDocumentWindow {
    */
   _createCommandButton(label, callback) {
     let button = document.createElement('button');
+    button.id = label.replace(/ +/, '_').toLowerCase();
     button.innerText = label;
     button.onclick = () => {
       callback(this.provider.getDisplayedDocument());

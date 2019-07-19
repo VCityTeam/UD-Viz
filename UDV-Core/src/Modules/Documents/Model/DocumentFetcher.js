@@ -28,27 +28,21 @@ export class DocumentFetcher {
     this.requestService = requestService;
     
     /**
-     * The URL to fetch the documents.
-     * 
-     * @type {string}
-     */
-    this.documentUrl;
-
-    /**
-     * The route to fetch the document images.
-     * 
-     * @type {string}
-     */
-    this.fileRoute;
-
-    /**
      * If authentication should be used for the request.
      * 
      * @type {boolean}
      */
-    this.authenticate;
+    this.authenticate = false;
+    if (config.server.authenticate) {
+      this.authenticate = true;
+    }
 
-    this.setConfig(config);
+    /**
+     * The object that defines the server URLs to fetch documents.
+     * 
+     * @type {DocumentSource}
+     */
+    this.source = new DefaultDocumentSource(config);
 
     /**
      * The list of documents.
@@ -59,33 +53,16 @@ export class DocumentFetcher {
   }
 
   /**
-   * Sets the configuration of the documents source.
+   * Sets the source of documents.
    * 
-   * @param {object} config The configuration of UDV.
-   * @param {object} config.server The server configuration.
-   * @param {string} config.server.url The server url.
-   * @param {string} config.server.document The base route for documents.
-   * @param {string} config.server.file The route for document files.
-   * @param {boolean} [config.server.authenticate] If authentication should be
-   * used for the request.
+   * @param {DocumentSource} docSource The document source.
    */
-  setConfig(config) {
-    if (!!config && !!config.server && !!config.server.url &&
-      !!config.server.document && !!config.server.file) {
-      this.documentUrl = config.server.url;
-      if (this.documentUrl.slice(-1) !== "/") {
-        this.documentUrl += "/";
-      }
-      this.documentUrl += config.server.document;
-      this.fileRoute = config.server.file;
-      if (config.server.authenticate !== undefined) {
-        this.authenticate = config.server.authenticate;
-      } else {
-        this.authenticate = false;
-      }
-    } else {
-      throw 'The given configuration is incorrect.';
+  setSource(docSource) {
+    if (! (docSource instanceof DocumentSource)) {
+      throw 'The document source must be an instance of DocumentSource';
     }
+
+    this.source = docSource;
   }
 
   /**
@@ -96,14 +73,8 @@ export class DocumentFetcher {
    * @returns {Promise<Array<Document>>}
    */
   async fetchDocuments() {
-    if (this.documentUrl === undefined) {
-      console.warn('Cannot fetch documents if the config has not been set.');
-      return;
-    }
-
-    let req = await this.requestService.request('GET', this.documentUrl, {
-      authenticate: this.authenticate
-    });
+    let req = await this.requestService.request('GET',
+      this.source.getDocumentUrl(), { authenticate: this.authenticate });
 
     if (req.status !== 200) {
       throw 'Could not fetch the documents: ' + req.statusText;
@@ -122,7 +93,7 @@ export class DocumentFetcher {
    * @returns {string} The data string of the image.
    */
   async fetchDocumentImage(doc) {
-    let imgUrl = this.documentUrl + '/' + doc.id + '/' + this.fileRoute;
+    let imgUrl = this.source.getImageUrl(doc);
     let req = await this.requestService.request('GET', imgUrl, {
       responseType: 'arraybuffer',
       authenticate: this.authenticate
@@ -132,5 +103,94 @@ export class DocumentFetcher {
         req.getResponseHeader('Content-Type'));
     }
     throw 'Could not get the file';
+  }
+}
+
+/**
+ * An object that holds and returns the URLs for documents.
+ */
+export class DocumentSource {
+  constructor() {
+
+  }
+
+  /**
+   * Returns the URL to retrieve the documents.
+   * 
+   * @abstract
+   * 
+   * @returns {string}
+   */
+  getDocumentUrl() {
+    return '';
+  }
+
+  /**
+   * Returns the URL to retrieve the image of the document.
+   * 
+   * @param {Document} doc The document.
+   * 
+   * @abstract
+   * 
+   * @returns {string}
+   */
+  getImageUrl(doc) {
+    return '';
+  }
+}
+
+/**
+ * The default document source, built from the application configuration.
+ */
+class DefaultDocumentSource extends DocumentSource {
+  /**
+   * 
+   * @param {object} config The configuration of UDV.
+   * @param {object} config.server The server configuration.
+   * @param {string} config.server.url The server url.
+   * @param {string} config.server.document The base route for documents.
+   * @param {string} config.server.file The route for document files.
+   */
+  constructor(config) {
+    super();
+
+    /**
+     * The URL to fetch the documents.
+     * 
+     * @type {string}
+     */
+    this.documentUrl;
+
+    /**
+     * The route to fetch the document images.
+     * 
+     * @type {string}
+     */
+    this.fileRoute;
+
+    if (!!config && !!config.server && !!config.server.url &&
+      !!config.server.document && !!config.server.file) {
+      this.documentUrl = config.server.url;
+      if (this.documentUrl.slice(-1) !== "/") {
+        this.documentUrl += "/";
+      }
+      this.documentUrl += config.server.document;
+      this.fileRoute = config.server.file;
+    } else {
+      throw 'The given configuration is incorrect.';
+    }
+  }
+
+  getDocumentUrl() {
+    return this.documentUrl;
+  }
+
+  /**
+   * @override
+   * 
+   * @param {Document} doc The document.
+   */
+  getImageUrl(doc) {
+    return this.documentUrl + '/' + doc.id + '/' + this.fileRoute;
   }
 }

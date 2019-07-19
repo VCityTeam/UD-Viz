@@ -40,3 +40,4 @@ export { DocumentImageOrienter }    from './Modules/DocumentVisualizer/View/Docu
 export { CameraPositioner }         from './Modules/CameraPositioner/CameraPositioner';
 
 export { ContributeModule }         from './Extensions/Contribute/ContributeModule';
+export { DocumentValidation }       from './Extensions/DocumentValidation/DocumentValidation';
