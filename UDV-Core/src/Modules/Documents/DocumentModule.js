@@ -54,29 +54,40 @@ export class DocumentModule {
   }
   
   /**
-   * Adds a command (button) in the browser window. The callback will be called
-   * when the user presses the button. The current document will be passed as
-   * parameter.
+   * Creates a new extension for the document browser. An extension can be
+   * either a command button or a panel. An extension should be identified by
+   * a unique label.
    * 
    * @param {string} label The button label.
-   * @param {(doc: Document) => any} callback The callback to call when the
-   * button is pressed. The current displayed document is passed as parameter.
+   * @param {object} options The extension options
+   * @param {string} options.type The type of the option. Can be either `button`
+   * or `panel`.
+   * @param {(doc: Document) => string} options.html The inside HTML of the
+   * extension. For a button, this will be the displayed text. For a panel, it
+   * will be the inside HTML.
+   * @param {(doc: Document) => any} [options.callback] The callback to call
+   * for a button.
    */
-  addDisplayedDocumentCommand(label, callback) {
-    this.view.browserWindow.addDocumentCommand(label, callback);
+  addBrowserExtension(label, options) {
+    this.view.browserWindow.addDocumentExtension(label, options)
   }
 
   /**
-   * Adds a command (button) in the search window. The callback will be called
-   * when the user presses the button. The current filtered documents are passed
-   * as parameter.
+   * Creates a new extension for the document search. An extension can be
+   * either a command button or a panel. An extension should be identified by
+   * a unique label.
    * 
-   * @param {string} label The button label.
-   * @param {(doc: Array<Document>) => any} callback The callback to call when
-   * the button is pressed. The current filtered documents are passed as
-   * parameter.
+   * @param {string} label The extension label.
+   * @param {object} options The extension options
+   * @param {string} options.type The type of the option. Can be either `button`
+   * or `panel`.
+   * @param {(doc: Document[]) => string} options.html The inside HTML of the
+   * extension. For a button, this will be the displayed text. For a panel, it
+   * will be the inside HTML.
+   * @param {(doc: Document[]) => any} [options.callback] The callback to call
+   * for a button.
    */
-  addFilteredDocumentsCommand(label, callback) {
-    this.view.searchWindow.addDocumentsCommand(label, callback);
+  addDocumentsExtension(label, options) {
+    this.view.searchWindow.addDocumentsExtension(label, options);
   }
 }

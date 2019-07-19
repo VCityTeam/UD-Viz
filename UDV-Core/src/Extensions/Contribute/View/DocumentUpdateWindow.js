@@ -70,8 +70,10 @@ export class DocumentUpdateWindow extends AbstractDocumentWindow {
   }
 
   documentWindowReady() {
-    this.view.browserWindow.addDocumentCommand('Update', () => {
-      this._initWindow();
+    this.view.browserWindow.addDocumentExtension('Update', {
+      type: 'button',
+      html: () => 'Update',
+      callback: () => this._initWindow()
     });
 
     this.provider.addEventListener(DocumentProvider.EVENT_DISPLAYED_DOC_CHANGED,

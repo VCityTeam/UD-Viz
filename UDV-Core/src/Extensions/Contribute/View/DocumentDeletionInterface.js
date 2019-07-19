@@ -14,9 +14,14 @@ export class DocumentDeletionInterface {
    * @param {ContributeService} contributeService The contribute service.
    */
   constructor(documentModule, contributeService) {
-    documentModule.addDisplayedDocumentCommand('Delete', async () => {
-      if (confirm('You are going to delete the document. This operation ' +
-        'is irreversible. Do you want to continue ?')) {
+    documentModule.addBrowserExtension('Delete', {
+      type: 'button',
+      html: () => 'Delete',
+      callback: async () => {
+        if (!confirm('You are going to delete the document. This operation ' +
+          'is irreversible. Do you want to continue ?')) {
+          return;
+        }
         try {
           await contributeService.deleteDocument();
         } catch (e) {

@@ -22,12 +22,18 @@ export class DocumentSearchWindow extends AbstractDocumentWindow {
     this.searchFilter = new DocumentSearchFilter();
 
     /**
-     * @type {Array<{
-      *   label: string,
-      *   callback: (doc: Array<Document>) => any
+     * Represents a list of extensions. An extension can either be a button or
+     * a panel.
+     * 
+     * @type {Object.<string, {
+      *  type: 'button' | 'panel',
+      *  label: string,
+      *  id: string,
+      *  callback?: (doc: Document[]) => any,
+      *  html: (doc: Document[]) => string
       * }>}
       */
-     this.extensionCommands = [];
+     this.extensions = {};
   }
 
   get innerContentHtml() {
@@ -70,6 +76,9 @@ export class DocumentSearchWindow extends AbstractDocumentWindow {
           </ul>
         </div>
       </div>
+      <div id="${this.extensionContainerId}">
+      
+      </div>
       <div class="box-section">
         <div id="${this.commandPanelId}">
           
@@ -83,10 +92,11 @@ export class DocumentSearchWindow extends AbstractDocumentWindow {
     this.window.style.top = '10px';
     this.window.style.left = '10px';
 
-    // Add extension commands
-    for (let command of this.extensionCommands) {
-      this._createCommandButton(command.label, command.callback);
+    // Add extensions
+    for (let extension of Object.values(this.extensions)) {
+      this._createExtensionElement(extension);
     }
+    this.updateExtensions();
 
     this.inputFormElement.onsubmit = () => {
       this.search();
@@ -125,6 +135,8 @@ export class DocumentSearchWindow extends AbstractDocumentWindow {
       list.appendChild(item);
     }
     this.docCountElement.innerHTML = documents.length;
+
+    this.updateExtensions();
   }
 
 
@@ -174,44 +186,100 @@ export class DocumentSearchWindow extends AbstractDocumentWindow {
     this.provider.refreshDocumentList();
   }
 
-  ////////////////////////
-  ///// DOCUMENT EXTENSION
+  //////////////////////////
+  ///// DOCUMENTS EXTENSIONS
 
   /**
-   * Adds a command (button) in the search window. The callback will be called
-   * when the user presses the button. The current filtered documents are passed
-   * as parameter.
+   * Creates a new extension for the document search. An extension can be
+   * either a command button or a panel. An extension should be identified by
+   * a unique label.
    * 
-   * @param {string} label The button label.
-   * @param {(doc: Array<Document>) => any} callback The callback to call when
-   * the button is pressed. The current filtered documents are passed as
-   * parameter.
+   * @param {string} label The extension label.
+   * @param {object} options The extension options
+   * @param {string} options.type The type of the option. Can be either `button`
+   * or `panel`.
+   * @param {(doc: Document[]) => string} options.html The inside HTML of the
+   * extension. For a button, this will be the displayed text. For a panel, it
+   * will be the inside HTML.
+   * @param {(doc: Document[]) => any} [options.callback] The callback to call
+   * for a button.
    */
-  addDocumentsCommand(label, callback) {
-    this.extensionCommands.push({
-      label, callback
-    });
+  addDocumentsExtension(label, options) {
+    if (!!this.extensions[label]) {
+      throw 'Extension already exists : ' + label;
+    }
+    options.label = label;
+    options.id = label.replace(/ +/, ' ').toLowerCase();
+    this.extensions[label] = options;
+
     if (this.isCreated) {
-      this._createCommandButton(label, callback);
+      this._createExtensionElement(options);
+      this.updateExtensions();
     }
   }
 
   /**
-   * Creates the command button.
+   * Removes an existing extension.
+   * 
+   * @param {string} label The extension label.
+   */
+  removeDocumentsExtension(label) {
+    let extension = this.extensions[label];
+    if (!extension) {
+      throw 'Extension does not exist : ' + label;
+    }
+
+    let element = document.getElementById(extension.id);
+    if (element) {
+      element.parentElement.removeChild(element);
+    }
+    delete this.extensions[label];
+  }
+
+  /**
+   * Proceeds to create an extension. If this is a button, it will be added to
+   * the commands panel. If this is a panel, it will be pushed under the
+   * document description.
    * 
    * @private
    * 
-   * @param {string} label The button label.
-   * @param {(doc: Array<Document>) => any} callback The callback to call when
-   * the button is pressed.
+   * @param {object} extension 
+   * @param {string} extension.type The type of the option. Can be either `button`
+   * or `panel`.
+   * @param {string} extension.id The id of the element.
+   * @param {string} extension.label The label of the extension.
+   * @param {(doc: Document[]) => string} extension.html The inside HTML of the
+   * extension. For a button, this will be the displayed text. For a panel, it
+   * will be the inside HTML.
+   * @param {(doc: Document[]) => any} [extension.callback] The callback to call
+   * for a button.
    */
-  _createCommandButton(label, callback) {
-    let button = document.createElement('button');
-    button.innerText = label;
-    button.onclick = () => {
-      callback(this.provider.getFilteredDocuments());
-    };
-    this.commandPanelElement.appendChild(button);
+  _createExtensionElement(extension) {
+    if (extension.type === 'button') {
+      let button = document.createElement('button');
+      button.id = extension.id;
+      button.onclick = () =>
+        extension.callback(this.provider.getFilteredDocuments());
+      this.commandPanelElement.appendChild(button);
+    } else if (extension.type === 'panel') {
+      let panel = document.createElement('div');
+      panel.id = extension.id;
+      panel.className = 'box-section';
+      this.extensionContainerElement.appendChild(panel);
+    } else {
+      throw 'Invalid extension type : ' + extension.type;
+    }
+  }
+
+  /**
+   * Makes the extensions update their HTML value. This function is called
+   * after each document update, but can also be called manually if required.
+   */
+  updateExtensions() {
+    for (let extension of Object.values(this.extensions)) {
+      let element = document.getElementById(extension.id);
+      element.innerHTML = extension.html(this.provider.getFilteredDocuments());
+    }
   }
 
   ////////////
@@ -303,5 +371,13 @@ export class DocumentSearchWindow extends AbstractDocumentWindow {
 
   get commandPanelElement() {
     return document.getElementById(this.commandPanelId);
+  }
+
+  get extensionContainerId() {
+    return `${this.windowId}_extensions`;
+  }
+
+  get extensionContainerElement() {
+    return document.getElementById(this.extensionContainerId);
   }
 }

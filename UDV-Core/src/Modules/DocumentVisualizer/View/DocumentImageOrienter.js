@@ -26,9 +26,13 @@ export class DocumentImageOrienter extends AbstractDocumentWindow {
 
     // Add the image orienter as a document window
     documentModule.addDocumentWindow(this);
-    documentModule.addDisplayedDocumentCommand('Orient', () => {
-      this.startTravelToDisplayedDocument();
-      this.view.requestWindowDisplay(this);
+    documentModule.addBrowserExtension('Orient', {
+      type: 'button',
+      html: () => 'Orient',
+      callback: () => {
+        this.startTravelToDisplayedDocument();
+        this.view.requestWindowDisplay(this);
+      }
     });
 
     /**

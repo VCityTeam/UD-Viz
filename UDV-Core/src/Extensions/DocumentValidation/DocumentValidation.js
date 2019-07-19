@@ -14,39 +14,48 @@ export class DocumentValidation {
 
     this.validationSource = new ValidationDocumentSource(config);
 
-    documentModule.addFilteredDocumentsCommand('Documents in validation', () => {
-      if (!this.oldSource) {
-        console.log('show documents in validation');
-        this.oldSource = documentModule.provider.fetcher.source;
-        documentModule.provider.fetcher.authenticate = true;
-        documentModule.provider.fetcher.setSource(this.validationSource);
-        documentModule.view.browserWindow.addDocumentCommand('Validate', (doc) => {
-          if (!confirm('Are you sure do validate this document ? ' +
-            'This operation is irreversible.')) {
-            return;
-          }
-          this.validationService.validate(doc).catch((reason) => {
-            alert(reason.statusText);
-          }).then(() => {
-            documentModule.provider.refreshDocumentList();
-          });
-        });
-      } else {
-        console.log('hide documents in validation');
-        documentModule.provider.fetcher.authenticate = false;
-        documentModule.provider.fetcher.setSource(this.oldSource);
-        this.oldSource = undefined;
-        documentModule.view.browserWindow.removeDocumentCommand('Validate');
-      }
-
-      documentModule.provider.refreshDocumentList().catch((reason) => {
-        alert(reason);
-        documentModule.provider.fetcher.authenticate = false;
-        documentModule.provider.fetcher.setSource(this.oldSource);
-        this.oldSource = undefined;
-        documentModule.view.browserWindow.removeDocumentCommand('Validate');
-      });
+    documentModule.addDocumentsExtension('Validation State', {
+      type: 'panel',
+      html: () => `Currently seeing : ${!this.oldSource ? 'validated documents' : 'documents in validation'}`
     });
+
+    documentModule.addDocumentsExtension('Toggle Validation', {
+      type: 'button',
+      html: () => this.oldSource ? 'See validated documents' : 'See documents in validation',
+      callback: () => {
+        if (!this.oldSource) {
+          this.oldSource = documentModule.provider.fetcher.source;
+          documentModule.provider.fetcher.authenticate = true;
+          documentModule.provider.fetcher.setSource(this.validationSource);
+          documentModule.addBrowserExtension('Validate', {
+            type: 'button',
+            html: () => 'Validate',
+            callback: (doc) => {
+              if (!confirm('Are you sure do validate this document ? ' +
+                'This operation is irreversible.')) {
+                return;
+              }
+              this.validationService.validate(doc).catch((reason) => {
+                alert(reason.statusText);
+              }).then(() => {
+                documentModule.provider.refreshDocumentList();
+              });
+          }});
+        } else {
+          documentModule.provider.fetcher.authenticate = false;
+          documentModule.provider.fetcher.setSource(this.oldSource);
+          this.oldSource = undefined;
+          documentModule.view.browserWindow.removeDocumentExtension('Validate');
+        }
+
+        documentModule.provider.refreshDocumentList().catch((reason) => {
+          alert(reason);
+          documentModule.provider.fetcher.authenticate = false;
+          documentModule.provider.fetcher.setSource(this.oldSource);
+          this.oldSource = undefined;
+          documentModule.view.browserWindow.removeDocumentExtension('Validate');
+        });
+    }});
   }
 }
 

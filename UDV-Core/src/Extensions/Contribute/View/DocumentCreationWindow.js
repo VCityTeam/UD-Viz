@@ -121,8 +121,10 @@ export class DocumentCreationWindow extends AbstractDocumentWindow {
   }
 
   documentWindowReady() {
-    this.view.searchWindow.addDocumentsCommand('Create', () => {
-      this.view.requestWindowDisplay(this, true);
+    this.view.searchWindow.addDocumentsExtension('Create', {
+      type: 'button',
+      html: () => 'Create',
+      callback: () => this.view.requestWindowDisplay(this, true)
     });
   }
 
