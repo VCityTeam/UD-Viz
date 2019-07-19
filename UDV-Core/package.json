@@ -30,6 +30,7 @@
     "alpaca": "1.5.24",
     "babel-runtime": "^6.20.0",
     "bootstrap": "^4.1.1",
+    "dat.gui": "^0.6.5",
     "es6-promise": "^4.0.5",
     "handlebars": "^4.0.11",
     "itowns": "^2.12.0",

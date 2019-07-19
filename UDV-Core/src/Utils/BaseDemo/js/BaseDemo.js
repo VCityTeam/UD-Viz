@@ -17,6 +17,7 @@ export class BaseDemo {
         this.view;  // itowns view (3d scene)
         this.extent;  // itowns extent (city limits)
         this.controls;
+        this.itowns = itowns;
         // Temporal is currently disabled and will be reintroduced in a new
         // version based on a 3D Tiles extension
         this.temporal = false;
@@ -342,6 +343,7 @@ export class BaseDemo {
      * Initialize the iTowns 3D view.
      */
     init3DView() {
+
         // ********* INIT ITOWNS VIEW
         // Define projection used in iTowns viewer (taken from
         // https://epsg.io/3946, Proj4js section)
@@ -354,13 +356,20 @@ export class BaseDemo {
             1837860.980127206, 1847648.6685636174,
             5169347.42659997, 5180280.0400808845);
 
-        // `viewerDiv` will contain iTowns' rendering area (`<canvas>`)
+        // `viewerDiv` will contain iTowns' rendering area (`<canvsas>`)
         let viewerDiv = document.getElementById('viewerDiv');
         // Instantiate PlanarView (iTowns' view that will hold the layers)
         // The skirt allows to remove the cracks between the terrain tiles
         this.view = new itowns.PlanarView(viewerDiv, this.extent, {
             disableSkirt: false
         });
+
+
+        //menuGlobe.addImageryLayersGUI(this.view.getLayers(function filterColor(l) { return l.isColorLayer; }));
+        // this.menuGlobe.addElevationLayersGUI(this.view.getLayers(function filterElevation(l) { return l.isElevationLayer; }));
+        // console.log(debug);
+        // this.debug = new debug.Debug(this.view, this.menuGlobe.gui);
+        // debug.createTileDebugUI(this.menuGlobe.gui, this.view, this.view.tileLayer, this.debug);
 
         // ********* ADD TERRAIN LAYERS (WMS imagery and WMS elevation)
         // These layer are served by the grandLyon
@@ -402,18 +411,384 @@ export class BaseDemo {
         });
         this.view.addLayer(wmsElevationLayer);
 
+        // Add extruded polygons (buildings)
+        let tile;
+        function colorBuildings(properties) {
+                        if (properties.id.indexOf('bati_remarquable') === 0) {
+                            return color.set(0x5555ff);
+                        }
+                        if (properties.id.indexOf('bati_industriel') === 0) {
+                            return color.set(0xff5555);
+                        }
+                        return color.set(0xeeeeee);
+                    }
+
+        function extrudeBuildings(properties) {
+            return properties.hauteur;
+        }
+
+        let meshes = [];
+        let meshesMask = [];
+        let scaler = (/* dt */) => {
+            var i;
+            var mesh;
+            if (meshes.length) {
+                this.view.notifyChange();
+            }
+            for (i = 0; i < meshes.length; i++) {
+                mesh = meshes[i];
+                mesh.scale.z = Math.min(
+                    1.0, mesh.scale.z + 0.1);
+                mesh.updateMatrixWorld(true);
+            }
+            meshes = meshes.filter(function filter(m) { return m.scale.z < 1; });
+        }
+
+        function acceptFeature(properties) {
+            return !!properties.hauteur;
+        }
+
+        function altitudeBuildings(properties) {
+                return properties.z_min - properties.hauteur;
+            }
+
+        this.view.addFrameRequester(itowns.MAIN_LOOP_EVENTS.BEFORE_RENDER, scaler);
+
+        var wfsBuildingSource = new itowns.WFSSource({
+                url: 'https://wxs.ign.fr/3ht7xcw6f7nciopo16etuqp2/geoportail/wfs?',
+                version: '2.0.0',
+                typeName: 'BDTOPO_BDD_WLD_WGS84G:bati_remarquable,BDTOPO_BDD_WLD_WGS84G:bati_indifferencie,BDTOPO_BDD_WLD_WGS84G:bati_industriel',
+                projection: 'EPSG:4326',
+                ipr: 'IGN',
+                format: 'application/json',
+                zoom: { min: 4, max: 4 },
+                extent: {
+                    west: 4.568,
+                    east: 5.18,
+                    south: 45.437,
+                    north: 46.03,
+                },
+            });
+
+          var wfsBuildingLayer = new itowns.GeometryLayer('wfsBuilding', new itowns.THREE.Group(), {
+              update: itowns.FeatureProcessing.update,
+              convert: itowns.Feature2Mesh.convert({
+                  color: colorBuildings,
+                  batchId: function (property, featureId) { return featureId; },
+                  extrude: extrudeBuildings,
+                  altitude: altitudeBuildings
+                }),
+              onMeshCreated: function scaleZ(mesh) {
+                  mesh.scale.z = 0.01;
+                  meshes.push(mesh);
+              },
+              filter: acceptFeature,
+              overrideAltitudeInToZero: true,
+              projection: 'EPSG:3946',
+              source: wfsBuildingSource,
+          });
+
+          this.view.addLayer(wfsBuildingLayer);
+
         // ********* ADD 3D BUILDING LAYER (3D Tiles)
         // This building layer represents Lyon in 2015 and is served from
         // grand lyon alpha server
-        let $3dTilesLayer = new itowns.GeometryLayer(
-            this.config['3DTilesLayerID'], new THREE.Group());
-        $3dTilesLayer.name = 'Lyon-2015';
-        $3dTilesLayer.url =
-            this.config['3DTilesLayerURL'];
-        $3dTilesLayer.protocol = '3d-tiles';
-        $3dTilesLayer.overrideMaterials = true;
+        // let $3dTilesLayer = new itowns.GeometryLayer(
+        //     this.config['3DTilesLayerID'], new THREE.Group());
+        // $3dTilesLayer.name = 'Lyon-2015';
+        // $3dTilesLayer.url =
+        //     this.config['3DTilesLayerURL'];
+        // $3dTilesLayer.protocol = '3d-tiles';
+        // $3dTilesLayer.overrideMaterials = true;
+        //
+        // itowns.View.prototype.addLayer.call(this.view, $3dTilesLayer);
 
-        itowns.View.prototype.addLayer.call(this.view, $3dTilesLayer);
+
+        // ********* ADD WFS
+        let color = new itowns.THREE.Color();
+        // let tile;
+        let rgb;
+
+     // * Return current displayed elevation at coord in meters.
+     // * @param {GeometryLayer} layer The tile layer owning the elevation textures we're going to query.
+     // * This is typically the globeLayer or a planeLayer.
+     // * @param {Coordinates} coord The coordinates that we're interested in
+     // * @param {Number} method 2 available method: FAST_READ_Z (default) or PRECISE_READ_Z. Chosing between
+     // * the 2 is a compromise between performance and visual quality
+     // * @param {Array} tileHint Optional array of tiles to speed up the process. You can give candidates tiles
+     // * likely to contain 'coord'. Otherwise the lookup process starts from the root.
+        var altitudeLine = (properties, contour) => {
+            var result;
+            var z = 0;
+            if (contour) {
+                result = itowns.DEMUtils.getElevationValueAt(this.view.tileLayer, contour, 0, tile);
+
+                if (!result) {
+                    result = itowns.DEMUtils.getElevationValueAt(this.view.tileLayer, contour, 0);
+                }
+                tile = [result.tile];
+                if (result) {
+                    z = result.z;
+                }
+                return z + 10;
+            }
+        };
+
+        var setMaterialLineWidth = function(result) {
+                result.traverse(function _setLineWidth(mesh) {
+                    if (mesh.material) {
+                      // console.log("MESH", mesh);
+                        mesh.material.linewidth = 20;
+                    }
+                });
+            };
+
+            var setMaterialPointSize = function(result) {
+                    result.traverse(function _setPointSize(mesh) {
+                        if (mesh.material) {
+                          // console.log("MESH", mesh);
+                            mesh.material.size = 50;
+                        }
+                    });
+                };
+
+            var colorLine = function(properties) {
+                    if (properties) {
+                        var rgb = properties.couleur.split(' ');
+                        return color.setRGB(rgb[0] / 255, rgb[1] / 255, rgb[2] / 255);
+                    }
+                    else{
+                      return color.setRGB(1,1,1);
+                    }
+                };
+
+        // let lyonTclBusSource = new itowns.WFSSource({
+        //     url: 'https://download.data.grandlyon.com/wfs/rdata?',
+        //     protocol: 'wfs',
+        //     version: '2.0.0',
+        //     // id: 'tcl_bus',
+        //     typeName: 'tcl_sytral.tcllignebus',
+        //     projection: 'EPSG:3946',
+        //     // extent: {
+        //     //     west: 1822174.60,
+        //     //     east: 1868247.07,
+        //     //     south: 5138876.75,
+        //     //     north: 5205890.19,
+        //     // },
+        //     zoom: { min: 2, max: 2 },
+        //     format: 'geojson',
+        // });
+        //
+        // let lyonTclBusLayer = new itowns.GeometryLayer('Lignes Bus TCL', new itowns.THREE.Group(), {
+        //     update: itowns.FeatureProcessing.update,
+        //     convert: itowns.Feature2Mesh.convert({
+        //         color: new itowns.THREE.Color().setRGB(1,1,0.5),
+        //         altitude:altitudeLine
+        //       }),
+        //     onMeshCreated: setMaterialLineWidth,
+        //     source: lyonTclBusSource,
+        // });
+        //
+        // this.view.addLayer(lyonTclBusLayer);
+        //
+        //
+        // //// Add points
+        // let lyonArretTCLSource = new itowns.WFSSource({
+        //     url: 'https://download.data.grandlyon.com/wfs/rdata?',
+        //     protocol: 'wfs',
+        //     version: '2.0.0',
+        //     // id: 'tcl_bus',
+        //     typeName: 'tcl_sytral.tclarret',
+        //     projection: 'EPSG:3946',
+        //     extent: {
+        //         west: 1822174.60,
+        //         east: 1868247.07,
+        //         south: 5138876.75,
+        //         north: 5205890.19,
+        //     },
+        //     zoom: { min: 2, max: 2 },
+        //     format: 'geojson',
+        // });
+        //
+        // let lyonArretTCLLayer = new itowns.GeometryLayer('Arrets TCL', new itowns.THREE.Group(), {
+        //     update: itowns.FeatureProcessing.update,
+        //     onMeshCreated: setMaterialPointSize,
+        //     convert: itowns.Feature2Mesh.convert(
+        //       {
+        //         color: new itowns.THREE.Color().setRGB(1,0.6,1),
+        //         altitude: altitudeLine
+        //       }
+        //     ),
+        //     source: lyonArretTCLSource,
+        // });
+        //
+        //
+        // this.view.addLayer(lyonArretTCLLayer);
+        //
+        //
+        //
+        //
+
+
+
+
+        //   let config;
+        //   let addGeometryLayerFromConfig = (config) => {
+        //
+        //
+        //         config.update= itowns.FeatureProcessing.update;
+        //         config.convert= itowns.Feature2Mesh.convert ({
+        //             color: new itowns.THREE.Color().setRGB(config.color.red,config.color.green,config.color.blue),
+        //             // batchId: function (property, featureId) { return featureId; },
+        //             // extrude: extrudeBuildings,
+        //             altitude: 200//TODO: put in config
+        //           });
+        //         // config.onMeshCreated= function scaleZ(mesh) {
+        //         //     mesh.scale.z = 0.01;
+        //         //     meshesMask.push(mesh);
+        //         // };
+        //         // filter: acceptFeature,
+        //         config.overrideAltitudeInToZero= true;
+        //         config.projection= config.source.projection;
+        //         config.source= config.source;
+        //     console.log("CACA", config);
+        //
+        //       let layer = new itowns.GeometryLayer(config.id, new itowns.THREE.Group(), config,
+        //
+        //   );
+        //     console.log("LAYER",layer);
+        //   return this.view.addLayer(layer);
+        //
+        // };
+        //
+        //
+        //   itowns.Fetcher.json('../../../examples/MAM/data/config/mask_config.json')
+        //   .then(function _(config) {
+        //     console.log("CONFIG",config.source);
+        //       config.source = new itowns.FileSource(config.source);
+        //       return config;
+        //   })
+        //   .then(addGeometryLayerFromConfig);
+
+
+
+        ////////////////////////////
+        ////////////////////////////
+        ////////////////////////////
+        ////////////////////////////
+        ////////////////////////////
+        ////////////////////////////
+        itowns.Fetcher.json('../../../examples/MAM/data/config/layers_settings.json')
+        .then( (configList) => {
+          for (var i in configList) {
+            let geometry = configList[i].geometry;
+            let config;
+            let addGeometryLayerFromConfig = (config) => {
+
+
+                  config.update= itowns.FeatureProcessing.update;
+                  config.convert= itowns.Feature2Mesh.convert ({
+                      color: new itowns.THREE.Color().setRGB(config.color.red,config.color.green,config.color.blue),
+                      // batchId: function (property, featureId) { return featureId; },
+                      // extrude: extrudeBuildings,
+                      altitude: 200//TODO: put in config
+                    });
+                  // config.onMeshCreated= function scaleZ(mesh) {
+                  //     mesh.scale.z = 0.01;
+                  //     meshesMask.push(mesh);
+                  // };
+                  // filter: acceptFeature,
+                  config.overrideAltitudeInToZero= true;
+                  config.projection= config.source.projection;
+                  config.source= config.source;
+              console.log("CACA", config);
+
+                let layer = new itowns.GeometryLayer(config.id, new itowns.THREE.Group(), config,
+
+            );
+              console.log("LAYER",layer);
+            return this.view.addLayer(layer);
+
+          };
+
+          if (geometry === "polygons") {
+            let configuration = configList[i];
+            (function _() {
+              console.log("CONFIG",configuration.source);
+                configuration.source = new itowns.FileSource(configuration.source);
+                return configuration;
+            }).then(addGeometryLayerFromConfig);
+          };
+          }
+        }
+      );
+
+
+
+        ////////////////////////////
+        ////////////////////////////
+        ////////////////////////////
+        ////////////////////////////
+        ////////////////////////////
+        ////////////////////////////
+
+
+
+
+
+        // Create Geometry Layers from a config JSON file
+
+        // itowns.Fetcher.json('../../../examples/MAM/data/config/mask_config.json')
+        // .then( (configList) => {
+        //   for (var i in configList) {
+        //     var config = configList[i];
+        //     var layer = undefined;
+        //
+        //     if (config.geometry == "polygons") {
+        //       console.log("CONFIG", config);
+        //         config.update= itowns.FeatureProcessing.update;
+        //         config.convert= itowns.Feature2Mesh.convert ({
+        //             color: new itowns.THREE.Color().setRGB(
+        //               config.color.red,
+        //               config.color.green,
+        //               config.color.blue
+        //             ),
+        //             // batchId: function (property, featureId) { return featureId; },
+        //             // extrude: extrudeBuildings,
+        //             altitude: 200//TODO: put in config
+        //           });
+        //         // config.onMeshCreated= function scaleZ(mesh) {
+        //         //     mesh.scale.z = 0.01;
+        //         //     meshesMask.push(mesh);
+        //         // };
+        //         // filter: acceptFeature,
+        //         config.overrideAltitudeInToZero= true;
+        //         config.fetchedData = itowns.Fetcher.json(config.source.url);
+        //         config.projection= config.source.projection;
+        //         // config.source.extent= this.extent;
+        //         let source = new itowns.FileSource(config);
+        //
+        //         layer = new itowns.GeometryLayer(
+        //           config.id,
+        //           new itowns.THREE.Group(),
+        //           source,
+        //         );
+        //
+        //         console.log("config2", config.fetchedData);
+        //         return this.view.addLayer(layer);
+        //       }
+
+            // if (layer !== undefined){
+            //     console.log("LAYER",layer);
+            //     this.view.addLayer(layer);
+            //   }
+        //     }
+        //   }
+        // );
+            // config.source = new itowns.FileSource(config.source);
+            // return config;
+
+        // .then(addGeometryLayerFromConfig);
 
         // ********* 3D Elements
         // Lights

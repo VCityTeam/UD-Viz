@@ -1,0 +1,18 @@
+  {
+    "id":"Lyon mask 10mns",
+    "geometry":"polygons",
+    "source":{
+      "format": "geojson",
+      "url": "http://localhost:8080/examples/MAM/data/geojson/mini_poly.geojson",
+      "projection": "EPSG:3946",
+      "zoom": {
+        "min": 2,
+        "max": 2
+      }
+    },
+    "color": {
+      "red": 1.0,
+      "green": 0.6,
+      "blue": 1.0
+    }
+  }

@@ -1,0 +1,62 @@
+[
+  {
+    "id":"Lyon mask 10mns",
+    "geometry":"polygons",
+    "source":{
+      "format": "geojson",
+      "url": "http://localhost:8080/examples/MAM/data/geojson/mini_poly.geojson",
+      "projection": "EPSG:3946",
+      "zoom": {
+        "min": 2,
+        "max": 2
+      }
+    },
+    "color": {
+      "red": 1.0,
+      "green": 0.6,
+      "blue": 1.0
+    }
+  },
+  {
+    "id":"Lignes Bus TCL",
+    "geometry":"lines",
+    "source":{
+      "url": "https://download.data.grandlyon.com/wfs/rdata?",
+      "protocol": "wfs",
+      "version": "2.0.0",
+      "typeName": "tcl_sytral.tcllignebus",
+      "projection": "EPSG:3946",
+      "zoom": {
+        "min": 2,
+        "max": 2
+      },
+      "format": "geojson"
+    },
+    "color": {
+      "red": 0.6,
+      "green": 0.6,
+      "blue": 1.0
+    }
+  },
+  {
+    "id":"Arrets TCL",
+    "geometry":"points",
+    "source":{
+      "url": "https://download.data.grandlyon.com/wfs/rdata?",
+      "protocol": "wfs",
+      "version": "2.0.0",
+      "typeName": "tcl_sytral.tclarret",
+      "projection": "EPSG:3946",
+      "zoom": {
+        "min": 2,
+        "max": 2
+      },
+      "format": "geojson"
+    },
+    "color": {
+      "red": 0.6,
+      "green": 0.6,
+      "blue": 1.0
+    }
+  }
+]
