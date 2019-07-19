@@ -1,14 +1,36 @@
+import { DocumentModule } from "../../../Modules/Documents/DocumentModule";
+import { RequestService } from "../../../Utils/Request/RequestService";
+import { DocumentProvider } from "../../../Modules/Documents/ViewModel/DocumentProvider";
+
+/**
+ * The service that performs the requests for document comments. This include
+ * retrieve and create operations.
+ */
 export class DocumentCommentsService {
-    constructor (documentController, requestService, config) {
-        this.documentCrontroller = documentController;
+    /**
+     * Creates a document comments service.
+     * 
+     * @param {DocumentProvider} documentProvider The document provider.
+     * @param {RequestService} requestService The request service.
+     * @param {object} config The UDV config.
+     * @param {object} config.server The server access config.
+     * @param {string} config.server.url The server URL.
+     * @param {string} config.server.document The route for documents.
+     * @param {string} config.server.comment The route for comments.
+     * @param {string} config.server.user The route for users.
+     */
+    constructor (documentProvider, requestService, config) {
+        this.documentProvider = documentProvider;
+
         this.requestService = requestService;
+        
         this.documentUrl = `${config.server.url}${config.server.document}`;
         this.commentRoute = config.server.comment;
         this.authorUrl = `${config.server.url}${config.server.user}`;
     }
 
     async getComments() {
-        let currentDocument = this.documentCrontroller.getCurrentDoc();
+        let currentDocument = this.documentProvider.getDisplayedDocument();
         if (currentDocument !== null && currentDocument !== undefined) {
             let url = this.documentUrl + "/" + currentDocument.id + "/" + this.commentRoute;
             let response = (await this.requestService.send('GET', url)).response;
@@ -24,7 +46,7 @@ export class DocumentCommentsService {
     }
 
     async publishComment(formData) {
-        let currentDocument = this.documentCrontroller.getCurrentDoc();
+        let currentDocument = this.documentProvider.getDisplayedDocument();
         if (currentDocument !== null && currentDocument !== undefined) {
             let url = this.documentUrl + "/" + currentDocument.id + "/" + this.commentRoute;
             let response = (await this.requestService.send('POST', url, formData)).response;

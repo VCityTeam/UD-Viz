@@ -1,44 +1,26 @@
-import { Window } from '../../../Utils/GUI/js/Window';
-import '../../../Utils/GUI/css/window.css';
 import './DocumentCommentsStyle.css';
+import { AbstractDocumentWindow } from '../../../Modules/Documents/View/AbstractDocumentWindow';
+import { DocumentCommentsService } from '../services/DocumentCommentsService';
 
-export class DocumentCommentsWindow extends Window {
+/**
+ * A window to display the comments associated to a document. Also serves as
+ * a comments creation interface.
+ */
+export class DocumentCommentsWindow extends AbstractDocumentWindow {
 
-    constructor(documentController, documentCommentsService) {
+    /**
+     * Creates a document comments window to add in the document browser.
+     * 
+     * @param {DocumentCommentsService} documentCommentsService The document comments
+     * service.
+     */
+    constructor(documentCommentsService) {
         super('documentComments', 'Comments');
         this.documentCommentsService = documentCommentsService;
-        this.documentController = documentController;
-
-        documentController.documentBrowser.addEventListener(
-            Window.EVENT_CREATED, () => {
-                let browserTabs = documentController.documentBrowser.browserTabID;
-                let docBrowserCreateButton = document.createElement('button');
-                docBrowserCreateButton.id = "docBrowserCommentButton";
-                let word = document.createTextNode("Comment");
-                docBrowserCreateButton.appendChild(word);
-                document.getElementById(browserTabs).appendChild(docBrowserCreateButton);
-                docBrowserCreateButton.onclick = () => {
-                    if (this.isVisible) {
-                        this.hide();
-                    } else {
-                        this.show();
-                        this.getComments();
-                    }
-                };
-        });
-
-        documentController.addEventListener(
-            Window.EVENT_DISABLED, () => {
-                this.disable();
-            }
-        );
-        
-        this.appendTo(documentController.parentElement);
-        this.hide();
     }
 
     get innerContentHtml() {
-        return `
+        return /*html*/`
         <div class="innerClass" id="documentComments_innerWindow">
             <div id ="documentComments_left">
 
@@ -57,6 +39,25 @@ export class DocumentCommentsWindow extends Window {
         `;
     }
 
+    windowCreated() {
+        this.hide();
+
+        this.window.style.width = '500px';
+        this.window.style.height = '500px';
+        this.window.style.left = '290px';
+        this.window.style.top = '10px';
+        this.innerContent.style.height = '100%';
+        document.getElementById('documentComments_inputButton').onclick = this.publishComment.bind(this);
+        this.getComments();
+    }
+
+    documentWindowReady() {
+        this.view.browserWindow.addDocumentCommand('Comments', () => {
+            this.view.requestWindowDisplay(this);
+            this.getComments();
+        });
+    }
+
     getComments() {
         this.documentCommentsService.getComments().then((comments) => {
             document.getElementById('documentComments_left').innerHTML = '';
@@ -73,26 +74,23 @@ export class DocumentCommentsWindow extends Window {
                 `;
                 document.getElementById('documentComments_left').appendChild(div);
             }
+        }, (reason) => {
+            alert(reason);
+            this.disable();
         });
     }
 
-    windowCreated() {
-        this.window.style.setProperty('width', '500px');
-        this.window.style.setProperty('height', '500px');
-        this.window.style.setProperty('left', '290px');
-        this.window.style.setProperty('top', '10px');
-        this.window.style.setProperty('resize', 'both');
-        this.innerContent.style.setProperty('height', '100%');
-        document.getElementById('documentComments_inputButton').onclick = this.publishComment.bind(this);
-        this.getComments();
-    }
 
-    publishComment() {
+    async publishComment() {
         let form = document.getElementById('documentComments_inputForm');
         let form_data = new FormData(form);
-        this.documentCommentsService.publishComment(form_data).then(() => {
-            document.getElementById('documentComments_inputComment').value = '';
-            this.getComments();
-        });
+        try {
+            await this.documentCommentsService.publishComment(form_data).then(() => {
+                document.getElementById('documentComments_inputComment').value = '';
+                this.getComments();
+            });
+        } catch (e) {
+            alert(e);
+        }
     }
 }

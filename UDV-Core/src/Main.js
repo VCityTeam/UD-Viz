@@ -24,8 +24,7 @@ export { DocumentController}        from './Modules/ConsultDoc/DocumentControlle
 
 export { ContributeController }     from './Extensions/Contribute/src/ContributeController';
 
-export { DocumentCommentsService }  from './Extensions/DocumentComments/services/DocumentCommentsService';
-export { DocumentCommentsWindow }   from './Extensions/DocumentComments/views/DocumentCommentsWindow';
+export { DocumentComments }         from './Extensions/DocumentComments/DocumentComments';
 
 export { GeocodingService }         from './Extensions/Geocoding/services/GeocodingService';
 export { GeocodingView }            from './Extensions/Geocoding/views/GeocodingView';
