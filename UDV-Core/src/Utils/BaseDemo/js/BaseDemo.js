@@ -504,7 +504,7 @@ export class BaseDemo {
         // itowns.View.prototype.addLayer.call(this.view, $3dTilesLayer);
 
 
-        // ********* ADD WFS
+        // ********* FUNCTIONS FOR MATERIAL AND ALTITUDE
         let color = new itowns.THREE.Color();
         // let tile;
         let rgb;
@@ -562,233 +562,102 @@ export class BaseDemo {
                     }
                 };
 
-        // let lyonTclBusSource = new itowns.WFSSource({
-        //     url: 'https://download.data.grandlyon.com/wfs/rdata?',
-        //     protocol: 'wfs',
-        //     version: '2.0.0',
-        //     // id: 'tcl_bus',
-        //     typeName: 'tcl_sytral.tcllignebus',
-        //     projection: 'EPSG:3946',
-        //     // extent: {
-        //     //     west: 1822174.60,
-        //     //     east: 1868247.07,
-        //     //     south: 5138876.75,
-        //     //     north: 5205890.19,
-        //     // },
-        //     zoom: { min: 2, max: 2 },
-        //     format: 'geojson',
-        // });
-        //
-        // let lyonTclBusLayer = new itowns.GeometryLayer('Lignes Bus TCL', new itowns.THREE.Group(), {
-        //     update: itowns.FeatureProcessing.update,
-        //     convert: itowns.Feature2Mesh.convert({
-        //         color: new itowns.THREE.Color().setRGB(1,1,0.5),
-        //         altitude:altitudeLine
-        //       }),
-        //     onMeshCreated: setMaterialLineWidth,
-        //     source: lyonTclBusSource,
-        // });
-        //
-        // this.view.addLayer(lyonTclBusLayer);
-        //
-        //
-        // //// Add points
-        // let lyonArretTCLSource = new itowns.WFSSource({
-        //     url: 'https://download.data.grandlyon.com/wfs/rdata?',
-        //     protocol: 'wfs',
-        //     version: '2.0.0',
-        //     // id: 'tcl_bus',
-        //     typeName: 'tcl_sytral.tclarret',
-        //     projection: 'EPSG:3946',
-        //     extent: {
-        //         west: 1822174.60,
-        //         east: 1868247.07,
-        //         south: 5138876.75,
-        //         north: 5205890.19,
-        //     },
-        //     zoom: { min: 2, max: 2 },
-        //     format: 'geojson',
-        // });
-        //
-        // let lyonArretTCLLayer = new itowns.GeometryLayer('Arrets TCL', new itowns.THREE.Group(), {
-        //     update: itowns.FeatureProcessing.update,
-        //     onMeshCreated: setMaterialPointSize,
-        //     convert: itowns.Feature2Mesh.convert(
-        //       {
-        //         color: new itowns.THREE.Color().setRGB(1,0.6,1),
-        //         altitude: altitudeLine
-        //       }
-        //     ),
-        //     source: lyonArretTCLSource,
-        // });
-        //
-        //
-        // this.view.addLayer(lyonArretTCLLayer);
-        //
-        //
-        //
-        //
 
-
-
-
-        //   let config;
-        //   let addGeometryLayerFromConfig = (config) => {
-        //
-        //
-        //         config.update= itowns.FeatureProcessing.update;
-        //         config.convert= itowns.Feature2Mesh.convert ({
-        //             color: new itowns.THREE.Color().setRGB(config.color.red,config.color.green,config.color.blue),
-        //             // batchId: function (property, featureId) { return featureId; },
-        //             // extrude: extrudeBuildings,
-        //             altitude: 200//TODO: put in config
-        //           });
-        //         // config.onMeshCreated= function scaleZ(mesh) {
-        //         //     mesh.scale.z = 0.01;
-        //         //     meshesMask.push(mesh);
-        //         // };
-        //         // filter: acceptFeature,
-        //         config.overrideAltitudeInToZero= true;
-        //         config.projection= config.source.projection;
-        //         config.source= config.source;
-        //     console.log("CACA", config);
-        //
-        //       let layer = new itowns.GeometryLayer(config.id, new itowns.THREE.Group(), config,
-        //
-        //   );
-        //     console.log("LAYER",layer);
-        //   return this.view.addLayer(layer);
-        //
-        // };
-        //
-        //
-        //   itowns.Fetcher.json('../../../examples/MAM/data/config/mask_config.json')
-        //   .then(function _(config) {
-        //     console.log("CONFIG",config.source);
-        //       config.source = new itowns.FileSource(config.source);
-        //       return config;
-        //   })
-        //   .then(addGeometryLayerFromConfig);
-
-
-
-        ////////////////////////////
-        ////////////////////////////
-        ////////////////////////////
-        ////////////////////////////
-        ////////////////////////////
-        ////////////////////////////
+        //******** CREATE LAYERS FROM CONFIG FILES
         itowns.Fetcher.json('../../../examples/MAM/data/config/layers_settings.json')
         .then( (configList) => {
           for (var i in configList) {
             let geometry = configList[i].geometry;
+            let protocol = configList[i].source.protocol;
             let config;
-            let addGeometryLayerFromConfig = (config) => {
 
-
+            // Function for polygons
+            let addGeometryLayerFromConfigPolygons = (config) => {
                   config.update= itowns.FeatureProcessing.update;
                   config.convert= itowns.Feature2Mesh.convert ({
                       color: new itowns.THREE.Color().setRGB(config.color.red,config.color.green,config.color.blue),
-                      // batchId: function (property, featureId) { return featureId; },
-                      // extrude: extrudeBuildings,
-                      altitude: 200//TODO: put in config
+                      altitude: 200
                     });
-                  // config.onMeshCreated= function scaleZ(mesh) {
-                  //     mesh.scale.z = 0.01;
-                  //     meshesMask.push(mesh);
-                  // };
-                  // filter: acceptFeature,
                   config.overrideAltitudeInToZero= true;
                   config.projection= config.source.projection;
                   config.source= config.source;
-              console.log("CACA", config);
-
                 let layer = new itowns.GeometryLayer(config.id, new itowns.THREE.Group(), config,
 
             );
-              console.log("LAYER",layer);
             return this.view.addLayer(layer);
-
           };
 
-          if (geometry === "polygons") {
+          // Function for points
+          let addGeometryLayerFromConfigPoints = (config) => {
+                config.update= itowns.FeatureProcessing.update;
+                config.onMeshCreated = setMaterialPointSize;
+                config.convert= itowns.Feature2Mesh.convert ({
+                    color: new itowns.THREE.Color().setRGB(config.color.red,config.color.green,config.color.blue),
+                    altitude: altitudeLine
+                  });
+                config.overrideAltitudeInToZero= true;
+                config.projection= config.source.projection;
+                config.source= config.source;
+              let layer = new itowns.GeometryLayer(config.id, new itowns.THREE.Group(), config,
+          );
+          return this.view.addLayer(layer);
+        };
+
+          // Function for lines
+          let addGeometryLayerFromConfigLines = (config) => {
+                config.update= itowns.FeatureProcessing.update;
+                config.onMeshCreated = setMaterialLineWidth;
+                config.convert= itowns.Feature2Mesh.convert ({
+                    color: new itowns.THREE.Color().setRGB(config.color.red,config.color.green,config.color.blue),
+                    altitude: altitudeLine
+                  });
+                config.overrideAltitudeInToZero= true;
+                config.projection= config.source.projection;
+                config.source= config.source;
+              let layer = new itowns.GeometryLayer(config.id, new itowns.THREE.Group(), config,
+          );
+          return this.view.addLayer(layer);
+        };
+
+          if (protocol === undefined){
             let configuration = configList[i];
-            (function _() {
-              console.log("CONFIG",configuration.source);
-                configuration.source = new itowns.FileSource(configuration.source);
-                return configuration;
-            }).then(addGeometryLayerFromConfig);
-          };
+            var promise = new Promise(function(resolve,reject){
+              configuration.source = new itowns.FileSource(configList[i].source);
+              resolve(configuration);
+            }
+          );
+
+            if (geometry === "polygons") {
+              promise.then(addGeometryLayerFromConfigPolygons);
+              }
+            else if (geometry === "points") {
+              promise.then(addGeometryLayerFromConfigPoints);
+            }
+            else if (geometry === "lines") {
+              promise.then(addGeometryLayerFromConfigLines);
+            }
+          }
+          else if (protocol === "wfs"){
+            let configuration = configList[i];
+            var promise = new Promise(function(resolve,reject){
+              configuration.source = new itowns.WFSSource(configList[i].source);
+              resolve(configuration);
+            }
+          );
+
+            if (geometry === "polygons") {
+              promise.then(addGeometryLayerFromConfigPolygons);
+              }
+            else if (geometry === "points") {
+              promise.then(addGeometryLayerFromConfigPoints);
+            }
+            else if (geometry === "lines") {
+              promise.then(addGeometryLayerFromConfigLines);
+            }
+          }
           }
         }
       );
-
-
-
-        ////////////////////////////
-        ////////////////////////////
-        ////////////////////////////
-        ////////////////////////////
-        ////////////////////////////
-        ////////////////////////////
-
-
-
-
-
-        // Create Geometry Layers from a config JSON file
-
-        // itowns.Fetcher.json('../../../examples/MAM/data/config/mask_config.json')
-        // .then( (configList) => {
-        //   for (var i in configList) {
-        //     var config = configList[i];
-        //     var layer = undefined;
-        //
-        //     if (config.geometry == "polygons") {
-        //       console.log("CONFIG", config);
-        //         config.update= itowns.FeatureProcessing.update;
-        //         config.convert= itowns.Feature2Mesh.convert ({
-        //             color: new itowns.THREE.Color().setRGB(
-        //               config.color.red,
-        //               config.color.green,
-        //               config.color.blue
-        //             ),
-        //             // batchId: function (property, featureId) { return featureId; },
-        //             // extrude: extrudeBuildings,
-        //             altitude: 200//TODO: put in config
-        //           });
-        //         // config.onMeshCreated= function scaleZ(mesh) {
-        //         //     mesh.scale.z = 0.01;
-        //         //     meshesMask.push(mesh);
-        //         // };
-        //         // filter: acceptFeature,
-        //         config.overrideAltitudeInToZero= true;
-        //         config.fetchedData = itowns.Fetcher.json(config.source.url);
-        //         config.projection= config.source.projection;
-        //         // config.source.extent= this.extent;
-        //         let source = new itowns.FileSource(config);
-        //
-        //         layer = new itowns.GeometryLayer(
-        //           config.id,
-        //           new itowns.THREE.Group(),
-        //           source,
-        //         );
-        //
-        //         console.log("config2", config.fetchedData);
-        //         return this.view.addLayer(layer);
-        //       }
-
-            // if (layer !== undefined){
-            //     console.log("LAYER",layer);
-            //     this.view.addLayer(layer);
-            //   }
-        //     }
-        //   }
-        // );
-            // config.source = new itowns.FileSource(config.source);
-            // return config;
-
-        // .then(addGeometryLayerFromConfig);
 
         // ********* 3D Elements
         // Lights
