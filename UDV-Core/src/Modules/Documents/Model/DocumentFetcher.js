@@ -56,13 +56,21 @@ export class DocumentFetcher {
    * Sets the source of documents.
    * 
    * @param {DocumentSource} docSource The document source.
+   * @param {boolean} [authenticate] Specifies if authentication should be used
+   * to fetch documents.
+   * 
+   * @returns {DocumentSource} The previous source.
    */
-  setSource(docSource) {
+  setSource(docSource, authenticate = false) {
     if (! (docSource instanceof DocumentSource)) {
       throw 'The document source must be an instance of DocumentSource';
     }
 
+    this.authenticate = authenticate;
+
+    let previous = this.source;
     this.source = docSource;
+    return previous;
   }
 
   /**

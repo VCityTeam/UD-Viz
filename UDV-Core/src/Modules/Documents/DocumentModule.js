@@ -1,5 +1,5 @@
 import { RequestService } from "../../Utils/Request/RequestService";
-import { DocumentFetcher } from "./Model/DocumentFetcher";
+import { DocumentFetcher, DocumentSource } from "./Model/DocumentFetcher";
 import { DocumentProvider } from "./ViewModel/DocumentProvider";
 import { DocumentView } from "./View/DocumentView";
 
@@ -73,6 +73,15 @@ export class DocumentModule {
   }
 
   /**
+   * Removes an existing extension in the browser window.
+   * 
+   * @param {string} label The extension label.
+   */
+  removeBrowserExtension(label) {
+    this.view.browserWindow.removeDocumentExtension(label);
+  }
+
+  /**
    * Creates a new extension for the document search. An extension can be
    * either a command button or a panel. An extension should be identified by
    * a unique label.
@@ -87,7 +96,30 @@ export class DocumentModule {
    * @param {(doc: Document[]) => any} [options.callback] The callback to call
    * for a button.
    */
-  addDocumentsExtension(label, options) {
+  addSearchWindowExtension(label, options) {
     this.view.searchWindow.addDocumentsExtension(label, options);
+  }
+
+  /**
+   * Removes an existing extension in the search window.
+   * 
+   * @param {string} label The extension label.
+   */
+  removeSearchWindowExtension(label) {
+    this.view.searchWindow.removeDocumentsExtension(label);
+  }
+
+  /**
+   * Changes the document source (the object representing the server URLs
+   * to fetch the documents).
+   * 
+   * @param {DocumentSource} newSource The new document source.
+   * @param {boolean} [authenticate] Specifies wether authentication should be
+   * used for the document fetch requests.
+   * 
+   * @returns {DocumentSource} The previous document source.
+   */
+  changeDocumentSource(newSource, authenticate) {
+    return this.provider.fetcher.setSource(newSource, authenticate);
   }
 }
