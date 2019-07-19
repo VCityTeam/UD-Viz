@@ -23,7 +23,7 @@ export class DocumentBrowserWindow extends AbstractDocumentWindow {
      *  label: string,
      *  id: string,
      *  callback?: (doc: Document) => any,
-     *  html: (doc: Document) => string
+     *  html: string
      * }>}
      */
     this.extensions = {};
@@ -76,7 +76,6 @@ export class DocumentBrowserWindow extends AbstractDocumentWindow {
     for (let extension of Object.values(this.extensions)) {
       this._createExtensionElement(extension);
     }
-    this.updateExtensions();
 
     this.docImageElement.onclick = (event) => {
       if (event.ctrlKey) {
@@ -99,8 +98,6 @@ export class DocumentBrowserWindow extends AbstractDocumentWindow {
    * @param {Document} newDocument The new displayed document.
    */
   async onDisplayedDocumentChange(newDocument) {
-    this.updateExtensions();
-
     if (!newDocument) {
       this._setDefaultFieldValues();
       this._updateNavigationArrows(undefined);
@@ -185,7 +182,7 @@ export class DocumentBrowserWindow extends AbstractDocumentWindow {
    * @param {object} options The extension options
    * @param {string} options.type The type of the option. Can be either `button`
    * or `panel`.
-   * @param {(doc: Document) => string} options.html The inside HTML of the
+   * @param {string} options.html The inside HTML of the
    * extension. For a button, this will be the displayed text. For a panel, it
    * will be the inside HTML.
    * @param {(doc: Document) => any} [options.callback] The callback to call
@@ -201,7 +198,6 @@ export class DocumentBrowserWindow extends AbstractDocumentWindow {
 
     if (this.isCreated) {
       this._createExtensionElement(options);
-      this.updateExtensions();
     }
   }
 
@@ -235,7 +231,7 @@ export class DocumentBrowserWindow extends AbstractDocumentWindow {
    * or `panel`.
    * @param {string} extension.id The id of the element.
    * @param {string} extension.label The label of the extension.
-   * @param {(doc: Document) => string} extension.html The inside HTML of the
+   * @param {string} extension.html The inside HTML of the
    * extension. For a button, this will be the displayed text. For a panel, it
    * will be the inside HTML.
    * @param {(doc: Document) => any} [extension.callback] The callback to call
@@ -245,27 +241,18 @@ export class DocumentBrowserWindow extends AbstractDocumentWindow {
     if (extension.type === 'button') {
       let button = document.createElement('button');
       button.id = extension.id;
+      button.innerHTML = extension.html;
       button.onclick = () =>
         extension.callback(this.provider.getDisplayedDocument());
       this.commandPanelElement.appendChild(button);
     } else if (extension.type === 'panel') {
       let panel = document.createElement('div');
       panel.id = extension.id;
+      panel.innerHTML = extension.html;
       panel.className = 'box-section';
       this.extensionContainerElement.appendChild(panel);
     } else {
       throw 'Invalid extension type : ' + extension.type;
-    }
-  }
-
-  /**
-   * Makes the extensions update their HTML value. This function is called
-   * after each document update, but can also be called manually if required.
-   */
-  updateExtensions() {
-    for (let extension of Object.values(this.extensions)) {
-      let element = document.getElementById(extension.id);
-      element.innerHTML = extension.html(this.provider.getDisplayedDocument());
     }
   }
 

@@ -41,3 +41,5 @@ export { CameraPositioner }         from './Modules/CameraPositioner/CameraPosit
 
 export { ContributeModule }         from './Extensions/Contribute/ContributeModule';
 export { DocumentValidation }       from './Extensions/DocumentValidation/DocumentValidation';
+
+export { LinkModule }               from './Modules/Links/LinkModule';

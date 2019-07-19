@@ -53,22 +53,15 @@ export class ValidationView {
     // viewing.
     documentModule.addSearchWindowExtension('Validation State', {
       type: 'panel',
-      html: () => {
-        return 'Currently seeing: ' + (this.displayingDocumentsToValidate ?
-          'documents in validation' : 'validated documents');
-      }
+      html: `Currently seing:
+        <span id="${this.validationStateId}">validated documents</span>`
     });
 
     // Adds a button to display the documents in validation
     documentModule.addSearchWindowExtension('Toggle Validation', {
       type: 'button',
-      html: () => {
-        if (this.displayingDocumentsToValidate) {
-          return 'Show validated documents';
-        } else {
-          return 'Show documents in validation';
-        }
-      },
+      html: `Show
+        <span id="${this.validateToggleId}">documents in validation</span>`,
       callback: () => this._toggleValidation()
     });
   }
@@ -113,9 +106,12 @@ export class ValidationView {
     // Adds the validate button
     this.documentModule.addBrowserExtension('Validate', {
       type: 'button',
-      html: () => 'Validate',
+      html: 'Validate',
       callback: (doc) => this._validateDocument(doc)
     });
+
+    this.validationToggleElement.innerText = 'validated documents';
+    this.validateStateElement.innerText = 'documents in validation';
   }
 
   /**
@@ -129,6 +125,9 @@ export class ValidationView {
       false);
 
     this.documentModule.view.browserWindow.removeDocumentExtension('Validate');
+
+    this.validationToggleElement.innerText = 'documents in validation';
+    this.validateStateElement.innerText = 'validated documents';
   }
 
   /**
@@ -148,5 +147,24 @@ export class ValidationView {
     }).then(() => {
       this.documentModule.provider.refreshDocumentList();
     });
+  }
+
+  /////////////
+  ///// GETTERS
+
+  get validationStateId() {
+    return 'document-validation-view-state';
+  }
+  
+  get validateStateElement() {
+    return document.getElementById(this.validationStateId);
+  }
+
+  get validateToggleId() {
+    return 'document-validation-view-toggle';
+  }
+  
+  get validationToggleElement() {
+    return document.getElementById(this.validateToggleId);
   }
 }

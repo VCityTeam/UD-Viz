@@ -16,7 +16,7 @@ export class DocumentDeletionInterface {
   constructor(documentModule, contributeService) {
     documentModule.addBrowserExtension('Delete', {
       type: 'button',
-      html: () => 'Delete',
+      html: 'Delete',
       callback: async () => {
         if (!confirm('You are going to delete the document. This operation ' +
           'is irreversible. Do you want to continue ?')) {

@@ -123,7 +123,7 @@ export class DocumentCreationWindow extends AbstractDocumentWindow {
   documentWindowReady() {
     this.view.searchWindow.addDocumentsExtension('Create', {
       type: 'button',
-      html: () => 'Create',
+      html: 'Create',
       callback: () => this.view.requestWindowDisplay(this, true)
     });
   }

@@ -28,7 +28,7 @@ export class DocumentImageOrienter extends AbstractDocumentWindow {
     documentModule.addDocumentWindow(this);
     documentModule.addBrowserExtension('Orient', {
       type: 'button',
-      html: () => 'Orient',
+      html: 'Orient',
       callback: () => {
         this.startTravelToDisplayedDocument();
         this.view.requestWindowDisplay(this);
