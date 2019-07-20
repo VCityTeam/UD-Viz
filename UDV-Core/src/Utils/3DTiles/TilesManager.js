@@ -149,6 +149,27 @@ export class TilesManager {
   }
 
   /**
+   * Search and returns the first city object that matches the given predicate.
+   * If no city object matches the predicate, `undefined` is returned.
+   * 
+   * @param {(cityObject: CityObject) => boolean} predicate The predicate to
+   * determine the city object.
+   * 
+   * @returns {CityObject | undefined} The first city object that matches the
+   * predicate, or `undefined` if no city object is found.
+   */
+  findCityObject(predicate) {
+    for (let tile of Object.values(this.tiles)) {
+      for (let cityObject of tile.cityObjects) {
+        if (predicate(cityObject)) {
+          return cityObject;
+        }
+      }
+    }
+    return undefined;
+  }
+
+  /**
    * Sets the style of a particular city object.
    * 
    * @param {CityObjectID | Array<CityObjectID>} cityObjectId The city object

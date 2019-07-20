@@ -3,11 +3,16 @@ import { LinkService } from "../Service/LinkService";
 import { DocumentProvider } from "../../Documents/ViewModel/DocumentProvider";
 import { Document } from "../../Documents/Model/Document";
 import { TilesManager } from "../../../Utils/3DTiles/TilesManager";
-import { CityObjectID } from "../../../Utils/3DTiles/Model/CityObject";
+import { CityObject } from "../../../Utils/3DTiles/Model/CityObject";
 import { focusCameraOn } from "../../../Utils/Camera/CameraUtils";
+import { Window } from "../../../Utils/GUI/js/Window";
 
+/**
+ * Represents the links section in the browser window.
+ */
 export class DocumentLinkView {
   /**
+   * Creates the document link view.
    * 
    * @param {DocumentModule} documentModule The document module.
    * @param {LinkService} linkService The link service.
@@ -22,8 +27,18 @@ export class DocumentLinkView {
       html: this._getLinksHtml()
     });
 
+    /**
+     * The link service.
+     * 
+     * @type {LinkService}
+     */
     this.linkService = linkService;
 
+    /**
+     * The tiles manager.
+     * 
+     * @type {TilesManager}
+     */
     this.tilesManager = tilesManager;
     this.tilesManager.registerStyle('selection', {
       materialProps: {
@@ -36,27 +51,178 @@ export class DocumentLinkView {
       }
     });
 
+    /**
+     * The iTowns view.
+     */
     this.itownsView = itownsView;
+
+    /**
+     * The planar camera controls.
+     */
     this.cameraControls = cameraControls;
+
+    /**
+     * Wether the user is currently selecting a city object.
+     * 
+     * @type {boolean}
+     */
+    this.isSelecting = false;
+
+    /**
+     * The currently selected city object.
+     * 
+     * @type {CityObject}
+     */
+    this.selectedCityObject = undefined;
+
+    /**
+     * The mouse click listener. This arrow function is needed so we can hold
+     * a reference to the method.
+     * 
+     * @type {(event: MouseEvent) => void}
+     */
+    this.mouseClickLister = (event) => this._onMouseClick(event);
+
+    /**
+     * The document provider.
+     * 
+     * @type {DocumentProvider}
+     */
+    this.documentProvider = documentModule.provider;
 
     documentModule.provider.addEventListener(
       DocumentProvider.EVENT_DISPLAYED_DOC_CHANGED,
-      (doc) => this._fetchLinks(doc));
+      (doc) => this._updateLinkList(doc));
+
+    documentModule.view.browserWindow.addEventListener(Window.EVENT_CREATED,
+      () => this._initLinkCreation());
   }
 
+  /**
+   * Returns the HTML of the links section in the deocument browser.
+   */
   _getLinksHtml() {
     return /*html*/`
-      <div id="${this.linkTableDivId}">
-      
-      </div>
-      <hr>
-      <div>
-        <h3>Create a new link</h3>
-        <button id="${this.selectBuildingButtonId}">Select building</button>
-        <button id="${this.createLinkButtonId}">Create link</button>
-        <p id="${this.hoveredBuildingParagraphId}">No building</p>
-        <p id="${this.selectedBuildingParagraphId}"></p>
+      <input type="checkbox" class="spoiler-check" id="doc-link-spoiler">
+      <label for="doc-link-spoiler" class="section-title">Links</label>
+      <div class="spoiler-box">
+        <div id="${this.linkTableDivId}">
+        
+        </div>
+        <div>
+          <h4 class="subsection-title">Create a new link</h4>
+          <button id="${this.selectBuildingButtonId}">Select building</button>
+          <button id="${this.createLinkButtonId}">Create link</button>
+          <p id="${this.selectedBuildingParagraphId}"></p>
+        </div>
       </div>`;
+  }
+
+  ///////////////////
+  ///// LINK CREATION
+
+  /**
+   * Binds the link creation buttons to their events and update the selected
+   * city object section.
+   */
+  _initLinkCreation() {
+    this.selectBuildingButtonElement.onclick = () => {
+      this._toggleBuildingSelection();
+    };
+
+    this.createLinkButtonElement.onclick = () => {
+      this._createLink();
+    };
+
+    this._updateLinkCreationHtml();
+  }
+
+  /**
+   * Toggles the building selection.  
+   * When selecting a building, the mouse cursor position will be used to fetch
+   * building IDs under it, and a mouse click will trigger the selection of a
+   * building.
+   */
+  _toggleBuildingSelection() {
+    this.isSelecting = !this.isSelecting;
+    if (this.isSelecting) {
+      this.linkTableDivElement.style.opacity = 0.5;
+      this.linkTableDivElement.style.pointerEvents = 'none';
+      this.selectBuildingButtonElement.innerText = 'Cancel';
+      window.addEventListener('mousedown', this.mouseClickLister);
+    } else {
+      this.linkTableDivElement.style.opacity = 1;
+      this.linkTableDivElement.style.pointerEvents = 'auto';
+      this.selectBuildingButtonElement.innerText = 'Select building';
+      this.selectedBuildingParagraphElement.innerText = '';
+      this.selectedCityObject = undefined;
+      window.removeEventListener('mousedown', this.mouseClickLister);
+    }
+    this._updateLinkCreationHtml();
+    this.tilesManager.removeAllStyles();
+    this.tilesManager.applyStyles();
+  }
+
+  /**
+   * If the user is currently hovering a building, fetches the building info
+   * and colors the building. If a building was already selected, it returns to
+   * its original coloring.
+   * 
+   * @param {MouseEvent} event The mouse event.
+   */
+  _onMouseClick(event) {
+    let cityObject = this.tilesManager.pickCityObject(event);
+    if (!cityObject) {
+      return;
+    }
+    this.selectedCityObject = cityObject;
+    this._updateLinkCreationHtml();
+    this.tilesManager.removeAllStyles();
+    this.tilesManager.setStyle(cityObject.cityObjectId, 'selection');
+    this.tilesManager.applyStyles();
+  }
+
+  /**
+   * Update the inside HTML of the "Link Creation" section according to the
+   * currently selected city object.
+   */
+  _updateLinkCreationHtml() {
+    if (!this.selectedCityObject) {
+      this.selectedBuildingParagraphElement.innerHTML = '';
+      this.createLinkButtonElement.disabled = true;
+    } else {
+      this.selectedBuildingParagraphElement.innerHTML = /*html*/`
+        Selected building ID : ${this.selectedCityObject.props['cityobject.database_id']}<br>
+        Tile ID : ${this.selectedCityObject.tileId}<br>
+        Batch ID : ${this.selectedCityObject.batchId}
+      `;
+      this.createLinkButtonElement.disabled = false;
+    }
+  }
+
+  /**
+   * Creates a new link with a city object, using the currently selected
+   * building ID.
+   */
+  async _createLink() {
+    if (!this.selectedCityObject) {
+      throw 'No selected city object.';
+    }
+    
+    let formData = new FormData();
+    formData.append('source_id', this.documentProvider.getDisplayedDocument().id);
+    formData.append('target_id', this.selectedCityObject.props['cityobject.database_id']);
+    let centroid = this.selectedCityObject.centroid;
+    formData.append('centroid_x', centroid.x);
+    formData.append('centroid_y', centroid.y);
+    formData.append('centroid_z', centroid.z);
+    try {
+      await this.linkService.createLink('city_object', formData);
+      await this.documentProvider.refreshDocumentList();
+      this._toggleBuildingSelection();
+    } catch (e) {
+      alert(`Could not create the link : ${e}`);
+    }
   }
 
   /**
@@ -69,54 +235,58 @@ export class DocumentLinkView {
    * 
    * @param {Document} doc The current document.
    */
-  async _fetchLinks(doc) {
-    let currentDocument = doc;
-    if (!!currentDocument) {
-      let filters = {
-        source_id: currentDocument.id
-      };
+  async _updateLinkList(doc) {
+    this.linkTableDivElement.innerHTML = '';
 
-      this.linkTableDivElement.innerHTML = '';
+    if (!doc) {
+      this.selectBuildingButtonElement.disabled = true;
+      return;
+    }
 
-      let linkTypes = await this.linkService.getSupportedLinkTypes();
-      for (let type of linkTypes) {
-        let newDiv = document.createElement('div');
-        let newDivHtml = `<h3>Type : ${type}</h3>
-                          <ul>`;
-        let links = await this.linkService.getLinks(type, filters);
-        for (let link of links) {
-          newDivHtml += `<li>
-                           ID : ${link.target_id}
-                           <span id="${this.linkHighlighterId(type, link)}" class="link-selector">
-                            highlight
-                           </span>
-                           <span id="${this.linkTravelerId(type, link)}" class="link-selector">
-                            travel
-                           </span>
-                           <span id="${this.linkDeleterId(type, link)}" class="link-selector">
-                            delete
-                           </span>
-                         </li>`;
-        }
-        newDivHtml += '</ul>';
-        newDiv.innerHTML = newDivHtml;
-        this.linkTableDivElement.appendChild(newDiv);
-        for (let link of links) {
-          document.getElementById(this.linkHighlighterId(type, link)).onclick = () => {
-            this.highlightLink(type, link);
-          };
-          document.getElementById(this.linkTravelerId(type, link)).onclick = () => {
-            this.travelToLink(type, link);
-          };
-          document.getElementById(this.linkDeleterId(type, link)).onclick = () => {
-            this.deleteLink(type, link);
-          };
-        }
+    this.selectBuildingButtonElement.disabled = false;
+    let filters = {
+      source_id: doc.id
+    };
+
+    let linkTypes = await this.linkService.getSupportedLinkTypes();
+    for (let type of linkTypes) {
+      let newDiv = document.createElement('div');
+      let newDivHtml = `<h4 class="subsection-title">Type : ${type}</h4>
+                        <ul>`;
+      let links = await this.linkService.getLinks(type, filters);
+      for (let link of links) {
+        newDivHtml += `<li>
+                          ID : ${link.target_id}
+                          <span id="${this.linkHighlighterId(type, link)}" class="link-selector">
+                          highlight
+                          </span>
+                          <span id="${this.linkTravelerId(type, link)}" class="link-selector">
+                          travel
+                          </span>
+                          <span id="${this.linkDeleterId(type, link)}" class="link-selector">
+                          delete
+                          </span>
+                        </li>`;
+      }
+      newDivHtml += '</ul>';
+      newDiv.innerHTML = newDivHtml;
+      this.linkTableDivElement.appendChild(newDiv);
+      for (let link of links) {
+        document.getElementById(this.linkHighlighterId(type, link)).onclick = () => {
+          this._highlightLink(type, link);
+        };
+        document.getElementById(this.linkTravelerId(type, link)).onclick = () => {
+          this._travelToLink(type, link);
+        };
+        document.getElementById(this.linkDeleterId(type, link)).onclick = () => {
+          this._deleteLink(type, link);
+        };
       }
     }
   }
 
-  ////// LINK OPERATION
+  ////////////////////
+  ///// LINK OPERATION
 
   /**
    * If the target of the link is a city object, highlights it by changing its
@@ -126,24 +296,19 @@ export class DocumentLinkView {
    * @param {any} link The actual link, with `id`, `source_id` and `target_id`
    * properties.
    */
-  async highlightLink(type, link) {
+  async _highlightLink(type, link) {
     if (type === 'city_object') {
-      this.tilesManager.removeAllStyles();
-      let cityObjectId = undefined;
-      for (let tile of Object.values(this.tilesManager.tiles)) {
-        for (let cityObject of Object.values(tile.cityObjects)) {
-          if (cityObject.props['cityobject:database_id'] === link.target_id) {
-            cityObjectId = cityObject.cityObjectId;
-            break;
-          }
-        }
-      }
+      this.tilesManager.update();
+      let targetId = Number(link.target_id);
+      let cityObject = this.tilesManager.findCityObject(
+        (co) => co.props["cityobject.database_id"] === targetId);
 
-      if (!cityObjectId) {
+      if (!cityObject) {
         throw 'No city object found';
       }
 
-      this.tilesManager.setStyle(cityObjectId, 'highlight');
+      this.tilesManager.removeAllStyles();
+      this.tilesManager.setStyle(cityObject.cityObjectId, 'highlight');
       this.tilesManager.applyStyles();
     }
   }
@@ -154,7 +319,7 @@ export class DocumentLinkView {
    * @param {string} type The link target type.
    * @param {any} link The actual link, with `id`, `source_id` and `target_id`
    */
-  async travelToLink(type, link) {
+  async _travelToLink(type, link) {
     if (type === 'city_object') {
       let centroid = new THREE.Vector3(link.centroid_x, link.centroid_y,
         link.centroid_z);
@@ -169,11 +334,11 @@ export class DocumentLinkView {
    * @param {string} type The link target type.
    * @param {any} link The actual link, with `id`, `source_id` and `target_id`.
    */
-  async deleteLink(type, link) {
+  async _deleteLink(type, link) {
     if (confirm('Are you sure you want to delete this link ?')) {
       try {
         await this.linkService.deleteLink(type, link.id);
-        await this.fetchLinks();
+        await this.documentProvider.refreshDocumentList();
       } catch (e) {
         alert(`Failed to detete link : ${e}`);
       }

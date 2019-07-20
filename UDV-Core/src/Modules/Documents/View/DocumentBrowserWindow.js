@@ -36,10 +36,14 @@ export class DocumentBrowserWindow extends AbstractDocumentWindow {
         <div>
           <img class="browser-doc-img" src="" alt="Document image"
             id="${this.docImageId}" title="CTRL + Click to open the image">
-          <p id="${this.docSubjectId}"></p>
-          <p id="${this.docDescriptionId}"></p>
-          <p>Reffering date : <span id="${this.docRefDateId}"></span></p>
-          <p>Published on <span id="${this.docPubDateId}"></span></p>
+          <input type="checkbox" class="spoiler-check" id="doc-details-spoiler" checked>
+          <label for="doc-details-spoiler" class="subsection-title">Details</label>
+          <div class="search-form spoiler-box">
+            <p id="${this.docSubjectId}"></p>
+            <p id="${this.docDescriptionId}"></p>
+            <p>Reffering date : <span id="${this.docRefDateId}"></span></p>
+            <p>Published on <span id="${this.docPubDateId}"></span></p>
+          </div>
         </div>
       </div>
       <div id="${this.extensionContainerId}">
