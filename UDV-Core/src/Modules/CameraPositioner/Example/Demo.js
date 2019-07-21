@@ -15,5 +15,5 @@ baseDemo.loadConfigFile(
     
     const cameraPosition = new udvcore.CameraPositioner(baseDemo.view,
         baseDemo.controls);
-    baseDemo.addModuleView('CameraPositioner', cameraPosition);
+    baseDemo.addModuleView('cameraPositioner', cameraPosition);
 });

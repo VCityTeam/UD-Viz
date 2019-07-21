@@ -56,11 +56,11 @@ baseDemo.loadConfigFile('../data/config/generalDemoConfig.json').then(() => {
     ////// DOCUMENT COMMENTS
     const documentComments = new udvcore.DocumentComments(documentModule,
         requestService, baseDemo.config);
-/*
+
     ////// GUIDED TOURS MODULE
-    const guidedtour = new udvcore.GuidedTourController(documents,
-        requestService);
-    baseDemo.addModuleView('guidedTour', guidedtour, {name: 'Guided tours'});*/
+    const guidedtour = new udvcore.GuidedTourController(documentModule,
+        requestService, baseDemo.config);
+    baseDemo.addModuleView('guidedTour', guidedtour, {name: 'Guided Tours'});
 
     ////// GEOCODING EXTENSION
     const geocodingService = new udvcore.GeocodingService(requestService,
@@ -75,4 +75,9 @@ baseDemo.loadConfigFile('../data/config/generalDemoConfig.json').then(() => {
     baseDemo.addModuleView('3dtilesDebug', debug3dTilesWindow, {
         name: '3DTiles Debug'
     });
+
+    ////// CAMERA POSITIONER
+    const cameraPosition = new udvcore.CameraPositioner(baseDemo.view,
+        baseDemo.controls);
+    baseDemo.addModuleView('cameraPositioner', cameraPosition);
 });

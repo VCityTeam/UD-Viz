@@ -2,6 +2,7 @@ import './GuidedTour.css';
 import { GuidedTour } from './GuidedTour.js';
 import { ModuleView } from '../../Utils/ModuleView/ModuleView';
 import { RequestService } from "../../Utils/Request/RequestService";
+import { DocumentModule } from '../Documents/DocumentModule';
 
 /**
 * Class: GuidedTourController
@@ -21,21 +22,25 @@ export class GuidedTourController extends ModuleView {
   * Multiple guided tours are supported (only one tour is finished for the demo)
   * For the demo : options.preventUserFromChangingTour allows to hide the buttons for changing tour
   *
-  * @param { documentController } documentController
+  * @param { DocumentModule } documentModule The document module.
   * @param { RequestService } requestService The request service
+  * @param { object } config The UDV config.
+  * @param { object } config.server The server configuration.
+  * @param { string } config.server.url The base URL of the server.
+  * @param { string } config.server.guidedTour The route for guided tours.
   *
   ======================================================================
   */
-  constructor(documentController, requestService) {
+  constructor(documentModule, requestService, config) {
     super();
 
     this.guidedTourContainerId = "guidedTourContainer";
 
-    this.documentController = documentController; //instance of DocumentController
+    this.documentModule = documentModule; //instance of DocumentModule
 
-    this.url = this.documentController.serverModel.url + this.documentController.serverModel.guidedTour;
+    this.url = config.server.url + config.server.guidedTour;
 
-    this.browser = this.documentController.documentBrowser;
+    this.browser = this.documentModule.view.browserWindow;
 
     this.guidedTours = [];
 
@@ -75,10 +80,10 @@ export class GuidedTourController extends ModuleView {
       authenticate: false
     });
     this.guidedTours = JSON.parse(req.responseText);
-
+/*
     if (this.guidedTours.length > 0) {
-      this.documentController.documentBrowser.numberDocs = this.guidedTours[0].extendedDocs.length;
-    }
+      this.documentModule.provider.getFilteredDocuments().length = this.guidedTours[0].extendedDocs.length;
+    }*/
   }
 
   /**

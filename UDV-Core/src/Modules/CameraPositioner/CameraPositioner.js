@@ -1,11 +1,15 @@
 import { ModuleView } from "../../Utils/ModuleView/ModuleView";
 import { PositionerWindow } from "../../Utils/Camera/PositionerWindow";
+import { Window } from "../../Utils/GUI/js/Window";
 
 export class CameraPositioner extends ModuleView {
   constructor(itownsView, cameraControls) {
     super();
 
     this.positionerWindow = new PositionerWindow(itownsView, cameraControls);
+
+    this.positionerWindow.addEventListener(Window.EVENT_DISABLED,
+      () => this.disable());
   }
 
   enableView() {
@@ -13,6 +17,6 @@ export class CameraPositioner extends ModuleView {
   }
 
   disableView() {
-    this.positionerWindow.dispose(this.parentElement);
+    this.positionerWindow.dispose();
   }
 }
