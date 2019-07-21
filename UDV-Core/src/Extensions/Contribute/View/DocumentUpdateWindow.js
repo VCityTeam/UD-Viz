@@ -104,6 +104,12 @@ export class DocumentUpdateWindow extends AbstractDocumentWindow {
 
     // Sets doc attributes in HTML
     let doc = this.provider.getDisplayedDocument();
+
+    if (!doc) {
+      this.disable();
+      return;
+    }
+
     this.docTitleElement.innerText = doc.title;
     this.docImageElement.src =
       await this.provider.getDisplayedDocumentImage();

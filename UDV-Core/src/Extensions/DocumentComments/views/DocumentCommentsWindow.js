@@ -52,9 +52,13 @@ export class DocumentCommentsWindow extends AbstractDocumentWindow {
     }
 
     documentWindowReady() {
-        this.view.browserWindow.addDocumentCommand('Comments', () => {
-            this.view.requestWindowDisplay(this);
-            this.getComments();
+        this.view.browserWindow.addDocumentExtension('Comments', {
+            type: 'button',
+            html: 'Comments',
+            callback: () => {
+                this.view.requestWindowDisplay(this);
+                this.getComments();
+            }
         });
     }
 
