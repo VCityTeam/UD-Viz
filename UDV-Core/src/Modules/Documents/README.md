@@ -20,7 +20,7 @@ In the [demo](./Example/Demo.html), you can try out the basic functionnalities o
 
 The demo also includes the `DocumentVisualizer` module, that adds an "Orient" button in the document browser. When pressed, the button moves the camera to the "visualization" position specified in the document, and the image of the document is displayed in superposition to the scene.
 
-## Installation
+## Usage
 
 Adding the documents module in a demo is pretty simple :
 
@@ -49,6 +49,8 @@ The minimal configuration required to make the documents module work is the foll
   }
 }
 ```
+
+`server.url` represents the base URL for the server. The documents service expects it to be a REST API, where access routes are in the form `{baseURL}/{document}` for documents (e.g. "http://localhost:1525/document") and `{baseURL}/{document}/{id}/{file}` for files associated with documents (e.g. "http://localhost:1525/document/1/file" for the file associated with the document of ID 1).
 
 ### Dependencies
 
