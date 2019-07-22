@@ -29,8 +29,9 @@ export class DocumentImageOrienter extends AbstractDocumentWindow {
     documentModule.addBrowserExtension('Orient', {
       type: 'button',
       html: 'Orient',
-      callback: () => {
-        this.startTravelToDisplayedDocument();
+      callback: async () => {
+        this.disable();
+        await this.startTravelToDisplayedDocument();
         this.requestDisplay();
       }
     });
@@ -147,6 +148,8 @@ export class DocumentImageOrienter extends AbstractDocumentWindow {
   /**
    * Retrieve the displayed document and start a travel to its visualization
    * location.
+   * 
+   * @async
    */
   async startTravelToDisplayedDocument() {
     let currentDoc = this.provider.getDisplayedDocument();
@@ -186,8 +189,10 @@ export class DocumentImageOrienter extends AbstractDocumentWindow {
    * the opacity is gradually restored.  
    * To call this function, the `position`, `quaternion` and `imageSrc`
    * attributes must all have been set beforehand.
+   * 
+   * @async
    */
-  async startTravel() {    
+  startTravel() {
     this.imageElement.style.opacity = 0;
     this.opacitySliderElement.value = 0;
     this.opacityElement.value = 0;
@@ -196,19 +201,26 @@ export class DocumentImageOrienter extends AbstractDocumentWindow {
         this.quaternion, true);
     this.itownsView.notifyChange();
 
-    setTimeout(() => {
-      let intervalHandle;
-      let increaseOpacity = () => {
-        let nextValue = Number(this.opacitySliderElement.value) + 0.01;
-        if (nextValue >= 1) {
-          nextValue = 1;
-          clearInterval(intervalHandle)
-        }
-        this.opacitySliderElement.value = nextValue;
-        this._onOpacityChange();
-      };
-      intervalHandle = setInterval(increaseOpacity, 15);
-    }, 2000);
+    return new Promise((resolve, reject) => {
+      try {
+        setTimeout(() => {
+          let intervalHandle;
+          let increaseOpacity = () => {
+            let nextValue = Number(this.opacitySliderElement.value) + 0.01;
+            this.opacitySliderElement.value = nextValue;
+            this._onOpacityChange();
+            if (nextValue >= 1) {
+              nextValue = 1;
+              clearInterval(intervalHandle)
+            }
+          };
+          intervalHandle = setInterval(increaseOpacity, 15);
+          resolve();
+        }, 2000);
+      } catch (e) {
+        reject(e); 
+      }
+    });
   }
 
   /////////////
