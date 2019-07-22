@@ -2,7 +2,7 @@ import { Window } from "../../../Utils/GUI/js/Window";
 import { DocumentProvider } from "../ViewModel/DocumentProvider";
 import { DocumentView } from "./DocumentView";
 
-import './CSS/DocumentWindow.css'
+import './DocumentWindow.css'
 
 export class AbstractDocumentWindow extends Window {
   /**

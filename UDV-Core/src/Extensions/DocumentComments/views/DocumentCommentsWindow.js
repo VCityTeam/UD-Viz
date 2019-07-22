@@ -15,7 +15,7 @@ export class DocumentCommentsWindow extends AbstractDocumentWindow {
      * service.
      */
     constructor(documentCommentsService) {
-        super('documentComments', 'Comments');
+        super('Comments');
         this.documentCommentsService = documentCommentsService;
     }
 
