@@ -257,13 +257,13 @@ export class DocumentLinkView {
       for (let link of links) {
         newDivHtml += `<li>
                           ID : ${link.target_id}
-                          <span id="${this.linkHighlighterId(type, link)}" class="link-selector">
+                          <span id="${this.linkHighlighterId(type, link)}" class="clickable-text">
                           highlight
                           </span>
-                          <span id="${this.linkTravelerId(type, link)}" class="link-selector">
+                          <span id="${this.linkTravelerId(type, link)}" class="clickable-text">
                           travel
                           </span>
-                          <span id="${this.linkDeleterId(type, link)}" class="link-selector">
+                          <span id="${this.linkDeleterId(type, link)}" class="clickable-text">
                           delete
                           </span>
                         </li>`;

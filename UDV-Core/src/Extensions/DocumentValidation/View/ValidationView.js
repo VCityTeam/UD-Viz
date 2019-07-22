@@ -84,7 +84,7 @@ export class ValidationView {
       this._showValidatedDocuments()
     }
 
-    this.documentModule.provider.refreshDocumentList().then(() => {
+    this.documentModule.refreshDocumentList().then(() => {
     }, (reason) => {
       this._showValidatedDocuments();
       this.displayingDocumentsToValidate = !this.displayingDocumentsToValidate;
@@ -124,7 +124,7 @@ export class ValidationView {
     this.documentModule.changeDocumentSource(this.previousDocumentSource,
       false);
 
-    this.documentModule.view.browserWindow.removeDocumentExtension('Validate');
+    this.documentModule.removeBrowserExtension('Validate');
 
     this.validationToggleElement.innerText = 'documents in validation';
     this.validateStateElement.innerText = 'validated documents';
@@ -145,7 +145,7 @@ export class ValidationView {
     this.validationService.validate(doc).catch((reason) => {
       alert(reason.statusText);
     }).then(() => {
-      this.documentModule.provider.refreshDocumentList();
+      this.documentModule.refreshDocumentList();
     });
   }
 

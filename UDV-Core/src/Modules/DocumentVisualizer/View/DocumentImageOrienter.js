@@ -31,7 +31,7 @@ export class DocumentImageOrienter extends AbstractDocumentWindow {
       html: 'Orient',
       callback: () => {
         this.startTravelToDisplayedDocument();
-        this.view.requestWindowDisplay(this);
+        this.requestDisplay();
       }
     });
 

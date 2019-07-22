@@ -80,10 +80,6 @@ export class GuidedTourController extends ModuleView {
       authenticate: false
     });
     this.guidedTours = JSON.parse(req.responseText);
-/*
-    if (this.guidedTours.length > 0) {
-      this.documentModule.provider.getFilteredDocuments().length = this.guidedTours[0].extendedDocs.length;
-    }*/
   }
 
   /**

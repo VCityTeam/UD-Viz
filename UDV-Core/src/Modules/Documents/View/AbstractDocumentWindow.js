@@ -53,4 +53,14 @@ export class AbstractDocumentWindow extends Window {
 
     this.documentWindowReady();
   }
+
+  /**
+   * Request to show a this document window.
+   * 
+   * @param {boolean} [hideOtherWindows] Set to `true` to hide other document
+   * windows.
+   */
+  requestDisplay(hideOtherWindows = false) {
+    this.view.requestWindowDisplay(this, hideOtherWindows);
+  }
 }

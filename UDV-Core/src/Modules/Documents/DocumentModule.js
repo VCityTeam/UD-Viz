@@ -122,4 +122,47 @@ export class DocumentModule {
   changeDocumentSource(newSource, authenticate) {
     return this.provider.fetcher.setSource(newSource, authenticate);
   }
+
+  /**
+   * Adds an event listener to the document provider. There are two types
+   * of events :
+   * - `DocumentModule.EVENT_FILTERED_DOCUMENTS_UPDATED` fires when the list
+   * of filtered documents changes
+   * - `DocumentModule.EVENT_DISPLAYED_DOC_CHANGED` fires when the displayed
+   * document changes.
+   * 
+   * @param {string} event The event to register. Can only be
+   * `DocumentModule.EVENT_FILTERED_DOCS_UPDATED` or
+   * `DocumentModule.EVENT_DISPLAYED_DOC_CHANGED`
+   * @param {(data: any) => any} action The listener.
+   */
+  addEventListener(event, action) {
+    this.provider.addEventListener(event, action);
+  }
+
+  /**
+   * Removes an event listener from the document provider.
+   * 
+   * @param {(data: any) => data} action The listener to remove.
+   */
+  removeEventListener(action) {
+    this.provider.removeEventListener(action);
+  }
+
+  static get EVENT_FILTERED_DOCS_UPDATED() {
+    return DocumentProvider.EVENT_FILTERED_DOCS_UPDATED;
+  }
+
+  static get EVENT_DISPLAYED_DOC_CHANGED() {
+    return DocumentProvider.EVENT_DISPLAYED_DOC_CHANGED;
+  }
+
+  /**
+   * Updates the filtered documents list by fetching them from the
+   * `DocumentFetcher` and applying the successive filters. Triggers the
+   * `DOCUMENT_LIST_UPDATED` and then the `DISPLAYED_DOCUMENT_CHANGED` events.
+   */
+  async refreshDocumentList() {
+    await this.provider.refreshDocumentList();
+  }
 }

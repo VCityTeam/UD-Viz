@@ -12,15 +12,10 @@ export { GuidedTourController }     from './Modules/GuidedTour/GuidedTourControl
 
 export { AuthenticationView }  from './Extensions/Authentication/views/AuthenticationView';
 
-export { DocToValidateService }     from './Extensions/DocToValidate/services/DocToValidateService';
-export { DocToValidateView }        from './Extensions/DocToValidate/views/DocToValidateView';
-
 export { AboutWindow }              from './Modules/Others/About';
 export { HelpWindow }               from './Modules/Others/Help';
 
 export { TemporalController }       from './Modules/Temporal/Temporal';
-
-export { DocumentController}        from './Modules/ConsultDoc/DocumentController';
 
 export { ContributeController }     from './Extensions/Contribute/src/ContributeController';
 
@@ -30,9 +25,6 @@ export { GeocodingService }         from './Extensions/Geocoding/services/Geocod
 export { GeocodingView }            from './Extensions/Geocoding/views/GeocodingView';
 
 export { Debug3DTilesWindow }       from './Extensions/3DTilesDebug/views/3DTilesDebugWindow';
-
-export { LinkService }              from './Extensions/DocumentLinks/services/LinkService';
-export { DocumentLinkWindow }       from './Extensions/DocumentLinks/views/DocumentLinkWindow';
 
 export { DocumentModule }           from './Modules/Documents/DocumentModule';
 export { DocumentImageOrienter }    from './Modules/DocumentVisualizer/View/DocumentImageOrienter';
