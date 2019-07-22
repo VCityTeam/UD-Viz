@@ -4,8 +4,6 @@ export class CustomWindow extends Window {
 
     constructor () {
         super('custom', 'Ma fenêtre', false);
-        this.defaultStyle = false;
-        this.windowDisplayWhenVisible = 'block';
     }
 
     get innerContentHtml () {
