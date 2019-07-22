@@ -15,7 +15,7 @@
   },
   "3DTilesLayerURL": "http://rict.liris.cnrs.fr/UDVDemo-2/Data/3DTiles_FullLyon_withIDs/tileset.json",
   "3DTilesLayerID": "3d-tiles-layer",
-  "3DTilesTemporalLayerURL": "http://localhost:8003/tilesets/3DTiles_temporal_extension/V25_FullLyonBigTiles/tileset.json",
+  "3DTilesTemporalLayerURL": "http://localhost:8003/tilesets/3DTiles_temporal_extension/Lyon2009-2015WithRemarkable/tileset.json",
   "3DTilesTemporalLayerID": "3d-tiles-temporal-layer",
   "geocoding":{
     "url":"https://nominatim.openstreetmap.org/search",

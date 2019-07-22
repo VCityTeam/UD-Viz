@@ -2,23 +2,6 @@ import { $3DTAbstractExtension } from 'itowns';
 import { CityObjectStyle } from '../../Utils/3DTiles/Model/CityObjectStyle';
 import { CityObjectID } from '../../Utils/3DTiles/Model/CityObject';
 
-// TODO: Complex transactions ? Et en particulier les
-//  subdivision/fusion+modified
-const transactionsColors = {
-    noTransaction: 0xffffff, // white
-    creation: 0x009900, // green
-    demolition: 0xff0000, // red
-    modified: 0xFFD700, // yellow
-    subdivision: 0x0000ff, // dark blue
-    fusion: 0x0000ff, // dark blue
-};
-
-const opacities = {
-    certain: 1.0,
-    uncertain: 0.6,
-    hide: 0,
-};
-
 class TemporalExtension_Tileset {
     constructor(json) {
         // TODO: pour l'instant les dates sont des années, les gérer ensuite
@@ -100,11 +83,13 @@ class TemporalExtension_BatchTable {
     // tags (fusion + modification or subdivision + modification) we display
     // the features in grey. These cases are indeed mostly between 2012 and 2015
     // and are due to the data
-    static getDisplayStateFromTags(tags) {
+    static getDisplayStateFromTags(currentTime, tags) {
         if (tags.length === 1) {
             return tags[0];
-        } else {
+        } else if (currentTime > 2012 && currentTime < 2015) {
             return 'noTransaction';
+        } else {
+            return 'modified';
         }
     }
 
@@ -160,7 +145,7 @@ class TemporalExtension_BatchTable {
                         oldTransac.startDate + oldTransacHalfDuration) {
                         hasTransac = true;
                         const displayState = TemporalExtension_BatchTable.getDisplayStateFromTags(
-                            oldTransac.tags);
+                            currentTime, oldTransac.tags);
                         featuresDisplayStates.push(displayState);
                     }
                 }
@@ -173,7 +158,7 @@ class TemporalExtension_BatchTable {
                         newTransac.endDate) {
                         hasTransac = true;
                         const displayState = TemporalExtension_BatchTable.getDisplayStateFromTags(
-                            newTransac.tags);
+                            currentTime, newTransac.tags);
                         featuresDisplayStates.push(displayState);
                     }
                 }
@@ -375,13 +360,6 @@ export class $3DTemporalExtension extends $3DTAbstractExtension {
 
             for (let i = 0; i < featuresDisplayStates.length ; i++) {
                 this.tilesManager.setStyle(new CityObjectID(node.tileId, i), featuresDisplayStates[i]);
-            }
-
-            if (node.tileId === 208) {
-                const featureId = BT_ext.featureIds[8]
-                console.log(featureId);
-                console.log(BT_ext.featuresTransacs);
-                console.log(featuresDisplayStates[8]);
             }
 
             /* this.tilesManager.applyStyleToTile(node.tileId,
