@@ -16,6 +16,8 @@ In the [demo](./Example/Demo.html), you can try out the basic functionnalities o
 - Fetch all documents from the server. It's actually the default comportement (and may change in the future for scaling purpose). The user can filter the retrieved list according to some filters: keywords in the title/description, subject, publication or refering date.
 - Display the details of one particular documents, and navigate through the documents list. The navigation can be done either by selecting a document in the document list, or by using navigation arrows in the document browser.
 
+![The look of the documents module](./Doc/Pictures/view.png)
+
 The demo also includes the `DocumentVisualizer` module, that adds an "Orient" button in the document browser. When pressed, the button moves the camera to the "visualization" position specified in the document, and the image of the document is displayed in superposition to the scene.
 
 ## Installation
@@ -112,11 +114,11 @@ documentModule.addEventListener(DocumentModule.EVENT_DISPLAYED_DOC_CHANGED, (doc
 
 In this example, we create a new section in the browser window that keeps track of the document title. We do this by passing a string of HTML, in which a `span` tag has a specific 'title' ID that we can use later. We then adds an event listener so that when the currently displayed document change, our custom section will update and render the title.
 
-The `addBrowserExtension` also has an equivalent for the search window, which is called `addSearchWindowExtension`. It has the same behaviour, except on difference for the buttons elements : the callback does not pass the displayed document as parameter, but the list of filtered documents.
+The `addBrowserExtension` also has an equivalent for the search window, which is called `addSearchWindowExtension`. It has the same behaviour, except one difference for the buttons elements : the callback does not pass the displayed document as parameter, but the list of filtered documents.
 
 #### Adding a new window
 
-The addition of a new window for documents is made through the `AbstractDocumentWindow` class (in the `View` folder) that represents a window responsible for display document data, and interacting with the document provider. The base code inside the extending window should look like like this :
+The addition of a new window for documents is made through the `AbstractDocumentWindow` class (in the `View` folder) that represents a window responsible for displaying document data, and interacting with the document provider. The base code inside the extending window should look like like this :
 
 ```js
 export class ExtensionWindow extends AbstractDocumentWindow {
@@ -143,9 +145,9 @@ export class ExtensionWindow extends AbstractDocumentWindow {
 This window is empty and does nothing. In fact, it doesn't event displays as we specified `this.hide()` when the window is created. This will allow us to display the window when the user clicks on a button in the document browser for example, but we'll see that in a few paragraphs. For the moment, let's just register our new window :
 
 ```js
-// OtherFile.js
+// MyModule.js
 let myWindow = new ExtensionWindow();
-documentModule.addDocumentWindow();
+documentModule.addDocumentWindow(myWindow);
 ```
 
 This code tells the view to register the new document window in its windows list. We can also do this in the `ExtensionWindow` by taking the documents module as parameter of the constructor :
@@ -156,7 +158,7 @@ constructor(documentModule) {
   documentModule.addDocumentWindow(this);
 }
 
-// OtherFile.js
+// MyModule.js
 let myWindow = new ExtensionWindow(documentModule);
 ```
 
@@ -183,3 +185,91 @@ documentModule.addBrowserExtension('MyExtension', {
 ```
 
 The `requestDisplay` methods tells the view to display the specified window.
+
+### Interacting with the model
+
+An external module has two ways of interacting with the model : changing the source of documents, and adding custom filters.
+
+#### Changing the source
+
+Changing the document source means changing the server configuration. This is done by instantiating a `DocumentSource` object with the correct parameters. One way of doing that is to create a custom objects that inherits this class :
+
+```js
+export class MyCustomSource extends DocumentSource {
+  constructor(config) {
+    super();
+
+    this.myCustomUrl = `${config.customUrl}${config.customDocs}`;
+    this.fileRoute = config.customFiles;
+  }
+
+  getDocumentUrl() {
+    return this.myCustomUrl;
+  }
+
+  getImageUrl(doc) {
+    return this.myCustomUrl + '/' + doc.id + '/' + this.imageRoute;
+  }
+}
+```
+
+Here, we suppose that the UDV configuration has an object like this :
+
+```json
+{
+  "customUrl": "http://custom-url.com/",
+  "customDocs": "my-documents",
+  "customFiles": "my-file"
+}
+```
+
+So, by using the source we provided, the document fetcher will now retrieve the documents using the URL returned by `getDocumentUrl` (in this case, it will be `http://custom-url.com/my-documents`) and document files using `getImageUrl` (in our example, `http://custom-url.com/my-documents/{id}/my-file`).
+
+To change the document source, we can use the `changeDocumentSource` method of the documents module :
+
+```js
+let mySource = new MyCustomSource(config);
+documentModule.changeDocumentSource(mySource, true);
+```
+
+The second parameter indicates that authentication should be used with this source.
+
+#### Adding filters
+
+The other way of changing the document list is by adding new filters. This is done by providing an instance of the `DocumentFilter` class. A filter in its simplest form is basically a function that takes a document in input, and returns a boolean indicating wether the filters "accepts" the document. If yes, the document will be kept in the filtered document list, otherwise it will not appear in the list.
+
+Let's construct a filter that only keeps documents that have a title with less than 3 words :
+
+```js
+let titleFilter = new DocumentFilter((doc) => {
+  let wordCount = doc.title.split(' ').length;
+  return wordCount < 3;
+});
+
+documentModule.addFilter(titleFilter);
+```
+
+Creating our filter is really simple : we only need to instantiate a `DocumentFilter` object and pass the acceptation function to it. In this example, we use an arrow function that captures the context in which it was created. This allows us to make dynamic filters, like this one :
+
+```js
+this.maxWordCount = 3;
+
+let titleFilter = new DocumentFilter((doc) => {
+  let wordCount = doc.title.split(' ').length;
+  return wordCount < this.maxWordCount;
+});
+
+documentModule.addFilter(titleFilter);
+
+// Later, we can change our filter
+this.maxWordCount = 5;
+documentModule.refreshDocumentList();
+```
+
+In this example, we only keep documents that have a title with less than N words, where N is determined by the `maxWordCount` variable. This means that our filter is dynamic and can be updated anytime during the execution. This also means that we can deactivate our filter, by specifying :
+
+```js
+this.maxWordCount = Infinity;
+```
+
+As there will always be a finite number of words in a document title, the filter will let all documents pass.

@@ -124,6 +124,15 @@ export class DocumentModule {
   }
 
   /**
+   * Adds a filter to the filtering pipeline.
+   * 
+   * @param {DocumentFilter} filter The new filter to add.
+   */
+  addFilter(filter) {
+    this.provider.addFilter(filter);
+  }
+
+  /**
    * Adds an event listener to the document provider. There are two types
    * of events :
    * - `DocumentModule.EVENT_FILTERED_DOCUMENTS_UPDATED` fires when the list
