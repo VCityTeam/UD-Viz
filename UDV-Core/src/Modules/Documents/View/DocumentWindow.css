@@ -60,22 +60,20 @@
   border-radius: 4px;
 }
 
-.inspector-arrows-panel {
+.inspector-left-right-grid {
   display: grid;
   grid-template-columns: auto auto;
-  margin: 10px;
-  font-size: 15px;
+}
+
+.inspector-details {
+  padding: 5px;
+}
+
+.inspector-field {
+  margin: 0 0 5px 10px;
+}
+
+.inspector-field-title {
+  margin: 0;
   font-weight: bold;
-}
-
-.inspector-arrows-panel .clickable-text:hover{
-  text-decoration: none;
-}
-
-.inspector-arrows-panel .left-arrow {
-  text-align: left;
-}
-
-.inspector-arrows-panel .right-arrow {
-  text-align: right;
 }

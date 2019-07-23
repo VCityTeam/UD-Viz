@@ -104,8 +104,9 @@ export class ValidationView {
       .changeDocumentSource(this.validationSource, true);
     
     // Adds the validate button
-    this.documentModule.addBrowserExtension('Validate', {
+    this.documentModule.addInspectorExtension('Validate', {
       type: 'button',
+      container: 'right',
       html: 'Validate',
       callback: (doc) => this._validateDocument(doc)
     });

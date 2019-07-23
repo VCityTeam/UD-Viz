@@ -3,6 +3,7 @@ import { ContributeService } from "../Service/ContributeService";
 
 import "./Contribute.css";
 import { DocumentProvider } from "../../../Modules/Documents/ViewModel/DocumentProvider";
+import { DocumentModule } from "../../../Modules/Documents/DocumentModule";
 
 /**
  * This window is used to update a document. It contains a form that allows to
@@ -14,8 +15,9 @@ export class DocumentUpdateWindow extends AbstractDocumentWindow {
    * 
    * @param {ContributeService} contributeService The contribute service to
    * perform requests.
+   * @param {DocumentModule} documentModule The document module.
    */
-  constructor(contributeService) {
+  constructor(contributeService, documentModule) {
     super('Update');
 
     /**
@@ -24,6 +26,13 @@ export class DocumentUpdateWindow extends AbstractDocumentWindow {
      * @type {ContributeService}
      */
     this.contributeService = contributeService;
+
+    documentModule.addInspectorExtension('Update', {
+      type: 'button',
+      container: 'right',
+      html: 'Update',
+      callback: () => this._initWindow()
+    });
   }
 
   get innerContentHtml() {
@@ -70,12 +79,6 @@ export class DocumentUpdateWindow extends AbstractDocumentWindow {
   }
 
   documentWindowReady() {
-    this.view.inspectorWindow.addDocumentExtension('Update', {
-      type: 'button',
-      html: 'Update',
-      callback: () => this._initWindow()
-    });
-
     this.provider.addEventListener(DocumentProvider.EVENT_DISPLAYED_DOC_CHANGED,
       () => this.disable());
   }

@@ -62,13 +62,16 @@ export class DocumentModule {
    * @param {object} options The extension options
    * @param {string} options.type The type of the option. Can be either `button`
    * or `panel`.
+   * @param {string} [options.container] The parent element to place the
+   * extension in the window. For buttons, the position can be either `left`
+   * or `right`.
    * @param {string} options.html The inside HTML of the
    * extension. For a button, this will be the displayed text. For a panel, it
    * will be the inside HTML.
    * @param {(doc: Document) => any} [options.callback] The callback to call
    * for a button.
    */
-  addBrowserExtension(label, options) {
+  addInspectorExtension(label, options) {
     this.view.inspectorWindow.addDocumentExtension(label, options)
   }
 

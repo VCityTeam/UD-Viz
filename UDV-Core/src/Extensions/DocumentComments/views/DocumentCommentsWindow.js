@@ -54,6 +54,7 @@ export class DocumentCommentsWindow extends AbstractDocumentWindow {
     documentWindowReady() {
         this.view.inspectorWindow.addDocumentExtension('Comments', {
             type: 'button',
+            container: 'left',
             html: 'Comments',
             callback: () => {
                 this.view.requestWindowDisplay(this);

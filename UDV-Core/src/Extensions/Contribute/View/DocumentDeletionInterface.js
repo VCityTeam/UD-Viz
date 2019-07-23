@@ -14,8 +14,9 @@ export class DocumentDeletionInterface {
    * @param {ContributeService} contributeService The contribute service.
    */
   constructor(documentModule, contributeService) {
-    documentModule.addBrowserExtension('Delete', {
+    documentModule.addInspectorExtension('Delete', {
       type: 'button',
+      container: 'right',
       html: 'Delete',
       callback: async () => {
         if (!confirm('You are going to delete the document. This operation ' +

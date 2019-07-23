@@ -31,7 +31,8 @@ export class ContributeModule {
 
     this.creationWindow = new DocumentCreationWindow(this.contributeService,
       itownsView, cameraControls, documentImageOrienter);
-    this.updateWindow = new DocumentUpdateWindow(this.contributeService);
+    this.updateWindow = new DocumentUpdateWindow(this.contributeService,
+      documentModule);
     new DocumentDeletionInterface(documentModule, this.contributeService);
 
     documentModule.addDocumentWindow(this.creationWindow);

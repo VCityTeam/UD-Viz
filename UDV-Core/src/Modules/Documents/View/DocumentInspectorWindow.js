@@ -20,6 +20,7 @@ export class DocumentInspectorWindow extends AbstractDocumentWindow {
      * 
      * @type {Object.<string, {
      *  type: 'button' | 'panel',
+     *  container?: string,
      *  label: string,
      *  id: string,
      *  callback?: (doc: Document) => any,
@@ -32,40 +33,32 @@ export class DocumentInspectorWindow extends AbstractDocumentWindow {
   get innerContentHtml() {
     return /*html*/`
       <div class="box-section">
-        <h3 id="${this.docTitleId}" class="section-title"></h3>
+        <h3 class="section-title">Title: <span id="${this.docTitleId}"></span></h3>
         <div>
           <img class="inspector-doc-img" src="" alt="Document image"
             id="${this.docImageId}" title="CTRL + Click to open the image">
           <input type="checkbox" class="spoiler-check" id="doc-details-spoiler" checked>
           <label for="doc-details-spoiler" class="subsection-title">Details</label>
-          <div class="search-form spoiler-box">
-            <p id="${this.docSubjectId}"></p>
-            <p id="${this.docDescriptionId}"></p>
-            <p>Reffering date : <span id="${this.docRefDateId}"></span></p>
-            <p>Published on <span id="${this.docPubDateId}"></span></p>
+          <div class="inspector-details spoiler-box">
+            <p class="inspector-field-title">Subject</p>
+            <p class="inspector-field" id="${this.docSubjectId}"></p>
+            <p class="inspector-field-title">Description</p>
+            <p class="inspector-field" id="${this.docDescriptionId}"></p>
+            <p class="inspector-field-title">Refering date</p>
+            <p class="inspector-field" id="${this.docRefDateId}"></p>
+            <p class="inspector-field-title">Publication date</p>
+            <p class="inspector-field" id="${this.docPubDateId}"></p>
+          </div>
+          <div id="${this.commandPanelId}" class="inspector-left-right-grid">
+            <div data-extension-container="left" class="text-left">
+            </div>
+            <div data-extension-container="right" class="text-right">
+            </div>
           </div>
         </div>
       </div>
-      <div id="${this.extensionContainerId}">
+      <div id="${this.extensionContainerId}" data-extension-container="panel">
 
-      </div>
-      <div class="box-section">
-        <div id="${this.commandPanelId}">
-
-        </div>
-        <!--hr>
-        <div class="inspector-arrows-panel">
-          <div class="left-arrow">
-            <span class="clickable-text" id="${this.leftArrowId}">
-              &#9666 <span id="${this.leftArrowTextId}"></span>
-            </span>
-          </div>
-          <div class="right-arrow">
-            <span class="clickable-text" id="${this.rightArrowId}">
-              <span id="${this.rightArrowTextId}"></span> &#9656
-            </span>
-          </div>
-        </div-->
       </div>
     `;
   }
@@ -150,6 +143,9 @@ export class DocumentInspectorWindow extends AbstractDocumentWindow {
    * @param {object} options The extension options
    * @param {string} options.type The type of the option. Can be either `button`
    * or `panel`.
+   * @param {string} [options.container] The parent element to place the
+   * extension in the window. For buttons, the position can be either `left`
+   * or `right`.
    * @param {string} options.html The inside HTML of the
    * extension. For a button, this will be the displayed text. For a panel, it
    * will be the inside HTML.
@@ -197,6 +193,9 @@ export class DocumentInspectorWindow extends AbstractDocumentWindow {
    * @param {object} extension 
    * @param {string} extension.type The type of the option. Can be either `button`
    * or `panel`.
+   * @param {string} [extension.container] The parent element to place the
+   * extension in the window. For buttons, the position can be either `left`
+   * or `right`.
    * @param {string} extension.id The id of the element.
    * @param {string} extension.label The label of the extension.
    * @param {string} extension.html The inside HTML of the
@@ -206,19 +205,25 @@ export class DocumentInspectorWindow extends AbstractDocumentWindow {
    * for a button.
    */
   _createExtensionElement(extension) {
+    let containerName = extension.container || extension.type;
+    let container = this.innerContent
+      .querySelector(`[data-extension-container="${containerName}"]`);
+    if (!container) {
+      throw 'Container does not exist in inspector : ' + containerName;
+    }
     if (extension.type === 'button') {
       let button = document.createElement('button');
       button.id = extension.id;
       button.innerHTML = extension.html;
       button.onclick = () =>
         extension.callback(this.provider.getDisplayedDocument());
-      this.commandPanelElement.appendChild(button);
+      container.appendChild(button);
     } else if (extension.type === 'panel') {
       let panel = document.createElement('div');
       panel.id = extension.id;
       panel.innerHTML = extension.html;
       panel.className = 'box-section';
-      this.extensionContainerElement.appendChild(panel);
+      container.appendChild(panel);
     } else {
       throw 'Invalid extension type : ' + extension.type;
     }

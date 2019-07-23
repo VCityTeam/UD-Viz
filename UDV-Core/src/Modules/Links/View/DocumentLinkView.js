@@ -22,7 +22,7 @@ export class DocumentLinkView {
    */
   constructor(documentModule, linkService, tilesManager, itownsView,
     cameraControls) {
-    documentModule.addBrowserExtension('Links', {
+    documentModule.addInspectorExtension('Links', {
       type: 'panel',
       html: this._getLinksHtml()
     });
@@ -104,14 +104,14 @@ export class DocumentLinkView {
   _getLinksHtml() {
     return /*html*/`
       <input type="checkbox" class="spoiler-check" id="doc-link-spoiler">
-      <label for="doc-link-spoiler" class="section-title">Links</label>
+      <label for="doc-link-spoiler" class="section-title">Document Links</label>
       <div class="spoiler-box">
         <div id="${this.linkTableDivId}">
         
         </div>
         <div>
-          <h4 class="subsection-title">Create a new link</h4>
-          <button id="${this.selectBuildingButtonId}">Select building</button>
+          <h4 class="subsection-title">Create a new document link</h4>
+          <button id="${this.selectBuildingButtonId}">Select city object</button>
           <button id="${this.createLinkButtonId}">Create link</button>
           <p id="${this.selectedBuildingParagraphId}"></p>
         </div>
