@@ -70,7 +70,7 @@ export class DocumentUpdateWindow extends AbstractDocumentWindow {
   }
 
   documentWindowReady() {
-    this.view.browserWindow.addDocumentExtension('Update', {
+    this.view.inspectorWindow.addDocumentExtension('Update', {
       type: 'button',
       html: 'Update',
       callback: () => this._initWindow()
@@ -96,7 +96,7 @@ export class DocumentUpdateWindow extends AbstractDocumentWindow {
     this.view.requestWindowDisplay(this, true);
 
     // Sets the position according to the browser (reference)
-    let reference = getComputedStyle(this.view.browserWindow.window);
+    let reference = getComputedStyle(this.view.inspectorWindow.window);
     this.window.style.top = reference.top;
     this.window.style.left = reference.left;
     this.window.style.right = reference.right;

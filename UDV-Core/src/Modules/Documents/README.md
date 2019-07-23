@@ -7,18 +7,18 @@ The module is also extensible, which means that other modules can serve as plug-
 - Change the source of documents
 - Apply new filters
 - Add a window to display
-- Modify the search and/or the browser windows to add elements such as text, buttons, etc.
+- Modify the navigator and/or the inspector windows to add elements such as text, buttons, etc.
 
 ## Basic functionnalities
 
 In the [demo](./Example/Demo.html), you can try out the basic functionnalities of the document modules. It can:
 
 - Fetch all documents from the server. It's actually the default comportement (and may change in the future for scaling purpose). The user can filter the retrieved list according to some filters: keywords in the title/description, subject, publication or refering date.
-- Display the details of one particular documents, and navigate through the documents list. The navigation can be done either by selecting a document in the document list, or by using navigation arrows in the document browser.
+- Display the details of one particular documents, and navigate through the documents list. The navigation can be done either by selecting a document in the document list, or by using navigation arrows in the document inspector.
 
 ![The look of the documents module](./Doc/Pictures/view.png)
 
-The demo also includes the `DocumentVisualizer` module, that adds an "Orient" button in the document browser. When pressed, the button moves the camera to the "visualization" position specified in the document, and the image of the document is displayed in superposition to the scene.
+The demo also includes the `DocumentVisualizer` module, that adds an "Orient" button in the document inspector. When pressed, the button moves the camera to the "visualization" position specified in the document, and the image of the document is displayed in superposition to the scene.
 
 ## Usage
 
@@ -66,7 +66,7 @@ The code architectures follows an [MVVM](https://en.wikipedia.org/wiki/Model%E2%
 
 - The model is responsible for holding the documents. It fetches them from the server and store them in a list. The objects responsible for making the requests are the `DocumentFetcher` and the `DocumentSource`.
 - The view model serves as an interface between the view and the model. It holds a `DocumentProvider` that retrieve the document list fetched by the model, and dispatch it into two types of documents. First, the filtered documents is a smaller list of documents reduced according to some filters (which are istances of `DocumentFilter`). Second, it holds a reference to the "displayed document" which is one particular document in the filtered documents list.
-- The view is responsible to display the data in the view model and react to user input. It has two windows : a search window that holds a form corresponding to search filters and displays the filtered documents list. It also has a browser window that shows the displayed document. In the code, the view is separated into three classes : the `DocumentView` holds a reference to the two windows, `DocumentSearchWindow` and `DocumentBrowser`.
+- The view is responsible to display the data in the view model and react to user input. It has two windows : a navigator window that holds a form corresponding to search filters and displays the filtered documents list. It also has a inspector window that shows the displayed document. In the code, the view is separated into three classes : the `DocumentView` holds a reference to the two windows, `DocumentNavigatorWindow` and `DocumentInspector`.
 
 ## Extensions
 
@@ -78,15 +78,15 @@ A module that wishes to extend the documents module should take a `DocumentModul
 
 Adding visual interface elements to the view can be done in two ways :
 
-- Extending one of the search or browser window.
+- Extending one of the navigator or inspector window.
 - Adding a new window.
 
-#### Extending the search or browser window
+#### Extending the navigator or inspector window
 
 Extending one the existing windows can be done pretty easily from the `DocumentModule`:
 
 ```js
-documentModule.addBrowserExtension('MyExtension', {
+documentModule.addInspectorExtension('MyExtension', {
   type: 'button',
   html: 'Click here to show the title !',
   callback: (doc) => {
@@ -95,12 +95,12 @@ documentModule.addBrowserExtension('MyExtension', {
 });
 ```
 
-In this example, we add a button (`type: 'button'`) in the browser window. Its text shall be 'Click here to show the title !' and when clicked, it displays the title of the displayed document.
+In this example, we add a button (`type: 'button'`) in the inspector window. Its text shall be 'Click here to show the title !' and when clicked, it displays the title of the displayed document.
 
 As you can see, adding an extension is done by providing a descriptive object that specifies a type, the HTML content and eventually a callback. For the moment, only two types are supported : 'button' which is a button that triggers a callback, and 'panel' which is simply a chunk of static HTML.
 
 ```js
-documentModule.addBrowserExtension('MyExtension', {
+documentModule.addInspectorExtension('MyExtension', {
   type: 'panel',
   html: `
     <h3>My Extension</h3>
@@ -114,9 +114,9 @@ documentModule.addEventListener(DocumentModule.EVENT_DISPLAYED_DOC_CHANGED, (doc
 });
 ```
 
-In this example, we create a new section in the browser window that keeps track of the document title. We do this by passing a string of HTML, in which a `span` tag has a specific 'title' ID that we can use later. We then adds an event listener so that when the currently displayed document change, our custom section will update and render the title.
+In this example, we create a new section in the inspector window that keeps track of the document title. We do this by passing a string of HTML, in which a `span` tag has a specific 'title' ID that we can use later. We then adds an event listener so that when the currently displayed document change, our custom section will update and render the title.
 
-The `addBrowserExtension` also has an equivalent for the search window, which is called `addSearchWindowExtension`. It has the same behaviour, except one difference for the buttons elements : the callback does not pass the displayed document as parameter, but the list of filtered documents.
+The `addInspectorExtension` also has an equivalent for the navigator window, which is called `addNavigatorExtension`. It has the same behaviour, except one difference for the buttons elements : the callback does not pass the displayed document as parameter, but the list of filtered documents.
 
 #### Adding a new window
 
@@ -144,7 +144,7 @@ export class ExtensionWindow extends AbstractDocumentWindow {
 }
 ```
 
-This window is empty and does nothing. In fact, it doesn't event displays as we specified `this.hide()` when the window is created. This will allow us to display the window when the user clicks on a button in the document browser for example, but we'll see that in a few paragraphs. For the moment, let's just register our new window :
+This window is empty and does nothing. In fact, it doesn't event displays as we specified `this.hide()` when the window is created. This will allow us to display the window when the user clicks on a button in the document inspector for example, but we'll see that in a few paragraphs. For the moment, let's just register our new window :
 
 ```js
 // MyModule.js
@@ -176,10 +176,10 @@ documentWindowReady() {
 }
 ```
 
-Now we need to add a button to actually display our window. Let's say we want to add this button in the document browser. All we need to do is the following :
+Now we need to add a button to actually display our window. Let's say we want to add this button in the document inspector. All we need to do is the following :
 
 ```js
-documentModule.addBrowserExtension('MyExtension', {
+documentModule.addInspectorExtension('MyExtension', {
   type: 'button',
   html: 'Show my window',
   callback: () => myWindow.requestDisplay()

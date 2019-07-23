@@ -94,7 +94,7 @@ export class DocumentLinkView {
       DocumentProvider.EVENT_DISPLAYED_DOC_CHANGED,
       (doc) => this._updateLinkList(doc));
 
-    documentModule.view.browserWindow.addEventListener(Window.EVENT_CREATED,
+    documentModule.view.inspectorWindow.addEventListener(Window.EVENT_CREATED,
       () => this._initLinkCreation());
   }
 

@@ -167,6 +167,15 @@ export class DocumentProvider extends EventSender {
   }
 
   /**
+   * Returns the displayed document index.
+   * 
+   * @returns {number | undefined}
+   */
+  getDisplayedDocumentIndex() {
+    return this.displayedDocumentIndex;
+  }
+
+  /**
    * Returns the image corresponding to the displayed document. It is a string
    * that can be put into the `src` attribute of an `img` tag (so either an
    * URL or a base64 encoded file).

@@ -4,15 +4,15 @@ import { DocumentSearchFilter } from "../ViewModel/DocumentSearchFilter";
 import { AbstractDocumentWindow } from "./AbstractDocumentWindow";
 
 /**
- * Represents the search window for the documents. It contains the filters on
+ * Represents the navigator window for the documents. It contains the filters on
  * the fields of a document.
  */
-export class DocumentSearchWindow extends AbstractDocumentWindow {
+export class DocumentNavigatorWindow extends AbstractDocumentWindow {
   /**
-   * Creates a document search window.
+   * Creates a document navigator window.
    */
   constructor() {
-    super('Search');
+    super('Navigator');
 
     /**
      * The filter corresponding to the research fields.
@@ -40,7 +40,7 @@ export class DocumentSearchWindow extends AbstractDocumentWindow {
     return /*html*/`
       <div class="box-section">
         <input type="checkbox" class="spoiler-check" id="doc-search-spoiler">
-        <label for="doc-search-spoiler" class="section-title">Filters</label>
+        <label for="doc-search-spoiler" class="section-title">Search</label>
         <form class="search-form spoiler-box" id="${this.inputFormId}">
           <label for="${this.inputKeywordsId}">Keywords</label>
           <input type="text" id="${this.inputKeywordsId}">
@@ -110,7 +110,9 @@ export class DocumentSearchWindow extends AbstractDocumentWindow {
     this.provider.addFilter(this.searchFilter);
 
     this.provider.addEventListener(DocumentProvider.EVENT_FILTERED_DOCS_UPDATED,
-      (documents) => this.onFilteredDocumentsUpdate(documents));
+      (documents) => this._onFilteredDocumentsUpdate(documents));
+    this.provider.addEventListener(DocumentProvider.EVENT_DISPLAYED_DOC_CHANGED,
+      (doc) => this._onDisplayedDocumentChange(doc));
   }
 
   //////////////////////////////
@@ -119,21 +121,47 @@ export class DocumentSearchWindow extends AbstractDocumentWindow {
   /**
    * Callback triggered when the list of filtered documents changes.
    * 
+   * @private
+   * 
    * @param {Array<Document>} documents The new array of filtered documents.
    */
-  onFilteredDocumentsUpdate(documents) {
+  _onFilteredDocumentsUpdate(documents) {
     let list = this.documentListElement;
     list.innerHTML = '';
     for (let doc of documents) {
       let item = document.createElement('li');
-      item.innerHTML = doc.title;
-      item.classList.add('clickable-text')
+      item.innerHTML = /*html*/`
+        <div class='doc-title'>${doc.title}</div>
+        <div class='doc-info'>Refering ${(new Date(doc.refDate)).toLocaleDateString()}</div>
+      `;
+      item.classList.add('navigator-result-doc')
       item.onclick = () => {
         this.provider.setDisplayedDocument(doc);
       };
       list.appendChild(item);
     }
     this.docCountElement.innerHTML = documents.length;
+  }
+
+  /**
+   * Callback triggered when the displayed document changes.
+   * 
+   * @private
+   * 
+   * @param {Document} document The new displayed documents.
+   */
+  _onDisplayedDocumentChange(document) {
+    let previouslySelected =
+      this.documentListElement.querySelector('.document-selected');
+    if (!!previouslySelected) {
+      previouslySelected.classList.remove('document-selected');
+    }
+    if (!!document) {
+      let newIndex = this.provider.getDisplayedDocumentIndex();
+      let newSelected = this.documentListElement
+        .querySelector(`li:nth-child(${newIndex + 1})`);
+      newSelected.classList.add('document-selected');
+    }
   }
 
 
@@ -187,7 +215,7 @@ export class DocumentSearchWindow extends AbstractDocumentWindow {
   ///// DOCUMENTS EXTENSIONS
 
   /**
-   * Creates a new extension for the document search. An extension can be
+   * Creates a new extension for the document navigator. An extension can be
    * either a command button or a panel. An extension should be identified by
    * a unique label.
    * 

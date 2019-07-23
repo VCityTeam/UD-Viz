@@ -102,7 +102,7 @@ export class DocumentCreationWindow extends AbstractDocumentWindow {
   windowCreated() {
     this.hide();
 
-    let reference = this.view.browserWindow.window.style;
+    let reference = this.view.inspectorWindow.window.style;
     this.window.style.top = reference.top;
     this.window.style.right = reference.right;
     this.window.style.left = reference.left;
@@ -121,7 +121,7 @@ export class DocumentCreationWindow extends AbstractDocumentWindow {
   }
 
   documentWindowReady() {
-    this.view.searchWindow.addDocumentsExtension('Create', {
+    this.view.navigatorWindow.addDocumentsExtension('Create', {
       type: 'button',
       html: 'Create a new document',
       callback: () => this.view.requestWindowDisplay(this, true)

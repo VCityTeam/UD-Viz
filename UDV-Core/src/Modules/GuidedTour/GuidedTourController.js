@@ -40,7 +40,7 @@ export class GuidedTourController extends ModuleView {
 
     this.url = config.server.url + config.server.guidedTour;
 
-    this.browser = this.documentModule.view.browserWindow;
+    this.browser = this.documentModule.view.inspectorWindow;
 
     this.guidedTours = [];
 

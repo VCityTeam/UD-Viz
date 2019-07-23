@@ -1,13 +1,13 @@
 import { ModuleView } from "../../../Utils/ModuleView/ModuleView";
 import { DocumentProvider } from "../ViewModel/DocumentProvider";
-import { DocumentSearchWindow } from "./DocumentSearchWindow";
+import { DocumentNavigatorWindow } from "./DocumentNavigatorWindow";
 import { Document } from "../Model/Document";
-import { DocumentBrowserWindow } from "./DocumentBrowserWindow";
+import { DocumentInspectorWindow } from "./DocumentInspectorWindow";
 import { Window } from "../../../Utils/GUI/js/Window";
 import { AbstractDocumentWindow } from "./AbstractDocumentWindow";
 
 /**
- * The entry point of the document view. It holds the two main windows, browser
+ * The entry point of the document view. It holds the two main windows, inspector
  * and search. It also accepts instances of `AbstractDocumentWindow` as
  * extension windows.
  */
@@ -30,16 +30,16 @@ export class DocumentView extends ModuleView {
     /**
      * The search window.
      * 
-     * @type {DocumentSearchWindow}
+     * @type {DocumentNavigatorWindow}
      */
-    this.searchWindow = new DocumentSearchWindow();
+    this.navigatorWindow = new DocumentNavigatorWindow();
 
     /**
-     * The browser window.
+     * The inspector window.
      * 
-     * @type {DocumentBrowserWindow}
+     * @type {DocumentInspectorWindow}
      */
-    this.browserWindow = new DocumentBrowserWindow();
+    this.inspectorWindow = new DocumentInspectorWindow();
 
     /**
      * The different windows of the view.
@@ -55,13 +55,13 @@ export class DocumentView extends ModuleView {
      */
     this.hiddenWindows = [];
 
-    this.addDocumentWindow(this.searchWindow);
-    this.addDocumentWindow(this.browserWindow);
+    this.addDocumentWindow(this.navigatorWindow);
+    this.addDocumentWindow(this.inspectorWindow);
 
-    this.searchWindow.addEventListener(Window.EVENT_DISABLED, () => {
+    this.navigatorWindow.addEventListener(Window.EVENT_DISABLED, () => {
       this.disable();
     });
-    this.browserWindow.addEventListener(Window.EVENT_DISABLED, () => {
+    this.inspectorWindow.addEventListener(Window.EVENT_DISABLED, () => {
       this.disable();
     });
   }

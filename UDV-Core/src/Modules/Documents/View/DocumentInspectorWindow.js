@@ -7,12 +7,12 @@ import { AbstractDocumentWindow } from "./AbstractDocumentWindow";
  * defined in the document provider. It also serves as a container to add
  * extension buttons.
  */
-export class DocumentBrowserWindow extends AbstractDocumentWindow {
+export class DocumentInspectorWindow extends AbstractDocumentWindow {
   /**
-   * Constructs a documents browser window.
+   * Constructs a documents inspector window.
    */
   constructor() {
-    super('Browser');
+    super('Inspector');
 
     /**
      * Represents a list of extensions. An extension can either be a button or
@@ -34,7 +34,7 @@ export class DocumentBrowserWindow extends AbstractDocumentWindow {
       <div class="box-section">
         <h3 id="${this.docTitleId}" class="section-title"></h3>
         <div>
-          <img class="browser-doc-img" src="" alt="Document image"
+          <img class="inspector-doc-img" src="" alt="Document image"
             id="${this.docImageId}" title="CTRL + Click to open the image">
           <input type="checkbox" class="spoiler-check" id="doc-details-spoiler" checked>
           <label for="doc-details-spoiler" class="subsection-title">Details</label>
@@ -53,8 +53,8 @@ export class DocumentBrowserWindow extends AbstractDocumentWindow {
         <div id="${this.commandPanelId}">
 
         </div>
-        <hr>
-        <div class="browser-arrows-panel">
+        <!--hr>
+        <div class="inspector-arrows-panel">
           <div class="left-arrow">
             <span class="clickable-text" id="${this.leftArrowId}">
               &#9666 <span id="${this.leftArrowTextId}"></span>
@@ -65,7 +65,7 @@ export class DocumentBrowserWindow extends AbstractDocumentWindow {
               <span id="${this.rightArrowTextId}"></span> &#9656
             </span>
           </div>
-        </div>
+        </div-->
       </div>
     `;
   }
@@ -104,12 +104,10 @@ export class DocumentBrowserWindow extends AbstractDocumentWindow {
   async onDisplayedDocumentChange(newDocument) {
     if (!newDocument) {
       this._setDefaultFieldValues();
-      this._updateNavigationArrows(undefined);
       return;
     }
 
     this._fillFieldsFromDocument(newDocument);
-    this._updateNavigationArrows(newDocument);
   }
 
   /**
@@ -140,45 +138,11 @@ export class DocumentBrowserWindow extends AbstractDocumentWindow {
     this.docImageElement.src = await this.provider.getDisplayedDocumentImage();
   }
 
-  /////////////////////////////////
-  ///// NAVIGATION SECTION (ARROWS)
-
-  /**
-   * Updates the navigation arrows so that they point to the next / previous
-   * documents. If there isn't a displayed document, of if this is the only
-   * document, the arrows are disabled.
-   * 
-   * @param {Document} currentDocument The current document.
-   */
-  _updateNavigationArrows(currentDocument) {
-    let docs = this.provider.getFilteredDocuments();
-
-    if (!currentDocument || docs.length <= 1) {
-      this.leftArrowTextElement.innerText = '';
-      this.rightArrowTextElement.innerText = '';
-      this.leftArrowElement.onclick = undefined;
-      this.rightArrowElement.onclick = undefined;
-      return;
-    }
-
-    let currentDocId = docs.findIndex((doc) => doc.id === currentDocument.id);
-    let nextDocId = (docs.length + (currentDocId + 1)) % docs.length;
-    let prevDocId = (docs.length + (currentDocId - 1)) % docs.length;
-
-    this.leftArrowTextElement.innerText = docs[prevDocId].title;
-    this.rightArrowTextElement.innerText = docs[nextDocId].title;
-
-    this.leftArrowElement.onclick = () =>
-      this.provider.shiftDisplayedDocumentIndex(-1);
-    this.rightArrowElement.onclick = () =>
-      this.provider.shiftDisplayedDocumentIndex(1);
-  }
-
   /////////////////////////
   ///// DOCUMENT EXTENSIONS
 
   /**
-   * Creates a new extension for the document browser. An extension can be
+   * Creates a new extension for the document inspector. An extension can be
    * either a command button or a panel. An extension should be identified by
    * a unique label.
    * 

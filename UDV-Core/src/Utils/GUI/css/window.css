@@ -111,7 +111,7 @@ label {
 
 .window-inner-content .spoiler-check ~
 label:after {
-    content: " \25C2";
+    content: " \25C3";
     margin-left: 10px;
     color: rgb(185, 185, 185);
 }
