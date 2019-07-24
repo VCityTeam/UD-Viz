@@ -17,8 +17,6 @@ export { HelpWindow }               from './Modules/Others/Help';
 
 export { TemporalController }       from './Modules/Temporal/Temporal';
 
-export { ContributeController }     from './Extensions/Contribute/src/ContributeController';
-
 export { DocumentCommentsModule }   from './Extensions/DocumentComments/DocumentCommentsModule';
 
 export { GeocodingService }         from './Extensions/Geocoding/services/GeocodingService';
