@@ -6,9 +6,9 @@ import { imageToDataURI } from "../../../Utils/DataProcessing/DataProcessing";
  * This class is responsible of fetching the documents from the server. It is
  * configured by an object containing the server URL and routes.
  */
-export class DocumentFetcher {
+export class DocumentService {
   /**
-   * Constructs a new document fetcher.
+   * Constructs a new document service.
    * 
    * @param {RequestService} requestService The request service.
    * @param {object} config The configuration of UDV.

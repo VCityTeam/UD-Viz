@@ -1,4 +1,4 @@
-import { DocumentSource } from "../../../Modules/Documents/Model/DocumentFetcher";
+import { DocumentSource } from "../../../Modules/Documents/Model/DocumentService";
 
 /**
  * The document source for documents in validation.

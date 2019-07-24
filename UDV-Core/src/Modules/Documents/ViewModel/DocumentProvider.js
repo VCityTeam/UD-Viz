@@ -1,4 +1,4 @@
-import { DocumentFetcher } from "../Model/DocumentFetcher";
+import { DocumentService } from "../Model/DocumentService";
 import { Document } from "../Model/Document";
 import { EventSender } from "../../../Utils/Events/EventSender";
 import { DocumentFilter } from "./DocumentFilter";
@@ -6,7 +6,7 @@ import { DocumentFilter } from "./DocumentFilter";
 /**
  * Represents the set of documents that is displayed in the view. This includes
  * the list of filtered documents, as well as the currently displayed one. It
- * uses a `DocumentFetcher` to retrieve documents from the server. It also emits
+ * uses a `DocumentService` to retrieve documents from the server. It also emits
  * events when the filtered documents, or the currently displayed document
  * change.
  */
@@ -14,17 +14,17 @@ export class DocumentProvider extends EventSender {
   /**
    * Constructs a new documents provider.
    * 
-   * @param {DocumentFetcher} fetcher The document fetcher.
+   * @param {DocumentService} service The document service.
    */
-  constructor(fetcher) {
+  constructor(service) {
     super();
 
     /**
-     * The document fetcher.
+     * The document service.
      * 
-     * @type {DocumentFetcher}
+     * @type {DocumentService}
      */
-    this.fetcher = fetcher;
+    this.service = service;
 
     /**
      * The list of filters.
@@ -53,11 +53,11 @@ export class DocumentProvider extends EventSender {
 
   /**
    * Updates the filtered documents list by fetching them from the
-   * `DocumentFetcher` and applying the successive filters. Triggers the
+   * `DocumentService` and applying the successive filters. Triggers the
    * `DOCUMENT_LIST_UPDATED` and then the `DISPLAYED_DOCUMENT_CHANGED` events.
    */
   async refreshDocumentList() {
-    this.filteredDocuments = await this.fetcher.fetchDocuments();
+    this.filteredDocuments = await this.service.fetchDocuments();
 
     for (let filter of this.filters) {
       this.filteredDocuments = filter.apply(this.filteredDocuments);
@@ -189,7 +189,7 @@ export class DocumentProvider extends EventSender {
       return undefined;
     }
 
-    return await this.fetcher.fetchDocumentImage(this.getDisplayedDocument());
+    return await this.service.fetchDocumentImage(this.getDisplayedDocument());
   }
 
   ////////////

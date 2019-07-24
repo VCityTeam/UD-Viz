@@ -64,7 +64,7 @@ The document visualizer depends on the documents module, and the iTowns view and
 
 The code architectures follows an [MVVM](https://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93viewmodel) architectural pattern.
 
-- The model is responsible for holding the documents. It fetches them from the server and store them in a list. The objects responsible for making the requests are the `DocumentFetcher` and the `DocumentSource`.
+- The model is responsible for holding the documents. It fetches them from the server and store them in a list. The objects responsible for making the requests are the `DocumentService` and the `DocumentSource`.
 - The view model serves as an interface between the view and the model. It holds a `DocumentProvider` that retrieve the document list fetched by the model, and dispatch it into two types of documents. First, the filtered documents is a smaller list of documents reduced according to some filters (which are istances of `DocumentFilter`). Second, it holds a reference to the "displayed document" which is one particular document in the filtered documents list.
 - The view is responsible to display the data in the view model and react to user input. It has two windows : a navigator window that holds a form corresponding to search filters and displays the filtered documents list. It also has a inspector window that shows the displayed document. In the code, the view is separated into three classes : the `DocumentView` holds a reference to the two windows, `DocumentNavigatorWindow` and `DocumentInspector`.
 
@@ -230,7 +230,7 @@ Here, we suppose that the UDV configuration has an object like this :
 }
 ```
 
-So, by using the source we provided, the document fetcher will now retrieve the documents using the URL returned by `getDocumentUrl` (in this case, it will be `http://custom-url.com/my-documents`) and document files using `getImageUrl` (in our example, `http://custom-url.com/my-documents/{id}/my-file`).
+So, by using the source we provided, the document service will now retrieve the documents using the URL returned by `getDocumentUrl` (in this case, it will be `http://custom-url.com/my-documents`) and document files using `getImageUrl` (in our example, `http://custom-url.com/my-documents/{id}/my-file`).
 
 To change the document source, we can use the `changeDocumentSource` method of the documents module :
 

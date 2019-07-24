@@ -1,6 +1,6 @@
 import { DocumentModule } from "../../../Modules/Documents/DocumentModule";
 import { ValidationService } from "../Service/ValidationService";
-import { DocumentSource } from "../../../Modules/Documents/Model/DocumentFetcher";
+import { DocumentSource } from "../../../Modules/Documents/Model/DocumentService";
 import { DocumentsInValidationDocumentSource } from "../Service/DocumentsInValidationSource";
 import { Document } from "../../../Modules/Documents/Model/Document";
 import { Window } from "../../../Utils/GUI/js/Window";

@@ -1,5 +1,5 @@
 import { RequestService } from "../../Utils/Request/RequestService";
-import { DocumentFetcher, DocumentSource } from "./Model/DocumentFetcher";
+import { DocumentService, DocumentSource } from "./Model/DocumentService";
 import { DocumentProvider } from "./ViewModel/DocumentProvider";
 import { DocumentView } from "./View/DocumentView";
 
@@ -19,19 +19,19 @@ export class DocumentModule {
    */
   constructor(requestService, config) {
     /**
-     * The document fetcher holds the list of documents fetched from the
+     * The document service holds the list of documents fetched from the
      * server.
      * 
-     * @type {DocumentFetcher}
+     * @type {DocumentService}
      */
-    this.fetcher = new DocumentFetcher(requestService, config);
+    this.service = new DocumentService(requestService, config);
 
     /**
      * The document provider filters the list of documents.
      * 
      * @type {DocumentProvider}
      */
-    this.provider = new DocumentProvider(this.fetcher);
+    this.provider = new DocumentProvider(this.service);
 
     /**
      * The document view represents the user interface for the documents.
@@ -126,7 +126,7 @@ export class DocumentModule {
    * @returns {DocumentSource} The previous document source.
    */
   changeDocumentSource(newSource, authenticate) {
-    return this.provider.fetcher.setSource(newSource, authenticate);
+    return this.provider.service.setSource(newSource, authenticate);
   }
 
   /**
@@ -174,7 +174,7 @@ export class DocumentModule {
 
   /**
    * Updates the filtered documents list by fetching them from the
-   * `DocumentFetcher` and applying the successive filters. Triggers the
+   * `DocumentService` and applying the successive filters. Triggers the
    * `DOCUMENT_LIST_UPDATED` and then the `DISPLAYED_DOCUMENT_CHANGED` events.
    */
   async refreshDocumentList() {
