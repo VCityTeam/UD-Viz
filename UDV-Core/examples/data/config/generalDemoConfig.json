@@ -1,7 +1,7 @@
 {
   "type": "class",
   "server":{
-    "url":"http://localhost:1525/",
+    "url":"localhost:8080",
     "login": "login",
     "user": "user",
     "userMe": "user/me",
@@ -13,8 +13,16 @@
     "guidedTour": "guidedTour",
     "link": "link"
   },
-  "3DTilesLayerURL": "http://rict.liris.cnrs.fr/UDVDemo-2/Data/3DTiles_FullLyon_withIDs/tileset.json",
-  "3DTilesLayerID": "3d-tiles-layer",
+    "3DTilesLayer":{
+	"building":{
+	    "id":"3d-tiles-layer-building",
+	    "url":"http://localhost:8003/tilesets/junk_buildings/tileset.json"
+	}
+	"relief":{
+	    "id":"3d-tiles-layer-relief",
+	    "url":"http://localhost:8003/tilesets/junk_reliefs/tileset.json"	    
+	}
+    }
   "geocoding":{
     "url":"https://nominatim.openstreetmap.org/search",
     "credit": "© OpenStreetMap contributors under <a href=\"https://www.openstreetmap.org/copyright\">ODbL</a>",

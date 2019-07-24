@@ -346,6 +346,26 @@ export class BaseDemo {
     }
 
     /**
+     * Add a 3D Tiles layer the iTowns 3D view.
+     */
+
+    add3DTilesLayer() {
+        // ********* DOC TO ADD ?
+        // Lorem ipsum
+        let $3dTilesLayerBuilding = new itowns.GeometryLayer(
+            this.config['3DTilesLayerID_BUILDING'], new THREE.Group());
+        $3dTilesLayerBuilding.name = 'Lyon-2015-building';
+        $3dTilesLayerBuilding.url =
+            this.config['3DTilesLayerURL_BUILDING'];
+        $3dTilesLayerBuilding.protocol = '3d-tiles';
+
+	const material_building = new THREE.MeshLambertMaterial({color:0xffffff});
+	
+        $3dTilesLayerBuilding.overrideMaterials = material_building;
+
+        itowns.View.prototype.addLayer.call(this.view, $3dTilesLayerBuilding);
+    }
+    /**
      * Initialize the iTowns 3D view.
      */
     init3DView() {
@@ -358,9 +378,8 @@ export class BaseDemo {
         // Define geographic extent: CRS, min/max X, min/max Y
         this.extent = new itowns.Extent(
             'EPSG:3946',
-            1837860.980127206, 1847648.6685636174,
-            5169347.42659997, 5180280.0400808845);
-
+            1837860.980127206, 1851647,
+	    5169347.4265999, 5180575);
         // `viewerDiv` will contain iTowns' rendering area (`<canvas>`)
         let viewerDiv = document.getElementById('viewerDiv');
         // Instantiate PlanarView (iTowns' view that will hold the layers)
@@ -369,10 +388,10 @@ export class BaseDemo {
             disableSkirt: false
         });
 
-        // ********* ADD TERRAIN LAYERS (WMS imagery and WMS elevation)
+        /* // ********* ADD TERRAIN LAYERS (WMS imagery and WMS elevation)
         // These layer are served by the grandLyon
         // Add a WMS imagery source
-        let wmsImagerySource = new itowns.WMSSource({
+         let wmsImagerySource = new itowns.WMSSource({
             extent: this.extent,
             name: 'Ortho2009_vue_ensemble_16cm_CC46',
             url: 'https://download.data.grandlyon.com/wms/grandlyon',
@@ -407,18 +426,37 @@ export class BaseDemo {
             colorTextureElevationMaxZ: 240,
             source: wmsElevationSource,
         });
-        this.view.addLayer(wmsElevationLayer);
+        this.view.addLayer(wmsElevationLayer);*/
 
         // ********* ADD 3D BUILDING LAYER (3D Tiles)
         // This building layer represents Lyon in 2015 and is served from
         // grand lyon alpha server
+        let $3dTilesLayerBuilding = new itowns.GeometryLayer(
+            this.config['3DTilesLayerID_BUILDING'], new THREE.Group());
+        $3dTilesLayerBuilding.name = 'Lyon-2015-building';
+        $3dTilesLayerBuilding.url =
+            this.config['3DTilesLayerURL_BUILDING'];
+        $3dTilesLayerBuilding.protocol = '3d-tiles';
+
+	const material_building = new THREE.MeshLambertMaterial({color:0xffffff});
+	
+        $3dTilesLayerBuilding.overrideMaterials = material_building;
+
+        itowns.View.prototype.addLayer.call(this.view, $3dTilesLayerBuilding);
+
+	        // ********* ADD 3D TERRAIN LAYER (3D Tiles)
+        // This building layer represents Lyon in 2015 and is served from
+        // grand lyon alpha server
         let $3dTilesLayer = new itowns.GeometryLayer(
-            this.config['3DTilesLayerID'], new THREE.Group());
-        $3dTilesLayer.name = 'Lyon-2015';
+            this.config['3DTilesLayerID_RELIEF'], new THREE.Group());
+        $3dTilesLayer.name = 'Lyon-2015-relief';
         $3dTilesLayer.url =
-            this.config['3DTilesLayerURL'];
+            this.config['3DTilesLayerURL_RELIEF'];
         $3dTilesLayer.protocol = '3d-tiles';
-        $3dTilesLayer.overrideMaterials = true;
+
+	const material = new THREE.MeshLambertMaterial({color:0xD2B48C});
+	
+        $3dTilesLayer.overrideMaterials = material;
 
         itowns.View.prototype.addLayer.call(this.view, $3dTilesLayer);
 
