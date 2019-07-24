@@ -40,7 +40,7 @@ export class DocumentUpdateWindow extends AbstractDocumentWindow {
       <div class="box-section">
         <h3 id="${this.docTitleId}" class="section-title"></h3>
         <div>
-          <img class="browser-doc-img" src="" alt="Document image"
+          <img class="inspector-doc-img" src="" alt="Document image"
             id="${this.docImageId}">
           <form id="${this.formId}" class="doc-update-creation-form">
             <label for="${this.subjectId}">Subject</label>
