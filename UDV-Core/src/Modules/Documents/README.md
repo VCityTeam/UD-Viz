@@ -88,6 +88,7 @@ Extending one the existing windows can be done pretty easily from the `DocumentM
 ```js
 documentModule.addInspectorExtension('MyExtension', {
   type: 'button',
+  container: 'left',
   html: 'Click here to show the title !',
   callback: (doc) => {
     alert('The title of the current document is : ' + doc.title);
@@ -96,6 +97,8 @@ documentModule.addInspectorExtension('MyExtension', {
 ```
 
 In this example, we add a button (`type: 'button'`) in the inspector window. Its text shall be 'Click here to show the title !' and when clicked, it displays the title of the displayed document.
+
+We also pass a `container` parameter that specifies where in the window the button should be added. In this example, it will be added in the "left" side of the buttons section. To see available containers, please refer to the `addInspectorExtension` documentation.
 
 As you can see, adding an extension is done by providing a descriptive object that specifies a type, the HTML content and eventually a callback. For the moment, only two types are supported : 'button' which is a button that triggers a callback, and 'panel' which is simply a chunk of static HTML.
 
@@ -115,6 +118,8 @@ documentModule.addEventListener(DocumentModule.EVENT_DISPLAYED_DOC_CHANGED, (doc
 ```
 
 In this example, we create a new section in the inspector window that keeps track of the document title. We do this by passing a string of HTML, in which a `span` tag has a specific 'title' ID that we can use later. We then adds an event listener so that when the currently displayed document change, our custom section will update and render the title.
+
+You notice that no `container` value has been passed in parameter. That's because our inspector window currently has only one container available for panels, so the parameter is optional.
 
 The `addInspectorExtension` also has an equivalent for the navigator window, which is called `addNavigatorExtension`. It has the same behaviour, except one difference for the buttons elements : the callback does not pass the displayed document as parameter, but the list of filtered documents.
 
