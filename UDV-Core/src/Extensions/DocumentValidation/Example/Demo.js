@@ -36,4 +36,8 @@ baseDemo.loadConfigFile(
     ////// CONTRIBUTE EXTENSION
     const contribute = new udvcore.ContributeModule(documentModule, imageOrienter,
         requestService, baseDemo.view, baseDemo.controls, baseDemo.config);
+
+    ////// VALIDATION EXTENSION
+    const validation = new udvcore.DocumentValidationModule(documentModule, requestService,
+        baseDemo.config);
 });

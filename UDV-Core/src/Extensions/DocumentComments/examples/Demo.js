@@ -33,7 +33,7 @@ baseDemo.loadConfigFile(
     const imageOrienter = new udvcore.DocumentVisualizerWindow(documentModule,
         baseDemo.view, baseDemo.controls);
 
-    ////// CONTRIBUTE EXTENSION
-    const contribute = new udvcore.ContributeModule(documentModule, imageOrienter,
-        requestService, baseDemo.view, baseDemo.controls, baseDemo.config);
+    ////// DOCUMENT COMMENTS
+    const documentComments = new udvcore.DocumentCommentsModule(documentModule,
+        requestService, baseDemo.config);
 });

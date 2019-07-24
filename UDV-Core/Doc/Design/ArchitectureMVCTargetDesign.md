@@ -3,41 +3,85 @@
 ## Description
 
 UDV-Core is split in several components, independent to each other, in order to create an application as modular as possible.
-These components are : 
-* **GuidedTour controller**
-* **Temporal controller**
-* **Extended document**
-* **Contribute**
+These components are :
+
+* **Temporal**
+* **Geocoding**
+* **Authentication**
+* **Documents** and its extensions
+  * **Contribute**
+  * **Guided tour**
+  * **Validation**
+  * **Comments**
+* **Links**
 
 *A [class diagram of udv-core](https://github.com/MEPP-team/RICT/tree/master/Doc/Devel/Architecture/Diagrams/UDVcoreClassDiagram.jpg) can be found in the link below:*
 
-Modules are based on a **MVC architecture**. MVC stands for **Model-View-Controller**:
-* the **view** is in charge of displaying models and getting user's action;
-* the **controller** is in charge of handling events from the view, communicate with the server to get information and data and create the correct models;
-* the **model** represents a back-end object.
+Multiple architectures are possible for the modules :
 
-## ConsultDoc module
+- [MVC](https://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller) (Model-View-Controller):
+  * the **view** is in charge of displaying models and getting user's action;
+  * the **controller** is in charge of handling events from the view, communicate with the server to get information and data and create the correct models;
+  * the **model** represents a back-end object.
+- [MVVM](https://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93viewmodel) (Model-View-ViewModel):
+  * This pattern is similar to MVC, excepts that instead of a controller, the view communicates with a view model. 
+- View / Service:
+  * This simple pattern divides the code into two parts : the view and the service.
+  * The service serves as a simple model. This pattern is useful for small modules where an MVC or MVVM architecture would be too complex.
 
-The **ConsultDoc module** handles different types of visualization of documents, such as **billboard mode**, **browser mode** or **attached mode**.
-It also can allows the user to make a research using several filters, for instance a keyword research or publication research.
+## Conventions
 
-*  __Model__ : *Extended*Document
-* __Controller__ : *DocumentController*
-*  __Views__ : *DocumentBrowser*, *DocumentBillboard*, *DocumentResearch*, *DocumentPlacement*
+We decide to adopt a few conventions so that our files and classes have uniformized names.
 
-*The scheme below shows structure and interaction inside **Contribute***:
-![](Pictures/ConsultDocArchitecture.png)
+### File structure
 
-## Contribute module
+Depending on the architecture of the module, the files can be grouped in different categories: view, controller, model, view model, service. The modules should have a folder structure that shows this separation, for example :
 
-The **Contribute module** is composed of several functionalities such as the *creation*, *deletion* or *updating* of documents 
-It uses **Document module** to display documents, which would be modify or delete and to handle the creation of a new document.
+```
+Example
+├─ View
+│  └─ ExampleView.js
+├─ Model
+│  └─ ExampleService.js
+├─ ViewModel
+│  └─ ExampleProvider.js
+└─ ExampleModule.js
+```
 
-* __Controller__ : *ContributeController*
-* __Views__ : *ContributeCreate, ContributeUpdate*
+In this example, we have an MVVM pattern. The service fetches the data, then the provider converts them for the view, and finally the view displays them. The files are separated in three different folders to make the code more readable and organized.
 
-*The scheme below shows structure and interaction between **Contribute** and how it uses **Document module***:
-![](Pictures/ContributeArchitecture.png)
+To organize the files inside the folder, we propose the following recommendations :
+
+- The `View` folder contains objects that represents visual interfaces (for example, windows). If the view regroups multiple objects, you can regroup them in an `ExampleView` class.
+- The `Model` folder should contain only objects from the model (documents, guided tours, etc.) and services that use them. This also applies for the `Service` folder in a View / Service architecture.
+- The `ViewModel` folder contains the logic for transforming object from the model to objects displayable by the view. The classes that do this job are called providers.
+- The `Controller` contains the controller of MVC architecture.
+
+In top of that, a file can be added to the root of the module, to serve as an interface with the rest of the code. This file should be call `ExampleModule.js` and contain a class that instantiates the module. This is not necessary if the module is simple enough to need only one class to be exported. However, if the module contains multiple views or services, it is more convenient to export only the `ExampleModule` class.
+
+### Class and file nomenclature
+
+We propose a nomenclature to use when working with classes in a module, so that modules use a coherent notation between them.
+
+- **ExampleView** : represents the module view.
+  - **ExampleSpecificWindow** : represents a window in the module view.
+  - **ExampleSpecificInterface** : represents a visual interface that is not a window (for example, an extension of the documents module)
+- **ExampleService** : an object that make requests to the server. It belongs either to the model (in MVC / MVVM) or to the services (in View-Service)
+- **ExampleProvider** : Represents the view model of the MVVM pattern.
+- **ExampleController** : Represents the MVC controller.
+- **ExampleModule** : Represents the module. This is the interface between the module components and the rest of the application. If present, this is the class that should be exported in the `Main.js` file.
+
+## Documents module
+
+[[Detailed documentation](../../src/Modules/Documents/README.md)]
+
+The documents module follows an MVVM architecture :
+
+![](./Pictures/DocumentsArchitecture.png)
+
+The model holds the documents and make requests to the server, the view model filter those documents and the view displays the filtered documents.
+
+The entry point of the documents module is the `DocumentModule` object that allows other modules to interact with it. It exposes the `DocumentProvider` and the `DocumentView` so that they are accessible from outside. That means that external modules can add filters to the provider or visual elements to the view, for example.
 
 ## Authentication module
 
