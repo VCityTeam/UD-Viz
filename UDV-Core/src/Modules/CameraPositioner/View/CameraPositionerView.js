@@ -1,8 +1,8 @@
-import { ModuleView } from "../../Utils/ModuleView/ModuleView";
-import { PositionerWindow } from "../../Utils/Camera/PositionerWindow";
-import { Window } from "../../Utils/GUI/js/Window";
+import { ModuleView } from "../../../Utils/ModuleView/ModuleView";
+import { PositionerWindow } from "../../../Utils/Camera/PositionerWindow";
+import { Window } from "../../../Utils/GUI/js/Window";
 
-export class CameraPositioner extends ModuleView {
+export class CameraPositionerView extends ModuleView {
   constructor(itownsView, cameraControls) {
     super();
 

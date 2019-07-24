@@ -30,7 +30,7 @@ baseDemo.loadConfigFile(
     baseDemo.addModuleView('documents', documentModule.view);
 
     ////// DOCUMENTS VISUALIZER (to orient the document)
-    const imageOrienter = new udvcore.DocumentImageOrienter(documentModule,
+    const imageOrienter = new udvcore.DocumentVisualizerWindow(documentModule,
         baseDemo.view, baseDemo.controls);
 
     ////// CONTRIBUTE EXTENSION
@@ -38,6 +38,6 @@ baseDemo.loadConfigFile(
         requestService, baseDemo.view, baseDemo.controls, baseDemo.config);
 
     ////// VALIDATION EXTENSION
-    const validation = new udvcore.DocumentValidation(documentModule, requestService,
+    const validation = new udvcore.DocumentValidationModule(documentModule, requestService,
         baseDemo.config);
 });

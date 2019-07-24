@@ -10,7 +10,7 @@ import { ValidationView } from "./View/ValidationView";
  * button in the search window. If the user is a moderator, he/she can also
  * click on the "Validate" button in the document browser to validate it.
  */
-export class DocumentValidation {
+export class DocumentValidationModule {
   /**
    * Creates the document validation module. Creates a validation service to
    * manage HTTP requests, a validation source to change the retrieving URL

@@ -1,7 +1,7 @@
 import { AbstractDocumentWindow } from "../../Documents/View/AbstractDocumentWindow";
 import * as THREE from "three";
 
-import './DocumentImageOrienter.css';
+import './DocumentVisualizer.css';
 import { DocumentProvider } from "../../Documents/ViewModel/DocumentProvider";
 import { DocumentModule } from "../../Documents/DocumentModule";
 
@@ -10,7 +10,7 @@ import { DocumentModule } from "../../Documents/DocumentModule";
  * is a window without its default style, centered in the view with an opacity
  * control.
  */
-export class DocumentImageOrienter extends AbstractDocumentWindow {
+export class DocumentVisualizerWindow extends AbstractDocumentWindow {
   /**
    * Creates a new document image orienter.
    * 

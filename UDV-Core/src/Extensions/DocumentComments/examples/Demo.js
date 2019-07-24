@@ -30,10 +30,10 @@ baseDemo.loadConfigFile(
     baseDemo.addModuleView('documents', documentModule.view);
 
     ////// DOCUMENTS VISUALIZER (to orient the document)
-    const imageOrienter = new udvcore.DocumentImageOrienter(documentModule,
+    const imageOrienter = new udvcore.DocumentVisualizerWindow(documentModule,
         baseDemo.view, baseDemo.controls);
 
     ////// DOCUMENT COMMENTS
-    const documentComments = new udvcore.DocumentComments(documentModule,
+    const documentComments = new udvcore.DocumentCommentsModule(documentModule,
         requestService, baseDemo.config);
 });

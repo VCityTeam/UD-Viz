@@ -30,7 +30,7 @@ const documentModule = new udvcore.DocumentModule(requestService, baseDemo.confi
 baseDemo.addModuleView('documents', documentModule.view);
 
 ////// DOCUMENTS VISUALIZER (to orient the document)
-const imageOrienter = new udvcore.DocumentImageOrienter(documentModule, baseDemo.view, baseDemo.controls);
+const imageOrienter = new udvcore.DocumentVisualizerWindow(documentModule, baseDemo.view, baseDemo.controls);
 ```
 
 In this example, we actually add the document visualizer in addition to the documents module.

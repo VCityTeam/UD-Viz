@@ -8,7 +8,7 @@ import { DocumentCommentsWindow } from "./views/DocumentCommentsWindow";
  * service that performs HTTP requests and a window that extends the interface
  * for documents.
  */
-export class DocumentComments {
+export class DocumentCommentsModule {
   /**
    * Creates the document comments module. Creates a service and a comments
    * window.

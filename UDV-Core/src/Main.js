@@ -10,7 +10,7 @@ export { RequestService }           from './Utils/Request/RequestService';
 
 export { GuidedTourController }     from './Modules/GuidedTour/GuidedTourController';
 
-export { AuthenticationView }  from './Extensions/Authentication/views/AuthenticationView';
+export { AuthenticationView }       from './Extensions/Authentication/views/AuthenticationView';
 
 export { AboutWindow }              from './Modules/Others/About';
 export { HelpWindow }               from './Modules/Others/Help';
@@ -19,7 +19,7 @@ export { TemporalController }       from './Modules/Temporal/Temporal';
 
 export { ContributeController }     from './Extensions/Contribute/src/ContributeController';
 
-export { DocumentComments }         from './Extensions/DocumentComments/DocumentComments';
+export { DocumentCommentsModule }   from './Extensions/DocumentComments/DocumentCommentsModule';
 
 export { GeocodingService }         from './Extensions/Geocoding/services/GeocodingService';
 export { GeocodingView }            from './Extensions/Geocoding/views/GeocodingView';
@@ -27,11 +27,11 @@ export { GeocodingView }            from './Extensions/Geocoding/views/Geocoding
 export { Debug3DTilesWindow }       from './Extensions/3DTilesDebug/views/3DTilesDebugWindow';
 
 export { DocumentModule }           from './Modules/Documents/DocumentModule';
-export { DocumentImageOrienter }    from './Modules/DocumentVisualizer/View/DocumentImageOrienter';
+export { DocumentVisualizerWindow } from './Modules/DocumentVisualizer/View/DocumentVisualizerWindow';
 
-export { CameraPositioner }         from './Modules/CameraPositioner/CameraPositioner';
+export { CameraPositionerView }     from './Modules/CameraPositioner/View/CameraPositionerView';
 
 export { ContributeModule }         from './Extensions/Contribute/ContributeModule';
-export { DocumentValidation }       from './Extensions/DocumentValidation/DocumentValidation';
+export { DocumentValidationModule } from './Extensions/DocumentValidation/DocumentValidationModule';
 
 export { LinkModule }               from './Modules/Links/LinkModule';

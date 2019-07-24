@@ -37,7 +37,7 @@ baseDemo.loadConfigFile('../data/config/generalDemoConfig.json').then(() => {
     baseDemo.addModuleView('documents', documentModule.view);
 
     ////// DOCUMENTS VISUALIZER (to orient the document)
-    const imageOrienter = new udvcore.DocumentImageOrienter(documentModule,
+    const imageOrienter = new udvcore.DocumentVisualizerWindow(documentModule,
         baseDemo.view, baseDemo.controls);
 
     ////// CONTRIBUTE EXTENSION
@@ -45,7 +45,7 @@ baseDemo.loadConfigFile('../data/config/generalDemoConfig.json').then(() => {
         requestService, baseDemo.view, baseDemo.controls, baseDemo.config);
 
     ////// VALIDATION EXTENSION
-    const validation = new udvcore.DocumentValidation(documentModule, requestService,
+    const validation = new udvcore.DocumentValidationModule(documentModule, requestService,
         baseDemo.config);
 
     ////// LINKS MODULES
@@ -54,7 +54,7 @@ baseDemo.loadConfigFile('../data/config/generalDemoConfig.json').then(() => {
         baseDemo.config);
     
     ////// DOCUMENT COMMENTS
-    const documentComments = new udvcore.DocumentComments(documentModule,
+    const documentComments = new udvcore.DocumentCommentsModule(documentModule,
         requestService, baseDemo.config);
 
     ////// GUIDED TOURS MODULE
@@ -77,7 +77,7 @@ baseDemo.loadConfigFile('../data/config/generalDemoConfig.json').then(() => {
     });
 
     ////// CAMERA POSITIONER
-    const cameraPosition = new udvcore.CameraPositioner(baseDemo.view,
+    const cameraPosition = new udvcore.CameraPositionerView(baseDemo.view,
         baseDemo.controls);
     baseDemo.addModuleView('cameraPositioner', cameraPosition);
 });

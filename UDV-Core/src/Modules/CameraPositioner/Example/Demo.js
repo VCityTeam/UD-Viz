@@ -13,7 +13,7 @@ baseDemo.loadConfigFile(
     // Initialize iTowns 3D view
     baseDemo.init3DView();
     
-    const cameraPosition = new udvcore.CameraPositioner(baseDemo.view,
+    const cameraPosition = new udvcore.CameraPositionerView(baseDemo.view,
         baseDemo.controls);
     baseDemo.addModuleView('cameraPositioner', cameraPosition);
 });

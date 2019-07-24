@@ -1,7 +1,7 @@
 import { AbstractDocumentWindow } from "../../../Modules/Documents/View/AbstractDocumentWindow";
 import { ContributeService } from "../Service/ContributeService";
 import { PositionerWindow } from "../../../Utils/Camera/PositionerWindow";
-import { DocumentImageOrienter } from "../../../Modules/DocumentVisualizer/View/DocumentImageOrienter";
+import { DocumentVisualizerWindow } from "../../../Modules/DocumentVisualizer/View/DocumentVisualizerWindow";
 import * as THREE from 'three';
 import { Window } from "../../../Utils/GUI/js/Window";
 
@@ -13,7 +13,7 @@ export class DocumentCreationWindow extends AbstractDocumentWindow {
    * perform requests.
    * @param {*} itownsView The iTowns view.
    * @param {*} cameraControls The planar camera controls.
-   * @param {DocumentImageOrienter} documentImageOrienter The document image orienter module.
+   * @param {DocumentVisualizerWindow} documentImageOrienter The document image orienter module.
    */
   constructor(contributeService, itownsView, cameraControls, documentImageOrienter) {
     super('Creation');
@@ -54,7 +54,7 @@ export class DocumentCreationWindow extends AbstractDocumentWindow {
     /**
      * The document image orienter module.
      * 
-     * @type {DocumentImageOrienter}
+     * @type {DocumentVisualizerWindow}
      */
     this.documentImageOrienter = documentImageOrienter;
     // Listeners to close both the positioner and the image orienter at the
