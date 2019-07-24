@@ -3,41 +3,63 @@
 ## Description
 
 UDV-Core is split in several components, independent to each other, in order to create an application as modular as possible.
-These components are : 
-* **GuidedTour controller**
-* **Temporal controller**
-* **Extended document**
-* **Contribute**
+These components are :
+
+* **Temporal**
+* **Geocoding**
+* **Authentication**
+* **Documents** and its extensions
+  * **Contribute**
+  * **Guided tour**
+  * **Validation**
+  * **Comments**
+* **Links**
 
 *A [class diagram of udv-core](https://github.com/MEPP-team/RICT/tree/master/Doc/Devel/Architecture/Diagrams/UDVcoreClassDiagram.jpg) can be found in the link below:*
 
-Modules are based on a **MVC architecture**. MVC stands for **Model-View-Controller**:
-* the **view** is in charge of displaying models and getting user's action;
-* the **controller** is in charge of handling events from the view, communicate with the server to get information and data and create the correct models;
-* the **model** represents a back-end object.
+Multiple architectures are possible for the modules :
 
-## ConsultDoc module
+- [MVC](https://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller) (Model-View-Controller):
+  * the **view** is in charge of displaying models and getting user's action;
+  * the **controller** is in charge of handling events from the view, communicate with the server to get information and data and create the correct models;
+  * the **model** represents a back-end object.
+- [MVVM](https://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93viewmodel) (Model-View-ViewModel):
+  * This pattern is similar to MVC, excepts that instead of a controller, the view communicates with a view model. 
+- View / Service:
+  * This simple pattern divides the code into two parts : the view and the service.
+  * The service serves as a simple model. This pattern is useful for small modules where an MVC or MVVM architecture would be too complex.
 
-The **ConsultDoc module** handles different types of visualization of documents, such as **billboard mode**, **browser mode** or **attached mode**.
-It also can allows the user to make a research using several filters, for instance a keyword research or publication research.
+## Conventions
 
-*  __Model__ : *Extended*Document
-* __Controller__ : *DocumentController*
-*  __Views__ : *DocumentBrowser*, *DocumentBillboard*, *DocumentResearch*, *DocumentPlacement*
+We decide to adopt a few conventions so that our files and classes have uniformized names.
 
-*The scheme below shows structure and interaction inside **Contribute***:
-![](Pictures/ConsultDocArchitecture.png)
+### File structure
 
-## Contribute module
+Depending on the architecture of the module, the files can be grouped in different categories: view, controller, model, view model, service. The modules should have a folder structure that shows this separation, for example : 
 
-The **Contribute module** is composed of several functionalities such as the *creation*, *deletion* or *updating* of documents 
-It uses **Document module** to display documents, which would be modify or delete and to handle the creation of a new document.
+```
+MyModule
+├─ View
+│  └─ MyModuleView.js
+├─ Model
+│  └─ MyModuleService.js
+└─ ViewModel
+   └─ MyModuleProvider.js
+```
 
-* __Controller__ : *ContributeController*
-* __Views__ : *ContributeCreate, ContributeUpdate*
+In this example, we have an MVVM pattern. The service fetches the data, then the provider converts them for the view, and finally the view displays them. The files are separated 
 
-*The scheme below shows structure and interaction between **Contribute** and how it uses **Document module***:
-![](Pictures/ContributeArchitecture.png)
+## Documents module
+
+[[Detailed documentation](../../src/Modules/Documents/README.md)]
+
+The documents module follows an MVVM architecture :
+
+![](./Pictures/DocumentsArchitecture.png)
+
+The model holds the documents and make requests to the server, the view model filter those documents and the view displays the filtered documents.
+
+The entry point of the documents module is the `DocumentModule` object that allows other modules to interact with it. It exposes the `DocumentProvider` and the `DocumentView` so that they are accessible from outside. That means that external modules can add filters to the provider or visual elements to the view, for example.
 
 ## Authentication module
 
