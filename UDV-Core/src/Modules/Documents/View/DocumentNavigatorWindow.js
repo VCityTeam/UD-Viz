@@ -39,34 +39,6 @@ export class DocumentNavigatorWindow extends AbstractDocumentWindow {
   get innerContentHtml() {
     return /*html*/`
       <div class="box-section">
-        <input type="checkbox" class="spoiler-check" id="doc-search-spoiler">
-        <label for="doc-search-spoiler" class="section-title">Search</label>
-        <form class="search-form spoiler-box" id="${this.inputFormId}">
-          <label for="${this.inputKeywordsId}">Keywords</label>
-          <input type="text" id="${this.inputKeywordsId}">
-          <label for="${this.inputSubjectId}">Subject</label>
-          <select id="${this.inputSubjectId}">
-            <option value="">All subjects</option>
-            <option value="Architecture">Architecture</option>
-            <option value="Tourism">Tourism</option>
-            <option value="Urbanism">Urbanism</option>
-          </select>
-          <label for="${this.inputPubDateStartId}">Publication date</label>
-          <div class="date-wrapper">
-            <span>From</span><input type="date" id="${this.inputPubDateStartId}"><br>
-            <span>To</span><input type="date" id="${this.inputPubDateEndId}">
-          </div>
-          <label for="${this.inputRefDateStartId}">Refering date</label>
-          <div class="date-wrapper">
-            <span>From</span><input type="date" id="${this.inputRefDateStartId}"><br>
-            <span>To</span><input type="date" id="${this.inputRefDateEndId}">
-          </div>
-          <hr>
-          <input type="submit" value="Filter">
-          <button id="${this.clearButtonId}">Clear</button>
-        </form>
-      </div>
-      <div class="box-section">
         <h3 class="section-title">
           <span id="${this.docCountId}"></span> Document(s)
         </h3>
@@ -75,14 +47,47 @@ export class DocumentNavigatorWindow extends AbstractDocumentWindow {
 
           </ul>
         </div>
-      </div>
-      <div id="${this.extensionContainerId}">
-      
+        <div data-extension-container="button">
+
+        </div>
       </div>
       <div class="box-section">
-        <div id="${this.commandPanelId}">
-          
+        <input type="checkbox" class="spoiler-check" id="doc-filters-spoiler">
+        <label for="doc-filters-spoiler" class="section-title">Filters</label>
+        <div class="spoiler-box" id="${this.inputFormId}">
+          <div data-extension-container="filter">
+
+          </div>
+          <input type="checkbox" class="spoiler-check" id="doc-search-spoiler">
+          <label for="doc-search-spoiler" class="subsection-title">Attributes</label>
+          <form class="search-form spoiler-box" id="${this.inputFormId}">
+            <label for="${this.inputKeywordsId}">Keywords</label>
+            <input type="text" id="${this.inputKeywordsId}">
+            <label for="${this.inputSubjectId}">Subject</label>
+            <select id="${this.inputSubjectId}">
+              <option value="">All subjects</option>
+              <option value="Architecture">Architecture</option>
+              <option value="Tourism">Tourism</option>
+              <option value="Urbanism">Urbanism</option>
+            </select>
+            <label for="${this.inputPubDateStartId}">Publication date</label>
+            <div class="date-wrapper">
+              <span>From</span><input type="date" id="${this.inputPubDateStartId}"><br>
+              <span>To</span><input type="date" id="${this.inputPubDateEndId}">
+            </div>
+            <label for="${this.inputRefDateStartId}">Refering date</label>
+            <div class="date-wrapper">
+              <span>From</span><input type="date" id="${this.inputRefDateStartId}"><br>
+              <span>To</span><input type="date" id="${this.inputRefDateEndId}">
+            </div>
+            <hr>
+            <input type="submit" value="Filter">
+            <button id="${this.clearButtonId}">Clear</button>
+          </form>
         </div>
+      </div>
+      <div data-extension-container="bottom">
+      
       </div>
     `;
   }
@@ -223,6 +228,9 @@ export class DocumentNavigatorWindow extends AbstractDocumentWindow {
    * @param {object} options The extension options
    * @param {string} options.type The type of the option. Can be either `button`
    * or `panel`.
+   * @param {string} [options.container] The parent element to place the
+   * extension in the window. For panels, the position can be either `filter`
+   * or `bottom`.
    * @param {string} options.html The inside HTML of the
    * extension. For a button, this will be the displayed text. For a panel, it
    * will be the inside HTML.
@@ -270,6 +278,9 @@ export class DocumentNavigatorWindow extends AbstractDocumentWindow {
    * @param {object} extension 
    * @param {string} extension.type The type of the option. Can be either `button`
    * or `panel`.
+   * @param {string} [extension.container] The parent element to place the
+   * extension in the window. For panels, the position can be either `filter`
+   * or `bottom`.
    * @param {string} extension.id The id of the element.
    * @param {string} extension.label The label of the extension.
    * @param {string} extension.html The inside HTML of the
@@ -279,19 +290,25 @@ export class DocumentNavigatorWindow extends AbstractDocumentWindow {
    * for a button.
    */
   _createExtensionElement(extension) {
+    let containerName = extension.container || extension.type;
+    let container = this.innerContent
+      .querySelector(`[data-extension-container="${containerName}"]`);
+    if (!container) {
+      throw 'Container does not exist in navigator : ' + containerName;
+    }
     if (extension.type === 'button') {
       let button = document.createElement('button');
       button.id = extension.id;
       button.innerHTML = extension.html;
       button.onclick = () =>
         extension.callback(this.provider.getFilteredDocuments());
-      this.commandPanelElement.appendChild(button);
+      container.appendChild(button);
     } else if (extension.type === 'panel') {
       let panel = document.createElement('div');
       panel.id = extension.id;
       panel.innerHTML = extension.html;
-      panel.className = 'box-section';
-      this.extensionContainerElement.appendChild(panel);
+      panel.className = container.dataset.extensionPanelClass;
+      container.appendChild(panel);
     } else {
       throw 'Invalid extension type : ' + extension.type;
     }
@@ -378,21 +395,5 @@ export class DocumentNavigatorWindow extends AbstractDocumentWindow {
 
   get docCountElement() {
     return document.getElementById(this.docCountId);
-  }
-
-  get commandPanelId() {
-    return `${this.windowId}_commands`
-  }
-
-  get commandPanelElement() {
-    return document.getElementById(this.commandPanelId);
-  }
-
-  get extensionContainerId() {
-    return `${this.windowId}_extensions`;
-  }
-
-  get extensionContainerElement() {
-    return document.getElementById(this.extensionContainerId);
   }
 }

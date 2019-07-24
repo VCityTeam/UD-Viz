@@ -3,6 +3,7 @@ import { ValidationService } from "../Service/ValidationService";
 import { DocumentSource } from "../../../Modules/Documents/Model/DocumentFetcher";
 import { DocumentsInValidationDocumentSource } from "../Service/DocumentsInValidationSource";
 import { Document } from "../../../Modules/Documents/Model/Document";
+import { Window } from "../../../Utils/GUI/js/Window";
 
 /**
  * This class represents the visual elements and their logic for the
@@ -50,20 +51,29 @@ export class ValidationView {
     this.validationSource = validationSource;
 
     // Adds a panel to inform the user about the documents he/she is currently
-    // viewing.
-    documentModule.addSearchWindowExtension('Validation State', {
+    // viewing, and give him the possibility to switch.
+    documentModule.addNavigatorExtension('Validation Filter', {
       type: 'panel',
-      html: `Currently seing:
-        <span id="${this.validationStateId}">validated documents</span>`
+      container: 'filter',
+      html: /*html*/`
+        <label for="${this.switchId}">Documents to see: </label>
+        <select id="${this.switchId}">
+          <option value="validated">Validated documents</option>
+          <option value="in-validation">Documents in validation</option>
+        </select>
+      `
     });
 
-    // Adds a button to display the documents in validation
-    documentModule.addSearchWindowExtension('Toggle Validation', {
-      type: 'button',
-      html: `Show
-        <span id="${this.validateToggleId}">documents in validation</span>`,
-      callback: () => this._toggleValidation()
-    });
+    documentModule.view.navigatorWindow.addEventListener(Window.EVENT_CREATED,
+      () => this._initView());
+  }
+
+  _initView() {
+    this.switchElement.value = 'validated';
+    this._toggleValidation();
+    this.switchElement.onchange = () => {
+      this._toggleValidation();
+    }
   }
 
   ///////////////////////////////////////
@@ -77,7 +87,8 @@ export class ValidationView {
    * @private
    */
   _toggleValidation() {
-    this.displayingDocumentsToValidate = !this.displayingDocumentsToValidate;
+    this.displayingDocumentsToValidate =
+      this.switchElement.value === 'in-validation';
     if (this.displayingDocumentsToValidate) {
       this._showDocumentsInValidation();
     } else {
@@ -87,7 +98,8 @@ export class ValidationView {
     this.documentModule.refreshDocumentList().then(() => {
     }, (reason) => {
       this._showValidatedDocuments();
-      this.displayingDocumentsToValidate = !this.displayingDocumentsToValidate;
+      this.displayingDocumentsToValidate = false;
+      this.switchElement.value = "validated";
       alert(reason);
     });
   }
@@ -110,9 +122,6 @@ export class ValidationView {
       html: 'Validate',
       callback: (doc) => this._validateDocument(doc)
     });
-
-    this.validationToggleElement.innerText = 'validated documents';
-    this.validateStateElement.innerText = 'documents in validation';
   }
 
   /**
@@ -122,13 +131,18 @@ export class ValidationView {
    * @private
    */
   _showValidatedDocuments() {
+    if (!this.previousDocumentSource) {
+      return;
+    }
+
     this.documentModule.changeDocumentSource(this.previousDocumentSource,
       false);
 
-    this.documentModule.removeBrowserExtension('Validate');
-
-    this.validationToggleElement.innerText = 'documents in validation';
-    this.validateStateElement.innerText = 'validated documents';
+    try {
+      this.documentModule.removeBrowserExtension('Validate');
+    } catch (_) {
+      // Validate does not exist
+    }
   }
 
   /**
@@ -153,19 +167,11 @@ export class ValidationView {
   /////////////
   ///// GETTERS
 
-  get validationStateId() {
-    return 'document-validation-view-state';
+  get switchId() {
+    return 'document-validation-view-switch';
   }
   
-  get validateStateElement() {
-    return document.getElementById(this.validationStateId);
-  }
-
-  get validateToggleId() {
-    return 'document-validation-view-toggle';
-  }
-  
-  get validationToggleElement() {
-    return document.getElementById(this.validateToggleId);
+  get switchElement() {
+    return document.getElementById(this.switchId);
   }
 }

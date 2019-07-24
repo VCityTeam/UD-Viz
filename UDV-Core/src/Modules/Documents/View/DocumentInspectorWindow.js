@@ -49,7 +49,7 @@ export class DocumentInspectorWindow extends AbstractDocumentWindow {
             <p class="inspector-field-title">Publication date</p>
             <p class="inspector-field" id="${this.docPubDateId}"></p>
           </div>
-          <div id="${this.commandPanelId}" class="inspector-left-right-grid">
+          <div class="inspector-left-right-grid">
             <div data-extension-container="left" class="text-left">
             </div>
             <div data-extension-container="right" class="text-right">
@@ -57,7 +57,8 @@ export class DocumentInspectorWindow extends AbstractDocumentWindow {
           </div>
         </div>
       </div>
-      <div id="${this.extensionContainerId}" data-extension-container="panel">
+      <div data-extension-container="panel"
+        data-extension-panel-class="box-section">
 
       </div>
     `;
@@ -222,7 +223,7 @@ export class DocumentInspectorWindow extends AbstractDocumentWindow {
       let panel = document.createElement('div');
       panel.id = extension.id;
       panel.innerHTML = extension.html;
-      panel.className = 'box-section';
+      panel.className = container.dataset.extensionPanelClass;
       container.appendChild(panel);
     } else {
       throw 'Invalid extension type : ' + extension.type;
@@ -278,53 +279,5 @@ export class DocumentInspectorWindow extends AbstractDocumentWindow {
 
   get docImageElement() {
     return document.getElementById(this.docImageId);
-  }
-
-  get commandPanelId() {
-    return `${this.windowId}_commands`
-  }
-
-  get commandPanelElement() {
-    return document.getElementById(this.commandPanelId);
-  }
-
-  get leftArrowId() {
-    return `${this.windowId}_left_arrow`;
-  }
-
-  get leftArrowElement() {
-    return document.getElementById(this.leftArrowId);
-  }
-
-  get leftArrowTextId() {
-    return `${this.windowId}_left_arrow_text`;
-  }
-
-  get leftArrowTextElement() {
-    return document.getElementById(this.leftArrowTextId);
-  }
-
-  get rightArrowId() {
-    return `${this.windowId}_right_arrow`;
-  }
-
-  get rightArrowElement() {
-    return document.getElementById(this.rightArrowId);
-  }
-
-  get rightArrowTextId() {
-    return `${this.windowId}_right_arrow_text`;
-  }
-
-  get rightArrowTextElement() {
-    return document.getElementById(this.rightArrowTextId);
-  }
-
-  get extensionContainerId() {
-    return `${this.windowId}_extensions`;
-  }
-
-  get extensionContainerElement() {
-    return document.getElementById(this.extensionContainerId);
   }
 }

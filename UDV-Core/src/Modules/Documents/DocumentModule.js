@@ -93,13 +93,16 @@ export class DocumentModule {
    * @param {object} options The extension options
    * @param {string} options.type The type of the option. Can be either `button`
    * or `panel`.
+   * @param {string} [options.container] The parent element to place the
+   * extension in the window. For panels, the position can be either `filter`
+   * or `bottom`.
    * @param {string} options.html The inside HTML of the
    * extension. For a button, this will be the displayed text. For a panel, it
    * will be the inside HTML.
    * @param {(doc: Document[]) => any} [options.callback] The callback to call
    * for a button.
    */
-  addSearchWindowExtension(label, options) {
+  addNavigatorExtension(label, options) {
     this.view.navigatorWindow.addDocumentsExtension(label, options);
   }
 

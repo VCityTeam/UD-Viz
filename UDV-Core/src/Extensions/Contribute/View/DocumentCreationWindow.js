@@ -72,7 +72,7 @@ export class DocumentCreationWindow extends AbstractDocumentWindow {
   get innerContentHtml() {
     return /*html*/`
       <div class="box-section">
-        <h3>Document data</h3>
+        <h3 class="section-title">Document data</h3>
         <form id="${this.formId}" class="doc-update-creation-form">
           <label for="${this.docImageId}">File</label>
           <input name="file" type="file" id="${this.docImageId}">

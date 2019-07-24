@@ -19,11 +19,16 @@
   display: inline-block;
   width: 40px;
 }
+.documents-list {
+  max-height: 300px;
+  overflow-y: auto;
+  margin: 5px 0 5px 0;
+}
 
 .documents-list ul {
   list-style: none;
   padding: 0;
-  margin: 5px 0 5px 0;
+  margin: 0;
 }
 
 .navigator-result-doc {
