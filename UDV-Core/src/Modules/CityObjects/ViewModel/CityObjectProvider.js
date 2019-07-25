@@ -93,6 +93,10 @@ export class CityObjectProvider extends EventSender {
     this._updateTilesManagerFromLayer();
   }
 
+  getLayer() {
+    return this.layer;
+  }
+
   removeLayer() {
     this.layer = undefined;
     this.sendEvent(CityObjectProvider.EVENT_LAYER_CHANGED, undefined);

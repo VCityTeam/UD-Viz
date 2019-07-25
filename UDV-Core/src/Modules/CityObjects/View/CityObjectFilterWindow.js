@@ -21,7 +21,7 @@ export class CityObjectFilterWindow extends Window {
         <form id="${this.filterFormId}">
           <select name="filterLabel" id="${this.filterSelectId}">
           </select>
-          <div id="${this.filterSectionId}">
+          <div id="${this.filterSectionId}" class="city-object-filter-section">
           </div>
           <input type="submit" value="Set filter">
         </form>
@@ -30,6 +30,12 @@ export class CityObjectFilterWindow extends Window {
   }
 
   windowCreated() {
+    this.window.style.left = '290px';
+    this.window.style.top = 'unset';
+    this.window.style.bottom = '10px';
+    this.window.style.width = '270px';
+    this.window.style.minHeight = 'unset';
+
     this._createFilterSelect();
 
     this.filterSelectElement.oninput = () => this._onFilterSelection();

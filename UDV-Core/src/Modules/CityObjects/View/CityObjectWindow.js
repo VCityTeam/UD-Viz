@@ -5,6 +5,8 @@ import { CityObjectFilterSelector } from "./CityObjectFilterSelector";
 import { CityObjectFilterWindow } from "./CityObjectFilterWindow";
 import { CityObjectFieldsFilterSelector } from "./CityObjectFieldsFilterSelector";
 
+import './CityObjectWindow.css';
+
 export class CityObjectWindow extends Window {
   /**
    * 
@@ -36,8 +38,10 @@ export class CityObjectWindow extends Window {
       if (!!filterLabel) {
         let selector = this.filterWindow.getFilterSelector(filterLabel);
         this.selectedFilterElement.innerText = selector.toString();
+        this.selectedStyleElement.innerText = JSON.stringify(this.provider.getLayer().style);
       } else {
         this.selectedFilterElement.innerText = '';
+        this.selectedStyleElement.innerText = '';
       }
     });
   }
@@ -47,10 +51,10 @@ export class CityObjectWindow extends Window {
       <div class="box-section">
         <h3 class="section-title">Layer</h3>
         <div>
-          <p>Filter <button id="${this.selectFilterButtonId}">Select</button></p>
-          <p id="${this.selectedFilterId}"></p>
-          <p>Style</p>
-          <p></p>
+          <p class="city-object-layer-title">Filter <button id="${this.selectFilterButtonId}">Select</button></p>
+          <p class="city-object-layer-value" id="${this.selectedFilterId}"></p>
+          <p class="city-object-layer-title">Style</p>
+          <p class="city-object-layer-value" id="${this.selectedStyleId}"></p>
           <button id="${this.applyButtonId}">Apply styles</button>
         </div>
       </div>
@@ -64,6 +68,11 @@ export class CityObjectWindow extends Window {
   }
 
   windowCreated() {
+    this.window.style.left = '10px';
+    this.window.style.top = 'unset';
+    this.window.style.bottom = '10px';
+    this.window.style.width = '270px';
+
     this.filterWindow.appendTo(this.parentElement);
     this.filterWindow.disable();
 
@@ -108,5 +117,13 @@ export class CityObjectWindow extends Window {
 
   get selectedFilterElement() {
     return document.getElementById(this.selectedFilterId);
+  }
+
+  get selectedStyleId() {
+    return `${this.windowId}_selected_style`;
+  }
+
+  get selectedStyleElement() {
+    return document.getElementById(this.selectedStyleId);
   }
 }

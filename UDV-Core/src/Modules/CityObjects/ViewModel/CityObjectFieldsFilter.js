@@ -28,7 +28,7 @@ export class CityObjectFieldsFilter extends CityObjectFilter {
     }
 
     for (let key of Object.keys(this.props)) {
-      if (!cityObject.props[key] || this.props[key] !== cityObject.props[key]) {
+      if (!cityObject.props[key] || (!!this.props[key] && this.props[key] != cityObject.props[key])) {
         return false;
       }
     }

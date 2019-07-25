@@ -1,0 +1,18 @@
+.city-object-layer-title {
+  margin: 5px 0 5px 0;
+  font-weight: bold;
+}
+
+.city-object-layer-value {
+  margin: 5px 0 5px 0;
+  padding-left: 10px;
+}
+
+.city-object-filter-section {
+  margin: 10px;
+}
+
+.city-object-filter-section input[type="text"] {
+  width: 100%;
+  box-sizing: border-box;
+}
