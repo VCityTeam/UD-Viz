@@ -346,7 +346,7 @@ export class BaseDemo {
     }
 
     /**
-     * Adds a WMS layer the iTowns 3D view.
+     * Adds Lyon WMS layer to the iTowns 3D view.
      */
     addLyonWMSLayer() {
         // ********* ADD TERRAIN LAYERS (WMS imagery and WMS elevation)
