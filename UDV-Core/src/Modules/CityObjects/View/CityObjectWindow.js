@@ -34,14 +34,42 @@ export class CityObjectWindow extends Window {
 
     this.filterWindow.addFilterSelector(new CityObjectFieldsFilterSelector(this.provider));
 
-    this.provider.addEventListener(CityObjectProvider.EVENT_LAYER_CHANGED, (filterLabel) => {
-      if (!!filterLabel) {
-        let selector = this.filterWindow.getFilterSelector(filterLabel);
-        this.selectedFilterElement.innerText = selector.toString();
-        this.selectedStyleElement.innerText = JSON.stringify(this.provider.getLayer().style);
+    this.provider.addEventListener(CityObjectProvider.EVENT_LAYER_CHANGED, () => {
+      let layer = this.provider.getLayer();
+      if (!!layer) {
+        this.selectedFilterElement.innerText = layer.filter.toString();
+        this.selectedStyleElement.innerText = JSON.stringify(layer.style);
       } else {
         this.selectedFilterElement.innerText = '';
         this.selectedStyleElement.innerText = '';
+      }
+    });
+
+    this.isSelectingCityObject = false;
+
+    this.mouseClickListener = (event) => {
+      this.provider.selectCityObject(event);
+      this.provider.applyStyles();
+    };
+
+    this.provider.addEventListener(CityObjectProvider.EVENT_CITY_OBJECT_SELECTED, (cityObject) => {
+      if (!cityObject) {
+        return;
+      }
+
+      this.clearSelectionButtonElement.disabled = false;
+
+      this.selectedCityObjectElement.innerHTML = /*html*/`
+        <p class="city-object-title">Tile ID</p>
+        <p class="city-object-value">${cityObject.tile.tileId}</p>
+        <p class="city-object-title">Batch ID</p>
+        <p class="city-object-value">${cityObject.batchId}</p>
+      `;
+      for (let prop of Object.entries(cityObject.props)) {
+        this.selectedCityObjectElement.innerHTML += /*html*/`
+        <p class="city-object-title">${prop[0]}</p>
+        <p class="city-object-value">${prop[1]}</p>
+        `;
       }
     });
   }
@@ -51,18 +79,20 @@ export class CityObjectWindow extends Window {
       <div class="box-section">
         <h3 class="section-title">Layer</h3>
         <div>
-          <p class="city-object-layer-title">Filter <button id="${this.selectFilterButtonId}">Select</button></p>
-          <p class="city-object-layer-value" id="${this.selectedFilterId}"></p>
-          <p class="city-object-layer-title">Style</p>
-          <p class="city-object-layer-value" id="${this.selectedStyleId}"></p>
+          <p class="city-object-title">Filter <button id="${this.selectFilterButtonId}">Select</button></p>
+          <p class="city-object-value" id="${this.selectedFilterId}"></p>
+          <p class="city-object-title">Style</p>
+          <p class="city-object-value" id="${this.selectedStyleId}"></p>
           <button id="${this.applyButtonId}">Apply styles</button>
         </div>
       </div>
       <div class="box-section">
         <h3 class="section-title">Selection</h3>
-        <div>
+        <div id="${this.selectedCityObjectId}">
 
         </div>
+        <button id="${this.selectButtonId}">Select city object</button>
+        <button id="${this.clearSelectionButtonId}">Clear selection</button>
       </div>
     `;
   }
@@ -83,6 +113,19 @@ export class CityObjectWindow extends Window {
     this.applyButtonElement.onclick = () => {
       this.provider.applyStyles();
     };
+
+    this.selectButtonElement.onclick = () => {
+      this._toggleCityObjectSelection();
+    };
+
+    this.clearSelectionButtonElement.onclick = () => {
+      this.selectedCityObjectElement.innerHTML = '';
+      this.clearSelectionButtonElement.disabled = true;
+      this.provider.unselectCityObject();
+      this.provider.applyStyles();
+    };
+
+    this.clearSelectionButtonElement.disabled = true;
   }
 
   /////////////////////
@@ -90,6 +133,20 @@ export class CityObjectWindow extends Window {
 
   addFilterSelector(filterSelector) {
     this.filterWindow.addFilterSelector(filterSelector);
+  }
+
+  ////////////////////////
+  ///// BUILDING SELECTION
+
+  _toggleCityObjectSelection() {
+    this.isSelectingCityObject = !this.isSelectingCityObject;
+    if (this.isSelectingCityObject) {
+      this.selectButtonElement.innerText = 'Finish selection';
+      window.addEventListener('mousedown', this.mouseClickListener);
+    } else {
+      this.selectButtonElement.innerText = 'Select city object';
+      window.removeEventListener('mousedown', this.mouseClickListener);
+    }
   }
 
   /////////////
@@ -125,5 +182,29 @@ export class CityObjectWindow extends Window {
 
   get selectedStyleElement() {
     return document.getElementById(this.selectedStyleId);
+  }
+
+  get selectButtonId() {
+    return `${this.windowId}_co_select_button`;
+  }
+
+  get selectButtonElement() {
+    return document.getElementById(this.selectButtonId);
+  }
+
+  get selectedCityObjectId() {
+    return `${this.windowId}_co_selected_paragraph`;
+  }
+
+  get selectedCityObjectElement() {
+    return document.getElementById(this.selectedCityObjectId);
+  }
+
+  get clearSelectionButtonId() {
+    return `${this.windowId}_co_clear_selection_button`;
+  }
+
+  get clearSelectionButtonElement() {
+    return document.getElementById(this.clearSelectionButtonId);
   }
 }

@@ -11,7 +11,7 @@ export class CityObjectFieldsFilterSelector extends CityObjectFilterSelector {
     super('fields', 'City object attributes');
 
     this.filter = new CityObjectFieldsFilter();
-    provider.addFilter('fields', this.filter);
+    provider.addFilter(this.filter);
   }
 
   get html() {
@@ -37,40 +37,5 @@ export class CityObjectFieldsFilterSelector extends CityObjectFilterSelector {
         this.filter.props[key] = formData.get(key);
       }
     }
-  }
-
-  toString() {
-    let result = '';
-    let attributes = [];
-
-    if (!!this.filter.tileId) {
-      attributes.push(['tileId', this.filter.tileId]);
-    }
-
-    if (!!this.filter.batchId) {
-      attributes.push(['batchId', this.filter.batchId]);
-    }
-
-    for (let entry of Object.entries(this.filter.props)) {
-      if (!!entry[1]) {
-        attributes.push([entry[0], entry[1]]);
-      }
-    }
-
-    if (attributes.length > 0) {
-      result += 'Attributes (';
-      for (let i = 0; i < attributes.length; i++) {
-        let attribute = attributes[i];
-        result += `${attribute[0]}=${attribute[1]}`;
-        if (i < attributes.length - 1) {
-          result += ', ';
-        }
-      }
-      result += ')'
-    } else {
-      result += 'All city objects'
-    }
-
-    return result;
   }
 }

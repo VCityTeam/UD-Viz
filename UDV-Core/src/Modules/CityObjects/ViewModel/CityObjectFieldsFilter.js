@@ -3,7 +3,7 @@ import { CityObject } from "../../../Utils/3DTiles/Model/CityObject";
 
 export class CityObjectFieldsFilter extends CityObjectFilter {
   constructor() {
-    super();
+    super('fields');
 
     this.tileId = undefined;
     this.batchId = undefined;
@@ -34,5 +34,40 @@ export class CityObjectFieldsFilter extends CityObjectFilter {
     }
 
     return true;
+  }
+
+  toString() {
+    let result = '';
+    let attributes = [];
+
+    if (!!this.tileId) {
+      attributes.push(['tileId', this.tileId]);
+    }
+
+    if (!!this.batchId) {
+      attributes.push(['batchId', this.batchId]);
+    }
+
+    for (let entry of Object.entries(this.props)) {
+      if (!!entry[1]) {
+        attributes.push([entry[0], entry[1]]);
+      }
+    }
+
+    if (attributes.length > 0) {
+      result += 'Attributes (';
+      for (let i = 0; i < attributes.length; i++) {
+        let attribute = attributes[i];
+        result += `${attribute[0]}=${attribute[1]}`;
+        if (i < attributes.length - 1) {
+          result += ', ';
+        }
+      }
+      result += ')'
+    } else {
+      result += 'All city objects'
+    }
+
+    return result;
   }
 }

@@ -4,7 +4,7 @@ export class CityObjectFilterSelector {
   /**
    * 
    * @param {string} filterLabel The associated filter.
-   * @param {string} displayName The displayed name in the `select` tag.*
+   * @param {string} displayName The displayed name in the `select` tag.
    */
   constructor(filterLabel, displayName) {    
     /**
@@ -39,12 +39,8 @@ export class CityObjectFilterSelector {
    * 
    * @param {HTMLElement} parentElement The parent element to add the fields.
    */
-  appendFieldsTo(parentElement) {
+  appendFormFieldsTo(parentElement) {
     parentElement.innerHTML = this.html;
     this.onCreated();
-  }
-
-  toString() {
-    return this.displayName;
   }
 }

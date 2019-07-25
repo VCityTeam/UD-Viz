@@ -9,11 +9,13 @@ export class CityObjectFilter {
    * Constructs a new city object filter, from an acceptation function. If no
    * acceptation function was provided, the filter accepts all city objects.
    * 
+   * @param {string} label The unique label identifying the filter.
    * @param {(CityObject) => boolean} [accepts] The function responsible to
    * filter the city objects. It must evaluate wether a city object is
    * acceptable according to the filter.
    */
-  constructor(accepts) {
+  constructor(label, accepts) {
+    this.label = label;
     if (typeof(accepts) === 'function') {
       this.accepts = accepts;
     } else {
@@ -31,5 +33,9 @@ export class CityObjectFilter {
    */
   accepts(cityObject) {
     return true;
+  }
+
+  toString() {
+    return this.label;
   }
 }

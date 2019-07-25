@@ -86,7 +86,7 @@ export class CityObjectFilterWindow extends Window {
     this.filterSectionElement.innerHTML = '';
     let selector = this._getCurrentSelector();
     if (!!selector) {
-      selector.appendFieldsTo(this.filterSectionElement);
+      selector.appendFormFieldsTo(this.filterSectionElement);
     }
   }
 

@@ -36,12 +36,22 @@ export class CityObjectProvider extends EventSender {
     /**
      * The array of city objects in the layer.
      * 
-     * @type {Array<CityObjectID}
+     * @type {Array<CityObjectID>}
      */
     this.layerCityObjectIds = [];
 
+    /**
+     * The selected city object.
+     * 
+     * @type {CityObjectID}
+     */
+    this.selectedCityObjectId = undefined;
+
+    this.selectedStyle = new CityObjectStyle({materialProps: {color: 0x00ff00}});
+
     this.registerEvent(CityObjectProvider.EVENT_FILTERS_UPDATED);
     this.registerEvent(CityObjectProvider.EVENT_LAYER_CHANGED);
+    this.registerEvent(CityObjectProvider.EVENT_CITY_OBJECT_SELECTED);
 
     this._init();
   }
@@ -53,14 +63,29 @@ export class CityObjectProvider extends EventSender {
 
   /**
    * 
-   * @param {string} label The label to identify the filter.
-   * @param {CityObjectFilter | ((cityObject: CityObject) => boolean)} cityObjectFilter
-   * The filter to add.
+   * @param {MouseEvent} mouseEvent 
    */
-  addFilter(label, cityObjectFilter) {
-    if (typeof(cityObjectFilter) === 'function') {
-      cityObjectFilter = new CityObjectFilter(cityObjectFilter);
+  selectCityObject(mouseEvent) {
+    let cityObject = this.tilesManager.pickCityObject(mouseEvent);
+    if (!!cityObject) {
+      this.selectedCityObjectId = cityObject.cityObjectId;
     }
+    this.sendEvent(CityObjectProvider.EVENT_CITY_OBJECT_SELECTED, cityObject);
+    this._updateTilesManager();
+  }
+
+  unselectCityObject() {
+    this.selectedCityObjectId = undefined;
+    this.sendEvent(CityObjectProvider.EVENT_CITY_OBJECT_SELECTED, undefined);
+    this._updateTilesManager();
+  }
+
+  /**
+   * 
+   * @param {CityObjectFilter} cityObjectFilter The filter to add.
+   */
+  addFilter(cityObjectFilter) {
+    let label = cityObjectFilter.label;
 
     if (this.filters[label] !== undefined) {
       throw 'A filter with this label already exists : ' + label;
@@ -73,10 +98,10 @@ export class CityObjectProvider extends EventSender {
 
   /**
    * 
-   * @return {Array<string>}
+   * @return {Array<CityObjectFilter>}
    */
   getFilters() {
-    return Object.keys(this.filters);
+    return this.filters;
   }
 
   setLayer(filterLabel, style) {
@@ -88,9 +113,9 @@ export class CityObjectProvider extends EventSender {
 
     this.layer = new CityObjectLayer(filter, style);
 
-    this.sendEvent(CityObjectProvider.EVENT_LAYER_CHANGED, filterLabel);
+    this.sendEvent(CityObjectProvider.EVENT_LAYER_CHANGED, filter);
 
-    this._updateTilesManagerFromLayer();
+    this._updateTilesManager();
   }
 
   getLayer() {
@@ -100,27 +125,30 @@ export class CityObjectProvider extends EventSender {
   removeLayer() {
     this.layer = undefined;
     this.sendEvent(CityObjectProvider.EVENT_LAYER_CHANGED, undefined);
-    this._updateTilesManagerFromLayer();
+    this._updateTilesManager();
   }
 
-  _updateTilesManagerFromLayer() {
+  _updateTilesManager() {
     this.tilesManager.update();
     this.tilesManager.removeAllStyles();
 
     if (this.layer === undefined) {
       this.layerCityObjectIds = [];
-      return;
+    } else {
+      this.layerCityObjectIds = this.tilesManager
+        .findAllCityObjects(this.layer.filter.accepts)
+        .map((co) => co.cityObjectId);
+      
+      this.tilesManager.setStyle(this.layerCityObjectIds, this.layer.style);
     }
 
-    this.layerCityObjectIds = this.tilesManager
-      .findAllCityObjects(this.layer.filter.accepts)
-      .map((co) => co.cityObjectId);
-    
-    this.tilesManager.setStyle(this.layerCityObjectIds, this.layer.style);
+    if (!!this.selectedCityObjectId) {
+      this.tilesManager.setStyle(this.selectedCityObjectId, this.selectedStyle);
+    }
   }
 
   applyStyles() {
-    this._updateTilesManagerFromLayer();
+    this._updateTilesManager();
     this.tilesManager.applyStyles();
   }
 
@@ -133,5 +161,9 @@ export class CityObjectProvider extends EventSender {
 
   static get EVENT_LAYER_CHANGED() {
     return 'EVENT_LAYER_CHANGED';
+  }
+
+  static get EVENT_CITY_OBJECT_SELECTED() {
+    return 'EVENT_CITY_OBJECT_SELECTED';
   }
 }
