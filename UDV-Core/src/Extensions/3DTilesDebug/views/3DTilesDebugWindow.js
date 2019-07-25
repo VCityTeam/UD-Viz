@@ -8,7 +8,7 @@ import { CityObjectID } from "../../../Utils/3DTiles/Model/CityObject";
 export class Debug3DTilesWindow extends Window {
   /**
    * Creates the debug window.
-   * 
+   *
    * @param {TilesManager} tilesManager The tiles manager.
    */
   constructor(tilesManager) {
@@ -16,7 +16,7 @@ export class Debug3DTilesWindow extends Window {
 
     /**
      * The tiles manager.
-     * 
+     *
      * @type {TilesManager}
      */
     this.tilesManager = tilesManager;
@@ -123,12 +123,12 @@ export class Debug3DTilesWindow extends Window {
   /**
    * If the user is currently hovering a building, fetches the building ID and
    * displays it in the window.
-   * 
+   *
    * @param {MouseEvent} event The mouse event.
    */
   onMouseMove(event) {
     // Update the current visible tile count
-    let visibleTileCount = getVisibleTileCount(this.layer);
+    let visibleTileCount = getVisibleTileCount(this.tilesManager.layer);
     this.visibleTilesParagraphElement.innerText = `${visibleTileCount} tiles visible.`
   }
 
@@ -136,7 +136,7 @@ export class Debug3DTilesWindow extends Window {
    * If the user is currently hovering a building, fetches the building info
    * and colors the building. If a building was already selected, it returns to
    * its original coloring.
-   * 
+   *
    * @param {MouseEvent} event The mouse event.
    */
   onMouseClick(event) {
@@ -237,7 +237,7 @@ export class Debug3DTilesWindow extends Window {
   get groupColorTileInputElement() {
     return document.getElementById(this.groupColorTileInputId);
   }
-  
+
   get groupColorBatchInputId() {
     return `${this.windowId}_form_groups_batchid`;
   }
@@ -245,7 +245,7 @@ export class Debug3DTilesWindow extends Window {
   get groupColorBatchInputElement() {
     return document.getElementById(this.groupColorBatchInputId);
   }
-  
+
   get groupColorColorInputId() {
     return `${this.windowId}_form_groups_color`;
   }
