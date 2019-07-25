@@ -9,10 +9,8 @@ baseDemo.appendTo(document.body);
 
 baseDemo.loadConfigFile('../data/config/generalDemoConfig.json').then(() => {
     // Initialize iTowns 3D view
-    baseDemo.init3DView('lyon_all_districts');
+    baseDemo.init3DView('lyon_villeurbanne_bron');
     baseDemo.add3DTilesLayer('building');
-    baseDemo.add3DTilesLayer('relief');
-    baseDemo.add3DTilesLayer('water');
     baseDemo.update3DView();
 
     ////// REQUEST SERVICE

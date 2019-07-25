@@ -345,10 +345,6 @@ export class BaseDemo {
         return document.getElementById(this.getModuleButtonId(moduleId));
     }
 
-    /**
-     * Add a 3D Tiles layer the iTowns 3D view.
-     */
-
     addLyonWMSLayer() {
         // ********* ADD TERRAIN LAYERS (WMS imagery and WMS elevation)
         // These layer are served by the grandLyon
@@ -391,6 +387,11 @@ export class BaseDemo {
         this.view.addLayer(wmsElevationLayer);
     }
 
+    /**
+     * Adds a 3D Tiles layer the iTowns 3D view.
+     * @param {string} layer The name of the type of object to add to the view. This name should
+     * be one of the properties of the 3DTilesLayer object (in .json config file).
+     */
     add3DTilesLayer(layer) {
         //  ADD 3D Tiles Layer
         let $3dTilesLayer = new itowns.GeometryLayer(
@@ -419,7 +420,9 @@ export class BaseDemo {
     }
 
     /**
-     * Initialize the iTowns 3D view.
+     * Initializes the iTowns 3D view.
+     * @param {string} area The name of the area to view. Used to adjust the extent, this name should be
+     * one of the properties of the 3DTilesLayer object (in .json config file).
      */
     init3DView(area) {
         // ********* INIT ITOWNS VIEW
@@ -471,7 +474,9 @@ export class BaseDemo {
         // Set sky color to blue
         this.view.mainLoop.gfxEngine.renderer.setClearColor(0x6699cc, 1);
     }
-
+    /*
+    * Updates the 3D view by notifying iTowns that it changed (e.g. because a layer has been added).
+    */
      update3DView() {
         // Request itowns view redraw
         this.view.notifyChange();
