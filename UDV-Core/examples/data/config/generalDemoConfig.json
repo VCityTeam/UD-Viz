@@ -13,16 +13,40 @@
     "guidedTour": "guidedTour",
     "link": "link"
   },
-    "3DTilesLayer":{
-	"building":{
+    "extents": {
+      "lyon_5": {
+        "min_x": "1837860",
+        "max_x": "1842500",
+        "min_y": "5172500",
+        "max_y": "5176000"
+      },
+      "lyon_all_districts": {
+        "min_x": "1837860.980127206",
+        "max_x": "1847648.6685636174",
+        "min_y": "5169347.42659997",
+        "max_y": "5180280.0400808845"
+      },
+      "lyon_villeurbanne_bron": {
+        "min_x": "1837860.980127206",
+        "max_x": "1851647",
+        "min_y": "5169347.4265999",
+        "max_y": "5180575"
+      }
+    },
+      "3DTilesLayer":{
+	  "building":{
 	    "id":"3d-tiles-layer-building",
-	    "url":"http://localhost:8003/tilesets/junk_buildings/tileset.json"
-	}
-	"relief":{
+	    "url":"http://rict.liris.cnrs.fr/DataStore/TileSets_Demo_MultiLayerLyon1_Lyon2_Lyon5_2015/tileset_buildings/tileset.json"
+	  },
+	  "relief":{
 	    "id":"3d-tiles-layer-relief",
-	    "url":"http://localhost:8003/tilesets/junk_reliefs/tileset.json"	    
-	}
-    }
+	    "url":"http://rict.liris.cnrs.fr/DataStore/TileSets_Demo_MultiLayerLyon1_Lyon2_Lyon5_2015/tileset_reliefs/tileset.json"
+	  },
+      "water": {
+        "id":"3d-tiles-layer-water",
+        "url": "http://rict.liris.cnrs.fr/DataStore/TileSets_Demo_MultiLayerLyon1_Lyon2_Lyon5_2015/tileset_water_bodies/tileset.json"
+      }
+    },
   "geocoding":{
     "url":"https://nominatim.openstreetmap.org/search",
     "credit": "© OpenStreetMap contributors under <a href=\"https://www.openstreetmap.org/copyright\">ODbL</a>",

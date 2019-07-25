@@ -20,7 +20,7 @@ export class BaseDemo {
         this.controls;
         /**
          * Object used to manage the 3DTiles layer.
-         * 
+         *
          * @type {TilesManager}
          */
         this.tilesManager;
@@ -349,46 +349,8 @@ export class BaseDemo {
      * Add a 3D Tiles layer the iTowns 3D view.
      */
 
-    add3DTilesLayer() {
-        // ********* DOC TO ADD ?
-        // Lorem ipsum
-        let $3dTilesLayerBuilding = new itowns.GeometryLayer(
-            this.config['3DTilesLayerID_BUILDING'], new THREE.Group());
-        $3dTilesLayerBuilding.name = 'Lyon-2015-building';
-        $3dTilesLayerBuilding.url =
-            this.config['3DTilesLayerURL_BUILDING'];
-        $3dTilesLayerBuilding.protocol = '3d-tiles';
-
-	const material_building = new THREE.MeshLambertMaterial({color:0xffffff});
-	
-        $3dTilesLayerBuilding.overrideMaterials = material_building;
-
-        itowns.View.prototype.addLayer.call(this.view, $3dTilesLayerBuilding);
-    }
-    /**
-     * Initialize the iTowns 3D view.
-     */
-    init3DView() {
-        // ********* INIT ITOWNS VIEW
-        // Define projection used in iTowns viewer (taken from
-        // https://epsg.io/3946, Proj4js section)
-        itowns.proj4.defs('EPSG:3946', '+proj=lcc +lat_1=45.25 +lat_2=46.75' +
-            ' +lat_0=46 +lon_0=3 +x_0=1700000 +y_0=5200000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs');
-
-        // Define geographic extent: CRS, min/max X, min/max Y
-        this.extent = new itowns.Extent(
-            'EPSG:3946',
-            1837860.980127206, 1851647,
-	    5169347.4265999, 5180575);
-        // `viewerDiv` will contain iTowns' rendering area (`<canvas>`)
-        let viewerDiv = document.getElementById('viewerDiv');
-        // Instantiate PlanarView (iTowns' view that will hold the layers)
-        // The skirt allows to remove the cracks between the terrain tiles
-        this.view = new itowns.PlanarView(viewerDiv, this.extent, {
-            disableSkirt: false
-        });
-
-        /* // ********* ADD TERRAIN LAYERS (WMS imagery and WMS elevation)
+    addLyonWMSLayer() {
+        // ********* ADD TERRAIN LAYERS (WMS imagery and WMS elevation)
         // These layer are served by the grandLyon
         // Add a WMS imagery source
          let wmsImagerySource = new itowns.WMSSource({
@@ -426,69 +388,93 @@ export class BaseDemo {
             colorTextureElevationMaxZ: 240,
             source: wmsElevationSource,
         });
-        this.view.addLayer(wmsElevationLayer);*/
+        this.view.addLayer(wmsElevationLayer);
+    }
 
-        // ********* ADD 3D BUILDING LAYER (3D Tiles)
-        // This building layer represents Lyon in 2015 and is served from
-        // grand lyon alpha server
-        let $3dTilesLayerBuilding = new itowns.GeometryLayer(
-            this.config['3DTilesLayerID_BUILDING'], new THREE.Group());
-        $3dTilesLayerBuilding.name = 'Lyon-2015-building';
-        $3dTilesLayerBuilding.url =
-            this.config['3DTilesLayerURL_BUILDING'];
-        $3dTilesLayerBuilding.protocol = '3d-tiles';
-
-	const material_building = new THREE.MeshLambertMaterial({color:0xffffff});
-	
-        $3dTilesLayerBuilding.overrideMaterials = material_building;
-
-        itowns.View.prototype.addLayer.call(this.view, $3dTilesLayerBuilding);
-
-	        // ********* ADD 3D TERRAIN LAYER (3D Tiles)
-        // This building layer represents Lyon in 2015 and is served from
-        // grand lyon alpha server
+    add3DTilesLayer(layer) {
+        //  ADD 3D Tiles Layer
         let $3dTilesLayer = new itowns.GeometryLayer(
-            this.config['3DTilesLayerID_RELIEF'], new THREE.Group());
-        $3dTilesLayer.name = 'Lyon-2015-relief';
+            this.config['3DTilesLayer'][layer]['id'], new THREE.Group());
+        $3dTilesLayer.name = 'Lyon-2015-'.concat(layer);
         $3dTilesLayer.url =
-            this.config['3DTilesLayerURL_RELIEF'];
+            this.config['3DTilesLayer'][layer]['url'];
         $3dTilesLayer.protocol = '3d-tiles';
-
-	const material = new THREE.MeshLambertMaterial({color:0xD2B48C});
-	
+        let material;
+        if (layer === 'building') {
+            material = new THREE.MeshLambertMaterial({ color: 0xFFFFFF });
+        } else if (layer === 'relief') {
+            material = new THREE.MeshLambertMaterial({ color: 0xD2B48C });
+        } else if (layer === 'water') {
+            material = new THREE.MeshLambertMaterial({ color: 0xB0E0E6 });
+        }
         $3dTilesLayer.overrideMaterials = material;
 
         itowns.View.prototype.addLayer.call(this.view, $3dTilesLayer);
 
+        if (layer === 'building') {
+            // Initialize the 3DTiles manager
+            this.tilesManager = new TilesManager(this.view,
+                this.view.getLayerById(this.config['3DTilesLayer']['building']['id']));
+        }
+    }
+
+    /**
+     * Initialize the iTowns 3D view.
+     */
+    init3DView(area) {
+        // ********* INIT ITOWNS VIEW
+        // Define projection used in iTowns viewer (taken from
+        // https://epsg.io/3946, Proj4js section)
+        itowns.proj4.defs('EPSG:3946', '+proj=lcc +lat_1=45.25 +lat_2=46.75' +
+            ' +lat_0=46 +lon_0=3 +x_0=1700000 +y_0=5200000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs');
+
+        // Define geographic extent: CRS, min/max X, min/max Y
+        // area should be one of the properties of the object extents in config file
+        let min_x = parseInt(this.config['extents'][area]['min_x']);
+        let max_x = parseInt(this.config['extents'][area]['max_x']);
+        let min_y = parseInt(this.config['extents'][area]['min_y']);
+        let max_y = parseInt(this.config['extents'][area]['max_y']);
+        this.extent = new itowns.Extent(
+            'EPSG:3946',
+            min_x, max_x,
+            min_y, max_y);
+        // `viewerDiv` will contain iTowns' rendering area (`<canvas>`)
+        let viewerDiv = document.getElementById('viewerDiv');
+        // Instantiate PlanarView (iTowns' view that will hold the layers)
+        // The skirt allows to remove the cracks between the terrain tiles
+        this.view = new itowns.PlanarView(viewerDiv, this.extent, {
+            disableSkirt: false
+        });
+
         // ********* 3D Elements
         // Lights
-        let directionalLight = new THREE.DirectionalLight( 0xffffff, 0.5 );
-        directionalLight.position.set( 0, 0, 20000 );
+        let directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
+        directionalLight.position.set(0, 0, 20000);
         directionalLight.updateMatrixWorld();
-        this.view.scene.add( directionalLight );
+        this.view.scene.add(directionalLight);
 
-        let ambientLight = new THREE.AmbientLight( 0xffffff,0.5 );
-        ambientLight.position.set(0, 0, 3000 );
+        let ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+        ambientLight.position.set(0, 0, 3000);
         directionalLight.updateMatrixWorld();
-        this.view.scene.add( ambientLight );
+        this.view.scene.add(ambientLight);
 
         // Camera
-        let p = { coord: this.extent.center(), heading: -49.6, range: 3000, tilt:
-                17 };
+        let p = {
+            coord: this.extent.center(), heading: -49.6, range: 3000, tilt:
+                17
+        };
         itowns.CameraUtils.transformCameraToLookAtTarget(this.view, this.view.camera.camera3D, p);
 
         // Controls
         this.controls = new itowns.PlanarControls(this.view, {});
 
         // Set sky color to blue
-        this.view.mainLoop.gfxEngine.renderer.setClearColor( 0x6699cc, 1);
+        this.view.mainLoop.gfxEngine.renderer.setClearColor(0x6699cc, 1);
+    }
 
+     update3DView() {
         // Request itowns view redraw
         this.view.notifyChange();
-
-        // Initialize the 3DTiles manager
-        this.tilesManager = new TilesManager(this.view,
-            this.view.getLayerById(this.config['3DTilesLayerID']));
     }
 
     /**
