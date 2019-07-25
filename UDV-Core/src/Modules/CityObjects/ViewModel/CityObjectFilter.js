@@ -15,10 +15,17 @@ export class CityObjectFilter {
    * acceptable according to the filter.
    */
   constructor(label, accepts) {
+    /**
+     * The unique identifier of the filter.
+     * 
+     * @type {string}
+     */
     this.label = label;
+
     if (typeof(accepts) === 'function') {
       this.accepts = accepts;
     } else {
+      // Necessary if inheritance is used, I'm not sure why though
       this.accepts = this.accepts.bind(this);
     }
   }
@@ -35,6 +42,10 @@ export class CityObjectFilter {
     return true;
   }
 
+  /**
+   * Returns a descriptive string of the filter. By default, it returns the
+   * label.
+   */
   toString() {
     return this.label;
   }

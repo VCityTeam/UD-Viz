@@ -1,18 +1,40 @@
 import { CityObjectFilter } from "./CityObjectFilter";
 import { CityObject } from "../../../Utils/3DTiles/Model/CityObject";
 
-export class CityObjectFieldsFilter extends CityObjectFilter {
+/**
+ * A specialization of `CityObjectFilter` to filter the city objects from
+ * their attributes. The attributes tested are `tileId`, `batchId` and the
+ * `props`. By default, this filter accepts all city objects.
+ */
+export class AttributeFilter extends CityObjectFilter {
+  /**
+   * Constructs the attribute filter.
+   */
   constructor() {
-    super('fields');
+    super('attributes');
 
+    /**
+     * Filters the city objects according to their tile. If this attribute is
+     * undefined (default), all tiles are accepted.
+     */
     this.tileId = undefined;
+
+    /**
+     * Filters the city objects according to their batch ID. If this attribute
+     * is undefined (default), all batch IDs are accepted.
+     */
     this.batchId = undefined;
+
+    /**
+     * Filters the city objects according to their props.
+     */
     this.props = {};
   }
 
   /**
-   * The function responsible to filter the city objects. It evaluates wether
-   * a city object is acceptable according to the filter.
+   * Accepts city objects according to their attributes. For each attribute in
+   * this filter that evaluates to `true` (ie. neither undefined, null nor an
+   * empty string), equality is tested with the city object.
    * 
    * @param {CityObject} cityObject The city object to evaluate.
    * 
@@ -28,7 +50,8 @@ export class CityObjectFieldsFilter extends CityObjectFilter {
     }
 
     for (let key of Object.keys(this.props)) {
-      if (!cityObject.props[key] || (!!this.props[key] && this.props[key] != cityObject.props[key])) {
+      if (!cityObject.props[key] ||
+        (!!this.props[key] && this.props[key] != cityObject.props[key])) {
         return false;
       }
     }
@@ -36,6 +59,10 @@ export class CityObjectFieldsFilter extends CityObjectFilter {
     return true;
   }
 
+  /**
+   * If no attribute is set, returns 'All city objects'. Otherwise, returns
+   * 'Attributes' with the list of the conditions.
+   */
   toString() {
     let result = '';
     let attributes = [];

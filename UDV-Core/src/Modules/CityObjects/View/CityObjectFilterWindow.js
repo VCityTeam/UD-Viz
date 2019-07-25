@@ -1,16 +1,26 @@
 import { Window } from "../../../Utils/GUI/js/Window";
 import { CityObjectFilterSelector } from "./CityObjectFilterSelector";
 
+/**
+ * The filter selection window. This window allows the user to pick a filter
+ * through the list of `FilterSelector`s. A filter selector is associated with
+ * a filter and can offer some parameters through a form.
+ */
 export class CityObjectFilterWindow extends Window {
+  /**
+   * Creates a city object filter window.
+   */
   constructor() {
     super('cityObjectsFilters', 'City Objects - Filters', true);
 
     /**
+     * The list of filter selectors.
      * 
      * @type {Array<CityObjectFilterSelector>}
      */
     this.filterSelectors = [];
 
+    // Event registration
     this.registerEvent(CityObjectFilterWindow.EVENT_FILTER_SELECTED);
   }
 
@@ -47,19 +57,33 @@ export class CityObjectFilterWindow extends Window {
   }
 
   /**
+   * Adds a filter selector in the filter selectos list.
    * 
    * @param {CityObjectFilterSelector} filterSelector The filter selector to
    * add.
    */
   addFilterSelector(filterSelector) {
+    if (!!this.getFilterSelector(filterSelector.filterLabel)) {
+      throw 'A filter selector with the same filter label already exist: '
+        + filterSelector.filterLabel;
+    }
     this.filterSelectors.push(filterSelector);
     this._createFilterSelect();
   }
 
+  /**
+   * Returns the filter selector corresponding to the given filter label.
+   * 
+   * @param {string} filterLabel The label of the filter.
+   */
   getFilterSelector(filterLabel) {
     return this.filterSelectors.find((fs) => fs.filterLabel === filterLabel);
   }
 
+  /**
+   * Fills the HTML select element with an option for each filter selector.
+   * Also adds a 'No filter' option.
+   */
   _createFilterSelect() {
     if (!this.isCreated) {
       return;
@@ -82,6 +106,10 @@ export class CityObjectFilterWindow extends Window {
     }
   }
 
+  /**
+   * Triggered when the users selects a filter in the dropdown list. It
+   * displays the corresponding form fields (if any) after the select input.
+   */
   _onFilterSelection() {
     this.filterSectionElement.innerHTML = '';
     let selector = this._getCurrentSelector();
@@ -90,6 +118,10 @@ export class CityObjectFilterWindow extends Window {
     }
   }
 
+  /**
+   * Returns the current filter selector, or `undefined` if the user has
+   * selected the 'No filter' option.
+   */
   _getCurrentSelector() {
     let selected = this.filterSelectElement.options[this.filterSelectElement.selectedIndex].label;
 
@@ -106,6 +138,10 @@ export class CityObjectFilterWindow extends Window {
     return selector;
   }
 
+  /**
+   * Triggers when the form is submitted. The `EVENT_FILTER_SELECTED` event is
+   * sent and the window closes.
+   */
   _onSubmit() {
     let selector = this._getCurrentSelector();
     if (selector === undefined) {

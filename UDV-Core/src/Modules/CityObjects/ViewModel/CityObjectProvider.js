@@ -5,8 +5,15 @@ import { CityObjectStyle } from "../../../Utils/3DTiles/Model/CityObjectStyle";
 import { CityObjectID, CityObject } from "../../../Utils/3DTiles/Model/CityObject";
 import { EventSender } from "../../../Utils/Events/EventSender";
 
+/**
+ * The city object provider manages the city object by organizing them in two
+ * categories : the _layer_ and the _selected city object_. The layer
+ * represents a set of city objects to highlight, determined by a specific
+ * filter.
+ */
 export class CityObjectProvider extends EventSender {
   /**
+   * Constructs a city object provider, using a tiles manager.
    * 
    * @param {TilesManager} tilesManager The tiles manager.
    */
@@ -27,7 +34,7 @@ export class CityObjectProvider extends EventSender {
     this.filters = {};
 
     /**
-     * The current displayed layer.
+     * The current highlighted layer.
      * 
      * @type {CityObjectLayer}
      */
@@ -47,23 +54,27 @@ export class CityObjectProvider extends EventSender {
      */
     this.selectedCityObjectId = undefined;
 
+    /**
+     * The style applied to the selected city object.
+     * 
+     * @type {CityObjectStyle | string}
+     */
     this.defaultSelectionStyle = {materialProps: {color: 0x13ddef}};
 
+    // Event registration
     this.registerEvent(CityObjectProvider.EVENT_FILTERS_UPDATED);
     this.registerEvent(CityObjectProvider.EVENT_LAYER_CHANGED);
     this.registerEvent(CityObjectProvider.EVENT_CITY_OBJECT_SELECTED);
-
-    this._init();
   }
 
-  _init() {
-    // Create default filters
-    this.addFilter('all', new CityObjectFilter((_) => true));
-  }
+  ///////////////////////////
+  ///// CITY OBJECT SELECTION
 
   /**
+   * Selects a city object from a mouse event. If a city object is actually
+   * under the mouse, the `EVENT_CITY_OBJECT_SELECTED` event is sent.
    * 
-   * @param {MouseEvent} mouseEvent 
+   * @param {MouseEvent} mouseEvent The mouse click event.
    */
   selectCityObject(mouseEvent) {
     let cityObject = this.tilesManager.pickCityObject(mouseEvent);
@@ -74,6 +85,10 @@ export class CityObjectProvider extends EventSender {
     this._updateTilesManager();
   }
 
+  /**
+   * Unset the selected city object and sends an `EVENT_CITY_OBJECT_SELECTED`
+   * event.
+   */
   unselectCityObject() {
     this.selectedCityObjectId = undefined;
     this.sendEvent(CityObjectProvider.EVENT_CITY_OBJECT_SELECTED, undefined);
@@ -81,14 +96,21 @@ export class CityObjectProvider extends EventSender {
   }
 
   /**
+   * Sets the style for the selected city object.
    * 
-   * @param {CityObjectStyle | string} style
+   * @param {CityObjectStyle | string} style The style.
    */
   setSelectionStyle(style) {
     this.defaultSelectionStyle = style;
   }
 
+  /////////////
+  ///// FILTERS
+
   /**
+   * Adds a filter to the dictionnary of available filters. The key shall be
+   * the `label` attribute of the filter. After that, the
+   * `EVENT_FILTERS_UPDATED` event is sent.
    * 
    * @param {CityObjectFilter} cityObjectFilter The filter to add.
    */
@@ -105,13 +127,26 @@ export class CityObjectProvider extends EventSender {
   }
 
   /**
+   * Returns the currently available filters.
    * 
-   * @return {Array<CityObjectFilter>}
+   * @return {Array<CityObjectFilter>} The currently available filters.
    */
   getFilters() {
-    return this.filters;
+    return Object.values(this.filters);
   }
 
+  //////////////////////
+  ///// LAYER MANAGEMENT
+
+  /**
+   * Sets the current layer. The layer is defined by a filter (ie. a set
+   * of city objects) and a style. Sends the `EVENT_LAYER_CHANGED` event.
+   * 
+   * @param {string} filterLabel Label of the filter that defines the layer.
+   * The filter must first be registered using `addFilter`.
+   * @param {CityObjectStyle | string} style The style to associate to the
+   * layer.
+   */
   setLayer(filterLabel, style) {
     let filter = this.filters[filterLabel];
 
@@ -126,16 +161,30 @@ export class CityObjectProvider extends EventSender {
     this._updateTilesManager();
   }
 
+  /**
+   * Returns the current layer.
+   * 
+   * @returns {CityObjectLayer} The current layer.
+   */
   getLayer() {
     return this.layer;
   }
 
+  /**
+   * Unsets the current layer. Sends the `EVENT_LAYER_CHANGED` event.
+   */
   removeLayer() {
     this.layer = undefined;
     this.sendEvent(CityObjectProvider.EVENT_LAYER_CHANGED, undefined);
     this._updateTilesManager();
   }
 
+  /**
+   * Updates the tiles manager so that it has the correct styles associated with
+   * the right city objects.
+   * 
+   * @private
+   */
   _updateTilesManager() {
     this.tilesManager.update();
     this.tilesManager.removeAllStyles();
@@ -155,6 +204,11 @@ export class CityObjectProvider extends EventSender {
     }
   }
 
+  /**
+   * Apply the styles to the tiles manager. This function is necessary as the
+   * event for tile loading does not exist yet. In the future, it shouldn't be
+   * necessary to manually call this function.
+   */
   applyStyles() {
     this._updateTilesManager();
     this.tilesManager.applyStyles();

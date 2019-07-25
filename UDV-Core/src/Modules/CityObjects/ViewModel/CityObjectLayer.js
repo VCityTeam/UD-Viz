@@ -28,7 +28,7 @@ export class CityObjectLayer {
     /**
      * The style associated with the layer.
      * 
-     * @type {CityObjectStyle}
+     * @type {CityObjectStyle | string}
      */
     this.style = style;
   }

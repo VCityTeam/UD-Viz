@@ -87,6 +87,20 @@
       }
     }
   },
+  "cityObjects": {
+    "styles": {
+      "layerDefault": {
+        "materialProps": {
+          "color": "#ffa14f"
+        }
+      },
+      "selection": {
+        "materialProps": {
+          "color": "#13ddef"
+        }
+      }
+    }
+  },
   "properties": {
     "title": {
       "name":"title",

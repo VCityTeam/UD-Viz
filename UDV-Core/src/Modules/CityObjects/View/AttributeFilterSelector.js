@@ -1,16 +1,30 @@
 import { CityObjectFilterSelector } from "./CityObjectFilterSelector";
 import { CityObjectProvider } from "../ViewModel/CityObjectProvider";
-import { CityObjectFieldsFilter } from "../ViewModel/CityObjectFieldsFilter";
+import { AttributeFilter } from "../ViewModel/AttributeFilter";
 
-export class CityObjectFieldsFilterSelector extends CityObjectFilterSelector {
+/**
+ * A filter selector for the `AttributeFilter` filter. It allows the user to
+ * select it in the filter window, and specify some parameters (such as the
+ * tile ID and the batch ID). It also serves as an example of implementation
+ * for the `FilterSelector` class.
+ */
+export class AttributeFilterSelector extends CityObjectFilterSelector {
   /**
+   * Constructs the attribute filter selector from the provider.
    * 
    * @param {CityObjectProvider} provider The city object provider.
    */
   constructor(provider) {
-    super('fields', 'City object attributes');
+    super('attributes', 'City object attributes');
 
-    this.filter = new CityObjectFieldsFilter();
+    /**
+     * The associated attribute filter.
+     * 
+     * @type {AttributeFilter}
+     */
+    this.filter = new AttributeFilter();
+
+    // Adds the filter in the filter list of the provider
     provider.addFilter(this.filter);
   }
 
@@ -26,6 +40,10 @@ export class CityObjectFieldsFilterSelector extends CityObjectFilterSelector {
   }
 
   /**
+   * Sets the `tileId`, `batchId` and `props` attributes of the attribut filter
+   * from the given form data.
+   * 
+   * @override
    * 
    * @param {FormData} formData
    */

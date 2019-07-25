@@ -13,6 +13,6 @@ baseDemo.loadConfigFile(
     // Initialize iTowns 3D view
     baseDemo.init3DView();
     
-    const cityObjects = new udvcore.CityObjectModule(baseDemo.tilesManager);
+    const cityObjects = new udvcore.CityObjectModule(baseDemo.tilesManager, baseDemo.config);
     baseDemo.addModuleView('cityObjects', cityObjects.view);
 });
