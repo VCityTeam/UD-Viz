@@ -24,9 +24,11 @@ export class CityObjectWindow extends Window {
 
     this.filterWindow = new CityObjectFilterWindow();
 
+    this.defaultLayerStyle = {materialProps: {color: 0xffa14f}};
+
     this.filterWindow.addEventListener(CityObjectFilterWindow.EVENT_FILTER_SELECTED, (filterLabel) => {
       if (filterLabel) {
-        this.provider.setLayer(filterLabel, {materialProps: {color: 0xff2222}});
+        this.provider.setLayer(filterLabel, this.defaultLayerStyle);
       } else {
         this.provider.removeLayer();
       }
@@ -133,6 +135,10 @@ export class CityObjectWindow extends Window {
 
   addFilterSelector(filterSelector) {
     this.filterWindow.addFilterSelector(filterSelector);
+  }
+
+  setDefaultLayerStyle(style) {
+    this.defaultLayerStyle = style;
   }
 
   ////////////////////////

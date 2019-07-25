@@ -6,6 +6,7 @@
 .city-object-value {
   margin: 5px 0 5px 0;
   padding-left: 10px;
+  word-wrap: break-word;
 }
 
 .city-object-filter-section {

@@ -47,7 +47,7 @@ export class CityObjectProvider extends EventSender {
      */
     this.selectedCityObjectId = undefined;
 
-    this.selectedStyle = new CityObjectStyle({materialProps: {color: 0x00ff00}});
+    this.defaultSelectionStyle = {materialProps: {color: 0x13ddef}};
 
     this.registerEvent(CityObjectProvider.EVENT_FILTERS_UPDATED);
     this.registerEvent(CityObjectProvider.EVENT_LAYER_CHANGED);
@@ -78,6 +78,14 @@ export class CityObjectProvider extends EventSender {
     this.selectedCityObjectId = undefined;
     this.sendEvent(CityObjectProvider.EVENT_CITY_OBJECT_SELECTED, undefined);
     this._updateTilesManager();
+  }
+
+  /**
+   * 
+   * @param {CityObjectStyle | string} style
+   */
+  setSelectionStyle(style) {
+    this.defaultSelectionStyle = style;
   }
 
   /**
@@ -143,7 +151,7 @@ export class CityObjectProvider extends EventSender {
     }
 
     if (!!this.selectedCityObjectId) {
-      this.tilesManager.setStyle(this.selectedCityObjectId, this.selectedStyle);
+      this.tilesManager.setStyle(this.selectedCityObjectId, this.defaultSelectionStyle);
     }
   }
 
