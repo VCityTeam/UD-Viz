@@ -86,19 +86,16 @@ export class CityObjectProvider extends EventSender {
       throw 'No filter found with the label : ' + label;
     }
 
-    if (!(style instanceof CityObjectStyle)) {
-      style = new CityObjectStyle(style);
-    }
-
     this.layer = new CityObjectLayer(filter, style);
 
-    this.sendEvent(CityObjectProvider.EVENT_LAYER_CHANGED);
+    this.sendEvent(CityObjectProvider.EVENT_LAYER_CHANGED, filterLabel);
 
     this._updateTilesManagerFromLayer();
   }
 
   removeLayer() {
     this.layer = undefined;
+    this.sendEvent(CityObjectProvider.EVENT_LAYER_CHANGED, undefined);
     this._updateTilesManagerFromLayer();
   }
 

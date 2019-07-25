@@ -16,6 +16,8 @@ export class CityObjectFilter {
   constructor(accepts) {
     if (typeof(accepts) === 'function') {
       this.accepts = accepts;
+    } else {
+      this.accepts = this.accepts.bind(this);
     }
   }
 

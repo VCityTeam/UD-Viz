@@ -1,6 +1,9 @@
 import { Window } from "../../../Utils/GUI/js/Window";
 import { CityObjectProvider } from "../ViewModel/CityObjectProvider";
 import { CityObjectStyle } from "../../../Utils/3DTiles/Model/CityObjectStyle";
+import { CityObjectFilterSelector } from "./CityObjectFilterSelector";
+import { CityObjectFilterWindow } from "./CityObjectFilterWindow";
+import { CityObjectFieldsFilterSelector } from "./CityObjectFieldsFilterSelector";
 
 export class CityObjectWindow extends Window {
   /**
@@ -17,12 +20,26 @@ export class CityObjectWindow extends Window {
      */
     this.provider = provider;
 
-    this.filterSelectors = [];
+    this.filterWindow = new CityObjectFilterWindow();
 
-    this.provider.addEventListener(CityObjectProvider.EVENT_FILTERS_UPDATED,
-      () => this._createFilterSelect());
+    this.filterWindow.addEventListener(CityObjectFilterWindow.EVENT_FILTER_SELECTED, (filterLabel) => {
+      if (filterLabel) {
+        this.provider.setLayer(filterLabel, {materialProps: {color: 0xff2222}});
+      } else {
+        this.provider.removeLayer();
+      }
+    });
 
-    this.provider.addFilter('six', (cityObject) => cityObject.tile.tileId == 6);
+    this.filterWindow.addFilterSelector(new CityObjectFieldsFilterSelector(this.provider));
+
+    this.provider.addEventListener(CityObjectProvider.EVENT_LAYER_CHANGED, (filterLabel) => {
+      if (!!filterLabel) {
+        let selector = this.filterWindow.getFilterSelector(filterLabel);
+        this.selectedFilterElement.innerText = selector.toString();
+      } else {
+        this.selectedFilterElement.innerText = '';
+      }
+    });
   }
 
   get innerContentHtml() {
@@ -30,10 +47,8 @@ export class CityObjectWindow extends Window {
       <div class="box-section">
         <h3 class="section-title">Layer</h3>
         <div>
-          <label for="filter">Filter</label>
-          <select name="filter" id="${this.filterSelectId}">
-            <option value="default">No filter</option>
-          </select>
+          <p>Filter <button id="${this.selectFilterButtonId}">Select</button></p>
+          <p id="${this.selectedFilterId}"></p>
           <p>Style</p>
           <p></p>
           <button id="${this.applyButtonId}">Apply styles</button>
@@ -49,15 +64,11 @@ export class CityObjectWindow extends Window {
   }
 
   windowCreated() {
-    this._createFilterSelect();
+    this.filterWindow.appendTo(this.parentElement);
+    this.filterWindow.disable();
 
-    this.filterSelectElement.oninput = () => {
-      let selected = this.filterSelectElement.options[this.filterSelectElement.selectedIndex].label;
-      if (selected === 'no-filter') {
-        this.provider.removeLayer();
-        return;
-      }
-      this.provider.setLayer(selected, new CityObjectStyle({materialProps: {color: 0xfced7b}}));
+    this.selectFilterButtonElement.onclick = () => {
+      this.filterWindow.enable();
     };
 
     this.applyButtonElement.onclick = () => {
@@ -65,37 +76,15 @@ export class CityObjectWindow extends Window {
     };
   }
 
-  _createFilterSelect() {
-    if (!this.isCreated) {
-      return;
-    }
+  /////////////////////
+  ///// FILTER SELECTOR
 
-    let select = this.filterSelectElement;
-
-    select.innerHTML = '';
-
-    let defaultOption = document.createElement('option');
-    defaultOption.label = 'no-filter';
-    defaultOption.innerText = 'No filter';
-    select.appendChild(defaultOption);
-    for (let label of this.provider.getFilters()) {
-      let option = document.createElement('option');
-      option.value = label;
-      option.innerText = label;
-      select.appendChild(option);
-    }
+  addFilterSelector(filterSelector) {
+    this.filterWindow.addFilterSelector(filterSelector);
   }
 
   /////////////
   ///// GETTERS
-
-  get filterSelectId() {
-    return `${this.windowId}_filters_select`;
-  }
-
-  get filterSelectElement() {
-    return document.getElementById(this.filterSelectId);
-  }
 
   get applyButtonId() {
     return `${this.windowId}_apply_button`;
@@ -103,5 +92,21 @@ export class CityObjectWindow extends Window {
 
   get applyButtonElement() {
     return document.getElementById(this.applyButtonId);
+  }
+
+  get selectFilterButtonId() {
+    return `${this.windowId}_filter_button`;
+  }
+
+  get selectFilterButtonElement() {
+    return document.getElementById(this.selectFilterButtonId);
+  }
+
+  get selectedFilterId() {
+    return `${this.windowId}_selected_filter`;
+  }
+
+  get selectedFilterElement() {
+    return document.getElementById(this.selectedFilterId);
   }
 }

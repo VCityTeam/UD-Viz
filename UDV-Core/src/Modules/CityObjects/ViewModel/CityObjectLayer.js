@@ -10,15 +10,12 @@ export class CityObjectLayer {
    * Constructs a layer from a filter and a style.
    * 
    * @param {CityObjectFilter} filter The filter associated with the layer.
-   * @param {CityObjectStyle} style The style associated with the layer.
+   * @param {CityObjectStyle | string} style The style associated with the
+   * layer.
    */
   constructor(filter, style) {
     if (!(filter instanceof CityObjectFilter)) {
       throw 'The filter must be an instance of CityObjectFilter.';
-    }
-
-    if (!(style instanceof CityObjectStyle)) {
-      style = new CityObjectStyle(stlye);
     }
 
     /**
