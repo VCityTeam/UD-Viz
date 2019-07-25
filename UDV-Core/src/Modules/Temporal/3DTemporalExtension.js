@@ -130,6 +130,8 @@ class TemporalExtension_BatchTable {
         const featuresDisplayStates = [];
         for (let i = 0; i < this.featureIds.length; i++) {
             const featureId = this.featureIds[i];
+            bigScaleDemoModifs(featureId, i, this.startDates, this.endDates);
+            if (confluenceDemoModifs(featureId, featuresDisplayStates, currentTime)) continue;
             if (currentTime >= this.startDates[i] && currentTime <=
                 this.endDates[i]) {
                 // ** FEATURE EXISTS
@@ -358,7 +360,7 @@ export class $3DTemporalExtension extends $3DTAbstractExtension {
             const BT_ext = node.batchTable.extensions['3DTILES_temporal'];
             const featuresDisplayStates = BT_ext.culling(layer.currentTime);
 
-            for (let i = 0; i < featuresDisplayStates.length ; i++) {
+            for (let i = 0; i < featuresDisplayStates.length; i++) {
                 this.tilesManager.setStyle(new CityObjectID(node.tileId, i), featuresDisplayStates[i]);
             }
 
@@ -391,4 +393,242 @@ export class $3DTemporalExtension extends $3DTAbstractExtension {
             return {};
         }
     }
+}
+
+
+function bigScaleDemoModifs(featureId, i, startDates, endDates) {
+    // *** Corrections of wrongly detected transactions for demo
+    // purposes
+    // Centre commercial part dieu (tile 208, batchID 8)
+    if (featureId === '2009::LYON_3_00433_4') {
+        endDates[i] = 2015;
+    }
+    // Tour crayon (tile 208, batchID 137)
+    if (featureId === '2015::BU_69383AR8') {
+        startDates[i] = 2009;
+    }
+    // Cite internationale (tile 222, batchID 144)
+    if (featureId === '2015::BU_69386AB36') {
+        startDates[i] = 2009;
+    }
+    // Beaux arts (tile 105, batchID 128)
+    if (featureId === '2015::BU_69381AT70') {
+        startDates[i] = 2009;
+    }
+    // Hotel de ville (tile 108, batchID 48)
+    if (featureId === '2015::BU_69381AS18') {
+        startDates[i] = 2009;
+    }
+    // Opera (tile 108, batchID 51)
+    if (featureId === '2015::BU_69381AS19') {
+        startDates[i] = 2009;
+    }
+    // Saint nizier (tile 64, batchID 141)
+    if (featureId === '2015::BU_69382AB18') {
+        startDates[i] = 2009;
+    }
+    // Cordeliers' bati remarquable (tile 64, batchID 141)
+    if (featureId === '2015::BU_69382AC58') {
+        startDates[i] = 2009;
+    }
+    // Cordeliers' bati remarquable (tile 64, batchID 104)
+    if (featureId === '2015::BU_69382AD83') {
+        startDates[i] = 2009;
+    }
+    // Cordeliers' bati remarquable (tile 64, batchID 113)
+    if (featureId === '2015::BU_69382AD82') {
+        startDates[i] = 2009;
+    }
+    // Hotel Dieu (tile 63, batchID 23)
+    if (featureId === '2015::BU_69382AL5') {
+        startDates[i] = 2009;
+    }
+    // Bellecour est bati remarquable (tile 60, batchID 68)
+    if (featureId === '2015::BU_69382AR66') {
+        startDates[i] = 2009;
+    }
+    // Univ Lyon 2 (tile 59, batchID 52)
+    if (featureId === '2015::BU_69387AR1') {
+        startDates[i] = 2009;
+    }
+    // ? (tile 59, batchID 51)
+    if (featureId === '2015::BU_69387AP17') {
+        startDates[i] = 2009;
+    }
+    // ? (tile 59, batchID 19)
+    if (featureId === '2015::BU_69387AS52') {
+        startDates[i] = 2009;
+    }
+    // ? (tile 46, batchID 127)
+    if (featureId === '2015::BU_69387AS90') {
+        startDates[i] = 2009;
+    }
+    // Palais de justice (tile 55, batchID 127)
+    if (featureId === '2015::BU_69385AH128') {
+        startDates[i] = 2009;
+    }
+    // Palais de justice (tile 55, batchID 127)
+    if (featureId === '2015::BU_69385AH128') {
+        startDates[i] = 2009;
+    }
+    // Saint Jean (tile 55, batchID 102)
+    if (featureId === '2015::BU_69385AI76') {
+        startDates[i] = 2009;
+    }
+    // ? (tile 53, batchID 41)
+    if (featureId === '2015::BU_69385AK128') {
+        startDates[i] = 2009;
+    }
+    // ? (tile 52, batchID 15)
+    if (featureId === '2015::BU_69382AT41') {
+        startDates[i] = 2009;
+    }
+    // Perrache (tile 40, batchID 140)
+    if (featureId === '2015::BU_69382PUBLIC11') {
+        startDates[i] = 2009;
+    }
+    // Perrache 2 (tile 40, batchID 136)
+    if (featureId === '2015::BU_69382AY97') {
+        startDates[i] = 2009;
+    }
+    // ? (tile 33, batchID 131)
+    if (featureId === '2015::BU_69387BZ166') {
+        startDates[i] = 2009;
+    }
+    // ? (tile 35, batchID 104)
+    if (featureId === '2015::BU_69387CK10') {
+        startDates[i] = 2009;
+    }
+    // Confluence (tile 11, batchID 114)
+    if (featureId === '2015::BU_69382BC177') {
+        startDates[i] = 2009;
+    }
+    // Confluence (tile 11, batchID 116)
+    if (featureId === '2015::BU_69382BC164') {
+        startDates[i] = 2009;
+    }
+    // Confluence (tile 11, batchID 117)
+    if (featureId === '2015::BU_69382BC166') {
+        startDates[i] = 2009;
+    }
+    // Confluence (tile 11, batchID 120)
+    if (featureId === '2015::BU_69382BC162') {
+        startDates[i] = 2009;
+    }
+    // Confluence (tile 11, batchID 113)
+    if (featureId === '2015::BU_69382BD210') {
+        startDates[i] = 2009;
+    }
+    // Confluence (tile 11, batchID 98)
+    if (featureId === '2015::BU_69382BP62') {
+        startDates[i] = 2009;
+    }
+    // Confluence (tile 11, batchID 102)
+    if (featureId === '2015::BU_69382BP11') {
+        startDates[i] = 2009;
+    }
+    // Confluence (tile 11, batchID 103)
+    if (featureId === '2015::BU_69382BP25') {
+        startDates[i] = 2009;
+    }
+    // Confluence (tile 11, batchID 106)
+    if (featureId === '2015::BU_69382BP46') {
+        startDates[i] = 2009;
+    }
+    // Confluence (tile 38, batchID 55)
+    if (featureId === '2015::BU_69382BD13') {
+        startDates[i] = 2009;
+    }
+}
+
+function confluenceDemoModifs(featureId, featuresDisplayStates, currentTime) {
+    // 2009 -> 2012 inconsistencies
+    // Confluence (tile 37, batchID 6)
+    if (featureId === '2009::LYON_2_00161_25') {
+        featuresDisplayStates.push('hide');
+        return true
+    }
+    // Confluence (tile 37, batchID 8)
+    if (featureId === '2009::LYON_2_00161_22') {
+        featuresDisplayStates.push('hide');
+        return true;
+    }
+    // Confluence (tile 37, batchID 66)
+    if (featureId === '2015::BU_69382BD209') {
+        featuresDisplayStates.push('noTransaction');
+        return true;
+    }
+    // 2012 -> 2015 inconsistencies
+    // Confluence (tile 11, batchID 59)
+    if (featureId === '2012::LYON_2EME_00232_6' && currentTime === 2013) {
+        featuresDisplayStates.push('demolition');
+        return true;
+    }
+    // 2012 -> 2015 inconsistencies
+    // Confluence (tile 37, batchID 26)
+    if (featureId === '2012::LYON_2EME_00232_20' && currentTime === 2013) {
+        featuresDisplayStates.push('demolition');
+        return true;
+    }
+    // 2012 -> 2015 inconsistencies
+    // Confluence (tile 37, batchID 30)
+    if (featureId === '2012::LYON_2EME_00232_16' && currentTime === 2013) {
+        featuresDisplayStates.push('demolition');
+        return true;
+    }
+    // 2012 -> 2015 inconsistencies
+    // Confluence (tile 37, batchID 29)
+    if (featureId === '2012::LYON_2EME_00232_17' && currentTime === 2013) {
+        featuresDisplayStates.push('demolition');
+        return true;
+    }
+    // 2012 -> 2015 inconsistencies
+    // Confluence (tile 11, batchID 60)
+    if (featureId === '2012::LYON_2EME_00232_4' && currentTime === 2013) {
+        featuresDisplayStates.push('modified');
+        return true;
+    }
+    // 2012 -> 2015 inconsistencies
+    // Confluence (tile 11, batchID 101)
+    if (featureId === '2015::BU_69382BE71' && currentTime === 2014) {
+        featuresDisplayStates.push('modified');
+        return true;
+    }
+    // 2012 -> 2015 inconsistencies
+    // Confluence (tile 37, batchID 42)
+    if (featureId === '2012::LYON_2EME_00232_13' && currentTime === 2013) {
+        featuresDisplayStates.push('modified');
+        return true;
+    }
+    // 2012 -> 2015 inconsistencies
+    // Confluence (tile 37, batchID 79)
+    if (featureId === '2015::BU_69382BD95' && currentTime === 2014) {
+        featuresDisplayStates.push('modified');
+        return true;
+    }
+    // 2012 -> 2015 inconsistencies
+    // Confluence (tile 37, batchID 80)
+    if (featureId === '2015::BU_69382BD93' && currentTime === 2014) {
+        featuresDisplayStates.push('modified');
+        return true;
+    }
+    // 2012 -> 2015 inconsistencies
+    // Confluence (tile 37, batchID 82)
+    if (featureId === '2015::BU_69382BD92' && currentTime === 2014) {
+        featuresDisplayStates.push('modified');
+        return true;
+    }
+    // 2012 -> 2015 inconsistencies
+    // Confluence (tile 37, batchID 32)
+    if (featureId === '2012::LYON_2EME_00232_0' && currentTime === 2013) {
+        featuresDisplayStates.push('noTransaction');
+        return true;
+    }
+    // 2012 -> 2015 inconsistencies
+    // Confluence (tile 37, batchID 68)
+    if (featureId === '2015::BU_69382BD205' && currentTime === 2014) {
+        featuresDisplayStates.push('noTransaction');
+        return true;
+    }
+    return false;
 }
