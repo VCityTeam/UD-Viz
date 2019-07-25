@@ -345,6 +345,9 @@ export class BaseDemo {
         return document.getElementById(this.getModuleButtonId(moduleId));
     }
 
+    /**
+     * Adds a WMS layer the iTowns 3D view.
+     */
     addLyonWMSLayer() {
         // ********* ADD TERRAIN LAYERS (WMS imagery and WMS elevation)
         // These layer are served by the grandLyon
@@ -388,7 +391,7 @@ export class BaseDemo {
     }
 
     /**
-     * Adds a 3D Tiles layer the iTowns 3D view.
+     * Adds a 3D Tiles layer to the iTowns 3D view.
      * @param {string} layer The name of the type of object to add to the view. This name should
      * be one of the properties of the 3DTilesLayer object (in .json config file).
      */

@@ -21,10 +21,10 @@
         "max_y": "5176000"
       },
       "lyon_1_2_5": {
-        "min_x": "1837860",
-        "max_x": "1842500",
-        "min_y": "5172500",
-        "max_y": "5176000"
+        "min_x": "1837800",
+        "max_x": "1844500",
+        "min_y": "5171700",
+        "max_y": "5176900"
       },
       "lyon_all_districts": {
         "min_x": "1837860.980127206",
@@ -42,7 +42,7 @@
       "3DTilesLayer":{
 	  "building":{
 	    "id":"3d-tiles-layer-building",
-	    "url":"http://rict.liris.cnrs.fr/DataStore/TileSets_Demo_MultiLayerLyon1_Lyon2_Lyon5_2015/tileset_buildings/tileset.json"
+	    "url":"http://rict.liris.cnrs.fr/DataStore/TileSet_LyonFull_Villeurbanne_Bron_2015/tileset.json"
 	  },
 	  "relief":{
 	    "id":"3d-tiles-layer-relief",
