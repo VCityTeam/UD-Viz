@@ -132,6 +132,7 @@ class TemporalExtension_BatchTable {
             const featureId = this.featureIds[i];
             bigScaleDemoModifs(featureId, i, this.startDates, this.endDates);
             if (confluenceDemoModifs(featureId, featuresDisplayStates, currentTime)) continue;
+            if (TourIncity(featureId, featuresDisplayStates, currentTime)) continue;
             if (currentTime >= this.startDates[i] && currentTime <=
                 this.endDates[i]) {
                 // ** FEATURE EXISTS
@@ -148,7 +149,12 @@ class TemporalExtension_BatchTable {
                         hasTransac = true;
                         const displayState = TemporalExtension_BatchTable.getDisplayStateFromTags(
                             currentTime, oldTransac.tags);
-                        featuresDisplayStates.push(displayState);
+                        if (displayState === 'fusion'
+                            || displayState === 'subdivision') {
+                            featuresDisplayStates.push('noTransaction');
+                        } else {
+                            featuresDisplayStates.push(displayState);
+                        }
                     }
                 }
                 const newTransac = this.featuresTransacs[featureId].transactionsAsNewFeature;
@@ -161,7 +167,12 @@ class TemporalExtension_BatchTable {
                         hasTransac = true;
                         const displayState = TemporalExtension_BatchTable.getDisplayStateFromTags(
                             currentTime, newTransac.tags);
-                        featuresDisplayStates.push(displayState);
+                        if (displayState === 'fusion'
+                            || displayState === 'subdivision') {
+                            featuresDisplayStates.push('noTransaction');
+                        } else {
+                            featuresDisplayStates.push(displayState);
+                        }
                     }
                 }
 
@@ -245,11 +256,11 @@ export class $3DTemporalExtension extends $3DTAbstractExtension {
         this.tilesManager.registerStyle('modified', new CityObjectStyle({
             materialProps: { opacity: 0.6, color: 0xFFD700 } })); // yellow
 
-        this.tilesManager.registerStyle('subdivision', new CityObjectStyle({
+/*        this.tilesManager.registerStyle('subdivision', new CityObjectStyle({
             materialProps: { opacity: 0.6, color: 0x0000ff } })); // dark blue
 
         this.tilesManager.registerStyle('fusion', new CityObjectStyle({
-            materialProps: { opacity: 0.6, color: 0x0000ff } })); // dark blue
+            materialProps: { opacity: 0.6, color: 0x0000ff } })); // dark blue*/
 
         this.tilesManager.registerStyle('hide', new CityObjectStyle({
             materialProps: { opacity: 0, color: 0xffffff, alphaTest: 0.3 } })); // hidden
@@ -541,12 +552,31 @@ function bigScaleDemoModifs(featureId, i, startDates, endDates) {
     }
 }
 
+function TourIncity(featureId, featuresDisplayStates, currentTime) {
+    // Part dieu : tour incity (tileId 217, batchID 35)
+    if (featureId === "2015::BU_69383AD5" ) {
+        if (currentTime === 2011) {
+            featuresDisplayStates.push('modified');
+            return true;
+        } else if (currentTime === 2012 || currentTime === 2013 || currentTime === 2014) {
+            featuresDisplayStates.push('noTransaction');
+            return true;
+        }
+    }
+    // Tour Incity en construction (2009) tileID = 217, batchID = 0
+    if (featureId === "2009::LYON_3_00316_1" && currentTime === 2010) {
+        featuresDisplayStates.push('modified');
+        return true;
+    }
+    return false;
+}
+
 function confluenceDemoModifs(featureId, featuresDisplayStates, currentTime) {
     // 2009 -> 2012 inconsistencies
     // Confluence (tile 37, batchID 6)
     if (featureId === '2009::LYON_2_00161_25') {
         featuresDisplayStates.push('hide');
-        return true
+        return true;
     }
     // Confluence (tile 37, batchID 8)
     if (featureId === '2009::LYON_2_00161_22') {
