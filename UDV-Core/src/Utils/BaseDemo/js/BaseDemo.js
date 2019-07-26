@@ -1,6 +1,5 @@
 import { ModuleView } from '../../ModuleView/ModuleView.js';
 import { TilesManager } from '../../3DTiles/TilesManager.js';
-// import { MeshLambertMaterial } from 'three';
 
 /**
  * Represents the base HTML content of a demo for UDV and provides methods to
