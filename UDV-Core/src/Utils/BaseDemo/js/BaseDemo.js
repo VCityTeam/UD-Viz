@@ -346,12 +346,9 @@ export class BaseDemo {
     }
 
     /**
-     * Adds Lyon WMS layer to the iTowns 3D view.
+     * Adds WMS elevation Layer of Lyon in 2012 and WMS imagery layer of Lyon in 2009 (from Grand Lyon data).
      */
     addLyonWMSLayer() {
-        // ********* ADD TERRAIN LAYERS (WMS imagery and WMS elevation)
-        // These layer are served by the grandLyon
-        // Add a WMS imagery source
          let wmsImagerySource = new itowns.WMSSource({
             extent: this.extent,
             name: 'Ortho2009_vue_ensemble_16cm_CC46',
@@ -392,40 +389,41 @@ export class BaseDemo {
 
     /**
      * Adds a 3D Tiles layer to the iTowns 3D view.
-     * @param {string} layer The name of the type of object to add to the view. This name should
-     * be one of the properties of the 3DTilesLayer object (in .json config file).
+     * @param {string} layerConfig The name of the type of object to add to the view. This name should
+     * be one of the properties of the 3DTilesLayer object (in UDV/UDV-Core/examples/data/config/generalDemoConfig.json
+     * config file).
      */
-    add3DTilesLayer(layer) {
+    add3DTilesLayer(layerConfig) {
         //  ADD 3D Tiles Layer
         let $3dTilesLayer = new itowns.GeometryLayer(
-            this.config['3DTilesLayer'][layer]['id'], new THREE.Group());
-        $3dTilesLayer.name = 'Lyon-2015-'.concat(layer);
+            this.config['3DTilesLayer'][layerConfig]['id'], new THREE.Group());
+        $3dTilesLayer.name = 'Lyon-2015-'.concat(layerConfig);
         $3dTilesLayer.url =
-            this.config['3DTilesLayer'][layer]['url'];
+            this.config['3DTilesLayer'][layerConfig]['url'];
         $3dTilesLayer.protocol = '3d-tiles';
         let material;
-        if (layer === 'building') {
+        if (layerConfig === 'building' || layerConfig === 'building_1_2_5') {
             material = new THREE.MeshLambertMaterial({ color: 0xFFFFFF });
-        } else if (layer === 'relief') {
+        } else if (layerConfig === 'relief') {
             material = new THREE.MeshLambertMaterial({ color: 0xD2B48C });
-        } else if (layer === 'water') {
+        } else if (layerConfig === 'water') {
             material = new THREE.MeshLambertMaterial({ color: 0xB0E0E6 });
         }
         $3dTilesLayer.overrideMaterials = material;
 
         itowns.View.prototype.addLayer.call(this.view, $3dTilesLayer);
 
-        if (layer === 'building') {
+        if (layerConfig === 'building' || layerConfig === 'building_1_2_5') {
             // Initialize the 3DTiles manager
             this.tilesManager = new TilesManager(this.view,
-                this.view.getLayerById(this.config['3DTilesLayer']['building']['id']));
+                this.view.getLayerById(this.config['3DTilesLayer'][layerConfig]['id']));
         }
     }
 
     /**
      * Initializes the iTowns 3D view.
      * @param {string} area The name of the area to view. Used to adjust the extent, this name should be
-     * one of the properties of the 3DTilesLayer object (in .json config file).
+     * one of the properties of the extents object (in UDV/UDV-Core/examples/data/config/generalDemoConfig.json file).
      */
     init3DView(area) {
         // ********* INIT ITOWNS VIEW
