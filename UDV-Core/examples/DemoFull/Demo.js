@@ -1,17 +1,19 @@
-import { BaseDemo } from '../../src/Utils/BaseDemo/js/BaseDemo.js'
+import { BaseDemo } from '../../src/Utils/BaseDemo/js/BaseDemo.js';
 
 let baseDemo = new BaseDemo({
     iconFolder: '../data/icons',
-    imageFolder: '../data/img'
+    imageFolder: '../data/img',
 });
 
 baseDemo.appendTo(document.body);
 
 baseDemo.loadConfigFile('../data/config/generalDemoConfig.json').then(() => {
-
     // Initialize iTowns 3D view
-    baseDemo.init3DView();
-    
+    baseDemo.init3DView('lyon_villeurbanne_bron');
+    baseDemo.addLyonWMSLayer();
+    baseDemo.add3DTilesLayer('building');
+    baseDemo.update3DView();
+
     ////// REQUEST SERVICE
     const requestService = new udvcore.RequestService();
 
@@ -52,7 +54,7 @@ baseDemo.loadConfigFile('../data/config/generalDemoConfig.json').then(() => {
     const linkModule = new udvcore.LinkModule(documentModule, requestService,
         baseDemo.tilesManager, baseDemo.view, baseDemo.controls,
         baseDemo.config);
-    
+
     ////// DOCUMENT COMMENTS
     const documentComments = new udvcore.DocumentCommentsModule(documentModule,
         requestService, baseDemo.config);

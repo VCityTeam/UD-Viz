@@ -20,7 +20,7 @@ export class BaseDemo {
         this.controls;
         /**
          * Object used to manage the 3DTiles layer.
-         * 
+         *
          * @type {TilesManager}
          */
         this.tilesManager;
@@ -346,33 +346,10 @@ export class BaseDemo {
     }
 
     /**
-     * Initialize the iTowns 3D view.
+     * Adds WMS elevation Layer of Lyon in 2012 and WMS imagery layer of Lyon in 2009 (from Grand Lyon data).
      */
-    init3DView() {
-        // ********* INIT ITOWNS VIEW
-        // Define projection used in iTowns viewer (taken from
-        // https://epsg.io/3946, Proj4js section)
-        itowns.proj4.defs('EPSG:3946', '+proj=lcc +lat_1=45.25 +lat_2=46.75' +
-            ' +lat_0=46 +lon_0=3 +x_0=1700000 +y_0=5200000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs');
-
-        // Define geographic extent: CRS, min/max X, min/max Y
-        this.extent = new itowns.Extent(
-            'EPSG:3946',
-            1837860.980127206, 1847648.6685636174,
-            5169347.42659997, 5180280.0400808845);
-
-        // `viewerDiv` will contain iTowns' rendering area (`<canvas>`)
-        let viewerDiv = document.getElementById('viewerDiv');
-        // Instantiate PlanarView (iTowns' view that will hold the layers)
-        // The skirt allows to remove the cracks between the terrain tiles
-        this.view = new itowns.PlanarView(viewerDiv, this.extent, {
-            disableSkirt: false
-        });
-
-        // ********* ADD TERRAIN LAYERS (WMS imagery and WMS elevation)
-        // These layer are served by the grandLyon
-        // Add a WMS imagery source
-        let wmsImagerySource = new itowns.WMSSource({
+    addLyonWMSLayer() {
+         let wmsImagerySource = new itowns.WMSSource({
             extent: this.extent,
             name: 'Ortho2009_vue_ensemble_16cm_CC46',
             url: 'https://download.data.grandlyon.com/wms/grandlyon',
@@ -408,49 +385,114 @@ export class BaseDemo {
             source: wmsElevationSource,
         });
         this.view.addLayer(wmsElevationLayer);
+    }
 
-        // ********* ADD 3D BUILDING LAYER (3D Tiles)
-        // This building layer represents Lyon in 2015 and is served from
-        // grand lyon alpha server
+    /**
+     * Adds a 3D Tiles layer to the iTowns 3D view.
+     * @param {string} layerConfig The name of the type of object to add to the view. This name should
+     * be one of the properties of the 3DTilesLayer object (in UDV/UDV-Core/examples/data/config/generalDemoConfig.json
+     * config file).
+     */
+    add3DTilesLayer(layerConfig) {
+        //  ADD 3D Tiles Layer
+
+        // Positional arguments verification
+        if (!this.config['3DTilesLayer'][layerConfig]) {
+            throw "Your layer is not one of the properties of 3DTilesLayer object " +
+                "(in UDV/UDV-Core/examples/data/config/generalDemoConfig.json).";
+        }
+        if (!this.config['3DTilesLayer'][layerConfig]['id'] || !this.config['3DTilesLayer'][layerConfig]['url']) {
+            throw "Your layer does not have 'url'/'id' properties or both. " +
+                "(in UDV/UDV-Core/examples/data/config/generalDemoConfig.json)";
+        }
+
         let $3dTilesLayer = new itowns.GeometryLayer(
-            this.config['3DTilesLayerID'], new THREE.Group());
-        $3dTilesLayer.name = 'Lyon-2015';
+            this.config['3DTilesLayer'][layerConfig]['id'], new THREE.Group());
+        $3dTilesLayer.name = 'Lyon-2015-'.concat(layerConfig);
         $3dTilesLayer.url =
-            this.config['3DTilesLayerURL'];
+            this.config['3DTilesLayer'][layerConfig]['url'];
         $3dTilesLayer.protocol = '3d-tiles';
-        $3dTilesLayer.overrideMaterials = true;
+
+        let material;
+        if (!this.config['3DTilesLayer'][layerConfig]['color']) {
+            material = new THREE.MeshLambertMaterial({ color: 0xFFFFFF });
+        } else {
+            material =
+                new THREE.MeshLambertMaterial({color: parseInt(this.config['3DTilesLayer'][layerConfig]['color'])});
+        }
+
+        $3dTilesLayer.overrideMaterials = material;
 
         itowns.View.prototype.addLayer.call(this.view, $3dTilesLayer);
 
+        if (this.config['3DTilesLayer'][layerConfig]['initTilesManager']) {
+            // Initialize the 3DTiles manager
+            this.tilesManager = new TilesManager(this.view,
+                this.view.getLayerById(this.config['3DTilesLayer'][layerConfig]['id']));
+        }
+    }
+
+    /**
+     * Initializes the iTowns 3D view.
+     * @param {string} area The name of the area to view. Used to adjust the extent, this name should be
+     * one of the properties of the extents object (in UDV/UDV-Core/examples/data/config/generalDemoConfig.json file).
+     */
+    init3DView(area) {
+        // ********* INIT ITOWNS VIEW
+        // Define projection used in iTowns viewer (taken from
+        // https://epsg.io/3946, Proj4js section)
+        itowns.proj4.defs('EPSG:3946', '+proj=lcc +lat_1=45.25 +lat_2=46.75' +
+            ' +lat_0=46 +lon_0=3 +x_0=1700000 +y_0=5200000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs');
+
+        // Define geographic extent: CRS, min/max X, min/max Y
+        // area should be one of the properties of the object extents in config file
+        let min_x = parseInt(this.config['extents'][area]['min_x']);
+        let max_x = parseInt(this.config['extents'][area]['max_x']);
+        let min_y = parseInt(this.config['extents'][area]['min_y']);
+        let max_y = parseInt(this.config['extents'][area]['max_y']);
+        this.extent = new itowns.Extent(
+            'EPSG:3946',
+            min_x, max_x,
+            min_y, max_y);
+        // `viewerDiv` will contain iTowns' rendering area (`<canvas>`)
+        let viewerDiv = document.getElementById('viewerDiv');
+        // Instantiate PlanarView (iTowns' view that will hold the layers)
+        // The skirt allows to remove the cracks between the terrain tiles
+        this.view = new itowns.PlanarView(viewerDiv, this.extent, {
+            disableSkirt: false
+        });
+
         // ********* 3D Elements
         // Lights
-        let directionalLight = new THREE.DirectionalLight( 0xffffff, 0.5 );
-        directionalLight.position.set( 0, 0, 20000 );
+        let directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
+        directionalLight.position.set(0, 0, 20000);
         directionalLight.updateMatrixWorld();
-        this.view.scene.add( directionalLight );
+        this.view.scene.add(directionalLight);
 
-        let ambientLight = new THREE.AmbientLight( 0xffffff,0.5 );
-        ambientLight.position.set(0, 0, 3000 );
+        let ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+        ambientLight.position.set(0, 0, 3000);
         directionalLight.updateMatrixWorld();
-        this.view.scene.add( ambientLight );
+        this.view.scene.add(ambientLight);
 
         // Camera
-        let p = { coord: this.extent.center(), heading: -49.6, range: 3000, tilt:
-                17 };
+        let p = {
+            coord: this.extent.center(), heading: -49.6, range: 3000, tilt:
+                17
+        };
         itowns.CameraUtils.transformCameraToLookAtTarget(this.view, this.view.camera.camera3D, p);
 
         // Controls
         this.controls = new itowns.PlanarControls(this.view, {});
 
         // Set sky color to blue
-        this.view.mainLoop.gfxEngine.renderer.setClearColor( 0x6699cc, 1);
-
+        this.view.mainLoop.gfxEngine.renderer.setClearColor(0x6699cc, 1);
+    }
+    /*
+    * Updates the 3D view by notifying iTowns that it changed (e.g. because a layer has been added).
+    */
+     update3DView() {
         // Request itowns view redraw
         this.view.notifyChange();
-
-        // Initialize the 3DTiles manager
-        this.tilesManager = new TilesManager(this.view,
-            this.view.getLayerById(this.config['3DTilesLayerID']));
     }
 
     /**

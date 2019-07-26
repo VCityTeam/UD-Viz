@@ -9,7 +9,10 @@ baseDemo.appendTo(document.body);
 
 baseDemo.loadConfigFile('../../../../examples/data/config/generalDemoConfig.json').then(() => {
     // Initialize iTowns 3D view
-    baseDemo.init3DView();
+    baseDemo.init3DView('lyon_villeurbanne_bron');
+    baseDemo.addLyonWMSLayer();
+    baseDemo.add3DTilesLayer('building');
+    baseDemo.update3DView();
 
     ////// 3DTILES DEBUG
     const debug3dTilesWindow = new udvcore.Debug3DTilesWindow(baseDemo.tilesManager);
