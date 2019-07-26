@@ -138,6 +138,8 @@ export class CityObjectWindow extends Window {
       () => this._clearCityObjectSelection();
 
     this.clearSelectionButtonElement.disabled = true;
+
+    this._updateLayerDescription();
   }
 
   ///////////////////////
@@ -147,13 +149,15 @@ export class CityObjectWindow extends Window {
    * Updates the layer description (filter and style).
    */
   _updateLayerDescription() {
-    let layer = this.provider.getLayer();
-    if (!!layer) {
-      this.selectedFilterElement.innerText = layer.filter.toString();
-      this.selectedStyleElement.innerText = JSON.stringify(layer.style);
-    } else {
-      this.selectedFilterElement.innerText = '';
-      this.selectedStyleElement.innerText = '';
+    if (this.isCreated) {
+      let layer = this.provider.getLayer();
+      if (!!layer) {
+        this.selectedFilterElement.innerText = layer.filter.toString();
+        this.selectedStyleElement.innerText = JSON.stringify(layer.style);
+      } else {
+        this.selectedFilterElement.innerText = '';
+        this.selectedStyleElement.innerText = '';
+      }
     }
   }
 

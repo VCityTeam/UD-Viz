@@ -158,7 +158,7 @@ export class CityObjectProvider extends EventSender {
 
     this.sendEvent(CityObjectProvider.EVENT_LAYER_CHANGED, filter);
 
-    this._updateTilesManager();
+    this.applyStyles();
   }
 
   /**
@@ -176,7 +176,8 @@ export class CityObjectProvider extends EventSender {
   removeLayer() {
     this.layer = undefined;
     this.sendEvent(CityObjectProvider.EVENT_LAYER_CHANGED, undefined);
-    this._updateTilesManager();
+    
+    this.applyStyles();
   }
 
   /**

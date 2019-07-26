@@ -1,5 +1,5 @@
 import { DocumentModule } from "../../Documents/DocumentModule";
-import { LinkService } from "../Service/LinkService";
+import { LinkService } from "../Model/LinkService";
 import { DocumentProvider } from "../../Documents/ViewModel/DocumentProvider";
 import { Document } from "../../Documents/Model/Document";
 import { TilesManager } from "../../../Utils/3DTiles/TilesManager";

@@ -77,4 +77,14 @@ export class CityObjectModule {
   removeExtension(label) {
     this.view.removeExtension(label);
   }
+
+  /**
+   * Adds a filter selector in the city object filter window.
+   * 
+   * @param {CityObjectFilterSelector} filterSelector The filter selector to
+   * add.
+   */
+  addFilterSelector(filterSelector) {
+    this.view.addFilterSelector(filterSelector);
+  }
 }
