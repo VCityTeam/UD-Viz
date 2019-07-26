@@ -1,5 +1,6 @@
 import { ModuleView } from '../../ModuleView/ModuleView.js';
 import { TilesManager } from '../../3DTiles/TilesManager.js';
+// import { MeshLambertMaterial } from 'three';
 
 /**
  * Represents the base HTML content of a demo for UDV and provides methods to
@@ -395,25 +396,37 @@ export class BaseDemo {
      */
     add3DTilesLayer(layerConfig) {
         //  ADD 3D Tiles Layer
+
+        // Positional arguments verification
+        if (!this.config['3DTilesLayer'][layerConfig]) {
+            throw "Your layer is not one of the properties of 3DTilesLayer object " +
+                "(in UDV/UDV-Core/examples/data/config/generalDemoConfig.json).";
+        }
+        if (!this.config['3DTilesLayer'][layerConfig]['id'] || !this.config['3DTilesLayer'][layerConfig]['url']) {
+            throw "Your layer does not have 'url'/'id' properties or both. " +
+                "(in UDV/UDV-Core/examples/data/config/generalDemoConfig.json)";
+        }
+
         let $3dTilesLayer = new itowns.GeometryLayer(
             this.config['3DTilesLayer'][layerConfig]['id'], new THREE.Group());
         $3dTilesLayer.name = 'Lyon-2015-'.concat(layerConfig);
         $3dTilesLayer.url =
             this.config['3DTilesLayer'][layerConfig]['url'];
         $3dTilesLayer.protocol = '3d-tiles';
+
         let material;
-        if (layerConfig === 'building' || layerConfig === 'building_1_2_5') {
+        if (!this.config['3DTilesLayer'][layerConfig]['color']) {
             material = new THREE.MeshLambertMaterial({ color: 0xFFFFFF });
-        } else if (layerConfig === 'relief') {
-            material = new THREE.MeshLambertMaterial({ color: 0xD2B48C });
-        } else if (layerConfig === 'water') {
-            material = new THREE.MeshLambertMaterial({ color: 0xB0E0E6 });
+        } else {
+            material =
+                new THREE.MeshLambertMaterial({color: parseInt(this.config['3DTilesLayer'][layerConfig]['color'])});
         }
+
         $3dTilesLayer.overrideMaterials = material;
 
         itowns.View.prototype.addLayer.call(this.view, $3dTilesLayer);
 
-        if (layerConfig === 'building' || layerConfig === 'building_1_2_5') {
+        if (this.config['3DTilesLayer'][layerConfig]['initTilesManager']) {
             // Initialize the 3DTiles manager
             this.tilesManager = new TilesManager(this.view,
                 this.view.getLayerById(this.config['3DTilesLayer'][layerConfig]['id']));
