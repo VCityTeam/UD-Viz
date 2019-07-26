@@ -80,8 +80,8 @@ export class CityObjectProvider extends EventSender {
     let cityObject = this.tilesManager.pickCityObject(mouseEvent);
     if (!!cityObject) {
       this.selectedCityObjectId = cityObject.cityObjectId;
+      this.sendEvent(CityObjectProvider.EVENT_CITY_OBJECT_SELECTED, cityObject);
     }
-    this.sendEvent(CityObjectProvider.EVENT_CITY_OBJECT_SELECTED, cityObject);
     this._updateTilesManager();
   }
 

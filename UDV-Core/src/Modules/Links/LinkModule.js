@@ -25,7 +25,7 @@ export class LinkModule {
     cameraControls, config) {
     this.service = new LinkService(requestService, config);
 
-    this.provider = new LinkProvider(documentModule.provider, cityObjectModule.provider, this.service);
+    this.provider = new LinkProvider(documentModule.provider, cityObjectModule.provider, this.service, config);
     this.provider.fetchLinks().then(() => {
       this.view = new LinkView(documentModule, cityObjectModule, this.provider,
         itownsView, cameraControls);

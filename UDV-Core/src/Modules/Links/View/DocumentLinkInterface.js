@@ -47,11 +47,12 @@ export class DocumentLinkInterface {
           
           </div>
           <button id="${this.highlightDocButtonId}">Highlight city objects</button>
+          <button id="${this.createLinkButtonId}">Select & link a city object</button>
         </div>`
     });
 
-    documentModule.addEventListener(DocumentProvider.EVENT_DISPLAYED_DOC_CHANGED,
-      (doc) => this._updateLinkList(doc));
+    linkProvider.addEventListener(DocumentProvider.EVENT_DISPLAYED_DOC_CHANGED,
+      () => this._updateLinkList());
 
     documentModule.view.inspectorWindow.addEventListener(Window.EVENT_CREATED,
       () => this._init());
@@ -60,6 +61,28 @@ export class DocumentLinkInterface {
   _init() {
     this.highlightDocButtonElement.onclick = () => {
       this.provider.highlightDisplayedDocumentLinks();
+    };
+
+    this.createLinkButtonElement.onclick = async () => {
+      if (!!this.provider.selectedCityObject) {
+        let newLink = new Link();
+        newLink.source_id = this.provider.displayedDocument.id;
+        newLink.target_id = this.provider.selectedCityObject.props['cityobject.database_id'];
+        newLink.centroid_x = this.provider.selectedCityObject.centroid.x;
+        newLink.centroid_y = this.provider.selectedCityObject.centroid.y;
+        newLink.centroid_z = this.provider.selectedCityObject.centroid.z;
+        if (confirm('Are you sure you want to associate the document with this city object ?')) {
+          try {
+            await this.provider.createLink(newLink);
+          } catch (e) {
+            alert(e);
+          }
+        }
+      } else {
+        alert('Select a city object to link with the document.');
+        // @TODO open the city object module
+        // And if possible, start the selection process
+      }
     };
   }
 
@@ -73,20 +96,9 @@ export class DocumentLinkInterface {
    * and "travel". Clicking on the "highlight" button triggers the
    * `highlightLink` method, while the "travel" button calls the `travelToLink`
    * method.
-   * 
-   * @param {Document} doc The current document.
    */
-  async _updateLinkList(doc) {
-    if (!doc) {
-      this.selectBuildingButtonElement.disabled = true;
-      return;
-    }
-
-    let filters = {
-      source_id: doc.id
-    };
-
-    let links = this.provider.getLinksFromDocuments([doc]);
+  async _updateLinkList() {
+    let links = this.provider.getDisplayedDocumentLinks();
     let newDiv = document.createElement('div');
     let newDivHtml = `<h4 class="subsection-title">${links.length} city object(s)</h4>
                       <ul>`;
@@ -172,5 +184,13 @@ export class DocumentLinkInterface {
 
   get highlightDocButtonElement() {
     return document.getElementById(this.highlightDocButtonId);
+  }
+
+  get createLinkButtonId() {
+    return `${this.windowId}_create_link`;
+  }
+
+  get createLinkButtonElement() {
+    return document.getElementById(this.createLinkButtonId);
   }
 }

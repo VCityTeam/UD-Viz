@@ -16,8 +16,8 @@ export class CityObjectLinkInterface {
   constructor(cityObjectModule, linkProvider) {
     this.linkCountFilterSelector = new LinkCountFilterSelector(linkProvider);
     cityObjectModule.addFilterSelector(this.linkCountFilterSelector);
-    cityObjectModule.addFilterSelector(new CityObjectFilterSelector('linkDisplayedDoc', 'Linked to a displayed document'));
-    cityObjectModule.addFilterSelector(new CityObjectFilterSelector('linkFilteredDocs', 'Linked to the filtered documents'));
+    // cityObjectModule.addFilterSelector(new CityObjectFilterSelector('linkDisplayedDoc', 'Linked to a displayed document'));
+    // cityObjectModule.addFilterSelector(new CityObjectFilterSelector('linkFilteredDocs', 'Linked to the filtered documents'));
   }
 }
 
