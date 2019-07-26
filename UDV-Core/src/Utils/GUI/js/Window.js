@@ -1,6 +1,7 @@
 import { dragElement } from './Draggable.js';
 import { ModuleView } from '../../ModuleView/ModuleView.js';
 import { windowManager } from "./WindowManager.js";
+import { WindowExtension } from './WindowExtension.js';
 
 // Documentation is on the Wiki
 // URL : https://github.com/MEPP-team/UDV/wiki/Window-Framework
@@ -59,6 +60,13 @@ export class Window extends ModuleView {
          * @type {string}
          */
         this.windowDisplayWhenVisible = 'grid';
+
+        /**
+         * The list of extensions for this window.
+         * 
+         * @type {Array<WindowExtension>}
+         */
+        this.windowExtensions = [];
 
         this.registerEvent(Window.EVENT_CREATED);
         this.registerEvent(Window.EVENT_DESTROYED);
@@ -122,6 +130,10 @@ export class Window extends ModuleView {
                 this.headerCloseButton.onclick = this.disable.bind(this);
             }
 
+            for (let extension of this.windowExtensions) {
+                extension.appendTo(this.window);
+            }
+
             this.windowCreated();
             this.sendEvent(Window.EVENT_CREATED);
             this.sendEvent(Window.EVENT_SHOWN);
@@ -173,6 +185,58 @@ export class Window extends ModuleView {
                 </div>
             </div>
         `;
+    }
+
+    //////////// Extensions management
+    //////////////////////////////////
+
+    /**
+     * Adds a new extension in the window.
+     * 
+     * @param {string} label The unique label for the extension.
+     * @param {object} options The options for the extension.
+     * @param {string} options.type The type of the extension. Can either be
+     * `button` or `div`.
+     * @param {string} options.html The inner HTML content for the extension. If
+     * this is a `button`, it represents the displayed text. If this is a `div`,
+     * it represents the inner HTML content.
+     * @param {string} options.container The label of the parent container.
+     * @param {function} [options.oncreated] A callback triggered when the
+     * HTML elements of the extension is effectively created.
+     * @param {function} [options.callback] The callback to call when the user
+     * clicks on a `button` extension. This has no effects on `div` extensions.
+     */
+    addExtension(label, options) {
+        options.id = `${this.windowId}__extensions_${label.toLowerCase().replace(/ +/, '_')}`;
+        let extension = new WindowExtension(label, options);
+        if (!!this.windowExtensions.find(ext => ext.label === label)) {
+            throw 'Extension already exist : ' + label;
+        }
+        this.windowExtensions.push(extension);
+
+        if (this.isCreated) {
+            extension.appendTo(this.window);
+        }
+    }
+
+    /**
+     * Removes an existing extension from the window.
+     * 
+     * @param {string} label The label identifying the extension to remove.
+     */
+    removeExtension(label) {
+        let index = this.windowExtensions.findIndex(ext => ext.label === label);
+        if (index < 0) {
+            throw 'Extension does not exist : ' + label;
+        }
+
+        let extension = this.windowExtensions[index];
+        if (this.isCreated) {
+            let extensionElement = document.getElementById(extension.id);
+            extensionElement.parentElement.removeChild(extensionElement);
+        }
+
+        this.windowExtensions.splice(index, 1);
     }
 
     //////////// Module view overrides

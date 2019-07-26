@@ -24,6 +24,32 @@ function main () {
         console.log('show...');
         w.show();
     };
+
+    w.addExtension('blabla', {
+        type: 'div',
+        html: 'blabla',
+        container: 'top',
+        oncreated: () => console.log('blabla'),
+        callback: () => console.log('jamais')
+    });
+    
+    w.addExtension('bloblo', {
+        type: 'div',
+        html: '<em>HELLO</em>',
+    });
+
+    w.addExtension('blibli', {
+        type: 'div',
+        html: 'blibli',
+        container: 'bottom',
+    });
+
+    w.addExtension('bouton', {
+        type: 'button',
+        html: 'bouton !!',
+        container: 'bottom',
+        callback: () => console.log('O=BO=OIJDFQJ')
+    })
 }
 
 main();
