@@ -93,7 +93,7 @@ export class CityObjectWindow extends Window {
           <p class="city-object-value" id="${this.selectedFilterId}"></p>
           <p class="city-object-title">Style</p>
           <p class="city-object-value" id="${this.selectedStyleId}"></p>
-          <button id="${this.applyButtonId}">Apply styles</button>
+          <button id="${this.applyButtonId}">[Debug] Update styles</button>
         </div>
       </div>
       <div class="box-section">

@@ -38,7 +38,7 @@ export class DocumentLinkInterface {
     this.cameraControls = cameraControls;
 
     documentModule.addInspectorExtension('links', {
-      type: 'panel',
+      type: 'div',
       html: /*html*/`
         <input type="checkbox" class="spoiler-check" id="doc-link-spoiler">
         <label for="doc-link-spoiler" class="section-title">Document Links</label>

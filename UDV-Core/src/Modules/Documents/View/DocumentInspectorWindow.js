@@ -52,15 +52,16 @@ export class DocumentInspectorWindow extends AbstractDocumentWindow {
             <p class="inspector-field" id="${this.docRightsHolderId}"></p>
           </div>
           <div class="inspector-left-right-grid">
-            <div data-extension-container="left" class="text-left">
+            <div data-ext-container="left" class="text-left">
             </div>
-            <div data-extension-container="right" class="text-right">
+            <div data-ext-container="right" class="text-right">
             </div>
           </div>
         </div>
       </div>
-      <div data-extension-container="panel"
-        data-extension-panel-class="box-section">
+      <div data-ext-container="panel"
+        data-ext-container-default="div"
+        data-ext-class="box-section">
 
       </div>
     `;
@@ -134,104 +135,6 @@ export class DocumentInspectorWindow extends AbstractDocumentWindow {
     this.docRefDateElement.innerText =
       (new Date(newDocument.refDate)).toLocaleDateString();
     this.docImageElement.src = await this.provider.getDisplayedDocumentImage();
-  }
-
-  /////////////////////////
-  ///// DOCUMENT EXTENSIONS
-
-  /**
-   * Creates a new extension for the document inspector. An extension can be
-   * either a command button or a panel. An extension should be identified by
-   * a unique label.
-   * 
-   * @param {string} label The extension label.
-   * @param {object} options The extension options
-   * @param {string} options.type The type of the option. Can be either `button`
-   * or `panel`.
-   * @param {string} [options.container] The parent element to place the
-   * extension in the window. For buttons, the position can be either `left`
-   * or `right`.
-   * @param {string} options.html The inside HTML of the
-   * extension. For a button, this will be the displayed text. For a panel, it
-   * will be the inside HTML.
-   * @param {(doc: Document) => any} [options.callback] The callback to call
-   * for a button.
-   */
-  addDocumentExtension(label, options) {
-    if (!!this.extensions[label]) {
-      throw 'Extension already exists : ' + label;
-    }
-    options.label = label;
-    options.id = label.replace(/ +/, ' ').toLowerCase();
-    this.extensions[label] = options;
-
-    if (this.isCreated) {
-      this._createExtensionElement(options);
-    }
-  }
-
-  /**
-   * Removes an existing extension.
-   * 
-   * @param {string} label The extension label.
-   */
-  removeDocumentExtension(label) {
-    let extension = this.extensions[label];
-    if (!extension) {
-      throw 'Extension does not exist : ' + label;
-    }
-
-    let element = document.getElementById(extension.id);
-    if (element) {
-      element.parentElement.removeChild(element);
-    }
-    delete this.extensions[label];
-  }
-
-  /**
-   * Proceeds to create an extension. If this is a button, it will be added to
-   * the commands panel. If this is a panel, it will be pushed under the
-   * document description.
-   * 
-   * @private
-   * 
-   * @param {object} extension 
-   * @param {string} extension.type The type of the option. Can be either `button`
-   * or `panel`.
-   * @param {string} [extension.container] The parent element to place the
-   * extension in the window. For buttons, the position can be either `left`
-   * or `right`.
-   * @param {string} extension.id The id of the element.
-   * @param {string} extension.label The label of the extension.
-   * @param {string} extension.html The inside HTML of the
-   * extension. For a button, this will be the displayed text. For a panel, it
-   * will be the inside HTML.
-   * @param {(doc: Document) => any} [extension.callback] The callback to call
-   * for a button.
-   */
-  _createExtensionElement(extension) {
-    let containerName = extension.container || extension.type;
-    let container = this.innerContent
-      .querySelector(`[data-extension-container="${containerName}"]`);
-    if (!container) {
-      throw 'Container does not exist in inspector : ' + containerName;
-    }
-    if (extension.type === 'button') {
-      let button = document.createElement('button');
-      button.id = extension.id;
-      button.innerHTML = extension.html;
-      button.onclick = () =>
-        extension.callback(this.provider.getDisplayedDocument());
-      container.appendChild(button);
-    } else if (extension.type === 'panel') {
-      let panel = document.createElement('div');
-      panel.id = extension.id;
-      panel.innerHTML = extension.html;
-      panel.className = container.dataset.extensionPanelClass;
-      container.appendChild(panel);
-    } else {
-      throw 'Invalid extension type : ' + extension.type;
-    }
   }
 
   /////////////

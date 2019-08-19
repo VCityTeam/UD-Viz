@@ -118,7 +118,7 @@ export class DocumentCreationWindow extends AbstractDocumentWindow {
   }
 
   documentWindowReady() {
-    this.view.navigatorWindow.addDocumentsExtension('Create', {
+    this.view.navigatorWindow.addExtension('Create', {
       type: 'button',
       html: 'Create a new document',
       callback: () => this.view.requestWindowDisplay(this, true)

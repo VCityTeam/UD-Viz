@@ -23,7 +23,7 @@ export class DocumentLinkView {
   constructor(documentModule, linkService, tilesManager, itownsView,
     cameraControls) {
     documentModule.addInspectorExtension('Links', {
-      type: 'panel',
+      type: 'div',
       html: this._getLinksHtml()
     });
 
@@ -99,7 +99,7 @@ export class DocumentLinkView {
   }
 
   /**
-   * Returns the HTML of the links section in the deocument browser.
+   * Returns the HTML of the links section in the document browser.
    */
   _getLinksHtml() {
     return /*html*/`
