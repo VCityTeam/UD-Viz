@@ -24,8 +24,19 @@ export class LinkView {
   constructor(documentModule, cityObjectModule, linkProvider, itownsView,
     cameraControls) {
 
+    this.documentView = documentModule.view;
+    this.cityObjectView = cityObjectModule.view;
+
     this.documentInterface = new DocumentLinkInterface(documentModule, linkProvider, itownsView, cameraControls);
 
-    this.cityObjectInterface = new CityObjectLinkInterface(cityObjectModule, linkProvider);
+    this.cityObjectInterface = new CityObjectLinkInterface(this, cityObjectModule, linkProvider);
+  }
+
+  requestDisplayDocuments() {
+    this.documentView.enable();
+  }
+
+  requestDisplayCityObjects() {
+    this.cityObjectView.enable();
   }
 }

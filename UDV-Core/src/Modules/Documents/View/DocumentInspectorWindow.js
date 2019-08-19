@@ -126,6 +126,9 @@ export class DocumentInspectorWindow extends AbstractDocumentWindow {
    * @param {Document} newDocument The new displayed document.
    */
   async _fillFieldsFromDocument(newDocument) {
+    if (!this.isCreated) {
+      return;
+    }
     this.docTitleElement.innerText = newDocument.title;
     this.docDescriptionElement.innerText = newDocument.description;
     this.docSourceElement.innerText = newDocument.source;

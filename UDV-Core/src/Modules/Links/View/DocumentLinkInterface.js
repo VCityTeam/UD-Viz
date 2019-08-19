@@ -54,7 +54,7 @@ export class DocumentLinkInterface {
     documentModule.addNavigatorExtension('linkFilter', {
       type: 'div',
       container: 'filter',
-      html: /*html*/`<label>Linked to the selected city object</label>
+      html: /*html*/`<label for="${this.linkFilterId}">Linked to the selected city object</label>
         <input type="checkbox" id="${this.linkFilterId}">`,
       oncreated: () => {
         this.linkFilterElement.onchange = () => this.provider.toggleLinkedDocumentsFilter();
@@ -100,6 +100,9 @@ export class DocumentLinkInterface {
   }
 
   _updateLinkFilter() {
+    if (!this.linkFilterElement) {
+      return;
+    }
     this.linkFilterElement.checked = this.provider.shouldFilterLinkedDocuments;
   }
 
@@ -115,6 +118,9 @@ export class DocumentLinkInterface {
    * method.
    */
   async _updateLinkList() {
+    if (!this.linkListElement) {
+      return;
+    }
     let links = this.provider.getDisplayedDocumentLinks();
     let newDiv = document.createElement('div');
     let newDivHtml = `<h4 class="subsection-title">${links.length} city object(s)</h4>

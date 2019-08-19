@@ -40,6 +40,8 @@ export class LinkProvider extends EventSender {
       return !this.shouldFilterLinkedDocuments || this.selectedCityObjectLinks.find(link => link.source_id === doc.id);
     }));
 
+    this.documentProvider.refreshDocumentList();
+
     /**
      * The cached list of links.
      * 

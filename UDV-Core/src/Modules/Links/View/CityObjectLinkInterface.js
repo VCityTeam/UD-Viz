@@ -3,6 +3,7 @@ import { CityObjectModule } from "../../CityObjects/CityObjectModule";
 import { CityObjectFilterSelector } from "../../CityObjects/View/CityObjectFilterSelector";
 import { LinkProvider } from "../ViewModel/LinkProvider";
 import { CityObjectProvider } from "../../CityObjects/ViewModel/CityObjectProvider";
+import { LinkView } from "./LinkView";
 
 /**
  * The interface extensions for the city object window.
@@ -11,10 +12,11 @@ export class CityObjectLinkInterface {
   /**
    * Constructs the city object link interface.
    * 
+   * @param {LinkView} linkView The link view.
    * @param {CityObjectModule} cityObjectModule The city object module.
    * @param {LinkProvider} linkProvider The link service.
    */
-  constructor(cityObjectModule, linkProvider) {
+  constructor(linkView, cityObjectModule, linkProvider) {
     this.linkCountFilterSelector = new LinkCountFilterSelector(linkProvider);
     cityObjectModule.addFilterSelector(this.linkCountFilterSelector);
     cityObjectModule.addFilterSelector(new CityObjectFilterSelector('linkDisplayedDoc', '[Debug] Linked to a displayed document'));
@@ -24,6 +26,7 @@ export class CityObjectLinkInterface {
       type: 'button',
       html: 'Show linked documents',
       callback: () => {
+        linkView.requestDisplayDocuments();
         linkProvider.toggleLinkedDocumentsFilter();
       }
     });

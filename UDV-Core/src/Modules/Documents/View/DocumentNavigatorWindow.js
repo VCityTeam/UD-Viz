@@ -128,6 +128,10 @@ export class DocumentNavigatorWindow extends AbstractDocumentWindow {
    * @param {Array<Document>} documents The new array of filtered documents.
    */
   _onFilteredDocumentsUpdate(documents) {
+    if (!this.isCreated) {
+      return;
+    }
+
     let list = this.documentListElement;
     list.innerHTML = '';
     for (let doc of documents) {
@@ -153,6 +157,9 @@ export class DocumentNavigatorWindow extends AbstractDocumentWindow {
    * @param {Document} document The new displayed documents.
    */
   _onDisplayedDocumentChange(document) {
+    if (!this.isCreated) {
+      return;
+    }
     let previouslySelected =
       this.documentListElement.querySelector('.document-selected');
     if (!!previouslySelected) {
