@@ -51,6 +51,19 @@ export class DocumentLinkInterface {
         </div>`
     });
 
+    documentModule.addNavigatorExtension('linkFilter', {
+      type: 'div',
+      container: 'filter',
+      html: /*html*/`<label>Linked to the selected city object</label>
+        <input type="checkbox" id="${this.linkFilterId}">`,
+      oncreated: () => {
+        this.linkFilterElement.onchange = () => this.provider.toggleLinkedDocumentsFilter();
+      }
+    });
+
+    linkProvider.addEventListener(DocumentProvider.EVENT_FILTERED_DOCS_UPDATED,
+      () => this._updateLinkFilter());
+
     linkProvider.addEventListener(DocumentProvider.EVENT_DISPLAYED_DOC_CHANGED,
       () => this._updateLinkList());
 
@@ -84,6 +97,10 @@ export class DocumentLinkInterface {
         // And if possible, start the selection process
       }
     };
+  }
+
+  _updateLinkFilter() {
+    this.linkFilterElement.checked = this.provider.shouldFilterLinkedDocuments;
   }
 
   ///////////////
@@ -168,6 +185,14 @@ export class DocumentLinkInterface {
 
   get linkListElement() {
     return document.getElementById(this.linkListId);
+  }
+
+  get linkFilterId() {
+    return `city_object_link_filter`;
+  }
+
+  get linkFilterElement() {
+    return document.getElementById(this.linkFilterId);
   }
 
   linkTravelerId(link) {

@@ -56,7 +56,7 @@ export class ValidationView {
       type: 'div',
       container: 'filter',
       html: /*html*/`
-        <label for="${this.switchId}">Documents to see: </label>
+        <label for="${this.switchId}">Validation status : </label>
         <select id="${this.switchId}">
           <option value="validated">Validated documents</option>
           <option value="in-validation">Documents in validation</option>
