@@ -6,6 +6,7 @@ import { Document } from "../../Documents/Model/Document";
 import { CityObject } from "../../../Utils/3DTiles/Model/CityObject";
 import { LinkCountFilter, LinkedWithDisplayedDocumentFilter, LinkedWithFilteredDocumentsFilter } from "./CityObjectLinkFilters";
 import { EventSender } from "../../../Utils/Events/EventSender";
+import { DocumentFilter } from "../../Documents/ViewModel/DocumentFilter";
 
 export class LinkProvider extends EventSender {
   /**
@@ -33,6 +34,11 @@ export class LinkProvider extends EventSender {
 
     this.linkedWithFilteredDocsFilter = new LinkedWithFilteredDocumentsFilter(this);
     this.cityObjectProvider.addFilter(this.linkedWithFilteredDocsFilter);
+
+    this.shouldFilterLinkedDocuments = false;
+    this.documentProvider.addFilter(new DocumentFilter((doc) => {
+      return !this.shouldFilterLinkedDocuments || this.selectedCityObjectLinks.find(link => link.source_id === doc.id);
+    }));
 
     /**
      * The cached list of links.
@@ -114,6 +120,9 @@ export class LinkProvider extends EventSender {
   _onCityObjectSelection(co) {
     this.selectedCityObject = co;
     this.selectedCityObjectLinks = co ? this.getLinksFromCityObject(co) : [];
+    if (this.shouldFilterLinkedDocuments) {
+      this.documentProvider.refreshDocumentList();
+    }
     this.sendEvent(CityObjectProvider.EVENT_CITY_OBJECT_SELECTED, co);
   }
 
@@ -185,6 +194,24 @@ export class LinkProvider extends EventSender {
    */
   getSelectedCityObjectLinks() {
     return this.selectedCityObjectLinks;
+  }
+
+  getSelectedCityObjectLinkedDocuments() {
+    let allDocuments = this.documentProvider.getAllDocuments().slice();
+    let docIdsToFind = this.selectedCityObjectLinks.map(link => link.source_id);
+    return allDocuments.filter(doc => docIdsToFind.includes(doc.id));
+  }
+
+  /**
+   * 
+   * @param {Boolean} [toggle] 
+   */
+  toggleLinkedDocumentsFilter(toggle) {
+    if (toggle === null || toggle === undefined) {
+      toggle = !this.shouldFilterLinkedDocuments;
+    }
+    this.shouldFilterLinkedDocuments = toggle;
+    this.documentProvider.refreshDocumentList();
   }
 
   highlightDisplayedDocumentLinks() {

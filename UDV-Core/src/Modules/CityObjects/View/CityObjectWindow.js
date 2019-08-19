@@ -101,12 +101,14 @@ export class CityObjectWindow extends Window {
         <div id="${this.selectedCityObjectId}">
 
         </div>
-        <div id="${this.extensionId}">
+        <div data-ext-container-default="div">
 
         </div>
         <hr>
-        <button id="${this.selectButtonId}">Select city object</button>
-        <button id="${this.clearSelectionButtonId}">Clear selection</button>
+        <div data-ext-container-default="button">
+          <button id="${this.selectButtonId}">Select city object</button>
+          <button id="${this.clearSelectionButtonId}">Clear selection</button>
+        </div>
       </div>
     `;
   }
@@ -251,68 +253,6 @@ export class CityObjectWindow extends Window {
     }
   }
 
-  ////////////////
-  ///// EXTENSIONS
-
-  /**
-   * Creates a new extension for the city object window. An extension is 
-   * a piece of HTML identified by a label.
-   * 
-   * @param {string} label The extension label.
-   * @param {object} options The extension options.
-   * @param {string} options.html The inside HTML of the
-   * extension.
-   */
-  addExtension(label, options) {
-    if (!!this.extensions[label]) {
-      throw 'Extension already exists : ' + label;
-    }
-    options.label = label;
-    options.id = label.replace(/ +/, ' ').toLowerCase();
-    this.extensions[label] = options;
-
-    if (this.isCreated) {
-      this._createExtensionElement(options);
-    }
-  }
-
-  /**
-   * Removes an existing extension.
-   * 
-   * @param {string} label The extension label.
-   */
-  removeExtension(label) {
-    let extension = this.extensions[label];
-    if (!extension) {
-      throw 'Extension does not exist : ' + label;
-    }
-
-    let element = document.getElementById(extension.id);
-    if (element) {
-      element.parentElement.removeChild(element);
-    }
-    delete this.extensions[label];
-  }
-
-  /**
-   * Proceeds to create an extension.
-   * 
-   * @private
-   * 
-   * @param {object} extension 
-   * @param {string} extension.id The id of the element.
-   * @param {string} extension.label The label of the extension.
-   * @param {string} extension.html The inside HTML of the
-   * extension.
-   */
-  _createExtensionElement(extension) {
-    let panel = document.createElement('div');
-    panel.id = extension.id;
-    panel.innerHTML = extension.html;
-    let container = this.extensionElement;
-    container.appendChild(panel);
-  }
-
   /////////////
   ///// GETTERS
 
@@ -370,13 +310,5 @@ export class CityObjectWindow extends Window {
 
   get clearSelectionButtonElement() {
     return document.getElementById(this.clearSelectionButtonId);
-  }
-
-  get extensionId() {
-    return `${this.windowId}_extension`;
-  }
-
-  get extensionElement() {
-    return document.getElementById(this.extensionId);
   }
 }

@@ -34,6 +34,13 @@ export class DocumentProvider extends EventSender {
     this.filters = [];
 
     /**
+     * The list of all documents.
+     * 
+     * @type {Array<Document>}
+     */
+    this.allDocuments = [];
+
+    /**
      * The list of filtered documents.
      * 
      * @type {Array<Document>}
@@ -57,7 +64,8 @@ export class DocumentProvider extends EventSender {
    * `DOCUMENT_LIST_UPDATED` and then the `DISPLAYED_DOCUMENT_CHANGED` events.
    */
   async refreshDocumentList() {
-    this.filteredDocuments = await this.service.fetchDocuments();
+    this.allDocuments = await this.service.fetchDocuments();
+    this.filteredDocuments = this.allDocuments.slice();
 
     for (let filter of this.filters) {
       this.filteredDocuments = filter.apply(this.filteredDocuments);
@@ -142,6 +150,15 @@ export class DocumentProvider extends EventSender {
     
     this.sendEvent(DocumentProvider.EVENT_DISPLAYED_DOC_CHANGED,
       this.getDisplayedDocument());
+  }
+
+  /**
+   * Returns the list of all documents.
+   * 
+   * @returns {Array<Document>}
+   */
+  getAllDocuments() {
+    return this.allDocuments;
   }
 
   /**
