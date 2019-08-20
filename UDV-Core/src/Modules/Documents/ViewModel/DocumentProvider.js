@@ -64,6 +64,7 @@ export class DocumentProvider extends EventSender {
    * `DOCUMENT_LIST_UPDATED` and then the `DISPLAYED_DOCUMENT_CHANGED` events.
    */
   async refreshDocumentList() {
+    let previousDocument = this.getDisplayedDocument();
     this.allDocuments = await this.service.fetchDocuments();
     this.filteredDocuments = this.allDocuments.slice();
 
@@ -72,7 +73,14 @@ export class DocumentProvider extends EventSender {
     }
 
     if (this.filteredDocuments.length > 0) {
-      this.displayedDocumentIndex = 0;
+      if (previousDocument) {
+        let previousDisplayedId = previousDocument.id;
+        let newIndex = this.filteredDocuments.findIndex(doc =>
+          doc.id === previousDisplayedId);
+        this.displayedDocumentIndex = (newIndex >= 0) ? newIndex : 0;
+      } else {
+        this.displayedDocumentIndex = 0;
+      }
     } else {
       this.displayedDocumentIndex = undefined;
     }

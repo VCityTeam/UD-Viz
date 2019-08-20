@@ -65,6 +65,13 @@ export class CityObjectWindow extends Window {
       this.provider.selectCityObject(event);
       this.provider.applyStyles();
     };
+    this.addEventListener(Window.EVENT_ENABLED, () => {
+      window.addEventListener('mousedown', this.mouseClickListener);
+    });
+    this.addEventListener(Window.EVENT_DISABLED, () => {
+      window.removeEventListener('mousedown', this.mouseClickListener);
+    });
+
 
     // Adding a filter selector for the attribute filter
     this.filterWindow.addFilterSelector(new AttributeFilterSelector(this.provider));
@@ -82,22 +89,23 @@ export class CityObjectWindow extends Window {
     // Event listener for city object selection
     this.provider.addEventListener(CityObjectProvider.EVENT_CITY_OBJECT_SELECTED,
       (cityObject) => this._updateSelectedCityObjectDescription(cityObject));
+
+    this._updateLayerDescription();
+    this._updateSelectedCityObjectDescription();
   }
 
   get innerContentHtml() {
     return /*html*/`
       <div class="box-section">
-        <h3 class="section-title">Layer</h3>
+        <h3 class="section-title">Layer<span class="color-indicator" id="${this.layerColorIndicatorId}"></span></h3>
         <div>
           <p class="city-object-title">Filter <button id="${this.selectFilterButtonId}">Select</button></p>
           <p class="city-object-value" id="${this.selectedFilterId}"></p>
-          <p class="city-object-title">Style</p>
-          <p class="city-object-value" id="${this.selectedStyleId}"></p>
           <button id="${this.applyButtonId}">[Debug] Update styles</button>
         </div>
       </div>
       <div class="box-section">
-        <h3 class="section-title">Selection</h3>
+        <h3 class="section-title">Selection<span class="color-indicator" id="${this.selectionColorIndicatorId}"></span></h3>
         <div id="${this.selectedCityObjectId}">
 
         </div>
@@ -106,7 +114,6 @@ export class CityObjectWindow extends Window {
         </div>
         <hr>
         <div data-ext-container-default="button">
-          <button id="${this.selectButtonId}">Select city object</button>
           <button id="${this.clearSelectionButtonId}">Clear selection</button>
         </div>
       </div>
@@ -133,9 +140,6 @@ export class CityObjectWindow extends Window {
     this.applyButtonElement.onclick =
       () => this.provider.applyStyles();
 
-    this.selectButtonElement.onclick =
-      () => this._toggleCityObjectSelection();
-
     this.clearSelectionButtonElement.onclick =
       () => this._clearCityObjectSelection();
 
@@ -155,10 +159,12 @@ export class CityObjectWindow extends Window {
       let layer = this.provider.getLayer();
       if (!!layer) {
         this.selectedFilterElement.innerText = layer.filter.toString();
-        this.selectedStyleElement.innerText = JSON.stringify(layer.style);
+        this.layerColorIndicatorElement.style.display = '';
+        this.layerColorIndicatorElement.style.background =
+          '#' + (new THREE.Color(layer.style.materialProps.color)).getHexString();
       } else {
         this.selectedFilterElement.innerText = '';
-        this.selectedStyleElement.innerText = '';
+        this.layerColorIndicatorElement.style.display = 'none';
       }
     }
   }
@@ -204,20 +210,6 @@ export class CityObjectWindow extends Window {
   ///// BUILDING SELECTION
 
   /**
-   * Toggles the city object selection.
-   */
-  _toggleCityObjectSelection() {
-    this.isSelectingCityObject = !this.isSelectingCityObject;
-    if (this.isSelectingCityObject) {
-      this.selectButtonElement.innerText = 'Finish selection';
-      window.addEventListener('mousedown', this.mouseClickListener);
-    } else {
-      this.selectButtonElement.innerText = 'Select city object';
-      window.removeEventListener('mousedown', this.mouseClickListener);
-    }
-  }
-
-  /**
    * Clears the selected city object.
    */
   _clearCityObjectSelection() {
@@ -233,24 +225,32 @@ export class CityObjectWindow extends Window {
    * @param {CityObject} cityObject The selected city object.
    */
   _updateSelectedCityObjectDescription(cityObject) {
+    if (!this.isCreated) {
+      return;
+    }
+
+    this.selectionColorIndicatorElement.style.background = '#' +
+      (new THREE.Color(this.provider.defaultSelectionStyle.materialProps.color)).getHexString();
+
     if (!cityObject) {
       return;
     }
 
     this.clearSelectionButtonElement.disabled = false;
 
-    this.selectedCityObjectElement.innerHTML = /*html*/`
-      <p class="city-object-title">Tile ID</p>
-      <p class="city-object-value">${cityObject.tile.tileId}</p>
-      <p class="city-object-title">Batch ID</p>
-      <p class="city-object-value">${cityObject.batchId}</p>
+    let html = /*html*/`
+      <p class="city-object-title">Attributes</p>
+      <p class="city-object-value">
+        Tile ID : ${cityObject.tile.tileId}<br>
+        Batch ID : ${cityObject.batchId}
     `;
     for (let prop of Object.entries(cityObject.props)) {
-      this.selectedCityObjectElement.innerHTML += /*html*/`
-      <p class="city-object-title">${prop[0]}</p>
-      <p class="city-object-value">${prop[1]}</p>
+      html += /*html*/`
+        <br>${prop[0]} : ${prop[1]}
       `;
     }
+    html += '</p>';
+    this.selectedCityObjectElement.innerHTML = html;
   }
 
   /////////////
@@ -280,22 +280,6 @@ export class CityObjectWindow extends Window {
     return document.getElementById(this.selectedFilterId);
   }
 
-  get selectedStyleId() {
-    return `${this.windowId}_selected_style`;
-  }
-
-  get selectedStyleElement() {
-    return document.getElementById(this.selectedStyleId);
-  }
-
-  get selectButtonId() {
-    return `${this.windowId}_co_select_button`;
-  }
-
-  get selectButtonElement() {
-    return document.getElementById(this.selectButtonId);
-  }
-
   get selectedCityObjectId() {
     return `${this.windowId}_co_selected_paragraph`;
   }
@@ -310,5 +294,21 @@ export class CityObjectWindow extends Window {
 
   get clearSelectionButtonElement() {
     return document.getElementById(this.clearSelectionButtonId);
+  }
+
+  get layerColorIndicatorId() {
+    return `${this.windowId}_layer_color_indicator`;
+  }
+
+  get layerColorIndicatorElement() {
+    return document.getElementById(this.layerColorIndicatorId);
+  }
+
+  get selectionColorIndicatorId() {
+    return `${this.windowId}_selection_color_indicator`;
+  }
+
+  get selectionColorIndicatorElement() {
+    return document.getElementById(this.selectionColorIndicatorId);
   }
 }

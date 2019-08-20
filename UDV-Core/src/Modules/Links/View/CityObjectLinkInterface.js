@@ -22,21 +22,20 @@ export class CityObjectLinkInterface {
     cityObjectModule.addFilterSelector(new CityObjectFilterSelector('linkDisplayedDoc', '[Debug] Linked to a displayed document'));
     cityObjectModule.addFilterSelector(new CityObjectFilterSelector('linkFilteredDocs', '[Debug] Linked to the filtered documents'));
 
-    cityObjectModule.addExtension('showDoc', {
-      type: 'button',
-      html: 'Show linked documents',
-      callback: () => {
-        linkView.requestDisplayDocuments();
-        linkProvider.toggleLinkedDocumentsFilter();
-      }
-    });
-
     cityObjectModule.addExtension('links', {
       type: 'div',
       html: /*html*/`
         <div id="${this.linkListId}">
         </div>
+        <button id="${this.showDocsButtonId}">Show in navigator</button>
       `,
+      oncreated: () => {
+        this._updateLinkList();
+        this.showDocsButtonElement.onclick = () => {
+          linkView.requestDisplayDocuments();
+          linkProvider.toggleLinkedDocumentsFilter(true);
+        };
+      }
     });
 
     this.linkProvider = linkProvider;
@@ -47,17 +46,15 @@ export class CityObjectLinkInterface {
 
   _updateLinkList() {
     let docs = this.linkProvider.getSelectedCityObjectLinkedDocuments();
-    if (docs.length === 0) {
-      this.linkListElement.innerHTML = '';
-    } else {
-      let listHtml = `<p class="city-object-title">${docs.length} linked document(s)</p>
-        <p class="city-object-value"><ul>`;
+    let listHtml = `<p class="city-object-title">${docs.length} linked document(s)</p>`
+    if (docs.length > 0) {
+      listHtml += `<p class="city-object-value"><ul>`;
       for (let doc of docs) {
         listHtml += `<li>${doc.title}</li>`;
       }
       listHtml += '</ul></p>';
-      this.linkListElement.innerHTML = listHtml;
     }
+    this.linkListElement.innerHTML = listHtml;
   }
 
   //////////////
@@ -69,6 +66,14 @@ export class CityObjectLinkInterface {
 
   get linkListElement() {
     return document.getElementById(this.linkListId);
+  }
+
+  get showDocsButtonId() {
+    return `city_objects_link_show_doc`;
+  }
+
+  get showDocsButtonElement() {
+    return document.getElementById(this.showDocsButtonId);
   }
 }
 
