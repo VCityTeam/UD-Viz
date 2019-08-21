@@ -4,7 +4,7 @@ import { Document } from "../Model/Document";
 /**
  * A document filter to use with the search window. It filters the documents
  * depending on some of their attributes (keywords for title and description,
- * subject, publication and refering dates).
+ * source, rights holder, publication and refering dates).
  */
 export class DocumentSearchFilter extends DocumentFilter {
   /**
@@ -23,11 +23,16 @@ export class DocumentSearchFilter extends DocumentFilter {
     this.keywords = [];
 
     /**
-     * A string representing the subject. Should be in lowercase.
+     * A string representing the source. Should be in lowercase.
      * 
      * @type {string}
      */
-    this.subject = undefined;
+    this.source = undefined;
+
+    /**
+     * The rights holder. Should be in lowercase.
+     */
+    this.rightsHolder = undefined;
 
     /**
      * The lower bound of the publication date.
@@ -73,7 +78,12 @@ export class DocumentSearchFilter extends DocumentFilter {
       }
     }
 
-    if (!!this.subject && this.subject !== doc.subject.toLowerCase()) {
+    if (!!this.source && !doc.source.toLowerCase().includes(this.source)) {
+      return false;
+    }
+
+    if (!!this.rightsHolder &&
+      !doc.rightsHolder.toLowerCase().includes(this.rightsHolder)) {
       return false;
     }
 
@@ -101,7 +111,8 @@ export class DocumentSearchFilter extends DocumentFilter {
    */
   clear() {
     this.keywords = [];
-    this.subject = undefined;
+    this.source = undefined;
+    this.rightsHolder = undefined;
     this.pubStartDate = undefined;
     this.pubEndDate = undefined;
     this.refStartDate = undefined;

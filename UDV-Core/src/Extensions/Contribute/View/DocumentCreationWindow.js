@@ -78,19 +78,16 @@ export class DocumentCreationWindow extends AbstractDocumentWindow {
           <input name="file" type="file" id="${this.docImageId}">
           <label for="${this.docTitleId}">Title</label>
           <input name="title" type="text" id="${this.docTitleId}">
-          <label for="${this.subjectId}">Subject</label>
-          <select name="subject" id="${this.subjectId}">
-            <option value="">All subjects</option>
-            <option value="Architecture">Architecture</option>
-            <option value="Tourism">Tourism</option>
-            <option value="Urbanism">Urbanism</option>
-          </select>
           <label for="${this.descriptionId}">Description</label>
           <textarea name="description" id="${this.descriptionId}"></textarea>
           <label for="${this.pubDateId}">Publication date</label>
           <input name="publicationDate" type="date" id="${this.pubDateId}">
           <label for="${this.refDateId}">Refering date</label>
           <input name="refDate" type="date" id="${this.refDateId}">
+          <label for="${this.sourceId}">Source</label>
+          <input name="source" type="text" id="${this.sourceId}">
+          <label for="${this.docRightsHolderId}">Rights holder</label>
+          <input name="rightsHolder" type="text" id="${this.docRightsHolderId}">
           <hr>
           <button type="button" id="${this.buttonPositionId}">Set position</button>
           <input type="submit" disabled value="Create" id="${this.buttonCreateId}">
@@ -161,7 +158,8 @@ export class DocumentCreationWindow extends AbstractDocumentWindow {
   _initForm() {
     this.docImageElement.value = '';
     this.docTitleElement.value = '';
-    this.subjectElement.value = '';
+    this.sourceElement.value = '';
+    this.docRightsHolderElement.value = '';
     this.descriptionElement.value = '';
     this.pubDateElement.value = '';
     this.refDateElement.value = '';
@@ -292,12 +290,20 @@ export class DocumentCreationWindow extends AbstractDocumentWindow {
     return document.getElementById(this.docImageId);
   }
 
-  get subjectId() {
-    return `${this.windowId}_subject`;
+  get sourceId() {
+    return `${this.windowId}_source`;
   }
 
-  get subjectElement() {
-    return document.getElementById(this.subjectId);
+  get sourceElement() {
+    return document.getElementById(this.sourceId);
+  }
+
+  get docRightsHolderId() {
+    return `${this.windowId}_rights_holder`
+  }
+
+  get docRightsHolderElement() {
+    return document.getElementById(this.docRightsHolderId);
   }
 
   get descriptionId() {

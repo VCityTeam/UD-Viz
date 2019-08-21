@@ -63,13 +63,6 @@ export class DocumentNavigatorWindow extends AbstractDocumentWindow {
           <form class="search-form spoiler-box" id="${this.inputFormId}">
             <label for="${this.inputKeywordsId}">Keywords</label>
             <input type="text" id="${this.inputKeywordsId}">
-            <label for="${this.inputSubjectId}">Subject</label>
-            <select id="${this.inputSubjectId}">
-              <option value="">All subjects</option>
-              <option value="Architecture">Architecture</option>
-              <option value="Tourism">Tourism</option>
-              <option value="Urbanism">Urbanism</option>
-            </select>
             <label for="${this.inputPubDateStartId}">Publication date</label>
             <div class="date-wrapper">
               <span>From</span><input type="date" id="${this.inputPubDateStartId}"><br>
@@ -80,6 +73,10 @@ export class DocumentNavigatorWindow extends AbstractDocumentWindow {
               <span>From</span><input type="date" id="${this.inputRefDateStartId}"><br>
               <span>To</span><input type="date" id="${this.inputRefDateEndId}">
             </div>
+            <label for="${this.inputSourceId}">Source</label>
+            <input type="text" id="${this.inputSourceId}">
+            <label for="${this.inputRightsHolderId}">Rights holder</label>
+            <input type="text" id="${this.inputRightsHolderId}">
             <hr>
             <input type="submit" value="Filter">
             <button id="${this.clearButtonId}">Clear</button>
@@ -181,8 +178,12 @@ export class DocumentNavigatorWindow extends AbstractDocumentWindow {
       .filter((k) => k !== "").map((k) => k.toLowerCase());
     this.searchFilter.keywords = keywords;
 
-    let subject = this.inputSubjectElement.value.toLowerCase();
-    this.searchFilter.subject = (subject !== "") ? subject : undefined;
+    let source = this.inputSourceElement.value.toLowerCase();
+    this.searchFilter.source = (source !== "") ? source : undefined;
+
+    let rightsHolder = this.inputRightsHolderElement.value.toLowerCase();
+    this.searchFilter.rightsHolder = (rightsHolder !== "") ? rightsHolder
+      : undefined;
 
     let pubStartDate = this.inputPubDateStartElement.value;
     this.searchFilter.pubStartDate = (!!pubStartDate) ? new Date(pubStartDate)
@@ -207,7 +208,8 @@ export class DocumentNavigatorWindow extends AbstractDocumentWindow {
    * Clears the research fields.
    */
   clear() {
-    this.inputSubjectElement.value = '';
+    this.inputSourceElement.value = '';
+    this.inputRightsHolderElement.value = '';
     this.inputKeywordsElement.value = '';
     this.inputRefDateEndElement.value = '';
     this.inputRefDateStartElement.value = '';
@@ -349,12 +351,20 @@ export class DocumentNavigatorWindow extends AbstractDocumentWindow {
     return document.getElementById(this.inputKeywordsId);
   }
 
-  get inputSubjectId() {
-    return `${this.windowId}_input_Subject`;
+  get inputSourceId() {
+    return `${this.windowId}_input_Source`;
   }
 
-  get inputSubjectElement() {
-    return document.getElementById(this.inputSubjectId);
+  get inputSourceElement() {
+    return document.getElementById(this.inputSourceId);
+  }
+
+  get inputRightsHolderId() {
+    return `${this.windowId}_rights_holder`
+  }
+
+  get inputRightsHolderElement() {
+    return document.getElementById(this.inputRightsHolderId);
   }
 
   get inputPubDateStartId() {

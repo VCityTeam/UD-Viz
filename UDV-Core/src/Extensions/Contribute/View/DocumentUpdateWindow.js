@@ -43,19 +43,16 @@ export class DocumentUpdateWindow extends AbstractDocumentWindow {
           <img class="inspector-doc-img" src="" alt="Document image"
             id="${this.docImageId}">
           <form id="${this.formId}" class="doc-update-creation-form">
-            <label for="${this.subjectId}">Subject</label>
-            <select name="subject" id="${this.subjectId}">
-              <option value="">All subjects</option>
-              <option value="Architecture">Architecture</option>
-              <option value="Tourism">Tourism</option>
-              <option value="Urbanism">Urbanism</option>
-            </select>
             <label for="${this.descriptionId}">Description</label>
             <textarea name="description" id="${this.descriptionId}"></textarea>
             <label for="${this.pubDateId}">Publication date</label>
             <input name="publicationDate" type="date" id="${this.pubDateId}">
             <label for="${this.refDateId}">Refering date</label>
             <input name="refDate" type="date" id="${this.refDateId}">
+            <label for="${this.sourceId}">Source</label>
+            <input name="source" type="text" id="${this.sourceId}">
+            <label for="${this.docRightsHolderId}">Rights holder</label>
+            <input name="rightsHolder" type="text" id="${this.docRightsHolderId}">
             <hr>
             <input type="submit" value="Update">
             <button id="${this.cancelButtonId}" type="button">Cancel</button>
@@ -116,7 +113,8 @@ export class DocumentUpdateWindow extends AbstractDocumentWindow {
     this.docTitleElement.innerText = doc.title;
     this.docImageElement.src =
       await this.provider.getDisplayedDocumentImage();
-    this.subjectElement.value = doc.subject;
+    this.sourceElement.value = doc.source;
+    this.docRightsHolderElement.value = doc.rightsHolder;
     this.descriptionElement.value = doc.description;
     this.pubDateElement.value = (new Date(doc.publicationDate))
       .toISOString().substring(0, 10);
@@ -176,12 +174,20 @@ export class DocumentUpdateWindow extends AbstractDocumentWindow {
     return document.getElementById(this.docImageId);
   }
 
-  get subjectId() {
-    return `${this.windowId}_subject`;
+  get sourceId() {
+    return `${this.windowId}_source`;
   }
 
-  get subjectElement() {
-    return document.getElementById(this.subjectId);
+  get sourceElement() {
+    return document.getElementById(this.sourceId);
+  }
+
+  get docRightsHolderId() {
+    return `${this.windowId}_rights_holder`
+  }
+
+  get docRightsHolderElement() {
+    return document.getElementById(this.docRightsHolderId);
   }
 
   get descriptionId() {
