@@ -4,7 +4,7 @@ import { Document } from "../Model/Document";
 /**
  * A document filter to use with the search window. It filters the documents
  * depending on some of their attributes (keywords for title and description,
- * source, publication and refering dates).
+ * source, rights holder, publication and refering dates).
  */
 export class DocumentSearchFilter extends DocumentFilter {
   /**
@@ -112,6 +112,7 @@ export class DocumentSearchFilter extends DocumentFilter {
   clear() {
     this.keywords = [];
     this.source = undefined;
+    this.rightsHolder = undefined;
     this.pubStartDate = undefined;
     this.pubEndDate = undefined;
     this.refStartDate = undefined;
