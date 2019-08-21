@@ -21,11 +21,18 @@ export class Document {
     this.title;
 
     /**
-     * The subject of the document.
+     * The source of the document.
      * 
      * @type {string}
      */
-    this.subject;
+    this.source;
+
+    /**
+     * The holder of the rights for the document.
+     * 
+     * @type {string}
+     */
+    this.rightsHolder;
 
     /**
      * The description of the document.

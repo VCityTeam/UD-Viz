@@ -40,14 +40,16 @@ export class DocumentInspectorWindow extends AbstractDocumentWindow {
           <input type="checkbox" class="spoiler-check" id="doc-details-spoiler" checked>
           <label for="doc-details-spoiler" class="subsection-title">Details</label>
           <div class="inspector-details spoiler-box">
-            <p class="inspector-field-title">Subject</p>
-            <p class="inspector-field" id="${this.docSubjectId}"></p>
             <p class="inspector-field-title">Description</p>
             <p class="inspector-field" id="${this.docDescriptionId}"></p>
             <p class="inspector-field-title">Refering date</p>
             <p class="inspector-field" id="${this.docRefDateId}"></p>
             <p class="inspector-field-title">Publication date</p>
             <p class="inspector-field" id="${this.docPubDateId}"></p>
+            <p class="inspector-field-title">Source</p>
+            <p class="inspector-field" id="${this.docSourceId}"></p>
+            <p class="inspector-field-title">Rights holder</p>
+            <p class="inspector-field" id="${this.docRightsHolderId}"></p>
           </div>
           <div class="inspector-left-right-grid">
             <div data-extension-container="left" class="text-left">
@@ -110,7 +112,8 @@ export class DocumentInspectorWindow extends AbstractDocumentWindow {
   _setDefaultFieldValues() {
     this.docTitleElement.innerText = 'No document found';
     this.docDescriptionElement.innerText = '';
-    this.docSubjectElement.innerText = '';
+    this.docSourceElement.innerText = '';
+    this.docRightsHolderElement.innerText = '';
     this.docPubDateElement.innerText = '';
     this.docRefDateElement.innerText = '';
     this.docImageElement.src = '';
@@ -124,7 +127,8 @@ export class DocumentInspectorWindow extends AbstractDocumentWindow {
   async _fillFieldsFromDocument(newDocument) {
     this.docTitleElement.innerText = newDocument.title;
     this.docDescriptionElement.innerText = newDocument.description;
-    this.docSubjectElement.innerText = newDocument.subject;
+    this.docSourceElement.innerText = newDocument.source;
+    this.docRightsHolderElement.innerText = newDocument.rightsHolder;
     this.docPubDateElement.innerText =
       (new Date(newDocument.publicationDate)).toLocaleDateString();
     this.docRefDateElement.innerText =
@@ -249,12 +253,20 @@ export class DocumentInspectorWindow extends AbstractDocumentWindow {
     return document.getElementById(this.docDescriptionId);
   }
 
-  get docSubjectId() {
-    return `${this.windowId}_subject`
+  get docSourceId() {
+    return `${this.windowId}_source`
   }
 
-  get docSubjectElement() {
-    return document.getElementById(this.docSubjectId);
+  get docSourceElement() {
+    return document.getElementById(this.docSourceId);
+  }
+
+  get docRightsHolderId() {
+    return `${this.windowId}_rights_holder`
+  }
+
+  get docRightsHolderElement() {
+    return document.getElementById(this.docRightsHolderId);
   }
 
   get docPubDateId() {
