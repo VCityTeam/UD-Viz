@@ -6,10 +6,13 @@ import { LinkView } from "./View/LinkView";
 import { LinkProvider } from "./ViewModel/LinkProvider";
 
 /**
- * 
+ * Manages the links between the city objects and the documents. This modules
+ * fetches the links from the server and displays them in the document and city
+ * object modules by adding extensions.
  */
 export class LinkModule {
   /**
+   * Creates the link module.
    * 
    * @param {DocumentModule} documentModule The document module.
    * @param {CityObjectModule} cityObjectModule The city objects module.
@@ -23,8 +26,18 @@ export class LinkModule {
    */
   constructor(documentModule, cityObjectModule, requestService, itownsView,
     cameraControls, config) {
+    /**
+     * The link service.
+     * 
+     * @type {LinkService}
+     */
     this.service = new LinkService(requestService, config);
 
+    /**
+     * The link provider.
+     * 
+     * @type {LinkProvider}
+     */
     this.provider = new LinkProvider(documentModule.provider, cityObjectModule.provider, this.service, config);
     this.provider.fetchLinks().then(() => {
       this.view = new LinkView(documentModule, cityObjectModule, this.provider,

@@ -5,6 +5,11 @@ import * as THREE from 'three';
 import { TilesManager } from "../../Utils/3DTiles/TilesManager";
 import { CityObjectStyle } from "../../Utils/3DTiles/Model/CityObjectStyle";
 
+/**
+ * Manages the city objects and allows the user to visualize them with
+ * filters. Other modules can extend the functionnalities of the city object
+ * module by adding filters.
+ */
 export class CityObjectModule {
   /**
    * Manages the city objects and allows the user to visualize them with

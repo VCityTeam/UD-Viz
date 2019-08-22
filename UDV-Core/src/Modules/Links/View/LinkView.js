@@ -5,6 +5,8 @@ import { DocumentLinkInterface } from "./DocumentLinkInterface";
 import { CityObjectLinkInterface } from "./CityObjectLinkInterface";
 import { DocumentInspectorWindow } from "../../Documents/View/DocumentInspectorWindow";
 import { LinkProvider } from "../ViewModel/LinkProvider";
+import { DocumentView } from "../../Documents/View/DocumentView";
+import { CityObjectWindow } from "../../CityObjects/View/CityObjectWindow";
 
 /**
  * Represents the visual interface of the link module. This class contains
@@ -24,18 +26,47 @@ export class LinkView {
   constructor(documentModule, cityObjectModule, linkProvider, itownsView,
     cameraControls) {
 
+    /**
+     * A reference to the document view.
+     * 
+     * @type {DocumentView}
+     */
     this.documentView = documentModule.view;
+
+    /**
+     * A reference to the city object window.
+     * 
+     * @type {CityObjectWindow}
+     */
     this.cityObjectView = cityObjectModule.view;
 
-    this.documentInterface = new DocumentLinkInterface(documentModule, linkProvider, itownsView, cameraControls);
+    /**
+     * The interface extensions for the document module.
+     * 
+     * @type {DocumentLinkInterface}
+     */
+    this.documentInterface = new DocumentLinkInterface(documentModule,
+      linkProvider, itownsView, cameraControls);
 
-    this.cityObjectInterface = new CityObjectLinkInterface(this, cityObjectModule, linkProvider);
+    /**
+     * The interface extensions for the city object module.
+     * 
+     * @type {CityObjectLinkInterface}
+     */
+    this.cityObjectInterface = new CityObjectLinkInterface(this,
+      cityObjectModule, linkProvider);
   }
 
+  /**
+   * Request the display of the documents windows.
+   */
   requestDisplayDocuments() {
     this.documentView.enable();
   }
 
+  /**
+   * Request the display of the city objects window.
+   */
   requestDisplayCityObjects() {
     this.cityObjectView.enable();
   }

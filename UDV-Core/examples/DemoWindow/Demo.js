@@ -25,30 +25,30 @@ function main () {
         w.show();
     };
 
-    w.addExtension('blabla', {
+    w.addExtension('test1', {
         type: 'div',
-        html: 'blabla',
+        html: 'test1',
         container: 'top',
-        oncreated: () => console.log('blabla'),
+        oncreated: () => console.log('test1'),
         callback: () => console.log('jamais')
     });
     
-    w.addExtension('bloblo', {
+    w.addExtension('test2', {
         type: 'div',
-        html: '<em>HELLO</em>',
+        html: '<em>test2</em>',
     });
 
-    w.addExtension('blibli', {
+    w.addExtension('test3', {
         type: 'div',
-        html: 'blibli',
+        html: 'test3',
         container: 'bottom',
     });
 
     w.addExtension('bouton', {
         type: 'button',
-        html: 'bouton !!',
+        html: '[bouton]',
         container: 'bottom',
-        callback: () => console.log('O=BO=OIJDFQJ')
+        callback: () => console.log('test bouton')
     })
 }
 

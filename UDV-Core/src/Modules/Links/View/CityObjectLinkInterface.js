@@ -17,11 +17,15 @@ export class CityObjectLinkInterface {
    * @param {LinkProvider} linkProvider The link service.
    */
   constructor(linkView, cityObjectModule, linkProvider) {
+    /**
+     * The link count filter selector.
+     */
     this.linkCountFilterSelector = new LinkCountFilterSelector(linkProvider);
     cityObjectModule.addFilterSelector(this.linkCountFilterSelector);
-    cityObjectModule.addFilterSelector(new CityObjectFilterSelector('linkDisplayedDoc', '[Debug] Linked to a displayed document'));
-    cityObjectModule.addFilterSelector(new CityObjectFilterSelector('linkFilteredDocs', '[Debug] Linked to the filtered documents'));
 
+    // Adds an extension in the 'selected city object' panel of the city object
+    // window. Displays the links of the selected city objects and a button
+    // to show them in the document navigator.
     cityObjectModule.addExtension('links', {
       type: 'div',
       html: /*html*/`
@@ -38,12 +42,20 @@ export class CityObjectLinkInterface {
       }
     });
 
+    /**
+     * The link provider.
+     * 
+     * @type {LinkProvider}
+     */
     this.linkProvider = linkProvider;
 
     this.linkProvider.addEventListener(CityObjectProvider.EVENT_CITY_OBJECT_SELECTED,
       () => this._updateLinkList());
   }
 
+  /**
+   * Updates the list of links for the currently selected city object.
+   */
   _updateLinkList() {
     let docs = this.linkProvider.getSelectedCityObjectLinkedDocuments();
     let listHtml = `<p class="city-object-title">${docs.length} linked document(s)</p>`
@@ -77,14 +89,22 @@ export class CityObjectLinkInterface {
   }
 }
 
+/**
+ * The filter selector for the link count filter. The user has the option to
+ * choose the minimum required link count.
+ */
 export class LinkCountFilterSelector extends CityObjectFilterSelector {
   /**
+   * Creates the filter selector.
    * 
    * @param {LinkProvider} linkProvider The link provider.
    */
   constructor(linkProvider) {
     super('linkCount', 'Number of linked documents');
 
+    /**
+     * The reference to the filter.
+     */
     this.filter = linkProvider.linkCountFilter;
   }
 

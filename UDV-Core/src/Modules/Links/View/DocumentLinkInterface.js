@@ -22,21 +22,32 @@ export class DocumentLinkInterface {
    */
   constructor(documentModule, linkProvider, itownsView, cameraControls) {
     /**
+     * The link provider.
      * 
+     * @type {LinkProvider}
      */
     this.provider = linkProvider;
 
     /**
-     * 
+     * The list of links for the currently displayed document.
      * 
      * @type {Array<Link>}
      */
     this.documentLinks = [];
 
+    /**
+     * The itowns view.
+     */
     this.itownsView = itownsView;
     
+    /**
+     * The planar camera controls.
+     */
     this.cameraControls = cameraControls;
 
+    // Adds the extension for the displayed documents. This extension shows the
+    // links and adds two buttons to highlight the linked city objects, and 
+    // create a new link.
     documentModule.addInspectorExtension('links', {
       type: 'div',
       html: /*html*/`
@@ -48,9 +59,13 @@ export class DocumentLinkInterface {
           </div>
           <button id="${this.highlightDocButtonId}">Highlight city objects</button>
           <button id="${this.createLinkButtonId}">Select & link a city object</button>
-        </div>`
+        </div>`,
+      oncreated: () => this._init()
     });
 
+    // Adds an extension in the navigator window to show the status of the
+    // 'link' filter for documents (the filter based on wether the document is
+    // linked with the selected city object).
     documentModule.addNavigatorExtension('linkFilter', {
       type: 'div',
       container: 'filter',
@@ -66,11 +81,12 @@ export class DocumentLinkInterface {
 
     linkProvider.addEventListener(DocumentProvider.EVENT_DISPLAYED_DOC_CHANGED,
       () => this._updateLinkList());
-
-    documentModule.view.inspectorWindow.addEventListener(Window.EVENT_CREATED,
-      () => this._init());
   }
 
+  /**
+   * Inits the extension of the inspector window. Adds the listeners for the
+   * buttons.
+   */
   _init() {
     this.highlightDocButtonElement.onclick = () => {
       this.provider.highlightDisplayedDocumentLinks();
@@ -93,12 +109,13 @@ export class DocumentLinkInterface {
         }
       } else {
         alert('Select a city object to link with the document.');
-        // @TODO open the city object module
-        // And if possible, start the selection process
       }
     };
   }
 
+  /**
+   * Updates the filter display in the navigator.
+   */
   _updateLinkFilter() {
     if (!this.linkFilterElement) {
       return;

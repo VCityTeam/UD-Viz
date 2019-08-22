@@ -49,12 +49,7 @@ baseDemo.loadConfigFile('../data/config/generalDemoConfig.json').then(() => {
     ////// VALIDATION EXTENSION
     const validation = new udvcore.DocumentValidationModule(documentModule, requestService,
         baseDemo.config);
-
-    ////// LINKS MODULES
-    const linkModule = new udvcore.LinkModule(documentModule, requestService,
-        baseDemo.tilesManager, baseDemo.view, baseDemo.controls,
-        baseDemo.config);
-
+    
     ////// DOCUMENT COMMENTS
     const documentComments = new udvcore.DocumentCommentsModule(documentModule,
         requestService, baseDemo.config);
@@ -72,6 +67,15 @@ baseDemo.loadConfigFile('../data/config/generalDemoConfig.json').then(() => {
     baseDemo.addModuleView('geocoding', geocodingView, {binding: 's',
                                 name: 'Address Search'});
 
+
+    ////// CITY OBJECTS MODULE
+    const cityObjectModule = new udvcore.CityObjectModule(baseDemo.tilesManager, baseDemo.config);
+    baseDemo.addModuleView('cityObjects', cityObjectModule.view);
+
+    ////// LINKS MODULES
+    const linkModule = new udvcore.LinkModule(documentModule, cityObjectModule,
+        requestService, baseDemo.view, baseDemo.controls, baseDemo.config);
+    
     ////// 3DTILES DEBUG
     const debug3dTilesWindow = new udvcore.Debug3DTilesWindow(baseDemo.tilesManager);
     baseDemo.addModuleView('3dtilesDebug', debug3dTilesWindow, {
