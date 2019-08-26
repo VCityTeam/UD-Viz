@@ -6,6 +6,7 @@
   right: 0;
   top: 0;
   bottom: 10%;
+  pointer-events: none;
 }
 
 .orienter-box img {
@@ -23,6 +24,7 @@
   color: white;
   margin: auto;
   text-align: center;
+  pointer-events: all;
 }
 
 .orienter-box .controls-panel .slider-container {
