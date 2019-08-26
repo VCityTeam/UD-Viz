@@ -97,11 +97,10 @@ export class CityObjectWindow extends Window {
   get innerContentHtml() {
     return /*html*/`
       <div class="box-section">
-        <h3 class="section-title">Layer<span class="color-indicator" id="${this.layerColorIndicatorId}"></span></h3>
+        <h3 class="section-title">Filter<span class="color-indicator" id="${this.layerColorIndicatorId}"></span></h3>
         <div>
           <p class="city-object-title">Filter <button id="${this.selectFilterButtonId}">Select</button></p>
           <p class="city-object-value" id="${this.selectedFilterId}"></p>
-          <button id="${this.applyButtonId}">[Debug] Update styles</button>
         </div>
       </div>
       <div class="box-section">
@@ -136,9 +135,6 @@ export class CityObjectWindow extends Window {
 
     this.selectFilterButtonElement.onclick =
       () => this.filterWindow.enable();
-
-    this.applyButtonElement.onclick =
-      () => this.provider.applyStyles();
 
     this.clearSelectionButtonElement.onclick =
       () => this._clearCityObjectSelection();
@@ -255,14 +251,6 @@ export class CityObjectWindow extends Window {
 
   /////////////
   ///// GETTERS
-
-  get applyButtonId() {
-    return `${this.windowId}_apply_button`;
-  }
-
-  get applyButtonElement() {
-    return document.getElementById(this.applyButtonId);
-  }
 
   get selectFilterButtonId() {
     return `${this.windowId}_filter_button`;
