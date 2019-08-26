@@ -157,7 +157,7 @@ export class ValidationView {
       'This operation is irreversible.')) {
       return;
     }
-    this.validationService.validate(doc).catch((reason) => {
+    this.validationService.validate(this.documentModule.provider.getDisplayedDocument()).catch((reason) => {
       alert(reason.statusText);
     }).then(() => {
       this.documentModule.refreshDocumentList();

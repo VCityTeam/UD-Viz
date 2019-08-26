@@ -209,8 +209,6 @@ export class CityObjectWindow extends Window {
    * Clears the selected city object.
    */
   _clearCityObjectSelection() {
-    this.selectedCityObjectElement.innerHTML = '';
-    this.clearSelectionButtonElement.disabled = true;
     this.provider.unselectCityObject();
     this.provider.applyStyles();
   }
@@ -229,6 +227,8 @@ export class CityObjectWindow extends Window {
       (new THREE.Color(this.provider.defaultSelectionStyle.materialProps.color)).getHexString();
 
     if (!cityObject) {
+      this.selectedCityObjectElement.innerHTML = '';
+      this.clearSelectionButtonElement.disabled = true;
       return;
     }
 

@@ -80,6 +80,7 @@ export class CityObjectProvider extends EventSender {
     let cityObject = this.tilesManager.pickCityObject(mouseEvent);
     if (!!cityObject) {
       this.selectedCityObjectId = cityObject.cityObjectId;
+      this.removeLayer();
       this.sendEvent(CityObjectProvider.EVENT_CITY_OBJECT_SELECTED, cityObject);
     }
     this._updateTilesManager();
@@ -157,6 +158,8 @@ export class CityObjectProvider extends EventSender {
     this.layer = new CityObjectLayer(filter, style);
 
     this.sendEvent(CityObjectProvider.EVENT_LAYER_CHANGED, filter);
+
+    this.unselectCityObject();
 
     this.applyStyles();
   }
