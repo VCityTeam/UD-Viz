@@ -1,7 +1,7 @@
 {
   "type": "class",
   "server":{
-    "url":"http://localhost:1525/",
+    "url":"http://rict.liris.cnrs.fr:443/",
     "login": "login",
     "user": "user",
     "userMe": "user/me",

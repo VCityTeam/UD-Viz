@@ -39,7 +39,7 @@ export class DocumentInspectorWindow extends AbstractDocumentWindow {
             id="${this.docImageId}" title="CTRL + Click to open the image">
           <input type="checkbox" class="spoiler-check" id="doc-details-spoiler" checked>
           <label for="doc-details-spoiler" class="subsection-title">Details</label>
-          <div class="inspector-details spoiler-box">
+          <div class="inspector-details spoiler-box" style="max-height: 250px; overflow-y: auto;">
             <p class="inspector-field-title">Description</p>
             <p class="inspector-field" id="${this.docDescriptionId}"></p>
             <p class="inspector-field-title">Refering date</p>
