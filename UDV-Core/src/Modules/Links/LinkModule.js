@@ -4,6 +4,7 @@ import { CityObjectModule } from "../CityObjects/CityObjectModule";
 import { RequestService } from "../../Utils/Request/RequestService";
 import { LinkView } from "./View/LinkView";
 import { LinkProvider } from "./ViewModel/LinkProvider";
+import { Window } from "../../Utils/GUI/js/Window";
 
 /**
  * Manages the links between the city objects and the documents. This modules
@@ -42,6 +43,12 @@ export class LinkModule {
     this.provider.fetchLinks().then(() => {
       this.view = new LinkView(documentModule, cityObjectModule, this.provider,
         itownsView, cameraControls);
+    });
+
+    documentModule.view.addEventListener(Window.EVENT_DISABLED, () => {
+      if (cityObjectModule.provider.getLayer().filter.label === 'linkDisplayedDoc') {
+        cityObjectModule.provider.removeLayer();
+      }
     });
   }
 }
