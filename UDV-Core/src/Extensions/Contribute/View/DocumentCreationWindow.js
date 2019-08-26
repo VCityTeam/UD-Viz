@@ -71,9 +71,9 @@ export class DocumentCreationWindow extends AbstractDocumentWindow {
         this.positioner.disable()
       }});
     this.positioner.addEventListener(Window.EVENT_DISABLED, () => {
+      this._exitEditMode();
       if (this.documentImageOrienter.isVisible) {
         this.documentImageOrienter.disable()
-        this._exitEditMode();
       }});
   }
 
