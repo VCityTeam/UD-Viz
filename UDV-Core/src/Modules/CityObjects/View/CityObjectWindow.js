@@ -99,7 +99,7 @@ export class CityObjectWindow extends Window {
       <div class="box-section">
         <h3 class="section-title">Filter<span class="color-indicator" id="${this.layerColorIndicatorId}"></span></h3>
         <div>
-          <p class="city-object-title">Filter <button id="${this.selectFilterButtonId}">Select</button></p>
+          <p class="city-object-title"><button id="${this.selectFilterButtonId}">Select</button></p>
           <p class="city-object-value" id="${this.selectedFilterId}"></p>
         </div>
       </div>
