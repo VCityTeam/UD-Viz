@@ -46,6 +46,9 @@ export class LinkModule {
     });
 
     documentModule.view.addEventListener(Window.EVENT_DISABLED, () => {
+      if (!cityObjectModule.provider.getLayer()) {
+        return;
+      }
       if (cityObjectModule.provider.getLayer().filter.label === 'linkDisplayedDoc') {
         cityObjectModule.provider.removeLayer();
       }
