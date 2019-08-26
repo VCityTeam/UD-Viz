@@ -38,6 +38,13 @@ export class DocumentCreationWindow extends AbstractDocumentWindow {
       () => this.positioner.disable());
 
     /**
+     * The camera controls
+     * 
+     * @type {*}
+     */
+    this.controls = cameraControls;
+
+    /**
      * The registered camera position for the document visualization.
      * 
      * @type {THREE.Vector3}
@@ -66,6 +73,7 @@ export class DocumentCreationWindow extends AbstractDocumentWindow {
     this.positioner.addEventListener(Window.EVENT_DISABLED, () => {
       if (this.documentImageOrienter.isVisible) {
         this.documentImageOrienter.disable()
+        this._exitEditMode();
       }});
   }
 
@@ -139,12 +147,30 @@ export class DocumentCreationWindow extends AbstractDocumentWindow {
     this.positioner.window.style.left = '10px';
     this.positioner.window.style.top = '10px';
 
+    this._enterEditMode();
+
     let fileReader = new FileReader();
     fileReader.onload = () => {
       this.documentImageOrienter.setImageSrc(fileReader.result);
       this.view.requestWindowDisplay(this.documentImageOrienter, false);
     };
     fileReader.readAsDataURL(this.docImageElement.files[0]);
+  }
+
+  _enterEditMode() {
+    this.controls.rotateSpeed = 1.5;
+    this.controls.zoomInFactor = 0.04;
+    this.controls.zoomOutFactor = 0.04;
+    this.controls.maxPanSpeed = 5.0;
+    this.controls.minPanSpeed = 0.01;
+  }
+
+  _exitEditMode() {
+    this.controls.rotateSpeed = 2.0;
+    this.controls.zoomInFactor = 0.25;
+    this.controls.zoomOutFactor = 0.4;
+    this.controls.maxPanSpeed = 15.0;
+    this.controls.minPanSpeed = 0.05;
   }
 
   //////////
