@@ -43,6 +43,9 @@ export function RequestService() {
         let authenticate = (args.authenticate !== null
                             && args.authenticate !== undefined)?
                             args.authenticate : true;
+        if (authenticate === 'auto') {
+            authenticate = !!window.sessionStorage.getItem('user.token');
+        }
         let responseType = args.responseType || null;
         let urlParameters = args.urlParameters || null;
         return new Promise((resolve, reject) => {

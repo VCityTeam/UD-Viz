@@ -33,11 +33,11 @@ export class DocumentCommentsService {
         let currentDocument = this.documentProvider.getDisplayedDocument();
         if (currentDocument !== null && currentDocument !== undefined) {
             let url = this.documentUrl + "/" + currentDocument.id + "/" + this.commentRoute;
-            let response = (await this.requestService.request('GET', url, {authenticate: false})).response;
+            let response = (await this.requestService.request('GET', url, {authenticate: 'auto'})).response;
             let jsonResponse = JSON.parse(response);
             for (let element of jsonResponse) {
                 let url = this.authorUrl + "/" + element.user_id;
-                let responseAuthor = (await this.requestService.request('GET', url, {authenticate: false})).response;
+                let responseAuthor = (await this.requestService.request('GET', url, {authenticate: 'auto'})).response;
                 element.author = JSON.parse(responseAuthor);
             }
             return jsonResponse;
