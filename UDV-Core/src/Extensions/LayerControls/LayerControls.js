@@ -11,11 +11,6 @@ export class LayerControls extends ModuleView {
     // How to display the view ?
     enableView() {
         this.menuGlobe = new GuiTools('menuDiv', this.view, document.getElementById('viewerDiv'), this.itowns); //calls a method that creates the DOM elements
-        // //menuGlobe.addImageryLayersGUI(this.view.getLayers(function filterColor(l) { return l.isColorLayer; }));
-        // // console.log(debug);
-        // this.debug = new debug.Debug(this.view, this.menuGlobe.gui);
-        // debug.createTileDebugUI(this.menuGlobe.gui, this.view, this.view.tileLayer, this.debug);
-        //
          for (var layer of this.view.getLayers()) {
 
                  layer.whenReady.then(  (layer) => {
@@ -26,9 +21,7 @@ export class LayerControls extends ModuleView {
                  });
              }
           }
-
-
-
+          
     // How to close the view ?
     disableView() {
         if (this.menuGlobe !== undefined)

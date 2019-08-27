@@ -1,8 +1,7 @@
-[
-  {
-    "id":"Lyon mask 10mns",
-    "geometry":"polygons",
-    "source":{
+[{
+    "id": "Lyon mask 10mns",
+    "geometry": "polygons",
+    "source": {
       "format": "geojson",
       "url": "http://localhost:8080/examples/MAM/data/geojson/mini_poly.geojson",
       "projection": "EPSG:3946",
@@ -18,9 +17,10 @@
     }
   },
   {
-    "id":"Lignes Bus TCL",
-    "geometry":"lines",
-    "source":{
+    "id": "Lignes Bus TCL",
+    "geometry": "lines",
+    "linewidth": 50,
+    "source": {
       "url": "https://download.data.grandlyon.com/wfs/rdata?",
       "protocol": "wfs",
       "version": "2.0.0",
@@ -39,9 +39,10 @@
     }
   },
   {
-    "id":"Arrets TCL",
-    "geometry":"points",
-    "source":{
+    "id": "Arrets TCL",
+    "geometry": "points",
+    "size": 50,
+    "source": {
       "url": "https://download.data.grandlyon.com/wfs/rdata?",
       "protocol": "wfs",
       "version": "2.0.0",
