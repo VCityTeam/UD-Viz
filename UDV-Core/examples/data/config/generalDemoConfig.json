@@ -1,7 +1,8 @@
 {
   "type": "class",
   "server":{
-    "url":"http://rict.liris.cnrs.fr:443/",
+    "url":"http://rict.liris.cnrs.fr:1525/",
+    "stableUrl": "http://rict.liris.cnrs.fr:443/",
     "login": "login",
     "user": "user",
     "userMe": "user/me",
