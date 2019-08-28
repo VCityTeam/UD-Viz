@@ -72,7 +72,7 @@ export class DocumentModule {
    * for a button.
    */
   addInspectorExtension(label, options) {
-    this.view.inspectorWindow.addDocumentExtension(label, options)
+    this.view.inspectorWindow.addExtension(label, options)
   }
 
   /**
@@ -81,7 +81,7 @@ export class DocumentModule {
    * @param {string} label The extension label.
    */
   removeBrowserExtension(label) {
-    this.view.inspectorWindow.removeDocumentExtension(label);
+    this.view.inspectorWindow.removeExtension(label);
   }
 
   /**
@@ -103,7 +103,7 @@ export class DocumentModule {
    * for a button.
    */
   addNavigatorExtension(label, options) {
-    this.view.navigatorWindow.addDocumentsExtension(label, options);
+    this.view.navigatorWindow.addExtension(label, options);
   }
 
   /**
@@ -112,7 +112,7 @@ export class DocumentModule {
    * @param {string} label The extension label.
    */
   removeSearchWindowExtension(label) {
-    this.view.navigatorWindow.removeDocumentsExtension(label);
+    this.view.navigatorWindow.removeExtension(label);
   }
 
   /**

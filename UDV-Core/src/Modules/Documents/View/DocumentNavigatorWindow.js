@@ -47,7 +47,7 @@ export class DocumentNavigatorWindow extends AbstractDocumentWindow {
 
           </ul>
         </div>
-        <div data-extension-container="button">
+        <div data-ext-container-default="button">
 
         </div>
       </div>
@@ -55,7 +55,7 @@ export class DocumentNavigatorWindow extends AbstractDocumentWindow {
         <input type="checkbox" class="spoiler-check" id="doc-filters-spoiler">
         <label for="doc-filters-spoiler" class="section-title">Filters</label>
         <div class="spoiler-box" id="${this.inputFormId}">
-          <div data-extension-container="filter">
+          <div data-ext-container="filter">
 
           </div>
           <input type="checkbox" class="spoiler-check" id="doc-search-spoiler">
@@ -83,7 +83,7 @@ export class DocumentNavigatorWindow extends AbstractDocumentWindow {
           </form>
         </div>
       </div>
-      <div data-extension-container="bottom">
+      <div data-ext-container="bottom" data-ext-container-default="div">
       
       </div>
     `;
@@ -128,6 +128,10 @@ export class DocumentNavigatorWindow extends AbstractDocumentWindow {
    * @param {Array<Document>} documents The new array of filtered documents.
    */
   _onFilteredDocumentsUpdate(documents) {
+    if (!this.isCreated) {
+      return;
+    }
+
     let list = this.documentListElement;
     list.innerHTML = '';
     for (let doc of documents) {
@@ -153,6 +157,9 @@ export class DocumentNavigatorWindow extends AbstractDocumentWindow {
    * @param {Document} document The new displayed documents.
    */
   _onDisplayedDocumentChange(document) {
+    if (!this.isCreated) {
+      return;
+    }
     let previouslySelected =
       this.documentListElement.querySelector('.document-selected');
     if (!!previouslySelected) {
@@ -216,104 +223,6 @@ export class DocumentNavigatorWindow extends AbstractDocumentWindow {
     this.inputPubDateEndElement.value = '';
     this.inputPubDateStartElement.value = '';
     this.provider.refreshDocumentList();
-  }
-
-  //////////////////////////
-  ///// DOCUMENTS EXTENSIONS
-
-  /**
-   * Creates a new extension for the document navigator. An extension can be
-   * either a command button or a panel. An extension should be identified by
-   * a unique label.
-   * 
-   * @param {string} label The extension label.
-   * @param {object} options The extension options
-   * @param {string} options.type The type of the option. Can be either `button`
-   * or `panel`.
-   * @param {string} [options.container] The parent element to place the
-   * extension in the window. For panels, the position can be either `filter`
-   * or `bottom`.
-   * @param {string} options.html The inside HTML of the
-   * extension. For a button, this will be the displayed text. For a panel, it
-   * will be the inside HTML.
-   * @param {(doc: Document[]) => any} [options.callback] The callback to call
-   * for a button.
-   */
-  addDocumentsExtension(label, options) {
-    if (!!this.extensions[label]) {
-      throw 'Extension already exists : ' + label;
-    }
-    options.label = label;
-    options.id = label.replace(/ +/, ' ').toLowerCase();
-    this.extensions[label] = options;
-
-    if (this.isCreated) {
-      this._createExtensionElement(options);
-    }
-  }
-
-  /**
-   * Removes an existing extension.
-   * 
-   * @param {string} label The extension label.
-   */
-  removeDocumentsExtension(label) {
-    let extension = this.extensions[label];
-    if (!extension) {
-      throw 'Extension does not exist : ' + label;
-    }
-
-    let element = document.getElementById(extension.id);
-    if (element) {
-      element.parentElement.removeChild(element);
-    }
-    delete this.extensions[label];
-  }
-
-  /**
-   * Proceeds to create an extension. If this is a button, it will be added to
-   * the commands panel. If this is a panel, it will be pushed under the
-   * document description.
-   * 
-   * @private
-   * 
-   * @param {object} extension 
-   * @param {string} extension.type The type of the option. Can be either `button`
-   * or `panel`.
-   * @param {string} [extension.container] The parent element to place the
-   * extension in the window. For panels, the position can be either `filter`
-   * or `bottom`.
-   * @param {string} extension.id The id of the element.
-   * @param {string} extension.label The label of the extension.
-   * @param {string} extension.html The inside HTML of the
-   * extension. For a button, this will be the displayed text. For a panel, it
-   * will be the inside HTML.
-   * @param {(doc: Document[]) => any} [extension.callback] The callback to call
-   * for a button.
-   */
-  _createExtensionElement(extension) {
-    let containerName = extension.container || extension.type;
-    let container = this.innerContent
-      .querySelector(`[data-extension-container="${containerName}"]`);
-    if (!container) {
-      throw 'Container does not exist in navigator : ' + containerName;
-    }
-    if (extension.type === 'button') {
-      let button = document.createElement('button');
-      button.id = extension.id;
-      button.innerHTML = extension.html;
-      button.onclick = () =>
-        extension.callback(this.provider.getFilteredDocuments());
-      container.appendChild(button);
-    } else if (extension.type === 'panel') {
-      let panel = document.createElement('div');
-      panel.id = extension.id;
-      panel.innerHTML = extension.html;
-      panel.className = container.dataset.extensionPanelClass;
-      container.appendChild(panel);
-    } else {
-      throw 'Invalid extension type : ' + extension.type;
-    }
   }
 
   ////////////

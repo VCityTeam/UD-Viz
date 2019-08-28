@@ -482,7 +482,7 @@ export class BaseDemo {
         itowns.CameraUtils.transformCameraToLookAtTarget(this.view, this.view.camera.camera3D, p);
 
         // Controls
-        this.controls = new itowns.PlanarControls(this.view, {});
+        this.controls = new itowns.PlanarControls(this.view, {maxZenithAngle: 180, groundLevel: -100, handleCollision: false});
 
         // Set sky color to blue
         this.view.mainLoop.gfxEngine.renderer.setClearColor(0x6699cc, 1);

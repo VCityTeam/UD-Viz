@@ -104,7 +104,7 @@ As you can see, adding an extension is done by providing a descriptive object th
 
 ```js
 documentModule.addInspectorExtension('MyExtension', {
-  type: 'panel',
+  type: 'div',
   html: `
     <h3>My Extension</h3>
     <p>

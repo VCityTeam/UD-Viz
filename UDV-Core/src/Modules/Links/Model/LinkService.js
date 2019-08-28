@@ -1,4 +1,5 @@
 import { RequestService } from "../../../Utils/Request/RequestService";
+import { Link } from "./Link";
 
 /**
  * This class is used to perform requests concerning links.
@@ -49,7 +50,7 @@ export class LinkService {
    * are `source_id` (which must be a document id) and `target_id` (an ID of
    * type `linkType`).
    * 
-   * @returns {Promise<Array<any>>} An array of links.
+   * @returns {Promise<Array<Link>>} An array of links.
    */
   async getLinks(linkType, filters = null) {
     const url = `${this.linkURL}/${linkType}`;

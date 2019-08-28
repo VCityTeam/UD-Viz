@@ -8,6 +8,9 @@ let baseDemo = new BaseDemo({
 baseDemo.appendTo(document.body);
 
 baseDemo.loadConfigFile('../data/config/generalDemoConfig.json').then(() => {
+    // Use the stable server
+    baseDemo.config.server.url = baseDemo.config.server.stableUrl;
+
     // Initialize iTowns 3D view
     baseDemo.init3DView('lyon_villeurbanne_bron');
     baseDemo.addLyonWMSLayer();
@@ -75,15 +78,4 @@ baseDemo.loadConfigFile('../data/config/generalDemoConfig.json').then(() => {
     ////// LINKS MODULES
     const linkModule = new udvcore.LinkModule(documentModule, cityObjectModule,
         requestService, baseDemo.view, baseDemo.controls, baseDemo.config);
-    
-    ////// 3DTILES DEBUG
-    const debug3dTilesWindow = new udvcore.Debug3DTilesWindow(baseDemo.tilesManager);
-    baseDemo.addModuleView('3dtilesDebug', debug3dTilesWindow, {
-        name: '3DTiles Debug'
-    });
-
-    ////// CAMERA POSITIONER
-    const cameraPosition = new udvcore.CameraPositionerView(baseDemo.view,
-        baseDemo.controls);
-    baseDemo.addModuleView('cameraPositioner', cameraPosition);
 });

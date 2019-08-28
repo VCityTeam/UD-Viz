@@ -38,6 +38,13 @@ export class DocumentCreationWindow extends AbstractDocumentWindow {
       () => this.positioner.disable());
 
     /**
+     * The camera controls
+     * 
+     * @type {*}
+     */
+    this.controls = cameraControls;
+
+    /**
      * The registered camera position for the document visualization.
      * 
      * @type {THREE.Vector3}
@@ -64,9 +71,37 @@ export class DocumentCreationWindow extends AbstractDocumentWindow {
         this.positioner.disable()
       }});
     this.positioner.addEventListener(Window.EVENT_DISABLED, () => {
+      this._exitEditMode();
       if (this.documentImageOrienter.isVisible) {
         this.documentImageOrienter.disable()
       }});
+
+    /**
+     * The settings for an accurate movement of the camera. These settings
+     * should be used in the `PlanarControls` class.
+     * 
+     * @type {{rotateSpeed: number, zoomInFactor: number, zoomOutFactor: number,
+     * maxPanSpeed: number, minPanSpeed: number}}
+     */
+    this.accurateControlsSettings = {
+      rotateSpeed: 1.5,
+      zoomInFactor: 0.04,
+      zoomOutFactor: 0.04,
+      maxPanSpeed: 5.0,
+      minPanSpeed: 0.01
+    };
+
+    /**
+     * The saved state of the planar controls settings. This is used to restore
+     * the default settings when needed.
+     * 
+     * @type {{rotateSpeed: number, zoomInFactor: number, zoomOutFactor: number,
+      * maxPanSpeed: number, minPanSpeed: number}}
+      */
+    this.savedControlsSettings = {};
+    for (let key of Object.keys(this.accurateControlsSettings)) {
+      this.savedControlsSettings[key] = this.controls[key];
+    }
   }
 
   get innerContentHtml() {
@@ -118,7 +153,7 @@ export class DocumentCreationWindow extends AbstractDocumentWindow {
   }
 
   documentWindowReady() {
-    this.view.navigatorWindow.addDocumentsExtension('Create', {
+    this.view.navigatorWindow.addExtension('Create', {
       type: 'button',
       html: 'Create a new document',
       callback: () => this.view.requestWindowDisplay(this, true)
@@ -139,12 +174,34 @@ export class DocumentCreationWindow extends AbstractDocumentWindow {
     this.positioner.window.style.left = '10px';
     this.positioner.window.style.top = '10px';
 
+    this._enterEditMode();
+
     let fileReader = new FileReader();
     fileReader.onload = () => {
       this.documentImageOrienter.setImageSrc(fileReader.result);
       this.view.requestWindowDisplay(this.documentImageOrienter, false);
     };
     fileReader.readAsDataURL(this.docImageElement.files[0]);
+  }
+
+  /**
+   * Change the controls settings to 'edit mode', ie. the camera moves, zooms
+   * and rotates slower. This allows the user to place a document with more
+   * accuracy.
+   */
+  _enterEditMode() {
+    for (let [key, val] of Object.entries(this.accurateControlsSettings)) {
+      this.controls[key] = val;
+    }
+  }
+
+  /**
+   * Resets the controls settings to their default value.
+   */
+  _exitEditMode() {
+    for (let [key, val] of Object.entries(this.savedControlsSettings)) {
+      this.controls[key] = val;
+    }
   }
 
   //////////

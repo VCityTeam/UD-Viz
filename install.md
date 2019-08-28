@@ -15,7 +15,7 @@
 ```
   git clone https://github.com/MEPP-team/UDV.git
   cd UDV/UDV-Core
-  npm install
+  ./install.sh
   npm start
 ```
 

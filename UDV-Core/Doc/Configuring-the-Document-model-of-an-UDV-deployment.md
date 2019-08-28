@@ -1,3 +1,9 @@
+# WARNING : Outdated document
+
+This document describes how the application was originally designed to handle the management of documents in a generic way. Although it is a good idea, we figured that it added too much complexity to the developement process, as more modules came to exist.
+
+However, hereas this document is outdated, we still think that the method it propose could be useful in the future. That's why we decide to keep it as it is for the moment, even if the described process is not actually implemented.
+
 # Motivations
 
 Providing UDV with a customizable/parameterizable Document model came in response to the general need of having to provide an application while several unknown variables of this application are yet unknown or fuzzy. For example:
