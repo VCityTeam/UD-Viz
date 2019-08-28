@@ -7,7 +7,7 @@ Server-side tools can be found [here](https://github.com/MEPP-team/UDV-server).
 
 ## Demo
 Online demos :
- - [UDV](http://rict.liris.cnrs.fr/UDVDemo-2/UDV/UDV-Core/)
+ - [UDV](http://rict.liris.cnrs.fr/UDV-stable/UDV/UDV-Core/)
  - [Vilo3D](http://rict.liris.cnrs.fr/Vilo3D/UDV/Vilo3D/)
 
 ## Current features (regrouped by Modules) :
