@@ -7,7 +7,7 @@ Server-side tools can be found [here](https://github.com/MEPP-team/UDV-server).
 
 ## Demo
 Online demos (alas only visible on the [Lyon1](https://sciences.univ-lyon1.fr/)/[INSA-Lyon](https://www.insa-lyon.fr/en/) campus):
- - [UDV](http://rict.liris.cnrs.fr/UDVDemo-2/UDV/UDV-Core/)
+ - [UDV](http://rict.liris.cnrs.fr/UDV/UDV-Core/)
  - [Vilo3D](http://rict.liris.cnrs.fr/Vilo3D/UDV/Vilo3D/)
 
 ## Current features (regrouped by Modules) :
@@ -23,13 +23,46 @@ Online demos (alas only visible on the [Lyon1](https://sciences.univ-lyon1.fr/)/
 
 The camera controller has been merged into itowns ([PR](https://github.com/iTowns/itowns/pull/454)) and is now PlanarControls. It features an animation of camera movement and orientation (called "travel" in the code) which we use to orient the camera with a document (document **oriented view**).
 
-### ConsultDoc
+### Document
 
 * Display of documents in a 3D representation of the city, in superposition
 * Filtered research (research by keyword, attribute and/or temporal research)
-* All documents are loaded from an external data server and can be accessed using the **Document Browser** window.
+* All documents are loaded from an external data server and can be accessed using the **Document Inspector** window.
 
-More information about this module can be found [here](https://github.com/sophiaab/UDV/tree/new_contribute/UDV-Core/src/Modules/ConsultDoc)
+![](./doc/pictures/module_pres/document.png)
+
+This module has several extensions that add functionalities :
+
+#### Contribute
+
+* Possibility to create a new document
+* Possibility to edit and delete existing documents
+
+#### Validation
+
+This extensions works with the *Authentication* module :
+
+* A document has information about the user who posted it.
+* Users have different roles :
+  * A *contributor* is a regular user
+  * A *moderator* has validation rights
+  * An *administrator* has all rights
+* You must be logged in to contribute. A contributor must have its submissions validated by a moderator or an administrator to be published.
+
+#### Comments
+
+Requires the *Authentication* module :
+
+* Adds the possibility to comment a document (must be logged in)
+
+### Authentication
+
+Adds user management :
+
+* Possibility to create an account
+* Possibility to log in
+
+![](./doc/pictures/module_pres/authentication.png)
 
 ### Temporal
 
@@ -38,6 +71,21 @@ More information about this module can be found [here](https://github.com/sophia
 * When we enter a document "oriented view", the date is updated to match the document's date
 * Key dates correspond to a temporal version of the 3d models for the "Îlot du Lac"
 
+### City Objects
+
+* Selection of a city object, view its details
+* Filter city objects from their attributes
+
+![](./doc/pictures/module_pres/city_object.png)
+
+### Links
+
+The link module serves as an extension for both *Document* and *City object* modules.
+
+* Adds the possibility to create link between a document and a city object (many to many)
+* Possibility to visualize the city objects linked to a document
+* Possibility to visualize the documents linked to a city object
+
 ### Guided Tour
 
 * A Guided Tour is a succession of Steps (document + text) that the user can follow
@@ -45,19 +93,6 @@ More information about this module can be found [here](https://github.com/sophia
 * Ability to navigate between steps of a tour (previous, next) and to start/exit a tour
 * Support for multiple guided tours, all loaded from a csv file (visite.csv)
 
-### Contribute
-
-* Possibility to create a new document
-* Possibility to edit and delete existing documents
-
-More information about this module can be found [here](https://github.com/sophiaab/UDV/tree/new_contribute/UDV-Core/src/Extensions/Contribute)
-
 ### Others
 
 * Help, About : windows with text and links
-
-### GUI
-
-* Multiple windows (document browser, guided tour, temporal, help, about)
-* Each window can be open / closed by clicking on its button
-* The display is weakly responsive : best used with 16/9 or 16/10 resolution, and width between 1400px and 1900px. Using browser zoom (ctrl + / ctrl -) can help adjusting static elements (text and button size).
