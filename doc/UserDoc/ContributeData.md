@@ -21,11 +21,41 @@ click on the *Sign in* button on the upper-left corner of
 
 ![](../pictures/UserDoc/UDVHome.png)
 
-This account gives you **contributor** rights. This means that when you add a
-document, it is not right away accepted. First, it needs to be validated by
-an **administrator** which will verifies that the document is ready to be
-published. See [Document validation process](#document-validation-process
-) for more information.
+Once you've clicked the *Sing in* button, fill the *Registration form* and
+click *Register*:
+
+![](../pictures/UserDoc/registration.png)
+
+You're account is now created! 
+
+You can now log in with the *Login* form on the right. If this was successful, 
+you should see your name on the upper-left corner of the application instead
+of the previous *Sign in*:
+
+![](../pictures/UserDoc/loggedIn.png)
+
+
+**Note**: Your account gives you **contributor** rights, meaning that
+when you [add a document](#adding-a-document) it is not right away published. 
+It is indeed first verified by an **administrator** to check that there is no
+insanity nor problems in filled attributes (see [Document validation 
+process](#document-validation-process) for more information).
   
+## Adding a document
+
+One way of contributing is by adding documents. For the time being, documents
+are images (jpeg or png). 
+
+You can see existing documents by opening the **Document** module from the
+left side menu:
+
+![](../pictures/UserDoc/documentsMenu.png)
+
+Clicking on this menu opens the **Document Navigator** and the **Document
+Inspector**. These two windows allow to consult the existing documentation:
+
+TODO: capture d'écran de doc navigator et inspector et carré sur chaque zone
+ avec flèche qui décrit ce que ça permet de faire.
+
 ## Document validation process 
 
