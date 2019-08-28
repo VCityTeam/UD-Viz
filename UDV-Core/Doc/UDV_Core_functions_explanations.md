@@ -396,7 +396,7 @@ else if (protocol === "wfs") {
 
 ### Explanations
 
-As explained in the [iTowns issue](https://github.com/iTowns/itowns/issues/1178), there are iTowns examples about layers Menu creation but no documentation.
+As explained in the [iTowns issue](https://github.com/iTowns/itowns/issues/1178), there are iTowns examples about layers Menu creation but no documentation (*however we base our ```LayerControl``` extension on iTowns examples*).
 
 The creation is not really easy but we managed to add a ```LayerControl``` extension, based on the other extensions templates:
 
