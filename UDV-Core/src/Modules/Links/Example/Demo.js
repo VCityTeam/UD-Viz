@@ -28,9 +28,12 @@ baseDemo.loadConfigFile(
     ////// DOCUMENTS VISUALIZER (to orient the document)
     const imageOrienter = new udvcore.DocumentVisualizerWindow(documentModule,
         baseDemo.view, baseDemo.controls);
+    
+    ////// CITY OBJECTS MODULE
+    const cityObjectModule = new udvcore.CityObjectModule(baseDemo.tilesManager, baseDemo.config);
+    baseDemo.addModuleView('cityObjects', cityObjectModule.view);
 
     ////// LINKS MODULES
-    const linkModule = new udvcore.LinkModule(documentModule, requestService,
-        baseDemo.tilesManager, baseDemo.view, baseDemo.controls,
-        baseDemo.config);
+    const linkModule = new udvcore.LinkModule(documentModule, cityObjectModule,
+        requestService, baseDemo.view, baseDemo.controls, baseDemo.config);
 });

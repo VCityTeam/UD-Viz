@@ -170,6 +170,27 @@ export class TilesManager {
   }
 
   /**
+   * Search and returns all city objects that matches the given predicate.
+   * 
+   * @param {(cityObject: CityObject) => boolean} predicate The predicate to
+   * determine the city objects.
+   * 
+   * @returns {Array<CityObject>} An array of all the city object that matches
+   * the predicate.
+   */
+  findAllCityObjects(predicate) {
+    let results = [];
+    for (let tile of Object.values(this.tiles)) {
+      for (let cityObject of tile.cityObjects) {
+        if (predicate(cityObject)) {
+          results.push(cityObject);
+        }
+      }
+    }
+    return results;
+  }
+
+  /**
    * Sets the style of a particular city object.
    * 
    * @param {CityObjectID | Array<CityObjectID>} cityObjectId The city object

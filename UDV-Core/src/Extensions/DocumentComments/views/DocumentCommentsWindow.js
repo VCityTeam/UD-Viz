@@ -52,7 +52,7 @@ export class DocumentCommentsWindow extends AbstractDocumentWindow {
     }
 
     documentWindowReady() {
-        this.view.inspectorWindow.addDocumentExtension('Comments', {
+        this.view.inspectorWindow.addExtension('Comments', {
             type: 'button',
             container: 'left',
             html: 'Comments',

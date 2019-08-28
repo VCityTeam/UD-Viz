@@ -53,10 +53,10 @@ export class ValidationView {
     // Adds a panel to inform the user about the documents he/she is currently
     // viewing, and give him the possibility to switch.
     documentModule.addNavigatorExtension('Validation Filter', {
-      type: 'panel',
+      type: 'div',
       container: 'filter',
       html: /*html*/`
-        <label for="${this.switchId}">Documents to see: </label>
+        <label for="${this.switchId}">Validation status : </label>
         <select id="${this.switchId}">
           <option value="validated">Validated documents</option>
           <option value="in-validation">Documents in validation</option>
@@ -157,7 +157,7 @@ export class ValidationView {
       'This operation is irreversible.')) {
       return;
     }
-    this.validationService.validate(doc).catch((reason) => {
+    this.validationService.validate(this.documentModule.provider.getDisplayedDocument()).catch((reason) => {
       alert(reason.statusText);
     }).then(() => {
       this.documentModule.refreshDocumentList();

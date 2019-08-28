@@ -24,6 +24,32 @@ function main () {
         console.log('show...');
         w.show();
     };
+
+    w.addExtension('test1', {
+        type: 'div',
+        html: 'test1',
+        container: 'top',
+        oncreated: () => console.log('test1'),
+        callback: () => console.log('never')
+    });
+    
+    w.addExtension('test2', {
+        type: 'div',
+        html: '<em>test2</em>',
+    });
+
+    w.addExtension('test3', {
+        type: 'div',
+        html: 'test3',
+        container: 'bottom',
+    });
+
+    w.addExtension('bouton', {
+        type: 'button',
+        html: '[bouton]',
+        container: 'bottom',
+        callback: () => console.log('button test')
+    })
 }
 
 main();

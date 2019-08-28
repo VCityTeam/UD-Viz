@@ -36,4 +36,6 @@ export { CameraPositionerView }     from './Modules/CameraPositioner/View/Camera
 export { ContributeModule }         from './Extensions/Contribute/ContributeModule';
 export { DocumentValidationModule } from './Extensions/DocumentValidation/DocumentValidationModule';
 
+export { CityObjectModule }         from './Modules/CityObjects/CityObjectModule';
+
 export { LinkModule }               from './Modules/Links/LinkModule';

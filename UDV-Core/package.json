@@ -33,7 +33,7 @@
     "dat.gui": "^0.6.5",
     "es6-promise": "^4.0.5",
     "handlebars": "^4.0.11",
-    "itowns": "file:dist/itowns/itowns-2.12.0.tgz",
+    "itowns": "file:dist/itowns/itowns-2.13.1.tgz",
     "jquery": "^3.3.1",
     "moment": "^2.19.0",
     "popper.js": "^1.14.3",
