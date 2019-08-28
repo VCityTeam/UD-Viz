@@ -75,6 +75,33 @@ export class DocumentCreationWindow extends AbstractDocumentWindow {
       if (this.documentImageOrienter.isVisible) {
         this.documentImageOrienter.disable()
       }});
+
+    /**
+     * The settings for an accurate movement of the camera. These settings
+     * should be used in the `PlanarControls` class.
+     * 
+     * @type {{rotateSpeed: number, zoomInFactor: number, zoomOutFactor: number,
+     * maxPanSpeed: number, minPanSpeed: number}}
+     */
+    this.accurateControlsSettings = {
+      rotateSpeed: 1.5,
+      zoomInFactor: 0.04,
+      zoomOutFactor: 0.04,
+      maxPanSpeed: 5.0,
+      minPanSpeed: 0.01
+    };
+
+    /**
+     * The saved state of the planar controls settings. This is used to restore
+     * the default settings when needed.
+     * 
+     * @type {{rotateSpeed: number, zoomInFactor: number, zoomOutFactor: number,
+      * maxPanSpeed: number, minPanSpeed: number}}
+      */
+    this.savedControlsSettings = {};
+    for (let key of Object.keys(this.accurateControlsSettings)) {
+      this.savedControlsSettings[key] = this.controls[key];
+    }
   }
 
   get innerContentHtml() {
@@ -157,20 +184,24 @@ export class DocumentCreationWindow extends AbstractDocumentWindow {
     fileReader.readAsDataURL(this.docImageElement.files[0]);
   }
 
+  /**
+   * Change the controls settings to 'edit mode', ie. the camera moves, zooms
+   * and rotates slower. This allows the user to place a document with more
+   * accuracy.
+   */
   _enterEditMode() {
-    this.controls.rotateSpeed = 1.5;
-    this.controls.zoomInFactor = 0.04;
-    this.controls.zoomOutFactor = 0.04;
-    this.controls.maxPanSpeed = 5.0;
-    this.controls.minPanSpeed = 0.01;
+    for (let [key, val] of Object.entries(this.accurateControlsSettings)) {
+      this.controls[key] = val;
+    }
   }
 
+  /**
+   * Resets the controls settings to their default value.
+   */
   _exitEditMode() {
-    this.controls.rotateSpeed = 2.0;
-    this.controls.zoomInFactor = 0.25;
-    this.controls.zoomOutFactor = 0.4;
-    this.controls.maxPanSpeed = 15.0;
-    this.controls.minPanSpeed = 0.05;
+    for (let [key, val] of Object.entries(this.savedControlsSettings)) {
+      this.controls[key] = val;
+    }
   }
 
   //////////

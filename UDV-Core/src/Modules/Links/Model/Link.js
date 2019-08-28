@@ -29,21 +29,24 @@ export class Link {
     this.target_id;
 
     /**
-     * The X coordinate of the centroid.
+     * The X coordinate of the centroid. The centroid must be stored in the
+     * in order to travel to the city object.
      * 
      * @type {number}
      */
     this.centroid_x;
 
     /**
-     * The Y coordinate of the centroid.
+     * The Y coordinate of the centroid. The centroid must be stored in the
+     * in order to travel to the city object.
      * 
      * @type {number}
      */
     this.centroid_y;
 
     /**
-     * The Z coordinate of the centroid.
+     * The Z coordinate of the centroid. The centroid must be stored in the
+     * in order to travel to the city object.
      * 
      * @type {number}
      */

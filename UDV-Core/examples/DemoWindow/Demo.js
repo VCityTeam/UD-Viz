@@ -30,7 +30,7 @@ function main () {
         html: 'test1',
         container: 'top',
         oncreated: () => console.log('test1'),
-        callback: () => console.log('jamais')
+        callback: () => console.log('never')
     });
     
     w.addExtension('test2', {
@@ -48,7 +48,7 @@ function main () {
         type: 'button',
         html: '[bouton]',
         container: 'bottom',
-        callback: () => console.log('test bouton')
+        callback: () => console.log('button test')
     })
 }
 
