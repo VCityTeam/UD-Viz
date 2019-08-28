@@ -9,9 +9,7 @@ Server-side tools can be found [here](https://github.com/MEPP-team/UDV-server).
 Online demos :
  - [UDV](http://rict.liris.cnrs.fr/UDV-stable/UDV/UDV-Core/)
  - [Vilo3D](http://rict.liris.cnrs.fr/Vilo3D/UDV/Vilo3D/)
-
-## Current features (regrouped by Modules) :
-
+ 
 ### Camera Controller
 
 * **Left-click + drag** : User "grabs" the ground (cursor stays at the same spot on the ground) to translate camera on XY axis.
@@ -23,7 +21,13 @@ Online demos :
 
 The camera controller has been merged into itowns ([PR](https://github.com/iTowns/itowns/pull/454)) and is now PlanarControls. It features an animation of camera movement and orientation (called "travel" in the code) which we use to orient the camera with a document (document **oriented view**).
 
+## Current features (regrouped by Modules) :
+
+Each module adds new functionnalities to the application. You can find the code and the documentation (sometimes the documentation is directly in the code) by following the link under each module described below.
+
 ### Document
+
+[Go to the module](./UDV-Core/src/Modules/Documents/)
 
 * Display of documents in a 3D representation of the city, in superposition
 * Filtered research (research by keyword, attribute and/or temporal research)
@@ -35,10 +39,14 @@ This module has several extensions that add functionalities :
 
 #### Contribute
 
+[Go to the module](./UDV-Core/src/Extensions/Contribute/)
+
 * Possibility to create a new document
 * Possibility to edit and delete existing documents
 
 #### Validation
+
+[Go to the module](./UDV-Core/src/Extensions/DocumentValidation/)
 
 This extensions works with the *Authentication* module :
 
@@ -51,11 +59,15 @@ This extensions works with the *Authentication* module :
 
 #### Comments
 
+[Go to the module](./UDV-Core/src/Extensions/DocumentComments/)
+
 Requires the *Authentication* module :
 
 * Adds the possibility to comment a document (must be logged in)
 
 ### Authentication
+
+[Go to the module](./UDV-Core/src/Extensions/Authentication/)
 
 Adds user management :
 
@@ -66,12 +78,16 @@ Adds user management :
 
 ### Temporal
 
+[Go to the module](./UDV-Core/src/Modules/Temporal/)
+
 * Basic slider + input field to select a date
 * Ability to navigate between key dates (arrow buttons)
 * When we enter a document "oriented view", the date is updated to match the document's date
 * Key dates correspond to a temporal version of the 3d models for the "Îlot du Lac"
 
 ### City Objects
+
+[Go to the module](./UDV-Core/src/Modules/CityObjects/)
 
 * Selection of a city object, view its details
 * Filter city objects from their attributes
@@ -80,6 +96,8 @@ Adds user management :
 
 ### Links
 
+[Go to the module](./UDV-Core/src/Modules/Links/)
+
 The link module serves as an extension for both *Document* and *City object* modules.
 
 * Adds the possibility to create link between a document and a city object (many to many)
@@ -87,6 +105,8 @@ The link module serves as an extension for both *Document* and *City object* mod
 * Possibility to visualize the documents linked to a city object
 
 ### Guided Tour
+
+[Go to the module](./UDV-Core/src/Modules/GuidedTour/)
 
 * A Guided Tour is a succession of Steps (document + text) that the user can follow
 * Each step triggers the oriented view of its document, and opens this doc in the doc browser
