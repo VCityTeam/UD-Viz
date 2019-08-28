@@ -1,6 +1,5 @@
-import {
-  ModuleView
-} from '../../ModuleView/ModuleView.js';
+import { ModuleView } from '../../ModuleView/ModuleView.js';
+import { TilesManager } from '../../3DTiles/TilesManager.js';
 
 /**
  * Represents the base HTML content of a demo for UDV and provides methods to
@@ -342,359 +341,345 @@ export class BaseDemo {
   }
 
   /**
-   * Initialize the iTowns 3D view.
+   * Adds WMS elevation Layer of Lyon in 2012 and WMS imagery layer of Lyon in 2009 (from Grand Lyon data).
    */
-  init3DView() {
-
-    // ********* INIT ITOWNS VIEW
-    // Define projection used in iTowns viewer (taken from
-    // https://epsg.io/3946, Proj4js section)
-    itowns.proj4.defs('EPSG:3946', '+proj=lcc +lat_1=45.25 +lat_2=46.75' +
-      ' +lat_0=46 +lon_0=3 +x_0=1700000 +y_0=5200000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs');
-
-    // Define geographic extent: CRS, min/max X, min/max Y
-    this.extent = new itowns.Extent(
-      'EPSG:3946',
-      1837860.980127206, 1847648.6685636174,
-      5169347.42659997, 5180280.0400808845);
-
-    // `viewerDiv` will contain iTowns' rendering area (`<canvsas>`)
-    let viewerDiv = document.getElementById('viewerDiv');
-    // Instantiate PlanarView (iTowns' view that will hold the layers)
-    // The skirt allows to remove the cracks between the terrain tiles
-    this.view = new itowns.PlanarView(viewerDiv, this.extent, {
-      disableSkirt: false
-    });
-
-
-    //menuGlobe.addImageryLayersGUI(this.view.getLayers(function filterColor(l) { return l.isColorLayer; }));
-    // this.menuGlobe.addElevationLayersGUI(this.view.getLayers(function filterElevation(l) { return l.isElevationLayer; }));
-    // console.log(debug);
-    // this.debug = new debug.Debug(this.view, this.menuGlobe.gui);
-    // debug.createTileDebugUI(this.menuGlobe.gui, this.view, this.view.tileLayer, this.debug);
-
-    // ********* ADD TERRAIN LAYERS (WMS imagery and WMS elevation)
-    // These layer are served by the grandLyon
-    // Add a WMS imagery source
-    let wmsImagerySource = new itowns.WMSSource({
-      extent: this.extent,
-      name: 'Ortho2009_vue_ensemble_16cm_CC46',
-      url: 'https://download.data.grandlyon.com/wms/grandlyon',
-      version: '1.3.0',
-      projection: 'EPSG:3946',
-      format: 'image/jpeg',
-    });
-    // Add a WMS imagery layer
-    let wmsImageryLayer = new itowns.ColorLayer('wms_imagery', {
-      updateStrategy: {
-        type: itowns.STRATEGY_DICHOTOMY,
-        options: {},
-      },
-      source: wmsImagerySource,
-    });
-    this.view.addLayer(wmsImageryLayer);
-
-    // Add a WMS elevation source
-    let wmsElevationSource = new itowns.WMSSource({
-      extent: this.extent,
-      url: 'https://download.data.grandlyon.com/wms/grandlyon',
-      name: 'MNT2012_Altitude_10m_CC46',
-      projection: 'EPSG:3946',
-      heightMapWidth: 256,
-      format: 'image/jpeg',
-    });
-    // Add a WMS elevation layer
-    let wmsElevationLayer = new
-    itowns.ElevationLayer('wms_elevation', {
-      useColorTextureElevation: true,
-      colorTextureElevationMinZ: 37,
-      colorTextureElevationMaxZ: 240,
-      source: wmsElevationSource,
-    });
-    this.view.addLayer(wmsElevationLayer);
-
-    // Add extruded polygons (buildings)
-    let tile;
-
-    function colorBuildings(properties) {
-      if (properties.id.indexOf('bati_remarquable') === 0) {
-        return color.set(0x5555ff);
-      }
-      if (properties.id.indexOf('bati_industriel') === 0) {
-        return color.set(0xff5555);
-      }
-      return color.set(0xeeeeee);
-    }
-
-    function extrudeBuildings(properties) {
-      return properties.hauteur;
-    }
-
-    let meshes = [];
-    let meshesMask = [];
-    let scaler = ( /* dt */ ) => {
-      var i;
-      var mesh;
-      if (meshes.length) {
-        this.view.notifyChange();
-      }
-      for (i = 0; i < meshes.length; i++) {
-        mesh = meshes[i];
-        mesh.scale.z = Math.min(
-          1.0, mesh.scale.z + 0.1);
-        mesh.updateMatrixWorld(true);
-      }
-      meshes = meshes.filter(function filter(m) {
-        return m.scale.z < 1;
+  addLyonWMSLayer() {
+       let wmsImagerySource = new itowns.WMSSource({
+          extent: this.extent,
+          name: 'Ortho2009_vue_ensemble_16cm_CC46',
+          url: 'https://download.data.grandlyon.com/wms/grandlyon',
+          version: '1.3.0',
+          projection: 'EPSG:3946',
+          format: 'image/jpeg',
       });
-    }
+      // Add a WMS imagery layer
+      let wmsImageryLayer = new itowns.ColorLayer('wms_imagery', {
+          updateStrategy: {
+              type: itowns.STRATEGY_DICHOTOMY,
+              options: {},
+          },
+          source: wmsImagerySource,
+      });
+      this.view.addLayer(wmsImageryLayer);
 
-    function acceptFeature(properties) {
-      return !!properties.hauteur;
-    }
-
-    function altitudeBuildings(properties) {
-      return properties.z_min - properties.hauteur;
-    }
-
-    this.view.addFrameRequester(itowns.MAIN_LOOP_EVENTS.BEFORE_RENDER, scaler);
-
-    var wfsBuildingSource = new itowns.WFSSource({
-      url: 'https://wxs.ign.fr/3ht7xcw6f7nciopo16etuqp2/geoportail/wfs?',
-      version: '2.0.0',
-      typeName: 'BDTOPO_BDD_WLD_WGS84G:bati_remarquable,BDTOPO_BDD_WLD_WGS84G:bati_indifferencie,BDTOPO_BDD_WLD_WGS84G:bati_industriel',
-      projection: 'EPSG:4326',
-      ipr: 'IGN',
-      format: 'application/json',
-      zoom: {
-        min: 4,
-        max: 4
-      },
-      extent: {
-        west: 4.568,
-        east: 5.18,
-        south: 45.437,
-        north: 46.03,
-      },
-    });
-
-    var wfsBuildingLayer = new itowns.GeometryLayer('wfsBuilding', new itowns.THREE.Group(), {
-      update: itowns.FeatureProcessing.update,
-      convert: itowns.Feature2Mesh.convert({
-        color: colorBuildings,
-        batchId: function(property, featureId) {
-          return featureId;
-        },
-        extrude: extrudeBuildings,
-        altitude: altitudeBuildings
-      }),
-      onMeshCreated: function scaleZ(mesh) {
-        mesh.scale.z = 0.01;
-        meshes.push(mesh);
-      },
-      filter: acceptFeature,
-      overrideAltitudeInToZero: true,
-      projection: 'EPSG:3946',
-      source: wfsBuildingSource,
-    });
-
-    this.view.addLayer(wfsBuildingLayer);
-
-    // ********* ADD 3D BUILDING LAYER (3D Tiles)
-    // This building layer represents Lyon in 2015 and is served from
-    // grand lyon alpha server
-    // let $3dTilesLayer = new itowns.GeometryLayer(
-    //     this.config['3DTilesLayerID'], new THREE.Group());
-    // $3dTilesLayer.name = 'Lyon-2015';
-    // $3dTilesLayer.url =
-    //     this.config['3DTilesLayerURL'];
-    // $3dTilesLayer.protocol = '3d-tiles';
-    // $3dTilesLayer.overrideMaterials = true;
-    //
-    // itowns.View.prototype.addLayer.call(this.view, $3dTilesLayer);
-
-
-    // ********* COLOR AND ALTITUDE BASIC SETTINGS
-    let color = new itowns.THREE.Color();
-    let rgb;
-
-    // ********* Function to set altitude relative to tile altitude
-    var altitude = (properties, contour) => {
-      var result;
-      var z = 0;
-      if (contour) {
-        result = itowns.DEMUtils.getElevationValueAt(this.view.tileLayer, contour, 0, tile);
-
-        if (!result) {
-          result = itowns.DEMUtils.getElevationValueAt(this.view.tileLayer, contour, 0);
-        }
-        tile = [result.tile];
-        if (result) {
-          z = result.z;
-        }
-        return z + 10;
-      }
-    };
-
-    // ********* Set the absolute value for polygons layer altitude
-    var altitudePoly = 200;
-
-    // ********* Function to get color for lines
-    var colorLine = function(properties) {
-      if (properties) {
-        var rgb = properties.couleur.split(' ');
-        return color.setRGB(rgb[0] / 255, rgb[1] / 255, rgb[2] / 255);
-      } else {
-        return color.setRGB(1, 1, 1);
-      }
-    };
-
-
-    //******** FUNCTIONS TO CREATE LAYERS FROM CONFIG JSON FILE
-    itowns.Fetcher.json('../../../examples/MAM/data/config/layers_settings.json')
-      .then(
-        (configList) => {
-          for (var i in configList) {
-            let geometry = configList[i].geometry;
-            let protocol = configList[i].source.protocol;
-            let config;
-            let size;
-            let linewidth;
-
-            let addGeometryLayerFromConfig = (config) => {
-              if (geometry === "polygons"){
-                config.altitude = altitudePoly
-              }
-              else if (geometry === "lines"){
-                config.altitude = altitude;
-                if (config.linewidth){
-                  linewidth = config.linewidth
-                }
-                else {
-                  linewidth = 50 //default
-                };
-                config.onMeshCreated = function(result) {
-                  result.traverse(function _setLineWidth(mesh) {
-                    if (mesh.material) {
-                      mesh.material.linewidth = linewidth;
-                    }
-                  });
-                }
-              }
-              else if (geometry === "points"){
-                config.altitude = altitude;
-                if (config.size){
-                  size = config.size
-                }
-                else {
-                  size = 50 //default
-                };
-                config.onMeshCreated = function(result) {
-                  result.traverse(function _setPointSize(mesh) {
-                    if (mesh.material) {
-                      mesh.material.size = size;
-                    }
-                  });
-                }
-              };
-              config.update = itowns.FeatureProcessing.update;
-              config.convert = itowns.Feature2Mesh.convert({
-                color: new itowns.THREE.Color().setRGB(
-                  config.color.red,
-                  config.color.green,
-                  config.color.blue
-                ),
-                altitude: config.altitude,
-              });
-              config.overrideAltitudeInToZero = true;
-              config.projection = config.source.projection;
-              config.source = config.source;
-              let layer = new itowns.GeometryLayer(
-                config.id,
-                new itowns.THREE.Group(),
-                config
-              );
-              return this.view.addLayer(layer);
-            };
-
-            //// If no protocol, set configuration
-            if (protocol === undefined) {
-              let configuration = configList[i];
-              var promise = new Promise(
-                function(resolve, reject) {
-                  configuration.source = new itowns.FileSource(configList[i].source);
-                  resolve(configuration);
-                }
-              );
-              promise.then(addGeometryLayerFromConfig);
-            }
-
-            //// If protocol === "wfs", set configuration
-            else if (protocol === "wfs") {
-              let configuration = configList[i];
-              var promise = new Promise(
-                function(resolve, reject) {
-                  configuration.source = new itowns.WFSSource(configList[i].source);
-                  resolve(configuration);
-                }
-              );
-              promise.then(addGeometryLayerFromConfig);
-            }
-          }
-        }
-      );
-
-    // ********* 3D Elements
-    // Lights
-    let directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
-    directionalLight.position.set(0, 0, 20000);
-    directionalLight.updateMatrixWorld();
-    this.view.scene.add(directionalLight);
-
-    let ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
-    ambientLight.position.set(0, 0, 3000);
-    directionalLight.updateMatrixWorld();
-    this.view.scene.add(ambientLight);
-
-    // Camera
-    let p = {
-      coord: this.extent.center(),
-      heading: -49.6,
-      range: 3000,
-      tilt: 17
-    };
-    itowns.CameraUtils.transformCameraToLookAtTarget(this.view, this.view.camera.camera3D, p);
-
-    // Controls
-    this.controls = new itowns.PlanarControls(this.view, {});
-
-    // Set sky color to blue
-    this.view.mainLoop.gfxEngine.renderer.setClearColor(0x6699cc, 1);
-
-    // Request itowns view redraw
-    this.view.notifyChange();
+      // Add a WMS elevation source
+      let wmsElevationSource = new itowns.WMSSource({
+          extent: this.extent,
+          url: 'https://download.data.grandlyon.com/wms/grandlyon',
+          name: 'MNT2012_Altitude_10m_CC46',
+          projection: 'EPSG:3946',
+          heightMapWidth: 256,
+          format: 'image/jpeg',
+      });
+      // Add a WMS elevation layer
+      let wmsElevationLayer = new
+      itowns.ElevationLayer('wms_elevation', {
+          useColorTextureElevation: true,
+          colorTextureElevationMinZ: 37,
+          colorTextureElevationMaxZ: 240,
+          source: wmsElevationSource,
+      });
+      this.view.addLayer(wmsElevationLayer);
   }
 
   /**
-   * Loads a config file. Module views should only be added after calling
-   * this method.
-   * @param filePath The path to the config file.
+   * Adds a 3D Tiles layer to the iTowns 3D view.
+   * @param {string} layerConfig The name of the type of object to add to the view. This name should
+   * be one of the properties of the 3DTilesLayer object (in UDV/UDV-Core/examples/data/config/generalDemoConfig.json
+   * config file).
    */
-  async loadConfigFile(filePath) {
-    //loading configuration file
-    // see https://github.com/MEPP-team/VCity/wiki/Configuring-UDV
-    return $.ajax({
-      type: "GET",
-      url: filePath,
-      datatype: "json",
-      success: (data) => {
-        this.config = data;
-      },
-      error: (e) => {
-        throw 'Could not load config file : ' + filePath;
+  add3DTilesLayer(layerConfig) {
+      //  ADD 3D Tiles Layer
+
+      // Positional arguments verification
+      if (!this.config['3DTilesLayer'][layerConfig]) {
+          throw "Your layer is not one of the properties of 3DTilesLayer object " +
+              "(in UDV/UDV-Core/examples/data/config/generalDemoConfig.json).";
       }
-    });
-  }
+      if (!this.config['3DTilesLayer'][layerConfig]['id'] || !this.config['3DTilesLayer'][layerConfig]['url']) {
+          throw "Your layer does not have 'url'/'id' properties or both. " +
+              "(in UDV/UDV-Core/examples/data/config/generalDemoConfig.json)";
+      }
+
+      let $3dTilesLayer = new itowns.GeometryLayer(
+          this.config['3DTilesLayer'][layerConfig]['id'], new THREE.Group());
+      $3dTilesLayer.name = 'Lyon-2015-'.concat(layerConfig);
+      $3dTilesLayer.url =
+          this.config['3DTilesLayer'][layerConfig]['url'];
+      $3dTilesLayer.protocol = '3d-tiles';
+
+      let material;
+      if (!this.config['3DTilesLayer'][layerConfig]['color']) {
+          material = new THREE.MeshLambertMaterial({ color: 0xFFFFFF });
+      } else {
+          material =
+              new THREE.MeshLambertMaterial({color: parseInt(this.config['3DTilesLayer'][layerConfig]['color'])});
+      }
+
+      $3dTilesLayer.overrideMaterials = material;
+
+      itowns.View.prototype.addLayer.call(this.view, $3dTilesLayer);
+
+      if (this.config['3DTilesLayer'][layerConfig]['initTilesManager']) {
+          // Initialize the 3DTiles manager
+          this.tilesManager = new TilesManager(this.view,
+              this.view.getLayerById(this.config['3DTilesLayer'][layerConfig]['id']));
+      }
+  };
+
+
+
+    /**
+     * Initializes the iTowns 3D view.
+     * @param {string} area The name of the area to view. Used to adjust the extent, this name should be
+     * one of the properties of the extents object (in UDV/UDV-Core/examples/data/config/generalDemoConfig.json file).
+     */
+    init3DView(area) {
+        // ********* INIT ITOWNS VIEW
+        // Define projection used in iTowns viewer (taken from
+        // https://epsg.io/3946, Proj4js section)
+        itowns.proj4.defs('EPSG:3946', '+proj=lcc +lat_1=45.25 +lat_2=46.75' +
+            ' +lat_0=46 +lon_0=3 +x_0=1700000 +y_0=5200000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs');
+
+        // Define geographic extent: CRS, min/max X, min/max Y
+        // area should be one of the properties of the object extents in config file
+        let min_x = parseInt(this.config['extents'][area]['min_x']);
+        let max_x = parseInt(this.config['extents'][area]['max_x']);
+        let min_y = parseInt(this.config['extents'][area]['min_y']);
+        let max_y = parseInt(this.config['extents'][area]['max_y']);
+        this.extent = new itowns.Extent(
+            'EPSG:3946',
+            min_x, max_x,
+            min_y, max_y);
+        // `viewerDiv` will contain iTowns' rendering area (`<canvas>`)
+        let viewerDiv = document.getElementById('viewerDiv');
+        // Instantiate PlanarView (iTowns' view that will hold the layers)
+        // The skirt allows to remove the cracks between the terrain tiles
+        this.view = new itowns.PlanarView(viewerDiv, this.extent, {
+            disableSkirt: false
+        });
+
+        // ********* 3D Elements
+        // Lights
+        let directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
+        directionalLight.position.set(0, 0, 20000);
+        directionalLight.updateMatrixWorld();
+        this.view.scene.add(directionalLight);
+
+        let ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+        ambientLight.position.set(0, 0, 3000);
+        directionalLight.updateMatrixWorld();
+        this.view.scene.add(ambientLight);
+
+        // Camera
+        let p = {
+            coord: this.extent.center(), heading: -49.6, range: 3000, tilt:
+                17
+        };
+        itowns.CameraUtils.transformCameraToLookAtTarget(this.view, this.view.camera.camera3D, p);
+
+        // Controls
+        this.controls = new itowns.PlanarControls(this.view, {});
+
+        // Set sky color to blue
+        this.view.mainLoop.gfxEngine.renderer.setClearColor(0x6699cc, 1);
+
+
+        // ********* COLOR AND ALTITUDE BASIC SETTINGS
+        let color = new itowns.THREE.Color();
+        let rgb;
+
+        // ********* Function to set altitude relative to tile altitude
+        let altitude = (properties, contour) => {
+        let result_altitude;
+        let z = 0;
+        let tile;
+
+        if (contour) {
+          result_altitude = itowns.DEMUtils.getElevationValueAt(this.view.tileLayer, contour, 0, tile);
+
+          if (!result_altitude) {
+            result_altitude = itowns.DEMUtils.getElevationValueAt(this.view.tileLayer, contour, 0);
+          }
+          tile = [result_altitude.tile];
+
+          if (result_altitude) {
+            z = result_altitude.z;
+          }
+          return z + 10;
+        }
+      };
+
+        // ********* Set the absolute value for polygons layer altitude
+        let altitudePoly = 200;
+
+        // ********* Function to get color for lines
+        var colorLine = function(properties) {
+          if (properties) {
+            var rgb = properties.couleur.split(' ');
+            return color.setRGB(rgb[0] / 255, rgb[1] / 255, rgb[2] / 255);
+          } else {
+            return color.setRGB(1, 1, 1);
+          }
+        };
+
+
+        //******** FUNCTIONS TO CREATE LAYERS FROM CONFIG JSON FILE
+        itowns.Fetcher.json('../../../examples/MAM/data/config/layers_settings.json')
+          .then(
+            (configList) => {
+              for (var i in configList) {
+                let geometry = configList[i].geometry;
+                let protocol = configList[i].source.protocol;
+                let config;
+                let size;
+                let linewidth;
+
+                let addGeometryLayerFromConfig = (config) => {
+                  if (geometry === "polygons"){
+                    config.altitude = altitudePoly
+                  }
+                  else if (geometry === "lines"){
+                    config.altitude = altitude;
+                    if (config.linewidth){
+                      linewidth = config.linewidth
+                    }
+                    else {
+                      linewidth = 50 //default
+                    };
+                    config.onMeshCreated = function(result) {
+                      result.traverse(function _setLineWidth(mesh) {
+                        if (mesh.material) {
+                          mesh.material.linewidth = linewidth;
+                        }
+                      });
+                    }
+                  }
+                  else if (geometry === "points"){
+                    config.altitude = altitude;
+                    if (config.size){
+                      size = config.size
+                    }
+                    else {
+                      size = 50 //default
+                    };
+                    config.onMeshCreated = function(result) {
+                      result.traverse(function _setPointSize(mesh) {
+                        if (mesh.material) {
+                          mesh.material.size = size;
+                        }
+                      });
+                    }
+                  };
+                  config.update = itowns.FeatureProcessing.update;
+                  config.convert = itowns.Feature2Mesh.convert({
+                    color: new itowns.THREE.Color().setRGB(
+                      config.color.red,
+                      config.color.green,
+                      config.color.blue
+                    ),
+                    altitude: config.altitude,
+                  });
+                  config.overrideAltitudeInToZero = true;
+                  config.projection = config.source.projection;
+                  config.source = config.source;
+                  let layer = new itowns.GeometryLayer(
+                    config.id,
+                    new itowns.THREE.Group(),
+                    config
+                  );
+                  return this.view.addLayer(layer);
+                };
+
+                //// If no protocol, set configuration
+                if (protocol === undefined) {
+                  let configuration = configList[i];
+                  var promise = new Promise(
+                    function(resolve, reject) {
+                      configuration.source = new itowns.FileSource(configList[i].source);
+                      resolve(configuration);
+                    }
+                  );
+                  promise.then(addGeometryLayerFromConfig);
+                }
+
+                //// If protocol === "wfs", set configuration
+                else if (protocol === "wfs") {
+                  let configuration = configList[i];
+                  var promise = new Promise(
+                    function(resolve, reject) {
+                      configuration.source = new itowns.WFSSource(configList[i].source);
+                      resolve(configuration);
+                    }
+                  );
+                  promise.then(addGeometryLayerFromConfig);
+                }
+              }
+            }
+          );
+    }
+    /*
+    * Updates the 3D view by notifying iTowns that it changed (e.g. because a layer has been added).
+    */
+     update3DView() {
+        // Request itowns view redraw
+        this.view.notifyChange();
+    }
+
+    /**
+     * Loads a config file. Module views should only be added after calling
+     * this method.
+     * @param filePath The path to the config file.
+     */
+    async loadConfigFile(filePath) {
+      //loading configuration file
+      // see https://github.com/MEPP-team/VCity/wiki/Configuring-UDV
+      console.log(filePath);
+      return $.ajax({
+        type: "GET",
+        url: filePath,
+        datatype: "json",
+        success: (data) => {
+          this.config = data;
+        },
+        error: (e) => {
+          throw 'Could not load config file : ' + filePath;
+        }
+      });
+    };
+
+  //   // ********* 3D Elements
+  //   // Lights
+  //   let directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
+  //   directionalLight.position.set(0, 0, 20000);
+  //   directionalLight.updateMatrixWorld();
+  //   this.view.scene.add(directionalLight);
+  //
+  //   let ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+  //   ambientLight.position.set(0, 0, 3000);
+  //   directionalLight.updateMatrixWorld();
+  //   this.view.scene.add(ambientLight);
+  //
+  //   // Camera
+  //   let p = {
+  //     coord: this.extent.center(),
+  //     heading: -49.6,
+  //     range: 3000,
+  //     tilt: 17
+  //   };
+  //   itowns.CameraUtils.transformCameraToLookAtTarget(this.view, this.view.camera.camera3D, p);
+  //
+  //   // Controls
+  //   this.controls = new itowns.PlanarControls(this.view, {});
+  //
+  //   // Set sky color to blue
+  //   this.view.mainLoop.gfxEngine.renderer.setClearColor(0x6699cc, 1);
+  //
+  //   // Request itowns view redraw
+  //   this.view.notifyChange();
+  // }
+
+
 
   ////////////////////////////////////////////////////////
   // GETTERS FOR HTML IDS AND ELEMENTS OF THE DEMO PAGE //

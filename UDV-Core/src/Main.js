@@ -10,29 +10,30 @@ export { RequestService }           from './Utils/Request/RequestService';
 
 export { GuidedTourController }     from './Modules/GuidedTour/GuidedTourController';
 
-export { AuthenticationView }  from './Extensions/Authentication/views/AuthenticationView';
-
-export { DocToValidateService }     from './Extensions/DocToValidate/services/DocToValidateService';
-export { DocToValidateView }        from './Extensions/DocToValidate/views/DocToValidateView';
+export { AuthenticationView }       from './Extensions/Authentication/views/AuthenticationView';
 
 export { AboutWindow }              from './Modules/Others/About';
 export { HelpWindow }               from './Modules/Others/Help';
 
 export { TemporalController }       from './Modules/Temporal/Temporal';
 
-export { DocumentController}        from './Modules/ConsultDoc/DocumentController';
-
-export { ContributeController }     from './Extensions/Contribute/src/ContributeController';
-
-export { DocumentCommentsService }  from './Extensions/DocumentComments/services/DocumentCommentsService';
-export { DocumentCommentsWindow }   from './Extensions/DocumentComments/views/DocumentCommentsWindow';
+export { DocumentCommentsModule }   from './Extensions/DocumentComments/DocumentCommentsModule';
 
 export { GeocodingService }         from './Extensions/Geocoding/services/GeocodingService';
 export { GeocodingView }            from './Extensions/Geocoding/views/GeocodingView';
 
 export { Debug3DTilesWindow }       from './Extensions/3DTilesDebug/views/3DTilesDebugWindow';
 
-export { LinkService }              from './Extensions/DocumentLinks/services/LinkService';
-export { DocumentLinkWindow }       from './Extensions/DocumentLinks/views/DocumentLinkWindow';
+//export { LinkService }              from './Extensions/DocumentLinks/services/LinkService';
+//export { DocumentLinkWindow }       from './Extensions/DocumentLinks/views/DocumentLinkWindow';
 
 export { LayerControls }            from './Extensions/LayerControls/LayerControls';
+export { DocumentModule }           from './Modules/Documents/DocumentModule';
+export { DocumentVisualizerWindow } from './Modules/DocumentVisualizer/View/DocumentVisualizerWindow';
+
+export { CameraPositionerView }     from './Modules/CameraPositioner/View/CameraPositionerView';
+
+export { ContributeModule }         from './Extensions/Contribute/ContributeModule';
+export { DocumentValidationModule } from './Extensions/DocumentValidation/DocumentValidationModule';
+
+export { LinkModule }               from './Modules/Links/LinkModule';

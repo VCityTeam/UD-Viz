@@ -25,13 +25,17 @@ export function RequestService() {
      * @param {string} method The HTTP method. Accepted methods include `GET`,
      * `DELETE`, `POST` and `PUT`.
      * @param {string} url The requested URL.
-     * @param {object} options A dictionnary of optional parameters. These
-     * options include  
-     * - `body` : the request body
-     * - `authenticate` : set to false if you don't want the request to use
-     * authentication
-     * - `responseType` : the expected response type.
-     * - `urlParameters` : A dictionnary of url parameters.
+     * @param {object} [options] A dictionnary of optional parameters. These
+     * options include the following :
+     * @param {FormData | string} [options.body] The request body
+     * @param {boolean} [options.authenticate] Set to `false` if you don't want
+     * the request to use authentication.
+     * @param {XMLHttpRequestResponseType} [options.responseType] The expected
+     * response type.
+     * @param {Object.<string, string>} [options.urlParameters] A dictionnary of
+     * URL parameters.
+     * 
+     * @returns {Promise<XMLHttpRequest>}
      */
     this.request = (method, url, options = {}) => {
         let args = options || {};

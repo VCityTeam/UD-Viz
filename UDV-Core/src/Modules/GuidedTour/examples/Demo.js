@@ -11,20 +11,25 @@ baseDemo.loadConfigFile(
     '../../../../examples/data/config/generalDemoConfig.json').then(() => {
 
     // Initialize iTowns 3D view
-    baseDemo.init3DView();
-    
+    baseDemo.init3DView('lyon_villeurbanne_bron');
+    baseDemo.addLyonWMSLayer();
+    baseDemo.add3DTilesLayer('building');
+    baseDemo.update3DView();
+
     ////// REQUEST SERVICE
     const requestService = new udvcore.RequestService();
 
     ////// DOCUMENTS MODULE
-    const documents = new udvcore.DocumentController(baseDemo.view,
-        baseDemo.controls, {temporal: baseDemo.temporal, active: false},
-        baseDemo.config, requestService);
-    //// We coule add it to the view but it is not necessary
-    //baseDemo.addModuleView('documents', documents);
+    const documentModule = new udvcore.DocumentModule(requestService,
+        baseDemo.config)
+    baseDemo.addModuleView('documents', documentModule.view);
+
+    ////// DOCUMENTS VISUALIZER (to orient the document)
+    const imageOrienter = new udvcore.DocumentVisualizerWindow(documentModule,
+        baseDemo.view, baseDemo.controls);
 
     ////// GUIDED TOURS MODULE
-    const guidedtour = new udvcore.GuidedTourController(documents,
-        requestService);
+    const guidedtour = new udvcore.GuidedTourController(documentModule,
+        requestService, baseDemo.config);
     baseDemo.addModuleView('guidedTour', guidedtour, {name: 'Guided Tours'});
 });

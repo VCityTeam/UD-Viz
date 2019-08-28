@@ -44,6 +44,22 @@ export class Window extends ModuleView {
          */
         this.hideOnClose = hideOnClose;
 
+        /**
+         * Defines if the window has its default style. If set to false, you
+         * should override the `html` getter and set the `windowDisplayWhenVisible`
+         * property.
+         * 
+         * @type {true}
+         */
+        this.defaultStyle = true;
+
+        /**
+         * Define the css `display` property when the window is visible.
+         * 
+         * @type {string}
+         */
+        this.windowDisplayWhenVisible = 'grid';
+
         this.registerEvent(Window.EVENT_CREATED);
         this.registerEvent(Window.EVENT_DESTROYED);
         this.registerEvent(Window.EVENT_SHOWN);
@@ -99,11 +115,12 @@ export class Window extends ModuleView {
             let windowDiv = document.createElement('div');
             windowDiv.innerHTML = this.html;
             windowDiv.id = this.windowId;
-            windowDiv.className = "window";
             htmlElement.appendChild(windowDiv);
-            dragElement(windowDiv, this.header);
-
-            this.headerCloseButton.onclick = this.disable.bind(this);
+            if (this.defaultStyle) {
+                windowDiv.className = "window";
+                dragElement(windowDiv, this.header);
+                this.headerCloseButton.onclick = this.disable.bind(this);
+            }
 
             this.windowCreated();
             this.sendEvent(Window.EVENT_CREATED);
@@ -129,7 +146,7 @@ export class Window extends ModuleView {
      */
     show() {
         if (this.isCreated && !this.isVisible) {
-            this.window.style.setProperty('display', 'grid');
+            this.window.style.setProperty('display', this.windowDisplayWhenVisible);
             this.sendEvent(Window.EVENT_SHOWN);
         }
     }
@@ -193,7 +210,7 @@ export class Window extends ModuleView {
     }
 
     get isVisible() {
-        return this.isCreated && window.getComputedStyle(this.window).getPropertyValue('display') === 'grid';
+        return this.isCreated && window.getComputedStyle(this.window).getPropertyValue('display') === this.windowDisplayWhenVisible;
     }
 
     get windowId() {
