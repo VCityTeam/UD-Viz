@@ -1,5 +1,5 @@
 [{
-    "id": "Lyon mask 10mns",
+    "id": "Simple poly test",
     "geometry": "polygons",
     "source": {
       "format": "geojson",

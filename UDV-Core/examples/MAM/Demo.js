@@ -1,16 +1,18 @@
-import { BaseDemo } from '../../src/Utils/BaseDemo/js/BaseDemo.js'
+import { BaseDemo } from '../../src/Utils/BaseDemo/js/BaseDemo.js';
 
 let baseDemo = new BaseDemo({
     iconFolder: '../data/icons',
-    imageFolder: '../data/img'
+    imageFolder: '../data/img',
 });
 
 baseDemo.appendTo(document.body);
 
 baseDemo.loadConfigFile('../data/config/generalDemoConfig.json').then(() => {
-
     // Initialize iTowns 3D view
-    baseDemo.init3DView();
+    baseDemo.init3DView('lyon_villeurbanne_bron');
+    baseDemo.addLyonWMSLayer();
+    baseDemo.add3DTilesLayer('building');
+    baseDemo.update3DView();
 
     ////// REQUEST SERVICE
     const requestService = new udvcore.RequestService();
@@ -23,23 +25,6 @@ baseDemo.loadConfigFile('../data/config/generalDemoConfig.json').then(() => {
     const help  = new udvcore.HelpWindow();
     baseDemo.addModuleView('help', help);
 
-    ////// DOCUMENTS MODULE
-    const documents = new udvcore.DocumentController(baseDemo.view,
-        baseDemo.controls, {temporal: baseDemo.temporal, active: false},
-        baseDemo.config, requestService);
-    baseDemo.addModuleView('documents', documents, {
-        binding: 'd'
-    });
-
-    ////// GUIDED TOURS MODULE
-    const guidedtour = new udvcore.GuidedTourController(documents,
-        requestService);
-    baseDemo.addModuleView('guidedTour', guidedtour, {name: 'Guided tours'});
-
-    ////// CONTRIBUTE EXTENSION
-    const contributeController = new udvcore.ContributeController(documents,
-        requestService);
-
     ////// AUTHENTICATION MODULE
     const authenticationService =
         new udvcore.AuthenticationService(requestService, baseDemo.config);
@@ -48,19 +33,36 @@ baseDemo.loadConfigFile('../data/config/generalDemoConfig.json').then(() => {
     baseDemo.addModuleView('authentication', authenticationView,
         {type: BaseDemo.AUTHENTICATION_MODULE});
 
-    ////// DOCUMENTS TO VALIDATE
-    const docToValidateService =
-        new udvcore.DocToValidateService(requestService, baseDemo.config);
-    const docToValidateView =
-        new udvcore.DocToValidateView(docToValidateService, documents);
-    baseDemo.addModuleView('docToValidate', docToValidateView,
-        {name: 'Documents in validation', requireAuth: true, binding: 'v'});
+    ////// DOCUMENTS MODULE
+    const documentModule = new udvcore.DocumentModule(requestService,
+        baseDemo.config)
+    baseDemo.addModuleView('documents', documentModule.view);
 
-    ////// DOCUMENTS COMMENTS EXTENSION
-    const docCommentsService = new udvcore.DocumentCommentsService(documents,
+    ////// DOCUMENTS VISUALIZER (to orient the document)
+    const imageOrienter = new udvcore.DocumentVisualizerWindow(documentModule,
+        baseDemo.view, baseDemo.controls);
+
+    ////// CONTRIBUTE EXTENSION
+    const contribute = new udvcore.ContributeModule(documentModule, imageOrienter,
+        requestService, baseDemo.view, baseDemo.controls, baseDemo.config);
+
+    ////// VALIDATION EXTENSION
+    const validation = new udvcore.DocumentValidationModule(documentModule, requestService,
+        baseDemo.config);
+
+    ////// LINKS MODULES
+    const linkModule = new udvcore.LinkModule(documentModule, requestService,
+        baseDemo.tilesManager, baseDemo.view, baseDemo.controls,
+        baseDemo.config);
+
+    ////// DOCUMENT COMMENTS
+    const documentComments = new udvcore.DocumentCommentsModule(documentModule,
         requestService, baseDemo.config);
-    const docCommentsWindow = new udvcore.DocumentCommentsWindow(documents,
-        docCommentsService);
+
+    ////// GUIDED TOURS MODULE
+    const guidedtour = new udvcore.GuidedTourController(documentModule,
+        requestService, baseDemo.config);
+    baseDemo.addModuleView('guidedTour', guidedtour, {name: 'Guided Tours'});
 
     ////// GEOCODING EXTENSION
     const geocodingService = new udvcore.GeocodingService(requestService,
@@ -71,16 +73,15 @@ baseDemo.loadConfigFile('../data/config/generalDemoConfig.json').then(() => {
                                 name: 'Address Search'});
 
     ////// 3DTILES DEBUG
-    const debug3dTilesWindow = new udvcore.Debug3DTilesWindow(baseDemo.view,
-        baseDemo.config);
+    const debug3dTilesWindow = new udvcore.Debug3DTilesWindow(baseDemo.tilesManager);
     baseDemo.addModuleView('3dtilesDebug', debug3dTilesWindow, {
         name: '3DTiles Debug'
     });
 
-    ////// DOCUMENT LINK EXTENSION
-    const linkService = new udvcore.LinkService(requestService, baseDemo.config);
-    const documentLinkWindow = new udvcore.DocumentLinkWindow(
-        linkService, documents, baseDemo.view, baseDemo.controls);
+    ////// CAMERA POSITIONER
+    const cameraPosition = new udvcore.CameraPositionerView(baseDemo.view,
+        baseDemo.controls);
+    baseDemo.addModuleView('cameraPositioner', cameraPosition);
 
    /////// LAYERS CONTROLS
    const layercontrols = new udvcore.LayerControls(baseDemo.view, baseDemo.itowns);

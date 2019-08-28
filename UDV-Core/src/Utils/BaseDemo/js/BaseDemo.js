@@ -634,7 +634,6 @@ export class BaseDemo {
     async loadConfigFile(filePath) {
       //loading configuration file
       // see https://github.com/MEPP-team/VCity/wiki/Configuring-UDV
-      console.log(filePath);
       return $.ajax({
         type: "GET",
         url: filePath,
@@ -647,39 +646,6 @@ export class BaseDemo {
         }
       });
     };
-
-  //   // ********* 3D Elements
-  //   // Lights
-  //   let directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
-  //   directionalLight.position.set(0, 0, 20000);
-  //   directionalLight.updateMatrixWorld();
-  //   this.view.scene.add(directionalLight);
-  //
-  //   let ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
-  //   ambientLight.position.set(0, 0, 3000);
-  //   directionalLight.updateMatrixWorld();
-  //   this.view.scene.add(ambientLight);
-  //
-  //   // Camera
-  //   let p = {
-  //     coord: this.extent.center(),
-  //     heading: -49.6,
-  //     range: 3000,
-  //     tilt: 17
-  //   };
-  //   itowns.CameraUtils.transformCameraToLookAtTarget(this.view, this.view.camera.camera3D, p);
-  //
-  //   // Controls
-  //   this.controls = new itowns.PlanarControls(this.view, {});
-  //
-  //   // Set sky color to blue
-  //   this.view.mainLoop.gfxEngine.renderer.setClearColor(0x6699cc, 1);
-  //
-  //   // Request itowns view redraw
-  //   this.view.notifyChange();
-  // }
-
-
 
   ////////////////////////////////////////////////////////
   // GETTERS FOR HTML IDS AND ELEMENTS OF THE DEMO PAGE //

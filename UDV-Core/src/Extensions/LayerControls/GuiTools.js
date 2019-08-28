@@ -46,10 +46,6 @@ export function GuiTools(domId, view, viewerDiv, itowns) {
     this.colorGui = this.gui.addFolder('Color Layers');
     this.elevationGui = this.gui.addFolder('Elevation Layers');
 
-    console.log(domId);
-    console.log(view);
-    console.log(viewerDiv);
-
     if (view) {
         this.view = view;
         view.addEventListener('layers-order-changed', (function refreshColorGui() {
