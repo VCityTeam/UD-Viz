@@ -57,6 +57,9 @@ export class CityObjectLinkInterface {
    * Updates the list of links for the currently selected city object.
    */
   _updateLinkList() {
+    if (!this.linkListElement) {
+      return;
+    }
     let docs = this.linkProvider.getSelectedCityObjectLinkedDocuments();
     let listHtml = `<p class="city-object-title">${docs.length} linked document(s)</p>`
     if (docs.length > 0) {

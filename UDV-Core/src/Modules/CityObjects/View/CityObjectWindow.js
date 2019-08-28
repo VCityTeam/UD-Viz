@@ -69,6 +69,8 @@ export class CityObjectWindow extends Window {
       window.addEventListener('mousedown', this.mouseClickListener);
     });
     this.addEventListener(Window.EVENT_DISABLED, () => {
+      this.provider.removeLayer();
+      this.provider.unselectCityObject();
       window.removeEventListener('mousedown', this.mouseClickListener);
     });
 
@@ -99,7 +101,10 @@ export class CityObjectWindow extends Window {
       <div class="box-section">
         <h3 class="section-title">Filter<span class="color-indicator" id="${this.layerColorIndicatorId}"></span></h3>
         <div>
-          <p class="city-object-title"><button id="${this.selectFilterButtonId}">Select</button></p>
+          <p class="city-object-title">
+            <button id="${this.selectFilterButtonId}">Select</button>
+            <button id="${this.clearFilterButtonId}">Clear</button>
+          </p>
           <p class="city-object-value" id="${this.selectedFilterId}"></p>
         </div>
       </div>
@@ -135,6 +140,9 @@ export class CityObjectWindow extends Window {
 
     this.selectFilterButtonElement.onclick =
       () => this.filterWindow.enable();
+
+    this.clearFilterButtonElement.onclick =
+      () => this.provider.removeLayer();
 
     this.clearSelectionButtonElement.onclick =
       () => this._clearCityObjectSelection();
@@ -266,6 +274,14 @@ export class CityObjectWindow extends Window {
 
   get selectedFilterElement() {
     return document.getElementById(this.selectedFilterId);
+  }
+
+  get clearFilterButtonId() {
+    return `${this.windowId}_co_clear_filter_button`;
+  }
+
+  get clearFilterButtonElement() {
+    return document.getElementById(this.clearFilterButtonId);
   }
 
   get selectedCityObjectId() {

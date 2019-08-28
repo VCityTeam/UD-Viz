@@ -94,6 +94,7 @@ export class CityObjectProvider extends EventSender {
     this.selectedCityObjectId = undefined;
     this.sendEvent(CityObjectProvider.EVENT_CITY_OBJECT_SELECTED, undefined);
     this._updateTilesManager();
+    this.applyStyles();
   }
 
   /**
