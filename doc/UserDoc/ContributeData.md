@@ -105,24 +105,44 @@ To add your document, you need to:
    represents the interior of a building or is a text document for instance. 
    In this case, just place the document roughly in the location it refers to. 
    
-Before placing you document, you might want to travel to an adress where you
+Before placing you document, you might want to go to a specific adress where you
 will place it. This is possible using the **adress search module**:
 
-![](../pictures/UserDoc/AdressSearch.png)
+![](../pictures/UserDoc/adressSearchMenu.png)
 
+By clicking on the loop in the menu, a search bar will open in the top-center
+of the screen:
+ 
+![](../pictures/UserDoc/adressSearchModule.png)
+ 
+Type in the address you're looking for and hit enter. This will initiate a
+travel to the address and will identify the result in the 3D scene with a red
+pin:
 
+![](../pictures/UserDoc/adressSearchExample.png)
 
-To place your document, click on **Set position**. It will display your
-document in overlay to the 3D scene:
+You can now close the **adress search** module by clicking on the loop in the
+left-side menu and start placing your document by clicking on **Set 
+position**. This will display your document in overlay to the 3D scene:
 
 ![](../pictures/UserDoc/docSetPosition.png)
 
-To place your document, you can play with the opacity of the document and
-move in the scene to be rightly placed above the 3D geometry. For instance:
+To place your document, you can play with its opacity and move in the scene
+to be rightly placed above the 3D geometry. For instance:
 
 ![](../pictures/UserDoc/docPositionSet.png)
 
 Once you've found the right position, click on Validate in the **Camera
  Positioner** window situated on the left side of the screen.
+ 
+You're all set, you can now click on **Create** in the **Document - Creation**
+window to create your document. 
+
+This will bring you back to the first view of the document module (**Document
+Navigator** and **Document Inspector**). You might notice here that your
+document does not appear in the **Document Navigator** and it's totally
+normal because it first needs to go through a **validation process** with an
+Administrator.
 
 ## Document validation process 
+
