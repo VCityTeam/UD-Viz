@@ -21,16 +21,15 @@ click on the *Sign in* button on the upper-left corner of
 
 ![](../pictures/UserDoc/UDVHome.png)
 
-Once you've clicked the *Sing in* button, fill the *Registration form* and
-click *Register*:
+Then, you need to fill the *Registration form* and click on *Register*:
 
 ![](../pictures/UserDoc/registration.png)
 
-You're account is now created! 
+You're account is now created! You can now log in with the *Login* form on the right. 
 
-You can now log in with the *Login* form on the right. If this was successful, 
-you should see your name on the upper-left corner of the application instead
-of the previous *Sign in*:
+
+Once you're logged in, you should see your name on the upper-left corner of
+the application:
 
 ![](../pictures/UserDoc/loggedIn.png)
 
@@ -81,7 +80,7 @@ To add a document, click on **Create a new document** in the **Document
 ![](../pictures/UserDoc/docCreation.png)
 
 To add your document, you need to:
-  * Select the document file on your computer by clicking on **Parcourir...**
+  * Select the document file on your computer by clicking on **Browse...**
   * Fill in the fields:
     * **Title**: title/name of the document
     * **Description**: description of the document (e.g. context, more
@@ -123,7 +122,8 @@ pin:
 
 You can now close the **adress search** module by clicking on the loop in the
 left-side menu and start placing your document by clicking on **Set 
-position**. This will display your document in overlay to the 3D scene:
+position** in the **Document Creation** window. This will display your document
+in overlay to the 3D scene:
 
 ![](../pictures/UserDoc/docSetPosition.png)
 
@@ -141,8 +141,8 @@ window to create your document.
 This will bring you back to the first view of the document module (**Document
 Navigator** and **Document Inspector**). You might notice here that your
 document does not appear in the **Document Navigator** and it's totally
-normal because it first needs to go through a **validation process** with an
-Administrator.
+normal because it first needs to go through the **validation process** by an
+administrator.
 
 ## Document validation process 
 
