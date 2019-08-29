@@ -77,7 +77,7 @@ export function RequestService() {
                 if (req.status >= 200 && req.status < 300) {
                     resolve(req);
                 } else {
-                    reject(req);
+                    reject(req.responseText);
                 }
             }
         });
