@@ -11,7 +11,7 @@ You can help us achieving these goals by contributing data such as historical
  **Where ?** [Follow this link...](http://rict.liris.cnrs.fr/UDVDemo/UDV/UDV-Core/examples/DemoStable/Demo.html)
  
 This tutorial describes step by step how you can contribute and what kind of
- contributions are possible.
+contributions are possible.
 
 ## Creating an account
 
@@ -52,10 +52,77 @@ left side menu:
 ![](../pictures/UserDoc/documentsMenu.png)
 
 Clicking on this menu opens the **Document Navigator** and the **Document
-Inspector**. These two windows allow to consult the existing documentation:
+Inspector**.
 
-TODO: capture d'écran de doc navigator et inspector et carré sur chaque zone
- avec flèche qui décrit ce que ça permet de faire.
+![](../pictures/UserDoc/documentsModule.png)
+
+These two windows allow to consult the documentation that has
+already been added by contributors and validated by administrators. 
+
+The **Document Navigator** (window on the left) allows to:
+  * See all documents and select them for being inspected in the
+   **Document Inspector**
+  * Filter documents (by unfolding *Filters*) e.g. by searching into their
+   titles
+
+The **Document Inspector** (window on the right) allows to:
+  * See details about the documents (e.g. description, source, publication
+   date, etc.)
+  * Perform actions on the current document:
+    * *Visualize* : Displays the document in the 3D scene
+    * *Comments*: See comments on the document (see [Document validation
+     process](#document-validation-process) for more information)
+    * *Update*: Update the *Details* of the document
+    * *Delete*: Delete the document
+
+To add a document, click on **Create a new document** in the **Document
+ Navigator**. The **Document creation window** opens:
+ 
+![](../pictures/UserDoc/docCreation.png)
+
+To add your document, you need to:
+  * Select the document file on your computer by clicking on **Parcourir...**
+  * Fill in the fields:
+    * **Title**: title/name of the document
+    * **Description**: description of the document (e.g. context, more
+     detailed information, etc.)
+    * **Publication date**: Date when the document was published (e.g. a
+     picture was taken on the 05/07/2019 (**refering date**) and published on
+     the 07/08/2019 in a magazine (**publication date**))
+    * **Refering date**: Date to what the document refers to (e.g. a
+     picture was taken on the 05/07/2019 (**refering date**) and published on
+     the 07/08/2019 in a magazine (**publication date**))
+    * **Source**: The source of the document (e.g. the URL from where it was
+     taken from ; the name, volume and pages of the journal it was taken from
+     , etc.)
+    * **Rights Holder**: The person or organization owning or managing rights
+     over the document
+     
+  * Place the document in the 3D scene. The purpose of this step is to place
+   the document in overlay to the 3D geometry it references. For instance, if
+   you add a picture of a building, it should be placed in overlay to the
+   building. In some cases it is not possible to do so since the document
+   represents the interior of a building or is a text document for instance. 
+   In this case, just place the document roughly in the location it refers to. 
+   
+Before placing you document, you might want to travel to an adress where you
+will place it. This is possible using the **adress search module**:
+
+![](../pictures/UserDoc/AdressSearch.png)
+
+
+
+To place your document, click on **Set position**. It will display your
+document in overlay to the 3D scene:
+
+![](../pictures/UserDoc/docSetPosition.png)
+
+To place your document, you can play with the opacity of the document and
+move in the scene to be rightly placed above the 3D geometry. For instance:
+
+![](../pictures/UserDoc/docPositionSet.png)
+
+Once you've found the right position, click on Validate in the **Camera
+ Positioner** window situated on the left side of the screen.
 
 ## Document validation process 
-
