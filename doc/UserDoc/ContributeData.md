@@ -13,6 +13,10 @@ You can help us achieving these goals by contributing data such as historical
 This tutorial describes step by step how you can contribute and what kind of
 contributions are possible.
 
+As a first step, you can try to navigate in the 3D scene with the following controls:
+
+![](../pictures/UserDoc/controls.PNG)
+
 ## Creating an account
 
 Before starting contributing, you need to open an account. To do so, you must
