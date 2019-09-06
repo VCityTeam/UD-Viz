@@ -14,7 +14,7 @@ export class HelpWindow extends ModuleView {
     ///////////// Html elements
     var helpDiv = document.createElement("div");
     helpDiv.id = 'helpWindow';
-    $("#contentSection").append(helpDiv);
+    document.getElementById('contentSection').append(helpDiv);
 
     document.getElementById("helpWindow").innerHTML =
       '<div id="text">\
