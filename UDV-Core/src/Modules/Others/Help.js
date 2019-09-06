@@ -19,8 +19,10 @@ export class HelpWindow extends ModuleView {
     document.getElementById("helpWindow").innerHTML =
       '<div id="text">\
          <br>\
-         <p><a target="_blank"\
-         href="https://github.com/iTowns/itowns/blob/master/src/Renderer/ThreeExtended/PlanarControls.js">Camera key bindings</a>:</p>\
+         <h3><a\
+          href="https://github.com/MEPP-team/UDV/blob/master/doc/UserDoc/ContributeData.md">User Tutorial</a></h3>\
+         <hr>\
+         <h3>Camera key bindings:</h3>\
          <ul>\
            <li>Left-Click: camera translation (drag)</li>\
            <li>Right-Click: camera translation (pan)</li>\
@@ -30,8 +32,6 @@ export class HelpWindow extends ModuleView {
            <li>T: orient camera to a top view</li>\
            <li>Y: move camera to start position</li>\
          </ul>\
-         <a><a\
-          href="https://github.com/MEPP-team/UDV/blob/master/doc/UserDoc/ContributeData.md">User Tutorials</a></p>\
          <button id="helpCloseButton">Close</button>\
       </div>\
       ';
