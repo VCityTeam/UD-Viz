@@ -30,6 +30,8 @@ export class HelpWindow extends ModuleView {
            <li>T: orient camera to a top view</li>\
            <li>Y: move camera to start position</li>\
          </ul>\
+         <a><a\
+          href="https://github.com/MEPP-team/UDV/blob/master/doc/UserDoc/ContributeData.md">User Tutorials</a></p>\
          <button id="helpCloseButton">Close</button>\
       </div>\
       ';
