@@ -32,7 +32,7 @@
     "itowns": "2.14.0",
     "moment": "^2.19.0",
     "proj4": "^2.5.0",
-    "three": "^0.105.2",
+    "three": "^0.108.0",
     "three.meshline": "^1.0.3"
   },
   "devDependencies": {
