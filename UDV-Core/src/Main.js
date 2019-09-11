@@ -27,7 +27,7 @@ export { Debug3DTilesWindow }       from './Extensions/3DTilesDebug/views/3DTile
 //export { LinkService }              from './Extensions/DocumentLinks/services/LinkService';
 //export { DocumentLinkWindow }       from './Extensions/DocumentLinks/views/DocumentLinkWindow';
 
-export { LayerControls }            from './Extensions/LayerControls/LayerControls';
+export { LayersControlWindow }      from './Modules/LayersControl/View/LayersControlWindow';
 export { DocumentModule }           from './Modules/Documents/DocumentModule';
 export { DocumentVisualizerWindow } from './Modules/DocumentVisualizer/View/DocumentVisualizerWindow';
 

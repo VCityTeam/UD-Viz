@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Slider test</title>
+        <meta charset="UTF-8">
+
+        <script src="slider.js"></script>
+        <link rel="stylesheet" href="./slider.css">
+
+    </head>
+    <body>
+        <div class="slidercontainer">
+          <input type="range" min="0" max="100" value="100" class="slider" id="opacity">
+          <p align="right"><span class="slider value" id="demo"></span></p>
+        </div>
+        <div>
+          <input type="checkbox" id="visibility" name="visibility"
+                 checked>
+          <label for="visibility">Visibility</label>
+        </div>
+
+        <div class="slidercontainer">
+          <input type="range" min="0" max="100" value="100" class="slider" id="opacity2">
+          <p align="right"> <span class="slider value" id="demo2"></span></p>
+        </div>
+        <div>
+          <input type="checkbox" id="visibility" name="visibility2"
+                 checked>
+          <label for="visibility2">Visibility</label>
+        </div>
+
+        <script>
+        getSliderValues()
+        </script>
+
+    </body>
+</html>

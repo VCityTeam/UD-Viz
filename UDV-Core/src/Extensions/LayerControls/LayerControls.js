@@ -10,23 +10,23 @@ export class LayerControls extends ModuleView {
 
     // How to display the view ?
     enableView() {
-        this.menuGlobe = new GuiTools('menuDiv', this.view, document.getElementById('viewerDiv'), this.itowns); //calls a method that creates the DOM elements
+        this.layersMenu = new GuiTools('menuDiv', this.view, document.getElementById('viewerDiv'), this.itowns); //calls a method that creates the DOM elements
          for (var layer of this.view.getLayers()) {
 
                  layer.whenReady.then(  (layer) => {
                    if (layer.visible != undefined)
                    {
-                     var gui = debug.GeometryDebug.createGeometryDebugUI(this.menuGlobe.gui, this.view, layer);
+                     var gui = debug.GeometryDebug.createGeometryDebugUI(this.layersMenu.gui, this.view, layer);
                   }
                  });
              }
           }
-          
+
     // How to close the view ?
     disableView() {
-        if (this.menuGlobe !== undefined)
+        if (this.layersMenu !== undefined)
           {
-            this.menuGlobe.gui.destroy()
+            this.layersMenu.gui.destroy()
           }; //This methods destroys the DOM elements
     }
 }
