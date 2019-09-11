@@ -12,7 +12,7 @@ export class AboutWindow extends ModuleView {
       // Create DOM element
       let aboutDiv = document.createElement("div");
       aboutDiv.id = 'aboutWindow';
-      $("#contentSection").append(aboutDiv);
+      document.getElementById('contentSection').append(aboutDiv);
 
       // Create HMTL
       document.getElementById("aboutWindow").innerHTML =

@@ -14,13 +14,15 @@ export class HelpWindow extends ModuleView {
     ///////////// Html elements
     var helpDiv = document.createElement("div");
     helpDiv.id = 'helpWindow';
-    $("#contentSection").append(helpDiv);
+    document.getElementById('contentSection').append(helpDiv);
 
     document.getElementById("helpWindow").innerHTML =
       '<div id="text">\
          <br>\
-         <p><a target="_blank"\
-         href="https://github.com/iTowns/itowns/blob/master/src/Renderer/ThreeExtended/PlanarControls.js">Camera key bindings</a>:</p>\
+         <h3><a\
+          href="https://github.com/MEPP-team/UDV/blob/master/doc/UserDoc/ContributeData.md">User Tutorial</a></h3>\
+         <hr>\
+         <h3>Camera key bindings:</h3>\
          <ul>\
            <li>Left-Click: camera translation (drag)</li>\
            <li>Right-Click: camera translation (pan)</li>\
