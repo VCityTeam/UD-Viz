@@ -541,7 +541,7 @@ export class BaseDemo {
 
         //******** FUNCTIONS TO CREATE LAYERS FROM CONFIG JSON FILE
         itowns.Fetcher.json(
-            '../../../examples/MAM/data/config/layers_settings.json')
+            '../../../examples/MAM/data/config/config_demo.json')
             .then(
                 (configList) => {
                     for (var i in configList) {
@@ -553,7 +553,7 @@ export class BaseDemo {
 
                         let addGeometryLayerFromConfig = (config) => {
                             if (geometry === "polygons") {
-                                config.altitude = altitudePoly
+                                config.altitude = config.altitude
                             } else if (geometry === "lines") {
                                 config.altitude = altitude;
                                 if (config.linewidth) {
@@ -596,8 +596,11 @@ export class BaseDemo {
                                     config.color.green,
                                     config.color.blue
                                 ),
+                                extrude: 20,
                                 altitude: config.altitude,
                             });
+                            config.transparent= true;
+                            config.opacity = 0.8
                             config.overrideAltitudeInToZero = true;
                             config.projection = config.source.projection;
                             config.source = config.source;

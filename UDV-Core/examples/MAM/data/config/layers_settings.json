@@ -1,9 +1,48 @@
 [{
-    "id": "Simple poly test",
+      "id": "Parks",
+      "geometry": "polygons",
+      "altitude": 175,
+      "source": {
+        "format": "geojson",
+        "url": "http://localhost:8080/examples/MAM/data/geojson/parks.geojson",
+        "projection": "EPSG:3946",
+        "zoom": {
+          "min": 2,
+          "max": 2
+        }
+      },
+      "color": {
+        "red": 0.074,
+        "green": 0.384,
+        "blue": 0.301
+      }
+    },
+     {
+      "id": "5 minutes accessibility",
+      "geometry": "polygons",
+      "altitude": 170,
+      "source": {
+        "format": "geojson",
+        "url": "http://localhost:8080/examples/MAM/data/geojson/5.geojson",
+        "projection": "EPSG:3946",
+        "zoom": {
+          "min": 2,
+          "max": 2
+        }
+      },
+      "color": {
+        "red": 0.133,
+        "green": 0.654,
+        "blue": 0.517
+      }
+    },
+{
+    "id": "10 minutes accessibility",
     "geometry": "polygons",
+    "altitude": 170,
     "source": {
       "format": "geojson",
-      "url": "http://localhost:8080/examples/MAM/data/geojson/mini_poly.geojson",
+      "url": "http://localhost:8080/examples/MAM/data/geojson/10.geojson",
       "projection": "EPSG:3946",
       "zoom": {
         "min": 2,
@@ -11,53 +50,28 @@
       }
     },
     "color": {
-      "red": 1.0,
-      "green": 0.6,
-      "blue": 1.0
+      "red": 0.474,
+      "green": 0.819,
+      "blue": 0.317
     }
   },
   {
-    "id": "Lignes Bus TCL",
-    "geometry": "lines",
-    "linewidth": 50,
-    "source": {
-      "url": "https://download.data.grandlyon.com/wfs/rdata?",
-      "protocol": "wfs",
-      "version": "2.0.0",
-      "typeName": "tcl_sytral.tcllignebus",
-      "projection": "EPSG:3946",
-      "zoom": {
-        "min": 2,
-        "max": 2
+      "id": "15 minutes accessibility",
+      "geometry": "polygons",
+      "altitude": 170,
+      "source": {
+        "format": "geojson",
+        "url": "http://localhost:8080/examples/MAM/data/geojson/15.geojson",
+        "projection": "EPSG:3946",
+        "zoom": {
+          "min": 2,
+          "max": 2
+        }
       },
-      "format": "geojson"
-    },
-    "color": {
-      "red": 0.6,
-      "green": 0.6,
-      "blue": 1.0
+      "color": {
+        "red": 0.992,
+        "green": 0.905,
+        "blue": 0.141
+      }
     }
-  },
-  {
-    "id": "Arrets TCL",
-    "geometry": "points",
-    "size": 50,
-    "source": {
-      "url": "https://download.data.grandlyon.com/wfs/rdata?",
-      "protocol": "wfs",
-      "version": "2.0.0",
-      "typeName": "tcl_sytral.tclarret",
-      "projection": "EPSG:3946",
-      "zoom": {
-        "min": 2,
-        "max": 2
-      },
-      "format": "geojson"
-    },
-    "color": {
-      "red": 0.6,
-      "green": 1.0,
-      "blue": 1.0
-    }
-  }
 ]

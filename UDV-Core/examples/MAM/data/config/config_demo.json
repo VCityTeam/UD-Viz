@@ -1,0 +1,46 @@
+[
+  {
+    "id": "Lignes Bus TCL",
+    "geometry": "lines",
+    "linewidth": 50,
+    "source": {
+      "url": "https://download.data.grandlyon.com/wfs/rdata?",
+      "protocol": "wfs",
+      "version": "2.0.0",
+      "typeName": "tcl_sytral.tcllignebus",
+      "projection": "EPSG:3946",
+      "zoom": {
+        "min": 2,
+        "max": 2
+      },
+      "format": "geojson"
+    },
+    "color": {
+      "red": 0.9,
+      "green": 0.0,
+      "blue": 0.098
+    }
+  },
+  {
+    "id": "Arrets TCL",
+    "geometry": "points",
+    "size": 50,
+    "source": {
+      "url": "https://download.data.grandlyon.com/wfs/rdata?",
+      "protocol": "wfs",
+      "version": "2.0.0",
+      "typeName": "tcl_sytral.tclarret",
+      "projection": "EPSG:3946",
+      "zoom": {
+        "min": 2,
+        "max": 2
+      },
+      "format": "geojson"
+    },
+    "color": {
+      "red": 0.1,
+      "green": 0.1,
+      "blue": 1.0
+    }
+  }
+]

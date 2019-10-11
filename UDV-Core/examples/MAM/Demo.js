@@ -87,7 +87,7 @@ baseDemo.loadConfigFile('../data/config/generalDemoConfig.json').then(() => {
         baseDemo.controls);
     baseDemo.addModuleView('cameraPositioner', cameraPosition);
 
-   /////// LAYERS CONTROLS
-   const layercontrols = new udvcore.LayerControls(baseDemo.view, baseDemo.itowns);
-   baseDemo.addModuleView('LayerControls', layercontrols);
+   /////// LAYERS CONTROL
+   const layersControl = new udvcore.LayersControlWindow();
+   baseDemo.addModuleView('LayersControl', layersControl);
 });
