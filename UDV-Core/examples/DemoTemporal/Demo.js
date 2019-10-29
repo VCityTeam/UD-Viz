@@ -29,6 +29,12 @@ baseDemo.loadConfigFile('../data/config/generalDemoConfig.json').then(() => {
     });
 
     ////// TEMPORAL MODULE
+    // je pense que le callback pourrait etre déclaré dans le temporal
+    // module (peut etre dans un point d'entrée d'ailleurs et pas direct
+    // dans la vue) et que ce module devrait connaitre le layer temporal (ou
+    // les layers dont il dépent d'ailleurs ? Ou en fait pas spécialement
+    // car ça peut être propre à la démo de dire ce qu'on veut update (e.g.
+    // un layer 3D tiles et un layer wfs ?)
     function updateLayerCurrentTime(newDate) {
         const numberDate = Number(newDate);
         const $3DTilesTemporalLayer = this.view.getLayerById(this.config['3DTilesTemporalLayerID']);

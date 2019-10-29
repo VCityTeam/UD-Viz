@@ -33,7 +33,7 @@ export class $3DTemporalBatchTable {
 
     /* *** Culling with transactions and colors management     */
     // Rules for culling:
-    //   * If the feature exists at the currentTime we display it in
+    //   * If the feature exists at the currentTime we display it in gray
     //   * If there is a transaction between the feature and another
     //   feature at the currentTime:
     //      * the displayed geometry is the one of the old feature for the

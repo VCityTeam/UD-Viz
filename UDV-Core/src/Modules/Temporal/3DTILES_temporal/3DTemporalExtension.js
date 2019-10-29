@@ -68,8 +68,6 @@ export class $3DTemporalExtension extends $3DTAbstractExtension {
             const temporal_batchTable = new $3DTemporalBatchTable(json);
             // Fill this.temporal_batchTable.oldFeaturesTransaction which is
             // then used for optimization later on (e.g. in culling).
-            // TODO : This could be simplified so we directly store the
-            //  featureTransacs instead of having two arrays.
             for (let i = 0; i < temporal_batchTable.featureIds.length; i++) {
                 const featureId = temporal_batchTable.featureIds[i];
                 temporal_batchTable.featuresTransacs[featureId] = this.temporal_tileset.FeaturesTransactions[featureId];
@@ -81,34 +79,6 @@ export class $3DTemporalExtension extends $3DTAbstractExtension {
             return undefined;
         }
     }
-    /*    parse(json, context) {
-        if (context instanceof $3DTileset) {
-            this.temporal_tileset = new $3DTemporalTileset(json);
-            return this.temporal_tileset;
-        } else if (context instanceof $3DTBatchTable) {
-            const temporal_batchTable = new $3DTemporalBatchTable(json);
-            // Fill this.temporal_batchTable.oldFeaturesTransaction which is
-            // then used for optimization later on (e.g. in culling).
-            // TODO : This could be simplified so we directly store the
-            //  featureTransacs instead of having two arrays.
-            for (let i = 0; i < temporal_batchTable.featureIds.length; i++) {
-                const featureId = temporal_batchTable.featureIds[i];
-                if (this.temporal_tileset.FeaturesTransactions[featureId] !== undefined) {
-                    const featureTransacs = this.temporal_tileset.FeaturesTransactions[featureId];
-                    temporal_batchTable.oldFeaturesTransaction[i] = featureTransacs.transactionsAsOldFeature;
-                    temporal_batchTable.newFeaturesTransaction[i] = featureTransacs.transactionsAsNewFeature;
-                } else {
-                    temporal_batchTable.oldFeaturesTransaction[i] = {};
-                    temporal_batchTable.newFeaturesTransaction[i] = {};
-                }
-            }
-            return temporal_batchTable;
-        } else if (context instanceof $3DTBoundingVolume) {
-            return new $3DTemporalBoundingVolume(json);
-        } else {
-            return undefined;
-        }
-    } */
 
     // TODO: si on avait une 3DTilesbaseclass on pourrait mettre une
     //  fonction hasExtension dedans qui ferait le check si un obj a
