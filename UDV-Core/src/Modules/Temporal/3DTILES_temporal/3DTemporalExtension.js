@@ -1,6 +1,6 @@
 import { $3DTAbstractExtension } from 'itowns';
-import { CityObjectStyle } from '../../Utils/3DTiles/Model/CityObjectStyle';
-import { CityObjectID } from '../../Utils/3DTiles/Model/CityObject';
+import { CityObjectStyle } from '../../../Utils/3DTiles/Model/CityObjectStyle';
+import { CityObjectID } from '../../../Utils/3DTiles/Model/CityObject';
 
 class TemporalExtension_Tileset {
     constructor(json) {

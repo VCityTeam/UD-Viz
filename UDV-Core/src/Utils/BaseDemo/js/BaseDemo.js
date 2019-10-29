@@ -1,6 +1,6 @@
 import { ModuleView } from '../../ModuleView/ModuleView.js';
 import { TilesManager } from '../../3DTiles/TilesManager.js';
-import { $3DTemporalExtension } from '../../../Modules/Temporal/3DTemporalExtension.js'
+import { $3DTemporalExtension } from '../../../Modules/Temporal/3DTILES_temporal/3DTemporalExtension.js'
 
 /**
  * Represents the base HTML content of a demo for UDV and provides methods to
