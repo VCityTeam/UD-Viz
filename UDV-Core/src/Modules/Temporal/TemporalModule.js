@@ -39,9 +39,6 @@ export class TemporalModule {
         this.layer.name = '3DTiles-temporal';
         this.layer.url = layerConfig.url;
         this.layer.protocol = '3d-tiles';
-        // When a tile is loaded, we compute the state of its features (e.g.
-        // should they be displayed or not and in which color, etc.)
-        this.layer.onTileContentLoaded = this.applyTemporalStateToTile.bind(this);
 
         // Register temporal extension and add it to the layer
         // using defineLayerProperty method
@@ -56,15 +53,9 @@ export class TemporalModule {
         // ******* Tiles manager
         this.tilesManager = new TilesManager(itownsView, this.layer);
         this.initTransactionsStyles();
-        // TODO: temporel, l'extension ne devrait pas avoir à le connaitre
-        //  en soit
-        this.temporalExtension.tilesManager = this.tilesManager;
-
-        /*
-        this.tilesManager.view.addFrameRequester(
-            itowns.MAIN_LOOP_EVENTS.BEFORE_RENDER,
-            this.tilesManager.applyStyles.bind(this.tilesManager));
-         */
+        // When a tile is loaded, we compute the state of its features (e.g.
+        // should they be displayed or not and in which color, etc.)
+        this.tilesManager.onTileLoaded = this.applyTileState.bind(this);
 
         // Request itowns view redraw
         itownsView.notifyChange();
@@ -74,7 +65,7 @@ export class TemporalModule {
         // by the user in the temporalWindow
         function currentTimeUpdated(newDate) {
             this.currentTime = Number(newDate);
-            this.applyTemporalStateToVisibileTiles(newDate, this.tileManager);
+            this.applyVisibleTilesStates(newDate, this.tileManager);
         }
         const refreshCallback = currentTimeUpdated.bind(this);
 
@@ -108,24 +99,27 @@ export class TemporalModule {
     }
 
     // tile is tilecontent here
-    applyTemporalStateToTile(tile) {
+    computeTileState(tile) {
         const featuresStates = this.temporalExtension.computeFeaturesStates(tile, this.currentTime);
         for (let i = 0; i < featuresStates.length; i++) {
             this.tilesManager.setStyle(new CityObjectID(tile.tileId, i), featuresStates[i]);
         }
-        this.tilesManager.applyStyles();
-        // this.tilesManager.applyStyleToTile(tile.tileId, { updateView:
-        // true });
+    }
+
+    applyTileState(tile) {
+        this.computeTileState(tile);
+        this.tilesManager.applyStyleToTile(tile.tileId, { updateView: false });
         /*
         this.tilesManager.applyStyleToTile(tile.tileId, { updateView: true,
             updateFunction: this.tilesManager.view.notifyChange(this.tilesManager.layer) });
          */
     }
 
-    applyTemporalStateToVisibileTiles() {
+    applyVisibleTilesStates() {
         const tiles = getVisibleTiles(this.layer);
         for (let i = 0; i < tiles.length; i++) {
-            this.applyTemporalStateToTile(tiles[i]);
+            this.computeTileState(tiles[i]);
         }
+        this.tilesManager.applyStyles();
     }
 }

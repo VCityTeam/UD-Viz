@@ -25,31 +25,52 @@ export class TilesManager {
      */
     this.layer = layer;
 
+      /**
+       * The total number of tiles in the scene.
+       *
+       * @type {number}
+       */
+      this.totalTileCount = 0;
+      // Get total tile count
+      if (this.layer.tileIndex !== undefined) {
+          this.totalTileCount = Object.keys(this.layer.tileIndex.index).length - 1;
+      }
+
+      /**
+       * The number of tiles currently loaded by the tile manager. If this number
+       * is equal to `totalTileCount`, no more `update` is necessary.
+       *
+       * @type {number}
+       */
+      this.loadedTileCount = 0;
+
     /**
      * The set of tile wrappers that have been loaded.
      *
      * @type {Array<Tile>}
      */
     this.tiles = [];
-
-    /**
-     * The number of tiles currently loaded by the tile manager. If this number
-     * is equal to `totalTileCount`, no more `update` is necessary.
-     *
-     * @type {number}
-     */
-    this.loadedTileCount = 0;
-
-    /**
-     * The total number of tiles in the scene.
-     *
-     * @type {number}
-     */
-    this.totalTileCount = 0;
-
-    if (this.layer.tileIndex !== undefined) {
-      this.totalTileCount = Object.keys(this.layer.tileIndex.index).length - 1;
+    if (this.totalTileCount !== 0)
+    {
+        // Load existing tiles
+        const tiles = getVisibleTiles(this.layer);
+        for (let tile of tiles) {
+            if (this.tiles[tile.tileId] === undefined) {
+                this.tiles[tile.tileId] = new Tile(this.layer, tile.tileId);
+                this.tiles[tile.tileId].loadCityObjects();
+                this.loadedTileCount += 1;
+            }
+        }
     }
+
+    ///// EVENTS
+    ///////////
+    // TODO: Tile unloading when there will be such an event in itowns
+    // Add listener to the 3D Tiles layer for tile loading
+    this.layer.onTileContentLoaded = this.loadTile.bind(this);
+    // Create an event where a module can add a callback. Fired in
+    // this.loadTile().
+    this.onTileLoaded = (() => {});
 
     ///// STYLE
     ///////////
@@ -70,12 +91,24 @@ export class TilesManager {
     this.upToDateTileIds = {};
   }
 
+  loadTile(tile) {
+      // Verifies that the tile has not been already added (might be removed
+      // when tile unloading will be managed)
+      if (this.tiles[tile.tileId] === undefined) {
+          this.tiles[tile.tileId] = new Tile(this.layer, tile.tileId);
+          this.tiles[tile.tileId].loadCityObjects();
+          this.loadedTileCount += 1;
+          this.onTileLoaded(tile);
+      }
+  }
+
   /**
    * Constructs the tiles that have not been loaded yet. This function should be
    * called before accessing or modifying city objects to be sure that they have
    * been loaded once. In the future, this function should be replaced by
    * listeners to events of the 3DTiles layer (tile loading / unloading).
    */
+  /*
   update() {
     if (this.layer.tileIndex === undefined) {
       // Cannot update yet because the layer is not fully loaded.
@@ -100,6 +133,7 @@ export class TilesManager {
       }
     }
   }
+  */
 
   /**
    * Returns the city object under the mouse cursor.
@@ -110,7 +144,7 @@ export class TilesManager {
    */
   pickCityObject(event) {
     if (event.target.nodeName.toUpperCase() === 'CANVAS') {
-      this.update();
+      // this.update();
       // Get the intersecting objects where our mouse pointer is
       let intersections = this.view.pickObjectsAt(event, 5);
       // Get the first intersecting tile
@@ -144,7 +178,7 @@ export class TilesManager {
       cityObjectId = createCityObjectID(cityObjectId);
     }
 
-    this.update();
+    // this.update();
     return this.tiles[cityObjectId.tileId].cityObjects[cityObjectId.batchId];
   }
 
@@ -267,7 +301,7 @@ export class TilesManager {
    * view. Default is `udpateITownsView(view, layer)`.
    */
   applyStyles(options = {}) {
-    this.update();
+    // this.update();
     let updateFunction = options.updateFunction || (() => {
       this.view.notifyChange();
     });
@@ -293,7 +327,7 @@ export class TilesManager {
    * view. Default is `udpateITownsView(view, layer)`.
    */
   applyStyleToTile(tileId, options = {}) {
-    this.update();
+    // this.update();
     let updateView = (options.updateView !== undefined) ?
       options.updateView : true;
     let updateFunction = options.updateFunction || (() => {

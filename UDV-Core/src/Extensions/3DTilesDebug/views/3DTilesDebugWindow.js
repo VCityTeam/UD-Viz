@@ -109,7 +109,7 @@ export class Debug3DTilesWindow extends Window {
    * Updates the TBI.
    */
   updateTilesManager() {
-    this.tilesManager.update();
+    // this.tilesManager.update();
     this.TBIInfoParagraphElement.innerText = `${this.tilesManager.loadedTileCount} / ${this.tilesManager.totalTileCount} tiles loaded.`;
   }
 
@@ -140,7 +140,7 @@ export class Debug3DTilesWindow extends Window {
    * @param {MouseEvent} event The mouse event.
    */
   onMouseClick(event) {
-    this.tilesManager.update();
+    // this.tilesManager.update();
     let cityObject = this.tilesManager.pickCityObject(event);
     if (cityObject !== undefined) {
       this.clickDivElement.innerHTML = /*html*/`
