@@ -15,35 +15,6 @@ export class $3DTemporalExtension extends $3DTAbstractExtension {
     constructor() {
         super();
         this.temporal_tileset = {};
-        this.tilesManager = {};
-    }
-
-    // TODO: chicken egg (on doit instancier l'extension pour instancier le
-    //  layer et instancier le layer pour instancier le tileManager).
-    initTilesManager(tilesManager) {
-        this.tilesManager = tilesManager;
-
-        // Set styles
-        this.tilesManager.registerStyle('noTransaction', new CityObjectStyle({
-            materialProps: { opacity: 1.0, color: 0xffffff } })); // white
-
-        this.tilesManager.registerStyle('creation', new CityObjectStyle({
-            materialProps: { opacity: 0.6, color: 0x009900 } })); // green
-
-        this.tilesManager.registerStyle('demolition', new CityObjectStyle({
-            materialProps: { opacity: 0.6, color: 0xff0000 } })); // red
-
-        this.tilesManager.registerStyle('modified', new CityObjectStyle({
-            materialProps: { opacity: 0.6, color: 0xFFD700 } })); // yellow
-
-/*        this.tilesManager.registerStyle('subdivision', new CityObjectStyle({
-            materialProps: { opacity: 0.6, color: 0x0000ff } })); // dark blue
-
-        this.tilesManager.registerStyle('fusion', new CityObjectStyle({
-            materialProps: { opacity: 0.6, color: 0x0000ff } })); // dark blue */
-
-        this.tilesManager.registerStyle('hide', new CityObjectStyle({
-            materialProps: { opacity: 0, color: 0xffffff, alphaTest: 0.3 } })); // hidden
     }
 
     /**
@@ -80,68 +51,15 @@ export class $3DTemporalExtension extends $3DTAbstractExtension {
         }
     }
 
-    // TODO: si on avait une 3DTilesbaseclass on pourrait mettre une
-    //  fonction hasExtension dedans qui ferait le check si un obj a
-    //  extensions et si il a l'extension courante et qui retourne l'ext de
-    //  l'obj
     // eslint-disable-next-line class-methods-use-this
-    culling(layer, node) {
-        // TODO: la displaydate pourrait plutot etre stockée dans l'extension
-        //  temporelle ?
-        if (!('currentTime' in layer)) {
-            throw new Error(`You must define a property named
-            currentTime in the 3D Tiles layer with time_evolving_cities
-            extension to use this extension. To do so, use
-            layer.defineProperty(). currentTime must store the current date of
-            display of the scene.`);
+    computeFeaturesStates(tileContent, currentTime) {
+        let featuresDisplayStates = {};
+        if (tileContent.batchTable && tileContent.batchTable.extensions &&
+            tileContent.batchTable.extensions['3DTILES_temporal']) {
+            const BT_ext = tileContent.batchTable.extensions['3DTILES_temporal'];
+            featuresDisplayStates = BT_ext.culling(currentTime);
         }
-        // TODO: Quand on parse les oldFeatureTransactions, on pourrait
-        //  aller changer les dates dans le bounding volume temporel de la
-        //  tuile si on trouve des oldFeatureTransactions
-        /*
-        if (node.boundingVolume && node.boundingVolume.extensions && node.boundingVolume.extensions['3DTILES_temporal']) {
-            console.log('Temporal bounding volume culling for node :');
-            console.log(node);
-            const BV_ext = node.boundingVolume.extensions['3DTILES_temporal'];
-            if (BV_ext.culling(layer.currentTime)) {
-                // if the display date is outside the temporal bounding volume
-                // of the tile; we don't cull the tile directly. This is
-                // because we need to display the features of the tile that
-                // have a transaction with other features from the next
-                // timestamp in time. Hence, we need to verify the dates of
-                // each object of the tile first
-                console.log('Bounding volume culling = true');
-                return true;
-            }
-            console.log('Bounding volume culling = false');
-        }
-        */
-        if (node.batchTable && node.batchTable.extensions &&
-            node.batchTable.extensions['3DTILES_temporal']) {
-            const BT_ext = node.batchTable.extensions['3DTILES_temporal'];
-            const featuresDisplayStates = BT_ext.culling(layer.currentTime);
-
-            for (let i = 0; i < featuresDisplayStates.length; i++) {
-                this.tilesManager.setStyle(new CityObjectID(node.tileId, i), featuresDisplayStates[i]);
-            }
-
-            /* this.tilesManager.applyStyleToTile(node.tileId,
-                { updateView: true, updateFunction:
-                 this.tilesManager.view.notifyChange(this.tilesManager.layer) }); */
-
-            // Calling this method outside of the culling would be better.
-            // For instance we might would want to call it before rendering.
-            // However, there is no event in iTowns allowing to call it just
-            // before rendering for instance (i.e. when the culling is
-            // done). Trying to add it as a callback to the node with
-            // THREEJS' Object3D.OnBeforeRender
-            // (https://threejs.org/docs/index.html#api/en/core/Object3D.onBeforeRender)
-            // doesn't work either because of the following issue: https://github.com/mrdoob/three.js/issues/11306
-            // Adding it as a callback to the mesh however works but slows
-            // down a lot the rendering.
-            // createTileGroupsFromBatchIDs(node, featuresDisplayStates);
-        }
-        return false;
+        return featuresDisplayStates;
     }
 
     // TODO: plutôt passer la batch table (faire comme dans culling de

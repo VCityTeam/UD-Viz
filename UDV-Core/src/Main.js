@@ -18,8 +18,7 @@ export { DocToValidateView }        from './Extensions/DocToValidate/views/DocTo
 export { AboutWindow }              from './Modules/Others/About';
 export { HelpWindow }               from './Modules/Others/Help';
 
-export { TemporalWindow }           from './Modules/Temporal/views/TemporalWindow';
-export { $3DTemporalExtension }     from './Modules/Temporal/3DTILES_temporal/3DTemporalExtension';
+export { TemporalModule }           from './Modules/Temporal/TemporalModule';
 
 export { DocumentController }        from './Modules/ConsultDoc/DocumentController';
 

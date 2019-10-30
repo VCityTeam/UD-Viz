@@ -1,6 +1,5 @@
 import { ModuleView } from '../../ModuleView/ModuleView.js';
 import { TilesManager } from '../../3DTiles/TilesManager.js';
-import { $3DTemporalExtension } from '../../../Modules/Temporal/3DTILES_temporal/3DTemporalExtension.js'
 
 /**
  * Represents the base HTML content of a demo for UDV and provides methods to
@@ -449,7 +448,7 @@ export class BaseDemo {
         this.view.scene.add( ambientLight );
 
         // Camera
-        let p = { coord: this.extent.center(), heading: -49.6, range: 3000, tilt:
+        let p = { coord: this.extent.center(), heading: -49.6, range: 12000, tilt:
                 17 };
         itowns.CameraUtils.transformCameraToLookAtTarget(this.view, this.view.camera.camera3D, p);
 
@@ -491,47 +490,14 @@ export class BaseDemo {
             this.view.getLayerById(this.config['3DTilesLayerID']));
     }
 
-    init4DView(currentTime) {
+    // se baser sur ce qui existe déja pour ça
+    initView() {
         // initialize itowns planar view
         this.initPlanarView();
         // Add terrain layers (raster and elevation)
         this.addIGNTerrainLayers();
         // Add camera, lights, controls, set sky color to blue
         this.addRenderingElements();
-
-        // TODO: this should be in the
-        // Create a new 3D tiles layer with temporal extension
-        let $3dTilesLayerTemporal = new itowns.GeometryLayer(
-            this.config['3DTilesTemporalLayerID'], new itowns.THREE.Group());
-        $3dTilesLayerTemporal.name = '3DTiles-temporal';
-        $3dTilesLayerTemporal.url =
-            this.config['3DTilesTemporalLayerURL'];
-        $3dTilesLayerTemporal.protocol = '3d-tiles';
-
-        $3dTilesLayerTemporal.defineLayerProperty('currentTime',
-            currentTime);
-
-        // Register temporal extension and add it to the layer
-        // using defineLayerProperty method
-        const extensions = new itowns.$3DTExtensions();
-        extensions.registerExtension('3DTILES_temporal',
-            new $3DTemporalExtension());
-        $3dTilesLayerTemporal.defineLayerProperty('registeredExtensions', extensions);
-
-        itowns.View.prototype.addLayer.call(this.view, $3dTilesLayerTemporal);
-
-        // Request itowns view redraw
-        this.view.notifyChange();
-
-        // Initialize the 3DTiles manager
-        this.tilesManager = new TilesManager(this.view,
-            this.view.getLayerById(this.config['3DTilesTemporalLayerID']));
-
-        extensions.getExtension('3DTILES_temporal').initTilesManager(this.tilesManager);
-
-        this.tilesManager.view.addFrameRequester(
-            itowns.MAIN_LOOP_EVENTS.BEFORE_RENDER,
-            this.tilesManager.applyStyles.bind(this.tilesManager));
     }
 
     ////////////////////////////////////////////////////////
