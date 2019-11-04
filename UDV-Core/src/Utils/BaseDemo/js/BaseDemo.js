@@ -495,7 +495,7 @@ export class BaseDemo {
         // initialize itowns planar view
         this.initPlanarView();
         // Add terrain layers (raster and elevation)
-        this.addIGNTerrainLayers();
+        // this.addIGNTerrainLayers();
         // Add camera, lights, controls, set sky color to blue
         this.addRenderingElements();
     }
