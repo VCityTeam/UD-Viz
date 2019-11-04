@@ -476,7 +476,7 @@ export class BaseDemo {
 
         // Camera
         let p = {
-            coord: this.extent.center(), heading: -49.6, range: 3000, tilt:
+            coord: this.extent.center(), heading: -49.6, range: 13000, tilt:
                 17
         };
         itowns.CameraUtils.transformCameraToLookAtTarget(this.view, this.view.camera.camera3D, p);
