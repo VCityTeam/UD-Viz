@@ -17,7 +17,7 @@
   "3DTilesLayerID": "3d-tiles-layer",
   "3DTilesTemporalLayer" : {
     "id": "3d-tiles-temporal-layer",
-    "url": "http://localhost:8003/tilesets/3DTiles_temporal_extension-v8/v4-temporal_v8_arrond_1_et_2_fixed_source_without_remarkable/tileset.json"
+    "url": "http://localhost:8003/tilesets/3DTiles_temporal_extension-v8/v5-temporal_v8_full_city_fixed_source_without_remarkable/tileset.json"
   },
   "geocoding":{
     "url":"https://nominatim.openstreetmap.org/search",
