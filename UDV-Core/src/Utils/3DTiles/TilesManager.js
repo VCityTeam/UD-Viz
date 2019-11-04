@@ -92,14 +92,22 @@ export class TilesManager {
   }
 
   loadTile(tile) {
+      // Update the totalTileCount.
+      // TODO: this should be managed with an event: when the tileset is
+      //  loaded (i.e. tileIndex filled), then totalTileCount should be set.
+      this.totalTileCount = Object.keys(this.layer.tileIndex.index).length - 1;
       // Verifies that the tile has not been already added (might be removed
       // when tile unloading will be managed)
       if (this.tiles[tile.tileId] === undefined) {
           this.tiles[tile.tileId] = new Tile(this.layer, tile.tileId);
           this.tiles[tile.tileId].loadCityObjects();
           this.loadedTileCount += 1;
-          this.onTileLoaded(tile);
       }
+      // Callback when a tile is loaded.
+      // TODO: Les tuiles d'iTowns devraient etre rendues invisibles plutot
+      //  que d'etre déchargées et rechargées. A ce moment là, ce callback
+      //  pourra etre dans le if ci dessus
+      this.onTileLoaded(tile);
   }
 
   /**

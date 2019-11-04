@@ -5,9 +5,9 @@ export class $3DTemporalBatchTable {
         this.endDates = json.endDates;
         this.featureIds = json.featureIds;
         // Create a table which will hold for each features the transaction
-        // for which the current feature is an oldFeature (i.e. the source of
-        // the transaction) if it exists. This array is filled in the parse
-        // method of the TemporalExtension class
+        // for which the current feature is a source or a destination if it
+        // exists. This array is filled in the parse method of the
+        // TemporalExtension class
         this.featuresTransacs = [];
         // Store the displayStates of Features of this tile depending on the
         // date once it has been computed. Its an object structured as follows:
@@ -20,13 +20,31 @@ export class $3DTemporalBatchTable {
     // tags (fusion + modification or subdivision + modification) we display
     // the features in grey. These cases are indeed mostly between 2012 and 2015
     // and are due to the data
+    /*
     static getDisplayStateFromTags(currentTime, tags) {
         if (tags.length === 1) {
             return tags[0];
         } else if (currentTime > 2012 && currentTime < 2015) {
             return 'noTransaction';
         } else {
-            return 'modified';
+            return 'modification';
+        }
+    }
+    */
+
+    // We do not manage all type of transactions and don't display some
+    // wrongly detected transactions for demonstration purposes.
+    static computeDisplayState(currentTime, transaction) {
+        if (transaction.isAggregate) {
+            if (currentTime > 2012 && currentTime < 2015) {
+                return 'noTransaction';
+            } else {
+                return 'modification';
+            }
+        } else if (transaction.type === 'union' || transaction.type === 'division') {
+            return 'noTransaction';
+        } else {
+            return transaction.type;
         }
     }
 
@@ -44,8 +62,6 @@ export class $3DTemporalBatchTable {
     //      * the color is set depending on the transaction type (defined in
     //      transactionsColors)
     //   * else we hide the feature.
-    // TODO: it seems weird to do the culling here, it might be done in the
-    //  extension using the information of the batch table for more clarity ?
     culling(currentTime) {
         // featuresMaterial is an array of object that will be used to color
         // and change the opacity of features according to their batchIDs by
@@ -79,39 +95,27 @@ export class $3DTemporalBatchTable {
             } else if (this.featuresTransacs[featureId]) {
                 // ** TRANSACTION CASE
                 let hasTransac = false;
-                const oldTransac = this.featuresTransacs[featureId].transactionsAsOldFeature;
-                if (oldTransac) {
-                    const oldTransacHalfDuration = (oldTransac.endDate -
-                        oldTransac.startDate) / 2;
-                    if (currentTime > oldTransac.startDate && currentTime <=
-                        oldTransac.startDate + oldTransacHalfDuration) {
+                const transacAsSource = this.featuresTransacs[featureId].asSource;
+                if (transacAsSource) {
+                    const transacAsSourceHalfDuration = (transacAsSource.endDate -
+                        transacAsSource.startDate) / 2;
+                    if (currentTime > transacAsSource.startDate && currentTime <=
+                        transacAsSource.startDate + transacAsSourceHalfDuration) {
                         hasTransac = true;
-                        const displayState = $3DTemporalBatchTable.getDisplayStateFromTags(
-                            currentTime, oldTransac.tags);
-                        if (displayState === 'fusion'
-                            || displayState === 'subdivision') {
-                            featuresDisplayStates.push('noTransaction');
-                        } else {
-                            featuresDisplayStates.push(displayState);
-                        }
+                        featuresDisplayStates.push($3DTemporalBatchTable.computeDisplayState(
+                            currentTime, transacAsSource));
                     }
                 }
-                const newTransac = this.featuresTransacs[featureId].transactionsAsNewFeature;
-                if (newTransac) {
-                    const newTransacHalfDuration = (newTransac.endDate -
-                        newTransac.startDate) / 2;
-                    if (currentTime > newTransac.startDate +
-                        newTransacHalfDuration && currentTime <=
-                        newTransac.endDate) {
+                const transacAsDest = this.featuresTransacs[featureId].asDestination;
+                if (transacAsDest) {
+                    const transacAsDestHalfDuration = (transacAsDest.endDate -
+                        transacAsDest.startDate) / 2;
+                    if (currentTime > transacAsDest.startDate +
+                        transacAsDestHalfDuration && currentTime <=
+                        transacAsDest.endDate) {
                         hasTransac = true;
-                        const displayState = $3DTemporalBatchTable.getDisplayStateFromTags(
-                            currentTime, newTransac.tags);
-                        if (displayState === 'fusion'
-                            || displayState === 'subdivision') {
-                            featuresDisplayStates.push('noTransaction');
-                        } else {
-                            featuresDisplayStates.push(displayState);
-                        }
+                        featuresDisplayStates.push($3DTemporalBatchTable.computeDisplayState(
+                            currentTime, transacAsDest));
                     }
                 }
 
@@ -125,7 +129,7 @@ export class $3DTemporalBatchTable {
                 // ** MANAGE CREATIONS AND DEMOLITIONS (this step must be
                 // done because the creation and demolitions transactions
                 // are currently not in the tileset. However, the tileset
-                // should have them later on.
+                // should have them later on).
                 const halfVintage = 1.5;
 
                 if (currentTime + halfVintage >= this.startDates[i] &&
@@ -313,7 +317,7 @@ function TourIncity(featureId, featuresDisplayStates, currentTime) {
     // Part dieu : tour incity (tileId 217, batchID 35)
     if (featureId === "2015::BU_69383AD5") {
         if (currentTime === 2011) {
-            featuresDisplayStates.push('modified');
+            featuresDisplayStates.push('modification');
             return true;
         } else if (currentTime === 2012 || currentTime === 2013 ||
             currentTime === 2014) {
@@ -323,7 +327,7 @@ function TourIncity(featureId, featuresDisplayStates, currentTime) {
     }
     // Tour Incity en construction (2009) tileID = 217, batchID = 0
     if (featureId === "2009::LYON_3_00316_1" && currentTime === 2010) {
-        featuresDisplayStates.push('modified');
+        featuresDisplayStates.push('modification');
         return true;
     }
     return false;
@@ -373,37 +377,37 @@ function confluenceDemoModifs(featureId, featuresDisplayStates, currentTime) {
     // 2012 -> 2015 inconsistencies
     // Confluence (tile 11, batchID 60)
     if (featureId === '2012::LYON_2EME_00232_4' && currentTime === 2013) {
-        featuresDisplayStates.push('modified');
+        featuresDisplayStates.push('modification');
         return true;
     }
     // 2012 -> 2015 inconsistencies
     // Confluence (tile 11, batchID 101)
     if (featureId === '2015::BU_69382BE71' && currentTime === 2014) {
-        featuresDisplayStates.push('modified');
+        featuresDisplayStates.push('modification');
         return true;
     }
     // 2012 -> 2015 inconsistencies
     // Confluence (tile 37, batchID 42)
     if (featureId === '2012::LYON_2EME_00232_13' && currentTime === 2013) {
-        featuresDisplayStates.push('modified');
+        featuresDisplayStates.push('modification');
         return true;
     }
     // 2012 -> 2015 inconsistencies
     // Confluence (tile 37, batchID 79)
     if (featureId === '2015::BU_69382BD95' && currentTime === 2014) {
-        featuresDisplayStates.push('modified');
+        featuresDisplayStates.push('modification');
         return true;
     }
     // 2012 -> 2015 inconsistencies
     // Confluence (tile 37, batchID 80)
     if (featureId === '2015::BU_69382BD93' && currentTime === 2014) {
-        featuresDisplayStates.push('modified');
+        featuresDisplayStates.push('modification');
         return true;
     }
     // 2012 -> 2015 inconsistencies
     // Confluence (tile 37, batchID 82)
     if (featureId === '2015::BU_69382BD92' && currentTime === 2014) {
-        featuresDisplayStates.push('modified');
+        featuresDisplayStates.push('modification');
         return true;
     }
     // 2012 -> 2015 inconsistencies

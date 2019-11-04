@@ -13,11 +13,11 @@
     "guidedTour": "guidedTour",
     "link": "link"
   },
-  "3DTilesLayerURL": "http://rict.liris.cnrs.fr/UDVDemo-2/Data/3DTiles_FullLyon_withIDs/tileset.json",
+  "3DTilesLayerURL": "http://rict.liris.cnrs.fr/DataStore/TileSet_LyonFull_Villeurbanne_Bron_2015/tileset.json",
   "3DTilesLayerID": "3d-tiles-layer",
   "3DTilesTemporalLayer" : {
     "id": "3d-tiles-temporal-layer",
-    "url": "http://localhost:8003/tilesets/3DTiles_temporal_extension/Lyon2009-2015BigTiles/tileset.json"
+    "url": "http://localhost:8003/tilesets/3DTiles_temporal_extension-v8/v4-temporal_v8_arrond_1_et_2_fixed_source_without_remarkable/tileset.json"
   },
   "geocoding":{
     "url":"https://nominatim.openstreetmap.org/search",

@@ -85,7 +85,7 @@ export class TemporalModule {
         this.tilesManager.registerStyle('demolition', new CityObjectStyle({
             materialProps: { opacity: 0.6, color: 0xff0000 } })); // red
 
-        this.tilesManager.registerStyle('modified', new CityObjectStyle({
+        this.tilesManager.registerStyle('modification', new CityObjectStyle({
             materialProps: { opacity: 0.6, color: 0xFFD700 } })); // yellow
 
         /*        this.tilesManager.registerStyle('subdivision', new CityObjectStyle({
@@ -109,10 +109,6 @@ export class TemporalModule {
     applyTileState(tile) {
         this.computeTileState(tile);
         this.tilesManager.applyStyleToTile(tile.tileId, { updateView: false });
-        /*
-        this.tilesManager.applyStyleToTile(tile.tileId, { updateView: true,
-            updateFunction: this.tilesManager.view.notifyChange(this.tilesManager.layer) });
-         */
     }
 
     applyVisibleTilesStates() {

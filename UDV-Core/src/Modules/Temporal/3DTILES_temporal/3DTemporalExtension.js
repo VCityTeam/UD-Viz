@@ -4,6 +4,8 @@ import { CityObjectID } from '../../../Utils/3DTiles/Model/CityObject';
 import { $3DTemporalTileset } from './3DTemporalTileset';
 import { $3DTemporalBoundingVolume } from './3DTemporalBoundingVolume';
 import { $3DTemporalBatchTable } from './3DTemporalBatchTable';
+import { $3DTemporalPrimaryTransaction } from './3DTemporalPrimaryTransaction';
+import {$3DTemporalTransactionAggregate} from "./3DTemporalTransactionAggregate";
 
 /**
  * @module TemporalExtension
@@ -37,11 +39,12 @@ export class $3DTemporalExtension extends $3DTAbstractExtension {
             return this.temporal_tileset;
         } else if (json.featureIds) {
             const temporal_batchTable = new $3DTemporalBatchTable(json);
-            // Fill this.temporal_batchTable.oldFeaturesTransaction which is
+            // Fill this.temporal_batchTable.featuresTransactions which is
             // then used for optimization later on (e.g. in culling).
             for (let i = 0; i < temporal_batchTable.featureIds.length; i++) {
                 const featureId = temporal_batchTable.featureIds[i];
-                temporal_batchTable.featuresTransacs[featureId] = this.temporal_tileset.FeaturesTransactions[featureId];
+                // TODO: access to featuresTransactions might be better managed
+                temporal_batchTable.featuresTransacs[featureId] = this.temporal_tileset.transactionManager.featuresTransactions[featureId];
             }
             return temporal_batchTable;
         } else if (context.box) {
@@ -57,6 +60,10 @@ export class $3DTemporalExtension extends $3DTAbstractExtension {
         if (tileContent.batchTable && tileContent.batchTable.extensions &&
             tileContent.batchTable.extensions['3DTILES_temporal']) {
             const BT_ext = tileContent.batchTable.extensions['3DTILES_temporal'];
+            // TODO: sortir cette intelligence de la batch table extension
+            //  et la mettre ici. BT_ext devrait seulement avoir des
+            //  fonctions pour qu'on récupère son contenu ou une partie de
+            //  son contenu
             featuresDisplayStates = BT_ext.culling(currentTime);
         }
         return featuresDisplayStates;
