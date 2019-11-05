@@ -43,7 +43,7 @@
   "3DTilesLayer":{
     "building-lyon-2009":{
       "id":"3d-tiles-layer-building",
-      "url":"http://localhost:8003/tilesets/3DTiles/Lyon_2009_Without_Remarkable_256_Tiles/tileset.json",
+      "url":"http://localhost:8003/tilesets/3DTiles/Lyon_2009_Without_Remarkable_128_Tiles/tileset.json",
       "color": "0xFFFFFF",
       "initTilesManager": "true"
     },
