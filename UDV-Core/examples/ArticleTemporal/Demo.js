@@ -22,8 +22,8 @@ baseDemo.loadConfigFile('../data/config/generalDemoConfig.json').then(() => {
         currentTime: 2009,
         timeStep: 1,
     };
-    const layerConfig = baseDemo.config['3DTilesTemporalLayer']['SmallTiles'];
-    // const layerConfig = baseDemo.config['3DTilesTemporalLayer']['BigTiles'];
+    const layerConfig = baseDemo.config['3DTilesTemporalLayer'];
+    console.time("loading time");
     const temporalModule = new udvcore.TemporalModule(layerConfig, baseDemo.view, temporalOptions);
     baseDemo.addModuleView('temporal', temporalModule.temporalWindow, {
         name: 'Temporal Navigation'

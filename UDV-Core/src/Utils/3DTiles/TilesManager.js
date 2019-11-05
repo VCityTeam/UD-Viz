@@ -108,6 +108,9 @@ export class TilesManager {
       //  que d'etre déchargées et rechargées. A ce moment là, ce callback
       //  pourra etre dans le if ci dessus
       this.onTileLoaded(tile);
+      if (this.totalTileCount === this.loadedTileCount) {
+          console.timeEnd("loading time");
+      }
   }
 
   /**
