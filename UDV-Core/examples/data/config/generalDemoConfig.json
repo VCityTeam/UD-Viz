@@ -43,19 +43,19 @@
   "3DTilesLayer":{
     "building-lyon-2009":{
       "id":"3d-tiles-layer-building",
-      "url":"http://localhost:8003/tilesets/3DTiles_FullLyon/TileSet_Lyon_2009_full/tileset.json",
+      "url":"http://localhost:8003/tilesets/3DTiles/Lyon_2009_Without_Remarkable_256_Tiles/tileset.json",
       "color": "0xFFFFFF",
       "initTilesManager": "true"
     },
     "building-lyon-2012":{
       "id":"3d-tiles-layer-building",
-      "url":"http://localhost:8003/tilesets/3DTiles_FullLyon/TileSet_Lyon_2012_full/tileset.json",
+      "url":"http://localhost:8003/tilesets/3DTiles/Lyon_2012_Without_Remarkable_256_Tiles/tileset.json",
       "color": "0xFFFFFF",
       "initTilesManager": "true"
     },
     "building-lyon-2015":{
       "id":"3d-tiles-layer-building",
-      "url":"http://localhost:8003/tilesets/3DTiles_FullLyon/TileSet_Lyon_2015_full/tileset.json",
+      "url":"http://localhost:8003/tilesets/3DTiles/Lyon_2015_Without_Remarkable_256_Tiles/tileset.json",
       "color": "0xFFFFFF",
       "initTilesManager": "true"
     },
