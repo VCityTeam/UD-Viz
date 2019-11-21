@@ -11,13 +11,17 @@
     ```
   - References: [how can I update Nodejs](https://askubuntu.com/questions/426750/how-can-i-update-my-nodejs-to-the-latest-version), and [install Ubuntu](http://www.hostingadvice.com/how-to/install-nodejs-ubuntu-14-04/#ubuntu-package-manager)
 
-## Installation of the client side (with a developer use case)
+## Installation of the client side
 ```
   git clone https://github.com/MEPP-team/UDV.git
   cd UDV/UDV-Core
-  ./install.sh
+  npm install
   npm start
 ```
+
+### Developer note
+When working on a specific version of the code (in particular when making changes to the underlying iTowns) you might (will) need to work with a specific version of iTowns and thus use a different install process. Refer to the 
+[install.sh shell script](https://github.com/MEPP-team/UDV/blob/0512f4eb0b2322224c1a4c332b8d74c6b0d1a3f8/UDV-Core/install.sh) for concrete means on how to achieve this.
 
 ## Running a demo
 
