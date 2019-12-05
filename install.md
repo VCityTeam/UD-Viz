@@ -37,9 +37,9 @@ Thus, you can choose one of those solutions to do so:
   * Or you want to have an insight of all UDV features (including handling of documents), then you need install all the tools necessary for the server-side [here](https://github.com/MEPP-team/RICT/tree/master/Install/Readme.md) in order to be able to run it locally;
 
   * Or you can also modify the attribute _server.url_ of the file `<path-to-UDV>/UDV-Core/examples/data/config/generalDemoConfig.json` as described below:
-```
-"url":"http://rict.liris.cnrs.fr:1525/",
-```
+    ```
+    "url":"http://rict.liris.cnrs.fr:1525/",
+    ```
 You will then be able to run the full module demo of UDV.
 
 ## Notes
