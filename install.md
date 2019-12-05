@@ -34,7 +34,7 @@ Thus, you can choose one of those solutions to do so:
 
   * Either you just need a view of 3D objects, in which case there is nothing more to do
   
-  * Or you want to have an insight of all UDV features (including handling of documents), then you need install all the tools necessary for the server-side [here](https://github.com/MEPP-team/RICT/blob/master/Install.md) in order to be able to run it locally;
+  * Or you want to have an insight of all UDV features (including handling of documents), then you need install all the tools necessary for the server-side [here](https://github.com/MEPP-team/RICT/tree/master/Install/Readme.md) in order to be able to run it locally;
 
   * Or you can also modify the attribute _server.url_ of the file `<path-to-UDV>/UDV-Core/examples/data/config/generalDemoConfig.json` as described below:
 ```
@@ -45,7 +45,7 @@ You will then be able to run the full module demo of UDV.
 ## Notes
 
 * For an install of the full pipeline of our application refer to
-[these install notes](https://github.com/MEPP-team/RICT/Install/Readme.md).
+[these install notes](https://github.com/MEPP-team/RICT/tree/master/Install/Readme.md).
 
 * **Windows**
   - Install and update npm which Windows Powershell
