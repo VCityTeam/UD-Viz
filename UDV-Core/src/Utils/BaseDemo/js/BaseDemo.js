@@ -474,19 +474,22 @@ export class BaseDemo {
         directionalLight.updateMatrixWorld();
         this.view.scene.add(ambientLight);
         // Camera
-        let p = {
-            coord: this.extent.center(), heading: -49.6, range: 1500, tilt:
-                17
-        };
-        
-   
-        if (this.config['camera'] && this.config['camera']['position'] && this.config['camera']['position']['x'] && this.config['camera']['position']['y']) {
-            
-            let coordinates = new itowns.Coordinates('EPSG:3946',parseInt(this.config['camera']['position']['x']),parseInt(this.config['camera']['position']['y']));
-            p = {
-                coord: coordinates, heading: 0, range: 4000, tilt:35
-            };
+
+        let coordinates = this.extent.center();
+        let range = parseFloat(this.config['camera']['position']['range']);
+        let tilt = parseFloat(this.config['camera']['position']['tilt']);
+        let heading = parseFloat(this.config['camera']['position']['heading']);
+
+        if (this.config['camera']['position']['x'] 
+          && this.config['camera']['position']['y']) {
+          coordinates = new itowns.Coordinates('EPSG:3946',
+            parseInt(this.config['camera']['position']['x']),
+            parseInt(this.config['camera']['position']['y']));
         }
+
+        let p = {
+            coord: coordinates, heading: heading, range: range, tilt: tilt
+          };
 
         itowns.CameraUtils.transformCameraToLookAtTarget(this.view, this.view.camera.camera3D, p);
 

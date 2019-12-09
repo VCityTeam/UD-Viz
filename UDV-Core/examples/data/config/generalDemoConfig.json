@@ -40,6 +40,13 @@
       "max_y": "5180575"
     }
   },
+  "camera": {
+    "position": {
+      "range":"3000",
+      "heading":"-49.6",
+      "tilt":"17"
+    }
+  },
   "3DTilesLayer":{
     "building":{
       "id":"3d-tiles-layer-building",
