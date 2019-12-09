@@ -1,6 +1,7 @@
 import { ModuleView } from '../../ModuleView/ModuleView.js';
 import { TilesManager } from '../../3DTiles/TilesManager.js';
 
+
 /**
  * Represents the base HTML content of a demo for UDV and provides methods to
  * dynamically add module views.
@@ -430,6 +431,10 @@ export class BaseDemo {
             this.tilesManager = new TilesManager(this.view,
                 this.view.getLayerById(this.config['3DTilesLayer'][layerConfig]['id']));
         }
+        
+
+
+
     }
 
     /**
@@ -473,12 +478,21 @@ export class BaseDemo {
         ambientLight.position.set(0, 0, 3000);
         directionalLight.updateMatrixWorld();
         this.view.scene.add(ambientLight);
-
         // Camera
         let p = {
-            coord: this.extent.center(), heading: -49.6, range: 3000, tilt:
+            coord: this.extent.center(), heading: -49.6, range: 1500, tilt:
                 17
         };
+        
+   
+        if (this.config['camera'] && this.config['camera']['position'] && this.config['camera']['position']['x'] && this.config['camera']['position']['y']) {
+            
+            let coordinates = new itowns.Coordinates('EPSG:3946',parseInt(this.config['camera']['position']['x']),parseInt(this.config['camera']['position']['y']));
+            p = {
+                coord: coordinates, heading: 0, range: 4000, tilt:35
+            };
+        }
+
         itowns.CameraUtils.transformCameraToLookAtTarget(this.view, this.view.camera.camera3D, p);
 
         // Controls
