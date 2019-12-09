@@ -1,7 +1,6 @@
 import { ModuleView } from '../../ModuleView/ModuleView.js';
 import { TilesManager } from '../../3DTiles/TilesManager.js';
 
-
 /**
  * Represents the base HTML content of a demo for UDV and provides methods to
  * dynamically add module views.
@@ -431,10 +430,6 @@ export class BaseDemo {
             this.tilesManager = new TilesManager(this.view,
                 this.view.getLayerById(this.config['3DTilesLayer'][layerConfig]['id']));
         }
-        
-
-
-
     }
 
     /**
