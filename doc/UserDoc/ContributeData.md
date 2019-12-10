@@ -1,6 +1,6 @@
 # Contribute to the project with new data
 
-UDV is developed in the context of the [VCity research project](https://projet.liris.cnrs.fr/vcity/wiki/doku.php). 
+UD-Viz is developed in the context of the [VCity research project](https://projet.liris.cnrs.fr/vcity/wiki/doku.php). 
 One aspect of this project is to enhance numerical representations of cities
  with documents in order to highlight and share cultural heritage and
  to understand urban evolution.
