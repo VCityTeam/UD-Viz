@@ -13,15 +13,15 @@
 
 ## Installation of the client side
 ```
-  git clone https://github.com/MEPP-team/UDV.git
-  cd UDV/UDV-Core
+  git clone https://github.com/MEPP-team/UD-Viz.git
+  cd UD-Viz/UD-Viz-Core
   npm install
   npm start
 ```
 
 ### Developer note
 When working on a specific version of the code (in particular when making changes to the underlying iTowns) you might (will) need to work with a specific version of iTowns and thus use a different install process. Refer to the 
-[install.sh shell script](https://github.com/MEPP-team/UDV/blob/0512f4eb0b2322224c1a4c332b8d74c6b0d1a3f8/UDV-Core/install.sh) for concrete means on how to achieve this.
+[install.sh shell script](https://github.com/MEPP-team/UD-Viz/blob/0512f4eb0b2322224c1a4c332b8d74c6b0d1a3f8/UD-Viz-Core/install.sh) for concrete means on how to achieve this.
 
 ## Running a demo
 
@@ -34,13 +34,13 @@ Thus, you can choose one of those solutions to do so:
 
   * Either you just need a view of 3D objects, in which case there is nothing more to do
   
-  * Or you want to have an insight of all UDV features (including handling of documents), then you need install all the tools necessary for the server-side [here](https://github.com/MEPP-team/RICT/tree/master/Install/Readme.md) in order to be able to run it locally;
+  * Or you want to have an insight of all UD-Viz features (including handling of documents), then you need install all the tools necessary for the server-side [here](https://github.com/MEPP-team/RICT/tree/master/Install/Readme.md) in order to be able to run it locally;
 
-  * Or you can also modify the attribute _server.url_ of the file `<path-to-UDV>/UDV-Core/examples/data/config/generalDemoConfig.json` as described below:
+  * Or you can also modify the attribute _server.url_ of the file `<path-to-UD-Viz>/UD-Viz-Core/examples/data/config/generalDemoConfig.json` as described below:
     ```
     "url":"http://rict.liris.cnrs.fr:1525/",
     ```
-You will then be able to run the full module demo of UDV.
+You will then be able to run the full module demo of UD-Viz.
 
 ## Notes
 
@@ -52,7 +52,7 @@ You will then be able to run the full module demo of UDV.
     ```
     iex (new-object net.webclient).downstring(‘https://get.scoop.sh’)
     scoop install nodejs
-    cd UDV/UDV-Core
+    cd UD-Viz/UD-Viz-Core
     npm install
     npm start
     ```

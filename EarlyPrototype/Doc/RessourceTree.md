@@ -1,6 +1,6 @@
-The application expects to find  a `UDV/ressources/` sub-directory itself containing sub-directories each of which corresponding to a particular city, for example:
-  - `UDV/ressources/GrandLyon`
-  - `UDV/ressources/MecicoCity`
+The application expects to find  a `UD-Viz/ressources/` sub-directory itself containing sub-directories each of which corresponding to a particular city, for example:
+  - `UD-Viz/ressources/GrandLyon`
+  - `UD-Viz/ressources/MecicoCity`
   - ...
 
 Each such city sub-directory is expected to have the following directory/file data structure :
