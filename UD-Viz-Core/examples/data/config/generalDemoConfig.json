@@ -38,19 +38,43 @@
       "max_x": "1851647",
       "min_y": "5169347.4265999",
       "max_y": "5180575"
+    },
+    "limonest": {
+      "min_x": "1833742.43",
+      "max_x": "1842872.59",
+      "min_y": "5176992.72",
+      "max_y": "5185870.67"
     }
   },
   "camera": {
-    "position": {
-      "range":"3000",
-      "heading":"-49.6",
-      "tilt":"17"
+    "lyon_villeurbanne_bron": {
+      "position": {
+        "range":"3000",
+        "heading":"-49.6",
+        "tilt":"17"
+      }
+    },
+    "limonest": {
+      "position": {
+        "x":"1837779.25",
+        "y":"5180394.64",
+        "range":"3000",
+        "heading":"0",
+        "tilt":"35"
+      }
     }
+  
   },
   "3DTilesLayer":{
     "building":{
       "id":"3d-tiles-layer-building",
       "url":"http://rict.liris.cnrs.fr/DataStore/TileSet_LyonFull_Villeurbanne_Bron_2015/tileset.json",
+      "color": "0xFFFFFF",
+      "initTilesManager": "true"
+    },
+    "limonest_building":{
+      "id":"3d-tiles-layer-building",
+      "url":"http://localhost:8003/tilesets/local/junk_2015/tileset.json",
       "color": "0xFFFFFF",
       "initTilesManager": "true"
     },

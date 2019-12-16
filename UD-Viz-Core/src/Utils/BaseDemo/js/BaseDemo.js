@@ -476,15 +476,15 @@ export class BaseDemo {
         // Camera
 
         let coordinates = this.extent.center();
-        let range = parseFloat(this.config['camera']['position']['range']);
-        let tilt = parseFloat(this.config['camera']['position']['tilt']);
-        let heading = parseFloat(this.config['camera']['position']['heading']);
+        let range = parseFloat(this.config['camera'][area]['position']['range']);
+        let tilt = parseFloat(this.config['camera'][area]['position']['tilt']);
+        let heading = parseFloat(this.config['camera'][area]['position']['heading']);
 
-        if (this.config['camera']['position']['x'] 
-          && this.config['camera']['position']['y']) {
+        if (this.config['camera'][area]['position']['x'] 
+          && this.config['camera'][area]['position']['y']) {
           coordinates = new itowns.Coordinates('EPSG:3946',
-            parseInt(this.config['camera']['position']['x']),
-            parseInt(this.config['camera']['position']['y']));
+            parseInt(this.config['camera'][area]['position']['x']),
+            parseInt(this.config['camera'][area]['position']['y']));
         }
 
         let p = {
