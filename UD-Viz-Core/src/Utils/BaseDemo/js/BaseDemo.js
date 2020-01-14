@@ -380,8 +380,8 @@ export class BaseDemo {
         let wmsElevationLayer = new
         itowns.ElevationLayer('wms_elevation', {
             useColorTextureElevation: true,
-            colorTextureElevationMinZ: 37,
-            colorTextureElevationMaxZ: 240,
+            colorTextureElevationMinZ: 144,
+            colorTextureElevationMaxZ: 622,
             source: wmsElevationSource,
         });
         this.view.addLayer(wmsElevationLayer);
