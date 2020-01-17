@@ -64,8 +64,10 @@ export class TemporalModule {
         // Declare a callback to update this.currentTime when it is changed
         // by the user in the temporalWindow
         function currentTimeUpdated(newDate) {
+            console.time("transition");
             this.currentTime = Number(newDate);
             this.applyVisibleTilesStates(newDate, this.tileManager);
+            console.timeEnd("transition");
         }
         const refreshCallback = currentTimeUpdated.bind(this);
 

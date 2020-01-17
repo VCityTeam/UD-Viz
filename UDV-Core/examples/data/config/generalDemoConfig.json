@@ -16,8 +16,8 @@
   "3DTilesLayerURL": "http://rict.liris.cnrs.fr/DataStore/TileSet_LyonFull_Villeurbanne_Bron_2015/tileset.json",
   "3DTilesLayerID": "3d-tiles-layer",
   "3DTilesTemporalLayer" : {
-      "id": "3d-tiles-temporal-layer",
-      "url": "http://localhost:8003/tilesets/3DTiles-temporal/Lyon_2009-2015_Without_Remarkable_256_Tiles/tileset.json"
+    "id": "3d-tiles-temporal-layer",
+    "url": "http://localhost:8003/tilesets/3DTiles-temporal/Lyon_2009-2015_Without_Remarkable_2_Tiles/tileset.json"
   },
   "geocoding":{
     "url":"https://nominatim.openstreetmap.org/search",
