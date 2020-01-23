@@ -96,6 +96,12 @@
       "color": "0xFFFFFF",
       "initTilesManager": "true"
     },
+    "point_clouds":{
+      "id":"3d-tiles-layer-building",
+      "url":"http://localhost:8003/tilesets/local/junk_cloud/tileset.json",
+      "color": "0xFFFFFF",
+      "initTilesManager": "true"
+    },
     "building_1_2_5":{
       "id":"3d-tiles-layer-building_1_2_5",
       "url":"http://rict.liris.cnrs.fr/DataStore/TileSets_Demo_MultiLayerLyon1_Lyon2_Lyon5_2015/tileset_buildings/tileset.json",
