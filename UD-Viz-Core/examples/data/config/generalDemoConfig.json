@@ -86,20 +86,21 @@
     },
     "limonest_building":{
       "id":"3d-tiles-layer-building",
-      "url":"http://localhost:8003/tilesets/local/junk_2015/tileset.json",
+      "url":"http://rict2.liris.cnrs.fr/DataStore/limonest_tiles/tileset.json",
       "color": "0xFFFFFF",
       "initTilesManager": "true"
     },
     "bron_building":{
       "id":"3d-tiles-layer-building",
-      "url":"http://localhost:8003/tilesets/local/junk_buildings/tileset.json",
+      "url":"http://rict2.liris.cnrs.fr/DataStore/bron_tiles/tileset.json",
       "color": "0xFFFFFF",
       "initTilesManager": "true"
     },
     "point_clouds":{
-      "id":"3d-tiles-layer-building",
+      "id":"3d-tiles-layer-point-clouds",
       "url":"http://localhost:8003/tilesets/local/junk_cloud/tileset.json",
       "color": "0xFFFFFF",
+      "pc_size":2,
       "initTilesManager": "true"
     },
     "building_1_2_5":{
