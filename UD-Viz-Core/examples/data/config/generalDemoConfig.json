@@ -1,7 +1,7 @@
 {
   "type": "class",
   "server":{
-    "url":"http://rict.liris.cnrs.fr:1525/",
+    "url":"http://rict2.liris.cnrs.fr:1525/",
     "stableUrl": "http://rict.liris.cnrs.fr:443/",
     "login": "login",
     "user": "user",
@@ -98,7 +98,7 @@
     },
     "point_clouds":{
       "id":"3d-tiles-layer-point-clouds",
-      "url":"http://localhost:8003/tilesets/local/junk_cloud/tileset.json",
+      "url":"http://rict2.liris.cnrs.fr/DataStore/point_clouds_tiles/tileset.json",
       "color": "0xFFFFFF",
       "pc_size":2,
       "initTilesManager": "true"
