@@ -1,18 +1,34 @@
 {
   "type": "class",
-  "server":{
-    "url":"http://rict2.liris.cnrs.fr:1525/",
-    "stableUrl": "http://rict.liris.cnrs.fr:443/",
-    "login": "login",
-    "user": "user",
-    "userMe": "user/me",
-    "document": "document",
-    "documentToValidate": "document/in_validation",
-    "comment" : "comment",
-    "validate": "document/validate",
-    "file": "file",
-    "guidedTour": "guidedTour",
-    "link": "link"
+  "servers": {
+    "lyon": {
+      "url": "http://rict.liris.cnrs.fr:1525/",
+      "stableUrl": "http://rict.liris.cnrs.fr:443/",
+      "login": "login",
+      "user": "user",
+      "userMe": "user/me",
+      "document": "document",
+      "documentToValidate": "document/in_validation",
+      "comment": "comment",
+      "validate": "document/validate",
+      "file": "file",
+      "guidedTour": "guidedTour",
+      "link": "link"
+    },
+    "limonest_bron": {
+      "url": "http://rict2.liris.cnrs.fr:1525/",
+      "stableUrl": "http://rict.liris.cnrs.fr:443/",
+      "login": "login",
+      "user": "user",
+      "userMe": "user/me",
+      "document": "document",
+      "documentToValidate": "document/in_validation",
+      "comment": "comment",
+      "validate": "document/validate",
+      "file": "file",
+      "guidedTour": "guidedTour",
+      "link": "link"
+    }
   },
   "extents": {
     "lyon_5": {
@@ -55,90 +71,97 @@
   "camera": {
     "lyon_villeurbanne_bron": {
       "position": {
-        "range":"3000",
-        "heading":"-49.6",
-        "tilt":"17"
+        "range": "3000",
+        "heading": "-49.6",
+        "tilt": "17"
+      }
+    },
+    "lyon_1_2_5": {
+      "position": {
+        "range": "3000",
+        "heading": "-49.6",
+        "tilt": "17"
       }
     },
     "limonest": {
       "position": {
-        "x":"1837779.25",
-        "y":"5180394.64",
-        "range":"3000",
-        "heading":"0",
-        "tilt":"35"
+        "x": "1837779.25",
+        "y": "5180394.64",
+        "range": "3000",
+        "heading": "0",
+        "tilt": "35"
       }
     },
     "bron": {
       "position": {
-        "range":"3000",
-        "heading":"0",
-        "tilt":"35"
+        "range": "3000",
+        "heading": "0",
+        "tilt": "35"
       }
     }
   },
-  "3DTilesLayer":{
-    "building":{
-      "id":"3d-tiles-layer-building",
-      "url":"http://rict.liris.cnrs.fr/DataStore/TileSet_LyonFull_Villeurbanne_Bron_2015/tileset.json",
+  "3DTilesLayer": {
+    "building": {
+      "id": "3d-tiles-layer-building",
+      "url": "http://rict.liris.cnrs.fr/DataStore/TileSet_LyonFull_Villeurbanne_Bron_2015/tileset.json",
       "color": "0xFFFFFF",
       "initTilesManager": "true"
     },
-    "limonest_building":{
-      "id":"3d-tiles-layer-building",
-      "url":"http://rict2.liris.cnrs.fr/DataStore/limonest_tiles/tileset.json",
+    "limonest_building": {
+      "id": "3d-tiles-layer-building",
+      "url": "http://rict2.liris.cnrs.fr/DataStore/limonest_tiles/tileset.json",
       "color": "0xFFFFFF",
       "initTilesManager": "true"
     },
-    "bron_building":{
-      "id":"3d-tiles-layer-building",
-      "url":"http://rict2.liris.cnrs.fr/DataStore/bron_tiles/tileset.json",
+    "bron_building": {
+      "id": "3d-tiles-layer-building",
+      "url": "http://rict2.liris.cnrs.fr/DataStore/bron_tiles/tileset.json",
       "color": "0xFFFFFF",
       "initTilesManager": "true"
     },
-    "point_clouds":{
-      "id":"3d-tiles-layer-point-clouds",
-      "url":"http://rict2.liris.cnrs.fr/DataStore/point_clouds_tiles/tileset.json",
+    "point_clouds": {
+      "id": "3d-tiles-layer-point-clouds",
+      "url": "http://rict2.liris.cnrs.fr/DataStore/point_clouds_tiles/tileset.json",
       "color": "0xFFFFFF",
-      "pc_size":2,
+      "pc_size": 2,
       "initTilesManager": "true"
     },
-    "building_1_2_5":{
-      "id":"3d-tiles-layer-building_1_2_5",
-      "url":"http://rict.liris.cnrs.fr/DataStore/TileSets_Demo_MultiLayerLyon1_Lyon2_Lyon5_2015/tileset_buildings/tileset.json",
+    "building_1_2_5": {
+      "id": "3d-tiles-layer-building_1_2_5",
+      "url": "http://rict.liris.cnrs.fr/DataStore/TileSets_Demo_MultiLayerLyon1_Lyon2_Lyon5_2015/tileset_buildings/tileset.json",
       "color": "0xFFFFFF",
       "initTilesManager": "true"
     },
-    "relief":{
-      "id":"3d-tiles-layer-relief",
-      "url":"http://rict.liris.cnrs.fr/DataStore/TileSets_Demo_MultiLayerLyon1_Lyon2_Lyon5_2015/tileset_reliefs/tileset.json",
+    "relief": {
+      "id": "3d-tiles-layer-relief",
+      "url": "http://rict.liris.cnrs.fr/DataStore/TileSets_Demo_MultiLayerLyon1_Lyon2_Lyon5_2015/tileset_reliefs/tileset.json",
       "color": "0xD2B48C"
     },
     "water": {
-      "id":"3d-tiles-layer-water",
+      "id": "3d-tiles-layer-water",
       "url": "http://rict.liris.cnrs.fr/DataStore/TileSets_Demo_MultiLayerLyon1_Lyon2_Lyon5_2015/tileset_water_bodies/tileset.json",
       "color": "0xB0E0E6"
     }
   },
-  "geocoding":{
-    "url":"https://nominatim.openstreetmap.org/search",
+  "geocoding": {
+    "url": "https://nominatim.openstreetmap.org/search",
     "credit": "© OpenStreetMap contributors under <a href=\"https://www.openstreetmap.org/copyright\">ODbL</a>",
     "requestTimeIntervalMs": "1000",
-    "result":{
+    "result": {
       "format": "json",
       "basePath": "",
       "lng": "lon",
       "lat": "lat"
     },
-    "parameters":{
-      "q":{
+    "parameters": {
+      "q": {
         "fill": "query"
       },
-      "format":{
+      "format": {
         "fill": "value",
         "value": "json"
       },
-      "viewbox":{
+      "viewbox": {
         "fill": "extent",
         "format": "WEST,SOUTH,EAST,NORTH"
       }
@@ -165,130 +188,133 @@
   },
   "properties": {
     "title": {
-      "name":"title",
+      "name": "title",
       "type": "string",
       "optional": "false",
-      "creationID":"create_title",
-      "labelCreation":"Title of the document",
-      "updatable":"false",
-      "updateID":"update_title",
-      "displayable":"true",
-      "displayID":"title",
-      "label":"false",
-      "queryable":"keyword",
-      "queryID" : "query_name"
+      "creationID": "create_title",
+      "labelCreation": "Title of the document",
+      "updatable": "false",
+      "updateID": "update_title",
+      "displayable": "true",
+      "displayID": "title",
+      "label": "false",
+      "queryable": "keyword",
+      "queryID": "query_name"
     },
     "description": {
-      "name":"description",
+      "name": "description",
       "type": "string",
       "optional": "false",
-      "creationID":"create_description",
-      "labelCreation":"Description",
-      "displayable":"true",
-      "displayID":"description",
-      "label":"Description",
-      "updatable":"true",
-      "updateID":"update_description",
-      "labelUpdate":"Description: ",
-      "queryable":"keyword"
-
+      "creationID": "create_description",
+      "labelCreation": "Description",
+      "displayable": "true",
+      "displayID": "description",
+      "label": "Description",
+      "updatable": "true",
+      "updateID": "update_description",
+      "labelUpdate": "Description: ",
+      "queryable": "keyword"
     },
-    "refDate":{
-      "name":"refDate",
-      "type":"date",
-      "optional":"false",
-      "creationID":"create_refDate",
-      "labelCreation":"Date of referrence",
-      "displayable":"true",
-      "displayID":"refDate",
-      "label":"Referring date",
-      "updatable":"true",
-      "updateID":"update_refDate",
-      "labelUpdate":"Date of referrence",
-      "queryable":"true",
-      "labelQuery":"referring date"
+    "refDate": {
+      "name": "refDate",
+      "type": "date",
+      "optional": "false",
+      "creationID": "create_refDate",
+      "labelCreation": "Date of referrence",
+      "displayable": "true",
+      "displayID": "refDate",
+      "label": "Referring date",
+      "updatable": "true",
+      "updateID": "update_refDate",
+      "labelUpdate": "Date of referrence",
+      "queryable": "true",
+      "labelQuery": "referring date"
     },
-    "publicationDate":{
-      "name":"publicationDate",
-      "type":"date",
-      "optional":"false",
-      "creationID":"create_publicationDate",
-      "labelCreation":"Date of publication",
-      "displayable":"true",
-      "displayID":"publicationDate",
-      "label":"Publication date",
-      "updatable":"true",
-      "updateID":"update_publicationDate",
-      "labelUpdate":"Date of publication",
-      "queryable":"true",
-      "labelQuery":"publication date"
+    "publicationDate": {
+      "name": "publicationDate",
+      "type": "date",
+      "optional": "false",
+      "creationID": "create_publicationDate",
+      "labelCreation": "Date of publication",
+      "displayable": "true",
+      "displayID": "publicationDate",
+      "label": "Publication date",
+      "updatable": "true",
+      "updateID": "update_publicationDate",
+      "labelUpdate": "Date of publication",
+      "queryable": "true",
+      "labelQuery": "publication date"
     },
-    "subject":{
-      "name":"subject",
-      "type":"enum",
-      "enum":["Urbanism", "Architecture", "Tourism"],
-      "optional":"false",
-      "creationID":"create_subject",
-      "labelCreation":"Subject",
-      "displayable":"true",
-      "displayID":"subject",
-      "label":"Subject",
-      "updatable":"true",
-      "updateID":"update_subject",
-      "queryable":"true",
-      "queryID":"query_subject",
-      "labelQuery":"Subject: "
+    "subject": {
+      "name": "subject",
+      "type": "enum",
+      "enum": [
+        "Urbanism",
+        "Architecture",
+        "Tourism"
+      ],
+      "optional": "false",
+      "creationID": "create_subject",
+      "labelCreation": "Subject",
+      "displayable": "true",
+      "displayID": "subject",
+      "label": "Subject",
+      "updatable": "true",
+      "updateID": "update_subject",
+      "queryable": "true",
+      "queryID": "query_subject",
+      "labelQuery": "Subject: "
     },
-    "visualization":{
-      "positionX":{
-        "type":"double",
-        "optional":"false",
-        "displayable":"false"
+    "visualization": {
+      "positionX": {
+        "type": "double",
+        "optional": "false",
+        "displayable": "false"
       },
-      "positionY":{
-        "type":"double",
-        "optional":"false",
-        "displayable":"false"
+      "positionY": {
+        "type": "double",
+        "optional": "false",
+        "displayable": "false"
       },
-      "positionZ":{
-        "type":"double",
-        "optional":"false",
-        "displayable":"false"
+      "positionZ": {
+        "type": "double",
+        "optional": "false",
+        "displayable": "false"
       },
-      "quaternionX":{
-        "type":"double",
-        "optional":"false",
-        "displayable":"false"
+      "quaternionX": {
+        "type": "double",
+        "optional": "false",
+        "displayable": "false"
       },
-      "quaternionY":{
-        "type":"double",
-        "optional":"false",
-        "displayable":"false"
+      "quaternionY": {
+        "type": "double",
+        "optional": "false",
+        "displayable": "false"
       },
-      "quaternionZ":{
-        "type":"double",
-        "optional":"false",
-        "displayable":"false"
+      "quaternionZ": {
+        "type": "double",
+        "optional": "false",
+        "displayable": "false"
       },
-      "quaternionW":{
-        "type":"double",
-        "optional":"false",
-        "displayable":"false"
+      "quaternionW": {
+        "type": "double",
+        "optional": "false",
+        "displayable": "false"
       },
-      "billboardX":{
-        "type":"double",
-        "optional":"true",
-        "displayable":"false"
+      "billboardX": {
+        "type": "double",
+        "optional": "true",
+        "displayable": "false"
       },
-      "billboardY":{
-        "type":"double",
-        "optional":"true",
-        "displayable":"false"
+      "billboardY": {
+        "type": "double",
+        "optional": "true",
+        "displayable": "false"
       },
-      "billboardZ":{
-        "type":"double",
-        "optional":"true",
-        "displayable":"false"
+      "billboardZ": {
+        "type": "double",
+        "optional": "true",
+        "displayable": "false"
       }
     }
   }

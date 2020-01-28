@@ -9,7 +9,6 @@ baseDemo.appendTo(document.body);
 
 baseDemo.loadConfigFile('../data/config/generalDemoConfig.json').then(() => {
     // Use the stable server
-    baseDemo.config.server.url = baseDemo.config.server.stableUrl;
 
     // Initialize iTowns 3D view
     baseDemo.init3DView('lyon_villeurbanne_bron');
@@ -20,6 +19,9 @@ baseDemo.loadConfigFile('../data/config/generalDemoConfig.json').then(() => {
     ////// REQUEST SERVICE
     const requestService = new udvcore.RequestService();
 
+    baseDemo.config.server = baseDemo.config.servers["lyon"];   
+    baseDemo.config.server.url = baseDemo.config.server.stableUrl;
+    
     ////// ABOUT MODULE
     const about = new udvcore.AboutWindow();
     baseDemo.addModuleView('about', about);
