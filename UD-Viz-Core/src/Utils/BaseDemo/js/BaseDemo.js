@@ -412,9 +412,13 @@ export class BaseDemo {
         $3dTilesLayer.url =
             this.config['3DTilesLayer'][layerConfig]['url'];
         $3dTilesLayer.protocol = '3d-tiles';
-
+        
         let material;
-        if (!this.config['3DTilesLayer'][layerConfig]['color']) {
+        if (this.config['3DTilesLayer'][layerConfig]['pc_size'])
+        {
+            material = new THREE.PointsMaterial({ size: this.config['3DTilesLayer'][layerConfig]['pc_size'], vertexColors: THREE.VertexColors });
+        }
+        else if (!this.config['3DTilesLayer'][layerConfig]['color']) {
             material = new THREE.MeshLambertMaterial({ color: 0xFFFFFF });
         } else {
             material =
@@ -422,9 +426,11 @@ export class BaseDemo {
         }
 
         $3dTilesLayer.overrideMaterials = material;
+        $3dTilesLayer.material = material;
 
         itowns.View.prototype.addLayer.call(this.view, $3dTilesLayer);
 
+        
         if (this.config['3DTilesLayer'][layerConfig]['initTilesManager']) {
             // Initialize the 3DTiles manager
             this.tilesManager = new TilesManager(this.view,

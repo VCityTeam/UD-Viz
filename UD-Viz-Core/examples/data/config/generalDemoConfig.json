@@ -1,7 +1,7 @@
 {
   "type": "class",
   "server":{
-    "url":"http://rict.liris.cnrs.fr:1525/",
+    "url":"http://rict2.liris.cnrs.fr:1525/",
     "stableUrl": "http://rict.liris.cnrs.fr:443/",
     "login": "login",
     "user": "user",
@@ -44,6 +44,12 @@
       "max_x": "1842872.59",
       "min_y": "5176992.72",
       "max_y": "5185870.67"
+    },
+    "bron": {
+      "min_x": "1844860.980127206",
+      "max_x": "1851647",
+      "min_y": "5169347.4265999",
+      "max_y": "5175575"
     }
   },
   "camera": {
@@ -62,8 +68,14 @@
         "heading":"0",
         "tilt":"35"
       }
+    },
+    "bron": {
+      "position": {
+        "range":"3000",
+        "heading":"0",
+        "tilt":"35"
+      }
     }
-  
   },
   "3DTilesLayer":{
     "building":{
@@ -74,8 +86,21 @@
     },
     "limonest_building":{
       "id":"3d-tiles-layer-building",
-      "url":"http://localhost:8003/tilesets/local/junk_2015/tileset.json",
+      "url":"http://rict2.liris.cnrs.fr/DataStore/limonest_tiles/tileset.json",
       "color": "0xFFFFFF",
+      "initTilesManager": "true"
+    },
+    "bron_building":{
+      "id":"3d-tiles-layer-building",
+      "url":"http://rict2.liris.cnrs.fr/DataStore/bron_tiles/tileset.json",
+      "color": "0xFFFFFF",
+      "initTilesManager": "true"
+    },
+    "point_clouds":{
+      "id":"3d-tiles-layer-point-clouds",
+      "url":"http://rict2.liris.cnrs.fr/DataStore/point_clouds_tiles/tileset.json",
+      "color": "0xFFFFFF",
+      "pc_size":2,
       "initTilesManager": "true"
     },
     "building_1_2_5":{
