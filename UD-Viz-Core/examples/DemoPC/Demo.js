@@ -25,6 +25,8 @@ baseDemo.loadConfigFile('../data/config/generalDemoConfig.json').then(() => {
     const help  = new udvcore.HelpWindow();
     baseDemo.addModuleView('help', help);
 
+    baseDemo.config.server = baseDemo.config.servers["lyon"];   
+    
     ////// AUTHENTICATION MODULE
     const authenticationService =
         new udvcore.AuthenticationService(requestService, baseDemo.config);
@@ -68,9 +70,9 @@ baseDemo.loadConfigFile('../data/config/generalDemoConfig.json').then(() => {
                                 name: 'Address Search'});
 
 
-    ////// CITY OBJECTS MODULE
-    const cityObjectModule = new udvcore.CityObjectModule(baseDemo.tilesManager, baseDemo.config);
-    baseDemo.addModuleView('cityObjects', cityObjectModule.view);
+     ////// CITY OBJECTS MODULE
+     const cityObjectModule = new udvcore.CityObjectModule(baseDemo.tilesManager, baseDemo.config);
+     baseDemo.addModuleView('cityObjects', cityObjectModule.view);
 
     ////// LINKS MODULES
     const linkModule = new udvcore.LinkModule(documentModule, cityObjectModule,
