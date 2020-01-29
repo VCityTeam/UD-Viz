@@ -19,8 +19,7 @@ baseDemo.loadConfigFile('../data/config/generalDemoConfig.json').then(() => {
     ////// REQUEST SERVICE
     const requestService = new udvcore.RequestService();
 
-    baseDemo.config.server = baseDemo.config.servers["lyon"];   
-    baseDemo.config.server.url = baseDemo.config.server.stableUrl;
+    baseDemo.config.server = baseDemo.config.servers["lyon_stable"];   
     
     ////// ABOUT MODULE
     const about = new udvcore.AboutWindow();
