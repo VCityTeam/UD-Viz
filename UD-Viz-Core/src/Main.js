@@ -35,3 +35,5 @@ export { DocumentValidationModule } from './Extensions/DocumentValidation/Docume
 export { CityObjectModule }         from './Modules/CityObjects/CityObjectModule';
 
 export { LinkModule }               from './Modules/Links/LinkModule';
+
+export { LayerChoice }       from './Extensions/LayerChoice/views/LayerChoice';
