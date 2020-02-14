@@ -22,4 +22,10 @@ baseDemo.loadConfigFile('../data/config/generalDemoConfig.json').then(() => {
     ////// HELP MODULE
     const help  = new udvcore.HelpWindow();
     baseDemo.addModuleView('help', help);
+
+    ////// LAYER CHOICE
+    const layerChoice = new udvcore.LayerChoice(baseDemo.view);
+    baseDemo.addModuleView('layerChoice', layerChoice, {
+        name: 'layerChoice'
+    });
 });
