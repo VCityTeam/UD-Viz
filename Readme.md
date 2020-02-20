@@ -10,7 +10,7 @@ Server-side tools can be found [here](https://github.com/MEPP-team/UD-Viz-server
 
 ## Demo
 Online demos :
- - [UD-Viz](http://rict.liris.cnrs.fr/UDV/UDV-Core/)
+ - [UD-Viz](http://rict.liris.cnrs.fr/UDVDemo/UDV/UDV-Core/)
  - [Vilo3D](http://rict.liris.cnrs.fr/Vilo3D/UDV/Vilo3D/)
  
 ### Camera Controller
