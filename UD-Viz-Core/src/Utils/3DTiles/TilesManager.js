@@ -10,7 +10,7 @@ import { StyleManager } from "./StyleManager.js";
 export class TilesManager {
   /**
    * Creates a new TilesManager from an iTowns view and the 3DTiles layer.
-   * 
+   *
    * @param {*} view The iTowns view.
    * @param {*} layer The 3DTiles layer.
    */
@@ -27,7 +27,7 @@ export class TilesManager {
 
     /**
      * The set of tile wrappers that have been loaded.
-     * 
+     *
      * @type {Array<Tile>}
      */
     this.tiles = [];
@@ -35,14 +35,14 @@ export class TilesManager {
     /**
      * The number of tiles currently loaded by the tile manager. If this number
      * is equal to `totalTileCount`, no more `update` is necessary.
-     * 
+     *
      * @type {number}
      */
     this.loadedTileCount = 0;
 
     /**
      * The total number of tiles in the scene.
-     * 
+     *
      * @type {number}
      */
     this.totalTileCount = 0;
@@ -56,7 +56,7 @@ export class TilesManager {
 
     /**
      * Manages the styles of the city objects.
-     * 
+     *
      * @type {StyleManager}
      */
     this.styleManager = new StyleManager();
@@ -64,7 +64,7 @@ export class TilesManager {
     /**
      * Keep tracks of the update of tiles. Associate each tile with the UUID of
      * their Object3D during the last update.
-     * 
+     *
      * @type {Object.<number, string>}
      */
     this.upToDateTileIds = {};
@@ -105,9 +105,9 @@ export class TilesManager {
 
   /**
    * Returns the city object, if the tile is loaded.
-   * 
+   *
    * @param {CityObjectID} cityObjectId The city object identifier.
-   * 
+   *
    * @return {CityObject}
    */
   getCityObject(cityObjectId) {
@@ -126,10 +126,10 @@ export class TilesManager {
   /**
    * Search and returns the first city object that matches the given predicate.
    * If no city object matches the predicate, `undefined` is returned.
-   * 
+   *
    * @param {(cityObject: CityObject) => boolean} predicate The predicate to
    * determine the city object.
-   * 
+   *
    * @returns {CityObject | undefined} The first city object that matches the
    * predicate, or `undefined` if no city object is found.
    */
@@ -146,10 +146,10 @@ export class TilesManager {
 
   /**
    * Search and returns all city objects that matches the given predicate.
-   * 
+   *
    * @param {(cityObject: CityObject) => boolean} predicate The predicate to
    * determine the city objects.
-   * 
+   *
    * @returns {Array<CityObject>} An array of all the city object that matches
    * the predicate.
    */
@@ -167,7 +167,7 @@ export class TilesManager {
 
   /**
    * Sets the style of a particular city object.
-   * 
+   *
    * @param {CityObjectID | Array<CityObjectID>} cityObjectId The city object
    * identifier.
    * @param {CityObjectStyle | string} style The desired style.
@@ -195,7 +195,7 @@ export class TilesManager {
 
   /**
    * Register a new or modify an existing registered style.
-   * 
+   *
    * @param {string} name A name to identify the style.
    * @param {CityObjectStyle} style The style to register.
    */
@@ -214,7 +214,7 @@ export class TilesManager {
 
   /**
    * Removes the style of a particular city object.
-   * 
+   *
    * @param {CityObjectID | Array<CityObjectID>} cityObjectId The city object
    * identifier.
    */
@@ -243,7 +243,7 @@ export class TilesManager {
 
   /**
    * Removes all styles for the given tile.
-   * 
+   *
    * @param {number} tileId The tile ID.
    */
   removeStyleFromTile(tileId) {
@@ -264,9 +264,9 @@ export class TilesManager {
 
   /**
    * Gets the style applied to a given object ID.
-   * 
+   *
    * @param {CityObjectID} cityObjectId The city object ID.
-   * 
+   *
    * @returns {CityObjectStyle}
    */
   getStyleAppliedTo(cityObjectId) {
@@ -278,7 +278,7 @@ export class TilesManager {
 
   /**
    * Applies the current styles added with `setStyle` or `addStyle`.
-   * 
+   *
    * @param {object} options Options of the method.
    * @param {() => any} [options.updateFunction] The function used to update the
    * view. Default is `udpateITownsView(view, layer)`.
@@ -301,7 +301,7 @@ export class TilesManager {
 
   /**
    * Apply the saved style to the tile given in parameter.
-   * 
+   *
    * @param {number} tileId The ID of the tile to apply the style to.
    * @param {object} options Options of the apply function.
    * @param {boolean} [options.updateView] Whether the view should update at the
@@ -330,9 +330,9 @@ export class TilesManager {
   /**
    * Sets the saved UUID of the tile, so that it should be updated in the next
    * `applyStyles` call.
-   * 
+   *
    * @private
-   * 
+   *
    * @param {number} tileId The ID of the tile to update.
    */
   _markTileToUpdate(tileId) {
@@ -341,9 +341,9 @@ export class TilesManager {
 
   /**
    * Updates the saved UUID of the tile.
-   * 
+   *
    * @private
-   * 
+   *
    * @param {Tile} tile The tile to mark.
    */
   _markTileAsUpdated(tile) {
@@ -358,9 +358,9 @@ export class TilesManager {
 
   /**
    * Checks if the style of the tile should be updated.
-   * 
+   *
    * @private
-   * 
+   *
    * @param {Tile} tile The tile.
    */
   _shouldTileBeUpdated(tile) {
