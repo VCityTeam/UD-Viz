@@ -8,7 +8,7 @@
     "doc": "jsdoc Main.js",
     "doclint": "npm run doc -- -t templates/silent",
     "test": "npm run lint",
-    "build": "webpack -p",
+    "build": "webpack",
     "transpile": "cross-env BABEL_DISABLE_CACHE=1 babel src --out-dir lib",
     "start": "cross-env NODE_ENV=development webpack-dev-server -d --inline --hot",
     "//": "\"prepublish\": \"npm run build && npm run transpile\""
@@ -29,10 +29,10 @@
   "dependencies": {
     "babel-runtime": "^6.20.0",
     "es6-promise": "^4.0.5",
-    "itowns": "2.14.0",
+    "itowns": "2.15.3",
     "moment": "^2.19.0",
     "proj4": "^2.5.0",
-    "three": "^0.108.0"
+    "three": "^0.109.0"
   },
   "devDependencies": {
     "babel-cli": "^6.22.2",
