@@ -33,6 +33,8 @@ export class TransactionsManager {
         this.featuresTransactions = {};
         // TODO: peut etre rentré dans parseTransactions pour éviter deux boucles
         this.findFeaturesTransactions();
+        console.log("TransactionManager.js constructed :");
+        console.log(this);
     }
 
     /**

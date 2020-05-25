@@ -88,6 +88,7 @@ export class TemporalWindow extends Window {
 
         // Eventually inform who it may concern (e.g. an associated iTowns layer)
         // that the currentTime has changed:
+        console.log("View - TemporalWindow.js - call back with new time : " + time);
         this.refreshCallback(this.currentTime);
     }
 }

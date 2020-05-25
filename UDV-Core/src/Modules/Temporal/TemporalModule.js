@@ -72,6 +72,10 @@ export class TemporalModule {
         // Instantiate the temporal window
         // TODO: make it active by default
         this.temporalWindow = new TemporalWindow(refreshCallback, temporalOptions);
+
+        // Test
+        console.log("Test in TemporaleModule.js - Constructor");
+        console.log(this);
     }
 
     initTransactionsStyles() {

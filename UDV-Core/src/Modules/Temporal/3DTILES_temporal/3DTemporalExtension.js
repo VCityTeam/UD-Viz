@@ -34,6 +34,11 @@ export class $3DTemporalExtension extends $3DTAbstractExtension {
      */
     // eslint-disable-next-line class-methods-use-this
     parse(json, context) {
+    // TCH Observation : We pass by this parser 17times before doing something useful (seen with next log)
+        console.log("3DTemporalExtension - parser");
+        console.log(json);
+        console.log(context);
+        
         if (json.transactions) {
             this.temporal_tileset = new $3DTemporalTileset(json);
             return this.temporal_tileset;
