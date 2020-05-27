@@ -118,9 +118,10 @@ export class NetworkManagerSingleton {
         const options = this.get_option(this.current_mode);
         const container = document.getElementById(this.id_network);
         console.log("Drawing [ Mode : %s | Container : %o | Data : %o | Options : %o", this.current_mode, container, this.data, options);
-        var network = new vis.Network(container, this.data, options);
+        this.network = new vis.Network(container, this.data, options);
         console.info("Network drawn");
-        console.log(network);
+        console.log(this.network);
+
         this.has_changed = false;
     }
 
@@ -198,19 +199,22 @@ export class NetworkManagerSingleton {
                     "id": 3,
                     "label": "Limonest 2009",
                     "level": 0,
-                    "group": 1
+                    "group": 1,
+                    "title": "2009"
                 },
                 {
                     "id": 4,
                     "label": "Limonest 2012",
                     "level": 1,
-                    "group": 1
+                    "group": 1,
+                    "title": "2012"
                 },
                 {
                     "id": 5,
                     "label": "Limonest 2015",
                     "level": 2,
-                    "group": 1
+                    "group": 1,
+                    "title": "2015"
                 }
             ],
             "edges": [
@@ -246,43 +250,7 @@ export class NetworkManagerSingleton {
         var options_received = {
             "options":
             [
-/*                {
-                    "visNetwork":
-                    {
-                        "edges": 
-                                {
-                                    "smooth": 
-                                    {
-                                        "type": "cubicBezier"
-                                    },
-                                    "arrows": { "to": true },
-                                    "font":{ "align": "middle"},
-                                    "length":170
-                                },
-                        "groups":
-                                {
-                                    "useDefaultGroups": true,
-                                    "timeFrame":{
-                                        "color": "white",
-                                        "hidden": "true"
-                                    },
-                                    "consensusScenario":{
-                                        "color": "green"
-                                    },
-                                    "propositionScenario":{
-                                        "color": "yellow"
-                                    }
-                                },
-                        "physics":
-                                {
-                                    "enabled": true
-        
-                                }
-                    }
-                    
-                },
-*/              {
-//                    "mode":"hierarchy",
+              {
                     "visNetwork":{
                         "edges": 
                         {
@@ -348,6 +316,17 @@ export class NetworkManagerSingleton {
 
         //n.add_button_to_view();
         n.draw();
+    }
+
+
+    add_event(callback){
+        this.network.on("click", function (params) {
+            let nodeId = this.getNodeAt(params.pointer.DOM);
+            let node = this.body.nodes[nodeId];
+            let time = node.options.title;
+                console.log("node : %o",time);
+                callback(time);
+            });
     }
 }
 /*

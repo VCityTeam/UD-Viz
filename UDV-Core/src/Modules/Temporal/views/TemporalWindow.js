@@ -82,9 +82,10 @@ export class TemporalWindow extends Window {
             'input', this.timeSelection.bind(this), false);
         document.getElementById('timeSlider').addEventListener(
             'input', this.timeSelectionSlider.bind(this), false);
-*/
+        */
         // Add graph
         this.networkManagerSingleton.init();
+        this.networkManagerSingleton.add_event((param)=>{this.changeTime(param)});
     }
 /*
     // TODO: not sure we need two methods doing the same thing here.
@@ -99,17 +100,17 @@ export class TemporalWindow extends Window {
         var timeFromSlider = document.getElementById('timeSlider').value.toString();
         this.changeTime(timeFromSlider);
     }
-
+*/
     // change the current date and sync the temporal version to this new date
     changeTime(time) {
         this.currentTime = time;
 
-        document.getElementById('timeSlider').value = time;
-        document.getElementById('timeSliderValue').value = time;
+        //document.getElementById('timeSlider').value = time;
+        //document.getElementById('timeSliderValue').value = time;
 
         // Eventually inform who it may concern (e.g. an associated iTowns layer)
         // that the currentTime has changed:
         this.refreshCallback(this.currentTime);
     }
-    */
+
 }
