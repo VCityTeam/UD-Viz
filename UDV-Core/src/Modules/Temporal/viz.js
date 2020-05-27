@@ -178,86 +178,38 @@ export class NetworkManagerSingleton {
             "nodes": [
                   {
                     "id": 0,
-                    "label": "2000",
+                    "label": "2009",
                     "level": 0,
                     "group": 0
                 },
                 {
                     "id": 1,
-                    "label": "2001",
+                    "label": "2012",
                     "level": 1,
                     "group": 0
                 },
                 {
                     "id": 2,
-                    "label": "2002",
+                    "label": "2015",
                     "level": 2,
                     "group": 0
                 },
                 {
                     "id": 3,
-                    "label": "2003",
-                    "level": 3,
-                    "group": 0
-                },
-                {
-                    "id": 4,
-                    "label": "2004",
-                    "level": 4,
-                    "group": 0
-                },
-                {
-                    "id": 5,
-                    "label": "2005",
-                    "level": 5,
-                    "group": 0
-                },
-                {
-                    "id": 6,
-                    "label": "C_2000",
+                    "label": "Limonest 2009",
                     "level": 0,
                     "group": 1
                 },
                 {
-                    "id": 7,
-                    "label": "C_2002",
+                    "id": 4,
+                    "label": "Limonest 2012",
+                    "level": 1,
+                    "group": 1
+                },
+                {
+                    "id": 5,
+                    "label": "Limonest 2015",
                     "level": 2,
-                    "group": 1
-                },
-                {
-                    "id": 8,
-                    "label": "C_2004",
-                    "level": 4,
-                    "group": 1
-                },
-                {
-                    "id": 9,
-                    "label": "P_2001",
-                    "level": 1,
-                    "group": 2
-                },
-                {
-                    "id": 10,
-                    "label": "P_2001",
-                    "level": 1,
-                    "group": 2
-                },
-                {
-                    "id": 11,
-                    "label": "P_2004",
-                    "level": 4,
-                    "group": 2
-                },
-                {
-                    "id": 12,
-                    "label": "C_2005",
-                    "level": 5,
-                    "group": 1
-                },
-                {
-                    "id": 13,
-                    "label": "C_2005_bis",
-                    "level": 5,
                     "group": 1
                 }
             ],
@@ -271,60 +223,13 @@ export class NetworkManagerSingleton {
                     "to": 2
                 },
                 {
-                    "from": 2,
-                    "to": 3
-                },
-                {
                     "from": 3,
                     "to": 4
                 },
                 {
                     "from": 4,
                     "to": 5
-                },
-                {
-                    "from": 6,
-                    "to": 7,
-                    "color": "red",
-                    "label": "modification"
-                },
-                {
-                    "from": 7,
-                    "to": 8,
-                    "color": "red",
-                    "label": "modification"
-                },
-                {
-                    "from": 8,
-                    "to": 12,
-                    "color": "blue",
-                    "label": "split"
-                },
-                {
-                    "from": 8,
-                    "to": 13,
-                    "color": "blue",
-                    "label": "split"
-                },
-                {
-                    "from": 9,
-                    "to": 7,
-                    "color": "green",
-                    "label": "merge"
-                },
-                {
-                    "from": 10,
-                    "to": 7,
-                    "color": "green",
-                    "label": "merge"
-                },
-                {
-                    "from": 7,
-                    "to": 11,
-                    "color": "black",
-                    "label": "destruction"
                 }
-        
             ],
             "groups":[
                 {
@@ -334,10 +239,6 @@ export class NetworkManagerSingleton {
                 {
                     "id":1,
                     "label": "consensusScenario"
-                },
-                {
-                    "id":2,
-                    "label": "propositionScenario"
                 }
             ]
         };
@@ -408,13 +309,10 @@ export class NetworkManagerSingleton {
                             "useDefaultGroups": true,
                             "timeFrame":{
                                 "color":"white",
-                                "hidden": false
+                                "hidden": false,
                             },
                             "consensusScenario":{
                                 "color": "green"
-                            },
-                            "propositionScenario":{
-                                "color": "yellow"
                             }
                         },
                         "layout": 
