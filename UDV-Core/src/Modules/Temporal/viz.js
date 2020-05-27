@@ -181,19 +181,22 @@ export class NetworkManagerSingleton {
                     "id": 0,
                     "label": "2009",
                     "level": 0,
-                    "group": 0
+                    "group": 0,
+                    "title": "2009"
                 },
                 {
                     "id": 1,
                     "label": "2012",
                     "level": 1,
-                    "group": 0
+                    "group": 0,
+                    "title": "2012"
                 },
                 {
                     "id": 2,
                     "label": "2015",
                     "level": 2,
-                    "group": 0
+                    "group": 0,
+                    "title": "2015"
                 },
                 {
                     "id": 3,
@@ -294,7 +297,13 @@ export class NetworkManagerSingleton {
                                 "nodeSpacing": 100,
                             }
                         },
-                        "interaction": { "dragNodes": false },
+                        "interaction": {
+                            "dragNodes": false,
+                            "hover": true,
+                            "hoverConnectedEdges": false,
+                            "selectConnectedEdges": false
+
+                         },
                         "physics": 
                         {
                         "enabled": false
@@ -320,12 +329,23 @@ export class NetworkManagerSingleton {
 
 
     add_event(callback){
-        this.network.on("click", function (params) {
+        this.network.on("selectNode", function (params) {
             let nodeId = this.getNodeAt(params.pointer.DOM);
+            console.log(nodeId);
             let node = this.body.nodes[nodeId];
             let time = node.options.title;
-                console.log("node : %o",time);
-                callback(time);
+            console.log("Node selected : %s", time);
+            callback(time);
+            });
+
+        this.network.on("selectEdge", function (params) {
+            let edgeId = this.getEdgeAt(params.pointer.DOM);
+            let connectedNodesId = this.getConnectedNodes(edgeId);
+            let from_time = this.body.nodes[connectedNodesId[0]].options.title
+            let to_time = this.body.nodes[connectedNodesId[1]].options.title
+            let time = (from_time/1 + to_time/1) / 2 ;
+            console.log("Edge selected : %s", time);
+            callback(time);
             });
     }
 }
