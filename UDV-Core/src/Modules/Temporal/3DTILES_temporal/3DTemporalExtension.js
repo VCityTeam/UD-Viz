@@ -8,6 +8,8 @@ import { $3DTemporalPrimaryTransaction } from './3DTemporalPrimaryTransaction';
 import {$3DTemporalTransactionAggregate} from "./3DTemporalTransactionAggregate";
 import {$3DTemporalVersion} from "./3DTemporalVersion";
 import {$3DTemporalVersionTransition} from "./3DTemporalVersionTransition";
+import { NetworkManagerSingleton } from "../viz";
+
 
 /**
  * @module TemporalExtension
@@ -36,11 +38,18 @@ export class $3DTemporalExtension extends $3DTAbstractExtension {
      */
     // eslint-disable-next-line class-methods-use-this
     parse(json, context) {
+        console.log("parser : %o", json);
     // TCH Observation : We pass by this parser 17times before doing something useful (seen with next log)
-        console.log("3DTemporalExtension - parser");
-        console.log(json);
-        console.log(context);
-        
+        if (json.graphData) {
+                    let n = new NetworkManagerSingleton();
+                    n.data = json.graphData;
+                    console.log("3d temporal : %o", n);
+                }
+        if (json.graphOption) {
+                    let n = new NetworkManagerSingleton();
+                    n.list_option = json.graphOption;
+                    console.log("3d temporal : %o", n);
+                }
         if (json.transactions) {
             this.temporal_tileset = new $3DTemporalTileset(json);
             return this.temporal_tileset;

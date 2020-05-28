@@ -3,27 +3,31 @@ import * as vis from 'vis-network';
 import { get_data, get_list_options } from "./Utils/json_parser";
 
 export class NetworkManagerSingleton {
-    constructor(start_mode="default", id_network="mynetwork", id_button_location="mybuttons", hidden_button="mode"){
+    constructor(start_mode="default",
+                id_network="mynetwork",
+                id_button_location="mybuttons",
+                hidden_button="mode"){
     /**
      * Constructor for singleton
      */
         const instance = this.constructor.instance;
+        console.log("Singleton ? %o", instance);
         if(instance){
+            console.log("Singleton unlimited power : %o", this);
             return instance;
         }
         else{
             this.network = null;
             this.data = null;
-            this.data_ok = false;
-            this.list_options_ok = false;
             this.list_option = null;
             this.has_changed = true;
             this.current_mode = start_mode;
             this.id_network = id_network;
             this.id_button_location = id_button_location;
-            this.hidden_button = hidden_button
+            this.hidden_button = hidden_button;
 
             this.constructor.instance = this;
+            console.log("Singleton first power : %o", this);
         }
 
     }
@@ -39,9 +43,8 @@ export class NetworkManagerSingleton {
         }
     }
 
-    init(url_data="http://localhost:5000/data.json", url_option="http://localhost:5000/options.json"){
-        console.log("NetworkManager init from url data: %s || options: %s", url_data, url_option);
-        this.prepare_html_pages(url_data, url_option);
+    init(){
+        this.prepare_html_pages();
     }
 
     get_option(mode){
@@ -116,6 +119,7 @@ export class NetworkManagerSingleton {
         this.destroy();  
     
         const options = this.get_option(this.current_mode);
+        console.log("test vis %o",this);
         const container = document.getElementById(this.id_network);
         console.log("Drawing [ Mode : %s | Container : %o | Data : %o | Options : %o", this.current_mode, container, this.data, options);
         this.network = new vis.Network(container, this.data, options);
@@ -125,7 +129,7 @@ export class NetworkManagerSingleton {
         this.has_changed = false;
     }
 
-    prepare_html_pages(data_url, data_option) {
+    prepare_html_pages() {
         //var button_load = document.getElementById("getData");
         //button_load.onclick = function(param) {
         
@@ -174,7 +178,7 @@ export class NetworkManagerSingleton {
 
         //}
         // mode dégradé
-        
+/*
         var data_received = {
             "nodes": [
                   {
@@ -312,16 +316,14 @@ export class NetworkManagerSingleton {
                 }
             ]
         };
-
-        var result_d = data_received;
+*/
+        var result_d = n.data;
         console.log("result data: %o", result_d);
         n.data = get_data(result_d);
-        n.data_ok = true;
 
-        var result_o = options_received;
+        var result_o = n.list_option;
         console.log("result option: %o", result_o);
         n.list_option = get_list_options(result_o);
-        n.list_options_ok = true;
 
         //n.add_button_to_view();
         n.draw();

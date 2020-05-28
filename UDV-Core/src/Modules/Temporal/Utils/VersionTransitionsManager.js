@@ -14,7 +14,6 @@ export class VersionTransitionsManager {
         let item;
         for (let i = 0; i < versionTransitions.length; i++) {
             item = versionTransitions[i];
-            console.log(item)
             versionTransition = new $3DTemporalVersionTransition(item);
             parsedVersionTransition.push(versionTransition);
 

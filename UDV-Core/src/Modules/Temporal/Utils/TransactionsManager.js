@@ -10,7 +10,6 @@ export class TransactionsManager {
          * @type {Array}
          */
         this.transactions = this.parseTransactions(transactions);
-
         /**
          * A dictionary of transactions organized per feature, used for
          * optimisation and structured as follows:
@@ -33,8 +32,6 @@ export class TransactionsManager {
         this.featuresTransactions = {};
         // TODO: peut etre rentré dans parseTransactions pour éviter deux boucles
         this.findFeaturesTransactions();
-        console.log("TransactionManager.js constructed :");
-        console.log(this);
     }
 
     /**

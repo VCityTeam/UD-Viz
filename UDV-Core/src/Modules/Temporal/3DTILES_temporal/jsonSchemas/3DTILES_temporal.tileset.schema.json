@@ -32,6 +32,14 @@
         {"$ref": "3DTILES_temporal.primaryTransaction.schema.json"},
         {"$ref": "3DTILES_temporal.transactionAggregate.schema.json"}
       ]}
+    },
+    "graphData": {
+      "description": "Data for the graph",
+      "type": "string"
+    },
+    "graphOption": {
+      "description": "Option for the graph",
+      "type": "string"
     }
   }
 }

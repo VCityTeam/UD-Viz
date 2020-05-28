@@ -26,7 +26,6 @@ export function get_data(json_object) {
         nodes: get_nodes(json_object),
         edges: get_edges(json_object)
       };
-    console.log("Data parsed for vis.Network : %o", data);
     return data;
 }
 
@@ -77,7 +76,6 @@ function get_modes(json_object){
             }
         }
     }
-    console.log("List mode found : %s", ret);
     return ret;
 }
 
@@ -133,7 +131,6 @@ export function get_list_options(json_object) {
         }
     }
 
-    console.log("List options found : %o", ret);
     return ret;
     
 }

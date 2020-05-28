@@ -14,7 +14,6 @@ export class VersionsManager {
         let item;
         for (let i = 0; i < versions.length; i++) {
             item = versions[i];
-            console.log(item)
             version = new $3DTemporalVersion(item);
             parsedVersion.push(version);
 

@@ -47,6 +47,7 @@ export class TemporalModule {
         extensions.registerExtension('3DTILES_temporal',
             this.temporalExtension);
         this.layer.defineLayerProperty('registeredExtensions', extensions);
+        console.log("Test2 in TemporaleModule.js - Constructor : %o", this);
 
         itowns.View.prototype.addLayer.call(itownsView, this.layer);
 
@@ -71,11 +72,15 @@ export class TemporalModule {
 
         // Instantiate the temporal window
         // TODO: make it active by default
-        this.temporalWindow = new TemporalWindow(refreshCallback, temporalOptions);
+        console.log("Test1 in TemporaleModule.js - Constructor : %o", this);
+
+        this.temporalWindow = new TemporalWindow(refreshCallback,
+                        temporalOptions);
 
         // Test
-        console.log("Test in TemporaleModule.js - Constructor");
-        console.log(this);
+        console.log("Test in TemporaleModule.js - Constructor : %o", this);
+        let a = this.temporalExtension.endDate;
+        console.log("data %o", a);
     }
 
     initTransactionsStyles() {
