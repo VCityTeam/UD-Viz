@@ -1,4 +1,4 @@
-# UD-Viz : Urban Data Vizualsiation
+# UD-Viz : Urban Data Vizualisation
 
 UD-Viz is a JavaScript client based on [iTowns](https://github.com/itowns/itowns) 
 allowing to visualize, analyse and interact with urban data.
