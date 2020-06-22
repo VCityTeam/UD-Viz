@@ -168,7 +168,7 @@ export function setTileVerticesColor(tile, newColor, indexArray = null) {
   }
 
   //We need to use the color of the vertices, not the material
-  tile.material.vertexColors = THREE.VertexColors;
+  tile.material.vertexColors = true;
 
   if (!tile.geometry.attributes.color) {
     //If no vertex color is present, we need to add the BufferAttribute
@@ -424,7 +424,7 @@ export function removeTileVerticesColor(tile) {
   tile.geometry.deleteAttribute('color');
 
   //We go back to the color of the material
-  tile.material.vertexColors = THREE.NoColors;
+  tile.material.vertexColors = false;
 }
 
 /**

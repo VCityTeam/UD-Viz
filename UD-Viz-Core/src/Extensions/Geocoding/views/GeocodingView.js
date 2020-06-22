@@ -130,7 +130,7 @@ export class GeocodingView extends ModuleView {
   getWorldCoordinates(lat, lng) {
     const [targetX, targetY] = proj4('EPSG:3946').forward([lng, lat]);
     const coords = new Coordinates('EPSG:3946', targetX, targetY, 0);
-    const elevation = itowns.DEMUtils.getElevationValueAt(this.planarView.tileLayer, coords);
+    const elevation = itowns.DEMUtils.getTerrainObjectAt(this.planarView.tileLayer, coords);
     const targetZ = (!!elevation) ? elevation.z : undefined;
     return new THREE.Vector3(targetX, targetY, targetZ);
   }

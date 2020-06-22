@@ -417,7 +417,7 @@ export class BaseDemo {
         let material;
         if (this.config['3DTilesLayer'][layerConfig]['pc_size'])
         {
-            material = new THREE.PointsMaterial({ size: this.config['3DTilesLayer'][layerConfig]['pc_size'], vertexColors: THREE.VertexColors });
+            material = new THREE.PointsMaterial({ size: this.config['3DTilesLayer'][layerConfig]['pc_size'], vertexColors: true });
         }
         else if (!this.config['3DTilesLayer'][layerConfig]['color']) {
             material = new THREE.MeshLambertMaterial({ color: 0xFFFFFF });
