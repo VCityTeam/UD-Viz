@@ -411,7 +411,9 @@ export class BaseDemo {
         var $3dTilesLayer = new itowns.C3DTilesLayer(
             this.config['3DTilesLayer'][layerConfig]['id'], {
                 name: 'Lyon-2015-'.concat(layerConfig),
-                url: this.config['3DTilesLayer'][layerConfig]['url'],
+                source: new itowns.C3DTilesSource({
+                    url: this.config['3DTilesLayer'][layerConfig]['url'],
+                }),
             }, this.view);
 
         let material;
