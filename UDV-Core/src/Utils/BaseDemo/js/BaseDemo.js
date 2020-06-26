@@ -381,8 +381,8 @@ export class BaseDemo {
         // Define geographic extent: CRS, min/max X, min/max Y
         this.extent = new itowns.Extent(
             'EPSG:3946',
-            1837860.980127206, 1847648.6685636174,
-            5169347.42659997, 5180280.0400808845);
+            1833742.43, 1842872.59,
+            5176992.72, 5185870.67);
 
         // `viewerDiv` will contain iTowns' rendering area (`<canvas>`)
         let viewerDiv = document.getElementById('viewerDiv');
@@ -428,8 +428,8 @@ export class BaseDemo {
         let wmsElevationLayer = new
         itowns.ElevationLayer('wms_elevation', {
             useColorTextureElevation: true,
-            colorTextureElevationMinZ: 37,
-            colorTextureElevationMaxZ: 240,
+            colorTextureElevationMinZ: 144,
+            colorTextureElevationMaxZ: 622,
             source: wmsElevationSource,
         });
         this.view.addLayer(wmsElevationLayer);
