@@ -351,7 +351,7 @@ export class BaseDemo {
     addLyonWMSLayer() {
          let wmsImagerySource = new itowns.WMSSource({
             extent: this.extent,
-            name: 'Ortho2009_vue_ensemble_16cm_CC46',
+            name: 'Ortho2018_Dalle_unique_8cm_CC46',
             url: 'https://download.data.grandlyon.com/wms/grandlyon',
             version: '1.3.0',
             projection: 'EPSG:3946',
@@ -371,7 +371,7 @@ export class BaseDemo {
         let wmsElevationSource = new itowns.WMSSource({
             extent: this.extent,
             url: 'https://download.data.grandlyon.com/wms/grandlyon',
-            name: 'MNT2012_Altitude_10m_CC46',
+            name: 'MNT2018_Altitude_2m',
             projection: 'EPSG:3946',
             heightMapWidth: 256,
             format: 'image/jpeg',
