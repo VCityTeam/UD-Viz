@@ -14,6 +14,7 @@ export class BaseDemo {
         this.requireAuthModules = [];
         this.authService;
         this.config = {};
+        this.ifcText;
         this.parentElement;
         this.view;  // itowns view (3d scene)
         this.extent;  // itowns extent (city limits)
@@ -141,7 +142,7 @@ export class BaseDemo {
      */
     addModuleView(moduleId, moduleClass, options = {}) {
         if ((typeof (moduleClass.enable) !== 'function')
-         || (typeof (moduleClass.disable) !== 'function')) {
+            || (typeof (moduleClass.disable) !== 'function')) {
             throw 'A module must implement at least an enable() and a disable() methods';
         }
 
@@ -149,9 +150,9 @@ export class BaseDemo {
         // myModule -> My Module
         // my_module -> My module
         let moduleName = moduleId
-        .replace(/([A-Z])/g, ' $1')
-        .replace(/_/g, ' ')
-        .replace(/^./, (str) => str.toUpperCase());
+            .replace(/([A-Z])/g, ' $1')
+            .replace(/_/g, ' ')
+            .replace(/^./, (str) => str.toUpperCase());
         let type = BaseDemo.MODULE_VIEW;
         let requireAuth = false;
         if (!!options) {
@@ -349,9 +350,9 @@ export class BaseDemo {
      * Adds WMS elevation Layer of Lyon in 2012 and WMS imagery layer of Lyon in 2009 (from Grand Lyon data).
      */
     addLyonWMSLayer() {
-         let wmsImagerySource = new itowns.WMSSource({
+        let wmsImagerySource = new itowns.WMSSource({
             extent: this.extent,
-            name: 'Ortho2009_vue_ensemble_16cm_CC46',
+            name: 'ima_gestion_images.imaortho2018ecw5km8cmcc46',
             url: 'https://download.data.grandlyon.com/wms/grandlyon',
             version: '1.3.0',
             projection: 'EPSG:3946',
@@ -371,19 +372,19 @@ export class BaseDemo {
         let wmsElevationSource = new itowns.WMSSource({
             extent: this.extent,
             url: 'https://download.data.grandlyon.com/wms/grandlyon',
-            name: 'MNT2012_Altitude_10m_CC46',
+            name: 'MNT2015_Altitude_10m',
             projection: 'EPSG:3946',
             heightMapWidth: 256,
             format: 'image/jpeg',
         });
         // Add a WMS elevation layer
         let wmsElevationLayer = new
-        itowns.ElevationLayer('wms_elevation', {
-            useColorTextureElevation: true,
-            colorTextureElevationMinZ: 144,
-            colorTextureElevationMaxZ: 622,
-            source: wmsElevationSource,
-        });
+            itowns.ElevationLayer('wms_elevation', {
+                useColorTextureElevation: true,
+                colorTextureElevationMinZ: 144,
+                colorTextureElevationMaxZ: 622,
+                source: wmsElevationSource,
+            });
         this.view.addLayer(wmsElevationLayer);
     }
 
@@ -399,11 +400,11 @@ export class BaseDemo {
         // Positional arguments verification
         if (!this.config['3DTilesLayer'][layerConfig]) {
             throw "Your layer is not one of the properties of 3DTilesLayer object " +
-                "(in UD-Viz/UD-Viz-Core/examples/data/config/generalDemoConfig.json).";
+            "(in UD-Viz/UD-Viz-Core/examples/data/config/generalDemoConfig.json).";
         }
         if (!this.config['3DTilesLayer'][layerConfig]['id'] || !this.config['3DTilesLayer'][layerConfig]['url']) {
             throw "Your layer does not have 'url'/'id' properties or both. " +
-                "(in UD-Viz/UD-Viz-Core/examples/data/config/generalDemoConfig.json)";
+            "(in UD-Viz/UD-Viz-Core/examples/data/config/generalDemoConfig.json)";
         }
 
         let $3dTilesLayer = new itowns.GeometryLayer(
@@ -412,17 +413,16 @@ export class BaseDemo {
         $3dTilesLayer.url =
             this.config['3DTilesLayer'][layerConfig]['url'];
         $3dTilesLayer.protocol = '3d-tiles';
-        
+
         let material;
-        if (this.config['3DTilesLayer'][layerConfig]['pc_size'])
-        {
+        if (this.config['3DTilesLayer'][layerConfig]['pc_size']) {
             material = new THREE.PointsMaterial({ size: this.config['3DTilesLayer'][layerConfig]['pc_size'], vertexColors: THREE.VertexColors });
         }
         else if (!this.config['3DTilesLayer'][layerConfig]['color']) {
             material = new THREE.MeshLambertMaterial({ color: 0xFFFFFF });
         } else {
             material =
-                new THREE.MeshLambertMaterial({color: parseInt(this.config['3DTilesLayer'][layerConfig]['color'])});
+                new THREE.MeshLambertMaterial({ color: parseInt(this.config['3DTilesLayer'][layerConfig]['color']) });
         }
 
         $3dTilesLayer.overrideMaterials = material;
@@ -430,11 +430,46 @@ export class BaseDemo {
 
         itowns.View.prototype.addLayer.call(this.view, $3dTilesLayer);
 
-        
+
         if (this.config['3DTilesLayer'][layerConfig]['initTilesManager']) {
             // Initialize the 3DTiles manager
             this.tilesManager = new TilesManager(this.view,
                 this.view.getLayerById(this.config['3DTilesLayer'][layerConfig]['id']));
+        }
+    }
+
+    /**
+     * Adds a 3D Tiles layer to the iTowns 3D view.
+     * @param {string} layerConfig The name of the type of object to add to the view. This name should
+     * be one of the properties of the 3DTilesLayer object (in UD-Viz/UD-Viz-Core/examples/data/config/generalDemoConfig.json
+     * config file).
+     */
+    add3DTilesLayerFromIfc() {
+        //  ADD 3D Tiles Layer
+
+        // Positional arguments verification
+        if (!this.ifcText) {
+            throw "Your IFCText file was not download correctly ";
+        }
+        var tilesToLoad = this.ifcText.split(';');
+        for (let i = 0; i < tilesToLoad.length; i++) {
+            var tile = tilesToLoad[i]; 
+            let $3dTilesLayer = new itowns.GeometryLayer(
+                tile, new THREE.Group());
+            $3dTilesLayer.name = tile;
+            $3dTilesLayer.url =  "http://localhost:8003/tilesets/" + tile + "/tileset.json";
+            $3dTilesLayer.protocol = '3d-tiles';
+
+            let material = new THREE.MeshLambertMaterial({ color: 0xFFFFFF });
+  
+            $3dTilesLayer.overrideMaterials = material;
+            $3dTilesLayer.material = material;
+
+            itowns.View.prototype.addLayer.call(this.view, $3dTilesLayer);
+            
+            this.tilesManager = new TilesManager(this.view,
+                this.view.getLayerById(tile));
+
         }
     }
 
@@ -486,21 +521,21 @@ export class BaseDemo {
         let tilt = parseFloat(this.config['camera'][area]['position']['tilt']);
         let heading = parseFloat(this.config['camera'][area]['position']['heading']);
 
-        if (this.config['camera'][area]['position']['x'] 
-          && this.config['camera'][area]['position']['y']) {
-          coordinates = new itowns.Coordinates('EPSG:3946',
-            parseInt(this.config['camera'][area]['position']['x']),
-            parseInt(this.config['camera'][area]['position']['y']));
+        if (this.config['camera'][area]['position']['x']
+            && this.config['camera'][area]['position']['y']) {
+            coordinates = new itowns.Coordinates('EPSG:3946',
+                parseInt(this.config['camera'][area]['position']['x']),
+                parseInt(this.config['camera'][area]['position']['y']));
         }
 
         let p = {
             coord: coordinates, heading: heading, range: range, tilt: tilt
-          };
+        };
 
         itowns.CameraUtils.transformCameraToLookAtTarget(this.view, this.view.camera.camera3D, p);
 
         // Controls
-        this.controls = new itowns.PlanarControls(this.view, {maxZenithAngle: 180, groundLevel: -100, handleCollision: false});
+        this.controls = new itowns.PlanarControls(this.view, { maxZenithAngle: 180, groundLevel: -100, handleCollision: false });
 
         // Set sky color to blue
         this.view.mainLoop.gfxEngine.renderer.setClearColor(0x6699cc, 1);
@@ -508,7 +543,7 @@ export class BaseDemo {
     /*
     * Updates the 3D view by notifying iTowns that it changed (e.g. because a layer has been added).
     */
-     update3DView() {
+    update3DView() {
         // Request itowns view redraw
         this.view.notifyChange();
     }
@@ -530,6 +565,28 @@ export class BaseDemo {
             },
             error: (e) => {
                 throw 'Could not load config file : ' + filePath;
+            }
+        });
+    }
+
+
+    /**
+ * Loads a list of tileset from an IFC file. Module views should only be added after calling
+ * this method.
+ * @param filePath The path to the config file.
+ */
+    async loadIfcFile(filePath) {
+        //loading configuration file
+        // see https://github.com/MEPP-team/VCity/wiki/Configuring-UDV
+        return $.ajax({
+            type: "GET",
+            url: "../data/config/tileset.txt",
+            datatype: "text",
+            success: (data) => {
+                this.ifcText = data;
+            },
+            error: (e) => {
+                throw 'Could not load ifc Text';
             }
         });
     }

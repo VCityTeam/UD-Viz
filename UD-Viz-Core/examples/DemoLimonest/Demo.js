@@ -9,9 +9,14 @@ baseDemo.appendTo(document.body);
 
 baseDemo.loadConfigFile('../data/config/generalDemoConfig.json').then(() => {
     // Initialize iTowns 3D view
+    baseDemo.loadIfcFile(' ').then(() => {
+    
     baseDemo.init3DView('limonest');
     baseDemo.addLyonWMSLayer();
+    baseDemo.add3DTilesLayerFromIfc();
     baseDemo.add3DTilesLayer('limonest_building');
+    //baseDemo.add3DTilesLayer('wall');
+
     baseDemo.update3DView();
 
     ////// REQUEST SERVICE
@@ -87,4 +92,11 @@ baseDemo.loadConfigFile('../data/config/generalDemoConfig.json').then(() => {
     const cameraPosition = new udvcore.CameraPositionerView(baseDemo.view,
         baseDemo.controls);
     baseDemo.addModuleView('cameraPositioner', cameraPosition);
+
+        ////// LAYER CHOICE
+        const layerChoice = new udvcore.LayerChoice(baseDemo.view);
+        baseDemo.addModuleView('layerChoice', layerChoice, {
+            name: 'layerChoice'
+        });
+    })
 });
