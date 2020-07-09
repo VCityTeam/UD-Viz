@@ -91,7 +91,6 @@ function get_option_by_mode(json_object, mode){
      
     var list_options = json_object.options;
     if (list_options === undefined){
-        console.info("No options provided");
         return ret;
     }
 
@@ -134,18 +133,3 @@ export function get_list_options(json_object) {
     return ret;
     
 }
-/*
-export function get_data_and_options(json_path){
-    const json_obj = get_graph_from_json_file(json_path);
-    const ret = {
-        "data": get_data(json_obj),
-        "list_options": get_list_options(json_obj)
-    };
-    return ret;
-}
-*/
-// test
-
-//var json_obj = get_graph_from_json_file('input/urban_graph.json');
-//get_data(json_obj);
-//get_list_options(json_obj);
