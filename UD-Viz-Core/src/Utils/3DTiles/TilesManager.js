@@ -47,8 +47,8 @@ export class TilesManager {
      */
     this.totalTileCount = 0;
 
-    if (this.layer.tileIndex !== undefined) {
-      this.totalTileCount = Object.keys(this.layer.tileIndex.index).length - 1;
+    if (this.layer.tileset !== undefined) {
+      this.totalTileCount = Object.keys(this.layer.tileset.tiles).length - 1;
     }
 
     ///// STYLE
@@ -77,13 +77,13 @@ export class TilesManager {
    * listeners to events of the 3DTiles layer (tile loading / unloading).
    */
   update() {
-    if (this.layer.tileIndex === undefined) {
+    if (this.layer.tileset === undefined) {
       // Cannot update yet because the layer is not fully loaded.
       return;
     }
 
     if (this.totalTileCount === 0) {
-      this.totalTileCount = Object.keys(this.layer.tileIndex.index).length - 1;
+      this.totalTileCount = Object.keys(this.layer.tileset.tiles).length - 1;
     }
 
     if (this.loadedTileCount === this.totalTileCount) {
