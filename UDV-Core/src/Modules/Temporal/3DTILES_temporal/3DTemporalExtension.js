@@ -39,14 +39,26 @@ export class $3DTemporalExtension extends $3DTAbstractExtension {
     // eslint-disable-next-line class-methods-use-this
     parse(json, context) {
     // TCH Observation : We pass by this parser 17times before doing something useful (seen with next log)
-        if (json.graphData) {
-                    let n = new NetworkManagerSingleton();
-                    n.data = json.graphData;
-                }
-        if (json.graphOption) {
-                    let n = new NetworkManagerSingleton();
-                    n.list_option = json.graphOption;
-                }
+        if (json.versions) {
+            let n = new NetworkManagerSingleton();
+
+            for(let i = 0; i < json.versions.length; i++) {
+                json.versions[i].label = json.versions[i].name;
+                json.versions[i].level = i;
+                json.versions[i].group = "consensusScenario";
+                json.versions[i].title = json.versions[i].description;
+
+            };
+            n.data.nodes = json.versions;
+            n.data.groups = {
+            "id":0,
+            "label":"consensusScenario"};
+        }
+        if (json.versionTransitions){
+            let n = new NetworkManagerSingleton();
+                n.data.edges = json.versionTransitions;
+                console.log("net, %o", n);
+        }
         if (json.transactions) {
             this.temporal_tileset = new $3DTemporalTileset(json);
             return this.temporal_tileset;

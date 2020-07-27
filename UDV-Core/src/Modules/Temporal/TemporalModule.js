@@ -7,6 +7,7 @@ import { TilesManager } from '../../Utils/3DTiles/TilesManager';
 import { CityObjectStyle } from '../../Utils/3DTiles/Model/CityObjectStyle';
 import { CityObjectID } from '../../Utils/3DTiles/Model/CityObject';
 import { getVisibleTiles } from '../../Utils/3DTiles/3DTilesUtils';
+import { NetworkManagerSingleton } from './viz';
 
 /**
  * This module is used to manage the update, deletion and creation of documents.
@@ -71,6 +72,11 @@ export class TemporalModule {
 
         // Instantiate the temporal window
         // TODO: make it active by default
+
+        // load options from baseconfig
+        let n = new NetworkManagerSingleton();
+        n.list_option = temporalOptions.graphOption;
+        console.log("list_options, %o", n)
 
         this.temporalWindow = new TemporalWindow(refreshCallback,
                         temporalOptions);

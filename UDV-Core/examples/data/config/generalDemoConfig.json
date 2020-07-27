@@ -171,5 +171,68 @@
         "displayable":"false"
       }
     }
+  },
+  "graphOption":[{
+    "visNetwork": {
+      "edges": {
+        "smooth": {
+          "type": "continuous"
+        },
+        "arrows": {
+          "to": true
+        },
+        "color": {
+          "color": "white",
+          "highlight": "grey",
+          "hover": "white",
+          "inherit": "from",
+          "opacity": 1.0
+        }
+      },
+      "nodes": {
+        "font": {
+          "size": 25
+        }
+
+      },
+      "groups": {
+        "useDefaultGroups": true,
+        "consensusScenario": {
+          "color": {
+            "background": "#90EE90",
+            "border": "#A9A9A9",
+            "highlight": {
+              "border": "black",
+              "background": "#8FBC8F"
+            },
+            "hover": {
+              "border": "#A9A9A9",
+              "background": "#90EE90"
+            }
+          },
+          "borderWidthSelected": 2000
+        }
+      },
+      "layout": {
+        "hierarchical": {
+          "direction": "LR",
+          "sortMethod": "directed",
+          "treeSpacing": 100,
+          "levelSeparation": 200,
+          "nodeSpacing": 100,
+          "edgeMinimization": false
+        }
+      },
+      "interaction": {
+        "dragNodes": true,
+        "hover": true,
+        "hoverConnectedEdges": false,
+        "selectConnectedEdges": false
+
+      },
+      "physics": {
+        "enabled": false
+      }
+    }}]
   }
-}
+

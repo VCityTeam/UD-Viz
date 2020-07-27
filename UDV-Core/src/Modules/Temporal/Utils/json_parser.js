@@ -38,8 +38,8 @@ function get_nodes(json_object) {
  *        { id: 1, label: "2001", level: 1, group:0},
  *        ]
  */
+    console.log("json_obj, %o", json_object);
     var ret = json_object.nodes;
-    //TODO verification for key
     return ret;
     
 }
@@ -67,7 +67,8 @@ function get_modes(json_object){
  * @return: list[str] with unicity
  */
     var ret = [undefined]; // if mode is not present inside the json. The default value will be undifined
-    var list_option = json_object.options;
+    var list_option = json_object;
+    console.log("list_opt, %o", json_object)
     for (const option in list_option) {               // -\
         if (list_option.hasOwnProperty(option)) {     // - > = for in
             const element = list_option[option];      // -/
@@ -76,6 +77,7 @@ function get_modes(json_object){
             }
         }
     }
+    console.log("ret list, %o", ret);
     return ret;
 }
 
@@ -116,6 +118,7 @@ export function get_list_options(json_object) {
  * @returns list of json object with complete and ready options for vis.Network
  */    
     var ret = [];
+    console.log("parser, %o", json_object)
     var list_mode = get_modes(json_object);
 
     for (const option in list_mode) {

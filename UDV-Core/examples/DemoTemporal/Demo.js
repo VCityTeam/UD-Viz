@@ -16,12 +16,15 @@ baseDemo.loadConfigFile('../data/config/generalDemoConfig.json').then(() => {
     // créer un module 3D au lieu que l'init soit faite dans baseDemo pour
     // être cohérent. A rediscuter avec EBO sur le role des modules et sur
     // comment organiser ça.
+    console.log("basedemo, %o", baseDemo);
     const temporalOptions = {
         minTime: 2009,
         maxTime: 2015,
         currentTime: 2009,
         timeStep: 1,
+        graphOption: baseDemo.config['graphOption']
     };
+    console.log("temporalOption, %o", temporalOptions);
     const layerConfig = baseDemo.config['3DTilesTemporalLayer'];
     const temporalModule = new udvcore.TemporalModule(layerConfig, baseDemo.view, temporalOptions);
     baseDemo.addModuleView('temporal', temporalModule.temporalWindow, {

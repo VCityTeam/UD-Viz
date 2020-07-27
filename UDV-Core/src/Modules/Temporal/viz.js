@@ -16,7 +16,9 @@ export class NetworkManagerSingleton {
         }
         else{
             this.network = null;
-            this.data = null;
+            this.data = {"nodes": null,
+                         "edges": null,
+                         "groups": null};
             this.list_option = null;
             this.has_changed = true;
             this.current_mode = start_mode;
@@ -50,19 +52,8 @@ export class NetworkManagerSingleton {
      * @param mode specific mode correspondong to a specific view
      * @return ready to used json for vis-network
      */
-        var test = mode;
-        if (mode === "default"){
-            test = undefined
-        }
-        for (const key in this.list_option) {
-            if (this.list_option.hasOwnProperty(key)) {
-                const element = this.list_option[key];
-                if (test === element.label){
-                    return element.option.visNetwork;
-                }
-            }
-        }
-        return this.list_option[0].option.visNetwork;
+
+        return this.list_option[0].visNetwork;
     }
 
     add_button_to_view(){
@@ -108,6 +99,7 @@ export class NetworkManagerSingleton {
     
         const options = this.get_option(this.current_mode);
         const container = document.getElementById(this.id_network);
+        console.log("draw, %o, %o", this.data, options);
         this.network = new vis.Network(container, this.data, options);
 
         this.has_changed = false;
@@ -116,11 +108,12 @@ export class NetworkManagerSingleton {
     prepare_html_pages() {
         
         var n = new NetworkManagerSingleton();
+        console.log("Preapre html page, networksingle %o", n);
         var result_d = n.data;
         n.data = get_data(result_d);
 
-        var result_o = n.list_option;
-        n.list_option = get_list_options(result_o);
+        //var result_o = n.list_option;
+        //n.list_option = get_list_options(result_o);
 
         n.draw();
     }
@@ -130,15 +123,15 @@ export class NetworkManagerSingleton {
         this.network.on("selectNode", function (params) {
             let nodeId = this.getNodeAt(params.pointer.DOM);
             let node = this.body.nodes[nodeId];
-            let time = node.options.title;
+            let time = node.options.name;
             callback(time);
             });
 
         this.network.on("selectEdge", function (params) {
             let edgeId = this.getEdgeAt(params.pointer.DOM);
             let connectedNodesId = this.getConnectedNodes(edgeId);
-            let from_time = this.body.nodes[connectedNodesId[0]].options.title
-            let to_time = this.body.nodes[connectedNodesId[1]].options.title
+            let from_time = this.body.nodes[connectedNodesId[0]].options.name;
+            let to_time = this.body.nodes[connectedNodesId[1]].options.name;
             let time = (from_time/1 + to_time/1) / 2 ;
             callback(time);
             });
