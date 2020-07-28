@@ -21,7 +21,7 @@ baseDemo.loadConfigFile('../data/config/generalDemoConfig.json').then(() => {
         maxTime: 2015,
         currentTime: 2009,
         timeStep: 1,
-        graphOption: baseDemo.config['graphOption'] // la windows est gérer par le module temporel et non par basedemo
+        graphOption: baseDemo.config['graphOption'] // the window is encapsulate by TemporalModule so we need to pass by it for the graphic options
     };
     const layerConfig = baseDemo.config['3DTilesTemporalLayer'];
     const temporalModule = new udvcore.TemporalModule(layerConfig, baseDemo.view, temporalOptions);

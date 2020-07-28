@@ -38,14 +38,13 @@ export class $3DTemporalExtension extends $3DTAbstractExtension {
      */
     // eslint-disable-next-line class-methods-use-this
     parse(json, context) {
-    // TCH Observation : We pass by this parser 17times before doing something useful (seen with next log)
         if (json.versions) {
             let n = new NetworkManagerSingleton();
-
             for(let i = 0; i < json.versions.length; i++) {
+            // Add the fields missing for the graph window
                 json.versions[i].label = json.versions[i].name;
                 json.versions[i].level = i;
-                json.versions[i].group = "consensusScenario";
+                json.versions[i].group = "consensusScenario"; // Needs to be changed if multiple scenario is wanted
                 json.versions[i].title = json.versions[i].description;
 
             };

@@ -45,13 +45,6 @@ export class TemporalGraphWindow extends Window {
             <div id="mynetwork"></div>
             </div>
         `;
-        //    <div id="timeSliderMinDate">${this.minTime}</div>
-        //    <div id="timeSliderMaxDate">${this.maxTime}</div>
-        //    <input type="text" id="timeSliderValue" value=${this.currentTime}>
-        //    <input  id="timeSlider" type="range" min=${this.minTime} max=${this.maxTime}
-        //            value=${this.currentTime} step=${this.timeStep}>
-        //    </div>
-        //`;
     }
 
     windowCreated() {
@@ -70,37 +63,14 @@ export class TemporalGraphWindow extends Window {
 //        this.window.style.setProperty('height', '115px');
         this.window.style.setProperty('text-align', 'center');
 
-        // Hook up the callbacks
-        /*
-        document.getElementById('timeSliderValue').addEventListener(
-            'input', this.timeSelection.bind(this), false);
-        document.getElementById('timeSlider').addEventListener(
-            'input', this.timeSelectionSlider.bind(this), false);
-        */
         // Add graph
         this.networkManagerSingleton.init();
         this.networkManagerSingleton.add_event((param)=>{this.changeTime(param)});
     }
-/*
-    // TODO: not sure we need two methods doing the same thing here.
-    // Call back on new user input with the date selector
-    timeSelection() {
-        const time = document.getElementById('timeSliderValue').value.toString();
-        this.changeTime(time);
-    }
 
-    // Call back on new user input with the time slider
-    timeSelectionSlider()  {
-        var timeFromSlider = document.getElementById('timeSlider').value.toString();
-        this.changeTime(timeFromSlider);
-    }
-*/
     // change the current date and sync the temporal version to this new date
     changeTime(time) {
         this.currentTime = time;
-
-        //document.getElementById('timeSlider').value = time;
-        //document.getElementById('timeSliderValue').value = time;
 
         // Eventually inform who it may concern (e.g. an associated iTowns layer)
         // that the currentTime has changed:

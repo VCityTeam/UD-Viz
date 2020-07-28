@@ -1,5 +1,12 @@
 import * as vis from 'vis-network';
 
+/**
+* Manager for the graph
+* Done as a singleton so only one instance can exist.
+* If a constructor is called :
+*   - First time = instantiation
+*   - Other time = return the already existing NetworkManagerSingleton
+*/
 export class NetworkManagerSingleton {
     constructor(start_mode="default",
                 id_network="mynetwork",
@@ -29,26 +36,36 @@ export class NetworkManagerSingleton {
 
     }
 
-    destroy() {
     /**
-     * Kill the simulation network  
+     * Kill the simulation network
      */
+    destroy() {
         if (this.network !== null) {
           this.network.destroy();
           this.network = null;
         }
     }
 
+    /**
+    * Initiate the vis.Network with the container (html), data (nodes & edges) and options (graphics)
+    */
     init(){
         this.destroy();
 
-        const options = this.list_option[0].visNetwork;
+        const options = this.list_option[0].visNetwork; // the options could have been multiple
         const container = document.getElementById(this.id_network);
         this.network = new vis.Network(container, this.data, options);
 
         this.has_changed = false;
     }
 
+    /**
+    * Add callback to the graph
+    * Click on node = event
+    * Click on edge = event
+    * In both case, a date is passed
+    * @param : callback (function) ( the function to be call when the event is done)
+    */
     add_event(callback){
         this.network.on("selectNode", function (params) {
             let nodeId = this.getNodeAt(params.pointer.DOM);
