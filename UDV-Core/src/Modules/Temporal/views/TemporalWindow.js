@@ -33,7 +33,7 @@ export class TemporalWindow extends Window {
         this.refreshCallback = refreshCallback;
 
         // graph
-
+        console.log("options, %o", options);
         this.networkManagerSingleton = new NetworkManagerSingleton();
     }
 

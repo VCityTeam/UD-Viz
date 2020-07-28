@@ -22,7 +22,7 @@ baseDemo.loadConfigFile('../data/config/generalDemoConfig.json').then(() => {
         maxTime: 2015,
         currentTime: 2009,
         timeStep: 1,
-        graphOption: baseDemo.config['graphOption']
+        graphOption: baseDemo.config['graphOption'] // la windows est gérer par le module temporel et non par basedemo
     };
     console.log("temporalOption, %o", temporalOptions);
     const layerConfig = baseDemo.config['3DTilesTemporalLayer'];
