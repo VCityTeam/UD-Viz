@@ -8,8 +8,6 @@ export class $3DTemporalTileset {
         //  avec moment
         this.startDate = json.startDate;
         this.endDate = json.endDate;
-        this.graph_data = json.graphData;
-        this.graph_option = json.graphOption;
         this.versionsManager = new VersionsManager(json.versions);
         this.versionTransitionsManager = new VersionTransitionsManager(json.versionTransitions);
         this.transactionManager = new TransactionsManager(json.transactions);

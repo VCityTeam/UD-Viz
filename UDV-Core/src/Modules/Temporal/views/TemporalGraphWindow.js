@@ -1,4 +1,5 @@
 import { Window } from "../../../Utils/GUI/js/Window";
+import { NetworkManagerSingleton } from "../viz";
 import './TemporalWindow.css';
 
 // TODO: MANAGE DATES WITH MOMENT
@@ -14,9 +15,9 @@ import './TemporalWindow.css';
  * @param refreshCallback : callback to be called when the time has changed.
  * @param options : optional parameters (min time, max time and current time)
  */
-export class TemporalWindow extends Window {
+export class TemporalGraphWindow extends Window {
     constructor(refreshCallback, options = {}) {
-        super('temporal', 'Temporal Navigation', false);
+        super('temporal', 'Temporal Graph Navigation', false);
 
         // Minimum and maximum times that can be displayed by this occurence
         this.minTime = options.minTime || 2009;
@@ -30,18 +31,27 @@ export class TemporalWindow extends Window {
         this.timeStep = options.timeStep || 1;
 
         this.refreshCallback = refreshCallback;
+
+        // graph
+        this.networkManagerSingleton = new NetworkManagerSingleton();
     }
 
     get innerContentHtml() {
         return /*html*/`
             <div id="temporalWindow">
-            <div id="timeSliderMinDate">${this.minTime}</div>
-            <div id="timeSliderMaxDate">${this.maxTime}</div>
-            <input type="text" id="timeSliderValue" value=${this.currentTime}>
-            <input  id="timeSlider" type="range" min=${this.minTime} max=${this.maxTime}
-                    value=${this.currentTime} step=${this.timeStep}>
+            <p id="mybuttons">
+            <input type="hidden" id="mode" value="default" />
+            </p>
+            <div id="mynetwork"></div>
             </div>
         `;
+        //    <div id="timeSliderMinDate">${this.minTime}</div>
+        //    <div id="timeSliderMaxDate">${this.maxTime}</div>
+        //    <input type="text" id="timeSliderValue" value=${this.currentTime}>
+        //    <input  id="timeSlider" type="range" min=${this.minTime} max=${this.maxTime}
+        //            value=${this.currentTime} step=${this.timeStep}>
+        //    </div>
+        //`;
     }
 
     windowCreated() {
@@ -56,16 +66,22 @@ export class TemporalWindow extends Window {
         this.window.style.setProperty('margin-bottom', 'auto');
         // Window size and center text
         this.window.style.setProperty('width', '700px');
-        this.window.style.setProperty('height', '115px');
+        this.window.style.setProperty('height', '215px');
+//        this.window.style.setProperty('height', '115px');
         this.window.style.setProperty('text-align', 'center');
 
         // Hook up the callbacks
+        /*
         document.getElementById('timeSliderValue').addEventListener(
             'input', this.timeSelection.bind(this), false);
         document.getElementById('timeSlider').addEventListener(
             'input', this.timeSelectionSlider.bind(this), false);
+        */
+        // Add graph
+        this.networkManagerSingleton.init();
+        this.networkManagerSingleton.add_event((param)=>{this.changeTime(param)});
     }
-
+/*
     // TODO: not sure we need two methods doing the same thing here.
     // Call back on new user input with the date selector
     timeSelection() {
@@ -78,16 +94,17 @@ export class TemporalWindow extends Window {
         var timeFromSlider = document.getElementById('timeSlider').value.toString();
         this.changeTime(timeFromSlider);
     }
-
+*/
     // change the current date and sync the temporal version to this new date
     changeTime(time) {
         this.currentTime = time;
 
-        document.getElementById('timeSlider').value = time;
-        document.getElementById('timeSliderValue').value = time;
+        //document.getElementById('timeSlider').value = time;
+        //document.getElementById('timeSliderValue').value = time;
 
         // Eventually inform who it may concern (e.g. an associated iTowns layer)
         // that the currentTime has changed:
         this.refreshCallback(this.currentTime);
     }
+
 }

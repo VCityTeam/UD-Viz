@@ -57,7 +57,6 @@ export class $3DTemporalExtension extends $3DTAbstractExtension {
         if (json.versionTransitions){
             let n = new NetworkManagerSingleton();
                 n.data.edges = json.versionTransitions;
-                console.log("net, %o", n);
         }
         if (json.transactions) {
             this.temporal_tileset = new $3DTemporalTileset(json);

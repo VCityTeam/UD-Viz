@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import * as itowns from 'itowns';
 
 import { $3DTemporalExtension } from './3DTILES_temporal/3DTemporalExtension';
+import { TemporalGraphWindow } from './views/TemporalGraphWindow';
 import { TemporalWindow } from './views/TemporalWindow';
 import { TilesManager } from '../../Utils/3DTiles/TilesManager';
 import { CityObjectStyle } from '../../Utils/3DTiles/Model/CityObjectStyle';
@@ -76,9 +77,14 @@ export class TemporalModule {
         // load options from baseconfig
         let n = new NetworkManagerSingleton();
         n.list_option = temporalOptions.graphOption;
-        console.log("list_options, %o", n)
 
-        this.temporalWindow = new TemporalWindow(refreshCallback,
+
+        // Choose the window type you want
+        // For time slider :
+        //this.temporalWindow = new TemporalWindow(refreshCallback, // Change for switching with window mode
+        //                temporalOptions);
+        // For graph navigator
+        this.temporalWindow = new TemporalGraphWindow(refreshCallback,
                         temporalOptions);
 
         // Test
