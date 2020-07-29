@@ -1,43 +1,39 @@
 {
-	"$schema": "http://json-schema.org/draft-07/schema",
-	"id": "3DTILES_temporal.version.schema.json",
-	"title": "3DTILES_temporal_version",
-	"type": "object",
-	"properties": {
-		"id": {
-			"description": "Version identifier",
-			"type": "string"
-		},
-		"name": {
-			"description": "Version name",
-			"type": "string"
-		},
-		"description": {
-			"description": "User defined detailed description of the version",
-			"type": "string"
-		},
-		"startDate": {
-			"description": "Start date of the version",
-			"type": "string",
-			"format": "date"
-		},
-		"endDate": {
-			"description": "End date of the version",
-			"type": "string",
-			"format": "date"
-		},
-		"tags": {
-			"type": "array",
-			"items": {
-				"type": "string"
-			}
-		},
-		"featuresIds": {
-			"description": "Array of Features Ids composing the version (stored in the 3DTILES_temporal extension of the batch table)",
-			"type": "array",
-			"items": {
-				"type": "string"
-			}
-		}
-	}
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "id": "3DTILES_temporal.version.schema.json",
+  "title": "3DTILES_temporal_version",
+  "type": "object",
+  "properties": {
+    "id": {
+      "description": "Version identifier",
+      "type": "string"
+    },
+    "name": {
+      "description": "Version name",
+      "type": "string"
+    },
+    "description": {
+      "description": "User defined detailed description of the version",
+      "type": "string"
+    },
+    "startDate": {
+      "description": "Start date of the version",
+      "type": "string",
+      "format": "date"
+    },
+    "endDate": {
+      "description": "End date of the version",
+      "type": "string",
+      "format": "date"
+    },
+    "tags": {
+      "type": "array",
+      "items": {"type": "string"}
+    },
+    "featuresIds": {
+      "description": "Array of Features Ids composing the version (stored in the 3DTILES_temporal extension of the batch table)",
+      "type": "array",
+      "items": {"type": "string"}
+    }
+  }
 }
