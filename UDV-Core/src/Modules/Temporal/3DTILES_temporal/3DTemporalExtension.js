@@ -6,8 +6,6 @@ import { $3DTemporalBoundingVolume } from './3DTemporalBoundingVolume';
 import { $3DTemporalBatchTable } from './3DTemporalBatchTable';
 import { $3DTemporalPrimaryTransaction } from './3DTemporalPrimaryTransaction';
 import {$3DTemporalTransactionAggregate} from "./3DTemporalTransactionAggregate";
-import {$3DTemporalVersion} from "./3DTemporalVersion";
-import {$3DTemporalVersionTransition} from "./3DTemporalVersionTransition";
 import { NetworkManagerSingleton } from "../viz";
 
 
