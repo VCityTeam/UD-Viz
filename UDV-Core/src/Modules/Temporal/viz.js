@@ -53,8 +53,6 @@ export class NetworkManagerSingleton {
         this.destroy();
 
         const container = document.getElementById(this.id_network);
-        console.log(this.data)
-         console.log(this.option)
         this.network = new vis.Network(container, this.data, this.option);
 
         this.has_changed = false;

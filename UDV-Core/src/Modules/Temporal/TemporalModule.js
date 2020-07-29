@@ -3,7 +3,7 @@ import * as itowns from 'itowns';
 
 import { $3DTemporalExtension } from './3DTILES_temporal/3DTemporalExtension';
 import { TemporalGraphWindow } from './views/TemporalGraphWindow';
-import { TemporalWindow } from './views/TemporalWindow';
+import { TemporalSliderWindow } from './views/TemporalSliderWindow';
 import { TilesManager } from '../../Utils/3DTiles/TilesManager';
 import { CityObjectStyle } from '../../Utils/3DTiles/Model/CityObjectStyle';
 import { CityObjectID } from '../../Utils/3DTiles/Model/CityObject';
@@ -74,13 +74,11 @@ export class TemporalModule {
         const refreshCallback = currentTimeUpdated.bind(this);
 
         // Select the window type:
-        console.log("test, %o", temporalOptions)
         switch (temporalOptions.temporalWindow.name) {
                     case EnumTemporalWindow.SLIDERWINDOW :
-                        this.temporalWindow = new TemporalWindow(refreshCallback, temporalOptions);
+                        this.temporalWindow = new TemporalSliderWindow(refreshCallback, temporalOptions);
                         break;
                     case EnumTemporalWindow.GRAPHWINDOW :
-                        console.log("YOLO");
                         this.temporalWindow = new TemporalGraphWindow(refreshCallback, temporalOptions);
                         break;
             }
