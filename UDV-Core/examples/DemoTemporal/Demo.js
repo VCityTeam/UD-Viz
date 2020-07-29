@@ -1,3 +1,4 @@
+
 let baseDemo = new udvcore.BaseDemo({
     iconFolder: '../data/icons',
     imageFolder: '../data/img'
@@ -21,7 +22,10 @@ baseDemo.loadConfigFile('../data/config/generalDemoConfig.json').then(() => {
         maxTime: 2015,
         currentTime: 2009,
         timeStep: 1,
-        graphOption: baseDemo.config['temporalGraphWindow']['graphOption'] // the window is encapsulate by TemporalModule so we need to pass by it for the graphic options
+        temporalWindow : {
+            name: baseDemo.config['temporalGraphWindow']['windowName'],
+            option: baseDemo.config['temporalGraphWindow']['graphOption'] // the window is encapsulate by TemporalModule so we need to pass by it for the graphic options
+        }
     };
     const layerConfig = baseDemo.config['3DTilesTemporalLayer'];
     const temporalModule = new udvcore.TemporalModule(layerConfig, baseDemo.view, temporalOptions);

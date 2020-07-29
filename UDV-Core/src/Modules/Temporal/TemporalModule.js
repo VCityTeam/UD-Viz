@@ -9,6 +9,7 @@ import { CityObjectStyle } from '../../Utils/3DTiles/Model/CityObjectStyle';
 import { CityObjectID } from '../../Utils/3DTiles/Model/CityObject';
 import { getVisibleTiles } from '../../Utils/3DTiles/3DTilesUtils';
 import { NetworkManagerSingleton } from './viz';
+import { EnumTemporalWindow } from './views/EnumWindows';
 
 /**
  * This module is used to manage the update, deletion and creation of documents.
@@ -32,6 +33,7 @@ export class TemporalModule {
     };
      */
     constructor(layerConfig, itownsView, temporalOptions) {
+
         // Current time at which the scene is displayed
         this.currentTime = temporalOptions.currentTime;
 
@@ -71,21 +73,17 @@ export class TemporalModule {
         }
         const refreshCallback = currentTimeUpdated.bind(this);
 
-        // Instantiate the temporal window
-        // TODO: make it active by default
-
-        // load options from baseconfig
-        let n = new NetworkManagerSingleton();
-        n.option = temporalOptions.graphOption;
-
-
-        // Choose the window type you want
-        // For time slider :
-        //this.temporalWindow = new TemporalWindow(refreshCallback, // Change for switching with window mode
-        //                temporalOptions);
-        // For graph navigator
-        this.temporalWindow = new TemporalGraphWindow(refreshCallback,
-                        temporalOptions);
+        // Select the window type:
+        console.log("test, %o", temporalOptions)
+        switch (temporalOptions.temporalWindow.name) {
+                    case EnumTemporalWindow.SLIDERWINDOW :
+                        this.temporalWindow = new TemporalWindow(refreshCallback, temporalOptions);
+                        break;
+                    case EnumTemporalWindow.GRAPHWINDOW :
+                        console.log("YOLO");
+                        this.temporalWindow = new TemporalGraphWindow(refreshCallback, temporalOptions);
+                        break;
+            }
 
     }
 

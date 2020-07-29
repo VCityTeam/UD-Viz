@@ -34,6 +34,7 @@ export class TemporalGraphWindow extends Window {
 
         // graph
         this.networkManagerSingleton = new NetworkManagerSingleton();
+        this.networkManagerSingleton.option = options.temporalWindow.option;
     }
 
     get innerContentHtml() {

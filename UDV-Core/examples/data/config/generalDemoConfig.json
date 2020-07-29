@@ -176,6 +176,7 @@
     }
   },
   "temporalGraphWindow": {
+    "windowName": "GRAPHWINDOW",
     "graphOption":
      {
         "edges": {
