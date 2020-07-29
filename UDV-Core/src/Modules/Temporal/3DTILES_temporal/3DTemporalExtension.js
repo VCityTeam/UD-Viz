@@ -39,16 +39,17 @@ export class $3DTemporalExtension extends $3DTAbstractExtension {
     // eslint-disable-next-line class-methods-use-this
     parse(json, context) {
         if (json.versions) {
+            let versions = json.versions
             let n = new NetworkManagerSingleton();
             for(let i = 0; i < json.versions.length; i++) {
             // Add the fields missing for the graph window
-                json.versions[i].label = json.versions[i].name;
-                json.versions[i].level = i;
-                json.versions[i].group = "consensusScenario"; // Needs to be changed if multiple scenario is wanted
-                json.versions[i].title = json.versions[i].description
+                versions[i].label = json.versions[i].name;
+                versions[i].level = i;
+                versions[i].group = "consensusScenario"; // Needs to be changed if multiple scenario is wanted
+                versions[i].title = json.versions[i].description
 
             }
-            n.data.nodes = json.versions;
+            n.data.nodes = versions;
             n.data.groups = {
             "id":0,
             "label":"consensusScenario"};
