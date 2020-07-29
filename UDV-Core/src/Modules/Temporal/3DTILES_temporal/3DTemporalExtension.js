@@ -45,9 +45,9 @@ export class $3DTemporalExtension extends $3DTAbstractExtension {
                 json.versions[i].label = json.versions[i].name;
                 json.versions[i].level = i;
                 json.versions[i].group = "consensusScenario"; // Needs to be changed if multiple scenario is wanted
-                json.versions[i].title = json.versions[i].description;
+                json.versions[i].title = json.versions[i].description
 
-            };
+            }
             n.data.nodes = json.versions;
             n.data.groups = {
             "id":0,
@@ -55,7 +55,7 @@ export class $3DTemporalExtension extends $3DTAbstractExtension {
         }
         if (json.versionTransitions){
             let n = new NetworkManagerSingleton();
-                n.data.edges = json.versionTransitions;
+            n.data.edges = json.versionTransitions;
         }
         if (json.transactions) {
             this.temporal_tileset = new $3DTemporalTileset(json);
