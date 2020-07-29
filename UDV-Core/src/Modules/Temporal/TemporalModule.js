@@ -76,7 +76,7 @@ export class TemporalModule {
 
         // load options from baseconfig
         let n = new NetworkManagerSingleton();
-        n.list_option = temporalOptions.graphOption;
+        n.option = temporalOptions.graphOption;
 
 
         // Choose the window type you want

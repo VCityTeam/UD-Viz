@@ -24,7 +24,7 @@ export class NetworkManagerSingleton {
             this.data = {"nodes": null,
                          "edges": null,
                          "groups": null};
-            this.list_option = null;
+            this.option = null;
             this.has_changed = true;
             this.current_mode = start_mode;
             this.id_network = id_network;
@@ -52,9 +52,8 @@ export class NetworkManagerSingleton {
     init(){
         this.destroy();
 
-        const options = this.list_option[0].visNetwork; // the options could have been multiple
         const container = document.getElementById(this.id_network);
-        this.network = new vis.Network(container, this.data, options);
+        this.network = new vis.Network(container, this.data, this.option);
 
         this.has_changed = false;
     }

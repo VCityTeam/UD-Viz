@@ -176,9 +176,8 @@
     }
   },
   "temporalGraphWindow": {
-    "graphOption":[
-    {
-      "visNetwork": {
+    "graphOption":
+     {
         "edges": {
           "smooth": {
             "type": "continuous"
@@ -237,7 +236,6 @@
           "enabled": false
         }
       }
-    }]
-  }
+    }
 }
 
