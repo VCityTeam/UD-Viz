@@ -6,10 +6,10 @@ export class $3DTemporalTileset {
         //  avec moment
         this.startDate = json.startDate;
         this.endDate = json.endDate;
+
         this.versions = json.versions;
         this.versionTransitions = json.versionTransitions;
         this.transactionManager = new TransactionsManager(json.transactions);
-
     }
 
 }
