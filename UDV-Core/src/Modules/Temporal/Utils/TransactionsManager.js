@@ -10,6 +10,7 @@ export class TransactionsManager {
          * @type {Array}
          */
         this.transactions = this.parseTransactions(transactions);
+
         /**
          * A dictionary of transactions organized per feature, used for
          * optimisation and structured as follows:
