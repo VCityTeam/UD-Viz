@@ -8,10 +8,19 @@ import * as vis from 'vis-network';
 *   - Other time = return the already existing NetworkManagerSingleton
 */
 export class NetworkManagerSingleton {
-    constructor(start_mode="default",
-                id_network="mynetwork",
-                id_button_location="mybuttons",
-                hidden_button="mode"){
+    /**
+     * Constructs a NetworkManagerSingleton.
+     *
+     * @param {String} id_network - HTML id which will be the container of the graph
+     * To simplify the use of the singleton, others parameter are not filled in the construction phases
+     *
+     * network {Object} - hold the network/graph instance created by viz.js
+     * data {Object} - Data about nodes, edges and groups for the graph
+     * option {Object} - Data about graphics' options for viz.js
+     *
+     * instance {Object} - special fiel that make this class a singleton
+     */
+    constructor(id_network="mynetwork"){
     /**
      * Constructor for singleton
      */
@@ -26,11 +35,7 @@ export class NetworkManagerSingleton {
                          "groups": null};
             this.option = null;
             this.has_changed = true;
-            this.current_mode = start_mode;
             this.id_network = id_network;
-            this.id_button_location = id_button_location;
-            this.hidden_button = hidden_button;
-
             this.constructor.instance = this;
         }
 
