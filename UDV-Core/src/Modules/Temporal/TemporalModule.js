@@ -87,8 +87,6 @@ export class TemporalModule {
         this.temporalWindow = new TemporalGraphWindow(refreshCallback,
                         temporalOptions);
 
-        // Test
-        let a = this.temporalExtension.endDate;
     }
 
     initTransactionsStyles() {
