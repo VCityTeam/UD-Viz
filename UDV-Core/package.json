@@ -39,7 +39,11 @@
     "proj4": "^2.5.0",
     "three": "^0.105.2",
     "three.meshline": "^1.0.3",
-    "vis-network": "^7.3.6"
+    "vis-network": "^7.10.2",
+    "@egjs/hammerjs": "^2.0.0",
+    "timsort": "^0.3.0",
+    "vis-data": "^6.2.1",
+    "vis-util": "^3.0.0"
   },
   "devDependencies": {
     "babel-cli": "^6.22.2",
