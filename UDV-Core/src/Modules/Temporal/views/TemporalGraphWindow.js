@@ -19,17 +19,6 @@ export class TemporalGraphWindow extends TemporalWindow {
     constructor(refreshCallback, options = {}) {
         super('temporal', 'Temporal Graph Navigation', false);
 
-        // Minimum and maximum times that can be displayed by this occurence
-        this.minTime = options.minTime || 2009;
-        this.maxTime = options.maxTime || 2015;
-
-        // The currently selected timestamp
-        this.currentTime = options.currentTime || 2009;
-
-        // The timestep used to increment or decrement time with the slide buttons.
-        // Note that timeStep is a "duration" as opposed to a timestamp.
-        this.timeStep = options.timeStep || 1;
-
         this.refreshCallback = refreshCallback;
 
         // graph
@@ -40,9 +29,6 @@ export class TemporalGraphWindow extends TemporalWindow {
     get innerContentHtml() {
         return /*html*/`
             <div id="temporalWindow">
-            <p id="mybuttons">
-            <input type="hidden" id="mode" value="default" />
-            </p>
             <div id="mynetwork"></div>
             </div>
         `;
