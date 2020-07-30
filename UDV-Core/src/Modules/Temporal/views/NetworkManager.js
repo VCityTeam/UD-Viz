@@ -2,47 +2,54 @@ import * as vis from 'vis-network';
 
 /**
 * Manager for the graph
-* Done as a singleton so only one instance can exist.
-* If a constructor is called :
-*   - First time = instantiation
-*   - Other time = return the already existing NetworkManagerSingleton
+* It take care of all data needed by vis.js
 */
-export class NetworkManagerSingleton {
+export class NetworkManager {
     /**
-     * Constructs a NetworkManagerSingleton.
+     * Constructs a NetworkManager.
      *
      * @param {String} id_network - HTML id which will be the container of the graph
-     * To simplify the use of the singleton, others parameter are not filled in the construction phases
+     * data {Dict} - Data about nodes, edges and groups for the graph
+     * {
+     nodes:[{
+        id:string
+        label:string
+        level:int
+        title:string
+        startDate:int
+        }]
+     edges:[{
+        id:string
+        from:string
+        to:string
+        }]
+     groups:{id:int
+              label:string}
+     }
+     * option {Object} - Data about graphics' options for viz.js. See doc for futher details about the possibilities
      *
      * network {Object} - hold the network/graph instance created by viz.js
-     * data {Object} - Data about nodes, edges and groups for the graph
-     * option {Object} - Data about graphics' options for viz.js
-     *
-     * instance {Object} - special fiel that make this class a singleton
      */
-    constructor(id_network="mynetwork"){
-    /**
-     * Constructor for singleton
-     */
-        const instance = this.constructor.instance;
-        if(instance){
-            return instance;
-        }
-        else{
-            this.network = null;
-            this.data = {"nodes": null,
-                         "edges": null,
-                         "groups": null};
-            this.option = null;
-            this.has_changed = true;
-            this.id_network = id_network;
-            this.constructor.instance = this;
-        }
+    constructor(id_network="mynetwork",
+                data={"nodes": null,
+                      "edges": null,
+                      "groups": {
+                            "id":0,
+                            "label":"consensusScenario"}
+                       },
+                option=null){
+        this.network = null;
+        this.data = data;
+        this.option = option;
+        this.id_network = id_network;
+        this.getAsynchronousData = null;
 
     }
 
     /**
      * Kill the simulation network
+     * When the graph is shown, a simulation is running. It allows dynamics interactions
+     * When killed, the graph disappear.
      */
     destroy() {
         if (this.network !== null) {
@@ -53,14 +60,16 @@ export class NetworkManagerSingleton {
 
     /**
     * Initiate the vis.Network with the container (html), data (nodes & edges) and options (graphics)
+    * The data is got asynchronously. It's coming from tileset.json so we need to wait for it.
     */
     init(){
         this.destroy();
 
+        this.data.nodes = this.getAsynchronousData()[0];
+        this.data.edges = this.getAsynchronousData()[1];
+        console.log(this.data)
         const container = document.getElementById(this.id_network);
         this.network = new vis.Network(container, this.data, this.option);
-
-        this.has_changed = false;
     }
 
     /**

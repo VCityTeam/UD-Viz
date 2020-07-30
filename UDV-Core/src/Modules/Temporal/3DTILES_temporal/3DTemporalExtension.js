@@ -6,7 +6,6 @@ import { $3DTemporalBoundingVolume } from './3DTemporalBoundingVolume';
 import { $3DTemporalBatchTable } from './3DTemporalBatchTable';
 import { $3DTemporalPrimaryTransaction } from './3DTemporalPrimaryTransaction';
 import {$3DTemporalTransactionAggregate} from "./3DTemporalTransactionAggregate";
-import { NetworkManagerSingleton } from "../viz";
 
 
 /**
@@ -36,26 +35,6 @@ export class $3DTemporalExtension extends $3DTAbstractExtension {
      */
     // eslint-disable-next-line class-methods-use-this
     parse(json, context) {
-        if (json.versions) {
-            let versions = json.versions
-            let n = new NetworkManagerSingleton();
-            for(let i = 0; i < json.versions.length; i++) {
-            // Add the fields missing for the graph window
-                versions[i].label = json.versions[i].name;
-                versions[i].level = i;
-                versions[i].group = "consensusScenario"; // Needs to be changed if multiple scenario is wanted
-                versions[i].title = json.versions[i].description
-
-            }
-            n.data.nodes = versions;
-            n.data.groups = {
-            "id":0,
-            "label":"consensusScenario"};
-        }
-        if (json.versionTransitions){
-            let n = new NetworkManagerSingleton();
-            n.data.edges = json.versionTransitions;
-        }
         if (json.transactions) {
             this.temporal_tileset = new $3DTemporalTileset(json);
             return this.temporal_tileset;

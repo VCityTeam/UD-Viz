@@ -1,4 +1,4 @@
-import { TemporalWindow } from "./TemporalWindow";
+import { Window } from "../../../Utils/GUI/js/Window";
 import './TemporalWindow.css';
 
 // TODO: MANAGE DATES WITH MOMENT
@@ -14,7 +14,7 @@ import './TemporalWindow.css';
  * @param refreshCallback : callback to be called when the time has changed.
  * @param options : optional parameters (min time, max time and current time)
  */
-export class TemporalSliderWindow extends TemporalWindow {
+export class TemporalSliderWindow extends Window {
     constructor(refreshCallback, options = {}) {
         super('temporal', 'Temporal Navigation', false);
 

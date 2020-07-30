@@ -23,11 +23,23 @@ baseDemo.loadConfigFile('../data/config/generalDemoConfig.json').then(() => {
         currentTime: 2009,
         timeStep: 1,
         temporalWindow : {
-            name: baseDemo.config['temporalGraphWindow']['windowName'],
-            option: baseDemo.config['temporalGraphWindow']['graphOption'] // the window is encapsulate by TemporalModule so we need to pass by it for the graphic options
+            name: baseDemo.config['temporalModule']['windowName'],
+            option: baseDemo.config['temporalModule']['graphOption'], // the window is encapsulate by TemporalModule so we need to pass by it for the graphic options
+            getAsynchronousData: null
         }
     };
-    const layerConfig = baseDemo.config['3DTilesTemporalLayer'];
+
+    // Select the window type:
+    let layerConfig = null;
+    switch (baseDemo.config['temporalModule']['windowName']) {
+                case "SLIDERWINDOW" :
+                    layerConfig = baseDemo.config['temporalModule']['3DTilesTemporalLayer_withoutVersion'];
+                    break;
+                case "GRAPHWINDOW" :
+                    layerConfig = baseDemo.config['temporalModule']['3DTilesTemporalLayer_withVersion'];
+                    break;
+        }
+
     const temporalModule = new udvcore.TemporalModule(layerConfig, baseDemo.view, temporalOptions);
     baseDemo.addModuleView('temporal', temporalModule.temporalWindow, {
         name: 'Temporal Navigation'

@@ -1,4 +1,5 @@
 import { TransactionsManager } from '../Utils/TransactionsManager';
+import { $3DTemporalVersion } from './3DTemporalVersion';
 
 export class $3DTemporalTileset {
     constructor(json) {
@@ -7,7 +8,7 @@ export class $3DTemporalTileset {
         this.startDate = json.startDate;
         this.endDate = json.endDate;
 
-        this.versions = json.versions;
+        this.temporalVersions = new $3DTemporalVersion(json.versions);
         this.versionTransitions = json.versionTransitions;
         this.transactionManager = new TransactionsManager(json.transactions);
     }

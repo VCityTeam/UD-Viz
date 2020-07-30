@@ -8,7 +8,6 @@ import { TilesManager } from '../../Utils/3DTiles/TilesManager';
 import { CityObjectStyle } from '../../Utils/3DTiles/Model/CityObjectStyle';
 import { CityObjectID } from '../../Utils/3DTiles/Model/CityObject';
 import { getVisibleTiles } from '../../Utils/3DTiles/3DTilesUtils';
-import { NetworkManagerSingleton } from './viz';
 import { EnumTemporalWindow } from './views/EnumWindows';
 
 /**
@@ -73,17 +72,26 @@ export class TemporalModule {
         }
         const refreshCallback = currentTimeUpdated.bind(this);
 
+        // Callback to get data asynchronously from the tileset.jsonS
+        function getAsynchronousData(){
+                let versions = this.temporalExtension.temporal_tileset.temporalVersions.versions;
+                let versionTransitions = this.temporalExtension.temporal_tileset.versionTransitions;
+                return [versions, versionTransitions]
+            }
+
         // Select the window type:
         switch (temporalOptions.temporalWindow.name) {
                     case EnumTemporalWindow.SLIDERWINDOW :
                         this.temporalWindow = new TemporalSliderWindow(refreshCallback, temporalOptions);
                         break;
                     case EnumTemporalWindow.GRAPHWINDOW :
+                        temporalOptions.temporalWindow.getAsynchronousData = getAsynchronousData.bind(this);
                         this.temporalWindow = new TemporalGraphWindow(refreshCallback, temporalOptions);
                         break;
             }
 
     }
+
 
     initTransactionsStyles() {
         // Set styles

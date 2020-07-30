@@ -175,8 +175,16 @@
       }
     }
   },
-  "temporalGraphWindow": {
+  "temporalModule": {
     "windowName": "GRAPHWINDOW",
+    "3DTilesTemporalLayer_withoutVersion": {
+      "id": "3d-tiles-temporal-layer",
+      "url": "old_one"
+    },
+    "3DTilesTemporalLayer_withVersion": {
+      "id": "3d-tiles-temporal-layer",
+      "url": "http://rict.liris.cnrs.fr/DataStore/limonest_temporal_tiles_versions_graph/tileset.json"
+    },
     "graphOption":
      {
         "edges": {

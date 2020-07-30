@@ -1,5 +1,5 @@
-import { TemporalWindow } from "./TemporalWindow";
-import { NetworkManagerSingleton } from "../viz";
+import { Window } from "../../../Utils/GUI/js/Window";
+import { NetworkManager } from "./NetworkManager";
 import './TemporalWindow.css';
 
 // TODO: MANAGE DATES WITH MOMENT
@@ -15,15 +15,17 @@ import './TemporalWindow.css';
  * @param refreshCallback : callback to be called when the time has changed.
  * @param options : optional parameters (min time, max time and current time)
  */
-export class TemporalGraphWindow extends TemporalWindow {
+export class TemporalGraphWindow extends Window {
     constructor(refreshCallback, options = {}) {
+    // option : getAsynchronousData
         super('temporal', 'Temporal Graph Navigation', false);
 
         this.refreshCallback = refreshCallback;
 
         // graph
-        this.networkManagerSingleton = new NetworkManagerSingleton();
-        this.networkManagerSingleton.option = options.temporalWindow.option;
+        this.networkManager = new NetworkManager();
+        this.networkManager.option=options.temporalWindow.option;
+        this.networkManager.getAsynchronousData = options.temporalWindow.getAsynchronousData;
     }
 
     get innerContentHtml() {
@@ -51,8 +53,8 @@ export class TemporalGraphWindow extends TemporalWindow {
         this.window.style.setProperty('text-align', 'center');
 
         // Add graph
-        this.networkManagerSingleton.init();
-        this.networkManagerSingleton.add_event((param)=>{this.changeTime(param)});
+        this.networkManager.init();
+        this.networkManager.add_event((param)=>{this.changeTime(param)});
     }
 
 
