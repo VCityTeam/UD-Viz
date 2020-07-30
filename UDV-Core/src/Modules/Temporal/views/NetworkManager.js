@@ -28,7 +28,7 @@ export class NetworkManager {
      }
      * option {Object} - Data about graphics' options for viz.js. See doc for futher details about the possibilities
      *
-     * network {Object} - hold the network/graph instance created by viz.js
+     * network {Vis.Network Object} - hold the network/graph instance created by viz.js
      */
     constructor(id_network="mynetwork",
                 data={"nodes": null,
