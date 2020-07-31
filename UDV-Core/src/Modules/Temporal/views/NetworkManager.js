@@ -67,7 +67,6 @@ export class NetworkManager {
 
         this.data.nodes = this.getAsynchronousData()[0];
         this.data.edges = this.getAsynchronousData()[1];
-        console.log(this.data)
         const container = document.getElementById(this.id_network);
         this.network = new vis.Network(container, this.data, this.option);
     }
