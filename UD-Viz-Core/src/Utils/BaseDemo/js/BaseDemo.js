@@ -1,5 +1,6 @@
 import { ModuleView } from '../../ModuleView/ModuleView.js';
 import { TilesManager } from '../../3DTiles/TilesManager.js';
+import { LayerManager } from '../../LayerManager/LayerManager.js';
 
 /**
  * Represents the base HTML content of a demo for UD-Viz and provides methods to
@@ -22,9 +23,9 @@ export class BaseDemo {
         /**
          * Object used to manage the 3DTiles layer.
          *
-         * @type {TilesManager}
+         * @type {LayerManager}
          */
-        this.tilesManager;
+        this.layerManager;
         // Temporal is currently disabled and will be reintroduced in a new
         // version based on a 3D Tiles extension
         this.temporal = false;
@@ -414,28 +415,25 @@ export class BaseDemo {
             this.config['3DTilesLayer'][layerConfig]['url'];
         $3dTilesLayer.protocol = '3d-tiles';
 
-        let material;
-        if (this.config['3DTilesLayer'][layerConfig]['pc_size']) {
-            material = new THREE.PointsMaterial({ size: this.config['3DTilesLayer'][layerConfig]['pc_size'], vertexColors: THREE.VertexColors });
-        }
-        else if (!this.config['3DTilesLayer'][layerConfig]['color']) {
-            material = new THREE.MeshLambertMaterial({ color: 0xFFFFFF });
-        } else {
-            material =
-                new THREE.MeshLambertMaterial({ color: parseInt(this.config['3DTilesLayer'][layerConfig]['color']) });
-        }
+        // let material;
+        // if (this.config['3DTilesLayer'][layerConfig]['pc_size']) {
+        //     material = new THREE.PointsMaterial({ size: this.config['3DTilesLayer'][layerConfig]['pc_size'], vertexColors: THREE.VertexColors });
+        // }
+        // else if (!this.config['3DTilesLayer'][layerConfig]['color']) {
+        //     material = new THREE.MeshLambertMaterial({ color: 0xFFFFFF });
+        // } else {
+        //     material =
+        //         new THREE.MeshLambertMaterial({ color: parseInt(this.config['3DTilesLayer'][layerConfig]['color']) });
+        // }
 
-        $3dTilesLayer.overrideMaterials = material;
-        $3dTilesLayer.material = material;
+        // $3dTilesLayer.overrideMaterials = material;
+        // $3dTilesLayer.material = material;
 
         itowns.View.prototype.addLayer.call(this.view, $3dTilesLayer);
 
 
-        if (this.config['3DTilesLayer'][layerConfig]['initTilesManager']) {
-            // Initialize the 3DTiles manager
-            this.tilesManager = new TilesManager(this.view,
-                this.view.getLayerById(this.config['3DTilesLayer'][layerConfig]['id']));
-        }
+        this.layerManager.tilesManagers.push(new TilesManager(this.view,
+                this.view.getLayerById(this.config['3DTilesLayer'][layerConfig]['id'])));
     }
 
     /**
@@ -467,8 +465,8 @@ export class BaseDemo {
 
             itowns.View.prototype.addLayer.call(this.view, $3dTilesLayer);
             
-            this.tilesManager = new TilesManager(this.view,
-                this.view.getLayerById(tile));
+            this.layerManager.tilesManagers.push(new TilesManager(this.view,
+                this.view.getLayerById(tile)));
 
         }
     }
@@ -502,7 +500,7 @@ export class BaseDemo {
         this.view = new itowns.PlanarView(viewerDiv, this.extent, {
             disableSkirt: false
         });
-
+        this.layerManager = new LayerManager(this.view);
         // ********* 3D Elements
         // Lights
         let directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
