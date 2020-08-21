@@ -80,7 +80,6 @@ baseDemo.loadConfigFile('../data/config/generalDemoConfig.json').then(() => {
     const linkModule = new udvcore.LinkModule(documentModule, cityObjectModule,
         requestService, baseDemo.view, baseDemo.controls, baseDemo.config);
     
-    console.log(baseDemo.layerManager);
     ////// 3DTILES DEBUG
     const debug3dTilesWindow = new udvcore.Debug3DTilesWindow(baseDemo.layerManager);
     baseDemo.addModuleView('3dtilesDebug', debug3dTilesWindow, {
@@ -94,7 +93,7 @@ baseDemo.loadConfigFile('../data/config/generalDemoConfig.json').then(() => {
 
 
     ////// LAYER CHOICE
-    const layerChoice = new udvcore.LayerChoice(baseDemo.view);
+    const layerChoice = new udvcore.LayerChoice(baseDemo.layerManager);
     baseDemo.addModuleView('layerChoice', layerChoice, {
         name: 'layerChoice'
     });

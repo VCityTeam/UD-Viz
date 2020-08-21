@@ -366,6 +366,7 @@ export class BaseDemo {
                 options: {},
             },
             source: wmsImagerySource,
+            transparent: true
         });
         this.view.addLayer(wmsImageryLayer);
 

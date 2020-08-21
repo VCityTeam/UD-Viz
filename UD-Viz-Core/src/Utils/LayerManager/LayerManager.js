@@ -49,4 +49,34 @@ export class LayerManager {
 
     }
   }
+
+  getLayers(){
+    return this.view.getLayers();
+  }
+
+  getColorLayers(){
+    return this.view.getLayers(layer => layer.isColorLayer);
+  }
+
+  getElevationLayers(){
+    return this.view.getLayers(layer => layer.isElevationLayer);
+  }
+
+  getGeometryLayers(){
+    return this.view.getLayers(layer => layer.isGeometryLayer);
+  }
+
+  updateScale(layer,scale){
+    layer.scale = scale;
+    this.notifyChange();
+  }
+
+  updateOpacity(layer,opacity){
+    layer.opacity = opacity;
+    this.notifyChange();
+  }
+
+  notifyChange(){
+    this.view.notifyChange();
+  }
 }
