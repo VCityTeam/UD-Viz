@@ -4,6 +4,7 @@ import { CityObjectLayer } from "./CityObjectLayer";
 import { CityObjectStyle } from "../../../Utils/3DTiles/Model/CityObjectStyle";
 import { CityObjectID, CityObject } from "../../../Utils/3DTiles/Model/CityObject";
 import { EventSender } from "../../../Utils/Events/EventSender";
+import { LayerManager } from "../../../Utils/LayerManager/LayerManager";
 
 /**
  * The city object provider manages the city object by organizing them in two
@@ -15,16 +16,16 @@ export class CityObjectProvider extends EventSender {
   /**
    * Constructs a city object provider, using a tiles manager.
    * 
-   * @param {TilesManager} tilesManager The tiles manager.
+   * @param {LayerManager} layerManager The tiles manager.
    */
-  constructor(tilesManager) {
+  constructor(layerManager) {
     super();
     /**
      * The tiles manager.
      * 
-     * @type {TilesManager}
+     * @type {LayerManager}
      */
-    this.tilesManager = tilesManager;
+    this.layerManager = layerManager;
 
     /**
      * The available filters.
@@ -77,7 +78,7 @@ export class CityObjectProvider extends EventSender {
    * @param {MouseEvent} mouseEvent The mouse click event.
    */
   selectCityObject(mouseEvent) {
-    let cityObject = this.tilesManager.pickCityObject(mouseEvent,this.selectedCityObjectId);
+    let cityObject = this.layerManager.tilesManagers[0].pickCityObject(mouseEvent);
     if (!!cityObject) {
       this.selectedCityObjectId = cityObject.cityObjectId;
       this.removeLayer();
@@ -191,21 +192,21 @@ export class CityObjectProvider extends EventSender {
    * @private
    */
   _updateTilesManager() {
-    this.tilesManager.update();
-    this.tilesManager.removeAllStyles();
+    this.layerManager.tilesManagers[0].update();
+    this.layerManager.tilesManagers[0].removeAllStyles();
 
     if (this.layer === undefined) {
       this.layerCityObjectIds = [];
     } else {
-      this.layerCityObjectIds = this.tilesManager
+      this.layerCityObjectIds = this.layerManager.tilesManagers[0]
         .findAllCityObjects(this.layer.filter.accepts)
         .map((co) => co.cityObjectId);
       
-      this.tilesManager.setStyle(this.layerCityObjectIds, this.layer.style);
+      this.layerManager.tilesManagers[0].setStyle(this.layerCityObjectIds, this.layer.style);
     }
 
     if (!!this.selectedCityObjectId) {
-      this.tilesManager.setStyle(this.selectedCityObjectId, this.defaultSelectionStyle);
+      this.layerManager.tilesManagers[0].setStyle(this.selectedCityObjectId, this.defaultSelectionStyle);
     }
   }
 
@@ -216,7 +217,7 @@ export class CityObjectProvider extends EventSender {
    */
   applyStyles() {
     this._updateTilesManager();
-    this.tilesManager.applyStyles();
+    this.layerManager.tilesManagers[0].applyStyles();
   }
 
   ////////////

@@ -9,21 +9,21 @@ export class Debug3DTilesWindow extends Window {
   /**
    * Creates the debug window.
    * 
-   * @param {TilesManager} tilesManager The tiles manager.
+   * @param {layer} layerManager The tiles manager.
    */
-  constructor(tilesManager) {
+  constructor(layerManager) {
     super('3d_tiles_debug', '3DTiles Debug', false);
 
     /**
      * The tiles manager.
      * 
-     * @type {TilesManager}
+     * @type {layerManager}
      */
-    this.tilesManager = tilesManager;
+    this.layerManager = layerManager;
 
     // Selection
-    this.tilesManager.registerStyle('selected', new CityObjectStyle({
-      materialProps: { color: 0x00ff00 } }));
+      this.layerManager.registerStyle('selected', new CityObjectStyle({
+        materialProps: { color: 0x00ff00 } }));
     this.selectedCityObject = undefined;
 
     let clickListener = (event) => {
@@ -43,8 +43,8 @@ export class Debug3DTilesWindow extends Window {
       if (this.selectedCityObject !== undefined) {
         this.selectedCityObject = undefined;
       }
-      this.tilesManager.removeAllStyles();
-      this.tilesManager.applyStyles();
+      this.layerManager.removeAll3DTilesStyles();
+      this.layerManager.apply3DTilesStyles();
     });
   }
 
@@ -109,15 +109,15 @@ export class Debug3DTilesWindow extends Window {
    * Updates the TBI.
    */
   updateTilesManager() {
-    this.tilesManager.update();
-    this.TBIInfoParagraphElement.innerText = `${this.tilesManager.loadedTileCount} / ${this.tilesManager.totalTileCount} tiles loaded.`;
+    this.layerManager.update3DTiles();
+    this.TBIInfoParagraphElement.innerText = `${this.layerManager.tilesManagers[0].loadedTileCount} / ${this.layerManager.tilesManagers[0].totalTileCount} tiles loaded.`;
   }
 
   /**
    * Logs the TBI in the console.
    */
   logTilesManager() {
-    console.log(this.tilesManager);
+    console.log(this.layerManager.tilesManagers[0]);
   }
 
   /**
@@ -128,7 +128,7 @@ export class Debug3DTilesWindow extends Window {
    */
   onMouseMove(event) {
     // Update the current visible tile count
-    let visibleTileCount = getVisibleTileCount(this.tilesManager.layer);
+    let visibleTileCount = getVisibleTileCount(this.layerManager.tilesManagers[0].layer);
     this.visibleTilesParagraphElement.innerText = `${visibleTileCount} tiles visible.`
   }
 
@@ -140,7 +140,7 @@ export class Debug3DTilesWindow extends Window {
    * @param {MouseEvent} event The mouse event.
    */
   onMouseClick(event) {
-    let cityObject = this.tilesManager.pickCityObject(event);
+    let cityObject = this.layerManager.tilesManagers[0].pickCityObject(event);
     if (cityObject !== undefined) {
       this.clickDivElement.innerHTML = /*html*/`
         Vertex indexes : ${cityObject.indexStart} to ${cityObject.indexEnd}
@@ -153,13 +153,13 @@ export class Debug3DTilesWindow extends Window {
       }
 
       if (!!this.selectedCityObject) {
-        this.tilesManager.removeStyle(this.selectedCityObject.cityObjectId);
+        this.layerManager.tilesManagers[0].removeStyle(this.selectedCityObject.cityObjectId);
       }
 
       this.selectedCityObject = cityObject;
-      this.tilesManager.setStyle(this.selectedCityObject.cityObjectId, 'selected');
-      this.tilesManager.applyStyles({updateFunction:
-        this.tilesManager.view.notifyChange.bind(this.tilesManager.view)});
+      this.layerManager.tilesManagers[0].setStyle(this.selectedCityObject.cityObjectId, 'selected');
+      this.layerManager.tilesManagers[0].applyStyles({updateFunction:
+        this.layerManager.tilesManagers[0].view.notifyChange.bind(this.layerManager.tilesManagers[0].view)});
     }
   }
 
@@ -176,9 +176,9 @@ export class Debug3DTilesWindow extends Window {
       }
       let color = new THREE.Color(this.groupColorColorInputElement.value);
       let opacity = Number.parseFloat(this.groupColorOpacityInputElement.value);
-      this.tilesManager.setStyle(cityObjectIds, 
+      this.layerManager.tilesManagers[0].setStyle(cityObjectIds, 
         {materialProps: {color, opacity}});
-      this.tilesManager.applyStyles();
+      this.layerManager.tilesManagers[0].applyStyles();
     } catch (e) {
       alert(e);
     }
