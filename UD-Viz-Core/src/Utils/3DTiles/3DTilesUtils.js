@@ -37,13 +37,23 @@ export function getBatchIdFromIntersection(inter) {
  * itowns.View.pickObjectsAt
  */
 export function getFirstTileIntersection(intersects) {
+  let first_inter = null;
+  let dist_min = 0;
   for (let inter of intersects) {
     let geomAttributes = inter.object.geometry.attributes;
     if (!!geomAttributes && !!geomAttributes._BATCHID) {
-      return inter;
+      if(!first_inter){
+        first_inter = inter;
+        dist_min = inter.distance;
+      }
+      else if(inter.distance < dist_min)
+      {
+        first_inter = inter;
+        dist_min = inter.distance;
+      }
     }
   }
-  return undefined;
+  return first_inter;
 }
 
 /**

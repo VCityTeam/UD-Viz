@@ -418,16 +418,13 @@ export class BaseDemo {
         if (this.config['3DTilesLayer'][layerConfig]['pc_size']) {
             material = new THREE.PointsMaterial({ size: this.config['3DTilesLayer'][layerConfig]['pc_size'], vertexColors: THREE.VertexColors });
         }
-        else if (!this.config['3DTilesLayer'][layerConfig]['color']) {
-            material = new THREE.MeshLambertMaterial({ color: 0xFFFFFF });
-        } else {
-            material =
-                new THREE.MeshLambertMaterial({ color: parseInt(this.config['3DTilesLayer'][layerConfig]['color']) });
+        else if (this.config['3DTilesLayer'][layerConfig]['color']) {
+            material = new THREE.MeshLambertMaterial({ color: parseInt(this.config['3DTilesLayer'][layerConfig]['color']), opacity: 0.5, transparent: true });
         }
 
         $3dTilesLayer.overrideMaterials = material;
         $3dTilesLayer.material = material;
-
+        
         itowns.View.prototype.addLayer.call(this.view, $3dTilesLayer);
 
 
@@ -453,23 +450,23 @@ export class BaseDemo {
         }
         var tilesToLoad = this.ifcText.split(';');
         for (let i = 0; i < tilesToLoad.length; i++) {
-            var tile = tilesToLoad[i]; 
-            let $3dTilesLayer = new itowns.GeometryLayer(
-                tile, new THREE.Group());
-            $3dTilesLayer.name = tile;
-            $3dTilesLayer.url =  "http://localhost:8003/tilesets/" + tile + "/tileset.json";
-            $3dTilesLayer.protocol = '3d-tiles';
+            var tile = tilesToLoad[i];
+            if(tile != ''){ 
+                let $3dTilesLayer = new itowns.GeometryLayer(
+                    tile, new THREE.Group());
+                $3dTilesLayer.name = tile;
+                $3dTilesLayer.url =  "http://localhost:8003/tilesets/ifc_tilesets/" + tile + "/tileset.json";
+                $3dTilesLayer.protocol = '3d-tiles';
 
-            let material = new THREE.MeshLambertMaterial({ color: 0xFFFFFF });
-  
-            $3dTilesLayer.overrideMaterials = material;
-            $3dTilesLayer.material = material;
+                let material = new THREE.MeshLambertMaterial({ color: 0xFFFFFF });
+    
+                $3dTilesLayer.overrideMaterials = material;
+                $3dTilesLayer.material = material;
 
-            itowns.View.prototype.addLayer.call(this.view, $3dTilesLayer);
-            
-            this.tilesManager = new TilesManager(this.view,
-                this.view.getLayerById(tile));
-
+                itowns.View.prototype.addLayer.call(this.view, $3dTilesLayer);
+                this.tilesManager = new TilesManager(this.view,
+                    this.view.getLayerById(tile));
+            }
         }
     }
 
@@ -580,7 +577,7 @@ export class BaseDemo {
         // see https://github.com/MEPP-team/VCity/wiki/Configuring-UDV
         return $.ajax({
             type: "GET",
-            url: "../data/config/tileset.txt",
+            url: filePath,
             datatype: "text",
             success: (data) => {
                 this.ifcText = data;

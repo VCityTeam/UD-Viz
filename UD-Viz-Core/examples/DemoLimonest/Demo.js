@@ -9,13 +9,17 @@ baseDemo.appendTo(document.body);
 
 baseDemo.loadConfigFile('../data/config/generalDemoConfig.json').then(() => {
     // Initialize iTowns 3D view
-    baseDemo.loadIfcFile(' ').then(() => {
+    baseDemo.loadIfcFile('../data/config/classes.txt').then(() => {
     
     baseDemo.init3DView('limonest');
     baseDemo.addLyonWMSLayer();
-    baseDemo.add3DTilesLayerFromIfc();
     baseDemo.add3DTilesLayer('limonest_building');
-    //baseDemo.add3DTilesLayer('wall');
+    baseDemo.add3DTilesLayer('villeurbanne_building');
+    baseDemo.add3DTilesLayer('villeurbanne_relief');
+    baseDemo.add3DTilesLayer('villeurbanne_eau');
+    baseDemo.add3DTilesLayerFromIfc();
+
+
 
     baseDemo.update3DView();
 
@@ -83,7 +87,7 @@ baseDemo.loadConfigFile('../data/config/generalDemoConfig.json').then(() => {
         requestService, baseDemo.view, baseDemo.controls, baseDemo.config);
     
     ////// 3DTILES DEBUG
-    const debug3dTilesWindow = new udvcore.Debug3DTilesWindow(baseDemo.tilesManager);
+    const debug3dTilesWindow = new udvcore.Debug3DTilesWindow(baseDemo.tilesManager, baseDemo.view);
     baseDemo.addModuleView('3dtilesDebug', debug3dTilesWindow, {
         name: '3DTiles Debug'
     });

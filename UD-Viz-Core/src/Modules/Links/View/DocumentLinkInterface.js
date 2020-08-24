@@ -7,6 +7,7 @@ import { EventSender } from "../../../Utils/Events/EventSender";
 import { Link } from "../Model/Link";
 import { Window } from "../../../Utils/GUI/js/Window";
 import { LinkProvider } from "../ViewModel/LinkProvider";
+import { TilesManager } from "../../../Utils/3DTiles/TilesManager";
 
 /**
  * The interface extensions for the document windows.
@@ -96,7 +97,7 @@ export class DocumentLinkInterface {
       if (!!this.provider.selectedCityObject) {
         let newLink = new Link();
         newLink.source_id = this.provider.displayedDocument.id;
-        newLink.target_id = this.provider.selectedCityObject.props['cityobject.database_id'];
+        newLink.target_id = this.provider.selectedCityObject.props['ifc.id'];
         newLink.centroid_x = this.provider.selectedCityObject.centroid.x;
         newLink.centroid_y = this.provider.selectedCityObject.centroid.y;
         newLink.centroid_z = this.provider.selectedCityObject.centroid.z;

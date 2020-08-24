@@ -230,7 +230,6 @@ export class CityObjectWindow extends Window {
     if (!this.isCreated) {
       return;
     }
-
     this.selectionColorIndicatorElement.style.background = '#' +
       (new THREE.Color(this.provider.defaultSelectionStyle.materialProps.color)).getHexString();
 
@@ -246,7 +245,8 @@ export class CityObjectWindow extends Window {
       <p class="city-object-title">Attributes</p>
       <p class="city-object-value">
         Tile ID : ${cityObject.tile.tileId}<br>
-        Batch ID : ${cityObject.batchId}
+        Batch ID : ${cityObject.batchId}<br>
+        Ifc Class : ${cityObject.tile.layer.name}
     `;
     for (let prop of Object.entries(cityObject.props)) {
       html += /*html*/`

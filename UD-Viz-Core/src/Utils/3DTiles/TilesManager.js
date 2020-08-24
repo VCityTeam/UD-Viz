@@ -25,6 +25,8 @@ export class TilesManager {
      */
     this.layer = layer;
 
+
+    this.layers = this.view.getLayers(layer => layer.id !== "planar" && layer.isGeometryLayer);
     /**
      * The set of tile wrappers that have been loaded.
      * 
@@ -108,16 +110,39 @@ export class TilesManager {
    * 
    * @returns {CityObject | undefined}
    */
-  pickCityObject(event) {
+  pickCityObject(event,selectCityObjectId) {
     if (event.target.nodeName.toUpperCase() === 'CANVAS') {
       this.update();
       // Get the intersecting objects where our mouse pointer is
-      let intersections = this.view.pickObjectsAt(event, 5);
+      let intersections = [];
+      for (let i = 0; i < this.layers.length; i++) {
+        let intersections_to_add = this.view.pickObjectsAt(event, 10, this.layers[i]);
+        for (let j = 0; j < intersections_to_add.length; j++) {
+          intersections.push(intersections_to_add[j]);
+        }
+
+      }
       // Get the first intersecting tile
       let firstInter = getFirstTileIntersection(intersections);
       if (!!firstInter) {
+        if(selectCityObjectId != null){
+          this.removeStyleFromTile(selectCityObjectId.tileId);
+          this.applyStyleToTile(selectCityObjectId.tileId);
+          this.update();
+        }
         let batchId = getBatchIdFromIntersection(firstInter);
         let tileId = getObject3DFromTile(firstInter.object).tileId;
+        this.layer = firstInter.layer;
+        this.tiles = [];
+        this.loadedTileCount = 0;
+        let tiles = getVisibleTiles(this.layer);
+        for (let tile of tiles) {
+          if (this.tiles[tile.tileId] === undefined) {
+            this.tiles[tile.tileId] = new Tile(this.layer, tile.tileId);
+            this.tiles[tile.tileId].loadCityObjects();
+            this.loadedTileCount += 1;
+          }
+        }
 
         if (this.tiles[tileId] !== undefined) {
           return this.tiles[tileId].cityObjects[batchId];
@@ -140,7 +165,7 @@ export class TilesManager {
       return undefined;
     }
 
-    if (! (cityObjectId instanceof CityObjectID)) {
+    if (!(cityObjectId instanceof CityObjectID)) {
       cityObjectId = createCityObjectID(cityObjectId);
     }
 
@@ -201,13 +226,13 @@ export class TilesManager {
     let tilesToUpdate = new Set();
     if (Array.isArray(cityObjectId)) {
       for (let i = 0; i < cityObjectId.length; i++) {
-        if (! (cityObjectId[i] instanceof CityObjectID)) {
+        if (!(cityObjectId[i] instanceof CityObjectID)) {
           cityObjectId[i] = createCityObjectID(cityObjectId[i]);
         }
         tilesToUpdate.add(cityObjectId[i].tileId);
       }
     } else {
-      if (! (cityObjectId instanceof CityObjectID)) {
+      if (!(cityObjectId instanceof CityObjectID)) {
         cityObjectId = createCityObjectID(cityObjectId);
       }
       tilesToUpdate.add(cityObjectId.tileId);
@@ -225,7 +250,7 @@ export class TilesManager {
    * @param {CityObjectStyle} style The style to register.
    */
   registerStyle(name, style) {
-    if (! (style instanceof CityObjectStyle)) {
+    if (!(style instanceof CityObjectStyle)) {
       style = new CityObjectStyle(style);
     }
     let needUpdate = this.styleManager.registerStyle(name, style);
@@ -248,13 +273,13 @@ export class TilesManager {
 
     if (Array.isArray(cityObjectId)) {
       for (let i = 0; i < cityObjectId.length; i++) {
-        if (! (cityObjectId[i] instanceof CityObjectID)) {
+        if (!(cityObjectId[i] instanceof CityObjectID)) {
           cityObjectId[i] = createCityObjectID(cityObjectId[i]);
         }
         tilesToUpdate.add(cityObjectId[i].tileId);
       }
     } else {
-      if (! (cityObjectId instanceof CityObjectID)) {
+      if (!(cityObjectId instanceof CityObjectID)) {
         cityObjectId = createCityObjectID(cityObjectId);
       }
       tilesToUpdate.add(cityObjectId.tileId);
@@ -295,7 +320,7 @@ export class TilesManager {
    * @returns {CityObjectStyle}
    */
   getStyleAppliedTo(cityObjectId) {
-    if (! (cityObjectId instanceof CityObjectID)) {
+    if (!(cityObjectId instanceof CityObjectID)) {
       cityObjectId = createCityObjectID(cityObjectId);
     }
     return this.styleManager.getStyleAppliedTo(cityObjectId);
@@ -319,7 +344,7 @@ export class TilesManager {
       }
 
       // Set to false so we update the view only once
-      this.applyStyleToTile(tile.tileId, {updateView: false});
+      this.applyStyleToTile(tile.tileId, { updateView: false });
     }
     updateFunction();
   }

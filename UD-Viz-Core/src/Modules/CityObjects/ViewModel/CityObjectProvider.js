@@ -77,7 +77,7 @@ export class CityObjectProvider extends EventSender {
    * @param {MouseEvent} mouseEvent The mouse click event.
    */
   selectCityObject(mouseEvent) {
-    let cityObject = this.tilesManager.pickCityObject(mouseEvent);
+    let cityObject = this.tilesManager.pickCityObject(mouseEvent,this.selectedCityObjectId);
     if (!!cityObject) {
       this.selectedCityObjectId = cityObject.cityObjectId;
       this.removeLayer();
