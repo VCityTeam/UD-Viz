@@ -25,8 +25,6 @@ export class TilesManager {
      */
     this.layer = layer;
 
-
-    this.layers = this.view.getLayers(layer => layer.id !== "planar" && layer.isGeometryLayer);
     /**
      * The set of tile wrappers that have been loaded.
      * 
@@ -114,35 +112,12 @@ export class TilesManager {
     if (event.target.nodeName.toUpperCase() === 'CANVAS') {
       this.update();
       // Get the intersecting objects where our mouse pointer is
-      let intersections = [];
-      for (let i = 0; i < this.layers.length; i++) {
-        let intersections_to_add = this.view.pickObjectsAt(event, 10, this.layers[i]);
-        for (let j = 0; j < intersections_to_add.length; j++) {
-          intersections.push(intersections_to_add[j]);
-        }
-
-      }
+      let intersections = this.view.pickObjectsAt(event, 5);
       // Get the first intersecting tile
       let firstInter = getFirstTileIntersection(intersections);
       if (!!firstInter) {
-        if(selectCityObjectId != null){
-          this.removeStyleFromTile(selectCityObjectId.tileId);
-          this.applyStyleToTile(selectCityObjectId.tileId);
-          this.update();
-        }
         let batchId = getBatchIdFromIntersection(firstInter);
         let tileId = getObject3DFromTile(firstInter.object).tileId;
-        this.layer = firstInter.layer;
-        this.tiles = [];
-        this.loadedTileCount = 0;
-        let tiles = getVisibleTiles(this.layer);
-        for (let tile of tiles) {
-          if (this.tiles[tile.tileId] === undefined) {
-            this.tiles[tile.tileId] = new Tile(this.layer, tile.tileId);
-            this.tiles[tile.tileId].loadCityObjects();
-            this.loadedTileCount += 1;
-          }
-        }
 
         if (this.tiles[tileId] !== undefined) {
           return this.tiles[tileId].cityObjects[batchId];
@@ -151,6 +126,7 @@ export class TilesManager {
     }
 
     return undefined;
+
   }
 
   /**

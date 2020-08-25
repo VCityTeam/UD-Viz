@@ -449,23 +449,24 @@ export class BaseDemo {
         }
         var tilesToLoad = this.ifcText.split(';');
         for (let i = 0; i < tilesToLoad.length; i++) {
-            var tile = tilesToLoad[i]; 
-            let $3dTilesLayer = new itowns.GeometryLayer(
-                tile, new THREE.Group());
-            $3dTilesLayer.name = tile;
-            $3dTilesLayer.url =  "http://localhost:8003/tilesets/" + tile + "/tileset.json";
-            $3dTilesLayer.protocol = '3d-tiles';
+            if(tilesToLoad[i] != '' && tilesToLoad[i] != undefined ){ 
+                var tile = tilesToLoad[i]; 
+                let $3dTilesLayer = new itowns.GeometryLayer(
+                    tile, new THREE.Group());
+                $3dTilesLayer.name = tile;
+                $3dTilesLayer.url =  "http://localhost:8003/tilesets/ifc_tilesets/" + tile + "/tileset.json";
+                $3dTilesLayer.protocol = '3d-tiles';
 
-            let material = new THREE.MeshLambertMaterial({ color: 0xFFFFFF });
-  
-            $3dTilesLayer.overrideMaterials = material;
-            $3dTilesLayer.material = material;
+                let material = new THREE.MeshLambertMaterial({ color: 0xFFFFFF });
+                
+                $3dTilesLayer.overrideMaterials = material;
+                $3dTilesLayer.material = material;
 
-            itowns.View.prototype.addLayer.call(this.view, $3dTilesLayer);
-            
-            this.layerManager.tilesManagers.push(new TilesManager(this.view,
-                this.view.getLayerById(tile)));
-
+                itowns.View.prototype.addLayer.call(this.view, $3dTilesLayer);
+                
+                this.layerManager.tilesManagers.push(new TilesManager(this.view,
+                    this.view.getLayerById(tile)));
+            }
         }
     }
 
@@ -572,8 +573,7 @@ export class BaseDemo {
  * @param filePath The path to the config file.
  */
     async loadIfcFile(filePath) {
-        //loading configuration file
-        // see https://github.com/MEPP-team/VCity/wiki/Configuring-UDV
+        //load an ifc description file
         return $.ajax({
             type: "GET",
             url: filePath,

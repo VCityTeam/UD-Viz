@@ -46,67 +46,66 @@ export class LayerChoice extends Window {
 
   }
 
-  innerContentColorLayers(){
+  innerContentColorLayers() {
     let list = this.colorLayerListElement;
     list.innerHTML = '';
     let layers = this.layerManager.getColorLayers();
-    console.log(layers);
     for (let i = 0; i < layers.length; i++) {
       let itemVisible = document.createElement('div');
       itemVisible.innerHTML = `<h3>${layers[i].id}</h3>
-                      Visible <input type="checkbox" id="${i}" ${layers[i].visible ? "checked" : ""}></input></li>`; 
+                      Visible <input type="checkbox" id="${i}" ${layers[i].visible ? "checked" : ""}></input></li>`;
       itemVisible.onchange = (event) => {
         layers[event.srcElement.id].visible = event.srcElement.checked;
         this.layerManager.notifyChange();
       };
       list.appendChild(itemVisible);
       let item = document.createElement('div');
-      item.innerHTML = `Opacity : ${layers[i].opacity} <input type ="range" id="${i}" min="0" max="1" step = "0.1" value="${layers[i].opacity}"></input>`; 
+      item.innerHTML = `Opacity : ${layers[i].opacity} <input type ="range" id="${i}" min="0" max="1" step = "0.1" value="${layers[i].opacity}"></input>`;
       item.onchange = (event) => {
-        this.layerManager.updateOpacity(layers[i],event.srcElement.valueAsNumber);
-        item.innerHTML = `Opacity : ${layers[i].opacity} <input type ="range" id="${i}" min="0" max="1" step = "0.1" value="${layers[i].opacity}"></input>`; 
+        this.layerManager.updateOpacity(layers[i], event.srcElement.valueAsNumber);
+        item.innerHTML = `Opacity : ${layers[i].opacity} <input type ="range" id="${i}" min="0" max="1" step = "0.1" value="${layers[i].opacity}"></input>`;
         this.layerManager.notifyChange();
       };
       list.appendChild(item);
     }
   }
 
-  innerContentElevationLayers(){
+  innerContentElevationLayers() {
     let list = this.elevationLayerListElement;
     list.innerHTML = '';
     let layers = this.layerManager.getElevationLayers();
     for (let i = 0; i < layers.length; i++) {
       let item = document.createElement('div');
       item.innerHTML = `<h3>${layers[i].id}</h3>
-                        Scale : ${layers[i].scale} <input type ="range" id="${i}" min="1" max="10" step = "1" value="${layers[i].scale}"></input>`; 
+                        Scale : ${layers[i].scale} <input type ="range" id="${i}" min="1" max="10" step = "1" value="${layers[i].scale}"></input>`;
       item.onchange = (event) => {
-        this.layerManager.updateScale(layers[i],event.srcElement.valueAsNumber);
+        this.layerManager.updateScale(layers[i], event.srcElement.valueAsNumber);
         item.innerHTML = `<h3>${layers[i].id}</h3>
-         Scale : ${layers[i].scale}<input type ="range" id="${i}" min="1" max="10" step = "1" value="${layers[i].scale}"></input>`; 
+         Scale : ${layers[i].scale}<input type ="range" id="${i}" min="1" max="10" step = "1" value="${layers[i].scale}"></input>`;
         this.layerManager.notifyChange();
       };
       list.appendChild(item);
     }
   }
 
-  innerContentGeometryLayers(){
+  innerContentGeometryLayers() {
     let list = this.geometryLayerListElement;
     list.innerHTML = '';
     let layers = this.layerManager.getGeometryLayers();
     for (let i = 0; i < layers.length; i++) {
       let itemVisible = document.createElement('div');
       itemVisible.innerHTML = `<h3>${layers[i].id}</h3>
-                      Visible <input type="checkbox" id="${i}" ${layers[i].visible ? "checked" : ""}></input></li>`; 
+                      Visible <input type="checkbox" id="${i}" ${layers[i].visible ? "checked" : ""}></input></li>`;
       itemVisible.onchange = (event) => {
         layers[event.srcElement.id].visible = event.srcElement.checked;
         this.layerManager.notifyChange();
       };
       list.appendChild(itemVisible);
       let item = document.createElement('div');
-      item.innerHTML = `Opacity : ${layers[i].opacity} <input type ="range" id="${i}" min="0" max="1" step = "0.1" value="${layers[i].opacity}"></input>`; 
+      item.innerHTML = `Opacity : ${layers[i].opacity} <input type ="range" id="${i}" min="0" max="1" step = "0.1" value="${layers[i].opacity}"></input>`;
       item.onchange = (event) => {
-        this.layerManager.updateOpacity(layers[i],event.srcElement.valueAsNumber);
-        item.innerHTML = `Opacity : ${layers[i].opacity} <input type ="range" id="${i}" min="0" max="1" step = "0.1" value="${layers[i].opacity}"></input>`; 
+        this.layerManager.updateOpacity(layers[i], event.srcElement.valueAsNumber);
+        item.innerHTML = `Opacity : ${layers[i].opacity} <input type ="range" id="${i}" min="0" max="1" step = "0.1" value="${layers[i].opacity}"></input>`;
         this.layerManager.notifyChange();
       };
       list.appendChild(item);
@@ -114,18 +113,18 @@ export class LayerChoice extends Window {
   }
   ////// GETTERS
 
-  get colorLayersId(){
+  get colorLayersId() {
     return `${this.windowId}_color_layers`;
   }
-  
-  get elevationLayersId(){
+
+  get elevationLayersId() {
     return `${this.windowId}_elevation_layers`;
   }
 
-  get geometryLayersId(){
+  get geometryLayersId() {
     return `${this.windowId}_geometry_layers`;
   }
-  
+
   get layerListId() {
     return `${this.windowId}_layer_list`;
   }

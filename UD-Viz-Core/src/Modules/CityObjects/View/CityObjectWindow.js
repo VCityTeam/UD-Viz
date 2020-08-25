@@ -246,7 +246,7 @@ export class CityObjectWindow extends Window {
       <p class="city-object-value">
         Tile ID : ${cityObject.tile.tileId}<br>
         Batch ID : ${cityObject.batchId}<br>
-        Ifc Class : ${cityObject.tile.layer.name}
+        Layer : ${cityObject.tile.layer.name}
     `;
     for (let prop of Object.entries(cityObject.props)) {
       html += /*html*/`

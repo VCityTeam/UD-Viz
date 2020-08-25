@@ -13,225 +13,225 @@ import { LayerManager } from "../../../Utils/LayerManager/LayerManager";
  * filter.
  */
 export class CityObjectProvider extends EventSender {
-  /**
-   * Constructs a city object provider, using a tiles manager.
-   * 
-   * @param {LayerManager} layerManager The tiles manager.
-   */
-  constructor(layerManager) {
-    super();
     /**
-     * The tiles manager.
+     * Constructs a city object provider, using a tiles manager.
      * 
-     * @type {LayerManager}
+     * @param {LayerManager} layerManager The tiles manager.
      */
-    this.layerManager = layerManager;
+    constructor(layerManager) {
+        super();
+        /**
+         * The tiles manager.
+         * 
+         * @type {LayerManager}
+         */
+        this.layerManager = layerManager;
 
-    /**
-     * The available filters.
-     * 
-     * @type {Object.<string, CityObjectFilter>}
-     */
-    this.filters = {};
+        /**
+         * The available filters.
+         * 
+         * @type {Object.<string, CityObjectFilter>}
+         */
+        this.filters = {};
 
-    /**
-     * The current highlighted layer.
-     * 
-     * @type {CityObjectLayer}
-     */
-    this.layer = undefined;
+        /**
+         * The current highlighted layer.
+         * 
+         * @type {CityObjectLayer}
+         */
+        this.layer = undefined;
 
-    /**
-     * The array of city objects in the layer.
-     * 
-     * @type {Array<CityObjectID>}
-     */
-    this.layerCityObjectIds = [];
+        /**
+         * The array of city objects in the layer.
+         * 
+         * @type {Array<CityObjectID>}
+         */
+        this.layerCityObjectIds = [];
 
-    /**
-     * The selected city object.
-     * 
-     * @type {CityObjectID}
-     */
-    this.selectedCityObjectId = undefined;
+        /**
+         * The selected city object.
+         * 
+         * @type {CityObjectID}
+         */
+        this.selectedCityObject = undefined;
 
-    /**
-     * The style applied to the selected city object.
-     * 
-     * @type {CityObjectStyle | string}
-     */
-    this.defaultSelectionStyle = {materialProps: {color: 0x13ddef}};
+        /**
+         * The style applied to the selected city object.
+         * 
+         * @type {CityObjectStyle | string}
+         */
+        this.defaultSelectionStyle = { materialProps: { color: 0x13ddef } };
 
-    // Event registration
-    this.registerEvent(CityObjectProvider.EVENT_FILTERS_UPDATED);
-    this.registerEvent(CityObjectProvider.EVENT_LAYER_CHANGED);
-    this.registerEvent(CityObjectProvider.EVENT_CITY_OBJECT_SELECTED);
-  }
-
-  ///////////////////////////
-  ///// CITY OBJECT SELECTION
-
-  /**
-   * Selects a city object from a mouse event. If a city object is actually
-   * under the mouse, the `EVENT_CITY_OBJECT_SELECTED` event is sent.
-   * 
-   * @param {MouseEvent} mouseEvent The mouse click event.
-   */
-  selectCityObject(mouseEvent) {
-    let cityObject = this.layerManager.tilesManagers[0].pickCityObject(mouseEvent);
-    if (!!cityObject) {
-      this.selectedCityObjectId = cityObject.cityObjectId;
-      this.removeLayer();
-      this.sendEvent(CityObjectProvider.EVENT_CITY_OBJECT_SELECTED, cityObject);
-    }
-    this._updateTilesManager();
-  }
-
-  /**
-   * Unset the selected city object and sends an `EVENT_CITY_OBJECT_SELECTED`
-   * event.
-   */
-  unselectCityObject() {
-    this.selectedCityObjectId = undefined;
-    this.sendEvent(CityObjectProvider.EVENT_CITY_OBJECT_SELECTED, undefined);
-    this._updateTilesManager();
-    this.applyStyles();
-  }
-
-  /**
-   * Sets the style for the selected city object.
-   * 
-   * @param {CityObjectStyle | string} style The style.
-   */
-  setSelectionStyle(style) {
-    this.defaultSelectionStyle = style;
-  }
-
-  /////////////
-  ///// FILTERS
-
-  /**
-   * Adds a filter to the dictionnary of available filters. The key shall be
-   * the `label` attribute of the filter. After that, the
-   * `EVENT_FILTERS_UPDATED` event is sent.
-   * 
-   * @param {CityObjectFilter} cityObjectFilter The filter to add.
-   */
-  addFilter(cityObjectFilter) {
-    let label = cityObjectFilter.label;
-
-    if (this.filters[label] !== undefined) {
-      throw 'A filter with this label already exists : ' + label;
+        // Event registration
+        this.registerEvent(CityObjectProvider.EVENT_FILTERS_UPDATED);
+        this.registerEvent(CityObjectProvider.EVENT_LAYER_CHANGED);
+        this.registerEvent(CityObjectProvider.EVENT_CITY_OBJECT_SELECTED);
     }
 
-    this.filters[label] = cityObjectFilter;
+    ///////////////////////////
+    ///// CITY OBJECT SELECTION
 
-    this.sendEvent(CityObjectProvider.EVENT_FILTERS_UPDATED, this.filters);
-  }
-
-  /**
-   * Returns the currently available filters.
-   * 
-   * @return {Array<CityObjectFilter>} The currently available filters.
-   */
-  getFilters() {
-    return Object.values(this.filters);
-  }
-
-  //////////////////////
-  ///// LAYER MANAGEMENT
-
-  /**
-   * Sets the current layer. The layer is defined by a filter (ie. a set
-   * of city objects) and a style. Sends the `EVENT_LAYER_CHANGED` event.
-   * 
-   * @param {string} filterLabel Label of the filter that defines the layer.
-   * The filter must first be registered using `addFilter`.
-   * @param {CityObjectStyle | string} style The style to associate to the
-   * layer.
-   */
-  setLayer(filterLabel, style) {
-    let filter = this.filters[filterLabel];
-
-    if (filter === undefined) {
-      throw 'No filter found with the label : ' + label;
+    /**
+     * Selects a city object from a mouse event. If a city object is actually
+     * under the mouse, the `EVENT_CITY_OBJECT_SELECTED` event is sent.
+     * 
+     * @param {MouseEvent} mouseEvent The mouse click event.
+     */
+    selectCityObject(mouseEvent) {
+        let cityObject = this.layerManager.pickCityObject(mouseEvent);
+        if (!!cityObject) {
+            this.selectedCityObject = cityObject;
+            this.removeLayer();
+            this.sendEvent(CityObjectProvider.EVENT_CITY_OBJECT_SELECTED, cityObject);
+        }
+        this._updateTilesManager();
     }
 
-    this.layer = new CityObjectLayer(filter, style);
-
-    this.sendEvent(CityObjectProvider.EVENT_LAYER_CHANGED, filter);
-
-    this.unselectCityObject();
-
-    this.applyStyles();
-  }
-
-  /**
-   * Returns the current layer.
-   * 
-   * @returns {CityObjectLayer} The current layer.
-   */
-  getLayer() {
-    return this.layer;
-  }
-
-  /**
-   * Unsets the current layer. Sends the `EVENT_LAYER_CHANGED` event.
-   */
-  removeLayer() {
-    this.layer = undefined;
-    this.sendEvent(CityObjectProvider.EVENT_LAYER_CHANGED, undefined);
-    
-    this.applyStyles();
-  }
-
-  /**
-   * Updates the tiles manager so that it has the correct styles associated with
-   * the right city objects.
-   * 
-   * @private
-   */
-  _updateTilesManager() {
-    this.layerManager.tilesManagers[0].update();
-    this.layerManager.tilesManagers[0].removeAllStyles();
-
-    if (this.layer === undefined) {
-      this.layerCityObjectIds = [];
-    } else {
-      this.layerCityObjectIds = this.layerManager.tilesManagers[0]
-        .findAllCityObjects(this.layer.filter.accepts)
-        .map((co) => co.cityObjectId);
-      
-      this.layerManager.tilesManagers[0].setStyle(this.layerCityObjectIds, this.layer.style);
+    /**
+     * Unset the selected city object and sends an `EVENT_CITY_OBJECT_SELECTED`
+     * event.
+     */
+    unselectCityObject() {
+        this.selectedCityObject = undefined;
+        this.sendEvent(CityObjectProvider.EVENT_CITY_OBJECT_SELECTED, undefined);
+        this._updateTilesManager();
+        this.applyStyles();
     }
 
-    if (!!this.selectedCityObjectId) {
-      this.layerManager.tilesManagers[0].setStyle(this.selectedCityObjectId, this.defaultSelectionStyle);
+    /**
+     * Sets the style for the selected city object.
+     * 
+     * @param {CityObjectStyle | string} style The style.
+     */
+    setSelectionStyle(style) {
+        this.defaultSelectionStyle = style;
     }
-  }
 
-  /**
-   * Apply the styles to the tiles manager. This function is necessary as the
-   * event for tile loading does not exist yet. In the future, it shouldn't be
-   * necessary to manually call this function.
-   */
-  applyStyles() {
-    this._updateTilesManager();
-    this.layerManager.tilesManagers[0].applyStyles();
-  }
+    /////////////
+    ///// FILTERS
 
-  ////////////
-  ///// EVENTS
+    /**
+     * Adds a filter to the dictionnary of available filters. The key shall be
+     * the `label` attribute of the filter. After that, the
+     * `EVENT_FILTERS_UPDATED` event is sent.
+     * 
+     * @param {CityObjectFilter} cityObjectFilter The filter to add.
+     */
+    addFilter(cityObjectFilter) {
+        let label = cityObjectFilter.label;
 
-  static get EVENT_FILTERS_UPDATED() {
-    return 'EVENT_FILTERS_UPDATED';
-  }
+        if (this.filters[label] !== undefined) {
+            throw 'A filter with this label already exists : ' + label;
+        }
 
-  static get EVENT_LAYER_CHANGED() {
-    return 'EVENT_LAYER_CHANGED';
-  }
+        this.filters[label] = cityObjectFilter;
 
-  static get EVENT_CITY_OBJECT_SELECTED() {
-    return 'EVENT_CITY_OBJECT_SELECTED';
-  }
+        this.sendEvent(CityObjectProvider.EVENT_FILTERS_UPDATED, this.filters);
+    }
+
+    /**
+     * Returns the currently available filters.
+     * 
+     * @return {Array<CityObjectFilter>} The currently available filters.
+     */
+    getFilters() {
+        return Object.values(this.filters);
+    }
+
+    //////////////////////
+    ///// LAYER MANAGEMENT
+
+    /**
+     * Sets the current layer. The layer is defined by a filter (ie. a set
+     * of city objects) and a style. Sends the `EVENT_LAYER_CHANGED` event.
+     * 
+     * @param {string} filterLabel Label of the filter that defines the layer.
+     * The filter must first be registered using `addFilter`.
+     * @param {CityObjectStyle | string} style The style to associate to the
+     * layer.
+     */
+    setLayer(filterLabel, style) {
+        let filter = this.filters[filterLabel];
+
+        if (filter === undefined) {
+            throw 'No filter found with the label : ' + label;
+        }
+
+        this.layer = new CityObjectLayer(filter, style);
+
+        this.sendEvent(CityObjectProvider.EVENT_LAYER_CHANGED, filter);
+
+        this.unselectCityObject();
+
+        this.applyStyles();
+    }
+
+    /**
+     * Returns the current layer.
+     * 
+     * @returns {CityObjectLayer} The current layer.
+     */
+    getLayer() {
+        return this.layer;
+    }
+
+    /**
+     * Unsets the current layer. Sends the `EVENT_LAYER_CHANGED` event.
+     */
+    removeLayer() {
+        this.layer = undefined;
+        this.sendEvent(CityObjectProvider.EVENT_LAYER_CHANGED, undefined);
+        this.applyStyles();
+    }
+
+    /**
+     * Updates the tiles manager so that it has the correct styles associated with
+     * the right city objects.
+     * 
+     * @private
+     */
+    _updateTilesManager() {
+        this.layerManager.update3DTiles();
+        this.layerManager.removeAll3DTilesStyles();
+        if (!!this.selectedCityObject) {
+            let tileManager = this.layerManager.getTilesManagerByLayerID(this.selectedCityObject.tile.layer.id);
+        
+            if (this.layer === undefined) {
+                this.layerCityObjectIds = [];
+            } else {
+                this.layerCityObjectIds = tileManager
+                    .findAllCityObjects(this.layer.filter.accepts)
+                    .map((co) => co.cityObjectId);
+
+                    tileManager.setStyle(this.layerCityObjectIds, this.layer.style);
+            }
+
+            tileManager.setStyle(this.selectedCityObject.cityObjectId, this.defaultSelectionStyle);
+        }
+    }
+
+    /**
+     * Apply the styles to the tiles manager. This function is necessary as the
+     * event for tile loading does not exist yet. In the future, it shouldn't be
+     * necessary to manually call this function.
+     */
+    applyStyles() {
+        this._updateTilesManager();
+        this.layerManager.apply3DTilesStyles();
+    }
+
+    ////////////
+    ///// EVENTS
+
+    static get EVENT_FILTERS_UPDATED() {
+        return 'EVENT_FILTERS_UPDATED';
+    }
+
+    static get EVENT_LAYER_CHANGED() {
+        return 'EVENT_LAYER_CHANGED';
+    }
+
+    static get EVENT_CITY_OBJECT_SELECTED() {
+        return 'EVENT_CITY_OBJECT_SELECTED';
+    }
 }
