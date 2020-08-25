@@ -6,6 +6,7 @@ import { CityObjectFilterWindow } from "./CityObjectFilterWindow";
 import { AttributeFilterSelector } from "./AttributeFilterSelector";
 
 import './CityObjectWindow.css';
+import { IfcAttributeWindow } from "./IfcAttributeWindow";
 
 /**
  * The main window of the city object module. It displays a short description
@@ -34,6 +35,14 @@ export class CityObjectWindow extends Window {
      * @type {CityObjectFilterWindow}
      */
     this.filterWindow = new CityObjectFilterWindow();
+
+
+    /**
+     * The window for selected filters.
+     * 
+     * @type {CityObjectFilterWindow}
+     */
+    this.ifcAttributeWindow = undefined;
 
     /**
      * The style for the layer chosen by the user, through the filter window.
@@ -113,6 +122,9 @@ export class CityObjectWindow extends Window {
         <div id="${this.selectedCityObjectId}">
 
         </div>
+        <div data-ext-container-default="button">
+              <button id="${this.ifcAttributeButtonId}">More </button>
+        </div>
         <div data-ext-container-default="div">
 
         </div>
@@ -128,7 +140,7 @@ export class CityObjectWindow extends Window {
     this.window.style.left = '10px';
     this.window.style.top = 'unset';
     this.window.style.bottom = '10px';
-    this.window.style.width = '270px';
+    this.window.style.width = '400px';
 
     this.filterWindow.appendTo(this.parentElement);
     this.filterWindow.disable();
@@ -147,7 +159,12 @@ export class CityObjectWindow extends Window {
     this.clearSelectionButtonElement.onclick =
       () => this._clearCityObjectSelection();
 
+    this.ifcAttributeButtonElement.onclick =
+      () => IfcAttributeWindow
+
     this.clearSelectionButtonElement.disabled = true;
+
+    this.ifcAttributeButtonElement.disabled = true;
 
     this._updateLayerDescription();
   }
@@ -270,6 +287,14 @@ export class CityObjectWindow extends Window {
 
   get selectedFilterId() {
     return `${this.windowId}_selected_filter`;
+  }
+
+  get ifcAttributeButtonId() {
+    return `${this.windowId}_ifc_attribute_button`;
+  }
+
+  get ifcAttributeButtonElement() {
+    return document.getElementById(this.ifcAttributeButtonId);
   }
 
   get selectedFilterElement() {
