@@ -410,7 +410,7 @@ export class BaseDemo {
         }
 
         let $3dTilesLayer = new itowns.GeometryLayer(
-            this.config['3DTilesLayer'][layerConfig]['id'], new THREE.Group());
+            this.config['3DTilesLayer'][layerConfig]['id'], new THREE.Group(), {transparent: true});
         $3dTilesLayer.name = 'Lyon-2015-'.concat(layerConfig);
         $3dTilesLayer.url =
             this.config['3DTilesLayer'][layerConfig]['url'];
@@ -452,7 +452,7 @@ export class BaseDemo {
             if(tilesToLoad[i] != '' && tilesToLoad[i] != undefined ){ 
                 var tile = tilesToLoad[i]; 
                 let $3dTilesLayer = new itowns.GeometryLayer(
-                    tile, new THREE.Group());
+                    tile, new THREE.Group(), {transparent: true});
                 $3dTilesLayer.name = tile;
                 $3dTilesLayer.url =  "http://localhost:8003/tilesets/ifc_tilesets/" + tile + "/tileset.json";
                 $3dTilesLayer.protocol = '3d-tiles';
