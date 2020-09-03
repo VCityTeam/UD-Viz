@@ -23,6 +23,21 @@ export class LayerManager {
         this.tilesManagers = [];
     }
 
+    isOneLayerVisible(){
+        for (let i = 0; i < this.tilesManagers.length; i++) {
+            if(this.tilesManagers[i].layer.visible){
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    changeVisibility(bool) {
+        for (let i = 0; i < this.tilesManagers.length; i++) {
+            this.tilesManagers[i].layer.visible = bool;
+        }
+    }
+
     registerStyle(name, style) {
         for (let i = 0; i < this.tilesManagers.length; i++) {
             this.tilesManagers[i].registerStyle(name, style);
