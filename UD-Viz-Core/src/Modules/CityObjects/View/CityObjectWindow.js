@@ -114,6 +114,10 @@ export class CityObjectWindow extends Window {
       <div class="box-section">
         <h3 class="section-title">Selection<span class="color-indicator" id="${this.selectionColorIndicatorId}"></span></h3>
         <div id="${this.selectedCityObjectId}">
+
+        </div>
+        <div data-ext-container-default="div">
+
         </div>
         <hr>
         <div data-ext-container-default="button">
