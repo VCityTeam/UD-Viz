@@ -38,9 +38,9 @@ export class CityObjectWindow extends Window {
 
 
     /**
-     * The window for selected filters.
+     * The window for ifc attribute.
      * 
-     * @type {CityObjectFilterWindow}
+     * @type {IfcAttributeWindow}
      */
     this.ifcAttributeWindow = undefined;
 
@@ -49,7 +49,7 @@ export class CityObjectWindow extends Window {
      * 
      * @type {CityObjectStyle | string}
      */
-    this.defaultLayerStyle = {materialProps: {color: 0xffa14f}};
+    this.defaultLayerStyle = { materialProps: { color: 0xffa14f } };
 
     /**
      * Wether the use is currently selecting a city object.
@@ -92,7 +92,7 @@ export class CityObjectWindow extends Window {
     this.filterWindow.addEventListener(
       CityObjectFilterWindow.EVENT_FILTER_SELECTED,
       (filterLabel) => this._onFilterSelected(filterLabel));
-    
+
     // The event listener for the layer change. Updates the layer description.
     this.provider.addEventListener(CityObjectProvider.EVENT_LAYER_CHANGED,
       () => this._updateLayerDescription());
@@ -121,9 +121,6 @@ export class CityObjectWindow extends Window {
         <h3 class="section-title">Selection<span class="color-indicator" id="${this.selectionColorIndicatorId}"></span></h3>
         <div id="${this.selectedCityObjectId}">
 
-        </div>
-        <div data-ext-container-default="button">
-              <button id="${this.ifcAttributeButtonId}">More </button>
         </div>
         <div data-ext-container-default="div">
 
@@ -159,12 +156,7 @@ export class CityObjectWindow extends Window {
     this.clearSelectionButtonElement.onclick =
       () => this._clearCityObjectSelection();
 
-    this.ifcAttributeButtonElement.onclick =
-      () => IfcAttributeWindow
-
     this.clearSelectionButtonElement.disabled = true;
-
-    this.ifcAttributeButtonElement.disabled = true;
 
     this._updateLayerDescription();
   }
@@ -255,7 +247,6 @@ export class CityObjectWindow extends Window {
       this.clearSelectionButtonElement.disabled = true;
       return;
     }
-
     this.clearSelectionButtonElement.disabled = false;
 
     let html = /*html*/`
@@ -265,13 +256,26 @@ export class CityObjectWindow extends Window {
         Batch ID : ${cityObject.batchId}<br>
         Layer : ${cityObject.tile.layer.name}
     `;
+    let ifc_id = undefined;
     for (let prop of Object.entries(cityObject.props)) {
       html += /*html*/`
         <br>${prop[0]} : ${prop[1]}
       `;
+      ifc_id = prop[1];
     }
-    html += '</p>';
+    html += `</p>
+            <div data-ext-container-default="button">
+              <button id="${this.ifcAttributeButtonId}">More </button>
+            </div>`;
+
     this.selectedCityObjectElement.innerHTML = html;
+
+    this.ifcAttributeButtonElement.onclick =
+      () => { 
+        this.ifcAttributeWindow = new IfcAttributeWindow(ifc_id);
+        this.ifcAttributeWindow.appendTo(this.parentElement);
+      }
+
   }
 
   /////////////

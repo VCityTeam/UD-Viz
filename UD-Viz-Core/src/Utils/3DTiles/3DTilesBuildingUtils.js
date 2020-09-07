@@ -11,7 +11,7 @@ import { setTileVerticesColor, getBatchIdFromIntersection,
 export function getBuildingIdFromIntersection(inter) {
   let table = getBatchTableFromTile(inter.object);
   let bid = getBatchIdFromIntersection(inter);
-  return table.content['cityobject.database_id'][bid];
+  return table.content['ifc.id'][bid];
 }
 
 export function getBuildingInfoFromBuildingId(tilesInfo, buildingId) {
@@ -19,7 +19,7 @@ export function getBuildingInfoFromBuildingId(tilesInfo, buildingId) {
     let tile = tilesInfo.tiles[tileId];
     for (let batchId of Object.keys(tile)) {
       let buildingInfo = tile[batchId];
-      if (buildingInfo.props['cityobject.database_id'] === buildingId) {
+      if (buildingInfo.props['ifc.id'] === buildingId) {
         return buildingInfo;
       }
     }

@@ -276,7 +276,7 @@ export class LinkProvider extends EventSender {
    */
   getLinksFromCityObject(cityObject) {
     return this.links.filter((link) =>
-      link.target_id == cityObject.props['cityobject.database_id']);
+      link.target_id == cityObject.props['ifc.id']);
   }
 
   /**
