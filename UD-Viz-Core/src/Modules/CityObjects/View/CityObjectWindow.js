@@ -6,7 +6,7 @@ import { CityObjectFilterWindow } from "./CityObjectFilterWindow";
 import { AttributeFilterSelector } from "./AttributeFilterSelector";
 
 import './CityObjectWindow.css';
-import { IfcAttributeWindow } from "./IfcAttributeWindow";
+
 
 /**
  * The main window of the city object module. It displays a short description
@@ -37,12 +37,6 @@ export class CityObjectWindow extends Window {
     this.filterWindow = new CityObjectFilterWindow();
 
 
-    /**
-     * The window for selected filters.
-     * 
-     * @type {CityObjectFilterWindow}
-     */
-    this.ifcAttributeWindow = undefined;
 
     /**
      * The style for the layer chosen by the user, through the filter window.
@@ -120,13 +114,6 @@ export class CityObjectWindow extends Window {
       <div class="box-section">
         <h3 class="section-title">Selection<span class="color-indicator" id="${this.selectionColorIndicatorId}"></span></h3>
         <div id="${this.selectedCityObjectId}">
-
-        </div>
-        <div data-ext-container-default="button">
-              <button id="${this.ifcAttributeButtonId}">More </button>
-        </div>
-        <div data-ext-container-default="div">
-
         </div>
         <hr>
         <div data-ext-container-default="button">
@@ -159,12 +146,8 @@ export class CityObjectWindow extends Window {
     this.clearSelectionButtonElement.onclick =
       () => this._clearCityObjectSelection();
 
-    this.ifcAttributeButtonElement.onclick =
-      () => IfcAttributeWindow
 
     this.clearSelectionButtonElement.disabled = true;
-
-    this.ifcAttributeButtonElement.disabled = true;
 
     this._updateLayerDescription();
   }
@@ -287,14 +270,6 @@ export class CityObjectWindow extends Window {
 
   get selectedFilterId() {
     return `${this.windowId}_selected_filter`;
-  }
-
-  get ifcAttributeButtonId() {
-    return `${this.windowId}_ifc_attribute_button`;
-  }
-
-  get ifcAttributeButtonElement() {
-    return document.getElementById(this.ifcAttributeButtonId);
   }
 
   get selectedFilterElement() {
