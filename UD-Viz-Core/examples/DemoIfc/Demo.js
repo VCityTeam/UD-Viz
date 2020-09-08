@@ -9,9 +9,11 @@ baseDemo.appendTo(document.body);
 
 baseDemo.loadConfigFile('../data/config/generalDemoConfig.json').then(() => {
     // Initialize iTowns 3D view
+    baseDemo.loadIfcFile('../data/config/classes.txt').then(() => {    
         baseDemo.init3DView('limonest');
         baseDemo.addLyonWMSLayer();
         baseDemo.add3DTilesLayer('limonest_building');
+        baseDemo.add3DTilesLayerFromIfc();
 
 
         baseDemo.update3DView();
@@ -95,5 +97,5 @@ baseDemo.loadConfigFile('../data/config/generalDemoConfig.json').then(() => {
             baseDemo.addModuleView('layerChoice', layerChoice, {
                 name: 'layerChoice'
         });
-    
+    })
 });
