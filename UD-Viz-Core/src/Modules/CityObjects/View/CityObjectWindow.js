@@ -6,7 +6,7 @@ import { CityObjectFilterWindow } from "./CityObjectFilterWindow";
 import { AttributeFilterSelector } from "./AttributeFilterSelector";
 
 import './CityObjectWindow.css';
-import { IfcAttributeWindow } from "./IfcAttributeWindow";
+
 
 /**
  * The main window of the city object module. It displays a short description
@@ -35,14 +35,6 @@ export class CityObjectWindow extends Window {
      * @type {CityObjectFilterWindow}
      */
     this.filterWindow = new CityObjectFilterWindow();
-
-
-    /**
-     * The window for ifc attribute.
-     * 
-     * @type {IfcAttributeWindow}
-     */
-    this.ifcAttributeWindow = undefined;
 
     /**
      * The style for the layer chosen by the user, through the filter window.
@@ -291,14 +283,6 @@ export class CityObjectWindow extends Window {
 
   get selectedFilterId() {
     return `${this.windowId}_selected_filter`;
-  }
-
-  get ifcAttributeButtonId() {
-    return `${this.windowId}_ifc_attribute_button`;
-  }
-
-  get ifcAttributeButtonElement() {
-    return document.getElementById(this.ifcAttributeButtonId);
   }
 
   get selectedFilterElement() {

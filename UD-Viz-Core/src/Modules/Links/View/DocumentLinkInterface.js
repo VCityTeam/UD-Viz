@@ -97,7 +97,7 @@ export class DocumentLinkInterface {
       if (!!this.provider.selectedCityObject) {
         let newLink = new Link();
         newLink.source_id = this.provider.displayedDocument.id;
-        newLink.target_id = this.provider.selectedCityObject.props['ifc.id'];
+        newLink.target_id = this.provider.selectedCityObject.props['cityobject.database_id'];
         newLink.centroid_x = this.provider.selectedCityObject.centroid.x;
         newLink.centroid_y = this.provider.selectedCityObject.centroid.y;
         newLink.centroid_z = this.provider.selectedCityObject.centroid.z;

@@ -108,7 +108,7 @@ export class TilesManager {
    * 
    * @returns {CityObject | undefined}
    */
-  pickCityObject(event,selectCityObjectId) {
+  pickCityObject(event, selectCityObjectId) {
     if (event.target.nodeName.toUpperCase() === 'CANVAS') {
       this.update();
       // Get the intersecting objects where our mouse pointer is

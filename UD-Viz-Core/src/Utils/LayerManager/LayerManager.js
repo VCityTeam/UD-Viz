@@ -8,7 +8,6 @@ export class LayerManager {
        * Creates a new TilesManager from an iTowns view and the 3DTiles layer.
        * 
        * @param {*} view The iTowns view.
-       * @param {*} layer The 3DTiles layer.
        */
     constructor(view) {
         /**
@@ -17,124 +16,130 @@ export class LayerManager {
         this.view = view;
 
         /**
-         * The set of tile wrappers that have been loaded.
+         * The set of tiles Manager that have been loaded.
          * @type {Array<TilesManager>}
          */
         this.tilesManagers = [];
     }
 
-    isOneLayerVisible(){
+
+
+    /**
+    * Update all 3DTiles and constructs the tiles that have not been loaded yet. 
+    */
+    update3DTiles() {
+        this.tilesManagers.forEach(function(tilesManager){
+            tilesManager.update();
+        });
+    }
+
+
+    /**
+     * Register a new or modify an existing registered style for all tilesManager.
+     * 
+     * @param {string} name A name to identify the style.
+     * @param {CityObjectStyle} style The style to register.
+     */
+    registerStyle(name, style) {
+        this.tilesManagers.forEach(function(tilesManager){
+            tilesManager.registerStyle(name, style);
+        });
+    }
+
+    /**
+     * Removes all styles currently registered.
+     */
+    removeAll3DTilesStyles() {
+        this.tilesManagers.forEach(function(tilesManager){
+            tilesManager.removeAllStyles();
+        });
+    }
+
+    /**
+     * Applies the current styles added with `setStyle` or `addStyle`.
+     * 
+     * @param {object} options Options of the method.
+     * @param {() => any} [options.updateFunction] The function used to update the
+     * view. Default is `udpateITownsView(view, layer)`.
+     */
+    apply3DTilesStyles(options = {}) {
+        this.tilesManagers.forEach(function(tilesManager){
+            tilesManager.applyStyles(options);
+        });
+    }
+
+    /**
+    * Check if at leat one 3DTiles layer is visible
+    * 
+    * @returns {boolean}
+    */
+    isOneLayerVisible() {
         for (let i = 0; i < this.tilesManagers.length; i++) {
-            if(this.tilesManagers[i].layer.visible){
+            if (this.tilesManagers[i].layer.visible) {
                 return true;
             }
         }
         return false;
     }
-    
+
+    /**
+    * Change the visibilty of all 3DTiles layers 
+    * 
+    */
     changeVisibility(bool) {
-        for (let i = 0; i < this.tilesManagers.length; i++) {
-            this.tilesManagers[i].layer.visible = bool;
-        }
-    }
-
-    registerStyle(name, style) {
-        for (let i = 0; i < this.tilesManagers.length; i++) {
-            this.tilesManagers[i].registerStyle(name, style);
-        }
+        this.tilesManagers.forEach(function(tilesManager){
+            tilesManager.layer.visible = bool ;
+        });
     }
 
 
-    removeAll3DTilesStyles() {
-        for (let i = 0; i < this.tilesManagers.length; i++) {
-            this.tilesManagers[i].removeAllStyles();
-        }
-    }
 
-    apply3DTilesStyles() {
-        for (let i = 0; i < this.tilesManagers.length; i++) {
-            this.tilesManagers[i].applyStyles();
-        }
-    }
-
-    update3DTiles() {
-        for (let i = 0; i < this.tilesManagers.length; i++) {
-            this.tilesManagers[i].update();
-        }
-    }
-
-    getTilesManagerByLayerID(id) {
-        for (let i = 0; i < this.tilesManagers.length; i++) {
-            if (this.tilesManagers[i].layer.id === id)
-                return this.tilesManagers[i];
-        }
-    }
-
-    getLayers() {
-        return this.view.getLayers();
-    }
-
-    getLoadedTileCount(){
-        let loadedTileCount = 0;
-        for (let i = 0; i < this.tilesManagers.length; i++) {
-            loadedTileCount += this.tilesManagers[i].loadedTileCount;
-        }
-        return loadedTileCount;
-    }
-
-    getTotalTileCount(){
-        let totalTileCount = 0;
-        for (let i = 0; i < this.tilesManagers.length; i++) {
-            totalTileCount += this.tilesManagers[i].totalTileCount;
-        }
-        return totalTileCount;
-    }
-
-    getVisibleTileCountFromLayers() {
-        let nb = 0;
-        for (let i = 0; i < this.tilesManagers.length; i++) {
-            nb += getVisibleTileCount(this.tilesManagers[i].layer);
-        }
-        return nb;
-    }
-
-    getColorLayers() {
-        return this.view.getLayers(layer => layer.isColorLayer);
-    }
-
-    getElevationLayers() {
-        return this.view.getLayers(layer => layer.isElevationLayer);
-    }
-
-    getGeometryLayers() {
-        return this.view.getLayers(layer => layer.isGeometryLayer);
-    }
-
-    getGeometryLayersWithoutPlanar() {
-        return this.view.getLayers(layer => layer.id !== "planar" && layer.isGeometryLayer);
-    }
-
+    /**
+    * Update the scale of the given layer
+    * @param {itowns.Layer} layer one layer loaded.
+    * @param {float} scale Value of the new scale
+    */
     updateScale(layer, scale) {
         layer.scale = scale;
         this.notifyChange();
     }
 
+    /**
+    * Update the opacity of the given layer
+    * @param {itowns.Layer} layer one layer loaded.
+    * @param {float} opacity Value of the new scale
+    */
     updateOpacity(layer, opacity) {
         layer.opacity = opacity;
         this.notifyChange();
     }
-
+    /**
+    * Update the view when called. Must be called when a change have been made
+    */
     notifyChange() {
         this.view.notifyChange();
     }
 
+    /**
+     * Returns the city object under the mouse cursor.
+     * 
+     * @param {MouseEvent} event The mouse event.
+     * 
+     * @returns {CityObject | undefined}
+     */
     pickCityObject(event) {
         if (event.target.nodeName.toUpperCase() === 'CANVAS') {
             this.update3DTiles();
             // Get the intersecting objects where our mouse pointer is
             let intersections = [];
+            //As the current pickObjectsAt on all layer is not working, we need 
+            //to call pickObjectsAt() for each layer.
             for (let i = 0; i < this.tilesManagers.length; i++) {
-                intersections = intersections.concat(this.view.pickObjectsAt(event, 5, this.tilesManagers[i].layer));
+                intersections = intersections.concat(this.view.pickObjectsAt(
+                    event,
+                    5,
+                    this.tilesManagers[i].layer
+                ));
             }
             let firstInter = getFirstTileIntersection(intersections);
             if (!!firstInter) {
@@ -145,5 +150,107 @@ export class LayerManager {
             }
         }
         return undefined;
+    }
+
+    /**
+    * Returns a tilesManager given a layer ID.
+    * 
+    * @param {string} id the layer ID.
+    * 
+    * @returns {TilesManager}
+    */
+    getTilesManagerByLayerID(id) {
+        for (let i = 0; i < this.tilesManagers.length; i++) {
+            if (this.tilesManagers[i].layer.id === id)
+                return this.tilesManagers[i];
+        }
+    }
+
+    /**
+    * Get all Layers loaded in the view.
+    */
+    getLayers() {
+        return this.view.getLayers();
+    }
+
+    /**
+   * Get the number of tiles that have been loaded, across all the tileset that 
+   * have been loaded
+   * 
+   * @returns {int} 
+   */
+    getLoadedTileCount() {
+        let loadedTileCount = 0;
+        for (let i = 0; i < this.tilesManagers.length; i++) {
+            loadedTileCount += this.tilesManagers[i].loadedTileCount;
+        }
+        return loadedTileCount;
+    }
+
+    /**
+   * Get the number of tiles across all the tileset 
+   * 
+   * @returns {int} 
+   */
+    getTotalTileCount() {
+        let totalTileCount = 0;
+        for (let i = 0; i < this.tilesManagers.length; i++) {
+            totalTileCount += this.tilesManagers[i].totalTileCount;
+        }
+        return totalTileCount;
+    }
+
+    /**
+   * Get the number of tiles visible, across all the tileset that 
+   * have been loaded
+   * 
+   * @returns {int} 
+   */
+    getVisibleTileCountFromLayers() {
+        let visibleTileCount = 0;
+        for (let i = 0; i < this.tilesManagers.length; i++) {
+            visibleTileCount += getVisibleTileCount(this.tilesManagers[i].layer);
+        }
+        return visibleTileCount;
+    }
+
+    /**
+   * Get Color layers in the view
+   * 
+   * @returns {Array<itown.ColorLayer>} 
+   */
+    getColorLayers() {
+        return this.view.getLayers(layer => layer.isColorLayer);
+    }
+
+
+    /**
+   * Get Elevation layers in the view
+   * 
+   * @returns {Array<itown.ElevationLayer>} 
+   */
+    getElevationLayers() {
+        return this.view.getLayers(layer => layer.isElevationLayer);
+    }
+
+
+    /**
+   * Get Geometry layers in the view
+   * 
+   * @returns {Array<itown.GeometryLayer>} 
+   */
+    getGeometryLayers() {
+        return this.view.getLayers(layer => layer.isGeometryLayer);
+    }
+
+
+    /**
+   * Get Geometry layers in the view, without the planar one
+   * 
+   * @returns {Array<itown.GeometryLayer>} 
+   */
+    getGeometryLayersWithoutPlanar() {
+        return this.view.getLayers(layer => layer.id !== "planar"
+            && layer.isGeometryLayer);
     }
 }
