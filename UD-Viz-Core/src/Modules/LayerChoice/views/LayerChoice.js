@@ -1,18 +1,17 @@
 import { Window } from "../../../Utils/GUI/js/Window";
+import { LayerManager } from "../../../Utils/LayerManager/LayerManager";
 
 export class LayerChoice extends Window {
   /**
    * Creates the layer choice windows 
    * 
-   * @param {itowns.View} itownsView 
+   * @param {LayerManager} layerManager 
    */
   constructor(layerManager) {
     super('layer_choice', 'Layer', false);
 
-    /**
-     * 
-     * 
-     * @type {itowns.View}
+    /** 
+     * the layerManager
      */
     this.layerManager = layerManager;
   }
@@ -52,9 +51,9 @@ export class LayerChoice extends Window {
     this.innerContentColorLayers();
     this.innerContentElevationLayers();
     this.innerContentGeometryLayers();
-
   }
 
+  // Create the description part of ColorLayers
   innerContentColorLayers() {
     let list = this.colorLayerListElement;
     list.innerHTML = '';
@@ -82,6 +81,7 @@ export class LayerChoice extends Window {
     }
   }
 
+  // Create the description part of ElevationLayers
   innerContentElevationLayers() {
     let list = this.elevationLayerListElement;
     list.innerHTML = '';
@@ -90,6 +90,7 @@ export class LayerChoice extends Window {
       let item = document.createElement('div');
       item.innerHTML = `<h3>${layers[i].id}</h3>
                         Scale : ${layers[i].scale} <input type ="range" id="${i}" min="1" max="10" step = "1" value="${layers[i].scale}"></input>`;
+
       item.onchange = (event) => {
         this.layerManager.updateScale(layers[i], event.srcElement.valueAsNumber);
         item.innerHTML = `<h3>${layers[i].id}</h3>
@@ -100,6 +101,7 @@ export class LayerChoice extends Window {
     }
   }
 
+  // Create the description part of GeometryLayers
   innerContentGeometryLayers() {
     let list = this.geometryLayerListElement;
     list.innerHTML = '';

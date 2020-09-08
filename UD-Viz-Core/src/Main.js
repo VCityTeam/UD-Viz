@@ -36,4 +36,4 @@ export { CityObjectModule }         from './Modules/CityObjects/CityObjectModule
 
 export { LinkModule }               from './Modules/Links/LinkModule';
 
-export { LayerChoice }       from './Extensions/LayerChoice/views/LayerChoice';
+export { LayerChoice }              from './Modules/LayerChoice/views/LayerChoice';
