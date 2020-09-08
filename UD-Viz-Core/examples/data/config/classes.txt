@@ -1,1 +1,0 @@
-IfcBeam;IfcPipeSegment;IfcStairFlight;IfcCableCarrierSegment;IfcSanitaryTerminal;IfcDuctSegment;IfcSlab;IfcWindow;IfcRailing;IfcDuctFitting;IfcLightFixture;IfcColumn;IfcValve;IfcDoor;IfcPipeFitting;IfcPlate;IfcCondenser;IfcAirTerminal;IfcCableCarrierFitting;IfcWall;
