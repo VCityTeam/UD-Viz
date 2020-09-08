@@ -12,8 +12,6 @@ baseDemo.loadConfigFile('../data/config/generalDemoConfig.json').then(() => {
     baseDemo.init3DView('lyon_villeurbanne_bron');
     baseDemo.addLyonWMSLayer();
     baseDemo.add3DTilesLayer('building');
-    baseDemo.add3DTilesLayer('building_1_2_5');
-
     baseDemo.update3DView();
 
     ////// REQUEST SERVICE

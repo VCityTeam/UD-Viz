@@ -71,7 +71,7 @@ baseDemo.loadConfigFile('../data/config/generalDemoConfig.json').then(() => {
 
 
     ////// CITY OBJECTS MODULE
-    const cityObjectModule = new udvcore.CityObjectModule(baseDemo.tilesManager, baseDemo.config);
+    const cityObjectModule = new udvcore.CityObjectModule(baseDemo.layerManager, baseDemo.config);
     baseDemo.addModuleView('cityObjects', cityObjectModule.view);
 
     ////// LINKS MODULES
@@ -79,7 +79,7 @@ baseDemo.loadConfigFile('../data/config/generalDemoConfig.json').then(() => {
         requestService, baseDemo.view, baseDemo.controls, baseDemo.config);
     
     ////// 3DTILES DEBUG
-    const debug3dTilesWindow = new udvcore.Debug3DTilesWindow(baseDemo.tilesManager);
+    const debug3dTilesWindow = new udvcore.Debug3DTilesWindow(baseDemo.layerManager);
     baseDemo.addModuleView('3dtilesDebug', debug3dTilesWindow, {
         name: '3DTiles Debug'
     });
