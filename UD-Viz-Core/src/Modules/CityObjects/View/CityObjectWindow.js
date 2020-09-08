@@ -248,25 +248,15 @@ export class CityObjectWindow extends Window {
         Batch ID : ${cityObject.batchId}<br>
         Layer : ${cityObject.tile.layer.name}
     `;
-    let ifc_id = undefined;
+
     for (let prop of Object.entries(cityObject.props)) {
       html += /*html*/`
         <br>${prop[0]} : ${prop[1]}
       `;
-      ifc_id = prop[1];
     }
-    html += `</p>
-            <div data-ext-container-default="button">
-              <button id="${this.ifcAttributeButtonId}">More </button>
-            </div>`;
 
     this.selectedCityObjectElement.innerHTML = html;
 
-    this.ifcAttributeButtonElement.onclick =
-      () => { 
-        this.ifcAttributeWindow = new IfcAttributeWindow(ifc_id);
-        this.ifcAttributeWindow.appendTo(this.parentElement);
-      }
 
   }
 
