@@ -75,7 +75,7 @@ export class LinkedWithDisplayedDocumentFilter extends CityObjectFilter {
    */
   accepts(cityObject) {
     let found = this.provider.getDisplayedDocumentLinks().find((link) =>
-      link.target_id == cityObject.props['ifc.id']);
+      link.target_id == cityObject.props['cityobject.database_id']);
     return !!found;
   }
 
@@ -112,7 +112,7 @@ export class LinkedWithFilteredDocumentsFilter extends CityObjectFilter {
    */
   accepts(cityObject) {
     let found = this.provider.getFilteredDocumentsLinks().find((link) =>
-      link.target_id == cityObject.props['ifc.id']);
+      link.target_id == cityObject.props['cityobject.database_id']);
     return !!found;
   }
 
