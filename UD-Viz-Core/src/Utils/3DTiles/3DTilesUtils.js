@@ -157,14 +157,14 @@ export function setTileVerticesColor(tile, newColor, indexArray = null) {
     if (!!indexArray && (lowerBound > i || upperBound < i)) {
       //If i is not one of the selected indexes, we keep the previous color
       let previousColor = (tile.geometry.attributes.color) ?
-        tile.geometry.attributes.color.array.slice(i * 3, i * 3 + 3) :
-        tile.material.color.toArray();
+                          tile.geometry.attributes.color.array.slice(i * 3, i * 3 + 3) :
+                          tile.material.color.toArray();
       vertexColor = previousColor;
     }
 
-    colors[i * 3] = vertexColor[0];
-    colors[i * 3 + 1] = vertexColor[1];
-    colors[i * 3 + 2] = vertexColor[2];
+    colors[i * 3     ] = vertexColor[0];
+    colors[i * 3 + 1 ] = vertexColor[1];
+    colors[i * 3 + 2 ] = vertexColor[2];
   }
 
   //We need to use the color of the vertices, not the material
@@ -215,11 +215,11 @@ export function createTileGroups(tile, materialsProps, ranges) {
   let mesh = getMeshFromTile(tile);
 
   let defaultMaterial = Array.isArray(mesh.material) ?
-    mesh.material[0] :
-    mesh.material;
+                        mesh.material[0] :
+                        mesh.material;
 
   // Reset the materials
-  mesh.material = [defaultMaterial];
+  mesh.material = [ defaultMaterial ];
 
   // Material index table (index in materialProps -> index in mesh.material)
   let materialIndexTable = {};
@@ -245,7 +245,6 @@ export function createTileGroups(tile, materialsProps, ranges) {
     ranges.sort((a, b) => {
       return a.start - b.start;
     });
-
     // Merge consecutive ranges with the same material
     let mergedRanges = [];
     for (let index = 0; index < ranges.length; index++) {
@@ -255,7 +254,7 @@ export function createTileGroups(tile, materialsProps, ranges) {
       } else {
         let currentMergingRange = mergedRanges[mergedRanges.length - 1];
         if (currentMergingRange.start + currentMergingRange.count === range.start
-          && currentMergingRange.material === range.material) {
+            && currentMergingRange.material === range.material) {
           currentMergingRange.count += range.count;
         } else {
           mergedRanges.push(range);
@@ -276,7 +275,7 @@ export function createTileGroups(tile, materialsProps, ranges) {
     }
     for (let i = 0; i < ranges.length - 1; ++i) {
       let start = ranges[i].start + ranges[i].count;
-      let count = ranges[i + 1].start - start;
+      let count = ranges[i+1].start - start;
       if (count > 0) {
         mesh.geometry.addGroup(start, count, 0);
       }
@@ -387,7 +386,7 @@ export function createTileGroupsFromBatchIDs(tile, groups) {
     }
 
     if (index === mesh.geometry.attributes._BATCHID.count - 1
-      && !!addingRange.start && !addingRange.count) {
+        && !!addingRange.start && !addingRange.count) {
       addingRange.count = index - addingRange.start + 1;
       ranges.push(addingRange);
     }
@@ -476,7 +475,7 @@ export function getVerticesCentroid(tile, indexArray) {
   let vertexSum = new THREE.Vector3(0, 0, 0);
   let positionArray = tile.geometry.attributes.position.array;
   for (let i = indexArray[0]; i <= indexArray[indexArray.length - 1]; ++i) {
-    vertexSum.x += positionArray[i * 3];
+    vertexSum.x += positionArray[i * 3    ];
     vertexSum.y += positionArray[i * 3 + 1];
     vertexSum.z += positionArray[i * 3 + 2];
   }
@@ -567,7 +566,7 @@ export function getTilesInfo(layer, tilesInfo = null) {
   }
   let tileIndex = layer.tileIndex;
   let tileCount = Object.keys(tileIndex.index).length - 1; // -1 because of the
-  // root tile
+                                                           // root tile
   tilesInfo.totalTileCount = tileCount;
   let rootTile = layer.object3d.children[0];
   tilesInfo.tileset = rootTile;

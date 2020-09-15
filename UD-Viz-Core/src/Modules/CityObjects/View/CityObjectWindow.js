@@ -41,7 +41,7 @@ export class CityObjectWindow extends Window {
      * 
      * @type {CityObjectStyle | string}
      */
-    this.defaultLayerStyle = { materialProps: { color: 0xffa14f } };
+    this.defaultLayerStyle = {materialProps: {color: 0xffa14f}};
 
     /**
      * Wether the use is currently selecting a city object.
@@ -84,7 +84,6 @@ export class CityObjectWindow extends Window {
     this.filterWindow.addEventListener(
       CityObjectFilterWindow.EVENT_FILTER_SELECTED,
       (filterLabel) => this._onFilterSelected(filterLabel));
-
     // The event listener for the layer change. Updates the layer description.
     this.provider.addEventListener(CityObjectProvider.EVENT_LAYER_CHANGED,
       () => this._updateLayerDescription());
@@ -129,7 +128,7 @@ export class CityObjectWindow extends Window {
     this.window.style.left = '10px';
     this.window.style.top = 'unset';
     this.window.style.bottom = '10px';
-    this.window.style.width = '400px';
+    this.window.style.width = '270px';
 
     this.filterWindow.appendTo(this.parentElement);
     this.filterWindow.disable();
@@ -231,6 +230,7 @@ export class CityObjectWindow extends Window {
     if (!this.isCreated) {
       return;
     }
+
     this.selectionColorIndicatorElement.style.background = '#' +
       (new THREE.Color(this.provider.defaultSelectionStyle.materialProps.color)).getHexString();
 
@@ -239,6 +239,7 @@ export class CityObjectWindow extends Window {
       this.clearSelectionButtonElement.disabled = true;
       return;
     }
+
     this.clearSelectionButtonElement.disabled = false;
 
     let html = /*html*/`
@@ -248,16 +249,13 @@ export class CityObjectWindow extends Window {
         Batch ID : ${cityObject.batchId}<br>
         Layer : ${cityObject.tile.layer.name}
     `;
-
     for (let prop of Object.entries(cityObject.props)) {
       html += /*html*/`
         <br>${prop[0]} : ${prop[1]}
       `;
     }
-
+    html += '</p>';
     this.selectedCityObjectElement.innerHTML = html;
-
-
   }
 
   /////////////

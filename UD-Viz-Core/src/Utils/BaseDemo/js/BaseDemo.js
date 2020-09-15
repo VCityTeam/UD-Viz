@@ -143,7 +143,7 @@ export class BaseDemo {
      */
     addModuleView(moduleId, moduleClass, options = {}) {
         if ((typeof (moduleClass.enable) !== 'function')
-            || (typeof (moduleClass.disable) !== 'function')) {
+          || (typeof (moduleClass.disable) !== 'function')) {
             throw 'A module must implement at least an enable() and a disable() methods';
         }
 
@@ -151,9 +151,9 @@ export class BaseDemo {
         // myModule -> My Module
         // my_module -> My module
         let moduleName = moduleId
-            .replace(/([A-Z])/g, ' $1')
-            .replace(/_/g, ' ')
-            .replace(/^./, (str) => str.toUpperCase());
+        .replace(/([A-Z])/g, ' $1')
+        .replace(/_/g, ' ')
+        .replace(/^./, (str) => str.toUpperCase());
         let type = BaseDemo.MODULE_VIEW;
         let requireAuth = false;
         if (!!options) {
@@ -381,12 +381,12 @@ export class BaseDemo {
         });
         // Add a WMS elevation layer
         let wmsElevationLayer = new
-            itowns.ElevationLayer('wms_elevation', {
-                useColorTextureElevation: true,
-                colorTextureElevationMinZ: 144,
-                colorTextureElevationMaxZ: 622,
-                source: wmsElevationSource,
-            });
+        itowns.ElevationLayer('wms_elevation', {
+            useColorTextureElevation: true,
+            colorTextureElevationMinZ: 144,
+            colorTextureElevationMaxZ: 622,
+            source: wmsElevationSource,
+        });
         this.view.addLayer(wmsElevationLayer);
     }
 
@@ -402,11 +402,11 @@ export class BaseDemo {
         // Positional arguments verification
         if (!this.config['3DTilesLayer'][layerConfig]) {
             throw "Your layer is not one of the properties of 3DTilesLayer object " +
-            "(in UD-Viz/UD-Viz-Core/examples/data/config/generalDemoConfig.json).";
+                "(in UD-Viz/UD-Viz-Core/examples/data/config/generalDemoConfig.json).";
         }
         if (!this.config['3DTilesLayer'][layerConfig]['id'] || !this.config['3DTilesLayer'][layerConfig]['url']) {
             throw "Your layer does not have 'url'/'id' properties or both. " +
-            "(in UD-Viz/UD-Viz-Core/examples/data/config/generalDemoConfig.json)";
+                "(in UD-Viz/UD-Viz-Core/examples/data/config/generalDemoConfig.json)";
         }
 
         let $3dTilesLayer = new itowns.GeometryLayer(
@@ -417,10 +417,12 @@ export class BaseDemo {
         $3dTilesLayer.protocol = '3d-tiles';
 
         let material;
-        if (this.config['3DTilesLayer'][layerConfig]['pc_size']) {
+        if (this.config['3DTilesLayer'][layerConfig]['pc_size']) 
+        {
             material = new THREE.PointsMaterial({ size: this.config['3DTilesLayer'][layerConfig]['pc_size'], vertexColors: THREE.VertexColors });
         }
-        else if (this.config['3DTilesLayer'][layerConfig]['color']) {
+        else if (this.config['3DTilesLayer'][layerConfig]['color']) 
+        {
             material = new THREE.MeshLambertMaterial({ color: parseInt(this.config['3DTilesLayer'][layerConfig]['color']), opacity: 0.5, transparent: true });
         }
 
@@ -519,15 +521,15 @@ export class BaseDemo {
         let heading = parseFloat(this.config['camera'][area]['position']['heading']);
 
         if (this.config['camera'][area]['position']['x']
-            && this.config['camera'][area]['position']['y']) {
-            coordinates = new itowns.Coordinates('EPSG:3946',
-                parseInt(this.config['camera'][area]['position']['x']),
-                parseInt(this.config['camera'][area]['position']['y']));
+          && this.config['camera'][area]['position']['y']) {
+          coordinates = new itowns.Coordinates('EPSG:3946',
+            parseInt(this.config['camera'][area]['position']['x']),
+            parseInt(this.config['camera'][area]['position']['y']));
         }
 
         let p = {
             coord: coordinates, heading: heading, range: range, tilt: tilt
-        };
+          };
 
         itowns.CameraUtils.transformCameraToLookAtTarget(this.view, this.view.camera.camera3D, p);
 
