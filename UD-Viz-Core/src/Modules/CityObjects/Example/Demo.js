@@ -16,6 +16,6 @@ baseDemo.loadConfigFile(
     baseDemo.add3DTilesLayer('building');
     baseDemo.update3DView();
 
-    const cityObjects = new udvcore.CityObjectModule(baseDemo.tilesManager, baseDemo.config);
+    const cityObjects = new udvcore.CityObjectModule(baseDemo.layerManager, baseDemo.config);
     baseDemo.addModuleView('cityObjects', cityObjects.view);
 });

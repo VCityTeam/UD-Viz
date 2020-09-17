@@ -15,7 +15,7 @@ baseDemo.loadConfigFile('../../../../examples/data/config/generalDemoConfig.json
     baseDemo.update3DView();
 
     ////// 3DTILES DEBUG
-    const debug3dTilesWindow = new udvcore.Debug3DTilesWindow(baseDemo.tilesManager);
+    const debug3dTilesWindow = new udvcore.Debug3DTilesWindow(baseDemo.layerManager);
     baseDemo.addModuleView('3dtilesDebug', debug3dTilesWindow, {
         name: '3DTiles Debug'
     });

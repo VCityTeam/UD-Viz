@@ -16,7 +16,7 @@ export class CityObjectModule {
    * filters. Other modules can extend the functionnalities of the city object
    * module by adding filters.
    * 
-   * @param {TilesManager} tilesManager The tiles manager.
+   * @param {LayerManager} layerManager The layer manager.
    * @param {object} config The UDV configuration.
    * @param {object} config.cityObjects The city objects config.
    * @param {Object.<string, CityObjectStyle>} config.cityObjects.styles The
@@ -26,12 +26,12 @@ export class CityObjectModule {
    * @param {CityObjectStyle} config.cityObjects.styles.selection The style
    * for the selected city object.
    */
-  constructor(tilesManager, config) {
+  constructor(layerManager, config) {
     /**
      * The city object provider, whichs manages the city objects in terms
      * of layer and selected city object.
      */
-    this.provider = new CityObjectProvider(tilesManager);
+    this.provider = new CityObjectProvider(layerManager);
     this.provider.setSelectionStyle(config.cityObjects.styles.selection);
 
     /**

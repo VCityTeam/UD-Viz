@@ -9,22 +9,24 @@ export class Debug3DTilesWindow extends Window {
   /**
    * Creates the debug window.
    * 
-   * @param {TilesManager} tilesManager The tiles manager.
+   * @param {layer} layerManager The tiles manager.
    */
-  constructor(tilesManager) {
+  constructor(layerManager) {
     super('3d_tiles_debug', '3DTiles Debug', false);
 
     /**
      * The tiles manager.
      * 
-     * @type {TilesManager}
+     * @type {layerManager}
      */
-    this.tilesManager = tilesManager;
+    this.layerManager = layerManager;
 
     // Selection
-    this.tilesManager.registerStyle('selected', new CityObjectStyle({
-      materialProps: { color: 0x00ff00 } }));
+    this.layerManager.registerStyle('selected', new CityObjectStyle({
+      materialProps: { color: 0x00ff00 }
+    }));
     this.selectedCityObject = undefined;
+    this.selectedTilesManager = undefined;
 
     let clickListener = (event) => {
       this.onMouseClick(event);
@@ -43,8 +45,8 @@ export class Debug3DTilesWindow extends Window {
       if (this.selectedCityObject !== undefined) {
         this.selectedCityObject = undefined;
       }
-      this.tilesManager.removeAllStyles();
-      this.tilesManager.applyStyles();
+      this.layerManager.removeAll3DTilesStyles();
+      this.layerManager.applyAll3DTilesStyles();
     });
   }
 
@@ -109,15 +111,15 @@ export class Debug3DTilesWindow extends Window {
    * Updates the TBI.
    */
   updateTilesManager() {
-    this.tilesManager.update();
-    this.TBIInfoParagraphElement.innerText = `${this.tilesManager.loadedTileCount} / ${this.tilesManager.totalTileCount} tiles loaded.`;
+    this.layerManager.update3DTiles();
+    this.TBIInfoParagraphElement.innerText = `${this.layerManager.getLoaded3DTilesTileCount()} / ${this.layerManager.getTotal3DTilesTileCount()} tiles loaded.`;
   }
 
   /**
    * Logs the TBI in the console.
    */
   logTilesManager() {
-    console.log(this.tilesManager);
+    console.log(this.layerManager.tilesManagers);
   }
 
   /**
@@ -128,7 +130,7 @@ export class Debug3DTilesWindow extends Window {
    */
   onMouseMove(event) {
     // Update the current visible tile count
-    let visibleTileCount = getVisibleTileCount(this.tilesManager.layer);
+    let visibleTileCount = this.layerManager.getVisible3DTilesTileCountFromLayers();
     this.visibleTilesParagraphElement.innerText = `${visibleTileCount} tiles visible.`
   }
 
@@ -140,26 +142,32 @@ export class Debug3DTilesWindow extends Window {
    * @param {MouseEvent} event The mouse event.
    */
   onMouseClick(event) {
-    let cityObject = this.tilesManager.pickCityObject(event);
+    let cityObject = this.layerManager.pickCityObject(event);
     if (cityObject !== undefined) {
-      this.clickDivElement.innerHTML = /*html*/`
-        Vertex indexes : ${cityObject.indexStart} to ${cityObject.indexEnd}
-         (${cityObject.indexCount})<br>
-        Batch ID : ${cityObject.batchId}<br>
-        Tile ID : ${cityObject.tile.tileId}
-      `;
+
       for (let [key, value] of Object.entries(cityObject.props)) {
         this.clickDivElement.innerHTML += `<br>${key} : ${value}`;
       }
 
       if (!!this.selectedCityObject) {
-        this.tilesManager.removeStyle(this.selectedCityObject.cityObjectId);
+        this.selectedTilesManager.removeStyle(this.selectedCityObject.cityObjectId);
+        this.selectedTilesManager.applyStyles();
       }
 
       this.selectedCityObject = cityObject;
-      this.tilesManager.setStyle(this.selectedCityObject.cityObjectId, 'selected');
-      this.tilesManager.applyStyles({updateFunction:
-        this.tilesManager.view.notifyChange.bind(this.tilesManager.view)});
+      this.selectedTilesManager = this.layerManager.getTilesManagerByLayerID(this.selectedCityObject.tile.layer.id);
+      this.selectedTilesManager.setStyle(this.selectedCityObject.cityObjectId, 'selected');
+      this.selectedTilesManager.applyStyles({
+        updateFunction:
+          this.selectedTilesManager.view.notifyChange.bind(this.selectedTilesManager.view)
+      });
+      this.clickDivElement.innerHTML = /*html*/`
+           3D Tiles : ${this.selectedTilesManager.layer.name}<br>
+           Vertex indexes : ${cityObject.indexStart} to ${cityObject.indexEnd}
+            (${cityObject.indexCount})<br>
+           Batch ID : ${cityObject.batchId}<br>
+           Tile ID : ${cityObject.tile.tileId}
+         `;
     }
   }
 
@@ -176,9 +184,9 @@ export class Debug3DTilesWindow extends Window {
       }
       let color = new THREE.Color(this.groupColorColorInputElement.value);
       let opacity = Number.parseFloat(this.groupColorOpacityInputElement.value);
-      this.tilesManager.setStyle(cityObjectIds, 
-        {materialProps: {color, opacity}});
-      this.tilesManager.applyStyles();
+      this.layerManager.tilesManagers[0].setStyle(cityObjectIds,
+        { materialProps: { color, opacity } });
+      this.layerManager.tilesManagers[0].applyStyles();
     } catch (e) {
       alert(e);
     }
@@ -241,7 +249,7 @@ export class Debug3DTilesWindow extends Window {
   get groupColorTileInputElement() {
     return document.getElementById(this.groupColorTileInputId);
   }
-  
+
   get groupColorBatchInputId() {
     return `${this.windowId}_form_groups_batchid`;
   }
@@ -249,7 +257,7 @@ export class Debug3DTilesWindow extends Window {
   get groupColorBatchInputElement() {
     return document.getElementById(this.groupColorBatchInputId);
   }
-  
+
   get groupColorColorInputId() {
     return `${this.windowId}_form_groups_color`;
   }

@@ -37,13 +37,22 @@ export function getBatchIdFromIntersection(inter) {
  * itowns.View.pickObjectsAt
  */
 export function getFirstTileIntersection(intersects) {
+  let first_inter = null;
+  let dist_min = 0;
   for (let inter of intersects) {
     let geomAttributes = inter.object.geometry.attributes;
     if (!!geomAttributes && !!geomAttributes._BATCHID) {
-      return inter;
+      if (!first_inter) {
+        first_inter = inter;
+        dist_min = inter.distance;
+      }
+      else if (inter.distance < dist_min) {
+        first_inter = inter;
+        dist_min = inter.distance;
+      }
     }
   }
-  return undefined;
+  return first_inter;
 }
 
 /**
@@ -57,15 +66,17 @@ export function getVisibleTiles(layer) {
   let rootTile = layer.object3d.children[0];
   let tiles = [];
   let exploreTree = (node) => {
-    if (!!node.batchTable) {
-      // It's an actual tile
-      tiles.push(node);
-    };
-    for (let childIndex = 0; childIndex < node.children.length; childIndex++) {
-      let child = node.children[childIndex];
-      if (child.type === 'Object3D') {
-        //This child can be a tile or contain tiles so we explore it too
-        exploreTree(child);
+    if (!!node) {
+      if (!!node.batchTable) {
+        // It's an actual tile
+        tiles.push(node);
+      };
+      for (let childIndex = 0; childIndex < node.children.length; childIndex++) {
+        let child = node.children[childIndex];
+        if (child.type === 'Object3D') {
+          //This child can be a tile or contain tiles so we explore it too
+          exploreTree(child);
+        }
       }
     }
   };
@@ -146,7 +157,7 @@ export function setTileVerticesColor(tile, newColor, indexArray = null) {
     if (!!indexArray && (lowerBound > i || upperBound < i)) {
       //If i is not one of the selected indexes, we keep the previous color
       let previousColor = (tile.geometry.attributes.color) ?
-                          tile.geometry.attributes.color.array.slice(i * 3 , i * 3 + 3) :
+                          tile.geometry.attributes.color.array.slice(i * 3, i * 3 + 3) :
                           tile.material.color.toArray();
       vertexColor = previousColor;
     }
@@ -234,7 +245,6 @@ export function createTileGroups(tile, materialsProps, ranges) {
     ranges.sort((a, b) => {
       return a.start - b.start;
     });
-    
     // Merge consecutive ranges with the same material
     let mergedRanges = [];
     for (let index = 0; index < ranges.length; index++) {
@@ -357,7 +367,7 @@ export function createTileGroupsFromBatchIDs(tile, groups) {
     if (batchID > searchingBatchID) {
       addingRange.count = index - addingRange.start;
       ranges.push(addingRange);
-      
+
       if (searchingBatchID === undefined) {
         // No more batch IDs to search
         break;

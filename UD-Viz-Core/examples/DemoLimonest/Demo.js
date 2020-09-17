@@ -22,17 +22,17 @@ baseDemo.loadConfigFile('../data/config/generalDemoConfig.json').then(() => {
     baseDemo.addModuleView('about', about);
 
     ////// HELP MODULE
-    const help  = new udvcore.HelpWindow();
+    const help = new udvcore.HelpWindow();
     baseDemo.addModuleView('help', help);
 
-    baseDemo.config.server = baseDemo.config.servers["limonest_bron"];   
+    baseDemo.config.server = baseDemo.config.servers["limonest_bron"];
     ////// AUTHENTICATION MODULE
     const authenticationService =
         new udvcore.AuthenticationService(requestService, baseDemo.config);
     const authenticationView =
         new udvcore.AuthenticationView(authenticationService);
     baseDemo.addModuleView('authentication', authenticationView,
-        {type: BaseDemo.AUTHENTICATION_MODULE});
+        { type: BaseDemo.AUTHENTICATION_MODULE });
 
     ////// DOCUMENTS MODULE
     const documentModule = new udvcore.DocumentModule(requestService,
@@ -50,7 +50,7 @@ baseDemo.loadConfigFile('../data/config/generalDemoConfig.json').then(() => {
     ////// VALIDATION EXTENSION
     const validation = new udvcore.DocumentValidationModule(documentModule, requestService,
         baseDemo.config);
-    
+
     ////// DOCUMENT COMMENTS
     const documentComments = new udvcore.DocumentCommentsModule(documentModule,
         requestService, baseDemo.config);
@@ -58,27 +58,29 @@ baseDemo.loadConfigFile('../data/config/generalDemoConfig.json').then(() => {
     ////// GUIDED TOURS MODULE
     const guidedtour = new udvcore.GuidedTourController(documentModule,
         requestService, baseDemo.config);
-    baseDemo.addModuleView('guidedTour', guidedtour, {name: 'Guided Tours'});
+    baseDemo.addModuleView('guidedTour', guidedtour, { name: 'Guided Tours' });
 
     ////// GEOCODING EXTENSION
     const geocodingService = new udvcore.GeocodingService(requestService,
         baseDemo.extent, baseDemo.config);
     const geocodingView = new udvcore.GeocodingView(geocodingService,
         baseDemo.controls, baseDemo.view);
-    baseDemo.addModuleView('geocoding', geocodingView, {binding: 's',
-                                name: 'Address Search'});
+    baseDemo.addModuleView('geocoding', geocodingView, {
+        binding: 's',
+        name: 'Address Search'
+    });
 
 
     ////// CITY OBJECTS MODULE
-    const cityObjectModule = new udvcore.CityObjectModule(baseDemo.tilesManager, baseDemo.config);
+    const cityObjectModule = new udvcore.CityObjectModule(baseDemo.layerManager, baseDemo.config);
     baseDemo.addModuleView('cityObjects', cityObjectModule.view);
 
     ////// LINKS MODULES
     const linkModule = new udvcore.LinkModule(documentModule, cityObjectModule,
         requestService, baseDemo.view, baseDemo.controls, baseDemo.config);
-    
+
     ////// 3DTILES DEBUG
-    const debug3dTilesWindow = new udvcore.Debug3DTilesWindow(baseDemo.tilesManager);
+    const debug3dTilesWindow = new udvcore.Debug3DTilesWindow(baseDemo.layerManager, baseDemo.view);
     baseDemo.addModuleView('3dtilesDebug', debug3dTilesWindow, {
         name: '3DTiles Debug'
     });
@@ -87,4 +89,11 @@ baseDemo.loadConfigFile('../data/config/generalDemoConfig.json').then(() => {
     const cameraPosition = new udvcore.CameraPositionerView(baseDemo.view,
         baseDemo.controls);
     baseDemo.addModuleView('cameraPositioner', cameraPosition);
+
+    ////// LAYER CHOICE
+    const layerChoice = new udvcore.LayerChoice(baseDemo.layerManager);
+    baseDemo.addModuleView('layerChoice', layerChoice, {
+        name: 'layerChoice'
+    });
+
 });

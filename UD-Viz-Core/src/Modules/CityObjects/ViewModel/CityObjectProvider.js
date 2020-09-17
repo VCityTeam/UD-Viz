@@ -4,6 +4,7 @@ import { CityObjectLayer } from "./CityObjectLayer";
 import { CityObjectStyle } from "../../../Utils/3DTiles/Model/CityObjectStyle";
 import { CityObjectID, CityObject } from "../../../Utils/3DTiles/Model/CityObject";
 import { EventSender } from "../../../Utils/Events/EventSender";
+import { LayerManager } from "../../../Utils/LayerManager/LayerManager";
 
 /**
  * The city object provider manages the city object by organizing them in two
@@ -13,18 +14,18 @@ import { EventSender } from "../../../Utils/Events/EventSender";
  */
 export class CityObjectProvider extends EventSender {
   /**
-   * Constructs a city object provider, using a tiles manager.
+   * Constructs a city object provider, using a layer manager.
    * 
-   * @param {TilesManager} tilesManager The tiles manager.
+   * @param {LayerManager} layerManager The layer manager.
    */
-  constructor(tilesManager) {
+  constructor(layerManager) {
     super();
     /**
      * The tiles manager.
      * 
-     * @type {TilesManager}
+     * @type {LayerManager}
      */
-    this.tilesManager = tilesManager;
+    this.layerManager = layerManager;
 
     /**
      * The available filters.
@@ -38,7 +39,7 @@ export class CityObjectProvider extends EventSender {
      * 
      * @type {CityObjectLayer}
      */
-    this.layer = undefined;
+    this.cityOjectLayer = undefined;
 
     /**
      * The array of city objects in the layer.
@@ -50,16 +51,16 @@ export class CityObjectProvider extends EventSender {
     /**
      * The selected city object.
      * 
-     * @type {CityObjectID}
+     * @type {CityObject}
      */
-    this.selectedCityObjectId = undefined;
+    this.selectedCityObject = undefined;
 
     /**
      * The style applied to the selected city object.
      * 
      * @type {CityObjectStyle | string}
      */
-    this.defaultSelectionStyle = {materialProps: {color: 0x13ddef}};
+    this.defaultSelectionStyle = { materialProps: { color: 0x13ddef } };
 
     // Event registration
     this.registerEvent(CityObjectProvider.EVENT_FILTERS_UPDATED);
@@ -77,9 +78,9 @@ export class CityObjectProvider extends EventSender {
    * @param {MouseEvent} mouseEvent The mouse click event.
    */
   selectCityObject(mouseEvent) {
-    let cityObject = this.tilesManager.pickCityObject(mouseEvent);
+    let cityObject = this.layerManager.pickCityObject(mouseEvent);
     if (!!cityObject) {
-      this.selectedCityObjectId = cityObject.cityObjectId;
+      this.selectedCityObject = cityObject;
       this.removeLayer();
       this.sendEvent(CityObjectProvider.EVENT_CITY_OBJECT_SELECTED, cityObject);
     }
@@ -91,7 +92,7 @@ export class CityObjectProvider extends EventSender {
    * event.
    */
   unselectCityObject() {
-    this.selectedCityObjectId = undefined;
+    this.selectedCityObject = undefined;
     this.sendEvent(CityObjectProvider.EVENT_CITY_OBJECT_SELECTED, undefined);
     this._updateTilesManager();
     this.applyStyles();
@@ -156,7 +157,7 @@ export class CityObjectProvider extends EventSender {
       throw 'No filter found with the label : ' + label;
     }
 
-    this.layer = new CityObjectLayer(filter, style);
+    this.cityOjectLayer = new CityObjectLayer(filter, style);
 
     this.sendEvent(CityObjectProvider.EVENT_LAYER_CHANGED, filter);
 
@@ -171,16 +172,15 @@ export class CityObjectProvider extends EventSender {
    * @returns {CityObjectLayer} The current layer.
    */
   getLayer() {
-    return this.layer;
+    return this.cityOjectLayer;
   }
 
   /**
    * Unsets the current layer. Sends the `EVENT_LAYER_CHANGED` event.
    */
   removeLayer() {
-    this.layer = undefined;
+    this.cityOjectLayer = undefined;
     this.sendEvent(CityObjectProvider.EVENT_LAYER_CHANGED, undefined);
-    
     this.applyStyles();
   }
 
@@ -191,21 +191,22 @@ export class CityObjectProvider extends EventSender {
    * @private
    */
   _updateTilesManager() {
-    this.tilesManager.update();
-    this.tilesManager.removeAllStyles();
+    this.layerManager.update3DTiles();
+    this.layerManager.removeAll3DTilesStyles();
+    if (!!this.selectedCityObject) {
+      let tileManager = this.layerManager.getTilesManagerByLayerID(this.selectedCityObject.tile.layer.id);
 
-    if (this.layer === undefined) {
-      this.layerCityObjectIds = [];
-    } else {
-      this.layerCityObjectIds = this.tilesManager
-        .findAllCityObjects(this.layer.filter.accepts)
-        .map((co) => co.cityObjectId);
-      
-      this.tilesManager.setStyle(this.layerCityObjectIds, this.layer.style);
-    }
+      if (this.cityOjectLayer === undefined) {
+        this.layerCityObjectIds = [];
+      } else {
+        this.layerCityObjectIds = tileManager
+          .findAllCityObjects(this.cityOjectLayer.filter.accepts)
+          .map((co) => co.cityObjectId);
 
-    if (!!this.selectedCityObjectId) {
-      this.tilesManager.setStyle(this.selectedCityObjectId, this.defaultSelectionStyle);
+        tileManager.setStyle(this.layerCityObjectIds, this.cityOjectLayer.style);
+      }
+
+      tileManager.setStyle(this.selectedCityObject.cityObjectId, this.defaultSelectionStyle);
     }
   }
 
@@ -216,7 +217,7 @@ export class CityObjectProvider extends EventSender {
    */
   applyStyles() {
     this._updateTilesManager();
-    this.tilesManager.applyStyles();
+    this.layerManager.applyAll3DTilesStyles();
   }
 
   ////////////

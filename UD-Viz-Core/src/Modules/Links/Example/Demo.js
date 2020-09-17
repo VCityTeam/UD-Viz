@@ -30,7 +30,7 @@ baseDemo.loadConfigFile(
         baseDemo.view, baseDemo.controls);
     
     ////// CITY OBJECTS MODULE
-    const cityObjectModule = new udvcore.CityObjectModule(baseDemo.tilesManager, baseDemo.config);
+    const cityObjectModule = new udvcore.CityObjectModule(baseDemo.layerManager, baseDemo.config);
     baseDemo.addModuleView('cityObjects', cityObjectModule.view);
 
     ////// LINKS MODULES

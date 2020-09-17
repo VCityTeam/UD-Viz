@@ -1,5 +1,6 @@
 import { ModuleView } from '../../ModuleView/ModuleView.js';
 import { TilesManager } from '../../3DTiles/TilesManager.js';
+import { LayerManager } from '../../LayerManager/LayerManager.js';
 
 /**
  * Represents the base HTML content of a demo for UD-Viz and provides methods to
@@ -19,11 +20,11 @@ export class BaseDemo {
         this.extent;  // itowns extent (city limits)
         this.controls;
         /**
-         * Object used to manage the 3DTiles layer.
+         * Object used to manage all of the layer.
          *
-         * @type {TilesManager}
+         * @type {LayerManager}
          */
-        this.tilesManager;
+        this.layerManager;
         // Temporal is currently disabled and will be reintroduced in a new
         // version based on a 3D Tiles extension
         this.temporal = false;
@@ -141,7 +142,7 @@ export class BaseDemo {
      */
     addModuleView(moduleId, moduleClass, options = {}) {
         if ((typeof (moduleClass.enable) !== 'function')
-         || (typeof (moduleClass.disable) !== 'function')) {
+          || (typeof (moduleClass.disable) !== 'function')) {
             throw 'A module must implement at least an enable() and a disable() methods';
         }
 
@@ -349,7 +350,7 @@ export class BaseDemo {
      * Adds WMS elevation Layer of Lyon in 2012 and WMS imagery layer of Lyon in 2009 (from Grand Lyon data).
      */
     addLyonWMSLayer() {
-         let wmsImagerySource = new itowns.WMSSource({
+        let wmsImagerySource = new itowns.WMSSource({
             extent: this.extent,
             name: 'Ortho2018_Dalle_unique_8cm_CC46',
             url: 'https://download.data.grandlyon.com/wms/grandlyon',
@@ -364,6 +365,7 @@ export class BaseDemo {
                 options: {},
             },
             source: wmsImagerySource,
+            transparent: true
         });
         this.view.addLayer(wmsImageryLayer);
 
@@ -407,37 +409,33 @@ export class BaseDemo {
         }
 
         let $3dTilesLayer = new itowns.GeometryLayer(
-            this.config['3DTilesLayer'][layerConfig]['id'], new THREE.Group());
+            this.config['3DTilesLayer'][layerConfig]['id'], new THREE.Group(), {transparent: true});
         $3dTilesLayer.name = 'Lyon-2015-'.concat(layerConfig);
         $3dTilesLayer.url =
             this.config['3DTilesLayer'][layerConfig]['url'];
         $3dTilesLayer.protocol = '3d-tiles';
-        
+
         let material;
-        if (this.config['3DTilesLayer'][layerConfig]['pc_size'])
+        if (this.config['3DTilesLayer'][layerConfig]['pc_size']) 
         {
             material = new THREE.PointsMaterial({ size: this.config['3DTilesLayer'][layerConfig]['pc_size'], vertexColors: THREE.VertexColors });
         }
-        else if (!this.config['3DTilesLayer'][layerConfig]['color']) {
-            material = new THREE.MeshLambertMaterial({ color: 0xFFFFFF });
-        } else {
-            material =
-                new THREE.MeshLambertMaterial({color: parseInt(this.config['3DTilesLayer'][layerConfig]['color'])});
+        else if (this.config['3DTilesLayer'][layerConfig]['color']) 
+        {
+            material = new THREE.MeshLambertMaterial({ color: parseInt(this.config['3DTilesLayer'][layerConfig]['color']), opacity: 0.5, transparent: true });
         }
 
         $3dTilesLayer.overrideMaterials = material;
         $3dTilesLayer.material = material;
-
+        
         itowns.View.prototype.addLayer.call(this.view, $3dTilesLayer);
 
-        
-        if (this.config['3DTilesLayer'][layerConfig]['initTilesManager']) {
-            // Initialize the 3DTiles manager
-            this.tilesManager = new TilesManager(this.view,
-                this.view.getLayerById(this.config['3DTilesLayer'][layerConfig]['id']));
-        }
+
+        this.layerManager.tilesManagers.push(new TilesManager(this.view,
+                this.view.getLayerById(this.config['3DTilesLayer'][layerConfig]['id'])));
     }
 
+   
     /**
      * Initializes the iTowns 3D view.
      * @param {string} area The name of the area to view. Used to adjust the extent, this name should be
@@ -467,7 +465,7 @@ export class BaseDemo {
         this.view = new itowns.PlanarView(viewerDiv, this.extent, {
             disableSkirt: false
         });
-
+        this.layerManager = new LayerManager(this.view);
         // ********* 3D Elements
         // Lights
         let directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
@@ -486,7 +484,7 @@ export class BaseDemo {
         let tilt = parseFloat(this.config['camera'][area]['position']['tilt']);
         let heading = parseFloat(this.config['camera'][area]['position']['heading']);
 
-        if (this.config['camera'][area]['position']['x'] 
+        if (this.config['camera'][area]['position']['x']
           && this.config['camera'][area]['position']['y']) {
           coordinates = new itowns.Coordinates('EPSG:3946',
             parseInt(this.config['camera'][area]['position']['x']),
@@ -500,7 +498,7 @@ export class BaseDemo {
         itowns.CameraUtils.transformCameraToLookAtTarget(this.view, this.view.camera.camera3D, p);
 
         // Controls
-        this.controls = new itowns.PlanarControls(this.view, {maxZenithAngle: 180, groundLevel: -100, handleCollision: false});
+        this.controls = new itowns.PlanarControls(this.view, { maxZenithAngle: 180, groundLevel: -100, handleCollision: false });
 
         // Set sky color to blue
         this.view.mainLoop.gfxEngine.renderer.setClearColor(0x6699cc, 1);
@@ -508,7 +506,7 @@ export class BaseDemo {
     /*
     * Updates the 3D view by notifying iTowns that it changed (e.g. because a layer has been added).
     */
-     update3DView() {
+    update3DView() {
         // Request itowns view redraw
         this.view.notifyChange();
     }
@@ -533,6 +531,8 @@ export class BaseDemo {
             }
         });
     }
+
+
 
     ////////////////////////////////////////////////////////
     // GETTERS FOR HTML IDS AND ELEMENTS OF THE DEMO PAGE //

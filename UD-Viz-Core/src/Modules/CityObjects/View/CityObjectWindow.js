@@ -7,6 +7,7 @@ import { AttributeFilterSelector } from "./AttributeFilterSelector";
 
 import './CityObjectWindow.css';
 
+
 /**
  * The main window of the city object module. It displays a short description
  * for the currently highlighted layer (filter and style), as well as the
@@ -83,7 +84,6 @@ export class CityObjectWindow extends Window {
     this.filterWindow.addEventListener(
       CityObjectFilterWindow.EVENT_FILTER_SELECTED,
       (filterLabel) => this._onFilterSelected(filterLabel));
-    
     // The event listener for the layer change. Updates the layer description.
     this.provider.addEventListener(CityObjectProvider.EVENT_LAYER_CHANGED,
       () => this._updateLayerDescription());
@@ -246,7 +246,8 @@ export class CityObjectWindow extends Window {
       <p class="city-object-title">Attributes</p>
       <p class="city-object-value">
         Tile ID : ${cityObject.tile.tileId}<br>
-        Batch ID : ${cityObject.batchId}
+        Batch ID : ${cityObject.batchId}<br>
+        Layer : ${cityObject.tile.layer.name}
     `;
     for (let prop of Object.entries(cityObject.props)) {
       html += /*html*/`
