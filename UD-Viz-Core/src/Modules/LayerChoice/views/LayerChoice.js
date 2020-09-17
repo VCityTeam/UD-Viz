@@ -63,18 +63,18 @@ export class LayerChoice extends Window {
       item.innerHTML = `<label for="${layers[i].id}-spoiler" class="section-title">${layers[i].id}</Label>
                         Visible <input type="checkbox" id="checkbox_${i}" ${layers[i].visible ? "checked" : ""}></input></br>
                         <div id="opacity_${i}"> 
-                          Opacity : ${layers[i].opacity} <input type ="range" id="range_${i}" min="0" max="1" step = "0.1" value="${layers[i].opacity}"></input>
+                          Opacity : <span id="color_value_opacity_${i}">${layers[i].opacity}</span>  <input type ="range" id="range_${i}" min="0" max="1" step = "0.1" value="${layers[i].opacity}"></input>
                         </div>`;
 
-      item.onchange = (event) => {
+      item.oninput = (event) => {
         if (event.srcElement.id === "checkbox_" + i) {
           layers[i].visible = event.srcElement.checked;
         }
         if (event.srcElement.id === "range_" + i) {
           this.layerManager.updateOpacity(layers[i], event.srcElement.valueAsNumber);
-          let div_opacity = document.getElementById("opacity_" + i);
-          div_opacity.innerHTML = `Opacity : ${layers[i].opacity} <input type ="range" id="range_${i}" min="0" max="1" step = "0.1" value="${layers[i].opacity}"></input>`;
         }
+        let span_opacity = document.getElementById("color_value_opacity_" + i);
+        span_opacity.innerHTML = `${layers[i].opacity}`;
         this.layerManager.notifyChange();
       };
       list.appendChild(item);
@@ -89,13 +89,13 @@ export class LayerChoice extends Window {
     for (let i = 0; i < layers.length; i++) {
       let item = document.createElement('div');
       item.innerHTML = `<h3>${layers[i].id}</h3>
-                        Scale : ${layers[i].scale} <input type ="range" id="${i}" min="1" max="10" step = "1" value="${layers[i].scale}"></input>`;
+                        Scale : <span id="elevation_value_scale_${i}">${layers[i].scale}</span> <input type ="range" id="${i}" min="1" max="10" step = "1" value="${layers[i].scale}"></input>`;
 
-      item.onchange = (event) => {
+      item.oninput = (event) => {
         this.layerManager.updateScale(layers[i], event.srcElement.valueAsNumber);
-        item.innerHTML = `<h3>${layers[i].id}</h3>
-         Scale : ${layers[i].scale}<input type ="range" id="${i}" min="1" max="10" step = "1" value="${layers[i].scale}"></input>`;
         this.layerManager.notifyChange();
+        let span_elevation = document.getElementById("elevation_value_scale_" + i);
+        span_elevation.innerHTML = `${layers[i].scale}`;
       };
       list.appendChild(item);
     }
@@ -109,7 +109,7 @@ export class LayerChoice extends Window {
 
     let div = document.createElement('div');
     div.innerHTML = `
-      Visible <input type="checkbox" id="checkbox" ${this.layerManager.isOneLayerVisible() ? "checked" : ""}></input></br>
+      All Visible <input type="checkbox" id="checkbox" ${this.layerManager.isOneLayerVisible() ? "checked" : ""}></input></br>
   `;
     div.onchange = (event) => {
       this.layerManager.changeVisibility(event.srcElement.checked);
@@ -125,21 +125,21 @@ export class LayerChoice extends Window {
                           Visible <input type="checkbox" id="checkbox_${i}" ${layers[i].visible ? "checked" : ""}></input></br>
                           </div>
                           <div id="opacity_${i}"> 
-                            Opacity : ${layers[i].opacity} <input type ="range" id="range_${i}" min="0" max="1" step = "0.1" value="${layers[i].opacity}"></input>
+                            Opacity : <span id="geometry_value_opacity_${i}">${layers[i].opacity}</span><input type ="range" id="range_${i}" min="0" max="1" step = "0.1" value="${layers[i].opacity}"></input>
                           </div>
                         </div>`;
 
-      item.onchange = (event) => {
+      item.oninput = (event) => {
         if (event.srcElement.id === "checkbox_" + i) {
           layers[i].visible = event.srcElement.checked;
         }
         if (event.srcElement.id === "range_" + i) {
           this.layerManager.updateOpacity(layers[i], event.srcElement.valueAsNumber);
-          let div_opacity = document.getElementById("opacity_" + i);
-          div_opacity.innerHTML = `Opacity : ${layers[i].opacity} <input type ="range" id="range_${i}" min="0" max="1" step = "0.1" value="${layers[i].opacity}"></input>`;
         }
         let div_visible = document.getElementById("visible_" + i);
         div_visible.innerHTML = `Visible <input type="checkbox" id="checkbox_${i}" ${layers[i].visible ? "checked" : ""}></input></br>`;
+        let span_opacity = document.getElementById("geometry_value_opacity_" + i);
+        span_opacity.innerHTML = `${layers[i].opacity}`;
         this.layerManager.notifyChange();
       };
       list.appendChild(item);
