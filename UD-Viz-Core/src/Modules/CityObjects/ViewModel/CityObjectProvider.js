@@ -217,7 +217,7 @@ export class CityObjectProvider extends EventSender {
    */
   applyStyles() {
     this._updateTilesManager();
-    this.layerManager.apply3DTilesStyles();
+    this.layerManager.applyAll3DTilesStyles();
   }
 
   ////////////

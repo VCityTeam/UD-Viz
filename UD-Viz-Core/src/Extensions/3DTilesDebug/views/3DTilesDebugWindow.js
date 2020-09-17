@@ -46,7 +46,7 @@ export class Debug3DTilesWindow extends Window {
         this.selectedCityObject = undefined;
       }
       this.layerManager.removeAll3DTilesStyles();
-      this.layerManager.apply3DTilesStyles();
+      this.layerManager.applyAll3DTilesStyles();
     });
   }
 
@@ -112,7 +112,7 @@ export class Debug3DTilesWindow extends Window {
    */
   updateTilesManager() {
     this.layerManager.update3DTiles();
-    this.TBIInfoParagraphElement.innerText = `${this.layerManager.getLoadedTileCount()} / ${this.layerManager.getTotalTileCount()} tiles loaded.`;
+    this.TBIInfoParagraphElement.innerText = `${this.layerManager.getLoaded3DTilesTileCount()} / ${this.layerManager.getTotal3DTilesTileCount()} tiles loaded.`;
   }
 
   /**
@@ -130,7 +130,7 @@ export class Debug3DTilesWindow extends Window {
    */
   onMouseMove(event) {
     // Update the current visible tile count
-    let visibleTileCount = this.layerManager.getVisibleTileCountFromLayers();
+    let visibleTileCount = this.layerManager.getVisible3DTilesTileCountFromLayers();
     this.visibleTilesParagraphElement.innerText = `${visibleTileCount} tiles visible.`
   }
 

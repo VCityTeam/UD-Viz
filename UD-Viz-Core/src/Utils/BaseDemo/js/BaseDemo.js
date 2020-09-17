@@ -20,7 +20,7 @@ export class BaseDemo {
         this.extent;  // itowns extent (city limits)
         this.controls;
         /**
-         * Object used to manage the 3DTiles layer.
+         * Object used to manage all of the layer.
          *
          * @type {LayerManager}
          */

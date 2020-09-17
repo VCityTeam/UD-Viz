@@ -62,14 +62,14 @@ export class LayerManager {
      * @param {() => any} [options.updateFunction] The function used to update the
      * view. Default is `udpateITownsView(view, layer)`.
      */
-    apply3DTilesStyles(options = {}) {
+    applyAll3DTilesStyles(options = {}) {
         this.tilesManagers.forEach(function(tilesManager){
             tilesManager.applyStyles(options);
         });
     }
 
     /**
-    * Check if at leat one 3DTiles layer is visible
+    * Check if at least one 3DTiles layer is visible
     * 
     * @returns {boolean}
     */
@@ -181,7 +181,7 @@ export class LayerManager {
    * 
    * @returns {int} 
    */
-    getLoadedTileCount() {
+    getLoaded3DTilesTileCount() {
         let loadedTileCount = 0;
         for (let i = 0; i < this.tilesManagers.length; i++) {
             loadedTileCount += this.tilesManagers[i].loadedTileCount;
@@ -194,7 +194,7 @@ export class LayerManager {
    * 
    * @returns {int} 
    */
-    getTotalTileCount() {
+    getTotal3DTilesTileCount() {
         let totalTileCount = 0;
         for (let i = 0; i < this.tilesManagers.length; i++) {
             totalTileCount += this.tilesManagers[i].totalTileCount;
@@ -208,7 +208,7 @@ export class LayerManager {
    * 
    * @returns {int} 
    */
-    getVisibleTileCountFromLayers() {
+    getVisible3DTilesTileCountFromLayers() {
         let visibleTileCount = 0;
         for (let i = 0; i < this.tilesManagers.length; i++) {
             visibleTileCount += getVisibleTileCount(this.tilesManagers[i].layer);

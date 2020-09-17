@@ -7,7 +7,6 @@ import { EventSender } from "../../../Utils/Events/EventSender";
 import { Link } from "../Model/Link";
 import { Window } from "../../../Utils/GUI/js/Window";
 import { LinkProvider } from "../ViewModel/LinkProvider";
-import { TilesManager } from "../../../Utils/3DTiles/TilesManager";
 
 /**
  * The interface extensions for the document windows.
