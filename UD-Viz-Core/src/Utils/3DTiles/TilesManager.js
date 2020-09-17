@@ -101,33 +101,7 @@ export class TilesManager {
     }
   }
 
-  /**
-   * Returns the city object under the mouse cursor.
-   * 
-   * @param {MouseEvent} event The mouse event.
-   * 
-   * @returns {CityObject | undefined}
-   */
-  pickCityObject(event, selectCityObjectId) {
-    if (event.target.nodeName.toUpperCase() === 'CANVAS') {
-      this.update();
-      // Get the intersecting objects where our mouse pointer is
-      let intersections = this.view.pickObjectsAt(event, 5);
-      // Get the first intersecting tile
-      let firstInter = getFirstTileIntersection(intersections);
-      if (!!firstInter) {
-        let batchId = getBatchIdFromIntersection(firstInter);
-        let tileId = getObject3DFromTile(firstInter.object).tileId;
 
-        if (this.tiles[tileId] !== undefined) {
-          return this.tiles[tileId].cityObjects[batchId];
-        }
-      }
-    }
-
-    return undefined;
-
-  }
 
   /**
    * Returns the city object, if the tile is loaded.

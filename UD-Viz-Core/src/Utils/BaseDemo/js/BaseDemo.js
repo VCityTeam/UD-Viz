@@ -15,7 +15,6 @@ export class BaseDemo {
         this.requireAuthModules = [];
         this.authService;
         this.config = {};
-        this.ifcText;
         this.parentElement;
         this.view;  // itowns view (3d scene)
         this.extent;  // itowns extent (city limits)
@@ -436,42 +435,7 @@ export class BaseDemo {
                 this.view.getLayerById(this.config['3DTilesLayer'][layerConfig]['id'])));
     }
 
-    /**
-     * Adds a 3D Tiles layer to the iTowns 3D view.
-     * @param {string} layerConfig The name of the type of object to add to the view. This name should
-     * be one of the properties of the 3DTilesLayer object (in UD-Viz/UD-Viz-Core/examples/data/config/generalDemoConfig.json
-     * config file).
-     */
-    add3DTilesLayerFromIfc() {
-        //  ADD 3D Tiles Layer
-
-        // Positional arguments verification
-        if (!this.ifcText) {
-            throw "Your IFCText file was not download correctly ";
-        }
-        var tilesToLoad = this.ifcText.split(';');
-        for (let i = 0; i < tilesToLoad.length; i++) {
-            if(tilesToLoad[i] != '' && tilesToLoad[i] != undefined ){ 
-                var tile = tilesToLoad[i]; 
-                let $3dTilesLayer = new itowns.GeometryLayer(
-                    tile, new THREE.Group(), {transparent: true});
-                $3dTilesLayer.name = tile;
-                $3dTilesLayer.url =  "http://localhost:8003/tilesets/ifc_tilesets/" + tile + "/tileset.json";
-                $3dTilesLayer.protocol = '3d-tiles';
-
-                let material = new THREE.MeshLambertMaterial({ color: 0xFFFFFF });
-                
-                $3dTilesLayer.overrideMaterials = material;
-                $3dTilesLayer.material = material;
-
-                itowns.View.prototype.addLayer.call(this.view, $3dTilesLayer);
-                
-                this.layerManager.tilesManagers.push(new TilesManager(this.view,
-                    this.view.getLayerById(tile)));
-            }
-        }
-    }
-
+   
     /**
      * Initializes the iTowns 3D view.
      * @param {string} area The name of the area to view. Used to adjust the extent, this name should be
@@ -569,25 +533,6 @@ export class BaseDemo {
     }
 
 
-    /**
- * Loads a list of tileset from an IFC file. Module views should only be added after calling
- * this method.
- * @param filePath The path to the config file.
- */
-    async loadIfcFile(filePath) {
-        //load an ifc description file
-        return $.ajax({
-            type: "GET",
-            url: filePath,
-            datatype: "text",
-            success: (data) => {
-                this.ifcText = data;
-            },
-            error: (e) => {
-                throw 'Could not load ifc Text';
-            }
-        });
-    }
 
     ////////////////////////////////////////////////////////
     // GETTERS FOR HTML IDS AND ELEMENTS OF THE DEMO PAGE //

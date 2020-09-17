@@ -115,9 +115,11 @@ export class LayerManager {
     }
     /**
     * Update the view when called. Must be called when a change have been made
+    * The view.camera.camera3D is passed to actualize all of the layer, but the 
+    * the documentation of notifyChange says taht it should not be needed 
     */
     notifyChange() {
-        this.view.notifyChange();
+        this.view.notifyChange(this.view.camera.camera3D);
     }
 
     /**

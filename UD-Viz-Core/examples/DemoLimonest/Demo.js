@@ -12,8 +12,6 @@ baseDemo.loadConfigFile('../data/config/generalDemoConfig.json').then(() => {
     baseDemo.init3DView('limonest');
     baseDemo.addLyonWMSLayer();
     baseDemo.add3DTilesLayer('limonest_building');
-
-
     baseDemo.update3DView();
 
     ////// REQUEST SERVICE

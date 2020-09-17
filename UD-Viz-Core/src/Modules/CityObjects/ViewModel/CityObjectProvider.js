@@ -14,9 +14,9 @@ import { LayerManager } from "../../../Utils/LayerManager/LayerManager";
  */
 export class CityObjectProvider extends EventSender {
   /**
-   * Constructs a city object provider, using a tiles manager.
+   * Constructs a city object provider, using a layer manager.
    * 
-   * @param {LayerManager} layerManager The tiles manager.
+   * @param {LayerManager} layerManager The layer manager.
    */
   constructor(layerManager) {
     super();
@@ -39,7 +39,7 @@ export class CityObjectProvider extends EventSender {
      * 
      * @type {CityObjectLayer}
      */
-    this.layer = undefined;
+    this.cityOjectLayer = undefined;
 
     /**
      * The array of city objects in the layer.
@@ -51,7 +51,7 @@ export class CityObjectProvider extends EventSender {
     /**
      * The selected city object.
      * 
-     * @type {CityObjectID}
+     * @type {CityObject}
      */
     this.selectedCityObject = undefined;
 
@@ -157,7 +157,7 @@ export class CityObjectProvider extends EventSender {
       throw 'No filter found with the label : ' + label;
     }
 
-    this.layer = new CityObjectLayer(filter, style);
+    this.cityOjectLayer = new CityObjectLayer(filter, style);
 
     this.sendEvent(CityObjectProvider.EVENT_LAYER_CHANGED, filter);
 
@@ -172,14 +172,14 @@ export class CityObjectProvider extends EventSender {
    * @returns {CityObjectLayer} The current layer.
    */
   getLayer() {
-    return this.layer;
+    return this.cityOjectLayer;
   }
 
   /**
    * Unsets the current layer. Sends the `EVENT_LAYER_CHANGED` event.
    */
   removeLayer() {
-    this.layer = undefined;
+    this.cityOjectLayer = undefined;
     this.sendEvent(CityObjectProvider.EVENT_LAYER_CHANGED, undefined);
     this.applyStyles();
   }
@@ -196,14 +196,14 @@ export class CityObjectProvider extends EventSender {
     if (!!this.selectedCityObject) {
       let tileManager = this.layerManager.getTilesManagerByLayerID(this.selectedCityObject.tile.layer.id);
 
-      if (this.layer === undefined) {
+      if (this.cityOjectLayer === undefined) {
         this.layerCityObjectIds = [];
       } else {
         this.layerCityObjectIds = tileManager
-          .findAllCityObjects(this.layer.filter.accepts)
+          .findAllCityObjects(this.cityOjectLayer.filter.accepts)
           .map((co) => co.cityObjectId);
 
-        tileManager.setStyle(this.layerCityObjectIds, this.layer.style);
+        tileManager.setStyle(this.layerCityObjectIds, this.cityOjectLayer.style);
       }
 
       tileManager.setStyle(this.selectedCityObject.cityObjectId, this.defaultSelectionStyle);

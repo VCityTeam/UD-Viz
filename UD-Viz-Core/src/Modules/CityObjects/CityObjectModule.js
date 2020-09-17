@@ -16,7 +16,7 @@ export class CityObjectModule {
    * filters. Other modules can extend the functionnalities of the city object
    * module by adding filters.
    * 
-   * @param {LayerManager} layerManager The tiles manager.
+   * @param {LayerManager} layerManager The layer manager.
    * @param {object} config The UDV configuration.
    * @param {object} config.cityObjects The city objects config.
    * @param {Object.<string, CityObjectStyle>} config.cityObjects.styles The
