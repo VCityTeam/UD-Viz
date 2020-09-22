@@ -168,11 +168,11 @@ export function setTileVerticesColor(tile, newColor, indexArray = null) {
   }
 
   //We need to use the color of the vertices, not the material
-  tile.material.vertexColors = THREE.VertexColors;
+  tile.material.vertexColors = true;
 
   if (!tile.geometry.attributes.color) {
     //If no vertex color is present, we need to add the BufferAttribute
-    tile.geometry.addAttribute('color', new THREE.BufferAttribute(colors, 3));
+    tile.geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
   } else {
     //Else we need to update the existing attribute
     tile.geometry.attributes.color.set(colors);
@@ -292,13 +292,13 @@ export function createTileGroups(tile, materialsProps, ranges) {
 
 /**
  * Create groups in the tile mesh from the given batch IDs and materials.
- * 
+ *
  * @param {*} tile The 3DTiles tile.
  * @param {Array<any>} groups An array of group descriptors. A group descriptor
  * is a dictionnary containing two entries :
  * - `material` contains the material parameters, such as `color` or `opacity`.
  * - `batchIDs` contains the batch IDs to be applied the given material.
- * 
+ *
  * @example
  * // Fetch the tile
  * let tile = getTileInLayer(layer, 6);
@@ -399,7 +399,7 @@ export function createTileGroupsFromBatchIDs(tile, groups) {
 /**
  * Removes vertex-specific colors of the tile and switch back to the material's
  * color.
- * 
+ *
  * @param {*} tile The 3DTiles tile.
  */
 export function removeTileVerticesColor(tile) {
@@ -421,16 +421,16 @@ export function removeTileVerticesColor(tile) {
   }
 
   //Remove color attribute
-  tile.geometry.removeAttribute('color');
+  tile.geometry.deleteAttribute('color');
 
   //We go back to the color of the material
-  tile.material.vertexColors = THREE.NoColors;
+  tile.material.vertexColors = false;
 }
 
 /**
  * Tells the iTowns view to update the scene. If you made changes to some colors
  * for example, you need to call this function to actually see the changes.
- * 
+ *
  * @param {*} view The iTowns view.
  */
 export function updateITownsView(view, layer) {
@@ -447,11 +447,11 @@ export function updateITownsView(view, layer) {
 
 /**
  * Computes and returns the centroid of the vertices given as parameter.
- * 
+ *
  * @param {*} tile The 3DTiles tile.
  * @param {*} indexArray The indexes of the vertices. It is assumed to be
  * **sorted** and **contiguous**.
- * 
+ *
  * @returns {THREE.Vector3} The centroid of the vertices.
  */
 export function getVerticesCentroid(tile, indexArray) {
@@ -527,13 +527,13 @@ export function getObject3DFromTile(tile) {
  * The TI is an object containing associations between tile, batch IDs and
  * data specific to the batched geometry (vertex indexes, centroid, properties
  * from the batch table).
- * 
+ *
  * @param {*} layer The 3DTiles layer.
  * @param {*} tilesInfo An existing TI for this layer. Tiles that are currently
  * loaded in the layer will be added to the TI if they're not already present.
  * If no TI is provided, a brand new one will be instantiated with currently
  * loaded tiles.
- * 
+ *
  * @example
  * let layer = view.getLayerById(config['3DTilesLayerID']);
  * //Fetch the TI
@@ -547,7 +547,7 @@ export function getObject3DFromTile(tile) {
  * let batchId = getBatchIdFromIntersection(firstInter);
  * //Display the building's infos
  * console.log(tilesInfo.tiles[tileId][batchId]);
- * 
+ *
  * @example
  * let layer = view.getLayerById(config['3DTilesLayerID']);
  * //Initialize the TI
@@ -564,8 +564,8 @@ export function getTilesInfo(layer, tilesInfo = null) {
     tilesInfo.tiles = {};
     tilesInfo.tileset;
   }
-  let tileIndex = layer.tileIndex;
-  let tileCount = Object.keys(tileIndex.index).length - 1; // -1 because of the
+  let tileset = layer.tileset;
+  let tileCount = Object.keys(tileset.tiles).length - 1; // -1 because of the
                                                            // root tile
   tilesInfo.totalTileCount = tileCount;
   let rootTile = layer.object3d.children[0];

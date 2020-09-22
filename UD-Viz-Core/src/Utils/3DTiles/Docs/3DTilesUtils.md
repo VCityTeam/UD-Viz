@@ -52,7 +52,7 @@ let layer = view.getLayerById(config['3DTilesLayerID']);
 
 The 3DTiles layer has an `object3d` which contains exactly one child of type "Object3D". This child is actually the tileset root, and contains the tiles that are currently displayed in the scene.
 
-The layer also has a `tileIndex` property which describes all tiles. Every tile is listed here, even if they are not rendered in the scene for the moment. However, the THREE.js actual objects representing the tiles are not there.
+The layer also has a `tileset` property which describes all tiles. Every tile is listed here, even if they are not rendered in the scene for the moment. However, the THREE.js actual objects representing the tiles are not there.
 
 ### Batch Table
 

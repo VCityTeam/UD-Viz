@@ -235,7 +235,7 @@ export class BaseDemo {
         let moduleClass = this.getModuleById(moduleId);
 
         //dynamically color the button
-        moduleClass.parentElement = this.viewerDivElement;
+        moduleClass.parentElement = this.viewerDivElement.parentElement;
         moduleClass.addEventListener(ModuleView.EVENT_ENABLED, () => {
             button.className = 'choiceMenu choiceMenuSelected';
 
@@ -256,7 +256,7 @@ export class BaseDemo {
         frame.innerHTML = this.authenticationFrameHtml;
         this.authFrameLocationElement.appendChild(frame);
         const authView = this.getModuleById(authModuleId);
-        authView.parentElement = this.viewerDivElement;
+        authView.parentElement = this.viewerDivElement.parentElement;
         const authService = authView.authenticationService;
         this.authenticationLoginButtonElement.onclick = () => {
             if (this.isModuleActive(authModuleId)) {
@@ -408,26 +408,29 @@ export class BaseDemo {
                 "(in UD-Viz/UD-Viz-Core/examples/data/config/generalDemoConfig.json)";
         }
 
-        let $3dTilesLayer = new itowns.GeometryLayer(
-            this.config['3DTilesLayer'][layerConfig]['id'], new THREE.Group(), {transparent: true});
-        $3dTilesLayer.name = 'Lyon-2015-'.concat(layerConfig);
-        $3dTilesLayer.url =
-            this.config['3DTilesLayer'][layerConfig]['url'];
-        $3dTilesLayer.protocol = '3d-tiles';
+        var $3dTilesLayer = new itowns.C3DTilesLayer(
+            this.config['3DTilesLayer'][layerConfig]['id'], {
+                name: 'Lyon-2015-'.concat(layerConfig),
+                source: new itowns.C3DTilesSource({
+                    url: this.config['3DTilesLayer'][layerConfig]['url'],
+                }),
+            }, this.view);
 
         let material;
-        if (this.config['3DTilesLayer'][layerConfig]['pc_size']) 
+        if (this.config['3DTilesLayer'][layerConfig]['pc_size'])
         {
-            material = new THREE.PointsMaterial({ size: this.config['3DTilesLayer'][layerConfig]['pc_size'], vertexColors: THREE.VertexColors });
+            material = new THREE.PointsMaterial({ size: this.config['3DTilesLayer'][layerConfig]['pc_size'], vertexColors: true });
         }
-        else if (this.config['3DTilesLayer'][layerConfig]['color']) 
-        {
-            material = new THREE.MeshLambertMaterial({ color: parseInt(this.config['3DTilesLayer'][layerConfig]['color']), opacity: 0.5, transparent: true });
+        else if (!this.config['3DTilesLayer'][layerConfig]['color']) {
+            material = new THREE.MeshLambertMaterial({ color: 0xFFFFFF });
+        } else {
+            material =
+                new THREE.MeshLambertMaterial({color: parseInt(this.config['3DTilesLayer'][layerConfig]['color'])});
         }
 
         $3dTilesLayer.overrideMaterials = material;
         $3dTilesLayer.material = material;
-        
+
         itowns.View.prototype.addLayer.call(this.view, $3dTilesLayer);
 
 
@@ -458,12 +461,31 @@ export class BaseDemo {
             'EPSG:3946',
             min_x, max_x,
             min_y, max_y);
+
+        // Get camera placement parameters from config
+        let coordinates = this.extent.center();
+        if (this.config['camera'][area]['position']['x']
+            && this.config['camera'][area]['position']['y']) {
+            coordinates = new itowns.Coordinates('EPSG:3946',
+                parseInt(this.config['camera'][area]['position']['x']),
+                parseInt(this.config['camera'][area]['position']['y']));
+        }
+        let heading = parseFloat(this.config['camera'][area]['position']['heading']);
+        let range = parseFloat(this.config['camera'][area]['position']['range']);
+        let tilt = parseFloat(this.config['camera'][area]['position']['tilt']);
+
         // `viewerDiv` will contain iTowns' rendering area (`<canvas>`)
         let viewerDiv = document.getElementById('viewerDiv');
         // Instantiate PlanarView (iTowns' view that will hold the layers)
         // The skirt allows to remove the cracks between the terrain tiles
         this.view = new itowns.PlanarView(viewerDiv, this.extent, {
-            disableSkirt: false
+            disableSkirt: false,
+            placement: {
+                coord: coordinates,
+                heading: heading,
+                range: range,
+                tilt: tilt
+            }
         });
         this.layerManager = new LayerManager(this.view);
         // ********* 3D Elements
@@ -477,25 +499,6 @@ export class BaseDemo {
         ambientLight.position.set(0, 0, 3000);
         directionalLight.updateMatrixWorld();
         this.view.scene.add(ambientLight);
-        // Camera
-
-        let coordinates = this.extent.center();
-        let range = parseFloat(this.config['camera'][area]['position']['range']);
-        let tilt = parseFloat(this.config['camera'][area]['position']['tilt']);
-        let heading = parseFloat(this.config['camera'][area]['position']['heading']);
-
-        if (this.config['camera'][area]['position']['x']
-          && this.config['camera'][area]['position']['y']) {
-          coordinates = new itowns.Coordinates('EPSG:3946',
-            parseInt(this.config['camera'][area]['position']['x']),
-            parseInt(this.config['camera'][area]['position']['y']));
-        }
-
-        let p = {
-            coord: coordinates, heading: heading, range: range, tilt: tilt
-          };
-
-        itowns.CameraUtils.transformCameraToLookAtTarget(this.view, this.view.camera.camera3D, p);
 
         // Controls
         this.controls = new itowns.PlanarControls(this.view, { maxZenithAngle: 180, groundLevel: -100, handleCollision: false });
@@ -531,8 +534,6 @@ export class BaseDemo {
             }
         });
     }
-
-
 
     ////////////////////////////////////////////////////////
     // GETTERS FOR HTML IDS AND ELEMENTS OF THE DEMO PAGE //
