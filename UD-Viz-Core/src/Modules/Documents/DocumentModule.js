@@ -68,7 +68,7 @@ export class DocumentModule {
    * @param {string} options.html The inside HTML of the
    * extension. For a button, this will be the displayed text. For a panel, it
    * will be the inside HTML.
-   * @param {(Doc: Document) => any} [options.callback] The callback to call
+   * @param {(doc: Document) => any} [options.callback] The callback to call
    * for a button.
    */
   addInspectorExtension(label, options) {
@@ -99,7 +99,7 @@ export class DocumentModule {
    * @param {string} options.html The inside HTML of the
    * extension. For a button, this will be the displayed text. For a panel, it
    * will be the inside HTML.
-   * @param {(Doc: Document[]) => any} [options.callback] The callback to call
+   * @param {(doc: Document[]) => any} [options.callback] The callback to call
    * for a button.
    */
   addNavigatorExtension(label, options) {

@@ -57,7 +57,7 @@ app.get('/dyn/textures/:bw/*', function(req,res){
 
 });
 
-//mini Doc to remove ?
+//mini doc to remove ?
 app.get('/dyn/textures', function(req,res){
 	res.send(400,'use with url like /dyn/textures/bandwithInKb/filePath');
 });

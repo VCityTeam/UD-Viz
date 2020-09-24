@@ -23,7 +23,7 @@ export class DocumentInspectorWindow extends AbstractDocumentWindow {
      *  container?: string,
      *  label: string,
      *  id: string,
-     *  callback?: (Doc: Document) => any,
+     *  callback?: (doc: Document) => any,
      *  html: string
      * }>}
      */

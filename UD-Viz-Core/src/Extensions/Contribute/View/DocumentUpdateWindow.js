@@ -102,7 +102,7 @@ export class DocumentUpdateWindow extends AbstractDocumentWindow {
     this.window.style.right = reference.right;
     this.window.style.width = reference.width;
 
-    // Sets Doc attributes in HTML
+    // Sets doc attributes in HTML
     let doc = this.provider.getDisplayedDocument();
 
     if (!doc) {

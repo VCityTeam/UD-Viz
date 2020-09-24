@@ -29,7 +29,7 @@ export class DocumentNavigatorWindow extends AbstractDocumentWindow {
       *  type: 'button' | 'panel',
       *  label: string,
       *  id: string,
-      *  callback?: (Doc: Document[]) => any,
+      *  callback?: (doc: Document[]) => any,
       *  html: string
       * }>}
       */
@@ -140,7 +140,7 @@ export class DocumentNavigatorWindow extends AbstractDocumentWindow {
         <div class='doc-title'>${doc.title}</div>
         <div class='doc-info'>Refering ${(new Date(doc.refDate)).toLocaleDateString()}</div>
       `;
-      item.classList.add('navigator-result-Doc')
+      item.classList.add('navigator-result-doc')
       item.onclick = () => {
         this.provider.setDisplayedDocument(doc);
       };
