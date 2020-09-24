@@ -9,7 +9,7 @@ import { Document } from "../../../Modules/Documents/Model/Document";
 export class ContributeService {
   /**
    * Creates a contribute service.
-   * 
+   *
    * @param {RequestService} requestService The request service.
    * @param {DocumentProvider} provider The document provider.
    * @param {object} config The UD-Viz config.
@@ -20,21 +20,21 @@ export class ContributeService {
   constructor(requestService, provider, config) {
     /**
      * The request service.
-     * 
+     *
      * @type {RequestService}
      */
     this.requestService = requestService;
 
     /**
      * The document provider.
-     * 
+     *
      * @type {DocumentProvider}
      */
     this.provider = provider;
 
     /**
      * The UD-Viz configuration.
-     * 
+     *
      * @type {{
      *  server: {
      *    url: string,
@@ -46,7 +46,7 @@ export class ContributeService {
 
     /**
      * The base URL for documents.
-     * 
+     *
      * @type {string}
      */
     this.documentUrl = this.config.server.url;
@@ -58,13 +58,13 @@ export class ContributeService {
 
   /**
    * Sends the request to update the document.
-   * 
+   *
    * @param {FormData} updatedData The updated document data.
-   * 
+   *
    * @returns {Document} The updated document.
    */
   async updateDocument(updatedData) {
-    //get current doc data and id
+    //get current Doc data and id
     let currentDoc = this.provider.getDisplayedDocument();
     let id = currentDoc.id;
 
@@ -86,9 +86,9 @@ export class ContributeService {
 
   /**
    * Sends the request to create the document.
-   * 
+   *
    * @param {FormData} creationData The document data.
-   * 
+   *
    * @returns {Document} The created document.
    */
   async createDocument(creationData) {

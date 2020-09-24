@@ -33,7 +33,7 @@ app.get('/api/:bw/kvp', kvpRequest.mandatoryParamValidator,kvpRequest.handler);
 //bandwith tweaking
 
 app.get('/dyn/textures/:bw/*', function(req,res){
-	var speed = parseInt(req.params.bw); 
+	var speed = parseInt(req.params.bw);
 	if(speed == 0) {
 		speed = 10240000;
 	}else if (speed >10240000){
@@ -41,12 +41,12 @@ app.get('/dyn/textures/:bw/*', function(req,res){
 	}
 	//console.log(req.params[0]);//show file path
 	var stream = fs.createReadStream('./ressources/'+req.query.CITY+'/textures/'+req.params[0]);
-	
+
 	stream.on('error',function(error){
 		console.log('dyn ReadStream error :',error);
 		res.send('use with url like /dyn/bandwithInKb/filePath');
 	});
-		
+
 	stream.once('readable',function(){
 		var gzip = zlib.createGzip();
 		var throttle = new Throttle(speed*1024);
@@ -57,7 +57,7 @@ app.get('/dyn/textures/:bw/*', function(req,res){
 
 });
 
-//mini doc to remove ?
+//mini Doc to remove ?
 app.get('/dyn/textures', function(req,res){
 	res.send(400,'use with url like /dyn/textures/bandwithInKb/filePath');
 });

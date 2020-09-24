@@ -17,13 +17,13 @@ export class DocumentInspectorWindow extends AbstractDocumentWindow {
     /**
      * Represents a list of extensions. An extension can either be a button or
      * a panel.
-     * 
+     *
      * @type {Object.<string, {
      *  type: 'button' | 'panel',
      *  container?: string,
      *  label: string,
      *  id: string,
-     *  callback?: (doc: Document) => any,
+     *  callback?: (Doc: Document) => any,
      *  html: string
      * }>}
      */
@@ -95,7 +95,7 @@ export class DocumentInspectorWindow extends AbstractDocumentWindow {
 
   /**
    * Triggered when the displayed document change. Updates the HTML fields.
-   * 
+   *
    * @param {Document} newDocument The new displayed document.
    */
   async onDisplayedDocumentChange(newDocument) {
@@ -122,7 +122,7 @@ export class DocumentInspectorWindow extends AbstractDocumentWindow {
 
   /**
    * Updates the HTML fields so that they describe the new displayed document.
-   * 
+   *
    * @param {Document} newDocument The new displayed document.
    */
   async _fillFieldsFromDocument(newDocument) {
