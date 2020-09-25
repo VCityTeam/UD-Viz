@@ -1,5 +1,3 @@
-import { EventSender } from "../../../Utils/Events/EventSender";
-
 /**
  * Represents an option in the list of filters the user can select. It also
  * stores additional HTML that can be put in a form if the filter accepts

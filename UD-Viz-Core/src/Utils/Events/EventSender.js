@@ -21,7 +21,7 @@ export class EventSender {
     }
 
     /**
-     * Registers an event. Should be clalled by the implementing class to
+     * Registers an event. Should be called by the implementing class to
      * specify its own events.
      * @param event The event to register. Can be of any type. The class will be
      *              able to send only the events that it has registered.
