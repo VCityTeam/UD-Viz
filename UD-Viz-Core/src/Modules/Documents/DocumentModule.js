@@ -9,7 +9,7 @@ import { DocumentView } from "./View/DocumentView";
 export class DocumentModule {
   /**
    * Creates a new documents module.
-   * 
+   *
    * @param {RequestService} requestService The request service.
    * @param {object} config The configuration of UD-Viz.
    * @param {object} config.server The server configuration.
@@ -21,21 +21,21 @@ export class DocumentModule {
     /**
      * The document service holds the list of documents fetched from the
      * server.
-     * 
+     *
      * @type {DocumentService}
      */
     this.service = new DocumentService(requestService, config);
 
     /**
      * The document provider filters the list of documents.
-     * 
+     *
      * @type {DocumentProvider}
      */
     this.provider = new DocumentProvider(this.service);
 
     /**
      * The document view represents the user interface for the documents.
-     * 
+     *
      * @type {DocumentView}
      */
     this.view = new DocumentView(this.provider);
@@ -46,18 +46,18 @@ export class DocumentModule {
 
   /**
    * Adds a new window to display information about documents.
-   * 
+   *
    * @param {AbstractDocumentWindow} newWindow The window to add.
    */
   addDocumentWindow(newWindow) {
     this.view.addDocumentWindow(newWindow);
   }
-  
+
   /**
    * Creates a new extension for the document browser. An extension can be
    * either a command button or a panel. An extension should be identified by
    * a unique label.
-   * 
+   *
    * @param {string} label The button label.
    * @param {object} options The extension options
    * @param {string} options.type The type of the option. Can be either `button`
@@ -77,7 +77,7 @@ export class DocumentModule {
 
   /**
    * Removes an existing extension in the browser window.
-   * 
+   *
    * @param {string} label The extension label.
    */
   removeBrowserExtension(label) {
@@ -88,7 +88,7 @@ export class DocumentModule {
    * Creates a new extension for the document search. An extension can be
    * either a command button or a panel. An extension should be identified by
    * a unique label.
-   * 
+   *
    * @param {string} label The extension label.
    * @param {object} options The extension options
    * @param {string} options.type The type of the option. Can be either `button`
@@ -108,7 +108,7 @@ export class DocumentModule {
 
   /**
    * Removes an existing extension in the search window.
-   * 
+   *
    * @param {string} label The extension label.
    */
   removeSearchWindowExtension(label) {
@@ -118,11 +118,11 @@ export class DocumentModule {
   /**
    * Changes the document source (the object representing the server URLs
    * to fetch the documents).
-   * 
+   *
    * @param {DocumentSource} newSource The new document source.
    * @param {boolean} [authenticate] Specifies wether authentication should be
    * used for the document fetch requests.
-   * 
+   *
    * @returns {DocumentSource} The previous document source.
    */
   changeDocumentSource(newSource, authenticate) {
@@ -131,7 +131,7 @@ export class DocumentModule {
 
   /**
    * Adds a filter to the filtering pipeline.
-   * 
+   *
    * @param {DocumentFilter} filter The new filter to add.
    */
   addFilter(filter) {
@@ -145,7 +145,7 @@ export class DocumentModule {
    * of filtered documents changes
    * - `DocumentModule.EVENT_DISPLAYED_DOC_CHANGED` fires when the displayed
    * document changes.
-   * 
+   *
    * @param {string} event The event to register. Can only be
    * `DocumentModule.EVENT_FILTERED_DOCS_UPDATED` or
    * `DocumentModule.EVENT_DISPLAYED_DOC_CHANGED`
@@ -157,7 +157,7 @@ export class DocumentModule {
 
   /**
    * Removes an event listener from the document provider.
-   * 
+   *
    * @param {(data: any) => data} action The listener to remove.
    */
   removeEventListener(action) {

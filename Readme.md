@@ -36,7 +36,7 @@ Each module adds new functionnalities to the application. You can find the code 
 * Filtered research (research by keyword, attribute and/or temporal research)
 * All documents are loaded from an external data server and can be accessed using the **Document Inspector** window.
 
-![](./doc/pictures/module_pres/document.png)
+![](UD-Viz-Core/Doc/User/Pictures/module_pres/document.png)
 
 This module has several extensions that add functionalities :
 
@@ -77,7 +77,7 @@ Adds user management :
 * Possibility to create an account
 * Possibility to log in
 
-![](./doc/pictures/module_pres/authentication.png)
+![](UD-Viz-Core/Doc/User/Pictures/module_pres/authentication.png)
 
 ### Temporal
 
@@ -95,7 +95,7 @@ Adds user management :
 * Selection of a city object, view its details
 * Filter city objects from their attributes
 
-![](./doc/pictures/module_pres/city_object.png)
+![](UD-Viz-Core/Doc/User/Pictures/module_pres/city_object.png)
 
 ### Links
 

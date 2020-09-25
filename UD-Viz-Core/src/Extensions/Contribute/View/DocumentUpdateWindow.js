@@ -7,12 +7,12 @@ import { DocumentModule } from "../../../Modules/Documents/DocumentModule";
 
 /**
  * This window is used to update a document. It contains a form that allows to
- * manipulate 
+ * manipulate
  */
 export class DocumentUpdateWindow extends AbstractDocumentWindow {
   /**
    * Creates a new document update window.
-   * 
+   *
    * @param {ContributeService} contributeService The contribute service to
    * perform requests.
    * @param {DocumentModule} documentModule The document module.
@@ -22,7 +22,7 @@ export class DocumentUpdateWindow extends AbstractDocumentWindow {
 
     /**
      * The contribute service to perform requests.
-     * 
+     *
      * @type {ContributeService}
      */
     this.contributeService = contributeService;
@@ -88,7 +88,7 @@ export class DocumentUpdateWindow extends AbstractDocumentWindow {
    * document. It requests the document view to display this window, and
    * change its position to match the document browser. It also updates the
    * field values.
-   * 
+   *
    * @private
    */
   async _initWindow() {
@@ -127,7 +127,7 @@ export class DocumentUpdateWindow extends AbstractDocumentWindow {
 
   /**
    * Called when the user submits the update form. Updates the document.
-   * 
+   *
    * @private
    */
   async _submitUpdate() {
@@ -157,7 +157,7 @@ export class DocumentUpdateWindow extends AbstractDocumentWindow {
   get docTitleElement() {
     return document.getElementById(this.docTitleId);
   }
-  
+
   get cancelButtonId() {
     return `${this.windowId}_cancel`;
   }
@@ -165,11 +165,11 @@ export class DocumentUpdateWindow extends AbstractDocumentWindow {
   get cancelButtonElement() {
     return document.getElementById(this.cancelButtonId);
   }
-  
+
   get docImageId() {
     return `${this.windowId}_image`;
   }
-  
+
   get docImageElement() {
     return document.getElementById(this.docImageId);
   }

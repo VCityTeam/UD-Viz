@@ -77,7 +77,7 @@ We propose a nomenclature to use when working with classes in a module, so that 
 
 The documents module follows an MVVM architecture :
 
-![](./Pictures/DocumentsArchitecture.png)
+![](Pictures/DocumentsArchitecture.png)
 
 The model holds the documents and make requests to the server, the view model filter those documents and the view displays the filtered documents.
 

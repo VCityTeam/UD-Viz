@@ -20,7 +20,7 @@ export class HelpWindow extends ModuleView {
       '<div id="text">\
          <br>\
          <h3><a\
-          href="https://github.com/MEPP-team/UD-Viz/blob/master/doc/UserDoc/ContributeData.md">User Tutorial</a></h3>\
+          href="https://github.com/MEPP-team/UD-Viz/blob/master/Doc/UserDoc/ContributeData.md">User Tutorial</a></h3>\
          <hr>\
          <h3>Camera key bindings:</h3>\
          <ul>\

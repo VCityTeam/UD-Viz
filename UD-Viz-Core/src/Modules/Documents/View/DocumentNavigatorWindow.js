@@ -16,7 +16,7 @@ export class DocumentNavigatorWindow extends AbstractDocumentWindow {
 
     /**
      * The filter corresponding to the research fields.
-     * 
+     *
      * @type {DocumentSearchFilter}
      */
     this.searchFilter = new DocumentSearchFilter();
@@ -24,7 +24,7 @@ export class DocumentNavigatorWindow extends AbstractDocumentWindow {
     /**
      * Represents a list of extensions. An extension can either be a button or
      * a panel.
-     * 
+     *
      * @type {Object.<string, {
       *  type: 'button' | 'panel',
       *  label: string,
@@ -122,9 +122,9 @@ export class DocumentNavigatorWindow extends AbstractDocumentWindow {
 
   /**
    * Callback triggered when the list of filtered documents changes.
-   * 
+   *
    * @private
-   * 
+   *
    * @param {Array<Document>} documents The new array of filtered documents.
    */
   _onFilteredDocumentsUpdate(documents) {
@@ -151,9 +151,9 @@ export class DocumentNavigatorWindow extends AbstractDocumentWindow {
 
   /**
    * Callback triggered when the displayed document changes.
-   * 
+   *
    * @private
-   * 
+   *
    * @param {Document} document The new displayed documents.
    */
   _onDisplayedDocumentChange(document) {
@@ -176,7 +176,7 @@ export class DocumentNavigatorWindow extends AbstractDocumentWindow {
 
   ////////////////////////
   ///// SEARCH AND FILTERS
-  
+
   /**
    * Event on the 'search' button click.
    */
