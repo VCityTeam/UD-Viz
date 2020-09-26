@@ -27,6 +27,7 @@ export class BaseDemo {
         this.layerManager;
         // Temporal is currently disabled and will be reintroduced in a new
         // version based on a 3D Tiles extension
+        // TODO: Mind this
         this.temporal = false;
         ///// Config values for some file paths
         // iconFolder    : folder for icons (for the modules menu)

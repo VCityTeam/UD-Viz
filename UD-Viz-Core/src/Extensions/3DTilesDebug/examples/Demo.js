@@ -1,6 +1,4 @@
-import { BaseDemo } from '../../../Utils/BaseDemo/js/BaseDemo.js'
-
-let baseDemo = new BaseDemo({
+let baseDemo = new udvcore.BaseDemo({
     iconFolder: '../../../../examples/data/icons',
     imageFolder: '../../../../examples/data/img'
 });
