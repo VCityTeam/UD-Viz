@@ -11,7 +11,7 @@ baseDemo.loadConfigFile('../data/config/generalDemoConfig.json').then(() => {
     // Initialize iTowns 3D view
     baseDemo.init3DView('bron');
     baseDemo.addLyonWMSLayer();
-    baseDemo.add3DTilesLayer('bron_building');
+    baseDemo.setupAndAdd3DTilesLayer('bron_building');
     baseDemo.update3DView();
 
     ////// REQUEST SERVICE

@@ -9,21 +9,22 @@ baseDemo.appendTo(document.body);
 baseDemo.loadConfigFile('../data/config/generalDemoConfig.json').then(() => {
 
     // Initialize iTowns 3D view
-    baseDemo.initView();
+    baseDemo.init3DView('lyon_all_districts');
+    baseDemo.addLyonWMSLayer();
+    const $3DTilesLayer = baseDemo.setup3DTilesLayer('lyon2009-2015');
+    // DO SOME TEMPORAL MODULE RELATED STUFF
+    baseDemo.add3DTilesLayer($3DTilesLayer);
+    baseDemo.update3DView();
 
     ////// TEMPORAL MODULE
-    // Might be renamed to 4D module ? Car c'est lui qui déclare le layer 3D
-    // Tiles (car tmeporel interdépendant avec la partie 3D). + on devrait
-    // créer un module 3D au lieu que l'init soit faite dans baseDemo pour
-    // être cohérent. A rediscuter avec EBO sur le role des modules et sur
-    // comment organiser ça.
+    // Passer "baseDemo.config["temporalModule"]" plutot
     const temporalOptions = {
-        minTime: 2009,
-        maxTime: 2015,
-        currentTime: 2009,
-        timeStep: 1,
+        minTime: baseDemo.config['temporalModule'].minTime,
+        maxTime: baseDemo.config['temporalModule'].maxTime,
+        currentTime: baseDemo.config['temporalModule'].currentTime,
+        timeStep: baseDemo.config['temporalModule'].timeStep,
         temporalWindow : {
-            name: baseDemo.config['temporalModule']['windowName'],
+            name: baseDemo.config['temporalModule']['view'],
             option: baseDemo.config['temporalModule']['graphOption'], // the window is encapsulate by TemporalModule so we need to pass by it for the graphic options
             getAsynchronousData: null
         }
@@ -31,7 +32,7 @@ baseDemo.loadConfigFile('../data/config/generalDemoConfig.json').then(() => {
 
     // Select the window type:
     let layerConfig = null;
-    switch (baseDemo.config['temporalModule']['windowName']) {
+    switch (baseDemo.config['temporalModule']['view']) {
                 case "SLIDERWINDOW" :
                     layerConfig = baseDemo.config['temporalModule']['3DTilesTemporalLayer_withoutVersion'];
                     break;

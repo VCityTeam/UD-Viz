@@ -391,12 +391,14 @@ export class BaseDemo {
     }
 
     /**
-     * Adds a 3D Tiles layer to the iTowns 3D view.
-     * @param {string} layerConfig The name of the type of object to add to the view. This name should
-     * be one of the properties of the 3DTilesLayer object (in UD-Viz/UD-Viz-Core/examples/data/config/generalDemoConfig.json
+     * Create an iTowns 3D Tiles layer based on the specified layerConfig.
+     * @param {string} layerConfig The name of the layer to setup from the
+     * generalDemoConfig.json config file (should be one of the properties
+     * of the 3DTilesLayer object in 
+     * UD-Viz/UD-Viz-Core/examples/data/config/generalDemoConfig.json
      * config file).
      */
-    add3DTilesLayer(layerConfig) {
+    setup3DTilesLayer(layerConfig) {
         //  ADD 3D Tiles Layer
 
         // Positional arguments verification
@@ -407,6 +409,10 @@ export class BaseDemo {
         if (!this.config['3DTilesLayer'][layerConfig]['id'] || !this.config['3DTilesLayer'][layerConfig]['url']) {
             throw "Your layer does not have 'url'/'id' properties or both. " +
                 "(in UD-Viz/UD-Viz-Core/examples/data/config/generalDemoConfig.json)";
+        }
+
+        if (this.config['3DTilesLayer'][layerConfig]['extensions']) {
+            // Manage extensions
         }
 
         var $3dTilesLayer = new itowns.C3DTilesLayer(
@@ -432,14 +438,34 @@ export class BaseDemo {
         $3dTilesLayer.overrideMaterials = material;
         $3dTilesLayer.material = material;
 
-        itowns.View.prototype.addLayer.call(this.view, $3dTilesLayer);
-
-
         this.layerManager.tilesManagers.push(new TilesManager(this.view,
-                this.view.getLayerById(this.config['3DTilesLayer'][layerConfig]['id'])));
+            $3dTilesLayer));
+
+        return $3dTilesLayer;
     }
 
-   
+    /**
+     * Adds the specified 3D Tiles layer to the iTowns 3D view.
+     * @param {itowns.C3DTilesLayer} layer The layer to add to itowns view.
+     */
+    add3DTilesLayer(layer) {
+        itowns.View.prototype.addLayer.call(this.view, layer);
+    }
+    
+    /**
+     * Sets up a 3D Tiles layer and adds it to the itowns view (for the demos
+     * that don't need more granularity than that).
+     * @param {string} layerConfig The name of the layer to setup from the
+     * generalDemoConfig.json config file (should be one of the properties
+     * of the 3DTilesLayer object in 
+     * UD-Viz/UD-Viz-Core/examples/data/config/generalDemoConfig.json
+     * config file).
+     */
+    setupAndAdd3DTilesLayer(layerConfig) {
+        const $3DTilesLayer = this.setup3DTilesLayer(layerConfig);
+        this.add3DTilesLayer($3DTilesLayer);
+    }
+
     /**
      * Initializes the iTowns 3D view.
      * @param {string} area The name of the area to view. Used to adjust the extent, this name should be

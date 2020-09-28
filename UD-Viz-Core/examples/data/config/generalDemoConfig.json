@@ -152,7 +152,21 @@
       "id":"3d-tiles-layer-water",
       "url":"http://rict.liris.cnrs.fr/DataStore/TileSets_Demo_MultiLayerLyon1_Lyon2_Lyon5_2015/tileset_water_bodies/tileset.json",
       "color": "0xB0E0E6"
+    },
+    "lyon2009-2015":{
+      "id": "3d-tiles-layer-temporal",
+      "url":"http://localhost:8003/tilesets/TemporalTileset/TemporalTileset/tileset.json",
+      "color": "0xFFFFFF",
+      "initTilesManager": "true",
+      "extensions":["3DTILES_temporal"]
     }
+  },
+  "temporalModule": {
+    "view": "SLIDERWINDOW",
+    "minTime": 2009,
+    "maxTime": 2015,
+    "currentTime": 2009,
+    "timeStep": 1
   },
   "geocoding": {
     "url": "https://nominatim.openstreetmap.org/search",
