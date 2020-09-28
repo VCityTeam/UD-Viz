@@ -1,4 +1,3 @@
-
 let baseDemo = new udvcore.BaseDemo({
     iconFolder: '../data/icons',
     imageFolder: '../data/img'
@@ -11,8 +10,16 @@ baseDemo.loadConfigFile('../data/config/generalDemoConfig.json').then(() => {
     // Initialize iTowns 3D view
     baseDemo.init3DView('lyon_all_districts');
     baseDemo.addLyonWMSLayer();
-    const $3DTilesLayer = baseDemo.setup3DTilesLayer('lyon2009-2015');
-    // DO SOME TEMPORAL MODULE RELATED STUFF
+    const [$3DTilesLayer, $3DTilesManager] = baseDemo.setup3DTilesLayer('lyon2009-2015');
+    
+    // Set up the temporal module which needs to register events to the 3D 
+    // Tiles Layer before it is added to the itowns view
+    const temporalModule = new udvcore.TemporalModule($3DTilesLayer, $3DTilesManager, temporalOptions);
+    baseDemo.addModuleView('temporal', temporalModule.temporalWindow, {
+        name: 'Temporal Navigation'
+    });
+
+    // Add the 3D Tiles layer to itowns view and update the view
     baseDemo.add3DTilesLayer($3DTilesLayer);
     baseDemo.update3DView();
 
@@ -40,19 +47,6 @@ baseDemo.loadConfigFile('../data/config/generalDemoConfig.json').then(() => {
                     layerConfig = baseDemo.config['temporalModule']['3DTilesTemporalLayer_withVersion'];
                     break;
         }
-
-    const temporalModule = new udvcore.TemporalModule(layerConfig, baseDemo.view, temporalOptions);
-    baseDemo.addModuleView('temporal', temporalModule.temporalWindow, {
-        name: 'Temporal Navigation'
-    });
-
-    // TODO: alignement des tilesManager entre celui du temporel et celui
-    //  de baseDemo. Ceci vient du fait qu'avant il était initialisé par
-    //  init3DView ou init4Dview dans baseDemo. Il est par contre utilisé
-    //  par plusieurs modules. Pour plus de clarté, faire en sorte qu'il
-    //  soit initialisé à un seul endroit canonique et passé aux modules
-    //  ensuite. Dépendant de la structuration des modules 3D / 4D.
-    baseDemo.tilesManager = temporalModule.tilesManager;
 
     ////// REQUEST SERVICE
     const requestService = new udvcore.RequestService();

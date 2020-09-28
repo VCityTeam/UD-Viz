@@ -1,5 +1,5 @@
-import { TransactionsManager } from '../Utils/TransactionsManager';
-import { $3DTemporalVersion } from './3DTemporalVersion';
+import { TransactionsManager } from '../Utils/TransactionsManager.js';
+import { $3DTemporalVersion } from './3DTemporalVersion.js';
 
 export class $3DTemporalTileset {
     constructor(json) {

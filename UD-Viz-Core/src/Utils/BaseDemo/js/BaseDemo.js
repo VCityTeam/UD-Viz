@@ -2,6 +2,10 @@ import { ModuleView } from '../../ModuleView/ModuleView.js';
 import { TilesManager } from '../../3DTiles/TilesManager.js';
 import { LayerManager } from '../../LayerManager/LayerManager.js';
 
+import { $3DTemporalBatchTable } from '../../../Modules/Temporal/3DTILES_temporal/3DTemporalBatchTable.js';
+import { $3DTemporalBoundingVolume } from '../../../Modules/Temporal/3DTILES_temporal/3DTemporalBoundingVolume.js';
+import { $3DTemporalTileset } from '../../../Modules/Temporal/3DTILES_temporal/3DTemporalTileset.js';
+
 /**
  * Represents the base HTML content of a demo for UD-Viz and provides methods to
  * dynamically add module views.
@@ -411,8 +415,31 @@ export class BaseDemo {
                 "(in UD-Viz/UD-Viz-Core/examples/data/config/generalDemoConfig.json)";
         }
 
-        if (this.config['3DTilesLayer'][layerConfig]['extensions']) {
-            // Manage extensions
+        const extensionsConfig = this.config['3DTilesLayer'][layerConfig]
+        ['extensions'];
+        let extensions = new itowns.C3DTExtensions();
+        if (!!extensionsConfig) {
+            for (let i = 0; i < extensionsConfig.size ; i++) {
+                if (extensionsConfig[i] === "3DTILES_temporal") {
+                    extensions.registerExtension("3DTILES_temporal",
+                        { [itowns.C3DTilesTypes.batchtable]:
+                            $3DTemporalBatchTable,
+                          [itowns.C3DTilesTypes.boundingVolume]:
+                            $3DTemporalBoundingVolume,
+                          [itowns.C3DTilesTypes.tileset]:
+                            $3DTemporalTileset});
+                } else if (extensionsConfig[i] === 
+                    "3DTILES_batch_table_hierarchy") {
+                        extensions.registerExtension("3DTILES_batch_table_hierarchy",
+                        { [itowns.C3DTilesTypes.batchtable]:
+                          itowns.C3DTBatchTableHierarchyExtension });
+                } else {
+                    console.warn("The 3D Tiles extension " + extensionsConfig[i] + 
+                    " specified in generalDemoConfig.json is not supported " + 
+                    "by UD-Viz yet. Only 3DTILES_temporal and " + 
+                    "3DTILES_batch_table_hierarchy are supported.")
+                }
+            }  
         }
 
         var $3dTilesLayer = new itowns.C3DTilesLayer(
@@ -438,10 +465,11 @@ export class BaseDemo {
         $3dTilesLayer.overrideMaterials = material;
         $3dTilesLayer.material = material;
 
-        this.layerManager.tilesManagers.push(new TilesManager(this.view,
-            $3dTilesLayer));
+        const $3DTilesManager = new TilesManager(this.view,
+            $3dTilesLayer)
+        this.layerManager.tilesManagers.push($3DTilesManager);
 
-        return $3dTilesLayer;
+        return [$3dTilesLayer, $3DTilesManager];
     }
 
     /**
@@ -462,7 +490,7 @@ export class BaseDemo {
      * config file).
      */
     setupAndAdd3DTilesLayer(layerConfig) {
-        const $3DTilesLayer = this.setup3DTilesLayer(layerConfig);
+        const [$3DTilesLayer] = this.setup3DTilesLayer(layerConfig);
         this.add3DTilesLayer($3DTilesLayer);
     }
 

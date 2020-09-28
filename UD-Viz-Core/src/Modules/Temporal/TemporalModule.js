@@ -1,12 +1,9 @@
-import * as itowns from 'itowns';
-
-import { TemporalGraphWindow } from './views/TemporalGraphWindow';
-import { TemporalSliderWindow } from './views/TemporalSliderWindow';
-import { TilesManager } from '../../Utils/3DTiles/TilesManager';
-import { CityObjectStyle } from '../../Utils/3DTiles/Model/CityObjectStyle';
-import { CityObjectID } from '../../Utils/3DTiles/Model/CityObject';
-import { getVisibleTiles } from '../../Utils/3DTiles/3DTilesUtils';
-import { EnumTemporalWindow } from './views/EnumWindows';
+import { TemporalGraphWindow } from './views/TemporalGraphWindow.js';
+import { TemporalSliderWindow } from './views/TemporalSliderWindow.js';
+import { CityObjectStyle } from '../../Utils/3DTiles/Model/CityObjectStyle.js';
+import { CityObjectID } from '../../Utils/3DTiles/Model/CityObject.js';
+import { getVisibleTiles } from '../../Utils/3DTiles/3DTilesUtils.js';
+import { EnumTemporalWindow } from './views/EnumWindows.js';
 
 /**
  * This module is used to manage the update, deletion and creation of documents.
@@ -29,40 +26,19 @@ export class TemporalModule {
      * the slider
     };
      */
-    constructor(layerConfig, itownsView, temporalOptions) {
+    constructor(layer, tilesManager, temporalOptions) {
 
         // Current time at which the scene is displayed
         this.currentTime = temporalOptions.currentTime;
-
-        // ******* iTowns 3D Tiles layer with temporal extension
-        // Initialize temporal extension
-        // TODO: change here to the declaration of the sub-parts of
-        // the temporal extension.
-        const extensions = new itowns.C3DTExtensions();
-        extensions.registerExtension('3DTILES_temporal',
-            { [itowns.C3DTilesTypes.batchtable]:
-                itowns.C3DTBatchTableHierarchyExtension });
         
-        this.layer = new itowns.C3DTilesLayer(
-            layerConfig.id, {
-                name: '3DTiles-temporal',
-                source: new itowns.C3DTilesSource({
-                    url: layerConfig.url,
-                }),
-                registeredExtensions: extensions,
-            }, this.itownsView);
-
-        itowns.View.prototype.addLayer.call(itownsView, this.layer);
+        this.layer = layer 
 
         // ******* Tiles manager
-        this.tilesManager = new TilesManager(itownsView, this.layer);
+        this.tilesManager = tilesManager;
         this.initTransactionsStyles();
         // When a tile is loaded, we compute the state of its features (e.g.
         // should they be displayed or not and in which color, etc.)
         this.tilesManager.onTileLoaded = this.applyTileState.bind(this);
-
-        // Request itowns view redraw
-        itownsView.notifyChange();
 
         // ******* Temporal window
         // Declare a callback to update this.currentTime when it is changed

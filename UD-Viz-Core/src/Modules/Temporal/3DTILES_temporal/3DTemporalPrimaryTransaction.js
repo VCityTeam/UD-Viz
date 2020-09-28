@@ -1,4 +1,4 @@
-import { $3DTemporalTransaction } from './3DTemporalTransaction';
+import { $3DTemporalTransaction } from './3DTemporalTransaction.js';
 
 export class $3DTemporalPrimaryTransaction extends $3DTemporalTransaction {
     constructor(json) {
