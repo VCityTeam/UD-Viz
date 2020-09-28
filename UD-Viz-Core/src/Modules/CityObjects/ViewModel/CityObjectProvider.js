@@ -191,7 +191,6 @@ export class CityObjectProvider extends EventSender {
    * @private
    */
   _updateTilesManager() {
-    this.layerManager.update3DTiles();
     this.layerManager.removeAll3DTilesStyles();
     if (!!this.selectedCityObject) {
       let tileManager = this.layerManager.getTilesManagerByLayerID(this.selectedCityObject.tile.layer.id);

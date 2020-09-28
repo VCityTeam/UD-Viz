@@ -1,5 +1,4 @@
-import { TilesManager } from "../3DTiles/TilesManager.js";
-import { getVisibleTiles, updateITownsView, getFirstTileIntersection, getBatchIdFromIntersection, getObject3DFromTile, getVisibleTileCount } from "../3DTiles/3DTilesUtils.js";
+import { getFirstTileIntersection, getBatchIdFromIntersection, getObject3DFromTile, getVisibleTileCount } from "../3DTiles/3DTilesUtils.js";
 
 
 export class LayerManager {
@@ -21,18 +20,6 @@ export class LayerManager {
          */
         this.tilesManagers = [];
     }
-
-
-
-    /**
-    * Update all 3DTiles and constructs the tiles that have not been loaded yet. 
-    */
-    update3DTiles() {
-        this.tilesManagers.forEach(function(tilesManager){
-            tilesManager.update();
-        });
-    }
-
 
     /**
      * Register a new or modify an existing registered style for all tilesManager.
@@ -92,8 +79,6 @@ export class LayerManager {
         });
     }
 
-
-
     /**
     * Update the scale of the given layer
     * @param {itowns.Layer} layer one layer loaded.
@@ -131,7 +116,6 @@ export class LayerManager {
      */
     pickCityObject(event) {
         if (event.target.nodeName.toUpperCase() === 'CANVAS') {
-            this.update3DTiles();
             // Get the intersecting objects where our mouse pointer is
             let intersections = [];
             //As the current pickObjectsAt on all layer is not working, we need 

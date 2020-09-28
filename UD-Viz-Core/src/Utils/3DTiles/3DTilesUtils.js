@@ -565,8 +565,7 @@ export function getTilesInfo(layer, tilesInfo = null) {
     tilesInfo.tileset;
   }
   let tileset = layer.tileset;
-  let tileCount = Object.keys(tileset.tiles).length - 1; // -1 because of the
-                                                           // root tile
+  let tileCount = tileset.tiles.length;
   tilesInfo.totalTileCount = tileCount;
   let rootTile = layer.object3d.children[0];
   tilesInfo.tileset = rootTile;

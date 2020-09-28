@@ -1,9 +1,7 @@
 import { Window } from "../../../Utils/GUI/js/Window";
-import { getTilesInfo, getFirstTileIntersection, getBatchTableFromTile, getBatchIdFromIntersection, getVisibleTileCount, removeTileVerticesColor, getTileInTileset, getTileInLayer, updateITownsView, getObject3DFromTile, createTileGroupsFromBatchIDs } from '../../../Utils/3DTiles/3DTilesUtils';
-import { colorBuilding } from '../../../Utils/3DTiles/3DTilesBuildingUtils';
-import { TilesManager } from "../../../Utils/3DTiles/TilesManager";
 import { CityObjectStyle } from "../../../Utils/3DTiles/Model/CityObjectStyle";
 import { CityObjectID } from "../../../Utils/3DTiles/Model/CityObject";
+import { TilesManager } from "../../../Utils/3DTiles/TilesManager";
 
 export class Debug3DTilesWindow extends Window {
   /**
@@ -52,7 +50,6 @@ export class Debug3DTilesWindow extends Window {
 
   get innerContentHtml() {
     return /*html*/`
-      <button id="${this.loadTBIButtonId}">Update Tiles Manager</button>
       <button id="${this.logTBIButtonId}">Log Tiles Manager</button>
       <p id="${this.TBIInfoParagraphId}">0 / ? tiles loaded.</p>
       <p id="${this.visibleTilesParagraphId}">0 tiles visible.</p>
@@ -90,12 +87,14 @@ export class Debug3DTilesWindow extends Window {
 
   windowCreated() {
     this.window.style.width = '300px';
-    this.loadTBIButtonElement.onclick = () => {
-      this.updateTilesManager();
-    };
     this.logTBIButtonElement.onclick = () => {
       this.logTilesManager();
     };
+    // Sets the number of loaded tiles and add an event for dynamic change of this value.
+    this.updateTBIInfoParagraphElement();
+    for (let i = 0; i < this.layerManager.tilesManagers.length; i++) {
+      this.layerManager.tilesManagers[i].addEventListener(TilesManager.EVENT_TILE_LOADED, (tile) => this.updateTBIInfoParagraphElement(tile));
+    }
     this.groupColorOpacityInputElement.oninput = () => {
       this.groupColorOpacitySpanElement.innerText =
         this.groupColorOpacityInputElement.value;
@@ -104,15 +103,13 @@ export class Debug3DTilesWindow extends Window {
       this.submitStyleForm();
       return false;
     };
-    this.updateTilesManager();
   }
 
   /**
-   * Updates the TBI.
+   * Updates the number of loaded 3D Tiles tiles.
    */
-  updateTilesManager() {
-    this.layerManager.update3DTiles();
-    this.TBIInfoParagraphElement.innerText = `${this.layerManager.getLoaded3DTilesTileCount()} / ${this.layerManager.getTotal3DTilesTileCount()} tiles loaded.`;
+  updateTBIInfoParagraphElement() {
+    this.TBIInfoParagraphElement.innerText = `${this.layerManager.getLoaded3DTilesTileCount()} / ${this.layerManager.getTotal3DTilesTileCount()} tiles loaded. (first tile is the root tile which has no geometry)`;
   }
 
   /**
@@ -125,13 +122,12 @@ export class Debug3DTilesWindow extends Window {
   /**
    * If the user is currently hovering a building, fetches the building ID and
    * displays it in the window.
-   * 
    * @param {MouseEvent} event The mouse event.
    */
   onMouseMove(event) {
     // Update the current visible tile count
     let visibleTileCount = this.layerManager.getVisible3DTilesTileCountFromLayers();
-    this.visibleTilesParagraphElement.innerText = `${visibleTileCount} tiles visible.`
+    this.visibleTilesParagraphElement.innerText = `${visibleTileCount} tiles visible.`;
   }
 
   /**
@@ -178,13 +174,9 @@ export class Debug3DTilesWindow extends Window {
     try {
       let tileId = Number.parseInt(this.groupColorTileInputElement.value);
       let batchIds = JSON.parse('[' + this.groupColorBatchInputElement.value + ']');
-      let cityObjectIds = [];
-      for (let batchId of batchIds) {
-        cityObjectIds.push(new CityObjectID(tileId, batchId));
-      }
       let color = new THREE.Color(this.groupColorColorInputElement.value);
       let opacity = Number.parseFloat(this.groupColorOpacityInputElement.value);
-      this.layerManager.tilesManagers[0].setStyle(cityObjectIds,
+      this.layerManager.tilesManagers[0].setStyle(new CityObjectID(tileId, batchIds),
         { materialProps: { color, opacity } });
       this.layerManager.tilesManagers[0].applyStyles();
     } catch (e) {
@@ -200,14 +192,6 @@ export class Debug3DTilesWindow extends Window {
 
   get clickDivElement() {
     return document.getElementById(this.clickDivId);
-  }
-
-  get loadTBIButtonId() {
-    return `${this.windowId}_load_button`;
-  }
-
-  get loadTBIButtonElement() {
-    return document.getElementById(this.loadTBIButtonId);
   }
 
   get logTBIButtonId() {
