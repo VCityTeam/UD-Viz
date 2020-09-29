@@ -30,9 +30,6 @@ baseDemo.loadConfigFile('../data/config/generalDemoConfig.json').then(() => {
     };
     
     const temporalModule = new udvcore.TemporalModule($3DTilesLayer, $3DTilesManager, temporalOptions);
-    baseDemo.addModuleView('temporal', temporalModule.temporalWindow, {
-        name: 'Temporal Navigation'
-    });
 
     // Add the 3D Tiles layer to itowns view and update the view
     baseDemo.add3DTilesLayer($3DTilesLayer);
@@ -48,6 +45,11 @@ baseDemo.loadConfigFile('../data/config/generalDemoConfig.json').then(() => {
     ////// HELP MODULE
     const help  = new udvcore.HelpWindow();
     baseDemo.addModuleView('help', help);
+
+    ///// TEMPORAL MODULE VIEW
+    baseDemo.addModuleView('temporal', temporalModule.temporalWindow, {
+        name: 'Temporal Navigation'
+    });
 
     ////// GEOCODING EXTENSION
     const geocodingService = new udvcore.GeocodingService(requestService,
