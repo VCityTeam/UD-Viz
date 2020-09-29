@@ -152,7 +152,7 @@ export class $3DTemporalBatchTable {
         return this.datedDisplayStates[currentTime];
     }
 
-    getPickingInfo(featureId) {
+    getInfoById(featureId) {
         const pickingInfo = {};
         // TODO: this could be a function as we do the same thing 3 times.
         if (this.featureIds && this.featureIds[featureId]) {

@@ -87,6 +87,13 @@
         "tilt": "17"
       }
     },
+    "lyon_all_districts": {
+      "position": {
+        "range": "3000",
+        "heading": "-49.6",
+        "tilt": "17"
+      }
+    },
     "lyon_1_2_5": {
       "position": {
         "range": "3000",

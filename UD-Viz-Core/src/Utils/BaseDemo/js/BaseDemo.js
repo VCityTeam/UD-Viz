@@ -2,9 +2,9 @@ import { ModuleView } from '../../ModuleView/ModuleView.js';
 import { TilesManager } from '../../3DTiles/TilesManager.js';
 import { LayerManager } from '../../LayerManager/LayerManager.js';
 
-import { $3DTemporalBatchTable } from '../../../Modules/Temporal/3DTILES_temporal/3DTemporalBatchTable.js';
-import { $3DTemporalBoundingVolume } from '../../../Modules/Temporal/3DTILES_temporal/3DTemporalBoundingVolume.js';
-import { $3DTemporalTileset } from '../../../Modules/Temporal/3DTILES_temporal/3DTemporalTileset.js';
+import { $3DTemporalBatchTable } from '../../../Modules/Temporal/Model/3DTILES_temporal/3DTemporalBatchTable.js';
+import { $3DTemporalBoundingVolume } from '../../../Modules/Temporal/Model/3DTILES_temporal/3DTemporalBoundingVolume.js';
+import { $3DTemporalTileset } from '../../../Modules/Temporal/Model/3DTILES_temporal/3DTemporalTileset.js';
 
 /**
  * Represents the base HTML content of a demo for UD-Viz and provides methods to
@@ -29,10 +29,6 @@ export class BaseDemo {
          * @type {LayerManager}
          */
         this.layerManager;
-        // Temporal is currently disabled and will be reintroduced in a new
-        // version based on a 3D Tiles extension
-        // TODO: Mind this
-        this.temporal = false;
         ///// Config values for some file paths
         // iconFolder    : folder for icons (for the modules menu)
         // imageFolder   : folder for the logo files (for LIRIS and IMU)
@@ -419,7 +415,7 @@ export class BaseDemo {
         ['extensions'];
         let extensions = new itowns.C3DTExtensions();
         if (!!extensionsConfig) {
-            for (let i = 0; i < extensionsConfig.size ; i++) {
+            for (let i = 0; i < extensionsConfig.length ; i++) {
                 if (extensionsConfig[i] === "3DTILES_temporal") {
                     extensions.registerExtension("3DTILES_temporal",
                         { [itowns.C3DTilesTypes.batchtable]:
@@ -448,6 +444,7 @@ export class BaseDemo {
                 source: new itowns.C3DTilesSource({
                     url: this.config['3DTilesLayer'][layerConfig]['url'],
                 }),
+                registeredExtensions: extensions
             }, this.view);
 
         let material;

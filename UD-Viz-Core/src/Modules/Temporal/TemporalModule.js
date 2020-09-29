@@ -1,9 +1,11 @@
-import { TemporalGraphWindow } from './views/TemporalGraphWindow.js';
-import { TemporalSliderWindow } from './views/TemporalSliderWindow.js';
+import { $3DTemporalExtension } from './Model/3DTemporalExtension.js';
+import { TemporalGraphWindow } from './View/TemporalGraphWindow.js';
+import { TemporalSliderWindow } from './View/TemporalSliderWindow.js';
 import { CityObjectStyle } from '../../Utils/3DTiles/Model/CityObjectStyle.js';
 import { CityObjectID } from '../../Utils/3DTiles/Model/CityObject.js';
 import { getVisibleTiles } from '../../Utils/3DTiles/3DTilesUtils.js';
-import { EnumTemporalWindow } from './views/EnumWindows.js';
+import { EnumTemporalWindow } from './View/EnumWindows.js';
+import { TilesManager } from '../../Utils/3DTiles/TilesManager.js';
 
 /**
  * This module is used to manage the update, deletion and creation of documents.
@@ -38,7 +40,18 @@ export class TemporalModule {
         this.initTransactionsStyles();
         // When a tile is loaded, we compute the state of its features (e.g.
         // should they be displayed or not and in which color, etc.)
-        this.tilesManager.onTileLoaded = this.applyTileState.bind(this);
+        this.tilesManager.addEventListener(
+            TilesManager.EVENT_TILE_LOADED, 
+            this.applyTileState.bind(this));
+
+        // ***** Init the model that will be filled when the temporal 
+        // extension parts will be loaded by iTowns.
+        this.temporalExtensionModel = new $3DTemporalExtension();
+        // events for the temporalextension model (see comment at the
+        // end of the $3DTemporalExtension constructor)
+        this.tilesManager.addEventListener(
+            TilesManager.EVENT_TILE_LOADED,
+            this.temporalExtensionModel.updateTileExtensionModel.bind(this.temporalExtensionModel));
 
         // ******* Temporal window
         // Declare a callback to update this.currentTime when it is changed
@@ -50,6 +63,10 @@ export class TemporalModule {
         const refreshCallback = currentTimeUpdated.bind(this);
 
         // Callback to get data asynchronously from the tileset.jsonS
+        // TODO: remove this "asynchronous" part of the code and just 
+        // parse the version and version transition and only use them 
+        // when the graph window is chosen in the config... That should 
+        // remove the this.temporalExtension from here.
         function getAsynchronousData(){
                 let versions = this.temporalExtension.temporal_tileset.temporalVersions.versions;
                 let versionTransitions = this.temporalExtension.temporal_tileset.versionTransitions;
@@ -68,7 +85,6 @@ export class TemporalModule {
             }
 
     }
-
 
     initTransactionsStyles() {
         // Set styles
@@ -96,7 +112,7 @@ export class TemporalModule {
 
     // tile is tilecontent here
     computeTileState(tile) {
-        const featuresStates = this.temporalExtension.computeFeaturesStates(tile, this.currentTime);
+        const featuresStates = this.computeFeaturesStates(tile, this.currentTime);
         for (let i = 0; i < featuresStates.length; i++) {
             this.tilesManager.setStyle(new CityObjectID(tile.tileId, i), featuresStates[i]);
         }
@@ -113,5 +129,20 @@ export class TemporalModule {
             this.computeTileState(tiles[i]);
         }
         this.tilesManager.applyStyles();
+    }
+
+    // eslint-disable-next-line class-methods-use-this
+    computeFeaturesStates(tileContent, currentTime) {
+        let featuresDisplayStates = {};
+        if (tileContent.batchTable && tileContent.batchTable.extensions &&
+            tileContent.batchTable.extensions['3DTILES_temporal']) {
+            const BT_ext = tileContent.batchTable.extensions['3DTILES_temporal'];
+            // TODO: sortir cette intelligence de la batch table extension
+            //  et la mettre ici. BT_ext devrait seulement avoir des
+            //  fonctions pour qu'on récupère son contenu ou une partie de
+            //  son contenu
+            featuresDisplayStates = BT_ext.culling(currentTime);
+        }
+        return featuresDisplayStates;
     }
 }

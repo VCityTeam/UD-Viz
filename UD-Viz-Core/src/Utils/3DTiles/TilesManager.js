@@ -1,5 +1,5 @@
 import { Tile } from "./Model/Tile.js";
-import { getVisibleTiles, updateITownsView, getFirstTileIntersection, getBatchIdFromIntersection, getObject3DFromTile } from "./3DTilesUtils.js";
+import { getVisibleTiles, updateITownsView } from "./3DTilesUtils.js";
 import { CityObjectID, CityObject, createCityObjectID } from "./Model/CityObject.js";
 import { CityObjectStyle } from "./Model/CityObjectStyle.js";
 import { StyleManager } from "./StyleManager.js";
@@ -67,7 +67,6 @@ export class TilesManager extends EventSender {
 
     ///// EVENTS
     ///////////
-    // TODO: Tile unloading when there will be such an event in itowns
     // Add listener to the 3D Tiles layer for tile loading
     this.layer.onTileContentLoaded = this.loadTile.bind(this);
     // Create an event where a module can add a callback. Fired in
