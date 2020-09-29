@@ -74,12 +74,14 @@ export class TemporalModule {
             }
 
         // Select the window type:
-        switch (temporalOptions.temporalWindow.name) {
+        switch (temporalOptions.view) {
                     case EnumTemporalWindow.SLIDERWINDOW :
                         this.temporalWindow = new TemporalSliderWindow(refreshCallback, temporalOptions);
                         break;
+                    // TODO: virer le piggy back de getAsynchronousData et
+                    // verifier qu'il sert à quelque chose...
                     case EnumTemporalWindow.GRAPHWINDOW :
-                        temporalOptions.temporalWindow.getAsynchronousData = getAsynchronousData.bind(this);
+                        temporalOptions.getAsynchronousData = getAsynchronousData.bind(this);
                         this.temporalWindow = new TemporalGraphWindow(refreshCallback, temporalOptions);
                         break;
             }

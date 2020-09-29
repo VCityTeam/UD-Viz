@@ -24,7 +24,7 @@ export class TemporalGraphWindow extends Window {
 
         // graph
         this.networkManager = new NetworkManager();
-        this.networkManager.option=options.temporalWindow.option;
+        this.networkManager.option=options.viewOptions;
         this.networkManager.getAsynchronousData = options.temporalWindow.getAsynchronousData;
     }
 
