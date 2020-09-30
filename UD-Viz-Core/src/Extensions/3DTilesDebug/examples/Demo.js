@@ -1,6 +1,8 @@
-let baseDemo = new udvcore.BaseDemo({
+import { BaseDemo } from '../../src/Utils/BaseDemo/js/BaseDemo.js';
+
+let baseDemo = new BaseDemo({
     iconFolder: '../../../../examples/data/icons',
-    imageFolder: '../../../../examples/data/img'
+    imageFolder: '../../../../examples/data/img',
 });
 
 baseDemo.appendTo(document.body);

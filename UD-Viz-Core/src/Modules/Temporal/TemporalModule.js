@@ -29,9 +29,6 @@ export class TemporalModule {
     };
      */
     constructor(layer, tilesManager, temporalOptions) {
-
-        // Current time at which the scene is displayed
-        this.currentTime = temporalOptions.currentTime;
         
         this.layer = layer 
 
@@ -56,6 +53,8 @@ export class TemporalModule {
         // ******* Temporal window
         // Declare a callback to update this.currentTime when it is changed
         // by the user in the temporalWindow
+        this.currentTime = temporalOptions.currentTime;
+
         function currentTimeUpdated(newDate) {
             this.currentTime = Number(newDate);
             this.applyVisibleTilesStates(newDate, this.tileManager);
@@ -102,11 +101,11 @@ export class TemporalModule {
         this.tilesManager.registerStyle('modification', new CityObjectStyle({
             materialProps: { opacity: 0.6, color: 0xFFD700 } })); // yellow
 
-        /*        this.tilesManager.registerStyle('subdivision', new CityObjectStyle({
-                    materialProps: { opacity: 0.6, color: 0x0000ff } })); // dark blue
+        this.tilesManager.registerStyle('subdivision', new CityObjectStyle({
+            materialProps: { opacity: 0.6, color: 0x0000ff } })); // dark blue
 
-                this.tilesManager.registerStyle('fusion', new CityObjectStyle({
-                    materialProps: { opacity: 0.6, color: 0x0000ff } })); // dark blue */
+        this.tilesManager.registerStyle('fusion', new CityObjectStyle({
+            materialProps: { opacity: 0.6, color: 0x0000ff } })); // dark blue
 
         this.tilesManager.registerStyle('hide', new CityObjectStyle({
             materialProps: { opacity: 0, color: 0xffffff, alphaTest: 0.3 } })); // hidden
