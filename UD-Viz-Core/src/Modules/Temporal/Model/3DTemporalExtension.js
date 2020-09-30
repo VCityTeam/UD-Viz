@@ -10,7 +10,7 @@ export class $3DTemporalExtension {
          * The temporal extension part of the tileset that will be filled
          * when it has been parsed by the $3DTemporalTileset class.
          */
-        this.temporalTileset = {};
+        this.temporalTileset;
 
         /**
          * The temporal extension part of the batch tables mapped to the tile

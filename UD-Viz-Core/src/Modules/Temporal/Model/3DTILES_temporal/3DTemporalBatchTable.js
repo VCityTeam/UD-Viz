@@ -1,3 +1,5 @@
+import { $3DTemporalTransaction } from "./3DTemporalTransaction.js";
+
 // TODO: store the current display state of the tile ? (i.e. featuresDisplayStates from culling function)
 export class $3DTemporalBatchTable {
     constructor(json) {
@@ -15,39 +17,40 @@ export class $3DTemporalBatchTable {
         this.datedDisplayStates = {};
     }
 
-    // Should not exist if the implementation followed the current version of
-    // the extension + for demonstration purposes if there is two
-    // tags (fusion + modification or subdivision + modification) we display
-    // the features in grey. These cases are indeed mostly between 2012 and 2015
-    // and are due to the data
-    /*
-    static getDisplayStateFromTags(currentTime, tags) {
-        if (tags.length === 1) {
-            return tags[0];
-        } else if (currentTime > 2012 && currentTime < 2015) {
-            return 'noTransaction';
-        } else {
-            return 'modification';
-        }
-    }
-    */
-
-    // We do not manage all type of transactions and don't display some
-    // wrongly detected transactions for demonstration purposes.
-    static computeDisplayState(currentTime, transaction) {
-        if (transaction.isAggregate) {
-            if (currentTime > 2012 && currentTime < 2015) {
-                return 'noTransaction';
-            } else {
-                return 'modification';
+    // TODO: probablement à faire directement au parsing des transactions 
+    // et mettre ça dans un attribut 'styleName'. A voir au moment où je 
+    // virerai le transactionManager.
+    /**
+     * Generates the style name of a transaction. This method is recursive
+     * for aggregated transactions that may have multiple nested transactions. 
+     * The style name correspond to the one created in the 
+     * initTransactionsStyles method).
+     * 
+     * @param {$3DTemporalTransaction} transaction The transaction 
+     * to generate the style name from.
+     * 
+     * @returns {string} If the transaction is a primary transaction, 
+     * returns its type. If it is an aggregated transaction, it returns a
+     * concatenation of the primary transactions types aggregated in 
+     * transaction, prefixed by 'aggregate'. Currently, no style are 
+     * declared for transactions aggregates for a simpler visual 
+     * rendering. We could also generate styles with random colors
+     * and add them to a legend and provide a user the possibility to
+     * update these colors and / or to disable them from the GUI.
+     */
+    getTransactionStyleName(transaction, styleName) {
+        if (transaction.isPrimary) return transaction.type;
+        else if (transaction.isAggregate) {
+            if (styleName === '') styleName = 'aggregate'; // prefix
+            for (let i = 0 ; i < transaction.transactions.length ; i++) {
+                styleName = styleName + '-' + this.getTransactionStyleName(
+                    transaction.transactions[i], styleName);
             }
-        } else if (transaction.type === 'union' || transaction.type === 'division') {
-            return 'noTransaction';
+            return styleName
         } else {
-            return transaction.type;
+            console.warn('Transaction which is not a primary nor an aggregate.')
         }
     }
-
 
     /* *** Culling with transactions and colors management     */
     // Rules for culling:
@@ -63,18 +66,6 @@ export class $3DTemporalBatchTable {
     //      transactionsColors)
     //   * else we hide the feature.
     culling(currentTime) {
-        // featuresMaterial is an array of object that will be used to color
-        // and change the opacity of features according to their batchIDs by
-        // using the function createTileGroupsFromBatchIDs() from 3DTilesUtils.
-        // Its structure is as follow:
-        //   [{
-        //     material: {color: 0xff0000, opacity: 0.8},
-        //     batchIDs: [64, 67]
-        //   },
-        //   {
-        //     material: {color: 0xff000f, opacity: 0},
-        //     batchIDs: [66]
-        //   }]
         // If it has already been computed, don't do it again
         if (this.datedDisplayStates[currentTime]) {
             return this.datedDisplayStates[currentTime];
@@ -102,8 +93,8 @@ export class $3DTemporalBatchTable {
                     if (currentTime > transacAsSource.startDate && currentTime <=
                         transacAsSource.startDate + transacAsSourceHalfDuration) {
                         hasTransac = true;
-                        featuresDisplayStates.push($3DTemporalBatchTable.computeDisplayState(
-                            currentTime, transacAsSource));
+                        featuresDisplayStates.push(
+                            this.getTransactionStyleName(transacAsSource, ''));
                     }
                 }
                 const transacAsDest = this.featuresTransacs[featureId].asDestination;
@@ -114,8 +105,8 @@ export class $3DTemporalBatchTable {
                         transacAsDestHalfDuration && currentTime <=
                         transacAsDest.endDate) {
                         hasTransac = true;
-                        featuresDisplayStates.push($3DTemporalBatchTable.computeDisplayState(
-                            currentTime, transacAsDest));
+                        featuresDisplayStates.push(
+                            this.getTransactionStyleName(transacAsDest, ''));
                     }
                 }
 

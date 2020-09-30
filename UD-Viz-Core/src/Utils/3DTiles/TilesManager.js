@@ -220,6 +220,17 @@ export class TilesManager extends EventSender {
   }
 
   /**
+   * Check if a style is registered.
+   * 
+   * @param {string} name Name of the style. 
+   * 
+   * @returns {boolean} True if the style is registered, false either.
+   */
+  isStyleRegistered(name) {
+    return this.styleManager.isStyleRegistered(name);
+  }
+
+  /**
    * Removes the style of a particular city object.
    *
    * @param {CityObjectID | Array<CityObjectID>} cityObjectId The city object
