@@ -16,7 +16,11 @@ baseDemo.loadConfigFile('../data/config/generalDemoConfig.json').then(() => {
     
     // Set up the temporal module which needs to register events to the 3D 
     // Tiles Layer before it is added to the itowns view
-    const temporalModule = new udvcore.TemporalController($3DTilesManager, baseDemo.config['temporalModule']);
+    const temporalModule = new udvcore.TemporalModule($3DTilesManager, baseDemo.config['temporalModule']);
+    ///// TEMPORAL MODULE VIEW
+    baseDemo.addModuleView('temporal', temporalModule.view, {
+        name: 'Temporal Navigation'
+    });
 
     // Add the 3D Tiles layer to itowns view and update the view
     baseDemo.add3DTilesLayer($3DTilesLayer);
@@ -32,11 +36,6 @@ baseDemo.loadConfigFile('../data/config/generalDemoConfig.json').then(() => {
     ////// HELP MODULE
     const help  = new udvcore.HelpWindow();
     baseDemo.addModuleView('help', help);
-
-    ///// TEMPORAL MODULE VIEW
-    baseDemo.addModuleView('temporal', temporalModule.temporalWindow, {
-        name: 'Temporal Navigation'
-    });
 
     ////// GEOCODING EXTENSION
     const geocodingService = new udvcore.GeocodingService(requestService,
