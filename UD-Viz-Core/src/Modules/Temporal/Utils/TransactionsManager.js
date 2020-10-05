@@ -1,5 +1,5 @@
-import { $3DTemporalPrimaryTransaction } from '../Model/3DTILES_temporal/3DTemporalPrimaryTransaction.js';
-import { $3DTemporalTransactionAggregate } from '../Model/3DTILES_temporal/3DTemporalTransactionAggregate.js';
+import { $3DTemporalPrimaryTransaction } from '../Model/3DTemporalPrimaryTransaction.js';
+import { $3DTemporalTransactionAggregate } from '../Model/3DTemporalTransactionAggregate.js';
 
 export class TransactionsManager {
     constructor(transactions) {

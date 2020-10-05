@@ -1,4 +1,4 @@
-import { $3DTemporalTileset } from './3DTILES_temporal/3DTemporalTileset.js';
+import { $3DTemporalTileset } from './3DTemporalTileset.js';
 
 /**
  * @module TemporalExtension

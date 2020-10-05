@@ -2,9 +2,9 @@ import { ModuleView } from '../../ModuleView/ModuleView.js';
 import { TilesManager } from '../../3DTiles/TilesManager.js';
 import { LayerManager } from '../../LayerManager/LayerManager.js';
 
-import { $3DTemporalBatchTable } from '../../../Modules/Temporal/Model/3DTILES_temporal/3DTemporalBatchTable.js';
-import { $3DTemporalBoundingVolume } from '../../../Modules/Temporal/Model/3DTILES_temporal/3DTemporalBoundingVolume.js';
-import { $3DTemporalTileset } from '../../../Modules/Temporal/Model/3DTILES_temporal/3DTemporalTileset.js';
+import { $3DTemporalBatchTable } from '../../../Modules/Temporal/Model/3DTemporalBatchTable.js';
+import { $3DTemporalBoundingVolume } from '../../../Modules/Temporal/Model/3DTemporalBoundingVolume.js';
+import { $3DTemporalTileset } from '../../../Modules/Temporal/Model/3DTemporalTileset.js';
 
 /**
  * Represents the base HTML content of a demo for UD-Viz and provides methods to
