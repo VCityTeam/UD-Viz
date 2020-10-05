@@ -57,6 +57,7 @@ export class CityObjectWindow extends Window {
      */
     this.extensions = [];
 
+    let viewerDiv = document.getElementById('viewerDiv');
     /**
      * The event listener for mouse clicks.
      * 
@@ -67,12 +68,12 @@ export class CityObjectWindow extends Window {
       this.provider.applyStyles();
     };
     this.addEventListener(Window.EVENT_ENABLED, () => {
-      window.addEventListener('mousedown', this.mouseClickListener);
+      viewerDiv.addEventListener('mousedown', this.mouseClickListener);
     });
     this.addEventListener(Window.EVENT_DISABLED, () => {
       this.provider.removeLayer();
       this.provider.unselectCityObject();
-      window.removeEventListener('mousedown', this.mouseClickListener);
+      viewerDiv.removeEventListener('mousedown', this.mouseClickListener);
     });
 
 

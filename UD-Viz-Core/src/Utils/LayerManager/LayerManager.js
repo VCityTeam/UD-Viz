@@ -115,7 +115,7 @@ export class LayerManager {
      * @returns {CityObject | undefined}
      */
     pickCityObject(event) {
-        if (event.target.nodeName.toUpperCase() === 'CANVAS') {
+        if (event.currentTarget.id.toUpperCase() === 'VIEWERDIV') {
             // Get the intersecting objects where our mouse pointer is
             let intersections = [];
             //As the current pickObjectsAt on all layer is not working, we need 

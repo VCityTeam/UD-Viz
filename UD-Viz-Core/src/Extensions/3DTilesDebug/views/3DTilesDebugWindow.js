@@ -18,14 +18,14 @@ export class Debug3DTilesWindow extends Window {
      * @type {layerManager}
      */
     this.layerManager = layerManager;
-
     // Selection
     this.layerManager.registerStyle('selected', new CityObjectStyle({
       materialProps: { color: 0x00ff00 }
     }));
     this.selectedCityObject = undefined;
     this.selectedTilesManager = undefined;
-
+    
+    let viewerDiv = document.getElementById('viewerDiv');
     let clickListener = (event) => {
       this.onMouseClick(event);
     };
@@ -33,12 +33,12 @@ export class Debug3DTilesWindow extends Window {
       this.onMouseMove(event);
     };
     this.addEventListener(Window.EVENT_ENABLED, () => {
-      window.addEventListener('mousedown', clickListener);
-      window.addEventListener('mousemove', moveListener);
+      viewerDiv.addEventListener('mousedown', clickListener);
+      viewerDiv.addEventListener('mousemove', moveListener);
     });
     this.addEventListener(Window.EVENT_DISABLED, () => {
-      window.removeEventListener('mousedown', clickListener);
-      window.removeEventListener('mousemove', moveListener);
+      viewerDiv.removeEventListener('mousedown', clickListener);
+      viewerDiv.removeEventListener('mousemove', moveListener);
 
       if (this.selectedCityObject !== undefined) {
         this.selectedCityObject = undefined;

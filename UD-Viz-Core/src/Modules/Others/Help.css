@@ -1,5 +1,6 @@
 #helpWindow {
     position: absolute;
+    z-index: 10;
     width: 15%;
     top: 10px;
     left : 22.5%;
