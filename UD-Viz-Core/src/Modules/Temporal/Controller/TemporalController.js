@@ -1,23 +1,23 @@
-import { $3DTemporalExtension } from './Model/3DTemporalExtension.js';
-import { TemporalGraphWindow } from './View/TemporalGraphWindow.js';
-import { TemporalSliderWindow } from './View/TemporalSliderWindow.js';
-import { CityObjectStyle } from '../../Utils/3DTiles/Model/CityObjectStyle.js';
-import { CityObjectID } from '../../Utils/3DTiles/Model/CityObject.js';
-import { getVisibleTiles } from '../../Utils/3DTiles/3DTilesUtils.js';
-import { EnumTemporalWindow } from './View/EnumWindows.js';
-import { TilesManager } from '../../Utils/3DTiles/TilesManager.js';
+import { $3DTemporalExtension } from '../Model/3DTemporalExtension.js';
+import { TemporalGraphWindow } from '../View/TemporalGraphWindow.js';
+import { TemporalSliderWindow } from '../View/TemporalSliderWindow.js';
+import { CityObjectStyle } from '../../../Utils/3DTiles/Model/CityObjectStyle.js';
+import { CityObjectID } from '../../../Utils/3DTiles/Model/CityObject.js';
+import { getVisibleTiles } from '../../../Utils/3DTiles/3DTilesUtils.js';
+import { EnumTemporalWindow } from '../View/EnumWindows.js';
+import { TilesManager } from '../../../Utils/3DTiles/TilesManager.js';
 
 /**
- * This module is used to manage the update, deletion and creation of documents.
- * It holds two windows that extend the document module, and creates a button
- * for the document deletion.
+ * Entrypoint of the temporal module (that can be instanciated in the demos)
+ * and controller of the temporal module (triggers view updates when the model
+ * changes).
  */
-export class TemporalModule {
+export class TemporalController {
     /**
      * Constructs a new temporal module.
      *
-     * @param {Object} $3DTilesTemporalLayer - 3D Tiles layer with temporal
-     * extension
+     * @param {TilesManager} tilesManager - The tiles manager associated with
+     * the 3D Tiles layer with temporal extension.
      * @param {Object} temporalOptions - options for initializing the temporal
      * module.
      * @param {Number} temporalOptions.minTime - start time of the slider
@@ -28,19 +28,18 @@ export class TemporalModule {
      * the slider
     };
      */
-    constructor(layer, tilesManager, temporalOptions) {
-        
-        this.layer = layer 
-
-        // ******* Tiles manager
+    constructor(tilesManager, temporalOptions) {
         this.tilesManager = tilesManager;
+        // Initialize the styles affected to transactions. Will be 
+        // used to update the 3D view.
         this.initTransactionsStyles();
 
-        // ***** Init the model that will be filled when the temporal 
-        // extension parts will be loaded by iTowns.
+        // Initialize the model. One part of this model is filled when the
+        // temporal extension is loaded by iTowns; an other part is filled 
+        // with the event declared below (when a tile is loaded).
+        // See the comment at the end of the $3DTemporalExtension constructor
+        // for more details.
         this.temporalExtensionModel = new $3DTemporalExtension();
-        // events for the temporalextension model (see comment at the
-        // end of the $3DTemporalExtension constructor)
         this.tilesManager.addEventListener(
             TilesManager.EVENT_TILE_LOADED,
             this.temporalExtensionModel.updateTileExtensionModel.bind(this.temporalExtensionModel));
@@ -88,9 +87,6 @@ export class TemporalModule {
 
     }
 
-    /**
-     * 
-     */
     initTransactionsStyles() {
         // Set styles
         this.tilesManager.registerStyle('noTransaction', new CityObjectStyle({
@@ -148,7 +144,7 @@ export class TemporalModule {
     }
 
     applyVisibleTilesStates() {
-        const tiles = getVisibleTiles(this.layer);
+        const tiles = getVisibleTiles(this.tilesManager.layer);
         for (let i = 0; i < tiles.length; i++) {
             this.computeTileState(tiles[i]);
         }

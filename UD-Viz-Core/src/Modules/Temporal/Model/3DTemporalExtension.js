@@ -1,7 +1,8 @@
 import { $3DTemporalTileset } from './3DTemporalTileset.js';
 
 /**
- * @module TemporalExtension
+ * Entrypoint of the temporal module model. 
+ * It stores all parts of the 3D Tiles temporal extension model
  */
 export class $3DTemporalExtension {
     constructor() {
@@ -39,7 +40,7 @@ export class $3DTemporalExtension {
         // by the 3D Tiles itowns layer when a tile has been
         // loaded. To avoid creating a dependency between this class
         // and the tilesManager, we add this event listener in the 
-        // TemporalModule which knows both this model and the tilesManager.
+        // TemporalCntroler which knows both this model and the tilesManager.
         // This is not ideal but improving this would asks for more
         // modifications in itowns, which is currently not possible.
     }

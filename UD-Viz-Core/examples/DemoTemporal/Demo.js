@@ -16,8 +16,7 @@ baseDemo.loadConfigFile('../data/config/generalDemoConfig.json').then(() => {
     
     // Set up the temporal module which needs to register events to the 3D 
     // Tiles Layer before it is added to the itowns view
-    const temporalModule = new udvcore.TemporalModule($3DTilesLayer,
-        $3DTilesManager, baseDemo.config['temporalModule']);
+    const temporalModule = new udvcore.TemporalController($3DTilesManager, baseDemo.config['temporalModule']);
 
     // Add the 3D Tiles layer to itowns view and update the view
     baseDemo.add3DTilesLayer($3DTilesLayer);
