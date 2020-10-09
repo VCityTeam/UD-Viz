@@ -1,5 +1,6 @@
 #_geocoding_view {
   position: absolute;
+  z-index: 200;
   top: 30px;
   width: 100%;
 }

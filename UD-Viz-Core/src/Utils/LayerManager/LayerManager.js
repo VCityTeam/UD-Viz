@@ -115,7 +115,12 @@ export class LayerManager {
      * @returns {CityObject | undefined}
      */
     pickCityObject(event) {
-        if (event.target.nodeName.toUpperCase() === 'CANVAS') {
+        /**
+        * Make sure the event is captured by a click listener attached 
+        * to the div#viewerDiv, which contains the iTowns canvas. All click 
+        * listeners should be instantiated this way as of iTowns 2.24.0
+        */
+        if (event.currentTarget.id.toUpperCase() === 'VIEWERDIV') {
             // Get the intersecting objects where our mouse pointer is
             let intersections = [];
             //As the current pickObjectsAt on all layer is not working, we need 
