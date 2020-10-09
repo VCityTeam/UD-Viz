@@ -1,6 +1,6 @@
 {
   "name": "UD-Viz-Core",
-  "version": "0.0.1",
+  "version": "2.25.0",
   "description": "An iTowns based set of overlay display modules for City exploration",
   "main": "src/Main.js",
   "scripts": {
