@@ -5,6 +5,8 @@ import { CityObjectID } from '../../../Utils/3DTiles/Model/CityObject.js';
 
 // TODO: harmoniser les noms display state, feature display state, transaction
 // style, etc.
+// TODO: harmoniser l'usage de features (terminologie 3D tiles) et de city
+// objects (terminologie citygml et UD-Viz)
 /**
  * Contains the logic for city objects and transactions display
  */
@@ -47,6 +49,9 @@ export class TemporalProvider {
       this.changeTileState.bind(this));
   }
 
+  // TODO: rename to initStyles ou initDisplayStates: dans tous les cas 
+  // utiliser soit "style" soit "displaystate" pour harmoniser les noms de 
+  // variables.
   initTransactionsStyles() {
     // Set styles
     this.tilesManager.registerStyle('noTransaction', new CityObjectStyle({
@@ -114,7 +119,7 @@ export class TemporalProvider {
     //      transactionsColors)
     //   * else we hide the feature.
     // TODO: possibilite d'ajouter des "continue" apres les featuresdisplaystate.push
-    culling(BT) {
+    culling(BT, tileId) {
       const featuresDisplayStates = [];
       for (let i = 0; i < BT.featureIds.length; i++) {
           const featureId = BT.featureIds[i];
@@ -122,6 +127,7 @@ export class TemporalProvider {
             BT.endDates[i]) {
               // ** FEATURE EXISTS
               featuresDisplayStates.push('noTransaction');
+              this.setCityObjectStyle(tileId, i, 'noTransaction');
           } else if (BT.featuresTransacs[featureId]) {
               // ** TRANSACTION CASE
               let hasTransac = false;
@@ -132,8 +138,9 @@ export class TemporalProvider {
                   if (this.currentTime > transacAsSource.startDate && this.currentTime <=
                       transacAsSource.startDate + transacAsSourceHalfDuration) {
                       hasTransac = true;
-                      featuresDisplayStates.push(
-                          this.getTransactionStyleName(transacAsSource, ''));
+                      const transactionStyleName = this.getTransactionStyleName(transacAsSource, '');
+                      featuresDisplayStates.push(transactionStyleName);
+                      this.setCityObjectStyle(tileId, i, transactionStyleName);
                   }
               }
               const transacAsDest = BT.featuresTransacs[featureId].asDestination;
@@ -144,14 +151,16 @@ export class TemporalProvider {
                       transacAsDestHalfDuration && this.currentTime <=
                       transacAsDest.endDate) {
                       hasTransac = true;
-                      featuresDisplayStates.push(
-                          this.getTransactionStyleName(transacAsDest, ''));
+                      const transactionStyleName = this.getTransactionStyleName(transacAsDest, '');
+                      featuresDisplayStates.push(transactionStyleName);
+                      this.setCityObjectStyle(tileId, i, transactionStyleName);
                   }
               }
 
               if (!hasTransac) {
                   // ** TRANSACTION NOT AT THE RIGHT DATE
                   featuresDisplayStates.push('hide');
+                  this.setCityObjectStyle(tileId, i, 'hide');
               }
           } else {
               // ** FEATURE DOES NOT EXIST AND THERE IS NO TRANSACTION
@@ -166,18 +175,33 @@ export class TemporalProvider {
                   this.currentTime < BT.startDates[i]) {
                   // ** CREATION
                   featuresDisplayStates.push('creation');
+                  this.setCityObjectStyle(tileId, i, 'creation');
               } else if (this.currentTime - halfVintage < BT.endDates[i] &&
                   this.currentTime > BT.endDates[i]) {
                   // ** DEMOLITION
                   featuresDisplayStates.push('demolition');
+                  this.setCityObjectStyle(tileId, i, 'demolition');
               } else {
                   // ** FEATURE DOES NOT EXIST
                   featuresDisplayStates.push('hide');
+                  this.setCityObjectStyle(tileId, i, 'hide');
               }
           }
       }
 
       return featuresDisplayStates;
+  }
+
+  setCityObjectStyle(tileId, cityObjectId, styleName) {
+    if(this.tilesManager.isStyleRegistered(styleName)) {
+        this.tilesManager.setStyle(new CityObjectID(tileId, cityObjectId), 
+        styleName);
+    } else {
+        console.warn("Style " +  styleName + " is not " + 
+        "registered. Defaulting to style noTransaction.")
+        this.tilesManager.setStyle(new CityObjectID(tileId, cityObjectId), 
+        'noTransaction');
+    }
   }
 
   /**
@@ -188,39 +212,25 @@ export class TemporalProvider {
     // Compute features states
     if (tileId === 0) return; // Skip the root tile which has no geometry
 
-    let featuresDisplayStates;
     // If it has already been computed, don't do it again
     if (this.displayStates.has(this.currentTime) &&
         this.displayStates.get(this.currentTime).has(tileId)) {
-        featuresDisplayStates = this.displayStates.get(this.currentTime).get(tileId);
+        const tileDisplayStates = this.displayStates.get(this.currentTime).get(tileId);
+        for (let i = 0 ; i < tileDisplayStates.length ; i++) {
+            this.setCityObjectStyle(tileId, i, tileDisplayStates[i]);
+        }
     } else {
         const tileTemporalBT = this.tempExtModel.temporalBatchTables[tileId];
         if (tileTemporalBT) {
             if (! this.displayStates.has(this.currentTime)) {
                 this.displayStates.set(this.currentTime, new Map());
             }
-            featuresDisplayStates = this.culling(tileTemporalBT);
-            this.displayStates.get(this.currentTime).set(tileId, featuresDisplayStates);
+            this.displayStates.get(this.currentTime).set(tileId, this.culling(tileTemporalBT, tileId));
         } else {
         console.warn(`Cannot compute features states for tile ${tileId}  
         since the temporal extension of the batch table has not yet been 
         loaded for this tile`);
         return;
-        }
-    }
-
-    // Set features states
-    let featureStyleName;
-    for (let i = 0; i < featuresDisplayStates.length; i++) {
-        featureStyleName = featuresDisplayStates[i];
-        if(this.tilesManager.isStyleRegistered(featureStyleName)) {
-            this.tilesManager.setStyle(new CityObjectID(tileId, i), 
-            featureStyleName);
-        } else {
-            console.warn("Style " +  featureStyleName + " is not " + 
-            "registered. Defaulting to style noTransaction.")
-            this.tilesManager.setStyle(new CityObjectID(tileId, i), 
-            'noTransaction');
         }
     }
   }
