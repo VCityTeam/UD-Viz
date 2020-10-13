@@ -9,8 +9,8 @@ import { CityObjectID } from '../../../Utils/3DTiles/Model/CityObject.js';
  * Contains the logic for city objects and transactions display
  */
 export class TemporalProvider {
-  constructor(temporalExtensionModel, tilesManager, currentTime) {
-    this.temporalExtensionModel = temporalExtensionModel;
+  constructor(tempExtModel, tilesManager, currentTime) {
+    this.tempExtModel = tempExtModel;
 
     this.tilesManager = tilesManager;
 
@@ -22,7 +22,7 @@ export class TemporalProvider {
      * { date: tile : [ displayStates ] } } where displayStates is
      * an array of transactions (the name is associated with the styles)
      * */ 
-    this.datedTilesDisplayStates = new Map();
+    this.displayStates = new Map();
 
     // Initialize the styles affected to transactions. Will be 
     // used to update the 3D view.
@@ -37,8 +37,8 @@ export class TemporalProvider {
     // for more details
     this.tilesManager.addEventListener(
       TilesManager.EVENT_TILE_LOADED,
-      this.temporalExtensionModel.updateTileExtensionModel.bind(
-        this.temporalExtensionModel));
+      this.tempExtModel.updateTileExtensionModel.bind(
+        this.tempExtModel));
 
     // When a tile is loaded, we compute the state of its features (e.g.
     // should they be displayed or not and in which color, etc.)
@@ -184,17 +184,17 @@ export class TemporalProvider {
     let featuresDisplayStates = {};
     if (tileId === 0) return featuresDisplayStates; // Skip root tile which has no geometry
     // If it has already been computed, don't do it again
-    if (this.datedTilesDisplayStates.has(this.currentTime) &&
-        this.datedTilesDisplayStates.get(this.currentTime).has(tileId)) {
-        return this.datedTilesDisplayStates.get(this.currentTime).get(tileId);
+    if (this.displayStates.has(this.currentTime) &&
+        this.displayStates.get(this.currentTime).has(tileId)) {
+        return this.displayStates.get(this.currentTime).get(tileId);
     }
-    const tileTemporalBT = this.temporalExtensionModel.temporalBatchTables[tileId];
+    const tileTemporalBT = this.tempExtModel.temporalBatchTables[tileId];
     if (tileTemporalBT) {
-        if (! this.datedTilesDisplayStates.has(this.currentTime)) {
-            this.datedTilesDisplayStates.set(this.currentTime, new Map());
+        if (! this.displayStates.has(this.currentTime)) {
+            this.displayStates.set(this.currentTime, new Map());
         }
         featuresDisplayStates = this.culling(tileTemporalBT);
-        this.datedTilesDisplayStates.get(this.currentTime).set(tileId, featuresDisplayStates);
+        this.displayStates.get(this.currentTime).set(tileId, featuresDisplayStates);
     } else {
       console.warn(`Cannot compute features states for tile ${tileId}  
       since the temporal extension of the batch table has not yet been 
@@ -203,33 +203,46 @@ export class TemporalProvider {
     return featuresDisplayStates;
   }
 
-  computeTileState(tileContent) {
-    const featuresStates = this.computeFeaturesStates(tileContent.tileId);
+  computeTileState(tileId) {
+    const featuresStates = this.computeFeaturesStates(tileId);
     let featureStyleName;
     for (let i = 0; i < featuresStates.length; i++) {
         featureStyleName = featuresStates[i];
         if(this.tilesManager.isStyleRegistered(featureStyleName)) {
-            this.tilesManager.setStyle(new CityObjectID(tileContent.tileId, i), 
+            this.tilesManager.setStyle(new CityObjectID(tileId, i), 
             featureStyleName);
         } else {
             console.warn("Style " +  featureStyleName + " is not " + 
             "registered. Defaulting to style noTransaction.")
-            this.tilesManager.setStyle(new CityObjectID(tileContent.tileId, i), 
+            this.tilesManager.setStyle(new CityObjectID(tileId, i), 
             'noTransaction');
         }
     }
   }
 
+  /**
+   * Computes and applies the display state of a tile. This method
+   * is triggered by an event (TilesManager.EVENT_TILE_LOADED) 
+   * indicating that a new tile content has been loaded (e.g. because it 
+   * becomes visible by the camera)
+   * @param {*} tileContent The tileContent loaded.
+   */
   changeTileState(tileContent) {
-      this.computeTileState(tileContent);
+      this.computeTileState(tileContent.tileId);
       this.tilesManager.applyStyleToTile(tileContent.tileId, 
         { updateView: false });
   } 
 
+  /**
+   * Computes and applies the display state of currently visible tiles 
+   * (i.e. those in the camera field of view and having features 
+   * at the current display time). This method is triggered by the 
+   * TemporalView when the time of the view is updated.
+   */
   changeVisibleTilesStates() {
       const tiles = getVisibleTiles(this.tilesManager.layer);
       for (let i = 0; i < tiles.length; i++) {
-          this.computeTileState(tiles[i]);
+          this.computeTileState(tiles[i].tileId);
       }
       this.tilesManager.applyStyles();
   }
