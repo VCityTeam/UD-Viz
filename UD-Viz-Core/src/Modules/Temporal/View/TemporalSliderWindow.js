@@ -64,26 +64,19 @@ export class TemporalSliderWindow extends Window {
             'input', this.timeSelectionSlider.bind(this), false);
     }
 
-    // TODO: not sure we need two methods doing the same thing here.
     // Call back on new user input with the date selector
     timeSelection() {
-        const time = document.getElementById('timeSliderValue').value.toString();
-        this.changeTime(time);
+        this.currentTime = document.getElementById('timeSliderValue').value.toString();
+        document.getElementById('timeSlider').value = this.currentTime;
+        // Eventually inform who it may concern (e.g. an associated iTowns layer)
+        // that the currentTime has changed:
+        this.refreshCallback(this.currentTime);
     }
 
     // Call back on new user input with the time slider
     timeSelectionSlider()  {
-        var timeFromSlider = document.getElementById('timeSlider').value.toString();
-        this.changeTime(timeFromSlider);
-    }
-
-    // change the current date and sync the temporal version to this new date
-    changeTime(time) {
-        this.currentTime = time;
-
-        document.getElementById('timeSlider').value = time;
-        document.getElementById('timeSliderValue').value = time;
-
+        this.currentTime = document.getElementById('timeSlider').value.toString();
+        document.getElementById('timeSliderValue').value = this.currentTime;
         // Eventually inform who it may concern (e.g. an associated iTowns layer)
         // that the currentTime has changed:
         this.refreshCallback(this.currentTime);

@@ -21,7 +21,7 @@ export class TemporalView extends ModuleView {
         this.currentTime = Number(newDate);
         this.provider.currentTime = this.currentTime; // TODO: verify that the 
         // flow is good with MVVM 
-        this.provider.applyVisibleTilesStates(newDate, this.tileManager);
+        this.provider.changeVisibleTilesStates();
     }
     const refreshCallback = currentTimeUpdated.bind(this);
 
