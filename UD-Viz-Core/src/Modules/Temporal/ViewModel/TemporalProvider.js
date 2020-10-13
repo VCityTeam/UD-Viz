@@ -180,34 +180,39 @@ export class TemporalProvider {
       return featuresDisplayStates;
   }
 
-  computeFeaturesStates(tileId) {
-    let featuresDisplayStates = {};
-    if (tileId === 0) return featuresDisplayStates; // Skip root tile which has no geometry
+  /**
+   * Computes and sets the style of the features of a given tile. 
+   * @param {Number} tileId The id of the given tile.
+   */
+  computeTileState(tileId) {
+    // Compute features states
+    if (tileId === 0) return; // Skip the root tile which has no geometry
+
+    let featuresDisplayStates;
     // If it has already been computed, don't do it again
     if (this.displayStates.has(this.currentTime) &&
         this.displayStates.get(this.currentTime).has(tileId)) {
-        return this.displayStates.get(this.currentTime).get(tileId);
-    }
-    const tileTemporalBT = this.tempExtModel.temporalBatchTables[tileId];
-    if (tileTemporalBT) {
-        if (! this.displayStates.has(this.currentTime)) {
-            this.displayStates.set(this.currentTime, new Map());
-        }
-        featuresDisplayStates = this.culling(tileTemporalBT);
-        this.displayStates.get(this.currentTime).set(tileId, featuresDisplayStates);
+        featuresDisplayStates = this.displayStates.get(this.currentTime).get(tileId);
     } else {
-      console.warn(`Cannot compute features states for tile ${tileId}  
-      since the temporal extension of the batch table has not yet been 
-      loaded for this tile`);
+        const tileTemporalBT = this.tempExtModel.temporalBatchTables[tileId];
+        if (tileTemporalBT) {
+            if (! this.displayStates.has(this.currentTime)) {
+                this.displayStates.set(this.currentTime, new Map());
+            }
+            featuresDisplayStates = this.culling(tileTemporalBT);
+            this.displayStates.get(this.currentTime).set(tileId, featuresDisplayStates);
+        } else {
+        console.warn(`Cannot compute features states for tile ${tileId}  
+        since the temporal extension of the batch table has not yet been 
+        loaded for this tile`);
+        return;
+        }
     }
-    return featuresDisplayStates;
-  }
 
-  computeTileState(tileId) {
-    const featuresStates = this.computeFeaturesStates(tileId);
+    // Set features states
     let featureStyleName;
-    for (let i = 0; i < featuresStates.length; i++) {
-        featureStyleName = featuresStates[i];
+    for (let i = 0; i < featuresDisplayStates.length; i++) {
+        featureStyleName = featuresDisplayStates[i];
         if(this.tilesManager.isStyleRegistered(featureStyleName)) {
             this.tilesManager.setStyle(new CityObjectID(tileId, i), 
             featureStyleName);
@@ -225,7 +230,7 @@ export class TemporalProvider {
    * is triggered by an event (TilesManager.EVENT_TILE_LOADED) 
    * indicating that a new tile content has been loaded (e.g. because it 
    * becomes visible by the camera)
-   * @param {*} tileContent The tileContent loaded.
+   * @param {Object} tileContent The tile content loaded.
    */
   changeTileState(tileContent) {
       this.computeTileState(tileContent.tileId);
