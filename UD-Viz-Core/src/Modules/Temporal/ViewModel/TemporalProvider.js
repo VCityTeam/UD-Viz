@@ -11,49 +11,59 @@ import { CityObjectID } from '../../../Utils/3DTiles/Model/CityObject.js';
  * Contains the logic for city objects and transactions display
  */
 export class TemporalProvider {
+    /**
+     * Constructs a new temporal provider: initialize data structures
+     * used for the view (this.COStyles), initialize the possible
+     * city objects styles that displays transactions and set events. 
+     * @param {$3DTemporalExtension} tempExtModel The model of the temporal
+     * module (i.e. holding data from the 3D Tiles temporal extension).
+     * @param {TilesManager} tilesManager The tiles manager associated 
+     * with the itowns 3D Tiles layer holding the temporal extension.
+     * @param {Number} currentTime The current display time, updated by the 
+     * TemporalView.
+     */
   constructor(tempExtModel, tilesManager, currentTime) {
+    
     this.tempExtModel = tempExtModel;
 
     this.tilesManager = tilesManager;
 
     this.currentTime = currentTime;
 
-    /** Store the display states of features of the tiles per date 
+    /** Stores city objects (CO) styles per tile and per date 
      * to avoid computing it multiple times. It's actually a map 
      * of a map and its structure is:
-     * { date: tile : [ displayStates ] } } where displayStates is
-     * an array of transactions (the name is associated with the styles)
+     * { date: tile : styles[] } } where the position in the styles 
+     * array is the id of the city object
      * */ 
-    this.displayStates = new Map();
+    this.COStyles = new Map();
 
-    // Initialize the styles affected to transactions. Will be 
-    // used to update the 3D view.
-    // TODO: could be passed as a config of the module and if not 
-    // defined, we could initialize default styles.
-    this.initTransactionsStyles();
+    this.initCOStyles();
 
-    // Initialize the model. One part of this model is filled when the
+    // Initializes the model. One part of this model is filled when the
     // temporal extension is loaded by iTowns; an other part is filled 
     // with the event declared below (when a tile is loaded).
     // See the comment at the end of the $3DTemporalExtension constructor
-    // for more details
+    // for more details.
     this.tilesManager.addEventListener(
       TilesManager.EVENT_TILE_LOADED,
       this.tempExtModel.updateTileExtensionModel.bind(
         this.tempExtModel));
 
-    // When a tile is loaded, we compute the state of its features (e.g.
+    // When a tile is loaded, we compute the state of its city objects (e.g.
     // should they be displayed or not and in which color, etc.)
     this.tilesManager.addEventListener(
       TilesManager.EVENT_TILE_LOADED, 
       this.changeTileState.bind(this));
   }
 
-  // TODO: rename to initStyles ou initDisplayStates: dans tous les cas 
-  // utiliser soit "style" soit "displaystate" pour harmoniser les noms de 
-  // variables.
-  initTransactionsStyles() {
-    // Set styles
+  /**
+   * Initializes the styles affected to city objects to represent 
+   * transactions (see 3DTiles_temporal extension for more information
+   * on transactions). The names of the styles match transaction names,
+   * except for 'noTransaction' dans 'hide'.
+   */
+  initCOStyles() {
     this.tilesManager.registerStyle('noTransaction', new CityObjectStyle({
         materialProps: { opacity: 1.0, color: 0xffffff } })); // white
 
@@ -70,6 +80,26 @@ export class TemporalProvider {
         materialProps: { opacity: 0, color: 0xffffff, alphaTest: 0.3 } })); // hidden
   }
 
+  /**
+   * Sets the style of a given city object in the tiles manager if this
+   * style has been registered in the tiles manager (e.g. in 
+   * this.initCOStyles()). 
+   * @param {Number} tileId Id of the tile of the city object.
+   * @param {Number} cityObjectId Id of the city object.
+   * @param {String} styleName Name of the style to apply.
+   */
+  setCityObjectStyle(tileId, cityObjectId, styleName) {
+    if(this.tilesManager.isStyleRegistered(styleName)) {
+        this.tilesManager.setStyle(new CityObjectID(tileId, cityObjectId), 
+        styleName);
+    } else {
+        console.warn("Style " +  styleName + " is not " + 
+        "registered. Defaulting to style noTransaction.")
+        this.tilesManager.setStyle(new CityObjectID(tileId, cityObjectId), 
+        'noTransaction');
+    }
+  }
+
     // TODO: probablement à faire directement au parsing des transactions 
     // et mettre ça dans un attribut 'styleName'. A voir au moment où je 
     // virerai le transactionManager.
@@ -77,7 +107,7 @@ export class TemporalProvider {
      * Generates the style name of a transaction. This method is recursive
      * for aggregated transactions that may have multiple nested transactions. 
      * The style name correspond to the one created in the 
-     * initTransactionsStyles method).
+     * initCOStyles method).
      * 
      * @param {$3DTemporalTransaction} transaction The transaction 
      * to generate the style name from.
@@ -192,18 +222,6 @@ export class TemporalProvider {
       return featuresDisplayStates;
   }
 
-  setCityObjectStyle(tileId, cityObjectId, styleName) {
-    if(this.tilesManager.isStyleRegistered(styleName)) {
-        this.tilesManager.setStyle(new CityObjectID(tileId, cityObjectId), 
-        styleName);
-    } else {
-        console.warn("Style " +  styleName + " is not " + 
-        "registered. Defaulting to style noTransaction.")
-        this.tilesManager.setStyle(new CityObjectID(tileId, cityObjectId), 
-        'noTransaction');
-    }
-  }
-
   /**
    * Computes and sets the style of the features of a given tile. 
    * @param {Number} tileId The id of the given tile.
@@ -213,19 +231,19 @@ export class TemporalProvider {
     if (tileId === 0) return; // Skip the root tile which has no geometry
 
     // If it has already been computed, don't do it again
-    if (this.displayStates.has(this.currentTime) &&
-        this.displayStates.get(this.currentTime).has(tileId)) {
-        const tileDisplayStates = this.displayStates.get(this.currentTime).get(tileId);
+    if (this.COStyles.has(this.currentTime) &&
+        this.COStyles.get(this.currentTime).has(tileId)) {
+        const tileDisplayStates = this.COStyles.get(this.currentTime).get(tileId);
         for (let i = 0 ; i < tileDisplayStates.length ; i++) {
             this.setCityObjectStyle(tileId, i, tileDisplayStates[i]);
         }
     } else {
         const tileTemporalBT = this.tempExtModel.temporalBatchTables[tileId];
         if (tileTemporalBT) {
-            if (! this.displayStates.has(this.currentTime)) {
-                this.displayStates.set(this.currentTime, new Map());
+            if (! this.COStyles.has(this.currentTime)) {
+                this.COStyles.set(this.currentTime, new Map());
             }
-            this.displayStates.get(this.currentTime).set(tileId, this.culling(tileTemporalBT, tileId));
+            this.COStyles.get(this.currentTime).set(tileId, this.culling(tileTemporalBT, tileId));
         } else {
         console.warn(`Cannot compute features states for tile ${tileId}  
         since the temporal extension of the batch table has not yet been 
