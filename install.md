@@ -48,7 +48,7 @@ You will then be able to run the full module demo of UD-Viz.
 [these install notes](https://github.com/MEPP-team/RICT/tree/master/Install/Readme.md).
 
 * **Windows**
-  - Install and update npm which Windows Powershell
+  - Install and update npm with Windows Powershell
     ```
     iex (new-object net.webclient).downstring(‘https://get.scoop.sh’)
     scoop install nodejs
