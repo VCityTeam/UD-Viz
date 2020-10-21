@@ -1,4 +1,4 @@
-import { BaseDemo } from '../../src/Utils/BaseDemo/js/BaseDemo.js';
+import { BaseDemo } from '../../../Utils/BaseDemo/js/BaseDemo.js';
 
 let baseDemo = new BaseDemo({
     iconFolder: '../../../../examples/data/icons',

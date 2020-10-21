@@ -10,7 +10,7 @@ baseDemo.appendTo(document.body);
 baseDemo.loadConfigFile('../data/config/generalDemoConfig.json').then(() => {
 
     // Initialize iTowns 3D view
-    baseDemo.init3DView('lyon_all_districts');
+    baseDemo.init3DView('lyon_1');
     baseDemo.addLyonWMSLayer();
     const [$3DTilesLayer, $3DTilesManager] = baseDemo.setup3DTilesLayer('lyon2009-2015');
     
