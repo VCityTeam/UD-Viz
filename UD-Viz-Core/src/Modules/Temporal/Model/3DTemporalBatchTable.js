@@ -1,6 +1,7 @@
 /**
- * Class implementing the batch table part of the 3DTiles_temporal
- * extension.
+ * Implements the bounding volume part of the 3DTILES_temporal
+ * extension. See the spec in 
+ * ./jsonSchemas/3DTILES_temporal.batchTable.schema.json
  */
 export class $3DTemporalBatchTable {
     /**
