@@ -50,7 +50,7 @@ export class TemporalSliderWindow extends Window {
         this.window.style.setProperty('margin-right', 'auto');
         // Put it at the bottom of the page
         this.window.style.setProperty('top', 'unset');
-        this.window.style.setProperty('bottom', '0');
+        this.window.style.setProperty('bottom', '10px');
         this.window.style.setProperty('margin-bottom', 'auto');
         // Window size and center text
         this.window.style.setProperty('width', '700px');
