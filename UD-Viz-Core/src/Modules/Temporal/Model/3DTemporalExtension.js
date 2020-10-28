@@ -7,11 +7,32 @@ import { $3DTemporalTileset } from './3DTemporalTileset.js';
 export class $3DTemporalExtension {
     constructor() {
         this.extensionName = "3DTILES_temporal";
+
         /**
-         * The temporal extension part of the tileset that will be filled
-         * when it has been parsed by the $3DTemporalTileset class.
+         * A map of map with transactions as values and organized 
+         * per tiles and per features. This structure is used for
+         * optimizing the temporal culling (to decide which features
+         * should be displayed and with which style depending on the time,
+         * see TemporalProvider.js for more information). It is structured 
+         * as follows:
+         * { tileId : featureID : {
+         *     asSource: transaction;
+         *     asDestination: transaction;
+         *   }
+         * }
+         *  Note that currently only the first transaction where the feature
+         *  is a source or where the feature is a destination is kept.
+         *  NORMALLY a feature shouldn't be the source (reps. the
+         *  destination) of multiple transaction, since in this case one
+         *  should create aggregates. Otherwise it might represent
+         *  concurrent evolutions which are not managed in this
+         *  implementation. However, in practical terms there is cases where
+         *  a feature is the source (resp. destination) of multiple
+         *  transactions. These cases might need to be investigated in more
+         *  depth....
+         * @type {Map}
          */
-        this.temporalTileset;
+        this.featuresTransactions = new Map();
 
         /**
          * The temporal extension part of the batch tables mapped to the tile
@@ -46,12 +67,33 @@ export class $3DTemporalExtension {
     }
 
     temporalTilesetLoaded(event) {
-        if (this.temporalTileset) {
-            console.warn("Mmhhh, the temporal tileset has already been loaded" 
-            + " and it should only be loaded one time... Keeping the newest" + 
-            " one");
+        const allTransactions = event.detail.temporalTileset.transactions;
+
+        for (let i = 0; i < allTransactions.length; i++) {
+            const transaction = allTransactions[i];
+            for (let j = 0; j < transaction.source.length; j++) {
+                const source = transaction.source[j];
+                if (this.featuresTransactions.get(source) === undefined) {
+                    this.featuresTransactions.set(source, {});
+                }
+                if (this.featuresTransactions.get(source).asSource ===
+                    undefined) {
+                    this.featuresTransactions.get(source).asSource =
+                        transaction;
+                }
+            }
+            for (let j = 0; j < transaction.destination.length; j++) {
+                const destination = transaction.destination[j];
+                if (this.featuresTransactions.get(destination) === undefined) {
+                    this.featuresTransactions.set(destination, {});
+                }
+                if (this.featuresTransactions.get(destination).asDestination ===
+                    undefined) {
+                    this.featuresTransactions.get(destination).asDestination =
+                        transaction;
+                }
+            }
         }
-        this.temporalTileset = event.detail.temporalTileset;
     }
 
     updateTileExtensionModel(tile) {
@@ -68,7 +110,7 @@ export class $3DTemporalExtension {
             for (let i = 0; i < this.temporalBatchTables[tile.tileId].featureIds.length; i++) {
                 const featureId = this.temporalBatchTables[tile.tileId].featureIds[i];
                 // TODO: access to featuresTransactions might be better managed
-                this.temporalBatchTables[tile.tileId].featuresTransacs[featureId] = this.temporalTileset.transactionManager.featuresTransactions[featureId];
+                this.temporalBatchTables[tile.tileId].featuresTransacs[featureId] = this.featuresTransactions.get(featureId);
             }
         }
     }
