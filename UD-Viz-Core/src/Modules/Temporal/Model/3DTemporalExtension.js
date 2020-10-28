@@ -9,6 +9,7 @@ export class $3DTemporalExtension {
         this.extensionName = "3DTILES_temporal";
 
         /**
+         * TODO: update comment and comment the next one...
          * A map of map with transactions as values and organized 
          * per tiles and per features. This structure is used for
          * optimizing the temporal culling (to decide which features
@@ -32,7 +33,9 @@ export class $3DTemporalExtension {
          *  depth....
          * @type {Map}
          */
-        this.featuresTransactions = new Map();
+        this.transactionsPerFeature = new Map();
+
+        this.transactionsPerTile = new Map();
 
         /**
          * The temporal extension part of the batch tables mapped to the tile
@@ -73,23 +76,23 @@ export class $3DTemporalExtension {
             const transaction = allTransactions[i];
             for (let j = 0; j < transaction.source.length; j++) {
                 const source = transaction.source[j];
-                if (this.featuresTransactions.get(source) === undefined) {
-                    this.featuresTransactions.set(source, {});
+                if (this.transactionsPerFeature.get(source) === undefined) {
+                    this.transactionsPerFeature.set(source, {});
                 }
-                if (this.featuresTransactions.get(source).asSource ===
+                if (this.transactionsPerFeature.get(source).asSource ===
                     undefined) {
-                    this.featuresTransactions.get(source).asSource =
+                    this.transactionsPerFeature.get(source).asSource =
                         transaction;
                 }
             }
             for (let j = 0; j < transaction.destination.length; j++) {
                 const destination = transaction.destination[j];
-                if (this.featuresTransactions.get(destination) === undefined) {
-                    this.featuresTransactions.set(destination, {});
+                if (this.transactionsPerFeature.get(destination) === undefined) {
+                    this.transactionsPerFeature.set(destination, {});
                 }
-                if (this.featuresTransactions.get(destination).asDestination ===
+                if (this.transactionsPerFeature.get(destination).asDestination ===
                     undefined) {
-                    this.featuresTransactions.get(destination).asDestination =
+                    this.transactionsPerFeature.get(destination).asDestination =
                         transaction;
                 }
             }
@@ -98,19 +101,21 @@ export class $3DTemporalExtension {
 
     updateTileExtensionModel(tile) {
         // Get the bounding volume temporal extension
-        this.temporalBoundingVolumes[tile.tileId] = 
-        tile.boundingVolume.extensions[this.extensionName];
+        this.temporalBoundingVolumes.set(tile.tileId,  
+        tile.boundingVolume.extensions[this.extensionName]);
 
         // Get the batch table temporal extension
         // The batch table is not mandatory (e.g. the root tile
         // has no batch table)
         if (tile.batchTable) {
-            this.temporalBatchTables[tile.tileId] =
-            tile.batchTable.extensions[this.extensionName];
-            for (let i = 0; i < this.temporalBatchTables[tile.tileId].featureIds.length; i++) {
-                const featureId = this.temporalBatchTables[tile.tileId].featureIds[i];
-                // TODO: access to featuresTransactions might be better managed
-                this.temporalBatchTables[tile.tileId].featuresTransacs[featureId] = this.featuresTransactions.get(featureId);
+            this.temporalBatchTables.set(tile.tileId,
+            tile.batchTable.extensions[this.extensionName]);
+            if (! this.transactionsPerTile.has(tile.tileId)) {
+                this.transactionsPerTile.set(tile.tileId, new Map());
+            }
+            for (let i = 0; i < this.temporalBatchTables.get(tile.tileId).featureIds.length; i++) {
+                const featureId = this.temporalBatchTables.get(tile.tileId).featureIds[i];
+                this.transactionsPerTile.get(tile.tileId).set(featureId, this.transactionsPerFeature.get(featureId));
             }
         }
     }

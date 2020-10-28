@@ -149,7 +149,7 @@ export class TemporalProvider {
     //      transactionsColors)
     //   * else we hide the feature.
     // TODO: possibilite d'ajouter des "continue" apres les featuresdisplaystate.push
-    culling(BT, tileId) {
+    culling(BT, tileId, tileTransactions) {
       const featuresDisplayStates = [];
       for (let i = 0; i < BT.featureIds.length; i++) {
           const featureId = BT.featureIds[i];
@@ -158,11 +158,12 @@ export class TemporalProvider {
               // ** FEATURE EXISTS
               featuresDisplayStates.push('noTransaction');
               this.setCityObjectStyle(tileId, i, 'noTransaction');
-          } else if (BT.featuresTransacs[featureId]) {
+          } else if (tileTransactions.has(featureId) && tileTransactions.get(featureId)) {
               // ** TRANSACTION CASE
+              const featureTransactions = tileTransactions.get(featureId);
               let hasTransac = false;
-              const transacAsSource = BT.featuresTransacs[featureId].asSource;
-              if (transacAsSource) {
+              if (featureTransactions.asSource) {
+                  const transacAsSource = featureTransactions.asSource
                   const transacAsSourceHalfDuration = (transacAsSource.endDate -
                       transacAsSource.startDate) / 2;
                   if (this.currentTime > transacAsSource.startDate && this.currentTime <=
@@ -173,8 +174,8 @@ export class TemporalProvider {
                       this.setCityObjectStyle(tileId, i, transactionStyleName);
                   }
               }
-              const transacAsDest = BT.featuresTransacs[featureId].asDestination;
-              if (transacAsDest) {
+              if (featureTransactions.asDestination) {
+                const transacAsDest = featureTransactions.asDestination;
                   const transacAsDestHalfDuration = (transacAsDest.endDate -
                       transacAsDest.startDate) / 2;
                   if (this.currentTime > transacAsDest.startDate +
@@ -238,12 +239,12 @@ export class TemporalProvider {
             this.setCityObjectStyle(tileId, i, tileDisplayStates[i]);
         }
     } else {
-        const tileTemporalBT = this.tempExtModel.temporalBatchTables[tileId];
-        if (tileTemporalBT) {
+        if (this.tempExtModel.temporalBatchTables.has(tileId)) {
+            const tileTemporalBT = this.tempExtModel.temporalBatchTables.get(tileId);
             if (! this.COStyles.has(this.currentTime)) {
                 this.COStyles.set(this.currentTime, new Map());
             }
-            this.COStyles.get(this.currentTime).set(tileId, this.culling(tileTemporalBT, tileId));
+            this.COStyles.get(this.currentTime).set(tileId, this.culling(tileTemporalBT, tileId, this.tempExtModel.transactionsPerTile.get(tileId)));
         } else {
         console.warn(`Cannot compute features states for tile ${tileId}  
         since the temporal extension of the batch table has not yet been 

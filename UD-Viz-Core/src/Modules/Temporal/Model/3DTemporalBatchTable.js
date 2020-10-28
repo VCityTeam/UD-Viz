@@ -36,11 +36,6 @@ export class $3DTemporalBatchTable {
         this.startDates = json.startDates;
         this.endDates = json.endDates;
         this.featureIds = json.featureIds;
-        // Create a table which will hold for each features the transaction
-        // for which the current feature is a source or a destination if it
-        // exists. This array is filled in the parse method of the
-        // TemporalExtension class
-        this.featuresTransacs = [];
     }
 
     /**
