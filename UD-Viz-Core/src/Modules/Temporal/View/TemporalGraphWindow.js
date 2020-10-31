@@ -2,8 +2,6 @@ import { Window } from "../../../Utils/GUI/js/Window";
 import { NetworkManager } from "./NetworkManager";
 import './TemporalWindow.css';
 
-// TODO: MANAGE DATES WITH MOMENT
-
 /**
  * Constructor for TemporalWindow Class
  * Handles the GUI part enabling the user to specify the chosen "time" (moment or

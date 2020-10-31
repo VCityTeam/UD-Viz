@@ -1,11 +1,12 @@
 import { TemporalGraphWindow } from './TemporalGraphWindow.js';
 import { TemporalSliderWindow } from './TemporalSliderWindow.js';
-import { EnumTemporalWindow } from './EnumWindows.js'; // TODO: assert this import is useful ?
+import { EnumTemporalWindow } from './EnumWindows.js';
 import { ModuleView } from '../../../Utils/ModuleView/ModuleView.js';
 
-// TODO: choisir la stratégie avec les windows ici: est-ce qu'o naffiche par
-// defaut les deux ? Est-ce qu'on en affiche qu'une ? Si plusieurs windows en
-// même temps, faire comme dans DocumentView pour gérer toutes ces fenetres
+/**
+ * The view entrypoint. Initialize the correct window depending on the
+ * configuration and hook up the callbacks from the view model to this window.
+ */
 export class TemporalView extends ModuleView {
   constructor(provider, temporalOptions) {
     super();
@@ -25,11 +26,7 @@ export class TemporalView extends ModuleView {
     }
     const refreshCallback = currentTimeUpdated.bind(this);
 
-    // Callback to get data asynchronously from the tileset.jsonS
-    // TODO: remove this "asynchronous" part of the code and just 
-    // parse the version and version transition and only use them 
-    // when the graph window is chosen in the config... That should 
-    // remove the this.temporalExtension from here.
+    // Callback to get data asynchronously from the tileset.json
     function getAsynchronousData(){
             let versions = this.temporalExtension.temporal_tileset.temporalVersions.versions;
             let versionTransitions = this.temporalExtension.temporal_tileset.versionTransitions;
@@ -41,8 +38,6 @@ export class TemporalView extends ModuleView {
       case EnumTemporalWindow.SLIDERWINDOW :
           this.temporalWindow = new TemporalSliderWindow(refreshCallback, temporalOptions);
           break;
-      // TODO: virer le piggy back de getAsynchronousData et
-      // verifier qu'il sert à quelque chose...
       case EnumTemporalWindow.GRAPHWINDOW :
           temporalOptions.getAsynchronousData = getAsynchronousData.bind(this);
           this.temporalWindow = new TemporalGraphWindow(refreshCallback, temporalOptions);

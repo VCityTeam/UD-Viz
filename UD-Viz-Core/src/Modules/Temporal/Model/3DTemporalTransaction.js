@@ -1,3 +1,8 @@
+/**
+ * Implements the transaction concept of the 3DTILES_temporal
+ * extension. See the spec in 
+ * ./jsonSchemas/3DTILES_temporal.transaction.schema.json
+ */
 export class $3DTemporalTransaction {
     constructor(json) {
         this.id = json.id;

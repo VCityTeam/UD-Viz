@@ -2,14 +2,19 @@ import { $3DTemporalTileset } from './3DTemporalTileset.js';
 
 /**
  * Entrypoint of the temporal module model. 
- * It stores all parts of the 3D Tiles temporal extension model
+ * Stores all parts of the 3D Tiles temporal extension model
  */
 export class $3DTemporalExtension {
     constructor() {
         this.extensionName = "3DTILES_temporal";
 
         /**
-         * TODO: update comment and comment the next one...
+         * A map with feature IDs as keys and transactions of these features 
+         * as value.  
+         */
+        this.transactionsPerFeature = new Map();
+
+        /**
          * A map of map with transactions as values and organized 
          * per tiles and per features. This structure is used for
          * optimizing the temporal culling (to decide which features
@@ -33,8 +38,6 @@ export class $3DTemporalExtension {
          *  depth....
          * @type {Map}
          */
-        this.transactionsPerFeature = new Map();
-
         this.transactionsPerTile = new Map();
 
         /**
@@ -69,6 +72,13 @@ export class $3DTemporalExtension {
         // modifications in itowns, which is currently not possible.
     }
 
+    /**
+     * Fills this.transactionsPerFeature map when the tileset has been loaded 
+     * (all transactions are stored in the temporal extension part of the 
+     * tileset).
+     * @param {*} event The evet triggered; holds the temporal part of the
+     * extension in event.detail
+     */
     temporalTilesetLoaded(event) {
         const allTransactions = event.detail.temporalTileset.transactions;
 
@@ -99,23 +109,26 @@ export class $3DTemporalExtension {
         }
     }
 
-    updateTileExtensionModel(tile) {
-        // Get the bounding volume temporal extension
-        this.temporalBoundingVolumes.set(tile.tileId,  
-        tile.boundingVolume.extensions[this.extensionName]);
+    /**
+     * Triggered when the content of a tile has been loaded. Fills
+     * this.transactionsPerTile list with the transaction of this tile.
+     * @param {*} tileContent 
+     */
+    updateTileExtensionModel(tileContent) {
+        this.temporalBoundingVolumes.set(tileContent.tileId,  
+        tileContent.boundingVolume.extensions[this.extensionName]);
 
-        // Get the batch table temporal extension
         // The batch table is not mandatory (e.g. the root tile
         // has no batch table)
-        if (tile.batchTable) {
-            this.temporalBatchTables.set(tile.tileId,
-            tile.batchTable.extensions[this.extensionName]);
-            if (! this.transactionsPerTile.has(tile.tileId)) {
-                this.transactionsPerTile.set(tile.tileId, new Map());
+        if (tileContent.batchTable) {
+            this.temporalBatchTables.set(tileContent.tileId,
+            tileContent.batchTable.extensions[this.extensionName]);
+            if (! this.transactionsPerTile.has(tileContent.tileId)) {
+                this.transactionsPerTile.set(tileContent.tileId, new Map());
             }
-            for (let i = 0; i < this.temporalBatchTables.get(tile.tileId).featureIds.length; i++) {
-                const featureId = this.temporalBatchTables.get(tile.tileId).featureIds[i];
-                this.transactionsPerTile.get(tile.tileId).set(featureId, this.transactionsPerFeature.get(featureId));
+            for (let i = 0; i < this.temporalBatchTables.get(tileContent.tileId).featureIds.length; i++) {
+                const featureId = this.temporalBatchTables.get(tileContent.tileId).featureIds[i];
+                this.transactionsPerTile.get(tileContent.tileId).set(featureId, this.transactionsPerFeature.get(featureId));
             }
         }
     }

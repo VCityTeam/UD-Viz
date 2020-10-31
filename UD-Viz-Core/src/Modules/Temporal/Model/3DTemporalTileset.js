@@ -2,6 +2,11 @@ import { $3DTemporalPrimaryTransaction } from '../Model/3DTemporalPrimaryTransac
 import { $3DTemporalTransactionAggregate } from '../Model/3DTemporalTransactionAggregate.js';
 import { $3DTemporalVersion } from './3DTemporalVersion.js';
 
+/**
+ * Implements the tileset part of the 3DTILES_temporal
+ * extension. See the spec in 
+ * ./jsonSchemas/3DTILES_temporal.tileset.schema.json
+ */
 export class $3DTemporalTileset {
     constructor(json) {
         this.startDate = json.startDate;
@@ -21,18 +26,21 @@ export class $3DTemporalTileset {
             {detail: { temporalTileset: this}}));
     }
 
+    /**
+     * Parses transactions from a json file and creates primary and aggregated
+     * transactions.
+     * @param {Object} transactions The json holding the transactions.
+     */
     parseTransactions(transactions) {
         for (let i = 0; i < transactions.length; i++) {
             let parsedTransac;
-            // **** Create Primary Transactions and Transactions Aggregates
             if (transactions[i].type) {
-                // it is a PrimaryTransaction
+                // Transactions aggregates don't have a type attribute
                 parsedTransac = new $3DTemporalPrimaryTransaction(transactions[i]);
             } else if (transactions[i].transactions) {
-                // it is a TransactionAggregate
-                // We create a TransactionAggregate and parse its aggregated
-                // transactions
+                // Primary transactions don't have a transactions attribute
                 parsedTransac = new $3DTemporalTransactionAggregate(transactions[i]);
+                // Recursively parse the aggregated transactions.
                 parsedTransac.transactions = this.parseTransactions(transactions[i].transactions);
             }
             this.transactions.push(parsedTransac);

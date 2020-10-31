@@ -1,5 +1,5 @@
 /**
- * Implements the bounding volume part of the 3DTILES_temporal
+ * Implements the batch table of the 3DTILES_temporal
  * extension. See the spec in 
  * ./jsonSchemas/3DTILES_temporal.batchTable.schema.json
  */

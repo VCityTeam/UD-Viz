@@ -3,12 +3,10 @@ import { getVisibleTiles } from '../../../Utils/3DTiles/3DTilesUtils.js';
 import { CityObjectStyle } from '../../../Utils/3DTiles/Model/CityObjectStyle.js';
 import { CityObjectID } from '../../../Utils/3DTiles/Model/CityObject.js';
 
-// TODO: harmoniser les noms display state, feature display state, transaction
-// style, etc.
-// TODO: harmoniser l'usage de features (terminologie 3D tiles) et de city
-// objects (terminologie citygml et UD-Viz)
 /**
- * Contains the logic for city objects and transactions display
+ * The ViewModel of the temporal module. Contains intermediate data structures
+ * between the model and the view as well as the logic for city objects and 
+ * transactions display.
  */
 export class TemporalProvider {
     /**
@@ -100,9 +98,6 @@ export class TemporalProvider {
     }
   }
 
-    // TODO: probablement à faire directement au parsing des transactions 
-    // et mettre ça dans un attribut 'styleName'. A voir au moment où je 
-    // virerai le transactionManager.
     /**
      * Generates the style name of a transaction. This method is recursive
      * for aggregated transactions that may have multiple nested transactions. 
@@ -144,11 +139,9 @@ export class TemporalProvider {
     //      first half duration of the transaction
     //      * the displayed geometry is the one of the new feature for the
     //      second half of the duration
-    //      * the opacity is set to 0.5
-    //      * the color is set depending on the transaction type (defined in
-    //      transactionsColors)
+    //      * the opacity is set to 0.6
+    //      * the color is set depending on the transaction type
     //   * else we hide the feature.
-    // TODO: possibilite d'ajouter des "continue" apres les featuresdisplaystate.push
     culling(BT, tileId, tileTransactions) {
       const featuresDisplayStates = [];
       for (let i = 0; i < BT.featureIds.length; i++) {
