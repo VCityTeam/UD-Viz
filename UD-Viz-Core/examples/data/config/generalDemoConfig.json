@@ -175,7 +175,7 @@
     },
     "lyon2009-2015":{
       "id": "3d-tiles-layer-temporal",
-      "url":"http://localhost:8003/tilesets/TemporalTileset/TemporalTileset/tileset.json",
+      "url":"http://rict.liris.cnrs.fr/DataStore/Lyon1er-2009-2015/tileset.json",
       "color": "0xFFFFFF",
       "initTilesManager": "true",
       "extensions":["3DTILES_temporal"]
