@@ -10,9 +10,9 @@ baseDemo.appendTo(document.body);
 baseDemo.loadConfigFile('../data/config/generalDemoConfig.json').then(() => {
     // Initialize iTowns 3D view
     baseDemo.init3DView('lyon_1_2_5');
-    baseDemo.add3DTilesLayer('building_1_2_5');
-    baseDemo.add3DTilesLayer('relief');
-    baseDemo.add3DTilesLayer('water');
+    baseDemo.setupAndAdd3DTilesLayer('building_1_2_5');
+    baseDemo.setupAndAdd3DTilesLayer('relief');
+    baseDemo.setupAndAdd3DTilesLayer('water');
     baseDemo.update3DView();
 
     ////// ABOUT MODULE

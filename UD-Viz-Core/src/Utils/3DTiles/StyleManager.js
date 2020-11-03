@@ -69,9 +69,20 @@ export class StyleManager {
   registerStyle(name, style) {
     this._updateBufferedMaterials(name, style);
 
-    let existing = this.registeredStyles[name] !== undefined;
+    let existing = this.isStyleRegistered(name);
     this.registeredStyles[name] = style;
     return existing;
+  }
+  
+  /**
+   * Check if a style is registered.
+   * 
+   * @param {string} name Name of the style. 
+   * 
+   * @returns {boolean} True if the style is registered, false either.
+   */
+  isStyleRegistered(name) {
+    return this.registeredStyles[name] !== undefined ? true : false;
   }
 
   /**
@@ -109,7 +120,7 @@ export class StyleManager {
     } else if (typeof(identifier) === "number") {
       return this.anonymousStyles[identifier];
     }
-    throw 'Identifier must be a string or a number';
+    throw 'Style identifier must be a string or a number';
   }
 
   /**

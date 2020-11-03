@@ -11,7 +11,7 @@ baseDemo.loadConfigFile('../data/config/generalDemoConfig.json').then(() => {
     // Initialize iTowns 3D view
     baseDemo.init3DView('limonest');
     baseDemo.addLyonWMSLayer();
-    baseDemo.add3DTilesLayer('limonest_building');
+    baseDemo.setupAndAdd3DTilesLayer('limonest_building');
     baseDemo.update3DView();
 
     ////// REQUEST SERVICE

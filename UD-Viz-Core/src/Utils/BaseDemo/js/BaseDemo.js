@@ -2,6 +2,10 @@ import { ModuleView } from '../../ModuleView/ModuleView.js';
 import { TilesManager } from '../../3DTiles/TilesManager.js';
 import { LayerManager } from '../../LayerManager/LayerManager.js';
 
+import { $3DTemporalBatchTable } from '../../../Modules/Temporal/Model/3DTemporalBatchTable.js';
+import { $3DTemporalBoundingVolume } from '../../../Modules/Temporal/Model/3DTemporalBoundingVolume.js';
+import { $3DTemporalTileset } from '../../../Modules/Temporal/Model/3DTemporalTileset.js';
+
 /**
  * Represents the base HTML content of a demo for UD-Viz and provides methods to
  * dynamically add module views.
@@ -25,9 +29,6 @@ export class BaseDemo {
          * @type {LayerManager}
          */
         this.layerManager;
-        // Temporal is currently disabled and will be reintroduced in a new
-        // version based on a 3D Tiles extension
-        this.temporal = false;
         ///// Config values for some file paths
         // iconFolder    : folder for icons (for the modules menu)
         // imageFolder   : folder for the logo files (for LIRIS and IMU)
@@ -390,12 +391,14 @@ export class BaseDemo {
     }
 
     /**
-     * Adds a 3D Tiles layer to the iTowns 3D view.
-     * @param {string} layerConfig The name of the type of object to add to the view. This name should
-     * be one of the properties of the 3DTilesLayer object (in UD-Viz/UD-Viz-Core/examples/data/config/generalDemoConfig.json
+     * Create an iTowns 3D Tiles layer based on the specified layerConfig.
+     * @param {string} layerConfig The name of the layer to setup from the
+     * generalDemoConfig.json config file (should be one of the properties
+     * of the 3DTilesLayer object in 
+     * UD-Viz/UD-Viz-Core/examples/data/config/generalDemoConfig.json
      * config file).
      */
-    add3DTilesLayer(layerConfig) {
+    setup3DTilesLayer(layerConfig) {
         //  ADD 3D Tiles Layer
 
         // Positional arguments verification
@@ -408,12 +411,40 @@ export class BaseDemo {
                 "(in UD-Viz/UD-Viz-Core/examples/data/config/generalDemoConfig.json)";
         }
 
+        const extensionsConfig = this.config['3DTilesLayer'][layerConfig]
+        ['extensions'];
+        let extensions = new itowns.C3DTExtensions();
+        if (!!extensionsConfig) {
+            for (let i = 0; i < extensionsConfig.length ; i++) {
+                if (extensionsConfig[i] === "3DTILES_temporal") {
+                    extensions.registerExtension("3DTILES_temporal",
+                        { [itowns.C3DTilesTypes.batchtable]:
+                            $3DTemporalBatchTable,
+                          [itowns.C3DTilesTypes.boundingVolume]:
+                            $3DTemporalBoundingVolume,
+                          [itowns.C3DTilesTypes.tileset]:
+                            $3DTemporalTileset});
+                } else if (extensionsConfig[i] === 
+                    "3DTILES_batch_table_hierarchy") {
+                        extensions.registerExtension("3DTILES_batch_table_hierarchy",
+                        { [itowns.C3DTilesTypes.batchtable]:
+                          itowns.C3DTBatchTableHierarchyExtension });
+                } else {
+                    console.warn("The 3D Tiles extension " + extensionsConfig[i] + 
+                    " specified in generalDemoConfig.json is not supported " + 
+                    "by UD-Viz yet. Only 3DTILES_temporal and " + 
+                    "3DTILES_batch_table_hierarchy are supported.")
+                }
+            }  
+        }
+
         var $3dTilesLayer = new itowns.C3DTilesLayer(
             this.config['3DTilesLayer'][layerConfig]['id'], {
                 name: 'Lyon-2015-'.concat(layerConfig),
                 source: new itowns.C3DTilesSource({
                     url: this.config['3DTilesLayer'][layerConfig]['url'],
                 }),
+                registeredExtensions: extensions
             }, this.view);
 
         let material;
@@ -431,14 +462,35 @@ export class BaseDemo {
         $3dTilesLayer.overrideMaterials = material;
         $3dTilesLayer.material = material;
 
-        itowns.View.prototype.addLayer.call(this.view, $3dTilesLayer);
+        const $3DTilesManager = new TilesManager(this.view,
+            $3dTilesLayer)
+        this.layerManager.tilesManagers.push($3DTilesManager);
 
-
-        this.layerManager.tilesManagers.push(new TilesManager(this.view,
-                this.view.getLayerById(this.config['3DTilesLayer'][layerConfig]['id'])));
+        return [$3dTilesLayer, $3DTilesManager];
     }
 
-   
+    /**
+     * Adds the specified 3D Tiles layer to the iTowns 3D view.
+     * @param {itowns.C3DTilesLayer} layer The layer to add to itowns view.
+     */
+    add3DTilesLayer(layer) {
+        itowns.View.prototype.addLayer.call(this.view, layer);
+    }
+    
+    /**
+     * Sets up a 3D Tiles layer and adds it to the itowns view (for the demos
+     * that don't need more granularity than that).
+     * @param {string} layerConfig The name of the layer to setup from the
+     * generalDemoConfig.json config file (should be one of the properties
+     * of the 3DTilesLayer object in 
+     * UD-Viz/UD-Viz-Core/examples/data/config/generalDemoConfig.json
+     * config file).
+     */
+    setupAndAdd3DTilesLayer(layerConfig) {
+        const [$3DTilesLayer] = this.setup3DTilesLayer(layerConfig);
+        this.add3DTilesLayer($3DTilesLayer);
+    }
+
     /**
      * Initializes the iTowns 3D view.
      * @param {string} area The name of the area to view. Used to adjust the extent, this name should be

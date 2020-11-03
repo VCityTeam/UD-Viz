@@ -15,7 +15,7 @@ export { AuthenticationView }       from './Extensions/Authentication/views/Auth
 export { AboutWindow }              from './Modules/Others/About';
 export { HelpWindow }               from './Modules/Others/Help';
 
-export { TemporalController }       from './Modules/Temporal/Temporal';
+export { TemporalModule }           from './Modules/Temporal/TemporalModule';
 
 export { DocumentCommentsModule }   from './Extensions/DocumentComments/DocumentCommentsModule';
 
