@@ -1,6 +1,10 @@
 import { ModuleView } from '../../ModuleView/ModuleView.js';
 import { TilesManager } from '../../3DTiles/TilesManager.js';
+import { LayerManager } from '../../LayerManager/LayerManager.js';
 
+import { $3DTemporalBatchTable } from '../../../Modules/Temporal/Model/3DTemporalBatchTable.js';
+import { $3DTemporalBoundingVolume } from '../../../Modules/Temporal/Model/3DTemporalBoundingVolume.js';
+import { $3DTemporalTileset } from '../../../Modules/Temporal/Model/3DTemporalTileset.js';
 
 /**
  * Represents the base HTML content of a demo for UD-Viz and provides methods to
@@ -20,14 +24,11 @@ export class BaseDemo {
         this.extent;  // itowns extent (city limits)
         this.controls;
         /**
-         * Object used to manage the 3DTiles layer.
+         * Object used to manage all of the layer.
          *
-         * @type {TilesManager}
+         * @type {LayerManager}
          */
-        this.tilesManager;
-        // Temporal is currently disabled and will be reintroduced in a new
-        // version based on a 3D Tiles extension
-        this.temporal = false;
+        this.layerManager;
         ///// Config values for some file paths
         // iconFolder    : folder for icons (for the modules menu)
         // imageFolder   : folder for the logo files (for LIRIS and IMU)
@@ -142,7 +143,7 @@ export class BaseDemo {
      */
     addModuleView(moduleId, moduleClass, options = {}) {
         if ((typeof (moduleClass.enable) !== 'function')
-         || (typeof (moduleClass.disable) !== 'function')) {
+          || (typeof (moduleClass.disable) !== 'function')) {
             throw 'A module must implement at least an enable() and a disable() methods';
         }
 
@@ -235,7 +236,7 @@ export class BaseDemo {
         let moduleClass = this.getModuleById(moduleId);
 
         //dynamically color the button
-        moduleClass.parentElement = this.viewerDivElement;
+        moduleClass.parentElement = this.viewerDivElement.parentElement;
         moduleClass.addEventListener(ModuleView.EVENT_ENABLED, () => {
             button.className = 'choiceMenu choiceMenuSelected';
 
@@ -256,7 +257,7 @@ export class BaseDemo {
         frame.innerHTML = this.authenticationFrameHtml;
         this.authFrameLocationElement.appendChild(frame);
         const authView = this.getModuleById(authModuleId);
-        authView.parentElement = this.viewerDivElement;
+        authView.parentElement = this.viewerDivElement.parentElement;
         const authService = authView.authenticationService;
         this.authenticationLoginButtonElement.onclick = () => {
             if (this.isModuleActive(authModuleId)) {
@@ -350,8 +351,6 @@ export class BaseDemo {
      * Adds WMS elevation Layer of Lyon in 2012 and WMS imagery layer of Lyon in 2009 (from Grand Lyon data).
      */
     addLyonWMSLayer() {
-
-
         let wmsImagerySource = new itowns.WMSSource({
             extent: this.extent,
             name: 'Ortho2018_Dalle_unique_8cm_CC46',
@@ -367,309 +366,39 @@ export class BaseDemo {
                 options: {},
             },
             source: wmsImagerySource,
+            transparent: true
         });
-        //this.view.addLayer(wmsImageryLayer);
+        this.view.addLayer(wmsImageryLayer);
 
-        // // // Add a WMS elevation source
-        // let wmsElevationSource = new itowns.WMSSource({
-        //     extent: this.extent,
-        //     url: 'https://download.data.grandlyon.com/wms/grandlyon',
-        //     name: 'MNT2018_Altitude_2m',
-        //     projection: 'EPSG:3946',
-        //     heightMapWidth: 256,
-        //     format: 'image/jpeg',
-        // });
-        // // Add a WMS elevation layer
-        // let wmsElevationLayer = new
-        // itowns.ElevationLayer('wms_elevation', {
-        //     useColorTextureElevation: true,
-        //     colorTextureElevationMinZ: 144,
-        //     colorTextureElevationMaxZ: 622,
-        //     source: wmsElevationSource,
-        // });
-        // this.view.addLayer(wmsElevationLayer);
-
-
-        let wmsTemperatureSource = new itowns.WMSSource({
+        // Add a WMS elevation source
+        let wmsElevationSource = new itowns.WMSSource({
             extent: this.extent,
-            name: 'TS2015_k',
             url: 'https://download.data.grandlyon.com/wms/grandlyon',
-            version: '1.3.0',
+            name: 'MNT2018_Altitude_2m',
             projection: 'EPSG:3946',
-            format: 'image/png',
+            heightMapWidth: 256,
+            format: 'image/jpeg',
         });
-
-        let wmsTemperatureLayer = new itowns.ColorLayer('wms_Temperature', {
-            updateStrategy: {
-                type: itowns.STRATEGY_DICHOTOMY,
-                options: {},
-                altitude: 3,
-
-            },
-            source: wmsTemperatureSource,
+        // Add a WMS elevation layer
+        let wmsElevationLayer = new
+        itowns.ElevationLayer('wms_elevation', {
+            useColorTextureElevation: true,
+            colorTextureElevationMinZ: 144,
+            colorTextureElevationMaxZ: 622,
+            source: wmsElevationSource,
         });
-
-        //this.view.addLayer(wmsTemperatureLayer);
-
-        let wmsPolutedGroundSource = new itowns.WMSSource({
-            extent: this.extent,
-            name: 'SSP_CLASSIFICATION',
-            url: ' https://www.georisques.gouv.fr/services',
-            version: '1.3.0',
-            projection: 'EPSG:4326',
-            format: 'image/png',
-        });
-
-        let wmsPolutedGroundLayer = new itowns.ColorLayer('wms_polutedGround', {
-            updateStrategy: {
-                type: itowns.STRATEGY_DICHOTOMY,
-                options: {},
-                altitude: 4,
-
-            },
-            source: wmsPolutedGroundSource,
-        });
-
-        //this.view.addLayer(wmsPolutedGroundLayer);
-
-
-
-
-
-        ////---Add layer SHP---////
-        // itowns.Fetcher.multiple('C:/Users/homer/Downloads/tcl_sytral_tcllignebus/tcl_sytral.tcllignebus', {
-        //     arrayBuffer: ['shp', 'dbf', 'shx'],
-        //     text: ['prj'],
-        // }).then(function _(res) {
-        //     return itowns.ShapefileParser.parse(res, {
-        //         out: {
-        //             crs: this.extent,
-        //             buildExtent: true,
-        //         }
-        //     });
-        // }).then(function _(features) {
-        //     var velibSource = new itowns.FileSource({ features });
-
-
-        //     var velibLayer = new itowns.ColorLayer('velib', {
-        //         source: velibSource,
-        //         //labelEnabled: true,
-        //     });
-
-
-        //     return this.view.addLayer(velibLayer);
-        // });
-
-        //var jpp = this;
-        //console.log(jpp);
-
-        // Promise.all([
-        //     itowns.Fetcher.arrayBuffer('https://raw.githubusercontent.com/iTowns/iTowns2-sample-data/master/shapefile/velib-disponibilite-en-temps-reel.shp'),
-        //     itowns.Fetcher.arrayBuffer('https://raw.githubusercontent.com/iTowns/iTowns2-sample-data/master/shapefile/velib-disponibilite-en-temps-reel.dbf'),
-        //     itowns.Fetcher.arrayBuffer('https://raw.githubusercontent.com/iTowns/iTowns2-sample-data/master/shapefile/velib-disponibilite-en-temps-reel.shx'),
-        //     itowns.Fetcher.text('https://raw.githubusercontent.com/iTowns/iTowns2-sample-data/master/shapefile/velib-disponibilite-en-temps-reel.prj'),
-        // ]).then(function _(res) {
-        //     console.log(jpp);
-        //     return itowns.ShapefileParser.parse({
-        //         shp: res[0],
-        //         dbf: res[1],
-        //         shx: res[2],
-        //         prj: res[3],
-        //     }, {
-        //            in: {
-        //              crs: 'EPSG:3946',
-        //         },
-        //         out: {
-        //             crs: "EPSG:3946",
-        //             buildExtent: true,
-        //         }
-        //     });
-        // }).then(function _(geojson) {
-        //     var source = new FileSource({ features: geojson });
-        //     var layer = new ColorLayer('velib', { source  });
-        //     this.view.addLayer(layer);
-        // });
-
-        ////---Add layer JSON---////
-
-
-        var color = new itowns.THREE.Color();
-        function colorLineMetro() {
-            return color.set(0xff00ff);
-        }
-
-        function colorSurfaceParcs() {
-            return color.set(0x00ff00);
-        }
-
-        function colorPointsTrees(properties) {
-            if (properties.circonference_cm > 180 ) 
-            {
-                return color.set(0xff0000);
-            }
-            else
-            if(properties.circonference_cm > 140)
-            {
-                return color.set(0xff7b00);
-            }
-            else
-            return color.set(0xffff00);
-        }
-
-
-        var ParcsSource = new itowns.WFSSource({
-            url: 'https://download.data.grandlyon.com/wfs/grandlyon?',
-            protocol: 'wfs',
-            version: '2.0.0',
-            id: 'parcs',
-            typeName: 'com_donnees_communales.comparcjardin_1_0_0',
-            projection: 'EPSG:3946',
-            extent: this.extent,
-            format: 'geojson',
-        });
-        
-        var ParcsLayer = new itowns.GeometryLayer('parcs', new itowns.THREE.Group(), {
-            update: itowns.FeatureProcessing.update,
-            convert: itowns.Feature2Mesh.convert({
-                altitude: 5,
-                color: colorSurfaceParcs,
-            }),
-            source: ParcsSource,
-        });
-
-        //this.view.addLayer(ParcsLayer);
-
-        let imaterial = new THREE.PointsMaterial({ size: 50, vertexColors: THREE.VertexColors });
-
-        let wfstreeSource = new itowns.WFSSource({
-            url: 'https://download.data.grandlyon.com/wfs/grandlyon?',
-            protocol: 'wfs',
-            version: '2.0.0',
-            id: 'arbres_ali',
-            typeName: 'abr_arbres_alignement.abrarbre',
-            projection: 'EPSG:3946',
-            extent: this.extent,
-            format: 'geojson',
-        });
-
-        function acceptFeatureTree(properties) {
-            if (properties.circonference_cm > 180) {
-                return true;
-            }
-            return false;
-        }
-
-        let wfsTreeLayer = new itowns.GeometryLayer('tree_points', new itowns.THREE.Group(),{
-            update: itowns.FeatureProcessing.update,
-            convert: itowns.Feature2Mesh.convert({
-                altitude: 20,
-                color : colorPointsTrees,
-            }),
-            //filter : acceptFeatureTree,
-            //material : imaterial,
-            source: wfstreeSource,
-        });
-
-        //console.log(wfsTreeLayer);
-
-        //this.view.addLayer(wfsTreeLayer);
-        //this.view.removeLayer(wfsTreeLayer);
-        
-        function setMaterialLineWidth(result) {
-            result.traverse(function _setLineWidth(mesh) {
-                if (mesh.material) {
-                    mesh.material.linewidth = 500;
-                }
-            });
-        }
-
-        // var lyonPisteCyclablesBusSource = new itowns.WFSSource({
-        //     url: 'https://download.data.grandlyon.com/wfs/grandlyon?',
-        //     protocol: 'wfs',
-        //     version: '2.0.0',
-        //     id: 'pistes_cyclables',
-        //     typeName: 'pvo_patrimoine_voirie.pvoamenagementcyclable',
-        //     projection: 'EPSG:3946',
-        //     extent: this.extent,
-        //     format: 'geojson',
-        // });
-
-        // var lyonPisteCyclableBusLayer = new itowns.GeometryLayer('lyon_velo_bus', new itowns.THREE.Group(), {
-        //     update: itowns.FeatureProcessing.update,
-        //     convert: itowns.Feature2Mesh.convert(
-        //         {
-        //             color: colorLineVelos,
-        //         }
-        //     ),
-        //     //onMeshCreated: setMaterialLineWidth,
-        //     linewidth: 500,
-        //     source: lyonPisteCyclablesBusSource,
-        // });
-
-        //this.view.addLayer(lyonPisteCyclableBusLayer);
-
-        var lyonTclMetroSource = new itowns.WFSSource({
-            url: 'https://download.data.grandlyon.com/wfs/rdata?',
-            protocol: 'wfs',
-            version: '2.0.0',
-            id: 'tcl_metro',
-            typeName: 'tcl_sytral.tcllignemf',
-            projection: 'EPSG:3946',
-            extent: this.extent,
-            format: 'geojson',
-        });
-
-        var lyonTclMetroLayer = new itowns.GeometryLayer('lyon_tcl_metro', new itowns.THREE.Group(), {
-            update: itowns.FeatureProcessing.update,
-            convert: itowns.Feature2Mesh.convert(
-                {
-                    color: colorLineMetro,
-                }
-            ),
-            linewidth: 500,
-            source: lyonTclMetroSource,
-        });
-
-        // this.view.addLayer(lyonTclMetroLayer);
-
-        let wfsClementSource = new itowns.WFSSource({
-            url: 'https://arcgis-portail.carl-source.com/arcgis/services/CCO_MAY/Carte_CCO_MAY_WMS_WFS/MapServer/WFSServer?',
-            protocol: 'wfs',
-            version: '2.0.0',
-            id: 'test_clement',
-            typeName: 'CCO_MAY_Carte_CCO_MAY_WMS_WFS:velov',
-            projection: 'RGF93',
-            extent: this.extent,
-            format: 'geojson',
-        });
-
-        //console.log(wfsClementSource);
-
-        var wfsClementLayer = new itowns.GeometryLayer('clement_layer', new itowns.THREE.Group(), {
-            update: itowns.FeatureProcessing.update,
-            convert: itowns.Feature2Mesh.convert(
-                {
-                    //color: colorLineMetro,
-                }
-            ),
-            linewidth: 500,
-            source: wfsClementSource,
-        });
-
-        //console.log(wfsClementLayer);
-
-
-        //this.view.addLayer(wfsClementLayer);
+        this.view.addLayer(wmsElevationLayer);
     }
 
-
     /**
-     * Adds a 3D Tiles layer to the iTowns 3D view.
-     * @param {string} layerConfig The name of the type of object to add to the view. This name should
-     * be one of the properties of the 3DTilesLayer object (in UD-Viz/UD-Viz-Core/examples/data/config/generalDemoConfig.json
+     * Create an iTowns 3D Tiles layer based on the specified layerConfig.
+     * @param {string} layerConfig The name of the layer to setup from the
+     * generalDemoConfig.json config file (should be one of the properties
+     * of the 3DTilesLayer object in 
+     * UD-Viz/UD-Viz-Core/examples/data/config/generalDemoConfig.json
      * config file).
      */
-    add3DTilesLayer(layerConfig) {
+    setup3DTilesLayer(layerConfig) {
         //  ADD 3D Tiles Layer
 
         // Positional arguments verification
@@ -682,17 +411,46 @@ export class BaseDemo {
                 "(in UD-Viz/UD-Viz-Core/examples/data/config/generalDemoConfig.json)";
         }
 
-        let $3dTilesLayer = new itowns.GeometryLayer(
-            this.config['3DTilesLayer'][layerConfig]['id'], new THREE.Group());
-        $3dTilesLayer.name = 'Lyon-2015-'.concat(layerConfig);
-        $3dTilesLayer.url =
-            this.config['3DTilesLayer'][layerConfig]['url'];
-        $3dTilesLayer.protocol = '3d-tiles';
-        
+        const extensionsConfig = this.config['3DTilesLayer'][layerConfig]
+        ['extensions'];
+        let extensions = new itowns.C3DTExtensions();
+        if (!!extensionsConfig) {
+            for (let i = 0; i < extensionsConfig.length ; i++) {
+                if (extensionsConfig[i] === "3DTILES_temporal") {
+                    extensions.registerExtension("3DTILES_temporal",
+                        { [itowns.C3DTilesTypes.batchtable]:
+                            $3DTemporalBatchTable,
+                          [itowns.C3DTilesTypes.boundingVolume]:
+                            $3DTemporalBoundingVolume,
+                          [itowns.C3DTilesTypes.tileset]:
+                            $3DTemporalTileset});
+                } else if (extensionsConfig[i] === 
+                    "3DTILES_batch_table_hierarchy") {
+                        extensions.registerExtension("3DTILES_batch_table_hierarchy",
+                        { [itowns.C3DTilesTypes.batchtable]:
+                          itowns.C3DTBatchTableHierarchyExtension });
+                } else {
+                    console.warn("The 3D Tiles extension " + extensionsConfig[i] + 
+                    " specified in generalDemoConfig.json is not supported " + 
+                    "by UD-Viz yet. Only 3DTILES_temporal and " + 
+                    "3DTILES_batch_table_hierarchy are supported.")
+                }
+            }  
+        }
+
+        var $3dTilesLayer = new itowns.C3DTilesLayer(
+            this.config['3DTilesLayer'][layerConfig]['id'], {
+                name: 'Lyon-2015-'.concat(layerConfig),
+                source: new itowns.C3DTilesSource({
+                    url: this.config['3DTilesLayer'][layerConfig]['url'],
+                }),
+                registeredExtensions: extensions
+            }, this.view);
+
         let material;
         if (this.config['3DTilesLayer'][layerConfig]['pc_size'])
         {
-            material = new THREE.PointsMaterial({ size: this.config['3DTilesLayer'][layerConfig]['pc_size'], vertexColors: THREE.VertexColors });
+            material = new THREE.PointsMaterial({ size: this.config['3DTilesLayer'][layerConfig]['pc_size'], vertexColors: true });
         }
         else if (!this.config['3DTilesLayer'][layerConfig]['color']) {
             material = new THREE.MeshLambertMaterial({ color: 0xFFFFFF });
@@ -704,14 +462,33 @@ export class BaseDemo {
         $3dTilesLayer.overrideMaterials = material;
         $3dTilesLayer.material = material;
 
-        itowns.View.prototype.addLayer.call(this.view, $3dTilesLayer);
+        const $3DTilesManager = new TilesManager(this.view,
+            $3dTilesLayer)
+        this.layerManager.tilesManagers.push($3DTilesManager);
 
-        
-        if (this.config['3DTilesLayer'][layerConfig]['initTilesManager']) {
-            // Initialize the 3DTiles manager
-            this.tilesManager = new TilesManager(this.view,
-                this.view.getLayerById(this.config['3DTilesLayer'][layerConfig]['id']));
-        }
+        return [$3dTilesLayer, $3DTilesManager];
+    }
+
+    /**
+     * Adds the specified 3D Tiles layer to the iTowns 3D view.
+     * @param {itowns.C3DTilesLayer} layer The layer to add to itowns view.
+     */
+    add3DTilesLayer(layer) {
+        itowns.View.prototype.addLayer.call(this.view, layer);
+    }
+    
+    /**
+     * Sets up a 3D Tiles layer and adds it to the itowns view (for the demos
+     * that don't need more granularity than that).
+     * @param {string} layerConfig The name of the layer to setup from the
+     * generalDemoConfig.json config file (should be one of the properties
+     * of the 3DTilesLayer object in 
+     * UD-Viz/UD-Viz-Core/examples/data/config/generalDemoConfig.json
+     * config file).
+     */
+    setupAndAdd3DTilesLayer(layerConfig) {
+        const [$3DTilesLayer] = this.setup3DTilesLayer(layerConfig);
+        this.add3DTilesLayer($3DTilesLayer);
     }
 
     /**
@@ -736,14 +513,33 @@ export class BaseDemo {
             'EPSG:3946',
             min_x, max_x,
             min_y, max_y);
+
+        // Get camera placement parameters from config
+        let coordinates = this.extent.center();
+        if (this.config['camera'][area]['position']['x']
+            && this.config['camera'][area]['position']['y']) {
+            coordinates = new itowns.Coordinates('EPSG:3946',
+                parseInt(this.config['camera'][area]['position']['x']),
+                parseInt(this.config['camera'][area]['position']['y']));
+        }
+        let heading = parseFloat(this.config['camera'][area]['position']['heading']);
+        let range = parseFloat(this.config['camera'][area]['position']['range']);
+        let tilt = parseFloat(this.config['camera'][area]['position']['tilt']);
+
         // `viewerDiv` will contain iTowns' rendering area (`<canvas>`)
         let viewerDiv = document.getElementById('viewerDiv');
         // Instantiate PlanarView (iTowns' view that will hold the layers)
         // The skirt allows to remove the cracks between the terrain tiles
         this.view = new itowns.PlanarView(viewerDiv, this.extent, {
-            disableSkirt: false
+            disableSkirt: false,
+            placement: {
+                coord: coordinates,
+                heading: heading,
+                range: range,
+                tilt: tilt
+            }
         });
-
+        this.layerManager = new LayerManager(this.view);
         // ********* 3D Elements
         // Lights
         let directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
@@ -755,28 +551,9 @@ export class BaseDemo {
         ambientLight.position.set(0, 0, 3000);
         directionalLight.updateMatrixWorld();
         this.view.scene.add(ambientLight);
-        // Camera
-
-        let coordinates = this.extent.center();
-        let range = parseFloat(this.config['camera'][area]['position']['range']);
-        let tilt = parseFloat(this.config['camera'][area]['position']['tilt']);
-        let heading = parseFloat(this.config['camera'][area]['position']['heading']);
-
-        if (this.config['camera'][area]['position']['x'] 
-          && this.config['camera'][area]['position']['y']) {
-          coordinates = new itowns.Coordinates('EPSG:3946',
-            parseInt(this.config['camera'][area]['position']['x']),
-            parseInt(this.config['camera'][area]['position']['y']));
-        }
-
-        let p = {
-            coord: coordinates, heading: heading, range: range, tilt: tilt
-          };
-
-        itowns.CameraUtils.transformCameraToLookAtTarget(this.view, this.view.camera.camera3D, p);
 
         // Controls
-        this.controls = new itowns.PlanarControls(this.view, {maxZenithAngle: 180, groundLevel: -100, handleCollision: false});
+        this.controls = new itowns.PlanarControls(this.view, { maxZenithAngle: 180, groundLevel: -100, handleCollision: false });
 
         // Set sky color to blue
         this.view.mainLoop.gfxEngine.renderer.setClearColor(0x6699cc, 1);
@@ -784,7 +561,7 @@ export class BaseDemo {
     /*
     * Updates the 3D view by notifying iTowns that it changed (e.g. because a layer has been added).
     */
-     update3DView() {
+    update3DView() {
         // Request itowns view redraw
         this.view.notifyChange();
     }
