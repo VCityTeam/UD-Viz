@@ -40,7 +40,8 @@ export class BaseDemo {
         config = config || {};
         this.iconFolder = config.iconFolder || 'icon';
         this.imageFolder = config.imageFolder || 'img';
-        this.logoIMUFile = config.logoIMUFile || 'logo-imu.png';
+        this.logoGrandLyonFile = config.logoGrandLyonFile || 'logo-grand-lyon.png';
+        this.logoUnivFile = config.logoUnivLyonFile || 'logo-univ-lyon.png';
         this.logoLIRISFile = config.logoLIRISFile || 'logo-liris.png';
     }
 
@@ -55,8 +56,9 @@ export class BaseDemo {
                     <div id="${this.authFrameLocationId}"></div>
                 </div>
                 <div id="_base_demo_struct_header_panel">
-                    <img id="logoIMU" src="${this.imageFolder}/${this.logoIMUFile}" />
+                    <img id="logoUnivLyon" src="${this.imageFolder}/${this.logoUnivFile}" />
                     <img id="logoLIRIS" src="${this.imageFolder}/${this.logoLIRISFile}" />
+                    <img id="logoGrandLyon" src="${this.imageFolder}/${this.logoGrandLyonFile}" />
                     <p style="display: inline-block; color: white; margin: 0;">
                         Icons made by <a href="https://www.freepik.com/"
                         title="Freepik">Freepik</a> from
