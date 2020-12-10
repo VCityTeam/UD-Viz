@@ -9,7 +9,7 @@ baseDemo.appendTo(document.body);
 
 baseDemo.loadConfigFile('../data/ConfigData/DemoConfigData.json').then(() => {
     // Initialize iTowns 3D view
-    baseDemo.init3DView('lyon_villeurbanne_bron');
+    baseDemo.init3DView('lyon_part_dieu');
     baseDemo.addLyonWMSLayer();
     //baseDemo.setupAndAdd3DTilesLayer('building');
     baseDemo.update3DView();

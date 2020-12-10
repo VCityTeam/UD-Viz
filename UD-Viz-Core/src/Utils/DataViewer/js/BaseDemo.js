@@ -441,10 +441,6 @@ export class BaseDemo {
 
         this.view.addLayer(wmsPolutedGroundLayer);
 
-
-
-
-
         ////---Add layer SHP---////
         // itowns.Fetcher.multiple('C:/Users/homer/Downloads/tcl_sytral_tcllignebus/tcl_sytral.tcllignebus', {
         //     arrayBuffer: ['shp', 'dbf', 'shx'],
@@ -526,6 +522,10 @@ export class BaseDemo {
             return color.set(0xff00ff);
         }
 
+        function colorEVA(properties) {
+            return color.set(0x0000ff);
+        }
+
         function colorSurfaceParcs() {
             return color.set(0x00ff00);
         }
@@ -560,8 +560,6 @@ export class BaseDemo {
             format: 'geojson',
         });
         
-
-
         var ParcsLayer = new itowns.GeometryLayer('wfs_Parc_Layer', new itowns.THREE.Group(), {
             update: itowns.FeatureProcessing.update,
             convert: itowns.Feature2Mesh.convert({
@@ -571,7 +569,7 @@ export class BaseDemo {
             source: ParcsSource,
         });
 
-        this.view.addLayer(ParcsLayer);
+        //this.view.addLayer(ParcsLayer);
 
         var BatimentsSource = new itowns.WFSSource({
             url: 'https://download.data.grandlyon.com/wfs/grandlyon?',
@@ -610,8 +608,6 @@ export class BaseDemo {
             format: 'geojson',
         });
 
-
-
         function acceptFeatureTree(properties) {
             if (properties.circonference_cm > 180) {
                 return true;
@@ -630,8 +626,6 @@ export class BaseDemo {
             source: wfstreeSource,
         });
 
-        //console.log(wfsTreeLayer);
-
         //this.view.addLayer(wfsTreeLayer);
         //this.view.removeLayer(wfsTreeLayer);
         
@@ -642,31 +636,6 @@ export class BaseDemo {
                 }
             });
         }
-
-        // var lyonPisteCyclablesBusSource = new itowns.WFSSource({
-        //     url: 'https://download.data.grandlyon.com/wfs/grandlyon?',
-        //     protocol: 'wfs',
-        //     version: '2.0.0',
-        //     id: 'pistes_cyclables',
-        //     typeName: 'pvo_patrimoine_voirie.pvoamenagementcyclable',
-        //     projection: 'EPSG:3946',
-        //     extent: this.extent,
-        //     format: 'geojson',
-        // });
-
-        // var lyonPisteCyclableBusLayer = new itowns.GeometryLayer('lyon_velo_bus', new itowns.THREE.Group(), {
-        //     update: itowns.FeatureProcessing.update,
-        //     convert: itowns.Feature2Mesh.convert(
-        //         {
-        //             color: colorLineVelos,
-        //         }
-        //     ),
-        //     //onMeshCreated: setMaterialLineWidth,
-        //     linewidth: 500,
-        //     source: lyonPisteCyclablesBusSource,
-        // });
-
-        //this.view.addLayer(lyonPisteCyclableBusLayer);
 
         var lyonTclMetroSource = new itowns.WFSSource({
             url: 'https://download.data.grandlyon.com/wfs/rdata?',
@@ -695,33 +664,7 @@ export class BaseDemo {
 
         this.view.addLayer(lyonTclMetroLayer);
 
-        let wfsClementSource = new itowns.WFSSource({
-            url: 'https://arcgis-portail.carl-source.com/arcgis/services/CCO_MAY/Carte_CCO_MAY_WMS_WFS/MapServer/WFSServer?',
-            protocol: 'wfs',
-            version: '2.0.0',
-            id: 'test_clement',
-            typeName: 'CCO_MAY_Carte_CCO_MAY_WMS_WFS:velov',
-            projection: 'RGF93',
-            extent: this.extent,
-            format: 'geojson',
-        });
-
-        //console.log(wfsClementSource);
-
-        var wfsClementLayer = new itowns.GeometryLayer('wfs_Clement_Layer', new itowns.THREE.Group(), {
-            update: itowns.FeatureProcessing.update,
-            convert: itowns.Feature2Mesh.convert(
-                {
-                    color: colorLineMetro,
-                }
-            ),
-            source: wfsClementSource,
-        });
-
-        //console.log(wfsClementLayer);
-
-        //this.view.addLayer(wfsClementLayer);
-
+        
         let wfsAssainissementSource = new itowns.WFSSource({
             url: 'http://localhost:8080/geoserver/cite/ows?',
             protocol: 'wfs',
@@ -733,7 +676,7 @@ export class BaseDemo {
             format: 'application/json',
         });
 
-        wfsAssainissementSource.url+="&callback=?";
+        //wfsAssainissementSource.url+="&callback=?";
         var wfsAssainissementLayer = new itowns.GeometryLayer('wfs_Assainissement_Layer', new itowns.THREE.Group(), {
             update: itowns.FeatureProcessing.update,
             convert: itowns.Feature2Mesh.convert(
@@ -747,6 +690,65 @@ export class BaseDemo {
 
 
         this.view.addLayer(wfsAssainissementLayer);
+
+        function acceptFeatureEVA(properties) {
+            //if (properties.Shape_Area > 30000) {
+                return true;
+            //}
+            return false;
+        }
+
+        let wfsEVA_STRSource = new itowns.WFSSource({
+            url: 'http://localhost:8080/geoserver/cite/ows?',
+            protocol: 'wfs',
+            version: '1.0.0',
+            id: 'wfs_EVA_STR',
+            typeName: 'cite:EVA2015_3STR',
+            projection: 'EPSG:3946',
+            extent: this.extent,
+            format: 'application/json',
+        });
+
+        wfsEVA_STRSource.url+="&callback=?";
+        var wfsEVA_STRLayer = new itowns.GeometryLayer('wfs_EVA_STR_Layer', new itowns.THREE.Group(), {
+            update: itowns.FeatureProcessing.update,
+            convert: itowns.Feature2Mesh.convert(
+                {
+                    altitude : 3,
+                    color: colorSurfaceParcs,
+                    //filter: acceptFeatureEVA
+                }
+            ),
+            source: wfsEVA_STRSource,
+        });
+
+        this.view.addLayer(wfsEVA_STRLayer);
+        
+        let wfsEVA_ArtifSource = new itowns.WFSSource({
+            url: 'http://localhost:8080/geoserver/cite/ows?',
+            protocol: 'wfs',
+            version: '1.0.0',
+            id: 'wfs_EVA_Artif',
+            typeName: 'cite:EVA2015_artif_sols_nus',
+            projection: 'EPSG:3946',
+            extent: this.extent,
+            format: 'application/json',
+        });
+
+        wfsEVA_ArtifSource.url+="&callback=?";
+        var wfsEVA_ArtifLayer = new itowns.GeometryLayer('wfs_EVA_Artif_Layer', new itowns.THREE.Group(), {
+            update: itowns.FeatureProcessing.update,
+            convert: itowns.Feature2Mesh.convert(
+                {
+                    altitude : 2,
+                    color: colorEVA,
+                    filter: acceptFeatureEVA
+                }
+            ),
+            source: wfsEVA_ArtifSource,
+        });
+
+        this.view.addLayer(wfsEVA_ArtifLayer);
     }
 
     /**
