@@ -56,8 +56,8 @@ export class BaseDemo {
                     <div id="${this.authFrameLocationId}"></div>
                 </div>
                 <div id="_base_demo_struct_header_panel">
-                    <img id="logoUnivLyon" src="${this.imageFolder}/${this.logoUnivFile}" />
                     <img id="logoLIRIS" src="${this.imageFolder}/${this.logoLIRISFile}" />
+                    <img id="logoUnivLyon" src="${this.imageFolder}/${this.logoUnivFile}" />
                     <img id="logoGrandLyon" src="${this.imageFolder}/${this.logoGrandLyonFile}" />
                     <p style="display: inline-block; color: white; margin: 0;">
                         Icons made by <a href="https://www.freepik.com/"
@@ -592,7 +592,7 @@ export class BaseDemo {
             source: BatimentsSource,
         });
 
-        //this.view.addLayer(BatimentsLayer);
+        this.view.addLayer(BatimentsLayer);
 
 
         let imaterial = new THREE.PointsMaterial({ size: 50, vertexColors: THREE.VertexColors });
@@ -714,9 +714,8 @@ export class BaseDemo {
             update: itowns.FeatureProcessing.update,
             convert: itowns.Feature2Mesh.convert(
                 {
-                    altitude : 3,
+                    altitude : 30,
                     color: colorSurfaceParcs,
-                    //filter: acceptFeatureEVA
                 }
             ),
             source: wfsEVA_STRSource,
@@ -748,7 +747,7 @@ export class BaseDemo {
             source: wfsEVA_ArtifSource,
         });
 
-        this.view.addLayer(wfsEVA_ArtifLayer);
+        //this.view.addLayer(wfsEVA_ArtifLayer);
     }
 
     /**

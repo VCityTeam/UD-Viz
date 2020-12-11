@@ -26,7 +26,7 @@
   "camera": {
     "lyon_part_dieu":{
       "position": {
-        "range": "700",
+        "range": "800",
         "heading": "0",
         "tilt": "90"
       }
@@ -38,48 +38,6 @@
       "url":"http://rict2.liris.cnrs.fr/DataStore/Lyon-2015-gltf-repaired/tileset.json",
       "color": "0xFFFFFF",
       "initTilesManager": "true"
-    },
-    "limonest_building":{
-      "id":"3d-tiles-layer-building",
-      "url":"http://rict2.liris.cnrs.fr/DataStore/limonest_tiles/tileset.json",
-      "color": "0xFFFFFF",
-      "initTilesManager": "true"
-    },
-    "bron_building":{
-      "id":"3d-tiles-layer-building",
-      "url":"http://rict2.liris.cnrs.fr/DataStore/bron_tiles/tileset.json",
-      "color": "0xFFFFFF",
-      "initTilesManager": "true"
-    },
-    "point_clouds":{
-      "id":"3d-tiles-layer-point-clouds",
-      "url":"http://rict2.liris.cnrs.fr/DataStore/point_clouds_tiles/tileset.json",
-      "color": "0xFFFFFF",
-      "pc_size":2,
-      "initTilesManager": "true"
-    },
-    "building_1_2_5":{
-      "id":"3d-tiles-layer-building_1_2_5",
-      "url":"http://rict.liris.cnrs.fr/DataStore/TileSets_Demo_MultiLayerLyon1_Lyon2_Lyon5_2015/tileset_buildings/tileset.json",
-      "color": "0xFFFFFF",
-      "initTilesManager": "true"
-    },
-    "relief":{
-      "id":"3d-tiles-layer-relief",
-      "url":"http://rict.liris.cnrs.fr/DataStore/TileSets_Demo_MultiLayerLyon1_Lyon2_Lyon5_2015/tileset_reliefs/tileset.json",
-      "color": "0xD2B48C"
-    },
-    "water":{
-      "id":"3d-tiles-layer-water",
-      "url":"http://rict.liris.cnrs.fr/DataStore/TileSets_Demo_MultiLayerLyon1_Lyon2_Lyon5_2015/tileset_water_bodies/tileset.json",
-      "color": "0xB0E0E6"
-    },
-    "lyon2009-2015":{
-      "id": "3d-tiles-layer-temporal",
-      "url":"http://rict.liris.cnrs.fr/DataStore/Lyon1er-2009-2015/tileset.json",
-      "color": "0xFFFFFF",
-      "initTilesManager": "true",
-      "extensions":["3DTILES_temporal"]
     }
   },
   "temporalModule": {
