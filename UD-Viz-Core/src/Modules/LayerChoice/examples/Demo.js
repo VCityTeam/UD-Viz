@@ -11,8 +11,8 @@ baseDemo.loadConfigFile('../../../../examples/data/config/generalDemoConfig.json
     // Initialize iTowns 3D view
     baseDemo.init3DView('lyon_villeurbanne_bron');
     baseDemo.addLyonWMSLayer();
-    baseDemo.add3DTilesLayer('building');
-    baseDemo.add3DTilesLayer('building_1_2_5');
+    baseDemo.setupAndAdd3DTilesLayer('building');
+    baseDemo.setupAndAdd3DTilesLayer('building_1_2_5');
     baseDemo.update3DView();
 
     ////// LAYER CHOICE

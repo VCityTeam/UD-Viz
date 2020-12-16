@@ -54,6 +54,12 @@
       "min_y": "5171200",
       "max_y": "5176900"
     },
+    "lyon_1": {
+      "min_x": "1837860.980127206",
+      "max_x": "1847648.6685636174",
+      "min_y": "5169347.42659997",
+      "max_y": "5180280.0400808845"
+    },
     "lyon_all_districts": {
       "min_x": "1837860.980127206",
       "max_x": "1847648.6685636174",
@@ -87,11 +93,25 @@
         "tilt": "17"
       }
     },
+    "lyon_all_districts": {
+      "position": {
+        "range": "3000",
+        "heading": "-49.6",
+        "tilt": "17"
+      }
+    },
     "lyon_1_2_5": {
       "position": {
         "range": "3000",
         "heading": "-49.6",
         "tilt": "17"
+      }
+    },
+    "lyon_1": {
+      "position": {
+        "range": "2600",
+        "heading": "5",
+        "tilt": "28"
       }
     },
     "limonest": {
@@ -152,7 +172,21 @@
       "id":"3d-tiles-layer-water",
       "url":"http://rict.liris.cnrs.fr/DataStore/TileSets_Demo_MultiLayerLyon1_Lyon2_Lyon5_2015/tileset_water_bodies/tileset.json",
       "color": "0xB0E0E6"
+    },
+    "lyon2009-2015":{
+      "id": "3d-tiles-layer-temporal",
+      "url":"http://rict.liris.cnrs.fr/DataStore/Lyon1er-2009-2015/tileset.json",
+      "color": "0xFFFFFF",
+      "initTilesManager": "true",
+      "extensions":["3DTILES_temporal"]
     }
+  },
+  "temporalModule": {
+    "view": "SLIDERWINDOW",
+    "minTime": 2009,
+    "maxTime": 2015,
+    "currentTime": 2009,
+    "timeStep": 1
   },
   "geocoding": {
     "url": "https://nominatim.openstreetmap.org/search",
