@@ -7,11 +7,11 @@ let baseDemo = new BaseDemo({
 
 baseDemo.appendTo(document.body);
 
-baseDemo.loadConfigFile('../data/ConfigData/DemoConfigData.json').then(() => {
+baseDemo.loadConfigFile('./DemoConfigData.json').then(() => {
     // Initialize iTowns 3D view
     baseDemo.init3DView('lyon_part_dieu');
     baseDemo.addLyonWMSLayer();
-    //baseDemo.setupAndAdd3DTilesLayer('building');
+    baseDemo.setupAndAdd3DTilesLayer('building');
     baseDemo.update3DView();
 
     ////// REQUEST SERVICE
