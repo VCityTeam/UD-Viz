@@ -1,12 +1,12 @@
 # UD-Viz : Urban Data Vizualisation
 
 UD-Viz is a JavaScript client based on [iTowns](https://github.com/itowns/itowns) 
-allowing to visualize, analyse and interact with urban data.
-You can find install notes 
-[here](https://github.com/MEPP-team/UD-Viz/blob/master/install.md). UD-Viz's code is
+allowing to visualize, analyse and interact with urban data. UD-Viz's code is
 located in [UD-Viz-Core](UD-Viz-Core) folder.
 
 Server-side tools can be found [here](https://github.com/MEPP-team/UD-Viz-server).
+## Installation
+You can find install notes [here](https://github.com/MEPP-team/UD-Viz/blob/master/install.md).
 
 ## Demo
 Online demos :
