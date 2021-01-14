@@ -1,11 +1,24 @@
-var path = require('path');
-var webpack = require('webpack');
+const fs = require('fs');
+const path = require('path');
 
-var commonConfig = require('./webpack-common.config.js');
+const commonConfig = require('./webpack-common.config.js');
 
-var definePlugin = new webpack.DefinePlugin({
-    __DEBUG__: JSON.stringify(process.env.NODE_ENV === 'development'),
-});
+const debugBuild = process.env.NODE_ENV === 'development';
+
+var babelrc = fs.readFileSync(path.resolve(__dirname, '.babelrc'));
+var babelConf = JSON.parse(babelrc);
+var newPresets = [];
+for (var preset of babelConf.presets) {
+    if (!Array.isArray(preset)) {
+        preset = [preset];
+    }
+    newPresets.push(preset);
+}
+
+babelConf.presets = newPresets;
+babelConf.babelrc = false; // disable babelrc reading, as we've just done it
+const replacementPluginConf = babelConf.plugins.find(plugin => Array.isArray(plugin) && plugin[0] === 'minify-replace');
+replacementPluginConf[1].replacements.find(decl => decl.identifierName === '__DEBUG__').replacement.value = debugBuild;
 
 module.exports = {
     entry: {
@@ -19,10 +32,9 @@ module.exports = {
         libraryTarget: 'umd',
         umdNamedDefine: true,
     },
-    plugins: [
-        definePlugin,
-        new webpack.optimize.CommonsChunkPlugin({ name: 'udvcore' }),
-    ],
+    optimization: {
+        runtimeChunk: { name: 'udvcore' },
+    },
     module: {
         rules: [
             {
@@ -31,14 +43,10 @@ module.exports = {
                     path.resolve(__dirname, 'src'),
                 ],
                 loader: 'babel-loader',
-                // Please consider modifying .babelrc too
+                // Please make babel modifications in the .babelrc file
                 // .babelrc is used for transpiling src/ into lib/ in the prepublish
                 // phase, see package.json
-                options: {
-                    presets: ['env'],
-                    plugins: ['transform-runtime'],
-                    babelrc: false,
-                },
+                options: babelConf,
             },
             {
                 // We also want to (web)pack the style files:
