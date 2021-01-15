@@ -7,3 +7,4 @@ before_install:
 
 install:
   - npm run lint
+  - npm install
