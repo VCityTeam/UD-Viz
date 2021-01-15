@@ -1,0 +1,9 @@
+language: node_js
+node_js:
+  - 15
+
+before_install:
+  - npm --version
+
+install:
+  - npm run lint
