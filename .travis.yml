@@ -1,10 +1,18 @@
+os: linux
+dist: focal
 language: node_js
 node_js:
   - 15
 
 before_install:
   - npm --version
+  - cd UD-Viz-Core
+
+jobs:
+  include:
+    - stage: lint
+      script:
+        - npm run lint
 
 install:
-  - npm run lint
   - npm install
