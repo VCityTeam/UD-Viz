@@ -1,58 +1,62 @@
 // Service used to make HTTP requests and manage authentication
 // Wiki : https://github.com/MEPP-team/UD-Viz/wiki/Request-Service#request-service
 export function RequestService() {
+    // eslint-disable-next-line no-unused-expressions
     this.authenticationService;
     this.useAuthentication = false;
 
+    // eslint-disable-next-line func-names
     this.initialize = function () {
 
     };
 
     /**
      * @deprecated Prefer using `RequestService.request` instead.
+     * // eslint-disable-next-line valid-jsdoc
      */
+    // eslint-disable-next-line func-names
     this.send = function (method, url, body = '', authenticate = true) {
         return this.request(method, url, {
             body: body,
-            authenticate: authenticate
+            authenticate: authenticate,
         });
     };
 
     /**
      * Performs an HTTP request.
-     * 
+     *
      * @async
      * @param {string} method The HTTP method. Accepted methods include `GET`,
      * `DELETE`, `POST` and `PUT`.
      * @param {string} url The requested URL.
-     * @param {object} [options] A dictionnary of optional parameters. These
+     * @param {object} [options] A dictionary of optional parameters. These
      * options include the following :
      * @param {FormData | string} [options.body] The request body
      * @param {boolean} [options.authenticate] Set to `false` if you don't want
      * the request to use authentication.
      * @param {XMLHttpRequestResponseType} [options.responseType] The expected
      * response type.
-     * @param {Object.<string, string>} [options.urlParameters] A dictionnary of
+     * @param {Object.<string, string>} [options.urlParameters] A dictionary of
      * URL parameters.
-     * 
+     *
      * @returns {Promise<XMLHttpRequest>}
      */
     this.request = (method, url, options = {}) => {
-        let args = options || {};
-        let body = args.body || '';
+        const args = options || {};
+        const body = args.body || '';
         let authenticate = (args.authenticate !== null
-                            && args.authenticate !== undefined)?
+                            && args.authenticate !== undefined) ?
                             args.authenticate : true;
         if (authenticate === 'auto') {
             authenticate = !!window.sessionStorage.getItem('user.token');
         }
-        let responseType = args.responseType || null;
-        let urlParameters = args.urlParameters || null;
+        const responseType = args.responseType || null;
+        const urlParameters = args.urlParameters || null;
         return new Promise((resolve, reject) => {
-            let req = new XMLHttpRequest();
+            const req = new XMLHttpRequest();
             if (!!urlParameters) {
                 url += '?';
-                for (let [paramKey, paramValue] of Object.entries(urlParameters)) {
+                for (const [paramKey, paramValue] of Object.entries(urlParameters)) {
                     url += `${encodeURIComponent(paramKey)}=${encodeURIComponent(paramValue)}&`;
                 }
             }
@@ -70,7 +74,7 @@ export function RequestService() {
             if (!!responseType) {
                 req.responseType = responseType;
             }
-            
+
             req.send(body);
 
             req.onload = () => {
@@ -79,10 +83,11 @@ export function RequestService() {
                 } else {
                     reject(req.responseText);
                 }
-            }
+            };
         });
     };
 
+    // eslint-disable-next-line func-names
     this.setAuthenticationService = function (authenticationService) {
         this.authenticationService = authenticationService;
         this.useAuthentication = true;
