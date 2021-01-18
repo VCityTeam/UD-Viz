@@ -16,4 +16,5 @@ jobs:
   include:
     - stage: lint
       script:
+        - ./node_modules/eslint/bin/eslint.js --version
         - npm run lint
