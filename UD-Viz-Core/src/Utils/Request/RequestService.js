@@ -17,7 +17,9 @@ export function RequestService() {
     // eslint-disable-next-line func-names
     this.send = function (method, url, body = '', authenticate = true) {
         return this.request(method, url, {
+            // eslint-disable-next-line object-shorthand
             body: body,
+            // eslint-disable-next-line object-shorthand
             authenticate: authenticate,
         });
     };
@@ -54,7 +56,7 @@ export function RequestService() {
         const urlParameters = args.urlParameters || null;
         return new Promise((resolve, reject) => {
             const req = new XMLHttpRequest();
-            if (!!urlParameters) {
+            if (!!urlParameters) { // eslint-disable-line no-extra-boolean-cast
                 url += '?';
                 for (const [paramKey, paramValue] of Object.entries(urlParameters)) {
                     url += `${encodeURIComponent(paramKey)}=${encodeURIComponent(paramValue)}&`;
@@ -71,7 +73,7 @@ export function RequestService() {
                 req.setRequestHeader('Authorization', `Bearer ${token}`);
             }
 
-            if (!!responseType) {
+            if (!!responseType) { // eslint-disable-line no-extra-boolean-cast
                 req.responseType = responseType;
             }
 

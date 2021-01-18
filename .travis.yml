@@ -9,11 +9,11 @@ before_install:
   - npm install -g npm@6.14.10
   - npm --version
 
+install:
+  - npm install
+
 jobs:
   include:
     - stage: lint
       script:
         - npm run lint
-
-install:
-  - npm install
