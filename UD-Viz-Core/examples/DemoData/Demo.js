@@ -11,6 +11,8 @@ baseDemo.loadConfigFile('./DemoConfigData.json').then(() => {
     // Initialize iTowns 3D view
     baseDemo.init3DView('lyon_part_dieu');
     baseDemo.addLyonWMSLayer();
+    baseDemo.addLyonImageryLayers();
+    baseDemo.addLyonGeometryLayers();
     baseDemo.setupAndAdd3DTilesLayer('building');
     baseDemo.update3DView();
 

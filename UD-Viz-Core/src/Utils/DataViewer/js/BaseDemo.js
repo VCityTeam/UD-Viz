@@ -22,7 +22,6 @@ export class BaseDemo {
         this.parentElement;
         this.view;  // itowns view (3d scene)
         this.extent;  // itowns extent (city limits)
-        this.additionalExtents = [];
         this.controls;
         /**
          * Object used to manage all of the layer.
@@ -353,6 +352,7 @@ export class BaseDemo {
     /**
      * Adds WMS elevation Layer of Lyon in 2012 and WMS imagery layer of Lyon in 2009 (from Grand Lyon data).
      */
+
     addLyonWMSLayer() {
 
         // Add WMS imagery layers
@@ -375,7 +375,7 @@ export class BaseDemo {
         });
 
         this.view.addLayer(wmsImageryLayer);
-
+        
         // Add a WMS elevation source
         let wmsElevationSource = new itowns.WMSSource({
             extent: this.extent,
@@ -396,7 +396,10 @@ export class BaseDemo {
         });
 
         this.view.addLayer(wmsElevationLayer);
+    }
 
+    addLyonImageryLayers()
+    {
         let wmsPolutedGroundSource = new itowns.WMSSource({
             extent: this.extent,
             name: 'SSP_CLASSIFICATION',
@@ -417,101 +420,21 @@ export class BaseDemo {
         });
 
         this.view.addLayer(wmsPolutedGroundLayer);
+    }
 
-        // WIP
-                ////---Add layer SHP---////
-                // itowns.Fetcher.multiple('C:/Users/homer/Downloads/tcl_sytral_tcllignebus/tcl_sytral.tcllignebus', {
-                //     arrayBuffer: ['shp', 'dbf', 'shx'],
-                //     text: ['prj'],
-                // }).then(function _(res) {
-                //     return itowns.ShapefileParser.parse(res, {
-                //         out: {
-                //             crs: this.extent,
-                //             buildExtent: true,
-                //         }
-                //     });
-                // }).then(function _(features) {
-                //     var velibSource = new itowns.FileSource({ features });
-
-
-                //     var velibLayer = new itowns.ColorLayer('velib', {
-                //         source: velibSource,
-                //         //labelEnabled: true,
-                //     });
-
-
-                //     return this.view.addLayer(velibLayer);
-                // });
-
-                //var jpp = this;
-                //console.log(jpp);
-
-                // Promise.all([
-                //     itowns.Fetcher.arrayBuffer('https://raw.githubusercontent.com/iTowns/iTowns2-sample-data/master/shapefile/velib-disponibilite-en-temps-reel.shp'),
-                //     itowns.Fetcher.arrayBuffer('https://raw.githubusercontent.com/iTowns/iTowns2-sample-data/master/shapefile/velib-disponibilite-en-temps-reel.dbf'),
-                //     itowns.Fetcher.arrayBuffer('https://raw.githubusercontent.com/iTowns/iTowns2-sample-data/master/shapefile/velib-disponibilite-en-temps-reel.shx'),
-                //     itowns.Fetcher.text('https://raw.githubusercontent.com/iTowns/iTowns2-sample-data/master/shapefile/velib-disponibilite-en-temps-reel.prj'),
-                // ]).then(function _(res) {
-                //     console.log(jpp);
-                //     return itowns.ShapefileParser.parse({
-                //         shp: res[0],
-                //         dbf: res[1],
-                //         shx: res[2],
-                //         prj: res[3],
-                //     }, {
-                //            in: {
-                //              crs: 'EPSG:3946',
-                //         },
-                //         out: {
-                //             crs: "EPSG:3946",
-                //             buildExtent: true,
-                //         }
-                //     });
-                // }).then(function _(geojson) {
-                //     var source = new FileSource({ features: geojson });
-                //     var layer = new ColorLayer('velib', { source  });
-                //     this.view.addLayer(layer);
-                // });
-
-
-
-                // var tiffSource = new itowns.TMSSource({
-                //     url: 'https://raw.githubusercontent.com/iTowns/iTowns2-sample-data/master/geoid/localcolors/tiff/${z}/localcolors_${x}_${y}.tif',
-                //     tileMatrixSet: 'WGS84G',
-                //     crs: this.extent,
-                //     projection: 
-                //     parser: TIFFParser.parse,
-                //     fetcher: itowns.Fetcher.arrayBuffer,
-                // });
-
-                // tiffSource.isInverted = true;
-
-                // var tiffLayer = new itowns.ColorLayer('tiff', {
-                //     source: tiffSource,
-                // });
-
-                // this.view.addLayer(tiffLayer)
-
-        ////---Add layer JSON---////
+    addLyonGeometryLayers()
+    {
+        var color = new itowns.THREE.Color();
 
         function colorLineRoads() {
             return color.set(0xffff00);
         }
 
-        var color = new itowns.THREE.Color();
-        function colorLineMetro() {
+        function colorLineRails() {
             return color.set(0xff0000);
         }
 
-        function colorLineTram() {
-            return color.set(0xff55ff);
-        }
-
-        function colorLineBus() {
-            return color.set(0xffb0ff);
-        }
-
-        function colorEVA(properties) {
+        function colorEVAArtif(properties) {
             return color.set(0x0000ff);
         }
 
@@ -529,49 +452,11 @@ export class BaseDemo {
             return color.set(0x00ff00);
         }
 
-        function colorSurfaceParcs() {
-            return color.set(0x00ff00);
-        }
-
         function colorSurfaceBatiments() {
             return color.set(0x00ffff);
         }
 
-        function colorPointsTrees(properties) {
-            if (properties.circonference_cm > 180 ) 
-            {
-                return color.set(0xff0000);
-            }
-            else
-            if(properties.circonference_cm > 140)
-            {
-                return color.set(0xff7b00);
-            }
-            else
-            return color.set(0xffff00);
-        }
-
-        var ParcsSource = new itowns.WFSSource({
-            url: 'https://download.data.grandlyon.com/wfs/grandlyon?',
-            protocol: 'wfs',
-            version: '2.0.0',
-            id: 'parcs',
-            typeName: 'com_donnees_communales.comparcjardin_1_0_0',
-            projection: 'EPSG:3946',
-            extent: this.additionalExtents[0],
-            format: 'geojson',
-        });
-        
-        var ParcsLayer = new itowns.GeometryLayer('wfs_Parc_Layer', new itowns.THREE.Group(), {
-            update: itowns.FeatureProcessing.update,
-            convert: itowns.Feature2Mesh.convert({
-                altitude: 2,
-                color: colorSurfaceParcs,
-            }),
-            source: ParcsSource,
-        });
-
-        //this.view.addLayer(ParcsLayer);
+        ////---DataGrandLyon Layers---////
 
         var BatimentsSource = new itowns.WFSSource({
             url: 'https://download.data.grandlyon.com/wfs/grandlyon?',
@@ -580,7 +465,7 @@ export class BaseDemo {
             id: 'batiments',
             typeName: 'cad_cadastre.cadbatiment',
             projection: 'EPSG:3946',
-            extent: this.additionalExtents[0],
+            extent: this.extent,
             format: 'geojson',
         });
         
@@ -594,126 +479,6 @@ export class BaseDemo {
         });
 
         this.view.addLayer(BatimentsLayer);
-
-        // let wfstreeSource = new itowns.WFSSource({
-        //     url: 'https://download.data.grandlyon.com/wfs/grandlyon?',
-        //     protocol: 'wfs',
-        //     version: '2.0.0',
-        //     id: 'arbres_ali',
-        //     typeName: 'abr_arbres_alignement.abrarbre',
-        //     projection: 'EPSG:3946',
-        //     extent: this.additionalExtents[0],
-        //     format: 'geojson',
-        // });
-
-        // let wfsTreeLayer = new itowns.GeometryLayer('wfs_Tree_Layer', new itowns.THREE.Group(),{
-        //     update: itowns.FeatureProcessing.update,
-        //     convert: itowns.Feature2Mesh.convert({
-        //         altitude: 4,
-        //         color : colorPointsTrees,
-        //     }),
-        //     source: wfstreeSource,
-        // });
-
-        // this.view.addLayer(wfsTreeLayer);
-
-        // var lyonRoadsSource = new itowns.WFSSource({
-        //     url: 'https://download.data.grandlyon.com/wfs/grandlyon?',
-        //     protocol: 'wfs',
-        //     version: '2.0.0',
-        //     id: 'roads',
-        //     typeName: 'pvo_patrimoine_voirie.pvochausseetrottoir',
-        //     projection: 'EPSG:3946',
-        //     extent: this.additionalExtents[0],
-        //     format: 'geojson',
-        // });
-
-        // var lyonRoadsLayer = new itowns.GeometryLayer('wfs_Roads_Layer', new itowns.THREE.Group(), {
-        //     update: itowns.FeatureProcessing.update,
-        //     convert: itowns.Feature2Mesh.convert(
-        //         {
-        //             altitude : 5,
-        //             color: colorLineRoads,
-        //         }),
-        //     linewidth: 500,
-        //     source: lyonRoadsSource,
-        // });
-
-        // this.view.addLayer(lyonRoadsLayer);
-
-        // var lyonTclMetroSource = new itowns.WFSSource({
-        //     url: 'https://download.data.grandlyon.com/wfs/rdata?',
-        //     protocol: 'wfs',
-        //     version: '2.0.0',
-        //     id: 'tcl_metro',
-        //     typeName: 'tcl_sytral.tcllignemf_2_0_0',
-        //     projection: 'EPSG:3946',
-        //     extent: this.additionalExtents[0],
-        //     format: 'geojson',
-        // });
-
-        // console.log(lyonTclMetroSource.extent);
-
-        // var lyonTclMetroLayer = new itowns.GeometryLayer('wfs_Metro_Layer', new itowns.THREE.Group(), {
-        //     update: itowns.FeatureProcessing.update,
-        //     convert: itowns.Feature2Mesh.convert(
-        //         {
-        //             altitude : 5,
-        //             color: colorLineMetro,
-        //         }),
-        //     linewidth: 500,
-        //     source: lyonTclMetroSource,
-        // });
-
-        // this.view.addLayer(lyonTclMetroLayer);
-
-        // var lyonTclBusSource = new itowns.WFSSource({
-        //     url: 'https://download.data.grandlyon.com/wfs/rdata?',
-        //     protocol: 'wfs',
-        //     version: '2.0.0',
-        //     id: 'tcl_bus',
-        //     typeName: 'tcl_sytral.tcllignebus_2_0_0',
-        //     projection: 'EPSG:3946',
-        //     extent: this.extent,
-        //     format: 'geojson',
-        // });
-
-        // var lyonTclBusLayer = new itowns.GeometryLayer('wfs_Bus_Layer', new itowns.THREE.Group(), {
-        //     update: itowns.FeatureProcessing.update,
-        //     convert: itowns.Feature2Mesh.convert(
-        //         {
-        //             altitude : 5,
-        //             color: colorLineBus,
-        //         }),
-        //     linewidth: 500,
-        //     source: lyonTclBusSource,
-        // });
-
-        // this.view.addLayer(lyonTclBusLayer);
-
-        // var lyonTclTramSource = new itowns.WFSSource({
-        //     url: 'https://download.data.grandlyon.com/wfs/rdata?',
-        //     protocol: 'wfs',
-        //     version: '2.0.0',
-        //     id: 'tcl_tram',
-        //     typeName: 'tcl_sytral.tcllignetram_2_0_0',
-        //     projection: 'EPSG:3946',
-        //     extent: this.extent,
-        //     format: 'geojson',
-        // });
-
-        // var lyonTclTramLayer = new itowns.GeometryLayer('wfs_Tram_Layer', new itowns.THREE.Group(), {
-        //     update: itowns.FeatureProcessing.update,
-        //     convert: itowns.Feature2Mesh.convert(
-        //         {
-        //             altitude : 5,
-        //             color: colorLineTram,
-        //         }),
-        //     linewidth: 500,
-        //     source: lyonTclTramSource,
-        // });
-
-        // this.view.addLayer(lyonTclTramLayer);
      
         ////---GeoServer layers---////
 
@@ -757,7 +522,7 @@ export class BaseDemo {
             convert: itowns.Feature2Mesh.convert(
                 {
                     altitude : 170.4,
-                    color: colorLineMetro,
+                    color: colorLineRails,
                 }
             ),
             source: wfsRailsSource,
@@ -787,7 +552,6 @@ export class BaseDemo {
             source: wfsEVA_STRSource,
         });
 
-
         this.view.addLayer(wfsEVA_STRLayer);
         
         let wfsEVA_ArtifSource = new itowns.WFSSource({
@@ -801,22 +565,20 @@ export class BaseDemo {
             format: 'application/json',
         });
 
-        //wfsEVA_ArtifSource.url+="&callback=?";
         var wfsEVA_ArtifLayer = new itowns.GeometryLayer('EVA_Artif_Sols_Nus', new itowns.THREE.Group(), {
             update: itowns.FeatureProcessing.update,
             convert: itowns.Feature2Mesh.convert(
                 {
                     altitude : 170.3,
-                    color: colorEVA,
+                    color: colorEVAArtif,
                 }
             ),
             source: wfsEVA_ArtifSource,
         });
 
-        //this.view.addLayer(wfsEVA_ArtifLayer);
+        this.view.addLayer(wfsEVA_ArtifLayer);
 
-
-        ///////---Masks---///////
+        ////---Masks---////
         let wfsMaskASource = new itowns.WFSSource({
             url: 'http://localhost:8080/geoserver/cite/ows?',
             protocol: 'wfs',
@@ -833,7 +595,7 @@ export class BaseDemo {
             convert: itowns.Feature2Mesh.convert(
                 {
                     altitude : 170,
-                    color: colorEVA,
+                    color: colorEVAArtif,
                 }
             ),
             source: wfsMaskASource,
@@ -857,7 +619,7 @@ export class BaseDemo {
             convert: itowns.Feature2Mesh.convert(
                 {
                     altitude : 170,
-                    color: colorEVA,
+                    color: colorEVAArtif,
                 }
             ),
             source: wfsMaskBSource,
@@ -881,7 +643,7 @@ export class BaseDemo {
             convert: itowns.Feature2Mesh.convert(
                 {
                     altitude : 170,
-                    color: colorEVA,
+                    color: colorEVAArtif,
                 }
             ),
             source: wfsMaskCSource,
