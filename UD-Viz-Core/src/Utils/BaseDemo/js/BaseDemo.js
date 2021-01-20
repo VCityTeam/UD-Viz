@@ -10,7 +10,6 @@ import { $3DTemporalTileset } from '../../../Modules/Temporal/Model/3DTemporalTi
  * Represents the base HTML content of a demo for UD-Viz and provides methods to
  * dynamically add module views.
  */
-
 export class BaseDemo {
     constructor(config = {}) {
         this.modules = {};
@@ -24,13 +23,11 @@ export class BaseDemo {
         this.view;  // itowns view (3d scene)
         this.extent;  // itowns extent (city limits)
         this.controls;
-
         /**
          * Object used to manage all of the layer.
          *
          * @type {LayerManager}
          */
-
         this.layerManager;
         ///// Config values for some file paths
         // iconFolder    : folder for icons (for the modules menu)
@@ -362,20 +359,18 @@ export class BaseDemo {
             projection: 'EPSG:3946',
             format: 'image/jpeg',
         });
-
-
-
         // Add a WMS imagery layer
-        let wmsImageryLayer = new itowns.ColorLayer('wms_Map_Background', {
+        let wmsImageryLayer = new itowns.ColorLayer('wms_imagery', {
             updateStrategy: {
                 type: itowns.STRATEGY_DICHOTOMY,
                 options: {},
             },
             source: wmsImagerySource,
+            transparent: true
         });
         this.view.addLayer(wmsImageryLayer);
 
-        // // // Add a WMS elevation source
+        // Add a WMS elevation source
         let wmsElevationSource = new itowns.WMSSource({
             extent: this.extent,
             url: 'https://download.data.grandlyon.com/wms/grandlyon',
@@ -393,9 +388,6 @@ export class BaseDemo {
             source: wmsElevationSource,
         });
         this.view.addLayer(wmsElevationLayer);
-
-
-
     }
 
     /**
@@ -538,8 +530,14 @@ export class BaseDemo {
         let viewerDiv = document.getElementById('viewerDiv');
         // Instantiate PlanarView (iTowns' view that will hold the layers)
         // The skirt allows to remove the cracks between the terrain tiles
+        // Instantiate controls within PlanarView
         this.view = new itowns.PlanarView(viewerDiv, this.extent, {
             disableSkirt: false,
+            controls: {
+                maxZenithAngle: 180,
+                groundLevel: -100,
+                handleCollision: false
+            },
             placement: {
                 coord: coordinates,
                 heading: heading,
@@ -561,7 +559,7 @@ export class BaseDemo {
         this.view.scene.add(ambientLight);
 
         // Controls
-        this.controls = new itowns.PlanarControls(this.view, { maxZenithAngle: 180, groundLevel: -100, handleCollision: false });
+        this.controls = this.view.controls
 
         // Set sky color to blue
         this.view.mainLoop.gfxEngine.renderer.setClearColor(0x6699cc, 1);

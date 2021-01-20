@@ -1,10 +1,10 @@
-import { ModuleView } from '../../ModuleView/ModuleView.js';
-import { TilesManager } from '../../3DTiles/TilesManager.js';
-import { LayerManager } from '../../LayerManager/LayerManager.js';
+import { ModuleView } from '../../src/Utils/ModuleView/ModuleView.js';
+import { TilesManager } from '../../src/Utils/3DTiles/TilesManager.js';
+import { LayerManager } from '../../src/Utils/LayerManager/LayerManager.js';
 
-import { $3DTemporalBatchTable } from '../../../Modules/Temporal/Model/3DTemporalBatchTable.js';
-import { $3DTemporalBoundingVolume } from '../../../Modules/Temporal/Model/3DTemporalBoundingVolume.js';
-import { $3DTemporalTileset } from '../../../Modules/Temporal/Model/3DTemporalTileset.js';
+import { $3DTemporalBatchTable } from '../../src/Modules/Temporal/Model/3DTemporalBatchTable.js';
+import { $3DTemporalBoundingVolume } from '../../src/Modules/Temporal/Model/3DTemporalBoundingVolume.js';
+import { $3DTemporalTileset } from '../../src/Modules/Temporal/Model/3DTemporalTileset.js';
 
 /**
  * Represents the base HTML content of a demo for UD-Viz and provides methods to
@@ -569,7 +569,7 @@ export class BaseDemo {
             update: itowns.FeatureProcessing.update,
             convert: itowns.Feature2Mesh.convert(
                 {
-                    altitude : 170.3,
+                    altitude : 170,
                     color: colorEVAArtif,
                 }
             ),

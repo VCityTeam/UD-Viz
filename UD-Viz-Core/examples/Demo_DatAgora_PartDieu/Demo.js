@@ -1,4 +1,4 @@
-import { BaseDemo } from '../../src/Utils/DataViewer/js/BaseDemo.js';
+import { BaseDemo } from './BaseDemo.js';
 
 let baseDemo = new BaseDemo({
     iconFolder: '../data/icons',
