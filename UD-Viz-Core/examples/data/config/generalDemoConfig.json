@@ -85,27 +85,24 @@
       "max_y": "5175575"
     }
   },
-  
-  "logos":{
-    "logo_imu" : "logo-imu.png",
-    "logo_liris" : "logo-liris.png",
-    "length" : 2
-  },
+
   "logo_style" : {
     "height" : "40px",
     "margin" : "5px 10px 5px 5px"
   },
 
   "projection":"EPSG:3946",
+
   "background_image_layer":
   {
     "url":"https://download.data.grandlyon.com/wms/grandlyon",
     "name":"Ortho2018_Dalle_unique_8cm_CC46",
     "version":"1.3.0",
     "format":"image/jpeg",
-    "layer_name":"Background_Image",
+    "layer_name":"Base_Map",
     "transparent":true
   },
+
   "elevation_layer":
   {
     "url":"https://download.data.grandlyon.com/wms/grandlyon",

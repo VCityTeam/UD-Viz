@@ -3,7 +3,7 @@ import { BaseDemo } from '../../src/Utils/BaseDemo/js/BaseDemo.js';
 let baseDemo = new BaseDemo({
     iconFolder: '../data/icons',
     imageFolder: '../data/img',
-    logos: ['logo-univ-lyon.png','logo-liris.png','logo-imu.png']
+    logos: ['logo-liris.png','logo-imu.png']
 });
 
 baseDemo.appendTo(document.body);
@@ -12,7 +12,7 @@ baseDemo.loadConfigFile('../data/config/generalDemoConfig.json').then(() => {
     baseDemo.addLogos();
     // Initialize iTowns 3D view
     baseDemo.init3DView('lyon_villeurbanne_bron');
-    baseDemo.addBackgroundImageLayer();
+    baseDemo.addBaseMapLayer();
     baseDemo.addElevationLayer();
     
     var color = new itowns.THREE.Color();

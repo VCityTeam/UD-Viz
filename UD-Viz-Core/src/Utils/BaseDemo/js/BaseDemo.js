@@ -359,7 +359,7 @@ export class BaseDemo {
     /**
      * Adds WMS elevation Layer of Lyon in 2012 and WMS imagery layer of Lyon in 2009 (from Grand Lyon data).
      */
-    addBackgroundImageLayer() {
+    addBaseMapLayer() {
         let wmsImagerySource = new itowns.WMSSource({
             extent: this.extent,
             name: this.config['background_image_layer']['name'],
