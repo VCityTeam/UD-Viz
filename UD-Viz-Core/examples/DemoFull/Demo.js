@@ -3,7 +3,7 @@ import { BaseDemo } from '../../src/Utils/BaseDemo/js/BaseDemo.js';
 let baseDemo = new BaseDemo({
     iconFolder: '../data/icons',
     imageFolder: '../data/img',
-    logos: ['logo-liris.png','logo-imu.png']
+    logos: ['logo-liris.png','logo-univ-lyon.png']
 });
 
 baseDemo.appendTo(document.body);
