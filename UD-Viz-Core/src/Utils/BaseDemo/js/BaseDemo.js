@@ -79,8 +79,7 @@ export class BaseDemo {
         {
             var img = document.createElement("img");
             img.src = this.imageFolder.concat('/'.concat(this.logos[i]));
-            img.style.maxHeight = this.config['logo_style']['height'];
-            img.style.margin = this.config['logo_style']['margin'];
+            img.classList.add("logos");
             var src = document.getElementById("_base_demo_struct_header_panel");
             src.appendChild(img);
         }

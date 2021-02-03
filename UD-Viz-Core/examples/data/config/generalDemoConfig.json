@@ -86,11 +86,6 @@
     }
   },
 
-  "logo_style" : {
-    "height" : "40px",
-    "margin" : "5px 10px 5px 5px"
-  },
-
   "projection":"EPSG:3946",
 
   "background_image_layer":
