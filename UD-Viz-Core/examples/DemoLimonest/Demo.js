@@ -3,14 +3,17 @@ import { BaseDemo } from '../../src/Utils/BaseDemo/js/BaseDemo.js';
 let baseDemo = new BaseDemo({
     iconFolder: '../data/icons',
     imageFolder: '../data/img',
+    logos: ['logo-liris.png','logo-univ-lyon.png']
 });
 
 baseDemo.appendTo(document.body);
 
 baseDemo.loadConfigFile('../data/config/generalDemoConfig.json').then(() => {
+    baseDemo.addLogos();
     // Initialize iTowns 3D view
     baseDemo.init3DView('limonest');
-    baseDemo.addLyonWMSLayer();
+    baseDemo.addBaseMapLayer();
+    baseDemo.addElevationLayer();
     baseDemo.setupAndAdd3DTilesLayer('limonest_building');
     baseDemo.update3DView();
 

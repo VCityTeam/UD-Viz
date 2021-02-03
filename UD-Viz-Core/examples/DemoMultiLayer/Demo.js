@@ -3,11 +3,13 @@ import { BaseDemo } from '../../src/Utils/BaseDemo/js/BaseDemo.js';
 let baseDemo = new BaseDemo({
     iconFolder: '../data/icons',
     imageFolder: '../data/img',
+    logos: ['logo-liris.png','logo-univ-lyon.png']
 });
 
 baseDemo.appendTo(document.body);
 
 baseDemo.loadConfigFile('../data/config/generalDemoConfig.json').then(() => {
+    baseDemo.addLogos();
     // Initialize iTowns 3D view
     baseDemo.init3DView('lyon_1_2_5');
     baseDemo.setupAndAdd3DTilesLayer('building_1_2_5');
