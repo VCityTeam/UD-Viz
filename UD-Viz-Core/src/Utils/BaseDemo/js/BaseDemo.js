@@ -544,6 +544,11 @@ export class BaseDemo {
         // Instantiate controls within PlanarView
         this.view = new itowns.PlanarView(viewerDiv, this.extent, {
             disableSkirt: false,
+            controls: {
+                maxZenithAngle: 180,
+                groundLevel: -100,
+                handleCollision: false
+            },
             placement: {
                 coord: coordinates,
                 heading: heading,
@@ -565,7 +570,7 @@ export class BaseDemo {
         this.view.scene.add(ambientLight);
 
         // Controls
-        this.controls = new itowns.PlanarControls(this.view,{maxZenithAngle:180,groundLevel:-100,handleCollision:false});
+        this.controls = this.view.controls;
 
         // Set sky color to blue
         this.view.mainLoop.gfxEngine.renderer.setClearColor(0x6699cc, 1);
