@@ -32,13 +32,11 @@ export class BaseDemo {
         ///// Config values for some file paths
         // iconFolder    : folder for icons (for the modules menu)
         // imageFolder   : folder for the logo files (for LIRIS and IMU)
-        // logoIMUFile   : filename for IMU logo
-        // logoLIRISFile : filename for LIRIS logo
+        // logos         : logos displayed in application header
         config = config || {};
         this.iconFolder = config.iconFolder || 'icon';
         this.imageFolder = config.imageFolder || 'img';
-        this.logoIMUFile = config.logoIMUFile || 'logo-imu.png';
-        this.logoLIRISFile = config.logoLIRISFile || 'logo-liris.png';
+        this.logos = config.logos || ['logo-imu.png','logo-liris.png'];
     }
 
     /**
@@ -52,8 +50,6 @@ export class BaseDemo {
                     <div id="${this.authFrameLocationId}"></div>
                 </div>
                 <div id="_base_demo_struct_header_panel">
-                    <img id="logoIMU" src="${this.imageFolder}/${this.logoIMUFile}" />
-                    <img id="logoLIRIS" src="${this.imageFolder}/${this.logoLIRISFile}" />
                     <p style="display: inline-block; color: white; margin: 0;">
                         Icons made by <a href="https://www.freepik.com/"
                         title="Freepik">Freepik</a> from
@@ -75,6 +71,18 @@ export class BaseDemo {
                 </section>
             </div>
         `;
+    }
+
+    addLogos()
+    {
+        for(let i =0;i< this.logos.length ; i++)
+        {
+            var img = document.createElement("img");
+            img.src = this.imageFolder.concat('/'.concat(this.logos[i]));
+            img.classList.add("logos");
+            var src = document.getElementById("_base_demo_struct_header_panel");
+            src.appendChild(img);
+        }
     }
 
     /**
@@ -350,17 +358,17 @@ export class BaseDemo {
     /**
      * Adds WMS elevation Layer of Lyon in 2012 and WMS imagery layer of Lyon in 2009 (from Grand Lyon data).
      */
-    addLyonWMSLayer() {
+    addBaseMapLayer() {
         let wmsImagerySource = new itowns.WMSSource({
             extent: this.extent,
-            name: 'Ortho2018_Dalle_unique_8cm_CC46',
-            url: 'https://download.data.grandlyon.com/wms/grandlyon',
-            version: '1.3.0',
-            projection: 'EPSG:3946',
-            format: 'image/jpeg',
+            name: this.config['background_image_layer']['name'],
+            url: this.config['background_image_layer']['url'],
+            version: this.config['background_image_layer']['version'],
+            projection: this.config['projection'],
+            format: this.config['background_image_layer']['format'],
         });
         // Add a WMS imagery layer
-        let wmsImageryLayer = new itowns.ColorLayer('wms_imagery', {
+        let wmsImageryLayer = new itowns.ColorLayer(this.config['background_image_layer']['layer_name'], {
             updateStrategy: {
                 type: itowns.STRATEGY_DICHOTOMY,
                 options: {},
@@ -369,19 +377,22 @@ export class BaseDemo {
             transparent: true
         });
         this.view.addLayer(wmsImageryLayer);
-
+    }
+    
+    addElevationLayer()
+    {
         // Add a WMS elevation source
         let wmsElevationSource = new itowns.WMSSource({
             extent: this.extent,
-            url: 'https://download.data.grandlyon.com/wms/grandlyon',
-            name: 'MNT2018_Altitude_2m',
-            projection: 'EPSG:3946',
+            url: this.config['elevation_layer']['url'],
+            name: this.config['elevation_layer']['name'],
+            projection: this.config['projection'],
             heightMapWidth: 256,
-            format: 'image/jpeg',
+            format: this.config['elevation_layer']['format'],
         });
         // Add a WMS elevation layer
         let wmsElevationLayer = new
-        itowns.ElevationLayer('wms_elevation', {
+        itowns.ElevationLayer(this.config['elevation_layer']['layer_name'], {
             useColorTextureElevation: true,
             colorTextureElevationMinZ: 144,
             colorTextureElevationMaxZ: 622,
@@ -510,7 +521,7 @@ export class BaseDemo {
         let min_y = parseInt(this.config['extents'][area]['min_y']);
         let max_y = parseInt(this.config['extents'][area]['max_y']);
         this.extent = new itowns.Extent(
-            'EPSG:3946',
+            this.config['projection'],
             min_x, max_x,
             min_y, max_y);
 
@@ -559,7 +570,7 @@ export class BaseDemo {
         this.view.scene.add(ambientLight);
 
         // Controls
-        this.controls = this.view.controls
+        this.controls = this.view.controls;
 
         // Set sky color to blue
         this.view.mainLoop.gfxEngine.renderer.setClearColor(0x6699cc, 1);

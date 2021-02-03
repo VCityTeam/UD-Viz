@@ -3,15 +3,17 @@ import { BaseDemo } from '../../src/Utils/BaseDemo/js/BaseDemo.js';
 let baseDemo = new BaseDemo({
     iconFolder: '../data/icons',
     imageFolder: '../data/img',
+    logos: ['logo-liris.png','logo-univ-lyon.png']
 });
 
 baseDemo.appendTo(document.body);
 
 baseDemo.loadConfigFile('../data/config/generalDemoConfig.json').then(() => {
-
+    baseDemo.addLogos();
     // Initialize iTowns 3D view
     baseDemo.init3DView('lyon_1');
-    baseDemo.addLyonWMSLayer();
+    baseDemo.addBaseMapLayer();
+    baseDemo.addElevationLayer();
     const [$3DTilesLayer, $3DTilesManager] = baseDemo.setup3DTilesLayer('lyon2009-2015');
     
     // Set up the temporal module which needs to register events to the 3D 
