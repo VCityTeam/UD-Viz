@@ -19,6 +19,11 @@
   npm start
 ```
 
+If you want to change the listening port :
+```
+  npm start -- --port=8081
+```
+
 ### Developer note
 When working on a specific version of the code (in particular when making changes to the underlying iTowns) you might (will) need to work with a specific version of iTowns and thus use a different install process. Refer to the 
 [install.sh shell script](https://github.com/MEPP-team/UD-Viz/blob/0512f4eb0b2322224c1a4c332b8d74c6b0d1a3f8/UD-Viz-Core/install.sh) for concrete means on how to achieve this.
