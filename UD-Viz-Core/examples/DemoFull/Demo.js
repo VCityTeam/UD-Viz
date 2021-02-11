@@ -14,38 +14,6 @@ baseDemo.loadConfigFile('../data/config/generalDemoConfig.json').then(() => {
     baseDemo.init3DView('lyon_villeurbanne_bron');
     baseDemo.addBaseMapLayer();
     baseDemo.addElevationLayer();
-    
-    var color = new itowns.THREE.Color();
-
-    function colorSurfaceBatiments() {
-        return color.set(0x00ffff);
-    }
-
-    ////---DataGrandLyon Layers---////
-
-    var BatimentsSource = new itowns.WFSSource({
-        url: 'https://download.data.grandlyon.com/wfs/grandlyon?',
-        protocol: 'wfs',
-        version: '2.0.0',
-        id: 'batiments',
-        typeName: 'lyon.parcjardin_latest',
-        projection: 'EPSG:3946',
-        extent: baseDemo.extent,
-        format: 'geojson',
-    });
-    
-    var BatimentsLayer = new itowns.GeometryLayer('Batiments', new itowns.THREE.Group(), {
-        update: itowns.FeatureProcessing.update,
-        convert: itowns.Feature2Mesh.convert({
-            altitude: 180,
-            color: colorSurfaceBatiments,
-        }),
-        source: BatimentsSource,
-    });
-
-    baseDemo.view.addLayer(BatimentsLayer);
-
-
     baseDemo.setupAndAdd3DTilesLayer('building');
 
     baseDemo.update3DView();

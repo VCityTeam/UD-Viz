@@ -20,6 +20,17 @@ baseDemo.loadConfigFile('../../../../examples/data/config/generalDemoConfig.json
     ////// REQUEST SERVICE
     const requestService = new udvcore.RequestService();
 
+    ////// SERVER
+    baseDemo.config.server = baseDemo.config.servers["lyon"];  
+
+    ////// AUTHENTICATION MODULE
+    const authenticationService =
+        new udvcore.AuthenticationService(requestService, baseDemo.config);
+    const authenticationView =
+        new udvcore.AuthenticationView(authenticationService);
+    baseDemo.addModuleView('authentication', authenticationView,
+        {type: BaseDemo.AUTHENTICATION_MODULE});
+
     ////// DOCUMENTS MODULE
     const documentModule = new udvcore.DocumentModule(requestService,
         baseDemo.config)
