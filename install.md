@@ -25,7 +25,7 @@ Notes:
    npm start -- --port=8081
    ```
  * if you want this server to be visible from another host (than the one running this npm based server) 
-   then (as [documented in this issue](https://github.com/iTowns/itowns/issues/1503) use
+   then (as [documented in this issue](https://github.com/iTowns/itowns/issues/1503)) use
    ```bash
    npm start -- --host=0.0.0.0
    ```
