@@ -19,10 +19,20 @@
   npm start
 ```
 
-If you want to change the listening port :
-```
-  npm start -- --port=8081
-```
+Notes:
+ * If you want to change the listening port use
+   ```bash
+   npm start -- --port=8081
+   ```
+ * if you want this server to be visible from another host (than the one running this npm based server) 
+   then (as [documented in this issue](https://github.com/iTowns/itowns/issues/1503) use
+   ```bash
+   npm start -- --host=0.0.0.0
+   ```
+   or alternatively
+   ```bash
+   npm start -- --host=<the_host_IP_number>
+   ```
 
 ### Developer note
 When working on a specific version of the code (in particular when making changes to the underlying iTowns) you might (will) need to work with a specific version of iTowns and thus use a different install process. Refer to the 
