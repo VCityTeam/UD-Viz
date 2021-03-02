@@ -9,6 +9,7 @@
     "doclint": "npm run doc -- -t templates/silent",
     "test": "npm run lint",
     "build": "webpack",
+    "build-examples": "webpack --config webpack-examples.config.js --env=Main",
     "transpile": "cross-env BABEL_DISABLE_CACHE=1 babel src --out-dir lib",
     "start": "cross-env NODE_ENV=development webpack-dev-server -d --inline --hot",
     "//": "\"prepublish\": \"npm run build && npm run transpile\""
@@ -51,7 +52,9 @@
     "babel-loader": "^8.2.2",
     "babel-plugin-minify-dead-code-elimination": "^0.5.1",
     "babel-plugin-minify-replace": "^0.5.0",
+    "babel-plugin-transform-runtime": "^6.22.0",
     "babel-plugin-webpack-loaders": "0.9.0",
+    "babel-preset-env": "^1.6.0",
     "chart.js": "^2.9.4",
     "cross-env": "^7.0.2",
     "css-loader": "^0.28.10",
