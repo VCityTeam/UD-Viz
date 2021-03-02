@@ -1,5 +1,5 @@
 // Service used to make HTTP requests and manage authentication
-// Wiki : https://github.com/MEPP-team/UD-Viz/wiki/Request-Service#request-service
+// Wiki : https://github.com/MEPP-team/UD-Viz/wiki/Request-Service#request-service 
 export function RequestService() {
     // eslint-disable-next-line no-unused-expressions
     this.authenticationService;
