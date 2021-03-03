@@ -1,18 +1,12 @@
 {
   "name": "udv",
   "version": "2.28.1",
-  "description": "An iTowns based set of overlay display modules for City exploration",
-  "main": "src/Main.js",
+  "description": "A collection of itowns plugins",
+  "main": "src/UDV.js",
   "scripts": {
     "lint": "eslint \"src/**/*.js\"",
-    "doc": "jsdoc Main.js",
-    "doclint": "npm run doc -- -t templates/silent",
-    "test": "npm run lint",
-    "build": "webpack",
-    "build-examples": "webpack --config webpack-examples.config.js --env=Main",
-    "transpile": "cross-env BABEL_DISABLE_CACHE=1 babel src --out-dir lib",
-    "start": "cross-env NODE_ENV=development webpack-dev-server -d --inline --hot",
-    "//": "\"prepublish\": \"npm run build && npm run transpile\""
+    "doc": "jsdoc UDV.js -- -t templates/silent",
+    "build-examples": "webpack --config webpack-client.config.js --env=UDV"
   },
   "files": [
     "Tools",
