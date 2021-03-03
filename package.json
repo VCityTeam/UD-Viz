@@ -1,5 +1,5 @@
 {
-  "name": "UD-Viz-Core",
+  "name": "udv",
   "version": "2.28.1",
   "description": "An iTowns based set of overlay display modules for City exploration",
   "main": "src/Main.js",
