@@ -1,0 +1,84 @@
+/* Generic for document windows */
+
+
+
+/* Search window */
+
+.search-form label {
+  display: block;
+  margin-top: 5px;
+}
+
+.search-form input[type="text"],
+.search-form select {
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.search-form .date-wrapper span {
+  display: inline-block;
+  width: 40px;
+}
+.documents-list {
+  max-height: 300px;
+  overflow-y: auto;
+  margin: 5px 0 5px 0;
+}
+
+.documents-list ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.navigator-result-doc {
+  padding: 3px 8px 3px 8px;
+  cursor: pointer;
+}
+
+.navigator-result-doc .doc-title {
+  color: lightgreen;
+}
+
+.navigator-result-doc:hover .doc-title {
+  font-weight: bold;
+}
+
+.navigator-result-doc.document-selected {
+  background: #fff2;
+}
+
+/*.navigator-result-doc.document-selected .doc-title::before {
+  content: '\26AB';
+  padding-right: 5px;
+}*/
+
+.navigator-result-doc .doc-info {
+  padding-left: 15px;
+}
+
+/* inspector window */
+
+.inspector-doc-img {
+  width: 100%;
+  box-shadow: 0 0 1px 1px #0003;
+  border-radius: 4px;
+}
+
+.inspector-left-right-grid {
+  display: grid;
+  grid-template-columns: auto auto;
+}
+
+.inspector-details {
+  padding: 5px;
+}
+
+.inspector-field {
+  margin: 0 0 5px 10px;
+}
+
+.inspector-field-title {
+  margin: 0;
+  font-weight: bold;
+}
