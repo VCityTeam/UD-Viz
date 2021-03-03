@@ -1,5 +1,7 @@
+//Components
+import { CityObject } from "../../../../Components/3DTiles/Model/CityObject";
+
 import { CityObjectFilter } from "./CityObjectFilter";
-import { CityObject } from "../../../Utils/3DTiles/Model/CityObject";
 
 /**
  * A specialization of `CityObjectFilter` to filter the city objects from

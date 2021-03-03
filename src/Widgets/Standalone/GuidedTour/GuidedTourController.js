@@ -1,7 +1,9 @@
+//Components
+import { ModuleView } from '../../../Components/ModuleView/ModuleView';
+import { RequestService } from "../../../Components/Request/RequestService";
+
 import './GuidedTour.css';
 import { GuidedTour } from './GuidedTour.js';
-import { ModuleView } from '../../Utils/ModuleView/ModuleView';
-import { RequestService } from "../../Utils/Request/RequestService";
 import { DocumentModule } from '../Documents/DocumentModule';
 
 /**

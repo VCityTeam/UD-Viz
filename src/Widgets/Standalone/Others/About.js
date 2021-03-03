@@ -1,5 +1,7 @@
+//Components
+import { ModuleView } from '../../../Components/ModuleView/ModuleView';
+
 import './About.css';
-import { ModuleView } from '../../Utils/ModuleView/ModuleView';
 
 /**
  * adds an "About" window that can be open/closed with a button

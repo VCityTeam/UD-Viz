@@ -1,13 +1,16 @@
+//Components
+import { CityObject } from "../../../../Components/3DTiles/Model/CityObject";
+import { EventSender } from "../../../../Components/Events/EventSender";
+import { CityObjectStyle } from "../../../../Components/3DTiles/Model/CityObjectStyle";
+
 import { LinkService } from "../Model/LinkService";
 import { DocumentProvider } from "../../Documents/ViewModel/DocumentProvider";
 import { CityObjectProvider } from "../../CityObjects/ViewModel/CityObjectProvider";
 import { Link } from "../Model/Link";
 import { Document } from "../../Documents/Model/Document";
-import { CityObject } from "../../../Utils/3DTiles/Model/CityObject";
 import { LinkCountFilter, LinkedWithDisplayedDocumentFilter, LinkedWithFilteredDocumentsFilter } from "./CityObjectLinkFilters";
-import { EventSender } from "../../../Utils/Events/EventSender";
 import { DocumentFilter } from "../../Documents/ViewModel/DocumentFilter";
-import { CityObjectStyle } from "../../../Utils/3DTiles/Model/CityObjectStyle";
+
 
 /**
  * The link provider is responsible to manage links fetched from the server,

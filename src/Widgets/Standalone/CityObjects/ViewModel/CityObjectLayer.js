@@ -1,5 +1,7 @@
+//Components
+import { CityObjectStyle } from "../../../../Components/3DTiles/Model/CityObjectStyle";
+
 import { CityObjectFilter } from "./CityObjectFilter";
-import { CityObjectStyle } from "../../../Utils/3DTiles/Model/CityObjectStyle";
 
 /**
  * A layer represents an association between a set of city objects and a style.

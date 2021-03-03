@@ -1,10 +1,12 @@
+//Components
+import { RequestService } from "../../../Components/Request/RequestService";
+import { Window } from "../../../Components/GUI/js/Window";
+
 import { LinkService } from "./Model/LinkService";
 import { DocumentModule } from "../Documents/DocumentModule";
 import { CityObjectModule } from "../CityObjects/CityObjectModule";
-import { RequestService } from "../../Utils/Request/RequestService";
 import { LinkView } from "./View/LinkView";
 import { LinkProvider } from "./ViewModel/LinkProvider";
-import { Window } from "../../Utils/GUI/js/Window";
 
 /**
  * Manages the links between the city objects and the documents. This modules

@@ -1,9 +1,8 @@
+//Components
+import { CityObjectStyle } from "../../../Components/3DTiles/Model/CityObjectStyle";
+
 import { CityObjectProvider } from "./ViewModel/CityObjectProvider";
 import { CityObjectWindow } from "./View/CityObjectWindow";
-
-import * as THREE from 'three';
-import { TilesManager } from "../../Utils/3DTiles/TilesManager";
-import { CityObjectStyle } from "../../Utils/3DTiles/Model/CityObjectStyle";
 
 /**
  * Manages the city objects and allows the user to visualize them with

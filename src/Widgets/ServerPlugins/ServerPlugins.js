@@ -1,12 +1,12 @@
 /** @format */
 
-// export { AuthenticationService } from './Authentication/services/AuthenticationService';
+export { AuthenticationService } from './Authentication/services/AuthenticationService';
 
-// export { AuthenticationView } from './Authentication/views/AuthenticationView';
+export { AuthenticationView } from './Authentication/views/AuthenticationView';
 
-// export { DocumentCommentsModule } from './DocumentComments/DocumentCommentsModule';
+export { DocumentCommentsModule } from './DocumentComments/DocumentCommentsModule';
 
-// export { GeocodingService } from './Geocoding/services/GeocodingService';
+export { GeocodingService } from './Geocoding/services/GeocodingService';
 
 export { GeocodingView } from './Geocoding/views/GeocodingView';
 

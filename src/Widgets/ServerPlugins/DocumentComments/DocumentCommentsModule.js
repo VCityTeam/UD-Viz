@@ -1,6 +1,10 @@
+//Standalone
+import { DocumentModule } from "../../Standalone/Documents/DocumentModule";
+
+//Components
+import { RequestService } from "../../../Components/Request/RequestService";
+
 import { DocumentCommentsService } from "./services/DocumentCommentsService";
-import { DocumentModule } from "../../Modules/Documents/DocumentModule";
-import { RequestService } from "../../Utils/Request/RequestService";
 import { DocumentCommentsWindow } from "./views/DocumentCommentsWindow";
 
 /**

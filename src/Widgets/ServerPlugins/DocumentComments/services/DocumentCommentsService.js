@@ -1,6 +1,8 @@
-import { DocumentModule } from "../../../Modules/Documents/DocumentModule";
-import { RequestService } from "../../../Utils/Request/RequestService";
-import { DocumentProvider } from "../../../Modules/Documents/ViewModel/DocumentProvider";
+//Components
+import { RequestService } from "../../../../Components/Request/RequestService";
+
+//Standalone
+import { DocumentProvider } from "../../../Standalone/Documents/ViewModel/DocumentProvider";
 
 /**
  * The service that performs the requests for document comments. This include

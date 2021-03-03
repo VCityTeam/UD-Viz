@@ -1,6 +1,8 @@
+//Components
+import { Window } from '../../../Components/GUI/js/Window';
+import '../../../Components/GUI/css/window.css';
+
 import './GuidedTour.css'
-import { Window } from '../../Utils/GUI/js/Window';
-import '../../Utils/GUI/css/window.css';
 
 /**
  * Class: GuidedTour

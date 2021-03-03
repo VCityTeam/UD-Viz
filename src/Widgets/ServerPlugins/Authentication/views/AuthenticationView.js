@@ -1,5 +1,7 @@
+//Components
+import { ModuleView } from '../../../../Components/ModuleView/ModuleView';
+
 import './AuthenticationView.css';
-import { ModuleView } from '../../../Utils/ModuleView/ModuleView';
 
 export class AuthenticationView extends ModuleView {
 

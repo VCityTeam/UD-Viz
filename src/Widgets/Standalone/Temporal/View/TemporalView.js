@@ -1,7 +1,9 @@
+//Components
+import { ModuleView } from '../../../../Components/ModuleView/ModuleView.js';
+
 import { TemporalGraphWindow } from './TemporalGraphWindow.js';
 import { TemporalSliderWindow } from './TemporalSliderWindow.js';
 import { EnumTemporalWindow } from './EnumWindows.js';
-import { ModuleView } from '../../../Utils/ModuleView/ModuleView.js';
 
 /**
  * The view entrypoint. Initialize the correct window depending on the

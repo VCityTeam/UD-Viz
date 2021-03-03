@@ -1,6 +1,8 @@
-import './DocumentCommentsStyle.css';
-import { AbstractDocumentWindow } from '../../../Modules/Documents/View/AbstractDocumentWindow';
+//Standalone
+import { AbstractDocumentWindow } from '../../../Standalone/Documents/View/AbstractDocumentWindow';
+
 import { DocumentCommentsService } from '../services/DocumentCommentsService';
+import './DocumentCommentsStyle.css';
 
 /**
  * A window to display the comments associated to a document. Also serves as

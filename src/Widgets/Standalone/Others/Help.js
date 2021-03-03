@@ -1,5 +1,7 @@
+//Components
+import { ModuleView } from '../../../Components/ModuleView/ModuleView';
+
 import './Help.css';
-import { ModuleView } from '../../Utils/ModuleView/ModuleView';
 
 /**
 * adds a "Help" window that can be open/closed with a button

@@ -1,12 +1,13 @@
-import { Window } from "../../../Utils/GUI/js/Window";
+//Components
+import { Window } from "../../../../Components/GUI/js/Window";
+import { CityObjectStyle } from "../../../../Components/3DTiles/Model/CityObjectStyle";
+
 import { CityObjectProvider } from "../ViewModel/CityObjectProvider";
-import { CityObjectStyle } from "../../../Utils/3DTiles/Model/CityObjectStyle";
 import { CityObjectFilterSelector } from "./CityObjectFilterSelector";
 import { CityObjectFilterWindow } from "./CityObjectFilterWindow";
 import { AttributeFilterSelector } from "./AttributeFilterSelector";
 
 import './CityObjectWindow.css';
-
 
 /**
  * The main window of the city object module. It displays a short description

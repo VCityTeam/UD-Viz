@@ -1,11 +1,10 @@
+//Components
+import { focusCameraOn } from "../../../../Components/Camera/CameraUtils";
+
 import { DocumentModule } from "../../Documents/DocumentModule";
-import { LinkService } from "../Model/LinkService";
-import { focusCameraOn } from "../../../Utils/Camera/CameraUtils";
 import * as THREE from 'three';
 import { DocumentProvider } from "../../Documents/ViewModel/DocumentProvider";
-import { EventSender } from "../../../Utils/Events/EventSender";
 import { Link } from "../Model/Link";
-import { Window } from "../../../Utils/GUI/js/Window";
 import { LinkProvider } from "../ViewModel/LinkProvider";
 
 /**

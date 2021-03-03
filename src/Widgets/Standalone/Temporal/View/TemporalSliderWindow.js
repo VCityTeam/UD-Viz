@@ -1,4 +1,6 @@
-import { Window } from "../../../Utils/GUI/js/Window";
+//Components
+import { Window } from "../../../../Components/GUI/js/Window";
+
 import './TemporalWindow.css';
 
 /**

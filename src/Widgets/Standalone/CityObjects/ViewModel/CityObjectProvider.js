@@ -1,10 +1,11 @@
-import { TilesManager } from "../../../Utils/3DTiles/TilesManager";
+//Components
+import { CityObjectStyle } from "../../../../Components/3DTiles/Model/CityObjectStyle";
+import { CityObjectID, CityObject } from "../../../../Components/3DTiles/Model/CityObject";
+import { EventSender } from "../../../../Components/Events/EventSender";
+import { LayerManager } from "../../../../Components/LayerManager/LayerManager";
+
 import { CityObjectFilter } from "./CityObjectFilter";
 import { CityObjectLayer } from "./CityObjectLayer";
-import { CityObjectStyle } from "../../../Utils/3DTiles/Model/CityObjectStyle";
-import { CityObjectID, CityObject } from "../../../Utils/3DTiles/Model/CityObject";
-import { EventSender } from "../../../Utils/Events/EventSender";
-import { LayerManager } from "../../../Utils/LayerManager/LayerManager";
 
 /**
  * The city object provider manages the city object by organizing them in two

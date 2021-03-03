@@ -1,6 +1,8 @@
+//Components
+import { CityObject } from "../../../../Components/3DTiles/Model/CityObject";
+
 import { CityObjectFilter } from "../../CityObjects/ViewModel/CityObjectFilter";
 import { LinkProvider } from "./LinkProvider";
-import { CityObject } from "../../../Utils/3DTiles/Model/CityObject";
 
 /**
  * A filter for city objects based how many documents are linked to them.
