@@ -9,7 +9,8 @@ UD-Viz (repo)
 |    |    └── Server            # server side code
 |    ├── Widgets                # the  
 |    |    ├── NoDeps            # FIXME  
-|    |    └── Server/Hookable   # FIXME  
+|    |    └── Server/Hookable   # FIXME  can import noDeps modules (can be confusing) create a Widgets/Components ?
+                                # or no Standalone folder and rename serverplugins in extensions or plugins(server)
 |    ├── UDV.js          # Api of UDV package (FIXME: what the current Main.js does)
 |    ├── UDVServer.js    # An application for hosting UDV based games
 |    └── UDVExamples.js  # A set of illustrative UDV based applications simplifying
@@ -23,7 +24,6 @@ UD-Viz (repo)
 |         ├── UDVServer.js    # Bundle generated out of src/UDVServer.js
 |         └── UDVExamples.js  # 
 |    
-├── webpack-common.js    # Webpack code shared by both client and server bundles
 ├── webpack-client.js    # Webpack code for building client side bundles e.g. UDVExamples.js
 ├── webpack-server.js    # Webpack code for building server side bundles e.g. UDVServer.js
 
