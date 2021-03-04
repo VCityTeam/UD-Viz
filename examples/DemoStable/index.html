@@ -1,0 +1,22 @@
+<!-- @format -->
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>UD-Viz Widgets</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  </head>
+  <body>
+    <script src="../local_modules/DemoWidgets/DemoWidgets.js"></script>
+    <script>
+      debugger;
+      const app = new DemoWidgets.App({
+        iconFolder: '../data/icons',
+        imageFolder: '../data/img',
+        logos: ['logo-liris.png', 'logo-univ-lyon.png'],
+      });
+      app.start('../data/config/generalDemoConfig.json');
+    </script>
+  </body>
+</html>

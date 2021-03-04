@@ -1,7 +1,8 @@
 /** @format */
 
 //Components
-export { RequestService } from './Components/Request/RequestService';
+import * as Components from './Components/Components.js';
+export { Components };
 
 //Widgets
 import * as Widgets from './Widgets/Widgets.js';

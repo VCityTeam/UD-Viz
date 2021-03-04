@@ -10,15 +10,18 @@ const path = require('path');
 const babelrc = fs.readFileSync(path.resolve(__dirname, '.babelrc'));
 const babelConf = JSON.parse(babelrc);
 
-module.exports = (env) => {
+module.exports = () => {
+  const name = process.env.npm_config_name || 'UDV';
+  const entry = process.env.npm_config_entry || './src/UDV.js';
+  console.log('Build from ', entry, ' to examples/local_modules/' + name);
   return {
     mode: 'development',
-    entry: path.resolve(__dirname, 'src/' + env + '.js'),
+    entry: path.resolve(__dirname, entry),
     devtool: 'source-map',
     output: {
-      path: path.resolve(__dirname, 'examples/local_modules/' + env + ''),
-      filename: '' + env + '.js',
-      library: '' + env + '',
+      path: path.resolve(__dirname, 'examples/local_modules/' + name + ''),
+      filename: '' + name + '.js',
+      library: '' + name + '',
       libraryTarget: 'umd',
       umdNamedDefine: true,
     },
