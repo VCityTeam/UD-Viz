@@ -9,7 +9,10 @@ const $3DTemporalBatchTable = Widgets.$3DTemporalBatchTable
 const $3DTemporalBoundingVolume = Widgets.$3DTemporalBoundingVolume
 const $3DTemporalTileset = Widgets.$3DTemporalTileset
 
-// const jquery = require("jquery");//save as a dev dep because do not belong to UDV package
+import * as itowns from "itowns";
+import * as THREE from "three";
+import proj4 from "proj4";
+import jquery from "jquery"; //save as a dev dep because do not belong to UDV package
 
 import "./App.css";
 
@@ -18,7 +21,7 @@ import "./App.css";
  * dynamically add module views.
  */
 export class App {
-    constructor(config = {}) {
+    constructor() {
         this.modules = {};
         this.moduleNames = {};
         this.moduleActivation = {};
@@ -36,14 +39,6 @@ export class App {
          * @type {LayerManager}
          */
         this.layerManager;
-        ///// Config values for some file paths
-        // iconFolder    : folder for icons (for the modules menu)
-        // imageFolder   : folder for the logo files (for LIRIS and IMU)
-        // logos         : logos displayed in application header
-        config = config || {};
-        this.iconFolder = config.iconFolder || 'icon';
-        this.imageFolder = config.imageFolder || 'img';
-        this.logos = config.logos || ['logo-imu.png','logo-liris.png'];
     }
 
     start(path){
@@ -56,75 +51,122 @@ export class App {
             _this.addLogos();
 
             // Initialize iTowns 3D view
-            _this.init3DView('lyon_villeurbanne_bron');
+            _this.init3DView();
             _this.addBaseMapLayer();
             _this.addElevationLayer();    
-            _this.setupAndAdd3DTilesLayer('building');
+            _this.setupAndAdd3DTilesLayer();
             _this.update3DView();
 
             ////// REQUEST SERVICE
             const requestService = new Components.RequestService();
 
-            _this.config.server = _this.config.servers["lyon_stable"];   
-            
             ////// ABOUT MODULE
-            const about = new Widgets.AboutWindow();
-            _this.addModuleView('about', about);
+            if(this.config.widgets.aboutWindow){
+                const about = new Widgets.AboutWindow();
+                _this.addModuleView('about', about);
+            }            
 
             ////// HELP MODULE
-            const help  = new Widgets.HelpWindow();
-            _this.addModuleView('help', help);
-
-            ////// AUTHENTICATION MODULE
-            const authenticationService =
-                new Widgets.Extensions.AuthenticationService(requestService, _this.config);
-            const authenticationView =
-                new Widgets.Extensions.AuthenticationView(authenticationService);
-            _this.addModuleView('authentication', authenticationView,
-                {type: App.AUTHENTICATION_MODULE});
-
-            ////// DOCUMENTS MODULE
-            const documentModule = new Widgets.DocumentModule(requestService,
-                _this.config)
-            _this.addModuleView('documents', documentModule.view);
-
-            ////// DOCUMENTS VISUALIZER (to orient the document)
-            const imageOrienter = new Widgets.DocumentVisualizerWindow(documentModule,
-                _this.view, _this.controls);
-
-            ////// CONTRIBUTE EXTENSION
-            const contribute = new Widgets.Extensions.ContributeModule(documentModule, imageOrienter,
-                requestService, _this.view, _this.controls, _this.config);
-
-            ////// VALIDATION EXTENSION
-            const validation = new Widgets.Extensions.DocumentValidationModule(documentModule, requestService,
-                _this.config);
+            if(this.config.widgets.helpWindow){
+                const help  = new Widgets.HelpWindow();
+                _this.addModuleView('help', help);   
+            }
             
-            ////// DOCUMENT COMMENTS
-            const documentComments = new Widgets.Extensions.DocumentCommentsModule(documentModule,
-                requestService, _this.config);
+            ////// AUTHENTICATION MODULE
+            if(this.config.widgets.authenticationView){
+                const authenticationService =
+                    new Widgets.Extensions.AuthenticationService(requestService, _this.config);
+                const authenticationView =
+                    new Widgets.Extensions.AuthenticationView(authenticationService);
+                _this.addModuleView('authentication', authenticationView,
+                    {type: App.AUTHENTICATION_MODULE});
+            }
+            
+            
+            ////// DOCUMENTS MODULE
+            let documentModule = null;
+            if(this.config.widgets.documentModule){
+                documentModule = new Widgets.DocumentModule(requestService,
+                    _this.config)
+                _this.addModuleView('documents', documentModule.view);    
+                
+                ////// DOCUMENTS VISUALIZER (to orient the document)
+                if(this.config.widgets.documentVisualizerWindow){
+                    const imageOrienter = new Widgets.DocumentVisualizerWindow(documentModule,
+                        _this.view, _this.controls);    
 
-            ////// GUIDED TOURS MODULE
-            const guidedtour = new Widgets.GuidedTourController(documentModule,
-                requestService, _this.config);
-            _this.addModuleView('guidedTour', guidedtour, {name: 'Guided Tours'});
+                    ////// CONTRIBUTE EXTENSION
+                    if(this.config.widgets.contributeModule){
+                        const contribute = new Widgets.Extensions.ContributeModule(documentModule, imageOrienter,
+                            requestService, _this.view, _this.controls, _this.config);    
+                    }
+                }
 
+                ////// VALIDATION EXTENSION
+                if(this.config.widgets.documentValidationModule){
+                    const validation = new Widgets.Extensions.DocumentValidationModule(documentModule, requestService,
+                        _this.config);    
+                }
+                
+                ////// DOCUMENT COMMENTS
+                if(this.config.widgets.documentCommentsModule){
+                    const documentComments = new Widgets.Extensions.DocumentCommentsModule(documentModule,
+                        requestService, _this.config);    
+                }
+                
+                ////// GUIDED TOURS MODULE
+                if(this.config.widgets.guidedTourController){
+                    const guidedtour = new Widgets.GuidedTourController(documentModule,
+                        requestService, _this.config);
+                    _this.addModuleView('guidedTour', guidedtour, {name: 'Guided Tours'});    
+                }
+            }
+            
             ////// GEOCODING EXTENSION
-            const geocodingService = new Widgets.Extensions.GeocodingService(requestService,
-                _this.extent, _this.config);
-            const geocodingView = new Widgets.Extensions.GeocodingView(geocodingService,
-                _this.controls, _this.view);
-            _this.addModuleView('geocoding', geocodingView, {binding: 's',
-                                        name: 'Address Search'});
-
+            if(this.config.widgets.geocodingView){
+                const geocodingService = new Widgets.Extensions.GeocodingService(requestService,
+                    _this.extent, _this.config);
+                const geocodingView = new Widgets.Extensions.GeocodingView(geocodingService,
+                    _this.controls, _this.view);
+                _this.addModuleView('geocoding', geocodingView, {binding: 's',
+                                            name: 'Address Search'});
+            }
 
             ////// CITY OBJECTS MODULE
-            const cityObjectModule = new Widgets.CityObjectModule(_this.layerManager, _this.config);
-            _this.addModuleView('cityObjects', cityObjectModule.view);
-
+            let cityObjectModule = null;
+            if(this.config.widgets.cityObjectModule){
+                cityObjectModule = new Widgets.CityObjectModule(_this.layerManager, _this.config);
+                _this.addModuleView('cityObjects', cityObjectModule.view);    
+            }
+            
             ////// LINKS MODULES
-            const linkModule = new Widgets.LinkModule(documentModule, cityObjectModule,
-                requestService, _this.view, _this.controls, _this.config);
+            if(documentModule && cityObjectModule && this.config.widgets.linkModule){
+                const linkModule = new Widgets.LinkModule(documentModule, cityObjectModule,
+                    requestService, _this.view, _this.controls, _this.config);    
+            }
+            
+            ////// 3DTILES DEBUG
+            if(this.config.widgets.debug3DTilesWindow){
+                const debug3dTilesWindow = new Widgets.Extensions.Debug3DTilesWindow(_this.layerManager);
+                _this.addModuleView('3dtilesDebug', debug3dTilesWindow, {
+                    name: '3DTiles Debug'
+                });
+            }
+
+            ////// CAMERA POSITIONER
+            if(this.config.widgets.cameraPositionerView){
+                const cameraPosition = new Widgets.CameraPositionerView(_this.view,
+                    _this.controls);
+                _this.addModuleView('cameraPositioner', cameraPosition);    
+            }
+
+            ////// LAYER CHOICE
+            if(this.config.widgets.layerChoice){
+                const layerChoice = new Widgets.LayerChoice(_this.layerManager);
+                _this.addModuleView('layerChoice', layerChoice, {
+                    name: 'layerChoice'
+                });
+            }
         });
 
     }
@@ -165,10 +207,13 @@ export class App {
 
     addLogos()
     {
-        for(let i =0;i< this.logos.length ; i++)
+        const logos = this.config.assets.logos;
+        const imageFolder = this.config.assets.imageFolder;
+
+        for(let i =0;i< logos.length ; i++)
         {
-            var img = document.createElement("img");
-            img.src = this.imageFolder.concat('/'.concat(this.logos[i]));
+            var img = document.createElement("img");            
+            img.src = imageFolder.concat('/'.concat(logos[i]));
             img.classList.add("logos");
             var src = document.getElementById("_base_demo_struct_header_panel");
             src.appendChild(img);
@@ -323,7 +368,7 @@ export class App {
         let icon = document.createElement('img');
 
         //creating an icon
-        icon.setAttribute('src', `${this.iconFolder}/${moduleId}.svg`)
+        icon.setAttribute('src', `${this.config.assets.iconFolder}/${moduleId}.svg`)
         icon.className = 'menuIcon';
         button.insertBefore(icon, button.firstChild);
 
@@ -499,20 +544,20 @@ export class App {
      * UD-Viz/UD-Viz-Core/examples/data/config/generalDemoConfig.json
      * config file).
      */
-    setup3DTilesLayer(layerConfig) {
+    setup3DTilesLayer() {
         //  ADD 3D Tiles Layer
 
         // Positional arguments verification
-        if (!this.config['3DTilesLayer'][layerConfig]) {
+        if (!this.config['3DTilesLayer']) {
             throw "Your layer is not one of the properties of 3DTilesLayer object " +
                 "(in UD-Viz/UD-Viz-Core/examples/data/config/generalDemoConfig.json).";
         }
-        if (!this.config['3DTilesLayer'][layerConfig]['id'] || !this.config['3DTilesLayer'][layerConfig]['url']) {
+        if (!this.config['3DTilesLayer']['id'] || !this.config['3DTilesLayer']['url']) {
             throw "Your layer does not have 'url'/'id' properties or both. " +
                 "(in UD-Viz/UD-Viz-Core/examples/data/config/generalDemoConfig.json)";
         }
 
-        const extensionsConfig = this.config['3DTilesLayer'][layerConfig]
+        const extensionsConfig = this.config['3DTilesLayer']
         ['extensions'];
         let extensions = new itowns.C3DTExtensions();
         if (!!extensionsConfig) {
@@ -540,24 +585,24 @@ export class App {
         }
 
         var $3dTilesLayer = new itowns.C3DTilesLayer(
-            this.config['3DTilesLayer'][layerConfig]['id'], {
-                name: 'Lyon-2015-'.concat(layerConfig),
+            this.config['3DTilesLayer']['id'], {
+                name: 'Lyon-2015-'.concat(this.config['3DTilesLayer']['id']),
                 source: new itowns.C3DTilesSource({
-                    url: this.config['3DTilesLayer'][layerConfig]['url'],
+                    url: this.config['3DTilesLayer']['url'],
                 }),
                 registeredExtensions: extensions
             }, this.view);
 
         let material;
-        if (this.config['3DTilesLayer'][layerConfig]['pc_size'])
+        if (this.config['3DTilesLayer']['pc_size'])
         {
-            material = new THREE.PointsMaterial({ size: this.config['3DTilesLayer'][layerConfig]['pc_size'], vertexColors: true });
+            material = new THREE.PointsMaterial({ size: this.config['3DTilesLayer']['pc_size'], vertexColors: true });
         }
-        else if (!this.config['3DTilesLayer'][layerConfig]['color']) {
+        else if (!this.config['3DTilesLayer']['color']) {
             material = new THREE.MeshLambertMaterial({ color: 0xFFFFFF });
         } else {
             material =
-                new THREE.MeshLambertMaterial({color: parseInt(this.config['3DTilesLayer'][layerConfig]['color'])});
+                new THREE.MeshLambertMaterial({color: parseInt(this.config['3DTilesLayer']['color'])});
         }
 
         $3dTilesLayer.overrideMaterials = material;
@@ -587,29 +632,27 @@ export class App {
      * UD-Viz/UD-Viz-Core/examples/data/config/generalDemoConfig.json
      * config file).
      */
-    setupAndAdd3DTilesLayer(layerConfig) {
-        const [$3DTilesLayer] = this.setup3DTilesLayer(layerConfig);
+    setupAndAdd3DTilesLayer() {
+        const [$3DTilesLayer] = this.setup3DTilesLayer();
         this.add3DTilesLayer($3DTilesLayer);
     }
 
     /**
-     * Initializes the iTowns 3D view.
-     * @param {string} area The name of the area to view. Used to adjust the extent, this name should be
-     * one of the properties of the extents object (in UD-Viz/UD-Viz-Core/examples/data/config/generalDemoConfig.json file).
+     * Initializes the iTowns 3D view according the config.
      */
-    init3DView(area) {
+    init3DView() {
         // ********* INIT ITOWNS VIEW
         // Define projection used in iTowns viewer (taken from
         // https://epsg.io/3946, Proj4js section)
-        itowns.proj4.defs('EPSG:3946', '+proj=lcc +lat_1=45.25 +lat_2=46.75' +
+        proj4.defs('EPSG:3946', '+proj=lcc +lat_1=45.25 +lat_2=46.75' +
             ' +lat_0=46 +lon_0=3 +x_0=1700000 +y_0=5200000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs');
 
         // Define geographic extent: CRS, min/max X, min/max Y
         // area should be one of the properties of the object extents in config file
-        let min_x = parseInt(this.config['extents'][area]['min_x']);
-        let max_x = parseInt(this.config['extents'][area]['max_x']);
-        let min_y = parseInt(this.config['extents'][area]['min_y']);
-        let max_y = parseInt(this.config['extents'][area]['max_y']);
+        let min_x = parseInt(this.config['extents']['min_x']);
+        let max_x = parseInt(this.config['extents']['max_x']);
+        let min_y = parseInt(this.config['extents']['min_y']);
+        let max_y = parseInt(this.config['extents']['max_y']);
         this.extent = new itowns.Extent(
             this.config['projection'],
             min_x, max_x,
@@ -617,15 +660,15 @@ export class App {
 
         // Get camera placement parameters from config
         let coordinates = this.extent.center();
-        if (this.config['camera'][area]['position']['x']
-            && this.config['camera'][area]['position']['y']) {
+        if (this.config['camera']['position']['x']
+            && this.config['camera']['position']['y']) {
             coordinates = new itowns.Coordinates('EPSG:3946',
-                parseInt(this.config['camera'][area]['position']['x']),
-                parseInt(this.config['camera'][area]['position']['y']));
+                parseInt(this.config['camera']['position']['x']),
+                parseInt(this.config['camera']['position']['y']));
         }
-        let heading = parseFloat(this.config['camera'][area]['position']['heading']);
-        let range = parseFloat(this.config['camera'][area]['position']['range']);
-        let tilt = parseFloat(this.config['camera'][area]['position']['tilt']);
+        let heading = parseFloat(this.config['camera']['position']['heading']);
+        let range = parseFloat(this.config['camera']['position']['range']);
+        let tilt = parseFloat(this.config['camera']['position']['tilt']);
 
         // `viewerDiv` will contain iTowns' rendering area (`<canvas>`)
         let viewerDiv = document.getElementById('viewerDiv');

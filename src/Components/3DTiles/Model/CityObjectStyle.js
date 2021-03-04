@@ -1,3 +1,5 @@
+import * as THREE from "three";
+
 /**
  * Represents the style of a tile part. Accepted parameters are :
  * 
@@ -27,7 +29,7 @@ export class CityObjectStyle {
     // Uniform color representation accros styles
     if (this.materialProps !== undefined
       && this.materialProps.color !== undefined) {
-      this.materialProps.color = new THREE.Color(this.materialProps.color);
+      this.materialProps.color = new THREE.Color(this.materialProps.color);//TODO clean this, a ref dont change its type
     }
   }
 

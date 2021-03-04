@@ -1,3 +1,4 @@
+import {RequestService} from "../../../../Components/Request/RequestService"
 
 export function AuthenticationService(requestService, config) {
     this.observers = [];
@@ -7,7 +8,7 @@ export function AuthenticationService(requestService, config) {
     this.userUrl = `${config.server.url}${config.server.user}`;
     //route to get personal information
     this.userMeUrl = `${config.server.url}${config.server.userMe}`;
-    this.requestService = new udvcore.RequestService();
+    this.requestService = new RequestService();
     this.loginRequiredKeys = ['username', 'password'];
     this.registerRequiredKeys = ['username', 'firstName', 'lastName', 'password', 'email'];
     this.storageKeys = {
