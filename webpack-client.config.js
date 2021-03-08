@@ -7,35 +7,22 @@
 
 const fs = require('fs');
 const path = require('path');
-const babelrc = fs.readFileSync(path.resolve(__dirname, '.babelrc'));
-const babelConf = JSON.parse(babelrc);
 
 module.exports = () => {
-  const name = process.env.npm_config_name || 'UDV';
-  const entry = process.env.npm_config_entry || './src/UDV.js';
-  console.log('Build from ', entry, ' to examples/local_modules/' + name);
   return {
     mode: 'development',
-    entry: path.resolve(__dirname, entry),
+    entry: path.resolve(__dirname, "./src/udv.js"),
     devtool: 'source-map',
     output: {
-      path: path.resolve(__dirname, 'examples/local_modules/' + name + ''),
-      filename: '' + name + '.js',
-      library: '' + name + '',
+      path: path.resolve(__dirname, 'dist/debug/'),
+      filename: "udv-debug.js",
+      library: "udv-debug",
       libraryTarget: 'umd',
       umdNamedDefine: true,
     },
+    //TODO mettres les rules des plugins dans des fichiers de conf a part
     module: {
       rules: [
-        {
-          test: /\.js$/,
-          include: [path.resolve(__dirname, 'src')],
-          loader: 'babel-loader',
-          // Please consider modifying .babelrc too
-          // .babelrc is used for transpiling src/ into lib/ in the prepublish
-          // phase, see package.json
-          options: babelConf,
-        },
         {
           // We also want to (web)pack the style files:
           test: /\.css$/,
@@ -55,7 +42,6 @@ module.exports = () => {
           ],
         },
         {
-          // please consider modifying corresponding loaders in webpack-babel.config.js too
           test: /\.json$/,
           include: [path.resolve(__dirname, 'src')],
           loader: 'raw-loader',
