@@ -1,4 +1,4 @@
-import * as THREE from 'three/build/three.module';
+import * as THREE from 'three';
 import { CityObject } from './CityObject.js';
 import { getTileInLayer } from '../3DTilesUtils.js';
 

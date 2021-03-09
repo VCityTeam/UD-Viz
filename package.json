@@ -6,10 +6,10 @@
   "scripts": {
     "lint": "eslint \"src/**/*.js\"",
     "doc": "jsdoc UDV.js -- -t templates/silent",
-    "build": "npm run build-dev",
+    "build": "npm run build-dev && npm run babel",
+    "babel": "babel dist/debug -d dist/release",
     "build-dev": "webpack --config webpack.config.js",
-    "dev": "nodemon --verbose --watch src --delay 2500ms ./bin/dev.js -e js,css,html",
-    "build-server": "webpack --config webpack-server.config.js"
+    "dev": "nodemon --verbose --watch src --delay 2500ms ./bin/dev.js -e js,css,html"
   },
   "files": [
     "Tools",
@@ -32,6 +32,11 @@
     "vis-network": "^9.0.3"
   },
   "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-stage-2": "^6.24.1",
+    "babel-register": "^6.26.0",
+    "babili": "^0.1.4",
     "child-process-promise": "^2.2.1",
     "css-loader": "^0.28.10",
     "nodemon": "^2.0.7",

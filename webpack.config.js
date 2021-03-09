@@ -11,14 +11,13 @@ const path = require('path');
 module.exports = () => {
   return {
     mode: 'development',
-    entry: path.resolve(__dirname, "./src/udv.js"),
+    entry: path.resolve(__dirname, './src/udv.js'),
     devtool: 'source-map',
     output: {
       path: path.resolve(__dirname, 'dist/debug/'),
-      filename: "udv-debug.js",
-      library: "udv-debug",
-      libraryTarget: 'umd',
-      umdNamedDefine: true,
+      filename: 'udv.js',
+      library: 'udv',
+      libraryTarget: 'commonjs2',
     },
     //TODO mettres les rules des plugins dans des fichiers de conf a part
     module: {
