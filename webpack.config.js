@@ -1,51 +1,45 @@
 /** @format */
-
-/*
- * Webpack for a client side bundle:
- *  - requires env parameter: cli parameter
- */
-
-const fs = require('fs');
 const path = require('path');
+const mode = process.env.NODE_ENV;
+const debugBuild = mode === 'development';
 
-module.exports = () => {
+let outputPath;
+let devTool;
+if (debugBuild) {
+  devTool = 'source-map';
+  outputPath = path.resolve(__dirname, 'dist/debug');
+} else {
+  devTool = 'none';
+  outputPath = path.resolve(__dirname, 'dist/release');
+}
+
+module.exports = (env) => {
+  const rules = [
+    {
+      // We also want to (web)pack the style files:
+      test: /\.css$/,
+      use: ['style-loader', 'css-loader'],
+    },
+    {
+      test: /\.json$/,
+      include: [path.resolve(__dirname, 'src')],
+      loader: 'raw-loader',
+    },
+  ];
+
   return {
-    mode: 'development',
+    mode,
     entry: path.resolve(__dirname, './src/udv.js'),
-    devtool: 'source-map',
+    devtool: devTool,
     output: {
-      path: path.resolve(__dirname, 'dist/debug/'),
+      path: outputPath,
       filename: 'udv.js',
       library: 'udv',
-      libraryTarget: 'commonjs2',
+      libraryTarget: 'umd',
+      umdNamedDefine: true,
     },
-    //TODO mettres les rules des plugins dans des fichiers de conf a part
     module: {
-      rules: [
-        {
-          // We also want to (web)pack the style files:
-          test: /\.css$/,
-          use: ['style-loader', 'css-loader'],
-        },
-        {
-          // (web)pack "small" images
-          test: /\.(png|gif)$/,
-          use: [
-            {
-              loader: 'url-loader',
-              options: {
-                limit: 100000, // Convert images < 100kb to base64 strings
-                name: 'images/[hash]-[name].[ext]',
-              },
-            },
-          ],
-        },
-        {
-          test: /\.json$/,
-          include: [path.resolve(__dirname, 'src')],
-          loader: 'raw-loader',
-        },
-      ],
+      rules: rules,
     },
   };
 };
