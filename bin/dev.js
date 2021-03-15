@@ -7,4 +7,4 @@ const printExec = function (result) {
   console.log('stderr: \n', result.stderr);
 };
 
-exec('npm run build-dev').then(printExec);
+exec('npm run build-debug').then(printExec);
