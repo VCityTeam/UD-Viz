@@ -1,4 +1,4 @@
-import * as vis from 'vis-network';
+const Network = require('vis-network').Network
 
 /**
 * Manager for the graph
@@ -68,7 +68,7 @@ export class NetworkManager {
         this.data.nodes = this.getAsynchronousData()[0];
         this.data.edges = this.getAsynchronousData()[1];
         const container = document.getElementById(this.id_network);
-        this.network = new vis.Network(container, this.data, this.option);
+        this.network = new Network(container, this.data, this.option);
     }
 
     /**
