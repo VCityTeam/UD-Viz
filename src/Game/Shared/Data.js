@@ -2,8 +2,9 @@
 const RenderComponent = require('./GameObject/Components/RenderComponent');
 const ScriptComponent = require('./GameObject/Components/ScriptComponent');
 const GameObject = require('./GameObject/GameObject.js');
-const THREE = require('three');
 const BodyComponent = require('./GameObject/Components/BodyComponent');
+
+const THREE = require('three');
 
 module.exports = Object.freeze({
   WEBSOCKET: {

@@ -5,7 +5,6 @@
  */
 
 const THREE = require('three');
-const Data = require('../Data');
 
 //GameObject Components
 const RenderComponent = require('./Components/RenderComponent');

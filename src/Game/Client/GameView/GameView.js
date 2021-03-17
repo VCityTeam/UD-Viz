@@ -115,13 +115,15 @@ export class GameView {
   }
 
   initScene(state) {
-    this.updateObject3D(state);
+    
     const o = state.getOrigin();
     const [x, y] = proj4('EPSG:3946').forward([o.lng, o.lat]);
     this.object3D.position.x = x;
     this.object3D.position.y = y;
     this.object3D.position.z = o.alt;
+    this.updateObject3D(state);
     this.view.scene.add(this.object3D);
+    console.log(this.object3D)
 
     //shadow
     const renderer = this.view.mainLoop.gfxEngine.renderer;
