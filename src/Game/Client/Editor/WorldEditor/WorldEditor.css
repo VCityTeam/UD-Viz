@@ -1,0 +1,28 @@
+/** @format */
+.root_WorldEditorView {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.ui_WorldEditorView {
+  display: inline-block;
+  height: 100%;
+  background-color: darkgreen;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  padding: 5px;
+}
+
+img {
+  width: 300px !important;
+  height: 300px !important;
+}
+
+.canvas_preview {
+  display: block;
+  position: relative;
+  width: 300px !important;
+  height: 300px !important;
+  background-color: black;
+}

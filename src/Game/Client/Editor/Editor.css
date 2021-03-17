@@ -1,0 +1,47 @@
+/** @format */
+html {
+  height: 100%;
+}
+
+body {
+  margin: 0%;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+li {
+  display: flex;
+  cursor: pointer;
+}
+
+li:hover {
+  background-color: blueviolet;
+}
+
+.root_Editor {
+  height: 100%;
+  background-color: chartreuse;
+}
+
+.button_Editor {
+  background-color: blue;
+  width: 100%;
+  height: 25px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  -ms-user-select: none;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  -khtml-user-select: none;
+  user-select: none;
+  margin: 2px;
+}
+
+.button_Editor:hover {
+  background-color: red;
+  cursor: pointer;
+}

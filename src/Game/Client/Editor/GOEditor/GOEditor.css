@@ -1,0 +1,21 @@
+/** @format */
+
+.root_GOEditorView {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.ui_GOEditorView {
+  display: inline-block;
+  height: 100%;
+  background-color: burlywood;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  padding: 5px;
+}
+
+.canvas_GOEditorView {
+  display: inline-block;
+  position: absolute;
+}

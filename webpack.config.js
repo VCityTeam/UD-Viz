@@ -27,14 +27,19 @@ module.exports = (env) => {
     },
   ];
 
+  const entry = process.env.npm_config_entry || './src/index.js';
+  const output = process.env.npm_config_output || 'udv';
+
+  console.log('Build from ', entry, ' to ', output);
+
   return {
     mode,
-    entry: path.resolve(__dirname, './src/udv.js'),
+    entry: path.resolve(__dirname, entry),
     devtool: devTool,
     output: {
       path: outputPath,
-      filename: 'udv.js',
-      library: 'udv',
+      filename: output + '.js',
+      library: output + '',
       libraryTarget: 'umd',
       umdNamedDefine: true,
     },
