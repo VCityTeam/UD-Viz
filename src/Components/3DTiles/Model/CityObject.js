@@ -1,5 +1,5 @@
 import { Tile } from "./Tile.js";
-import * as THREE from 'three/build/three';
+import * as THREE from 'three';
 
 /**
  * Represents a city object.
