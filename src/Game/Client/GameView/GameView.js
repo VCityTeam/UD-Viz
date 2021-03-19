@@ -294,7 +294,8 @@ export class GameView {
         range: range,
         tilt: tilt,
       },
-    });
+      noControls:true}
+    );
 
     //TODO parler a itowns remove listener of the resize
     this.view.debugResize = this.view.resize;
@@ -510,6 +511,8 @@ export class GameView {
 
               _this.itownsControls = new itowns.PlanarControls(_this.view, {
                 handleCollision: false,
+                focusOnMouseOver:false,//TODO itowns bug not working
+                focusOnMouseClick:false
               });
 
               _this.cameraman.setFilmingTarget(false);
