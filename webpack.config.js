@@ -30,7 +30,7 @@ module.exports = (env) => {
   const entry = process.env.npm_config_entry || './src/index.js';
   const output = process.env.npm_config_output || 'udv';
 
-  console.log('Build from ', entry, ' to ', output);
+  console.log('Build from ', entry, ' to ', outputPath + '/' + output);
 
   return {
     mode,
