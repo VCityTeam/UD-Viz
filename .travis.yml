@@ -12,9 +12,9 @@ install:
 
 jobs:
   include:
-    - stage: build
+    - stage: test
       script:
-        - npm run build
+        - npm run test
   # - stage: lint
   #   script:
   #     - ./node_modules/eslint/bin/eslint.js --version
