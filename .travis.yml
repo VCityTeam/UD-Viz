@@ -7,9 +7,6 @@ node_js:
 before_install:
   - npm --version
 
-install:
-  - npm install --legacy-peer-deps
-
 jobs:
   include:
     - stage: test

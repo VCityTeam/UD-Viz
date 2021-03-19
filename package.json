@@ -4,8 +4,7 @@
   "description": "A collection of itowns plugins",
   "main": "src",
   "scripts": {
-    "test": "npm run install-peerDep && npm run build",
-    "install-peerDep": "npm i --legacy-peer-deps itowns && npm i --legacy-peer-deps three && npm i --legacy-peer-deps proj4",
+    "test": "npm i itowns && npm i three && npm i proj4 && npm i && npm run build",
     "build": "cross-env NODE_ENV=production webpack",
     "build-debug": "cross-env NODE_ENV=development webpack",
     "debug": "nodemon --verbose --watch src --delay 2500ms ./bin/debug.js -e js,css,html"
