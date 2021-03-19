@@ -7,6 +7,9 @@ node_js:
 before_install:
   - npm --version
 
+install:
+  - npm install
+
 jobs:
   include:
     - stage: test
