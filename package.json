@@ -26,7 +26,7 @@
     "itowns": "^2.31.0",
     "proj4": "^2.7.2",
     "socket.io-client": "^4.0.0",
-    "three": "^0.126.1",
+    "three": "0.125.2",
     "vis-data": "^7.1.2",
     "vis-network": "^9.0.3"
   },
