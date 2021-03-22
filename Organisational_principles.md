@@ -13,12 +13,12 @@ UD-Viz (repo)
 |    ├── Game                   # A plugin offering game engine functionnality
 |    |    ├── Shared            # code that can be executed both and client and server side
 |    |    └── Client            # client side game components           
-|    ├── Widgets                # A plugin gathering a set web web widgets (UI)  
-|    |    ├── Widget_1
-|    |    ├── Widget_2
-|    |    ├── ...
-|    |    └── Extensions        # Widgets depending on an external web service  
-|    
+|    └── Widgets                # A plugin gathering a set web web widgets (UI)  
+|         ├── Widget_1
+|         ├── Widget_2
+|         ├── ...
+|         └── Extensions        # Widgets depending on an external web service  
+├── ...
 └── webpack.js
 ```
 
