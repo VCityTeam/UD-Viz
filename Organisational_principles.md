@@ -1,5 +1,6 @@
 Plugin: a plugin of the iTowns framework
 
+```
 UD-Viz (repo)
 ├── src         # holds all the js sources that will be build
 |    ├── Components             # (FIXME: what src/Utils does for now)
@@ -26,4 +27,4 @@ UD-Viz (repo)
 |    
 ├── webpack-client.js    # Webpack code for building client side bundles e.g. UDVExamples.js
 ├── webpack-server.js    # Webpack code for building server side bundles e.g. UDVServer.js
-
+```
