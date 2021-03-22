@@ -1,30 +1,46 @@
-Plugin: a plugin of the iTowns framework
+Definitions:
+ - [Component](https://en.wikipedia.org/wiki/Component-based_software_engineering)
+   - `Components` folder: a set of components
+ - Plugin: a plugin (importable atomic sub-library) of the iTowns framework
+ - [web widgets](https://en.wikipedia.org/wiki/Web_widget) 
+
 
 ```
 UD-Viz (repo)
 ├── src         # holds all the js sources that will be build
-|    ├── Components             # (FIXME: what src/Utils does for now)
-|    ├── Game                   # a plugin offering game engine components
+|    ├── Components             # A set of components used by the plugins
+|    ├── Game                   # A plugin offering game engine functionnality
 |    |    ├── Shared            # code that can be executed both and client and server side
-|    |    ├── Client            # client side game components
-|    |    └── Server            # server side code
-|    ├── Widgets                # the  
-|    |    ├── NoDeps            # FIXME  
-|    |    └── Server/Hookable   # FIXME  can import noDeps modules (can be confusing) create a Widgets/Components ?
-                                # or no Standalone folder and rename serverplugins in extensions or plugins(server)
-|    ├── UDV.js          # Api of UDV package (FIXME: what the current Main.js does)
-|    ├── UDVServer.js    # An application for hosting UDV based games
-|    └── UDVExamples.js  # A set of illustrative UDV based applications simplifying
-|                        # the realization of examples  (packaged with their dependencies)
-├── examples    # holds all the js sources that will be build
-|    ├── Example_1       # An entrypoint to the first example application
-|    ├── Example_2       # ...
-|    ├── ...
-|    ├── local_modules   # A directory collecting all locally provided bundles 
-|         ├── UDV.js          # Bundle generated out of src/UDV.js
-|         ├── UDVServer.js    # Bundle generated out of src/UDVServer.js
-|         └── UDVExamples.js  # 
+|    |    └── Client            # client side game components           
+|    ├── Widgets                # A plugin offering a set web widgets  
+|    |    ├── Widget_1          # 
+|    |    ├── Widget_2
+|    |    ├── ...
+|    |    └── Extensions   # FIXME  
 |    
-├── webpack-client.js    # Webpack code for building client side bundles e.g. UDVExamples.js
-├── webpack-server.js    # Webpack code for building server side bundles e.g. UDVServer.js
+└── webpack.js
 ```
+
+Notes:
+ * The position of a specific component in the sub-folder hierarchy reflects
+   how it is shared/re-used by the plugins. For example if a given component 
+   is only used by a single widget, then it gets defined within that widget 
+   folder. But when another component usage is shared by two widgets then 
+   its definition directory gets promoted at the level of the two widgets
+   ```
+   └── src         # holds all the js sources that will be build
+        ├── Components 
+        |    └── Component_1         # A component shared by the Game and Widgets plugins 
+        |         └── *.js ...       # Component definition
+        ├── Game
+        |    └── Shared      
+        |         └── Component_2    # A component used by the Shared sub-set of the Game plugin 
+        |              └── ...       
+        └── Widgets  
+             ├── Components
+             |    └── Component_3    # A component shared by at least two widgets 
+             |         └── ...      
+             └── Widget_1     
+                  └── Component_4    # A component only used by Widget_1 (of the Widgets plugin) 
+                       └── ...         
+   ```
