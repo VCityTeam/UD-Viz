@@ -460,7 +460,7 @@ export class GameView {
       if (_this.cameraman.hasRoutine()) return; //already routine
 
       const speed = 0.6;
-      if (_this.itownsControls) {
+      if (_this.view.controls) {
         _this.cameraman.addRoutine(
           new Routine(
             function (dt) {
@@ -477,7 +477,8 @@ export class GameView {
               return ratio >= 1;
             },
             function () {
-              _this.itownsControls = null;
+              _this.view.controls.dispose();
+              _this.view.controls = null;
               _this.cameraman.setFilmingTarget(true);
             }
           )
@@ -509,7 +510,8 @@ export class GameView {
             function () {
               swicthMode(MODE.DEFAULT);
 
-              _this.itownsControls = new itowns.PlanarControls(_this.view, {
+              //creating controls like put it in _this.view.controls
+              const c = new itowns.PlanarControls(_this.view, {
                 handleCollision: false,
                 focusOnMouseOver:false,//TODO itowns bug not working
                 focusOnMouseClick:false
