@@ -101,13 +101,11 @@ export class GameView {
       );
 
       //only send cmds to server when not local
-      this.view.addFrameRequester(
-        itowns.MAIN_LOOP_EVENTS.UPDATE_START,
-        this.inputManager.sendCommandsToServer.bind(
-          this.inputManager,
-          this.webSocketService
-        )
-      );
+      const _this = this;
+      const sendCmds = function () {
+        requestAnimationFrame(sendCmds);
+        _this.inputManager.sendCommandsToServer(_this.webSocketService);
+      };
     }
 
     //resize
@@ -115,7 +113,6 @@ export class GameView {
   }
 
   initScene(state) {
-    
     const o = state.getOrigin();
     const [x, y] = proj4('EPSG:3946').forward([o.lng, o.lat]);
     this.object3D.position.x = x;
@@ -123,7 +120,7 @@ export class GameView {
     this.object3D.position.z = o.alt;
     this.updateObject3D(state);
     this.view.scene.add(this.object3D);
-    console.log(this.object3D)
+    console.log(this.object3D);
 
     //shadow
     const renderer = this.view.mainLoop.gfxEngine.renderer;
@@ -294,8 +291,8 @@ export class GameView {
         range: range,
         tilt: tilt,
       },
-      noControls:true}
-    );
+      noControls: true,
+    });
 
     //TODO parler a itowns remove listener of the resize
     this.view.debugResize = this.view.resize;
@@ -513,8 +510,8 @@ export class GameView {
               //creating controls like put it in _this.view.controls
               const c = new itowns.PlanarControls(_this.view, {
                 handleCollision: false,
-                focusOnMouseOver:false,//TODO itowns bug not working
-                focusOnMouseClick:false
+                focusOnMouseOver: false, //TODO itowns bug not working
+                focusOnMouseClick: false,
               });
 
               _this.cameraman.setFilmingTarget(false);
