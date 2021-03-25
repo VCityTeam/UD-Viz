@@ -7,7 +7,7 @@ export { ModuleView } from './ModuleView/ModuleView.js';//TODO remove this one f
 export { TilesManager } from './3DTiles/TilesManager.js';
 
 //this kind of component should be at this level of API
-import * as SystemUtils from './System/SystemUtils';
+import * as SystemUtils from './SystemUtils/SystemUtils';
 export { SystemUtils };
 
 export { LayerManager } from './LayerManager/LayerManager.js';
