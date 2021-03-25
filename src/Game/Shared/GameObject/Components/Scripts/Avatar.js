@@ -52,8 +52,8 @@ const AvatarModule = class Avatar {
     //TODO mettre valeur fichier de conf
     const AVATAR_SPEED_MOVE = 0.01;
     const AVATAR_SPEED_RUN = 0.02;
-    const AVATAR_SPEED_ROTATION_Z = 0.0001;
-    const AVATAR_SPEED_ROTATION_X = 0.0001;
+    const AVATAR_SPEED_ROTATION_Z = 0.00005;
+    const AVATAR_SPEED_ROTATION_X = 0.00005;
 
     for (let type in this.commands) {
       const cmds = this.commands[type];

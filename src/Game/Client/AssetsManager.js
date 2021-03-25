@@ -2,9 +2,12 @@
 
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import * as THREE from 'three';
+// import * as jquery from 'jquery'
 
 export class AssetsManager {
   constructor() {
+    //manager to load scripts
+    this.scripts = {};
     this.models = {};
   }
 
@@ -114,9 +117,9 @@ export class AssetsManager {
     const loader = new GLTFLoader();
     this.buildNativeModel();
 
-    return new Promise((resolve, reject) => {
-      var count = 0;
-      for (var idModel in config.models) {
+    const modelPromise = new Promise((resolve, reject) => {
+      let count = 0;
+      for (let idModel in config.models) {
         const id = idModel;
         const modelAnchor = config.models[id].anchor;
         const modelPath = config.models[id].path;
@@ -137,6 +140,18 @@ export class AssetsManager {
           reject
         );
       }
+    });
+    const scriptsPromise = new Promise((resolve, reject) => {
+      let count = 0;
+      for (let idScript in config.scripts) {
+        const scriptPath = config.scripts[idScript].path;
+        console.log(scriptPath);
+      }
+      resolve();
+    });
+
+    return new Promise((resolve, reject) => {
+      Promise.all([scriptsPromise, modelPromise]).then(resolve);
     });
   }
 }

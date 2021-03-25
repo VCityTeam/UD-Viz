@@ -21,13 +21,13 @@
     "url": "https://github.com/VCityTeam/UD-Viz/issues"
   },
   "homepage": "https://github.com/VCityTeam/UD-Viz/",
-  "peerDependencies": {
-    "proj4": "^2.7.0",
-    "three": "0.125.2"
-  },
+  "peerDependencies": {},
   "dependencies": {
+    "proj4": "^2.7.0",
+    "three": "0.125.2",
     "detect-collisions": "^2.5.2",
     "itowns": "^2.31.0",
+    "jquery": "^3.6.0",
     "socket.io-client": "^4.0.0",
     "vis-data": "^7.1.2",
     "vis-network": "^9.0.3"
