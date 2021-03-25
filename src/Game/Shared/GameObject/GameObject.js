@@ -54,17 +54,18 @@ const GameObjectModule = class GameObject {
     this.outdated = true;
   }
 
-  initAssets(assetsManager, udvShared) {
+  initAssets(manager, udvShared, isServerSide = false) {
     if (!this.initialized) {
       this.initialized = true;
       console.log('initAssets ', this);
       for (let type in this.components) {
         const c = this.components[type];
-        c.initAssets(assetsManager, udvShared);
+        if (isServerSide && !c.isServerSide()) continue;
+        c.initAssets(manager, udvShared);
       }
     }
     this.children.forEach(function (child) {
-      child.initAssets(assetsManager, udvShared);
+      child.initAssets(manager, udvShared);
     });
   }
 
