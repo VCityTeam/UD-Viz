@@ -15,6 +15,10 @@ const BodyComponentModule = class BodyComponent {
     this.createBodies();
   }
 
+  initAssets(assetsManager) {
+    //nada
+  }
+
   createBodies() {
     const bodies = this.bodies;
 

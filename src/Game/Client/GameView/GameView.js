@@ -19,6 +19,8 @@ import { Cameraman, Routine } from '../Cameraman';
 import GameObject from '../../Shared/GameObject/GameObject';
 import Command from '../../Shared/Command';
 
+const udvShared = require('../../Shared/Shared');
+
 export class GameView {
   constructor(params) {
     //html
@@ -77,13 +79,12 @@ export class GameView {
     return this.rootHtml;
   }
 
-  onFirstState(state, avatarUUID) {
+  onFirstState(state) {
     //build itowns view
     this.initItownsView(state);
 
     //cameraman
     this.cameraman = new Cameraman(this.view.camera.camera3D);
-    this.avatarUUID = avatarUUID;
 
     this.initScene(state);
     this.initInputs(state);
@@ -120,7 +121,6 @@ export class GameView {
     this.object3D.position.z = o.alt;
     this.updateObject3D(state);
     this.view.scene.add(this.object3D);
-    console.log(this.object3D);
 
     //shadow
     const renderer = this.view.mainLoop.gfxEngine.renderer;
@@ -251,7 +251,7 @@ export class GameView {
       state.setGameObject(lastGO); //update GO
     }
 
-    const obj = state.getGameObject().computeObject3D(this.assetsManager);
+    const obj = state.getGameObject().getObject3D();
     if (!obj) throw new Error('no object3D');
     this.object3D.children.length = 0;
     this.object3D.add(obj);
@@ -571,7 +571,7 @@ export class GameView {
     //MOVE ON MOUSEDOWN
 
     //DEBUG
-    const debugMesh = this.assetsManager.fetch('sphere');
+    const debugMesh = this.assetsManager.fetchModel('sphere');
     debugMesh.scale.copy(new THREE.Vector3(0.2, 0.2, 0.2));
 
     //disbale right click context menu
@@ -706,7 +706,8 @@ export class GameView {
 
             const state = new WorldState(firstStateJSON.state);
             _this.worldStateInterpolator.onFirstState(state);
-            _this.onFirstState(state, firstStateJSON.avatarID);
+            _this.onFirstState(state);
+            _this.avatarUUID = firstStateJSON.avatarID;
           }
         );
 
@@ -729,12 +730,18 @@ export class GameView {
       } else {
         //load world
         if (!_this.world) throw new Error('no world');
-        _this.world.load(function () {
-          const avatar = new GameObject(Data.createAvatarJSON());
-          _this.world.addGameObject(avatar);
 
+        _this.world.getGameObject().initAssets(_this.assetsManager, udvShared);
+
+        _this.world.load(function () {
           const state = _this.world.computeWorldState();
-          _this.onFirstState(state, avatar.getUUID());
+          _this.onFirstState(state);
+
+          //add an avatar in it
+          const avatar = new GameObject(Data.createAvatarJSON());
+          _this.avatarUUID = avatar.getUUID();
+          avatar.initAssets(_this.assetsManager, udvShared);
+          _this.world.addGameObject(avatar);
 
           resolve();
         });

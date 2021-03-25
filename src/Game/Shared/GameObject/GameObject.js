@@ -14,7 +14,6 @@ const ScriptComponent = require('./Components/ScriptComponent');
 const GameObjectModule = class GameObject {
   constructor(json, parent) {
     if (!json) throw new Error('no json');
-
     /******************DATA***************************/
 
     //id
@@ -33,9 +32,6 @@ const GameObjectModule = class GameObject {
     //static
     this.static = json.static || false;
 
-    //outdated flag
-    this.outdated = json.outdated || true;
-
     //nodale structure
     const children = [];
     if (json.children && json.children.length > 0) {
@@ -50,6 +46,26 @@ const GameObjectModule = class GameObject {
 
     /******************INTERNAL***************************/
     this.setParent(parent);
+
+    //assets has been initialized
+    this.initialized = false;
+
+    //outdated flag for network opti
+    this.outdated = true;
+  }
+
+  initAssets(assetsManager, udvShared) {
+    if (!this.initialized) {
+      this.initialized = true;
+      console.log('initAssets ', this);
+      for (let type in this.components) {
+        const c = this.components[type];
+        c.initAssets(assetsManager, udvShared);
+      }
+    }
+    this.children.forEach(function (child) {
+      child.initAssets(assetsManager, udvShared);
+    });
   }
 
   computeWorldTransform() {
@@ -201,31 +217,29 @@ const GameObjectModule = class GameObject {
   getObject3D() {
     const r = this.getComponent(RenderComponent.TYPE);
     if (!r) return null;
-    return r.getObject3D();
-  }
+    const obj = r.getObject3D();
+    if (!obj) return null;
 
-  computeObject3D(assetsManager) {
-    const r = this.getComponent(RenderComponent.TYPE);
-    if (r) {
-      let obj = r.computeObject3D(assetsManager);
+    //transform
+    obj.position.copy(this.getPosition());
+    //TODO rotation n'est plus un THREE VEctor3 mais un euler
+    obj.rotation.copy(
+      new THREE.Euler(
+        this.transform.rotation.x,
+        this.transform.rotation.y,
+        this.transform.rotation.z,
+        'ZXY'
+      )
+    );
+    obj.scale.copy(this.getScale());
 
-      //transform
-      obj.position.copy(this.getPosition());
-      //TODO rotation n'est plus un THREE VEctor3 mais un euler
-      obj.rotation.copy(
-        new THREE.Euler(
-          this.transform.rotation.x,
-          this.transform.rotation.y,
-          this.transform.rotation.z,
-          'ZXY'
-        )
-      );
-      obj.scale.copy(this.getScale());
+    //reset
+    this.children.forEach(function (child) {
+      const childObj = child.getObject3D();
+      if (childObj) obj.add(childObj);
+    });
 
-      return obj;
-    }
-
-    return null;
+    return obj;
   }
 
   setTransformFromJSON(json) {
@@ -283,7 +297,10 @@ const GameObjectModule = class GameObject {
 
   setParent(parent) {
     this.parent = parent;
-    if (parent) this.parentUUID = parent.getUUID();
+
+    if (parent) {
+      this.parentUUID = parent.getUUID();
+    }
   }
 
   getParentUUID() {
@@ -369,7 +386,6 @@ const GameObjectModule = class GameObject {
       name: this.name,
       type: GameObjectModule.TYPE,
       static: this.static,
-      outdated: this.outdated,
       uuid: this.uuid,
       parentUUID: this.parentUUID,
       components: components,

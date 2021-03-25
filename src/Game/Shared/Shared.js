@@ -15,10 +15,13 @@ const es5World = require('./World');
 const es5WorldState = require('./WorldState');
 // export { es5WorldState as WorldState };
 
+const THREE = require('three');
+
 module.exports = {
   Data: es5Data,
   Command: es5Command,
   GameObject: es5GameObject,
   World: es5World,
   WorldState: es5WorldState,
+  THREE: THREE,
 };

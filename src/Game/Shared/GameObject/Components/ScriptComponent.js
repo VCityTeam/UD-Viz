@@ -1,7 +1,5 @@
 /** @format */
 
-const Avatar = require('./Scripts/Avatar');
-const Map = require('./Scripts/Map');
 const THREE = require('three');
 
 const ScriptComponentModule = class ScriptComponent {
@@ -10,27 +8,21 @@ const ScriptComponentModule = class ScriptComponent {
     this.uuid = json.uuid || THREE.MathUtils.generateUUID();
     this.idScripts = json.idScripts;
     this.type = json.type;
-    this.data = json.data;
+    this.conf = json.conf;
 
-    //dynamic
-    const scripts = {};
-    this.idScripts.forEach(function (id) {
-      switch (id) {
-        case Avatar.ID:
-          scripts[Avatar.ID] = new Avatar(json.data);
-          break;
-        case Map.ID:
-          scripts[Map.ID] = new Map(json.data);
-          break;
-        default:
-          throw new Error('unknown script ' + id);
-      }
-    });
-    this.scripts = scripts;
+    this.scripts = {};
   }
 
-  getData() {
-    return this.data;
+  getConf() {
+    return this.conf;
+  }
+
+  initAssets(assetsManager, udvShared) {
+    const _this = this;
+    this.idScripts.forEach(function (id) {
+      const constructor = assetsManager.fetchScript(id);
+      _this.scripts[id] = new constructor(_this.conf, udvShared);
+    });
   }
 
   execute(event, params) {
@@ -42,7 +34,8 @@ const ScriptComponentModule = class ScriptComponent {
   }
 
   executeScript(id, event, params) {
-    const s = this.scripts[id];
+    let s = this.scripts[id];
+
     if (s[event]) {
       return s[event].apply(s, [this.parent].concat(params));
     } else {
@@ -62,7 +55,7 @@ const ScriptComponentModule = class ScriptComponent {
     return {
       uuid: this.uuid,
       idScripts: this.idScripts,
-      data: this.data,
+      conf: this.conf,
       type: ScriptComponentModule.TYPE,
     };
   }

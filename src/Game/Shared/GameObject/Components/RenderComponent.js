@@ -32,31 +32,19 @@ const RenderComponentModule = class RenderComponent {
     return this.object3D;
   }
 
-  computeObject3D(assetsManager) {
-    if (this.object3D) {
-      //clear children and dispatch computeObject3D
-      while (this.object3D.legngth) {
-        this.object3D.remove(this.object3D.children[0]);
-      }
-    } else {
-      this.object3D = new THREE.Object3D();
-      this.object3D.name = this.parent.getName();
+  initAssets(assetsManager) {
+    this.object3D = new THREE.Object3D();
+    this.object3D.name = 'RenderComponent Object3D ' + this.parent.getName();
 
-      //stock data in userData
-      this.object3D.userData = {
-        uuid: this.parent.getUUID(),
-      };
+    //stock data in userData
+    this.object3D.userData = {
+      uuid: this.parent.getUUID(),
+    };
 
-      //get the 3D model
-      if (this.idModel) {
-        this.object3D.add(assetsManager.fetch(this.idModel));
-      }
+    //get the 3D model
+    if (this.idModel) {
+      this.object3D.add(assetsManager.fetchModel(this.idModel));
     }
-
-    //build recursively
-    this.parent.getChildren().forEach((child) => {
-      this.object3D.add(child.computeObject3D(assetsManager));
-    });
 
     return this.object3D;
   }

@@ -2,7 +2,7 @@
 
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import * as THREE from 'three';
-// import * as jquery from 'jquery'
+import * as jquery from 'jquery';
 
 export class AssetsManager {
   constructor() {
@@ -11,9 +11,14 @@ export class AssetsManager {
     this.models = {};
   }
 
-  fetch(idModel) {
+  fetchModel(idModel) {
     if (!this.models[idModel]) console.error('no model with id ', idModel);
     return this.models[idModel].clone();
+  }
+
+  fetchScript(idScript) {
+    if (!this.scripts[idScript]) console.error('no script with id ', idScript);
+    return this.scripts[idScript];
   }
 
   buildNativeModel() {
@@ -108,6 +113,8 @@ export class AssetsManager {
       }
     });
 
+    parent.name = id;
+
     this.models[id] = parent;
   }
 
@@ -132,7 +139,7 @@ export class AssetsManager {
             //check if finish
             count++;
             if (count == Object.keys(config.models).length) {
-              console.log('Model loaded ', this.models);
+              console.log('Models loaded ', this.models);
               resolve();
             }
           },
@@ -145,9 +152,20 @@ export class AssetsManager {
       let count = 0;
       for (let idScript in config.scripts) {
         const scriptPath = config.scripts[idScript].path;
-        console.log(scriptPath);
+        jquery.get(
+          scriptPath,
+          function (scriptString) {
+            _this.scripts[idScript] = eval(scriptString);
+            //check if finish
+            count++;
+            if (count == Object.keys(config.scripts).length) {
+              console.log('Scripts loaded ', _this.scripts);
+              resolve();
+            }
+          },
+          'text'
+        );
       }
-      resolve();
     });
 
     return new Promise((resolve, reject) => {
