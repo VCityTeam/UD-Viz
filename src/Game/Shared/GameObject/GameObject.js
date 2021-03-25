@@ -265,19 +265,25 @@ const GameObjectModule = class GameObject {
     return new GameObject(this.toJSON(true));
   }
 
-  //TODO permettre de break la propagation like cb return true = stop propagation
   traverse(cb) {
-    cb(this);
-    this.children.forEach(function (c) {
-      c.traverse(cb);
-    });
+    if (cb(this)) return true;
+
+    for (let index = 0; index < this.children.length; index++) {
+      const element = this.children[index];
+      if (element.traverse(cb)) return true;
+    }
+
+    return false;
   }
 
   find(uuid) {
     let result = null;
-    //TODO opti pas obliger de parcourir tous les children break
     this.traverse(function (g) {
-      if (g.getUUID() == uuid) result = g;
+      if (g.getUUID() == uuid) {
+        result = g;
+        return true;
+      }
+      return false;
     });
     return result;
   }

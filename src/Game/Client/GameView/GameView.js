@@ -251,7 +251,14 @@ export class GameView {
       state.setGameObject(lastGO); //update GO
     }
 
-    const obj = state.getGameObject().getObject3D();
+    let obj;
+    state.getGameObject().traverse(function (child) {
+      const childObj = child.getObject3D();
+      if (childObj) {
+        obj = childObj;
+        return true;
+      }
+    });
     if (!obj) throw new Error('no object3D');
     this.object3D.children.length = 0;
     this.object3D.add(obj);
