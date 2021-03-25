@@ -12,7 +12,8 @@ export { Widgets };
 
 //Game
 import * as Game from './Game/Game.js';
-export { Game };
+const GameView = Game.Client.GameView;//TODO remonter la GameView un niveau au dessus
+export { Game, GameView };
 
 //external package
 
