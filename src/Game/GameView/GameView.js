@@ -3,23 +3,22 @@
 //UDV
 // import { TilesManager } from '../../Utils/3DTiles/TilesManager';
 // import { LayerManager } from '../../Utils/LayerManager/LayerManager';
-
-import { InputManager } from '../InputManager';
-
-const Data = require('../../Shared/Data');
-const WorldState = require('../../Shared/WorldState');
-const WorldStateDiff = require('../../Shared/WorldStateDiff');
+import { AssetsManager } from '../Components/AssetsManager';
+import { InputManager } from '../Components/InputManager';
+import { Cameraman, Routine } from '../Components/Cameraman';
 
 const THREE = require('three');
 import proj4 from 'proj4';
 import * as itowns from 'itowns';
 
 import './GameView.css';
-import { Cameraman, Routine } from '../Cameraman';
-import GameObject from '../../Shared/GameObject/GameObject';
-import Command from '../../Shared/Command';
 
-const udvShared = require('../../Shared/Shared');
+const udvShared = require('../Shared/Shared');
+const Command = udvShared.Command;
+const GameObject = udvShared.GameObject;
+const Data = udvShared.Data;
+const WorldState = udvShared.WorldState;
+const WorldStateDiff = udvShared.WorldStateDiff;
 
 export class GameView {
   constructor(params) {
@@ -35,7 +34,7 @@ export class GameView {
     this.config = params.config;
 
     //assets
-    this.assetsManager = params.assetsManager;
+    this.assetsManager = params.assetsManager || new AssetsManager();
 
     //inputs
     this.inputManager = new InputManager();
@@ -690,6 +689,8 @@ export class GameView {
     this.inputManager.dispose();
     window.removeEventListener('resize', this.onResize.bind(this));
     this.rootHtml.parentElement.removeChild(this.rootHtml);
+
+    //TODO dispose itoqns view & sendCommands tick + renderCanvas
   }
 
   load() {
