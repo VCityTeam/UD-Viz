@@ -57,7 +57,6 @@ const GameObjectModule = class GameObject {
   initAssets(manager, udvShared, isServerSide = false) {
     if (!this.initialized) {
       this.initialized = true;
-      console.log('initAssets ', this);
       for (let type in this.components) {
         const c = this.components[type];
         if (isServerSide && !c.isServerSide()) continue;
@@ -210,7 +209,7 @@ const GameObjectModule = class GameObject {
 
           break;
         default:
-          throw new Error('wrong type component');
+          throw new Error('wrong type component', json, componentJSON);
       }
     });
   }
