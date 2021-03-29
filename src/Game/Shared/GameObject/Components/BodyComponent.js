@@ -103,6 +103,6 @@ const BodyComponentModule = class BodyComponent {
   }
 };
 
-BodyComponentModule.TYPE = 'BodyComponent';
+BodyComponentModule.TYPE = 'Body';
 
 module.exports = BodyComponentModule;

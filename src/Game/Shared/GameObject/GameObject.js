@@ -209,7 +209,7 @@ const GameObjectModule = class GameObject {
 
           break;
         default:
-          throw new Error('wrong type component', json, componentJSON);
+          console.warn('wrong type component', componentJSON);
       }
     });
   }

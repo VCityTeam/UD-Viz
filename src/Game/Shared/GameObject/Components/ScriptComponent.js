@@ -6,10 +6,11 @@ const ScriptComponentModule = class ScriptComponent {
   constructor(parent, json) {
     this.parent = parent;
     this.uuid = json.uuid || THREE.MathUtils.generateUUID();
-    this.idScripts = json.idScripts;
-    this.type = json.type;
-    this.conf = json.conf;
+    this.idScripts = json.idScripts || [];
+    this.type = json.type || ScriptComponentModule.TYPE;
+    this.conf = json.conf || {};
 
+    //internal
     this.scripts = {};
   }
 
@@ -61,8 +62,9 @@ const ScriptComponentModule = class ScriptComponent {
   }
 };
 
-ScriptComponentModule.TYPE = 'ScriptComponent';
+ScriptComponentModule.TYPE = 'Script';
 ScriptComponentModule.EVENT = {
+  INIT: 'init', //when add to world
   TICK: 'tick', //every tick
   LOAD: 'load', //at world load return promises
 };

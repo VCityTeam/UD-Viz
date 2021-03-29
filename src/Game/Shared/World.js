@@ -87,6 +87,9 @@ const WorldModule = class World {
       }
     });
     if (changed) collisions.update();
+
+    //init
+    gameObject.executeScripts(ScriptComponent.EVENT.INIT, []);
   }
 
   removeGameObject(uuid) {

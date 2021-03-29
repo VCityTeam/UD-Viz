@@ -50,6 +50,6 @@ const RenderComponentModule = class RenderComponent {
   }
 };
 
-RenderComponentModule.TYPE = 'RenderComponent';
+RenderComponentModule.TYPE = 'Render';
 
 module.exports = RenderComponentModule;
