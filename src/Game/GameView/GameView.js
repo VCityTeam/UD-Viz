@@ -64,10 +64,22 @@ export class GameView {
 
     //model only in Local
     this.world = null;
+
+    //to pass gameobject script
+    this.gameContext = {
+      assetsManager: this.assetsManager,
+      inputManager: this.inputManager,
+      dt: 0,
+      commands: null,
+      world: null,
+      UDVShared: udvShared,
+    };
   }
 
   setWorld(world) {
     this.world = world;
+    if (!world) return;
+    this.gameContext.world = world;
   }
 
   getWorld() {
@@ -197,7 +209,7 @@ export class GameView {
 
   updateViewLocal(dt) {
     //TODO itowns BUG
-    if (isNaN(dt)) dt = 0;
+    if (!isNaN(dt)) this.gameContext.dt = dt;
 
     //DEBUG
     // window.UDVDebugger.displayShadowMap(
@@ -206,12 +218,12 @@ export class GameView {
     // );
 
     //tick world
-    const commands = this.inputManager.computeCommands();
+    this.gameContext.commands = this.inputManager.computeCommands();
     const avatarUUID = this.avatarUUID;
-    commands.forEach(function (cmd) {
+    this.gameContext.commands.forEach(function (cmd) {
       cmd.setAvatarID(avatarUUID);
     });
-    this.world.tick(commands, dt);
+    this.world.tick(this.gameContext);
     const state = this.world.computeWorldState();
     this.updateObject3D(state);
 
@@ -265,7 +277,6 @@ export class GameView {
     //buffer
     this.lastState = state;
   }
-
   initItownsView(state) {
     // Define EPSG:3946 projection which is the projection used in the 3D view
     // (planarView of iTowns). It is indeed needed
@@ -739,20 +750,16 @@ export class GameView {
         //load world
         if (!_this.world) throw new Error('no world');
 
-        _this.world.getGameObject().initAssets(_this.assetsManager, udvShared);
-
         _this.world.load(function () {
           const state = _this.world.computeWorldState();
           _this.onFirstState(state);
 
-          //add an avatar in it
+          //add an avatar in it TODO fetch with a prefab
           const avatar = new GameObject(Data.createAvatarJSON());
           _this.avatarUUID = avatar.getUUID();
-          avatar.initAssets(_this.assetsManager, udvShared);
-          _this.world.addGameObject(avatar);
-
-          resolve();
-        });
+          const parent = _this.world.getGameObject();
+          _this.world.addGameObject(avatar, _this.gameContext, parent, resolve);
+        }, _this.gameContext);
       }
     });
   }

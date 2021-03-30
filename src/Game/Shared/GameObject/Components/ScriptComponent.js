@@ -64,7 +64,7 @@ const ScriptComponentModule = class ScriptComponent {
 
 ScriptComponentModule.TYPE = 'Script';
 ScriptComponentModule.EVENT = {
-  INIT: 'init', //when add to world
+  INIT: 'init', //when added
   TICK: 'tick', //every tick
   LOAD: 'load', //at world load return promises
 };

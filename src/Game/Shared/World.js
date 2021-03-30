@@ -26,7 +26,9 @@ const WorldModule = class World {
 
     //gameobject
     if (json.gameObject) {
-      this.addGameObject(new GameObject(json.gameObject));
+      this.gameObject = new GameObject(json.gameObject);
+    } else {
+      throw new Error('no go in world');
     }
 
     //name of the world
@@ -42,16 +44,17 @@ const WorldModule = class World {
     this.modules = options.modules || {};
   }
 
-  load(onLoad) {
+  load(onLoad, gCtx) {
+    //load gameobject
+    this.addGameObject(this.gameObject, gCtx, null, onLoad);
+  }
+
+  computePromisesLoad(go, gCtx) {
     //load GameObject
     const promises = [];
-    let params;
-    if (this.isServerSide) {
-      params = [this.isServerSide, this.modules.gm, this.modules.PNG];
-    } else {
-      params = [this.isServerSide];
-    }
-    this.gameObject.traverse(function (g) {
+    let params = [gCtx, this.isServerSide, this.modules];
+
+    go.traverse(function (g) {
       const scriptC = g.getComponent(ScriptComponent.TYPE);
       if (scriptC) {
         for (let idScript in scriptC.getScripts()) {
@@ -64,20 +67,39 @@ const WorldModule = class World {
         }
       }
     });
-    Promise.all(promises).then(onLoad);
+
+    return promises;
   }
 
-  addGameObject(gameObject) {
-    if (!this.gameObject) {
-      this.gameObject = gameObject;
-    } else {
-      this.gameObject.addChild(gameObject);
-    }
+  addGameObject(gameObject, gCtx, parent = this.gameObject, onLoad = null) {
+    const _this = this;
 
+    gameObject.initAssetsComponents(
+      gCtx.assetsManager,
+      gCtx.UDVShared,
+      _this.isServerSide
+    );
+
+    Promise.all(this.computePromisesLoad(gameObject, gCtx)).then(function () {
+      if (parent) {
+        parent.addChild(gameObject);
+      } else {
+        _this.gameObject = gameObject;
+      }
+
+      _this.registerGOCollision(gameObject);
+      gameObject.traverse(function (g) {
+        g.executeScripts(ScriptComponent.EVENT.INIT, [gCtx]);
+      });
+      if (onLoad) onLoad();
+    });
+  }
+
+  registerGOCollision(go) {
     //collisions
     const collisions = this.collisions;
     let changed = false;
-    gameObject.traverse(function (child) {
+    go.traverse(function (child) {
       const body = child.getComponent(BodyComponent.TYPE);
       if (body) {
         changed = true;
@@ -87,23 +109,12 @@ const WorldModule = class World {
       }
     });
     if (changed) collisions.update();
-
-    //init
-    gameObject.executeScripts(ScriptComponent.EVENT.INIT, []);
   }
 
-  removeGameObject(uuid) {
-    let goRemoved = null;
-    this.gameObject.traverse(function (g) {
-      if (g.getUUID() == uuid) {
-        g.removeFromParent();
-        goRemoved = g;
-      }
-    });
-
+  unregisterGOCollision(go) {
     //collisions
     let changed = false;
-    goRemoved.traverse(function (child) {
+    go.traverse(function (child) {
       const body = child.getComponent(BodyComponent.TYPE);
       if (body) {
         changed = true;
@@ -113,14 +124,18 @@ const WorldModule = class World {
       }
     });
     if (changed) this.collisions.update();
-
-    if (this.gameObject.find(uuid)) throw new Error('not deleted');
   }
 
-  tick(commands, dt) {
+  removeGameObject(uuid) {
+    const go = this.gameObject.find(uuid);
+    go.removeFromParent();
+    this.unregisterGOCollision(go);
+  }
+
+  tick(gCtx) {
     //Tick GameObject
     this.gameObject.traverse(function (g) {
-      g.executeScripts(ScriptComponent.EVENT.TICK, [commands, dt]);
+      g.executeScripts(ScriptComponent.EVENT.TICK, [gCtx]);
     });
 
     //collisions

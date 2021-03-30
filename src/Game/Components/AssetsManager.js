@@ -3,10 +3,12 @@
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import * as THREE from 'three';
 import * as jquery from 'jquery';
+import GameObjectModule from '../Shared/GameObject/GameObject';
 
 export class AssetsManager {
   constructor() {
     //manager to load scripts
+    this.prefabs = {};
     this.scripts = {};
     this.models = {};
   }
@@ -19,6 +21,11 @@ export class AssetsManager {
   fetchScript(idScript) {
     if (!this.scripts[idScript]) console.error('no script with id ', idScript);
     return this.scripts[idScript];
+  }
+
+  fetchPrefab(idprefab) {
+    if (!this.prefabs[idprefab]) console.error('no prefab with id ', idprefab);
+    return new GameObjectModule(this.prefabs[idprefab]);
   }
 
   buildNativeModel() {
@@ -168,8 +175,28 @@ export class AssetsManager {
       }
     });
 
+    const prefabsPromise = new Promise((resolve, reject) => {
+      let count = 0;
+      for (let idPrefab in config.prefabs) {
+        const scriptPath = config.prefabs[idPrefab].path;
+        jquery.get(
+          scriptPath,
+          function (prefabstring) {
+            _this.prefabs[idPrefab] = JSON.parse(prefabstring);
+            //check if finish
+            count++;
+            if (count == Object.keys(config.prefabs).length) {
+              console.log('prefabs loaded ', _this.prefabs);
+              resolve();
+            }
+          },
+          'text'
+        );
+      }
+    });
+
     return new Promise((resolve, reject) => {
-      Promise.all([scriptsPromise, modelPromise]).then(resolve);
+      Promise.all([scriptsPromise, modelPromise, prefabsPromise]).then(resolve);
     });
   }
 }

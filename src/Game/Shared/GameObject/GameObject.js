@@ -52,9 +52,12 @@ const GameObjectModule = class GameObject {
 
     //outdated flag for network opti
     this.outdated = true;
+
+    //default object3d
+    this.defaultObject3D = new THREE.Object3D();
   }
 
-  initAssets(manager, udvShared, isServerSide = false) {
+  initAssetsComponents(manager, udvShared, isServerSide = false) {
     if (!this.initialized) {
       this.initialized = true;
       for (let type in this.components) {
@@ -64,7 +67,7 @@ const GameObjectModule = class GameObject {
       }
     }
     this.children.forEach(function (child) {
-      child.initAssets(manager, udvShared);
+      child.initAssetsComponents(manager, udvShared);
     });
   }
 
@@ -216,9 +219,13 @@ const GameObjectModule = class GameObject {
 
   getObject3D() {
     const r = this.getComponent(RenderComponent.TYPE);
-    if (!r) return null;
-    const obj = r.getObject3D();
-    if (!obj) return null;
+    let obj;
+    if (!r) {
+      obj = this.defaultObject3D;
+    } else {
+      obj = r.getObject3D();
+      if (!obj) obj = this.defaultObject3D;
+    }
 
     //transform
     obj.position.copy(this.getPosition());
