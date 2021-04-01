@@ -1,8 +1,8 @@
 /** @format */
-const RenderComponent = require('./GameObject/Components/RenderComponent');
-const ScriptComponent = require('./GameObject/Components/ScriptComponent');
+const RenderComponent = require('./GameObject/Components/Render');
+const ScriptComponent = require('./GameObject/Components/Script');
 const GameObject = require('./GameObject/GameObject.js');
-const BodyComponent = require('./GameObject/Components/BodyComponent');
+const BodyComponent = require('./GameObject/Components/Body');
 
 const THREE = require('three');
 

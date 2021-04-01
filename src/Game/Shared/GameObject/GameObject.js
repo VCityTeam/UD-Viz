@@ -7,9 +7,9 @@
 const THREE = require('three');
 
 //GameObject Components
-const RenderComponent = require('./Components/RenderComponent');
-const BodyComponent = require('./Components/BodyComponent');
-const ScriptComponent = require('./Components/ScriptComponent');
+const RenderComponent = require('./Components/Render');
+const BodyComponent = require('./Components/Body');
+const ScriptComponent = require('./Components/Script');
 
 const GameObjectModule = class GameObject {
   constructor(json, parent) {

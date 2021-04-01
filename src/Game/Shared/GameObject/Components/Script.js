@@ -2,12 +2,12 @@
 
 const THREE = require('three');
 
-const ScriptComponentModule = class ScriptComponent {
+const ScriptModule = class Script {
   constructor(parent, json) {
     this.parent = parent;
     this.uuid = json.uuid || THREE.MathUtils.generateUUID();
     this.idScripts = json.idScripts || [];
-    this.type = json.type || ScriptComponentModule.TYPE;
+    this.type = json.type || ScriptModule.TYPE;
     this.conf = json.conf || {};
 
     //internal
@@ -57,16 +57,16 @@ const ScriptComponentModule = class ScriptComponent {
       uuid: this.uuid,
       idScripts: this.idScripts,
       conf: this.conf,
-      type: ScriptComponentModule.TYPE,
+      type: ScriptModule.TYPE,
     };
   }
 };
 
-ScriptComponentModule.TYPE = 'Script';
-ScriptComponentModule.EVENT = {
+ScriptModule.TYPE = 'Script';
+ScriptModule.EVENT = {
   INIT: 'init', //when added
   TICK: 'tick', //every tick
   LOAD: 'load', //at world load return promises
 };
 
-module.exports = ScriptComponentModule;
+module.exports = ScriptModule;

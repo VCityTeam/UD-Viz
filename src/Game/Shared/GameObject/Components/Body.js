@@ -3,7 +3,7 @@
 const { Circle, Polygon } = require('detect-collisions');
 const THREE = require('three');
 
-const BodyComponentModule = class BodyComponent {
+const BodyModule = class Body {
   constructor(parent, json) {
     if (!json) throw new Error('no json');
     this.parent = parent;
@@ -97,12 +97,12 @@ const BodyComponentModule = class BodyComponent {
   toJSON() {
     return {
       uuid: this.uuid,
-      type: BodyComponentModule.TYPE,
+      type: BodyModule.TYPE,
       shapes: this.shapesJSON,
     };
   }
 };
 
-BodyComponentModule.TYPE = 'Body';
+BodyModule.TYPE = 'Body';
 
-module.exports = BodyComponentModule;
+module.exports = BodyModule;

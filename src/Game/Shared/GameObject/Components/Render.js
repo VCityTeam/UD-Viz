@@ -2,7 +2,7 @@
 
 const THREE = require('three');
 
-const RenderComponentModule = class RenderComponent {
+const RenderModule = class Render {
   constructor(parent, json) {
     this.parent = parent;
     this.uuid = json.uuid || THREE.MathUtils.generateUUID();
@@ -19,7 +19,7 @@ const RenderComponentModule = class RenderComponent {
   toJSON() {
     return {
       uuid: this.uuid,
-      type: RenderComponentModule.TYPE,
+      type: RenderModule.TYPE,
       idModel: this.idModel,
     };
   }
@@ -34,7 +34,7 @@ const RenderComponentModule = class RenderComponent {
 
   initAssets(assetsManager) {
     this.object3D = new THREE.Object3D();
-    this.object3D.name = 'RenderComponent Object3D ' + this.parent.getName();
+    this.object3D.name = 'Render Object3D ' + this.parent.getName();
 
     //stock data in userData
     this.object3D.userData = {
@@ -50,6 +50,6 @@ const RenderComponentModule = class RenderComponent {
   }
 };
 
-RenderComponentModule.TYPE = 'Render';
+RenderModule.TYPE = 'Render';
 
-module.exports = RenderComponentModule;
+module.exports = RenderModule;

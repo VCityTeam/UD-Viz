@@ -5,8 +5,8 @@
  * @format
  */
 const GameObject = require('./GameObject/GameObject');
-const ScriptComponent = require('./GameObject/Components/ScriptComponent');
-const BodyComponent = require('./GameObject/Components/BodyComponent');
+const ScriptComponent = require('./GameObject/Components/Script');
+const BodyComponent = require('./GameObject/Components/Body');
 const THREE = require('three');
 const WorldState = require('./WorldState');
 const { Collisions } = require('detect-collisions');
