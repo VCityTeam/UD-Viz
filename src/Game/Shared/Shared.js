@@ -1,6 +1,6 @@
 /** @format */
 
-const es5Data = require('./Data');
+const commnJsComponents = require('./Components/Components');
 // export { es5Data as Data };
 
 const es5Command = require('./Command');
@@ -18,7 +18,7 @@ const es5WorldState = require('./WorldState');
 const THREE = require('three');
 
 module.exports = {
-  Data: es5Data,
+  Components: commnJsComponents,
   Command: es5Command,
   GameObject: es5GameObject,
   World: es5World,

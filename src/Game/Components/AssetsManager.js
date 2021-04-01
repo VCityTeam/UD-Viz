@@ -4,6 +4,7 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import * as THREE from 'three';
 import * as jquery from 'jquery';
 import GameObjectModule from '../Shared/GameObject/GameObject';
+import PrefabUtils from '../Shared/Components/PrefabUtils';
 
 export class AssetsManager {
   constructor() {
@@ -26,6 +27,11 @@ export class AssetsManager {
   fetchPrefab(idprefab) {
     if (!this.prefabs[idprefab]) console.error('no prefab with id ', idprefab);
     return new GameObjectModule(this.prefabs[idprefab]);
+  }
+
+  fetchPrefabJSON(idprefab) {
+    if (!this.prefabs[idprefab]) console.error('no prefab with id ', idprefab);
+    return JSON.parse(JSON.stringify(this.prefabs[idprefab]));
   }
 
   buildNativeModel() {
@@ -183,9 +189,15 @@ export class AssetsManager {
           scriptPath,
           function (prefabstring) {
             _this.prefabs[idPrefab] = JSON.parse(prefabstring);
+
             //check if finish
             count++;
             if (count == Object.keys(config.prefabs).length) {
+              //inject
+              for (let id in _this.prefabs) {
+                PrefabUtils.parsePrefab(_this.prefabs[id], _this);
+              }
+
               console.log('prefabs loaded ', _this.prefabs);
               resolve();
             }

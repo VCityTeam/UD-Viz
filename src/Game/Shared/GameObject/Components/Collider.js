@@ -11,9 +11,15 @@ const ColliderModule = class Collider {
     this.uuid = json.uuid || THREE.MathUtils.generateUUID();
     this.shapesJSON = json.shapes || [];
 
+    this.body = json.body || false;
+
     //data
     this.shapeWrappers = [];
     this.createShapeWrappers();
+  }
+
+  isBody() {
+    return this.body;
   }
 
   initAssets(assetsManager) {
@@ -29,9 +35,9 @@ const ColliderModule = class Collider {
     });
   }
 
-  onCollision(result) {
+  onCollision(result, gCtx) {
     this.parent.traverse(function (g) {
-      g.executeScripts(ScriptComponent.EVENT.COLLISION, [result]);
+      g.executeScripts(ScriptComponent.EVENT.COLLISION, [result, gCtx]);
     });
   }
 
@@ -63,6 +69,7 @@ const ColliderModule = class Collider {
       uuid: this.uuid,
       type: ColliderModule.TYPE,
       shapes: this.shapesJSON,
+      body: this.body,
     };
   }
 };

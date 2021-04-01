@@ -40,7 +40,7 @@ const WorldStateModule = class WorldState {
       } else {
         //update transform of the outdated one
         if (outdatedGameObjectsJSON[uuid]) {
-          g.setTransformFromJSON(outdatedGameObjectsJSON[uuid]);
+          g.setTransformFromJSON(outdatedGameObjectsJSON[uuid].transform);
           delete outdatedGameObjectsJSON[uuid]; //remove it
         }
       }

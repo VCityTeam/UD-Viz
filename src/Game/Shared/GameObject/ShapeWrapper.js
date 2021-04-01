@@ -59,7 +59,7 @@ module.exports = class ShapeWrapper {
       default:
     }
 
-    //ref private to access gameObject from shape collision
-    this.shape.gameObject = this.gameObject;
+    //ref private to access this wrapper from shape collision (with event bad perf?)
+    this.shape.getGameObject = this.getGameObject.bind(this);
   }
 };

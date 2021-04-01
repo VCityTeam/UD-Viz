@@ -15,6 +15,7 @@ const GameObjectModule = class GameObject {
   constructor(json, parent) {
     if (!json) throw new Error('no json');
     /******************DATA***************************/
+    this.json = json;
 
     //id
     this.uuid = json.uuid || THREE.Math.generateUUID();
@@ -26,8 +27,11 @@ const GameObjectModule = class GameObject {
     //name
     this.name = json.name || 'none';
 
+    //prefabId
+    this.prefabId = json.prefabId || null;
+
     //transform
-    this.setTransformFromJSON(json);
+    this.setTransformFromJSON(json.transform);
 
     //static
     this.static = json.static || false;
@@ -57,7 +61,21 @@ const GameObjectModule = class GameObject {
     this.defaultObject3D = new THREE.Object3D();
   }
 
+  setFromJSON(json) {
+    this.setComponentsFromJSON(json);
+    if (!this.json.transform) this.setTransformFromJSON(json.transform); //if a transform was passed keep it
+    this.name = json.name;
+    this.static = json.static;
+
+    //TODO recursive call for children
+  }
+
   initAssetsComponents(manager, udvShared, isServerSide = false) {
+    if (this.prefabId) {
+      const json = manager.fetchPrefabJSON(this.prefabId);
+      this.setFromJSON(json);
+    }
+
     if (!this.initialized) {
       this.initialized = true;
       for (let type in this.components) {
@@ -250,10 +268,10 @@ const GameObjectModule = class GameObject {
   }
 
   setTransformFromJSON(json) {
-    if (json.transform) {
-      const l = json.transform.position;
-      const r = json.transform.rotation;
-      const s = json.transform.scale;
+    if (json) {
+      const l = json.position;
+      const r = json.rotation;
+      const s = json.scale;
       this.transform = {
         position: new THREE.Vector3(l.x, l.y, l.z),
         rotation: new THREE.Vector3(r.x, r.y, r.z),
@@ -374,6 +392,8 @@ const GameObjectModule = class GameObject {
 
   //serialize
   toJSON(withServerComponent = false) {
+    if (this.prefabId) return this.prefabId; //onJSON return its id instead of an Object
+
     const children = [];
     this.children.forEach((child) => {
       children.push(child.toJSON(withServerComponent));

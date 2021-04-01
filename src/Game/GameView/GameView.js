@@ -757,8 +757,8 @@ export class GameView {
           const state = _this.world.computeWorldState();
           _this.onFirstState(state);
 
-          //add an avatar in it TODO fetch with a prefab
-          const avatar = new GameObject(Data.createAvatarJSON());
+          //add an avatar in it
+          const avatar = _this.assetsManager.fetchPrefab('avatar');
           _this.avatarUUID = avatar.getUUID();
           const parent = _this.world.getGameObject();
           _this.world.addGameObject(avatar, _this.gameContext, parent, resolve);

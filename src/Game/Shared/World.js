@@ -42,6 +42,20 @@ const WorldModule = class World {
     //is running on webpage or node app
     this.isServerSide = options.isServerSide || false;
     this.modules = options.modules || {};
+    this.listeners = {};
+  }
+
+  //custom event
+  on(eventID, cb) {
+    if (!this.listeners[eventID]) this.listeners[eventID] = [];
+    this.listeners[eventID].push(cb);
+  }
+
+  notify(eventID) {
+    if (!this.listeners[eventID]) this.listeners[eventID] = [];
+    this.listeners[eventID].forEach(function (cb) {
+      cb();
+    });
   }
 
   load(onLoad, gCtx) {
@@ -150,9 +164,9 @@ const WorldModule = class World {
           let result = collisions.createResult();
           for (const p of potentials) {
             //in ShapeWrapper shape are link to gameObject
-            if (!p.gameObject.isStatic()) continue;
+            if (!p.getGameObject().isStatic()) continue;
             if (body.collides(p, result)) {
-              bC.onCollision(result);
+              bC.onCollision(result, gCtx);
             }
           }
         });

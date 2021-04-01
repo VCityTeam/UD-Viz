@@ -1,6 +1,6 @@
 /** @format */
 
-const Data = require('../Shared/Data');
+const Shared = require('../Shared/Shared');
 
 
 //TODO CREATE class KeyState
@@ -191,6 +191,6 @@ export class InputManager {
     cmds.forEach(function (cmd) {
       cmdsJSON.push(cmd.toJSON());
     });
-    websocketService.emit(Data.WEBSOCKET.MSG_TYPES.COMMANDS, cmdsJSON);
+    websocketService.emit(Shared.Components.Data.WEBSOCKET.MSG_TYPES.COMMANDS, cmdsJSON);
   }
 }
