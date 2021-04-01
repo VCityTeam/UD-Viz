@@ -98,32 +98,26 @@ const WorldModule = class World {
   registerGOCollision(go) {
     //collisions
     const collisions = this.collisions;
-    let changed = false;
     go.traverse(function (child) {
       const body = child.getComponent(BodyComponent.TYPE);
       if (body) {
-        changed = true;
-        body.getBodies().forEach(function (b) {
-          collisions.insert(b);
+        body.getShapeWrappers().forEach(function (wrapper) {
+          collisions.insert(wrapper.getShape());
         });
       }
     });
-    if (changed) collisions.update();
   }
 
   unregisterGOCollision(go) {
     //collisions
-    let changed = false;
     go.traverse(function (child) {
       const body = child.getComponent(BodyComponent.TYPE);
       if (body) {
-        changed = true;
-        body.getBodies().forEach(function (b) {
-          b.remove();
+        body.getShapeWrappers().forEach(function (wrapper) {
+          wrapper.getShape().remove();
         });
       }
     });
-    if (changed) this.collisions.update();
   }
 
   removeGameObject(uuid) {
@@ -142,7 +136,7 @@ const WorldModule = class World {
     const collisions = this.collisions;
     this.gameObject.traverse(function (g) {
       const bC = g.getComponent(BodyComponent.TYPE);
-      if (bC) bC.update(); //TODO créer une classe parent pour accéder au go
+      if (bC) bC.update();
     });
     collisions.update();
 
@@ -150,11 +144,13 @@ const WorldModule = class World {
       if (g.isStatic()) return;
       const bC = g.getComponent(BodyComponent.TYPE);
       if (bC) {
-        //TODO seulement collider les non static avec les static
-        bC.getBodies().forEach(function (body) {
+        bC.getShapeWrappers().forEach(function (wrapper) {
+          const body = wrapper.getShape();
           const potentials = body.potentials();
           let result = collisions.createResult();
           for (const p of potentials) {
+            //in ShapeWrapper shape are link to gameObject
+            if (!p.gameObject.isStatic()) continue;
             if (body.collides(p, result)) {
               bC.onCollision(result);
             }

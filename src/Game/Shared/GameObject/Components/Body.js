@@ -1,6 +1,6 @@
 /** @format */
 
-const { Circle, Polygon } = require('detect-collisions');
+const ShapeWrapper = require('../ShapeWrapper');
 const THREE = require('three');
 
 const BodyModule = class Body {
@@ -11,58 +11,20 @@ const BodyModule = class Body {
     this.shapesJSON = json.shapes || [];
 
     //data
-    this.bodies = [];
-    this.createBodies();
+    this.shapeWrappers = [];
+    this.createShapeWrappers();
   }
 
   initAssets(assetsManager) {
     //nada
   }
 
-  createBodies() {
-    const bodies = this.bodies;
-
-    this.shapesJSON.forEach(function (s) {
-      switch (s.type) {
-        case 'Circle':
-          const circle = new Circle(s.center.x, s.center.y, s.radius);
-
-          //attach userData to perform update
-          circle.userData = s;
-          circle.update = function (worldtransform) {
-            circle.x = circle.userData.center.x + worldtransform.position.x;
-            circle.y = circle.userData.center.y + worldtransform.position.y;
-          };
-
-          bodies.push(circle);
-          break;
-        case 'Polygon':
-          const points = [];
-          s.points.forEach(function (p) {
-            points.push([p.x, p.y]);
-          });
-
-          const polygon = new Polygon(0, 0, points);
-
-          //attach userData to perform update
-          polygon.userData = s;
-          polygon.update = function (worldtransform) {
-            const points = [];
-            polygon.userData.points.forEach(function (p) {
-              const point = [
-                p.x + worldtransform.position.x,
-                p.y + worldtransform.position.y,
-              ];
-              points.push(point);
-              //TODO handle rotation
-            });
-            polygon.setPoints(points);
-          };
-
-          bodies.push(polygon);
-          break;
-        default:
-      }
+  createShapeWrappers() {
+    const shapeWrappers = this.shapeWrappers;
+    const _this = this;
+    this.shapesJSON.forEach(function (json) {
+      const wrapper = new ShapeWrapper(_this.parent, json);
+      shapeWrappers.push(wrapper);
     });
   }
 
@@ -71,13 +33,13 @@ const BodyModule = class Body {
     this.parent.transform.position.y -= result.overlap * result.overlap_y;
   }
 
-  getBodies() {
-    return this.bodies;
+  getShapeWrappers() {
+    return this.shapeWrappers;
   }
 
   update() {
     const worldTransform = this.parent.computeWorldTransform();
-    this.bodies.forEach(function (b) {
+    this.shapeWrappers.forEach(function (b) {
       b.update(worldTransform);
     });
   }
