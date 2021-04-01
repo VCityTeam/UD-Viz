@@ -49,7 +49,7 @@ export class GameView {
     this.object3D = new THREE.Object3D();
     this.object3D.name = 'GameViewObject3D';
 
-    //buffer
+    //register last pass
     this.lastState = null;
 
     //camera
@@ -113,11 +113,11 @@ export class GameView {
       );
 
       //only send cmds to server when not local
-      const _this = this;
-      const sendCmds = function () {
-        requestAnimationFrame(sendCmds);
-        _this.inputManager.sendCommandsToServer(_this.webSocketService);
-      };
+      // const _this = this;
+      // const sendCmds = function () {
+      //   requestAnimationFrame(sendCmds);
+      //   _this.inputManager.sendCommandsToServer(_this.webSocketService);
+      // };
     }
 
     //resize
@@ -154,9 +154,14 @@ export class GameView {
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
     this.view.scene.add(ambientLight);
 
-    //place directionnal lights
-    const bb = new THREE.Box3().setFromObject(this.object3D);
+    this.directionalLight = directionalLight;
+  }
 
+  placeLight() {
+    const bb = new THREE.Box3().setFromObject(this.object3D);
+    const directionalLight = this.directionalLight;
+
+    //place directionnal lights
     const centerOffset = bb.getCenter(new THREE.Vector3());
 
     directionalLight.target.position.copy(centerOffset);
@@ -177,25 +182,22 @@ export class GameView {
     cameraShadow.left = -100;
     cameraShadow.bottom = -90;
     cameraShadow.updateProjectionMatrix();
-
-    // const helper = new THREE.DirectionalLightHelper(directionalLight, 110);
-    // helper.update();
-    // this.view.scene.add(helper);
-
-    //DEBUG
-    this.light = directionalLight;
   }
 
   updateViewServer(dt) {
     //DEBUG
     window.UDVDebugger.displayShadowMap(
-      this.light,
+      this.directionalLight,
       this.view.mainLoop.gfxEngine.renderer
     );
 
     //TODO itowns BUG
     if (isNaN(dt)) dt = 0;
 
+    //send cmd
+    this.inputManager.sendCommandsToServer(this.webSocketService);
+
+    //get state
     const currentState = this.worldStateInterpolator.getCurrentState();
     if (currentState) {
       this.updateObject3D(currentState);
@@ -211,11 +213,13 @@ export class GameView {
     //TODO itowns BUG
     if (!isNaN(dt)) this.gameContext.dt = dt;
 
+    this.placeLight();
+
     //DEBUG
-    // window.UDVDebugger.displayShadowMap(
-    //   this.light,
-    //   this.view.mainLoop.gfxEngine.renderer
-    // );
+    window.UDVDebugger.displayShadowMap(
+      this.directionalLight,
+      this.view.mainLoop.gfxEngine.renderer
+    );
 
     //tick world
     this.gameContext.commands = this.inputManager.computeCommands();
@@ -262,21 +266,20 @@ export class GameView {
       state.setGameObject(lastGO); //update GO
     }
 
-    let obj;
-    state.getGameObject().traverse(function (child) {
-      const childObj = child.getObject3D();
-      if (childObj) {
-        obj = childObj;
-        return true;
-      }
-    });
-    if (!obj) throw new Error('no object3D');
     this.object3D.children.length = 0;
-    this.object3D.add(obj);
-    this.object3D.updateMatrixWorld(true);
+
+    const obj = stateGO.getObject3D();
+    if (obj) {
+      this.object3D.add(obj);
+      this.object3D.updateMatrixWorld(true);
+    } else {
+      console.warn('no object3D in GameObject');
+    }
+
     //buffer
     this.lastState = state;
   }
+
   initItownsView(state) {
     // Define EPSG:3946 projection which is the projection used in the 3D view
     // (planarView of iTowns). It is indeed needed
@@ -697,11 +700,11 @@ export class GameView {
   }
 
   dispose() {
+    this.view.dispose();
+
     this.inputManager.dispose();
     window.removeEventListener('resize', this.onResize.bind(this));
     this.rootHtml.parentElement.removeChild(this.rootHtml);
-
-    //TODO dispose itoqns view & sendCommands tick + renderCanvas
   }
 
   load() {
