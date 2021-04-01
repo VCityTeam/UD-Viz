@@ -6,7 +6,7 @@
  */
 const GameObject = require('./GameObject/GameObject');
 const ScriptComponent = require('./GameObject/Components/Script');
-const BodyComponent = require('./GameObject/Components/Body');
+const ColliderComponent = require('./GameObject/Components/Collider');
 const THREE = require('three');
 const WorldState = require('./WorldState');
 const { Collisions } = require('detect-collisions');
@@ -99,7 +99,7 @@ const WorldModule = class World {
     //collisions
     const collisions = this.collisions;
     go.traverse(function (child) {
-      const body = child.getComponent(BodyComponent.TYPE);
+      const body = child.getComponent(ColliderComponent.TYPE);
       if (body) {
         body.getShapeWrappers().forEach(function (wrapper) {
           collisions.insert(wrapper.getShape());
@@ -111,7 +111,7 @@ const WorldModule = class World {
   unregisterGOCollision(go) {
     //collisions
     go.traverse(function (child) {
-      const body = child.getComponent(BodyComponent.TYPE);
+      const body = child.getComponent(ColliderComponent.TYPE);
       if (body) {
         body.getShapeWrappers().forEach(function (wrapper) {
           wrapper.getShape().remove();
@@ -135,14 +135,14 @@ const WorldModule = class World {
     //collisions
     const collisions = this.collisions;
     this.gameObject.traverse(function (g) {
-      const bC = g.getComponent(BodyComponent.TYPE);
+      const bC = g.getComponent(ColliderComponent.TYPE);
       if (bC) bC.update();
     });
     collisions.update();
 
     this.gameObject.traverse(function (g) {
       if (g.isStatic()) return;
-      const bC = g.getComponent(BodyComponent.TYPE);
+      const bC = g.getComponent(ColliderComponent.TYPE);
       if (bC) {
         bC.getShapeWrappers().forEach(function (wrapper) {
           const body = wrapper.getShape();

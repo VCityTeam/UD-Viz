@@ -8,7 +8,7 @@ const THREE = require('three');
 
 //GameObject Components
 const RenderComponent = require('./Components/Render');
-const BodyComponent = require('./Components/Body');
+const ColliderComponent = require('./Components/Collider');
 const ScriptComponent = require('./Components/Script');
 
 const GameObjectModule = class GameObject {
@@ -201,11 +201,11 @@ const GameObjectModule = class GameObject {
           );
 
           break;
-        case BodyComponent.TYPE:
-          if (_this.components[BodyComponent.TYPE])
+        case ColliderComponent.TYPE:
+          if (_this.components[ColliderComponent.TYPE])
             console.warn('multiple component');
 
-          _this.components[BodyComponent.TYPE] = new BodyComponent(
+          _this.components[ColliderComponent.TYPE] = new ColliderComponent(
             _this,
             componentJSON
           );

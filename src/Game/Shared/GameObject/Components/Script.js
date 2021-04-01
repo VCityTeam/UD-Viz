@@ -67,6 +67,7 @@ ScriptModule.EVENT = {
   INIT: 'init', //when added
   TICK: 'tick', //every tick
   LOAD: 'load', //at world load return promises
+  COLLISION: 'onCollision', //when collision is detected
 };
 
 module.exports = ScriptModule;

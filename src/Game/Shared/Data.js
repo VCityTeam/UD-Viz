@@ -2,7 +2,7 @@
 const RenderComponent = require('./GameObject/Components/Render');
 const ScriptComponent = require('./GameObject/Components/Script');
 const GameObject = require('./GameObject/GameObject.js');
-const BodyComponent = require('./GameObject/Components/Body');
+const ColliderComponent = require('./GameObject/Components/Collider');
 
 const THREE = require('three');
 
@@ -44,7 +44,7 @@ module.exports = Object.freeze({
       type: GameObject.TYPE,
       components: [
         {
-          type: BodyComponent.TYPE,
+          type: ColliderComponent.TYPE,
           shapes: [
             {
               type: 'Circle',
