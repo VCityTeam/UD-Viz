@@ -193,11 +193,6 @@ export class AssetsManager {
             //check if finish
             count++;
             if (count == Object.keys(config.prefabs).length) {
-              //inject
-              for (let id in _this.prefabs) {
-                PrefabUtils.parsePrefab(_this.prefabs[id], _this);
-              }
-
               console.log('prefabs loaded ', _this.prefabs);
               resolve();
             }
@@ -207,8 +202,6 @@ export class AssetsManager {
       }
     });
 
-    return new Promise((resolve, reject) => {
-      Promise.all([scriptsPromise, modelPromise, prefabsPromise]).then(resolve);
-    });
+    return Promise.all([scriptsPromise, modelPromise, prefabsPromise]);
   }
 }

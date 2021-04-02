@@ -10,6 +10,7 @@ const THREE = require('three');
 const RenderComponent = require('./Components/Render');
 const ColliderComponent = require('./Components/Collider');
 const ScriptComponent = require('./Components/Script');
+const JSONUtils = require('../../../Components/SystemUtils/JSONUtils');
 
 const GameObjectModule = class GameObject {
   constructor(json, parent) {
@@ -62,8 +63,9 @@ const GameObjectModule = class GameObject {
   }
 
   setFromJSON(json) {
+    this.components = {}; //clear
     this.setComponentsFromJSON(json);
-    if (!this.json.transform) this.setTransformFromJSON(json.transform); //if a transform was passed keep it
+    this.setTransformFromJSON(json.transform); //if a transform was passed keep it
     this.name = json.name;
     this.static = json.static;
 
@@ -73,6 +75,7 @@ const GameObjectModule = class GameObject {
   initAssetsComponents(manager, udvShared, isServerSide = false) {
     if (this.prefabId) {
       const json = manager.fetchPrefabJSON(this.prefabId);
+      JSONUtils.overWrite(json, this.json);
       this.setFromJSON(json);
     }
 
@@ -192,13 +195,15 @@ const GameObjectModule = class GameObject {
   }
 
   setComponentsFromJSON(json) {
-    const arrayJSON = json.components;
+    const jsonMap = json.components;
     const _this = this;
 
-    if (!arrayJSON) return;
+    if (!jsonMap) return;
 
-    arrayJSON.forEach(function (componentJSON) {
-      switch (componentJSON.type) {
+    for (let type in jsonMap) {
+      const componentJSON = jsonMap[type];
+
+      switch (type) {
         case RenderComponent.TYPE:
           if (_this.components[RenderComponent.TYPE])
             console.warn('multiple component');
@@ -230,9 +235,9 @@ const GameObjectModule = class GameObject {
 
           break;
         default:
-          console.warn('wrong type component', componentJSON);
+          console.warn('wrong type component', type, componentJSON);
       }
-    });
+    }
   }
 
   getObject3D() {
@@ -268,21 +273,30 @@ const GameObjectModule = class GameObject {
   }
 
   setTransformFromJSON(json) {
+    const defaultTransform = {
+      position: new THREE.Vector3(),
+      rotation: new THREE.Vector3(),
+      scale: new THREE.Vector3(1, 1, 1),
+    };
+    this.transform = defaultTransform;
     if (json) {
-      const l = json.position;
-      const r = json.rotation;
-      const s = json.scale;
-      this.transform = {
-        position: new THREE.Vector3(l.x, l.y, l.z),
-        rotation: new THREE.Vector3(r.x, r.y, r.z),
-        scale: new THREE.Vector3(s.x, s.y, s.z),
-      };
-    } else {
-      this.transform = {
-        position: new THREE.Vector3(),
-        rotation: new THREE.Vector3(),
-        scale: new THREE.Vector3(1, 1, 1),
-      };
+      if (json.position) {
+        this.transform.position.x = json.position.x;
+        this.transform.position.y = json.position.y;
+        this.transform.position.z = json.position.z;
+      }
+
+      if (json.rotation) {
+        this.transform.rotation.x = json.rotation.x;
+        this.transform.rotation.y = json.rotation.y;
+        this.transform.rotation.z = json.rotation.z;
+      }
+
+      if (json.scale) {
+        this.transform.scale.x = json.scale.x;
+        this.transform.scale.y = json.scale.y;
+        this.transform.scale.z = json.scale.z;
+      }
     }
   }
 
@@ -392,8 +406,6 @@ const GameObjectModule = class GameObject {
 
   //serialize
   toJSON(withServerComponent = false) {
-    if (this.prefabId) return this.prefabId; //onJSON return its id instead of an Object
-
     const children = [];
     this.children.forEach((child) => {
       children.push(child.toJSON(withServerComponent));
@@ -403,11 +415,12 @@ const GameObjectModule = class GameObject {
     const rot = this.transform.rotation;
     const scale = this.transform.scale;
 
-    //TODO ranger les components dans GameObject comme dans le json
-    const components = [];
-    for (var type in this.components) {
+    const components = {};
+    for (let type in this.components) {
       const c = this.components[type];
-      if (!c.isServerSide() || withServerComponent) components.push(c.toJSON());
+      if (!c.isServerSide() || withServerComponent) {
+        components[type] = c.toJSON();
+      }
     }
 
     //TODO not declare here or use THREE.Vector3.toJSON

@@ -5,7 +5,7 @@
  */
 const THREE = require('three');
 const GameObject = require('./GameObject/GameObject');
-const WorldStatDiff = require('./WorldStateDiff');
+const WorldStateDiff = require('./WorldStateDiff');
 
 const WorldStateModule = class WorldState {
   constructor(json) {
@@ -47,7 +47,7 @@ const WorldStateModule = class WorldState {
     });
 
     //create others which existed not yet
-    for (var uuid in outdatedGameObjectsJSON) {
+    for (let uuid in outdatedGameObjectsJSON) {
       const json = outdatedGameObjectsJSON[uuid];
       const go = new GameObject(json, null);
       const parent = newGO.find(json.parentUUID);
@@ -55,7 +55,7 @@ const WorldStateModule = class WorldState {
     }
 
     //DEBUG
-    var count = 0;
+    let count = 0;
     newGO.traverse(function (g) {
       const uuid = g.getUUID();
       if (uuidGO.includes(uuid)) count++;
@@ -97,7 +97,7 @@ const WorldStateModule = class WorldState {
       }
     });
 
-    return new WorldStatDiff({
+    return new WorldStateDiff({
       gameObjectsUUID: gameObjectsUUID,
       outdatedGameObjectsJSON: outdatedGameObjectsJSON,
       timestamp: this.timestamp,
@@ -129,7 +129,7 @@ const WorldStateModule = class WorldState {
   }
 
   toJSON() {
-    var gameObjectData = null;
+    let gameObjectData = null;
     if (this.gameObject) gameObjectData = this.gameObject.toJSON();
 
     return {

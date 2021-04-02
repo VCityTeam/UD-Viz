@@ -1,8 +1,11 @@
 /** @format */
 
+const JSONUtils = require('../../../Components/SystemUtils/JSONUtils');
+
 module.exports = {
   parsePrefab(goJSON, manager) {
-    const traverse = function (json, cb) {
+    console.warn('deprecated ?');
+    const parse = function (json, cb) {
       if (json.children instanceof Object) {
         for (let key in json.children) {
           cb(json.children, key);
@@ -10,11 +13,13 @@ module.exports = {
       }
     };
 
-    traverse(goJSON, function (json, key) {
+    parse(goJSON, function (json, key) {
       const value = json[key];
-      if (typeof value == 'string') {
-        //id prefab inject json
-        json[key] = manager.fetchPrefabJSON(value);
+
+      if (value.prefabId != undefined) {
+        const prefabJSON = manager.fetchPrefabJSON(value.prefabId);
+        JSONUtils.overWrite(prefabJSON, json);
+        json[key] = prefabJSON;
       }
     });
 

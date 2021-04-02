@@ -1,8 +1,8 @@
 /** @format */
 
-const ShapeWrapper = require('../ShapeWrapper');
 const THREE = require('three');
 const ScriptComponent = require('./Script');
+const { Circle, Polygon } = require('detect-collisions');
 
 const ColliderModule = class Collider {
   constructor(parent, json) {
@@ -77,3 +77,66 @@ const ColliderModule = class Collider {
 ColliderModule.TYPE = 'Collider';
 
 module.exports = ColliderModule;
+
+class ShapeWrapper {
+  constructor(gameObject, json) {
+    this.gameObject = gameObject;
+    this.json = json;
+
+    //sgape detect - collision
+    this.shape = null;
+
+    this.initFromJSON(json);
+  }
+
+  getShape() {
+    return this.shape;
+  }
+
+  getGameObject() {
+    return this.gameObject;
+  }
+
+  initFromJSON(json) {
+    switch (json.type) {
+      case 'Circle':
+        const circle = new Circle(json.center.x, json.center.y, json.radius);
+
+        this.update = function (worldtransform) {
+          circle.x = json.center.x + worldtransform.position.x;
+          circle.y = json.center.y + worldtransform.position.y;
+        };
+
+        this.shape = circle;
+        break;
+      case 'Polygon':
+        const points = [];
+        json.points.forEach(function (p) {
+          points.push([p.x, p.y]);
+        });
+
+        const polygon = new Polygon(0, 0, points);
+
+        //attach userData to perform update
+        this.update = function (worldtransform) {
+          const points = [];
+          json.points.forEach(function (p) {
+            const point = [
+              p.x + worldtransform.position.x,
+              p.y + worldtransform.position.y,
+            ];
+            points.push(point);
+            //TODO handle rotation
+          });
+          polygon.setPoints(points);
+        };
+
+        this.shape = polygon;
+        break;
+      default:
+    }
+
+    //ref private to access this wrapper from shape collision (with event bad perf?)
+    this.shape.getGameObject = this.getGameObject.bind(this);
+  }
+}

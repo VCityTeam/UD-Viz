@@ -51,10 +51,10 @@ const WorldModule = class World {
     this.listeners[eventID].push(cb);
   }
 
-  notify(eventID) {
+  notify(eventID, params) {
     if (!this.listeners[eventID]) this.listeners[eventID] = [];
     this.listeners[eventID].forEach(function (cb) {
-      cb();
+      cb(params);
     });
   }
 
