@@ -88,7 +88,7 @@ const GameObjectModule = class GameObject {
       }
     }
     this.children.forEach(function (child) {
-      child.initAssetsComponents(manager, udvShared);
+      child.initAssetsComponents(manager, udvShared, isServerSide);
     });
   }
 
