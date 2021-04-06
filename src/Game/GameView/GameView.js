@@ -133,13 +133,25 @@ export class GameView {
     this.updateObject3D(state);
     this.view.scene.add(this.object3D);
 
+    //fog
+    const skyColor = new THREE.Color(
+      this.config.game.skyColor.r,
+      this.config.game.skyColor.g,
+      this.config.game.skyColor.b
+    );
+    this.view.scene.fog = new THREE.Fog(
+      skyColor,
+      this.config.game.fog.near,
+      this.config.game.fog.far
+    );
+
     //shadow
     const renderer = this.view.mainLoop.gfxEngine.renderer;
     renderer.shadowMap.enabled = true;
     // to antialias the shadow
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     // Set sky color to blue
-    renderer.setClearColor(0x6699cc, 1);
+    renderer.setClearColor(skyColor, 1);
 
     // Lights
     const directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
