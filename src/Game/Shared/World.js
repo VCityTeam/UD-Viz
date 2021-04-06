@@ -85,7 +85,7 @@ const WorldModule = class World {
     return promises;
   }
 
-  addGameObject(gameObject, gCtx, parent = this.gameObject, onLoad = null) {
+  addGameObject(gameObject, gCtx, parent, onLoad = null) {
     const _this = this;
 
     gameObject.initAssetsComponents(
@@ -105,6 +105,7 @@ const WorldModule = class World {
       gameObject.traverse(function (g) {
         g.executeScripts(ScriptComponent.EVENT.INIT, [gCtx]);
       });
+
       if (onLoad) onLoad();
     });
   }

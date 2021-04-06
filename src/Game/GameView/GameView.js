@@ -16,7 +16,7 @@ import './GameView.css';
 const udvShared = require('../Shared/Shared');
 const Command = udvShared.Command;
 const GameObject = udvShared.GameObject;
-const Data = udvShared.Data;
+const Data = udvShared.Components.Data;
 const WorldState = udvShared.WorldState;
 const WorldStateDiff = udvShared.WorldStateDiff;
 
@@ -203,8 +203,10 @@ export class GameView {
       this.view.mainLoop.gfxEngine.renderer
     );
 
+    this.placeLight();
+
     //TODO itowns BUG
-    if (isNaN(dt)) dt = 0;
+    if (!isNaN(dt)) this.gameContext.dt = dt;
 
     //send cmd
     this.inputManager.sendCommandsToServer(this.webSocketService);
@@ -251,10 +253,10 @@ export class GameView {
   }
 
   updateObject3D(state) {
-    const stateGO = state.getGameObject();
-    if (!stateGO) throw new Error('no gameObject in state');
-
     if (this.lastState) {
+      const stateGO = state.getGameObject();
+      if (!stateGO) throw new Error('no gameObject in state');
+
       let lastGO = this.lastState.getGameObject();
       lastGO.traverse(function (g) {
         const current = stateGO.find(g.getUUID());
@@ -266,6 +268,7 @@ export class GameView {
           g.removeFromParent();
         }
       });
+
       stateGO.traverse(function (g) {
         const old = lastGO.find(g.getUUID());
         if (!old) {
@@ -278,9 +281,19 @@ export class GameView {
       state.setGameObject(lastGO); //update GO
     }
 
+    //TODO mettre ailleurs seulement server
+    const m = this.assetsManager;
+    const s = this.isServerSide;
+    state.getGameObject().traverse(function (g) {
+      if (!g.initialized) {
+        g.initAssetsComponents(m, udvShared, s);
+      }
+    });
+
+    //rebuild object
     this.object3D.children.length = 0;
 
-    const obj = stateGO.getObject3D();
+    const obj = state.getGameObject().getObject3D();
     if (obj) {
       this.object3D.add(obj);
       this.object3D.updateMatrixWorld(true);

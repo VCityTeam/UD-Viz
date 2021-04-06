@@ -202,6 +202,11 @@ export class AssetsManager {
       }
     });
 
-    return Promise.all([scriptsPromise, modelPromise, prefabsPromise]);
+    const promises = [];
+    if (config.models) promises.push(modelPromise);
+    if (config.prefabs) promises.push(prefabsPromise);
+    if (config.scripts) promises.push(scriptsPromise);
+
+    return Promise.all(promises);
   }
 }

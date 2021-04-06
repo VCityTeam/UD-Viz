@@ -37,6 +37,9 @@ const GameObjectModule = class GameObject {
     //static
     this.static = json.static || false;
 
+    //outdated flag for network opti
+    this.outdated = json.outdated || false;
+
     //nodale structure
     const children = [];
     if (json.children && json.children.length > 0) {
@@ -54,9 +57,6 @@ const GameObjectModule = class GameObject {
 
     //assets has been initialized
     this.initialized = false;
-
-    //outdated flag for network opti
-    this.outdated = true;
 
     //default object3d
     this.defaultObject3D = new THREE.Object3D();
@@ -432,6 +432,7 @@ const GameObjectModule = class GameObject {
       name: this.name,
       type: GameObjectModule.TYPE,
       static: this.static,
+      outdated: this.outdated,
       uuid: this.uuid,
       parentUUID: this.parentUUID,
       components: components,

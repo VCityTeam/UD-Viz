@@ -85,9 +85,11 @@ const WorldStateModule = class WorldState {
     const outdatedGameObjectsJSON = {};
     const alreadyInOutdated = [];
     this.gameObject.traverse(function (g) {
-      gameObjectsUUID.push(g.getUUID());
+      gameObjectsUUID.push(g.getUUID()); //register all uuid
       if (!g.isStatic() && !alreadyInOutdated.includes(g)) {
+        //if is not static and is not already register
         if (!stateClient.includes(g.getUUID()) || g.isOutdated()) {
+          //if not in the last state or outdated
           outdatedGameObjectsJSON[g.getUUID()] = g.toJSON();
           //avoid to add child of an outdated object twice because toJSON is recursive
           g.traverse(function (outdated) {
