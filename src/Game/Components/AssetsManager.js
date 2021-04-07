@@ -4,7 +4,7 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import * as THREE from 'three';
 import * as jquery from 'jquery';
 import GameObjectModule from '../Shared/GameObject/GameObject';
-import PrefabUtils from '../Shared/Components/PrefabUtils';
+import { THREEUtils } from '../Components/THREEUtils';
 
 export class AssetsManager {
   constructor() {
@@ -123,6 +123,10 @@ export class AssetsManager {
       if (child.geometry) {
         child.castShadow = true;
         child.receiveShadow = true;
+      }
+      if (child.material && child.material.map) {
+        child.material.map.encoding = THREEUtils.textureEncoding;
+        child.material.needsUpdate = true;
       }
     });
 

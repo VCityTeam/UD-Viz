@@ -7,6 +7,8 @@ import { AssetsManager } from '../Components/AssetsManager';
 import { InputManager } from '../Components/InputManager';
 import { Cameraman, Routine } from '../Components/Cameraman';
 
+import { THREEUtils } from '../Components/THREEUtils';
+
 const THREE = require('three');
 import proj4 from 'proj4';
 import * as itowns from 'itowns';
@@ -147,25 +149,19 @@ export class GameView {
 
     //shadow
     const renderer = this.view.mainLoop.gfxEngine.renderer;
-    renderer.shadowMap.enabled = true;
-    // to antialias the shadow
-    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-    // Set sky color to blue
-    renderer.setClearColor(skyColor, 1);
+    THREEUtils.initRenderer(renderer, skyColor);
 
     // Lights
-    const directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
+    const { directionalLight, ambientLight } = THREEUtils.addLights(
+      this.view.scene
+    );
+
     directionalLight.shadow.mapSize = new THREE.Vector2(
       this.config.game.shadowMapSize,
       this.config.game.shadowMapSize
     );
     directionalLight.castShadow = true;
     directionalLight.shadow.bias = -0.0005;
-    this.view.scene.add(directionalLight);
-
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
-    this.view.scene.add(ambientLight);
-
     this.directionalLight = directionalLight;
   }
 
