@@ -1,7 +1,5 @@
 /** @format */
-import * as THREE from 'three';
 import WorldState from '../Shared/WorldState';
-import { Cameraman } from './Cameraman';
 
 export class WorldStateInterpolator {
   constructor(config) {

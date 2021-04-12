@@ -7,6 +7,7 @@ const RenderModule = class Render {
     this.parent = parent;
     this.uuid = json.uuid || THREE.MathUtils.generateUUID();
     this.idModel = json.idModel;
+    this.name = json.name;//TODO display it above object3D
 
     //internal
     this.object3D = null;
@@ -19,6 +20,7 @@ const RenderModule = class Render {
   toJSON() {
     return {
       uuid: this.uuid,
+      name: this.name,
       type: RenderModule.TYPE,
       idModel: this.idModel,
     };

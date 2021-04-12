@@ -65,7 +65,7 @@ const GameObjectModule = class GameObject {
   setFromJSON(json) {
     this.components = {}; //clear
     this.setComponentsFromJSON(json);
-    this.setTransformFromJSON(json.transform); //if a transform was passed keep it
+    this.setTransformFromJSON(json.transform);
     this.name = json.name;
     this.static = json.static;
 
