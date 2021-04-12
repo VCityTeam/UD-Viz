@@ -82,6 +82,8 @@ export class GameView {
     this.world = world;
     if (!world) return;
     this.gameContext.world = world;
+
+    //reload world
   }
 
   getWorld() {
@@ -113,13 +115,6 @@ export class GameView {
         itowns.MAIN_LOOP_EVENTS.UPDATE_END,
         this.updateViewServer.bind(this)
       );
-
-      //only send cmds to server when not local
-      // const _this = this;
-      // const sendCmds = function () {
-      //   requestAnimationFrame(sendCmds);
-      //   _this.inputManager.sendCommandsToServer(_this.webSocketService);
-      // };
     }
 
     //resize
@@ -565,13 +560,13 @@ export class GameView {
     //COMMANDS WORLD
 
     //FORWARD
+    manager.listenKeys(['c']);
     manager.addKeyCommand(
       Command.TYPE.MOVE_FORWARD,
       ['z', 'ArrowUp'],
       function () {
         swicthMode(MODE.POINTER_LOCK);
-        if (manager.isAltKey()) {
-          console.log('RUNNN');
+        if (manager.isPressed('c')) {
           return new Command({ type: Command.TYPE.RUN });
         } else {
           return new Command({ type: Command.TYPE.MOVE_FORWARD });
