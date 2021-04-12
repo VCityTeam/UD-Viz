@@ -240,7 +240,7 @@ const GameObjectModule = class GameObject {
     }
   }
 
-  getObject3D() {
+  getObject3D(recursive = true) {
     const r = this.getComponent(RenderComponent.TYPE);
     let obj;
     if (!r) {
@@ -264,10 +264,12 @@ const GameObjectModule = class GameObject {
     obj.scale.copy(this.getScale());
 
     //reset
-    this.children.forEach(function (child) {
-      const childObj = child.getObject3D();
-      if (childObj) obj.add(childObj);
-    });
+    if (recursive) {
+      this.children.forEach(function (child) {
+        const childObj = child.getObject3D();
+        if (childObj) obj.add(childObj);
+      });
+    }
 
     return obj;
   }

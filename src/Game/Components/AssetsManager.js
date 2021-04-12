@@ -88,6 +88,35 @@ export class AssetsManager {
     this.models['gizmo'] = result;
   }
 
+  buildSprite(label) {
+    //create texture with name on it
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+
+    ctx.fillStyle = 'rgba(255, 255, 255, 0)';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    ctx.fillStyle = 'black';
+    ctx.font = '50px Arial';
+    const wT = ctx.measureText(label).width;
+    ctx.fillText(label, (canvas.width - wT) * 0.5, canvas.height * 0.5);
+
+    const texture = new THREE.TextureLoader().load(
+      canvas.toDataURL('image/png')
+    );
+    texture.flipY = true;
+    texture.flipX = true;
+
+    const material = new THREE.SpriteMaterial({
+      map: texture,
+    });
+    material.alphaTest = 0.5;
+    const result = new THREE.Sprite(material);
+    result.scale.set(1, 0.3, 1);
+
+    return result;
+  }
+
   parse(id, obj, anchor) {
     //rotation
     const quatTHREE2UDV = new THREE.Quaternion().setFromEuler(

@@ -49,7 +49,9 @@ export class GameView {
 
     //object
     this.object3D = new THREE.Object3D();
-    this.object3D.name = 'GameViewObject3D';
+    this.object3D.name = 'GameView_Object3D';
+    this.obstacle = new THREE.Object3D();
+    this.obstacle.name = 'GameView_Obstacle';
 
     //register last pass
     this.lastState = null;
@@ -76,6 +78,9 @@ export class GameView {
       world: null,
       UDVShared: udvShared,
     };
+
+    //ref uuid of go in the last state
+    this.currentUUID = {};
   }
 
   setWorld(world) {
@@ -127,7 +132,6 @@ export class GameView {
     this.object3D.position.x = x;
     this.object3D.position.y = y;
     this.object3D.position.z = o.alt;
-    this.updateObject3D(state);
     this.view.scene.add(this.object3D);
 
     //fog
@@ -194,31 +198,18 @@ export class GameView {
       this.view.mainLoop.gfxEngine.renderer
     );
 
-    this.placeLight();
-
     //TODO itowns BUG
     if (!isNaN(dt)) this.gameContext.dt = dt;
 
     //send cmd
     this.inputManager.sendCommandsToServer(this.webSocketService);
 
-    //get state
-    const currentState = this.worldStateInterpolator.getCurrentState();
-    if (currentState) {
-      this.updateObject3D(currentState);
-    }
-    this.cameraman.setObstacle(this.object3D);
-    this.cameraman.tick(dt, currentState, this.avatarUUID);
-
-    //TODO do not notify everytime ?
-    this.view.notifyChange();
+    this.update(this.worldStateInterpolator.getCurrentState());
   }
 
   updateViewLocal(dt) {
     //TODO itowns BUG
     if (!isNaN(dt)) this.gameContext.dt = dt;
-
-    this.placeLight();
 
     //DEBUG
     window.UDVDebugger.displayShadowMap(
@@ -233,24 +224,21 @@ export class GameView {
       cmd.setAvatarID(avatarUUID);
     });
     this.world.tick(this.gameContext);
-    const state = this.world.computeWorldState();
-    this.updateObject3D(state);
 
-    this.cameraman.setObstacle(this.object3D);
-    this.cameraman.tick(dt, state, this.avatarUUID);
-
-    //TODO do not notify everytime ?
-    this.view.notifyChange();
+    this.update(this.world.computeWorldState());
   }
 
-  updateObject3D(state) {
+  update(state) {
+    const _this = this;
+    const newGO = [];
+
     if (this.lastState) {
-      const stateGO = state.getGameObject();
-      if (!stateGO) throw new Error('no gameObject in state');
+      if (!state.getGameObject()) throw new Error('no gameObject in state');
 
       let lastGO = this.lastState.getGameObject();
       lastGO.traverse(function (g) {
-        const current = stateGO.find(g.getUUID());
+        const uuid = g.getUUID();
+        const current = state.getGameObject().find(uuid);
         if (current) {
           //still exist update only the transform
           g.setTransform(current.getTransform());
@@ -260,26 +248,48 @@ export class GameView {
         }
       });
 
-      stateGO.traverse(function (g) {
-        const old = lastGO.find(g.getUUID());
+      state.getGameObject().traverse(function (g) {
+        const uuid = g.getUUID();
+        const old = lastGO.find(uuid);
         if (!old) {
           //new one add it
           const parent = lastGO.find(g.getParentUUID());
           parent.addChild(g);
         }
+
+        if (!_this.currentUUID[g.getUUID()]) {
+          newGO.push(g);
+        }
       });
 
       state.setGameObject(lastGO); //update GO
+    } else {
+      state.getGameObject().traverse(function (g) {
+        newGO.push(g);
+      });
     }
 
-    //TODO mettre ailleurs seulement server
-    const m = this.assetsManager;
-    const s = this.isServerSide;
-    state.getGameObject().traverse(function (g) {
-      if (!g.initialized) {
-        g.initAssetsComponents(m, udvShared, s);
-      }
+    newGO.forEach(function (g) {
+      console.log('New GO => ', g.name);
+      _this.currentUUID[g.getUUID()] = true;
+
+      g.traverse(function (child) {
+        //build render component
+        if (!_this.isLocal)
+          child.initAssetsComponents(
+            this.assetsManager,
+            udvShared,
+            !_this.isLocal
+          );
+
+        //add static object to obstacle
+        if (child.isStatic()) {
+          _this.obstacle.add(child.getObject3D(false).clone());
+        }
+      });
     });
+
+    if (newGO.length) this.placeLight();
 
     //rebuild object
     this.object3D.children.length = 0;
@@ -287,10 +297,20 @@ export class GameView {
     const obj = state.getGameObject().getObject3D();
     if (obj) {
       this.object3D.add(obj);
-      this.object3D.updateMatrixWorld(true);
+      this.object3D.updateMatrixWorld();
     } else {
       console.warn('no object3D in GameObject');
     }
+
+    this.cameraman.tick(
+      this.gameContext.dt,
+      state,
+      this.avatarUUID,
+      this.obstacle
+    );
+
+    //TODO do not notify everytime ?
+    this.view.notifyChange();
 
     //buffer
     this.lastState = state;

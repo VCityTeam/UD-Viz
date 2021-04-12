@@ -6,8 +6,8 @@ const RenderModule = class Render {
   constructor(parent, json) {
     this.parent = parent;
     this.uuid = json.uuid || THREE.MathUtils.generateUUID();
-    this.idModel = json.idModel;
-    this.name = json.name;//TODO display it above object3D
+    this.idModel = json.idModel || null;
+    this.name = json.name || null; //TODO display it above object3D
 
     //internal
     this.object3D = null;
@@ -46,6 +46,15 @@ const RenderModule = class Render {
     //get the 3D model
     if (this.idModel) {
       this.object3D.add(assetsManager.fetchModel(this.idModel));
+    }
+
+    //name display above model
+    if (this.name) {
+      const bb = this.computeBoundingBox();
+      const sprite = assetsManager.buildSprite(this.name);
+      const bbSprite = new THREE.Box3().setFromObject(sprite);
+      sprite.position.z = bb.max.z + 0.5 * (bbSprite.max.y - bbSprite.min.y);
+      this.object3D.add(sprite);
     }
 
     return this.object3D;

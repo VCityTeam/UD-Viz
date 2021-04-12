@@ -15,14 +15,12 @@ export class Cameraman {
     this.bbTarget = null;
     this.filmingTarget = true;
 
-    //obstacle
-    this.obstacle = null;
-
     //updating or not
     this.enabled = true;
 
     //raycaster
     this.raycaster = new THREE.Raycaster();
+    this.raycaster.camera = camera;
 
     //routines
     this.routines = [];
@@ -40,10 +38,6 @@ export class Cameraman {
     return this.camera;
   }
 
-  setObstacle(obs) {
-    this.obstacle = obs; //a three object3D to avoid during filming
-  }
-
   setTarget(gameObject) {
     if (this.target == gameObject) return; //only when its changed
 
@@ -58,12 +52,12 @@ export class Cameraman {
     }
   }
 
-  focusTarget() {
+  focusTarget(obstacle) {
     if (!this.target) {
       console.warn('no target');
       return;
     }
-    const transform = this.computeTransformTarget();
+    const transform = this.computeTransformTarget(obstacle);
 
     this.camera.position.copy(transform.position);
     this.camera.quaternion.copy(transform.quaternion);
@@ -71,7 +65,7 @@ export class Cameraman {
     this.camera.updateProjectionMatrix();
   }
 
-  computeTransformTarget() {
+  computeTransformTarget(obstacle = null) {
     const quaternionCam = new THREE.Quaternion().setFromEuler(
       new THREE.Euler(Math.PI * 0.5, 0, 0)
     );
@@ -97,10 +91,10 @@ export class Cameraman {
     let distance = 2.5;
 
     //compute intersection
-    if (this.obstacle) {
+    if (obstacle) {
       //TODO opti calcul avec un bvh ? ou avec un plan au niveau du perso?
       this.raycaster.set(position, dir.clone().negate());
-      const intersects = this.raycaster.intersectObject(this.obstacle, true);
+      const intersects = this.raycaster.intersectObject(obstacle, true);
       if (intersects.length) {
         intersects.forEach(function (inter) {
           distance = Math.min(distance, inter.distance);
@@ -124,7 +118,7 @@ export class Cameraman {
     return this.routines.length;
   }
 
-  tick(dt, state, targetUUID) {
+  tick(dt, state, targetUUID, obstacle) {
     if (!this.enabled) return;
 
     if (!state) throw new Error('no state');
@@ -139,7 +133,7 @@ export class Cameraman {
         this.routines.shift(); //remove
       }
     } else if (this.isFilmingTarget()) {
-      this.focusTarget();
+      this.focusTarget(obstacle);
     }
   }
 }
