@@ -18,7 +18,6 @@ import Render from '../Shared/GameObject/Components/Render';
 
 const udvShared = require('../Shared/Shared');
 const Command = udvShared.Command;
-const GameObject = udvShared.GameObject;
 const Data = udvShared.Components.Data;
 const WorldState = udvShared.WorldState;
 const WorldStateDiff = udvShared.WorldStateDiff;
