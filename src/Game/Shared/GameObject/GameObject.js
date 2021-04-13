@@ -7,15 +7,16 @@
 const THREE = require('three');
 
 //GameObject Components
-const RenderComponent = require('./Components/RenderComponent');
-const BodyComponent = require('./Components/BodyComponent');
-const ScriptComponent = require('./Components/ScriptComponent');
+const RenderComponent = require('./Components/Render');
+const ColliderComponent = require('./Components/Collider');
+const ScriptComponent = require('./Components/Script');
+const JSONUtils = require('../../../Components/SystemUtils/JSONUtils');
 
 const GameObjectModule = class GameObject {
   constructor(json, parent) {
     if (!json) throw new Error('no json');
-
     /******************DATA***************************/
+    this.json = json;
 
     //id
     this.uuid = json.uuid || THREE.Math.generateUUID();
@@ -27,14 +28,17 @@ const GameObjectModule = class GameObject {
     //name
     this.name = json.name || 'none';
 
+    //prefabId
+    this.prefabId = json.prefabId || null;
+
     //transform
-    this.setTransformFromJSON(json);
+    this.setTransformFromJSON(json.transform);
 
     //static
     this.static = json.static || false;
 
-    //outdated flag
-    this.outdated = json.outdated || true;
+    //outdated flag for network opti
+    this.outdated = json.outdated || false;
 
     //nodale structure
     const children = [];
@@ -50,6 +54,42 @@ const GameObjectModule = class GameObject {
 
     /******************INTERNAL***************************/
     this.setParent(parent);
+
+    //assets has been initialized
+    this.initialized = false;
+
+    //default object3d
+    this.defaultObject3D = new THREE.Object3D();
+  }
+
+  setFromJSON(json) {
+    this.components = {}; //clear
+    this.setComponentsFromJSON(json);
+    this.setTransformFromJSON(json.transform); //if a transform was passed keep it
+    this.name = json.name;
+    this.static = json.static;
+
+    //TODO recursive call for children
+  }
+
+  initAssetsComponents(manager, udvShared, isServerSide = false) {
+    if (this.prefabId) {
+      const json = manager.fetchPrefabJSON(this.prefabId);
+      JSONUtils.overWrite(json, this.json);
+      this.setFromJSON(json);
+    }
+
+    if (!this.initialized) {
+      this.initialized = true;
+      for (let type in this.components) {
+        const c = this.components[type];
+        if (isServerSide && !c.isServerSide()) continue;
+        c.initAssets(manager, udvShared);
+      }
+    }
+    this.children.forEach(function (child) {
+      child.initAssetsComponents(manager, udvShared, isServerSide);
+    });
   }
 
   computeWorldTransform() {
@@ -155,13 +195,15 @@ const GameObjectModule = class GameObject {
   }
 
   setComponentsFromJSON(json) {
-    const arrayJSON = json.components;
+    const jsonMap = json.components;
     const _this = this;
 
-    if (!arrayJSON) return;
+    if (!jsonMap) return;
 
-    arrayJSON.forEach(function (componentJSON) {
-      switch (componentJSON.type) {
+    for (let type in jsonMap) {
+      const componentJSON = jsonMap[type];
+
+      switch (type) {
         case RenderComponent.TYPE:
           if (_this.components[RenderComponent.TYPE])
             console.warn('multiple component');
@@ -182,68 +224,79 @@ const GameObjectModule = class GameObject {
           );
 
           break;
-        case BodyComponent.TYPE:
-          if (_this.components[BodyComponent.TYPE])
+        case ColliderComponent.TYPE:
+          if (_this.components[ColliderComponent.TYPE])
             console.warn('multiple component');
 
-          _this.components[BodyComponent.TYPE] = new BodyComponent(
+          _this.components[ColliderComponent.TYPE] = new ColliderComponent(
             _this,
             componentJSON
           );
 
           break;
         default:
-          throw new Error('wrong type component');
+          console.warn('wrong type component', type, componentJSON);
       }
-    });
+    }
   }
 
   getObject3D() {
     const r = this.getComponent(RenderComponent.TYPE);
-    if (!r) return null;
-    return r.getObject3D();
-  }
-
-  computeObject3D(assetsManager) {
-    const r = this.getComponent(RenderComponent.TYPE);
-    if (r) {
-      let obj = r.computeObject3D(assetsManager);
-
-      //transform
-      obj.position.copy(this.getPosition());
-      //TODO rotation n'est plus un THREE VEctor3 mais un euler
-      obj.rotation.copy(
-        new THREE.Euler(
-          this.transform.rotation.x,
-          this.transform.rotation.y,
-          this.transform.rotation.z,
-          'ZXY'
-        )
-      );
-      obj.scale.copy(this.getScale());
-
-      return obj;
+    let obj;
+    if (!r) {
+      obj = this.defaultObject3D;
+    } else {
+      obj = r.getObject3D();
+      if (!obj) obj = this.defaultObject3D;
     }
 
-    return null;
+    //transform
+    obj.position.copy(this.getPosition());
+    //TODO rotation n'est plus un THREE VEctor3 mais un euler
+    obj.rotation.copy(
+      new THREE.Euler(
+        this.transform.rotation.x,
+        this.transform.rotation.y,
+        this.transform.rotation.z,
+        'ZXY'
+      )
+    );
+    obj.scale.copy(this.getScale());
+
+    //reset
+    this.children.forEach(function (child) {
+      const childObj = child.getObject3D();
+      if (childObj) obj.add(childObj);
+    });
+
+    return obj;
   }
 
   setTransformFromJSON(json) {
-    if (json.transform) {
-      const l = json.transform.position;
-      const r = json.transform.rotation;
-      const s = json.transform.scale;
-      this.transform = {
-        position: new THREE.Vector3(l.x, l.y, l.z),
-        rotation: new THREE.Vector3(r.x, r.y, r.z),
-        scale: new THREE.Vector3(s.x, s.y, s.z),
-      };
-    } else {
-      this.transform = {
-        position: new THREE.Vector3(),
-        rotation: new THREE.Vector3(),
-        scale: new THREE.Vector3(1, 1, 1),
-      };
+    const defaultTransform = {
+      position: new THREE.Vector3(),
+      rotation: new THREE.Vector3(),
+      scale: new THREE.Vector3(1, 1, 1),
+    };
+    this.transform = defaultTransform;
+    if (json) {
+      if (json.position) {
+        this.transform.position.x = json.position.x;
+        this.transform.position.y = json.position.y;
+        this.transform.position.z = json.position.z;
+      }
+
+      if (json.rotation) {
+        this.transform.rotation.x = json.rotation.x;
+        this.transform.rotation.y = json.rotation.y;
+        this.transform.rotation.z = json.rotation.z;
+      }
+
+      if (json.scale) {
+        this.transform.scale.x = json.scale.x;
+        this.transform.scale.y = json.scale.y;
+        this.transform.scale.z = json.scale.z;
+      }
     }
   }
 
@@ -251,19 +304,25 @@ const GameObjectModule = class GameObject {
     return new GameObject(this.toJSON(true));
   }
 
-  //TODO permettre de break la propagation like cb return true = stop propagation
   traverse(cb) {
-    cb(this);
-    this.children.forEach(function (c) {
-      c.traverse(cb);
-    });
+    if (cb(this)) return true;
+
+    for (let index = 0; index < this.children.length; index++) {
+      const element = this.children[index];
+      if (element.traverse(cb)) return true;
+    }
+
+    return false;
   }
 
   find(uuid) {
     let result = null;
-    //TODO opti pas obliger de parcourir tous les children break
     this.traverse(function (g) {
-      if (g.getUUID() == uuid) result = g;
+      if (g.getUUID() == uuid) {
+        result = g;
+        return true;
+      }
+      return false;
     });
     return result;
   }
@@ -283,7 +342,10 @@ const GameObjectModule = class GameObject {
 
   setParent(parent) {
     this.parent = parent;
-    if (parent) this.parentUUID = parent.getUUID();
+
+    if (parent) {
+      this.parentUUID = parent.getUUID();
+    }
   }
 
   getParentUUID() {
@@ -353,11 +415,12 @@ const GameObjectModule = class GameObject {
     const rot = this.transform.rotation;
     const scale = this.transform.scale;
 
-    //TODO ranger les components dans GameObject comme dans le json
-    const components = [];
-    for (var type in this.components) {
+    const components = {};
+    for (let type in this.components) {
       const c = this.components[type];
-      if (!c.isServerSide() || withServerComponent) components.push(c.toJSON());
+      if (!c.isServerSide() || withServerComponent) {
+        components[type] = c.toJSON();
+      }
     }
 
     //TODO not declare here or use THREE.Vector3.toJSON

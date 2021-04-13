@@ -128,7 +128,7 @@ export class Cameraman {
     if (!this.enabled) return;
 
     if (!state) throw new Error('no state');
-    const target = state.getGameObject().find(targetUUID);//TODO peut etre pas obligé de le reset a chaque fois
+    const target = state.getGameObject().find(targetUUID); //TODO peut etre pas obligé de le reset a chaque fois
     this.setTarget(target);
 
     if (this.hasRoutine()) {

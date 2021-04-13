@@ -3,21 +3,22 @@
 //UDV
 // import { TilesManager } from '../../Utils/3DTiles/TilesManager';
 // import { LayerManager } from '../../Utils/LayerManager/LayerManager';
-
-import { InputManager } from '../InputManager';
-
-const Data = require('../../Shared/Data');
-const WorldState = require('../../Shared/WorldState');
-const WorldStateDiff = require('../../Shared/WorldStateDiff');
+import { AssetsManager } from '../Components/AssetsManager';
+import { InputManager } from '../Components/InputManager';
+import { Cameraman, Routine } from '../Components/Cameraman';
 
 const THREE = require('three');
 import proj4 from 'proj4';
 import * as itowns from 'itowns';
 
 import './GameView.css';
-import { Cameraman, Routine } from '../Cameraman';
-import GameObject from '../../Shared/GameObject/GameObject';
-import Command from '../../Shared/Command';
+
+const udvShared = require('../Shared/Shared');
+const Command = udvShared.Command;
+const GameObject = udvShared.GameObject;
+const Data = udvShared.Components.Data;
+const WorldState = udvShared.WorldState;
+const WorldStateDiff = udvShared.WorldStateDiff;
 
 export class GameView {
   constructor(params) {
@@ -33,7 +34,7 @@ export class GameView {
     this.config = params.config;
 
     //assets
-    this.assetsManager = params.assetsManager;
+    this.assetsManager = params.assetsManager || new AssetsManager();
 
     //inputs
     this.inputManager = new InputManager();
@@ -48,7 +49,7 @@ export class GameView {
     this.object3D = new THREE.Object3D();
     this.object3D.name = 'GameViewObject3D';
 
-    //buffer
+    //register last pass
     this.lastState = null;
 
     //camera
@@ -63,10 +64,22 @@ export class GameView {
 
     //model only in Local
     this.world = null;
+
+    //to pass gameobject script
+    this.gameContext = {
+      assetsManager: this.assetsManager,
+      inputManager: this.inputManager,
+      dt: 0,
+      commands: null,
+      world: null,
+      UDVShared: udvShared,
+    };
   }
 
   setWorld(world) {
     this.world = world;
+    if (!world) return;
+    this.gameContext.world = world;
   }
 
   getWorld() {
@@ -77,13 +90,12 @@ export class GameView {
     return this.rootHtml;
   }
 
-  onFirstState(state, avatarUUID) {
+  onFirstState(state) {
     //build itowns view
     this.initItownsView(state);
 
     //cameraman
     this.cameraman = new Cameraman(this.view.camera.camera3D);
-    this.avatarUUID = avatarUUID;
 
     this.initScene(state);
     this.initInputs(state);
@@ -101,13 +113,11 @@ export class GameView {
       );
 
       //only send cmds to server when not local
-      this.view.addFrameRequester(
-        itowns.MAIN_LOOP_EVENTS.UPDATE_START,
-        this.inputManager.sendCommandsToServer.bind(
-          this.inputManager,
-          this.webSocketService
-        )
-      );
+      // const _this = this;
+      // const sendCmds = function () {
+      //   requestAnimationFrame(sendCmds);
+      //   _this.inputManager.sendCommandsToServer(_this.webSocketService);
+      // };
     }
 
     //resize
@@ -115,7 +125,6 @@ export class GameView {
   }
 
   initScene(state) {
-    
     const o = state.getOrigin();
     const [x, y] = proj4('EPSG:3946').forward([o.lng, o.lat]);
     this.object3D.position.x = x;
@@ -123,7 +132,18 @@ export class GameView {
     this.object3D.position.z = o.alt;
     this.updateObject3D(state);
     this.view.scene.add(this.object3D);
-    console.log(this.object3D)
+
+    //fog
+    const skyColor = new THREE.Color(
+      this.config.game.skyColor.r,
+      this.config.game.skyColor.g,
+      this.config.game.skyColor.b
+    );
+    this.view.scene.fog = new THREE.Fog(
+      skyColor,
+      this.config.game.fog.near,
+      this.config.game.fog.far
+    );
 
     //shadow
     const renderer = this.view.mainLoop.gfxEngine.renderer;
@@ -131,7 +151,7 @@ export class GameView {
     // to antialias the shadow
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     // Set sky color to blue
-    renderer.setClearColor(0x6699cc, 1);
+    renderer.setClearColor(skyColor, 1);
 
     // Lights
     const directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
@@ -146,9 +166,14 @@ export class GameView {
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
     this.view.scene.add(ambientLight);
 
-    //place directionnal lights
-    const bb = new THREE.Box3().setFromObject(this.object3D);
+    this.directionalLight = directionalLight;
+  }
 
+  placeLight() {
+    const bb = new THREE.Box3().setFromObject(this.object3D);
+    const directionalLight = this.directionalLight;
+
+    //place directionnal lights
     const centerOffset = bb.getCenter(new THREE.Vector3());
 
     directionalLight.target.position.copy(centerOffset);
@@ -169,25 +194,24 @@ export class GameView {
     cameraShadow.left = -100;
     cameraShadow.bottom = -90;
     cameraShadow.updateProjectionMatrix();
-
-    // const helper = new THREE.DirectionalLightHelper(directionalLight, 110);
-    // helper.update();
-    // this.view.scene.add(helper);
-
-    //DEBUG
-    this.light = directionalLight;
   }
 
   updateViewServer(dt) {
     //DEBUG
     window.UDVDebugger.displayShadowMap(
-      this.light,
+      this.directionalLight,
       this.view.mainLoop.gfxEngine.renderer
     );
 
-    //TODO itowns BUG
-    if (isNaN(dt)) dt = 0;
+    this.placeLight();
 
+    //TODO itowns BUG
+    if (!isNaN(dt)) this.gameContext.dt = dt;
+
+    //send cmd
+    this.inputManager.sendCommandsToServer(this.webSocketService);
+
+    //get state
     const currentState = this.worldStateInterpolator.getCurrentState();
     if (currentState) {
       this.updateObject3D(currentState);
@@ -201,21 +225,23 @@ export class GameView {
 
   updateViewLocal(dt) {
     //TODO itowns BUG
-    if (isNaN(dt)) dt = 0;
+    if (!isNaN(dt)) this.gameContext.dt = dt;
+
+    this.placeLight();
 
     //DEBUG
-    // window.UDVDebugger.displayShadowMap(
-    //   this.light,
-    //   this.view.mainLoop.gfxEngine.renderer
-    // );
+    window.UDVDebugger.displayShadowMap(
+      this.directionalLight,
+      this.view.mainLoop.gfxEngine.renderer
+    );
 
     //tick world
-    const commands = this.inputManager.computeCommands();
+    this.gameContext.commands = this.inputManager.computeCommands();
     const avatarUUID = this.avatarUUID;
-    commands.forEach(function (cmd) {
+    this.gameContext.commands.forEach(function (cmd) {
       cmd.setAvatarID(avatarUUID);
     });
-    this.world.tick(commands, dt);
+    this.world.tick(this.gameContext);
     const state = this.world.computeWorldState();
     this.updateObject3D(state);
 
@@ -227,10 +253,10 @@ export class GameView {
   }
 
   updateObject3D(state) {
-    const stateGO = state.getGameObject();
-    if (!stateGO) throw new Error('no gameObject in state');
-
     if (this.lastState) {
+      const stateGO = state.getGameObject();
+      if (!stateGO) throw new Error('no gameObject in state');
+
       let lastGO = this.lastState.getGameObject();
       lastGO.traverse(function (g) {
         const current = stateGO.find(g.getUUID());
@@ -242,6 +268,7 @@ export class GameView {
           g.removeFromParent();
         }
       });
+
       stateGO.traverse(function (g) {
         const old = lastGO.find(g.getUUID());
         if (!old) {
@@ -254,11 +281,26 @@ export class GameView {
       state.setGameObject(lastGO); //update GO
     }
 
-    const obj = state.getGameObject().computeObject3D(this.assetsManager);
-    if (!obj) throw new Error('no object3D');
+    //TODO mettre ailleurs seulement server
+    const m = this.assetsManager;
+    const s = this.isServerSide;
+    state.getGameObject().traverse(function (g) {
+      if (!g.initialized) {
+        g.initAssetsComponents(m, udvShared, s);
+      }
+    });
+
+    //rebuild object
     this.object3D.children.length = 0;
-    this.object3D.add(obj);
-    this.object3D.updateMatrixWorld(true);
+
+    const obj = state.getGameObject().getObject3D();
+    if (obj) {
+      this.object3D.add(obj);
+      this.object3D.updateMatrixWorld(true);
+    } else {
+      console.warn('no object3D in GameObject');
+    }
+
     //buffer
     this.lastState = state;
   }
@@ -294,8 +336,8 @@ export class GameView {
         range: range,
         tilt: tilt,
       },
-      noControls:true}
-    );
+      noControls: true,
+    });
 
     //TODO parler a itowns remove listener of the resize
     this.view.debugResize = this.view.resize;
@@ -513,8 +555,8 @@ export class GameView {
               //creating controls like put it in _this.view.controls
               const c = new itowns.PlanarControls(_this.view, {
                 handleCollision: false,
-                focusOnMouseOver:false,//TODO itowns bug not working
-                focusOnMouseClick:false
+                focusOnMouseOver: false, //TODO itowns bug not working
+                focusOnMouseClick: false,
               });
 
               _this.cameraman.setFilmingTarget(false);
@@ -574,7 +616,7 @@ export class GameView {
     //MOVE ON MOUSEDOWN
 
     //DEBUG
-    const debugMesh = this.assetsManager.fetch('sphere');
+    const debugMesh = this.assetsManager.fetchModel('sphere');
     debugMesh.scale.copy(new THREE.Vector3(0.2, 0.2, 0.2));
 
     //disbale right click context menu
@@ -683,6 +725,8 @@ export class GameView {
   }
 
   dispose() {
+    this.view.dispose();
+
     this.inputManager.dispose();
     window.removeEventListener('resize', this.onResize.bind(this));
     this.rootHtml.parentElement.removeChild(this.rootHtml);
@@ -709,7 +753,8 @@ export class GameView {
 
             const state = new WorldState(firstStateJSON.state);
             _this.worldStateInterpolator.onFirstState(state);
-            _this.onFirstState(state, firstStateJSON.avatarID);
+            _this.onFirstState(state);
+            _this.avatarUUID = firstStateJSON.avatarID;
           }
         );
 
@@ -732,15 +777,17 @@ export class GameView {
       } else {
         //load world
         if (!_this.world) throw new Error('no world');
+
         _this.world.load(function () {
-          const avatar = new GameObject(Data.createAvatarJSON());
-          _this.world.addGameObject(avatar);
-
           const state = _this.world.computeWorldState();
-          _this.onFirstState(state, avatar.getUUID());
+          _this.onFirstState(state);
 
-          resolve();
-        });
+          //add an avatar in it
+          const avatar = _this.assetsManager.fetchPrefab('avatar');
+          _this.avatarUUID = avatar.getUUID();
+          const parent = _this.world.getGameObject();
+          _this.world.addGameObject(avatar, _this.gameContext, parent, resolve);
+        }, _this.gameContext);
       }
     });
   }

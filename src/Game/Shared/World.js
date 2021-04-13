@@ -5,8 +5,8 @@
  * @format
  */
 const GameObject = require('./GameObject/GameObject');
-const ScriptComponent = require('./GameObject/Components/ScriptComponent');
-const BodyComponent = require('./GameObject/Components/BodyComponent');
+const ScriptComponent = require('./GameObject/Components/Script');
+const ColliderComponent = require('./GameObject/Components/Collider');
 const THREE = require('three');
 const WorldState = require('./WorldState');
 const { Collisions } = require('detect-collisions');
@@ -26,7 +26,9 @@ const WorldModule = class World {
 
     //gameobject
     if (json.gameObject) {
-      this.addGameObject(new GameObject(json.gameObject));
+      this.gameObject = new GameObject(json.gameObject);
+    } else {
+      throw new Error('no go in world');
     }
 
     //name of the world
@@ -40,18 +42,33 @@ const WorldModule = class World {
     //is running on webpage or node app
     this.isServerSide = options.isServerSide || false;
     this.modules = options.modules || {};
+    this.listeners = {};
   }
 
-  load(onLoad) {
+  //custom event
+  on(eventID, cb) {
+    if (!this.listeners[eventID]) this.listeners[eventID] = [];
+    this.listeners[eventID].push(cb);
+  }
+
+  notify(eventID, params) {
+    if (!this.listeners[eventID]) this.listeners[eventID] = [];
+    this.listeners[eventID].forEach(function (cb) {
+      cb(params);
+    });
+  }
+
+  load(onLoad, gCtx) {
+    //load gameobject
+    this.addGameObject(this.gameObject, gCtx, null, onLoad);
+  }
+
+  computePromisesLoad(go, gCtx) {
     //load GameObject
     const promises = [];
-    let params;
-    if (this.isServerSide) {
-      params = [this.isServerSide, this.modules.gm, this.modules.PNG];
-    } else {
-      params = [this.isServerSide];
-    }
-    this.gameObject.traverse(function (g) {
+    let params = [gCtx, this.isServerSide, this.modules];
+
+    go.traverse(function (g) {
       const scriptC = g.getComponent(ScriptComponent.TYPE);
       if (scriptC) {
         for (let idScript in scriptC.getScripts()) {
@@ -64,81 +81,93 @@ const WorldModule = class World {
         }
       }
     });
-    Promise.all(promises).then(onLoad);
+
+    return promises;
   }
 
-  addGameObject(gameObject) {
-    if (!this.gameObject) {
-      this.gameObject = gameObject;
-    } else {
-      this.gameObject.addChild(gameObject);
-    }
+  addGameObject(gameObject, gCtx, parent, onLoad = null) {
+    const _this = this;
 
+    gameObject.initAssetsComponents(
+      gCtx.assetsManager,
+      gCtx.UDVShared,
+      _this.isServerSide
+    );
+
+    Promise.all(this.computePromisesLoad(gameObject, gCtx)).then(function () {
+      if (parent) {
+        parent.addChild(gameObject);
+      } else {
+        _this.gameObject = gameObject;
+      }
+
+      _this.registerGOCollision(gameObject);
+      gameObject.traverse(function (g) {
+        g.executeScripts(ScriptComponent.EVENT.INIT, [gCtx]);
+      });
+
+      if (onLoad) onLoad();
+    });
+  }
+
+  registerGOCollision(go) {
     //collisions
     const collisions = this.collisions;
-    let changed = false;
-    gameObject.traverse(function (child) {
-      const body = child.getComponent(BodyComponent.TYPE);
+    go.traverse(function (child) {
+      const body = child.getComponent(ColliderComponent.TYPE);
       if (body) {
-        changed = true;
-        body.getBodies().forEach(function (b) {
-          collisions.insert(b);
+        body.getShapeWrappers().forEach(function (wrapper) {
+          collisions.insert(wrapper.getShape());
         });
       }
     });
-    if (changed) collisions.update();
+  }
+
+  unregisterGOCollision(go) {
+    //collisions
+    go.traverse(function (child) {
+      const body = child.getComponent(ColliderComponent.TYPE);
+      if (body) {
+        body.getShapeWrappers().forEach(function (wrapper) {
+          wrapper.getShape().remove();
+        });
+      }
+    });
   }
 
   removeGameObject(uuid) {
-    let goRemoved = null;
-    this.gameObject.traverse(function (g) {
-      if (g.getUUID() == uuid) {
-        g.removeFromParent();
-        goRemoved = g;
-      }
-    });
-
-    //collisions
-    let changed = false;
-    goRemoved.traverse(function (child) {
-      const body = child.getComponent(BodyComponent.TYPE);
-      if (body) {
-        changed = true;
-        body.getBodies().forEach(function (b) {
-          b.remove();
-        });
-      }
-    });
-    if (changed) this.collisions.update();
-
-    if (this.gameObject.find(uuid)) throw new Error('not deleted');
+    const go = this.gameObject.find(uuid);
+    go.removeFromParent();
+    this.unregisterGOCollision(go);
   }
 
-  tick(commands, dt) {
+  tick(gCtx) {
     //Tick GameObject
     this.gameObject.traverse(function (g) {
-      g.executeScripts(ScriptComponent.EVENT.TICK, [commands, dt]);
+      g.executeScripts(ScriptComponent.EVENT.TICK, [gCtx]);
     });
 
     //collisions
     const collisions = this.collisions;
     this.gameObject.traverse(function (g) {
-      const bC = g.getComponent(BodyComponent.TYPE);
-      if (bC) bC.update(); //TODO créer une classe parent pour accéder au go
+      const bC = g.getComponent(ColliderComponent.TYPE);
+      if (bC) bC.update();
     });
     collisions.update();
 
     this.gameObject.traverse(function (g) {
       if (g.isStatic()) return;
-      const bC = g.getComponent(BodyComponent.TYPE);
+      const bC = g.getComponent(ColliderComponent.TYPE);
       if (bC) {
-        //TODO seulement collider les non static avec les static
-        bC.getBodies().forEach(function (body) {
+        bC.getShapeWrappers().forEach(function (wrapper) {
+          const body = wrapper.getShape();
           const potentials = body.potentials();
           let result = collisions.createResult();
           for (const p of potentials) {
+            //in ShapeWrapper shape are link to gameObject
+            if (!p.getGameObject().isStatic()) continue;
             if (body.collides(p, result)) {
-              bC.onCollision(result);
+              bC.onCollision(result, gCtx);
             }
           }
         });

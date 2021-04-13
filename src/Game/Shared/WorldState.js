@@ -5,7 +5,7 @@
  */
 const THREE = require('three');
 const GameObject = require('./GameObject/GameObject');
-const WorldStatDiff = require('./WorldStateDiff');
+const WorldStateDiff = require('./WorldStateDiff');
 
 const WorldStateModule = class WorldState {
   constructor(json) {
@@ -40,14 +40,14 @@ const WorldStateModule = class WorldState {
       } else {
         //update transform of the outdated one
         if (outdatedGameObjectsJSON[uuid]) {
-          g.setTransformFromJSON(outdatedGameObjectsJSON[uuid]);
+          g.setTransformFromJSON(outdatedGameObjectsJSON[uuid].transform);
           delete outdatedGameObjectsJSON[uuid]; //remove it
         }
       }
     });
 
     //create others which existed not yet
-    for (var uuid in outdatedGameObjectsJSON) {
+    for (let uuid in outdatedGameObjectsJSON) {
       const json = outdatedGameObjectsJSON[uuid];
       const go = new GameObject(json, null);
       const parent = newGO.find(json.parentUUID);
@@ -55,7 +55,7 @@ const WorldStateModule = class WorldState {
     }
 
     //DEBUG
-    var count = 0;
+    let count = 0;
     newGO.traverse(function (g) {
       const uuid = g.getUUID();
       if (uuidGO.includes(uuid)) count++;
@@ -85,9 +85,11 @@ const WorldStateModule = class WorldState {
     const outdatedGameObjectsJSON = {};
     const alreadyInOutdated = [];
     this.gameObject.traverse(function (g) {
-      gameObjectsUUID.push(g.getUUID());
+      gameObjectsUUID.push(g.getUUID()); //register all uuid
       if (!g.isStatic() && !alreadyInOutdated.includes(g)) {
+        //if is not static and is not already register
         if (!stateClient.includes(g.getUUID()) || g.isOutdated()) {
+          //if not in the last state or outdated
           outdatedGameObjectsJSON[g.getUUID()] = g.toJSON();
           //avoid to add child of an outdated object twice because toJSON is recursive
           g.traverse(function (outdated) {
@@ -97,7 +99,7 @@ const WorldStateModule = class WorldState {
       }
     });
 
-    return new WorldStatDiff({
+    return new WorldStateDiff({
       gameObjectsUUID: gameObjectsUUID,
       outdatedGameObjectsJSON: outdatedGameObjectsJSON,
       timestamp: this.timestamp,
@@ -129,7 +131,7 @@ const WorldStateModule = class WorldState {
   }
 
   toJSON() {
-    var gameObjectData = null;
+    let gameObjectData = null;
     if (this.gameObject) gameObjectData = this.gameObject.toJSON();
 
     return {
