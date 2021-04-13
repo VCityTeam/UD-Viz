@@ -241,7 +241,7 @@ const GameObjectModule = class GameObject {
     }
   }
 
-  computeObject3D(recursive = true) {
+  fetchObject3D(recursive = true) {
     const r = this.getComponent(RenderComponent.TYPE);
     let obj;
     if (!r) {
@@ -267,7 +267,7 @@ const GameObjectModule = class GameObject {
     //reset
     if (recursive) {
       this.children.forEach(function (child) {
-        const childObj = child.computeObject3D();
+        const childObj = child.fetchObject3D();
         if (childObj) obj.add(childObj);
       });
     }

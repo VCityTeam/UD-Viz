@@ -321,7 +321,7 @@ export class GameView {
     this.object3D.children.length = 0;
     this.object3D.add(this.pointerMouseObject);
 
-    const obj = state.getGameObject().computeObject3D();
+    const obj = state.getGameObject().fetchObject3D();
     if (obj) {
       this.object3D.add(obj);
       this.object3D.updateMatrixWorld();

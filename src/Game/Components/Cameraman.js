@@ -46,7 +46,7 @@ export class Cameraman {
     if (this.target) {
       //follow tps
       this.camera.fov = THIRD_PERSON_FOV;
-      const obj = this.target.computeObject3D();
+      const obj = this.target.fetchObject3D();
       this.bbTarget = new THREE.Box3().setFromObject(obj); //compute here one time
       this.camera.updateProjectionMatrix();
     }
@@ -74,7 +74,7 @@ export class Cameraman {
     );
 
     //world transform
-    const obj = this.target.computeObject3D();
+    const obj = this.target.fetchObject3D();
     let position = new THREE.Vector3();
     let quaternion = new THREE.Quaternion();
     obj.matrixWorld.decompose(position, quaternion, new THREE.Vector3());
