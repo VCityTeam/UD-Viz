@@ -6,6 +6,8 @@ import * as jquery from 'jquery';
 import GameObjectModule from '../Shared/GameObject/GameObject';
 import { THREEUtils } from '../Components/THREEUtils';
 
+const DEFAULT_MATERIAL = new THREE.MeshLambertMaterial({ color: 0x00ff00 });
+
 export class AssetsManager {
   constructor() {
     //manager to load scripts
@@ -35,17 +37,16 @@ export class AssetsManager {
   }
 
   buildNativeModel() {
-    const material = new THREE.MeshLambertMaterial({ color: 0x00ff00 });
-
     const geometryBox = new THREE.BoxGeometry();
-    const cube = new THREE.Mesh(geometryBox, material);
+    const cube = new THREE.Mesh(geometryBox, DEFAULT_MATERIAL);
     this.models['cube'] = cube;
 
     const geometrySphere = new THREE.SphereGeometry(1, 32, 32);
-    const sphere = new THREE.Mesh(geometrySphere, material);
+    const sphere = new THREE.Mesh(geometrySphere, DEFAULT_MATERIAL);
     this.models['sphere'] = sphere;
 
     this.buildGizmo();
+    this.buildPointerMouse();
   }
 
   buildGizmo() {
@@ -86,6 +87,13 @@ export class AssetsManager {
     );
 
     this.models['gizmo'] = result;
+  }
+
+  buildPointerMouse() {
+    const geometry = new THREE.CylinderGeometry(0.15, 0, 0.3, 32);
+    const cylinder = new THREE.Mesh(geometry, DEFAULT_MATERIAL);
+    cylinder.rotateX(Math.PI * 0.5);
+    this.models['pointer_mouse'] = cylinder;
   }
 
   buildSprite(label) {

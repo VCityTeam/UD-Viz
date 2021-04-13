@@ -53,6 +53,8 @@ export class GameView {
     this.object3D.name = 'GameView_Object3D';
     this.obstacle = new THREE.Object3D();
     this.obstacle.name = 'GameView_Obstacle';
+    this.pointerMouseObject = this.assetsManager.fetchModel('pointer_mouse');
+    this.pointerMouseObject.name = 'GameView_PointerMouse';
 
     //register last pass
     this.lastState = null;
@@ -317,6 +319,7 @@ export class GameView {
 
     //rebuild object
     this.object3D.children.length = 0;
+    this.object3D.add(this.pointerMouseObject);
 
     const obj = state.getGameObject().computeObject3D();
     if (obj) {
@@ -650,10 +653,6 @@ export class GameView {
 
     //MOVE ON MOUSEDOWN
 
-    //DEBUG
-    const debugMesh = this.assetsManager.fetchModel('sphere');
-    debugMesh.scale.copy(new THREE.Vector3(0.2, 0.2, 0.2));
-
     //disbale right click context menu
     viewerDiv.oncontextmenu = function (e) {
       e.preventDefault();
@@ -668,9 +667,6 @@ export class GameView {
       //map is the root object
       const mapObject = _this.obstacle;
       if (!mapObject) throw new Error('no map object');
-
-      //DEBUG
-      if (!mapObject.children.includes(debugMesh)) mapObject.add(debugMesh);
 
       //1. sets the mouse position with a coordinate system where the center
       //   of the screen is the origin
@@ -704,11 +700,11 @@ export class GameView {
         const bb = new THREE.Box3().setFromObject(mapObject);
         p.sub(bb.min);
 
+        //DEBUG
         console.log(p);
 
-        //DEBUG
-        debugMesh.position.copy(p.clone());
-        debugMesh.updateMatrixWorld();
+        _this.pointerMouseObject.position.copy(p.clone());
+        _this.pointerMouseObject.updateMatrixWorld();
 
         return new Command({
           type: Command.TYPE.MOVE_TO,
