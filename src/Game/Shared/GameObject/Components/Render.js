@@ -11,6 +11,7 @@ const RenderModule = class Render {
 
     //internal
     this.object3D = null;
+    this.originalObject3D = null;
   }
 
   isServerSide() {
@@ -32,6 +33,10 @@ const RenderModule = class Render {
 
   getObject3D() {
     return this.object3D;
+  }
+
+  getOriginalObject3D() {
+    return this.originalObject3D;
   }
 
   initAssets(assetsManager) {
@@ -56,6 +61,8 @@ const RenderModule = class Render {
       sprite.position.z = bb.max.z + 0.5 * (bbSprite.max.y - bbSprite.min.y);
       this.object3D.add(sprite);
     }
+
+    this.originalObject3D = this.object3D.clone();//keep a copy of it
 
     return this.object3D;
   }

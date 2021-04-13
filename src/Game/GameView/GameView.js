@@ -14,6 +14,7 @@ import proj4 from 'proj4';
 import * as itowns from 'itowns';
 
 import './GameView.css';
+import Render from '../Shared/GameObject/Components/Render';
 
 const udvShared = require('../Shared/Shared');
 const Command = udvShared.Command;
@@ -129,10 +130,16 @@ export class GameView {
   initScene(state) {
     const o = state.getOrigin();
     const [x, y] = proj4('EPSG:3946').forward([o.lng, o.lat]);
+
     this.object3D.position.x = x;
     this.object3D.position.y = y;
     this.object3D.position.z = o.alt;
     this.view.scene.add(this.object3D);
+
+    this.obstacle.position.x = x;
+    this.obstacle.position.y = y;
+    this.obstacle.position.z = o.alt;
+    // this.view.scene.add(this.obstacle);
 
     //fog
     const skyColor = new THREE.Color(
@@ -245,6 +252,7 @@ export class GameView {
         } else {
           //do not exist remove it
           g.removeFromParent();
+          delete _this.currentUUID[g.getUUID()];
         }
       });
 
@@ -273,20 +281,36 @@ export class GameView {
       console.log('New GO => ', g.name);
       _this.currentUUID[g.getUUID()] = true;
 
-      g.traverse(function (child) {
-        //build render component
-        if (!_this.isLocal)
-          child.initAssetsComponents(
-            this.assetsManager,
-            udvShared,
-            !_this.isLocal
-          );
+      //build render component
+      if (!_this.isLocal)
+        g.initAssetsComponents(this.assetsManager, udvShared, !_this.isLocal);
 
-        //add static object to obstacle
-        if (child.isStatic()) {
-          _this.obstacle.add(child.getObject3D(false).clone());
+      //add static object to obstacle
+      if (g.isStatic()) {
+        //register in obstacle
+        const r = g.getComponent(Render.TYPE);
+        if (r) {
+          const clone = r.getOriginalObject3D().clone();
+          // const clone = _this.assetsManager.fetchModel('sphere');
+
+          const wT = g.computeWorldTransform();
+
+          clone.position.x = wT.position.x;
+          clone.position.y = wT.position.y;
+          clone.position.z = wT.position.z;
+
+          clone.rotation.x = wT.rotation.x;
+          clone.rotation.y = wT.rotation.y;
+          clone.rotation.z = wT.rotation.z;
+
+          clone.scale.x = wT.scale.x;
+          clone.scale.y = wT.scale.y;
+          clone.scale.z = wT.scale.z;
+
+          _this.obstacle.add(clone);
+          _this.obstacle.updateMatrixWorld();
         }
-      });
+      }
     });
 
     if (newGO.length) this.placeLight();
@@ -294,7 +318,7 @@ export class GameView {
     //rebuild object
     this.object3D.children.length = 0;
 
-    const obj = state.getGameObject().getObject3D();
+    const obj = state.getGameObject().computeObject3D();
     if (obj) {
       this.object3D.add(obj);
       this.object3D.updateMatrixWorld();
@@ -475,13 +499,13 @@ export class GameView {
 
   initInputs(state) {
     //TODO réfléchir ou mettre ce code
-    const canvasGame = this.rootHtml;
+    const viewerDiv = this.rootHtml;
     const camera = this.view.camera.camera3D;
     const _this = this;
     const manager = this.inputManager;
 
-    canvasGame.requestPointerLock =
-      canvasGame.requestPointerLock || canvasGame.mozRequestPointerLock;
+    viewerDiv.requestPointerLock =
+      viewerDiv.requestPointerLock || viewerDiv.mozRequestPointerLock;
     document.exitPointerLock =
       document.exitPointerLock || document.mozExitPointerLock;
 
@@ -498,7 +522,7 @@ export class GameView {
           document.exitPointerLock();
           break;
         case MODE.POINTER_LOCK:
-          canvasGame.requestPointerLock();
+          viewerDiv.requestPointerLock();
           break;
 
         default:
@@ -631,19 +655,18 @@ export class GameView {
     debugMesh.scale.copy(new THREE.Vector3(0.2, 0.2, 0.2));
 
     //disbale right click context menu
-    canvasGame.oncontextmenu = function (e) {
+    viewerDiv.oncontextmenu = function (e) {
       e.preventDefault();
       e.stopPropagation();
     };
 
-    const firstGO = state.getGameObject();
     manager.addMouseCommand('mousedown', function () {
       const event = this.event('mousedown');
       swicthMode(MODE.DEFAULT);
       if (event.which != 3) return; //if its not a right click
 
       //map is the root object
-      const mapObject = firstGO.getObject3D();
+      const mapObject = _this.obstacle;
       if (!mapObject) throw new Error('no map object');
 
       //DEBUG
@@ -653,10 +676,8 @@ export class GameView {
       //   of the screen is the origin
       const mouse = new THREE.Vector2(
         -1 +
-          (2 * event.offsetX) /
-            (canvasGame.clientWidth - canvasGame.offsetLeft),
-        1 -
-          (2 * event.offsetY) / (canvasGame.clientHeight - canvasGame.offsetTop)
+          (2 * event.offsetX) / (viewerDiv.clientWidth - viewerDiv.offsetLeft),
+        1 - (2 * event.offsetY) / (viewerDiv.clientHeight - viewerDiv.offsetTop)
       );
 
       //2. set the picking ray from the camera position and mouse coordinates
@@ -683,8 +704,11 @@ export class GameView {
         const bb = new THREE.Box3().setFromObject(mapObject);
         p.sub(bb.min);
 
+        console.log(p);
+
         //DEBUG
         debugMesh.position.copy(p.clone());
+        debugMesh.updateMatrixWorld();
 
         return new Command({
           type: Command.TYPE.MOVE_TO,
@@ -724,7 +748,7 @@ export class GameView {
     });
 
     //start
-    manager.startListening(canvasGame);
+    manager.startListening(viewerDiv);
   }
 
   onResize() {

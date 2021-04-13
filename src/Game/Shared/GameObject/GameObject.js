@@ -59,7 +59,8 @@ const GameObjectModule = class GameObject {
     this.initialized = false;
 
     //default object3d
-    this.defaultObject3D = new THREE.Object3D();
+    this.object3D = new THREE.Object3D();
+    this.object3D.name = this.name + '_object3D';
   }
 
   setFromJSON(json) {
@@ -96,7 +97,7 @@ const GameObjectModule = class GameObject {
     const result = {
       position: new THREE.Vector3(),
       rotation: new THREE.Vector3(),
-      scale: new THREE.Vector3(),
+      scale: new THREE.Vector3(1, 1, 1),
     };
 
     let current = this;
@@ -240,14 +241,14 @@ const GameObjectModule = class GameObject {
     }
   }
 
-  getObject3D(recursive = true) {
+  computeObject3D(recursive = true) {
     const r = this.getComponent(RenderComponent.TYPE);
     let obj;
     if (!r) {
-      obj = this.defaultObject3D;
+      obj = this.object3D;
     } else {
       obj = r.getObject3D();
-      if (!obj) obj = this.defaultObject3D;
+      if (!obj) obj = this.object3D;
     }
 
     //transform
@@ -266,7 +267,7 @@ const GameObjectModule = class GameObject {
     //reset
     if (recursive) {
       this.children.forEach(function (child) {
-        const childObj = child.getObject3D();
+        const childObj = child.computeObject3D();
         if (childObj) obj.add(childObj);
       });
     }
