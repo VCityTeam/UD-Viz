@@ -2,7 +2,6 @@
 
 const Shared = require('../Shared/Shared');
 
-
 //TODO CREATE class KeyState
 const MOUSE_STATE_EVENTS = {
   MOUSE_UP: 'mouseup',
@@ -86,6 +85,13 @@ export class InputManager {
     this.altKey = false;
   }
 
+  listenKeys(keys) {
+    const _this = this;
+    keys.forEach(function (k) {
+      _this.keyMap[k] = false;
+    });
+  }
+
   addKeyInput(key, eventID, cb) {
     window.addEventListener(eventID, function (event) {
       if (key == event.key) cb();
@@ -144,6 +150,10 @@ export class InputManager {
     this.mouseState.startListening(element);
   }
 
+  isPressed(key) {
+    return this.keyMap[key];
+  }
+
   dispose() {
     this.listeners.forEach(function (l) {
       l.element.removeEventListener(l.id, l.cb);
@@ -191,6 +201,9 @@ export class InputManager {
     cmds.forEach(function (cmd) {
       cmdsJSON.push(cmd.toJSON());
     });
-    websocketService.emit(Shared.Components.Data.WEBSOCKET.MSG_TYPES.COMMANDS, cmdsJSON);
+    websocketService.emit(
+      Shared.Components.Data.WEBSOCKET.MSG_TYPES.COMMANDS,
+      cmdsJSON
+    );
   }
 }

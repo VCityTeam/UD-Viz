@@ -7,15 +7,17 @@ import { AssetsManager } from '../Components/AssetsManager';
 import { InputManager } from '../Components/InputManager';
 import { Cameraman, Routine } from '../Components/Cameraman';
 
+import { THREEUtils } from '../Components/THREEUtils';
+
 const THREE = require('three');
 import proj4 from 'proj4';
 import * as itowns from 'itowns';
 
 import './GameView.css';
+import Render from '../Shared/GameObject/Components/Render';
 
 const udvShared = require('../Shared/Shared');
 const Command = udvShared.Command;
-const GameObject = udvShared.GameObject;
 const Data = udvShared.Components.Data;
 const WorldState = udvShared.WorldState;
 const WorldStateDiff = udvShared.WorldStateDiff;
@@ -47,7 +49,11 @@ export class GameView {
 
     //object
     this.object3D = new THREE.Object3D();
-    this.object3D.name = 'GameViewObject3D';
+    this.object3D.name = 'GameView_Object3D';
+    this.obstacle = new THREE.Object3D();
+    this.obstacle.name = 'GameView_Obstacle';
+    this.pointerMouseObject = this.assetsManager.fetchModel('pointer_mouse');
+    this.pointerMouseObject.name = 'GameView_PointerMouse';
 
     //register last pass
     this.lastState = null;
@@ -74,12 +80,17 @@ export class GameView {
       world: null,
       UDVShared: udvShared,
     };
+
+    //ref uuid of go in the last state
+    this.currentUUID = {};
   }
 
   setWorld(world) {
     this.world = world;
     if (!world) return;
     this.gameContext.world = world;
+
+    //reload world
   }
 
   getWorld() {
@@ -111,13 +122,6 @@ export class GameView {
         itowns.MAIN_LOOP_EVENTS.UPDATE_END,
         this.updateViewServer.bind(this)
       );
-
-      //only send cmds to server when not local
-      // const _this = this;
-      // const sendCmds = function () {
-      //   requestAnimationFrame(sendCmds);
-      //   _this.inputManager.sendCommandsToServer(_this.webSocketService);
-      // };
     }
 
     //resize
@@ -127,11 +131,16 @@ export class GameView {
   initScene(state) {
     const o = state.getOrigin();
     const [x, y] = proj4('EPSG:3946').forward([o.lng, o.lat]);
+
     this.object3D.position.x = x;
     this.object3D.position.y = y;
     this.object3D.position.z = o.alt;
-    this.updateObject3D(state);
     this.view.scene.add(this.object3D);
+
+    this.obstacle.position.x = x;
+    this.obstacle.position.y = y;
+    this.obstacle.position.z = o.alt;
+    // this.view.scene.add(this.obstacle);
 
     //fog
     const skyColor = new THREE.Color(
@@ -147,25 +156,19 @@ export class GameView {
 
     //shadow
     const renderer = this.view.mainLoop.gfxEngine.renderer;
-    renderer.shadowMap.enabled = true;
-    // to antialias the shadow
-    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-    // Set sky color to blue
-    renderer.setClearColor(skyColor, 1);
+    THREEUtils.initRenderer(renderer, skyColor);
 
     // Lights
-    const directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
+    const { directionalLight, ambientLight } = THREEUtils.addLights(
+      this.view.scene
+    );
+
     directionalLight.shadow.mapSize = new THREE.Vector2(
       this.config.game.shadowMapSize,
       this.config.game.shadowMapSize
     );
     directionalLight.castShadow = true;
     directionalLight.shadow.bias = -0.0005;
-    this.view.scene.add(directionalLight);
-
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
-    this.view.scene.add(ambientLight);
-
     this.directionalLight = directionalLight;
   }
 
@@ -203,31 +206,18 @@ export class GameView {
       this.view.mainLoop.gfxEngine.renderer
     );
 
-    this.placeLight();
-
     //TODO itowns BUG
     if (!isNaN(dt)) this.gameContext.dt = dt;
 
     //send cmd
     this.inputManager.sendCommandsToServer(this.webSocketService);
 
-    //get state
-    const currentState = this.worldStateInterpolator.getCurrentState();
-    if (currentState) {
-      this.updateObject3D(currentState);
-    }
-    this.cameraman.setObstacle(this.object3D);
-    this.cameraman.tick(dt, currentState, this.avatarUUID);
-
-    //TODO do not notify everytime ?
-    this.view.notifyChange();
+    this.update(this.worldStateInterpolator.getCurrentState());
   }
 
   updateViewLocal(dt) {
     //TODO itowns BUG
     if (!isNaN(dt)) this.gameContext.dt = dt;
-
-    this.placeLight();
 
     //DEBUG
     window.UDVDebugger.displayShadowMap(
@@ -242,64 +232,111 @@ export class GameView {
       cmd.setAvatarID(avatarUUID);
     });
     this.world.tick(this.gameContext);
-    const state = this.world.computeWorldState();
-    this.updateObject3D(state);
 
-    this.cameraman.setObstacle(this.object3D);
-    this.cameraman.tick(dt, state, this.avatarUUID);
-
-    //TODO do not notify everytime ?
-    this.view.notifyChange();
+    this.update(this.world.computeWorldState());
   }
 
-  updateObject3D(state) {
+  update(state) {
+    const _this = this;
+    const newGO = [];
+
     if (this.lastState) {
-      const stateGO = state.getGameObject();
-      if (!stateGO) throw new Error('no gameObject in state');
+      if (!state.getGameObject()) throw new Error('no gameObject in state');
 
       let lastGO = this.lastState.getGameObject();
       lastGO.traverse(function (g) {
-        const current = stateGO.find(g.getUUID());
+        const uuid = g.getUUID();
+        const current = state.getGameObject().find(uuid);
         if (current) {
           //still exist update only the transform
           g.setTransform(current.getTransform());
         } else {
           //do not exist remove it
           g.removeFromParent();
+          delete _this.currentUUID[g.getUUID()];
         }
       });
 
-      stateGO.traverse(function (g) {
-        const old = lastGO.find(g.getUUID());
+      state.getGameObject().traverse(function (g) {
+        const uuid = g.getUUID();
+        const old = lastGO.find(uuid);
         if (!old) {
           //new one add it
           const parent = lastGO.find(g.getParentUUID());
           parent.addChild(g);
         }
+
+        if (!_this.currentUUID[g.getUUID()]) {
+          newGO.push(g);
+        }
       });
 
       state.setGameObject(lastGO); //update GO
+    } else {
+      state.getGameObject().traverse(function (g) {
+        newGO.push(g);
+      });
     }
 
-    //TODO mettre ailleurs seulement server
-    const m = this.assetsManager;
-    const s = this.isServerSide;
-    state.getGameObject().traverse(function (g) {
-      if (!g.initialized) {
-        g.initAssetsComponents(m, udvShared, s);
+    newGO.forEach(function (g) {
+      console.log('New GO => ', g.name);
+      _this.currentUUID[g.getUUID()] = true;
+
+      //build render component
+      if (!_this.isLocal)
+        g.initAssetsComponents(_this.assetsManager, udvShared);
+
+      //add static object to obstacle
+      if (g.isStatic()) {
+        //register in obstacle
+        const r = g.getComponent(Render.TYPE);
+        if (r) {
+          const clone = r.getOriginalObject3D().clone();
+          // const clone = _this.assetsManager.fetchModel('sphere');
+
+          const wT = g.computeWorldTransform();
+
+          clone.position.x = wT.position.x;
+          clone.position.y = wT.position.y;
+          clone.position.z = wT.position.z;
+
+          clone.rotation.x = wT.rotation.x;
+          clone.rotation.y = wT.rotation.y;
+          clone.rotation.z = wT.rotation.z;
+
+          clone.scale.x = wT.scale.x;
+          clone.scale.y = wT.scale.y;
+          clone.scale.z = wT.scale.z;
+
+          _this.obstacle.add(clone);
+          _this.obstacle.updateMatrixWorld();
+        }
       }
     });
 
+    if (newGO.length) this.placeLight();
+
     //rebuild object
     this.object3D.children.length = 0;
+    this.object3D.add(this.pointerMouseObject);
 
-    const obj = state.getGameObject().getObject3D();
+    const obj = state.getGameObject().fetchObject3D();
     if (obj) {
       this.object3D.add(obj);
-      this.object3D.updateMatrixWorld(true);
+      this.object3D.updateMatrixWorld();
     } else {
       console.warn('no object3D in GameObject');
     }
+
+    this.cameraman.tick(
+      this.gameContext.dt,
+      state,
+      this.avatarUUID,
+      this.obstacle
+    );
+
+    //TODO do not notify everytime ?
+    this.view.notifyChange();
 
     //buffer
     this.lastState = state;
@@ -464,13 +501,13 @@ export class GameView {
 
   initInputs(state) {
     //TODO réfléchir ou mettre ce code
-    const canvasGame = this.rootHtml;
+    const viewerDiv = this.rootHtml;
     const camera = this.view.camera.camera3D;
     const _this = this;
     const manager = this.inputManager;
 
-    canvasGame.requestPointerLock =
-      canvasGame.requestPointerLock || canvasGame.mozRequestPointerLock;
+    viewerDiv.requestPointerLock =
+      viewerDiv.requestPointerLock || viewerDiv.mozRequestPointerLock;
     document.exitPointerLock =
       document.exitPointerLock || document.mozExitPointerLock;
 
@@ -487,7 +524,7 @@ export class GameView {
           document.exitPointerLock();
           break;
         case MODE.POINTER_LOCK:
-          canvasGame.requestPointerLock();
+          viewerDiv.requestPointerLock();
           break;
 
         default:
@@ -569,13 +606,13 @@ export class GameView {
     //COMMANDS WORLD
 
     //FORWARD
+    manager.listenKeys(['c']);
     manager.addKeyCommand(
       Command.TYPE.MOVE_FORWARD,
       ['z', 'ArrowUp'],
       function () {
         swicthMode(MODE.POINTER_LOCK);
-        if (manager.isAltKey()) {
-          console.log('RUNNN');
+        if (manager.isPressed('c')) {
           return new Command({ type: Command.TYPE.RUN });
         } else {
           return new Command({ type: Command.TYPE.MOVE_FORWARD });
@@ -615,37 +652,27 @@ export class GameView {
 
     //MOVE ON MOUSEDOWN
 
-    //DEBUG
-    const debugMesh = this.assetsManager.fetchModel('sphere');
-    debugMesh.scale.copy(new THREE.Vector3(0.2, 0.2, 0.2));
-
     //disbale right click context menu
-    canvasGame.oncontextmenu = function (e) {
+    viewerDiv.oncontextmenu = function (e) {
       e.preventDefault();
       e.stopPropagation();
     };
 
-    const firstGO = state.getGameObject();
     manager.addMouseCommand('mousedown', function () {
       const event = this.event('mousedown');
       swicthMode(MODE.DEFAULT);
       if (event.which != 3) return; //if its not a right click
 
       //map is the root object
-      const mapObject = firstGO.getObject3D();
+      const mapObject = _this.obstacle;
       if (!mapObject) throw new Error('no map object');
-
-      //DEBUG
-      if (!mapObject.children.includes(debugMesh)) mapObject.add(debugMesh);
 
       //1. sets the mouse position with a coordinate system where the center
       //   of the screen is the origin
       const mouse = new THREE.Vector2(
         -1 +
-          (2 * event.offsetX) /
-            (canvasGame.clientWidth - canvasGame.offsetLeft),
-        1 -
-          (2 * event.offsetY) / (canvasGame.clientHeight - canvasGame.offsetTop)
+          (2 * event.offsetX) / (viewerDiv.clientWidth - viewerDiv.offsetLeft),
+        1 - (2 * event.offsetY) / (viewerDiv.clientHeight - viewerDiv.offsetTop)
       );
 
       //2. set the picking ray from the camera position and mouse coordinates
@@ -673,7 +700,10 @@ export class GameView {
         p.sub(bb.min);
 
         //DEBUG
-        debugMesh.position.copy(p.clone());
+        console.log(p);
+
+        _this.pointerMouseObject.position.copy(p.clone());
+        _this.pointerMouseObject.updateMatrixWorld();
 
         return new Command({
           type: Command.TYPE.MOVE_TO,
@@ -713,7 +743,7 @@ export class GameView {
     });
 
     //start
-    manager.startListening(canvasGame);
+    manager.startListening(viewerDiv);
   }
 
   onResize() {

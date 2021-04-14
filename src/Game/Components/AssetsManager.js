@@ -4,7 +4,9 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import * as THREE from 'three';
 import * as jquery from 'jquery';
 import GameObjectModule from '../Shared/GameObject/GameObject';
-import PrefabUtils from '../Shared/Components/PrefabUtils';
+import { THREEUtils } from '../Components/THREEUtils';
+
+const DEFAULT_MATERIAL = new THREE.MeshLambertMaterial({ color: 0x00ff00 });
 
 export class AssetsManager {
   constructor() {
@@ -35,17 +37,16 @@ export class AssetsManager {
   }
 
   buildNativeModel() {
-    const material = new THREE.MeshLambertMaterial({ color: 0x00ff00 });
-
     const geometryBox = new THREE.BoxGeometry();
-    const cube = new THREE.Mesh(geometryBox, material);
+    const cube = new THREE.Mesh(geometryBox, DEFAULT_MATERIAL);
     this.models['cube'] = cube;
 
     const geometrySphere = new THREE.SphereGeometry(1, 32, 32);
-    const sphere = new THREE.Mesh(geometrySphere, material);
+    const sphere = new THREE.Mesh(geometrySphere, DEFAULT_MATERIAL);
     this.models['sphere'] = sphere;
 
     this.buildGizmo();
+    this.buildPointerMouse();
   }
 
   buildGizmo() {
@@ -88,6 +89,42 @@ export class AssetsManager {
     this.models['gizmo'] = result;
   }
 
+  buildPointerMouse() {
+    const geometry = new THREE.CylinderGeometry(0.15, 0, 0.3, 32);
+    const cylinder = new THREE.Mesh(geometry, DEFAULT_MATERIAL);
+    cylinder.rotateX(Math.PI * 0.5);
+    this.models['pointer_mouse'] = cylinder;
+  }
+
+  buildSprite(label) {
+    //create texture with name on it
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+
+    ctx.fillStyle = 'rgba(255, 255, 255, 0)';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    ctx.fillStyle = 'black';
+    ctx.font = '50px Arial';
+    const wT = ctx.measureText(label).width;
+    ctx.fillText(label, (canvas.width - wT) * 0.5, canvas.height * 0.5);
+
+    const texture = new THREE.TextureLoader().load(
+      canvas.toDataURL('image/png')
+    );
+    texture.flipY = true;
+    texture.flipX = true;
+
+    const material = new THREE.SpriteMaterial({
+      map: texture,
+    });
+    material.alphaTest = 0.5;
+    const result = new THREE.Sprite(material);
+    result.scale.set(1, 0.3, 1);
+
+    return result;
+  }
+
   parse(id, obj, anchor) {
     //rotation
     const quatTHREE2UDV = new THREE.Quaternion().setFromEuler(
@@ -123,6 +160,10 @@ export class AssetsManager {
       if (child.geometry) {
         child.castShadow = true;
         child.receiveShadow = true;
+      }
+      if (child.material && child.material.map) {
+        child.material.map.encoding = THREEUtils.textureEncoding;
+        child.material.needsUpdate = true;
       }
     });
 
