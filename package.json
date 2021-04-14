@@ -24,7 +24,7 @@
   "peerDependencies": {},
   "dependencies": {
     "proj4": "^2.7.0",
-    "three": "0.125.2",
+    "three": "0.126.1",
     "detect-collisions": "^2.5.2",
     "itowns": "^2.31.0",
     "jquery": "^3.6.0",
