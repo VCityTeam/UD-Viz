@@ -172,7 +172,7 @@ const GameObjectModule = class GameObject {
       });
 
       //remove object3D
-      let obj3D = this.getObject3D();
+      let obj3D = this.fetchObject3D();
       if (obj3D && obj3D.parent) {
         obj3D.parent.remove(obj3D);
       }

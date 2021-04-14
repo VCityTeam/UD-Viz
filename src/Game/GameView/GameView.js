@@ -284,7 +284,7 @@ export class GameView {
 
       //build render component
       if (!_this.isLocal)
-        g.initAssetsComponents(this.assetsManager, udvShared, !_this.isLocal);
+        g.initAssetsComponents(_this.assetsManager, udvShared);
 
       //add static object to obstacle
       if (g.isStatic()) {
