@@ -315,17 +315,19 @@ export class GameView {
 
     if (newGO.length) this.placeLight();
 
+    const go = state.getGameObject();
+
     //rebuild object
     this.object3D.children.length = 0;
     this.object3D.add(this.pointerMouseObject);
+    this.object3D.add(go.fetchObject3D());
+    this.object3D.updateMatrixWorld();
 
-    const obj = state.getGameObject().fetchObject3D();
-    if (obj) {
-      this.object3D.add(obj);
-      this.object3D.updateMatrixWorld();
-    } else {
-      console.warn('no object3D in GameObject');
-    }
+    //tick render component (anim/video)
+    go.traverse(function (child) {
+      const r = child.getComponent(Render.TYPE);
+      if (r) r.tick();
+    });
 
     this.cameraman.tick(
       this.gameContext.dt,

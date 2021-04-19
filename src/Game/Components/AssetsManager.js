@@ -174,7 +174,7 @@ export class AssetsManager {
     return texture;
   }
 
-  createImage(path, w, h) {
+  createImage(path, w = 1, h = 1) {
     const texture = new THREE.TextureLoader().load(path);
     const material = new THREE.MeshBasicMaterial({ map: texture });
     const geometry = new THREE.PlaneGeometry(w, h, 32);
@@ -185,7 +185,7 @@ export class AssetsManager {
     return frame;
   }
 
-  createVideo(path, w, h, size) {
+  createVideo(path, w = 1, h = 1, size) {
     const video = document.createElement('video');
     video.src = path;
     video.autoplay = true;
@@ -216,18 +216,15 @@ export class AssetsManager {
     const frame = this.createFrame(w, h);
     frame.add(movieScreen);
 
-    //TODO move tick from here
     const tick = function () {
-      requestAnimationFrame(tick);
       if (video.ended) video.play();
       if (video.readyState === video.HAVE_ENOUGH_DATA) {
         videoImageContext.drawImage(video, 0, 0);
         if (videoTexture) videoTexture.needsUpdate = true;
       }
     };
-    tick();
 
-    return frame;
+    return { frame: frame, tick: tick };
   }
 
   createText(text, w = 1, h = 1) {

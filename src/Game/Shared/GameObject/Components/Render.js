@@ -13,6 +13,14 @@ const RenderModule = class Render {
     //internal
     this.object3D = null;
     this.originalObject3D = null;
+
+    this.tickCb = [];
+  }
+
+  tick() {
+    this.tickCb.forEach(function (cb) {
+      cb();
+    });
   }
 
   isServerSide() {
@@ -84,13 +92,14 @@ const RenderModule = class Render {
       }
 
       if (this.media.video) {
-        const mediaVideo = assetsManager.createVideo(
+        const result = assetsManager.createVideo(
           this.media.video.path,
           this.media.video.width,
           this.media.video.height,
           this.media.video.size
         );
-        this.object3D.add(mediaVideo);
+        this.tickCb.push(result.tick);
+        this.object3D.add(result.frame);
       }
     }
 

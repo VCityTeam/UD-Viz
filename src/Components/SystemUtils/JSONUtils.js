@@ -20,19 +20,22 @@ module.exports = {
     traverse(jsonOverWrited, jsonModel);
   },
 
-  parseNumeric(json) {
-    const parse = function (j) {
-      for (let key in j) {
-        if (j[key] instanceof Object) {
-          parse(j[key]);
-        } else if (Type.isNumeric(j[key])) {
-          //console.log(j[key]);
-          j[key] = parseFloat(j[key]);
-          //console.log(j[key]);
-        }
+  parse(json, cb) {
+    for (let key in json) {
+      if (json[key] instanceof Object) {
+        this.parse(json[key], cb);
+      } else {
+        cb(json, key);
       }
-    };
+    }
+    return json;
+  },
 
-    return parse(json);
+  parseNumeric(json) {
+    return this.parse(json, function (j, key) {
+      if (Type.isNumeric(j[key])) {
+        j[key] = parseFloat(j[key]);
+      }
+    });
   },
 };
