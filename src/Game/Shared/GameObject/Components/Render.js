@@ -7,6 +7,7 @@ const RenderModule = class Render {
     this.parent = parent;
     this.uuid = json.uuid || THREE.MathUtils.generateUUID();
     this.idModel = json.idModel || null;
+    this.media = json.media || null;
     this.name = json.name || null; //TODO display it above object3D
 
     //internal
@@ -22,6 +23,7 @@ const RenderModule = class Render {
     return {
       uuid: this.uuid,
       name: this.name,
+      media: this.media,
       type: RenderModule.TYPE,
       idModel: this.idModel,
     };
@@ -50,19 +52,49 @@ const RenderModule = class Render {
 
     //get the 3D model
     if (this.idModel) {
-      this.object3D.add(assetsManager.fetchModel(this.idModel));
+      this.object3D.add(assetsManager.createModel(this.idModel));
     }
 
     //name display above model
     if (this.name) {
       const bb = this.computeBoundingBox();
-      const sprite = assetsManager.buildSprite(this.name);
+      const sprite = assetsManager.createSprite(this.name);
       const bbSprite = new THREE.Box3().setFromObject(sprite);
       sprite.position.z = bb.max.z + 0.5 * (bbSprite.max.y - bbSprite.min.y);
       this.object3D.add(sprite);
     }
 
-    this.originalObject3D = this.object3D.clone();//keep a copy of it
+    if (this.media) {
+      if (this.media.text) {
+        const mediaText = assetsManager.createText(
+          this.media.text.label,
+          this.media.text.width,
+          this.media.text.height
+        );
+        this.object3D.add(mediaText);
+      }
+
+      if (this.media.img) {
+        const mediaImg = assetsManager.createImage(
+          this.media.img.path,
+          this.media.img.width,
+          this.media.img.height
+        );
+        this.object3D.add(mediaImg);
+      }
+
+      if (this.media.video) {
+        const mediaVideo = assetsManager.createVideo(
+          this.media.video.path,
+          this.media.video.width,
+          this.media.video.height,
+          this.media.video.size
+        );
+        this.object3D.add(mediaVideo);
+      }
+    }
+
+    this.originalObject3D = this.object3D.clone(); //keep a copy of it
 
     return this.object3D;
   }

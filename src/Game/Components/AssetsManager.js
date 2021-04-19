@@ -16,7 +16,7 @@ export class AssetsManager {
     this.models = {};
   }
 
-  fetchModel(idModel) {
+  createModel(idModel) {
     if (!this.models[idModel]) console.error('no model with id ', idModel);
     return this.models[idModel].clone();
   }
@@ -89,6 +89,51 @@ export class AssetsManager {
     this.models['gizmo'] = result;
   }
 
+  createFrame(w, h) {
+    const buildBox = function (
+      x,
+      y,
+      z,
+      offset,
+      rotation = new THREE.Vector3()
+    ) {
+      const geo = new THREE.BoxGeometry();
+      const result = new THREE.Mesh(geo, DEFAULT_MATERIAL);
+      result.position.add(offset);
+      result.scale.set(x, y, z);
+      result.rotation.setFromVector3(rotation);
+      return result;
+    };
+
+    const frame = new THREE.Object3D();
+    frame.name = 'frame';
+
+    const thickness = 0.1;
+    const depth = 0.05;
+    frame.add(buildBox(w, thickness, depth, new THREE.Vector3(0, h / 2, 0)));
+    frame.add(buildBox(w, thickness, depth, new THREE.Vector3(0, -h / 2, 0)));
+    frame.add(
+      buildBox(
+        h + thickness,
+        thickness,
+        depth,
+        new THREE.Vector3(-w / 2, 0, 0),
+        new THREE.Vector3(0, 0, Math.PI * 0.5)
+      )
+    );
+    frame.add(
+      buildBox(
+        h + thickness,
+        thickness,
+        depth,
+        new THREE.Vector3(w / 2, 0, 0),
+        new THREE.Vector3(0, 0, Math.PI * 0.5)
+      )
+    );
+
+    return frame;
+  }
+
   buildPointerMouse() {
     const geometry = new THREE.CylinderGeometry(0.15, 0, 0.3, 32);
     const cylinder = new THREE.Mesh(geometry, DEFAULT_MATERIAL);
@@ -96,18 +141,29 @@ export class AssetsManager {
     this.models['pointer_mouse'] = cylinder;
   }
 
-  buildSprite(label) {
+  createSprite(label) {
+    const texture = this.createLabelTexture(label, 'rgba(255, 255, 255, 0)');
+    const material = new THREE.SpriteMaterial({
+      map: texture,
+    });
+    material.alphaTest = 0.5;
+    const result = new THREE.Sprite(material);
+    result.scale.set(1, 0.3, 1);
+    return result;
+  }
+
+  createLabelTexture(text, clearColor) {
     //create texture with name on it
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
 
-    ctx.fillStyle = 'rgba(255, 255, 255, 0)';
+    ctx.fillStyle = clearColor;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     ctx.fillStyle = 'black';
     ctx.font = '50px Arial';
-    const wT = ctx.measureText(label).width;
-    ctx.fillText(label, (canvas.width - wT) * 0.5, canvas.height * 0.5);
+    const wT = ctx.measureText(text).width;
+    ctx.fillText(text, (canvas.width - wT) * 0.5, canvas.height * 0.5);
 
     const texture = new THREE.TextureLoader().load(
       canvas.toDataURL('image/png')
@@ -115,14 +171,73 @@ export class AssetsManager {
     texture.flipY = true;
     texture.flipX = true;
 
-    const material = new THREE.SpriteMaterial({
-      map: texture,
-    });
-    material.alphaTest = 0.5;
-    const result = new THREE.Sprite(material);
-    result.scale.set(1, 0.3, 1);
+    return texture;
+  }
 
-    return result;
+  createImage(path, w, h) {
+    const texture = new THREE.TextureLoader().load(path);
+    const material = new THREE.MeshBasicMaterial({ map: texture });
+    const geometry = new THREE.PlaneGeometry(w, h, 32);
+    const plane = new THREE.Mesh(geometry, material);
+
+    const frame = this.createFrame(w, h);
+    frame.add(plane);
+    return frame;
+  }
+
+  createVideo(path, w, h, size) {
+    const video = document.createElement('video');
+    video.src = path;
+    video.autoplay = true;
+    video.muted = true;
+    video.load(); // must call after setting/changing source
+    video.play();
+
+    const videoImage = document.createElement('canvas');
+
+    videoImage.width = size.width;
+    videoImage.height = size.height;
+
+    const videoImageContext = videoImage.getContext('2d');
+    videoImageContext.fillStyle = '#000000';
+    videoImageContext.fillRect(0, 0, videoImage.width, videoImage.height);
+
+    const videoTexture = new THREE.Texture(videoImage);
+    videoTexture.minFilter = THREE.LinearFilter;
+    videoTexture.magFilter = THREE.LinearFilter;
+
+    const movieMaterial = new THREE.MeshBasicMaterial({
+      map: videoTexture,
+      side: THREE.DoubleSide,
+    });
+    const movieGeometry = new THREE.PlaneGeometry(w, h);
+    const movieScreen = new THREE.Mesh(movieGeometry, movieMaterial);
+
+    const frame = this.createFrame(w, h);
+    frame.add(movieScreen);
+
+    //TODO move tick from here
+    const tick = function () {
+      requestAnimationFrame(tick);
+      if (video.ended) video.play();
+      if (video.readyState === video.HAVE_ENOUGH_DATA) {
+        videoImageContext.drawImage(video, 0, 0);
+        if (videoTexture) videoTexture.needsUpdate = true;
+      }
+    };
+    tick();
+
+    return frame;
+  }
+
+  createText(text, w = 1, h = 1) {
+    const texture = this.createLabelTexture(text, 'rgba(255, 255, 255, 255)');
+    const material = new THREE.MeshBasicMaterial({ map: texture });
+    const geometry = new THREE.PlaneGeometry(w, h, 32);
+    const plane = new THREE.Mesh(geometry, material);
+    const frame = this.createFrame(w, h);
+    frame.add(plane);
+    return frame;
   }
 
   parse(id, obj, anchor) {

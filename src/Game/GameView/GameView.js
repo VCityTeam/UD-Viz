@@ -52,7 +52,7 @@ export class GameView {
     this.object3D.name = 'GameView_Object3D';
     this.obstacle = new THREE.Object3D();
     this.obstacle.name = 'GameView_Obstacle';
-    this.pointerMouseObject = this.assetsManager.fetchModel('pointer_mouse');
+    this.pointerMouseObject = this.assetsManager.createModel('pointer_mouse');
     this.pointerMouseObject.name = 'GameView_PointerMouse';
 
     //register last pass
@@ -292,7 +292,6 @@ export class GameView {
         const r = g.getComponent(Render.TYPE);
         if (r) {
           const clone = r.getOriginalObject3D().clone();
-          // const clone = _this.assetsManager.fetchModel('sphere');
 
           const wT = g.computeWorldTransform();
 
