@@ -2,7 +2,7 @@
 module.exports = Object.freeze({
   WEBSOCKET: {
     MSG_TYPES: {
-      JOIN_SERVER: 'join_server',
+      JOIN_WORLD: 'join_world',
       COMMANDS: 'cmds',
       WORLDSTATE_DIFF: 'worldstate_diff',
     },

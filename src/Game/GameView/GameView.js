@@ -776,7 +776,7 @@ export class GameView {
 
         // Register callbacks
         _this.webSocketService.on(
-          Data.WEBSOCKET.MSG_TYPES.JOIN_SERVER,
+          Data.WEBSOCKET.MSG_TYPES.JOIN_WORLD,
           (firstStateJSON) => {
             if (!firstStateJSON) throw new Error('no data');
 
