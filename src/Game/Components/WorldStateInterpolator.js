@@ -17,6 +17,7 @@ export class WorldStateInterpolator {
   onFirstState(state) {
     this.firstServerTimestamp = state.getTimestamp();
     this.gameStart = Date.now();
+    this.states.length = 0;
 
     this.onNewState(state);
   }
