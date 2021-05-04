@@ -206,12 +206,6 @@ export class GameView {
   }
 
   updateViewServer(dt) {
-    //DEBUG
-    window.UDVDebugger.displayShadowMap(
-      this.directionalLight,
-      this.view.mainLoop.gfxEngine.renderer
-    );
-
     //TODO itowns BUG
     if (!isNaN(dt)) this.gameContext.dt = dt;
 
@@ -792,7 +786,6 @@ export class GameView {
               _this.onFirstState(state);
               _this.avatarUUID = firstStateJSON.avatarID;
             } else {
-
               //TODO maybe do this in parent and not here
 
               //this need to be disposed
@@ -806,7 +799,6 @@ export class GameView {
                 worldStateInterpolator: _this.worldStateInterpolator,
                 config: _this.config,
               });
-
 
               //load then notify join world
               gameView.load().then(function () {
