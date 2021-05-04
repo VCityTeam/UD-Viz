@@ -9,8 +9,8 @@ import { Cameraman, Routine } from '../Components/Cameraman';
 
 import { THREEUtils } from '../Components/THREEUtils';
 
-const THREE = require('three');
-import proj4 from 'proj4';
+import * as THREE from 'three';
+import * as proj4 from 'proj4';
 import * as itowns from 'itowns';
 
 import './GameView.css';
@@ -32,6 +32,7 @@ export class GameView {
     //html
     this.rootHtml = document.createElement('div');
     this.rootHtml.id = 'viewerDiv'; //itowns
+    document.body.appendChild(this.rootHtml);
     window.addEventListener('resize', this.onResize.bind(this));
 
     //game running with  a server simulating world or local
@@ -135,7 +136,7 @@ export class GameView {
 
   initScene(state) {
     const o = state.getOrigin();
-    const [x, y] = proj4('EPSG:3946').forward([o.lng, o.lat]);
+    const [x, y] = proj4.default('EPSG:3946').forward([o.lng, o.lat]);
 
     this.object3D.position.x = x;
     this.object3D.position.y = y;
@@ -353,13 +354,13 @@ export class GameView {
     // (planarView of iTowns). It is indeed needed
     // to convert the coordinates received from the world server
     // to this coordinate system.
-    proj4.defs(
+    proj4.default.defs(
       'EPSG:3946',
       '+proj=lcc +lat_1=45.25 +lat_2=46.75' +
         ' +lat_0=46 +lon_0=3 +x_0=1700000 +y_0=5200000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs'
     );
     const o = state.getOrigin();
-    const [x, y] = proj4('EPSG:3946').forward([o.lng, o.lat]);
+    const [x, y] = proj4.default('EPSG:3946').forward([o.lng, o.lat]);
     const r = this.config.itowns.radiusExtent;
 
     // Define geographic extent: CRS, min/max X, min/max Y
@@ -764,7 +765,7 @@ export class GameView {
     this.view.dispose();
     this.inputManager.dispose();
     window.removeEventListener('resize', this.onResize.bind(this));
-    this.rootHtml.parentElement.removeChild(this.rootHtml);
+    this.rootHtml.remove();
 
     if (this.webSocketService) this.webSocketService.reset();
   }
@@ -791,11 +792,13 @@ export class GameView {
               _this.onFirstState(state);
               _this.avatarUUID = firstStateJSON.avatarID;
             } else {
-              //this need to be disposed
 
+              //TODO maybe do this in parent and not here
+
+              //this need to be disposed
               _this.dispose();
 
-              //TODO check if websocketservice need to reset
+              //create new one
               const gameView = new GameView({
                 isLocal: false,
                 assetsManager: _this.assetsManager,
@@ -804,19 +807,15 @@ export class GameView {
                 config: _this.config,
               });
 
+
               //load then notify join world
               gameView.load().then(function () {
                 console.log('JOIN_WORLD ', gameView.id, firstStateJSON);
-
-                // debugger
 
                 const state = new WorldState(firstStateJSON.state);
                 gameView.worldStateInterpolator.onFirstState(state);
                 gameView.onFirstState(state);
                 gameView.avatarUUID = firstStateJSON.avatarID;
-
-                //add html
-                document.body.appendChild(gameView.html());
               });
             }
           }
