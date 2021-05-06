@@ -17,3 +17,13 @@ body {
 canvas {
   display: block;
 }
+
+.ui_GameView {
+  background-color: white;
+  position: absolute;
+  z-index: 1;
+}
+
+.label_GameView {
+  color: black;
+}

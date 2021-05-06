@@ -36,6 +36,14 @@ export class GameView {
     document.body.appendChild(this.rootHtml);
     window.addEventListener('resize', this.onResize.bind(this));
 
+    //ui
+    this.ui = document.createElement('div');
+    this.ui.classList.add('ui_GameView');
+    this.rootHtml.appendChild(this.ui);
+
+    this.fpsLabel = null;
+    this.avatarCount = null;
+
     //game running with  a server simulating world or local
     this.isLocal = params.isLocal;
 
@@ -111,6 +119,16 @@ export class GameView {
     return this.rootHtml;
   }
 
+  initUI() {
+    this.fpsLabel = document.createElement('div');
+    this.fpsLabel.classList.add('label_GameView');
+    this.ui.appendChild(this.fpsLabel);
+
+    this.avatarCount = document.createElement('div');
+    this.avatarCount.classList.add('label_GameView');
+    this.ui.appendChild(this.avatarCount);
+  }
+
   onFirstState(state) {
     //build itowns view
     this.initItownsView(state);
@@ -120,6 +138,7 @@ export class GameView {
 
     this.initScene(state);
     this.initInputs(state);
+    this.initUI();
 
     //register in mainloop
     const _this = this;
@@ -139,7 +158,6 @@ export class GameView {
         if (delta > 1000 / fps) {
           // update time stuffs
           then = now - (delta % 1000) / fps;
-
           _this.updateViewLocal(delta);
         }
       };
@@ -377,6 +395,14 @@ export class GameView {
     const renderer = this.view.mainLoop.gfxEngine.renderer;
     renderer.clearColor();
     renderer.render(scene, this.cameraman.getCamera());
+
+    //update ui
+    this.fpsLabel.innerHTML = 'FPS = ' + Math.round(this.gameContext.dt);
+    let avatarCount = 0;
+    go.traverse(function (g) {
+      if (g.name == 'avatar') avatarCount++;
+    });
+    this.avatarCount.innerHTML = 'Player: ' + avatarCount;
 
     //buffer
     this.lastState = state;
