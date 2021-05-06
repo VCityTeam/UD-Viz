@@ -22,6 +22,7 @@ const Data = udvShared.Components.Data;
 const WorldState = udvShared.WorldState;
 const WorldStateDiff = udvShared.WorldStateDiff;
 
+//DEBUG
 let id = 0;
 
 export class GameView {
@@ -63,6 +64,9 @@ export class GameView {
 
     //register last pass
     this.lastState = null;
+
+    //flag
+    this.disposed = false;
 
     //camera
     this.cameraman = null;
@@ -118,16 +122,48 @@ export class GameView {
     this.initInputs(state);
 
     //register in mainloop
+    const _this = this;
+    const fps = this.config.game.fps;
     if (this.isLocal) {
-      this.view.addFrameRequester(
-        itowns.MAIN_LOOP_EVENTS.UPDATE_END,
-        this.updateViewLocal.bind(this)
-      );
+      let now;
+      let then = Date.now();
+      let delta;
+      const tick = function () {
+        if (_this.disposed) return; //stop requesting frame
+
+        requestAnimationFrame(tick);
+
+        now = Date.now();
+        delta = now - then;
+
+        if (delta > 1000 / fps) {
+          // update time stuffs
+          then = now - (delta % 1000) / fps;
+
+          _this.updateViewLocal(delta);
+        }
+      };
+      tick();
     } else {
-      this.view.addFrameRequester(
-        itowns.MAIN_LOOP_EVENTS.UPDATE_END,
-        this.updateViewServer.bind(this)
-      );
+      let now;
+      let then = Date.now();
+      let delta;
+      const tick = function () {
+        if (_this.disposed) return; //stop requesting frame
+
+        requestAnimationFrame(tick);
+
+        now = Date.now();
+        delta = now - then;
+
+        if (delta > 1000 / fps) {
+          // update time stuffs
+          then = now - (delta % 1000) / fps;
+
+          _this.updateViewServer(delta);
+        }
+      };
+      tick();
     }
 
     //resize
@@ -220,10 +256,10 @@ export class GameView {
     if (!isNaN(dt)) this.gameContext.dt = dt;
 
     //DEBUG
-    window.UDVDebugger.displayShadowMap(
-      this.directionalLight,
-      this.view.mainLoop.gfxEngine.renderer
-    );
+    // window.UDVDebugger.displayShadowMap(
+    //   this.directionalLight,
+    //   this.view.mainLoop.gfxEngine.renderer
+    // );
 
     //tick world
     this.gameContext.commands = this.inputManager.computeCommands();
@@ -336,8 +372,11 @@ export class GameView {
       this.obstacle
     );
 
-    //TODO do not notify everytime ?
-    this.view.notifyChange();
+    //render
+    const scene = this.view.scene;
+    const renderer = this.view.mainLoop.gfxEngine.renderer;
+    renderer.clearColor();
+    renderer.render(scene, this.cameraman.getCamera());
 
     //buffer
     this.lastState = state;
@@ -762,6 +801,9 @@ export class GameView {
     this.rootHtml.remove();
 
     if (this.webSocketService) this.webSocketService.reset();
+
+    //flag to stop tick
+    this.disposed = true;
   }
 
   load() {

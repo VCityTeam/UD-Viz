@@ -22,6 +22,8 @@ const THREEUtils = {
   initRenderer(renderer, skyColor) {
     // Set sky color to blue
     renderer.setClearColor(skyColor, 1);
+    renderer.autoClear = false;
+    renderer.autoClearColor = false;
 
     renderer.outputEncoding = this.textureEncoding;
     renderer.setPixelRatio(window.devicePixelRatio);

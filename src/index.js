@@ -27,7 +27,8 @@ export { jquery };
 //three
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
-export { THREE, OrbitControls };
+import { PointerLockControls } from 'three/examples/jsm/controls/PointerLockControls';
+export { THREE, OrbitControls, PointerLockControls };
 
 //proj4
 import * as proj4 from 'proj4';
