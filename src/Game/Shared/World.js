@@ -10,6 +10,7 @@ const ColliderComponent = require('./GameObject/Components/Collider');
 const THREE = require('three');
 const WorldState = require('./WorldState');
 const { Collisions } = require('detect-collisions');
+const { on } = require('nodemon');
 
 const WorldModule = class World {
   constructor(json, options) {
@@ -60,7 +61,11 @@ const WorldModule = class World {
 
   load(onLoad, gCtx) {
     //load gameobject
-    this.addGameObject(this.gameObject, gCtx, null, onLoad);
+    const message = this.name + ' has loaded';
+    this.addGameObject(this.gameObject, gCtx, null, function () {
+      console.log(message);
+      onLoad();
+    });
   }
 
   computePromisesLoad(go, gCtx) {
