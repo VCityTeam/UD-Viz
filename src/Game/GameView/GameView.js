@@ -884,7 +884,7 @@ export class GameView {
         _this.webSocketService.on(
           Data.WEBSOCKET.MSG_TYPES.WORLDSTATE_DIFF,
           (diffJSON) => {
-            console.log(_this.id, ' diff');
+            // console.log(_this.id, ' diff');
 
             _this.worldStateInterpolator.onNewDiff(
               new WorldStateDiff(diffJSON)
