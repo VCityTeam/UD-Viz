@@ -70,6 +70,8 @@ export class GameView {
     this.pointerMouseObject = this.assetsManager.createModel('pointer_mouse');
     this.pointerMouseObject.name = 'GameView_PointerMouse';
 
+    this.fogObject = null;
+
     //register last pass
     this.lastState = null;
 
@@ -208,11 +210,12 @@ export class GameView {
       this.config.game.skyColor.g,
       this.config.game.skyColor.b
     );
-    this.view.scene.fog = new THREE.Fog(
+    this.fogObject = new THREE.Fog(
       skyColor,
       this.config.game.fog.near,
       this.config.game.fog.far
     );
+    this.view.scene.fog = this.fogObject;
 
     //shadow
     const renderer = this.view.mainLoop.gfxEngine.renderer;
@@ -396,8 +399,10 @@ export class GameView {
     renderer.clearColor();
     renderer.render(scene, this.cameraman.getCamera());
 
+    //TODO ne pas lancer des rendu si itowns vient d'en faire un
+
     //update ui
-    this.fpsLabel.innerHTML = 'FPS = ' + Math.round(this.gameContext.dt);
+    this.fpsLabel.innerHTML = 'FPS = ' + Math.round(1000 / this.gameContext.dt);
     let avatarCount = 0;
     go.traverse(function (g) {
       if (g.name == 'avatar') avatarCount++;
@@ -485,88 +490,10 @@ export class GameView {
       source: wmsElevationSource,
     });
     this.view.addLayer(wmsElevationLayer);
-
-    //DEBUG
-    return;
-
-    //  ADD 3D Tiles Layer
-    let layerConfig = 'building';
-    // Positional arguments verification
-    if (
-      !this.config['3DTilesLayer'][layerConfig] ||
-      !this.config['3DTilesLayer'][layerConfig]['id'] ||
-      !this.config['3DTilesLayer'][layerConfig]['url']
-    ) {
-      throw new Error('config wrong');
-    }
-
-    const extensionsConfig = this.config['3DTilesLayer'][layerConfig][
-      'extensions'
-    ];
-    const extensions = new itowns.C3DTExtensions();
-    if (!!extensionsConfig) {
-      for (let i = 0; i < extensionsConfig.length; i++) {
-        if (extensionsConfig[i] === '3DTILES_temporal') {
-          extensions.registerExtension('3DTILES_temporal', {
-            [itowns.C3DTilesTypes.batchtable]: $3DTemporalBatchTable,
-            [itowns.C3DTilesTypes.boundingVolume]: $3DTemporalBoundingVolume,
-            [itowns.C3DTilesTypes.tileset]: $3DTemporalTileset,
-          });
-        } else if (extensionsConfig[i] === '3DTILES_batch_table_hierarchy') {
-          extensions.registerExtension('3DTILES_batch_table_hierarchy', {
-            [itowns.C3DTilesTypes.batchtable]:
-              itowns.C3DTBatchTableHierarchyExtension,
-          });
-        } else {
-          console.warn(
-            'The 3D Tiles extension ' +
-              extensionsConfig[i] +
-              ' specified in generalDemoConfig.json is not supported ' +
-              'by UD-Viz yet. Only 3DTILES_temporal and ' +
-              '3DTILES_batch_table_hierarchy are supported.'
-          );
-        }
-      }
-    }
-
-    const $3dTilesLayer = new itowns.C3DTilesLayer(
-      this.config['3DTilesLayer'][layerConfig]['id'],
-      {
-        name: 'Lyon-2015-'.concat(layerConfig),
-        source: new itowns.C3DTilesSource({
-          url: this.config['3DTilesLayer'][layerConfig]['url'],
-        }),
-        registeredExtensions: extensions,
-      },
-      this.view
-    );
-
-    let material;
-    if (this.config['3DTilesLayer'][layerConfig]['pc_size']) {
-      material = new THREE.PointsMaterial({
-        size: this.config['3DTilesLayer'][layerConfig]['pc_size'],
-        vertexColors: true,
-      });
-    } else if (!this.config['3DTilesLayer'][layerConfig]['color']) {
-      material = new THREE.MeshLambertMaterial({ color: 0xffffff });
-    } else {
-      material = new THREE.MeshLambertMaterial({
-        color: parseInt(this.config['3DTilesLayer'][layerConfig]['color']),
-      });
-    }
-
-    $3dTilesLayer.overrideMaterials = material;
-    $3dTilesLayer.material = material;
-
-    const $3DTilesManager = new TilesManager(this.view, $3dTilesLayer);
-    new LayerManager(this.view).tilesManagers.push($3DTilesManager);
-    const [$a] = [$3dTilesLayer, $3DTilesManager];
-
-    itowns.View.prototype.addLayer.call(this.view, $a);
   }
 
   initInputs(state) {
-    //TODO réfléchir ou mettre ce code
+    //TODO réfléchir ou mettre ce code faire des scripts dans les gameobject qui tourne coté client
     const viewerDiv = this.rootHtml;
     const camera = this.view.camera.camera3D;
     const _this = this;
@@ -625,6 +552,7 @@ export class GameView {
               _this.view.controls.dispose();
               _this.view.controls = null;
               _this.cameraman.setFilmingTarget(true);
+              _this.view.scene.fog = _this.fogObject;
             }
           )
         );
@@ -637,6 +565,8 @@ export class GameView {
         const endQuaternion = new THREE.Quaternion().setFromEuler(
           new THREE.Euler(Math.PI / 5, 0, 0)
         );
+
+        _this.view.scene.fog = null;
 
         _this.cameraman.addRoutine(
           new Routine(
