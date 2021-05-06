@@ -10,7 +10,6 @@ const ColliderComponent = require('./GameObject/Components/Collider');
 const THREE = require('three');
 const WorldState = require('./WorldState');
 const { Collisions } = require('detect-collisions');
-const { on } = require('nodemon');
 
 const WorldModule = class World {
   constructor(json, options) {
