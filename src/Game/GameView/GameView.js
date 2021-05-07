@@ -30,10 +30,12 @@ export class GameView {
     this.id = id;
     id++;
 
+    params.htmlParent = params.htmlParent || document.body;
+
     //html
     this.rootHtml = document.createElement('div');
     this.rootHtml.id = 'viewerDiv'; //itowns
-    document.body.appendChild(this.rootHtml);
+    params.htmlParent.appendChild(this.rootHtml);
     window.addEventListener('resize', this.onResize.bind(this));
 
     //ui
@@ -370,8 +372,6 @@ export class GameView {
       }
     });
 
-    if (newGO.length) this.placeLight();
-
     const go = state.getGameObject();
 
     //rebuild object
@@ -408,6 +408,9 @@ export class GameView {
       if (g.name == 'avatar') avatarCount++;
     });
     this.avatarCount.innerHTML = 'Player: ' + avatarCount;
+
+    //update shadow
+    if (newGO.length) this.placeLight();
 
     //buffer
     this.lastState = state;
