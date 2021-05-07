@@ -1,7 +1,6 @@
 /** @format */
 
 const THREE = require('three');
-const ScriptComponent = require('./Script');
 const { Circle, Polygon } = require('detect-collisions');
 
 const ColliderModule = class Collider {
@@ -32,12 +31,6 @@ const ColliderModule = class Collider {
     this.shapesJSON.forEach(function (json) {
       const wrapper = new ShapeWrapper(_this.parent, json);
       shapeWrappers.push(wrapper);
-    });
-  }
-
-  onCollision(result, gCtx) {
-    this.parent.traverse(function (g) {
-      g.executeScripts(ScriptComponent.EVENT.COLLISION, [result, gCtx]);
     });
   }
 
