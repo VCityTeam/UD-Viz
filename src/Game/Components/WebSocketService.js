@@ -9,7 +9,6 @@ import io from 'socket.io-client';
 export class WebSocketService {
   constructor() {
     this.socket = null;
-
     this.events = {};
   }
   connectToServer() {

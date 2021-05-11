@@ -5,6 +5,8 @@ module.exports = Object.freeze({
       JOIN_WORLD: 'join_world',
       COMMANDS: 'cmds',
       WORLDSTATE_DIFF: 'worldstate_diff',
+      SIGN_UP: 'sign_up',
+      SERVER_ALERT: 'server_alert',
     },
   },
 
@@ -26,5 +28,5 @@ module.exports = Object.freeze({
   unpack(array) {
     let str = String.fromCharCode.apply(this, array);
     return JSON.parse(str);
-  }
+  },
 });
