@@ -44,9 +44,6 @@ const WorldModule = class World {
     this.isServerSide = options.isServerSide || false;
     this.modules = options.modules || {};
     this.listeners = {};
-
-    //DEBUG
-    this.firstTick = true;
   }
 
   //custom event
@@ -163,18 +160,11 @@ const WorldModule = class World {
             if (!potentialG.isStatic()) continue;
             if (shape.collides(p, result)) {
               _this.collisionsBuffer[g.getUUID()].push(potentialG.getUUID());
-              debugger;
             }
           }
         });
       }
     });
-
-    // console.log(this.name);
-    console.log(this.collisionsBuffer);
-    // console.log(this.collisions);
-
-    //TODO WHEN transfert world this buffer is wrongly computed and its bugging
   }
 
   unregisterGOCollision(go) {
@@ -205,11 +195,6 @@ const WorldModule = class World {
   }
 
   tick(gCtx) {
-    if (this.firstTick) {
-      this.firstTick = false;
-      debugger;
-    }
-
     const _this = this;
 
     //Tick GameObject
