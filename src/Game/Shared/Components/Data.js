@@ -6,6 +6,7 @@ module.exports = Object.freeze({
       COMMANDS: 'cmds',
       WORLDSTATE_DIFF: 'worldstate_diff',
       SIGN_UP: 'sign_up',
+      SIGN_IN: 'sign_in',
       SERVER_ALERT: 'server_alert',
     },
   },
