@@ -108,7 +108,7 @@ const WorldModule = class World {
 
       _this.registerGOCollision(gameObject);
 
-      console.log(gameObject.name + ' loaded');
+      console.log(gameObject.name + ' loaded in ', _this.name);
 
       if (onLoad) onLoad();
     });
@@ -131,8 +131,6 @@ const WorldModule = class World {
         });
       }
     });
-
-    this.updateCollisionBuffer();
   }
 
   updateCollisionBuffer() {
