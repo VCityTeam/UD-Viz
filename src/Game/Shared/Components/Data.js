@@ -8,6 +8,8 @@ module.exports = Object.freeze({
       SIGN_UP: 'sign_up',
       SIGN_IN: 'sign_in',
       SERVER_ALERT: 'server_alert',
+      SIGNED: 'signed',
+      GAME_APP_LOADED: 'game_app_loaded',
     },
   },
 
