@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 /** @format */
 
 //Components
@@ -12,6 +13,16 @@ import { LayerManager } from '../../../Components/LayerManager/LayerManager';
 import { CityObjectFilter } from './CityObjectFilter';
 import { CityObjectLayer } from './CityObjectLayer';
 
+=======
+import { TilesManager } from "../../../Components/3DTiles/TilesManager";
+import { CityObjectStyle } from "../../../Components/3DTiles/Model/CityObjectStyle";
+import { CityObjectID, CityObject } from "../../../Components/3DTiles/Model/CityObject";
+import { EventSender } from "../../../Components/Events/EventSender";
+import { LayerManager } from "../../../Components/LayerManager/LayerManager";
+
+import { CityObjectFilter } from "./CityObjectFilter";
+import { CityObjectLayer } from "./CityObjectLayer";
+>>>>>>> 12610ec (Fixed header path)
 /**
  * The city object provider manages the city object by organizing them in two
  * categories : the _layer_ and the _selected city object_. The layer

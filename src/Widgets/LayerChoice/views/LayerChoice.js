@@ -18,6 +18,8 @@ export class LayerChoice extends Window {
      */
     this.layerManager = layerManager;
   }
+
+  
   // <div class ="box-section"> 
   // <input type="checkbox" class="spoiler-check" id="color-layers-spoiler">
   // <label for="color-layers-spoiler" class="section-title">Color Layers</Label>

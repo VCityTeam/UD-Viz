@@ -1,5 +1,5 @@
-import { Window } from "../../../Utils/GUI/js/Window";
-import { EventSender } from "../../../Utils/Events/EventSender";
+import { Window } from "../../../Components/GUI/js/Window";
+import { EventSender } from "../../../Components/Events/EventSender";
 
 
 
