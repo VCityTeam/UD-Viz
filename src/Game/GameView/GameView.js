@@ -136,11 +136,8 @@ export class GameView {
   onFirstState(state) {
     //build itowns view
     this.initItownsView(state);
-
-    //cameraman
-    this.cameraman = new Cameraman(this.view.camera.camera3D);
-
     this.initScene(state);
+    this.initCameraman();
     this.initInputs(state);
     this.initUI();
 
@@ -192,6 +189,46 @@ export class GameView {
     setTimeout(this.onResize.bind(this), 1000);
   }
 
+  initCameraman() {
+    const _this = this;
+
+    //cameraman
+    this.cameraman = new Cameraman(this.view.camera.camera3D);
+
+    const duration = this.config.game.traveling_time;
+    let currentTime = 0;
+    this.cameraman.setFilmingTarget(false);
+    const camera = _this.cameraman.getCamera();
+    const startPos = camera.position.clone();
+    const startQuat = camera.quaternion.clone();
+
+    //first travelling
+    this.cameraman.addRoutine(
+      new Routine(
+        function (dt) {
+          const t = _this.cameraman.computeTransformTarget();
+
+          currentTime += dt;
+          const ratio = Math.min(Math.max(0, currentTime / duration), 1);
+
+          const p = t.position.lerp(startPos, 1 - ratio);
+          const q = t.quaternion.slerp(startQuat, 1 - ratio);
+
+          camera.position.copy(p);
+          camera.quaternion.copy(q);
+
+          camera.updateProjectionMatrix();
+
+          return ratio >= 1;
+        },
+        function () {
+          _this.cameraman.setFilmingTarget(true);
+          _this.view.scene.fog = _this.fogObject;
+        }
+      )
+    );
+  }
+
   initScene(state) {
     const o = state.getOrigin();
     const [x, y] = proj4.default('EPSG:3946').forward([o.lng, o.lat]);
@@ -217,7 +254,6 @@ export class GameView {
       this.config.game.fog.near,
       this.config.game.fog.far
     );
-    this.view.scene.fog = this.fogObject;
 
     //shadow
     const renderer = this.view.mainLoop.gfxEngine.renderer;

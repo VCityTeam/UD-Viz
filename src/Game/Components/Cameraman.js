@@ -5,6 +5,13 @@ const THREE = require('three');
 const CAMERA_ANGLE = Math.PI / 12;
 const THIRD_PERSON_FOV = 60;
 
+const quaternionCam = new THREE.Quaternion().setFromEuler(
+  new THREE.Euler(Math.PI * 0.5, 0, 0)
+);
+const quaternionAngle = new THREE.Quaternion().setFromEuler(
+  new THREE.Euler(-CAMERA_ANGLE, 0, 0)
+);
+
 export class Cameraman {
   constructor(camera) {
     //three js camera
@@ -66,13 +73,6 @@ export class Cameraman {
   }
 
   computeTransformTarget(obstacle = null) {
-    const quaternionCam = new THREE.Quaternion().setFromEuler(
-      new THREE.Euler(Math.PI * 0.5, 0, 0)
-    );
-    const quaternionAngle = new THREE.Quaternion().setFromEuler(
-      new THREE.Euler(-CAMERA_ANGLE, 0, 0)
-    );
-
     //world transform
     const obj = this.target.fetchObject3D();
     let position = new THREE.Vector3();
