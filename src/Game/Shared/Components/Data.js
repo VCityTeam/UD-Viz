@@ -10,6 +10,8 @@ module.exports = Object.freeze({
       SERVER_ALERT: 'server_alert',
       SIGNED: 'signed',
       GAME_APP_LOADED: 'game_app_loaded',
+      ON_AVATAR_GO: 'on_avatar_go',
+      QUERY_AVATAR_GO: 'query_avatar_go',
     },
   },
 

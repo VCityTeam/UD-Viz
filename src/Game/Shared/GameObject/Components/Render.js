@@ -10,9 +10,12 @@ const RenderModule = class Render {
     this.media = json.media || null;
     this.name = json.name || null; //TODO display it above object3D
 
+    this.color = new THREE.Color().fromArray(json.color || [1, 1, 1]);
+
     //internal
     this.object3D = null;
     this.originalObject3D = null;
+    this.sprite = null;
 
     this.tickCb = [];
   }
@@ -34,6 +37,7 @@ const RenderModule = class Render {
       media: this.media,
       type: RenderModule.TYPE,
       idModel: this.idModel,
+      color: this.color.toArray(),
     };
   }
 
@@ -47,6 +51,11 @@ const RenderModule = class Render {
 
   getOriginalObject3D() {
     return this.originalObject3D;
+  }
+
+  setName(value, assetsManager) {
+    this.name = value;
+    this.initAssets(assetsManager);
   }
 
   initAssets(assetsManager) {
