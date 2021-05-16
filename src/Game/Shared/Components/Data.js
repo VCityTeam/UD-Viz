@@ -12,6 +12,7 @@ module.exports = Object.freeze({
       GAME_APP_LOADED: 'game_app_loaded',
       ON_AVATAR_GO: 'on_avatar_go',
       QUERY_AVATAR_GO: 'query_avatar_go',
+      SAVE_AVATAR_GO: 'save_avatar_go',
     },
   },
 

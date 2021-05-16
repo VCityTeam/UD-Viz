@@ -15,7 +15,6 @@ const RenderModule = class Render {
     //internal
     this.object3D = null;
     this.originalObject3D = null;
-    this.sprite = null;
 
     this.tickCb = [];
   }
