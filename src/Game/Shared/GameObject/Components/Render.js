@@ -57,6 +57,11 @@ const RenderModule = class Render {
     this.initAssets(assetsManager);
   }
 
+  setColor(value, assetsManager) {
+    this.color = value;
+    this.initAssets(assetsManager);
+  }
+
   initAssets(assetsManager) {
     this.object3D = new THREE.Object3D();
     this.object3D.name = 'Render Object3D ' + this.parent.getName();
@@ -110,6 +115,11 @@ const RenderModule = class Render {
         this.object3D.add(result.frame);
       }
     }
+
+    const color = this.color;
+    this.object3D.traverse(function (c) {
+      if (c.material) c.material.color = color;
+    });
 
     this.originalObject3D = this.object3D.clone(); //keep a copy of it
 
