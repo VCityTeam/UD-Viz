@@ -11,7 +11,7 @@ module.exports = {
         } else {
           if (json2[key] != undefined) {
             json1[key] = json2[key];
-            console.log('overwrite ', json1);
+            // console.log('overwrite ', json1);
           }
         }
       }
