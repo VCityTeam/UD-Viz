@@ -52,11 +52,13 @@ const RenderModule = class Render {
     return this.originalObject3D;
   }
 
+  //TODO remove and add scene here
   setName(value, assetsManager) {
     this.name = value;
     this.initAssets(assetsManager);
   }
 
+  //TODO remove and add scene here
   setColor(value, assetsManager) {
     this.color = value;
     this.initAssets(assetsManager);
