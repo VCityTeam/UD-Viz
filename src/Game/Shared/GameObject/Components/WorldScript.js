@@ -2,12 +2,12 @@
 
 const THREE = require('three');
 
-const ScriptModule = class Script {
+const WorldScriptModule = class WorldScript {
   constructor(parent, json) {
     this.parent = parent;
     this.uuid = json.uuid || THREE.MathUtils.generateUUID();
     this.idScripts = json.idScripts || [];
-    this.type = json.type || ScriptModule.TYPE;
+    this.type = json.type || WorldScriptModule.TYPE;
     this.conf = json.conf || {};
 
     //internal
@@ -21,7 +21,7 @@ const ScriptModule = class Script {
   initAssets(assetsManager, udvShared) {
     const _this = this;
     this.idScripts.forEach(function (id) {
-      const constructor = assetsManager.fetchScript(id);
+      const constructor = assetsManager.fetchWorldScript(id);
       _this.scripts[id] = new constructor(_this.conf, udvShared);
     });
   }
@@ -57,13 +57,13 @@ const ScriptModule = class Script {
       uuid: this.uuid,
       idScripts: this.idScripts,
       conf: this.conf,
-      type: ScriptModule.TYPE,
+      type: WorldScriptModule.TYPE,
     };
   }
 };
 
-ScriptModule.TYPE = 'Script';
-ScriptModule.EVENT = {
+WorldScriptModule.TYPE = 'WorldScript';
+WorldScriptModule.EVENT = {
   INIT: 'init', //when added
   TICK: 'tick', //every tick
   LOAD: 'load', //at world load return promises
@@ -72,4 +72,4 @@ ScriptModule.EVENT = {
   ON_LEAVE_COLLISION: 'onLeaveCollision', //on leave collision
 };
 
-module.exports = ScriptModule;
+module.exports = WorldScriptModule;

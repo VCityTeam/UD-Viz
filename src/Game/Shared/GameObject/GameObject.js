@@ -9,7 +9,7 @@ const THREE = require('three');
 //GameObject Components
 const RenderComponent = require('./Components/Render');
 const ColliderComponent = require('./Components/Collider');
-const ScriptComponent = require('./Components/Script');
+const WorldScriptComponent = require('./Components/WorldScript');
 const JSONUtils = require('../../../Components/SystemUtils/JSONUtils');
 
 const GameObjectModule = class GameObject {
@@ -129,8 +129,8 @@ const GameObjectModule = class GameObject {
     this.outdated = true;
   }
 
-  getScripts() {
-    const c = this.getComponent(ScriptComponent.TYPE);
+  getWorldScripts() {
+    const c = this.getComponent(WorldScriptComponent.TYPE);
     if (!c) return null;
     return c.getScripts();
   }
@@ -190,7 +190,7 @@ const GameObjectModule = class GameObject {
   }
 
   executeScripts(event, params) {
-    const script = this.getComponent(ScriptComponent.TYPE);
+    const script = this.getComponent(WorldScriptComponent.TYPE);
     if (!script) return null;
     return script.execute(event, params);
   }
@@ -215,11 +215,11 @@ const GameObjectModule = class GameObject {
           );
 
           break;
-        case ScriptComponent.TYPE:
-          if (_this.components[ScriptComponent.TYPE])
+        case WorldScriptComponent.TYPE:
+          if (_this.components[WorldScriptComponent.TYPE])
             console.warn('multiple component');
 
-          _this.components[ScriptComponent.TYPE] = new ScriptComponent(
+          _this.components[WorldScriptComponent.TYPE] = new WorldScriptComponent(
             _this,
             componentJSON
           );

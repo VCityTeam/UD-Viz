@@ -12,7 +12,7 @@ export class AssetsManager {
   constructor() {
     //manager to load scripts
     this.prefabs = {};
-    this.scripts = {};
+    this.worldScripts = {};
     this.models = {};
   }
 
@@ -21,9 +21,9 @@ export class AssetsManager {
     return this.models[idModel].clone();
   }
 
-  fetchScript(idScript) {
-    if (!this.scripts[idScript]) console.error('no script with id ', idScript);
-    return this.scripts[idScript];
+  fetchWorldScript(idScript) {
+    if (!this.worldScripts[idScript]) console.error('no world script with id ', idScript);
+    return this.worldScripts[idScript];
   }
 
   fetchPrefab(idprefab) {
@@ -316,16 +316,16 @@ export class AssetsManager {
     });
     const scriptsPromise = new Promise((resolve, reject) => {
       let count = 0;
-      for (let idScript in config.scripts) {
-        const scriptPath = config.scripts[idScript].path;
+      for (let idScript in config.worldScripts) {
+        const scriptPath = config.worldScripts[idScript].path;
         jquery.get(
           scriptPath,
           function (scriptString) {
-            _this.scripts[idScript] = eval(scriptString);
+            _this.worldScripts[idScript] = eval(scriptString);
             //check if finish
             count++;
-            if (count == Object.keys(config.scripts).length) {
-              console.log('Scripts loaded ', _this.scripts);
+            if (count == Object.keys(config.worldScripts).length) {
+              console.log('World Scripts loaded ', _this.worldScripts);
               resolve();
             }
           },
@@ -358,7 +358,7 @@ export class AssetsManager {
     const promises = [];
     if (config.models) promises.push(modelPromise);
     if (config.prefabs) promises.push(prefabsPromise);
-    if (config.scripts) promises.push(scriptsPromise);
+    if (config.worldScripts) promises.push(scriptsPromise);
 
     return Promise.all(promises);
   }

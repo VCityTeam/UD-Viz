@@ -5,7 +5,7 @@
  * @format
  */
 const GameObject = require('./GameObject/GameObject');
-const ScriptComponent = require('./GameObject/Components/Script');
+const WorldScriptComponent = require('./GameObject/Components/WorldScript');
 const ColliderComponent = require('./GameObject/Components/Collider');
 const THREE = require('three');
 const WorldState = require('./WorldState');
@@ -70,12 +70,12 @@ const WorldModule = class World {
     let params = [gCtx, this.isServerSide, this.modules];
 
     go.traverse(function (g) {
-      const scriptC = g.getComponent(ScriptComponent.TYPE);
+      const scriptC = g.getComponent(WorldScriptComponent.TYPE);
       if (scriptC) {
         for (let idScript in scriptC.getScripts()) {
           const result = scriptC.executeScript(
             idScript,
-            ScriptComponent.EVENT.LOAD,
+            WorldScriptComponent.EVENT.LOAD,
             params
           );
           if (result) promises.push(result);
@@ -103,7 +103,7 @@ const WorldModule = class World {
       }
 
       gameObject.traverse(function (g) {
-        g.executeScripts(ScriptComponent.EVENT.INIT, [gCtx]);
+        g.executeScripts(WorldScriptComponent.EVENT.INIT, [gCtx]);
       });
 
       _this.registerGOCollision(gameObject);
@@ -197,7 +197,7 @@ const WorldModule = class World {
 
     //Tick GameObject
     this.gameObject.traverse(function (g) {
-      g.executeScripts(ScriptComponent.EVENT.TICK, [gCtx]);
+      g.executeScripts(WorldScriptComponent.EVENT.TICK, [gCtx]);
     });
 
     //collisions
@@ -230,7 +230,7 @@ const WorldModule = class World {
               if (buffer.includes(potentialG.getUUID())) {
                 //already collided
                 g.traverse(function (child) {
-                  child.executeScripts(ScriptComponent.EVENT.IS_COLLIDING, [
+                  child.executeScripts(WorldScriptComponent.EVENT.IS_COLLIDING, [
                     result,
                     gCtx,
                   ]);
@@ -240,7 +240,7 @@ const WorldModule = class World {
                 buffer.push(potentialG.getUUID()); //register in buffer
                 g.traverse(function (child) {
                   child.executeScripts(
-                    ScriptComponent.EVENT.ON_ENTER_COLLISION,
+                    WorldScriptComponent.EVENT.ON_ENTER_COLLISION,
                     [result, gCtx]
                   );
                 });
@@ -254,7 +254,7 @@ const WorldModule = class World {
           const uuid = buffer[i];
           if (!collidedGO.includes(uuid)) {
             g.traverse(function (child) {
-              child.executeScripts(ScriptComponent.EVENT.ON_LEAVE_COLLISION, [
+              child.executeScripts(WorldScriptComponent.EVENT.ON_LEAVE_COLLISION, [
                 gCtx,
               ]);
             });
