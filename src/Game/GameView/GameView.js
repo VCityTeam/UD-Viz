@@ -42,7 +42,6 @@ export class GameView {
     //ui
     this.ui = document.createElement('div');
     this.ui.classList.add('ui_GameView');
-    this.rootHtml.appendChild(this.ui);
 
     this.fpsLabel = null;
     this.avatarCount = null;
@@ -113,6 +112,16 @@ export class GameView {
 
     //ref uuid of go in the last state
     this.currentUUID = {};
+
+    this.pause = false;
+  }
+
+  setPause(value) {
+    this.pause = value;
+  }
+
+  appendToUI(el) {
+    this.ui.appendChild(el);
   }
 
   setWorld(world) {
@@ -139,6 +148,8 @@ export class GameView {
     this.avatarCount = document.createElement('div');
     this.avatarCount.classList.add('label_GameView');
     this.ui.appendChild(this.avatarCount);
+
+    this.rootHtml.appendChild(this.ui);
   }
 
   setOnFirstStateEnd(f) {
@@ -172,6 +183,7 @@ export class GameView {
         if (delta > 1000 / fps) {
           // update time stuffs
           then = now - (delta % 1000) / fps;
+          if (_this.pause) return;
           _this.updateViewLocal(delta);
         }
       };
@@ -192,6 +204,7 @@ export class GameView {
           // update time stuffs
           then = now - (delta % 1000) / fps;
 
+          if (_this.pause) return;
           _this.updateViewServer(delta);
         }
       };
