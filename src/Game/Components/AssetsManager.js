@@ -13,6 +13,7 @@ export class AssetsManager {
     //manager to load scripts
     this.prefabs = {};
     this.worldScripts = {};
+    this.localScripts = {};
     this.models = {};
   }
 
@@ -24,6 +25,11 @@ export class AssetsManager {
   fetchWorldScript(idScript) {
     if (!this.worldScripts[idScript]) console.error('no world script with id ', idScript);
     return this.worldScripts[idScript];
+  }
+
+  fetchLocalScript(id){
+    if (!this.localScripts[id]) console.error('no local script with id ', id);
+    return this.localScripts[id];
   }
 
   fetchPrefab(idprefab) {
@@ -314,7 +320,7 @@ export class AssetsManager {
         );
       }
     });
-    const scriptsPromise = new Promise((resolve, reject) => {
+    const worldScriptsPromise = new Promise((resolve, reject) => {
       let count = 0;
       for (let idScript in config.worldScripts) {
         const scriptPath = config.worldScripts[idScript].path;
@@ -333,7 +339,25 @@ export class AssetsManager {
         );
       }
     });
-
+    const localScriptsPromise = new Promise((resolve, reject) => {
+      let count = 0;
+      for (let idScript in config.localScripts) {
+        const scriptPath = config.localScripts[idScript].path;
+        jquery.get(
+          scriptPath,
+          function (scriptString) {
+            _this.localScripts[idScript] = eval(scriptString);
+            //check if finish
+            count++;
+            if (count == Object.keys(config.localScripts).length) {
+              console.log('Local Scripts loaded ', _this.localScripts);
+              resolve();
+            }
+          },
+          'text'
+        );
+      }
+    });
     const prefabsPromise = new Promise((resolve, reject) => {
       let count = 0;
       for (let idPrefab in config.prefabs) {
@@ -358,7 +382,8 @@ export class AssetsManager {
     const promises = [];
     if (config.models) promises.push(modelPromise);
     if (config.prefabs) promises.push(prefabsPromise);
-    if (config.worldScripts) promises.push(scriptsPromise);
+    if (config.worldScripts) promises.push(worldScriptsPromise);
+    if (config.localScripts) promises.push(localScriptsPromise);
 
     return Promise.all(promises);
   }

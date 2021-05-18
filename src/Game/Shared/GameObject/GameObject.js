@@ -11,6 +11,7 @@ const RenderComponent = require('./Components/Render');
 const ColliderComponent = require('./Components/Collider');
 const WorldScriptComponent = require('./Components/WorldScript');
 const JSONUtils = require('../../../Components/SystemUtils/JSONUtils');
+const LocalScriptModule = require('./Components/LocalScript');
 
 const GameObjectModule = class GameObject {
   constructor(json, parent) {
@@ -219,10 +220,16 @@ const GameObjectModule = class GameObject {
           if (_this.components[WorldScriptComponent.TYPE])
             console.warn('multiple component');
 
-          _this.components[WorldScriptComponent.TYPE] = new WorldScriptComponent(
-            _this,
-            componentJSON
-          );
+          _this.components[WorldScriptComponent.TYPE] =
+            new WorldScriptComponent(_this, componentJSON);
+
+          break;
+        case LocalScriptModule.TYPE:
+          if (_this.components[LocalScriptModule.TYPE])
+            console.warn('multiple component');
+
+          _this.components[LocalScriptModule.TYPE] =
+            new LocalScriptModule(_this, componentJSON);
 
           break;
         case ColliderComponent.TYPE:

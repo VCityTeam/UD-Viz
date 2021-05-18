@@ -66,7 +66,6 @@ LocalScriptModule.TYPE = 'LocalScript';
 LocalScriptModule.EVENT = {
   INIT: 'init', //when added
   TICK: 'tick', //every tick
-  LOAD: 'load', //at view load return promises
 };
 
 module.exports = LocalScriptModule;

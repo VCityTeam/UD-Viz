@@ -14,6 +14,7 @@ import * as proj4 from 'proj4';
 import * as itowns from 'itowns';
 
 import './GameView.css';
+import LocalScript from '../Shared/GameObject/Components/LocalScript';
 import Render from '../Shared/GameObject/Components/Render';
 
 const udvShared = require('../Shared/Shared');
@@ -93,13 +94,20 @@ export class GameView {
     //model only in Local
     this.world = null;
 
-    //to pass gameobject script
+    //to pass gameobject world script (only local)
     this.gameContext = {
       assetsManager: this.assetsManager,
-      inputManager: this.inputManager,
       dt: 0,
       commands: null,
       world: null,
+      UDVShared: udvShared,
+    };
+
+    //to pass local script
+    this.localContext = {
+      assetsManager: this.assetsManager,
+      inputManager: this.inputManager,
+      dt: 0,
       UDVShared: udvShared,
     };
 
@@ -281,7 +289,10 @@ export class GameView {
 
   updateViewServer(dt) {
     //TODO itowns BUG
-    if (!isNaN(dt)) this.gameContext.dt = dt;
+    if (!isNaN(dt)) {
+      this.gameContext.dt = dt;
+      this.localContext.dt = dt;
+    }
 
     //send cmd
     this.inputManager.sendCommandsToServer(this.webSocketService);
@@ -291,7 +302,10 @@ export class GameView {
 
   updateViewLocal(dt) {
     //TODO itowns BUG
-    if (!isNaN(dt)) this.gameContext.dt = dt;
+    if (!isNaN(dt)) {
+      this.gameContext.dt = dt;
+      this.localContext.dt = dt;
+    }
 
     //DEBUG
     // window.UDVDebugger.displayShadowMap(
@@ -313,6 +327,7 @@ export class GameView {
   update(state) {
     const _this = this;
     const newGO = [];
+    const ctx = this.localContext;
 
     if (this.lastState) {
       if (!state.getGameObject()) throw new Error('no gameObject in state');
@@ -360,6 +375,10 @@ export class GameView {
       if (!_this.isLocal)
         g.initAssetsComponents(_this.assetsManager, udvShared);
 
+      g.traverse(function () {
+        g.execute(LocalScript.EVENT.INIT, [ctx]);
+      });
+
       //add static object to obstacle
       if (g.isStatic()) {
         //register in obstacle
@@ -395,10 +414,11 @@ export class GameView {
     this.object3D.add(go.fetchObject3D());
     this.object3D.updateMatrixWorld();
 
-    //tick render component (anim/video)
+    //tick local script
     go.traverse(function (child) {
-      const r = child.getComponent(Render.TYPE);
-      if (r) r.tick();
+      const scriptComponent = child.getComponent(LocalScript.TYPE);
+      if (scriptComponent)
+        scriptComponent.execute(LocalScript.EVENT.TICK, [ctx]);
     });
 
     this.cameraman.tick(
