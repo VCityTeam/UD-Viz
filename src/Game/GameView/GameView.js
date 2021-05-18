@@ -133,13 +133,18 @@ export class GameView {
     this.ui.appendChild(this.avatarCount);
   }
 
+  setOnFirstStateEnd(f) {
+    this.onFirstStateEnd = f;
+  }
+
   onFirstState(state) {
     //build itowns view
     this.initItownsView(state);
     this.initScene(state);
-    this.initCameraman();
     this.initInputs(state);
     this.initUI();
+
+    this.cameraman = new Cameraman(this.view.camera.camera3D);
 
     //register in mainloop
     const _this = this;
@@ -185,48 +190,22 @@ export class GameView {
       tick();
     }
 
+    if (this.onFirstStateEnd) this.onFirstStateEnd();
+
     //resize
     setTimeout(this.onResize.bind(this), 1000);
   }
 
-  initCameraman() {
-    const _this = this;
+  getCameraman() {
+    return this.cameraman;
+  }
 
-    //cameraman
-    this.cameraman = new Cameraman(this.view.camera.camera3D);
-
-    const duration = this.config.game.traveling_time;
-    let currentTime = 0;
-    this.cameraman.setFilmingTarget(false);
-    const camera = _this.cameraman.getCamera();
-    const startPos = camera.position.clone();
-    const startQuat = camera.quaternion.clone();
-
-    //first travelling
-    this.cameraman.addRoutine(
-      new Routine(
-        function (dt) {
-          const t = _this.cameraman.computeTransformTarget();
-
-          currentTime += dt;
-          const ratio = Math.min(Math.max(0, currentTime / duration), 1);
-
-          const p = t.position.lerp(startPos, 1 - ratio);
-          const q = t.quaternion.slerp(startQuat, 1 - ratio);
-
-          camera.position.copy(p);
-          camera.quaternion.copy(q);
-
-          camera.updateProjectionMatrix();
-
-          return ratio >= 1;
-        },
-        function () {
-          _this.cameraman.setFilmingTarget(true);
-          _this.view.scene.fog = _this.fogObject;
-        }
-      )
-    );
+  setFog(value) {
+    if (value) {
+      this.view.scene.fog = this.fogObject;
+    } else {
+      this.view.scene.fog = null;
+    }
   }
 
   initScene(state) {
@@ -591,7 +570,7 @@ export class GameView {
               _this.view.controls.dispose();
               _this.view.controls = null;
               _this.cameraman.setFilmingTarget(true);
-              _this.view.scene.fog = _this.fogObject;
+              _this.setFog(true);
             }
           )
         );
@@ -605,7 +584,7 @@ export class GameView {
           new THREE.Euler(Math.PI / 5, 0, 0)
         );
 
-        _this.view.scene.fog = null;
+        _this.setFog(false);
 
         _this.cameraman.addRoutine(
           new Routine(
