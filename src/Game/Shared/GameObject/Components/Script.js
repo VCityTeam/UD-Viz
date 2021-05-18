@@ -9,7 +9,6 @@ const ScriptModule = class Script {
     this.idScripts = json.idScripts || [];
     this.type = json.type || ScriptModule.TYPE;
     this.conf = json.conf || {};
-    this.local = json.local;
 
     //internal
     this.scripts = {};
@@ -50,7 +49,7 @@ const ScriptModule = class Script {
   }
 
   isServerSide() {
-    return this.local;
+    return true;
   }
 
   toJSON() {
@@ -58,7 +57,6 @@ const ScriptModule = class Script {
       uuid: this.uuid,
       idScripts: this.idScripts,
       conf: this.conf,
-      local: this.local,
       type: ScriptModule.TYPE,
     };
   }
