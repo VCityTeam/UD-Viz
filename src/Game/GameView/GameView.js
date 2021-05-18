@@ -375,8 +375,10 @@ export class GameView {
       if (!_this.isLocal)
         g.initAssetsComponents(_this.assetsManager, udvShared);
 
-      g.traverse(function () {
-        g.execute(LocalScript.EVENT.INIT, [ctx]);
+      g.traverse(function (child) {
+        const scriptComponent = child.getComponent(LocalScript.TYPE);
+        if (scriptComponent)
+          scriptComponent.execute(LocalScript.EVENT.INIT, [ctx]);
       });
 
       //add static object to obstacle
