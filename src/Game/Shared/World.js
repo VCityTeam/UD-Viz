@@ -188,6 +188,7 @@ const WorldModule = class World {
 
   removeGameObject(uuid) {
     const go = this.gameObject.find(uuid);
+    if (!go) throw new Error(uuid, ' not found in ', this.gameObject);
     go.removeFromParent();
     this.unregisterGOCollision(go);
   }
@@ -230,10 +231,10 @@ const WorldModule = class World {
               if (buffer.includes(potentialG.getUUID())) {
                 //already collided
                 g.traverse(function (child) {
-                  child.executeScripts(WorldScriptComponent.EVENT.IS_COLLIDING, [
-                    result,
-                    gCtx,
-                  ]);
+                  child.executeScripts(
+                    WorldScriptComponent.EVENT.IS_COLLIDING,
+                    [result, gCtx]
+                  );
                 });
               } else {
                 //onEnter
@@ -254,9 +255,10 @@ const WorldModule = class World {
           const uuid = buffer[i];
           if (!collidedGO.includes(uuid)) {
             g.traverse(function (child) {
-              child.executeScripts(WorldScriptComponent.EVENT.ON_LEAVE_COLLISION, [
-                gCtx,
-              ]);
+              child.executeScripts(
+                WorldScriptComponent.EVENT.ON_LEAVE_COLLISION,
+                [gCtx]
+              );
             });
             buffer.splice(i, 1); //remove from buffer
           }
