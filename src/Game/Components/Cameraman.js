@@ -1,5 +1,7 @@
 /** @format */
 
+//TODO this class shoudl be a GameObject
+
 const THREE = require('three');
 
 const CAMERA_ANGLE = Math.PI / 12;
@@ -88,7 +90,7 @@ export class Cameraman {
       .applyQuaternion(quaternion);
 
     //TODO compute dist so the bottom of the gameobject is at the bottom of the screen
-    let distance = 2.5;
+    let distance = 3;
 
     //compute intersection
     if (obstacle) {
