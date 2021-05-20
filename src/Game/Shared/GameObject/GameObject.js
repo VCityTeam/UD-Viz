@@ -228,8 +228,10 @@ const GameObjectModule = class GameObject {
           if (_this.components[LocalScriptModule.TYPE])
             console.warn('multiple component');
 
-          _this.components[LocalScriptModule.TYPE] =
-            new LocalScriptModule(_this, componentJSON);
+          _this.components[LocalScriptModule.TYPE] = new LocalScriptModule(
+            _this,
+            componentJSON
+          );
 
           break;
         case ColliderComponent.TYPE:
@@ -384,10 +386,12 @@ const GameObjectModule = class GameObject {
 
   setRotation(vector) {
     this.transform.rotation.set(vector.x, vector.y, vector.z);
+    this.outdated = true;
   }
 
   setPosition(vector) {
     this.transform.position.set(vector.x, vector.y, vector.z);
+    this.outdated = true;
   }
 
   getPosition() {
@@ -396,6 +400,7 @@ const GameObjectModule = class GameObject {
 
   setScale(vector) {
     this.transform.scale.set(vector.x, vector.y, vector.z);
+    this.outdated = true;
   }
 
   getScale() {

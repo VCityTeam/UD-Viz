@@ -78,6 +78,8 @@ const RenderModule = class Render {
       this.object3D.add(assetsManager.createModel(this.idModel));
     }
 
+    //TODO remove media and name and handle with a local script
+
     //name display above model
     if (this.name) {
       const bb = this.computeBoundingBox();

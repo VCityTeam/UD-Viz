@@ -102,6 +102,7 @@ const WorldModule = class World {
         _this.gameObject = gameObject;
       }
 
+      //TODO init can be trigger several time FIXME maybe with a flag in worldscript component
       gameObject.traverse(function (g) {
         g.executeScripts(WorldScriptComponent.EVENT.INIT, [gCtx]);
       });
