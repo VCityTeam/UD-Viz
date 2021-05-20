@@ -349,10 +349,10 @@ export class GameView {
       lastGO.traverse(function (g) {
         const uuid = g.getUUID();
         const current = state.getGameObject().find(uuid);
-        if (current) {
+        if (current && !g.isStatic()) {
           //still exist update only the transform
           g.setTransform(current.getTransform());
-        } else {
+        } else if (!current) {
           //do not exist remove it
           g.removeFromParent();
           delete _this.currentUUID[g.getUUID()];
@@ -423,18 +423,18 @@ export class GameView {
 
     const go = state.getGameObject();
 
-    //rebuild object
-    this.object3D.children.length = 0;
-    this.object3D.add(this.pointerMouseObject);
-    this.object3D.add(go.fetchObject3D());
-    this.object3D.updateMatrixWorld();
-
     //tick local script
     go.traverse(function (child) {
       const scriptComponent = child.getComponent(LocalScript.TYPE);
       if (scriptComponent)
         scriptComponent.execute(LocalScript.EVENT.TICK, [ctx]);
     });
+
+    //rebuild object
+    this.object3D.children.length = 0;
+    this.object3D.add(this.pointerMouseObject);
+    this.object3D.add(go.fetchObject3D());
+    this.object3D.updateMatrixWorld();
 
     this.cameraman.tick(
       this.gameContext.dt,
