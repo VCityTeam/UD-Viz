@@ -74,7 +74,7 @@ export class Cameraman {
     this.camera.updateProjectionMatrix();
   }
 
-  computeTransformTarget(obstacle = null) {
+  computeTransformTarget(obstacle = null, distance) {
     //world transform
     const obj = this.target.fetchObject3D();
     let position = new THREE.Vector3();
@@ -90,7 +90,7 @@ export class Cameraman {
       .applyQuaternion(quaternion);
 
     //TODO compute dist so the bottom of the gameobject is at the bottom of the screen
-    let distance = 3;
+    if (!distance) distance = 3;
 
     //compute intersection
     if (obstacle) {
