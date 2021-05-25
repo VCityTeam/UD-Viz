@@ -75,6 +75,8 @@ export class Cameraman {
   }
 
   computeTransformTarget(obstacle = null, distance) {
+    if (!this.target) return null;
+
     //world transform
     const obj = this.target.fetchObject3D();
     let position = new THREE.Vector3();
