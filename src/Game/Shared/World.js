@@ -53,7 +53,11 @@ const WorldModule = class World {
   }
 
   notify(eventID, params) {
-    if (!this.listeners[eventID]) this.listeners[eventID] = [];
+    if (!this.listeners[eventID]) {
+      console.warn('no listener on event ', eventID);
+      return;
+    }
+
     this.listeners[eventID].forEach(function (cb) {
       cb(params);
     });
@@ -109,7 +113,11 @@ const WorldModule = class World {
 
       _this.registerGOCollision(gameObject);
 
-      console.log(gameObject.name + ' loaded in ', _this.name);
+      console.log(
+        gameObject.name,
+        gameObject.getUUID() + ' loaded in ',
+        _this.name
+      );
 
       if (onLoad) onLoad();
     });
@@ -188,6 +196,7 @@ const WorldModule = class World {
   }
 
   removeGameObject(uuid) {
+    console.log(uuid + ' remove from ', this.name);
     const go = this.gameObject.find(uuid);
     if (!go) throw new Error(uuid, ' not found in ', this.gameObject);
     go.removeFromParent();
