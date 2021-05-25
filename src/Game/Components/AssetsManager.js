@@ -23,11 +23,12 @@ export class AssetsManager {
   }
 
   fetchWorldScript(idScript) {
-    if (!this.worldScripts[idScript]) console.error('no world script with id ', idScript);
+    if (!this.worldScripts[idScript])
+      console.error('no world script with id ', idScript);
     return this.worldScripts[idScript];
   }
 
-  fetchLocalScript(id){
+  fetchLocalScript(id) {
     if (!this.localScripts[id]) console.error('no local script with id ', id);
     return this.localScripts[id];
   }
@@ -243,7 +244,7 @@ export class AssetsManager {
     return frame;
   }
 
-  parse(id, obj, anchor) {
+  parse(id, obj, anchor, scale) {
     //rotation
     const quatTHREE2UDV = new THREE.Quaternion().setFromEuler(
       new THREE.Euler(-Math.PI * 0.5, 0, Math.PI)
@@ -270,6 +271,15 @@ export class AssetsManager {
         break;
       default:
         throw new Error('no anchor');
+    }
+
+    //scale
+    if (scale) {
+      const newScale = obj.scale;
+      newScale.x *= scale.x;
+      newScale.y *= scale.y;
+      newScale.z *= scale.z;
+      obj.scale.copy(newScale);
     }
 
     parent.add(obj);
@@ -302,11 +312,12 @@ export class AssetsManager {
         const id = idModel;
         const modelAnchor = config.models[id].anchor;
         const modelPath = config.models[id].path;
+        const modelScale = config.models[id].scale;
         loader.load(
           modelPath,
           (data) => {
             //parse
-            _this.parse(id, data.scene, modelAnchor);
+            _this.parse(id, data.scene, modelAnchor, modelScale);
 
             //check if finish
             count++;
