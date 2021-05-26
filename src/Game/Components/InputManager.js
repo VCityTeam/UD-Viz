@@ -22,6 +22,12 @@ export class MouseState {
   }
 
   dispose() {
+    //reset variables
+    this.mouseMap = {};
+    this.mouseEvent = {};
+    this.dragging = false;
+    this.listeners = [];
+
     this.listeners.forEach(function (l) {
       l.element.removeEventListener(l.id, l.cb);
     });
@@ -155,6 +161,15 @@ export class InputManager {
   }
 
   dispose() {
+    //reset variables
+    this.keyMap = {};
+    this.keyCommands = {};
+    this.mouseCommands = {};
+    this.commandsBuffer = {};
+    this.listeners = [];
+    this.element = null;
+    this.altKey = false;
+
     this.listeners.forEach(function (l) {
       l.element.removeEventListener(l.id, l.cb);
     });

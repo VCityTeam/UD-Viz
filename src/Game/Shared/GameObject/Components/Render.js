@@ -52,16 +52,38 @@ const RenderModule = class Render {
     return this.originalObject3D;
   }
 
-  //TODO remove and add scene here
   setName(value, assetsManager) {
+    const oldParent = this.object3D.parent;
+    oldParent.remove(this.object3D);
     this.name = value;
     this.initAssets(assetsManager);
+    oldParent.add(this.parent.fetchObject3D());
   }
 
-  //TODO remove and add scene here
+  getName() {
+    return this.name;
+  }
+
   setColor(value, assetsManager) {
+    const oldParent = this.object3D.parent;
+    oldParent.remove(this.object3D);
     this.color = value;
     this.initAssets(assetsManager);
+    oldParent.add(this.parent.fetchObject3D());
+  }
+
+  getColor() {
+    return this.color;
+  }
+
+  updateFromComponent(component, assetsManager) {
+    if (this.name != component.getName()) {
+      this.setName(component.getName(), assetsManager);
+    }
+
+    if (!this.color.equals(component.getColor())) {
+      this.setColor(component.getColor(), assetsManager);
+    }
   }
 
   initAssets(assetsManager) {

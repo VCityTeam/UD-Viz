@@ -19,7 +19,16 @@ export class AssetsManager {
 
   createModel(idModel) {
     if (!this.models[idModel]) console.error('no model with id ', idModel);
-    return this.models[idModel].clone();
+
+    const result = this.models[idModel].clone();
+    result.traverse(function (child) {
+      if (child.material) {
+        child.material = child.material.clone();
+        child.material.needsUpdate = true;
+      }
+    });
+
+    return result;
   }
 
   fetchWorldScript(idScript) {

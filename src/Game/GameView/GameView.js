@@ -155,7 +155,7 @@ export class GameView {
     this.onFirstStateEnd = f;
   }
 
-  onFirstStateJSON(firstStateJSON){
+  onFirstStateJSON(firstStateJSON) {
     const state = new WorldState(firstStateJSON.state);
     this.worldStateInterpolator.onFirstState(state);
     this.onFirstState(state);
@@ -189,7 +189,6 @@ export class GameView {
         if (delta > 1000 / fps) {
           // update time stuffs
           then = now - (delta % 1000) / fps;
-          if (_this.pause) return;
           _this.updateViewLocal(delta);
         }
       };
@@ -209,8 +208,6 @@ export class GameView {
         if (delta > 1000 / fps) {
           // update time stuffs
           then = now - (delta % 1000) / fps;
-
-          if (_this.pause) return;
           _this.updateViewServer(delta);
         }
       };
@@ -356,8 +353,7 @@ export class GameView {
         const uuid = g.getUUID();
         const current = state.getGameObject().find(uuid);
         if (current && !g.isStatic()) {
-          //still exist update only the transform
-          g.setTransform(current.getTransform());
+          g.updateNoStaticFromGO(current, _this.assetsManager);
         } else if (!current) {
           //do not exist remove it
           g.removeFromParent();
@@ -427,6 +423,9 @@ export class GameView {
       }
     });
 
+    //update shadow
+    if (newGO.length) this.placeLight();
+
     const go = state.getGameObject();
 
     //tick local script
@@ -435,6 +434,11 @@ export class GameView {
       if (scriptComponent)
         scriptComponent.execute(LocalScript.EVENT.TICK, [ctx]);
     });
+
+    //buffer
+    this.lastState = state;
+
+    if (this.pause) return; //no render
 
     //rebuild object
     this.object3D.children.length = 0;
@@ -464,12 +468,6 @@ export class GameView {
       if (g.name == 'avatar') avatarCount++;
     });
     this.avatarCount.innerHTML = 'Player: ' + avatarCount;
-
-    //update shadow
-    if (newGO.length) this.placeLight();
-
-    //buffer
-    this.lastState = state;
   }
 
   initItownsView(state) {

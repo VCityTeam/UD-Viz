@@ -64,6 +64,19 @@ const GameObjectModule = class GameObject {
     this.object3D.name = this.name + '_object3D';
   }
 
+  updateNoStaticFromGO(go, assetsManager) {
+    //update transform
+    this.setTransform(go.getTransform());
+    //update render
+    const r = this.getComponent(RenderComponent.TYPE);
+    if (r) {
+      r.updateFromComponent(
+        go.getComponent(RenderComponent.TYPE),
+        assetsManager
+      );
+    }
+  }
+
   setFromJSON(json) {
     this.components = {}; //clear
     this.setComponentsFromJSON(json);
