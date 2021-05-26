@@ -19,9 +19,8 @@ import Render from '../Shared/GameObject/Components/Render';
 
 const udvShared = require('../Shared/Shared');
 const Command = udvShared.Command;
-const Data = udvShared.Components.Data;
 const WorldState = udvShared.WorldState;
-const WorldStateDiff = udvShared.WorldStateDiff;
+const Data = udvShared.Data;
 
 //DEBUG
 let id = 0;
@@ -154,6 +153,13 @@ export class GameView {
 
   setOnFirstStateEnd(f) {
     this.onFirstStateEnd = f;
+  }
+
+  onFirstStateJSON(firstStateJSON){
+    const state = new WorldState(firstStateJSON.state);
+    this.worldStateInterpolator.onFirstState(state);
+    this.onFirstState(state);
+    this.avatarUUID = firstStateJSON.avatarID;
   }
 
   onFirstState(state) {
@@ -809,8 +815,6 @@ export class GameView {
     window.removeEventListener('resize', this.onResize.bind(this));
     this.rootHtml.remove();
 
-    if (this.webSocketService) this.webSocketService.reset();
-
     //flag to stop tick
     this.disposed = true;
   }
@@ -820,61 +824,6 @@ export class GameView {
 
     return new Promise((resolve, reject) => {
       if (!_this.isLocal) {
-        //wait to be notify by server
-        if (!_this.webSocketService) throw new Error('no websocket service');
-
-        // Register callbacks
-        _this.webSocketService.on(
-          Data.WEBSOCKET.MSG_TYPES.JOIN_WORLD,
-          (firstStateJSON) => {
-            if (!firstStateJSON) throw new Error('no data');
-            console.log('JOIN_WORLD ', _this.id, firstStateJSON);
-
-            if (!_this.view) {
-              //view was not intialized do it
-              const state = new WorldState(firstStateJSON.state);
-              _this.worldStateInterpolator.onFirstState(state);
-              _this.onFirstState(state);
-              _this.avatarUUID = firstStateJSON.avatarID;
-            } else {
-              //TODO maybe do this in parent and not here
-
-              //this need to be disposed
-              _this.dispose();
-
-              //create new one
-              const gameView = new GameView({
-                isLocal: false,
-                assetsManager: _this.assetsManager,
-                webSocketService: _this.webSocketService,
-                worldStateInterpolator: _this.worldStateInterpolator,
-                config: _this.config,
-              });
-
-              //load then notify join world
-              gameView.load().then(function () {
-                console.log('JOIN_WORLD ', gameView.id, firstStateJSON);
-
-                const state = new WorldState(firstStateJSON.state);
-                gameView.worldStateInterpolator.onFirstState(state);
-                gameView.onFirstState(state);
-                gameView.avatarUUID = firstStateJSON.avatarID;
-              });
-            }
-          }
-        );
-
-        _this.webSocketService.on(
-          Data.WEBSOCKET.MSG_TYPES.WORLDSTATE_DIFF,
-          (diffJSON) => {
-            // console.log(_this.id, ' diff');
-
-            _this.worldStateInterpolator.onNewDiff(
-              new WorldStateDiff(diffJSON)
-            );
-          }
-        );
-
         resolve();
       } else {
         //load world

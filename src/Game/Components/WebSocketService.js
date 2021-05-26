@@ -32,11 +32,19 @@ export class WebSocketService {
     });
   }
 
-  reset() {
-    for (let event in this.events) {
-      this.socket.removeAllListeners(event);
+  reset(events) {
+    if (events) {
+      const _this = this;
+      events.forEach((element) => {
+        delete _this.events[element];
+        _this.socket.removeAllListeners(element);
+      });
+    } else {
+      for (let event in this.events) {
+        this.socket.removeAllListeners(event);
+      }
+      this.events = {};
     }
-    this.events = {};
   }
 
   on(event, callback) {
