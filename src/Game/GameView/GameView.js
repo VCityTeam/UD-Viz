@@ -16,6 +16,7 @@ import * as itowns from 'itowns';
 import './GameView.css';
 import LocalScript from '../Shared/GameObject/Components/LocalScript';
 import Render from '../Shared/GameObject/Components/Render';
+import { isFunction } from 'jquery';
 
 const udvShared = require('../Shared/Shared');
 const Command = udvShared.Command;
@@ -277,7 +278,17 @@ export class GameView {
   }
 
   placeLight() {
-    const bb = new THREE.Box3().setFromObject(this.object3D);
+    const obj = this.object3D.clone();
+
+    //compute bb only with mesh receiving shadow WIP
+    // obj.traverse(function (child) {
+    //   if (child.geometry) {
+    //     if (!child.receiveShadow) debugger;
+    //     child.visible = child.receiveShadow;
+    //   }
+    // });
+
+    const bb = new THREE.Box3().setFromObject(obj);
     const directionalLight = this.directionalLight;
 
     //place directionnal lights
@@ -511,24 +522,24 @@ export class GameView {
     };
 
     //LYON WMS
-    const wmsImagerySource = new itowns.WMSSource({
-      extent: extent,
-      name: 'Ortho2018_Dalle_unique_8cm_CC46',
-      url: 'https://download.data.grandlyon.com/wms/grandlyon',
-      version: '1.3.0',
-      projection: 'EPSG:3946',
-      format: 'image/jpeg',
-    });
-    // Add a WMS imagery layer
-    const wmsImageryLayer = new itowns.ColorLayer('wms_imagery', {
-      updateStrategy: {
-        type: itowns.STRATEGY_DICHOTOMY,
-        options: {},
-      },
-      source: wmsImagerySource,
-      transparent: true,
-    });
-    this.view.addLayer(wmsImageryLayer);
+    // const wmsImagerySource = new itowns.WMSSource({
+    //   extent: extent,
+    //   name: 'Ortho2018_Dalle_unique_8cm_CC46',
+    //   url: 'https://download.data.grandlyon.com/wms/grandlyon',
+    //   version: '1.3.0',
+    //   projection: 'EPSG:3946',
+    //   format: 'image/jpeg',
+    // });
+    // // Add a WMS imagery layer
+    // const wmsImageryLayer = new itowns.ColorLayer('wms_imagery', {
+    //   updateStrategy: {
+    //     type: itowns.STRATEGY_DICHOTOMY,
+    //     options: {},
+    //   },
+    //   source: wmsImagerySource,
+    //   transparent: true,
+    // });
+    // this.view.addLayer(wmsImageryLayer);
 
     // Add a WMS elevation source
     const wmsElevationSource = new itowns.WMSSource({

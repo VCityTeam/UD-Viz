@@ -253,7 +253,12 @@ export class AssetsManager {
     return frame;
   }
 
-  parse(id, obj, anchor, scale, rotation) {
+  parse(id, obj, modelData) {
+    const anchor = modelData.anchor;
+    const scale = modelData.scale;
+    const rotation = modelData.rotation;
+    const noShadow = modelData.noShadow || false;
+
     //rotation
     const quatTHREE2UDV = new THREE.Quaternion().setFromEuler(
       new THREE.Euler(-Math.PI * 0.5, 0, Math.PI)
@@ -302,7 +307,7 @@ export class AssetsManager {
     parent.add(obj);
 
     parent.traverse(function (child) {
-      if (child.geometry) {
+      if (child.geometry && !noShadow) {
         child.castShadow = true;
         child.receiveShadow = true;
       }
@@ -327,15 +332,12 @@ export class AssetsManager {
       let count = 0;
       for (let idModel in config.models) {
         const id = idModel;
-        const modelAnchor = config.models[id].anchor;
-        const modelPath = config.models[id].path;
-        const modelScale = config.models[id].scale;
-        const modelRotation = config.models[id].rotation;
+        const modelData = config.models[id];
         loader.load(
-          modelPath,
+          modelData.path,
           (data) => {
             //parse
-            _this.parse(id, data.scene, modelAnchor, modelScale, modelRotation);
+            _this.parse(id, data.scene, modelData);
 
             //check if finish
             count++;
