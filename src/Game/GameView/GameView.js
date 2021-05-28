@@ -423,9 +423,6 @@ export class GameView {
       }
     });
 
-    //update shadow
-    if (newGO.length) this.placeLight();
-
     const go = state.getGameObject();
 
     //tick local script
@@ -435,16 +432,19 @@ export class GameView {
         scriptComponent.execute(LocalScript.EVENT.TICK, [ctx]);
     });
 
-    //buffer
-    this.lastState = state;
-
-    if (this.pause) return; //no render
-
     //rebuild object
     this.object3D.children.length = 0;
     this.object3D.add(this.pointerMouseObject);
     this.object3D.add(go.fetchObject3D());
     this.object3D.updateMatrixWorld();
+
+    //update shadow
+    if (newGO.length) this.placeLight();
+
+    //buffer
+    this.lastState = state;
+
+    if (this.pause) return; //no render
 
     this.cameraman.tick(
       this.gameContext.dt,
