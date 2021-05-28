@@ -131,15 +131,18 @@ const GameObjectModule = class GameObject {
     this.outdated = true;
   }
 
-  rotate(vector) {
-    this.transform.rotation.add(vector);
+  clampRotation() {
     this.transform.rotation.x =
       (Math.PI * 2 + this.transform.rotation.x) % (Math.PI * 2);
     this.transform.rotation.y =
       (Math.PI * 2 + this.transform.rotation.y) % (Math.PI * 2);
     this.transform.rotation.z =
       (Math.PI * 2 + this.transform.rotation.z) % (Math.PI * 2);
+  }
 
+  rotate(vector) {
+    this.transform.rotation.add(vector);
+    this.clampRotation();
     this.outdated = true;
   }
 
@@ -298,12 +301,15 @@ const GameObjectModule = class GameObject {
   }
 
   setTransformFromJSON(json) {
-    const defaultTransform = {
-      position: new THREE.Vector3(),
-      rotation: new THREE.Vector3(),
-      scale: new THREE.Vector3(1, 1, 1),
-    };
-    this.transform = defaultTransform;
+    if (!this.transform) {
+      const defaultTransform = {
+        position: new THREE.Vector3(),
+        rotation: new THREE.Vector3(),
+        scale: new THREE.Vector3(1, 1, 1),
+      };
+      this.transform = defaultTransform;
+    }
+
     if (json) {
       if (json.position) {
         this.transform.position.x = json.position.x;
@@ -399,6 +405,7 @@ const GameObjectModule = class GameObject {
 
   setRotation(vector) {
     this.transform.rotation.set(vector.x, vector.y, vector.z);
+    this.clampRotation();
     this.outdated = true;
   }
 
@@ -430,6 +437,7 @@ const GameObjectModule = class GameObject {
 
   setTransform(transform) {
     this.transform = transform;
+    this.outdated = true;
   }
 
   //serialize

@@ -2,6 +2,8 @@
 
 import * as THREE from 'three';
 
+//TODO create an object Transform with a clone method
+
 const THREEUtils = {
   textureEncoding: THREE.RGBDEncoding,
 
