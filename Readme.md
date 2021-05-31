@@ -22,7 +22,8 @@ Developing UD-Viz requires some knowledge about [JS](https://github.com/VCityTea
 
 * **Windows**
   
-  * Install and update npm with Windows Powershell
+  * Installing from the [installer](https://nodejs.org/en/download/)
+  * Installing with the CLI
 
     ```bash
     iex (new-object net.webclient).downstring(‘https://get.scoop.sh’)
