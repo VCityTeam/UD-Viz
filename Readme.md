@@ -38,13 +38,11 @@ cd UD-Viz
 npm install
 ```
 
-You can find install notes [here](https://github.com/MEPP-team/UD-Viz/blob/master/install.md).
-
 ## Demos
 Standard application demos using UD-Viz are [gathered in UD-Viz-demo](https://github.com/VCityTeam/UD-Viz-demo)
 and some online demos are [available here](https://projet.liris.cnrs.fr/vcity/demos/)
 
-## Organizational principles
+## Sources directory layout (organizational principles)
 Definitions:
  - [Component](https://en.wikipedia.org/wiki/Component-based_software_engineering)
    - `Components` folder: a set of components
