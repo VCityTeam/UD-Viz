@@ -23,11 +23,10 @@
     scoop install nodejs
     ```
 
-## Building of the library
+## Installing the library
 
 ```bash
 git clone https://github.com/VCityTeam/UD-Viz.git
 cd UD-Viz
 npm install
-npm build
 ```
