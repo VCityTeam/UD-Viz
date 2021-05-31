@@ -1,121 +1,62 @@
 # UD-Viz : Urban Data Vizualisation
 
-UD-Viz is a JavaScript client based on [iTowns](https://github.com/itowns/itowns) 
-allowing to visualize, analyse and interact with urban data. UD-Viz's code is
-located in [UD-Viz-Core](UD-Viz-Core) folder.
+UD-Viz is a JavaScript library based on [iTowns](https://github.com/itowns/itowns), using [npm](https://www.npmjs.com/) and [published on the npm package repository](https://www.npmjs.com/package/ud-viz), allowing to visualize, analyse and interact with urban data.
 
-Server-side tools can be found [here](https://github.com/MEPP-team/UD-Serv).
+### Pre-requisite
+Developing UD-Viz requires some knowledge about [JS](https://github.com/VCityTeam/UD-SV/blob/master/UD-Doc/Devel/ToolJavaScript.md), node.js, npm and [three.js](https://threejs.org/).
+
 ## Installation
 You can find install notes [here](https://github.com/MEPP-team/UD-Viz/blob/master/install.md).
 
-## Demo
-Online demos :
- - [UD-Viz](http://rict.liris.cnrs.fr/UDVDemo/UDV/UDV-Core/)
- - [Vilo3D](http://rict.liris.cnrs.fr/Vilo3D/UDV/Vilo3D/)
- 
-### Camera Controller
+## Demos
+Standard application demos using UD-Viz are [gathered in UD-Viz-demo](https://github.com/VCityTeam/UD-Viz-demo)
+and some online demos are [available here](https://projet.liris.cnrs.fr/vcity/demos/)
 
-* **Left-click + drag** : User "grabs" the ground (cursor stays at the same spot on the ground) to translate camera on XY axis.
-* **Right-click + drag** : camera rotation around the focus point (ground point at the center of the screen), clamped to avoid going under ground level.
-* **Mousewheel** : smooth zoom toward the ground point under the mouse cursor, adjusted according to the ground distance (zoom is faster the further from the ground and cannot go through the ground).
-* **Mousewheel click** (middle mouse button) : "Smart Zoom". Camera smoothly moves and rotates toward target ground point, at fixed orientation and adjusted distance.
-* **S** : moves and orients camera to the start view
-* **T** : moves and orients camera to top view (high altitude and pointing toward the center of the city)
+## Organizational principles
+Definitions:
+ - [Component](https://en.wikipedia.org/wiki/Component-based_software_engineering)
+   - `Components` folder: a set of components
+ - Extension: a component depending on a [web service](https://github.com/VCityTeam/UD-Viz/blob/master/src/Widgets/Extensions/Geocoding/services/GeocodingService.js#L2) in order to be functionnal. 
+ - Plugin: a plugin (importable atomic sub-library) of the iTowns framework
+ - [web widgets](https://en.wikipedia.org/wiki/Web_widget)
 
-The camera controller has been merged into itowns ([PR](https://github.com/iTowns/itowns/pull/454)) and is now PlanarControls. It features an animation of camera movement and orientation (called "travel" in the code) which we use to orient the camera with a document (document **oriented view**).
 
-## Current features (regrouped by Modules) :
+```
+UD-Viz (repo)
+├── src                         # All the js sources of UD-Viz JS library
+|    ├── Components             # A set of components used by the plugins
+|    ├── Game                   # A plugin offering game engine functionnality
+|    |    ├── Shared            # code that can be executed both and client and server side
+|    |    └── Client            # client side game components           
+|    └── Widgets                # A plugin gathering a set web web widgets (UI)  
+|         ├── Widget_1
+|         ├── Widget_2
+|         ├── ...
+|         └── Extensions        # Widgets depending on an external web service  
+├── ...
+└── webpack.js
+```
 
-Each module adds new functionnalities to the application. You can find the code and the documentation (sometimes the documentation is directly in the code) by following the link under each module described below.
-
-### Document
-
-[Go to the module](UD-Viz-Core/src/Modules/Documents/)
-
-* Display of documents in a 3D representation of the city, in superposition
-* Filtered research (research by keyword, attribute and/or temporal research)
-* All documents are loaded from an external data server and can be accessed using the **Document Inspector** window.
-
-![](UD-Viz-Core/Doc/User/Pictures/module_pres/document.png)
-
-This module has several extensions that add functionalities :
-
-#### Contribute
-
-[Go to the module](UD-Viz-Core/src/Extensions/Contribute/)
-
-* Possibility to create a new document
-* Possibility to edit and delete existing documents
-
-#### Validation
-
-[Go to the module](UD-Viz-Core/src/Extensions/DocumentValidation/)
-
-This extensions works with the *Authentication* module :
-
-* A document has information about the user who posted it.
-* Users have different roles :
-  * A *contributor* is a regular user
-  * A *moderator* has validation rights
-  * An *administrator* has all rights
-* You must be logged in to contribute. A contributor must have its submissions validated by a moderator or an administrator to be published.
-
-#### Comments
-
-[Go to the module](UD-Viz-Core/src/Extensions/DocumentComments/)
-
-Requires the *Authentication* module :
-
-* Adds the possibility to comment a document (must be logged in)
-
-### Authentication
-
-[Go to the module](UD-Viz-Core/src/Extensions/Authentication/)
-
-Adds user management :
-
-* Possibility to create an account
-* Possibility to log in
-
-![](UD-Viz-Core/Doc/User/Pictures/module_pres/authentication.png)
-
-### Temporal
-
-[Go to the module](UD-Viz-Core/src/Modules/Temporal/)
-
-* Basic slider + input field to select a date
-* Ability to navigate between key dates (arrow buttons)
-* When we enter a document "oriented view", the date is updated to match the document's date
-* Key dates correspond to a temporal version of the 3d models for the "Îlot du Lac"
-
-### City Objects
-
-[Go to the module](UD-Viz-Core/src/Modules/CityObjects/)
-
-* Selection of a city object, view its details
-* Filter city objects from their attributes
-
-![](UD-Viz-Core/Doc/User/Pictures/module_pres/city_object.png)
-
-### Links
-
-[Go to the module](UD-Viz-Core/src/Modules/Links/)
-
-The link module serves as an extension for both *Document* and *City object* modules.
-
-* Adds the possibility to create link between a document and a city object (many to many)
-* Possibility to visualize the city objects linked to a document
-* Possibility to visualize the documents linked to a city object
-
-### Guided Tour
-
-[Go to the module](UD-Viz-Core/src/Modules/GuidedTour/)
-
-* A Guided Tour is a succession of Steps (document + text) that the user can follow
-* Each step triggers the oriented view of its document, and opens this doc in the doc browser
-* Ability to navigate between steps of a tour (previous, next) and to start/exit a tour
-* Support for multiple guided tours, all loaded from a csv file (visite.csv)
-
-### Others
-
-* Help, About : windows with text and links
+Notes:
+ * The position of a specific component in the sub-folder hierarchy reflects
+   how it is shared/re-used by the plugins. For example if a given component 
+   is only used by a single widget, then it gets defined within that widget 
+   folder. But when another component usage is shared by two widgets then 
+   its definition directory gets promoted at the level of the two widgets
+   ```
+   └── src         # holds all the js sources that will be build
+        ├── Components 
+        |    └── Component_1         # A component shared by the Game and Widgets plugins 
+        |         └── *.js ...       # Component definition
+        ├── Game
+        |    └── Shared      
+        |         └── Component_2    # A component used by the Shared sub-set of the Game plugin 
+        |              └── ...       
+        └── Widgets  
+             ├── Components
+             |    └── Component_3    # A component shared by at least two widgets 
+             |         └── ...      
+             └── Widget_1     
+                  └── Component_4    # A component only used by Widget_1 (of the Widgets plugin) 
+                       └── ...         
+   ```
