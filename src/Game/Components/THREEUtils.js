@@ -2,6 +2,8 @@
 
 import * as THREE from 'three';
 
+//TODO create an object Transform with a clone method
+
 const THREEUtils = {
   textureEncoding: THREE.RGBDEncoding,
 
@@ -19,9 +21,11 @@ const THREEUtils = {
     return { directionalLight, ambientLight };
   },
 
-  initRenderer(renderer, skyColor) {
+  initRenderer(renderer, skyColor, clear = false) {
     // Set sky color to blue
     renderer.setClearColor(skyColor, 1);
+    renderer.autoClear = clear;
+    renderer.autoClearColor = clear;
 
     renderer.outputEncoding = this.textureEncoding;
     renderer.setPixelRatio(window.devicePixelRatio);

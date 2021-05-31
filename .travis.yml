@@ -1,3 +1,9 @@
+# @format
+
+branches:
+  only:
+    - master
+
 os: linux
 dist: focal
 language: node_js

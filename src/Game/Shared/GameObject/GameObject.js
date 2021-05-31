@@ -9,8 +9,9 @@ const THREE = require('three');
 //GameObject Components
 const RenderComponent = require('./Components/Render');
 const ColliderComponent = require('./Components/Collider');
-const ScriptComponent = require('./Components/Script');
+const WorldScriptComponent = require('./Components/WorldScript');
 const JSONUtils = require('../../../Components/SystemUtils/JSONUtils');
+const LocalScriptModule = require('./Components/LocalScript');
 
 const GameObjectModule = class GameObject {
   constructor(json, parent) {
@@ -58,9 +59,23 @@ const GameObjectModule = class GameObject {
     //assets has been initialized
     this.initialized = false;
 
+    //TODO remove me
     //default object3d
     this.object3D = new THREE.Object3D();
     this.object3D.name = this.name + '_object3D';
+  }
+
+  updateNoStaticFromGO(go, assetsManager) {
+    //update transform
+    this.setTransform(go.getTransform());
+    //update render
+    const r = this.getComponent(RenderComponent.TYPE);
+    if (r) {
+      r.updateFromComponent(
+        go.getComponent(RenderComponent.TYPE),
+        assetsManager
+      );
+    }
   }
 
   setFromJSON(json) {
@@ -117,20 +132,23 @@ const GameObjectModule = class GameObject {
     this.outdated = true;
   }
 
-  rotate(vector) {
-    this.transform.rotation.add(vector);
+  clampRotation() {
     this.transform.rotation.x =
       (Math.PI * 2 + this.transform.rotation.x) % (Math.PI * 2);
     this.transform.rotation.y =
       (Math.PI * 2 + this.transform.rotation.y) % (Math.PI * 2);
     this.transform.rotation.z =
       (Math.PI * 2 + this.transform.rotation.z) % (Math.PI * 2);
+  }
 
+  rotate(vector) {
+    this.transform.rotation.add(vector);
+    this.clampRotation();
     this.outdated = true;
   }
 
-  getScripts() {
-    const c = this.getComponent(ScriptComponent.TYPE);
+  getWorldScripts() {
+    const c = this.getComponent(WorldScriptComponent.TYPE);
     if (!c) return null;
     return c.getScripts();
   }
@@ -190,7 +208,7 @@ const GameObjectModule = class GameObject {
   }
 
   executeScripts(event, params) {
-    const script = this.getComponent(ScriptComponent.TYPE);
+    const script = this.getComponent(WorldScriptComponent.TYPE);
     if (!script) return null;
     return script.execute(event, params);
   }
@@ -215,11 +233,19 @@ const GameObjectModule = class GameObject {
           );
 
           break;
-        case ScriptComponent.TYPE:
-          if (_this.components[ScriptComponent.TYPE])
+        case WorldScriptComponent.TYPE:
+          if (_this.components[WorldScriptComponent.TYPE])
             console.warn('multiple component');
 
-          _this.components[ScriptComponent.TYPE] = new ScriptComponent(
+          _this.components[WorldScriptComponent.TYPE] =
+            new WorldScriptComponent(_this, componentJSON);
+
+          break;
+        case LocalScriptModule.TYPE:
+          if (_this.components[LocalScriptModule.TYPE])
+            console.warn('multiple component');
+
+          _this.components[LocalScriptModule.TYPE] = new LocalScriptModule(
             _this,
             componentJSON
           );
@@ -276,12 +302,15 @@ const GameObjectModule = class GameObject {
   }
 
   setTransformFromJSON(json) {
-    const defaultTransform = {
-      position: new THREE.Vector3(),
-      rotation: new THREE.Vector3(),
-      scale: new THREE.Vector3(1, 1, 1),
-    };
-    this.transform = defaultTransform;
+    if (!this.transform) {
+      const defaultTransform = {
+        position: new THREE.Vector3(),
+        rotation: new THREE.Vector3(),
+        scale: new THREE.Vector3(1, 1, 1),
+      };
+      this.transform = defaultTransform;
+    }
+
     if (json) {
       if (json.position) {
         this.transform.position.x = json.position.x;
@@ -377,10 +406,13 @@ const GameObjectModule = class GameObject {
 
   setRotation(vector) {
     this.transform.rotation.set(vector.x, vector.y, vector.z);
+    this.clampRotation();
+    this.outdated = true;
   }
 
   setPosition(vector) {
     this.transform.position.set(vector.x, vector.y, vector.z);
+    this.outdated = true;
   }
 
   getPosition() {
@@ -389,6 +421,7 @@ const GameObjectModule = class GameObject {
 
   setScale(vector) {
     this.transform.scale.set(vector.x, vector.y, vector.z);
+    this.outdated = true;
   }
 
   getScale() {
@@ -405,6 +438,7 @@ const GameObjectModule = class GameObject {
 
   setTransform(transform) {
     this.transform = transform;
+    this.outdated = true;
   }
 
   //serialize

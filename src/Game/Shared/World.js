@@ -5,7 +5,7 @@
  * @format
  */
 const GameObject = require('./GameObject/GameObject');
-const ScriptComponent = require('./GameObject/Components/Script');
+const WorldScriptComponent = require('./GameObject/Components/WorldScript');
 const ColliderComponent = require('./GameObject/Components/Collider');
 const THREE = require('three');
 const WorldState = require('./WorldState');
@@ -18,6 +18,7 @@ const WorldModule = class World {
 
     //collisions system
     this.collisions = new Collisions();
+    this.collisionsBuffer = {}; //to handle onEnter on onExit
 
     /******************DATA***************************/
 
@@ -52,7 +53,11 @@ const WorldModule = class World {
   }
 
   notify(eventID, params) {
-    if (!this.listeners[eventID]) this.listeners[eventID] = [];
+    if (!this.listeners[eventID]) {
+      console.warn('no listener on event ', eventID);
+      return;
+    }
+
     this.listeners[eventID].forEach(function (cb) {
       cb(params);
     });
@@ -69,12 +74,12 @@ const WorldModule = class World {
     let params = [gCtx, this.isServerSide, this.modules];
 
     go.traverse(function (g) {
-      const scriptC = g.getComponent(ScriptComponent.TYPE);
+      const scriptC = g.getComponent(WorldScriptComponent.TYPE);
       if (scriptC) {
         for (let idScript in scriptC.getScripts()) {
           const result = scriptC.executeScript(
             idScript,
-            ScriptComponent.EVENT.LOAD,
+            WorldScriptComponent.EVENT.LOAD,
             params
           );
           if (result) promises.push(result);
@@ -101,29 +106,77 @@ const WorldModule = class World {
         _this.gameObject = gameObject;
       }
 
-      _this.registerGOCollision(gameObject);
+      //TODO init can be trigger several time FIXME maybe with a flag in worldscript component
       gameObject.traverse(function (g) {
-        g.executeScripts(ScriptComponent.EVENT.INIT, [gCtx]);
+        g.executeScripts(WorldScriptComponent.EVENT.INIT, [gCtx]);
       });
+
+      _this.registerGOCollision(gameObject);
+
+      console.log(
+        gameObject.name,
+        gameObject.getUUID() + ' loaded in ',
+        _this.name
+      );
 
       if (onLoad) onLoad();
     });
   }
 
   registerGOCollision(go) {
+    const _this = this;
+
     //collisions
     const collisions = this.collisions;
     go.traverse(function (child) {
-      const body = child.getComponent(ColliderComponent.TYPE);
-      if (body) {
-        body.getShapeWrappers().forEach(function (wrapper) {
+      if (_this.collisionsBuffer[child.getUUID()]) return; //already add
+
+      _this.collisionsBuffer[child.getUUID()] = [];
+
+      const colliderComponent = child.getComponent(ColliderComponent.TYPE);
+      if (colliderComponent) {
+        colliderComponent.getShapeWrappers().forEach(function (wrapper) {
           collisions.insert(wrapper.getShape());
         });
       }
     });
   }
 
+  updateCollisionBuffer() {
+    //collisions
+    const collisions = this.collisions;
+    this.gameObject.traverse(function (g) {
+      const colliderComponent = g.getComponent(ColliderComponent.TYPE);
+      if (colliderComponent) colliderComponent.update();
+    });
+    collisions.update();
+
+    const _this = this;
+
+    this.gameObject.traverse(function (g) {
+      if (g.isStatic()) return;
+      const colliderComponent = g.getComponent(ColliderComponent.TYPE);
+      if (colliderComponent) {
+        colliderComponent.getShapeWrappers().forEach(function (wrapper) {
+          const shape = wrapper.getShape();
+          const potentials = shape.potentials();
+          let result = collisions.createResult();
+          for (const p of potentials) {
+            //in ShapeWrapper shape are link to gameObject
+            const potentialG = p.getGameObject();
+            if (!potentialG.isStatic()) continue;
+            if (shape.collides(p, result)) {
+              _this.collisionsBuffer[g.getUUID()].push(potentialG.getUUID());
+            }
+          }
+        });
+      }
+    });
+  }
+
   unregisterGOCollision(go) {
+    const _this = this;
+
     //collisions
     go.traverse(function (child) {
       const body = child.getComponent(ColliderComponent.TYPE);
@@ -131,46 +184,95 @@ const WorldModule = class World {
         body.getShapeWrappers().forEach(function (wrapper) {
           wrapper.getShape().remove();
         });
+
+        //delete from buffer
+        delete _this.collisionsBuffer[child.getUUID()];
+        for (let id in _this.collisionsBuffer) {
+          const index = _this.collisionsBuffer[id].indexOf(go.getUUID());
+          if (index >= 0) _this.collisionsBuffer[id].splice(index, 1); //remove from the other
+        }
       }
     });
   }
 
   removeGameObject(uuid) {
+    console.log(uuid + ' remove from ', this.name);
     const go = this.gameObject.find(uuid);
+    if (!go) throw new Error(uuid, ' not found in ', this.gameObject);
     go.removeFromParent();
     this.unregisterGOCollision(go);
   }
 
   tick(gCtx) {
+    const _this = this;
+
     //Tick GameObject
     this.gameObject.traverse(function (g) {
-      g.executeScripts(ScriptComponent.EVENT.TICK, [gCtx]);
+      g.executeScripts(WorldScriptComponent.EVENT.TICK, [gCtx]);
     });
 
     //collisions
     const collisions = this.collisions;
     this.gameObject.traverse(function (g) {
-      const bC = g.getComponent(ColliderComponent.TYPE);
-      if (bC) bC.update();
+      const colliderComponent = g.getComponent(ColliderComponent.TYPE);
+      if (colliderComponent) colliderComponent.update();
     });
     collisions.update();
 
     this.gameObject.traverse(function (g) {
       if (g.isStatic()) return;
-      const bC = g.getComponent(ColliderComponent.TYPE);
-      if (bC) {
-        bC.getShapeWrappers().forEach(function (wrapper) {
-          const body = wrapper.getShape();
-          const potentials = body.potentials();
+      const colliderComponent = g.getComponent(ColliderComponent.TYPE);
+      if (colliderComponent) {
+        const collidedGO = [];
+        const buffer = _this.collisionsBuffer[g.getUUID()];
+
+        colliderComponent.getShapeWrappers().forEach(function (wrapper) {
+          const shape = wrapper.getShape();
+          const potentials = shape.potentials();
           let result = collisions.createResult();
           for (const p of potentials) {
             //in ShapeWrapper shape are link to gameObject
-            if (!p.getGameObject().isStatic()) continue;
-            if (body.collides(p, result)) {
-              bC.onCollision(result, gCtx);
+            const potentialG = p.getGameObject();
+            if (!potentialG.isStatic()) continue;
+            if (shape.collides(p, result)) {
+              collidedGO.push(potentialG.getUUID());
+
+              //g collides with potentialG
+              if (buffer.includes(potentialG.getUUID())) {
+                //already collided
+                g.traverse(function (child) {
+                  child.executeScripts(
+                    WorldScriptComponent.EVENT.IS_COLLIDING,
+                    [result, gCtx]
+                  );
+                });
+              } else {
+                //onEnter
+                buffer.push(potentialG.getUUID()); //register in buffer
+                g.traverse(function (child) {
+                  child.executeScripts(
+                    WorldScriptComponent.EVENT.ON_ENTER_COLLISION,
+                    [result, gCtx]
+                  );
+                });
+              }
             }
           }
         });
+
+        //notify onExit
+        for (let i = buffer.length - 1; i >= 0; i--) {
+          const uuid = buffer[i];
+          if (!collidedGO.includes(uuid)) {
+            g.traverse(function (child) {
+              child.executeScripts(
+                WorldScriptComponent.EVENT.ON_LEAVE_COLLISION,
+                [gCtx]
+              );
+            });
+            buffer.splice(i, 1); //remove from buffer
+          }
+        }
       }
     });
   }

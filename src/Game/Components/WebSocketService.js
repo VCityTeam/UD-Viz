@@ -9,6 +9,7 @@ import io from 'socket.io-client';
 export class WebSocketService {
   constructor() {
     this.socket = null;
+    this.events = {};
   }
   connectToServer() {
     //protocol
@@ -22,16 +23,32 @@ export class WebSocketService {
       secure: true,
     });
 
-    this.on('connect', () => {
+    this.socket.on('connect', () => {
       console.log('Connected to server!');
     });
 
-    this.on('disconnect', () => {
+    this.socket.on('disconnect', () => {
       console.log('Disconnected from server.');
     });
   }
 
+  reset(events) {
+    if (events) {
+      const _this = this;
+      events.forEach((element) => {
+        delete _this.events[element];
+        _this.socket.removeAllListeners(element);
+      });
+    } else {
+      for (let event in this.events) {
+        this.socket.removeAllListeners(event);
+      }
+      this.events = {};
+    }
+  }
+
   on(event, callback) {
+    this.events[event] = true;
     this.socket.on(event, callback);
   }
 

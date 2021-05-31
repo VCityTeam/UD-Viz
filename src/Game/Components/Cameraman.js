@@ -1,9 +1,18 @@
 /** @format */
 
+//TODO this class shoudl be a GameObject
+
 const THREE = require('three');
 
 const CAMERA_ANGLE = Math.PI / 12;
 const THIRD_PERSON_FOV = 60;
+
+const quaternionCam = new THREE.Quaternion().setFromEuler(
+  new THREE.Euler(Math.PI * 0.5, 0, 0)
+);
+const quaternionAngle = new THREE.Quaternion().setFromEuler(
+  new THREE.Euler(-CAMERA_ANGLE, 0, 0)
+);
 
 export class Cameraman {
   constructor(camera) {
@@ -65,13 +74,8 @@ export class Cameraman {
     this.camera.updateProjectionMatrix();
   }
 
-  computeTransformTarget(obstacle = null) {
-    const quaternionCam = new THREE.Quaternion().setFromEuler(
-      new THREE.Euler(Math.PI * 0.5, 0, 0)
-    );
-    const quaternionAngle = new THREE.Quaternion().setFromEuler(
-      new THREE.Euler(-CAMERA_ANGLE, 0, 0)
-    );
+  computeTransformTarget(obstacle = null, distance) {
+    if (!this.target) return null;
 
     //world transform
     const obj = this.target.fetchObject3D();
@@ -88,7 +92,7 @@ export class Cameraman {
       .applyQuaternion(quaternion);
 
     //TODO compute dist so the bottom of the gameobject is at the bottom of the screen
-    let distance = 2.5;
+    if (!distance) distance = 3;
 
     //compute intersection
     if (obstacle) {

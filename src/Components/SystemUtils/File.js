@@ -1,5 +1,7 @@
 /** @format */
 
+const jquery = require('jquery');
+
 module.exports = {
   downloadObjectAsJson: function (exportObj, exportName) {
     const dataStr =
@@ -11,5 +13,21 @@ module.exports = {
     document.body.appendChild(downloadAnchorNode); // required for firefox
     downloadAnchorNode.click();
     downloadAnchorNode.remove();
+  },
+  loadJSON(filePath) {
+    return new Promise((resolve, reject) => {
+      jquery.ajax({
+        type: 'GET',
+        url: filePath,
+        datatype: 'json',
+        success: (data) => {
+          resolve(data);
+        },
+        error: (e) => {
+          console.error(e);
+          reject();
+        },
+      });
+    });
   },
 };

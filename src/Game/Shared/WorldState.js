@@ -38,9 +38,11 @@ const WorldStateModule = class WorldState {
         console.log(g, ' is not in the scene anymore');
         g.removeFromParent();
       } else {
-        //update transform of the outdated one
-        if (outdatedGameObjectsJSON[uuid]) {
-          g.setTransformFromJSON(outdatedGameObjectsJSON[uuid].transform);
+        //update the outdated one
+        const o = outdatedGameObjectsJSON[uuid];
+        if (o) {
+          //update
+          g.setFromJSON(o);
           delete outdatedGameObjectsJSON[uuid]; //remove it
         }
       }

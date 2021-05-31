@@ -12,18 +12,34 @@ export class AssetsManager {
   constructor() {
     //manager to load scripts
     this.prefabs = {};
-    this.scripts = {};
+    this.worldScripts = {};
+    this.localScripts = {};
     this.models = {};
   }
 
-  fetchModel(idModel) {
+  createModel(idModel) {
     if (!this.models[idModel]) console.error('no model with id ', idModel);
-    return this.models[idModel].clone();
+
+    const result = this.models[idModel].clone();
+    result.traverse(function (child) {
+      if (child.material) {
+        child.material = child.material.clone();
+        child.material.needsUpdate = true;
+      }
+    });
+
+    return result;
   }
 
-  fetchScript(idScript) {
-    if (!this.scripts[idScript]) console.error('no script with id ', idScript);
-    return this.scripts[idScript];
+  fetchWorldScript(idScript) {
+    if (!this.worldScripts[idScript])
+      console.error('no world script with id ', idScript);
+    return this.worldScripts[idScript];
+  }
+
+  fetchLocalScript(id) {
+    if (!this.localScripts[id]) console.error('no local script with id ', id);
+    return this.localScripts[id];
   }
 
   fetchPrefab(idprefab) {
@@ -89,6 +105,51 @@ export class AssetsManager {
     this.models['gizmo'] = result;
   }
 
+  createFrame(w, h) {
+    const buildBox = function (
+      x,
+      y,
+      z,
+      offset,
+      rotation = new THREE.Vector3()
+    ) {
+      const geo = new THREE.BoxGeometry();
+      const result = new THREE.Mesh(geo, DEFAULT_MATERIAL);
+      result.position.add(offset);
+      result.scale.set(x, y, z);
+      result.rotation.setFromVector3(rotation);
+      return result;
+    };
+
+    const frame = new THREE.Object3D();
+    frame.name = 'frame';
+
+    const thickness = 0.1;
+    const depth = 0.05;
+    frame.add(buildBox(w, thickness, depth, new THREE.Vector3(0, h / 2, 0)));
+    frame.add(buildBox(w, thickness, depth, new THREE.Vector3(0, -h / 2, 0)));
+    frame.add(
+      buildBox(
+        h + thickness,
+        thickness,
+        depth,
+        new THREE.Vector3(-w / 2, 0, 0),
+        new THREE.Vector3(0, 0, Math.PI * 0.5)
+      )
+    );
+    frame.add(
+      buildBox(
+        h + thickness,
+        thickness,
+        depth,
+        new THREE.Vector3(w / 2, 0, 0),
+        new THREE.Vector3(0, 0, Math.PI * 0.5)
+      )
+    );
+
+    return frame;
+  }
+
   buildPointerMouse() {
     const geometry = new THREE.CylinderGeometry(0.15, 0, 0.3, 32);
     const cylinder = new THREE.Mesh(geometry, DEFAULT_MATERIAL);
@@ -96,18 +157,29 @@ export class AssetsManager {
     this.models['pointer_mouse'] = cylinder;
   }
 
-  buildSprite(label) {
+  createSprite(label) {
+    const texture = this.createLabelTexture(label, 'rgba(255, 255, 255, 0)');
+    const material = new THREE.SpriteMaterial({
+      map: texture,
+    });
+    material.alphaTest = 0.5;
+    const result = new THREE.Sprite(material);
+    result.scale.set(1, 0.3, 1);
+    return result;
+  }
+
+  createLabelTexture(text, clearColor) {
     //create texture with name on it
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
 
-    ctx.fillStyle = 'rgba(255, 255, 255, 0)';
+    ctx.fillStyle = clearColor;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     ctx.fillStyle = 'black';
     ctx.font = '50px Arial';
-    const wT = ctx.measureText(label).width;
-    ctx.fillText(label, (canvas.width - wT) * 0.5, canvas.height * 0.5);
+    const wT = ctx.measureText(text).width;
+    ctx.fillText(text, (canvas.width - wT) * 0.5, canvas.height * 0.5);
 
     const texture = new THREE.TextureLoader().load(
       canvas.toDataURL('image/png')
@@ -115,17 +187,78 @@ export class AssetsManager {
     texture.flipY = true;
     texture.flipX = true;
 
-    const material = new THREE.SpriteMaterial({
-      map: texture,
-    });
-    material.alphaTest = 0.5;
-    const result = new THREE.Sprite(material);
-    result.scale.set(1, 0.3, 1);
-
-    return result;
+    return texture;
   }
 
-  parse(id, obj, anchor) {
+  createImage(path, w = 1, h = 1) {
+    const texture = new THREE.TextureLoader().load(path);
+    const material = new THREE.MeshBasicMaterial({ map: texture });
+    const geometry = new THREE.PlaneGeometry(w, h, 32);
+    const plane = new THREE.Mesh(geometry, material);
+
+    const frame = this.createFrame(w, h);
+    frame.add(plane);
+    return frame;
+  }
+
+  createVideo(path, w = 1, h = 1, size) {
+    const video = document.createElement('video');
+    video.src = path;
+    video.autoplay = true;
+    video.muted = true;
+    video.load(); // must call after setting/changing source
+    video.play();
+
+    const videoImage = document.createElement('canvas');
+
+    videoImage.width = size.width;
+    videoImage.height = size.height;
+
+    const videoImageContext = videoImage.getContext('2d');
+    videoImageContext.fillStyle = '#000000';
+    videoImageContext.fillRect(0, 0, videoImage.width, videoImage.height);
+
+    const videoTexture = new THREE.Texture(videoImage);
+    videoTexture.minFilter = THREE.LinearFilter;
+    videoTexture.magFilter = THREE.LinearFilter;
+
+    const movieMaterial = new THREE.MeshBasicMaterial({
+      map: videoTexture,
+      side: THREE.DoubleSide,
+    });
+    const movieGeometry = new THREE.PlaneGeometry(w, h);
+    const movieScreen = new THREE.Mesh(movieGeometry, movieMaterial);
+
+    const frame = this.createFrame(w, h);
+    frame.add(movieScreen);
+
+    const tick = function () {
+      if (video.ended) video.play();
+      if (video.readyState === video.HAVE_ENOUGH_DATA) {
+        videoImageContext.drawImage(video, 0, 0);
+        if (videoTexture) videoTexture.needsUpdate = true;
+      }
+    };
+
+    return { frame: frame, tick: tick };
+  }
+
+  createText(text, w = 1, h = 1) {
+    const texture = this.createLabelTexture(text, 'rgba(255, 255, 255, 255)');
+    const material = new THREE.MeshBasicMaterial({ map: texture });
+    const geometry = new THREE.PlaneGeometry(w, h, 32);
+    const plane = new THREE.Mesh(geometry, material);
+    const frame = this.createFrame(w, h);
+    frame.add(plane);
+    return frame;
+  }
+
+  parse(id, obj, modelData) {
+    const anchor = modelData.anchor;
+    const scale = modelData.scale;
+    const rotation = modelData.rotation;
+    const noShadow = modelData.noShadow || false;
+
     //rotation
     const quatTHREE2UDV = new THREE.Quaternion().setFromEuler(
       new THREE.Euler(-Math.PI * 0.5, 0, Math.PI)
@@ -154,10 +287,27 @@ export class AssetsManager {
         throw new Error('no anchor');
     }
 
+    //scale
+    if (scale) {
+      const newScale = obj.scale;
+      newScale.x *= scale.x;
+      newScale.y *= scale.y;
+      newScale.z *= scale.z;
+      obj.scale.copy(newScale);
+    }
+
+    if (rotation) {
+      const newRotation = obj.rotation;
+      newRotation.x += rotation.x;
+      newRotation.y += rotation.y;
+      newRotation.z += rotation.z;
+      obj.rotation.copy(newRotation);
+    }
+
     parent.add(obj);
 
     parent.traverse(function (child) {
-      if (child.geometry) {
+      if (child.geometry && !noShadow) {
         child.castShadow = true;
         child.receiveShadow = true;
       }
@@ -182,13 +332,12 @@ export class AssetsManager {
       let count = 0;
       for (let idModel in config.models) {
         const id = idModel;
-        const modelAnchor = config.models[id].anchor;
-        const modelPath = config.models[id].path;
+        const modelData = config.models[id];
         loader.load(
-          modelPath,
+          modelData.path,
           (data) => {
             //parse
-            _this.parse(id, data.scene, modelAnchor);
+            _this.parse(id, data.scene, modelData);
 
             //check if finish
             count++;
@@ -202,18 +351,18 @@ export class AssetsManager {
         );
       }
     });
-    const scriptsPromise = new Promise((resolve, reject) => {
+    const worldScriptsPromise = new Promise((resolve, reject) => {
       let count = 0;
-      for (let idScript in config.scripts) {
-        const scriptPath = config.scripts[idScript].path;
+      for (let idScript in config.worldScripts) {
+        const scriptPath = config.worldScripts[idScript].path;
         jquery.get(
           scriptPath,
           function (scriptString) {
-            _this.scripts[idScript] = eval(scriptString);
+            _this.worldScripts[idScript] = eval(scriptString);
             //check if finish
             count++;
-            if (count == Object.keys(config.scripts).length) {
-              console.log('Scripts loaded ', _this.scripts);
+            if (count == Object.keys(config.worldScripts).length) {
+              console.log('World Scripts loaded ', _this.worldScripts);
               resolve();
             }
           },
@@ -221,7 +370,25 @@ export class AssetsManager {
         );
       }
     });
-
+    const localScriptsPromise = new Promise((resolve, reject) => {
+      let count = 0;
+      for (let idScript in config.localScripts) {
+        const scriptPath = config.localScripts[idScript].path;
+        jquery.get(
+          scriptPath,
+          function (scriptString) {
+            _this.localScripts[idScript] = eval(scriptString);
+            //check if finish
+            count++;
+            if (count == Object.keys(config.localScripts).length) {
+              console.log('Local Scripts loaded ', _this.localScripts);
+              resolve();
+            }
+          },
+          'text'
+        );
+      }
+    });
     const prefabsPromise = new Promise((resolve, reject) => {
       let count = 0;
       for (let idPrefab in config.prefabs) {
@@ -246,7 +413,8 @@ export class AssetsManager {
     const promises = [];
     if (config.models) promises.push(modelPromise);
     if (config.prefabs) promises.push(prefabsPromise);
-    if (config.scripts) promises.push(scriptsPromise);
+    if (config.worldScripts) promises.push(worldScriptsPromise);
+    if (config.localScripts) promises.push(localScriptsPromise);
 
     return Promise.all(promises);
   }

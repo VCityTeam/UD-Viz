@@ -9,25 +9,42 @@ import { Cameraman, Routine } from '../Components/Cameraman';
 
 import { THREEUtils } from '../Components/THREEUtils';
 
-const THREE = require('three');
-import proj4 from 'proj4';
+import * as THREE from 'three';
+import * as proj4 from 'proj4';
 import * as itowns from 'itowns';
 
 import './GameView.css';
+import LocalScript from '../Shared/GameObject/Components/LocalScript';
 import Render from '../Shared/GameObject/Components/Render';
+import { isFunction } from 'jquery';
 
 const udvShared = require('../Shared/Shared');
 const Command = udvShared.Command;
-const Data = udvShared.Components.Data;
 const WorldState = udvShared.WorldState;
-const WorldStateDiff = udvShared.WorldStateDiff;
+const Data = udvShared.Data;
+
+//DEBUG
+let id = 0;
 
 export class GameView {
   constructor(params) {
+    this.id = id;
+    id++;
+
+    params.htmlParent = params.htmlParent || document.body;
+
     //html
     this.rootHtml = document.createElement('div');
     this.rootHtml.id = 'viewerDiv'; //itowns
+    params.htmlParent.appendChild(this.rootHtml);
     window.addEventListener('resize', this.onResize.bind(this));
+
+    //ui
+    this.ui = document.createElement('div');
+    this.ui.classList.add('ui_GameView');
+
+    this.fpsLabel = null;
+    this.avatarCount = null;
 
     //game running with  a server simulating world or local
     this.isLocal = params.isLocal;
@@ -52,11 +69,16 @@ export class GameView {
     this.object3D.name = 'GameView_Object3D';
     this.obstacle = new THREE.Object3D();
     this.obstacle.name = 'GameView_Obstacle';
-    this.pointerMouseObject = this.assetsManager.fetchModel('pointer_mouse');
+    this.pointerMouseObject = this.assetsManager.createModel('pointer_mouse');
     this.pointerMouseObject.name = 'GameView_PointerMouse';
+
+    this.fogObject = null;
 
     //register last pass
     this.lastState = null;
+
+    //flag
+    this.disposed = false;
 
     //camera
     this.cameraman = null;
@@ -71,18 +93,35 @@ export class GameView {
     //model only in Local
     this.world = null;
 
-    //to pass gameobject script
+    //to pass gameobject world script (only local)
     this.gameContext = {
       assetsManager: this.assetsManager,
-      inputManager: this.inputManager,
       dt: 0,
       commands: null,
       world: null,
       UDVShared: udvShared,
     };
 
+    //to pass local script
+    this.localContext = {
+      assetsManager: this.assetsManager,
+      inputManager: this.inputManager,
+      dt: 0,
+      UDVShared: udvShared,
+    };
+
     //ref uuid of go in the last state
     this.currentUUID = {};
+
+    this.pause = false;
+  }
+
+  setPause(value) {
+    this.pause = value;
+  }
+
+  appendToUI(el) {
+    this.ui.appendChild(el);
   }
 
   setWorld(world) {
@@ -101,36 +140,102 @@ export class GameView {
     return this.rootHtml;
   }
 
+  initUI() {
+    this.fpsLabel = document.createElement('div');
+    this.fpsLabel.classList.add('label_GameView');
+    this.ui.appendChild(this.fpsLabel);
+
+    this.avatarCount = document.createElement('div');
+    this.avatarCount.classList.add('label_GameView');
+    this.ui.appendChild(this.avatarCount);
+
+    this.rootHtml.appendChild(this.ui);
+  }
+
+  setOnFirstStateEnd(f) {
+    this.onFirstStateEnd = f;
+  }
+
+  onFirstStateJSON(firstStateJSON) {
+    const state = new WorldState(firstStateJSON.state);
+    this.worldStateInterpolator.onFirstState(state);
+    this.onFirstState(state);
+    this.avatarUUID = firstStateJSON.avatarID;
+  }
+
   onFirstState(state) {
     //build itowns view
     this.initItownsView(state);
-
-    //cameraman
-    this.cameraman = new Cameraman(this.view.camera.camera3D);
-
     this.initScene(state);
     this.initInputs(state);
+    this.initUI();
+
+    this.cameraman = new Cameraman(this.view.camera.camera3D);
 
     //register in mainloop
+    const _this = this;
+    const fps = this.config.game.fps;
     if (this.isLocal) {
-      this.view.addFrameRequester(
-        itowns.MAIN_LOOP_EVENTS.UPDATE_END,
-        this.updateViewLocal.bind(this)
-      );
+      let now;
+      let then = Date.now();
+      let delta;
+      const tick = function () {
+        if (_this.disposed) return; //stop requesting frame
+
+        requestAnimationFrame(tick);
+
+        now = Date.now();
+        delta = now - then;
+
+        if (delta > 1000 / fps) {
+          // update time stuffs
+          then = now - (delta % 1000) / fps;
+          _this.updateViewLocal(delta);
+        }
+      };
+      tick();
     } else {
-      this.view.addFrameRequester(
-        itowns.MAIN_LOOP_EVENTS.UPDATE_END,
-        this.updateViewServer.bind(this)
-      );
+      let now;
+      let then = Date.now();
+      let delta;
+      const tick = function () {
+        if (_this.disposed) return; //stop requesting frame
+
+        requestAnimationFrame(tick);
+
+        now = Date.now();
+        delta = now - then;
+
+        if (delta > 1000 / fps) {
+          // update time stuffs
+          then = now - (delta % 1000) / fps;
+          _this.updateViewServer(delta);
+        }
+      };
+      tick();
     }
+
+    if (this.onFirstStateEnd) this.onFirstStateEnd();
 
     //resize
     setTimeout(this.onResize.bind(this), 1000);
   }
 
+  getCameraman() {
+    return this.cameraman;
+  }
+
+  setFog(value) {
+    if (value) {
+      this.view.scene.fog = this.fogObject;
+    } else {
+      this.view.scene.fog = null;
+    }
+  }
+
   initScene(state) {
     const o = state.getOrigin();
-    const [x, y] = proj4('EPSG:3946').forward([o.lng, o.lat]);
+    const [x, y] = proj4.default('EPSG:3946').forward([o.lng, o.lat]);
 
     this.object3D.position.x = x;
     this.object3D.position.y = y;
@@ -148,7 +253,7 @@ export class GameView {
       this.config.game.skyColor.g,
       this.config.game.skyColor.b
     );
-    this.view.scene.fog = new THREE.Fog(
+    this.fogObject = new THREE.Fog(
       skyColor,
       this.config.game.fog.near,
       this.config.game.fog.far
@@ -173,7 +278,17 @@ export class GameView {
   }
 
   placeLight() {
-    const bb = new THREE.Box3().setFromObject(this.object3D);
+    const obj = this.object3D.clone();
+
+    //compute bb only with mesh receiving shadow WIP
+    // obj.traverse(function (child) {
+    //   if (child.geometry) {
+    //     if (!child.receiveShadow) debugger;
+    //     child.visible = child.receiveShadow;
+    //   }
+    // });
+
+    const bb = new THREE.Box3().setFromObject(obj);
     const directionalLight = this.directionalLight;
 
     //place directionnal lights
@@ -200,14 +315,11 @@ export class GameView {
   }
 
   updateViewServer(dt) {
-    //DEBUG
-    window.UDVDebugger.displayShadowMap(
-      this.directionalLight,
-      this.view.mainLoop.gfxEngine.renderer
-    );
-
     //TODO itowns BUG
-    if (!isNaN(dt)) this.gameContext.dt = dt;
+    if (!isNaN(dt)) {
+      this.gameContext.dt = dt;
+      this.localContext.dt = dt;
+    }
 
     //send cmd
     this.inputManager.sendCommandsToServer(this.webSocketService);
@@ -217,13 +329,16 @@ export class GameView {
 
   updateViewLocal(dt) {
     //TODO itowns BUG
-    if (!isNaN(dt)) this.gameContext.dt = dt;
+    if (!isNaN(dt)) {
+      this.gameContext.dt = dt;
+      this.localContext.dt = dt;
+    }
 
     //DEBUG
-    window.UDVDebugger.displayShadowMap(
-      this.directionalLight,
-      this.view.mainLoop.gfxEngine.renderer
-    );
+    // window.UDVDebugger.displayShadowMap(
+    //   this.directionalLight,
+    //   this.view.mainLoop.gfxEngine.renderer
+    // );
 
     //tick world
     this.gameContext.commands = this.inputManager.computeCommands();
@@ -239,6 +354,7 @@ export class GameView {
   update(state) {
     const _this = this;
     const newGO = [];
+    const ctx = this.localContext;
 
     if (this.lastState) {
       if (!state.getGameObject()) throw new Error('no gameObject in state');
@@ -247,10 +363,9 @@ export class GameView {
       lastGO.traverse(function (g) {
         const uuid = g.getUUID();
         const current = state.getGameObject().find(uuid);
-        if (current) {
-          //still exist update only the transform
-          g.setTransform(current.getTransform());
-        } else {
+        if (current && !g.isStatic()) {
+          g.updateNoStaticFromGO(current, _this.assetsManager);
+        } else if (!current) {
           //do not exist remove it
           g.removeFromParent();
           delete _this.currentUUID[g.getUUID()];
@@ -286,13 +401,18 @@ export class GameView {
       if (!_this.isLocal)
         g.initAssetsComponents(_this.assetsManager, udvShared);
 
+      g.traverse(function (child) {
+        const scriptComponent = child.getComponent(LocalScript.TYPE);
+        if (scriptComponent)
+          scriptComponent.execute(LocalScript.EVENT.INIT, [ctx]);
+      });
+
       //add static object to obstacle
       if (g.isStatic()) {
         //register in obstacle
         const r = g.getComponent(Render.TYPE);
         if (r) {
           const clone = r.getOriginalObject3D().clone();
-          // const clone = _this.assetsManager.fetchModel('sphere');
 
           const wT = g.computeWorldTransform();
 
@@ -314,19 +434,28 @@ export class GameView {
       }
     });
 
-    if (newGO.length) this.placeLight();
+    const go = state.getGameObject();
+
+    //tick local script
+    go.traverse(function (child) {
+      const scriptComponent = child.getComponent(LocalScript.TYPE);
+      if (scriptComponent)
+        scriptComponent.execute(LocalScript.EVENT.TICK, [ctx]);
+    });
 
     //rebuild object
     this.object3D.children.length = 0;
     this.object3D.add(this.pointerMouseObject);
+    this.object3D.add(go.fetchObject3D());
+    this.object3D.updateMatrixWorld();
 
-    const obj = state.getGameObject().fetchObject3D();
-    if (obj) {
-      this.object3D.add(obj);
-      this.object3D.updateMatrixWorld();
-    } else {
-      console.warn('no object3D in GameObject');
-    }
+    //update shadow
+    if (newGO.length) this.placeLight();
+
+    //buffer
+    this.lastState = state;
+
+    if (this.pause) return; //no render
 
     this.cameraman.tick(
       this.gameContext.dt,
@@ -335,11 +464,21 @@ export class GameView {
       this.obstacle
     );
 
-    //TODO do not notify everytime ?
-    this.view.notifyChange();
+    //render
+    const scene = this.view.scene;
+    const renderer = this.view.mainLoop.gfxEngine.renderer;
+    renderer.clearColor();
+    renderer.render(scene, this.cameraman.getCamera());
 
-    //buffer
-    this.lastState = state;
+    //TODO ne pas lancer des rendu si itowns vient d'en faire un
+
+    //update ui
+    this.fpsLabel.innerHTML = 'FPS = ' + Math.round(1000 / this.gameContext.dt);
+    let avatarCount = 0;
+    go.traverse(function (g) {
+      if (g.name == 'avatar') avatarCount++;
+    });
+    this.avatarCount.innerHTML = 'Player: ' + avatarCount;
   }
 
   initItownsView(state) {
@@ -347,13 +486,13 @@ export class GameView {
     // (planarView of iTowns). It is indeed needed
     // to convert the coordinates received from the world server
     // to this coordinate system.
-    proj4.defs(
+    proj4.default.defs(
       'EPSG:3946',
       '+proj=lcc +lat_1=45.25 +lat_2=46.75' +
         ' +lat_0=46 +lon_0=3 +x_0=1700000 +y_0=5200000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs'
     );
     const o = state.getOrigin();
-    const [x, y] = proj4('EPSG:3946').forward([o.lng, o.lat]);
+    const [x, y] = proj4.default('EPSG:3946').forward([o.lng, o.lat]);
     const r = this.config.itowns.radiusExtent;
 
     // Define geographic extent: CRS, min/max X, min/max Y
@@ -383,24 +522,24 @@ export class GameView {
     };
 
     //LYON WMS
-    const wmsImagerySource = new itowns.WMSSource({
-      extent: extent,
-      name: 'Ortho2018_Dalle_unique_8cm_CC46',
-      url: 'https://download.data.grandlyon.com/wms/grandlyon',
-      version: '1.3.0',
-      projection: 'EPSG:3946',
-      format: 'image/jpeg',
-    });
-    // Add a WMS imagery layer
-    const wmsImageryLayer = new itowns.ColorLayer('wms_imagery', {
-      updateStrategy: {
-        type: itowns.STRATEGY_DICHOTOMY,
-        options: {},
-      },
-      source: wmsImagerySource,
-      transparent: true,
-    });
-    this.view.addLayer(wmsImageryLayer);
+    // const wmsImagerySource = new itowns.WMSSource({
+    //   extent: extent,
+    //   name: 'Ortho2018_Dalle_unique_8cm_CC46',
+    //   url: 'https://download.data.grandlyon.com/wms/grandlyon',
+    //   version: '1.3.0',
+    //   projection: 'EPSG:3946',
+    //   format: 'image/jpeg',
+    // });
+    // // Add a WMS imagery layer
+    // const wmsImageryLayer = new itowns.ColorLayer('wms_imagery', {
+    //   updateStrategy: {
+    //     type: itowns.STRATEGY_DICHOTOMY,
+    //     options: {},
+    //   },
+    //   source: wmsImagerySource,
+    //   transparent: true,
+    // });
+    // this.view.addLayer(wmsImageryLayer);
 
     // Add a WMS elevation source
     const wmsElevationSource = new itowns.WMSSource({
@@ -419,88 +558,10 @@ export class GameView {
       source: wmsElevationSource,
     });
     this.view.addLayer(wmsElevationLayer);
-
-    //DEBUG
-    return;
-
-    //  ADD 3D Tiles Layer
-    let layerConfig = 'building';
-    // Positional arguments verification
-    if (
-      !this.config['3DTilesLayer'][layerConfig] ||
-      !this.config['3DTilesLayer'][layerConfig]['id'] ||
-      !this.config['3DTilesLayer'][layerConfig]['url']
-    ) {
-      throw new Error('config wrong');
-    }
-
-    const extensionsConfig = this.config['3DTilesLayer'][layerConfig][
-      'extensions'
-    ];
-    const extensions = new itowns.C3DTExtensions();
-    if (!!extensionsConfig) {
-      for (let i = 0; i < extensionsConfig.length; i++) {
-        if (extensionsConfig[i] === '3DTILES_temporal') {
-          extensions.registerExtension('3DTILES_temporal', {
-            [itowns.C3DTilesTypes.batchtable]: $3DTemporalBatchTable,
-            [itowns.C3DTilesTypes.boundingVolume]: $3DTemporalBoundingVolume,
-            [itowns.C3DTilesTypes.tileset]: $3DTemporalTileset,
-          });
-        } else if (extensionsConfig[i] === '3DTILES_batch_table_hierarchy') {
-          extensions.registerExtension('3DTILES_batch_table_hierarchy', {
-            [itowns.C3DTilesTypes.batchtable]:
-              itowns.C3DTBatchTableHierarchyExtension,
-          });
-        } else {
-          console.warn(
-            'The 3D Tiles extension ' +
-              extensionsConfig[i] +
-              ' specified in generalDemoConfig.json is not supported ' +
-              'by UD-Viz yet. Only 3DTILES_temporal and ' +
-              '3DTILES_batch_table_hierarchy are supported.'
-          );
-        }
-      }
-    }
-
-    const $3dTilesLayer = new itowns.C3DTilesLayer(
-      this.config['3DTilesLayer'][layerConfig]['id'],
-      {
-        name: 'Lyon-2015-'.concat(layerConfig),
-        source: new itowns.C3DTilesSource({
-          url: this.config['3DTilesLayer'][layerConfig]['url'],
-        }),
-        registeredExtensions: extensions,
-      },
-      this.view
-    );
-
-    let material;
-    if (this.config['3DTilesLayer'][layerConfig]['pc_size']) {
-      material = new THREE.PointsMaterial({
-        size: this.config['3DTilesLayer'][layerConfig]['pc_size'],
-        vertexColors: true,
-      });
-    } else if (!this.config['3DTilesLayer'][layerConfig]['color']) {
-      material = new THREE.MeshLambertMaterial({ color: 0xffffff });
-    } else {
-      material = new THREE.MeshLambertMaterial({
-        color: parseInt(this.config['3DTilesLayer'][layerConfig]['color']),
-      });
-    }
-
-    $3dTilesLayer.overrideMaterials = material;
-    $3dTilesLayer.material = material;
-
-    const $3DTilesManager = new TilesManager(this.view, $3dTilesLayer);
-    new LayerManager(this.view).tilesManagers.push($3DTilesManager);
-    const [$a] = [$3dTilesLayer, $3DTilesManager];
-
-    itowns.View.prototype.addLayer.call(this.view, $a);
   }
 
   initInputs(state) {
-    //TODO réfléchir ou mettre ce code
+    //TODO réfléchir ou mettre ce code faire des scripts dans les gameobject qui tourne coté client
     const viewerDiv = this.rootHtml;
     const camera = this.view.camera.camera3D;
     const _this = this;
@@ -559,6 +620,7 @@ export class GameView {
               _this.view.controls.dispose();
               _this.view.controls = null;
               _this.cameraman.setFilmingTarget(true);
+              _this.setFog(true);
             }
           )
         );
@@ -571,6 +633,8 @@ export class GameView {
         const endQuaternion = new THREE.Quaternion().setFromEuler(
           new THREE.Euler(Math.PI / 5, 0, 0)
         );
+
+        _this.setFog(false);
 
         _this.cameraman.addRoutine(
           new Routine(
@@ -756,10 +820,12 @@ export class GameView {
 
   dispose() {
     this.view.dispose();
-
     this.inputManager.dispose();
     window.removeEventListener('resize', this.onResize.bind(this));
-    this.rootHtml.parentElement.removeChild(this.rootHtml);
+    this.rootHtml.remove();
+
+    //flag to stop tick
+    this.disposed = true;
   }
 
   load() {
@@ -767,42 +833,6 @@ export class GameView {
 
     return new Promise((resolve, reject) => {
       if (!_this.isLocal) {
-        //wait to be notify by server
-        if (!_this.webSocketService) throw new Error('no websocket service');
-
-        //communication server
-        _this.webSocketService.connectToServer();
-
-        // Register callbacks
-        _this.webSocketService.on(
-          Data.WEBSOCKET.MSG_TYPES.JOIN_SERVER,
-          (firstStateJSON) => {
-            if (!firstStateJSON) throw new Error('no data');
-
-            console.log('FIRST JSON', firstStateJSON);
-
-            const state = new WorldState(firstStateJSON.state);
-            _this.worldStateInterpolator.onFirstState(state);
-            _this.onFirstState(state);
-            _this.avatarUUID = firstStateJSON.avatarID;
-          }
-        );
-
-        let firstDiff = true;
-        _this.webSocketService.on(
-          Data.WEBSOCKET.MSG_TYPES.WORLDSTATE_DIFF,
-          (diffJSON) => {
-            if (firstDiff) {
-              firstDiff = false;
-              console.log('FIRST DIFF ', diffJSON);
-            }
-
-            _this.worldStateInterpolator.onNewDiff(
-              new WorldStateDiff(diffJSON)
-            );
-          }
-        );
-
         resolve();
       } else {
         //load world

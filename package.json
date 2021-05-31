@@ -1,6 +1,6 @@
 {
   "name": "ud-viz",
-  "version": "2.31.6",
+  "version": "2.31.9",
   "description": "A collection of itowns plugins",
   "main": "src",
   "scripts": {
@@ -23,12 +23,12 @@
   "homepage": "https://github.com/VCityTeam/UD-Viz/",
   "peerDependencies": {},
   "dependencies": {
-    "proj4": "^2.7.0",
-    "three": "0.126.1",
     "detect-collisions": "^2.5.2",
-    "itowns": "^2.31.0",
+    "itowns": "^2.32.0",
     "jquery": "^3.6.0",
+    "proj4": "^2.7.0",
     "socket.io-client": "^4.0.0",
+    "three": "0.126.1",
     "vis-data": "^7.1.2",
     "vis-network": "^9.0.3"
   },
