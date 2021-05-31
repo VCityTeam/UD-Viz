@@ -6,6 +6,37 @@ UD-Viz is a JavaScript library based on [iTowns](https://github.com/itowns/itown
 Developing UD-Viz requires some knowledge about [JS](https://github.com/VCityTeam/UD-SV/blob/master/UD-Doc/Devel/ToolJavaScript.md), node.js, npm and [three.js](https://threejs.org/).
 
 ## Installation
+### Prerequisite: install nodejs and npm
+
+* **Ubuntu**
+
+  * Install and update npm
+
+    ```bash
+    sudo apt-get install npm    ## Will pull NodeJS
+    sudo npm install -g n     
+    sudo n latest
+    ```
+
+  * References: [how can I update Nodejs](https://askubuntu.com/questions/426750/how-can-i-update-my-nodejs-to-the-latest-version), and [install Ubuntu](http://www.hostingadvice.com/how-to/install-nodejs-ubuntu-14-04/#ubuntu-package-manager)
+
+* **Windows**
+  
+  * Install and update npm with Windows Powershell
+
+    ```bash
+    iex (new-object net.webclient).downstring(‘https://get.scoop.sh’)
+    scoop install nodejs
+    ```
+
+### Installing the UD-Viz library
+
+```bash
+git clone https://github.com/VCityTeam/UD-Viz.git
+cd UD-Viz
+npm install
+```
+
 You can find install notes [here](https://github.com/MEPP-team/UD-Viz/blob/master/install.md).
 
 ## Demos
