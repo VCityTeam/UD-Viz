@@ -23,7 +23,7 @@ Developing UD-Viz requires some knowledge about [JS](https://github.com/VCityTea
 * **Windows**
   
   * Installing from the [installer](https://nodejs.org/en/download/)
-  * Installing with the CLI
+  * Installing with the [CLI](https://en.wikipedia.org/wiki/Command-line_interface)
 
     ```bash
     iex (new-object net.webclient).downstring(‘https://get.scoop.sh’)
