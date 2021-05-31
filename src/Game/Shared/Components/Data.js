@@ -7,6 +7,7 @@ module.exports = Object.freeze({
       WORLDSTATE_DIFF: 'worldstate_diff',
       SIGN_UP: 'sign_up',
       SIGN_IN: 'sign_in',
+      GUEST_CONNECTION: 'guest_connection',
       SERVER_ALERT: 'server_alert',
       SIGNED: 'signed',
       GAME_APP_LOADED: 'game_app_loaded',
