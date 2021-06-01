@@ -10,7 +10,7 @@ const CommandModule = class Command {
     this.type = json.type;
     this.userID = json.userID;
     this.avatarID = json.avatarID;
-    this.data = json.data;
+    this.data = json.data || null;
   }
 
   getData() {
@@ -38,7 +38,6 @@ const CommandModule = class Command {
   }
 
   toJSON() {
-    
     return {
       type: this.type,
       avatarID: this.avatarID,
