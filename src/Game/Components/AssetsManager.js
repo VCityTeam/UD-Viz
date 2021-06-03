@@ -260,10 +260,10 @@ export class AssetsManager {
     const noShadow = modelData.noShadow || false;
 
     //rotation
-    const quatTHREE2UDV = new THREE.Quaternion().setFromEuler(
+    const quatYUP2ZUP = new THREE.Quaternion().setFromEuler(
       new THREE.Euler(-Math.PI * 0.5, 0, Math.PI)
     );
-    obj.applyQuaternion(quatTHREE2UDV);
+    obj.applyQuaternion(quatYUP2ZUP);
 
     const bbox = new THREE.Box3().setFromObject(obj);
     const parent = new THREE.Object3D();
@@ -277,6 +277,7 @@ export class AssetsManager {
         break;
       case 'min':
         obj.position.sub(bbox.min);
+        console.log(id, bbox.min);
         break;
       case 'center_min':
         let centerMin = bbox.min.clone().lerp(bbox.max, 0.5);
@@ -284,7 +285,6 @@ export class AssetsManager {
         obj.position.sub(centerMin);
         break;
       default:
-        throw new Error('no anchor');
     }
 
     //scale
