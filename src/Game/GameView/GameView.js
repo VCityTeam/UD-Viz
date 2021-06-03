@@ -21,15 +21,9 @@ import { isFunction } from 'jquery';
 const udvShared = require('../Shared/Shared');
 const Command = udvShared.Command;
 const WorldState = udvShared.WorldState;
-const Data = udvShared.Data;
-
-//DEBUG
-let id = 0;
 
 export class GameView {
   constructor(params) {
-    this.id = id;
-    id++;
 
     params.htmlParent = params.htmlParent || document.body;
 
