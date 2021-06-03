@@ -277,7 +277,6 @@ export class AssetsManager {
         break;
       case 'min':
         obj.position.sub(bbox.min);
-        console.log(id, bbox.min);
         break;
       case 'center_min':
         let centerMin = bbox.min.clone().lerp(bbox.max, 0.5);
