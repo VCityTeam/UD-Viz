@@ -314,6 +314,18 @@ export class GameView {
     cameraShadow.updateProjectionMatrix();
   }
 
+  getWorldStateInterpolator() {
+    return this.worldStateInterpolator;
+  }
+
+  getLastState() {
+    return this.lastState;
+  }
+
+  getInputManager() {
+    return this.inputManager;
+  }
+
   updateViewServer(dt) {
     //TODO itowns BUG
     if (!isNaN(dt)) {
