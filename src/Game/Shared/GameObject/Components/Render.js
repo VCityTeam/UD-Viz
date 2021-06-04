@@ -92,7 +92,7 @@ const RenderModule = class Render {
 
     //stock data in userData
     this.object3D.userData = {
-      uuid: this.parent.getUUID(),
+      gameObjectUUID: this.parent.getUUID(),
     };
 
     //get the 3D model
