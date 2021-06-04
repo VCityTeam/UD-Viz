@@ -96,8 +96,9 @@ class ShapeWrapper {
         const circle = new Circle(json.center.x, json.center.y, json.radius);
 
         this.update = function (worldtransform) {
-          circle.x = json.center.x + worldtransform.position.x;
-          circle.y = json.center.y + worldtransform.position.y;
+          const wp = worldtransform.getPosition();
+          circle.x = json.center.x + wp.x;
+          circle.y = json.center.y + wp.y;
         };
 
         this.shape = circle;
@@ -114,10 +115,8 @@ class ShapeWrapper {
         this.update = function (worldtransform) {
           const points = [];
           json.points.forEach(function (p) {
-            const point = [
-              p.x + worldtransform.position.x,
-              p.y + worldtransform.position.y,
-            ];
+            const wp = worldtransform.getPosition();
+            const point = [p.x + wp.x, p.y + wp.y];
             points.push(point);
             //TODO handle rotation
           });
