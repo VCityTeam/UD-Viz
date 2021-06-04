@@ -1,8 +1,10 @@
 /** @format */
 
-const THREE = require('three');
+import * as THREE from 'three';
 
-module.exports = {
+//TODO create an object Transform with a clone method
+
+const THREEUtils = {
   textureEncoding: THREE.RGBDEncoding,
 
   addLights(scene) {
@@ -35,74 +37,6 @@ module.exports = {
     // renderer.toneMapping = THREE.ReinhardToneMapping;
     // renderer.toneMappingExposure = 1;
   },
-
-  Transform: class Transform {
-    constructor(position, rotation, scale) {
-      this.position = position || new THREE.Vector3();
-      this.rotation = rotation || new THREE.Vector3();
-      this.scale = scale || new THREE.Vector3(1, 1, 1);
-    }
-
-    getPosition() {
-      return this.position;
-    }
-
-    setPosition(position) {
-      this.position = position;
-    }
-
-    getRotation() {
-      return this.rotation;
-    }
-
-    setRotation(rotation) {
-      this.rotation = rotation;
-    }
-
-    getScale() {
-      return this.scale;
-    }
-
-    setScale(scale) {
-      this.scale = scale;
-    }
-
-    clone() {
-      return new Transform(
-        this.position.clone(),
-        this.rotation.clone(),
-        this.scale.clone()
-      );
-    }
-
-    lerp(transform, ratio) {
-      this.position.lerp(transform.getPosition(), ratio);
-      this.rotation.lerp(transform.getRotation(), ratio);
-      this.scale.lerp(transform.getScale(), ratio);
-    }
-
-    toJSON() {
-      return {
-        position: this.position.toArray(),
-        rotation: this.rotation.toArray(),
-        scale: this.scale.toArray(),
-      };
-    }
-
-    setFromJSON(json) {
-      if (json) {
-        if (json.position) {
-          this.position.fromArray(json.position);
-        }
-
-        if (json.rotation) {
-          this.rotation.fromArray(json.rotation);
-        }
-
-        if (json.scale) {
-          this.scale.fromArray(json.scale);
-        }
-      }
-    }
-  },
 };
+
+export { THREEUtils };
