@@ -58,8 +58,6 @@ const GameObjectModule = class GameObject {
 
     //assets has been initialized
     this.initialized = false;
-
-    //TODO remove me
     //default object3d
     this.object3D = new THREE.Object3D();
     this.object3D.name = this.name + '_object3D';
@@ -205,6 +203,10 @@ const GameObjectModule = class GameObject {
 
   isOutdated() {
     return this.outdated;
+  }
+
+  setOutdated(value) {
+    this.outdated = value;
   }
 
   executeScripts(event, params) {
