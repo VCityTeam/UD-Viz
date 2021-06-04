@@ -2,8 +2,6 @@
 
 const THREE = require('three');
 
-//TODO create an object Transform with a clone method
-
 module.exports = {
   textureEncoding: THREE.RGBDEncoding,
 
@@ -77,24 +75,32 @@ module.exports = {
       );
     }
 
+    lerp(transform, ratio) {
+      this.position.lerp(transform.getPosition(), ratio);
+      this.rotation.lerp(transform.getRotation(), ratio);
+      this.scale.lerp(transform.getScale(), ratio);
+    }
+
+    toJSON() {
+      return {
+        position: this.position.toArray(),
+        rotation: this.rotation.toArray(),
+        scale: this.scale.toArray(),
+      };
+    }
+
     setFromJSON(json) {
       if (json) {
         if (json.position) {
-          this.position.x = json.position.x;
-          this.position.y = json.position.y;
-          this.position.z = json.position.z;
+          this.position.fromArray(json.position);
         }
 
         if (json.rotation) {
-          this.rotation.x = json.rotation.x;
-          this.rotation.y = json.rotation.y;
-          this.rotation.z = json.rotation.z;
+          this.rotation.fromArray(json.rotation);
         }
 
         if (json.scale) {
-          this.scale.x = json.scale.x;
-          this.scale.y = json.scale.y;
-          this.scale.z = json.scale.z;
+          this.scale.fromArray(json.scale);
         }
       }
     }
