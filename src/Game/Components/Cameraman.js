@@ -111,6 +111,7 @@ export class Cameraman {
     quaternion.multiply(quaternionCam);
     quaternion.multiply(quaternionAngle);
 
+    //this is not a transform of THREEUtils.Transform
     return { position: position, quaternion: quaternion };
   }
 

@@ -102,8 +102,8 @@ export class UDVDebugger {
       };
 
       const loc = {
-        x: avatarGO.transform.position.x / pixelWorldUnit.width,
-        y: avatarGO.transform.position.y / pixelWorldUnit.height,
+        x: avatarGO.getPosition().x / pixelWorldUnit.width,
+        y: avatarGO.getPosition().y / pixelWorldUnit.height,
       };
       // console.log(loc);
 
