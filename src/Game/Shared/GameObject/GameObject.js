@@ -12,6 +12,7 @@ const ColliderComponent = require('./Components/Collider');
 const WorldScriptComponent = require('./Components/WorldScript');
 const JSONUtils = require('../../../Components/SystemUtils/JSONUtils');
 const LocalScriptModule = require('./Components/LocalScript');
+const THREEUtils = require('../Components/THREEUtils');
 
 const GameObjectModule = class GameObject {
   constructor(json, parent) {
@@ -29,6 +30,7 @@ const GameObjectModule = class GameObject {
     //name
     this.name = json.name || 'none';
 
+    //TODO remove me
     //prefabId
     this.prefabId = json.prefabId || null;
 
@@ -61,6 +63,9 @@ const GameObjectModule = class GameObject {
     //default object3d
     this.object3D = new THREE.Object3D();
     this.object3D.name = this.name + '_object3D';
+
+    //buffer
+    this.eulerBuffer = new THREE.Euler(0, 0, 0, 'ZXY'); //to avoid new THREE.Euler on fetchObject3D
   }
 
   updateNoStaticFromGO(go, assetsManager) {
@@ -279,20 +284,18 @@ const GameObjectModule = class GameObject {
       if (!obj) obj = this.object3D;
     }
 
-    //transform
+    //position
     obj.position.copy(this.getPosition());
-    //TODO rotation n'est plus un THREE VEctor3 mais un euler
-    obj.rotation.copy(
-      new THREE.Euler(
-        this.transform.rotation.x,
-        this.transform.rotation.y,
-        this.transform.rotation.z,
-        'ZXY'
-      )
-    );
+    //rot
+    const rot = this.getRotation();
+    this.eulerBuffer.x = rot.x;
+    this.eulerBuffer.y = rot.y;
+    this.eulerBuffer.z = rot.z;
+    obj.rotation.copy(this.eulerBuffer);
+    //scale
     obj.scale.copy(this.getScale());
 
-    //reset
+    //add children if recursive
     if (recursive) {
       this.children.forEach(function (child) {
         const childObj = child.fetchObject3D();

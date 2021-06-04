@@ -4,7 +4,7 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import * as THREE from 'three';
 import * as jquery from 'jquery';
 import GameObjectModule from '../Shared/GameObject/GameObject';
-import { THREEUtils } from '../Components/THREEUtils';
+const THREEUtils = require('../Shared/Components/THREEUtils');
 
 const DEFAULT_MATERIAL = new THREE.MeshLambertMaterial({ color: 0x00ff00 });
 

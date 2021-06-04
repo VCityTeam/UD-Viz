@@ -1,10 +1,10 @@
 /** @format */
 
-import * as THREE from 'three';
+const THREE = require('three');
 
 //TODO create an object Transform with a clone method
 
-const THREEUtils = {
+module.exports = {
   textureEncoding: THREE.RGBDEncoding,
 
   addLights(scene) {
@@ -37,6 +37,10 @@ const THREEUtils = {
     // renderer.toneMapping = THREE.ReinhardToneMapping;
     // renderer.toneMappingExposure = 1;
   },
-};
 
-export { THREEUtils };
+  Transform: class {
+    constructor() {
+      console.log('new transform');
+    }
+  },
+};
