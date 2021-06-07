@@ -86,6 +86,11 @@ const RenderModule = class Render {
     }
   }
 
+  addObject3D(obj) {
+    this.object3D.add(obj);
+    this.originalObject3D = this.object3D.clone();
+  }
+
   initAssets(assetsManager) {
     this.object3D = new THREE.Object3D();
     this.object3D.name = 'Render Object3D ' + this.parent.getName();
@@ -128,17 +133,6 @@ const RenderModule = class Render {
           this.media.img.height
         );
         this.object3D.add(mediaImg);
-      }
-
-      if (this.media.video) {
-        const result = assetsManager.createVideo(
-          this.media.video.path,
-          this.media.video.width,
-          this.media.video.height,
-          this.media.video.size
-        );
-        this.tickCb.push(result.tick);
-        this.object3D.add(result.frame);
       }
     }
 
