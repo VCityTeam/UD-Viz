@@ -115,9 +115,11 @@ export class TilesManager extends EventSender {
     let tilesWithGeom = []
     for (let j = 0; j < this.tiles.length;j++)
     {
+      if(this.tiles[j] != undefined) {
         if(this.tiles[j].cityObjects != undefined ){
           tilesWithGeom.push(this.tiles[j]);
         }
+      }
     }
     return tilesWithGeom;
   }
