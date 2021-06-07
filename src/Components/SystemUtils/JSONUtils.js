@@ -38,4 +38,31 @@ module.exports = {
       }
     });
   },
+
+  separator: '&',
+
+  pack(jsonArray) {
+    let result = '';
+    for (let key in jsonArray) {
+      result += JSON.stringify(jsonArray[key]);
+      result += this.separator;
+    }
+
+    //remove seprator at the end
+    if (result.endsWith(this.separator)) {
+      result = result.slice(0, result.length - this.separator.length);
+    }
+    return result;
+  },
+
+  unpack(string) {
+    const prefabs = string.split(this.separator);
+    const result = {};
+    prefabs.forEach(function (p) {
+      const json = JSON.parse(p);
+      result[json.name] = json;
+    });
+
+    return result;
+  },
 };
