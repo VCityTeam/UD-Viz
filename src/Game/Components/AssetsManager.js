@@ -10,6 +10,8 @@ const DEFAULT_MATERIAL = new THREE.MeshLambertMaterial({ color: 0x00ff00 });
 
 export class AssetsManager {
   constructor() {
+    this.conf = null;
+
     //manager to load scripts
     this.prefabs = {};
     this.worldScripts = {};
@@ -45,6 +47,11 @@ export class AssetsManager {
   fetchPrefab(idprefab) {
     if (!this.prefabs[idprefab]) console.error('no prefab with id ', idprefab);
     return new GameObjectModule(this.prefabs[idprefab]);
+  }
+
+  fetchVideoPath(idVideo) {
+    if (!this.conf.videos[idVideo]) console.error('no video with id ', idVideo);
+    return this.conf.videos[idVideo].path;
   }
 
   fetchPrefabJSON(idprefab) {
@@ -323,6 +330,8 @@ export class AssetsManager {
   }
 
   loadFromConfig(config) {
+    this.conf = config;
+
     //load config file
     const _this = this;
     const loader = new GLTFLoader();
