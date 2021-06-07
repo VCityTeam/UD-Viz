@@ -201,6 +201,7 @@ export class AssetsManager {
     return frame;
   }
 
+  //TODO assetManager load video with config a return video with id
   createVideo(path, w = 1, h = 1, size) {
     const video = document.createElement('video');
     video.src = path;
