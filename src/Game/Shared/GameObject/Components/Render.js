@@ -155,4 +155,20 @@ const RenderModule = class Render {
 
 RenderModule.TYPE = 'Render';
 
+RenderModule.bindName = function (goJSON, name) {
+  try {
+    goJSON.components.Render.name = name;
+  } catch (e) {
+    throw new Error(e);
+  }
+};
+
+RenderModule.bindColor = function (goJSON, color) {
+  try {
+    goJSON.components.Render.color = color;
+  } catch (e) {
+    throw new Error(e);
+  }
+};
+
 module.exports = RenderModule;
