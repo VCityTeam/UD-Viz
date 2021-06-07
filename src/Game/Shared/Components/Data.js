@@ -17,7 +17,7 @@ module.exports = Object.freeze({
     },
   },
 
-  //THREAD
+  //THREAD TODO move this to worldthread and rename this file Constants
 
   pack(obj) {
     let OString = JSON.stringify(obj);

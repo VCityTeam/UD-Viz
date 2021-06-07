@@ -30,10 +30,6 @@ const GameObjectModule = class GameObject {
     //name
     this.name = json.name || 'none';
 
-    //TODO remove me
-    //prefabId
-    this.prefabId = json.prefabId || null;
-
     //transform
     this.transform = new THREEUtils.Transform();
     this.transform.setFromJSON(json.transform);
@@ -90,14 +86,10 @@ const GameObjectModule = class GameObject {
     this.static = json.static;
 
     //TODO recursive call for children
+    if (this.children.length) console.warn('children not set from ', json);
   }
 
   initAssetsComponents(manager, udvShared, isServerSide = false) {
-    if (this.prefabId) {
-      const json = manager.fetchPrefabJSON(this.prefabId);
-      JSONUtils.overWrite(json, this.json);
-      this.setFromJSON(json);
-    }
 
     if (!this.initialized) {
       this.initialized = true;
