@@ -18,20 +18,22 @@
     "versions": {
       "description": "Versions of the city",
       "type": "array",
-      "items": {"$ref": "3DTILES_temporal.version.schema.json"}
+      "items": { "$ref": "3DTILES_temporal.version.schema.json" }
     },
     "versionTransitions": {
       "description": "Transitions between versions of the city",
       "type": "array",
-      "items": {"$ref": "3DTILES_temporal.versionTransition.schema.json"}
+      "items": { "$ref": "3DTILES_temporal.versionTransition.schema.json" }
     },
     "transactions": {
       "description": "Transactions between features",
       "type": "array",
-      "items": { "anyOf": [
-        {"$ref": "3DTILES_temporal.primaryTransaction.schema.json"},
-        {"$ref": "3DTILES_temporal.transactionAggregate.schema.json"}
-      ]}
+      "items": {
+        "anyOf": [
+          { "$ref": "3DTILES_temporal.primaryTransaction.schema.json" },
+          { "$ref": "3DTILES_temporal.transactionAggregate.schema.json" }
+        ]
+      }
     }
   }
 }

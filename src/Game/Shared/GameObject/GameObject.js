@@ -10,8 +10,8 @@ const THREE = require('three');
 const RenderComponent = require('./Components/Render');
 const ColliderComponent = require('./Components/Collider');
 const WorldScriptComponent = require('./Components/WorldScript');
-const JSONUtils = require('../../../Components/SystemUtils/JSONUtils');
 const LocalScriptModule = require('./Components/LocalScript');
+const THREEUtils = require('../Components/THREEUtils');
 
 const GameObjectModule = class GameObject {
   constructor(json, parent) {
@@ -29,11 +29,9 @@ const GameObjectModule = class GameObject {
     //name
     this.name = json.name || 'none';
 
-    //prefabId
-    this.prefabId = json.prefabId || null;
-
     //transform
-    this.setTransformFromJSON(json.transform);
+    this.transform = new THREEUtils.Transform();
+    this.transform.setFromJSON(json.transform);
 
     //static
     this.static = json.static || false;
@@ -58,11 +56,12 @@ const GameObjectModule = class GameObject {
 
     //assets has been initialized
     this.initialized = false;
-
-    //TODO remove me
     //default object3d
     this.object3D = new THREE.Object3D();
     this.object3D.name = this.name + '_object3D';
+
+    //buffer
+    this.eulerBuffer = new THREE.Euler(0, 0, 0, 'ZXY'); //to avoid new THREE.Euler on fetchObject3D
   }
 
   updateNoStaticFromGO(go, assetsManager) {
@@ -81,19 +80,15 @@ const GameObjectModule = class GameObject {
   setFromJSON(json) {
     this.components = {}; //clear
     this.setComponentsFromJSON(json);
-    this.setTransformFromJSON(json.transform);
+    this.transform.setFromJSON(json.transform);
     this.name = json.name;
     this.static = json.static;
 
     //TODO recursive call for children
+    if (this.children.length) console.warn('children not set from ', json);
   }
 
   initAssetsComponents(manager, udvShared, isServerSide = false) {
-    if (this.prefabId) {
-      const json = manager.fetchPrefabJSON(this.prefabId);
-      JSONUtils.overWrite(json, this.json);
-      this.setFromJSON(json);
-    }
 
     if (!this.initialized) {
       this.initialized = true;
@@ -109,17 +104,13 @@ const GameObjectModule = class GameObject {
   }
 
   computeWorldTransform() {
-    const result = {
-      position: new THREE.Vector3(),
-      rotation: new THREE.Vector3(),
-      scale: new THREE.Vector3(1, 1, 1),
-    };
+    const result = new THREEUtils.Transform();
 
     let current = this;
     do {
-      result.position.add(current.getPosition());
-      result.rotation.add(current.getRotation());
-      result.scale.multiply(current.getScale());
+      result.getPosition().add(current.getPosition());
+      result.getRotation().add(current.getRotation());
+      result.getScale().multiply(current.getScale());
 
       current = current.parent;
     } while (current);
@@ -128,21 +119,19 @@ const GameObjectModule = class GameObject {
   }
 
   move(vector) {
-    this.transform.position.add(vector);
+    this.transform.getPosition().add(vector);
     this.outdated = true;
   }
 
   clampRotation() {
-    this.transform.rotation.x =
-      (Math.PI * 2 + this.transform.rotation.x) % (Math.PI * 2);
-    this.transform.rotation.y =
-      (Math.PI * 2 + this.transform.rotation.y) % (Math.PI * 2);
-    this.transform.rotation.z =
-      (Math.PI * 2 + this.transform.rotation.z) % (Math.PI * 2);
+    const r = this.transform.getRotation();
+    r.x = (Math.PI * 2 + r.x) % (Math.PI * 2);
+    r.y = (Math.PI * 2 + r.y) % (Math.PI * 2);
+    r.z = (Math.PI * 2 + r.z) % (Math.PI * 2);
   }
 
   rotate(vector) {
-    this.transform.rotation.add(vector);
+    this.transform.getRotation().add(vector);
     this.clampRotation();
     this.outdated = true;
   }
@@ -163,12 +152,9 @@ const GameObjectModule = class GameObject {
   }
 
   computeForwardVector() {
+    const r = this.transform.getRotation();
     const quaternion = new THREE.Quaternion().setFromEuler(
-      new THREE.Euler(
-        this.transform.rotation.x,
-        this.transform.rotation.y,
-        this.transform.rotation.z
-      )
+      new THREE.Euler(r.x, r.y, r.z)
     );
     const result = this.getDefaultForward().applyQuaternion(quaternion);
     return result;
@@ -205,6 +191,10 @@ const GameObjectModule = class GameObject {
 
   isOutdated() {
     return this.outdated;
+  }
+
+  setOutdated(value) {
+    this.outdated = value;
   }
 
   executeScripts(event, params) {
@@ -277,20 +267,18 @@ const GameObjectModule = class GameObject {
       if (!obj) obj = this.object3D;
     }
 
-    //transform
+    //position
     obj.position.copy(this.getPosition());
-    //TODO rotation n'est plus un THREE VEctor3 mais un euler
-    obj.rotation.copy(
-      new THREE.Euler(
-        this.transform.rotation.x,
-        this.transform.rotation.y,
-        this.transform.rotation.z,
-        'ZXY'
-      )
-    );
+    //rot
+    const rot = this.getRotation();
+    this.eulerBuffer.x = rot.x;
+    this.eulerBuffer.y = rot.y;
+    this.eulerBuffer.z = rot.z;
+    obj.rotation.copy(this.eulerBuffer);
+    //scale
     obj.scale.copy(this.getScale());
 
-    //reset
+    //add children if recursive
     if (recursive) {
       this.children.forEach(function (child) {
         const childObj = child.fetchObject3D();
@@ -299,37 +287,6 @@ const GameObjectModule = class GameObject {
     }
 
     return obj;
-  }
-
-  setTransformFromJSON(json) {
-    if (!this.transform) {
-      const defaultTransform = {
-        position: new THREE.Vector3(),
-        rotation: new THREE.Vector3(),
-        scale: new THREE.Vector3(1, 1, 1),
-      };
-      this.transform = defaultTransform;
-    }
-
-    if (json) {
-      if (json.position) {
-        this.transform.position.x = json.position.x;
-        this.transform.position.y = json.position.y;
-        this.transform.position.z = json.position.z;
-      }
-
-      if (json.rotation) {
-        this.transform.rotation.x = json.rotation.x;
-        this.transform.rotation.y = json.rotation.y;
-        this.transform.rotation.z = json.rotation.z;
-      }
-
-      if (json.scale) {
-        this.transform.scale.x = json.scale.x;
-        this.transform.scale.y = json.scale.y;
-        this.transform.scale.z = json.scale.z;
-      }
-    }
   }
 
   clone() {
@@ -401,31 +358,31 @@ const GameObjectModule = class GameObject {
   }
 
   getRotation() {
-    return this.transform.rotation;
+    return this.transform.getRotation();
   }
 
   setRotation(vector) {
-    this.transform.rotation.set(vector.x, vector.y, vector.z);
+    this.transform.getRotation().set(vector.x, vector.y, vector.z);
     this.clampRotation();
     this.outdated = true;
   }
 
   setPosition(vector) {
-    this.transform.position.set(vector.x, vector.y, vector.z);
+    this.transform.getPosition().set(vector.x, vector.y, vector.z);
     this.outdated = true;
   }
 
   getPosition() {
-    return this.transform.position;
+    return this.transform.getPosition();
   }
 
   setScale(vector) {
-    this.transform.scale.set(vector.x, vector.y, vector.z);
+    this.transform.getScale().set(vector.x, vector.y, vector.z);
     this.outdated = true;
   }
 
   getScale() {
-    return this.transform.scale;
+    return this.transform.getScale();
   }
 
   getName() {
@@ -448,10 +405,6 @@ const GameObjectModule = class GameObject {
       children.push(child.toJSON(withServerComponent));
     });
 
-    const position = this.transform.position;
-    const rot = this.transform.rotation;
-    const scale = this.transform.scale;
-
     const components = {};
     for (let type in this.components) {
       const c = this.components[type];
@@ -459,11 +412,6 @@ const GameObjectModule = class GameObject {
         components[type] = c.toJSON();
       }
     }
-
-    //TODO not declare here or use THREE.Vector3.toJSON
-    const V2JSON = function (vector) {
-      return { x: vector.x, y: vector.y, z: vector.z };
-    };
 
     return {
       name: this.name,
@@ -474,11 +422,7 @@ const GameObjectModule = class GameObject {
       parentUUID: this.parentUUID,
       components: components,
       children: children,
-      transform: {
-        position: V2JSON(position),
-        rotation: V2JSON(rot),
-        scale: V2JSON(scale),
-      },
+      transform: this.transform.toJSON(),
     };
   }
 };
@@ -487,10 +431,7 @@ GameObjectModule.TYPE = 'GameObject';
 
 GameObjectModule.interpolateInPlace = function (g1, g2, ratio) {
   //modify g1 transform
-  g1.transform.position.lerp(g2.transform.position, ratio);
-  g1.transform.rotation.lerp(g2.transform.rotation, ratio);
-  g1.transform.scale.lerp(g2.transform.scale, ratio);
-
+  g1.getTransform().lerp(g2.getTransform(), ratio);
   return g1;
 };
 

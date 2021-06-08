@@ -102,8 +102,8 @@ export class UDVDebugger {
       };
 
       const loc = {
-        x: avatarGO.transform.position.x / pixelWorldUnit.width,
-        y: avatarGO.transform.position.y / pixelWorldUnit.height,
+        x: avatarGO.getPosition().x / pixelWorldUnit.width,
+        y: avatarGO.getPosition().y / pixelWorldUnit.height,
       };
       // console.log(loc);
 
@@ -124,23 +124,5 @@ export class UDVDebugger {
   setSize(w, h) {
     this.root.style.width = w + 'px';
     this.root.style.height = h + 'px';
-  }
-
-  //TODO used twice put it in a UTILS
-  async loadConfigFile(filePath, cb) {
-    return new Promise((resolve, reject) => {
-      $.ajax({
-        type: 'GET',
-        url: filePath,
-        datatype: 'json',
-        success: (data) => {
-          resolve(data);
-        },
-        error: (e) => {
-          console.error(e);
-          reject();
-        },
-      });
-    });
   }
 }

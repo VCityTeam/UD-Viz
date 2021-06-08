@@ -1,7 +1,9 @@
-//Components
-import { Window } from "../../../Components/GUI/js/Window";
+/** @format */
 
-import { CityObjectFilterSelector } from "./CityObjectFilterSelector";
+//Components
+import { Window } from '../../../Components/GUI/js/Window';
+
+import { CityObjectFilterSelector } from './CityObjectFilterSelector';
 
 /**
  * The filter selection window. This window allows the user to pick a filter
@@ -17,7 +19,7 @@ export class CityObjectFilterWindow extends Window {
 
     /**
      * The list of filter selectors.
-     * 
+     *
      * @type {Array<CityObjectFilterSelector>}
      */
     this.filterSelectors = [];
@@ -27,7 +29,7 @@ export class CityObjectFilterWindow extends Window {
   }
 
   get innerContentHtml() {
-    return /*html*/`
+    return /*html*/ `
       <div class="box-section">
         <h3 class="section-title">Filter selection</h3>
         <form id="${this.filterFormId}">
@@ -55,19 +57,21 @@ export class CityObjectFilterWindow extends Window {
     this.filterFormElement.onsubmit = () => {
       this._onSubmit();
       return false;
-    }
+    };
   }
 
   /**
    * Adds a filter selector in the filter selectos list.
-   * 
+   *
    * @param {CityObjectFilterSelector} filterSelector The filter selector to
    * add.
    */
   addFilterSelector(filterSelector) {
-    if (!!this.getFilterSelector(filterSelector.filterLabel)) {
-      throw 'A filter selector with the same filter label already exist: '
-        + filterSelector.filterLabel;
+    if (this.getFilterSelector(filterSelector.filterLabel)) {
+      throw (
+        'A filter selector with the same filter label already exist: ' +
+        filterSelector.filterLabel
+      );
     }
     this.filterSelectors.push(filterSelector);
     this._createFilterSelect();
@@ -75,7 +79,7 @@ export class CityObjectFilterWindow extends Window {
 
   /**
    * Returns the filter selector corresponding to the given filter label.
-   * 
+   *
    * @param {string} filterLabel The label of the filter.
    */
   getFilterSelector(filterLabel) {
@@ -115,7 +119,7 @@ export class CityObjectFilterWindow extends Window {
   _onFilterSelection() {
     this.filterSectionElement.innerHTML = '';
     let selector = this._getCurrentSelector();
-    if (!!selector) {
+    if (selector) {
       selector.appendFormFieldsTo(this.filterSectionElement);
     }
   }
@@ -125,12 +129,14 @@ export class CityObjectFilterWindow extends Window {
    * selected the 'No filter' option.
    */
   _getCurrentSelector() {
-    let selected = this.filterSelectElement.options[this.filterSelectElement.selectedIndex].label;
+    let selected =
+      this.filterSelectElement.options[this.filterSelectElement.selectedIndex]
+        .label;
 
     if (selected === 'no-filter') {
       return undefined;
     }
-    
+
     let selector = this.getFilterSelector(selected);
 
     if (selector === undefined) {
@@ -154,7 +160,10 @@ export class CityObjectFilterWindow extends Window {
 
     let formData = new FormData(this.filterFormElement);
     selector.onSubmit(formData);
-    this.sendEvent(CityObjectFilterWindow.EVENT_FILTER_SELECTED, selector.filterLabel);
+    this.sendEvent(
+      CityObjectFilterWindow.EVENT_FILTER_SELECTED,
+      selector.filterLabel
+    );
     this.disable();
   }
 

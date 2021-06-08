@@ -1,7 +1,9 @@
-//Components
-import { CityObjectStyle } from "../../../Components/3DTiles/Model/CityObjectStyle";
+/** @format */
 
-import { CityObjectFilter } from "./CityObjectFilter";
+//Components
+import { CityObjectStyle } from '../../../Components/3DTiles/Model/CityObjectStyle';
+
+import { CityObjectFilter } from './CityObjectFilter';
 
 /**
  * A layer represents an association between a set of city objects and a style.
@@ -10,7 +12,7 @@ import { CityObjectFilter } from "./CityObjectFilter";
 export class CityObjectLayer {
   /**
    * Constructs a layer from a filter and a style.
-   * 
+   *
    * @param {CityObjectFilter} filter The filter associated with the layer.
    * @param {CityObjectStyle | string} style The style associated with the
    * layer.
@@ -22,14 +24,14 @@ export class CityObjectLayer {
 
     /**
      * The filter associated with the layer.
-     * 
+     *
      * @type {CityObjectFilter}
      */
     this.filter = filter;
 
     /**
      * The style associated with the layer.
-     * 
+     *
      * @type {CityObjectStyle | string}
      */
     this.style = style;

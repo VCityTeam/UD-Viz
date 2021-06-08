@@ -1,9 +1,11 @@
+/** @format */
+
 //Widgets
-import { DocumentProvider } from "../../../Documents/ViewModel/DocumentProvider";
-import { Document } from "../../../Documents/Model/Document";
+import { DocumentProvider } from '../../../Documents/ViewModel/DocumentProvider';
+import { Document } from '../../../Documents/Model/Document';
 
 //Components
-import { RequestService } from "../../../../Components/Request/RequestService";
+import { RequestService } from '../../../../Components/Request/RequestService';
 
 /**
  * This class performs the requests on the server to update and create
@@ -74,7 +76,7 @@ export class ContributeService {
     let url = this.documentUrl + '/' + id;
 
     let response = await this.requestService.request('PUT', url, {
-      body: updatedData
+      body: updatedData,
     });
 
     if (response.status >= 200 && response.status < 300) {
@@ -95,9 +97,9 @@ export class ContributeService {
    * @returns {Document} The created document.
    */
   async createDocument(creationData) {
-    let response = await (this.requestService.request('POST', this.documentUrl, {
-      body: creationData
-    }));
+    let response = await this.requestService.request('POST', this.documentUrl, {
+      body: creationData,
+    });
 
     if (response.status >= 200 && response.status < 300) {
       let created = JSON.parse(response.responseText);

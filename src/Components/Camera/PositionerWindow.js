@@ -1,4 +1,4 @@
-import { Window } from "../GUI/js/Window";
+import { Window } from '../GUI/js/Window';
 import { MAIN_LOOP_EVENTS } from 'itowns';
 import * as THREE from 'three';
 
@@ -60,7 +60,7 @@ export class PositionerWindow extends Window {
 
     this.buttonValidateElement.onclick = () => {
       this._validate();
-    }
+    };
   }
 
   /////////////////////////

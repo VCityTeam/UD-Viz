@@ -1,24 +1,25 @@
+/** @format */
+
 //Components
 import { ModuleView } from '../../Components/ModuleView/ModuleView';
 
 import './Help.css';
 
 /**
-* adds a "Help" window that can be open/closed with a button
-* simply include this file in the html, no need to instanciate anything in main.js
-*/
+ * adds a "Help" window that can be open/closed with a button
+ * simply include this file in the html, no need to instanciate anything in main.js
+ */
 
 export class HelpWindow extends ModuleView {
-
-  constructor(options = {}) {
+  constructor() {
     super();
 
     ///////////// Html elements
-    var helpDiv = document.createElement("div");
+    var helpDiv = document.createElement('div');
     helpDiv.id = 'helpWindow';
     document.getElementById('contentSection').append(helpDiv);
 
-    document.getElementById("helpWindow").innerHTML =
+    document.getElementById('helpWindow').innerHTML =
       '<div id="text">\
          <br>\
          <h3><a\
@@ -39,12 +40,14 @@ export class HelpWindow extends ModuleView {
       ';
 
     // Close the window...when close button is hit
-    document.getElementById("helpCloseButton").addEventListener(
-      'mousedown', () => {
+    document.getElementById('helpCloseButton').addEventListener(
+      'mousedown',
+      () => {
         this.disable();
-      }, false);
+      },
+      false
+    );
   }
-
 
   /////// MODULE VIEW METHODS
 

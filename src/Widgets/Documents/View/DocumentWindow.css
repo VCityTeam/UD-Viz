@@ -1,6 +1,8 @@
-/* Generic for document windows */
-
-
+/**
+ * /* Generic for document windows
+ *
+ * @format
+ */
 
 /* Search window */
 
@@ -9,7 +11,7 @@
   margin-top: 5px;
 }
 
-.search-form input[type="text"],
+.search-form input[type='text'],
 .search-form select {
   box-sizing: border-box;
   width: 100%;

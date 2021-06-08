@@ -4,12 +4,14 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import * as THREE from 'three';
 import * as jquery from 'jquery';
 import GameObjectModule from '../Shared/GameObject/GameObject';
-import { THREEUtils } from '../Components/THREEUtils';
+const THREEUtils = require('../Shared/Components/THREEUtils');
 
 const DEFAULT_MATERIAL = new THREE.MeshLambertMaterial({ color: 0x00ff00 });
 
 export class AssetsManager {
   constructor() {
+    this.conf = null;
+
     //manager to load scripts
     this.prefabs = {};
     this.worldScripts = {};
@@ -45,6 +47,11 @@ export class AssetsManager {
   fetchPrefab(idprefab) {
     if (!this.prefabs[idprefab]) console.error('no prefab with id ', idprefab);
     return new GameObjectModule(this.prefabs[idprefab]);
+  }
+
+  fetchVideoPath(idVideo) {
+    if (!this.conf.videos[idVideo]) console.error('no video with id ', idVideo);
+    return this.conf.videos[idVideo].path;
   }
 
   fetchPrefabJSON(idprefab) {
@@ -201,6 +208,7 @@ export class AssetsManager {
     return frame;
   }
 
+  //TODO assetManager load video with config a return video with id
   createVideo(path, w = 1, h = 1, size) {
     const video = document.createElement('video');
     video.src = path;
@@ -260,31 +268,38 @@ export class AssetsManager {
     const noShadow = modelData.noShadow || false;
 
     //rotation
-    const quatTHREE2UDV = new THREE.Quaternion().setFromEuler(
+    const quatYUP2ZUP = new THREE.Quaternion().setFromEuler(
       new THREE.Euler(-Math.PI * 0.5, 0, Math.PI)
     );
-    obj.applyQuaternion(quatTHREE2UDV);
+    obj.applyQuaternion(quatYUP2ZUP);
 
     const bbox = new THREE.Box3().setFromObject(obj);
     const parent = new THREE.Object3D();
     switch (anchor) {
       case 'center':
-        let center = bbox.min.lerp(bbox.max, 0.5);
-        obj.position.sub(center);
+        {
+          let center = bbox.min.lerp(bbox.max, 0.5);
+          obj.position.sub(center);
+        }
         break;
       case 'max':
-        obj.position.sub(bbox.max);
+        {
+          obj.position.sub(bbox.max);
+        }
         break;
       case 'min':
-        obj.position.sub(bbox.min);
+        {
+          obj.position.sub(bbox.min);
+        }
         break;
       case 'center_min':
-        let centerMin = bbox.min.clone().lerp(bbox.max, 0.5);
-        centerMin.z = bbox.min.z;
-        obj.position.sub(centerMin);
+        {
+          let centerMin = bbox.min.clone().lerp(bbox.max, 0.5);
+          centerMin.z = bbox.min.z;
+          obj.position.sub(centerMin);
+        }
         break;
       default:
-        throw new Error('no anchor');
     }
 
     //scale
@@ -323,6 +338,8 @@ export class AssetsManager {
   }
 
   loadFromConfig(config) {
+    this.conf = config;
+
     //load config file
     const _this = this;
     const loader = new GLTFLoader();

@@ -86,13 +86,18 @@ const RenderModule = class Render {
     }
   }
 
+  addObject3D(obj) {
+    this.object3D.add(obj);
+    this.originalObject3D = this.object3D.clone();
+  }
+
   initAssets(assetsManager) {
     this.object3D = new THREE.Object3D();
     this.object3D.name = 'Render Object3D ' + this.parent.getName();
 
     //stock data in userData
     this.object3D.userData = {
-      uuid: this.parent.getUUID(),
+      gameObjectUUID: this.parent.getUUID(),
     };
 
     //get the 3D model
@@ -129,17 +134,6 @@ const RenderModule = class Render {
         );
         this.object3D.add(mediaImg);
       }
-
-      if (this.media.video) {
-        const result = assetsManager.createVideo(
-          this.media.video.path,
-          this.media.video.width,
-          this.media.video.height,
-          this.media.video.size
-        );
-        this.tickCb.push(result.tick);
-        this.object3D.add(result.frame);
-      }
     }
 
     const color = this.color;
@@ -154,5 +148,21 @@ const RenderModule = class Render {
 };
 
 RenderModule.TYPE = 'Render';
+
+RenderModule.bindName = function (goJSON, name) {
+  try {
+    goJSON.components.Render.name = name;
+  } catch (e) {
+    throw new Error(e);
+  }
+};
+
+RenderModule.bindColor = function (goJSON, color) {
+  try {
+    goJSON.components.Render.color = color;
+  } catch (e) {
+    throw new Error(e);
+  }
+};
 
 module.exports = RenderModule;

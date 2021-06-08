@@ -1,7 +1,9 @@
-import { DocumentProvider } from "../ViewModel/DocumentProvider";
-import { Document } from "../Model/Document";
-import { DocumentSearchFilter } from "../ViewModel/DocumentSearchFilter";
-import { AbstractDocumentWindow } from "./AbstractDocumentWindow";
+/** @format */
+
+import { DocumentProvider } from '../ViewModel/DocumentProvider';
+import { Document } from '../Model/Document';
+import { DocumentSearchFilter } from '../ViewModel/DocumentSearchFilter';
+import { AbstractDocumentWindow } from './AbstractDocumentWindow';
 
 /**
  * Represents the navigator window for the documents. It contains the filters on
@@ -26,18 +28,18 @@ export class DocumentNavigatorWindow extends AbstractDocumentWindow {
      * a panel.
      *
      * @type {Object.<string, {
-      *  type: 'button' | 'panel',
-      *  label: string,
-      *  id: string,
-      *  callback?: (doc: Document[]) => any,
-      *  html: string
-      * }>}
-      */
-     this.extensions = {};
+     *  type: 'button' | 'panel',
+     *  label: string,
+     *  id: string,
+     *  callback?: (doc: Document[]) => any,
+     *  html: string
+     * }>}
+     */
+    this.extensions = {};
   }
 
   get innerContentHtml() {
-    return /*html*/`
+    return /*html*/ `
       <div class="box-section">
         <h3 class="section-title">
           <span id="${this.docCountId}"></span> Document(s)
@@ -111,10 +113,14 @@ export class DocumentNavigatorWindow extends AbstractDocumentWindow {
   documentWindowReady() {
     this.provider.addFilter(this.searchFilter);
 
-    this.provider.addEventListener(DocumentProvider.EVENT_FILTERED_DOCS_UPDATED,
-      (documents) => this._onFilteredDocumentsUpdate(documents));
-    this.provider.addEventListener(DocumentProvider.EVENT_DISPLAYED_DOC_CHANGED,
-      (doc) => this._onDisplayedDocumentChange(doc));
+    this.provider.addEventListener(
+      DocumentProvider.EVENT_FILTERED_DOCS_UPDATED,
+      (documents) => this._onFilteredDocumentsUpdate(documents)
+    );
+    this.provider.addEventListener(
+      DocumentProvider.EVENT_DISPLAYED_DOC_CHANGED,
+      (doc) => this._onDisplayedDocumentChange(doc)
+    );
   }
 
   //////////////////////////////
@@ -136,11 +142,13 @@ export class DocumentNavigatorWindow extends AbstractDocumentWindow {
     list.innerHTML = '';
     for (let doc of documents) {
       let item = document.createElement('li');
-      item.innerHTML = /*html*/`
+      item.innerHTML = /*html*/ `
         <div class='doc-title'>${doc.title}</div>
-        <div class='doc-info'>Refering ${(new Date(doc.refDate)).toLocaleDateString()}</div>
+        <div class='doc-info'>Refering ${new Date(
+    doc.refDate
+  ).toLocaleDateString()}</div>
       `;
-      item.classList.add('navigator-result-doc')
+      item.classList.add('navigator-result-doc');
       item.onclick = () => {
         this.provider.setDisplayedDocument(doc);
       };
@@ -162,17 +170,17 @@ export class DocumentNavigatorWindow extends AbstractDocumentWindow {
     }
     let previouslySelected =
       this.documentListElement.querySelector('.document-selected');
-    if (!!previouslySelected) {
+    if (previouslySelected) {
       previouslySelected.classList.remove('document-selected');
     }
-    if (!!document) {
+    if (document) {
       let newIndex = this.provider.getDisplayedDocumentIndex();
-      let newSelected = this.documentListElement
-        .querySelector(`li:nth-child(${newIndex + 1})`);
+      let newSelected = this.documentListElement.querySelector(
+        `li:nth-child(${newIndex + 1})`
+      );
       newSelected.classList.add('document-selected');
     }
   }
-
 
   ////////////////////////
   ///// SEARCH AND FILTERS
@@ -181,31 +189,37 @@ export class DocumentNavigatorWindow extends AbstractDocumentWindow {
    * Event on the 'search' button click.
    */
   async search() {
-    let keywords = this.inputKeywordsElement.value.split(/[ ,;]/)
-      .filter((k) => k !== "").map((k) => k.toLowerCase());
+    let keywords = this.inputKeywordsElement.value
+      .split(/[ ,;]/)
+      .filter((k) => k !== '')
+      .map((k) => k.toLowerCase());
     this.searchFilter.keywords = keywords;
 
     let source = this.inputSourceElement.value.toLowerCase();
-    this.searchFilter.source = (source !== "") ? source : undefined;
+    this.searchFilter.source = source !== '' ? source : undefined;
 
     let rightsHolder = this.inputRightsHolderElement.value.toLowerCase();
-    this.searchFilter.rightsHolder = (rightsHolder !== "") ? rightsHolder
-      : undefined;
+    this.searchFilter.rightsHolder =
+      rightsHolder !== '' ? rightsHolder : undefined;
 
     let pubStartDate = this.inputPubDateStartElement.value;
-    this.searchFilter.pubStartDate = (!!pubStartDate) ? new Date(pubStartDate)
+    this.searchFilter.pubStartDate = pubStartDate
+      ? new Date(pubStartDate)
       : undefined;
 
     let pubEndDate = this.inputPubDateEndElement.value;
-    this.searchFilter.pubEndDate = (!!pubEndDate) ? new Date(pubEndDate)
+    this.searchFilter.pubEndDate = pubEndDate
+      ? new Date(pubEndDate)
       : undefined;
 
     let refStartDate = this.inputRefDateStartElement.value;
-    this.searchFilter.refStartDate = (!!refStartDate) ? new Date(refStartDate)
+    this.searchFilter.refStartDate = refStartDate
+      ? new Date(refStartDate)
       : undefined;
 
     let refEndDate = this.inputRefDateEndElement.value;
-    this.searchFilter.refEndDate = (!!refEndDate) ? new Date(refEndDate)
+    this.searchFilter.refEndDate = refEndDate
+      ? new Date(refEndDate)
       : undefined;
 
     this.provider.refreshDocumentList();
@@ -269,7 +283,7 @@ export class DocumentNavigatorWindow extends AbstractDocumentWindow {
   }
 
   get inputRightsHolderId() {
-    return `${this.windowId}_rights_holder`
+    return `${this.windowId}_rights_holder`;
   }
 
   get inputRightsHolderElement() {

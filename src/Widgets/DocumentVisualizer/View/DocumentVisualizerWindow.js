@@ -1,9 +1,11 @@
-import { AbstractDocumentWindow } from "../../Documents/View/AbstractDocumentWindow";
-import * as THREE from "three";
+/** @format */
+
+import { AbstractDocumentWindow } from '../../Documents/View/AbstractDocumentWindow';
+import * as THREE from 'three';
 
 import './DocumentVisualizer.css';
-import { DocumentProvider } from "../../Documents/ViewModel/DocumentProvider";
-import { DocumentModule } from "../../Documents/DocumentModule";
+import { DocumentProvider } from '../../Documents/ViewModel/DocumentProvider';
+import { DocumentModule } from '../../Documents/DocumentModule';
 
 /**
  * Represents the document visualizer, under the form of an oriented image. It
@@ -13,7 +15,7 @@ import { DocumentModule } from "../../Documents/DocumentModule";
 export class DocumentVisualizerWindow extends AbstractDocumentWindow {
   /**
    * Creates a new document image orienter.
-   * 
+   *
    * @param {DocumentModule} documentModule The document module.
    * @param {*} itownsView The iTowns view.
    * @param {*} cameraControls The planar camera controls.
@@ -34,40 +36,40 @@ export class DocumentVisualizerWindow extends AbstractDocumentWindow {
         this.disable();
         await this.startTravelToDisplayedDocument();
         this.requestDisplay();
-      }
+      },
     });
 
     /**
      * The iTowns view.
-     * 
+     *
      * @type {any}
      */
     this.itownsView = itownsView;
 
     /**
      * The camera controls.
-     * 
+     *
      * @type {any}
      */
     this.cameraControls = cameraControls;
 
     /**
      * The visualization camera position.
-     * 
+     *
      * @type {THREE.Vector3}
      */
     this.position = undefined;
 
     /**
      * The visualization camera orientation.
-     * 
+     *
      * @type {THREE.Quaternion}
      */
     this.quaternion = undefined;
   }
 
   get html() {
-    return /*html*/`
+    return /*html*/ `
       <img id="${this.imageId}"/>
       <div class="controls-panel">
         <button id="${this.closeButtonId}">Close</button>
@@ -84,7 +86,7 @@ export class DocumentVisualizerWindow extends AbstractDocumentWindow {
 
   windowCreated() {
     this.hide();
-    this.window.classList.add("orienter-box");
+    this.window.classList.add('orienter-box');
     this.window.style.position = 'absolute';
 
     this.closeButtonElement.onclick = () => {
@@ -98,8 +100,10 @@ export class DocumentVisualizerWindow extends AbstractDocumentWindow {
 
   documentWindowReady() {
     // Dispose the window when the displayed document change
-    this.provider.addEventListener(DocumentProvider.EVENT_DISPLAYED_DOC_CHANGED,
-      () => this.disable());
+    this.provider.addEventListener(
+      DocumentProvider.EVENT_DISPLAYED_DOC_CHANGED,
+      () => this.disable()
+    );
   }
 
   //////////////////////
@@ -108,7 +112,7 @@ export class DocumentVisualizerWindow extends AbstractDocumentWindow {
   /**
    * Triggered when the opacity of the slider changes. This method apply the
    * change on the image and the output element.
-   * 
+   *
    * @private
    */
   _onOpacityChange() {
@@ -120,7 +124,7 @@ export class DocumentVisualizerWindow extends AbstractDocumentWindow {
   /**
    * Sets the orientation for the camera. `startTravel` should be called after
    * this method to apply the new position.
-   * 
+   *
    * @param {THREE.Vector3} position The visualization camera position.
    */
   setTargetPosition(position) {
@@ -130,7 +134,7 @@ export class DocumentVisualizerWindow extends AbstractDocumentWindow {
   /**
    * Sets the orientation for the camera. `startTravel` should be called after
    * this method to apply the new orientation.
-   * 
+   *
    * @param {THREE.Quaternion} position The visualization camera orientation.
    */
   setTargetQuaternion(quaternion) {
@@ -139,7 +143,7 @@ export class DocumentVisualizerWindow extends AbstractDocumentWindow {
 
   /**
    * Sets the image source.
-   * 
+   *
    * @param {string} newSrc The image source.
    */
   setImageSrc(newSrc) {
@@ -149,7 +153,7 @@ export class DocumentVisualizerWindow extends AbstractDocumentWindow {
   /**
    * Retrieve the displayed document and start a travel to its visualization
    * location.
-   * 
+   *
    * @async
    */
   async startTravelToDisplayedDocument() {
@@ -161,9 +165,11 @@ export class DocumentVisualizerWindow extends AbstractDocumentWindow {
 
     let imageSrc = await this.provider.getDisplayedDocumentImage();
 
-    if (isNaN(currentDoc.visualization.positionX) ||
-      isNaN(currentDoc.visualization.quaternionX)) {
-        return;
+    if (
+      isNaN(currentDoc.visualization.positionX) ||
+      isNaN(currentDoc.visualization.quaternionX)
+    ) {
+      return;
     }
 
     var docViewPos = new THREE.Vector3();
@@ -187,10 +193,10 @@ export class DocumentVisualizerWindow extends AbstractDocumentWindow {
   /**
    * Starts the document orientation. The processes first assign the correct src
    * to the image, then sets the opacity to 0. After the travel is finished,
-   * the opacity is gradually restored.  
+   * the opacity is gradually restored.
    * To call this function, the `position`, `quaternion` and `imageSrc`
    * attributes must all have been set beforehand.
-   * 
+   *
    * @async
    */
   startTravel() {
@@ -198,8 +204,7 @@ export class DocumentVisualizerWindow extends AbstractDocumentWindow {
     this.opacitySliderElement.value = 0;
     this.opacityElement.value = 0;
 
-    this.cameraControls.initiateTravel(this.position, 2,
-        this.quaternion, true);
+    this.cameraControls.initiateTravel(this.position, 2, this.quaternion, true);
     this.itownsView.notifyChange();
 
     return new Promise((resolve, reject) => {
@@ -212,14 +217,14 @@ export class DocumentVisualizerWindow extends AbstractDocumentWindow {
             this._onOpacityChange();
             if (nextValue >= 1) {
               nextValue = 1;
-              clearInterval(intervalHandle)
+              clearInterval(intervalHandle);
             }
           };
           intervalHandle = setInterval(increaseOpacity, 15);
           resolve();
         }, 2000);
       } catch (e) {
-        reject(e); 
+        reject(e);
       }
     });
   }
@@ -228,7 +233,7 @@ export class DocumentVisualizerWindow extends AbstractDocumentWindow {
   ///// GETTERS
 
   get closeButtonId() {
-    return `${this.windowId}_close_button`
+    return `${this.windowId}_close_button`;
   }
 
   get closeButtonElement() {
@@ -236,15 +241,15 @@ export class DocumentVisualizerWindow extends AbstractDocumentWindow {
   }
 
   get opacitySliderId() {
-    return `${this.windowId}_opacity_slider`
+    return `${this.windowId}_opacity_slider`;
   }
 
   get opacitySliderElement() {
     return document.getElementById(this.opacitySliderId);
   }
-  
+
   get opacityId() {
-    return `${this.windowId}_opacity`
+    return `${this.windowId}_opacity`;
   }
 
   get opacityElement() {
@@ -252,7 +257,7 @@ export class DocumentVisualizerWindow extends AbstractDocumentWindow {
   }
 
   get imageId() {
-    return `${this.windowId}_image`
+    return `${this.windowId}_image`;
   }
 
   get imageElement() {

@@ -1,11 +1,16 @@
-//Components
-import { CityObjectStyle } from "../../../Components/3DTiles/Model/CityObjectStyle";
-import { CityObjectID, CityObject } from "../../../Components/3DTiles/Model/CityObject";
-import { EventSender } from "../../../Components/Events/EventSender";
-import { LayerManager } from "../../../Components/LayerManager/LayerManager";
+/** @format */
 
-import { CityObjectFilter } from "./CityObjectFilter";
-import { CityObjectLayer } from "./CityObjectLayer";
+//Components
+import { CityObjectStyle } from '../../../Components/3DTiles/Model/CityObjectStyle';
+import {
+  CityObjectID,
+  CityObject,
+} from '../../../Components/3DTiles/Model/CityObject';
+import { EventSender } from '../../../Components/Events/EventSender';
+import { LayerManager } from '../../../Components/LayerManager/LayerManager';
+
+import { CityObjectFilter } from './CityObjectFilter';
+import { CityObjectLayer } from './CityObjectLayer';
 
 /**
  * The city object provider manages the city object by organizing them in two
@@ -16,49 +21,49 @@ import { CityObjectLayer } from "./CityObjectLayer";
 export class CityObjectProvider extends EventSender {
   /**
    * Constructs a city object provider, using a layer manager.
-   * 
+   *
    * @param {LayerManager} layerManager The layer manager.
    */
   constructor(layerManager) {
     super();
     /**
      * The tiles manager.
-     * 
+     *
      * @type {LayerManager}
      */
     this.layerManager = layerManager;
 
     /**
      * The available filters.
-     * 
+     *
      * @type {Object.<string, CityObjectFilter>}
      */
     this.filters = {};
 
     /**
      * The current highlighted layer.
-     * 
+     *
      * @type {CityObjectLayer}
      */
     this.cityOjectLayer = undefined;
 
     /**
      * The array of city objects in the layer.
-     * 
+     *
      * @type {Array<CityObjectID>}
      */
     this.layerCityObjectIds = [];
 
     /**
      * The selected city object.
-     * 
+     *
      * @type {CityObject}
      */
     this.selectedCityObject = undefined;
 
     /**
      * The style applied to the selected city object.
-     * 
+     *
      * @type {CityObjectStyle | string}
      */
     this.defaultSelectionStyle = { materialProps: { color: 0x13ddef } };
@@ -75,12 +80,12 @@ export class CityObjectProvider extends EventSender {
   /**
    * Selects a city object from a mouse event. If a city object is actually
    * under the mouse, the `EVENT_CITY_OBJECT_SELECTED` event is sent.
-   * 
+   *
    * @param {MouseEvent} mouseEvent The mouse click event.
    */
   selectCityObject(mouseEvent) {
     let cityObject = this.layerManager.pickCityObject(mouseEvent);
-    if (!!cityObject) {
+    if (cityObject) {
       this.selectedCityObject = cityObject;
       this.removeLayer();
       this.sendEvent(CityObjectProvider.EVENT_CITY_OBJECT_SELECTED, cityObject);
@@ -101,7 +106,7 @@ export class CityObjectProvider extends EventSender {
 
   /**
    * Sets the style for the selected city object.
-   * 
+   *
    * @param {CityObjectStyle | string} style The style.
    */
   setSelectionStyle(style) {
@@ -115,7 +120,7 @@ export class CityObjectProvider extends EventSender {
    * Adds a filter to the dictionnary of available filters. The key shall be
    * the `label` attribute of the filter. After that, the
    * `EVENT_FILTERS_UPDATED` event is sent.
-   * 
+   *
    * @param {CityObjectFilter} cityObjectFilter The filter to add.
    */
   addFilter(cityObjectFilter) {
@@ -132,7 +137,7 @@ export class CityObjectProvider extends EventSender {
 
   /**
    * Returns the currently available filters.
-   * 
+   *
    * @return {Array<CityObjectFilter>} The currently available filters.
    */
   getFilters() {
@@ -145,7 +150,7 @@ export class CityObjectProvider extends EventSender {
   /**
    * Sets the current layer. The layer is defined by a filter (ie. a set
    * of city objects) and a style. Sends the `EVENT_LAYER_CHANGED` event.
-   * 
+   *
    * @param {string} filterLabel Label of the filter that defines the layer.
    * The filter must first be registered using `addFilter`.
    * @param {CityObjectStyle | string} style The style to associate to the
@@ -155,7 +160,7 @@ export class CityObjectProvider extends EventSender {
     let filter = this.filters[filterLabel];
 
     if (filter === undefined) {
-      throw 'No filter found with the label : ' + label;
+      throw 'No filter found with the label : ' + filterLabel;
     }
 
     this.cityOjectLayer = new CityObjectLayer(filter, style);
@@ -169,7 +174,7 @@ export class CityObjectProvider extends EventSender {
 
   /**
    * Returns the current layer.
-   * 
+   *
    * @returns {CityObjectLayer} The current layer.
    */
   getLayer() {
@@ -188,13 +193,15 @@ export class CityObjectProvider extends EventSender {
   /**
    * Updates the tiles manager so that it has the correct styles associated with
    * the right city objects.
-   * 
+   *
    * @private
    */
   _updateTilesManager() {
     this.layerManager.removeAll3DTilesStyles();
-    if (!!this.selectedCityObject) {
-      let tileManager = this.layerManager.getTilesManagerByLayerID(this.selectedCityObject.tile.layer.id);
+    if (this.selectedCityObject) {
+      let tileManager = this.layerManager.getTilesManagerByLayerID(
+        this.selectedCityObject.tile.layer.id
+      );
 
       if (this.cityOjectLayer === undefined) {
         this.layerCityObjectIds = [];
@@ -203,10 +210,16 @@ export class CityObjectProvider extends EventSender {
           .findAllCityObjects(this.cityOjectLayer.filter.accepts)
           .map((co) => co.cityObjectId);
 
-        tileManager.setStyle(this.layerCityObjectIds, this.cityOjectLayer.style);
+        tileManager.setStyle(
+          this.layerCityObjectIds,
+          this.cityOjectLayer.style
+        );
       }
 
-      tileManager.setStyle(this.selectedCityObject.cityObjectId, this.defaultSelectionStyle);
+      tileManager.setStyle(
+        this.selectedCityObject.cityObjectId,
+        this.defaultSelectionStyle
+      );
     }
   }
 

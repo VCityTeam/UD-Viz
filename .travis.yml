@@ -18,10 +18,6 @@ install:
 
 jobs:
   include:
-    - stage: test
+    - stage: travis
       script:
-        - npm run test
-  # - stage: lint
-  #   script:
-  #     - ./node_modules/eslint/bin/eslint.js --version
-  #     - npm run lint
+        - npm run travis

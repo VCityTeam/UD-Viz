@@ -1,11 +1,15 @@
-//Components
-import { Window } from "../../../Components/GUI/js/Window";
-import { CityObjectStyle } from "../../../Components/3DTiles/Model/CityObjectStyle";
+/** @format */
 
-import { CityObjectProvider } from "../ViewModel/CityObjectProvider";
-import { CityObjectFilterSelector } from "./CityObjectFilterSelector";
-import { CityObjectFilterWindow } from "./CityObjectFilterWindow";
-import { AttributeFilterSelector } from "./AttributeFilterSelector";
+const THREE = require('three');
+
+//Components
+import { Window } from '../../../Components/GUI/js/Window';
+import { CityObjectStyle } from '../../../Components/3DTiles/Model/CityObjectStyle';
+
+import { CityObjectProvider } from '../ViewModel/CityObjectProvider';
+import { CityObjectFilterSelector } from './CityObjectFilterSelector';
+import { CityObjectFilterWindow } from './CityObjectFilterWindow';
+import { AttributeFilterSelector } from './AttributeFilterSelector';
 
 import './CityObjectWindow.css';
 
@@ -17,7 +21,7 @@ import './CityObjectWindow.css';
 export class CityObjectWindow extends Window {
   /**
    * Constructs the window from the provider.
-   * 
+   *
    * @param {CityObjectProvider} provider The city object provider.
    */
   constructor(provider) {
@@ -25,35 +29,35 @@ export class CityObjectWindow extends Window {
 
     /**
      * The city object provider.
-     * 
+     *
      * @type {CityObjectProvider}
      */
     this.provider = provider;
 
     /**
      * The window for selected filters.
-     * 
+     *
      * @type {CityObjectFilterWindow}
      */
     this.filterWindow = new CityObjectFilterWindow();
 
     /**
      * The style for the layer chosen by the user, through the filter window.
-     * 
+     *
      * @type {CityObjectStyle | string}
      */
-    this.defaultLayerStyle = {materialProps: {color: 0xffa14f}};
+    this.defaultLayerStyle = { materialProps: { color: 0xffa14f } };
 
     /**
      * Wether the use is currently selecting a city object.
-     * 
+     *
      * @type {boolean}
      */
     this.isSelectingCityObject = false;
 
     /**
      * The list of extensions
-     * 
+     *
      * @type {Array<{html: string, label: string, id: string}>}
      */
     this.extensions = [];
@@ -61,7 +65,7 @@ export class CityObjectWindow extends Window {
     let viewerDiv = document.getElementById('viewerDiv');
     /**
      * The event listener for mouse clicks.
-     * 
+     *
      * @type {(event: MouseEvent) => any}
      */
     this.mouseClickListener = (event) => {
@@ -77,29 +81,34 @@ export class CityObjectWindow extends Window {
       viewerDiv.removeEventListener('mousedown', this.mouseClickListener);
     });
 
-
     // Adding a filter selector for the attribute filter
-    this.filterWindow.addFilterSelector(new AttributeFilterSelector(this.provider));
+    this.filterWindow.addFilterSelector(
+      new AttributeFilterSelector(this.provider)
+    );
 
     // The event listener for filter selection (in the filter window). Updates
     // the layer in the provider.
     this.filterWindow.addEventListener(
       CityObjectFilterWindow.EVENT_FILTER_SELECTED,
-      (filterLabel) => this._onFilterSelected(filterLabel));
+      (filterLabel) => this._onFilterSelected(filterLabel)
+    );
     // The event listener for the layer change. Updates the layer description.
-    this.provider.addEventListener(CityObjectProvider.EVENT_LAYER_CHANGED,
-      () => this._updateLayerDescription());
+    this.provider.addEventListener(CityObjectProvider.EVENT_LAYER_CHANGED, () =>
+      this._updateLayerDescription()
+    );
 
     // Event listener for city object selection
-    this.provider.addEventListener(CityObjectProvider.EVENT_CITY_OBJECT_SELECTED,
-      (cityObject) => this._updateSelectedCityObjectDescription(cityObject));
+    this.provider.addEventListener(
+      CityObjectProvider.EVENT_CITY_OBJECT_SELECTED,
+      (cityObject) => this._updateSelectedCityObjectDescription(cityObject)
+    );
 
     this._updateLayerDescription();
     this._updateSelectedCityObjectDescription();
   }
 
   get innerContentHtml() {
-    return /*html*/`
+    return /*html*/ `
       <div class="box-section">
         <h3 class="section-title">Filter<span class="color-indicator" id="${this.layerColorIndicatorId}"></span></h3>
         <div>
@@ -140,14 +149,12 @@ export class CityObjectWindow extends Window {
       this._createExtensionElement(extension);
     }
 
-    this.selectFilterButtonElement.onclick =
-      () => this.filterWindow.enable();
+    this.selectFilterButtonElement.onclick = () => this.filterWindow.enable();
 
-    this.clearFilterButtonElement.onclick =
-      () => this.provider.removeLayer();
+    this.clearFilterButtonElement.onclick = () => this.provider.removeLayer();
 
-    this.clearSelectionButtonElement.onclick =
-      () => this._clearCityObjectSelection();
+    this.clearSelectionButtonElement.onclick = () =>
+      this._clearCityObjectSelection();
 
     this.clearSelectionButtonElement.disabled = true;
 
@@ -163,11 +170,11 @@ export class CityObjectWindow extends Window {
   _updateLayerDescription() {
     if (this.isCreated) {
       let layer = this.provider.getLayer();
-      if (!!layer) {
+      if (layer) {
         this.selectedFilterElement.innerText = layer.filter.toString();
         this.layerColorIndicatorElement.style.display = '';
         this.layerColorIndicatorElement.style.background =
-          '#' + (new THREE.Color(layer.style.materialProps.color)).getHexString();
+          '#' + new THREE.Color(layer.style.materialProps.color).getHexString();
       } else {
         this.selectedFilterElement.innerText = '';
         this.layerColorIndicatorElement.style.display = 'none';
@@ -180,7 +187,7 @@ export class CityObjectWindow extends Window {
 
   /**
    * Adds a filter selector in the city object filter window.
-   * 
+   *
    * @param {CityObjectFilterSelector} filterSelector The filter selector to
    * add.
    */
@@ -191,11 +198,11 @@ export class CityObjectWindow extends Window {
   /**
    * Triggered when the user selects a filter in the filter selection window.
    * Sets the correct layer in the provider.
-   * 
+   *
    * @param {string} filterLabel The selected filter label.
    */
   _onFilterSelected(filterLabel) {
-    if (!!filterLabel) {
+    if (filterLabel) {
       this.provider.setLayer(filterLabel, this.defaultLayerStyle);
     } else {
       this.provider.removeLayer();
@@ -205,7 +212,7 @@ export class CityObjectWindow extends Window {
   /**
    * Sets the default style for the layer defined by the user (through the
    * filter selection window).
-   * 
+   *
    * @param {CityObjectStyle | string} style The default style for the layer.
    */
   setDefaultLayerStyle(style) {
@@ -225,7 +232,7 @@ export class CityObjectWindow extends Window {
 
   /**
    * Updates the description for the selected city object.
-   * 
+   *
    * @param {CityObject} cityObject The selected city object.
    */
   _updateSelectedCityObjectDescription(cityObject) {
@@ -233,8 +240,11 @@ export class CityObjectWindow extends Window {
       return;
     }
 
-    this.selectionColorIndicatorElement.style.background = '#' +
-      (new THREE.Color(this.provider.defaultSelectionStyle.materialProps.color)).getHexString();
+    this.selectionColorIndicatorElement.style.background =
+      '#' +
+      new THREE.Color(
+        this.provider.defaultSelectionStyle.materialProps.color
+      ).getHexString();
 
     if (!cityObject) {
       this.selectedCityObjectElement.innerHTML = '';
@@ -244,7 +254,7 @@ export class CityObjectWindow extends Window {
 
     this.clearSelectionButtonElement.disabled = false;
 
-    let html = /*html*/`
+    let html = /*html*/ `
       <p class="city-object-title">Attributes</p>
       <p class="city-object-value">
         Tile ID : ${cityObject.tile.tileId}<br>
@@ -252,7 +262,7 @@ export class CityObjectWindow extends Window {
         Layer : ${cityObject.tile.layer.name}
     `;
     for (let prop of Object.entries(cityObject.props)) {
-      html += /*html*/`
+      html += /*html*/ `
         <br>${prop[0]} : ${prop[1]}
       `;
     }

@@ -1,3 +1,5 @@
+/** @format */
+
 //Components
 import { ModuleView } from '../../../Components/ModuleView/ModuleView.js';
 
@@ -21,30 +23,38 @@ export class TemporalView extends ModuleView {
     this.currentTime = temporalOptions.currentTime;
 
     function currentTimeUpdated(newDate) {
-        this.currentTime = Number(newDate);
-        this.provider.currentTime = this.currentTime; // TODO: verify that the 
-        // flow is good with MVVM 
-        this.provider.changeVisibleTilesStates();
+      this.currentTime = Number(newDate);
+      this.provider.currentTime = this.currentTime; // TODO: verify that the
+      // flow is good with MVVM
+      this.provider.changeVisibleTilesStates();
     }
     const refreshCallback = currentTimeUpdated.bind(this);
 
     // Callback to get data asynchronously from the tileset.json
-    function getAsynchronousData(){
-            let versions = this.temporalExtension.temporal_tileset.temporalVersions.versions;
-            let versionTransitions = this.temporalExtension.temporal_tileset.versionTransitions;
-            return [versions, versionTransitions]
-        }
+    function getAsynchronousData() {
+      let versions =
+        this.temporalExtension.temporal_tileset.temporalVersions.versions;
+      let versionTransitions =
+        this.temporalExtension.temporal_tileset.versionTransitions;
+      return [versions, versionTransitions];
+    }
 
     // Select the window type:
     switch (temporalOptions.view) {
-      case EnumTemporalWindow.SLIDERWINDOW :
-          this.temporalWindow = new TemporalSliderWindow(refreshCallback, temporalOptions);
-          break;
-      case EnumTemporalWindow.GRAPHWINDOW :
-          temporalOptions.getAsynchronousData = getAsynchronousData.bind(this);
-          this.temporalWindow = new TemporalGraphWindow(refreshCallback, temporalOptions);
-          break;
-      }
+      case EnumTemporalWindow.SLIDERWINDOW:
+        this.temporalWindow = new TemporalSliderWindow(
+          refreshCallback,
+          temporalOptions
+        );
+        break;
+      case EnumTemporalWindow.GRAPHWINDOW:
+        temporalOptions.getAsynchronousData = getAsynchronousData.bind(this);
+        this.temporalWindow = new TemporalGraphWindow(
+          refreshCallback,
+          temporalOptions
+        );
+        break;
+    }
   }
 
   /////////////////

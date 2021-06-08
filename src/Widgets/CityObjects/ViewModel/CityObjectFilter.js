@@ -1,5 +1,7 @@
+/** @format */
+
 //Components
-import { CityObject } from "../../../Components/3DTiles/Model/CityObject";
+import { CityObject } from '../../../Components/3DTiles/Model/CityObject';
 
 /**
  * Represents a filter for city objects. It is basically a function that takes
@@ -9,7 +11,7 @@ export class CityObjectFilter {
   /**
    * Constructs a new city object filter, from an acceptation function. If no
    * acceptation function was provided, the filter accepts all city objects.
-   * 
+   *
    * @param {string} label The unique label identifying the filter.
    * @param {(CityObject) => boolean} [accepts] The function responsible to
    * filter the city objects. It must evaluate wether a city object is
@@ -18,12 +20,12 @@ export class CityObjectFilter {
   constructor(label, accepts) {
     /**
      * The unique identifier of the filter.
-     * 
+     *
      * @type {string}
      */
     this.label = label;
 
-    if (typeof(accepts) === 'function') {
+    if (typeof accepts === 'function') {
       this.accepts = accepts;
     } else {
       // Necessary if inheritance is used, I'm not sure why though
@@ -34,9 +36,9 @@ export class CityObjectFilter {
   /**
    * The function responsible to filter the city objects. It evaluates wether
    * a city object is acceptable according to the filter.
-   * 
+   *
    * @param {CityObject} cityObject The city object to evaluate.
-   * 
+   *
    * @returns {boolean} Wether the city object is acceptable.
    */
   accepts(cityObject) {

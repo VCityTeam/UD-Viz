@@ -1,7 +1,9 @@
-//Components
-import { CityObject } from "../../../Components/3DTiles/Model/CityObject";
+/** @format */
 
-import { CityObjectFilter } from "./CityObjectFilter";
+//Components
+import { CityObject } from '../../../Components/3DTiles/Model/CityObject';
+
+import { CityObjectFilter } from './CityObjectFilter';
 
 /**
  * A specialization of `CityObjectFilter` to filter the city objects from
@@ -37,9 +39,9 @@ export class AttributeFilter extends CityObjectFilter {
    * Accepts city objects according to their attributes. For each attribute in
    * this filter that evaluates to `true` (ie. neither undefined, null nor an
    * empty string), equality is tested with the city object.
-   * 
+   *
    * @param {CityObject} cityObject The city object to evaluate.
-   * 
+   *
    * @returns {boolean} Wether the city object is acceptable.
    */
   accepts(cityObject) {
@@ -52,8 +54,10 @@ export class AttributeFilter extends CityObjectFilter {
     }
 
     for (let key of Object.keys(this.props)) {
-      if (!cityObject.props[key] ||
-        (!!this.props[key] && this.props[key] != cityObject.props[key])) {
+      if (
+        !cityObject.props[key] ||
+        (!!this.props[key] && this.props[key] != cityObject.props[key])
+      ) {
         return false;
       }
     }
@@ -69,16 +73,16 @@ export class AttributeFilter extends CityObjectFilter {
     let result = '';
     let attributes = [];
 
-    if (!!this.tileId) {
+    if (this.tileId) {
       attributes.push(['tileId', this.tileId]);
     }
 
-    if (!!this.batchId) {
+    if (this.batchId) {
       attributes.push(['batchId', this.batchId]);
     }
 
     for (let entry of Object.entries(this.props)) {
-      if (!!entry[1]) {
+      if (entry[1]) {
         attributes.push([entry[0], entry[1]]);
       }
     }
@@ -92,9 +96,9 @@ export class AttributeFilter extends CityObjectFilter {
           result += ', ';
         }
       }
-      result += ')'
+      result += ')';
     } else {
-      result += 'All city objects'
+      result += 'All city objects';
     }
 
     return result;

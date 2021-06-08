@@ -1,13 +1,15 @@
+/** @format */
+
 import * as THREE from 'three';
 import * as itowns from 'itowns';
-import Coordinates from "itowns/lib/Core/Geographic/Coordinates";
+import Coordinates from 'itowns/lib/Core/Geographic/Coordinates';
 import proj4 from 'proj4';
 
 //Components
-import { ModuleView } from "../../../../Components/ModuleView/ModuleView";
-import { focusCameraOn } from "../../../../Components/Camera/CameraUtils";
+import { ModuleView } from '../../../../Components/ModuleView/ModuleView';
+import { focusCameraOn } from '../../../../Components/Camera/CameraUtils';
 
-import { GeocodingService } from "../services/GeocodingService";
+import { GeocodingService } from '../services/GeocodingService';
 import './GeocodingStyle.css';
 
 export class GeocodingView extends ModuleView {
@@ -28,12 +30,15 @@ export class GeocodingView extends ModuleView {
     // (planarView of iTowns). It is indeed needed in getWorldCoordinates()
     // to convert the coordinates received from the geocoding service (WGS84)
     // to this coordinate system.
-    proj4.defs('EPSG:3946', '+proj=lcc +lat_1=45.25 +lat_2=46.75' +
-          ' +lat_0=46 +lon_0=3 +x_0=1700000 +y_0=5200000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs');
+    proj4.defs(
+      'EPSG:3946',
+      '+proj=lcc +lat_1=45.25 +lat_2=46.75' +
+        ' +lat_0=46 +lon_0=3 +x_0=1700000 +y_0=5200000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs'
+    );
   }
 
   get html() {
-    return /*html*/`
+    return /*html*/ `
       <form id="${this.formId}">
         <div id="${this.centeredDivId}">
           <input id="${this.searchInputId}" type="text"
@@ -61,7 +66,7 @@ export class GeocodingView extends ModuleView {
       this.formElement.onsubmit = () => {
         this.doGeocoding();
         return false;
-      }
+      };
     }
   }
 
@@ -73,16 +78,16 @@ export class GeocodingView extends ModuleView {
       if (this.isCreated) {
         let div = this.viewElement;
         let input = this.searchInputElement;
-        input.style.transition = 'width 0.3s ease-out, opacity 0.4s ease-out'
+        input.style.transition = 'width 0.3s ease-out, opacity 0.4s ease-out';
         input.style.width = '0';
         input.style.opacity = '0';
         input.ontransitionend = (event) => {
-          if (event.propertyName === "opacity") {
+          if (event.propertyName === 'opacity') {
             div.parentElement.removeChild(div);
             this.removePins();
             resolve();
           }
-        }
+        };
       } else {
         resolve();
       }
@@ -100,12 +105,12 @@ export class GeocodingView extends ModuleView {
 
     try {
       let coords = await this.geocodingService.getCoordinates(searchString);
-      coords.forEach(c => {
-        let {lat, lng} = c;
+      coords.forEach((c) => {
+        let { lat, lng } = c;
         let i = 0;
         //step 1 : convert the lat/lng to coordinates used by itowns
         let targetPos = this.getWorldCoordinates(lat, lng);
-        if (!!targetPos.z) {
+        if (targetPos.z) {
           //if we could convert the coords (ie. they are on the map)
           //step 2 : add a mesh representing a pin
           this.addPin(targetPos);
@@ -132,8 +137,11 @@ export class GeocodingView extends ModuleView {
   getWorldCoordinates(lat, lng) {
     const [targetX, targetY] = proj4('EPSG:3946').forward([lng, lat]);
     const coords = new Coordinates('EPSG:3946', targetX, targetY, 0);
-    const elevation = itowns.DEMUtils.getElevationValueAt(this.planarView.tileLayer, coords);
-    const targetZ = (!!elevation) ? elevation : undefined;
+    const elevation = itowns.DEMUtils.getElevationValueAt(
+      this.planarView.tileLayer,
+      coords
+    );
+    const targetZ = elevation ? elevation : undefined;
     return new THREE.Vector3(targetX, targetY, targetZ);
   }
 
@@ -146,12 +154,12 @@ export class GeocodingView extends ModuleView {
   async addPin(position) {
     const pinHeight = 50;
     const cylGeom = new THREE.CylinderGeometry(1, 8, pinHeight, 8);
-    const cylMat = new THREE.MeshToonMaterial({color: 0xff0000});
+    const cylMat = new THREE.MeshToonMaterial({ color: 0xff0000 });
     const cylMesh = new THREE.Mesh(cylGeom, cylMat);
     position.z += pinHeight / 2;
     this.addMeshToScene(cylMesh, position);
     const sphereGeom = new THREE.SphereGeometry(10, 16, 16);
-    const sphereMat = new THREE.MeshToonMaterial({color: 0xff00000});
+    const sphereMat = new THREE.MeshToonMaterial({ color: 0xff00000 });
     const sphereMesh = new THREE.Mesh(sphereGeom, sphereMat);
     position.z += pinHeight / 2;
     this.addMeshToScene(sphereMesh, position);
@@ -277,7 +285,6 @@ export class GeocodingView extends ModuleView {
    * @override
    */
   async disableView() {
-
     await this.dispose();
   }
 }

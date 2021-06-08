@@ -7,8 +7,6 @@ import { AssetsManager } from '../Components/AssetsManager';
 import { InputManager } from '../Components/InputManager';
 import { Cameraman, Routine } from '../Components/Cameraman';
 
-import { THREEUtils } from '../Components/THREEUtils';
-
 import * as THREE from 'three';
 import * as proj4 from 'proj4';
 import * as itowns from 'itowns';
@@ -16,21 +14,14 @@ import * as itowns from 'itowns';
 import './GameView.css';
 import LocalScript from '../Shared/GameObject/Components/LocalScript';
 import Render from '../Shared/GameObject/Components/Render';
-import { isFunction } from 'jquery';
 
 const udvShared = require('../Shared/Shared');
 const Command = udvShared.Command;
 const WorldState = udvShared.WorldState;
-const Data = udvShared.Data;
-
-//DEBUG
-let id = 0;
+const THREEUtils = udvShared.Components.THREEUtils;
 
 export class GameView {
   constructor(params) {
-    this.id = id;
-    id++;
-
     params.htmlParent = params.htmlParent || document.body;
 
     //html
@@ -314,6 +305,18 @@ export class GameView {
     cameraShadow.updateProjectionMatrix();
   }
 
+  getWorldStateInterpolator() {
+    return this.worldStateInterpolator;
+  }
+
+  getLastState() {
+    return this.lastState;
+  }
+
+  getInputManager() {
+    return this.inputManager;
+  }
+
   updateViewServer(dt) {
     //TODO itowns BUG
     if (!isNaN(dt)) {
@@ -401,11 +404,9 @@ export class GameView {
       if (!_this.isLocal)
         g.initAssetsComponents(_this.assetsManager, udvShared);
 
-      g.traverse(function (child) {
-        const scriptComponent = child.getComponent(LocalScript.TYPE);
-        if (scriptComponent)
-          scriptComponent.execute(LocalScript.EVENT.INIT, [ctx]);
-      });
+      const scriptComponent = g.getComponent(LocalScript.TYPE);
+      if (scriptComponent)
+        scriptComponent.execute(LocalScript.EVENT.INIT, [ctx]);
 
       //add static object to obstacle
       if (g.isStatic()) {

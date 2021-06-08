@@ -24,7 +24,7 @@
     "featuresIds": {
       "description": "Array of ids of the features. Used in versions and transactions to identify the features.",
       "type": "array",
-      "items": {"type": "string"}
+      "items": { "type": "string" }
     }
   }
 }

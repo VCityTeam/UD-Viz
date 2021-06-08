@@ -1,71 +1,80 @@
+/** @format */
+
 import * as THREE from 'three';
 
 //Widgets
-import { DocumentVisualizerWindow } from "../../../DocumentVisualizer/View/DocumentVisualizerWindow";
-import { AbstractDocumentWindow } from "../../../Documents/View/AbstractDocumentWindow";
+import { DocumentVisualizerWindow } from '../../../DocumentVisualizer/View/DocumentVisualizerWindow';
+import { AbstractDocumentWindow } from '../../../Documents/View/AbstractDocumentWindow';
 
 //Components
-import { Window } from "../../../../Components/GUI/js/Window";
-import { PositionerWindow } from "../../../../Components/Camera/PositionerWindow";
+import { Window } from '../../../../Components/GUI/js/Window';
+import { PositionerWindow } from '../../../../Components/Camera/PositionerWindow';
 
-import { ContributeService } from "../Service/ContributeService";
+import { ContributeService } from '../Service/ContributeService';
 
 export class DocumentCreationWindow extends AbstractDocumentWindow {
   /**
    * Creates a new document creation window.
-   * 
+   *
    * @param {ContributeService} contributeService The contribute service to
    * perform requests.
    * @param {*} itownsView The iTowns view.
    * @param {*} cameraControls The planar camera controls.
    * @param {DocumentVisualizerWindow} documentImageOrienter The document image orienter module.
    */
-  constructor(contributeService, itownsView, cameraControls, documentImageOrienter) {
+  constructor(
+    contributeService,
+    itownsView,
+    cameraControls,
+    documentImageOrienter
+  ) {
     super('Creation');
-
 
     /**
      * The contribute service to perform requests.
-     * 
+     *
      * @type {ContributeService}
      */
     this.contributeService = contributeService;
 
     /**
      * The camera positioner utility tool.
-     * 
+     *
      * @type {PositionerWindow}
      */
     this.positioner = new PositionerWindow(itownsView, cameraControls);
-    this.positioner.addEventListener(PositionerWindow.EVENT_POSITION_SUBMITTED,
-      (data) => this._registerPositionAndQuaternion(data));
-    this.addEventListener(Window.EVENT_DISABLED,
-      () => this.positioner.disable());
+    this.positioner.addEventListener(
+      PositionerWindow.EVENT_POSITION_SUBMITTED,
+      (data) => this._registerPositionAndQuaternion(data)
+    );
+    this.addEventListener(Window.EVENT_DISABLED, () =>
+      this.positioner.disable()
+    );
 
     /**
      * The camera controls
-     * 
+     *
      * @type {*}
      */
     this.controls = cameraControls;
 
     /**
      * The registered camera position for the document visualization.
-     * 
+     *
      * @type {THREE.Vector3}
      */
     this.cameraPosition = undefined;
 
     /**
      * The registered camera orientation for the document visualization.
-     * 
+     *
      * @type {THREE.Quaternion}
      */
     this.cameraQuaternion = undefined;
 
     /**
      * The document image orienter module.
-     * 
+     *
      * @type {DocumentVisualizerWindow}
      */
     this.documentImageOrienter = documentImageOrienter;
@@ -73,18 +82,20 @@ export class DocumentCreationWindow extends AbstractDocumentWindow {
     // same time.
     this.documentImageOrienter.addEventListener(Window.EVENT_DISABLED, () => {
       if (this.positioner.isVisible) {
-        this.positioner.disable()
-      }});
+        this.positioner.disable();
+      }
+    });
     this.positioner.addEventListener(Window.EVENT_DISABLED, () => {
       this._exitEditMode();
       if (this.documentImageOrienter.isVisible) {
-        this.documentImageOrienter.disable()
-      }});
+        this.documentImageOrienter.disable();
+      }
+    });
 
     /**
      * The settings for an accurate movement of the camera. These settings
      * should be used in the `PlanarControls` class.
-     * 
+     *
      * @type {{rotateSpeed: number, zoomInFactor: number, zoomOutFactor: number,
      * maxPanSpeed: number, minPanSpeed: number}}
      */
@@ -93,16 +104,16 @@ export class DocumentCreationWindow extends AbstractDocumentWindow {
       zoomInFactor: 0.04,
       zoomOutFactor: 0.04,
       maxPanSpeed: 5.0,
-      minPanSpeed: 0.01
+      minPanSpeed: 0.01,
     };
 
     /**
      * The saved state of the planar controls settings. This is used to restore
      * the default settings when needed.
-     * 
+     *
      * @type {{rotateSpeed: number, zoomInFactor: number, zoomOutFactor: number,
-      * maxPanSpeed: number, minPanSpeed: number}}
-      */
+     * maxPanSpeed: number, minPanSpeed: number}}
+     */
     this.savedControlsSettings = {};
     for (let key of Object.keys(this.accurateControlsSettings)) {
       this.savedControlsSettings[key] = this.controls[key];
@@ -110,7 +121,7 @@ export class DocumentCreationWindow extends AbstractDocumentWindow {
   }
 
   get innerContentHtml() {
-    return /*html*/`
+    return /*html*/ `
       <div class="box-section">
         <h3 class="section-title">Document data</h3>
         <form id="${this.formId}" class="doc-update-creation-form">
@@ -161,7 +172,7 @@ export class DocumentCreationWindow extends AbstractDocumentWindow {
     this.view.navigatorWindow.addExtension('Create', {
       type: 'button',
       html: 'Create a new document',
-      callback: () => this.view.requestWindowDisplay(this, true)
+      callback: () => this.view.requestWindowDisplay(this, true),
     });
   }
 
@@ -171,7 +182,7 @@ export class DocumentCreationWindow extends AbstractDocumentWindow {
   /**
    * Displays the document positioning interfaces : the window positioner and
    * the document image orienter.
-   * 
+   *
    * @private
    */
   _startPositioningDocument() {
@@ -214,7 +225,7 @@ export class DocumentCreationWindow extends AbstractDocumentWindow {
 
   /**
    * Sets the initial values for the form.
-   * 
+   *
    * @private
    */
   _initForm() {
@@ -231,13 +242,13 @@ export class DocumentCreationWindow extends AbstractDocumentWindow {
   /**
    * Checks if the form is ready to be validated. Every entry must have a
    * non-empty value, and the camera position / orientation must have been set.
-   * 
+   *
    * @private
    */
   _formValidation() {
     let data = new FormData(this.formElement);
     for (let entry of data.entries()) {
-      if (!entry[1] || entry[1] === "") {
+      if (!entry[1] || entry[1] === '') {
         return false;
       }
     }
@@ -251,11 +262,11 @@ export class DocumentCreationWindow extends AbstractDocumentWindow {
    * Update the form buttons depending on the current form state. If the
    * document have been chosen, we can position it. If the form is valid,
    * we can create the document.
-   * 
+   *
    * @private
    */
   _updateFormButtons() {
-    if (!!this.docImageElement.value) {
+    if (this.docImageElement.value) {
       this.buttonPositionElement.disabled = false;
     } else {
       this.buttonPositionElement.disabled = true;
@@ -270,11 +281,11 @@ export class DocumentCreationWindow extends AbstractDocumentWindow {
 
   /**
    * Registers the camera position and orientation.
-   * 
+   *
    * @param {{
    *  position: THREE.Vector3,
    * quaternion: THREE.Quaternion
-   * }} cameraState Position and orientation of the camera. 
+   * }} cameraState Position and orientation of the camera.
    */
   _registerPositionAndQuaternion(cameraState) {
     this.cameraPosition = cameraState.position;
@@ -284,7 +295,7 @@ export class DocumentCreationWindow extends AbstractDocumentWindow {
 
   /**
    * Proceeds to create the document from the form data.
-   * 
+   *
    * @private
    */
   async _submitCreation() {
@@ -300,7 +311,7 @@ export class DocumentCreationWindow extends AbstractDocumentWindow {
     data.append('quaternionY', this.cameraQuaternion.y);
     data.append('quaternionZ', this.cameraQuaternion.z);
     data.append('quaternionW', this.cameraQuaternion.w);
-    
+
     try {
       await this.contributeService.createDocument(data);
       this.disable();
@@ -343,11 +354,11 @@ export class DocumentCreationWindow extends AbstractDocumentWindow {
   get docTitleElement() {
     return document.getElementById(this.docTitleId);
   }
-  
+
   get docImageId() {
     return `${this.windowId}_image`;
   }
-  
+
   get docImageElement() {
     return document.getElementById(this.docImageId);
   }
@@ -361,7 +372,7 @@ export class DocumentCreationWindow extends AbstractDocumentWindow {
   }
 
   get docRightsHolderId() {
-    return `${this.windowId}_rights_holder`
+    return `${this.windowId}_rights_holder`;
   }
 
   get docRightsHolderElement() {

@@ -1,3 +1,5 @@
+/** @format */
+
 //Components
 import { ModuleView } from '../../Components/ModuleView/ModuleView';
 
@@ -8,17 +10,16 @@ import './About.css';
  * simply include this file in the html, no need to instanciate anything in main.js
  */
 export class AboutWindow extends ModuleView {
+  constructor() {
+    super();
+    // Create DOM element
+    let aboutDiv = document.createElement('div');
+    aboutDiv.id = 'aboutWindow';
+    document.getElementById('contentSection').append(aboutDiv);
 
-   constructor(options = {}) {
-      super();
-      // Create DOM element
-      let aboutDiv = document.createElement("div");
-      aboutDiv.id = 'aboutWindow';
-      document.getElementById('contentSection').append(aboutDiv);
-
-      // Create HMTL
-      document.getElementById("aboutWindow").innerHTML =
-         '<div id="text">\
+    // Create HMTL
+    document.getElementById('aboutWindow').innerHTML =
+      '<div id="text">\
              <br>\
              <p>This UD-Viz-Core demo is part of the \
              <a target="_blank"\
@@ -36,7 +37,7 @@ export class AboutWindow extends ModuleView {
                 <ul>\
                 <li><a href="http://www.itowns-project.org/">iTowns</a></li>\
                 <li><a target="_blank"\
-                       href="https://data.grandlyon.com">Lyon Métropole Open\ Data</a></li>\
+                       href="https://data.grandlyon.com">Lyon Métropole Open Data</a></li>\
                 </ul>\
              </p>\
              <p> <b>Legal and operational disclaimer:</b> This demonstration\
@@ -75,19 +76,24 @@ export class AboutWindow extends ModuleView {
         <button id="aboutCloseButton">Close</button>\
         ';
 
-      // Close the window...when close button is hit
-      document.getElementById("aboutCloseButton").addEventListener(
-         'mousedown', () => {
-            this.disable();
-         }, false);
-   }
+    // Close the window...when close button is hit
+    document.getElementById('aboutCloseButton').addEventListener(
+      'mousedown',
+      () => {
+        this.disable();
+      },
+      false
+    );
+  }
 
-   /////// MODULE VIEW MANAGEMENT
-   enableView() {
-      document.getElementById('aboutWindow').style.setProperty('display', 'block');
-   }
+  /////// MODULE VIEW MANAGEMENT
+  enableView() {
+    document
+      .getElementById('aboutWindow')
+      .style.setProperty('display', 'block');
+  }
 
-   disableView() {
-      document.getElementById('aboutWindow').style.setProperty('display', 'none');
-   }
+  disableView() {
+    document.getElementById('aboutWindow').style.setProperty('display', 'none');
+  }
 }

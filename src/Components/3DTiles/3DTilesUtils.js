@@ -9,9 +9,9 @@ import { objectEquals } from '../DataProcessing/DataProcessing.js';
  * @param {*} tile A 3DTiles tile object from THREE.js.
  */
 export function getBatchTableFromTile(tile) {
-  if (!!tile.batchTable) {
+  if (tile.batchTable) {
     return tile.batchTable;
-  } else if (!!tile.parent) {
+  } else if (tile.parent) {
     return getBatchTableFromTile(tile.parent);
   }
   return undefined;
@@ -66,11 +66,11 @@ export function getVisibleTiles(layer) {
   let rootTile = layer.object3d.children[0];
   let tiles = [];
   let exploreTree = (node) => {
-    if (!!node) {
-      if (!!node.batchTable) {
+    if (node) {
+      if (node.batchTable) {
         // It's an actual tile
         tiles.push(node);
-      };
+      }
       for (let childIndex = 0; childIndex < node.children.length; childIndex++) {
         let child = node.children[childIndex];
         if (child.type === 'Object3D') {
@@ -157,8 +157,8 @@ export function setTileVerticesColor(tile, newColor, indexArray = null) {
     if (!!indexArray && (lowerBound > i || upperBound < i)) {
       //If i is not one of the selected indexes, we keep the previous color
       let previousColor = (tile.geometry.attributes.color) ?
-                          tile.geometry.attributes.color.array.slice(i * 3, i * 3 + 3) :
-                          tile.material.color.toArray();
+        tile.geometry.attributes.color.array.slice(i * 3, i * 3 + 3) :
+        tile.material.color.toArray();
       vertexColor = previousColor;
     }
 
@@ -215,8 +215,8 @@ export function createTileGroups(tile, materialsProps, ranges) {
   let mesh = getMeshFromTile(tile);
 
   let defaultMaterial = Array.isArray(mesh.material) ?
-                        mesh.material[0] :
-                        mesh.material;
+    mesh.material[0] :
+    mesh.material;
 
   // Reset the materials
   mesh.material = [ defaultMaterial ];
@@ -335,7 +335,7 @@ export function createTileGroupsFromBatchIDs(tile, groups) {
     if (materialIndex < 0) {
       // If the material is new, push it
       materialIndex = materials.length;
-      materials.push(group.material)
+      materials.push(group.material);
     }
 
     // Push the batch IDs and remember their material

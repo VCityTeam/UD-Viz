@@ -1,9 +1,10 @@
-import { LinkService } from "../Model/LinkService";
-import { CityObjectModule } from "../../CityObjects/CityObjectModule";
-import { CityObjectFilterSelector } from "../../CityObjects/View/CityObjectFilterSelector";
-import { LinkProvider } from "../ViewModel/LinkProvider";
-import { CityObjectProvider } from "../../CityObjects/ViewModel/CityObjectProvider";
-import { LinkView } from "./LinkView";
+/** @format */
+
+import { CityObjectModule } from '../../CityObjects/CityObjectModule';
+import { CityObjectFilterSelector } from '../../CityObjects/View/CityObjectFilterSelector';
+import { LinkProvider } from '../ViewModel/LinkProvider';
+import { CityObjectProvider } from '../../CityObjects/ViewModel/CityObjectProvider';
+import { LinkView } from './LinkView';
 
 /**
  * The interface extensions for the city object window.
@@ -11,7 +12,7 @@ import { LinkView } from "./LinkView";
 export class CityObjectLinkInterface {
   /**
    * Constructs the city object link interface.
-   * 
+   *
    * @param {LinkView} linkView The link view.
    * @param {CityObjectModule} cityObjectModule The city object module.
    * @param {LinkProvider} linkProvider The link service.
@@ -28,7 +29,7 @@ export class CityObjectLinkInterface {
     // to show them in the document navigator.
     cityObjectModule.addExtension('links', {
       type: 'div',
-      html: /*html*/`
+      html: /*html*/ `
         <div id="${this.linkListId}">
         </div>
         <button id="${this.showDocsButtonId}">Show in navigator</button>
@@ -39,18 +40,20 @@ export class CityObjectLinkInterface {
           linkView.requestDisplayDocuments();
           linkProvider.toggleLinkedDocumentsFilter(true);
         };
-      }
+      },
     });
 
     /**
      * The link provider.
-     * 
+     *
      * @type {LinkProvider}
      */
     this.linkProvider = linkProvider;
 
-    this.linkProvider.addEventListener(CityObjectProvider.EVENT_CITY_OBJECT_SELECTED,
-      () => this._updateLinkList());
+    this.linkProvider.addEventListener(
+      CityObjectProvider.EVENT_CITY_OBJECT_SELECTED,
+      () => this._updateLinkList()
+    );
   }
 
   /**
@@ -61,9 +64,9 @@ export class CityObjectLinkInterface {
       return;
     }
     let docs = this.linkProvider.getSelectedCityObjectLinkedDocuments();
-    let listHtml = `<p class="city-object-title">${docs.length} linked document(s)</p>`
+    let listHtml = `<p class="city-object-title">${docs.length} linked document(s)</p>`;
     if (docs.length > 0) {
-      listHtml += `<p class="city-object-value"><ul>`;
+      listHtml += '<p class="city-object-value"><ul>';
       for (let doc of docs) {
         listHtml += `<li>${doc.title}</li>`;
       }
@@ -76,7 +79,7 @@ export class CityObjectLinkInterface {
   ////// GETTERS
 
   get linkListId() {
-    return `city_objects_link_list`;
+    return 'city_objects_link_list';
   }
 
   get linkListElement() {
@@ -84,7 +87,7 @@ export class CityObjectLinkInterface {
   }
 
   get showDocsButtonId() {
-    return `city_objects_link_show_doc`;
+    return 'city_objects_link_show_doc';
   }
 
   get showDocsButtonElement() {
@@ -99,7 +102,7 @@ export class CityObjectLinkInterface {
 export class LinkCountFilterSelector extends CityObjectFilterSelector {
   /**
    * Creates the filter selector.
-   * 
+   *
    * @param {LinkProvider} linkProvider The link provider.
    */
   constructor(linkProvider) {
@@ -112,7 +115,7 @@ export class LinkCountFilterSelector extends CityObjectFilterSelector {
   }
 
   get html() {
-    return /*html*/`
+    return /*html*/ `
       <label for="requiredCount">Required count of linked documents</label>
       <input type="text" name="requiredCount" value="1">
     `;
