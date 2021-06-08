@@ -1,17 +1,19 @@
-import { DocumentModule } from "../../../Documents/DocumentModule";
-import { DocumentSource } from "../../../Documents/Model/DocumentService";
-import { Document } from "../../../Documents/Model/Document";
+/** @format */
+
+import { DocumentModule } from '../../../Documents/DocumentModule';
+import { DocumentSource } from '../../../Documents/Model/DocumentService';
+import { Document } from '../../../Documents/Model/Document';
 
 //Components
-import { Window } from "../../../../Components/GUI/js/Window";
+import { Window } from '../../../../Components/GUI/js/Window';
 
-import { ValidationService } from "../Service/ValidationService";
-import { DocumentsInValidationDocumentSource } from "../Service/DocumentsInValidationSource";
+import { ValidationService } from '../Service/ValidationService';
+import { DocumentsInValidationDocumentSource } from '../Service/DocumentsInValidationSource';
 
 /**
  * This class represents the visual elements and their logic for the
  * validation module :
- * 
+ *
  * - Button "See documents in validation" to change the document source
  * - Panel "Currently seing ..." to inform the user that he/she is consulting
  * documents in validation or validated documents
@@ -20,7 +22,7 @@ import { DocumentsInValidationDocumentSource } from "../Service/DocumentsInValid
 export class ValidationView {
   /**
    * Creates the view.
-   * 
+   *
    * @param {DocumentModule} documentModule The document module.
    * @param {ValidationService} validationService The validation service.
    * @param {DocumentsInValidationDocumentSource} validationSource The source
@@ -33,7 +35,7 @@ export class ValidationView {
     /**
      * Defines wether the interface displays documents to validate (`true`) or
      * validated documents (`false`).
-     * 
+     *
      * @type {boolean}
      */
     this.displayingDocumentsToValidate = false;
@@ -41,14 +43,14 @@ export class ValidationView {
     /**
      * Stores the previous document source to restore it (the source for
      * validated documents).
-     * 
+     *
      * @type {DocumentSource}
      */
     this.previousDocumentSource = undefined;
 
     /**
      * The validation source.
-     * 
+     *
      * @type {DocumentsInValidationDocumentSource}
      */
     this.validationSource = validationSource;
@@ -58,17 +60,19 @@ export class ValidationView {
     documentModule.addNavigatorExtension('Validation Filter', {
       type: 'div',
       container: 'filter',
-      html: /*html*/`
+      html: /*html*/ `
         <label for="${this.switchId}">Validation status : </label>
         <select id="${this.switchId}">
           <option value="validated">Validated documents</option>
           <option value="in-validation">Documents in validation</option>
         </select>
-      `
+      `,
     });
 
-    documentModule.view.navigatorWindow.addEventListener(Window.EVENT_CREATED,
-      () => this._initView());
+    documentModule.view.navigatorWindow.addEventListener(
+      Window.EVENT_CREATED,
+      () => this._initView()
+    );
   }
 
   _initView() {
@@ -76,7 +80,7 @@ export class ValidationView {
     this._toggleValidation();
     this.switchElement.onchange = () => {
       this._toggleValidation();
-    }
+    };
   }
 
   ///////////////////////////////////////
@@ -86,7 +90,7 @@ export class ValidationView {
    * Toggles the visualization of documents in validation, then refreshes the
    * document list with the new source. If the refresh fails (probably because
    * the user isn't logged in), reverts back to displaying validated documents.
-   * 
+   *
    * @private
    */
   _toggleValidation() {
@@ -95,42 +99,46 @@ export class ValidationView {
     if (this.displayingDocumentsToValidate) {
       this._showDocumentsInValidation();
     } else {
-      this._showValidatedDocuments()
+      this._showValidatedDocuments();
     }
 
-    this.documentModule.refreshDocumentList().then(() => {
-    }, (reason) => {
-      this._showValidatedDocuments();
-      this.displayingDocumentsToValidate = false;
-      this.switchElement.value = "validated";
-      alert(reason);
-    });
+    this.documentModule.refreshDocumentList().then(
+      () => {},
+      (reason) => {
+        this._showValidatedDocuments();
+        this.displayingDocumentsToValidate = false;
+        this.switchElement.value = 'validated';
+        alert(reason);
+      }
+    );
   }
 
   /**
    * Sets the document source to be documents in validation, and adds a
    * 'Validate' button in the browser.
-   * 
+   *
    * @private
    */
   _showDocumentsInValidation() {
     // Change the document source
-    this.previousDocumentSource = this.documentModule
-      .changeDocumentSource(this.validationSource, true);
-    
+    this.previousDocumentSource = this.documentModule.changeDocumentSource(
+      this.validationSource,
+      true
+    );
+
     // Adds the validate button
     this.documentModule.addInspectorExtension('Validate', {
       type: 'button',
       container: 'right',
       html: 'Validate',
-      callback: (doc) => this._validateDocument(doc)
+      callback: (doc) => this._validateDocument(doc),
     });
   }
 
   /**
    * Sets to document source to validated documents, and removes the 'Validate'
    * button in the browser.
-   * 
+   *
    * @private
    */
   _showValidatedDocuments() {
@@ -138,8 +146,10 @@ export class ValidationView {
       return;
     }
 
-    this.documentModule.changeDocumentSource(this.previousDocumentSource,
-      false);
+    this.documentModule.changeDocumentSource(
+      this.previousDocumentSource,
+      false
+    );
 
     try {
       this.documentModule.removeBrowserExtension('Validate');
@@ -150,21 +160,28 @@ export class ValidationView {
 
   /**
    * Validates the document.
-   * 
+   *
    * @private
-   * 
+   *
    * @param {Document} doc The document to validate.
    */
   _validateDocument(doc) {
-    if (!confirm('Are you sure do validate this document ? ' +
-      'This operation is irreversible.')) {
+    if (
+      !confirm(
+        'Are you sure do validate this document ? ' +
+          'This operation is irreversible.'
+      )
+    ) {
       return;
     }
-    this.validationService.validate(this.documentModule.provider.getDisplayedDocument()).catch((reason) => {
-      alert(reason.statusText);
-    }).then(() => {
-      this.documentModule.refreshDocumentList();
-    });
+    this.validationService
+      .validate(this.documentModule.provider.getDisplayedDocument())
+      .catch((reason) => {
+        alert(reason.statusText);
+      })
+      .then(() => {
+        this.documentModule.refreshDocumentList();
+      });
   }
 
   /////////////
@@ -173,7 +190,7 @@ export class ValidationView {
   get switchId() {
     return 'document-validation-view-switch';
   }
-  
+
   get switchElement() {
     return document.getElementById(this.switchId);
   }

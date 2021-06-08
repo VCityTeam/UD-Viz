@@ -21,17 +21,17 @@
     "source": {
       "description": "Array of Features Ids (stored in the 3DTILES_temporal extension of the batch table) representing a state before the transaction",
       "type": "array",
-      "items": {"type": "string"}
+      "items": { "type": "string" }
     },
     "destination": {
       "description": "Array of Features Ids (stored in the 3DTILES_temporal extension of the batch table) representing a state after the transaction",
       "type": "array",
-      "items": {"type": "string"}
+      "items": { "type": "string" }
     },
     "tags": {
       "description": "tags of the transaction",
       "type": "array",
-      "items": {"type": "string"}
+      "items": { "type": "string" }
     }
   }
 }

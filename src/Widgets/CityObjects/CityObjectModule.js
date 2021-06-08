@@ -1,8 +1,10 @@
-//Components
-import { CityObjectStyle } from "../../Components/3DTiles/Model/CityObjectStyle";
+/** @format */
 
-import { CityObjectProvider } from "./ViewModel/CityObjectProvider";
-import { CityObjectWindow } from "./View/CityObjectWindow";
+//Components
+import { CityObjectStyle } from '../../Components/3DTiles/Model/CityObjectStyle';
+
+import { CityObjectProvider } from './ViewModel/CityObjectProvider';
+import { CityObjectWindow } from './View/CityObjectWindow';
 
 /**
  * Manages the city objects and allows the user to visualize them with
@@ -14,7 +16,7 @@ export class CityObjectModule {
    * Manages the city objects and allows the user to visualize them with
    * filters. Other modules can extend the functionnalities of the city object
    * module by adding filters.
-   * 
+   *
    * @param {LayerManager} layerManager The layer manager.
    * @param {object} config The UDV configuration.
    * @param {object} config.cityObjects The city objects config.
@@ -43,7 +45,7 @@ export class CityObjectModule {
 
   /**
    * Adds an event listener to the city object provider.
-   * 
+   *
    * @param {string} event The event of the city object provider.
    * @param {(data: any) => any} action The listener method.
    */
@@ -53,7 +55,7 @@ export class CityObjectModule {
 
   /**
    * Removes the event listener from the city object provider.
-   * 
+   *
    * @param {(data: any) => any} action The listener to remove.
    */
   removeEventListener(action) {
@@ -61,9 +63,9 @@ export class CityObjectModule {
   }
 
   /**
-   * Creates a new extension for the city object window. An extension is 
+   * Creates a new extension for the city object window. An extension is
    * a piece of HTML identified by a label.
-   * 
+   *
    * @param {string} label The extension label.
    * @param {object} options The options for the extension.
    * @param {string} options.type The type of the extension. Can either be
@@ -83,7 +85,7 @@ export class CityObjectModule {
 
   /**
    * Removes an existing extension in the city object window.
-   * 
+   *
    * @param {string} label The extension label.
    */
   removeExtension(label) {
@@ -92,7 +94,7 @@ export class CityObjectModule {
 
   /**
    * Adds a filter selector in the city object filter window.
-   * 
+   *
    * @param {CityObjectFilterSelector} filterSelector The filter selector to
    * add.
    */

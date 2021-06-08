@@ -1,8 +1,10 @@
-//Components
-import { CityObject } from "../../../Components/3DTiles/Model/CityObject";
+/** @format */
 
-import { CityObjectFilter } from "../../CityObjects/ViewModel/CityObjectFilter";
-import { LinkProvider } from "./LinkProvider";
+//Components
+import { CityObject } from '../../../Components/3DTiles/Model/CityObject';
+
+import { CityObjectFilter } from '../../CityObjects/ViewModel/CityObjectFilter';
+import { LinkProvider } from './LinkProvider';
 
 /**
  * A filter for city objects based how many documents are linked to them.
@@ -10,7 +12,7 @@ import { LinkProvider } from "./LinkProvider";
 export class LinkCountFilter extends CityObjectFilter {
   /**
    * Instantiates the filter.
-   * 
+   *
    * @param {LinkProvider} linkProvider The link provider.
    */
   constructor(linkProvider) {
@@ -23,7 +25,7 @@ export class LinkCountFilter extends CityObjectFilter {
 
     /**
      * The link provider
-     * 
+     *
      * @type {LinkProvider}
      */
     this.provider = linkProvider;
@@ -32,8 +34,8 @@ export class LinkCountFilter extends CityObjectFilter {
   /**
    * Accepts city objects that have at least `this.requiredCount` linked
    * documents.
-   * 
-   * @param {CityObject} cityObject 
+   *
+   * @param {CityObject} cityObject
    */
   accepts(cityObject) {
     let linkCount = this.provider.getLinksFromCityObject(cityObject).length;
@@ -56,7 +58,7 @@ export class LinkCountFilter extends CityObjectFilter {
 export class LinkedWithDisplayedDocumentFilter extends CityObjectFilter {
   /**
    * Instantiates the filter.
-   * 
+   *
    * @param {LinkProvider} linkProvider The link provider.
    */
   constructor(linkProvider) {
@@ -64,7 +66,7 @@ export class LinkedWithDisplayedDocumentFilter extends CityObjectFilter {
 
     /**
      * The link provider.
-     * 
+     *
      * @type {LinkProvider}
      */
     this.provider = linkProvider;
@@ -72,12 +74,15 @@ export class LinkedWithDisplayedDocumentFilter extends CityObjectFilter {
 
   /**
    * Accepts city objects that are linked with the currently displayed document.
-   * 
-   * @param {CityObject} cityObject 
+   *
+   * @param {CityObject} cityObject
    */
   accepts(cityObject) {
-    let found = this.provider.getDisplayedDocumentLinks().find((link) =>
-      link.target_id == cityObject.props['cityobject.database_id']);
+    let found = this.provider
+      .getDisplayedDocumentLinks()
+      .find(
+        (link) => link.target_id == cityObject.props['cityobject.database_id']
+      );
     return !!found;
   }
 
@@ -93,7 +98,7 @@ export class LinkedWithDisplayedDocumentFilter extends CityObjectFilter {
 export class LinkedWithFilteredDocumentsFilter extends CityObjectFilter {
   /**
    * Instantiates the filter.
-   * 
+   *
    * @param {LinkProvider} linkProvider The link provider.
    */
   constructor(linkProvider) {
@@ -101,7 +106,7 @@ export class LinkedWithFilteredDocumentsFilter extends CityObjectFilter {
 
     /**
      * The link provider.
-     * 
+     *
      * @type {LinkProvider}
      */
     this.provider = linkProvider;
@@ -109,12 +114,15 @@ export class LinkedWithFilteredDocumentsFilter extends CityObjectFilter {
 
   /**
    * Accepts city objects that are linked with the currently filtered documents.
-   * 
-   * @param {CityObject} cityObject 
+   *
+   * @param {CityObject} cityObject
    */
   accepts(cityObject) {
-    let found = this.provider.getFilteredDocumentsLinks().find((link) =>
-      link.target_id == cityObject.props['cityobject.database_id']);
+    let found = this.provider
+      .getFilteredDocumentsLinks()
+      .find(
+        (link) => link.target_id == cityObject.props['cityobject.database_id']
+      );
     return !!found;
   }
 

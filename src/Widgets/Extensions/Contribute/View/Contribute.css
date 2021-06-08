@@ -1,8 +1,12 @@
-/* forms */
+/**
+ * /* forms
+ *
+ * @format
+ */
 
-.doc-update-creation-form input[type="date"],
-.doc-update-creation-form input[type="text"],
-.doc-update-creation-form input[type="file"],
+.doc-update-creation-form input[type='date'],
+.doc-update-creation-form input[type='text'],
+.doc-update-creation-form input[type='file'],
 .doc-update-creation-form textarea,
 .doc-update-creation-form select {
   display: block;

@@ -1,4 +1,6 @@
-import { Document } from "../Model/Document";
+/** @format */
+
+import { Document } from '../Model/Document';
 
 /**
  * A filter for documents. It is essentially a function that determines if a
@@ -7,7 +9,7 @@ import { Document } from "../Model/Document";
 export class DocumentFilter {
   /**
    * Constructs a new document filter, from an acceptation function.
-   * 
+   *
    * @param {(Document) => boolean} accepts The function responsible to filter
    * the documents. It must evaluate wether a document is acceptable according
    * to the filter.
@@ -16,7 +18,7 @@ export class DocumentFilter {
     /**
      * The function responsible to filter the documents. It must evaluate wether
      * a document is acceptable according to the filter.
-     * 
+     *
      * @type {(Document) => boolean}
      */
     this.accepts = accepts;
@@ -24,9 +26,9 @@ export class DocumentFilter {
 
   /**
    * Applies the filter to the documents.
-   * 
+   *
    * @param {Array<Document>} documents The documents to filter.
-   * 
+   *
    * @returns {Array<Document>}
    */
   apply(documents) {

@@ -1,6 +1,8 @@
-import { CityObjectFilterSelector } from "./CityObjectFilterSelector";
-import { CityObjectProvider } from "../ViewModel/CityObjectProvider";
-import { AttributeFilter } from "../ViewModel/AttributeFilter";
+/** @format */
+
+import { CityObjectFilterSelector } from './CityObjectFilterSelector';
+import { CityObjectProvider } from '../ViewModel/CityObjectProvider';
+import { AttributeFilter } from '../ViewModel/AttributeFilter';
 
 /**
  * A filter selector for the `AttributeFilter` filter. It allows the user to
@@ -11,7 +13,7 @@ import { AttributeFilter } from "../ViewModel/AttributeFilter";
 export class AttributeFilterSelector extends CityObjectFilterSelector {
   /**
    * Constructs the attribute filter selector from the provider.
-   * 
+   *
    * @param {CityObjectProvider} provider The city object provider.
    */
   constructor(provider) {
@@ -19,7 +21,7 @@ export class AttributeFilterSelector extends CityObjectFilterSelector {
 
     /**
      * The associated attribute filter.
-     * 
+     *
      * @type {AttributeFilter}
      */
     this.filter = new AttributeFilter();
@@ -29,7 +31,7 @@ export class AttributeFilterSelector extends CityObjectFilterSelector {
   }
 
   get html() {
-    return /*html*/`
+    return /*html*/ `
       <label for="tileId">Tile ID</label>
       <input type="text" name="tileId">
       <label for="batchId">Batch ID</label>
@@ -42,9 +44,9 @@ export class AttributeFilterSelector extends CityObjectFilterSelector {
   /**
    * Sets the `tileId`, `batchId` and `props` attributes of the attribut filter
    * from the given form data.
-   * 
+   *
    * @override
-   * 
+   *
    * @param {FormData} formData
    */
   onSubmit(formData) {

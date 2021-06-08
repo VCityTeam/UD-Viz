@@ -1,7 +1,9 @@
-//Widgets
-import { DocumentModule } from "../../../Documents/DocumentModule";
+/** @format */
 
-import { ContributeService } from "../Service/ContributeService";
+//Widgets
+import { DocumentModule } from '../../../Documents/DocumentModule';
+
+import { ContributeService } from '../Service/ContributeService';
 
 /**
  * Represents a really simple interface to delete a document. It is just a
@@ -11,7 +13,7 @@ import { ContributeService } from "../Service/ContributeService";
 export class DocumentDeletionInterface {
   /**
    * Creates a button in the document browser to perform the deletion.
-   * 
+   *
    * @param {DocumentModule} documentModule The document module.
    * @param {ContributeService} contributeService The contribute service.
    */
@@ -21,8 +23,12 @@ export class DocumentDeletionInterface {
       container: 'right',
       html: 'Delete',
       callback: async () => {
-        if (!confirm('You are going to delete the document. This operation ' +
-          'is irreversible. Do you want to continue ?')) {
+        if (
+          !confirm(
+            'You are going to delete the document. This operation ' +
+              'is irreversible. Do you want to continue ?'
+          )
+        ) {
           return;
         }
         try {
@@ -30,7 +36,7 @@ export class DocumentDeletionInterface {
         } catch (e) {
           alert(e);
         }
-      }
+      },
     });
   }
 }

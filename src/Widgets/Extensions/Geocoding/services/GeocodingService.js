@@ -1,6 +1,8 @@
+/** @format */
+
 //Components
-import { RequestService } from "../../../../Components/Request/RequestService";
-import { getAttributeByPath } from "../../../../Components/DataProcessing/DataProcessing";
+import { RequestService } from '../../../../Components/Request/RequestService';
+import { getAttributeByPath } from '../../../../Components/DataProcessing/DataProcessing';
 
 export class GeocodingService {
   /**
@@ -29,7 +31,7 @@ export class GeocodingService {
    * @param {String} searchString Either an address or the name of a place.
    */
   async getCoordinates(searchString) {
-    if ((!!this.requestTimeIntervalMs) && !this.canDoRequest) {
+    if (!!this.requestTimeIntervalMs && !this.canDoRequest) {
       throw 'Cannot perform a request for now.';
     }
 
@@ -39,32 +41,36 @@ export class GeocodingService {
     //build the URL according to parameter description (in config file)
     let url = this.geocodingUrl + '?';
     for (let [paramName, param] of Object.entries(this.parameters)) {
-      if (param.fill === "value") {
+      if (param.fill === 'value') {
         url += `${paramName}=${param.value}`;
-      } else if (param.fill === "query") {
+      } else if (param.fill === 'query') {
         url += `${paramName}=${queryString}`;
-      } else if (param.fill === "extent") {
-        url += paramName + '=' + param.format
-          .replace('SOUTH', this.extent.south)
-          .replace('WEST', this.extent.west)
-          .replace('NORTH', this.extent.north)
-          .replace('EAST', this.extent.east);
+      } else if (param.fill === 'extent') {
+        url +=
+          paramName +
+          '=' +
+          param.format
+            .replace('SOUTH', this.extent.south)
+            .replace('WEST', this.extent.west)
+            .replace('NORTH', this.extent.north)
+            .replace('EAST', this.extent.east);
       }
-      url += "&";
+      url += '&';
     }
 
     //make the request
     const req = await this.requestService.request('GET', url, {
-      authenticate: false
+      authenticate: false,
     });
     const response = JSON.parse(req.response);
-    const results = ((!!this.basePath) ? response[this.basePath] : response)
-      .map(res => {
+    const results = (!!this.basePath ? response[this.basePath] : response).map(
+      (res) => {
         return {
           lat: Number(getAttributeByPath(res, this.latPath)),
-          lng: Number(getAttributeByPath(res, this.lngPath))
+          lng: Number(getAttributeByPath(res, this.lngPath)),
         };
-      });
+      }
+    );
 
     if (!!this.requestTimeIntervalMs) {
       this.canDoRequest = false;
