@@ -1,7 +1,9 @@
+/** @format */
+
 //Components
-import { ModuleView } from "../../../Components/ModuleView/ModuleView";
-import { PositionerWindow } from "../../../Components/Camera/PositionerWindow";
-import { Window } from "../../../Components/GUI/js/Window";
+import { ModuleView } from '../../../Components/ModuleView/ModuleView';
+import { PositionerWindow } from '../../../Components/Camera/PositionerWindow';
+import { Window } from '../../../Components/GUI/js/Window';
 
 export class CameraPositionerView extends ModuleView {
   constructor(itownsView, cameraControls) {
@@ -9,8 +11,9 @@ export class CameraPositionerView extends ModuleView {
 
     this.positionerWindow = new PositionerWindow(itownsView, cameraControls);
 
-    this.positionerWindow.addEventListener(Window.EVENT_DISABLED,
-      () => this.disable());
+    this.positionerWindow.addEventListener(Window.EVENT_DISABLED, () =>
+      this.disable()
+    );
   }
 
   enableView() {

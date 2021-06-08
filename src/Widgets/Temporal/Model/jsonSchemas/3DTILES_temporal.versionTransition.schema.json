@@ -42,7 +42,7 @@
     "transactionsIds": {
       "type": "array",
       "description": "ids of the transactions composing this VersionTransition",
-      "items": {"type": "string"}
+      "items": { "type": "string" }
     }
   }
 }

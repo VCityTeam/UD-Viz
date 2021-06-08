@@ -1,9 +1,11 @@
-//Components
-import { RequestService } from "../../Components/Request/RequestService";
+/** @format */
 
-import { DocumentService, DocumentSource } from "./Model/DocumentService";
-import { DocumentProvider } from "./ViewModel/DocumentProvider";
-import { DocumentView } from "./View/DocumentView";
+//Components
+import { RequestService } from '../../Components/Request/RequestService';
+
+import { DocumentService, DocumentSource } from './Model/DocumentService';
+import { DocumentProvider } from './ViewModel/DocumentProvider';
+import { DocumentView } from './View/DocumentView';
 
 /**
  * The entry point of the documents module.
@@ -74,7 +76,7 @@ export class DocumentModule {
    * for a button.
    */
   addInspectorExtension(label, options) {
-    this.view.inspectorWindow.addExtension(label, options)
+    this.view.inspectorWindow.addExtension(label, options);
   }
 
   /**

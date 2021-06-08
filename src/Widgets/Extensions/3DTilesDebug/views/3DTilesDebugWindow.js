@@ -1,13 +1,15 @@
+/** @format */
+
 //Components
-import { Window } from "../../../../Components/GUI/js/Window";
-import { CityObjectStyle } from "../../../../Components/3DTiles/Model/CityObjectStyle";
-import { CityObjectID } from "../../../../Components/3DTiles/Model/CityObject";
-import { TilesManager } from "../../../../Components/3DTiles/TilesManager";
+import { Window } from '../../../../Components/GUI/js/Window';
+import { CityObjectStyle } from '../../../../Components/3DTiles/Model/CityObjectStyle';
+import { CityObjectID } from '../../../../Components/3DTiles/Model/CityObject';
+import { TilesManager } from '../../../../Components/3DTiles/TilesManager';
 
 export class Debug3DTilesWindow extends Window {
   /**
    * Creates the debug window.
-   * 
+   *
    * @param {layer} layerManager The tiles manager.
    */
   constructor(layerManager) {
@@ -15,17 +17,20 @@ export class Debug3DTilesWindow extends Window {
 
     /**
      * The tiles manager.
-     * 
+     *
      * @type {layerManager}
      */
     this.layerManager = layerManager;
     // Selection
-    this.layerManager.registerStyle('selected', new CityObjectStyle({
-      materialProps: { color: 0x00ff00 }
-    }));
+    this.layerManager.registerStyle(
+      'selected',
+      new CityObjectStyle({
+        materialProps: { color: 0x00ff00 },
+      })
+    );
     this.selectedCityObject = undefined;
     this.selectedTilesManager = undefined;
-    
+
     let viewerDiv = document.getElementById('viewerDiv');
     let clickListener = (event) => {
       this.onMouseClick(event);
@@ -50,7 +55,7 @@ export class Debug3DTilesWindow extends Window {
   }
 
   get innerContentHtml() {
-    return /*html*/`
+    return /*html*/ `
       <button id="${this.logTBIButtonId}">Log Tiles Manager</button>
       <p id="${this.TBIInfoParagraphId}">0 / ? tiles loaded.</p>
       <p id="${this.visibleTilesParagraphId}">0 tiles visible.</p>
@@ -94,7 +99,10 @@ export class Debug3DTilesWindow extends Window {
     // Sets the number of loaded tiles and add an event for dynamic change of this value.
     this.updateTBIInfoParagraphElement();
     for (let i = 0; i < this.layerManager.tilesManagers.length; i++) {
-      this.layerManager.tilesManagers[i].addEventListener(TilesManager.EVENT_TILE_LOADED, (tile) => this.updateTBIInfoParagraphElement(tile));
+      this.layerManager.tilesManagers[i].addEventListener(
+        TilesManager.EVENT_TILE_LOADED,
+        (tile) => this.updateTBIInfoParagraphElement(tile)
+      );
     }
     this.groupColorOpacityInputElement.oninput = () => {
       this.groupColorOpacitySpanElement.innerText =
@@ -127,7 +135,8 @@ export class Debug3DTilesWindow extends Window {
    */
   onMouseMove(event) {
     // Update the current visible tile count
-    let visibleTileCount = this.layerManager.getVisible3DTilesTileCountFromLayers();
+    let visibleTileCount =
+      this.layerManager.getVisible3DTilesTileCountFromLayers();
     this.visibleTilesParagraphElement.innerText = `${visibleTileCount} tiles visible.`;
   }
 
@@ -135,30 +144,37 @@ export class Debug3DTilesWindow extends Window {
    * If the user is currently hovering a building, fetches the building info
    * and colors the building. If a building was already selected, it returns to
    * its original coloring.
-   * 
+   *
    * @param {MouseEvent} event The mouse event.
    */
   onMouseClick(event) {
     let cityObject = this.layerManager.pickCityObject(event);
     if (cityObject !== undefined) {
-
       for (let [key, value] of Object.entries(cityObject.props)) {
         this.clickDivElement.innerHTML += `<br>${key} : ${value}`;
       }
 
       if (!!this.selectedCityObject) {
-        this.selectedTilesManager.removeStyle(this.selectedCityObject.cityObjectId);
+        this.selectedTilesManager.removeStyle(
+          this.selectedCityObject.cityObjectId
+        );
         this.selectedTilesManager.applyStyles();
       }
 
       this.selectedCityObject = cityObject;
-      this.selectedTilesManager = this.layerManager.getTilesManagerByLayerID(this.selectedCityObject.tile.layer.id);
-      this.selectedTilesManager.setStyle(this.selectedCityObject.cityObjectId, 'selected');
+      this.selectedTilesManager = this.layerManager.getTilesManagerByLayerID(
+        this.selectedCityObject.tile.layer.id
+      );
+      this.selectedTilesManager.setStyle(
+        this.selectedCityObject.cityObjectId,
+        'selected'
+      );
       this.selectedTilesManager.applyStyles({
-        updateFunction:
-          this.selectedTilesManager.view.notifyChange.bind(this.selectedTilesManager.view)
+        updateFunction: this.selectedTilesManager.view.notifyChange.bind(
+          this.selectedTilesManager.view
+        ),
       });
-      this.clickDivElement.innerHTML = /*html*/`
+      this.clickDivElement.innerHTML = /*html*/ `
            3D Tiles : ${this.selectedTilesManager.layer.name}<br>
            Vertex indexes : ${cityObject.indexStart} to ${cityObject.indexEnd}
             (${cityObject.indexCount})<br>
@@ -174,11 +190,15 @@ export class Debug3DTilesWindow extends Window {
   submitStyleForm() {
     try {
       let tileId = Number.parseInt(this.groupColorTileInputElement.value);
-      let batchIds = JSON.parse('[' + this.groupColorBatchInputElement.value + ']');
+      let batchIds = JSON.parse(
+        '[' + this.groupColorBatchInputElement.value + ']'
+      );
       let color = new THREE.Color(this.groupColorColorInputElement.value);
       let opacity = Number.parseFloat(this.groupColorOpacityInputElement.value);
-      this.layerManager.tilesManagers[0].setStyle(new CityObjectID(tileId, batchIds),
-        { materialProps: { color, opacity } });
+      this.layerManager.tilesManagers[0].setStyle(
+        new CityObjectID(tileId, batchIds),
+        { materialProps: { color, opacity } }
+      );
       this.layerManager.tilesManagers[0].applyStyles();
     } catch (e) {
       alert(e);

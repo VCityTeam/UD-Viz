@@ -1,7 +1,10 @@
 /**
  * Represents a link between a document and a target (in this example, the
  * only valid target types are city objects).
+ *
+ * @format
  */
+
 export class Link {
   /**
    * Constructs an empty link.
@@ -9,21 +12,21 @@ export class Link {
   constructor() {
     /**
      * The ID of the link.
-     * 
+     *
      * @type {number}
      */
     this.id;
 
     /**
      * The source (document) ID.
-     * 
+     *
      * @type {number}
      */
     this.source_id;
 
     /**
      * The target ID. For the moment, the only targets are city objects.
-     * 
+     *
      * @type {number}
      */
     this.target_id;
@@ -31,7 +34,7 @@ export class Link {
     /**
      * The X coordinate of the centroid. The centroid must be stored in the
      * in order to travel to the city object.
-     * 
+     *
      * @type {number}
      */
     this.centroid_x;
@@ -39,7 +42,7 @@ export class Link {
     /**
      * The Y coordinate of the centroid. The centroid must be stored in the
      * in order to travel to the city object.
-     * 
+     *
      * @type {number}
      */
     this.centroid_y;
@@ -47,7 +50,7 @@ export class Link {
     /**
      * The Z coordinate of the centroid. The centroid must be stored in the
      * in order to travel to the city object.
-     * 
+     *
      * @type {number}
      */
     this.centroid_z;

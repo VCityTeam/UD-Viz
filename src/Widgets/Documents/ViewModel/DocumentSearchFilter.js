@@ -1,5 +1,7 @@
-import { DocumentFilter } from "./DocumentFilter";
-import { Document } from "../Model/Document";
+/** @format */
+
+import { DocumentFilter } from './DocumentFilter';
+import { Document } from '../Model/Document';
 
 /**
  * A document filter to use with the search window. It filters the documents
@@ -17,14 +19,14 @@ export class DocumentSearchFilter extends DocumentFilter {
     /**
      * A list of keywords to search in the title or the description of the
      * document. These keywords should be in lowercase.
-     * 
+     *
      * @type {Array<string>}
      */
     this.keywords = [];
 
     /**
      * A string representing the source. Should be in lowercase.
-     * 
+     *
      * @type {string}
      */
     this.source = undefined;
@@ -36,28 +38,28 @@ export class DocumentSearchFilter extends DocumentFilter {
 
     /**
      * The lower bound of the publication date.
-     * 
+     *
      * @type {Date}
      */
     this.pubStartDate = undefined;
 
     /**
      * The upper bound of the publication date.
-     * 
+     *
      * @type {Date}
      */
     this.pubEndDate = undefined;
 
     /**
      * The lower bound of the refering date.
-     * 
+     *
      * @type {Date}
      */
     this.refStartDate = undefined;
 
     /**
      * The upper bound of the refering date.
-     * 
+     *
      * @type {Date}
      */
     this.refEndDate = undefined;
@@ -65,14 +67,16 @@ export class DocumentSearchFilter extends DocumentFilter {
 
   /**
    * The function to filter the documents.
-   * 
+   *
    * @param {Document} doc The document to filter.
    */
   filterDocument(doc) {
     if (this.keywords.length > 0) {
       for (let keyword of this.keywords) {
-        if (!doc.title.toLowerCase().includes(keyword) &&
-          !doc.description.toLowerCase().includes(keyword)) {
+        if (
+          !doc.title.toLowerCase().includes(keyword) &&
+          !doc.description.toLowerCase().includes(keyword)
+        ) {
           return false;
         }
       }
@@ -82,16 +86,24 @@ export class DocumentSearchFilter extends DocumentFilter {
       return false;
     }
 
-    if (!!this.rightsHolder &&
-      !doc.rightsHolder.toLowerCase().includes(this.rightsHolder)) {
+    if (
+      !!this.rightsHolder &&
+      !doc.rightsHolder.toLowerCase().includes(this.rightsHolder)
+    ) {
       return false;
     }
 
-    if (!!this.pubStartDate && !(this.pubStartDate <= new Date(doc.publicationDate))) {
+    if (
+      !!this.pubStartDate &&
+      !(this.pubStartDate <= new Date(doc.publicationDate))
+    ) {
       return false;
     }
 
-    if (!!this.pubEndDate && !(this.pubEndDate >= new Date(doc.publicationDate))) {
+    if (
+      !!this.pubEndDate &&
+      !(this.pubEndDate >= new Date(doc.publicationDate))
+    ) {
       return false;
     }
 
@@ -102,7 +114,7 @@ export class DocumentSearchFilter extends DocumentFilter {
     if (!!this.refEndDate && !(this.refEndDate >= new Date(doc.refDate))) {
       return false;
     }
-    
+
     return true;
   }
 
