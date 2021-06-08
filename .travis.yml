@@ -18,9 +18,6 @@ install:
 
 jobs:
   include:
-    - stage: build
+    - stage: travis
       script:
-        - npm run build
-    - stage: eslint
-      script:
-        - npm run eslint
+        - npm run travis
