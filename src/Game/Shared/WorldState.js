@@ -63,7 +63,7 @@ const WorldStateModule = class WorldState {
       if (uuidGO.includes(uuid)) count++;
     });
     if (uuidGO.length != count) {
-      debugger;
+      throw new Error('count of go error');
     }
 
     const result = new WorldState({

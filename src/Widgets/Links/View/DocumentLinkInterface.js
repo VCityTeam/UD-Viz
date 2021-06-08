@@ -99,7 +99,7 @@ export class DocumentLinkInterface {
     };
 
     this.createLinkButtonElement.onclick = async () => {
-      if (!!this.provider.selectedCityObject) {
+      if (this.provider.selectedCityObject) {
         let newLink = new Link();
         newLink.source_id = this.provider.displayedDocument.id;
         newLink.target_id =
@@ -158,13 +158,13 @@ export class DocumentLinkInterface {
       newDivHtml += `<li>
                         ID : ${link.target_id}
                         <span id="${this.linkTravelerId(
-                          link
-                        )}" class="clickable-text">
+    link
+  )}" class="clickable-text">
                         travel
                         </span>
                         <span id="${this.linkDeleterId(
-                          link
-                        )}" class="clickable-text">
+    link
+  )}" class="clickable-text">
                         delete
                         </span>
                       </li>`;
@@ -229,7 +229,7 @@ export class DocumentLinkInterface {
   }
 
   get linkFilterId() {
-    return `city_object_link_filter`;
+    return 'city_object_link_filter';
   }
 
   get linkFilterElement() {

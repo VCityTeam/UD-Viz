@@ -18,10 +18,9 @@ install:
 
 jobs:
   include:
-    - stage: test
+    - stage: build
       script:
-        - npm run test
-  # - stage: lint
-  #   script:
-  #     - ./node_modules/eslint/bin/eslint.js --version
-  #     - npm run lint
+        - npm run build
+    - stage: eslint
+      script:
+        - npm run eslint

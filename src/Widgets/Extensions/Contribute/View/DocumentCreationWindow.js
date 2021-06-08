@@ -266,7 +266,7 @@ export class DocumentCreationWindow extends AbstractDocumentWindow {
    * @private
    */
   _updateFormButtons() {
-    if (!!this.docImageElement.value) {
+    if (this.docImageElement.value) {
       this.buttonPositionElement.disabled = false;
     } else {
       this.buttonPositionElement.disabled = true;

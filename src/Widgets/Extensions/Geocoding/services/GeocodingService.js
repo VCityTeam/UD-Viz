@@ -63,7 +63,7 @@ export class GeocodingService {
       authenticate: false,
     });
     const response = JSON.parse(req.response);
-    const results = (!!this.basePath ? response[this.basePath] : response).map(
+    const results = (this.basePath ? response[this.basePath] : response).map(
       (res) => {
         return {
           lat: Number(getAttributeByPath(res, this.latPath)),
@@ -72,7 +72,7 @@ export class GeocodingService {
       }
     );
 
-    if (!!this.requestTimeIntervalMs) {
+    if (this.requestTimeIntervalMs) {
       this.canDoRequest = false;
       setTimeout(() => {
         this.canDoRequest = true;

@@ -1,5 +1,7 @@
 /** @format */
 
+const THREE = require('three');
+
 //Components
 import { Window } from '../../../../Components/GUI/js/Window';
 import { CityObjectStyle } from '../../../../Components/3DTiles/Model/CityObjectStyle';
@@ -154,7 +156,7 @@ export class Debug3DTilesWindow extends Window {
         this.clickDivElement.innerHTML += `<br>${key} : ${value}`;
       }
 
-      if (!!this.selectedCityObject) {
+      if (this.selectedCityObject) {
         this.selectedTilesManager.removeStyle(
           this.selectedCityObject.cityObjectId
         );

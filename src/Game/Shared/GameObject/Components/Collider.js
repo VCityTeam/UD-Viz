@@ -93,37 +93,41 @@ class ShapeWrapper {
   initFromJSON(json) {
     switch (json.type) {
       case 'Circle':
-        const circle = new Circle(json.center.x, json.center.y, json.radius);
+        {
+          const circle = new Circle(json.center.x, json.center.y, json.radius);
 
-        this.update = function (worldtransform) {
-          const wp = worldtransform.getPosition();
-          circle.x = json.center.x + wp.x;
-          circle.y = json.center.y + wp.y;
-        };
+          this.update = function (worldtransform) {
+            const wp = worldtransform.getPosition();
+            circle.x = json.center.x + wp.x;
+            circle.y = json.center.y + wp.y;
+          };
 
-        this.shape = circle;
+          this.shape = circle;
+        }
         break;
       case 'Polygon':
-        const points = [];
-        json.points.forEach(function (p) {
-          points.push([p.x, p.y]);
-        });
-
-        const polygon = new Polygon(0, 0, points);
-
-        //attach userData to perform update
-        this.update = function (worldtransform) {
+        {
           const points = [];
           json.points.forEach(function (p) {
-            const wp = worldtransform.getPosition();
-            const point = [p.x + wp.x, p.y + wp.y];
-            points.push(point);
-            //TODO handle rotation
+            points.push([p.x, p.y]);
           });
-          polygon.setPoints(points);
-        };
 
-        this.shape = polygon;
+          const polygon = new Polygon(0, 0, points);
+
+          //attach userData to perform update
+          this.update = function (worldtransform) {
+            const points = [];
+            json.points.forEach(function (p) {
+              const wp = worldtransform.getPosition();
+              const point = [p.x + wp.x, p.y + wp.y];
+              points.push(point);
+              //TODO handle rotation
+            });
+            polygon.setPoints(points);
+          };
+
+          this.shape = polygon;
+        }
         break;
       default:
     }
