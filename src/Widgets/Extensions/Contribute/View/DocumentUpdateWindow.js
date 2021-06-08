@@ -1,12 +1,13 @@
+/** @format */
+
 //Widgets
-import { AbstractDocumentWindow } from "../../../Documents/View/AbstractDocumentWindow";
-import { DocumentProvider } from "../../../Documents/ViewModel/DocumentProvider";
-import { DocumentModule } from "../../../Documents/DocumentModule";
+import { AbstractDocumentWindow } from '../../../Documents/View/AbstractDocumentWindow';
+import { DocumentProvider } from '../../../Documents/ViewModel/DocumentProvider';
+import { DocumentModule } from '../../../Documents/DocumentModule';
 
-import { ContributeService } from "../Service/ContributeService";
+import { ContributeService } from '../Service/ContributeService';
 
-import "./Contribute.css";
-
+import './Contribute.css';
 
 /**
  * This window is used to update a document. It contains a form that allows to
@@ -34,12 +35,12 @@ export class DocumentUpdateWindow extends AbstractDocumentWindow {
       type: 'button',
       container: 'right',
       html: 'Update',
-      callback: () => this._initWindow()
+      callback: () => this._initWindow(),
     });
   }
 
   get innerContentHtml() {
-    return /*html*/`
+    return /*html*/ `
       <div class="box-section">
         <h3 id="${this.docTitleId}" class="section-title"></h3>
         <div>
@@ -75,12 +76,14 @@ export class DocumentUpdateWindow extends AbstractDocumentWindow {
 
     this.cancelButtonElement.onclick = () => {
       this.disable();
-    }
+    };
   }
 
   documentWindowReady() {
-    this.provider.addEventListener(DocumentProvider.EVENT_DISPLAYED_DOC_CHANGED,
-      () => this.disable());
+    this.provider.addEventListener(
+      DocumentProvider.EVENT_DISPLAYED_DOC_CHANGED,
+      () => this.disable()
+    );
   }
 
   ///////////////////////
@@ -114,15 +117,16 @@ export class DocumentUpdateWindow extends AbstractDocumentWindow {
     }
 
     this.docTitleElement.innerText = doc.title;
-    this.docImageElement.src =
-      await this.provider.getDisplayedDocumentImage();
+    this.docImageElement.src = await this.provider.getDisplayedDocumentImage();
     this.sourceElement.value = doc.source;
     this.docRightsHolderElement.value = doc.rightsHolder;
     this.descriptionElement.value = doc.description;
-    this.pubDateElement.value = (new Date(doc.publicationDate))
-      .toISOString().substring(0, 10);
-    this.refDateElement.value = (new Date(doc.refDate))
-      .toISOString().substring(0, 10);
+    this.pubDateElement.value = new Date(doc.publicationDate)
+      .toISOString()
+      .substring(0, 10);
+    this.refDateElement.value = new Date(doc.refDate)
+      .toISOString()
+      .substring(0, 10);
   }
 
   /////////////////
@@ -186,7 +190,7 @@ export class DocumentUpdateWindow extends AbstractDocumentWindow {
   }
 
   get docRightsHolderId() {
-    return `${this.windowId}_rights_holder`
+    return `${this.windowId}_rights_holder`;
   }
 
   get docRightsHolderElement() {

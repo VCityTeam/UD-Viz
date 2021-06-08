@@ -1,16 +1,21 @@
+/** @format */
+
 //Components
-import { CityObject } from "../../../Components/3DTiles/Model/CityObject";
-import { EventSender } from "../../../Components/Events/EventSender";
-import { CityObjectStyle } from "../../../Components/3DTiles/Model/CityObjectStyle";
+import { CityObject } from '../../../Components/3DTiles/Model/CityObject';
+import { EventSender } from '../../../Components/Events/EventSender';
+import { CityObjectStyle } from '../../../Components/3DTiles/Model/CityObjectStyle';
 
-import { LinkService } from "../Model/LinkService";
-import { DocumentProvider } from "../../Documents/ViewModel/DocumentProvider";
-import { CityObjectProvider } from "../../CityObjects/ViewModel/CityObjectProvider";
-import { Link } from "../Model/Link";
-import { Document } from "../../Documents/Model/Document";
-import { LinkCountFilter, LinkedWithDisplayedDocumentFilter, LinkedWithFilteredDocumentsFilter } from "./CityObjectLinkFilters";
-import { DocumentFilter } from "../../Documents/ViewModel/DocumentFilter";
-
+import { LinkService } from '../Model/LinkService';
+import { DocumentProvider } from '../../Documents/ViewModel/DocumentProvider';
+import { CityObjectProvider } from '../../CityObjects/ViewModel/CityObjectProvider';
+import { Link } from '../Model/Link';
+import { Document } from '../../Documents/Model/Document';
+import {
+  LinkCountFilter,
+  LinkedWithDisplayedDocumentFilter,
+  LinkedWithFilteredDocumentsFilter,
+} from './CityObjectLinkFilters';
+import { DocumentFilter } from '../../Documents/ViewModel/DocumentFilter';
 
 /**
  * The link provider is responsible to manage links fetched from the server,
@@ -21,7 +26,7 @@ import { DocumentFilter } from "../../Documents/ViewModel/DocumentFilter";
 export class LinkProvider extends EventSender {
   /**
    * Constructs the link provider.
-   * 
+   *
    * @param {DocumentProvider} documentProvider The document provider.
    * @param {CityObjectProvider} cityObjectProvider The city object provider.
    * @param {LinkService} linkService The link service.
@@ -38,28 +43,28 @@ export class LinkProvider extends EventSender {
 
     /**
      * The link service.
-     * 
+     *
      * @type {LinkService}
      */
     this.linkService = linkService;
 
     /**
      * The document provider.
-     * 
+     *
      * @type {DocumentProvider}
      */
     this.documentProvider = documentProvider;
 
     /**
      * The city object provider.
-     * 
+     *
      * @type {CityObjectProvider}
      */
     this.cityObjectProvider = cityObjectProvider;
 
     /**
      * A filter for city objects based on their count of linked documents.
-     * 
+     *
      * @type {LinkCountFilter}
      */
     this.linkCountFilter = new LinkCountFilter(this);
@@ -68,27 +73,32 @@ export class LinkProvider extends EventSender {
     /**
      * A filter for city objects based on wether they are linked with the
      * currently displayed document.
-     * 
+     *
      * @type {LinkedWithDisplayedDocumentFilter}
      */
-    this.linkedWithDisplayedDocFilter = new LinkedWithDisplayedDocumentFilter(this);
+    this.linkedWithDisplayedDocFilter = new LinkedWithDisplayedDocumentFilter(
+      this
+    );
     this.cityObjectProvider.addFilter(this.linkedWithDisplayedDocFilter);
 
     /**
      * The style for city objects linked with the displayed document.
-     * 
+     *
      * @type {CityObjectStyle}
      */
-    this.linkDisplayedDocumentStyle = config.cityObjects.styles.linkedWithDisplayedDocument;
+    this.linkDisplayedDocumentStyle =
+      config.cityObjects.styles.linkedWithDisplayedDocument;
 
     /**
      * A filter for city objects based on wether they are linked with any of the
      * currently filtered documents (ie. the list of documents that appear in
      * the navigator).
-     * 
+     *
      * @type {LinkedWithFilteredDocumentsFilter}
      */
-    this.linkedWithFilteredDocsFilter = new LinkedWithFilteredDocumentsFilter(this);
+    this.linkedWithFilteredDocsFilter = new LinkedWithFilteredDocumentsFilter(
+      this
+    );
     this.cityObjectProvider.addFilter(this.linkedWithFilteredDocsFilter);
 
     // The following adds a filter for documents, based on wether they are
@@ -98,58 +108,62 @@ export class LinkProvider extends EventSender {
      * This value determines wether the filter is active.
      */
     this.shouldFilterLinkedDocuments = false;
-    this.documentProvider.addFilter(new DocumentFilter((doc) => {
-      return !this.shouldFilterLinkedDocuments ||
-        this.selectedCityObjectLinks.find(link => link.source_id === doc.id);
-    }));
+    this.documentProvider.addFilter(
+      new DocumentFilter((doc) => {
+        return (
+          !this.shouldFilterLinkedDocuments ||
+          this.selectedCityObjectLinks.find((link) => link.source_id === doc.id)
+        );
+      })
+    );
 
     this.documentProvider.refreshDocumentList();
 
     /**
      * The cached list of links.
-     * 
+     *
      * @type {Array<Link>}
      */
     this.links = [];
 
     /**
      * The currently displayed document.
-     * 
+     *
      * @type {Document}
      */
     this.displayedDocument = undefined;
 
     /**
      * The links of the currently displayed document.
-     * 
+     *
      * @type {Array<Link>}
      */
     this.displayedDocumentLinks = [];
 
     /**
      * The list of filtered documents.
-     * 
+     *
      * @type {Array<Document>}
      */
     this.filteredDocuments = [];
 
     /**
      * The links of the filtered documents.
-     * 
+     *
      * @type {Array<Link>}
      */
     this.filteredDocumentsLinks = [];
 
     /**
      * The currently selected city object.
-     * 
+     *
      * @type {CityObject}
      */
     this.selectedCityObject = undefined;
 
     /**
      * The links of the currently selected city object.
-     * 
+     *
      * @type {Array<Link>}
      */
     this.selectedCityObjectLinks = [];
@@ -160,21 +174,27 @@ export class LinkProvider extends EventSender {
     this.registerEvent(DocumentProvider.EVENT_FILTERED_DOCS_UPDATED);
     this.registerEvent(CityObjectProvider.EVENT_CITY_OBJECT_SELECTED);
 
-    this.documentProvider.addEventListener(DocumentProvider.EVENT_DISPLAYED_DOC_CHANGED,
-      (doc) => this._onDisplayedDocumentChange(doc));
+    this.documentProvider.addEventListener(
+      DocumentProvider.EVENT_DISPLAYED_DOC_CHANGED,
+      (doc) => this._onDisplayedDocumentChange(doc)
+    );
 
-    this.documentProvider.addEventListener(DocumentProvider.EVENT_FILTERED_DOCS_UPDATED,
-      (docs) => this._onFilteredDocumentsUpdate(docs));
+    this.documentProvider.addEventListener(
+      DocumentProvider.EVENT_FILTERED_DOCS_UPDATED,
+      (docs) => this._onFilteredDocumentsUpdate(docs)
+    );
 
-    this.cityObjectProvider.addEventListener(CityObjectProvider.EVENT_CITY_OBJECT_SELECTED,
-      (co) => this._onCityObjectSelection(co));
+    this.cityObjectProvider.addEventListener(
+      CityObjectProvider.EVENT_CITY_OBJECT_SELECTED,
+      (co) => this._onCityObjectSelection(co)
+    );
   }
 
   /**
    * Triggers when the displayed document changed. Updates the displayed
    * document reference in the link provider and re-applies the styles for the
    * city objects. The event is propagated.
-   * 
+   *
    * @param {Document} doc The newly displayed document.
    */
   _onDisplayedDocumentChange(doc) {
@@ -188,7 +208,7 @@ export class LinkProvider extends EventSender {
    * Triggers when the filtered documents change. Updates the filtered document
    * and their links in the provider, and re-applies the styles for the city
    * objects. The event is propagated.
-   * 
+   *
    * @param {Array<Document>} docs The newly filtered documents.
    */
   _onFilteredDocumentsUpdate(docs) {
@@ -202,7 +222,7 @@ export class LinkProvider extends EventSender {
    * Triggers when a city object is selected. Updates the city object and its
    * links in the provider, and refreshes the list of documents. The event is
    * propagated.
-   * 
+   *
    * @param {CityObject} co The newly selected city object.
    */
   _onCityObjectSelection(co) {
@@ -216,7 +236,7 @@ export class LinkProvider extends EventSender {
 
   /**
    * Fetches the links from the server.
-   * 
+   *
    * @async
    */
   async fetchLinks() {
@@ -228,7 +248,7 @@ export class LinkProvider extends EventSender {
 
   /**
    * Deletes the link.
-   * 
+   *
    * @async
    * @param {Link} link The link to delete.
    */
@@ -239,7 +259,7 @@ export class LinkProvider extends EventSender {
 
   /**
    * Creates a new link.
-   * 
+   *
    * @param {Link} link The link to create.
    */
   async createLink(link) {
@@ -255,7 +275,7 @@ export class LinkProvider extends EventSender {
 
   /**
    * Returns the cached list of links.
-   * 
+   *
    * @returns {Array<Link>} The cached list of links.
    */
   getLinks() {
@@ -264,27 +284,29 @@ export class LinkProvider extends EventSender {
 
   /**
    * Returns the links from a list of documents.
-   * 
+   *
    * @param {Array<Document>} docs A list of documents.
    */
   getLinksFromDocuments(docs) {
-    return this.links.filter((link) =>
-      docs.find((doc) => doc.id == link.source_id) !== undefined);
+    return this.links.filter(
+      (link) => docs.find((doc) => doc.id == link.source_id) !== undefined
+    );
   }
 
   /**
    * Returns the links from a city object.
-   * 
+   *
    * @param {CityObject} cityObject The city object.
    */
   getLinksFromCityObject(cityObject) {
-    return this.links.filter((link) =>
-      link.target_id == cityObject.props['cityobject.database_id']);
+    return this.links.filter(
+      (link) => link.target_id == cityObject.props['cityobject.database_id']
+    );
   }
 
   /**
    * Returns the links from the displayed document.
-   * 
+   *
    * @returns {Array<Link>} The list of links.
    */
   getDisplayedDocumentLinks() {
@@ -293,7 +315,7 @@ export class LinkProvider extends EventSender {
 
   /**
    * Returns the links from the filtered documents.
-   * 
+   *
    * @returns {Array<Link>} The list of links.
    */
   getFilteredDocumentsLinks() {
@@ -302,7 +324,7 @@ export class LinkProvider extends EventSender {
 
   /**
    * Returns the links from the selected city object.
-   * 
+   *
    * @returns {Array<Link>} The list of links.
    */
   getSelectedCityObjectLinks() {
@@ -311,19 +333,21 @@ export class LinkProvider extends EventSender {
 
   /**
    * Returns the list of documents linked to the selected city object.
-   * 
+   *
    * @returns {Array<Document>} The list of linked documents.
    */
   getSelectedCityObjectLinkedDocuments() {
     let allDocuments = this.documentProvider.getAllDocuments().slice();
-    let docIdsToFind = this.selectedCityObjectLinks.map(link => link.source_id);
-    return allDocuments.filter(doc => docIdsToFind.includes(doc.id));
+    let docIdsToFind = this.selectedCityObjectLinks.map(
+      (link) => link.source_id
+    );
+    return allDocuments.filter((doc) => docIdsToFind.includes(doc.id));
   }
 
   /**
    * Toggles the filter for the documents, based on wether they are linked with
    * the selected city object.
-   * 
+   *
    * @param {Boolean} [toggle] The desired value (`true` activates the filter).
    * If not specified, the activation state of the filter is simply negated (ie.
    * if the filter was active, it is now inactive and vice-versa)
@@ -340,13 +364,18 @@ export class LinkProvider extends EventSender {
    * Filters the city objects that are linked with the displayed document.
    */
   highlightDisplayedDocumentLinks() {
-    this.cityObjectProvider.setLayer('linkDisplayedDoc', this.linkDisplayedDocumentStyle);
+    this.cityObjectProvider.setLayer(
+      'linkDisplayedDoc',
+      this.linkDisplayedDocumentStyle
+    );
   }
 
   /**
    * Filters the city objects that are linked with the filtered document.
    */
   highlightFilteredDocumentsLinks() {
-    this.cityObjectProvider.setLayer('linkFilteredDocs', {materialProps: {color: 'blue'}});
+    this.cityObjectProvider.setLayer('linkFilteredDocs', {
+      materialProps: { color: 'blue' },
+    });
   }
 }

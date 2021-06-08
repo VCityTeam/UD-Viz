@@ -1,9 +1,11 @@
-//Components
-import { EventSender } from "../../../Components/Events/EventSender";
+/** @format */
 
-import { DocumentService } from "../Model/DocumentService";
-import { Document } from "../Model/Document";
-import { DocumentFilter } from "./DocumentFilter";
+//Components
+import { EventSender } from '../../../Components/Events/EventSender';
+
+import { DocumentService } from '../Model/DocumentService';
+import { Document } from '../Model/Document';
+import { DocumentFilter } from './DocumentFilter';
 
 /**
  * Represents the set of documents that is displayed in the view. This includes
@@ -15,7 +17,7 @@ import { DocumentFilter } from "./DocumentFilter";
 export class DocumentProvider extends EventSender {
   /**
    * Constructs a new documents provider.
-   * 
+   *
    * @param {DocumentService} service The document service.
    */
   constructor(service) {
@@ -23,35 +25,35 @@ export class DocumentProvider extends EventSender {
 
     /**
      * The document service.
-     * 
+     *
      * @type {DocumentService}
      */
     this.service = service;
 
     /**
      * The list of filters.
-     * 
+     *
      * @type {Array<DocumentFilter>}
      */
     this.filters = [];
 
     /**
      * The list of all documents.
-     * 
+     *
      * @type {Array<Document>}
      */
     this.allDocuments = [];
 
     /**
      * The list of filtered documents.
-     * 
+     *
      * @type {Array<Document>}
      */
     this.filteredDocuments = [];
 
     /**
      * The currently displayed document.
-     * 
+     *
      * @type {number}
      */
     this.displayedDocumentIndex = undefined;
@@ -77,28 +79,33 @@ export class DocumentProvider extends EventSender {
     if (this.filteredDocuments.length > 0) {
       if (previousDocument) {
         let previousDisplayedId = previousDocument.id;
-        let newIndex = this.filteredDocuments.findIndex(doc =>
-          doc.id === previousDisplayedId);
-        this.displayedDocumentIndex = (newIndex >= 0) ? newIndex : 0;
+        let newIndex = this.filteredDocuments.findIndex(
+          (doc) => doc.id === previousDisplayedId
+        );
+        this.displayedDocumentIndex = newIndex >= 0 ? newIndex : 0;
       } else {
         this.displayedDocumentIndex = 0;
       }
     } else {
       this.displayedDocumentIndex = undefined;
     }
-    await this.sendEvent(DocumentProvider.EVENT_FILTERED_DOCS_UPDATED,
-      this.getFilteredDocuments());
-    await this.sendEvent(DocumentProvider.EVENT_DISPLAYED_DOC_CHANGED,
-      this.getDisplayedDocument());
+    await this.sendEvent(
+      DocumentProvider.EVENT_FILTERED_DOCS_UPDATED,
+      this.getFilteredDocuments()
+    );
+    await this.sendEvent(
+      DocumentProvider.EVENT_DISPLAYED_DOC_CHANGED,
+      this.getDisplayedDocument()
+    );
   }
 
   /**
    * Adds a filter to the filtering pipeline.
-   * 
+   *
    * @param {DocumentFilter} newFilter The new filter to add.
    */
   addFilter(newFilter) {
-    if (! (newFilter instanceof DocumentFilter)) {
+    if (!(newFilter instanceof DocumentFilter)) {
       throw 'addFilter() expects a DocumentFilter parameter';
     }
     this.filters.push(newFilter);
@@ -106,12 +113,13 @@ export class DocumentProvider extends EventSender {
 
   /**
    * Sets the given document as the displayed one.
-   * 
+   *
    * @param {Document} doc The document.
    */
   setDisplayedDocument(doc) {
-    let index = this.filteredDocuments.findIndex((filteredDoc) =>
-      doc.id === filteredDoc.id);
+    let index = this.filteredDocuments.findIndex(
+      (filteredDoc) => doc.id === filteredDoc.id
+    );
 
     if (index < 0) {
       throw 'Document not found.';
@@ -123,12 +131,14 @@ export class DocumentProvider extends EventSender {
   /**
    * Change the displayed document index. Sends a `DISPLAYED_DOCUMENT_CHANGED`
    * event.
-   * 
+   *
    * @param {number} index The new document index.
    */
   setDisplayedDocumentIndex(index) {
     if (this.displayedDocumentIndex === undefined) {
-      console.warn('Cannot change displayed document if no document is present');
+      console.warn(
+        'Cannot change displayed document if no document is present'
+      );
       return;
     }
 
@@ -137,34 +147,41 @@ export class DocumentProvider extends EventSender {
     }
 
     this.displayedDocumentIndex = index;
-    this.sendEvent(DocumentProvider.EVENT_DISPLAYED_DOC_CHANGED,
-      this.getDisplayedDocument());
+    this.sendEvent(
+      DocumentProvider.EVENT_DISPLAYED_DOC_CHANGED,
+      this.getDisplayedDocument()
+    );
   }
 
   /**
    * Shift the displayed document index.  The filtered array is treated as
    * cyclical. Sends a `DISPLAYED_DOCUMENT_CHANGED` event.
-   * 
+   *
    * @param {number} offset The offset that will be applied to the current
    * index.
    */
   shiftDisplayedDocumentIndex(offset) {
     if (this.displayedDocumentIndex === undefined) {
-      console.warn('Cannot change displayed document if no document is present');
+      console.warn(
+        'Cannot change displayed document if no document is present'
+      );
       return;
     }
 
     offset = offset % this.filteredDocuments.length;
-    this.displayedDocumentIndex = (this.filteredDocuments.length +
-      this.displayedDocumentIndex + offset) % this.filteredDocuments.length;
-    
-    this.sendEvent(DocumentProvider.EVENT_DISPLAYED_DOC_CHANGED,
-      this.getDisplayedDocument());
+    this.displayedDocumentIndex =
+      (this.filteredDocuments.length + this.displayedDocumentIndex + offset) %
+      this.filteredDocuments.length;
+
+    this.sendEvent(
+      DocumentProvider.EVENT_DISPLAYED_DOC_CHANGED,
+      this.getDisplayedDocument()
+    );
   }
 
   /**
    * Returns the list of all documents.
-   * 
+   *
    * @returns {Array<Document>}
    */
   getAllDocuments() {
@@ -173,7 +190,7 @@ export class DocumentProvider extends EventSender {
 
   /**
    * Returns the filtered list of documents.
-   * 
+   *
    * @returns {Array<Document>}
    */
   getFilteredDocuments() {
@@ -182,7 +199,7 @@ export class DocumentProvider extends EventSender {
 
   /**
    * Returns the currently displayed document.
-   * 
+   *
    * @returns {Document | undefined}
    */
   getDisplayedDocument() {
@@ -195,7 +212,7 @@ export class DocumentProvider extends EventSender {
 
   /**
    * Returns the displayed document index.
-   * 
+   *
    * @returns {number | undefined}
    */
   getDisplayedDocumentIndex() {
@@ -206,9 +223,9 @@ export class DocumentProvider extends EventSender {
    * Returns the image corresponding to the displayed document. It is a string
    * that can be put into the `src` attribute of an `img` tag (so either an
    * URL or a base64 encoded file).
-   * 
+   *
    * @async
-   * 
+   *
    * @returns {Promise<string | undefined>}
    */
   async getDisplayedDocumentImage() {

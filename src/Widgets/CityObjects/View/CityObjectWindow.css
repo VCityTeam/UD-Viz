@@ -1,3 +1,5 @@
+/** @format */
+
 .city-object-title {
   margin: 5px 0 5px 0;
   font-weight: bold;
@@ -13,7 +15,7 @@
   margin: 10px;
 }
 
-.city-object-filter-section input[type="text"] {
+.city-object-filter-section input[type='text'] {
   width: 100%;
   box-sizing: border-box;
 }

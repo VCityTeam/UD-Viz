@@ -1,11 +1,16 @@
-import { setTileVerticesColor, getBatchIdFromIntersection,
-  getBatchTableFromTile, 
-  getTileInLayer} from "./3DTilesUtils";
+/** @format */
+
+import {
+  setTileVerticesColor,
+  getBatchIdFromIntersection,
+  getBatchTableFromTile,
+  getTileInLayer,
+} from './3DTilesUtils';
 
 /**
  * Gets a building ID from an intersection. The intersecting object must
  * be a "Mesh" object with a batch id.
- * 
+ *
  * @param {*} inter An intersection
  */
 export function getBuildingIdFromIntersection(inter) {
@@ -28,7 +33,7 @@ export function getBuildingInfoFromBuildingId(tilesInfo, buildingId) {
 
 /**
  * Sets the color of one building in the scene.
- * 
+ *
  * @param {*} layer The 3DTiles layer.
  * @param {*} buildingInfo The building info.
  * @param {Array<number>} color The color.

@@ -1,4 +1,6 @@
-import { DocumentSource } from "../../../Documents/Model/DocumentService";
+/** @format */
+
+import { DocumentSource } from '../../../Documents/Model/DocumentService';
 
 /**
  * The document source for documents in validation.
@@ -6,7 +8,7 @@ import { DocumentSource } from "../../../Documents/Model/DocumentService";
 export class DocumentsInValidationDocumentSource extends DocumentSource {
   /**
    * Creates the document source.
-   * 
+   *
    * @param {object} config The UD-Viz configuration.
    * @param {object} config.server The configuration for the server.
    * @param {string} config.server.url The base URL of the server.

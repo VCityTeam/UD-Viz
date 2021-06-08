@@ -1,3 +1,5 @@
+/** @format */
+
 .orienter-box {
   width: 55%;
   height: 55%;
@@ -18,7 +20,7 @@
 .orienter-box .controls-panel {
   width: 80%;
   max-width: 500px;
-  background: rgba(30,30,30,.6);
+  background: rgba(30, 30, 30, 0.6);
   border: 1px solid #000;
   padding: 5px;
   color: white;

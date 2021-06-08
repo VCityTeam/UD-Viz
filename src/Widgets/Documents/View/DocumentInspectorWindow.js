@@ -1,6 +1,8 @@
-import { DocumentProvider } from "../ViewModel/DocumentProvider";
-import { Document } from "../Model/Document";
-import { AbstractDocumentWindow } from "./AbstractDocumentWindow";
+/** @format */
+
+import { DocumentProvider } from '../ViewModel/DocumentProvider';
+import { Document } from '../Model/Document';
+import { AbstractDocumentWindow } from './AbstractDocumentWindow';
 
 /**
  * The window responsible for displaying the currently displayed document, as
@@ -31,7 +33,7 @@ export class DocumentInspectorWindow extends AbstractDocumentWindow {
   }
 
   get innerContentHtml() {
-    return /*html*/`
+    return /*html*/ `
       <div class="box-section">
         <h3 class="section-title">Title: <span id="${this.docTitleId}"></span></h3>
         <div>
@@ -86,8 +88,10 @@ export class DocumentInspectorWindow extends AbstractDocumentWindow {
   }
 
   documentWindowReady() {
-    this.provider.addEventListener(DocumentProvider.EVENT_DISPLAYED_DOC_CHANGED,
-      (doc) => this.onDisplayedDocumentChange(doc));
+    this.provider.addEventListener(
+      DocumentProvider.EVENT_DISPLAYED_DOC_CHANGED,
+      (doc) => this.onDisplayedDocumentChange(doc)
+    );
   }
 
   ///////////////////////
@@ -133,10 +137,12 @@ export class DocumentInspectorWindow extends AbstractDocumentWindow {
     this.docDescriptionElement.innerText = newDocument.description;
     this.docSourceElement.innerText = newDocument.source;
     this.docRightsHolderElement.innerText = newDocument.rightsHolder;
-    this.docPubDateElement.innerText =
-      (new Date(newDocument.publicationDate)).toLocaleDateString();
-    this.docRefDateElement.innerText =
-      (new Date(newDocument.refDate)).toLocaleDateString();
+    this.docPubDateElement.innerText = new Date(
+      newDocument.publicationDate
+    ).toLocaleDateString();
+    this.docRefDateElement.innerText = new Date(
+      newDocument.refDate
+    ).toLocaleDateString();
     this.docImageElement.src = await this.provider.getDisplayedDocumentImage();
   }
 
@@ -144,7 +150,7 @@ export class DocumentInspectorWindow extends AbstractDocumentWindow {
   ///// GETTERS
 
   get docTitleId() {
-    return `${this.windowId}_title`
+    return `${this.windowId}_title`;
   }
 
   get docTitleElement() {
@@ -152,7 +158,7 @@ export class DocumentInspectorWindow extends AbstractDocumentWindow {
   }
 
   get docDescriptionId() {
-    return `${this.windowId}_desc`
+    return `${this.windowId}_desc`;
   }
 
   get docDescriptionElement() {
@@ -160,7 +166,7 @@ export class DocumentInspectorWindow extends AbstractDocumentWindow {
   }
 
   get docSourceId() {
-    return `${this.windowId}_source`
+    return `${this.windowId}_source`;
   }
 
   get docSourceElement() {
@@ -168,7 +174,7 @@ export class DocumentInspectorWindow extends AbstractDocumentWindow {
   }
 
   get docRightsHolderId() {
-    return `${this.windowId}_rights_holder`
+    return `${this.windowId}_rights_holder`;
   }
 
   get docRightsHolderElement() {
@@ -176,7 +182,7 @@ export class DocumentInspectorWindow extends AbstractDocumentWindow {
   }
 
   get docPubDateId() {
-    return `${this.windowId}_pub_date`
+    return `${this.windowId}_pub_date`;
   }
 
   get docPubDateElement() {
@@ -184,7 +190,7 @@ export class DocumentInspectorWindow extends AbstractDocumentWindow {
   }
 
   get docRefDateId() {
-    return `${this.windowId}_ref_date`
+    return `${this.windowId}_ref_date`;
   }
 
   get docRefDateElement() {

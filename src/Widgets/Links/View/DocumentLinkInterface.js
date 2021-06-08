@@ -1,11 +1,13 @@
-//Components
-import { focusCameraOn } from "../../../Components/Camera/CameraUtils";
+/** @format */
 
-import { DocumentModule } from "../../Documents/DocumentModule";
+//Components
+import { focusCameraOn } from '../../../Components/Camera/CameraUtils';
+
+import { DocumentModule } from '../../Documents/DocumentModule';
 import * as THREE from 'three';
-import { DocumentProvider } from "../../Documents/ViewModel/DocumentProvider";
-import { Link } from "../Model/Link";
-import { LinkProvider } from "../ViewModel/LinkProvider";
+import { DocumentProvider } from '../../Documents/ViewModel/DocumentProvider';
+import { Link } from '../Model/Link';
+import { LinkProvider } from '../ViewModel/LinkProvider';
 
 /**
  * The interface extensions for the document windows.
@@ -13,7 +15,7 @@ import { LinkProvider } from "../ViewModel/LinkProvider";
 export class DocumentLinkInterface {
   /**
    * Constructs the document link interface.
-   * 
+   *
    * @param {DocumentModule} documentModule The document module.
    * @param {LinkProvider} linkProvider The link provider.
    * @param {*} itownsView The iTowns view.
@@ -22,14 +24,14 @@ export class DocumentLinkInterface {
   constructor(documentModule, linkProvider, itownsView, cameraControls) {
     /**
      * The link provider.
-     * 
+     *
      * @type {LinkProvider}
      */
     this.provider = linkProvider;
 
     /**
      * The list of links for the currently displayed document.
-     * 
+     *
      * @type {Array<Link>}
      */
     this.documentLinks = [];
@@ -38,18 +40,18 @@ export class DocumentLinkInterface {
      * The itowns view.
      */
     this.itownsView = itownsView;
-    
+
     /**
      * The planar camera controls.
      */
     this.cameraControls = cameraControls;
 
     // Adds the extension for the displayed documents. This extension shows the
-    // links and adds two buttons to highlight the linked city objects, and 
+    // links and adds two buttons to highlight the linked city objects, and
     // create a new link.
     documentModule.addInspectorExtension('links', {
       type: 'div',
-      html: /*html*/`
+      html: /*html*/ `
         <input type="checkbox" class="spoiler-check" id="doc-link-spoiler">
         <label for="doc-link-spoiler" class="section-title">Document Links</label>
         <div class="spoiler-box">
@@ -59,7 +61,7 @@ export class DocumentLinkInterface {
           <button id="${this.highlightDocButtonId}">Highlight city objects</button>
           <button id="${this.createLinkButtonId}">Select & link a city object</button>
         </div>`,
-      oncreated: () => this._init()
+      oncreated: () => this._init(),
     });
 
     // Adds an extension in the navigator window to show the status of the
@@ -68,18 +70,23 @@ export class DocumentLinkInterface {
     documentModule.addNavigatorExtension('linkFilter', {
       type: 'div',
       container: 'filter',
-      html: /*html*/`<label for="${this.linkFilterId}">Linked to the selected city object</label>
+      html: /*html*/ `<label for="${this.linkFilterId}">Linked to the selected city object</label>
         <input type="checkbox" id="${this.linkFilterId}">`,
       oncreated: () => {
-        this.linkFilterElement.onchange = () => this.provider.toggleLinkedDocumentsFilter();
-      }
+        this.linkFilterElement.onchange = () =>
+          this.provider.toggleLinkedDocumentsFilter();
+      },
     });
 
-    linkProvider.addEventListener(DocumentProvider.EVENT_FILTERED_DOCS_UPDATED,
-      () => this._updateLinkFilter());
+    linkProvider.addEventListener(
+      DocumentProvider.EVENT_FILTERED_DOCS_UPDATED,
+      () => this._updateLinkFilter()
+    );
 
-    linkProvider.addEventListener(DocumentProvider.EVENT_DISPLAYED_DOC_CHANGED,
-      () => this._updateLinkList());
+    linkProvider.addEventListener(
+      DocumentProvider.EVENT_DISPLAYED_DOC_CHANGED,
+      () => this._updateLinkList()
+    );
   }
 
   /**
@@ -95,11 +102,16 @@ export class DocumentLinkInterface {
       if (!!this.provider.selectedCityObject) {
         let newLink = new Link();
         newLink.source_id = this.provider.displayedDocument.id;
-        newLink.target_id = this.provider.selectedCityObject.props['cityobject.database_id'];
+        newLink.target_id =
+          this.provider.selectedCityObject.props['cityobject.database_id'];
         newLink.centroid_x = this.provider.selectedCityObject.centroid.x;
         newLink.centroid_y = this.provider.selectedCityObject.centroid.y;
         newLink.centroid_z = this.provider.selectedCityObject.centroid.z;
-        if (confirm('Are you sure you want to associate the document with this city object ?')) {
+        if (
+          confirm(
+            'Are you sure you want to associate the document with this city object ?'
+          )
+        ) {
           try {
             await this.provider.createLink(newLink);
           } catch (e) {
@@ -145,10 +157,14 @@ export class DocumentLinkInterface {
     for (let link of links) {
       newDivHtml += `<li>
                         ID : ${link.target_id}
-                        <span id="${this.linkTravelerId(link)}" class="clickable-text">
+                        <span id="${this.linkTravelerId(
+                          link
+                        )}" class="clickable-text">
                         travel
                         </span>
-                        <span id="${this.linkDeleterId(link)}" class="clickable-text">
+                        <span id="${this.linkDeleterId(
+                          link
+                        )}" class="clickable-text">
                         delete
                         </span>
                       </li>`;
@@ -167,25 +183,28 @@ export class DocumentLinkInterface {
     }
   }
 
-
   ////////////////////
   ///// LINK OPERATION
 
   /**
    * If the target is a city object, moves the camera to focus on its centroid.
-   * 
+   *
    * @param {Link} link The link to travel to.
    */
   async _travelToLink(link) {
-    let centroid = new THREE.Vector3(link.centroid_x, link.centroid_y,
-      link.centroid_z);
-    await focusCameraOn(this.itownsView, this.cameraControls, centroid,
-      {duration: 1});
+    let centroid = new THREE.Vector3(
+      link.centroid_x,
+      link.centroid_y,
+      link.centroid_z
+    );
+    await focusCameraOn(this.itownsView, this.cameraControls, centroid, {
+      duration: 1,
+    });
   }
 
   /**
    * Deletes the link.
-   * 
+   *
    * @param {Link} link The link to delete.
    */
   async _deleteLink(link) {

@@ -3,15 +3,24 @@
   "id": "3DTILES_temporal.primaryTransaction.schema.json",
   "title": "3DTILES_temporal_primaryTransaction extension",
   "type": "object",
-  "allOf" : [{
-      "$ref" : "3DTILES_temporal.transaction.schema.json"
-    }, {
-      "properties" : {
+  "allOf": [
+    {
+      "$ref": "3DTILES_temporal.transaction.schema.json"
+    },
+    {
+      "properties": {
         "type": {
           "description": "Type of transaction",
           "type": "string",
-          "enum": ["creation", "demolition", "modification", "union", "division"]
+          "enum": [
+            "creation",
+            "demolition",
+            "modification",
+            "union",
+            "division"
+          ]
         }
       }
-  }]
+    }
+  ]
 }

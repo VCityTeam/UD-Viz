@@ -3,18 +3,23 @@
   "id": "3DTILES_temporal.transactionAggregate.schema.json",
   "title": "3DTILES_temporal_transactionAggregate extension",
   "type": "object",
-  "allOf" : [{
-      "$ref" : "3DTILES_temporal.transaction.schema.json"
-    }, {
-      "properties" : {
+  "allOf": [
+    {
+      "$ref": "3DTILES_temporal.transaction.schema.json"
+    },
+    {
+      "properties": {
         "primaryTransactions": {
           "description": "Array of transactionAggregate or of primaryTransactions",
           "type": "array",
-          "items": { "anyOf": [
-            {"$ref": "3DTILES_temporal.primaryTransaction.schema.json"},
-            {"$ref": "3DTILES_temporal.transactionAggregate.schema.json"}
-          ]}
+          "items": {
+            "anyOf": [
+              { "$ref": "3DTILES_temporal.primaryTransaction.schema.json" },
+              { "$ref": "3DTILES_temporal.transactionAggregate.schema.json" }
+            ]
+          }
         }
       }
-  }]
+    }
+  ]
 }
