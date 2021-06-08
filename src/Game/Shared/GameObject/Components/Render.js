@@ -15,14 +15,6 @@ const RenderModule = class Render {
     //internal
     this.object3D = null;
     this.originalObject3D = null;
-
-    this.tickCb = [];
-  }
-
-  tick() {
-    this.tickCb.forEach(function (cb) {
-      cb();
-    });
   }
 
   isServerSide() {
@@ -117,14 +109,6 @@ const RenderModule = class Render {
     }
 
     if (this.media) {
-      if (this.media.text) {
-        const mediaText = assetsManager.createText(
-          this.media.text.label,
-          this.media.text.width,
-          this.media.text.height
-        );
-        this.object3D.add(mediaText);
-      }
 
       if (this.media.img) {
         const mediaImg = assetsManager.createImage(
