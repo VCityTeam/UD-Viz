@@ -1,6 +1,5 @@
 /** @format */
 
-import { LinkService } from '../Model/LinkService';
 import { CityObjectModule } from '../../CityObjects/CityObjectModule';
 import { CityObjectFilterSelector } from '../../CityObjects/View/CityObjectFilterSelector';
 import { LinkProvider } from '../ViewModel/LinkProvider';
@@ -67,7 +66,7 @@ export class CityObjectLinkInterface {
     let docs = this.linkProvider.getSelectedCityObjectLinkedDocuments();
     let listHtml = `<p class="city-object-title">${docs.length} linked document(s)</p>`;
     if (docs.length > 0) {
-      listHtml += `<p class="city-object-value"><ul>`;
+      listHtml += '<p class="city-object-value"><ul>';
       for (let doc of docs) {
         listHtml += `<li>${doc.title}</li>`;
       }
@@ -80,7 +79,7 @@ export class CityObjectLinkInterface {
   ////// GETTERS
 
   get linkListId() {
-    return `city_objects_link_list`;
+    return 'city_objects_link_list';
   }
 
   get linkListElement() {
@@ -88,7 +87,7 @@ export class CityObjectLinkInterface {
   }
 
   get showDocsButtonId() {
-    return `city_objects_link_show_doc`;
+    return 'city_objects_link_show_doc';
   }
 
   get showDocsButtonElement() {

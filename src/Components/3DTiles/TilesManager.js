@@ -1,9 +1,9 @@
-import { Tile } from "./Model/Tile.js";
-import { getVisibleTiles, updateITownsView } from "./3DTilesUtils.js";
-import { CityObjectID, CityObject, createCityObjectID } from "./Model/CityObject.js";
-import { CityObjectStyle } from "./Model/CityObjectStyle.js";
-import { StyleManager } from "./StyleManager.js";
-import { EventSender } from "../Events/EventSender.js";
+import { Tile } from './Model/Tile.js';
+import { getVisibleTiles, updateITownsView } from './3DTilesUtils.js';
+import { CityObjectID, CityObject, createCityObjectID } from './Model/CityObject.js';
+import { CityObjectStyle } from './Model/CityObjectStyle.js';
+import { StyleManager } from './StyleManager.js';
+import { EventSender } from '../Events/EventSender.js';
 
 /**
  * Manages the tiles and the style for city objects.
@@ -54,15 +54,15 @@ export class TilesManager extends EventSender {
     this.tiles = [];
     if (this.totalTileCount !== 0)
     {
-        // Load existing tiles
-        const tiles = getVisibleTiles(this.layer);
-        for (let tile of tiles) {
-            if (this.tiles[tile.tileId] === undefined) {
-                this.tiles[tile.tileId] = new Tile(this.layer, tile.tileId);
-                this.tiles[tile.tileId].loadCityObjects();
-                this.loadedTileCount += 1;
-            }
+      // Load existing tiles
+      const tiles = getVisibleTiles(this.layer);
+      for (let tile of tiles) {
+        if (this.tiles[tile.tileId] === undefined) {
+          this.tiles[tile.tileId] = new Tile(this.layer, tile.tileId);
+          this.tiles[tile.tileId].loadCityObjects();
+          this.loadedTileCount += 1;
         }
+      }
     }
 
     ///// EVENTS
@@ -93,22 +93,22 @@ export class TilesManager extends EventSender {
   }
 
   loadTile(tile) {
-      // Update the totalTileCount.
-      // TODO: this should be managed with an event: when the tileset is
-      //  loaded (i.e. tileIndex filled), then totalTileCount should be set.
-      this.totalTileCount = this.layer.tileset.tiles.length;
-      // Verifies that the tile has not been already added (might be removed
-      // when tile unloading will be managed)
-      if (this.tiles[tile.tileId] === undefined) {
-          this.tiles[tile.tileId] = new Tile(this.layer, tile.tileId);
-          this.tiles[tile.tileId].loadCityObjects();
-          this.loadedTileCount += 1;
-      }
-      // Callback when a tile is loaded.
-      // TODO: Les tuiles d'iTowns devraient etre rendues invisibles plutot
-      //  que d'etre déchargées et rechargées. A ce moment là, ce callback
-      //  pourra etre dans le if ci dessus
-      this.sendEvent(TilesManager.EVENT_TILE_LOADED, tile);
+    // Update the totalTileCount.
+    // TODO: this should be managed with an event: when the tileset is
+    //  loaded (i.e. tileIndex filled), then totalTileCount should be set.
+    this.totalTileCount = this.layer.tileset.tiles.length;
+    // Verifies that the tile has not been already added (might be removed
+    // when tile unloading will be managed)
+    if (this.tiles[tile.tileId] === undefined) {
+      this.tiles[tile.tileId] = new Tile(this.layer, tile.tileId);
+      this.tiles[tile.tileId].loadCityObjects();
+      this.loadedTileCount += 1;
+    }
+    // Callback when a tile is loaded.
+    // TODO: Les tuiles d'iTowns devraient etre rendues invisibles plutot
+    //  que d'etre déchargées et rechargées. A ce moment là, ce callback
+    //  pourra etre dans le if ci dessus
+    this.sendEvent(TilesManager.EVENT_TILE_LOADED, tile);
   }
 
   /**

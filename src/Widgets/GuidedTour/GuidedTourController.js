@@ -21,9 +21,9 @@ export class GuidedTourController extends ModuleView {
   /**
   * Constructor for GuidedTourController
   * The controller reads data from a database to build one or more guided tours
-  * Each guided tour is a succession of "steps"
+  * Each guided tour is a succession of "steps"
   * Each step has a document + tour text + doc text (steps are instances of
-   * the TourStep class)
+  * the TourStep class)
   * Multiple guided tours are supported (only one tour is finished for the demo)
   * For the demo : options.preventUserFromChangingTour allows to hide the buttons for changing tour
   *

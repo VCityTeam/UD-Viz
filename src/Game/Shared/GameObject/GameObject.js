@@ -10,7 +10,6 @@ const THREE = require('three');
 const RenderComponent = require('./Components/Render');
 const ColliderComponent = require('./Components/Collider');
 const WorldScriptComponent = require('./Components/WorldScript');
-const JSONUtils = require('../../../Components/SystemUtils/JSONUtils');
 const LocalScriptModule = require('./Components/LocalScript');
 const THREEUtils = require('../Components/THREEUtils');
 
@@ -288,14 +287,6 @@ const GameObjectModule = class GameObject {
     }
 
     return obj;
-  }
-
-  getTransform() {
-    return this.transform;
-  }
-
-  setTransform(transform) {
-    this.transform = transform;
   }
 
   clone() {

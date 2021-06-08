@@ -1,5 +1,7 @@
 /** @format */
 
+const THREE = require('three');
+
 //Components
 import { Window } from '../../../Components/GUI/js/Window';
 import { CityObjectStyle } from '../../../Components/3DTiles/Model/CityObjectStyle';
@@ -168,7 +170,7 @@ export class CityObjectWindow extends Window {
   _updateLayerDescription() {
     if (this.isCreated) {
       let layer = this.provider.getLayer();
-      if (!!layer) {
+      if (layer) {
         this.selectedFilterElement.innerText = layer.filter.toString();
         this.layerColorIndicatorElement.style.display = '';
         this.layerColorIndicatorElement.style.background =
@@ -200,7 +202,7 @@ export class CityObjectWindow extends Window {
    * @param {string} filterLabel The selected filter label.
    */
   _onFilterSelected(filterLabel) {
-    if (!!filterLabel) {
+    if (filterLabel) {
       this.provider.setLayer(filterLabel, this.defaultLayerStyle);
     } else {
       this.provider.removeLayer();

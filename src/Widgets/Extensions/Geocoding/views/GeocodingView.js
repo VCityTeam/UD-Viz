@@ -110,7 +110,7 @@ export class GeocodingView extends ModuleView {
         let i = 0;
         //step 1 : convert the lat/lng to coordinates used by itowns
         let targetPos = this.getWorldCoordinates(lat, lng);
-        if (!!targetPos.z) {
+        if (targetPos.z) {
           //if we could convert the coords (ie. they are on the map)
           //step 2 : add a mesh representing a pin
           this.addPin(targetPos);
@@ -141,7 +141,7 @@ export class GeocodingView extends ModuleView {
       this.planarView.tileLayer,
       coords
     );
-    const targetZ = !!elevation ? elevation : undefined;
+    const targetZ = elevation ? elevation : undefined;
     return new THREE.Vector3(targetX, targetY, targetZ);
   }
 

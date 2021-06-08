@@ -85,7 +85,7 @@ export class CityObjectProvider extends EventSender {
    */
   selectCityObject(mouseEvent) {
     let cityObject = this.layerManager.pickCityObject(mouseEvent);
-    if (!!cityObject) {
+    if (cityObject) {
       this.selectedCityObject = cityObject;
       this.removeLayer();
       this.sendEvent(CityObjectProvider.EVENT_CITY_OBJECT_SELECTED, cityObject);
@@ -160,7 +160,7 @@ export class CityObjectProvider extends EventSender {
     let filter = this.filters[filterLabel];
 
     if (filter === undefined) {
-      throw 'No filter found with the label : ' + label;
+      throw 'No filter found with the label : ' + filterLabel;
     }
 
     this.cityOjectLayer = new CityObjectLayer(filter, style);
@@ -198,7 +198,7 @@ export class CityObjectProvider extends EventSender {
    */
   _updateTilesManager() {
     this.layerManager.removeAll3DTilesStyles();
-    if (!!this.selectedCityObject) {
+    if (this.selectedCityObject) {
       let tileManager = this.layerManager.getTilesManagerByLayerID(
         this.selectedCityObject.tile.layer.id
       );

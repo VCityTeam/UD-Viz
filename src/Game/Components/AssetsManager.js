@@ -277,19 +277,27 @@ export class AssetsManager {
     const parent = new THREE.Object3D();
     switch (anchor) {
       case 'center':
-        let center = bbox.min.lerp(bbox.max, 0.5);
-        obj.position.sub(center);
+        {
+          let center = bbox.min.lerp(bbox.max, 0.5);
+          obj.position.sub(center);
+        }
         break;
       case 'max':
-        obj.position.sub(bbox.max);
+        {
+          obj.position.sub(bbox.max);
+        }
         break;
       case 'min':
-        obj.position.sub(bbox.min);
+        {
+          obj.position.sub(bbox.min);
+        }
         break;
       case 'center_min':
-        let centerMin = bbox.min.clone().lerp(bbox.max, 0.5);
-        centerMin.z = bbox.min.z;
-        obj.position.sub(centerMin);
+        {
+          let centerMin = bbox.min.clone().lerp(bbox.max, 0.5);
+          centerMin.z = bbox.min.z;
+          obj.position.sub(centerMin);
+        }
         break;
       default:
     }

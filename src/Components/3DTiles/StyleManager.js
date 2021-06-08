@@ -1,7 +1,7 @@
-import { CityObjectStyle } from "./Model/CityObjectStyle.js";
-import { CityObjectID } from "./Model/CityObject.js";
-import { createTileGroups } from "./3DTilesUtils.js";
-import { Tile } from "./Model/Tile.js";
+import { CityObjectStyle } from './Model/CityObjectStyle.js';
+import { CityObjectID } from './Model/CityObject.js';
+import { createTileGroups } from './3DTilesUtils.js';
+import { Tile } from './Model/Tile.js';
 
 /**
  * Class used to manage the styles of city objects.
@@ -115,9 +115,9 @@ export class StyleManager {
    * @returns {CityObjectStyle}
    */
   getStyle(identifier) {
-    if (typeof(identifier) === "string") {
+    if (typeof(identifier) === 'string') {
       return this.registeredStyles[identifier];
-    } else if (typeof(identifier) === "number") {
+    } else if (typeof(identifier) === 'number') {
       return this.anonymousStyles[identifier];
     }
     throw 'Style identifier must be a string or a number';
@@ -197,7 +197,7 @@ export class StyleManager {
       this._registerUsage(styleIdentifier, cityObjectId);
     } else if (Array.isArray(cityObjectId)) {
       cityObjectId.sort((idA, idB) => {
-        return idA.tileId - idB.tileId
+        return idA.tileId - idB.tileId;
       });
       for (let id of cityObjectId) {
         if (this.styleTable[id.tileId] === undefined) {
