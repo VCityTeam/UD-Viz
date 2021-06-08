@@ -141,7 +141,7 @@ export class GeocodingView extends ModuleView {
       this.planarView.tileLayer,
       coords
     );
-    const targetZ = !!elevation ? elevation : undefined;
+    const targetZ = elevation ? elevation : undefined;
     return new THREE.Vector3(targetX, targetY, targetZ);
   }
 
