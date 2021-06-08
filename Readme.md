@@ -38,6 +38,18 @@ cd UD-Viz
 npm install
 ```
 
+## Setup of the coding environment
+
+Installing [Visual Studio Code](https://code.visualstudio.com/) is recommended, in order to use the plugin formatter [Prettier](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode). Once installed you should setup Prettier with single quote coding style (Preferences => Settings => Type in search bar : Single quote => Toggle single quote of Prettier extension)
+
+### Workflow
+
+Before to push your modifications run:
+```
+npm run travis
+```
+to check if eslint and the webpack command run well
+
 ## Demos
 Standard application demos using UD-Viz are [gathered in UD-Viz-demo](https://github.com/VCityTeam/UD-Viz-demo)
 and some online demos are [available here](https://projet.liris.cnrs.fr/vcity/demos/)
