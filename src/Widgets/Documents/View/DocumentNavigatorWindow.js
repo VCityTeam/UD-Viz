@@ -145,8 +145,8 @@ export class DocumentNavigatorWindow extends AbstractDocumentWindow {
       item.innerHTML = /*html*/ `
         <div class='doc-title'>${doc.title}</div>
         <div class='doc-info'>Refering ${new Date(
-    doc.refDate
-  ).toLocaleDateString()}</div>
+          doc.refDate
+        ).toLocaleDateString()}</div>
       `;
       item.classList.add('navigator-result-doc');
       item.onclick = () => {

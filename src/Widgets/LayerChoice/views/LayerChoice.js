@@ -67,14 +67,14 @@ export class LayerChoice extends Window {
         layers[i].id
       }-spoiler" class="section-title">${layers[i].id}</Label>
                         Visible <input type="checkbox" id="checkbox_${i}" ${
-  layers[i].visible ? 'checked' : ''
-}></input></br>
+        layers[i].visible ? 'checked' : ''
+      }></input></br>
                         <div id="opacity_${i}"> 
                           Opacity : <span id="color_value_opacity_${i}">${
-  layers[i].opacity
-}</span>  <input type ="range" id="range_${i}" min="0" max="1" step = "0.1" value="${
-  layers[i].opacity
-}"></input>
+        layers[i].opacity
+      }</span>  <input type ="range" id="range_${i}" min="0" max="1" step = "0.1" value="${
+        layers[i].opacity
+      }"></input>
                         </div>`;
 
       item.oninput = (event) => {
@@ -129,8 +129,8 @@ export class LayerChoice extends Window {
     let div = document.createElement('div');
     div.innerHTML = `
       All Visible <input type="checkbox" id="checkbox" ${
-  this.layerManager.isOneLayerVisible() ? 'checked' : ''
-}></input></br>
+        this.layerManager.isOneLayerVisible() ? 'checked' : ''
+      }></input></br>
   `;
     div.onchange = (event) => {
       this.layerManager.changeVisibility(event.srcElement.checked);
@@ -143,22 +143,22 @@ export class LayerChoice extends Window {
         layers[i].id
       }-spoiler">
                         <label for="${
-  layers[i].id
-}-spoiler" class="subsection-title">${
-  layers[i].id
-}</Label>
+                          layers[i].id
+                        }-spoiler" class="subsection-title">${
+        layers[i].id
+      }</Label>
                         <div class="spoiler-box">
                           <div id="visible_${i}">
                           Visible <input type="checkbox" id="checkbox_${i}" ${
-  layers[i].visible ? 'checked' : ''
-}></input></br>
+        layers[i].visible ? 'checked' : ''
+      }></input></br>
                           </div>
                           <div id="opacity_${i}"> 
                             Opacity : <span id="geometry_value_opacity_${i}">${
-  layers[i].opacity
-}</span><input type ="range" id="range_${i}" min="0" max="1" step = "0.1" value="${
-  layers[i].opacity
-}"></input>
+        layers[i].opacity
+      }</span><input type ="range" id="range_${i}" min="0" max="1" step = "0.1" value="${
+        layers[i].opacity
+      }"></input>
                           </div>
                         </div>`;
 
