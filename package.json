@@ -4,8 +4,8 @@
   "description": "A collection of itowns plugins",
   "main": "src",
   "scripts": {
-    "travis": "./node_modules/.bin/eslint ./src && npm run build",
-    "eslint": "./node_modules/.bin/eslint ./src --fix",
+    "travis": "npm run eslint && npm run build",
+    "eslint": "./node_modules/.bin/eslint ./src",
     "build": "cross-env NODE_ENV=production webpack",
     "build-debug": "cross-env NODE_ENV=development webpack",
     "debug": "nodemon --verbose --watch src --delay 2500ms ./bin/debug.js -e js,css,html"
