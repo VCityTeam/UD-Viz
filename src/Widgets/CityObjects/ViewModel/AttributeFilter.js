@@ -73,16 +73,16 @@ export class AttributeFilter extends CityObjectFilter {
     let result = '';
     let attributes = [];
 
-    if (!!this.tileId) {
+    if (this.tileId) {
       attributes.push(['tileId', this.tileId]);
     }
 
-    if (!!this.batchId) {
+    if (this.batchId) {
       attributes.push(['batchId', this.batchId]);
     }
 
     for (let entry of Object.entries(this.props)) {
-      if (!!entry[1]) {
+      if (entry[1]) {
         attributes.push([entry[0], entry[1]]);
       }
     }

@@ -1,4 +1,4 @@
-import * as THREE from "three";
+import * as THREE from 'three';
 
 /**
  * Represents the style of a tile part. Accepted parameters are :
@@ -14,7 +14,7 @@ export class CityObjectStyle {
      */
     this.materialProps = null;
 
-    if (typeof(params) !== "object") {
+    if (typeof(params) !== 'object') {
       throw 'TilePartStyle require parameters in its constructor';
     }
 

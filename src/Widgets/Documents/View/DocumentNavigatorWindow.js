@@ -145,8 +145,8 @@ export class DocumentNavigatorWindow extends AbstractDocumentWindow {
       item.innerHTML = /*html*/ `
         <div class='doc-title'>${doc.title}</div>
         <div class='doc-info'>Refering ${new Date(
-          doc.refDate
-        ).toLocaleDateString()}</div>
+    doc.refDate
+  ).toLocaleDateString()}</div>
       `;
       item.classList.add('navigator-result-doc');
       item.onclick = () => {
@@ -170,10 +170,10 @@ export class DocumentNavigatorWindow extends AbstractDocumentWindow {
     }
     let previouslySelected =
       this.documentListElement.querySelector('.document-selected');
-    if (!!previouslySelected) {
+    if (previouslySelected) {
       previouslySelected.classList.remove('document-selected');
     }
-    if (!!document) {
+    if (document) {
       let newIndex = this.provider.getDisplayedDocumentIndex();
       let newSelected = this.documentListElement.querySelector(
         `li:nth-child(${newIndex + 1})`
@@ -203,22 +203,22 @@ export class DocumentNavigatorWindow extends AbstractDocumentWindow {
       rightsHolder !== '' ? rightsHolder : undefined;
 
     let pubStartDate = this.inputPubDateStartElement.value;
-    this.searchFilter.pubStartDate = !!pubStartDate
+    this.searchFilter.pubStartDate = pubStartDate
       ? new Date(pubStartDate)
       : undefined;
 
     let pubEndDate = this.inputPubDateEndElement.value;
-    this.searchFilter.pubEndDate = !!pubEndDate
+    this.searchFilter.pubEndDate = pubEndDate
       ? new Date(pubEndDate)
       : undefined;
 
     let refStartDate = this.inputRefDateStartElement.value;
-    this.searchFilter.refStartDate = !!refStartDate
+    this.searchFilter.refStartDate = refStartDate
       ? new Date(refStartDate)
       : undefined;
 
     let refEndDate = this.inputRefDateEndElement.value;
-    this.searchFilter.refEndDate = !!refEndDate
+    this.searchFilter.refEndDate = refEndDate
       ? new Date(refEndDate)
       : undefined;
 

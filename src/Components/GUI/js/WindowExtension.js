@@ -105,17 +105,17 @@ export class WindowExtension {
    */
   findContainer(htmlRoot) {
     let queries = [];
-    if (!!this.container) {
+    if (this.container) {
       queries.push(`[data-ext-container="${this.type}-${this.container}"]`);
       queries.push(`[data-ext-container="${this.container}"]`);
     }
-    queries.push(`[data-ext-container="${this.type}"]`)
-    queries.push(`[data-ext-container-default="${this.type}"]`)
+    queries.push(`[data-ext-container="${this.type}"]`);
+    queries.push(`[data-ext-container-default="${this.type}"]`);
     
     let container;
     for (let query of queries) {
       container = htmlRoot.querySelector(query);
-      if (!!container) {
+      if (container) {
         break;
       }
     }

@@ -80,12 +80,12 @@ export class DocumentCommentsWindow extends AbstractDocumentWindow {
           div.innerHTML = `
                     <div class="talktext">
                     <p class="talktext-author">${comment.author.firstName} ${
-            comment.author.lastName
-          }</p>
+  comment.author.lastName
+}</p>
                     <p class="talktext-comment">${text}</p>
                     <p class="talktext-date">${new Date(
-                      comment.date
-                    ).toLocaleString()}</p>
+    comment.date
+  ).toLocaleString()}</p>
                     </div>
                 `;
           document.getElementById('documentComments_left').appendChild(div);

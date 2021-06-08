@@ -67,7 +67,7 @@ export class CityObjectFilterWindow extends Window {
    * add.
    */
   addFilterSelector(filterSelector) {
-    if (!!this.getFilterSelector(filterSelector.filterLabel)) {
+    if (this.getFilterSelector(filterSelector.filterLabel)) {
       throw (
         'A filter selector with the same filter label already exist: ' +
         filterSelector.filterLabel
@@ -119,7 +119,7 @@ export class CityObjectFilterWindow extends Window {
   _onFilterSelection() {
     this.filterSectionElement.innerHTML = '';
     let selector = this._getCurrentSelector();
-    if (!!selector) {
+    if (selector) {
       selector.appendFormFieldsTo(this.filterSectionElement);
     }
   }

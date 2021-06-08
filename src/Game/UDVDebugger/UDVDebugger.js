@@ -125,22 +125,4 @@ export class UDVDebugger {
     this.root.style.width = w + 'px';
     this.root.style.height = h + 'px';
   }
-
-  //TODO used twice put it in a UTILS
-  async loadConfigFile(filePath, cb) {
-    return new Promise((resolve, reject) => {
-      $.ajax({
-        type: 'GET',
-        url: filePath,
-        datatype: 'json',
-        success: (data) => {
-          resolve(data);
-        },
-        error: (e) => {
-          console.error(e);
-          reject();
-        },
-      });
-    });
-  }
 }
