@@ -17,6 +17,7 @@ export class AssetsManager {
     this.worldScripts = {};
     this.localScripts = {};
     this.models = {};
+    this.worldsJSON = null;
   }
 
   createModel(idModel) {
@@ -31,6 +32,10 @@ export class AssetsManager {
     });
 
     return result;
+  }
+
+  getWorldsJSON() {
+    return this.worldsJSON;
   }
 
   fetchWorldScript(idScript) {
@@ -372,12 +377,28 @@ export class AssetsManager {
         );
       }
     });
+    const worldsPromise = new Promise((resolve, reject) => {
+      if (config.worlds) {
+        jquery.get(
+          config.worlds.path,
+          function (worldsString) {
+            _this.worldsJSON = JSON.parse(worldsString);
+            console.log('worlds loaded ', _this.worldsJSON);
+            resolve();
+          },
+          'text'
+        );
+      } else {
+        resolve();
+      }
+    });
 
     const promises = [];
     if (config.models) promises.push(modelPromise);
     if (config.prefabs) promises.push(prefabsPromise);
     if (config.worldScripts) promises.push(worldScriptsPromise);
     if (config.localScripts) promises.push(localScriptsPromise);
+    if (config.worlds) promises.push(worldsPromise);
 
     return Promise.all(promises);
   }
