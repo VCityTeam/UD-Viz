@@ -88,7 +88,11 @@ export class InputManager {
     //internal
     this.listeners = [];
     this.element = null;
-    this.altKey = false;
+    this.pause = false;
+  }
+
+  setPause(pause) {
+    this.pause = pause;
   }
 
   listenKeys(keys) {
@@ -139,7 +143,6 @@ export class InputManager {
       if (_this.keyMap[event.key] == false) {
         _this.keyMap[event.key] = true;
       }
-      _this.altKey = event.altKey;
     };
     window.addEventListener('keydown', keydown);
     this.listeners.push({ element: window, cb: keydown, id: 'keydown' });
@@ -148,7 +151,6 @@ export class InputManager {
       if (_this.keyMap[event.key] == true) {
         _this.keyMap[event.key] = false;
       }
-      _this.altKey = event.altKey;
     };
     window.addEventListener('keyup', keyup);
     this.listeners.push({ element: window, cb: keyup, id: 'keyup' });
@@ -161,6 +163,11 @@ export class InputManager {
   }
 
   dispose() {
+    this.listeners.forEach(function (l) {
+      l.element.removeEventListener(l.id, l.cb);
+    });
+    this.mouseState.dispose();
+
     //reset variables
     this.keyMap = {};
     this.keyCommands = {};
@@ -168,12 +175,6 @@ export class InputManager {
     this.commandsBuffer = {};
     this.listeners = [];
     this.element = null;
-    this.altKey = false;
-
-    this.listeners.forEach(function (l) {
-      l.element.removeEventListener(l.id, l.cb);
-    });
-    this.mouseState.dispose();
   }
 
   resetCommandsBuffer() {
@@ -182,11 +183,9 @@ export class InputManager {
     }
   }
 
-  isAltKey() {
-    return this.altKey;
-  }
-
   computeCommands() {
+    if (this.pause) return []; //early return if paused
+
     const result = [];
     for (let id in this.keyCommands) {
       if (this.keyMap[id]) {
