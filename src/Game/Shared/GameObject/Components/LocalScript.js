@@ -66,6 +66,7 @@ LocalScriptModule.TYPE = 'LocalScript';
 LocalScriptModule.EVENT = {
   INIT: 'init', //when added
   TICK: 'tick', //every tick
+  ON_NEW_GAMEOBJECT: 'onNewGameObject', //when a go is added
 };
 
 module.exports = LocalScriptModule;

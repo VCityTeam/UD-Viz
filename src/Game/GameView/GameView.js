@@ -55,8 +55,6 @@ export class GameView {
     //object
     this.object3D = new THREE.Object3D();
     this.object3D.name = 'GameView_Object3D';
-    this.obstacle = new THREE.Object3D();
-    this.obstacle.name = 'GameView_Obstacle';
     this.pointerMouseObject = this.assetsManager.createModel('pointer_mouse');
     this.pointerMouseObject.name = 'GameView_PointerMouse';
 
@@ -95,6 +93,7 @@ export class GameView {
       assetsManager: this.assetsManager,
       inputManager: this.inputManager,
       dt: 0,
+      state: null,
       UDVShared: udvShared,
     };
 
@@ -108,6 +107,7 @@ export class GameView {
 
   setPause(value) {
     this.pause = value;
+    this.inputManager.setPause(value);
   }
 
   appendToUI(el) {
@@ -244,11 +244,6 @@ export class GameView {
     this.object3D.position.z = o.alt;
     this.view.scene.add(this.object3D);
 
-    this.obstacle.position.x = x;
-    this.obstacle.position.y = y;
-    this.obstacle.position.z = o.alt;
-    // this.view.scene.add(this.obstacle);
-
     //fog
     const skyColor = new THREE.Color(
       this.config.game.skyColor.r,
@@ -345,13 +340,7 @@ export class GameView {
       this.localContext.dt = dt;
     }
 
-    //DEBUG
-    // window.UDVDebugger.displayShadowMap(
-    //   this.directionalLight,
-    //   this.view.mainLoop.gfxEngine.renderer
-    // );
-
-    //tick world
+    //tick world TODO handle by another class
     this.gameContext.commands = this.inputManager.computeCommands();
     const avatarUUID = this.avatarUUID;
     this.gameContext.commands.forEach(function (cmd) {
@@ -366,6 +355,7 @@ export class GameView {
     const _this = this;
     const newGO = [];
     const ctx = this.localContext;
+    ctx.state = state; //update state
 
     if (this.lastState) {
       if (!state.getGameObject()) throw new Error('no gameObject in state');
@@ -404,46 +394,37 @@ export class GameView {
       });
     }
 
+    const go = state.getGameObject();
+
+    //init new GO remove ?
+    if (!this.isLocal) {
+      newGO.forEach(function (g) {
+        g.initAssetsComponents(_this.assetsManager, udvShared);
+      });
+    }
+
+    //localscript event
     newGO.forEach(function (g) {
       console.log('New GO => ', g.name);
       _this.currentUUID[g.getUUID()] = true;
 
-      //build render component
-      if (!_this.isLocal)
-        g.initAssetsComponents(_this.assetsManager, udvShared);
-
+      //init newGO localscript
       const scriptComponent = g.getComponent(LocalScript.TYPE);
-      if (scriptComponent)
+      if (scriptComponent) {
         scriptComponent.execute(LocalScript.EVENT.INIT, [ctx]);
-
-      //add static object to obstacle
-      if (g.isStatic()) {
-        //register in obstacle
-        const r = g.getComponent(Render.TYPE);
-        if (r) {
-          const clone = r.getOriginalObject3D().clone();
-
-          const wT = g.computeWorldTransform();
-
-          clone.position.x = wT.position.x;
-          clone.position.y = wT.position.y;
-          clone.position.z = wT.position.z;
-
-          clone.rotation.x = wT.rotation.x;
-          clone.rotation.y = wT.rotation.y;
-          clone.rotation.z = wT.rotation.z;
-
-          clone.scale.x = wT.scale.x;
-          clone.scale.y = wT.scale.y;
-          clone.scale.z = wT.scale.z;
-
-          _this.obstacle.add(clone);
-          _this.obstacle.updateMatrixWorld();
-        }
       }
-    });
 
-    const go = state.getGameObject();
+      //notify other go that
+      go.traverse(function (child) {
+        const scriptComponent = child.getComponent(LocalScript.TYPE);
+        if (scriptComponent) {
+          scriptComponent.execute(LocalScript.EVENT.ON_NEW_GAMEOBJECT, [
+            ctx,
+            g,
+          ]);
+        }
+      });
+    });
 
     //tick local script
     go.traverse(function (child) {
@@ -466,12 +447,7 @@ export class GameView {
 
     if (this.pause) return; //no render
 
-    this.cameraman.tick(
-      this.gameContext.dt,
-      state,
-      this.avatarUUID,
-      this.obstacle
-    );
+    this.cameraman.tick(this.gameContext.dt, state, this.avatarUUID, null);
 
     //render
     const scene = this.view.scene;
