@@ -49,9 +49,6 @@ export class GameView {
     //inputs
     this.inputManager = new InputManager();
 
-    //server
-    this.webSocketService = params.webSocketService;
-
     //state renderer
     this.worldStateInterpolator = params.worldStateInterpolator;
 
@@ -105,6 +102,8 @@ export class GameView {
     this.currentUUID = {};
 
     this.pause = false;
+
+    this.tickRequesters = [];
   }
 
   setPause(value) {
@@ -154,6 +153,10 @@ export class GameView {
     this.avatarUUID = firstStateJSON.avatarID;
   }
 
+  addTickRequester(cb) {
+    this.tickRequesters.push(cb);
+  }
+
   onFirstState(state) {
     //build itowns view
     this.initItownsView(state);
@@ -175,6 +178,10 @@ export class GameView {
 
         requestAnimationFrame(tick);
 
+        _this.tickRequesters.forEach(function (cb) {
+          cb();
+        });
+
         now = Date.now();
         delta = now - then;
 
@@ -193,6 +200,10 @@ export class GameView {
         if (_this.disposed) return; //stop requesting frame
 
         requestAnimationFrame(tick);
+
+        _this.tickRequesters.forEach(function (cb) {
+          cb();
+        });
 
         now = Date.now();
         delta = now - then;
@@ -323,9 +334,6 @@ export class GameView {
       this.gameContext.dt = dt;
       this.localContext.dt = dt;
     }
-
-    //send cmd
-    this.inputManager.sendCommandsToServer(this.webSocketService);
 
     this.update(this.worldStateInterpolator.getCurrentState());
   }
