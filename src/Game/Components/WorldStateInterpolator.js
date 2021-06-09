@@ -14,20 +14,12 @@ export class WorldStateInterpolator {
     this.lastTimeState = 0;
   }
 
-  onFirstState(state) {
-    this.firstServerTimestamp = state.getTimestamp();
-    this.gameStart = Date.now();
-    this.states.length = 0;
-
-    this.onNewState(state);
-  }
-
-  getDelay() {
+  _getDelay() {
     if (this.config && this.config.renderDelay) return this.config.renderDelay;
     return 0;
   }
 
-  onNewState(state) {
+  _onNewState(state) {
     if (!state) {
       throw new Error('no state');
     }
@@ -37,41 +29,59 @@ export class WorldStateInterpolator {
     let dState = now - this.lastTimeState;
     this.lastTimeState = now;
     // console.log('state received last one was ', dState, ' ms ago');
-    if (dState > this.getDelay()) console.warn('Server delay');
+    if (dState > this._getDelay()) console.warn('Server delay');
 
     this.states.push(state);
 
     // Keep only one worldstate before the current server time
-    const index = this.computeIndexBaseState();
+    const index = this._computeIndexBaseState();
     if (index > 0) {
       this.states.splice(0, index);
     }
   }
 
-  onNewDiff(diff) {
-    let last = this.getLastStateReceived();
-    if (!last) throw new Error('no last state');
-    let newState = last.add(diff);
-    this.onNewState(newState);
-  }
-
-  getLastStateReceived() {
+  _getLastStateReceived() {
     return this.states[this.states.length - 1];
   }
 
+  _computeCurrentServerTime() {
+    return (
+      this.firstServerTimestamp + Date.now() - this.gameStart - this._getDelay()
+    );
+  }
+
+  //return the index of the first worldstate before server time
+  _computeIndexBaseState() {
+    const serverTime = this._computeCurrentServerTime();
+    for (let i = this.states.length - 1; i >= 0; i--) {
+      if (this.states[i].getTimestamp() <= serverTime) {
+        return i;
+      }
+    }
+    return -1;
+  }
+  //INTERFACE
+  onNewDiff(diff) {
+    let last = this._getLastStateReceived();
+    if (!last) throw new Error('no last state');
+    let newState = last.add(diff);
+    this._onNewState(newState);
+  }
+
+  //GAMEVIEW INTERFACE
   getCurrentState() {
     if (!this.firstServerTimestamp) {
       return null;
     }
 
-    const index = this.computeIndexBaseState();
-    const serverTime = this.computeCurrentServerTime();
+    const index = this._computeIndexBaseState();
+    const serverTime = this._computeCurrentServerTime();
 
     // If base is the most recent update we have, use its state.
     // Otherwise, interpolate between its state and the state of (base + 1).
     if (index < 0 || index === this.states.length - 1) {
       // console.log('Last state !!');
-      return this.getLastStateReceived();
+      return this._getLastStateReceived();
     } else {
       const baseState = this.states[index];
       const nextState = this.states[index + 1];
@@ -82,20 +92,10 @@ export class WorldStateInterpolator {
     }
   }
 
-  computeCurrentServerTime() {
-    return (
-      this.firstServerTimestamp + Date.now() - this.gameStart - this.getDelay()
-    );
-  }
-
-  //return the index of the first worldstate before server time
-  computeIndexBaseState() {
-    const serverTime = this.computeCurrentServerTime();
-    for (let i = this.states.length - 1; i >= 0; i--) {
-      if (this.states[i].getTimestamp() <= serverTime) {
-        return i;
-      }
-    }
-    return -1;
+  onFirstState(state) {
+    this.firstServerTimestamp = state.getTimestamp();
+    this.gameStart = Date.now();
+    this.states.length = 0;
+    this._onNewState(state);
   }
 }
