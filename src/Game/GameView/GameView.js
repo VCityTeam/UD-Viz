@@ -5,7 +5,6 @@
 // import { LayerManager } from '../../Utils/LayerManager/LayerManager';
 import { AssetsManager } from '../Components/AssetsManager';
 import { InputManager } from '../Components/InputManager';
-import { Cameraman, Routine } from '../Components/Cameraman';
 
 import * as THREE from 'three';
 import * as proj4 from 'proj4';
@@ -13,10 +12,8 @@ import * as itowns from 'itowns';
 
 import './GameView.css';
 import LocalScript from '../Shared/GameObject/Components/LocalScript';
-import Render from '../Shared/GameObject/Components/Render';
 
 const udvShared = require('../Shared/Shared');
-const Command = udvShared.Command;
 const WorldState = udvShared.WorldState;
 const THREEUtils = udvShared.Components.THREEUtils;
 
@@ -55,10 +52,9 @@ export class GameView {
     //object
     this.object3D = new THREE.Object3D();
     this.object3D.name = 'GameView_Object3D';
-    this.pointerMouseObject = this.assetsManager.createModel('pointer_mouse');
-    this.pointerMouseObject.name = 'GameView_PointerMouse';
 
-    this.fogObject = null;
+    //sky color
+    this.skyColor = null;
 
     //register last pass
     this.lastState = null;
@@ -66,8 +62,10 @@ export class GameView {
     //flag
     this.disposed = false;
 
-    //camera
-    this.cameraman = null;
+    //first game view to know if traveling
+    this.firstGameView = params.firstGameView || false;
+
+    //uuid avatar TODO remove
     this.avatarUUID = null;
 
     //itowns view
@@ -95,6 +93,10 @@ export class GameView {
       dt: 0,
       state: null,
       UDVShared: udvShared,
+      view: null,
+      avatarUUID: null,
+      itowns: itowns,
+      gameView: this,
     };
 
     //ref uuid of go in the last state
@@ -142,15 +144,14 @@ export class GameView {
     this.rootHtml.appendChild(this.ui);
   }
 
-  setOnFirstStateEnd(f) {
-    this.onFirstStateEnd = f;
-  }
-
   onFirstStateJSON(firstStateJSON) {
     const state = new WorldState(firstStateJSON.state);
     this.worldStateInterpolator.onFirstState(state);
     this.onFirstState(state);
+
+    //TODO remove doublon with localContext
     this.avatarUUID = firstStateJSON.avatarID;
+    this.localContext.avatarUUID = firstStateJSON.avatarID;
   }
 
   addTickRequester(cb) {
@@ -161,10 +162,10 @@ export class GameView {
     //build itowns view
     this.initItownsView(state);
     this.initScene(state);
-    this.initInputs(state);
+    // this.initInputs();
     this.initUI();
 
-    this.cameraman = new Cameraman(this.view.camera.camera3D);
+    // this.cameraman = new Cameraman(this.view.camera.camera3D);
 
     //register in mainloop
     const _this = this;
@@ -217,22 +218,8 @@ export class GameView {
       tick();
     }
 
-    if (this.onFirstStateEnd) this.onFirstStateEnd();
-
     //resize
     setTimeout(this.onResize.bind(this), 1000);
-  }
-
-  getCameraman() {
-    return this.cameraman;
-  }
-
-  setFog(value) {
-    if (value) {
-      this.view.scene.fog = this.fogObject;
-    } else {
-      this.view.scene.fog = null;
-    }
   }
 
   initScene(state) {
@@ -244,21 +231,16 @@ export class GameView {
     this.object3D.position.z = o.alt;
     this.view.scene.add(this.object3D);
 
-    //fog
-    const skyColor = new THREE.Color(
+    //sky
+    this.skyColor = new THREE.Color(
       this.config.game.skyColor.r,
       this.config.game.skyColor.g,
       this.config.game.skyColor.b
     );
-    this.fogObject = new THREE.Fog(
-      skyColor,
-      this.config.game.fog.near,
-      this.config.game.fog.far
-    );
 
     //shadow
     const renderer = this.view.mainLoop.gfxEngine.renderer;
-    THREEUtils.initRenderer(renderer, skyColor);
+    THREEUtils.initRenderer(renderer, this.skyColor);
 
     // Lights
     const { directionalLight, ambientLight } = THREEUtils.addLights(
@@ -315,14 +297,7 @@ export class GameView {
     return this.worldStateInterpolator;
   }
 
-  getLastState() {
-    return this.lastState;
-  }
-
-  getInputManager() {
-    return this.inputManager;
-  }
-
+  //TODO only one update
   updateViewServer(dt) {
     //TODO itowns BUG
     if (!isNaN(dt)) {
@@ -403,7 +378,7 @@ export class GameView {
       });
     }
 
-    //localscript event
+    //localscript event INIT + ON_NEW_GAMEOBJECT
     newGO.forEach(function (g) {
       console.log('New GO => ', g.name);
       _this.currentUUID[g.getUUID()] = true;
@@ -426,16 +401,8 @@ export class GameView {
       });
     });
 
-    //tick local script
-    go.traverse(function (child) {
-      const scriptComponent = child.getComponent(LocalScript.TYPE);
-      if (scriptComponent)
-        scriptComponent.execute(LocalScript.EVENT.TICK, [ctx]);
-    });
-
     //rebuild object
     this.object3D.children.length = 0;
-    this.object3D.add(this.pointerMouseObject);
     this.object3D.add(go.fetchObject3D());
     this.object3D.updateMatrixWorld();
 
@@ -447,13 +414,18 @@ export class GameView {
 
     if (this.pause) return; //no render
 
-    this.cameraman.tick(this.gameContext.dt, state, this.avatarUUID, null);
+    //tick local script
+    go.traverse(function (child) {
+      const scriptComponent = child.getComponent(LocalScript.TYPE);
+      if (scriptComponent)
+        scriptComponent.execute(LocalScript.EVENT.TICK, [ctx]);
+    });
 
     //render
     const scene = this.view.scene;
     const renderer = this.view.mainLoop.gfxEngine.renderer;
     renderer.clearColor();
-    renderer.render(scene, this.cameraman.getCamera());
+    renderer.render(scene, this.view.camera.camera3D);
 
     //TODO ne pas lancer des rendu si itowns vient d'en faire un
 
@@ -499,6 +471,7 @@ export class GameView {
       },
       noControls: true,
     });
+    this.localContext.view = this.view;
 
     //TODO parler a itowns remove listener of the resize
     this.view.debugResize = this.view.resize;
@@ -545,256 +518,6 @@ export class GameView {
     this.view.addLayer(wmsElevationLayer);
   }
 
-  initInputs(state) {
-    //TODO réfléchir ou mettre ce code faire des scripts dans les gameobject qui tourne coté client
-    const viewerDiv = this.rootHtml;
-    const camera = this.view.camera.camera3D;
-    const _this = this;
-    const manager = this.inputManager;
-
-    viewerDiv.requestPointerLock =
-      viewerDiv.requestPointerLock || viewerDiv.mozRequestPointerLock;
-    document.exitPointerLock =
-      document.exitPointerLock || document.mozExitPointerLock;
-
-    const MODE = {
-      DEFAULT: 0,
-      POINTER_LOCK: 1,
-    };
-    let currentMode = MODE.DEFAULT;
-    const swicthMode = function (newMode) {
-      currentMode = newMode;
-
-      switch (currentMode) {
-        case MODE.DEFAULT:
-          document.exitPointerLock();
-          break;
-        case MODE.POINTER_LOCK:
-          viewerDiv.requestPointerLock();
-          break;
-
-        default:
-          break;
-      }
-    };
-
-    //INPUTS LOCAL
-
-    //SWITCH CONTROLS
-    manager.addKeyInput('a', 'keydown', function () {
-      if (_this.cameraman.hasRoutine()) return; //already routine
-
-      const speed = 0.6;
-      if (_this.view.controls) {
-        _this.cameraman.addRoutine(
-          new Routine(
-            function (dt) {
-              const t = _this.cameraman.computeTransformTarget();
-              const camera = _this.cameraman.getCamera();
-              const amount = speed * dt;
-              const dist = t.position.distanceTo(camera.position);
-              let ratio = amount / dist;
-              ratio = Math.min(Math.max(0, ratio), 1);
-              camera.position.lerp(t.position, ratio);
-              camera.quaternion.slerp(t.quaternion, ratio);
-              camera.updateProjectionMatrix();
-
-              return ratio >= 1;
-            },
-            function () {
-              _this.view.controls.dispose();
-              _this.view.controls = null;
-              _this.cameraman.setFilmingTarget(true);
-              _this.setFog(true);
-            }
-          )
-        );
-      } else {
-        const currentPosition = new THREE.Vector3().copy(
-          _this.cameraman.getCamera().position
-        );
-        //TODO valeur en dur
-        const endPosition = new THREE.Vector3(0, 0, 200).add(currentPosition); //envoie la camera 200 metre plus haut
-        const endQuaternion = new THREE.Quaternion().setFromEuler(
-          new THREE.Euler(Math.PI / 5, 0, 0)
-        );
-
-        _this.setFog(false);
-
-        _this.cameraman.addRoutine(
-          new Routine(
-            function (dt) {
-              const camera = _this.cameraman.getCamera();
-              const amount = speed * dt;
-              const dist = endPosition.distanceTo(camera.position);
-              let ratio = amount / dist;
-              ratio = Math.min(Math.max(0, ratio), 1);
-              camera.position.lerp(endPosition, ratio);
-              camera.quaternion.slerp(endQuaternion, ratio);
-              camera.updateProjectionMatrix();
-
-              return ratio >= 1;
-            },
-            function () {
-              swicthMode(MODE.DEFAULT);
-
-              //creating controls like put it in _this.view.controls
-              const c = new itowns.PlanarControls(_this.view, {
-                handleCollision: false,
-                focusOnMouseOver: false, //TODO itowns bug not working
-                focusOnMouseClick: false,
-              });
-
-              _this.cameraman.setFilmingTarget(false);
-            }
-          )
-        );
-      }
-    });
-
-    //COMMANDS WORLD
-
-    //FORWARD
-    manager.listenKeys(['c']);
-    manager.addKeyCommand(
-      Command.TYPE.MOVE_FORWARD,
-      ['z', 'ArrowUp'],
-      function () {
-        swicthMode(MODE.POINTER_LOCK);
-        if (manager.isPressed('c')) {
-          return new Command({ type: Command.TYPE.RUN });
-        } else {
-          return new Command({ type: Command.TYPE.MOVE_FORWARD });
-        }
-      }
-    );
-
-    //BACKWARD
-    manager.addKeyCommand(
-      Command.TYPE.MOVE_BACKWARD,
-      ['s', 'ArrowDown'],
-      function () {
-        swicthMode(MODE.POINTER_LOCK);
-        return new Command({ type: Command.TYPE.MOVE_BACKWARD });
-      }
-    );
-
-    //LEFT
-    manager.addKeyCommand(
-      Command.TYPE.MOVE_LEFT,
-      ['q', 'ArrowLeft'],
-      function () {
-        swicthMode(MODE.POINTER_LOCK);
-        return new Command({ type: Command.TYPE.MOVE_LEFT });
-      }
-    );
-
-    //RIGHT
-    manager.addKeyCommand(
-      Command.TYPE.MOVE_RIGHT,
-      ['d', 'ArrowRight'],
-      function () {
-        swicthMode(MODE.POINTER_LOCK);
-        return new Command({ type: Command.TYPE.MOVE_RIGHT });
-      }
-    );
-
-    //MOVE ON MOUSEDOWN
-
-    //disbale right click context menu
-    viewerDiv.oncontextmenu = function (e) {
-      e.preventDefault();
-      e.stopPropagation();
-    };
-
-    manager.addMouseCommand('mousedown', function () {
-      const event = this.event('mousedown');
-      swicthMode(MODE.DEFAULT);
-      if (event.which != 3) return; //if its not a right click
-
-      //map is the root object
-      const mapObject = _this.obstacle;
-      if (!mapObject) throw new Error('no map object');
-
-      //1. sets the mouse position with a coordinate system where the center
-      //   of the screen is the origin
-      const mouse = new THREE.Vector2(
-        -1 +
-          (2 * event.offsetX) / (viewerDiv.clientWidth - viewerDiv.offsetLeft),
-        1 - (2 * event.offsetY) / (viewerDiv.clientHeight - viewerDiv.offsetTop)
-      );
-
-      //2. set the picking ray from the camera position and mouse coordinates
-      const raycaster = new THREE.Raycaster();
-      raycaster.setFromCamera(mouse, camera);
-
-      //3. compute intersections
-      //TODO opti en enlevant la recursive et en selectionnant seulement les bon object3D
-
-      const intersects = raycaster.intersectObject(mapObject, true);
-
-      if (intersects.length) {
-        let minDist = Infinity;
-        let p = null;
-
-        intersects.forEach(function (i) {
-          if (i.distance < minDist) {
-            p = i.point;
-            minDist = i.distance;
-          }
-        });
-
-        //transform p map referentiel
-        const bb = new THREE.Box3().setFromObject(mapObject);
-        p.sub(bb.min);
-
-        //DEBUG
-        console.log(p);
-
-        _this.pointerMouseObject.position.copy(p.clone());
-        _this.pointerMouseObject.updateMatrixWorld();
-
-        return new Command({
-          type: Command.TYPE.MOVE_TO,
-          data: { target: new THREE.Vector2(p.x, p.y) },
-        });
-      } else {
-        return null;
-      }
-    });
-
-    //ROTATE
-    manager.addMouseCommand('mousemove', function () {
-      if (
-        currentMode == MODE.POINTER_LOCK ||
-        (this.isDragging() && currentMode == MODE.DEFAULT)
-      ) {
-        const event = this.event('mousemove');
-        if (event.movementX != 0 || event.movementY != 0) {
-          let pixelX = -event.movementX;
-          let pixelY = -event.movementY;
-
-          if (this.isDragging()) {
-            const dragRatio = 2; //TODO conf ?
-            pixelX *= dragRatio;
-            pixelY *= dragRatio;
-          }
-
-          return new Command({
-            type: Command.TYPE.ROTATE,
-            data: {
-              vector: new THREE.Vector3(pixelY, 0, pixelX),
-            },
-          });
-        }
-      }
-      return null;
-    });
-
-    //start
-    manager.startListening(viewerDiv);
-  }
-
   onResize() {
     const w = window.innerWidth - this.rootHtml.offsetLeft;
     const h = window.innerHeight - this.rootHtml.offsetTop;
@@ -835,5 +558,9 @@ export class GameView {
         }, _this.gameContext);
       }
     });
+  }
+
+  getInputManager() {
+    return this.inputManager;
   }
 }
