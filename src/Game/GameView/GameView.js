@@ -84,12 +84,7 @@ export class GameView {
     };
 
     //to pass local script
-    this.localContext = {
-      dt: 0,
-      UDVShared: udvShared,
-      itowns: itowns,
-      gameView: this,
-    };
+    this.localContext = new LocalContext(this);
 
     //ref uuid of go in the last state
     this.currentUUID = {};
@@ -140,10 +135,7 @@ export class GameView {
     const state = new WorldState(firstStateJSON.state);
     this.worldStateInterpolator.onFirstState(state);
     this.onFirstState(state);
-
-    //TODO remove doublon with localContext
     this.avatarUUID = firstStateJSON.avatarID;
-    this.localContext.avatarUUID = firstStateJSON.avatarID;
   }
 
   addTickRequester(cb) {
@@ -291,7 +283,7 @@ export class GameView {
     //TODO itowns BUG
     if (!isNaN(dt)) {
       this.gameContext.dt = dt;
-      this.localContext.dt = dt;
+      this.localContext.setDt(dt);
     }
 
     this.update(this.worldStateInterpolator.getCurrentState());
@@ -301,7 +293,7 @@ export class GameView {
     //TODO itowns BUG
     if (!isNaN(dt)) {
       this.gameContext.dt = dt;
-      this.localContext.dt = dt;
+      this.localContext.setDt(dt);
     }
 
     //tick world TODO handle by another class
@@ -459,7 +451,6 @@ export class GameView {
       },
       noControls: true,
     });
-    this.localContext.view = this.view;
 
     //TODO parler a itowns remove listener of the resize
     this.view.debugResize = this.view.resize;
@@ -550,5 +541,29 @@ export class GameView {
 
   getInputManager() {
     return this.inputManager;
+  }
+}
+
+class LocalContext {
+  constructor(gameView) {
+    this.dt = 0;
+    this.gameView = gameView;
+  }
+
+  setDt(dt) {
+    this.dt = dt;
+  }
+
+  getSharedModule() {
+    return udvShared;
+  }
+  getDt() {
+    return this.dt;
+  }
+  getGameView() {
+    return this.gameView;
+  }
+  getItownsModule() {
+    return itowns;
   }
 }
