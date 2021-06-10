@@ -71,13 +71,10 @@ export class GameView {
     //itowns view
     this.view = null;
 
-    //controls
-    this.itownsControls = null;
-
     //model only in Local
     this.world = null;
 
-    //to pass gameobject world script (only local)
+    //to pass gameobject world script (only local) TODO move this in LocalWorld
     this.gameContext = {
       assetsManager: this.assetsManager,
       dt: 0,
@@ -157,10 +154,7 @@ export class GameView {
     //build itowns view
     this.initItownsView(state);
     this.initScene(state);
-    // this.initInputs();
     this.initUI();
-
-    // this.cameraman = new Cameraman(this.view.camera.camera3D);
 
     //register in mainloop
     const _this = this;
