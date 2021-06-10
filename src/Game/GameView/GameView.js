@@ -363,6 +363,9 @@ export class GameView {
       });
     }
 
+    //buffer
+    this.lastState = state;
+
     const go = state.getGameObject();
 
     //init new GO remove ?
@@ -402,9 +405,6 @@ export class GameView {
 
     //update shadow
     if (newGO.length) this.placeLight();
-
-    //buffer
-    this.lastState = state;
 
     if (this.pause) return; //no render
 
