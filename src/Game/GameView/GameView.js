@@ -1,9 +1,5 @@
 /** @format */
 
-//UDV
-// import { TilesManager } from '../../Utils/3DTiles/TilesManager';
-// import { LayerManager } from '../../Utils/LayerManager/LayerManager';
-import { AssetsManager } from '../Components/AssetsManager';
 import { InputManager } from '../Components/InputManager';
 
 import * as THREE from 'three';
@@ -41,7 +37,7 @@ export class GameView {
     this.config = params.config;
 
     //assets
-    this.assetsManager = params.assetsManager || new AssetsManager();
+    this.assetsManager = params.assetsManager;
 
     //inputs
     this.inputManager = new InputManager();
@@ -320,7 +316,7 @@ export class GameView {
         const uuid = g.getUUID();
         const current = state.getGameObject().find(uuid);
         if (current && !g.isStatic()) {
-          g.updateNoStaticFromGO(current, _this.assetsManager);
+          g.updateNoStaticFromGO(current);
         } else if (!current) {
           //do not exist remove it
           g.removeFromParent();
@@ -541,6 +537,14 @@ export class GameView {
 
   getInputManager() {
     return this.inputManager;
+  }
+
+  getAssetsManager() {
+    return this.assetsManager;
+  }
+
+  getLastState() {
+    return this.lastState;
   }
 }
 

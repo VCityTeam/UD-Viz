@@ -64,16 +64,14 @@ const GameObjectModule = class GameObject {
     this.eulerBuffer = new THREE.Euler(0, 0, 0, 'ZXY'); //to avoid new THREE.Euler on fetchObject3D
   }
 
-  updateNoStaticFromGO(go, assetsManager) {
+  updateNoStaticFromGO(go) {
     //update transform
     this.setTransform(go.getTransform());
     //update render
     const r = this.getComponent(RenderComponent.TYPE);
     if (r) {
-      r.updateFromComponent(
-        go.getComponent(RenderComponent.TYPE),
-        assetsManager
-      );
+      r.updateFromComponent(go.getComponent(RenderComponent.TYPE));
+      //TODO update localscript as well
     }
   }
 
@@ -89,7 +87,6 @@ const GameObjectModule = class GameObject {
   }
 
   initAssetsComponents(manager, udvShared, isServerSide = false) {
-
     if (!this.initialized) {
       this.initialized = true;
       for (let type in this.components) {
