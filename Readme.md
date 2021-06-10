@@ -48,13 +48,13 @@ Before to push your modifications run:
 ```
 npm run travis
 ```
-to check if eslint and the webpack command run well
+to check if eslint and the webpack commands run well
 
 ## Demos
 Standard application demos using UD-Viz are [gathered in UD-Viz-demo](https://github.com/VCityTeam/UD-Viz-demo)
 and some online demos are [available here](https://projet.liris.cnrs.fr/vcity/demos/)
 
-## Sources directory layout (organizational principles)
+## Sources directory layout (organizational principles) FIXME:update layout description
 Definitions:
  - [Component](https://en.wikipedia.org/wiki/Component-based_software_engineering)
    - `Components` folder: a set of components
