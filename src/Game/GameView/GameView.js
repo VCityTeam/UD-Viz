@@ -88,13 +88,8 @@ export class GameView {
 
     //to pass local script
     this.localContext = {
-      assetsManager: this.assetsManager,
-      inputManager: this.inputManager,
       dt: 0,
-      state: null,
       UDVShared: udvShared,
-      view: null,
-      avatarUUID: null,
       itowns: itowns,
       gameView: this,
     };
@@ -330,7 +325,6 @@ export class GameView {
     const _this = this;
     const newGO = [];
     const ctx = this.localContext;
-    ctx.state = state; //update state
 
     if (this.lastState) {
       if (!state.getGameObject()) throw new Error('no gameObject in state');
