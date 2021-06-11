@@ -1,7 +1,7 @@
 /** @format */
 
 //Components
-import { CityObject } from '../../../Components/3DTiles/Model/CityObject';
+import { CityObject } from '../../Components/3DTiles/Model/CityObject';
 
 /**
  * Represents a filter for city objects. It is basically a function that takes

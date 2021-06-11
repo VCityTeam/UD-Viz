@@ -99,6 +99,7 @@ export class GameView {
     this.ui.appendChild(el);
   }
 
+  //TODO remove in localworld object
   setWorld(world) {
     this.world = world;
     if (!world) return;
@@ -107,6 +108,7 @@ export class GameView {
     //reload world
   }
 
+  //TODO remove in localworld object
   getWorld() {
     return this.world;
   }

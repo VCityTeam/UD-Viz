@@ -1,8 +1,8 @@
 /** @format */
 
 //Components
-import { ModuleView } from '../../../Components/ModuleView/ModuleView';
-import { Window } from '../../../Components/GUI/js/Window';
+import { ModuleView } from '../../Components/ModuleView/ModuleView';
+import { Window } from '../../Components/GUI/js/Window';
 
 import { DocumentProvider } from '../ViewModel/DocumentProvider';
 import { DocumentNavigatorWindow } from './DocumentNavigatorWindow';

@@ -1,10 +1,10 @@
 /** @format */
 
 //Components
-import { TilesManager } from '../../../Components/3DTiles/TilesManager.js';
-import { getVisibleTiles } from '../../../Components/3DTiles/3DTilesUtils.js';
-import { CityObjectStyle } from '../../../Components/3DTiles/Model/CityObjectStyle.js';
-import { CityObjectID } from '../../../Components/3DTiles/Model/CityObject.js';
+import { TilesManager } from '../../Components/3DTiles/TilesManager.js';
+import { getVisibleTiles } from '../../Components/3DTiles/3DTilesUtils.js';
+import { CityObjectStyle } from '../../Components/3DTiles/Model/CityObjectStyle.js';
+import { CityObjectID } from '../../Components/3DTiles/Model/CityObject.js';
 
 /**
  * The ViewModel of the temporal module. Contains intermediate data structures

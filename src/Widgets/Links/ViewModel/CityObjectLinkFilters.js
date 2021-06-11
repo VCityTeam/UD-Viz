@@ -1,7 +1,7 @@
 /** @format */
 
 //Components
-import { CityObject } from '../../../Components/3DTiles/Model/CityObject';
+import { CityObject } from '../../Components/3DTiles/Model/CityObject';
 
 import { CityObjectFilter } from '../../CityObjects/ViewModel/CityObjectFilter';
 import { LinkProvider } from './LinkProvider';

@@ -5,7 +5,7 @@ import { DocumentSource } from '../../../Documents/Model/DocumentService';
 import { Document } from '../../../Documents/Model/Document';
 
 //Components
-import { Window } from '../../../../Components/GUI/js/Window';
+import { Window } from '../../../Components/GUI/js/Window';
 
 import { ValidationService } from '../Service/ValidationService';
 import { DocumentsInValidationDocumentSource } from '../Service/DocumentsInValidationSource';
