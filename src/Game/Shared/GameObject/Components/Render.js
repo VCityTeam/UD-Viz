@@ -12,7 +12,6 @@ const RenderModule = class Render {
 
     //internal
     this.object3D = null;
-    this.originalObject3D = null;
   }
 
   isServerSide() {
@@ -36,8 +35,13 @@ const RenderModule = class Render {
     return this.object3D;
   }
 
-  getOriginalObject3D() {
-    return this.originalObject3D;
+  computeOriginalObject3D() {
+    const result = this.object3D.clone();
+    result.position.set(0, 0, 0);
+    result.rotation.set(0, 0, 0);
+    result.scale.set(0, 0, 0);
+    result.updateMatrixWorld();
+    return result;
   }
 
   setColor(value) {
@@ -59,7 +63,6 @@ const RenderModule = class Render {
 
   addObject3D(obj) {
     this.object3D.add(obj);
-    this.originalObject3D = this.object3D.clone();
   }
 
   initAssets(assetsManager) {
@@ -77,8 +80,6 @@ const RenderModule = class Render {
     }
 
     this.setColor(this.color);
-
-    this.originalObject3D = this.object3D.clone(); //keep a copy of it
 
     return this.object3D;
   }
