@@ -6,7 +6,7 @@ import Coordinates from 'itowns/lib/Core/Geographic/Coordinates';
 import proj4 from 'proj4';
 
 //Components
-import { ModuleView } from '../../../../Components/ModuleView/ModuleView';
+import { ModuleView } from '../../../Components/ModuleView/ModuleView';
 import { focusCameraOn } from '../../../../Components/Camera/CameraUtils';
 
 import { GeocodingService } from '../services/GeocodingService';

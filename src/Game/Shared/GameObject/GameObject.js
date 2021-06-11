@@ -122,9 +122,9 @@ const GameObjectModule = class GameObject {
 
   clampRotation() {
     const r = this.transform.getRotation();
-    r.x = (Math.PI * 2 + r.x) % (Math.PI * 2);
-    r.y = (Math.PI * 2 + r.y) % (Math.PI * 2);
-    r.z = (Math.PI * 2 + r.z) % (Math.PI * 2);
+    r.x = (Math.PI * 4 + r.x) % (Math.PI * 2);
+    r.y = (Math.PI * 4 + r.y) % (Math.PI * 2);
+    r.z = (Math.PI * 4 + r.z) % (Math.PI * 2);
   }
 
   rotate(vector) {

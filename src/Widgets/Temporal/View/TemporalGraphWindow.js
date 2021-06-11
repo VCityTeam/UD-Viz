@@ -1,7 +1,7 @@
 /** @format */
 
 //Components
-import { Window } from '../../../Components/GUI/js/Window';
+import { Window } from '../../Components/GUI/js/Window';
 
 import { NetworkManager } from './NetworkManager';
 import './TemporalWindow.css';

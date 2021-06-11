@@ -1,8 +1,8 @@
 /** @format */
 
 //Components
-import { Window } from '../../Components/GUI/js/Window';
-import '../../Components/GUI/css/window.css';
+import { Window } from '../Components/GUI/js/Window';
+import '../Components/GUI/css/window.css';
 
 import './GuidedTour.css';
 
