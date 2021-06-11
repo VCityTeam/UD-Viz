@@ -64,9 +64,10 @@ const LocalScriptModule = class LocalScript {
 
 LocalScriptModule.TYPE = 'LocalScript';
 LocalScriptModule.EVENT = {
-  INIT: 'init', //when added
+  INIT: 'init', //Before first tick
   TICK: 'tick', //every tick
   ON_NEW_GAMEOBJECT: 'onNewGameObject', //when a go is added
+  UPDATE: 'update', //when component need to be updated with newer localScript component
 };
 
 module.exports = LocalScriptModule;
