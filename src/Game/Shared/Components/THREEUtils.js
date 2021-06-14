@@ -106,10 +106,6 @@ module.exports = {
     }
   },
   bindLightTransform(offset, phi, theta, obj, dirLight) {
-    // convert degrees into radians
-    phi = THREE.Math.degToRad(phi);
-    theta = THREE.Math.degToRad(theta);
-
     // computing boundingSphere
     const bb = new THREE.Box3().setFromObject(obj);
     const center = bb.getCenter(new THREE.Vector3());
