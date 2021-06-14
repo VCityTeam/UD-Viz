@@ -105,4 +105,38 @@ module.exports = {
       }
     }
   },
+  bindLightTransform(offset, phi, theta, obj, dirLight) {
+    // computing boundingSphere
+    const bb = new THREE.Box3().setFromObject(obj);
+    const center = bb.getCenter(new THREE.Vector3());
+    const bsphere = bb.getBoundingSphere(new THREE.Sphere(center));
+    const sphericalPoint = new THREE.Spherical(
+      bsphere.radius + offset,
+      phi,
+      theta
+    );
+
+    // set the light's target
+    dirLight.target.position.copy(center);
+    dirLight.target.updateMatrixWorld();
+    
+    // convert spherical coordinates in cartesian 
+    const vecLightPos = new THREE.Vector3();
+    vecLightPos.setFromSpherical(sphericalPoint);
+    vecLightPos.add(dirLight.target.position);
+    
+    // place directionnal lights
+    dirLight.position.copy(vecLightPos);
+    dirLight.updateMatrixWorld();
+
+    // set up camera that computes the shadow map
+    const cameraShadow = dirLight.shadow.camera;
+    cameraShadow.near = offset;
+    cameraShadow.far = offset + bsphere.radius * 2;
+    cameraShadow.top = bsphere.radius;
+    cameraShadow.right = bsphere.radius;
+    cameraShadow.left = -bsphere.radius;
+    cameraShadow.bottom = -bsphere.radius;
+    cameraShadow.updateProjectionMatrix();
+  },
 };

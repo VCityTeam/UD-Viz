@@ -244,44 +244,7 @@ export class GameView {
     this.directionalLight = directionalLight;
   }
 
-  bindLightTransform() {
-    const obj = this.object3D.clone();
-
-    //compute bb only with mesh receiving shadow WIP
-    // obj.traverse(function (child) {
-    //   if (child.geometry) {
-    //     if (!child.receiveShadow) debugger;
-    //     child.visible = child.receiveShadow;
-    //   }
-    // });
-
-    console.log('PLACE LIGHT');
-
-    const bb = new THREE.Box3().setFromObject(obj);
-    const directionalLight = this.directionalLight;
-
-    //place directionnal lights
-    const centerOffset = bb.getCenter(new THREE.Vector3());
-
-    directionalLight.target.position.copy(centerOffset);
-    directionalLight.target.updateMatrixWorld();
-
-    directionalLight.position.copy(directionalLight.target.position);
-    const distlight = 250;
-    directionalLight.position.add(
-      new THREE.Vector3(distlight, distlight, 2 * distlight)
-    );
-    directionalLight.updateMatrixWorld();
-
-    const cameraShadow = directionalLight.shadow.camera;
-    cameraShadow.near = 1;
-    cameraShadow.far = 1000;
-    cameraShadow.top = 80;
-    cameraShadow.right = 95;
-    cameraShadow.left = -100;
-    cameraShadow.bottom = -90;
-    cameraShadow.updateProjectionMatrix();
-  }
+  
 
   getWorldStateInterpolator() {
     return this.worldStateInterpolator;
@@ -403,8 +366,10 @@ export class GameView {
     this.object3D.add(go.fetchObject3D());
     this.object3D.updateMatrixWorld();
 
+    
     //update shadow
-    if (newGO.length) this.bindLightTransform();
+    if (newGO.length)
+      THREEUtils.bindLightTransform(10, Math.PI * 0.2, 2*Math.PI *0, this.object3D, this.directionalLight);
 
     if (this.pause) return; //no render
 
