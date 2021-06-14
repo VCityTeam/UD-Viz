@@ -244,8 +244,6 @@ export class GameView {
     this.directionalLight = directionalLight;
   }
 
-  
-
   getWorldStateInterpolator() {
     return this.worldStateInterpolator;
   }
@@ -366,10 +364,15 @@ export class GameView {
     this.object3D.add(go.fetchObject3D());
     this.object3D.updateMatrixWorld();
 
-    
     //update shadow
     if (newGO.length)
-      THREEUtils.bindLightTransform(10, Math.PI * 0.2, 2*Math.PI *0, this.object3D, this.directionalLight);
+      THREEUtils.bindLightTransform(
+        10,
+        Math.PI * 0.2,
+        2 * Math.PI * 0,
+        this.object3D,
+        this.directionalLight
+      );
 
     if (this.pause) return; //no render
 
