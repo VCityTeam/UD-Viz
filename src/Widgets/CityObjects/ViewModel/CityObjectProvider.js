@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 /** @format */
 
 //Components
@@ -13,16 +12,6 @@ import { LayerManager } from '../../../Components/LayerManager/LayerManager';
 import { CityObjectFilter } from './CityObjectFilter';
 import { CityObjectLayer } from './CityObjectLayer';
 
-=======
-import { TilesManager } from "../../../Components/3DTiles/TilesManager";
-import { CityObjectStyle } from "../../../Components/3DTiles/Model/CityObjectStyle";
-import { CityObjectID, CityObject } from "../../../Components/3DTiles/Model/CityObject";
-import { EventSender } from "../../../Components/Events/EventSender";
-import { LayerManager } from "../../../Components/LayerManager/LayerManager";
-
-import { CityObjectFilter } from "./CityObjectFilter";
-import { CityObjectLayer } from "./CityObjectLayer";
->>>>>>> 12610ec (Fixed header path)
 /**
  * The city object provider manages the city object by organizing them in two
  * categories : the _layer_ and the _selected city object_. The layer
@@ -101,15 +90,15 @@ export class CityObjectProvider extends EventSender {
    */
   selectCityObject(mouseEvent) {
     let cityObject = this.layerManager.pickCityObject(mouseEvent);
-    if (!!cityObject) {
+    if (cityObject) {
       if(this.selectedCityObject != cityObject) {
-        if (!!this.selectedCityObject) {
+        if (this.selectedCityObject) {
           this.selectedTilesManager.setStyle(this.selectedCityObject.cityObjectId, this.selectedStyle);
           this.selectedTilesManager.applyStyles();
         }
         this.selectedCityObject = cityObject;
         this.selectedTilesManager = this.layerManager.getTilesManagerByLayerID(this.selectedCityObject.tile.layer.id);
-        this.selectedStyle = this.selectedTilesManager.styleManager.getStyleIdentifierAppliedTo(this.selectedCityObject.cityObjectId)
+        this.selectedStyle = this.selectedTilesManager.styleManager.getStyleIdentifierAppliedTo(this.selectedCityObject.cityObjectId);
         this.selectedTilesManager.setStyle(this.selectedCityObject.cityObjectId, 'selected');
         this.selectedTilesManager.applyStyles({
           updateFunction:
@@ -119,7 +108,7 @@ export class CityObjectProvider extends EventSender {
         this.sendEvent(CityObjectProvider.EVENT_CITY_OBJECT_SELECTED, cityObject);
       }
     }
-   // this._updateTilesManager();
+    // this._updateTilesManager();
   }
 
   /**
@@ -127,7 +116,10 @@ export class CityObjectProvider extends EventSender {
    * event.
    */
   unselectCityObject() {
-
+    if (this.selectedCityObject) {
+      this.selectedTilesManager.setStyle(this.selectedCityObject.cityObjectId, this.selectedStyle);
+      this.selectedTilesManager.applyStyles();
+    }
     this.selectedTilesManager = undefined;
     this.selectedStyle = undefined;
     this.selectedCityObject = undefined;
@@ -228,7 +220,7 @@ export class CityObjectProvider extends EventSender {
    * @private
    */
   _updateTilesManager() {
-    if (!!this.selectedCityObject) {
+    if (this.selectedCityObject) {
       let tileManager = this.layerManager.getTilesManagerByLayerID(this.selectedCityObject.tile.layer.id);
 
       if (this.cityOjectLayer === undefined) {

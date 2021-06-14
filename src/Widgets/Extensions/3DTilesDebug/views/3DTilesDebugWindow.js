@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 /** @format */
 
 const THREE = require('three');
@@ -8,13 +7,6 @@ import { Window } from '../../../../Components/GUI/js/Window';
 import { CityObjectStyle } from '../../../../Components/3DTiles/Model/CityObjectStyle';
 import { CityObjectID } from '../../../../Components/3DTiles/Model/CityObject';
 import { TilesManager } from '../../../../Components/3DTiles/TilesManager';
-=======
-//Components
-import { Window } from "../../../../Components/GUI/js/Window";
-import { CityObjectStyle } from "../../../../Components/3DTiles/Model/CityObjectStyle";
-import { CityObjectID } from "../../../../Components/3DTiles/Model/CityObject";
-import { TilesManager } from "../../../../Components/3DTiles/TilesManager";
->>>>>>> 12610ec (Fixed header path)
 
 export class Debug3DTilesWindow extends Window {
   /**
