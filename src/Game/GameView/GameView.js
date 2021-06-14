@@ -95,6 +95,10 @@ export class GameView {
     window.UDVDebugger = new UDVDebugger(document.body);
   }
 
+  getSkyColor() {
+    return this.skyColor;
+  }
+
   setPause(value) {
     this.pause = value;
     this.inputManager.setPause(value);
