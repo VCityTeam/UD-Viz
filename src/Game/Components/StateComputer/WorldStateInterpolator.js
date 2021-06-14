@@ -1,5 +1,7 @@
 /** @format */
-import WorldState from '../Shared/WorldState';
+import WorldState from '../../Shared/WorldState';
+
+//compute/interpolate state working with a server
 
 export class WorldStateInterpolator {
   constructor(config) {
@@ -68,8 +70,15 @@ export class WorldStateInterpolator {
     this._onNewState(newState);
   }
 
-  //GAMEVIEW INTERFACE
-  getCurrentState() {
+  onFirstState(state) {
+    this.firstServerTimestamp = state.getTimestamp();
+    this.gameStart = Date.now();
+    this.states.length = 0;
+    this._onNewState(state);
+  }
+
+  //StateComputer INTERFACE
+  computeCurrentState() {
     if (!this.firstServerTimestamp) {
       return null;
     }
@@ -90,12 +99,5 @@ export class WorldStateInterpolator {
         (nextState.getTimestamp() - baseState.getTimestamp());
       return WorldState.interpolate(baseState, nextState, ratio);
     }
-  }
-
-  onFirstState(state) {
-    this.firstServerTimestamp = state.getTimestamp();
-    this.gameStart = Date.now();
-    this.states.length = 0;
-    this._onNewState(state);
   }
 }
