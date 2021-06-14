@@ -28,3 +28,6 @@ export { $3DTemporalTileset } from './Temporal/Model/3DTemporalTileset.js';
 
 import * as Extensions from './Extensions/Extensions';
 export { Extensions };
+
+import * as Components from './Components/Components';
+export { Components };
