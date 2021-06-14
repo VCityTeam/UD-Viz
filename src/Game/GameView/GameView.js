@@ -365,7 +365,7 @@ export class GameView {
     
     //update shadow
     if (newGO.length)
-      THREEUtils.bindLightTransform(10, 50, 0, this.object3D, this.directionalLight);
+      THREEUtils.bindLightTransform(10, Math.PI * 0.2, 2*Math.PI *0, this.object3D, this.directionalLight);
 
     if (this.pause) return; //no render
 
