@@ -368,8 +368,8 @@ export class GameView {
     if (newGO.length)
       THREEUtils.bindLightTransform(
         10,
-        Math.PI * 0.2,
-        2 * Math.PI * 0,
+        Math.PI / 4,
+        Math.PI / 4,
         this.object3D,
         this.directionalLight
       );
