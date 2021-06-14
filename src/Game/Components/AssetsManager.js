@@ -216,7 +216,7 @@ export class AssetsManager {
     const anchor = modelData.anchor;
     const scale = modelData.scale;
     const rotation = modelData.rotation;
-    const noShadow = modelData.noShadow || false;
+    const noShadow = modelData.noShadow || false; //WIP
 
     //rotation
     const quatYUP2ZUP = new THREE.Quaternion().setFromEuler(
@@ -279,6 +279,7 @@ export class AssetsManager {
       }
       if (child.material && child.material.map) {
         child.material.map.encoding = THREEUtils.textureEncoding;
+        child.material.side = THREE.FrontSide;
         child.material.needsUpdate = true;
       }
     });
