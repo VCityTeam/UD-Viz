@@ -12,7 +12,6 @@ import './GameView.css';
 import LocalScript from '../Shared/GameObject/Components/LocalScript';
 
 const udvShared = require('../Shared/Shared');
-const WorldState = udvShared.WorldState;
 const THREEUtils = udvShared.Components.THREEUtils;
 
 export class GameView {
@@ -45,7 +44,7 @@ export class GameView {
     this.inputManager = new InputManager();
 
     //state renderer
-    this.worldStateInterpolator = params.worldStateInterpolator;
+    this.stateComputer = params.stateComputer;
 
     //object
     this.object3D = new THREE.Object3D();
@@ -138,18 +137,13 @@ export class GameView {
     this.rootHtml.appendChild(this.ui);
   }
 
-  onFirstStateJSON(firstStateJSON) {
-    const state = new WorldState(firstStateJSON.state);
-    this.worldStateInterpolator.onFirstState(state);
-    this.onFirstState(state);
-    this.avatarUUID = firstStateJSON.avatarID;
-  }
-
   addTickRequester(cb) {
     this.tickRequesters.push(cb);
   }
 
-  onFirstState(state) {
+  onFirstState(state, avatarUUID) {
+    this.avatarUUID = avatarUUID;
+
     //build itowns view
     this.initItownsView(state);
     this.initScene(state);
@@ -244,10 +238,6 @@ export class GameView {
     this.directionalLight = directionalLight;
   }
 
-  getWorldStateInterpolator() {
-    return this.worldStateInterpolator;
-  }
-
   //TODO only one update
   updateViewServer(dt) {
     //TODO itowns BUG
@@ -261,7 +251,7 @@ export class GameView {
       this.view.mainLoop.gfxEngine.renderer
     );
 
-    this.update(this.worldStateInterpolator.getCurrentState());
+    this.update(this.stateComputer.computeCurrentState());
   }
 
   updateViewLocal(dt) {
