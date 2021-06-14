@@ -2,6 +2,8 @@
 
 import { InputManager } from '../Components/InputManager';
 
+import { UDVDebugger } from '../../Game/UDVDebugger/UDVDebugger';
+
 import * as THREE from 'three';
 import * as proj4 from 'proj4';
 import * as itowns from 'itowns';
@@ -88,6 +90,9 @@ export class GameView {
     this.pause = false;
 
     this.tickRequesters = [];
+
+    //DEBUG
+    window.UDVDebugger = new UDVDebugger(document.body);
   }
 
   setPause(value) {
@@ -235,7 +240,7 @@ export class GameView {
     this.directionalLight = directionalLight;
   }
 
-  placeLight() {
+  bindLightTransform() {
     const obj = this.object3D.clone();
 
     //compute bb only with mesh receiving shadow WIP
@@ -245,6 +250,8 @@ export class GameView {
     //     child.visible = child.receiveShadow;
     //   }
     // });
+
+    console.log('PLACE LIGHT');
 
     const bb = new THREE.Box3().setFromObject(obj);
     const directionalLight = this.directionalLight;
@@ -283,6 +290,11 @@ export class GameView {
       this.gameContext.dt = dt;
       this.localContext.setDt(dt);
     }
+
+    window.UDVDebugger.displayShadowMap(
+      this.directionalLight,
+      this.view.mainLoop.gfxEngine.renderer
+    );
 
     this.update(this.worldStateInterpolator.getCurrentState());
   }
@@ -388,7 +400,7 @@ export class GameView {
     this.object3D.updateMatrixWorld();
 
     //update shadow
-    if (newGO.length) this.placeLight();
+    if (newGO.length) this.bindLightTransform();
 
     if (this.pause) return; //no render
 
