@@ -217,16 +217,8 @@ export class CityObjectProvider extends EventSender {
    * @private
    */
   _updateTilesManager() {
-<<<<<<< HEAD
-    this.layerManager.removeAll3DTilesStyles();
-    if (this.selectedCityObject) {
-      let tileManager = this.layerManager.getTilesManagerByLayerID(
-        this.selectedCityObject.tile.layer.id
-      );
-=======
     if (!!this.selectedCityObject) {
       let tileManager = this.layerManager.getTilesManagerByLayerID(this.selectedCityObject.tile.layer.id);
->>>>>>> 90953b0 (Preservantion of work done on UD-Viz.clementColin/ifc)
 
       if (this.cityOjectLayer === undefined) {
         this.layerCityObjectIds = [];
