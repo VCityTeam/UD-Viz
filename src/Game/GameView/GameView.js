@@ -240,7 +240,7 @@ export class GameView {
     this.directionalLight = directionalLight;
   }
 
-  bindLightTransform(rho, theta, phi) {
+  bindLightTransform(rho, phi, theta) {
     const obj = this.object3D.clone();
 
     //compute bb only with mesh receiving shadow WIP
@@ -264,11 +264,14 @@ export class GameView {
     directionalLight.target.position.copy(centerOffset);
     directionalLight.target.updateMatrixWorld();
 
-    directionalLight.position.copy(directionalLight.target.position);
-    const distlight = 250;
-    directionalLight.position.add(
-      new THREE.Vector3(distlight, distlight, 2 * distlight)
-    );
+    const SphericalPoint = new THREE.Spherical(bsphere.radius + rho, phi, theta);
+    console.log(SphericalPoint);
+
+    const vecLightPos = new THREE.Vector3();
+    vecLightPos.setFromSpherical(SphericalPoint);
+    vecLightPos.add(directionalLight.target.position)
+
+    directionalLight.position.copy(vecLightPos);
     directionalLight.updateMatrixWorld();
 
     const cameraShadow = directionalLight.shadow.camera;
@@ -402,7 +405,7 @@ export class GameView {
     this.object3D.updateMatrixWorld();
 
     //update shadow
-    if (newGO.length) this.bindLightTransform();
+    if (newGO.length) this.bindLightTransform(50,20,45);
 
     if (this.pause) return; //no render
 
