@@ -2,7 +2,8 @@
 
 const Shared = require('../Shared/Shared');
 
-//TODO CREATE class KeyState
+//TODO CREATE class KeyState like MousState
+
 const MOUSE_STATE_EVENTS = {
   MOUSE_UP: 'mouseup',
   MOUSE_DOWN: 'mousedown',
