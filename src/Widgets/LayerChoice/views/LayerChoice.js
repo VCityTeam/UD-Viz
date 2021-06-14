@@ -18,27 +18,27 @@ export class LayerChoice extends Window {
      */
     this.layerManager = layerManager;
   }
-
+  // <div class ="box-section"> 
+  // <input type="checkbox" class="spoiler-check" id="color-layers-spoiler">
+  // <label for="color-layers-spoiler" class="section-title">Color Layers</Label>
+  //   <div class="spoiler-box">
+  //     <ul id= "${this.colorLayersId}">
+  //     </ul>
+  //   </div>
+  // </div>
+  // <div class ="box-section"> 
+  // <input type="checkbox" class="spoiler-check" id="elevation-layers-spoiler">
+  // <label for="elevation-layers-spoiler" class="section-title">Elevation Layers</Label>
+  //   <div class="spoiler-box">
+  //     <ul id= "${this.elevationLayersId}">
+  //     </ul>
+  //   </div>
+  // </div>
   get innerContentHtml() {
     return /*html*/ `
     <ul id="${this.layerListId}">
     </ul>
-    <div class ="box-section"> 
-    <input type="checkbox" class="spoiler-check" id="color-layers-spoiler">
-    <label for="color-layers-spoiler" class="section-title">Color Layers</Label>
-      <div class="spoiler-box">
-        <ul id= "${this.colorLayersId}">
-        </ul>
-      </div>
-    </div>
-    <div class ="box-section"> 
-    <input type="checkbox" class="spoiler-check" id="elevation-layers-spoiler">
-    <label for="elevation-layers-spoiler" class="section-title">Elevation Layers</Label>
-      <div class="spoiler-box">
-        <ul id= "${this.elevationLayersId}">
-        </ul>
-      </div>
-    </div>
+
     <div class ="box-section"> 
       <input type="checkbox" class="spoiler-check" id="geometry-layers-spoiler">
       <label for="geometry-layers-spoiler" class="section-title">Geometry Layers</Label>
@@ -51,8 +51,8 @@ export class LayerChoice extends Window {
   }
 
   windowCreated() {
-    this.innerContentColorLayers();
-    this.innerContentElevationLayers();
+    // this.innerContentColorLayers();
+    // this.innerContentElevationLayers();
     this.innerContentGeometryLayers();
   }
 
@@ -138,6 +138,17 @@ export class LayerChoice extends Window {
     };
     list.append(div);
     for (let i = 0; i < layers.length; i++) {
+      let tilesManager = this.layerManager.getTilesManagerByLayerID(layers[i].id); 
+      let tiles = undefined;  
+      let htmlTiles = "";
+
+      if(tilesManager !== undefined){ 
+        tiles = tilesManager.getTilesWithGeom();
+        for(let j = 0; j < tiles.length ; j++) {
+          let classe = tiles[j].cityObjects[0].tile.batchTable.content.classe[0]
+          htmlTiles += `<p><input type="checkbox" id="checkbox_${i}_${j}" ${tiles[j].getMesh().visible ? "checked" : ""}>${classe}</input></p>`
+        }
+      }
       let item = document.createElement('div');
       item.innerHTML = `<input type="checkbox" class="spoiler-check" id="${
         layers[i].id
@@ -166,11 +177,14 @@ export class LayerChoice extends Window {
         if (event.srcElement.id === 'checkbox_' + i) {
           layers[i].visible = event.srcElement.checked;
         }
-        if (event.srcElement.id === 'range_' + i) {
-          this.layerManager.updateOpacity(
-            layers[i],
-            event.srcElement.valueAsNumber
-          );
+        if (event.srcElement.id.includes("checkbox_" + i + "_") ) {
+          let tileIndex = event.srcElement.id.split("_");//.slice(-1)[0];
+          tileIndex = tileIndex[tileIndex.length - 1];
+          tiles[tileIndex].getMesh().visible = !tiles[tileIndex].getMesh().visible;
+          this.layerManager.notifyChange();
+        }
+        if (event.srcElement.id === "range_" + i) {
+          this.layerManager.updateOpacity(layers[i], event.srcElement.valueAsNumber);
         }
         let div_visible = document.getElementById('visible_' + i);
         div_visible.innerHTML = `Visible <input type="checkbox" id="checkbox_${i}" ${
@@ -180,7 +194,6 @@ export class LayerChoice extends Window {
           'geometry_value_opacity_' + i
         );
         span_opacity.innerHTML = `${layers[i].opacity}`;
-        this.layerManager.notifyChange();
       };
       list.appendChild(item);
     }
