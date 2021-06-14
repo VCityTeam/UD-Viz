@@ -216,7 +216,7 @@ export class InputManager {
       cmdsJSON.push(cmd.toJSON());
     });
     websocketService.emit(
-      Shared.Components.Data.WEBSOCKET.MSG_TYPES.COMMANDS,
+      Shared.Components.Constants.WEBSOCKET.MSG_TYPES.COMMANDS,
       cmdsJSON
     );
   }
