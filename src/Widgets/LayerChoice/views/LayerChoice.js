@@ -147,8 +147,6 @@ export class LayerChoice extends Window {
       if(tilesManager !== undefined){ 
         tiles = tilesManager.getTilesWithGeom();
         for(let j = 0; j < tiles.length ; j++) {
-          console.log(tiles);
-
           let classe = tiles[j].batchTable.content.classe[tiles[j].cityObjects[0].batchId];  
           htmlTiles += `<p><input type="checkbox" id="checkbox_${i}_${j}" ${tiles[j].getMesh().visible ? 'checked' : ''}>${classe}</input></p>`;
         }
