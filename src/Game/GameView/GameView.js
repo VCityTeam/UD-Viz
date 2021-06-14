@@ -240,7 +240,7 @@ export class GameView {
     this.directionalLight = directionalLight;
   }
 
-  bindLightTransform() {
+  bindLightTransform(rho, theta, phi) {
     const obj = this.object3D.clone();
 
     //compute bb only with mesh receiving shadow WIP
@@ -258,6 +258,8 @@ export class GameView {
 
     //place directionnal lights
     const centerOffset = bb.getCenter(new THREE.Vector3());
+
+    const bsphere = bb.getBoundingSphere(new THREE.Sphere(centerOffset));
 
     directionalLight.target.position.copy(centerOffset);
     directionalLight.target.updateMatrixWorld();
