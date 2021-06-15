@@ -14,6 +14,10 @@ export { Widgets };
 import * as Game from './Game/Game.js';
 export { Game };
 
+//View3D
+import { View3D } from './View/View3D';
+export { View3D };
+
 //external package
 
 //itowns

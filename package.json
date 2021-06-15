@@ -31,6 +31,7 @@
     "proj4": "^2.7.0",
     "socket.io-client": "^4.0.0",
     "three": "0.126.1",
+    "three-css3drenderer": "^1.0.1",
     "vis-data": "^7.1.2",
     "vis-network": "^9.0.3"
   },
