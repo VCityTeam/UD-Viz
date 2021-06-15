@@ -1,6 +1,6 @@
 /** @format */
 
-import { InputManager } from '../Components/InputManager';
+import { InputManager } from '../../Components/InputManager';
 
 import { UDVDebugger } from '../../Game/UDVDebugger/UDVDebugger';
 

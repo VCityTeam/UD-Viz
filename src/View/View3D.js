@@ -5,22 +5,27 @@ import * as THREE from 'three';
 import * as itowns from 'itowns';
 import { CSS3DObject, CSS3DRenderer } from 'three-css3drenderer';
 
-//TODO move THREEUtils.Transform at this level of Component
-import THREEUtils from '../Game/Shared/Components/THREEUtils';
-
 import './View3D.css';
-
-const ID_VIEW3D = 'viewerDiv'; //only one View3D per at the same time
-const ID_CSS3DVIEW = 'viewCss3D';
+import { InputManager } from '../Components/InputManager';
 
 export class View3D {
   constructor(params = {}) {
-    params.htmlParent = params.htmlParent || document.body;
+    //root webgl
+    this.rootWebGL = document.createElement('div');
+    this.rootWebGL.id = 'webgl_View3D';
 
-    //html
-    this.rootHtml = document.createElement('div');
-    this.rootHtml.id = ID_VIEW3D; //itowns div
-    params.htmlParent.appendChild(this.rootHtml);
+    //root css
+    this.rootCss = document.createElement('div');
+    this.rootCss.id = 'css_View3D';
+
+    document.body.appendChild(this.rootCss);
+    document.body.appendChild(this.rootWebGL);
+
+    //root itowns
+    this.rootItownsHtml = document.createElement('div');
+    this.rootItownsHtml.id = 'viewerDiv'; //itowns div
+    this.rootWebGL.appendChild(this.rootItownsHtml);
+
     window.addEventListener('resize', this.onResize.bind(this));
 
     //conf
@@ -29,34 +34,53 @@ export class View3D {
     //itowns view
     this.itownsView = null;
 
+    //pause
     this.pause = false;
 
     //CSS3D attributes
     this.css3DRenderer = null;
     this.css3DScene = null;
     this.maskObject = null;
+
+    //inputs
+    this.inputsManager = new InputManager();
+  }
+
+  getInputsManager() {
+    return this.inputsManager;
   }
 
   initCSS3D() {
     //CSS3DRenderer
     const css3DRenderer = new CSS3DRenderer();
-    css3DRenderer.domElement.id = ID_CSS3DVIEW;
-    this.rootHtml.appendChild(css3DRenderer.domElement);
     this.css3DRenderer = css3DRenderer;
+    this.rootCss.appendChild(css3DRenderer.domElement);
 
     this.css3DScene = new THREE.Scene();
-
     this.maskObject = new THREE.Object3D();
     this.itownsView.scene.add(this.maskObject);
 
-    setTimeout(this.onResize.bind(this), 100);
-
     const _this = this;
+
     const tick = function () {
       requestAnimationFrame(tick);
       css3DRenderer.render(_this.css3DScene, _this.itownsView.camera.camera3D);
     };
     tick();
+
+    setTimeout(this.onResize.bind(this), 100);
+  }
+
+  isCatchingEventsCSS3D() {
+    return this.rootWebGL.style.pointerEvents === 'none';
+  }
+
+  catchEventsCSS3D(value) {
+    if (value) {
+      this.rootWebGL.style.pointerEvents = 'none';
+    } else {
+      this.rootWebGL.style.pointerEvents = '';
+    }
   }
 
   appendCSS3D(htmlEl, size3D, transform) {
@@ -72,6 +96,10 @@ export class View3D {
     htmlEl.style.height = size3D.height + 'px';
     htmlEl.classList.add('DEBUG');
 
+    htmlEl.onclick = function () {
+      console.log('CLICK');
+    };
+
     this.css3DScene.add(newElement);
 
     //mask
@@ -81,11 +109,6 @@ export class View3D {
     material.color.set('black');
     material.opacity = 0;
     material.blending = THREE.NoBlending;
-
-    // const material = new THREE.MeshBasicMaterial({
-    //   color: 0xffff00,
-    //   side: THREE.DoubleSide,
-    // });
 
     const plane = new THREE.Mesh(geometry, material);
     plane.position.copy(transform.getPosition());
@@ -101,10 +124,6 @@ export class View3D {
 
   setPause(value) {
     this.pause = value;
-  }
-
-  html() {
-    return this.rootHtml;
   }
 
   initItownsView(extent) {
@@ -136,7 +155,7 @@ export class View3D {
         tilt = this.config['itowns']['camera']['tilt'];
     }
 
-    this.itownsView = new itowns.PlanarView(this.rootHtml, extent, {
+    this.itownsView = new itowns.PlanarView(this.rootItownsHtml, extent, {
       disableSkirt: false,
       placement: {
         coord: coordinates,
@@ -155,8 +174,8 @@ export class View3D {
   }
 
   onResize() {
-    const w = window.innerWidth - this.rootHtml.offsetLeft;
-    const h = window.innerHeight - this.rootHtml.offsetTop;
+    const w = window.innerWidth - this.rootItownsHtml.offsetLeft;
+    const h = window.innerHeight - this.rootItownsHtml.offsetTop;
 
     //TODO remove this fonction
     this.itownsView.debugResize(w, h);
@@ -167,7 +186,8 @@ export class View3D {
   dispose() {
     this.itownsView.dispose();
     window.removeEventListener('resize', this.onResize.bind(this));
-    this.rootHtml.remove();
+    this.rootWebGL.remove();
+    this.rootCss.remove();
   }
 
   getItownsView() {

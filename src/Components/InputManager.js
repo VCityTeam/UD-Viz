@@ -1,6 +1,6 @@
 /** @format */
 
-const Shared = require('../Shared/Shared');
+const Shared = require('../Game/Shared/Shared');
 
 //TODO CREATE class KeyState like MousState
 
