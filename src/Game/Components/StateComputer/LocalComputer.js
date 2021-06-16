@@ -1,8 +1,13 @@
 /** @format */
 
 export class LocalComputer {
-  constructor() {}
+  constructor(world) {
+    this.world = world;
+    this.currentState = world.computeWorldState();
+  }
 
   //API
-  computeCurrentState() {}
+  computeCurrentState() {
+    return this.currentState;
+  }
 }
