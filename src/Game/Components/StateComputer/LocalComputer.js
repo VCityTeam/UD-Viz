@@ -12,6 +12,10 @@ export class LocalComputer {
     });
   }
 
+  load(onLoad) {
+    this.worldContext.getWorld().load(onLoad, this.worldContext);
+  }
+
   //API
   computeCurrentState() {
     return this.worldContext.getWorld().computeWorldState();
