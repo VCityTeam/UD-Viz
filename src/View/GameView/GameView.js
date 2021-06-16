@@ -1,9 +1,5 @@
 /** @format */
 
-import { InputManager } from '../../Components/InputManager';
-
-import { UDVDebugger } from '../../Game/UDVDebugger/UDVDebugger';
-
 import * as THREE from 'three';
 import * as proj4 from 'proj4';
 import * as itowns from 'itowns';
@@ -68,10 +64,6 @@ export class GameView extends View3D {
     this.ui.appendChild(el);
   }
 
-  html() {
-    return this.rootHtml;
-  }
-
   initUI() {
     this.fpsLabel = document.createElement('div');
     this.fpsLabel.classList.add('label_GameView');
@@ -92,7 +84,16 @@ export class GameView extends View3D {
     this.avatarUUID = avatarUUID;
 
     //build itowns view
-    this.initItownsView(state);
+    const o = state.getOrigin();
+    const [x, y] = proj4.default('EPSG:3946').forward([o.lng, o.lat]);
+    const r = this.config.itowns.radiusExtent;
+
+    // Define geographic extent: CRS, min/max X, min/max Y
+    const extent = new itowns.Extent('EPSG:3946', x - r, x + r, y - r, y + r);
+
+    this.initItownsView(extent);
+
+    //other init
     this.initScene(state);
     this.initUI();
 
@@ -118,7 +119,8 @@ export class GameView extends View3D {
       if (delta > 1000 / fps) {
         // update time stuffs
         then = now - (delta % 1000) / fps;
-        _this.updateViewServer(delta);
+        _this.localContext.setDt(delta);
+        _this.update(_this.stateComputer.computeCurrentState());
       }
     };
     tick();
@@ -134,7 +136,7 @@ export class GameView extends View3D {
     this.object3D.position.x = x;
     this.object3D.position.y = y;
     this.object3D.position.z = o.alt;
-    this.view.scene.add(this.object3D);
+    this.itownsView.scene.add(this.object3D);
 
     //sky
     this.skyColor = new THREE.Color(
@@ -144,12 +146,12 @@ export class GameView extends View3D {
     );
 
     //shadow
-    const renderer = this.view.mainLoop.gfxEngine.renderer;
+    const renderer = this.itownsView.mainLoop.gfxEngine.renderer;
     THREEUtils.initRenderer(renderer, this.skyColor);
 
     // Lights
     const { directionalLight, ambientLight } = THREEUtils.addLights(
-      this.view.scene
+      this.itownsView.scene
     );
 
     directionalLight.shadow.mapSize = new THREE.Vector2(
@@ -159,40 +161,6 @@ export class GameView extends View3D {
     directionalLight.castShadow = true;
     directionalLight.shadow.bias = -0.0005;
     this.directionalLight = directionalLight;
-  }
-
-  //TODO only one update
-  updateViewServer(dt) {
-    //TODO itowns BUG
-    if (!isNaN(dt)) {
-      this.gameContext.dt = dt;
-      this.localContext.setDt(dt);
-    }
-
-    window.UDVDebugger.displayShadowMap(
-      this.directionalLight,
-      this.view.mainLoop.gfxEngine.renderer
-    );
-
-    this.update(this.stateComputer.computeCurrentState());
-  }
-
-  updateViewLocal(dt) {
-    //TODO itowns BUG
-    if (!isNaN(dt)) {
-      this.gameContext.dt = dt;
-      this.localContext.setDt(dt);
-    }
-
-    //tick world TODO handle by another class
-    this.gameContext.commands = this.inputManager.computeCommands();
-    const avatarUUID = this.avatarUUID;
-    this.gameContext.commands.forEach(function (cmd) {
-      cmd.setAvatarID(avatarUUID);
-    });
-    this.world.tick(this.gameContext);
-
-    this.update(this.world.computeWorldState());
   }
 
   update(state) {
@@ -295,121 +263,21 @@ export class GameView extends View3D {
     });
 
     //render
-    const scene = this.view.scene;
-    const renderer = this.view.mainLoop.gfxEngine.renderer;
+    const scene = this.itownsView.scene;
+    const renderer = this.itownsView.mainLoop.gfxEngine.renderer;
     renderer.clearColor();
-    renderer.render(scene, this.view.camera.camera3D);
+    renderer.render(scene, this.itownsView.camera.camera3D);
 
     //TODO ne pas lancer des rendu si itowns vient d'en faire un
 
     //update ui
-    this.fpsLabel.innerHTML = 'FPS = ' + Math.round(1000 / this.gameContext.dt);
+    this.fpsLabel.innerHTML =
+      'FPS = ' + Math.round(1000 / this.localContext.getDt());
     let avatarCount = 0;
     go.traverse(function (g) {
       if (g.name == 'avatar') avatarCount++;
     });
     this.avatarCount.innerHTML = 'Player: ' + avatarCount;
-  }
-
-  initItownsView(state) {
-    // Define EPSG:3946 projection which is the projection used in the 3D view
-    // (planarView of iTowns). It is indeed needed
-    // to convert the coordinates received from the world server
-    // to this coordinate system.
-    proj4.default.defs(
-      'EPSG:3946',
-      '+proj=lcc +lat_1=45.25 +lat_2=46.75' +
-        ' +lat_0=46 +lon_0=3 +x_0=1700000 +y_0=5200000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs'
-    );
-    const o = state.getOrigin();
-    const [x, y] = proj4.default('EPSG:3946').forward([o.lng, o.lat]);
-    const r = this.config.itowns.radiusExtent;
-
-    // Define geographic extent: CRS, min/max X, min/max Y
-    const extent = new itowns.Extent('EPSG:3946', x - r, x + r, y - r, y + r);
-
-    // Get camera placement parameters from config
-    let coordinates = extent.center();
-    let heading = parseFloat(this.config['itowns']['camera']['heading']);
-    let range = parseFloat(this.config['itowns']['camera']['range']);
-    let tilt = parseFloat(this.config['itowns']['camera']['tilt']);
-
-    this.view = new itowns.PlanarView(this.rootHtml, extent, {
-      disableSkirt: false,
-      placement: {
-        coord: coordinates,
-        heading: heading,
-        range: range,
-        tilt: tilt,
-      },
-      noControls: true,
-    });
-
-    //TODO parler a itowns remove listener of the resize
-    this.view.debugResize = this.view.resize;
-    this.view.resize = function () {
-      //nada
-    };
-
-    //LYON WMS
-    // const wmsImagerySource = new itowns.WMSSource({
-    //   extent: extent,
-    //   name: 'Ortho2018_Dalle_unique_8cm_CC46',
-    //   url: 'https://download.data.grandlyon.com/wms/grandlyon',
-    //   version: '1.3.0',
-    //   projection: 'EPSG:3946',
-    //   format: 'image/jpeg',
-    // });
-    // // Add a WMS imagery layer
-    // const wmsImageryLayer = new itowns.ColorLayer('wms_imagery', {
-    //   updateStrategy: {
-    //     type: itowns.STRATEGY_DICHOTOMY,
-    //     options: {},
-    //   },
-    //   source: wmsImagerySource,
-    //   transparent: true,
-    // });
-    // this.view.addLayer(wmsImageryLayer);
-
-    // Add a WMS elevation source
-    const wmsElevationSource = new itowns.WMSSource({
-      extent: extent,
-      url: 'https://download.data.grandlyon.com/wms/grandlyon',
-      name: 'MNT2018_Altitude_2m',
-      projection: 'EPSG:3946',
-      heightMapWidth: 256,
-      format: 'image/jpeg',
-    });
-    // Add a WMS elevation layer
-    const wmsElevationLayer = new itowns.ElevationLayer('wms_elevation', {
-      useColorTextureElevation: true,
-      colorTextureElevationMinZ: 144,
-      colorTextureElevationMaxZ: 622,
-      source: wmsElevationSource,
-    });
-    this.view.addLayer(wmsElevationLayer);
-  }
-
-  onResize() {
-    const w = window.innerWidth - this.rootHtml.offsetLeft;
-    const h = window.innerHeight - this.rootHtml.offsetTop;
-
-    //TODO remove this fonction
-    this.view.debugResize(w, h);
-  }
-
-  dispose() {
-    this.view.dispose();
-    this.inputManager.dispose();
-    window.removeEventListener('resize', this.onResize.bind(this));
-    this.rootHtml.remove();
-
-    //flag to stop tick
-    this.disposed = true;
-  }
-
-  getInputManager() {
-    return this.inputManager;
   }
 
   getAssetsManager() {
