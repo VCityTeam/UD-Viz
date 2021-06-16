@@ -1,0 +1,30 @@
+/** @format */
+
+html {
+  height: 100%;
+}
+body {
+  margin: 0;
+  overflow: hidden;
+  height: 100%;
+}
+#viewerDiv {
+  margin: auto;
+  height: 100%;
+  width: 100%;
+  padding: 0;
+}
+canvas {
+  display: block;
+}
+
+.ui_GameView {
+  background-color: white;
+  position: absolute;
+  z-index: 1;
+  top: 0px;
+}
+
+.label_GameView {
+  color: black;
+}
