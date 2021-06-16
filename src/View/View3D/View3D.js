@@ -1,6 +1,5 @@
 /** @format */
 
-import * as proj4 from 'proj4';
 import * as THREE from 'three';
 import * as itowns from 'itowns';
 import { CSS3DObject, CSS3DRenderer } from 'three-css3drenderer';
@@ -8,8 +7,22 @@ import { CSS3DObject, CSS3DRenderer } from 'three-css3drenderer';
 import './View3D.css';
 import { InputManager } from '../../Components/InputManager';
 
+import * as proj4 from 'proj4';
+// Define EPSG:3946 projection which is the projection used in the 3D view
+// (planarView of iTowns). It is indeed needed
+// to convert the coordinates received from the world server
+// to this coordinate system.
+proj4.default.defs(
+  'EPSG:3946',
+  '+proj=lcc +lat_1=45.25 +lat_2=46.75' +
+    ' +lat_0=46 +lon_0=3 +x_0=1700000 +y_0=5200000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs'
+);
+
 export class View3D {
   constructor(params = {}) {
+    this.rootHtml = document.createElement('div');
+    document.body.appendChild(this.rootHtml);
+
     //root webgl
     this.rootWebGL = document.createElement('div');
     this.rootWebGL.id = 'webgl_View3D';
@@ -18,8 +31,8 @@ export class View3D {
     this.rootCss = document.createElement('div');
     this.rootCss.id = 'css_View3D';
 
-    document.body.appendChild(this.rootCss);
-    document.body.appendChild(this.rootWebGL);
+    this.rootHtml.appendChild(this.rootCss);
+    this.rootHtml.appendChild(this.rootWebGL);
 
     //root itowns
     this.rootItownsHtml = document.createElement('div');
@@ -46,11 +59,19 @@ export class View3D {
     this.maskObject = null;
 
     //inputs
-    this.inputsManager = new InputManager();
+    this.inputManager = new InputManager();
   }
 
-  getInputsManager() {
-    return this.inputsManager;
+  getItownsView() {
+    return this.itownsView;
+  }
+
+  html() {
+    return this.rootHtml;
+  }
+
+  getInputManager() {
+    return this.inputManager;
   }
 
   initCSS3D() {
@@ -123,25 +144,11 @@ export class View3D {
     this.maskObject.add(plane);
   }
 
-  init(extent) {
-    this.initItownsView(extent);
-  }
-
   setPause(value) {
     this.pause = value;
   }
 
   initItownsView(extent) {
-    // Define EPSG:3946 projection which is the projection used in the 3D view
-    // (planarView of iTowns). It is indeed needed
-    // to convert the coordinates received from the world server
-    // to this coordinate system.
-    proj4.default.defs(
-      'EPSG:3946',
-      '+proj=lcc +lat_1=45.25 +lat_2=46.75' +
-        ' +lat_0=46 +lon_0=3 +x_0=1700000 +y_0=5200000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs'
-    );
-
     const coordinates = extent.center();
 
     let heading = -50;
@@ -191,8 +198,8 @@ export class View3D {
   dispose() {
     this.itownsView.dispose();
     window.removeEventListener('resize', this.onResize.bind(this));
-    this.rootWebGL.remove();
-    this.rootCss.remove();
+    this.html().remove();
+    this.inputManager.dispose();
     this.disposed = true;
   }
 
