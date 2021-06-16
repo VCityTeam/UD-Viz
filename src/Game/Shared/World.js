@@ -63,15 +63,15 @@ const WorldModule = class World {
     });
   }
 
-  load(onLoad, gCtx) {
+  load(onLoad, worldContext) {
     //load gameobject
-    this.addGameObject(this.gameObject, gCtx, null, onLoad);
+    this.addGameObject(this.gameObject, worldContext, null, onLoad);
   }
 
-  computePromisesLoad(go, gCtx) {
+  computePromisesLoad(go, worldContext) {
     //load GameObject
     const promises = [];
-    let params = [gCtx, this.isServerSide, this.modules];
+    let params = [worldContext, this.isServerSide, this.modules];
 
     go.traverse(function (g) {
       const scriptC = g.getComponent(WorldScriptComponent.TYPE);
@@ -90,37 +90,39 @@ const WorldModule = class World {
     return promises;
   }
 
-  addGameObject(gameObject, gCtx, parent, onLoad = null) {
+  addGameObject(gameObject, worldContext, parent, onLoad = null) {
     const _this = this;
 
     gameObject.initAssetsComponents(
-      gCtx.assetsManager,
-      gCtx.UDVShared,
+      worldContext.getAssetsManager(),
+      worldContext.getSharedModule(),
       _this.isServerSide
     );
 
-    Promise.all(this.computePromisesLoad(gameObject, gCtx)).then(function () {
-      if (parent) {
-        parent.addChild(gameObject);
-      } else {
-        _this.gameObject = gameObject;
+    Promise.all(this.computePromisesLoad(gameObject, worldContext)).then(
+      function () {
+        if (parent) {
+          parent.addChild(gameObject);
+        } else {
+          _this.gameObject = gameObject;
+        }
+
+        //TODO init can be trigger several time FIXME maybe with a flag in worldscript component
+        gameObject.traverse(function (g) {
+          g.executeScripts(WorldScriptComponent.EVENT.INIT, [worldContext]);
+        });
+
+        _this.registerGOCollision(gameObject);
+
+        console.log(
+          gameObject.name,
+          gameObject.getUUID() + ' loaded in ',
+          _this.name
+        );
+
+        if (onLoad) onLoad();
       }
-
-      //TODO init can be trigger several time FIXME maybe with a flag in worldscript component
-      gameObject.traverse(function (g) {
-        g.executeScripts(WorldScriptComponent.EVENT.INIT, [gCtx]);
-      });
-
-      _this.registerGOCollision(gameObject);
-
-      console.log(
-        gameObject.name,
-        gameObject.getUUID() + ' loaded in ',
-        _this.name
-      );
-
-      if (onLoad) onLoad();
-    });
+    );
   }
 
   registerGOCollision(go) {
@@ -203,12 +205,12 @@ const WorldModule = class World {
     this.unregisterGOCollision(go);
   }
 
-  tick(gCtx) {
+  tick(worldContext) {
     const _this = this;
 
     //Tick GameObject
     this.gameObject.traverse(function (g) {
-      g.executeScripts(WorldScriptComponent.EVENT.TICK, [gCtx]);
+      g.executeScripts(WorldScriptComponent.EVENT.TICK, [worldContext]);
     });
 
     //collisions
@@ -243,7 +245,7 @@ const WorldModule = class World {
                 g.traverse(function (child) {
                   child.executeScripts(
                     WorldScriptComponent.EVENT.IS_COLLIDING,
-                    [result, gCtx]
+                    [result, worldContext]
                   );
                 });
               } else {
@@ -252,7 +254,7 @@ const WorldModule = class World {
                 g.traverse(function (child) {
                   child.executeScripts(
                     WorldScriptComponent.EVENT.ON_ENTER_COLLISION,
-                    [result, gCtx]
+                    [result, worldContext]
                   );
                 });
               }
@@ -267,7 +269,7 @@ const WorldModule = class World {
             g.traverse(function (child) {
               child.executeScripts(
                 WorldScriptComponent.EVENT.ON_LEAVE_COLLISION,
-                [gCtx]
+                [worldContext]
               );
             });
             buffer.splice(i, 1); //remove from buffer
