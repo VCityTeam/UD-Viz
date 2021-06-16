@@ -1,5 +1,15 @@
 /** @format */
 
+html {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  overflow: hidden;
+  height: 100%;
+}
+
 #css_View3D,
 #webgl_View3D {
   width: 100%;
@@ -7,4 +17,8 @@
   position: absolute;
   top: 0;
   left: 0;
+}
+
+#root_View3D {
+  /* position: absolute; */
 }
