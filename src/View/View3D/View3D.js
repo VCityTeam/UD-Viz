@@ -175,7 +175,7 @@ export class View3D {
         range: range,
         tilt: tilt,
       },
-      noControls: false,
+      noControls: true,
     });
 
     //TODO parler a itowns remove listener of the resize
