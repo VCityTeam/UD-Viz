@@ -104,8 +104,9 @@ export class InputManager {
   }
 
   addKeyInput(key, eventID, cb) {
+    const _this = this;
     window.addEventListener(eventID, function (event) {
-      if (key == event.key) cb();
+      if (key == event.key && !_this.pause) cb();
     });
   }
 
