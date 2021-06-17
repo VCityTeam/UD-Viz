@@ -1,6 +1,7 @@
 /** @format */
 
 const THREE = require('three');
+const JSONUtils = require('../../../../Components/SystemUtils/JSONUtils');
 
 const LocalScriptModule = class LocalScript {
   constructor(parent, json) {
@@ -41,6 +42,18 @@ const LocalScriptModule = class LocalScript {
       return s[event].apply(s, [this.parent].concat(params));
     } else {
       return null;
+    }
+  }
+
+  updateFromComponent(component, localContext) {
+    if (!JSONUtils.equals(this.conf, component.conf)) {
+      //replace conf and launch an update event
+      this.conf = component.conf;
+      for (let id in this.scripts) {
+        const s = this.scripts[id];
+        s.config = component.conf;
+      }
+      this.execute(LocalScriptModule.EVENT.UPDATE, [localContext]);
     }
   }
 
