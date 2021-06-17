@@ -55,7 +55,7 @@ const RenderModule = class Render {
     return this.color;
   }
 
-  updateFromComponent(component) {
+  updateFromComponent(component, localContext) {
     if (!this.color.equals(component.getColor())) {
       this.setColor(component.getColor());
     }

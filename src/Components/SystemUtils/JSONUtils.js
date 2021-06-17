@@ -3,6 +3,33 @@
 const Type = require('./Type');
 
 module.exports = {
+  equals(j1, j2) {
+    const traverse = function (json1, json2) {
+      for (let key in json1) {
+        if (json1[key] instanceof Object) {
+          if (json2[key] instanceof Object) {
+            if (traverse(json1[key], json2[key])) {
+              continue;
+            } else {
+              return false;
+            }
+          } else {
+            return false;
+          }
+        } else {
+          if (json2[key] == json1[key]) {
+            continue;
+          } else {
+            return false;
+          }
+        }
+      }
+      return true; //all check have passed meaning is equals
+    };
+
+    return traverse(j1, j2);
+  },
+
   overWrite(jsonOverWrited, jsonModel) {
     const traverse = function (json1, json2) {
       for (let key in json1) {
@@ -56,9 +83,9 @@ module.exports = {
   },
 
   unpack(string) {
-    const prefabs = string.split(this.separator);
+    const splitString = string.split(this.separator);
     const result = {};
-    prefabs.forEach(function (p) {
+    splitString.forEach(function (p) {
       const json = JSON.parse(p);
       result[json.name] = json;
     });

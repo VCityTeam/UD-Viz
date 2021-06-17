@@ -64,14 +64,26 @@ const GameObjectModule = class GameObject {
     this.eulerBuffer = new THREE.Euler(0, 0, 0, 'ZXY'); //to avoid new THREE.Euler on fetchObject3D
   }
 
-  updateNoStaticFromGO(go) {
+  updateNoStaticFromGO(go, localContext) {
     //update transform
     this.setTransform(go.getTransform());
+
     //update render
     const r = this.getComponent(RenderComponent.TYPE);
     if (r) {
-      r.updateFromComponent(go.getComponent(RenderComponent.TYPE));
-      //TODO update localscript as well
+      r.updateFromComponent(
+        go.getComponent(RenderComponent.TYPE),
+        localContext
+      );
+    }
+
+    //update local scripts
+    const ls = this.getComponent(LocalScriptModule.TYPE);
+    if (ls) {
+      ls.updateFromComponent(
+        go.getComponent(LocalScriptModule.TYPE),
+        localContext
+      );
     }
   }
 

@@ -176,7 +176,7 @@ export class GameView extends View3D {
         const uuid = g.getUUID();
         const current = state.getGameObject().find(uuid);
         if (current && !g.isStatic()) {
-          g.updateNoStaticFromGO(current);
+          g.updateNoStaticFromGO(current, ctx);
         } else if (!current) {
           //do not exist remove it
           g.removeFromParent();
