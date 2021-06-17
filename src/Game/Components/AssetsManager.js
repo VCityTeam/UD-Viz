@@ -393,6 +393,28 @@ export class AssetsManager {
         resolve();
       }
     });
+    const cssPromise = new Promise((resolve, reject) => {
+      let count = 0;
+      for (let idCss in config.css) {
+        const cssPath = config.css[idCss].path;
+        jquery.get(
+          cssPath,
+          function (cssString) {
+            const styleSheet = document.createElement('style');
+            styleSheet.type = 'text/css';
+            styleSheet.innerText = cssString;
+            document.head.appendChild(styleSheet);
+            //check if finish
+            count++;
+            if (count == Object.keys(config.css).length) {
+              console.log('css loaded');
+              resolve();
+            }
+          },
+          'text'
+        );
+      }
+    });
 
     const promises = [];
     if (config.models) promises.push(modelPromise);
@@ -400,6 +422,7 @@ export class AssetsManager {
     if (config.worldScripts) promises.push(worldScriptsPromise);
     if (config.localScripts) promises.push(localScriptsPromise);
     if (config.worlds) promises.push(worldsPromise);
+    if (config.css) promises.push(cssPromise);
 
     return Promise.all(promises);
   }
