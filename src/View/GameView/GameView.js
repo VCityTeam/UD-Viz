@@ -19,10 +19,7 @@ export class GameView extends View3D {
     //ui
     this.ui = document.createElement('div');
     this.ui.classList.add('ui_GameView');
-
-    //dynamic html
-    this.fpsLabel = null;
-    this.avatarCount = null;
+    this.rootHtml.appendChild(this.ui);
 
     //assets
     this.assetsManager = params.assetsManager;
@@ -64,18 +61,6 @@ export class GameView extends View3D {
     this.ui.appendChild(el);
   }
 
-  initUI() {
-    this.fpsLabel = document.createElement('div');
-    this.fpsLabel.classList.add('label_GameView');
-    this.ui.appendChild(this.fpsLabel);
-
-    this.avatarCount = document.createElement('div');
-    this.avatarCount.classList.add('label_GameView');
-    this.ui.appendChild(this.avatarCount);
-
-    this.rootHtml.appendChild(this.ui);
-  }
-
   addTickRequester(cb) {
     this.tickRequesters.push(cb);
   }
@@ -92,10 +77,7 @@ export class GameView extends View3D {
     const extent = new itowns.Extent('EPSG:3946', x - r, x + r, y - r, y + r);
 
     this.initItownsView(extent);
-
-    //other init
     this.initScene(state);
-    this.initUI();
 
     //register in mainloop
     const _this = this;
@@ -269,15 +251,6 @@ export class GameView extends View3D {
     renderer.render(scene, this.itownsView.camera.camera3D);
 
     //TODO ne pas lancer des rendu si itowns vient d'en faire un
-
-    //update ui
-    this.fpsLabel.innerHTML =
-      'FPS = ' + Math.round(1000 / this.localContext.getDt());
-    let avatarCount = 0;
-    go.traverse(function (g) {
-      if (g.name == 'avatar') avatarCount++;
-    });
-    this.avatarCount.innerHTML = 'Player: ' + avatarCount;
   }
 
   getAssetsManager() {
