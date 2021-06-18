@@ -58,6 +58,7 @@ export class View3D {
 
     //itowns view
     this.itownsView = null;
+    this.extent = null;
 
     //pause
     this.pause = false;
@@ -178,7 +179,13 @@ export class View3D {
     this.pause = value;
   }
 
+  getExtent() {
+    return this.extent;
+  }
+
   initItownsView(extent) {
+    this.extent = extent;
+
     const coordinates = extent.center();
 
     let heading = -50;
