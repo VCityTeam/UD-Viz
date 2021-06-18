@@ -83,8 +83,8 @@ export class View3D {
     [this.rootWebGL, this.rootCss].forEach(function (el) {
       el.style.top = top + 'px';
       el.style.left = left + 'px';
-      // el.style.bottom = bottom + 'px';
-      // el.style.right = right + 'px';
+      el.style.bottom = bottom + 'px';
+      el.style.right = right + 'px';
     });
   }
 
