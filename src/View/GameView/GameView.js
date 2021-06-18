@@ -4,7 +4,6 @@ import * as THREE from 'three';
 import * as proj4 from 'proj4';
 import * as itowns from 'itowns';
 
-import './GameView.css';
 import LocalScript from '../../Game/Shared/GameObject/Components/LocalScript';
 import { View3D } from '../View3D/View3D';
 
@@ -15,11 +14,6 @@ export class GameView extends View3D {
   constructor(params) {
     //call parent class
     super(params);
-
-    //ui
-    this.ui = document.createElement('div');
-    this.ui.classList.add('ui_GameView');
-    this.rootHtml.appendChild(this.ui);
 
     //assets
     this.assetsManager = params.assetsManager;
@@ -57,10 +51,6 @@ export class GameView extends View3D {
     return this.skyColor;
   }
 
-  appendToUI(el) {
-    this.ui.appendChild(el);
-  }
-
   addTickRequester(cb) {
     this.tickRequesters.push(cb);
   }
@@ -91,17 +81,22 @@ export class GameView extends View3D {
 
       requestAnimationFrame(tick);
 
-      _this.tickRequesters.forEach(function (cb) {
-        cb();
-      });
-
       now = Date.now();
       delta = now - then;
 
       if (delta > 1000 / fps) {
         // update time stuffs
         then = now - (delta % 1000) / fps;
+
+        //set dt
         _this.localContext.setDt(delta);
+
+        //call tick requester
+        _this.tickRequesters.forEach(function (cb) {
+          cb(_this.localContext);
+        });
+
+        //update Gameview
         _this.update(_this.stateComputer.computeCurrentState());
       }
     };
@@ -250,7 +245,7 @@ export class GameView extends View3D {
     renderer.clearColor();
     renderer.render(scene, this.itownsView.camera.camera3D);
 
-    //TODO ne pas lancer des rendu si itowns vient d'en faire un
+    //TODO refacto tick integrate with itowns rendering
   }
 
   getAssetsManager() {

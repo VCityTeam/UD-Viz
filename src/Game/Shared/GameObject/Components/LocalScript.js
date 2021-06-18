@@ -3,6 +3,8 @@
 const THREE = require('three');
 const JSONUtils = require('../../../../Components/SystemUtils/JSONUtils');
 
+//TODO pass ud-viz as parameter to localscript and not only Shared
+
 const LocalScriptModule = class LocalScript {
   constructor(parent, json) {
     this.parent = parent;
