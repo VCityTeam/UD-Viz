@@ -43,8 +43,13 @@ export class View3D {
 
     //root itowns
     this.rootItownsHtml = document.createElement('div');
-    this.rootItownsHtml.id = 'viewerDiv'; //itowns div
+    this.rootItownsHtml.id = 'itowns_View3D'; //itowns div
     this.rootWebGL.appendChild(this.rootItownsHtml);
+
+    //ui
+    this.ui = document.createElement('div');
+    this.ui.classList.add('ui_View3D');
+    this.rootItownsHtml.appendChild(this.ui);
 
     window.addEventListener('resize', this.onResize.bind(this));
 
@@ -67,6 +72,24 @@ export class View3D {
 
     //inputs
     this.inputManager = new InputManager();
+  }
+
+  setDisplaySize(min = new THREE.Vector2(), max = new THREE.Vector2()) {
+    const top = min.y;
+    const left = min.x;
+    const bottom = max.y;
+    const right = max.x;
+
+    [this.rootWebGL, this.rootCss].forEach(function (el) {
+      el.style.top = top + 'px';
+      el.style.left = left + 'px';
+      // el.style.bottom = bottom + 'px';
+      // el.style.right = right + 'px';
+    });
+  }
+
+  appendToUI(el) {
+    this.ui.appendChild(el);
   }
 
   getItownsView() {

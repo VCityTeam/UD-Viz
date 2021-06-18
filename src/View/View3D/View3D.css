@@ -10,15 +10,29 @@ body {
   height: 100%;
 }
 
+canvas {
+  display: block;
+}
+
 #css_View3D,
 #webgl_View3D {
   width: 100%;
   height: 100%;
   position: absolute;
-  top: 0;
-  left: 0;
+  top: 0px;
+  left: 0px;
 }
 
-#root_View3D {
+#itowns_View3D {
   /* position: absolute; */
+  margin: auto;
+  height: 100%;
+  width: 100%;
+  padding: 0;
+}
+
+.ui_View3D {
+  background-color: white;
+  position: absolute;
+  z-index: 2;
 }
