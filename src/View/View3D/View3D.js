@@ -162,7 +162,7 @@ export class View3D {
     const geometry = new THREE.PlaneGeometry(size3D.width, size3D.height);
 
     const material = new THREE.MeshBasicMaterial({ side: THREE.DoubleSide });
-    material.color.set('black');
+    material.color.set('white');
     material.opacity = 0;
     material.blending = THREE.NoBlending;
 
