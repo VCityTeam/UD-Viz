@@ -3,7 +3,7 @@
 const THREE = require('three');
 
 module.exports = {
-  textureEncoding: THREE.RGBDEncoding,
+  textureEncoding: THREE.sRGBEncoding,
 
   addLights(scene) {
     //lights
