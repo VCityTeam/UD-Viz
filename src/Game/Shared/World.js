@@ -281,13 +281,10 @@ const WorldModule = class World {
 
   computeWorldState() {
     const result = new WorldState({
-      gameObject: null,
+      gameObject: this.gameObject.toJSON(true),
       timestamp: Date.now(),
       origin: this.origin,
     });
-
-    //share same gameobject to avoid gameobject.toJSON then instanciate a new one
-    result.setGameObject(this.gameObject);
 
     return result;
   }

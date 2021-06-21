@@ -217,7 +217,7 @@ export class GameView extends View3D {
 
     //rebuild object
     this.object3D.children.length = 0;
-    this.object3D.add(go.fetchObject3D());
+    this.object3D.add(go.computeObject3D());
     this.object3D.updateMatrixWorld();
 
     //update shadow
