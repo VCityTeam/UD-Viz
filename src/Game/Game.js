@@ -5,5 +5,3 @@ export { Shared };
 
 import * as Components from './Components/Components.js';
 export { Components };
-
-export { UDVDebugger } from './UDVDebugger/UDVDebugger';
