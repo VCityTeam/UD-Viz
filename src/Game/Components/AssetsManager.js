@@ -3,7 +3,7 @@
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import * as THREE from 'three';
 import * as jquery from 'jquery';
-import GameObjectModule from '../Shared/GameObject/GameObject';
+import GameObject from '../Shared/GameObject/GameObject';
 const THREEUtils = require('../Shared/Components/THREEUtils');
 
 /**
@@ -26,10 +26,18 @@ export class AssetsManager {
     this.worldsJSON = null;
   }
 
+  /**
+   * Return new model corresponding to the id passed
+   * @param {String} idModel id of the model
+   * @returns {THREE.Object3D} new model
+   */
   createModel(idModel) {
     if (!this.models[idModel]) console.error('no model with id ', idModel);
 
+    //clone Object
     const result = this.models[idModel].clone();
+
+    //clone materials as well
     result.traverse(function (child) {
       if (child.material) {
         child.material = child.material.clone();
@@ -40,36 +48,68 @@ export class AssetsManager {
     return result;
   }
 
+  /**
+   * Return worlds loaded
+   * @returns {JSONArray[WorldJSON]} array of worlds
+   */
   getWorldsJSON() {
     return this.worldsJSON;
   }
 
+  /**
+   * Return javascript class with a given id
+   * @param {String} idScript id of the script
+   * @returns {Object} constructor of the class
+   */
   fetchWorldScript(idScript) {
     if (!this.worldScripts[idScript])
       console.error('no world script with id ', idScript);
     return this.worldScripts[idScript];
   }
 
+  /**
+   * Return javascript class with a given id
+   * @param {String} id id of the script
+   * @returns {Object} constructor of the class
+   */
   fetchLocalScript(id) {
     if (!this.localScripts[id]) console.error('no local script with id ', id);
     return this.localScripts[id];
   }
 
-  fetchPrefab(idprefab) {
+  /**
+   * Create a new GameObject base on a prefab json
+   * @param {String} idprefab id of the prefab
+   * @returns {GameObject} the gameobject based on a prefab
+   */
+  createPrefab(idprefab) {
     if (!this.prefabs[idprefab]) console.error('no prefab with id ', idprefab);
-    return new GameObjectModule(this.prefabs[idprefab]);
+    return new GameObject(this.prefabs[idprefab]);
   }
 
+  /**
+   * Return the path of video with a given id
+   * @param {String} idVideo id of the video
+   * @returns {String} path of the video
+   */
   fetchVideoPath(idVideo) {
     if (!this.conf.videos[idVideo]) console.error('no video with id ', idVideo);
     return this.conf.videos[idVideo].path;
   }
 
+  /**
+   * Return a json GameObject with a given id
+   * @param {String} idprefab id of the prefab
+   * @returns {JSON} json gameobject
+   */
   fetchPrefabJSON(idprefab) {
     if (!this.prefabs[idprefab]) console.error('no prefab with id ', idprefab);
     return JSON.parse(JSON.stringify(this.prefabs[idprefab]));
   }
 
+  /**
+   * Build native models (procedural models)
+   */
   buildNativeModel() {
     const geometryBox = new THREE.BoxGeometry();
     const cube = new THREE.Mesh(geometryBox, DEFAULT_MATERIAL);
@@ -83,6 +123,9 @@ export class AssetsManager {
     this.buildPointerMouse();
   }
 
+  /**
+   * Build 'gizmo' native model
+   */
   buildGizmo() {
     const result = new THREE.Object3D();
 
@@ -123,51 +166,9 @@ export class AssetsManager {
     this.models['gizmo'] = result;
   }
 
-  createFrame(w, h) {
-    const buildBox = function (
-      x,
-      y,
-      z,
-      offset,
-      rotation = new THREE.Vector3()
-    ) {
-      const geo = new THREE.BoxGeometry();
-      const result = new THREE.Mesh(geo, DEFAULT_MATERIAL);
-      result.position.add(offset);
-      result.scale.set(x, y, z);
-      result.rotation.setFromVector3(rotation);
-      return result;
-    };
-
-    const frame = new THREE.Object3D();
-    frame.name = 'frame';
-
-    const thickness = 0.1;
-    const depth = 0.05;
-    frame.add(buildBox(w, thickness, depth, new THREE.Vector3(0, h / 2, 0)));
-    frame.add(buildBox(w, thickness, depth, new THREE.Vector3(0, -h / 2, 0)));
-    frame.add(
-      buildBox(
-        h + thickness,
-        thickness,
-        depth,
-        new THREE.Vector3(-w / 2, 0, 0),
-        new THREE.Vector3(0, 0, Math.PI * 0.5)
-      )
-    );
-    frame.add(
-      buildBox(
-        h + thickness,
-        thickness,
-        depth,
-        new THREE.Vector3(w / 2, 0, 0),
-        new THREE.Vector3(0, 0, Math.PI * 0.5)
-      )
-    );
-
-    return frame;
-  }
-
+  /**
+   * Build 'pointer_mouse' native model
+   */
   buildPointerMouse() {
     const geometry = new THREE.CylinderGeometry(0.15, 0, 0.3, 32);
     const cylinder = new THREE.Mesh(geometry, DEFAULT_MATERIAL);
@@ -175,6 +176,12 @@ export class AssetsManager {
     this.models['pointer_mouse'] = cylinder;
   }
 
+  /**
+   * Parse model imported according its metadata
+   * @param {String} id id of the model
+   * @param {THREE.Object3D} obj the object parsed
+   * @param {JSON} modelData metadata
+   */
   parse(id, obj, modelData) {
     const anchor = modelData.anchor;
     const scale = modelData.scale;
@@ -187,6 +194,7 @@ export class AssetsManager {
     );
     obj.applyQuaternion(quatYUP2ZUP);
 
+    //anchor point
     const bbox = new THREE.Box3().setFromObject(obj);
     const parent = new THREE.Object3D();
     switch (anchor) {
@@ -225,6 +233,7 @@ export class AssetsManager {
       obj.scale.copy(newScale);
     }
 
+    //rotation
     if (rotation) {
       const newRotation = obj.rotation;
       newRotation.x += rotation.x;
@@ -252,6 +261,11 @@ export class AssetsManager {
     this.models[id] = parent;
   }
 
+  /**
+   * Load from a server assets described in a config file
+   * @param {JSON} config config file
+   * @returns {Array[Promises]} all the promises processed to load assets
+   */
   loadFromConfig(config) {
     this.conf = config;
 
