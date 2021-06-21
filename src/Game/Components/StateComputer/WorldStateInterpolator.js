@@ -1,8 +1,11 @@
 /** @format */
 import WorldState from '../../Shared/WorldState';
 
-//compute/interpolate state working with a server
-
+/**
+ * StateComputer working with a distant server
+ * Interpolate states received by server
+ * Same system as described here (https://victorzhou.com/blog/build-an-io-game-part-1/#7-client-state)
+ */
 export class WorldStateInterpolator {
   constructor(config) {
     this.config = config;
@@ -16,11 +19,19 @@ export class WorldStateInterpolator {
     this.lastTimeState = 0;
   }
 
+  /**
+   *
+   * @returns {Number} delay with the server
+   */
   _getDelay() {
     if (this.config && this.config.renderDelay) return this.config.renderDelay;
     return 0;
   }
 
+  /**
+   * Add a new state
+   * @param {WorldState} state
+   */
   _onNewState(state) {
     if (!state) {
       throw new Error('no state');
@@ -42,17 +53,28 @@ export class WorldStateInterpolator {
     }
   }
 
+  /**
+   *
+   * @returns {WorldState} the last state received by the server
+   */
   _getLastStateReceived() {
     return this.states[this.states.length - 1];
   }
 
+  /**
+   *
+   * @returns {Number} the current server time
+   */
   _computeCurrentServerTime() {
     return (
       this.firstServerTimestamp + Date.now() - this.gameStart - this._getDelay()
     );
   }
 
-  //return the index of the first worldstate before server time
+  /**
+   *
+   * @returns {Integer} the index of the first worldstate before server time
+   */
   _computeIndexBaseState() {
     const serverTime = this._computeCurrentServerTime();
     for (let i = this.states.length - 1; i >= 0; i--) {
@@ -62,7 +84,13 @@ export class WorldStateInterpolator {
     }
     return -1;
   }
-  //INTERFACE
+
+  //PUBLIC METHODS
+
+  /**
+   * Add a new diff to compute a new state
+   * @param {WorldStateDiff} diff 
+   */
   onNewDiff(diff) {
     let last = this._getLastStateReceived();
     if (!last) throw new Error('no last state');
@@ -70,6 +98,10 @@ export class WorldStateInterpolator {
     this._onNewState(newState);
   }
 
+  /**
+   * Init the computer with a first state
+   * @param {WorldState} state the first state received
+   */
   onFirstState(state) {
     this.firstServerTimestamp = state.getTimestamp();
     this.gameStart = Date.now();
@@ -78,6 +110,11 @@ export class WorldStateInterpolator {
   }
 
   //StateComputer INTERFACE
+
+  /**
+   * Compute the current world state
+   * @returns {WorldState} 
+   */
   computeCurrentState() {
     if (!this.firstServerTimestamp) {
       return null;
@@ -89,7 +126,6 @@ export class WorldStateInterpolator {
     // If base is the most recent update we have, use its state.
     // Otherwise, interpolate between its state and the state of (base + 1).
     if (index < 0 || index === this.states.length - 1) {
-      // console.log('Last state !!');
       return this._getLastStateReceived();
     } else {
       const baseState = this.states[index];
