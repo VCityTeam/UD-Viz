@@ -3,6 +3,8 @@
 const WorldContext = require('../../Shared/WorldContext');
 const Shared = require('../../Shared/Shared');
 
+//TODO LocalComputer do not have tick to make tick the world
+
 export class LocalComputer {
   constructor(world, assetsManager) {
     this.worldContext = new WorldContext({
