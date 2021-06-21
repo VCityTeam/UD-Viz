@@ -61,7 +61,7 @@ const GameObjectModule = class GameObject {
     this.object3D.name = this.name + '_object3D';
 
     //buffer
-    this.eulerBuffer = new THREE.Euler(0, 0, 0, 'ZXY'); //to avoid new THREE.Euler on fetchObject3D
+    this.eulerBuffer = new THREE.Euler(0, 0, 0, 'ZXY'); //to avoid new THREE.Euler on computeObject3D
   }
 
   updateNoStaticFromGO(go, localContext) {
@@ -185,7 +185,7 @@ const GameObjectModule = class GameObject {
       });
 
       //remove object3D
-      let obj3D = this.fetchObject3D();
+      let obj3D = this.computeObject3D();
       if (obj3D && obj3D.parent) {
         obj3D.parent.remove(obj3D);
       }
@@ -266,7 +266,7 @@ const GameObjectModule = class GameObject {
     }
   }
 
-  fetchObject3D(recursive = true) {
+  computeObject3D(recursive = true) {
     const r = this.getComponent(RenderComponent.TYPE);
     let obj;
     if (!r) {
@@ -290,7 +290,7 @@ const GameObjectModule = class GameObject {
     //add children if recursive
     if (recursive) {
       this.children.forEach(function (child) {
-        const childObj = child.fetchObject3D();
+        const childObj = child.computeObject3D();
         if (childObj) obj.add(childObj);
       });
     }
