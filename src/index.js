@@ -28,7 +28,7 @@ export { itowns };
 import * as jquery from 'jquery';
 export { jquery };
 
-//three
+//THREE
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { TransformControls } from 'three/examples/jsm/controls/TransformControls';
