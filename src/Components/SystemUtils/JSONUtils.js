@@ -2,7 +2,17 @@
 
 const Type = require('./Type');
 
+/**
+ * Set of utility function to handle JSON
+ */
+
 module.exports = {
+  /**
+   * Test if two JSON are identical
+   * @param {JSON} j1 first json
+   * @param {JSON} j2 second json
+   * @returns {Boolean} true if both json are identical, false otherwise
+   */
   equals(j1, j2) {
     const traverse = function (json1, json2) {
       for (let key in json1) {
@@ -30,6 +40,11 @@ module.exports = {
     return traverse(j1, j2);
   },
 
+  /**
+   * Overwrite identical field of a json with another one
+   * @param {JSON} jsonOverWrited the json overwritted
+   * @param {JSON} jsonModel the json used as model
+   */
   overWrite(jsonOverWrited, jsonModel) {
     const traverse = function (json1, json2) {
       for (let key in json1) {
@@ -38,7 +53,6 @@ module.exports = {
         } else {
           if (json2[key] != undefined) {
             json1[key] = json2[key];
-            // console.log('overwrite ', json1);
           }
         }
       }
@@ -47,6 +61,12 @@ module.exports = {
     traverse(jsonOverWrited, jsonModel);
   },
 
+  /**
+   * Apply a callback to each field of json
+   * @param {JSON} json the json to be parsed
+   * @param {Function} cb callback with first argument the json and second the key
+   * @returns {JSON} the json parsed
+   */
   parse(json, cb) {
     for (let key in json) {
       if (json[key] instanceof Object) {
@@ -58,6 +78,11 @@ module.exports = {
     return json;
   },
 
+  /**
+   * Parse to float every field of type numeric in json
+   * @param {JSON} json the json to be parsed
+   * @returns {JSON} the json parsed
+   */
   parseNumeric(json) {
     return this.parse(json, function (j, key) {
       if (Type.isNumeric(j[key])) {
@@ -66,8 +91,16 @@ module.exports = {
     });
   },
 
+  /**
+   * Symbol used to separate field of a json array
+   */
   separator: '&',
 
+  /**
+   * Transform a json array to a single string
+   * @param {JSONArray} jsonArray the json array to transform
+   * @returns {String} String corresponding to the json array
+   */
   pack(jsonArray) {
     let result = '';
     for (let key in jsonArray) {
@@ -82,6 +115,11 @@ module.exports = {
     return result;
   },
 
+  /**
+   * Transform a string to a json array
+   * @param {String} string corresponding to a json array pack
+   * @returns {JSONArray} json array corresponding to the string
+   */
   unpack(string) {
     const splitString = string.split(this.separator);
     const result = {};
