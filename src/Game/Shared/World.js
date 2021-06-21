@@ -11,6 +11,9 @@ const THREE = require('three');
 const WorldState = require('./WorldState');
 const { Collisions } = require('detect-collisions');
 
+/**
+ * Parent Object of GameObject, handle simulation
+ */
 const WorldModule = class World {
   constructor(json, options) {
     if (!json) throw new Error('no json');
@@ -20,9 +23,7 @@ const WorldModule = class World {
     this.collisions = new Collisions();
     this.collisionsBuffer = {}; //to handle onEnter on onExit
 
-    /******************DATA***************************/
-
-    //id
+    //uuid
     this.uuid = json.uuid || THREE.Math.generateUUID();
 
     //gameobject
@@ -36,7 +37,7 @@ const WorldModule = class World {
     this.name = json.name || 'default_world';
 
     //origin
-    this.origin = json.origin || { lat: 0, lng: 0 };
+    this.origin = json.origin || { lat: 0, lng: 0, alt: 0 };
 
     /******************INTERNAL***********************/
 
@@ -46,28 +47,46 @@ const WorldModule = class World {
     this.listeners = {};
   }
 
-  //custom event
+  /**
+   * Register a custom event
+   * @param {String} eventID id of the event
+   * @param {Function} cb callback to be called when the event is dispatched
+   */
   on(eventID, cb) {
     if (!this.listeners[eventID]) this.listeners[eventID] = [];
     this.listeners[eventID].push(cb);
   }
 
+  /**
+   * Notify that a custom event occured
+   * @param {String} eventID id of the event to dispatch
+   * @param {Array} params params to passed to callbacks
+   */
   notify(eventID, params) {
     if (!this.listeners[eventID]) {
       console.warn('no listener on event ', eventID);
-      return;
+    } else {
+      this.listeners[eventID].forEach(function (cb) {
+        cb(params);
+      });
     }
-
-    this.listeners[eventID].forEach(function (cb) {
-      cb(params);
-    });
   }
 
+  /**
+   * Load its gameobject
+   * @param {Function} onLoad callback called at the end of the load
+   * @param {WorldContext} worldContext this world context
+   */
   load(onLoad, worldContext) {
-    //load gameobject
     this.addGameObject(this.gameObject, worldContext, null, onLoad);
   }
 
+  /**
+   * Compute all the promises of a gameobject needed at the load event WorldScript
+   * @param {GameObject} go the gameobject to compute load promises
+   * @param {WorldContext} worldContext this world context
+   * @returns {Array[Promise]} An array containing all the promises
+   */
   computePromisesLoad(go, worldContext) {
     //load GameObject
     const promises = [];
