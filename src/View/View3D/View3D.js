@@ -19,11 +19,16 @@ proj4.default.defs(
     ' +lat_0=46 +lon_0=3 +x_0=1700000 +y_0=5200000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs'
 );
 
+/**
+ *  Main view of an ud-viz application
+ */
 export class View3D {
   constructor(params = {}) {
+    //root html
     this.rootHtml = document.createElement('div');
     this.rootHtml.id = 'root_View3D';
 
+    //add to DOM
     if (params.htmlParent) {
       params.htmlParent.appendChild(this.rootHtml);
     } else {
@@ -51,6 +56,7 @@ export class View3D {
     this.ui.classList.add('ui_View3D');
     this.rootItownsHtml.appendChild(this.ui);
 
+    //listen resize event
     window.addEventListener('resize', this.onResize.bind(this));
 
     //conf
@@ -58,7 +64,7 @@ export class View3D {
 
     //itowns view
     this.itownsView = null;
-    this.extent = null;
+    this.extent = null; //area handle by itowns
 
     //pause
     this.pause = false;
@@ -75,6 +81,11 @@ export class View3D {
     this.inputManager = new InputManager();
   }
 
+  /**
+   *
+   * @param {THREE.Vector2} min coordinate min in pixel
+   * @param {THREE.Vector2} max coordinate max in pixel
+   */
   setDisplaySize(min = new THREE.Vector2(), max = new THREE.Vector2()) {
     const top = min.y;
     const left = min.x;
@@ -89,34 +100,58 @@ export class View3D {
     });
   }
 
+  /**
+   *
+   * @param {HTMLElement} el the html element to add to the ui
+   */
   appendToUI(el) {
     this.ui.appendChild(el);
   }
 
+  /**
+   *
+   * @returns {itowns.PlanarView} the itowns view
+   */
   getItownsView() {
     return this.itownsView;
   }
 
+  /**
+   *
+   * @returns {HTMLElement} the root html of this view
+   */
   html() {
     return this.rootHtml;
   }
 
+  /**
+   *
+   * @returns {InputManager} the input manager of this view
+   */
   getInputManager() {
     return this.inputManager;
   }
 
+  /**
+   * init the css3D renderer
+   */
   initCSS3D() {
     //CSS3DRenderer
     const css3DRenderer = new CSS3DRenderer();
     this.css3DRenderer = css3DRenderer;
+
+    //add html el
     this.rootCss.appendChild(css3DRenderer.domElement);
 
+    //create a new scene for the css3D renderer
     this.css3DScene = new THREE.Scene();
+
+    //add mask object to the itownsView scene
     this.maskObject = new THREE.Object3D();
     this.itownsView.scene.add(this.maskObject);
 
+    //start ticking render of css3D renderer
     const _this = this;
-
     const tick = function () {
       if (_this.disposed) return;
       requestAnimationFrame(tick);
@@ -125,13 +160,23 @@ export class View3D {
     };
     tick();
 
+    //launch an async resize
     setTimeout(this.onResize.bind(this), 100);
   }
 
+  /**
+   *
+   * @returns {Boolean} true if html of the webgl rendering isn't catching events
+   * allowing the css3D html to catch it
+   */
   isCatchingEventsCSS3D() {
     return this.rootWebGL.style.pointerEvents === 'none';
   }
 
+  /**
+   *
+   * @param {Boolean} value if true allow css3D html elements to catch user events, otherwise no
+   */
   catchEventsCSS3D(value) {
     if (value) {
       this.rootWebGL.style.pointerEvents = 'none';
@@ -140,6 +185,12 @@ export class View3D {
     }
   }
 
+  /**
+   *
+   * @param {HTMLElement} htmlEl html element to add to the css3D Scene
+   * @param {Object} size3D object with a width and height to define the size into the scene
+   * @param {THREEUtils.Transform} transform how to place the html el into the scene
+   */
   appendCSS3D(htmlEl, size3D, transform) {
     if (!this.css3DRenderer) this.initCSS3D();
 
@@ -175,14 +226,26 @@ export class View3D {
     this.maskObject.add(plane);
   }
 
+  /**
+   *
+   * @param {Boolean} value if true the css3D renderer stop rendering
+   */
   setPause(value) {
     this.pause = value;
   }
 
+  /**
+   *
+   * @returns {itowns.Extent} return the extent of the itowns view
+   */
   getExtent() {
     return this.extent;
   }
 
+  /**
+   * init the itowns.PlanarView of this view with a given extent
+   * @param {itowns.Extent} extent the extent of the itowns.PlanarView
+   */
   initItownsView(extent) {
     this.extent = extent;
 
@@ -222,6 +285,9 @@ export class View3D {
     };
   }
 
+  /**
+   * Callback call on the resize event
+   */
   onResize() {
     const w = window.innerWidth - this.rootHtml.offsetLeft;
     const h = window.innerHeight - this.rootHtml.offsetTop;
@@ -232,15 +298,14 @@ export class View3D {
     if (this.css3DRenderer) this.css3DRenderer.setSize(w, h);
   }
 
+  /**
+   * Remove html from the DOM and stop listeners
+   */
   dispose() {
     this.itownsView.dispose();
     window.removeEventListener('resize', this.onResize.bind(this));
     this.html().remove();
     this.inputManager.dispose();
     this.disposed = true;
-  }
-
-  getItownsView() {
-    return this.itownsView;
   }
 }
