@@ -1,18 +1,22 @@
 /** @format */
 
-/**
- * Handle a WebSocket communication client side with socket.io with server hosting the app
- */
-
 import io from 'socket.io-client';
 
+/**
+ * Handle communication with a server using socket.io-client npm package
+ * (https://www.npmjs.com/package/socket.io-client)
+ */
 export class WebSocketService {
   constructor() {
     this.socket = null;
     this.events = {};
   }
+
+  /**
+   * Start communication with the server (the one hosting index.html by default)
+   */
   connectToServer() {
-    //protocol
+    //communication protocol
     const socketProtocol = window.location.protocol.includes('https')
       ? 'wss'
       : 'ws';
@@ -32,6 +36,10 @@ export class WebSocketService {
     });
   }
 
+  /**
+   * Reset all events listened or only the ones listed in events parameter
+   * @param {Array} events list of events to reset can be null
+   */
   reset(events) {
     if (events) {
       const _this = this;
@@ -47,11 +55,21 @@ export class WebSocketService {
     }
   }
 
+  /**
+   * Assign a callback to a specific event
+   * @param {Shared.Components.Constants} event the event listened
+   * @param {Function} callback function called when the event is received
+   */
   on(event, callback) {
     this.events[event] = true;
     this.socket.on(event, callback);
   }
 
+  /**
+   * Fire an event to the server with data attached
+   * @param {Shared.Components.Constants} event the event fired
+   * @param {JSON} data data passed
+   */
   emit(event, data) {
     this.socket.emit(event, data);
   }
