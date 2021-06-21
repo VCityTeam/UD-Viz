@@ -6,8 +6,14 @@ import * as jquery from 'jquery';
 import GameObjectModule from '../Shared/GameObject/GameObject';
 const THREEUtils = require('../Shared/Components/THREEUtils');
 
+/**
+ * Default material used by native models
+ */
 const DEFAULT_MATERIAL = new THREE.MeshLambertMaterial({ color: 0x00ff00 });
 
+/**
+ * Give acess to all assets (image, video, script, worlds, ...)
+ */
 export class AssetsManager {
   constructor() {
     this.conf = null;
@@ -167,49 +173,6 @@ export class AssetsManager {
     const cylinder = new THREE.Mesh(geometry, DEFAULT_MATERIAL);
     cylinder.rotateX(Math.PI * 0.5);
     this.models['pointer_mouse'] = cylinder;
-  }
-
-  createSprite(label) {
-    const texture = this.createLabelTexture(label, 'rgba(255, 255, 255, 0)');
-    const material = new THREE.SpriteMaterial({
-      map: texture,
-    });
-    material.alphaTest = 0.5;
-    const result = new THREE.Sprite(material);
-    result.scale.set(1, 0.3, 1);
-    return result;
-  }
-
-  createLabelTexture(text, clearColor) {
-    //create texture with name on it
-    const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d');
-
-    ctx.fillStyle = clearColor;
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    ctx.fillStyle = 'black';
-    ctx.font = '50px Arial';
-    const wT = ctx.measureText(text).width;
-    ctx.fillText(text, (canvas.width - wT) * 0.5, canvas.height * 0.5);
-
-    const texture = new THREE.TextureLoader().load(
-      canvas.toDataURL('image/png')
-    );
-    texture.flipY = true;
-    texture.flipX = true;
-
-    return texture;
-  }
-
-  createText(text, w = 1, h = 1) {
-    const texture = this.createLabelTexture(text, 'rgba(255, 255, 255, 255)');
-    const material = new THREE.MeshBasicMaterial({ map: texture });
-    const geometry = new THREE.PlaneGeometry(w, h, 32);
-    const plane = new THREE.Mesh(geometry, material);
-    const frame = this.createFrame(w, h);
-    frame.add(plane);
-    return frame;
   }
 
   parse(id, obj, modelData) {
