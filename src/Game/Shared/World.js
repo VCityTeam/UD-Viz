@@ -145,7 +145,7 @@ const WorldModule = class World {
 
         //TODO init can be trigger several time FIXME maybe with a flag in worldscript component
         gameObject.traverse(function (g) {
-          g.executeScripts(WorldScriptComponent.EVENT.INIT, [worldContext]);
+          g.executeWorldScripts(WorldScriptComponent.EVENT.INIT, [worldContext]);
         });
 
         _this.registerGOCollision(gameObject);
@@ -265,7 +265,7 @@ const WorldModule = class World {
 
     //Tick GameObject
     this.gameObject.traverse(function (g) {
-      g.executeScripts(WorldScriptComponent.EVENT.TICK, [worldContext]);
+      g.executeWorldScripts(WorldScriptComponent.EVENT.TICK, [worldContext]);
     });
 
     //collisions
@@ -298,7 +298,7 @@ const WorldModule = class World {
               if (buffer.includes(potentialG.getUUID())) {
                 //already collided
                 g.traverse(function (child) {
-                  child.executeScripts(
+                  child.executeWorldScripts(
                     WorldScriptComponent.EVENT.IS_COLLIDING,
                     [result, worldContext]
                   );
@@ -307,7 +307,7 @@ const WorldModule = class World {
                 //onEnter
                 buffer.push(potentialG.getUUID()); //register in buffer
                 g.traverse(function (child) {
-                  child.executeScripts(
+                  child.executeWorldScripts(
                     WorldScriptComponent.EVENT.ON_ENTER_COLLISION,
                     [result, worldContext]
                   );
@@ -322,7 +322,7 @@ const WorldModule = class World {
           const uuid = buffer[i];
           if (!collidedGO.includes(uuid)) {
             g.traverse(function (child) {
-              child.executeScripts(
+              child.executeWorldScripts(
                 WorldScriptComponent.EVENT.ON_LEAVE_COLLISION,
                 [worldContext]
               );
