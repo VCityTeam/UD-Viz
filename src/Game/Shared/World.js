@@ -12,7 +12,7 @@ const WorldState = require('./WorldState');
 const { Collisions } = require('detect-collisions');
 
 /**
- * Parent Object of GameObject, handle simulation
+ * Parent Object of GameObjects, handle simulation and store extradata like the geographic origin
  */
 const WorldModule = class World {
   constructor(json, options) {
