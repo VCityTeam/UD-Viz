@@ -160,31 +160,31 @@ export class Debug3DTilesWindow extends Window {
           this.clickDivElement.innerHTML += `<br>${key} : ${value}`;
         }
 
-      if (!!this.selectedCityObject) {
-        this.selectedTilesManager.setStyle(this.selectedCityObject.cityObjectId, this.selectedStyle);
-        this.selectedTilesManager.applyStyles();
-      }
+        if (this.selectedCityObject) {
+          this.selectedTilesManager.setStyle(this.selectedCityObject.cityObjectId, this.selectedStyle);
+          this.selectedTilesManager.applyStyles();
+        }
 
-      this.selectedCityObject = cityObject;
-      this.selectedTilesManager = this.layerManager.getTilesManagerByLayerID(this.selectedCityObject.tile.layer.id);
-      this.selectedStyle = this.selectedTilesManager.styleManager.getStyleIdentifierAppliedTo(this.selectedCityObject.cityObjectId)
-      this.selectedTilesManager.setStyle(this.selectedCityObject.cityObjectId, 'selected');
-      this.selectedTilesManager.applyStyles({
-        updateFunction: this.selectedTilesManager.view.notifyChange.bind(
-          this.selectedTilesManager.view
-        ),
-      });
+        this.selectedCityObject = cityObject;
+        this.selectedTilesManager = this.layerManager.getTilesManagerByLayerID(this.selectedCityObject.tile.layer.id);
+        this.selectedStyle = this.selectedTilesManager.styleManager.getStyleIdentifierAppliedTo(this.selectedCityObject.cityObjectId);
+        this.selectedTilesManager.setStyle(this.selectedCityObject.cityObjectId, 'selected');
+        this.selectedTilesManager.applyStyles({
+          updateFunction: this.selectedTilesManager.view.notifyChange.bind(
+            this.selectedTilesManager.view
+          ),
+        });
 
-      this.clickDivElement.innerHTML = /*html*/`
+        this.clickDivElement.innerHTML = /*html*/`
            3D Tiles : ${this.selectedTilesManager.layer.name}<br>
            Vertex indexes : ${cityObject.indexStart} to ${cityObject.indexEnd}
             (${cityObject.indexCount})<br>
            Batch ID : ${cityObject.batchId}<br>
            Tile ID : ${cityObject.tile.tileId}
          `;
-       }
       }
     }
+  }
 
   /**
    * Creates the new style.

@@ -112,7 +112,7 @@ export class TilesManager extends EventSender {
   }
 
   getTilesWithGeom() {
-    let tilesWithGeom = []
+    let tilesWithGeom = [];
     for (let j = 0; j < this.tiles.length;j++)
     {
       if(this.tiles[j] != undefined) {
