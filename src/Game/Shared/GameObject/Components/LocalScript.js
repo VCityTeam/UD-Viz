@@ -5,22 +5,43 @@ const JSONUtils = require('../../../../Components/SystemUtils/JSONUtils');
 
 //TODO pass ud-viz as parameter to localscript and not only Shared
 
+/**
+ * Component used to script a GameObject during the client side update
+ */
 const LocalScriptModule = class LocalScript {
   constructor(parent, json) {
+    //gameobject of this component
     this.parent = parent;
-    this.uuid = json.uuid || THREE.MathUtils.generateUUID();
+
+    //uuid
+    this.uuid = jsopn.uuid || THREE.MathUtils.generateUUID();
+
+    //array of localscripts id
     this.idScripts = json.idScripts || [];
+
+    //type
     this.type = json.type || LocalScriptModule.TYPE;
+
+    //conf pass to scripts
     this.conf = json.conf || {};
 
-    //internal
+    //map of scripts
     this.scripts = {};
   }
 
+  /**
+   *
+   * @returns {JSON}
+   */
   getConf() {
     return this.conf;
   }
 
+  /**
+   * Initialize scripts
+   * @param {AssetsManager} assetsManager local assetsManager
+   * @param {Shared} udvShared ud-viz/Game/Shared module
+   */
   initAssets(assetsManager, udvShared) {
     const _this = this;
     this.idScripts.forEach(function (id) {
@@ -29,6 +50,11 @@ const LocalScriptModule = class LocalScript {
     });
   }
 
+  /**
+   * Execute all scripts for a particular event
+   * @param {LocalScript.EVENT} event the event trigger
+   * @param {Array} params parameters pass to scripts
+   */
   execute(event, params) {
     const _this = this;
 
@@ -37,6 +63,13 @@ const LocalScriptModule = class LocalScript {
     });
   }
 
+  /**
+   * Execute script with id for a particular event
+   * @param {String} id id of the script executed
+   * @param {LocalScript.EVENT} event event trigger
+   * @param {Array} params parameters pass to the script function
+   * @returns {Object} result of the script execution
+   */
   executeScript(id, event, params) {
     let s = this.scripts[id];
 
@@ -47,6 +80,12 @@ const LocalScriptModule = class LocalScript {
     }
   }
 
+  /**
+   * Check if conf differed with component and
+   * notify scripts that conf has changed and fire an UPDATE event
+   * @param {JSON} component the component json to update to
+   * @param {LocalContext} localContext
+   */
   updateFromComponent(component, localContext) {
     if (!JSONUtils.equals(this.conf, component.conf)) {
       //replace conf and launch an update event
@@ -59,14 +98,26 @@ const LocalScriptModule = class LocalScript {
     }
   }
 
+  /**
+   *
+   * @returns {Object}
+   */
   getScripts() {
     return this.scripts;
   }
 
+  /**
+   * This component cant be run on the server side
+   * @returns {Boolean}
+   */
   isServerSide() {
     return false;
   }
 
+  /**
+   * Compute this to JSON
+   * @returns {JSON}
+   */
   toJSON() {
     return {
       uuid: this.uuid,
