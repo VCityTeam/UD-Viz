@@ -1,6 +1,6 @@
 {
   "name": "ud-viz",
-  "version": "2.32.0",
+  "version": "2.32.2",
   "description": "A collection of itowns plugins",
   "main": "src",
   "scripts": {
@@ -26,11 +26,11 @@
   "peerDependencies": {},
   "dependencies": {
     "detect-collisions": "^2.5.2",
-    "itowns": "^2.33.0",
+    "itowns": "2.33.0",
     "jquery": "^3.6.0",
     "proj4": "^2.7.0",
     "socket.io-client": "^4.0.0",
-    "three": "0.126.1",
+    "three": "0.127.0",
     "three-css3drenderer": "^1.0.1",
     "vis-data": "^7.1.2",
     "vis-network": "^9.0.3"

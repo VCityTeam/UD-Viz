@@ -1,6 +1,12 @@
 /** @format */
 
+/**
+ * Constants of ud-viz/Shared
+ */
 module.exports = Object.freeze({
+  /**
+   * Define the type of message of a websocket communication
+   */
   WEBSOCKET: {
     MSG_TYPES: {
       JOIN_WORLD: 'join_world',

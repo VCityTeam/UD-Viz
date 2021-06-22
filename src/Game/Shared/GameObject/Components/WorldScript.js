@@ -2,22 +2,43 @@
 
 const THREE = require('three');
 
+/**
+ * Component used to script a GameObject during the world simulation
+ */
 const WorldScriptModule = class WorldScript {
   constructor(parent, json) {
+    //gameobject of this component
     this.parent = parent;
+
+    //uuid
     this.uuid = json.uuid || THREE.MathUtils.generateUUID();
+
+    //array of worldScripts id
     this.idScripts = json.idScripts || [];
+
+    //type
     this.type = json.type || WorldScriptModule.TYPE;
+
+    //conf pass to scripts
     this.conf = json.conf || {};
 
-    //internal
+    //map of scripts
     this.scripts = {};
   }
 
+  /**
+   *
+   * @returns {JSON}
+   */
   getConf() {
     return this.conf;
   }
 
+  /**
+   * Initialize scripts
+   * @param {AssetsManager} assetsManager must implement an assetsmanager interface can be local or server
+   * @param {Shared} udvShared ud-viz/Game/Shared module
+   */
   initAssets(assetsManager, udvShared) {
     const _this = this;
     this.idScripts.forEach(function (id) {
@@ -26,6 +47,11 @@ const WorldScriptModule = class WorldScript {
     });
   }
 
+  /**
+   * Execute all scripts for a particular event
+   * @param {WorldScript.EVENT} event the event trigger
+   * @param {Array} params parameters pass to scripts
+   */
   execute(event, params) {
     const _this = this;
 
@@ -34,6 +60,13 @@ const WorldScriptModule = class WorldScript {
     });
   }
 
+  /**
+   * Execute script with id for a particular event
+   * @param {String} id id of the script executed
+   * @param {WorldScript.EVENT} event event trigger
+   * @param {Array} params parameters pass to the script function
+   * @returns {Object} result of the script execution
+   */
   executeScript(id, event, params) {
     let s = this.scripts[id];
 
@@ -44,14 +77,26 @@ const WorldScriptModule = class WorldScript {
     }
   }
 
+  /**
+   *
+   * @returns {Object}
+   */
   getScripts() {
     return this.scripts;
   }
 
+  /**
+   * This component can be run on the server side
+   * @returns {Boolean}
+   */
   isServerSide() {
     return true;
   }
 
+  /**
+   * Compute this to JSON
+   * @returns {JSON}
+   */
   toJSON() {
     return {
       uuid: this.uuid,
@@ -63,6 +108,7 @@ const WorldScriptModule = class WorldScript {
 };
 
 WorldScriptModule.TYPE = 'WorldScript';
+
 WorldScriptModule.EVENT = {
   INIT: 'init', //when added
   TICK: 'tick', //every tick
