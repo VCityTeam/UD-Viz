@@ -320,6 +320,14 @@ const WorldModule = class World {
     return this.uuid;
   }
 
+  /**
+   *
+   * @returns {String}
+   */
+  getName() {
+    return this.name;
+  }
+
   clone() {
     return new World(this.toJSON());
   }
