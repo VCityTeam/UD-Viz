@@ -19,9 +19,14 @@ const WorldModule = class World {
     if (!json) throw new Error('no json');
     options = options || {};
 
-    //collisions system
+    //collisions system of detect-collisions npm package
     this.collisions = new Collisions();
-    this.collisionsBuffer = {}; //to handle onEnter on onExit
+    /**
+     * ON_ENTER_COLLISION: 'onEnterCollision', //first collsion
+     * IS_COLLIDING: 'isColliding', //is colliding
+     * ON_LEAVE_COLLISION: 'onLeaveCollision', //on leave collision
+     */
+    this.collisionsBuffer = {}; //to handle event above
 
     //uuid
     this.uuid = json.uuid || THREE.Math.generateUUID();
@@ -82,7 +87,7 @@ const WorldModule = class World {
   }
 
   /**
-   * Compute all the promises of a gameobject needed at the load event WorldScript
+   * Compute all the promises of a gameobject needed at the load event of WorldScripts
    * @param {GameObject} go the gameobject to compute load promises
    * @param {WorldContext} worldContext this world context
    * @returns {Array[Promise]} An array containing all the promises
@@ -109,6 +114,18 @@ const WorldModule = class World {
     return promises;
   }
 
+  /**
+   * Add a GameObject into this world
+   * Init Assets components
+   * Load GameObject
+   * Init when loaded
+   * Register into the collision system
+   * Then call a callback onLoad
+   * @param {GameObject} gameObject the gameobject to add
+   * @param {WorldContext} worldContext this world context
+   * @param {GameObject} parent the gameobject parent may be null
+   * @param {Function} onLoad callback called when loaded
+   */
   addGameObject(gameObject, worldContext, parent, onLoad = null) {
     const _this = this;
 
@@ -144,6 +161,10 @@ const WorldModule = class World {
     );
   }
 
+  /**
+   * Add a gameobject into the collision system
+   * @param {GameObject} go the gameobject to register
+   */
   registerGOCollision(go) {
     const _this = this;
 
@@ -163,6 +184,9 @@ const WorldModule = class World {
     });
   }
 
+  /**
+   * Check gameobject transform and update this.collisionsBuffer
+   */
   updateCollisionBuffer() {
     //collisions
     const collisions = this.collisions;
@@ -195,6 +219,10 @@ const WorldModule = class World {
     });
   }
 
+  /**
+   * Remove a GameObject from the collision system
+   * @param {GameObject} go the gameobject to remove
+   */
   unregisterGOCollision(go) {
     const _this = this;
 
@@ -216,6 +244,10 @@ const WorldModule = class World {
     });
   }
 
+  /**
+   * Remove a gameobject from this world
+   * @param {String} uuid the uuid of the gameobject to remove
+   */
   removeGameObject(uuid) {
     console.log(uuid + ' remove from ', this.name);
     const go = this.gameObject.find(uuid);
@@ -224,6 +256,10 @@ const WorldModule = class World {
     this.unregisterGOCollision(go);
   }
 
+  /**
+   * Simulate one step of the world simulation
+   * @param {WorldContext} worldContext
+   */
   tick(worldContext) {
     const _this = this;
 
@@ -298,6 +334,10 @@ const WorldModule = class World {
     });
   }
 
+  /**
+   * Return the current world state
+   * @returns {WorldState}
+   */
   computeWorldState() {
     const result = new WorldState({
       gameObject: this.gameObject.toJSON(true),
@@ -308,22 +348,42 @@ const WorldModule = class World {
     return result;
   }
 
+  /**
+   *
+   * @returns {GameObject}
+   */
   getGameObject() {
     return this.gameObject;
   }
 
+  /**
+   * Return the collision system
+   * @returns {Collisions}
+   */
   getCollisions() {
     return this.collisions;
   }
 
+  /**
+   * Return the uuid of this world
+   * @returns {String}
+   */
   getUUID() {
     return this.uuid;
   }
 
+  /**
+   * Return a clone of this
+   * @returns {World}
+   */
   clone() {
     return new World(this.toJSON());
   }
 
+  /**
+   * Compute this to JSON
+   * @returns {JSON}
+   */
   toJSON() {
     return {
       gameObject: this.gameObject.toJSON(true),
