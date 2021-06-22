@@ -1,0 +1,37 @@
+/** @format */
+
+html {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  overflow: hidden;
+  height: 100%;
+}
+
+canvas {
+  display: block;
+}
+
+#css_View3D,
+#webgl_View3D {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+}
+
+#itowns_View3D {
+  margin: auto;
+  height: 100%;
+  width: 100%;
+  padding: 0;
+}
+
+.ui_View3D {
+  background-color: white;
+  position: absolute;
+  z-index: 2;
+}

@@ -11,18 +11,24 @@ const THREE = require('three');
 const WorldState = require('./WorldState');
 const { Collisions } = require('detect-collisions');
 
+/**
+ * Parent Object of GameObjects, handle simulation and store extradata like the geographic origin
+ */
 const WorldModule = class World {
   constructor(json, options) {
     if (!json) throw new Error('no json');
     options = options || {};
 
-    //collisions system
+    //collisions system of detect-collisions npm package
     this.collisions = new Collisions();
-    this.collisionsBuffer = {}; //to handle onEnter on onExit
+    /**
+     * ON_ENTER_COLLISION: 'onEnterCollision', //first collsion
+     * IS_COLLIDING: 'isColliding', //is colliding
+     * ON_LEAVE_COLLISION: 'onLeaveCollision', //on leave collision
+     */
+    this.collisionsBuffer = {}; //to handle event above
 
-    /******************DATA***************************/
-
-    //id
+    //uuid
     this.uuid = json.uuid || THREE.Math.generateUUID();
 
     //gameobject
@@ -36,7 +42,7 @@ const WorldModule = class World {
     this.name = json.name || 'default_world';
 
     //origin
-    this.origin = json.origin || { lat: 0, lng: 0 };
+    this.origin = json.origin || { lat: 0, lng: 0, alt: 0 };
 
     /******************INTERNAL***********************/
 
@@ -46,32 +52,50 @@ const WorldModule = class World {
     this.listeners = {};
   }
 
-  //custom event
+  /**
+   * Register a custom event
+   * @param {String} eventID id of the event
+   * @param {Function} cb callback to be called when the event is dispatched
+   */
   on(eventID, cb) {
     if (!this.listeners[eventID]) this.listeners[eventID] = [];
     this.listeners[eventID].push(cb);
   }
 
+  /**
+   * Notify that a custom event occured
+   * @param {String} eventID id of the event to dispatch
+   * @param {Array} params params to passed to callbacks
+   */
   notify(eventID, params) {
     if (!this.listeners[eventID]) {
       console.warn('no listener on event ', eventID);
-      return;
+    } else {
+      this.listeners[eventID].forEach(function (cb) {
+        cb(params);
+      });
     }
-
-    this.listeners[eventID].forEach(function (cb) {
-      cb(params);
-    });
   }
 
-  load(onLoad, gCtx) {
-    //load gameobject
-    this.addGameObject(this.gameObject, gCtx, null, onLoad);
+  /**
+   * Load its gameobject
+   * @param {Function} onLoad callback called at the end of the load
+   * @param {WorldContext} worldContext this world context
+   */
+  load(onLoad, worldContext) {
+    this.addGameObject(this.gameObject, worldContext, null, onLoad);
   }
 
-  computePromisesLoad(go, gCtx) {
+  /**
+   * Compute all the promises of a gameobject needed at the load event of WorldScripts
+   * @param {GameObject} go the gameobject to compute load promises
+   * @param {WorldContext} worldContext this world context
+   * @returns {Array[Promise]} An array containing all the promises
+   */
+  computePromisesLoad(go, worldContext) {
     //load GameObject
     const promises = [];
-    let params = [gCtx, this.isServerSide, this.modules];
+    let params = [worldContext, this.isServerSide, this.modules];
 
     go.traverse(function (g) {
       const scriptC = g.getComponent(WorldScriptComponent.TYPE);
@@ -90,39 +114,57 @@ const WorldModule = class World {
     return promises;
   }
 
-  addGameObject(gameObject, gCtx, parent, onLoad = null) {
+  /**
+   * Add a GameObject into this world
+   * Init Assets components
+   * Load GameObject
+   * Init when loaded
+   * Register into the collision system
+   * Then call a callback onLoad
+   * @param {GameObject} gameObject the gameobject to add
+   * @param {WorldContext} worldContext this world context
+   * @param {GameObject} parent the gameobject parent may be null
+   * @param {Function} onLoad callback called when loaded
+   */
+  addGameObject(gameObject, worldContext, parent, onLoad = null) {
     const _this = this;
 
     gameObject.initAssetsComponents(
-      gCtx.assetsManager,
-      gCtx.UDVShared,
+      worldContext.getAssetsManager(),
+      worldContext.getSharedModule(),
       _this.isServerSide
     );
 
-    Promise.all(this.computePromisesLoad(gameObject, gCtx)).then(function () {
-      if (parent) {
-        parent.addChild(gameObject);
-      } else {
-        _this.gameObject = gameObject;
+    Promise.all(this.computePromisesLoad(gameObject, worldContext)).then(
+      function () {
+        if (parent) {
+          parent.addChild(gameObject);
+        } else {
+          _this.gameObject = gameObject;
+        }
+
+        //TODO init can be trigger several time FIXME maybe with a flag in worldscript component
+        gameObject.traverse(function (g) {
+          g.executeWorldScripts(WorldScriptComponent.EVENT.INIT, [worldContext]);
+        });
+
+        _this.registerGOCollision(gameObject);
+
+        console.log(
+          gameObject.name,
+          gameObject.getUUID() + ' loaded in ',
+          _this.name
+        );
+
+        if (onLoad) onLoad();
       }
-
-      //TODO init can be trigger several time FIXME maybe with a flag in worldscript component
-      gameObject.traverse(function (g) {
-        g.executeScripts(WorldScriptComponent.EVENT.INIT, [gCtx]);
-      });
-
-      _this.registerGOCollision(gameObject);
-
-      console.log(
-        gameObject.name,
-        gameObject.getUUID() + ' loaded in ',
-        _this.name
-      );
-
-      if (onLoad) onLoad();
-    });
+    );
   }
 
+  /**
+   * Add a gameobject into the collision system
+   * @param {GameObject} go the gameobject to register
+   */
   registerGOCollision(go) {
     const _this = this;
 
@@ -142,6 +184,9 @@ const WorldModule = class World {
     });
   }
 
+  /**
+   * Check gameobject transform and update this.collisionsBuffer
+   */
   updateCollisionBuffer() {
     //collisions
     const collisions = this.collisions;
@@ -174,6 +219,10 @@ const WorldModule = class World {
     });
   }
 
+  /**
+   * Remove a GameObject from the collision system
+   * @param {GameObject} go the gameobject to remove
+   */
   unregisterGOCollision(go) {
     const _this = this;
 
@@ -195,6 +244,10 @@ const WorldModule = class World {
     });
   }
 
+  /**
+   * Remove a gameobject from this world
+   * @param {String} uuid the uuid of the gameobject to remove
+   */
   removeGameObject(uuid) {
     console.log(uuid + ' remove from ', this.name);
     const go = this.gameObject.find(uuid);
@@ -203,12 +256,16 @@ const WorldModule = class World {
     this.unregisterGOCollision(go);
   }
 
-  tick(gCtx) {
+  /**
+   * Simulate one step of the world simulation
+   * @param {WorldContext} worldContext
+   */
+  tick(worldContext) {
     const _this = this;
 
     //Tick GameObject
     this.gameObject.traverse(function (g) {
-      g.executeScripts(WorldScriptComponent.EVENT.TICK, [gCtx]);
+      g.executeWorldScripts(WorldScriptComponent.EVENT.TICK, [worldContext]);
     });
 
     //collisions
@@ -241,18 +298,18 @@ const WorldModule = class World {
               if (buffer.includes(potentialG.getUUID())) {
                 //already collided
                 g.traverse(function (child) {
-                  child.executeScripts(
+                  child.executeWorldScripts(
                     WorldScriptComponent.EVENT.IS_COLLIDING,
-                    [result, gCtx]
+                    [result, worldContext]
                   );
                 });
               } else {
                 //onEnter
                 buffer.push(potentialG.getUUID()); //register in buffer
                 g.traverse(function (child) {
-                  child.executeScripts(
+                  child.executeWorldScripts(
                     WorldScriptComponent.EVENT.ON_ENTER_COLLISION,
-                    [result, gCtx]
+                    [result, worldContext]
                   );
                 });
               }
@@ -265,9 +322,9 @@ const WorldModule = class World {
           const uuid = buffer[i];
           if (!collidedGO.includes(uuid)) {
             g.traverse(function (child) {
-              child.executeScripts(
+              child.executeWorldScripts(
                 WorldScriptComponent.EVENT.ON_LEAVE_COLLISION,
-                [gCtx]
+                [worldContext]
               );
             });
             buffer.splice(i, 1); //remove from buffer
@@ -277,35 +334,56 @@ const WorldModule = class World {
     });
   }
 
+  /**
+   * Return the current world state
+   * @returns {WorldState}
+   */
   computeWorldState() {
     const result = new WorldState({
-      gameObject: null,
+      gameObject: this.gameObject.toJSON(true),
       timestamp: Date.now(),
       origin: this.origin,
     });
 
-    //share same gameobject to avoid gameobject.toJSON then instanciate a new one
-    result.setGameObject(this.gameObject);
-
     return result;
   }
 
+  /**
+   *
+   * @returns {GameObject}
+   */
   getGameObject() {
     return this.gameObject;
   }
 
+  /**
+   * Return the collision system
+   * @returns {Collisions}
+   */
   getCollisions() {
     return this.collisions;
   }
 
+  /**
+   * Return the uuid of this world
+   * @returns {String}
+   */
   getUUID() {
     return this.uuid;
   }
 
+  /**
+   * Return a clone of this
+   * @returns {World}
+   */
   clone() {
     return new World(this.toJSON());
   }
 
+  /**
+   * Compute this to JSON
+   * @returns {JSON}
+   */
   toJSON() {
     return {
       gameObject: this.gameObject.toJSON(true),

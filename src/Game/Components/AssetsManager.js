@@ -3,11 +3,17 @@
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import * as THREE from 'three';
 import * as jquery from 'jquery';
-import GameObjectModule from '../Shared/GameObject/GameObject';
+import GameObject from '../Shared/GameObject/GameObject';
 const THREEUtils = require('../Shared/Components/THREEUtils');
 
+/**
+ * Default material used by native models
+ */
 const DEFAULT_MATERIAL = new THREE.MeshLambertMaterial({ color: 0x00ff00 });
 
+/**
+ * Give acess to all assets (image, video, script, worlds, ...)
+ */
 export class AssetsManager {
   constructor() {
     this.conf = null;
@@ -17,12 +23,21 @@ export class AssetsManager {
     this.worldScripts = {};
     this.localScripts = {};
     this.models = {};
+    this.worldsJSON = null;
   }
 
+  /**
+   * Return new model corresponding to the id passed
+   * @param {String} idModel id of the model
+   * @returns {THREE.Object3D} new model
+   */
   createModel(idModel) {
     if (!this.models[idModel]) console.error('no model with id ', idModel);
 
+    //clone Object
     const result = this.models[idModel].clone();
+
+    //clone materials as well
     result.traverse(function (child) {
       if (child.material) {
         child.material = child.material.clone();
@@ -33,32 +48,68 @@ export class AssetsManager {
     return result;
   }
 
+  /**
+   * Return worlds loaded
+   * @returns {JSONArray[WorldJSON]} array of worlds
+   */
+  getWorldsJSON() {
+    return this.worldsJSON;
+  }
+
+  /**
+   * Return javascript class with a given id
+   * @param {String} idScript id of the script
+   * @returns {Object} constructor of the class
+   */
   fetchWorldScript(idScript) {
     if (!this.worldScripts[idScript])
       console.error('no world script with id ', idScript);
     return this.worldScripts[idScript];
   }
 
+  /**
+   * Return javascript class with a given id
+   * @param {String} id id of the script
+   * @returns {Object} constructor of the class
+   */
   fetchLocalScript(id) {
     if (!this.localScripts[id]) console.error('no local script with id ', id);
     return this.localScripts[id];
   }
 
-  fetchPrefab(idprefab) {
+  /**
+   * Create a new GameObject base on a prefab json
+   * @param {String} idprefab id of the prefab
+   * @returns {GameObject} the gameobject based on a prefab
+   */
+  createPrefab(idprefab) {
     if (!this.prefabs[idprefab]) console.error('no prefab with id ', idprefab);
-    return new GameObjectModule(this.prefabs[idprefab]);
+    return new GameObject(this.prefabs[idprefab]);
   }
 
+  /**
+   * Return the path of video with a given id
+   * @param {String} idVideo id of the video
+   * @returns {String} path of the video
+   */
   fetchVideoPath(idVideo) {
     if (!this.conf.videos[idVideo]) console.error('no video with id ', idVideo);
     return this.conf.videos[idVideo].path;
   }
 
+  /**
+   * Return a json GameObject with a given id
+   * @param {String} idprefab id of the prefab
+   * @returns {JSON} json gameobject
+   */
   fetchPrefabJSON(idprefab) {
     if (!this.prefabs[idprefab]) console.error('no prefab with id ', idprefab);
     return JSON.parse(JSON.stringify(this.prefabs[idprefab]));
   }
 
+  /**
+   * Build native models (procedural models)
+   */
   buildNativeModel() {
     const geometryBox = new THREE.BoxGeometry();
     const cube = new THREE.Mesh(geometryBox, DEFAULT_MATERIAL);
@@ -72,6 +123,9 @@ export class AssetsManager {
     this.buildPointerMouse();
   }
 
+  /**
+   * Build 'gizmo' native model
+   */
   buildGizmo() {
     const result = new THREE.Object3D();
 
@@ -112,51 +166,9 @@ export class AssetsManager {
     this.models['gizmo'] = result;
   }
 
-  createFrame(w, h) {
-    const buildBox = function (
-      x,
-      y,
-      z,
-      offset,
-      rotation = new THREE.Vector3()
-    ) {
-      const geo = new THREE.BoxGeometry();
-      const result = new THREE.Mesh(geo, DEFAULT_MATERIAL);
-      result.position.add(offset);
-      result.scale.set(x, y, z);
-      result.rotation.setFromVector3(rotation);
-      return result;
-    };
-
-    const frame = new THREE.Object3D();
-    frame.name = 'frame';
-
-    const thickness = 0.1;
-    const depth = 0.05;
-    frame.add(buildBox(w, thickness, depth, new THREE.Vector3(0, h / 2, 0)));
-    frame.add(buildBox(w, thickness, depth, new THREE.Vector3(0, -h / 2, 0)));
-    frame.add(
-      buildBox(
-        h + thickness,
-        thickness,
-        depth,
-        new THREE.Vector3(-w / 2, 0, 0),
-        new THREE.Vector3(0, 0, Math.PI * 0.5)
-      )
-    );
-    frame.add(
-      buildBox(
-        h + thickness,
-        thickness,
-        depth,
-        new THREE.Vector3(w / 2, 0, 0),
-        new THREE.Vector3(0, 0, Math.PI * 0.5)
-      )
-    );
-
-    return frame;
-  }
-
+  /**
+   * Build 'pointer_mouse' native model
+   */
   buildPointerMouse() {
     const geometry = new THREE.CylinderGeometry(0.15, 0, 0.3, 32);
     const cylinder = new THREE.Mesh(geometry, DEFAULT_MATERIAL);
@@ -164,108 +176,17 @@ export class AssetsManager {
     this.models['pointer_mouse'] = cylinder;
   }
 
-  createSprite(label) {
-    const texture = this.createLabelTexture(label, 'rgba(255, 255, 255, 0)');
-    const material = new THREE.SpriteMaterial({
-      map: texture,
-    });
-    material.alphaTest = 0.5;
-    const result = new THREE.Sprite(material);
-    result.scale.set(1, 0.3, 1);
-    return result;
-  }
-
-  createLabelTexture(text, clearColor) {
-    //create texture with name on it
-    const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d');
-
-    ctx.fillStyle = clearColor;
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    ctx.fillStyle = 'black';
-    ctx.font = '50px Arial';
-    const wT = ctx.measureText(text).width;
-    ctx.fillText(text, (canvas.width - wT) * 0.5, canvas.height * 0.5);
-
-    const texture = new THREE.TextureLoader().load(
-      canvas.toDataURL('image/png')
-    );
-    texture.flipY = true;
-    texture.flipX = true;
-
-    return texture;
-  }
-
-  createImage(path, w = 1, h = 1) {
-    const texture = new THREE.TextureLoader().load(path);
-    const material = new THREE.MeshBasicMaterial({ map: texture });
-    const geometry = new THREE.PlaneGeometry(w, h, 32);
-    const plane = new THREE.Mesh(geometry, material);
-
-    const frame = this.createFrame(w, h);
-    frame.add(plane);
-    return frame;
-  }
-
-  //TODO assetManager load video with config a return video with id
-  createVideo(path, w = 1, h = 1, size) {
-    const video = document.createElement('video');
-    video.src = path;
-    video.autoplay = true;
-    video.muted = true;
-    video.load(); // must call after setting/changing source
-    video.play();
-
-    const videoImage = document.createElement('canvas');
-
-    videoImage.width = size.width;
-    videoImage.height = size.height;
-
-    const videoImageContext = videoImage.getContext('2d');
-    videoImageContext.fillStyle = '#000000';
-    videoImageContext.fillRect(0, 0, videoImage.width, videoImage.height);
-
-    const videoTexture = new THREE.Texture(videoImage);
-    videoTexture.minFilter = THREE.LinearFilter;
-    videoTexture.magFilter = THREE.LinearFilter;
-
-    const movieMaterial = new THREE.MeshBasicMaterial({
-      map: videoTexture,
-      side: THREE.DoubleSide,
-    });
-    const movieGeometry = new THREE.PlaneGeometry(w, h);
-    const movieScreen = new THREE.Mesh(movieGeometry, movieMaterial);
-
-    const frame = this.createFrame(w, h);
-    frame.add(movieScreen);
-
-    const tick = function () {
-      if (video.ended) video.play();
-      if (video.readyState === video.HAVE_ENOUGH_DATA) {
-        videoImageContext.drawImage(video, 0, 0);
-        if (videoTexture) videoTexture.needsUpdate = true;
-      }
-    };
-
-    return { frame: frame, tick: tick };
-  }
-
-  createText(text, w = 1, h = 1) {
-    const texture = this.createLabelTexture(text, 'rgba(255, 255, 255, 255)');
-    const material = new THREE.MeshBasicMaterial({ map: texture });
-    const geometry = new THREE.PlaneGeometry(w, h, 32);
-    const plane = new THREE.Mesh(geometry, material);
-    const frame = this.createFrame(w, h);
-    frame.add(plane);
-    return frame;
-  }
-
+  /**
+   * Parse model imported according its metadata
+   * @param {String} id id of the model
+   * @param {THREE.Object3D} obj the object parsed
+   * @param {JSON} modelData metadata
+   */
   parse(id, obj, modelData) {
     const anchor = modelData.anchor;
     const scale = modelData.scale;
     const rotation = modelData.rotation;
-    const noShadow = modelData.noShadow || false;
+    const noShadow = modelData.noShadow || false; //WIP
 
     //rotation
     const quatYUP2ZUP = new THREE.Quaternion().setFromEuler(
@@ -273,6 +194,7 @@ export class AssetsManager {
     );
     obj.applyQuaternion(quatYUP2ZUP);
 
+    //anchor point
     const bbox = new THREE.Box3().setFromObject(obj);
     const parent = new THREE.Object3D();
     switch (anchor) {
@@ -311,6 +233,7 @@ export class AssetsManager {
       obj.scale.copy(newScale);
     }
 
+    //rotation
     if (rotation) {
       const newRotation = obj.rotation;
       newRotation.x += rotation.x;
@@ -328,6 +251,7 @@ export class AssetsManager {
       }
       if (child.material && child.material.map) {
         child.material.map.encoding = THREEUtils.textureEncoding;
+        child.material.side = THREE.FrontSide;
         child.material.needsUpdate = true;
       }
     });
@@ -337,6 +261,11 @@ export class AssetsManager {
     this.models[id] = parent;
   }
 
+  /**
+   * Load from a server assets described in a config file
+   * @param {JSON} config config file
+   * @returns {Array[Promises]} all the promises processed to load assets
+   */
   loadFromConfig(config) {
     this.conf = config;
 
@@ -426,12 +355,51 @@ export class AssetsManager {
         );
       }
     });
+    const worldsPromise = new Promise((resolve, reject) => {
+      if (config.worlds) {
+        jquery.get(
+          config.worlds.path,
+          function (worldsString) {
+            _this.worldsJSON = JSON.parse(worldsString);
+            console.log('worlds loaded ', _this.worldsJSON);
+            resolve();
+          },
+          'text'
+        );
+      } else {
+        resolve();
+      }
+    });
+    const cssPromise = new Promise((resolve, reject) => {
+      let count = 0;
+      for (let idCss in config.css) {
+        const cssPath = config.css[idCss].path;
+        jquery.get(
+          cssPath,
+          function (cssString) {
+            const styleSheet = document.createElement('style');
+            styleSheet.type = 'text/css';
+            styleSheet.innerText = cssString;
+            document.head.appendChild(styleSheet);
+            //check if finish
+            count++;
+            if (count == Object.keys(config.css).length) {
+              console.log('css loaded');
+              resolve();
+            }
+          },
+          'text'
+        );
+      }
+    });
 
     const promises = [];
     if (config.models) promises.push(modelPromise);
     if (config.prefabs) promises.push(prefabsPromise);
     if (config.worldScripts) promises.push(worldScriptsPromise);
     if (config.localScripts) promises.push(localScriptsPromise);
+    if (config.worlds) promises.push(worldsPromise);
+    if (config.css) promises.push(cssPromise);
 
     return Promise.all(promises);
   }

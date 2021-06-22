@@ -1,12 +1,12 @@
 /** @format */
 
 //Components
-import { ModuleView } from '../../Components/ModuleView/ModuleView';
+import { ModuleView } from '../Components/ModuleView/ModuleView';
 import { RequestService } from '../../Components/Request/RequestService';
 
 import './GuidedTour.css';
 import { GuidedTour } from './GuidedTour.js';
-import { DocumentModule } from '../Documents/DocumentModule';
+import { DocumentModule } from '../Documents/DocumentModule';//TODO should be a components
 
 /**
  * Class: GuidedTourController

@@ -7,8 +7,8 @@ import { DocumentVisualizerWindow } from '../../../DocumentVisualizer/View/Docum
 import { AbstractDocumentWindow } from '../../../Documents/View/AbstractDocumentWindow';
 
 //Components
-import { Window } from '../../../../Components/GUI/js/Window';
-import { PositionerWindow } from '../../../../Components/Camera/PositionerWindow';
+import { Window } from '../../../Components/GUI/js/Window';
+import { PositionerWindow } from '../../../Components/Camera/PositionerWindow';
 
 import { ContributeService } from '../Service/ContributeService';
 

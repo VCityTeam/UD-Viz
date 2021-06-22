@@ -1,9 +1,9 @@
 /** @format */
 
 //Components
-import { CityObject } from '../../../Components/3DTiles/Model/CityObject';
-import { EventSender } from '../../../Components/Events/EventSender';
-import { CityObjectStyle } from '../../../Components/3DTiles/Model/CityObjectStyle';
+import { CityObject } from '../../Components/3DTiles/Model/CityObject';
+import { EventSender } from '../../Components/Events/EventSender';
+import { CityObjectStyle } from '../../Components/3DTiles/Model/CityObjectStyle';
 
 import { LinkService } from '../Model/LinkService';
 import { DocumentProvider } from '../../Documents/ViewModel/DocumentProvider';
