@@ -132,7 +132,7 @@ class ShapeWrapper {
       default:
     }
 
-    //ref private to access this wrapper from shape collision (with event bad perf?)
+    //add a getter to the gameObject
     this.shape.getGameObject = this.getGameObject.bind(this);
   }
 }

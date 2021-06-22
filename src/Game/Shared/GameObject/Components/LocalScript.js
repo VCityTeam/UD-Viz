@@ -6,7 +6,7 @@ const JSONUtils = require('../../../../Components/SystemUtils/JSONUtils');
 //TODO pass ud-viz as parameter to localscript and not only Shared
 
 /**
- * Component used to script a GameObject during the client side update
+ * Component used to script a GameObject during the client side update (call from GameView)
  */
 const LocalScriptModule = class LocalScript {
   constructor(parent, json) {
@@ -14,7 +14,7 @@ const LocalScriptModule = class LocalScript {
     this.parent = parent;
 
     //uuid
-    this.uuid = jsopn.uuid || THREE.MathUtils.generateUUID();
+    this.uuid = json.uuid || THREE.MathUtils.generateUUID();
 
     //array of localscripts id
     this.idScripts = json.idScripts || [];
