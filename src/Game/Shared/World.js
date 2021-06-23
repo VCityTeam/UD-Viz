@@ -373,6 +373,14 @@ const WorldModule = class World {
   }
 
   /**
+   *
+   * @returns {String}
+   */
+  getName() {
+    return this.name;
+  }
+
+  /**
    * Return a clone of this
    * @returns {World}
    */
