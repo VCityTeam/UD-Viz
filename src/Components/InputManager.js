@@ -68,6 +68,8 @@ export class InputManager {
     window.addEventListener(eventID, function (event) {
       if (key == event.key && !_this.pause) cb();
     });
+    //register to dispose it
+    this.listeners.push({ element: window, cb: cb, id: eventID });
   }
 
   /**
@@ -104,6 +106,23 @@ export class InputManager {
    */
   addMouseCommand(eventID, cb) {
     this.mouseCommands[eventID] = cb;
+  }
+
+  /**
+   * Register a callback for a particular mouse event
+   * @param {HTMLElement} element element listened
+   * @param {String} eventID id of the event (mousedown, mouseup, mousemove)
+   * @param {Function} cb callback called for this event
+   */
+  addMouseInput(element, eventID, cb) {
+    const _this = this;
+    element.addEventListener(eventID, function (event) {
+      if (!_this.pause) {
+        cb(event);
+      }
+    });
+    //register to dispose it
+    this.listeners.push({ element: element, cb: cb, id: eventID });
   }
 
   /**
