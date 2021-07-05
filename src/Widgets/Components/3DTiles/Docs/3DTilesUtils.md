@@ -1,7 +1,7 @@
 This document is about the following files :
 
-* [3DTilesUtils](./3DTilesUtils.js)
-* [3DTilesBuildingUtils](./3DTilesBuildingUtils.js)
+* [3DTilesUtils](../3DTilesUtils.js)
+* [3DTilesBuildingUtils](../3DTilesBuildingUtils.js)
 
 # Helper functions for 3DTiles
 
