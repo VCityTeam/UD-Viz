@@ -123,6 +123,10 @@ export class GameView extends View3D {
     setTimeout(this.onResize.bind(this), 1000);
   }
 
+  getObject3D() {
+    return this.object3D;
+  }
+
   /**
    * initialize the scene of the itwons view
    * @param {WorldState} state
@@ -132,6 +136,7 @@ export class GameView extends View3D {
     const [x, y] = proj4.default('EPSG:3946').forward([o.lng, o.lat]);
 
     //add the object3D of the Game
+    //TODO this object should be in World
     this.object3D.position.x = x;
     this.object3D.position.y = y;
     this.object3D.position.z = o.alt;
@@ -272,6 +277,7 @@ export class GameView extends View3D {
 
       //render
       const scene = this.itownsView.scene;
+      scene.updateMatrixWorld();
       const renderer = this.itownsView.mainLoop.gfxEngine.renderer;
       renderer.clearColor();
       renderer.render(scene, this.itownsView.camera.camera3D);

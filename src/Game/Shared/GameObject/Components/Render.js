@@ -120,11 +120,6 @@ const RenderModule = class Render {
     this.object3D = new THREE.Object3D();
     this.object3D.name = 'Render Object3D ' + this.parent.getName();
 
-    //stock data in userData
-    this.object3D.userData = {
-      gameObjectUUID: this.parent.getUUID(),
-    };
-
     //get the 3D model
     if (this.idModel) {
       this.object3D.add(assetsManager.createModel(this.idModel));

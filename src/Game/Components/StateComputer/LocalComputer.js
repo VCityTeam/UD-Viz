@@ -26,6 +26,14 @@ export class LocalComputer {
     this.worldContext.getWorld().load(onLoad, this.worldContext);
   }
 
+  /**
+   * 
+   * @returns {WorldContext}
+   */
+  getWorldContext() {
+    return this.worldContext;
+  }
+
   //StateComputer INTERFACE
 
   /**

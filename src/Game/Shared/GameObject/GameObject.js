@@ -37,9 +37,15 @@ const GameObjectModule = class GameObject {
     //name
     this.name = json.name || 'none';
 
-    //transform
-    this.transform = new THREEUtils.Transform();
-    this.transform.setFromJSON(json.transform);
+    //default object3d where transform is stored
+    this.object3D = new THREE.Object3D();
+    this.object3D.name = this.name + '_object3D';
+    this.object3D.rotation.reorder('ZXY');
+    //stock data in userData
+    this.object3D.userData = {
+      gameObjectUUID: this.getUUID(),
+    };
+    this.setFromTransformJSON(json.transform);
 
     /**
      * true mean the object is not supposed to move during the game
@@ -66,14 +72,6 @@ const GameObjectModule = class GameObject {
 
     //assets has been initialized
     this.initialized = false;
-
-    //default object3d
-    this.object3D = new THREE.Object3D();
-    this.object3D.name = this.name + '_object3D';
-
-    //euler buffer
-    //to avoid new THREE.Euler on computeObject3D and keep Transform.rotation as a THREE.Vector3
-    this.eulerBuffer = new THREE.Euler(0, 0, 0, 'ZXY');
   }
 
   /**
@@ -84,7 +82,7 @@ const GameObjectModule = class GameObject {
    */
   updateNoStaticFromGO(go, localContext) {
     //update transform
-    this.setTransform(go.getTransform());
+    this.setTransformFromGO(go);
 
     //update render
     const r = this.getComponent(RenderComponent.TYPE);
@@ -106,13 +104,50 @@ const GameObjectModule = class GameObject {
   }
 
   /**
+   * Bind transform of go into this
+   * @param {GameObject} go 
+   */
+  setTransformFromGO(go) {
+    this.object3D.position.copy(go.object3D.position);
+    this.object3D.scale.copy(go.object3D.scale);
+    this.object3D.rotation.copy(go.object3D.rotation);
+    this.outdated = true;
+  }
+
+  /**
+   * Set transform of object3D from json
+   * @param {JSON} json 
+   */
+  setFromTransformJSON(json) {
+    if (!json) throw new Error('no json');
+
+    if (json.position) {
+      this.object3D.position.fromArray(json.position);
+    } else {
+      this.object3D.position.fromArray([0, 0, 0]);
+    }
+
+    if (json.rotation) {
+      this.object3D.rotation.fromArray(json.rotation);
+    } else {
+      this.object3D.rotation.fromArray([0, 0, 0]);
+    }
+
+    if (json.scale) {
+      this.object3D.scale.fromArray(json.scale);
+    } else {
+      this.object3D.scale.fromArray([0, 0, 0]);
+    }
+  }
+
+  /**
    * Replace data of this with a json object
    * @param {JSON} json
    */
   setFromJSON(json) {
     this.components = {}; //clear
     this.setComponentsFromJSON(json);
-    this.transform.setFromJSON(json.transform);
+    this.setFromTransformJSON(json.transform);
     this.name = json.name;
     this.static = json.static;
 
@@ -164,7 +199,7 @@ const GameObjectModule = class GameObject {
    * @param {THREE.Vector3} vector
    */
   move(vector) {
-    this.transform.getPosition().add(vector);
+    this.object3D.position.add(vector);
     this.outdated = true;
   }
 
@@ -172,7 +207,7 @@ const GameObjectModule = class GameObject {
    * Clamp rotation between 0 => 2*PI
    */
   clampRotation() {
-    const r = this.transform.getRotation();
+    const r = this.object3D.rotation;
     r.x = (Math.PI * 4 + r.x) % (Math.PI * 2);
     r.y = (Math.PI * 4 + r.y) % (Math.PI * 2);
     r.z = (Math.PI * 4 + r.z) % (Math.PI * 2);
@@ -183,7 +218,10 @@ const GameObjectModule = class GameObject {
    * @param {THREE.Vector3} vector
    */
   rotate(vector) {
-    this.transform.getRotation().add(vector);
+    this.object3D.rotateZ(vector.z);
+    this.object3D.rotateX(vector.x);
+    this.object3D.rotateY(vector.y);
+
     this.clampRotation();
     this.outdated = true;
   }
@@ -220,9 +258,8 @@ const GameObjectModule = class GameObject {
    * @returns {THREE.Vector3}
    */
   computeForwardVector() {
-    const r = this.transform.getRotation();
     const quaternion = new THREE.Quaternion().setFromEuler(
-      new THREE.Euler(r.x, r.y, r.z)
+      this.object3D.rotation
     );
     const result = this.getDefaultForward().applyQuaternion(quaternion);
     return result;
@@ -355,33 +392,25 @@ const GameObjectModule = class GameObject {
   }
 
   /**
-   * Compute the object3D of this and bind the transform into it
+   * Compute the object3D
    * @param {Boolean} recursive if true recursive call on children
    * @returns {THREE.Object3D} the object3D of this
    */
   computeObject3D(recursive = true) {
-    const r = this.getComponent(RenderComponent.TYPE);
     const obj = this.object3D;
-    if (r) {
-      this.object3D.add(r.getObject3D());
-    }
 
-    //position
-    obj.position.copy(this.getPosition());
-    //rot
-    const rot = this.getRotation();
-    this.eulerBuffer.x = rot.x;
-    this.eulerBuffer.y = rot.y;
-    this.eulerBuffer.z = rot.z;
-    obj.rotation.copy(this.eulerBuffer);
-    //scale
-    obj.scale.copy(this.getScale());
+    //clear children object
+    obj.children.length = 0;
+
+    const r = this.getComponent(RenderComponent.TYPE);
+    if (r) {
+      obj.add(r.getObject3D());
+    }
 
     //add children if recursive
     if (recursive) {
       this.children.forEach(function (child) {
-        const childObj = child.computeObject3D();
-        if (childObj) obj.add(childObj);
+        obj.add(child.computeObject3D());
       });
     }
 
@@ -506,7 +535,7 @@ const GameObjectModule = class GameObject {
    * @returns {THREE.Vector3}
    */
   getRotation() {
-    return this.transform.getRotation();
+    return this.object3D.rotation;
   }
 
   /**
@@ -514,7 +543,7 @@ const GameObjectModule = class GameObject {
    * @param {THREE.Vector3} vector
    */
   setRotation(vector) {
-    this.transform.getRotation().set(vector.x, vector.y, vector.z);
+    this.object3D.rotation.set(vector.x, vector.y, vector.z);
     this.clampRotation();
     this.outdated = true;
   }
@@ -524,7 +553,7 @@ const GameObjectModule = class GameObject {
    * @param {THREE.Vector3} vector
    */
   setPosition(vector) {
-    this.transform.getPosition().set(vector.x, vector.y, vector.z);
+    this.object3D.position.set(vector.x, vector.y, vector.z);
     this.outdated = true;
   }
 
@@ -533,7 +562,7 @@ const GameObjectModule = class GameObject {
    * @returns {THREE.Vector3}
    */
   getPosition() {
-    return this.transform.getPosition();
+    return this.object3D.position;
   }
 
   /**
@@ -541,7 +570,7 @@ const GameObjectModule = class GameObject {
    * @param {THREE.Vector3} vector
    */
   setScale(vector) {
-    this.transform.getScale().set(vector.x, vector.y, vector.z);
+    this.object3D.scale.set(vector.x, vector.y, vector.z);
     this.outdated = true;
   }
 
@@ -550,7 +579,7 @@ const GameObjectModule = class GameObject {
    * @returns {THREE.Vector3}
    */
   getScale() {
-    return this.transform.getScale();
+    return this.object3D.scale;
   }
 
   /**
@@ -559,23 +588,6 @@ const GameObjectModule = class GameObject {
    */
   getName() {
     return this.name;
-  }
-
-  /**
-   *
-   * @returns {Transform}
-   */
-  getTransform() {
-    return this.transform;
-  }
-
-  /**
-   *
-   * @param {Transform} transform
-   */
-  setTransform(transform) {
-    this.transform = transform;
-    this.outdated = true;
   }
 
   /**
@@ -606,7 +618,11 @@ const GameObjectModule = class GameObject {
       parentUUID: this.parentUUID,
       components: components,
       children: children,
-      transform: this.transform.toJSON(),
+      transform: {
+        position: this.object3D.position.toArray(),
+        rotation: this.object3D.rotation.toArray(),
+        scale: this.object3D.scale.toArray(),
+      },
     };
   }
 };
@@ -621,8 +637,16 @@ GameObjectModule.TYPE = 'GameObject';
  * @returns {GameObject} g1 interpolated
  */
 GameObjectModule.interpolateInPlace = function (g1, g2, ratio) {
-  //modify g1 transform
-  g1.getTransform().lerp(g2.getTransform(), ratio);
+  g1.object3D.position.lerp(g2.object3D.position, ratio);
+  g1.object3D.scale.lerp(g2.object3D.scale, ratio);
+
+  //TODO opti Euler lerp
+  const v1 = g1.object3D.rotation.toVector3();
+  const v2 = g2.object3D.rotation.toVector3();
+
+  v1.lerp(v2, ratio);
+
+  g1.object3D.rotation.setFromVector3(v1);
   return g1;
 };
 

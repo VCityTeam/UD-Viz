@@ -283,6 +283,9 @@ export class View3D {
     this.itownsView.resize = function () {
       //nada
     };
+
+    //start
+    this.inputManager.startListening(this.itownsView.domElement);
   }
 
   /**
