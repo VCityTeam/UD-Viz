@@ -1,23 +1,33 @@
 # @format
-
-branches:
-  only:
-    - master
-
 os: linux
 dist: focal
 language: node_js
 node_js:
   - 15
 
+branches:
+  only:
+    - master
+
+env:
+  - FAILURE_THRESHOLD=9
+  
 before_install:
   - npm --version
 
 install:
   - npm install
+  - npm install --global remark-cli remark-validate-links
 
 jobs:
   include:
-    - stage: travis
-      script:
+    - script:
         - npm run travis
+      name: "CI checks"
+    - script:
+        - remark -u validate-links .
+        - export warnings=`remark -u validate-links UD-Viz 2>&1 | grep warning | grep "Link to unknown" | wc -l` &&
+          if [ $warnings -gt $FAILURE_THRESHOLD ]; then
+            exit 1;
+          fi
+      name: "Markdown link checks" 
