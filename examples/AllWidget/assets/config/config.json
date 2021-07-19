@@ -42,6 +42,13 @@
     "min_y": "5169347.4265999",
     "max_y": "5180575"
   },
+  "temporalModule": {
+    "view": "SLIDERWINDOW",
+    "minTime": 2009,
+    "maxTime": 2015,
+    "currentTime": 2009,
+    "timeStep": 1
+  },
   "projection": "EPSG:3946",
   "background_image_layer": {
     "url": "https://download.data.grandlyon.com/wms/grandlyon",
@@ -71,13 +78,6 @@
       "color": "0xFFFFFF"
     }
   ],
-  "temporalModule": {
-    "view": "SLIDERWINDOW",
-    "minTime": 2009,
-    "maxTime": 2015,
-    "currentTime": 2009,
-    "timeStep": 1
-  },
   "geocoding": {
     "url": "https://nominatim.openstreetmap.org/search",
     "credit": "© OpenStreetMap contributors under <a href=\"https://www.openstreetmap.org/copyright\">ODbL</a>",
