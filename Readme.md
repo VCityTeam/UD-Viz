@@ -46,6 +46,7 @@ npm run build
 cd /
 git clone https://github.com/VCityTeam/UD-SimpleServer
 cd UD-SimpleServer
+npm install
 node index.js PATH_TO_UD-Viz 8000
 ```
 
