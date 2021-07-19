@@ -19,9 +19,10 @@
     "linkModule": true,
     "debug3DTilesWindow": true,
     "cameraPositionerView": true,
-    "LayerChoice": true,
-    "ElevationLayer": true,
-    "Layer3DTiles":true
+    "layerChoice": true,
+    "elevationLayer": true,
+    "Layer3DTiles":true,
+    "basemapLayer":true
   },
   "server": {
     "url": "http://rict.liris.cnrs.fr:1525/",

@@ -43,7 +43,9 @@ export class AllWidget {
 
       // Initialize iTowns 3D view
       _this.init3DView();
-      _this.addBaseMapLayer();
+      if (_this.config.widgets.basemapLayer) {
+        _this.addBaseMapLayer();
+      }
       if (_this.config.widgets.elevationLayer) {
         _this.addElevationLayer();
       }

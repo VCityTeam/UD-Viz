@@ -22,7 +22,8 @@
     "elevationLayer": true,
     "layer3DTiles":true,
     "layerChoice": false,
-    "temporalModule": true
+    "temporalModule": true,
+    "basemapLayer":true
   },
   "extents": {
     "min_x": "1837860.980127206",
