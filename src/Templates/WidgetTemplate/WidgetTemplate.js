@@ -44,10 +44,10 @@ export class WidgetTemplate {
       // Initialize iTowns 3D view
       _this.init3DView();
       _this.addBaseMapLayer();
-      if (_this.config.widgets.ElevationLayer) {
+      if (_this.config.widgets.elevationLayer) {
         _this.addElevationLayer();
       }
-      if (_this.config.widgets.Layer3DTiles) {
+      if (_this.config.widgets.layer3DTiles) {
         _this.setupAndAdd3DTilesLayers();
       }
       _this.update3DView();
@@ -212,6 +212,12 @@ export class WidgetTemplate {
         _this.addModuleView('layerChoice', layerChoice, {
           name: 'layerChoice',
         });
+      }
+
+      ////// TEMPORAL MODULE
+      if (_this.config.widgets.temporalModule) {
+        const temporalModule = new Widgets.TemporalModule(_this.layerManager.tilesManagers[0],_this.config.temporalModule);
+        _this.addModuleView('temporal', temporalModule.view);
       }
     });
   }
