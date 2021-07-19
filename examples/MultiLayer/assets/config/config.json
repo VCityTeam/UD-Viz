@@ -20,9 +20,9 @@
     "debug3DTilesWindow": false,
     "cameraPositionerView": false,
     "layerChoice": true,
-    "elevationLayer": true,
+    "elevationLayer": false,
     "layer3DTiles":true,
-    "basemapLayer":true
+    "basemapLayer":false
   },
   "extents": {
     "min_x": "1837860.980127206",
@@ -54,14 +54,19 @@
   },
   "3DTilesLayers": [
     {
-      "id": "Lyon",
-      "url": "https://dataset-dl.liris.cnrs.fr/three-d-tiles-lyon-metropolis/Lyon_2015-gltf-repaired_TileSet/tileset.json",
+      "id": "Lyon Buildings",
+      "url": "https://dataset-dl.liris.cnrs.fr/three-d-tiles-lyon-metropolis/Lyon1-Lyon2-Lyon5_2015-multi-layers_TileSets/tileset_buildings/tileset.json",
       "color": "0xFFFFFF"
     },
     {
-      "id": "Vallee_chimie",
-      "url": "https://dataset-dl.liris.cnrs.fr/three-d-tiles-lyon-metropolis/Chemistry-Valley_2015_TileSet/tileset.json",
-      "color": "0x808080"
+      "id": "Lyon Relief",
+      "url": "https://dataset-dl.liris.cnrs.fr/three-d-tiles-lyon-metropolis/Lyon1-Lyon2-Lyon5_2015-multi-layers_TileSets/tileset_reliefs/tileset.json",
+      "color": "0x936a4f"
+    },
+    {
+      "id": "Lyon Water",
+      "url": "https://dataset-dl.liris.cnrs.fr/three-d-tiles-lyon-metropolis/Lyon1-Lyon2-Lyon5_2015-multi-layers_TileSets/tileset_water_bodies/tileset.json",
+      "color": "0x007fff"
     }
   ],
   "cityObjects": {
