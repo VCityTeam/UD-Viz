@@ -44,8 +44,12 @@ export class WidgetTemplate {
       // Initialize iTowns 3D view
       _this.init3DView();
       _this.addBaseMapLayer();
-      _this.addElevationLayer();
-      _this.setupAndAdd3DTilesLayer();
+      if (_this.config.widgets.ElevationLayer) {
+        _this.addElevationLayer();
+      }
+      if (_this.config.widgets.Layer3DTiles) {
+        _this.setupAndAdd3DTilesLayers();
+      }
       _this.update3DView();
 
       ////// REQUEST SERVICE
@@ -590,19 +594,10 @@ export class WidgetTemplate {
    * UD-Viz/UD-Viz-Core/examples/data/config/generalDemoConfig.json
    * config file).
    */
-  setup3DTilesLayer() {
-    //  ADD 3D Tiles Layer
-
-    // Positional arguments verification
-    if (!this.config['3DTilesLayer']) {
-      throw (
-        'Your layer is not one of the properties of 3DTilesLayer object ' +
-        '(in UD-Viz/UD-Viz-Core/examples/data/config/generalDemoConfig.json).'
-      );
-    }
+  setup3DTilesLayer(layer) {
     if (
-      !this.config['3DTilesLayer']['id'] ||
-      !this.config['3DTilesLayer']['url']
+      !layer['id'] ||
+      !layer['url']
     ) {
       throw (
         'Your layer does not have url id properties or both. ' +
@@ -610,7 +605,7 @@ export class WidgetTemplate {
       );
     }
 
-    const extensionsConfig = this.config['3DTilesLayer']['extensions'];
+    const extensionsConfig = layer['extensions'];
     let extensions = new itowns.C3DTExtensions();
     if (extensionsConfig) {
       for (let i = 0; i < extensionsConfig.length; i++) {
@@ -638,11 +633,11 @@ export class WidgetTemplate {
     }
 
     var $3dTilesLayer = new itowns.C3DTilesLayer(
-      this.config['3DTilesLayer']['id'],
+      layer['id'],
       {
-        name: 'Lyon-2015-'.concat(this.config['3DTilesLayer']['id']),
+        name: 'Lyon-2015-'.concat(layer['id']),
         source: new itowns.C3DTilesSource({
-          url: this.config['3DTilesLayer']['url'],
+          url: layer['url'],
         }),
         registeredExtensions: extensions,
       },
@@ -650,16 +645,16 @@ export class WidgetTemplate {
     );
 
     let material;
-    if (this.config['3DTilesLayer']['pc_size']) {
+    if (layer['pc_size']) {
       material = new THREE.PointsMaterial({
-        size: this.config['3DTilesLayer']['pc_size'],
+        size: layer['pc_size'],
         vertexColors: true,
       });
-    } else if (!this.config['3DTilesLayer']['color']) {
+    } else if (!layer['color']) {
       material = new THREE.MeshLambertMaterial({ color: 0xffffff });
     } else {
       material = new THREE.MeshLambertMaterial({
-        color: parseInt(this.config['3DTilesLayer']['color']),
+        color: parseInt(layer['color']),
       });
     }
 
@@ -692,9 +687,17 @@ export class WidgetTemplate {
    * UD-Viz/UD-Viz-Core/examples/data/config/generalDemoConfig.json
    * config file).
    */
-  setupAndAdd3DTilesLayer() {
-    const [$3DTilesLayer] = this.setup3DTilesLayer();
-    this.add3DTilesLayer($3DTilesLayer);
+  setupAndAdd3DTilesLayers() {
+    // Positional arguments verification
+    if (!this.config['3DTilesLayers']) {
+      throw (
+        'No 3DTilesLayers field in the configuration file' 
+      );
+    }
+    for (let layer of this.config['3DTilesLayers']){
+      const [$3DTilesLayer] = this.setup3DTilesLayer(layer);
+      this.add3DTilesLayer($3DTilesLayer);
+    }
   }
 
   /**
