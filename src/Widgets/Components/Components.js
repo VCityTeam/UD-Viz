@@ -6,4 +6,5 @@ export { TilesManager } from './3DTiles/TilesManager.js';
 
 export { LayerManager } from './LayerManager/LayerManager.js';
 
-export { Window } from './GUI/js/Window.js';
+import * as GUI from './GUI/GUI.js';
+export { GUI };
