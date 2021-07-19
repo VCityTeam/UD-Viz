@@ -381,7 +381,7 @@ export class StyleManager {
       this.styleTable[cityObjectId.tileId][cityObjectId.batchId]);
   }
 
-    /**
+  /**
    * Gets the style identifier applied to a given object ID.
    * 
    * @param {CityObjectID} cityObjectId The city object ID.
