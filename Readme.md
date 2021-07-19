@@ -38,6 +38,20 @@ cd UD-Viz
 npm install
 ```
 
+### Try examples 
+
+```bash
+cd PATH_TO_UD-Viz
+npm run build
+cd /
+git clone https://github.com/VCityTeam/UD-SimpleServer
+cd UD-SimpleServer
+node index.js PATH_TO_UD-Viz 8000
+```
+
+Visit http://localhost:8000/ and try examples
+
+
 ## Setup of the coding environment
 
 Installing [Visual Studio Code](https://code.visualstudio.com/) is recommended, in order to use the plugin formatter [Prettier](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode). Once installed you should setup Prettier with single quote coding style (Preferences => Settings => Type in search bar : Single quote => Toggle single quote of Prettier extension)
