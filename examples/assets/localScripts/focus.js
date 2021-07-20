@@ -2,7 +2,7 @@
 
 let Shared = null;
 
-const CAMERA_ANGLE = Math.PI /6;
+const CAMERA_ANGLE = Math.PI / 6;
 
 module.exports = class Focus {
   constructor(conf, SharedModule) {
@@ -16,6 +16,16 @@ module.exports = class Focus {
     this.quaternionAngle = new Shared.THREE.Quaternion().setFromEuler(
       new Shared.THREE.Euler(-CAMERA_ANGLE, 0, 0)
     );
+
+    this.distance = 150;
+  }
+
+  init() {
+    const _this = this;
+    window.addEventListener('wheel', function (event) {
+      _this.distance += event.wheelDelta * 0.1;
+      _this.distance = Math.max(Math.min(_this.distance, 500), 0);
+    });
   }
 
   tick() {
@@ -37,7 +47,7 @@ module.exports = class Focus {
       .applyQuaternion(this.quaternionAngle)
       .applyQuaternion(quaternion);
 
-    position.sub(dir.setLength(150));
+    position.sub(dir.setLength(this.distance));
     quaternion.multiply(this.quaternionCam);
     quaternion.multiply(this.quaternionAngle);
 
