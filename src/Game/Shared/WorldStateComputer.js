@@ -20,10 +20,19 @@ module.exports = class WorldStateComputer {
     this.onAfterTick = null;
   }
 
+  /**
+   * Add a callback call at after each tick
+   * @param {Function} cb
+   */
   setOnAfterTick(cb) {
     this.onAfterTick = cb;
   }
 
+  /**
+   * Init worldcontext and start ticking
+   * @param {World} world world to tick
+   * @param {Function} onLoad call at the end of world load
+   */
   onInit(world, onLoad) {
     const wC = this.worldContext;
     const _this = this;
@@ -57,6 +66,10 @@ module.exports = class WorldStateComputer {
     }, this.worldContext);
   }
 
+  /**
+   * Pass commands for the next tick
+   * @param {Array[Command]} cmds
+   */
   onCommands(cmds) {
     const a = this.worldContext.getCommands();
     cmds.forEach(function (cmd) {
@@ -64,6 +77,11 @@ module.exports = class WorldStateComputer {
     });
   }
 
+  /**
+   * Add a new GameObject to the world and call onAdd when object is loaded
+   * @param {GameObject} newGO
+   * @param {Function} onAdd
+   */
   onAddGameObject(newGO, onAdd) {
     this.worldContext
       .getWorld()
@@ -75,6 +93,10 @@ module.exports = class WorldStateComputer {
       );
   }
 
+  /**
+   * Remove the GameObject with the uuid
+   * @param {String} uuid
+   */
   onRemoveGameObject(uuid) {
     this.worldContext.getWorld().removeGameObject(uuid);
   }
