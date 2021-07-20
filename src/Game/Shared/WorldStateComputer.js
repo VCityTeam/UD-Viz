@@ -2,6 +2,8 @@
 
 const WorldContext = require('./WorldContext');
 
+//TODO make a stop function to stop setInterval
+
 /**
  * StateComputer working locally
  */
