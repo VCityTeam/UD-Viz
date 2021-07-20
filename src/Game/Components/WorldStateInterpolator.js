@@ -1,5 +1,5 @@
 /** @format */
-import WorldState from '../../Shared/WorldState';
+import WorldState from '../Shared/WorldState';
 
 /**
  * StateComputer working with a distant server
