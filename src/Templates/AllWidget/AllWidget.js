@@ -42,7 +42,7 @@ export class AllWidget {
       _this.addLogos();
 
       // Initialize iTowns 3D view
-      _this.init3DView();
+      _this.init3DView(_this.config.widgets.worldMap);
       if (_this.config.widgets.basemapLayer) {
         _this.addBaseMapLayer();
       }
@@ -711,7 +711,7 @@ export class AllWidget {
   /**
    * Initializes the iTowns 3D view according the config.
    */
-  init3DView() {
+  init3DView(worldMap) {
     // ********* INIT ITOWNS VIEW
     // Define projection used in iTowns viewer (taken from
     // https://epsg.io/3946, Proj4js section)
@@ -756,8 +756,12 @@ export class AllWidget {
     // Instantiate PlanarView (iTowns' view that will hold the layers)
     // The skirt allows to remove the cracks between the terrain tiles
     // Instantiate controls within PlanarView
+    let maxSubdivisionLevel = 3;
+    if(worldMap) maxSubdivisionLevel = 18;
+
     this.view = new itowns.PlanarView(viewerDiv, this.extent, {
       disableSkirt: false,
+      maxSubdivisionLevel: maxSubdivisionLevel,
       controls: {
         maxZenithAngle: 180,
         groundLevel: -100,
