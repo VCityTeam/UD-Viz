@@ -2,7 +2,7 @@
 
 let Shared = null;
 
-const CAMERA_ANGLE = Math.PI /5;
+const CAMERA_ANGLE = Math.PI /6;
 
 module.exports = class Focus {
   constructor(conf, SharedModule) {
@@ -37,7 +37,7 @@ module.exports = class Focus {
       .applyQuaternion(this.quaternionAngle)
       .applyQuaternion(quaternion);
 
-    position.sub(dir.setLength(50));
+    position.sub(dir.setLength(150));
     quaternion.multiply(this.quaternionCam);
     quaternion.multiply(this.quaternionAngle);
 

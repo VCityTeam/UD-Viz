@@ -9,16 +9,6 @@ import { InputManager } from '../../Components/InputManager';
 
 import * as proj4 from 'proj4';
 
-// Define EPSG:3946 projection which is the projection used in the 3D view
-// (planarView of iTowns). It is indeed needed
-// to convert the coordinates received from the world server
-// to this coordinate system.
-proj4.default.defs(
-  'EPSG:3946',
-  '+proj=lcc +lat_1=45.25 +lat_2=46.75' +
-    ' +lat_0=46 +lon_0=3 +x_0=1700000 +y_0=5200000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs'
-);
-
 /**
  *  Main view of an ud-viz application
  */
@@ -61,6 +51,14 @@ export class View3D {
 
     //conf
     this.config = params.config || {};
+
+    //projection
+    this.projection = this.config['projection'] || 'EPSG:3946';
+    proj4.default.defs(
+      this.projection,
+      '+proj=lcc +lat_1=45.25 +lat_2=46.75' +
+        ' +lat_0=46 +lon_0=3 +x_0=1700000 +y_0=5200000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs'
+    );
 
     //itowns view
     this.itownsView = null;
@@ -279,6 +277,11 @@ export class View3D {
       noControls: !this.itownsControls,
     });
 
+    //City generation
+    this.addBaseMapLayer();
+    this.addElevationLayer();
+    this.add3DTilesLayer();
+
     //TODO parler a itowns remove listener of the resize
     this.itownsView.debugResize = this.itownsView.resize;
     this.itownsView.resize = function () {
@@ -287,6 +290,86 @@ export class View3D {
 
     //start
     this.inputManager.startListening(this.itownsView.domElement);
+  }
+
+  /**
+   * Adds WMS elevation Layer of Lyon in 2012 and WMS imagery layer of Lyon in 2009 (from Grand Lyon data).
+   */
+  addBaseMapLayer() {
+    if (!this.config['background_image_layer']) {
+      console.warn('no background_image_layer in config');
+      return;
+    }
+    let wmsImagerySource = new itowns.WMSSource({
+      extent: this.extent,
+      name: this.config['background_image_layer']['name'],
+      url: this.config['background_image_layer']['url'],
+      version: this.config['background_image_layer']['version'],
+      projection: this.projection,
+      format: this.config['background_image_layer']['format'],
+    });
+
+    // Add a WMS imagery layer
+    let wmsImageryLayer = new itowns.ColorLayer(
+      this.config['background_image_layer']['layer_name'],
+      {
+        updateStrategy: {
+          type: itowns.STRATEGY_DICHOTOMY,
+          options: {},
+        },
+        source: wmsImagerySource,
+        transparent: true,
+      }
+    );
+    this.itownsView.addLayer(wmsImageryLayer);
+  }
+
+  addElevationLayer() {
+    if (!this.config['elevation_layer']) {
+      console.warn('no elevation_layer in config');
+      return;
+    }
+
+    // Add a WMS elevation source
+    let wmsElevationSource = new itowns.WMSSource({
+      extent: this.extent,
+      url: this.config['elevation_layer']['url'],
+      name: this.config['elevation_layer']['name'],
+      projection: this.projection,
+      heightMapWidth: 256,
+      format: this.config['elevation_layer']['format'],
+    });
+    // Add a WMS elevation layer
+    let wmsElevationLayer = new itowns.ElevationLayer(
+      this.config['elevation_layer']['layer_name'],
+      {
+        useColorTextureElevation: true,
+        colorTextureElevationMinZ: 149,
+        colorTextureElevationMaxZ: 622,
+        source: wmsElevationSource,
+      }
+    );
+    this.itownsView.addLayer(wmsElevationLayer);
+  }
+
+  add3DTilesLayer() {
+    if (!this.config['3DTilesLayer']) {
+      console.warn('no 3DTilesLayer in config');
+      return;
+    }
+
+    const $3DTilesLayer = new itowns.C3DTilesLayer(
+      this.config['3DTilesLayer']['id'],
+      {
+        name: 'Lyon-2015-'.concat(this.config['3DTilesLayer']['id']),
+        source: new itowns.C3DTilesSource({
+          url: this.config['3DTilesLayer']['url'],
+        }),
+      },
+      this.itownsView
+    );
+
+    itowns.View.prototype.addLayer.call(this.itownsView, $3DTilesLayer);
   }
 
   /**
