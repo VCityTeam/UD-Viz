@@ -65,6 +65,7 @@ export class View3D {
     //itowns view
     this.itownsView = null;
     this.extent = null; //area handle by itowns
+    this.itownsControls = params.itownsControls || false;
 
     //pause
     this.pause = false;
@@ -275,7 +276,7 @@ export class View3D {
         range: range,
         tilt: tilt,
       },
-      noControls: true,
+      noControls: !this.itownsControls,
     });
 
     //TODO parler a itowns remove listener of the resize

@@ -2,8 +2,6 @@
 
 const WorldContext = require('./WorldContext');
 
-//TODO WorldStateComputer do not have tick to make tick the world
-
 /**
  * StateComputer working locally
  */

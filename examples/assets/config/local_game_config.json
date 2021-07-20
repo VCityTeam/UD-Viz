@@ -1,0 +1,41 @@
+{
+  "assetsManager": {
+    "models": {
+      "zeppelin": {
+        "path": "./assets/models/Zeppelin_Labex_IMU.glb",
+        "anchor": "center_min",
+        "rotation": { "x": 0, "y": 1.5707, "z": 0 }
+      }
+    },
+    "worldScripts": {
+      "worldGameManager": {
+        "path": "./assets/worldScripts/worldGameManager.js"
+      }
+    },
+    "localScripts": {
+      "focus": {
+        "path": "./assets/localScripts/focus.js"
+      },
+      "commands": {
+        "path": "./assets/localScripts/commands.js"
+      }
+    }
+  },
+  "game": {
+    "fps": 30,
+    "shadowMapSize": 2046,
+    "skyColor": {
+      "r": 0.4,
+      "g": 0.6,
+      "b": 0.8
+    }
+  },
+  "itowns": {
+    "radiusExtent": 1000,
+    "camera": {
+      "range": 3000,
+      "heading": -50,
+      "tilt": 10
+    }
+  }
+}

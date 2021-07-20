@@ -299,6 +299,10 @@ export class GameView extends View3D {
   getLastState() {
     return this.lastState;
   }
+
+  getStateComputer() {
+    return this.stateComputer;
+  }
 }
 
 /**

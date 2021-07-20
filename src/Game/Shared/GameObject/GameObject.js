@@ -105,7 +105,7 @@ const GameObjectModule = class GameObject {
 
   /**
    * Bind transform of go into this
-   * @param {GameObject} go 
+   * @param {GameObject} go
    */
   setTransformFromGO(go) {
     this.object3D.position.copy(go.object3D.position);
@@ -116,11 +116,9 @@ const GameObjectModule = class GameObject {
 
   /**
    * Set transform of object3D from json
-   * @param {JSON} json 
+   * @param {JSON} json
    */
-  setFromTransformJSON(json) {
-    if (!json) throw new Error('no json');
-
+  setFromTransformJSON(json = {}) {
     if (json.position) {
       this.object3D.position.fromArray(json.position);
     } else {
@@ -136,7 +134,7 @@ const GameObjectModule = class GameObject {
     if (json.scale) {
       this.object3D.scale.fromArray(json.scale);
     } else {
-      this.object3D.scale.fromArray([0, 0, 0]);
+      this.object3D.scale.fromArray([1, 1, 1]);
     }
   }
 
@@ -451,6 +449,24 @@ const GameObjectModule = class GameObject {
     let result = null;
     this.traverse(function (g) {
       if (g.getUUID() == uuid) {
+        result = g;
+        return true;
+      }
+      return false;
+    });
+    return result;
+  }
+
+  /**
+   * Find a gameobject into the hierarchy with a name
+   * return the first one encounter
+   * @param {String} name
+   * @returns
+   */
+  findByName(name) {
+    let result = null;
+    this.traverse(function (g) {
+      if (g.getName() == name) {
         result = g;
         return true;
       }
