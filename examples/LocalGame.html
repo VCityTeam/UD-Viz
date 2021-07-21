@@ -11,49 +11,25 @@
   <body>
     <script src="../dist/debug/udv.js"></script>
     <script type="text/javascript">
-      udv.Components.SystemUtils.File.loadJSON(
-        './assets/config/local_game_config.json'
-      ).then(function (config) {
-        const assetsManager = new udv.Game.Components.AssetsManager();
-
-        assetsManager.loadFromConfig(config.assetsManager).then(function () {
-          const worldStateComputer = new udv.Game.Shared.WorldStateComputer(
-            assetsManager,
-            60,
-            udv.Game.Shared
-          );
-
-          const myWorld = new udv.Game.Shared.World({
-            name: 'My World',
-            origin: { lat: 45.7530993, lng: 4.8452654, alt: 300 },
-            gameObject: {
-              name: 'GameManager',
-              static: true,
-              components: {
-                WorldScript: {
-                  idScripts: ['worldGameManager'],
-                },
-                LocalScript: {
-                  idScripts: ['focus', 'commands'],
-                },
-              },
+      const myWorld = new udv.Game.Shared.World({
+        name: 'My World',
+        origin: { lat: 45.7530993, lng: 4.8452654, alt: 300 },
+        gameObject: {
+          name: 'GameManager',
+          static: true,
+          components: {
+            WorldScript: {
+              idScripts: ['worldGameManager'],
             },
-          });
-
-          worldStateComputer.onInit(myWorld);
-
-          const gameView = new udv.Views.GameView({
-            htmlParent: document.body,
-            assetsManager: assetsManager,
-            stateComputer: worldStateComputer,
-            config: config,
-            itownsControls: false,
-          });
-
-          //start gameview tick
-          gameView.onFirstState(worldStateComputer.computeCurrentState(), null);
-        });
+            LocalScript: {
+              idScripts: ['focus', 'commands'],
+            },
+          },
+        },
       });
+
+      const app = new udv.Templates.LocalGame();
+      app.start(myWorld, './assets/config/local_game_config.json');
     </script>
   </body>
 </html>
