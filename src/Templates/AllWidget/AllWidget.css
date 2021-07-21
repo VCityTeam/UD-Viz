@@ -29,7 +29,7 @@ canvas {
     position: absolute;
 }
 
-#_widget_template {
+#_all_widget {
     display: grid;
     height: 100%;
     grid-template-rows: 50px auto;
@@ -53,12 +53,12 @@ header h1 {
     height: 100%;
 }
 
-#_widget_template_struct_header_panel {
+#_all_widget_struct_header_panel {
     text-align: right;
     padding-right: 10px;
 }
 
-#_widget_template_stuct_main_panel {
+#_all_widget_stuct_main_panel {
     display: grid;
     grid-template-columns: 60px auto;
 }
@@ -88,18 +88,18 @@ section {
     cursor: pointer;
 }
 
-#_widget_template_auth_frame_location {
+#_all_widget_auth_frame_location {
     display: inline-block;
 }
 
-#_widget_template_profile_name {
+#_all_widget_profile_name {
     display: inline-block;
     color: white;
     font-size: 20px;
     padding: 10px;
 }
 
-#_widget_template_profile_name em {
+#_all_widget_profile_name em {
     font-style: normal;
     font-weight: bold;
     font-variant: small-caps;
@@ -124,7 +124,7 @@ section {
     cursor: pointer;
 }
 
-#_widget_template_menu {
+#_all_widget_menu {
     list-style: none;
     padding: 0;
 }
@@ -134,7 +134,7 @@ section {
     height: 60px;
 }
 
-._widget_template_menu_hint {
+._all_widget_menu_hint {
     position: absolute;
     background-color: #666666;
     z-index: 50000;
@@ -155,12 +155,12 @@ section {
     box-shadow: 1px 0px 1px -1px #0009, 0px 1px 1px -1px #0009, 0px -1px 1px -1px #0009;
 }
 
-.choiceMenu:hover > ._widget_template_menu_hint {
+.choiceMenu:hover > ._all_widget_menu_hint {
     visibility: visible;
     opacity: 1;
 }
 
-.choiceMenuSelected > ._widget_template_menu_hint {
+.choiceMenuSelected > ._all_widget_menu_hint {
     background-color: #f09f45;
 }
 
@@ -183,7 +183,7 @@ section {
     display: none;
 }
 
-#_widget_template_menu .choiceMenu:hover {
+#_all_widget_menu .choiceMenu:hover {
     background-color: #666666;
 }
 
@@ -195,7 +195,7 @@ section {
     opacity: 0.9;
 }
 
-#openSidebar:checked ~ #_widget_template_menu {
+#openSidebar:checked ~ #_all_widget_menu {
     display: block;
     transform: translateX(0);
 }

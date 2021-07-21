@@ -7,13 +7,13 @@ const $3DTemporalBatchTable = Widgets.$3DTemporalBatchTable;
 const $3DTemporalBoundingVolume = Widgets.$3DTemporalBoundingVolume;
 const $3DTemporalTileset = Widgets.$3DTemporalTileset;
 
-import './WidgetTemplate.css';
+import './AllWidget.css';
 
 /**
  * Represents the base HTML content of a demo for UD-Viz and provides methods to
  * dynamically add module views.
  */
-export class WidgetTemplate {
+export class AllWidget {
   constructor() {
     this.modules = {};
     this.moduleNames = {};
@@ -74,7 +74,7 @@ export class WidgetTemplate {
           authenticationService
         );
         _this.addModuleView('authentication', authenticationView, {
-          type: WidgetTemplate.AUTHENTICATION_MODULE,
+          type: AllWidget.AUTHENTICATION_MODULE,
         });
       }
 
@@ -222,7 +222,7 @@ export class WidgetTemplate {
                     <h1>UD-Viz &bull;</h1>
                     <div id="${this.authFrameLocationId}"></div>
                 </div>
-                <div id="_widget_template_struct_header_panel">
+                <div id="_all_widget_struct_header_panel">
                     <p style="display: inline-block; color: white; margin: 0;">
                         Icons made by <a href="https://www.freepik.com/"
                         title="Freepik">Freepik</a> from
@@ -234,7 +234,7 @@ export class WidgetTemplate {
                     </p>
                 </div>
             </header>
-            <div id="_widget_template_stuct_main_panel">
+            <div id="_all_widget_stuct_main_panel">
                 <nav>
                     <ul id="${this.menuId}">
                     </ul>
@@ -254,7 +254,7 @@ export class WidgetTemplate {
       var img = document.createElement('img');
       img.src = imageFolder.concat('/'.concat(logos[i]));
       img.classList.add('logos');
-      var src = document.getElementById('_widget_template_struct_header_panel');
+      var src = document.getElementById('_all_widget_struct_header_panel');
       src.appendChild(img);
     }
   }
@@ -338,13 +338,13 @@ export class WidgetTemplate {
       .replace(/([A-Z])/g, ' $1')
       .replace(/_/g, ' ')
       .replace(/^./, (str) => str.toUpperCase());
-    let type = WidgetTemplate.MODULE_VIEW;
+    let type = AllWidget.MODULE_VIEW;
     let requireAuth = false;
     if (options) {
       if (options.type) {
         if (
-          options.type === WidgetTemplate.MODULE_VIEW ||
-          options.type === WidgetTemplate.AUTHENTICATION_MODULE
+          options.type === AllWidget.MODULE_VIEW ||
+          options.type === AllWidget.AUTHENTICATION_MODULE
         ) {
           type = options.type;
         } else {
@@ -372,11 +372,11 @@ export class WidgetTemplate {
     });
 
     switch (type) {
-      case WidgetTemplate.MODULE_VIEW:
+      case AllWidget.MODULE_VIEW:
         //create a new button in the menu
         this.createMenuButton(moduleId, moduleName, binding);
         break;
-      case WidgetTemplate.AUTHENTICATION_MODULE:
+      case AllWidget.AUTHENTICATION_MODULE:
         this.createAuthenticationFrame(moduleId);
         break;
       default:
@@ -402,7 +402,7 @@ export class WidgetTemplate {
   createMenuButton(moduleId, buttonText, accessKey) {
     let button = document.createElement('li');
     button.id = this.getModuleButtonId(moduleId);
-    button.innerHTML = `<p class="_widget_template_menu_hint">${buttonText}</p>`;
+    button.innerHTML = `<p class="_all_widget_menu_hint">${buttonText}</p>`;
     if (accessKey) {
       button.accessKey = accessKey;
     }
@@ -524,7 +524,7 @@ export class WidgetTemplate {
   }
 
   getModuleButtonId(moduleId) {
-    return `_widget_template_menu_button${moduleId}`;
+    return `_all_widget_menu_button${moduleId}`;
   }
 
   // Get module button element
@@ -812,11 +812,11 @@ export class WidgetTemplate {
   ////////////////////////////////////////////////////////
 
   get mainDivId() {
-    return '_widget_template';
+    return '_all_widget';
   }
 
   get headerId() {
-    return '_widget_template_header';
+    return '_all_widget_header';
   }
 
   get headerElement() {
@@ -824,7 +824,7 @@ export class WidgetTemplate {
   }
 
   get authFrameLocationId() {
-    return '_widget_template_auth_frame_location';
+    return '_all_widget_auth_frame_location';
   }
 
   get authFrameLocationElement() {
@@ -848,7 +848,7 @@ export class WidgetTemplate {
   }
 
   get menuId() {
-    return '_widget_template_menu';
+    return '_all_widget_menu';
   }
 
   get menuElement() {
@@ -856,7 +856,7 @@ export class WidgetTemplate {
   }
 
   get authenticationFrameId() {
-    return '_widget_template_profile';
+    return '_all_widget_profile';
   }
 
   get authenticationFrameElement() {
@@ -864,7 +864,7 @@ export class WidgetTemplate {
   }
 
   get authenticationLogoutButtonId() {
-    return '_widget_template_button_logout';
+    return '_all_widget_button_logout';
   }
 
   get authenticationLogoutButtonElement() {
@@ -872,7 +872,7 @@ export class WidgetTemplate {
   }
 
   get authenticationLoginButtonId() {
-    return '_widget_template_button_login';
+    return '_all_widget_button_login';
   }
 
   get authenticationLoginButtonElement() {
@@ -880,7 +880,7 @@ export class WidgetTemplate {
   }
 
   get authenticationMenuLoggedInId() {
-    return '_widget_template_profile_menu_logged_in';
+    return '_all_widget_profile_menu_logged_in';
   }
 
   get authenticationMenuLoggedInElement() {
@@ -888,7 +888,7 @@ export class WidgetTemplate {
   }
 
   get authenticationMenuLoggedOutId() {
-    return '_widget_template_profile_menu_logged_out';
+    return '_all_widget_profile_menu_logged_out';
   }
 
   get authenticationMenuLoggedOutElement() {
@@ -896,7 +896,7 @@ export class WidgetTemplate {
   }
 
   get authenticationUserNameId() {
-    return '_widget_template_profile_name';
+    return '_all_widget_profile_name';
   }
 
   get authenticationUserNameElement() {

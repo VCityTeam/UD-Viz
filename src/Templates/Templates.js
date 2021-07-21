@@ -1,3 +1,3 @@
 /** @format */
 
-export { WidgetTemplate } from './WidgetTemplate/WidgetTemplate';
+export { AllWidget } from './AllWidget/AllWidget';
