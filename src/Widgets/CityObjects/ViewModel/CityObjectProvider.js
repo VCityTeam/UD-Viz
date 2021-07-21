@@ -1,13 +1,13 @@
 /** @format */
 
 //Components
-import { CityObjectStyle } from '../../../Components/3DTiles/Model/CityObjectStyle';
+import { CityObjectStyle } from '../../Components/3DTiles/Model/CityObjectStyle';
 import {
   CityObjectID,
   CityObject,
-} from '../../../Components/3DTiles/Model/CityObject';
-import { EventSender } from '../../../Components/Events/EventSender';
-import { LayerManager } from '../../../Components/LayerManager/LayerManager';
+} from '../../Components/3DTiles/Model/CityObject';
+import { EventSender } from '../../Components/Events/EventSender';
+import { LayerManager } from '../../Components/LayerManager/LayerManager';
 
 import { CityObjectFilter } from './CityObjectFilter';
 import { CityObjectLayer } from './CityObjectLayer';

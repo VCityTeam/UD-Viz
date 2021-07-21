@@ -1,7 +1,7 @@
 /** @format */
 
 //Components
-import { ModuleView } from '../../../Components/ModuleView/ModuleView.js';
+import { ModuleView } from '../../Components/ModuleView/ModuleView.js';
 
 import { TemporalGraphWindow } from './TemporalGraphWindow.js';
 import { TemporalSliderWindow } from './TemporalSliderWindow.js';

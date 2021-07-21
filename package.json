@@ -1,11 +1,12 @@
 {
   "name": "ud-viz",
-  "version": "2.32.0",
+  "version": "2.32.4",
   "description": "A collection of itowns plugins",
   "main": "src",
   "scripts": {
     "travis": "npm run eslint && npm run build",
     "eslint": "./node_modules/.bin/eslint ./src",
+    "eslint-fix": "./node_modules/.bin/eslint ./src --fix",
     "build": "cross-env NODE_ENV=production webpack",
     "build-debug": "cross-env NODE_ENV=development webpack",
     "debug": "nodemon --verbose --watch src --delay 2500ms ./bin/debug.js -e js,css,html"
@@ -25,11 +26,12 @@
   "peerDependencies": {},
   "dependencies": {
     "detect-collisions": "^2.5.2",
-    "itowns": "^2.32.0",
+    "itowns": "2.33.0",
     "jquery": "^3.6.0",
     "proj4": "^2.7.0",
     "socket.io-client": "^4.0.0",
-    "three": "0.126.1",
+    "three": "0.127.0",
+    "three-css3drenderer": "^1.0.1",
     "vis-data": "^7.1.2",
     "vis-network": "^9.0.3"
   },
