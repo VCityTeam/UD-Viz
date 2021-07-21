@@ -10,6 +10,8 @@ module.exports = class Commands {
 
   init() {
     const localContext = arguments[1];
+
+    //Input manager of the game
     const inputManager = localContext.getGameView().getInputManager();
 
     //FORWARD
@@ -54,6 +56,7 @@ module.exports = class Commands {
     const worldComputer = localContext.getGameView().getStateComputer();
     const inputManager = localContext.getGameView().getInputManager();
 
+    //send input manager command to the world
     worldComputer.onCommands(inputManager.computeCommands());
   }
 };

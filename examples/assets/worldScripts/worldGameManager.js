@@ -11,6 +11,7 @@ module.exports = class WorldGameManager {
   }
 
   init() {
+    //a context containing all references needed for scripting game
     const worldContext = arguments[1];
     const world = worldContext.getWorld();
 
