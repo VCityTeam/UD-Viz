@@ -20,27 +20,27 @@ export class LayerChoice extends Window {
   }
 
   
-  // <div class ="box-section"> 
-  // <input type="checkbox" class="spoiler-check" id="color-layers-spoiler">
-  // <label for="color-layers-spoiler" class="section-title">Color Layers</Label>
-  //   <div class="spoiler-box">
-  //     <ul id= "${this.colorLayersId}">
-  //     </ul>
-  //   </div>
-  // </div>
-  // <div class ="box-section"> 
-  // <input type="checkbox" class="spoiler-check" id="elevation-layers-spoiler">
-  // <label for="elevation-layers-spoiler" class="section-title">Elevation Layers</Label>
-  //   <div class="spoiler-box">
-  //     <ul id= "${this.elevationLayersId}">
-  //     </ul>
-  //   </div>
-  // </div>
+
   get innerContentHtml() {
     return /*html*/ `
     <ul id="${this.layerListId}">
     </ul>
-
+    <div class ="box-section"> 
+    <input type="checkbox" class="spoiler-check" id="color-layers-spoiler">
+    <label for="color-layers-spoiler" class="section-title">Color Layers</Label>
+      <div class="spoiler-box">
+        <ul id= "${this.colorLayersId}">
+        </ul>
+      </div>
+    </div>
+    <div class ="box-section"> 
+    <input type="checkbox" class="spoiler-check" id="elevation-layers-spoiler">
+    <label for="elevation-layers-spoiler" class="section-title">Elevation Layers</Label>
+      <div class="spoiler-box">
+        <ul id= "${this.elevationLayersId}">
+        </ul>
+      </div>
+    </div>
     <div class ="box-section"> 
       <input type="checkbox" class="spoiler-check" id="geometry-layers-spoiler">
       <label for="geometry-layers-spoiler" class="section-title">Geometry Layers</Label>
@@ -53,8 +53,8 @@ export class LayerChoice extends Window {
   }
 
   windowCreated() {
-    // this.innerContentColorLayers();
-    // this.innerContentElevationLayers();
+    this.innerContentColorLayers();
+    this.innerContentElevationLayers();
     this.innerContentGeometryLayers();
   }
 
