@@ -2,33 +2,34 @@
 
 Local Game tutorial:
 
-Welcome in the first ud-viz game tutorial. Lines will be add step by step if you want to see complete files go to [LocalGame](../../examples/LocalGame.html). At the end of this tutorial you will fly with your zeppelin in the sky of Lyon !
+Welcome in the first ud-viz game tutorial. Lines will be add step by step if you want to see complete files go to [LocalGame](../../examples/LocalGame.html). At the end of this tutorial you will fly with your zeppelin in the sky of Lyon, and collect some sphere !
 
 ![Zeppelin](./Pictures/zeppelin.gif)
 
 # Create your game project :smile:
 
-##  Working environment
+## Working environment
 
 Steps :
-* Create an empty folder that you can call  `My_UD-Viz_Game`.
 
-* Copy and paste [LocalGame.html](../../examples/LocalGame.html) in your folder. 
+- Create an empty folder that you can call `My_UD-Viz_Game`.
+
+- Copy and paste [LocalGame.html](../../examples/LocalGame.html) in your folder.
 
 > Open the folder in visual studio code or your favorite IDE :computer:
 
 ## ud-viz
 
-For this tutorial you will need to import `ud-viz` in your project, it is the package that contains the game engine and urban visualisation tools (hence the name). 
+For this tutorial you will need to import `ud-viz` in your project, it is the package that contains the game engine and urban visualisation tools (hence the name).
 
 In this turorial we achieve this by building locally a bundle of the library, then with importing it with a script tag.
 
-You can now add your script tag calling udv npm package (its recommended for your production app to import ud-viz with npm to benefit of the upgrade). 
+You can now add your script tag calling udv npm package (its recommended for your production app to import ud-viz with npm to benefit of the upgrade).
 
 To begin your code should look like this:
 
 ```html
- <!--LocalGame.html-->
+<!--LocalGame.html-->
 <!DOCTYPE html>
 <html>
   <head>
@@ -45,7 +46,7 @@ To begin your code should look like this:
         name: 'My World',
         origin: { lat: 45.7530993, lng: 4.8452654, alt: 300 },
         gameObject: {
-          name: 'GameManager'
+          name: 'GameManager',
         },
       });
 
@@ -350,4 +351,126 @@ tick() {
   }
 ```
 
-Ok now your travel in zeppelin is possible !! lol
+Ok now your travel in zeppelin is possible !
+
+Now we are going to add some collectable sphere.
+
+In worldGamemanager.js add this method
+
+```
+createCollectableSphere(x, y) {
+  const size = 10;
+
+  const result = new Shared.GameObject({
+    name: 'collectable_sphere',
+    static: true,
+    components: {
+      Render: {
+        idModel: 'sphere',
+        color: [Math.random(), Math.random(), Math.random()],
+      },
+    },
+    transform: {
+      position: [x, y, size],
+      scale: [size, size, size],
+    },
+  });
+
+  return result;
+}
+```
+
+and then in the init method
+
+```
+//add collectable sphere at random position
+const range = 400;
+const minRange = 50;
+for (let i = 0; i < 10; i++) {
+  let x = (Math.random() - 0.5) * range;
+  let y = (Math.random() - 0.5) * range;
+
+  if (x > 0) {
+    x += minRange;
+  } else {
+    x -= minRange;
+  }
+
+  if (y > 0) {
+    y += minRange;
+  } else {
+    y -= minRange;
+  }
+
+  const s = this.createCollectableSphere(x, y);
+  world.addGameObject(s, worldContext, world.getGameObject());
+}
+```
+
+now you should see sphere around your zeppelin
+
+![6](./Pictures/6.png)
+
+ok that's nice, now let handle the collision with these objects.
+
+first add a collider component to these spheres
+
+```
+  createCollectableSphere(x, y) {
+    const size = 10;
+
+    const result = new Shared.GameObject({
+      name: 'collectable_sphere',
+      static: true,
+      components: {
+        Render: {
+          idModel: 'sphere',
+          color: [Math.random(), Math.random(), Math.random()],
+        },
+        Collider: {
+          shapes: [
+            {
+              type: 'Circle',
+              center: { x: 0, y: 0 },
+              radius: size / 2,
+            },
+          ],
+        },
+      },
+      transform: {
+        position: [x, y, size],
+        scale: [size, size, size],
+      },
+    });
+
+    return result;
+  }
+```
+
+then add a collider component to the zeppelin
+
+```
+this.zeppelin = new Shared.GameObject({
+      name: 'zeppelin',
+      components: {
+        Render: { idModel: 'zeppelin' },
+        Collider: {
+          shapes: [
+            {
+              type: 'Circle',
+              center: { x: 0, y: 0 },
+              radius: 10,
+            },
+          ],
+        },
+      },
+    });
+```
+
+ok now let's add a worldscript to the zeppelin to handle collision  
+
+create a new worldscript import it with the config files and create it in the assets
+
+[zeppelin.js](../../examples/assets/worldScripts/zeppelin.js)
+
+now when you touch sphere with the zeppelin they are disapearing !!
