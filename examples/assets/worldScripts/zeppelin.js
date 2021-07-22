@@ -2,7 +2,7 @@
 
 let Shared;
 
-module.exports = class WorldGameManager {
+module.exports = class Zeppelin {
   constructor(conf, SharedModule) {
     this.conf = conf;
     Shared = SharedModule;
