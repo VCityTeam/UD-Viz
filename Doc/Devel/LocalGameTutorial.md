@@ -2,14 +2,33 @@
 
 Local Game tutorial:
 
-Welcome in the first ud-viz game tutorial. Lines will be add step by step if you want to see complete files go to ./examples/LocalGame.html. At the end of this tutorial you will fly with your zeppelin in the sky of Lyon !
+Welcome in the first ud-viz game tutorial. Lines will be add step by step if you want to see complete files go to [LocalGame](../../examples/LocalGame.html). At the end of this tutorial you will fly with your zeppelin in the sky of Lyon !
 
 ![Zeppelin](./Pictures/zeppelin.gif)
 
-For this tutorial you will need to import ud-viz package in your project. In this turorial we achieve this by building locally a bundle of the library, then with importing it with a script tag.
-You can now add your script tag calling udv npm package (its recommended for your production app to import ud-viz with npm to benefit of the upgrade). To begin your code should look like this:
+# Create your game project :smile:
 
-```
+##  Working environment
+
+Steps :
+* Create an empty folder that you can call  `My_UD-Viz_Game`.
+
+* Copy and paste [LocalGame.html](../../examples/LocalGame.html) in your folder. 
+
+> Open the folder in visual studio code or your favorite IDE :computer:
+
+## ud-viz
+
+For this tutorial you will need to import `ud-viz` in your project, it is the package that contains the game engine and urban visualisation tools (hence the name). 
+
+In this turorial we achieve this by building locally a bundle of the library, then with importing it with a script tag.
+
+You can now add your script tag calling udv npm package (its recommended for your production app to import ud-viz with npm to benefit of the upgrade). 
+
+To begin your code should look like this:
+
+```html
+ <!--LocalGame.html-->
 <!DOCTYPE html>
 <html>
   <head>
@@ -37,7 +56,7 @@ You can now add your script tag calling udv npm package (its recommended for you
 </html>
 ```
 
-First a new World called "My World" is created, you have to specified at which 3D coordonate you want to create it. Here we take a random location in Lyon. We also scpecified our root gameobject which is here called GameManager
+First a new World called `My World` is created, you have to specified at which 3D coordonate you want to create it. Here we take a random location in Lyon. We also scpecified our root gameobject which is here called GameManager
 
 Then a LocalGame is instanciate, to start it you need to pass a world and a path to a config file.
 
