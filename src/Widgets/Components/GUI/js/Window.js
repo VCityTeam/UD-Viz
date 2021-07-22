@@ -239,15 +239,15 @@ export class Window extends ModuleView {
     this.windowExtensions.splice(index, 1);
   }
 
-    /**
+  /**
      * Removes an existing extension from the window.
      * 
      * @param {string} label The label identifying the extension to remove.
      */
-     isExtensionUsed(label) {
-      let index = this.windowExtensions.findIndex(ext => ext.label === label);
-      return (index >= 0);
-    }
+  isExtensionUsed(label) {
+    let index = this.windowExtensions.findIndex(ext => ext.label === label);
+    return (index >= 0);
+  }
   //////////// Module view overrides
   //////////////////////////////////
 
