@@ -251,77 +251,7 @@ Import it the same way that the worldscript with these lines in your config file
 
 and here is the focus script
 
-```
-let Shared = null;
-
-//angle to inclinate the camera
-const CAMERA_ANGLE = Math.PI / 6;
-
-module.exports = class Focus {
-  constructor(conf, SharedModule) {
-    this.conf = conf;
-    Shared = SharedModule;
-
-    //quaternion to place the camera
-    this.quaternionCam = new Shared.THREE.Quaternion().setFromEuler(
-      new Shared.THREE.Euler(Math.PI * 0.5, 0, 0)
-    );
-    this.quaternionAngle = new Shared.THREE.Quaternion().setFromEuler(
-      new Shared.THREE.Euler(-CAMERA_ANGLE, 0, 0)
-    );
-
-    //initial distance of the camera with the zeppelin
-    this.distance = 150;
-  }
-
-  init() {
-    const _this = this;
-
-    //modulate the distance from the zeppelin with the wheel of the mouse
-    //TODO should be register with the InputManager
-    window.addEventListener('wheel', function (event) {
-      _this.distance += event.wheelDelta * 0.1;
-      _this.distance = Math.max(Math.min(_this.distance, 500), 0);
-    });
-  }
-
-  tick() {
-    //the gameobject parent of this script
-    const go = arguments[0];
-
-    //a context containing all data to script clientside script
-    const localContext = arguments[1];
-
-    //get the zeppelin gameobject by name
-    const zeppelin = go.computeRoot().findByName('zeppelin');
-
-    //compute world transform
-    const obj = zeppelin.computeObject3D();
-    let position = new Shared.THREE.Vector3();
-    let quaternion = new Shared.THREE.Quaternion();
-    obj.matrixWorld.decompose(position, quaternion, new Shared.THREE.Vector3());
-
-    //move the position a bit up (z is up)
-    position.z += 10;
-
-    //compute camera position
-    const dir = zeppelin
-      .getDefaultForward()
-      .applyQuaternion(this.quaternionAngle)
-      .applyQuaternion(quaternion);
-
-    position.sub(dir.setLength(this.distance));
-    quaternion.multiply(this.quaternionCam);
-    quaternion.multiply(this.quaternionAngle);
-
-    //tweak values in camera object
-    const iV = localContext.getGameView().getItownsView();
-    iV.camera.camera3D.position.copy(position);
-    iV.camera.camera3D.quaternion.copy(quaternion);
-    iV.camera.camera3D.updateProjectionMatrix();
-  }
-};
-```
+[focus.js](../../examples/assets/localScripts/focus.js)
 
 ok here is what you should see, you should also be able to zoom in/out with the wheel !
 
@@ -361,70 +291,7 @@ Import it
 
 Here is what this localscript looks like
 
-```
-/** @format */
-
-let Shared = null;
-
-module.exports = class Commands {
-  constructor(conf, SharedModule) {
-    this.conf = conf;
-    Shared = SharedModule;
-  }
-
-  init() {
-    const localContext = arguments[1];
-
-    //Input manager of the game
-    const inputManager = localContext.getGameView().getInputManager();
-
-    //FORWARD
-    inputManager.addKeyCommand(
-      Shared.Command.TYPE.MOVE_FORWARD,
-      ['z', 'ArrowUp'],
-      function () {
-        return new Shared.Command({ type: Shared.Command.TYPE.MOVE_FORWARD });
-      }
-    );
-
-    //BACKWARD
-    inputManager.addKeyCommand(
-      Shared.Command.TYPE.MOVE_BACKWARD,
-      ['s', 'ArrowDown'],
-      function () {
-        return new Shared.Command({ type: Shared.Command.TYPE.MOVE_BACKWARD });
-      }
-    );
-
-    //LEFT
-    inputManager.addKeyCommand(
-      Shared.Command.TYPE.MOVE_LEFT,
-      ['q', 'ArrowLeft'],
-      function () {
-        return new Shared.Command({ type: Shared.Command.TYPE.MOVE_LEFT });
-      }
-    );
-
-    //RIGHT
-    inputManager.addKeyCommand(
-      Shared.Command.TYPE.MOVE_RIGHT,
-      ['d', 'ArrowRight'],
-      function () {
-        return new Shared.Command({ type: Shared.Command.TYPE.MOVE_RIGHT });
-      }
-    );
-  }
-
-  tick() {
-    const localContext = arguments[1];
-    const worldComputer = localContext.getGameView().getStateComputer();
-    const inputManager = localContext.getGameView().getInputManager();
-
-    //send input manager command to the world
-    worldComputer.onCommands(inputManager.computeCommands());
-  }
-};
-```
+[commands.js](../../examples/assets/localScripts/commands.js)
 
 ok now commands are send to world simulation but the world don't know what to do with them.
 
