@@ -93,6 +93,17 @@ export class CityObjectModule {
   }
 
   /**
+   * Removes an existing extension in the city object window.
+   *
+   * @param {string} label The extension label.
+   */
+  isExtensionUsed(label) {
+    return this.view.isExtensionUsed(label);
+  }
+
+
+
+  /**
    * Adds a filter selector in the city object filter window.
    *
    * @param {CityObjectFilterSelector} filterSelector The filter selector to

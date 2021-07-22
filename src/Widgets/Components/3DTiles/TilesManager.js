@@ -111,6 +111,18 @@ export class TilesManager extends EventSender {
     this.sendEvent(TilesManager.EVENT_TILE_LOADED, tile);
   }
 
+  getTilesWithGeom() {
+    let tilesWithGeom = [];
+    for (let j = 0; j < this.tiles.length;j++)
+    {
+      if(this.tiles[j] != undefined) {
+        if(this.tiles[j].cityObjects != undefined ){
+          tilesWithGeom.push(this.tiles[j]);
+        }
+      }
+    }
+    return tilesWithGeom;
+  }
   /**
    * Returns the city object, if the tile is loaded.
    *
@@ -197,6 +209,32 @@ export class TilesManager extends EventSender {
     this.styleManager.setStyle(cityObjectId, style);
     for (let tileId of tilesToUpdate) {
       this._markTileToUpdate(tileId);
+    }
+  }
+
+  /**
+   * Sets the style of a particular tile.
+   * 
+   * @param {Int} tileId The tile
+   * identifier.
+   * @param {CityObjectStyle | string} style The desired style.
+   */
+  setStyleToTile(tileId, style) {
+    if(this.tiles[tileId]){
+      for(let i in this.tiles[tileId].cityObjects){
+        this.setStyle(this.tiles[tileId].cityObjects[i].cityObjectId,style);
+      }
+    }
+  }
+
+  /**
+   * Sets the style for all the tileset
+   * 
+   * @param {CityObjectStyle | string} style The desired style.
+   */
+  setStyleToTileset(style) {
+    for(let tile in this.tiles){
+      this.setStyleToTile(tile,style);
     }
   }
 
