@@ -5,6 +5,8 @@ import { AssetsManager } from '../../Game/Components/AssetsManager';
 import * as Shared from '../../Game/Shared/Shared';
 import * as Views from '../../Views/Views';
 
+import * as udviz from '../../index';
+
 export class LocalGame {
   constructor(fps) {
     this.fps = fps || 30;
@@ -20,7 +22,7 @@ export class LocalGame {
         const worldStateComputer = new Shared.WorldStateComputer(
           assetsManager,
           fps,
-          Shared
+          { udviz: udviz, Shared: Shared }
         );
 
         worldStateComputer.onInit(world);

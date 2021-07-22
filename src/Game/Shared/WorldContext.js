@@ -18,7 +18,7 @@ module.exports = class WorldContext {
     this.commands = [];
 
     //Modules
-    this.Shared = params.Shared;
+    this.bundles = params.bundles;
   }
 
   /**
@@ -79,9 +79,9 @@ module.exports = class WorldContext {
 
   /**
    *
-   * @returns {Shared}
+   * @returns {Library}
    */
-  getSharedModule() {
-    return this.Shared;
+  getBundles() {
+    return this.bundles;
   }
 };

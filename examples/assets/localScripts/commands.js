@@ -1,11 +1,13 @@
 /** @format */
 
+let udviz;
 let Shared = null;
 
 module.exports = class Commands {
-  constructor(conf, SharedModule) {
+  constructor(conf, udvizBundle) {
     this.conf = conf;
-    Shared = SharedModule;
+    udviz = udvizBundle;
+    Shared = udviz.Game.Shared;
   }
 
   init() {

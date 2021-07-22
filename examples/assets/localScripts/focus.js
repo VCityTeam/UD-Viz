@@ -1,14 +1,16 @@
 /** @format */
 
-let Shared = null;
+let udviz = null;
+let Shared;
 
 //angle to inclinate the camera
 const CAMERA_ANGLE = Math.PI / 6;
 
 module.exports = class Focus {
-  constructor(conf, SharedModule) {
+  constructor(conf, udvizBundle) {
     this.conf = conf;
-    Shared = SharedModule;
+    udviz = udvizBundle;
+    Shared = udviz.Game.Shared;
 
     //quaternion to place the camera
     this.quaternionCam = new Shared.THREE.Quaternion().setFromEuler(

@@ -1,5 +1,6 @@
 /** @format */
 
+import * as udviz from '../../index';
 import * as THREE from 'three';
 import * as proj4 from 'proj4';
 import * as itowns from 'itowns';
@@ -224,7 +225,10 @@ export class GameView extends View3D {
 
     //init assets new GO
     newGO.forEach(function (g) {
-      g.initAssetsComponents(_this.assetsManager, udvShared);
+      g.initAssetsComponents(_this.assetsManager, {
+        udviz: udviz,
+        Shared: udvShared,
+      });
     });
 
     const go = state.getGameObject();

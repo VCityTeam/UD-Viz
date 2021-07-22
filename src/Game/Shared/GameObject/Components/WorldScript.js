@@ -37,13 +37,13 @@ const WorldScriptModule = class WorldScript {
   /**
    * Initialize scripts
    * @param {AssetsManager} assetsManager must implement an assetsmanager interface can be local or server
-   * @param {Shared} udvShared ud-viz/Game/Shared module
+   * @param {Library} bundles set of bundle library used by script
    */
-  initAssets(assetsManager, udvShared) {
+  initAssets(assetsManager, bundles) {
     const _this = this;
     this.idScripts.forEach(function (id) {
       const constructor = assetsManager.fetchWorldScript(id);
-      _this.scripts[id] = new constructor(_this.conf, udvShared);
+      _this.scripts[id] = new constructor(_this.conf, bundles.Shared);
     });
   }
 

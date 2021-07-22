@@ -156,20 +156,20 @@ const GameObjectModule = class GameObject {
   /**
    * Initialize components of this
    * @param {AssetsManager} manager must implement an assetsmanager interface can be local or server
-   * @param {Shared} udvShared ud-viz/Game/Shared module
+   * @param {Library} bundles set of bundle library used by script
    * @param {Boolean} isServerSide the code is running on a server or in a browser
    */
-  initAssetsComponents(manager, udvShared, isServerSide = false) {
+  initAssetsComponents(manager, bundles = {}, isServerSide = false) {
     if (!this.initialized) {
       this.initialized = true;
       for (let type in this.components) {
         const c = this.components[type];
         if (isServerSide && !c.isServerSide()) continue;
-        c.initAssets(manager, udvShared);
+        c.initAssets(manager, bundles);
       }
     }
     this.children.forEach(function (child) {
-      child.initAssetsComponents(manager, udvShared, isServerSide);
+      child.initAssetsComponents(manager, bundles, isServerSide);
     });
   }
 

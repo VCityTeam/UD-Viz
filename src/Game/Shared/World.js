@@ -127,7 +127,7 @@ const WorldModule = class World {
 
     gameObject.initAssetsComponents(
       worldContext.getAssetsManager(),
-      worldContext.getSharedModule(),
+      worldContext.getBundles(),
       _this.isServerSide
     );
 
