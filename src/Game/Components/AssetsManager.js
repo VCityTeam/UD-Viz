@@ -266,7 +266,7 @@ export class AssetsManager {
    * @param {JSON} config config file
    * @returns {Array[Promises]} all the promises processed to load assets
    */
-  loadFromConfig(config) {
+  loadFromConfig(config = {}) {
     this.conf = config;
 
     //load config file

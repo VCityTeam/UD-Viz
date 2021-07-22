@@ -1,3 +1,4 @@
 /** @format */
 
-export { WidgetTemplate } from './WidgetTemplate/WidgetTemplate';
+export { LocalGame } from './LocalGame/LocalGame';
+export { AllWidget } from './AllWidget/AllWidget';

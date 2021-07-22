@@ -1,5 +1,4 @@
 /** @format */
 
-export { WorldStateInterpolator } from './StateComputer/WorldStateInterpolator';
+export { WorldStateInterpolator } from './WorldStateInterpolator';
 export { AssetsManager } from './AssetsManager';
-export { InputManager } from '../../Components/InputManager';
