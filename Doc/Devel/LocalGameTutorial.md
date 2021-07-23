@@ -1,28 +1,27 @@
 <!-- @format -->
+# Local Game tutorial :lion:
 
-Local Game tutorial:
-
-Welcome in the first ud-viz game tutorial. Lines will be add step by step if you want to see complete files go to [LocalGame](../../examples/LocalGame.html) et le projet complet est stoqué dans le dossier [examples](../../examples). At the end of this tutorial you will fly with your zeppelin in the sky of Lyon, and collect some sphere !
+Welcome in the first ud-viz game tutorial. We will proceed step by step if you want to consult the complete project, you can find it in this [folder](../../examples). At the end of this tutorial you will fly with your zeppelin in the sky of Lyon, and collect some spheres !
 
 ![Zeppelin](./Pictures/zeppelin.gif)
 
-# Create your game project :smile:
+# Getting started :smile:
 
 ## Working environment
 
 Steps :
 
-- Create an empty folder that you can call `My_UD-Viz_Game`.
+- Create an empty folder that you can call `GameFolder`.
 
 - Create an html script in your folder that you call `index.html`.
 
 > Open the folder in visual studio code or your favorite IDE :computer:
 
-## ud-viz
+## Importing ud-viz
 
-For this tutorial you will need to import `ud-viz` in your project, it is the package that contains the **game engine** and **urban data visualization tools** (hence the name).
+For this tutorial you will need to import `ud-viz` in your project, it is the framework that contains the **game engine** and **urban data visualization tools**.
 
-To begin with, here is the **basis** of an html script, **copy it** :
+To begin with, here is the **basis** of an html file, **copy it** :
 
 ```html
 <!--index.html-->
@@ -38,46 +37,37 @@ To begin with, here is the **basis** of an html script, **copy it** :
 </html>
 ```
 
-Pour la suite nous aurrons besoins d'heberger la page html, vous pouvez utilisez votre propre localserver, sinon voilà les étapes à suivre :
+Then you will need to host your `GameFolder`, to do so you can use your own local server otherwise follows these steps: 
 
-- Clonez le repo SimpleServer, à part :
+- Clone the following repository [SimpleServer](https://github.com/VCityTeam/UD-SimpleServer) :
 
 ```bash
 git clone https://github.com/VCityTeam/UD-SimpleServer.git
 ```
 
-- Ouvrez le repo SimpleServer dans un terminal
+- Open a terminal in the cloned repository
 
-- Installer les packages nodes :
+- Install npm packages :
 
 ```bash
 npm install
 ```
 
-- Et enfin hebergez le dossier UD-Viz :
+- Finally host your `GameFolder` :
 
 ```bash
-node index.js PATH_TO_My_UD-Viz_Game 8000
+node index.js PATH_TO_GameFolder 8000
 ```
 
-Vous pouvez visitez votre page à http://localhost:8000/ mais rien ne s'affiche.
+Now you can visit your http://localhost:8000/ and nothing is displayed but we are all good :satisfied:
 
-Before you can use ud-viz, you need somewhere to display it. Save the following HTML to a file on your computer, along with a copy of [udv.js](../../examples/assets/js/udv.js) in a assets/js/ directory, and open it in your browser.
+Before you can use ud-viz, you need to import it. In your HTML file add the following script tag in the body. Then copy this [file](../../examples/assets/js/udv.js) in a ./assets/js/ directory, which contains all the ud-viz code in a single file.
 
 ```html
-<!DOCTYPE html>
-<html>
-  <head>
-    ...
-  </head>
-  <body>
-    <script src="./assets/js/udv.js"></script>
-    <!--the path point your bundle library-->
-  </body>
-</html>
+  <script src="./assets/js/udv.js"></script>
 ```
 
-Toujours rien d'afficher mais la librairie est maintenant globalement accessible.
+Nothing is still displayed but the library is now globally visible.
 
 > Pour garder le tutoriel simple ud-viz est importé de cette mainere mais il existe un package npm, il est recommendé de prendre le paquet pour bénéficier des mises à jour notamment.
 
