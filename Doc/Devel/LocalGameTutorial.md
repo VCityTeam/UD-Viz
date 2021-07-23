@@ -8,7 +8,11 @@ Welcome in the first ud-viz game tutorial. We will proceed step by step, if you 
 
 # Create your game project :smile:
 
-####[Working environment](./LocalGameTutorial.md#Inputs)
+[Working environment](./LocalGameTutorial.md#working-environment)
+[Initialize your project](./LocalGameTutorial.md#initialize-your-project)
+[Importing ud-viz](./LocalGameTutorial.md#importing-ud-viz)
+[Create your game](./LocalGameTutorial.md#create-your-game)
+[Parameterize itowns layers](./LocalGameTutorial.md#parameterize-itowns-layers)
 
 ## Working environment
 
