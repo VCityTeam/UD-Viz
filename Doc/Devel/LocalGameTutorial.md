@@ -8,6 +8,8 @@ Welcome in the first ud-viz game tutorial. We will proceed step by step, if you 
 
 # Create your game project :smile:
 
+####[Working environment](./LocalGameTutorial.md#Inputs)
+
 ## Working environment
 
 Steps :
