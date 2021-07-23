@@ -27,9 +27,10 @@ module.exports = class Focus {
   init() {
     const _this = this;
 
-    //modulate the distance from the zeppelin with the wheel of the mouse
-    //TODO should be register with the InputManager
-    window.addEventListener('wheel', function (event) {
+    const localContext = arguments[1];
+    const gV = localContext.getGameView();
+    const manager = gV.getInputManager();
+    manager.addMouseInput(gV.html(), 'wheel', function (event) {
       _this.distance += event.wheelDelta * 0.1;
       _this.distance = Math.max(Math.min(_this.distance, 500), 0);
     });
