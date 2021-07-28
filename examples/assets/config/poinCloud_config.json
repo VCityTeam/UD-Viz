@@ -35,7 +35,7 @@
   "3DTilesLayers": [
     {
       "id": "Lyon",
-      "url": "https://dataset-dl.liris.cnrs.fr/three-d-tiles-lyon-metropolis/Lyon_2015-gltf-repaired_TileSet/tileset.json",
+      "url": "",
       "pc-size": 2
     }
   ]
