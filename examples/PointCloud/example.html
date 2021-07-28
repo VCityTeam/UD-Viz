@@ -11,8 +11,23 @@
   <body>
     <script src="../../dist/release/udv.js"></script>
     <script type="text/javascript">
-      const app = new udv.Templates.AllWidget();
-      app.start('./config.json');
+      let app = new udv.Templates.AllWidget();
+
+      app.start("../assets/config/pointCloud_config.json").then(() => {
+        app.addBaseMapLayer();
+
+        app.addElevationLayer();
+
+        app.setupAndAdd3DTilesLayers();
+
+        ////// ABOUT MODULE
+        const about = new udv.Widgets.AboutWindow();
+        app.addModuleView("about", about);
+
+        ////// HELP MODULE
+        const help = new udv.Widgets.HelpWindow();
+        app.addModuleView("help", help);
+      });
     </script>
   </body>
 </html>

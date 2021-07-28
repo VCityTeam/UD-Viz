@@ -11,8 +11,29 @@
   <body>
     <script src="../../dist/release/udv.js"></script>
     <script type="text/javascript">
-      const app = new udv.Templates.AllWidget();
-      app.start('./config.json');
+      let app = new udv.Templates.AllWidget();
+
+      app.start("../assets/config/temporal_widget_config.json").then(() => {
+        app.addBaseMapLayer();
+
+        app.addElevationLayer();
+
+        ////// ABOUT MODULE
+        const about = new udv.Widgets.AboutWindow();
+        app.addModuleView("about", about);
+
+        ////// HELP MODULE
+        const help = new udv.Widgets.HelpWindow();
+        app.addModuleView("help", help);
+
+        app.setupAndAdd3DTilesLayers();
+        ////// TEMPORAL MODULE
+        const temporalModule = new udv.Widgets.TemporalModule(
+          app.layerManager.tilesManagers[0],
+          app.config.temporalModule
+        );
+        app.addModuleView("temporal", temporalModule.view);
+      });
     </script>
   </body>
 </html>

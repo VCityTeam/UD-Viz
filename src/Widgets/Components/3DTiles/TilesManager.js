@@ -20,7 +20,7 @@ export class TilesManager extends EventSender {
     /**
      * The iTowns view.
      */
-    this.view = view;
+    this.view = view; 
 
     /**
      * The 3DTiles layer.
