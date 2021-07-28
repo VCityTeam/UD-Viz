@@ -111,6 +111,14 @@ export class TilesManager extends EventSender {
     this.sendEvent(TilesManager.EVENT_TILE_LOADED, tile);
   }
 
+  focusCamera() {
+    let coordinates = this.view.camera.position();
+    let extent = this.layer.extent;
+    coordinates.x = (extent.north + extent.south) / 2;
+    coordinates.y = (extent.east + extent.west) / 2; 
+    this.view.camera.setPosition(coordinates);
+  }
+
   getTilesWithGeom() {
     let tilesWithGeom = [];
     for (let j = 0; j < this.tiles.length;j++)
