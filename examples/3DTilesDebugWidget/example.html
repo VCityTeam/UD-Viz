@@ -11,8 +11,30 @@
   <body>
     <script src="../../dist/release/udv.js"></script>
     <script type="text/javascript">
-      const app = new udv.Templates.AllWidget();
-      app.start('./config.json');
+      let app = new udv.Templates.AllWidget();
+
+      app.start("../assets/config/all_widget_config.json").then(() => {
+        app.addBaseMapLayer();
+
+        app.addElevationLayer();
+
+        app.setupAndAdd3DTilesLayers();
+
+        ////// ABOUT MODULE
+        const about = new udv.Widgets.AboutWindow();
+        app.addModuleView("about", about);
+
+        ////// HELP MODULE
+        const help = new udv.Widgets.HelpWindow();
+        app.addModuleView("help", help);
+
+        ////// 3DTILES DEBUG
+        const debug3dTilesWindow =
+          new udv.Widgets.Extensions.Debug3DTilesWindow(app.layerManager);
+        app.addModuleView("3dtilesDebug", debug3dTilesWindow, {
+          name: "3DTiles Debug",
+        });
+      });
     </script>
   </body>
 </html>

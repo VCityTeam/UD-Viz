@@ -35,192 +35,18 @@ export class AllWidget {
   }
 
   start(path) {
-    const _this = this;
-    this.appendTo(document.body);
-    this.loadConfigFile(path).then(() => {
+    return new Promise( resolve => {
+      const _this = this;
+      this.appendTo(document.body);
+      this.loadConfigFile(path).then(() => {
       // Use the stable server
-      _this.addLogos();
+        _this.addLogos();
 
-      // Initialize iTowns 3D view
-      _this.init3DView(_this.config.widgets.worldMap);
-      if (_this.config.widgets.basemapLayer) {
-        _this.addBaseMapLayer();
-      }
-      if (_this.config.widgets.elevationLayer) {
-        _this.addElevationLayer();
-      }
-      if (_this.config.widgets.layer3DTiles) {
-        _this.setupAndAdd3DTilesLayers();
-      }
-      _this.update3DView();
+        // Initialize iTowns 3D view
+        _this.init3DView();
 
-      ////// REQUEST SERVICE
-      const requestService = new Components.RequestService();
-
-      ////// ABOUT MODULE
-      if (_this.config.widgets.aboutWindow) {
-        const about = new Widgets.AboutWindow();
-        _this.addModuleView('about', about);
-      }
-
-      ////// HELP MODULE
-      if (_this.config.widgets.helpWindow) {
-        const help = new Widgets.HelpWindow();
-        _this.addModuleView('help', help);
-      }
-
-      ////// AUTHENTICATION MODULE
-      if (_this.config.widgets.authenticationView) {
-        const authenticationService =
-          new Widgets.Extensions.AuthenticationService(
-            requestService,
-            _this.config
-          );
-        const authenticationView = new Widgets.Extensions.AuthenticationView(
-          authenticationService
-        );
-        _this.addModuleView('authentication', authenticationView, {
-          type: AllWidget.AUTHENTICATION_MODULE,
-        });
-      }
-
-      ////// DOCUMENTS MODULE
-      let documentModule = null;
-      if (_this.config.widgets.documentModule) {
-        documentModule = new Widgets.DocumentModule(
-          requestService,
-          _this.config
-        );
-        _this.addModuleView('documents', documentModule.view);
-
-        ////// DOCUMENTS VISUALIZER (to orient the document)
-        if (_this.config.widgets.documentVisualizerWindow) {
-          const imageOrienter = new Widgets.DocumentVisualizerWindow(
-            documentModule,
-            _this.view,
-            _this.controls
-          );
-
-          ////// CONTRIBUTE EXTENSION
-          if (_this.config.widgets.contributeModule) {
-            new Widgets.Extensions.ContributeModule(
-              documentModule,
-              imageOrienter,
-              requestService,
-              _this.view,
-              _this.controls,
-              _this.config
-            );
-          }
-        }
-
-        ////// VALIDATION EXTENSION
-        if (_this.config.widgets.documentValidationModule) {
-          new Widgets.Extensions.DocumentValidationModule(
-            documentModule,
-            requestService,
-            _this.config
-          );
-        }
-
-        ////// DOCUMENT COMMENTS
-        if (_this.config.widgets.documentCommentsModule) {
-          new Widgets.Extensions.DocumentCommentsModule(
-            documentModule,
-            requestService,
-            _this.config
-          );
-        }
-
-        ////// GUIDED TOURS MODULE
-        if (_this.config.widgets.guidedTourController) {
-          const guidedtour = new Widgets.GuidedTourController(
-            documentModule,
-            requestService,
-            _this.config
-          );
-          _this.addModuleView('guidedTour', guidedtour, {
-            name: 'Guided Tours',
-          });
-        }
-      }
-
-      ////// GEOCODING EXTENSION
-      if (_this.config.widgets.geocodingView) {
-        const geocodingService = new Widgets.Extensions.GeocodingService(
-          requestService,
-          _this.extent,
-          _this.config
-        );
-        const geocodingView = new Widgets.Extensions.GeocodingView(
-          geocodingService,
-          _this.controls,
-          _this.view
-        );
-        _this.addModuleView('geocoding', geocodingView, {
-          binding: 's',
-          name: 'Address Search',
-        });
-      }
-
-      ////// CITY OBJECTS MODULE
-      let cityObjectModule = null;
-      if (_this.config.widgets.cityObjectModule) {
-        cityObjectModule = new Widgets.CityObjectModule(
-          _this.layerManager,
-          _this.config
-        );
-        _this.addModuleView('cityObjects', cityObjectModule.view);
-      }
-
-      ////// LINKS MODULES
-      if (
-        documentModule &&
-        cityObjectModule &&
-        _this.config.widgets.linkModule
-      ) {
-        new Widgets.LinkModule(
-          documentModule,
-          cityObjectModule,
-          requestService,
-          _this.view,
-          _this.controls,
-          _this.config
-        );
-      }
-
-      ////// 3DTILES DEBUG
-      if (_this.config.widgets.debug3DTilesWindow) {
-        const debug3dTilesWindow = new Widgets.Extensions.Debug3DTilesWindow(
-          _this.layerManager
-        );
-        _this.addModuleView('3dtilesDebug', debug3dTilesWindow, {
-          name: '3DTiles Debug',
-        });
-      }
-
-      ////// CAMERA POSITIONER
-      if (_this.config.widgets.cameraPositionerView) {
-        const cameraPosition = new Widgets.CameraPositionerView(
-          _this.view,
-          _this.controls
-        );
-        _this.addModuleView('cameraPositioner', cameraPosition);
-      }
-
-      ////// LAYER CHOICE
-      if (_this.config.widgets.layerChoice) {
-        const layerChoice = new Widgets.LayerChoice(_this.layerManager);
-        _this.addModuleView('layerChoice', layerChoice, {
-          name: 'layerChoice',
-        });
-      }
-
-      ////// TEMPORAL MODULE
-      if (_this.config.widgets.temporalModule) {
-        const temporalModule = new Widgets.TemporalModule(_this.layerManager.tilesManagers[0],_this.config.temporalModule);
-        _this.addModuleView('temporal', temporalModule.view);
-      }
+        resolve('resolved');
+      });
     });
   }
 
@@ -569,6 +395,7 @@ export class AllWidget {
       }
     );
     this.view.addLayer(wmsImageryLayer);
+    this.update3DView();
   }
 
   addElevationLayer() {
@@ -592,6 +419,7 @@ export class AllWidget {
       }
     );
     this.view.addLayer(wmsElevationLayer);
+    this.update3DView();
   }
 
   /**
@@ -706,12 +534,13 @@ export class AllWidget {
       const [$3DTilesLayer] = this.setup3DTilesLayer(layer);
       this.add3DTilesLayer($3DTilesLayer);
     }
+    this.update3DView();
   }
 
   /**
    * Initializes the iTowns 3D view according the config.
    */
-  init3DView(worldMap) {
+  init3DView() {
     // ********* INIT ITOWNS VIEW
     // Define projection used in iTowns viewer (taken from
     // https://epsg.io/3946, Proj4js section)
@@ -757,7 +586,7 @@ export class AllWidget {
     // The skirt allows to remove the cracks between the terrain tiles
     // Instantiate controls within PlanarView
     let maxSubdivisionLevel = 3;
-    if(worldMap) maxSubdivisionLevel = 18;
+    if(this.config.background_image_layer.maxSubdivisionLevel) maxSubdivisionLevel = this.config.background_image_layer.maxSubdivisionLevel;
 
     this.view = new itowns.PlanarView(viewerDiv, this.extent, {
       disableSkirt: false,

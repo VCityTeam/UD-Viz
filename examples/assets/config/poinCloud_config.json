@@ -4,26 +4,6 @@
     "imageFolder": "../assets/img",
     "logos": ["logo-liris.png", "logo-univ-lyon.png"]
   },
-  "widgets": {
-    "aboutWindow": true,
-    "helpWindow": true,
-    "authenticationView": false,
-    "documentModule": false,
-    "documentVisualizerWindow": false,
-    "contributeModule": false,
-    "documentValidationModule": false,
-    "documentCommentsModule": false,
-    "guidedTourController": false,
-    "geocodingView": false,
-    "cityObjectModule": false,
-    "linkModule": false,
-    "debug3DTilesWindow": false,
-    "cameraPositionerView": false,
-    "layerChoice": true,
-    "elevationLayer": true,
-    "layer3DTiles":true,
-    "basemapLayer":true
-  },
   "extents": {
     "min_x": "1837860.980127206",
     "max_x": "1851647",

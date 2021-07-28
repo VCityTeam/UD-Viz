@@ -11,8 +11,23 @@
   <body>
     <script src="../../dist/release/udv.js"></script>
     <script type="text/javascript">
-      const app = new udv.Templates.AllWidget();
-      app.start('./config.json');
+      let app = new udv.Templates.AllWidget();
+
+      app.start("../assets/config/multiLayer_config.json").then(() => {
+        app.setupAndAdd3DTilesLayers();
+
+        ////// ABOUT MODULE
+        const about = new udv.Widgets.AboutWindow();
+        app.addModuleView("about", about);
+
+        ////// HELP MODULE
+        const help = new udv.Widgets.HelpWindow();
+        app.addModuleView("help", help);
+
+        ////// LAYER CHOICE MODULE
+        const layerChoice = new udv.Widgets.LayerChoice(app.layerManager);
+        app.addModuleView("layerChoice", layerChoice);
+      });
     </script>
   </body>
 </html>

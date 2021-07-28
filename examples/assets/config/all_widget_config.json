@@ -1,25 +1,8 @@
 {
   "assets": {
-    "iconFolder": "./assets/icons",
-    "imageFolder": "./assets/img",
+    "iconFolder": "../assets/icons",
+    "imageFolder": "../assets/img",
     "logos": ["logo-liris.png", "logo-univ-lyon.png"]
-  },
-  "widgets": {
-    "aboutWindow": true,
-    "helpWindow": true,
-    "authenticationView": true,
-    "documentModule": true,
-    "documentVisualizerWindow": true,
-    "contributeModule": true,
-    "documentValidationModule": true,
-    "documentCommentsModule": true,
-    "guidedTourController": true,
-    "geocodingView": true,
-    "cityObjectModule": true,
-    "linkModule": true,
-    "debug3DTilesWindow": true,
-    "cameraPositionerView": true,
-    "LayerChoice": true
   },
   "server": {
     "url": "http://rict.liris.cnrs.fr:1525/",
@@ -40,6 +23,13 @@
     "min_y": "5169347.4265999",
     "max_y": "5180575"
   },
+  "temporalModule": {
+    "view": "SLIDERWINDOW",
+    "minTime": 2009,
+    "maxTime": 2015,
+    "currentTime": 2009,
+    "timeStep": 1
+  },
   "projection": "EPSG:3946",
   "background_image_layer": {
     "url": "https://download.data.grandlyon.com/wms/grandlyon",
@@ -47,7 +37,8 @@
     "version": "1.3.0",
     "format": "image/jpeg",
     "layer_name": "Base_Map",
-    "transparent": true
+    "transparent": true,
+    "maxSubdivisionLevel": 3
   },
   "elevation_layer": {
     "url": "https://download.data.grandlyon.com/wms/grandlyon",
@@ -62,19 +53,13 @@
       "tilt": "17"
     }
   },
-  "3DTilesLayer": {
-    "id": "3d-tiles-layer-building",
-    "url": "https://dataset-dl.liris.cnrs.fr/three-d-tiles-lyon-metropolis/Lyon_2015-gltf-repaired_TileSet/tileset.json",
-    "color": "0xFFFFFF",
-    "initTilesManager": "true"
-  },
-  "temporalModule": {
-    "view": "SLIDERWINDOW",
-    "minTime": 2009,
-    "maxTime": 2015,
-    "currentTime": 2009,
-    "timeStep": 1
-  },
+  "3DTilesLayers": [
+    {
+      "id": "Lyon",
+      "url": "https://dataset-dl.liris.cnrs.fr/three-d-tiles-lyon-metropolis/Lyon_2015-gltf-repaired_TileSet/tileset.json",
+      "color": "0xFFFFFF"
+    }
+  ],
   "geocoding": {
     "url": "https://nominatim.openstreetmap.org/search",
     "credit": "© OpenStreetMap contributors under <a href=\"https://www.openstreetmap.org/copyright\">ODbL</a>",
