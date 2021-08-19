@@ -139,9 +139,12 @@ const WorldModule = class World {
           _this.gameObject = gameObject;
         }
 
-        gameObject.executeWorldScripts(WorldScriptComponent.EVENT.INIT, [
-          worldContext,
-        ]);
+        //TODO init can be trigger several times but need this to init child of a add go
+        gameObject.traverse(function (child) {
+          child.executeWorldScripts(WorldScriptComponent.EVENT.INIT, [
+            worldContext,
+          ]);
+        });
 
         _this.registerGOCollision(gameObject);
 
