@@ -7,8 +7,9 @@ A tutorial of the game engine can be found [here](./Doc/Devel/LocalGameTutorial.
 ### Pre-requisite
 Developing UD-Viz requires some knowledge about [JS](https://github.com/VCityTeam/UD-SV/blob/master/UD-Doc/Devel/ToolJavaScript.md), node.js, npm and [three.js](https://threejs.org/).
 
-## Installation
-### Prerequisite: install nodejs and npm
+Developing UD-Viz requires some knowledge about [JS](https://github.com/VCityTeam/UD-SV/blob/master/UD-Doc/Devel/ToolJavaScript.md), [node.js](https://en.wikipedia.org/wiki/Node.js), [npm](https://en.wikipedia.org/wiki/Npm_(software)) and [three.js](https://threejs.org/).
+
+### Install nodejs and npm
 
 * **Ubuntu**
 
@@ -32,7 +33,7 @@ Developing UD-Viz requires some knowledge about [JS](https://github.com/VCityTea
     scoop install nodejs
     ```
 
-### Installing the UD-Viz library
+### Installing the UD-Viz library per se
 
 ```bash
 git clone https://github.com/VCityTeam/UD-Viz.git
@@ -40,25 +41,31 @@ cd UD-Viz
 npm install
 ```
 
-## Setup of the coding environment
+## UD-Viz based applications
+
+* [UD-Viz-Template](https://github.com/VCityTeam/UD-Viz-Template) (demonstration) application,
+* online demos are [available here](https://projet.liris.cnrs.fr/vcity/demos/)
+
+## Developers
+
+### Recommended IDE
 
 Installing [Visual Studio Code](https://code.visualstudio.com/) is recommended, in order to use the plugin formatter [Prettier](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode). Once installed you should setup Prettier with single quote coding style (Preferences => Settings => Type in search bar : Single quote => Toggle single quote of Prettier extension)
 
 ### Workflow
 
-Before to push your modifications run:
-```
+Before pushing your modifications to the origin repository please run:
+
+```bash
 npm run travis
 ```
-to check if eslint and the webpack commands run well
 
-## Demos
-Standard application demos using UD-Viz are [gathered in UD-Viz-demo](https://github.com/VCityTeam/UD-Viz-demo)
-and some online demos are [available here](https://projet.liris.cnrs.fr/vcity/demos/)
+in order to assert that `eslint` and `webpack` commands are still effective
+
 
 ## Sources directory layout (organizational principles) FIXME:update layout description
 Definitions:
- - [Component](https://en.wikipedia.org/wiki/Component-based_software_engineering)
+ - [Component](https://en.wikipedia.org/wiki/Component-based_software_engineering)<a name="anchor-ud-viz-component-definition"></a>
    - `Components` folder: a set of components
  - Extension: a component depending on a [web service](https://github.com/VCityTeam/UD-Viz/blob/master/src/Widgets/Extensions/Geocoding/services/GeocodingService.js#L2) in order to be functionnal. 
  - Plugin: a plugin (importable atomic sub-library) of the iTowns framework
