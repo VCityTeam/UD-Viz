@@ -36,6 +36,9 @@ export class GameView extends View3D {
     //the last state processed
     this.lastState = null;
 
+    //stop update of gameobject
+    this.updateGameObject = true;
+
     //TODO place these attributes in a userData object
     this.firstGameView = params.firstGameView || false; //first gameview of the application
     this.avatarUUID = null; //uuid of the avatar
@@ -49,6 +52,14 @@ export class GameView extends View3D {
     //TODO move in View3D
     //Array of callbacks call during the tick
     this.tickRequesters = [];
+  }
+
+  /**
+   *
+   * @param {Boolean} value true go are updated false no
+   */
+  setUpdateGameObject(value) {
+    this.updateGameObject = value;
   }
 
   /**
@@ -186,34 +197,39 @@ export class GameView extends View3D {
     //update lastState with the new one
     if (this.lastState) {
       let lastGO = this.lastState.getGameObject();
-      lastGO.traverse(function (g) {
-        const uuid = g.getUUID();
-        const current = state.getGameObject().find(uuid);
-        if (current && !g.isStatic()) {
-          //update local components
-          g.updateNoStaticFromGO(current, ctx);
-        } else if (!current) {
-          //do not exist remove it
-          g.removeFromParent();
-          delete _this.currentUUID[g.getUUID()];
-        }
-      });
 
-      state.getGameObject().traverse(function (g) {
-        const uuid = g.getUUID();
-        const old = lastGO.find(uuid);
-        if (!old) {
-          //new one add it
-          const parent = lastGO.find(g.getParentUUID());
-          parent.addChild(g);
-        }
+      if (this.updateGameObject) {
+        //update lastGO
 
-        if (!_this.currentUUID[g.getUUID()]) {
-          newGO.push(g);
-        }
-      });
+        lastGO.traverse(function (g) {
+          const uuid = g.getUUID();
+          const current = state.getGameObject().find(uuid);
+          if (current && !g.isStatic()) {
+            //update local components
+            g.updateNoStaticFromGO(current, ctx);
+          } else if (!current) {
+            //do not exist remove it
+            g.removeFromParent();
+            delete _this.currentUUID[g.getUUID()];
+          }
+        });
 
-      state.setGameObject(lastGO); //update GO
+        state.getGameObject().traverse(function (g) {
+          const uuid = g.getUUID();
+          const old = lastGO.find(uuid);
+          if (!old) {
+            //new one add it
+            const parent = lastGO.find(g.getParentUUID());
+            parent.addChild(g);
+          }
+
+          if (!_this.currentUUID[g.getUUID()]) {
+            newGO.push(g);
+          }
+        });
+      }
+
+      state.setGameObject(lastGO); //set it
     } else {
       state.getGameObject().traverse(function (g) {
         newGO.push(g);
@@ -271,13 +287,15 @@ export class GameView extends View3D {
         this.directionalLight
       );
 
-    //tick local script
-    go.traverse(function (child) {
-      const scriptComponent = child.getComponent(LocalScript.TYPE);
-      if (scriptComponent)
-        scriptComponent.execute(LocalScript.EVENT.TICK, [ctx]);
-    });
-    
+    if (this.updateGameObject) {
+      //tick local script
+      go.traverse(function (child) {
+        const scriptComponent = child.getComponent(LocalScript.TYPE);
+        if (scriptComponent)
+          scriptComponent.execute(LocalScript.EVENT.TICK, [ctx]);
+      });
+    }
+
     if (this.isRendering) {
       //render
       const scene = this.itownsView.scene;
