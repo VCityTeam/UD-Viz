@@ -44,27 +44,27 @@ To begin with, here is the **basis** of an html script, **copy it** :
 
 Then you will need to host your `GameFolder`, to do so you can use your own local server otherwise follows these steps:
 
-- Clonez le repo SimpleServer, à part :
+- Clone the SimpleServer repo separately :
 
 ```bash
 git clone https://github.com/VCityTeam/UD-SimpleServer.git
 ```
 
-- Ouvrez le repo SimpleServer dans un terminal
+- Open the SimpleServer repo in a terminal
 
-- Installer les packages nodes :
+- Installing node packages :
 
 ```bash
 npm install
 ```
 
-- Et enfin hebergez le dossier UD-Viz :
+- And finally host the UD-Viz folder :
 
 ```bash
 node index.js PATH_TO_My_UD-Viz_Game 8000
 ```
 
-Vous pouvez visitez votre page à http://localhost:8000/ mais rien ne s'affiche.
+You can visit your page at http://localhost:8000/ but nothing is displayed.
 
 ## Importing ud-viz
 
@@ -74,7 +74,7 @@ For this tutorial you will need to import `ud-viz` in your project, it is the fr
 <script src="./assets/js/udv.js"></script>
 ```
 
-Toujours rien d'afficher mais la librairie est maintenant globalement accessible.
+Still nothing displayed but the bookshop is now globally accessible.
 
 > To keep this tutorial simple ud-viz is imported this way, but a [npm package](https://www.npmjs.com/package/ud-viz) exists and it's recommended to use it since you can benefit of the update with it.
 
