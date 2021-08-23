@@ -271,14 +271,14 @@ export class GameView extends View3D {
         this.directionalLight
       );
 
-    if (!this.pause) {
-      //tick local script
-      go.traverse(function (child) {
-        const scriptComponent = child.getComponent(LocalScript.TYPE);
-        if (scriptComponent)
-          scriptComponent.execute(LocalScript.EVENT.TICK, [ctx]);
-      });
-
+    //tick local script
+    go.traverse(function (child) {
+      const scriptComponent = child.getComponent(LocalScript.TYPE);
+      if (scriptComponent)
+        scriptComponent.execute(LocalScript.EVENT.TICK, [ctx]);
+    });
+    
+    if (this.isRendering) {
       //render
       const scene = this.itownsView.scene;
       scene.updateMatrixWorld();

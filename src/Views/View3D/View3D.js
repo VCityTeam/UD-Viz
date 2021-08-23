@@ -66,7 +66,7 @@ export class View3D {
     this.itownsControls = params.itownsControls || false;
 
     //pause
-    this.pause = false;
+    this.isRendering = true;
 
     //flag
     this.disposed = false;
@@ -154,7 +154,7 @@ export class View3D {
     const tick = function () {
       if (_this.disposed) return;
       requestAnimationFrame(tick);
-      if (_this.pause) return;
+      if (!_this.isRendering) return;
       css3DRenderer.render(_this.css3DScene, _this.itownsView.camera.camera3D);
     };
     tick();
@@ -229,8 +229,8 @@ export class View3D {
    *
    * @param {Boolean} value if true the css3D renderer stop rendering
    */
-  setPause(value) {
-    this.pause = value;
+  setIsRendering(value) {
+    this.isRendering = value;
   }
 
   /**
