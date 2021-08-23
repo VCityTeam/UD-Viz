@@ -181,6 +181,11 @@ export class GameView extends View3D {
     this.directionalLight = directionalLight;
   }
 
+  dispose() {
+    super.dispose();
+    this.stateComputer.stop();
+  }
+
   /**
    * Update GameObject with the new state
    * Initialize assets of the new GameObject

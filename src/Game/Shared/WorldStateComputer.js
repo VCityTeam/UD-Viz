@@ -20,6 +20,12 @@ module.exports = class WorldStateComputer {
     this.onAfterTick = null;
 
     this.pause = false;
+
+    this.interval = null;
+  }
+
+  stop() {
+    if (this.interval) clearInterval(this.interval);
   }
 
   setPause(value) {
@@ -68,7 +74,7 @@ module.exports = class WorldStateComputer {
 
       const fps = _this.fps;
       if (!fps) throw new Error('no fps');
-      setInterval(tick, 1000 / fps);
+      _this.interval = setInterval(tick, 1000 / fps);
 
       if (onLoad) onLoad();
     }, this.worldContext);
