@@ -22,7 +22,7 @@ Steps :
 
 - Create an html script in your folder that you call `index.html`.
 
-> Open the folder in visual studio code or your favorite IDE :computer:
+> Open the **folder** in visual studio code or your favorite IDE :computer:
 
 ## Initialize your project
 
@@ -42,9 +42,9 @@ To begin with, here is the **basis** of an html script, **copy it** :
 </html>
 ```
 
-Then you will need to host your `GameFolder`, to do so you can use your own local server otherwise follows these steps:
+Then you will need to host your game folder `My_UD-Viz_Game`, to do so you can use your own local server otherwise follows these steps:
 
-- Clone the SimpleServer repo separately :
+- Clone the SimpleServer repo separately:
 
 ```bash
 git clone https://github.com/VCityTeam/UD-SimpleServer.git
@@ -52,13 +52,13 @@ git clone https://github.com/VCityTeam/UD-SimpleServer.git
 
 - Open the SimpleServer repo in a terminal
 
-- Installing node packages :
+- Installing node packages:
 
 ```bash
 npm install
 ```
 
-- And finally host the UD-Viz folder :
+- And finally host `My_UD-Viz_Game` folder with this command line:
 
 ```bash
 node index.js PATH_TO_My_UD-Viz_Game 8000
@@ -68,19 +68,21 @@ You can visit your page at http://localhost:8000/ but nothing is displayed.
 
 ## Importing ud-viz
 
-For this tutorial you will need to import `ud-viz` in your project, it is the framework that contains the **game engine** and **urban data visualization tools**. In your HTML file add the following script tag in the body. Then copy this [file](../../examples/assets/js/udv.js) in a ./assets/js/ directory, which contains all the ud-viz code in a single file.
+For this tutorial you will need to import `ud-viz` in your project, it is the framework that contains the **game engine** and **urban data visualization tools**. 
+For this purpose, in your HTML file (`index.html`) add the following script tag in the **body**.
 
 ```html
 <script src="./assets/js/udv.js"></script>
 ```
+Then copy this [file](../../examples/assets/js/udv.js) in a My_UD-Viz_Game/assets/js/ directory, which contains all the ud-viz code in a single file.
 
-Still nothing displayed but the bookshop is now globally accessible.
+Still nothing displayed but the library is now globally accessible.
 
-> To keep this tutorial simple ud-viz is imported this way, but a [npm package](https://www.npmjs.com/package/ud-viz) exists and it's recommended to use it since you can benefit of the update with it.
+> To keep this tutorial simple ud-viz is imported this way, but a [npm package](https://www.npmjs.com/package/ud-viz) exists and it's recommended to use it since you can benefit of the update with it. 
 
 ## Create a your game
 
-Let's create a script tag in the index.html and add the following code to start a new local game :
+Let's create a script tag in the `index.html` and add the following code to start a new local game (*Still in the body tag*):
 
 ```html
 <script type="text/javascript">
@@ -96,12 +98,10 @@ Let's create a script tag in the index.html and add the following code to start 
   app.start(myWorld, './assets/config/local_game_config.json');
 </script>
 ```
-
+**What does this mean?**
 First a new World called `My World` is created, you have to specified at which 3D coordonates you want to create it. Here we take a random location in Lyon. We also scpecified our root gameobject which is here called `GameManager`
 
-Then a [LocalGame](../../src/Templates/LocalGame/LocalGame.js) is instanciate, to start it you need to pass a world and a path to a config file.
-
-Create a file `local_game_config.json` in the folder ./assets/config/local_game_config.json ([local_game_config.json](../../examples/assets/config/local_game_config.json)) and copy the following code :
+Then a [LocalGame](../../src/Templates/LocalGame/LocalGame.js) is instanciate, to start it you need to pass a world and a path to a config file. To do this, create a file `local_game_config.json` in the folder ./assets/config/local_game_config.json ([local_game_config.json](../../examples/assets/config/local_game_config.json)) and copy the following code :
 
 ```json
 {
@@ -214,7 +214,7 @@ Now there is a worldscript named worldGameManager located at a certain path.
 
 Finally we need to create that script `worldGameManager.js`, in ./assets/worldscripts/ folder.
 
-Skeleton of the `worldGameManager.js` is like so : 
+Skeleton of the `worldGameManager.js` is like so :
 
 ```js
 let Shared;
@@ -339,7 +339,6 @@ module.exports = class MyClass {
 
   tick() {}
 };
-
 ```
 
 `conf` is metadata that could be passed into the json file but here there is none. `udvizBundle` is the dynamic import of the ud-viz framework which is used to code inside a localscript context.
