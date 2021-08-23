@@ -389,6 +389,12 @@ const GameObjectModule = class GameObject {
     }
   }
 
+  bindTransformFrom(o) {
+    this.object3D.position.set(o.position.x, o.position.y, o.position.z);
+    this.object3D.rotation.set(o.rotation.x, o.rotation.y, o.rotation.z);
+    this.object3D.scale.set(o.scale.x, o.scale.y, o.scale.z);
+  }
+
   /**
    * Compute the object3D
    * @param {Boolean} recursive if true recursive call on children
