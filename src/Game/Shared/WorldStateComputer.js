@@ -18,6 +18,12 @@ module.exports = class WorldStateComputer {
     this.fps = fps || 60;
 
     this.onAfterTick = null;
+
+    this.pause = false;
+  }
+
+  setPause(value) {
+    this.pause = value;
   }
 
   /**
@@ -44,6 +50,8 @@ module.exports = class WorldStateComputer {
     world.load(function () {
       //loop
       const tick = function () {
+        if (_this.pause) return;
+
         const now = Date.now();
         if (!lastTimeTick) {
           wC.setDt(0);
