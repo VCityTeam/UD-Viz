@@ -18,9 +18,9 @@ export { Game };
 import * as Templates from './Templates/Templates.js';
 export { Templates };
 
-//View3D
-import { View3D } from './View/View3D/View3D';
-export { View3D };
+//Views
+import * as Views from './Views/Views';
+export { Views };
 
 //external package
 

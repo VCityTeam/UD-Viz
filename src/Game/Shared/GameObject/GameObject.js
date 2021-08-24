@@ -105,7 +105,7 @@ const GameObjectModule = class GameObject {
 
   /**
    * Bind transform of go into this
-   * @param {GameObject} go 
+   * @param {GameObject} go
    */
   setTransformFromGO(go) {
     this.object3D.position.copy(go.object3D.position);
@@ -116,11 +116,9 @@ const GameObjectModule = class GameObject {
 
   /**
    * Set transform of object3D from json
-   * @param {JSON} json 
+   * @param {JSON} json
    */
-  setFromTransformJSON(json) {
-    if (!json) throw new Error('no json');
-
+  setFromTransformJSON(json = {}) {
     if (json.position) {
       this.object3D.position.fromArray(json.position);
     } else {
@@ -136,7 +134,7 @@ const GameObjectModule = class GameObject {
     if (json.scale) {
       this.object3D.scale.fromArray(json.scale);
     } else {
-      this.object3D.scale.fromArray([0, 0, 0]);
+      this.object3D.scale.fromArray([1, 1, 1]);
     }
   }
 
@@ -158,20 +156,20 @@ const GameObjectModule = class GameObject {
   /**
    * Initialize components of this
    * @param {AssetsManager} manager must implement an assetsmanager interface can be local or server
-   * @param {Shared} udvShared ud-viz/Game/Shared module
+   * @param {Library} bundles set of bundle library used by script
    * @param {Boolean} isServerSide the code is running on a server or in a browser
    */
-  initAssetsComponents(manager, udvShared, isServerSide = false) {
+  initAssetsComponents(manager, bundles = {}, isServerSide = false) {
     if (!this.initialized) {
       this.initialized = true;
       for (let type in this.components) {
         const c = this.components[type];
         if (isServerSide && !c.isServerSide()) continue;
-        c.initAssets(manager, udvShared);
+        c.initAssets(manager, bundles);
       }
     }
     this.children.forEach(function (child) {
-      child.initAssetsComponents(manager, udvShared, isServerSide);
+      child.initAssetsComponents(manager, bundles, isServerSide);
     });
   }
 
@@ -391,6 +389,12 @@ const GameObjectModule = class GameObject {
     }
   }
 
+  bindTransformFrom(o) {
+    this.object3D.position.set(o.position.x, o.position.y, o.position.z);
+    this.object3D.rotation.set(o.rotation.x, o.rotation.y, o.rotation.z);
+    this.object3D.scale.set(o.scale.x, o.scale.y, o.scale.z);
+  }
+
   /**
    * Compute the object3D
    * @param {Boolean} recursive if true recursive call on children
@@ -451,6 +455,24 @@ const GameObjectModule = class GameObject {
     let result = null;
     this.traverse(function (g) {
       if (g.getUUID() == uuid) {
+        result = g;
+        return true;
+      }
+      return false;
+    });
+    return result;
+  }
+
+  /**
+   * Find a gameobject into the hierarchy with a name
+   * return the first one encounter
+   * @param {String} name
+   * @returns
+   */
+  findByName(name) {
+    let result = null;
+    this.traverse(function (g) {
+      if (g.getName() == name) {
         result = g;
         return true;
       }

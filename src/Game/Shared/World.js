@@ -32,11 +32,7 @@ const WorldModule = class World {
     this.uuid = json.uuid || THREE.Math.generateUUID();
 
     //gameobject
-    if (json.gameObject) {
-      this.gameObject = new GameObject(json.gameObject);
-    } else {
-      throw new Error('no go in world');
-    }
+    this.gameObject = new GameObject(json.gameObject);
 
     //name of the world
     this.name = json.name || 'default_world';
@@ -131,7 +127,7 @@ const WorldModule = class World {
 
     gameObject.initAssetsComponents(
       worldContext.getAssetsManager(),
-      worldContext.getSharedModule(),
+      worldContext.getBundles(),
       _this.isServerSide
     );
 
@@ -143,9 +139,11 @@ const WorldModule = class World {
           _this.gameObject = gameObject;
         }
 
-        //TODO init can be trigger several time FIXME maybe with a flag in worldscript component
-        gameObject.traverse(function (g) {
-          g.executeWorldScripts(WorldScriptComponent.EVENT.INIT, [worldContext]);
+        //TODO init can be trigger several times but need this to init child of a add go
+        gameObject.traverse(function (child) {
+          child.executeWorldScripts(WorldScriptComponent.EVENT.INIT, [
+            worldContext,
+          ]);
         });
 
         _this.registerGOCollision(gameObject);

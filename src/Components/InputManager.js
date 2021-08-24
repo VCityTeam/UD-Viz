@@ -65,11 +65,17 @@ export class InputManager {
    */
   addKeyInput(key, eventID, cb) {
     const _this = this;
-    window.addEventListener(eventID, function (event) {
+    const listener = function (event) {
       if (key == event.key && !_this.pause) cb();
-    });
+    };
+    window.addEventListener(eventID, listener);
     //register to dispose it
-    this.listeners.push({ element: window, cb: cb, id: eventID });
+    this.listeners.push({
+      element: window,
+      cb: cb, //keep it to make easier the remove
+      id: eventID,
+      listener: listener,
+    });
   }
 
   /**
@@ -116,13 +122,21 @@ export class InputManager {
    */
   addMouseInput(element, eventID, cb) {
     const _this = this;
-    element.addEventListener(eventID, function (event) {
+
+    const listener = function (event) {
       if (!_this.pause) {
         cb(event);
       }
-    });
+    };
+
+    element.addEventListener(eventID, listener);
     //register to dispose it
-    this.listeners.push({ element: element, cb: cb, id: eventID });
+    this.listeners.push({
+      element: element,
+      cb: cb, //keep it to make easier the remove
+      id: eventID,
+      listener: listener,
+    });
   }
 
   /**
@@ -152,6 +166,17 @@ export class InputManager {
 
     //start listening mouse state
     this.mouseState.startListening(element);
+  }
+
+  removeInputListener(listener) {
+    for (let index = 0; index < this.listeners.length; index++) {
+      const o = this.listeners[index];
+      if (o.cb == listener) {
+        o.element.removeEventListener(o.id, o.listener);
+        this.listeners.splice(index, 1);
+        break;
+      }
+    }
   }
 
   /**
