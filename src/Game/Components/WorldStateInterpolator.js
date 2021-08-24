@@ -89,7 +89,7 @@ export class WorldStateInterpolator {
 
   /**
    * Add a new diff to compute a new state
-   * @param {WorldStateDiff} diff 
+   * @param {WorldStateDiff} diff
    */
   onNewDiff(diff) {
     let last = this._getLastStateReceived();
@@ -112,8 +112,13 @@ export class WorldStateInterpolator {
   //StateComputer INTERFACE
 
   /**
+   * wrapper function
+   */
+  stop() {}
+
+  /**
    * Compute the current world state
-   * @returns {WorldState} 
+   * @returns {WorldState}
    */
   computeCurrentState() {
     if (!this.firstServerTimestamp) {
