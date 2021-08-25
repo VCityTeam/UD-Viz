@@ -163,7 +163,7 @@ Here we are parameterized layers of the [itowns](http://www.itowns-project.org/i
 
 ![2](./Pictures/2.png)
 
-* Okay we are close, add these lines
+* Okay we are close, add these lines in `local_game_config.json`:
 
 ```json
 "3DTilesLayer": {
@@ -174,7 +174,7 @@ Here we are parameterized layers of the [itowns](http://www.itowns-project.org/i
 }
 ```
 
-Here data (geometries of buildings) are not collected from a distant server but locally, you need to download these [folder](../../examples/assets/lod_flying_campus), then copy it in ./assets/
+Here data (geometries of buildings) are not collected from a **distant server** but **locally**, you need to download these [folder](../../examples/assets/lod_flying_campus), then copy it in **./assets/**
 
 Here is what you shoudl see now
 
