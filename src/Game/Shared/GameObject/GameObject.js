@@ -612,6 +612,10 @@ const GameObjectModule = class GameObject {
     return this.name;
   }
 
+  setName(name) {
+    this.name = name;
+  }
+
   /**
    * Compute this to JSON with or without its server side components
    * @param {Boolean} withServerComponent
