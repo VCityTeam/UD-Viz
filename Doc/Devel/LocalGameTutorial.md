@@ -90,7 +90,7 @@ For this tutorial you will need to import `ud-viz` in your project, it is the fr
 * Then copy this [file](../../examples/assets/js/udv.js) in a **My_UD-Viz_Game/assets/js/** directory, which contains all the ud-viz code in a single file.
 
 Still nothing displayed but the library is now globally accessible.
-> To keep this tutorial simple ud-viz is imported this way, but a [npm package](https://www.npmjs.com/package/ud-viz) exists and it's recommended to use it since you can benefit of the update with it.
+> To keep this tutorial simple ud-viz is imported this way, but a [npm package](https://www.npmjs.com/package/ud-viz) exists and it's recommended to use it since you can benefit of the update with it. You can visit this [repository](https://github.com/VCityTeam/UD-Viz-Template) to see an example of a npm project using ud-viz as a package.
 
 ## Create a your game
 
