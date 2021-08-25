@@ -234,6 +234,12 @@ const GameObjectModule = class GameObject {
     return c.getScripts();
   }
 
+  fetchLocalScripts() {
+    const c = this.getComponent(LocalScriptModule.TYPE);
+    if (!c) return null;
+    return c.getScripts();
+  }
+
   /**
    * Return the default forward vector
    * @returns {THREE.Vector3}
