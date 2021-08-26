@@ -92,7 +92,7 @@ const LocalScriptModule = class LocalScript {
       this.conf = component.conf;
       for (let id in this.scripts) {
         const s = this.scripts[id];
-        s.config = component.conf;
+        s.conf = component.conf;
       }
       this.execute(LocalScriptModule.EVENT.UPDATE, [localContext]);
     }

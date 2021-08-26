@@ -129,7 +129,7 @@ module.exports = class WorldStateComputer {
    * Compute the current world state
    * @returns {WorldState}
    */
-  computeCurrentState() {
-    return this.worldContext.getWorld().computeWorldState();
+  computeCurrentState(withServerComponent = true) {
+    return this.worldContext.getWorld().computeWorldState(withServerComponent);
   }
 };

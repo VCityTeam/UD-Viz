@@ -336,9 +336,9 @@ const WorldModule = class World {
    * Return the current world state
    * @returns {WorldState}
    */
-  computeWorldState() {
+  computeWorldState(withServerComponent = true) {
     const result = new WorldState({
-      gameObject: this.gameObject.toJSON(true),
+      gameObject: this.gameObject.toJSON(withServerComponent),
       timestamp: Date.now(),
       origin: this.origin,
     });
