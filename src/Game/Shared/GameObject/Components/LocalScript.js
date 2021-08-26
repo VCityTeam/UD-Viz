@@ -114,6 +114,10 @@ const LocalScriptModule = class LocalScript {
     return false;
   }
 
+  getUUID() {
+    return this.uuid;
+  }
+
   /**
    * Compute this to JSON
    * @returns {JSON}
