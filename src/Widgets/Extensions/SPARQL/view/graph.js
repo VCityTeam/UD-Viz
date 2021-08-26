@@ -1,19 +1,17 @@
 import * as d3 from 'd3';
 
-export class graphView {
+export class Graph {
   /**
    * Create a new D3 graph from an RDF JSON object.
    * Adapted from https://observablehq.com/@d3/force-directed-graph#chart
    */
-  constructor(data, height = 240, width = 240) {
+  constructor(height = 500, width = 500) {
     this.height = height;
     this.width = width;
 
     this.svg = d3
       .create('svg')
       .attr('viewBox', [0, 0, this.width, this.height]);
-
-    this.updateGraph(data);
   }
 
   /**
