@@ -6,7 +6,11 @@
 >>>>>>> Tuto Update
 # Local Game tutorial :lion:
 
+<<<<<<< HEAD
 Welcome in the first ud-viz game tutorial. We will proceed step by step if you want to consult the complete project, you can find it in this [folder](../../examples). At the end of this tutorial you will fly with your zeppelin in the sky of Lyon, and collect some spheres !
+=======
+Welcome in the first ud-viz game tutorial. We will proceed step by step, if you want to consult the complete project, you can find it in this [folder](../../examples). At the end of this tutorial you will fly with your zeppelin in the sky of Lyon, and collect some spheres!
+>>>>>>> First pass.
 
 ![Zeppelin](./Pictures/zeppelin.gif)
 
@@ -22,9 +26,14 @@ Welcome in the first ud-viz game tutorial. We will proceed step by step if you w
 
 Steps :
 
+<<<<<<< HEAD
 - Create an empty folder that you can call `GameFolder`.
 
 - Create an html script in your folder that you call `index.html`.
+=======
+- Create an empty folder that you can call `My_UD-Viz_Game`.
+- Create a html script in your folder that you call `index.html`.
+>>>>>>> First pass.
 
 > Open the **folder** in visual studio code or your favorite IDE :computer:
 
@@ -32,7 +41,11 @@ Steps :
 
 For this tutorial you will need to import `ud-viz` in your project, it is the framework that contains the **game engine** and **urban data visualization tools**.
 
+<<<<<<< HEAD
 To begin with, here is the **basis** of an html file, **copy it** :
+=======
+To begin with, here is the **base** of an html script, **copy it**:
+>>>>>>> First pass.
 
 ```html
 <!--index.html-->
@@ -48,25 +61,39 @@ To begin with, here is the **basis** of an html file, **copy it** :
 </html>
 ```
 
+<<<<<<< HEAD
 Then you will need to host your game folder (`My_UD-Viz_Game`), to do so you can use your own local server otherwise follows these steps:
 
 > If you chose to host with this way npm and node must be installed. ([Doc link](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm))
 
 - Clone the `UD-SimpleServer` repo separately:
+=======
+Then you will need to host your `GameFolder`, to do so you can use your own local server, otherwise follow these steps:
+
+- Clone the SimpleServer repo separately:
+>>>>>>> First pass.
 
 ```bash
 git clone https://github.com/VCityTeam/UD-SimpleServer.git
 ```
 
+<<<<<<< HEAD
 - Open a terminal in the cloned repository
 
 - Installing node packages:
+=======
+- Open the SimpleServer repo in a terminal and install node packages:
+>>>>>>> First pass.
 
 ```bash
 npm install
 ```
 
+<<<<<<< HEAD
 - And finally host `My_UD-Viz_Game` folder with this command line:
+=======
+- And finally host the UD-Viz folder:
+>>>>>>> First pass.
 
 ```bash
 <<<<<<< HEAD
@@ -78,23 +105,41 @@ node index.js PATH_TO_My_UD-Viz_Game 8000
 >>>>>>> Tuto Update
 ```
 
+<<<<<<< HEAD
 Now you can visit your http://localhost:8000/ and nothing is displayed but we are all good :satisfied:
+=======
+You can visit your page at http://localhost:8000/ but nothing is displayed (yet).
+>>>>>>> First pass.
 
 For this tutorial you will need to import `ud-viz` in your project, it is the framework that contains the **game engine** and **urban data visualization tools**. 
 
+<<<<<<< HEAD
 * For this purpose, in your HTML file (`index.html`) add the following script tag in the **\<body\>**.
+=======
+For this tutorial you will need to import `ud-viz` in your project. It is the framework that contains the **game engine** and **urban data visualization tools**. In the body of your HTML file add the following script tag. Then copy all the ud-viz code contained in this single [file](../../examples/assets/js/udv.js) to a `./assets/js/` directory.
+>>>>>>> First pass.
 
 ```html
   <script src="./assets/js/udv.js"></script>
 ```
 * Then copy this [file](../../examples/assets/js/udv.js) in a **My_UD-Viz_Game/assets/js/** directory, which contains all the ud-viz code in a single file.
 
+<<<<<<< HEAD
 Still nothing displayed but the library is now globally accessible.
 > To keep this tutorial simple ud-viz is imported this way, but a [npm package](https://www.npmjs.com/package/ud-viz) exists and it's recommended to use it since you can benefit of the update with it. You can visit this [repository](https://github.com/VCityTeam/UD-Viz-Template) to see an example of a npm project using ud-viz as a package.
+=======
+Still nothing displayed but the bookshop is now globally accessible.
 
-## Create a your game
+> To keep this tutorial simple, ud-viz is imported this way (manually), but a [npm package](https://www.npmjs.com/package/ud-viz) exists and it's recommended to use it since you can benefit of its regular updates.
+>>>>>>> First pass.
 
+## Create your game
+
+<<<<<<< HEAD
  * Let's create a script tag in the `index.html` and add the following code to start a new local game (*Still in the **\<body\>***):
+=======
+Let's create a script tag in `index.html` and add the following code to start a new local game:
+>>>>>>> First pass.
 
 ```html
 <script type="text/javascript">
@@ -110,9 +155,18 @@ Still nothing displayed but the library is now globally accessible.
   app.start(myWorld, './assets/config/local_game_config.json');
 </script>
 ```
+<<<<<<< HEAD
 First a new World called `My World` is created, you have to specified at which 3D coordonates you want to create it. Here we take a random location in Lyon. We also scpecified our root gameobject which is here called `GameManager`
 
 Then a [LocalGame](../../src/Templates/LocalGame/LocalGame.js) is instanciate, to start it you need to pass a world and a path to a config file. To do this, create a file `local_game_config.json` in the folder **./assets/config/local_game_config.json** ([local_game_config.json](../../examples/assets/config/local_game_config.json)) and copy the following code :
+=======
+
+First a new world called `My World` is created, you have to specify at which 3D coordinates you want to create it. Here we take a random location in Lyon. We also specify our root game object which is here called `GameManager`.
+
+Then a [LocalGame](../../src/Templates/LocalGame/LocalGame.js) is instanciated, to start it you need to pass a world and the path to a config file.
+
+Create a new folder called `./assets/config/` and, in it, a new file called [`local_game_config.json`](../../examples/assets/config/local_game_config.json) composed of the following code:
+>>>>>>> First pass.
 
 ```json
 {
@@ -131,15 +185,19 @@ Then a [LocalGame](../../src/Templates/LocalGame/LocalGame.js) is instanciate, t
 }
 ```
 
-Parameters in `game` section are relative to your [GameView](../../src/Views/GameView/GameView.js) (the framerate, the size of the shadow map and the sky color). The `itowns` parameter is used to crop the area around the location of your world.
+Parameters in the `game` section are relative to your [GameView](../../src/Views/GameView/GameView.js) (the framerate, the size of the shadow map and the sky color). The `itowns` parameter is used to crop the area around the location of your world.
 
+<<<<<<< HEAD
 * Ok at this point let's look what should appear on your **browser**.
+=======
+Ok, at this point, your browser should display something like the following, namely a light blue background and a dark blue slab.
+>>>>>>> First pass.
 
 ![1](./Pictures/1.png)
 
 ## Parameterize itowns layers
 
-That's great, you don't know it yet but this is Lyon, ok let's make the city appeared !
+That's great, you don't know it yet but this is Lyon, ok let's make the city appear!
 
 * Let's add these lines in your `local_game_config.json` file
 
@@ -160,11 +218,10 @@ That's great, you don't know it yet but this is Lyon, ok let's make the city app
 }
 ```
 
-Here we are parameterized layers of the [itowns](http://www.itowns-project.org/itowns/docs/#home) framework on which `ud-viz` is builded.
+Here we are parameterizing the layers of the [itowns](http://www.itowns-project.org/itowns/docs/#home) framework on which `ud-viz` is based :
 
-"background_image_layer" define where and how to query the background image of the ground ([ColorLayer](http://www.itowns-project.org/itowns/docs/#api/Layer/ColorLayer)).
-
-"elevation_layer" define where and how to query the heightmap texture to display the elevation of the ground ([ElevationLayer](http://www.itowns-project.org/itowns/docs/#api/Layer/ElevationLayer)).
+  - `background_image_layer` defines where and how to query the background image of the ground ([ColorLayer](http://www.itowns-project.org/itowns/docs/#api/Layer/ColorLayer)).
+  - `elevation_layer` defines where and how to query the heightmap texture to display the elevation of the ground ([ElevationLayer](http://www.itowns-project.org/itowns/docs/#api/Layer/ElevationLayer)).
 
 * Let's see how it looks like now:
 
@@ -181,19 +238,29 @@ Here we are parameterized layers of the [itowns](http://www.itowns-project.org/i
 }
 ```
 
+<<<<<<< HEAD
 Here data (geometries of buildings) are not collected from a **distant server** but **locally**, you need to download these [folder](../../examples/assets/lod_flying_campus), then copy it in **./assets/**
+=======
+Here data (geometries of buildings) are not collected from a distant server but locally, you need to download the  [`lod_flying_campus` folder](../../examples/assets/lod_flying_campus) in `./assets/`.
+>>>>>>> First pass.
 
-Here is what you shoudl see now
+Here is what you should see now:
 
 ![3](./Pictures/3.png)
 
-That's it Lyon is here, ok now we are gonna to add our zeppelin.
+That's it Lyon is here! Now we are going to add our zeppelin.
 
-## Create a worldscript
+## Create a world script
 
-First we are gonna to attach a [WorldScript](../../src/Game/Shared/GameObject/Components/WorldScript.js) to our gameobject GameManager. A worldscript is used to customize the world simulation, you can put your code in different event called by the game engine.
+TODO: mieux décrire ce qu'est un world script en général et son but dans le cas particulier de ce tuto.
 
+<<<<<<< HEAD
 * Add the following code in `index.html` inside the declaration of the `myWorld` object.
+=======
+First we are going to attach a [`WorldScript`](../../src/Game/Shared/GameObject/Components/WorldScript.js) to our `GameManager` game object. A world script is used to customize the world simulation, you can put your code in different events called by the game engine.
+
+In `index.html`, complete the declaration of the `myWorld` object as the following:
+>>>>>>> First pass.
 
 ```js
 gameObject: {
@@ -207,12 +274,16 @@ gameObject: {
 },
 ```
 
-`static` set to `true` is used for internal optimization and is meaning that this gameobject is not moving into the 3D scene.
+> `static` set to `true` is used for internal optimization and is meaning that this gameobject is not moving into the 3D scene.
 
+<<<<<<< HEAD
 Now our GameManager gameobject is linked to a worldscript named worldGameManager. We need to import that script in our game. 
 * To do so add these lines to your `local_game_config.json` file.
+=======
+Now our `GameManager` game object is linked to a world script named `worldGameManager`. We need to import that script in our game. To do so add these lines to your `local_game_config.json` file.
+>>>>>>> First pass.
 
-```
+```json
 "assetsManager": {
     "worldScripts": {
         "worldGameManager": {
@@ -222,11 +293,15 @@ Now our GameManager gameobject is linked to a worldscript named worldGameManager
 }
 ```
 
+<<<<<<< HEAD
 Now there is a worldscript named *worldGameManager* located at a certain path.
 
 * Finally we need to create that script `worldGameManager.js`, in **./assets/worldscripts/** folder.
 
 Skeleton of the `worldGameManager.js` is like so :
+=======
+Now we need to create the `worldGameManager.js` world script in the new folder `./assets/worldScripts/`. Fill the script with the following skeleton:
+>>>>>>> First pass.
 
 ```js
 let Shared;
@@ -243,13 +318,18 @@ module.exports = class WorldGameManager {
 };
 ```
 
+<<<<<<< HEAD
 * Copy it in `worldGameManager.js`
 
 `conf` is metadata that could be passed into the json file but here there is none. `SharedModule` is the dynamic import of the [library](../../src/Game/Shared/Shared.js) which is used to code inside a worldscript context.
 
 `init` is called when the gameobject is added, and `tick` is called every world simulation step.
+=======
+- `conf` is metadata that could be passed into the json file but here there is none. `SharedModule` is the dynamic import of the [library](../../src/Game/Shared/Shared.js) which is used to code inside a worldscript context.
+- `init` is called when the gameobject is added, and `tick` is called every world simulation step.
+>>>>>>> First pass.
 
-## Add the zeppelin gameobject
+## Add the zeppelin game object
 
 * Let's add the zeppelin, add these lines into `init` method.
 
@@ -292,9 +372,9 @@ As always when we point to assets with an id, we need to import that asset (here
   }
 ```
 
-`path` point to your .glb
-`anchor` means where the origin of the object is taken here at the bottom centered of the 3D model
-`rotation` tweak a custom rotation in your 3D model
+- `path` point to your .glb
+- `anchor` means where the origin of the object is taken here at the bottom centered of the 3D model
+- `rotation` sets a custom rotation for the 3D model
 
 Ok let's see what's happen on screen
 
@@ -302,13 +382,17 @@ Ok let's see what's happen on screen
 
 Yes a zeppelin appears on the middle of the scene ! trust me...
 
-## Create a localscript
+## Create a local script
 
-Ok let's add a [LocalScript](../../src/Game/Shared/GameObject/Components/LocalScript.js) now to focus this zeppelin with the camera. These scripts are used to customize client-side game.
+Ok let's add a [LocalScript](../../src/Game/Shared/GameObject/Components/LocalScript.js) now to focus the camera on this zeppelin. These scripts are used to customize client-side game.
 
-> Here every script could be a localScript here since the world is simulated on the client-side but it's good pratice to keep them separate since the world simulation could be executed somewhere else (on a distant server for example)
+> In this simple tutorial, every script could be a localScript since the world is simulated on the client-side but it's good pratice to keep them separated since the world simulation could be executed somewhere else (on a distant server for example).
 
+<<<<<<< HEAD
 * GameManager in `index.html` become
+=======
+GameManager in `index.html` becomes:
+>>>>>>> First pass.
 
 ```js
 gameObject: {
@@ -364,9 +448,13 @@ Ok here is what the game looks like now, you should also be able to zoom in/out 
 
 ## Inputs
 
-Ok in the next steps we are gonna to move the zeppelin above the city.
+Ok, in the next steps we are going to move the zeppelin above the city.
 
+<<<<<<< HEAD
 * Let's add a new localscript. Complete the declaration of the GameManager in `index.html` gameobject like below:
+=======
+Let's add a new `commands.js` local script. Complete the declaration of the GameManager game object in `index.html` like below:
+>>>>>>> First pass.
 
 ```js
 gameObject: {
@@ -383,7 +471,11 @@ gameObject: {
 }
 ```
 
+<<<<<<< HEAD
 * Import it in your `local_game_config.json`
+=======
+Modify `local_game_config.json` to import it
+>>>>>>> First pass.
 
 ```json
 "localScripts": {
@@ -396,9 +488,13 @@ gameObject: {
     }
 ```
 
+<<<<<<< HEAD
 * Then copy [commands.js](../../examples/assets/localScripts/commands.js) in the folder **./assets/localScripts**.
+=======
+Then copy this [commands.js](../../examples/assets/localScripts/commands.js) local scrip in the folder `./assets/localScripts`.
+>>>>>>> First pass.
 
-Now commands are send to world simulation but the world simulation don't know what to do with them.
+Now commands are sent to the world simulation but not used yet.
 
 * In the `worldGameManager.js` add these lines in the `tick` function
 
@@ -436,7 +532,11 @@ tick() {
   }
 ```
 
+<<<<<<< HEAD
 * You can now pilot the zeppelin ! Try it with Z,Q,S,D or Arrows.
+=======
+You can now pilot the zeppelin! Try it with the Z,Q,S,D or the arrows keys.
+>>>>>>> First pass.
 
 ## Add collisions
 
@@ -534,8 +634,12 @@ ok that's nice, now let handle the collision with these objects.
   }
 ```
 
+<<<<<<< HEAD
 * Then add a [Collider](../../src/Game/Shared/GameObject/Components/Collider.js) component to the zeppelin in the `init` method inside `this.zeppelin` declaration.
 
+=======
+Then add a [Collider](../../src/Game/Shared/GameObject/Components/Collider.js) component to the zeppelin in the `init` method inside `this.zeppelin` declaration:
+>>>>>>> First pass.
 ```js
 this.zeppelin = new Shared.GameObject({
   name: 'zeppelin',
@@ -554,20 +658,23 @@ this.zeppelin = new Shared.GameObject({
 });
 ```
 
-Ok now let's add a worldscript to the zeppelin to handle collision.
+Ok now let's add a new world script for the zeppelin to handle collisions.
 
-Create a new worldscript import it with the config files and create it in the assets.
+Create the new world script file [`zeppelin.js`](../../examples/assets/worldScripts/zeppelin.js) in the assets, import it with the config file, and attach it as a component of the zeppelin object.
 
-[zeppelin.js](../../examples/assets/worldScripts/zeppelin.js)
+TODO: expliciter où doit être ajouté le worldScript component (ie dans worldGameManager.js et pas index.html comme j'ai voulu le faire)
 
-When you touch spheres with the zeppelin they are disapearing !!
+TODO: expliquer ce qu'est un component et ce que sont censés représenter les worldscripts et localscripts
+
+
+When you touch a sphere with the zeppelin, it should new disappear!!
 
 ## Conclusion
 
 Congrats you have finished this tutorial, you are now able to :
 
-- Create a project from scratch
-- Importing assets in a ud-viz game
-- Parameterized itowns layers
-- Manipulating components of gameobjects
-- Using user inputs
+- Create a project from scratch,
+- Import assets in a ud-viz game,
+- Parameterize itowns layers,
+- Manipulatr components of gameobjects,
+- Use user inputs.
