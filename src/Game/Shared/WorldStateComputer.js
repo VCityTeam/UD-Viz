@@ -141,8 +141,10 @@ WorldStateComputerModule.WorldCanLoad = function (
 ) {
   return new Promise((resolve, reject) => {
     const c = new WorldStateComputerModule(assetsManager, 60, bundles);
-    c.load(new World(worldJSON, options), resolve);
-    c.stop();
+    c.load(new World(worldJSON, options), function () {
+      c.stop();
+      resolve();
+    });
   });
 };
 
