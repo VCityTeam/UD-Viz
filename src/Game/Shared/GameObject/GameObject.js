@@ -80,9 +80,11 @@ const GameObjectModule = class GameObject {
    * @param {GameObject} go the gameobject to upadate to
    * @param {LocalContext} localContext this localcontext
    */
-  updateNoStaticFromGO(go, localContext) {
-    //update transform
-    this.setTransformFromGO(go);
+  updateFromGO(go, localContext) {
+    if (!go.isStatic()) {
+      //update transform
+      this.setTransformFromGO(go);
+    }
 
     //update render
     const r = this.getComponent(RenderComponent.TYPE);

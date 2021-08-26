@@ -210,10 +210,10 @@ export class GameView extends View3D {
         lastGO.traverse(function (g) {
           const uuid = g.getUUID();
           const current = state.getGameObject().find(uuid);
-          if (current && !g.isStatic()) {
+          if (current) {
             //update local components
-            g.updateNoStaticFromGO(current, ctx);
-          } else if (!current) {
+            g.updateFromGO(current, ctx);
+          } else {
             //do not exist remove it
             g.removeFromParent();
             delete _this.currentUUID[g.getUUID()];
@@ -312,6 +312,15 @@ export class GameView extends View3D {
 
       //TODO refacto tick integrate with itowns rendering
     }
+  }
+
+  forceUpdate(state) {
+    if (!state) state = this.stateComputer.computeCurrentState();
+
+    let old = this.updateGameObject;
+    this.updateGameObject = true;
+    this.update(state);
+    this.updateGameObject = old;
   }
 
   /**

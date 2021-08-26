@@ -125,7 +125,7 @@ const WorldStateModule = class WorldState {
    */
   clone() {
     return new WorldState({
-      gameObject: this.gameObject.toJSON(),
+      gameObject: this.gameObject.toJSON(true),
       timestamp: this.timestamp,
       origin: this.origin,
     });
