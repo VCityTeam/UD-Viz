@@ -1,4 +1,6 @@
 import { ModuleView } from '../../../Components/ModuleView/ModuleView';
+import { SparqlEndpointResponseProvider } from '../service/SparqlEndpointResponseProvider';
+import { SparqlEndpointService } from '../service/SparqlEndpointService';
 import { SparqlQueryWindow } from './SparqlQueryWindow';
 
   /**
@@ -13,17 +15,29 @@ export class SparqlModuleView extends ModuleView {
    * @param {string} config.sparqlModule.url The SPARQL endpoint url.
    * @param {SparqlEndpointService} serviceContains SPARQL endpoint information.
    */
-  constructor(service) {
+  constructor(service, provider) {
     super();
 
-    this.service = service;
+    /**
+     * The SPARQL Endpoint Service
+     * 
+     * @type {SparqlEndpointService}
+     */
+     this.service = service;
+
+    /**
+     * The SPARQL Endpoint Response Provider
+     * 
+     * @type {SparqlEndpointResponseProvider}
+     */
+    this.provider = provider;
     /**
      * Contains a SparqlQueryWindow for capturing user input and displaying
      * query results.
      *
      * @type {SparqlQueryWindow}
      */
-    this.window = new SparqlQueryWindow(this.service);
+    this.window = new SparqlQueryWindow(this.provider);
   }
 
   /**
