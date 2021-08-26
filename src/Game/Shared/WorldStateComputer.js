@@ -1,13 +1,12 @@
 /** @format */
 
+const World = require('./World');
 const WorldContext = require('./WorldContext');
-
-//TODO make a stop function to stop setInterval
 
 /**
  * StateComputer working locally
  */
-module.exports = class WorldStateComputer {
+const WorldStateComputerModule = class WorldStateComputer {
   constructor(assetsManager, fps, bundles) {
     this.worldContext = new WorldContext({
       world: null,
@@ -45,7 +44,7 @@ module.exports = class WorldStateComputer {
    * @param {World} world world to tick
    * @param {Function} onLoad call at the end of world load
    */
-  onInit(world, onLoad) {
+  load(world, onLoad) {
     const wC = this.worldContext;
     const _this = this;
 
@@ -133,3 +132,18 @@ module.exports = class WorldStateComputer {
     return this.worldContext.getWorld().computeWorldState(withServerComponent);
   }
 };
+
+WorldStateComputerModule.WorldCanLoad = function (
+  worldJSON,
+  assetsManager,
+  bundles,
+  options
+) {
+  return new Promise((resolve, reject) => {
+    const c = new WorldStateComputerModule(assetsManager, 60, bundles);
+    c.load(new World(worldJSON, options), resolve);
+    c.stop();
+  });
+};
+
+module.exports = WorldStateComputerModule;
