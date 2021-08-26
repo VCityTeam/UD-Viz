@@ -141,18 +141,14 @@ const WorldModule = class World {
 
         //TODO init can be trigger several times but need this to init child of a add go
         gameObject.traverse(function (child) {
+          console.log(_this.name + ' add ' + child.name);
+
           child.executeWorldScripts(WorldScriptComponent.EVENT.INIT, [
             worldContext,
           ]);
         });
 
         _this.registerGOCollision(gameObject);
-
-        console.log(
-          gameObject.name,
-          gameObject.getUUID() + ' loaded in ',
-          _this.name
-        );
 
         if (onLoad) onLoad();
       }
