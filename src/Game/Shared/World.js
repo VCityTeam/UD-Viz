@@ -222,9 +222,9 @@ const WorldModule = class World {
 
     //collisions
     go.traverse(function (child) {
-      const body = child.getComponent(ColliderComponent.TYPE);
-      if (body) {
-        body.getShapeWrappers().forEach(function (wrapper) {
+      const comp = child.getComponent(ColliderComponent.TYPE);
+      if (comp) {
+        comp.getShapeWrappers().forEach(function (wrapper) {
           wrapper.getShape().remove();
         });
 
