@@ -71,6 +71,7 @@ const WorldStateModule = class WorldState {
     const result = new WorldState({
       gameObject: newGO.toJSON(true),
       timestamp: diff.getTimeStamp(),
+      origin: this.origin,
     });
 
     return result;
