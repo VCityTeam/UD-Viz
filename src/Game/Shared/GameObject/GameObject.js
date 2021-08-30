@@ -5,6 +5,7 @@
  */
 
 const THREE = require('three');
+const JSONUtils = require('../Components/JSONUtils');
 
 //GameObject Components
 const RenderComponent = require('./Components/Render');
@@ -682,6 +683,23 @@ GameObjectModule.interpolateInPlace = function (g1, g2, ratio) {
 
   g1.object3D.rotation.setFromVector3(v1);
   return g1;
+};
+
+/**
+ * return a deep copy (new uuid are generated) of a gameObject
+ * @param {GameObject} gameObject
+ * @returns {GameObject} a new gameobject with new uuid base on gameObject
+ */
+GameObjectModule.deepCopy = function (gameObject) {
+  const cloneJSON = gameObject.toJSON(true);
+  //rename uuid
+  // /!\ parentUUID is corrupted but should be okay
+  JSONUtils.parse(cloneJSON, function (json, key) {
+    let keyLowerCase = key.toLowerCase();
+    if (keyLowerCase.includes('uuid'))
+      json[key] = THREE.MathUtils.generateUUID();
+  });
+  return new GameObjectModule(cloneJSON);
 };
 
 module.exports = GameObjectModule;

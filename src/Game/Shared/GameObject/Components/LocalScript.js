@@ -1,7 +1,7 @@
 /** @format */
 
 const THREE = require('three');
-const JSONUtils = require('../../../../Components/SystemUtils/JSONUtils');
+const JSONUtils = require('../../Components/JSONUtils');
 
 //TODO pass ud-viz as parameter to localscript and not only Shared
 
