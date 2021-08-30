@@ -41,7 +41,17 @@ cd UD-Viz
 npm install
 ```
 
-## UD-Viz based applications
+### Try examples 
+
+```bash
+cd PATH_TO_UD-Viz
+npm run build
+cd /
+git clone https://github.com/VCityTeam/UD-SimpleServer
+cd UD-SimpleServer
+npm install
+node index.js PATH_TO_UD-Viz 8000
+```
 
 * [UD-Viz-Template](https://github.com/VCityTeam/UD-Viz-Template) (demonstration) application,
 * online demos are [available here](https://projet.liris.cnrs.fr/vcity/demos/)

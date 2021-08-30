@@ -35,180 +35,18 @@ export class AllWidget {
   }
 
   start(path) {
-    const _this = this;
-    this.appendTo(document.body);
-    this.loadConfigFile(path).then(() => {
+    return new Promise( resolve => {
+      const _this = this;
+      this.appendTo(document.body);
+      this.loadConfigFile(path).then(() => {
       // Use the stable server
-      _this.addLogos();
+        _this.addLogos();
 
-      // Initialize iTowns 3D view
-      _this.init3DView();
-      _this.addBaseMapLayer();
-      _this.addElevationLayer();
-      _this.setupAndAdd3DTilesLayer();
-      _this.update3DView();
+        // Initialize iTowns 3D view
+        _this.init3DView();
 
-      ////// REQUEST SERVICE
-      const requestService = new Components.RequestService();
-
-      ////// ABOUT MODULE
-      if (_this.config.widgets.aboutWindow) {
-        const about = new Widgets.AboutWindow();
-        _this.addModuleView('about', about);
-      }
-
-      ////// HELP MODULE
-      if (_this.config.widgets.helpWindow) {
-        const help = new Widgets.HelpWindow();
-        _this.addModuleView('help', help);
-      }
-
-      ////// AUTHENTICATION MODULE
-      if (_this.config.widgets.authenticationView) {
-        const authenticationService =
-          new Widgets.Extensions.AuthenticationService(
-            requestService,
-            _this.config
-          );
-        const authenticationView = new Widgets.Extensions.AuthenticationView(
-          authenticationService
-        );
-        _this.addModuleView('authentication', authenticationView, {
-          type: AllWidget.AUTHENTICATION_MODULE,
-        });
-      }
-
-      ////// DOCUMENTS MODULE
-      let documentModule = null;
-      if (_this.config.widgets.documentModule) {
-        documentModule = new Widgets.DocumentModule(
-          requestService,
-          _this.config
-        );
-        _this.addModuleView('documents', documentModule.view);
-
-        ////// DOCUMENTS VISUALIZER (to orient the document)
-        if (_this.config.widgets.documentVisualizerWindow) {
-          const imageOrienter = new Widgets.DocumentVisualizerWindow(
-            documentModule,
-            _this.view,
-            _this.controls
-          );
-
-          ////// CONTRIBUTE EXTENSION
-          if (_this.config.widgets.contributeModule) {
-            new Widgets.Extensions.ContributeModule(
-              documentModule,
-              imageOrienter,
-              requestService,
-              _this.view,
-              _this.controls,
-              _this.config
-            );
-          }
-        }
-
-        ////// VALIDATION EXTENSION
-        if (_this.config.widgets.documentValidationModule) {
-          new Widgets.Extensions.DocumentValidationModule(
-            documentModule,
-            requestService,
-            _this.config
-          );
-        }
-
-        ////// DOCUMENT COMMENTS
-        if (_this.config.widgets.documentCommentsModule) {
-          new Widgets.Extensions.DocumentCommentsModule(
-            documentModule,
-            requestService,
-            _this.config
-          );
-        }
-
-        ////// GUIDED TOURS MODULE
-        if (_this.config.widgets.guidedTourController) {
-          const guidedtour = new Widgets.GuidedTourController(
-            documentModule,
-            requestService,
-            _this.config
-          );
-          _this.addModuleView('guidedTour', guidedtour, {
-            name: 'Guided Tours',
-          });
-        }
-      }
-
-      ////// GEOCODING EXTENSION
-      if (_this.config.widgets.geocodingView) {
-        const geocodingService = new Widgets.Extensions.GeocodingService(
-          requestService,
-          _this.extent,
-          _this.config
-        );
-        const geocodingView = new Widgets.Extensions.GeocodingView(
-          geocodingService,
-          _this.controls,
-          _this.view
-        );
-        _this.addModuleView('geocoding', geocodingView, {
-          binding: 's',
-          name: 'Address Search',
-        });
-      }
-
-      ////// CITY OBJECTS MODULE
-      let cityObjectModule = null;
-      if (_this.config.widgets.cityObjectModule) {
-        cityObjectModule = new Widgets.CityObjectModule(
-          _this.layerManager,
-          _this.config
-        );
-        _this.addModuleView('cityObjects', cityObjectModule.view);
-      }
-
-      ////// LINKS MODULES
-      if (
-        documentModule &&
-        cityObjectModule &&
-        _this.config.widgets.linkModule
-      ) {
-        new Widgets.LinkModule(
-          documentModule,
-          cityObjectModule,
-          requestService,
-          _this.view,
-          _this.controls,
-          _this.config
-        );
-      }
-
-      ////// 3DTILES DEBUG
-      if (_this.config.widgets.debug3DTilesWindow) {
-        const debug3dTilesWindow = new Widgets.Extensions.Debug3DTilesWindow(
-          _this.layerManager
-        );
-        _this.addModuleView('3dtilesDebug', debug3dTilesWindow, {
-          name: '3DTiles Debug',
-        });
-      }
-
-      ////// CAMERA POSITIONER
-      if (_this.config.widgets.cameraPositionerView) {
-        const cameraPosition = new Widgets.CameraPositionerView(
-          _this.view,
-          _this.controls
-        );
-        _this.addModuleView('cameraPositioner', cameraPosition);
-      }
-
-      ////// LAYER CHOICE
-      if (_this.config.widgets.layerChoice) {
-        const layerChoice = new Widgets.LayerChoice(_this.layerManager);
-        _this.addModuleView('layerChoice', layerChoice, {
-          name: 'layerChoice',
-        });
-      }
+        resolve('resolved');
+      });
     });
   }
 
@@ -557,6 +395,7 @@ export class AllWidget {
       }
     );
     this.view.addLayer(wmsImageryLayer);
+    this.update3DView();
   }
 
   addElevationLayer() {
@@ -580,6 +419,7 @@ export class AllWidget {
       }
     );
     this.view.addLayer(wmsElevationLayer);
+    this.update3DView();
   }
 
   /**
@@ -590,19 +430,10 @@ export class AllWidget {
    * UD-Viz/UD-Viz-Core/examples/data/config/generalDemoConfig.json
    * config file).
    */
-  setup3DTilesLayer() {
-    //  ADD 3D Tiles Layer
-
-    // Positional arguments verification
-    if (!this.config['3DTilesLayer']) {
-      throw (
-        'Your layer is not one of the properties of 3DTilesLayer object ' +
-        '(in UD-Viz/UD-Viz-Core/examples/data/config/generalDemoConfig.json).'
-      );
-    }
+  setup3DTilesLayer(layer) {
     if (
-      !this.config['3DTilesLayer']['id'] ||
-      !this.config['3DTilesLayer']['url']
+      !layer['id'] ||
+      !layer['url']
     ) {
       throw (
         'Your layer does not have url id properties or both. ' +
@@ -610,7 +441,7 @@ export class AllWidget {
       );
     }
 
-    const extensionsConfig = this.config['3DTilesLayer']['extensions'];
+    const extensionsConfig = layer['extensions'];
     let extensions = new itowns.C3DTExtensions();
     if (extensionsConfig) {
       for (let i = 0; i < extensionsConfig.length; i++) {
@@ -638,11 +469,11 @@ export class AllWidget {
     }
 
     var $3dTilesLayer = new itowns.C3DTilesLayer(
-      this.config['3DTilesLayer']['id'],
+      layer['id'],
       {
-        name: 'Lyon-2015-'.concat(this.config['3DTilesLayer']['id']),
+        name: 'Lyon-2015-'.concat(layer['id']),
         source: new itowns.C3DTilesSource({
-          url: this.config['3DTilesLayer']['url'],
+          url: layer['url'],
         }),
         registeredExtensions: extensions,
       },
@@ -650,16 +481,16 @@ export class AllWidget {
     );
 
     let material;
-    if (this.config['3DTilesLayer']['pc_size']) {
+    if (layer['pc_size']) {
       material = new THREE.PointsMaterial({
-        size: this.config['3DTilesLayer']['pc_size'],
+        size: layer['pc_size'],
         vertexColors: true,
       });
-    } else if (!this.config['3DTilesLayer']['color']) {
+    } else if (!layer['color']) {
       material = new THREE.MeshLambertMaterial({ color: 0xffffff });
     } else {
       material = new THREE.MeshLambertMaterial({
-        color: parseInt(this.config['3DTilesLayer']['color']),
+        color: parseInt(layer['color']),
       });
     }
 
@@ -692,9 +523,18 @@ export class AllWidget {
    * UD-Viz/UD-Viz-Core/examples/data/config/generalDemoConfig.json
    * config file).
    */
-  setupAndAdd3DTilesLayer() {
-    const [$3DTilesLayer] = this.setup3DTilesLayer();
-    this.add3DTilesLayer($3DTilesLayer);
+  setupAndAdd3DTilesLayers() {
+    // Positional arguments verification
+    if (!this.config['3DTilesLayers']) {
+      throw (
+        'No 3DTilesLayers field in the configuration file' 
+      );
+    }
+    for (let layer of this.config['3DTilesLayers']){
+      const [$3DTilesLayer] = this.setup3DTilesLayer(layer);
+      this.add3DTilesLayer($3DTilesLayer);
+    }
+    this.update3DView();
   }
 
   /**
@@ -745,8 +585,12 @@ export class AllWidget {
     // Instantiate PlanarView (iTowns' view that will hold the layers)
     // The skirt allows to remove the cracks between the terrain tiles
     // Instantiate controls within PlanarView
+    let maxSubdivisionLevel = 3;
+    if(this.config.background_image_layer.maxSubdivisionLevel) maxSubdivisionLevel = this.config.background_image_layer.maxSubdivisionLevel;
+
     this.view = new itowns.PlanarView(viewerDiv, this.extent, {
       disableSkirt: false,
+      maxSubdivisionLevel: maxSubdivisionLevel,
       controls: {
         maxZenithAngle: 180,
         groundLevel: -100,
