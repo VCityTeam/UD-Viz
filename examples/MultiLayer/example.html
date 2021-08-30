@@ -14,6 +14,9 @@
       let app = new udv.Templates.AllWidget();
 
       app.start("../assets/config/multiLayer_config.json").then(() => {
+        app.addBaseMapLayer();
+
+
         app.setupAndAdd3DTilesLayers();
 
         ////// ABOUT MODULE
