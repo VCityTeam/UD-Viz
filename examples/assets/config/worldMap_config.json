@@ -30,19 +30,9 @@
   },
   "3DTilesLayers": [
     {
-      "id": "Lyon Buildings",
-      "url": "https://dataset-dl.liris.cnrs.fr/three-d-tiles-lyon-metropolis/Lyon1-Lyon2-Lyon5_2015-multi-layers_TileSets/tileset_buildings/tileset.json",
+      "id": "Lyon 1 Buildings",
+      "url": "https://dataset-dl.liris.cnrs.fr/three-d-tiles-lyon-metropolis/2015/Lyon-1_2015/tileset.json",
       "color": "0xFFFFFF"
-    },
-    {
-      "id": "Lyon Relief",
-      "url": "https://dataset-dl.liris.cnrs.fr/three-d-tiles-lyon-metropolis/Lyon1-Lyon2-Lyon5_2015-multi-layers_TileSets/tileset_reliefs/tileset.json",
-      "color": "0x936a4f"
-    },
-    {
-      "id": "Lyon Water",
-      "url": "https://dataset-dl.liris.cnrs.fr/three-d-tiles-lyon-metropolis/Lyon1-Lyon2-Lyon5_2015-multi-layers_TileSets/tileset_water_bodies/tileset.json",
-      "color": "0x007fff"
     }
   ],
   "cityObjects": {

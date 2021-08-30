@@ -55,8 +55,43 @@
   },
   "3DTilesLayers": [
     {
-      "id": "Lyon",
-      "url": "https://dataset-dl.liris.cnrs.fr/three-d-tiles-lyon-metropolis/Lyon_2015-gltf-repaired_TileSet/tileset.json",
+      "id": "Lyon-1",
+      "url": "https://dataset-dl.liris.cnrs.fr/three-d-tiles-lyon-metropolis/2015/Lyon-1_2015/tileset.json",
+      "color": "0xFFFFFF"
+    },
+    {
+      "id": "Lyon-2",
+      "url": "https://dataset-dl.liris.cnrs.fr/three-d-tiles-lyon-metropolis/2015/Lyon-2_2015/tileset.json",
+      "color": "0xFFFFFF"
+    },
+    {
+      "id": "Lyon-3",
+      "url": "https://dataset-dl.liris.cnrs.fr/three-d-tiles-lyon-metropolis/2015/Lyon-3_2015/tileset.json",
+      "color": "0xFFFFFF"
+    },
+    {
+      "id": "Lyon-4",
+      "url": "https://dataset-dl.liris.cnrs.fr/three-d-tiles-lyon-metropolis/2015/Lyon-4_2015/tileset.json",
+      "color": "0xFFFFFF"
+    },
+    {
+      "id": "Lyon-5",
+      "url": "https://dataset-dl.liris.cnrs.fr/three-d-tiles-lyon-metropolis/2015/Lyon-5_2015/tileset.json",
+      "color": "0xFFFFFF"
+    },
+    {
+      "id": "Lyon-6",
+      "url": "https://dataset-dl.liris.cnrs.fr/three-d-tiles-lyon-metropolis/2015/Lyon-6_2015/tileset.json",
+      "color": "0xFFFFFF"
+    },
+    {
+      "id": "Lyon-7",
+      "url": "https://dataset-dl.liris.cnrs.fr/three-d-tiles-lyon-metropolis/2015/Lyon-7_2015/tileset.json",
+      "color": "0xFFFFFF"
+    },
+    {
+      "id": "Lyon-8",
+      "url": "https://dataset-dl.liris.cnrs.fr/three-d-tiles-lyon-metropolis/2015/Lyon-8_2015/tileset.json",
       "color": "0xFFFFFF"
     }
   ],
