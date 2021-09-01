@@ -693,11 +693,13 @@ GameObjectModule.interpolateInPlace = function (g1, g2, ratio) {
 GameObjectModule.deepCopy = function (gameObject) {
   const cloneJSON = gameObject.toJSON(true);
   //rename uuid
-  // /!\ parentUUID is corrupted but should be okay
   JSONUtils.parse(cloneJSON, function (json, key) {
     let keyLowerCase = key.toLowerCase();
-    if (keyLowerCase.includes('uuid'))
-      json[key] = THREE.MathUtils.generateUUID();
+    if (keyLowerCase === 'uuid') json[key] = THREE.MathUtils.generateUUID();
+
+    if (keyLowerCase === 'name') {
+      json[key] = json[key] + ' (clone)';
+    }
   });
   return new GameObjectModule(cloneJSON);
 };
