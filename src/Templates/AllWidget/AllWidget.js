@@ -486,12 +486,6 @@ export class AllWidget {
         size: layer['pc_size'],
         vertexColors: true,
       });
-    } else if (!layer['color']) {
-      material = new THREE.MeshLambertMaterial({ color: 0xffffff });
-    } else {
-      material = new THREE.MeshLambertMaterial({
-        color: parseInt(layer['color']),
-      });
     }
 
     $3dTilesLayer.overrideMaterials = material;
@@ -501,6 +495,20 @@ export class AllWidget {
       this.view,
       $3dTilesLayer
     );
+    let color = 0xffffff;
+    if (layer['color']) {
+      color = parseInt(layer['color']);
+    }
+    $3DTilesManager.registerStyle('default', { materialProps : { opacity: 1, color: color }});
+
+    $3DTilesManager.addEventListener(
+      Widgets.Components.TilesManager.EVENT_TILE_LOADED, 
+      function (event) {
+        $3DTilesManager.setStyleToTileset("default");
+      }
+    );
+
+
     this.layerManager.tilesManagers.push($3DTilesManager);
 
     return [$3dTilesLayer, $3DTilesManager];
