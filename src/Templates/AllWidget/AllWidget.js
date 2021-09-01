@@ -504,7 +504,7 @@ export class AllWidget {
     $3DTilesManager.addEventListener(
       Widgets.Components.TilesManager.EVENT_TILE_LOADED, 
       function (event) {
-        $3DTilesManager.setStyleToTileset("default");
+        $3DTilesManager.setStyleToTileset('default');
       }
     );
 
