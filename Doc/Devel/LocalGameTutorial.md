@@ -292,8 +292,6 @@ Yes a zeppelin appears on the middle of the scene ! trust me...
 
 Ok let's add a [LocalScript](../../src/Game/Shared/GameObject/Components/LocalScript.js) now to focus this zeppelin with the camera. These scripts are used to customize client-side game.
 
-> Here every script could be a localScript here since the world is simulated on the client-side but it's good pratice to keep them separate since the world simulation could be executed somewhere else (on a distant server for example)
-
 GameManager in `index.html` become
 
 ```js
