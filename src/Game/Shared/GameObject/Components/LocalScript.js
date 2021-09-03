@@ -1,7 +1,7 @@
 /** @format */
 
 const THREE = require('three');
-const JSONUtils = require('../../../../Components/SystemUtils/JSONUtils');
+const JSONUtils = require('../../Components/JSONUtils');
 
 //TODO pass ud-viz as parameter to localscript and not only Shared
 
@@ -23,7 +23,7 @@ const LocalScriptModule = class LocalScript {
     this.type = json.type || LocalScriptModule.TYPE;
 
     //conf pass to scripts
-    this.conf = json.conf || {};
+    this.conf = JSON.parse(JSON.stringify(json.conf)) || {};
 
     //map of scripts
     this.scripts = {};

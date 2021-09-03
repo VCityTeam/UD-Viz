@@ -20,7 +20,7 @@ const WorldScriptModule = class WorldScript {
     this.type = json.type || WorldScriptModule.TYPE;
 
     //conf pass to scripts
-    this.conf = json.conf || {};
+    this.conf = JSON.parse(JSON.stringify(json.conf)) || {};
 
     //map of scripts
     this.scripts = {};
