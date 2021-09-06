@@ -30,7 +30,7 @@ module.exports = class Focus {
     const localContext = arguments[1];
     const gV = localContext.getGameView();
     const manager = gV.getInputManager();
-    manager.addMouseInput(gV.html(), "wheel", function (event) {
+    manager.addMouseInput(gV.html(), 'wheel', function (event) {
       _this.distance += event.wheelDelta * 0.1;
       _this.distance = Math.max(Math.min(_this.distance, 500), 0);
     });
@@ -44,7 +44,7 @@ module.exports = class Focus {
     const localContext = arguments[1];
 
     //get the zeppelin gameobject by name
-    const zeppelin = go.computeRoot().findByName("zeppelin");
+    const zeppelin = go.computeRoot().findByName('zeppelin');
 
     //compute world transform
     const obj = zeppelin.computeObject3D();
