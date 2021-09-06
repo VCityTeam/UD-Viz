@@ -141,18 +141,14 @@ const WorldModule = class World {
 
         //TODO init can be trigger several times but need this to init child of a add go
         gameObject.traverse(function (child) {
+          console.log(_this.name + ' add ' + child.name);
+
           child.executeWorldScripts(WorldScriptComponent.EVENT.INIT, [
             worldContext,
           ]);
         });
 
         _this.registerGOCollision(gameObject);
-
-        console.log(
-          gameObject.name,
-          gameObject.getUUID() + ' loaded in ',
-          _this.name
-        );
 
         if (onLoad) onLoad();
       }
@@ -226,9 +222,9 @@ const WorldModule = class World {
 
     //collisions
     go.traverse(function (child) {
-      const body = child.getComponent(ColliderComponent.TYPE);
-      if (body) {
-        body.getShapeWrappers().forEach(function (wrapper) {
+      const comp = child.getComponent(ColliderComponent.TYPE);
+      if (comp) {
+        comp.getShapeWrappers().forEach(function (wrapper) {
           wrapper.getShape().remove();
         });
 
@@ -336,9 +332,9 @@ const WorldModule = class World {
    * Return the current world state
    * @returns {WorldState}
    */
-  computeWorldState() {
+  computeWorldState(withServerComponent = true) {
     const result = new WorldState({
-      gameObject: this.gameObject.toJSON(true),
+      gameObject: this.gameObject.toJSON(withServerComponent),
       timestamp: Date.now(),
       origin: this.origin,
     });

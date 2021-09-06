@@ -71,6 +71,7 @@ const WorldStateModule = class WorldState {
     const result = new WorldState({
       gameObject: newGO.toJSON(true),
       timestamp: diff.getTimeStamp(),
+      origin: this.origin,
     });
 
     return result;
@@ -125,7 +126,7 @@ const WorldStateModule = class WorldState {
    */
   clone() {
     return new WorldState({
-      gameObject: this.gameObject.toJSON(),
+      gameObject: this.gameObject.toJSON(true),
       timestamp: this.timestamp,
       origin: this.origin,
     });

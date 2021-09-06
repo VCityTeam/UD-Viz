@@ -31,8 +31,8 @@ export class WebSocketService {
       console.log('Connected to server!');
     });
 
-    this.socket.on('disconnect', () => {
-      console.log('Disconnected from server.');
+    this.socket.on('disconnect', (reason) => {
+      console.log('Disconnected from server. reason = ', reason);
     });
   }
 

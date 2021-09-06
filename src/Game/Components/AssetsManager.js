@@ -26,6 +26,10 @@ export class AssetsManager {
     this.worldsJSON = null;
   }
 
+  getPrefabs() {
+    return this.prefabs;
+  }
+
   /**
    * Return new model corresponding to the id passed
    * @param {String} idModel id of the model

@@ -5,6 +5,7 @@
  */
 
 const THREE = require('three');
+const JSONUtils = require('../Components/JSONUtils');
 
 //GameObject Components
 const RenderComponent = require('./Components/Render');
@@ -80,9 +81,11 @@ const GameObjectModule = class GameObject {
    * @param {GameObject} go the gameobject to upadate to
    * @param {LocalContext} localContext this localcontext
    */
-  updateNoStaticFromGO(go, localContext) {
-    //update transform
-    this.setTransformFromGO(go);
+  updateFromGO(go, localContext) {
+    if (!go.isStatic()) {
+      //update transform
+      this.setTransformFromGO(go);
+    }
 
     //update render
     const r = this.getComponent(RenderComponent.TYPE);
@@ -230,6 +233,12 @@ const GameObjectModule = class GameObject {
    */
   fetchWorldScripts() {
     const c = this.getComponent(WorldScriptComponent.TYPE);
+    if (!c) return null;
+    return c.getScripts();
+  }
+
+  fetchLocalScripts() {
+    const c = this.getComponent(LocalScriptModule.TYPE);
     if (!c) return null;
     return c.getScripts();
   }
@@ -612,6 +621,10 @@ const GameObjectModule = class GameObject {
     return this.name;
   }
 
+  setName(name) {
+    this.name = name;
+  }
+
   /**
    * Compute this to JSON with or without its server side components
    * @param {Boolean} withServerComponent
@@ -670,6 +683,25 @@ GameObjectModule.interpolateInPlace = function (g1, g2, ratio) {
 
   g1.object3D.rotation.setFromVector3(v1);
   return g1;
+};
+
+/**
+ * return a deep copy (new uuid are generated) of a gameObject
+ * @param {GameObject} gameObject
+ * @returns {GameObject} a new gameobject with new uuid base on gameObject
+ */
+GameObjectModule.deepCopy = function (gameObject) {
+  const cloneJSON = gameObject.toJSON(true);
+  //rename uuid
+  JSONUtils.parse(cloneJSON, function (json, key) {
+    let keyLowerCase = key.toLowerCase();
+    if (keyLowerCase === 'uuid') json[key] = THREE.MathUtils.generateUUID();
+
+    if (keyLowerCase === 'name') {
+      json[key] = json[key] + ' (clone)';
+    }
+  });
+  return new GameObjectModule(cloneJSON);
 };
 
 module.exports = GameObjectModule;
