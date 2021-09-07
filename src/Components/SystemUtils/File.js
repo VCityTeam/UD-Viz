@@ -77,4 +77,15 @@ module.exports = {
       throw new Error(e);
     }
   },
+
+  downloadImageOnDisk(url, filename) {
+    const imgResult = document.createElement('img');
+    imgResult.src = url;
+    const link = document.createElement('a');
+    link.href = imgResult.src;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  },
 };
