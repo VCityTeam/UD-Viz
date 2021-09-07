@@ -430,6 +430,15 @@ const GameObjectModule = class GameObject {
     return obj;
   }
 
+  getComponentByUUID(uuid) {
+    for (let key in this.components) {
+      const c = this.components[key];
+      if (c.getUUID() == uuid) return c;
+    }
+
+    return null;
+  }
+
   /**
    * Return a clone of this
    * @returns {GameObject}

@@ -110,6 +110,10 @@ const ColliderModule = class Collider {
       body: this.body,
     };
   }
+
+  getUUID() {
+    return this.uuid;
+  }
 };
 
 ColliderModule.TYPE = 'Collider';
