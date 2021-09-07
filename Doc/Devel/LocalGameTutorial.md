@@ -45,7 +45,6 @@ To begin with, here is the **base** of an html script, **copy it**:
 Then you will need to host your game folder (`My_UD-Viz_Game`), to do so you can use your own local server otherwise follow these steps:
 
 > If you chose to host with this way npm and node must be installed. ([Doc link](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm))
-- Clone the SimpleServer repo separately:
 
 - Clone the `UD-SimpleServer` repo separately:
 
@@ -71,7 +70,7 @@ You can visit your page at http://localhost:8000/ but nothing is displayed (yet)
 
 ## Importing ud-viz
 
-- For this purpose, in your HTML file (`index.html`) add the following script tag in the **\<body\>**.
+
 
 * For this purpose, in your HTML file (`index.html`) add the following script tag in the **\<body\>**.
 
@@ -82,7 +81,6 @@ You can visit your page at http://localhost:8000/ but nothing is displayed (yet)
 Still nothing displayed but the library is now globally accessible.
 > To keep this tutorial simple ud-viz is imported this way, but a [npm package](https://www.npmjs.com/package/ud-viz) exists and it's recommended to use it since you can benefit of the update with it. You can visit this [repository](https://github.com/VCityTeam/UD-Viz-Template) to see an example of a npm project using ud-viz as a package.
 
-> To keep this tutorial simple, ud-viz is imported this way (manually), but a [npm package](https://www.npmjs.com/package/ud-viz) exists and it's recommended to use it since you can benefit of its regular updates.
 
 ## Create your game
 
@@ -159,8 +157,6 @@ Here we are parameterized layers of the [itowns](http://www.itowns-project.org/i
 
 "background_image_layer" define where and how to query the background image of the ground ([ColorLayer](http://www.itowns-project.org/itowns/docs/#api/Layer/ColorLayer)).
 
-Let's see how it looks like now:
-
 - Let's see how it looks like now:
 
 ![2](./Pictures/2.png)
@@ -186,7 +182,6 @@ That's it Lyon is here! Now we are going to add our zeppelin.
 
 ## Create a worldscript
 
-First we are gonna to attach a [WorldScript](../../src/Game/Shared/GameObject/Components/WorldScript.js) to our gameobject GameManager. A worldscript is used to customize the world simulation, you can put your code in different event called by the game engine.
 
 First we are going to attach a [`WorldScript`](../../src/Game/Shared/GameObject/Components/WorldScript.js) to our `GameManager` game object. A world script is used to customize the world simulation, you can put your code in different events called by the game engine.
 
@@ -206,12 +201,11 @@ gameObject: {
 
 `static` set to `true` is used for internal optimization and is meaning that this gameobject is not moving into the 3D scene.
 
-Now our `GameManager` game object is linked to a world script named `worldGameManager`. We need to import that script in our game. 
-* To do so add these lines to your `local_game_config.json` file.
+Now our `GameManager` game object is linked to a world script named `worldGameManager`. We need to import that script in our game.
 
 - To do so add these lines to your `local_game_config.json` file.
 
-```
+```json
 "assetsManager": {
     "worldScripts": {
         "worldGameManager": {
@@ -350,7 +344,7 @@ module.exports = class MyClass {
 
 `conf` is metadata that could be passed into the json file but here there is none. `udvizBundle` is the dynamic import of the ud-viz framework which is used to code inside a localscript context.
 
-- And here is the [focus.js](../../examples/assets/localScripts/focus.js) script, copy it in the folder **./assets/localScripts**
+- And here is the [focus.js](../../examples/assets/localScripts/focus.js) script, copy it in the folder `./assets/localScripts`
 
 Ok here is what the game looks like now, you should also be able to zoom in/out with the wheel !
 
@@ -436,7 +430,7 @@ tick() {
 
 Now we are going to add some collectable spheres.
 
-- In `worldGameManager.js` add the method createCollectableSphere
+- In `worldGameManager.js` add the method `createCollectableSphere`
 
 ```js
 createCollectableSphere(x, y) {
@@ -488,7 +482,7 @@ for (let i = 0; i < 10; i++) {
 }
 ```
 
-- You should see spheres around your zeppelin (zoom out :smile:)
+- You should see spheres around your zeppelin (**zoom out** :smile:)
 
 ![6](./Pictures/6.png)
 
