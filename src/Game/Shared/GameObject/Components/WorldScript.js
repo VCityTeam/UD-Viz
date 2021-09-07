@@ -85,6 +85,10 @@ const WorldScriptModule = class WorldScript {
     return this.scripts;
   }
 
+  getUUID() {
+    return this.uuid;
+  }
+
   /**
    * This component can be run on the server side
    * @returns {Boolean}
