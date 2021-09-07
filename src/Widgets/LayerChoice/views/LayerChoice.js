@@ -172,12 +172,12 @@ export class LayerChoice extends Window {
         if (event.srcElement.id.includes('checkbox_' + i + '_') ) {
           let tileIndex = event.srcElement.id.split('_');//.slice(-1)[0];
           tileIndex = tileIndex[tileIndex.length - 1];
-          tiles[tileIndex].getMesh().visible = !tiles[tileIndex].getMesh().visible;
-          this.layerManager.notifyChange();
+          tiles[tileIndex].getMesh().visible = event.srcElement.checked;
         }
         if (event.srcElement.id === 'range_' + i) {
           this.layerManager.updateOpacity(layers[i], event.srcElement.valueAsNumber);
         }
+        this.layerManager.notifyChange();
         let div_visible = document.getElementById('visible_' + i);
         div_visible.innerHTML = `Visible <input type="checkbox" id="checkbox_${i}" ${
           layers[i].visible ? 'checked' : ''
@@ -185,6 +185,7 @@ export class LayerChoice extends Window {
         let span_opacity = document.getElementById(
           'geometry_value_opacity_' + i
         );
+
         span_opacity.innerHTML = `${layers[i].opacity}`;
       };
       list.appendChild(item);
