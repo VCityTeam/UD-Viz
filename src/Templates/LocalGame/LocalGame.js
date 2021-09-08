@@ -10,33 +10,52 @@ import * as udviz from '../../index';
 export class LocalGame {
   constructor(fps) {
     this.fps = fps || 30;
+
+    this.gameView = null;
   }
 
-  start(world, configPath) {
+  getGameView() {
+    return this.gameView;
+  }
+
+  dispose() {
+    this.gameView.dispose();
+  }
+
+  start(world, configPath, options = {}) {
     const fps = this.fps;
 
-    Components.SystemUtils.File.loadJSON(configPath).then(function (config) {
-      const assetsManager = new AssetsManager();
+    const _this = this;
 
-      assetsManager.loadFromConfig(config.assetsManager).then(function () {
-        const worldStateComputer = new Shared.WorldStateComputer(
-          assetsManager,
-          fps,
-          { udviz: udviz, Shared: Shared }
-        );
+    return new Promise((resolve, reject) => {
+      Components.SystemUtils.File.loadJSON(configPath).then(function (config) {
+        const assetsManager = new AssetsManager();
 
-        worldStateComputer.load(world);
+        assetsManager.loadFromConfig(config.assetsManager).then(function () {
+          const worldStateComputer = new Shared.WorldStateComputer(
+            assetsManager,
+            fps,
+            { udviz: udviz, Shared: Shared }
+          );
 
-        const gameView = new Views.GameView({
-          htmlParent: document.body,
-          assetsManager: assetsManager,
-          stateComputer: worldStateComputer,
-          config: config,
-          itownsControls: false,
+          worldStateComputer.load(world);
+
+          _this.gameView = new Views.GameView({
+            htmlParent: options.htmlParent || document.body,
+            assetsManager: assetsManager,
+            stateComputer: worldStateComputer,
+            config: config,
+            itownsControls: false,
+          });
+
+          //start gameview tick
+          _this.gameView.onFirstState(
+            worldStateComputer.computeCurrentState(),
+            options.avatarUUID
+          );
+
+          resolve();
         });
-
-        //start gameview tick
-        gameView.onFirstState(worldStateComputer.computeCurrentState(), null);
       });
     });
   }
