@@ -713,4 +713,27 @@ GameObjectModule.deepCopy = function (gameObject) {
   return new GameObjectModule(cloneJSON);
 };
 
+GameObjectModule.findObject3D = function (uuid, obj, upSearch = true) {
+  let result;
+  if (upSearch) {
+    let current = obj;
+    while (current) {
+      if (current.userData.gameObjectUUID == uuid) {
+        result = current;
+        break;
+      }
+
+      current = current.parent;
+    }
+  } else {
+    obj.traverse(function (child) {
+      if (child.userData.gameObjectUUID == uuid) {
+        result = child;
+      }
+    });
+  }
+
+  return result;
+};
+
 module.exports = GameObjectModule;
