@@ -39,7 +39,7 @@ export class SparqlQueryWindow extends Window {
   windowCreated() {
     this.dataView.append(this.graph.nodes);
     this.form.onsubmit = () => {
-      this.provider.querySparqlEndpointService(this.queryTextArea.textContent);
+      this.provider.querySparqlEndpointService(this.queryTextArea.value);
       return false;
     };
     this.provider.addEventListener(
