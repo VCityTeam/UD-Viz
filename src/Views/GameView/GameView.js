@@ -38,6 +38,8 @@ export class GameView extends View3D {
 
     //stop update of gameobject
     this.updateGameObject = true;
+    if (params.updateGameObject != undefined)
+      this.updateGameObject = params.updateGameObject;
 
     //TODO place these attributes in a userData object
     this.firstGameView = params.firstGameView || false; //first gameview of the application
