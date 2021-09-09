@@ -49,7 +49,7 @@ export class LocalGame {
           });
 
           //start gameview tick
-          _this.gameView.onFirstState(
+          _this.gameView.start(
             worldStateComputer.computeCurrentState(),
             options.avatarUUID
           );

@@ -85,7 +85,7 @@ export class GameView extends View3D {
    * @param {WorldState} state first state of this view
    * @param {uuid} avatarUUID uuid of the avatar GameObject
    */
-  onFirstState(state, avatarUUID) {
+  start(state, avatarUUID) {
     //ref it
     this.avatarUUID = avatarUUID;
 
