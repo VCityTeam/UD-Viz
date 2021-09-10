@@ -102,15 +102,9 @@ Still nothing displayed but the library is now globally accessible.
 ```
 
 First a new world called `My World` is created, you have to specify at which 3D coordinates you want to create it. Here we take a random location in Lyon. We also specify our root game object which is here called `GameManager`.
-<<<<<<< HEAD
 
 Then a [LocalGame](../../src/Templates/LocalGame/LocalGame.js) is instanciated, to start it you need to pass a world and the path to a config file.
 
-=======
-
-Then a [LocalGame](../../src/Templates/LocalGame/LocalGame.js) is instanciated, to start it you need to pass a world and the path to a config file.
-
->>>>>>> 8472597947d53c5f47c916b79f8a5dd2b29b1d30
 * Create a new folder called `./assets/config/` and, in it, a new file called [`local_game_config.json`](../../examples/assets/config/local_game_config.json) composed of the following code:
 
 ```json
