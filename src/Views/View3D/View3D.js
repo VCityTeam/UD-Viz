@@ -97,6 +97,8 @@ export class View3D {
       el.style.bottom = bottom + 'px';
       el.style.right = right + 'px';
     });
+
+    this.onResize();
   }
 
   /**
@@ -376,8 +378,8 @@ export class View3D {
    * Callback call on the resize event
    */
   onResize() {
-    const w = window.innerWidth - this.rootHtml.offsetLeft;
-    const h = window.innerHeight - this.rootHtml.offsetTop;
+    const w = window.innerWidth - parseInt(this.rootWebGL.style.left);
+    const h = window.innerHeight - parseInt(this.rootWebGL.style.top);
 
     //TODO remove this fonction
     if (this.itownsView) this.itownsView.debugResize(w, h);

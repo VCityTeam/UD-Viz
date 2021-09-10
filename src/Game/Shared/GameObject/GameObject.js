@@ -430,6 +430,15 @@ const GameObjectModule = class GameObject {
     return obj;
   }
 
+  getComponentByUUID(uuid) {
+    for (let key in this.components) {
+      const c = this.components[key];
+      if (c.getUUID() == uuid) return c;
+    }
+
+    return null;
+  }
+
   /**
    * Return a clone of this
    * @returns {GameObject}
@@ -702,6 +711,29 @@ GameObjectModule.deepCopy = function (gameObject) {
     }
   });
   return new GameObjectModule(cloneJSON);
+};
+
+GameObjectModule.findObject3D = function (uuid, obj, upSearch = true) {
+  let result;
+  if (upSearch) {
+    let current = obj;
+    while (current) {
+      if (current.userData.gameObjectUUID == uuid) {
+        result = current;
+        break;
+      }
+
+      current = current.parent;
+    }
+  } else {
+    obj.traverse(function (child) {
+      if (child.userData.gameObjectUUID == uuid) {
+        result = child;
+      }
+    });
+  }
+
+  return result;
 };
 
 module.exports = GameObjectModule;
