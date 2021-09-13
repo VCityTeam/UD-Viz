@@ -64,7 +64,6 @@ iframe {
   left: 0;
   right: 0;
   height: 100%;
-  overflow: auto;
 }
 
 #viewer {
@@ -72,9 +71,9 @@ iframe {
 }
 
 #projects {
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   line-height: 0;
 }
 
@@ -90,4 +89,25 @@ iframe {
 
 #projects a:hover img {
   transform: scale(1.08);
+}
+
+#panel #content ul {
+  list-style-type: none;
+  padding: 0px;
+  margin: 0px 0 20px 0;
+}
+#panel #content ul li {
+  margin: 1px 0;
+}
+
+#panel #content a {
+  position: relative;
+  color: var(--text-color);
+  text-decoration: none;
+}
+
+#panel #content a:hover,
+#panel #content a:hover .spacer,
+#panel #content .selected {
+  color: var(--color-blue);
 }
