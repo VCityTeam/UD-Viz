@@ -398,12 +398,6 @@ const GameObjectModule = class GameObject {
     }
   }
 
-  bindTransformFrom(o) {
-    this.object3D.position.set(o.position.x, o.position.y, o.position.z);
-    this.object3D.rotation.set(o.rotation.x, o.rotation.y, o.rotation.z);
-    this.object3D.scale.set(o.scale.x, o.scale.y, o.scale.z);
-  }
-
   /**
    * Compute the object3D
    * @param {Boolean} recursive if true recursive call on children
@@ -430,6 +424,11 @@ const GameObjectModule = class GameObject {
     return obj;
   }
 
+  /**
+   * Get a gameobject component with a given uuid
+   * @param {String} uuid the uuid of the component
+   * @returns {GameObject.Component} the gameobject component
+   */
   getComponentByUUID(uuid) {
     for (let key in this.components) {
       const c = this.components[key];
@@ -630,6 +629,10 @@ const GameObjectModule = class GameObject {
     return this.name;
   }
 
+  /**
+   *
+   * @param {String} name the new name of the gameobject
+   */
   setName(name) {
     this.name = name;
   }
@@ -713,6 +716,13 @@ GameObjectModule.deepCopy = function (gameObject) {
   return new GameObjectModule(cloneJSON);
 };
 
+/**
+ * Search in the object3D the object3D sign with uuid
+ * @param {String} uuid the uuid of the gameobject
+ * @param {THREE.Object3D} obj the 3Dobject where to search
+ * @param {Boolean} upSearch true up search false bottom search
+ * @returns {THREE.Object3D} the object3D sign with the uuid of the gameobject
+ */
 GameObjectModule.findObject3D = function (uuid, obj, upSearch = true) {
   let result;
   if (upSearch) {

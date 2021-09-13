@@ -138,6 +138,10 @@ export class GameView extends View3D {
     setTimeout(this.onResize.bind(this), 1000);
   }
 
+  /**
+   *
+   * @returns {THREE.Object3D} return the object3D of the gameview
+   */
   getObject3D() {
     return this.object3D;
   }
@@ -183,6 +187,9 @@ export class GameView extends View3D {
     this.directionalLight = directionalLight;
   }
 
+  /**
+   * dispose this view
+   */
   dispose() {
     super.dispose();
     this.stateComputer.stop();
@@ -316,6 +323,10 @@ export class GameView extends View3D {
     }
   }
 
+  /**
+   * force this gameview to update with a specific state
+   * @param {WorldState} state
+   */
   forceUpdate(state) {
     if (!state) state = this.stateComputer.computeCurrentState();
 
@@ -346,7 +357,6 @@ export class GameView extends View3D {
 
 /**
  * Context pass to the GameObject LocalScript to work
- * TODO pass ud-viz module instead of just Shared/itowns/proj4
  */
 class LocalContext {
   constructor(gameView) {
@@ -363,14 +373,6 @@ class LocalContext {
   }
 
   /**
-   * ud-viz/Game/Shared module
-   * @returns {Shared}
-   */
-  getSharedModule() {
-    return udvShared;
-  }
-
-  /**
    *
    * @returns {Number}
    */
@@ -384,13 +386,5 @@ class LocalContext {
    */
   getGameView() {
     return this.gameView;
-  }
-
-  /**
-   * itowns module
-   * @returns {itowns}
-   */
-  getItownsModule() {
-    return itowns;
   }
 }

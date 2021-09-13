@@ -23,10 +23,17 @@ const WorldStateComputerModule = class WorldStateComputer {
     this.interval = null;
   }
 
+  /**
+   * stop tick of this
+   */
   stop() {
     if (this.interval) clearInterval(this.interval);
   }
 
+  /**
+   * true tick world false stop ticking world
+   * @param {Boolean} value
+   */
   setPause(value) {
     this.pause = value;
   }
@@ -133,16 +140,23 @@ const WorldStateComputerModule = class WorldStateComputer {
   }
 };
 
-WorldStateComputerModule.WorldCanLoad = function (
-  world,
-  assetsManager,
-  bundles
-) {
+/**
+ * Load a world and tick during 1000ms then stop
+ * @param {World} world the world to load
+ * @param {AssetsManager} assetsManager manager needed to load world assets
+ * @param {Bundles} bundles bundles needed to load the world
+ * @returns
+ */
+WorldStateComputerModule.WorldTest = function (world, assetsManager, bundles) {
   return new Promise((resolve, reject) => {
     const c = new WorldStateComputerModule(assetsManager, 60, bundles);
     c.load(world, function () {
-      c.stop();
-      resolve();
+      console.log(world.getName(), ' has loaded');
+      setTimeout(function () {
+        c.stop();
+        console.log('stop test ', world.getName());
+        resolve();
+      }, 1000); //stop after 1000ms
     });
   });
 };

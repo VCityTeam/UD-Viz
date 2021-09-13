@@ -26,6 +26,10 @@ export class AssetsManager {
     this.worldsJSON = null;
   }
 
+  /**
+   * return json prefabs 
+   * @returns {Object} a map containing prefabs JSON loaded
+   */
   getPrefabs() {
     return this.prefabs;
   }
