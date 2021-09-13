@@ -212,7 +212,7 @@ export class WidgetTemplate {
 
       ////// SPARQL MODULE
       if (_this.config.widgets.sparqlModule) {
-        const sparqlModule = new Widgets.Extensions.SparqlModule(_this.config);
+        const sparqlModule = new Widgets.Extensions.SparqlModule(_this.config, _this.layerManager);
         _this.addModuleView('sparqlModule', sparqlModule.view, {
           name: 'SPARQL Query'
         });
