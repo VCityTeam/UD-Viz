@@ -14,6 +14,8 @@ const commonJsWorldState = require('./WorldState');
 
 const commonJsWorldStateDiff = require('./WorldStateDiff');
 
+const commonJsWorldStateComputer = require('./WorldStateComputer');
+
 const THREE = require('three');
 
 const proj4 = require('proj4');
@@ -26,6 +28,7 @@ module.exports = {
   World: commonJsWorld,
   WorldState: commonJsWorldState,
   WorldStateDiff: commonJsWorldStateDiff,
+  WorldStateComputer: commonJsWorldStateComputer,
   THREE: THREE,
   proj4: proj4,
 };

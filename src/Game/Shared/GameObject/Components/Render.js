@@ -129,6 +129,10 @@ const RenderModule = class Render {
 
     return this.object3D;
   }
+
+  getUUID() {
+    return this.uuid;
+  }
 };
 
 RenderModule.TYPE = 'Render';

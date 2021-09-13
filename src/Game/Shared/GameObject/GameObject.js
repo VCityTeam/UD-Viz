@@ -5,6 +5,7 @@
  */
 
 const THREE = require('three');
+const JSONUtils = require('../Components/JSONUtils');
 
 //GameObject Components
 const RenderComponent = require('./Components/Render');
@@ -80,9 +81,11 @@ const GameObjectModule = class GameObject {
    * @param {GameObject} go the gameobject to upadate to
    * @param {LocalContext} localContext this localcontext
    */
-  updateNoStaticFromGO(go, localContext) {
-    //update transform
-    this.setTransformFromGO(go);
+  updateFromGO(go, localContext) {
+    if (!go.isStatic()) {
+      //update transform
+      this.setTransformFromGO(go);
+    }
 
     //update render
     const r = this.getComponent(RenderComponent.TYPE);
@@ -105,7 +108,7 @@ const GameObjectModule = class GameObject {
 
   /**
    * Bind transform of go into this
-   * @param {GameObject} go 
+   * @param {GameObject} go
    */
   setTransformFromGO(go) {
     this.object3D.position.copy(go.object3D.position);
@@ -116,11 +119,9 @@ const GameObjectModule = class GameObject {
 
   /**
    * Set transform of object3D from json
-   * @param {JSON} json 
+   * @param {JSON} json
    */
-  setFromTransformJSON(json) {
-    if (!json) throw new Error('no json');
-
+  setFromTransformJSON(json = {}) {
     if (json.position) {
       this.object3D.position.fromArray(json.position);
     } else {
@@ -136,7 +137,7 @@ const GameObjectModule = class GameObject {
     if (json.scale) {
       this.object3D.scale.fromArray(json.scale);
     } else {
-      this.object3D.scale.fromArray([0, 0, 0]);
+      this.object3D.scale.fromArray([1, 1, 1]);
     }
   }
 
@@ -158,20 +159,20 @@ const GameObjectModule = class GameObject {
   /**
    * Initialize components of this
    * @param {AssetsManager} manager must implement an assetsmanager interface can be local or server
-   * @param {Shared} udvShared ud-viz/Game/Shared module
+   * @param {Library} bundles set of bundle library used by script
    * @param {Boolean} isServerSide the code is running on a server or in a browser
    */
-  initAssetsComponents(manager, udvShared, isServerSide = false) {
+  initAssetsComponents(manager, bundles = {}, isServerSide = false) {
     if (!this.initialized) {
       this.initialized = true;
       for (let type in this.components) {
         const c = this.components[type];
         if (isServerSide && !c.isServerSide()) continue;
-        c.initAssets(manager, udvShared);
+        c.initAssets(manager, bundles);
       }
     }
     this.children.forEach(function (child) {
-      child.initAssetsComponents(manager, udvShared, isServerSide);
+      child.initAssetsComponents(manager, bundles, isServerSide);
     });
   }
 
@@ -232,6 +233,12 @@ const GameObjectModule = class GameObject {
    */
   fetchWorldScripts() {
     const c = this.getComponent(WorldScriptComponent.TYPE);
+    if (!c) return null;
+    return c.getScripts();
+  }
+
+  fetchLocalScripts() {
+    const c = this.getComponent(LocalScriptModule.TYPE);
     if (!c) return null;
     return c.getScripts();
   }
@@ -391,6 +398,12 @@ const GameObjectModule = class GameObject {
     }
   }
 
+  bindTransformFrom(o) {
+    this.object3D.position.set(o.position.x, o.position.y, o.position.z);
+    this.object3D.rotation.set(o.rotation.x, o.rotation.y, o.rotation.z);
+    this.object3D.scale.set(o.scale.x, o.scale.y, o.scale.z);
+  }
+
   /**
    * Compute the object3D
    * @param {Boolean} recursive if true recursive call on children
@@ -415,6 +428,15 @@ const GameObjectModule = class GameObject {
     }
 
     return obj;
+  }
+
+  getComponentByUUID(uuid) {
+    for (let key in this.components) {
+      const c = this.components[key];
+      if (c.getUUID() == uuid) return c;
+    }
+
+    return null;
   }
 
   /**
@@ -451,6 +473,24 @@ const GameObjectModule = class GameObject {
     let result = null;
     this.traverse(function (g) {
       if (g.getUUID() == uuid) {
+        result = g;
+        return true;
+      }
+      return false;
+    });
+    return result;
+  }
+
+  /**
+   * Find a gameobject into the hierarchy with a name
+   * return the first one encounter
+   * @param {String} name
+   * @returns
+   */
+  findByName(name) {
+    let result = null;
+    this.traverse(function (g) {
+      if (g.getName() == name) {
         result = g;
         return true;
       }
@@ -590,6 +630,10 @@ const GameObjectModule = class GameObject {
     return this.name;
   }
 
+  setName(name) {
+    this.name = name;
+  }
+
   /**
    * Compute this to JSON with or without its server side components
    * @param {Boolean} withServerComponent
@@ -648,6 +692,48 @@ GameObjectModule.interpolateInPlace = function (g1, g2, ratio) {
 
   g1.object3D.rotation.setFromVector3(v1);
   return g1;
+};
+
+/**
+ * return a deep copy (new uuid are generated) of a gameObject
+ * @param {GameObject} gameObject
+ * @returns {GameObject} a new gameobject with new uuid base on gameObject
+ */
+GameObjectModule.deepCopy = function (gameObject) {
+  const cloneJSON = gameObject.toJSON(true);
+  //rename uuid
+  JSONUtils.parse(cloneJSON, function (json, key) {
+    let keyLowerCase = key.toLowerCase();
+    if (keyLowerCase === 'uuid') json[key] = THREE.MathUtils.generateUUID();
+
+    if (keyLowerCase === 'name') {
+      json[key] = json[key] + ' (clone)';
+    }
+  });
+  return new GameObjectModule(cloneJSON);
+};
+
+GameObjectModule.findObject3D = function (uuid, obj, upSearch = true) {
+  let result;
+  if (upSearch) {
+    let current = obj;
+    while (current) {
+      if (current.userData.gameObjectUUID == uuid) {
+        result = current;
+        break;
+      }
+
+      current = current.parent;
+    }
+  } else {
+    obj.traverse(function (child) {
+      if (child.userData.gameObjectUUID == uuid) {
+        result = child;
+      }
+    });
+  }
+
+  return result;
 };
 
 module.exports = GameObjectModule;

@@ -5,34 +5,19 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
     </head>
     <body>
-        
-        <p>Widget Template example</p>
-        <a href="./examples/WidgetTemplate.html">Widget template example</a>
-        
-        <div>FIX SECTION ABOVE</div>
         <section>
-            <h1>UD-Viz Examples</h1>
             <p>UD-Viz is a JavaScript client based on
                 <a href="http://www.itowns-project.org/">iTowns</a> allowing to
                 visualize, analyse and interact with urban data. It is developed
                 as part of the
-                <a href="https://projet.liris.cnrs.fr/vcity/wiki/doku.php">
-                    Virtual City Project.</a>
+                <a href="https://github.com/VCityTeam/UD-SV">
+                    Urban Data Services and Vizualisation Project.</a>
             </p>
-            <p>This page lists the demos and examples of UD-Viz.</p>
-            <h2> Demos </h2>
-            <p>
-                List of demonstrations combining modules and / or extensions of
-                UD-Viz.
-            </p>
+            <h2> Examples </h2>
             <ul>
                 <li>
-                    <h3><a href='examples/DemoFull/Demo.html'>UD-Viz
-                        Full modules Demo</a></h3>
-                    <p>Demonstrate all possible modules in UD-Viz, including debug
-                        modules.
-                    </p>
-                    <p>This demo implements all the modules and extensions
+                    <h3><a href='./examples/AllWidget/example.html'> All Widgets</a></h3>
+                    <p>This demo implements all widgets and extensions
                         currently available. As of today, this includes :<br>
                         - Temporal<br>
                         - Help & About<br>
@@ -49,57 +34,46 @@
                     </p>
                 </li>
                 <li>
-                    <h3><a href='examples/DemoStable/Demo.html'>UD-Viz Stable Demo
-                    </a></h3>
-                    <p>The stable full demonstration.
-                    </p>
-                    <p>The demo is similar to the "Full modules demo", with two major
-                        differences :<br>
-                        - Debug modules are not included<br>
-                        - The server is different (stable server)
-                    </p>
-                </li>
-                <li>
-                    <h3><a href='examples/DemoMultiLayer/Demo.html'>UD-Viz
-                        Demo Multilayer on Lyon 1, 2 and 5 </a></h3>
-                    <p>
-                        Demonstrate the possibility to visualize new 3D city objects.
-                    </p>
+                    <h3><a href='examples/MultiLayer/example.html'>
+                        Multiple CityGML type visualization on Lyon 1, 2 and 5 </a></h3>
                     <p>
                         Visualisation of three 3D Tiles Layers representing the buildings, the terrain and the water
-                        of the 1st, 2nd and 5th borough of Lyon. These layers are computed with
-                        <a href='https://github.com/MEPP-Team/py3dtiles'>py3DTiles</a> from CityGML
-                        files obtained on the <a href='https://data.beta.grandlyon.com/en/accueil'>data Grand Lyon website</a> .
+                        of the 1st, 2nd and 5th borough of Lyon, extracted from CityGML.
                     </p>
                 </li>
                 <li>
-                    <h3><a href='examples/DemoPC/Demo.html'>UD-Viz
-                        Demo of the capacity to visualize point clouds </a></h3>
+                    <h3><a
+                        href='./examples/WorldMap/example.html'>
+                        WorldMap basemap</a></h3>
+                    <p>
+                        This example use IGN basemap to be able to navigate all over the world
+                    </p>
                 </li>
                 <li>
-                    <h3><a href='examples/DemoLimonest/Demo.html'>UD-Viz
-                        Demo of Limonest </a></h3>
+                    <h3><a href='./examples/LocalGame.html'> Local game</a></h3>
+                    <p>This demo implements a local mini game builded with the ud-viz game engine
+                    </p>
+                </li>
+                <!-- <li>
+                    <h3><a href='examples/DemoPC/Demo.html'> Point clouds visualization </a></h3>
                 </li>
                 <li>
-                    <h3><a href='examples/DemoBron/Demo.html'>UD-Viz
-                        Demo of Bron </a></h3>
+                    <h3><a href='examples/DemoLimonest/Demo.html'>Limonest visualization</a></h3>
                 </li>
+                <li>
+                    <h3><a href='examples/DemoBron/Demo.html'>Bron visualization</a></h3>
+                </li> -->
             </ul>
-            <h2> Individual Modules and Extensions Demos</h2>
-            <p>
-                Each individual module and extension should have an associated
-                example. They are listed here.
-            </p>
+            <h2> Individual Modules</h2>
             <ul>
                 <li>
-                    <h3><a href='src/Modules/Documents/Example/Demo.html'>
-                        Documents</a></h3>
-                    <p>Demonstrate the Documents Module.</p>
+                    <h3><a href='examples/DocumentWidget/example.html'>
+                        Documents Widget</a></h3>
                     <p>In this demo you can consult documents in a document
                         browser and search them using keywords and other fields.
                     </p>
                 </li>
-                <li>
+                <!-- <li>
                     <h3><a href='src/Modules/GuidedTour/examples/Demo.html'>Guided
                         Tour</a></h3>
                     <p>Demonstrate the GuidedTour Module.</p>
@@ -107,48 +81,11 @@
                         virtual navigation in a 4D (3D + time) and documented
                         representation of the city.
                     </p>
-                </li>
-                <li>
-                    <h3><a href='src/Extensions/Contribute/examples/Demo.html'>
-                        Contribute</a></h3>
-                    <p>Demonstrate the Contribute Extension.</p>
-                    <p>In this demo you can try the Contribute extension which
-                        allows to create, update and delete documents. You can also
-                        consult documents in a document browser and search them
-                        using keywords and other fields.
-                    </p>
-                </li>
+                </li> -->
                 <li>
                     <h3><a
-                        href='src/Extensions/Authentication/examples/Demo.html'>
-                        Authentication</a></h3>
-                    <p>Demonstrate the Authentication Extension.</p>
-                    <p>This demo allows you to create a user account, log in and
-                        log out. This demonstrates how user information can be
-                        retained through the session.
-                    </p>
-                </li>
-                <li>
-                    <h3><a
-                        href='src/Extensions/DocumentValidation/Example/Demo.html'>
-                        Documents to validate</a></h3>
-                    <p>Demonstrate the Documents to validate Extension.</p>
-                    <p>
-                        In this demo, the creation of a document actually adds a
-                         "document to validate", which is a contribution
-                         request. These documents can be udpated, deleted,
-                         commented and validated. When validated, the actual
-                         document is created. This demo makes use of the
-                         authentication module : only the user who made the
-                         contribution and the admin can see them; and only an
-                         admin can validate them.
-                    </p>
-                </li>
-                <li>
-                    <h3><a
-                        href='src/Extensions/Geocoding/examples/Demo.html'>
-                        Geocoding</a></h3>
-                    <p>Demonstrate the Geocoding Extension.</p>
+                        href='examples/GeocodingWidget/example.html'>
+                        Geocoding Widget</a></h3>
                     <p>
                         Geocoding allows a user to navigate in the city
                          by searching addresses or place names.
@@ -156,9 +93,8 @@
                 </li>
                 <li>
                     <h3><a
-                        href='src/Modules/CameraPositioner/Example/Demo.html'>
-                        Camera Positioner</a></h3>
-                    <p>Demonstrate the Camera Postioner tool.</p>
+                        href='examples/CameraPositionerWidget/example.html'>
+                        Camera Positioner Widget</a></h3>
                     <p>
                         The camera positioner is a tool that show the
                         coordinates and the orientation of the camera.
@@ -166,9 +102,8 @@
                 </li>
                 <li>
                     <h3><a
-                        href='src/Extensions/3DTilesDebug/examples/Demo.html'>
-                        3DTiles Debug</a></h3>
-                    <p>Demonstrate the 3DTiles Debug tool.</p>
+                        href='examples/3DTilesDebugWidget/example.html'>
+                        3DTiles Debug Widget</a></h3>
                     <p>
                         3DTiles Debug displays a window which shows various
                         information about 3DTiles objects and city objects.
@@ -176,20 +111,25 @@
                 </li>
                 <li>
                     <h3><a
-                        href='src/Modules/Links/Example/Demo.html'>
-                        Links</a></h3>
-                    <p>Demonstrate the Links Extension.</p>
+                        href='examples/CityObjectWidget/example.html'>
+                        City Objects Widget</a></h3>
                     <p>
-                        This extension adds the possibility to see the links
-                        associated to a document, as well as to create new
-                        links with city objects.
+                        This extensions allows the user to explore city objects
+                        and color them according to filters.
+                    </p>
+                </li>                
+                <li>
+                    <h3><a
+                        href='./examples/LayerChoiceWidget/example.html'>
+                        LayerChoice Widget</a></h3>
+                    <p>
+                        This extensions interact with layers
                     </p>
                 </li>
                 <li>
                     <h3><a
-                        href='src/Modules/CityObjects/Example/Demo.html'>
-                        City Objects</a></h3>
-                    <p>Demonstrate the City Objects Extension.</p>
+                        href='./examples/TemporalWidget/example.html'>
+                        Temporal Widget</a></h3>
                     <p>
                         This extensions allows the user to explore city objects
                         and color them according to filters.

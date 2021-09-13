@@ -1,0 +1,36 @@
+<!-- @format -->
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>UD-Viz LocalGame Template example</title>
+
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  </head>
+  <body>
+    <script src="./assets/js/udv.js"></script>
+    <!--the path point your bundle library-->
+    <script type="text/javascript">
+      const myWorld = new udv.Game.Shared.World({
+        name: 'My World',
+        origin: { lat: 45.7530993, lng: 4.8452654, alt: 300 },
+        gameObject: {
+          name: 'GameManager',
+          static: true,
+          components: {
+            WorldScript: {
+              idScripts: ['worldGameManager'],
+            },
+            LocalScript: {
+              idScripts: ['focus', 'commands'],
+            },
+          },
+        },
+      });
+
+      const app = new udv.Templates.LocalGame();
+      app.start(myWorld, './assets/config/local_game_config.json');
+    </script>
+  </body>
+</html>

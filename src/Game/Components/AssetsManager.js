@@ -26,6 +26,10 @@ export class AssetsManager {
     this.worldsJSON = null;
   }
 
+  getPrefabs() {
+    return this.prefabs;
+  }
+
   /**
    * Return new model corresponding to the id passed
    * @param {String} idModel id of the model
@@ -266,7 +270,7 @@ export class AssetsManager {
    * @param {JSON} config config file
    * @returns {Array[Promises]} all the promises processed to load assets
    */
-  loadFromConfig(config) {
+  loadFromConfig(config = {}) {
     this.conf = config;
 
     //load config file

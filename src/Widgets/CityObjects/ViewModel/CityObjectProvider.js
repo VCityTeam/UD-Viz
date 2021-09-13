@@ -77,6 +77,8 @@ export class CityObjectProvider extends EventSender {
     this.registerEvent(CityObjectProvider.EVENT_FILTERS_UPDATED);
     this.registerEvent(CityObjectProvider.EVENT_LAYER_CHANGED);
     this.registerEvent(CityObjectProvider.EVENT_CITY_OBJECT_SELECTED);
+    this.registerEvent(CityObjectProvider.EVENT_CITY_OBJECT_UNSELECTED);
+    this.registerEvent(CityObjectProvider.EVENT_CITY_OBJECT_CHANGED);
   }
 
   ///////////////////////////
@@ -93,7 +95,11 @@ export class CityObjectProvider extends EventSender {
     if (cityObject) {
       if(this.selectedCityObject != cityObject) {
         if(this.selectedCityObject) {
-          this.unselectCityObject();
+          this.sendEvent(CityObjectProvider.EVENT_CITY_OBJECT_CHANGED, cityObject);
+          this.unselectCityObject(false);
+        }
+        else {
+          this.sendEvent(CityObjectProvider.EVENT_CITY_OBJECT_SELECTED, cityObject);
         }
         this.selectedCityObject = cityObject;
         this.selectedTilesManager = this.layerManager.getTilesManagerByLayerID(this.selectedCityObject.tile.layer.id);
@@ -104,7 +110,6 @@ export class CityObjectProvider extends EventSender {
             this.selectedTilesManager.view.notifyChange.bind(this.selectedTilesManager.view)
         });
         this.removeLayer();
-        this.sendEvent(CityObjectProvider.EVENT_CITY_OBJECT_SELECTED, cityObject);
       }
     }
   }
@@ -113,11 +118,12 @@ export class CityObjectProvider extends EventSender {
    * Unset the selected city object and sends an `EVENT_CITY_OBJECT_SELECTED`
    * event.
    */
-  unselectCityObject() {
+  unselectCityObject(sendEvent=true) {
     if (this.selectedCityObject) {
       this.selectedTilesManager.setStyle(this.selectedCityObject.cityObjectId, this.selectedStyle);
       this.selectedTilesManager.applyStyles();
     }
+    if(sendEvent) this.sendEvent(CityObjectProvider.EVENT_CITY_OBJECT_UNSELECTED,this.selectedCityObject);
     this.selectedTilesManager = undefined;
     this.selectedStyle = undefined;
     this.selectedCityObject = undefined;
@@ -262,5 +268,13 @@ export class CityObjectProvider extends EventSender {
 
   static get EVENT_CITY_OBJECT_SELECTED() {
     return 'EVENT_CITY_OBJECT_SELECTED';
+  }
+
+  static get EVENT_CITY_OBJECT_UNSELECTED() {
+    return 'EVENT_CITY_OBJECT_UNSELECTED';
+  }
+
+  static get EVENT_CITY_OBJECT_CHANGED() {
+    return 'EVENT_CITY_OBJECT_CHANGED';
   }
 }

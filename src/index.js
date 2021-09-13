@@ -18,9 +18,9 @@ export { Game };
 import * as Templates from './Templates/Templates.js';
 export { Templates };
 
-//View3D
-import { View3D } from './View/View3D/View3D';
-export { View3D };
+//Views
+import * as Views from './Views/Views';
+export { Views };
 
 //external package
 
@@ -36,7 +36,8 @@ export { jquery };
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { TransformControls } from 'three/examples/jsm/controls/TransformControls';
-export { THREE, OrbitControls, TransformControls };
+import { ConvexGeometry } from 'three/examples/jsm/geometries/ConvexGeometry';
+export { THREE, OrbitControls, TransformControls, ConvexGeometry };
 
 //proj4
 import * as proj4 from 'proj4';

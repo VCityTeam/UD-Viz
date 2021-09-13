@@ -1,7 +1,7 @@
 /** @format */
 
 const THREE = require('three');
-const JSONUtils = require('../../../../Components/SystemUtils/JSONUtils');
+const JSONUtils = require('../../Components/JSONUtils');
 
 //TODO pass ud-viz as parameter to localscript and not only Shared
 
@@ -23,7 +23,7 @@ const LocalScriptModule = class LocalScript {
     this.type = json.type || LocalScriptModule.TYPE;
 
     //conf pass to scripts
-    this.conf = json.conf || {};
+    this.conf = JSON.parse(JSON.stringify(json.conf)) || {};
 
     //map of scripts
     this.scripts = {};
@@ -40,13 +40,13 @@ const LocalScriptModule = class LocalScript {
   /**
    * Initialize scripts
    * @param {AssetsManager} assetsManager local assetsManager
-   * @param {Shared} udvShared ud-viz/Game/Shared module
+   * @param {Library} bundles set of bundle library used by script
    */
-  initAssets(assetsManager, udvShared) {
+  initAssets(assetsManager, bundles) {
     const _this = this;
     this.idScripts.forEach(function (id) {
       const constructor = assetsManager.fetchLocalScript(id);
-      _this.scripts[id] = new constructor(_this.conf, udvShared);
+      _this.scripts[id] = new constructor(_this.conf, bundles.udviz);
     });
   }
 
@@ -92,7 +92,7 @@ const LocalScriptModule = class LocalScript {
       this.conf = component.conf;
       for (let id in this.scripts) {
         const s = this.scripts[id];
-        s.config = component.conf;
+        s.conf = component.conf;
       }
       this.execute(LocalScriptModule.EVENT.UPDATE, [localContext]);
     }
@@ -112,6 +112,10 @@ const LocalScriptModule = class LocalScript {
    */
   isServerSide() {
     return false;
+  }
+
+  getUUID() {
+    return this.uuid;
   }
 
   /**

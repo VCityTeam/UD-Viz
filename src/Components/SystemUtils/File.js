@@ -50,7 +50,7 @@ module.exports = {
    * @param {Object} e input of type file argument when 'change'
    * @param {Function} onLoad callback passing the file as text as first argument
    */
-  readSingleFile(e, onLoad) {
+  readSingleFileAsText(e, onLoad) {
     try {
       const file = e.target.files[0];
       if (file) {
@@ -62,5 +62,30 @@ module.exports = {
     } catch (e) {
       throw new Error(e);
     }
+  },
+
+  readSingleFileAsDataUrl(e, onLoad) {
+    try {
+      const file = e.target.files[0];
+      if (file) {
+        const _this = this;
+        const reader = new FileReader();
+        reader.onload = onLoad;
+        reader.readAsDataURL(file);
+      }
+    } catch (e) {
+      throw new Error(e);
+    }
+  },
+
+  downloadImageOnDisk(url, filename) {
+    const imgResult = document.createElement('img');
+    imgResult.src = url;
+    const link = document.createElement('a');
+    link.href = imgResult.src;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   },
 };
