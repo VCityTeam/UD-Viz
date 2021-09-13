@@ -35,17 +35,17 @@ export class AllWidget {
   }
 
   start(path) {
-    return new Promise( resolve => {
+    return new Promise((resolve) => {
       const _this = this;
       this.appendTo(document.body);
       this.loadConfigFile(path).then(() => {
-      // Use the stable server
+        // Use the stable server
         _this.addLogos();
 
         // Initialize iTowns 3D view
         _this.init3DView();
 
-        resolve('resolved');
+        resolve(_this.config);
       });
     });
   }
@@ -431,10 +431,7 @@ export class AllWidget {
    * config file).
    */
   setup3DTilesLayer(layer) {
-    if (
-      !layer['id'] ||
-      !layer['url']
-    ) {
+    if (!layer['id'] || !layer['url']) {
       throw (
         'Your layer does not have url id properties or both. ' +
         '(in UD-Viz/UD-Viz-Core/examples/data/config/generalDemoConfig.json)'
@@ -499,16 +496,17 @@ export class AllWidget {
     if (layer['color']) {
       color = parseInt(layer['color']);
     }
-    $3DTilesManager.registerStyle('default', { materialProps : { opacity: 1, color: color }});
+    $3DTilesManager.registerStyle('default', {
+      materialProps: { opacity: 1, color: color },
+    });
 
     $3DTilesManager.addEventListener(
-      Widgets.Components.TilesManager.EVENT_TILE_LOADED, 
+      Widgets.Components.TilesManager.EVENT_TILE_LOADED,
       function (event) {
         $3DTilesManager.setStyleToTileset('default');
         $3DTilesManager.applyStyles();
       }
     );
-
 
     this.layerManager.tilesManagers.push($3DTilesManager);
 
@@ -535,9 +533,7 @@ export class AllWidget {
   setupAndAdd3DTilesLayers() {
     // Positional arguments verification
     if (!this.config['3DTilesLayers']) {
-      throw (
-        'No 3DTilesLayers field in the configuration file' 
-      );
+      throw 'No 3DTilesLayers field in the configuration file';
     }
     const layers = {};
     for (let layer of this.config['3DTilesLayers']) {
@@ -597,7 +593,9 @@ export class AllWidget {
     // The skirt allows to remove the cracks between the terrain tiles
     // Instantiate controls within PlanarView
     let maxSubdivisionLevel = 3;
-    if(this.config.background_image_layer.maxSubdivisionLevel) maxSubdivisionLevel = this.config.background_image_layer.maxSubdivisionLevel;
+    if (this.config.background_image_layer.maxSubdivisionLevel)
+      maxSubdivisionLevel =
+        this.config.background_image_layer.maxSubdivisionLevel;
 
     this.view = new itowns.PlanarView(viewerDiv, this.extent, {
       disableSkirt: false,

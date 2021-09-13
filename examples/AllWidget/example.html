@@ -9,11 +9,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   </head>
   <body>
-    <script src="../../dist/release/udv.js"></script>
+    <script src="../../dist/debug/udv.js"></script>
     <script type="text/javascript">
       let app = new udv.Templates.AllWidget();
 
-      app.start("../assets/config/all_widget_config.json").then(() => {
+      app.start('../assets/config/all_widget_config.json').then((config) => {
         app.addBaseMapLayer();
 
         app.addElevationLayer();
@@ -25,11 +25,11 @@
 
         ////// ABOUT MODULE
         const about = new udv.Widgets.AboutWindow();
-        app.addModuleView("about", about);
+        app.addModuleView('about', about);
 
         ////// HELP MODULE
-        const help = new udv.Widgets.HelpWindow();
-        app.addModuleView("help", help);
+        const help = new udv.Widgets.HelpWindow(config.helpWindow);
+        app.addModuleView('help', help);
 
         ////// AUTHENTICATION MODULE
         const authenticationService =
@@ -40,7 +40,7 @@
 
         const authenticationView =
           new udv.Widgets.Extensions.AuthenticationView(authenticationService);
-        app.addModuleView("authentication", authenticationView, {
+        app.addModuleView('authentication', authenticationView, {
           type: udv.Templates.AllWidget.AUTHENTICATION_MODULE,
         });
 
@@ -49,7 +49,7 @@
           requestService,
           app.config
         );
-        app.addModuleView("documents", documentModule.view);
+        app.addModuleView('documents', documentModule.view);
 
         ////// DOCUMENTS VISUALIZER EXTENSION (to orient the document)
         const imageOrienter = new udv.Widgets.DocumentVisualizerWindow(
@@ -88,8 +88,8 @@
           requestService,
           app.config
         );
-        app.addModuleView("guidedTour", guidedtour, {
-          name: "Guided Tours",
+        app.addModuleView('guidedTour', guidedtour, {
+          name: 'Guided Tours',
         });
 
         ////// GEOCODING EXTENSION
@@ -103,9 +103,9 @@
           app.controls,
           app.view
         );
-        app.addModuleView("geocoding", geocodingView, {
-          binding: "s",
-          name: "Address Search",
+        app.addModuleView('geocoding', geocodingView, {
+          binding: 's',
+          name: 'Address Search',
         });
 
         ////// CITY OBJECTS MODULE
@@ -113,7 +113,7 @@
           app.layerManager,
           app.config
         );
-        app.addModuleView("cityObjects", cityObjectModule.view);
+        app.addModuleView('cityObjects', cityObjectModule.view);
 
         ////// LINKS MODULE
         new udv.Widgets.LinkModule(
@@ -128,8 +128,8 @@
         ////// 3DTILES DEBUG
         const debug3dTilesWindow =
           new udv.Widgets.Extensions.Debug3DTilesWindow(app.layerManager);
-        app.addModuleView("3dtilesDebug", debug3dTilesWindow, {
-          name: "3DTiles Debug",
+        app.addModuleView('3dtilesDebug', debug3dTilesWindow, {
+          name: '3DTiles Debug',
         });
 
         ////// CAMERA POSITIONER
@@ -137,7 +137,7 @@
           app.view,
           app.controls
         );
-        app.addModuleView("cameraPositioner", cameraPosition);
+        app.addModuleView('cameraPositioner', cameraPosition);
 
         // ////// TEMPORAL MODULE
         // const temporalModule = new udv.Widgets.TemporalModule(
@@ -148,7 +148,7 @@
 
         ////// LAYER CHOICE MODULE
         const layerChoice = new udv.Widgets.LayerChoice(app.layerManager);
-        app.addModuleView("layerChoice", layerChoice);
+        app.addModuleView('layerChoice', layerChoice);
       });
     </script>
   </body>
