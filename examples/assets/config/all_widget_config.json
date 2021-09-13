@@ -23,6 +23,12 @@
     "min_y": "5169347.4265999",
     "max_y": "5180575"
   },
+  "helpWindow": {
+    "htmlPaths": [
+      "../assets/html/contribute.html",
+      "../assets/html/camera.html"
+    ]
+  },
   "temporalModule": {
     "view": "SLIDERWINDOW",
     "minTime": 2009,
