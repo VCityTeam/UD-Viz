@@ -70,7 +70,7 @@ WHERE {
    * @param {Object} data SPARQL query response data.
    */
   updateDataView(data) {
-    this.graph.updateGraph(data);
+    this.graph.createGraph(data);
     this.dataView.style['visibility'] = 'visible';
     this.dataView.append(this.graph.data);
   }
@@ -86,6 +86,8 @@ WHERE {
       <select>
         <option value="graph">Graph</option>
         <option value="table">Table</option>
+        <option value="json">JSON</option>
+        <option value="timeline">Timeline</option>
       </select>
       <div id="${this.dataViewId}"/>`;
   }
