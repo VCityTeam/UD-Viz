@@ -26,8 +26,14 @@ export class SparqlEndpointResponseProvider extends EventSender {
      *
      * @type {SparqlEndpointService}
      */
-
     this.service = service;
+
+    /**
+     * An array containing each uri base in the dataset.
+     *
+     * @type {Array}
+     */
+    this.uriBases = [];
 
     this.registerEvent(
       SparqlEndpointResponseProvider.EVENT_ENDPOINT_RESPONSE_UPDATED
@@ -59,16 +65,28 @@ export class SparqlEndpointResponseProvider extends EventSender {
       links: [
         // { source: 'x', target: 'y', value: 1 }
       ],
+      legend: undefined
     };
 
     for (let triple of this.data.results.bindings) {
-      if (!graphData.nodes.includes({ id: triple.subject.value })) {
-        let node = { id: triple.subject.value };
+      if (graphData.nodes.find(n => n.id == triple.subject.value) == undefined) {
+        let node = { id: triple.subject.value, group: 0 };
         graphData.nodes.push(node);
       }
-      if (!graphData.nodes.includes({ id: triple.object.value })) {
-        let node = { id: triple.object.value };
+      if (graphData.nodes.find(n => n.id == triple.object.value) == undefined) {
+        let node = { id: triple.object.value, group: 0 };
         graphData.nodes.push(node);
+      }
+      if (
+        triple.predicate.value ==
+        'http://www.w3.org/1999/02/22-rdf-syntax-ns#type' &&
+        triple.object.value != 'http://www.w3.org/2002/07/owl#NamedIndividual'
+      ) {
+        let i = graphData.nodes.findIndex( n => n.id == triple.subject.value );
+        if (i >= 0) {
+          let groupId = this.getBaseUriIndex(triple.object.value);
+          graphData.nodes[i].group = groupId;
+        }
       }
       let link = {
         source: triple.subject.value,
@@ -77,15 +95,29 @@ export class SparqlEndpointResponseProvider extends EventSender {
       };
       graphData.links.push(link);
     }
-    console.log(graphData)
+    graphData.legend = this.uriBases
+    console.log(graphData);
     return graphData;
+  }
+
+  /**
+   * add a uri to this.uriBases if it does not exist.
+   * @param {String} uri the uri to map to a group.
+   * @return {Number}
+   */
+  getBaseUriIndex(uri) {
+    let uriBase = uri.split('#')[0];
+    if (!this.uriBases.includes(uriBase)) {
+      this.uriBases.push(uriBase);
+    }
+    return this.uriBases.findIndex((d) => d == uriBase);
   }
 
   /**
    * return the most recently cached query response formatted for a table.
    * @return {Object | undefined}
    */
-  get getResponseDataAsTable() {
+  getResponseDataAsTable() {
     return this.tableData;
   }
 

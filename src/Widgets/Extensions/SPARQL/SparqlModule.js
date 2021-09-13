@@ -2,6 +2,7 @@ import { SparqlEndpointResponseProvider } from './service/SparqlEndpointResponse
 import { SparqlEndpointService } from './service/SparqlEndpointService';
 import { SparqlModuleView } from './view/SparqlModuleView';
 import { SparqlQueryWindow } from './view/SparqlQueryWindow';
+import { LayerManager } from '../../Components/Components';
 
 /**
  * The SPARQL module class used to initialize the SPARQL widget
@@ -13,9 +14,11 @@ export class SparqlModule {
    * @param {object} config The configuration of UD-Viz.
    * @param {object} config.sparqlModule The sparqlModule configuration.
    * @param {string} config.sparqlModule.url The SPARQL endpoint url.
+   * @param {LayerManager} layerManager The UD-Viz LayerManager.
    */
-  constructor(config) {
+  constructor(config, layerManager) {
     this.config = config;
+    this.layerManager = layerManager;
 
     /**
      * Contains connection information for the SPARQL Endpoint service.
@@ -32,10 +35,10 @@ export class SparqlModule {
     this.provider = new SparqlEndpointResponseProvider(this.service);
 
     /**
-     * Contains a SparqlQueryWindow for capturing user input.
+     * Contains a SparqlModuleView for managing the user interface and view.
      *
-     * @type {SparqlQueryWindow}
+     * @type {SparqlModuleView}
      */
-    this.view = new SparqlModuleView(this.service, this.provider);
+    this.view = new SparqlModuleView(this.service, this.provider, this.layerManager);
   }
 }

@@ -9,9 +9,7 @@ export class Graph {
     this.height = height;
     this.width = width;
 
-    this.svg = d3
-      .create('svg')
-      .attr('viewBox', [0, 0, this.width, this.height]);
+    this.svg = undefined;
   }
 
   /**
@@ -22,8 +20,12 @@ export class Graph {
   updateGraph(data) {
     const links = data.links.map((d) => Object.create(d));
     const nodes = data.nodes.map((d) => Object.create(d));
+    const uriBases = data.legend;
 
-    this.clearGraph();
+    this.svg = d3
+      .create('svg')
+      .attr('class', 'd3_graph')
+      .attr('viewBox', [0, 0, this.width, this.height]);
 
     const simulation = d3
       .forceSimulation(nodes)
@@ -43,17 +45,33 @@ export class Graph {
       .join('line')
       .attr('stroke-width', (d) => Math.sqrt(d.value));
 
+    const colorScale = d3.scaleOrdinal(d3.schemeCategory10);
+
     const node = this.svg
       .append('g')
-      .attr('stroke', '#fff')
+      .attr('stroke', '#333')
       .attr('stroke-width', 1.5)
       .selectAll('circle')
       .data(nodes)
       .join('circle')
       .attr('r', 5)
-      .attr('fill', this.color)
+      .attr('fill', (d) => colorScale(d.group))
+      .on('click', (d) => console.log(d))
       .call(this.drag(simulation));
 
+    const legend = this.svg.append('g')
+      .attr('stroke', '#333')
+      .attr('stroke-width', 1)
+      .selectAll('rect')
+      .data(uriBases)
+      .join('rect')
+      .attr("x", 10)
+      .attr("y", (d, i) => 10 + (i * 12))
+      .attr("width", 8)
+      .attr("height", 8)
+      .style("fill", (d, i) => colorScale(i));
+
+    legend.append('title').text((d) => d);
     node.append('title').text((d) => d.id);
 
     simulation.on('tick', () => {
@@ -69,15 +87,9 @@ export class Graph {
 
   /**
    * Remove nodes and lines from the SVG.
-   *
    */
   clearGraph() {
     this.svg.selectAll('g').remove();
-  }
-
-  color() {
-    const scale = d3.scaleOrdinal(d3.schemeCategory10);
-    return (d) => scale(d.group);
   }
 
   drag(simulation) {
@@ -105,7 +117,11 @@ export class Graph {
       .on('end', dragended);
   }
 
-  get nodes() {
+  /**
+   * Getter for retrieving the d3 svg.
+   */
+  get data() {
+    console.log(this.svg.node());
     return this.svg.node();
   }
 }

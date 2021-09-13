@@ -1,6 +1,7 @@
 import { Window } from '../../../Components/GUI/js/Window';
 import { SparqlEndpointResponseProvider } from '../service/SparqlEndpointResponseProvider';
 import { Graph } from './graph';
+import { LayerManager } from '../../../Components/Components';
 
 /**
  * The SPARQL query window class which provides the user interface for querying
@@ -10,8 +11,9 @@ export class SparqlQueryWindow extends Window {
   /**
    * Creates a SPARQL query window.
    * @param {SparqlEndpointResponseProvider} provider the SparqlEndpointResponseProvider.
+   * @param {LayerManager} layerManager The UD-Viz LayerManager.
    */
-  constructor(provider) {
+  constructor(provider, layerManager) {
     super('sparqlQueryWindow', 'SPARQL Query');
 
     /**
@@ -19,15 +21,31 @@ export class SparqlQueryWindow extends Window {
      *
      * @type {SparqlEndpointResponseProvider}
      */
-
     this.provider = provider;
+
+    /**
+     * The UD-Viz LayerManager.
+     *
+     * @type {LayerManager}
+     */
+    this.layerManager = layerManager;
+
     /**
      * Contains the D3 graph view to display RDF data.
      *
      * @type {Graph}
      */
     this.graph = new Graph();
-    this.default_query = 'SELECT *\nWHERE {\n  ?subject ?predicate ?object .\n}';
+
+    /**
+     * The initial SPARQL query to display upon window initialization.
+     *
+     * @type {Graph}
+     */
+    this.default_query = `SELECT *
+WHERE {
+  ?subject ?predicate ?object .
+}`;
   }
 
   /**
@@ -37,7 +55,6 @@ export class SparqlQueryWindow extends Window {
    * @param {SparqlEndpointService} service The SPARQL endpoint service.
    */
   windowCreated() {
-    this.dataView.append(this.graph.nodes);
     this.form.onsubmit = () => {
       this.provider.querySparqlEndpointService(this.queryTextArea.textContent);
       return false;
@@ -54,20 +71,23 @@ export class SparqlQueryWindow extends Window {
    */
   updateDataView(data) {
     this.graph.updateGraph(data);
+    this.dataView.style['visibility'] = 'visible';
+    this.dataView.append(this.graph.data);
   }
 
   get innerContentHtml() {
     return /*html*/ `
-        <div>
-            <form id=${this.formId}>
-                <label for="${this.queryTextAreaId}">Query:</label></br>
-                <textarea id="${this.queryTextAreaId}" rows="10" cols="27">${this.default_query}</textarea></br>
-                <input id="${this.buttonId}" type="submit" value="Send"/>
-            </form>
-            <label>Results:</label>
-            <div id=${this.dataViewId} width="240" height="240"/>
-        </div>
-      `;
+      <form id=${this.formId}>
+          <label for="${this.queryTextAreaId}">Query:</label></br>
+          <textarea id="${this.queryTextAreaId}" rows="10">${this.default_query}</textarea></br>
+          <input id="${this.buttonId}" type="submit" value="Send"/>
+      </form>
+      <label>Results Format:</label>
+      <select>
+        <option value="graph">Graph</option>
+        <option value="table">Table</option>
+      </select>
+      <div id="${this.dataViewId}"/>`;
   }
 
   // SPARQL Window getters //

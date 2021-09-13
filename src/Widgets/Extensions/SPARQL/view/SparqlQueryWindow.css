@@ -1,0 +1,23 @@
+#_window_sparqlQueryWindow {
+  width: 300px;
+}
+
+#_window_sparqlQueryWindow_form {
+  width: 100%;
+}
+
+#_window_sparqlQueryWindow_query_text_area {
+  width: 98%;
+  
+}
+
+#_window_sparqlQueryWindow_data_view {
+  width: 100%;
+  padding-top: 3px;
+  visibility: hidden;
+}
+
+.d3_graph {
+  width: 100%;
+  background-color: rgb(255, 255, 255);
+}
