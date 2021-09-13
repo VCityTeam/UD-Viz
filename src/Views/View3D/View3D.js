@@ -295,7 +295,7 @@ export class View3D {
   }
 
   /**
-   * Adds WMS elevation Layer of Lyon in 2012 and WMS imagery layer of Lyon in 2009 (from Grand Lyon data).
+   * Adds WMS imagery layer
    */
   addBaseMapLayer() {
     if (!this.config['background_image_layer']) {
@@ -326,6 +326,9 @@ export class View3D {
     this.itownsView.addLayer(wmsImageryLayer);
   }
 
+  /**
+   * Adds WMS elevation Layer
+   */
   addElevationLayer() {
     if (!this.config['elevation_layer']) {
       console.warn('no elevation_layer in config');
@@ -354,6 +357,9 @@ export class View3D {
     this.itownsView.addLayer(wmsElevationLayer);
   }
 
+  /**
+   * Adds 3DTiles Layer
+   */
   add3DTilesLayer() {
     if (!this.config['3DTilesLayer']) {
       console.warn('no 3DTilesLayer in config');
