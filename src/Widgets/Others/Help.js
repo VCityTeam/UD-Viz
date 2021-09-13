@@ -3,6 +3,8 @@
 //Components
 import { ModuleView } from '../Components/ModuleView/ModuleView';
 
+import jQuery from 'jquery';
+
 import './Help.css';
 
 /**
@@ -11,42 +13,47 @@ import './Help.css';
  */
 
 export class HelpWindow extends ModuleView {
-  constructor() {
+  constructor(config = {}) {
     super();
 
     ///////////// Html elements
-    var helpDiv = document.createElement('div');
+    const helpDiv = document.createElement('div');
     helpDiv.id = 'helpWindow';
     document.getElementById('contentSection').append(helpDiv);
 
-    document.getElementById('helpWindow').innerHTML =
-      '<div id="text">\
-         <br>\
-         <h3><a\
-          href="https://github.com/MEPP-team/UD-Viz/blob/master/Doc/UserDoc/ContributeData.md">User Tutorial</a></h3>\
-         <hr>\
-         <h3>Camera key bindings:</h3>\
-         <ul>\
-           <li>Left-Click: camera translation (drag)</li>\
-           <li>Right-Click: camera translation (pan)</li>\
-           <li>Ctrl + Left-Click: camera rotation (orbit)</li>\
-           <li>Spacebar / Wheel-Click: smart zoom</li>\
-           <li>Mouse Wheel: zoom in/out</li>\
-           <li>T: orient camera to a top view</li>\
-           <li>Y: move camera to start position</li>\
-         </ul>\
-         <button id="helpCloseButton">Close</button>\
-      </div>\
-      ';
-
-    // Close the window...when close button is hit
-    document.getElementById('helpCloseButton').addEventListener(
-      'mousedown',
-      () => {
-        this.disable();
-      },
-      false
-    );
+    //////////// Build dynamically the html content
+    const promises = [];
+    if (config.htmlPaths && config.htmlPaths.length) {
+      config.htmlPaths.forEach(function (path) {
+        promises.push(
+          new Promise((resolve, reject) => {
+            jQuery.ajax({
+              type: 'GET',
+              url: path,
+              datatype: 'html',
+              success: (data) => {
+                helpDiv.innerHTML += data;
+                resolve();
+              },
+              error: (e) => {
+                console.error(e);
+                reject();
+              },
+            });
+          })
+        );
+      });
+    }
+    const closeCallback = this.disable.bind(this);
+    Promise.all(promises).then(function () {
+      //create close button
+      const closeButton = document.createElement('button');
+      closeButton.id = 'helpCloseButton';
+      closeButton.innerHTML = 'Close';
+      helpDiv.appendChild(closeButton);
+      // Close the window...when close button is hit
+      closeButton.addEventListener('mousedown', closeCallback, false);
+    });
   }
 
   /////// MODULE VIEW METHODS
