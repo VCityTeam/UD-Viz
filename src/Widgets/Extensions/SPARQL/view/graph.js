@@ -3,7 +3,8 @@ import * as d3 from 'd3';
 export class Graph {
   /**
    * Create a new D3 graph from an RDF JSON object.
-   * Adapted from https://observablehq.com/@d3/force-directed-graph#chart
+   * Adapted from https://observablehq.com/@d3/force-directed-graph#chart and 
+   * https://www.d3indepth.com/zoom-and-pan/
    */
   constructor(height = 500, width = 500) {
     this.height = height;
@@ -13,11 +14,11 @@ export class Graph {
   }
 
   /**
-   * Update the graph data.
+   * Create a new graph based on an graph dataset.
    *
    * @param {Object} data an RDF JSON object.
    */
-  updateGraph(data) {
+  createGraph(data) {
     const links = data.links.map((d) => Object.create(d));
     const nodes = data.nodes.map((d) => Object.create(d));
     const uriBases = data.legend;
@@ -34,7 +35,13 @@ export class Graph {
         d3.forceLink(links).id((d) => d.id)
       )
       .force('charge', d3.forceManyBody())
-      .force('center', d3.forceCenter(this.width / 2, this.height / 2));
+      .force('center', d3.forceCenter(this.width / 2, this.height / 2)
+                           .strength(1.5));
+
+    const zoom = d3.zoom()
+      .on('zoom', this.handleZoom);
+
+    this.svg.call(zoom);
 
     const link = this.svg
       .append('g')
@@ -87,6 +94,7 @@ export class Graph {
         .text((d) => d)
       
     this.svg.append('g')
+      .style('font-size', '0.8em')
       .selectAll('text')
       .data(uriBases)
       .join('text')
@@ -102,6 +110,11 @@ export class Graph {
     this.svg.selectAll('g').remove();
   }
 
+  /**
+   * Create a drag effect for graph nodes within the context of a force simulation
+   * @param {d3.forceSimulation} simulation 
+   * @returns {d3.drag}
+   */
   drag(simulation) {
     function dragstarted(event) {
       if (!event.active) simulation.alphaTarget(0.3).restart();
@@ -125,6 +138,16 @@ export class Graph {
       .on('start', dragstarted)
       .on('drag', dragged)
       .on('end', dragended);
+  }
+
+  /**
+   * A handler function for selecting elements to transform during a zoom event
+   * @param {d3.D3ZoomEvent} event
+   */
+  handleZoom(event) {
+    d3.selectAll('svg g')
+      .filter((d, i) => i < 2)
+      .attr('transform', event.transform);
   }
 
   /**
