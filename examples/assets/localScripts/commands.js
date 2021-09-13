@@ -59,6 +59,9 @@ module.exports = class Commands {
     const inputManager = localContext.getGameView().getInputManager();
 
     //send input manager command to the world
-    worldComputer.onCommands(inputManager.computeCommands());
+    worldComputer.setOnAfterTick(function () {
+      const cmds = inputManager.computeCommands();
+      worldComputer.onCommands(cmds);
+    });
   }
 };
