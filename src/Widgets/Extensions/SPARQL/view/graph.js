@@ -58,20 +58,7 @@ export class Graph {
       .attr('fill', (d) => colorScale(d.group))
       .on('click', (d) => console.log(d))
       .call(this.drag(simulation));
-
-    const legend = this.svg.append('g')
-      .attr('stroke', '#333')
-      .attr('stroke-width', 1)
-      .selectAll('rect')
-      .data(uriBases)
-      .join('rect')
-      .attr("x", 10)
-      .attr("y", (d, i) => 10 + (i * 12))
-      .attr("width", 8)
-      .attr("height", 8)
-      .style("fill", (d, i) => colorScale(i));
-
-    legend.append('title').text((d) => d);
+    
     node.append('title').text((d) => d.id);
 
     simulation.on('tick', () => {
@@ -83,6 +70,29 @@ export class Graph {
 
       node.attr('cx', (d) => d.x).attr('cy', (d) => d.y);
     });
+
+    // Create legend
+    this.svg.append('g')
+      .attr('stroke', '#333')
+      .attr('stroke-width', 1)
+      .selectAll('rect')
+      .data(uriBases)
+      .join('rect')
+      .attr("x", 10)
+      .attr("y", (d, i) => 10 + (i * 12))
+      .attr("width", 8)
+      .attr("height", 8)
+      .style("fill", (d, i) => colorScale(i))
+      .append('title')
+        .text((d) => d)
+      
+    this.svg.append('g')
+      .selectAll('text')
+      .data(uriBases)
+      .join('text')
+      .attr("x", 22)
+      .attr("y", (d, i) => 18 + (i * 12))
+      .text((d) => d);
   }
 
   /**
