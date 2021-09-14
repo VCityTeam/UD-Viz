@@ -1,6 +1,6 @@
 import { Window } from '../../../Components/GUI/js/Window';
 import { SparqlEndpointResponseProvider } from '../service/SparqlEndpointResponseProvider';
-import { Graph } from './graph';
+import { Graph } from '../model/graph';
 import { LayerManager } from '../../../Components/Components';
 
 /**
