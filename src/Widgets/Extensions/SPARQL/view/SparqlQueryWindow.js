@@ -42,7 +42,9 @@ export class SparqlQueryWindow extends Window {
      *
      * @type {Graph}
      */
-    this.default_query = `SELECT *
+    this.default_query = `PREFIX skos:<http://www.w3.org/2004/02/skos/core#>
+
+SELECT *
 WHERE {
   ?subject ?predicate ?object .
 }`;
@@ -61,16 +63,17 @@ WHERE {
     };
     this.provider.addEventListener(
       SparqlEndpointResponseProvider.EVENT_ENDPOINT_RESPONSE_UPDATED,
-      (data) => this.updateDataView(data)
+      (data) => this.updateDataView(data, undefined)
     );
   }
 
   /**
    * Update the window.
    * @param {Object} data SPARQL query response data.
+   * @param {Object} viewType The selected semantic data view type.
    */
-  updateDataView(data) {
-    this.graph.createGraph(data);
+  updateDataView(data, viewType) {
+    this.graph.update(data);
     this.dataView.style['visibility'] = 'visible';
     this.dataView.append(this.graph.data);
   }
