@@ -11,6 +11,7 @@ const JSONUtils = require('../Components/JSONUtils');
 const RenderComponent = require('./Components/Render');
 const ColliderComponent = require('./Components/Collider');
 const WorldScriptComponent = require('./Components/WorldScript');
+const AudioComponent = require('./Components/Audio');
 const LocalScriptModule = require('./Components/LocalScript');
 const THREEUtils = require('../Components/THREEUtils');
 
@@ -82,7 +83,10 @@ const GameObjectModule = class GameObject {
    * @param {LocalContext} localContext this localcontext
    */
   updateFromGO(go, localContext) {
-    if (!go.isStatic()) {
+    //update outdated flag
+    this.setOutdated(go.outdated);
+
+    if (!go.isStatic() && this.isOutdated()) {
       //update transform
       this.setTransformFromGO(go);
     }
@@ -114,7 +118,7 @@ const GameObjectModule = class GameObject {
     this.object3D.position.copy(go.object3D.position);
     this.object3D.scale.copy(go.object3D.scale);
     this.object3D.rotation.copy(go.object3D.rotation);
-    this.outdated = true;
+    this.setOutdated(true);
   }
 
   /**
@@ -154,6 +158,7 @@ const GameObjectModule = class GameObject {
     this.setFromTransformJSON(json.transform);
     this.name = json.name;
     this.static = json.static;
+    this.outdated = json.outdated;
 
     //TODO recursive call for children
     if (this.children.length) console.warn('children not set from ', json);
@@ -204,7 +209,7 @@ const GameObjectModule = class GameObject {
    */
   move(vector) {
     this.object3D.position.add(vector);
-    this.outdated = true;
+    this.setOutdated(true);
   }
 
   /**
@@ -227,7 +232,7 @@ const GameObjectModule = class GameObject {
     this.object3D.rotateY(vector.y);
 
     this.clampRotation();
-    this.outdated = true;
+    this.setOutdated(true);
   }
 
   /**
@@ -362,6 +367,16 @@ const GameObjectModule = class GameObject {
             console.warn('multiple component');
 
           _this.components[RenderComponent.TYPE] = new RenderComponent(
+            _this,
+            componentJSON
+          );
+
+          break;
+        case AudioComponent.TYPE:
+          if (_this.components[AudioComponent.TYPE])
+            console.warn('multiple component');
+
+          _this.components[AudioComponent.TYPE] = new AudioComponent(
             _this,
             componentJSON
           );
@@ -587,7 +602,7 @@ const GameObjectModule = class GameObject {
   setRotation(vector) {
     this.object3D.rotation.set(vector.x, vector.y, vector.z);
     this.clampRotation();
-    this.outdated = true;
+    this.setOutdated(true);
   }
 
   /**
@@ -596,7 +611,7 @@ const GameObjectModule = class GameObject {
    */
   setPosition(vector) {
     this.object3D.position.set(vector.x, vector.y, vector.z);
-    this.outdated = true;
+    this.setOutdated(true);
   }
 
   /**
@@ -613,7 +628,7 @@ const GameObjectModule = class GameObject {
    */
   setScale(vector) {
     this.object3D.scale.set(vector.x, vector.y, vector.z);
-    this.outdated = true;
+    this.setOutdated(true);
   }
 
   /**

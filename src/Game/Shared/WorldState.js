@@ -46,6 +46,9 @@ const WorldStateModule = class WorldState {
           //update
           g.setFromJSON(o);
           delete outdatedGameObjectsJSON[uuid]; //remove it
+        } else {
+          //g is not outdated
+          g.setOutdated(false);
         }
       }
     });
