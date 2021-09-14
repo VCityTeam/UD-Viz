@@ -1,5 +1,5 @@
 import { RequestService } from '../../../../Components/Request/RequestService';
-import { SparqlEndpointResponseProvider } from './SparqlEndpointResponseProvider';
+import {SparqlEndpointFetcher} from "fetch-sparql-endpoint";
 
 /**
  * The SPARQL Endpoint Service which contains connection information for
@@ -29,6 +29,12 @@ export class SparqlEndpointService extends RequestService {
     } else {
       throw 'The given configuration is incorrect.';
     }
+
+    /**
+     * SPARQL endpoint query handler
+     * @type {SparqlEndpointFetcher} 
+     */
+    this.queryFetcher = new SparqlEndpointFetcher();
   }
 
   /**
@@ -49,6 +55,9 @@ export class SparqlEndpointService extends RequestService {
     }
 
     let response = JSON.parse(request.responseText);
+    // const bindingsStream = await this.queryFetcher.fetchBindings('http://localhost:9999/strabon/', 'SELECT * WHERE { ?s ?p ?o } LIMIT 100');
+    // bindingsStream.on('data', (bindings) => console.log(bindings));
+
     console.log(query);
     console.log(response);
     return response;
