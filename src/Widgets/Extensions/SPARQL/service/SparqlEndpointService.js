@@ -1,5 +1,4 @@
 import { RequestService } from '../../../../Components/Request/RequestService';
-import {SparqlEndpointFetcher} from "fetch-sparql-endpoint";
 
 /**
  * The SPARQL Endpoint Service which contains connection information for
@@ -27,14 +26,8 @@ export class SparqlEndpointService extends RequestService {
       this.url = config.sparqlModule.url;
       this.url_parameters = config.sparqlModule.url_parameters;
     } else {
-      throw 'The given configuration is incorrect.';
+      throw 'The given "sparqlModule" configuration is incorrect.';
     }
-
-    /**
-     * SPARQL endpoint query handler
-     * @type {SparqlEndpointFetcher} 
-     */
-    this.queryFetcher = new SparqlEndpointFetcher();
   }
 
   /**
@@ -45,9 +38,13 @@ export class SparqlEndpointService extends RequestService {
    * @return {Promise<Object>}
    */
   async querySparqlEndpoint(query) {
-    let full_url = this.url + this.url_parameters + encodeURI(query);
+
+    let full_url = this.url + this.url_parameters + encodeURIComponent(query);
     let options = {};
 
+    console.log(encodeURI(query));
+    console.log(encodeURIComponent(query));
+    console.log(full_url);
     let request = await this.request('GET', full_url, options);
 
     if (request.status !== 200) {
@@ -55,8 +52,6 @@ export class SparqlEndpointService extends RequestService {
     }
 
     let response = JSON.parse(request.responseText);
-    // const bindingsStream = await this.queryFetcher.fetchBindings('http://localhost:9999/strabon/', 'SELECT * WHERE { ?s ?p ?o } LIMIT 100');
-    // bindingsStream.on('data', (bindings) => console.log(bindings));
 
     console.log(query);
     console.log(response);

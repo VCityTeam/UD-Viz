@@ -10,7 +10,11 @@ export class Graph {
     this.height = height;
     this.width = width;
 
-    this.svg = undefined;
+    this.svg = d3
+      .create('svg')
+      .attr('class', 'd3_graph')
+      .attr('viewBox', [0, 0, this.width, this.height])
+      .style('display', 'hidden');
   }
 
   /**
@@ -18,15 +22,12 @@ export class Graph {
    *
    * @param {Object} data an RDF JSON object.
    */
-  createGraph(data) {
+  update(data) {
+    this.clear();
+
     const links = data.links.map((d) => Object.create(d));
     const nodes = data.nodes.map((d) => Object.create(d));
     const uriBases = data.legend;
-
-    this.svg = d3
-      .create('svg')
-      .attr('class', 'd3_graph')
-      .attr('viewBox', [0, 0, this.width, this.height]);
 
     const simulation = d3
       .forceSimulation(nodes)
@@ -104,9 +105,23 @@ export class Graph {
   }
 
   /**
+   * Hide the graph SVG
+   */
+  hide() {
+    this.svg.style('display', 'hidden');
+  }
+
+  /**
+   * Show the graph SVG
+   */
+  hide() {
+    this.svg.style('display', 'visible');
+  }
+
+  /**
    * Remove nodes and lines from the SVG.
    */
-  clearGraph() {
+  clear() {
     this.svg.selectAll('g').remove();
   }
 
