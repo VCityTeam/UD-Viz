@@ -17,7 +17,7 @@ module.exports = Object.freeze({
       GUEST_CONNECTION: 'guest_connection',
       SERVER_ALERT: 'server_alert',
       SIGNED: 'signed',
-      GAME_APP_LOADED: 'game_app_loaded',
+      READY_TO_RECEIVE_STATE: 'ready_to_receive_state',
       ON_AVATAR_GO: 'on_avatar_go',
       QUERY_AVATAR_GO: 'query_avatar_go',
       SAVE_AVATAR_GO: 'save_avatar_go',

@@ -124,18 +124,21 @@ const GameObjectModule = class GameObject {
   setFromTransformJSON(json = {}) {
     if (json.position) {
       this.object3D.position.fromArray(json.position);
+      JSONUtils.parseVector3(this.object3D.position);
     } else {
       this.object3D.position.fromArray([0, 0, 0]);
     }
 
     if (json.rotation) {
       this.object3D.rotation.fromArray(json.rotation);
+      JSONUtils.parseVector3(this.object3D.rotation);
     } else {
       this.object3D.rotation.fromArray([0, 0, 0]);
     }
 
     if (json.scale) {
       this.object3D.scale.fromArray(json.scale);
+      JSONUtils.parseVector3(this.object3D.scale);
     } else {
       this.object3D.scale.fromArray([1, 1, 1]);
     }

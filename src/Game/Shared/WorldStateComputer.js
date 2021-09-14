@@ -150,7 +150,7 @@ const WorldStateComputerModule = class WorldStateComputer {
 WorldStateComputerModule.WorldTest = function (world, assetsManager, bundles) {
   return new Promise((resolve, reject) => {
     const c = new WorldStateComputerModule(assetsManager, 60, bundles);
-    c.load(world, function () {
+    c.start(world, function () {
       console.log(world.getName(), ' has loaded');
       setTimeout(function () {
         c.stop();

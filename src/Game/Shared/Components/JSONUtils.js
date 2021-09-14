@@ -8,6 +8,16 @@ const Type = require('./Type');
 
 module.exports = {
   /**
+   * parse float value of a vector3
+   * @param {THREE.Vector3} vector
+   */
+  parseVector3(vector) {
+    vector.x = parseFloat(vector.x);
+    vector.y = parseFloat(vector.y);
+    vector.z = parseFloat(vector.z);
+  },
+
+  /**
    * Test if two JSON are identical
    * @param {JSON} j1 first json
    * @param {JSON} j2 second json

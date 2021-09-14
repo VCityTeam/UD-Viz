@@ -164,7 +164,11 @@ class ShapeWrapper {
     switch (json.type) {
       case 'Circle':
         {
-          const circle = new Circle(json.center.x, json.center.y, json.radius);
+          const circle = new Circle(
+            parseFloat(json.center.x),
+            parseFloat(json.center.y),
+            parseFloat(json.radius)
+          );
 
           this.update = function (worldtransform) {
             const wp = worldtransform.getPosition();
@@ -179,7 +183,7 @@ class ShapeWrapper {
         {
           const points = [];
           json.points.forEach(function (p) {
-            points.push([p.x, p.y]);
+            points.push([parseFloat(p.x), parseFloat(p.y)]);
           });
 
           const polygon = new Polygon(0, 0, points);
