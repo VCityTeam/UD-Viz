@@ -384,8 +384,13 @@ export class View3D {
    * Callback call on the resize event
    */
   onResize() {
-    const w = window.innerWidth - parseInt(this.rootWebGL.style.left);
-    const h = window.innerHeight - parseInt(this.rootWebGL.style.top);
+    let offsetLeft = parseInt(this.rootWebGL.style.left);
+    if (isNaN(offsetLeft)) offsetLeft = 0;
+    let offsetTop = parseInt(this.rootWebGL.style.top);
+    if (isNaN(offsetTop)) offsetTop = 0;
+
+    const w = window.innerWidth - offsetLeft;
+    const h = window.innerHeight - offsetTop;
 
     //TODO remove this fonction
     if (this.itownsView) this.itownsView.debugResize(w, h);

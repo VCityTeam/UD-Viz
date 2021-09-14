@@ -51,7 +51,7 @@ const WorldStateComputerModule = class WorldStateComputer {
    * @param {World} world world to tick
    * @param {Function} onLoad call at the end of world load
    */
-  load(world, onLoad) {
+  start(world, onLoad) {
     const wC = this.worldContext;
     const _this = this;
 

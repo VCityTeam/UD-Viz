@@ -56,7 +56,7 @@ export class LocalGame {
             { udviz: udviz, Shared: Shared }
           );
 
-          worldStateComputer.load(world);
+          worldStateComputer.start(world);
 
           _this.gameView = new Views.GameView({
             htmlParent: options.htmlParent || document.body,
