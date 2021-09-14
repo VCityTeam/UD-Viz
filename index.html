@@ -1,145 +1,162 @@
 <html>
-    <head>
-        <title>UD-Viz Examples</title>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    </head>
-    <body>
-        <section>
-            <p>UD-Viz is a JavaScript client based on
-                <a href="http://www.itowns-project.org/">iTowns</a> allowing to
-                visualize, analyse and interact with urban data. It is developed
-                as part of the
-                <a href="https://github.com/VCityTeam/UD-SV">
-                    Urban Data Services and Vizualisation Project.</a>
-            </p>
-            <h2> Examples </h2>
+  <head>
+    <title>UD-Viz</title>
+    <link rel="stylesheet" href="./style.css" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  </head>
+  <body>
+    <section>
+      <div id="panel">
+        <div id="header">
+          <h1>
+            <div>ud-viz</div>
+          </h1>
+        </div>
+        <div id="contentWrapper">
+          <div id="content">
+            <h2>Learn</h2>
             <ul>
-                <li>
-                    <h3><a href='./examples/AllWidget/example.html'> All Widgets</a></h3>
-                    <p>This demo implements all widgets and extensions
-                        currently available. As of today, this includes :<br>
-                        - Temporal<br>
-                        - Help & About<br>
-                        - Documents<br>
-                        - Contribute<br>
-                        - Guided tours<br>
-                        - Authentication<br>
-                        - Documents to validate<br>
-                        - Document comments<br>
-                        - Geocoding<br>
-                        - 3DTiles debug<br>
-                        - Camera positioner<br>
-                        - Document links
-                    </p>
-                </li>
-                <li>
-                    <h3><a href='examples/MultiLayer/example.html'>
-                        Multiple CityGML type visualization on Lyon 1, 2 and 5 </a></h3>
-                    <p>
-                        Visualisation of three 3D Tiles Layers representing the buildings, the terrain and the water
-                        of the 1st, 2nd and 5th borough of Lyon, extracted from CityGML.
-                    </p>
-                </li>
-                <li>
-                    <h3><a
-                        href='./examples/WorldMap/example.html'>
-                        WorldMap basemap</a></h3>
-                    <p>
-                        This example use IGN basemap to be able to navigate all over the world
-                    </p>
-                </li>
-                <li>
-                    <h3><a href='./examples/LocalGame.html'> Local game</a></h3>
-                    <p>This demo implements a local mini game builded with the ud-viz game engine
-                    </p>
-                </li>
-                <!-- <li>
-                    <h3><a href='examples/DemoPC/Demo.html'> Point clouds visualization </a></h3>
-                </li>
-                <li>
-                    <h3><a href='examples/DemoLimonest/Demo.html'>Limonest visualization</a></h3>
-                </li>
-                <li>
-                    <h3><a href='examples/DemoBron/Demo.html'>Bron visualization</a></h3>
-                </li> -->
+              <li>
+                <a
+                  href="https://github.com/VCityTeam/UD-Viz/blob/master/Doc/Devel/LocalGameTutorial.md"
+                  >game tutorial</a
+                >
+              </li>
             </ul>
-            <h2> Individual Modules</h2>
+
+            <h2>Community</h2>
             <ul>
-                <li>
-                    <h3><a href='examples/DocumentWidget/example.html'>
-                        Documents Widget</a></h3>
-                    <p>In this demo you can consult documents in a document
-                        browser and search them using keywords and other fields.
-                    </p>
-                </li>
-                <!-- <li>
-                    <h3><a href='src/Modules/GuidedTour/examples/Demo.html'>Guided
-                        Tour</a></h3>
-                    <p>Demonstrate the GuidedTour Module.</p>
-                    <p>In this demo you can try the mode guided tour which is a
-                        virtual navigation in a 4D (3D + time) and documented
-                        representation of the city.
-                    </p>
-                </li> -->
-                <li>
-                    <h3><a
-                        href='examples/GeocodingWidget/example.html'>
-                        Geocoding Widget</a></h3>
-                    <p>
-                        Geocoding allows a user to navigate in the city
-                         by searching addresses or place names.
-                    </p>
-                </li>
-                <li>
-                    <h3><a
-                        href='examples/CameraPositionerWidget/example.html'>
-                        Camera Positioner Widget</a></h3>
-                    <p>
-                        The camera positioner is a tool that show the
-                        coordinates and the orientation of the camera.
-                    </p>
-                </li>
-                <li>
-                    <h3><a
-                        href='examples/3DTilesDebugWidget/example.html'>
-                        3DTiles Debug Widget</a></h3>
-                    <p>
-                        3DTiles Debug displays a window which shows various
-                        information about 3DTiles objects and city objects.
-                    </p>
-                </li>
-                <li>
-                    <h3><a
-                        href='examples/CityObjectWidget/example.html'>
-                        City Objects Widget</a></h3>
-                    <p>
-                        This extensions allows the user to explore city objects
-                        and color them according to filters.
-                    </p>
-                </li>                
-                <li>
-                    <h3><a
-                        href='./examples/LayerChoiceWidget/example.html'>
-                        LayerChoice Widget</a></h3>
-                    <p>
-                        This extensions interact with layers
-                    </p>
-                </li>
-                <li>
-                    <h3><a
-                        href='./examples/TemporalWidget/example.html'>
-                        Temporal Widget</a></h3>
-                    <p>
-                        This extensions allows the user to explore city objects
-                        and color them according to filters.
-                    </p>
-                </li>
+              <li>
+                <a href="https://projet.liris.cnrs.fr/vcity/">website</a>
+              </li>
             </ul>
-        </section>
-        <footer>
-            <img id="logoIMU" src="examples/assets/img/logo-imu.png"></img>
-            <img id="logoLIRIS" src="examples/assets/img/logo-liris.png"></img>
-        </footer>
-    </body>
+
+            <h2>Code</h2>
+            <ul>
+              <li><a href="https://github.com/VCityTeam/UD-Viz">github</a></li>
+              <li>
+                <a href="https://www.npmjs.com/package/ud-viz">npm package</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div id="viewer">
+        <div id="projects">
+          <a
+            href="./examples/AllWidget/example.html"
+            target="_blank"
+            rel="noopener"
+            title="This demo implements all widgets and extensions currently available. As of today, this includes :
+            - Temporal
+            - Help & About
+            - Documents
+            - Contribute
+            - Guided tours
+            - Authentication
+            - Documents to validate
+            - Document comments
+            - Geocoding
+            - 3DTiles debug
+            - Camera positioner
+            - Document links"
+            ><img
+              src="./examples/assets/img/examples_images/AllWidgets.png"
+              loading="lazy"
+          /></a>
+          <a
+            href="./examples/MultiLayer/example.html"
+            target="_blank"
+            rel="noopener"
+            title="Visualisation of three 3D Tiles Layers representing the buildings, the terrain and the water of the 1st, 2nd and 5th borough of Lyon, extracted from CityGML."
+            ><img
+              src="./examples/assets/img/examples_images/MultiLayer.png"
+              loading="lazy"
+          /></a>
+          <a
+            href="./examples/WorldMap/example.html"
+            target="_blank"
+            rel="noopener"
+            title="This example use IGN basemap to be able to navigate all over the world"
+            ><img
+              src="./examples/assets/img/examples_images/WorldMap.png"
+              loading="lazy"
+          /></a>
+          <a
+            href="./examples/LocalGame.html"
+            target="_blank"
+            rel="noopener"
+            title="This demo implements a local mini game builded with the ud-viz game engine"
+            ><img
+              src="./examples/assets/img/examples_images/LocalGame.png"
+              loading="lazy"
+          /></a>
+          <a
+            href="examples/DocumentWidget/example.html"
+            target="_blank"
+            rel="noopener"
+            title="In this demo you can consult documents in a document browser and search them using keywords and other fields."
+            ><img
+              src="./examples/assets/img/examples_images/DocumentWidget.png"
+              loading="lazy"
+          /></a>
+          <a
+            href="examples/GeocodingWidget/example.html"
+            target="_blank"
+            rel="noopener"
+            title="Geocoding allows a user to navigate in the city by searching addresses or place names."
+            ><img
+              src="./examples/assets/img/examples_images/GeocodingWidget.png"
+              loading="lazy"
+          /></a>
+          <a
+            href="examples/CameraPositionerWidget/example.html"
+            target="_blank"
+            rel="noopener"
+            title="The camera positioner is a tool that show the coordinates and the orientation of the camera."
+            ><img
+              src="./examples/assets/img/examples_images/CameraPositionerWidget.png"
+              loading="lazy"
+          /></a>
+          <a
+            href="examples/3DTilesDebugWidget/example.html"
+            target="_blank"
+            rel="noopener"
+            title="3DTiles Debug displays a window which shows various information about 3DTiles objects and city objects."
+            ><img
+              src="./examples/assets/img/examples_images/3DTilesDebugWidget.png"
+              loading="lazy"
+          /></a>
+          <a
+            href="examples/CityObjectWidget/example.html"
+            target="_blank"
+            rel="noopener"
+            title="This extensions allows the user to explore city objects and color them according to filters."
+            ><img
+              src="./examples/assets/img/examples_images/CityObjectWidget.png"
+              loading="lazy"
+          /></a>
+          <a
+            href="examples/LayerChoiceWidget/example.html"
+            target="_blank"
+            rel="noopener"
+            title="This extensions interact with layers"
+            ><img
+              src="./examples/assets/img/examples_images/LayerChoiceWidget.png"
+              loading="lazy"
+          /></a>
+          <a
+            href="examples/TemporalWidget/example.html"
+            target="_blank"
+            rel="noopener"
+            title="This extensions allows the user to explore city objects and color them according to filters."
+            ><img
+              src="./examples/assets/img/examples_images/TemporalWidget.png"
+              loading="lazy"
+          /></a>
+        </div>
+      </div>
+    </section>
+  </body>
 </html>
