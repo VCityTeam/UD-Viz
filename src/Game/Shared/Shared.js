@@ -8,6 +8,8 @@ const commonJsGameObject = require('./GameObject/GameObject');
 
 const commonJsRender = require('./GameObject/Components/Render');
 
+const commonJsAudio = require('./GameObject/Components/Audio');
+
 const commonJsWorld = require('./World');
 
 const commonJsWorldState = require('./WorldState');
@@ -25,6 +27,7 @@ module.exports = {
   Command: commonJsCommand,
   GameObject: commonJsGameObject,
   Render: commonJsRender,
+  Audio: commonJsAudio,
   World: commonJsWorld,
   WorldState: commonJsWorldState,
   WorldStateDiff: commonJsWorldStateDiff,

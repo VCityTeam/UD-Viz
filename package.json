@@ -26,6 +26,7 @@
   "peerDependencies": {},
   "dependencies": {
     "detect-collisions": "^2.5.2",
+    "howler": "^2.2.3",
     "itowns": "2.33.0",
     "jquery": "^3.6.0",
     "proj4": "^2.7.0",
