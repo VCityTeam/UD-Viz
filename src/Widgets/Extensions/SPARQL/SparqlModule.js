@@ -1,7 +1,5 @@
-import { SparqlEndpointResponseProvider } from './service/SparqlEndpointResponseProvider';
-import { SparqlEndpointService } from './service/SparqlEndpointService';
-import { SparqlModuleView } from './view/SparqlModuleView';
-import { SparqlQueryWindow } from './view/SparqlQueryWindow';
+import { SparqlEndpointResponseProvider } from './modelView/SparqlEndpointResponseProvider';
+import { SparqlModuleView } from './modelView/SparqlModuleView';
 import { LayerManager } from '../../Components/Components';
 
 /**
@@ -21,24 +19,17 @@ export class SparqlModule {
     this.layerManager = layerManager;
 
     /**
-     * Contains connection information for the SPARQL Endpoint service.
-     *
-     * @type {SparqlEndpointService}
-     */
-    this.service = new SparqlEndpointService(this.config);
-
-    /**
      * Manages events and HTTP responses from SPARQL Endpoint.
      *
      * @type {SparqlEndpointResponseProvider}
      */
-    this.provider = new SparqlEndpointResponseProvider(this.service);
+    this.provider = new SparqlEndpointResponseProvider(this.config);
 
     /**
      * Contains a SparqlModuleView for managing the user interface and view.
      *
      * @type {SparqlModuleView}
      */
-    this.view = new SparqlModuleView(this.service, this.provider, this.layerManager);
+    this.view = new SparqlModuleView(this.provider, this.layerManager);
   }
 }

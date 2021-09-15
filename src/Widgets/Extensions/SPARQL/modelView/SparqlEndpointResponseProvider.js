@@ -1,5 +1,5 @@
 import { EventSender } from '../../../Components/Events/EventSender';
-import { SparqlEndpointService } from './SparqlEndpointService';
+import { SparqlEndpointService } from '../model/SparqlEndpointService';
 
 /**
  * Creates a SPARQL Endpoint Provider which manages treating SPARQL endpoint
@@ -11,29 +11,30 @@ export class SparqlEndpointResponseProvider extends EventSender {
    *
    * @param {SparqlEndpointService} service a SPARQL endpoint service.
    */
-  constructor(service) {
+  constructor(config) {
     super();
+    this.config = config;
+
+    /**
+     * The SPARQL Endpoint Service..
+     *
+     * @type {SparqlEndpointService}
+     */
+    this.service = new SparqlEndpointService(this.config);
 
     /**
      * The most recent query response.
      *
-     * @type {string}
+     * @type {Object}
      */
-    this.data = undefined;
+    this.data = {};
 
     /**
-     * The SPARQL Endpoint Service.
-     *
-     * @type {SparqlEndpointService}
-     */
-    this.service = service;
-
-    /**
-     * An array containing each uri base in the dataset.
+     * An array containing each namespace in the dataset.
      *
      * @type {Array}
      */
-    this.uriBases = [];
+    this.namespaces = [];
 
     this.registerEvent(
       SparqlEndpointResponseProvider.EVENT_ENDPOINT_RESPONSE_UPDATED
@@ -46,6 +47,7 @@ export class SparqlEndpointResponseProvider extends EventSender {
    */
   async querySparqlEndpointService(query) {
     this.data = await this.service.querySparqlEndpoint(query);
+
     await this.sendEvent(
       SparqlEndpointResponseProvider.EVENT_ENDPOINT_RESPONSE_UPDATED,
       this.getResponseDataAsGraph()
@@ -59,34 +61,29 @@ export class SparqlEndpointResponseProvider extends EventSender {
   getResponseDataAsGraph() {
     let graphData = {
       nodes: [
-        // { id: 'x', group: 1 },
-        // { id: 'y', group: 2 },
+        // { id: 'x', namespace: 1 },
+        // { id: 'y', namespace: 2 },
       ],
       links: [
         // { source: 'x', target: 'y', value: 1 }
       ],
-      legend: undefined
+      legend: undefined,
     };
 
     for (let triple of this.data.results.bindings) {
-      if (graphData.nodes.find(n => n.id == triple.subject.value) == undefined) {
-        let node = { id: triple.subject.value, group: 0 };
-        graphData.nodes.push(node);
-      }
-      if (graphData.nodes.find(n => n.id == triple.object.value) == undefined) {
-        let node = { id: triple.object.value, group: 0 };
+      if (
+        graphData.nodes.find((n) => n.id == triple.subject.value) == undefined
+      ) {
+        let subjectNamespaceId = this.getNamespaceIndex(triple.subjectType.value);
+        let node = { id: triple.subject.value, namespace: subjectNamespaceId };
         graphData.nodes.push(node);
       }
       if (
-        triple.predicate.value ==
-        'http://www.w3.org/1999/02/22-rdf-syntax-ns#type' &&
-        triple.object.value != 'http://www.w3.org/2002/07/owl#NamedIndividual'
+        graphData.nodes.find((n) => n.id == triple.object.value) == undefined
       ) {
-        let i = graphData.nodes.findIndex( n => n.id == triple.subject.value );
-        if (i >= 0) {
-          let groupId = this.getBaseUriIndex(triple.object.value);
-          graphData.nodes[i].group = groupId;
-        }
+        let objectNamespaceId = this.getNamespaceIndex(triple.objectType.value);
+        let node = { id: triple.object.value, namespace: objectNamespaceId };
+        graphData.nodes.push(node);
       }
       let link = {
         source: triple.subject.value,
@@ -95,22 +92,31 @@ export class SparqlEndpointResponseProvider extends EventSender {
       };
       graphData.links.push(link);
     }
-    graphData.legend = this.uriBases
+    graphData.legend = this.namespaces;
     console.log(graphData);
+    console.log(this.namespaces);
     return graphData;
   }
 
   /**
-   * add a uri to this.uriBases if it does not exist.
-   * @param {String} uri the uri to map to a group.
+   * Get the namespace index of a uri. Add the namespace to the array of namespaces
+   * if it does not exist.
+   * @param {String} uri the uri to map to a namespace.
    * @return {Number}
    */
-  getBaseUriIndex(uri) {
-    let uriBase = uri.split('#')[0];
-    if (!this.uriBases.includes(uriBase)) {
-      this.uriBases.push(uriBase);
+  getNamespaceIndex(uri) {
+    let namespace = '';
+    if (uri.includes('#')) {
+      namespace = uri.split('#')[0] + '#';
+      if (!this.namespaces.includes(namespace)) {
+        this.namespaces.push(namespace);
+      }
+    } else {
+      uriTokens = uri.split('/').splice();
+      uriTokens[uriTokens.length - 1] = '';
+      namespace = uriTokens.join('/');
     }
-    return this.uriBases.findIndex((d) => d == uriBase);
+    return this.namespaces.findIndex((d) => d == namespace);
   }
 
   /**
