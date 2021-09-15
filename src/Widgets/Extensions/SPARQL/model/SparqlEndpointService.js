@@ -42,9 +42,6 @@ export class SparqlEndpointService extends RequestService {
     let full_url = this.url + this.url_parameters + encodeURIComponent(query);
     let options = {};
 
-    console.log(encodeURI(query));
-    console.log(encodeURIComponent(query));
-    console.log(full_url);
     let request = await this.request('GET', full_url, options);
 
     if (request.status !== 200) {
@@ -53,7 +50,6 @@ export class SparqlEndpointService extends RequestService {
 
     let response = JSON.parse(request.responseText);
 
-    console.log(query);
     console.log(response);
     return response;
   }

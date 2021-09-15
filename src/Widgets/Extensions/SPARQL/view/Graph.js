@@ -27,7 +27,7 @@ export class Graph {
 
     const links = data.links.map((d) => Object.create(d));
     const nodes = data.nodes.map((d) => Object.create(d));
-    const uriBases = data.legend;
+    const namespaces = data.legend;
 
     const simulation = d3
       .forceSimulation(nodes)
@@ -36,8 +36,7 @@ export class Graph {
         d3.forceLink(links).id((d) => d.id)
       )
       .force('charge', d3.forceManyBody())
-      .force('center', d3.forceCenter(this.width / 2, this.height / 2)
-                           .strength(1.5));
+      .force('center', d3.forceCenter(this.width / 2, this.height / 2));
 
     const zoom = d3.zoom()
       .on('zoom', this.handleZoom);
@@ -63,7 +62,7 @@ export class Graph {
       .data(nodes)
       .join('circle')
       .attr('r', 5)
-      .attr('fill', (d) => colorScale(d.group))
+      .attr('fill', (d) => colorScale(d.namespace))
       .on('click', (d) => console.log(d))
       .call(this.drag(simulation));
     
@@ -84,23 +83,22 @@ export class Graph {
       .attr('stroke', '#333')
       .attr('stroke-width', 1)
       .selectAll('rect')
-      .data(uriBases)
+      .data(namespaces)
       .join('rect')
       .attr("x", 10)
-      .attr("y", (d, i) => 10 + (i * 12))
-      .attr("width", 8)
-      .attr("height", 8)
+      .attr("y", (d, i) => 10 + (i * 16))
+      .attr("width", 10)
+      .attr("height", 10)
       .style("fill", (d, i) => colorScale(i))
       .append('title')
         .text((d) => d)
       
     this.svg.append('g')
-      .style('font-size', '0.8em')
       .selectAll('text')
-      .data(uriBases)
+      .data(namespaces)
       .join('text')
-      .attr("x", 22)
-      .attr("y", (d, i) => 18 + (i * 12))
+      .attr("x", 24)
+      .attr("y", (d, i) => 20 + (i * 16))
       .text((d) => d);
   }
 

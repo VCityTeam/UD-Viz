@@ -1,9 +1,8 @@
 import { ModuleView } from '../../../Components/ModuleView/ModuleView';
-import { SparqlEndpointResponseProvider } from '../service/SparqlEndpointResponseProvider';
-import { SparqlEndpointService } from '../service/SparqlEndpointService';
-import { SparqlQueryWindow } from './SparqlQueryWindow';
+import { SparqlEndpointResponseProvider } from './SparqlEndpointResponseProvider';
+import { SparqlEndpointService } from '../model/SparqlEndpointService';
+import { SparqlQueryWindow } from '../view/SparqlQueryWindow';
 import { LayerManager } from '../../../Components/Components';
-import './SparqlQueryWindow.css';
 
   /**
    * The SPARQL ModuleView class which manages the SPARQL query window.
@@ -18,15 +17,8 @@ export class SparqlModuleView extends ModuleView {
    * @param {SparqlEndpointService} serviceContains SPARQL endpoint information.
    * @param {LayerManager} layerManager The UD-Viz LayerManager.
    */
-  constructor(service, provider, layerManager) {
+  constructor(provider, layerManager) {
     super();
-
-    /**
-     * The SPARQL Endpoint Service
-     * 
-     * @type {SparqlEndpointService}
-     */
-     this.service = service;
 
      /**
       * The SPARQL Endpoint Response Provider
