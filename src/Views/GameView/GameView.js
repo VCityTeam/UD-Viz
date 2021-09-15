@@ -93,10 +93,16 @@ export class GameView extends View3D {
 
     //build itowns view
     const o = state.getOrigin();
-    const [x, y] = proj4.default('EPSG:3946').forward([o.lng, o.lat]);
+    const [x, y] = proj4.default(this.projection).forward([o.lng, o.lat]);
     const r = this.config.itowns.radiusExtent;
     // Define geographic extent: CRS, min/max X, min/max Y
-    const extent = new itowns.Extent('EPSG:3946', x - r, x + r, y - r, y + r);
+    const extent = new itowns.Extent(
+      this.projection,
+      x - r,
+      x + r,
+      y - r,
+      y + r
+    );
     this.initItownsView(extent);
 
     //TODO disable itons rendering
@@ -157,7 +163,7 @@ export class GameView extends View3D {
    */
   initScene(state) {
     const o = state.getOrigin();
-    const [x, y] = proj4.default('EPSG:3946').forward([o.lng, o.lat]);
+    const [x, y] = proj4.default(this.projection).forward([o.lng, o.lat]);
 
     //add the object3D of the Game
     //TODO this object should be in World
