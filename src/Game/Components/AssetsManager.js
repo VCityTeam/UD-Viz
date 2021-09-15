@@ -4,6 +4,7 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import * as THREE from 'three';
 import * as jquery from 'jquery';
 import GameObject from '../Shared/GameObject/GameObject';
+import { Howl } from 'howler';
 const THREEUtils = require('../Shared/Components/THREEUtils');
 
 /**
@@ -19,6 +20,7 @@ export class AssetsManager {
     this.conf = null;
 
     //manager to load scripts
+    this.sounds = {};
     this.prefabs = {};
     this.worldScripts = {};
     this.localScripts = {};
@@ -26,8 +28,14 @@ export class AssetsManager {
     this.worldsJSON = null;
   }
 
+  dispose() {
+    for (let id in this.sounds) {
+      this.sounds[id].unload();
+    }
+  }
+
   /**
-   * return json prefabs 
+   * return json prefabs
    * @returns {Object} a map containing prefabs JSON loaded
    */
   getPrefabs() {
@@ -62,6 +70,11 @@ export class AssetsManager {
    */
   getWorldsJSON() {
     return this.worldsJSON;
+  }
+
+  fetchSound(idSound) {
+    if (!this.sounds[idSound]) console.error('no sound with id ', idSound);
+    return this.sounds[idSound];
   }
 
   /**
@@ -400,6 +413,26 @@ export class AssetsManager {
         );
       }
     });
+    const soundsPromise = new Promise((resolve, reject) => {
+      let count = 0;
+      const checkIfLoaded = function () {
+        count++;
+        if (count == Object.keys(config.sounds).length) {
+          console.log('sounds loaded ', _this.sounds);
+          resolve();
+        }
+      };
+
+      for (let idSound in config.sounds) {
+        const s = config.sounds[idSound];
+        _this.sounds[idSound] = new Howl({
+          src: s.path,
+          onload: checkIfLoaded,
+          onloaderror: reject,
+          loop: s.loop || false,
+        });
+      }
+    });
 
     const promises = [];
     if (config.models) promises.push(modelPromise);
@@ -408,6 +441,7 @@ export class AssetsManager {
     if (config.localScripts) promises.push(localScriptsPromise);
     if (config.worlds) promises.push(worldsPromise);
     if (config.css) promises.push(cssPromise);
+    if (config.sounds) promises.push(soundsPromise);
 
     return Promise.all(promises);
   }

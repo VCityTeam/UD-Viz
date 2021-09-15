@@ -1,12 +1,6 @@
 /** @format */
 
-// https://github.com/goldfire/howler.js#documentation
-const Howler = require('howler');
 const THREE = require('three');
-
-/**
- * TODO import once the sound and clone it woth assetsmanager
- */
 
 /**
  *  Component used to handle the 3D Audio of the GameObject
@@ -19,15 +13,11 @@ const AudioModule = class Audio {
     this.uuid = json.uuid || THREE.MathUtils.generateUUID();
 
     this.soundsJSON = json.sounds || [];
-    this.sound = null;
+    this.sounds = {};
   }
 
-  createSounds() {
-    this.sound = new Howler.Howl({ src: this.soundsJSON });
-  }
-
-  getSound() {
-    return this.sound;
+  getSounds() {
+    return this.sounds;
   }
 
   /**
@@ -56,7 +46,10 @@ const AudioModule = class Audio {
    * @param {Shared} udvShared ud-viz/Game/Shared module
    */
   initAssets(assetsManager, udvShared) {
-    this.createSounds();
+    const _this = this;
+    this.soundsJSON.forEach(function (idS) {
+      _this.sounds[idS] = assetsManager.fetchSound(idS);
+    });
   }
 
   getUUID() {
