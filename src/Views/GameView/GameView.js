@@ -99,6 +99,11 @@ export class GameView extends View3D {
     const extent = new itowns.Extent('EPSG:3946', x - r, x + r, y - r, y + r);
     this.initItownsView(extent);
 
+    //TODO disable itons rendering
+    this.itownsView.render = function () {
+      //empty
+    };
+
     this.initScene(state);
 
     //start to tick
@@ -319,8 +324,6 @@ export class GameView extends View3D {
       const renderer = this.itownsView.mainLoop.gfxEngine.renderer;
       renderer.clearColor();
       renderer.render(scene, this.itownsView.camera.camera3D);
-
-      //TODO refacto tick integrate with itowns rendering
     }
   }
 
