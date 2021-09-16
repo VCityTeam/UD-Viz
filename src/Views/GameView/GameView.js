@@ -62,7 +62,7 @@ export class GameView extends View3D {
    */
   setUpdateGameObject(value) {
     this.updateGameObject = value;
-    this.stateComputer.setPause(!value);
+    this.stateComputer.setPause(value);
   }
 
   /**
