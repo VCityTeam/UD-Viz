@@ -539,11 +539,13 @@ export class AllWidget {
         'No 3DTilesLayers field in the configuration file' 
       );
     }
-    for (let layer of this.config['3DTilesLayers']){
-      const [$3DTilesLayer] = this.setup3DTilesLayer(layer);
-      this.add3DTilesLayer($3DTilesLayer);
+    const layers = {};
+    for (let layer of this.config['3DTilesLayers']) {
+      layers[layer.id] = this.setup3DTilesLayer(layer);
+      this.add3DTilesLayer(layers[layer.id][0]);
     }
     this.update3DView();
+    return layers;
   }
 
   /**
