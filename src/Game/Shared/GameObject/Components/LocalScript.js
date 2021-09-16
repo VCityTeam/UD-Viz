@@ -23,7 +23,8 @@ const LocalScriptModule = class LocalScript {
     this.type = json.type || LocalScriptModule.TYPE;
 
     //conf pass to scripts
-    this.conf = JSON.parse(JSON.stringify(json.conf)) || {};
+    const conf = json.conf || {};
+    this.conf = JSON.parse(JSON.stringify(conf));
 
     //map of scripts
     this.scripts = {};
@@ -87,6 +88,7 @@ const LocalScriptModule = class LocalScript {
    * @param {LocalContext} localContext
    */
   updateFromComponent(component, localContext) {
+    if (this.parent.name == 'Zeppelin') debugger;
     if (!JSONUtils.equals(this.conf, component.conf)) {
       //replace conf and launch an update event
       this.conf = component.conf;
