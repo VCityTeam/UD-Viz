@@ -88,7 +88,6 @@ const LocalScriptModule = class LocalScript {
    * @param {LocalContext} localContext
    */
   updateFromComponent(component, localContext) {
-    if (this.parent.name == 'Zeppelin') debugger;
     if (!JSONUtils.equals(this.conf, component.conf)) {
       //replace conf and launch an update event
       this.conf = component.conf;
