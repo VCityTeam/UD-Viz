@@ -1,7 +1,7 @@
 import { ModuleView } from '../../../Components/ModuleView/ModuleView';
-import { SparqlEndpointResponseProvider } from './SparqlEndpointResponseProvider';
-import { SparqlEndpointService } from '../model/SparqlEndpointService';
-import { SparqlQueryWindow } from '../view/SparqlQueryWindow';
+import { SparqlEndpointResponseProvider } from '../ViewModel/SparqlEndpointResponseProvider';
+import { SparqlEndpointService } from '../Model/SparqlEndpointService';
+import { SparqlQueryWindow } from './SparqlQueryWindow';
 import { LayerManager } from '../../../Components/Components';
 
   /**
@@ -41,6 +41,17 @@ export class SparqlModuleView extends ModuleView {
      * @type {SparqlQueryWindow}
      */
     this.window = new SparqlQueryWindow(this.provider, this.layerManager);
+  }
+  
+  /**
+   * Select a city object based on a key,value pair in the batch table. If multiple
+   * objects correcpond to the key,value pair the first one selected is returned. 
+   * @param {string} batchTableKey
+   * @param {string} batchTableValue
+   */
+  selectCityObject(batchTableKey, batchTableValue) {
+    //TODO: implement me!
+    this.layerManager.pickCityObjectByBatchTable();
   }
 
   /**
