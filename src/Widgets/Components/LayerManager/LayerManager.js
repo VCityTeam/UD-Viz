@@ -147,6 +147,58 @@ export class LayerManager {
   }
 
   /**
+   * Returns the city object which corresponds to a key,value pair in a tilesManager
+   * batch table. The first city object whos batch table entry matches the criteria
+   * is returned.
+   *
+   * @param {string} batchTableKey The batch table key to search by.
+   * @param {string} batchTableValue The batch table value to search for.
+   *
+   * @returns {CityObject | undefined}
+   */
+  pickCityObjectByBatchTable(batchTableKey, batchTableValue) {
+    for (let i = 0; i < this.tilesManagers.length; i++) {
+      for (let j = 0; j < this.tilesManagers[i].tiles.length; j++) {
+        if (this.tilesManagers[i].tiles[j].batchTable != null) {
+          let batchTableContent = this.tilesManagers[i].tiles[j].batchTable.content;
+          for (let k = 0; k < batchTableContent.id.length; k++) {
+            if (batchTableContent[batchTableKey][k] == batchTableValue) {
+              return this.tilesManagers[i].tiles[j].cityObjects[k];
+            }
+          }
+        }
+      }
+    }
+    return undefined;
+  }
+
+  /**
+   * Returns the city objects which corresponds to a key,value pair in a tilesManager
+   * batch table.
+   *
+   * @param {string} batchTableKey The batch table key to search by.
+   * @param {string} batchTableValue The batch table value to search for.
+   *
+   * @returns {Array<CityObject>}
+   */
+  pickCityObjectsByBatchTable(batchTableKey, batchTableValue) {
+    let cityObjects = [];
+    for (let i = 0; i < this.tilesManagers.length; i++) {
+      for (let j = 0; j < this.tilesManagers[i].tiles.length; j++) {
+        if (this.tilesManagers[i].tiles[j].batchTable != null) {
+          let batchTableContent = this.tilesManagers[i].tiles[j].batchTable.content;
+          for (let k = 0; k < batchTableContent.id.length; k++) {
+            if (batchTableContent[batchTableKey][k] == batchTableValue) {
+              cityObjects.push(this.tilesManagers[i].tiles[j].cityObjects[k]);
+            }
+          }
+        }
+      }
+    }
+    return cityObjects;
+  }
+
+  /**
    * Returns a tilesManager given a layer ID.
    *
    * @param {string} id the layer ID.

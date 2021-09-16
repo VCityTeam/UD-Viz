@@ -1,5 +1,5 @@
-import { SparqlEndpointResponseProvider } from './modelView/SparqlEndpointResponseProvider';
-import { SparqlModuleView } from './modelView/SparqlModuleView';
+import { SparqlEndpointResponseProvider } from './ViewModel/SparqlEndpointResponseProvider';
+import { SparqlModuleView } from './View/SparqlModuleView';
 import { LayerManager } from '../../Components/Components';
 
 /**

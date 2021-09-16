@@ -1,9 +1,10 @@
 import { EventSender } from '../../../Components/Events/EventSender';
-import { SparqlEndpointService } from '../model/SparqlEndpointService';
+import { SparqlEndpointService } from '../Model/SparqlEndpointService';
 
 /**
  * Creates a SPARQL Endpoint Provider which manages treating SPARQL endpoint
- * responses and events for a specific SPARQL Endpoint.
+ * responses and events for a specific SPARQL Endpoint. Also contains helper
+ * functions for manipulating RDF data.
  */
 export class SparqlEndpointResponseProvider extends EventSender {
   /**
@@ -11,16 +12,15 @@ export class SparqlEndpointResponseProvider extends EventSender {
    *
    * @param {SparqlEndpointService} service a SPARQL endpoint service.
    */
-  constructor(config) {
+  constructor(service) {
     super();
-    this.config = config;
 
     /**
      * The SPARQL Endpoint Service..
      *
      * @type {SparqlEndpointService}
      */
-    this.service = new SparqlEndpointService(this.config);
+    this.service = new SparqlEndpointService(service);
 
     /**
      * The most recent query response.
@@ -74,7 +74,9 @@ export class SparqlEndpointResponseProvider extends EventSender {
       if (
         graphData.nodes.find((n) => n.id == triple.subject.value) == undefined
       ) {
-        let subjectNamespaceId = this.getNamespaceIndex(triple.subjectType.value);
+        let subjectNamespaceId = this.getNamespaceIndex(
+          triple.subjectType.value
+        );
         let node = { id: triple.subject.value, namespace: subjectNamespaceId };
         graphData.nodes.push(node);
       }
@@ -99,32 +101,46 @@ export class SparqlEndpointResponseProvider extends EventSender {
   }
 
   /**
+   * return the most recently cached query response formatted for a table.
+   * @return {Object | undefined}
+   */
+  getResponseDataAsTable() {
+    //TODO: implement me!
+    return undefined;
+  }
+
+  /**
+   * Tokenize a URI into a namespace and id
+   * @param {string} uri
+   * @returns {Object}
+   */
+  tokenizeURI(uri) {
+    let tokenizedURI = {};
+    if (uri.includes('#')) {
+      let uriTokens = uri.split('#');
+      tokenizedURI.namespace = uriTokens[0] + '#';
+      tokenizedURI.id = uriTokens[1];
+    } else {
+      let uriTokens = uri.split('/');
+      tokenizedURI.id = uriTokens[uriTokens.length - 1];
+      uriTokens[uriTokens.length - 1] = '';
+      tokenizedURI.namespace = uriTokens.join('/');
+    }
+    return tokenizedURI;
+  }
+
+  /**
    * Get the namespace index of a uri. Add the namespace to the array of namespaces
    * if it does not exist.
    * @param {String} uri the uri to map to a namespace.
    * @return {Number}
    */
   getNamespaceIndex(uri) {
-    let namespace = '';
-    if (uri.includes('#')) {
-      namespace = uri.split('#')[0] + '#';
-      if (!this.namespaces.includes(namespace)) {
-        this.namespaces.push(namespace);
-      }
-    } else {
-      uriTokens = uri.split('/').splice();
-      uriTokens[uriTokens.length - 1] = '';
-      namespace = uriTokens.join('/');
+    let namespace = this.tokenizeURI(uri).namespace;
+    if (!this.namespaces.includes(namespace)) {
+      this.namespaces.push(namespace);
     }
     return this.namespaces.findIndex((d) => d == namespace);
-  }
-
-  /**
-   * return the most recently cached query response formatted for a table.
-   * @return {Object | undefined}
-   */
-  getResponseDataAsTable() {
-    return this.tableData;
   }
 
   ////////////

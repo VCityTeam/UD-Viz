@@ -1,12 +1,18 @@
 import * as d3 from 'd3';
+import { SparqlQueryWindow } from './SparqlQueryWindow';
 
 export class Graph {
   /**
    * Create a new D3 graph from an RDF JSON object.
-   * Adapted from https://observablehq.com/@d3/force-directed-graph#chart and 
+   * Adapted from https://observablehq.com/@d3/force-directed-graph#chart and
    * https://www.d3indepth.com/zoom-and-pan/
+   *
+   * @param {SparqlQueryWindow} window the window this graph is attached to.
+   * @param {Number} height The SVG height.
+   * @param {Number} height The SVG width.
    */
-  constructor(height = 500, width = 500) {
+  constructor(window, height = 500, width = 500) {
+    this.window = window;
     this.height = height;
     this.width = width;
 
@@ -38,8 +44,7 @@ export class Graph {
       .force('charge', d3.forceManyBody())
       .force('center', d3.forceCenter(this.width / 2, this.height / 2));
 
-    const zoom = d3.zoom()
-      .on('zoom', this.handleZoom);
+    const zoom = d3.zoom().on('zoom', this.handleZoom);
 
     this.svg.call(zoom);
 
@@ -63,9 +68,11 @@ export class Graph {
       .join('circle')
       .attr('r', 5)
       .attr('fill', (d) => colorScale(d.namespace))
-      .on('click', (d) => console.log(d))
+      .on('click', (d) =>
+        this.window.sendEvent(SparqlQueryWindow.EVENT_NODE_SELECTED, d.path[0].textContent)
+      )
       .call(this.drag(simulation));
-    
+
     node.append('title').text((d) => d.id);
 
     simulation.on('tick', () => {
@@ -79,26 +86,28 @@ export class Graph {
     });
 
     // Create legend
-    this.svg.append('g')
+    this.svg
+      .append('g')
       .attr('stroke', '#333')
       .attr('stroke-width', 1)
       .selectAll('rect')
       .data(namespaces)
       .join('rect')
-      .attr("x", 10)
-      .attr("y", (d, i) => 10 + (i * 16))
-      .attr("width", 10)
-      .attr("height", 10)
-      .style("fill", (d, i) => colorScale(i))
+      .attr('x', 10)
+      .attr('y', (d, i) => 10 + i * 16)
+      .attr('width', 10)
+      .attr('height', 10)
+      .style('fill', (d, i) => colorScale(i))
       .append('title')
-        .text((d) => d)
-      
-    this.svg.append('g')
+      .text((d) => d);
+
+    this.svg
+      .append('g')
       .selectAll('text')
       .data(namespaces)
       .join('text')
-      .attr("x", 24)
-      .attr("y", (d, i) => 20 + (i * 16))
+      .attr('x', 24)
+      .attr('y', (d, i) => 20 + i * 16)
       .text((d) => d);
   }
 
@@ -125,7 +134,7 @@ export class Graph {
 
   /**
    * Create a drag effect for graph nodes within the context of a force simulation
-   * @param {d3.forceSimulation} simulation 
+   * @param {d3.forceSimulation} simulation
    * @returns {d3.drag}
    */
   drag(simulation) {
@@ -167,7 +176,6 @@ export class Graph {
    * Getter for retrieving the d3 svg.
    */
   get data() {
-    console.log(this.svg.node());
     return this.svg.node();
   }
 }

@@ -47,10 +47,8 @@ export class SparqlEndpointService extends RequestService {
     if (request.status !== 200) {
       throw 'Could not query SPARQL endpoint: ' + request.statusText;
     }
-
     let response = JSON.parse(request.responseText);
 
-    console.log(response);
     return response;
   }
 }
