@@ -1,7 +1,7 @@
 {
   "name": "ud-viz",
   "version": "2.33.0",
-  "description": "A collection of itowns plugins",
+  "description": "A framework extension of itowns",
   "main": "src",
   "scripts": {
     "travis": "npm run eslint && npm run build",
