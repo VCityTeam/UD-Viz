@@ -545,7 +545,7 @@ export class AllWidget {
   }
 
   /**
-   * Initializes the iTowns 3D view according the config.
+   * Initializes the iTowns 3D view according the config. 
    */
   init3DView() {
     // ********* INIT ITOWNS VIEW
