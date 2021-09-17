@@ -1,0 +1,113 @@
+:root {
+  color-scheme: light dark;
+
+  --background-color: #fff;
+  --secondary-background-color: #f7f7f7;
+
+  --color-blue: #049ef4;
+  --text-color: #444;
+  --secondary-text-color: #9e9e9e;
+
+  --font-size: 16px;
+  --line-height: 26px;
+
+  --border-style: 1px solid #e8e8e8;
+  --header-height: 48px;
+  --panel-width: 300px;
+  --panel-padding: 16px;
+  --icon-size: 20px;
+}
+
+body {
+  padding: 0px;
+}
+
+#panel {
+  position: fixed;
+  z-index: 100;
+  left: 0px;
+  top: 0px;
+  width: var(--panel-width);
+  height: 100%;
+  overflow: auto;
+  border-right: var(--border-style);
+  display: flex;
+  flex-direction: column;
+  transition: 0s 0s height;
+}
+
+#header h1 {
+  padding-left: var(--panel-padding);
+  flex: 1;
+  display: flex;
+  align-items: center;
+  color: var(--color-blue);
+}
+
+#contentWrapper {
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  color: var(--color-blue);
+}
+
+#viewer,
+#content {
+  padding: 0 var(--panel-padding) var(--panel-padding) var(--panel-padding);
+}
+
+#viewer,
+iframe {
+  position: absolute;
+  border: 0px;
+  left: 0;
+  right: 0;
+  height: 100%;
+}
+
+#viewer {
+  padding-left: var(--panel-width);
+}
+
+#projects {
+  grid-template-columns: repeat(2, 1fr);
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  line-height: 0;
+}
+
+#projects a {
+  overflow: hidden;
+}
+
+#projects a img {
+  width: 100%;
+  transform: scale(1);
+  transition: 0.15s transform;
+}
+
+#projects a:hover img {
+  transform: scale(1.08);
+}
+
+#panel #content ul {
+  list-style-type: none;
+  padding: 0px;
+  margin: 0px 0 20px 0;
+}
+#panel #content ul li {
+  margin: 1px 0;
+}
+
+#panel #content a {
+  position: relative;
+  color: var(--text-color);
+  text-decoration: none;
+}
+
+#panel #content a:hover,
+#panel #content a:hover .spacer,
+#panel #content .selected {
+  color: var(--color-blue);
+}

@@ -14,9 +14,7 @@ export { DocumentVisualizerWindow } from './DocumentVisualizer/View/DocumentVisu
 
 export { CameraPositionerView } from './CameraPositioner/View/CameraPositionerView';
 
-export { AboutWindow } from './Others/About';
-
-export { HelpWindow } from './Others/Help';
+export { AboutWindow } from './About/About';
 
 export { TemporalModule } from './Temporal/TemporalModule';
 
