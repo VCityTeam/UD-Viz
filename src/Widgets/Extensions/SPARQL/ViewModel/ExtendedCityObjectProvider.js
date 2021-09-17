@@ -55,27 +55,4 @@ export class ExtendedCityObjectProvider extends CityObjectProvider {
       }
     }
   }
-
-  ////////////
-  ///// EVENTS
-
-  static get EVENT_FILTERS_UPDATED() {
-    return 'EVENT_FILTERS_UPDATED';
-  }
-
-  static get EVENT_LAYER_CHANGED() {
-    return 'EVENT_LAYER_CHANGED';
-  }
-
-  static get EVENT_CITY_OBJECT_SELECTED() {
-    return 'EVENT_CITY_OBJECT_SELECTED';
-  }
-
-  static get EVENT_CITY_OBJECT_UNSELECTED() {
-    return 'EVENT_CITY_OBJECT_UNSELECTED';
-  }
-
-  static get EVENT_CITY_OBJECT_CHANGED() {
-    return 'EVENT_CITY_OBJECT_CHANGED';
-  }
 }

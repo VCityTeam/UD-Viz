@@ -1,9 +1,8 @@
 import { ModuleView } from '../../../Components/ModuleView/ModuleView';
 import { SparqlEndpointResponseProvider } from '../ViewModel/SparqlEndpointResponseProvider';
-import { SparqlEndpointService } from '../Model/SparqlEndpointService';
+import { ExtendedCityObjectProvider } from '../ViewModel/ExtendedCityObjectProvider';
 import { SparqlQueryWindow } from './SparqlQueryWindow';
 import { LayerManager } from '../../../Components/Components';
-import { ExtendedCityObjectProvider } from '../ViewModel/ExtendedCityObjectProvider';
 
 /**
  * The SPARQL ModuleView class which manages the SPARQL query window.

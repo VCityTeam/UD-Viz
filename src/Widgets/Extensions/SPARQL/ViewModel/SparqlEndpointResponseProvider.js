@@ -27,7 +27,7 @@ export class SparqlEndpointResponseProvider extends EventSender {
      *
      * @type {Object}
      */
-    this.data = {};
+    this.response = {};
 
     /**
      * An array containing each namespace in the dataset.
@@ -46,7 +46,7 @@ export class SparqlEndpointResponseProvider extends EventSender {
    * @param {string} query
    */
   async querySparqlEndpointService(query) {
-    this.data = await this.service.querySparqlEndpoint(query);
+    this.response = await this.service.querySparqlEndpoint(query);
 
     await this.sendEvent(
       SparqlEndpointResponseProvider.EVENT_ENDPOINT_RESPONSE_UPDATED,
@@ -70,7 +70,7 @@ export class SparqlEndpointResponseProvider extends EventSender {
       legend: undefined,
     };
 
-    for (let triple of this.data.results.bindings) {
+    for (let triple of this.response.results.bindings) {
       if (
         graphData.nodes.find((n) => n.id == triple.subject.value) == undefined
       ) {
@@ -95,8 +95,6 @@ export class SparqlEndpointResponseProvider extends EventSender {
       graphData.links.push(link);
     }
     graphData.legend = this.namespaces;
-    console.log(graphData);
-    console.log(this.namespaces);
     return graphData;
   }
 

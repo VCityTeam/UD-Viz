@@ -91,10 +91,12 @@ WHERE {
       this.sparqlProvider.querySparqlEndpointService(this.queryTextArea.value);
       return false;
     };
+
     this.sparqlProvider.addEventListener(
       SparqlEndpointResponseProvider.EVENT_ENDPOINT_RESPONSE_UPDATED,
       (data) => this.updateDataView(data, undefined)
     );
+
     this.addEventListener(SparqlQueryWindow.EVENT_NODE_SELECTED, (uri) =>
       this.cityObjectProvider.selectCityObjectByBatchTable(
         'gml_id',
