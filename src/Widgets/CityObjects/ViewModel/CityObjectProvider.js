@@ -60,11 +60,10 @@ export class CityObjectProvider extends EventSender {
      * @type {CityObject}
      */
     this.selectedCityObject = undefined;
-    
+
     this.selectedTilesManager = undefined;
-      
+
     this.selectedStyle = undefined;
-  
 
     /**
      * The style applied to the selected city object.
@@ -93,21 +92,35 @@ export class CityObjectProvider extends EventSender {
   selectCityObject(mouseEvent) {
     let cityObject = this.layerManager.pickCityObject(mouseEvent);
     if (cityObject) {
-      if(this.selectedCityObject != cityObject) {
-        if(this.selectedCityObject) {
-          this.sendEvent(CityObjectProvider.EVENT_CITY_OBJECT_CHANGED, cityObject);
+      if (this.selectedCityObject != cityObject) {
+        if (this.selectedCityObject) {
+          this.sendEvent(
+            CityObjectProvider.EVENT_CITY_OBJECT_CHANGED,
+            cityObject
+          );
           this.unselectCityObject();
-        }
-        else {
-          this.sendEvent(CityObjectProvider.EVENT_CITY_OBJECT_SELECTED, cityObject);
+        } else {
+          this.sendEvent(
+            CityObjectProvider.EVENT_CITY_OBJECT_SELECTED,
+            cityObject
+          );
         }
         this.selectedCityObject = cityObject;
-        this.selectedTilesManager = this.layerManager.getTilesManagerByLayerID(this.selectedCityObject.tile.layer.id);
-        this.selectedStyle = this.selectedTilesManager.styleManager.getStyleIdentifierAppliedTo(this.selectedCityObject.cityObjectId);
-        this.selectedTilesManager.setStyle(this.selectedCityObject.cityObjectId, 'selected');
+        this.selectedTilesManager = this.layerManager.getTilesManagerByLayerID(
+          this.selectedCityObject.tile.layer.id
+        );
+        this.selectedStyle =
+          this.selectedTilesManager.styleManager.getStyleIdentifierAppliedTo(
+            this.selectedCityObject.cityObjectId
+          );
+        this.selectedTilesManager.setStyle(
+          this.selectedCityObject.cityObjectId,
+          'selected'
+        );
         this.selectedTilesManager.applyStyles({
-          updateFunction:
-            this.selectedTilesManager.view.notifyChange.bind(this.selectedTilesManager.view)
+          updateFunction: this.selectedTilesManager.view.notifyChange.bind(
+            this.selectedTilesManager.view
+          ),
         });
         this.removeLayer();
       }
@@ -118,12 +131,19 @@ export class CityObjectProvider extends EventSender {
    * Unset the selected city object and sends an `EVENT_CITY_OBJECT_SELECTED`
    * event.
    */
-  unselectCityObject(sendEvent=true) {
+  unselectCityObject(sendEvent = true) {
     if (this.selectedCityObject) {
-      this.selectedTilesManager.setStyle(this.selectedCityObject.cityObjectId, this.selectedStyle);
+      this.selectedTilesManager.setStyle(
+        this.selectedCityObject.cityObjectId,
+        this.selectedStyle
+      );
       this.selectedTilesManager.applyStyles();
     }
-    if(sendEvent) this.sendEvent(CityObjectProvider.EVENT_CITY_OBJECT_UNSELECTED,this.selectedCityObject);
+    if (sendEvent)
+      this.sendEvent(
+        CityObjectProvider.EVENT_CITY_OBJECT_UNSELECTED,
+        this.selectedCityObject
+      );
     this.selectedTilesManager = undefined;
     this.selectedStyle = undefined;
     this.selectedCityObject = undefined;
@@ -223,7 +243,9 @@ export class CityObjectProvider extends EventSender {
    */
   _updateTilesManager() {
     if (this.selectedCityObject) {
-      let tileManager = this.layerManager.getTilesManagerByLayerID(this.selectedCityObject.tile.layer.id);
+      let tileManager = this.layerManager.getTilesManagerByLayerID(
+        this.selectedCityObject.tile.layer.id
+      );
 
       if (this.cityObjectLayer === undefined) {
         this.layerCityObjectIds = [];

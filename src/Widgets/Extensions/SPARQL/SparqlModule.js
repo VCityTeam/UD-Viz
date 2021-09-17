@@ -1,6 +1,7 @@
 import { SparqlEndpointResponseProvider } from './ViewModel/SparqlEndpointResponseProvider';
 import { SparqlModuleView } from './View/SparqlModuleView';
 import { LayerManager } from '../../Components/Components';
+import { ExtendedCityObjectProvider } from './ViewModel/ExtendedCityObjectProvider';
 
 /**
  * The SPARQL module class used to initialize the SPARQL widget
@@ -23,13 +24,24 @@ export class SparqlModule {
      *
      * @type {SparqlEndpointResponseProvider}
      */
-    this.provider = new SparqlEndpointResponseProvider(this.config);
+    this.sparqlProvider = new SparqlEndpointResponseProvider(this.config);
+
+    /**
+     * Provides CityObjects based on mouse event positions or batch table data.
+     *
+     * @type {ExtendedCityObjectProvider}
+     */
+    this.cityObjectProvider = new ExtendedCityObjectProvider(this.layerManager);
 
     /**
      * Contains a SparqlModuleView for managing the user interface and view.
      *
      * @type {SparqlModuleView}
      */
-    this.view = new SparqlModuleView(this.provider, this.layerManager);
+    this.view = new SparqlModuleView(
+      this.sparqlProvider,
+      this.cityObjectProvider,
+      this.layerManager
+    );
   }
 }
