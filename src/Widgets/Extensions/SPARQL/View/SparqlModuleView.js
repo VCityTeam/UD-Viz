@@ -3,36 +3,42 @@ import { SparqlEndpointResponseProvider } from '../ViewModel/SparqlEndpointRespo
 import { SparqlEndpointService } from '../Model/SparqlEndpointService';
 import { SparqlQueryWindow } from './SparqlQueryWindow';
 import { LayerManager } from '../../../Components/Components';
+import { ExtendedCityObjectProvider } from '../ViewModel/ExtendedCityObjectProvider';
 
-  /**
-   * The SPARQL ModuleView class which manages the SPARQL query window.
-   */
+/**
+ * The SPARQL ModuleView class which manages the SPARQL query window.
+ */
 export class SparqlModuleView extends ModuleView {
   /**
    * Creates a new SparqlModuleView.
    *
-   * @param {object} config The configuration of UD-Viz.
-   * @param {object} config.sparqlModule The sparqlModule configuration.
-   * @param {string} config.sparqlModule.url The SPARQL endpoint url.
-   * @param {SparqlEndpointService} serviceContains SPARQL endpoint information.
+   * @param {SparqlEndpointResponseProvider} sparqlProvider The SPARQL Endpoint Response Provider
+   * @param {ExtendedCityObjectProvider} cityObjectProvider The City Object Provider
    * @param {LayerManager} layerManager The UD-Viz LayerManager.
    */
-  constructor(provider, layerManager) {
+  constructor(sparqlProvider, cityObjectProvider, layerManager) {
     super();
 
-     /**
-      * The SPARQL Endpoint Response Provider
-      * 
-      * @type {SparqlEndpointResponseProvider}
-      */
-     this.provider = provider;
+    /**
+     * The SPARQL Endpoint Response Provider
+     *
+     * @type {SparqlEndpointResponseProvider}
+     */
+    this.sparqlProvider = sparqlProvider;
 
-     /**
-      * The UD-Viz LayerManager.
-      * 
-      * @type {LayerManager}
-      */
-     this.layerManager = layerManager;
+    /**
+     * The Extended City Object Provider
+     *
+     * @type {ExtendedCityObjectProvider}
+     */
+    this.cityObjectProvider = cityObjectProvider;
+
+    /**
+     * The UD-Viz LayerManager.
+     *
+     * @type {LayerManager}
+     */
+    this.layerManager = layerManager;
 
     /**
      * Contains a SparqlQueryWindow for capturing user input and displaying
@@ -40,18 +46,7 @@ export class SparqlModuleView extends ModuleView {
      *
      * @type {SparqlQueryWindow}
      */
-    this.window = new SparqlQueryWindow(this.provider, this.layerManager);
-  }
-  
-  /**
-   * Select a city object based on a key,value pair in the batch table. If multiple
-   * objects correcpond to the key,value pair the first one selected is returned. 
-   * @param {string} batchTableKey
-   * @param {string} batchTableValue
-   */
-  selectCityObject(batchTableKey, batchTableValue) {
-    //TODO: implement me!
-    this.layerManager.pickCityObjectByBatchTable();
+    this.window = new SparqlQueryWindow(this.sparqlProvider, this.cityObjectProvider, this.layerManager);
   }
 
   /**

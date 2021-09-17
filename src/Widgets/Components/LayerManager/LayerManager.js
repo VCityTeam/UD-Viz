@@ -160,7 +160,8 @@ export class LayerManager {
     for (let i = 0; i < this.tilesManagers.length; i++) {
       for (let j = 0; j < this.tilesManagers[i].tiles.length; j++) {
         if (this.tilesManagers[i].tiles[j].batchTable != null) {
-          let batchTableContent = this.tilesManagers[i].tiles[j].batchTable.content;
+          let batchTableContent =
+            this.tilesManagers[i].tiles[j].batchTable.content;
           for (let k = 0; k < batchTableContent.id.length; k++) {
             if (batchTableContent[batchTableKey][k] == batchTableValue) {
               return this.tilesManagers[i].tiles[j].cityObjects[k];
@@ -186,7 +187,8 @@ export class LayerManager {
     for (let i = 0; i < this.tilesManagers.length; i++) {
       for (let j = 0; j < this.tilesManagers[i].tiles.length; j++) {
         if (this.tilesManagers[i].tiles[j].batchTable != null) {
-          let batchTableContent = this.tilesManagers[i].tiles[j].batchTable.content;
+          let batchTableContent =
+            this.tilesManagers[i].tiles[j].batchTable.content;
           for (let k = 0; k < batchTableContent.id.length; k++) {
             if (batchTableContent[batchTableKey][k] == batchTableValue) {
               cityObjects.push(this.tilesManagers[i].tiles[j].cityObjects[k]);

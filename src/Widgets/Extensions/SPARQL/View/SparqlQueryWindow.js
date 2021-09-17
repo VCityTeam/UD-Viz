@@ -12,18 +12,26 @@ import './SparqlQueryWindow.css';
 export class SparqlQueryWindow extends Window {
   /**
    * Creates a SPARQL query window.
-   * @param {SparqlEndpointResponseProvider} provider the SparqlEndpointResponseProvider.
+   * @param {SparqlEndpointResponseProvider} sparqlProvider The SPARQL Endpoint Response Provider
+   * @param {ExtendedCityObjectProvider} cityObjectProvider The City Object Provider
    * @param {LayerManager} layerManager The UD-Viz LayerManager.
    */
-  constructor(provider, layerManager) {
+  constructor(sparqlProvider, cityObjectProvider, layerManager) {
     super('sparqlQueryWindow', 'SPARQL Query');
 
     /**
-     * The SPARQL Endpoint Response Provider.
+     * The SPARQL Endpoint Response Provider
      *
      * @type {SparqlEndpointResponseProvider}
      */
-    this.provider = provider;
+    this.sparqlProvider = sparqlProvider;
+
+    /**
+     * The Extended City Object Provider
+     *
+     * @type {ExtendedCityObjectProvider}
+     */
+    this.cityObjectProvider = cityObjectProvider;
 
     /**
      * The UD-Viz LayerManager.
@@ -38,33 +46,6 @@ export class SparqlQueryWindow extends Window {
      * @type {Graph}
      */
     this.graph = new Graph(this);
-
-    //TODO: move CityObject functions to a provider or ViewModel class
-
-    /**
-     * The current highlighted layer.
-     *
-     * @type {CityObjectLayer}
-     */
-    this.cityObjectLayer = undefined;
-
-    /**
-     * The selected city object.
-     *
-     * @type {CityObject}
-     */
-    this.selectedCityObject = undefined;
-
-    this.selectedTilesManager = undefined;
-
-    this.selectedStyle = undefined;
-
-    /**
-     * The style applied to the selected city object.
-     *
-     * @type {CityObjectStyle | string}
-     */
-    this.defaultSelectionStyle = { materialProps: { color: 0x13ddef } };
 
     /**
      * The initial SPARQL query to display upon window initialization.
@@ -96,13 +77,7 @@ WHERE {
   FILTER(?subjectType != <http://www.w3.org/2002/07/owl#NamedIndividual>)
   FILTER(?objectType != <http://www.w3.org/2002/07/owl#NamedIndividual>)
 }`;
-
     this.registerEvent(SparqlQueryWindow.EVENT_NODE_SELECTED);
-    this.registerEvent(SparqlQueryWindow.EVENT_FILTERS_UPDATED);
-    this.registerEvent(SparqlQueryWindow.EVENT_LAYER_CHANGED);
-    this.registerEvent(SparqlQueryWindow.EVENT_CITY_OBJECT_SELECTED);
-    this.registerEvent(SparqlQueryWindow.EVENT_CITY_OBJECT_UNSELECTED);
-    this.registerEvent(SparqlQueryWindow.EVENT_CITY_OBJECT_CHANGED);
   }
 
   /**
@@ -113,134 +88,19 @@ WHERE {
    */
   windowCreated() {
     this.form.onsubmit = () => {
-      this.provider.querySparqlEndpointService(this.queryTextArea.value);
+      this.sparqlProvider.querySparqlEndpointService(this.queryTextArea.value);
       return false;
     };
-    this.provider.addEventListener(
+    this.sparqlProvider.addEventListener(
       SparqlEndpointResponseProvider.EVENT_ENDPOINT_RESPONSE_UPDATED,
       (data) => this.updateDataView(data, undefined)
     );
-    this.addEventListener(SparqlQueryWindow.EVENT_NODE_SELECTED, (id) =>
-      this.selectCityObject(id)
+    this.addEventListener(SparqlQueryWindow.EVENT_NODE_SELECTED, (uri) =>
+      this.cityObjectProvider.selectCityObjectByBatchTable(
+        'gml_id',
+        this.sparqlProvider.tokenizeURI(uri).id
+      )
     );
-  }
-
-  /**
-   * Select a city object based on a URI.
-   * @param {string} uri the URI to search by.
-   */
-  selectCityObject(uri) {
-    let tokenizedURI = this.provider.tokenizeURI(uri);
-    let cityObject = this.layerManager.pickCityObjectByBatchTable(
-      'gml_id',
-      tokenizedURI.id
-    );
-    if (cityObject) {
-      if (this.selectedCityObject != cityObject) {
-        if (this.selectedCityObject) {
-          this.sendEvent(
-            SparqlQueryWindow.EVENT_CITY_OBJECT_CHANGED,
-            cityObject
-          );
-          this.unselectCityObject();
-        } else {
-          this.sendEvent(
-            SparqlQueryWindow.EVENT_CITY_OBJECT_SELECTED,
-            cityObject
-          );
-        }
-        this.selectedCityObject = cityObject;
-        this.selectedTilesManager = this.layerManager.getTilesManagerByLayerID(
-          this.selectedCityObject.tile.layer.id
-        );
-        this.selectedStyle =
-          this.selectedTilesManager.styleManager.getStyleIdentifierAppliedTo(
-            this.selectedCityObject.cityObjectId
-          );
-        this.selectedTilesManager.setStyle(
-          this.selectedCityObject.cityObjectId,
-          'selected'
-        );
-        this.selectedTilesManager.applyStyles({
-          updateFunction: this.selectedTilesManager.view.notifyChange.bind(
-            this.selectedTilesManager.view
-          ),
-        });
-        this.removeLayer();
-      }
-    }
-  }
-
-  /**
-   * Unset the selected city object and sends an `EVENT_CITY_OBJECT_SELECTED`
-   * event.
-   * @param {boolean} sendEvent if true, send SparqlQueryWindow.EVENT_CITY_OBJECT_UNSELECTED upon
-   */
-  unselectCityObject(sendEvent = true) {
-    if (this.selectedCityObject) {
-      this.selectedTilesManager.setStyle(
-        this.selectedCityObject.cityObjectId,
-        this.selectedStyle
-      );
-      this.selectedTilesManager.applyStyles();
-    }
-    if (sendEvent)
-      this.sendEvent(
-        SparqlQueryWindow.EVENT_CITY_OBJECT_UNSELECTED,
-        this.selectedCityObject
-      );
-    this.selectedTilesManager = undefined;
-    this.selectedStyle = undefined;
-    this.selectedCityObject = undefined;
-  }
-
-  /**
-   * Unsets the current layer. Sends the `EVENT_LAYER_CHANGED` event.
-   */
-  removeLayer() {
-    this.cityObjectLayer = undefined;
-    this.sendEvent(SparqlQueryWindow.EVENT_LAYER_CHANGED, undefined);
-    this.applyStyles();
-  }
-
-  /**
-   * Updates the tiles manager so that it has the correct styles associated with
-   * the right city objects.
-   *
-   * @private
-   */
-  _updateTilesManager() {
-    if (this.selectedCityObject) {
-      let tileManager = this.layerManager.getTilesManagerByLayerID(this.selectedCityObject.tile.layer.id);
-
-      if (this.cityObjectLayer === undefined) {
-        this.layerCityObjectIds = [];
-      } else {
-        this.layerCityObjectIds = tileManager
-          .findAllCityObjects(this.cityObjectLayer.filter.accepts)
-          .map((co) => co.cityObjectId);
-
-        tileManager.setStyle(
-          this.layerCityObjectIds,
-          this.cityObjectLayer.style
-        );
-      }
-
-      tileManager.setStyle(
-        this.selectedCityObject.cityObjectId,
-        this.defaultSelectionStyle
-      );
-    }
-  }
-
-  /**
-   * Apply the styles to the tiles manager. This function is necessary as the
-   * event for tile loading does not exist yet. In the future, it shouldn't be
-   * necessary to manually call this function.
-   */
-  applyStyles() {
-    this._updateTilesManager();
-    this.layerManager.applyAll3DTilesStyles();
   }
 
   /**
@@ -314,25 +174,5 @@ WHERE {
 
   static get EVENT_NODE_SELECTED() {
     return 'EVENT_NODE_SELECTED';
-  }
-
-  static get EVENT_FILTERS_UPDATED() {
-    return 'EVENT_FILTERS_UPDATED';
-  }
-
-  static get EVENT_LAYER_CHANGED() {
-    return 'EVENT_LAYER_CHANGED';
-  }
-
-  static get EVENT_CITY_OBJECT_SELECTED() {
-    return 'EVENT_CITY_OBJECT_SELECTED';
-  }
-
-  static get EVENT_CITY_OBJECT_UNSELECTED() {
-    return 'EVENT_CITY_OBJECT_UNSELECTED';
-  }
-
-  static get EVENT_CITY_OBJECT_CHANGED() {
-    return 'EVENT_CITY_OBJECT_CHANGED';
   }
 }
