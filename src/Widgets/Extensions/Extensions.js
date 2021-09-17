@@ -17,3 +17,5 @@ export { ContributeModule } from './Contribute/ContributeModule';
 export { DocumentValidationModule } from './DocumentValidation/DocumentValidationModule';
 
 export { SparqlModule } from './SPARQL/SparqlModule';
+
+export { HelpWindow } from './Help/Help';
