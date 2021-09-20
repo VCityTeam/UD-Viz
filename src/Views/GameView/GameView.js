@@ -56,6 +56,10 @@ export class GameView extends View3D {
     this.tickRequesters = [];
   }
 
+  getLocalContext() {
+    return this.localContext;
+  }
+
   /**
    *
    * @param {Boolean} value true go are updated false no
@@ -372,6 +376,7 @@ class LocalContext {
   constructor(gameView) {
     this.dt = 0;
     this.gameView = gameView;
+    this.webSocketService = null;
   }
 
   /**
@@ -388,6 +393,14 @@ class LocalContext {
    */
   getDt() {
     return this.dt;
+  }
+
+  setWebSocketService(w) {
+    this.webSocketService = w;
+  }
+
+  getWebSocketService() {
+    return this.webSocketService;
   }
 
   /**

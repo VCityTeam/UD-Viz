@@ -46,6 +46,9 @@ export class DistantGame {
       firstGameView: options.firstGameView,
     });
 
+    const ctxGameView = gV.getLocalContext();
+    ctxGameView.setWebSocketService(this.webSocketService);
+
     //register in tick of the gameview
     const _this = this;
     gV.addTickRequester(function () {
