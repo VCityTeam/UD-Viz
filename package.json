@@ -27,7 +27,7 @@
   "dependencies": {
     "detect-collisions": "^2.5.2",
     "howler": "^2.2.3",
-    "itowns": "2.34.0",
+    "itowns": "2.35.0",
     "jquery": "^3.6.0",
     "proj4": "^2.7.0",
     "socket.io-client": "^4.0.0",
