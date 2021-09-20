@@ -62,7 +62,7 @@ export class GameView extends View3D {
    */
   setUpdateGameObject(value) {
     this.updateGameObject = value;
-    this.stateComputer.setPause(!value);
+    this.stateComputer.setPause(value);
   }
 
   /**
@@ -93,11 +93,22 @@ export class GameView extends View3D {
 
     //build itowns view
     const o = state.getOrigin();
-    const [x, y] = proj4.default('EPSG:3946').forward([o.lng, o.lat]);
+    const [x, y] = proj4.default(this.projection).forward([o.lng, o.lat]);
     const r = this.config.itowns.radiusExtent;
     // Define geographic extent: CRS, min/max X, min/max Y
-    const extent = new itowns.Extent('EPSG:3946', x - r, x + r, y - r, y + r);
+    const extent = new itowns.Extent(
+      this.projection,
+      x - r,
+      x + r,
+      y - r,
+      y + r
+    );
     this.initItownsView(extent);
+
+    //TODO disable itons rendering
+    this.itownsView.render = function () {
+      //empty
+    };
 
     this.initScene(state);
 
@@ -138,6 +149,10 @@ export class GameView extends View3D {
     setTimeout(this.onResize.bind(this), 1000);
   }
 
+  /**
+   *
+   * @returns {THREE.Object3D} return the object3D of the gameview
+   */
   getObject3D() {
     return this.object3D;
   }
@@ -148,7 +163,7 @@ export class GameView extends View3D {
    */
   initScene(state) {
     const o = state.getOrigin();
-    const [x, y] = proj4.default('EPSG:3946').forward([o.lng, o.lat]);
+    const [x, y] = proj4.default(this.projection).forward([o.lng, o.lat]);
 
     //add the object3D of the Game
     //TODO this object should be in World
@@ -183,9 +198,13 @@ export class GameView extends View3D {
     this.directionalLight = directionalLight;
   }
 
+  /**
+   * dispose this view
+   */
   dispose() {
     super.dispose();
     this.stateComputer.stop();
+    this.assetsManager.dispose();
   }
 
   /**
@@ -311,11 +330,13 @@ export class GameView extends View3D {
       const renderer = this.itownsView.mainLoop.gfxEngine.renderer;
       renderer.clearColor();
       renderer.render(scene, this.itownsView.camera.camera3D);
-
-      //TODO refacto tick integrate with itowns rendering
     }
   }
 
+  /**
+   * force this gameview to update with a specific state
+   * @param {WorldState} state
+   */
   forceUpdate(state) {
     if (!state) state = this.stateComputer.computeCurrentState();
 
@@ -346,7 +367,6 @@ export class GameView extends View3D {
 
 /**
  * Context pass to the GameObject LocalScript to work
- * TODO pass ud-viz module instead of just Shared/itowns/proj4
  */
 class LocalContext {
   constructor(gameView) {
@@ -363,14 +383,6 @@ class LocalContext {
   }
 
   /**
-   * ud-viz/Game/Shared module
-   * @returns {Shared}
-   */
-  getSharedModule() {
-    return udvShared;
-  }
-
-  /**
    *
    * @returns {Number}
    */
@@ -384,13 +396,5 @@ class LocalContext {
    */
   getGameView() {
     return this.gameView;
-  }
-
-  /**
-   * itowns module
-   * @returns {itowns}
-   */
-  getItownsModule() {
-    return itowns;
   }
 }

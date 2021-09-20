@@ -292,10 +292,34 @@ export class View3D {
 
     //start
     this.inputManager.startListening(this.itownsView.domElement);
+
+    //dynamic near far computation
+    this.itownsView.addFrameRequester(
+      itowns.MAIN_LOOP_EVENTS.AFTER_CAMERA_UPDATE,
+      this.computeNearFarCamera.bind(this)
+    );
   }
 
   /**
-   * Adds WMS elevation Layer of Lyon in 2012 and WMS imagery layer of Lyon in 2009 (from Grand Lyon data).
+   * dynamic computation of the near and far of the camera to fit the extent
+   */
+  computeNearFarCamera() {
+    const camera = this.itownsView.camera.camera3D;
+    const radius = Math.sqrt(
+      Math.pow(0.5 * (this.extent.north - this.extent.south), 2) +
+        Math.pow(0.5 * (this.extent.east - this.extent.west), 2)
+    );
+
+    const distToCenter = camera.position.distanceTo(this.extent.center());
+
+    camera.near = Math.max(distToCenter - radius, 0.001);
+    camera.far = distToCenter + radius;
+
+    camera.updateProjectionMatrix();
+  }
+
+  /**
+   * Adds WMS imagery layer
    */
   addBaseMapLayer() {
     if (!this.config['background_image_layer']) {
@@ -326,6 +350,9 @@ export class View3D {
     this.itownsView.addLayer(wmsImageryLayer);
   }
 
+  /**
+   * Adds WMS elevation Layer
+   */
   addElevationLayer() {
     if (!this.config['elevation_layer']) {
       console.warn('no elevation_layer in config');
@@ -354,6 +381,9 @@ export class View3D {
     this.itownsView.addLayer(wmsElevationLayer);
   }
 
+  /**
+   * Adds 3DTiles Layer
+   */
   add3DTilesLayer() {
     if (!this.config['3DTilesLayer']) {
       console.warn('no 3DTilesLayer in config');
@@ -378,8 +408,13 @@ export class View3D {
    * Callback call on the resize event
    */
   onResize() {
-    const w = window.innerWidth - parseInt(this.rootWebGL.style.left);
-    const h = window.innerHeight - parseInt(this.rootWebGL.style.top);
+    let offsetLeft = parseInt(this.rootWebGL.style.left);
+    if (isNaN(offsetLeft)) offsetLeft = 0;
+    let offsetTop = parseInt(this.rootWebGL.style.top);
+    if (isNaN(offsetTop)) offsetTop = 0;
+
+    const w = window.innerWidth - offsetLeft;
+    const h = window.innerHeight - offsetTop;
 
     //TODO remove this fonction
     if (this.itownsView) this.itownsView.debugResize(w, h);

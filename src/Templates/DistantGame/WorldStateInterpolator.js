@@ -1,5 +1,5 @@
 /** @format */
-import WorldState from '../Shared/WorldState';
+import WorldState from '../../Game/Shared/WorldState';
 
 /**
  * StateComputer working with a distant server
@@ -106,6 +106,7 @@ export class WorldStateInterpolator {
     this.firstServerTimestamp = state.getTimestamp();
     this.gameStart = Date.now();
     this.states.length = 0;
+    this.lastTimeState = 0;
     this._onNewState(state);
   }
 
