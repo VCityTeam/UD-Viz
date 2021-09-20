@@ -292,6 +292,30 @@ export class View3D {
 
     //start
     this.inputManager.startListening(this.itownsView.domElement);
+
+    //dynamic near far computation
+    this.itownsView.addFrameRequester(
+      itowns.MAIN_LOOP_EVENTS.AFTER_CAMERA_UPDATE,
+      this.computeNearFarCamera.bind(this)
+    );
+  }
+
+  /**
+   * dynamic computation of the near and far of the camera to fit the extent
+   */
+  computeNearFarCamera() {
+    const camera = this.itownsView.camera.camera3D;
+    const radius = Math.sqrt(
+      Math.pow(0.5 * (this.extent.north - this.extent.south), 2) +
+        Math.pow(0.5 * (this.extent.east - this.extent.west), 2)
+    );
+
+    const distToCenter = camera.position.distanceTo(this.extent.center());
+
+    camera.near = Math.max(distToCenter - radius, 0.001);
+    camera.far = distToCenter + radius;
+
+    camera.updateProjectionMatrix();
   }
 
   /**
