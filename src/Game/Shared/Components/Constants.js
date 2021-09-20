@@ -22,6 +22,8 @@ module.exports = Object.freeze({
       QUERY_AVATAR_GO: 'query_avatar_go',
       SAVE_AVATAR_GO: 'save_avatar_go',
       SAVE_WORLDS: 'save_worlds',
+      CREATE_BBB_ROOM: 'create_bbb_room',
+      ON_BBB_URL: 'on_bbb_url',
     },
   },
 });
