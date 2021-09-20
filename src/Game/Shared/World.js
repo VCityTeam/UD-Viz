@@ -131,25 +131,21 @@ const WorldModule = class World {
       _this.isServerSide
     );
 
+    //INIT EVENT TRIGGER
+    if (parent) {
+      parent.addChild(gameObject);
+    } else {
+      _this.gameObject = gameObject;
+    }
+    gameObject.traverse(function (child) {
+      child.executeWorldScripts(WorldScriptComponent.EVENT.INIT, [
+        worldContext,
+      ]);
+    });
+
     Promise.all(this.computePromisesLoad(gameObject, worldContext)).then(
       function () {
-        if (parent) {
-          parent.addChild(gameObject);
-        } else {
-          _this.gameObject = gameObject;
-        }
-
-        //TODO init can be trigger several times but need this to init child of a add go
-        gameObject.traverse(function (child) {
-          // console.log(_this.name + ' add ' + child.name);
-
-          child.executeWorldScripts(WorldScriptComponent.EVENT.INIT, [
-            worldContext,
-          ]);
-        });
-
         _this.registerGOCollision(gameObject);
-
         if (onLoad) onLoad();
       }
     );

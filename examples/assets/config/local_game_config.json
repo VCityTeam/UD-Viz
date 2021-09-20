@@ -1,5 +1,10 @@
 {
   "assetsManager": {
+    "sounds": {
+      "ballon_pop": {
+        "path": "./assets/sounds/ballon_pop.wav"
+      }
+    },
     "models": {
       "zeppelin": {
         "path": "./assets/models/Zeppelin_Labex_IMU.glb",
@@ -21,6 +26,9 @@
       },
       "commands": {
         "path": "./assets/localScripts/commands.js"
+      },
+      "zeppelin": {
+        "path": "./assets/localScripts/zeppelin.js"
       }
     }
   },

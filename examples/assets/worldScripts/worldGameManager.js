@@ -18,8 +18,15 @@ module.exports = class WorldGameManager {
     this.zeppelin = new Shared.GameObject({
       name: 'zeppelin',
       components: {
+        Audio: {
+          sounds: ['ballon_pop'],
+        },
         WorldScript: {
           idScripts: ['zeppelin'],
+        },
+        LocalScript: {
+          idScripts: ['zeppelin'],
+          conf: { sphereCount: 0 },
         },
         Render: { idModel: 'zeppelin' },
         Collider: {

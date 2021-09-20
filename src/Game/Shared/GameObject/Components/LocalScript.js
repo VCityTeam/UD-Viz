@@ -23,7 +23,8 @@ const LocalScriptModule = class LocalScript {
     this.type = json.type || LocalScriptModule.TYPE;
 
     //conf pass to scripts
-    this.conf = JSON.parse(JSON.stringify(json.conf)) || {};
+    const conf = json.conf || {};
+    this.conf = JSON.parse(JSON.stringify(conf));
 
     //map of scripts
     this.scripts = {};
