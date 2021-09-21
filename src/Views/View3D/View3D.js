@@ -9,7 +9,7 @@ import { InputManager } from '../../Components/InputManager';
 
 import * as proj4 from 'proj4';
 import { TilesManager } from '../../Components/Components';
-import { LayerManager } from '../../Widgets/Components/Components';//TODO LayerManager should be a components one level above
+import { LayerManager } from '../../Widgets/Components/Components'; //TODO LayerManager should be a components one level above
 
 /**
  *  Main view of an ud-viz application
@@ -450,7 +450,7 @@ export class View3D {
     const $3dTilesLayer = new itowns.C3DTilesLayer(
       layer['id'],
       {
-        name: 'Lyon-2015-'.concat(layer['id']),
+        name: layer['id'],
         source: new itowns.C3DTilesSource({
           url: layer['url'],
         }),
@@ -490,6 +490,10 @@ export class View3D {
     this.layerManager.tilesManagers.push($3DTilesManager);
 
     return [$3dTilesLayer, $3DTilesManager];
+  }
+
+  getLayerManager() {
+    return this.layerManager;
   }
 
   /**
