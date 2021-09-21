@@ -41,7 +41,7 @@
     "cross-env": "^7.0.3",
     "css-loader": "^0.28.10",
     "eslint": "^7.28.0",
-    "nodemon": "^2.0.7",
+    "nodemon": "^2.0.12",
     "style-loader": "^0.20.3",
     "url-loader": "^1.0.1",
     "webpack": "^4.46.0",
