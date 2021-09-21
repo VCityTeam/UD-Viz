@@ -8,6 +8,8 @@ import './View3D.css';
 import { InputManager } from '../../Components/InputManager';
 
 import * as proj4 from 'proj4';
+import { TilesManager } from '../../Components/Components';
+import { LayerManager } from '../../Widgets/Components/Components';//TODO LayerManager should be a components one level above
 
 /**
  *  Main view of an ud-viz application
@@ -78,6 +80,13 @@ export class View3D {
 
     //inputs
     this.inputManager = new InputManager();
+
+    /**
+     * Object used to manage all of the layer.
+     *
+     * @type {LayerManager}
+     */
+    this.layerManager = null;
   }
 
   /**
@@ -282,7 +291,7 @@ export class View3D {
     //City generation
     this.addBaseMapLayer();
     this.addElevationLayer();
-    this.add3DTilesLayer();
+    this.setupAndAdd3DTilesLayers();
 
     //TODO parler a itowns remove listener of the resize
     this.itownsView.debugResize = this.itownsView.resize;
@@ -382,26 +391,105 @@ export class View3D {
   }
 
   /**
-   * Adds 3DTiles Layer
+   * Sets up a 3D Tiles layer and adds it to the itowns view
+   * @param {string} layerConfig The name of the layer to setup
    */
-  add3DTilesLayer() {
-    if (!this.config['3DTilesLayer']) {
-      console.warn('no 3DTilesLayer in config');
-      return;
+  setupAndAdd3DTilesLayers() {
+    // Positional arguments verification
+    if (!this.config['3DTilesLayers']) {
+      throw 'No 3DTilesLayers field in the configuration file';
     }
 
-    const $3DTilesLayer = new itowns.C3DTilesLayer(
-      this.config['3DTilesLayer']['id'],
+    this.layerManager = new LayerManager(this.itownsView);
+
+    const layers = {};
+    for (let layer of this.config['3DTilesLayers']) {
+      layers[layer.id] = this.setup3DTilesLayer(layer);
+      itowns.View.prototype.addLayer.call(this.itownsView, layers[layer.id][0]);
+    }
+    return layers;
+  }
+
+  /**
+   * Create an iTowns 3D Tiles layer based on the specified layerConfig.
+   * @param {string} layerConfig The name of the layer to setup from the
+   * generalDemoConfig.json config file
+   */
+  setup3DTilesLayer(layer) {
+    if (!layer['id'] || !layer['url']) {
+      throw 'Your layer does not have url id properties or both. ';
+    }
+
+    const extensionsConfig = layer['extensions'];
+    const extensions = new itowns.C3DTExtensions();
+    if (extensionsConfig) {
+      for (let i = 0; i < extensionsConfig.length; i++) {
+        if (extensionsConfig[i] === '3DTILES_temporal') {
+          extensions.registerExtension('3DTILES_temporal', {
+            [itowns.C3DTilesTypes.batchtable]: $3DTemporalBatchTable,
+            [itowns.C3DTilesTypes.boundingVolume]: $3DTemporalBoundingVolume,
+            [itowns.C3DTilesTypes.tileset]: $3DTemporalTileset,
+          });
+        } else if (extensionsConfig[i] === '3DTILES_batch_table_hierarchy') {
+          extensions.registerExtension('3DTILES_batch_table_hierarchy', {
+            [itowns.C3DTilesTypes.batchtable]:
+              itowns.C3DTBatchTableHierarchyExtension,
+          });
+        } else {
+          console.warn(
+            'The 3D Tiles extension ' +
+              extensionsConfig[i] +
+              ' specified in generalDemoConfig.json is not supported ' +
+              'by UD-Viz yet. Only 3DTILES_temporal and ' +
+              '3DTILES_batch_table_hierarchy are supported.'
+          );
+        }
+      }
+    }
+
+    const $3dTilesLayer = new itowns.C3DTilesLayer(
+      layer['id'],
       {
-        name: 'Lyon-2015-'.concat(this.config['3DTilesLayer']['id']),
+        name: 'Lyon-2015-'.concat(layer['id']),
         source: new itowns.C3DTilesSource({
-          url: this.config['3DTilesLayer']['url'],
+          url: layer['url'],
         }),
+        registeredExtensions: extensions,
       },
       this.itownsView
     );
 
-    itowns.View.prototype.addLayer.call(this.itownsView, $3DTilesLayer);
+    let material;
+    if (layer['pc_size']) {
+      material = new THREE.PointsMaterial({
+        size: layer['pc_size'],
+        vertexColors: true,
+      });
+    }
+
+    $3dTilesLayer.overrideMaterials = material;
+    $3dTilesLayer.material = material;
+
+    const $3DTilesManager = new TilesManager(this.itownsView, $3dTilesLayer);
+    let color = 0xffffff;
+    if (layer['color']) {
+      color = parseInt(layer['color']);
+    }
+    $3DTilesManager.registerStyle('default', {
+      materialProps: { opacity: 1, color: color },
+    });
+
+    $3DTilesManager.addEventListener(
+      TilesManager.EVENT_TILE_LOADED,
+      function (event) {
+        $3DTilesManager.setStyleToTileset('default');
+        $3DTilesManager.applyStyles();
+      }
+    );
+
+    this.layerManager.tilesManagers.push($3DTilesManager);
+
+    return [$3dTilesLayer, $3DTilesManager];
   }
 
   /**

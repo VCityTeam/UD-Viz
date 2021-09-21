@@ -1,9 +1,9 @@
 /** @format */
 
-import { DocumentModule } from '../../Documents/DocumentModule';
-import { CityObjectModule } from '../../CityObjects/CityObjectModule';
-import { DocumentLinkInterface } from './DocumentLinkInterface';
-import { CityObjectLinkInterface } from './CityObjectLinkInterface';
+// import { DocumentModule } from '../../Documents/DocumentModule';
+// import { CityObjectModule } from '../../CityObjects/CityObjectModule';
+// import { DocumentLinkInterface } from './DocumentLinkInterface';
+// import { CityObjectLinkInterface } from './CityObjectLinkInterface';
 import { LinkProvider } from '../ViewModel/LinkProvider';
 import { DocumentView } from '../../Documents/View/DocumentView';
 import { CityObjectWindow } from '../../CityObjects/View/CityObjectWindow';

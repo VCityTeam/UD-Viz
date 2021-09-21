@@ -1,7 +1,7 @@
 /** @format */
 
 import * as THREE from 'three';
-import { objectEquals } from '../../../Components/DataProcessing/DataProcessing';
+import { objectEquals } from '../DataProcessing/DataProcessing';
 
 /**
  * Search a batch table in a tile. A tile is a THREE.js 3DObject with a
