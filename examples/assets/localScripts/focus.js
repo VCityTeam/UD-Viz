@@ -21,7 +21,7 @@ module.exports = class Focus {
     );
 
     //initial distance of the camera with the zeppelin
-    this.distance = 150;
+    this.distance = 10;
   }
 
   init() {
@@ -32,7 +32,7 @@ module.exports = class Focus {
     const manager = gV.getInputManager();
     manager.addMouseInput(gV.html(), 'wheel', function (event) {
       _this.distance += event.wheelDelta * 0.1;
-      _this.distance = Math.max(Math.min(_this.distance, 500), 0);
+      _this.distance = Math.max(Math.min(_this.distance, 500), 10);
     });
   }
 
@@ -44,7 +44,7 @@ module.exports = class Focus {
     const localContext = arguments[1];
 
     //get the zeppelin gameobject by name
-    const zeppelin = go.computeRoot().findByName('zeppelin');
+    const zeppelin = go.computeRoot().findByName(this.conf.nameGO2Focus);
 
     //compute world transform
     const obj = zeppelin.computeObject3D();
@@ -53,7 +53,7 @@ module.exports = class Focus {
     obj.matrixWorld.decompose(position, quaternion, new Shared.THREE.Vector3());
 
     //move the position a bit up (z is up)
-    position.z += 10;
+    position.z += 1;
 
     //compute camera position
     const dir = zeppelin
