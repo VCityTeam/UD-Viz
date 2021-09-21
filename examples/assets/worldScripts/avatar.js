@@ -19,6 +19,9 @@ module.exports = class Avatar {
       name: 'avatar',
       components: {
         Render: { idModel: 'avatar' },
+        LocalScript: {
+          idScripts: [],
+        },
       },
     });
 
@@ -54,9 +57,5 @@ module.exports = class Avatar {
           throw new Error('command not handle ', cmd.getType());
       }
     });
-
-    const aPos = this.avatar.getPosition();
-    aPos.z = -132;
-    this.avatar.setPosition(aPos);
   }
 };
