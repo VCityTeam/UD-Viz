@@ -10,6 +10,10 @@
         "path": "./assets/models/Zeppelin_Labex_IMU.glb",
         "anchor": "center_min",
         "rotation": { "x": 0, "y": 1.5707, "z": 0 }
+      },
+      "avatar": {
+        "path": "./assets/models/avatar_capuchon.glb",
+        "anchor": "center_min"
       }
     },
     "worldScripts": {
@@ -18,6 +22,9 @@
       },
       "zeppelin": {
         "path": "./assets/worldScripts/zeppelin.js"
+      },
+      "avatar": {
+        "path": "./assets/worldScripts/avatar.js"
       }
     },
     "localScripts": {
@@ -49,12 +56,28 @@
       "tilt": 10
     }
   },
-  "3DTilesLayer": {
-    "id": "3d-tiles-layer-building",
-    "url": "./assets/lod_flying_campus/tileset.json",
-    "color": "0xFFFFFF",
-    "initTilesManager": "true"
-  },
+  "3DTilesLayers": [
+    {
+      "id": "3d-tiles-layer-building",
+      "url": "./assets/3DTiles/buildings/tileset.json",
+      "color": "0xFFFFFF"
+    },
+    {
+      "id": "3d-tiles-layer-relief",
+      "url": "./assets/3DTiles/relief/tileset.json",
+      "color": "0xd0ac7f"
+    },
+    {
+      "id": "3d-tiles-layer-road",
+      "url": "./assets/3DTiles/roads/tileset.json",
+      "color": "0x272727"
+    },
+    {
+      "id": "3d-tiles-layer-water",
+      "url": "./assets/3DTiles/water/tileset.json",
+      "color": "0x2ACAEA"
+    }
+  ],
   "projection": "EPSG:3946",
   "background_image_layer": {
     "url": "https://download.data.grandlyon.com/wms/grandlyon",
