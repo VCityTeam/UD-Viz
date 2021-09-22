@@ -61,9 +61,19 @@
   },
   "3DTilesLayers": [
     {
+      "id": "3d-tiles-layer-building",
+      "url": "./assets/3DTiles/buildings/tileset.json",
+      "color": "0xFFFFFF"
+    },
+    {
       "id": "3d-tiles-layer-relief",
       "url": "./assets/3DTiles/relief/tileset.json",
       "color": "0xd0ac7f"
+    },
+    {
+      "id": "3d-tiles-layer-road",
+      "url": "./assets/3DTiles/roads/tileset.json",
+      "color": "0x272727"
     },
     {
       "id": "3d-tiles-layer-water",

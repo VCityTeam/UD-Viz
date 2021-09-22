@@ -1,11 +1,13 @@
 /** @format */
 
 let udviz = null;
+let Command = null;
 
 module.exports = class UpdateElevationGround {
   constructor(conf, udvizBundle) {
     this.conf = conf;
     udviz = udvizBundle;
+    Command = udviz.Game.Shared.Command;
 
     this.raycaster = new udviz.THREE.Raycaster();
   }
@@ -25,27 +27,32 @@ module.exports = class UpdateElevationGround {
     const localContext = arguments[1];
 
     const manager = localContext.getGameView().getLayerManager();
-    let layerManager = null;
-    for (let index = 0; index < manager.tilesManagers.length; index++) {
-      const element = manager.tilesManagers[index];
-      if (element.layer.id == '3d-tiles-layer-relief') {
-        layerManager = element;
-        break;
-      }
-    }
-
-    if (!layerManager) throw new Error('no relief');
-
     const ground = [];
-    layerManager.tiles.forEach(function (t) {
-      const obj = t.getObject3D();
-      if (obj) ground.push(obj);
-    });
+
+    const addObjectToGround = function (nameLayer) {
+      let layerManager = null;
+      for (let index = 0; index < manager.tilesManagers.length; index++) {
+        const element = manager.tilesManagers[index];
+        if (element.layer.id == nameLayer) {
+          layerManager = element;
+          break;
+        }
+      }
+
+      if (!layerManager) throw new Error('no ', nameLayer);
+
+      layerManager.tiles.forEach(function (t) {
+        const obj = t.getObject3D();
+        if (obj) ground.push(obj);
+      });
+    };
+
+    addObjectToGround('3d-tiles-layer-relief');
+    addObjectToGround('3d-tiles-layer-road');
 
     const avatar = go.computeRoot().findByName('avatar');
     const pos = avatar.getPosition();
     const ref = localContext.getGameView().getObject3D().position;
-    // const offset = new udviz.THREE.Vector3(0, 0, 100);
 
     this.raycaster.ray.origin = new udviz.THREE.Vector3(pos.x, pos.y, 0).add(
       ref
@@ -54,7 +61,7 @@ module.exports = class UpdateElevationGround {
 
     // console.log(this.raycaster.ray);
     let minDist = Infinity;
-
+    let z = 0;
     for (let index = 0; index < ground.length; index++) {
       const element = ground[index];
       const intersects = this.raycaster.intersectObjects([element], true);
@@ -62,15 +69,16 @@ module.exports = class UpdateElevationGround {
       if (intersects.length) {
         intersects.forEach(function (i) {
           if (i.distance < minDist) {
-            // minDist = i.distance;
-            pos.z = -i.distance;
-            console.log(pos);
+            z = -i.distance;
           }
         });
       }
     }
 
-    // debugger;
-    avatar.setPosition(pos);
+    //notify world with the right elevation
+    const computer = localContext.getGameView().getStateComputer();
+    computer.onCommands([
+      new Command({ type: Command.TYPE.Z_UPDATE, data: z }),
+    ]);
   }
 };

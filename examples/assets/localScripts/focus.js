@@ -3,9 +3,6 @@
 let udviz = null;
 let Shared;
 
-//angle to inclinate the camera
-const CAMERA_ANGLE = Math.PI / 6;
-
 module.exports = class Focus {
   constructor(conf, udvizBundle) {
     this.conf = conf;
@@ -17,11 +14,11 @@ module.exports = class Focus {
       new Shared.THREE.Euler(Math.PI * 0.5, 0, 0)
     );
     this.quaternionAngle = new Shared.THREE.Quaternion().setFromEuler(
-      new Shared.THREE.Euler(-CAMERA_ANGLE, 0, 0)
+      new Shared.THREE.Euler(-this.conf.cameraAngle, 0, 0)
     );
 
     //initial distance of the camera with the zeppelin
-    this.distance = 10;
+    this.distance = this.conf.minDist;
   }
 
   init() {
@@ -32,7 +29,10 @@ module.exports = class Focus {
     const manager = gV.getInputManager();
     manager.addMouseInput(gV.html(), 'wheel', function (event) {
       _this.distance += event.wheelDelta * 0.1;
-      _this.distance = Math.max(Math.min(_this.distance, 500), 10);
+      _this.distance = Math.max(
+        Math.min(_this.distance, _this.conf.maxDist),
+        _this.conf.minDist
+      );
     });
   }
 
@@ -53,7 +53,7 @@ module.exports = class Focus {
     obj.matrixWorld.decompose(position, quaternion, new Shared.THREE.Vector3());
 
     //move the position a bit up (z is up)
-    position.z += 1;
+    position.z += this.conf.offsetZ;
 
     //compute camera position
     const dir = zeppelin

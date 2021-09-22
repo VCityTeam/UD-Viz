@@ -90,6 +90,7 @@ CommandModule.TYPE = {
   MOVE_RIGHT: 'move_right',
   ROTATE: 'rotate',
   MOVE_TO: 'move_to',
+  Z_UPDATE: 'z_update',
 };
 
 module.exports = CommandModule;
