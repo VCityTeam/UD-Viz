@@ -36,14 +36,14 @@ export class DistantGame {
     ]);
   }
 
-  reset(options) {
+  reset(userData) {
     this.dispose();
 
     const gV = new GameView({
       assetsManager: this.assetsManager,
       stateComputer: this.stateComputer,
       config: this.config,
-      userData: { firstGameView: options.firstGameView },
+      userData: userData,
     });
 
     const ctxGameView = gV.getLocalContext();
@@ -58,8 +58,8 @@ export class DistantGame {
     this.gameView = gV;
   }
 
-  start(options = {}) {
-    this.reset(options);
+  start(userData = {}) {
+    this.reset(userData);
 
     const _this = this;
 
@@ -75,11 +75,13 @@ export class DistantGame {
         if (!_this.gameView.getLastState()) {
           //view was not intialized do it
           _this.stateComputer.onFirstState(state);
-          _this.gameView.start(state, json.avatarUUID);
+          _this.gameView.writeUserData('avatarUUID', json.avatarUUID);
+          _this.gameView.start(state);
         } else {
           _this.start({ firstGameView: false });
           _this.stateComputer.onFirstState(state);
-          _this.gameView.start(state, json.avatarUUID);
+          _this.gameView.writeUserData('avatarUUID', json.avatarUUID);
+          _this.gameView.start(state);
         }
       }
     );

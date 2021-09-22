@@ -41,9 +41,6 @@ export class GameView extends View3D {
     if (params.updateGameObject != undefined)
       this.updateGameObject = params.updateGameObject;
 
-    //TODO place these attributes in a userData object
-    this.avatarUUID = null; //uuid of the avatar
-
     //context pass to the localScript GameObject
     this.localContext = new LocalContext(this);
 
@@ -99,12 +96,8 @@ export class GameView extends View3D {
    * Initialize this view
    *
    * @param {WorldState} state first state of this view
-   * @param {uuid} avatarUUID uuid of the avatar GameObject
    */
-  start(state, avatarUUID) {
-    //ref it
-    this.avatarUUID = avatarUUID;
-
+  start(state) {
     //build itowns view
     const o = state.getOrigin();
     const [x, y] = proj4.default(this.projection).forward([o.lng, o.lat]);
