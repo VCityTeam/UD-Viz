@@ -43,7 +43,7 @@ export class DistantGame {
       assetsManager: this.assetsManager,
       stateComputer: this.stateComputer,
       config: this.config,
-      firstGameView: options.firstGameView,
+      userData: { firstGameView: options.firstGameView },
     });
 
     const ctxGameView = gV.getLocalContext();
