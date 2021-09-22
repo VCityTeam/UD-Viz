@@ -42,7 +42,6 @@ export class GameView extends View3D {
       this.updateGameObject = params.updateGameObject;
 
     //TODO place these attributes in a userData object
-    this.firstGameView = params.firstGameView || false; //first gameview of the application
     this.avatarUUID = null; //uuid of the avatar
 
     //context pass to the localScript GameObject
@@ -54,6 +53,17 @@ export class GameView extends View3D {
     //TODO move in View3D
     //Array of callbacks call during the tick
     this.tickRequesters = [];
+
+    //userData
+    this.userData = params.userData || {};
+  }
+
+  getUserData(key) {
+    return this.userData[key];
+  }
+
+  writeUserData(key, value) {
+    this.userData[key] = value;
   }
 
   getLocalContext() {
