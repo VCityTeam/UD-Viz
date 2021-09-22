@@ -11,6 +11,11 @@ import * as proj4 from 'proj4';
 import { TilesManager } from '../../Components/Components';
 import { LayerManager } from '../../Widgets/Components/Components'; //TODO LayerManager should be a components one level above
 
+import { Widgets } from '../..';
+const $3DTemporalBatchTable = Widgets.$3DTemporalBatchTable;
+const $3DTemporalBoundingVolume = Widgets.$3DTemporalBoundingVolume;
+const $3DTemporalTileset = Widgets.$3DTemporalTileset;
+
 /**
  *  Main view of an ud-viz application
  */
