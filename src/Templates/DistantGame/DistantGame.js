@@ -78,7 +78,8 @@ export class DistantGame {
           _this.gameView.writeUserData('avatarUUID', json.avatarUUID);
           _this.gameView.start(state);
         } else {
-          _this.start({ firstGameView: false });
+          userData.firstGameView = false;
+          _this.start(userData);
           _this.stateComputer.onFirstState(state);
           _this.gameView.writeUserData('avatarUUID', json.avatarUUID);
           _this.gameView.start(state);
