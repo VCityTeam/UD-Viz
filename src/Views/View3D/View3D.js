@@ -309,7 +309,7 @@ export class View3D {
 
     //dynamic near far computation
     this.itownsView.addFrameRequester(
-      itowns.MAIN_LOOP_EVENTS.AFTER_CAMERA_UPDATE,
+      itowns.MAIN_LOOP_EVENTS.BEFORE_RENDER,
       this.computeNearFarCamera.bind(this)
     );
   }
@@ -319,15 +319,27 @@ export class View3D {
    */
   computeNearFarCamera() {
     const camera = this.itownsView.camera.camera3D;
-    const radius = Math.sqrt(
-      Math.pow(0.5 * (this.extent.north - this.extent.south), 2) +
-        Math.pow(0.5 * (this.extent.east - this.extent.west), 2)
-    );
+    const points = [
+      new THREE.Vector3(this.extent.west, this.extent.south, 0),
+      new THREE.Vector3(this.extent.west, this.extent.north, 0),
+      new THREE.Vector3(this.extent.east, this.extent.south, 0),
+      new THREE.Vector3(this.extent.east, this.extent.north, 0),
+    ];
 
-    const distToCenter = camera.position.distanceTo(this.extent.center());
+    const dirCamera = camera.getWorldDirection(new THREE.Vector3());
 
-    camera.near = Math.max(distToCenter - radius, 0.001);
-    camera.far = distToCenter + radius;
+    let min = Infinity;
+    let max = -Infinity;
+    points.forEach(function (p) {
+      const pointDir = p.clone().sub(camera.position);
+      const cos = pointDir.dot(dirCamera) / pointDir.length(); //dircamera length is 1
+      const dist = p.distanceTo(camera.position) * cos;
+      if (min > dist) min = dist;
+      if (max < dist) max = dist;
+    });
+
+    camera.near = Math.max(min, 0.001);
+    camera.far = max;
 
     camera.updateProjectionMatrix();
   }
