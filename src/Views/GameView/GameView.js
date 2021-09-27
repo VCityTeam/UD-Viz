@@ -187,7 +187,7 @@ export class GameView extends View3D {
     );
 
     //init renderer
-    const renderer = this.itownsView.mainLoop.gfxEngine.renderer;
+    const renderer = this.getRenderer();
     THREEUtils.initRenderer(renderer, this.skyColor);
 
     //add lights
@@ -203,6 +203,14 @@ export class GameView extends View3D {
     directionalLight.castShadow = true;
     directionalLight.shadow.bias = -0.0005;
     this.directionalLight = directionalLight;
+
+    if (this.config.game && this.config.game.sky) {
+      THREEUtils.addEquiRectangularMap(
+        this.config.game.sky.path,
+        renderer,
+        this.getScene()
+      );
+    }
   }
 
   /**
@@ -369,6 +377,14 @@ export class GameView extends View3D {
 
   getStateComputer() {
     return this.stateComputer;
+  }
+
+  getScene() {
+    return this.itownsView.scene;
+  }
+
+  getRenderer() {
+    return this.itownsView.mainLoop.gfxEngine.renderer;
   }
 }
 

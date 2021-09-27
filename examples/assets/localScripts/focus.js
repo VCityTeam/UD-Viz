@@ -33,6 +33,7 @@ module.exports = class Focus {
         Math.min(_this.distance, _this.conf.maxDist),
         _this.conf.minDist
       );
+      gV.computeNearFarCamera();
     });
   }
 

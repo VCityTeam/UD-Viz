@@ -49,6 +49,9 @@
       "r": 0.4,
       "g": 0.6,
       "b": 0.8
+    },
+    "sky": {
+      "path": "./assets/img/sky.jpg"
     }
   },
   "itowns": {
