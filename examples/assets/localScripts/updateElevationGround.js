@@ -70,6 +70,7 @@ module.exports = class UpdateElevationGround {
         intersects.forEach(function (i) {
           if (i.distance < minDist) {
             z = -i.distance;
+            minDist = i.distance;
           }
         });
       }
