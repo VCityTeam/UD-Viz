@@ -476,24 +476,13 @@ export class View3D {
       this.itownsView
     );
 
-    let material;
-    if (layer['pc_size']) {
-      material = new THREE.PointsMaterial({
-        size: layer['pc_size'],
-        vertexColors: true,
-      });
-    }
-
-    $3dTilesLayer.overrideMaterials = material;
-    $3dTilesLayer.material = material;
-
     const $3DTilesManager = new TilesManager(this.itownsView, $3dTilesLayer);
     let color = 0xffffff;
     if (layer['color']) {
       color = parseInt(layer['color']);
     }
     $3DTilesManager.registerStyle('default', {
-      materialProps: { opacity: 1, color: color },
+      materialProps: { opacity: 1, color: color, fog: false },
     });
 
     $3DTilesManager.addEventListener(
