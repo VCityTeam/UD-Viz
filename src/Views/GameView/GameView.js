@@ -378,14 +378,6 @@ export class GameView extends View3D {
   getStateComputer() {
     return this.stateComputer;
   }
-
-  getScene() {
-    return this.itownsView.scene;
-  }
-
-  getRenderer() {
-    return this.itownsView.mainLoop.gfxEngine.renderer;
-  }
 }
 
 /**
