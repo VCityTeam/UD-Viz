@@ -319,11 +319,16 @@ export class View3D {
    */
   computeNearFarCamera() {
     const camera = this.itownsView.camera.camera3D;
+    const height = 400;
     const points = [
       new THREE.Vector3(this.extent.west, this.extent.south, 0),
+      new THREE.Vector3(this.extent.west, this.extent.south, height),
       new THREE.Vector3(this.extent.west, this.extent.north, 0),
+      new THREE.Vector3(this.extent.west, this.extent.north, height),
       new THREE.Vector3(this.extent.east, this.extent.south, 0),
+      new THREE.Vector3(this.extent.east, this.extent.south, height),
       new THREE.Vector3(this.extent.east, this.extent.north, 0),
+      new THREE.Vector3(this.extent.east, this.extent.north, height),
     ];
 
     const dirCamera = camera.getWorldDirection(new THREE.Vector3());
