@@ -3,7 +3,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Billboard example</title>
+    <title>DeckGL example</title>
 
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -40,6 +40,20 @@
           view3D.getRenderer(),
           view3D.getScene()
         );
+
+        const { directionalLight, ambientLight } =
+          udv.Game.Shared.Components.THREEUtils.addLights(view3D.getScene());
+        udv.Game.Shared.Components.THREEUtils.bindLightTransform(
+          10,
+          Math.PI / 4,
+          Math.PI / 4,
+          view3D.getScene(),
+          directionalLight
+        );
+
+        window.addEventListener('keydown', function () {
+          console.log(view3D);
+        });
 
         // const center = extent.center();
 
