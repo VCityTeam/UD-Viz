@@ -19,6 +19,8 @@ const $3DTemporalBatchTable = Widgets.$3DTemporalBatchTable;
 const $3DTemporalBoundingVolume = Widgets.$3DTemporalBoundingVolume;
 const $3DTemporalTileset = Widgets.$3DTemporalTileset;
 
+import { Deck } from '@deck.gl/core';
+
 /**
  *  Main view of an ud-viz application
  */
@@ -43,8 +45,12 @@ export class View3D {
     this.rootCss = document.createElement('div');
     this.rootCss.id = 'css_View3D';
 
+    this.rootDeckGL = document.createElement('canvas');
+    this.rootDeckGL.id = 'deck_gl_View3D';
+
     this.rootHtml.appendChild(this.rootCss);
     this.rootHtml.appendChild(this.rootWebGL);
+    this.rootHtml.appendChild(this.rootDeckGL);
 
     //root itowns
     this.rootItownsHtml = document.createElement('div');
@@ -85,6 +91,9 @@ export class View3D {
     this.css3DRenderer = null;
     this.css3DScene = null;
     this.maskObject = null;
+
+    //Deck GL attributes
+    this.deckGLRenderer = null;
 
     //inputs
     this.inputManager = new InputManager();
@@ -247,8 +256,9 @@ export class View3D {
     this.css3DScene.add(newElement);
 
     //mask
-    const geometry = new THREE.PlaneGeometry(size3D.width, size3D.height);
+    const geometry = new THREE.PlaneGeometry(size3D.width, size3D.height); //TODO remove size3D use scale of transform
 
+    //TODO just one instance
     const material = new THREE.MeshBasicMaterial({ side: THREE.DoubleSide });
     material.color.set('white');
     material.opacity = 0;
@@ -260,6 +270,65 @@ export class View3D {
     plane.scale.copy(transform.getScale());
     plane.updateMatrixWorld();
     this.maskObject.add(plane);
+  }
+
+  appendLayerDeckGL(layer, transform) {
+    if (!this.deckGLRenderer) this.initDeckGL();
+
+    this.deckGLRenderer.setProps({ layers: [layer] });
+  }
+
+  initDeckGL() {
+    const _this = this;
+
+    const o = proj4.default(this.projection).inverse(this.extent.center());
+    console.log('lat lng ', o);
+    //TODO pass certains attr as conf params
+    this.deckGLRenderer = new Deck({
+      map: false,
+      canvas: this.rootDeckGL,
+      initialViewState: {
+        longitude: o.x,
+        latitude: o.y,
+        zoom: 8,
+      },
+      parameters: {
+        clearColor: [0.93, 0.86, 0.81, 0],
+      },
+      controller: true,
+      onViewStateChange: function (object) {
+        const viewState = object.viewState;
+
+        const view = _this.itownsView;
+        const cam3D = view.camera.camera3D;
+        const prev = itowns.CameraUtils.getTransformCameraLookingAtTarget(
+          view,
+          cam3D
+        );
+        const newPos = prev;
+        newPos.coord = new itowns.Coordinates(
+          'EPSG:4326',
+          viewState.longitude,
+          viewState.latitude,
+          0
+        );
+
+        // newPos.range = 64118883.098724395 / (2(viewState.zoom-1));
+        newPos.range = (64118883 / 2) * (viewState.zoom - 1); // 64118883 is Range at Z=1
+        newPos.heading = viewState.bearing;
+        // for some reason I cant access Math.clamp
+        //newPos.tilt = clamp((90 - viewState.pitch), 0, 90);
+
+        itowns.CameraUtils.transformCameraToLookAtTarget(view, cam3D, newPos);
+        view.notifyChange();
+        cam3D.updateMatrixWorld();
+
+        console.log('view state change ', viewState);
+        return viewState;
+      },
+    });
+
+    this.catchEventsCSS3D(true);
   }
 
   /**
@@ -551,5 +620,14 @@ export class View3D {
     this.html().remove();
     this.inputManager.dispose();
     this.disposed = true;
+    if (this.deckGLRenderer) this.deckGLRenderer.finalize();
+  }
+
+  getScene() {
+    return this.itownsView.scene;
+  }
+
+  getRenderer() {
+    return this.itownsView.mainLoop.gfxEngine.renderer;
   }
 }
