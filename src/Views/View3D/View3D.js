@@ -295,40 +295,64 @@ export class View3D {
       parameters: {
         clearColor: [0.93, 0.86, 0.81, 0],
       },
-      controller: true,
-      onViewStateChange: function (object) {
-        const viewState = object.viewState;
+      controller: false,
+      // onViewStateChange: function (object) {
+      //   const viewState = object.viewState;
 
-        const view = _this.itownsView;
-        const cam3D = view.camera.camera3D;
-        const prev = itowns.CameraUtils.getTransformCameraLookingAtTarget(
-          view,
-          cam3D
-        );
-        const newPos = prev;
-        newPos.coord = new itowns.Coordinates(
-          'EPSG:4326',
-          viewState.longitude,
-          viewState.latitude,
-          0
-        );
+      //   const view = _this.itownsView;
+      //   const cam3D = view.camera.camera3D;
+      //   const prev = itowns.CameraUtils.getTransformCameraLookingAtTarget(
+      //     view,
+      //     cam3D
+      //   );
+      //   const newPos = prev;
+      //   newPos.coord = new itowns.Coordinates(
+      //     'EPSG:4326',
+      //     viewState.longitude,
+      //     viewState.latitude,
+      //     0
+      //   );
 
-        // newPos.range = 64118883.098724395 / (2(viewState.zoom-1));
-        newPos.range = (64118883 / 2) * (viewState.zoom - 1); // 64118883 is Range at Z=1
-        newPos.heading = viewState.bearing;
-        // for some reason I cant access Math.clamp
-        //newPos.tilt = clamp((90 - viewState.pitch), 0, 90);
+      //   // newPos.range = 64118883.098724395 / (2(viewState.zoom-1));
+      //   newPos.range = (64118883 / 2) * (viewState.zoom - 1); // 64118883 is Range at Z=1
+      //   newPos.heading = viewState.bearing;
+      //   // for some reason I cant access Math.clamp
+      //   //newPos.tilt = clamp((90 - viewState.pitch), 0, 90);
 
-        itowns.CameraUtils.transformCameraToLookAtTarget(view, cam3D, newPos);
-        view.notifyChange();
-        cam3D.updateMatrixWorld();
+      //   itowns.CameraUtils.transformCameraToLookAtTarget(view, cam3D, newPos);
+      //   view.notifyChange();
+      //   cam3D.updateMatrixWorld();
 
-        console.log('view state change ', viewState);
-        return viewState;
-      },
+      //   console.log(cam3D, _this.extent, viewState);
+      //   return viewState;
+      // },
     });
 
-    this.catchEventsCSS3D(true);
+    _this.itownsView.addFrameRequester(
+      itowns.MAIN_LOOP_EVENTS.AFTER_CAMERA_UPDATE,
+      function () {
+        // console.log('hola ');
+        const cameraItowns = _this.itownsView.camera.camera3D;
+
+        const o = proj4
+          .default(_this.projection)
+          .inverse(cameraItowns.position.clone());
+
+        const cameraParams = {
+          longitude: o.x,
+          latitude: o.y,
+          zoom: cameraItowns.zoom,
+        };
+
+        console.log(cameraParams);
+
+        _this.deckGLRenderer.setProps({
+          initialViewState: cameraParams,
+        });
+      }
+    );
+
+    // this.catchEventsCSS3D(tfalserue);
   }
 
   /**
