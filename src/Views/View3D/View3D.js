@@ -2,7 +2,10 @@
 
 import * as THREE from 'three';
 import * as itowns from 'itowns';
-import { CSS3DObject, CSS3DRenderer } from 'three-css3drenderer';
+import {
+  CSS3DObject,
+  CSS3DRenderer,
+} from 'three/examples/jsm/renderers/CSS3DRenderer';
 
 import './View3D.css';
 import { InputManager } from '../../Components/InputManager';
@@ -167,11 +170,29 @@ export class View3D {
 
     //start ticking render of css3D renderer
     const _this = this;
+    const fps = 20;
+
+    let now;
+    let then = Date.now();
+    let delta;
     const tick = function () {
-      if (_this.disposed) return;
+      if (_this.disposed) return; //stop requesting frame if disposed
+
       requestAnimationFrame(tick);
-      if (!_this.isRendering) return;
-      css3DRenderer.render(_this.css3DScene, _this.itownsView.camera.camera3D);
+
+      now = Date.now();
+      delta = now - then;
+
+      if (delta > 1000 / fps) {
+        // update time stuffs
+        then = now - (delta % 1000) / fps;
+
+        if (!_this.isRendering) return;
+        css3DRenderer.render(
+          _this.css3DScene,
+          _this.itownsView.camera.camera3D
+        );
+      }
     };
     tick();
 
@@ -414,7 +435,8 @@ export class View3D {
   setupAndAdd3DTilesLayers() {
     // Positional arguments verification
     if (!this.config['3DTilesLayers']) {
-      throw 'No 3DTilesLayers field in the configuration file';
+      console.warn('No 3DTilesLayers field in the configuration file');
+      return;
     }
 
     this.layerManager = new LayerManager(this.itownsView);
