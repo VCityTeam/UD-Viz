@@ -272,7 +272,7 @@ export class View3D {
     this.maskObject.add(plane);
   }
 
-  appendLayerDeckGL(layer, transform) {
+  appendLayerDeckGL(layer) {
     if (!this.deckGLRenderer) this.initDeckGL();
 
     this.deckGLRenderer.setProps({ layers: [layer] });
@@ -282,7 +282,7 @@ export class View3D {
     const _this = this;
 
     const o = proj4.default(this.projection).inverse(this.extent.center());
-    console.log('lat lng ', o);
+
     //TODO pass certains attr as conf params
     this.deckGLRenderer = new Deck({
       map: false,
@@ -296,36 +296,6 @@ export class View3D {
         clearColor: [0.93, 0.86, 0.81, 0],
       },
       controller: false,
-      // onViewStateChange: function (object) {
-      //   const viewState = object.viewState;
-
-      //   const view = _this.itownsView;
-      //   const cam3D = view.camera.camera3D;
-      //   const prev = itowns.CameraUtils.getTransformCameraLookingAtTarget(
-      //     view,
-      //     cam3D
-      //   );
-      //   const newPos = prev;
-      //   newPos.coord = new itowns.Coordinates(
-      //     'EPSG:4326',
-      //     viewState.longitude,
-      //     viewState.latitude,
-      //     0
-      //   );
-
-      //   // newPos.range = 64118883.098724395 / (2(viewState.zoom-1));
-      //   newPos.range = (64118883 / 2) * (viewState.zoom - 1); // 64118883 is Range at Z=1
-      //   newPos.heading = viewState.bearing;
-      //   // for some reason I cant access Math.clamp
-      //   //newPos.tilt = clamp((90 - viewState.pitch), 0, 90);
-
-      //   itowns.CameraUtils.transformCameraToLookAtTarget(view, cam3D, newPos);
-      //   view.notifyChange();
-      //   cam3D.updateMatrixWorld();
-
-      //   console.log(cam3D, _this.extent, viewState);
-      //   return viewState;
-      // },
     });
 
     _this.itownsView.addFrameRequester(
@@ -338,13 +308,25 @@ export class View3D {
           .default(_this.projection)
           .inverse(cameraItowns.position.clone());
 
+        const dirCam = cameraItowns.getWorldDirection(new THREE.Vector3());
+        const axis = new THREE.Vector3(0, 0, -1);
+        const pitch = Math.acos(dirCam.dot(axis));
+
+        // newPos.range = 64118883 / (2(viewState.zoom-1)); // 64118883 is Range at Z=1
+        const magicNumber = 64118883.098724395;
+
+        const zoom =
+          Math.log((2 * magicNumber) / cameraItowns.position.z) / Math.log(2);
+
         const cameraParams = {
           longitude: o.x,
           latitude: o.y,
-          zoom: cameraItowns.zoom,
+          zoom: zoom,
+          bearing: (-cameraItowns.rotation.y * 180) / Math.PI,
+          pitch: (pitch * 180) / Math.PI,
         };
 
-        console.log(cameraParams);
+        console.log(cameraParams, cameraItowns);
 
         _this.deckGLRenderer.setProps({
           initialViewState: cameraParams,
@@ -433,11 +415,16 @@ export class View3D {
    */
   computeNearFarCamera() {
     const camera = this.itownsView.camera.camera3D;
+    const height = 300; //TODO compute this dynamically
     const points = [
       new THREE.Vector3(this.extent.west, this.extent.south, 0),
+      new THREE.Vector3(this.extent.west, this.extent.south, height),
       new THREE.Vector3(this.extent.west, this.extent.north, 0),
+      new THREE.Vector3(this.extent.west, this.extent.north, height),
       new THREE.Vector3(this.extent.east, this.extent.south, 0),
+      new THREE.Vector3(this.extent.east, this.extent.south, height),
       new THREE.Vector3(this.extent.east, this.extent.north, 0),
+      new THREE.Vector3(this.extent.east, this.extent.north, height),
     ];
 
     const dirCamera = camera.getWorldDirection(new THREE.Vector3());

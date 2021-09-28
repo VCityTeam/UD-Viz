@@ -22,10 +22,10 @@
 
         const extent = new udv.itowns.Extent(
           config['projection'],
-          x - r,
-          x + r,
-          y - r,
-          y + r
+          1842551.0294686693,
+          1844551.0294686693,
+          5173222.462082106,
+          5175222.462082106
         );
         //pass the projection which was used to compute extent
         const view3D = new udv.Views.View3D({
@@ -55,27 +55,20 @@
           console.log(view3D);
         });
 
-        // const center = extent.center();
+        const center = extent.center();
 
-        // const urlData =
-        //   'https://download.data.grandlyon.com/wfs/grandlyon?SERVICE=WFS&VERSION=2.0.0&request=GetFeature&typename=vdl_deplacements.emplacement_pmr&outputFormat=application/json; subtype=geojson&SRSNAME=EPSG:4326';
-        // const layer = new udv.LayersDeckGL.GeoJsonLayer({
-        //   data: urlData,
-        //   filled: true,
-        //   pointRadiusMinPixels: 5,
-        //   pointRadiusScale: 20,
-        //   getPointRadius: (f) => 1,
-        //   getFillColor: [200, 0, 80, 180],
-        // });
+        const urlData =
+          'https://download.data.grandlyon.com/wfs/grandlyon?SERVICE=WFS&VERSION=2.0.0&request=GetFeature&typename=vdl_deplacements.emplacement_pmr&outputFormat=application/json; subtype=geojson&SRSNAME=EPSG:4326';
+        const layer = new udv.LayersDeckGL.GeoJsonLayer({
+          data: urlData,
+          filled: true,
+          pointRadiusMinPixels: 5,
+          pointRadiusScale: 20,
+          getPointRadius: (f) => 1,
+          getFillColor: [200, 0, 80, 180],
+        });
 
-        // view3D.appendLayerDeckGL(
-        //   layer,
-        //   new udv.Game.Shared.Components.THREEUtils.Transform(
-        //     new udv.THREE.Vector3(center.x, center.y, 50),
-        //     new udv.THREE.Vector3(Math.PI * 0.5, Math.PI * 0.2, 0),
-        //     new udv.THREE.Vector3(2, 2, 2)
-        //   )
-        // );
+        view3D.appendLayerDeckGL(layer);
 
         // const image = document.createElement('img');
         // image.src =
