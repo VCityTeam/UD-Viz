@@ -117,7 +117,7 @@ export class View3D {
     const bottom = max.y;
     const right = max.x;
 
-    [this.rootWebGL, this.rootCss].forEach(function (el) {
+    [this.rootWebGL, this.rootCss, this.rootDeckGL].forEach(function (el) {
       el.style.top = top + 'px';
       el.style.left = left + 'px';
       el.style.bottom = bottom + 'px';
