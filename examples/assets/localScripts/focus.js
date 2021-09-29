@@ -71,5 +71,7 @@ module.exports = class Focus {
     iV.camera.camera3D.position.copy(position);
     iV.camera.camera3D.quaternion.copy(quaternion);
     iV.camera.camera3D.updateProjectionMatrix();
+
+    localContext.getGameView().computeNearFarCamera();
   }
 };
