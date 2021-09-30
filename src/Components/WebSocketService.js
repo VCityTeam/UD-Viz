@@ -1,6 +1,8 @@
 /** @format */
 
 import io from 'socket.io-client';
+const pipeline = require('stream');
+const ss = require('socket.io-stream');
 
 /**
  * Handle communication with a server using socket.io-client npm package
@@ -32,8 +34,12 @@ export class WebSocketService {
     });
 
     this.socket.on('disconnect', (reason) => {
-      console.log('Disconnected from server. reason = ', reason);
+      console.warn('Disconnected from server. reason = ', reason);
     });
+
+    //stream
+    this.stream = ss.createStream();
+    pipeline(process.stdin, this.stream, (err) => err && console.log(err));
   }
 
   /**
@@ -72,5 +78,9 @@ export class WebSocketService {
    */
   emit(event, data) {
     this.socket.emit(event, data);
+  }
+
+  streamData(event, data) {
+    ss(this.socket).emit(event, this.stream, data);
   }
 }

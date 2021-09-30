@@ -2,7 +2,10 @@
 
 import * as THREE from 'three';
 import * as itowns from 'itowns';
-import { CSS3DObject, CSS3DRenderer } from 'three-css3drenderer';
+import {
+  CSS3DObject,
+  CSS3DRenderer,
+} from 'three/examples/jsm/renderers/CSS3DRenderer';
 
 import './View3D.css';
 import { InputManager } from '../../Components/InputManager';
@@ -15,6 +18,8 @@ import { Widgets } from '../..';
 const $3DTemporalBatchTable = Widgets.$3DTemporalBatchTable;
 const $3DTemporalBoundingVolume = Widgets.$3DTemporalBoundingVolume;
 const $3DTemporalTileset = Widgets.$3DTemporalTileset;
+
+import { Deck } from '@deck.gl/core';
 
 /**
  *  Main view of an ud-viz application
@@ -40,8 +45,12 @@ export class View3D {
     this.rootCss = document.createElement('div');
     this.rootCss.id = 'css_View3D';
 
+    this.rootDeckGL = document.createElement('canvas');
+    this.rootDeckGL.id = 'deck_gl_View3D';
+
     this.rootHtml.appendChild(this.rootCss);
     this.rootHtml.appendChild(this.rootWebGL);
+    this.rootHtml.appendChild(this.rootDeckGL);
 
     //root itowns
     this.rootItownsHtml = document.createElement('div');
@@ -83,6 +92,9 @@ export class View3D {
     this.css3DScene = null;
     this.maskObject = null;
 
+    //Deck GL attributes
+    this.deckGLRenderer = null;
+
     //inputs
     this.inputManager = new InputManager();
 
@@ -105,7 +117,7 @@ export class View3D {
     const bottom = max.y;
     const right = max.x;
 
-    [this.rootWebGL, this.rootCss].forEach(function (el) {
+    [this.rootWebGL, this.rootCss, this.rootDeckGL].forEach(function (el) {
       el.style.top = top + 'px';
       el.style.left = left + 'px';
       el.style.bottom = bottom + 'px';
@@ -167,11 +179,29 @@ export class View3D {
 
     //start ticking render of css3D renderer
     const _this = this;
+    const fps = 20;
+
+    let now;
+    let then = Date.now();
+    let delta;
     const tick = function () {
-      if (_this.disposed) return;
+      if (_this.disposed) return; //stop requesting frame if disposed
+
       requestAnimationFrame(tick);
-      if (!_this.isRendering) return;
-      css3DRenderer.render(_this.css3DScene, _this.itownsView.camera.camera3D);
+
+      now = Date.now();
+      delta = now - then;
+
+      if (delta > 1000 / fps) {
+        // update time stuffs
+        then = now - (delta % 1000) / fps;
+
+        if (!_this.isRendering) return;
+        css3DRenderer.render(
+          _this.css3DScene,
+          _this.itownsView.camera.camera3D
+        );
+      }
     };
     tick();
 
@@ -226,8 +256,9 @@ export class View3D {
     this.css3DScene.add(newElement);
 
     //mask
-    const geometry = new THREE.PlaneGeometry(size3D.width, size3D.height);
+    const geometry = new THREE.PlaneGeometry(size3D.width, size3D.height); //TODO remove size3D use scale of transform
 
+    //TODO just one instance
     const material = new THREE.MeshBasicMaterial({ side: THREE.DoubleSide });
     material.color.set('white');
     material.opacity = 0;
@@ -239,6 +270,71 @@ export class View3D {
     plane.scale.copy(transform.getScale());
     plane.updateMatrixWorld();
     this.maskObject.add(plane);
+  }
+
+  appendLayerDeckGL(layer) {
+    if (!this.deckGLRenderer) this.initDeckGL();
+
+    this.deckGLRenderer.setProps({ layers: [layer] });
+  }
+
+  initDeckGL() {
+    const _this = this;
+
+    const o = proj4.default(this.projection).inverse(this.extent.center());
+
+    //TODO pass certains attr as conf params
+    this.deckGLRenderer = new Deck({
+      map: false,
+      canvas: this.rootDeckGL,
+      initialViewState: {
+        longitude: o.x,
+        latitude: o.y,
+        zoom: 8,
+      },
+      parameters: {
+        clearColor: [0.93, 0.86, 0.81, 0],
+      },
+      controller: false,
+    });
+
+    _this.itownsView.addFrameRequester(
+      itowns.MAIN_LOOP_EVENTS.AFTER_CAMERA_UPDATE,
+      function () {
+        // console.log('hola ');
+        const cameraItowns = _this.itownsView.camera.camera3D;
+
+        const o = proj4
+          .default(_this.projection)
+          .inverse(cameraItowns.position.clone());
+
+        const dirCam = cameraItowns.getWorldDirection(new THREE.Vector3());
+        const axis = new THREE.Vector3(0, 0, -1);
+        const pitch = Math.acos(dirCam.dot(axis));
+
+        // newPos.range = 64118883 / (2(viewState.zoom-1)); // 64118883 is Range at Z=1
+        const magicNumber = 64118883.098724395;
+
+        const zoom =
+          Math.log((2 * magicNumber) / cameraItowns.position.z) / Math.log(2);
+
+        const cameraParams = {
+          longitude: o.x,
+          latitude: o.y,
+          zoom: zoom,
+          bearing: (-cameraItowns.rotation.y * 180) / Math.PI,
+          pitch: (pitch * 180) / Math.PI,
+        };
+
+        console.log(cameraParams, cameraItowns);
+
+        _this.deckGLRenderer.setProps({
+          initialViewState: cameraParams,
+        });
+      }
+    );
+
+    // this.catchEventsCSS3D(tfalserue);
   }
 
   /**
@@ -319,11 +415,16 @@ export class View3D {
    */
   computeNearFarCamera() {
     const camera = this.itownsView.camera.camera3D;
+    const height = 300; //TODO compute this dynamically
     const points = [
       new THREE.Vector3(this.extent.west, this.extent.south, 0),
+      new THREE.Vector3(this.extent.west, this.extent.south, height),
       new THREE.Vector3(this.extent.west, this.extent.north, 0),
+      new THREE.Vector3(this.extent.west, this.extent.north, height),
       new THREE.Vector3(this.extent.east, this.extent.south, 0),
+      new THREE.Vector3(this.extent.east, this.extent.south, height),
       new THREE.Vector3(this.extent.east, this.extent.north, 0),
+      new THREE.Vector3(this.extent.east, this.extent.north, height),
     ];
 
     const dirCamera = camera.getWorldDirection(new THREE.Vector3());
@@ -414,7 +515,8 @@ export class View3D {
   setupAndAdd3DTilesLayers() {
     // Positional arguments verification
     if (!this.config['3DTilesLayers']) {
-      throw 'No 3DTilesLayers field in the configuration file';
+      console.warn('No 3DTilesLayers field in the configuration file');
+      return;
     }
 
     this.layerManager = new LayerManager(this.itownsView);
@@ -476,24 +578,13 @@ export class View3D {
       this.itownsView
     );
 
-    let material;
-    if (layer['pc_size']) {
-      material = new THREE.PointsMaterial({
-        size: layer['pc_size'],
-        vertexColors: true,
-      });
-    }
-
-    $3dTilesLayer.overrideMaterials = material;
-    $3dTilesLayer.material = material;
-
     const $3DTilesManager = new TilesManager(this.itownsView, $3dTilesLayer);
     let color = 0xffffff;
     if (layer['color']) {
       color = parseInt(layer['color']);
     }
     $3DTilesManager.registerStyle('default', {
-      materialProps: { opacity: 1, color: color },
+      materialProps: { opacity: 1, color: color, fog: false },
     });
 
     $3DTilesManager.addEventListener(
@@ -540,5 +631,14 @@ export class View3D {
     this.html().remove();
     this.inputManager.dispose();
     this.disposed = true;
+    if (this.deckGLRenderer) this.deckGLRenderer.finalize();
+  }
+
+  getScene() {
+    return this.itownsView.scene;
+  }
+
+  getRenderer() {
+    return this.itownsView.mainLoop.gfxEngine.renderer;
   }
 }
