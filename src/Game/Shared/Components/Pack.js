@@ -1,5 +1,7 @@
 /** @format */
 
+const THREE = require('three');
+
 /**
  * Handle serialization/deserialization of an Object
  * Used to pass data from a thread to another one for example
@@ -33,5 +35,67 @@ module.exports = Object.freeze({
   unpack(array) {
     let str = String.fromCharCode.apply(this, array);
     return JSON.parse(str);
+  },
+
+  //WEBSOCKET SPLIT MESSAGE
+  maxSize: 10000,
+  bufferMessage: {},
+
+  splitMessage(message) {
+    let stringMessage = JSON.stringify(message);
+    const messageUUID = THREE.MathUtils.generateUUID();
+    const result = [];
+
+    //cut in several message
+    while (stringMessage.length > this.maxSize) {
+      const sliceMessage = stringMessage.slice(0, this.maxSize);
+      stringMessage = stringMessage.slice(this.maxSize, stringMessage.length);
+      result.push({ messageUUID: messageUUID, data: sliceMessage });
+    }
+
+    //add what need
+    if (stringMessage.length) {
+      result.push({
+        messageUUID: messageUUID,
+        data: stringMessage,
+      });
+    }
+
+    //push info to recompose message
+    for (let index = 0; index < result.length; index++) {
+      const element = result[index];
+      element.index = index;
+      element.totalMessage = result.length;
+    }
+
+    return result;
+  },
+
+  recomposeMessage(partialMessage) {
+    const messageUUID = partialMessage.messageUUID;
+    if (!this.bufferMessage[messageUUID]) {
+      //first partial message
+      this.bufferMessage[messageUUID] = {};
+    }
+
+    //record
+    this.bufferMessage[messageUUID][partialMessage.index] = partialMessage;
+
+    //check if all the partial message are here
+    if (
+      Object.keys(this.bufferMessage[messageUUID]).length ==
+      partialMessage.totalMessage
+    ) {
+      //can recompose message
+      let bufferString = '';
+      for (let index = 0; index < partialMessage.totalMessage; index++) {
+        bufferString += this.bufferMessage[messageUUID][index].data;
+      }
+
+      return JSON.parse(bufferString);
+    } else {
+      //no complete message receive
+      return null;
+    }
   },
 });
