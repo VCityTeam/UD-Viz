@@ -148,6 +148,13 @@ const GameObjectModule = class GameObject {
     }
   }
 
+  setTransformFromObject3D(object3D) {
+    this.object3D.position.copy(object3D.position);
+    this.object3D.scale.copy(object3D.scale);
+    this.object3D.rotation.copy(object3D.rotation);
+    this.setOutdated(true);
+  }
+
   /**
    * Replace data of this with a json object
    * @param {JSON} json
