@@ -415,7 +415,7 @@ export class View3D {
    */
   computeNearFarCamera() {
     const camera = this.itownsView.camera.camera3D;
-    const height = 300; //TODO compute this dynamically
+    const height = 400; //TODO compute this dynamically
     const points = [
       new THREE.Vector3(this.extent.west, this.extent.south, 0),
       new THREE.Vector3(this.extent.west, this.extent.south, height),
@@ -439,7 +439,7 @@ export class View3D {
       if (max < dist) max = dist;
     });
 
-    camera.near = Math.max(min, 0.001);
+    camera.near = Math.max(min, 0.000001);
     camera.far = max;
 
     camera.updateProjectionMatrix();
