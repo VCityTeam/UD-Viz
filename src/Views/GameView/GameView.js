@@ -216,10 +216,11 @@ export class GameView extends View3D {
   /**
    * dispose this view
    */
-  dispose() {
+  dispose(keepAssets = false) {
     super.dispose();
     this.stateComputer.stop();
-    this.assetsManager.dispose();
+
+    if (!keepAssets) this.assetsManager.dispose();
   }
 
   /**

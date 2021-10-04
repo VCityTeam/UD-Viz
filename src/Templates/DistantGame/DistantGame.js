@@ -27,8 +27,8 @@ export class DistantGame {
   /**
    * dispose the application
    */
-  dispose() {
-    if (this.gameView) this.gameView.dispose();
+  dispose(keepAssets = false) {
+    if (this.gameView) this.gameView.dispose(keepAssets); //keep assets
     //reset websocketservices
     this.webSocketService.reset([
       Constants.WEBSOCKET.MSG_TYPES.JOIN_WORLD,
@@ -37,7 +37,7 @@ export class DistantGame {
   }
 
   reset(userData) {
-    this.dispose();
+    this.dispose(true);
 
     const gV = new GameView({
       assetsManager: this.assetsManager,
@@ -72,18 +72,14 @@ export class DistantGame {
 
         const state = new WorldState(json.state);
 
-        if (!_this.gameView.getLastState()) {
-          //view was not intialized do it
-          _this.stateComputer.onFirstState(state);
-          _this.gameView.writeUserData('avatarUUID', json.avatarUUID);
-          _this.gameView.start(state);
-        } else {
+        if (_this.gameView.getLastState()) {
           userData.firstGameView = false;
           _this.start(userData);
-          _this.stateComputer.onFirstState(state);
-          _this.gameView.writeUserData('avatarUUID', json.avatarUUID);
-          _this.gameView.start(state);
         }
+
+        _this.stateComputer.onFirstState(state);
+        _this.gameView.writeUserData('avatarUUID', json.avatarUUID);
+        _this.gameView.start(state);
       }
     );
 
