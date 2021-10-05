@@ -265,8 +265,6 @@ const MOUSE_STATE_EVENTS = {
   MOUSE_CLICK: 'click',
 };
 
-//TODO listen the click of the mouse
-
 /**
  * Poll system (https://en.wikipedia.org/wiki/Polling_(computer_science))
  * Listen to the MOUSE_STATE_EVENTS and store the mouse state to then be access synchronously
