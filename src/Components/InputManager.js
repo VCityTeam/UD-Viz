@@ -262,6 +262,7 @@ const MOUSE_STATE_EVENTS = {
   MOUSE_UP: 'mouseup',
   MOUSE_DOWN: 'mousedown',
   MOUSE_MOVE: 'mousemove',
+  MOUSE_CLICK: 'click',
 };
 
 //TODO listen the click of the mouse
