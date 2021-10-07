@@ -33,18 +33,17 @@
 
       const center = extent.center();
 
-      const image = document.createElement('img');
-      image.src =
-        'https://i.pinimg.com/236x/33/a6/d0/33a6d0266c7a8c5dd22c975861d8abbc.jpg';
-      view3D.appendCSS3D(
-        image,
-        { width: 200, height: 500 },
+      const iframe = document.createElement('iframe');
+      iframe.src = 'http://localhost:8000/examples/AvatarGame.html';
+      const billboard = new udv.Widgets.Billboard(
+        iframe,
         new udv.Game.Shared.Components.THREEUtils.Transform(
-          new udv.THREE.Vector3(center.x, center.y, 50),
+          new udv.THREE.Vector3(center.x, center.y, 400),
           new udv.THREE.Vector3(Math.PI * 0.5, Math.PI * 0.2, 0),
-          new udv.THREE.Vector3(2, 2, 2)
+          new udv.THREE.Vector3(20, 20, 20)
         )
       );
+      view3D.appendBillboard(billboard);
     </script>
   </body>
 </html>
