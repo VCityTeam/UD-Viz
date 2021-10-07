@@ -2,10 +2,7 @@
 
 import * as THREE from 'three';
 import * as itowns from 'itowns';
-import {
-  CSS3DObject,
-  CSS3DRenderer,
-} from 'three/examples/jsm/renderers/CSS3DRenderer';
+import { CSS3DRenderer } from 'three/examples/jsm/renderers/CSS3DRenderer';
 
 import './View3D.css';
 import { InputManager } from '../../Components/InputManager';
@@ -48,7 +45,7 @@ export class View3D {
 
     this.rootHtml.appendChild(this.rootCss);
     this.rootHtml.appendChild(this.rootWebGL);
-    this.rootHtml.appendChild(this.rootDeckGL);
+    // this.rootHtml.appendChild(this.rootDeckGL);
 
     //root itowns
     this.rootItownsHtml = document.createElement('div');
@@ -88,7 +85,59 @@ export class View3D {
     //CSS3D attributes
     this.css3DRenderer = null;
     this.css3DScene = null;
-    this.maskObject = null;
+    this.billboards = [];
+    const raycaster = new THREE.Raycaster();
+    const _this = this;
+    this.toCSS3DEvent = function (event) {
+      if (_this.isCatchingEventsCSS3D()) return;
+
+      const canvas = event.currentTarget;
+
+      const mouse = new THREE.Vector2(
+        -1 +
+          (2 * event.offsetX) /
+            (canvas.clientWidth - parseInt(canvas.offsetLeft)),
+        1 -
+          (2 * event.offsetY) /
+            (canvas.clientHeight - parseInt(canvas.offsetTop))
+      );
+
+      raycaster.setFromCamera(mouse, _this.itownsView.camera.camera3D);
+
+      for (let index = 0; index < _this.billboards.length; index++) {
+        const element = _this.billboards[index];
+
+        const i = raycaster.intersectObject(element.getMaskObject());
+        if (i.length) {
+          _this.catchEventsCSS3D(true);
+          element.select(true);
+          return;
+        }
+      }
+    };
+
+    this.toWebGLEvent = function (event) {
+      if (!_this.isCatchingEventsCSS3D()) return;
+
+      let onBillboard = false;
+      if (event.path.length) {
+        const firstHoverEl = event.path[0];
+
+        for (let index = 0; index < _this.billboards.length; index++) {
+          const element = _this.billboards[index];
+          if (element.getHtml() == firstHoverEl) {
+            onBillboard = true;
+            break;
+          }
+        }
+      }
+      if (!onBillboard) {
+        _this.catchEventsCSS3D(false);
+        _this.billboards.forEach(function (b) {
+          b.select(false);
+        });
+      }
+    };
 
     //Deck GL attributes
     this.deckGLRenderer = null;
@@ -102,6 +151,10 @@ export class View3D {
      * @type {LayerManager}
      */
     this.layerManager = null;
+
+    //default catch events
+    const catchEventsCSS3D = params.catchEventsCSS3D || false;
+    this.catchEventsCSS3D(catchEventsCSS3D);
   }
 
   /**
@@ -171,9 +224,18 @@ export class View3D {
     //create a new scene for the css3D renderer
     this.css3DScene = new THREE.Scene();
 
-    //add mask object to the itownsView scene
-    this.maskObject = new THREE.Object3D();
-    this.itownsView.scene.add(this.maskObject);
+    //listen to switch mode between css3D and webgl controls
+    this.inputManager.addMouseInput(
+      this.rootItownsHtml,
+      'mousedown',
+      this.toCSS3DEvent
+    );
+
+    this.inputManager.addMouseInput(
+      this.rootCss,
+      'mousedown',
+      this.toWebGLEvent
+    );
 
     //start ticking render of css3D renderer
     const _this = this;
@@ -228,46 +290,20 @@ export class View3D {
     }
   }
 
-  /**
-   *
-   * @param {HTMLElement} htmlEl html element to add to the css3D Scene
-   * @param {Object} size3D object with a width and height to define the size into the scene
-   * @param {THREEUtils.Transform} transform how to place the html el into the scene
-   */
-  appendCSS3D(htmlEl, size3D, transform) {
+  appendBillboard(billboard) {
     if (!this.css3DRenderer) this.initCSS3D();
 
-    const newElement = new CSS3DObject(htmlEl);
-    newElement.position.copy(transform.getPosition());
-    newElement.rotation.setFromVector3(transform.getRotation());
-    newElement.scale.copy(transform.getScale());
+    this.itownsView.scene.add(billboard.getMaskObject());
+    this.css3DScene.add(billboard.getCss3DObject());
+    this.billboards.push(billboard);
+  }
 
-    //edit element style
-    htmlEl.style.width = size3D.width + 'px';
-    htmlEl.style.height = size3D.height + 'px';
-    htmlEl.classList.add('DEBUG');
+  removeBillboard(billboard) {
+    this.itownsView.scene.remove(billboard.getMaskObject());
+    this.css3DScene.remove(billboard.getCss3DObject());
 
-    htmlEl.onclick = function () {
-      console.log('CLICK');
-    };
-
-    this.css3DScene.add(newElement);
-
-    //mask
-    const geometry = new THREE.PlaneGeometry(size3D.width, size3D.height); //TODO remove size3D use scale of transform
-
-    //TODO just one instance
-    const material = new THREE.MeshBasicMaterial({ side: THREE.DoubleSide });
-    material.color.set('white');
-    material.opacity = 0;
-    material.blending = THREE.NoBlending;
-
-    const plane = new THREE.Mesh(geometry, material);
-    plane.position.copy(transform.getPosition());
-    plane.rotation.setFromVector3(transform.getRotation());
-    plane.scale.copy(transform.getScale());
-    plane.updateMatrixWorld();
-    this.maskObject.add(plane);
+    const index = this.billboards.indexOf(billboard);
+    this.billboards.splice(index, 1);
   }
 
   appendLayerDeckGL(layer) {
