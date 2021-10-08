@@ -33,31 +33,5 @@
       "heading": "0",
       "tilt": "0"
     }
-  },
-  "3DTilesLayers": [
-    {
-      "id": "Lyon 1 Buildings",
-      "url": "https://dataset-dl.liris.cnrs.fr/three-d-tiles-lyon-metropolis/2015/Lyon-1_2015/tileset.json",
-      "color": "0xFFFFFF"
-    }
-  ],
-  "cityObjects": {
-    "styles": {
-      "layerDefault": {
-        "materialProps": {
-          "color": "#ffa14f"
-        }
-      },
-      "selection": {
-        "materialProps": {
-          "color": "#13ddef"
-        }
-      },
-      "linkedWithDisplayedDocument": {
-        "materialProps": {
-          "color": "#4c5af7"
-        }
-      }
-    }
   }
 }

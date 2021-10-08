@@ -2,12 +2,22 @@
 
 import * as THREE from 'three';
 import * as itowns from 'itowns';
-import { CSS3DObject, CSS3DRenderer } from 'three-css3drenderer';
+import {
+  CSS3DObject,
+  CSS3DRenderer,
+} from 'three/examples/jsm/renderers/CSS3DRenderer';
 
 import './View3D.css';
 import { InputManager } from '../../Components/InputManager';
 
 import * as proj4 from 'proj4';
+import { TilesManager } from '../../Components/Components';
+import { LayerManager } from '../../Widgets/Components/Components'; //TODO LayerManager should be a components one level above
+
+import { Widgets } from '../..';
+const $3DTemporalBatchTable = Widgets.$3DTemporalBatchTable;
+const $3DTemporalBoundingVolume = Widgets.$3DTemporalBoundingVolume;
+const $3DTemporalTileset = Widgets.$3DTemporalTileset;
 
 /**
  *  Main view of an ud-viz application
@@ -33,8 +43,12 @@ export class View3D {
     this.rootCss = document.createElement('div');
     this.rootCss.id = 'css_View3D';
 
+    this.rootDeckGL = document.createElement('canvas');
+    this.rootDeckGL.id = 'deck_gl_View3D';
+
     this.rootHtml.appendChild(this.rootCss);
     this.rootHtml.appendChild(this.rootWebGL);
+    this.rootHtml.appendChild(this.rootDeckGL);
 
     //root itowns
     this.rootItownsHtml = document.createElement('div');
@@ -76,8 +90,18 @@ export class View3D {
     this.css3DScene = null;
     this.maskObject = null;
 
+    //Deck GL attributes
+    this.deckGLRenderer = null;
+
     //inputs
     this.inputManager = new InputManager();
+
+    /**
+     * Object used to manage all of the layer.
+     *
+     * @type {LayerManager}
+     */
+    this.layerManager = null;
   }
 
   /**
@@ -91,7 +115,7 @@ export class View3D {
     const bottom = max.y;
     const right = max.x;
 
-    [this.rootWebGL, this.rootCss].forEach(function (el) {
+    [this.rootWebGL, this.rootCss, this.rootDeckGL].forEach(function (el) {
       el.style.top = top + 'px';
       el.style.left = left + 'px';
       el.style.bottom = bottom + 'px';
@@ -153,11 +177,29 @@ export class View3D {
 
     //start ticking render of css3D renderer
     const _this = this;
+    const fps = 20;
+
+    let now;
+    let then = Date.now();
+    let delta;
     const tick = function () {
-      if (_this.disposed) return;
+      if (_this.disposed) return; //stop requesting frame if disposed
+
       requestAnimationFrame(tick);
-      if (!_this.isRendering) return;
-      css3DRenderer.render(_this.css3DScene, _this.itownsView.camera.camera3D);
+
+      now = Date.now();
+      delta = now - then;
+
+      if (delta > 1000 / fps) {
+        // update time stuffs
+        then = now - (delta % 1000) / fps;
+
+        if (!_this.isRendering) return;
+        css3DRenderer.render(
+          _this.css3DScene,
+          _this.itownsView.camera.camera3D
+        );
+      }
     };
     tick();
 
@@ -212,8 +254,9 @@ export class View3D {
     this.css3DScene.add(newElement);
 
     //mask
-    const geometry = new THREE.PlaneGeometry(size3D.width, size3D.height);
+    const geometry = new THREE.PlaneGeometry(size3D.width, size3D.height); //TODO remove size3D use scale of transform
 
+    //TODO just one instance
     const material = new THREE.MeshBasicMaterial({ side: THREE.DoubleSide });
     material.color.set('white');
     material.opacity = 0;
@@ -225,6 +268,72 @@ export class View3D {
     plane.scale.copy(transform.getScale());
     plane.updateMatrixWorld();
     this.maskObject.add(plane);
+  }
+
+  appendLayerDeckGL(layer) {
+    if (!this.deckGLRenderer) this.initDeckGL();
+
+    this.deckGLRenderer.setProps({ layers: [layer] });
+  }
+
+  initDeckGL() {
+    console.error('no deck.gl WIP');
+    // const _this = this;
+
+    // const o = proj4.default(this.projection).inverse(this.extent.center());
+
+    // //TODO pass certains attr as conf params
+    // this.deckGLRenderer = new Deck({
+    //   map: false,
+    //   canvas: this.rootDeckGL,
+    //   initialViewState: {
+    //     longitude: o.x,
+    //     latitude: o.y,
+    //     zoom: 8,
+    //   },
+    //   parameters: {
+    //     clearColor: [0.93, 0.86, 0.81, 0],
+    //   },
+    //   controller: false,
+    // });
+
+    // _this.itownsView.addFrameRequester(
+    //   itowns.MAIN_LOOP_EVENTS.AFTER_CAMERA_UPDATE,
+    //   function () {
+    //     // console.log('hola ');
+    //     const cameraItowns = _this.itownsView.camera.camera3D;
+
+    //     const o = proj4
+    //       .default(_this.projection)
+    //       .inverse(cameraItowns.position.clone());
+
+    //     const dirCam = cameraItowns.getWorldDirection(new THREE.Vector3());
+    //     const axis = new THREE.Vector3(0, 0, -1);
+    //     const pitch = Math.acos(dirCam.dot(axis));
+
+    //     // newPos.range = 64118883 / (2(viewState.zoom-1)); // 64118883 is Range at Z=1
+    //     const magicNumber = 64118883.098724395;
+
+    //     const zoom =
+    //       Math.log((2 * magicNumber) / cameraItowns.position.z) / Math.log(2);
+
+    //     const cameraParams = {
+    //       longitude: o.x,
+    //       latitude: o.y,
+    //       zoom: zoom,
+    //       bearing: (-cameraItowns.rotation.y * 180) / Math.PI,
+    //       pitch: (pitch * 180) / Math.PI,
+    //     };
+
+    //     console.log(cameraParams, cameraItowns);
+
+    //     _this.deckGLRenderer.setProps({
+    //       initialViewState: cameraParams,
+    //     });
+    //   }
+    // );
+
+    // this.catchEventsCSS3D(tfalserue);
   }
 
   /**
@@ -282,7 +391,7 @@ export class View3D {
     //City generation
     this.addBaseMapLayer();
     this.addElevationLayer();
-    this.add3DTilesLayer();
+    this.setupAndAdd3DTilesLayers();
 
     //TODO parler a itowns remove listener of the resize
     this.itownsView.debugResize = this.itownsView.resize;
@@ -292,10 +401,51 @@ export class View3D {
 
     //start
     this.inputManager.startListening(this.itownsView.domElement);
+
+    //dynamic near far computation
+    this.itownsView.addFrameRequester(
+      itowns.MAIN_LOOP_EVENTS.BEFORE_RENDER,
+      this.computeNearFarCamera.bind(this)
+    );
   }
 
   /**
-   * Adds WMS elevation Layer of Lyon in 2012 and WMS imagery layer of Lyon in 2009 (from Grand Lyon data).
+   * dynamic computation of the near and far of the camera to fit the extent
+   */
+  computeNearFarCamera() {
+    const camera = this.itownsView.camera.camera3D;
+    const height = 400; //TODO compute this dynamically
+    const points = [
+      new THREE.Vector3(this.extent.west, this.extent.south, 0),
+      new THREE.Vector3(this.extent.west, this.extent.south, height),
+      new THREE.Vector3(this.extent.west, this.extent.north, 0),
+      new THREE.Vector3(this.extent.west, this.extent.north, height),
+      new THREE.Vector3(this.extent.east, this.extent.south, 0),
+      new THREE.Vector3(this.extent.east, this.extent.south, height),
+      new THREE.Vector3(this.extent.east, this.extent.north, 0),
+      new THREE.Vector3(this.extent.east, this.extent.north, height),
+    ];
+
+    const dirCamera = camera.getWorldDirection(new THREE.Vector3());
+
+    let min = Infinity;
+    let max = -Infinity;
+    points.forEach(function (p) {
+      const pointDir = p.clone().sub(camera.position);
+      const cos = pointDir.dot(dirCamera) / pointDir.length(); //dircamera length is 1
+      const dist = p.distanceTo(camera.position) * cos;
+      if (min > dist) min = dist;
+      if (max < dist) max = dist;
+    });
+
+    camera.near = Math.max(min, 0.000001);
+    camera.far = max;
+
+    camera.updateProjectionMatrix();
+  }
+
+  /**
+   * Adds WMS imagery layer
    */
   addBaseMapLayer() {
     if (!this.config['background_image_layer']) {
@@ -326,6 +476,9 @@ export class View3D {
     this.itownsView.addLayer(wmsImageryLayer);
   }
 
+  /**
+   * Adds WMS elevation Layer
+   */
   addElevationLayer() {
     if (!this.config['elevation_layer']) {
       console.warn('no elevation_layer in config');
@@ -354,32 +507,113 @@ export class View3D {
     this.itownsView.addLayer(wmsElevationLayer);
   }
 
-  add3DTilesLayer() {
-    if (!this.config['3DTilesLayer']) {
-      console.warn('no 3DTilesLayer in config');
+  /**
+   * Sets up a 3D Tiles layer and adds it to the itowns view
+   * @param {string} layerConfig The name of the layer to setup
+   */
+  setupAndAdd3DTilesLayers() {
+    // Positional arguments verification
+    if (!this.config['3DTilesLayers']) {
+      console.warn('No 3DTilesLayers field in the configuration file');
       return;
     }
 
-    const $3DTilesLayer = new itowns.C3DTilesLayer(
-      this.config['3DTilesLayer']['id'],
+    this.layerManager = new LayerManager(this.itownsView);
+
+    const layers = {};
+    for (let layer of this.config['3DTilesLayers']) {
+      layers[layer.id] = this.setup3DTilesLayer(layer);
+      itowns.View.prototype.addLayer.call(this.itownsView, layers[layer.id][0]);
+    }
+    return layers;
+  }
+
+  /**
+   * Create an iTowns 3D Tiles layer based on the specified layerConfig.
+   * @param {string} layerConfig The name of the layer to setup from the
+   * generalDemoConfig.json config file
+   */
+  setup3DTilesLayer(layer) {
+    if (!layer['id'] || !layer['url']) {
+      throw 'Your layer does not have url id properties or both. ';
+    }
+
+    const extensionsConfig = layer['extensions'];
+    const extensions = new itowns.C3DTExtensions();
+    if (extensionsConfig) {
+      for (let i = 0; i < extensionsConfig.length; i++) {
+        if (extensionsConfig[i] === '3DTILES_temporal') {
+          extensions.registerExtension('3DTILES_temporal', {
+            [itowns.C3DTilesTypes.batchtable]: $3DTemporalBatchTable,
+            [itowns.C3DTilesTypes.boundingVolume]: $3DTemporalBoundingVolume,
+            [itowns.C3DTilesTypes.tileset]: $3DTemporalTileset,
+          });
+        } else if (extensionsConfig[i] === '3DTILES_batch_table_hierarchy') {
+          extensions.registerExtension('3DTILES_batch_table_hierarchy', {
+            [itowns.C3DTilesTypes.batchtable]:
+              itowns.C3DTBatchTableHierarchyExtension,
+          });
+        } else {
+          console.warn(
+            'The 3D Tiles extension ' +
+              extensionsConfig[i] +
+              ' specified in generalDemoConfig.json is not supported ' +
+              'by UD-Viz yet. Only 3DTILES_temporal and ' +
+              '3DTILES_batch_table_hierarchy are supported.'
+          );
+        }
+      }
+    }
+
+    const $3dTilesLayer = new itowns.C3DTilesLayer(
+      layer['id'],
       {
-        name: 'Lyon-2015-'.concat(this.config['3DTilesLayer']['id']),
+        name: layer['id'],
         source: new itowns.C3DTilesSource({
-          url: this.config['3DTilesLayer']['url'],
+          url: layer['url'],
         }),
+        registeredExtensions: extensions,
       },
       this.itownsView
     );
 
-    itowns.View.prototype.addLayer.call(this.itownsView, $3DTilesLayer);
+    const $3DTilesManager = new TilesManager(this.itownsView, $3dTilesLayer);
+    let color = 0xffffff;
+    if (layer['color']) {
+      color = parseInt(layer['color']);
+    }
+    $3DTilesManager.registerStyle('default', {
+      materialProps: { opacity: 1, color: color, fog: false },
+    });
+
+    $3DTilesManager.addEventListener(
+      TilesManager.EVENT_TILE_LOADED,
+      function (event) {
+        $3DTilesManager.setStyleToTileset('default');
+        $3DTilesManager.applyStyles();
+      }
+    );
+
+    this.layerManager.tilesManagers.push($3DTilesManager);
+
+    return [$3dTilesLayer, $3DTilesManager];
+  }
+
+  getLayerManager() {
+    return this.layerManager;
   }
 
   /**
    * Callback call on the resize event
    */
   onResize() {
-    const w = window.innerWidth - parseInt(this.rootWebGL.style.left);
-    const h = window.innerHeight - parseInt(this.rootWebGL.style.top);
+    let offsetLeft = parseInt(this.rootWebGL.style.left);
+    if (isNaN(offsetLeft)) offsetLeft = 0;
+    let offsetTop = parseInt(this.rootWebGL.style.top);
+    if (isNaN(offsetTop)) offsetTop = 0;
+
+    const w = window.innerWidth - offsetLeft;
+    const h = window.innerHeight - offsetTop;
 
     //TODO remove this fonction
     if (this.itownsView) this.itownsView.debugResize(w, h);
@@ -396,5 +630,14 @@ export class View3D {
     this.html().remove();
     this.inputManager.dispose();
     this.disposed = true;
+    if (this.deckGLRenderer) this.deckGLRenderer.finalize();
+  }
+
+  getScene() {
+    return this.itownsView.scene;
+  }
+
+  getRenderer() {
+    return this.itownsView.mainLoop.gfxEngine.renderer;
   }
 }

@@ -28,6 +28,10 @@ export { Views };
 import * as itowns from 'itowns';
 export { itowns };
 
+//deck gl
+// import * as LayersDeckGL from '@deck.gl/layers';
+// export { LayersDeckGL };
+
 //jquery
 import * as jquery from 'jquery';
 export { jquery };

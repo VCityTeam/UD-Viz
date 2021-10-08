@@ -1,7 +1,7 @@
 /** @format */
 
 //Components
-import { EventSender } from '../../Components/Events/EventSender';
+import { EventSender } from '../../../Components/Events/EventSender';
 
 import { DocumentService } from '../Model/DocumentService';
 import { Document } from '../Model/Document';

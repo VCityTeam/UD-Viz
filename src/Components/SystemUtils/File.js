@@ -64,6 +64,11 @@ module.exports = {
     }
   },
 
+  /**
+   * To be used with an input of type file
+   * @param {Object} e input of type file argument when 'change'
+   * @param {Function} onLoad callback passing the file as URL as first argument
+   */
   readSingleFileAsDataUrl(e, onLoad) {
     try {
       const file = e.target.files[0];
@@ -78,6 +83,11 @@ module.exports = {
     }
   },
 
+  /**
+   * Download an image on the local disk
+   * @param {String} url url of the image to download 
+   * @param {*} filename name of the file on disk
+   */
   downloadImageOnDisk(url, filename) {
     const imgResult = document.createElement('img');
     imgResult.src = url;

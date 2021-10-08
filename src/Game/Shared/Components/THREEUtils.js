@@ -11,6 +11,15 @@ module.exports = {
    */
   textureEncoding: THREE.sRGBEncoding,
 
+  addEquiRectangularMap(path, renderer, scene) {
+    const loader = new THREE.TextureLoader();
+    const texture = loader.load(path, () => {
+      const rt = new THREE.WebGLCubeRenderTarget(texture.image.height);
+      rt.fromEquirectangularTexture(renderer, texture);
+      scene.background = rt.texture;
+    });
+  },
+
   /**
    * Add default lights to a scene
    * one directional and one ambient

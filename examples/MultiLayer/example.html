@@ -16,6 +16,8 @@
       app.start('../assets/config/multiLayer_config.json').then((config) => {
         app.addBaseMapLayer();
 
+        app.addElevationLayer();
+
         app.setupAndAdd3DTilesLayers();
 
         ////// ABOUT MODULE

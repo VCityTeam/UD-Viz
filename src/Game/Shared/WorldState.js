@@ -46,6 +46,9 @@ const WorldStateModule = class WorldState {
           //update
           g.setFromJSON(o);
           delete outdatedGameObjectsJSON[uuid]; //remove it
+        } else {
+          //g is not outdated
+          g.setOutdated(false);
         }
       }
     });
@@ -202,6 +205,8 @@ WorldStateModule.interpolate = function (w1, w2, ratio) {
   });
   const result = w1.clone();
   result.gameObject.traverse(function (go) {
+    if (go.isStatic()) return false; //do not stop propagation
+
     if (mapW2[go.getUUID()]) {
       GameObject.interpolateInPlace(go, mapW2[go.getUUID()], ratio);
     }

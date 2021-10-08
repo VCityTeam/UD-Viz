@@ -10,6 +10,7 @@ const ColliderComponent = require('./GameObject/Components/Collider');
 const THREE = require('three');
 const WorldState = require('./WorldState');
 const { Collisions } = require('detect-collisions');
+const udvizVersion = require('../../../package.json').version;
 
 /**
  * Parent Object of GameObjects, handle simulation and store extradata like the geographic origin
@@ -131,25 +132,21 @@ const WorldModule = class World {
       _this.isServerSide
     );
 
+    //INIT EVENT TRIGGER
+    if (parent) {
+      parent.addChild(gameObject);
+    } else {
+      _this.gameObject = gameObject;
+    }
+    gameObject.traverse(function (child) {
+      child.executeWorldScripts(WorldScriptComponent.EVENT.INIT, [
+        worldContext,
+      ]);
+    });
+
     Promise.all(this.computePromisesLoad(gameObject, worldContext)).then(
       function () {
-        if (parent) {
-          parent.addChild(gameObject);
-        } else {
-          _this.gameObject = gameObject;
-        }
-
-        //TODO init can be trigger several times but need this to init child of a add go
-        gameObject.traverse(function (child) {
-          console.log(_this.name + ' add ' + child.name);
-
-          child.executeWorldScripts(WorldScriptComponent.EVENT.INIT, [
-            worldContext,
-          ]);
-        });
-
         _this.registerGOCollision(gameObject);
-
         if (onLoad) onLoad();
       }
     );
@@ -393,6 +390,7 @@ const WorldModule = class World {
       origin: this.origin,
       type: WorldModule.TYPE,
       uuid: this.uuid,
+      version: udvizVersion,
     };
   }
 };

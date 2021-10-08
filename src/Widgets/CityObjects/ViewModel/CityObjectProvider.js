@@ -1,12 +1,12 @@
 /** @format */
 
 //Components
-import { CityObjectStyle } from '../../Components/3DTiles/Model/CityObjectStyle';
+import { CityObjectStyle } from '../../../Components/3DTiles/Model/CityObjectStyle';
 import {
   CityObjectID,
   CityObject,
-} from '../../Components/3DTiles/Model/CityObject';
-import { EventSender } from '../../Components/Events/EventSender';
+} from '../../../Components/3DTiles/Model/CityObject';
+import { EventSender } from '../../../Components/Events/EventSender';
 import { LayerManager } from '../../Components/LayerManager/LayerManager';
 
 import { CityObjectFilter } from './CityObjectFilter';
@@ -98,7 +98,7 @@ export class CityObjectProvider extends EventSender {
             CityObjectProvider.EVENT_CITY_OBJECT_CHANGED,
             cityObject
           );
-          this.unselectCityObject();
+          this.unselectCityObject(false);
         } else {
           this.sendEvent(
             CityObjectProvider.EVENT_CITY_OBJECT_SELECTED,

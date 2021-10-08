@@ -6,7 +6,7 @@ import { RequestService } from '../../Components/Request/RequestService';
 
 import './GuidedTour.css';
 import { GuidedTour } from './GuidedTour.js';
-import { DocumentModule } from '../Documents/DocumentModule';//TODO should be a components
+import { DocumentModule } from '../Documents/DocumentModule'; //TODO should be a components
 
 /**
  * Class: GuidedTourController

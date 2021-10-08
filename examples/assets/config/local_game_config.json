@@ -1,10 +1,19 @@
 {
   "assetsManager": {
+    "sounds": {
+      "ballon_pop": {
+        "path": "./assets/sounds/ballon_pop.wav"
+      }
+    },
     "models": {
       "zeppelin": {
         "path": "./assets/models/Zeppelin_Labex_IMU.glb",
         "anchor": "center_min",
         "rotation": { "x": 0, "y": 1.5707, "z": 0 }
+      },
+      "avatar": {
+        "path": "./assets/models/avatar_capuchon.glb",
+        "anchor": "center_min"
       }
     },
     "worldScripts": {
@@ -13,6 +22,9 @@
       },
       "zeppelin": {
         "path": "./assets/worldScripts/zeppelin.js"
+      },
+      "avatar": {
+        "path": "./assets/worldScripts/avatar.js"
       }
     },
     "localScripts": {
@@ -21,6 +33,12 @@
       },
       "commands": {
         "path": "./assets/localScripts/commands.js"
+      },
+      "zeppelin": {
+        "path": "./assets/localScripts/zeppelin.js"
+      },
+      "updateElevationGround": {
+        "path": "./assets/localScripts/updateElevationGround.js"
       }
     }
   },
@@ -31,35 +49,35 @@
       "r": 0.4,
       "g": 0.6,
       "b": 0.8
+    },
+    "sky": {
+      "path": "./assets/img/sky.jpg"
     }
   },
   "itowns": {
-    "radiusExtent": 1000,
-    "camera": {
-      "range": 3000,
-      "heading": -50,
-      "tilt": 10
+  "radiusExtent": 1000
+  },
+  "3DTilesLayers": [
+    {
+      "id": "3d-tiles-layer-building",
+      "url": "./assets/3DTiles/buildings/tileset.json",
+      "color": "0xFFFFFF"
+    },
+    {
+      "id": "3d-tiles-layer-relief",
+      "url": "./assets/3DTiles/relief/tileset.json",
+      "color": "0xd0ac7f"
+    },
+    {
+      "id": "3d-tiles-layer-road",
+      "url": "./assets/3DTiles/roads/tileset.json",
+      "color": "0x272727"
+    },
+    {
+      "id": "3d-tiles-layer-water",
+      "url": "./assets/3DTiles/water/tileset.json",
+      "color": "0x2ACAEA"
     }
-  },
-  "3DTilesLayer": {
-    "id": "3d-tiles-layer-building",
-    "url": "./assets/lod_flying_campus/tileset.json",
-    "color": "0xFFFFFF",
-    "initTilesManager": "true"
-  },
-  "projection": "EPSG:3946",
-  "background_image_layer": {
-    "url": "https://download.data.grandlyon.com/wms/grandlyon",
-    "name": "Ortho2018_Dalle_unique_8cm_CC46",
-    "version": "1.3.0",
-    "format": "image/jpeg",
-    "layer_name": "Base_Map",
-    "transparent": true
-  },
-  "elevation_layer": {
-    "url": "https://download.data.grandlyon.com/wms/grandlyon",
-    "name": "MNT2018_Altitude_2m",
-    "format": "image/jpeg",
-    "layer_name": "wms_elevation_test"
-  }
+  ],
+  "projection": "EPSG:3946"
 }

@@ -4,7 +4,7 @@ const THREE = require('three');
 
 //Components
 import { Window } from '../../Components/GUI/js/Window';
-import { CityObjectStyle } from '../../Components/3DTiles/Model/CityObjectStyle';
+import { CityObjectStyle } from '../../../Components/3DTiles/Model/CityObjectStyle';
 
 import { CityObjectProvider } from '../ViewModel/CityObjectProvider';
 import { CityObjectFilterSelector } from './CityObjectFilterSelector';

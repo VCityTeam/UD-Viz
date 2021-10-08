@@ -1,6 +1,7 @@
 /** @format */
 
 //Components
+import { TilesManager } from '../../Components/Components';
 import { Widgets, Components, itowns, proj4, THREE, jquery } from '../../index';
 const ModuleView = Widgets.Components.ModuleView;
 const $3DTemporalBatchTable = Widgets.$3DTemporalBatchTable;
@@ -488,7 +489,7 @@ export class AllWidget {
     $3dTilesLayer.overrideMaterials = material;
     $3dTilesLayer.material = material;
 
-    const $3DTilesManager = new Widgets.Components.TilesManager(
+    const $3DTilesManager = new TilesManager(
       this.view,
       $3dTilesLayer
     );
@@ -501,7 +502,7 @@ export class AllWidget {
     });
 
     $3DTilesManager.addEventListener(
-      Widgets.Components.TilesManager.EVENT_TILE_LOADED,
+      TilesManager.EVENT_TILE_LOADED,
       function (event) {
         $3DTilesManager.setStyleToTileset('default');
         $3DTilesManager.applyStyles();

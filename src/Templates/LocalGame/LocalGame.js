@@ -7,6 +7,10 @@ import * as Views from '../../Views/Views';
 
 import * as udviz from '../../index';
 
+/**
+ * A Class contaning method to easily instanciate a local game based on the ud-viz game engine
+ */
+
 export class LocalGame {
   constructor(fps) {
     this.fps = fps || 30;
@@ -14,14 +18,28 @@ export class LocalGame {
     this.gameView = null;
   }
 
+  /**
+   *
+   * @returns {GameView} return the gameview of the local game
+   */
   getGameView() {
     return this.gameView;
   }
 
+  /**
+   * dispose the application
+   */
   dispose() {
     this.gameView.dispose();
   }
 
+  /**
+   * Start a local game based on the world, the config and some options
+   * @param {World} world world to start
+   * @param {String} configPath the path of the config file
+   * @param {Object} options
+   * @returns
+   */
   start(world, configPath, options = {}) {
     const fps = this.fps;
 
@@ -38,7 +56,7 @@ export class LocalGame {
             { udviz: udviz, Shared: Shared }
           );
 
-          worldStateComputer.load(world);
+          worldStateComputer.start(world);
 
           _this.gameView = new Views.GameView({
             htmlParent: options.htmlParent || document.body,
@@ -49,10 +67,8 @@ export class LocalGame {
           });
 
           //start gameview tick
-          _this.gameView.start(
-            worldStateComputer.computeCurrentState(),
-            options.avatarUUID
-          );
+          _this.gameView.writeUserData('avatarUUID', options.avatarUUID);
+          _this.gameView.start(worldStateComputer.computeCurrentState());
 
           resolve();
         });

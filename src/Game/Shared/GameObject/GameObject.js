@@ -11,6 +11,7 @@ const JSONUtils = require('../Components/JSONUtils');
 const RenderComponent = require('./Components/Render');
 const ColliderComponent = require('./Components/Collider');
 const WorldScriptComponent = require('./Components/WorldScript');
+const AudioComponent = require('./Components/Audio');
 const LocalScriptModule = require('./Components/LocalScript');
 const THREEUtils = require('../Components/THREEUtils');
 
@@ -82,7 +83,10 @@ const GameObjectModule = class GameObject {
    * @param {LocalContext} localContext this localcontext
    */
   updateFromGO(go, localContext) {
-    if (!go.isStatic()) {
+    //update outdated flag
+    this.setOutdated(go.outdated);
+
+    if (!go.isStatic() && this.isOutdated()) {
       //update transform
       this.setTransformFromGO(go);
     }
@@ -114,7 +118,7 @@ const GameObjectModule = class GameObject {
     this.object3D.position.copy(go.object3D.position);
     this.object3D.scale.copy(go.object3D.scale);
     this.object3D.rotation.copy(go.object3D.rotation);
-    this.outdated = true;
+    this.setOutdated(true);
   }
 
   /**
@@ -124,21 +128,31 @@ const GameObjectModule = class GameObject {
   setFromTransformJSON(json = {}) {
     if (json.position) {
       this.object3D.position.fromArray(json.position);
+      JSONUtils.parseVector3(this.object3D.position);
     } else {
       this.object3D.position.fromArray([0, 0, 0]);
     }
 
     if (json.rotation) {
       this.object3D.rotation.fromArray(json.rotation);
+      JSONUtils.parseVector3(this.object3D.rotation);
     } else {
       this.object3D.rotation.fromArray([0, 0, 0]);
     }
 
     if (json.scale) {
       this.object3D.scale.fromArray(json.scale);
+      JSONUtils.parseVector3(this.object3D.scale);
     } else {
       this.object3D.scale.fromArray([1, 1, 1]);
     }
+  }
+
+  setTransformFromObject3D(object3D) {
+    this.object3D.position.copy(object3D.position);
+    this.object3D.scale.copy(object3D.scale);
+    this.object3D.rotation.copy(object3D.rotation);
+    this.setOutdated(true);
   }
 
   /**
@@ -151,6 +165,7 @@ const GameObjectModule = class GameObject {
     this.setFromTransformJSON(json.transform);
     this.name = json.name;
     this.static = json.static;
+    this.outdated = json.outdated;
 
     //TODO recursive call for children
     if (this.children.length) console.warn('children not set from ', json);
@@ -201,7 +216,7 @@ const GameObjectModule = class GameObject {
    */
   move(vector) {
     this.object3D.position.add(vector);
-    this.outdated = true;
+    this.setOutdated(true);
   }
 
   /**
@@ -224,7 +239,7 @@ const GameObjectModule = class GameObject {
     this.object3D.rotateY(vector.y);
 
     this.clampRotation();
-    this.outdated = true;
+    this.setOutdated(true);
   }
 
   /**
@@ -364,6 +379,16 @@ const GameObjectModule = class GameObject {
           );
 
           break;
+        case AudioComponent.TYPE:
+          if (_this.components[AudioComponent.TYPE])
+            console.warn('multiple component');
+
+          _this.components[AudioComponent.TYPE] = new AudioComponent(
+            _this,
+            componentJSON
+          );
+
+          break;
         case WorldScriptComponent.TYPE:
           if (_this.components[WorldScriptComponent.TYPE])
             console.warn('multiple component');
@@ -398,12 +423,6 @@ const GameObjectModule = class GameObject {
     }
   }
 
-  bindTransformFrom(o) {
-    this.object3D.position.set(o.position.x, o.position.y, o.position.z);
-    this.object3D.rotation.set(o.rotation.x, o.rotation.y, o.rotation.z);
-    this.object3D.scale.set(o.scale.x, o.scale.y, o.scale.z);
-  }
-
   /**
    * Compute the object3D
    * @param {Boolean} recursive if true recursive call on children
@@ -430,6 +449,11 @@ const GameObjectModule = class GameObject {
     return obj;
   }
 
+  /**
+   * Get a gameobject component with a given uuid
+   * @param {String} uuid the uuid of the component
+   * @returns {GameObject.Component} the gameobject component
+   */
   getComponentByUUID(uuid) {
     for (let key in this.components) {
       const c = this.components[key];
@@ -585,7 +609,7 @@ const GameObjectModule = class GameObject {
   setRotation(vector) {
     this.object3D.rotation.set(vector.x, vector.y, vector.z);
     this.clampRotation();
-    this.outdated = true;
+    this.setOutdated(true);
   }
 
   /**
@@ -594,7 +618,7 @@ const GameObjectModule = class GameObject {
    */
   setPosition(vector) {
     this.object3D.position.set(vector.x, vector.y, vector.z);
-    this.outdated = true;
+    this.setOutdated(true);
   }
 
   /**
@@ -611,7 +635,7 @@ const GameObjectModule = class GameObject {
    */
   setScale(vector) {
     this.object3D.scale.set(vector.x, vector.y, vector.z);
-    this.outdated = true;
+    this.setOutdated(true);
   }
 
   /**
@@ -630,6 +654,10 @@ const GameObjectModule = class GameObject {
     return this.name;
   }
 
+  /**
+   *
+   * @param {String} name the new name of the gameobject
+   */
   setName(name) {
     this.name = name;
   }
@@ -713,6 +741,13 @@ GameObjectModule.deepCopy = function (gameObject) {
   return new GameObjectModule(cloneJSON);
 };
 
+/**
+ * Search in the object3D the object3D sign with uuid
+ * @param {String} uuid the uuid of the gameobject
+ * @param {THREE.Object3D} obj the 3Dobject where to search
+ * @param {Boolean} upSearch true up search false bottom search
+ * @returns {THREE.Object3D} the object3D sign with the uuid of the gameobject
+ */
 GameObjectModule.findObject3D = function (uuid, obj, upSearch = true) {
   let result;
   if (upSearch) {

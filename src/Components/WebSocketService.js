@@ -25,6 +25,7 @@ export class WebSocketService {
     this.socket = io(`${socketProtocol}://${window.location.host}`, {
       reconnection: false,
       secure: true,
+      transports: ['polling', 'websocket'],
     });
 
     this.socket.on('connect', () => {
@@ -32,7 +33,7 @@ export class WebSocketService {
     });
 
     this.socket.on('disconnect', (reason) => {
-      console.log('Disconnected from server. reason = ', reason);
+      console.warn('Disconnected from server. reason = ', reason);
     });
   }
 

@@ -10,7 +10,6 @@
   </head>
   <body>
     <script src="./assets/js/udv.js"></script>
-    <!--the path point your bundle library-->
     <script type="text/javascript">
       const myWorld = new udv.Game.Shared.World({
         name: 'My World',
@@ -23,6 +22,13 @@
               idScripts: ['worldGameManager'],
             },
             LocalScript: {
+              conf: {
+                nameGO2Focus: 'zeppelin',
+                cameraAngle: 0.51,
+                offsetZ: 10,
+                minDist: 50,
+                maxDist: 1000,
+              },
               idScripts: ['focus', 'commands'],
             },
           },

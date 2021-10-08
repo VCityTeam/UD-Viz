@@ -1,7 +1,7 @@
 /** @format */
 
 //Components
-import { CityObjectStyle } from '../Components/3DTiles/Model/CityObjectStyle';
+import { CityObjectStyle } from '../../Components/3DTiles/Model/CityObjectStyle';
 
 import { CityObjectProvider } from './ViewModel/CityObjectProvider';
 import { CityObjectWindow } from './View/CityObjectWindow';
@@ -100,8 +100,6 @@ export class CityObjectModule {
   isExtensionUsed(label) {
     return this.view.isExtensionUsed(label);
   }
-
-
 
   /**
    * Adds a filter selector in the city object filter window.
