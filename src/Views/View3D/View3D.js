@@ -91,15 +91,11 @@ export class View3D {
     this.toCSS3DEvent = function (event) {
       if (_this.isCatchingEventsCSS3D()) return;
 
-      const canvas = event.currentTarget;
+      const el = _this.rootWebGL;
 
       const mouse = new THREE.Vector2(
-        -1 +
-          (2 * event.offsetX) /
-            (canvas.clientWidth - parseInt(canvas.offsetLeft)),
-        1 -
-          (2 * event.offsetY) /
-            (canvas.clientHeight - parseInt(canvas.offsetTop))
+        -1 + (2 * event.offsetX) / (el.clientWidth - parseInt(el.offsetLeft)),
+        1 - (2 * event.offsetY) / (el.clientHeight - parseInt(el.offsetTop))
       );
 
       raycaster.setFromCamera(mouse, _this.itownsView.camera.camera3D);
@@ -288,6 +284,7 @@ export class View3D {
     } else {
       this.rootWebGL.style.pointerEvents = '';
     }
+    console.log('catch css3D event ', value);
   }
 
   appendBillboard(billboard) {
@@ -675,5 +672,9 @@ export class View3D {
 
   getRenderer() {
     return this.itownsView.mainLoop.gfxEngine.renderer;
+  }
+
+  getRootWebGL() {
+    return this.rootWebGL;
   }
 }
