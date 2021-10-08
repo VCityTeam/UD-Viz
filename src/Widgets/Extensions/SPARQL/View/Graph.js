@@ -121,7 +121,7 @@ export class Graph {
   /**
    * Show the graph SVG
    */
-  hide() {
+  show() {
     this.svg.style('display', 'visible');
   }
 
