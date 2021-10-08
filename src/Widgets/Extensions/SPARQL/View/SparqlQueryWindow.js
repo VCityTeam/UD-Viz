@@ -2,7 +2,7 @@ import { Window } from '../../../Components/GUI/js/Window';
 import { SparqlEndpointResponseProvider } from '../ViewModel/SparqlEndpointResponseProvider';
 import { Graph } from './Graph';
 import { LayerManager } from '../../../Components/Components';
-import { CityObject } from '../../../Components/3DTiles/Model/CityObject';
+import { ExtendedCityObjectProvider } from '../ViewModel/ExtendedCityObjectProvider';
 import './SparqlQueryWindow.css';
 
 /**
