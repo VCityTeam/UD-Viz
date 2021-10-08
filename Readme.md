@@ -72,6 +72,7 @@ npm run travis
 
 in order to assert that `eslint` and `webpack` commands are still effective
 
+**Tip for Windows developers:** eslint requires Linux style newline characters which are often overwritten in Windows environments. Although this is automatically resolved by Git when pushing code, eslint may detect "incorrect" newline characters when running locally. To attempt to fix this you may need to run `npm run eslint -- --fix`.
 
 ## Sources directory layout (organizational principles)
 Definitions:
