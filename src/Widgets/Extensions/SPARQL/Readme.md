@@ -41,7 +41,7 @@ The minimal configuration required to make the SPARQL module work is the followi
 ```
 
 - `sparqlModule.url` represents the base URL for the server. 
-- `sparqlModule.url_parameters` represents the URL parameters to query the server.
+- `sparqlModule.url_parameters` represents the URL parameters to query the server via an HTTP request.
 
 The SPARQL Query Service expects the URL to correspond to a REST API, where query routes are in the form `{url}{url_parameters}`
 
@@ -99,4 +99,3 @@ The code architectures follows an [MVVM](https://en.wikipedia.org/wiki/Model%E2%
   - a `SparqlEndpointResponseProvider` that retrieves the data fetched by the model, and dispatch it as a graph as list of nodes and links.
   - an `ExtendedCityObjectProvider` that retrieves `cityobject` information and highlights the object if selected in the user interface.
 - The view is responsible for displaying the data in the view model and providing a user interface. It has a `SparqlModuleView` which manages a `SparqlQueryWindow`. This windows is responsible for providing the user a form for entering and executing queries to be sent to the `SparqlEndpointResponseProvider` and vizualising the response in the form of a `Graph` constructed by [D3.js](https://d3js.org/).
-
