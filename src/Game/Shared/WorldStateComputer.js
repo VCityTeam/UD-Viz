@@ -16,7 +16,7 @@ const WorldStateComputerModule = class WorldStateComputer {
 
     this.fps = fps || 60;
 
-    this.onAfterTick = null;
+    this.afterTickRequester = [];
 
     this.pause = false;
 
@@ -42,8 +42,8 @@ const WorldStateComputerModule = class WorldStateComputer {
    * Add a callback call at after each tick
    * @param {Function} cb
    */
-  setOnAfterTick(cb) {
-    this.onAfterTick = cb;
+  addAfterTickRequester(cb) {
+    this.afterTickRequester.push(cb);
   }
 
   /**
@@ -75,7 +75,9 @@ const WorldStateComputerModule = class WorldStateComputer {
         wC.getWorld().tick(wC); //tick with user commands
         wC.getCommands().length = 0; //clear commands
 
-        if (_this.onAfterTick) _this.onAfterTick();
+        _this.afterTickRequester.forEach(function (cb) {
+          cb();
+        });
       };
 
       const fps = _this.fps;
