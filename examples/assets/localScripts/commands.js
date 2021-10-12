@@ -59,7 +59,7 @@ module.exports = class Commands {
     const inputManager = localContext.getGameView().getInputManager();
 
     //send input manager command to the world
-    worldComputer.setOnAfterTick(function () {
+    worldComputer.addAfterTickRequester(function () {
       const cmds = inputManager.computeCommands();
       worldComputer.onCommands(cmds);
     });
