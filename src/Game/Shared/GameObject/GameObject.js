@@ -586,6 +586,47 @@ const GameObjectModule = class GameObject {
     this.components[type] = c;
   }
 
+  addComponent(jsonComponent, manager, bundles, isServerSide) {
+    let c = null;
+
+    switch (jsonComponent.type) {
+      case RenderComponent.TYPE:
+        c = new RenderComponent(this, jsonComponent);
+        break;
+
+      case AudioComponent.TYPE:
+        c = new AudioComponent(this, jsonComponent);
+        break;
+
+      case WorldScriptComponent.TYPE:
+        c = new WorldScriptComponent(this, jsonComponent);
+        break;
+
+      case LocalScriptModule.TYPE:
+        c = new LocalScriptModule(this, jsonComponent);
+        break;
+
+      case ColliderComponent.TYPE:
+        c = new ColliderComponent(this, jsonComponent);
+        break;
+
+      default:
+        console.warn(
+          'wrong jsonComponent.type component',
+          jsonComponent.type,
+          jsonComponent
+        );
+        return;
+    }
+
+    if (isServerSide && !c.isServerSide()) return;
+    c.initAssets(manager, bundles);
+
+    this.setComponent(jsonComponent.type, c);
+
+    return c;
+  }
+
   /**
    *
    * @returns {String}
