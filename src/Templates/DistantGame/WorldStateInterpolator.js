@@ -24,7 +24,7 @@ export class WorldStateInterpolator {
       //register itself in the localcomputer
       const _this = this;
       _this.onFirstState(localComputer.computeCurrentState());
-      localComputer.setOnAfterTick(function () {
+      localComputer.addAfterTickRequester(function () {
         _this._onNewState(localComputer.computeCurrentState());
       });
     }
@@ -104,8 +104,8 @@ export class WorldStateInterpolator {
     return this.localComputer.getWorldContext();
   }
 
-  setOnAfterTick(cb) {
-    return this.localComputer.setOnAfterTick(cb);
+  addAfterTickRequester(cb) {
+    return this.localComputer.addAfterTickRequester(cb);
   }
 
   onCommands(cmds) {
