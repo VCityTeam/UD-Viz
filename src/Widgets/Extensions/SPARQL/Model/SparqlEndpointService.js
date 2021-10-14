@@ -1,12 +1,13 @@
 import { RequestService } from '../../../../Components/Request/RequestService';
 
 /**
- * The SPARQL Endpoint Service which contains connection information for
- * a specific SPARQL Endpoint.
+ * The SPARQL Endpoint Service which contains connection information and functions
+ * for fetching data from a specific SPARQL Endpoint.
  */
 export class SparqlEndpointService extends RequestService {
   /**
-   * Creates a SPARQL Endpoint Service
+   * Creates a SPARQLEndpointService object for communicating with a SPARQL Endpoint
+   * based on a given configuration
    *
    * @param {object} config The configuration of UD-Viz.
    * @param {object} config.sparqlModule The sparqlModule configuration.
