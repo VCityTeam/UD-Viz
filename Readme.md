@@ -5,8 +5,6 @@ UD-Viz is a JavaScript library based on [iTowns](https://github.com/itowns/itown
 A tutorial of the game engine can be found [here](./Doc/Devel/LocalGameTutorial.md)
 
 ### Pre-requisite
-Developing UD-Viz requires some knowledge about [JS](https://github.com/VCityTeam/UD-SV/blob/master/UD-Doc/Devel/ToolJavaScript.md), node.js, npm and [three.js](https://threejs.org/).
-
 Developing UD-Viz requires some knowledge about [JS](https://github.com/VCityTeam/UD-SV/blob/master/UD-Doc/Devel/ToolJavaScript.md), [node.js](https://en.wikipedia.org/wiki/Node.js), [npm](https://en.wikipedia.org/wiki/Npm_(software)) and [three.js](https://threejs.org/).
 
 ### Install nodejs and npm
