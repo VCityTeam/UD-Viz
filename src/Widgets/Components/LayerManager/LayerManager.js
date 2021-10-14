@@ -148,7 +148,7 @@ export class LayerManager {
 
   /**
    * Returns the city object which corresponds to a key,value pair in a tilesManager
-   * batch table. The first city object whos batch table entry matches the criteria
+   * batch table. The first city object whose batch table entry matches the criteria
    * is returned.
    *
    * @param {string} batchTableKey The batch table key to search by.
