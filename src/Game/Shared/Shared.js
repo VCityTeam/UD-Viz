@@ -22,6 +22,8 @@ const THREE = require('three');
 
 const proj4 = require('proj4');
 
+const detectCollision = { Circle, Polygon, Collisions } = require('detect-collisions');
+
 module.exports = {
   Components: commnJsComponents,
   Command: commonJsCommand,
@@ -32,6 +34,7 @@ module.exports = {
   WorldState: commonJsWorldState,
   WorldStateDiff: commonJsWorldStateDiff,
   WorldStateComputer: commonJsWorldStateComputer,
+  DetectCollision: detectCollision,
   THREE: THREE,
   proj4: proj4,
 };
