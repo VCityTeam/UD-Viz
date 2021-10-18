@@ -10,6 +10,8 @@ const commonJsRender = require('./GameObject/Components/Render');
 
 const commonJsAudio = require('./GameObject/Components/Audio');
 
+const commonJsCollider = require('./GameObject/Components/Collider');
+
 const commonJsWorld = require('./World');
 
 const commonJsWorldState = require('./WorldState');
@@ -22,19 +24,24 @@ const THREE = require('three');
 
 const proj4 = require('proj4');
 
-const detectCollision = { Circle, Polygon, Collisions } = require('detect-collisions');
+const detectCollisions = ({
+  Circle,
+  Polygon,
+  Collisions,
+} = require('detect-collisions'));
 
 module.exports = {
   Components: commnJsComponents,
   Command: commonJsCommand,
   GameObject: commonJsGameObject,
   Render: commonJsRender,
+  ColliderModule: commonJsCollider,
   Audio: commonJsAudio,
   World: commonJsWorld,
   WorldState: commonJsWorldState,
   WorldStateDiff: commonJsWorldStateDiff,
   WorldStateComputer: commonJsWorldStateComputer,
-  DetectCollision: detectCollision,
+  DetectCollisions: detectCollisions,
   THREE: THREE,
   proj4: proj4,
 };
