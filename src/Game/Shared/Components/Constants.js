@@ -23,7 +23,7 @@ module.exports = Object.freeze({
       SAVE_AVATAR_GO: 'save_avatar_go',
       SAVE_WORLDS: 'save_worlds',
       CREATE_BBB_ROOM: 'create_bbb_room',
-      ON_BBB_URLS: 'on_bbb_urls',
+      ON_BBB_URL: 'on_bbb_url',
     },
   },
 });
