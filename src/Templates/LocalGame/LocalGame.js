@@ -6,6 +6,7 @@ import * as Shared from '../../Game/Shared/Shared';
 import * as Views from '../../Views/Views';
 
 import * as udviz from '../../index';
+import { WorldStateInterpolator } from '../DistantGame/WorldStateInterpolator.js';
 
 /**
  * A Class contaning method to easily instanciate a local game based on the ud-viz game engine
@@ -58,10 +59,16 @@ export class LocalGame {
 
           worldStateComputer.start(world);
 
+          //smooth rendering with delay
+          const interpolator = new WorldStateInterpolator(
+            { renderDelay: 50 },
+            worldStateComputer
+          );
+
           _this.gameView = new Views.GameView({
             htmlParent: options.htmlParent || document.body,
             assetsManager: assetsManager,
-            stateComputer: worldStateComputer,
+            stateComputer: interpolator,
             config: config,
             itownsControls: false,
           });

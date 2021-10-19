@@ -5,8 +5,6 @@ UD-Viz is a JavaScript library based on [iTowns](https://github.com/itowns/itown
 A tutorial of the game engine can be found [here](./Doc/Devel/LocalGameTutorial.md)
 
 ### Pre-requisite
-Developing UD-Viz requires some knowledge about [JS](https://github.com/VCityTeam/UD-SV/blob/master/UD-Doc/Devel/ToolJavaScript.md), node.js, npm and [three.js](https://threejs.org/).
-
 Developing UD-Viz requires some knowledge about [JS](https://github.com/VCityTeam/UD-SV/blob/master/UD-Doc/Devel/ToolJavaScript.md), [node.js](https://en.wikipedia.org/wiki/Node.js), [npm](https://en.wikipedia.org/wiki/Npm_(software)) and [three.js](https://threejs.org/).
 
 ### Install nodejs and npm
@@ -72,6 +70,7 @@ npm run travis
 
 in order to assert that `eslint` and `webpack` commands are still effective
 
+**Tip for Windows developers:** eslint requires Linux style newline characters which are often overwritten in Windows environments. Although this is automatically resolved by Git when pushing code, eslint may detect "incorrect" newline characters when running locally. To attempt to fix this you may need to run `npm run eslint -- --fix`.
 
 ## Sources directory layout (organizational principles)
 Definitions:

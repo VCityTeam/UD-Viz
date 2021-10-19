@@ -7,7 +7,7 @@ import WorldState from '../../Game/Shared/WorldState';
  * Same system as described here (https://victorzhou.com/blog/build-an-io-game-part-1/#7-client-state)
  */
 export class WorldStateInterpolator {
-  constructor(config) {
+  constructor(config, localComputer) {
     this.config = config;
 
     //internal
@@ -17,6 +17,17 @@ export class WorldStateInterpolator {
 
     //DEBUG
     this.lastTimeState = 0;
+
+    //local game
+    this.localComputer = localComputer;
+    if (localComputer) {
+      //register itself in the localcomputer
+      const _this = this;
+      _this.onFirstState(localComputer.computeCurrentState());
+      localComputer.addAfterTickRequester(function () {
+        _this._onNewState(localComputer.computeCurrentState());
+      });
+    }
   }
 
   /**
@@ -86,6 +97,20 @@ export class WorldStateInterpolator {
   }
 
   //PUBLIC METHODS
+
+  //local computer wrapper methods
+
+  getWorldContext() {
+    return this.localComputer.getWorldContext();
+  }
+
+  addAfterTickRequester(cb) {
+    return this.localComputer.addAfterTickRequester(cb);
+  }
+
+  onCommands(cmds) {
+    return this.localComputer.onCommands(cmds);
+  }
 
   /**
    * Add a new diff to compute a new state
