@@ -24,11 +24,7 @@ const THREE = require('three');
 
 const proj4 = require('proj4');
 
-const detectCollisions = ({
-  Circle,
-  Polygon,
-  Collisions,
-} = require('detect-collisions'));
+const detectCollisions = require('detect-collisions');
 
 module.exports = {
   Components: commnJsComponents,
