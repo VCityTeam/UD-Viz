@@ -25,15 +25,20 @@
   "homepage": "https://github.com/VCityTeam/UD-Viz/",
   "peerDependencies": {},
   "dependencies": {
+    "d3": "^7.0.1",
     "detect-collisions": "^2.5.2",
     "howler": "^2.2.3",
     "itowns": "2.35.0",
+    "fetch-sparql-endpoint": "^2.3.1",
     "jquery": "^3.6.0",
     "proj4": "^2.7.0",
     "socket.io-client": "^4.0.0",
     "three": "0.131.3",
     "vis-data": "^7.1.2",
     "vis-network": "^9.0.3"
+  },
+  "dependencyComments": {
+    "d3": "required by the SPARQL Module"
   },
   "devDependencies": {
     "child-process-promise": "^2.2.1",
