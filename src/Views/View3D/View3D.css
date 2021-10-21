@@ -36,3 +36,7 @@ canvas {
   position: absolute;
   z-index: 2;
 }
+
+.ui_View3D * {
+  position: relative;
+}
