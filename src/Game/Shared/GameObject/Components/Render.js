@@ -45,32 +45,11 @@ const RenderModule = class Render {
   }
 
   /**
-   * Compute the bounding box of the object3D
-   * @returns {THREE.Box3}
-   */
-  computeBoundingBox() {
-    return new THREE.Box3().setFromObject(this.getObject3D());
-  }
-
-  /**
    *
    * @returns {THREE.Object3D}
    */
   getObject3D() {
     return this.object3D;
-  }
-
-  /**
-   * Compute a clone of the object3D with no transform
-   * @returns {THREE.Object3D}
-   */
-  computeOriginalObject3D() {
-    const result = this.object3D.clone();
-    result.position.set(0, 0, 0);
-    result.rotation.set(0, 0, 0);
-    result.scale.set(0, 0, 0);
-    result.updateMatrixWorld();
-    return result;
   }
 
   /**
