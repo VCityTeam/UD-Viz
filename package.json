@@ -23,7 +23,6 @@
     "url": "https://github.com/VCityTeam/UD-Viz/issues"
   },
   "homepage": "https://github.com/VCityTeam/UD-Viz/",
-  "peerDependencies": {},
   "dependencies": {
     "@deck.gl/core": "^8.5.0",
     "@deck.gl/layers": "^8.5.0",

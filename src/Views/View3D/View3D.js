@@ -315,63 +315,85 @@ export class View3D {
   }
 
   initDeckGL() {
-    console.error('no deck.gl WIP');
-    // const _this = this;
+    // console.error('no deck.gl WIP');
+    const _this = this;
 
-    // const o = proj4.default(this.projection).inverse(this.extent.center());
+    const o = proj4.default(this.projection).inverse(this.extent.center());
 
-    // //TODO pass certains attr as conf params
-    // this.deckGLRenderer = new Deck({
-    //   map: false,
-    //   canvas: this.rootDeckGL,
-    //   initialViewState: {
-    //     longitude: o.x,
-    //     latitude: o.y,
-    //     zoom: 8,
-    //   },
-    //   parameters: {
-    //     clearColor: [0.93, 0.86, 0.81, 0],
-    //   },
-    //   controller: false,
-    // });
+    //TODO pass certains attr as conf params
+    this.deckGLRenderer = new Deck({
+      map: false,
+      canvas: this.rootDeckGL,
+      initialViewState: {
+        longitude: o.x,
+        latitude: o.y,
+        zoom: 8,
+      },
+      parameters: {
+        clearColor: [0.93, 0.86, 0.81, 0],
+      },
+      controller: false,
+    });
 
-    // _this.itownsView.addFrameRequester(
-    //   itowns.MAIN_LOOP_EVENTS.AFTER_CAMERA_UPDATE,
-    //   function () {
-    //     // console.log('hola ');
-    //     const cameraItowns = _this.itownsView.camera.camera3D;
-
-    //     const o = proj4
-    //       .default(_this.projection)
-    //       .inverse(cameraItowns.position.clone());
-
-    //     const dirCam = cameraItowns.getWorldDirection(new THREE.Vector3());
-    //     const axis = new THREE.Vector3(0, 0, -1);
-    //     const pitch = Math.acos(dirCam.dot(axis));
-
-    //     // newPos.range = 64118883 / (2(viewState.zoom-1)); // 64118883 is Range at Z=1
-    //     const magicNumber = 64118883.098724395;
-
-    //     const zoom =
-    //       Math.log((2 * magicNumber) / cameraItowns.position.z) / Math.log(2);
-
-    //     const cameraParams = {
-    //       longitude: o.x,
-    //       latitude: o.y,
-    //       zoom: zoom,
-    //       bearing: (-cameraItowns.rotation.y * 180) / Math.PI,
-    //       pitch: (pitch * 180) / Math.PI,
-    //     };
-
-    //     console.log(cameraParams, cameraItowns);
-
-    //     _this.deckGLRenderer.setProps({
-    //       initialViewState: cameraParams,
-    //     });
-    //   }
+    // const cam3D = view.camera.camera3D;
+    // const prev = itowns.CameraUtils.getTransformCameraLookingAtTarget(
+    //   view,
+    //   cam3D
+    // );
+    // const newPos = prev;
+    // newPos.coord = new itowns.Coordinates(
+    //   'EPSG:4326',
+    //   viewState.longitude,
+    //   viewState.latitude,
+    //   0
     // );
 
-    // this.catchEventsCSS3D(tfalserue);
+    // // newPos.range = 64118883.098724395 / (2(viewState.zoom-1));
+    // newPos.range = 64118883 / 2(viewState.zoom - 1); // 64118883 is Range at Z=1
+    // newPos.heading = viewState.bearing;
+    // // for some reason I cant access Math.clamp
+    // //newPos.tilt = clamp((90 - viewState.pitch), 0, 90);
+
+    // itowns.CameraUtils.transformCameraToLookAtTarget(view, cam3D, newPos);
+    // view.notifyChange();
+    // cam3D.updateMatrixWorld();
+
+    _this.itownsView.addFrameRequester(
+      itowns.MAIN_LOOP_EVENTS.AFTER_CAMERA_UPDATE,
+      function () {
+        // console.log('hola ');
+        const cameraItowns = _this.itownsView.camera.camera3D;
+
+        const o = proj4
+          .default(_this.projection)
+          .inverse(cameraItowns.position.clone());
+
+        const dirCam = cameraItowns.getWorldDirection(new THREE.Vector3());
+        const axis = new THREE.Vector3(0, 0, -1);
+        const pitch = Math.acos(dirCam.dot(axis));
+
+        // newPos.range = 64118883 / (2(viewState.zoom-1)); // 64118883 is Range at Z=1
+        const magicNumber = 64118883.098724395;
+
+        const zoom =
+          Math.log((2 * magicNumber) / (cameraItowns.position.z + 200)) /
+          Math.log(2);
+
+        const cameraParams = {
+          longitude: o.x,
+          latitude: o.y,
+          zoom: zoom,
+          bearing: (-cameraItowns.rotation.y * 180) / Math.PI,
+          pitch: (pitch * 180) / Math.PI,
+        };
+
+        console.log(cameraParams, cameraItowns);
+
+        _this.deckGLRenderer.setProps({
+          initialViewState: cameraParams,
+        });
+      }
+    );
   }
 
   appendLayerDeckGL(layer) {
