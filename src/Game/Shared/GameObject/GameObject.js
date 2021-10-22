@@ -148,6 +148,13 @@ const GameObjectModule = class GameObject {
     }
   }
 
+  setTransformFromObject3D(object3D) {
+    this.object3D.position.copy(object3D.position);
+    this.object3D.scale.copy(object3D.scale);
+    this.object3D.rotation.copy(object3D.rotation);
+    this.setOutdated(true);
+  }
+
   /**
    * Replace data of this with a json object
    * @param {JSON} json
@@ -577,6 +584,47 @@ const GameObjectModule = class GameObject {
    */
   setComponent(type, c) {
     this.components[type] = c;
+  }
+
+  addComponent(jsonComponent, manager, bundles, isServerSide) {
+    let c = null;
+
+    switch (jsonComponent.type) {
+      case RenderComponent.TYPE:
+        c = new RenderComponent(this, jsonComponent);
+        break;
+
+      case AudioComponent.TYPE:
+        c = new AudioComponent(this, jsonComponent);
+        break;
+
+      case WorldScriptComponent.TYPE:
+        c = new WorldScriptComponent(this, jsonComponent);
+        break;
+
+      case LocalScriptModule.TYPE:
+        c = new LocalScriptModule(this, jsonComponent);
+        break;
+
+      case ColliderComponent.TYPE:
+        c = new ColliderComponent(this, jsonComponent);
+        break;
+
+      default:
+        console.warn(
+          'wrong jsonComponent.type component',
+          jsonComponent.type,
+          jsonComponent
+        );
+        return;
+    }
+
+    if (isServerSide && !c.isServerSide()) return;
+    c.initAssets(manager, bundles);
+
+    this.setComponent(jsonComponent.type, c);
+
+    return c;
   }
 
   /**

@@ -181,9 +181,9 @@ export class GameView extends View3D {
 
     //init sky color based on config file
     this.skyColor = new THREE.Color(
-      this.config.game.skyColor.r,
-      this.config.game.skyColor.g,
-      this.config.game.skyColor.b
+      this.config.game.sky.color.r,
+      this.config.game.sky.color.g,
+      this.config.game.sky.color.b
     );
 
     //init renderer
@@ -216,10 +216,11 @@ export class GameView extends View3D {
   /**
    * dispose this view
    */
-  dispose() {
+  dispose(keepAssets = false) {
     super.dispose();
     this.stateComputer.stop();
-    this.assetsManager.dispose();
+
+    if (!keepAssets) this.assetsManager.dispose();
   }
 
   /**
@@ -317,14 +318,17 @@ export class GameView extends View3D {
     //rebuild object
     this.object3D.children.length = 0;
     this.object3D.add(go.computeObject3D());
-    this.object3D.updateMatrixWorld();
+
+    //update matrix
+    const scene = this.getScene();
+    scene.updateMatrixWorld();
 
     //update shadow
     if (newGO.length)
       THREEUtils.bindLightTransform(
         10,
-        Math.PI / 4,
-        Math.PI / 4,
+        this.config.game.sky.sun_position.phi,
+        this.config.game.sky.sun_position.theta,
         this.object3D,
         this.directionalLight
       );
@@ -340,8 +344,6 @@ export class GameView extends View3D {
 
     if (this.isRendering) {
       //render
-      const scene = this.itownsView.scene;
-      scene.updateMatrixWorld();
       const renderer = this.itownsView.mainLoop.gfxEngine.renderer;
       renderer.clearColor();
       renderer.render(scene, this.itownsView.camera.camera3D);

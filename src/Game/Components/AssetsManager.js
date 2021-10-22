@@ -140,6 +140,10 @@ export class AssetsManager {
     const sphere = new THREE.Mesh(geometrySphere, DEFAULT_MATERIAL);
     this.models['sphere'] = sphere;
 
+    const geometryTorus = new THREE.TorusGeometry(10, 0.1, 16, 100);
+    const torus = new THREE.Mesh(geometryTorus, DEFAULT_MATERIAL);
+    this.models['torus'] = torus;
+
     this.buildGizmo();
     this.buildPointerMouse();
   }

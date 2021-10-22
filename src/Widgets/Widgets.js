@@ -24,6 +24,8 @@ export { $3DTemporalBoundingVolume } from './Temporal/Model/3DTemporalBoundingVo
 
 export { $3DTemporalTileset } from './Temporal/Model/3DTemporalTileset.js';
 
+export { Billboard } from './Billboard/Billboard';
+
 import * as Extensions from './Extensions/Extensions';
 export { Extensions };
 

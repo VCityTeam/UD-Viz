@@ -9,9 +9,9 @@ The module is also extensible, which means that other modules can serve as plug-
 - Add a window to display
 - Modify the navigator and/or the inspector windows to add elements such as text, buttons, etc.
 
-## Basic functionnalities
+## Basic functionalities
 
-In the [demo](http://rict2.liris.cnrs.fr/UD-Viz/UD-Viz-Core/src/Modules/Documents/Example/Demo.html), you can try out the basic functionnalities of the document modules. It can:
+In the [example](/examples/DocumentWidget), you can view how to implement this modules. It can:
 
 - Fetch all documents from the server. It's actually the default comportement (and may change in the future for scaling purpose). The user can filter the retrieved list according to some filters: keywords in the title/description, subject, publication or refering date.
 - Display the details of one particular documents, and navigate through the documents list. The navigation can be done either by selecting a document in the document list, or by using navigation arrows in the document inspector.

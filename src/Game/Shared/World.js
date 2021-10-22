@@ -10,6 +10,7 @@ const ColliderComponent = require('./GameObject/Components/Collider');
 const THREE = require('three');
 const WorldState = require('./WorldState');
 const { Collisions } = require('detect-collisions');
+const udvizVersion = require('../../../package.json').version;
 
 /**
  * Parent Object of GameObjects, handle simulation and store extradata like the geographic origin
@@ -389,6 +390,7 @@ const WorldModule = class World {
       origin: this.origin,
       type: WorldModule.TYPE,
       uuid: this.uuid,
+      version: udvizVersion,
     };
   }
 };

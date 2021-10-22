@@ -45,7 +45,7 @@ export class CityObjectProvider extends EventSender {
      *
      * @type {CityObjectLayer}
      */
-    this.cityOjectLayer = undefined;
+    this.cityObjectLayer = undefined;
 
     /**
      * The array of city objects in the layer.
@@ -208,7 +208,7 @@ export class CityObjectProvider extends EventSender {
       throw 'No filter found with the label : ' + filterLabel;
     }
 
-    this.cityOjectLayer = new CityObjectLayer(filter, style);
+    this.cityObjectLayer = new CityObjectLayer(filter, style);
 
     this.sendEvent(CityObjectProvider.EVENT_LAYER_CHANGED, filter);
 
@@ -223,14 +223,14 @@ export class CityObjectProvider extends EventSender {
    * @returns {CityObjectLayer} The current layer.
    */
   getLayer() {
-    return this.cityOjectLayer;
+    return this.cityObjectLayer;
   }
 
   /**
    * Unsets the current layer. Sends the `EVENT_LAYER_CHANGED` event.
    */
   removeLayer() {
-    this.cityOjectLayer = undefined;
+    this.cityObjectLayer = undefined;
     this.sendEvent(CityObjectProvider.EVENT_LAYER_CHANGED, undefined);
     this.applyStyles();
   }
@@ -247,16 +247,16 @@ export class CityObjectProvider extends EventSender {
         this.selectedCityObject.tile.layer.id
       );
 
-      if (this.cityOjectLayer === undefined) {
+      if (this.cityObjectLayer === undefined) {
         this.layerCityObjectIds = [];
       } else {
         this.layerCityObjectIds = tileManager
-          .findAllCityObjects(this.cityOjectLayer.filter.accepts)
+          .findAllCityObjects(this.cityObjectLayer.filter.accepts)
           .map((co) => co.cityObjectId);
 
         tileManager.setStyle(
           this.layerCityObjectIds,
-          this.cityOjectLayer.style
+          this.cityObjectLayer.style
         );
       }
 
