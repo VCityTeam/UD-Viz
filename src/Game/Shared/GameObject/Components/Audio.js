@@ -14,6 +14,8 @@ const AudioModule = class Audio {
 
     this.soundsJSON = json.sounds || [];
     this.sounds = {};
+
+    this.conf = json.conf || {};
   }
 
   getSounds() {
@@ -36,6 +38,7 @@ const AudioModule = class Audio {
     return {
       uuid: this.uuid,
       sounds: this.soundsJSON,
+      conf: this.conf,
       type: AudioModule.TYPE,
     };
   }
@@ -50,6 +53,34 @@ const AudioModule = class Audio {
     this.soundsJSON.forEach(function (idS) {
       _this.sounds[idS] = assetsManager.fetchSound(idS);
     });
+  }
+
+  tick(cameraPosition, cameraRotation) {
+    const goPos = this.parent.getPosition();
+
+    const upListener = new THREE.Vector3(0, 0, 1).multiply(cameraRotation);
+    const orientation = this.parent
+      .computeForwardVector()
+      .multiply(cameraRotation)
+      .negate();
+
+    for (let key in this.sounds) {
+      const sound = this.sounds[key];
+      if (this.conf.autoplay && !sound.playing()) sound.play();
+
+      if (this.conf.spatialized) {
+        const positionAudio = goPos.clone().sub(cameraPosition);
+        sound.pos(positionAudio.x, positionAudio.y, positionAudio.z);
+        sound.orientation(
+          orientation.x,
+          orientation.y,
+          orientation.z,
+          upListener.x,
+          upListener.y,
+          upListener.z
+        ); //z is up
+      }
+    }
   }
 
   getUUID() {

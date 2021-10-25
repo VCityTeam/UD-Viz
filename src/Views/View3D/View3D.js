@@ -758,6 +758,10 @@ export class View3D {
     if (this.deckGLRenderer) this.deckGLRenderer.finalize();
   }
 
+  getCamera() {
+    return this.itownsView.camera.camera3D;
+  }
+
   getScene() {
     return this.itownsView.scene;
   }

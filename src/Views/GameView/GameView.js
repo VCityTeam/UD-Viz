@@ -7,6 +7,7 @@ import * as itowns from 'itowns';
 
 import LocalScript from '../../Game/Shared/GameObject/Components/LocalScript';
 import { View3D } from '../View3D/View3D';
+import { Audio } from '../../Game/Shared/Shared';
 
 const udvShared = require('../../Game/Shared/Shared');
 const THREEUtils = udvShared.Components.THREEUtils;
@@ -334,11 +335,19 @@ export class GameView extends View3D {
       );
 
     if (this.updateGameObject) {
-      //tick local script
       go.traverse(function (child) {
+        //tick local script
         const scriptComponent = child.getComponent(LocalScript.TYPE);
         if (scriptComponent)
           scriptComponent.execute(LocalScript.EVENT.TICK, [ctx]);
+
+        //tick audio component
+        const audioComp = child.getComponent(Audio.TYPE);
+        const camera = _this.getCamera();
+        const positionCamera = camera.position
+          .clone()
+          .sub(_this.getObject3D().position);
+        if (audioComp) audioComp.tick(positionCamera, camera.rotation);
       });
     }
 
@@ -346,7 +355,7 @@ export class GameView extends View3D {
       //render
       const renderer = this.itownsView.mainLoop.gfxEngine.renderer;
       renderer.clearColor();
-      renderer.render(scene, this.itownsView.camera.camera3D);
+      renderer.render(scene, this.getCamera());
     }
   }
 
