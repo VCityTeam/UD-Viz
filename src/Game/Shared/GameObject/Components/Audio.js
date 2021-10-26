@@ -55,21 +55,24 @@ const AudioModule = class Audio {
     });
   }
 
-  tick(cameraPosition, cameraRotation) {
+  tick(cameraPosition, cameraQuaternion) {
     const goPos = this.parent.getPosition();
 
-    const upListener = new THREE.Vector3(0, 0, 1).multiply(cameraRotation);
-    const orientation = this.parent
-      .computeForwardVector()
-      .multiply(cameraRotation)
-      .negate();
+    const upListener = new THREE.Vector3(0, 1, 0)
+      .applyQuaternion(cameraQuaternion)
+      .normalize();
+    const orientation = new THREE.Vector3(0, 0, -1)
+      .applyQuaternion(cameraQuaternion)
+      .normalize();
+    const positionAudio = goPos.clone().sub(cameraPosition);
 
     for (let key in this.sounds) {
       const sound = this.sounds[key];
       if (this.conf.autoplay && !sound.playing()) sound.play();
 
+      //TODO not working very well but the values provide to howler seems fine to me
+      //https://github.com/goldfire/howler.js#documentation
       if (this.conf.spatialized) {
-        const positionAudio = goPos.clone().sub(cameraPosition);
         sound.pos(positionAudio.x, positionAudio.y, positionAudio.z);
         sound.orientation(
           orientation.x,
@@ -78,7 +81,7 @@ const AudioModule = class Audio {
           upListener.x,
           upListener.y,
           upListener.z
-        ); //z is up
+        );
       }
     }
   }

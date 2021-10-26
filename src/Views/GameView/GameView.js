@@ -344,10 +344,11 @@ export class GameView extends View3D {
         //tick audio component
         const audioComp = child.getComponent(Audio.TYPE);
         const camera = _this.getCamera();
+        //position in world referential
         const positionCamera = camera.position
           .clone()
           .sub(_this.getObject3D().position);
-        if (audioComp) audioComp.tick(positionCamera, camera.rotation);
+        if (audioComp) audioComp.tick(positionCamera, camera.quaternion);
       });
     }
 
