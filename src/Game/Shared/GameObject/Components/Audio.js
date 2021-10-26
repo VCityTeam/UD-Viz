@@ -73,14 +73,14 @@ const AudioModule = class Audio {
       //TODO not working very well but the values provide to howler seems fine to me
       //https://github.com/goldfire/howler.js#documentation
       if (this.conf.spatialized) {
-        sound.pos(positionAudio.x, positionAudio.y, positionAudio.z);
+        sound.pos(positionAudio.x, positionAudio.z, positionAudio.y);
         sound.orientation(
           orientation.x,
-          orientation.y,
           orientation.z,
+          orientation.y,
           upListener.x,
-          upListener.y,
-          upListener.z
+          upListener.z,
+          upListener.y
         );
       }
     }
