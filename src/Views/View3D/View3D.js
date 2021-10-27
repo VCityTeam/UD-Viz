@@ -616,7 +616,7 @@ export class View3D {
       color = parseInt(layer['color']);
     }
     $3DTilesManager.registerStyle('default', {
-      materialProps: { opacity: 1, color: color, fog: false },
+      materialProps: { opacity: 1, color: color, side:THREE.DoubleSide, shadowSide:THREE.DoubleSide, fog:true },
     });
 
     $3DTilesManager.addEventListener(
@@ -636,10 +636,7 @@ export class View3D {
     return this.layerManager;
   }
 
-  /**
-   * Callback call on the resize event
-   */
-  onResize() {
+  getSize() {
     let offsetLeft = parseInt(this.rootWebGL.style.left);
     if (isNaN(offsetLeft)) offsetLeft = 0;
     let offsetTop = parseInt(this.rootWebGL.style.top);
@@ -648,10 +645,18 @@ export class View3D {
     const w = window.innerWidth - offsetLeft;
     const h = window.innerHeight - offsetTop;
 
-    //TODO remove this fonction
-    if (this.itownsView) this.itownsView.debugResize(w, h);
+    return new THREE.Vector2(w, h);
+  }
+  /**
+   * Callback call on the resize event
+   */
+  onResize() {
+    const size = this.getSize();
 
-    if (this.css3DRenderer) this.css3DRenderer.setSize(w, h);
+    //TODO remove this fonction
+    if (this.itownsView) this.itownsView.debugResize(size.x, size.y);
+
+    if (this.css3DRenderer) this.css3DRenderer.setSize(size.x, size.y);
   }
 
   /**
