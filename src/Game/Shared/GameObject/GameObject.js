@@ -294,7 +294,7 @@ const GameObjectModule = class GameObject {
     const quaternion = new THREE.Quaternion().setFromAxisAngle(
       new THREE.Vector3(0, 0, 1),
       Math.PI
-    );
+    ); 
     return this.computeForwardVector().applyQuaternion(quaternion);
   }
 
