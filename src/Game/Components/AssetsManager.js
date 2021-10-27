@@ -27,13 +27,15 @@ export class AssetsManager {
     this.worldsJSON = null;
 
     //buffer
-    this.soundsBuffer = [];
+    this.soundsBuffer = {};
   }
 
   dispose() {
-    this.soundsBuffer.forEach(function (s) {
-      s.unload();
-    });
+    for (let key in this.soundsBuffer) {
+      this.soundsBuffer[key].forEach(function (s) {
+        s.unload();
+      });
+    }
   }
 
   /**
@@ -79,12 +81,31 @@ export class AssetsManager {
 
     if (!confSound) console.error('no sound with id ', idSound);
 
-    const result = new Howl({
-      src: confSound.path,
-      loop: options.loop || false,
-    });
+    let result;
 
-    this.soundsBuffer.push(result);
+    if (!this.soundsBuffer[idSound]) {
+      //first this sound is fetched
+      result = new Howl({
+        src: confSound.path,
+        loop: options.loop || false,
+      });
+
+      //register for unload
+      this.soundsBuffer[idSound] = [result];
+    } else {
+      //if shared an instance already existing is return
+      //TODO conf is the same for all the audio comp not allowing to have shared and not shared sound in the same comp
+      if (options.shared) {
+        result = this.soundsBuffer[idSound][0];
+        if (!result) throw new Error('no sound');
+      } else {
+        result = new Howl({
+          src: confSound.path,
+          loop: options.loop || false,
+        });
+        this.soundsBuffer[idSound].push(result);
+      }
+    }
 
     return result;
   }
