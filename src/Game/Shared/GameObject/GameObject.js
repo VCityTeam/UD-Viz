@@ -74,6 +74,9 @@ const GameObjectModule = class GameObject {
 
     //assets has been initialized
     this.initialized = false;
+
+    //update the object state in updateFromGO (or not)
+    this.noLocalUpdate = json.noLocalUpdate || false;
   }
 
   /**
@@ -83,6 +86,8 @@ const GameObjectModule = class GameObject {
    * @param {LocalContext} localContext this localcontext
    */
   updateFromGO(go, localContext) {
+    if(this.noLocalUpdate) return;
+
     //update outdated flag
     this.setOutdated(go.outdated);
 
@@ -736,6 +741,7 @@ const GameObjectModule = class GameObject {
         rotation: this.object3D.rotation.toArray(),
         scale: this.object3D.scale.toArray(),
       },
+      noLocalUpdate: this.noLocalUpdate,
     };
   }
 };
