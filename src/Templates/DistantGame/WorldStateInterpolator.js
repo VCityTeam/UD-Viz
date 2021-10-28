@@ -57,6 +57,13 @@ export class WorldStateInterpolator {
 
     this.states.push(state);
 
+    /*state.getGameObject().traverse(function (g) {
+      if (g.name == 'ButterflyArea') {
+        
+        console.log(g.getComponent("LocalScript").conf);
+      }
+    });*/
+
     // Keep only one worldstate before the current server time
     const index = this._computeIndexBaseState();
     if (index > 0) {
@@ -152,6 +159,7 @@ export class WorldStateInterpolator {
     }
 
     const index = this._computeIndexBaseState();
+
     const serverTime = this._computeCurrentServerTime();
 
     // If base is the most recent update we have, use its state.
@@ -166,5 +174,9 @@ export class WorldStateInterpolator {
         (nextState.getTimestamp() - baseState.getTimestamp());
       return WorldState.interpolate(baseState, nextState, ratio);
     }
+  }
+
+  computeCurrentStates(){
+
   }
 }

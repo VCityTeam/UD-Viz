@@ -167,8 +167,19 @@ const GameObjectModule = class GameObject {
     this.static = json.static;
     this.outdated = json.outdated;
 
-    //TODO recursive call for children
-    if (this.children.length) console.warn('children not set from ', json);
+    this.children.forEach(function(c){
+      const uuidChild = c.getUUID()
+      let jsonChild;
+      for(let i = 0;i<json.children.length;i++){
+        if(json.children[i].uuid == uuidChild){
+          jsonChild=json.children[i]
+          break;
+        }
+      }
+      if(!jsonChild)throw new Error("dont find children with uuid")
+
+      c.setFromJSON(jsonChild)
+    })
   }
 
   /**

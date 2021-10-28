@@ -316,6 +316,8 @@ export class GameView extends View3D {
       });
     });
 
+    //RENDERING
+
     //rebuild object
     this.object3D.children.length = 0;
     this.object3D.add(go.computeObject3D());

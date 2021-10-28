@@ -12,6 +12,9 @@ const commonJsAudio = require('./GameObject/Components/Audio');
 
 const commonJsCollider = require('./GameObject/Components/Collider');
 
+const commonJsLocalScript = require('./GameObject/Components/LocalScript');
+
+
 const commonJsWorld = require('./World');
 
 const commonJsWorldState = require('./WorldState');
@@ -30,6 +33,7 @@ module.exports = {
   GameObject: commonJsGameObject,
   Render: commonJsRender,
   ColliderModule: commonJsCollider,
+  LocalScript: commonJsLocalScript,
   Audio: commonJsAudio,
   World: commonJsWorld,
   WorldState: commonJsWorldState,

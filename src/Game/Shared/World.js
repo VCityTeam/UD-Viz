@@ -336,6 +336,11 @@ const WorldModule = class World {
       origin: this.origin,
     });
 
+    //everything is not outadted yet
+    this.getGameObject().traverse(function (g) {
+      g.setOutdated(false);
+    });
+
     return result;
   }
 
