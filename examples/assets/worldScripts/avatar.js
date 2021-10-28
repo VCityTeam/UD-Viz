@@ -32,12 +32,17 @@ module.exports = class Avatar {
     const worldContext = arguments[1];
     const dt = worldContext.getDt();
     const commands = worldContext.getCommands();
-    const speedTranslate = 0.03;
-    const speedRotate = 0.0006;
+    const speedTranslate = 0.0002;
+    const speedRotate = 0.000006;
     const avatar = this.avatar;
+
+    const ls = avatar.computeRoot().getComponent(Shared.LocalScript.TYPE);
+    ls.conf.worldComputerDt = dt;
+
     commands.forEach(function (cmd) {
       switch (cmd.getType()) {
         case Shared.Command.TYPE.MOVE_FORWARD:
+          console.log(dt * speedTranslate);
           avatar.move(
             avatar.computeForwardVector().setLength(dt * speedTranslate)
           );

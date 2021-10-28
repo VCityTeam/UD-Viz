@@ -20,6 +20,17 @@ const WorldStateModule = class WorldState {
 
     //coord of the origin (itowns)
     this.origin = json.origin || null;
+
+    //flag to determine if that state has been consumed/treated by the gameview (or something else)
+    this._consumed = false;
+  }
+
+  setConsumed(value) {
+    this._consumed = value;
+  }
+
+  hasBeenConsumed() {
+    return this._consumed;
   }
 
   /**
@@ -103,7 +114,7 @@ const WorldStateModule = class WorldState {
     const alreadyInOutdated = [];
     this.gameObject.traverse(function (g) {
       gameObjectsUUID.push(g.getUUID()); //register all uuid
-      if (!g.isStatic() && !alreadyInOutdated.includes(g)) {
+      if (!alreadyInOutdated.includes(g)) {
         //if is not static and is not already register
         if (!state.includes(g.getUUID()) || g.isOutdated()) {
           //if not in the last state or outdated

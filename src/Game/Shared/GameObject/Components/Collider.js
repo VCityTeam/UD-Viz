@@ -98,6 +98,10 @@ const ColliderModule = class Collider {
     return this.shapesJSON;
   }
 
+  updateFromComponent() {
+    //nada
+  }
+
   /**
    * Compute this to JSON
    * @returns {JSON}

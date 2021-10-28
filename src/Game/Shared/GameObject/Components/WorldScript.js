@@ -78,6 +78,10 @@ const WorldScriptModule = class WorldScript {
     }
   }
 
+  updateFromComponent() {
+    //nada
+  }
+
   /**
    *
    * @returns {Object}

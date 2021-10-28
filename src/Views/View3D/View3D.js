@@ -16,6 +16,8 @@ const $3DTemporalBatchTable = Widgets.$3DTemporalBatchTable;
 const $3DTemporalBoundingVolume = Widgets.$3DTemporalBoundingVolume;
 const $3DTemporalTileset = Widgets.$3DTemporalTileset;
 
+import { Deck } from '@deck.gl/core';
+
 /**
  *  Main view of an ud-viz application
  */
@@ -45,7 +47,7 @@ export class View3D {
 
     this.rootHtml.appendChild(this.rootCss);
     this.rootHtml.appendChild(this.rootWebGL);
-    // this.rootHtml.appendChild(this.rootDeckGL);
+    this.rootHtml.appendChild(this.rootDeckGL);
 
     //root itowns
     this.rootItownsHtml = document.createElement('div');
@@ -134,6 +136,9 @@ export class View3D {
         });
       }
     };
+
+    //Deck GL attributes
+    this.deckGLRenderer = null;
 
     //Deck GL attributes
     this.deckGLRenderer = null;
@@ -310,61 +315,60 @@ export class View3D {
   }
 
   initDeckGL() {
-    console.error('no deck.gl WIP');
-    // const _this = this;
+    const _this = this;
 
-    // const o = proj4.default(this.projection).inverse(this.extent.center());
+    const o = proj4.default(this.projection).inverse(this.extent.center());
 
-    // //TODO pass certains attr as conf params
-    // this.deckGLRenderer = new Deck({
-    //   map: false,
-    //   canvas: this.rootDeckGL,
-    //   initialViewState: {
-    //     longitude: o.x,
-    //     latitude: o.y,
-    //     zoom: 8,
-    //   },
-    //   parameters: {
-    //     clearColor: [0.93, 0.86, 0.81, 0],
-    //   },
-    //   controller: false,
-    // });
+    //TODO pass certains attr as conf params
+    this.deckGLRenderer = new Deck({
+      map: false,
+      canvas: this.rootDeckGL,
+      initialViewState: {
+        longitude: o.x,
+        latitude: o.y,
+        zoom: 8,
+      },
+      parameters: {
+        clearColor: [0.93, 0.86, 0.81, 0],
+      },
+      controller: false,
+    });
 
-    // _this.itownsView.addFrameRequester(
-    //   itowns.MAIN_LOOP_EVENTS.AFTER_CAMERA_UPDATE,
-    //   function () {
-    //     // console.log('hola ');
-    //     const cameraItowns = _this.itownsView.camera.camera3D;
+    _this.itownsView.addFrameRequester(
+      itowns.MAIN_LOOP_EVENTS.AFTER_CAMERA_UPDATE,
+      function () {
+        // console.log('hola ');
+        const cameraItowns = _this.itownsView.camera.camera3D;
 
-    //     const o = proj4
-    //       .default(_this.projection)
-    //       .inverse(cameraItowns.position.clone());
+        const o = proj4
+          .default(_this.projection)
+          .inverse(cameraItowns.position.clone());
 
-    //     const dirCam = cameraItowns.getWorldDirection(new THREE.Vector3());
-    //     const axis = new THREE.Vector3(0, 0, -1);
-    //     const pitch = Math.acos(dirCam.dot(axis));
+        const dirCam = cameraItowns.getWorldDirection(new THREE.Vector3());
+        const axis = new THREE.Vector3(0, 0, -1);
+        const pitch = Math.acos(dirCam.dot(axis));
 
-    //     // newPos.range = 64118883 / (2(viewState.zoom-1)); // 64118883 is Range at Z=1
-    //     const magicNumber = 64118883.098724395;
+        // newPos.range = 64118883 / (2(viewState.zoom-1)); // 64118883 is Range at Z=1
+        const magicNumber = 64118883.098724395;
 
-    //     const zoom =
-    //       Math.log((2 * magicNumber) / cameraItowns.position.z) / Math.log(2);
+        const zoom =
+          Math.log((2 * magicNumber) / cameraItowns.position.z) / Math.log(2);
 
-    //     const cameraParams = {
-    //       longitude: o.x,
-    //       latitude: o.y,
-    //       zoom: zoom,
-    //       bearing: (-cameraItowns.rotation.y * 180) / Math.PI,
-    //       pitch: (pitch * 180) / Math.PI,
-    //     };
+        const cameraParams = {
+          longitude: o.x,
+          latitude: o.y,
+          zoom: zoom,
+          bearing: (-cameraItowns.rotation.y * 180) / Math.PI,
+          pitch: (pitch * 180) / Math.PI,
+        };
 
-    //     console.log(cameraParams, cameraItowns);
+        console.log(cameraParams, cameraItowns);
 
-    //     _this.deckGLRenderer.setProps({
-    //       initialViewState: cameraParams,
-    //     });
-    //   }
-    // );
+        _this.deckGLRenderer.setProps({
+          initialViewState: cameraParams,
+        });
+      }
+    );
 
     // this.catchEventsCSS3D(tfalserue);
   }
@@ -664,6 +668,10 @@ export class View3D {
     this.inputManager.dispose();
     this.disposed = true;
     if (this.deckGLRenderer) this.deckGLRenderer.finalize();
+  }
+
+  getCamera() {
+    return this.itownsView.camera.camera3D;
   }
 
   getScene() {

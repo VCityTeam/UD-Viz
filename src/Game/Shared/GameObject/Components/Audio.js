@@ -14,6 +14,8 @@ const AudioModule = class Audio {
 
     this.soundsJSON = json.sounds || [];
     this.sounds = {};
+
+    this.conf = json.conf || {};
   }
 
   getSounds() {
@@ -36,6 +38,7 @@ const AudioModule = class Audio {
     return {
       uuid: this.uuid,
       sounds: this.soundsJSON,
+      conf: this.conf,
       type: AudioModule.TYPE,
     };
   }
@@ -48,8 +51,32 @@ const AudioModule = class Audio {
   initAssets(assetsManager, udvShared) {
     const _this = this;
     this.soundsJSON.forEach(function (idS) {
-      _this.sounds[idS] = assetsManager.fetchSound(idS);
+      _this.sounds[idS] = assetsManager.fetchSound(idS, _this.conf);
     });
+  }
+
+  tick(cameraMatrixWorldInverse, refOrigin) {
+    const goPos = this.parent.getPosition().clone();
+    goPos.add(refOrigin);
+    const positionAudio = goPos.clone().applyMatrix4(cameraMatrixWorldInverse);
+
+    for (let key in this.sounds) {
+      const sound = this.sounds[key];
+
+      if (sound.state() != 'loaded') continue;
+
+      if (this.conf.autoplay && !sound.playing()) sound.play();
+      if (this.conf.volume) sound.volume(this.conf.volume);
+
+      //https://github.com/goldfire/howler.js#documentation
+      if (this.conf.spatialized) {
+        sound.pos(positionAudio.x, positionAudio.y, positionAudio.z);
+      }
+    }
+  }
+
+  updateFromComponent() {
+    //nada
   }
 
   getUUID() {

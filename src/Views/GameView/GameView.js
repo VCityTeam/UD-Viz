@@ -7,6 +7,7 @@ import * as itowns from 'itowns';
 
 import LocalScript from '../../Game/Shared/GameObject/Components/LocalScript';
 import { View3D } from '../View3D/View3D';
+import { Audio } from '../../Game/Shared/Shared';
 
 const udvShared = require('../../Game/Shared/Shared');
 const THREEUtils = udvShared.Components.THREEUtils;
@@ -147,7 +148,7 @@ export class GameView extends View3D {
         });
 
         //update Gameview
-        _this.update(_this.stateComputer.computeCurrentState());
+        _this.update(_this.stateComputer.computeCurrentStates());
       }
     };
     tick();
@@ -181,9 +182,9 @@ export class GameView extends View3D {
 
     //init sky color based on config file
     this.skyColor = new THREE.Color(
-      this.config.game.skyColor.r,
-      this.config.game.skyColor.g,
-      this.config.game.skyColor.b
+      this.config.game.sky.color.r,
+      this.config.game.sky.color.g,
+      this.config.game.sky.color.b
     );
 
     //init renderer
@@ -232,10 +233,12 @@ export class GameView extends View3D {
    *
    * @param {WorldState} state the new state used to update this view
    */
-  update(state) {
+  update(states) {
     const _this = this;
     const newGO = [];
     const ctx = this.localContext;
+
+    const state = states[states.length - 1];
 
     //update lastState with the new one
     if (this.lastState) {
@@ -248,8 +251,14 @@ export class GameView extends View3D {
           const uuid = g.getUUID();
           const current = state.getGameObject().find(uuid);
           if (current) {
+            const bufferedGO = [];
+            states.forEach(function (s) {
+              const bGO = s.getGameObject().find(uuid);
+              if (bGO) bufferedGO.push(bGO);
+            });
+
             //update local components
-            g.updateFromGO(current, ctx);
+            g.updateFromGO(current, bufferedGO, ctx);
           } else {
             //do not exist remove it
             g.removeFromParent();
@@ -315,37 +324,48 @@ export class GameView extends View3D {
       });
     });
 
+    //RENDERING
+
     //rebuild object
     this.object3D.children.length = 0;
     this.object3D.add(go.computeObject3D());
-    this.object3D.updateMatrixWorld();
+
+    //update matrix
+    const scene = this.getScene();
+    scene.updateMatrixWorld();
 
     //update shadow
     if (newGO.length)
       THREEUtils.bindLightTransform(
         10,
-        Math.PI / 4,
-        Math.PI / 4,
+        this.config.game.sky.sun_position.phi,
+        this.config.game.sky.sun_position.theta,
         this.object3D,
         this.directionalLight
       );
 
     if (this.updateGameObject) {
-      //tick local script
       go.traverse(function (child) {
+        //tick local script
         const scriptComponent = child.getComponent(LocalScript.TYPE);
         if (scriptComponent)
           scriptComponent.execute(LocalScript.EVENT.TICK, [ctx]);
+
+        //tick audio component
+        const audioComp = child.getComponent(Audio.TYPE);
+        const camera = _this.getCamera();
+        //position in world referential
+        const cameraMatWorldInverse = camera.matrixWorldInverse;
+        if (audioComp)
+          audioComp.tick(cameraMatWorldInverse, _this.getObject3D().position);
       });
     }
 
     if (this.isRendering) {
       //render
-      const scene = this.itownsView.scene;
-      scene.updateMatrixWorld();
       const renderer = this.itownsView.mainLoop.gfxEngine.renderer;
       renderer.clearColor();
-      renderer.render(scene, this.itownsView.camera.camera3D);
+      renderer.render(scene, this.getCamera());
     }
   }
 

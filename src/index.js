@@ -29,8 +29,8 @@ import * as itowns from 'itowns';
 export { itowns };
 
 //deck gl
-// import * as LayersDeckGL from '@deck.gl/layers';
-// export { LayersDeckGL };
+import * as LayersDeckGL from '@deck.gl/layers';
+export { LayersDeckGL };
 
 //jquery
 import * as jquery from 'jquery';
