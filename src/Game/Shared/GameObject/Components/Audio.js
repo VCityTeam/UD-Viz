@@ -51,7 +51,7 @@ const AudioModule = class Audio {
   initAssets(assetsManager, udvShared) {
     const _this = this;
     this.soundsJSON.forEach(function (idS) {
-      _this.sounds[idS] = assetsManager.fetchSound(idS);
+      _this.sounds[idS] = assetsManager.fetchSound(idS, _this.conf);
     });
   }
 
@@ -62,6 +62,9 @@ const AudioModule = class Audio {
 
     for (let key in this.sounds) {
       const sound = this.sounds[key];
+
+      if (sound.state() != 'loaded') continue;
+
       if (this.conf.autoplay && !sound.playing()) sound.play();
 
       //https://github.com/goldfire/howler.js#documentation

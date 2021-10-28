@@ -20,17 +20,21 @@ export class AssetsManager {
     this.conf = null;
 
     //manager to load scripts
-    this.sounds = {};
     this.prefabs = {};
     this.worldScripts = {};
     this.localScripts = {};
     this.models = {};
     this.worldsJSON = null;
+
+    //buffer
+    this.soundsBuffer = {};
   }
 
   dispose() {
-    for (let id in this.sounds) {
-      this.sounds[id].unload();
+    for (let key in this.soundsBuffer) {
+      this.soundsBuffer[key].forEach(function (s) {
+        s.unload();
+      });
     }
   }
 
@@ -72,9 +76,38 @@ export class AssetsManager {
     return this.worldsJSON;
   }
 
-  fetchSound(idSound) {
-    if (!this.sounds[idSound]) console.error('no sound with id ', idSound);
-    return this.sounds[idSound];
+  fetchSound(idSound, options = {}) {
+    const confSound = this.conf['sounds'][idSound];
+
+    if (!confSound) console.error('no sound with id ', idSound);
+
+    let result;
+
+    if (!this.soundsBuffer[idSound]) {
+      //first this sound is fetched
+      result = new Howl({
+        src: confSound.path,
+        loop: options.loop || false,
+      });
+
+      //register for unload
+      this.soundsBuffer[idSound] = [result];
+    } else {
+      //if shared an instance already existing is return
+      //TODO conf is the same for all the audio comp not allowing to have shared and not shared sound in the same comp
+      if (options.shared) {
+        result = this.soundsBuffer[idSound][0];
+        if (!result) throw new Error('no sound');
+      } else {
+        result = new Howl({
+          src: confSound.path,
+          loop: options.loop || false,
+        });
+        this.soundsBuffer[idSound].push(result);
+      }
+    }
+
+    return result;
   }
 
   /**
@@ -417,26 +450,6 @@ export class AssetsManager {
         );
       }
     });
-    const soundsPromise = new Promise((resolve, reject) => {
-      let count = 0;
-      const checkIfLoaded = function () {
-        count++;
-        if (count == Object.keys(config.sounds).length) {
-          console.log('sounds loaded ', _this.sounds);
-          resolve();
-        }
-      };
-
-      for (let idSound in config.sounds) {
-        const s = config.sounds[idSound];
-        _this.sounds[idSound] = new Howl({
-          src: s.path,
-          onload: checkIfLoaded,
-          onloaderror: reject,
-          loop: s.loop || false,
-        });
-      }
-    });
 
     const promises = [];
     if (config.models) promises.push(modelPromise);
@@ -445,7 +458,6 @@ export class AssetsManager {
     if (config.localScripts) promises.push(localScriptsPromise);
     if (config.worlds) promises.push(worldsPromise);
     if (config.css) promises.push(cssPromise);
-    if (config.sounds) promises.push(soundsPromise);
 
     return Promise.all(promises);
   }
