@@ -103,7 +103,7 @@ const WorldStateModule = class WorldState {
     const alreadyInOutdated = [];
     this.gameObject.traverse(function (g) {
       gameObjectsUUID.push(g.getUUID()); //register all uuid
-      if (!g.isStatic() && !alreadyInOutdated.includes(g)) {
+      if (!alreadyInOutdated.includes(g)) {
         //if is not static and is not already register
         if (!state.includes(g.getUUID()) || g.isOutdated()) {
           //if not in the last state or outdated
@@ -211,6 +211,13 @@ WorldStateModule.interpolate = function (w1, w2, ratio) {
       GameObject.interpolateInPlace(go, mapW2[go.getUUID()], ratio);
     }
   });
+
+  /*result.getGameObject().traverse(function (g) {
+    if (g.name == 'ButterflyArea') {
+      console.log('interpol', g.getComponent('LocalScript').conf);
+      
+    }
+  });*/
 
   return result;
 };
