@@ -20,6 +20,17 @@ const WorldStateModule = class WorldState {
 
     //coord of the origin (itowns)
     this.origin = json.origin || null;
+
+    //flag to determine if that state has been consumed/treated by the gameview (or something else)
+    this._consumed = false;
+  }
+
+  setConsumed(value) {
+    this._consumed = value;
+  }
+
+  hasBeenConsumed() {
+    return this._consumed;
   }
 
   /**

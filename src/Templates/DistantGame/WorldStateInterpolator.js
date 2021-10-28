@@ -15,6 +15,9 @@ export class WorldStateInterpolator {
     this.gameStart = 0;
     this.firstServerTimestamp = 0;
 
+    //batch
+    this._notConsumedStates = [];
+
     //DEBUG
     this.lastTimeState = 0;
 
@@ -67,7 +70,11 @@ export class WorldStateInterpolator {
     // Keep only one worldstate before the current server time
     const index = this._computeIndexBaseState();
     if (index > 0) {
-      this.states.splice(0, index);
+      const stateDeleted = this.states.splice(0, index);
+      for (let index = 0; index < stateDeleted.length; index++) {
+        const element = stateDeleted[index];
+        if (!element.hasBeenConsumed()) this._notConsumedStates.push(element); //register states not consumed
+      }
     }
   }
 
@@ -158,6 +165,8 @@ export class WorldStateInterpolator {
       return null;
     }
 
+    let result;
+
     const index = this._computeIndexBaseState();
 
     const serverTime = this._computeCurrentServerTime();
@@ -165,18 +174,25 @@ export class WorldStateInterpolator {
     // If base is the most recent update we have, use its state.
     // Otherwise, interpolate between its state and the state of (base + 1).
     if (index < 0 || index === this.states.length - 1) {
-      return this._getLastStateReceived();
+      result = this._getLastStateReceived();
+      result.setConsumed(true);
     } else {
       const baseState = this.states[index];
+      baseState.setConsumed(true);
       const nextState = this.states[index + 1];
       const ratio =
         (serverTime - baseState.getTimestamp()) /
         (nextState.getTimestamp() - baseState.getTimestamp());
-      return WorldState.interpolate(baseState, nextState, ratio);
+      result = WorldState.interpolate(baseState, nextState, ratio);
     }
+
+    return result;
   }
 
-  computeCurrentStates(){
-
+  computeCurrentStates() {
+    const result = this._notConsumedStates;
+    this._notConsumedStates = [];
+    result.push(this.computeCurrentState());
+    return result;
   }
 }

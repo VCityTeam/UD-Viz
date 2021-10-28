@@ -82,31 +82,19 @@ const GameObjectModule = class GameObject {
    * @param {GameObject} go the gameobject to upadate to
    * @param {LocalContext} localContext this localcontext
    */
-  updateFromGO(go, localContext) {
-    //update outdated flag
-    this.setOutdated(go.outdated);
-
-    if (!go.isStatic() && this.isOutdated()) {
+  updateFromGO(go, bufferedGO, localContext) {
+    if (!go.isStatic()) {
       //update transform
       this.setTransformFromGO(go);
     }
 
-    //update render
-    const r = this.getComponent(RenderComponent.TYPE);
-    if (r) {
-      r.updateFromComponent(
-        go.getComponent(RenderComponent.TYPE),
-        localContext
-      );
-    }
-
-    //update local scripts
-    const ls = this.getComponent(LocalScriptModule.TYPE);
-    if (ls) {
-      ls.updateFromComponent(
-        go.getComponent(LocalScriptModule.TYPE),
-        localContext
-      );
+    //launch update event for bufferedGO
+    for (let key in this.components) {
+      const component = this.components[key];
+      for (let index = 0; index < bufferedGO.length; index++) {
+        const element = bufferedGO[index];
+        component.updateFromComponent(element.getComponent(key), localContext);
+      }
     }
   }
 
@@ -167,19 +155,19 @@ const GameObjectModule = class GameObject {
     this.static = json.static;
     this.outdated = json.outdated;
 
-    this.children.forEach(function(c){
-      const uuidChild = c.getUUID()
+    this.children.forEach(function (c) {
+      const uuidChild = c.getUUID();
       let jsonChild;
-      for(let i = 0;i<json.children.length;i++){
-        if(json.children[i].uuid == uuidChild){
-          jsonChild=json.children[i]
+      for (let i = 0; i < json.children.length; i++) {
+        if (json.children[i].uuid == uuidChild) {
+          jsonChild = json.children[i];
           break;
         }
       }
-      if(!jsonChild)throw new Error("dont find children with uuid")
+      if (!jsonChild) throw new Error('dont find children with uuid');
 
-      c.setFromJSON(jsonChild)
-    })
+      c.setFromJSON(jsonChild);
+    });
   }
 
   /**

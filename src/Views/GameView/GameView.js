@@ -148,7 +148,7 @@ export class GameView extends View3D {
         });
 
         //update Gameview
-        _this.update(_this.stateComputer.computeCurrentState());
+        _this.update(_this.stateComputer.computeCurrentStates());
       }
     };
     tick();
@@ -233,10 +233,12 @@ export class GameView extends View3D {
    *
    * @param {WorldState} state the new state used to update this view
    */
-  update(state) {
+  update(states) {
     const _this = this;
     const newGO = [];
     const ctx = this.localContext;
+
+    const state = states[states.length - 1];
 
     //update lastState with the new one
     if (this.lastState) {
@@ -249,8 +251,14 @@ export class GameView extends View3D {
           const uuid = g.getUUID();
           const current = state.getGameObject().find(uuid);
           if (current) {
+            const bufferedGO = [];
+            states.forEach(function (s) {
+              const bGO = s.getGameObject().find(uuid);
+              if (bGO) bufferedGO.push(bGO);
+            });
+
             //update local components
-            g.updateFromGO(current, ctx);
+            g.updateFromGO(current, bufferedGO, ctx);
           } else {
             //do not exist remove it
             g.removeFromParent();

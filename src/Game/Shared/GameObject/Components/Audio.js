@@ -75,6 +75,10 @@ const AudioModule = class Audio {
     }
   }
 
+  updateFromComponent() {
+    //nada
+  }
+
   getUUID() {
     return this.uuid;
   }
