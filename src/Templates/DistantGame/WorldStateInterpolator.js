@@ -60,13 +60,6 @@ export class WorldStateInterpolator {
 
     this.states.push(state);
 
-    /*state.getGameObject().traverse(function (g) {
-      if (g.name == 'ButterflyArea') {
-        
-        console.log(g.getComponent("LocalScript").conf);
-      }
-    });*/
-
     // Keep only one worldstate before the current server time
     const index = this._computeIndexBaseState();
     if (index > 0) {

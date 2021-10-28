@@ -223,13 +223,6 @@ WorldStateModule.interpolate = function (w1, w2, ratio) {
     }
   });
 
-  /*result.getGameObject().traverse(function (g) {
-    if (g.name == 'ButterflyArea') {
-      console.log('interpol', g.getComponent('LocalScript').conf);
-      
-    }
-  });*/
-
   return result;
 };
 
