@@ -66,6 +66,7 @@ const AudioModule = class Audio {
       if (sound.state() != 'loaded') continue;
 
       if (this.conf.autoplay && !sound.playing()) sound.play();
+      if (this.conf.volume) sound.volume(this.conf.volume);
 
       //https://github.com/goldfire/howler.js#documentation
       if (this.conf.spatialized) {

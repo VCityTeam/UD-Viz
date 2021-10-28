@@ -34,7 +34,7 @@ module.exports = {
     directionalLight.updateMatrixWorld();
     scene.add(directionalLight);
 
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.3);
     scene.add(ambientLight);
 
     return { directionalLight, ambientLight };
