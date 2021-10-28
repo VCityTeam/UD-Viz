@@ -8,10 +8,24 @@ module.exports = class Commands {
     this.conf = conf;
     udviz = udvizBundle;
     Shared = udviz.Game.Shared;
+
+    this.fpsLabel = null;
+    this.worldDtLabel = null;
   }
 
   init() {
+    const go = arguments[0];
     const localContext = arguments[1];
+
+    const gameView = localContext.getGameView();
+
+    this.fpsLabel = document.createElement('div');
+    this.fpsLabel.classList.add('label_localGameManager');
+    gameView.appendToUI(this.fpsLabel);
+
+    this.worldDtLabel = document.createElement('div');
+    this.worldDtLabel.classList.add('label_localGameManager');
+    gameView.appendToUI(this.worldDtLabel);
 
     //Input manager of the game
     const inputManager = localContext.getGameView().getInputManager();
@@ -53,6 +67,11 @@ module.exports = class Commands {
     );
   }
 
+  updateUI(go, localCtx) {
+    //update ui
+    this.fpsLabel.innerHTML = 'FPS = ' + Math.round(1000 / localCtx.getDt());
+  }
+
   tick() {
     const localContext = arguments[1];
     const worldComputer = localContext.getGameView().getStateComputer();
@@ -63,5 +82,14 @@ module.exports = class Commands {
       const cmds = inputManager.computeCommands();
       worldComputer.onCommands(cmds);
     });
+
+    this.updateUI(arguments[0], localContext);
+  }
+
+  update() {
+    if (!this.conf.worldComputerDt) debugger;
+
+    this.worldDtLabel.innerHTML =
+      'World FPS = ' + Math.round(1000 / this.conf.worldComputerDt);
   }
 };

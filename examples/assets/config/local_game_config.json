@@ -45,17 +45,21 @@
   "game": {
     "fps": 30,
     "shadowMapSize": 2046,
-    "skyColor": {
-      "r": 0.4,
-      "g": 0.6,
-      "b": 0.8
-    },
     "sky": {
-      "path": "./assets/img/sky.jpg"
+      "path": "./assets/img/sky.jpg",
+      "color": {
+        "r": 0.4,
+        "g": 0.6,
+        "b": 0.8
+      },
+      "sun_position": {
+        "phi": 1,
+        "theta": 0.3
+      }
     }
   },
   "itowns": {
-  "radiusExtent": 1000
+    "radiusExtent": 1000
   },
   "3DTilesLayers": [
     {
