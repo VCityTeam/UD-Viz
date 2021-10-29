@@ -221,6 +221,20 @@ export class GameView extends View3D {
     super.dispose();
     this.stateComputer.stop();
 
+    //notify localscript dispose
+    if (this.lastState) {
+      const ctx = this.localContext;
+
+      this.lastState.getGameObject().traverse(function (g) {
+        const scriptComponent = g.getComponent(LocalScript.TYPE);
+        if (scriptComponent) {
+          scriptComponent.execute(LocalScript.EVENT.DISPOSE, [ctx]);
+        }
+        const audioComponent = g.getComponent(Audio.TYPE);
+        if (audioComponent) audioComponent.dispose();
+      });
+    }
+
     if (!keepAssets) this.assetsManager.dispose();
   }
 
