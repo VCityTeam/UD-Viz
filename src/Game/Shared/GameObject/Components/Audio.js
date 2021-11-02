@@ -30,6 +30,12 @@ const AudioModule = class Audio {
     return false;
   }
 
+  dispose() {
+    for (let key in this.sounds) {
+      this.sounds[key].pause();
+    }
+  }
+
   /**
    * Compute this to JSON
    * @returns {JSON}

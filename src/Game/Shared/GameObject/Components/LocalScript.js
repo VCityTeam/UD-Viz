@@ -139,6 +139,7 @@ LocalScriptModule.EVENT = {
   TICK: 'tick', //every tick
   ON_NEW_GAMEOBJECT: 'onNewGameObject', //when a go is added
   UPDATE: 'update', //when component need to be updated with newer localScript component
+  DISPOSE: 'dispose', //world is dispose
 };
 
 module.exports = LocalScriptModule;
