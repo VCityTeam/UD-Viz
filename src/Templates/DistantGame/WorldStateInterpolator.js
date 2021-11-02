@@ -46,7 +46,7 @@ export class WorldStateInterpolator {
    * Add a new state
    * @param {WorldState} state
    */
-  _onNewState(state) {
+  _onNewState(state, force = false) {
     if (!state) {
       throw new Error('no state');
     }
@@ -61,11 +61,15 @@ export class WorldStateInterpolator {
     this.states.push(state);
 
     // Keep only one worldstate before the current server time
-    const index = this._computeIndexBaseState();
+    let index;
+    force
+      ? (index = this._computeIndexBaseState())
+      : (index = this.states.length - 1);
+
     if (index > 0) {
       const stateDeleted = this.states.splice(0, index);
-      for (let index = 0; index < stateDeleted.length; index++) {
-        const element = stateDeleted[index];
+      for (let iStateDel = 0; iStateDel < stateDeleted.length; iStateDel++) {
+        const element = stateDeleted[iStateDel];
         if (!element.hasBeenConsumed()) this._notConsumedStates.push(element); //register states not consumed
       }
     }
@@ -182,7 +186,8 @@ export class WorldStateInterpolator {
     return result;
   }
 
-  computeCurrentStates() {
+  computeCurrentStates(force = false) {
+    if (force) this._onNewState(this.localComputer.computeCurrentState());
     const result = this._notConsumedStates;
     this._notConsumedStates = [];
     result.push(this.computeCurrentState());

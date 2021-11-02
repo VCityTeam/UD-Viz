@@ -374,11 +374,13 @@ export class GameView extends View3D {
    * @param {WorldState} state
    */
   forceUpdate(state) {
-    if (!state) state = this.stateComputer.computeCurrentState();
+    let states = [];
+    if (!state) states = this.stateComputer.computeCurrentStates(true);
+    else states = [state];
 
     let old = this.updateGameObject;
     this.updateGameObject = true;
-    this.update(state);
+    this.update(states);
     this.updateGameObject = old;
   }
 
