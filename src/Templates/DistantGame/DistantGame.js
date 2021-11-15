@@ -36,7 +36,7 @@ export class DistantGame {
     ]);
   }
 
-  reset(userData) {
+  reset(userData, localScriptModules) {
     this.dispose(true);
 
     const gV = new GameView({
@@ -44,6 +44,7 @@ export class DistantGame {
       interpolator: this.interpolator,
       config: this.config,
       userData: userData,
+      localScriptModules: localScriptModules,
     });
 
     const ctxGameView = gV.getLocalContext();
@@ -58,8 +59,8 @@ export class DistantGame {
     this.gameView = gV;
   }
 
-  start(userData = {}) {
-    this.reset(userData);
+  start(userData = {}, localScriptModules) {
+    this.reset(userData, localScriptModules);
 
     const _this = this;
 
@@ -74,7 +75,7 @@ export class DistantGame {
 
         if (_this.gameView.getLastState()) {
           userData.firstGameView = false;
-          _this.start(userData);
+          _this.start(userData, localScriptModules);
         }
 
         _this.interpolator.onFirstState(state);

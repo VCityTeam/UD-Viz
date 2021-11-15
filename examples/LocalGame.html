@@ -36,8 +36,19 @@
         },
       });
 
+      //example of a local module pass to the localscript context
+      const localModules = {
+        myCustomModule: {
+          print() {
+            console.log('PRINT');
+          },
+        },
+      };
+
       const app = new udv.Templates.LocalGame();
-      app.start(myWorld, './assets/config/local_game_config.json');
+      app.start(myWorld, './assets/config/local_game_config.json', {
+        localScriptModules: localModules,
+      });
     </script>
   </body>
 </html>

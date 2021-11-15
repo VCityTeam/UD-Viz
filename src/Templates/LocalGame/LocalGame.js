@@ -71,6 +71,7 @@ export class LocalGame {
             interpolator: interpolator,
             config: config,
             itownsControls: false,
+            localScriptModules: options.localScriptModules,
           });
 
           //start gameview tick

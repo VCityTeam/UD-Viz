@@ -65,6 +65,11 @@ module.exports = class Commands {
         return new Shared.Command({ type: Shared.Command.TYPE.MOVE_RIGHT });
       }
     );
+
+    //example of how to access its custom module
+    const myCustomModule = gameView.getLocalScriptModules()['myCustomModule'];
+    if (myCustomModule)
+      inputManager.addKeyInput('p', 'keydown', myCustomModule.print);
   }
 
   updateUI(go, localCtx) {
@@ -74,7 +79,7 @@ module.exports = class Commands {
 
   tick() {
     const localContext = arguments[1];
-    const worldComputer = localContext.getGameView().getStateComputer();
+    const worldComputer = localContext.getGameView().getInterpolator();
     const inputManager = localContext.getGameView().getInputManager();
 
     //send input manager command to the world
@@ -87,7 +92,7 @@ module.exports = class Commands {
   }
 
   update() {
-    if (!this.conf.worldComputerDt) debugger;
+    if (!this.conf.worldComputerDt == undefined) debugger;
 
     this.worldDtLabel.innerHTML =
       'World FPS = ' + Math.round(1000 / this.conf.worldComputerDt);

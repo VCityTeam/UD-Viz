@@ -21,10 +21,13 @@ export class GameView extends View3D {
     //call parent class
     super(params);
 
+    //custom modules pass the localscript context
+    this.localScriptModules = params.localScriptModules || {};
+
     //assets
     this.assetsManager = params.assetsManager;
 
-    //state computer TODO this is always an worldstateinterpolator
+    //object passing states to the view its could work with a local worldcomputer or a distant server via websocket communication
     this.interpolator = params.interpolator;
 
     //object3D
@@ -66,6 +69,10 @@ export class GameView extends View3D {
 
   getLocalContext() {
     return this.localContext;
+  }
+
+  getLocalScriptModules() {
+    return this.localScriptModules;
   }
 
   /**
@@ -424,7 +431,7 @@ export class GameView extends View3D {
 }
 
 /**
- * Context pass to the GameObject LocalScript to work
+ * Context pass to the GameObject LocalScript to work (TODO this class is relevant ? all attributes could be in gameview class)
  */
 class LocalContext {
   constructor(gameView) {
