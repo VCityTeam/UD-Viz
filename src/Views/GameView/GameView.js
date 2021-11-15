@@ -14,7 +14,7 @@ const THREEUtils = udvShared.Components.THREEUtils;
 
 /**
  * Main view of an ud-viz game application
- * This object works with a state computer (./src/Game/Components/StateComputer)
+ * This object works with a state computer (./src/Game/Components/interpolator)
  */
 export class GameView extends View3D {
   constructor(params) {
@@ -25,7 +25,7 @@ export class GameView extends View3D {
     this.assetsManager = params.assetsManager;
 
     //state computer TODO this is always an worldstateinterpolator
-    this.stateComputer = params.stateComputer;
+    this.interpolator = params.interpolator;
 
     //object3D
     this.object3D = new THREE.Object3D();
@@ -74,7 +74,7 @@ export class GameView extends View3D {
    */
   setUpdateGameObject(value) {
     this.updateGameObject = value;
-    this.stateComputer.setPause(value);
+    this.interpolator.setPause(value);
   }
 
   /**
@@ -148,7 +148,7 @@ export class GameView extends View3D {
         });
 
         //update Gameview
-        _this.update(_this.stateComputer.computeCurrentStates());
+        _this.update(_this.interpolator.computeCurrentStates());
       }
     };
     tick();
@@ -219,7 +219,7 @@ export class GameView extends View3D {
    */
   dispose(keepAssets = false) {
     super.dispose();
-    this.stateComputer.stop();
+    this.interpolator.stop();
 
     //notify localscript dispose
     if (this.lastState) {
@@ -390,11 +390,12 @@ export class GameView extends View3D {
   forceUpdate(state) {
     let states = [];
     if (!state) {
-      const computer = this.stateComputer.getLocalComputer();
+      const computer = this.interpolator.getLocalComputer();
       if (computer) {
-        this.stateComputer.onNewState(computer.computeCurrentState()); //force the computation
+        states = [computer.computeCurrentState()];
+      } else {
+        throw new Error('no local computer');
       }
-      states = this.stateComputer.computeCurrentStates();
     } else states = [state];
 
     let old = this.updateGameObject;
@@ -417,8 +418,8 @@ export class GameView extends View3D {
     return this.lastState;
   }
 
-  getStateComputer() {
-    return this.stateComputer;
+  getInterpolator() {
+    return this.interpolator;
   }
 }
 

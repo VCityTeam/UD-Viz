@@ -68,7 +68,7 @@ export class LocalGame {
           _this.gameView = new Views.GameView({
             htmlParent: options.htmlParent || document.body,
             assetsManager: assetsManager,
-            stateComputer: interpolator,
+            interpolator: interpolator,
             config: config,
             itownsControls: false,
           });
