@@ -46,7 +46,7 @@ export class WorldStateInterpolator {
    * Add a new state
    * @param {WorldState} state
    */
-  onNewState(state, force = false) {
+  onNewState(state) {
     if (!state) {
       throw new Error('no state');
     }
@@ -61,10 +61,7 @@ export class WorldStateInterpolator {
     this.states.push(state);
 
     // Keep only one worldstate before the current server time
-    let index;
-    force
-      ? (index = this._computeIndexBaseState())
-      : (index = this.states.length - 1);
+    const index = this._computeIndexBaseState();
 
     if (index > 0) {
       const stateDeleted = this.states.splice(0, index);
