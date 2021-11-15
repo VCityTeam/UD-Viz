@@ -21,14 +21,14 @@ export class WorldStateInterpolator {
     //DEBUG
     this.lastTimeState = 0;
 
-    //local game
+    //local game optional (could work with a distant computer via websocket)
     this.localComputer = localComputer;
     if (localComputer) {
       //register itself in the localcomputer
       const _this = this;
       _this.onFirstState(localComputer.computeCurrentState());
       localComputer.addAfterTickRequester(function () {
-        _this._onNewState(localComputer.computeCurrentState());
+        _this.onNewState(localComputer.computeCurrentState());
       });
     }
   }
@@ -46,7 +46,7 @@ export class WorldStateInterpolator {
    * Add a new state
    * @param {WorldState} state
    */
-  _onNewState(state, force = false) {
+  onNewState(state, force = false) {
     if (!state) {
       throw new Error('no state');
     }
@@ -111,6 +111,10 @@ export class WorldStateInterpolator {
 
   //local computer wrapper methods
 
+  getLocalComputer() {
+    return this.localComputer;
+  }
+
   getWorldContext() {
     return this.localComputer.getWorldContext();
   }
@@ -131,7 +135,7 @@ export class WorldStateInterpolator {
     let last = this._getLastStateReceived();
     if (!last) throw new Error('no last state');
     let newState = last.add(diff);
-    this._onNewState(newState);
+    this.onNewState(newState);
   }
 
   /**
@@ -143,15 +147,17 @@ export class WorldStateInterpolator {
     this.gameStart = Date.now();
     this.states.length = 0;
     this.lastTimeState = 0;
-    this._onNewState(state);
+    this.onNewState(state);
   }
 
   //StateComputer INTERFACE
 
   /**
-   * wrapper function
+   * stop localcomputer if one
    */
-  stop() {}
+  stop() {
+    if (this.localComputer) this.localComputer.stop();
+  }
 
   /**
    * Compute the current world state
@@ -186,8 +192,8 @@ export class WorldStateInterpolator {
     return result;
   }
 
+  //When a view need the current it's called this function
   computeCurrentStates(force = false) {
-    if (force) this._onNewState(this.localComputer.computeCurrentState());
     const result = this._notConsumedStates;
     this._notConsumedStates = [];
     result.push(this.computeCurrentState());

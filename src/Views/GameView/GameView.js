@@ -24,7 +24,7 @@ export class GameView extends View3D {
     //assets
     this.assetsManager = params.assetsManager;
 
-    //state computer
+    //state computer TODO this is always an worldstateinterpolator
     this.stateComputer = params.stateComputer;
 
     //object3D
@@ -389,8 +389,13 @@ export class GameView extends View3D {
    */
   forceUpdate(state) {
     let states = [];
-    if (!state) states = this.stateComputer.computeCurrentStates(true);
-    else states = [state];
+    if (!state) {
+      const computer = this.stateComputer.getLocalComputer();
+      if (computer) {
+        this.stateComputer.onNewState(computer.computeCurrentState()); //force the computation
+      }
+      states = this.stateComputer.computeCurrentStates();
+    } else states = [state];
 
     let old = this.updateGameObject;
     this.updateGameObject = true;

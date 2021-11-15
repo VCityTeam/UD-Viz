@@ -32,7 +32,7 @@ const AudioModule = class Audio {
 
   dispose() {
     for (let key in this.sounds) {
-      this.sounds[key].pause();
+      this.sounds[key].pause(); //TODO if shared just pause if not unload 
     }
   }
 
