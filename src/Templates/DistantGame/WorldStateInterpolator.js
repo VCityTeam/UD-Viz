@@ -193,7 +193,7 @@ export class WorldStateInterpolator {
   }
 
   //When a view need the current it's called this function
-  computeCurrentStates(force = false) {
+  computeCurrentStates() {
     const result = this._notConsumedStates;
     this._notConsumedStates = [];
     result.push(this.computeCurrentState());
