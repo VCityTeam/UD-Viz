@@ -76,9 +76,11 @@ export class LocalGame {
 
           //start gameview tick
           _this.gameView.writeUserData('avatarUUID', options.avatarUUID);
-          _this.gameView.start(worldStateComputer.computeCurrentState());
-
-          resolve();
+          _this.gameView
+            .start(worldStateComputer.computeCurrentState())
+            .then(function () {
+              resolve();
+            });
         });
       });
     });

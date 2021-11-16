@@ -122,62 +122,67 @@ export class GameView extends View3D {
    * @param {WorldState} state first state of this view
    */
   start(state) {
-    //build itowns view
-    const o = state.getOrigin();
-    const [x, y] = proj4.default(this.projection).forward([o.lng, o.lat]);
-    const r = this.config.itowns.radiusExtent;
-    // Define geographic extent: CRS, min/max X, min/max Y
-    const extent = new itowns.Extent(
-      this.projection,
-      x - r,
-      x + r,
-      y - r,
-      y + r
-    );
-    this.initItownsView(extent);
-
-    //disable itowns rendering
-    this.itownsView.render = function () {
-      //empty
-    };
-
-    this.initScene(state);
-
-    //start to tick
     const _this = this;
-    const fps = this.config.game.fps;
+    return new Promise((resolve, reject) => {
+      //build itowns view
+      const o = state.getOrigin();
+      const [x, y] = proj4.default(_this.projection).forward([o.lng, o.lat]);
+      const r = _this.config.itowns.radiusExtent;
+      // Define geographic extent: CRS, min/max X, min/max Y
+      const extent = new itowns.Extent(
+        _this.projection,
+        x - r,
+        x + r,
+        y - r,
+        y + r
+      );
+      _this.initItownsView(extent);
 
-    let now;
-    let then = Date.now();
-    let delta;
-    const tick = function () {
-      if (_this.disposed) return; //stop requesting frame if disposed
+      //disable itowns rendering
+      _this.itownsView.render = function () {
+        //empty
+      };
 
-      requestAnimationFrame(tick);
+      _this.initScene(state);
 
-      now = Date.now();
-      delta = now - then;
+      //start to tick
+      const fps = _this.config.game.fps;
 
-      if (delta > 1000 / fps) {
-        // update time stuffs
-        then = now - (delta % 1000) / fps;
+      let now;
+      let then = Date.now();
+      let delta;
+      const tick = function () {
+        if (_this.disposed) return; //stop requesting frame if disposed
 
-        //set dt
-        _this.localContext.setDt(delta);
+        requestAnimationFrame(tick);
 
-        //call tick requester
-        _this.tickRequesters.forEach(function (cb) {
-          cb(_this.localContext);
-        });
+        now = Date.now();
+        delta = now - then;
 
-        //update Gameview
-        _this.update(_this.interpolator.computeCurrentStates());
-      }
-    };
-    tick();
+        if (delta > 1000 / fps) {
+          // update time stuffs
+          then = now - (delta % 1000) / fps;
 
-    //differed a resize event
-    setTimeout(this.onResize.bind(this), 1000);
+          //set dt
+          _this.localContext.setDt(delta);
+
+          //call tick requester
+          _this.tickRequesters.forEach(function (cb) {
+            cb(_this.localContext);
+          });
+
+          //update Gameview model
+          _this.update(_this.interpolator.computeCurrentStates());
+        }
+      };
+      tick();
+
+      //differed a resize event
+      setTimeout(function () {
+        _this.onResize();
+        resolve();
+      }, 100);
+    });
   }
 
   /**
