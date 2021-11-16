@@ -9,9 +9,98 @@ import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
 import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass.js';
 
+const MYMAT = new THREE.ShaderMaterial({
+  uniforms: {
+    // logDepthBufFC:{value:1},
+    // opacity: {
+    //   value: 1.0
+    // }
+  },
+  vertexShader: `
+    #define NORMAL
+
+    varying vec3 vNormal;
+    //varying float vDepth;
+    //varying vec3 vView;
+    varying vec2 vHighPrecisionZW;
+    varying float vDistance;
+
+    #include <common>
+    #include <logdepthbuf_pars_vertex>
+
+    void main() {
+      #include <beginnormal_vertex>
+      #include <defaultnormal_vertex>
+
+      //vNormal = normalize( transformedNormal );
+
+      #include <begin_vertex>
+      #include <project_vertex>
+      #include <logdepthbuf_vertex>
+
+      vNormal = normal;
+      //vView = -(modelViewMatrix * vec4(position.xyz, 1.)).xyz;
+      //vView = vec3(1.0 + gl_Position.w)/1000.;
+      //vDepth = 1.0 + gl_Position.w;
+      //vDepth = log(1.0 + abs(gl_Position.z));
+      //vDepth = gl_Position.w;
+      //vDepth = log(1. + abs(mvPosition.y));
+      //vDepth = -(modelViewMatrix * vec4(position.xyz, 1.)).z;
+      //vDepth = length(-(modelViewMatrix * vec4(position.xyz, 1.)).xyz);
+      //vDepth = log(1. + length(-(modelViewMatrix * vec4(position.xyz, 1.)).xyz));
+      //vDepth = log(1. + length(-(modelViewMatrix * vec4(position.xyz, 1.)).xyz);
+      //
+      vHighPrecisionZW = gl_Position.zw;
+      //
+      vDistance = length((modelViewMatrix * vec4(position.xyz, 1.)).xyz);
+      vDistance /= 1000.;
+    }
+  `,
+  fragmentShader: `
+    #define NORMAL
+
+    varying vec3 vNormal;
+    //varying float vDepth;
+    //varying vec3 vView;
+    varying vec2 vHighPrecisionZW; 
+    varying float vDistance;
+
+    #include <packing>
+    #include <normalmap_pars_fragment>
+    #include <logdepthbuf_pars_fragment>
+
+    void main() {
+
+      #include <clipping_planes_fragment>
+      #include <logdepthbuf_fragment>
+      #include <normal_fragment_begin>
+      #include <normal_fragment_maps>
+
+      
+
+      //float depth = 1.;
+      //
+      // float fragCoordZ = 0.5 * vHighPrecisionZW[0] / vHighPrecisionZW[1] + 0.5;
+      // float simplyPackedDepth = 1.0 - fragCoordZ;
+      // float depth = simplyPackedDepth;
+      //float depth = abs(vHighPrecisionZW[0] / vHighPrecisionZW[1]);
+      float depth = vDistance;
+      depth = clamp(depth, 0., 1.);
+
+      // gl_FragColor = vec4(packNormalToRGB( normal ), 1.);
+      gl_FragColor = vec4(packNormalToRGB( normal ), depth);
+    }
+  `,
+});
+// MYMAT.side = THREE.FrontSide;
+//MYMAT.clippingPlanes = [];
+// MYMAT.flatShading = false;
+// MYMAT.normalMapType = THREE.ObjectSpaceNormalMap;
+
 const MySobelOperatorShader = {
 	uniforms: {
 		'tDiffuse': { value: null },
+		'tDepth': { value: null },
 		'resolution': new THREE.Uniform(new THREE.Vector2()),
 	},
 
@@ -25,8 +114,24 @@ const MySobelOperatorShader = {
 
 	fragmentShader: /* glsl */`
     uniform sampler2D tDiffuse;
+    uniform sampler2D tDepth;
     uniform vec2 resolution;
     varying vec2 vUv;
+    vec4 getTex(in vec2 uv)
+    {
+      //float fragCoordZ = 0.5 * vHighPrecisionZW[0] / vHighPrecisionZW[1] + 0.5;
+      //float simplyPackedDepth = 1.0 - fragCoordZ;
+
+      // float simplyPackedDepth = texture2D(tDiffuse, uv).w;
+      // float fragCoordZ = -simplyPackedDepth + 1.0;
+
+      return vec4(
+        // fragCoordZ
+        texture2D(tDiffuse, uv)
+        //texture2D(tDiffuse, uv).xyz,
+        //texture2D(tDepth, uv).x
+      );
+    }
     void main() {
       vec2 texel = vec2( 1.0 / resolution.x, 1.0 / resolution.y );
       //vec2 texel = vUv;
@@ -35,17 +140,17 @@ const MySobelOperatorShader = {
       const mat3 Gy = mat3( -1, 0, 1, -2, 0, 2, -1, 0, 1 ); // y direction kernel
       // fetch the 3x3 neighbourhood of a fragment
       // first column
-      vec4 tx0y0 = texture2D( tDiffuse, vUv + texel * vec2( -1, -1 ) );
-      vec4 tx0y1 = texture2D( tDiffuse, vUv + texel * vec2( -1,  0 ) );
-      vec4 tx0y2 = texture2D( tDiffuse, vUv + texel * vec2( -1,  1 ) );
+      vec4 tx0y0 = getTex(vUv + texel * vec2( -1, -1 ) );
+      vec4 tx0y1 = getTex(vUv + texel * vec2( -1,  0 ) );
+      vec4 tx0y2 = getTex(vUv + texel * vec2( -1,  1 ) );
       // second column
-      vec4 tx1y0 = texture2D( tDiffuse, vUv + texel * vec2(  0, -1 ) );
-      vec4 tx1y1 = texture2D( tDiffuse, vUv + texel * vec2(  0,  0 ) );
-      vec4 tx1y2 = texture2D( tDiffuse, vUv + texel * vec2(  0,  1 ) );
+      vec4 tx1y0 = getTex(vUv + texel * vec2(  0, -1 ) );
+      vec4 tx1y1 = getTex(vUv + texel * vec2(  0,  0 ) );
+      vec4 tx1y2 = getTex(vUv + texel * vec2(  0,  1 ) );
       // third column
-      vec4 tx2y0 = texture2D( tDiffuse, vUv + texel * vec2(  1, -1 ) );
-      vec4 tx2y1 = texture2D( tDiffuse, vUv + texel * vec2(  1,  0 ) );
-      vec4 tx2y2 = texture2D( tDiffuse, vUv + texel * vec2(  1,  1 ) );
+      vec4 tx2y0 = getTex(vUv + texel * vec2(  1, -1 ) );
+      vec4 tx2y1 = getTex(vUv + texel * vec2(  1,  0 ) );
+      vec4 tx2y2 = getTex(vUv + texel * vec2(  1,  1 ) );
       // gradient value in x direction
       vec4 valueGx = Gx[0][0] * tx0y0 + Gx[1][0] * tx1y0 + Gx[2][0] * tx2y0 +
         Gx[0][1] * tx0y1 + Gx[1][1] * tx1y1 + Gx[2][1] * tx2y1 +
@@ -61,7 +166,6 @@ const MySobelOperatorShader = {
 };
 
 const MaskShader = {
-
 	uniforms: {
 		'tDiffuse': { value: null },
 		'tMask': { value: null },
@@ -81,6 +185,9 @@ const MaskShader = {
 		uniform sampler2D tMask;
 		uniform vec2 resolution;
 		varying vec2 vUv;
+
+    //#include <packing>
+
 		void main() {
       gl_FragColor = vec4(0.);
 
@@ -96,73 +203,28 @@ const MaskShader = {
 
       vec4 maskTexel = texture2D(tMask, vUv);
       float maskFactor = max(max(max(maskTexel.x, maskTexel.y), maskTexel.z), maskTexel.w);
-      gl_FragColor = vec4((1.- maskFactor) * texture2D(tDiffuse, vUv).xyz, 1.);
-      // if(maskFactor <= 0.)
-      //   gl_FragColor = texture2D(tDiffuse, vUv);
+      // gl_FragColor = vec4((1.- maskFactor) * texture2D(tDiffuse, vUv).xyz, 1.);
+      if(maskFactor <= 0.05)
+      {
+        gl_FragColor = texture2D(tDiffuse, vUv);
+
+        /*
+        //float depth = unpackRGBAToDepth(gl_FragColor);
+        float depth = gl_FragColor.x;
+        //depth = abs(depth)/2.;
+        //gl_FragColor = vec4(vec3(depth), 1.);
+        //gl_FragColor = vec4(vec3(unpackRGBAToDepth(texture2D(tDiffuse, vUv)), 1.);
+        */
+      }
+
+      #include <tonemapping_fragment>
+      #include <encodings_fragment>
+      #include <fog_fragment>
+      #include <premultiplied_alpha_fragment>
+      #include <dithering_fragment>
 		}
   `
 };
-
-
-const MYMAT = new THREE.ShaderMaterial({
-  uniforms: {
-    // logDepthBufFC:{value:1},
-    // opacity: {
-    //   value: 1.0
-    // }
-  },
-  vertexShader: `
-    #define NORMAL
-
-    varying vec3 vNormal;
-    varying float vDepth;
-
-    #include <common>
-    #include <logdepthbuf_pars_vertex>
-
-    void main() {
-      #include <beginnormal_vertex>
-      #include <defaultnormal_vertex>
-
-      //vNormal = normalize( transformedNormal );
-
-      #include <begin_vertex>
-      #include <project_vertex>
-      #include <logdepthbuf_vertex>
-
-      vNormal = normal;
-      //vDepth = 1.0 + gl_Position.w;
-      //vDepth = log(1.0 + abs(gl_Position.z));
-      //vDepth = gl_Position.w;
-      //vDepth = log(1. + abs(mvPosition.y));
-    }
-  `,
-  fragmentShader: `
-    #define NORMAL
-
-    varying vec3 vNormal;
-    varying float vDepth;
-
-    #include <packing>
-    #include <normalmap_pars_fragment>
-    #include <logdepthbuf_pars_fragment>
-
-    void main() {
-
-      #include <clipping_planes_fragment>
-      #include <logdepthbuf_fragment>
-      #include <normal_fragment_begin>
-      #include <normal_fragment_maps>
-
-      gl_FragColor = vec4(packNormalToRGB( normal ), 0.);
-      //gl_FragColor = vec4(packNormalToRGB( normal ), gl_FragCoord.w);
-    }
-  `,
-});
-// MYMAT.side = THREE.FrontSide;
-//MYMAT.clippingPlanes = [];
-MYMAT.flatShading = false;
-// MYMAT.normalMapType = THREE.ObjectSpaceNormalMap;
 
 
 
@@ -216,20 +278,43 @@ export class GameView extends View3D {
     //userData
     this.userData = params.userData || {};
 
+    //boolean switch to control special effects activation
+    this.cellShading = true;
+
     //renderTarget for special effects
     const size = super.getSize();
+    // this.depthTextureFX = new THREE.DepthTexture(size.x, size.y);
+    // this.renderTargetFX = new THREE.WebGLRenderTarget(size.x, size.y, {
+    //   depthBuffer: true,
+    //   stencilBuffer: false,
+    //   //depthBuffer: false,
+    //   // depthTexture: this.depthTextureFX,
+    // });
     this.renderTargetFX = new THREE.WebGLRenderTarget(size.x, size.y, {
       depthBuffer: true,
-      stencilBuffer: true,
+      stencilBuffer: false,
+      // depthTexture: this.depthTextureFX,
+      format: THREE.RGBAFormat, type: THREE.FloatType
     });
+    // console.log(this.renderTargetFX);
     // this.overrideMaterialFX = new THREE.MeshNormalMaterial();
+    // this.overrideMaterialFX = new THREE.MeshDepthMaterial({
+    //   depthTest: true,
+    //   depthWrite: true,
+    //   depthPacking: THREE.RGBADepthPacking,
+    // });
     this.overrideMaterialFX = MYMAT;
+    this.edgeDetectionComposer = null;
+    this.finalComposer = null;
   }
 
   onResize(){
     super.onResize();
     const size = super.getSize();
+    //this.depthTextureFX = new THREE.DepthTexture(size.x, size.y);
     this.renderTargetFX.setSize(size.x, size.y);
+    this.initComposers();
+    // console.log("resize!");
   }
 
   getUserData(key) {
@@ -295,6 +380,7 @@ export class GameView extends View3D {
     };
 
     this.initScene(state);
+    this.initComposers();
 
     //start to tick
     const _this = this;
@@ -390,6 +476,36 @@ export class GameView extends View3D {
     }
   }
 
+  initComposers() {
+    const scene = this.getScene();
+    scene.updateMatrixWorld();
+    const camera = this.getCamera();
+    // console.log(camera.near, camera.far);
+    // camera.near = 10;
+    // camera.far = 1000.;
+    // camera.updateProjectionMatrix();
+    const renderer = this.getRenderer();
+    
+    this.edgeDetectionComposer = new EffectComposer(renderer, this.renderTargetFX);
+    const normalsPass = new RenderPass(scene, camera, this.overrideMaterialFX);
+    this.edgeDetectionComposer.addPass(normalsPass);
+    const sobelPass = new ShaderPass(MySobelOperatorShader);
+    sobelPass.uniforms.resolution.value = new THREE.Vector2(this.edgeDetectionComposer.writeBuffer.width, this.edgeDetectionComposer.writeBuffer.height);
+    //sobelPass.uniforms.tDepth.value = this.depthTextureFX;
+    this.edgeDetectionComposer.addPass(sobelPass);
+    this.edgeDetectionComposer.renderToScreen = false;
+    //edgeDetectionComposer.render();
+    
+    this.finalComposer = new EffectComposer(renderer);
+    const renderPass = new RenderPass(scene, camera);
+    this.finalComposer.addPass(renderPass);
+    const compositionPass = new ShaderPass(MaskShader);
+    compositionPass.uniforms.tMask.value = this.renderTargetFX.texture;
+    compositionPass.uniforms.resolution.value = new THREE.Vector2(this.finalComposer.writeBuffer.width, this.finalComposer.writeBuffer.height);
+    this.finalComposer.addPass(compositionPass);
+    //finalComposer.render();
+  }
+
   /**
    * dispose this view
    */
@@ -398,6 +514,32 @@ export class GameView extends View3D {
     this.stateComputer.stop();
 
     if (!keepAssets) this.assetsManager.dispose();
+  }
+
+  render(){
+    //render
+    const scene = this.itownsView.scene;
+    scene.updateMatrixWorld();
+    const camera = this.itownsView.camera.camera3D;
+    // console.log(camera.near, camera.far);
+    // camera.near = 10;
+    // camera.far = 1000.;
+    // camera.updateProjectionMatrix();
+    const renderer = this.itownsView.mainLoop.gfxEngine.renderer;
+    //console.log(camera);
+    
+    //Standard rendering.
+    if(this.cellShading == false)
+    {
+      renderer.render(scene, camera);
+      return;
+    }
+
+    //Post-processing for cell-shading rendering.
+    this.edgeDetectionComposer.reset(this.renderTargetFX);
+    this.finalComposer.reset();
+    this.edgeDetectionComposer.render();
+    this.finalComposer.render();
   }
 
   /**
@@ -516,31 +658,8 @@ export class GameView extends View3D {
       });
     }
 
-    if (this.isRendering) {
-      //render
-      const scene = this.itownsView.scene;
-      scene.updateMatrixWorld();
-      const camera = this.itownsView.camera.camera3D;
-      const renderer = this.itownsView.mainLoop.gfxEngine.renderer;
-      
-      const composer = new EffectComposer(renderer, this.renderTargetFX);
-      const normalsPass = new RenderPass(scene, camera, this.overrideMaterialFX);
-      composer.addPass(normalsPass);
-      const sobelPass = new ShaderPass(MySobelOperatorShader);
-      sobelPass.uniforms.resolution.value = new THREE.Vector2(composer.writeBuffer.width, composer.writeBuffer.height);
-      composer.addPass(sobelPass);
-      composer.renderToScreen = false;
-      composer.render();
-
-      const finalComposer = new EffectComposer(renderer);
-      const renderPass = new RenderPass(scene, camera);
-      finalComposer.addPass(renderPass);
-      const compositionPass = new ShaderPass(MaskShader);
-      compositionPass.uniforms.tMask.value = this.renderTargetFX.texture;
-      compositionPass.uniforms.resolution.value = new THREE.Vector2(composer.writeBuffer.width, composer.writeBuffer.height);
-      finalComposer.addPass(compositionPass);
-      finalComposer.render();
-    }
+    if (this.isRendering)
+      this.render();
 
     //This notably charge missing iTowns tiles according to current view.
     this.getItownsView().notifyChange(this.getItownsView().camera.camera3D);
