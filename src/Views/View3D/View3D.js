@@ -692,6 +692,10 @@ export class View3D {
     return this.itownsView.scene;
   }
 
+  getCamera() {
+    return this.itownsView.camera.camera3D;
+  }
+
   getRenderer() {
     return this.itownsView.mainLoop.gfxEngine.renderer;
   }

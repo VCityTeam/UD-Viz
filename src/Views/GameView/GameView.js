@@ -242,6 +242,36 @@ export class GameView extends View3D {
     }
   }
 
+  initComposers() {
+    const scene = this.getScene();
+    scene.updateMatrixWorld();
+    const camera = this.getCamera();
+    // console.log(camera.near, camera.far);
+    // camera.near = 10;
+    // camera.far = 1000.;
+    // camera.updateProjectionMatrix();
+    const renderer = this.getRenderer();
+    
+    this.edgeDetectionComposer = new EffectComposer(renderer, this.renderTargetFX);
+    const normalsPass = new RenderPass(scene, camera, this.overrideMaterialFX);
+    this.edgeDetectionComposer.addPass(normalsPass);
+    const sobelPass = new ShaderPass(MySobelOperatorShader);
+    sobelPass.uniforms.resolution.value = new THREE.Vector2(this.edgeDetectionComposer.writeBuffer.width, this.edgeDetectionComposer.writeBuffer.height);
+    //sobelPass.uniforms.tDepth.value = this.depthTextureFX;
+    this.edgeDetectionComposer.addPass(sobelPass);
+    this.edgeDetectionComposer.renderToScreen = false;
+    //edgeDetectionComposer.render();
+    
+    this.finalComposer = new EffectComposer(renderer);
+    const renderPass = new RenderPass(scene, camera);
+    this.finalComposer.addPass(renderPass);
+    const compositionPass = new ShaderPass(MaskShader);
+    compositionPass.uniforms.tMask.value = this.renderTargetFX.texture;
+    compositionPass.uniforms.resolution.value = new THREE.Vector2(this.finalComposer.writeBuffer.width, this.finalComposer.writeBuffer.height);
+    this.finalComposer.addPass(compositionPass);
+    //finalComposer.render();
+  }
+
   /**
    * dispose this view
    */
@@ -264,6 +294,32 @@ export class GameView extends View3D {
     }
 
     if (!keepAssets) this.assetsManager.dispose();
+  }
+
+  render(){
+    //render
+    const scene = this.itownsView.scene;
+    scene.updateMatrixWorld();
+    const camera = this.itownsView.camera.camera3D;
+    // console.log(camera.near, camera.far);
+    // camera.near = 10;
+    // camera.far = 1000.;
+    // camera.updateProjectionMatrix();
+    const renderer = this.itownsView.mainLoop.gfxEngine.renderer;
+    //console.log(camera);
+    
+    //Standard rendering.
+    if(this.cellShading == false)
+    {
+      renderer.render(scene, camera);
+      return;
+    }
+
+    //Post-processing for cell-shading rendering.
+    this.edgeDetectionComposer.reset(this.renderTargetFX);
+    this.finalComposer.reset();
+    this.edgeDetectionComposer.render();
+    this.finalComposer.render();
   }
 
   /**
