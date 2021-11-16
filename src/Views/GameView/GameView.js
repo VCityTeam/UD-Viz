@@ -10,12 +10,12 @@ import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
 import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass.js';
 
 const MySobelOperatorShader = {
-	uniforms: {
-		'tDiffuse': { value: null },
-		'resolution': new THREE.Uniform(new THREE.Vector2()),
-	},
+  uniforms: {
+    tDiffuse: { value: null },
+    resolution: new THREE.Uniform(new THREE.Vector2()),
+  },
 
-	vertexShader: /* glsl */`
+  vertexShader: /* glsl */ `
 		varying vec2 vUv;
 		void main() {
 			vUv = uv;
@@ -23,7 +23,7 @@ const MySobelOperatorShader = {
 		}
   `,
 
-	fragmentShader: /* glsl */`
+  fragmentShader: /* glsl */ `
     uniform sampler2D tDiffuse;
     uniform vec2 resolution;
     varying vec2 vUv;
@@ -61,14 +61,13 @@ const MySobelOperatorShader = {
 };
 
 const MaskShader = {
+  uniforms: {
+    tDiffuse: { value: null },
+    tMask: { value: null },
+    resolution: new THREE.Uniform(new THREE.Vector2()),
+  },
 
-	uniforms: {
-		'tDiffuse': { value: null },
-		'tMask': { value: null },
-		'resolution': new THREE.Uniform(new THREE.Vector2()),
-	},
-
-	vertexShader: /* glsl */`
+  vertexShader: /* glsl */ `
 		varying vec2 vUv;
 		void main() {
 			vUv = uv;
@@ -76,7 +75,7 @@ const MaskShader = {
 		}
   `,
 
-	fragmentShader: /* glsl */`
+  fragmentShader: /* glsl */ `
 		uniform sampler2D tDiffuse;
 		uniform sampler2D tMask;
 		uniform vec2 resolution;
@@ -100,9 +99,8 @@ const MaskShader = {
       // if(maskFactor <= 0.)
       //   gl_FragColor = texture2D(tDiffuse, vUv);
 		}
-  `
+  `,
 };
-
 
 const MYMAT = new THREE.ShaderMaterial({
   uniforms: {
@@ -164,9 +162,6 @@ const MYMAT = new THREE.ShaderMaterial({
 MYMAT.flatShading = false;
 // MYMAT.normalMapType = THREE.ObjectSpaceNormalMap;
 
-
-
-
 import LocalScript from '../../Game/Shared/GameObject/Components/LocalScript';
 import { View3D } from '../View3D/View3D';
 import { Audio } from '../../Game/Shared/Shared';
@@ -221,8 +216,7 @@ export class GameView extends View3D {
     this.userData = params.userData || {};
 
     //renderTarget for special effects
-    const size = super.getSize();
-    this.renderTargetFX = new THREE.WebGLRenderTarget(size.x, size.y, {
+    this.renderTargetFX = new THREE.WebGLRenderTarget(0, 0, {
       depthBuffer: true,
       stencilBuffer: true,
     });
@@ -230,10 +224,9 @@ export class GameView extends View3D {
     this.overrideMaterialFX = MYMAT;
   }
 
-  onResize(){
+  onResize() {
     super.onResize();
-    const size = super.getSize();
-    this.renderTargetFX.setSize(size.x, size.y);
+    this.renderTargetFX.setSize(this.size.x, this.size.y);
   }
 
   getUserData(key) {
@@ -565,12 +558,19 @@ export class GameView extends View3D {
       scene.updateMatrixWorld();
       const camera = this.itownsView.camera.camera3D;
       const renderer = this.itownsView.mainLoop.gfxEngine.renderer;
-      
+
       const composer = new EffectComposer(renderer, this.renderTargetFX);
-      const normalsPass = new RenderPass(scene, camera, this.overrideMaterialFX);
+      const normalsPass = new RenderPass(
+        scene,
+        camera,
+        this.overrideMaterialFX
+      );
       composer.addPass(normalsPass);
       const sobelPass = new ShaderPass(MySobelOperatorShader);
-      sobelPass.uniforms.resolution.value = new THREE.Vector2(composer.writeBuffer.width, composer.writeBuffer.height);
+      sobelPass.uniforms.resolution.value = new THREE.Vector2(
+        composer.writeBuffer.width,
+        composer.writeBuffer.height
+      );
       composer.addPass(sobelPass);
       composer.renderToScreen = false;
       composer.render();
@@ -580,7 +580,10 @@ export class GameView extends View3D {
       finalComposer.addPass(renderPass);
       const compositionPass = new ShaderPass(MaskShader);
       compositionPass.uniforms.tMask.value = this.renderTargetFX.texture;
-      compositionPass.uniforms.resolution.value = new THREE.Vector2(composer.writeBuffer.width, composer.writeBuffer.height);
+      compositionPass.uniforms.resolution.value = new THREE.Vector2(
+        composer.writeBuffer.width,
+        composer.writeBuffer.height
+      );
       finalComposer.addPass(compositionPass);
       finalComposer.render();
     }
