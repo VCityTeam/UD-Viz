@@ -39,6 +39,9 @@
       },
       "updateElevationGround": {
         "path": "./assets/localScripts/updateElevationGround.js"
+      },
+      "localAvatar": {
+        "path": "./assets/localScripts/localAvatar.js"
       }
     }
   },
