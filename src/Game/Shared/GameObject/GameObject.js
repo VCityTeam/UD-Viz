@@ -74,6 +74,9 @@ const GameObjectModule = class GameObject {
 
     //assets has been initialized
     this.initialized = false;
+
+    //update the object state in updateFromGO (or not)
+    this.noLocalUpdate = json.noLocalUpdate || false;
   }
 
   /**
@@ -83,6 +86,8 @@ const GameObjectModule = class GameObject {
    * @param {LocalContext} localContext this localcontext
    */
   updateFromGO(go, bufferedGO, localContext) {
+    if (this.noLocalUpdate) return;
+
     if (!go.isStatic()) {
       //update transform
       this.setTransformFromGO(go);
@@ -294,7 +299,7 @@ const GameObjectModule = class GameObject {
     const quaternion = new THREE.Quaternion().setFromAxisAngle(
       new THREE.Vector3(0, 0, 1),
       Math.PI
-    ); 
+    );
     return this.computeForwardVector().applyQuaternion(quaternion);
   }
 
@@ -735,6 +740,7 @@ const GameObjectModule = class GameObject {
         rotation: this.object3D.rotation.toArray(),
         scale: this.object3D.scale.toArray(),
       },
+      noLocalUpdate: this.noLocalUpdate,
     };
   }
 };

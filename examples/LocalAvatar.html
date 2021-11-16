@@ -30,6 +30,15 @@
               idScripts: ['focus', 'localAvatar'],
             },
           },
+          children: [
+            {
+              name: 'avatar',
+              noLocalUpdate: true,
+              components: {
+                Render: { idModel: 'avatar' },
+              },
+            },
+          ],
         },
       });
 
