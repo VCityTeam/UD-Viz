@@ -1,3 +1,3 @@
-class LocalAvatar {
+module.exports = class LocalAvatar {
   constructor() {}
-}
+};

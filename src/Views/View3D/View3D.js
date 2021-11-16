@@ -649,6 +649,10 @@ export class View3D {
     return this.layerManager;
   }
 
+  getSize() {
+    return this.size;
+  }
+
   /**
    * Callback call on the resize event
    */
