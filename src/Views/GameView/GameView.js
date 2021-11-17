@@ -14,18 +14,21 @@ const THREEUtils = udvShared.Components.THREEUtils;
 
 /**
  * Main view of an ud-viz game application
- * This object works with a state computer (./src/Game/Components/StateComputer)
+ * This object works with a state computer (./src/Game/Components/interpolator)
  */
 export class GameView extends View3D {
   constructor(params) {
     //call parent class
     super(params);
 
+    //custom modules pass the localscript context
+    this.localScriptModules = params.localScriptModules || {};
+
     //assets
     this.assetsManager = params.assetsManager;
 
-    //state computer
-    this.stateComputer = params.stateComputer;
+    //object passing states to the view its could work with a local worldcomputer or a distant server via websocket communication
+    this.interpolator = params.interpolator;
 
     //object3D
     this.object3D = new THREE.Object3D();
@@ -68,13 +71,17 @@ export class GameView extends View3D {
     return this.localContext;
   }
 
+  getLocalScriptModules() {
+    return this.localScriptModules;
+  }
+
   /**
    *
    * @param {Boolean} value true go are updated false no
    */
   setUpdateGameObject(value) {
     this.updateGameObject = value;
-    this.stateComputer.setPause(value);
+    this.interpolator.setPause(value);
   }
 
   /**
@@ -148,7 +155,7 @@ export class GameView extends View3D {
         });
 
         //update Gameview
-        _this.update(_this.stateComputer.computeCurrentStates());
+        _this.update(_this.interpolator.computeCurrentStates());
       }
     };
     tick();
@@ -219,7 +226,21 @@ export class GameView extends View3D {
    */
   dispose(keepAssets = false) {
     super.dispose();
-    this.stateComputer.stop();
+    this.interpolator.stop();
+
+    //notify localscript dispose
+    if (this.lastState) {
+      const ctx = this.localContext;
+
+      this.lastState.getGameObject().traverse(function (g) {
+        const scriptComponent = g.getComponent(LocalScript.TYPE);
+        if (scriptComponent) {
+          scriptComponent.execute(LocalScript.EVENT.DISPOSE, [ctx]);
+        }
+        const audioComponent = g.getComponent(Audio.TYPE);
+        if (audioComponent) audioComponent.dispose();
+      });
+    }
 
     if (!keepAssets) this.assetsManager.dispose();
   }
@@ -374,11 +395,19 @@ export class GameView extends View3D {
    * @param {WorldState} state
    */
   forceUpdate(state) {
-    if (!state) state = this.stateComputer.computeCurrentState();
+    let states = [];
+    if (!state) {
+      const computer = this.interpolator.getLocalComputer();
+      if (computer) {
+        states = [computer.computeCurrentState()];
+      } else {
+        throw new Error('no local computer');
+      }
+    } else states = [state];
 
     let old = this.updateGameObject;
     this.updateGameObject = true;
-    this.update(state);
+    this.update(states);
     this.updateGameObject = old;
   }
 
@@ -396,13 +425,13 @@ export class GameView extends View3D {
     return this.lastState;
   }
 
-  getStateComputer() {
-    return this.stateComputer;
+  getInterpolator() {
+    return this.interpolator;
   }
 }
 
 /**
- * Context pass to the GameObject LocalScript to work
+ * Context pass to the GameObject LocalScript to work (TODO this class is relevant ? all attributes could be in gameview class)
  */
 class LocalContext {
   constructor(gameView) {

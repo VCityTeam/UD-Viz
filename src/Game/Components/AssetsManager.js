@@ -95,6 +95,7 @@ export class AssetsManager {
     } else {
       //if shared an instance already existing is return
       //TODO conf is the same for all the audio comp not allowing to have shared and not shared sound in the same comp
+      //TODO remove shared to well dispose sounds
       if (options.shared) {
         result = this.soundsBuffer[idSound][0];
         if (!result) throw new Error('no sound');

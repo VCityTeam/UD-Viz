@@ -315,7 +315,7 @@ const WorldModule = class World {
             g.traverse(function (child) {
               child.executeWorldScripts(
                 WorldScriptComponent.EVENT.ON_LEAVE_COLLISION,
-                [worldContext]
+                [uuid, worldContext]
               );
             });
             buffer.splice(i, 1); //remove from buffer
