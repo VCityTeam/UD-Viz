@@ -296,32 +296,6 @@ export class GameView extends View3D {
     if (!keepAssets) this.assetsManager.dispose();
   }
 
-  render(){
-    //render
-    const scene = this.itownsView.scene;
-    scene.updateMatrixWorld();
-    const camera = this.itownsView.camera.camera3D;
-    // console.log(camera.near, camera.far);
-    // camera.near = 10;
-    // camera.far = 1000.;
-    // camera.updateProjectionMatrix();
-    const renderer = this.itownsView.mainLoop.gfxEngine.renderer;
-    //console.log(camera);
-    
-    //Standard rendering.
-    if(this.cellShading == false)
-    {
-      renderer.render(scene, camera);
-      return;
-    }
-
-    //Post-processing for cell-shading rendering.
-    this.edgeDetectionComposer.reset(this.renderTargetFX);
-    this.finalComposer.reset();
-    this.edgeDetectionComposer.render();
-    this.finalComposer.render();
-  }
-
   /**
    * Update GameObject with the new state
    * Initialize assets of the new GameObject
