@@ -76,7 +76,7 @@ module.exports = class UpdateElevationGround {
       }
     }
 
-    //notify world with the right elevation
+    //add commands to the computer directly because not produce by the inputmanager
     const computer = localContext.getGameView().getInterpolator();
     computer.onCommands([
       new Command({ type: Command.TYPE.Z_UPDATE, data: z }),
