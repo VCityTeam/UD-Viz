@@ -72,10 +72,10 @@ export class LocalGame {
             config: config,
             itownsControls: false,
             localScriptModules: options.localScriptModules,
+            userData: options.userData,
           });
 
           //start gameview tick
-          _this.gameView.writeUserData('avatarUUID', options.avatarUUID);
           _this.gameView.start(worldStateComputer.computeCurrentState());
 
           resolve();
