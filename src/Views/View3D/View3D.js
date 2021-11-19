@@ -84,6 +84,18 @@ export class View3D {
     //flag
     this.disposed = false;
 
+    //inputs
+    this.inputManager = new InputManager();
+
+    /**
+     * Object used to manage all of the layer.
+     *
+     * @type {LayerManager}
+     */
+    this.layerManager = null;
+
+    //ATTRIBUTES BELOW ARE STILL IN WIP
+
     //CSS3D attributes
     this.css3DRenderer = null;
     this.css3DScene = null;
@@ -139,16 +151,6 @@ export class View3D {
 
     //Deck GL attributes
     this.deckGLRenderer = null;
-
-    //inputs
-    this.inputManager = new InputManager();
-
-    /**
-     * Object used to manage all of the layer.
-     *
-     * @type {LayerManager}
-     */
-    this.layerManager = null;
 
     //default catch events
     const catchEventsCSS3D = params.catchEventsCSS3D || false;
