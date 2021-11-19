@@ -94,6 +94,11 @@ export class View3D {
      */
     this.layerManager = null;
 
+    //3D rendering attributes
+    this.scene = null; //the three js scene
+    this.renderer = null; //the webgl renderer
+    this.camera = null; //the camera used to render the scene
+
     //ATTRIBUTES BELOW ARE STILL IN WIP
 
     //CSS3D attributes
@@ -424,6 +429,11 @@ export class View3D {
       noControls: !this.itownsControls,
     });
 
+    //init 3D rendering attributes with itownsview
+    this.scene = this.itownsView.scene;
+    this.renderer = this.itownsView.mainLoop.gfxEngine.renderer;
+    this.camera = this.itownsView.camera.camera3D;
+
     //City generation
     this.addBaseMapLayer();
     this.addElevationLayer();
@@ -670,15 +680,15 @@ export class View3D {
   }
 
   getCamera() {
-    return this.itownsView.camera.camera3D;
+    return this.camera;
   }
 
   getScene() {
-    return this.itownsView.scene;
+    return this.scene;
   }
 
   getRenderer() {
-    return this.itownsView.mainLoop.gfxEngine.renderer;
+    return this.renderer;
   }
 
   getRootWebGL() {
