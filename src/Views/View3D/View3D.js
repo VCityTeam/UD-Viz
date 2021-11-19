@@ -140,9 +140,6 @@ export class View3D {
     //Deck GL attributes
     this.deckGLRenderer = null;
 
-    //Deck GL attributes
-    this.deckGLRenderer = null;
-
     //inputs
     this.inputManager = new InputManager();
 
