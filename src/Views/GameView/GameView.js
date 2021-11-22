@@ -108,23 +108,51 @@ export class GameView extends View3D {
   start(state) {
     //build itowns view
     const o = state.getOrigin();
-    const [x, y] = proj4.default(this.projection).forward([o.lng, o.lat]);
-    const r = this.config.itowns.radiusExtent;
-    // Define geographic extent: CRS, min/max X, min/max Y
-    const extent = new itowns.Extent(
-      this.projection,
-      x - r,
-      x + r,
-      y - r,
-      y + r
-    );
-    this.initItownsView(extent);
+    const r = this.config.game.radiusExtent;
+    if (o) {
+      const [x, y] = proj4.default(this.projection).forward([o.lng, o.lat]);
+      // Define geographic extent: CRS, min/max X, min/max Y
+      const extent = new itowns.Extent(
+        this.projection,
+        x - r,
+        x + r,
+        y - r,
+        y + r
+      );
+      this.initItownsView(extent);
 
-    //TODO disable itons rendering
-    this.itownsView.render = function () {
-      //empty
-    };
+      //TODO disable itons rendering
+      this.itownsView.render = function () {
+        //empty
+      };
+    } else {
+      //no origin means no itowns view fill attr
+      this.scene = new THREE.Scene();
+      const canvas = document.createElement('canvas');
+      this.rootItownsHtml.appendChild(canvas);
+      this.renderer = new THREE.WebGLRenderer({
+        canvas: canvas,
+        antialias: true,
+        logarithmicDepthBuffer: true,
+      });
+      this.camera = new THREE.PerspectiveCamera(60, 1, 1, 1000); //default params
+      this.scene.add(this.camera);
 
+      //fill custom extent
+      this.extent = {
+        north: r,
+        west: -r,
+        south: -r,
+        east: r,
+      };
+
+      this.computeNearFarCamera();
+    }
+
+    //start listening
+    this.inputManager.startListening(this.renderer.domElement);
+
+    //init scene
     this.initScene(state);
 
     //start to tick
@@ -161,7 +189,7 @@ export class GameView extends View3D {
     tick();
 
     //differed a resize event
-    setTimeout(this.onResize.bind(this), 1000);
+    setTimeout(this.onResize.bind(this), 100);
   }
 
   /**
@@ -177,15 +205,22 @@ export class GameView extends View3D {
    * @param {WorldState} state
    */
   initScene(state) {
+    let x = 0;
+    let y = 0;
+    let z = 0;
+
     const o = state.getOrigin();
-    const [x, y] = proj4.default(this.projection).forward([o.lng, o.lat]);
+    if (o) {
+      [x, y] = proj4.default(this.projection).forward([o.lng, o.lat]);
+      z = o.alt;
+    }
 
     //add the object3D of the Game
-    //TODO this object should be in World
+    //TODO this object should be in World ?
     this.object3D.position.x = x;
     this.object3D.position.y = y;
-    this.object3D.position.z = o.alt;
-    this.itownsView.scene.add(this.object3D);
+    this.object3D.position.z = z;
+    this.scene.add(this.object3D);
 
     //init sky color based on config file
     this.skyColor = new THREE.Color(
@@ -199,9 +234,7 @@ export class GameView extends View3D {
     THREEUtils.initRenderer(renderer, this.skyColor);
 
     //add lights
-    const { directionalLight, ambientLight } = THREEUtils.addLights(
-      this.itownsView.scene
-    );
+    const { directionalLight, ambientLight } = THREEUtils.addLights(this.scene);
 
     //configure shadows based on a config files
     directionalLight.shadow.mapSize = new THREE.Vector2(
@@ -383,10 +416,9 @@ export class GameView extends View3D {
     }
 
     if (this.isRendering) {
-      //render
-      const renderer = this.itownsView.mainLoop.gfxEngine.renderer;
-      renderer.clearColor();
-      renderer.render(scene, this.getCamera());
+      //render;
+      this.renderer.clearColor();
+      this.renderer.render(scene, this.getCamera());
     }
   }
 

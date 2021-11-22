@@ -76,7 +76,11 @@ module.exports = class Commands {
     //example of how to access its custom module
     const myCustomModule = gameView.getLocalScriptModules()['myCustomModule'];
     if (myCustomModule)
-      inputManager.addKeyInput('p', 'keydown', myCustomModule.print);
+      inputManager.addKeyInput('l', 'keydown', myCustomModule.print);
+
+    inputManager.addKeyInput('p', 'keydown', function () {
+      console.log(go.computeRoot());
+    });
   }
 
   updateUI(go, localCtx) {

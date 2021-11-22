@@ -30,6 +30,7 @@ module.exports = class UpdateElevationGround {
     const ground = [];
 
     const addObjectToGround = function (nameLayer) {
+      if (!manager) return;
       let layerManager = null;
       for (let index = 0; index < manager.tilesManagers.length; index++) {
         const element = manager.tilesManagers[index];

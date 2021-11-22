@@ -45,6 +45,7 @@
   "game": {
     "fps": 30,
     "shadowMapSize": 2046,
+    "radiusExtent": 1000,
     "sky": {
       "path": "./assets/img/sky.jpg",
       "color": {
@@ -57,9 +58,6 @@
         "theta": 0.3
       }
     }
-  },
-  "itowns": {
-    "radiusExtent": 1000
   },
   "3DTilesLayers": [
     {

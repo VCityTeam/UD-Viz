@@ -39,7 +39,7 @@ const WorldModule = class World {
     this.name = json.name || 'default_world';
 
     //origin
-    this.origin = json.origin || { lat: 0, lng: 0, alt: 0 };
+    this.origin = json.origin || null;
 
     /******************INTERNAL***********************/
 

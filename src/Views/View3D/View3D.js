@@ -393,6 +393,12 @@ export class View3D {
     return this.extent;
   }
 
+  start(extent) {
+    this.initItownsView(extent);
+    //start
+    this.inputManager.startListening(this.renderer.domElement);
+  }
+
   /**
    * init the itowns.PlanarView of this view with a given extent
    * @param {itowns.Extent} extent the extent of the itowns.PlanarView
@@ -439,14 +445,10 @@ export class View3D {
     this.addElevationLayer();
     this.setupAndAdd3DTilesLayers();
 
-    //TODO parler a itowns remove listener of the resize
-    this.itownsView.debugResize = this.itownsView.resize;
+    //disable itowns resize
     this.itownsView.resize = function () {
       //nada
     };
-
-    //start
-    this.inputManager.startListening(this.itownsView.domElement);
 
     //dynamic near far computation
     this.itownsView.addFrameRequester(
@@ -459,7 +461,7 @@ export class View3D {
    * dynamic computation of the near and far of the camera to fit the extent
    */
   computeNearFarCamera() {
-    const camera = this.itownsView.camera.camera3D;
+    const camera = this.getCamera();
     const height = 400; //TODO compute this dynamically
     const points = [
       new THREE.Vector3(this.extent.west, this.extent.south, 0),
@@ -661,8 +663,9 @@ export class View3D {
     const w = window.innerWidth - offsetLeft;
     const h = window.innerHeight - offsetTop;
 
-    //TODO remove this fonction
-    if (this.itownsView) this.itownsView.debugResize(w, h);
+    this.camera.aspect = w / h;
+    this.camera.updateProjectionMatrix();
+    this.renderer.setSize(w, h);
 
     if (this.css3DRenderer) this.css3DRenderer.setSize(w, h);
   }
