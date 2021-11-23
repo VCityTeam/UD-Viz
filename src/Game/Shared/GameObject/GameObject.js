@@ -93,7 +93,13 @@ const GameObjectModule = class GameObject {
       const component = this.components[key];
       for (let index = 0; index < bufferedGO.length; index++) {
         const element = bufferedGO[index];
-        component.updateFromComponent(element.getComponent(key), localContext);
+
+        if (element.isOutdated()) {
+          component.updateFromComponent(
+            element.getComponent(key),
+            localContext
+          );
+        }
       }
     }
   }
@@ -435,7 +441,9 @@ const GameObjectModule = class GameObject {
 
     const r = this.getComponent(RenderComponent.TYPE);
     if (r) {
-      obj.add(r.getObject3D());
+      const rObj = r.getObject3D();
+      if (!rObj) throw new Error('no render object3D');
+      obj.add(rObj);
     }
 
     //add children if recursive

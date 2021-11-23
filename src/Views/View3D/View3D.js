@@ -262,10 +262,7 @@ export class View3D {
         then = now - (delta % 1000) / fps;
 
         if (!_this.isRendering) return;
-        css3DRenderer.render(
-          _this.css3DScene,
-          _this.itownsView.camera.camera3D
-        );
+        css3DRenderer.render(_this.css3DScene, _this.getCamera());
       }
     };
     tick();
@@ -396,7 +393,7 @@ export class View3D {
   start(extent) {
     this.initItownsView(extent);
     //start
-    this.inputManager.startListening(this.renderer.domElement);
+    this.inputManager.startListening(this.rootItownsHtml);
   }
 
   /**
@@ -674,7 +671,7 @@ export class View3D {
    * Remove html from the DOM and stop listeners
    */
   dispose() {
-    this.itownsView.dispose();
+    if (this.itownsView) this.itownsView.dispose();
     window.removeEventListener('resize', this.onResize.bind(this));
     this.html().remove();
     this.inputManager.dispose();
@@ -696,5 +693,9 @@ export class View3D {
 
   getRootWebGL() {
     return this.rootWebGL;
+  }
+
+  getRootItownsHtml() {
+    return this.rootItownsHtml;
   }
 }

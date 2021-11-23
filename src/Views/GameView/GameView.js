@@ -55,6 +55,8 @@ export class GameView extends View3D {
     //Array of callbacks call during the tick
     this.tickRequesters = [];
 
+    this.onNewGORequesters = [];
+
     //userData
     this.userData = params.userData || {};
   }
@@ -100,12 +102,18 @@ export class GameView extends View3D {
     this.tickRequesters.push(cb);
   }
 
+  addOnNewGORequester(cb) {
+    this.onNewGORequesters.push(cb);
+  }
+
   /**
    * Initialize this view
    *
    * @param {WorldState} state first state of this view
    */
-  start(state) {
+  start(state = this.interpolator.computeCurrentState()) {
+    if (!state) throw new Error('no state');
+
     //build itowns view
     const o = state.getOrigin();
     const r = this.config.game.radiusExtent;
@@ -144,13 +152,16 @@ export class GameView extends View3D {
         west: -r,
         south: -r,
         east: r,
+        center: function () {
+          return new THREE.Vector2();
+        },
       };
 
       this.computeNearFarCamera();
     }
 
     //start listening
-    this.inputManager.startListening(this.renderer.domElement);
+    this.inputManager.startListening(this.rootItownsHtml);
 
     //init scene
     this.initScene(state);
@@ -184,6 +195,12 @@ export class GameView extends View3D {
 
         //update Gameview
         _this.update(_this.interpolator.computeCurrentStates());
+
+        //render
+        if (_this.isRendering) {
+          _this.renderer.clearColor();
+          _this.renderer.render(_this.scene, _this.getCamera());
+        }
       }
     };
     tick();
@@ -389,7 +406,7 @@ export class GameView extends View3D {
     scene.updateMatrixWorld();
 
     //update shadow
-    if (newGO.length)
+    if (newGO.length) {
       THREEUtils.bindLightTransform(
         10,
         this.config.game.sky.sun_position.phi,
@@ -397,6 +414,11 @@ export class GameView extends View3D {
         this.object3D,
         this.directionalLight
       );
+
+      this.onNewGORequesters.forEach(function (cb) {
+        cb(ctx);
+      });
+    }
 
     if (this.updateGameObject) {
       go.traverse(function (child) {
@@ -413,12 +435,6 @@ export class GameView extends View3D {
         if (audioComp)
           audioComp.tick(cameraMatWorldInverse, _this.getObject3D().position);
       });
-    }
-
-    if (this.isRendering) {
-      //render;
-      this.renderer.clearColor();
-      this.renderer.render(scene, this.getCamera());
     }
   }
 
