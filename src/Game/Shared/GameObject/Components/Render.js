@@ -76,7 +76,7 @@ const RenderModule = class Render {
    * @param {JSON} component the component to update to
    * @param {LocalContext} localContext local context of the GameView
    */
-  updateFromComponent(component, localContext) {
+  updateFromComponent(outdated, component, localContext) {
     if (!this.color.equals(component.getColor())) {
       this.setColor(component.getColor());
     }

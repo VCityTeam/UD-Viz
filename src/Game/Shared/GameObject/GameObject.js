@@ -94,12 +94,11 @@ const GameObjectModule = class GameObject {
       for (let index = 0; index < bufferedGO.length; index++) {
         const element = bufferedGO[index];
 
-        if (element.isOutdated()) {
-          component.updateFromComponent(
-            element.getComponent(key),
-            localContext
-          );
-        }
+        component.updateFromComponent(
+          element.isOutdated(),
+          element.getComponent(key),
+          localContext
+        );
       }
     }
   }
