@@ -403,3 +403,28 @@ const WorldModule = class World {
 WorldModule.TYPE = 'World';
 
 module.exports = WorldModule;
+
+//Update json data of the world
+
+const stringToSemver = function(string){
+  const numbers = string.split(".")
+  
+}
+
+const from2337To2338 = function(json2337){
+
+}
+
+WorldModule.parseJSON = function (worldJSON) {
+  const version = worldJSON.version;
+  if (!version) return worldJSON;
+
+  let newJSON = null;
+  if (version === '2.33.7') {
+    newJSON = from2337To2338(worldJSON);
+  } else {
+    return worldJSON; //if it is up to date
+  }
+
+  return WorldModule.parseJSON(newJSON);
+};
