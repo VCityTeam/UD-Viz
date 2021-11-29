@@ -427,15 +427,15 @@ const versionIsInferior = function (version1, version2) {
 WorldModule.parseJSON = function (worldJSON) {
   return worldJSON; //for now no patch
 
-  const version = worldJSON.version;
-  if (!version) return worldJSON;
+  // const version = worldJSON.version;
+  // if (!version) return worldJSON;
 
-  let newJSON = null;
-  if (versionIsInferior(version, '2.33.7')) {
-    newJSON = from2337To2338(worldJSON); //example of a patch
-  } else {
-    return worldJSON; //if it is up to date
-  }
+  // let newJSON = null;
+  // if (versionIsInferior(version, '2.33.7')) {
+  //   newJSON = from2337To2338(worldJSON); //example of a patch
+  // } else {
+  //   return worldJSON; //if it is up to date
+  // }
 
-  return WorldModule.parseJSON(newJSON);
+  // return WorldModule.parseJSON(newJSON);
 };
