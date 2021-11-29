@@ -88,6 +88,22 @@ module.exports = {
     return json;
   },
 
+  //same as parse but you can pass the name of array that should be not parse
+  parseExceptArrays(json, cb, exceptArrays) {
+    for (let key in json) {
+      if (json[key] instanceof Object) {
+        if (json[key] instanceof Array && exceptArrays.includes(key)) {
+          cb(json, key);
+        } else {
+          this.parseExceptArrays(json[key], cb, exceptArrays);
+        }
+      } else {
+        cb(json, key);
+      }
+    }
+    return json;
+  },
+
   /**
    * Parse to float every field of type numeric in json
    * @param {JSON} json the json to be parsed
