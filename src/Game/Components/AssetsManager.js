@@ -308,8 +308,9 @@ export class AssetsManager {
         child.castShadow = true;
         child.receiveShadow = true;
       }
-      if (child.material && child.material.map) {
-        child.material.map.encoding = THREEUtils.textureEncoding;
+      if (child.material) {
+        if (child.material.map)
+          child.material.map.encoding = THREEUtils.textureEncoding;
         child.material.side = THREE.FrontSide;
         child.material.needsUpdate = true;
       }

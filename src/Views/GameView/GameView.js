@@ -137,7 +137,7 @@ export class GameView extends View3D {
       //no origin means no itowns view fill attr
       this.scene = new THREE.Scene();
       const canvas = document.createElement('canvas');
-      this.rootItownsHtml.appendChild(canvas);
+      this.rootWebGL.appendChild(canvas);
       this.renderer = new THREE.WebGLRenderer({
         canvas: canvas,
         antialias: true,
@@ -156,12 +156,10 @@ export class GameView extends View3D {
           return new THREE.Vector2();
         },
       };
-
-      this.computeNearFarCamera();
     }
 
     //start listening
-    this.inputManager.startListening(this.rootItownsHtml);
+    this.inputManager.startListening(this.rootWebGL);
 
     //init scene
     this.initScene(state);
@@ -198,6 +196,7 @@ export class GameView extends View3D {
 
         //render
         if (_this.isRendering) {
+          _this.computeNearFarCamera();
           _this.renderer.clearColor();
           _this.renderer.render(_this.scene, _this.getCamera());
         }
@@ -416,7 +415,7 @@ export class GameView extends View3D {
       );
 
       this.onNewGORequesters.forEach(function (cb) {
-        cb(ctx);
+        cb(ctx, newGO);
       });
     }
 
