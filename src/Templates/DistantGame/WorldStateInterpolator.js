@@ -18,8 +18,9 @@ export class WorldStateInterpolator {
     //batch
     this._notConsumedStates = [];
 
-    //DEBUG
-    this.lastTimeState = 0;
+    //ping attr computation
+    this.lastTimeState = 0; //buffer
+    this.ping = 0; //time between two new state
 
     //local game optional (could work with a distant computer via websocket)
     this.localComputer = localComputer;
@@ -42,6 +43,11 @@ export class WorldStateInterpolator {
     return 0;
   }
 
+  //time between two new state
+  getPing() {
+    return this.ping;
+  }
+
   /**
    * Add a new state
    * @param {WorldState} state
@@ -51,12 +57,10 @@ export class WorldStateInterpolator {
       throw new Error('no state');
     }
 
-    //DEBUG
+    //compute ping
     let now = Date.now();
-    let dState = now - this.lastTimeState;
+    this.ping = now - this.lastTimeState;
     this.lastTimeState = now;
-    // console.log('state received last one was ', dState, ' ms ago');
-    if (dState > this._getDelay()) console.warn('Server delay');
 
     this.states.push(state);
 

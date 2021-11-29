@@ -11,6 +11,7 @@ const THREE = require('three');
 const WorldState = require('./WorldState');
 const { Collisions } = require('detect-collisions');
 const udvizVersion = require('../../../package.json').version;
+const JSONUtils = require('./Components/JSONUtils');
 
 /**
  * Parent Object of GameObjects, handle simulation and store extradata like the geographic origin
@@ -18,6 +19,10 @@ const udvizVersion = require('../../../package.json').version;
 const WorldModule = class World {
   constructor(json, options) {
     if (!json) throw new Error('no json');
+
+    //update json format
+    json = WorldModule.parseJSON(json);
+
     options = options || {};
 
     //collisions system of detect-collisions npm package
@@ -39,7 +44,7 @@ const WorldModule = class World {
     this.name = json.name || 'default_world';
 
     //origin
-    this.origin = json.origin || { lat: 0, lng: 0, alt: 0 };
+    this.origin = json.origin || null;
 
     /******************INTERNAL***********************/
 
@@ -403,3 +408,34 @@ const WorldModule = class World {
 WorldModule.TYPE = 'World';
 
 module.exports = WorldModule;
+
+//Update json data of the world
+
+//return true if version1 < version2
+const versionIsInferior = function (version1, version2) {
+  const numbers1 = version1.split('.');
+  const numbers2 = version2.split('.');
+
+  for (let index = 0; index < numbers1.length; index++) {
+    const version1Number = parseInt(numbers1[index]);
+    const version2Number = parseInt(numbers2[index]);
+    if (version1Number < version2Number) return true;
+  }
+  return false;
+};
+
+WorldModule.parseJSON = function (worldJSON) {
+  return worldJSON; //for now no patch
+
+  // const version = worldJSON.version;
+  // if (!version) return worldJSON;
+
+  // let newJSON = null;
+  // if (versionIsInferior(version, '2.33.7')) {
+  //   newJSON = from2337To2338(worldJSON); //example of a patch
+  // } else {
+  //   return worldJSON; //if it is up to date
+  // }
+
+  // return WorldModule.parseJSON(newJSON);
+};

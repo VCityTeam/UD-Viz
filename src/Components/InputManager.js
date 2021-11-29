@@ -86,7 +86,7 @@ export class InputManager {
    */
   addKeyCommand(commandID, keys, cb) {
     const _this = this;
-    this.commandsBuffer[commandID] = false;
+    this.commandsBuffer[commandID] = false; //avoid to stack multiple commands if two key of keys are pressedplo
     keys.forEach(function (key) {
       if (_this.keyMap[key] != undefined)
         throw new Error(key, ' is already assign');
