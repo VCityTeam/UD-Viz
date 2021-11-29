@@ -424,35 +424,15 @@ const versionIsInferior = function (version1, version2) {
   return false;
 };
 
-//pass all rotation gameobject from euler to quaternion
-const from2337To2338 = function (json2337) {
-  const quaternionBuffer = new THREE.Quaternion();
-
-  JSONUtils.parseExceptArrays(
-    json2337,
-    function (j, key) {
-      if (key == 'rotation') {
-        quaternionBuffer.setFromEuler(
-          new THREE.Euler(j[key][0], j[key][1], j[key][2])
-        );
-        delete j[key];
-        j['quaternion'] = quaternionBuffer.toArray();
-      }
-    },
-    ['rotation']
-  );
-
-  json2337.version = '2.33.8';
-  return json2337;
-};
-
 WorldModule.parseJSON = function (worldJSON) {
+  return worldJSON; //for now no patch
+
   const version = worldJSON.version;
   if (!version) return worldJSON;
 
   let newJSON = null;
   if (versionIsInferior(version, '2.33.7')) {
-    newJSON = from2337To2338(worldJSON);
+    newJSON = from2337To2338(worldJSON); //example of a patch
   } else {
     return worldJSON; //if it is up to date
   }
