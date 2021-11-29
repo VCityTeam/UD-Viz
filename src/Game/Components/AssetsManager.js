@@ -356,6 +356,14 @@ export class AssetsManager {
         );
       }
     });
+
+    const toEvalCode = function (string) {
+      const regexRequire = /^const.*=\W*\n*.*require.*;$/gm;
+      const regexType = /^\/\*\*\W*@type.*\*\/$/gm;
+      let resultRequire = string.replace(regexRequire, '');
+      return resultRequire.replace(regexType, '');
+    };
+
     const worldScriptsPromise = new Promise((resolve, reject) => {
       let count = 0;
       for (let idScript in config.worldScripts) {
@@ -363,6 +371,7 @@ export class AssetsManager {
         jquery.get(
           scriptPath,
           function (scriptString) {
+            scriptString = toEvalCode(scriptString);
             _this.worldScripts[idScript] = eval(scriptString);
             //check if finish
             count++;
@@ -382,6 +391,7 @@ export class AssetsManager {
         jquery.get(
           scriptPath,
           function (scriptString) {
+            scriptString = toEvalCode(scriptString);
             _this.localScripts[idScript] = eval(scriptString);
             //check if finish
             count++;
