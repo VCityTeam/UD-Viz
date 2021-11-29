@@ -758,14 +758,7 @@ GameObjectModule.TYPE = 'GameObject';
 GameObjectModule.interpolateInPlace = function (g1, g2, ratio) {
   g1.object3D.position.lerp(g2.object3D.position, ratio);
   g1.object3D.scale.lerp(g2.object3D.scale, ratio);
-
-  //TODO opti Euler lerp
-  const v1 = g1.object3D.rotation.toVector3();
-  const v2 = g2.object3D.rotation.toVector3();
-
-  v1.lerp(v2, ratio);
-
-  g1.object3D.rotation.setFromVector3(v1);
+  g1.object3D.quaternion.slerp(g2.object3D.quaternion, ratio);
   return g1;
 };
 
