@@ -5,7 +5,7 @@
         "path": "./assets/sounds/ballon_pop.wav"
       }
     },
-    "models": {
+    "renderData": {
       "zeppelin": {
         "path": "./assets/models/Zeppelin_Labex_IMU.glb",
         "anchor": "center_min",
@@ -13,6 +13,10 @@
       },
       "avatar": {
         "path": "./assets/models/avatar_capuchon.glb",
+        "anchor": "center_min"
+      },
+      "helice": {
+        "path": "./assets/models/helice.gltf",
         "anchor": "center_min"
       }
     },

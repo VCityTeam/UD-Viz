@@ -7,7 +7,7 @@ import * as itowns from 'itowns';
 
 import LocalScript from '../../Game/Shared/GameObject/Components/LocalScript';
 import { View3D } from '../View3D/View3D';
-import { Audio } from '../../Game/Shared/Shared';
+import { Audio, Render } from '../../Game/Shared/Shared';
 
 const udvShared = require('../../Game/Shared/Shared');
 const THREEUtils = udvShared.Components.THREEUtils;
@@ -433,6 +433,10 @@ export class GameView extends View3D {
         const cameraMatWorldInverse = camera.matrixWorldInverse;
         if (audioComp)
           audioComp.tick(cameraMatWorldInverse, _this.getObject3D().position);
+
+        //render component
+        const renderComp = child.getComponent(Render.TYPE);
+        if (renderComp) renderComp.tick(ctx);
       });
     }
   }

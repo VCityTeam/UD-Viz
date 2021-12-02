@@ -28,7 +28,7 @@ module.exports = class WorldGameManager {
           idScripts: ['zeppelin'],
           conf: { sphereCount: 0 },
         },
-        Render: { idModel: 'zeppelin' },
+        Render: { idRenderData: 'helice' },
         Collider: {
           shapes: [
             {
@@ -75,7 +75,7 @@ module.exports = class WorldGameManager {
       static: true,
       components: {
         Render: {
-          idModel: 'sphere',
+          idRenderData: 'sphere',
           color: [Math.random(), Math.random(), Math.random()],
         },
         Collider: {

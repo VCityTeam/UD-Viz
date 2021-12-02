@@ -81,6 +81,12 @@ module.exports = class Commands {
     inputManager.addKeyInput('p', 'keydown', function () {
       console.log(go.computeRoot());
     });
+
+    //animation
+    const zeppelin = go.computeRoot().findByName('zeppelin');
+    const render = zeppelin.getComponent(Shared.Render.TYPE);
+    const action = render.getActions();
+    action['Anim_Ailes_Moulin'].play();
   }
 
   updateUI(go, localCtx) {

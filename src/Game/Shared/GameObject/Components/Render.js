@@ -14,13 +14,18 @@ const RenderModule = class Render {
     this.uuid = json.uuid || THREE.MathUtils.generateUUID();
 
     //id of the 3D model used (TODO could be an array of id)
-    this.idModel = json.idModel || null;
+    this.idRenderData = json.idRenderData || null;
 
     //color of the 3D model
     this.color = new THREE.Color().fromArray(json.color || [1, 1, 1]);
 
     //three.js object
     this.object3D = null;
+
+    //animations
+    this.animations = null;
+    this.animationMixer = null;
+    this.actions = {};
   }
 
   /**
@@ -39,7 +44,7 @@ const RenderModule = class Render {
     return {
       uuid: this.uuid,
       type: RenderModule.TYPE,
-      idModel: this.idModel,
+      idRenderData: this.idRenderData,
       color: this.color.toArray(),
     };
   }
@@ -100,13 +105,36 @@ const RenderModule = class Render {
     this.object3D.name = 'Render Object3D ' + this.parent.getName();
 
     //get the 3D model
-    if (this.idModel) {
-      this.object3D.add(assetsManager.createModel(this.idModel));
+    if (this.idRenderData) {
+      const data = assetsManager.createRenderData(this.idRenderData);
+      this.object3D.add(data.object);
+      this.animations = data.animations;
+      if (this.animations && this.animations.length) {
+        const _this = this;
+        this.animationMixer = new THREE.AnimationMixer(data.object);
+        this.animations.forEach(function (animClip) {
+          const action = _this.animationMixer.clipAction(animClip);
+          _this.actions[animClip.name] = action;
+        });
+      }
     }
 
     this.setColor(this.color);
 
     return this.object3D;
+  }
+
+  tick(localCtx) {
+    console.log(localCtx.getDt());
+    if (this.animationMixer) this.animationMixer.update(localCtx.getDt());
+  }
+
+  getActions() {
+    return this.actions;
+  }
+
+  getAnimationMixer() {
+    return this.animationMixer;
   }
 
   getUUID() {
