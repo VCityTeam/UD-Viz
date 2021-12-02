@@ -125,8 +125,9 @@ const RenderModule = class Render {
   }
 
   tick(localCtx) {
-    console.log(localCtx.getDt());
-    if (this.animationMixer) this.animationMixer.update(localCtx.getDt());
+    if (this.animationMixer) {
+      this.animationMixer.update(Math.round(localCtx.getDt()));
+    }
   }
 
   getActions() {
