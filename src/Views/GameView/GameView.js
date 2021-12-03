@@ -284,45 +284,6 @@ export class GameView extends View3D {
     }
   }
 
-  initComposers() {
-    const scene = this.getScene();
-    scene.updateMatrixWorld();
-    const camera = this.getCamera();
-    // console.log(camera.near, camera.far);
-    // camera.near = 10;
-    // camera.far = 1000.;
-    // camera.updateProjectionMatrix();
-    const renderer = this.getRenderer();
-
-    this.edgeDetectionComposer = new EffectComposer(
-      renderer,
-      this.renderTargetFX
-    );
-    const normalsPass = new RenderPass(scene, camera, this.overrideMaterialFX);
-    this.edgeDetectionComposer.addPass(normalsPass);
-    const sobelPass = new ShaderPass(MySobelOperatorShader);
-    sobelPass.uniforms.resolution.value = new THREE.Vector2(
-      this.edgeDetectionComposer.writeBuffer.width,
-      this.edgeDetectionComposer.writeBuffer.height
-    );
-    //sobelPass.uniforms.tDepth.value = this.depthTextureFX;
-    this.edgeDetectionComposer.addPass(sobelPass);
-    this.edgeDetectionComposer.renderToScreen = false;
-    //edgeDetectionComposer.render();
-
-    this.finalComposer = new EffectComposer(renderer);
-    const renderPass = new RenderPass(scene, camera);
-    this.finalComposer.addPass(renderPass);
-    const compositionPass = new ShaderPass(MaskShader);
-    compositionPass.uniforms.tMask.value = this.renderTargetFX.texture;
-    compositionPass.uniforms.resolution.value = new THREE.Vector2(
-      this.finalComposer.writeBuffer.width,
-      this.finalComposer.writeBuffer.height
-    );
-    this.finalComposer.addPass(compositionPass);
-    //finalComposer.render();
-  }
-
   /**
    * dispose this view
    */
