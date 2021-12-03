@@ -92,6 +92,11 @@ module.exports = class LocalAvatar {
     //Input manager of the game
     const inputManager = localContext.getGameView().getInputManager();
 
+    //DEBUG
+    inputManager.addKeyInput('p', 'keydown', function () {
+      console.log(avatar.computeRoot());
+    });
+
     //const thisLocalAvatar = this;
 
     //local avatar/cube

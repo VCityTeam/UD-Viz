@@ -179,11 +179,12 @@ export class GameView extends View3D {
     this.initScene(state);
 
     //start to tick
-    const fps = _this.config.game.fps;
+    const fps = this.config.game.fps;
 
     let now;
     let then = Date.now();
     let delta;
+    const _this = this;
     const tick = function () {
       if (_this.disposed) return; //stop requesting frame if disposed
 

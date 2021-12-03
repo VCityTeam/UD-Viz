@@ -321,7 +321,7 @@ export class View3D {
 
     //dynamic near far computation
     this.itownsView.addFrameRequester(
-      itowns.MAIN_LOOP_EVENTS.BEFORE_RENDER, //TODO another event (On camera change ?) 
+      itowns.MAIN_LOOP_EVENTS.BEFORE_RENDER, //TODO another event (On camera change ?)
       this.computeNearFarCamera.bind(this)
     );
   }
@@ -592,9 +592,9 @@ export class View3D {
     this.size.x = window.innerWidth - offsetLeft;
     this.size.y = window.innerHeight - offsetTop;
 
-    this.camera.aspect = w / h;
+    this.camera.aspect = this.size.x / this.size.y;
     this.camera.updateProjectionMatrix();
-    this.renderer.setSize(w, h);
+    this.renderer.setSize(this.size.x, this.size.y);
 
     if (this.css3DRenderer)
       this.css3DRenderer.setSize(this.size.x, this.size.y);
