@@ -211,8 +211,6 @@ export class GameView extends View3D {
 
           //render
           if (_this.isRendering) {
-            //update matrix
-            _this.getScene().updateMatrixWorld();
             //This notably charge missing iTowns tiles according to current view.
             _this.getItownsView().notifyChange(_this.getCamera());
             //adjust camera params
@@ -422,6 +420,8 @@ export class GameView extends View3D {
     //rebuild object
     this.object3D.children.length = 0;
     this.object3D.add(go.computeObject3D());
+    //update matrix
+    this.scene.updateMatrixWorld();
 
     //update shadow
     if (newGO.length) {
