@@ -619,10 +619,6 @@ export class View3D {
     return this.scene;
   }
 
-  getCamera() {
-    return this.itownsView.camera.camera3D;
-  }
-
   getRenderer() {
     return this.renderer;
   }
