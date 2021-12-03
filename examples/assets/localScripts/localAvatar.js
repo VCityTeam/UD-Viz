@@ -155,21 +155,17 @@ module.exports = class LocalAvatar {
     let dtcb = 0;
 
     //FORWARD
-    // inputManager.listenKeys(['z']);
-    inputManager.addKeyInput('z', 'keydown', function () {
-      if (Date.now() - dtcb < 60) return;
-      console.log('z');
-      //console.log("exec");
-      dtcb = Date.now();
-
+    inputManager.addKeyCommand('move_forward', ['z'], function () {
+      const dt = localContext.getDt();
       const direction = avatar.computeForwardVector();
       if (checkCollisionFun(direction)) return;
       avatar.move(direction.setLength(translationLength));
       updateGroundElevationFun();
-      return;
+      console.log('z');
     });
     //BACKWARD
-    inputManager.addKeyInput('s', 'keydown', function () {
+    inputManager.addKeyCommand('move_backward', ['s'], function () {
+      const dt = localContext.getDt();
       const direction = avatar.computeBackwardVector();
       if (checkCollisionFun(direction)) return;
       avatar.move(direction.setLength(translationLength));
@@ -177,16 +173,21 @@ module.exports = class LocalAvatar {
       console.log('s');
     });
     //LEFT
-    inputManager.addKeyInput('q', 'keydown', function () {
+    inputManager.addKeyCommand('rotate_left', ['q'], function () {
       const dt = localContext.getDt();
       avatar.rotate(new Shared.THREE.Vector3(0, 0, speedRotate * dt));
       console.log('q');
     });
     //RIGHT
-    inputManager.addKeyInput('d', 'keydown', function () {
+    inputManager.addKeyCommand('rotate_right', ['d'], function () {
       const dt = localContext.getDt();
       avatar.rotate(new Shared.THREE.Vector3(0, 0, -speedRotate * dt));
       console.log('d');
+    });
+
+    //tick command
+    gV.addTickRequester(function () {
+      inputManager.computeCommands();
     });
 
     //warp to saved location
