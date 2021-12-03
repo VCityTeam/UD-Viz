@@ -212,7 +212,9 @@ export class GameView extends View3D {
           //render
           if (_this.isRendering) {
             //This notably charge missing iTowns tiles according to current view.
-            _this.getItownsView().notifyChange(_this.getCamera());
+            const iV = _this.itownsView;
+            if (iV) iV.notifyChange(_this.getCamera());
+
             //adjust camera params
             _this.computeNearFarCamera();
             _this.render();
