@@ -128,98 +128,107 @@ export class GameView extends View3D {
   start(state = this.interpolator.computeCurrentState()) {
     if (!state) throw new Error('no state');
 
-    //build itowns view
-    const o = state.getOrigin();
-    const r = this.config.game.radiusExtent;
-    if (o) {
-      const [x, y] = proj4.default(this.projection).forward([o.lng, o.lat]);
-      // Define geographic extent: CRS, min/max X, min/max Y
-      const extent = new itowns.Extent(
-        this.projection,
-        x - r,
-        x + r,
-        y - r,
-        y + r
-      );
-      this.initItownsView(extent);
+    return new Promise((resolve, reject) => {
+      //build itowns view
+      const o = state.getOrigin();
+      const r = this.config.game.radiusExtent;
+      if (o) {
+        const [x, y] = proj4.default(this.projection).forward([o.lng, o.lat]);
+        // Define geographic extent: CRS, min/max X, min/max Y
+        const extent = new itowns.Extent(
+          this.projection,
+          x - r,
+          x + r,
+          y - r,
+          y + r
+        );
+        this.initItownsView(extent);
 
-      //TODO disable itons rendering
-      this.itownsView.render = function () {
-        //empty
-      };
-    } else {
-      //no origin means no itowns view fill attr
-      this.scene = new THREE.Scene();
-      const canvas = document.createElement('canvas');
-      this.rootWebGL.appendChild(canvas);
-      this.renderer = new THREE.WebGLRenderer({
-        canvas: canvas,
-        antialias: true,
-        logarithmicDepthBuffer: true,
-      });
-      this.camera = new THREE.PerspectiveCamera(60, 1, 1, 1000); //default params
-      this.scene.add(this.camera);
-
-      //fill custom extent
-      this.extent = {
-        north: r,
-        west: -r,
-        south: -r,
-        east: r,
-        center: function () {
-          return new THREE.Vector2();
-        },
-      };
-    }
-
-    //start listening
-    this.inputManager.startListening(this.rootWebGL);
-
-    //init scene
-    this.initScene(state);
-
-    //start to tick
-    const fps = this.config.game.fps;
-
-    let now;
-    let then = Date.now();
-    let delta;
-    const _this = this;
-    const tick = function () {
-      if (_this.disposed) return; //stop requesting frame if disposed
-
-      requestAnimationFrame(tick);
-
-      now = Date.now();
-      delta = now - then;
-
-      if (delta > 1000 / fps) {
-        // update time stuffs
-        then = now - (delta % 1000) / fps;
-
-        //set dt
-        _this.localContext.setDt(delta);
-
-        //call tick requester
-        _this.tickRequesters.forEach(function (cb) {
-          cb(_this.localContext);
+        //TODO disable itons rendering
+        this.itownsView.render = function () {
+          //empty
+        };
+      } else {
+        //no origin means no itowns view fill attr
+        this.scene = new THREE.Scene();
+        const canvas = document.createElement('canvas');
+        this.rootWebGL.appendChild(canvas);
+        this.renderer = new THREE.WebGLRenderer({
+          canvas: canvas,
+          antialias: true,
+          logarithmicDepthBuffer: true,
         });
+        this.camera = new THREE.PerspectiveCamera(60, 1, 1, 1000); //default params
+        this.scene.add(this.camera);
 
-        //update Gameview
-        _this.update(_this.interpolator.computeCurrentStates());
-
-        //render
-        if (_this.isRendering) {
-          _this.computeNearFarCamera();
-          _this.renderer.clearColor();
-          _this.renderer.render(_this.scene, _this.getCamera());
-        }
+        //fill custom extent
+        this.extent = {
+          north: r,
+          west: -r,
+          south: -r,
+          east: r,
+          center: function () {
+            return new THREE.Vector2();
+          },
+        };
       }
-    };
-    tick();
 
-    //differed a resize event
-    setTimeout(this.onResize.bind(this), 100);
+      //start listening
+      this.inputManager.startListening(this.rootWebGL);
+
+      //init scene
+      this.initScene(state);
+
+      //start to tick
+      const fps = this.config.game.fps;
+
+      let now;
+      let then = Date.now();
+      let delta;
+      const _this = this;
+      const tick = function () {
+        if (_this.disposed) return; //stop requesting frame if disposed
+
+        requestAnimationFrame(tick);
+
+        now = Date.now();
+        delta = now - then;
+
+        if (delta > 1000 / fps) {
+          // update time stuffs
+          then = now - (delta % 1000) / fps;
+
+          //set dt
+          _this.localContext.setDt(delta);
+
+          //call tick requester
+          _this.tickRequesters.forEach(function (cb) {
+            cb(_this.localContext);
+          });
+
+          //update Gameview
+          _this.update(_this.interpolator.computeCurrentStates());
+
+          //render
+          if (_this.isRendering) {
+            //update matrix
+            _this.getScene().updateMatrixWorld();
+            //This notably charge missing iTowns tiles according to current view.
+            _this.getItownsView().notifyChange(_this.getCamera());
+            //adjust camera params
+            _this.computeNearFarCamera();
+            _this.render();
+          }
+        }
+      };
+      tick();
+
+      //differed a resize event
+      setTimeout(function () {
+        _this.onResize();
+        resolve();
+      }, 100);
+    });
   }
 
   /**
@@ -423,12 +432,6 @@ export class GameView extends View3D {
         this.object3D,
         this.directionalLight
       );
-
-      //update matrix
-      this.getScene().updateMatrixWorld();
-
-      //This notably charge missing iTowns tiles according to current view.
-      this.getItownsView().notifyChange(this.getCamera());
       this.onNewGORequesters.forEach(function (cb) {
         cb(ctx, newGO);
       });
@@ -463,9 +466,8 @@ export class GameView extends View3D {
 
   render() {
     //render
-    const renderer = this.getRenderer();
-    renderer.clearColor();
-    renderer.render(this.getScene(), this.getCamera());
+    this.renderer.clearColor();
+    this.renderer.render(this.scene, this.getCamera());
   }
 
   /**
