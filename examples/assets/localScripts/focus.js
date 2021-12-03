@@ -69,10 +69,10 @@ module.exports = class Focus {
     quaternion.multiply(this.quaternionAngle);
 
     //tweak values in camera object
-    const iV = localContext.getGameView().getItownsView();
-    iV.camera.camera3D.position.copy(position);
-    iV.camera.camera3D.quaternion.copy(quaternion);
-    iV.camera.camera3D.updateProjectionMatrix();
+    const camera = localContext.getGameView().getCamera();
+    camera.position.copy(position);
+    camera.quaternion.copy(quaternion);
+    camera.updateProjectionMatrix();
 
     localContext.getGameView().computeNearFarCamera();
   }

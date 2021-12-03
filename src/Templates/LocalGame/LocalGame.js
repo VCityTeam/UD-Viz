@@ -13,9 +13,7 @@ import { WorldStateInterpolator } from '../DistantGame/WorldStateInterpolator.js
  */
 
 export class LocalGame {
-  constructor(fps) {
-    this.fps = fps || 30;
-
+  constructor() {
     this.gameView = null;
   }
 
@@ -42,13 +40,12 @@ export class LocalGame {
    * @returns
    */
   start(world, configPath, options = {}) {
-    const fps = this.fps;
-
     const _this = this;
 
     return new Promise((resolve, reject) => {
       Components.SystemUtils.File.loadJSON(configPath).then(function (config) {
         const assetsManager = new AssetsManager();
+        const fps = config.game.fps;
 
         assetsManager.loadFromConfig(config.assetsManager).then(function () {
           const worldStateComputer = new Shared.WorldStateComputer(
@@ -72,15 +69,13 @@ export class LocalGame {
             config: config,
             itownsControls: false,
             localScriptModules: options.localScriptModules,
+            userData: options.userData,
           });
 
           //start gameview tick
-          _this.gameView.writeUserData('avatarUUID', options.avatarUUID);
-          _this.gameView
-            .start(worldStateComputer.computeCurrentState())
-            .then(function () {
-              resolve();
-            });
+          _this.gameView.start(worldStateComputer.computeCurrentState());
+
+          resolve();
         });
       });
     });

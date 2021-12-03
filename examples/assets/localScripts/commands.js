@@ -66,29 +66,37 @@ module.exports = class Commands {
       }
     );
 
+    const worldComputer = localContext.getGameView().getInterpolator();
+
+    //send input manager command to the world at each computer tick
+    worldComputer.addAfterTickRequester(function () {
+      worldComputer.onCommands(inputManager.computeCommands());
+    });
+
     //example of how to access its custom module
     const myCustomModule = gameView.getLocalScriptModules()['myCustomModule'];
     if (myCustomModule)
-      inputManager.addKeyInput('p', 'keydown', myCustomModule.print);
+      inputManager.addKeyInput('l', 'keydown', myCustomModule.print);
+
+    inputManager.addKeyInput('p', 'keydown', function () {
+      console.log(go.computeRoot());
+    });
+
+    //animation
+    const zeppelin = go.computeRoot().findByName('zeppelin');
+    const render = zeppelin.getComponent(Shared.Render.TYPE);
+    const action = render.getActions();
+    action['Anim_Ailes_Moulin'].play();
   }
 
   updateUI(go, localCtx) {
     //update ui
-    this.fpsLabel.innerHTML = 'FPS = ' + Math.round(1000 / localCtx.getDt());
+    this.fpsLabel.innerHTML =
+      'Gameview dt = ' + Math.round(localCtx.getDt());
   }
 
   tick() {
-    const localContext = arguments[1];
-    const worldComputer = localContext.getGameView().getInterpolator();
-    const inputManager = localContext.getGameView().getInputManager();
-
-    //send input manager command to the world
-    worldComputer.addAfterTickRequester(function () {
-      const cmds = inputManager.computeCommands();
-      worldComputer.onCommands(cmds);
-    });
-
-    this.updateUI(arguments[0], localContext);
+    this.updateUI(arguments[0], arguments[1]);
   }
 
   update() {

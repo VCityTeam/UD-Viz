@@ -28,7 +28,7 @@ module.exports = class WorldGameManager {
           idScripts: ['zeppelin'],
           conf: { sphereCount: 0 },
         },
-        Render: { idModel: 'zeppelin' },
+        Render: { idRenderData: 'helice' },
         Collider: {
           shapes: [
             {
@@ -75,7 +75,7 @@ module.exports = class WorldGameManager {
       static: true,
       components: {
         Render: {
-          idModel: 'sphere',
+          idRenderData: 'sphere',
           color: [Math.random(), Math.random(), Math.random()],
         },
         Collider: {
@@ -101,8 +101,8 @@ module.exports = class WorldGameManager {
     const worldContext = arguments[1];
     const dt = worldContext.getDt();
     const commands = worldContext.getCommands();
-    const speedTranslate = 0.0005;
-    const speedRotate = 0.000005;
+    const speedTranslate = 0.05;
+    const speedRotate = 0.0005;
     const zeppelin = this.zeppelin;
 
     commands.forEach(function (cmd) {
