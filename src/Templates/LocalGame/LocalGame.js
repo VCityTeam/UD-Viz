@@ -73,9 +73,11 @@ export class LocalGame {
           });
 
           //start gameview tick
-          _this.gameView.start(worldStateComputer.computeCurrentState());
-
-          resolve();
+          _this.gameView
+            .start(worldStateComputer.computeCurrentState())
+            .then(function () {
+              resolve();
+            });
         });
       });
     });
