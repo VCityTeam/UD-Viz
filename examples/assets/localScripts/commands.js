@@ -83,10 +83,10 @@ module.exports = class Commands {
     });
 
     //animation
-    const zeppelin = go.computeRoot().findByName('zeppelin');
-    const render = zeppelin.getComponent(Shared.Render.TYPE);
-    const action = render.getActions();
-    action['Anim_Ailes_Moulin'].play();
+    // const zeppelin = go.computeRoot().findByName('zeppelin');
+    // const render = zeppelin.getComponent(Shared.Render.TYPE);
+    // const action = render.getActions();
+    // action['Anim_Ailes_Moulin'].play();
   }
 
   updateUI(go, localCtx) {
