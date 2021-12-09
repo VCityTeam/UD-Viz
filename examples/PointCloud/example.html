@@ -17,16 +17,27 @@
         app.addBaseMapLayer();
 
         app.addElevationLayer();
-
         app.setupAndAdd3DTilesLayers();
 
         ////// ABOUT MODULE
         const about = new udv.Widgets.AboutWindow();
-        app.addModuleView('about', about);
+        app.addModuleView("about", about);
+                  ////// LAYER CHOICE MODULE
+        const layerChoice = new udv.Widgets.LayerChoice(app.layerManager);
+        app.addModuleView('layerChoice', layerChoice);
+        
+                ////// 3DTILES DEBUG
+        const debug3dTilesWindow =
+        new udv.Widgets.Extensions.Debug3DTilesWindow(app.layerManager);
+        app.addModuleView('3dtilesDebug', debug3dTilesWindow, {
+          name: '3DTiles Debug',
+        });
 
-        ////// HELP MODULE
-        const help = new udv.Widgets.Extensions.HelpWindow(config.helpWindow);
-        app.addModuleView('help', help);
+        const cameraPosition = new udv.Widgets.CameraPositionerView(
+          app.view,
+          app.controls
+        );
+        app.addModuleView('cameraPositioner', cameraPosition);
       });
     </script>
   </body>
