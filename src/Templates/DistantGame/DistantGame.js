@@ -8,7 +8,7 @@ import { GameView } from '../../Views/Views';
 export class DistantGame {
   constructor(webSocketService, assetsManager, config) {
     this.config = config;
-    this.stateComputer = new WorldStateInterpolator(
+    this.interpolator = new WorldStateInterpolator(
       config.worldStateInterpolator
     );
     this.webSocketService = webSocketService;
@@ -36,14 +36,15 @@ export class DistantGame {
     ]);
   }
 
-  reset(userData) {
+  reset(userData, localScriptModules) {
     this.dispose(true);
 
     const gV = new GameView({
       assetsManager: this.assetsManager,
-      stateComputer: this.stateComputer,
+      interpolator: this.interpolator,
       config: this.config,
       userData: userData,
+      localScriptModules: localScriptModules,
     });
 
     const ctxGameView = gV.getLocalContext();
@@ -58,8 +59,8 @@ export class DistantGame {
     this.gameView = gV;
   }
 
-  start(userData = {}) {
-    this.reset(userData);
+  start(userData = {}, localScriptModules) {
+    this.reset(userData, localScriptModules);
 
     const _this = this;
 
@@ -74,10 +75,10 @@ export class DistantGame {
 
         if (_this.gameView.getLastState()) {
           userData.firstGameView = false;
-          _this.start(userData);
+          _this.start(userData, localScriptModules);
         }
 
-        _this.stateComputer.onFirstState(state);
+        _this.interpolator.onFirstState(state);
         _this.gameView.writeUserData('avatarUUID', json.avatarUUID);
         _this.gameView.start(state);
       }
@@ -86,7 +87,7 @@ export class DistantGame {
     this.webSocketService.on(
       Constants.WEBSOCKET.MSG_TYPES.WORLDSTATE_DIFF,
       (diffJSON) => {
-        _this.stateComputer.onNewDiff(new WorldStateDiff(diffJSON));
+        _this.interpolator.onNewDiff(new WorldStateDiff(diffJSON));
       }
     );
   }

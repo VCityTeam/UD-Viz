@@ -93,7 +93,12 @@ const GameObjectModule = class GameObject {
       const component = this.components[key];
       for (let index = 0; index < bufferedGO.length; index++) {
         const element = bufferedGO[index];
-        component.updateFromComponent(element.getComponent(key), localContext);
+
+        component.updateFromComponent(
+          element.isOutdated(),
+          element.getComponent(key),
+          localContext
+        );
       }
     }
   }
@@ -435,7 +440,9 @@ const GameObjectModule = class GameObject {
 
     const r = this.getComponent(RenderComponent.TYPE);
     if (r) {
-      obj.add(r.getObject3D());
+      const rObj = r.getObject3D();
+      if (!rObj) throw new Error('no render object3D');
+      obj.add(rObj);
     }
 
     //add children if recursive
@@ -751,14 +758,7 @@ GameObjectModule.TYPE = 'GameObject';
 GameObjectModule.interpolateInPlace = function (g1, g2, ratio) {
   g1.object3D.position.lerp(g2.object3D.position, ratio);
   g1.object3D.scale.lerp(g2.object3D.scale, ratio);
-
-  //TODO opti Euler lerp
-  const v1 = g1.object3D.rotation.toVector3();
-  const v2 = g2.object3D.rotation.toVector3();
-
-  v1.lerp(v2, ratio);
-
-  g1.object3D.rotation.setFromVector3(v1);
+  g1.object3D.quaternion.slerp(g2.object3D.quaternion, ratio);
   return g1;
 };
 

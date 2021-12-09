@@ -16,8 +16,6 @@ const $3DTemporalBatchTable = Widgets.$3DTemporalBatchTable;
 const $3DTemporalBoundingVolume = Widgets.$3DTemporalBoundingVolume;
 const $3DTemporalTileset = Widgets.$3DTemporalTileset;
 
-import { Deck } from '@deck.gl/core';
-
 /**
  *  Main view of an ud-viz application
  */
@@ -42,22 +40,13 @@ export class View3D {
     this.rootCss = document.createElement('div');
     this.rootCss.id = 'css_View3D';
 
-    this.rootDeckGL = document.createElement('canvas');
-    this.rootDeckGL.id = 'deck_gl_View3D';
-
     this.rootHtml.appendChild(this.rootCss);
     this.rootHtml.appendChild(this.rootWebGL);
-    this.rootHtml.appendChild(this.rootDeckGL);
-
-    //root itowns
-    this.rootItownsHtml = document.createElement('div');
-    this.rootItownsHtml.id = 'itowns_View3D'; //itowns div
-    this.rootWebGL.appendChild(this.rootItownsHtml);
 
     //ui
     this.ui = document.createElement('div');
     this.ui.classList.add('ui_View3D');
-    this.rootItownsHtml.appendChild(this.ui);
+    this.rootWebGL.appendChild(this.ui);
 
     //listen resize event
     window.addEventListener('resize', this.onResize.bind(this));
@@ -83,6 +72,23 @@ export class View3D {
 
     //flag
     this.disposed = false;
+
+    //inputs
+    this.inputManager = new InputManager();
+
+    /**
+     * Object used to manage all of the layer.
+     *
+     * @type {LayerManager}
+     */
+    this.layerManager = null;
+
+    //3D rendering attributes
+    this.scene = null; //the three js scene
+    this.renderer = null; //the webgl renderer
+    this.camera = null; //the camera used to render the scene
+
+    //ATTRIBUTES BELOW ARE STILL IN WIP
 
     //CSS3D attributes
     this.css3DRenderer = null;
@@ -137,22 +143,6 @@ export class View3D {
       }
     };
 
-    //Deck GL attributes
-    this.deckGLRenderer = null;
-
-    //Deck GL attributes
-    this.deckGLRenderer = null;
-
-    //inputs
-    this.inputManager = new InputManager();
-
-    /**
-     * Object used to manage all of the layer.
-     *
-     * @type {LayerManager}
-     */
-    this.layerManager = null;
-
     //default catch events
     const catchEventsCSS3D = params.catchEventsCSS3D || false;
     this.catchEventsCSS3D(catchEventsCSS3D);
@@ -169,7 +159,7 @@ export class View3D {
     const bottom = max.y;
     const right = max.x;
 
-    [this.rootWebGL, this.rootCss, this.rootDeckGL].forEach(function (el) {
+    [this.rootWebGL, this.rootCss].forEach(function (el) {
       el.style.top = top + 'px';
       el.style.left = left + 'px';
       el.style.bottom = bottom + 'px';
@@ -227,7 +217,7 @@ export class View3D {
 
     //listen to switch mode between css3D and webgl controls
     this.inputManager.addMouseInput(
-      this.rootItownsHtml,
+      this.rootWebGL,
       'mousedown',
       this.toCSS3DEvent
     );
@@ -258,10 +248,7 @@ export class View3D {
         then = now - (delta % 1000) / fps;
 
         if (!_this.isRendering) return;
-        css3DRenderer.render(
-          _this.css3DScene,
-          _this.itownsView.camera.camera3D
-        );
+        css3DRenderer.render(_this.css3DScene, _this.getCamera());
       }
     };
     tick();
@@ -308,71 +295,6 @@ export class View3D {
     this.billboards.splice(index, 1);
   }
 
-  appendLayerDeckGL(layer) {
-    if (!this.deckGLRenderer) this.initDeckGL();
-
-    this.deckGLRenderer.setProps({ layers: [layer] });
-  }
-
-  initDeckGL() {
-    const _this = this;
-
-    const o = proj4.default(this.projection).inverse(this.extent.center());
-
-    //TODO pass certains attr as conf params
-    this.deckGLRenderer = new Deck({
-      map: false,
-      canvas: this.rootDeckGL,
-      initialViewState: {
-        longitude: o.x,
-        latitude: o.y,
-        zoom: 8,
-      },
-      parameters: {
-        clearColor: [0.93, 0.86, 0.81, 0],
-      },
-      controller: false,
-    });
-
-    _this.itownsView.addFrameRequester(
-      itowns.MAIN_LOOP_EVENTS.AFTER_CAMERA_UPDATE,
-      function () {
-        // console.log('hola ');
-        const cameraItowns = _this.itownsView.camera.camera3D;
-
-        const o = proj4
-          .default(_this.projection)
-          .inverse(cameraItowns.position.clone());
-
-        const dirCam = cameraItowns.getWorldDirection(new THREE.Vector3());
-        const axis = new THREE.Vector3(0, 0, -1);
-        const pitch = Math.acos(dirCam.dot(axis));
-
-        // newPos.range = 64118883 / (2(viewState.zoom-1)); // 64118883 is Range at Z=1
-        const magicNumber = 64118883.098724395;
-
-        const zoom =
-          Math.log((2 * magicNumber) / cameraItowns.position.z) / Math.log(2);
-
-        const cameraParams = {
-          longitude: o.x,
-          latitude: o.y,
-          zoom: zoom,
-          bearing: (-cameraItowns.rotation.y * 180) / Math.PI,
-          pitch: (pitch * 180) / Math.PI,
-        };
-
-        console.log(cameraParams, cameraItowns);
-
-        _this.deckGLRenderer.setProps({
-          initialViewState: cameraParams,
-        });
-      }
-    );
-
-    // this.catchEventsCSS3D(tfalserue);
-  }
-
   /**
    *
    * @param {Boolean} value if true the css3D renderer stop rendering
@@ -387,6 +309,18 @@ export class View3D {
    */
   getExtent() {
     return this.extent;
+  }
+
+  start(extent) {
+    this.initItownsView(extent);
+    //start
+    this.inputManager.startListening(this.rootWebGL);
+
+    //dynamic near far computation
+    this.itownsView.addFrameRequester(
+      itowns.MAIN_LOOP_EVENTS.BEFORE_RENDER, //TODO another event (On camera change ?) 
+      this.computeNearFarCamera.bind(this)
+    );
   }
 
   /**
@@ -414,7 +348,7 @@ export class View3D {
         tilt = this.config['itowns']['camera']['tilt'];
     }
 
-    this.itownsView = new itowns.PlanarView(this.rootItownsHtml, extent, {
+    this.itownsView = new itowns.PlanarView(this.rootWebGL, extent, {
       disableSkirt: false,
       placement: {
         coord: coordinates,
@@ -425,33 +359,26 @@ export class View3D {
       noControls: !this.itownsControls,
     });
 
+    //init 3D rendering attributes with itownsview
+    this.scene = this.itownsView.scene;
+    this.renderer = this.itownsView.mainLoop.gfxEngine.renderer;
+    this.camera = this.itownsView.camera.camera3D;
+
     //City generation
     this.addBaseMapLayer();
     this.addElevationLayer();
     this.setupAndAdd3DTilesLayers();
 
-    //TODO parler a itowns remove listener of the resize
-    this.itownsView.debugResize = this.itownsView.resize;
-    this.itownsView.resize = function () {
-      //nada
-    };
-
-    //start
-    this.inputManager.startListening(this.itownsView.domElement);
-
-    //dynamic near far computation
-    this.itownsView.addFrameRequester(
-      itowns.MAIN_LOOP_EVENTS.BEFORE_RENDER,
-      this.computeNearFarCamera.bind(this)
-    );
+    //disable itowns resize
+    this.itownsView.resize = function () {};
   }
 
   /**
    * dynamic computation of the near and far of the camera to fit the extent
    */
   computeNearFarCamera() {
-    const camera = this.itownsView.camera.camera3D;
-    const height = 400; //TODO compute this dynamically
+    const camera = this.getCamera();
+    const height = 400; //TODO compute this dynamically and opti (remove new)
     const points = [
       new THREE.Vector3(this.extent.west, this.extent.south, 0),
       new THREE.Vector3(this.extent.west, this.extent.south, height),
@@ -652,8 +579,9 @@ export class View3D {
     const w = window.innerWidth - offsetLeft;
     const h = window.innerHeight - offsetTop;
 
-    //TODO remove this fonction
-    if (this.itownsView) this.itownsView.debugResize(w, h);
+    this.camera.aspect = w / h;
+    this.camera.updateProjectionMatrix();
+    this.renderer.setSize(w, h);
 
     if (this.css3DRenderer) this.css3DRenderer.setSize(w, h);
   }
@@ -662,24 +590,23 @@ export class View3D {
    * Remove html from the DOM and stop listeners
    */
   dispose() {
-    this.itownsView.dispose();
+    if (this.itownsView) this.itownsView.dispose();
     window.removeEventListener('resize', this.onResize.bind(this));
     this.html().remove();
     this.inputManager.dispose();
     this.disposed = true;
-    if (this.deckGLRenderer) this.deckGLRenderer.finalize();
   }
 
   getCamera() {
-    return this.itownsView.camera.camera3D;
+    return this.camera;
   }
 
   getScene() {
-    return this.itownsView.scene;
+    return this.scene;
   }
 
   getRenderer() {
-    return this.itownsView.mainLoop.gfxEngine.renderer;
+    return this.renderer;
   }
 
   getRootWebGL() {

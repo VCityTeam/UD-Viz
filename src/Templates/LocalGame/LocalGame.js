@@ -68,13 +68,14 @@ export class LocalGame {
           _this.gameView = new Views.GameView({
             htmlParent: options.htmlParent || document.body,
             assetsManager: assetsManager,
-            stateComputer: interpolator,
+            interpolator: interpolator,
             config: config,
             itownsControls: false,
+            localScriptModules: options.localScriptModules,
+            userData: options.userData,
           });
 
           //start gameview tick
-          _this.gameView.writeUserData('avatarUUID', options.avatarUUID);
           _this.gameView.start(worldStateComputer.computeCurrentState());
 
           resolve();

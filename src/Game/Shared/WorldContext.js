@@ -71,14 +71,6 @@ module.exports = class WorldContext {
 
   /**
    *
-   * @param {Array[Command]} value
-   */
-  setCommands(value) {
-    this.commands = value;
-  }
-
-  /**
-   *
    * @returns {Library}
    */
   getBundles() {

@@ -14,18 +14,21 @@ const THREEUtils = udvShared.Components.THREEUtils;
 
 /**
  * Main view of an ud-viz game application
- * This object works with a state computer (./src/Game/Components/StateComputer)
+ * This object works with a state computer (./src/Game/Components/interpolator)
  */
 export class GameView extends View3D {
   constructor(params) {
     //call parent class
     super(params);
 
+    //custom modules pass the localscript context
+    this.localScriptModules = params.localScriptModules || {};
+
     //assets
     this.assetsManager = params.assetsManager;
 
-    //state computer
-    this.stateComputer = params.stateComputer;
+    //object passing states to the view its could work with a local worldcomputer or a distant server via websocket communication
+    this.interpolator = params.interpolator;
 
     //object3D
     this.object3D = new THREE.Object3D();
@@ -52,6 +55,8 @@ export class GameView extends View3D {
     //Array of callbacks call during the tick
     this.tickRequesters = [];
 
+    this.onNewGORequesters = [];
+
     //userData
     this.userData = params.userData || {};
   }
@@ -68,13 +73,17 @@ export class GameView extends View3D {
     return this.localContext;
   }
 
+  getLocalScriptModules() {
+    return this.localScriptModules;
+  }
+
   /**
    *
    * @param {Boolean} value true go are updated false no
    */
   setUpdateGameObject(value) {
     this.updateGameObject = value;
-    this.stateComputer.setPause(value);
+    this.interpolator.setPause(value);
   }
 
   /**
@@ -93,31 +102,66 @@ export class GameView extends View3D {
     this.tickRequesters.push(cb);
   }
 
+  addOnNewGORequester(cb) {
+    this.onNewGORequesters.push(cb);
+  }
+
   /**
    * Initialize this view
    *
    * @param {WorldState} state first state of this view
    */
-  start(state) {
+  start(state = this.interpolator.computeCurrentState()) {
+    if (!state) throw new Error('no state');
+
     //build itowns view
     const o = state.getOrigin();
-    const [x, y] = proj4.default(this.projection).forward([o.lng, o.lat]);
-    const r = this.config.itowns.radiusExtent;
-    // Define geographic extent: CRS, min/max X, min/max Y
-    const extent = new itowns.Extent(
-      this.projection,
-      x - r,
-      x + r,
-      y - r,
-      y + r
-    );
-    this.initItownsView(extent);
+    const r = this.config.game.radiusExtent;
+    if (o) {
+      const [x, y] = proj4.default(this.projection).forward([o.lng, o.lat]);
+      // Define geographic extent: CRS, min/max X, min/max Y
+      const extent = new itowns.Extent(
+        this.projection,
+        x - r,
+        x + r,
+        y - r,
+        y + r
+      );
+      this.initItownsView(extent);
 
-    //TODO disable itons rendering
-    this.itownsView.render = function () {
-      //empty
-    };
+      //TODO disable itons rendering
+      this.itownsView.render = function () {
+        //empty
+      };
+    } else {
+      //no origin means no itowns view fill attr
+      this.scene = new THREE.Scene();
+      const canvas = document.createElement('canvas');
+      this.rootWebGL.appendChild(canvas);
+      this.renderer = new THREE.WebGLRenderer({
+        canvas: canvas,
+        antialias: true,
+        logarithmicDepthBuffer: true,
+      });
+      this.camera = new THREE.PerspectiveCamera(60, 1, 1, 1000); //default params
+      this.scene.add(this.camera);
 
+      //fill custom extent
+      this.extent = {
+        north: r,
+        west: -r,
+        south: -r,
+        east: r,
+        center: function () {
+          return new THREE.Vector2();
+        },
+      };
+    }
+
+    //start listening
+    this.inputManager.startListening(this.rootWebGL);
+
+    //init scene
     this.initScene(state);
 
     //start to tick
@@ -148,13 +192,20 @@ export class GameView extends View3D {
         });
 
         //update Gameview
-        _this.update(_this.stateComputer.computeCurrentStates());
+        _this.update(_this.interpolator.computeCurrentStates());
+
+        //render
+        if (_this.isRendering) {
+          _this.computeNearFarCamera();
+          _this.renderer.clearColor();
+          _this.renderer.render(_this.scene, _this.getCamera());
+        }
       }
     };
     tick();
 
     //differed a resize event
-    setTimeout(this.onResize.bind(this), 1000);
+    setTimeout(this.onResize.bind(this), 100);
   }
 
   /**
@@ -170,15 +221,22 @@ export class GameView extends View3D {
    * @param {WorldState} state
    */
   initScene(state) {
+    let x = 0;
+    let y = 0;
+    let z = 0;
+
     const o = state.getOrigin();
-    const [x, y] = proj4.default(this.projection).forward([o.lng, o.lat]);
+    if (o) {
+      [x, y] = proj4.default(this.projection).forward([o.lng, o.lat]);
+      z = o.alt;
+    }
 
     //add the object3D of the Game
-    //TODO this object should be in World
+    //TODO this object should be in World ?
     this.object3D.position.x = x;
     this.object3D.position.y = y;
-    this.object3D.position.z = o.alt;
-    this.itownsView.scene.add(this.object3D);
+    this.object3D.position.z = z;
+    this.scene.add(this.object3D);
 
     //init sky color based on config file
     this.skyColor = new THREE.Color(
@@ -192,9 +250,7 @@ export class GameView extends View3D {
     THREEUtils.initRenderer(renderer, this.skyColor);
 
     //add lights
-    const { directionalLight, ambientLight } = THREEUtils.addLights(
-      this.itownsView.scene
-    );
+    const { directionalLight, ambientLight } = THREEUtils.addLights(this.scene);
 
     //configure shadows based on a config files
     directionalLight.shadow.mapSize = new THREE.Vector2(
@@ -219,7 +275,21 @@ export class GameView extends View3D {
    */
   dispose(keepAssets = false) {
     super.dispose();
-    this.stateComputer.stop();
+    this.interpolator.stop();
+
+    //notify localscript dispose
+    if (this.lastState) {
+      const ctx = this.localContext;
+
+      this.lastState.getGameObject().traverse(function (g) {
+        const scriptComponent = g.getComponent(LocalScript.TYPE);
+        if (scriptComponent) {
+          scriptComponent.execute(LocalScript.EVENT.DISPOSE, [ctx]);
+        }
+        const audioComponent = g.getComponent(Audio.TYPE);
+        if (audioComponent) audioComponent.dispose();
+      });
+    }
 
     if (!keepAssets) this.assetsManager.dispose();
   }
@@ -335,7 +405,7 @@ export class GameView extends View3D {
     scene.updateMatrixWorld();
 
     //update shadow
-    if (newGO.length)
+    if (newGO.length) {
       THREEUtils.bindLightTransform(
         10,
         this.config.game.sky.sun_position.phi,
@@ -343,6 +413,11 @@ export class GameView extends View3D {
         this.object3D,
         this.directionalLight
       );
+
+      this.onNewGORequesters.forEach(function (cb) {
+        cb(ctx, newGO);
+      });
+    }
 
     if (this.updateGameObject) {
       go.traverse(function (child) {
@@ -360,13 +435,6 @@ export class GameView extends View3D {
           audioComp.tick(cameraMatWorldInverse, _this.getObject3D().position);
       });
     }
-
-    if (this.isRendering) {
-      //render
-      const renderer = this.itownsView.mainLoop.gfxEngine.renderer;
-      renderer.clearColor();
-      renderer.render(scene, this.getCamera());
-    }
   }
 
   /**
@@ -374,11 +442,19 @@ export class GameView extends View3D {
    * @param {WorldState} state
    */
   forceUpdate(state) {
-    if (!state) state = this.stateComputer.computeCurrentState();
+    let states = [];
+    if (!state) {
+      const computer = this.interpolator.getLocalComputer();
+      if (computer) {
+        states = [computer.computeCurrentState()];
+      } else {
+        throw new Error('no local computer');
+      }
+    } else states = [state];
 
     let old = this.updateGameObject;
     this.updateGameObject = true;
-    this.update(state);
+    this.update(states);
     this.updateGameObject = old;
   }
 
@@ -396,13 +472,13 @@ export class GameView extends View3D {
     return this.lastState;
   }
 
-  getStateComputer() {
-    return this.stateComputer;
+  getInterpolator() {
+    return this.interpolator;
   }
 }
 
 /**
- * Context pass to the GameObject LocalScript to work
+ * Context pass to the GameObject LocalScript to work (TODO this class is relevant ? all attributes could be in gameview class)
  */
 class LocalContext {
   constructor(gameView) {

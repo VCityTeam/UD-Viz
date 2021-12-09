@@ -18,17 +18,18 @@ export class WorldStateInterpolator {
     //batch
     this._notConsumedStates = [];
 
-    //DEBUG
-    this.lastTimeState = 0;
+    //ping attr computation
+    this.lastTimeState = 0; //buffer
+    this.ping = 0; //time between two new state
 
-    //local game
+    //local game optional (could work with a distant computer via websocket)
     this.localComputer = localComputer;
     if (localComputer) {
       //register itself in the localcomputer
       const _this = this;
       _this.onFirstState(localComputer.computeCurrentState());
       localComputer.addAfterTickRequester(function () {
-        _this._onNewState(localComputer.computeCurrentState());
+        _this.onNewState(localComputer.computeCurrentState());
       });
     }
   }
@@ -42,30 +43,34 @@ export class WorldStateInterpolator {
     return 0;
   }
 
+  //time between two new state
+  getPing() {
+    return this.ping;
+  }
+
   /**
    * Add a new state
    * @param {WorldState} state
    */
-  _onNewState(state) {
+  onNewState(state) {
     if (!state) {
       throw new Error('no state');
     }
 
-    //DEBUG
+    //compute ping
     let now = Date.now();
-    let dState = now - this.lastTimeState;
+    this.ping = now - this.lastTimeState;
     this.lastTimeState = now;
-    // console.log('state received last one was ', dState, ' ms ago');
-    if (dState > this._getDelay()) console.warn('Server delay');
 
     this.states.push(state);
 
     // Keep only one worldstate before the current server time
     const index = this._computeIndexBaseState();
+
     if (index > 0) {
       const stateDeleted = this.states.splice(0, index);
-      for (let index = 0; index < stateDeleted.length; index++) {
-        const element = stateDeleted[index];
+      for (let iStateDel = 0; iStateDel < stateDeleted.length; iStateDel++) {
+        const element = stateDeleted[iStateDel];
         if (!element.hasBeenConsumed()) this._notConsumedStates.push(element); //register states not consumed
       }
     }
@@ -107,6 +112,10 @@ export class WorldStateInterpolator {
 
   //local computer wrapper methods
 
+  getLocalComputer() {
+    return this.localComputer;
+  }
+
   getWorldContext() {
     return this.localComputer.getWorldContext();
   }
@@ -127,7 +136,7 @@ export class WorldStateInterpolator {
     let last = this._getLastStateReceived();
     if (!last) throw new Error('no last state');
     let newState = last.add(diff);
-    this._onNewState(newState);
+    this.onNewState(newState);
   }
 
   /**
@@ -139,15 +148,17 @@ export class WorldStateInterpolator {
     this.gameStart = Date.now();
     this.states.length = 0;
     this.lastTimeState = 0;
-    this._onNewState(state);
+    this.onNewState(state);
   }
 
   //StateComputer INTERFACE
 
   /**
-   * wrapper function
+   * stop localcomputer if one
    */
-  stop() {}
+  stop() {
+    if (this.localComputer) this.localComputer.stop();
+  }
 
   /**
    * Compute the current world state
@@ -182,6 +193,7 @@ export class WorldStateInterpolator {
     return result;
   }
 
+  //When a view need the current it's called this function
   computeCurrentStates() {
     const result = this._notConsumedStates;
     this._notConsumedStates = [];

@@ -45,6 +45,7 @@
   "game": {
     "fps": 30,
     "shadowMapSize": 2046,
+    "radiusExtent": 1000,
     "sky": {
       "path": "./assets/img/sky.jpg",
       "color": {
@@ -58,13 +59,10 @@
       }
     }
   },
-  "itowns": {
-    "radiusExtent": 1000
-  },
   "3DTilesLayers": [
     {
       "id": "3d-tiles-layer-building",
-      "url": "https://dataset-dl.liris.cnrs.fr/three-d-tiles-lyon-metropolis/Lyon_LOD/buildings/tileset.json",
+      "url": "./assets/3DTiles/buildings/tileset.json",
       "color": "0xFFFFFF"
     },
     {

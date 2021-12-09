@@ -87,8 +87,8 @@ const LocalScriptModule = class LocalScript {
    * @param {JSON} component the component json to update to
    * @param {LocalContext} localContext
    */
-  updateFromComponent(component, localContext) {
-    if (!JSONUtils.equals(this.conf, component.conf)) {
+  updateFromComponent(outdated, component, localContext) {
+    if (outdated) {
       //replace conf and launch an update event
       this.conf = component.conf;
       for (let id in this.scripts) {
@@ -139,6 +139,7 @@ LocalScriptModule.EVENT = {
   TICK: 'tick', //every tick
   ON_NEW_GAMEOBJECT: 'onNewGameObject', //when a go is added
   UPDATE: 'update', //when component need to be updated with newer localScript component
+  DISPOSE: 'dispose', //world is dispose
 };
 
 module.exports = LocalScriptModule;
