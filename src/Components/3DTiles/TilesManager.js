@@ -4,7 +4,7 @@ import { CityObjectID, CityObject, createCityObjectID } from './Model/CityObject
 import { CityObjectStyle } from './Model/CityObjectStyle.js';
 import { StyleManager } from './StyleManager.js';
 import { EventSender } from '../Events/EventSender.js';
-import { focusCameraOn } from '../../../Components/Components.js';
+import { focusCameraOn } from '../Components.js';
 /**
  * Manages the tiles and the style for city objects.
  */
