@@ -7,29 +7,10 @@ A tutorial of the game engine can be found [here](./Doc/Devel/LocalGameTutorial.
 ### Pre-requisite
 Developing UD-Viz requires some knowledge about [JS](https://github.com/VCityTeam/UD-SV/blob/master/UD-Doc/Devel/ToolJavaScript.md), [node.js](https://en.wikipedia.org/wiki/Node.js), [npm](https://en.wikipedia.org/wiki/Npm_(software)) and [three.js](https://threejs.org/).
 
-### Install nodejs and npm
+### Install npm
+For the npm installation refer [here](https://github.com/VCityTeam/UD-SV/blob/master/Tools/ToolNpm.md)
 
-* **Ubuntu**
-
-  * Install and update npm
-
-    ```bash
-    sudo apt-get install npm    ## Will pull NodeJS
-    sudo npm install -g n     
-    sudo n latest
-    ```
-
-  * References: [how can I update Nodejs](https://askubuntu.com/questions/426750/how-can-i-update-my-nodejs-to-the-latest-version), and [install Ubuntu](http://www.hostingadvice.com/how-to/install-nodejs-ubuntu-14-04/#ubuntu-package-manager)
-
-* **Windows**
-  
-  * Installing from the [installer](https://nodejs.org/en/download/)
-  * Installing with the [CLI](https://en.wikipedia.org/wiki/Command-line_interface)
-
-    ```bash
-    iex (new-object net.webclient).downstring(‘https://get.scoop.sh’)
-    scoop install nodejs
-    ```
+Required npm version: UD-Viz has been reported to work with npm versions npm 6.X and npm 7.X.
 
 ### Installing the UD-Viz library per se
 
