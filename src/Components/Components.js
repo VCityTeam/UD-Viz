@@ -8,3 +8,5 @@ export { SystemUtils };
 export { WebSocketService } from './WebSocketService';
 
 export { TilesManager } from './3DTiles/TilesManager.js';
+
+export { focusCameraOn } from './Camera/CameraUtils';
