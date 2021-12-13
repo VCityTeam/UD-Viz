@@ -156,34 +156,29 @@ export class LayerChoice extends Window {
       let item = document.createElement('div');
       item.innerHTML = `<input type="checkbox" class="spoiler-check" id="${layers[i].id}-spoiler">
                         <label for="${layers[i].id}-spoiler" class="subsection-title">${layers[i].id}</Label>
-                        <div class="spoiler-box">
-                          <div id="visible_${i}">
-                          Visible <input type="checkbox" id="checkbox_${i}" ${layers[i].visible ? 'checked' : ''}></input></br>
+                        <div class="spoiler-box" id="div_${layers[i].id}">
+                          <div id="visible_${layers[i].id}">
+                          Visible <input type="checkbox" id="checkbox_${layers[i].id}" ${layers[i].visible ? 'checked' : ''}></input></br>
                           </div>
-                          <div id="opacity_${i}"> 
-                            Opacity : <span id="geometry_value_opacity_${i}">${layers[i].opacity}</span><input type ="range" id="range_${i}" min="0" max="1" step = "0.1" value="${layers[i].opacity}"></input>
-                          </div>` + htmlTiles + `
+                          <div id="opacity_${layers[i].id}"> 
+                            Opacity : <span id="geometry_value_opacity_${layers[i].id}">${layers[i].opacity}</span><input type ="range" id="range_${layers[i].id}" min="0" max="1" step = "0.1" value="${layers[i].opacity}"></input>
+                          </div>
                         </div>`;
 
       item.oninput = (event) => {
-        if (event.srcElement.id === 'checkbox_' + i) {
+        if (event.srcElement.id === 'checkbox_' + layers[i].id) {
           layers[i].visible = event.srcElement.checked;
         }
-        if (event.srcElement.id.includes('checkbox_' + i + '_') ) {
-          let tileIndex = event.srcElement.id.split('_');//.slice(-1)[0];
-          tileIndex = tileIndex[tileIndex.length - 1];
-          tiles[tileIndex].getMesh().visible = event.srcElement.checked;
-        }
-        if (event.srcElement.id === 'range_' + i) {
+        if (event.srcElement.id === 'range_' + layers[i].id) {
           this.layerManager.updateOpacity(layers[i], event.srcElement.valueAsNumber);
         }
         this.layerManager.notifyChange();
-        let div_visible = document.getElementById('visible_' + i);
-        div_visible.innerHTML = `Visible <input type="checkbox" id="checkbox_${i}" ${
+        let div_visible = document.getElementById('visible_' + layers[i].id);
+        div_visible.innerHTML = `Visible <input type="checkbox" id="checkbox_${layers[i].id}" ${
           layers[i].visible ? 'checked' : ''
         }></input></br>`;
         let span_opacity = document.getElementById(
-          'geometry_value_opacity_' + i
+          'geometry_value_opacity_' + layers[i].id
         );
 
         span_opacity.innerHTML = `${layers[i].opacity}`;
