@@ -495,6 +495,12 @@ export class AllWidget {
       $3dTilesLayer
     );
     
+    /*
+    The pc_size correspond to a parameter specific 
+    to point_cloud dataset, to chose the size of a point.
+    We assume that layers without this parameter are not 
+    point cloud one, meaning that they can have cityObject Style
+    */
     if(!layer['pc_size']){
       let color = 0xffffff;
       if (layer['color']) {
