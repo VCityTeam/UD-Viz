@@ -42,7 +42,7 @@ export class AllWidget {
       this.loadConfigFile(path).then(() => {
         // Use the stable server
         _this.addLogos();
-
+        
         // Initialize iTowns 3D view
         _this.init3DView();
 
@@ -477,37 +477,41 @@ export class AllWidget {
       },
       this.view
     );
+    $3dTilesLayer.haveCityObject = true;
 
     let material;
     if (layer['pc_size']) {
+      $3dTilesLayer.haveCityObject = false;
       material = new THREE.PointsMaterial({
         size: layer['pc_size'],
-        vertexColors: true,
+        vertexColors: THREE.VertexColors
       });
+      $3dTilesLayer.overrideMaterials = material;
+      $3dTilesLayer.material = material;
     }
-
-    $3dTilesLayer.overrideMaterials = material;
-    $3dTilesLayer.material = material;
 
     const $3DTilesManager = new TilesManager(
       this.view,
       $3dTilesLayer
     );
-    let color = 0xffffff;
-    if (layer['color']) {
-      color = parseInt(layer['color']);
-    }
-    $3DTilesManager.registerStyle('default', {
-      materialProps: { opacity: 1, color: color },
-    });
-
-    $3DTilesManager.addEventListener(
-      TilesManager.EVENT_TILE_LOADED,
-      function (event) {
-        $3DTilesManager.setStyleToTileset('default');
-        $3DTilesManager.applyStyles();
+    
+    if(!layer['pc_size']){
+      let color = 0xffffff;
+      if (layer['color']) {
+        color = parseInt(layer['color']);
       }
-    );
+      $3DTilesManager.registerStyle('default', {
+        materialProps: { opacity: 1, color: color },
+      });
+      
+      $3DTilesManager.addEventListener(
+        TilesManager.EVENT_TILE_LOADED,
+        function (event) {
+          $3DTilesManager.setStyleToTileset('default');
+          $3DTilesManager.applyStyles();
+        }
+      );
+    }
 
     this.layerManager.tilesManagers.push($3DTilesManager);
 
@@ -571,15 +575,14 @@ export class AllWidget {
       min_y,
       max_y
     );
-
     // Get camera placement parameters from config
     let coordinates = this.extent.center();
     if (
       this.config['camera']['position']['x'] &&
       this.config['camera']['position']['y']
-    ) {
+    ) {      
       coordinates = new itowns.Coordinates(
-        'EPSG:3946',
+        this.config['projection'],
         parseInt(this.config['camera']['position']['x']),
         parseInt(this.config['camera']['position']['y'])
       );

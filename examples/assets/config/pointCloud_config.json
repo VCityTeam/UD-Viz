@@ -23,7 +23,8 @@
     "version": "1.3.0",
     "format": "image/jpeg",
     "layer_name": "Base_Map",
-    "transparent": true
+    "transparent": true,
+    "maxSubdivisionLevel": 3
   },
   "elevation_layer": {
     "url": "https://download.data.grandlyon.com/wms/grandlyon",
@@ -40,9 +41,9 @@
   },
   "3DTilesLayers": [
     {
-      "id": "Lyon",
-      "url": "",
-      "pc-size": 2
+      "id": "Point-Cloud",
+      "url": "http://localhost:8003/tilesets/pc_lyon_2018/tileset.json",
+      "pc_size": 2
     }
   ]
 }
