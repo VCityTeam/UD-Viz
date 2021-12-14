@@ -474,6 +474,7 @@ export class AllWidget {
           url: layer['url'],
         }),
         registeredExtensions: extensions,
+        overrideMaterials: false,
       },
       this.view
     );
@@ -496,10 +497,11 @@ export class AllWidget {
     let color = 0xffffff;
     if (layer['color']) {
       color = parseInt(layer['color']);
+      $3DTilesManager.registerStyle('default', {
+        materialProps: { opacity: 1, color: color },
+      });
     }
-    $3DTilesManager.registerStyle('default', {
-      materialProps: { opacity: 1, color: color },
-    });
+    else $3DTilesManager.registerDefaultStyle('default');
 
     $3DTilesManager.addEventListener(
       TilesManager.EVENT_TILE_LOADED,

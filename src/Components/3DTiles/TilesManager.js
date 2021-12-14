@@ -258,6 +258,25 @@ export class TilesManager extends EventSender {
   }
 
   /**
+   * Register a new or modify an existing registered style.
+   * The style will be the default material of the 3DTiles layer.
+   * 
+   * @param {string} name A name to identify the style.
+   */
+  registerDefaultStyle(name) {
+    let style = new CityObjectStyle({
+      materialProps: { overrideMaterials: false},
+    });
+    let needUpdate = this.styleManager.registerStyle(name, style);
+    if (needUpdate) {
+      let usage = this.styleManager.getStyleUsage(name);
+      for (let tileId of Object.keys(usage)) {
+        this._markTileToUpdate(tileId);
+      }
+    }
+  }
+
+  /**
    * Check if a style is registered.
    * 
    * @param {string} name Name of the style. 
