@@ -59,8 +59,7 @@ export class TilesManager extends EventSender {
       for (let tile of tiles) {
         if (this.tiles[tile.tileId] === undefined) {
           this.tiles[tile.tileId] = new Tile(this.layer, tile.tileId);
-          if(this.layer.haveCityObject)
-            this.tiles[tile.tileId].loadCityObjects();
+          this.tiles[tile.tileId].loadCityObjects();
           this.loadedTileCount += 1;
         }
       }
@@ -102,8 +101,7 @@ export class TilesManager extends EventSender {
     // when tile unloading will be managed)
     if (this.tiles[tile.tileId] === undefined) {
       this.tiles[tile.tileId] = new Tile(this.layer, tile.tileId);
-      if(this.layer.haveCityObject)
-        this.tiles[tile.tileId].loadCityObjects();
+      this.tiles[tile.tileId].loadCityObjects();
       this.loadedTileCount += 1;
     }
     // Callback when a tile is loaded.

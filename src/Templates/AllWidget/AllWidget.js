@@ -42,7 +42,7 @@ export class AllWidget {
       this.loadConfigFile(path).then(() => {
         // Use the stable server
         _this.addLogos();
-        
+
         // Initialize iTowns 3D view
         _this.init3DView();
 
@@ -477,39 +477,15 @@ export class AllWidget {
       },
       this.view
     );
-    $3dTilesLayer.haveCityObject = true;
 
-    let material;
-    if (layer['pc_size']) {
-      $3dTilesLayer.haveCityObject = false;
-      material = new THREE.PointsMaterial({
-        size: layer['pc_size'],
-        vertexColors: THREE.VertexColors
-      });
-      $3dTilesLayer.overrideMaterials = material;
-      $3dTilesLayer.material = material;
-    }
+    const $3DTilesManager = new TilesManager(this.view, $3dTilesLayer);
 
-    const $3DTilesManager = new TilesManager(
-      this.view,
-      $3dTilesLayer
-    );
-    
-    /*
-    The pc_size correspond to a parameter specific 
-    to point_cloud dataset, to chose the size of a point.
-    We assume that layers without this parameter are not 
-    point cloud one, meaning that they can have cityObject Style
-    */
-    if(!layer['pc_size']){
-      let color = 0xffffff;
-      if (layer['color']) {
-        color = parseInt(layer['color']);
-      }
+    if (layer['color']) {
+      let color = parseInt(layer['color']);
       $3DTilesManager.registerStyle('default', {
         materialProps: { opacity: 1, color: color },
       });
-      
+
       $3DTilesManager.addEventListener(
         TilesManager.EVENT_TILE_LOADED,
         function (event) {
@@ -556,7 +532,7 @@ export class AllWidget {
   }
 
   /**
-   * Initializes the iTowns 3D view according the config. 
+   * Initializes the iTowns 3D view according the config.
    */
   init3DView() {
     // ********* INIT ITOWNS VIEW
@@ -586,7 +562,7 @@ export class AllWidget {
     if (
       this.config['camera']['position']['x'] &&
       this.config['camera']['position']['y']
-    ) {      
+    ) {
       coordinates = new itowns.Coordinates(
         this.config['projection'],
         parseInt(this.config['camera']['position']['x']),
