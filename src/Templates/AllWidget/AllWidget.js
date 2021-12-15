@@ -479,37 +479,23 @@ export class AllWidget {
       this.view
     );
 
-    let material;
-    if (layer['pc_size']) {
-      material = new THREE.PointsMaterial({
-        size: layer['pc_size'],
-        vertexColors: true,
-      });
-    }
+    const $3DTilesManager = new TilesManager(this.view, $3dTilesLayer);
 
-    $3dTilesLayer.overrideMaterials = material;
-    $3dTilesLayer.material = material;
-
-    const $3DTilesManager = new TilesManager(
-      this.view,
-      $3dTilesLayer
-    );
-    let color = 0xffffff;
     if (layer['color']) {
-      color = parseInt(layer['color']);
+      let color = parseInt(layer['color']);
       $3DTilesManager.registerStyle('default', {
         materialProps: { opacity: 1, color: color },
       });
+
+      $3DTilesManager.addEventListener(
+        TilesManager.EVENT_TILE_LOADED,
+        function (event) {
+          $3DTilesManager.setStyleToTileset('default');
+          $3DTilesManager.applyStyles();
+        }
+      );
     }
     else $3DTilesManager.registerDefaultStyle('default');
-
-    $3DTilesManager.addEventListener(
-      TilesManager.EVENT_TILE_LOADED,
-      function (event) {
-        $3DTilesManager.setStyleToTileset('default');
-        $3DTilesManager.applyStyles();
-      }
-    );
 
     this.layerManager.tilesManagers.push($3DTilesManager);
 
@@ -548,7 +534,7 @@ export class AllWidget {
   }
 
   /**
-   * Initializes the iTowns 3D view according the config. 
+   * Initializes the iTowns 3D view according the config.
    */
   init3DView() {
     // ********* INIT ITOWNS VIEW
@@ -573,7 +559,6 @@ export class AllWidget {
       min_y,
       max_y
     );
-
     // Get camera placement parameters from config
     let coordinates = this.extent.center();
     if (
@@ -581,7 +566,7 @@ export class AllWidget {
       this.config['camera']['position']['y']
     ) {
       coordinates = new itowns.Coordinates(
-        'EPSG:3946',
+        this.config['projection'],
         parseInt(this.config['camera']['position']['x']),
         parseInt(this.config['camera']['position']['y'])
       );
