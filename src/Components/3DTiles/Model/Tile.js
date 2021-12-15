@@ -107,12 +107,20 @@ export class Tile {
     }
 
     let object3d = this.getObject3D();
+
     if (object3d === undefined) {
       // The tile is not in the view, nothing to do.
       return;
     }
 
+    if (object3d.content === undefined || object3d.content.type === 'Points') {
+      // The tile is a point cloud one or empty, it does not have city object.
+      return;
+    }
+
     let mesh = this.getMesh();
+
+
     let attributes = mesh.geometry.attributes;
     let totalVertices = attributes._BATCHID.count;
 
