@@ -47,6 +47,13 @@ export class TilesManager extends EventSender {
     this.loadedTileCount = 0;
 
     /**
+     * The color used for tiles default style.
+     * 
+     * @type {number}
+     */
+    this.color = null;
+
+    /**
      * The set of tile wrappers that have been loaded.
      * 
      * @type {Array<Tile>}
@@ -97,18 +104,35 @@ export class TilesManager extends EventSender {
     // TODO: this should be managed with an event: when the tileset is
     //  loaded (i.e. tileIndex filled), then totalTileCount should be set.
     this.totalTileCount = this.layer.tileset.tiles.length;
+
+    // Set the style for the whole tileset
+    if (this.color !== null && !this.styleManager.isStyleRegistered('default')) {
+      this.registerStyle('default', {
+        materialProps: { opacity: 1, color: this.color },
+      });
+    }
+
     // Verifies that the tile has not been already added (might be removed
     // when tile unloading will be managed)
     if (this.tiles[tile.tileId] === undefined) {
       this.tiles[tile.tileId] = new Tile(this.layer, tile.tileId);
       this.tiles[tile.tileId].loadCityObjects();
+      if (this.tiles[tile.tileId].isLoaded()) {
+        // Set a style for each tile from its mesh material
+        // If a style is already setted for the whole tileset, skip
+        if (this.color === null) {
+          let material = this.tiles[tile.tileId].getMaterial();
+          this.registerStyle('default' + tile.tileId, { materialProps: material});
+        }
+      }
       this.loadedTileCount += 1;
     }
     // Callback when a tile is loaded.
     // TODO: Les tuiles d'iTowns devraient etre rendues invisibles plutot
     //  que d'etre déchargées et rechargées. A ce moment là, ce callback
     //  pourra etre dans le if ci dessus
-    this.sendEvent(TilesManager.EVENT_TILE_LOADED, tile);
+    this.setDefaultStyle();
+    this.applyStyles();
   }
 
   getTilesWithGeom() {
@@ -258,25 +282,6 @@ export class TilesManager extends EventSender {
   }
 
   /**
-   * Register a new or modify an existing registered style.
-   * The style will be the default material of the 3DTiles layer.
-   * 
-   * @param {string} name A name to identify the style.
-   */
-  registerDefaultStyle(name) {
-    let style = new CityObjectStyle({
-      materialProps: { overrideMaterials: false},
-    });
-    let needUpdate = this.styleManager.registerStyle(name, style);
-    if (needUpdate) {
-      let usage = this.styleManager.getStyleUsage(name);
-      for (let tileId of Object.keys(usage)) {
-        this._markTileToUpdate(tileId);
-      }
-    }
-  }
-
-  /**
    * Check if a style is registered.
    * 
    * @param {string} name Name of the style. 
@@ -400,6 +405,18 @@ export class TilesManager extends EventSender {
         updateFunction();
       }
     }
+  }
+
+  /**
+   * Apply the default style to the whole tileset
+   */
+  setDefaultStyle() {
+    if (this.color === null) {
+      for (let tile of this.tiles) {
+        this.setStyleToTile(tile.tileId, 'default' + tile.tileId);
+      }
+    }
+    else this.setStyleToTileset('default');
   }
 
   /**

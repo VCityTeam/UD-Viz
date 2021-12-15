@@ -240,9 +240,7 @@ export function createTileGroups(tile, materialsProps, ranges) {
       props.transparent = true;
     }
     materialIndexTable[materialIndex] = mesh.material.length;
-    if (props.overrideMaterials !== undefined && !props.overrideMaterials)
-      mesh.material.push(defaultMaterial);
-    else mesh.material.push(new THREE.MeshLambertMaterial(props));
+    mesh.material.push(new THREE.MeshStandardMaterial(props));
   }
 
   // Clear the existing groups

@@ -481,21 +481,9 @@ export class AllWidget {
 
     const $3DTilesManager = new TilesManager(this.view, $3dTilesLayer);
 
-    if ((layer['type'] && layer['type'] === 'b3dm') || layer['color']) {
-      if (layer['color']) {
-        let color = parseInt(layer['color']);
-        $3DTilesManager.registerStyle('default', {
-          materialProps: { opacity: 1, color: color },
-        });
-      } else $3DTilesManager.registerDefaultStyle('default');
-
-      $3DTilesManager.addEventListener(
-        TilesManager.EVENT_TILE_LOADED,
-        function (event) {
-          $3DTilesManager.setStyleToTileset('default');
-          $3DTilesManager.applyStyles();
-        }
-      );
+    if (layer['color']) {
+      let color = parseInt(layer['color']);
+      $3DTilesManager.color = color;
     }
 
     this.layerManager.tilesManagers.push($3DTilesManager);

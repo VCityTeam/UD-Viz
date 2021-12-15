@@ -70,6 +70,19 @@ export class Tile {
   }
 
   /**
+   * Returns the material of the mesh
+   * 
+   * @returns {THREE.Material}
+   */
+  getMaterial() {
+    let mesh = this.getMesh();
+    let defaultMaterial = Array.isArray(mesh.material)
+    ? mesh.material[0]
+    : mesh.material;
+    return defaultMaterial;
+  }
+
+  /**
    * Checks if the tile is currently visible in the scene, ie. if an Object3D
    * with the same ID is present in the tileset.
    * 
