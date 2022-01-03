@@ -310,7 +310,7 @@ export class StyleManager {
       for (let batchId of Object.keys(this.styleTable[tile.tileId])) {
         let styleIdentifier = this.styleTable[tile.tileId][batchId];
         let style = this.getStyle(styleIdentifier);
-        let cityObject = tile.cityObjects[Number(batchId)];
+        let cityObject = tile.cityObjects[batchId];
 
         ranges.push({
           start: cityObject.indexStart,
@@ -322,7 +322,7 @@ export class StyleManager {
       createTileGroups(tile.getObject3D(), materials, ranges);
     } else {
       // Clear the tile
-      createTileGroups(tile.getMesh(), [], []);
+      createTileGroups(tile.getMeshes(), [], []);
     }
   }
 

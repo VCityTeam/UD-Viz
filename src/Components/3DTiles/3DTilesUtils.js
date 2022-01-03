@@ -217,96 +217,92 @@ export function setTileVerticesColor(tile, newColor, indexArray = null) {
  * createTileGroups(tile, materialProps, ranges);
  */
 export function createTileGroups(tile, materialsProps, ranges) {
-  let mesh = getMeshFromTile(tile);
+  let meshes = getMeshFromTile(tile);
 
-  let defaultMaterial = Array.isArray(mesh.material)
-    ? mesh.material[0]
-    : mesh.material;
+  for (let [index, mesh] of meshes.entries()) {
+    let defaultMaterial = Array.isArray(mesh.material)
+      ? mesh.material[0]
+      : mesh.material;
 
-  // Reset the materials
-  mesh.material = [defaultMaterial];
+    // Reset the materials
+    mesh.material = defaultMaterial;
 
-  // Material index table (index in materialProps -> index in mesh.material)
-  let materialIndexTable = {};
+    // Material index table (index in materialProps -> index in mesh.material)
+    let materialIndexTable = {};
 
-  // Create the materials
-  for (
-    let materialIndex = 0;
-    materialIndex < materialsProps.length;
-    materialIndex++
-  ) {
-    let props = materialsProps[materialIndex];
+    // Create the materials
+    let props = materialsProps[index];
     if (props.transparent === undefined) {
       props.transparent = true;
     }
-    materialIndexTable[materialIndex] = mesh.material.length;
-    mesh.material.push(new THREE.MeshStandardMaterial(props));
-  }
+    materialIndexTable[index] = mesh.material.length;
+    mesh.material = new THREE.MeshStandardMaterial(props);
 
-  // Clear the existing groups
-  mesh.geometry.groups = [];
+    // Clear the existing groups
+    mesh.geometry.groups = [];
 
-  // Total of vertices in the tile
-  let total = mesh.geometry.attributes._BATCHID.count;
+    // Total of vertices in the tile
+    let total = mesh.geometry.attributes._BATCHID.count;
 
-  if (ranges.length > 0) {
-    // Sort the ranges by increasing start index
-    ranges.sort((a, b) => {
-      return a.start - b.start;
-    });
-    // Merge consecutive ranges with the same material
-    let mergedRanges = [];
-    for (let index = 0; index < ranges.length; index++) {
-      let range = ranges[index];
-      if (index === 0) {
-        mergedRanges.push(range);
-      } else {
-        let currentMergingRange = mergedRanges[mergedRanges.length - 1];
-        if (
-          currentMergingRange.start + currentMergingRange.count ===
-            range.start &&
-          currentMergingRange.material === range.material
-        ) {
-          currentMergingRange.count += range.count;
-        } else {
+    if (ranges.length > 0) {
+      // Sort the ranges by increasing start index
+      ranges.sort((a, b) => {
+        return a.start - b.start;
+      });
+      // Merge consecutive ranges with the same material
+      let mergedRanges = [];
+      for (let index = 0; index < ranges.length; index++) {
+        let range = ranges[index];
+        if (index === 0) {
           mergedRanges.push(range);
+        } else {
+          let currentMergingRange = mergedRanges[mergedRanges.length - 1];
+          if (
+            currentMergingRange.start + currentMergingRange.count ===
+              range.start &&
+            currentMergingRange.material === range.material
+          ) {
+            currentMergingRange.count += range.count;
+          } else {
+            mergedRanges.push(range);
+          }
         }
       }
-    }
-    ranges = mergedRanges;
+      ranges = mergedRanges;
 
-    // Add the new groups
-    for (let rangeIndex = 0; rangeIndex < ranges.length; rangeIndex++) {
-      let range = ranges[rangeIndex];
-      mesh.geometry.addGroup(
-        range.start,
-        range.count,
-        materialIndexTable[range.material]
-      );
-    }
-
-    // Fill the "blanks" between the ranges with the default material
-    if (ranges[0].start > 0) {
-      mesh.geometry.addGroup(0, ranges[0].start, 0);
-    }
-    for (let i = 0; i < ranges.length - 1; ++i) {
-      let start = ranges[i].start + ranges[i].count;
-      let count = ranges[i + 1].start - start;
-      if (count > 0) {
-        mesh.geometry.addGroup(start, count, 0);
+      // Add the new groups
+      for (let rangeIndex = 0; rangeIndex < ranges.length; rangeIndex++) {
+        let range = ranges[rangeIndex];
+        mesh.geometry.addGroup(
+          range.start,
+          range.count,
+          materialIndexTable[range.material]
+        );
       }
+
+      // Fill the "blanks" between the ranges with the default material
+      if (ranges[0].start > 0) {
+        mesh.geometry.addGroup(0, ranges[0].start, 0);
+      }
+      for (let i = 0; i < ranges.length - 1; ++i) {
+        let start = ranges[i].start + ranges[i].count;
+        let count = ranges[i + 1].start - start;
+        if (count > 0) {
+          mesh.geometry.addGroup(start, count, 0);
+        }
+      }
+      if (
+        ranges[ranges.length - 1].start + ranges[ranges.length - 1].count <
+        total
+      ) {
+        let start =
+          ranges[ranges.length - 1].start + ranges[ranges.length - 1].count;
+        mesh.geometry.addGroup(start, total - start, 0);
+      }
+    } else {
+      // If no ranges array is specified, just add a group containing all vertices
+      mesh.geometry.addGroup(0, total, 0);
     }
-    if (
-      ranges[ranges.length - 1].start + ranges[ranges.length - 1].count <
-      total
-    ) {
-      let start =
-        ranges[ranges.length - 1].start + ranges[ranges.length - 1].count;
-      mesh.geometry.addGroup(start, total - start, 0);
-    }
-  } else {
-    // If no ranges array is specified, just add a group containing all vertices
-    mesh.geometry.addGroup(0, total, 0);
   }
 }
 
@@ -526,19 +522,20 @@ export function getMeshFromTile(tile) {
   }
 
   //Find the 'Mesh' part of the tile
-  while (!!tile.children[0] && !(tile.type === 'Mesh')) {
+  while (!!tile.children[0] && !(tile.children[0].type === 'Mesh')) {
     tile = tile.children[0];
   }
 
-  if (!tile.geometry.attributes._BATCHID) {
-    throw 'Invalid tile';
+  for (let mesh of tile.children) {
+    if (!mesh.geometry.attributes._BATCHID) {
+      throw 'Invalid tile';
+    }
+      if (mesh.geometry.type !== 'BufferGeometry') {
+        throw 'Tile has no buffer geometry';
+      }
   }
 
-  if (tile.geometry.type !== 'BufferGeometry') {
-    throw 'Tile has no buffer geometry';
-  }
-
-  return tile;
+  return tile.children;
 }
 
 export function getObject3DFromTile(tile) {

@@ -15,8 +15,9 @@ export class CityObject {
    * ID in the tile.
    * @param {THREE.Vector3} [centroid] Centroid of the geometry.
    * @param {Object} [props] Properties from the batch table.
+   * @param {number} meshId The ID of the mesh containing the CityObject
    */
-  constructor(tile, batchId, indexStart, indexCount, centroid, props) {
+  constructor(tile, batchId, indexStart, indexCount, centroid, props, meshId) {
     /**
      * The tile holding the city object.
      * 
@@ -65,6 +66,13 @@ export class CityObject {
      * @type {Object}
      */
     this.props = props || {};
+
+    /**
+     * The ID of the mesh containing the CityObject
+     * 
+     * @type {number}
+     */
+    this.meshId = meshId;
   }
 
   /**
