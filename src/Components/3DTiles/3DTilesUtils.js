@@ -246,16 +246,17 @@ export function createTileGroups(tile, materialsProps, ranges) {
 
     // Total of vertices in the tile
     let total = mesh.geometry.attributes._BATCHID.count;
+    let meshRanges = ranges[index];
 
-    if (ranges.length > 0) {
-      // Sort the ranges by increasing start index
-      ranges.sort((a, b) => {
+    if (meshRanges.length > 0) {
+      // Sort the meshRanges by increasing start index
+      meshRanges.sort((a, b) => {
         return a.start - b.start;
       });
-      // Merge consecutive ranges with the same material
+      // Merge consecutive meshRanges with the same material
       let mergedRanges = [];
-      for (let index = 0; index < ranges.length; index++) {
-        let range = ranges[index];
+      for (let index = 0; index < meshRanges.length; index++) {
+        let range = meshRanges[index];
         if (index === 0) {
           mergedRanges.push(range);
         } else {
@@ -271,11 +272,11 @@ export function createTileGroups(tile, materialsProps, ranges) {
           }
         }
       }
-      ranges = mergedRanges;
+      meshRanges = mergedRanges;
 
       // Add the new groups
-      for (let rangeIndex = 0; rangeIndex < ranges.length; rangeIndex++) {
-        let range = ranges[rangeIndex];
+      for (let rangeIndex = 0; rangeIndex < meshRanges.length; rangeIndex++) {
+        let range = meshRanges[rangeIndex];
         mesh.geometry.addGroup(
           range.start,
           range.count,
@@ -283,27 +284,27 @@ export function createTileGroups(tile, materialsProps, ranges) {
         );
       }
 
-      // Fill the "blanks" between the ranges with the default material
-      if (ranges[0].start > 0) {
-        mesh.geometry.addGroup(0, ranges[0].start, 0);
+      // Fill the "blanks" between the meshRanges with the default material
+      if (meshRanges[0].start > 0) {
+        mesh.geometry.addGroup(0, meshRanges[0].start, 0);
       }
-      for (let i = 0; i < ranges.length - 1; ++i) {
-        let start = ranges[i].start + ranges[i].count;
-        let count = ranges[i + 1].start - start;
+      for (let i = 0; i < meshRanges.length - 1; ++i) {
+        let start = meshRanges[i].start + meshRanges[i].count;
+        let count = meshRanges[i + 1].start - start;
         if (count > 0) {
           mesh.geometry.addGroup(start, count, 0);
         }
       }
       if (
-        ranges[ranges.length - 1].start + ranges[ranges.length - 1].count <
+        meshRanges[meshRanges.length - 1].start + meshRanges[meshRanges.length - 1].count <
         total
       ) {
         let start =
-          ranges[ranges.length - 1].start + ranges[ranges.length - 1].count;
+          meshRanges[meshRanges.length - 1].start + meshRanges[meshRanges.length - 1].count;
         mesh.geometry.addGroup(start, total - start, 0);
       }
     } else {
-      // If no ranges array is specified, just add a group containing all vertices
+      // If no meshRanges array is specified, just add a group containing all vertices
       mesh.geometry.addGroup(0, total, 0);
     }
   }

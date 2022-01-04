@@ -311,8 +311,10 @@ export class StyleManager {
         let styleIdentifier = this.styleTable[tile.tileId][batchId];
         let style = this.getStyle(styleIdentifier);
         let cityObject = tile.cityObjects[Number(batchId)];
+        let meshId = cityObject.meshId;
 
-        ranges.push({
+        if (ranges[meshId] === undefined) ranges[meshId] = [];
+        ranges[meshId].push({
           start: cityObject.indexStart,
           count: cityObject.indexCount,
           material: style._bufferedMaterialIndex[tile.tileId]
