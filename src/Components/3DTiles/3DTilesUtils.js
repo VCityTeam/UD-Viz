@@ -237,6 +237,9 @@ export function createTileGroups(tile, materialsProps, ranges) {
       materialIndex++
     ) {
       let props = materialsProps[materialIndex];
+      if (props.transparent === undefined) {
+        props.transparent = true;
+      }
       materialIndexTable[materialIndex] = mesh.material.length;
       mesh.material.push(new THREE.MeshStandardMaterial(props));
     }
