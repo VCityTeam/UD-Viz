@@ -151,25 +151,24 @@ export class Tile {
       // For each vertex get the corresponding batch ID
       for (let vertexIndex = 0; vertexIndex < totalVertices; vertexIndex += 1) {
         let batchId = attributes._BATCHID.array[vertexIndex];
-        let id = index.toString() + batchId.toString();
 
         // Creates a dict entry for the batch ID
-        if (this.cityObjects[id] === undefined) {
-          this.cityObjects[id] = new CityObject(this, id, vertexIndex, 0, null, null, index);
+        if (this.cityObjects[batchId] === undefined) {
+          this.cityObjects[batchId] = new CityObject(this, batchId, vertexIndex, 0, null, null, index);
 
           for (let key of Object.keys(this.batchTable.content)) {
-            this.cityObjects[id].props[key] =
-              this.batchTable.content[key][id];
+            this.cityObjects[batchId].props[key] =
+              this.batchTable.content[key][batchId];
           }
 
-          newbatchIds.push(id);
+          newbatchIds.push(batchId);
         }
 
         // If this is the last vertex corresponding to this batch ID
         if (vertexIndex + 1 === totalVertices ||
-          attributes._BATCHID.array[vertexIndex + 1] !== id) {
-          this.cityObjects[id].indexCount =
-            vertexIndex - this.cityObjects[id].indexStart + 1;
+          attributes._BATCHID.array[vertexIndex + 1] !== batchId) {
+          this.cityObjects[batchId].indexCount =
+            vertexIndex - this.cityObjects[batchId].indexStart + 1;
         }
       }
 
