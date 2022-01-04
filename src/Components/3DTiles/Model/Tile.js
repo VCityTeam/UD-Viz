@@ -134,6 +134,7 @@ export class Tile {
     }
 
     let meshes = this.getMeshes();
+    let k = 0;
 
     this.cityObjects = [];
     this.batchTable = object3d.batchTable;
@@ -145,31 +146,40 @@ export class Tile {
       }
 
       let attributes = mesh.geometry.attributes;
-      let totalVertices = attributes._BATCHID.count;
+      let totalVertices = attributes.position.count;
 
       let newbatchIds = [];
-      // For each vertex get the corresponding batch ID
-      for (let vertexIndex = 0; vertexIndex < totalVertices; vertexIndex += 1) {
-        let batchId = attributes._BATCHID.array[vertexIndex];
+      if (attributes._BATCHID !== undefined) {
+        // For each vertex get the corresponding batch ID
+        for (let vertexIndex = 0; vertexIndex < totalVertices; vertexIndex += 1) {
+          let batchId = attributes._BATCHID.array[vertexIndex];
+        
+          // Creates a dict entry for the batch ID
+          if (this.cityObjects[batchId] === undefined) {
+            this.cityObjects[batchId] = new CityObject(this, batchId, vertexIndex, 0, null, null, index);
+            for (let key of Object.keys(this.batchTable.content)) {
+              this.cityObjects[batchId].props[key] =
+                this.batchTable.content[key][batchId];
+            }
 
-        // Creates a dict entry for the batch ID
-        if (this.cityObjects[batchId] === undefined) {
-          this.cityObjects[batchId] = new CityObject(this, batchId, vertexIndex, 0, null, null, index);
-
-          for (let key of Object.keys(this.batchTable.content)) {
-            this.cityObjects[batchId].props[key] =
-              this.batchTable.content[key][batchId];
+            newbatchIds.push(batchId);
           }
 
-          newbatchIds.push(batchId);
+          // If this is the last vertex corresponding to this batch ID
+          if (vertexIndex + 1 === totalVertices ||
+            attributes._BATCHID.array[vertexIndex + 1] !== batchId) {
+            this.cityObjects[batchId].indexCount =
+              vertexIndex - this.cityObjects[batchId].indexStart + 1;
+          }
         }
-
-        // If this is the last vertex corresponding to this batch ID
-        if (vertexIndex + 1 === totalVertices ||
-          attributes._BATCHID.array[vertexIndex + 1] !== batchId) {
-          this.cityObjects[batchId].indexCount =
-            vertexIndex - this.cityObjects[batchId].indexStart + 1;
-        }
+      }
+      else {
+        let batchId = k++;
+        let batchIdArray = new Float32Array(totalVertices).fill(batchId);
+        let batchIdBuffer = new THREE.BufferAttribute(batchIdArray, 1);
+        this.cityObjects[batchId] = new CityObject(this, batchId, 0, totalVertices, null, null, index);
+        mesh.geometry.setAttribute('_BATCHID', batchIdBuffer);
+        newbatchIds.push(batchId);
       }
 
       // For each newly added tile part, compute the centroid
