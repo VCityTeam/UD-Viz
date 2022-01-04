@@ -259,11 +259,8 @@ export class TilesManager extends EventSender {
    */
   setDefaultStyleToTile(tileId) {
     if(this.tiles[tileId]){
-      // console.log(tileId);
-      // console.log(this.tiles[tileId].cityObjects);
       for(let i in this.tiles[tileId].cityObjects){
         let meshId = this.tiles[tileId].cityObjects[i].meshId;
-        // console.log('default' + tileId + 'm' + meshId);
         this.setStyle(this.tiles[tileId].cityObjects[i].cityObjectId, 'default' + tileId + 'm' + meshId);
       }
     }

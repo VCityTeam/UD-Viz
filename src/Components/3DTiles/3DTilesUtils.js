@@ -231,7 +231,7 @@ export function createTileGroups(tile, materialsProps, ranges) {
     let materialIndexTable = {};
 
     // Create the materials
-    let props = materialsProps[index];
+    let props = materialsProps[index] || materialsProps[0];
     if (props.transparent === undefined) {
       props.transparent = true;
     }
