@@ -101,13 +101,18 @@ export function getVisibleTileCount(layer) {
 /**
  * Finds the tile in the tileset with the specific ID.
  *
- * @param {*} tileset The 3DTiles tileset.
+ * @param {*} rootTile The root tile of the 3DTiles tileset.
  * @param {*} tileId The tile id.
  */
-export function getTileInTileset(tileset, tileId) {
-  let tile = tileset.children.find((tile) => {
-    return tile.tileId === tileId;
-  });
+export function getTileInTileset(rootTile, tileId) {
+  if (rootTile.tileId === undefined) return undefined;
+  if (rootTile.tileId === tileId) return rootTile;
+  let i = 0;
+  let tile = undefined;
+  while (tile === undefined && i < rootTile.children.length) {
+    tile = getTileInTileset(rootTile.children[i], tileId);
+    i++;
+  }
   return tile;
 }
 
@@ -118,6 +123,7 @@ export function getTileInTileset(tileset, tileId) {
  * @param {*} tileId The tile id.
  */
 export function getTileInLayer(layer, tileId) {
+  if (tileId === 0) return undefined;
   let rootTile = layer.object3d.children[0];
   let tile = getTileInTileset(rootTile, tileId);
   return tile;
