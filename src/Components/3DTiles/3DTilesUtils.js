@@ -225,18 +225,21 @@ export function createTileGroups(tile, materialsProps, ranges) {
       : mesh.material;
 
     // Reset the materials
-    mesh.material = defaultMaterial;
+    mesh.material = [defaultMaterial];
 
     // Material index table (index in materialProps -> index in mesh.material)
     let materialIndexTable = {};
 
     // Create the materials
-    let props = materialsProps[index] || materialsProps[0];
-    if (props.transparent === undefined) {
-      props.transparent = true;
+    for (
+      let materialIndex = 0;
+      materialIndex < materialsProps.length;
+      materialIndex++
+    ) {
+      let props = materialsProps[materialIndex];
+      materialIndexTable[materialIndex] = mesh.material.length;
+      mesh.material.push(new THREE.MeshStandardMaterial(props));
     }
-    materialIndexTable[index] = mesh.material.length;
-    mesh.material = new THREE.MeshStandardMaterial(props);
 
     // Clear the existing groups
     mesh.geometry.groups = [];
