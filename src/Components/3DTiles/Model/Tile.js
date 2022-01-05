@@ -77,8 +77,8 @@ export class Tile {
    */
   getMaterial(mesh) {
     let material = Array.isArray(mesh.material)
-    ? mesh.material[0]
-    : mesh.material;
+      ? mesh.material[0]
+      : mesh.material;
     return material;
   }
 

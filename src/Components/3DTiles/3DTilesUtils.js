@@ -543,9 +543,9 @@ export function getMeshFromTile(tile) {
     if (!mesh.geometry.attributes._BATCHID) {
       throw 'Invalid tile';
     }
-      if (mesh.geometry.type !== 'BufferGeometry') {
-        throw 'Tile has no buffer geometry';
-      }
+    if (mesh.geometry.type !== 'BufferGeometry') {
+      throw 'Tile has no buffer geometry';
+    }
   }
 
   return tile.children;
