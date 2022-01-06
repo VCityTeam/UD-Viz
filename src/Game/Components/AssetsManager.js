@@ -345,6 +345,8 @@ export class AssetsManager {
 
     const modelPromise = new Promise((resolve, reject) => {
       let count = 0;
+      if (config.models)
+        console.error('config.models is obsolete replace it by renderdata');
       for (let idRenderData in config.renderData) {
         const id = idRenderData;
         const renderData = config.renderData[id];
