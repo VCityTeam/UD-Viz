@@ -4,6 +4,7 @@ import { WorldStateInterpolator } from './WorldStateInterpolator';
 import Constants from '../../Game/Shared/Components/Constants';
 import { WorldState, WorldStateDiff } from '../../Game/Shared/Shared';
 import { GameView } from '../../Views/Views';
+import { LocalGame } from '../Templates';
 
 export class DistantGame {
   constructor(webSocketService, assetsManager, config) {

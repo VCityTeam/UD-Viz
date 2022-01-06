@@ -18,7 +18,7 @@ module.exports = class Avatar {
     this.avatar = new Shared.GameObject({
       name: 'avatar',
       components: {
-        Render: { idModel: 'avatar' },
+        Render: { idRenderData: 'avatar' },
         LocalScript: {
           idScripts: [],
         },

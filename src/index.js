@@ -34,10 +34,22 @@ export { jquery };
 
 //THREE
 import * as THREE from 'three';
+//modules of three necessary but not expose in THREE API
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { TransformControls } from 'three/examples/jsm/controls/TransformControls';
 import { ConvexGeometry } from 'three/examples/jsm/geometries/ConvexGeometry';
-export { THREE, OrbitControls, TransformControls, ConvexGeometry };
+import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
+import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass.js';
+export {
+  THREE,
+  OrbitControls,
+  TransformControls,
+  ConvexGeometry,
+  EffectComposer,
+  RenderPass,
+  ShaderPass,
+};
 
 //proj4
 import * as proj4 from 'proj4';
