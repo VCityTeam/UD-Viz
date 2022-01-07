@@ -81,6 +81,13 @@ export class CityObject {
   get indexEnd() {
     return this.indexStart + this.indexCount - 1;
   }
+
+  /**
+   * Get the identifier of this CityObject default style
+   */
+  get defaultStyleId() {
+    return 'default' + this.tile.tileId + 'm' + this.meshId;
+  }
 }
 
 /**

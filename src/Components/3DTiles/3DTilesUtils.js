@@ -105,13 +105,14 @@ export function getVisibleTileCount(layer) {
  * @param {*} tileId The tile id.
  */
 export function getTileInTileset(rootTile, tileId) {
-  if (rootTile.tileId === undefined) return undefined;
-  if (rootTile.tileId === tileId) return rootTile;
   let i = 0;
-  let tile = undefined;
-  while (tile === undefined && i < rootTile.children.length) {
-    tile = getTileInTileset(rootTile.children[i], tileId);
-    i++;
+  let tile;
+  if (rootTile.tileId === tileId) return rootTile;
+  else if ('tileId' in rootTile && tileId != 0) {
+    while (!tile && i < rootTile.children.length) {
+      tile = getTileInTileset(rootTile.children[i], tileId);
+      i++;
+    }
   }
   return tile;
 }
@@ -123,7 +124,6 @@ export function getTileInTileset(rootTile, tileId) {
  * @param {*} tileId The tile id.
  */
 export function getTileInLayer(layer, tileId) {
-  if (tileId === 0) return undefined;
   let rootTile = layer.object3d.children[0];
   let tile = getTileInTileset(rootTile, tileId);
   return tile;
@@ -223,7 +223,7 @@ export function setTileVerticesColor(tile, newColor, indexArray = null) {
  * createTileGroups(tile, materialProps, ranges);
  */
 export function createTileGroups(tile, materialsProps, ranges) {
-  let meshes = getMeshFromTile(tile);
+  let meshes = getMeshesFromTile(tile);
 
   for (let [index, mesh] of meshes.entries()) {
     let defaultMaterial = Array.isArray(mesh.material)
@@ -348,7 +348,7 @@ export function createTileGroupsFromBatchIDs(tile, groups) {
   let materials = [];
   let ranges = [];
 
-  let mesh = getMeshFromTile(tile);
+  let mesh = getMeshesFromTile(tile)[0];
 
   // Create an array we can loop on to search all batchIDs, plus a stucture
   // to associate batchIDs with their material
@@ -529,7 +529,7 @@ export function getVerticesCentroid(tile, indexArray) {
   return vertexCentroid;
 }
 
-export function getMeshFromTile(tile) {
+export function getMeshesFromTile(tile) {
   if (!tile) {
     throw 'Tile not loaded in view';
   }

@@ -99,11 +99,11 @@ export class TilesManager extends EventSender {
     this.upToDateTileIds = {};
 
     /**
-     * Set to true if the tileset has an unique default style
+     * Set to true if the tileset has an unique default color
      * 
      * @type {boolean}
      */
-    this.hasDefaultStyle = false;
+    this.hasDefaultColor = false;
   }
 
   loadTile(tile) {
@@ -117,7 +117,7 @@ export class TilesManager extends EventSender {
       this.registerStyle('default', {
         materialProps: { opacity: 1, color: this.color },
       });
-      this.hasDefaultStyle = true;
+      this.hasDefaultColor = true;
     }
 
     // Verifies that the tile has not been already added (might be removed
@@ -260,8 +260,8 @@ export class TilesManager extends EventSender {
   setDefaultStyleToTile(tileId) {
     if(this.tiles[tileId]){
       for(let i in this.tiles[tileId].cityObjects){
-        let meshId = this.tiles[tileId].cityObjects[i].meshId;
-        this.setStyle(this.tiles[tileId].cityObjects[i].cityObjectId, 'default' + tileId + 'm' + meshId);
+        let cityObject = this.tiles[tileId].cityObjects[i];
+        this.setStyle(cityObject.cityObjectId, cityObject.defaultStyleId);
       }
     }
   }

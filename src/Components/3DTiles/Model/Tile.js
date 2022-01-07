@@ -75,7 +75,7 @@ export class Tile {
    * @param {THREE.Mesh}
    * @returns {THREE.Material}
    */
-  getMaterial(mesh) {
+  getDefaultMaterial(mesh) {
     let material = Array.isArray(mesh.material)
       ? mesh.material[0]
       : mesh.material;
@@ -123,12 +123,12 @@ export class Tile {
 
     let object3d = this.getObject3D();
 
-    if (object3d === undefined) {
+    if (!object3d) {
       // The tile is not in the view, nothing to do.
       return;
     }
 
-    if (object3d.content === undefined || object3d.content.type === 'Points') {
+    if (!object3d.content || object3d.content.type === 'Points') {
       // The tile is a point cloud one or empty, it does not have city object.
       return;
     }
@@ -140,8 +140,8 @@ export class Tile {
     this.batchTable = object3d.batchTable;
 
     for (let [index, mesh] of meshes.entries()) {
-      if (!tilesManager.hasDefaultStyle) {
-        let material = this.getMaterial(mesh);
+      if (!tilesManager.hasDefaultColor) {
+        let material = this.getDefaultMaterial(mesh);
         tilesManager.registerStyle('default' + this.tileId + 'm' + index, { materialProps: material});
       }
 
