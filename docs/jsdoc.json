@@ -3,7 +3,7 @@
         "plugins/markdown"
     ],
     "opts":{
-        "destination":"docs/doc",
+        "destination":"./docs/doc",
         "recurse":true,
         "verbose":true,
         "tutorials": "./docs/static",
