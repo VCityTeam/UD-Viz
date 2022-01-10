@@ -401,26 +401,26 @@ export class AllWidget {
 
   addElevationLayer() {
     // Add a WMS elevation source
-      let wmsElevationSource = new itowns.WMSSource({
-        extent: this.extent,
-        url: this.config['elevation_layer']['url'],
-        name: this.config['elevation_layer']['name'],
-        projection: this.config['projection'],
-        heightMapWidth: 256,
-        format: this.config['elevation_layer']['format'],
-      });
-      // Add a WMS elevation layer
-      let wmsElevationLayer = new itowns.ElevationLayer(
-        this.config['elevation_layer']['layer_name'],
-        {
-          useColorTextureElevation: true,
-          colorTextureElevationMinZ: 144,
-          colorTextureElevationMaxZ: 622,
-          source: wmsElevationSource,
-        }
-      );
-      this.view.addLayer(wmsElevationLayer);
-      this.update3DView();
+    let wmsElevationSource = new itowns.WMSSource({
+      extent: this.extent,
+      url: this.config['elevation_layer']['url'],
+      name: this.config['elevation_layer']['name'],
+      projection: this.config['projection'],
+      heightMapWidth: 256,
+      format: this.config['elevation_layer']['format'],
+    });
+    // Add a WMS elevation layer
+    let wmsElevationLayer = new itowns.ElevationLayer(
+      this.config['elevation_layer']['layer_name'],
+      {
+        useColorTextureElevation: true,
+        colorTextureElevationMinZ: 144,
+        colorTextureElevationMaxZ: 622,
+        source: wmsElevationSource,
+      }
+    );
+    this.view.addLayer(wmsElevationLayer);
+    this.update3DView();
   }
 
   /**
