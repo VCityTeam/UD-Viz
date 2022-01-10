@@ -401,7 +401,6 @@ export class AllWidget {
 
   addElevationLayer() {
     // Add a WMS elevation source
-    if(this.config['elevation_layer']){
       let wmsElevationSource = new itowns.WMSSource({
         extent: this.extent,
         url: this.config['elevation_layer']['url'],
@@ -422,7 +421,6 @@ export class AllWidget {
       );
       this.view.addLayer(wmsElevationLayer);
       this.update3DView();
-    }
   }
 
   /**
@@ -577,6 +575,7 @@ export class AllWidget {
         this.config.background_image_layer.maxSubdivisionLevel;
 
     this.view = new itowns.PlanarView(viewerDiv, this.extent, {
+      disableSkirt: false,
       maxSubdivisionLevel: maxSubdivisionLevel,
       controls: {
         maxZenithAngle: 180,
