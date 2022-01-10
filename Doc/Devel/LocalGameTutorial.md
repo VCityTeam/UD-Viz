@@ -264,7 +264,7 @@ As always when we point to assets with an id, we need to import that asset (here
 
 ```json
 "assetsManager": {
-    "models": {
+    "renderData": {
       "zeppelin": {
         "path": "./assets/models/Zeppelin_Labex_IMU.glb",
         "anchor": "center_min",
