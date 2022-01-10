@@ -101,13 +101,19 @@ export function getVisibleTileCount(layer) {
 /**
  * Finds the tile in the tileset with the specific ID.
  *
- * @param {*} tileset The 3DTiles tileset.
+ * @param {*} rootTile The root tile of the 3DTiles tileset.
  * @param {*} tileId The tile id.
  */
-export function getTileInTileset(tileset, tileId) {
-  let tile = tileset.children.find((tile) => {
-    return tile.tileId === tileId;
-  });
+export function getTileInTileset(rootTile, tileId) {
+  let i = 0;
+  let tile;
+  if (rootTile.tileId === tileId) return rootTile;
+  else if ('tileId' in rootTile && tileId != 0) {
+    while (!tile && i < rootTile.children.length) {
+      tile = getTileInTileset(rootTile.children[i], tileId);
+      i++;
+    }
+  }
   return tile;
 }
 
@@ -217,96 +223,99 @@ export function setTileVerticesColor(tile, newColor, indexArray = null) {
  * createTileGroups(tile, materialProps, ranges);
  */
 export function createTileGroups(tile, materialsProps, ranges) {
-  let mesh = getMeshFromTile(tile);
+  let meshes = getMeshesFromTile(tile);
 
-  let defaultMaterial = Array.isArray(mesh.material)
-    ? mesh.material[0]
-    : mesh.material;
+  for (let [index, mesh] of meshes.entries()) {
+    let defaultMaterial = Array.isArray(mesh.material)
+      ? mesh.material[0]
+      : mesh.material;
 
-  // Reset the materials
-  mesh.material = [defaultMaterial];
+    // Reset the materials
+    mesh.material = [defaultMaterial];
 
-  // Material index table (index in materialProps -> index in mesh.material)
-  let materialIndexTable = {};
+    // Material index table (index in materialProps -> index in mesh.material)
+    let materialIndexTable = {};
 
-  // Create the materials
-  for (
-    let materialIndex = 0;
-    materialIndex < materialsProps.length;
-    materialIndex++
-  ) {
-    let props = materialsProps[materialIndex];
-    if (props.transparent === undefined) {
-      props.transparent = true;
+    // Create the materials
+    for (
+      let materialIndex = 0;
+      materialIndex < materialsProps.length;
+      materialIndex++
+    ) {
+      let props = materialsProps[materialIndex];
+      if (props.transparent === undefined) {
+        props.transparent = true;
+      }
+      materialIndexTable[materialIndex] = mesh.material.length;
+      mesh.material.push(new THREE.MeshStandardMaterial(props));
     }
-    materialIndexTable[materialIndex] = mesh.material.length;
-    mesh.material.push(new THREE.MeshLambertMaterial(props));
-  }
 
-  // Clear the existing groups
-  mesh.geometry.groups = [];
+    // Clear the existing groups
+    mesh.geometry.groups = [];
 
-  // Total of vertices in the tile
-  let total = mesh.geometry.attributes._BATCHID.count;
+    // Total of vertices in the tile
+    let total = mesh.geometry.attributes._BATCHID.count;
+    let meshRanges = ranges[index];
 
-  if (ranges.length > 0) {
-    // Sort the ranges by increasing start index
-    ranges.sort((a, b) => {
-      return a.start - b.start;
-    });
-    // Merge consecutive ranges with the same material
-    let mergedRanges = [];
-    for (let index = 0; index < ranges.length; index++) {
-      let range = ranges[index];
-      if (index === 0) {
-        mergedRanges.push(range);
-      } else {
-        let currentMergingRange = mergedRanges[mergedRanges.length - 1];
-        if (
-          currentMergingRange.start + currentMergingRange.count ===
-            range.start &&
-          currentMergingRange.material === range.material
-        ) {
-          currentMergingRange.count += range.count;
-        } else {
+    if (meshRanges.length > 0) {
+      // Sort the meshRanges by increasing start index
+      meshRanges.sort((a, b) => {
+        return a.start - b.start;
+      });
+      // Merge consecutive meshRanges with the same material
+      let mergedRanges = [];
+      for (let index = 0; index < meshRanges.length; index++) {
+        let range = meshRanges[index];
+        if (index === 0) {
           mergedRanges.push(range);
+        } else {
+          let currentMergingRange = mergedRanges[mergedRanges.length - 1];
+          if (
+            currentMergingRange.start + currentMergingRange.count ===
+              range.start &&
+            currentMergingRange.material === range.material
+          ) {
+            currentMergingRange.count += range.count;
+          } else {
+            mergedRanges.push(range);
+          }
         }
       }
-    }
-    ranges = mergedRanges;
+      meshRanges = mergedRanges;
 
-    // Add the new groups
-    for (let rangeIndex = 0; rangeIndex < ranges.length; rangeIndex++) {
-      let range = ranges[rangeIndex];
-      mesh.geometry.addGroup(
-        range.start,
-        range.count,
-        materialIndexTable[range.material]
-      );
-    }
-
-    // Fill the "blanks" between the ranges with the default material
-    if (ranges[0].start > 0) {
-      mesh.geometry.addGroup(0, ranges[0].start, 0);
-    }
-    for (let i = 0; i < ranges.length - 1; ++i) {
-      let start = ranges[i].start + ranges[i].count;
-      let count = ranges[i + 1].start - start;
-      if (count > 0) {
-        mesh.geometry.addGroup(start, count, 0);
+      // Add the new groups
+      for (let rangeIndex = 0; rangeIndex < meshRanges.length; rangeIndex++) {
+        let range = meshRanges[rangeIndex];
+        mesh.geometry.addGroup(
+          range.start,
+          range.count,
+          materialIndexTable[range.material]
+        );
       }
+
+      // Fill the "blanks" between the meshRanges with the default material
+      if (meshRanges[0].start > 0) {
+        mesh.geometry.addGroup(0, meshRanges[0].start, 0);
+      }
+      for (let i = 0; i < meshRanges.length - 1; ++i) {
+        let start = meshRanges[i].start + meshRanges[i].count;
+        let count = meshRanges[i + 1].start - start;
+        if (count > 0) {
+          mesh.geometry.addGroup(start, count, 0);
+        }
+      }
+      if (
+        meshRanges[meshRanges.length - 1].start + meshRanges[meshRanges.length - 1].count <
+        total
+      ) {
+        let start =
+          meshRanges[meshRanges.length - 1].start + meshRanges[meshRanges.length - 1].count;
+        mesh.geometry.addGroup(start, total - start, 0);
+      }
+    } else {
+      // If no meshRanges array is specified, just add a group containing all vertices
+      mesh.geometry.addGroup(0, total, 0);
     }
-    if (
-      ranges[ranges.length - 1].start + ranges[ranges.length - 1].count <
-      total
-    ) {
-      let start =
-        ranges[ranges.length - 1].start + ranges[ranges.length - 1].count;
-      mesh.geometry.addGroup(start, total - start, 0);
-    }
-  } else {
-    // If no ranges array is specified, just add a group containing all vertices
-    mesh.geometry.addGroup(0, total, 0);
   }
 }
 
@@ -339,7 +348,7 @@ export function createTileGroupsFromBatchIDs(tile, groups) {
   let materials = [];
   let ranges = [];
 
-  let mesh = getMeshFromTile(tile);
+  let mesh = getMeshesFromTile(tile)[0];
 
   // Create an array we can loop on to search all batchIDs, plus a stucture
   // to associate batchIDs with their material
@@ -520,25 +529,26 @@ export function getVerticesCentroid(tile, indexArray) {
   return vertexCentroid;
 }
 
-export function getMeshFromTile(tile) {
+export function getMeshesFromTile(tile) {
   if (!tile) {
     throw 'Tile not loaded in view';
   }
 
   //Find the 'Mesh' part of the tile
-  while (!!tile.children[0] && !(tile.type === 'Mesh')) {
+  while (!!tile.children[0] && !(tile.children[0].type === 'Mesh')) {
     tile = tile.children[0];
   }
 
-  if (!tile.geometry.attributes._BATCHID) {
-    throw 'Invalid tile';
+  for (let mesh of tile.children) {
+    if (!mesh.geometry.attributes._BATCHID) {
+      throw 'Invalid tile';
+    }
+    if (mesh.geometry.type !== 'BufferGeometry') {
+      throw 'Tile has no buffer geometry';
+    }
   }
 
-  if (tile.geometry.type !== 'BufferGeometry') {
-    throw 'Tile has no buffer geometry';
-  }
-
-  return tile;
+  return tile.children;
 }
 
 export function getObject3DFromTile(tile) {
