@@ -3,11 +3,11 @@
         "plugins/markdown"
     ],
     "opts":{
-        "destination":"docs/html",
+        "destination":"docs/doc",
         "recurse":true,
         "verbose":true,
-        "readme": "./docs/readme.md",
-        "tutorials": "./docs/Tutorials",
+        "tutorials": "./docs/static",
+        "readme":"./docs/static/readme.md",
         "template":"node_modules/clean-jsdoc-theme",
         "theme_opts":{
             "theme": "light",
@@ -30,7 +30,6 @@
     },
     "source": {
         "include":["src"],
-        "includePattern": ".js$",
         "excludePattern": "(node_modules/|docs)"
     },
     "templates": {
