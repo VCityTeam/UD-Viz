@@ -37,9 +37,25 @@ node index.js PATH_TO_UD-Viz 8000
 
 ## Developers
 
-### Recommended IDE
+### Coding style
 
-Installing [Visual Studio Code](https://code.visualstudio.com/) is recommended, in order to use the plugin formatter [Prettier](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode). Once installed you should setup Prettier with single quote coding style (Preferences => Settings => Type in search bar : Single quote => Toggle single quote of Prettier extension)
+The JavaScript filees coding style is defined with [eslint](https://eslint.org/) through the [.eslintrc.js configuration file](.eslintrc.js).
+It can be checked (e.g. prior to a commit) with the `npm run eslint` command.
+Notice that UD-Viz coding style uses a unix `linebreak-style` (aka `LF` as newline character). 
+
+**Tips for Windows developers**
+
+As configured, the coding style requires a Linux style newline characters which might be overwritten in Windows environments
+(both by `git` and/or your editor) to become `CRLF`. When such changes happen eslint will warn about "incorrect" newline characters
+(which can always be fixed with `npm run eslint -- --fix` but this process quickly gets painfull).
+In order to avoid such difficulties, the [recommended pratice](https://stackoverflow.com/questions/1967370/git-replacing-lf-with-crlf)
+consists in
+ 1. setting git's `core.autocrlf` to `false` (e.g. with `git config --global core.autocrlf false`) 
+ 2. configure your editor/IDE to use Unix-style endings
+
+#### Notes for VSCode users
+
+When using [Visual Studio Code](https://code.visualstudio.com/), you can [install the eslint extension](https://www.digitalocean.com/community/tutorials/linting-and-formatting-with-eslint-in-vs-code) allows you e.g. to automatically fix the coding style e.g. [when saving a file](https://www.digitalocean.com/community/tutorials/linting-and-formatting-with-eslint-in-vs-code) .
 
 ### Workflow
 
@@ -50,8 +66,6 @@ npm run travis
 ```
 
 in order to assert that `eslint` and `webpack` commands are still effective
-
-**Tip for Windows developers:** eslint requires Linux style newline characters which are often overwritten in Windows environments. Although this is automatically resolved by Git when pushing code, eslint may detect "incorrect" newline characters when running locally. To attempt to fix this you may need to run `npm run eslint -- --fix`.
 
 ## Sources directory layout (organizational principles)
 Definitions:
