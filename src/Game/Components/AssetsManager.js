@@ -8,7 +8,7 @@ import { Howl } from 'howler';
 const THREEUtils = require('../Shared/Components/THREEUtils');
 
 /**
- * Default material used by native models
+ * Default material used by native objects
  */
 const DEFAULT_MATERIAL = new THREE.MeshLambertMaterial({ color: 0x00ff00 });
 
@@ -23,7 +23,8 @@ export class AssetsManager {
     this.prefabs = {};
     this.worldScripts = {};
     this.localScripts = {};
-    this.models = {};
+    this.objects = {};
+    this.animations = {};
     this.worldsJSON = null;
 
     //buffer
@@ -48,17 +49,21 @@ export class AssetsManager {
 
   /**
    * Return new model corresponding to the id passed
-   * @param {String} idModel id of the model
-   * @returns {THREE.Object3D} new model
+   * @param {String} idRenderData id of the model
+   * @returns {Object{'animations' => THREE.AnimationClip[], 'object' => THREE.Object3D}
    */
-  createModel(idModel) {
-    if (!this.models[idModel]) console.error('no model with id ', idModel);
+  createRenderData(idRenderData) {
+    if (!this.objects[idRenderData])
+      console.error('no model with id ', idRenderData);
 
     //clone Object
-    const result = this.models[idModel].clone();
+    const result = {
+      animations: this.createAnimations(idRenderData),
+      object: this.objects[idRenderData].clone(),
+    };
 
     //clone materials as well
-    result.traverse(function (child) {
+    result.object.traverse(function (child) {
       if (child.material) {
         child.material = child.material.clone();
         child.material.needsUpdate = true;
@@ -66,6 +71,10 @@ export class AssetsManager {
     });
 
     return result;
+  }
+
+  createAnimations(idRenderData) {
+    return this.animations[idRenderData];
   }
 
   /**
@@ -163,20 +172,20 @@ export class AssetsManager {
   }
 
   /**
-   * Build native models (procedural models)
+   * Build native objects (procedural objects)
    */
   buildNativeModel() {
     const geometryBox = new THREE.BoxGeometry();
     const cube = new THREE.Mesh(geometryBox, DEFAULT_MATERIAL);
-    this.models['cube'] = cube;
+    this.objects['cube'] = cube;
 
     const geometrySphere = new THREE.SphereGeometry(1, 32, 32);
     const sphere = new THREE.Mesh(geometrySphere, DEFAULT_MATERIAL);
-    this.models['sphere'] = sphere;
+    this.objects['sphere'] = sphere;
 
     const geometryTorus = new THREE.TorusGeometry(10, 0.1, 16, 100);
     const torus = new THREE.Mesh(geometryTorus, DEFAULT_MATERIAL);
-    this.models['torus'] = torus;
+    this.objects['torus'] = torus;
 
     this.buildGizmo();
     this.buildPointerMouse();
@@ -222,7 +231,7 @@ export class AssetsManager {
       )
     );
 
-    this.models['gizmo'] = result;
+    this.objects['gizmo'] = result;
   }
 
   /**
@@ -232,7 +241,7 @@ export class AssetsManager {
     const geometry = new THREE.CylinderGeometry(0.15, 0, 0.3, 32);
     const cylinder = new THREE.Mesh(geometry, DEFAULT_MATERIAL);
     cylinder.rotateX(Math.PI * 0.5);
-    this.models['pointer_mouse'] = cylinder;
+    this.objects['pointer_mouse'] = cylinder;
   }
 
   /**
@@ -318,7 +327,7 @@ export class AssetsManager {
 
     parent.name = id;
 
-    this.models[id] = parent;
+    this.objects[id] = parent;
   }
 
   /**
@@ -336,19 +345,22 @@ export class AssetsManager {
 
     const modelPromise = new Promise((resolve, reject) => {
       let count = 0;
-      for (let idModel in config.models) {
-        const id = idModel;
-        const modelData = config.models[id];
+      for (let idRenderData in config.renderData) {
+        const id = idRenderData;
+        const renderData = config.renderData[id];
         loader.load(
-          modelData.path,
+          renderData.path,
           (data) => {
             //parse
-            _this.parse(id, data.scene, modelData);
+            _this.parse(id, data.scene, renderData);
+
+            _this.animations[id] = data.animations;
 
             //check if finish
             count++;
-            if (count == Object.keys(config.models).length) {
-              console.log('Models loaded ', this.models);
+            if (count == Object.keys(config.renderData).length) {
+              console.log('objects loaded ', this.objects);
+              console.log('animations loaded ', this.animations);
               resolve();
             }
           },
@@ -464,7 +476,7 @@ export class AssetsManager {
     });
 
     const promises = [];
-    if (config.models) promises.push(modelPromise);
+    if (config.renderData) promises.push(modelPromise);
     if (config.prefabs) promises.push(prefabsPromise);
     if (config.worldScripts) promises.push(worldScriptsPromise);
     if (config.localScripts) promises.push(localScriptsPromise);

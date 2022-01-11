@@ -248,7 +248,7 @@ module.exports = class WorldGameManager {
     this.zeppelin = new Shared.GameObject({
       name: 'zeppelin',
       components: {
-        Render: { idModel: 'zeppelin' },
+        Render: { idRenderData: 'zeppelin' },
       },
     });
 
@@ -264,7 +264,7 @@ As always when we point to assets with an id, we need to import that asset (here
 
 ```json
 "assetsManager": {
-    "models": {
+    "renderData": {
       "zeppelin": {
         "path": "./assets/models/Zeppelin_Labex_IMU.glb",
         "anchor": "center_min",
@@ -438,7 +438,7 @@ createCollectableSphere(x, y) {
     static: true,
     components: {
       Render: {
-        idModel: 'sphere',
+        idRenderData: 'sphere',
         color: [Math.random(), Math.random(), Math.random()],
       },
     },
@@ -496,7 +496,7 @@ ok that's nice, now let handle the collision with these objects.
       static: true,
       components: {
         Render: {
-          idModel: 'sphere',
+          idRenderData: 'sphere',
           color: [Math.random(), Math.random(), Math.random()],
         },
         Collider: {
@@ -525,7 +525,7 @@ ok that's nice, now let handle the collision with these objects.
 this.zeppelin = new Shared.GameObject({
   name: 'zeppelin',
   components: {
-    Render: { idModel: 'zeppelin' },
+    Render: { idRenderData: 'zeppelin' },
     Collider: {
       shapes: [
         {

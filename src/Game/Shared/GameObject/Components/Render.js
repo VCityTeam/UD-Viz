@@ -6,21 +6,38 @@ const THREE = require('three');
  *  Component used to handle the 3D rendering of the GameObject
  */
 const RenderModule = class Render {
+  /**
+   * Create a new Render component of a GameObject from json
+   * @param {GameObject} parent gameobject of this component
+   * @param {JSON} json
+   */
   constructor(parent, json) {
-    //gameobject of this component
+    /**@type {GameObject} gameobject of this component*/
     this.parent = parent;
 
-    //uuid
+    /**uuid of the component. Init from the field uuid of the json (If it does not exist, a uuid is generated). */
     this.uuid = json.uuid || THREE.MathUtils.generateUUID();
 
-    //id of the 3D model used (TODO could be an array of id)
-    this.idModel = json.idModel || null;
+    /**
+     * id of the 3D model used. Init from the field idRenderData of the json.
+     * @type {String}
+     * @note the field has been renamed, idModel => idRenderData
+     */
+    this.idRenderData = json.idRenderData || null; //TODO could be an array of id
 
-    //color of the 3D model
+    /**Color of the 3D model
+     * @type {THREE.Color}
+     */
     this.color = new THREE.Color().fromArray(json.color || [1, 1, 1]);
 
-    //three.js object
+    /** @type {THREE.Object3D} */
     this.object3D = null;
+
+    /**@type {THREE.AnimationClip[]} */
+    this.animations = null;
+    /**@type {THREE.AnimationMixer} */
+    this.animationMixer = null;
+    this.actions = {};
   }
 
   /**
@@ -39,7 +56,7 @@ const RenderModule = class Render {
     return {
       uuid: this.uuid,
       type: RenderModule.TYPE,
-      idModel: this.idModel,
+      idRenderData: this.idRenderData,
       color: this.color.toArray(),
     };
   }
@@ -100,13 +117,38 @@ const RenderModule = class Render {
     this.object3D.name = 'Render Object3D ' + this.parent.getName();
 
     //get the 3D model
-    if (this.idModel) {
-      this.object3D.add(assetsManager.createModel(this.idModel));
+    if (this.idRenderData) {
+      const data = assetsManager.createRenderData(this.idRenderData);
+      this.object3D.add(data.object);
+      this.animations = data.animations;
+      if (this.animations && this.animations.length) {
+        const _this = this;
+        this.animationMixer = new THREE.AnimationMixer(data.object);
+        this.animations.forEach(function (animClip) {
+          const action = _this.animationMixer.clipAction(animClip);
+          action.play(); //play action is default behaviour
+          _this.actions[animClip.name] = action;
+        });
+      }
     }
 
     this.setColor(this.color);
 
     return this.object3D;
+  }
+
+  tick(localCtx) {
+    if (this.animationMixer) {
+      this.animationMixer.update(localCtx.getDt() * 0.001);
+    }
+  }
+
+  getActions() {
+    return this.actions;
+  }
+
+  getAnimationMixer() {
+    return this.animationMixer;
   }
 
   getUUID() {

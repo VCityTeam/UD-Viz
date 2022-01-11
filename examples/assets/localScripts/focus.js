@@ -17,7 +17,7 @@ module.exports = class Focus {
       new Shared.THREE.Euler(-this.conf.cameraAngle, 0, 0)
     );
 
-    //initial distance of the camera with the zeppelin
+    //initial distance of the camera with the go2Focus
     this.distance = this.conf.minDist;
   }
 
@@ -44,11 +44,13 @@ module.exports = class Focus {
     //a context containing all data to script clientside script
     const localContext = arguments[1];
 
-    //get the zeppelin gameobject by name
-    const zeppelin = go.computeRoot().findByName(this.conf.nameGO2Focus);
+    //get the go2Focus gameobject by name
+    const go2Focus = go.computeRoot().findByName(this.conf.nameGO2Focus);
+
+    if (!go2Focus) return;
 
     //compute world transform
-    const obj = zeppelin.computeObject3D();
+    const obj = go2Focus.computeObject3D();
     let position = new Shared.THREE.Vector3();
     let quaternion = new Shared.THREE.Quaternion();
     obj.matrixWorld.decompose(position, quaternion, new Shared.THREE.Vector3());
@@ -57,7 +59,7 @@ module.exports = class Focus {
     position.z += this.conf.offsetZ;
 
     //compute camera position
-    const dir = zeppelin
+    const dir = go2Focus
       .getDefaultForward()
       .applyQuaternion(this.quaternionAngle)
       .applyQuaternion(quaternion);
