@@ -6,31 +6,36 @@ const THREE = require('three');
  *  Component used to handle the 3D rendering of the GameObject
  */
 const RenderModule = class Render {
+  /**
+   * Create a new Render component of a GameObject from json
+   * @param {GameObject} parent gameobject of this component
+   * @param {JSON} json
+   */
   constructor(parent, json) {
-    //gameobject of this component
+    /**@type {GameObject} gameobject of this component*/
     this.parent = parent;
 
-    //uuid
+    /**uuid of the component. Init from the field uuid of the json (If it does not exist, a uuid is generated). */
     this.uuid = json.uuid || THREE.MathUtils.generateUUID();
 
-    if (json.idModel)
-      console.error(
-        'idModel field is obsolete change this in worlds.json (check prefab) at GameObject with uuid ',
-        parent.uuid,
-        'by idRenderData'
-      );
+    /**
+     * id of the 3D model used. Init from the field idRenderData of the json.
+     * @type {String}
+     * @note the field has been renamed, idModel => idRenderData
+     */
+    this.idRenderData = json.idRenderData || null; //TODO could be an array of id
 
-    //id of the 3D model used (TODO could be an array of id)
-    this.idRenderData = json.idRenderData || null;
-
-    //color of the 3D model
+    /**Color of the 3D model
+     * @type {THREE.Color}
+     */
     this.color = new THREE.Color().fromArray(json.color || [1, 1, 1]);
 
-    //three.js object
+    /** @type {THREE.Object3D} */
     this.object3D = null;
 
-    //animations
+    /**@type {THREE.AnimationClip[]} */
     this.animations = null;
+    /**@type {THREE.AnimationMixer} */
     this.animationMixer = null;
     this.actions = {};
   }

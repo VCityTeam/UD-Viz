@@ -50,7 +50,7 @@ export class AssetsManager {
   /**
    * Return new model corresponding to the id passed
    * @param {String} idRenderData id of the model
-   * @returns {THREE.Object3D} new model
+   * @returns {Object{'animations' => THREE.AnimationClip[], 'object' => THREE.Object3D}
    */
   createRenderData(idRenderData) {
     if (!this.objects[idRenderData])
@@ -345,8 +345,6 @@ export class AssetsManager {
 
     const modelPromise = new Promise((resolve, reject) => {
       let count = 0;
-      if (config.models)
-        console.error('config.models is obsolete replace it by renderdata in your config files');
       for (let idRenderData in config.renderData) {
         const id = idRenderData;
         const renderData = config.renderData[id];
