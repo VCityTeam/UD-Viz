@@ -57,7 +57,7 @@ consists in
 
 When using [Visual Studio Code](https://code.visualstudio.com/), you can [install the eslint extension](https://www.digitalocean.com/community/tutorials/linting-and-formatting-with-eslint-in-vs-code) allows you e.g. to automatically fix the coding style e.g. [when saving a file](https://www.digitalocean.com/community/tutorials/linting-and-formatting-with-eslint-in-vs-code) .
 
-### Pushing process
+### Pushing process<a name="anchor-devel-pushing-process"></a>
 
 Before pushing (`git push`) to the origin repository please make sure to run
 
