@@ -36,37 +36,15 @@ module.exports = class LocalAvatar {
     });
   }
   buildingsHit(tilesManager, origin, direction) {
-    // const gV = localContext.getGameView();
-
-    // const tilesManager = gV.getLayerManager().tilesManagers;
     const buildings = [];
     this.addObjectToArray(buildings, tilesManager, '3d-tiles-layer-building');
 
-    // const pos = this.avatar.getPosition();
-    // const ref = localContext.getGameView().getObject3D().position;
-
-    // this.raycaster.ray.origin = pos.add(ref);
     this.raycaster.ray.origin = origin;
     this.raycaster.ray.direction = direction;
-    //console.log(origin);
 
     const intersections = this.raycaster.intersectObjects(buildings, true);
     if (intersections.length) return intersections[0];
     return null;
-    //if(!intersections.length) debugger;
-    //return intersections.length ? intersections[0] : Infinity;
-    // let minDist = Infinity;
-    // if (intersections.length) {
-    //   //debugger
-    //   intersections.forEach(function (i) {
-    //     if (i.distance < minDist) {
-    //       //z = -i.distance;
-    //       minDist = i.distance;
-    //     }
-    //   });
-    // }
-
-    // return minDist;
   }
   groundElevationDelta(tilesManager, origin) {
     const ground = [];
@@ -86,30 +64,12 @@ module.exports = class LocalAvatar {
     this.avatar = avatar;
     const localContext = arguments[1];
     const gV = localContext.getGameView();
+    const scene = gV.getScene();
     const tilesManager = gV.getLayerManager().tilesManagers;
     const worldOrigin = gV.getObject3D().position;
 
     //Input manager of the game
     const inputManager = localContext.getGameView().getInputManager();
-
-    //DEBUG
-    inputManager.addKeyInput('p', 'keydown', function () {
-      console.log(avatar.computeRoot());
-    });
-
-    //const thisLocalAvatar = this;
-
-    //local avatar/cube
-    const scene = gV.getScene();
-    console.log(avatar.object3D);
-    // const geometry = new Shared.THREE.BoxGeometry(3, 3, 3);
-    // const material = new Shared.THREE.MeshBasicMaterial( {color: 0xff0000} );
-    // const cube = new Shared.THREE.Mesh( geometry, material );
-    // const cube = avatar.object3D; //.clone();
-    //avatar.object3D.visible = false;
-    // this.cube = cube;
-    //scene.add(cube);
-    //console.log(scene);
 
     //intersection cube
     const geometry = new Shared.THREE.BoxGeometry(1, 1, 1);
@@ -139,8 +99,6 @@ module.exports = class LocalAvatar {
         this.intersectionCube.visibility = false;
       }
 
-      //debugger
-      // console.log(depth);
       return translationLength > depth;
     }.bind(this);
     const updateGroundElevationFun = function () {
@@ -152,8 +110,6 @@ module.exports = class LocalAvatar {
       avatar.move(new Shared.THREE.Vector3(0, 0, -zDelta));
     }.bind(this);
 
-    let dtcb = 0;
-
     //FORWARD
     inputManager.addKeyCommand('move_forward', ['z'], function () {
       const dt = localContext.getDt();
@@ -161,7 +117,6 @@ module.exports = class LocalAvatar {
       if (checkCollisionFun(direction)) return;
       avatar.move(direction.setLength(translationLength));
       updateGroundElevationFun();
-      console.log('z');
     });
     //BACKWARD
     inputManager.addKeyCommand('move_backward', ['s'], function () {
@@ -170,98 +125,23 @@ module.exports = class LocalAvatar {
       if (checkCollisionFun(direction)) return;
       avatar.move(direction.setLength(translationLength));
       updateGroundElevationFun();
-      console.log('s');
     });
     //LEFT
     inputManager.addKeyCommand('rotate_left', ['q'], function () {
       const dt = localContext.getDt();
       avatar.rotate(new Shared.THREE.Vector3(0, 0, speedRotate * dt));
-      console.log('q');
     });
     //RIGHT
     inputManager.addKeyCommand('rotate_right', ['d'], function () {
       const dt = localContext.getDt();
       avatar.rotate(new Shared.THREE.Vector3(0, 0, -speedRotate * dt));
-      console.log('d');
     });
 
     //tick command
     gV.addTickRequester(function () {
       inputManager.computeCommands();
     });
-
-    //warp to saved location
-    inputManager.addKeyInput('m', 'keydown', function () {
-      cube.position.set(
-        5522.95180710312,
-        -3322.608827644959,
-        -110.02345057404978
-      );
-      cube.updateMatrixWorld();
-    });
   }
 
-  tick() {
-    /*
-    const avatar = this.avatar;
-    const localContext = arguments[1];
-    const gV = localContext.getGameView();
-    const tilesManager = gV.getLayerManager().tilesManagers;
-    const worldOrigin = gV.getObject3D().position;
-
-    //Input manager of the game
-    const inputManager = localContext.getGameView().getInputManager();
-
-
-
-    const dt = localContext.getDt();
-    const translationSpeed = 0.03;
-    const translationLength = translationSpeed * dt;
-    const speedRotate = 0.0006;
-
-    const checkCollisionFun = function(direction) {
-      const origin = avatar.getPosition().clone().add(worldOrigin);
-      const intersection = this.buildingsHit(tilesManager, origin, direction);
-      const depth = intersection ? intersection.distance : Infinity;
-
-      if(depth != Infinity)
-      {
-        this.intersectionCube.visibility = true;
-        this.intersectionCube.position.copy(intersection.point);
-        this.intersectionCube.updateMatrixWorld();
-      } else {
-        this.intersectionCube.visibility = false;
-      }
-
-      //debugger
-      // console.log(depth);
-      return translationLength > depth;
-    }.bind(this);
-    const updateGroundElevationFun = function() {
-      const zDelta = this.groundElevationDelta(tilesManager, avatar.getPosition().clone().add(worldOrigin));
-      if(!zDelta) return;
-      avatar.move(new Shared.THREE.Vector3(0, 0, -zDelta));
-    }.bind(this);
-
-    //FORWARD
-    if(inputManager.isPressed("z")){
-
-      updateGroundElevationFun();
-      
-      const direction = avatar.computeForwardVector();
-      if(checkCollisionFun(direction)) return;
-      avatar.move(direction.setLength(translationLength));
-      console.log('z');
-    } 
-    */
-    // //TODO: send update of state to world/server side
-    // const localContext = arguments[1];
-    // const worldComputer = localContext.getGameView().getInterpolator();
-    // const inputManager = localContext.getGameView().getInputManager();
-    // //send input manager command to the world
-    // worldComputer.addAfterTickRequester(function () {
-    //   const cmds = inputManager.computeCommands();
-    //   worldComputer.onCommands(cmds);
-    // });
-  }
+  tick() {}
 };
