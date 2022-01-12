@@ -57,15 +57,21 @@ consists in
 
 When using [Visual Studio Code](https://code.visualstudio.com/), you can [install the eslint extension](https://www.digitalocean.com/community/tutorials/linting-and-formatting-with-eslint-in-vs-code) allows you e.g. to automatically fix the coding style e.g. [when saving a file](https://www.digitalocean.com/community/tutorials/linting-and-formatting-with-eslint-in-vs-code) .
 
-### Workflow
+### Pushing process
 
-Before pushing your modifications to the origin repository please run:
+Before pushing (`git push`) to the origin repository please make sure to run
 
 ```bash
 npm run travis
 ```
 
-in order to assert that `eslint` and `webpack` commands are still effective
+(or equivalently `npm eslint` and `npm run build`) in order to assert that the coding style is correct (`eslint`) and that bundle (production) build (`webpack`) is still effective. When failing to do so the CI won't check.
+
+Note that when commiting (`git commit`) you should make sure to provide representative messages because commit messages end-up collected in the PR message and eventually release explanations.
+
+### Submitting a Pull Request
+
+When creating a PR (Pull Request) make sure to provide a correct description 
 
 ## Sources directory layout (organizational principles)
 Definitions:
