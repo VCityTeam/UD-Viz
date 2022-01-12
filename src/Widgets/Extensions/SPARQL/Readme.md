@@ -49,7 +49,7 @@ The SPARQL Query Service expects the URL to correspond to a REST API, where quer
 
 SPARQL queries sent to the [SPARQL Endpoint](https://github.com/VCityTeam/UD-SV/blob/master/Vocabulary/Readme.md#SPARQL-Endpoint) can be formulated and executed via the module window. Once a query is executed, with the window selected, a displayed graph can be zoomed in and out using a mouse wheel and panned by clicking and dragging the background of the graph. In addition, nodes can be moved by clicking and dragging them.
 
-![Vizualize SPARQL query result in D3](./Doc/Pictures/sparql-widget-demo.gif)
+![Vizualize SPARQL query result in D3](Doc/Widgets/Extensions/SPARQL/Pictures/sparql-widget-demo.gif)
 
 In order to propery colorize the nodes of a graph a SPARQL query must be formulated following a simple subject-predicate-object [RDF triple](https://github.com/VCityTeam/UD-SV/blob/master/Vocabulary/Readme.md#triple) structure. Colors will be assigned as a function each node's `rdf:type`. Thus 4 data must be selected:
 - ?subject
@@ -88,7 +88,7 @@ WHERE {
 
 If the URIs of nodes in the graph correspond with identifiers of cityobjects they can be selected as shown below.
 
-![Pick City Object from Graph](./Doc/Pictures/pickcityobjectfromgraph.gif)
+![Pick City Object from Graph](Doc/Widgets/Extensions/SPARQL/Pictures/pickcityobjectfromgraph.gif)
 
 ## Code architecture
 
