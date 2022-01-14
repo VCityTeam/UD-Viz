@@ -1,4 +1,4 @@
-# v2.4.0
+# v2.34.0
 
     * Add Changelog file in Doc
     * renderData : Introducing the new renderData attribute whose purpose is to render animations.
