@@ -1,3 +1,11 @@
+# v2.34.1
+
+    * update gitignore
+    * Update SPARQL example.html
+    * Add CodeQL-analysis.yml
+    * Update SPARQL widget documentation
+    * Added a pushing/PR process documentation
+
 # v2.34.0
 
     * Add Changelog file in Doc
