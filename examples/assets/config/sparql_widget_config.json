@@ -1,7 +1,7 @@
 {
   "assets": {
-    "iconFolder": "./assets/icons",
-    "imageFolder": "./assets/img",
+    "iconFolder": "../assets/icons",
+    "imageFolder": "../assets/img",
     "logos": ["logo-liris.png", "logo-univ-lyon.png"]
   },
   "server": {
