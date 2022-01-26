@@ -6,9 +6,6 @@ UD-Viz is a JavaScript library based on [iTowns](https://github.com/itowns/itown
 
 A tutorial of the game engine can be found [here](./Doc/Devel/LocalGameTutorial.md)
 
-### Pre-requisite
-Developing UD-Viz requires some knowledge about [JS](https://github.com/VCityTeam/UD-SV/blob/master/UD-Doc/Devel/ToolJavaScript.md), [node.js](https://en.wikipedia.org/wiki/Node.js), [npm](https://en.wikipedia.org/wiki/Npm_(software)) and [three.js](https://threejs.org/).
-
 ### Install node/npm
 For the npm installation refer [here](https://github.com/VCityTeam/UD-SV/blob/master/Tools/ToolNpm.md)
 
@@ -25,7 +22,7 @@ cd UD-Viz
 npm install
 ```
 
-### Try examples 
+### Running the examples 
 
 ```bash
 cd PATH_TO_UD-Viz
@@ -40,14 +37,17 @@ node index.js PATH_TO_UD-Viz 8000
 * [UD-Viz-Template](https://github.com/VCityTeam/UD-Viz-Template) (demonstration) application,
 * online demos are [available here](https://projet.liris.cnrs.fr/vcity/demos/)
 
-### Documentation
-
-The documentation can be found [here](./docs/html/index.html)
-
-Refer to this [README](./docs/README.md) to generate it.
-
-
 ## Developers
+
+### Pre-requisite
+
+Developing UD-Viz requires some knowledge about [JS](https://github.com/VCityTeam/UD-SV/blob/master/UD-Doc/Devel/ToolJavaScript.md), [node.js](https://en.wikipedia.org/wiki/Node.js), [npm](https://en.wikipedia.org/wiki/Npm_(software)) and [three.js](https://threejs.org/).
+
+### Developers documentation
+
+The last generated documentation can be found [here](./docs/html/index.html)
+
+Refer to this [README](./docs/README.md) to re-generate it.
 
 ### Coding style
 
