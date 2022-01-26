@@ -37,6 +37,13 @@ node index.js PATH_TO_UD-Viz 8000
 * [UD-Viz-Template](https://github.com/VCityTeam/UD-Viz-Template) (demonstration) application,
 * online demos are [available here](https://projet.liris.cnrs.fr/vcity/demos/)
 
+### Documentation
+
+The documentation can be found [here](./docs/html/index.html)
+
+Refer to this [README](./docs/README.md) to generate it.
+
+
 ## Developers
 
 ### Coding style
@@ -45,7 +52,7 @@ The JavaScript filees coding style is defined with [eslint](https://eslint.org/)
 It can be checked (e.g. prior to a commit) with the `npm run eslint` command.
 Notice that UD-Viz coding style uses a unix `linebreak-style` (aka `LF` as newline character). 
 
-**Tips for Windows developers**
+### Tips for Windows developers
 
 As configured, the coding style requires a Linux style newline characters which might be overwritten in Windows environments
 (both by `git` and/or your editor) to become `CRLF`. When such changes happen eslint will warn about "incorrect" newline characters
