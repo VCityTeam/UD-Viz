@@ -242,7 +242,7 @@ export class LayerChoice extends Window {
           layers[i].visible ? 'checked' : ''
         }></input></br>`;
         let span_opacity = document.getElementById(
-          'geometry_value_opacity_' + i
+          'geometry_value_opacity_' + layers[i].id
         );
 
         span_opacity.innerHTML = `${layers[i].opacity}`;
