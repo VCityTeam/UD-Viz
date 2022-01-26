@@ -6,10 +6,8 @@ const debugBuild = mode === 'development';
 let outputPath;
 let devTool;
 if (debugBuild) {
-  devTool = 'source-map';
   outputPath = path.resolve(__dirname, 'dist/debug');
 } else {
-  devTool = 'none';
   outputPath = path.resolve(__dirname, 'dist/release');
 }
 
@@ -35,7 +33,7 @@ module.exports = (env) => {
   return {
     mode,
     entry: path.resolve(__dirname, entry),
-    devtool: devTool,
+    devtool: debugBuild ? 'source-map' : false,
     output: {
       path: outputPath,
       filename: output + '.js',
