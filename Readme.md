@@ -9,10 +9,13 @@ A tutorial of the game engine can be found [here](./Doc/Devel/LocalGameTutorial.
 ### Pre-requisite
 Developing UD-Viz requires some knowledge about [JS](https://github.com/VCityTeam/UD-SV/blob/master/UD-Doc/Devel/ToolJavaScript.md), [node.js](https://en.wikipedia.org/wiki/Node.js), [npm](https://en.wikipedia.org/wiki/Npm_(software)) and [three.js](https://threejs.org/).
 
-### Install npm
+### Install node/npm
 For the npm installation refer [here](https://github.com/VCityTeam/UD-SV/blob/master/Tools/ToolNpm.md)
 
-Required npm version: UD-Viz has been reported to work with npm versions npm 6.X and npm 7.X.
+UD-Viz has been reported to work with versions:
+
+* node version 16 (16.13.2)
+* npm version: 6.X, 7.X. and 8.X
 
 ### Installing the UD-Viz library per se
 
