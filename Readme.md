@@ -41,16 +41,8 @@ node index.js PATH_TO_UD-Viz 8000
 
 The documentation can be found [here](./docs/html/index.html)
 
-It is created using [JSDOC](https://jsdoc.app/) and [Clean-Jsdoc-Theme](https://github.com/ankitskvmdam/clean-jsdoc-theme) 
+Refer to this [README](./docs/README.md) to generate it.
 
-To generate the documentation : 
-
-```bash
-git clone https://github.com/VCityTeam/UD-Viz.git
-cd UD-Viz
-npm install
-npm run docs
-```
 
 ## Developers
 
