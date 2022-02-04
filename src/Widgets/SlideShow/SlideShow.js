@@ -1,26 +1,24 @@
 /** @format */
 
 //Components
-import { ModuleView } from '../Components/ModuleView/ModuleView';
-import { PositionerWindow } from '../Components/Camera/PositionerWindow';
 import { Window } from '../Components/GUI/js/Window';
 
-export class SlideShow extends ModuleView {
-  constructor(itownsView, cameraControls) {
-    super();
+export class SlideShow extends Window {
+  constructor(parentHtml) {
+    super('slideShow', 'Slide Show', false);
 
-    this.positionerWindow = new PositionerWindow(itownsView, cameraControls);
-
-    this.positionerWindow.addEventListener(Window.EVENT_DISABLED, () =>
-      this.disable()
-    );
+    this.parentHtml = parentHtml;
+    this.htmlSlideShow = null;
+    this.initHtml();
   }
 
-  enableView() {
-    this.positionerWindow.appendTo(this.parentElement);
+  initHtml() {
+    const htmlSlideShow = document.createElement('div');
+
+    this.htmlSlideShow = htmlSlideShow;
   }
 
-  disableView() {
-    this.positionerWindow.dispose();
+  get innerContentHtml() {
+    return this.htmlSlideShow;
   }
 }
