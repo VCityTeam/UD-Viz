@@ -3,56 +3,113 @@
 //Components
 import { Window } from '../Components/GUI/js/Window';
 import * as THREE from 'three';
-import { Vector2 } from 'three';
-import { color } from 'd3';
-import { LinkedWithFilteredDocumentsFilter } from '../Links/ViewModel/CityObjectLinkFilters';
 
 export class SlideShow extends Window {
-  constructor(app) {
+  constructor(app, inputManager) {
     super('slideShow', 'Slide Show', false);
     this.app = app;
     this.extent = app.extent;
     this.view = app.view;
 
+    //content
     this.htmlSlideShow = null;
-    this.coordinatesElement = null;
-    this.quaternionElement = null;
-    this.sizeElement = null;
+    //ids
+    this.coordinatesInputVectorID = null;
+    this.rotationInputVectorID = null;
+    this.sizeInputVectorID = null;
 
-    this.matchExtentButton = null;
-
+    //Vectors
     this.coordinatesVector = new THREE.Vector3();
-    this.quaternionVector = new THREE.Vector4();
+    this.rotationVector = new THREE.Vector3();
     this.sizeVector = new THREE.Vector2();
 
     this.callbacksHTMLEl = [];
 
     this.plane = null;
 
+    this.texturesFiles = null;
+    this.currentTextureFile = null;
+    this.iCurrentTexture = 0;
+
+    this.notifyValue = false;
+
+    this.initDefaultTextureFile();
+
+    this.currentTexture = null;
+
     this.initHtml();
+    this.initInput(app, inputManager);
+    this.initCBDrop();
+    const _this = this;
+    const tick = function () {
+      requestAnimationFrame(tick);
+      _this.notifyChangeEachFrame();
+    };
+    tick();
+  }
+
+  get coordinatesInputVectorDOM() {
+    return document.getElementById(this.coordinatesInputVectorID);
+  }
+  get rotationInputVectorDOM() {
+    return document.getElementById(this.rotationInputVectorID);
+  }
+  get sizeInputVectorDOM() {
+    return document.getElementById(this.sizeInputVectorID);
+  }
+
+  initDefaultTextureFile() {
+    this.defaultTexture = new THREE.TextureLoader().load(
+      '../assets/img/DefaultTexture.jpg'
+    );
+    const img = document.createElement('img');
+    img.src = '../assets/img/DefaultTexture.jpg';
+    this.texturesFiles = [
+      {
+        index: 0,
+        name: 'First',
+        texture: this.defaultTexture,
+        media: img,
+      },
+    ];
+    this.iCurrentText = 0;
+    this.currentTextureFile = this.texturesFiles[0];
+  }
+
+  notifyChangeEachFrame() {
+    if (this.notifyValue) {
+      this.app.update3DView();
+    }
   }
 
   initHtml() {
     const htmlSlideShow = document.createElement('div');
-    this.htmlSlideShow = htmlSlideShow;
-
-    this.coordinatesElement = this.createInputVector(
+    const coordinatesElement = this.createInputVector(
       ['X', 'Y', 'Z'],
-      'Coordinates'
+      'Coordinates',
+      100
     );
-    htmlSlideShow.appendChild(this.coordinatesElement.title);
-    htmlSlideShow.appendChild(this.coordinatesElement.inputVector);
+    htmlSlideShow.appendChild(coordinatesElement.title);
+    this.coordinatesInputVectorID = coordinatesElement.inputVector.id;
+    htmlSlideShow.appendChild(coordinatesElement.inputVector);
 
-    this.quaternionElement = this.createInputVector(
-      ['X', 'Y', 'Z', 'W'],
-      'Quaternion'
+    const rotationElement = this.createInputVector(
+      ['X', 'Y', 'Z'],
+      'Rotation',
+      0.1
     );
-    htmlSlideShow.appendChild(this.quaternionElement.title);
-    htmlSlideShow.appendChild(this.quaternionElement.inputVector);
+    htmlSlideShow.appendChild(rotationElement.title);
+    this.rotationInputVectorID = rotationElement.inputVector.id;
+    htmlSlideShow.appendChild(rotationElement.inputVector);
 
-    this.sizeElement = this.createInputVector(['Height', 'Width'], 'Size');
-    htmlSlideShow.appendChild(this.sizeElement.title);
-    htmlSlideShow.appendChild(this.sizeElement.inputVector);
+    const sizeElement = this.createInputVector(
+      ['Height', 'Width'],
+      'Size',
+      100
+    );
+    htmlSlideShow.appendChild(sizeElement.title);
+    this.sizeInputVectorID = sizeElement.inputVector.id;
+    htmlSlideShow.appendChild(sizeElement.inputVector);
 
     const matchExtentButton = document.createElement('button');
     matchExtentButton.id = '_button_match_extent';
@@ -62,19 +119,39 @@ export class SlideShow extends Window {
       id: matchExtentButton.id,
       cb: function () {
         const extentCenter = this.extent.center();
-        this.setSize(
+        this.setSizeInputs(
           new THREE.Vector2(
             Math.abs(this.extent.west - this.extent.east),
             Math.abs(this.extent.north - this.extent.south)
           )
         );
-        this.setCoordinates(
-          new THREE.Vector3(extentCenter.x, extentCenter.y, 200)
+        this.setCoordinatesInputs(
+          new THREE.Vector3(extentCenter.x, extentCenter.y, 250)
         );
+        this.setRotationInputs(new THREE.Vector3());
       },
     });
-    this.matchExtentButton = matchExtentButton;
     htmlSlideShow.appendChild(matchExtentButton);
+
+    const aspectRatioCheckbox = document.createElement('input');
+    aspectRatioCheckbox.id = 'aspectRatio';
+    aspectRatioCheckbox.type = 'checkbox';
+    this.callbacksHTMLEl.push({
+      event: 'change',
+      id: aspectRatioCheckbox.id,
+      cb: function (event) {},
+    });
+    this.getAspectRatioCheckbox = function () {
+      return document.getElementById(aspectRatioCheckbox.id);
+    };
+    htmlSlideShow.appendChild(aspectRatioCheckbox);
+
+    const labelAspectRatio = document.createElement('label');
+    labelAspectRatio.htmlFor = aspectRatioCheckbox.id;
+    labelAspectRatio.innerHTML = 'Aspect Ratio';
+    htmlSlideShow.appendChild(labelAspectRatio);
+
+    this.htmlSlideShow = htmlSlideShow;
   }
 
   windowCreated() {
@@ -85,11 +162,12 @@ export class SlideShow extends Window {
     });
   }
 
-  createInputVector(labels, vectorName) {
+  createInputVector(labels, vectorName, step = 0.5) {
     const titleVector = document.createElement('h3');
     titleVector.innerHTML = vectorName;
 
     const inputVector = document.createElement('div');
+    inputVector.id = vectorName + '_inputVector';
     inputVector.style.display = 'grid';
     for (let iInput = 0; iInput < labels.length; iInput++) {
       const labelElement = document.createElement('label');
@@ -99,14 +177,19 @@ export class SlideShow extends Window {
       componentElement.id = vectorName + labelElement.innerHTML;
       componentElement.type = 'number';
       componentElement.setAttribute('value', '0');
-      componentElement.step = 0.5;
+      componentElement.step = step;
 
       labelElement.htmlFor = componentElement.id;
       this.callbacksHTMLEl.push({
         event: 'change',
         id: componentElement.id,
         cb: function (event) {
-          componentElement.setAttribute('value', event.target.value);
+          const value = event.target.value;
+          const element = event.target;
+          element.setAttribute('value', value);
+          if (this.getAspectRatioCheckbox().checked)
+            if (vectorName.toLowerCase().includes('size'))
+              this.matchRatio(iInput, value);
           this.setVectors();
         },
       });
@@ -114,29 +197,48 @@ export class SlideShow extends Window {
       inputVector.appendChild(labelElement);
       inputVector.appendChild(componentElement);
     }
-    return { title: titleVector, inputVector: inputVector };
+    return {
+      title: titleVector,
+      inputVector: inputVector,
+    };
+  }
+
+  matchRatio(iInput, value) {
+    const linkedSizeElement =
+      this.sizeInputVectorDOM.getElementsByTagName('input')[
+        iInput == 0 ? 1 : 0
+      ];
+
+    const height = this.currentTextureFile.media.height;
+    const width = this.currentTextureFile.media.width;
+    const ratio = width / height;
+    const newValue = iInput == 0 ? value / ratio : value * ratio;
+
+    linkedSizeElement.value = newValue;
   }
 
   setVectors() {
     this.coordinatesVector =
-      this.inputVectorToVector(this.coordinatesElement.inputVector) ||
+      this.inputVectorToVector(this.coordinatesInputVectorDOM) ||
       new THREE.Vector3();
 
-    this.quaternionVector =
-      this.inputVectorToVector(this.quaternionElement.inputVector) ||
-      new THREE.Vector4();
+    this.rotationVector =
+      this.inputVectorToVector(this.rotationInputVectorDOM) ||
+      new THREE.Vector3();
 
     this.sizeVector =
-      this.inputVectorToVector(this.sizeElement.inputVector) ||
-      new THREE.Vector2();
+      this.inputVectorToVector(this.sizeInputVectorDOM) || new THREE.Vector2();
 
-    console.log(this.coordinatesVector, this.quaternionVector, this.sizeVector);
-    this.createPlane();
+    this.modifyPlane();
   }
 
   inputVectorToVector(inputVector) {
-    const inputEls = inputVector.getElementsByTagName('input');
+    const inputEls = document
+      .getElementById(inputVector.id)
+      .getElementsByTagName('input');
+
     const countEls = inputEls.length;
+
     switch (countEls) {
       case 2:
         return new THREE.Vector2(inputEls[0].value, inputEls[1].value);
@@ -158,31 +260,46 @@ export class SlideShow extends Window {
     return null;
   }
 
-  setSize(vec2) {
-    const sizeInputEls =
-      this.sizeElement.inputVector.getElementsByTagName('input');
-    const element0 = document.getElementById(sizeInputEls[0].id);
+  setSizeInputs(vec2) {
+    const sizeInputEls = this.sizeInputVectorDOM.getElementsByTagName('input');
+    const element0 = sizeInputEls[0];
     element0.value = vec2.x;
     element0.dispatchEvent(new Event('change'));
 
-    const element1 = document.getElementById(sizeInputEls[1].id);
+    const element1 = sizeInputEls[1];
     element1.value = vec2.y;
     element1.dispatchEvent(new Event('change'));
   }
 
-  setCoordinates(vec3) {
-    const sizeInputEls =
-      this.coordinatesElement.inputVector.getElementsByTagName('input');
-    const element0 = document.getElementById(sizeInputEls[0].id);
-    element0.value = vec3.x;
+  setCoordinatesInputs(vec3) {
+    const coordinatesInputEls =
+      this.coordinatesInputVectorDOM.getElementsByTagName('input');
+    const element0 = coordinatesInputEls[0];
+    element0.value = vec3.x || this.coordinatesVector.x;
     element0.dispatchEvent(new Event('change'));
 
-    const element1 = document.getElementById(sizeInputEls[1].id);
-    element1.value = vec3.y;
+    const element1 = coordinatesInputEls[1];
+    element1.value = vec3.y || this.coordinatesVector.y;
     element1.dispatchEvent(new Event('change'));
 
-    const element2 = document.getElementById(sizeInputEls[2].id);
-    element2.value = vec3.z;
+    const element2 = coordinatesInputEls[2];
+    element2.value = vec3.z || this.coordinatesVector.z;
+    element2.dispatchEvent(new Event('change'));
+  }
+
+  setRotationInputs(vec3) {
+    const rotationInputEls =
+      this.rotationInputVectorDOM.getElementsByTagName('input');
+    const element0 = rotationInputEls[0];
+    element0.value = vec3.x || this.rotationVector.x;
+    element0.dispatchEvent(new Event('change'));
+
+    const element1 = rotationInputEls[1];
+    element1.value = vec3.y || this.rotationVector.y;
+    element1.dispatchEvent(new Event('change'));
+
+    const element2 = rotationInputEls[2];
+    element2.value = vec3.z || this.rotationVector.z;
     element2.dispatchEvent(new Event('change'));
   }
 
@@ -191,36 +308,177 @@ export class SlideShow extends Window {
   }
 
   createPlane() {
-    if (this.plane) {
-      this.plane.removeFromParent();
-    }
-    const geometry = new THREE.PlaneGeometry(
-      this.sizeVector.x,
-      this.sizeVector.y
-    );
+    const geometry = new THREE.PlaneGeometry(1, 1);
 
     const material = new THREE.MeshBasicMaterial({
-      color: 0xffff00,
+      map: this.defaultTexture,
       side: THREE.DoubleSide,
     });
 
     this.plane = new THREE.Mesh(geometry, material);
+  }
 
+  modifyPlane() {
+    if (!this.plane) {
+      this.createPlane();
+    }
     this.plane.position.set(
       this.coordinatesVector.x,
       this.coordinatesVector.y,
       this.coordinatesVector.z
     );
 
-    this.plane.quaternion.set(
-      this.quaternionVector.x,
-      this.quaternionVector.y,
-      this.quaternionVector.z,
-      this.quaternionVector.w
+    this.plane.rotation.set(
+      this.rotationVector.x,
+      this.rotationVector.y,
+      this.rotationVector.z
     );
+    this.plane.scale.set(this.sizeVector.x, this.sizeVector.y, 1);
+    this.plane.material.map = this.currentTexture || this.plane.material.map;
 
     this.plane.updateMatrixWorld();
     this.view.scene.add(this.plane);
     this.app.update3DView();
+  }
+
+  /**
+   * @param {AllWidget} app
+   * @param {InputManager} iM
+   */
+  initInput(app, iM) {
+    const _this = this;
+
+    // Clamp number between two values with the following line:
+    const clamp = (num, min, max) => Math.min(Math.max(num, min), max);
+
+    iM.addKeyInput('h', 'keydown', function () {
+      if (!_this.plane) return;
+      _this.plane.visible = !_this.plane.visible;
+      app.update3DView();
+    });
+
+    iM.addKeyInput('ArrowRight', 'keydown', function () {
+      if (!_this.texturesFiles) return;
+      _this.iCurrentText = clamp(
+        _this.iCurrentText + 1,
+        0,
+        _this.texturesFiles.length - 1
+      );
+      _this.setTexture(_this.iCurrentText);
+
+      app.update3DView();
+    });
+    iM.addKeyInput('ArrowLeft', 'keydown', function () {
+      if (!_this.texturesFiles) return;
+      _this.iCurrentText = clamp(
+        _this.iCurrentText - 1,
+        0,
+        _this.texturesFiles.length - 1
+      );
+      _this.setTexture(_this.iCurrentText);
+
+      app.update3DView();
+    });
+  }
+
+  /**
+   * @param {*} iText
+   */
+  setTexture(iText) {
+    const _this = this;
+    if (this.currentTextureFile.video) {
+      this.currentTextureFile.video.pause();
+      this.currentTextureFile.video.currentTime = 0;
+      this.notifyValue = false;
+    }
+    this.currentTextureFile = this.texturesFiles[iText];
+    if (this.currentTextureFile.video) {
+      this.currentTextureFile.video.play();
+      this.notifyValue = true;
+    }
+
+    this.currentTexture = this.currentTextureFile.texture;
+    const app = this.app;
+    this.modifyPlane();
+    app.update3DView();
+  }
+
+  /**
+   *
+   */
+  initCBDrop() {
+    const _this = this;
+    const body = document.body;
+    body.addEventListener('drop', function (event) {
+      event.preventDefault();
+      if (!_this.plane) return;
+      _this.initDefaultTextureFile();
+      const files = Array.from(event.dataTransfer.files);
+
+      files.sort(function (a, b) {
+        return a.name.localeCompare(b.name);
+      });
+      for (let i = 0; i < files.length; i++) {
+        let file = files[i];
+        if (file) {
+          try {
+            const reader = new FileReader();
+
+            reader.onload = function (data) {
+              if (file.type.includes('image/')) {
+                const img = document.createElement('img');
+                img.src = data.target.result;
+
+                _this.texturesFiles.push({
+                  index: i + 1,
+                  name: file.name,
+                  texture: new THREE.TextureLoader().load(data.target.result),
+                  media: img,
+                });
+              } else if (file.type.includes('video/')) {
+                const video = document.createElement('video');
+                video.src = data.target.result;
+                video.autoplay = true;
+                video.muted = true;
+                video.loop = true;
+                video.load();
+
+                const videoTexture = new THREE.VideoTexture(video);
+                // Rotate the video texture with
+                // videoTexture.center.set(0.5, 0.5);
+                // videoTexture.rotation = Math.PI / 2;
+
+                _this.texturesFiles.push({
+                  index: i + 1,
+                  name: file.name,
+                  texture: videoTexture,
+                  video: video,
+                  media: video,
+                });
+              }
+            };
+
+            reader.readAsDataURL(file);
+          } catch (e) {
+            throw new Error(e);
+          }
+        }
+      }
+      _this.setTexture(0);
+    });
+
+    body.addEventListener(
+      'dragover',
+      function (event) {
+        event.preventDefault();
+      },
+      false
+    );
+  }
+
+  dispose() {
+    super.dispose();
+    // if (this.plane) this.plane.removeFromParent();
+    // inputManager.dispose();
   }
 }
