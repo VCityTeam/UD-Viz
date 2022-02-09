@@ -422,11 +422,16 @@ export class SlideShow extends Window {
       this.currentTextureFile.video.currentTime = 0;
       this.notifyValue = false;
     }
-    this.currentTextureFile = this.texturesFiles[iText];
-    if (this.currentTextureFile.video) {
-      this.currentTextureFile.video.play();
-      this.notifyValue = true;
-    }
+
+    this.texturesFiles.forEach(function (tf) {
+      if (tf.index == iText) {
+        _this.currentTextureFile = tf;
+        if (tf.video) {
+          tf.video.play();
+          _this.notifyValue = true;
+        }
+      }
+    });
 
     this.currentTexture = this.currentTextureFile.texture;
     const app = this.app;
