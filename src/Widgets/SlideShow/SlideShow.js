@@ -3,15 +3,20 @@
 //Components
 import { Window } from '../Components/GUI/js/Window';
 import * as THREE from 'three';
+import { AllWidget } from '../../Templates/Templates';
 
 export class SlideShow extends Window {
   constructor(app, inputManager) {
     super('slideShow', 'Slide Show', false);
+
+    /** @type {AllWidget} */
     this.app = app;
+    /** @type {itowns.Extent} */
     this.extent = app.extent;
+    /** @type {itowns.PlanarView} */
     this.view = app.view;
 
-    //content
+    //content html
     this.htmlSlideShow = null;
     //ids
     this.coordinatesInputVectorID = null;
@@ -24,24 +29,28 @@ export class SlideShow extends Window {
     this.rotationVector = new THREE.Vector3();
     this.sizeVector = new THREE.Vector2();
 
+    //list of callbacks to set when the window is created
     this.callbacksHTMLEl = [];
 
+    /** @type {THREE.Mesh} */
     this.plane = null;
 
+    //list of textures with data
     this.texturesFiles = null;
     this.currentTextureFile = null;
     this.iCurrentTexture = 0;
 
+    /** @type {bool} if true the application update its view3D eachFrame*/
     this.notifyValue = false;
 
     this.initDefaultTextureFile();
-
     this.currentTexture = null;
 
     this.initHtml();
     this.initInput(app, inputManager);
     this.initCBDrop();
     const _this = this;
+    /**A function call each frame by the browser */
     const tick = function () {
       requestAnimationFrame(tick);
       _this.notifyChangeEachFrame();
@@ -49,19 +58,36 @@ export class SlideShow extends Window {
     tick();
   }
 
+  notifyChangeEachFrame() {
+    if (this.notifyValue) {
+      this.app.update3DView();
+    }
+  }
+
+  // GETTERS
+
+  /**returns coordinates HTMLElements (inputs+labels) */
   get coordinatesInputVectorDOM() {
     return document.getElementById(this.coordinatesInputVectorID);
   }
+  /**return rotation HTMLElement (inputs+labels)*/
   get rotationInputVectorDOM() {
     return document.getElementById(this.rotationInputVectorID);
   }
+  /**return size HTMLElement (inputs+labels)*/
   get sizeInputVectorDOM() {
     return document.getElementById(this.sizeInputVectorID);
   }
+  /**return apspect ratio HTMLElement (checkbox)*/
   get aspectRatioCheckboxDOM() {
     return document.getElementById(this.aspectRatioCheckboxID);
   }
 
+  get innerContentHtml() {
+    return this.htmlSlideShow.outerHTML;
+  }
+
+  /**Create a default texture and fill the first texture file in this.texturesFiles */
   initDefaultTextureFile() {
     this.defaultTexture = new THREE.TextureLoader().load(
       '../assets/img/DefaultTexture.jpg'
@@ -85,12 +111,7 @@ export class SlideShow extends Window {
     this.currentTextureFile = this.texturesFiles[0];
   }
 
-  notifyChangeEachFrame() {
-    if (this.notifyValue) {
-      this.app.update3DView();
-    }
-  }
-
+  /**Create all HTMLElements and fill this.htmlSlideShow*/
   initHtml() {
     const htmlSlideShow = document.createElement('div');
     const coordinatesElement = this.createInputVector(
@@ -177,6 +198,7 @@ export class SlideShow extends Window {
     });
   }
 
+  /**Create 2 HTMLElements (title + inputVector) with labels list*/
   createInputVector(labels, vectorName, step = 0.5) {
     const titleVector = document.createElement('h3');
     titleVector.innerHTML = vectorName;
@@ -218,6 +240,7 @@ export class SlideShow extends Window {
     };
   }
 
+  /**function called when aspectRatio is checked*/
   matchRatio(iInput, value) {
     const linkedSizeElement =
       this.sizeInputVectorDOM.getElementsByTagName('input')[
@@ -232,6 +255,7 @@ export class SlideShow extends Window {
     linkedSizeElement.value = newValue;
   }
 
+  /**set vectors variables with the values in the inputs HTMLElement*/
   setVectors() {
     this.coordinatesVector =
       this.inputVectorToVector(this.coordinatesInputVectorDOM) ||
@@ -247,6 +271,7 @@ export class SlideShow extends Window {
     this.modifyPlane();
   }
 
+  /**convert inputVector HTMLElement to THREE.Vector*/
   inputVectorToVector(inputVector) {
     const inputEls = document
       .getElementById(inputVector.id)
@@ -275,6 +300,7 @@ export class SlideShow extends Window {
     return null;
   }
 
+  //SETTERS OF INPUTS ELEMENTS
   setSizeInputs(vec2) {
     const sizeInputEls = this.sizeInputVectorDOM.getElementsByTagName('input');
 
@@ -289,14 +315,6 @@ export class SlideShow extends Window {
       element1.value = vec2.y;
       element1.dispatchEvent(new Event('change'));
     }
-  }
-
-  getSizeInputsValue() {
-    const sizeInputEls = this.sizeInputVectorDOM.getElementsByTagName('input');
-    return {
-      height: parseInt(sizeInputEls[0].value),
-      width: parseInt(sizeInputEls[1].value),
-    };
   }
 
   setCoordinatesInputs(vec3) {
@@ -331,10 +349,16 @@ export class SlideShow extends Window {
     element2.dispatchEvent(new Event('change'));
   }
 
-  get innerContentHtml() {
-    return this.htmlSlideShow.outerHTML;
+  //GETTERS of inputs HTMLElements
+  getSizeInputsValue() {
+    const sizeInputEls = this.sizeInputVectorDOM.getElementsByTagName('input');
+    return {
+      height: parseInt(sizeInputEls[0].value),
+      width: parseInt(sizeInputEls[1].value),
+    };
   }
 
+  /**Create PlaneGeometry Mesh*/
   createPlane() {
     const geometry = new THREE.PlaneGeometry(1, 1);
 
@@ -346,6 +370,7 @@ export class SlideShow extends Window {
     this.plane = new THREE.Mesh(geometry, material);
   }
 
+  /**Modify this.plane @var {THREE.Mesh} */
   modifyPlane() {
     if (!this.plane) {
       this.createPlane();
@@ -372,6 +397,7 @@ export class SlideShow extends Window {
   /**
    * @param {AllWidget} app
    * @param {InputManager} iM
+   * Add event listeners to input
    */
   initInput(app, iM) {
     const _this = this;
@@ -414,6 +440,7 @@ export class SlideShow extends Window {
 
   /**
    * @param {*} iText
+   * Set this.currentTexture
    */
   setTexture(iText) {
     const _this = this;
@@ -439,9 +466,7 @@ export class SlideShow extends Window {
     app.update3DView();
   }
 
-  /**
-   *
-   */
+  /** Set the callback function of event 'drop' @warn !event.preventDefault! */
   initCBDrop() {
     const _this = this;
     const body = document.body;
@@ -521,11 +546,5 @@ export class SlideShow extends Window {
       },
       false
     );
-  }
-
-  dispose() {
-    super.dispose();
-    // if (this.plane) this.plane.removeFromParent();
-    // inputManager.dispose();
   }
 }
