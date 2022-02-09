@@ -3,11 +3,10 @@
 //Components
 import { Window } from '../Components/GUI/js/Window';
 import * as THREE from 'three';
-import { AllWidget } from '../../Templates/Templates';
 
 export class SlideShow extends Window {
   constructor(app, inputManager) {
-    super('slideShow', 'Slide Show', false);
+    super('slideShow', 'Slide Show 3D', false);
 
     /** @type {AllWidget} */
     this.app = app;
@@ -158,7 +157,7 @@ export class SlideShow extends Window {
         this.setCoordinatesInputs(
           new THREE.Vector3(extentCenter.x, extentCenter.y, 250)
         );
-        this.setRotationInputs(new THREE.Vector3());
+        this.setRotationInputs(new THREE.Vector3(0, 0, 0));
       },
     });
     htmlSlideShow.appendChild(matchExtentButton);
@@ -304,13 +303,13 @@ export class SlideShow extends Window {
   setSizeInputs(vec2) {
     const sizeInputEls = this.sizeInputVectorDOM.getElementsByTagName('input');
 
-    if (vec2.x) {
+    if (vec2.x !== null) {
       const element0 = sizeInputEls[0];
       element0.value = vec2.x;
       element0.dispatchEvent(new Event('change'));
     }
 
-    if (vec2.y) {
+    if (vec2.y !== null) {
       const element1 = sizeInputEls[1];
       element1.value = vec2.y;
       element1.dispatchEvent(new Event('change'));
@@ -321,32 +320,43 @@ export class SlideShow extends Window {
     const coordinatesInputEls =
       this.coordinatesInputVectorDOM.getElementsByTagName('input');
     const element0 = coordinatesInputEls[0];
-    element0.value = vec3.x || this.coordinatesVector.x;
-    element0.dispatchEvent(new Event('change'));
 
-    const element1 = coordinatesInputEls[1];
-    element1.value = vec3.y || this.coordinatesVector.y;
-    element1.dispatchEvent(new Event('change'));
+    if (vec3.x !== null) {
+      element0.value = vec3.x;
+      element0.dispatchEvent(new Event('change'));
+    }
+    if (vec3.y !== null) {
+      const element1 = coordinatesInputEls[1];
+      element1.value = vec3.y;
+      element1.dispatchEvent(new Event('change'));
+    }
 
-    const element2 = coordinatesInputEls[2];
-    element2.value = vec3.z || this.coordinatesVector.z;
-    element2.dispatchEvent(new Event('change'));
+    if (vec3.z !== null) {
+      const element2 = coordinatesInputEls[2];
+      element2.value = vec3.z || this.coordinatesVector.z;
+      element2.dispatchEvent(new Event('change'));
+    }
   }
 
   setRotationInputs(vec3) {
     const rotationInputEls =
       this.rotationInputVectorDOM.getElementsByTagName('input');
-    const element0 = rotationInputEls[0];
-    element0.value = vec3.x || this.rotationVector.x;
-    element0.dispatchEvent(new Event('change'));
 
-    const element1 = rotationInputEls[1];
-    element1.value = vec3.y || this.rotationVector.y;
-    element1.dispatchEvent(new Event('change'));
-
-    const element2 = rotationInputEls[2];
-    element2.value = vec3.z || this.rotationVector.z;
-    element2.dispatchEvent(new Event('change'));
+    if (vec3.x !== null) {
+      const element0 = rotationInputEls[0];
+      element0.value = vec3.x;
+      element0.dispatchEvent(new Event('change'));
+    }
+    if (vec3.y !== null) {
+      const element1 = rotationInputEls[1];
+      element1.value = vec3.y;
+      element1.dispatchEvent(new Event('change'));
+    }
+    if (vec3.z !== null) {
+      const element2 = rotationInputEls[2];
+      element2.value = vec3.z;
+      element2.dispatchEvent(new Event('change'));
+    }
   }
 
   //GETTERS of inputs HTMLElements
