@@ -17,6 +17,7 @@ export class SlideShow extends Window {
     this.coordinatesInputVectorID = null;
     this.rotationInputVectorID = null;
     this.sizeInputVectorID = null;
+    this.aspectRatioCheckboxID = null;
 
     //Vectors
     this.coordinatesVector = new THREE.Vector3();
@@ -57,6 +58,9 @@ export class SlideShow extends Window {
   get sizeInputVectorDOM() {
     return document.getElementById(this.sizeInputVectorID);
   }
+  get aspectRatioCheckboxDOM() {
+    return document.getElementById(this.aspectRatioCheckboxID);
+  }
 
   initDefaultTextureFile() {
     this.defaultTexture = new THREE.TextureLoader().load(
@@ -69,7 +73,12 @@ export class SlideShow extends Window {
         index: 0,
         name: 'First',
         texture: this.defaultTexture,
-        media: img,
+        getSize: function () {
+          return {
+            height: img.height,
+            width: img.width,
+          };
+        },
       },
     ];
     this.iCurrentText = 0;
@@ -139,11 +148,17 @@ export class SlideShow extends Window {
     this.callbacksHTMLEl.push({
       event: 'change',
       id: aspectRatioCheckbox.id,
-      cb: function (event) {},
+      cb: function (event) {
+        if (event.target.checked) {
+          const currentW = this.getSizeInputsValue().width;
+          const w =
+            currentW != 0 ? currentW : this.currentTextureFile.getSize().width;
+          this.setSizeInputs(new THREE.Vector2(null, w));
+        }
+      },
     });
-    this.getAspectRatioCheckbox = function () {
-      return document.getElementById(aspectRatioCheckbox.id);
-    };
+
+    this.aspectRatioCheckboxID = aspectRatioCheckbox.id;
     htmlSlideShow.appendChild(aspectRatioCheckbox);
 
     const labelAspectRatio = document.createElement('label');
@@ -187,7 +202,7 @@ export class SlideShow extends Window {
           const value = event.target.value;
           const element = event.target;
           element.setAttribute('value', value);
-          if (this.getAspectRatioCheckbox().checked)
+          if (this.aspectRatioCheckboxDOM.checked)
             if (vectorName.toLowerCase().includes('size'))
               this.matchRatio(iInput, value);
           this.setVectors();
@@ -209,8 +224,8 @@ export class SlideShow extends Window {
         iInput == 0 ? 1 : 0
       ];
 
-    const height = this.currentTextureFile.media.height;
-    const width = this.currentTextureFile.media.width;
+    const height = this.currentTextureFile.getSize().height;
+    const width = this.currentTextureFile.getSize().width;
     const ratio = width / height;
     const newValue = iInput == 0 ? value / ratio : value * ratio;
 
@@ -262,13 +277,26 @@ export class SlideShow extends Window {
 
   setSizeInputs(vec2) {
     const sizeInputEls = this.sizeInputVectorDOM.getElementsByTagName('input');
-    const element0 = sizeInputEls[0];
-    element0.value = vec2.x;
-    element0.dispatchEvent(new Event('change'));
 
-    const element1 = sizeInputEls[1];
-    element1.value = vec2.y;
-    element1.dispatchEvent(new Event('change'));
+    if (vec2.x) {
+      const element0 = sizeInputEls[0];
+      element0.value = vec2.x;
+      element0.dispatchEvent(new Event('change'));
+    }
+
+    if (vec2.y) {
+      const element1 = sizeInputEls[1];
+      element1.value = vec2.y;
+      element1.dispatchEvent(new Event('change'));
+    }
+  }
+
+  getSizeInputsValue() {
+    const sizeInputEls = this.sizeInputVectorDOM.getElementsByTagName('input');
+    return {
+      height: parseInt(sizeInputEls[0].value),
+      width: parseInt(sizeInputEls[1].value),
+    };
   }
 
   setCoordinatesInputs(vec3) {
@@ -366,6 +394,8 @@ export class SlideShow extends Window {
       );
       _this.setTexture(_this.iCurrentText);
 
+      _this.aspectRatioCheckboxDOM.dispatchEvent(new Event('change'));
+
       app.update3DView();
     });
     iM.addKeyInput('ArrowLeft', 'keydown', function () {
@@ -376,6 +406,7 @@ export class SlideShow extends Window {
         _this.texturesFiles.length - 1
       );
       _this.setTexture(_this.iCurrentText);
+      _this.aspectRatioCheckboxDOM.dispatchEvent(new Event('change'));
 
       app.update3DView();
     });
@@ -433,7 +464,12 @@ export class SlideShow extends Window {
                   index: i + 1,
                   name: file.name,
                   texture: new THREE.TextureLoader().load(data.target.result),
-                  media: img,
+                  getSize: function () {
+                    return {
+                      height: img.height,
+                      width: img.width,
+                    };
+                  },
                 });
               } else if (file.type.includes('video/')) {
                 const video = document.createElement('video');
@@ -453,7 +489,12 @@ export class SlideShow extends Window {
                   name: file.name,
                   texture: videoTexture,
                   video: video,
-                  media: video,
+                  getSize: function () {
+                    return {
+                      height: video.videoHeight,
+                      width: video.videoWidth,
+                    };
+                  },
                 });
               }
             };
@@ -465,6 +506,7 @@ export class SlideShow extends Window {
         }
       }
       _this.setTexture(0);
+      console.log(_this.texturesFiles);
     });
 
     body.addEventListener(
