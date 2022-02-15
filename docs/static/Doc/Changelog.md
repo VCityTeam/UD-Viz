@@ -1,3 +1,12 @@
+# v2.35.0
+
+    * Add a SlideShow Window
+    * Add SlideShow class and example
+    * Add verification elevation config
+    * Npm audit is now a travis job.
+    * Added a description of archived branch retrieval
+
+
 # v2.34.1
 
     * update gitignore
