@@ -1,18 +1,19 @@
 # UD-Viz : Urban Data Vizualisation
 [![CodeQL](https://github.com/VCityTeam/UD-Viz/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/VCityTeam/UD-Viz/actions/workflows/codeql-analysis.yml)
 [![Build status](https://travis-ci.com/VCityTeam/UD-Viz.svg?branch=master)](https://app.travis-ci.com/github/VCityTeam/UD-Viz)
+[![Documentation Status](https://readthedocs.org/projects/ansicolortags/badge/?version=latest)](http://vcityteam.github.io/UD-Viz/html/index.html)
 
 UD-Viz is a JavaScript library based on [iTowns](https://github.com/itowns/itowns), using [npm](https://www.npmjs.com/) and [published on the npm package repository](https://www.npmjs.com/package/ud-viz), allowing to visualize, analyse and interact with urban data.
 
 A tutorial of the game engine can be found [here](./Doc/Devel/LocalGameTutorial.md)
 
-### Pre-requisite
-Developing UD-Viz requires some knowledge about [JS](https://github.com/VCityTeam/UD-SV/blob/master/UD-Doc/Devel/ToolJavaScript.md), [node.js](https://en.wikipedia.org/wiki/Node.js), [npm](https://en.wikipedia.org/wiki/Npm_(software)) and [three.js](https://threejs.org/).
-
-### Install npm
+### Install node/npm
 For the npm installation refer [here](https://github.com/VCityTeam/UD-SV/blob/master/Tools/ToolNpm.md)
 
-Required npm version: UD-Viz has been reported to work with npm versions npm 6.X and npm 7.X.
+UD-Viz has been reported to work with versions:
+
+* node version 16 (16.13.2)
+* npm version: 6.X, 7.X. and 8.X
 
 ### Installing the UD-Viz library per se
 
@@ -22,7 +23,7 @@ cd UD-Viz
 npm install
 ```
 
-### Try examples 
+### Running the examples 
 
 ```bash
 cd PATH_TO_UD-Viz
@@ -37,14 +38,17 @@ node index.js PATH_TO_UD-Viz 8000
 * [UD-Viz-Template](https://github.com/VCityTeam/UD-Viz-Template) (demonstration) application,
 * online demos are [available here](https://projet.liris.cnrs.fr/vcity/demos/)
 
-### Documentation
-
-The documentation can be found [here](./docs/html/index.html)
-
-Refer to this [README](./docs/README.md) to generate it.
-
-
 ## Developers
+
+### Pre-requisite
+
+Developing UD-Viz requires some knowledge about [JS](https://github.com/VCityTeam/UD-SV/blob/master/UD-Doc/Devel/ToolJavaScript.md), [node.js](https://en.wikipedia.org/wiki/Node.js), [npm](https://en.wikipedia.org/wiki/Npm_(software)) and [three.js](https://threejs.org/).
+
+### Developers documentation
+
+The last generated documentation can be found [here](./docs/html/index.html)
+
+Refer to this [README](./docs/README.md) to re-generate it.
 
 ### Coding style
 

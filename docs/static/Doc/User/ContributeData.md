@@ -158,9 +158,13 @@ Options for the display :
 
 - Match Extent : Allows you to take the size of the extent of Itowns
 - Aspect Ratio: Allows you to keep the image / video ratio in the slide.
-- Press the 'h' key to hide the slide.
+- Press the **'h'** key to hide the slide.
 
-To add files to your slide you have to drag and drop the files in the window after opening the widget. Then you can navigate with the right and left arrow of your keyboard. NB : slide are order by files name.
+To add files to your slide you have to **drag and drop** the files in the window after opening the widget. Then you can navigate with the **right** and **left** arrow of your keyboard. NB : slide are order by files name.
+![2022-02-09_14h58_17](https://user-images.githubusercontent.com/34244904/153233727-1b4b3cf6-fca7-49a9-9cf1-4e9647b1c568.png)
+![2022-02-09_14h58_27](https://user-images.githubusercontent.com/34244904/153233735-4d28ed32-bdc2-4aff-bbf8-51cfe546589a.png)
+
+![widgetSS-min](https://user-images.githubusercontent.com/34244904/153233962-30d59fba-0ec8-4931-b187-6a9de86f6ed3.gif)
 
 ## Document validation process
 
