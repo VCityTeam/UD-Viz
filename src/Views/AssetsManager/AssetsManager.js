@@ -3,9 +3,9 @@
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import * as THREE from 'three';
 import * as jquery from 'jquery';
-import GameObject from '../../Shared/GameObject/GameObject';
+import GameObject from '../../Game/Shared/GameObject/GameObject';
 import { Howl } from 'howler';
-const THREEUtils = require('../../Shared/Components/THREEUtils');
+const THREEUtils = require('../../Game/Shared/Components/THREEUtils');
 
 /**
  * Default material used by native objects
@@ -342,9 +342,8 @@ export class AssetsManager {
 
     let loadingView = null;
     if (parentDiv) {
-      loadingView = document.createElement('div');
-      loadingView.classList.add('assetsLoadingView');
-      parentDiv.appendChild(loadingView);
+      loadingView = new LoadingView();
+      parentDiv.appendChild(loadingView.html());
     }
 
     //result
@@ -355,6 +354,9 @@ export class AssetsManager {
     this.buildNativeModel();
 
     if (config.renderData) {
+      const idLoadingRenderData = 'RenderData';
+      loadingView.addLoadingBar(idLoadingRenderData);
+
       const loader = new GLTFLoader();
       promises.push(
         new Promise((resolve, reject) => {
@@ -372,6 +374,13 @@ export class AssetsManager {
 
                 //check if finish
                 count++;
+
+                //update loading bar
+                loadingView.updateProgress(
+                  idLoadingRenderData,
+                  (100 * count) / Object.keys(config.renderData).length
+                );
+
                 if (count == Object.keys(config.renderData).length) {
                   console.log('objects loaded ', this.objects);
                   console.log('animations loaded ', this.animations);
@@ -394,6 +403,10 @@ export class AssetsManager {
     };
 
     if (config.worldScripts) {
+      
+      const idLoadingWorldScripts = 'WorldScripts';
+      loadingView.addLoadingBar(idLoadingWorldScripts);
+
       promises.push(
         new Promise((resolve, reject) => {
           let count = 0;
@@ -406,6 +419,12 @@ export class AssetsManager {
                 _this.worldScripts[idScript] = eval(scriptString);
                 //check if finish
                 count++;
+
+                loadingView.updateProgress(
+                  idLoadingWorldScripts,
+                  (100 * count) / Object.keys(config.worldScripts).length
+                );
+
                 if (count == Object.keys(config.worldScripts).length) {
                   console.log('World Scripts loaded ', _this.worldScripts);
                   resolve();
@@ -419,6 +438,10 @@ export class AssetsManager {
     }
 
     if (config.localScripts) {
+
+      const idLoadingLocalScripts = 'LocalScripts';
+      loadingView.addLoadingBar(idLoadingLocalScripts);
+
       promises.push(
         new Promise((resolve, reject) => {
           let count = 0;
@@ -431,6 +454,12 @@ export class AssetsManager {
                 _this.localScripts[idScript] = eval(scriptString);
                 //check if finish
                 count++;
+
+                loadingView.updateProgress(
+                  idLoadingLocalScripts,
+                  (100 * count) / Object.keys(config.localScripts).length
+                );
+
                 if (count == Object.keys(config.localScripts).length) {
                   console.log('Local Scripts loaded ', _this.localScripts);
                   resolve();
@@ -444,6 +473,10 @@ export class AssetsManager {
     }
 
     if (config.prefabs) {
+
+      const idLoadingPrefabs = 'Prefabs';
+      loadingView.addLoadingBar(idLoadingPrefabs);
+
       promises.push(
         new Promise((resolve, reject) => {
           let count = 0;
@@ -456,6 +489,12 @@ export class AssetsManager {
 
                 //check if finish
                 count++;
+
+                loadingView.updateProgress(
+                  idLoadingPrefabs,
+                  (100 * count) / Object.keys(config.prefabs).length
+                );
+
                 if (count == Object.keys(config.prefabs).length) {
                   console.log('prefabs loaded ', _this.prefabs);
                   resolve();
@@ -489,6 +528,10 @@ export class AssetsManager {
     }
 
     if (config.css) {
+
+      const idLoadingCss = 'Css';
+      loadingView.addLoadingBar(idLoadingCss);
+
       promises.push(
         new Promise((resolve, reject) => {
           let count = 0;
@@ -503,6 +546,12 @@ export class AssetsManager {
                 document.head.appendChild(styleSheet);
                 //check if finish
                 count++;
+
+                loadingView.updateProgress(
+                  idLoadingCss,
+                  (100 * count) / Object.keys(config.css).length
+                );
+
                 if (count == Object.keys(config.css).length) {
                   console.log('css loaded');
                   resolve();
@@ -518,10 +567,49 @@ export class AssetsManager {
     return new Promise((resolve, reject) => {
       Promise.all(promises).then(function () {
         if (loadingView) {
-          loadingView.remove();
+          loadingView.dispose();
         }
         resolve();
       });
     });
+  }
+}
+
+class LoadingView {
+  constructor() {
+    this.rootHtml = document.createElement('div');
+    this.rootHtml.classList.add('assetsLoadingView');
+
+    this.loadingBars = {};
+  }
+
+  html() {
+    return this.rootHtml;
+  }
+
+  dispose() {
+    this.rootHtml.remove();
+  }
+
+  updateProgress(id, percent) {
+    this.loadingBars[id].style.width = percent + '%';
+  }
+
+  addLoadingBar(id) {
+    const parent = document.createElement('div');
+    parent.classList.add('barBackground-Assets');
+
+    const progress = document.createElement('div');
+    progress.classList.add('progressBar-Assets');
+
+    parent.appendChild(progress);
+
+    const label = document.createElement('div');
+    label.innerHTML = id;
+    parent.appendChild(label);
+
+    this.loadingBars[id] = progress;
+
+    this.rootHtml.appendChild(parent);
   }
 }

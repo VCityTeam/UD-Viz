@@ -1,0 +1,18 @@
+/** @format */
+
+.assetsLoadingView {
+  background-color: brown;
+  width: 100%;
+  height: 100%;
+}
+
+.barBackground-Assets {
+  width: 100%;
+  background-color: grey;
+}
+
+.progressBar-Assets {
+  width: 1%;
+  height: 30px;
+  background-color: green;
+}

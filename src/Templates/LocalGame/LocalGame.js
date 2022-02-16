@@ -1,7 +1,7 @@
 /** @format */
 
 import * as Components from '../../Components/Components.js';
-import { AssetsManager } from '../../Game/Components/AssetsManager/AssetsManager';
+import { AssetsManager } from '../../Views/AssetsManager/AssetsManager';
 import * as Shared from '../../Game/Shared/Shared';
 import * as Views from '../../Views/Views';
 
