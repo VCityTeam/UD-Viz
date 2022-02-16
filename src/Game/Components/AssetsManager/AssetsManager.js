@@ -3,14 +3,16 @@
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import * as THREE from 'three';
 import * as jquery from 'jquery';
-import GameObject from '../Shared/GameObject/GameObject';
+import GameObject from '../../Shared/GameObject/GameObject';
 import { Howl } from 'howler';
-const THREEUtils = require('../Shared/Components/THREEUtils');
+const THREEUtils = require('../../Shared/Components/THREEUtils');
 
 /**
  * Default material used by native objects
  */
 const DEFAULT_MATERIAL = new THREE.MeshLambertMaterial({ color: 0x00ff00 });
+
+import './AssetsManager.css';
 
 /**
  * Give acess to all assets (image, video, script, worlds, ...)
@@ -335,40 +337,54 @@ export class AssetsManager {
    * @param {JSON} config config file
    * @returns {Array[Promises]} all the promises processed to load assets
    */
-  loadFromConfig(config = {}) {
+  loadFromConfig(config = {}, parentDiv) {
     this.conf = config;
+
+    let loadingView = null;
+    if (parentDiv) {
+      loadingView = document.createElement('div');
+      loadingView.classList.add('assetsLoadingView');
+      parentDiv.appendChild(loadingView);
+    }
+
+    //result
+    const promises = [];
 
     //load config file
     const _this = this;
-    const loader = new GLTFLoader();
     this.buildNativeModel();
 
-    const modelPromise = new Promise((resolve, reject) => {
-      let count = 0;
-      for (let idRenderData in config.renderData) {
-        const id = idRenderData;
-        const renderData = config.renderData[id];
-        loader.load(
-          renderData.path,
-          (data) => {
-            //parse
-            _this.parse(id, data.scene, renderData);
+    if (config.renderData) {
+      const loader = new GLTFLoader();
+      promises.push(
+        new Promise((resolve, reject) => {
+          let count = 0;
+          for (let idRenderData in config.renderData) {
+            const id = idRenderData;
+            const renderData = config.renderData[id];
+            loader.load(
+              renderData.path,
+              (data) => {
+                //parse
+                _this.parse(id, data.scene, renderData);
 
-            _this.animations[id] = data.animations;
+                _this.animations[id] = data.animations;
 
-            //check if finish
-            count++;
-            if (count == Object.keys(config.renderData).length) {
-              console.log('objects loaded ', this.objects);
-              console.log('animations loaded ', this.animations);
-              resolve();
-            }
-          },
-          null,
-          reject
-        );
-      }
-    });
+                //check if finish
+                count++;
+                if (count == Object.keys(config.renderData).length) {
+                  console.log('objects loaded ', this.objects);
+                  console.log('animations loaded ', this.animations);
+                  resolve();
+                }
+              },
+              null,
+              reject
+            );
+          }
+        })
+      );
+    }
 
     const toEvalCode = function (string) {
       const regexRequire = /^const.*=\W*\n*.*require.*;$/gm;
@@ -377,112 +393,135 @@ export class AssetsManager {
       return resultRequire.replace(regexType, '');
     };
 
-    const worldScriptsPromise = new Promise((resolve, reject) => {
-      let count = 0;
-      for (let idScript in config.worldScripts) {
-        const scriptPath = config.worldScripts[idScript].path;
-        jquery.get(
-          scriptPath,
-          function (scriptString) {
-            scriptString = toEvalCode(scriptString);
-            _this.worldScripts[idScript] = eval(scriptString);
-            //check if finish
-            count++;
-            if (count == Object.keys(config.worldScripts).length) {
-              console.log('World Scripts loaded ', _this.worldScripts);
-              resolve();
-            }
-          },
-          'text'
-        );
-      }
-    });
-    const localScriptsPromise = new Promise((resolve, reject) => {
-      let count = 0;
-      for (let idScript in config.localScripts) {
-        const scriptPath = config.localScripts[idScript].path;
-        jquery.get(
-          scriptPath,
-          function (scriptString) {
-            scriptString = toEvalCode(scriptString);
-            _this.localScripts[idScript] = eval(scriptString);
-            //check if finish
-            count++;
-            if (count == Object.keys(config.localScripts).length) {
-              console.log('Local Scripts loaded ', _this.localScripts);
-              resolve();
-            }
-          },
-          'text'
-        );
-      }
-    });
-    const prefabsPromise = new Promise((resolve, reject) => {
-      let count = 0;
-      for (let idPrefab in config.prefabs) {
-        const scriptPath = config.prefabs[idPrefab].path;
-        jquery.get(
-          scriptPath,
-          function (prefabstring) {
-            _this.prefabs[idPrefab] = JSON.parse(prefabstring);
+    if (config.worldScripts) {
+      promises.push(
+        new Promise((resolve, reject) => {
+          let count = 0;
+          for (let idScript in config.worldScripts) {
+            const scriptPath = config.worldScripts[idScript].path;
+            jquery.get(
+              scriptPath,
+              function (scriptString) {
+                scriptString = toEvalCode(scriptString);
+                _this.worldScripts[idScript] = eval(scriptString);
+                //check if finish
+                count++;
+                if (count == Object.keys(config.worldScripts).length) {
+                  console.log('World Scripts loaded ', _this.worldScripts);
+                  resolve();
+                }
+              },
+              'text'
+            );
+          }
+        })
+      );
+    }
 
-            //check if finish
-            count++;
-            if (count == Object.keys(config.prefabs).length) {
-              console.log('prefabs loaded ', _this.prefabs);
-              resolve();
-            }
-          },
-          'text'
-        );
-      }
-    });
-    const worldsPromise = new Promise((resolve, reject) => {
-      if (config.worlds) {
-        jquery.get(
-          config.worlds.path,
-          function (worldsString) {
-            _this.worldsJSON = JSON.parse(worldsString);
-            console.log('worlds loaded ', _this.worldsJSON);
+    if (config.localScripts) {
+      promises.push(
+        new Promise((resolve, reject) => {
+          let count = 0;
+          for (let idScript in config.localScripts) {
+            const scriptPath = config.localScripts[idScript].path;
+            jquery.get(
+              scriptPath,
+              function (scriptString) {
+                scriptString = toEvalCode(scriptString);
+                _this.localScripts[idScript] = eval(scriptString);
+                //check if finish
+                count++;
+                if (count == Object.keys(config.localScripts).length) {
+                  console.log('Local Scripts loaded ', _this.localScripts);
+                  resolve();
+                }
+              },
+              'text'
+            );
+          }
+        })
+      );
+    }
+
+    if (config.prefabs) {
+      promises.push(
+        new Promise((resolve, reject) => {
+          let count = 0;
+          for (let idPrefab in config.prefabs) {
+            const scriptPath = config.prefabs[idPrefab].path;
+            jquery.get(
+              scriptPath,
+              function (prefabstring) {
+                _this.prefabs[idPrefab] = JSON.parse(prefabstring);
+
+                //check if finish
+                count++;
+                if (count == Object.keys(config.prefabs).length) {
+                  console.log('prefabs loaded ', _this.prefabs);
+                  resolve();
+                }
+              },
+              'text'
+            );
+          }
+        })
+      );
+    }
+
+    if (config.worlds) {
+      promises.push(
+        new Promise((resolve, reject) => {
+          if (config.worlds) {
+            jquery.get(
+              config.worlds.path,
+              function (worldsString) {
+                _this.worldsJSON = JSON.parse(worldsString);
+                console.log('worlds loaded ', _this.worldsJSON);
+                resolve();
+              },
+              'text'
+            );
+          } else {
             resolve();
-          },
-          'text'
-        );
-      } else {
+          }
+        })
+      );
+    }
+
+    if (config.css) {
+      promises.push(
+        new Promise((resolve, reject) => {
+          let count = 0;
+          for (let idCss in config.css) {
+            const cssPath = config.css[idCss].path;
+            jquery.get(
+              cssPath,
+              function (cssString) {
+                const styleSheet = document.createElement('style');
+                styleSheet.type = 'text/css';
+                styleSheet.innerText = cssString;
+                document.head.appendChild(styleSheet);
+                //check if finish
+                count++;
+                if (count == Object.keys(config.css).length) {
+                  console.log('css loaded');
+                  resolve();
+                }
+              },
+              'text'
+            );
+          }
+        })
+      );
+    }
+
+    return new Promise((resolve, reject) => {
+      Promise.all(promises).then(function () {
+        if (loadingView) {
+          loadingView.remove();
+        }
         resolve();
-      }
+      });
     });
-    const cssPromise = new Promise((resolve, reject) => {
-      let count = 0;
-      for (let idCss in config.css) {
-        const cssPath = config.css[idCss].path;
-        jquery.get(
-          cssPath,
-          function (cssString) {
-            const styleSheet = document.createElement('style');
-            styleSheet.type = 'text/css';
-            styleSheet.innerText = cssString;
-            document.head.appendChild(styleSheet);
-            //check if finish
-            count++;
-            if (count == Object.keys(config.css).length) {
-              console.log('css loaded');
-              resolve();
-            }
-          },
-          'text'
-        );
-      }
-    });
-
-    const promises = [];
-    if (config.renderData) promises.push(modelPromise);
-    if (config.prefabs) promises.push(prefabsPromise);
-    if (config.worldScripts) promises.push(worldScriptsPromise);
-    if (config.localScripts) promises.push(localScriptsPromise);
-    if (config.worlds) promises.push(worldsPromise);
-    if (config.css) promises.push(cssPromise);
-
-    return Promise.all(promises);
   }
 }
