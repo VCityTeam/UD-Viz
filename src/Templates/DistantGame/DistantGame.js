@@ -61,40 +61,42 @@ export class DistantGame {
   }
 
   start(userData = {}, localScriptModules) {
-    this.reset(userData, localScriptModules);
+    return new Promise((resolve, reject) => {
+      this.reset(userData, localScriptModules);
 
-    const _this = this;
+      const _this = this;
 
-    // Register callbacks
-    this.webSocketService.on(
-      Constants.WEBSOCKET.MSG_TYPES.JOIN_WORLD,
-      (json) => {
-        if (!json) throw new Error('no data');
-        console.log('JOIN_WORLD ', json);
+      // Register callbacks
+      this.webSocketService.on(
+        Constants.WEBSOCKET.MSG_TYPES.JOIN_WORLD,
+        (json) => {
+          if (!json) throw new Error('no data');
+          console.log('JOIN_WORLD ', json);
 
-        const state = new WorldState(json.state);
+          const state = new WorldState(json.state);
 
-        if (_this.gameView.getLastState()) {
-          userData.firstGameView = false;
-          _this.start(userData, localScriptModules);
+          if (_this.gameView.getLastState()) {
+            userData.firstGameView = false;
+            _this.start(userData, localScriptModules);
+          }
+
+          _this.interpolator.onFirstState(state);
+          _this.gameView.writeUserData('avatarUUID', json.avatarUUID);
+          _this.gameView.start(state).then(resolve);
         }
+      );
 
-        _this.interpolator.onFirstState(state);
-        _this.gameView.writeUserData('avatarUUID', json.avatarUUID);
-        _this.gameView.start(state);
-      }
-    );
+      this.webSocketService.on(
+        Constants.WEBSOCKET.MSG_TYPES.WORLDSTATE_DIFF,
+        (diffJSON) => {
+          _this.interpolator.onNewDiff(new WorldStateDiff(diffJSON));
+        }
+      );
 
-    this.webSocketService.on(
-      Constants.WEBSOCKET.MSG_TYPES.WORLDSTATE_DIFF,
-      (diffJSON) => {
-        _this.interpolator.onNewDiff(new WorldStateDiff(diffJSON));
-      }
-    );
-
-    //app is loaded and ready to receive worldstate
-    this.webSocketService.emit(
-      Constants.WEBSOCKET.MSG_TYPES.READY_TO_RECEIVE_STATE
-    );
+      //app is loaded and ready to receive worldstate
+      this.webSocketService.emit(
+        Constants.WEBSOCKET.MSG_TYPES.READY_TO_RECEIVE_STATE
+      );
+    });
   }
 }
