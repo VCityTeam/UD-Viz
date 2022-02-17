@@ -45,41 +45,54 @@ export class LocalGame {
     return new Promise((resolve, reject) => {
       Components.SystemUtils.File.loadJSON(configPath).then(function (config) {
         const assetsManager = new AssetsManager();
-        const fps = config.game.fps;
-
-        assetsManager.loadFromConfig(config.assetsManager).then(function () {
-          const worldStateComputer = new Shared.WorldStateComputer(
-            assetsManager,
-            fps,
-            { udviz: udviz, Shared: Shared }
-          );
-
-          worldStateComputer.start(world);
-
-          //smooth rendering with delay
-          const interpolator = new WorldStateInterpolator(
-            { renderDelay: 50 },
-            worldStateComputer
-          );
-
-          _this.gameView = new Views.GameView({
-            htmlParent: options.htmlParent || document.body,
-            assetsManager: assetsManager,
-            interpolator: interpolator,
-            config: config,
-            itownsControls: false,
-            localScriptModules: options.localScriptModules,
-            userData: options.userData,
+        assetsManager
+          .loadFromConfig(
+            config.assetsManager,
+            options.htmlParent || document.body
+          )
+          .then(function () {
+            _this
+              .startWithAssetsLoaded(world, assetsManager, config, options)
+              .then(resolve);
           });
-
-          //start gameview tick
-          _this.gameView
-            .start(worldStateComputer.computeCurrentState())
-            .then(function () {
-              resolve();
-            });
-        });
       });
+    });
+  }
+
+  startWithAssetsLoaded(world, assetsManager, config, options = {}) {
+    return new Promise((resolve, reject) => {
+      const fps = config.game.fps;
+
+      const worldStateComputer = new Shared.WorldStateComputer(
+        assetsManager,
+        fps,
+        { udviz: udviz, Shared: Shared }
+      );
+
+      worldStateComputer.start(world);
+
+      //smooth rendering with delay
+      const interpolator = new WorldStateInterpolator(
+        { renderDelay: 50 },
+        worldStateComputer
+      );
+
+      this.gameView = new Views.GameView({
+        htmlParent: options.htmlParent || document.body,
+        assetsManager: assetsManager,
+        interpolator: interpolator,
+        config: config,
+        itownsControls: false,
+        localScriptModules: options.localScriptModules,
+        userData: options.userData,
+      });
+
+      //start gameview tick
+      this.gameView
+        .start(worldStateComputer.computeCurrentState())
+        .then(function () {
+          resolve();
+        });
     });
   }
 }
