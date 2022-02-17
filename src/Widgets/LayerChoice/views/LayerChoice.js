@@ -149,7 +149,7 @@ export class LayerChoice extends Window {
         for(let j = 0; j < tiles.length ; j++) {
           if (tiles[j].asAttributeInBatchTable('classe')) {
             let classe = tiles[j].batchTable.content.classe[tiles[j].cityObjects[0].batchId];  
-            htmlTiles += `<p><input type="checkbox" id="checkbox_${i}_${j}" ${tiles[j].getMesh().visible ? 'checked' : ''}>${classe}</input></p>`;
+            htmlTiles += `<p><input type="checkbox" id="checkbox_${i}_${j}" ${tiles[j].getMeshes().visible ? 'checked' : ''}>${classe}</input></p>`;
           }
         }
       }
