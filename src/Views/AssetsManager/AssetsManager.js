@@ -337,7 +337,7 @@ export class AssetsManager {
    * @param {JSON} config config file
    * @returns {Array[Promises]} all the promises processed to load assets
    */
-  loadFromConfig(config = {}, parentDiv) {
+  loadFromConfig(config = {}, parentDiv = document.body) {
     this.conf = config;
 
     let loadingView = null;
@@ -403,7 +403,6 @@ export class AssetsManager {
     };
 
     if (config.worldScripts) {
-      
       const idLoadingWorldScripts = 'WorldScripts';
       loadingView.addLoadingBar(idLoadingWorldScripts);
 
@@ -438,7 +437,6 @@ export class AssetsManager {
     }
 
     if (config.localScripts) {
-
       const idLoadingLocalScripts = 'LocalScripts';
       loadingView.addLoadingBar(idLoadingLocalScripts);
 
@@ -473,7 +471,6 @@ export class AssetsManager {
     }
 
     if (config.prefabs) {
-
       const idLoadingPrefabs = 'Prefabs';
       loadingView.addLoadingBar(idLoadingPrefabs);
 
@@ -528,7 +525,6 @@ export class AssetsManager {
     }
 
     if (config.css) {
-
       const idLoadingCss = 'Css';
       loadingView.addLoadingBar(idLoadingCss);
 
@@ -580,6 +576,12 @@ class LoadingView {
     this.rootHtml = document.createElement('div');
     this.rootHtml.classList.add('assetsLoadingView');
 
+    //image rotation
+    const faviconImg = document.createElement('img');
+    faviconImg.src = 'favicon.ico';
+    this.rootHtml.appendChild(faviconImg);
+
+    //loading bars
     this.loadingBars = {};
   }
 
@@ -606,6 +608,7 @@ class LoadingView {
 
     const label = document.createElement('div');
     label.innerHTML = id;
+    label.classList.add('labelBar-Assets');
     parent.appendChild(label);
 
     this.loadingBars[id] = progress;
