@@ -142,24 +142,10 @@ export class LayerChoice extends Window {
       let htmlTiles = '';
       if (tilesManager !== undefined) {
         tiles = tilesManager.getTilesWithGeom();
-        for (let j = 0; j < tiles.length; j++) {
-          if (tiles[j].asAttributeInBatchTable('group')) {
-            let group =
-              tiles[j].batchTable.content.group[
-                tiles[j].cityObjects[0].batchId
-              ];
-            htmlTiles += `<p><input type="checkbox" id="checkbox_${i}_${j}" ${
-              tiles[j].getMesh().visible ? 'checked' : ''
-            }>${group}</input></p>`;
-          }
-          else if (tiles[j].asAttributeInBatchTable('classe')) {
-            let classe =
-              tiles[j].batchTable.content.classe[
-                tiles[j].cityObjects[0].batchId
-              ];
-            htmlTiles += `<p><input type="checkbox" id="checkbox_${i}_${j}" ${
-              tiles[j].getMesh().visible ? 'checked' : ''
-            }>${classe}</input></p>`;
+        for(let j = 0; j < tiles.length ; j++) {
+          if (tiles[j].asAttributeInBatchTable('classe')) {
+            let classe = tiles[j].batchTable.content.classe[tiles[j].cityObjects[0].batchId];  
+            htmlTiles += `<p><input type="checkbox" id="checkbox_${i}_${j}" ${tiles[j].getMeshes().visible ? 'checked' : ''}>${classe}</input></p>`;
           }
         }
       }
