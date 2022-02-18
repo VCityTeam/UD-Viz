@@ -1,38 +1,29 @@
 /** @format */
 
 let udviz = null;
-const sharedType = require('ud-viz/src/Game/Shared/Shared');
-/** @type {sharedType} */
-let Shared;
+const gameType = require('ud-viz/src/Game/Game');
+/** @type {gameType} */
+let Game;
 
 module.exports = class Focus {
   constructor(conf, udvizBundle) {
     this.conf = conf;
     udviz = udvizBundle;
-    Shared = udviz.Game.Shared;
+    Game = udviz.Game;
   }
 
   init() {
     const gV = arguments[1].getGameView();
 
-    //start record button
-    const startRecord = document.createElement('button');
-    startRecord.innerHTML = 'Start record';
-
-    gV.appendToUI(startRecord);
-
-    const statesBuffer = [];
-
-    startRecord.onclick = function () {
-      console.log('start record');
-      gV.getInterpolator()
-        .getLocalComputer()
-        .addAfterTickRequester(function () {
-          statesBuffer.push(
-            gV.getInterpolator().getLocalComputer().computeCurrentState()
-          );
-        });
-    };
+    console.log('start record');
+    const record = [];
+    gV.getInterpolator()
+      .getLocalComputer()
+      .addAfterTickRequester(function () {
+        record.push(
+          gV.getInterpolator().getLocalComputer().computeCurrentState()
+        );
+      });
 
     const replayRecord = document.createElement('button');
     replayRecord.innerHTML = 'Replay record';
@@ -44,26 +35,18 @@ module.exports = class Focus {
 
       //stop current simulation
       gV.getInterpolator().stop();
-      
-      const interpolator = new  WorldStateInterpolator(
-        { renderDelay: 50 }
-      );
-
-      let index = 0;
-      if (!statesBuffer[index]) return;
-
-    //   const planNextState = function () {
-    //     gV.getInterpolator().onNewState(statesBuffer[index]);
-    //     if (statesBuffer[index + 1]) {
-    //       setTimeout(
-    //         planNextState,
-    //         statesBuffer[index + 1].timestamp - statesBuffer[index].timestamp
-    //       );
-    //       index += 1;
-    //     }
-    //   };
-    //   planNextState();
-    
+      //new interpolator
+      const interpolator = new Game.WorldStateInterpolator({ renderDelay: 50 });
+      //bind record
+      record.forEach(function (s, index) {
+        if (index) {
+          interpolator.onNewState(s);
+        } else {
+          interpolator.onFirstState(s);
+        }
+      });
+      //replace the old one in the gameview
+      gV.interpolator = interpolator;
     };
   }
 };
