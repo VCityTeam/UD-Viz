@@ -44,7 +44,7 @@ const WorldScriptModule = class WorldScript {
     const _this = this;
     this.idScripts.forEach(function (id) {
       const constructor = assetsManager.fetchWorldScript(id);
-      _this.scripts[id] = new constructor(_this.conf, bundles.Shared);
+      _this.scripts[id] = new constructor(_this.conf, bundles.Game);
     });
   }
 

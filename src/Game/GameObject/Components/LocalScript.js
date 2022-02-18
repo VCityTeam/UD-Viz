@@ -3,8 +3,6 @@
 const THREE = require('three');
 const JSONUtils = require('../../Components/JSONUtils');
 
-//TODO pass ud-viz as parameter to localscript and not only Shared
-
 /**
  * Component used to script a GameObject during the client side update (call from GameView)
  */

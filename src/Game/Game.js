@@ -1,6 +1,6 @@
 /** @format */
 
-/** @format */
+const commonJsComponents = require("./Components/Components");
 
 const commonJsCommand = require('./Command');
 
@@ -29,6 +29,7 @@ const THREE = require('three');
 const proj4 = require('proj4');
 
 module.exports = {
+  Components: commonJsComponents,
   Command: commonJsCommand,
   GameObject: commonJsGameObject,
   Render: commonJsRender,

@@ -5,7 +5,6 @@ import { AssetsManager } from '../../../Views/AssetsManager/AssetsManager';
 import * as Game from '../../../Game/Game';
 import * as Views from '../../../Views/Views';
 import * as udviz from '../../../index';
-import { WorldStateInterpolator } from '../../../Game/WorldStateInterpolator';
 
 /**
  * A Class contaning method to easily instanciate a local game based on the ud-viz game engine
@@ -71,7 +70,7 @@ export class LocalGame {
       worldStateComputer.start(world);
 
       //smooth rendering with delay
-      const interpolator = new WorldStateInterpolator(
+      const interpolator = new Game.WorldStateInterpolator(
         { renderDelay: 50 },
         worldStateComputer
       );
