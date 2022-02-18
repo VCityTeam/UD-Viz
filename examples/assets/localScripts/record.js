@@ -36,7 +36,7 @@ module.exports = class Focus {
       //stop current simulation
       gV.getInterpolator().stop();
       //new interpolator
-      const interpolator = new Game.WorldStateInterpolator({ renderDelay: 50 });
+      const interpolator = new Game.WorldStateInterpolator();
       //bind record
       record.forEach(function (s, index) {
         if (index) {
