@@ -582,10 +582,10 @@ class LoadingView {
     this.rootHtml = document.createElement('div');
     this.rootHtml.classList.add('assetsLoadingView');
 
-    //image rotation
-    const faviconImg = document.createElement('img');
-    faviconImg.src = 'favicon.ico';
-    this.rootHtml.appendChild(faviconImg);
+    const label = document.createElement('div');
+    label.classList.add('loadingLabel_Assets');
+    label.innerHTML = 'ud-viz';
+    this.rootHtml.appendChild(label);
 
     //loading bars
     this.loadingBars = {};
