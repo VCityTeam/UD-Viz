@@ -1,6 +1,6 @@
 /** @format */
 
-import { WorldStateInterpolator } from '../../../Game/WorldStateInterpolator';
+import WorldStateInterpolator from '../../../Game/WorldStateInterpolator';
 import Constants from '../../../Game/Components/Constants';
 import { WorldState, WorldStateDiff } from '../../../Game/Game';
 import { GameView } from '../../../Views/Views';

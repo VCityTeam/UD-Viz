@@ -87,7 +87,7 @@ Still nothing displayed but the library is now globally accessible.
 
 ```html
 <script type="text/javascript">
-  const myWorld = new udv.Game.Shared.World({
+  const myWorld = new udv.Game.World({
     name: 'My World',
     origin: { lat: 45.7530993, lng: 4.8452654, alt: 300 },
     gameObject: {
@@ -646,7 +646,7 @@ Okay everything is setup to play a sound !
 ```js
 update() {
   const go = arguments[0];
-  const s = go.getComponent(udviz.Game.Shared.Audio.TYPE).getSounds()[
+  const s = go.getComponent(udviz.Game.Audio.TYPE).getSounds()[
     'ballon_pop'
   ];
   s.play();
