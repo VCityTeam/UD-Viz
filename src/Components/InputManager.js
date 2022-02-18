@@ -170,7 +170,9 @@ export class InputManager {
     this.initPointerLock();
   }
 
-  //register pointerLock management
+  /**
+   * register pointerLock management
+   */
   initPointerLock() {
     this.element.requestPointerLock =
       this.element.requestPointerLock || this.element.mozRequestPointerLock;
@@ -201,10 +203,18 @@ export class InputManager {
     if (!value) document.exitPointerLock(); //exit since this not require a gesture
   }
 
+  /**
+   * return true if pointerLock is enabled or not
+   * @returns {Boolean}
+   */
   getPointerLock() {
     return this.pointerLock;
   }
 
+  /**
+   * identify the listener to remove with its callback and remove it of the listening web api
+   * @param {Object} listener 
+   */
   removeInputListener(listener) {
     for (let index = 0; index < this.listeners.length; index++) {
       const o = this.listeners[index];

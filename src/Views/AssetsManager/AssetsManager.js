@@ -335,12 +335,15 @@ export class AssetsManager {
   /**
    * Load from a server assets described in a config file
    * @param {JSON} config config file
+   * @param {Html} parentDiv where to add the loadingView
    * @returns {Array[Promises]} all the promises processed to load assets
    */
   loadFromConfig(config = {}, parentDiv = document.body) {
     this.conf = config;
 
+    /**@type {LoadingView} */
     let loadingView = null;
+
     if (parentDiv) {
       loadingView = new LoadingView();
       parentDiv.appendChild(loadingView.html());
@@ -571,6 +574,9 @@ export class AssetsManager {
   }
 }
 
+/**
+ * A view in which loading bar can be added
+ */
 class LoadingView {
   constructor() {
     this.rootHtml = document.createElement('div');
@@ -585,18 +591,34 @@ class LoadingView {
     this.loadingBars = {};
   }
 
+  /**
+   *
+   * @returns {Html} the element root html of this view
+   */
   html() {
     return this.rootHtml;
   }
 
+  /**
+   * dispose this view
+   */
   dispose() {
     this.rootHtml.remove();
   }
 
+  /**
+   * update the progress bar of the loading bar with an id
+   * @param {String} id of the loading bar
+   * @param {Number} percent the new percent of the bar
+   */
   updateProgress(id, percent) {
     this.loadingBars[id].style.width = percent + '%';
   }
 
+  /**
+   * add a loading bar to this view with a label equals to the id
+   * @param {String} id if of the loading bar to add
+   */
   addLoadingBar(id) {
     const parent = document.createElement('div');
     parent.classList.add('barBackground-Assets');
