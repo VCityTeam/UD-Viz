@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import THREEUtils from '../../Game/Shared/Components/THREEUtils';
+import THREEUtils from '../../Game/Components/THREEUtils';
 import { CSS3DObject } from 'three/examples/jsm/renderers/CSS3DRenderer';
 import { Color } from 'three';
 

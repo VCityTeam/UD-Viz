@@ -3,9 +3,9 @@
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import * as THREE from 'three';
 import * as jquery from 'jquery';
-import GameObject from '../../Game/Shared/GameObject/GameObject';
+import GameObject from '../../Game/GameObject/GameObject';
 import { Howl } from 'howler';
-const THREEUtils = require('../../Game/Shared/Components/THREEUtils');
+const THREEUtils = require('../../Game/Components/THREEUtils');
 
 /**
  * Default material used by native objects

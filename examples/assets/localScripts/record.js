@@ -42,23 +42,28 @@ module.exports = class Focus {
     replayRecord.onclick = function () {
       console.log('replay record');
 
-      gV.getInterpolator().getLocalComputer().resetAfterTickRequester();
-      gV.getInterpolator().states.length = 0;
+      //stop current simulation
+      gV.getInterpolator().stop();
+      
+      const interpolator = new  WorldStateInterpolator(
+        { renderDelay: 50 }
+      );
 
       let index = 0;
       if (!statesBuffer[index]) return;
 
-      const planNextState = function () {
-        gV.getInterpolator().onNewState(statesBuffer[index]);
-        if (statesBuffer[index + 1]) {
-          setTimeout(
-            planNextState,
-            statesBuffer[index + 1].timestamp - statesBuffer[index].timestamp
-          );
-          index += 1;
-        }
-      };
-      planNextState();
+    //   const planNextState = function () {
+    //     gV.getInterpolator().onNewState(statesBuffer[index]);
+    //     if (statesBuffer[index + 1]) {
+    //       setTimeout(
+    //         planNextState,
+    //         statesBuffer[index + 1].timestamp - statesBuffer[index].timestamp
+    //       );
+    //       index += 1;
+    //     }
+    //   };
+    //   planNextState();
+    
     };
   }
 };

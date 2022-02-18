@@ -1,12 +1,12 @@
 /** @format */
-import WorldState from '../../Game/Shared/WorldState';
+const WorldState = require('./WorldState');
 
 /**
  * StateComputer working with a distant server
  * Interpolate states received by server
  * Same system as described here (https://victorzhou.com/blog/build-an-io-game-part-1/#7-client-state)
  */
-export class WorldStateInterpolator {
+module.exports = class WorldStateInterpolator {
   constructor(config, localComputer) {
     this.config = config;
 
@@ -200,4 +200,4 @@ export class WorldStateInterpolator {
     result.push(this.computeCurrentState());
     return result;
   }
-}
+};

@@ -1,10 +1,9 @@
 /** @format */
 
-import { WorldStateInterpolator } from './WorldStateInterpolator';
-import Constants from '../../Game/Shared/Components/Constants';
-import { WorldState, WorldStateDiff } from '../../Game/Shared/Shared';
-import { GameView } from '../../Views/Views';
-import { LocalGame } from '../Templates';
+import { WorldStateInterpolator } from '../../../Game/WorldStateInterpolator';
+import Constants from '../../../Game/Components/Constants';
+import { WorldState, WorldStateDiff } from '../../../Game/Game';
+import { GameView } from '../../../Views/Views';
 
 export class DistantGame {
   constructor(webSocketService, assetsManager, config) {
