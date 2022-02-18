@@ -14,7 +14,6 @@ const commonJsCollider = require('./GameObject/Components/Collider');
 
 const commonJsLocalScript = require('./GameObject/Components/LocalScript');
 
-
 const commonJsWorld = require('./World');
 
 const commonJsWorldState = require('./WorldState');
