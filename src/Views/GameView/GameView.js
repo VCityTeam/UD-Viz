@@ -510,6 +510,10 @@ export class GameView extends View3D {
   getInterpolator() {
     return this.interpolator;
   }
+
+  setInterpolator(i) {
+    this.interpolator = i;
+  }
 }
 
 /**

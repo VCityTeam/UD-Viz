@@ -46,7 +46,7 @@ module.exports = class Focus {
         }
       });
       //replace the old one in the gameview
-      gV.interpolator = interpolator;
+      gV.setInterpolator(interpolator);
     };
   }
 };
