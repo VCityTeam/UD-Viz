@@ -47,6 +47,13 @@ export class TilesManager extends EventSender {
     this.loadedTileCount = 0;
 
     /**
+     * The color used for tiles default style.
+     * 
+     * @type {number}
+     */
+    this.color = null;
+
+    /**
      * The set of tile wrappers that have been loaded.
      * 
      * @type {Array<Tile>}
@@ -90,6 +97,13 @@ export class TilesManager extends EventSender {
      * @type {Object.<number, string>}
      */
     this.upToDateTileIds = {};
+
+    /**
+     * Set to true if the tileset has an unique default color
+     * 
+     * @type {boolean}
+     */
+    this.hasDefaultColor = false;
   }
 
   loadTile(tile) {
@@ -97,17 +111,28 @@ export class TilesManager extends EventSender {
     // TODO: this should be managed with an event: when the tileset is
     //  loaded (i.e. tileIndex filled), then totalTileCount should be set.
     this.totalTileCount = this.layer.tileset.tiles.length;
+
+    // Set the style for the whole tileset
+    if (this.color !== null && !this.styleManager.isStyleRegistered('default')) {
+      this.registerStyle('default', {
+        materialProps: { opacity: 1, color: this.color },
+      });
+      this.hasDefaultColor = true;
+    }
+
     // Verifies that the tile has not been already added (might be removed
     // when tile unloading will be managed)
     if (this.tiles[tile.tileId] === undefined) {
       this.tiles[tile.tileId] = new Tile(this.layer, tile.tileId);
-      this.tiles[tile.tileId].loadCityObjects();
+      this.tiles[tile.tileId].loadCityObjects(this);
       this.loadedTileCount += 1;
     }
     // Callback when a tile is loaded.
     // TODO: Les tuiles d'iTowns devraient etre rendues invisibles plutot
     //  que d'etre déchargées et rechargées. A ce moment là, ce callback
     //  pourra etre dans le if ci dessus
+    this.setDefaultStyle();
+    this.applyStyles();
     this.sendEvent(TilesManager.EVENT_TILE_LOADED, tile);
   }
 
@@ -231,6 +256,21 @@ export class TilesManager extends EventSender {
     if(this.tiles[tileId]){
       for(let i in this.tiles[tileId].cityObjects){
         this.setStyle(this.tiles[tileId].cityObjects[i].cityObjectId,style);
+      }
+    }
+  }
+
+  /**
+   * Sets the style of a particular tile.
+   * 
+   * @param {Int} tileId The tile
+   * identifier.
+   */
+  setDefaultStyleToTile(tileId) {
+    if(this.tiles[tileId]){
+      for(let i in this.tiles[tileId].cityObjects){
+        let cityObject = this.tiles[tileId].cityObjects[i];
+        this.setStyle(cityObject.cityObjectId, cityObject.defaultStyleId);
       }
     }
   }
@@ -389,6 +429,20 @@ export class TilesManager extends EventSender {
         updateFunction();
       }
     }
+  }
+
+  /**
+   * Apply the default style to the whole tileset
+   */
+  setDefaultStyle() {
+    if (this.color === null) {
+      for (let tile of this.tiles) {
+        if (tile !== undefined) {
+          this.setDefaultStyleToTile(tile.tileId);
+        }
+      }
+    }
+    else this.setStyleToTileset('default');
   }
 
   /**

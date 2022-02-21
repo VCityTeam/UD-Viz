@@ -304,15 +304,17 @@ export class StyleManager {
    * @param {Tile} tile The tile.
    */
   applyToTile(tile) {
-    if (this.styleTable[tile.tileId] !== undefined) {
+    if (this.styleTable[tile.tileId]) {
       let materials = this.tileBufferedMaterials[tile.tileId] || [];
       let ranges = [];
       for (let batchId of Object.keys(this.styleTable[tile.tileId])) {
         let styleIdentifier = this.styleTable[tile.tileId][batchId];
         let style = this.getStyle(styleIdentifier);
         let cityObject = tile.cityObjects[Number(batchId)];
+        let meshId = cityObject.meshId;
 
-        ranges.push({
+        if (!ranges[meshId]) ranges[meshId] = [];
+        ranges[meshId].push({
           start: cityObject.indexStart,
           count: cityObject.indexCount,
           material: style._bufferedMaterialIndex[tile.tileId]
@@ -322,7 +324,7 @@ export class StyleManager {
       createTileGroups(tile.getObject3D(), materials, ranges);
     } else {
       // Clear the tile
-      createTileGroups(tile.getMesh(), [], []);
+      createTileGroups(tile.getObject3D(), [], []);
     }
   }
 

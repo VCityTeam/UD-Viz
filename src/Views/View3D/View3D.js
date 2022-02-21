@@ -70,6 +70,9 @@ export class View3D {
     //pause
     this.isRendering = true;
 
+    //size of the view
+    this.size = new THREE.Vector2();
+
     //flag
     this.disposed = false;
 
@@ -318,7 +321,7 @@ export class View3D {
 
     //dynamic near far computation
     this.itownsView.addFrameRequester(
-      itowns.MAIN_LOOP_EVENTS.BEFORE_RENDER, //TODO another event (On camera change ?) 
+      itowns.MAIN_LOOP_EVENTS.BEFORE_RENDER, //TODO another event (On camera change ?)
       this.computeNearFarCamera.bind(this)
     );
   }
@@ -547,7 +550,13 @@ export class View3D {
       color = parseInt(layer['color']);
     }
     $3DTilesManager.registerStyle('default', {
-      materialProps: { opacity: 1, color: color, fog: false },
+      materialProps: {
+        opacity: 1,
+        color: color,
+        side: THREE.DoubleSide,
+        shadowSide: THREE.DoubleSide,
+        fog: true,
+      },
     });
 
     $3DTilesManager.addEventListener(
@@ -567,6 +576,10 @@ export class View3D {
     return this.layerManager;
   }
 
+  getSize() {
+    return this.size;
+  }
+
   /**
    * Callback call on the resize event
    */
@@ -576,14 +589,15 @@ export class View3D {
     let offsetTop = parseInt(this.rootWebGL.style.top);
     if (isNaN(offsetTop)) offsetTop = 0;
 
-    const w = window.innerWidth - offsetLeft;
-    const h = window.innerHeight - offsetTop;
+    this.size.x = window.innerWidth - offsetLeft;
+    this.size.y = window.innerHeight - offsetTop;
 
-    this.camera.aspect = w / h;
+    this.camera.aspect = this.size.x / this.size.y;
     this.camera.updateProjectionMatrix();
-    this.renderer.setSize(w, h);
+    this.renderer.setSize(this.size.x, this.size.y);
 
-    if (this.css3DRenderer) this.css3DRenderer.setSize(w, h);
+    if (this.css3DRenderer)
+      this.css3DRenderer.setSize(this.size.x, this.size.y);
   }
 
   /**

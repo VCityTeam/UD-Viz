@@ -7,7 +7,7 @@ import * as itowns from 'itowns';
 
 import LocalScript from '../../Game/Shared/GameObject/Components/LocalScript';
 import { View3D } from '../View3D/View3D';
-import { Audio } from '../../Game/Shared/Shared';
+import { Audio, Render } from '../../Game/Shared/Shared';
 
 const udvShared = require('../../Game/Shared/Shared');
 const THREEUtils = udvShared.Components.THREEUtils;
@@ -51,14 +51,23 @@ export class GameView extends View3D {
     //Current GameObject UUID in the last state
     this.currentUUID = {};
 
-    //TODO move in View3D
+    //TODO move requesters in View3D
     //Array of callbacks call during the tick
     this.tickRequesters = [];
-
+    this.resizeRequesters = [];
     this.onNewGORequesters = [];
 
     //userData
     this.userData = params.userData || {};
+  }
+
+  onResize() {
+    super.onResize();
+
+    const ctx = this.localContext;
+    this.resizeRequesters.forEach(function (cb) {
+      cb(ctx);
+    });
   }
 
   getUserData(key) {
@@ -102,6 +111,11 @@ export class GameView extends View3D {
     this.tickRequesters.push(cb);
   }
 
+  //allow user to plug a cb when resize method is called
+  addResizeRequester(cb) {
+    this.resizeRequesters.push(cb);
+  }
+
   addOnNewGORequester(cb) {
     this.onNewGORequesters.push(cb);
   }
@@ -114,98 +128,107 @@ export class GameView extends View3D {
   start(state = this.interpolator.computeCurrentState()) {
     if (!state) throw new Error('no state');
 
-    //build itowns view
-    const o = state.getOrigin();
-    const r = this.config.game.radiusExtent;
-    if (o) {
-      const [x, y] = proj4.default(this.projection).forward([o.lng, o.lat]);
-      // Define geographic extent: CRS, min/max X, min/max Y
-      const extent = new itowns.Extent(
-        this.projection,
-        x - r,
-        x + r,
-        y - r,
-        y + r
-      );
-      this.initItownsView(extent);
+    return new Promise((resolve, reject) => {
+      //build itowns view
+      const o = state.getOrigin();
+      const r = this.config.game.radiusExtent;
+      if (o) {
+        const [x, y] = proj4.default(this.projection).forward([o.lng, o.lat]);
+        // Define geographic extent: CRS, min/max X, min/max Y
+        const extent = new itowns.Extent(
+          this.projection,
+          x - r,
+          x + r,
+          y - r,
+          y + r
+        );
+        this.initItownsView(extent);
 
-      //TODO disable itons rendering
-      this.itownsView.render = function () {
-        //empty
-      };
-    } else {
-      //no origin means no itowns view fill attr
-      this.scene = new THREE.Scene();
-      const canvas = document.createElement('canvas');
-      this.rootWebGL.appendChild(canvas);
-      this.renderer = new THREE.WebGLRenderer({
-        canvas: canvas,
-        antialias: true,
-        logarithmicDepthBuffer: true,
-      });
-      this.camera = new THREE.PerspectiveCamera(60, 1, 1, 1000); //default params
-      this.scene.add(this.camera);
-
-      //fill custom extent
-      this.extent = {
-        north: r,
-        west: -r,
-        south: -r,
-        east: r,
-        center: function () {
-          return new THREE.Vector2();
-        },
-      };
-    }
-
-    //start listening
-    this.inputManager.startListening(this.rootWebGL);
-
-    //init scene
-    this.initScene(state);
-
-    //start to tick
-    const _this = this;
-    const fps = this.config.game.fps;
-
-    let now;
-    let then = Date.now();
-    let delta;
-    const tick = function () {
-      if (_this.disposed) return; //stop requesting frame if disposed
-
-      requestAnimationFrame(tick);
-
-      now = Date.now();
-      delta = now - then;
-
-      if (delta > 1000 / fps) {
-        // update time stuffs
-        then = now - (delta % 1000) / fps;
-
-        //set dt
-        _this.localContext.setDt(delta);
-
-        //call tick requester
-        _this.tickRequesters.forEach(function (cb) {
-          cb(_this.localContext);
+        //TODO disable itons rendering
+        this.itownsView.render = function () {
+          //empty
+        };
+      } else {
+        //no origin means no itowns view fill attr
+        this.scene = new THREE.Scene();
+        const canvas = document.createElement('canvas');
+        this.rootWebGL.appendChild(canvas);
+        this.renderer = new THREE.WebGLRenderer({
+          canvas: canvas,
+          antialias: true,
+          logarithmicDepthBuffer: true,
         });
+        this.camera = new THREE.PerspectiveCamera(60, 1, 1, 1000); //default params
+        this.scene.add(this.camera);
 
-        //update Gameview
-        _this.update(_this.interpolator.computeCurrentStates());
-
-        //render
-        if (_this.isRendering) {
-          _this.computeNearFarCamera();
-          _this.renderer.clearColor();
-          _this.renderer.render(_this.scene, _this.getCamera());
-        }
+        //fill custom extent
+        this.extent = {
+          north: r,
+          west: -r,
+          south: -r,
+          east: r,
+          center: function () {
+            return new THREE.Vector2();
+          },
+        };
       }
-    };
-    tick();
 
-    //differed a resize event
-    setTimeout(this.onResize.bind(this), 100);
+      //start listening
+      this.inputManager.startListening(this.rootWebGL);
+
+      //init scene
+      this.initScene(state);
+
+      //start to tick
+      const fps = this.config.game.fps;
+
+      let now;
+      let then = Date.now();
+      let delta;
+      const _this = this;
+      const tick = function () {
+        if (_this.disposed) return; //stop requesting frame if disposed
+
+        requestAnimationFrame(tick);
+
+        now = Date.now();
+        delta = now - then;
+
+        if (delta > 1000 / fps) {
+          // update time stuffs
+          then = now - (delta % 1000) / fps;
+
+          //set dt
+          _this.localContext.setDt(delta);
+
+          //call tick requester
+          _this.tickRequesters.forEach(function (cb) {
+            cb(_this.localContext);
+          });
+
+          //update Gameview
+          _this.update(_this.interpolator.computeCurrentStates());
+
+          //render
+          if (_this.isRendering) {
+            //This notably charge missing iTowns tiles according to current view.
+            const iV = _this.itownsView;
+            if (iV) iV.notifyChange(_this.getCamera());
+
+            //adjust camera params
+            _this.computeNearFarCamera();
+            _this.render();
+          }
+        }
+      };
+      tick();
+
+      //differed a resize event
+      setTimeout(function () {
+        _this.onResize();
+        resolve();
+      }, 100);
+    });
   }
 
   /**
@@ -399,10 +422,8 @@ export class GameView extends View3D {
     //rebuild object
     this.object3D.children.length = 0;
     this.object3D.add(go.computeObject3D());
-
     //update matrix
-    const scene = this.getScene();
-    scene.updateMatrixWorld();
+    this.scene.updateMatrixWorld();
 
     //update shadow
     if (newGO.length) {
@@ -413,7 +434,6 @@ export class GameView extends View3D {
         this.object3D,
         this.directionalLight
       );
-
       this.onNewGORequesters.forEach(function (cb) {
         cb(ctx, newGO);
       });
@@ -433,8 +453,23 @@ export class GameView extends View3D {
         const cameraMatWorldInverse = camera.matrixWorldInverse;
         if (audioComp)
           audioComp.tick(cameraMatWorldInverse, _this.getObject3D().position);
+
+        //render component
+        const renderComp = child.getComponent(Render.TYPE);
+        if (renderComp) renderComp.tick(ctx);
       });
     }
+  }
+
+  //allow user to set a custom render pass
+  setRender(f) {
+    this.render = f;
+  }
+
+  render() {
+    //render
+    this.renderer.clearColor();
+    this.renderer.render(this.scene, this.getCamera());
   }
 
   /**
