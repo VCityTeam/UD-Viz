@@ -13,7 +13,7 @@ const BLANK_MATERIAL = new THREE.MeshBasicMaterial({
 export class Billboard {
   constructor(html, transform = new THREEUtils.Transform(), resolution = 1) {
     this.uuid = THREE.MathUtils.generateUUID();
-
+    debugger
     this.html = html;
     this.html.style.width = resolution * transform.scale.x + 'px';
     this.html.style.height = resolution * transform.scale.y + 'px';
