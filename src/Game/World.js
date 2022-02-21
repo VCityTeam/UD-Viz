@@ -10,7 +10,7 @@ const ColliderComponent = require('./GameObject/Components/Collider');
 const THREE = require('three');
 const WorldState = require('./WorldState');
 const { Collisions } = require('detect-collisions');
-const udvizVersion = require('../../../package.json').version;
+const udvizVersion = require('../../package.json').version;
 const JSONUtils = require('./Components/JSONUtils');
 
 /**

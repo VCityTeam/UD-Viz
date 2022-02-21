@@ -27,20 +27,7 @@
   font-size: smaller;
 }
 
-/* @keyframes Rotate {
-  from {
-    transform: rotate(0deg);
-  }
-
-  to {
-    transform: rotate(360deg);
-  }
+.loadingLabel_Assets {
+  font-size: 5em;
+  color: #049ef4;
 }
-
-.loadingImg_Assets {
-  width: 200px;
-  height: 200px;
-  animation-duration: 3s;
-  animation-name: Rotate;
-  animation-iteration-count: infinite;
-} */

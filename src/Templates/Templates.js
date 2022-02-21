@@ -1,7 +1,7 @@
 /** @format */
-import { LocalGame } from './LocalGame/LocalGame';
+import { LocalGame } from './Game/LocalGame/LocalGame';
 export { LocalGame };
-export { DistantGame } from './DistantGame/DistantGame';
+export { DistantGame } from './Game/DistantGame/DistantGame';
 export { AllWidget } from './AllWidget/AllWidget';
 
 const startLocalGame = function (gameView, world, config) {

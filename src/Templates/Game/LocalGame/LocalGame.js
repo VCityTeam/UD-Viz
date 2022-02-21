@@ -1,12 +1,10 @@
 /** @format */
 
-import * as Components from '../../Components/Components.js';
-import { AssetsManager } from '../../Views/AssetsManager/AssetsManager';
-import * as Shared from '../../Game/Shared/Shared';
-import * as Views from '../../Views/Views';
-
-import * as udviz from '../../index';
-import { WorldStateInterpolator } from '../DistantGame/WorldStateInterpolator.js';
+import * as Components from '../../../Components/Components.js';
+import { AssetsManager } from '../../../Views/AssetsManager/AssetsManager';
+import * as Game from '../../../Game/Game';
+import * as Views from '../../../Views/Views';
+import * as udviz from '../../../index';
 
 /**
  * A Class contaning method to easily instanciate a local game based on the ud-viz game engine
@@ -63,16 +61,16 @@ export class LocalGame {
     return new Promise((resolve, reject) => {
       const fps = config.game.fps;
 
-      const worldStateComputer = new Shared.WorldStateComputer(
+      const worldStateComputer = new Game.WorldStateComputer(
         assetsManager,
         fps,
-        { udviz: udviz, Shared: Shared }
+        { udviz: udviz, Game: Game }
       );
 
       worldStateComputer.start(world);
 
       //smooth rendering with delay
-      const interpolator = new WorldStateInterpolator(
+      const interpolator = new Game.WorldStateInterpolator(
         { renderDelay: 50 },
         worldStateComputer
       );

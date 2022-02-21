@@ -7,7 +7,7 @@ module.exports = class UpdateElevationGround {
   constructor(conf, udvizBundle) {
     this.conf = conf;
     udviz = udvizBundle;
-    Command = udviz.Game.Shared.Command;
+    Command = udviz.Game.Command;
 
     this.raycaster = new udviz.THREE.Raycaster();
   }

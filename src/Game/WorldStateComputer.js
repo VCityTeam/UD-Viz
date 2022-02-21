@@ -46,6 +46,10 @@ const WorldStateComputerModule = class WorldStateComputer {
     this.afterTickRequester.push(cb);
   }
 
+  resetAfterTickRequester() {
+    this.afterTickRequester.length = 0;
+  }
+
   /**
    * Init worldcontext and start ticking
    * @param {World} world world to tick

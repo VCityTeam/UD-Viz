@@ -5,12 +5,12 @@ import * as THREE from 'three';
 import * as proj4 from 'proj4';
 import * as itowns from 'itowns';
 
-import LocalScript from '../../Game/Shared/GameObject/Components/LocalScript';
+import LocalScript from '../../Game/GameObject/Components/LocalScript';
 import { View3D } from '../View3D/View3D';
-import { Audio, Render } from '../../Game/Shared/Shared';
+import { Audio, Render } from '../../Game/Game';
 
-const udvShared = require('../../Game/Shared/Shared');
-const THREEUtils = udvShared.Components.THREEUtils;
+const udvGame = require('../../Game/Game');
+const THREEUtils = udvGame.Components.THREEUtils;
 
 /**
  * Main view of an ud-viz game application
@@ -388,7 +388,7 @@ export class GameView extends View3D {
     newGO.forEach(function (g) {
       g.initAssetsComponents(_this.assetsManager, {
         udviz: udviz,
-        Shared: udvShared,
+        Game: udvGame,
       });
     });
 
@@ -509,6 +509,10 @@ export class GameView extends View3D {
 
   getInterpolator() {
     return this.interpolator;
+  }
+
+  setInterpolator(i) {
+    this.interpolator = i;
   }
 }
 

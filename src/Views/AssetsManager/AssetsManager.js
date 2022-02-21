@@ -3,9 +3,9 @@
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import * as THREE from 'three';
 import * as jquery from 'jquery';
-import GameObject from '../../Game/Shared/GameObject/GameObject';
+import GameObject from '../../Game/GameObject/GameObject';
 import { Howl } from 'howler';
-const THREEUtils = require('../../Game/Shared/Components/THREEUtils');
+const THREEUtils = require('../../Game/Components/THREEUtils');
 
 /**
  * Default material used by native objects
@@ -582,10 +582,10 @@ class LoadingView {
     this.rootHtml = document.createElement('div');
     this.rootHtml.classList.add('assetsLoadingView');
 
-    //image rotation
-    const faviconImg = document.createElement('img');
-    faviconImg.src = 'favicon.ico';
-    this.rootHtml.appendChild(faviconImg);
+    const label = document.createElement('div');
+    label.classList.add('loadingLabel_Assets');
+    label.innerHTML = 'ud-viz';
+    this.rootHtml.appendChild(label);
 
     //loading bars
     this.loadingBars = {};

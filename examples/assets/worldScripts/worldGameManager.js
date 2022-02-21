@@ -1,11 +1,11 @@
 /** @format */
 
-let Shared;
+let Game;
 
 module.exports = class WorldGameManager {
-  constructor(conf, SharedModule) {
+  constructor(conf, GameModule) {
     this.conf = conf;
-    Shared = SharedModule;
+    Game = GameModule;
 
     this.zeppelin = null;
   }
@@ -15,7 +15,7 @@ module.exports = class WorldGameManager {
     const worldContext = arguments[1];
     const world = worldContext.getWorld();
 
-    this.zeppelin = new Shared.GameObject({
+    this.zeppelin = new Game.GameObject({
       name: 'zeppelin',
       components: {
         Audio: {
@@ -70,7 +70,7 @@ module.exports = class WorldGameManager {
   createCollectableSphere(x, y) {
     const size = 10;
 
-    const result = new Shared.GameObject({
+    const result = new Game.GameObject({
       name: 'collectable_sphere',
       static: true,
       components: {
@@ -107,21 +107,21 @@ module.exports = class WorldGameManager {
 
     commands.forEach(function (cmd) {
       switch (cmd.getType()) {
-        case Shared.Command.TYPE.MOVE_FORWARD:
+        case Game.Command.TYPE.MOVE_FORWARD:
           zeppelin.move(
             zeppelin.computeForwardVector().setLength(dt * speedTranslate)
           );
           break;
-        case Shared.Command.TYPE.MOVE_BACKWARD:
+        case Game.Command.TYPE.MOVE_BACKWARD:
           zeppelin.move(
             zeppelin.computeBackwardVector().setLength(dt * speedTranslate)
           );
           break;
-        case Shared.Command.TYPE.MOVE_LEFT:
-          zeppelin.rotate(new Shared.THREE.Vector3(0, 0, speedRotate * dt));
+        case Game.Command.TYPE.MOVE_LEFT:
+          zeppelin.rotate(new Game.THREE.Vector3(0, 0, speedRotate * dt));
           break;
-        case Shared.Command.TYPE.MOVE_RIGHT:
-          zeppelin.rotate(new Shared.THREE.Vector3(0, 0, -speedRotate * dt));
+        case Game.Command.TYPE.MOVE_RIGHT:
+          zeppelin.rotate(new Game.THREE.Vector3(0, 0, -speedRotate * dt));
           break;
         default:
           throw new Error('command not handle ', cmd.getType());

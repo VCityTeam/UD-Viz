@@ -1,6 +1,6 @@
 /** @format */
 
-const Shared = require('../Game/Shared/Shared');
+const Game = require('../Game/Game');
 
 /**
  * Poll system (https://en.wikipedia.org/wiki/Polling_(computer_science))
@@ -296,7 +296,7 @@ export class InputManager {
       cmdsJSON.push(cmd.toJSON());
     });
     websocketService.emit(
-      Shared.Components.Constants.WEBSOCKET.MSG_TYPES.COMMANDS,
+      Game.Components.Constants.WEBSOCKET.MSG_TYPES.COMMANDS,
       cmdsJSON
     );
   }

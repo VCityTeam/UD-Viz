@@ -1,20 +1,20 @@
 /** @format */
 
 let udviz = null;
-let Shared;
+let Game;
 
 module.exports = class Focus {
   constructor(conf, udvizBundle) {
     this.conf = conf;
     udviz = udvizBundle;
-    Shared = udviz.Game.Shared;
+    Game = udviz.Game;
 
     //quaternion to place the camera
-    this.quaternionCam = new Shared.THREE.Quaternion().setFromEuler(
-      new Shared.THREE.Euler(Math.PI * 0.5, 0, 0)
+    this.quaternionCam = new Game.THREE.Quaternion().setFromEuler(
+      new Game.THREE.Euler(Math.PI * 0.5, 0, 0)
     );
-    this.quaternionAngle = new Shared.THREE.Quaternion().setFromEuler(
-      new Shared.THREE.Euler(-this.conf.cameraAngle, 0, 0)
+    this.quaternionAngle = new Game.THREE.Quaternion().setFromEuler(
+      new Game.THREE.Euler(-this.conf.cameraAngle, 0, 0)
     );
 
     //initial distance of the camera with the go2Focus
@@ -51,9 +51,9 @@ module.exports = class Focus {
 
     //compute world transform
     const obj = go2Focus.computeObject3D();
-    let position = new Shared.THREE.Vector3();
-    let quaternion = new Shared.THREE.Quaternion();
-    obj.matrixWorld.decompose(position, quaternion, new Shared.THREE.Vector3());
+    let position = new Game.THREE.Vector3();
+    let quaternion = new Game.THREE.Quaternion();
+    obj.matrixWorld.decompose(position, quaternion, new Game.THREE.Vector3());
 
     //move the position a bit up (z is up)
     position.z += this.conf.offsetZ;
