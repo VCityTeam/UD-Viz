@@ -172,7 +172,6 @@ export class LayerChoice extends Window {
       itemLabel.htmlFor = layers[i].id + '-spoiler';
       itemLabel.className = 'subsection-title';
       itemLabel.innerHTML = layers[i].id + ' ';
-      console.log(layers[i]);
       if (layers[i].isC3DTilesLayer) {
         let itemButton = document.createElement('button');
         itemButton.id = 'button_' + layers[i].id;
