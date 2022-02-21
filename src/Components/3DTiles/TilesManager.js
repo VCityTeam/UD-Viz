@@ -133,6 +133,7 @@ export class TilesManager extends EventSender {
     //  pourra etre dans le if ci dessus
     this.setDefaultStyle();
     this.applyStyles();
+    this.sendEvent(TilesManager.EVENT_TILE_LOADED, tile);
   }
 
   getTilesWithGeom() {
