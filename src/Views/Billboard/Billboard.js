@@ -1,3 +1,5 @@
+/** @format */
+
 import * as THREE from 'three';
 import THREEUtils from '../../Game/Components/THREEUtils';
 import { CSS3DObject } from 'three/examples/jsm/renderers/CSS3DRenderer';
@@ -7,13 +9,12 @@ const BLANK_MATERIAL = new THREE.MeshBasicMaterial({
   side: THREE.DoubleSide,
   opacity: 0,
   blending: THREE.NoBlending,
-  color : new Color(0,0,0),
+  color: new Color(0, 0, 0),
 });
 
 export class Billboard {
   constructor(html, transform = new THREEUtils.Transform(), resolution = 1) {
     this.uuid = THREE.MathUtils.generateUUID();
-    debugger
     this.html = html;
     this.html.style.width = resolution * transform.scale.x + 'px';
     this.html.style.height = resolution * transform.scale.y + 'px';
