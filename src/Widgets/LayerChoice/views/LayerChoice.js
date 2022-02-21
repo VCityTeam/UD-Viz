@@ -155,8 +155,8 @@ export class LayerChoice extends Window {
         if (event.srcElement.id.includes('checkbox_' + i + '_')) {
           let tileIndex = event.srcElement.id.split('_'); //.slice(-1)[0];
           tileIndex = tileIndex[tileIndex.length - 1];
-          tiles[tileIndex].getMesh().visible =
-            !tiles[tileIndex].getMesh().visible;
+          tiles[tileIndex].getMeshes().visible =
+            !tiles[tileIndex].getMeshes().visible;
           this.layerManager.notifyChange();
         }
       };
