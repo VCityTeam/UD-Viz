@@ -4,7 +4,7 @@ import { CityObjectID, CityObject, createCityObjectID } from './Model/CityObject
 import { CityObjectStyle } from './Model/CityObjectStyle.js';
 import { StyleManager } from './StyleManager.js';
 import { EventSender } from '../Events/EventSender.js';
-
+import { focusCameraOn } from '../Components.js';
 /**
  * Manages the tiles and the style for city objects.
  */
@@ -134,6 +134,14 @@ export class TilesManager extends EventSender {
     this.setDefaultStyle();
     this.applyStyles();
     this.sendEvent(TilesManager.EVENT_TILE_LOADED, tile);
+  }
+
+  focusCamera() {
+    let coordinates = this.view.camera.position();
+    let extent = this.layer.extent;
+    coordinates.x = (extent.east + extent.west) / 2; 
+    coordinates.y = (extent.north + extent.south) / 2;
+    focusCameraOn(this.view,this.view.controls,coordinates);
   }
 
   getTilesWithGeom() {
