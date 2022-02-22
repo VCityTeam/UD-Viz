@@ -22,19 +22,19 @@ export class LayerChoice extends Window {
   get innerContentHtml() {
     return /*html*/ `
     <div id="${this.layerListId}">
-        <div class ="${this.colorLayersBoxSectionId}"> 
+        <div class="box-section" id="${this.colorLayersBoxSectionId}"> 
         <input type="checkbox" class="spoiler-check" id="color-layers-spoiler">
         <label for="color-layers-spoiler" class="section-title">Color Layers</Label>
           <div class="spoiler-box" id="${this.colorLayersSpoilerBoxId}">
           </div>
         </div>
-      <div class ="${this.elevationLayersBoxSectionId}"> 
+      <div class="box-section" id="${this.elevationLayersBoxSectionId}"> 
       <input type="checkbox" class="spoiler-check" id="elevation-layers-spoiler">
       <label for="elevation-layers-spoiler" class="section-title">Elevation Layers</Label>
         <div class="spoiler-box" id="${this.elevationLayersSpoilerBoxId}">
         </div>
       </div>
-      <div class =${this.geometryLayersBoxSectionId}> 
+      <div class="box-section" id=${this.geometryLayersBoxSectionId}> 
         <input type="checkbox" class="spoiler-check" id="geometry-layers-spoiler">
         <label for="geometry-layers-spoiler" class="section-title">Geometry Layers</Label>
         <div class="spoiler-box" id="${this.geometryLayersSpoilerBoxId}">
@@ -134,86 +134,76 @@ export class LayerChoice extends Window {
     list.append(div);
     for (let i = 0; i < layers.length; i++) {
       let item = document.createElement('div');
+      item.id = 'div' + layers[i].id;
+      item.className = 'box-section';
+      item.innerText = layers[i].id + ' ';
 
-      let itemInput = document.createElement('input');
-      itemInput.type = 'checkbox';
-      itemInput.className = 'spoiler-check';
-      itemInput.id = layers[i].id + '-spoiler';
+      let itemDivVisibility = document.createElement('span');
+      itemDivVisibility.id = 'visible_' + layers[i].id;
 
-      let itemLabel = document.createElement('label');
-      itemLabel.htmlFor = layers[i].id + '-spoiler';
-      itemLabel.className = 'subsection-title';
-      itemLabel.innerHTML = layers[i].id + ' ';
+      let itemCheckboxVisibility = document.createElement('input');
+      itemCheckboxVisibility.setAttribute('type', 'checkbox');
+      itemCheckboxVisibility.id = 'checkbox_' + layers[i].id;
+      itemCheckboxVisibility.checked = layers[i].visible;
+      itemCheckboxVisibility.onclick = (event) => {
+        layers[i].visible = event.srcElement.checked;
+        this.layerManager.notifyChange();
+      };
+
+      itemDivVisibility.appendChild(itemCheckboxVisibility);
+      item.appendChild(itemDivVisibility);
+
       if (layers[i].isC3DTilesLayer) {
         let itemButton = document.createElement('button');
         itemButton.id = 'button_' + layers[i].id;
         itemButton.innerText = 'Focus';
 
-        itemButton.onclick = (event) => {
+        itemButton.onclick = () => {
           let tilesManager = this.layerManager.getTilesManagerByLayerID(
             layers[i].id
           );
           tilesManager.focusCamera();
         };
-        itemLabel.appendChild(itemButton);
+        item.appendChild(itemButton);
       }
-      let itemDivSpoiler = document.createElement('div');
-      itemDivSpoiler.className = 'spoiler-box';
-      itemDivSpoiler.id = 'spoiler-box' + layers[i].id;
-      let itemDivVisibility = document.createElement('div');
-      itemDivVisibility.id = 'visible_' + layers[i].id;
-      itemDivVisibility.innerHTML = `Visible <input type="checkbox" id="checkbox_${layers[i].id}" ${
-        layers[i].visible ? 'checked' : ''
-      }></input></br>`;
-
-      itemDivVisibility.oninput = (event) => {
-        if (event.srcElement.id === 'checkbox_' + layers[i].id) {
-          layers[i].visible = event.srcElement.checked;
-        }
-      };
-
-      let itemDivOpacity = document.createElement('div');
-      itemDivOpacity.id = 'opacity' + i;
-      itemDivOpacity.innerHTML = `Opacity : <span id="geometry_value_opacity_${layers[i].id}">${layers[i].opacity}</span> <input type ="range" id="range_${layers[i].id}" min="0" max="1" step = "0.1" value="${layers[i].opacity}">`;
-
-      itemDivOpacity.oninput = (event) => {
-        if (event.srcElement.id === 'range_' + layers[i].id) {
+      else{
+        let itemDivOpacity = document.createElement('div');
+        itemDivOpacity.id = 'opacity_' + layers[i].id;
+  
+        let itemRangeOpacity = document.createElement('input');
+        itemRangeOpacity.setAttribute('type', 'range');
+        itemRangeOpacity.min = 0;
+        itemRangeOpacity.max = 1;
+        itemRangeOpacity.step = 0.1;
+        itemRangeOpacity.value = layers[i].opacity;
+  
+        itemRangeOpacity.onchange = (event) => {
           this.layerManager.updateOpacity(
             layers[i],
             event.srcElement.valueAsNumber
           );
-        }
-      };
+          this.layerManager.notifyChange();
+        };
+        
+        itemDivOpacity.appendChild(itemRangeOpacity);
 
-      itemDivSpoiler.appendChild(itemDivVisibility);
-      itemDivSpoiler.appendChild(itemDivOpacity);
+        let itemSpanOpacity = document.createElement('span');
+        itemSpanOpacity.innerText = ' Opacity';
+        itemDivOpacity.appendChild(itemSpanOpacity);
+        item.appendChild(itemDivOpacity);
+      }
 
-      item.appendChild(itemInput);
-      item.appendChild(itemLabel);
-      item.appendChild(itemDivSpoiler);
-
-      item.oninput = (event) => {
-        let div_visible = document.getElementById('visible_' + layers[i].id);
-        div_visible.innerHTML = `Visible <input type="checkbox" id="checkbox_${layers[i].id}" ${
-          layers[i].visible ? 'checked' : ''
-        }></input></br>`;
-        let span_opacity = document.getElementById(
-          'geometry_value_opacity_' + layers[i].id
-        );
-
-        span_opacity.innerHTML = `${layers[i].opacity}`;
-      };
       list.appendChild(item);
     }
   }
   ////// GETTERS
 
   ///ID
-  get colorLayersBoxSectionId(){
+  get colorLayersBoxSectionId() {
     return `box_section_${this.colorLayersId}`;
   }
 
-  get colorLayersSpoilerBoxId(){
+  get colorLayersSpoilerBoxId() {
     return `spoiler_box_${this.colorLayersId}`;
   }
 
@@ -221,11 +211,11 @@ export class LayerChoice extends Window {
     return `${this.windowId}_color_layers`;
   }
 
-  get elevationLayersBoxSectionId(){
+  get elevationLayersBoxSectionId() {
     return `box_section_${this.elevationLayersId}`;
   }
 
-  get elevationLayersSpoilerBoxId(){
+  get elevationLayersSpoilerBoxId() {
     return `spoiler_box_${this.elevationLayersId}`;
   }
 
@@ -233,11 +223,11 @@ export class LayerChoice extends Window {
     return `${this.windowId}_elevation_layers`;
   }
 
-  get geometryLayersBoxSectionId(){
+  get geometryLayersBoxSectionId() {
     return `box_section_${this.geometryLayersId}`;
   }
 
-  get geometryLayersSpoilerBoxId(){
+  get geometryLayersSpoilerBoxId() {
     return `spoiler_box_${this.geometryLayersId}`;
   }
 
@@ -251,16 +241,15 @@ export class LayerChoice extends Window {
 
   ///HTML ELEMENTS
 
-
   get layerListElement() {
     return document.getElementById(this.layerListId);
   }
 
-  get colorLayersBoxSectionElement(){
+  get colorLayersBoxSectionElement() {
     return document.getElementById(this.colorLayersBoxSectionId);
   }
 
-  get colorLayersSpoilerBoxElement(){
+  get colorLayersSpoilerBoxElement() {
     return document.getElementById(this.colorLayersSpoilerBoxId);
   }
 
@@ -268,11 +257,11 @@ export class LayerChoice extends Window {
     return document.getElementById(this.colorLayersId);
   }
 
-  get elevationLayersBoxSectionElement(){
+  get elevationLayersBoxSectionElement() {
     return document.getElementById(this.elevationLayersBoxSectionId);
   }
 
-  get elevationLayersSpoilerBoxElement(){
+  get elevationLayersSpoilerBoxElement() {
     return document.getElementById(this.elevationLayersSpoilerBoxId);
   }
 
@@ -280,11 +269,11 @@ export class LayerChoice extends Window {
     return document.getElementById(this.elevationLayersId);
   }
 
-  get geometryLayersBoxSectionElement(){
+  get geometryLayersBoxSectionElement() {
     return document.getElementById(this.geometryLayersBoxSectionId);
   }
 
-  get geometryLayersSpoilerBoxElement(){
+  get geometryLayersSpoilerBoxElement() {
     return document.getElementById(this.geometryLayersSpoilerBoxId);
   }
 
