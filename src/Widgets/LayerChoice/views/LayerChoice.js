@@ -22,22 +22,22 @@ export class LayerChoice extends Window {
   get innerContentHtml() {
     return /*html*/ `
     <div id="${this.layerListId}">
-        <div class ="box-section"> 
+        <div class ="${this.colorLayersBoxSectionId}"> 
         <input type="checkbox" class="spoiler-check" id="color-layers-spoiler">
         <label for="color-layers-spoiler" class="section-title">Color Layers</Label>
-          <div class="spoiler-box" id="${this.colorLayersId}">
+          <div class="spoiler-box" id="${this.colorLayersSpoilerBoxId}">
           </div>
         </div>
-      <div class ="box-section"> 
+      <div class ="${this.elevationLayersBoxSectionId}"> 
       <input type="checkbox" class="spoiler-check" id="elevation-layers-spoiler">
       <label for="elevation-layers-spoiler" class="section-title">Elevation Layers</Label>
-        <div class="spoiler-box" id="${this.elevationLayersId}">
+        <div class="spoiler-box" id="${this.elevationLayersSpoilerBoxId}">
         </div>
       </div>
-      <div class ="box-section"> 
+      <div class =${this.geometryLayersBoxSectionId}> 
         <input type="checkbox" class="spoiler-check" id="geometry-layers-spoiler">
         <label for="geometry-layers-spoiler" class="section-title">Geometry Layers</Label>
-        <div class="spoiler-box" id="${this.geometryLayersId}">
+        <div class="spoiler-box" id="${this.geometryLayersSpoilerBoxId}">
         </div>
       </div>
     </div>
@@ -53,7 +53,7 @@ export class LayerChoice extends Window {
 
   // Create the description part of ColorLayers
   innerContentColorLayers() {
-    let list = this.colorLayerListElement;
+    let list = this.colorLayersSpoilerBoxElement;
     list.innerHTML = '';
     let layers = this.layerManager.getColorLayers();
     for (let i = 0; i < layers.length; i++) {
@@ -92,7 +92,7 @@ export class LayerChoice extends Window {
 
   // Create the description part of ElevationLayers
   innerContentElevationLayers() {
-    let list = this.elevationLayerListElement;
+    let list = this.elevationLayersSpoilerBoxElement;
     list.innerHTML = '';
     let layers = this.layerManager.getElevationLayers();
     for (let i = 0; i < layers.length; i++) {
@@ -117,7 +117,7 @@ export class LayerChoice extends Window {
 
   // Create the description part of GeometryLayers
   innerContentGeometryLayers() {
-    let list = this.geometryLayerListElement;
+    let list = this.geometryLayersSpoilerBoxElement;
     list.innerHTML = '';
     let layers = this.layerManager.getGeometryLayers();
 
@@ -133,34 +133,6 @@ export class LayerChoice extends Window {
     };
     list.append(div);
     for (let i = 0; i < layers.length; i++) {
-      let tilesManager = this.layerManager.getTilesManagerByLayerID(
-        layers[i].id
-      );
-
-      let itemDivClasses = document.createElement('div');
-      let tiles = undefined;
-      let htmlTiles = '';
-      if (tilesManager !== undefined) {
-        tiles = tilesManager.getTilesWithGeom();
-        for(let j = 0; j < tiles.length ; j++) {
-          if (tiles[j].asAttributeInBatchTable('classe')) {
-            let classe = tiles[j].batchTable.content.classe[tiles[j].cityObjects[0].batchId];  
-            htmlTiles += `<p><input type="checkbox" id="checkbox_${i}_${j}" ${tiles[j].getMeshes().visible ? 'checked' : ''}>${classe}</input></p>`;
-          }
-        }
-      }
-      itemDivClasses.innerHTML = htmlTiles;
-
-      itemDivClasses.oninput = (event) => {
-        if (event.srcElement.id.includes('checkbox_' + i + '_')) {
-          let tileIndex = event.srcElement.id.split('_'); //.slice(-1)[0];
-          tileIndex = tileIndex[tileIndex.length - 1];
-          tiles[tileIndex].getMeshes().visible =
-            !tiles[tileIndex].getMeshes().visible;
-          this.layerManager.notifyChange();
-        }
-      };
-
       let item = document.createElement('div');
 
       let itemInput = document.createElement('input');
@@ -187,25 +159,25 @@ export class LayerChoice extends Window {
       }
       let itemDivSpoiler = document.createElement('div');
       itemDivSpoiler.className = 'spoiler-box';
-
+      itemDivSpoiler.id = 'spoiler-box' + layers[i].id;
       let itemDivVisibility = document.createElement('div');
-      itemDivVisibility.id = 'visible_' + i;
-      itemDivVisibility.innerHTML = `Visible <input type="checkbox" id="checkbox_${i}" ${
+      itemDivVisibility.id = 'visible_' + layers[i].id;
+      itemDivVisibility.innerHTML = `Visible <input type="checkbox" id="checkbox_${layers[i].id}" ${
         layers[i].visible ? 'checked' : ''
       }></input></br>`;
 
       itemDivVisibility.oninput = (event) => {
-        if (event.srcElement.id === 'checkbox_' + i) {
+        if (event.srcElement.id === 'checkbox_' + layers[i].id) {
           layers[i].visible = event.srcElement.checked;
         }
       };
 
       let itemDivOpacity = document.createElement('div');
       itemDivOpacity.id = 'opacity' + i;
-      itemDivOpacity.innerHTML = `Opacity : <span id="geometry_value_opacity_${i}">${layers[i].opacity}</span> <input type ="range" id="range_${i}" min="0" max="1" step = "0.1" value="${layers[i].opacity}">`;
+      itemDivOpacity.innerHTML = `Opacity : <span id="geometry_value_opacity_${layers[i].id}">${layers[i].opacity}</span> <input type ="range" id="range_${layers[i].id}" min="0" max="1" step = "0.1" value="${layers[i].opacity}">`;
 
       itemDivOpacity.oninput = (event) => {
-        if (event.srcElement.id === 'range_' + i) {
+        if (event.srcElement.id === 'range_' + layers[i].id) {
           this.layerManager.updateOpacity(
             layers[i],
             event.srcElement.valueAsNumber
@@ -215,15 +187,14 @@ export class LayerChoice extends Window {
 
       itemDivSpoiler.appendChild(itemDivVisibility);
       itemDivSpoiler.appendChild(itemDivOpacity);
-      itemDivSpoiler.appendChild(itemDivClasses);
 
       item.appendChild(itemInput);
       item.appendChild(itemLabel);
       item.appendChild(itemDivSpoiler);
 
       item.oninput = (event) => {
-        let div_visible = document.getElementById('visible_' + i);
-        div_visible.innerHTML = `Visible <input type="checkbox" id="checkbox_${i}" ${
+        let div_visible = document.getElementById('visible_' + layers[i].id);
+        div_visible.innerHTML = `Visible <input type="checkbox" id="checkbox_${layers[i].id}" ${
           layers[i].visible ? 'checked' : ''
         }></input></br>`;
         let span_opacity = document.getElementById(
@@ -237,12 +208,37 @@ export class LayerChoice extends Window {
   }
   ////// GETTERS
 
+  ///ID
+  get colorLayersBoxSectionId(){
+    return `box_section_${this.colorLayersId}`;
+  }
+
+  get colorLayersSpoilerBoxId(){
+    return `spoiler_box_${this.colorLayersId}`;
+  }
+
   get colorLayersId() {
     return `${this.windowId}_color_layers`;
   }
 
+  get elevationLayersBoxSectionId(){
+    return `box_section_${this.elevationLayersId}`;
+  }
+
+  get elevationLayersSpoilerBoxId(){
+    return `spoiler_box_${this.elevationLayersId}`;
+  }
+
   get elevationLayersId() {
     return `${this.windowId}_elevation_layers`;
+  }
+
+  get geometryLayersBoxSectionId(){
+    return `box_section_${this.geometryLayersId}`;
+  }
+
+  get geometryLayersSpoilerBoxId(){
+    return `spoiler_box_${this.geometryLayersId}`;
   }
 
   get geometryLayersId() {
@@ -253,16 +249,43 @@ export class LayerChoice extends Window {
     return `${this.windowId}_layer_list`;
   }
 
+  ///HTML ELEMENTS
+
+
   get layerListElement() {
     return document.getElementById(this.layerListId);
+  }
+
+  get colorLayersBoxSectionElement(){
+    return document.getElementById(this.colorLayersBoxSectionId);
+  }
+
+  get colorLayersSpoilerBoxElement(){
+    return document.getElementById(this.colorLayersSpoilerBoxId);
   }
 
   get colorLayerListElement() {
     return document.getElementById(this.colorLayersId);
   }
 
+  get elevationLayersBoxSectionElement(){
+    return document.getElementById(this.elevationLayersBoxSectionId);
+  }
+
+  get elevationLayersSpoilerBoxElement(){
+    return document.getElementById(this.elevationLayersSpoilerBoxId);
+  }
+
   get elevationLayerListElement() {
     return document.getElementById(this.elevationLayersId);
+  }
+
+  get geometryLayersBoxSectionElement(){
+    return document.getElementById(this.geometryLayersBoxSectionId);
+  }
+
+  get geometryLayersSpoilerBoxElement(){
+    return document.getElementById(this.geometryLayersSpoilerBoxId);
   }
 
   get geometryLayerListElement() {
