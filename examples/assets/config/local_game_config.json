@@ -35,6 +35,9 @@
       "focus": {
         "path": "./assets/localScripts/focus.js"
       },
+      "record": {
+        "path": "./assets/localScripts/record.js"
+      },
       "commands": {
         "path": "./assets/localScripts/commands.js"
       },

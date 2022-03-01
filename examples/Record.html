@@ -3,7 +3,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>UD-Viz Avatar example</title>
+    <title>UD-Viz Record example</title>
 
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -20,18 +20,17 @@
           static: true,
           components: {
             WorldScript: {
-              idScripts: ['avatar'],
+              idScripts: ['worldGameManager'],
             },
             LocalScript: {
               conf: {
-                nameGO2Focus: 'avatar',
-                cameraAngle: 0,
-                offsetZ: 2,
-                minDist: 5,
-                maxDist: 20,
-                worldComputerDt: 0,
+                nameGO2Focus: 'zeppelin',
+                cameraAngle: 0.51,
+                offsetZ: 10,
+                minDist: 50,
+                maxDist: 1000,
               },
-              idScripts: ['updateElevationGround', 'focus', 'commands'],
+              idScripts: ['focus', 'commands', 'record'],
             },
           },
         },

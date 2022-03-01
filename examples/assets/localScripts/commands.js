@@ -1,13 +1,13 @@
 /** @format */
 
 let udviz;
-let Shared = null;
+let Game = null;
 
 module.exports = class Commands {
   constructor(conf, udvizBundle) {
     this.conf = conf;
     udviz = udvizBundle;
-    Shared = udviz.Game.Shared;
+    Game = udviz.Game;
 
     this.fpsLabel = null;
     this.worldDtLabel = null;
@@ -32,37 +32,37 @@ module.exports = class Commands {
 
     //FORWARD
     inputManager.addKeyCommand(
-      Shared.Command.TYPE.MOVE_FORWARD,
+      Game.Command.TYPE.MOVE_FORWARD,
       ['z', 'ArrowUp'],
       function () {
-        return new Shared.Command({ type: Shared.Command.TYPE.MOVE_FORWARD });
+        return new Game.Command({ type: Game.Command.TYPE.MOVE_FORWARD });
       }
     );
 
     //BACKWARD
     inputManager.addKeyCommand(
-      Shared.Command.TYPE.MOVE_BACKWARD,
+      Game.Command.TYPE.MOVE_BACKWARD,
       ['s', 'ArrowDown'],
       function () {
-        return new Shared.Command({ type: Shared.Command.TYPE.MOVE_BACKWARD });
+        return new Game.Command({ type: Game.Command.TYPE.MOVE_BACKWARD });
       }
     );
 
     //LEFT
     inputManager.addKeyCommand(
-      Shared.Command.TYPE.MOVE_LEFT,
+      Game.Command.TYPE.MOVE_LEFT,
       ['q', 'ArrowLeft'],
       function () {
-        return new Shared.Command({ type: Shared.Command.TYPE.MOVE_LEFT });
+        return new Game.Command({ type: Game.Command.TYPE.MOVE_LEFT });
       }
     );
 
     //RIGHT
     inputManager.addKeyCommand(
-      Shared.Command.TYPE.MOVE_RIGHT,
+      Game.Command.TYPE.MOVE_RIGHT,
       ['d', 'ArrowRight'],
       function () {
-        return new Shared.Command({ type: Shared.Command.TYPE.MOVE_RIGHT });
+        return new Game.Command({ type: Game.Command.TYPE.MOVE_RIGHT });
       }
     );
 
@@ -81,12 +81,6 @@ module.exports = class Commands {
     inputManager.addKeyInput('p', 'keydown', function () {
       console.log(go.computeRoot());
     });
-
-    //animation
-    // const zeppelin = go.computeRoot().findByName('zeppelin');
-    // const render = zeppelin.getComponent(Shared.Render.TYPE);
-    // const action = render.getActions();
-    // action['Anim_Ailes_Moulin'].play();
   }
 
   updateUI(go, localCtx) {

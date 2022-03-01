@@ -3,14 +3,16 @@
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import * as THREE from 'three';
 import * as jquery from 'jquery';
-import GameObject from '../Shared/GameObject/GameObject';
+import GameObject from '../../Game/GameObject/GameObject';
 import { Howl } from 'howler';
-const THREEUtils = require('../Shared/Components/THREEUtils');
+const THREEUtils = require('../../Game/Components/THREEUtils');
 
 /**
  * Default material used by native objects
  */
 const DEFAULT_MATERIAL = new THREE.MeshLambertMaterial({ color: 0x00ff00 });
+
+import './AssetsManager.css';
 
 /**
  * Give acess to all assets (image, video, script, worlds, ...)
@@ -333,42 +335,68 @@ export class AssetsManager {
   /**
    * Load from a server assets described in a config file
    * @param {JSON} config config file
+   * @param {Html} parentDiv where to add the loadingView
    * @returns {Array[Promises]} all the promises processed to load assets
    */
-  loadFromConfig(config = {}) {
+  loadFromConfig(config = {}, parentDiv = document.body) {
     this.conf = config;
+
+    /**@type {LoadingView} */
+    let loadingView = null;
+
+    if (parentDiv) {
+      loadingView = new LoadingView();
+      parentDiv.appendChild(loadingView.html());
+    }
+
+    //result
+    const promises = [];
 
     //load config file
     const _this = this;
-    const loader = new GLTFLoader();
     this.buildNativeModel();
 
-    const modelPromise = new Promise((resolve, reject) => {
-      let count = 0;
-      for (let idRenderData in config.renderData) {
-        const id = idRenderData;
-        const renderData = config.renderData[id];
-        loader.load(
-          renderData.path,
-          (data) => {
-            //parse
-            _this.parse(id, data.scene, renderData);
+    if (config.renderData) {
+      const idLoadingRenderData = 'RenderData';
+      loadingView.addLoadingBar(idLoadingRenderData);
 
-            _this.animations[id] = data.animations;
+      const loader = new GLTFLoader();
+      promises.push(
+        new Promise((resolve, reject) => {
+          let count = 0;
+          for (let idRenderData in config.renderData) {
+            const id = idRenderData;
+            const renderData = config.renderData[id];
+            loader.load(
+              renderData.path,
+              (data) => {
+                //parse
+                _this.parse(id, data.scene, renderData);
 
-            //check if finish
-            count++;
-            if (count == Object.keys(config.renderData).length) {
-              console.log('objects loaded ', this.objects);
-              console.log('animations loaded ', this.animations);
-              resolve();
-            }
-          },
-          null,
-          reject
-        );
-      }
-    });
+                _this.animations[id] = data.animations;
+
+                //check if finish
+                count++;
+
+                //update loading bar
+                loadingView.updateProgress(
+                  idLoadingRenderData,
+                  (100 * count) / Object.keys(config.renderData).length
+                );
+
+                if (count == Object.keys(config.renderData).length) {
+                  console.log('objects loaded ', this.objects);
+                  console.log('animations loaded ', this.animations);
+                  resolve();
+                }
+              },
+              null,
+              reject
+            );
+          }
+        })
+      );
+    }
 
     const toEvalCode = function (string) {
       const regexRequire = /^const.*=\W*\n*.*require.*;$/gm;
@@ -377,112 +405,236 @@ export class AssetsManager {
       return resultRequire.replace(regexType, '');
     };
 
-    const worldScriptsPromise = new Promise((resolve, reject) => {
-      let count = 0;
-      for (let idScript in config.worldScripts) {
-        const scriptPath = config.worldScripts[idScript].path;
-        jquery.get(
-          scriptPath,
-          function (scriptString) {
-            scriptString = toEvalCode(scriptString);
-            _this.worldScripts[idScript] = eval(scriptString);
-            //check if finish
-            count++;
-            if (count == Object.keys(config.worldScripts).length) {
-              console.log('World Scripts loaded ', _this.worldScripts);
-              resolve();
-            }
-          },
-          'text'
-        );
-      }
-    });
-    const localScriptsPromise = new Promise((resolve, reject) => {
-      let count = 0;
-      for (let idScript in config.localScripts) {
-        const scriptPath = config.localScripts[idScript].path;
-        jquery.get(
-          scriptPath,
-          function (scriptString) {
-            scriptString = toEvalCode(scriptString);
-            _this.localScripts[idScript] = eval(scriptString);
-            //check if finish
-            count++;
-            if (count == Object.keys(config.localScripts).length) {
-              console.log('Local Scripts loaded ', _this.localScripts);
-              resolve();
-            }
-          },
-          'text'
-        );
-      }
-    });
-    const prefabsPromise = new Promise((resolve, reject) => {
-      let count = 0;
-      for (let idPrefab in config.prefabs) {
-        const scriptPath = config.prefabs[idPrefab].path;
-        jquery.get(
-          scriptPath,
-          function (prefabstring) {
-            _this.prefabs[idPrefab] = JSON.parse(prefabstring);
+    if (config.worldScripts) {
+      const idLoadingWorldScripts = 'WorldScripts';
+      loadingView.addLoadingBar(idLoadingWorldScripts);
 
-            //check if finish
-            count++;
-            if (count == Object.keys(config.prefabs).length) {
-              console.log('prefabs loaded ', _this.prefabs);
-              resolve();
-            }
-          },
-          'text'
-        );
-      }
-    });
-    const worldsPromise = new Promise((resolve, reject) => {
-      if (config.worlds) {
-        jquery.get(
-          config.worlds.path,
-          function (worldsString) {
-            _this.worldsJSON = JSON.parse(worldsString);
-            console.log('worlds loaded ', _this.worldsJSON);
+      promises.push(
+        new Promise((resolve, reject) => {
+          let count = 0;
+          for (let idScript in config.worldScripts) {
+            const scriptPath = config.worldScripts[idScript].path;
+            jquery.get(
+              scriptPath,
+              function (scriptString) {
+                scriptString = toEvalCode(scriptString);
+                _this.worldScripts[idScript] = eval(scriptString);
+                //check if finish
+                count++;
+
+                loadingView.updateProgress(
+                  idLoadingWorldScripts,
+                  (100 * count) / Object.keys(config.worldScripts).length
+                );
+
+                if (count == Object.keys(config.worldScripts).length) {
+                  console.log('World Scripts loaded ', _this.worldScripts);
+                  resolve();
+                }
+              },
+              'text'
+            );
+          }
+        })
+      );
+    }
+
+    if (config.localScripts) {
+      const idLoadingLocalScripts = 'LocalScripts';
+      loadingView.addLoadingBar(idLoadingLocalScripts);
+
+      promises.push(
+        new Promise((resolve, reject) => {
+          let count = 0;
+          for (let idScript in config.localScripts) {
+            const scriptPath = config.localScripts[idScript].path;
+            jquery.get(
+              scriptPath,
+              function (scriptString) {
+                scriptString = toEvalCode(scriptString);
+                _this.localScripts[idScript] = eval(scriptString);
+                //check if finish
+                count++;
+
+                loadingView.updateProgress(
+                  idLoadingLocalScripts,
+                  (100 * count) / Object.keys(config.localScripts).length
+                );
+
+                if (count == Object.keys(config.localScripts).length) {
+                  console.log('Local Scripts loaded ', _this.localScripts);
+                  resolve();
+                }
+              },
+              'text'
+            );
+          }
+        })
+      );
+    }
+
+    if (config.prefabs) {
+      const idLoadingPrefabs = 'Prefabs';
+      loadingView.addLoadingBar(idLoadingPrefabs);
+
+      promises.push(
+        new Promise((resolve, reject) => {
+          let count = 0;
+          for (let idPrefab in config.prefabs) {
+            const scriptPath = config.prefabs[idPrefab].path;
+            jquery.get(
+              scriptPath,
+              function (prefabstring) {
+                _this.prefabs[idPrefab] = JSON.parse(prefabstring);
+
+                //check if finish
+                count++;
+
+                loadingView.updateProgress(
+                  idLoadingPrefabs,
+                  (100 * count) / Object.keys(config.prefabs).length
+                );
+
+                if (count == Object.keys(config.prefabs).length) {
+                  console.log('prefabs loaded ', _this.prefabs);
+                  resolve();
+                }
+              },
+              'text'
+            );
+          }
+        })
+      );
+    }
+
+    if (config.worlds) {
+      promises.push(
+        new Promise((resolve, reject) => {
+          if (config.worlds) {
+            jquery.get(
+              config.worlds.path,
+              function (worldsString) {
+                _this.worldsJSON = JSON.parse(worldsString);
+                console.log('worlds loaded ', _this.worldsJSON);
+                resolve();
+              },
+              'text'
+            );
+          } else {
             resolve();
-          },
-          'text'
-        );
-      } else {
+          }
+        })
+      );
+    }
+
+    if (config.css) {
+      const idLoadingCss = 'Css';
+      loadingView.addLoadingBar(idLoadingCss);
+
+      promises.push(
+        new Promise((resolve, reject) => {
+          let count = 0;
+          for (let idCss in config.css) {
+            const cssPath = config.css[idCss].path;
+            jquery.get(
+              cssPath,
+              function (cssString) {
+                const styleSheet = document.createElement('style');
+                styleSheet.type = 'text/css';
+                styleSheet.innerText = cssString;
+                document.head.appendChild(styleSheet);
+                //check if finish
+                count++;
+
+                loadingView.updateProgress(
+                  idLoadingCss,
+                  (100 * count) / Object.keys(config.css).length
+                );
+
+                if (count == Object.keys(config.css).length) {
+                  console.log('css loaded');
+                  resolve();
+                }
+              },
+              'text'
+            );
+          }
+        })
+      );
+    }
+
+    return new Promise((resolve, reject) => {
+      Promise.all(promises).then(function () {
+        if (loadingView) {
+          loadingView.dispose();
+        }
         resolve();
-      }
+      });
     });
-    const cssPromise = new Promise((resolve, reject) => {
-      let count = 0;
-      for (let idCss in config.css) {
-        const cssPath = config.css[idCss].path;
-        jquery.get(
-          cssPath,
-          function (cssString) {
-            const styleSheet = document.createElement('style');
-            styleSheet.type = 'text/css';
-            styleSheet.innerText = cssString;
-            document.head.appendChild(styleSheet);
-            //check if finish
-            count++;
-            if (count == Object.keys(config.css).length) {
-              console.log('css loaded');
-              resolve();
-            }
-          },
-          'text'
-        );
-      }
-    });
+  }
+}
 
-    const promises = [];
-    if (config.renderData) promises.push(modelPromise);
-    if (config.prefabs) promises.push(prefabsPromise);
-    if (config.worldScripts) promises.push(worldScriptsPromise);
-    if (config.localScripts) promises.push(localScriptsPromise);
-    if (config.worlds) promises.push(worldsPromise);
-    if (config.css) promises.push(cssPromise);
+/**
+ * A view in which loading bar can be added
+ */
+class LoadingView {
+  constructor() {
+    this.rootHtml = document.createElement('div');
+    this.rootHtml.classList.add('assetsLoadingView');
 
-    return Promise.all(promises);
+    const label = document.createElement('div');
+    label.classList.add('loadingLabel_Assets');
+    label.innerHTML = 'ud-viz';
+    this.rootHtml.appendChild(label);
+
+    //loading bars
+    this.loadingBars = {};
+  }
+
+  /**
+   *
+   * @returns {Html} the element root html of this view
+   */
+  html() {
+    return this.rootHtml;
+  }
+
+  /**
+   * dispose this view
+   */
+  dispose() {
+    this.rootHtml.remove();
+  }
+
+  /**
+   * update the progress bar of the loading bar with an id
+   * @param {String} id of the loading bar
+   * @param {Number} percent the new percent of the bar
+   */
+  updateProgress(id, percent) {
+    this.loadingBars[id].style.width = percent + '%';
+  }
+
+  /**
+   * add a loading bar to this view with a label equals to the id
+   * @param {String} id if of the loading bar to add
+   */
+  addLoadingBar(id) {
+    const parent = document.createElement('div');
+    parent.classList.add('barBackground-Assets');
+
+    const progress = document.createElement('div');
+    progress.classList.add('progressBar-Assets');
+
+    parent.appendChild(progress);
+
+    const label = document.createElement('div');
+    label.innerHTML = id;
+    label.classList.add('labelBar-Assets');
+    parent.appendChild(label);
+
+    this.loadingBars[id] = progress;
+
+    this.rootHtml.appendChild(parent);
   }
 }

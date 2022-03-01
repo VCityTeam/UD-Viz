@@ -1,6 +1,6 @@
 /** @format */
 
-const Shared = require('../Game/Shared/Shared');
+const Game = require('../Game/Game');
 
 /**
  * Poll system (https://en.wikipedia.org/wiki/Polling_(computer_science))
@@ -59,14 +59,14 @@ export class InputManager {
 
   /**
    * Register a callback for a particular key and event
-   * @param {String} key id of the key
+   * @param {String} key id of the key if null every key trigger the event
    * @param {String} eventID id of the event (keyup, keydown)
    * @param {Function} cb callback called for this event
    */
   addKeyInput(key, eventID, cb) {
     const _this = this;
     const listener = function (event) {
-      if (key == event.key && !_this.pause) cb();
+      if ((key == event.key || key == null) && !_this.pause) cb();
     };
     window.addEventListener(eventID, listener);
     //register to dispose it
@@ -166,8 +166,55 @@ export class InputManager {
 
     //start listening mouse state
     this.mouseState.startListening(element);
+
+    this.initPointerLock();
   }
 
+  /**
+   * register pointerLock management
+   */
+  initPointerLock() {
+    this.element.requestPointerLock =
+      this.element.requestPointerLock || this.element.mozRequestPointerLock;
+    document.exitPointerLock =
+      document.exitPointerLock || document.mozExitPointerLock;
+
+    //gesture require to enter the pointerLock mode are click mousemove keypress keyup
+    const _this = this;
+    const checkPointerLock = function () {
+      if (_this.pointerLock) {
+        //enter pointerLock
+        _this.element.requestPointerLock();
+      }
+    };
+    //
+    this.addKeyInput(null, 'keypress', checkPointerLock);
+    this.addKeyInput(null, 'keyup', checkPointerLock);
+    this.addMouseInput(this.element, 'click', checkPointerLock);
+    this.addMouseInput(this.element, 'mousemove', checkPointerLock);
+  }
+
+  /**
+   * If value is true pointerLock mode is activated else it's exited
+   * @param {Boolean} value
+   */
+  setPointerLock(value) {
+    this.pointerLock = value;
+    if (!value) document.exitPointerLock(); //exit since this not require a gesture
+  }
+
+  /**
+   * return true if pointerLock is enabled or not
+   * @returns {Boolean}
+   */
+  getPointerLock() {
+    return this.pointerLock;
+  }
+
+  /**
+   * identify the listener to remove with its callback and remove it of the listening web api
+   * @param {Object} listener 
+   */
   removeInputListener(listener) {
     for (let index = 0; index < this.listeners.length; index++) {
       const o = this.listeners[index];
@@ -249,7 +296,7 @@ export class InputManager {
       cmdsJSON.push(cmd.toJSON());
     });
     websocketService.emit(
-      Shared.Components.Constants.WEBSOCKET.MSG_TYPES.COMMANDS,
+      Game.Components.Constants.WEBSOCKET.MSG_TYPES.COMMANDS,
       cmdsJSON
     );
   }

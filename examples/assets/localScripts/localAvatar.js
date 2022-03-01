@@ -1,20 +1,20 @@
 /** @format */
 
 let udviz;
-let Shared = null;
+let Game = null;
 
 module.exports = class LocalAvatar {
   constructor(conf, udvizBundle) {
     this.conf = conf;
     udviz = udvizBundle;
-    Shared = udviz.Game.Shared;
+    Game = udviz.Game;
 
     this.avatar = null;
     this.intersectionCube = null;
     this.inputManager = null;
 
     //raycaster for avoiding buildings collisions with avatar
-    this.raycaster = new Shared.THREE.Raycaster();
+    this.raycaster = new Game.THREE.Raycaster();
   }
 
   addObjectToArray(array, tilesManager, layerName) {
@@ -72,9 +72,9 @@ module.exports = class LocalAvatar {
     const inputManager = localContext.getGameView().getInputManager();
 
     //intersection cube
-    const geometry = new Shared.THREE.BoxGeometry(1, 1, 1);
-    const material = new Shared.THREE.MeshBasicMaterial({ color: 0x00ff00 });
-    this.intersectionCube = new Shared.THREE.Mesh(geometry, material);
+    const geometry = new Game.THREE.BoxGeometry(1, 1, 1);
+    const material = new Game.THREE.MeshBasicMaterial({ color: 0x00ff00 });
+    this.intersectionCube = new Game.THREE.Mesh(geometry, material);
     scene.add(this.intersectionCube);
 
     const dt = localContext.getDt();
@@ -87,7 +87,7 @@ module.exports = class LocalAvatar {
         .getPosition()
         .clone()
         .add(worldOrigin)
-        .add(new Shared.THREE.Vector3(0, 0, 1));
+        .add(new Game.THREE.Vector3(0, 0, 1));
       const intersection = this.buildingsHit(tilesManager, origin, direction);
       const depth = intersection ? intersection.distance : Infinity;
 
@@ -107,7 +107,7 @@ module.exports = class LocalAvatar {
         avatar.getPosition().clone().add(worldOrigin)
       );
       if (!zDelta) return;
-      avatar.move(new Shared.THREE.Vector3(0, 0, -zDelta));
+      avatar.move(new Game.THREE.Vector3(0, 0, -zDelta));
     }.bind(this);
 
     //FORWARD
@@ -129,12 +129,12 @@ module.exports = class LocalAvatar {
     //LEFT
     inputManager.addKeyCommand('rotate_left', ['q'], function () {
       const dt = localContext.getDt();
-      avatar.rotate(new Shared.THREE.Vector3(0, 0, speedRotate * dt));
+      avatar.rotate(new Game.THREE.Vector3(0, 0, speedRotate * dt));
     });
     //RIGHT
     inputManager.addKeyCommand('rotate_right', ['d'], function () {
       const dt = localContext.getDt();
-      avatar.rotate(new Shared.THREE.Vector3(0, 0, -speedRotate * dt));
+      avatar.rotate(new Game.THREE.Vector3(0, 0, -speedRotate * dt));
     });
 
     //tick command
