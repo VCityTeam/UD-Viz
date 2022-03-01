@@ -77,6 +77,9 @@ const GameObjectModule = class GameObject {
 
     //update the object state in updateFromGO (or not)
     this.noLocalUpdate = json.noLocalUpdate || false;
+
+    //freeze components and transform
+    this.freeze = json.freeze || false;
   }
 
   /**
@@ -86,7 +89,7 @@ const GameObjectModule = class GameObject {
    * @param {LocalContext} localContext this localcontext
    */
   updateFromGO(go, bufferedGO, localContext) {
-    if (this.noLocalUpdate) return;
+    if (this.noLocalUpdate || this.freeze) return;
 
     if (!go.isStatic()) {
       //update transform
@@ -113,6 +116,7 @@ const GameObjectModule = class GameObject {
    * @param {GameObject} go
    */
   setTransformFromGO(go) {
+    if (this.freeze) return;
     this.object3D.position.copy(go.object3D.position);
     this.object3D.scale.copy(go.object3D.scale);
     this.object3D.rotation.copy(go.object3D.rotation);
@@ -124,6 +128,8 @@ const GameObjectModule = class GameObject {
    * @param {JSON} json
    */
   setFromTransformJSON(json = {}) {
+    if (this.freeze) return;
+
     if (json.position) {
       this.object3D.position.fromArray(json.position);
       JSONUtils.parseVector3(this.object3D.position);
@@ -147,6 +153,8 @@ const GameObjectModule = class GameObject {
   }
 
   setTransformFromObject3D(object3D) {
+    if (this.freeze) return;
+
     this.object3D.position.copy(object3D.position);
     this.object3D.scale.copy(object3D.scale);
     this.object3D.rotation.copy(object3D.rotation);
@@ -224,6 +232,8 @@ const GameObjectModule = class GameObject {
    * @param {THREE.Vector3} vector
    */
   move(vector) {
+    if (this.freeze) return;
+
     this.object3D.position.add(vector);
     this.setOutdated(true);
   }
@@ -243,6 +253,8 @@ const GameObjectModule = class GameObject {
    * @param {THREE.Vector3} vector
    */
   rotate(vector) {
+    if (this.freeze) return;
+
     this.object3D.rotateZ(vector.z);
     this.object3D.rotateX(vector.x);
     this.object3D.rotateY(vector.y);
@@ -659,6 +671,8 @@ const GameObjectModule = class GameObject {
    * @param {THREE.Vector3} vector
    */
   setRotation(vector) {
+    if (this.freeze) return;
+
     this.object3D.rotation.set(vector.x, vector.y, vector.z);
     this.clampRotation();
     this.setOutdated(true);
@@ -669,6 +683,8 @@ const GameObjectModule = class GameObject {
    * @param {THREE.Vector3} vector
    */
   setPosition(vector) {
+    if (this.freeze) return;
+
     this.object3D.position.set(vector.x, vector.y, vector.z);
     this.setOutdated(true);
   }
@@ -686,6 +702,8 @@ const GameObjectModule = class GameObject {
    * @param {THREE.Vector3} vector
    */
   setScale(vector) {
+    if (this.freeze) return;
+
     this.object3D.scale.set(vector.x, vector.y, vector.z);
     this.setOutdated(true);
   }
@@ -696,6 +714,22 @@ const GameObjectModule = class GameObject {
    */
   getScale() {
     return this.object3D.scale;
+  }
+
+  /**
+   * If freeze components and transform are not updated
+   * @param {Boolean} value
+   */
+  setFreeze(value) {
+    this.freeze = value;
+  }
+
+  /**
+   *
+   * @returns {Boolean}
+   */
+  getFreeze() {
+    return this.freeze;
   }
 
   /**
@@ -748,6 +782,7 @@ const GameObjectModule = class GameObject {
         scale: this.object3D.scale.toArray(),
       },
       noLocalUpdate: this.noLocalUpdate,
+      freeze: this.freeze,
     };
   }
 };
