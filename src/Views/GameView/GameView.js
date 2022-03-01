@@ -227,7 +227,7 @@ export class GameView extends View3D {
       setTimeout(function () {
         _this.onResize();
         resolve();
-      }, 100);
+      }, 10);
     });
   }
 
