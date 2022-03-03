@@ -20,11 +20,11 @@ module.exports = class Commands {
     const gameView = localContext.getGameView();
 
     this.fpsLabel = document.createElement('div');
-    this.fpsLabel.classList.add('label_localGameManager');
+    this.fpsLabel.classList.add('label_controller');
     gameView.appendToUI(this.fpsLabel);
 
     this.worldDtLabel = document.createElement('div');
-    this.worldDtLabel.classList.add('label_localGameManager');
+    this.worldDtLabel.classList.add('label_controller');
     gameView.appendToUI(this.worldDtLabel);
 
     //Input manager of the game

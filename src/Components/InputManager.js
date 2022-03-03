@@ -105,6 +105,15 @@ export class InputManager {
     });
   }
 
+  removeKeyCommand(commandID, keys) {
+    delete this.commandsBuffer[commandID];
+    const _this = this
+    keys.forEach(function (key) {
+      delete _this.keyCommands[key];
+      delete _this.keyMap[key];
+    });
+  }
+
   /**
    * Add a command for a mouse input
    * @param {String} eventID id of the mouse to listen to
@@ -112,6 +121,10 @@ export class InputManager {
    */
   addMouseCommand(eventID, cb) {
     this.mouseCommands[eventID] = cb;
+  }
+
+  removeMouseCommand(eventID) {
+    delete this.mouseCommands[eventID];
   }
 
   /**
@@ -213,7 +226,7 @@ export class InputManager {
 
   /**
    * identify the listener to remove with its callback and remove it of the listening web api
-   * @param {Object} listener 
+   * @param {Object} listener
    */
   removeInputListener(listener) {
     for (let index = 0; index < this.listeners.length; index++) {
