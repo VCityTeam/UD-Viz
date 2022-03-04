@@ -472,6 +472,10 @@ const GameObjectModule = class GameObject {
     return obj;
   }
 
+  getObject3D() {
+    return this.object3D;
+  }
+
   /**
    * Get a gameobject component with a given uuid
    * @param {String} uuid the uuid of the component

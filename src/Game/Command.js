@@ -14,7 +14,7 @@ const CommandModule = class Command {
     this.userID = json.userID;
 
     //uuid of the gameobject concerned by this (TODO use a single uuid)
-    this.avatarID = json.avatarID;
+    this.gameObjectUUID = json.gameObjectUUID;
 
     //data of the command (optional)
     this.data = json.data || null;
@@ -40,16 +40,16 @@ const CommandModule = class Command {
    *
    * @param {String} id
    */
-  setAvatarID(id) {
-    this.avatarID = id;
+  setGameObjectUUID(id) {
+    this.gameObjectUUID = id;
   }
 
   /**
    *
    * @returns {String}
    */
-  getAvatarID() {
-    return this.avatarID;
+  getGameObjectUUID() {
+    return this.gameObjectUUID;
   }
 
   /**
@@ -75,7 +75,7 @@ const CommandModule = class Command {
   toJSON() {
     return {
       type: this.type,
-      avatarID: this.avatarID,
+      gameObjectUUID: this.gameObjectUUID,
       userID: this.userID,
       data: this.data,
     };

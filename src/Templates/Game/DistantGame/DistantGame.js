@@ -81,6 +81,7 @@ export class DistantGame {
 
           _this.interpolator.onFirstState(state);
           _this.gameView.writeUserData('avatarUUID', json.avatarUUID);
+          _this.gameView.writeUserData('userID', json.userID);
           _this.gameView.start(state).then(resolve);
         }
       );
@@ -90,11 +91,6 @@ export class DistantGame {
         (diffJSON) => {
           _this.interpolator.onNewDiff(new WorldStateDiff(diffJSON));
         }
-      );
-
-      //app is loaded and ready to receive worldstate
-      this.webSocketService.emit(
-        Constants.WEBSOCKET.MSG_TYPES.READY_TO_RECEIVE_STATE
       );
     });
   }
