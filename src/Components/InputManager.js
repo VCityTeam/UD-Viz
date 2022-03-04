@@ -209,7 +209,7 @@ export class InputManager {
           //enter pointerLock
           _this.element.requestPointerLock();
         } catch (error) {
-          debugger;
+          console.error('cant request pointer lock');
         }
       }
     };
