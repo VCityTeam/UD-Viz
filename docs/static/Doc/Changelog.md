@@ -1,3 +1,9 @@
+# v2.36.1
+
+    - Game zeppelin tour 
+    - Game fix portal 
+    - Documentation ref on landing page 
+
 # v2.36.0
 
     - reduce time resize gameview
