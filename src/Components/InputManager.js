@@ -105,9 +105,14 @@ export class InputManager {
     });
   }
 
+  /**
+   *
+   * @param {Command.TYPE} commandID
+   * @param {Array[String]} keys
+   */
   removeKeyCommand(commandID, keys) {
     delete this.commandsBuffer[commandID];
-    const _this = this
+    const _this = this;
     keys.forEach(function (key) {
       delete _this.keyCommands[key];
       delete _this.keyMap[key];
@@ -123,6 +128,10 @@ export class InputManager {
     this.mouseCommands[eventID] = cb;
   }
 
+  /**
+   *
+   * @param {String} eventID
+   */
   removeMouseCommand(eventID) {
     delete this.mouseCommands[eventID];
   }
@@ -195,16 +204,19 @@ export class InputManager {
     //gesture require to enter the pointerLock mode are click mousemove keypress keyup
     const _this = this;
     const checkPointerLock = function () {
-      if (_this.pointerLock) {
-        //enter pointerLock
-        _this.element.requestPointerLock();
+      if (_this.pointerLock && _this.element) {
+        try {
+          //enter pointerLock
+          _this.element.requestPointerLock();
+        } catch (error) {
+          debugger;
+        }
       }
     };
     //
     this.addKeyInput(null, 'keypress', checkPointerLock);
     this.addKeyInput(null, 'keyup', checkPointerLock);
     this.addMouseInput(this.element, 'click', checkPointerLock);
-    this.addMouseInput(this.element, 'mousemove', checkPointerLock);
   }
 
   /**
@@ -312,6 +324,14 @@ export class InputManager {
       Game.Components.Constants.WEBSOCKET.MSG_TYPES.COMMANDS,
       cmdsJSON
     );
+  }
+
+  /**
+   *
+   * @returns {HTML}
+   */
+  getElement() {
+    return this.element;
   }
 }
 

@@ -81,6 +81,7 @@ export class DistantGame {
 
           _this.interpolator.onFirstState(state);
           _this.gameView.writeUserData('avatarUUID', json.avatarUUID);
+          _this.gameView.writeUserData('userID', json.userID);
           _this.gameView.start(state).then(resolve);
         }
       );
