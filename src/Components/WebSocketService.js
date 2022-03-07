@@ -22,11 +22,14 @@ export class WebSocketService {
       : 'ws';
 
     //instantiate socket and connect to the server serving index.html
-    this.socket = io(`${socketProtocol}://${window.location.host}`, {
-      reconnection: false,
-      secure: true,
-      transports: ['polling', 'websocket'],
-    });
+    this.socket = io(
+      `${socketProtocol}://${window.location.host}${window.location.pathname}`,
+      {
+        reconnection: false,
+        secure: true,
+        transports: ['polling', 'websocket'],
+      }
+    );
 
     this.socket.on('connect', () => {
       console.log('Connected to server!');
