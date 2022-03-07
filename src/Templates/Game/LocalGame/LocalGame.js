@@ -71,7 +71,7 @@ export class LocalGame {
 
       //smooth rendering with delay
       const interpolator = new Game.WorldStateInterpolator(
-        { renderDelay: 50 },
+        config.worldStateInterpolator.renderDelay,
         worldStateComputer
       );
 

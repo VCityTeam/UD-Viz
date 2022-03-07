@@ -7,8 +7,10 @@ const WorldState = require('./WorldState');
  * Same system as described here (https://victorzhou.com/blog/build-an-io-game-part-1/#7-client-state)
  */
 module.exports = class WorldStateInterpolator {
-  constructor(config, localComputer) {
-    this.config = config;
+  constructor(renderDelay, localComputer) {
+
+    //delay between state received and state computed
+    this.renderDelay = renderDelay;
 
     //internal
     this.states = [];
@@ -38,9 +40,8 @@ module.exports = class WorldStateInterpolator {
    *
    * @returns {Number} delay with the server
    */
-  _getDelay() {
-    if (this.config && this.config.renderDelay) return this.config.renderDelay;
-    return 0;
+  getRenderDelay() {
+    return this.renderDelay
   }
 
   //time between two new state
@@ -90,7 +91,7 @@ module.exports = class WorldStateInterpolator {
    */
   _computeCurrentServerTime() {
     return (
-      this.firstServerTimestamp + Date.now() - this.gameStart - this._getDelay()
+      this.firstServerTimestamp + Date.now() - this.gameStart - this.getRenderDelay()
     );
   }
 
