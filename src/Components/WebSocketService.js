@@ -7,9 +7,10 @@ import io from 'socket.io-client';
  * (https://www.npmjs.com/package/socket.io-client)
  */
 export class WebSocketService {
-  constructor() {
+  constructor(params = {}) {
     this.socket = null;
     this.events = {};
+    this.path = params.path || '';
   }
 
   /**
@@ -20,16 +21,13 @@ export class WebSocketService {
     const socketProtocol = window.location.protocol.includes('https')
       ? 'wss'
       : 'ws';
-
     //instantiate socket and connect to the server serving index.html
-    this.socket = io(
-      `${socketProtocol}://${window.location.host}${window.location.pathname}`,
-      {
-        reconnection: false,
-        secure: true,
-        transports: ['polling', 'websocket'],
-      }
-    );
+    this.socket = io(`${socketProtocol}://${window.location.host}`, {
+      reconnection: false,
+      secure: true,
+      transports: ['polling', 'websocket'],
+      path: this.path + '/socket.io/',
+    });
 
     this.socket.on('connect', () => {
       console.log('Connected to server!');
