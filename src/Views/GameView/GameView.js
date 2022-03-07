@@ -550,6 +550,10 @@ class LocalContext {
     return this.webSocketService;
   }
 
+  getRootGameObject() {
+    return this.gameView.getLastState().getGameObject().computeRoot();
+  }
+
   /**
    *
    * @returns {GameView}
