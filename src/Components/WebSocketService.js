@@ -6,11 +6,11 @@ import io from 'socket.io-client';
  * Handle communication with a server using socket.io-client npm package
  * (https://www.npmjs.com/package/socket.io-client)
  */
+
 export class WebSocketService {
-  constructor(params = {}) {
+  constructor() {
     this.socket = null;
     this.events = {};
-    this.path = params.path || '';
   }
 
   /**
@@ -21,12 +21,15 @@ export class WebSocketService {
     const socketProtocol = window.location.protocol.includes('https')
       ? 'wss'
       : 'ws';
+
+    const loc = `${window.location.pathname}`;
+    const path = loc.substring(0, loc.lastIndexOf('/'));
     //instantiate socket and connect to the server serving index.html
     this.socket = io(`${socketProtocol}://${window.location.host}`, {
       reconnection: false,
       secure: true,
       transports: ['polling', 'websocket'],
-      path: this.path + '/socket.io/',
+      path: path + '/socket.io/',
     });
 
     this.socket.on('connect', () => {
