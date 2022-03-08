@@ -10,7 +10,9 @@ const THREEUtils = require('../../Game/Components/THREEUtils');
 /**
  * Default material used by native objects
  */
-const DEFAULT_MATERIAL = new THREE.MeshLambertMaterial({ color: 0x00ff00 });
+const DEFAULT_MATERIAL = new THREE.MeshLambertMaterial({
+  color: 0x00ff00,
+});
 
 import './AssetsManager.css';
 
@@ -189,6 +191,10 @@ export class AssetsManager {
     const torus = new THREE.Mesh(geometryTorus, DEFAULT_MATERIAL);
     this.objects['torus'] = torus;
 
+    const geometryQuad = new THREE.PlaneGeometry();
+    const quad = new THREE.Mesh(geometryQuad, DEFAULT_MATERIAL);
+    this.objects['quad'] = quad;
+
     this.buildGizmo();
     this.buildPointerMouse();
   }
@@ -256,7 +262,6 @@ export class AssetsManager {
     const anchor = modelData.anchor;
     const scale = modelData.scale;
     const rotation = modelData.rotation;
-    const noShadow = modelData.noShadow || false; //WIP
 
     //rotation
     const quatYUP2ZUP = new THREE.Quaternion().setFromEuler(
@@ -315,7 +320,7 @@ export class AssetsManager {
     parent.add(obj);
 
     parent.traverse(function (child) {
-      if (child.geometry && !noShadow) {
+      if (child.geometry) {
         child.castShadow = true;
         child.receiveShadow = true;
       }
