@@ -9,7 +9,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   </head>
   <body>
-    <script src="../dist/debug/udv.js"></script>
+    <!-- <script src="../dist/debug/udv.js"></script> -->
+    <script src="../dist/release/udv.js"></script>
     <script type="text/javascript">
       const x = 1832891;
       const y = 5174952;
@@ -34,7 +35,7 @@
       const center = extent.center();
 
       const iframe = document.createElement('iframe');
-      iframe.src = 'http://localhost:8000/examples/AvatarGame.html';
+      iframe.src = `${window.location.origin}/examples/AvatarGame.html`;
       const billboard = new udv.Views.Billboard(
         iframe,
         new udv.Game.Components.THREEUtils.Transform(
