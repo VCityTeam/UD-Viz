@@ -1,6 +1,6 @@
 {
   "name": "ud-viz",
-  "version": "2.36.1",
+  "version": "2.36.2",
   "description": "A framework extension of itowns.",
   "main": "src",
   "scripts": {

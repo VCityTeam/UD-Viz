@@ -1,8 +1,14 @@
+# v2.36.2
+
+    - Fix some examples
+    - Delete bundle udv.js in examples' assets
+    - Socket fix path url
+
 # v2.36.1
 
-    - Game zeppelin tour 
-    - Game fix portal 
-    - Documentation ref on landing page 
+    - Game zeppelin tour
+    - Game fix portal
+    - Documentation ref on landing page
 
 # v2.36.0
 
