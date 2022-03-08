@@ -22,7 +22,7 @@
                 {
                     "title": "Examples",
                     "id": "Examples",
-                    "link": "ud-viz.vcityliris.data.alpha.grandlyon.com"
+                    "link": "https://ud-viz.vcityliris.data.alpha.grandlyon.com/"
                 }
             ],
             "sections": ["Menu","Tutorials","Classes", "Modules", "Global"]
