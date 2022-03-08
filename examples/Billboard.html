@@ -35,7 +35,7 @@
       const center = extent.center();
 
       const iframe = document.createElement('iframe');
-      iframe.src = 'http://localhost:8000/examples/AvatarGame.html';
+      iframe.src = `${window.location.origin}/examples/AvatarGame.html`;
       const billboard = new udv.Views.Billboard(
         iframe,
         new udv.Game.Components.THREEUtils.Transform(
