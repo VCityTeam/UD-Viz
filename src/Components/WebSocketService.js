@@ -21,11 +21,14 @@ export class WebSocketService {
       ? 'wss'
       : 'ws';
 
+    const loc = `${window.location.pathname}`;
+    const path = loc.substring(0, loc.lastIndexOf('/'));
     //instantiate socket and connect to the server serving index.html
     this.socket = io(`${socketProtocol}://${window.location.host}`, {
       reconnection: false,
       secure: true,
       transports: ['polling', 'websocket'],
+      path: path + '/socket.io/',
     });
 
     this.socket.on('connect', () => {
