@@ -1,3 +1,9 @@
+# v2.36.3
+
+    - Add quad to native model 3D of the assetsmanager   
+    - Fix of broken link to example deployment in docs
+
+
 # v2.36.2
 
     - Fix some examples
