@@ -1,4 +1,7 @@
 {
+  "worldStateInterpolator": {
+    "renderDelay": 150
+  },
   "assetsManager": {
     "sounds": {
       "ballon_pop": {
