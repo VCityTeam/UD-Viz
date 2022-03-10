@@ -9,7 +9,7 @@ export class DistantGame {
   constructor(webSocketService, assetsManager, config) {
     this.config = config;
     this.interpolator = new WorldStateInterpolator(
-      config.worldStateInterpolator
+      config.worldStateInterpolator.renderDelay
     );
     this.webSocketService = webSocketService;
     this.assetsManager = assetsManager;
