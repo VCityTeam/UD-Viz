@@ -8,7 +8,6 @@ const WorldState = require('./WorldState');
  */
 module.exports = class WorldStateInterpolator {
   constructor(renderDelay, localComputer) {
-
     //delay between state received and state computed
     this.renderDelay = renderDelay;
 
@@ -41,7 +40,7 @@ module.exports = class WorldStateInterpolator {
    * @returns {Number} delay with the server
    */
   getRenderDelay() {
-    return this.renderDelay
+    return this.renderDelay;
   }
 
   //time between two new state
@@ -91,7 +90,10 @@ module.exports = class WorldStateInterpolator {
    */
   _computeCurrentServerTime() {
     return (
-      this.firstServerTimestamp + Date.now() - this.gameStart - this.getRenderDelay()
+      this.firstServerTimestamp +
+      Date.now() -
+      this.gameStart -
+      this.getRenderDelay()
     );
   }
 
