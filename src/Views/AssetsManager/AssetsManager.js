@@ -513,21 +513,41 @@ export class AssetsManager {
     }
 
     if (config.worlds) {
+      const idLoadingWorlds = 'Worlds';
+      loadingView.addLoadingBar(idLoadingWorlds);
+
       promises.push(
         new Promise((resolve, reject) => {
-          if (config.worlds) {
-            jquery.get(
-              config.worlds.path,
-              function (worldsString) {
-                _this.worldsJSON = JSON.parse(worldsString);
-                console.log('worlds loaded ', _this.worldsJSON);
-                resolve();
-              },
-              'text'
-            );
-          } else {
-            resolve();
-          }
+          jquery.get(
+            config.worlds.folder + 'index.json',
+            function (indexString) {
+              const indexWorldsJSON = JSON.parse(indexString);
+              let count = 0;
+              _this.worldsJSON = [];
+
+              for (let uuid in indexWorldsJSON) {
+                jquery.get(
+                  config.worlds.folder + indexWorldsJSON[uuid],
+                  function (worldString) {
+                    count++;
+                    _this.worldsJSON.push(JSON.parse(worldString));
+
+                    loadingView.updateProgress(
+                      idLoadingWorlds,
+                      (100 * count) / Object.keys(indexWorldsJSON).length
+                    );
+
+                    if (count == Object.keys(indexWorldsJSON).length) {
+                      console.log('worlds loaded ', _this.worldsJSON);
+                      resolve();
+                    }
+                  },
+                  'text'
+                );
+              }
+            },
+            'text'
+          );
         })
       );
     }
