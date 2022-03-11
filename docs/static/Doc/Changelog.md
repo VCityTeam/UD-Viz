@@ -1,3 +1,7 @@
+# v2.36.4
+
+    - Change worlds.json loading
+
 # v2.36.3
 
     - Add quad to native model 3D of the assetsmanager   
