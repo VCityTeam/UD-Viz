@@ -21,12 +21,22 @@ export class InputManager {
 
     //internal (KeyState)
     this.keyMap = {};
+    this.keyMapKeyDown = []; //buffer key down
+    this.keyMapKeyUp = []; //buffer key up
     this.keyCommands = {};
     this.listeners = [];
     this.element = null;
 
     //flag
     this.pause = false;
+  }
+
+  isKeyDown(key) {
+    return this.keyMapKeyDown.includes(key);
+  }
+
+  isKeyUp(key) {
+    return this.keyMapKeyUp.includes(key);
   }
 
   /**
@@ -173,6 +183,7 @@ export class InputManager {
     const keydown = function (event) {
       if (_this.keyMap[event.key] == false) {
         _this.keyMap[event.key] = true;
+        _this.keyMapKeyDown.push(event.key);
       }
     };
     window.addEventListener('keydown', keydown);
@@ -181,6 +192,7 @@ export class InputManager {
     const keyup = function (event) {
       if (_this.keyMap[event.key] == true) {
         _this.keyMap[event.key] = false;
+        _this.keyMapKeyUp.push(event.key);
       }
     };
     window.addEventListener('keyup', keyup);
@@ -289,7 +301,8 @@ export class InputManager {
 
     //compute key commands
     for (let id in this.keyCommands) {
-      if (this.keyMap[id]) {
+      //notify on down press and up
+      if (this.keyMap[id] || this.isKeyUp(id)) {
         const cmd = this.keyCommands[id]();
         if (cmd) result.push(cmd);
       }
@@ -306,6 +319,10 @@ export class InputManager {
     //reset
     this.mouseState.reset();
     this.resetCommandsBuffer();
+
+    //reset event key down and key up
+    this.keyMapKeyDown.length = 0;
+    this.keyMapKeyUp.length = 0;
 
     return result;
   }
