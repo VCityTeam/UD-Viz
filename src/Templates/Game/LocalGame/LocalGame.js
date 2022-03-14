@@ -59,11 +59,9 @@ export class LocalGame {
 
   startWithAssetsLoaded(world, assetsManager, config, options = {}) {
     return new Promise((resolve, reject) => {
-      const fps = config.game.fps;
-
       const worldStateComputer = new Game.WorldStateComputer(
         assetsManager,
-        fps,
+        60,
         { udviz: udviz, Game: Game }
       );
 
