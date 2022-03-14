@@ -1,3 +1,10 @@
+# v2.36.5
+
+    - Remove record example
+    - Worldcomputer 60 fps by default
+    - Add isKeyUp isKeyDown in InputManager
+    - New Command TYPE
+
 # v2.36.4
 
     - Change worlds.json loading
