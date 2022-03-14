@@ -83,7 +83,14 @@ const CommandModule = class Command {
 };
 
 CommandModule.TYPE = {
-  RUN: 'run',
+  MOVE_FORWARD_START: 'move_forward_start',
+  MOVE_FORWARD_END: 'move_forward_end',
+  MOVE_BACKWARD_START: 'move_backward_start',
+  MOVE_BACKWARD_END: 'move_backward_end',
+  MOVE_LEFT_START: 'move_left_start',
+  MOVE_LEFT_END: 'move_left_end',
+  MOVE_RIGHT_START: 'move_right_start',
+  MOVE_RIGHT_END: 'move_right_end',
   MOVE_FORWARD: 'move_forward',
   MOVE_BACKWARD: 'move_backward',
   MOVE_LEFT: 'move_left',
