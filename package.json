@@ -7,8 +7,8 @@
     "travis": "npm run eslint && npm run build",
     "eslint": "./node_modules/.bin/eslint ./src",
     "eslint-fix": "./node_modules/.bin/eslint ./src --fix",
-    "build": "cross-env NODE_ENV=production webpack",
-    "build-debug": "cross-env NODE_ENV=development webpack",
+    "build": "cross-env NODE_ENV=production webpack --config=./config/webpack.config.js",
+    "build-debug": "cross-env NODE_ENV=development webpack --config=./config/webpack.config.js",
     "debug": "nodemon --trace-warnings --verbose --watch src --delay 2500ms ./bin/debug.js -e js,css,html",
     "docs": "jsdoc -c ./docs/jsdoc.json --verbose"
   },
@@ -27,6 +27,7 @@
   "dependencies": {
     "@deck.gl/core": "^8.5.0",
     "@deck.gl/layers": "^8.5.0",
+    "buffer": "^6.0.3",
     "d3": "^7.0.1",
     "detect-collisions": "^2.5.2",
     "fetch-sparql-endpoint": "^2.3.1",
@@ -46,13 +47,13 @@
     "child-process-promise": "^2.2.1",
     "clean-jsdoc-theme": "^3.3.1",
     "cross-env": "^7.0.3",
-    "css-loader": "^6.5.1",
+    "css-loader": "^6.7.1",
     "eslint": "^7.28.0",
     "jsdoc": "^3.6.7",
     "nodemon": "^2.0.12",
-    "style-loader": "^0.20.3",
+    "style-loader": "^3.3.1",
     "url-loader": "^4.1.1",
-    "webpack": "^5.67.0",
-    "webpack-cli": "^4.9.1"
+    "webpack": "^5.70.0",
+    "webpack-cli": "^4.9.2"
   }
 }
