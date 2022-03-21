@@ -28,6 +28,8 @@ module.exports = {
     modules: [
       'node_modules', // The default
       'src',
+      'examples',
     ],
+    unsafeCache: true,
   },
 };
