@@ -92,6 +92,10 @@ export class CityObjectProvider extends EventSender {
   selectCityObject(mouseEvent) {
     let cityObject = this.layerManager.pickCityObject(mouseEvent);
     if (cityObject) {
+      this.sendEvent(
+        CityObjectProvider.EVENT_CITY_OBJECT_SELECTED,
+        cityObject
+      );
       if (this.selectedCityObject != cityObject) {
         if (this.selectedCityObject) {
           this.sendEvent(
@@ -99,12 +103,8 @@ export class CityObjectProvider extends EventSender {
             cityObject
           );
           this.unselectCityObject(false);
-        } else {
-          this.sendEvent(
-            CityObjectProvider.EVENT_CITY_OBJECT_SELECTED,
-            cityObject
-          );
         }
+
         this.selectedCityObject = cityObject;
         this.selectedTilesManager = this.layerManager.getTilesManagerByLayerID(
           this.selectedCityObject.tile.layer.id
