@@ -5,27 +5,10 @@ the display of city objects (e.g. buildings) states based on the chosen time.
 These display states are computed from information about the temporal evolution
 of city objects stored in a 3DTILES_temporal extension of 3D Tiles.
 
-## 3D Tiles temporal extension 
+## 3DTiles-temporal extension 
 
-* The JSON schemas of the extension are stored in [here](../Model/jsonSchemas/). They
-  are also openly available [online](https://doi.org/10.5281/zenodo.3596881).
-
-* A dataset of the city of Lyon between 2009 and 2015 is also openly
- [available online](https://doi.org/10.5281/zenodo.3596861) 
-
-* More information about the extension can be found in the following article:
-
-Jaillot, Vincent, Sylvie Servigne, and Gilles Gesquière. “Delivering
-Time-Evolving 3D City Models for Web Visualization.” International Journal of
-Geographical Information Science 34, no. 10 (October 2, 2020): 2030–52.
-https://doi.org/10.1080/13658816.2020.1749637.
-
-* In short, this extension allows to add dates of existence to city objects as
-  well as changing states called transactions (creation, modification,
-  demolition, union, division or a composition of these transactions). One can
-  also describe versions of the city (an aggregation of city objects for a given
-  period of time) and version transitions (transitions between versions and also
-  an aggregation of transactions between two versions).
+The definition of 3DTiles-temporal extension as well as introductory material and
+the [documention can be found here](https://github.com/VCityTeam/UD-SV/3DTilesTemporalExtention/Readme.md).
 
 ## Design of the temporal module
 
