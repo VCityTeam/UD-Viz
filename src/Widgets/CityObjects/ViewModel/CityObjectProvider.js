@@ -11,7 +11,7 @@ import { LayerManager } from '../../Components/LayerManager/LayerManager';
 
 import { CityObjectFilter } from './CityObjectFilter';
 import { CityObjectLayer } from './CityObjectLayer';
-
+import { focusCameraOn } from '../../../Components/Camera/CameraUtils';
 /**
  * The city object provider manages the city object by organizing them in two
  * categories : the _layer_ and the _selected city object_. The layer
@@ -127,6 +127,49 @@ export class CityObjectProvider extends EventSender {
     }
   }
 
+  changeSelectedCityObject(cityObject) {
+    this.sendEvent(
+      CityObjectProvider.EVENT_CITY_OBJECT_SELECTED,
+      cityObject
+    );
+    if (this.selectedCityObject != cityObject) {
+      if (this.selectedCityObject) {
+        this.sendEvent(
+          CityObjectProvider.EVENT_CITY_OBJECT_CHANGED,
+          cityObject
+        );
+        this.unselectCityObject(false);
+      }
+
+      this.selectedCityObject = cityObject;
+      this.selectedTilesManager = this.layerManager.getTilesManagerByLayerID(
+        this.selectedCityObject.tile.layer.id
+      );
+      this.selectedStyle =
+          this.selectedTilesManager.styleManager.getStyleIdentifierAppliedTo(
+            this.selectedCityObject.cityObjectId
+          );
+      this.selectedTilesManager.setStyle(
+        this.selectedCityObject.cityObjectId,
+        'selected'
+      );
+      this.selectedTilesManager.applyStyles({
+        updateFunction: this.selectedTilesManager.view.notifyChange.bind(
+          this.selectedTilesManager.view
+        ),
+      });
+      this.removeLayer();
+    }
+    
+  }
+
+  focusOnObject(){
+    if(this.selectedTilesManager && this.selectedCityObject){
+      focusCameraOn(this.selectedTilesManager.view,this.selectedTilesManager.view.controls,this.selectedCityObject.centroid,{
+        verticalDistance:200,horizontalDistance:200
+      });
+    }
+  }
   /**
    * Unset the selected city object and sends an `EVENT_CITY_OBJECT_SELECTED`
    * event.
