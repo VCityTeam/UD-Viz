@@ -1,7 +1,7 @@
 const path = require('path');
 
 module.exports = {
-  entry: './src/index.js',
+  entry: ['./src/index.js'],
   output: {
     filename: 'udv.js',
     library: 'udv',
@@ -28,8 +28,6 @@ module.exports = {
     modules: [
       'node_modules', // The default
       'src',
-      'examples',
     ],
-    unsafeCache: true,
   },
 };

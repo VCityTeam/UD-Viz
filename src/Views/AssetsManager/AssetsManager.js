@@ -15,7 +15,7 @@ const DEFAULT_MATERIAL = new THREE.MeshLambertMaterial({
 });
 
 import './AssetsManager.css';
-const module = __unused_webpack_module;
+// const module = __unused_webpack_module;
 
 /**
  * Give acess to all assets (image, video, script, worlds, ...)
