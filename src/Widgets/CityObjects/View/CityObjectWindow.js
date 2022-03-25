@@ -120,7 +120,9 @@ export class CityObjectWindow extends Window {
         </div>
       </div>
       <div class="box-section">
-        <h3 class="section-title">Selection<span class="color-indicator" id="${this.selectionColorIndicatorId}"></span></h3>
+        <h3 class="section-title">Selection<span class="color-indicator" id="${this.selectionColorIndicatorId}"></span>
+          <button id="${this.focusObjectButtonId}">Focus</button>
+        </h3>
         <div id="${this.selectedCityObjectId}">
 
         </div>
@@ -154,9 +156,13 @@ export class CityObjectWindow extends Window {
     this.clearFilterButtonElement.onclick = () => this.provider.removeLayer();
 
     this.clearSelectionButtonElement.onclick = () =>
-      this._clearCityObjectSelection();
+      this._clearCityObjectSelection();    
 
     this.clearSelectionButtonElement.disabled = true;
+
+    this.focusObjectButtonElement.onclick = () => this.provider.focusOnObject();
+
+    this.focusObjectButtonElement.disabled = true;
 
     this._updateLayerDescription();
   }
@@ -228,6 +234,7 @@ export class CityObjectWindow extends Window {
   _clearCityObjectSelection() {
     this.provider.unselectCityObject();
     this.provider.applyStyles();
+    this._updateSelectedCityObjectDescription();
   }
 
   /**
@@ -249,10 +256,12 @@ export class CityObjectWindow extends Window {
     if (!cityObject) {
       this.selectedCityObjectElement.innerHTML = '';
       this.clearSelectionButtonElement.disabled = true;
+      this.focusObjectButtonElement.disabled = true;
       return;
     }
 
     this.clearSelectionButtonElement.disabled = false;
+    this.focusObjectButtonElement.disabled = false;
 
     let html = /*html*/ `
       <p class="city-object-title">Attributes</p>
@@ -287,6 +296,14 @@ export class CityObjectWindow extends Window {
 
   get selectedFilterElement() {
     return document.getElementById(this.selectedFilterId);
+  }
+
+  get focusObjectButtonId() {
+    return `${this.windowId}_focus_object`;
+  }
+
+  get focusObjectButtonElement() {
+    return document.getElementById(this.focusObjectButtonId);
   }
 
   get clearFilterButtonId() {

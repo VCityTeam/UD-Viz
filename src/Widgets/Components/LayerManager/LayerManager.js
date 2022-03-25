@@ -39,6 +39,19 @@ export class LayerManager {
   }
 
   /**
+   * Register a new or modify an existing registered style for all tilesManager.
+   *
+   * @param {string} name A name to identify the style.
+   * @param {CityObjectStyle} style The style to register.
+   */
+  setStyle(style) {
+    this.tilesManagers.forEach(function (tilesManager) {
+      tilesManager.setStyleToTileset(style);
+      tilesManager.applyStyles();
+    });
+  }
+  
+  /**
    * Removes all styles currently registered.
    */
   removeAll3DTilesStyles() {
@@ -82,6 +95,7 @@ export class LayerManager {
     this.tilesManagers.forEach(function (tilesManager) {
       tilesManager.layer.visible = bool;
     });
+    this.notifyChange();
   }
 
   /**
@@ -157,14 +171,12 @@ export class LayerManager {
    * @returns {CityObject | undefined}
    */
   pickCityObjectByBatchTable(batchTableKey, batchTableValue) {
-    for (let i = 0; i < this.tilesManagers.length; i++) {
-      for (let j = 0; j < this.tilesManagers[i].tiles.length; j++) {
-        if (this.tilesManagers[i].tiles[j].batchTable != null) {
-          let batchTableContent =
-            this.tilesManagers[i].tiles[j].batchTable.content;
-          for (let k = 0; k < batchTableContent.id.length; k++) {
-            if (batchTableContent[batchTableKey][k] == batchTableValue) {
-              return this.tilesManagers[i].tiles[j].cityObjects[k];
+    for (let tilesManager of this.tilesManagers) {
+      for (let tile of tilesManager.tiles) {
+        if(tile){
+          if (tile.cityObjects != null) {
+            if(tile.batchTable.content[batchTableKey].includes(batchTableValue)){
+              return [tilesManager,tile.cityObjects[tile.batchTable.content[batchTableKey].indexOf(batchTableValue)]];
             }
           }
         }

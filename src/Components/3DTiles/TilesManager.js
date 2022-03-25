@@ -110,7 +110,6 @@ export class TilesManager extends EventSender {
     // TODO: this should be managed with an event: when the tileset is
     //  loaded (i.e. tileIndex filled), then totalTileCount should be set.
     this.totalTileCount = this.layer.tileset.tiles.length;
-
     // Set the style for the whole tileset
     if (this.color !== null && !this.styleManager.isStyleRegistered('default')) {
       this.registerStyle('default', {
@@ -130,17 +129,24 @@ export class TilesManager extends EventSender {
     // TODO: Les tuiles d'iTowns devraient etre rendues invisibles plutot
     //  que d'etre déchargées et rechargées. A ce moment là, ce callback
     //  pourra etre dans le if ci dessus
-    this.setDefaultStyle();
+    this.setStyleToTile(tile.tileId,'default');
     this.applyStyles();
     this.sendEvent(TilesManager.EVENT_TILE_LOADED, tile);
   }
 
   focusCamera() {
-    let coordinates = this.view.camera.position();
-    let extent = this.layer.extent;
-    coordinates.x = (extent.east + extent.west) / 2;
-    coordinates.y = (extent.north + extent.south) / 2;
-    focusCameraOn(this.view, this.view.controls, coordinates);
+    if(this.layer.isC3DTilesLayer){
+      let coordinates = this.view.camera.position();
+      let extent = this.layer.extent;
+      coordinates.x = (extent.east + extent.west) / 2; 
+      coordinates.y = (extent.north + extent.south) / 2;
+      coordinates.z = 200;
+      if(this.layer.tileset.tiles[0])
+        coordinates.z = this.layer.tileset.tiles[0].boundingVolume.box.max.z;
+      focusCameraOn(this.view,this.view.controls,coordinates, {
+        verticalDistance:200,horizontalDistance:200
+      });
+    }
   }
 
   getTilesWithGeom() {
