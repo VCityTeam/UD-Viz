@@ -25,6 +25,7 @@ module.exports = Object.freeze({
       CREATE_BBB_ROOM: 'create_bbb_room',
       ON_BBB_URL: 'on_bbb_url',
       ADD_GAMEOBJECT: 'add_gameobject',
+      EDIT_CONF_COMPONENT: 'edit_conf_component',
     },
   },
 });
