@@ -409,7 +409,8 @@ export class AssetsManager {
       let resultRequire = string.replace(regexRequire, '');
       return resultRequire.replace(regexType, '');
     };
-    const importScript = "const module = import('./AssetsManager.js');";
+    const importScript =
+      "const module = import('./src/Views/AssetsManager/AssetsManager.js');";
 
     if (config.worldScripts) {
       const idLoadingWorldScripts = 'WorldScripts';
