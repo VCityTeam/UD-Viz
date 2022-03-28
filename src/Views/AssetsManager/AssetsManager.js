@@ -409,8 +409,7 @@ export class AssetsManager {
       let resultRequire = string.replace(regexRequire, '');
       return resultRequire.replace(regexType, '');
     };
-    const importScript =
-      "const module = import('./src/Views/AssetsManager/AssetsManager.js');";
+    const module = import('./AssetsManager');
 
     if (config.worldScripts) {
       const idLoadingWorldScripts = 'WorldScripts';
@@ -425,9 +424,7 @@ export class AssetsManager {
               scriptPath,
               function (scriptString) {
                 scriptString = toEvalCode(scriptString);
-                _this.worldScripts[idScript] = eval(
-                  importScript + scriptString
-                );
+                _this.worldScripts[idScript] = eval(scriptString);
                 //check if finish
                 count++;
 
@@ -461,9 +458,7 @@ export class AssetsManager {
               scriptPath,
               function (scriptString) {
                 scriptString = toEvalCode(scriptString);
-                _this.localScripts[idScript] = eval(
-                  importScript + scriptString
-                );
+                _this.localScripts[idScript] = eval(scriptString);
                 //check if finish
                 count++;
 
