@@ -1,5 +1,18 @@
 # v2.36.5
 
+    - Add constants in websocket type msg `EDIT_CONF_COMP`
+    - WebPack 5 :
+        - Update of url-loader
+        - Update of style-loader
+        - Split configs
+    - Update landing page :
+        - Documentation
+        - Release link
+        - LocalAvatar example
+    - Update some markdowns
+
+# v2.36.5
+
     - Remove record example
     - Worldcomputer 60 fps by default
     - Add isKeyUp isKeyDown in InputManager
@@ -11,9 +24,8 @@
 
 # v2.36.3
 
-    - Add quad to native model 3D of the assetsmanager   
+    - Add quad to native model 3D of the assetsmanager
     - Fix of broken link to example deployment in docs
-
 
 # v2.36.2
 
