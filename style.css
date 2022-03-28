@@ -44,6 +44,17 @@ body {
   color: var(--color-blue);
 }
 
+#version {
+  text-decoration: none;
+  color: var(--color-blue);
+  border: 1px solid var(--color-blue);
+  border-radius: 4px;
+  line-height: 16px;
+  padding: 0px 2px;
+  margin-left: 6px;
+  font-size: 0.9rem;
+}
+
 #contentWrapper {
   flex: 1;
   overflow: hidden;
