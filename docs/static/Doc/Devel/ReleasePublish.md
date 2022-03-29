@@ -26,7 +26,7 @@
     ` git log | grep -v ^commit | grep -v ^Author | grep -v ^Date | grep -vi merge | grep . | head -n 150 > ChangelogDiff.md`
 - [ ] Update doc with `npm run docs`
 - [ ] Follow the [process to push](https://github.com/VCityTeam/UD-Viz/blob/master/Readme.md#anchor-devel-pushing-process) the above changes
-- [ ] Create the associated pull request using the following comment template and have it accepted
+- [ ] Add a reviewer to the PR
 ```
 7.  Create a github release (through the GUI)
     - copy the new content given in [`Changelog.md`](https://github.com/VCityTeam/UD-Viz/blob/master/Doc/Changelog.md) : this duplication doesn't seem to be [DRY](https://en.wikipedia.org/wiki/Don%27t_repeat_yourself) but the Release comments are hosted by github (and will be lost if you migrate to e.g. gitlab) and are not browsable offline.
