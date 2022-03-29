@@ -109,7 +109,7 @@ export class CityObjectWindow extends Window {
 
   get innerContentHtml() {
     return /*html*/ `
-      <div class="box-section">
+      <div class="box-section" id="${this.filterDivId}">
         <h3 class="section-title">Filter<span class="color-indicator" id="${this.layerColorIndicatorId}"></span></h3>
         <div>
           <p class="city-object-title">
@@ -348,5 +348,13 @@ export class CityObjectWindow extends Window {
 
   get selectionColorIndicatorElement() {
     return document.getElementById(this.selectionColorIndicatorId);
+  }
+
+  get filterDivId() {
+    return `${this.windowId}_filter_div`;
+  }
+
+  get filterDivElement() {
+    return document.getElementById(this.filterDivId);
   }
 }
