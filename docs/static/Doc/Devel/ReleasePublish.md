@@ -26,6 +26,7 @@
     ` git log | grep -v ^commit | grep -v ^Author | grep -v ^Date | grep -vi merge | grep . | head -n 150 > ChangelogDiff.md`
 - [ ] Update doc with `npm run docs`
 - [ ] Follow the [process to push](https://github.com/VCityTeam/UD-Viz/blob/master/Readme.md#anchor-devel-pushing-process) the above changes
+- [ ] Assign yourself to the PR
 - [ ] Add a reviewer to the PR
 ```
 7.  Create a github release (through the GUI)
