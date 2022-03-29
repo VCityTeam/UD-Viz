@@ -270,10 +270,14 @@ export class CityObjectWindow extends Window {
         Batch ID : ${cityObject.batchId}<br>
         Layer : ${cityObject.tile.layer.name}
     `;
+    let i = 0;
     for (let prop of Object.entries(cityObject.props)) {
-      html += /*html*/ `
+      if(i < 2){
+      html += `
         <br>${prop[0]} : ${prop[1]}
       `;
+      }
+      i = i + 1;
     }
     html += '</p>';
     this.selectedCityObjectElement.innerHTML = html;
