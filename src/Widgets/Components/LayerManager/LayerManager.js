@@ -172,11 +172,13 @@ export class LayerManager {
    */
   pickCityObjectByBatchTable(batchTableKey, batchTableValue) {
     for (let tilesManager of this.tilesManagers) {
-      for (let tile of tilesManager.tiles) {
-        if(tile){
-          if (tile.cityObjects != null) {
-            if(tile.batchTable.content[batchTableKey].includes(batchTableValue)){
-              return [tilesManager,tile.cityObjects[tile.batchTable.content[batchTableKey].indexOf(batchTableValue)]];
+      if(tilesManager.tiles){
+        for (let tile of tilesManager.tiles) {
+          if(tile){
+            if (tile.cityObjects && tile.batchTable) {
+              if(tile.batchTable.content[batchTableKey].includes(batchTableValue)){
+                return [tilesManager,tile.cityObjects[tile.batchTable.content[batchTableKey].indexOf(batchTableValue)]];
+              }
             }
           }
         }

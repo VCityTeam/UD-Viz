@@ -30,7 +30,7 @@ export class CityObjectFilterWindow extends Window {
 
   get innerContentHtml() {
     return /*html*/ `
-      <div class="box-section">
+      <div class="box-section" id="${this.filterDivId}">
         <h3 class="section-title">Filter selection</h3>
         <form id="${this.filterFormId}">
           <select name="filterLabel" id="${this.filterSelectId}">
@@ -194,6 +194,13 @@ export class CityObjectFilterWindow extends Window {
     return document.getElementById(this.filterSectionId);
   }
 
+  get filterDivId() {
+    return `${this.windowId}_filter_div`;
+  }
+
+  get filterDivElement() {
+    return document.getElementById(this.filterDivId);
+  }
   ////////////
   ///// EVENTS
 
