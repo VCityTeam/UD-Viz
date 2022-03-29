@@ -1,4 +1,9 @@
-# v2.36.5
+# v2.37.0
+    - update iTowns dependency to 2.37.0
+      - update dependencies : proj4j (version ^2.7.5) and three (version 0.135.0)
+    - minor documentation updates
+
+# v2.36.6
 
     - Add constants in websocket type msg `EDIT_CONF_COMP`
     - WebPack 5 :
