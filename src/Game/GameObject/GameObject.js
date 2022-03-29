@@ -579,6 +579,10 @@ const GameObjectModule = class GameObject {
     }
   }
 
+  getParent() {
+    return this.parent;
+  }
+
   /**
    *
    * @returns {String}
