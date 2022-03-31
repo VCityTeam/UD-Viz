@@ -540,32 +540,16 @@ export class View3D {
           url: layer['url'],
         }),
         registeredExtensions: extensions,
+        overrideMaterials: false,
       },
       this.itownsView
     );
 
     const $3DTilesManager = new TilesManager(this.itownsView, $3dTilesLayer);
-    let color = 0xffffff;
     if (layer['color']) {
-      color = parseInt(layer['color']);
+      let color = parseInt(layer['color']);
+      $3DTilesManager.color = color;
     }
-    $3DTilesManager.registerStyle('default', {
-      materialProps: {
-        opacity: 1,
-        color: color,
-        side: THREE.DoubleSide,
-        shadowSide: THREE.DoubleSide,
-        fog: true,
-      },
-    });
-
-    $3DTilesManager.addEventListener(
-      TilesManager.EVENT_TILE_LOADED,
-      function (event) {
-        $3DTilesManager.setStyleToTileset('default');
-        $3DTilesManager.applyStyles();
-      }
-    );
 
     this.layerManager.tilesManagers.push($3DTilesManager);
 
