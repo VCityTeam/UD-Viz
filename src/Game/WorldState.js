@@ -48,7 +48,7 @@ const WorldStateModule = class WorldState {
 
       if (!uuidGO.includes(uuid)) {
         //delete all gameobject not in diff
-        console.warn(g, ' is not in the scene anymore');
+        console.log(g, ' is not in the scene anymore');
         g.removeFromParent();
       } else {
         //update the outdated one

@@ -354,7 +354,19 @@ export class GameView extends View3D {
             g.updateFromGO(current, bufferedGO, ctx);
           } else {
             //do not exist remove it
-            g.removeFromParent();
+            g.removeFromParent(ctx);
+
+            //remove object3D
+            if (g.getObject3D() && g.getObject3D().parent) {
+              g.getObject3D().parent.remove(g.getObject3D());
+            }
+
+            //localscript notification
+            const scriptComponent = g.getComponent(LocalScript.TYPE);
+            if (scriptComponent) {
+              scriptComponent.execute(LocalScript.EVENT.ON_REMOVE, [ctx]);
+            }
+
             delete _this.currentUUID[g.getUUID()];
           }
         });

@@ -182,7 +182,10 @@ const GameObjectModule = class GameObject {
           break;
         }
       }
-      if (!jsonChild) throw new Error('dont find children with uuid');
+      if (!jsonChild) {
+        //c no longer in scene
+        return;
+      }
 
       c.setFromJSON(jsonChild);
     });
@@ -331,10 +334,6 @@ const GameObjectModule = class GameObject {
         return ele.getUUID() != _this.getUUID();
       });
 
-      //remove object3D
-      if (this.object3D && this.object3D.parent) {
-        this.object3D.parent.remove(this.object3D);
-      }
     } else {
       console.warn('no deleted because no parent ', this.toJSON());
     }

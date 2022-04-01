@@ -98,6 +98,7 @@ CommandModule.TYPE = {
   ROTATE: 'rotate',
   MOVE_TO: 'move_to',
   Z_UPDATE: 'z_update',
+  ESCAPE: 'escape',
 };
 
 module.exports = CommandModule;
