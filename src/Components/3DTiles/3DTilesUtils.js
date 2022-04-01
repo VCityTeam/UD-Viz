@@ -42,14 +42,17 @@ export function getFirstTileIntersection(intersects) {
   let first_inter = null;
   let dist_min = 0;
   for (let inter of intersects) {
-    let geomAttributes = inter.object.geometry.attributes;
-    if (!!geomAttributes && !!geomAttributes._BATCHID) {
-      if (!first_inter) {
-        first_inter = inter;
-        dist_min = inter.distance;
-      } else if (inter.distance < dist_min) {
-        first_inter = inter;
-        dist_min = inter.distance;
+    console.log(inter);
+    if(inter.object.visible){
+      let geomAttributes = inter.object.geometry.attributes;
+      if (!!geomAttributes && !!geomAttributes._BATCHID) {
+        if (!first_inter) {
+          first_inter = inter;
+          dist_min = inter.distance;
+        } else if (inter.distance < dist_min) {
+          first_inter = inter;
+          dist_min = inter.distance;
+        }
       }
     }
   }
