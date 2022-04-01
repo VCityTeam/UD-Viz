@@ -23,10 +23,10 @@ export class AboutWindow extends ModuleView {
              <br>\
              <p>This UD-Viz-Core demo is part of the \
              <a target="_blank"\
-                href="https://github.com/MEPP-team/UD-Viz">Urban Data Viewer</a>\
+                href="https://github.com/VCityTeam/UD-Viz">Urban Data Viewer</a>\
              (UD-Viz) project of the\
              <a target="_blank"\
-                href="https://liris.cnrs.fr/vcity/wiki/doku.php">VCity project</a>\
+                href="https://projet.liris.cnrs.fr/vcity/">VCity project</a>\
              from\
              <a target="_blank"\
                 href="https://liris.cnrs.fr/en">LIRIS lab</a>\
@@ -66,7 +66,7 @@ export class AboutWindow extends ModuleView {
                         if you are a copyright owner and believe that content \
                         available in this demo infringes one or more of your \
                         copyrights, please <a\
-                        href="https://github.com/MEPP-team/UD-Viz/issues">open an \
+                        href="https://github.com/VCityTeam/UD-Viz/issues">open an \
                         issue on github</a> so that we can (best effort)\
                          remove it from this site\
                     </li>\

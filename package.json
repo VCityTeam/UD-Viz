@@ -1,6 +1,6 @@
 {
   "name": "ud-viz",
-  "version": "2.36.6",
+  "version": "2.37.0",
   "description": "A framework extension of itowns.",
   "main": "src",
   "scripts": {
@@ -32,11 +32,11 @@
     "detect-collisions": "^2.5.2",
     "fetch-sparql-endpoint": "^2.3.1",
     "howler": "^2.2.3",
-    "itowns": "2.35.0",
+    "itowns": "2.37.0",
     "jquery": "^3.6.0",
-    "proj4": "^2.7.0",
+    "proj4": "^2.7.5",
     "socket.io-client": "^4.0.0",
-    "three": "0.131.3",
+    "three": "0.135.0",
     "vis-data": "^7.1.2",
     "vis-network": "^9.0.3"
   },
