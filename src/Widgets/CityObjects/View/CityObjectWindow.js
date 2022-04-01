@@ -176,14 +176,16 @@ export class CityObjectWindow extends Window {
   _updateLayerDescription() {
     if (this.isCreated) {
       let layer = this.provider.getLayer();
-      if (layer) {
-        this.selectedFilterElement.innerText = layer.filter.toString();
-        this.layerColorIndicatorElement.style.display = '';
-        this.layerColorIndicatorElement.style.background =
-          '#' + new THREE.Color(layer.style.materialProps.color).getHexString();
-      } else {
-        this.selectedFilterElement.innerText = '';
-        this.layerColorIndicatorElement.style.display = 'none';
+      if(this.selectedFilterElement){
+        if (layer) {
+          this.layerColorIndicatorElement.style.display = '';
+          this.selectedFilterElement.innerText = layer.filter.toString();
+          this.layerColorIndicatorElement.style.background =
+              '#' + new THREE.Color(layer.style.materialProps.color).getHexString();
+        } else {
+          this.selectedFilterElement.innerText = '';
+          this.layerColorIndicatorElement.style.display = 'none';
+        }
       }
     }
   }
