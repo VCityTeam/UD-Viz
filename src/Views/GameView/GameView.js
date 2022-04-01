@@ -354,7 +354,7 @@ export class GameView extends View3D {
             g.updateFromGO(current, bufferedGO, ctx);
           } else {
             //do not exist remove it
-            g.removeFromParent(ctx);
+            g.removeFromParent();
 
             //remove object3D
             if (g.getObject3D() && g.getObject3D().parent) {
