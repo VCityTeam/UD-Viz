@@ -469,7 +469,7 @@ export class AllWidget {
     var $3dTilesLayer = new itowns.C3DTilesLayer(
       layer['id'],
       {
-        name: 'Lyon-2015-'.concat(layer['id']),
+        name: layer['id'],
         source: new itowns.C3DTilesSource({
           url: layer['url'],
         }),
