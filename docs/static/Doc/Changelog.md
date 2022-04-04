@@ -1,3 +1,13 @@
+# v2.37.1
+
+    - Add onRemove EVENT localscript 
+    - Fix Inputmanager
+    - Add getParent
+    - Add billboard example
+    - Update ReleasePublish.md
+    - Keep the id of the layer to tag 3DTiles
+    - Remove default style for 3DTiles
+
 # v2.37.0
     - update iTowns dependency to 2.37.0
       - update dependencies : proj4j (version ^2.7.5) and three (version 0.135.0)
