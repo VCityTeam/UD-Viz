@@ -408,7 +408,7 @@ export class GameView extends View3D {
 
     //localscript event INIT + ON_NEW_GAMEOBJECT
     newGO.forEach(function (g) {
-      console.log('New GO => ', g.name);
+      // console.log('New GO => ', g.name);
       _this.currentUUID[g.getUUID()] = true;
 
       //init newGO localscript
