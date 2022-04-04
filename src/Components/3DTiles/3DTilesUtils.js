@@ -42,7 +42,6 @@ export function getFirstTileIntersection(intersects) {
   let first_inter = null;
   let dist_min = 0;
   for (let inter of intersects) {
-    console.log(inter);
     if(inter.object.visible){
       let geomAttributes = inter.object.geometry.attributes;
       if (!!geomAttributes && !!geomAttributes._BATCHID) {
