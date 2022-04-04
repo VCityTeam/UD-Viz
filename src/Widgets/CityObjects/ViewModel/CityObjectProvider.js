@@ -163,10 +163,10 @@ export class CityObjectProvider extends EventSender {
     
   }
 
-  focusOnObject(){
+  focusOnObject(_verticalDistance = 200, _horizontalDistance = 200){
     if(this.selectedTilesManager && this.selectedCityObject){
       focusCameraOn(this.selectedTilesManager.view,this.selectedTilesManager.view.controls,this.selectedCityObject.centroid,{
-        verticalDistance:200,horizontalDistance:200
+        verticalDistance:_verticalDistance,horizontalDistance:_horizontalDistance
       });
     }
   }
