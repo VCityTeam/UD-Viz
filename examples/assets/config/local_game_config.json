@@ -12,15 +12,12 @@
       "zeppelin": {
         "path": "./assets/models/Zeppelin_Labex_IMU.glb",
         "anchor": "center_min",
-        "rotation": { "x": 0, "y": 1.5707, "z": 0 }
+        "rotation": { "x": 0, "y": 0, "z": 1.57 }
       },
       "avatar": {
         "path": "./assets/models/avatar_capuchon.glb",
-        "anchor": "center_min"
-      },
-      "helice": {
-        "path": "./assets/models/helice.gltf",
-        "anchor": "center_min"
+        "anchor": "center_min",
+        "rotation": { "x": 0, "y": 0, "z": 3.14 }
       }
     },
     "worldScripts": {

@@ -263,12 +263,6 @@ export class AssetsManager {
     const scale = modelData.scale;
     const rotation = modelData.rotation;
 
-    //rotation
-    const quatYUP2ZUP = new THREE.Quaternion().setFromEuler(
-      new THREE.Euler(-Math.PI * 0.5, 0, Math.PI)
-    );
-    obj.applyQuaternion(quatYUP2ZUP);
-
     //anchor point
     const bbox = new THREE.Box3().setFromObject(obj);
     const parent = new THREE.Object3D();
