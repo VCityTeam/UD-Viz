@@ -285,11 +285,7 @@ export class GameView extends View3D {
     this.directionalLight = directionalLight;
 
     if (this.config.game && this.config.game.sky) {
-      THREEUtils.addEquiRectangularMap(
-        this.config.game.sky.path,
-        renderer,
-        this.getScene()
-      );
+      THREEUtils.addCubeTexture(this.config.game.sky.paths, this.getScene());
     }
   }
 
