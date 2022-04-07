@@ -1,3 +1,9 @@
+# v2.37.2
+  
+    - Gltf aren't rotated at importation
+    - Fix one example deployment
+    - Add cubemap scene background
+
 # v2.37.1
 
     - Add onRemove EVENT localscript 
