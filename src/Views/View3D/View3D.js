@@ -67,7 +67,8 @@ export class View3D {
     //itowns view
     this.itownsView = null;
     this.extent = null; //area handle by itowns
-    this.itownsControls = params.itownsControls || false;
+    this.hasItownsControls = params.hasItownsControls || false;
+    this.itownsRequesterBeforeRender = this.computeNearFarCamera.bind(this);
 
     //pause
     this.isRendering = true;
@@ -361,7 +362,7 @@ export class View3D {
         range: range,
         tilt: tilt,
       },
-      noControls: !this.itownsControls,
+      noControls: !this.hasItownsControls,
     });
 
     //init 3D rendering attributes with itownsview
