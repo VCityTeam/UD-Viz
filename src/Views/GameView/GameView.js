@@ -61,6 +61,9 @@ export class GameView extends View3D {
 
     //userData
     this.userData = params.userData || {};
+
+    //itowns rendering or not
+    this.itownsRendering = false;
   }
 
   onResize() {
@@ -209,10 +212,9 @@ export class GameView extends View3D {
           });
 
           //render
-          if (_this.isRendering) {
+          if (_this.isRendering && !_this.itownsRendering) {
             //update Gameview
             _this.update(_this.interpolator.computeCurrentStates());
-
             //This notably charge missing iTowns tiles according to current view.
             const iV = _this.itownsView;
             if (iV) iV.notifyChange(_this.getCamera());
@@ -231,6 +233,42 @@ export class GameView extends View3D {
         _this.onResize();
       }, 10);
     });
+  }
+
+  setItownsRendering(value) {
+    this.itownsRendering = value;
+
+    if (value) {
+      //creating controls like put it in _this.view.controls
+      const c = new itowns.PlanarControls(this.itownsView, {
+        handleCollision: false,
+        focusOnMouseOver: false,
+        focusOnMouseClick: false,
+        zoomFactor: 0.9,
+      });
+
+      //dynamic near far computation
+      this.itownsView.addFrameRequester(
+        itowns.MAIN_LOOP_EVENTS.BEFORE_RENDER,
+        this.itownsRequesterBeforeRender
+      );
+
+      //enable itowns rendering
+      this.itownsView.render = null;
+    } else {
+      this.itownsView.controls.dispose();
+      this.itownsView.controls = null;
+
+      this.itownsView.removeFrameRequester(
+        itowns.MAIN_LOOP_EVENTS.BEFORE_RENDER,
+        this.itownsRequesterBeforeRender
+      );
+
+      //disable itowns rendering
+      this.itownsView.render = function () {
+        //empty
+      };
+    }
   }
 
   /**

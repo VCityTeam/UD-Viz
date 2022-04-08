@@ -24,13 +24,6 @@ canvas {
   left: 0px;
 }
 
-#itowns_View3D {
-  margin: auto;
-  height: 100%;
-  width: 100%;
-  padding: 0;
-}
-
 .ui_View3D {
   background-color: white;
   position: absolute;
