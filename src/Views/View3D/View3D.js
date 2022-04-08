@@ -324,8 +324,8 @@ export class View3D {
 
     //dynamic near far computation
     this.itownsView.addFrameRequester(
-      itowns.MAIN_LOOP_EVENTS.BEFORE_RENDER,
-      computeNearFarCamera.bind(null, this.getCamera(), this.extent, 400)
+      itowns.MAIN_LOOP_EVENTS.BEFORE_RENDER, //TODO another event (On camera change ?)
+      this.itownsRequesterBeforeRender
     );
   }
 
