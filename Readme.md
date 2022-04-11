@@ -97,12 +97,13 @@ When creating a PR (Pull Request) make sure to provide a correct description
 
 ## Sources directory layout (organizational principles)
 Definitions:
- - [Component](https://en.wikipedia.org/wiki/Component-based_software_engineering)<a name="anchor-ud-viz-component-definition"></a>
-   - `Components` folder: a set of components
+ - [Component](https://en.wikipedia.org/wiki/Component-based_software_engineering):<a name="anchor-ud-viz-component-definition"></a>
+   (see also [module](https://en.wikipedia.org/wiki/Modular_programming)): everything thats is necessary to execute only one aspect 
+   of the desired functionality. 
  - Extension: a component depending on a [web service](https://github.com/VCityTeam/UD-Viz/blob/master/src/Widgets/Extensions/Geocoding/services/GeocodingService.js#L2) in order to be functionnal.
- - [web widgets](https://en.wikipedia.org/wiki/Web_widget)
- - [Templates](https://en.wikipedia.org/wiki/Template_method_pattern)
- - [itowns views](https://www.itowns-project.org/itowns/docs/#api/View/View)
+ - [Widget](https://en.wikipedia.org/wiki/Web_widget) (web widget): an embedded element of a host web page but which is substantially independent of the host page (having limited or no interaction with the host)
+ - [Template](https://en.wikipedia.org/wiki/Template_method_pattern): a class build on sibling sub-directories (Game, Widgets, Views) components and  proposing an application model
+ - View: decorated/enhanced [iTowns Views](https://www.itowns-project.org/itowns/docs/#api/View/View)
 
 
 ```
