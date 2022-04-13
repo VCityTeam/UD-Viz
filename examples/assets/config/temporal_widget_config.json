@@ -41,7 +41,7 @@
   "3DTilesLayers": [
     {
       "id": "Temporal_layer",
-      "url": "https://dataset-dl.liris.cnrs.fr/three-d-tiles-lyon-metropolis/Lyon1er_Temporal-2009-2012-2015_TileSet/tileset.json",
+      "url": "https://dataset-dl.liris.cnrs.fr/three-d-tiles-lyon-metropolis/Temporal/Lyon1er_Temporal-2009-2012-2015_TileSet/tileset.json",
       "color": "0xFFFFFF",
       "extensions": ["3DTILES_temporal"]
     }
