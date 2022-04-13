@@ -48,7 +48,7 @@
   "3DTilesLayers": [
     {
       "id": "3d-tiles-layer-building",
-      "url": "https://dataset-dl.liris.cnrs.fr/three-d-tiles-lyon-metropolis/Lyon1er_2015_20bldg_TileSet/tileset.json",
+      "url": "https://dataset-dl.liris.cnrs.fr/three-d-tiles-lyon-metropolis/2015/Lyon1er_2015_20bldg_TileSet/tileset.json",
       "color": "0xFFFFFF",
       "initTilesManager": "true"
     }
