@@ -8,16 +8,50 @@
 
 #_window_sparqlQueryWindow_query_text_area {
   width: 98%;
-  
+  margin: auto;
+}
+
+#_window_sparqlQueryWindow_query_button {
+  width: 50%;
+  height: 32px;
 }
 
 #_window_sparqlQueryWindow_data_view {
   width: 100%;
-  padding-top: 3px;
+  margin-top: 4px;
+  overflow: scroll;
+  background-color: rgba(218, 218, 218, 0.08);
   visibility: hidden;
 }
 
-.d3_graph {
+#filter_div{
+  position: fixed;
+  background-color: rgba(30,30,30,0.7);
+}
+
+table {
+  border: 1px solid white;
   width: 100%;
-  background-color: rgb(255, 255, 255);
+  margin-top:30px !important;
+}
+
+thead {
+  color: #90EE90;
+  margin:auto; border: 1px solid white !important;
+}
+
+tr {
+  border: 1px solid white !important;
+}
+
+td {
+  border: 1px solid white !important;
+}
+
+th.des:after {
+  content: "\21E9";
+}
+
+th.aes:after {
+  content: "\21E7";
 }

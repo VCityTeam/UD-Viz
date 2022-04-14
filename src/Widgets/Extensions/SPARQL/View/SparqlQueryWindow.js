@@ -1,8 +1,10 @@
 import { Window } from '../../../Components/GUI/js/Window';
 import { SparqlEndpointResponseProvider } from '../ViewModel/SparqlEndpointResponseProvider';
 import { Graph } from './Graph';
+import { Table } from './Table';
 import { LayerManager } from '../../../Components/Components';
 import { ExtendedCityObjectProvider } from '../ViewModel/ExtendedCityObjectProvider';
+import * as renderjson from './JsonRender';
 import './SparqlQueryWindow.css';
 
 /**
@@ -48,9 +50,16 @@ export class SparqlQueryWindow extends Window {
     this.graph = new Graph(this);
 
     /**
+     * Contains the D3 table to display RDF data.
+     *
+     * @type {Table}
+     */
+    this.table = new Table(this);
+
+    /**
      * The initial SPARQL query to display upon window initialization.
      *
-     * @type {Graph}
+     * @type {string}
      */
     this.default_query = `PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
@@ -94,7 +103,7 @@ WHERE {
 
     this.sparqlProvider.addEventListener(
       SparqlEndpointResponseProvider.EVENT_ENDPOINT_RESPONSE_UPDATED,
-      (data) => this.updateDataView(data, undefined)
+      (data) => this.updateDataView(data, document.getElementById(this.resultSelectId).value)
     );
 
     this.addEventListener(SparqlQueryWindow.EVENT_NODE_SELECTED, (uri) =>
@@ -106,14 +115,43 @@ WHERE {
   }
 
   /**
-   * Update the window.
+   * Update the DataView.
    * @param {Object} data SPARQL query response data.
    * @param {Object} viewType The selected semantic data view type.
    */
   updateDataView(data, viewType) {
-    this.graph.update(data);
-    this.dataView.style['visibility'] = 'visible';
-    this.dataView.append(this.graph.data);
+    console.debug(data)
+    this.clearDataView();
+    switch(viewType){
+      case 'graph':
+        this.graph.update(data);
+        this.dataView.style['visibility'] = 'visible';
+        this.dataView.append(this.graph.data);
+        break;
+      case 'json':
+        this.dataView.style['visibility'] = 'visible';
+        this.dataView.append(
+          renderjson
+            .set_icons('▶', '▼')
+            .set_max_string_length(40)
+          (data));
+        break;
+      case 'table':
+        this.table.dataAsTable(data.nodes, ['id', 'namespace'], this.filterSelect);
+        this.dataView.style['visibility'] = 'visible';
+        this.dataView.style['height'] = '400px';
+        break;
+      default:
+        console.error('This result format is not supported: ' + viewType);
+    }
+  }
+
+  /**
+   * Clear the DataView of content.
+   */
+  clearDataView() {
+    this.dataView.innerHTML="";
+    this.dataView.style['height'] = 'auto';
   }
 
   // SPARQL Window getters //
@@ -123,14 +161,14 @@ WHERE {
         <label for="${this.queryTextAreaId}">Query:</label></br>
         <textarea id="${this.queryTextAreaId}" rows="10">${this.default_query}</textarea></br>
         <input id="${this.queryButtonId}" type="submit" value="Send"/>
+        <label>Results Format: </label>
+        <select id="${this.resultSelectId}">
+          <option value="graph">Graph</option>
+          <option value="table">Table</option>
+          <option value="json">JSON</option>
+          <option value="timeline">Timeline</option>
+        </select>
       </form>
-      <label>Results Format:</label>
-      <select id="${this.resultSelectId}">
-        <option value="graph">Graph</option>
-        <option value="table">Table</option>
-        <option value="json">JSON</option>
-        <option value="timeline">Timeline</option>
-      </select>
       <div id="${this.dataViewId}"/>`;
   }
 

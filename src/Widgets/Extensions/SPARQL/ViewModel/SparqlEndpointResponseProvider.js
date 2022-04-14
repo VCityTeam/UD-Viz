@@ -61,8 +61,8 @@ export class SparqlEndpointResponseProvider extends EventSender {
   getResponseDataAsGraph() {
     let graphData = {
       nodes: [
-        // { id: 'x', namespace: 1 },
-        // { id: 'y', namespace: 2 },
+        // { id: 'x', namespace_id: 1 },
+        // { id: 'y', namespace_id: 2 },
       ],
       links: [
         // { source: 'x', target: 'y', value: 1 }
@@ -77,14 +77,14 @@ export class SparqlEndpointResponseProvider extends EventSender {
         let subjectNamespaceId = this.getNamespaceIndex(
           triple.subjectType.value
         );
-        let node = { id: triple.subject.value, namespace: subjectNamespaceId };
+        let node = { id: triple.subject.value, namespace_id: subjectNamespaceId };
         graphData.nodes.push(node);
       }
       if (
         graphData.nodes.find((n) => n.id == triple.object.value) == undefined
       ) {
         let objectNamespaceId = this.getNamespaceIndex(triple.objectType.value);
-        let node = { id: triple.object.value, namespace: objectNamespaceId };
+        let node = { id: triple.object.value, namespace_id: objectNamespaceId };
         graphData.nodes.push(node);
       }
       let link = {
