@@ -39,10 +39,13 @@ export class Graph {
       .forceSimulation(nodes)
       .force(
         'link',
-        d3.forceLink(links).id((d) => d.id)
-      )
-      .force('charge', d3.forceManyBody())
-      .force('center', d3.forceCenter(this.width / 2, this.height / 2));
+        d3.forceLink(links).id((d) => d.id))
+      .force(
+        'charge',
+        d3.forceManyBody().strength(-60))
+      .force(
+        'center',
+        d3.forceCenter(this.width / 2, this.height / 2));
 
     const zoom = d3.zoom().on('zoom', this.handleZoom);
 
@@ -51,7 +54,7 @@ export class Graph {
     const link = this.svg
       .append('g')
       .attr('stroke', '#999')
-      .attr('stroke-opacity', 0.6)
+      .attr('stroke-opacity', 0.8)
       .selectAll('line')
       .data(links)
       .join('line')
@@ -61,13 +64,14 @@ export class Graph {
 
     const node = this.svg
       .append('g')
-      .attr('stroke', '#333')
-      .attr('stroke-width', 1.5)
+      .attr('stroke', '#000')
+      .attr('stroke-opacity', 0.8)
+      .attr('stroke-width', 0.75)
       .selectAll('circle')
       .data(nodes)
       .join('circle')
       .attr('r', 5)
-      .attr('fill', (d) => colorScale(d.namespace))
+      .attr('fill', (d) => colorScale(d.namespace_id))
       .on('click', (d) =>
         this.window.sendEvent(SparqlQueryWindow.EVENT_NODE_SELECTED, d.path[0].textContent)
       )
@@ -87,14 +91,23 @@ export class Graph {
 
     // Create legend
     this.svg
+    .append('text')
+    .attr("x", 10)             
+    .attr("y", 16)
+    .style("font-size", "14px")
+    .style("text-decoration", "underline")
+    .text("Legend")
+    .style('fill','FloralWhite');
+
+    this.svg
       .append('g')
-      .attr('stroke', '#333')
+      .attr('stroke', '#000')
       .attr('stroke-width', 1)
       .selectAll('rect')
       .data(namespaces)
       .join('rect')
       .attr('x', 10)
-      .attr('y', (d, i) => 10 + i * 16)
+      .attr('y', (d, i) => 25 + i * 16)
       .attr('width', 10)
       .attr('height', 10)
       .style('fill', (d, i) => colorScale(i))
@@ -107,8 +120,9 @@ export class Graph {
       .data(namespaces)
       .join('text')
       .attr('x', 24)
-      .attr('y', (d, i) => 20 + i * 16)
-      .text((d) => d);
+      .attr('y', (d, i) => 35 + i * 16)
+      .text((d) => d)
+      .style('fill','FloralWhite');
   }
 
   /**
