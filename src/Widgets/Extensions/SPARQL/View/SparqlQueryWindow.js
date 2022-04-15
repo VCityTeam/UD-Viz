@@ -1,7 +1,7 @@
 import { Window } from '../../../Components/GUI/js/Window';
 import { SparqlEndpointResponseProvider } from '../ViewModel/SparqlEndpointResponseProvider';
-import { Graph } from './Graph';
-import { Table } from './Table';
+import { Graph } from '../Model/Graph';
+import { Table } from '../Model/Table';
 import { LayerManager } from '../../../Components/Components';
 import { ExtendedCityObjectProvider } from '../ViewModel/ExtendedCityObjectProvider';
 import * as renderjson from './JsonRender';
@@ -106,7 +106,7 @@ WHERE {
       (data) => this.updateDataView(data, document.getElementById(this.resultSelectId).value)
     );
 
-    this.addEventListener(SparqlQueryWindow.EVENT_NODE_SELECTED, (uri) =>
+    this.addEventListener(Graph.EVENT_NODE_SELECTED, (uri) =>
       this.cityObjectProvider.selectCityObjectByBatchTable(
         'gml_id',
         this.sparqlProvider.tokenizeURI(uri).id
@@ -125,11 +125,9 @@ WHERE {
     switch(viewType){
       case 'graph':
         this.graph.update(data);
-        this.dataView.style['visibility'] = 'visible';
-        this.dataView.append(this.graph.data);
+        this.dataView.append(this.graph.node);
         break;
       case 'json':
-        this.dataView.style['visibility'] = 'visible';
         this.dataView.append(
           renderjson
             .set_icons('▶', '▼')
@@ -138,8 +136,8 @@ WHERE {
         break;
       case 'table':
         this.table.dataAsTable(data.nodes, ['id', 'namespace'], this.filterSelect);
-        this.dataView.style['visibility'] = 'visible';
-        this.dataView.style['height'] = '400px';
+        this.dataView.style['height'] = '500px';
+        this.dataView.style['overflow'] = 'scroll';
         break;
       default:
         console.error('This result format is not supported: ' + viewType);
@@ -151,7 +149,8 @@ WHERE {
    */
   clearDataView() {
     this.dataView.innerHTML="";
-    this.dataView.style['height'] = 'auto';
+    this.dataView.style['height'] = '100%';
+    this.dataView.style['overflow'] = 'auto';
   }
 
   // SPARQL Window getters //
@@ -169,6 +168,7 @@ WHERE {
           <option value="timeline">Timeline</option>
         </select>
       </form>
+      <hr/>
       <div id="${this.dataViewId}"/>`;
   }
 
@@ -210,9 +210,5 @@ WHERE {
 
   get queryTextArea() {
     return document.getElementById(this.queryTextAreaId);
-  }
-
-  static get EVENT_NODE_SELECTED() {
-    return 'EVENT_NODE_SELECTED';
   }
 }
