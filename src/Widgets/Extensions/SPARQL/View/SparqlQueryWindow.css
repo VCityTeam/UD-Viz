@@ -1,43 +1,58 @@
 #_window_sparqlQueryWindow {
   width: 500px;
+  max-width: 100%;
+  max-height: 100%;
+}
+
+#_window_content_sparqlQueryWindow {
+  overflow: hidden;
+}
+
+#_window_inner_content_sparqlQueryWindow {
+  overflow: inherit;
 }
 
 #_window_sparqlQueryWindow_form {
   width: 100%;
+  height: 100%;
 }
 
 #_window_sparqlQueryWindow_query_text_area {
-  width: 98%;
-  margin: auto;
+  width: 100%;
+  height: 100%;
+  min-height: 150px;
+  resize: vertical;
+  box-sizing: border-box;
 }
 
 #_window_sparqlQueryWindow_query_button {
-  width: 50%;
+  width: 200px;
   height: 32px;
 }
 
 #_window_sparqlQueryWindow_data_view {
   width: 100%;
-  margin-top: 4px;
-  overflow: scroll;
+  height: 100%;
   background-color: rgba(218, 218, 218, 0.08);
-  visibility: hidden;
 }
 
 #filter_div{
   position: fixed;
+  padding: 1px;
   background-color: rgba(30,30,30,0.7);
 }
 
 table {
   border: 1px solid white;
   width: 100%;
-  margin-top:30px !important;
+  height: 100%;
+  margin-top:24px !important;
 }
 
 thead {
   color: #90EE90;
-  margin:auto; border: 1px solid white !important;
+  margin:auto;
+  border: 1px solid white !important;
 }
 
 tr {
@@ -54,4 +69,8 @@ th.des:after {
 
 th.aes:after {
   content: "\21E7";
+}
+
+.renderjson {
+  margin: 8px;
 }

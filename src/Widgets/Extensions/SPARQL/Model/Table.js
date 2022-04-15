@@ -1,6 +1,5 @@
 import * as d3 from 'd3';
-import { EventSender } from '../../../../Components/Events/EventSender';
-import { SparqlQueryWindow } from './SparqlQueryWindow';
+import { SparqlQueryWindow } from '../View/SparqlQueryWindow';
 
 export class Table {
   /**
@@ -20,7 +19,7 @@ export class Table {
     var table = d3.select('#' + this.parentWindow.dataViewId).append('table')
     var thead = table.append('thead');
     var tbody = table.append('tbody');
-    var filter = this.filterInput;
+    // var filter = this.filterInput;
     var filterValue = this.filterInputId.value;
     //Add event listener on input field to update table
     // this.parentWindow.addEventListener(Table.FILTER_CHANGED, updates);

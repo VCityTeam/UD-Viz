@@ -1,5 +1,6 @@
 import * as d3 from 'd3';
-import { SparqlQueryWindow } from './SparqlQueryWindow';
+import { tokenizeURI } from './URI';
+import { SparqlQueryWindow } from '../View/SparqlQueryWindow';
 
 export class Graph {
   /**
@@ -15,13 +16,15 @@ export class Graph {
     this.window = window;
     this.height = height;
     this.width = width;
-
+    this.namespaces = [];
     this.svg = d3
       .create('svg')
       .attr('class', 'd3_graph')
       .attr('viewBox', [0, 0, this.width, this.height])
       .style('display', 'hidden');
   }
+
+  /// Data Functions ///
 
   /**
    * Create a new graph based on an graph dataset.
@@ -73,7 +76,7 @@ export class Graph {
       .attr('r', 5)
       .attr('fill', (d) => colorScale(d.namespace_id))
       .on('click', (d) =>
-        this.window.sendEvent(SparqlQueryWindow.EVENT_NODE_SELECTED, d.path[0].textContent)
+        this.window.sendEvent(Graph.EVENT_NODE_SELECTED, d.path[0].textContent)
       )
       .call(this.drag(simulation));
 
@@ -125,6 +128,72 @@ export class Graph {
       .style('fill','FloralWhite');
   }
 
+
+  /**
+   * Getter for retrieving the d3 svg.
+   */
+   get node() {
+    return this.svg.node();
+  }
+
+  /**
+   * return the most recently cached query response formatted for a D3.js graph.
+   * @return {Object}
+   */
+   formatResponseDataAsGraph(data) {
+    let graphData = {
+      nodes: [
+        // { id: 'x', namespace_id: 1 },
+        // { id: 'y', namespace_id: 2 },
+      ],
+      links: [
+        // { source: 'x', target: 'y', value: 1 }
+      ],
+      legend: undefined,
+    };
+
+    for (let triple of data) {
+      if (
+        graphData.nodes.find((n) => n.id == triple.subject.value) == undefined
+      ) {
+        let subjectNamespaceId = this.getNamespaceIndex(
+          triple.subjectType.value
+        );
+        let node = { id: triple.subject.value, namespace_id: subjectNamespaceId };
+        graphData.nodes.push(node);
+      }
+      if (
+        graphData.nodes.find((n) => n.id == triple.object.value) == undefined
+      ) {
+        let objectNamespaceId = this.getNamespaceIndex(triple.objectType.value);
+        let node = { id: triple.object.value, namespace_id: objectNamespaceId };
+        graphData.nodes.push(node);
+      }
+      let link = {
+        source: triple.subject.value,
+        target: triple.object.value,
+        label: triple.predicate.value,
+      };
+      graphData.links.push(link);
+    }
+    graphData.legend = this.namespaces;
+    return graphData;
+  }
+
+  /**
+   * Get the namespace index of a uri. Add the namespace to the array of namespaces
+   * if it does not exist.
+   * @param {String} uri the uri to map to a namespace.
+   * @return {Number}
+   */
+  getNamespaceIndex(uri) {
+    let namespace = tokenizeURI(uri).namespace;
+    if (!this.namespaces.includes(namespace)) {
+      this.namespaces.push(namespace);
+    }
+    return this.namespaces.findIndex((d) => d == namespace);
+  }
+
   /**
    * Hide the graph SVG
    */
@@ -145,6 +214,8 @@ export class Graph {
   clear() {
     this.svg.selectAll('g').remove();
   }
+
+  /// Interface Functions ///
 
   /**
    * Create a drag effect for graph nodes within the context of a force simulation
@@ -186,10 +257,7 @@ export class Graph {
       .attr('transform', event.transform);
   }
 
-  /**
-   * Getter for retrieving the d3 svg.
-   */
-  get data() {
-    return this.svg.node();
+  static get EVENT_NODE_SELECTED() {
+    return 'EVENT_NODE_SELECTED';
   }
 }
