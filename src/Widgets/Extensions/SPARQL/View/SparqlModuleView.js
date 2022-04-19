@@ -1,6 +1,6 @@
 import { ModuleView } from '../../../Components/ModuleView/ModuleView';
 import { SparqlEndpointResponseProvider } from '../ViewModel/SparqlEndpointResponseProvider';
-import { ExtendedCityObjectProvider } from '../ViewModel/ExtendedCityObjectProvider';
+import { CityObjectProvider } from '../../../CityObjects/ViewModel/CityObjectProvider';
 import { SparqlQueryWindow } from './SparqlQueryWindow';
 import { LayerManager } from '../../../Components/Components';
 
@@ -12,7 +12,7 @@ export class SparqlModuleView extends ModuleView {
    * Creates a new SparqlModuleView.
    *
    * @param {SparqlEndpointResponseProvider} sparqlProvider The SPARQL Endpoint Response Provider
-   * @param {ExtendedCityObjectProvider} cityObjectProvider The City Object Provider
+   * @param {CityObjectProvider} cityObjectProvider The City Object Provider
    * @param {LayerManager} layerManager The UD-Viz LayerManager.
    */
   constructor(sparqlProvider, cityObjectProvider, layerManager) {
@@ -28,7 +28,7 @@ export class SparqlModuleView extends ModuleView {
     /**
      * The Extended City Object Provider
      *
-     * @type {ExtendedCityObjectProvider}
+     * @type {CityObjectProvider}
      */
     this.cityObjectProvider = cityObjectProvider;
 
