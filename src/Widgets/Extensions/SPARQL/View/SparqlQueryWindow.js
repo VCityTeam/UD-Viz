@@ -2,6 +2,7 @@ import { Window } from '../../../Components/GUI/js/Window';
 import { SparqlEndpointResponseProvider } from '../ViewModel/SparqlEndpointResponseProvider';
 import { Graph } from '../Model/Graph';
 import { Table } from '../Model/Table';
+import * as URI from '../Model/URI';
 import { LayerManager } from '../../../Components/Components';
 import { ExtendedCityObjectProvider } from '../ViewModel/ExtendedCityObjectProvider';
 import * as renderjson from './JsonRender';
@@ -86,12 +87,12 @@ WHERE {
   FILTER(?subjectType != <http://www.w3.org/2002/07/owl#NamedIndividual>)
   FILTER(?objectType != <http://www.w3.org/2002/07/owl#NamedIndividual>)
 }`;
-    this.registerEvent(SparqlQueryWindow.EVENT_NODE_SELECTED);
+    this.registerEvent(Graph.EVENT_NODE_SELECTED);
   }
 
   /**
    * Override the windowCreated function. Sets the SparqlEndpointResponseProvider
-   * and graph view. Should be called by `SparqlModuleView`. Once this is done,
+   * and graph view. Should be called by a `SparqlModuleView`. Once this is done,
    * the window is actually usable ; service event listerers are set here.
    * @param {SparqlEndpointService} service The SPARQL endpoint service.
    */
@@ -109,7 +110,7 @@ WHERE {
     this.addEventListener(Graph.EVENT_NODE_SELECTED, (uri) =>
       this.cityObjectProvider.selectCityObjectByBatchTable(
         'gml_id',
-        this.sparqlProvider.tokenizeURI(uri).id
+        URI.tokenizeURI(uri).id
       )
     );
   }
@@ -124,8 +125,9 @@ WHERE {
     this.clearDataView();
     switch(viewType){
       case 'graph':
-        this.graph.update(data);
-        this.dataView.append(this.graph.node);
+        let graph_data = this.graph.formatResponseDataAsGraph(data);
+        this.graph.update(graph_data);
+        this.dataView.append(this.graph.canvas);
         break;
       case 'json':
         this.dataView.append(
@@ -211,4 +213,5 @@ WHERE {
   get queryTextArea() {
     return document.getElementById(this.queryTextAreaId);
   }
+  
 }
