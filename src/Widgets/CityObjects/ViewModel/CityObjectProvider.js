@@ -156,6 +156,7 @@ export class CityObjectProvider extends EventSender {
    */
   setSelectionStyle(style) {
     this.defaultSelectionStyle = style;
+    this.layerManager.registerStyle('selected', style);
   }
 
   /////////////

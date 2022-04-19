@@ -25,7 +25,7 @@ export class Debug3DTilesWindow extends Window {
     this.layerManager = layerManager;
     // Selection
     this.layerManager.registerStyle(
-      'selected',
+      'debug_selected',
       new CityObjectStyle({
         materialProps: { color: 0x00ff00 },
       })
@@ -168,7 +168,7 @@ export class Debug3DTilesWindow extends Window {
         this.selectedCityObject = cityObject;
         this.selectedTilesManager = this.layerManager.getTilesManagerByLayerID(this.selectedCityObject.tile.layer.id);
         this.selectedStyle = this.selectedTilesManager.styleManager.getStyleIdentifierAppliedTo(this.selectedCityObject.cityObjectId);
-        this.selectedTilesManager.setStyle(this.selectedCityObject.cityObjectId, 'selected');
+        this.selectedTilesManager.setStyle(this.selectedCityObject.cityObjectId, 'debug_selected');
         this.selectedTilesManager.applyStyles({
           updateFunction: this.selectedTilesManager.view.notifyChange.bind(
             this.selectedTilesManager.view
