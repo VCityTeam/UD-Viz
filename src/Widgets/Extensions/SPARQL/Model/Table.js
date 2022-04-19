@@ -10,11 +10,23 @@ export class Table {
     this.parentWindow = parentWindow;
   }
 
-  dataAsTable(data, columns, filterSelect) {
+  /**
+   * Render the table.
+   * @param {Object} data The data to render.
+   * @param {Array} columns The columns to render.
+   */
+  dataAsTable(data, columns) {
     this.filter_div = document.createElement('div');
-    this.filter_div.id = "filter_div"
+    this.filter_div.id = this.filterId;
     this.filter_div.innerHTML = this.filterHtml;
     this.parentWindow.dataView.appendChild(this.filter_div);
+    columns.forEach(c => {
+      let option = document.createElement('option');
+      option.value = c;
+      option.text = c;
+      this.filterSelect.append(option);
+    });
+    
     var sortAscending = true;
     var table = d3.select('#' + this.parentWindow.dataViewId).append('table')
     var thead = table.append('thead');
@@ -100,17 +112,17 @@ export class Table {
           .data(function (d) {
               return columns.map(function (k) {
                   return {
-                    'value': d[k]?d[k]:0,
-                    'name': k
+                    'col': k,
+                    'row': d
                   };
               });
           }).enter()
           .append('td')
           .attr('data-th', function (d) {
-              return d.name;
+              return d.col;
           })
           .text(function (d) {
-              return d.value;
+              return d.row[d.col]['value'];
           });
       }
 
@@ -122,12 +134,13 @@ export class Table {
   get filterHtml() {
     return /*html*/ `
       <label>Select filter: </label>
-      <select id="${this.filterSelectId}">
-        <option value="id">Id </option>
-        <option value="namespace">Namespace</option>
-      </select>
+      <select id="${this.filterSelectId}"/>
       <label>Type filter value: </label>
       <input id="${this.filterInputId}" type="text" value=""/>`;
+  }
+
+  get filterId() {
+    return `${this.parentWindow.windowId}_filter`;
   }
 
   get filterSelectId() {
