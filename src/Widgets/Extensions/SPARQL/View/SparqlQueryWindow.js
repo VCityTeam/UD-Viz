@@ -4,7 +4,7 @@ import { Graph } from '../Model/Graph';
 import { Table } from '../Model/Table';
 import * as URI from '../Model/URI';
 import { LayerManager } from '../../../Components/Components';
-import { ExtendedCityObjectProvider } from '../ViewModel/ExtendedCityObjectProvider';
+import { CityObjectProvider } from '../../../CityObjects/ViewModel/CityObjectProvider';
 import * as renderjson from './JsonRender';
 import './SparqlQueryWindow.css';
 
@@ -16,7 +16,7 @@ export class SparqlQueryWindow extends Window {
   /**
    * Creates a SPARQL query window.
    * @param {SparqlEndpointResponseProvider} sparqlProvider The SPARQL Endpoint Response Provider
-   * @param {ExtendedCityObjectProvider} cityObjectProvider The City Object Provider
+   * @param {CityObjectProvider} cityObjectProvider The City Object Provider
    * @param {LayerManager} layerManager The UD-Viz LayerManager.
    */
   constructor(sparqlProvider, cityObjectProvider, layerManager) {
@@ -32,7 +32,7 @@ export class SparqlQueryWindow extends Window {
     /**
      * The Extended City Object Provider
      *
-     * @type {ExtendedCityObjectProvider}
+     * @type {CityObjectProvider}
      */
     this.cityObjectProvider = cityObjectProvider;
 
