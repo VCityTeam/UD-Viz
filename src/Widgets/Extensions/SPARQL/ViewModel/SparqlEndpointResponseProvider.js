@@ -42,7 +42,8 @@ export class SparqlEndpointResponseProvider extends EventSender {
     this.response_cache = await this.service.querySparqlEndpoint(query);
 
     await this.sendEvent(
-      SparqlEndpointResponseProvider.EVENT_ENDPOINT_RESPONSE_UPDATED
+      SparqlEndpointResponseProvider.EVENT_ENDPOINT_RESPONSE_UPDATED,
+      this.response_cache
     );
   }
 

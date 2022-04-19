@@ -132,12 +132,12 @@ export class Graph {
   /**
    * Getter for retrieving the d3 svg.
    */
-   get node() {
+   get canvas() {
     return this.svg.node();
   }
 
   /**
-   * return the most recently cached query response formatted for a D3.js graph.
+   * return a query response formatted for a D3.js graph.
    * @return {Object}
    */
    formatResponseDataAsGraph(data) {
@@ -152,7 +152,7 @@ export class Graph {
       legend: undefined,
     };
 
-    for (let triple of data) {
+    for (let triple of data.results.bindings) {
       if (
         graphData.nodes.find((n) => n.id == triple.subject.value) == undefined
       ) {
