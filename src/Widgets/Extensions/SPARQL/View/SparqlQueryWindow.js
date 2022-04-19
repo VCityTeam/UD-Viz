@@ -104,7 +104,7 @@ WHERE {
 
     this.sparqlProvider.addEventListener(
       SparqlEndpointResponseProvider.EVENT_ENDPOINT_RESPONSE_UPDATED,
-      (data) => this.updateDataView(data, document.getElementById(this.resultSelectId).value)
+      (response) => this.updateDataView(response, document.getElementById(this.resultSelectId).value)
     );
 
     this.addEventListener(Graph.EVENT_NODE_SELECTED, (uri) =>
@@ -120,12 +120,12 @@ WHERE {
    * @param {Object} data SPARQL query response data.
    * @param {Object} viewType The selected semantic data view type.
    */
-  updateDataView(data, viewType) {
-    console.debug(data)
+  updateDataView(response, viewType) {
+    console.debug(response)
     this.clearDataView();
     switch(viewType){
       case 'graph':
-        let graph_data = this.graph.formatResponseDataAsGraph(data);
+        let graph_data = this.graph.formatResponseDataAsGraph(response);
         this.graph.update(graph_data);
         this.dataView.append(this.graph.canvas);
         break;
@@ -134,10 +134,12 @@ WHERE {
           renderjson
             .set_icons('▶', '▼')
             .set_max_string_length(40)
-          (data));
+          (response));
         break;
       case 'table':
-        this.table.dataAsTable(data.nodes, ['id', 'namespace'], this.filterSelect);
+        this.table.dataAsTable(
+          response.results.bindings,
+          response.head.vars);
         this.dataView.style['height'] = '500px';
         this.dataView.style['overflow'] = 'scroll';
         break;
