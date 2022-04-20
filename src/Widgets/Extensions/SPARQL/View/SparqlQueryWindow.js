@@ -140,6 +140,8 @@ WHERE {
         this.table.dataAsTable(
           response.results.bindings,
           response.head.vars);
+        this.table.filterInput.addEventListener('change',
+          (e) => Table.update(this.table, e));
         this.dataView.style['height'] = '500px';
         this.dataView.style['overflow'] = 'scroll';
         break;
