@@ -36,7 +36,8 @@ export class Graph {
 
     const links = data.links.map((d) => Object.create(d));
     const nodes = data.nodes.map((d) => Object.create(d));
-    const namespaces = data.legend;
+    const legend = data.legend;
+    const colorScale = data.colorSet;
 
     const simulation = d3
       .forceSimulation(nodes)
@@ -63,24 +64,25 @@ export class Graph {
       .join('line')
       .attr('stroke-width', (d) => Math.sqrt(d.value));
 
-    const colorScale = d3.scaleOrdinal(d3.schemeCategory10);
 
     const node = this.svg
       .append('g')
-      .attr('stroke', '#000')
+      .attr('stroke', '#fff')
       .attr('stroke-opacity', 0.8)
       .attr('stroke-width', 0.75)
       .selectAll('circle')
       .data(nodes)
       .join('circle')
       .attr('r', 5)
-      .attr('fill', (d) => colorScale(d.namespace_id))
-      .on('click', (d) =>
-        this.window.sendEvent(Graph.EVENT_NODE_SELECTED, d.path[0].textContent)
-      )
+      .on('click', (d) => {
+        this.window.sendEvent(Graph.EVENT_NODE_CLICKED, d.path[0].textContent);
+      })
       .call(this.drag(simulation));
-
     node.append('title').text((d) => d.id);
+    if (colorScale) {
+      node.attr('fill', (d) => colorScale(d.color_id))
+      .attr('stroke', '#000')
+    }
 
     simulation.on('tick', () => {
       link
@@ -107,7 +109,7 @@ export class Graph {
       .attr('stroke', '#000')
       .attr('stroke-width', 1)
       .selectAll('rect')
-      .data(namespaces)
+      .data(legend)
       .join('rect')
       .attr('x', 10)
       .attr('y', (d, i) => 25 + i * 16)
@@ -120,7 +122,7 @@ export class Graph {
     this.svg
       .append('g')
       .selectAll('text')
-      .data(namespaces)
+      .data(legend)
       .join('text')
       .attr('x', 24)
       .attr('y', (d, i) => 35 + i * 16)
@@ -143,43 +145,75 @@ export class Graph {
    formatResponseDataAsGraph(data) {
     let graphData = {
       nodes: [
-        // { id: 'x', namespace_id: 1 },
-        // { id: 'y', namespace_id: 2 },
+        // { id: 'x', color_id: 1 },
+        // { id: 'y', color_id: 2 },
       ],
       links: [
         // { source: 'x', target: 'y', value: 1 }
       ],
-      legend: undefined,
+      legend: [],
+      colorSet: d3.scaleOrdinal(d3.schemeCategory10)
     };
 
     for (let triple of data.results.bindings) {
-      if (
-        graphData.nodes.find((n) => n.id == triple.subject.value) == undefined
-      ) {
-        let subjectNamespaceId = this.getNamespaceIndex(
-          triple.subjectType.value
-        );
-        let node = { id: triple.subject.value, namespace_id: subjectNamespaceId };
-        graphData.nodes.push(node);
+      /* If the query is formatted using subject, subjectType, predicate, object,
+         and objectType variables the node color based on the namespace of the subject
+         or object's respective type */
+      if (triple.subject && triple.subjectType && triple.predicate
+          && triple.object && triple.objectType) {
+        if ( // if the subject doesn't exist yet 
+          graphData.nodes.find((n) => n.id == triple.subject.value) == undefined
+        ) {
+          let subjectNamespaceId = this.getNamespaceIndex(
+            triple.subjectType.value
+          );
+          let node = { id: triple.subject.value, color_id: subjectNamespaceId };
+          graphData.nodes.push(node);
+        }
+        if (// if the object doesn't exist yet
+          graphData.nodes.find((n) => n.id == triple.object.value) == undefined
+        ) {
+          let objectNamespaceId = this.getNamespaceIndex(triple.objectType.value);
+          let node = { id: triple.object.value, color_id: objectNamespaceId };
+          graphData.nodes.push(node);
+        }
+        let link = {
+          source: triple.subject.value,
+          target: triple.object.value,
+          label: triple.predicate.value,
+        };
+        graphData.links.push(link);
+        graphData.legend = this.namespaces;
+      } else if (triple.subject && triple.predicate && triple.object) {
+        /* If the query is formatted using just subject, predicate, and object,
+           variables the node color is left black */
+        if ( // if the subject doesn't exist yet 
+          graphData.nodes.find((n) => n.id == triple.subject.value) == undefined
+        ) {
+          let node = { id: triple.subject.value, color_id: undefined };
+          graphData.nodes.push(node);
+        }
+        if (// if the object doesn't exist yet
+          graphData.nodes.find((n) => n.id == triple.object.value) == undefined
+        ) {
+          let node = { id: triple.object.value, color_id: undefined };
+          graphData.nodes.push(node);
+        }
+        let link = {
+          source: triple.subject.value,
+          target: triple.object.value,
+          label: triple.predicate.value,
+        };
+        graphData.links.push(link);
+        graphData.colorSet = undefined;
       }
-      if (
-        graphData.nodes.find((n) => n.id == triple.object.value) == undefined
-      ) {
-        let objectNamespaceId = this.getNamespaceIndex(triple.objectType.value);
-        let node = { id: triple.object.value, namespace_id: objectNamespaceId };
-        graphData.nodes.push(node);
+      else {
+        console.warn('Unrecognized endpoint response format for graph construction');
       }
-      let link = {
-        source: triple.subject.value,
-        target: triple.object.value,
-        label: triple.predicate.value,
-      };
-      graphData.links.push(link);
     }
-    graphData.legend = this.namespaces;
+    console.debug(graphData);
     return graphData;
   }
-
   /**
    * Get the namespace index of a uri. Add the namespace to the array of namespaces
    * if it does not exist.
@@ -213,6 +247,7 @@ export class Graph {
    */
   clear() {
     this.svg.selectAll('g').remove();
+    this.namespaces = [];
   }
 
   /// Interface Functions ///
@@ -257,7 +292,13 @@ export class Graph {
       .attr('transform', event.transform);
   }
 
-  static get EVENT_NODE_SELECTED() {
-    return 'EVENT_NODE_SELECTED';
+  /// EVENTS
+
+  static get EVENT_NODE_CLICKED() {
+    return 'EVENT_NODE_CLICKED';
+  }
+
+  static get EVENT_NODE_MOUSEOVER() {
+    return 'EVENT_NODE_MOUSEOVER';
   }
 }
