@@ -36,7 +36,7 @@
   background-color: rgba(218, 218, 218, 0.08);
 }
 
-#filter_div{
+#_window_sparqlQueryWindow_filter{
   position: fixed;
   padding: 1px;
   background-color: rgba(30,30,30,0.7);
