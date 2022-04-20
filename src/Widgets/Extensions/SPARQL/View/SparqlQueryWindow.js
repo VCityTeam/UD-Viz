@@ -87,7 +87,8 @@ WHERE {
   FILTER(?subjectType != <http://www.w3.org/2002/07/owl#NamedIndividual>)
   FILTER(?objectType != <http://www.w3.org/2002/07/owl#NamedIndividual>)
 }`;
-    this.registerEvent(Graph.EVENT_NODE_SELECTED);
+    this.registerEvent(Graph.EVENT_NODE_CLICKED);
+    this.registerEvent(Table.EVENT_CELL_CLICKED);
   }
 
   /**
@@ -107,10 +108,17 @@ WHERE {
       (response) => this.updateDataView(response, document.getElementById(this.resultSelectId).value)
     );
 
-    this.addEventListener(Graph.EVENT_NODE_SELECTED, (uri) =>
-      this.cityObjectProvider.selectCityObjectByBatchTable(
+    this.addEventListener(Graph.EVENT_NODE_CLICKED,
+      (node_text) => this.cityObjectProvider.selectCityObjectByBatchTable(
         'gml_id',
-        URI.tokenizeURI(uri).id
+        URI.tokenizeURI(node_text).id
+      )
+    );
+
+    this.addEventListener(Table.EVENT_CELL_CLICKED,
+      (cell_text) => this.cityObjectProvider.selectCityObjectByBatchTable(
+        'gml_id',
+        URI.tokenizeURI(cell_text).id
       )
     );
   }
@@ -118,12 +126,12 @@ WHERE {
   /**
    * Update the DataView.
    * @param {Object} data SPARQL query response data.
-   * @param {Object} viewType The selected semantic data view type.
+   * @param {Object} view_type The selected semantic data view type.
    */
-  updateDataView(response, viewType) {
+  updateDataView(response, view_type) {
     console.debug(response)
     this.clearDataView();
-    switch(viewType){
+    switch(view_type){
       case 'graph':
         let graph_data = this.graph.formatResponseDataAsGraph(response);
         this.graph.update(graph_data);
@@ -146,7 +154,7 @@ WHERE {
         this.dataView.style['overflow'] = 'scroll';
         break;
       default:
-        console.error('This result format is not supported: ' + viewType);
+        console.error('This result format is not supported: ' + view_type);
     }
   }
 

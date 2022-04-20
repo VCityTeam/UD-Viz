@@ -4,10 +4,10 @@ import { SparqlQueryWindow } from '../View/SparqlQueryWindow';
 export class Table {
   /**
    * Create a new Table using D3.
-   * @param {SparqlQueryWindow} parentWindow The SparqlQueryWindow to attach the table to.
+   * @param {SparqlQueryWindow} window The window the table is attached to.
    */
-  constructor(parentWindow) {
-    this.parentWindow = parentWindow;
+  constructor(window) {
+    this.window = window;
     this.data = undefined;
     this.columns = [];
     this.sortAscending = undefined;
@@ -28,7 +28,7 @@ export class Table {
     this.filter_div = document.createElement('div');
     this.filter_div.id = this.filterId;
     this.filter_div.innerHTML = this.filterHtml;
-    this.parentWindow.dataView.appendChild(this.filter_div);
+    this.window.dataView.appendChild(this.filter_div);
     this.columns.forEach(c => {
       let option = document.createElement('option');
       option.value = c;
@@ -37,7 +37,7 @@ export class Table {
     });
     
     this.sortAscending = true;
-    this.table = d3.select('#' + this.parentWindow.dataViewId).append('table')
+    this.table = d3.select('#' + this.window.dataViewId).append('table')
     this.thead = this.table.append('thead');
     this.tbody = this.table.append('tbody');
 
@@ -134,7 +134,13 @@ export class Table {
         })
         .text(function (d) {
             return d.row[d.col].value;
-        });
+        })
+        .on('click', (d) => {
+          let col = d.target.__data__.col;
+          let row = d.target.__data__.row;
+          table.window.sendEvent(Table.EVENT_CELL_CLICKED, row[col].value);
+        }
+        );
     }
   }
 
@@ -159,11 +165,11 @@ export class Table {
   }
 
   get filterId() {
-    return `${this.parentWindow.windowId}_filter`;
+    return `${this.window.windowId}_filter`;
   }
 
   get filterSelectId() {
-    return `${this.parentWindow.windowId}_filter_select`;
+    return `${this.window.windowId}_filter_select`;
   }
 
   get filterSelect() {
@@ -171,10 +177,20 @@ export class Table {
   }
 
   get filterInputId() {
-    return `${this.parentWindow.windowId}_filter_input`;
+    return `${this.window.windowId}_filter_input`;
   }
 
   get filterInput() {
     return document.getElementById(this.filterInputId);
+  }
+
+  /// EVENTS
+
+  static get EVENT_CELL_CLICKED() {
+    return 'EVENT_CELL_CLICKED';
+  }
+
+  static get EVENT_CELL_MOUSEOVER() {
+    return 'EVENT_CELL_MOUSEOVER';
   }
 }

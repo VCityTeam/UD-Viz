@@ -22,13 +22,6 @@ export class SparqlEndpointResponseProvider extends EventSender {
      */
     this.service = new SparqlEndpointService(service);
 
-    /**
-     * The most recent query response.
-     *
-     * @type {Object}
-     */
-    this.response_cache = {};
-
     this.registerEvent(
       SparqlEndpointResponseProvider.EVENT_ENDPOINT_RESPONSE_UPDATED
     );
@@ -39,11 +32,10 @@ export class SparqlEndpointResponseProvider extends EventSender {
    * @param {string} query
    */
   async querySparqlEndpointService(query) {
-    this.response_cache = await this.service.querySparqlEndpoint(query);
-
+    let response = await this.service.querySparqlEndpoint(query);
     await this.sendEvent(
       SparqlEndpointResponseProvider.EVENT_ENDPOINT_RESPONSE_UPDATED,
-      this.response_cache
+      JSON.parse(response.responseText)
     );
   }
 
