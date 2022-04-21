@@ -39,7 +39,7 @@ export class Graph {
     const legend = data.legend;
     const setColor = function (d, default_color, override_color = undefined) {
       if (override_color && data.colorSetOrScale) return override_color;
-      if (data.colorSetOrScale) return data.colorSetOrScale(d.color_id);
+      if (data.colorSetOrScale) return data.colorSetOrScale(d);
       return default_color;
     }
 
@@ -77,14 +77,14 @@ export class Graph {
       .attr('r', 4)
       .attr('stroke-opacity', 0.8)
       .attr('stroke-width', 0.75)
-      .attr('stroke', (d) => setColor(d, '#ddd', '#111'))
-      .attr('fill', (d) => setColor(d, 'black'))
+      .attr('stroke', (d) => setColor(d.color_id, '#ddd', '#111'))
+      .attr('fill', (d) => setColor(d.color_id, 'black'))
       .on('click', (d) => {
         this.window.sendEvent(Graph.EVENT_NODE_CLICKED, d.path[0].textContent);
       })
       .on('mouseover', (event, d) => {
-        event.target.style['stroke'] = setColor(nodes[d.index], 'white', 'white');
-        event.target.style['fill'] = setColor(nodes[d.index], '#333');
+        event.target.style['stroke'] = setColor(nodes[d.index].color_id, 'white', 'white');
+        event.target.style['fill'] = setColor(nodes[d.index].color_id, '#333');
         node_label.filter((e, j) => {
             return d.index == j;
           })
@@ -95,8 +95,8 @@ export class Graph {
           .style('fill', 'white');
       })
       .on('mouseout', (event, d) => {
-        event.target.style['stroke'] = setColor(nodes[d.index], '#ddd', '#111');
-        event.target.style['fill'] = setColor(nodes[d.index], 'black');
+        event.target.style['stroke'] = setColor(nodes[d.index].color_id, '#ddd', '#111');
+        event.target.style['fill'] = setColor(nodes[d.index].color_id, 'black');
         node_label.filter((e, j) => {
           return d.index == j;
         })
@@ -182,7 +182,9 @@ export class Graph {
       .attr('y', (d, i) => 25 + i * 16)
       .attr('width', 10)
       .attr('height', 10)
-      .style('fill', (d) => setColor(d, '#000'))
+      .style('fill', (d, i) => {
+        return setColor(i, '#000');
+      })
       .append('title')
       .text((d) => d);
 

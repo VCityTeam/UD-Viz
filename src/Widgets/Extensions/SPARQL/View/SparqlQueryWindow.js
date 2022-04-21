@@ -81,9 +81,10 @@ WHERE {
   ?object a bldg:Building .
   ?object a ?objectType .
   
-  FILTER(?subjectType != <http://www.w3.org/2002/07/owl#NamedIndividual>)
-  FILTER(?objectType != <http://www.w3.org/2002/07/owl#NamedIndividual>)
-}`;
+  FILTER(?subjectType != owl:NamedIndividual)
+  FILTER(?objectType != owl:NamedIndividual)
+}
+LIMIT 100`;
     this.registerEvent(Graph.EVENT_NODE_CLICKED);
     this.registerEvent(Table.EVENT_CELL_CLICKED);
   }
