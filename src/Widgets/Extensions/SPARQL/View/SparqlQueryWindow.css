@@ -73,4 +73,6 @@ th.aes:after {
 
 .renderjson {
   margin: 8px;
+  height: 500px;
+  overflow: scroll;
 }
