@@ -127,20 +127,17 @@ LIMIT 100`;
    * @param {Object} view_type The selected semantic data view type.
    */
   updateDataView(response, view_type) {
-    console.debug(response)
+    console.debug(response);
     this.clearDataView();
     switch(view_type){
       case 'graph':
-        let graph_data = this.graph.formatResponseDataAsGraph(response);
-        this.graph.update(graph_data);
+        this.graph.update( this.graph.formatResponseDataAsGraph(response) );
         this.dataView.append(this.graph.canvas);
         break;
       case 'json':
-        this.dataView.append(
-          renderjson
-            .set_icons('▶', '▼')
-            .set_max_string_length(40)
-          (response));
+        renderjson.set_icons('▶', '▼');
+        renderjson.set_max_string_length(40);
+        this.dataView.append(renderjson(response));
         break;
       case 'table':
         this.table.dataAsTable(
@@ -160,7 +157,7 @@ LIMIT 100`;
    * Clear the DataView of content.
    */
   clearDataView() {
-    this.dataView.innerHTML="";
+    this.dataView.innerHTML='';
     this.dataView.style['height'] = '100%';
     this.dataView.style['overflow'] = 'auto';
   }

@@ -41,7 +41,7 @@ export class Graph {
       if (override_color && data.colorSetOrScale) return override_color;
       if (data.colorSetOrScale) return data.colorSetOrScale(d);
       return default_color;
-    }
+    };
 
     const simulation = d3
       .forceSimulation(nodes)
@@ -86,12 +86,12 @@ export class Graph {
         event.target.style['stroke'] = setColor(nodes[d.index].color_id, 'white', 'white');
         event.target.style['fill'] = setColor(nodes[d.index].color_id, '#333');
         node_label.filter((e, j) => {
-            return d.index == j;
-          })
+          return d.index == j;
+        })
           .style('fill', 'white');
         link_label.filter((e, j) => {
-            return d.index == e.source.index || d.index == e.target.index;
-          })
+          return d.index == e.source.index || d.index == e.target.index;
+        })
           .style('fill', 'white');
       })
       .on('mouseout', (event, d) => {
@@ -100,17 +100,17 @@ export class Graph {
         node_label.filter((e, j) => {
           return d.index == j;
         })
-        .style('fill', 'grey');
+          .style('fill', 'grey');
         link_label.filter((e) => {
-            return d.index == e.source.index || d.index == e.target.index;
-          })
+          return d.index == e.source.index || d.index == e.target.index;
+        })
           .style('fill', 'grey');
       })
       .call(this.drag(simulation));
       
-      node.append('title').text((d) => d.id)
+    node.append('title').text((d) => d.id);
 
-      const node_label = this.svg.selectAll('.node_label')
+    const node_label = this.svg.selectAll('.node_label')
       .data(nodes)
       .enter()
       .append('text')
@@ -153,10 +153,10 @@ export class Graph {
         .attr('y2', (d) => d.target.y);
       link_label
         .attr('x', function(d) {
-            return ((d.source.x + d.target.x)/2);
+          return ((d.source.x + d.target.x)/2);
         })
         .attr('y', function(d) {
-            return ((d.source.y + d.target.y)/2);
+          return ((d.source.y + d.target.y)/2);
         });
       node.attr('cx', (d) => d.x).attr('cy', (d) => d.y);
     });
@@ -203,7 +203,7 @@ export class Graph {
   /**
    * Getter for retrieving the d3 svg.
    */
-   get canvas() {
+  get canvas() {
     return this.svg.node();
   }
 
@@ -211,7 +211,7 @@ export class Graph {
    * return a query response formatted for a D3.js graph.
    * @return {Object}
    */
-   formatResponseDataAsGraph(data) {
+  formatResponseDataAsGraph(data) {
     let graphData = {
       nodes: [
         // { id: 'x', color_id: 1 },
