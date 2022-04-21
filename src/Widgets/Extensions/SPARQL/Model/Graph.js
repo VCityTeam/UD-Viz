@@ -37,7 +37,11 @@ export class Graph {
     const links = data.links.map((d) => Object.create(d));
     const nodes = data.nodes.map((d) => Object.create(d));
     const legend = data.legend;
-    const colorScale = data.colorSet;
+    const setColor = function (d, default_color, override_color = undefined) {
+      if (override_color && data.colorSetOrScale) return override_color;
+      if (data.colorSetOrScale) return data.colorSetOrScale(d.color_id);
+      return default_color;
+    }
 
     const simulation = d3
       .forceSimulation(nodes)
@@ -67,62 +71,125 @@ export class Graph {
 
     const node = this.svg
       .append('g')
-      .attr('stroke', '#fff')
-      .attr('stroke-opacity', 0.8)
-      .attr('stroke-width', 0.75)
       .selectAll('circle')
       .data(nodes)
       .join('circle')
-      .attr('r', 5)
+      .attr('r', 4)
+      .attr('stroke-opacity', 0.8)
+      .attr('stroke-width', 0.75)
+      .attr('stroke', (d) => setColor(d, '#ddd', '#111'))
+      .attr('fill', (d) => setColor(d, 'black'))
       .on('click', (d) => {
         this.window.sendEvent(Graph.EVENT_NODE_CLICKED, d.path[0].textContent);
       })
+      .on('mouseover', (event, d) => {
+        event.target.style['stroke'] = setColor(nodes[d.index], 'white', 'white');
+        event.target.style['fill'] = setColor(nodes[d.index], '#333');
+        node_label.filter((e, j) => {
+            return d.index == j;
+          })
+          .style('fill', 'white');
+        link_label.filter((e, j) => {
+            return d.index == e.source.index || d.index == e.target.index;
+          })
+          .style('fill', 'white');
+      })
+      .on('mouseout', (event, d) => {
+        event.target.style['stroke'] = setColor(nodes[d.index], '#ddd', '#111');
+        event.target.style['fill'] = setColor(nodes[d.index], 'black');
+        node_label.filter((e, j) => {
+          return d.index == j;
+        })
+        .style('fill', 'grey');
+        link_label.filter((e) => {
+            return d.index == e.source.index || d.index == e.target.index;
+          })
+          .style('fill', 'grey');
+      })
       .call(this.drag(simulation));
-    node.append('title').text((d) => d.id);
-    if (colorScale) {
-      node.attr('fill', (d) => colorScale(d.color_id))
-      .attr('stroke', '#000')
-    }
+      
+      node.append('title').text((d) => d.id)
+
+      const node_label = this.svg.selectAll('.node_label')
+      .data(nodes)
+      .enter()
+      .append('text')
+      .text(function (d) { 
+        let uri = tokenizeURI(d.id);
+        return uri.id;
+      })
+      .style('text-anchor', 'middle')
+      .style('fill', 'grey')
+      .style('font-family', 'Arial')
+      .style('font-size', 10.5)
+      .style('text-shadow', '1px 1px black')
+      .attr('class','node_label')
+      .call(this.drag(simulation));
+      
+    const link_label = this.svg.selectAll('.link_label')
+      .data(links)
+      .enter()
+      .append('text')
+      .text(function (d) {
+        let label = tokenizeURI(d.label);
+        return label.id;
+      })
+      .style('text-anchor', 'middle')
+      .style('fill', 'grey')
+      .style('font-family', 'Arial')
+      .style('font-size', 10)
+      .style('text-shadow', '1px 1px black')
+      .attr('class','link_label')
+      .call(this.drag(simulation));
 
     simulation.on('tick', () => {
+      node_label
+        .attr('x', function(d){ return d.x; })
+        .attr('y', function (d) {return d.y - 10; });
       link
         .attr('x1', (d) => d.source.x)
         .attr('y1', (d) => d.source.y)
         .attr('x2', (d) => d.target.x)
         .attr('y2', (d) => d.target.y);
-
+      link_label
+        .attr('x', function(d) {
+            return ((d.source.x + d.target.x)/2);
+        })
+        .attr('y', function(d) {
+            return ((d.source.y + d.target.y)/2);
+        });
       node.attr('cx', (d) => d.x).attr('cy', (d) => d.y);
     });
 
     // Create legend
     this.svg
-    .append('text')
-    .attr("x", 10)             
-    .attr("y", 16)
-    .style("font-size", "14px")
-    .style("text-decoration", "underline")
-    .text("Legend")
-    .style('fill','FloralWhite');
+      .append('text')
+      .attr('x', 10)             
+      .attr('y', 16)
+      .style('font-size', '14px')
+      .style('text-decoration', 'underline')
+      .text(legend.title)
+      .style('fill','FloralWhite');
 
     this.svg
       .append('g')
-      .attr('stroke', '#000')
+      .attr('stroke', '#111')
       .attr('stroke-width', 1)
       .selectAll('rect')
-      .data(legend)
+      .data(legend.content)
       .join('rect')
       .attr('x', 10)
       .attr('y', (d, i) => 25 + i * 16)
       .attr('width', 10)
       .attr('height', 10)
-      .style('fill', (d, i) => colorScale(i))
+      .style('fill', (d) => setColor(d, '#000'))
       .append('title')
       .text((d) => d);
 
     this.svg
       .append('g')
       .selectAll('text')
-      .data(legend)
+      .data(legend.content)
       .join('text')
       .attr('x', 24)
       .attr('y', (d, i) => 35 + i * 16)
@@ -151,8 +218,11 @@ export class Graph {
       links: [
         // { source: 'x', target: 'y', value: 1 }
       ],
-      legend: [],
-      colorSet: d3.scaleOrdinal(d3.schemeCategory10)
+      legend: {
+        title: '',
+        content: []
+      },
+      colorSetOrScale: d3.scaleOrdinal(d3.schemeCategory10)
     };
 
     for (let triple of data.results.bindings) {
@@ -183,7 +253,8 @@ export class Graph {
           label: triple.predicate.value,
         };
         graphData.links.push(link);
-        graphData.legend = this.namespaces;
+        graphData.legend.title = 'Namespaces';
+        graphData.legend.content = this.namespaces;
       } else if (triple.subject && triple.predicate && triple.object) {
         /* If the query is formatted using just subject, predicate, and object,
            variables the node color is left black */
@@ -205,7 +276,8 @@ export class Graph {
           label: triple.predicate.value,
         };
         graphData.links.push(link);
-        graphData.colorSet = undefined;
+        graphData.legend.title = 'Legend';
+        graphData.colorSetOrScale = undefined;
       }
       else {
         console.warn('Unrecognized endpoint response format for graph construction');
@@ -247,6 +319,7 @@ export class Graph {
    */
   clear() {
     this.svg.selectAll('g').remove();
+    this.svg.selectAll('text').remove();
     this.namespaces = [];
   }
 
@@ -289,7 +362,19 @@ export class Graph {
   handleZoom(event) {
     d3.selectAll('svg g')
       .filter((d, i) => i < 2)
-      .attr('transform', event.transform);
+      .attr('height','100%')
+      .attr('width','100%')
+      //.attr('transform', event.transform)
+      .attr('transform',
+        'translate(' + event.transform.x + ',' + event.transform.y + ') scale(' + event.transform.k + ')');
+    d3.selectAll('text.node_label')
+      .style('font-size', (10.5/event.transform.k) + 'px')
+      .attr('transform',
+        'translate(' + event.transform.x + ',' + event.transform.y + ') scale(' + event.transform.k + ')');
+    d3.selectAll('text.link_label')
+      .style('font-size', (10.5/event.transform.k) + 'px')
+      .attr('transform',
+        'translate(' + event.transform.x + ',' + event.transform.y + ') scale(' + event.transform.k + ')');
   }
 
   /// EVENTS
@@ -300,5 +385,9 @@ export class Graph {
 
   static get EVENT_NODE_MOUSEOVER() {
     return 'EVENT_NODE_MOUSEOVER';
+  }
+
+  static get EVENT_NODE_MOUSEOUT() {
+    return 'EVENT_NODE_MOUSEOUT';
   }
 }

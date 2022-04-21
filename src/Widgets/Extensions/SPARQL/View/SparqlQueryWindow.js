@@ -63,15 +63,12 @@ export class SparqlQueryWindow extends Window {
      * @type {string}
      */
     this.default_query = `PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX owl:  <http://www.w3.org/2002/07/owl#>
 PREFIX xsd:  <http://www.w3.org/2001/XMLSchema#>
 PREFIX gmlowl:  <http://www.opengis.net/ont/gml#>
 PREFIX units: <http://www.opengis.net/def/uom/OGC/1.0/>
 PREFIX geo: <http://www.opengis.net/ont/geosparql#>
 PREFIX geof: <http://www.opengis.net/def/function/geosparql/>
-PREFIX strdf: <http://strdf.di.uoa.gr/ontology#>
-PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 PREFIX core: <http://www.opengis.net/citygml/2.0/core#>
 PREFIX bldg: <http://www.opengis.net/citygml/building/2.0/building#>
 
@@ -172,7 +169,7 @@ WHERE {
     return /*html*/ `
       <form id=${this.formId}>
         <label for="${this.queryTextAreaId}">Query:</label></br>
-        <textarea id="${this.queryTextAreaId}" rows="10">${this.default_query}</textarea></br>
+        <textarea id="${this.queryTextAreaId}" rows="20">${this.default_query}</textarea></br>
         <input id="${this.queryButtonId}" type="submit" value="Send"/>
         <label>Results Format: </label>
         <select id="${this.resultSelectId}">
