@@ -37,11 +37,11 @@ export class Table {
     });
     
     this.sortAscending = true;
-    this.table = d3.select('#' + this.window.dataViewId).append('table')
+    this.table = d3.select('#' + this.window.dataViewId).append('table');
     this.thead = this.table.append('thead');
     this.tbody = this.table.append('tbody');
 
-    Table.update(this, [])
+    Table.update(this, []);
   }
   /**
    * Update the table with new data.
@@ -54,86 +54,87 @@ export class Table {
 
     //check if element filter input is changed
     if (event.target) {
-      filterValue = event.target.value
+      filterValue = event.target.value;
       var column = table.filterSelect.value;
     }
     //filter data by filtertype
-    if (filterValue && filterValue !== ""){
-      var dataFilter = table.data.filter(function(d,i) {
-        if (typeof d[column].value === "string" &&
+    var dataFilter = undefined;
+    if (filterValue && filterValue !== ''){
+      dataFilter = table.data.filter(function(d,i) {
+        if (typeof d[column].value === 'string' &&
             d[column].value.includes(filterValue)) {
           return d;
-        } else if (typeof d[column].value === "number" &&
+        } else if (typeof d[column].value === 'number' &&
             d[column].value == filterValue) {
           return d;
         }
       });
     }else {
-      var dataFilter = table.data;
+      dataFilter = table.data;
     }
     //append the header row and click event on column to sort table by table column
     var headers = table.thead.append('tr')
-    .selectAll('th')
-    .data(table.columns).enter()
-    .append('th')
-    .text(function (column) { return column; })
-    .style('cursor','pointer')
-    .on('click', function (d) {
-      headers.attr('class', 'header');
+      .selectAll('th')
+      .data(table.columns).enter()
+      .append('th')
+      .text(function (column) { return column; })
+      .style('cursor','pointer')
+      .on('click', function (d) {
+        headers.attr('class', 'header');
 
-      if (table.sortAscending) {
+        if (table.sortAscending) {
         //sort tables rows data
-        table.rows._groups[0].sort(function(a, b) {
-          return d3.ascending(a.__data__[d.srcElement.__data__].value, b.__data__[d.srcElement.__data__].value);
-        });
-        //update rows in table
-        table.rows.sort(function(a, b) {
-          return d3.descending(b[d], a[d]);
-        });
-        table.sortAscending = false;
-        this.className = 'aes';
+          table.rows._groups[0].sort(function(a, b) {
+            return d3.ascending(a.__data__[d.srcElement.__data__].value, b.__data__[d.srcElement.__data__].value);
+          });
+          //update rows in table
+          table.rows.sort(function(a, b) {
+            return d3.descending(b[d], a[d]);
+          });
+          table.sortAscending = false;
+          this.className = 'aes';
         }
-      else {
-        table.rows._groups[0].sort(function(a, b) {
-          return d3.descending(a.__data__[d.srcElement.__data__].value, b.__data__[d.srcElement.__data__].value);
-        });
-        table.rows.sort(function(a, b) {
-          return d3.descending(b[d], a[d]);
-        });
-        table.sortAscending = true;
-        this.className = 'des';
-      }
-    });
-    headers.append("title").text("click to sort");
+        else {
+          table.rows._groups[0].sort(function(a, b) {
+            return d3.descending(a.__data__[d.srcElement.__data__].value, b.__data__[d.srcElement.__data__].value);
+          });
+          table.rows.sort(function(a, b) {
+            return d3.descending(b[d], a[d]);
+          });
+          table.sortAscending = true;
+          this.className = 'des';
+        }
+      });
+    headers.append('title').text('click to sort');
     if (dataFilter.length == 0) {
       var noResultDiv = document.createElement('div');
-      noResultDiv.id = "no_result";
-      noResultDiv.innerHTML = "No result found, try again!";
+      noResultDiv.id = 'no_result';
+      noResultDiv.innerHTML = 'No result found, try again!';
       document.getElementById('_window_sparqlQueryWindow_data_view').appendChild(noResultDiv);
     }
 
     else {
       // create a row for each object in the data
       table.rows = table.tbody.selectAll('tr')
-                    .data(dataFilter).enter()
-                    .append('tr');
+        .data(dataFilter).enter()
+        .append('tr');
       table.rows.exit().remove();
       let columns = table.columns;
       table.rows.selectAll('td')
         .data(function (d) {
-            return columns.map(function (k) {
-                return {
-                  'col': k,
-                  'row': d
-                };
-            });
+          return columns.map(function (k) {
+            return {
+              'col': k,
+              'row': d
+            };
+          });
         }).enter()
         .append('td')
         .attr('data-th', function (d) {
-            return d.col;
+          return d.col;
         })
         .text(function (d) {
-            return d.row[d.col].value;
+          return d.row[d.col].value;
         })
         .on('click', (d) => {
           let col = d.target.__data__.col;
@@ -148,9 +149,9 @@ export class Table {
    * Clear table.
    */
   clearTable() {
-    this.table.selectAll("tr").remove()
-    this.table.selectAll("td").remove()
-    var element = document.getElementById("no_result");
+    this.table.selectAll('tr').remove();
+    this.table.selectAll('td').remove();
+    var element = document.getElementById('no_result');
     if(element)
       element.parentNode.removeChild(element);
   }
