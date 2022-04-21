@@ -31,7 +31,7 @@
 
 
     <title>
-      Widgets/Links/View/DocumentLinkInterface.js
+      Widgets/Extensions/SPARQL/Model/Table.js
     </title>
 
     <!--[if lt IE 9]>
@@ -98,7 +98,7 @@
     <div id="main" class="main-content">
       
       <h1 id='page-title' class="page-title">
-        Widgets/Links/View/DocumentLinkInterface.js
+        Widgets/Extensions/SPARQL/Model/Table.js
       </h1>
       
 
@@ -109,266 +109,200 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>/** @format */
+            <pre class="prettyprint source linenums"><code>import * as d3 from 'd3';
+import { SparqlQueryWindow } from '../View/SparqlQueryWindow';
 
-//Components
-import { focusCameraOn } from '../../../Components/Camera/CameraUtils';
-
-import { DocumentModule } from '../../Documents/DocumentModule';
-import * as THREE from 'three';
-import { DocumentProvider } from '../../Documents/ViewModel/DocumentProvider';
-import { Link } from '../Model/Link';
-import { LinkProvider } from '../ViewModel/LinkProvider';
-
-/**
- * The interface extensions for the document windows.
- */
-export class DocumentLinkInterface {
+export class Table {
   /**
-   * Constructs the document link interface.
-   *
-   * @param {DocumentModule} documentModule The document module.
-   * @param {LinkProvider} linkProvider The link provider.
-   * @param {*} itownsView The iTowns view.
-   * @param {*} cameraControls The camera controls.
+   * Create a new Table using D3.
+   * @param {SparqlQueryWindow} window The window the table is attached to.
    */
-  constructor(documentModule, linkProvider, itownsView, cameraControls) {
-    /**
-     * The link provider.
-     *
-     * @type {LinkProvider}
-     */
-    this.provider = linkProvider;
-
-    /**
-     * The list of links for the currently displayed document.
-     *
-     * @type {Array&lt;Link>}
-     */
-    this.documentLinks = [];
-
-    /**
-     * The itowns view.
-     */
-    this.itownsView = itownsView;
-
-    /**
-     * The planar camera controls.
-     */
-    this.cameraControls = cameraControls;
-
-    // Adds the extension for the displayed documents. This extension shows the
-    // links and adds two buttons to highlight the linked city objects, and
-    // create a new link.
-    documentModule.addInspectorExtension('links', {
-      type: 'div',
-      html: /*html*/ `
-        &lt;input type="checkbox" class="spoiler-check" id="doc-link-spoiler">
-        &lt;label for="doc-link-spoiler" class="section-title">Document Links&lt;/label>
-        &lt;div class="spoiler-box">
-          &lt;div id="${this.linkListId}">
-          
-          &lt;/div>
-          &lt;button id="${this.highlightDocButtonId}">Highlight city objects&lt;/button>
-          &lt;button id="${this.createLinkButtonId}">Select &amp; link a city object&lt;/button>
-        &lt;/div>`,
-      oncreated: () => this._init(),
-    });
-
-    // Adds an extension in the navigator window to show the status of the
-    // 'link' filter for documents (the filter based on wether the document is
-    // linked with the selected city object).
-    documentModule.addNavigatorExtension('linkFilter', {
-      type: 'div',
-      container: 'filter',
-      html: /*html*/ `&lt;label for="${this.linkFilterId}">Linked to the selected city object&lt;/label>
-        &lt;input type="checkbox" id="${this.linkFilterId}">`,
-      oncreated: () => {
-        this.linkFilterElement.onchange = () =>
-          this.provider.toggleLinkedDocumentsFilter();
-      },
-    });
-
-    linkProvider.addEventListener(
-      DocumentProvider.EVENT_FILTERED_DOCS_UPDATED,
-      () => this._updateLinkFilter()
-    );
-
-    linkProvider.addEventListener(
-      DocumentProvider.EVENT_DISPLAYED_DOC_CHANGED,
-      () => this._updateLinkList()
-    );
+  constructor(window) {
+    this.window = window;
+    this.data = undefined;
+    this.columns = [];
+    this.sortAscending = undefined;
+    this.table = undefined;
+    this.thead = undefined;
+    this.tbody = undefined;
+    this.rows = undefined;
   }
 
   /**
-   * Inits the extension of the inspector window. Adds the listeners for the
-   * buttons.
+   * Render the table.
+   * @param {Object} data The data to render.
+   * @param {Array} columns The columns to render.
    */
-  _init() {
-    this.highlightDocButtonElement.onclick = () => {
-      this.provider.highlightDisplayedDocumentLinks();
-    };
+  dataAsTable(data, columns) {
+    this.data = data;
+    this.columns = columns;
+    this.filter_div = document.createElement('div');
+    this.filter_div.id = this.filterId;
+    this.filter_div.innerHTML = this.filterHtml;
+    this.window.dataView.appendChild(this.filter_div);
+    this.columns.forEach(c => {
+      let option = document.createElement('option');
+      option.value = c;
+      option.text = c;
+      this.filterSelect.append(option);
+    });
+    
+    this.sortAscending = true;
+    this.table = d3.select('#' + this.window.dataViewId).append('table')
+    this.thead = this.table.append('thead');
+    this.tbody = this.table.append('tbody');
 
-    this.createLinkButtonElement.onclick = async () => {
-      if (this.provider.selectedCityObject) {
-        let newLink = new Link();
-        newLink.source_id = this.provider.displayedDocument.id;
-        newLink.target_id =
-          this.provider.selectedCityObject.props['cityobject.database_id'];
-        newLink.centroid_x = this.provider.selectedCityObject.centroid.x;
-        newLink.centroid_y = this.provider.selectedCityObject.centroid.y;
-        newLink.centroid_z = this.provider.selectedCityObject.centroid.z;
-        if (
-          confirm(
-            'Are you sure you want to associate the document with this city object ?'
-          )
-        ) {
-          try {
-            await this.provider.createLink(newLink);
-          } catch (e) {
-            alert(e);
-          }
+    Table.update(this, [])
+  }
+  /**
+   * Update the table with new data.
+   * @param {Table} table The table object to update.
+   * @param {Event} event The event passed to the update function.
+   */
+  static update(table, event) {
+    table.clearTable();
+    let filterValue = table.filterInput.value;
+
+    //check if element filter input is changed
+    if (event.target) {
+      filterValue = event.target.value
+      var column = table.filterSelect.value;
+    }
+    //filter data by filtertype
+    if (filterValue &amp;&amp; filterValue !== ""){
+      var dataFilter = table.data.filter(function(d,i) {
+        if (typeof d[column].value === "string" &amp;&amp;
+            d[column].value.includes(filterValue)) {
+          return d;
+        } else if (typeof d[column].value === "number" &amp;&amp;
+            d[column].value == filterValue) {
+          return d;
         }
-      } else {
-        alert('Select a city object to link with the document.');
+      });
+    }else {
+      var dataFilter = table.data;
+    }
+    //append the header row and click event on column to sort table by table column
+    var headers = table.thead.append('tr')
+    .selectAll('th')
+    .data(table.columns).enter()
+    .append('th')
+    .text(function (column) { return column; })
+    .style('cursor','pointer')
+    .on('click', function (d) {
+      headers.attr('class', 'header');
+
+      if (table.sortAscending) {
+        //sort tables rows data
+        table.rows._groups[0].sort(function(a, b) {
+          return d3.ascending(a.__data__[d.srcElement.__data__].value, b.__data__[d.srcElement.__data__].value);
+        });
+        //update rows in table
+        table.rows.sort(function(a, b) {
+          return d3.descending(b[d], a[d]);
+        });
+        table.sortAscending = false;
+        this.className = 'aes';
+        }
+      else {
+        table.rows._groups[0].sort(function(a, b) {
+          return d3.descending(a.__data__[d.srcElement.__data__].value, b.__data__[d.srcElement.__data__].value);
+        });
+        table.rows.sort(function(a, b) {
+          return d3.descending(b[d], a[d]);
+        });
+        table.sortAscending = true;
+        this.className = 'des';
       }
-    };
-  }
-
-  /**
-   * Updates the filter display in the navigator.
-   */
-  _updateLinkFilter() {
-    if (!this.linkFilterElement) {
-      return;
-    }
-    this.linkFilterElement.checked = this.provider.shouldFilterLinkedDocuments;
-  }
-
-  ///////////////
-  ///// LINK LIST
-
-  /**
-   * Retrieves all link types, and for each type retrieves the links were the
-   * source id is the same as the current document. The links are then displayed
-   * in the window. Two buttons are created for each link, called "highlight"
-   * and "travel". Clicking on the "highlight" button triggers the
-   * `highlightLink` method, while the "travel" button calls the `travelToLink`
-   * method.
-   */
-  async _updateLinkList() {
-    if (!this.linkListElement) {
-      return;
-    }
-    let links = this.provider.getDisplayedDocumentLinks();
-    let newDiv = document.createElement('div');
-    let newDivHtml = `&lt;h4 class="subsection-title">${links.length} city object(s)&lt;/h4>
-                      &lt;ul>`;
-    this.documentLinks = links;
-    for (let link of links) {
-      newDivHtml += `&lt;li>
-                        ID : ${link.target_id}
-                        &lt;span id="${this.linkTravelerId(
-    link
-  )}" class="clickable-text">
-                        travel
-                        &lt;/span>
-                        &lt;span id="${this.linkDeleterId(
-    link
-  )}" class="clickable-text">
-                        delete
-                        &lt;/span>
-                      &lt;/li>`;
-    }
-    newDivHtml += '&lt;/ul>';
-    newDiv.innerHTML = newDivHtml;
-    this.linkListElement.innerHTML = '';
-    this.linkListElement.appendChild(newDiv);
-    for (let link of links) {
-      document.getElementById(this.linkTravelerId(link)).onclick = () => {
-        this._travelToLink(link);
-      };
-      document.getElementById(this.linkDeleterId(link)).onclick = () => {
-        this._deleteLink(link);
-      };
-    }
-  }
-
-  ////////////////////
-  ///// LINK OPERATION
-
-  /**
-   * If the target is a city object, moves the camera to focus on its centroid.
-   *
-   * @param {Link} link The link to travel to.
-   */
-  async _travelToLink(link) {
-    let centroid = new THREE.Vector3(
-      link.centroid_x,
-      link.centroid_y,
-      link.centroid_z
-    );
-    await focusCameraOn(this.itownsView, this.cameraControls, centroid, {
-      duration: 1,
     });
-  }
+    headers.append("title").text("click to sort");
+    if (dataFilter.length == 0) {
+      var noResultDiv = document.createElement('div');
+      noResultDiv.id = "no_result";
+      noResultDiv.innerHTML = "No result found, try again!";
+      document.getElementById('_window_sparqlQueryWindow_data_view').appendChild(noResultDiv);
+    }
 
-  /**
-   * Deletes the link.
-   *
-   * @param {Link} link The link to delete.
-   */
-  async _deleteLink(link) {
-    if (confirm('Are you sure you want to delete this link ?')) {
-      try {
-        await this.provider.deleteLink(link);
-      } catch (e) {
-        alert(`Failed to detete link : ${e}`);
-      }
+    else {
+      // create a row for each object in the data
+      table.rows = table.tbody.selectAll('tr')
+                    .data(dataFilter).enter()
+                    .append('tr');
+      table.rows.exit().remove();
+      let columns = table.columns;
+      table.rows.selectAll('td')
+        .data(function (d) {
+            return columns.map(function (k) {
+                return {
+                  'col': k,
+                  'row': d
+                };
+            });
+        }).enter()
+        .append('td')
+        .attr('data-th', function (d) {
+            return d.col;
+        })
+        .text(function (d) {
+            return d.row[d.col].value;
+        })
+        .on('click', (d) => {
+          let col = d.target.__data__.col;
+          let row = d.target.__data__.row;
+          table.window.sendEvent(Table.EVENT_CELL_CLICKED, row[col].value);
+        }
+        );
     }
   }
 
-  //////////////
-  ////// GETTERS
-
-  get linkListId() {
-    return `${this.windowId}_link_list`;
+  /**
+   * Clear table.
+   */
+  clearTable() {
+    this.table.selectAll("tr").remove()
+    this.table.selectAll("td").remove()
+    var element = document.getElementById("no_result");
+    if(element)
+      element.parentNode.removeChild(element);
   }
 
-  get linkListElement() {
-    return document.getElementById(this.linkListId);
+  // Table getters //
+  get filterHtml() {
+    return /*html*/ `
+      &lt;label>Select filter: &lt;/label>
+      &lt;select id="${this.filterSelectId}"/>
+      &lt;label>Type filter value: &lt;/label>
+      &lt;input id="${this.filterInputId}" type="text" value=""/>`;
   }
 
-  get linkFilterId() {
-    return 'city_object_link_filter';
+  get filterId() {
+    return `${this.window.windowId}_filter`;
   }
 
-  get linkFilterElement() {
-    return document.getElementById(this.linkFilterId);
+  get filterSelectId() {
+    return `${this.window.windowId}_filter_select`;
   }
 
-  linkTravelerId(link) {
-    return `${this.linkListId}_${link.id}_travel`;
+  get filterSelect() {
+    return document.getElementById(this.filterSelectId);
   }
 
-  linkDeleterId(link) {
-    return `${this.linkListId}_${link.id}_delete`;
+  get filterInputId() {
+    return `${this.window.windowId}_filter_input`;
   }
 
-  get highlightDocButtonId() {
-    return `${this.windowId}_highlight_doc_button`;
+  get filterInput() {
+    return document.getElementById(this.filterInputId);
   }
 
-  get highlightDocButtonElement() {
-    return document.getElementById(this.highlightDocButtonId);
+  /// EVENTS
+
+  static get EVENT_CELL_CLICKED() {
+    return 'EVENT_CELL_CLICKED';
   }
 
-  get createLinkButtonId() {
-    return `${this.windowId}_create_link`;
-  }
-
-  get createLinkButtonElement() {
-    return document.getElementById(this.createLinkButtonId);
+  static get EVENT_CELL_MOUSEOVER() {
+    return 'EVENT_CELL_MOUSEOVER';
   }
 }
 </code></pre>

@@ -31,7 +31,7 @@
 
 
     <title>
-      Widgets/Links/View/DocumentLinkInterface.js
+      Widgets/Extensions/SPARQL/Model/Graph.js
     </title>
 
     <!--[if lt IE 9]>
@@ -98,7 +98,7 @@
     <div id="main" class="main-content">
       
       <h1 id='page-title' class="page-title">
-        Widgets/Links/View/DocumentLinkInterface.js
+        Widgets/Extensions/SPARQL/Model/Graph.js
       </h1>
       
 
@@ -109,269 +109,401 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>/** @format */
+            <pre class="prettyprint source linenums"><code>import * as d3 from 'd3';
+import { tokenizeURI } from './URI';
+import { SparqlQueryWindow } from '../View/SparqlQueryWindow';
 
-//Components
-import { focusCameraOn } from '../../../Components/Camera/CameraUtils';
-
-import { DocumentModule } from '../../Documents/DocumentModule';
-import * as THREE from 'three';
-import { DocumentProvider } from '../../Documents/ViewModel/DocumentProvider';
-import { Link } from '../Model/Link';
-import { LinkProvider } from '../ViewModel/LinkProvider';
-
-/**
- * The interface extensions for the document windows.
- */
-export class DocumentLinkInterface {
+export class Graph {
   /**
-   * Constructs the document link interface.
+   * Create a new D3 graph from an RDF JSON object.
+   * Adapted from https://observablehq.com/@d3/force-directed-graph#chart and
+   * https://www.d3indepth.com/zoom-and-pan/
    *
-   * @param {DocumentModule} documentModule The document module.
-   * @param {LinkProvider} linkProvider The link provider.
-   * @param {*} itownsView The iTowns view.
-   * @param {*} cameraControls The camera controls.
+   * @param {SparqlQueryWindow} window the window this graph is attached to.
+   * @param {Number} height The SVG height.
+   * @param {Number} height The SVG width.
    */
-  constructor(documentModule, linkProvider, itownsView, cameraControls) {
-    /**
-     * The link provider.
-     *
-     * @type {LinkProvider}
-     */
-    this.provider = linkProvider;
+  constructor(window, height = 500, width = 500) {
+    this.window = window;
+    this.height = height;
+    this.width = width;
+    this.namespaces = [];
+    this.svg = d3
+      .create('svg')
+      .attr('class', 'd3_graph')
+      .attr('viewBox', [0, 0, this.width, this.height])
+      .style('display', 'hidden');
+  }
 
-    /**
-     * The list of links for the currently displayed document.
-     *
-     * @type {Array&lt;Link>}
-     */
-    this.documentLinks = [];
+  /// Data Functions ///
 
-    /**
-     * The itowns view.
-     */
-    this.itownsView = itownsView;
+  /**
+   * Create a new graph based on an graph dataset.
+   *
+   * @param {Object} data an RDF JSON object.
+   */
+  update(data) {
+    this.clear();
 
-    /**
-     * The planar camera controls.
-     */
-    this.cameraControls = cameraControls;
+    const links = data.links.map((d) => Object.create(d));
+    const nodes = data.nodes.map((d) => Object.create(d));
+    const legend = data.legend;
+    const setColor = function (d, default_color, override_color = undefined) {
+      if (override_color &amp;&amp; data.colorSetOrScale) return override_color;
+      if (data.colorSetOrScale) return data.colorSetOrScale(d);
+      return default_color;
+    }
 
-    // Adds the extension for the displayed documents. This extension shows the
-    // links and adds two buttons to highlight the linked city objects, and
-    // create a new link.
-    documentModule.addInspectorExtension('links', {
-      type: 'div',
-      html: /*html*/ `
-        &lt;input type="checkbox" class="spoiler-check" id="doc-link-spoiler">
-        &lt;label for="doc-link-spoiler" class="section-title">Document Links&lt;/label>
-        &lt;div class="spoiler-box">
-          &lt;div id="${this.linkListId}">
-          
-          &lt;/div>
-          &lt;button id="${this.highlightDocButtonId}">Highlight city objects&lt;/button>
-          &lt;button id="${this.createLinkButtonId}">Select &amp; link a city object&lt;/button>
-        &lt;/div>`,
-      oncreated: () => this._init(),
+    const simulation = d3
+      .forceSimulation(nodes)
+      .force(
+        'link',
+        d3.forceLink(links).id((d) => d.id))
+      .force(
+        'charge',
+        d3.forceManyBody().strength(-60))
+      .force(
+        'center',
+        d3.forceCenter(this.width / 2, this.height / 2));
+
+    const zoom = d3.zoom().on('zoom', this.handleZoom);
+
+    this.svg.call(zoom);
+
+    const link = this.svg
+      .append('g')
+      .attr('stroke', '#999')
+      .attr('stroke-opacity', 0.8)
+      .selectAll('line')
+      .data(links)
+      .join('line')
+      .attr('stroke-width', (d) => Math.sqrt(d.value));
+
+
+    const node = this.svg
+      .append('g')
+      .selectAll('circle')
+      .data(nodes)
+      .join('circle')
+      .attr('r', 4)
+      .attr('stroke-opacity', 0.8)
+      .attr('stroke-width', 0.75)
+      .attr('stroke', (d) => setColor(d.color_id, '#ddd', '#111'))
+      .attr('fill', (d) => setColor(d.color_id, 'black'))
+      .on('click', (d) => {
+        this.window.sendEvent(Graph.EVENT_NODE_CLICKED, d.path[0].textContent);
+      })
+      .on('mouseover', (event, d) => {
+        event.target.style['stroke'] = setColor(nodes[d.index].color_id, 'white', 'white');
+        event.target.style['fill'] = setColor(nodes[d.index].color_id, '#333');
+        node_label.filter((e, j) => {
+            return d.index == j;
+          })
+          .style('fill', 'white');
+        link_label.filter((e, j) => {
+            return d.index == e.source.index || d.index == e.target.index;
+          })
+          .style('fill', 'white');
+      })
+      .on('mouseout', (event, d) => {
+        event.target.style['stroke'] = setColor(nodes[d.index].color_id, '#ddd', '#111');
+        event.target.style['fill'] = setColor(nodes[d.index].color_id, 'black');
+        node_label.filter((e, j) => {
+          return d.index == j;
+        })
+        .style('fill', 'grey');
+        link_label.filter((e) => {
+            return d.index == e.source.index || d.index == e.target.index;
+          })
+          .style('fill', 'grey');
+      })
+      .call(this.drag(simulation));
+      
+      node.append('title').text((d) => d.id)
+
+      const node_label = this.svg.selectAll('.node_label')
+      .data(nodes)
+      .enter()
+      .append('text')
+      .text(function (d) { 
+        let uri = tokenizeURI(d.id);
+        return uri.id;
+      })
+      .style('text-anchor', 'middle')
+      .style('fill', 'grey')
+      .style('font-family', 'Arial')
+      .style('font-size', 10.5)
+      .style('text-shadow', '1px 1px black')
+      .attr('class','node_label')
+      .call(this.drag(simulation));
+      
+    const link_label = this.svg.selectAll('.link_label')
+      .data(links)
+      .enter()
+      .append('text')
+      .text(function (d) {
+        let label = tokenizeURI(d.label);
+        return label.id;
+      })
+      .style('text-anchor', 'middle')
+      .style('fill', 'grey')
+      .style('font-family', 'Arial')
+      .style('font-size', 10)
+      .style('text-shadow', '1px 1px black')
+      .attr('class','link_label')
+      .call(this.drag(simulation));
+
+    simulation.on('tick', () => {
+      node_label
+        .attr('x', function(d){ return d.x; })
+        .attr('y', function (d) {return d.y - 10; });
+      link
+        .attr('x1', (d) => d.source.x)
+        .attr('y1', (d) => d.source.y)
+        .attr('x2', (d) => d.target.x)
+        .attr('y2', (d) => d.target.y);
+      link_label
+        .attr('x', function(d) {
+            return ((d.source.x + d.target.x)/2);
+        })
+        .attr('y', function(d) {
+            return ((d.source.y + d.target.y)/2);
+        });
+      node.attr('cx', (d) => d.x).attr('cy', (d) => d.y);
     });
 
-    // Adds an extension in the navigator window to show the status of the
-    // 'link' filter for documents (the filter based on wether the document is
-    // linked with the selected city object).
-    documentModule.addNavigatorExtension('linkFilter', {
-      type: 'div',
-      container: 'filter',
-      html: /*html*/ `&lt;label for="${this.linkFilterId}">Linked to the selected city object&lt;/label>
-        &lt;input type="checkbox" id="${this.linkFilterId}">`,
-      oncreated: () => {
-        this.linkFilterElement.onchange = () =>
-          this.provider.toggleLinkedDocumentsFilter();
+    // Create legend
+    this.svg
+      .append('text')
+      .attr('x', 10)             
+      .attr('y', 16)
+      .style('font-size', '14px')
+      .style('text-decoration', 'underline')
+      .text(legend.title)
+      .style('fill','FloralWhite');
+
+    this.svg
+      .append('g')
+      .attr('stroke', '#111')
+      .attr('stroke-width', 1)
+      .selectAll('rect')
+      .data(legend.content)
+      .join('rect')
+      .attr('x', 10)
+      .attr('y', (d, i) => 25 + i * 16)
+      .attr('width', 10)
+      .attr('height', 10)
+      .style('fill', (d, i) => {
+        return setColor(i, '#000');
+      })
+      .append('title')
+      .text((d) => d);
+
+    this.svg
+      .append('g')
+      .selectAll('text')
+      .data(legend.content)
+      .join('text')
+      .attr('x', 24)
+      .attr('y', (d, i) => 35 + i * 16)
+      .text((d) => d)
+      .style('fill','FloralWhite');
+  }
+
+
+  /**
+   * Getter for retrieving the d3 svg.
+   */
+   get canvas() {
+    return this.svg.node();
+  }
+
+  /**
+   * return a query response formatted for a D3.js graph.
+   * @return {Object}
+   */
+   formatResponseDataAsGraph(data) {
+    let graphData = {
+      nodes: [
+        // { id: 'x', color_id: 1 },
+        // { id: 'y', color_id: 2 },
+      ],
+      links: [
+        // { source: 'x', target: 'y', value: 1 }
+      ],
+      legend: {
+        title: '',
+        content: []
       },
-    });
-
-    linkProvider.addEventListener(
-      DocumentProvider.EVENT_FILTERED_DOCS_UPDATED,
-      () => this._updateLinkFilter()
-    );
-
-    linkProvider.addEventListener(
-      DocumentProvider.EVENT_DISPLAYED_DOC_CHANGED,
-      () => this._updateLinkList()
-    );
-  }
-
-  /**
-   * Inits the extension of the inspector window. Adds the listeners for the
-   * buttons.
-   */
-  _init() {
-    this.highlightDocButtonElement.onclick = () => {
-      this.provider.highlightDisplayedDocumentLinks();
+      colorSetOrScale: d3.scaleOrdinal(d3.schemeCategory10)
     };
 
-    this.createLinkButtonElement.onclick = async () => {
-      if (this.provider.selectedCityObject) {
-        let newLink = new Link();
-        newLink.source_id = this.provider.displayedDocument.id;
-        newLink.target_id =
-          this.provider.selectedCityObject.props['cityobject.database_id'];
-        newLink.centroid_x = this.provider.selectedCityObject.centroid.x;
-        newLink.centroid_y = this.provider.selectedCityObject.centroid.y;
-        newLink.centroid_z = this.provider.selectedCityObject.centroid.z;
-        if (
-          confirm(
-            'Are you sure you want to associate the document with this city object ?'
-          )
+    for (let triple of data.results.bindings) {
+      /* If the query is formatted using subject, subjectType, predicate, object,
+         and objectType variables the node color based on the namespace of the subject
+         or object's respective type */
+      if (triple.subject &amp;&amp; triple.subjectType &amp;&amp; triple.predicate
+          &amp;&amp; triple.object &amp;&amp; triple.objectType) {
+        if ( // if the subject doesn't exist yet 
+          graphData.nodes.find((n) => n.id == triple.subject.value) == undefined
         ) {
-          try {
-            await this.provider.createLink(newLink);
-          } catch (e) {
-            alert(e);
-          }
+          let subjectNamespaceId = this.getNamespaceIndex(
+            triple.subjectType.value
+          );
+          let node = { id: triple.subject.value, color_id: subjectNamespaceId };
+          graphData.nodes.push(node);
         }
-      } else {
-        alert('Select a city object to link with the document.');
+        if (// if the object doesn't exist yet
+          graphData.nodes.find((n) => n.id == triple.object.value) == undefined
+        ) {
+          let objectNamespaceId = this.getNamespaceIndex(triple.objectType.value);
+          let node = { id: triple.object.value, color_id: objectNamespaceId };
+          graphData.nodes.push(node);
+        }
+        let link = {
+          source: triple.subject.value,
+          target: triple.object.value,
+          label: triple.predicate.value,
+        };
+        graphData.links.push(link);
+        graphData.legend.title = 'Namespaces';
+        graphData.legend.content = this.namespaces;
+      } else if (triple.subject &amp;&amp; triple.predicate &amp;&amp; triple.object) {
+        /* If the query is formatted using just subject, predicate, and object,
+           variables the node color is left black */
+        if ( // if the subject doesn't exist yet 
+          graphData.nodes.find((n) => n.id == triple.subject.value) == undefined
+        ) {
+          let node = { id: triple.subject.value, color_id: undefined };
+          graphData.nodes.push(node);
+        }
+        if (// if the object doesn't exist yet
+          graphData.nodes.find((n) => n.id == triple.object.value) == undefined
+        ) {
+          let node = { id: triple.object.value, color_id: undefined };
+          graphData.nodes.push(node);
+        }
+        let link = {
+          source: triple.subject.value,
+          target: triple.object.value,
+          label: triple.predicate.value,
+        };
+        graphData.links.push(link);
+        graphData.legend.title = 'Legend';
+        graphData.colorSetOrScale = undefined;
       }
-    };
-  }
-
-  /**
-   * Updates the filter display in the navigator.
-   */
-  _updateLinkFilter() {
-    if (!this.linkFilterElement) {
-      return;
-    }
-    this.linkFilterElement.checked = this.provider.shouldFilterLinkedDocuments;
-  }
-
-  ///////////////
-  ///// LINK LIST
-
-  /**
-   * Retrieves all link types, and for each type retrieves the links were the
-   * source id is the same as the current document. The links are then displayed
-   * in the window. Two buttons are created for each link, called "highlight"
-   * and "travel". Clicking on the "highlight" button triggers the
-   * `highlightLink` method, while the "travel" button calls the `travelToLink`
-   * method.
-   */
-  async _updateLinkList() {
-    if (!this.linkListElement) {
-      return;
-    }
-    let links = this.provider.getDisplayedDocumentLinks();
-    let newDiv = document.createElement('div');
-    let newDivHtml = `&lt;h4 class="subsection-title">${links.length} city object(s)&lt;/h4>
-                      &lt;ul>`;
-    this.documentLinks = links;
-    for (let link of links) {
-      newDivHtml += `&lt;li>
-                        ID : ${link.target_id}
-                        &lt;span id="${this.linkTravelerId(
-    link
-  )}" class="clickable-text">
-                        travel
-                        &lt;/span>
-                        &lt;span id="${this.linkDeleterId(
-    link
-  )}" class="clickable-text">
-                        delete
-                        &lt;/span>
-                      &lt;/li>`;
-    }
-    newDivHtml += '&lt;/ul>';
-    newDiv.innerHTML = newDivHtml;
-    this.linkListElement.innerHTML = '';
-    this.linkListElement.appendChild(newDiv);
-    for (let link of links) {
-      document.getElementById(this.linkTravelerId(link)).onclick = () => {
-        this._travelToLink(link);
-      };
-      document.getElementById(this.linkDeleterId(link)).onclick = () => {
-        this._deleteLink(link);
-      };
-    }
-  }
-
-  ////////////////////
-  ///// LINK OPERATION
-
-  /**
-   * If the target is a city object, moves the camera to focus on its centroid.
-   *
-   * @param {Link} link The link to travel to.
-   */
-  async _travelToLink(link) {
-    let centroid = new THREE.Vector3(
-      link.centroid_x,
-      link.centroid_y,
-      link.centroid_z
-    );
-    await focusCameraOn(this.itownsView, this.cameraControls, centroid, {
-      duration: 1,
-    });
-  }
-
-  /**
-   * Deletes the link.
-   *
-   * @param {Link} link The link to delete.
-   */
-  async _deleteLink(link) {
-    if (confirm('Are you sure you want to delete this link ?')) {
-      try {
-        await this.provider.deleteLink(link);
-      } catch (e) {
-        alert(`Failed to detete link : ${e}`);
+      else {
+        console.warn('Unrecognized endpoint response format for graph construction');
       }
     }
+    console.debug(graphData);
+    return graphData;
+  }
+  /**
+   * Get the namespace index of a uri. Add the namespace to the array of namespaces
+   * if it does not exist.
+   * @param {String} uri the uri to map to a namespace.
+   * @return {Number}
+   */
+  getNamespaceIndex(uri) {
+    let namespace = tokenizeURI(uri).namespace;
+    if (!this.namespaces.includes(namespace)) {
+      this.namespaces.push(namespace);
+    }
+    return this.namespaces.findIndex((d) => d == namespace);
   }
 
-  //////////////
-  ////// GETTERS
-
-  get linkListId() {
-    return `${this.windowId}_link_list`;
+  /**
+   * Hide the graph SVG
+   */
+  hide() {
+    this.svg.style('display', 'hidden');
   }
 
-  get linkListElement() {
-    return document.getElementById(this.linkListId);
+  /**
+   * Show the graph SVG
+   */
+  show() {
+    this.svg.style('display', 'visible');
   }
 
-  get linkFilterId() {
-    return 'city_object_link_filter';
+  /**
+   * Remove nodes and lines from the SVG.
+   */
+  clear() {
+    this.svg.selectAll('g').remove();
+    this.svg.selectAll('text').remove();
+    this.namespaces = [];
   }
 
-  get linkFilterElement() {
-    return document.getElementById(this.linkFilterId);
+  /// Interface Functions ///
+
+  /**
+   * Create a drag effect for graph nodes within the context of a force simulation
+   * @param {d3.forceSimulation} simulation
+   * @returns {d3.drag}
+   */
+  drag(simulation) {
+    function dragstarted(event) {
+      if (!event.active) simulation.alphaTarget(0.3).restart();
+      event.subject.fx = event.subject.x;
+      event.subject.fy = event.subject.y;
+    }
+
+    function dragged(event) {
+      event.subject.fx = event.x;
+      event.subject.fy = event.y;
+    }
+
+    function dragended(event) {
+      if (!event.active) simulation.alphaTarget(0);
+      event.subject.fx = null;
+      event.subject.fy = null;
+    }
+
+    return d3
+      .drag()
+      .on('start', dragstarted)
+      .on('drag', dragged)
+      .on('end', dragended);
   }
 
-  linkTravelerId(link) {
-    return `${this.linkListId}_${link.id}_travel`;
+  /**
+   * A handler function for selecting elements to transform during a zoom event
+   * @param {d3.D3ZoomEvent} event
+   */
+  handleZoom(event) {
+    d3.selectAll('svg g')
+      .filter((d, i) => i &lt; 2)
+      .attr('height','100%')
+      .attr('width','100%')
+      //.attr('transform', event.transform)
+      .attr('transform',
+        'translate(' + event.transform.x + ',' + event.transform.y + ') scale(' + event.transform.k + ')');
+    d3.selectAll('text.node_label')
+      .style('font-size', (10.5/event.transform.k) + 'px')
+      .attr('transform',
+        'translate(' + event.transform.x + ',' + event.transform.y + ') scale(' + event.transform.k + ')');
+    d3.selectAll('text.link_label')
+      .style('font-size', (10.5/event.transform.k) + 'px')
+      .attr('transform',
+        'translate(' + event.transform.x + ',' + event.transform.y + ') scale(' + event.transform.k + ')');
   }
 
-  linkDeleterId(link) {
-    return `${this.linkListId}_${link.id}_delete`;
+  /// EVENTS
+
+  static get EVENT_NODE_CLICKED() {
+    return 'EVENT_NODE_CLICKED';
   }
 
-  get highlightDocButtonId() {
-    return `${this.windowId}_highlight_doc_button`;
+  static get EVENT_NODE_MOUSEOVER() {
+    return 'EVENT_NODE_MOUSEOVER';
   }
 
-  get highlightDocButtonElement() {
-    return document.getElementById(this.highlightDocButtonId);
+  static get EVENT_NODE_MOUSEOUT() {
+    return 'EVENT_NODE_MOUSEOUT';
   }
-
-  get createLinkButtonId() {
-    return `${this.windowId}_create_link`;
-  }
-
-  get createLinkButtonElement() {
-    return document.getElementById(this.createLinkButtonId);
-  }
-}
-</code></pre>
+}</code></pre>
         </article>
     </section>
 
