@@ -3,7 +3,7 @@
 /**
  * Constants of ud-viz/Game
  */
- module.exports = Object.freeze({
+module.exports = Object.freeze({
   /**
    * Define the type of message of a websocket communication
    */
