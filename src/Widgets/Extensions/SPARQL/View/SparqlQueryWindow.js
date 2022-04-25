@@ -145,7 +145,6 @@ LIMIT 100`;
         this.dataView.append(this.graph.canvas);
         break;
       case 'json':
-        debugger;
         this.jsonRenderer.renderjson.set_icons('▶', '▼');
         this.jsonRenderer.renderjson.set_max_string_length(40);
         this.dataView.append(this.jsonRenderer.renderjson(response));
