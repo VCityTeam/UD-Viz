@@ -223,7 +223,7 @@ const renderjson = (function () {
         );
         let last;
         for (let k in json) last = k;
-        const keys = options.property_list || Object.keys(json);
+        let keys = options.property_list || Object.keys(json);
         if (options.sort_objects) keys = keys.sort();
         for (let i in keys) {
           const k = keys[i];
@@ -261,8 +261,8 @@ const renderjson = (function () {
       typeof options.replacer == 'function'
         ? options.replacer
         : function (k, v) {
-            return v;
-          };
+          return v;
+        };
     const pre = append(
       document.createElement('pre'),
       _renderjson(json, '', false, options.show_to_level, options)
