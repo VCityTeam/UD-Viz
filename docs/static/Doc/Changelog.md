@@ -1,12 +1,4 @@
 # v2.37.2
-    - integrate TIW Graph, JSON, and Table data views
-      - update graph query pipeline for more generic querys
-      - add graph link labels
-      - refactor D3 graph construction and
-    - integrate cityobjectprovider extension
-    - update documentation
-
-# v2.37.2
   
     - Gltf aren't rotated at importation
     - Fix one example deployment
