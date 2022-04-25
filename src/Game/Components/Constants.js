@@ -1,31 +1,29 @@
 /** @format */
 
 /**
- * Constants of ud-viz/Shared
+ * Constants of ud-viz/Game
  */
-module.exports = Object.freeze({
+ module.exports = Object.freeze({
   /**
    * Define the type of message of a websocket communication
    */
   WEBSOCKET: {
     MSG_TYPES: {
-      JOIN_WORLD: 'join_world', //send to client to indicate the first state when joining a world
-      COMMANDS: 'cmds', //send to server by client
-      WORLDSTATE_DIFF: 'worldstate_diff', //send diff of the world server => client
-      SIGN_UP: 'sign_up',
-      SIGN_IN: 'sign_in',
-      GUEST_CONNECTION: 'guest_connection',
-      SERVER_ALERT: 'server_alert',
-      SIGNED: 'signed',
-      READY_TO_RECEIVE_STATE: 'ready_to_receive_state',
-      ON_AVATAR_GO: 'on_avatar_go',
-      QUERY_AVATAR_GO: 'query_avatar_go',
-      SAVE_AVATAR_GO: 'save_avatar_go',
-      SAVE_WORLDS: 'save_worlds',
-      CREATE_BBB_ROOM: 'create_bbb_room',
-      ON_BBB_URL: 'on_bbb_url',
-      ADD_GAMEOBJECT: 'add_gameobject',
-      EDIT_CONF_COMPONENT: 'edit_conf_component',
+      //client => server
+      ADD_GAMEOBJECT: 'add_gameobject', //add a go in world
+      COMMANDS: 'cmds', //commands to apply to a world
+      SIGN_UP: 'sign_up', //sign up
+      SIGN_IN: 'sign_in', //sign in
+      READY_TO_RECEIVE_STATE: 'ready_to_receive_state', //client game is ready to receive the join_world
+      SAVE_WORLDS: 'save_worlds', //save new worlds on server
+      CREATE_BBB_ROOM: 'create_bbb_room', //query bbb url
+      //server => client
+      JOIN_WORLD: 'join_world', //first complete worldstate when joining a world
+      WORLDSTATE_DIFF: 'worldstate_diff', //diff of worldstate
+      SERVER_ALERT: 'server_alert', //alert client with a message
+      SIGN_UP_SUCCESS: 'sign_up_success', //sign up
+      SIGNED: 'signed', //client is signed in imuv server
+      ON_BBB_URL: 'on_bbb_url', //return a bbb url
     },
   },
 });
