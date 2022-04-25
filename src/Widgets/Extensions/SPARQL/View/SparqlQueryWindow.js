@@ -5,7 +5,7 @@ import { Table } from '../Model/Table';
 import * as URI from '../Model/URI';
 import { LayerManager } from '../../../Components/Components';
 import { CityObjectProvider } from '../../../CityObjects/ViewModel/CityObjectProvider';
-import * as renderjson from './JsonRender';
+import { JsonRenderer } from './JsonRenderer';
 import './SparqlQueryWindow.css';
 
 /**
@@ -35,6 +35,12 @@ export class SparqlQueryWindow extends Window {
      * @type {CityObjectProvider}
      */
     this.cityObjectProvider = cityObjectProvider;
+
+    /**
+     *A reference to the JsonRenderer class
+     * @type {JsonRenderer}
+     */
+    this.jsonRenderer = new JsonRenderer();
 
     /**
      * The UD-Viz LayerManager.
@@ -103,18 +109,22 @@ LIMIT 100`;
 
     this.sparqlProvider.addEventListener(
       SparqlEndpointResponseProvider.EVENT_ENDPOINT_RESPONSE_UPDATED,
-      (response) => this.updateDataView(response, document.getElementById(this.resultSelectId).value)
+      (response) =>
+        this.updateDataView(
+          response,
+          document.getElementById(this.resultSelectId).value
+        )
     );
 
-    this.addEventListener(Graph.EVENT_NODE_CLICKED,
-      (node_text) => this.cityObjectProvider.selectCityObjectByBatchTable(
+    this.addEventListener(Graph.EVENT_NODE_CLICKED, (node_text) =>
+      this.cityObjectProvider.selectCityObjectByBatchTable(
         'gml_id',
         URI.tokenizeURI(node_text).id
       )
     );
 
-    this.addEventListener(Table.EVENT_CELL_CLICKED,
-      (cell_text) => this.cityObjectProvider.selectCityObjectByBatchTable(
+    this.addEventListener(Table.EVENT_CELL_CLICKED, (cell_text) =>
+      this.cityObjectProvider.selectCityObjectByBatchTable(
         'gml_id',
         URI.tokenizeURI(cell_text).id
       )
@@ -129,22 +139,22 @@ LIMIT 100`;
   updateDataView(response, view_type) {
     console.debug(response);
     this.clearDataView();
-    switch(view_type){
+    switch (view_type) {
       case 'graph':
-        this.graph.update( this.graph.formatResponseDataAsGraph(response) );
+        this.graph.update(this.graph.formatResponseDataAsGraph(response));
         this.dataView.append(this.graph.canvas);
         break;
       case 'json':
-        renderjson.set_icons('▶', '▼');
-        renderjson.set_max_string_length(40);
-        this.dataView.append(renderjson(response));
+        debugger;
+        this.jsonRenderer.renderjson.set_icons('▶', '▼');
+        this.jsonRenderer.renderjson.set_max_string_length(40);
+        this.dataView.append(this.jsonRenderer.renderjson(response));
         break;
       case 'table':
-        this.table.dataAsTable(
-          response.results.bindings,
-          response.head.vars);
-        this.table.filterInput.addEventListener('change',
-          (e) => Table.update(this.table, e));
+        this.table.dataAsTable(response.results.bindings, response.head.vars);
+        this.table.filterInput.addEventListener('change', (e) =>
+          Table.update(this.table, e)
+        );
         this.dataView.style['height'] = '500px';
         this.dataView.style['overflow'] = 'scroll';
         break;
@@ -157,7 +167,7 @@ LIMIT 100`;
    * Clear the DataView of content.
    */
   clearDataView() {
-    this.dataView.innerHTML='';
+    this.dataView.innerHTML = '';
     this.dataView.style['height'] = '100%';
     this.dataView.style['overflow'] = 'auto';
   }
@@ -220,5 +230,4 @@ LIMIT 100`;
   get queryTextArea() {
     return document.getElementById(this.queryTextAreaId);
   }
-  
 }
