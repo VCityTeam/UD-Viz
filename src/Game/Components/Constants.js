@@ -10,6 +10,7 @@ module.exports = Object.freeze({
   WEBSOCKET: {
     MSG_TYPES: {
       //client => server
+      QUERY_AVATAR: 'query_avatar', //ask server to send avatar json
       ADD_GAMEOBJECT: 'add_gameobject', //add a go in world
       COMMANDS: 'cmds', //commands to apply to a world
       SIGN_UP: 'sign_up', //sign up
@@ -24,7 +25,8 @@ module.exports = Object.freeze({
       SIGN_UP_SUCCESS: 'sign_up_success', //sign up
       SIGNED: 'signed', //client is signed in imuv server
       ON_BBB_URL: 'on_bbb_url', //return a bbb url
-      TELEPORT_AVATAR: 'teleport_avatar',
+      TELEPORT_AVATAR: 'teleport_avatar',//this is sent from server to client ? TODO
+      ON_AVATAR: 'on_avatar', //return avatar json
     },
   },
 });
