@@ -1,3 +1,18 @@
+# v2.37.3
+
+    Sparql module:
+        - Fix legend coloring bug
+        - Integrate link labels
+        - Refactor graph construction and documentation
+        - Integrate TIW table filters
+        - Initial table integration
+        - Integrate cityobjectprovider extension
+        - Update graph query pipeline
+
+    - Add websocket Message TYPE + documentation websocket API
+    - Delete multilayer demo
+    - Fix links to 3D Tiles in examples
+    - Delete multilayer demo
 # v2.37.2
   
     - Gltf aren't rotated at importation
