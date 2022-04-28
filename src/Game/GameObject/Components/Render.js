@@ -88,6 +88,10 @@ const RenderModule = class Render {
     return this.color;
   }
 
+  getIdRenderData() {
+    return this.idRenderData;
+  }
+
   /**
    * Check if the color differed from component and update if needed
    * @param {JSON} component the component to update to
@@ -96,6 +100,11 @@ const RenderModule = class Render {
   updateFromComponent(outdated, component, localContext) {
     if (!this.color.equals(component.getColor())) {
       this.setColor(component.getColor());
+    }
+
+    if (this.idRenderData != component.idRenderData) {
+      this.idRenderData = component.getIdRenderData();
+      this.initAssets(localContext.getGameView().getAssetsManager());
     }
   }
 
