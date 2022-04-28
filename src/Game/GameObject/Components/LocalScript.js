@@ -136,7 +136,7 @@ LocalScriptModule.EVENT = {
   INIT: 'init', //Before first tick
   TICK: 'tick', //every tick
   ON_NEW_GAMEOBJECT: 'onNewGameObject', //when a go is added
-  UPDATE: 'update', //when component need to be updated with newer localScript component
+  UPDATE: 'update', //call when outdated is raised
   DISPOSE: 'dispose', //gameview is disposed
   ON_REMOVE: 'onRemove', //object is remove from parent
 };
