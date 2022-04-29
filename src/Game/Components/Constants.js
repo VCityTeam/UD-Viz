@@ -10,6 +10,7 @@ module.exports = Object.freeze({
   WEBSOCKET: {
     MSG_TYPES: {
       //client => server
+      SAVE_AVATAR: 'save_avatar', //save client avatar on server
       QUERY_AVATAR: 'query_avatar', //ask server to send avatar json
       ADD_GAMEOBJECT: 'add_gameobject', //add a go in world
       COMMANDS: 'cmds', //commands to apply to a world
