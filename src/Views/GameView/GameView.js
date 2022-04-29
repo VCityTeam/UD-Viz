@@ -451,8 +451,12 @@ export class GameView extends View3D {
       go.traverse(function (child) {
         //tick local script
         const scriptComponent = child.getComponent(LocalScript.TYPE);
-        if (scriptComponent)
+        if (scriptComponent) {
           scriptComponent.execute(LocalScript.EVENT.TICK, [ctx]);
+          if (child.isOutdated()) {
+            scriptComponent.execute(LocalScript.EVENT.ON_OUTDATED, [ctx]);
+          }
+        }
 
         //tick audio component
         const audioComp = child.getComponent(Audio.TYPE);

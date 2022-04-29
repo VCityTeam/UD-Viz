@@ -89,26 +89,7 @@ const GameObjectModule = class GameObject {
    * @param {LocalContext} localContext this localcontext
    */
   updateFromGO(go, bufferedGO, localContext) {
-    if (this.noLocalUpdate || this.freeze) return;
-
-    if (!go.isStatic()) {
-      //update transform
-      this.setTransformFromGO(go);
-    }
-
-    //launch update event for bufferedGO
-    for (let key in this.components) {
-      const component = this.components[key];
-      for (let index = 0; index < bufferedGO.length; index++) {
-        const element = bufferedGO[index];
-
-        component.updateFromComponent(
-          element.isOutdated(),
-          element.getComponent(key),
-          localContext
-        );
-      }
-    }
+    
   }
 
   /**
