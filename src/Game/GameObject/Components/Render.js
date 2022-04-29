@@ -75,9 +75,11 @@ const RenderModule = class Render {
    */
   setColor(value) {
     this.color = value;
-    this.object3D.traverse(function (c) {
-      if (c.material) c.material.color = value;
-    });
+    if (this.object3D) {
+      this.object3D.traverse(function (c) {
+        if (c.material) c.material.color = value;
+      });
+    }
   }
 
   /**
@@ -86,6 +88,10 @@ const RenderModule = class Render {
    */
   getColor() {
     return this.color;
+  }
+
+  setIdRenderData(value) {
+    this.idRenderData = value;
   }
 
   getIdRenderData() {
