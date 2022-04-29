@@ -453,9 +453,6 @@ export class GameView extends View3D {
         const scriptComponent = child.getComponent(LocalScript.TYPE);
         if (scriptComponent) {
           scriptComponent.execute(LocalScript.EVENT.TICK, [ctx]);
-          if (child.isOutdated()) {
-            scriptComponent.execute(LocalScript.EVENT.ON_OUTDATED, [ctx]);
-          }
         }
 
         //tick audio component
