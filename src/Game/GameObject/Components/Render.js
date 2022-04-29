@@ -98,14 +98,20 @@ const RenderModule = class Render {
    * @param {LocalContext} localContext local context of the GameView
    */
   updateFromComponent(outdated, component, localContext) {
+    let result = false;
+
     if (!this.color.equals(component.getColor())) {
       this.setColor(component.getColor());
+      result = true;
     }
 
     if (this.idRenderData != component.getIdRenderData()) {
       this.idRenderData = component.getIdRenderData();
       this.initAssets(localContext.getGameView().getAssetsManager());
+      result = true;
     }
+
+    return result;
   }
 
   /**

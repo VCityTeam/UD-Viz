@@ -56,10 +56,13 @@ const LocalScriptModule = class LocalScript {
    */
   execute(event, params) {
     const _this = this;
+    let result = false;
 
     this.idScripts.forEach(function (idScript) {
-      _this.executeScript(idScript, event, params);
+      result = result || _this.executeScript(idScript, event, params);
     });
+
+    return result;
   }
 
   /**
@@ -75,7 +78,7 @@ const LocalScriptModule = class LocalScript {
     if (s[event]) {
       return s[event].apply(s, [this.parent].concat(params));
     } else {
-      return null;
+      return false;
     }
   }
 
@@ -86,15 +89,17 @@ const LocalScriptModule = class LocalScript {
    * @param {LocalContext} localContext
    */
   updateFromComponent(outdated, component, localContext) {
-    // if (JSONUtils.equals(this.conf, component.conf)) {
-    //   //replace conf and launch an update event
-    //   this.conf = component.conf;
-    //   for (let id in this.scripts) {
-    //     const s = this.scripts[id];
-    //     s.conf = component.conf;
-    //   }
-    //   this.execute(LocalScriptModule.EVENT.ON_OUTDATED, [localContext]);
-    // }
+    if (outdated) {
+      //replace conf and launch an update event
+      this.conf = component.conf;
+      for (let id in this.scripts) {
+        const s = this.scripts[id];
+        s.conf = component.conf;
+      }
+      return this.execute(LocalScriptModule.EVENT.ON_OUTDATED, [localContext]);
+    }
+
+    return false;
   }
 
   /**
@@ -139,6 +144,7 @@ LocalScriptModule.EVENT = {
   ON_OUTDATED: 'onOutdated', //call when outdated is raised
   DISPOSE: 'dispose', //gameview is disposed
   ON_REMOVE: 'onRemove', //object is remove from parent
+  ON_COMPONENT_UPDATE: 'onComponentUpdate', //component updated smthg
 };
 
 module.exports = LocalScriptModule;

@@ -89,7 +89,37 @@ const GameObjectModule = class GameObject {
    * @param {LocalContext} localContext this localcontext
    */
   updateFromGO(go, bufferedGO, localContext) {
-    
+    if (this.noLocalUpdate || this.freeze) return;
+
+    if (!go.isStatic()) {
+      //update transform
+      this.setTransformFromGO(go);
+    }
+
+    //launch update event for bufferedGO
+    let update = false;
+    for (let index = 0; index < bufferedGO.length; index++) {
+      const element = bufferedGO[index];
+      for (let key in this.components) {
+        const component = this.components[key];
+
+        update =
+          update ||
+          component.updateFromComponent(
+            element.isOutdated(),
+            element.getComponent(key),
+            localContext
+          );
+      }
+    }
+
+    if (update) {
+      const localScript = this.getComponent(LocalScriptModule.TYPE);
+      if (localScript)
+        localScript.execute(LocalScriptModule.EVENT.ON_COMPONENT_UPDATE, [
+          localContext,
+        ]);
+    }
   }
 
   /**
@@ -314,7 +344,6 @@ const GameObjectModule = class GameObject {
       this.parent.children = this.parent.children.filter(function (ele) {
         return ele.getUUID() != _this.getUUID();
       });
-
     } else {
       console.warn('no deleted because no parent ', this.toJSON());
     }
