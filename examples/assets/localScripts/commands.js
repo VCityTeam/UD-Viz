@@ -91,7 +91,7 @@ module.exports = class Commands {
     this.updateUI(arguments[0], arguments[1]);
   }
 
-  update() {
+  onOutdated() {
     if (!this.conf.worldComputerDt == undefined) debugger;
 
     this.worldDtLabel.innerHTML =

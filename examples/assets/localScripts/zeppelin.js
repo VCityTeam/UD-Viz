@@ -22,7 +22,7 @@ module.exports = class Zeppelin {
     this.labelSphereCount.innerHTML = 'Sphere count: ' + this.conf.sphereCount;
   }
 
-  update() {
+  onOutdated() {
     const go = arguments[0];
     this.updateUI();
   }

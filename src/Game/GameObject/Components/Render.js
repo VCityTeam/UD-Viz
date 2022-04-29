@@ -102,7 +102,7 @@ const RenderModule = class Render {
       this.setColor(component.getColor());
     }
 
-    if (this.idRenderData != component.idRenderData) {
+    if (this.idRenderData != component.getIdRenderData()) {
       this.idRenderData = component.getIdRenderData();
       this.initAssets(localContext.getGameView().getAssetsManager());
     }
