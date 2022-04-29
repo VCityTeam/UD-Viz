@@ -86,15 +86,15 @@ const LocalScriptModule = class LocalScript {
    * @param {LocalContext} localContext
    */
   updateFromComponent(outdated, component, localContext) {
-    if (outdated) {
-      //replace conf and launch an update event
-      this.conf = component.conf;
-      for (let id in this.scripts) {
-        const s = this.scripts[id];
-        s.conf = component.conf;
-      }
-      this.execute(LocalScriptModule.EVENT.ON_OUTDATED, [localContext]);
-    }
+    // if (JSONUtils.equals(this.conf, component.conf)) {
+    //   //replace conf and launch an update event
+    //   this.conf = component.conf;
+    //   for (let id in this.scripts) {
+    //     const s = this.scripts[id];
+    //     s.conf = component.conf;
+    //   }
+    //   this.execute(LocalScriptModule.EVENT.ON_OUTDATED, [localContext]);
+    // }
   }
 
   /**
