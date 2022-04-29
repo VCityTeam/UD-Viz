@@ -93,7 +93,7 @@ const LocalScriptModule = class LocalScript {
         const s = this.scripts[id];
         s.conf = component.conf;
       }
-      this.execute(LocalScriptModule.EVENT.UPDATE, [localContext]);
+      this.execute(LocalScriptModule.EVENT.ON_OUTDATED, [localContext]);
     }
   }
 
@@ -136,7 +136,7 @@ LocalScriptModule.EVENT = {
   INIT: 'init', //Before first tick
   TICK: 'tick', //every tick
   ON_NEW_GAMEOBJECT: 'onNewGameObject', //when a go is added
-  UPDATE: 'update', //call when outdated is raised
+  ON_OUTDATED: 'onOutdated', //call when outdated is raised
   DISPOSE: 'dispose', //gameview is disposed
   ON_REMOVE: 'onRemove', //object is remove from parent
 };
