@@ -65,11 +65,19 @@ export class SlideShow extends Window {
 
   /**Create a default texture and fill the first texture file in this.texturesFiles */
   initDefaultTextureFile() {
-    this.defaultTexture = new THREE.TextureLoader().load(
-      '../assets/img/DefaultTexture.jpg'
-    );
-    const img = document.createElement('img');
-    img.src = '../assets/img/DefaultTexture.jpg';
+    const canvas = document.createElement('canvas');
+    canvas.height = 512;
+    canvas.width = 512;
+    const ctx = canvas.getContext('2d');
+    ctx.fillStyle = 'orange';
+    ctx.font = '30px Arial';
+    const stringDefaultTexture = 'Default Texture';
+    ctx.textBaseline = 'middle';
+    ctx.textAlign = 'center';
+    ctx.fillText(stringDefaultTexture, 256, 256);
+
+    this.defaultTexture = new THREE.CanvasTexture(canvas);
+    // this.defaultTexture.needsUpdate = true;
     this.texturesFiles = [
       {
         index: 0,
@@ -77,8 +85,8 @@ export class SlideShow extends Window {
         texture: this.defaultTexture,
         getSize: function () {
           return {
-            height: img.height,
-            width: img.width,
+            height: canvas.height,
+            width: canvas.width,
           };
         },
       },
