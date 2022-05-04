@@ -69,15 +69,41 @@ export class SlideShow extends Window {
     canvas.height = 512;
     canvas.width = 512;
     const ctx = canvas.getContext('2d');
-    ctx.fillStyle = 'orange';
-    ctx.font = '30px Arial';
+
+    ctx.beginPath();
+
+    const colors = [
+      'red',
+      'orange',
+      'DarkOliveGreen',
+      'SpringGreen',
+      'cyan',
+      'MidnightBlue',
+      'MediumVioletRed',
+    ];
+    for (let i = 0; i < colors.length; i++) {
+      ctx.beginPath();
+      const gradient = ctx.createLinearGradient(0, 0, 0, canvas.width);
+      gradient.addColorStop(0, colors[i]);
+      gradient.addColorStop(1, 'white');
+      ctx.fillStyle = gradient;
+      ctx.fillRect(
+        (canvas.width / colors.length) * i,
+        0,
+        (canvas.width / colors.length) * (i + 1),
+        canvas.height
+      );
+    }
+
+    ctx.beginPath();
+    ctx.fillStyle = 'black';
+    ctx.font = '70px Arial';
     const stringDefaultTexture = 'Default Texture';
     ctx.textBaseline = 'middle';
     ctx.textAlign = 'center';
     ctx.fillText(stringDefaultTexture, 256, 256);
 
     this.defaultTexture = new THREE.CanvasTexture(canvas);
-    // this.defaultTexture.needsUpdate = true;
     this.texturesFiles = [
       {
         index: 0,
