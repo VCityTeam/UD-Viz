@@ -47,7 +47,8 @@ Developing UD-Viz requires some knowledge about [JS](https://github.com/VCityTea
 
 ### Developers documentation
 
-The last generated documentation can be found [here](./docs/html/index.html)
+After generation, the [browsable documentation](https://vcityteam.github.io/UD-Viz/html/index.html) is 
+[stored within this repository](./docs/html/index.html).
 
 Refer to this [README](./docs/README.md) to re-generate it.
 
