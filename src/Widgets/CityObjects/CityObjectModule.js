@@ -34,7 +34,6 @@ export class CityObjectModule {
      */
     this.provider = new CityObjectProvider(layerManager);
     this.provider.setSelectionStyle(config.cityObjects.styles.selection);
-    this.provider.layerManager.registerStyle('selected',this.provider.defaultSelectionStyle);
     /**
      * The city object view. It consist of a main window, called the city
      * object window.
