@@ -14,6 +14,7 @@ export class SlideShow extends Window {
     this.extent = app.extent;
     /** @type {itowns.PlanarView} */
     this.view = app.view;
+    this.conf = app.config.slideShow || null;
 
     //content html
     this.htmlSlideShow = null;
@@ -42,7 +43,11 @@ export class SlideShow extends Window {
     /** @type {bool} if true the application update its view3D eachFrame*/
     this.notifyValue = false;
 
-    this.initDefaultTextureFile();
+    if (this.conf) {
+      this.initSlideshowInConfig();
+    } else {
+      this.initDefaultTextureFile();
+    }
     this.currentTexture = null;
 
     this.initHtml();
@@ -57,12 +62,58 @@ export class SlideShow extends Window {
     tick();
   }
 
+  /**If the notifyValue is true, then update the 3D view*/
   notifyChangeEachFrame() {
     if (this.notifyValue) {
       this.app.update3DView();
     }
   }
 
+  initSlideshowInConfig() {
+    const conf = this.conf;
+    const defaultSlide = conf[Object.keys(conf)[0]][0];
+    const folder = defaultSlide.folder;
+    const diapos = defaultSlide.diapositives;
+
+    const _this = this;
+
+    for (let i = 0; i < diapos.length; i++) {
+      const xhr = new XMLHttpRequest();
+      xhr.open('GET', folder.concat('/'.concat(diapos[i])));
+
+      xhr.onload = function () {
+        const type = this.getResponseHeader('Content-Type');
+        if (type.includes('image')) {
+          const img = document.createElement('img');
+          img.src = data.target.result;
+          img.onload = function () {
+            _this.texturesFiles.push({
+              index: i,
+              name: diapos[i],
+              texture: new THREE.TextureLoader().load(),
+              getSize: function () {
+                return {
+                  height: img.height,
+                  width: img.width,
+                };
+              },
+            });
+          };
+        } else if (type.includes('video')) {
+        } else {
+          console.error(
+            this.responseURL,
+            ' is not a valid video or image file'
+          );
+        }
+        debugger;
+      };
+      xhr.send();
+
+      // img.src = folder.concat('/'.concat(diapos[i]));
+      // img.onload = function () {};
+    }
+  }
   /**Create a default texture and fill the first texture file in this.texturesFiles */
   initDefaultTextureFile() {
     const canvas = document.createElement('canvas');
@@ -522,6 +573,7 @@ export class SlideShow extends Window {
   }
 
   //INPUTS ELEMENTS SETTERS
+  /* Setting the values of the input fields in the DOM. */
   setSizeInputs(vec2) {
     const sizeInputEls = this.sizeInputVectorDOM.getElementsByTagName('input');
 
@@ -590,6 +642,7 @@ export class SlideShow extends Window {
     };
   }
 
+  /**It adds event listeners to the HTML elements created by the Window class.*/
   windowCreated() {
     const _this = this;
     // Through this.callbacksHTMLEl and addEventListeners to HTMLElements in DOM (elements which created by Window class)
