@@ -74,9 +74,9 @@ export class SlideShow extends Window {
     const defaultSlide = conf[Object.keys(conf)[0]][0];
     const folder = defaultSlide.folder;
     const diapos = defaultSlide.diapositives;
+    this.texturesFiles = [];
 
     const _this = this;
-
     for (let i = 0; i < diapos.length; i++) {
       const xhr = new XMLHttpRequest();
       xhr.open('GET', folder.concat('/'.concat(diapos[i])));
@@ -84,13 +84,12 @@ export class SlideShow extends Window {
       xhr.onload = function () {
         const type = this.getResponseHeader('Content-Type');
         if (type.includes('image')) {
-          const img = document.createElement('img');
-          img.src = data.target.result;
-          img.onload = function () {
+          new THREE.TextureLoader().load(this.responseURL, function (texture) {
+            const img = texture.image;
             _this.texturesFiles.push({
               index: i,
               name: diapos[i],
-              texture: new THREE.TextureLoader().load(),
+              texture: texture,
               getSize: function () {
                 return {
                   height: img.height,
@@ -98,7 +97,9 @@ export class SlideShow extends Window {
                 };
               },
             });
-          };
+            _this.iCurrentText = 0;
+            _this.currentTextureFile = _this.texturesFiles[0];
+          });
         } else if (type.includes('video')) {
         } else {
           console.error(
@@ -106,12 +107,8 @@ export class SlideShow extends Window {
             ' is not a valid video or image file'
           );
         }
-        debugger;
       };
       xhr.send();
-
-      // img.src = folder.concat('/'.concat(diapos[i]));
-      // img.onload = function () {};
     }
   }
   /**Create a default texture and fill the first texture file in this.texturesFiles */
@@ -320,20 +317,22 @@ export class SlideShow extends Window {
 
             reader.onload = function (data) {
               if (file.type.includes('image/')) {
-                const img = document.createElement('img');
-                img.src = data.target.result;
-
-                _this.texturesFiles.push({
-                  index: i + 1,
-                  name: file.name,
-                  texture: new THREE.TextureLoader().load(data.target.result),
-                  getSize: function () {
-                    return {
-                      height: img.height,
-                      width: img.width,
-                    };
-                  },
-                });
+                new THREE.TextureLoader().load(
+                  data.target.result,
+                  function (texture) {
+                    _this.texturesFiles.push({
+                      index: i + 1,
+                      name: file.name,
+                      texture: texture,
+                      getSize: function () {
+                        return {
+                          height: texture.image.height,
+                          width: texture.image.width,
+                        };
+                      },
+                    });
+                  }
+                );
               } else if (file.type.includes('video/')) {
                 const video = document.createElement('video');
                 video.src = data.target.result;
@@ -543,7 +542,7 @@ export class SlideShow extends Window {
     const geometry = new THREE.PlaneGeometry(1, 1);
 
     const material = new THREE.MeshBasicMaterial({
-      map: this.defaultTexture,
+      map: this.texturesFiles[0].texture,
       side: THREE.DoubleSide,
     });
 
