@@ -90,12 +90,7 @@ export class SlideShow extends Window {
               index: i,
               name: diapos[i],
               texture: texture,
-              getSize: function () {
-                return {
-                  height: img.height,
-                  width: img.width,
-                };
-              },
+              size: { height: img.height, width: img.width },
             });
             _this.iCurrentText = 0;
             _this.currentTextureFile = _this.texturesFiles[0];
@@ -111,6 +106,7 @@ export class SlideShow extends Window {
       xhr.send();
     }
   }
+
   /**Create a default texture and fill the first texture file in this.texturesFiles */
   initDefaultTextureFile() {
     const canvas = document.createElement('canvas');
@@ -157,12 +153,7 @@ export class SlideShow extends Window {
         index: 0,
         name: 'First',
         texture: this.defaultTexture,
-        getSize: function () {
-          return {
-            height: canvas.height,
-            width: canvas.width,
-          };
-        },
+        size: { height: canvas.height, width: canvas.width },
       },
     ];
     this.iCurrentText = 0;
@@ -231,7 +222,7 @@ export class SlideShow extends Window {
         if (event.target.checked) {
           const currentW = this.getSizeValues().width;
           const w =
-            currentW != 0 ? currentW : this.currentTextureFile.getSize().width;
+            currentW != 0 ? currentW : this.currentTextureFile.size.width;
           this.setSizeInputs(new THREE.Vector2(null, w));
         }
       },
@@ -324,11 +315,9 @@ export class SlideShow extends Window {
                       index: i + 1,
                       name: file.name,
                       texture: texture,
-                      getSize: function () {
-                        return {
-                          height: texture.image.height,
-                          width: texture.image.width,
-                        };
+                      size: {
+                        height: texture.image.height,
+                        width: texture.image.width,
                       },
                     });
                   }
@@ -345,17 +334,14 @@ export class SlideShow extends Window {
                 // Rotate the video texture with
                 // videoTexture.center.set(0.5, 0.5);
                 // videoTexture.rotation = Math.PI / 2;
-
                 _this.texturesFiles.push({
                   index: i + 1,
                   name: file.name,
                   texture: videoTexture,
                   video: video,
-                  getSize: function () {
-                    return {
-                      height: video.videoHeight,
-                      width: video.videoWidth,
-                    };
+                  size: {
+                    height: video.videoHeight,
+                    width: video.videoWidth,
                   },
                 });
               }
@@ -434,8 +420,8 @@ export class SlideShow extends Window {
         iInput == 0 ? 1 : 0
       ];
 
-    const height = this.currentTextureFile.getSize().height;
-    const width = this.currentTextureFile.getSize().width;
+    const height = this.currentTextureFile.size.height;
+    const width = this.currentTextureFile.size.width;
     const ratio = width / height;
     const newValue = iInput == 0 ? value / ratio : value * ratio;
 
@@ -554,14 +540,17 @@ export class SlideShow extends Window {
   get coordinatesInputVectorDOM() {
     return document.getElementById(this.coordinatesInputVectorID);
   }
+
   /**return rotation HTMLElement (inputs+labels)*/
   get rotationInputVectorDOM() {
     return document.getElementById(this.rotationInputVectorID);
   }
+
   /**return size HTMLElement (inputs+labels)*/
   get sizeInputVectorDOM() {
     return document.getElementById(this.sizeInputVectorID);
   }
+
   /**return apspect ratio HTMLElement (checkbox)*/
   get aspectRatioCheckboxDOM() {
     return document.getElementById(this.aspectRatioCheckboxID);
