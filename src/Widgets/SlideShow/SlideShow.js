@@ -96,6 +96,22 @@ export class SlideShow extends Window {
             _this.currentTextureFile = _this.texturesFiles[0];
           });
         } else if (type.includes('video')) {
+          console.log(this);
+          const video = document.createElement('video');
+          video.src = this.responseURL;
+          video.autoplay = true;
+          video.muted = true;
+          video.loop = true;
+          video.load();
+
+          const videoTexture = new THREE.VideoTexture(video);
+          _this.texturesFiles.push({
+            index: i,
+            name: diapos[i],
+            texture: videoTexture,
+            video: video,
+            size: { height: video.height, width: video.width },
+          });
         } else {
           console.error(
             this.responseURL,
