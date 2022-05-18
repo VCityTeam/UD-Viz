@@ -2,177 +2,161 @@
 
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>UD-Viz Widget Template example</title>
+  <head>
+    <title>UD-Viz Widget Template example</title>
 
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    </head>
-    <body>
-        <script src="../../dist/release/udv.js"></script>
-        <!-- <script src="../../dist/debug/udv.js"></script> -->
-        <script type="text/javascript">
-            let app = new udv.Templates.AllWidget();
-            const inputManager = new udv.Components.InputManager();
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  </head>
+  <body>
+    <script src="../../dist/release/udv.js"></script>
+    <!-- <script src="../../dist/debug/udv.js"></script> -->
+    <script type="text/javascript">
+      let app = new udv.Templates.AllWidget();
+      const inputManager = new udv.Components.InputManager();
 
-            app.start('../assets/config/all_widget_config.json').then(
-                (config) => {
-                    app.addBaseMapLayer();
+      app.start('../assets/config/all_widget_config.json').then((config) => {
+        app.addBaseMapLayer();
 
-                    app.addElevationLayer();
+        app.addElevationLayer();
 
-                    app.setupAndAdd3DTilesLayers();
+        app.setupAndAdd3DTilesLayers();
 
-                    ////// REQUEST SERVICE
-                    const requestService = new udv.Components.RequestService();
+        ////// REQUEST SERVICE
+        const requestService = new udv.Components.RequestService();
 
-                    ////// ABOUT MODULE
-                    const about = new udv.Widgets.AboutWindow();
-                    app.addModuleView('about', about);
+        ////// ABOUT MODULE
+        const about = new udv.Widgets.AboutWindow();
+        app.addModuleView('about', about);
 
-                    ////// HELP MODULE
-                    const help = new udv.Widgets.Extensions.HelpWindow(
-                        config.helpWindow,
-                    );
-                    app.addModuleView('help', help);
+        ////// HELP MODULE
+        const help = new udv.Widgets.Extensions.HelpWindow(config.helpWindow);
+        app.addModuleView('help', help);
 
-                    ////// AUTHENTICATION MODULE
-                    const authenticationService =
-                        new udv.Widgets.Extensions.AuthenticationService(
-                            requestService,
-                            app.config,
-                        );
+        ////// AUTHENTICATION MODULE
+        const authenticationService =
+          new udv.Widgets.Extensions.AuthenticationService(
+            requestService,
+            app.config
+          );
 
-                    const authenticationView =
-                        new udv.Widgets.Extensions.AuthenticationView(
-                            authenticationService,
-                        );
-                    app.addModuleView('authentication', authenticationView, {
-                        type: udv.Templates.AllWidget.AUTHENTICATION_MODULE,
-                    });
+        const authenticationView =
+          new udv.Widgets.Extensions.AuthenticationView(authenticationService);
+        app.addModuleView('authentication', authenticationView, {
+          type: udv.Templates.AllWidget.AUTHENTICATION_MODULE,
+        });
 
-                    ////// DOCUMENTS MODULE
-                    let documentModule = new udv.Widgets.DocumentModule(
-                        requestService,
-                        app.config,
-                    );
-                    app.addModuleView('documents', documentModule.view);
+        ////// DOCUMENTS MODULE
+        let documentModule = new udv.Widgets.DocumentModule(
+          requestService,
+          app.config
+        );
+        app.addModuleView('documents', documentModule.view);
 
-                    ////// DOCUMENTS VISUALIZER EXTENSION (to orient the document)
-                    const imageOrienter =
-                        new udv.Widgets.DocumentVisualizerWindow(
-                            documentModule,
-                            app.view,
-                            app.controls,
-                        );
+        ////// DOCUMENTS VISUALIZER EXTENSION (to orient the document)
+        const imageOrienter = new udv.Widgets.DocumentVisualizerWindow(
+          documentModule,
+          app.view,
+          app.controls
+        );
 
-                    ////// CONTRIBUTE EXTENSION
-                    new udv.Widgets.Extensions.ContributeModule(
-                        documentModule,
-                        imageOrienter,
-                        requestService,
-                        app.view,
-                        app.controls,
-                        app.config,
-                    );
+        ////// CONTRIBUTE EXTENSION
+        new udv.Widgets.Extensions.ContributeModule(
+          documentModule,
+          imageOrienter,
+          requestService,
+          app.view,
+          app.controls,
+          app.config
+        );
 
-                    ////// VALIDATION EXTENSION
-                    new udv.Widgets.Extensions.DocumentValidationModule(
-                        documentModule,
-                        requestService,
-                        app.config,
-                    );
+        ////// VALIDATION EXTENSION
+        new udv.Widgets.Extensions.DocumentValidationModule(
+          documentModule,
+          requestService,
+          app.config
+        );
 
-                    ////// DOCUMENT COMMENTS
-                    new udv.Widgets.Extensions.DocumentCommentsModule(
-                        documentModule,
-                        requestService,
-                        app.config,
-                    );
+        ////// DOCUMENT COMMENTS
+        new udv.Widgets.Extensions.DocumentCommentsModule(
+          documentModule,
+          requestService,
+          app.config
+        );
 
-                    ////// GUIDED TOURS MODULE
-                    const guidedtour = new udv.Widgets.GuidedTourController(
-                        documentModule,
-                        requestService,
-                        app.config,
-                    );
-                    app.addModuleView('guidedTour', guidedtour, {
-                        name: 'Guided Tours',
-                    });
+        ////// GUIDED TOURS MODULE
+        const guidedtour = new udv.Widgets.GuidedTourController(
+          documentModule,
+          requestService,
+          app.config
+        );
+        app.addModuleView('guidedTour', guidedtour, {
+          name: 'Guided Tours',
+        });
 
-                    ////// GEOCODING EXTENSION
-                    const geocodingService =
-                        new udv.Widgets.Extensions.GeocodingService(
-                            requestService,
-                            app.extent,
-                            app.config,
-                        );
-                    const geocodingView =
-                        new udv.Widgets.Extensions.GeocodingView(
-                            geocodingService,
-                            app.controls,
-                            app.view,
-                        );
-                    app.addModuleView('geocoding', geocodingView, {
-                        binding: 's',
-                        name: 'Address Search',
-                    });
+        ////// GEOCODING EXTENSION
+        const geocodingService = new udv.Widgets.Extensions.GeocodingService(
+          requestService,
+          app.extent,
+          app.config
+        );
+        const geocodingView = new udv.Widgets.Extensions.GeocodingView(
+          geocodingService,
+          app.controls,
+          app.view
+        );
+        app.addModuleView('geocoding', geocodingView, {
+          binding: 's',
+          name: 'Address Search',
+        });
 
-                    ////// CITY OBJECTS MODULE
-                    let cityObjectModule = new udv.Widgets.CityObjectModule(
-                        app.layerManager,
-                        app.config,
-                    );
-                    app.addModuleView('cityObjects', cityObjectModule.view);
+        ////// CITY OBJECTS MODULE
+        let cityObjectModule = new udv.Widgets.CityObjectModule(
+          app.layerManager,
+          app.config
+        );
+        app.addModuleView('cityObjects', cityObjectModule.view);
 
-                    ////// LINKS MODULE
-                    new udv.Widgets.LinkModule(
-                        documentModule,
-                        cityObjectModule,
-                        requestService,
-                        app.view,
-                        app.controls,
-                        app.config,
-                    );
+        ////// LINKS MODULE
+        new udv.Widgets.LinkModule(
+          documentModule,
+          cityObjectModule,
+          requestService,
+          app.view,
+          app.controls,
+          app.config
+        );
 
-                    ////// 3DTILES DEBUG
-                    const debug3dTilesWindow =
-                        new udv.Widgets.Extensions.Debug3DTilesWindow(
-                            app.layerManager,
-                        );
-                    app.addModuleView('3dtilesDebug', debug3dTilesWindow, {
-                        name: '3DTiles Debug',
-                    });
+        ////// 3DTILES DEBUG
+        const debug3dTilesWindow =
+          new udv.Widgets.Extensions.Debug3DTilesWindow(app.layerManager);
+        app.addModuleView('3dtilesDebug', debug3dTilesWindow, {
+          name: '3DTiles Debug',
+        });
 
-                    ////// CAMERA POSITIONER
-                    const cameraPosition = new udv.Widgets.CameraPositionerView(
-                        app.view,
-                        app.controls,
-                    );
-                    app.addModuleView('cameraPositioner', cameraPosition);
+        ////// CAMERA POSITIONER
+        const cameraPosition = new udv.Widgets.CameraPositionerView(
+          app.view,
+          app.controls
+        );
+        app.addModuleView('cameraPositioner', cameraPosition);
 
-                    // ////// TEMPORAL MODULE
-                    // const temporalModule = new udv.Widgets.TemporalModule(
-                    //   app.layerManager.tilesManagers[0],
-                    //   app.config.temporalModule
-                    // );
-                    // app.addModuleView("temporal", temporalModule.view);
+        // ////// TEMPORAL MODULE
+        // const temporalModule = new udv.Widgets.TemporalModule(
+        //   app.layerManager.tilesManagers[0],
+        //   app.config.temporalModule
+        // );
+        // app.addModuleView("temporal", temporalModule.view);
 
-                    ////// LAYER CHOICE MODULE
-                    const layerChoice = new udv.Widgets.LayerChoice(
-                        app.layerManager,
-                    );
-                    app.addModuleView('layerChoice', layerChoice);
+        ////// LAYER CHOICE MODULE
+        const layerChoice = new udv.Widgets.LayerChoice(app.layerManager);
+        app.addModuleView('layerChoice', layerChoice);
 
-                    ///// SLIDESHOW MODULE
-                    const slideShow = new udv.Widgets.SlideShow(
-                        app,
-                        inputManager,
-                    );
+        ///// SLIDESHOW MODULE
+        const slideShow = new udv.Widgets.SlideShow(app, inputManager);
 
-                    app.addModuleView('slideShow', slideShow);
-                },
-            );
-        </script>
-    </body>
+        app.addModuleView('slideShow', slideShow);
+      });
+    </script>
+  </body>
 </html>
