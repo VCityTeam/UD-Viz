@@ -81,25 +81,47 @@ iframe {
   padding-left: var(--panel-width);
 }
 
-#projects {
-  grid-template-columns: repeat(3, 1fr);
+.projects {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   line-height: 0;
 }
 
-#projects a {
+.projects a {
   overflow: hidden;
+  text-align: center;
+  font-size: 1vw;
 }
 
-#projects a img {
+.projects a img {
   width: 100%;
   transform: scale(1);
   transition: 0.15s transform;
 }
 
-#projects a:hover img {
+.projects a:hover img {
   transform: scale(1.08);
+}
+
+.projects a div {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 10px;
+
+  background-color: rgba(0, 0, 0, 0.5);
+  color: white;
+  opacity: 0;
+  transform: scale(1);
+  visibility: none;
+  transition: opacity 0.15s;
+  text-decoration: underline;
+}
+
+.projects a:hover div {
+  visibility: visible;
+  opacity: 1;
+  transform: scale(1.08);
+  transition: 0.15s transform;
 }
 
 #panel #content ul {
