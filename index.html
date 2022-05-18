@@ -55,147 +55,148 @@
         </div>
       </div>
       <div id="viewer">
-        <div id="projects">
-          <a
-            href="./examples/AllWidget/example.html"
-            target="_blank"
-            rel="noopener"
-            title="This example implements all widgets and extensions currently available. As of today, this includes :
-            - Temporal
-            - Help & About
-            - Documents
-            - Contribute
-            - Guided tours
-            - Authentication
-            - Documents to validate
-            - Document comments
-            - Geocoding
-            - 3DTiles debug
-            - Camera positioner
-            - Document links"
-            ><img
-              src="./examples/assets/img/examples_images/AllWidgets.png"
-              loading="lazy"
-          /></a>
-          <a
-            href="./examples/WorldMap/example.html"
-            target="_blank"
-            rel="noopener"
-            title="This example use IGN basemap to be able to navigate all over the world"
-            ><img
-              src="./examples/assets/img/examples_images/WorldMap.png"
-              loading="lazy"
-          /></a>
-          <a
-            href="./examples/LocalGame.html"
-            target="_blank"
-            rel="noopener"
-            title="This example implements a local mini game builded with the ud-viz game engine"
-            ><img
-              src="./examples/assets/img/examples_images/LocalGame.png"
-              loading="lazy"
-          /></a>
-          <a
-            href="./examples/AvatarGame.html"
-            target="_blank"
-            rel="noopener"
-            title="This example implements a local mini game illustrating an avatar walking in the city"
-            ><img
-              src="./examples/assets/img/examples_images/AvatarGame.png"
-              loading="lazy"
-          /></a>
-          <a
-            href="./examples/LocalAvatar.html"
-            target="_blank"
-            rel="noopener"
-            title="This example implements a local mini game illustrating an avatar walking in the city with collision and shader pass."
-            ><img
-              src="./examples/assets/img/examples_images/LocalAvatar.png"
-              loading="lazy"
-          /></a>
-          <a
-            href="./examples/Billboard.html"
-            target="_blank"
-            rel="noopener"
-            title="This example implements a billboard (ie an embeded html content in a 3D view)."
-            ><img
-              src="./examples/assets/img/examples_images/billboard.png"
-              loading="lazy"
-          /></a>
-          <a
-            href="examples/DocumentWidget/example.html"
-            target="_blank"
-            rel="noopener"
-            title="In this example you can consult documents in a document browser and search them using keywords and other fields."
-            ><img
-              src="./examples/assets/img/examples_images/DocumentWidget.png"
-              loading="lazy"
-          /></a>
-          <a
-            href="examples/GeocodingWidget/example.html"
-            target="_blank"
-            rel="noopener"
-            title="Geocoding allows a user to navigate in the city by searching addresses or place names."
-            ><img
-              src="./examples/assets/img/examples_images/GeocodingWidget.png"
-              loading="lazy"
-          /></a>
-          <a
-            href="examples/CameraPositionerWidget/example.html"
-            target="_blank"
-            rel="noopener"
-            title="The camera positioner is a tool that show the coordinates and the orientation of the camera."
-            ><img
-              src="./examples/assets/img/examples_images/CameraPositionerWidget.png"
-              loading="lazy"
-          /></a>
-          <a
-            href="examples/SlideShow/slideShow.html"
-            target="_blank"
-            rel="noopener"
-            title="The SlideShow allows to display images and videos on a plane geometry."
-            ><img
-              src="./examples/assets/img/examples_images/CameraPositionerWidget.png"
-              loading="lazy"
-          /></a>
-          <a
-            href="examples/3DTilesDebugWidget/example.html"
-            target="_blank"
-            rel="noopener"
-            title="3DTiles Debug displays a window which shows various information about 3DTiles objects and city objects."
-            ><img
-              src="./examples/assets/img/examples_images/3DTilesDebugWidget.png"
-              loading="lazy"
-          /></a>
-          <a
-            href="examples/CityObjectWidget/example.html"
-            target="_blank"
-            rel="noopener"
-            title="This extensions allows the user to explore city objects and color them according to filters."
-            ><img
-              src="./examples/assets/img/examples_images/CityObjectWidget.png"
-              loading="lazy"
-          /></a>
-          <a
-            href="examples/LayerChoiceWidget/example.html"
-            target="_blank"
-            rel="noopener"
-            title="This extensions interact with layers"
-            ><img
-              src="./examples/assets/img/examples_images/LayerChoiceWidget.png"
-              loading="lazy"
-          /></a>
-          <a
-            href="examples/TemporalWidget/example.html"
-            target="_blank"
-            rel="noopener"
-            title="This extensions allows the user to explore city objects and color them according to filters."
-            ><img
-              src="./examples/assets/img/examples_images/TemporalWidget.png"
-              loading="lazy"
-          /></a>
-        </div>
+        <h1>UD-Viz</h1>
+        <div class="projects" id="prj_udviz"></div>
+        <h1>UD-Game</h1>
+        <div class="projects" id="prj_udgame"></div>
       </div>
     </section>
+
+    <script>
+      const divPrjUDViz = document.getElementById('prj_udviz');
+      const divPrjUDGame = document.getElementById('prj_udgame');
+
+      const addProjectElement = function (name, parentEl, href, title, srcImg) {
+        const newProject = document.createElement('a');
+        newProject.href = href;
+        newProject.title = title;
+        newProject.target = '_blank';
+        newProject.rel = 'noopener';
+        parentEl.appendChild(newProject);
+
+        const newProjectImg = document.createElement('img');
+        newProjectImg.src = srcImg;
+        newProjectImg.loading = 'lazy';
+        newProject.appendChild(newProjectImg);
+
+        const newProjectNameHoverDiv = document.createElement('div');
+        newProjectNameHoverDiv.innerHTML = name;
+        newProjectNameHoverDiv.classList.add('hovercap');
+        newProject.appendChild(newProjectNameHoverDiv);
+      };
+
+      addProjectElement(
+        'AllWidgets',
+        divPrjUDViz,
+        './examples/AllWidget/example.html',
+        `This example implements all widgets and extensions currently available. As of today, this includes :
+            \n- Temporal            \n- Help & About            \n- Documents            \n- Contribute            \n- Guided tours            \n- Authentication            \n- Documents to validate            \n- Document comments            \n- Geocoding            \n- 3DTiles debug            \n- Camera positioner            \n- Document links`,
+        './examples/assets/img/examples_images/AllWidgets.png'
+      );
+
+      addProjectElement(
+        'Worldmap',
+        divPrjUDViz,
+        './examples/WorldMap/example.html',
+        'This example use IGN basemap to be able to navigate all over the world',
+        './examples/assets/img/examples_images/WorldMap.png'
+      );
+
+      addProjectElement(
+        'Billboard',
+        divPrjUDViz,
+        './examples/Billboard.html',
+        'This example implements a billboard (ie an embeded html content in a 3D view).',
+        './examples/assets/img/examples_images/billboard.png'
+      );
+
+      addProjectElement(
+        'Document Widget',
+        divPrjUDViz,
+        'examples/DocumentWidget/example.html',
+        'In this example you can consult documents in a document browser and search them using keywords and other fields.',
+        './examples/assets/img/examples_images/DocumentWidget.png'
+      );
+
+      addProjectElement(
+        'Geocoding Widget',
+        divPrjUDViz,
+        'examples/GeocodingWidget/example.html',
+        'Geocoding allows a user to navigate in the city by searching addresses or place names.',
+        './examples/assets/img/examples_images/GeocodingWidget.png'
+      );
+
+      addProjectElement(
+        'Camera Positioner Widget',
+        divPrjUDViz,
+        'examples/CameraPositionerWidget/example.html',
+        'The camera positioner is a tool that show the coordinates and the orientation of the camera.',
+        './examples/assets/img/examples_images/CameraPositionerWidget.png'
+      );
+
+      addProjectElement(
+        'Slideshow Widget',
+        divPrjUDViz,
+        'examples/SlideShow/slideShow.html',
+        'The SlideShow allows to display images and videos on a plane geometry.',
+        './examples/assets/img/examples_images/CameraPositionerWidget.png'
+      );
+
+      addProjectElement(
+        '3DTilesDebug Widget',
+        divPrjUDViz,
+        'examples/3DTilesDebugWidget/example.html',
+        '3DTiles Debug displays a window which shows various information about 3DTiles objects and city objects.',
+        './examples/assets/img/examples_images/3DTilesDebugWidget.png'
+      );
+
+      addProjectElement(
+        'CityObject Widget',
+        divPrjUDViz,
+        'examples/CityObjectWidget/example.html',
+        'This extensions allows the user to explore city objects and color them according to filters.',
+        './examples/assets/img/examples_images/CityObjectWidget.png'
+      );
+
+      addProjectElement(
+        'LayerChoice Widget',
+        divPrjUDViz,
+        'examples/LayerChoiceWidget/example.html',
+        'This extensions interact with layers',
+        './examples/assets/img/examples_images/LayerChoiceWidget.png'
+      );
+
+      addProjectElement(
+        'Temporal Widget',
+        divPrjUDViz,
+        'examples/TemporalWidget/example.html',
+        'This extensions allows the user to explore city objects and color them according to filters.',
+        './examples/assets/img/examples_images/TemporalWidget.png'
+      );
+
+      addProjectElement(
+        'Local Avatar Game',
+        divPrjUDGame,
+        './examples/Avatar.html',
+        'This example implements a local mini game illustrating an avatar walking in the city',
+        './examples/assets/img/examples_images/AvatarGame.png'
+      );
+
+      addProjectElement(
+        'Local Avatar Game with Shader',
+        divPrjUDGame,
+        './examples/LocalAvatar.html',
+        'This example implements a local mini game illustrating an avatar walking in the city with collision and shader pass.',
+        './examples/assets/img/examples_images/LocalAvatar.png'
+      );
+
+      addProjectElement(
+        'Local Zeppelin Game',
+        divPrjUDGame,
+        './examples/LocalGame.html',
+        'This example implements a local mini game builded with the ud-viz game engine',
+        './examples/assets/img/examples_images/LocalGame.png'
+      );
+    </script>
   </body>
 </html>
