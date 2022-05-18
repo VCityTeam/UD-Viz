@@ -6,10 +6,10 @@ import * as THREE from 'three';
 
 export class SlideShow extends Window {
   /**
-     * It initializes the widget.
-     * @param app - the application object
-     * @param inputManager - the input manager of the application
-     */
+   * It initializes the widget.
+   * @param app - the application object
+   * @param inputManager - the input manager of the application
+   */
   constructor(app, inputManager) {
     super('slideShow', 'Slide Show 3D', false);
 
@@ -104,17 +104,14 @@ export class SlideShow extends Window {
       xhr.onload = function () {
         const type = this.getResponseHeader('Content-Type');
         if (type.includes('image')) {
-          new THREE.TextureLoader().load(
-            this.responseURL,
-            function (texture) {
-              _this.texturesFiles[i].texture = texture;
-              _this.texturesFiles[i].size = {
-                height: texture.image.height,
-                width: texture.image.width,
-              };
-              if (i == 0) _this.setTexture(0);
-            },
-          );
+          new THREE.TextureLoader().load(this.responseURL, function (texture) {
+            _this.texturesFiles[i].texture = texture;
+            _this.texturesFiles[i].size = {
+              height: texture.image.height,
+              width: texture.image.width,
+            };
+            if (i == 0) _this.setTexture(0);
+          });
         } else if (type.includes('video')) {
           const video = document.createElement('video');
           video.src = this.responseURL;
@@ -134,7 +131,7 @@ export class SlideShow extends Window {
         } else {
           console.error(
             this.responseURL,
-            ' is not a valid video or image file',
+            ' is not a valid video or image file'
           );
         }
       };
@@ -170,7 +167,7 @@ export class SlideShow extends Window {
         (canvas.width / colors.length) * i,
         0,
         (canvas.width / colors.length) * (i + 1),
-        canvas.height,
+        canvas.height
       );
     }
 
@@ -199,7 +196,7 @@ export class SlideShow extends Window {
     const coordinatesElement = this.createInputVector(
       ['X', 'Y', 'Z'],
       'Coordinates',
-      100,
+      100
     );
     htmlSlideShow.appendChild(coordinatesElement.title);
     this.coordinatesInputVectorID = coordinatesElement.inputVector.id;
@@ -208,7 +205,7 @@ export class SlideShow extends Window {
     const rotationElement = this.createInputVector(
       ['X', 'Y', 'Z'],
       'Rotation',
-      0.1,
+      0.1
     );
     htmlSlideShow.appendChild(rotationElement.title);
     this.rotationInputVectorID = rotationElement.inputVector.id;
@@ -217,7 +214,7 @@ export class SlideShow extends Window {
     const sizeElement = this.createInputVector(
       ['Height', 'Width'],
       'Size',
-      100,
+      100
     );
     htmlSlideShow.appendChild(sizeElement.title);
     this.sizeInputVectorID = sizeElement.inputVector.id;
@@ -243,9 +240,7 @@ export class SlideShow extends Window {
         if (event.target.checked) {
           const currentW = this.getSizeValues().width;
           const w =
-                        currentW != 0
-                          ? currentW
-                          : this.currentTextureFile.size.width;
+            currentW != 0 ? currentW : this.currentTextureFile.size.width;
           this.setSizeInputs(new THREE.Vector2(null, w));
         }
       },
@@ -295,20 +290,20 @@ export class SlideShow extends Window {
     this.setSizeInputs(
       new THREE.Vector2(
         Math.abs(this.extent.west - this.extent.east),
-        Math.abs(this.extent.north - this.extent.south),
-      ),
+        Math.abs(this.extent.north - this.extent.south)
+      )
     );
     this.setCoordinatesInputs(
-      new THREE.Vector3(extentCenter.x, extentCenter.y, 250),
+      new THREE.Vector3(extentCenter.x, extentCenter.y, 250)
     );
     this.setRotationInputs(new THREE.Vector3(0, 0, 0));
   }
 
   /**
-     * @param {AllWidget} app
-     * @param {InputManager} iM
-     * Add event listeners to input
-     */
+   * @param {AllWidget} app
+   * @param {InputManager} iM
+   * Add event listeners to input
+   */
   initInputListener(app, iM) {
     const _this = this;
 
@@ -328,7 +323,7 @@ export class SlideShow extends Window {
       _this.iCurrentTextureFile = clamp(
         _this.iCurrentTextureFile + 1,
         0,
-        _this.texturesFiles.length - 1,
+        _this.texturesFiles.length - 1
       );
       _this.setTexture(_this.iCurrentTextureFile);
 
@@ -343,7 +338,7 @@ export class SlideShow extends Window {
       _this.iCurrentTextureFile = clamp(
         _this.iCurrentTextureFile - 1,
         0,
-        _this.texturesFiles.length - 1,
+        _this.texturesFiles.length - 1
       );
       _this.setTexture(_this.iCurrentTextureFile);
       _this.aspectRatioCheckboxDOM.dispatchEvent(new Event('change'));
@@ -385,7 +380,7 @@ export class SlideShow extends Window {
                         width: texture.image.width,
                       },
                     });
-                  },
+                  }
                 );
               } else if (file.type.includes('video/')) {
                 const video = document.createElement('video');
@@ -395,9 +390,7 @@ export class SlideShow extends Window {
                 video.loop = true;
                 video.load();
 
-                const videoTexture = new THREE.VideoTexture(
-                  video,
-                );
+                const videoTexture = new THREE.VideoTexture(video);
                 // Rotate the video texture with
                 // videoTexture.center.set(0.5, 0.5);
                 // videoTexture.rotation = Math.PI / 2;
@@ -429,16 +422,16 @@ export class SlideShow extends Window {
       function (event) {
         event.preventDefault();
       },
-      false,
+      false
     );
   }
 
   /**
-     * @param {Array.String} labels List of labels name
-     * @param {String} vectorName Name of the vector
-     * @param {number} step The step of HTMLElement input (type number)
-     * @returns {Object} title => HTMLElement 'h3' ; inputVector => HTMLElement 'div' contains labels and inputs HTMLElements
-     */
+   * @param {Array.String} labels List of labels name
+   * @param {String} vectorName Name of the vector
+   * @param {number} step The step of HTMLElement input (type number)
+   * @returns {Object} title => HTMLElement 'h3' ; inputVector => HTMLElement 'div' contains labels and inputs HTMLElements
+   */
   createInputVector(labels, vectorName, step = 0.5) {
     const titleVector = document.createElement('h3');
     titleVector.innerHTML = vectorName;
@@ -483,9 +476,9 @@ export class SlideShow extends Window {
   /**function called when aspectRatio is checked*/
   matchRatio(iInput, value) {
     const linkedSizeElement =
-            this.sizeInputVectorDOM.getElementsByTagName('input')[
-              iInput == 0 ? 1 : 0
-            ];
+      this.sizeInputVectorDOM.getElementsByTagName('input')[
+        iInput == 0 ? 1 : 0
+      ];
 
     const height = this.currentTextureFile.size.height;
     const width = this.currentTextureFile.size.width;
@@ -498,16 +491,15 @@ export class SlideShow extends Window {
   /**Update vectors variables with the values contained in inputs elements in DOM */
   updateVectors() {
     this.coordinatesVector =
-            this.inputVectorToVector(this.coordinatesInputVectorDOM) ||
-            new THREE.Vector3();
+      this.inputVectorToVector(this.coordinatesInputVectorDOM) ||
+      new THREE.Vector3();
 
     this.rotationVector =
-            this.inputVectorToVector(this.rotationInputVectorDOM) ||
-            new THREE.Vector3();
+      this.inputVectorToVector(this.rotationInputVectorDOM) ||
+      new THREE.Vector3();
 
     this.sizeVector =
-            this.inputVectorToVector(this.sizeInputVectorDOM) ||
-            new THREE.Vector2();
+      this.inputVectorToVector(this.sizeInputVectorDOM) || new THREE.Vector2();
 
     this.modifyPlane();
   }
@@ -525,14 +517,14 @@ export class SlideShow extends Window {
         return new THREE.Vector3(
           inputEls[0].value,
           inputEls[1].value,
-          inputEls[2].value,
+          inputEls[2].value
         );
       case 4:
         return new THREE.Vector4(
           inputEls[0].value,
           inputEls[1].value,
           inputEls[2].value,
-          inputEls[3].value,
+          inputEls[3].value
         );
     }
 
@@ -540,9 +532,9 @@ export class SlideShow extends Window {
   }
 
   /**
-     * @param {*} iText
-     * Set this.currentTexture
-     */
+   * @param {*} iText
+   * Set this.currentTexture
+   */
   setTexture(iText) {
     const _this = this;
     if (this.currentTextureFile.video) {
@@ -575,17 +567,16 @@ export class SlideShow extends Window {
     this.plane.position.set(
       this.coordinatesVector.x,
       this.coordinatesVector.y,
-      this.coordinatesVector.z,
+      this.coordinatesVector.z
     );
 
     this.plane.rotation.set(
       this.rotationVector.x,
       this.rotationVector.y,
-      this.rotationVector.z,
+      this.rotationVector.z
     );
     this.plane.scale.set(this.sizeVector.x, this.sizeVector.y, 1);
-    this.plane.material.map =
-            this.currentTexture || this.plane.material.map;
+    this.plane.material.map = this.currentTexture || this.plane.material.map;
 
     this.plane.updateMatrixWorld();
     this.view.scene.add(this.plane);
@@ -636,8 +627,7 @@ export class SlideShow extends Window {
   //INPUTS ELEMENTS SETTERS
   /* Setting the values of the input fields in the DOM. */
   setSizeInputs(vec2) {
-    const sizeInputEls =
-            this.sizeInputVectorDOM.getElementsByTagName('input');
+    const sizeInputEls = this.sizeInputVectorDOM.getElementsByTagName('input');
 
     if (vec2.x !== null) {
       const element0 = sizeInputEls[0];
@@ -654,7 +644,7 @@ export class SlideShow extends Window {
 
   setCoordinatesInputs(vec3) {
     const coordinatesInputEls =
-            this.coordinatesInputVectorDOM.getElementsByTagName('input');
+      this.coordinatesInputVectorDOM.getElementsByTagName('input');
 
     if (vec3.x !== null) {
       const element0 = coordinatesInputEls[0];
@@ -676,7 +666,7 @@ export class SlideShow extends Window {
 
   setRotationInputs(vec3) {
     const rotationInputEls =
-            this.rotationInputVectorDOM.getElementsByTagName('input');
+      this.rotationInputVectorDOM.getElementsByTagName('input');
 
     if (vec3.x !== null) {
       const element0 = rotationInputEls[0];
@@ -697,8 +687,7 @@ export class SlideShow extends Window {
 
   /**Get size values contained in inputs elements in DOM*/
   getSizeValues() {
-    const sizeInputEls =
-            this.sizeInputVectorDOM.getElementsByTagName('input');
+    const sizeInputEls = this.sizeInputVectorDOM.getElementsByTagName('input');
     return {
       height: parseInt(sizeInputEls[0].value),
       width: parseInt(sizeInputEls[1].value),
