@@ -197,6 +197,8 @@ You can setup your slide in the `config.json`, it looks like :
 
 Then you can select a slide in the list accessible here :
 
+<img src=https://user-images.githubusercontent.com/34244904/169039277-f524b43f-5c97-44ba-a0d1-327ce5ead77f.png style="height:400px">
+
 ## Document validation process
 
 Under construction...
