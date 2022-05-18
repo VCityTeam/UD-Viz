@@ -15,6 +15,8 @@ export class SlideShow extends Window {
 
         /** @type {AllWidget} */
         this.app = app;
+        /**@type {InputManager} */
+        this.inputManager = inputManager;
         /** @type {itowns.Extent} */
         this.extent = app.extent;
         /** @type {itowns.PlanarView} */
@@ -57,7 +59,7 @@ export class SlideShow extends Window {
         this.currentTexture = null;
 
         this.initHtml();
-        this.initInput(app, inputManager);
+        this.initInputListener(app, this.inputManager);
         this.initCBDrop();
         const _this = this;
         /**A function call each frame by the browser */
@@ -227,19 +229,7 @@ export class SlideShow extends Window {
         this.callbacksHTMLEl.push({
             event: 'click',
             id: matchExtentButton.id,
-            cb: function () {
-                const extentCenter = this.extent.center();
-                this.setSizeInputs(
-                    new THREE.Vector2(
-                        Math.abs(this.extent.west - this.extent.east),
-                        Math.abs(this.extent.north - this.extent.south),
-                    ),
-                );
-                this.setCoordinatesInputs(
-                    new THREE.Vector3(extentCenter.x, extentCenter.y, 250),
-                );
-                this.setRotationInputs(new THREE.Vector3(0, 0, 0));
-            },
+            cb: this.matchExtent,
         });
         htmlSlideShow.appendChild(matchExtentButton);
 
@@ -280,7 +270,6 @@ export class SlideShow extends Window {
         this.slideSelectID = slideSelect.id;
 
         const conf = this.conf;
-        const _this = this;
         if (conf) {
             for (let i = 0; i < conf[Object.keys(conf)[0]].length; i++) {
                 const element = conf[Object.keys(conf)[0]][i];
@@ -293,7 +282,7 @@ export class SlideShow extends Window {
                 event: 'change',
                 id: slideSelect.id,
                 cb: function (event) {
-                    _this.setSlideshowInConfig(event.target.value);
+                    this.setSlideshowInConfig(event.target.value);
                 },
             });
         }
@@ -301,12 +290,26 @@ export class SlideShow extends Window {
         this.htmlSlideShow = htmlSlideShow;
     }
 
+    matchExtent() {
+        const extentCenter = this.extent.center();
+        this.setSizeInputs(
+            new THREE.Vector2(
+                Math.abs(this.extent.west - this.extent.east),
+                Math.abs(this.extent.north - this.extent.south),
+            ),
+        );
+        this.setCoordinatesInputs(
+            new THREE.Vector3(extentCenter.x, extentCenter.y, 250),
+        );
+        this.setRotationInputs(new THREE.Vector3(0, 0, 0));
+    }
+
     /**
      * @param {AllWidget} app
      * @param {InputManager} iM
      * Add event listeners to input
      */
-    initInput(app, iM) {
+    initInputListener(app, iM) {
         const _this = this;
 
         // Clamp number between two values with the following line:
@@ -321,7 +324,7 @@ export class SlideShow extends Window {
 
         //Change the next slide
         iM.addKeyInput('ArrowRight', 'keydown', function () {
-            if (!_this.texturesFiles) return;
+            if (!_this.plane) return;
             _this.iCurrentTextureFile = clamp(
                 _this.iCurrentTextureFile + 1,
                 0,
@@ -336,7 +339,7 @@ export class SlideShow extends Window {
 
         //Change the previous slide
         iM.addKeyInput('ArrowLeft', 'keydown', function () {
-            if (!_this.texturesFiles) return;
+            if (!_this.plane) return;
             _this.iCurrentTextureFile = clamp(
                 _this.iCurrentTextureFile - 1,
                 0,
@@ -710,5 +713,14 @@ export class SlideShow extends Window {
             const htmlElement = document.getElementById(element.id);
             htmlElement.addEventListener(element.event, element.cb.bind(_this));
         });
+        this.matchExtent();
+    }
+
+    windowDestroyed() {
+        if (this.plane) {
+            this.plane.removeFromParent();
+            this.plane = null;
+        }
+        this.app.update3DView();
     }
 }
