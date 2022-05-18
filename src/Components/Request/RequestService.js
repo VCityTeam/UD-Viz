@@ -55,7 +55,7 @@ export function RequestService() {
     const urlParameters = args.urlParameters || null;
     return new Promise((resolve, reject) => {
       const req = new XMLHttpRequest();
-      if (!!urlParameters) {
+      if (urlParameters) {
         // eslint-disable-line no-extra-boolean-cast
         url += '?';
         for (const [paramKey, paramValue] of Object.entries(urlParameters)) {
@@ -75,7 +75,7 @@ export function RequestService() {
         req.setRequestHeader('Authorization', `Bearer ${token}`);
       }
 
-      if (!!responseType) {
+      if (responseType) {
         // eslint-disable-line no-extra-boolean-cast
         req.responseType = responseType;
       }
