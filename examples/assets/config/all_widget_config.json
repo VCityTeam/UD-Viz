@@ -2,10 +2,7 @@
   "assets": {
     "iconFolder": "../assets/icons",
     "imageFolder": "../assets/img",
-    "logos": [
-      "logo-liris.png",
-      "logo-univ-lyon.png"
-    ]
+    "logos": ["logo-liris.png", "logo-univ-lyon.png"]
   },
   "server": {
     "url": "http://rict.liris.cnrs.fr:1525/",
@@ -209,11 +206,7 @@
     "subject": {
       "name": "subject",
       "type": "enum",
-      "enum": [
-        "Urbanism",
-        "Architecture",
-        "Tourism"
-      ],
+      "enum": ["Urbanism", "Architecture", "Tourism"],
       "optional": "false",
       "creationID": "create_subject",
       "labelCreation": "Subject",
@@ -284,22 +277,12 @@
       {
         "name": "diapo1",
         "folder": "../assets/diapositive1",
-        "diapositives": [
-          "1.jpeg",
-          "2.jpeg",
-          "3.jpeg",
-          "cloudVideo.mp4"
-        ]
+        "diapositives": ["1.jpeg", "2.jpeg", "3.jpeg", "cloudVideo.mp4"]
       },
       {
         "name": "diapo2",
         "folder": "../assets/diapositive1",
-        "diapositives": [
-          "11.jpeg",
-          "12.jpeg",
-          "cloudVideo.mp4",
-          "13.jpeg"
-        ]
+        "diapositives": ["11.jpeg", "12.jpeg", "cloudVideo.mp4", "13.jpeg"]
       }
     ]
   }
