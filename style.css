@@ -79,6 +79,10 @@ iframe {
   padding-left: var(--panel-width);
 }
 
+.projects_section_title{
+  text-align: center;
+}
+
 .projects {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
