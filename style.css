@@ -1,6 +1,4 @@
 :root {
-  color-scheme: light dark;
-
   --background-color: #fff;
   --secondary-background-color: #f7f7f7;
 
@@ -83,45 +81,53 @@ iframe {
 
 .projects {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  line-height: 0;
+  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
 }
 
 .projects a {
+  position: relative;
+
   overflow: hidden;
-  text-align: center;
-  font-size: 1vw;
 }
 
 .projects a img {
   width: 100%;
+  height: auto;
   transform: scale(1);
   transition: 0.15s transform;
 }
 
 .projects a:hover img {
+  width: 100%;
+  height: auto;
   transform: scale(1.08);
 }
 
 .projects a div {
-  box-sizing: border-box;
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
   width: 100%;
-  padding: 10px;
-
-  background-color: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.399);
+  
   color: white;
+  font-weight: bold;
+  text-decoration: none;
+  font-size: 1.5em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
   opacity: 0;
   transform: scale(1);
-  visibility: none;
-  transition: opacity 0.15s;
-  text-decoration: underline;
+  transition: 0.15s transform opacity;
 }
 
 .projects a:hover div {
   visibility: visible;
   opacity: 1;
   transform: scale(1.08);
-  transition: 0.15s transform;
 }
 
 #panel #content ul {
