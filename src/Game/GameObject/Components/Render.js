@@ -179,4 +179,12 @@ const RenderModule = class Render {
 
 RenderModule.TYPE = 'Render';
 
+RenderModule.bindColor = function (goJSON, color) {
+  try {
+    goJSON.components.Render.color = color;
+  } catch (e) {
+    throw new Error(e);
+  }
+};
+
 module.exports = RenderModule;
