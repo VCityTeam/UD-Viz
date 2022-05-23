@@ -10,6 +10,8 @@ const $3DTemporalTileset = Widgets.$3DTemporalTileset;
 
 import './AllWidget.css';
 
+import { computeNearFarCamera } from '../../Components/Camera/CameraUtils';
+
 /**
  * Represents the base HTML content of a demo for UD-Viz and provides methods to
  * dynamically add module views.
@@ -45,6 +47,12 @@ export class AllWidget {
 
         // Initialize iTowns 3D view
         _this.init3DView();
+
+        //dynamic near far computation
+        _this.view.addFrameRequester(
+          itowns.MAIN_LOOP_EVENTS.BEFORE_RENDER,
+          computeNearFarCamera.bind(null, _this.view.camera.camera3D, _this.extent, 400)
+        );
 
         resolve(_this.config);
       });
@@ -457,10 +465,10 @@ export class AllWidget {
         } else {
           console.warn(
             'The 3D Tiles extension ' +
-              extensionsConfig[i] +
-              ' specified in generalDemoConfig.json is not supported ' +
-              'by UD-Viz yet. Only 3DTILES_temporal and ' +
-              '3DTILES_batch_table_hierarchy are supported.'
+            extensionsConfig[i] +
+            ' specified in generalDemoConfig.json is not supported ' +
+            'by UD-Viz yet. Only 3DTILES_temporal and ' +
+            '3DTILES_batch_table_hierarchy are supported.'
           );
         }
       }
@@ -532,7 +540,7 @@ export class AllWidget {
     proj4.default.defs(
       'EPSG:3946',
       '+proj=lcc +lat_1=45.25 +lat_2=46.75' +
-        ' +lat_0=46 +lon_0=3 +x_0=1700000 +y_0=5200000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs'
+      ' +lat_0=46 +lon_0=3 +x_0=1700000 +y_0=5200000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs'
     );
 
     // Define geographic extent: CRS, min/max X, min/max Y

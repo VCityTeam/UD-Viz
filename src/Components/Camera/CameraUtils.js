@@ -42,3 +42,41 @@ export function focusCameraOn(view, controls, targetPos, options = {}) {
     }
   });
 }
+
+
+/**
+ * Compute near and far camera attributes to fit a quadrilatere of the extent + height size
+ * @param {THREE.Camera} camera 
+ * @param {itowns.Extent} extent 
+ * @param {Number} height 
+ */
+export function computeNearFarCamera(camera, extent, height) {
+
+  const points = [
+    new THREE.Vector3(extent.west, extent.south, 0),
+    new THREE.Vector3(extent.west, extent.south, height),
+    new THREE.Vector3(extent.west, extent.north, 0),
+    new THREE.Vector3(extent.west, extent.north, height),
+    new THREE.Vector3(extent.east, extent.south, 0),
+    new THREE.Vector3(extent.east, extent.south, height),
+    new THREE.Vector3(extent.east, extent.north, 0),
+    new THREE.Vector3(extent.east, extent.north, height),
+  ];
+
+  const dirCamera = camera.getWorldDirection(new THREE.Vector3());
+
+  let min = Infinity;
+  let max = -Infinity;
+  points.forEach(function (p) {
+    const pointDir = p.clone().sub(camera.position);
+    const cos = pointDir.dot(dirCamera) / pointDir.length(); //dircamera length is 1
+    const dist = p.distanceTo(camera.position) * cos;
+    if (min > dist) min = dist;
+    if (max < dist) max = dist;
+  });
+
+  camera.near = Math.max(min, 0.000001);
+  camera.far = max;
+
+  camera.updateProjectionMatrix();
+}

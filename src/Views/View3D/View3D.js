@@ -4,6 +4,8 @@ import * as THREE from 'three';
 import * as itowns from 'itowns';
 import { CSS3DRenderer } from 'three/examples/jsm/renderers/CSS3DRenderer';
 
+import { computeNearFarCamera } from '../../Components/Camera/CameraUtils';
+
 import './View3D.css';
 import { InputManager } from '../../Components/InputManager';
 
@@ -59,7 +61,7 @@ export class View3D {
     proj4.default.defs(
       this.projection,
       '+proj=lcc +lat_1=45.25 +lat_2=46.75' +
-        ' +lat_0=46 +lon_0=3 +x_0=1700000 +y_0=5200000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs'
+      ' +lat_0=46 +lon_0=3 +x_0=1700000 +y_0=5200000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs'
     );
 
     //itowns view
@@ -321,8 +323,8 @@ export class View3D {
 
     //dynamic near far computation
     this.itownsView.addFrameRequester(
-      itowns.MAIN_LOOP_EVENTS.BEFORE_RENDER, //TODO another event (On camera change ?)
-      this.computeNearFarCamera.bind(this)
+      itowns.MAIN_LOOP_EVENTS.BEFORE_RENDER,
+      computeNearFarCamera.bind(null, this.getCamera(), this.extent, 400)
     );
   }
 
@@ -373,42 +375,7 @@ export class View3D {
     this.setupAndAdd3DTilesLayers();
 
     //disable itowns resize
-    this.itownsView.resize = function () {};
-  }
-
-  /**
-   * dynamic computation of the near and far of the camera to fit the extent
-   */
-  computeNearFarCamera() {
-    const camera = this.getCamera();
-    const height = 400; //TODO compute this dynamically and opti (remove new)
-    const points = [
-      new THREE.Vector3(this.extent.west, this.extent.south, 0),
-      new THREE.Vector3(this.extent.west, this.extent.south, height),
-      new THREE.Vector3(this.extent.west, this.extent.north, 0),
-      new THREE.Vector3(this.extent.west, this.extent.north, height),
-      new THREE.Vector3(this.extent.east, this.extent.south, 0),
-      new THREE.Vector3(this.extent.east, this.extent.south, height),
-      new THREE.Vector3(this.extent.east, this.extent.north, 0),
-      new THREE.Vector3(this.extent.east, this.extent.north, height),
-    ];
-
-    const dirCamera = camera.getWorldDirection(new THREE.Vector3());
-
-    let min = Infinity;
-    let max = -Infinity;
-    points.forEach(function (p) {
-      const pointDir = p.clone().sub(camera.position);
-      const cos = pointDir.dot(dirCamera) / pointDir.length(); //dircamera length is 1
-      const dist = p.distanceTo(camera.position) * cos;
-      if (min > dist) min = dist;
-      if (max < dist) max = dist;
-    });
-
-    camera.near = Math.max(min, 0.000001);
-    camera.far = max;
-
-    camera.updateProjectionMatrix();
+    this.itownsView.resize = function () { };
   }
 
   /**
@@ -523,10 +490,10 @@ export class View3D {
         } else {
           console.warn(
             'The 3D Tiles extension ' +
-              extensionsConfig[i] +
-              ' specified in generalDemoConfig.json is not supported ' +
-              'by UD-Viz yet. Only 3DTILES_temporal and ' +
-              '3DTILES_batch_table_hierarchy are supported.'
+            extensionsConfig[i] +
+            ' specified in generalDemoConfig.json is not supported ' +
+            'by UD-Viz yet. Only 3DTILES_temporal and ' +
+            '3DTILES_batch_table_hierarchy are supported.'
           );
         }
       }

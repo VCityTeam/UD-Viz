@@ -9,6 +9,8 @@ import LocalScript from '../../Game/GameObject/Components/LocalScript';
 import { View3D } from '../View3D/View3D';
 import { Audio, Render } from '../../Game/Game';
 
+import { computeNearFarCamera } from '../../Components/Camera/CameraUtils';
+
 const udvGame = require('../../Game/Game');
 const THREEUtils = udvGame.Components.THREEUtils;
 
@@ -216,7 +218,7 @@ export class GameView extends View3D {
             if (iV) iV.notifyChange(_this.getCamera());
 
             //adjust camera params
-            _this.computeNearFarCamera();
+            computeNearFarCamera(_this.getCamera(), _this.extent, 400);
             _this.render();
           }
         }
