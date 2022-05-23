@@ -33,7 +33,6 @@ module.exports = class Focus {
         Math.min(_this.distance, _this.conf.maxDist),
         _this.conf.minDist
       );
-      gV.computeNearFarCamera();
     });
   }
 
@@ -73,7 +72,5 @@ module.exports = class Focus {
     camera.position.copy(position);
     camera.quaternion.copy(quaternion);
     camera.updateProjectionMatrix();
-
-    localContext.getGameView().computeNearFarCamera();
   }
 };
