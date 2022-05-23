@@ -103,9 +103,7 @@ module.exports = Object.freeze({
 
   dataUriToBuffer(uri) {
     if (!/^data:/i.test(uri)) {
-      throw new TypeError(
-        '`uri` does not appear to be a Data URI (must begin with "data:")'
-      );
+      return null; //its not a Data URI
     }
     // strip newlines
     uri = uri.replace(/\r?\n/g, '');
