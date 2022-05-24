@@ -333,22 +333,6 @@ export class InputManager {
   }
 
   /**
-   * Compute commands and send them to a server
-   * @param {WebSocketService} websocketService
-   */
-  sendCommandsToServer(websocketService) {
-    const cmds = this.computeCommands();
-    const cmdsJSON = [];
-    cmds.forEach(function (cmd) {
-      cmdsJSON.push(cmd.toJSON());
-    });
-    websocketService.emit(
-      Game.Components.Constants.WEBSOCKET.MSG_TYPES.COMMANDS,
-      cmdsJSON
-    );
-  }
-
-  /**
    *
    * @returns {HTML}
    */
