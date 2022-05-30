@@ -382,7 +382,7 @@ export class View3D {
     this.setupAndAdd3DTilesLayers();
 
     //disable itowns resize
-    this.itownsView.resize = function () { };
+    // this.itownsView.resize = function () { };
   }
 
   /**
