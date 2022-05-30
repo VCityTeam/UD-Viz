@@ -14,9 +14,8 @@ canvas {
   display: block;
 }
 
-#deck_gl_View3D,
 #css_View3D,
-#webgl_View3D {
+#viewerDiv {
   width: 100%;
   height: 100%;
   position: absolute;
