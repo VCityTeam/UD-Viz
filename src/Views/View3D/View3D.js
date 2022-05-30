@@ -360,6 +360,8 @@ export class View3D {
         tilt = this.config['itowns']['camera']['tilt'];
     }
 
+    console.log(heading, range, tilt)
+
     this.itownsView = new itowns.PlanarView(this.rootWebGL, extent, {
       disableSkirt: false,
       placement: {
@@ -375,6 +377,7 @@ export class View3D {
     this.scene = this.itownsView.scene;
     this.renderer = this.itownsView.mainLoop.gfxEngine.renderer;
     this.camera = this.itownsView.camera.camera3D;
+    // this.camera.fov = 60;//default fov otherwise it's NaN
 
     //City generation
     this.addBaseMapLayer();
@@ -382,7 +385,8 @@ export class View3D {
     this.setupAndAdd3DTilesLayers();
 
     //disable itowns resize
-    // this.itownsView.resize = function () { };
+    this.itownsViewResize = this.itownsView.resize.bind(this.itownsView)
+    this.itownsView.resize = function () { };
   }
 
   /**
@@ -550,12 +554,18 @@ export class View3D {
     this.size.x = window.innerWidth - offsetLeft;
     this.size.y = window.innerHeight - offsetTop;
 
-    this.camera.aspect = this.size.x / this.size.y;
-    this.camera.updateProjectionMatrix();
-    this.renderer.setSize(this.size.x, this.size.y);
 
     if (this.css3DRenderer)
       this.css3DRenderer.setSize(this.size.x, this.size.y);
+
+    if (this.itownsViewResize) {
+      this.itownsViewResize(this.size.x, this.size.y)
+    } else {
+
+      this.camera.aspect = this.size.x / this.size.y;
+      this.camera.updateProjectionMatrix();
+      this.renderer.setSize(this.size.x, this.size.y);
+    }
   }
 
   /**

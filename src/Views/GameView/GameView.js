@@ -149,7 +149,7 @@ export class GameView extends View3D {
         );
         this.initItownsView(extent);
 
-        //TODO disable itons rendering
+        //TODO disable itowns rendering
         this.itownsView.render = function () {
           //empty
         };
@@ -202,10 +202,10 @@ export class GameView extends View3D {
         if (delta > 1000 / fps) {
           // update time stuffs
           then = now - (delta % 1000) / fps;
-
+          
           //set dt
           _this.localContext.setDt(delta);
-
+          
           //call tick requester
           _this.tickRequesters.forEach(function (cb) {
             cb(_this.localContext);
