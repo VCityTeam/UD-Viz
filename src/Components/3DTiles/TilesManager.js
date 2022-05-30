@@ -297,10 +297,8 @@ export class TilesManager extends EventSender {
     let needUpdate = this.styleManager.registerStyle(name, style);
     if (needUpdate) {
       let usage = this.styleManager.getStyleUsage(name);
-      if (usage) {
-        for (let tileId of Object.keys(usage)) {
-          this._markTileToUpdate(tileId);
-        }
+      for (let tileId of Object.keys(usage)) {
+        this._markTileToUpdate(tileId);
       }
     }
   }
