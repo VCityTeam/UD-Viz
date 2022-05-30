@@ -239,7 +239,7 @@ export class GameView extends View3D {
     this.itownsRendering = value;
 
     if (value) {
-      //creating controls like put it in _this.view.controls
+      //creating controls like this put it in this.itownsView.controls
       const c = new itowns.PlanarControls(this.itownsView, {
         handleCollision: false,
         focusOnMouseOver: false,

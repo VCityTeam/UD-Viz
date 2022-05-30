@@ -23,6 +23,8 @@ const $3DTemporalTileset = Widgets.$3DTemporalTileset;
  */
 export class View3D {
   constructor(params = {}) {
+    const _this = this;
+
     //root html
     this.rootHtml = document.createElement('div');
     this.rootHtml.id = 'root_View3D';
@@ -36,7 +38,7 @@ export class View3D {
 
     //root webgl
     this.rootWebGL = document.createElement('div');
-    this.rootWebGL.id = 'webgl_View3D';
+    this.rootWebGL.id = 'viewerDiv';
 
     //root css
     this.rootCss = document.createElement('div');
@@ -82,6 +84,11 @@ export class View3D {
     //inputs
     this.inputManager = new InputManager();
 
+    //requesters
+    this.itownsRequesterBeforeRender = function () {
+      computeNearFarCamera(_this.getCamera(), _this.getExtent(), 400)
+    }
+
     /**
      * Object used to manage all of the layer.
      *
@@ -101,7 +108,6 @@ export class View3D {
     this.css3DScene = null;
     this.billboards = [];
     const raycaster = new THREE.Raycaster();
-    const _this = this;
     this.toCSS3DEvent = function (event) {
       if (_this.isCatchingEventsCSS3D()) return;
 
@@ -324,7 +330,7 @@ export class View3D {
 
     //dynamic near far computation
     this.itownsView.addFrameRequester(
-      itowns.MAIN_LOOP_EVENTS.BEFORE_RENDER, //TODO another event (On camera change ?)
+      itowns.MAIN_LOOP_EVENTS.BEFORE_RENDER,
       this.itownsRequesterBeforeRender
     );
   }

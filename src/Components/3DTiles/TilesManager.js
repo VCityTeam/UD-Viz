@@ -20,7 +20,7 @@ export class TilesManager extends EventSender {
     /**
      * The iTowns view.
      */
-    this.view = view; 
+    this.view = view;
 
     /**
      * The 3DTiles layer.
@@ -59,8 +59,7 @@ export class TilesManager extends EventSender {
      * @type {Array<Tile>}
      */
     this.tiles = [];
-    if (this.totalTileCount !== 0)
-    {
+    if (this.totalTileCount !== 0) {
       // Load existing tiles
       const tiles = getVisibleTiles(this.layer);
       for (let tile of tiles) {
@@ -139,17 +138,16 @@ export class TilesManager extends EventSender {
   focusCamera() {
     let coordinates = this.view.camera.position();
     let extent = this.layer.extent;
-    coordinates.x = (extent.east + extent.west) / 2; 
+    coordinates.x = (extent.east + extent.west) / 2;
     coordinates.y = (extent.north + extent.south) / 2;
-    focusCameraOn(this.view,this.view.controls,coordinates);
+    focusCameraOn(this.view, this.view.controls, coordinates);
   }
 
   getTilesWithGeom() {
     let tilesWithGeom = [];
-    for (let j = 0; j < this.tiles.length;j++)
-    {
-      if(this.tiles[j] != undefined) {
-        if(this.tiles[j].cityObjects != undefined ){
+    for (let j = 0; j < this.tiles.length; j++) {
+      if (this.tiles[j] != undefined) {
+        if (this.tiles[j].cityObjects != undefined) {
           tilesWithGeom.push(this.tiles[j]);
         }
       }
@@ -253,9 +251,9 @@ export class TilesManager extends EventSender {
    * @param {CityObjectStyle | string} style The desired style.
    */
   setStyleToTile(tileId, style) {
-    if(this.tiles[tileId]){
-      for(let i in this.tiles[tileId].cityObjects){
-        this.setStyle(this.tiles[tileId].cityObjects[i].cityObjectId,style);
+    if (this.tiles[tileId]) {
+      for (let i in this.tiles[tileId].cityObjects) {
+        this.setStyle(this.tiles[tileId].cityObjects[i].cityObjectId, style);
       }
     }
   }
@@ -267,8 +265,8 @@ export class TilesManager extends EventSender {
    * identifier.
    */
   setDefaultStyleToTile(tileId) {
-    if(this.tiles[tileId]){
-      for(let i in this.tiles[tileId].cityObjects){
+    if (this.tiles[tileId]) {
+      for (let i in this.tiles[tileId].cityObjects) {
         let cityObject = this.tiles[tileId].cityObjects[i];
         this.setStyle(cityObject.cityObjectId, cityObject.defaultStyleId);
       }
@@ -281,8 +279,8 @@ export class TilesManager extends EventSender {
    * @param {CityObjectStyle | string} style The desired style.
    */
   setStyleToTileset(style) {
-    for(let tile in this.tiles){
-      this.setStyleToTile(tile,style);
+    for (let tile in this.tiles) {
+      this.setStyleToTile(tile, style);
     }
   }
 
@@ -299,8 +297,10 @@ export class TilesManager extends EventSender {
     let needUpdate = this.styleManager.registerStyle(name, style);
     if (needUpdate) {
       let usage = this.styleManager.getStyleUsage(name);
-      for (let tileId of Object.keys(usage)) {
-        this._markTileToUpdate(tileId);
+      if (usage) {
+        for (let tileId of Object.keys(usage)) {
+          this._markTileToUpdate(tileId);
+        }
       }
     }
   }

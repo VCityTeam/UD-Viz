@@ -2,7 +2,7 @@
 
 //Components
 import { TilesManager } from '../../Components/Components';
-import { Widgets, Components, itowns, proj4, THREE, jquery } from '../../index';
+import { Widgets, itowns, proj4, THREE, jquery } from '../../index';
 const ModuleView = Widgets.Components.ModuleView;
 const $3DTemporalBatchTable = Widgets.$3DTemporalBatchTable;
 const $3DTemporalBoundingVolume = Widgets.$3DTemporalBoundingVolume;
