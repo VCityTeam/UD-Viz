@@ -129,7 +129,8 @@ export class TilesManager extends EventSender {
     // TODO: Les tuiles d'iTowns devraient etre rendues invisibles plutot
     //  que d'etre déchargées et rechargées. A ce moment là, ce callback
     //  pourra etre dans le if ci dessus
-    this.setStyleToTile(tile.tileId,'default');
+    if(this.color)
+      this.setStyleToTile(tile.tileId,'default');
     this.applyStyles();
     this.sendEvent(TilesManager.EVENT_TILE_LOADED, tile);
   }
