@@ -25,7 +25,7 @@ export function focusCameraOn(view, controls, targetPos, options = {}) {
       const duration = options.duration || null;
       const verticalDist = options.verticalDistance || 800;
       const horizontalDist = options.horizontalDistance || 1000;
-      
+
       let cameraPos = view.camera.camera3D.position.clone();
       const direction = new THREE.Vector3().subVectors(targetPos, cameraPos);
       const currentDist = Math.sqrt(
