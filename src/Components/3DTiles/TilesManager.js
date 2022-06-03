@@ -137,7 +137,7 @@ export class TilesManager extends EventSender {
   focusCamera() {
     if(this.layer.isC3DTilesLayer){
       let coordinates = this.view.camera.position();
-      let extent = this.layer.extent;
+      const extent = this.layer.extent;
       coordinates.x = (extent.east + extent.west) / 2; 
       coordinates.y = (extent.north + extent.south) / 2;
       coordinates.z = 200;

@@ -45,7 +45,7 @@ export function getFirstTileIntersection(intersects) {
 
     if(inter.object.visible){
       let geomAttributes = inter.object.geometry.attributes;
-      if (!!geomAttributes && !!geomAttributes._BATCHID) {
+      if (geomAttributes && geomAttributes._BATCHID) {
         if (!first_inter) {
           first_inter = inter;
           dist_min = inter.distance;
