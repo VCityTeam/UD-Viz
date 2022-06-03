@@ -1,3 +1,10 @@
+# v2.37.4
+
+    - Game engine update    
+    - AllWidget template compute dynamic near and far camera
+    - New Landing page
+    - SlideShow v2
+
 # v2.37.3
 
     Sparql module:
