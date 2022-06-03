@@ -31,11 +31,8 @@ export function focusCameraOn(view, controls, targetPos, options = {}) {
       const currentDist = Math.sqrt(
         direction.x * direction.x + direction.y * direction.y
       );
-      
       cameraPos.addScaledVector(direction, 1 - horizontalDist / currentDist);
-      
       cameraPos.z = targetPos.z + verticalDist;
-      
       const travelDuration = duration ? duration : 'auto';
       const timeoutDuration = duration ? duration * 1000 : 0;
       controls.initiateTravel(cameraPos, travelDuration, targetPos, true);
