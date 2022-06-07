@@ -78,5 +78,7 @@ export function computeNearFarCamera(camera, extent, height) {
   camera.near = Math.max(min, 0.000001);
   camera.far = max;
 
+  console.log(camera)
+
   camera.updateProjectionMatrix();
 }
