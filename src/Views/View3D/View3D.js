@@ -86,11 +86,6 @@ export class View3D {
     //inputs
     this.inputManager = new InputManager();
 
-    //requesters
-    this.itownsRequesterBeforeRender = function () {
-      computeNearFarCamera(_this.getCamera(), _this.getExtent(), 400)
-    }
-
     /**
      * Object used to manage all of the layer.
      *
@@ -362,8 +357,6 @@ export class View3D {
         tilt = this.config['itowns']['camera']['tilt'];
     }
 
-    console.log(heading, range, tilt)
-
     this.itownsView = new itowns.PlanarView(this.rootWebGL, extent, {
       disableSkirt: false,
       placement: {
@@ -379,7 +372,7 @@ export class View3D {
     this.scene = this.itownsView.scene;
     this.renderer = this.itownsView.mainLoop.gfxEngine.renderer;
     this.camera = this.itownsView.camera.camera3D;
-    // this.camera.fov = 60;//default fov otherwise it's NaN
+    this.camera.fov = 60;//default fov otherwise it's NaN
 
     //City generation
     this.addBaseMapLayer();

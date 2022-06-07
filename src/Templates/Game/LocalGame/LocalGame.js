@@ -78,7 +78,6 @@ export class LocalGame {
         assetsManager: assetsManager,
         interpolator: interpolator,
         config: config,
-        itownsControls: false,
         localScriptModules: options.localScriptModules,
         userData: options.userData,
       });
