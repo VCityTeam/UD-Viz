@@ -70,7 +70,9 @@ export class View3D {
     this.itownsView = null;
     this.extent = null; //area handle by itowns
     this.hasItownsControls = params.hasItownsControls || false;
-    this.itownsRequesterBeforeRender = this.computeNearFarCamera.bind(this);
+    this.itownsRequesterBeforeRender = function () {
+      computeNearFarCamera(_this.getCamera(), _this.getExtent(), 400);
+    }
 
     //pause
     this.isRendering = true;
