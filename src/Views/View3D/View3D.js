@@ -364,8 +364,6 @@ export class View3D {
       tilt: tilt,
     }
 
-    console.log(placement)
-
     this.itownsView = new itowns.PlanarView(this.rootWebGL, extent, {
       disableSkirt: false,
       placement,
@@ -376,9 +374,6 @@ export class View3D {
     this.scene = this.itownsView.scene;
     this.renderer = this.itownsView.mainLoop.gfxEngine.renderer;
     this.camera = this.itownsView.camera.camera3D;
-    this.camera.fov = View3D.DEFAULT_FOV;//default fov otherwise it's NaN
-
-    console.log("fov = ", this.camera.fov)
 
     //City generation
     this.addBaseMapLayer();
@@ -596,5 +591,3 @@ export class View3D {
     return this.rootWebGL;
   }
 }
-
-View3D.DEFAULT_FOV = 60
