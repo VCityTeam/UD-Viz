@@ -102,7 +102,6 @@
         );
         const geocodingView = new udv.Widgets.Extensions.GeocodingView(
           geocodingService,
-          app.controls,
           app.view
         );
         app.addModuleView('geocoding', geocodingView, {
@@ -135,10 +134,7 @@
         });
 
         ////// CAMERA POSITIONER
-        const cameraPosition = new udv.Widgets.CameraPositionerView(
-          app.view,
-          app.controls
-        );
+        const cameraPosition = new udv.Widgets.CameraPositionerView(app.view);
         app.addModuleView('cameraPositioner', cameraPosition);
 
         // ////// TEMPORAL MODULE

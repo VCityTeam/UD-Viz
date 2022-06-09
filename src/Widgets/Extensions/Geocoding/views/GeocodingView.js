@@ -2,7 +2,6 @@
 
 import * as THREE from 'three';
 import * as itowns from 'itowns';
-import Coordinates from 'itowns/lib/Core/Geographic/Coordinates';
 import proj4 from 'proj4';
 
 //Components
@@ -16,13 +15,11 @@ export class GeocodingView extends ModuleView {
   /**
    * Instantiates the view.
    * @param {GeocodingService} geocodingService The geocoding service.
-   * @param {udvcore.itowns.PlanarControls} cameraControls The camera controls.
    * @param {udvcore.itowns.PlanarView} planarView The iTowns view.
    */
-  constructor(geocodingService, cameraControls, planarView) {
+  constructor(geocodingService, planarView) {
     super();
     this.geocodingService = geocodingService;
-    this.cameraControls = cameraControls;
     this.planarView = planarView;
     this.meshes = [];
 
@@ -33,7 +30,7 @@ export class GeocodingView extends ModuleView {
     proj4.defs(
       'EPSG:3946',
       '+proj=lcc +lat_1=45.25 +lat_2=46.75' +
-        ' +lat_0=46 +lon_0=3 +x_0=1700000 +y_0=5200000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs'
+      ' +lat_0=46 +lon_0=3 +x_0=1700000 +y_0=5200000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs'
     );
   }
 
@@ -116,7 +113,7 @@ export class GeocodingView extends ModuleView {
           this.addPin(targetPos);
           //step 3 : if the first result, focus on it (move the camera)
           if (i === 0) {
-            focusCameraOn(this.planarView, this.cameraControls, targetPos);
+            focusCameraOn(this.planarView, this.planarView.controls, targetPos);
           }
           i += 1;
         }
@@ -136,7 +133,7 @@ export class GeocodingView extends ModuleView {
    */
   getWorldCoordinates(lat, lng) {
     const [targetX, targetY] = proj4('EPSG:3946').forward([lng, lat]);
-    const coords = new Coordinates('EPSG:3946', targetX, targetY, 0);
+    const coords = new itowns.Coordinates('EPSG:3946', targetX, targetY, 0);
     const elevation = itowns.DEMUtils.getElevationValueAt(
       this.planarView.tileLayer,
       coords

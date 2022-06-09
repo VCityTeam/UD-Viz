@@ -3,15 +3,14 @@ import { MAIN_LOOP_EVENTS } from 'itowns';
 import * as THREE from 'three';
 
 export class PositionerWindow extends Window {
-  constructor(itownsView, cameraControls) {
+  constructor(itownsView) {
     super('camera-positioner', 'Camera Positioner', false);
 
     this.itownsView = itownsView;
-    this.cameraControls = cameraControls;
 
     // Request update every active frame
     this.itownsView.addFrameRequester(MAIN_LOOP_EVENTS.AFTER_CAMERA_UPDATE,
-      () => this._updateFieldsFromCamera() );
+      () => this._updateFieldsFromCamera());
 
     // Event for position registering
     this.registerEvent(PositionerWindow.EVENT_POSITION_SUBMITTED);
@@ -114,10 +113,10 @@ export class PositionerWindow extends Window {
    */
   async _travel() {
     let camera = this._getCameraPosition();
-    this.cameraControls.initiateTravel(camera.position, 'auto', camera.quaternion,
+    this.itownsView.controls.initiateTravel(camera.position, 'auto', camera.quaternion,
       true);
   }
-  
+
   /**
    * Sends the position submitted event with the current camera position and
    * orientation.

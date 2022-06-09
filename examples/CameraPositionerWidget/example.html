@@ -32,10 +32,7 @@
         app.addModuleView('help', help);
 
         ////// CAMERA POSITIONER
-        const cameraPosition = new udv.Widgets.CameraPositionerView(
-          app.view,
-          app.controls
-        );
+        const cameraPosition = new udv.Widgets.CameraPositionerView(app.view);
         app.addModuleView('cameraPositioner', cameraPosition);
       });
     </script>
