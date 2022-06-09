@@ -72,7 +72,7 @@ export class View3D {
     this.hasItownsControls = params.hasItownsControls || false;
     this.itownsRequesterBeforeRender = function () {
       computeNearFarCamera(_this.getCamera(), _this.getExtent(), 400);
-    }
+    };
 
     //pause
     this.isRendering = true;
@@ -362,7 +362,7 @@ export class View3D {
       heading: heading,
       range: range,
       tilt: tilt,
-    }
+    };
 
     this.itownsView = new itowns.PlanarView(this.rootWebGL, extent, {
       disableSkirt: false,
@@ -381,7 +381,7 @@ export class View3D {
     this.setupAndAdd3DTilesLayers();
 
     //disable itowns resize
-    this.itownsViewResize = this.itownsView.resize.bind(this.itownsView)
+    this.itownsViewResize = this.itownsView.resize.bind(this.itownsView);
     this.itownsView.resize = function () { };
   }
 
@@ -555,7 +555,7 @@ export class View3D {
       this.css3DRenderer.setSize(this.size.x, this.size.y);
 
     if (this.itownsViewResize) {
-      this.itownsViewResize(this.size.x, this.size.y)
+      this.itownsViewResize(this.size.x, this.size.y);
     } else {
 
       this.camera.aspect = this.size.x / this.size.y;

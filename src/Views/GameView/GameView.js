@@ -236,7 +236,7 @@ export class GameView extends View3D {
   }
 
   isItownsRendering() {
-    return this.itownsRendering
+    return this.itownsRendering;
   }
 
   setItownsRendering(value) {
