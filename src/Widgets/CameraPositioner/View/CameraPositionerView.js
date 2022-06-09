@@ -6,10 +6,10 @@ import { PositionerWindow } from '../../Components/Camera/PositionerWindow';
 import { Window } from '../../Components/GUI/js/Window';
 
 export class CameraPositionerView extends ModuleView {
-  constructor(itownsView, cameraControls) {
+  constructor(itownsView) {
     super();
 
-    this.positionerWindow = new PositionerWindow(itownsView, cameraControls);
+    this.positionerWindow = new PositionerWindow(itownsView);
 
     this.positionerWindow.addEventListener(Window.EVENT_DISABLED, () =>
       this.disable()

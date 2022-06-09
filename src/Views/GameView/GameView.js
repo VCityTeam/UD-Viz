@@ -202,10 +202,10 @@ export class GameView extends View3D {
         if (delta > 1000 / fps) {
           // update time stuffs
           then = now - (delta % 1000) / fps;
-          
+
           //set dt
           _this.localContext.setDt(delta);
-          
+
           //call tick requester
           _this.tickRequesters.forEach(function (cb) {
             cb(_this.localContext);
@@ -233,6 +233,10 @@ export class GameView extends View3D {
         _this.onResize();
       }, 10);
     });
+  }
+
+  isItownsRendering() {
+    return this.itownsRendering
   }
 
   setItownsRendering(value) {

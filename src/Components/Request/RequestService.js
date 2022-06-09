@@ -6,7 +6,7 @@ export function RequestService() {
   this.useAuthentication = false;
 
   // eslint-disable-next-line func-names
-  this.initialize = function () {};
+  this.initialize = function () { };
 
   /**
    * @deprecated Prefer using `RequestService.request` instead.

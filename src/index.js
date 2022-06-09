@@ -26,6 +26,9 @@ export { Views };
 
 //itowns
 import * as itowns from 'itowns';
+//Wait to update itowns 2.38.0 at least
+// import * as itownsWidgets from "itowns/widgets"
+// export { itowns, itownsWidgets };
 export { itowns };
 
 //jquery
