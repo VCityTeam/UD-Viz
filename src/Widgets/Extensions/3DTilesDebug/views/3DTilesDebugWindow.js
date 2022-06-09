@@ -122,7 +122,8 @@ export class Debug3DTilesWindow extends Window {
    * Updates the number of loaded 3D Tiles tiles.
    */
   updateTBIInfoParagraphElement() {
-    this.TBIInfoParagraphElement.innerText = `${this.layerManager.getLoaded3DTilesTileCount()} / ${this.layerManager.getTotal3DTilesTileCount()} tiles loaded. (first tile is the root tile which has no geometry)`;
+    if (this.TBIInfoParagraphElement)
+      this.TBIInfoParagraphElement.innerText = `${this.layerManager.getLoaded3DTilesTileCount()} / ${this.layerManager.getTotal3DTilesTileCount()} tiles loaded. (first tile is the root tile which has no geometry)`;
   }
 
   /**
@@ -155,7 +156,7 @@ export class Debug3DTilesWindow extends Window {
     let cityObject = this.layerManager.pickCityObject(event);
 
     if (cityObject !== undefined) {
-      if(cityObject != this.selectedCityObject){
+      if (cityObject != this.selectedCityObject) {
         for (let [key, value] of Object.entries(cityObject.props)) {
           this.clickDivElement.innerHTML += `<br>${key} : ${value}`;
         }
