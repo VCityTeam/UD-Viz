@@ -274,7 +274,7 @@ export class CityObjectWindow extends Window {
     `;
     for (let prop of Object.entries(cityObject.props)) {
       if(prop[0] != 'group' && prop[0] != 'properties'){
-      html += `
+        html += `
         <br>${prop[0]} : ${prop[1]}
       `;
       }
