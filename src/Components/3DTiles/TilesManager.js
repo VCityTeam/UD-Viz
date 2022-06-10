@@ -131,7 +131,9 @@ export class TilesManager extends EventSender {
     //  pourra etre dans le if ci dessus
     if(this.color)
       this.setStyleToTile(tile.tileId,'default');
-    this.applyStyles();
+    else
+      this.setDefaultStyleToTile(tile.tileId);
+    this.applyStyleToTile(tile.tileId, { updateView: false });
     this.sendEvent(TilesManager.EVENT_TILE_LOADED, tile);
   }
 
