@@ -1,3 +1,14 @@
+# v2.37.5
+
+    - fix: 
+        apply default style for tilesets without color
+        layer without color
+        selection of non visible object
+        filterWindow having no specific div
+        picking and display of picked object
+    - focusOnObject distance parameter
+    - switch betwenn itowns rendering and game rendering
+
 # v2.37.4
 
     - Game engine update    
