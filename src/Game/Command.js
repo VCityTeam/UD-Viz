@@ -99,6 +99,7 @@ CommandModule.TYPE = {
   MOVE_TO: 'move_to',
   Z_UPDATE: 'z_update',
   ESCAPE: 'escape',
+  TELEPORT: 'teleport',
 };
 
 module.exports = CommandModule;
