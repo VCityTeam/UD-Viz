@@ -1,11 +1,11 @@
 /** @format */
 
-let Shared;
+let Game;
 
 module.exports = class Zeppelin {
-  constructor(conf, SharedModule) {
+  constructor(conf, GameModule) {
     this.conf = conf;
-    Shared = SharedModule;
+    Game = GameModule;
   }
 
   //called when this gameobject collider components collides with another one collider components
