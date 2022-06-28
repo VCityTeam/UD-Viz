@@ -305,7 +305,7 @@ export class GameView extends View3D {
     this.object3D.position.z = z;
     this.scene.add(this.object3D);
 
-    if (this.config.game) {
+    if (!this.config.game) {
       console.error('miss game field in your config');
     }
 
