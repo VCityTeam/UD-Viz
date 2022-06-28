@@ -305,6 +305,10 @@ export class GameView extends View3D {
     this.object3D.position.z = z;
     this.scene.add(this.object3D);
 
+    if (this.config.game) {
+      console.error('miss game field in your config');
+    }
+
     //init sky color based on config file
     this.skyColor = new THREE.Color(
       this.config.game.sky.color.r,
@@ -328,7 +332,7 @@ export class GameView extends View3D {
     directionalLight.shadow.bias = -0.0005;
     this.directionalLight = directionalLight;
 
-    if (this.config.game && this.config.game.sky) {
+    if (this.config.game.sky.paths) {
       THREEUtils.addCubeTexture(this.config.game.sky.paths, this.getScene());
     }
   }
