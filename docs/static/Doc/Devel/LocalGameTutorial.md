@@ -192,7 +192,7 @@ Still nothing displayed but the library is now globally accessible.
 - Add the following code to start a new local game in `src/bootsrap.js`:
 
 ```js
-const myWorld = new udv.Game.World({
+const myWorld = new udviz.Game.World({
   name: 'My World',
   origin: { lat: 45.7530993, lng: 4.8452654, alt: 300 },
   gameObject: {
@@ -200,7 +200,7 @@ const myWorld = new udv.Game.World({
   },
 });
 
-const app = new udv.Templates.LocalGame();
+const app = new udviz.Templates.LocalGame();
 app.start(myWorld, './assets/config/local_game_config.json');
 ```
 
@@ -369,7 +369,7 @@ module.exports = class WorldGameManager {
     const worldContext = arguments[1];
     const world = worldContext.getWorld();
 
-    this.zeppelin = new Shared.GameObject({
+    this.zeppelin = new Game.GameObject({
       name: 'zeppelin',
       components: {
         Render: { idRenderData: 'zeppelin' },
@@ -380,7 +380,7 @@ module.exports = class WorldGameManager {
   }
 ```
 
-We create a new gameobject called zeppelin and a [Render](/src/Game/Shared/GameObject/Components/Render.js) component is added with an id of the 3D model.
+We create a new gameobject called zeppelin and a [Render](/src/Game/GameObject/Components/Render.js) component is added with an id of the 3D model.
 
 As always when we point to assets with an id, we need to import that asset (here a 3D model). We gonna to use this [one](/examples/assets/models/Zeppelin_Labex_IMU.glb).
 
