@@ -1,3 +1,9 @@
+# v2.37.6
+
+    - Update LocalGameTutorial.md
+    - Fix no paths in sky with a sky color
+    - New Command.TYPE teleport
+
 # v2.37.5
 
     - fix: 
