@@ -53,7 +53,8 @@ export class View3D {
     this.rootWebGL.appendChild(this.ui);
 
     //listen resize event
-    window.addEventListener('resize', this.onResize.bind(this));
+    this.resizeListener = this.onResize.bind(this)
+    window.addEventListener('resize', this.resizeListener);
 
     //conf
     this.config = params.config || {};
@@ -263,7 +264,7 @@ export class View3D {
     tick();
 
     //launch an async resize
-    setTimeout(this.onResize.bind(this), 100);
+    setTimeout(this.resizeListener, 100);
   }
 
   /**
@@ -569,7 +570,7 @@ export class View3D {
    */
   dispose() {
     if (this.itownsView) this.itownsView.dispose();
-    window.removeEventListener('resize', this.onResize.bind(this));
+    window.removeEventListener('resize', this.resizeListener);
     this.html().remove();
     this.inputManager.dispose();
     this.disposed = true;
