@@ -22,6 +22,12 @@ export class GameView extends View3D {
   constructor(params) {
     //call parent class
     super(params);
+    
+    //remove resize listener of parent
+    window.removeEventListener('resize', this.resizeListener);
+    this.resizeListener = this.onResize.bind(this)
+    //add its own
+    window.addEventListener('resize', this.resizeListener);
 
     //custom modules pass the localscript context
     this.localScriptModules = params.localScriptModules || {};
@@ -73,6 +79,16 @@ export class GameView extends View3D {
     this.resizeRequesters.forEach(function (cb) {
       cb(ctx);
     });
+
+    //notify localscript
+    if (this.lastState) {
+      this.lastState.getGameObject().traverse(function (g) {
+        const scriptComponent = g.getComponent(LocalScript.TYPE);
+        if (scriptComponent) {
+          scriptComponent.execute(LocalScript.EVENT.ON_RESIZE, [ctx]);
+        }
+      });
+    }
   }
 
   getUserData(key) {
@@ -229,9 +245,7 @@ export class GameView extends View3D {
       tick();
 
       //differed a resize event
-      setTimeout(function () {
-        _this.onResize();
-      }, 10);
+      setTimeout(this.resizeListener, 10);
     });
   }
 

@@ -145,6 +145,7 @@ LocalScriptModule.EVENT = {
   DISPOSE: 'dispose', //gameview is disposed
   ON_REMOVE: 'onRemove', //object is remove from parent
   ON_COMPONENT_UPDATE: 'onComponentUpdate', //component updated smthg
+  ON_RESIZE: 'onResize', //on resize window
 };
 
 module.exports = LocalScriptModule;
