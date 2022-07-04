@@ -25,7 +25,7 @@ export class GameView extends View3D {
     
     //remove resize listener of parent
     window.removeEventListener('resize', this.resizeListener);
-    this.resizeListener = this.onResize.bind(this)
+    this.resizeListener = this.onResize.bind(this);
     //add its own
     window.addEventListener('resize', this.resizeListener);
 

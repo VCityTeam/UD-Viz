@@ -53,7 +53,7 @@ export class View3D {
     this.rootWebGL.appendChild(this.ui);
 
     //listen resize event
-    this.resizeListener = this.onResize.bind(this)
+    this.resizeListener = this.onResize.bind(this);
     window.addEventListener('resize', this.resizeListener);
 
     //conf
