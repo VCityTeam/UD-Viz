@@ -354,6 +354,30 @@ const GameObjectModule = class GameObject {
   }
 
   /**
+   * compute Upward vector
+   * @returns {THREE.Vector3}
+   */
+  computeUpVector() {
+    const quaternion = new THREE.Quaternion().setFromEuler(
+      this.object3D.rotation
+    );
+    const result = new THREE.Vector3(0, 1, 0).applyQuaternion(quaternion);
+    return result;
+  }
+
+  /**
+   * Compute the downward vector 
+   * @returns {THREE.Vector3}
+   */
+  computeDownVector() {
+    const quaternion = new THREE.Quaternion().setFromAxisAngle(
+      new THREE.Vector3(0, 0, 1),
+      Math.PI
+    );
+    return this.computeUpVector().applyQuaternion(quaternion);
+  }
+
+  /**
    * Remove the gameobject from its parent
    * Remove its object3D from the scene
    */
