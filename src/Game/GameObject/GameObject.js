@@ -361,7 +361,7 @@ const GameObjectModule = class GameObject {
     const quaternion = new THREE.Quaternion().setFromEuler(
       this.object3D.rotation
     );
-    console.log('coucou UP');
+    // console.log('coucou UP');
     const result = new THREE.Vector3(0, 0, 1).applyQuaternion(quaternion);
     return result;
   }
@@ -374,8 +374,34 @@ const GameObjectModule = class GameObject {
     const quaternion = new THREE.Quaternion().setFromEuler(
       this.object3D.rotation
     );
-    console.log('coucou DOWN');
+    // console.log('coucou DOWN');
     const result = new THREE.Vector3(0, 0, -1).applyQuaternion(quaternion);
+    return result;
+  }
+
+  /**
+   * Compute the left translation vector 
+   * @returns {THREE.Vector3}
+   */
+  computeLeftVector() {
+    const quaternion = new THREE.Quaternion().setFromEuler(
+      this.object3D.rotation
+    );
+    console.log('coucou LEFT');
+    const result = new THREE.Vector3(-1, 0, 0).applyQuaternion(quaternion);
+    return result;
+  }
+
+  /**
+   * Compute the right translation vector 
+   * @returns {THREE.Vector3}
+   */
+   computeRightVector() {
+    const quaternion = new THREE.Quaternion().setFromEuler(
+      this.object3D.rotation
+    );
+    console.log('coucou RIGHT');
+    const result = new THREE.Vector3(1, 0, 0).applyQuaternion(quaternion);
     return result;
   }
 
