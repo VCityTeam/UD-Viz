@@ -101,8 +101,11 @@ CommandModule.TYPE = {
   Z_UPDATE: 'z_update',
   ESCAPE: 'escape',
   TELEPORT: 'teleport',
+  // 
   MOVE_UP: 'move_up',
   MOVE_DOWN: 'move_down',
+  ROTATE_LEFT: 'rotate_left',
+  ROTATE_RIGHT: 'rotate_right',
 };
 
 module.exports = CommandModule;
