@@ -85,7 +85,7 @@ export class AllWidget {
                     <div id="${this.authFrameLocationId}"></div>
                 </div>
                 <div id="_all_widget_struct_header_panel">
-                    <p style="display: inline-block; color: white; margin: 0;">
+                  <!--  <p style="display: inline-block; color: white; margin: 0;">
                         Icons made by <a href="https://www.freepik.com/"
                         title="Freepik">Freepik</a> from
                         <a href="https://www.flaticon.com/"
@@ -93,7 +93,7 @@ export class AllWidget {
                         <a href="http://creativecommons.org/licenses/by/3.0/"
                         title="Creative Commons BY 3.0" target="_blank">
                         CC 3.0 BY</a>
-                    </p>
+                    </p> -->
                 </div>
             </header>
             <div id="_all_widget_stuct_main_panel">
