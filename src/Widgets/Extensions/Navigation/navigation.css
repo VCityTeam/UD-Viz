@@ -95,3 +95,12 @@
     bottom: 100%;
     left: 20%;
   }
+
+  #compass{
+    position : fixed;
+    display: flex;
+    right : 37%;
+    bottom : 73px;
+    height : 4%;
+  
+  }
