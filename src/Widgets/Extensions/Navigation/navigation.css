@@ -1,0 +1,97 @@
+.slidecontainer{
+    position: fixed;
+    width: 27%;
+    height: 5%;
+    display: flex;
+    /* Magic trick to center */
+    left: 0;
+    right: 0;
+    margin-left: auto;
+    margin-right: auto;
+    bottom: 70px;
+    z-index: 10;
+    background-color: #00000088;
+    list-style-type: none;
+
+}
+
+/* The slider itself */
+.slider {
+    -webkit-appearance: none;
+    position: absolute;
+    width: 40%;
+    height: 2px;
+    border-radius: 5px;  
+    background: #ffffff;
+    outline: none;
+    /* Magic trick to center */
+    left: 0;
+    right: 20px;
+    top: 0;
+    bottom: 0;
+    margin-top: auto;
+    margin-bottom: auto;
+    margin-left: auto;
+    margin-right: auto;
+    -webkit-transition: .2s;
+    transition: opacity .2s;
+    
+  }
+  
+  .slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    /* display : inline-block; */
+    height : 0;
+    width : 0;
+    border-top : 15px solid rgb(255, 255, 255);
+    border-right : 7px solid transparent;
+    border-left : 8px solid transparent;
+    cursor:pointer;
+    -webkit-transition: .2s;
+    transition: opacity .2s;    
+  }
+  
+  .slider::-moz-range-thumb {
+    display : inline-block;
+    height : 0;
+    width : 0;
+    border-top : 15px solid rgb(255, 255, 255);
+    border-right : 7px solid transparent;
+    border-left : 8px solid transparent;
+    cursor:pointer;
+  }
+
+  .slidecontainer h3{
+    color: #ffffff;
+    top: 20%;
+    bottom: 0px;
+    margin-top: auto;
+    margin-bottom: auto;
+  }
+
+  .slidecontainer h2{
+    position: absolute;
+    left: 2%; 
+    font-size: 2vh;
+    color: #ffffff;
+    top: 25%;
+    bottom: 80%;
+    margin-top: auto;
+    margin-bottom: auto;
+  }
+
+  .slidecontainer #zoomPlus{
+    position: absolute;
+    font-size: 3vh;
+    bottom: 100%;
+    right: 23%;
+
+  }
+
+  .slidecontainer #zoomMoins{
+    position: absolute;
+    font-size: 3vh;
+    bottom: 100%;
+    left: 20%;
+  }
