@@ -56,4 +56,13 @@ export class Navigation extends ModuleView {
       document.getElementById('compass').style.transform = `rotate(${THREE.Math.radToDeg(sph.theta) - 180}deg)`;
     });
   }
+
+  /////// MODULE VIEW METHODS
+  enableView() {
+    document.getElementsByClassName('slidecontainer')[0].style.setProperty('display', 'flex');
+  }
+
+  disableView() {
+    document.getElementsByClassName('slidecontainer')[0].style.setProperty('display', 'none');
+  }
 }
