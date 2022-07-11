@@ -8,6 +8,7 @@ import { Color } from 'three';
 const BLANK_MATERIAL = new THREE.MeshBasicMaterial({
   side: THREE.DoubleSide,
   opacity: 0,
+  transparent: true,
   blending: THREE.NoBlending,
   color: new Color(0, 0, 0),
 });

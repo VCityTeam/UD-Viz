@@ -64,7 +64,7 @@ export class View3D {
     proj4.default.defs(
       this.projection,
       '+proj=lcc +lat_1=45.25 +lat_2=46.75' +
-      ' +lat_0=46 +lon_0=3 +x_0=1700000 +y_0=5200000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs'
+        ' +lat_0=46 +lon_0=3 +x_0=1700000 +y_0=5200000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs'
     );
 
     //itowns view
@@ -116,7 +116,7 @@ export class View3D {
         1 - (2 * event.offsetY) / (el.clientHeight - parseInt(el.offsetTop))
       );
 
-      raycaster.setFromCamera(mouse, _this.itownsView.camera.camera3D);
+      raycaster.setFromCamera(mouse, _this.getCamera());
 
       for (let index = 0; index < _this.billboards.length; index++) {
         const element = _this.billboards[index];
@@ -292,7 +292,7 @@ export class View3D {
   appendBillboard(billboard) {
     if (!this.css3DRenderer) this.initCSS3D();
 
-    this.itownsView.scene.add(billboard.getMaskObject());
+    this.getScene().add(billboard.getMaskObject());
     this.css3DScene.add(billboard.getCss3DObject());
     this.billboards.push(billboard);
   }
@@ -383,7 +383,7 @@ export class View3D {
 
     //disable itowns resize
     this.itownsViewResize = this.itownsView.resize.bind(this.itownsView);
-    this.itownsView.resize = function () { };
+    this.itownsView.resize = function () {};
   }
 
   /**
@@ -498,10 +498,10 @@ export class View3D {
         } else {
           console.warn(
             'The 3D Tiles extension ' +
-            extensionsConfig[i] +
-            ' specified in generalDemoConfig.json is not supported ' +
-            'by UD-Viz yet. Only 3DTILES_temporal and ' +
-            '3DTILES_batch_table_hierarchy are supported.'
+              extensionsConfig[i] +
+              ' specified in generalDemoConfig.json is not supported ' +
+              'by UD-Viz yet. Only 3DTILES_temporal and ' +
+              '3DTILES_batch_table_hierarchy are supported.'
           );
         }
       }
@@ -551,14 +551,12 @@ export class View3D {
     this.size.x = window.innerWidth - offsetLeft;
     this.size.y = window.innerHeight - offsetTop;
 
-
     if (this.css3DRenderer)
       this.css3DRenderer.setSize(this.size.x, this.size.y);
 
     if (this.itownsViewResize) {
       this.itownsViewResize(this.size.x, this.size.y);
     } else {
-
       this.camera.aspect = this.size.x / this.size.y;
       this.camera.updateProjectionMatrix();
       this.renderer.setSize(this.size.x, this.size.y);
