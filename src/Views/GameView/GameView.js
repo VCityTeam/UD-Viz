@@ -22,7 +22,7 @@ export class GameView extends View3D {
   constructor(params) {
     //call parent class
     super(params);
-    
+
     //remove resize listener of parent
     window.removeEventListener('resize', this.resizeListener);
     this.resizeListener = this.onResize.bind(this);
@@ -178,6 +178,7 @@ export class GameView extends View3D {
           canvas: canvas,
           antialias: true,
           logarithmicDepthBuffer: true,
+          alpha: true,
         });
         this.camera = new THREE.PerspectiveCamera(60, 1, 1, 1000); //default params
         this.scene.add(this.camera);
