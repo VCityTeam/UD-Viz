@@ -1,3 +1,8 @@
+# v2.37.7
+
+    - Billboard fixes
+    - Add onResize LocalScript event
+
 # v2.37.6
 
     - Update LocalGameTutorial.md
