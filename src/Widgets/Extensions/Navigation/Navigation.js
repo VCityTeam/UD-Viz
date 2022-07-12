@@ -7,7 +7,9 @@ export class Navigation extends ModuleView {
   constructor(view3D) {
     super();
     
+    //Scene renderer
     let renderer = view3D.mainLoop.gfxEngine.renderer;
+
     //Zoom value for the slider
     let zoomValue = 100;
     
