@@ -26,6 +26,8 @@ export { $3DTemporalTileset } from './Temporal/Model/3DTemporalTileset.js';
 
 export { SlideShow } from './SlideShow/SlideShow';
 
+export { Navigation } from './Navigation/Navigation';
+
 import * as Extensions from './Extensions/Extensions';
 export { Extensions };
 

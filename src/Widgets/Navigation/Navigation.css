@@ -12,7 +12,6 @@
     z-index: 10;
     background-color: #00000088;
     list-style-type: none;
-
 }
 
 /* The slider itself */
@@ -35,7 +34,6 @@
     margin-right: auto;
     -webkit-transition: .2s;
     transition: opacity .2s;
-    
   }
   
   .slider::-webkit-slider-thumb {
@@ -102,5 +100,4 @@
     right : 37%;
     bottom : 73px;
     height : 4%;
-  
   }

@@ -9,7 +9,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   </head>
   <body>
-    <script src="../../dist/release/udv.js"></script>
+    <script src="../../dist/debug/udv.js"></script>
     <!-- <script src="../../dist/debug/udv.js"></script> -->
     <script type="text/javascript">
       let app = new udv.Templates.AllWidget();
@@ -34,7 +34,7 @@
         app.addModuleView('help', help);
 
         ////// NAVIGATION MODULE
-        const navigation = new udv.Widgets.Extensions.Navigation(app.view);
+        const navigation = new udv.Widgets.Navigation(app.view);
         app.addModuleView('navigation', navigation);
 
         ////// AUTHENTICATION MODULE

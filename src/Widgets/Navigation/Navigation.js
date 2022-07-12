@@ -1,22 +1,23 @@
 //Components
-import { ModuleView } from '../../Components/ModuleView/ModuleView';
+import { ModuleView } from '../Components/ModuleView/ModuleView';
 import * as THREE from 'three';
-import './navigation.css';
+import './Navigation.css';
 
 export class Navigation extends ModuleView {
   constructor(view3D) {
     super();
     
     //Scene renderer
-    let renderer = view3D.mainLoop.gfxEngine.renderer;
+    const renderer = view3D.mainLoop.gfxEngine.renderer;
 
     //Zoom value for the slider
     let zoomValue = 100;
     
-    const camera = view3D.camera.camera3D;
-
     //3D scene of your camera
     let scene3D =  view3D.scene;
+     
+    console.log(view3D);
+    const camera = view3D.camera.camera3D;
 
     // Zoom UI
     let zoomDiv = document.createElement('nav');
@@ -49,10 +50,11 @@ export class Navigation extends ModuleView {
     };
 
     //Compass update with camera
-    var dir = new THREE.Vector3();
-    var sph = new THREE.Spherical();
+    let dir = new THREE.Vector3();
+    let sph = new THREE.Spherical();
     renderer.setAnimationLoop(() => {
       camera.getWorldDirection(dir);
+      view3D.notifyChange();
       sph.setFromVector3(dir);
       document.getElementById('compass').style.transform = `rotate(${THREE.Math.radToDeg(sph.theta) - 180}deg)`;
     });

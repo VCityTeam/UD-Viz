@@ -19,5 +19,3 @@ export { DocumentValidationModule } from './DocumentValidation/DocumentValidatio
 export { SparqlModule } from './SPARQL/SparqlModule';
 
 export { HelpWindow } from './Help/Help';
-
-export { Navigation } from './Navigation/Navigation';
