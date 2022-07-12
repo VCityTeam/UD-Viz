@@ -20,5 +20,8 @@ module.exports = {
     quotes: ['error', 'single'],
     semi: ['error', 'always'],
     'no-unused-vars': 'off',
+    camelcase: 'off',
+    'prefer-const': [2, { destructuring: 'any' }],
+    'one-var': ['error', 'always'],
   },
 };
