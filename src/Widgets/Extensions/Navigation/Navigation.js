@@ -52,7 +52,6 @@ export class Navigation extends ModuleView {
     var dir = new THREE.Vector3();
     var sph = new THREE.Spherical();
     renderer.setAnimationLoop(() => {
-      renderer.render(scene3D, camera);
       camera.getWorldDirection(dir);
       sph.setFromVector3(dir);
       document.getElementById('compass').style.transform = `rotate(${THREE.Math.radToDeg(sph.theta) - 180}deg)`;
