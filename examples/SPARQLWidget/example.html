@@ -14,16 +14,6 @@
       let app = new udv.Templates.AllWidget();
 
       app.start('../assets/config/sparql_widget_config.json').then(() => {
-        udv.Components.addBaseMapLayer(config, app.view, app.extent);
-
-        udv.Components.addElevationLayer(config, app.view, app.extent);
-
-        udv.Components.setupAndAdd3DTilesLayers(
-          config,
-          app.layerManager,
-          app.view
-        );
-
         ////// REQUEST SERVICE
         const requestService = new udv.Components.RequestService();
 
@@ -38,23 +28,22 @@
             app.config
           );
 
-        const authenticationView = new udv.Widgets.Extensions.AuthenticationView(
-          authenticationService
-        );
+        const authenticationView =
+          new udv.Widgets.Extensions.AuthenticationView(authenticationService);
         app.addModuleView('authentication', authenticationView, {
           type: udv.Templates.AllWidget.AUTHENTICATION_MODULE,
         });
 
         ////// CITY OBJECTS MODULE
         let cityObjectModule = new udv.Widgets.CityObjectModule(
-          app.layerManager,
+          app.view3D.getLayerManager(),
           app.config
         );
         app.addModuleView('cityObjects', cityObjectModule.view);
 
         ////// 3DTILES DEBUG
         const debug3dTilesWindow = new udv.Widgets.Debug3DTilesWindow(
-          app.layerManager
+          app.view3D.getLayerManager()
         );
         app.addModuleView('3dtilesDebug', debug3dTilesWindow, {
           name: '3DTiles Debug',
@@ -68,13 +57,18 @@
         app.addModuleView('cameraPositioner', cameraPosition);
 
         ////// LAYER CHOICE MODULE
-        const layerChoice = new udv.Widgets.LayerChoice(app.layerManager);
+        const layerChoice = new udv.Widgets.LayerChoice(
+          app.view3D.getLayerManager()
+        );
         app.addModuleView('layerChoice', layerChoice);
 
         ////// SPARQL MODULE
-        const sparqlModule = new udv.Widgets.Extensions.SparqlModule(app.config, app.layerManager);
+        const sparqlModule = new udv.Widgets.Extensions.SparqlModule(
+          app.config,
+          app.view3D.getLayerManager()
+        );
         app.addModuleView('sparqlModule', sparqlModule.view, {
-          name: 'SPARQL Query'
+          name: 'SPARQL Query',
         });
       });
     </script>

@@ -1,14 +1,11 @@
 /** @format */
 
 //Components
-import { THREEUtils } from '../../Components/Components';
-import { Widgets, itowns, proj4, THREE, jquery } from '../../index';
+import { SystemUtils, THREEUtils } from '../../Components/Components';
+import { Widgets, itowns, THREE } from '../../index';
 const ModuleView = Widgets.Components.ModuleView;
-import { LayerManager } from '../../Components/Components';
-
 import './AllWidget.css';
-
-import { computeNearFarCamera } from '../../Components/Camera/CameraUtils';
+import { View3D } from '../../Views/Views';
 
 /**
  * Represents the base HTML content of a demo for UD-Viz and provides methods to
@@ -24,42 +21,57 @@ export class AllWidget {
     this.authService;
     this.config = {};
     this.parentElement;
-    this.view; // itowns view (3d scene)
+    this.view3D;
     this.extent; // itowns extent (city limits)
-    this.controls;
-    /**
-     * Object used to manage all of the layer.
-     *
-     * @type {LayerManager}
-     */
-    this.layerManager;
   }
 
   start(path) {
     return new Promise((resolve) => {
       const _this = this;
       this.appendTo(document.body);
-      this.loadConfigFile(path).then(() => {
+
+      SystemUtils.File.loadJSON(path).then((config) => {
+        _this.config = config;
         // Use the stable server
         _this.addLogos();
 
-        // Initialize iTowns 3D view
-        _this.init3DView();
-
-        //dynamic near far computation
-        _this.view.addFrameRequester(
-          itowns.MAIN_LOOP_EVENTS.BEFORE_RENDER,
-          computeNearFarCamera.bind(
-            null,
-            _this.view.camera.camera3D,
-            _this.extent,
-            400
-          )
-        );
+        _this.initView3D();
 
         resolve(_this.config);
       });
     });
+  }
+
+  initView3D() {
+    const parentDiv = document.getElementById(this.contentSectionId);
+    this.view3D = new View3D({
+      config: this.config,
+      htmlParent: parentDiv,
+      hasItownsControls: true,
+    });
+    // Define geographic extent: CRS, min/max X, min/max Y
+    // area should be one of the properties of the object extents in config file
+    let min_x = parseInt(this.config['extents']['min_x']);
+    let max_x = parseInt(this.config['extents']['max_x']);
+    let min_y = parseInt(this.config['extents']['min_y']);
+    let max_y = parseInt(this.config['extents']['max_y']);
+    this.extent = new itowns.Extent(
+      this.config['projection'],
+      min_x,
+      max_x,
+      min_y,
+      max_y
+    );
+    this.view3D.start(this.extent);
+
+    // Lights
+    THREEUtils.addLights(this.view3D.getScene());
+
+    // Set sky color to blue
+    THREEUtils.initRenderer(
+      this.view3D.getRenderer(),
+      new THREE.Color(0x6699cc)
+    );
   }
 
   /**
@@ -90,7 +102,6 @@ export class AllWidget {
                     </ul>
                 </nav>
                 <section id="${this.contentSectionId}">
-                    <div id="${this.viewerDivId}"></div>
                 </section>
             </div>
         `;
@@ -382,114 +393,12 @@ export class AllWidget {
     return document.getElementById(this.getModuleButtonId(moduleId));
   }
 
-  /**
-   * Initializes the iTowns 3D view according the config.
-   */
-  init3DView() {
-    // ********* INIT ITOWNS VIEW
-    // Define projection used in iTowns viewer (taken from
-    // https://epsg.io/3946, Proj4js section)
-    proj4.default.defs(
-      'EPSG:3946',
-      '+proj=lcc +lat_1=45.25 +lat_2=46.75' +
-        ' +lat_0=46 +lon_0=3 +x_0=1700000 +y_0=5200000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs'
-    );
-
-    // Define geographic extent: CRS, min/max X, min/max Y
-    // area should be one of the properties of the object extents in config file
-    let min_x = parseInt(this.config['extents']['min_x']);
-    let max_x = parseInt(this.config['extents']['max_x']);
-    let min_y = parseInt(this.config['extents']['min_y']);
-    let max_y = parseInt(this.config['extents']['max_y']);
-    this.extent = new itowns.Extent(
-      this.config['projection'],
-      min_x,
-      max_x,
-      min_y,
-      max_y
-    );
-    // Get camera placement parameters from config
-    let coordinates = this.extent.center();
-    if (
-      this.config['camera']['position']['x'] &&
-      this.config['camera']['position']['y']
-    ) {
-      coordinates = new itowns.Coordinates(
-        this.config['projection'],
-        parseInt(this.config['camera']['position']['x']),
-        parseInt(this.config['camera']['position']['y'])
-      );
-    }
-    let heading = parseFloat(this.config['camera']['position']['heading']);
-    let range = parseFloat(this.config['camera']['position']['range']);
-    let tilt = parseFloat(this.config['camera']['position']['tilt']);
-
-    // `viewerDiv` will contain iTowns' rendering area (`<canvas>`)
-    let viewerDiv = document.getElementById('viewerDiv');
-    // Instantiate PlanarView (iTowns' view that will hold the layers)
-    // The skirt allows to remove the cracks between the terrain tiles
-    // Instantiate controls within PlanarView
-    let maxSubdivisionLevel = 3;
-    if (this.config.background_image_layer.maxSubdivisionLevel)
-      maxSubdivisionLevel =
-        this.config.background_image_layer.maxSubdivisionLevel;
-
-    this.view = new itowns.PlanarView(viewerDiv, this.extent, {
-      disableSkirt: false,
-      maxSubdivisionLevel: maxSubdivisionLevel,
-      controls: {
-        maxZenithAngle: 180,
-        groundLevel: -100,
-        handleCollision: false,
-      },
-      placement: {
-        coord: coordinates,
-        heading: heading,
-        range: range,
-        tilt: tilt,
-      },
-    });
-    this.layerManager = new LayerManager(this.view);
-    // ********* 3D Elements
-    // Lights
-    THREEUtils.addLights(this.view.scene);
-
-    // Controls
-    this.controls = this.view.controls;
-
-    // Set sky color to blue
-    THREEUtils.initRenderer(
-      this.view.mainLoop.gfxEngine.renderer,
-      new THREE.Color(0x6699cc)
-    );
-  }
   /*
    * Updates the 3D view by notifying iTowns that it changed (e.g. because a layer has been added).
    */
   update3DView() {
     // Request itowns view redraw
-    this.view.notifyChange();
-  }
-
-  /**
-   * Loads a config file. Module views should only be added after calling
-   * this method.
-   * @param filePath The path to the config file.
-   */
-  async loadConfigFile(filePath) {
-    //loading configuration file
-    // see https://github.com/MEPP-team/VCity/wiki/Configuring-UDV
-    return jquery.ajax({
-      type: 'GET',
-      url: filePath,
-      datatype: 'json',
-      success: (data) => {
-        this.config = data;
-      },
-      error: () => {
-        throw 'Could not load config file : ' + filePath;
-      },
-    });
+    this.view3D.getItownsView().notifyChange();
   }
 
   ////////////////////////////////////////////////////////
