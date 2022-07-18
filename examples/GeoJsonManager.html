@@ -50,24 +50,23 @@
                 source: busSource,
                 style: new udv.itowns.Style({
                     fill: {
-                        color: 'yellow',
+                        color: 'black',
                         opacity: 0.5,
                         },
                         stroke: {
-                        color: 'red',
+                        color: 'yellow',
                     },
                 }),
             });
-        // Add the Ariege ColorLayer to the view and grant it a tooltip
         app.view.addLayer(busLayer);
 
-        // Declare the source for the data on bus ligne
+        // Declare the source for the data on humidity land
         const humiditySource = new udv.itowns.FileSource({
                 url: './assets/geojson/evg_esp_veg.evgmarezonehumide.geojson',
                 crs: 'EPSG:3946',
                 format: 'application/json',
             });
-        // Create a ColorLayer for the Bus ligne
+        // Create a ColorLayer for the humidity land
         const humidityLayer = new udv.itowns.ColorLayer('Zone Humide', {
             name: 'Zone Humide',
             transparent: true,
@@ -82,8 +81,27 @@
                 },
             }),
         });
-        // Add the Ariege ColorLayer to the view and grant it a tooltip
         app.view.addLayer(humidityLayer);
+
+        // Declare the source for the data of velov position
+        const velovSource = new udv.itowns.FileSource({
+            url: './assets/geojson/velov.stations.geojson',
+            crs: 'EPSG:3946',
+            format: 'application/json',
+        });
+        // Create a ColorLayer for velov
+        const velovLayer = new udv.itowns.ColorLayer('Velo v', {
+            name: 'Velo v',
+            transparent: true,
+            source: velovSource,
+            style: new udv.itowns.Style({
+                point: { color: 'white', line: 'red' },
+                stroke: {
+                    color: 'black',
+                },
+            }),
+        });
+        app.view.addLayer(velovLayer);
       });
     </script>
   </body>
