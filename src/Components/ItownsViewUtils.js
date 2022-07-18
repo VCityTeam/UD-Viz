@@ -88,6 +88,78 @@ export function setupAndAdd3DTilesLayers(config, layerManager, itownsView) {
   return layers;
 }
 
+
+
+/**
+ * Sets up a GeoJson layers and adds them to the itowns view (for the demos
+ * that don't need more granularity than that).
+ * @param {string} layerConfig The name of the layer to setup from the
+ * generalDemoConfig.json config file (should be one of the properties
+ * of the 3DTilesLayer object in
+ * UD-Viz/examples/config/all_widget_config.json
+ * config file).
+ */
+export function setupAndAddGeoJsonLayers(config, itownsView) {
+  
+  // Positional arguments verification
+  if (!config['GeoJSONLayers']) {
+    throw 'No GeoJSONLayers field in the configuration file';
+  }
+  /**
+   * Create an iTowns GeoJson layer based on the specified layerConfig.
+   * @param {string} layerConfig The name of the layer to setup from the
+   * all_widget_config.json config file (should be one of the properties
+   * of the GeoJsonLayer object in
+   * UD-Viz/examples/config/all_widget_config.json
+   * config file).
+   */
+  const setupAndAddGeoJsonLayer = function (layer) {
+    if (!layer['id'] || !layer['url'] || !layer['crs']) {
+      throw (
+        'Your layer does not have either "url", "crs" or "id" properties. ' +
+        '(in UD-Viz/examples/config/all_widget_config.json)'
+      );
+    }
+
+    // Declare the data source for the layer
+    const source = new itowns.FileSource({
+      url: layer.url,
+      crs: layer.crs,
+    });
+
+    // add optional source options
+    if (layer['format']) {
+      source.format = layer['format'];
+    }
+
+    const layerStyle = new itowns.Style({
+      fill: {
+          color: 'white',
+          opacity: 0.5,
+          },
+          stroke: {
+          color: 'black',
+      },
+    })
+
+    const geojsonLayer = new itowns.ColorLayer(layer.id, {
+      name: layer.id,
+      transparent: true,
+      source: source,
+      style: layerStyle,
+    });
+    itownsView.addLayer(geojsonLayer);
+    // return geojsonLayer;
+  }
+
+  const layers = {};
+  for (let layer of config['GeoJSONLayers']) {
+    // layers[layer.id] = this.setupGeoJsonLayer(layer);
+    // this.addGeoJsonLayer(layers[layer.id]);
+    setupAndAddGeoJsonLayer(layer);
+  }
+}
+
 /**
  * Add Base map layer to an itowns view
  * @param {*} config must contains a field background_image_layer

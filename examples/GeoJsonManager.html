@@ -16,13 +16,8 @@
       const inputManager = new udv.Components.InputManager();
 
       app.start('./assets/config/geoJsonManager_config.json').then((config) => {
-        app.addBaseMapLayer();
 
-        app.addElevationLayer();
-
-        app.setupAndAdd3DTilesLayers();
-
-        app.setupAndAddGeoJsonLayers();
+        udv.Components.setupAndAddGeoJsonLayers(config, app.view3D.getItownsView());
 
         ////// REQUEST SERVICE
         const requestService = new udv.Components.RequestService();

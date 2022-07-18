@@ -21,3 +21,4 @@ export { THREEUtils };
 export { setupAndAdd3DTilesLayers } from './ItownsViewUtils';
 export { addBaseMapLayer } from './ItownsViewUtils';
 export { addElevationLayer } from './ItownsViewUtils';
+export { setupAndAddGeoJsonLayers } from './ItownsViewUtils';
