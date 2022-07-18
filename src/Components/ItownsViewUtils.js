@@ -126,7 +126,7 @@ export function setupAndAddGeoJsonLayers(config, itownsView) {
       url: layer.url,
       crs: layer.crs,
     });
-
+    
     // add optional source options
     if (layer['format']) {
       source.format = layer['format'];
