@@ -52,6 +52,14 @@
         "tilt": "17"
       }
     },
+    "GeoJSONLayers": [
+      { 
+        "id": "bus-lines",
+        "url": "./assets/geojson/tcl_sytral.tcllignebus_2_0_0.geojson",
+        "crs": "EPSG:3946",
+        "format": "application/json"
+      }
+    ],
     "3DTilesLayers": [
       {
         "id": "Lyon-1",
