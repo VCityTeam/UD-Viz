@@ -42,7 +42,7 @@
         iframe.src = `${window.location.origin}/examples/assets/html/billboard.html`;
         const billboard = new udv.Views.Billboard(
           iframe,
-          new udv.Game.Components.THREEUtils.Transform(
+          new udv.Components.THREEUtils.Transform(
             new udv.THREE.Vector3(center.x, center.y, 600),
             new udv.THREE.Vector3(Math.PI * 0.5, Math.PI * 0.2, 0),
             new udv.THREE.Vector3(20, 20, 20)
