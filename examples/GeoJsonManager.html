@@ -47,6 +47,34 @@
           binding: 's',
           name: 'Address Search',
         });
+
+        ////// LAYER CHOICE MODULE
+        const layerChoice = new udv.Widgets.LayerChoice(app.layerManager);
+        app.addModuleView('layerChoice', layerChoice);
+
+        // Declare the source for the data on Ariege area
+        const busSource = new udv.itowns.FileSource({
+                url: './assets/geojson/tcl_sytral.tcllignebus_2_0_0.geojson',
+                crs: 'EPSG:3946',
+                format: 'application/json',
+            });
+            // Create a ColorLayer for the Ariege area
+            const busLayer = new udv.itowns.ColorLayer('ariege', {
+                name: 'ariege',
+                transparent: true,
+                source: busSource,
+                style: new udv.itowns.Style({
+                    fill: {
+                        color: 'yellow',
+                        opacity: 0.5,
+                        },
+                        stroke: {
+                        color: 'red',
+                    },
+                }),
+            });
+            // Add the Ariege ColorLayer to the view and grant it a tooltip
+            app.view.addLayer(busLayer);
       });
     </script>
   </body>
