@@ -17,15 +17,6 @@
       const inputManager = new udv.Components.InputManager();
 
       app.start('../assets/config/all_widget_config.json').then((config) => {
-        udv.Components.addBaseMapLayer(config, app.view, app.extent);
-
-        udv.Components.addElevationLayer(config, app.view, app.extent);
-
-        udv.Components.setupAndAdd3DTilesLayers(
-          config,
-          app.layerManager,
-          app.view
-        );
 
         const slideShow = new udv.Widgets.SlideShow(app, inputManager);
         app.addModuleView('slideShow', slideShow);
