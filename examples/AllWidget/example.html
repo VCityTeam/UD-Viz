@@ -16,11 +16,15 @@
       const inputManager = new udv.Components.InputManager();
 
       app.start('../assets/config/all_widget_config.json').then((config) => {
-        app.addBaseMapLayer();
+        udv.Components.addBaseMapLayer(config, app.view, app.extent);
 
-        app.addElevationLayer();
+        udv.Components.addElevationLayer(config, app.view, app.extent);
 
-        app.setupAndAdd3DTilesLayers();
+        udv.Components.setupAndAdd3DTilesLayers(
+          config,
+          app.layerManager,
+          app.view
+        );
 
         ////// REQUEST SERVICE
         const requestService = new udv.Components.RequestService();
