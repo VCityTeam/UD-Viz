@@ -33,34 +33,19 @@
         const help = new udv.Widgets.Extensions.HelpWindow(config.helpWindow);
         app.addModuleView('help', help);
 
-        ////// GEOCODING EXTENSION
-        const geocodingService = new udv.Widgets.Extensions.GeocodingService(
-          requestService,
-          app.extent,
-          app.config
-        );
-        const geocodingView = new udv.Widgets.Extensions.GeocodingView(
-          geocodingService,
-          app.view
-        );
-        app.addModuleView('geocoding', geocodingView, {
-          binding: 's',
-          name: 'Address Search',
-        });
-
         ////// LAYER CHOICE MODULE
         const layerChoice = new udv.Widgets.LayerChoice(app.layerManager);
         app.addModuleView('layerChoice', layerChoice);
 
-        // Declare the source for the data on Ariege area
+        // Declare the source for the data on bus ligne
         const busSource = new udv.itowns.FileSource({
                 url: './assets/geojson/tcl_sytral.tcllignebus_2_0_0.geojson',
                 crs: 'EPSG:3946',
                 format: 'application/json',
             });
-            // Create a ColorLayer for the Ariege area
-            const busLayer = new udv.itowns.ColorLayer('ariege', {
-                name: 'ariege',
+            // Create a ColorLayer for the Bus ligne
+            const busLayer = new udv.itowns.ColorLayer('bus', {
+                name: 'bus',
                 transparent: true,
                 source: busSource,
                 style: new udv.itowns.Style({
@@ -73,8 +58,32 @@
                     },
                 }),
             });
-            // Add the Ariege ColorLayer to the view and grant it a tooltip
-            app.view.addLayer(busLayer);
+        // Add the Ariege ColorLayer to the view and grant it a tooltip
+        app.view.addLayer(busLayer);
+
+        // Declare the source for the data on bus ligne
+        const humiditySource = new udv.itowns.FileSource({
+                url: './assets/geojson/evg_esp_veg.evgmarezonehumide.geojson',
+                crs: 'EPSG:3946',
+                format: 'application/json',
+            });
+        // Create a ColorLayer for the Bus ligne
+        const humidityLayer = new udv.itowns.ColorLayer('Zone Humide', {
+            name: 'Zone Humide',
+            transparent: true,
+            source: humiditySource,
+            style: new udv.itowns.Style({
+                fill: {
+                    color: 'blue',
+                    opacity: 0.5,
+                },
+                stroke: {
+                    color: 'black',
+                },
+            }),
+        });
+        // Add the Ariege ColorLayer to the view and grant it a tooltip
+        app.view.addLayer(humidityLayer);
       });
     </script>
   </body>
