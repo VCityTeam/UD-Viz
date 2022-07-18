@@ -17,7 +17,7 @@
 
       app.start('./assets/config/geoJsonManager_config.json').then((config) => {
 
-        // udv.Components.setupAndAddGeoJsonLayers(config, app.view3D.getItownsView());
+        udv.Components.setupAndAddGeoJsonLayers(config, app.view3D.getItownsView());
 
         ////// REQUEST SERVICE
         const requestService = new udv.Components.RequestService();
@@ -33,72 +33,6 @@
         ////// LAYER CHOICE MODULE
         const layerChoice = new udv.Widgets.LayerChoice(app.layerManager);
         app.addModuleView('layerChoice', layerChoice);
-
-        // Declare the source for the data on bus ligne
-        const busSource = new udv.itowns.FileSource({
-                url: './assets/geojson/tcl_sytral.tcllignebus_2_0_0.geojson',
-                crs: 'EPSG:3946',
-                format: 'application/json',
-            });
-            // Create a ColorLayer for the Bus ligne
-            const busLayer = new udv.itowns.ColorLayer('bus', {
-                name: 'bus',
-                transparent: true,
-                source: busSource,
-                style: new udv.itowns.Style({
-                    fill: {
-                        color: 'black',
-                        opacity: 0.5,
-                        },
-                        stroke: {
-                        color: 'yellow',
-                    },
-                }),
-            });
-        app.view3D.getItownsView().addLayer(busLayer);
-
-        // Declare the source for the data on humidity land
-        const humiditySource = new udv.itowns.FileSource({
-                url: './assets/geojson/evg_esp_veg.evgmarezonehumide.geojson',
-                crs: 'EPSG:3946',
-                format: 'application/json',
-            });
-        // Create a ColorLayer for the humidity land
-        const humidityLayer = new udv.itowns.ColorLayer('Zone Humide', {
-            name: 'Zone Humide',
-            transparent: true,
-            source: humiditySource,
-            style: new udv.itowns.Style({
-                fill: {
-                    color: 'blue',
-                    opacity: 0.5,
-                },
-                stroke: {
-                    color: 'black',
-                },
-            }),
-        });
-        app.view3D.getItownsView().addLayer(humidityLayer);
-
-        // Declare the source for the data of velov position
-        const velovSource = new udv.itowns.FileSource({
-            url: './assets/geojson/velov.stations.geojson',
-            crs: 'EPSG:3946',
-            format: 'application/json',
-        });
-        // Create a ColorLayer for velov
-        const velovLayer = new udv.itowns.ColorLayer('Velo v', {
-            name: 'Velo v',
-            transparent: true,
-            source: velovSource,
-            style: new udv.itowns.Style({
-                point: { color: 'white', line: 'red' },
-                stroke: {
-                    color: 'black',
-                },
-            }),
-        });
-        app.view3D.getItownsView().addLayer(velovLayer);
       });
     </script>
   </body>
