@@ -18,6 +18,6 @@ export { LayerManager } from './LayerManager/LayerManager.js';
 import * as THREEUtils from './THREEUtils';
 export { THREEUtils };
 
-export { setupAndAdd3DTilesLayers } from './ViewUtils';
-export { addBaseMapLayer } from './ViewUtils';
-export { addElevationLayer } from './ViewUtils';
+export { setupAndAdd3DTilesLayers } from './ItownsViewUtils';
+export { addBaseMapLayer } from './ItownsViewUtils';
+export { addElevationLayer } from './ItownsViewUtils';
