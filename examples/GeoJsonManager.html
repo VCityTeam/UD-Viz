@@ -1,0 +1,53 @@
+<!-- @format -->
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>UD-Viz Widget Template example</title>
+
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  </head>
+  <body>
+    <!-- <script src="../../dist/release/udv.js"></script> -->
+    <script src="../../dist/debug/udv.js"></script>
+    <script type="text/javascript">
+      let app = new udv.Templates.AllWidget();
+      const inputManager = new udv.Components.InputManager();
+
+      app.start('./assets/config/geoJsonManager_config.json').then((config) => {
+        app.addBaseMapLayer();
+
+        app.addElevationLayer();
+
+        app.setupAndAdd3DTilesLayers();
+
+        ////// REQUEST SERVICE
+        const requestService = new udv.Components.RequestService();
+
+        ////// ABOUT MODULE
+        const about = new udv.Widgets.AboutWindow();
+        app.addModuleView('about', about);
+
+        ////// HELP MODULE
+        const help = new udv.Widgets.Extensions.HelpWindow(config.helpWindow);
+        app.addModuleView('help', help);
+
+        ////// GEOCODING EXTENSION
+        const geocodingService = new udv.Widgets.Extensions.GeocodingService(
+          requestService,
+          app.extent,
+          app.config
+        );
+        const geocodingView = new udv.Widgets.Extensions.GeocodingView(
+          geocodingService,
+          app.view
+        );
+        app.addModuleView('geocoding', geocodingView, {
+          binding: 's',
+          name: 'Address Search',
+        });
+      });
+    </script>
+  </body>
+</html>
