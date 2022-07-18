@@ -125,22 +125,10 @@ export function setupAndAddGeoJsonLayers(config, itownsView) {
     const source = new itowns.FileSource({
       url: layer.url,
       crs: layer.crs,
+      format: 'application/json',
     });
-    
-    // add optional source options
-    if (layer['format']) {
-      source.format = layer['format'];
-    }
 
-    const layerStyle = new itowns.Style({
-      fill: {
-          color: 'white',
-          opacity: 0.5,
-          },
-          stroke: {
-          color: 'black',
-      },
-    })
+    const layerStyle = new itowns.Style(layer.style);
 
     const geojsonLayer = new itowns.ColorLayer(layer.id, {
       name: layer.id,
