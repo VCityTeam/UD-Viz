@@ -93,30 +93,6 @@
         "url": "https://dataset-dl.liris.cnrs.fr/three-d-tiles-lyon-metropolis/2015/Lyon-8_2015/tileset.json",
         "color": "0xFFFFFF"
       }
-    ],
-    "geocoding": {
-      "url": "https://nominatim.openstreetmap.org/search",
-      "credit": "© OpenStreetMap contributors under <a href=\"https://www.openstreetmap.org/copyright\">ODbL</a>",
-      "requestTimeIntervalMs": "1000",
-      "result": {
-        "format": "json",
-        "basePath": "",
-        "lng": "lon",
-        "lat": "lat"
-      },
-      "parameters": {
-        "q": {
-          "fill": "query"
-        },
-        "format": {
-          "fill": "value",
-          "value": "json"
-        },
-        "viewbox": {
-          "fill": "extent",
-          "format": "WEST,SOUTH,EAST,NORTH"
-        }
-      }
-    }
+    ]
   }
   
