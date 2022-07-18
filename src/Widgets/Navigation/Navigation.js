@@ -50,7 +50,7 @@ export class Navigation extends ModuleView {
     renderer.setAnimationLoop(() => {
       view3D.notifyChange();
       //Get z rotation of the camera and convert in degree
-      document.getElementById('compass').style.transform = `rotate(${-THREE.Math.radToDeg(camera.rotation.z)}deg)`;
+      document.getElementById('compass').style.transform = `rotate(${THREE.Math.radToDeg(camera.rotation.z)}deg)`;
     });
   }
 
