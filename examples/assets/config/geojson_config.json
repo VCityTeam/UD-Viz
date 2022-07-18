@@ -52,7 +52,7 @@
   "GeoJSONLayers": [
     {
       "id": "bus-lines",
-      "url": "./assets/geojson/tcl_sytral.tcllignebus_2_0_0.geojson",
+      "url": "https://download.data.grandlyon.com/wfs/rdata?SERVICE=WFS&VERSION=2.0.0&request=GetFeature&typename=tcl_sytral.tcllignebus_2_0_0&outputFormat=application/json; subtype=geojson&SRSNAME=EPSG:3946",
       "crs": "EPSG:3946",
       "style": {
         "fill": {
@@ -66,7 +66,7 @@
     },
     {
       "id": "Zones-Humides",
-      "url": "./assets/geojson/evg_esp_veg.evgmarezonehumide.geojson",
+      "url": "https://download.data.grandlyon.com/wfs/grandlyon?SERVICE=WFS&VERSION=2.0.0&request=GetFeature&typename=evg_esp_veg.evgmarezonehumide&outputFormat=application/json; subtype=geojson&SRSNAME=EPSG:3946",
       "crs": "EPSG:3946",
       "style": {
         "fill": {
@@ -80,7 +80,7 @@
     },
     {
       "id": "velo-v",
-      "url": "./assets/geojson/velov.stations.geojson",
+      "url": "https://download.data.grandlyon.com/wfs/grandlyon?SERVICE=WFS&VERSION=2.0.0&request=GetFeature&typename=pvo_patrimoine_voirie.pvostationvelov&outputFormat=application/json; subtype=geojson&SRSNAME=EPSG:3946",
       "crs": "EPSG:3946",
       "style": {
         "point": {
