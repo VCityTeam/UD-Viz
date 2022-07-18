@@ -12,7 +12,7 @@ import { Audio, Render } from '../../Game/Game';
 import { computeNearFarCamera } from '../../Components/Camera/CameraUtils';
 
 const udvGame = require('../../Game/Game');
-const THREEUtils = udvGame.Components.THREEUtils;
+import * as THREEUtils from '../../Components/THREEUtils';
 
 /**
  * Main view of an ud-viz game application
