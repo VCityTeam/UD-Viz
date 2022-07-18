@@ -436,14 +436,14 @@ export class AllWidget {
    * @param {string} layerConfig The name of the layer to setup from the
    * generalDemoConfig.json config file (should be one of the properties
    * of the 3DTilesLayer object in
-   * UD-Viz/UD-Viz-Core/examples/data/config/generalDemoConfig.json
+   * UD-Viz/examples/config/all_widget_config.json
    * config file).
    */
   setup3DTilesLayer(layer) {
     if (!layer['id'] || !layer['url']) {
       throw (
-        'Your layer does not have url id properties or both. ' +
-        '(in UD-Viz/UD-Viz-Core/examples/data/config/generalDemoConfig.json)'
+        'Your layer does not have either "url" or "id" properties. ' +
+        '(in UD-Viz/examples/config/all_widget_config.json)'
       );
     }
 
@@ -513,7 +513,7 @@ export class AllWidget {
    * @param {string} layerConfig The name of the layer to setup from the
    * generalDemoConfig.json config file (should be one of the properties
    * of the 3DTilesLayer object in
-   * UD-Viz/UD-Viz-Core/examples/data/config/generalDemoConfig.json
+   * UD-Viz/examples/config/all_widget_config.json
    * config file).
    */
   setupAndAdd3DTilesLayers() {
@@ -528,6 +528,75 @@ export class AllWidget {
     }
     this.update3DView();
     return layers;
+  }
+
+  /**
+   * Create an iTowns GeoJson layer based on the specified layerConfig.
+   * @param {string} layerConfig The name of the layer to setup from the
+   * all_widget_config.json config file (should be one of the properties
+   * of the GeoJsonLayer object in
+   * UD-Viz/examples/config/all_widget_config.json
+   * config file).
+   */
+  setupAndAddGeoJsonLayer(layer) {
+    if (!layer['id'] || !layer['url'] || !layer['crs']) {
+      throw (
+        'Your layer does not have either "url", "crs" or "id" properties. ' +
+        '(in UD-Viz/examples/config/all_widget_config.json)'
+      );
+    }
+
+    // Declare the data source for the layer
+    const source = new itowns.FileSource({
+      url: layer.url,
+      crs: layer.crs,
+    });
+
+    // add optional source options
+    if (layer['format']) {
+      source.format = layer['format'];
+    }
+
+    const layerStyle = new itowns.Style({
+      fill: {
+          color: 'white',
+          opacity: 0.5,
+          },
+          stroke: {
+          color: 'black',
+      },
+    })
+
+    const geojsonLayer = new itowns.ColorLayer(layer.id, {
+      name: layer.id,
+      transparent: true,
+      source: source,
+      style: layerStyle,
+    });
+    this.view.addLayer(geojsonLayer);
+    // return geojsonLayer;
+  }
+
+  /**
+   * Sets up a GeoJson layers and adds them to the itowns view (for the demos
+   * that don't need more granularity than that).
+   * @param {string} layerConfig The name of the layer to setup from the
+   * generalDemoConfig.json config file (should be one of the properties
+   * of the 3DTilesLayer object in
+   * UD-Viz/examples/config/all_widget_config.json
+   * config file).
+   */
+  setupAndAddGeoJsonLayers() {
+    // Positional arguments verification
+    if (!this.config['GeoJSONLayers']) {
+      throw 'No GeoJSONLayers field in the configuration file';
+    }
+    const layers = {};
+    for (let layer of this.config['GeoJSONLayers']) {
+      // layers[layer.id] = this.setupGeoJsonLayer(layer);
+      // this.addGeoJsonLayer(layers[layer.id]);
+      this.setupAndAddGeoJsonLayer(layer);
+    }
   }
 
   /**
