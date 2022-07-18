@@ -14,11 +14,6 @@
       let app = new udv.Templates.AllWidget();
 
       app.start('../assets/config/all_widget_config.json').then((config) => {
-        app.addBaseMapLayer();
-
-        app.addElevationLayer();
-
-        app.setupAndAdd3DTilesLayers();
 
         ////// REQUEST SERVICE
         const requestService = new udv.Components.RequestService();
@@ -33,7 +28,7 @@
 
         ////// CITY OBJECTS MODULE
         let cityObjectModule = new udv.Widgets.CityObjectModule(
-          app.layerManager,
+          app.view3D.layerManager,
           app.config
         );
         app.addModuleView('cityObjects', cityObjectModule.view);

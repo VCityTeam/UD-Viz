@@ -13,3 +13,12 @@ export { focusCameraOn } from './Camera/CameraUtils';
 
 export { InputManager } from './InputManager';
 
+export { LayerManager } from './LayerManager/LayerManager.js';
+
+import * as THREEUtils from './THREEUtils';
+export { THREEUtils };
+
+export { setupAndAdd3DTilesLayers } from './ItownsViewUtils';
+export { addBaseMapLayer } from './ItownsViewUtils';
+export { addElevationLayer } from './ItownsViewUtils';
+export { setupAndAddGeoJsonLayers } from './ItownsViewUtils';

@@ -14,12 +14,6 @@
       let app = new udv.Templates.AllWidget();
 
       app.start('../assets/config/all_widget_config.json').then((config) => {
-        app.addBaseMapLayer();
-
-        app.addElevationLayer();
-
-        app.setupAndAdd3DTilesLayers();
-
         ////// ABOUT MODULE
         const about = new udv.Widgets.AboutWindow();
         app.addModuleView('about', about);
@@ -29,8 +23,9 @@
         app.addModuleView('help', help);
 
         ////// 3DTILES DEBUG
-        const debug3dTilesWindow =
-          new udv.Widgets.Extensions.Debug3DTilesWindow(app.layerManager);
+        const debug3dTilesWindow = new udv.Widgets.Debug3DTilesWindow(
+          app.view3D.getLayerManager()
+        );
         app.addModuleView('3dtilesDebug', debug3dTilesWindow, {
           name: '3DTiles Debug',
         });

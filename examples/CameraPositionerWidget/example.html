@@ -14,12 +14,6 @@
       let app = new udv.Templates.AllWidget();
 
       app.start('../assets/config/all_widget_config.json').then((config) => {
-        app.addBaseMapLayer();
-
-        app.addElevationLayer();
-
-        app.setupAndAdd3DTilesLayers();
-
         ////// REQUEST SERVICE
         const requestService = new udv.Components.RequestService();
 
@@ -32,7 +26,9 @@
         app.addModuleView('help', help);
 
         ////// CAMERA POSITIONER
-        const cameraPosition = new udv.Widgets.CameraPositionerView(app.view);
+        const cameraPosition = new udv.Widgets.CameraPositionerView(
+          app.view3D.getItownsView()
+        );
         app.addModuleView('cameraPositioner', cameraPosition);
       });
     </script>
