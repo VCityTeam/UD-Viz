@@ -16,16 +16,6 @@
       app
         .start('../assets/config/layerChoice_widget_config.json')
         .then((config) => {
-          udv.Components.addBaseMapLayer(config, app.view, app.extent);
-
-          udv.Components.addElevationLayer(config, app.view, app.extent);
-
-          udv.Components.setupAndAdd3DTilesLayers(
-            config,
-            app.layerManager,
-            app.view
-          );
-
           ////// ABOUT MODULE
           const about = new udv.Widgets.AboutWindow();
           app.addModuleView('about', about);
@@ -35,7 +25,9 @@
           app.addModuleView('help', help);
 
           ////// LAYER CHOICE MODULE
-          const layerChoice = new udv.Widgets.LayerChoice(app.layerManager);
+          const layerChoice = new udv.Widgets.LayerChoice(
+            app.view3D.getLayerManager()
+          );
           app.addModuleView('layerChoice', layerChoice);
         });
     </script>
