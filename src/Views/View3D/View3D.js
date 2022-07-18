@@ -10,13 +10,10 @@ import './View3D.css';
 import { InputManager } from '../../Components/InputManager';
 
 import * as proj4 from 'proj4';
-import { TilesManager } from '../../Components/Components';
-import { LayerManager } from '../../Widgets/Components/Components'; //TODO LayerManager should be a components one level above
-
-import { Widgets } from '../..';
-const $3DTemporalBatchTable = Widgets.$3DTemporalBatchTable;
-const $3DTemporalBoundingVolume = Widgets.$3DTemporalBoundingVolume;
-const $3DTemporalTileset = Widgets.$3DTemporalTileset;
+import { LayerManager } from '../../Components/Components';
+import { addBaseMapLayer } from '../../Components/Components';
+import { addElevationLayer } from '../../Components/Components';
+import { setupAndAdd3DTilesLayers } from '../../Components/Components';
 
 /**
  *  Main view of an ud-viz application
@@ -376,159 +373,16 @@ export class View3D {
     this.renderer = this.itownsView.mainLoop.gfxEngine.renderer;
     this.camera = this.itownsView.camera.camera3D;
 
-    //City generation
-    this.addBaseMapLayer();
-    this.addElevationLayer();
-    this.setupAndAdd3DTilesLayers();
+    //layermanager
+    this.layerManager = new LayerManager(this.itownsView);
+
+    addBaseMapLayer(this.config, this.itownsView, this.extent);
+    addElevationLayer(this.config, this.itownsView, this.extent);
+    setupAndAdd3DTilesLayers(this.config, this.layerManager, this.itownsView);
 
     //disable itowns resize
     this.itownsViewResize = this.itownsView.resize.bind(this.itownsView);
     this.itownsView.resize = function () {};
-  }
-
-  /**
-   * Adds WMS imagery layer
-   */
-  addBaseMapLayer() {
-    if (!this.config['background_image_layer']) {
-      console.warn('no background_image_layer in config');
-      return;
-    }
-    let wmsImagerySource = new itowns.WMSSource({
-      extent: this.extent,
-      name: this.config['background_image_layer']['name'],
-      url: this.config['background_image_layer']['url'],
-      version: this.config['background_image_layer']['version'],
-      projection: this.projection,
-      format: this.config['background_image_layer']['format'],
-    });
-
-    // Add a WMS imagery layer
-    let wmsImageryLayer = new itowns.ColorLayer(
-      this.config['background_image_layer']['layer_name'],
-      {
-        updateStrategy: {
-          type: itowns.STRATEGY_DICHOTOMY,
-          options: {},
-        },
-        source: wmsImagerySource,
-        transparent: true,
-      }
-    );
-    this.itownsView.addLayer(wmsImageryLayer);
-  }
-
-  /**
-   * Adds WMS elevation Layer
-   */
-  addElevationLayer() {
-    if (!this.config['elevation_layer']) {
-      console.warn('no elevation_layer in config');
-      return;
-    }
-
-    // Add a WMS elevation source
-    let wmsElevationSource = new itowns.WMSSource({
-      extent: this.extent,
-      url: this.config['elevation_layer']['url'],
-      name: this.config['elevation_layer']['name'],
-      projection: this.projection,
-      heightMapWidth: 256,
-      format: this.config['elevation_layer']['format'],
-    });
-    // Add a WMS elevation layer
-    let wmsElevationLayer = new itowns.ElevationLayer(
-      this.config['elevation_layer']['layer_name'],
-      {
-        useColorTextureElevation: true,
-        colorTextureElevationMinZ: 149,
-        colorTextureElevationMaxZ: 622,
-        source: wmsElevationSource,
-      }
-    );
-    this.itownsView.addLayer(wmsElevationLayer);
-  }
-
-  /**
-   * Sets up a 3D Tiles layer and adds it to the itowns view
-   * @param {string} layerConfig The name of the layer to setup
-   */
-  setupAndAdd3DTilesLayers() {
-    // Positional arguments verification
-    if (!this.config['3DTilesLayers']) {
-      console.warn('No 3DTilesLayers field in the configuration file');
-      return;
-    }
-
-    this.layerManager = new LayerManager(this.itownsView);
-
-    const layers = {};
-    for (let layer of this.config['3DTilesLayers']) {
-      layers[layer.id] = this.setup3DTilesLayer(layer);
-      itowns.View.prototype.addLayer.call(this.itownsView, layers[layer.id][0]);
-    }
-    return layers;
-  }
-
-  /**
-   * Create an iTowns 3D Tiles layer based on the specified layerConfig.
-   * @param {string} layerConfig The name of the layer to setup from the
-   * generalDemoConfig.json config file
-   */
-  setup3DTilesLayer(layer) {
-    if (!layer['id'] || !layer['url']) {
-      throw 'Your layer does not have url id properties or both. ';
-    }
-
-    const extensionsConfig = layer['extensions'];
-    const extensions = new itowns.C3DTExtensions();
-    if (extensionsConfig) {
-      for (let i = 0; i < extensionsConfig.length; i++) {
-        if (extensionsConfig[i] === '3DTILES_temporal') {
-          extensions.registerExtension('3DTILES_temporal', {
-            [itowns.C3DTilesTypes.batchtable]: $3DTemporalBatchTable,
-            [itowns.C3DTilesTypes.boundingVolume]: $3DTemporalBoundingVolume,
-            [itowns.C3DTilesTypes.tileset]: $3DTemporalTileset,
-          });
-        } else if (extensionsConfig[i] === '3DTILES_batch_table_hierarchy') {
-          extensions.registerExtension('3DTILES_batch_table_hierarchy', {
-            [itowns.C3DTilesTypes.batchtable]:
-              itowns.C3DTBatchTableHierarchyExtension,
-          });
-        } else {
-          console.warn(
-            'The 3D Tiles extension ' +
-              extensionsConfig[i] +
-              ' specified in generalDemoConfig.json is not supported ' +
-              'by UD-Viz yet. Only 3DTILES_temporal and ' +
-              '3DTILES_batch_table_hierarchy are supported.'
-          );
-        }
-      }
-    }
-
-    const $3dTilesLayer = new itowns.C3DTilesLayer(
-      layer['id'],
-      {
-        name: layer['id'],
-        source: new itowns.C3DTilesSource({
-          url: layer['url'],
-        }),
-        registeredExtensions: extensions,
-        overrideMaterials: false,
-      },
-      this.itownsView
-    );
-
-    const $3DTilesManager = new TilesManager(this.itownsView, $3dTilesLayer);
-    if (layer['color']) {
-      let color = parseInt(layer['color']);
-      $3DTilesManager.color = color;
-    }
-
-    this.layerManager.tilesManagers.push($3DTilesManager);
-
-    return [$3dTilesLayer, $3DTilesManager];
   }
 
   getLayerManager() {

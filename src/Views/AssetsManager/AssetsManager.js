@@ -5,7 +5,7 @@ import * as THREE from 'three';
 import * as jquery from 'jquery';
 import GameObject from '../../Game/GameObject/GameObject';
 import { Howl } from 'howler';
-const THREEUtils = require('../../Game/Components/THREEUtils');
+const THREEUtils = require('../../Components/THREEUtils');
 
 /**
  * Default material used by native objects
