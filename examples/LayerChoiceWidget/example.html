@@ -16,11 +16,15 @@
       app
         .start('../assets/config/layerChoice_widget_config.json')
         .then((config) => {
-          app.addBaseMapLayer();
+          udv.Components.addBaseMapLayer(config, app.view, app.extent);
 
-          app.addElevationLayer();
+          udv.Components.addElevationLayer(config, app.view, app.extent);
 
-          app.setupAndAdd3DTilesLayers();
+          udv.Components.setupAndAdd3DTilesLayers(
+            config,
+            app.layerManager,
+            app.view
+          );
 
           ////// ABOUT MODULE
           const about = new udv.Widgets.AboutWindow();

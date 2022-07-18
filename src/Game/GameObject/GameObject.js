@@ -13,7 +13,7 @@ const ColliderComponent = require('./Components/Collider');
 const WorldScriptComponent = require('./Components/WorldScript');
 const AudioComponent = require('./Components/Audio');
 const LocalScriptModule = require('./Components/LocalScript');
-const THREEUtils = require('../Components/THREEUtils');
+const THREEUtils = require('../../Components/THREEUtils');
 
 /**
  * Objects to compose a Game

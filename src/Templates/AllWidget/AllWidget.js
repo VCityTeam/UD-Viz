@@ -1,12 +1,10 @@
 /** @format */
 
 //Components
-import { TilesManager } from '../../Components/Components';
+import { THREEUtils } from '../../Components/Components';
 import { Widgets, itowns, proj4, THREE, jquery } from '../../index';
 const ModuleView = Widgets.Components.ModuleView;
-const $3DTemporalBatchTable = Widgets.$3DTemporalBatchTable;
-const $3DTemporalBoundingVolume = Widgets.$3DTemporalBoundingVolume;
-const $3DTemporalTileset = Widgets.$3DTemporalTileset;
+import { LayerManager } from '../../Components/Components';
 
 import './AllWidget.css';
 
@@ -51,7 +49,12 @@ export class AllWidget {
         //dynamic near far computation
         _this.view.addFrameRequester(
           itowns.MAIN_LOOP_EVENTS.BEFORE_RENDER,
-          computeNearFarCamera.bind(null, _this.view.camera.camera3D, _this.extent, 400)
+          computeNearFarCamera.bind(
+            null,
+            _this.view.camera.camera3D,
+            _this.extent,
+            400
+          )
         );
 
         resolve(_this.config);
@@ -380,157 +383,6 @@ export class AllWidget {
   }
 
   /**
-   * Adds WMS elevation Layer of Lyon in 2012 and WMS imagery layer of Lyon in 2009 (from Grand Lyon data).
-   */
-  addBaseMapLayer() {
-    let wmsImagerySource = new itowns.WMSSource({
-      extent: this.extent,
-      name: this.config['background_image_layer']['name'],
-      url: this.config['background_image_layer']['url'],
-      version: this.config['background_image_layer']['version'],
-      projection: this.config['projection'],
-      format: this.config['background_image_layer']['format'],
-    });
-    // Add a WMS imagery layer
-    let wmsImageryLayer = new itowns.ColorLayer(
-      this.config['background_image_layer']['layer_name'],
-      {
-        updateStrategy: {
-          type: itowns.STRATEGY_DICHOTOMY,
-          options: {},
-        },
-        source: wmsImagerySource,
-        transparent: true,
-      }
-    );
-    this.view.addLayer(wmsImageryLayer);
-    this.update3DView();
-  }
-
-  addElevationLayer() {
-    // Add a WMS elevation source
-    let wmsElevationSource = new itowns.WMSSource({
-      extent: this.extent,
-      url: this.config['elevation_layer']['url'],
-      name: this.config['elevation_layer']['name'],
-      projection: this.config['projection'],
-      heightMapWidth: 256,
-      format: this.config['elevation_layer']['format'],
-    });
-    // Add a WMS elevation layer
-    let wmsElevationLayer = new itowns.ElevationLayer(
-      this.config['elevation_layer']['layer_name'],
-      {
-        useColorTextureElevation: true,
-        colorTextureElevationMinZ: 144,
-        colorTextureElevationMaxZ: 622,
-        source: wmsElevationSource,
-      }
-    );
-    this.view.addLayer(wmsElevationLayer);
-    this.update3DView();
-  }
-
-  /**
-   * Create an iTowns 3D Tiles layer based on the specified layerConfig.
-   * @param {string} layerConfig The name of the layer to setup from the
-   * generalDemoConfig.json config file (should be one of the properties
-   * of the 3DTilesLayer object in
-   * UD-Viz/UD-Viz-Core/examples/data/config/generalDemoConfig.json
-   * config file).
-   */
-  setup3DTilesLayer(layer) {
-    if (!layer['id'] || !layer['url']) {
-      throw (
-        'Your layer does not have url id properties or both. ' +
-        '(in UD-Viz/UD-Viz-Core/examples/data/config/generalDemoConfig.json)'
-      );
-    }
-
-    const extensionsConfig = layer['extensions'];
-    let extensions = new itowns.C3DTExtensions();
-    if (extensionsConfig) {
-      for (let i = 0; i < extensionsConfig.length; i++) {
-        if (extensionsConfig[i] === '3DTILES_temporal') {
-          extensions.registerExtension('3DTILES_temporal', {
-            [itowns.C3DTilesTypes.batchtable]: $3DTemporalBatchTable,
-            [itowns.C3DTilesTypes.boundingVolume]: $3DTemporalBoundingVolume,
-            [itowns.C3DTilesTypes.tileset]: $3DTemporalTileset,
-          });
-        } else if (extensionsConfig[i] === '3DTILES_batch_table_hierarchy') {
-          extensions.registerExtension('3DTILES_batch_table_hierarchy', {
-            [itowns.C3DTilesTypes.batchtable]:
-              itowns.C3DTBatchTableHierarchyExtension,
-          });
-        } else {
-          console.warn(
-            'The 3D Tiles extension ' +
-            extensionsConfig[i] +
-            ' specified in generalDemoConfig.json is not supported ' +
-            'by UD-Viz yet. Only 3DTILES_temporal and ' +
-            '3DTILES_batch_table_hierarchy are supported.'
-          );
-        }
-      }
-    }
-
-    var $3dTilesLayer = new itowns.C3DTilesLayer(
-      layer['id'],
-      {
-        name: layer['id'],
-        source: new itowns.C3DTilesSource({
-          url: layer['url'],
-        }),
-        registeredExtensions: extensions,
-        overrideMaterials: false,
-      },
-      this.view
-    );
-
-    const $3DTilesManager = new TilesManager(this.view, $3dTilesLayer);
-
-    if (layer['color']) {
-      let color = parseInt(layer['color']);
-      $3DTilesManager.color = color;
-    }
-
-    this.layerManager.tilesManagers.push($3DTilesManager);
-
-    return [$3dTilesLayer, $3DTilesManager];
-  }
-
-  /**
-   * Adds the specified 3D Tiles layer to the iTowns 3D view.
-   * @param {itowns.C3DTilesLayer} layer The layer to add to itowns view.
-   */
-  add3DTilesLayer(layer) {
-    itowns.View.prototype.addLayer.call(this.view, layer);
-  }
-
-  /**
-   * Sets up a 3D Tiles layer and adds it to the itowns view (for the demos
-   * that don't need more granularity than that).
-   * @param {string} layerConfig The name of the layer to setup from the
-   * generalDemoConfig.json config file (should be one of the properties
-   * of the 3DTilesLayer object in
-   * UD-Viz/UD-Viz-Core/examples/data/config/generalDemoConfig.json
-   * config file).
-   */
-  setupAndAdd3DTilesLayers() {
-    // Positional arguments verification
-    if (!this.config['3DTilesLayers']) {
-      throw 'No 3DTilesLayers field in the configuration file';
-    }
-    const layers = {};
-    for (let layer of this.config['3DTilesLayers']) {
-      layers[layer.id] = this.setup3DTilesLayer(layer);
-      this.add3DTilesLayer(layers[layer.id][0]);
-    }
-    this.update3DView();
-    return layers;
-  }
-
-  /**
    * Initializes the iTowns 3D view according the config.
    */
   init3DView() {
@@ -540,7 +392,7 @@ export class AllWidget {
     proj4.default.defs(
       'EPSG:3946',
       '+proj=lcc +lat_1=45.25 +lat_2=46.75' +
-      ' +lat_0=46 +lon_0=3 +x_0=1700000 +y_0=5200000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs'
+        ' +lat_0=46 +lon_0=3 +x_0=1700000 +y_0=5200000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs'
     );
 
     // Define geographic extent: CRS, min/max X, min/max Y
@@ -597,24 +449,19 @@ export class AllWidget {
         tilt: tilt,
       },
     });
-    this.layerManager = new Widgets.Components.LayerManager(this.view);
+    this.layerManager = new LayerManager(this.view);
     // ********* 3D Elements
     // Lights
-    let directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
-    directionalLight.position.set(0, 0, 20000);
-    directionalLight.updateMatrixWorld();
-    this.view.scene.add(directionalLight);
-
-    let ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
-    ambientLight.position.set(0, 0, 3000);
-    directionalLight.updateMatrixWorld();
-    this.view.scene.add(ambientLight);
+    THREEUtils.addLights(this.view.scene);
 
     // Controls
     this.controls = this.view.controls;
 
     // Set sky color to blue
-    this.view.mainLoop.gfxEngine.renderer.setClearColor(0x6699cc, 1);
+    THREEUtils.initRenderer(
+      this.view.mainLoop.gfxEngine.renderer,
+      new THREE.Color(0x6699cc)
+    );
   }
   /*
    * Updates the 3D view by notifying iTowns that it changed (e.g. because a layer has been added).

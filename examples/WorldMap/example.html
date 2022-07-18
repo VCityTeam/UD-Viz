@@ -14,7 +14,7 @@
       let app = new udv.Templates.AllWidget();
 
       app.start('../assets/config/worldMap_config.json').then((config) => {
-        app.addBaseMapLayer();
+        udv.Components.addBaseMapLayer(config, app.view, app.extent);
 
         ////// ABOUT MODULE
         const about = new udv.Widgets.AboutWindow();
