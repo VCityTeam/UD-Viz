@@ -6,6 +6,13 @@ const $3DTemporalBatchTable = Widgets.$3DTemporalBatchTable;
 const $3DTemporalBoundingVolume = Widgets.$3DTemporalBoundingVolume;
 const $3DTemporalTileset = Widgets.$3DTemporalTileset;
 
+/**
+ * Setup and add 3D tiles to an itowns view
+ * @param {*} config must contain a 3DTilesLayers field array with each 3d tile url
+ * @param {LayerManager} layerManager a layer manager
+ * @param {itowns.View} itownsView 
+ * @returns a map of each 3d tiles layer
+ */
 export function setupAndAdd3DTilesLayers(config, layerManager, itownsView) {
   // Positional arguments verification
   if (!config['3DTilesLayers']) {
@@ -81,6 +88,12 @@ export function setupAndAdd3DTilesLayers(config, layerManager, itownsView) {
   return layers;
 }
 
+/**
+ * Add Base map layer to an itowns view
+ * @param {*} config must contains a field background_image_layer
+ * @param {itowns.View} itownsView 
+ * @param {itowns.Extent} extent extent of the view
+ */
 export function addBaseMapLayer(config, itownsView, extent) {
   let wmsImagerySource = new itowns.WMSSource({
     extent: extent,
@@ -105,6 +118,12 @@ export function addBaseMapLayer(config, itownsView, extent) {
   itownsView.addLayer(wmsImageryLayer);
 }
 
+/**
+ * Add Elevation map layer to an itowns view
+ * @param {*} config must contains a field elevation_layer
+ * @param {itowns.View} itownsView 
+ * @param {itowns.Extent} extent extent of the view
+ */
 export function addElevationLayer(config, itownsView, extent) {
   // Add a WMS elevation source
   let wmsElevationSource = new itowns.WMSSource({
