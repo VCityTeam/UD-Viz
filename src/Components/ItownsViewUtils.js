@@ -88,8 +88,6 @@ export function setupAndAdd3DTilesLayers(config, layerManager, itownsView) {
   return layers;
 }
 
-
-
 /**
  * Sets up a GeoJson layers and adds them to the itowns view (for the demos
  * that don't need more granularity than that).
@@ -100,7 +98,6 @@ export function setupAndAdd3DTilesLayers(config, layerManager, itownsView) {
  * config file).
  */
 export function setupAndAddGeoJsonLayers(config, itownsView) {
-  
   // Positional arguments verification
   if (!config['GeoJSONLayers']) {
     throw 'No GeoJSONLayers field in the configuration file';
@@ -138,7 +135,7 @@ export function setupAndAddGeoJsonLayers(config, itownsView) {
     });
     itownsView.addLayer(geojsonLayer);
     // return geojsonLayer;
-  }
+  };
 
   const layers = {};
   for (let layer of config['GeoJSONLayers']) {
