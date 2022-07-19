@@ -22,5 +22,6 @@ module.exports = {
     'no-unused-vars': 'off',
     camelcase: 'off',
     'prefer-const': [2, { destructuring: 'any' }],
+    'no-duplicate-imports': ['error', { includeExports: true }],
   },
 };

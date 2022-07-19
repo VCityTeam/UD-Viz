@@ -6,7 +6,7 @@ export function RequestService() {
   this.useAuthentication = false;
 
   // eslint-disable-next-line func-names
-  this.initialize = function () { };
+  this.initialize = function () {};
 
   /**
    * @deprecated Prefer using `RequestService.request` instead.
@@ -56,7 +56,6 @@ export function RequestService() {
     return new Promise((resolve, reject) => {
       const req = new XMLHttpRequest();
       if (urlParameters) {
-        // eslint-disable-line no-extra-boolean-cast
         url += '?';
         for (const [paramKey, paramValue] of Object.entries(urlParameters)) {
           url += `${encodeURIComponent(paramKey)}=${encodeURIComponent(
@@ -76,11 +75,10 @@ export function RequestService() {
       }
 
       if (responseType) {
-        // eslint-disable-line no-extra-boolean-cast
         req.responseType = responseType;
       }
 
-      // req.send(body);
+      req.send(body);
 
       req.onload = () => {
         if (req.status >= 200 && req.status < 300) {
