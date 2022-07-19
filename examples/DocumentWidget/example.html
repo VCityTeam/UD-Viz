@@ -14,16 +14,6 @@
       let app = new udv.Templates.AllWidget();
 
       app.start('../assets/config/all_widget_config.json').then((config) => {
-        udv.Components.addBaseMapLayer(config, app.view, app.extent);
-
-        udv.Components.addElevationLayer(config, app.view, app.extent);
-
-        udv.Components.setupAndAdd3DTilesLayers(
-          config,
-          app.layerManager,
-          app.view
-        );
-
         ////// REQUEST SERVICE
         const requestService = new udv.Components.RequestService();
 
@@ -58,8 +48,8 @@
         ////// DOCUMENTS VISUALIZER EXTENSION (to orient the document)
         const imageOrienter = new udv.Widgets.DocumentVisualizerWindow(
           documentModule,
-          app.view,
-          app.controls
+          app.view3D.getItownsView(),
+          app.view3D.getItownsView().controls
         );
 
         ////// CONTRIBUTE EXTENSION
@@ -67,8 +57,8 @@
           documentModule,
           imageOrienter,
           requestService,
-          app.view,
-          app.controls,
+          app.view3D.getItownsView(),
+          app.view3D.getItownsView().controls,
           app.config
         );
 
@@ -88,7 +78,7 @@
 
         ////// CITY OBJECTS MODULE
         let cityObjectModule = new udv.Widgets.CityObjectModule(
-          app.layerManager,
+          app.view3D.getLayerManager(),
           app.config
         );
         app.addModuleView('cityObjects', cityObjectModule.view);
@@ -98,8 +88,8 @@
           documentModule,
           cityObjectModule,
           requestService,
-          app.view,
-          app.controls,
+          app.view3D.getItownsView(),
+          app.view3D.getItownsView().controls,
           app.config
         );
       });

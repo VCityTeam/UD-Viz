@@ -19,8 +19,6 @@ export class SlideShow extends Window {
     this.inputManager = inputManager;
     /** @type {itowns.Extent} */
     this.extent = app.extent;
-    /** @type {itowns.PlanarView} */
-    this.view = app.view;
     this.conf = app.config.slideShow || null;
 
     //content html
@@ -579,7 +577,7 @@ export class SlideShow extends Window {
     this.plane.material.map = this.currentTexture || this.plane.material.map;
 
     this.plane.updateMatrixWorld();
-    this.view.scene.add(this.plane);
+    this.app.view3D.getScene().add(this.plane);
     this.app.update3DView();
   }
 

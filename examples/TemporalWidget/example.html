@@ -16,16 +16,6 @@
       app
         .start('../assets/config/temporal_widget_config.json')
         .then((config) => {
-          udv.Components.addBaseMapLayer(config, app.view, app.extent);
-
-          udv.Components.addElevationLayer(config, app.view, app.extent);
-
-          udv.Components.setupAndAdd3DTilesLayers(
-            config,
-            app.layerManager,
-            app.view
-          );
-
           ////// ABOUT MODULE
           const about = new udv.Widgets.AboutWindow();
           app.addModuleView('about', about);
@@ -36,7 +26,7 @@
 
           ////// TEMPORAL MODULE
           const temporalModule = new udv.Widgets.TemporalModule(
-            app.layerManager.tilesManagers[0],
+            app.view3D.getLayerManager().tilesManagers[0],
             app.config.temporalModule
           );
           app.addModuleView('temporal', temporalModule.view);

@@ -10,7 +10,7 @@ const $3DTemporalTileset = Widgets.$3DTemporalTileset;
  * Setup and add 3D tiles to an itowns view
  * @param {*} config must contain a 3DTilesLayers field array with each 3d tile url
  * @param {LayerManager} layerManager a layer manager
- * @param {itowns.View} itownsView 
+ * @param {itowns.View} itownsView
  * @returns a map of each 3d tiles layer
  */
 export function setupAndAdd3DTilesLayers(config, layerManager, itownsView) {
@@ -89,12 +89,71 @@ export function setupAndAdd3DTilesLayers(config, layerManager, itownsView) {
 }
 
 /**
+ * Sets up a GeoJson layers and adds them to the itowns view (for the demos
+ * that don't need more granularity than that).
+ * @param {string} layerConfig The name of the layer to setup from the
+ * generalDemoConfig.json config file (should be one of the properties
+ * of the 3DTilesLayer object in
+ * UD-Viz/examples/config/all_widget_config.json
+ * config file).
+ */
+export function setupAndAddGeoJsonLayers(config, itownsView) {
+  // Positional arguments verification
+  if (!config['GeoJSONLayers']) {
+    throw 'No GeoJSONLayers field in the configuration file';
+  }
+  /**
+   * Create an iTowns GeoJson layer based on the specified layerConfig.
+   * @param {string} layerConfig The name of the layer to setup from the
+   * all_widget_config.json config file (should be one of the properties
+   * of the GeoJsonLayer object in
+   * UD-Viz/examples/config/all_widget_config.json
+   * config file).
+   */
+  const setupAndAddGeoJsonLayer = function (layer) {
+    if (!layer['id'] || !layer['url'] || !layer['crs']) {
+      throw (
+        'Your layer does not have either "url", "crs" or "id" properties. ' +
+        '(in UD-Viz/examples/config/all_widget_config.json)'
+      );
+    }
+
+    // Declare the data source for the layer
+    const source = new itowns.FileSource({
+      url: layer.url,
+      crs: layer.crs,
+      format: 'application/json',
+    });
+
+    const layerStyle = new itowns.Style(layer.style);
+
+    const geojsonLayer = new itowns.ColorLayer(layer.id, {
+      name: layer.id,
+      transparent: true,
+      source: source,
+      style: layerStyle,
+    });
+    itownsView.addLayer(geojsonLayer);
+    // return geojsonLayer;
+  };
+
+  const layers = {};
+  for (let layer of config['GeoJSONLayers']) {
+    // layers[layer.id] = this.setupGeoJsonLayer(layer);
+    // this.addGeoJsonLayer(layers[layer.id]);
+    setupAndAddGeoJsonLayer(layer);
+  }
+}
+
+/**
  * Add Base map layer to an itowns view
  * @param {*} config must contains a field background_image_layer
- * @param {itowns.View} itownsView 
+ * @param {itowns.View} itownsView
  * @param {itowns.Extent} extent extent of the view
  */
 export function addBaseMapLayer(config, itownsView, extent) {
+  if (!config['background_image_layer']) return;
+
   let wmsImagerySource = new itowns.WMSSource({
     extent: extent,
     name: config['background_image_layer']['name'],
@@ -121,10 +180,12 @@ export function addBaseMapLayer(config, itownsView, extent) {
 /**
  * Add Elevation map layer to an itowns view
  * @param {*} config must contains a field elevation_layer
- * @param {itowns.View} itownsView 
+ * @param {itowns.View} itownsView
  * @param {itowns.Extent} extent extent of the view
  */
 export function addElevationLayer(config, itownsView, extent) {
+  if (!config['elevation_layer']) return;
+
   // Add a WMS elevation source
   let wmsElevationSource = new itowns.WMSSource({
     extent: extent,

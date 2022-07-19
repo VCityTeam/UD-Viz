@@ -14,6 +14,7 @@ import { LayerManager } from '../../Components/Components';
 import { addBaseMapLayer } from '../../Components/Components';
 import { addElevationLayer } from '../../Components/Components';
 import { setupAndAdd3DTilesLayers } from '../../Components/Components';
+import { setupAndAddGeoJsonLayers } from '../../Components/Components';
 
 /**
  *  Main view of an ud-viz application
@@ -362,9 +363,16 @@ export class View3D {
       tilt: tilt,
     };
 
+    //maxSubdivisionLevel
+    let maxSubdivisionLevel = 3;
+    if (this.config.background_image_layer.maxSubdivisionLevel)
+      maxSubdivisionLevel =
+        this.config.background_image_layer.maxSubdivisionLevel;
+
     this.itownsView = new itowns.PlanarView(this.rootWebGL, extent, {
       disableSkirt: false,
-      placement,
+      placement: placement,
+      maxSubdivisionLevel: maxSubdivisionLevel,
       noControls: !this.hasItownsControls,
     });
 
@@ -379,6 +387,8 @@ export class View3D {
     addBaseMapLayer(this.config, this.itownsView, this.extent);
     addElevationLayer(this.config, this.itownsView, this.extent);
     setupAndAdd3DTilesLayers(this.config, this.layerManager, this.itownsView);
+    setupAndAddGeoJsonLayers(this.config, this.itownsView);
+
 
     //disable itowns resize
     this.itownsViewResize = this.itownsView.resize.bind(this.itownsView);
