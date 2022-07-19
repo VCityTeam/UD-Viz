@@ -105,6 +105,50 @@
       "tilt": "17"
     }
   },
+  "GeoJSONLayers": [
+    {
+      "id": "bus-lines",
+      "url": "https://download.data.grandlyon.com/wfs/rdata?SERVICE=WFS&VERSION=2.0.0&request=GetFeature&typename=tcl_sytral.tcllignebus_2_0_0&outputFormat=application/json; subtype=geojson&SRSNAME=EPSG:3946",
+      "crs": "EPSG:3946",
+      "style": {
+        "fill": {
+          "color": "white",
+          "opacity": 0.5
+        },
+        "stroke": {
+          "color": "yellow"
+        }
+      }
+    },
+    {
+      "id": "Zones-Humides",
+      "url": "https://download.data.grandlyon.com/wfs/grandlyon?SERVICE=WFS&VERSION=2.0.0&request=GetFeature&typename=evg_esp_veg.evgmarezonehumide&outputFormat=application/json; subtype=geojson&SRSNAME=EPSG:3946",
+      "crs": "EPSG:3946",
+      "style": {
+        "fill": {
+          "color": "blue",
+          "opacity": 0.5
+        },
+        "stroke": {
+          "color": "black"
+        }
+      }
+    },
+    {
+      "id": "velo-v",
+      "url": "https://download.data.grandlyon.com/wfs/grandlyon?SERVICE=WFS&VERSION=2.0.0&request=GetFeature&typename=pvo_patrimoine_voirie.pvostationvelov&outputFormat=application/json; subtype=geojson&SRSNAME=EPSG:3946",
+      "crs": "EPSG:3946",
+      "style": {
+        "point": {
+          "color": "white",
+          "line": "red"
+        },
+        "stroke": {
+          "color": "black"
+        }
+      }
+    }
+  ],
   "3DTilesLayers": [
     {
       "id": "Lyon-1",

@@ -98,6 +98,8 @@ export class AllWidget {
                     </p>
                 </div>
             </header>
+            <div id="logo-div">
+            </div>
             <div id="_all_widget_stuct_main_panel">
                 <nav>
                     <ul id="${this.menuId}">
@@ -114,10 +116,10 @@ export class AllWidget {
     const imageFolder = this.config.assets.imageFolder;
 
     for (let i = 0; i < logos.length; i++) {
-      const img = document.createElement('img');
+      let img = document.createElement('img');
       img.src = imageFolder.concat('/'.concat(logos[i]));
       img.classList.add('logos');
-      const src = document.getElementById('_all_widget_struct_header_panel');
+      let src = document.getElementById('logo-div');
       src.appendChild(img);
     }
   }
