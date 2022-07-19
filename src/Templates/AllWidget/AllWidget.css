@@ -133,9 +133,13 @@ section {
   padding: 0;
 }
 
+#_all_widget_menu li{
+  padding-top: 15px;
+}
+
 .choiceMenu {
   position: relative;
-  height: 60px;
+  height: 40px;
 }
 
 ._all_widget_menu_hint {
@@ -194,7 +198,7 @@ section {
 
 .menuIcon {
   display: inline-block;
-  width: 36px;
+  width: 23px;
   margin: 12px 12px 12px 12px;
   flex-shrink: 0;
   opacity: 0.9;
@@ -231,4 +235,19 @@ section {
   background-color: #d5d5d5cd;
   align-items: center;
   z-index: 5;
+}
+
+.UD-VIZ {
+  width: 69px;
+  height: 27px;
+  margin: 10px 0 39px;
+  font-family: SegoeUI;
+  font-size: 2vh;
+  font-weight: bold;
+  font-stretch: normal;
+  font-style: normal;
+  line-height: normal;
+  letter-spacing: normal;
+  text-align: left;
+  color: white;
 }
