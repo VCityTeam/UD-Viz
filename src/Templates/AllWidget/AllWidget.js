@@ -80,26 +80,7 @@ export class AllWidget {
    * Returns the basic html content of the demo
    */
   get html() {
-    return /* html*/ `
-            <header id="${this.headerId}">
-                <div>
-                    <h1>UD-Viz &bull;</h1>
-                    <div id="${this.authFrameLocationId}"></div>
-                </div>
-                <div id="_all_widget_struct_header_panel">
-                  <p style="display: inline-block; color: white; margin: 0;">
-                        Icons made by <a href="https://www.freepik.com/"
-                        title="Freepik">Freepik</a> from
-                        <a href="https://www.flaticon.com/"
-                        title="Flaticon">www.flaticon.com</a><br> is licensed by
-                        <a href="http://creativecommons.org/licenses/by/3.0/"
-                        title="Creative Commons BY 3.0" target="_blank">
-                        CC 3.0 BY</a>
-                    </p>
-                </div>
-            </header>
-            <div id="logo-div">
-            </div>
+    return /*html*/ `       
             <div id="_all_widget_stuct_main_panel">
                 <nav>
                     <ul id="${this.menuId}">
@@ -112,15 +93,22 @@ export class AllWidget {
   }
 
   addLogos() {
+    //path file for all the logo images
     const logos = this.config.assets.logos;
+
+    //path to the logos folder
     const imageFolder = this.config.assets.imageFolder;
+
+    //create div to integrate all logos images
+    const logoDiv = document.createElement('div');
+    logoDiv.id = 'logo-div';
+    document.getElementById(this.mainDivId).append(logoDiv);
 
     for (let i = 0; i < logos.length; i++) {
       let img = document.createElement('img');
       img.src = imageFolder.concat('/'.concat(logos[i]));
       img.classList.add('logos');
-      let src = document.getElementById('logo-div');
-      src.appendChild(img);
+      logoDiv.appendChild(img);
     }
   }
 
@@ -309,7 +297,7 @@ export class AllWidget {
     const frame = document.createElement('div');
     frame.id = this.authenticationFrameId;
     frame.innerHTML = this.authenticationFrameHtml;
-    this.authFrameLocationElement.appendChild(frame);
+    document.getElementById('_all_widget_stuct_main_panel').append(frame);
     const authView = this.getModuleById(authModuleId);
     authView.parentElement = this.viewerDivElement.parentElement;
     const authService = authView.authenticationService;

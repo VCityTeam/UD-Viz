@@ -27,7 +27,6 @@ canvas {
 #_all_widget {
   display: grid;
   height: 100%;
-  grid-template-rows: 50px auto;
 }
 
 header {
@@ -88,6 +87,13 @@ section {
 
 #_all_widget_auth_frame_location {
   display: inline-block;
+}
+
+#_all_widget_profile{
+  position: fixed;
+  top: 6px;
+  right: 60px;
+  z-index: 5;
 }
 
 #_all_widget_profile_name {

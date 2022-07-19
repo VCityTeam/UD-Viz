@@ -16,7 +16,23 @@ export class HelpWindow extends ModuleView {
   constructor(config = {}) {
     super();
 
-    // /////////// Html elements
+    // Button help to open help div
+    const helpButton = document.createElement('button');
+    helpButton.id = 'help-button';
+    document.getElementById('_all_widget_stuct_main_panel').append(helpButton);
+
+    // Image button
+    const imgButton = document.createElement('img');
+    imgButton.src = './../../../../examples/assets/icons/help.svg';
+    helpButton.append(imgButton);
+
+    //Event for openning help window
+    helpButton.addEventListener('mousedown',
+      () => {
+        this.enable(this);
+      });
+
+    ///////////// Html elements
     const helpDiv = document.createElement('div');
     helpDiv.id = 'helpWindow';
     document.getElementById('contentSection').append(helpDiv);
@@ -54,6 +70,8 @@ export class HelpWindow extends ModuleView {
       // Close the window...when close button is hit
       closeButton.addEventListener('mousedown', closeCallback, false);
     });
+
+    this.disableView();
   }
 
   // ///// MODULE VIEW METHODS
