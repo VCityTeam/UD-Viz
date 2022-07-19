@@ -3,7 +3,7 @@
 import {
   getFirstTileIntersection,
   getBatchIdFromIntersection,
-  getObject3DFromTile,
+  getTileFromMesh,
   getVisibleTileCount,
 } from '../3DTiles/3DTilesUtils';
 
@@ -153,7 +153,7 @@ export class LayerManager {
       if (firstInter) {
         let tilesManager = this.getTilesManagerByLayerID(firstInter.layer.id);
         let batchId = getBatchIdFromIntersection(firstInter);
-        let tileId = getObject3DFromTile(firstInter.object).tileId;
+        let tileId = getTileFromMesh(firstInter.object).tileId;
         return tilesManager.tiles[tileId].cityObjects[batchId];
       }
     }
