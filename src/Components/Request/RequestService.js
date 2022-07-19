@@ -80,7 +80,7 @@ export function RequestService() {
         req.responseType = responseType;
       }
 
-      // req.send(body);
+      req.send(body);
 
       req.onload = () => {
         if (req.status >= 200 && req.status < 300) {
