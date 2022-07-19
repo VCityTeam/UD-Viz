@@ -1,4 +1,4 @@
-import { Window } from '../GUI/js/Window';
+import { Window } from './Window';
 import { MAIN_LOOP_EVENTS } from 'itowns';
 import * as THREE from 'three';
 

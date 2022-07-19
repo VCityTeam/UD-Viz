@@ -8,7 +8,7 @@ import { AbstractDocumentWindow } from '../../../Documents/View/AbstractDocument
 
 // Components
 import { Window } from '../../../Components/GUI/js/Window';
-import { PositionerWindow } from '../../../Components/Camera/PositionerWindow';
+import { PositionerWindow } from '../../../Components/GUI/js/PositionerWindow';
 
 import { ContributeService } from '../Service/ContributeService';
 
