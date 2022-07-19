@@ -37,6 +37,7 @@ export class AllWidget {
 
         // Initialize iTowns 3D view
         _this.initView3D();
+        
 
         resolve(_this.config);
       });
