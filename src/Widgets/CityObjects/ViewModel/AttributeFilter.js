@@ -53,7 +53,7 @@ export class AttributeFilter extends CityObjectFilter {
       return false;
     }
 
-    for (let key of Object.keys(this.props)) {
+    for (const key of Object.keys(this.props)) {
       if (
         !cityObject.props[key] ||
         (!!this.props[key] && this.props[key] != cityObject.props[key])
@@ -71,7 +71,7 @@ export class AttributeFilter extends CityObjectFilter {
    */
   toString() {
     let result = '';
-    let attributes = [];
+    const attributes = [];
 
     if (this.tileId) {
       attributes.push(['tileId', this.tileId]);
@@ -81,7 +81,7 @@ export class AttributeFilter extends CityObjectFilter {
       attributes.push(['batchId', this.batchId]);
     }
 
-    for (let entry of Object.entries(this.props)) {
+    for (const entry of Object.entries(this.props)) {
       if (entry[1]) {
         attributes.push([entry[0], entry[1]]);
       }
@@ -90,7 +90,7 @@ export class AttributeFilter extends CityObjectFilter {
     if (attributes.length > 0) {
       result += 'Attributes (';
       for (let i = 0; i < attributes.length; i++) {
-        let attribute = attributes[i];
+        const attribute = attributes[i];
         result += `${attribute[0]}=${attribute[1]}`;
         if (i < attributes.length - 1) {
           result += ', ';

@@ -62,7 +62,7 @@ export class TilesManager extends EventSender {
     if (this.totalTileCount !== 0) {
       // Load existing tiles
       const tiles = getVisibleTiles(this.layer);
-      for (let tile of tiles) {
+      for (const tile of tiles) {
         if (this.tiles[tile.tileId] === undefined) {
           this.tiles[tile.tileId] = new Tile(this.layer, tile.tileId);
           this.tiles[tile.tileId].loadCityObjects();
@@ -139,7 +139,7 @@ export class TilesManager extends EventSender {
 
   focusCamera() {
     if(this.layer.isC3DTilesLayer){
-      let coordinates = this.view.camera.position();
+      const coordinates = this.view.camera.position();
       const extent = this.layer.extent;
       coordinates.x = (extent.east + extent.west) / 2; 
       coordinates.y = (extent.north + extent.south) / 2;
@@ -153,7 +153,7 @@ export class TilesManager extends EventSender {
   }
 
   getTilesWithGeom() {
-    let tilesWithGeom = [];
+    const tilesWithGeom = [];
     for (let j = 0; j < this.tiles.length; j++) {
       if (this.tiles[j] != undefined) {
         if (this.tiles[j].cityObjects != undefined) {
@@ -193,8 +193,8 @@ export class TilesManager extends EventSender {
    * predicate, or `undefined` if no city object is found.
    */
   findCityObject(predicate) {
-    for (let tile of Object.values(this.tiles)) {
-      for (let cityObject of tile.cityObjects) {
+    for (const tile of Object.values(this.tiles)) {
+      for (const cityObject of tile.cityObjects) {
         if (predicate(cityObject)) {
           return cityObject;
         }
@@ -213,9 +213,9 @@ export class TilesManager extends EventSender {
    * the predicate.
    */
   findAllCityObjects(predicate) {
-    let results = [];
-    for (let tile of Object.values(this.tiles)) {
-      for (let cityObject of tile.cityObjects) {
+    const results = [];
+    for (const tile of Object.values(this.tiles)) {
+      for (const cityObject of tile.cityObjects) {
         if (predicate(cityObject)) {
           results.push(cityObject);
         }
@@ -232,7 +232,7 @@ export class TilesManager extends EventSender {
    * @param {CityObjectStyle | string} style The desired style.
    */
   setStyle(cityObjectId, style) {
-    let tilesToUpdate = new Set();
+    const tilesToUpdate = new Set();
     if (Array.isArray(cityObjectId)) {
       for (let i = 0; i < cityObjectId.length; i++) {
         if (!(cityObjectId[i] instanceof CityObjectID)) {
@@ -247,7 +247,7 @@ export class TilesManager extends EventSender {
       tilesToUpdate.add(cityObjectId.tileId);
     }
     this.styleManager.setStyle(cityObjectId, style);
-    for (let tileId of tilesToUpdate) {
+    for (const tileId of tilesToUpdate) {
       this._markTileToUpdate(tileId);
     }
   }
@@ -261,7 +261,7 @@ export class TilesManager extends EventSender {
    */
   setStyleToTile(tileId, style) {
     if (this.tiles[tileId]) {
-      for (let i in this.tiles[tileId].cityObjects) {
+      for (const i in this.tiles[tileId].cityObjects) {
         this.setStyle(this.tiles[tileId].cityObjects[i].cityObjectId, style);
       }
     }
@@ -275,8 +275,8 @@ export class TilesManager extends EventSender {
    */
   setDefaultStyleToTile(tileId) {
     if (this.tiles[tileId]) {
-      for (let i in this.tiles[tileId].cityObjects) {
-        let cityObject = this.tiles[tileId].cityObjects[i];
+      for (const i in this.tiles[tileId].cityObjects) {
+        const cityObject = this.tiles[tileId].cityObjects[i];
         this.setStyle(cityObject.cityObjectId, cityObject.defaultStyleId);
       }
     }
@@ -288,7 +288,7 @@ export class TilesManager extends EventSender {
    * @param {CityObjectStyle | string} style The desired style.
    */
   setStyleToTileset(style) {
-    for (let tile in this.tiles) {
+    for (const tile in this.tiles) {
       this.setStyleToTile(tile, style);
     }
   }
@@ -303,10 +303,10 @@ export class TilesManager extends EventSender {
     if (!(style instanceof CityObjectStyle)) {
       style = new CityObjectStyle(style);
     }
-    let needUpdate = this.styleManager.registerStyle(name, style);
+    const needUpdate = this.styleManager.registerStyle(name, style);
     if (needUpdate) {
-      let usage = this.styleManager.getStyleUsage(name);
-      for (let tileId of Object.keys(usage)) {
+      const usage = this.styleManager.getStyleUsage(name);
+      for (const tileId of Object.keys(usage)) {
         this._markTileToUpdate(tileId);
       }
     }
@@ -330,7 +330,7 @@ export class TilesManager extends EventSender {
    * identifier.
    */
   removeStyle(cityObjectId) {
-    let tilesToUpdate = new Set();
+    const tilesToUpdate = new Set();
 
     if (Array.isArray(cityObjectId)) {
       for (let i = 0; i < cityObjectId.length; i++) {
@@ -347,7 +347,7 @@ export class TilesManager extends EventSender {
     }
 
     this.styleManager.removeStyle(cityObjectId);
-    for (let tileId of tilesToUpdate) {
+    for (const tileId of tilesToUpdate) {
       this._markTileToUpdate(tileId);
     }
   }
@@ -366,9 +366,9 @@ export class TilesManager extends EventSender {
    * Removes all styles currently registered.
    */
   removeAllStyles() {
-    let tileIds = this.styleManager.getStyledTiles();
+    const tileIds = this.styleManager.getStyledTiles();
     this.styleManager.removeAllStyles();
-    for (let tileId of tileIds) {
+    for (const tileId of tileIds) {
       this._markTileToUpdate(tileId);
     }
   }
@@ -395,10 +395,10 @@ export class TilesManager extends EventSender {
    * view. Default is `udpateITownsView(view, layer)`.
    */
   applyStyles(options = {}) {
-    let updateFunction = options.updateFunction || (() => {
+    const updateFunction = options.updateFunction || (() => {
       this.view.notifyChange();
     });
-    for (let tile of this.tiles) {
+    for (const tile of this.tiles) {
       if (tile === undefined) {
         continue;
       }
@@ -420,13 +420,13 @@ export class TilesManager extends EventSender {
    * view. Default is `udpateITownsView(view, layer)`.
    */
   applyStyleToTile(tileId, options = {}) {
-    let updateView = (options.updateView !== undefined) ?
+    const updateView = (options.updateView !== undefined) ?
       options.updateView : true;
-    let updateFunction = options.updateFunction || (() => {
+    const updateFunction = options.updateFunction || (() => {
       updateITownsView(this.view, this.layer);
     });
 
-    let tile = this.tiles[tileId];
+    const tile = this.tiles[tileId];
     if (tile === undefined) return;
     if (this._shouldTileBeUpdated(tile)) {
       this.styleManager.applyToTile(tile);
@@ -443,7 +443,7 @@ export class TilesManager extends EventSender {
    */
   setDefaultStyle() {
     if (this.color === null) {
-      for (let tile of this.tiles) {
+      for (const tile of this.tiles) {
         if (tile !== undefined) {
           this.setDefaultStyleToTile(tile.tileId);
         }
@@ -472,12 +472,12 @@ export class TilesManager extends EventSender {
    * @param {Tile} tile The tile to mark.
    */
   _markTileAsUpdated(tile) {
-    let object3d = tile.getObject3D();
+    const object3d = tile.getObject3D();
     if (object3d === undefined) {
       throw 'The tile is not currently loaded and cannot be marked as updated.';
     }
 
-    let uuid = object3d.uuid;
+    const uuid = object3d.uuid;
     this.upToDateTileIds[tile.tileId] = uuid;
   }
 
@@ -489,7 +489,7 @@ export class TilesManager extends EventSender {
    * @param {Tile} tile The tile.
    */
   _shouldTileBeUpdated(tile) {
-    let object3d = tile.getObject3D();
+    const object3d = tile.getObject3D();
     if (object3d === undefined) {
       // Tile is not visible, cannot be updated
       return false;
@@ -500,7 +500,7 @@ export class TilesManager extends EventSender {
       return true;
     }
 
-    let uuid = object3d.uuid;
+    const uuid = object3d.uuid;
     // If the current UUID is the same as the saved one, it means that the tile
     // has not been reloaded.
     return this.upToDateTileIds[tile.tileId] !== uuid;

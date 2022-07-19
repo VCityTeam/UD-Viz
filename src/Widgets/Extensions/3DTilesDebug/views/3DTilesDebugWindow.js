@@ -33,11 +33,11 @@ export class Debug3DTilesWindow extends Window {
     this.selectedCityObject = undefined;
     this.selectedTilesManager = undefined;
 
-    let viewerDiv = document.getElementById('viewerDiv');
-    let clickListener = (event) => {
+    const viewerDiv = document.getElementById('viewerDiv');
+    const clickListener = (event) => {
       this.onMouseClick(event);
     };
-    let moveListener = (event) => {
+    const moveListener = (event) => {
       this.onMouseMove(event);
     };
     this.addEventListener(Window.EVENT_ENABLED, () => {
@@ -140,7 +140,7 @@ export class Debug3DTilesWindow extends Window {
    */
   onMouseMove(event) {
     // Update the current visible tile count
-    let visibleTileCount =
+    const visibleTileCount =
       this.layerManager.getVisible3DTilesTileCountFromLayers();
     this.visibleTilesParagraphElement.innerText = `${visibleTileCount} tiles visible.`;
   }
@@ -153,11 +153,11 @@ export class Debug3DTilesWindow extends Window {
    * @param {MouseEvent} event The mouse event.
    */
   onMouseClick(event) {
-    let cityObject = this.layerManager.pickCityObject(event);
+    const cityObject = this.layerManager.pickCityObject(event);
 
     if (cityObject !== undefined) {
       if (cityObject != this.selectedCityObject) {
-        for (let [key, value] of Object.entries(cityObject.props)) {
+        for (const [key, value] of Object.entries(cityObject.props)) {
           this.clickDivElement.innerHTML += `<br>${key} : ${value}`;
         }
 
@@ -192,12 +192,12 @@ export class Debug3DTilesWindow extends Window {
    */
   submitStyleForm() {
     try {
-      let tileId = Number.parseInt(this.groupColorTileInputElement.value);
-      let batchIds = JSON.parse(
+      const tileId = Number.parseInt(this.groupColorTileInputElement.value);
+      const batchIds = JSON.parse(
         '[' + this.groupColorBatchInputElement.value + ']'
       );
-      let color = new THREE.Color(this.groupColorColorInputElement.value);
-      let opacity = Number.parseFloat(this.groupColorOpacityInputElement.value);
+      const color = new THREE.Color(this.groupColorColorInputElement.value);
+      const opacity = Number.parseFloat(this.groupColorOpacityInputElement.value);
       this.layerManager.tilesManagers[0].setStyle(
         new CityObjectID(tileId, batchIds),
         { materialProps: { color, opacity } }

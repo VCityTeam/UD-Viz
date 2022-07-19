@@ -51,4 +51,4 @@ class WindowManager {
   }
 }
 
-export let windowManager = new WindowManager();
+export const windowManager = new WindowManager();

@@ -33,17 +33,17 @@ export class DocumentCommentsService {
   }
 
   async getComments() {
-    let currentDocument = this.documentProvider.getDisplayedDocument();
+    const currentDocument = this.documentProvider.getDisplayedDocument();
     if (currentDocument !== null && currentDocument !== undefined) {
-      let url =
+      const url =
         this.documentUrl + '/' + currentDocument.id + '/' + this.commentRoute;
-      let response = (
+      const response = (
         await this.requestService.request('GET', url, { authenticate: 'auto' })
       ).response;
-      let jsonResponse = JSON.parse(response);
-      for (let element of jsonResponse) {
-        let url = this.authorUrl + '/' + element.user_id;
-        let responseAuthor = (
+      const jsonResponse = JSON.parse(response);
+      for (const element of jsonResponse) {
+        const url = this.authorUrl + '/' + element.user_id;
+        const responseAuthor = (
           await this.requestService.request('GET', url, {
             authenticate: 'auto',
           })
@@ -56,11 +56,11 @@ export class DocumentCommentsService {
   }
 
   async publishComment(formData) {
-    let currentDocument = this.documentProvider.getDisplayedDocument();
+    const currentDocument = this.documentProvider.getDisplayedDocument();
     if (currentDocument !== null && currentDocument !== undefined) {
-      let url =
+      const url =
         this.documentUrl + '/' + currentDocument.id + '/' + this.commentRoute;
-      let response = (await this.requestService.send('POST', url, formData))
+      const response = (await this.requestService.send('POST', url, formData))
         .response;
     }
   }

@@ -31,7 +31,7 @@ const AudioModule = class Audio {
   }
 
   dispose() {
-    for (let key in this.sounds) {
+    for (const key in this.sounds) {
       this.sounds[key].pause(); //TODO if shared just pause if not unload 
     }
   }
@@ -66,7 +66,7 @@ const AudioModule = class Audio {
     goPos.add(refOrigin);
     const positionAudio = goPos.clone().applyMatrix4(cameraMatrixWorldInverse);
 
-    for (let key in this.sounds) {
+    for (const key in this.sounds) {
       const sound = this.sounds[key];
 
       if (sound.state() != 'loaded') continue;

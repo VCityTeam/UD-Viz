@@ -32,9 +32,9 @@ export class TemporalView extends ModuleView {
 
     // Callback to get data asynchronously from the tileset.json
     function getAsynchronousData() {
-      let versions =
+      const versions =
         this.temporalExtension.temporal_tileset.temporalVersions.versions;
-      let versionTransitions =
+      const versionTransitions =
         this.temporalExtension.temporal_tileset.versionTransitions;
       return [versions, versionTransitions];
     }

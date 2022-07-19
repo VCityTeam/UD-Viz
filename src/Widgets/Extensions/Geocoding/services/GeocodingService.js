@@ -40,7 +40,7 @@ export class GeocodingService {
 
     //build the URL according to parameter description (in config file)
     let url = this.geocodingUrl + '?';
-    for (let [paramName, param] of Object.entries(this.parameters)) {
+    for (const [paramName, param] of Object.entries(this.parameters)) {
       if (param.fill === 'value') {
         url += `${paramName}=${param.value}`;
       } else if (param.fill === 'query') {

@@ -25,7 +25,7 @@ module.exports = {
    */
   equals(j1, j2) {
     const traverse = function (json1, json2) {
-      for (let key in json1) {
+      for (const key in json1) {
         if (json1[key] instanceof Object) {
           if (json2[key] instanceof Object) {
             if (traverse(json1[key], json2[key])) {
@@ -57,7 +57,7 @@ module.exports = {
    */
   overWrite(jsonOverWrited, jsonModel) {
     const traverse = function (json1, json2) {
-      for (let key in json1) {
+      for (const key in json1) {
         if (json1[key] instanceof Object) {
           if (json2[key] instanceof Object) traverse(json1[key], json2[key]);
         } else {
@@ -78,7 +78,7 @@ module.exports = {
    * @returns {JSON} the json parsed
    */
   parse(json, cb) {
-    for (let key in json) {
+    for (const key in json) {
       if (json[key] instanceof Object) {
         this.parse(json[key], cb);
       } else {
@@ -90,7 +90,7 @@ module.exports = {
 
   //same as parse but you can pass the name of array that should be not parse
   parseExceptArrays(json, cb, exceptArrays) {
-    for (let key in json) {
+    for (const key in json) {
       if (json[key] instanceof Object) {
         if (json[key] instanceof Array && exceptArrays.includes(key)) {
           cb(json, key);
@@ -129,7 +129,7 @@ module.exports = {
    */
   pack(jsonArray) {
     let result = '';
-    for (let key in jsonArray) {
+    for (const key in jsonArray) {
       result += JSON.stringify(jsonArray[key]);
       result += this.separator;
     }

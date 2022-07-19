@@ -30,7 +30,7 @@ export class Table {
     this.filter_div.innerHTML = this.filterHtml;
     this.window.dataView.appendChild(this.filter_div);
     this.columns.forEach((c) => {
-      let option = document.createElement('option');
+      const option = document.createElement('option');
       option.value = c;
       option.text = c;
       this.filterSelect.append(option);
@@ -135,7 +135,7 @@ export class Table {
         .enter()
         .append('tr');
       table.rows.exit().remove();
-      let columns = table.columns;
+      const columns = table.columns;
       table.rows
         .selectAll('td')
         .data(function (d) {
@@ -155,8 +155,8 @@ export class Table {
           return d.row[d.col].value;
         })
         .on('click', (d) => {
-          let col = d.target.__data__.col;
-          let row = d.target.__data__.row;
+          const col = d.target.__data__.col;
+          const row = d.target.__data__.row;
           table.window.sendEvent(Table.EVENT_CELL_CLICKED, row[col].value);
         });
     }

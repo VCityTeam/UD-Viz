@@ -39,10 +39,10 @@ export class LinkService {
    * types.
    */
   async getSupportedLinkTypes() {
-    let req = await this.requestService.request('GET', this.linkURL, {
+    const req = await this.requestService.request('GET', this.linkURL, {
       authenticate: false,
     });
-    let types = JSON.parse(req.response);
+    const types = JSON.parse(req.response);
     return types;
   }
 
@@ -58,11 +58,11 @@ export class LinkService {
    */
   async getLinks(linkType, filters = null) {
     const url = `${this.linkURL}/${linkType}`;
-    let req = await this.requestService.request('GET', url, {
+    const req = await this.requestService.request('GET', url, {
       authenticate: false,
       urlParameters: filters,
     });
-    let links = JSON.parse(req.response);
+    const links = JSON.parse(req.response);
     return links;
   }
 
@@ -76,11 +76,11 @@ export class LinkService {
    */
   async createLink(linkType, formData) {
     const url = `${this.linkURL}/${linkType}`;
-    let req = await this.requestService.request('POST', url, {
+    const req = await this.requestService.request('POST', url, {
       authenticate: false,
       body: formData,
     });
-    let created = JSON.parse(req.response);
+    const created = JSON.parse(req.response);
     return created;
   }
 
@@ -92,10 +92,10 @@ export class LinkService {
    */
   async deleteLink(linkType, linkId) {
     const url = `${this.linkURL}/${linkType}/${linkId}`;
-    let req = await this.requestService.request('DELETE', url, {
+    const req = await this.requestService.request('DELETE', url, {
       authenticate: false,
     });
-    let deleted = JSON.parse(req.response);
+    const deleted = JSON.parse(req.response);
     return deleted;
   }
 }

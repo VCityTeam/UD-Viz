@@ -76,7 +76,7 @@ export class Tile {
    * @returns {THREE.Material}
    */
   getDefaultMaterial(mesh) {
-    let material = Array.isArray(mesh.material)
+    const material = Array.isArray(mesh.material)
       ? mesh.material[0]
       : mesh.material;
     return material;
@@ -121,7 +121,7 @@ export class Tile {
       return;
     }
 
-    let object3d = this.getObject3D();
+    const object3d = this.getObject3D();
 
     if (!object3d) {
       // The tile is not in the view, nothing to do.
@@ -133,31 +133,31 @@ export class Tile {
       return;
     }
 
-    let meshes = this.getMeshes();
+    const meshes = this.getMeshes();
     let k = 0;
 
     this.cityObjects = [];
     this.batchTable = object3d.batchTable;
 
-    for (let [index, mesh] of meshes.entries()) {
+    for (const [index, mesh] of meshes.entries()) {
       if (!tilesManager.hasDefaultColor) {
-        let material = this.getDefaultMaterial(mesh);
+        const material = this.getDefaultMaterial(mesh);
         tilesManager.registerStyle('default' + this.tileId + 'm' + index, { materialProps: material});
       }
 
-      let attributes = mesh.geometry.attributes;
-      let totalVertices = attributes.position.count;
+      const attributes = mesh.geometry.attributes;
+      const totalVertices = attributes.position.count;
 
-      let newbatchIds = [];
+      const newbatchIds = [];
       if (attributes._BATCHID !== undefined) {
         // For each vertex get the corresponding batch ID
         for (let vertexIndex = 0; vertexIndex < totalVertices; vertexIndex += 1) {
-          let batchId = attributes._BATCHID.array[vertexIndex];
+          const batchId = attributes._BATCHID.array[vertexIndex];
         
           // Creates a dict entry for the batch ID
           if (this.cityObjects[batchId] === undefined) {
             this.cityObjects[batchId] = new CityObject(this, batchId, vertexIndex, 0, null, null, index);
-            for (let key of Object.keys(this.batchTable.content)) {
+            for (const key of Object.keys(this.batchTable.content)) {
               this.cityObjects[batchId].props[key] =
                 this.batchTable.content[key][batchId];
             }
@@ -174,24 +174,24 @@ export class Tile {
         }
       }
       else {
-        let batchId = k++;
-        let batchIdArray = new Float32Array(totalVertices).fill(batchId);
-        let batchIdBuffer = new THREE.BufferAttribute(batchIdArray, 1);
+        const batchId = k++;
+        const batchIdArray = new Float32Array(totalVertices).fill(batchId);
+        const batchIdBuffer = new THREE.BufferAttribute(batchIdArray, 1);
         this.cityObjects[batchId] = new CityObject(this, batchId, 0, totalVertices, null, null, index);
         mesh.geometry.setAttribute('_BATCHID', batchIdBuffer);
         newbatchIds.push(batchId);
       }
 
       // For each newly added tile part, compute the centroid
-      for (let id of newbatchIds) {
-        let vertexSum = new THREE.Vector3(0, 0, 0);
-        let positionArray = mesh.geometry.attributes.position.array;
+      for (const id of newbatchIds) {
+        const vertexSum = new THREE.Vector3(0, 0, 0);
+        const positionArray = mesh.geometry.attributes.position.array;
         for (let i = this.cityObjects[id].indexStart; i <= this.cityObjects[id].indexEnd; ++i) {
           vertexSum.x += positionArray[i * 3    ];
           vertexSum.y += positionArray[i * 3 + 1];
           vertexSum.z += positionArray[i * 3 + 2];
         }
-        let vertexCount = this.cityObjects[id].indexCount;
+        const vertexCount = this.cityObjects[id].indexCount;
         this.cityObjects[id].centroid =
           vertexSum.divideScalar(vertexCount).applyMatrix4(mesh.matrixWorld);
       }

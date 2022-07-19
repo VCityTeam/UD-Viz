@@ -87,7 +87,7 @@ const renderjson = (function () {
   };
   const isempty = function (obj, pl) {
     const keys = pl || Object.keys(obj);
-    for (let i in keys)
+    for (const i in keys)
       if (Object.hasOwnProperty.call(obj, keys[i])) return false;
     return true;
   };
@@ -222,10 +222,10 @@ const renderjson = (function () {
           themetext('object syntax', '{', null, '\n')
         );
         let last;
-        for (let k in json) last = k;
+        for (const k in json) last = k;
         let keys = options.property_list || Object.keys(json);
         if (options.sort_objects) keys = keys.sort();
-        for (let i in keys) {
+        for (const i in keys) {
           const k = keys[i];
           if (!(k in json)) continue;
           append(

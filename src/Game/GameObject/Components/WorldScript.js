@@ -69,7 +69,7 @@ const WorldScriptModule = class WorldScript {
    * @returns {Object} result of the script execution
    */
   executeScript(id, event, params) {
-    let s = this.scripts[id];
+    const s = this.scripts[id];
 
     if (s[event]) {
       return s[event].apply(s, [this.parent].concat(params));

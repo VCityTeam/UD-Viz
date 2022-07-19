@@ -16,11 +16,11 @@ module.exports = Object.freeze({
    * @returns {SharedArrayBuffer} serialized data
    */
   pack(obj) {
-    let OString = JSON.stringify(obj);
-    let SABuffer = new SharedArrayBuffer(
+    const OString = JSON.stringify(obj);
+    const SABuffer = new SharedArrayBuffer(
       Int32Array.BYTES_PER_ELEMENT * OString.length
     );
-    let sArray = new Int32Array(SABuffer);
+    const sArray = new Int32Array(SABuffer);
 
     for (let i = 0; i < OString.length; i++) {
       sArray[i] = OString.charCodeAt(i);
@@ -35,7 +35,7 @@ module.exports = Object.freeze({
    * @returns {JSON} object unserialized
    */
   unpack(array) {
-    let str = String.fromCharCode.apply(this, array);
+    const str = String.fromCharCode.apply(this, array);
     return JSON.parse(str);
   },
 

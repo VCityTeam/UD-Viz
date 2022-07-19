@@ -100,7 +100,7 @@ export class DocumentLinkInterface {
 
     this.createLinkButtonElement.onclick = async () => {
       if (this.provider.selectedCityObject) {
-        let newLink = new Link();
+        const newLink = new Link();
         newLink.source_id = this.provider.displayedDocument.id;
         newLink.target_id =
           this.provider.selectedCityObject.props['cityobject.database_id'];
@@ -149,12 +149,12 @@ export class DocumentLinkInterface {
     if (!this.linkListElement) {
       return;
     }
-    let links = this.provider.getDisplayedDocumentLinks();
-    let newDiv = document.createElement('div');
+    const links = this.provider.getDisplayedDocumentLinks();
+    const newDiv = document.createElement('div');
     let newDivHtml = `<h4 class="subsection-title">${links.length} city object(s)</h4>
                       <ul>`;
     this.documentLinks = links;
-    for (let link of links) {
+    for (const link of links) {
       newDivHtml += `<li>
                         ID : ${link.target_id}
                         <span id="${this.linkTravelerId(
@@ -173,7 +173,7 @@ export class DocumentLinkInterface {
     newDiv.innerHTML = newDivHtml;
     this.linkListElement.innerHTML = '';
     this.linkListElement.appendChild(newDiv);
-    for (let link of links) {
+    for (const link of links) {
       document.getElementById(this.linkTravelerId(link)).onclick = () => {
         this._travelToLink(link);
       };
@@ -192,7 +192,7 @@ export class DocumentLinkInterface {
    * @param {Link} link The link to travel to.
    */
   async _travelToLink(link) {
-    let centroid = new THREE.Vector3(
+    const centroid = new THREE.Vector3(
       link.centroid_x,
       link.centroid_y,
       link.centroid_z

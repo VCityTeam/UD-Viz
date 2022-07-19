@@ -85,18 +85,18 @@ export class NetworkManager {
    */
   add_event(callback) {
     this.network.on('selectNode', function (params) {
-      let nodeId = this.getNodeAt(params.pointer.DOM);
-      let node = this.body.nodes[nodeId];
-      let time = node.options.name;
+      const nodeId = this.getNodeAt(params.pointer.DOM);
+      const node = this.body.nodes[nodeId];
+      const time = node.options.name;
       callback(time);
     });
 
     this.network.on('selectEdge', function (params) {
-      let edgeId = this.getEdgeAt(params.pointer.DOM);
-      let connectedNodesId = this.getConnectedNodes(edgeId);
-      let from_time = this.body.nodes[connectedNodesId[0]].options.name;
-      let to_time = this.body.nodes[connectedNodesId[1]].options.name;
-      let time = (from_time / 1 + to_time / 1) / 2;
+      const edgeId = this.getEdgeAt(params.pointer.DOM);
+      const connectedNodesId = this.getConnectedNodes(edgeId);
+      const from_time = this.body.nodes[connectedNodesId[0]].options.name;
+      const to_time = this.body.nodes[connectedNodesId[1]].options.name;
+      const time = (from_time / 1 + to_time / 1) / 2;
       callback(time);
     });
   }

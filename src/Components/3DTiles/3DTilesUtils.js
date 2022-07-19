@@ -27,7 +27,7 @@ export function getBatchTableFromTile(tile) {
  * @param {*} inter An intersection
  */
 export function getBatchIdFromIntersection(inter) {
-  let index = inter.face.a;
+  const index = inter.face.a;
   return inter.object.geometry.attributes._BATCHID.array[index];
 }
 
@@ -41,10 +41,10 @@ export function getBatchIdFromIntersection(inter) {
 export function getFirstTileIntersection(intersects) {
   let first_inter = null;
   let dist_min = 0;
-  for (let inter of intersects) {
+  for (const inter of intersects) {
 
     if(inter.object.visible){
-      let geomAttributes = inter.object.geometry.attributes;
+      const geomAttributes = inter.object.geometry.attributes;
       if (geomAttributes && geomAttributes._BATCHID) {
         if (!first_inter) {
           first_inter = inter;
@@ -67,9 +67,9 @@ export function getFirstTileIntersection(intersects) {
  * @param {*} layer The 3DTiles layer.
  */
 export function getVisibleTiles(layer) {
-  let rootTile = layer.object3d.children[0];
-  let tiles = [];
-  let exploreTree = (node) => {
+  const rootTile = layer.object3d.children[0];
+  const tiles = [];
+  const exploreTree = (node) => {
     if (node) {
       if (node.batchTable) {
         // It's an actual tile
@@ -80,7 +80,7 @@ export function getVisibleTiles(layer) {
         childIndex < node.children.length;
         childIndex++
       ) {
-        let child = node.children[childIndex];
+        const child = node.children[childIndex];
         if (child.type === 'Object3D') {
           //This child can be a tile or contain tiles so we explore it too
           exploreTree(child);
@@ -127,8 +127,8 @@ export function getTileInTileset(rootTile, tileId) {
  * @param {*} tileId The tile id.
  */
 export function getTileInLayer(layer, tileId) {
-  let rootTile = layer.object3d.children[0];
-  let tile = getTileInTileset(rootTile, tileId);
+  const rootTile = layer.object3d.children[0];
+  const tile = getTileInTileset(rootTile, tileId);
   return tile;
 }
 
@@ -161,16 +161,16 @@ export function setTileVerticesColor(tile, newColor, indexArray = null) {
   }
 
   //Create the new color array
-  let indexCount = tile.geometry.attributes._BATCHID.count;
-  let colors = new Float32Array(indexCount * 3);
+  const indexCount = tile.geometry.attributes._BATCHID.count;
+  const colors = new Float32Array(indexCount * 3);
 
-  let lowerBound = indexArray[0];
-  let upperBound = indexArray[indexArray.length - 1];
+  const lowerBound = indexArray[0];
+  const upperBound = indexArray[indexArray.length - 1];
   for (let i = 0; i < indexCount; i++) {
     let vertexColor = newColor;
     if (!!indexArray && (lowerBound > i || upperBound < i)) {
       //If i is not one of the selected indexes, we keep the previous color
-      let previousColor = tile.geometry.attributes.color
+      const previousColor = tile.geometry.attributes.color
         ? tile.geometry.attributes.color.array.slice(i * 3, i * 3 + 3)
         : tile.material.color.toArray();
       vertexColor = previousColor;
@@ -226,10 +226,10 @@ export function setTileVerticesColor(tile, newColor, indexArray = null) {
  * createTileGroups(tile, materialProps, ranges);
  */
 export function createTileGroups(tile, materialsProps, ranges) {
-  let meshes = getMeshesFromTile(tile);
+  const meshes = getMeshesFromTile(tile);
 
-  for (let [index, mesh] of meshes.entries()) {
-    let defaultMaterial = Array.isArray(mesh.material)
+  for (const [index, mesh] of meshes.entries()) {
+    const defaultMaterial = Array.isArray(mesh.material)
       ? mesh.material[0]
       : mesh.material;
 
@@ -237,7 +237,7 @@ export function createTileGroups(tile, materialsProps, ranges) {
     mesh.material = [defaultMaterial];
 
     // Material index table (index in materialProps -> index in mesh.material)
-    let materialIndexTable = {};
+    const materialIndexTable = {};
 
     // Create the materials
     for (
@@ -245,7 +245,7 @@ export function createTileGroups(tile, materialsProps, ranges) {
       materialIndex < materialsProps.length;
       materialIndex++
     ) {
-      let props = materialsProps[materialIndex];
+      const props = materialsProps[materialIndex];
       if (props.transparent === undefined) {
         props.transparent = true;
       }
@@ -257,7 +257,7 @@ export function createTileGroups(tile, materialsProps, ranges) {
     mesh.geometry.groups = [];
 
     // Total of vertices in the tile
-    let total = mesh.geometry.attributes._BATCHID.count;
+    const total = mesh.geometry.attributes._BATCHID.count;
     let meshRanges = ranges[index];
 
     if (meshRanges.length > 0) {
@@ -266,13 +266,13 @@ export function createTileGroups(tile, materialsProps, ranges) {
         return a.start - b.start;
       });
       // Merge consecutive meshRanges with the same material
-      let mergedRanges = [];
+      const mergedRanges = [];
       for (let index = 0; index < meshRanges.length; index++) {
-        let range = meshRanges[index];
+        const range = meshRanges[index];
         if (index === 0) {
           mergedRanges.push(range);
         } else {
-          let currentMergingRange = mergedRanges[mergedRanges.length - 1];
+          const currentMergingRange = mergedRanges[mergedRanges.length - 1];
           if (
             currentMergingRange.start + currentMergingRange.count ===
               range.start &&
@@ -288,7 +288,7 @@ export function createTileGroups(tile, materialsProps, ranges) {
 
       // Add the new groups
       for (let rangeIndex = 0; rangeIndex < meshRanges.length; rangeIndex++) {
-        let range = meshRanges[rangeIndex];
+        const range = meshRanges[rangeIndex];
         mesh.geometry.addGroup(
           range.start,
           range.count,
@@ -301,8 +301,8 @@ export function createTileGroups(tile, materialsProps, ranges) {
         mesh.geometry.addGroup(0, meshRanges[0].start, 0);
       }
       for (let i = 0; i < meshRanges.length - 1; ++i) {
-        let start = meshRanges[i].start + meshRanges[i].count;
-        let count = meshRanges[i + 1].start - start;
+        const start = meshRanges[i].start + meshRanges[i].count;
+        const count = meshRanges[i + 1].start - start;
         if (count > 0) {
           mesh.geometry.addGroup(start, count, 0);
         }
@@ -311,7 +311,7 @@ export function createTileGroups(tile, materialsProps, ranges) {
         meshRanges[meshRanges.length - 1].start + meshRanges[meshRanges.length - 1].count <
         total
       ) {
-        let start =
+        const start =
           meshRanges[meshRanges.length - 1].start + meshRanges[meshRanges.length - 1].count;
         mesh.geometry.addGroup(start, total - start, 0);
       }
@@ -348,17 +348,17 @@ export function createTileGroups(tile, materialsProps, ranges) {
  * ]);
  */
 export function createTileGroupsFromBatchIDs(tile, groups) {
-  let materials = [];
-  let ranges = [];
+  const materials = [];
+  const ranges = [];
 
-  let mesh = getMeshesFromTile(tile)[0];
+  const mesh = getMeshesFromTile(tile)[0];
 
   // Create an array we can loop on to search all batchIDs, plus a stucture
   // to associate batchIDs with their material
-  let batchIDs = [];
-  let materialIndexTable = {};
+  const batchIDs = [];
+  const materialIndexTable = {};
   for (let groupIndex = 0; groupIndex < groups.length; groupIndex++) {
-    let group = groups[groupIndex];
+    const group = groups[groupIndex];
 
     // Check if a similar material has been added
     let materialIndex = materials.findIndex((mat) => {
@@ -376,7 +376,7 @@ export function createTileGroupsFromBatchIDs(tile, groups) {
       batchIDIndex < group.batchIDs.length;
       batchIDIndex++
     ) {
-      let batchID = group.batchIDs[batchIDIndex];
+      const batchID = group.batchIDs[batchIDIndex];
       batchIDs.push(batchID);
       materialIndexTable[batchID] = materialIndex;
     }
@@ -400,7 +400,7 @@ export function createTileGroupsFromBatchIDs(tile, groups) {
     index < total;
     index++
   ) {
-    let batchID = mesh.geometry.attributes._BATCHID.array[index];
+    const batchID = mesh.geometry.attributes._BATCHID.array[index];
 
     // If we found a batch ID that is greater than the one we're searching, it
     // means we found the end of the range.
@@ -518,15 +518,15 @@ export function getVerticesCentroid(tile, indexArray) {
     throw 'Cannot change vertices color';
   }
 
-  let vertexSum = new THREE.Vector3(0, 0, 0);
-  let positionArray = tile.geometry.attributes.position.array;
+  const vertexSum = new THREE.Vector3(0, 0, 0);
+  const positionArray = tile.geometry.attributes.position.array;
   for (let i = indexArray[0]; i <= indexArray[indexArray.length - 1]; ++i) {
     vertexSum.x += positionArray[i * 3];
     vertexSum.y += positionArray[i * 3 + 1];
     vertexSum.z += positionArray[i * 3 + 2];
   }
-  let vertexCount = indexArray.length;
-  let vertexCentroid = vertexSum
+  const vertexCount = indexArray.length;
+  const vertexCentroid = vertexSum
     .divideScalar(vertexCount)
     .applyMatrix4(tile.matrixWorld);
   return vertexCentroid;
@@ -542,7 +542,7 @@ export function getMeshesFromTile(tile) {
     tile = tile.children[0];
   }
 
-  for (let mesh of tile.children) {
+  for (const mesh of tile.children) {
     if (!mesh.geometry.attributes._BATCHID) {
       throw 'Invalid tile';
     }
@@ -613,25 +613,25 @@ export function getTilesInfo(layer, tilesInfo = null) {
     tilesInfo.tiles = {};
     tilesInfo.tileset;
   }
-  let tileset = layer.tileset;
-  let tileCount = tileset.tiles.length;
+  const tileset = layer.tileset;
+  const tileCount = tileset.tiles.length;
   tilesInfo.totalTileCount = tileCount;
-  let rootTile = layer.object3d.children[0];
+  const rootTile = layer.object3d.children[0];
   tilesInfo.tileset = rootTile;
-  let tiles = getVisibleTiles(layer);
+  const tiles = getVisibleTiles(layer);
   // tiles contains every tile currently loaded in the scene. We iterate
   // over them to visit the ones that we have not visited yet.
-  for (let tile of tiles) {
-    let tileId = tile.tileId;
+  for (const tile of tiles) {
+    const tileId = tile.tileId;
     // Check if this tile is already loaded (visited) in the TI
     if (!tilesInfo.tiles[tileId]) {
-      let batchTable = tile.batchTable;
-      let attributes = tile.children[0].children[0].geometry.attributes;
+      const batchTable = tile.batchTable;
+      const attributes = tile.children[0].children[0].geometry.attributes;
 
       // Map batchId -> object info
       tilesInfo.tiles[tileId] = {};
 
-      let newbatchIds = [];
+      const newbatchIds = [];
       // For each vertex get the corresponding batch ID
       attributes._BATCHID.array.forEach((batchId, arrayIndex) => {
         // Creates a dict entry for the batch ID
@@ -643,7 +643,7 @@ export function getTilesInfo(layer, tilesInfo = null) {
           tilesInfo.tiles[tileId][batchId].centroid = null;
           tilesInfo.tiles[tileId][batchId].props = {};
 
-          for (let key of Object.keys(batchTable.content)) {
+          for (const key of Object.keys(batchTable.content)) {
             tilesInfo.tiles[tileId][batchId].props[key] =
               batchTable.content[key][batchId];
           }
@@ -654,7 +654,7 @@ export function getTilesInfo(layer, tilesInfo = null) {
         tilesInfo.tiles[tileId][batchId].arrayIndexes.push(arrayIndex);
       });
       // For each newly added building, compute the centroid
-      for (let batchId of newbatchIds) {
+      for (const batchId of newbatchIds) {
         tilesInfo.tiles[tileId][batchId].centroid = getVerticesCentroid(
           tile,
           tilesInfo.tiles[tileId][batchId].arrayIndexes

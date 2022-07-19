@@ -115,7 +115,7 @@ export class Graph {
       .enter()
       .append('text')
       .text(function (d) { 
-        let uri = tokenizeURI(d.id);
+        const uri = tokenizeURI(d.id);
         return uri.id;
       })
       .style('text-anchor', 'middle')
@@ -131,7 +131,7 @@ export class Graph {
       .enter()
       .append('text')
       .text(function (d) {
-        let label = tokenizeURI(d.label);
+        const label = tokenizeURI(d.label);
         return label.id;
       })
       .style('text-anchor', 'middle')
@@ -212,7 +212,7 @@ export class Graph {
    * @return {Object}
    */
   formatResponseDataAsGraph(data) {
-    let graphData = {
+    const graphData = {
       nodes: [
         // { id: 'x', color_id: 1 },
         // { id: 'y', color_id: 2 },
@@ -227,7 +227,7 @@ export class Graph {
       colorSetOrScale: d3.scaleOrdinal(d3.schemeCategory10)
     };
 
-    for (let triple of data.results.bindings) {
+    for (const triple of data.results.bindings) {
       /* If the query is formatted using subject, subjectType, predicate, object,
          and objectType variables the node color based on the namespace of the subject
          or object's respective type */
@@ -236,20 +236,20 @@ export class Graph {
         if ( // if the subject doesn't exist yet 
           graphData.nodes.find((n) => n.id == triple.subject.value) == undefined
         ) {
-          let subjectNamespaceId = this.getNamespaceIndex(
+          const subjectNamespaceId = this.getNamespaceIndex(
             triple.subjectType.value
           );
-          let node = { id: triple.subject.value, color_id: subjectNamespaceId };
+          const node = { id: triple.subject.value, color_id: subjectNamespaceId };
           graphData.nodes.push(node);
         }
         if (// if the object doesn't exist yet
           graphData.nodes.find((n) => n.id == triple.object.value) == undefined
         ) {
-          let objectNamespaceId = this.getNamespaceIndex(triple.objectType.value);
-          let node = { id: triple.object.value, color_id: objectNamespaceId };
+          const objectNamespaceId = this.getNamespaceIndex(triple.objectType.value);
+          const node = { id: triple.object.value, color_id: objectNamespaceId };
           graphData.nodes.push(node);
         }
-        let link = {
+        const link = {
           source: triple.subject.value,
           target: triple.object.value,
           label: triple.predicate.value,
@@ -263,16 +263,16 @@ export class Graph {
         if ( // if the subject doesn't exist yet 
           graphData.nodes.find((n) => n.id == triple.subject.value) == undefined
         ) {
-          let node = { id: triple.subject.value, color_id: undefined };
+          const node = { id: triple.subject.value, color_id: undefined };
           graphData.nodes.push(node);
         }
         if (// if the object doesn't exist yet
           graphData.nodes.find((n) => n.id == triple.object.value) == undefined
         ) {
-          let node = { id: triple.object.value, color_id: undefined };
+          const node = { id: triple.object.value, color_id: undefined };
           graphData.nodes.push(node);
         }
-        let link = {
+        const link = {
           source: triple.subject.value,
           target: triple.object.value,
           label: triple.predicate.value,
@@ -295,7 +295,7 @@ export class Graph {
    * @return {Number}
    */
   getNamespaceIndex(uri) {
-    let namespace = tokenizeURI(uri).namespace;
+    const namespace = tokenizeURI(uri).namespace;
     if (!this.namespaces.includes(namespace)) {
       this.namespaces.push(namespace);
     }

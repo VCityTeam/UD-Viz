@@ -83,8 +83,7 @@ module.exports = class Commands {
 
   updateUI(go, localCtx) {
     //update ui
-    this.fpsLabel.innerHTML =
-      'Gameview dt = ' + Math.round(localCtx.getDt());
+    this.fpsLabel.innerHTML = 'Gameview dt = ' + Math.round(localCtx.getDt());
   }
 
   tick() {
@@ -92,7 +91,7 @@ module.exports = class Commands {
   }
 
   onOutdated() {
-    if (!this.conf.worldComputerDt == undefined) debugger;
+    if (!this.conf.worldComputerDt == undefined) return;
 
     this.worldDtLabel.innerHTML =
       'World FPS = ' + Math.round(1000 / this.conf.worldComputerDt);

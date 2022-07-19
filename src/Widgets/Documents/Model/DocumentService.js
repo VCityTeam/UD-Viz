@@ -72,7 +72,7 @@ export class DocumentService {
 
     this.authenticate = authenticate;
 
-    let previous = this.source;
+    const previous = this.source;
     this.source = docSource;
     return previous;
   }
@@ -85,7 +85,7 @@ export class DocumentService {
    * @returns {Promise<Array<Document>>}
    */
   async fetchDocuments() {
-    let req = await this.requestService.request(
+    const req = await this.requestService.request(
       'GET',
       this.source.getDocumentUrl(),
       { authenticate: this.authenticate }
@@ -108,8 +108,8 @@ export class DocumentService {
    * @returns {string} The data string of the image.
    */
   async fetchDocumentImage(doc) {
-    let imgUrl = this.source.getImageUrl(doc);
-    let req = await this.requestService.request('GET', imgUrl, {
+    const imgUrl = this.source.getImageUrl(doc);
+    const req = await this.requestService.request('GET', imgUrl, {
       responseType: 'arraybuffer',
       authenticate: this.authenticate,
     });

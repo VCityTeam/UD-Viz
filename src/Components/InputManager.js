@@ -290,7 +290,7 @@ export class InputManager {
    * Reset Commands buffer
    */
   resetCommandsBuffer() {
-    for (let id in this.commandsBuffer) {
+    for (const id in this.commandsBuffer) {
       this.commandsBuffer[id] = false;
     }
   }
@@ -305,7 +305,7 @@ export class InputManager {
     const result = [];
 
     //compute key commands
-    for (let id in this.keyCommands) {
+    for (const id in this.keyCommands) {
       //notify on down press and up
       if (this.keyMap[id] || this.isKeyUp(id)) {
         const cmd = this.keyCommands[id]();
@@ -314,7 +314,7 @@ export class InputManager {
     }
 
     //compute mouse commands
-    for (let eventID in this.mouseCommands) {
+    for (const eventID in this.mouseCommands) {
       if (this.mouseState.isTrigger(eventID)) {
         const cmd = this.mouseCommands[eventID].apply(this.mouseState, []);
         if (cmd) result.push(cmd);
@@ -391,7 +391,7 @@ export class MouseState {
    * @param {HTMLElement} element the element where to catch events
    */
   startListening(element) {
-    for (let id in MOUSE_STATE_EVENTS) {
+    for (const id in MOUSE_STATE_EVENTS) {
       this.listeners.push({
         element: element,
         cb: this.addEvent(element, MOUSE_STATE_EVENTS[id]),
@@ -445,7 +445,7 @@ export class MouseState {
    */
   reset() {
     //reset trigger mousemap
-    for (let idEvent in this.mouseMap) {
+    for (const idEvent in this.mouseMap) {
       this.mouseMap[idEvent] = false;
     }
   }

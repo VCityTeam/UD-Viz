@@ -36,7 +36,7 @@ export class AssetsManager {
   }
 
   dispose() {
-    for (let key in this.soundsBuffer) {
+    for (const key in this.soundsBuffer) {
       this.soundsBuffer[key].forEach(function (s) {
         s.unload();
       });
@@ -269,7 +269,7 @@ export class AssetsManager {
     switch (anchor) {
       case 'center':
         {
-          let center = bbox.min.lerp(bbox.max, 0.5);
+          const center = bbox.min.lerp(bbox.max, 0.5);
           obj.position.sub(center);
         }
         break;
@@ -285,7 +285,7 @@ export class AssetsManager {
         break;
       case 'center_min':
         {
-          let centerMin = bbox.min.clone().lerp(bbox.max, 0.5);
+          const centerMin = bbox.min.clone().lerp(bbox.max, 0.5);
           centerMin.z = bbox.min.z;
           obj.position.sub(centerMin);
         }
@@ -363,7 +363,7 @@ export class AssetsManager {
       promises.push(
         new Promise((resolve, reject) => {
           let count = 0;
-          for (let idRenderData in config.renderData) {
+          for (const idRenderData in config.renderData) {
             const id = idRenderData;
             const renderData = config.renderData[id];
             loader.load(
@@ -400,7 +400,7 @@ export class AssetsManager {
     const toEvalCode = function (string) {
       const regexRequire = /^const.*=\W*\n*.*require.*;$/gm;
       const regexType = /^\/\*\*\W*@type.*\*\/$/gm;
-      let resultRequire = string.replace(regexRequire, '');
+      const resultRequire = string.replace(regexRequire, '');
       return resultRequire.replace(regexType, '');
     };
     const module = import('./AssetsManager');
@@ -412,7 +412,7 @@ export class AssetsManager {
       promises.push(
         new Promise((resolve, reject) => {
           let count = 0;
-          for (let idScript in config.worldScripts) {
+          for (const idScript in config.worldScripts) {
             const scriptPath = config.worldScripts[idScript].path;
             jquery.get(
               scriptPath,
@@ -446,7 +446,7 @@ export class AssetsManager {
       promises.push(
         new Promise((resolve, reject) => {
           let count = 0;
-          for (let idScript in config.localScripts) {
+          for (const idScript in config.localScripts) {
             const scriptPath = config.localScripts[idScript].path;
             jquery.get(
               scriptPath,
@@ -480,7 +480,7 @@ export class AssetsManager {
       promises.push(
         new Promise((resolve, reject) => {
           let count = 0;
-          for (let idPrefab in config.prefabs) {
+          for (const idPrefab in config.prefabs) {
             const scriptPath = config.prefabs[idPrefab].path;
             jquery.get(
               scriptPath,
@@ -520,7 +520,7 @@ export class AssetsManager {
               let count = 0;
               _this.worldsJSON = [];
 
-              for (let uuid in indexWorldsJSON) {
+              for (const uuid in indexWorldsJSON) {
                 jquery.get(
                   config.worlds.folder + indexWorldsJSON[uuid],
                   function (worldString) {
@@ -554,7 +554,7 @@ export class AssetsManager {
       promises.push(
         new Promise((resolve, reject) => {
           let count = 0;
-          for (let idCss in config.css) {
+          for (const idCss in config.css) {
             const cssPath = config.css[idCss].path;
             jquery.get(
               cssPath,

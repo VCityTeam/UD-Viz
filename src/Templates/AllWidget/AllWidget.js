@@ -135,7 +135,7 @@ export class AllWidget {
    */
   appendTo(htmlElement) {
     this.parentElement = htmlElement;
-    let div = document.createElement('div');
+    const div = document.createElement('div');
     div.innerHTML = this.html;
     div.id = this.mainDivId;
     htmlElement.appendChild(div);
@@ -247,14 +247,14 @@ export class AllWidget {
    * @param {String} [accessKey] The key binding for the module.
    */
   createMenuButton(moduleId, buttonText, accessKey) {
-    let button = document.createElement('li');
+    const button = document.createElement('li');
     button.id = this.getModuleButtonId(moduleId);
     button.innerHTML = `<p class="_all_widget_menu_hint">${buttonText}</p>`;
     if (accessKey) {
       button.accessKey = accessKey;
     }
     this.menuElement.appendChild(button);
-    let icon = document.createElement('img');
+    const icon = document.createElement('img');
 
     //creating an icon
     icon.setAttribute(
@@ -268,7 +268,7 @@ export class AllWidget {
     button.onclick = (() => {
       this.toggleModule(moduleId);
     }).bind(this);
-    let moduleClass = this.getModuleById(moduleId);
+    const moduleClass = this.getModuleById(moduleId);
 
     //dynamically color the button
     moduleClass.parentElement = this.viewerDivElement.parentElement;
@@ -286,7 +286,7 @@ export class AllWidget {
    * @param authModuleId The id of the authentication module.
    */
   createAuthenticationFrame(authModuleId) {
-    let frame = document.createElement('div');
+    const frame = document.createElement('div');
     frame.id = this.authenticationFrameId;
     frame.innerHTML = this.authenticationFrameHtml;
     this.authFrameLocationElement.appendChild(frame);
@@ -329,13 +329,13 @@ export class AllWidget {
         this.authenticationMenuLoggedInElement.hidden = false;
         this.authenticationMenuLoggedOutElement.hidden = true;
         this.authenticationUserNameElement.innerHTML = `Logged in as <em>${user.firstname} ${user.lastname}</em>`;
-        for (let mid of this.requireAuthModules) {
+        for (const mid of this.requireAuthModules) {
           this.getModuleButton(mid).style.removeProperty('display');
         }
       } else {
         this.authenticationMenuLoggedInElement.hidden = true;
         this.authenticationMenuLoggedOutElement.hidden = false;
-        for (let mid of this.requireAuthModules) {
+        for (const mid of this.requireAuthModules) {
           this.getModuleButton(mid).style.setProperty('display', 'none');
         }
       }
@@ -383,7 +383,7 @@ export class AllWidget {
    * Adds WMS elevation Layer of Lyon in 2012 and WMS imagery layer of Lyon in 2009 (from Grand Lyon data).
    */
   addBaseMapLayer() {
-    let wmsImagerySource = new itowns.WMSSource({
+    const wmsImagerySource = new itowns.WMSSource({
       extent: this.extent,
       name: this.config['background_image_layer']['name'],
       url: this.config['background_image_layer']['url'],
@@ -392,7 +392,7 @@ export class AllWidget {
       format: this.config['background_image_layer']['format'],
     });
     // Add a WMS imagery layer
-    let wmsImageryLayer = new itowns.ColorLayer(
+    const wmsImageryLayer = new itowns.ColorLayer(
       this.config['background_image_layer']['layer_name'],
       {
         updateStrategy: {
@@ -409,7 +409,7 @@ export class AllWidget {
 
   addElevationLayer() {
     // Add a WMS elevation source
-    let wmsElevationSource = new itowns.WMSSource({
+    const wmsElevationSource = new itowns.WMSSource({
       extent: this.extent,
       url: this.config['elevation_layer']['url'],
       name: this.config['elevation_layer']['name'],
@@ -418,7 +418,7 @@ export class AllWidget {
       format: this.config['elevation_layer']['format'],
     });
     // Add a WMS elevation layer
-    let wmsElevationLayer = new itowns.ElevationLayer(
+    const wmsElevationLayer = new itowns.ElevationLayer(
       this.config['elevation_layer']['layer_name'],
       {
         useColorTextureElevation: true,
@@ -448,7 +448,7 @@ export class AllWidget {
     }
 
     const extensionsConfig = layer['extensions'];
-    let extensions = new itowns.C3DTExtensions();
+    const extensions = new itowns.C3DTExtensions();
     if (extensionsConfig) {
       for (let i = 0; i < extensionsConfig.length; i++) {
         if (extensionsConfig[i] === '3DTILES_temporal') {
@@ -490,7 +490,7 @@ export class AllWidget {
     const $3DTilesManager = new TilesManager(this.view, $3dTilesLayer);
 
     if (layer['color']) {
-      let color = parseInt(layer['color']);
+      const color = parseInt(layer['color']);
       $3DTilesManager.color = color;
     }
 
@@ -522,7 +522,7 @@ export class AllWidget {
       throw 'No 3DTilesLayers field in the configuration file';
     }
     const layers = {};
-    for (let layer of this.config['3DTilesLayers']) {
+    for (const layer of this.config['3DTilesLayers']) {
       layers[layer.id] = this.setup3DTilesLayer(layer);
       this.add3DTilesLayer(layers[layer.id][0]);
     }
@@ -545,10 +545,10 @@ export class AllWidget {
 
     // Define geographic extent: CRS, min/max X, min/max Y
     // area should be one of the properties of the object extents in config file
-    let min_x = parseInt(this.config['extents']['min_x']);
-    let max_x = parseInt(this.config['extents']['max_x']);
-    let min_y = parseInt(this.config['extents']['min_y']);
-    let max_y = parseInt(this.config['extents']['max_y']);
+    const min_x = parseInt(this.config['extents']['min_x']);
+    const max_x = parseInt(this.config['extents']['max_x']);
+    const min_y = parseInt(this.config['extents']['min_y']);
+    const max_y = parseInt(this.config['extents']['max_y']);
     this.extent = new itowns.Extent(
       this.config['projection'],
       min_x,
@@ -568,12 +568,12 @@ export class AllWidget {
         parseInt(this.config['camera']['position']['y'])
       );
     }
-    let heading = parseFloat(this.config['camera']['position']['heading']);
-    let range = parseFloat(this.config['camera']['position']['range']);
-    let tilt = parseFloat(this.config['camera']['position']['tilt']);
+    const heading = parseFloat(this.config['camera']['position']['heading']);
+    const range = parseFloat(this.config['camera']['position']['range']);
+    const tilt = parseFloat(this.config['camera']['position']['tilt']);
 
     // `viewerDiv` will contain iTowns' rendering area (`<canvas>`)
-    let viewerDiv = document.getElementById('viewerDiv');
+    const viewerDiv = document.getElementById('viewerDiv');
     // Instantiate PlanarView (iTowns' view that will hold the layers)
     // The skirt allows to remove the cracks between the terrain tiles
     // Instantiate controls within PlanarView
@@ -600,12 +600,12 @@ export class AllWidget {
     this.layerManager = new Widgets.Components.LayerManager(this.view);
     // ********* 3D Elements
     // Lights
-    let directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
+    const directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
     directionalLight.position.set(0, 0, 20000);
     directionalLight.updateMatrixWorld();
     this.view.scene.add(directionalLight);
 
-    let ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
     ambientLight.position.set(0, 0, 3000);
     directionalLight.updateMatrixWorld();
     this.view.scene.add(ambientLight);

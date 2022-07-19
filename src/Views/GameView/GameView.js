@@ -394,7 +394,7 @@ export class GameView extends View3D {
 
     //update lastState with the new one
     if (this.lastState) {
-      let lastGO = this.lastState.getGameObject();
+      const lastGO = this.lastState.getGameObject();
 
       if (this.updateGameObject) {
         //update lastGO
@@ -557,7 +557,7 @@ export class GameView extends View3D {
       }
     } else states = [state];
 
-    let old = this.updateGameObject;
+    const old = this.updateGameObject;
     this.updateGameObject = true;
     this.update(states);
     this.updateGameObject = old;

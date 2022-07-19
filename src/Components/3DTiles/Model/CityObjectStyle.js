@@ -18,7 +18,7 @@ export class CityObjectStyle {
       throw 'TilePartStyle require parameters in its constructor';
     }
 
-    for (let key of Object.keys(params)) {
+    for (const key of Object.keys(params)) {
       if (this[key] === null) {
         this[key] = params[key];
       } else {
@@ -62,20 +62,20 @@ export class CityObjectStyle {
       return true;
     }
 
-    for (let thisKey of Object.keys(this.materialProps)) {
+    for (const thisKey of Object.keys(this.materialProps)) {
       if (thisKey === 'transparent') {
         // Ignore the transparent value
         continue;
       }
 
-      let otherValue = otherProps[thisKey];
+      const otherValue = otherProps[thisKey];
 
       if (otherValue === undefined) {
         // We have a prop the other don't
         return false;
       }
 
-      let thisValue = this.materialProps[thisKey];
+      const thisValue = this.materialProps[thisKey];
 
       if (thisKey === 'color' && otherValue.getHex() === thisValue.getHex()) {
         // To compare color, use the hex representation
@@ -88,7 +88,7 @@ export class CityObjectStyle {
       }
     }
 
-    for (let otherKey of Object.keys(otherProps)) {
+    for (const otherKey of Object.keys(otherProps)) {
       if (otherKey === 'transparent') {
         // Again, ignore it
         continue;

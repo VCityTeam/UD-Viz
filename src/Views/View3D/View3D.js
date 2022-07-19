@@ -394,7 +394,7 @@ export class View3D {
       console.warn('no background_image_layer in config');
       return;
     }
-    let wmsImagerySource = new itowns.WMSSource({
+    const wmsImagerySource = new itowns.WMSSource({
       extent: this.extent,
       name: this.config['background_image_layer']['name'],
       url: this.config['background_image_layer']['url'],
@@ -404,7 +404,7 @@ export class View3D {
     });
 
     // Add a WMS imagery layer
-    let wmsImageryLayer = new itowns.ColorLayer(
+    const wmsImageryLayer = new itowns.ColorLayer(
       this.config['background_image_layer']['layer_name'],
       {
         updateStrategy: {
@@ -428,7 +428,7 @@ export class View3D {
     }
 
     // Add a WMS elevation source
-    let wmsElevationSource = new itowns.WMSSource({
+    const wmsElevationSource = new itowns.WMSSource({
       extent: this.extent,
       url: this.config['elevation_layer']['url'],
       name: this.config['elevation_layer']['name'],
@@ -437,7 +437,7 @@ export class View3D {
       format: this.config['elevation_layer']['format'],
     });
     // Add a WMS elevation layer
-    let wmsElevationLayer = new itowns.ElevationLayer(
+    const wmsElevationLayer = new itowns.ElevationLayer(
       this.config['elevation_layer']['layer_name'],
       {
         useColorTextureElevation: true,
@@ -463,7 +463,7 @@ export class View3D {
     this.layerManager = new LayerManager(this.itownsView);
 
     const layers = {};
-    for (let layer of this.config['3DTilesLayers']) {
+    for (const layer of this.config['3DTilesLayers']) {
       layers[layer.id] = this.setup3DTilesLayer(layer);
       itowns.View.prototype.addLayer.call(this.itownsView, layers[layer.id][0]);
     }
@@ -522,7 +522,7 @@ export class View3D {
 
     const $3DTilesManager = new TilesManager(this.itownsView, $3dTilesLayer);
     if (layer['color']) {
-      let color = parseInt(layer['color']);
+      const color = parseInt(layer['color']);
       $3DTilesManager.color = color;
     }
 

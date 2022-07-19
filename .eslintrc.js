@@ -22,6 +22,5 @@ module.exports = {
     'no-unused-vars': 'off',
     camelcase: 'off',
     'prefer-const': [2, { destructuring: 'any' }],
-    'one-var': ['error', 'always'],
   },
 };

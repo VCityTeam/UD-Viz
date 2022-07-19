@@ -58,7 +58,7 @@ module.exports = class WorldStateInterpolator {
     }
 
     //compute ping
-    let now = Date.now();
+    const now = Date.now();
     this.ping = now - this.lastTimeState;
     this.lastTimeState = now;
 
@@ -136,9 +136,9 @@ module.exports = class WorldStateInterpolator {
    * @param {WorldStateDiff} diff
    */
   onNewDiff(diff) {
-    let last = this._getLastStateReceived();
+    const last = this._getLastStateReceived();
     if (!last) throw new Error('no last state');
-    let newState = last.add(diff);
+    const newState = last.add(diff);
     this.onNewState(newState);
   }
 

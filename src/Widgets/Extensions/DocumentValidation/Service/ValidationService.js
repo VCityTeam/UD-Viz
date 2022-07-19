@@ -29,9 +29,9 @@ export class ValidationService {
    * @param {Document} doc The document to validate.
    */
   async validate(doc) {
-    let formData = new FormData();
+    const formData = new FormData();
     formData.append('id', doc.id);
-    let response = await this.requestService.request('POST', this.validateUrl, {
+    const response = await this.requestService.request('POST', this.validateUrl, {
       body: formData,
     });
   }

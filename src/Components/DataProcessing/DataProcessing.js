@@ -10,7 +10,7 @@
  */
 
 export function removeEmptyValues(formData) {
-  let emptyKeys = [];
+  const emptyKeys = [];
   formData.forEach((value, key) => {
     if (!value) {
       emptyKeys.push(key);
@@ -41,7 +41,7 @@ export function removeEmptyValues(formData) {
 export function imageToDataURI(arrayBuffer, mimeType, chunkSize = 8 * 1024) {
   // The response is a raw file, we need to convert it to base64
   // File (ArrayBuffer) -> Byte array -> String -> Base64 string
-  let responseArray = new Uint8Array(arrayBuffer);
+  const responseArray = new Uint8Array(arrayBuffer);
 
   // Make a string from the response array. As the array can be
   // too long (each value will be passed as an argument to
@@ -54,7 +54,7 @@ export function imageToDataURI(arrayBuffer, mimeType, chunkSize = 8 * 1024) {
     );
   }
 
-  let b64data = 'data:' + mimeType + ';base64,' + btoa(responseAsString);
+  const b64data = 'data:' + mimeType + ';base64,' + btoa(responseAsString);
   return b64data;
 }
 
@@ -75,7 +75,7 @@ export function imageToDataURI(arrayBuffer, mimeType, chunkSize = 8 * 1024) {
 export function getAttributeByPath(obj, path) {
   const segs = path.split('.');
   let val = obj;
-  for (let seg of segs) {
+  for (const seg of segs) {
     val = val[seg];
     if (val === undefined) {
       break;
@@ -93,14 +93,14 @@ export function getAttributeByPath(obj, path) {
  */
 export function objectEquals(a, b) {
   // Set of a's keys
-  let keys = new Set(Object.keys(a));
-  for (let key of Object.keys(b)) {
+  const keys = new Set(Object.keys(a));
+  for (const key of Object.keys(b)) {
     if (!keys.has(key)) {
       // If b has a key unknown to a, they aren't equal
       return false;
     }
   }
-  for (let key of keys) {
+  for (const key of keys) {
     // For each key of a, b must also have the key and the values must be equal
     if (b[key] === undefined || a[key] !== b[key]) {
       return false;

@@ -149,11 +149,11 @@ export class LayerManager {
           this.view.pickObjectsAt(event, 5, this.tilesManagers[i].layer)
         );
       }
-      let firstInter = getFirstTileIntersection(intersections);
+      const firstInter = getFirstTileIntersection(intersections);
       if (firstInter) {
-        let tilesManager = this.getTilesManagerByLayerID(firstInter.layer.id);
-        let batchId = getBatchIdFromIntersection(firstInter);
-        let tileId = getObject3DFromTile(firstInter.object).tileId;
+        const tilesManager = this.getTilesManagerByLayerID(firstInter.layer.id);
+        const batchId = getBatchIdFromIntersection(firstInter);
+        const tileId = getObject3DFromTile(firstInter.object).tileId;
         return tilesManager.tiles[tileId].cityObjects[batchId];
       }
     }
@@ -171,9 +171,9 @@ export class LayerManager {
    * @returns {CityObject | undefined}
    */
   pickCityObjectByBatchTable(batchTableKey, batchTableValue) {
-    for (let tilesManager of this.tilesManagers) {
+    for (const tilesManager of this.tilesManagers) {
       if(tilesManager.tiles){
-        for (let tile of tilesManager.tiles) {
+        for (const tile of tilesManager.tiles) {
           if(tile){
             if (tile.cityObjects && tile.batchTable) {
               if(tile.batchTable.content[batchTableKey].includes(batchTableValue)){
@@ -197,11 +197,11 @@ export class LayerManager {
    * @returns {Array<CityObject>}
    */
   pickCityObjectsByBatchTable(batchTableKey, batchTableValue) {
-    let cityObjects = [];
+    const cityObjects = [];
     for (let i = 0; i < this.tilesManagers.length; i++) {
       for (let j = 0; j < this.tilesManagers[i].tiles.length; j++) {
         if (this.tilesManagers[i].tiles[j].batchTable != null) {
-          let batchTableContent =
+          const batchTableContent =
             this.tilesManagers[i].tiles[j].batchTable.content;
           for (let k = 0; k < batchTableContent.id.length; k++) {
             if (batchTableContent[batchTableKey][k] == batchTableValue) {

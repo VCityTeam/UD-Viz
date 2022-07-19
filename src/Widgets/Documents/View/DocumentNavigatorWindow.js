@@ -97,7 +97,7 @@ export class DocumentNavigatorWindow extends AbstractDocumentWindow {
     this.window.style.left = '10px';
 
     // Add extensions
-    for (let extension of Object.values(this.extensions)) {
+    for (const extension of Object.values(this.extensions)) {
       this._createExtensionElement(extension);
     }
 
@@ -138,10 +138,10 @@ export class DocumentNavigatorWindow extends AbstractDocumentWindow {
       return;
     }
 
-    let list = this.documentListElement;
+    const list = this.documentListElement;
     list.innerHTML = '';
-    for (let doc of documents) {
-      let item = document.createElement('li');
+    for (const doc of documents) {
+      const item = document.createElement('li');
       item.innerHTML = /*html*/ `
         <div class='doc-title'>${doc.title}</div>
         <div class='doc-info'>Refering ${new Date(
@@ -168,14 +168,14 @@ export class DocumentNavigatorWindow extends AbstractDocumentWindow {
     if (!this.isCreated) {
       return;
     }
-    let previouslySelected =
+    const previouslySelected =
       this.documentListElement.querySelector('.document-selected');
     if (previouslySelected) {
       previouslySelected.classList.remove('document-selected');
     }
     if (document) {
-      let newIndex = this.provider.getDisplayedDocumentIndex();
-      let newSelected = this.documentListElement.querySelector(
+      const newIndex = this.provider.getDisplayedDocumentIndex();
+      const newSelected = this.documentListElement.querySelector(
         `li:nth-child(${newIndex + 1})`
       );
       newSelected.classList.add('document-selected');
@@ -189,35 +189,35 @@ export class DocumentNavigatorWindow extends AbstractDocumentWindow {
    * Event on the 'search' button click.
    */
   async search() {
-    let keywords = this.inputKeywordsElement.value
+    const keywords = this.inputKeywordsElement.value
       .split(/[ ,;]/)
       .filter((k) => k !== '')
       .map((k) => k.toLowerCase());
     this.searchFilter.keywords = keywords;
 
-    let source = this.inputSourceElement.value.toLowerCase();
+    const source = this.inputSourceElement.value.toLowerCase();
     this.searchFilter.source = source !== '' ? source : undefined;
 
-    let rightsHolder = this.inputRightsHolderElement.value.toLowerCase();
+    const rightsHolder = this.inputRightsHolderElement.value.toLowerCase();
     this.searchFilter.rightsHolder =
       rightsHolder !== '' ? rightsHolder : undefined;
 
-    let pubStartDate = this.inputPubDateStartElement.value;
+    const pubStartDate = this.inputPubDateStartElement.value;
     this.searchFilter.pubStartDate = pubStartDate
       ? new Date(pubStartDate)
       : undefined;
 
-    let pubEndDate = this.inputPubDateEndElement.value;
+    const pubEndDate = this.inputPubDateEndElement.value;
     this.searchFilter.pubEndDate = pubEndDate
       ? new Date(pubEndDate)
       : undefined;
 
-    let refStartDate = this.inputRefDateStartElement.value;
+    const refStartDate = this.inputRefDateStartElement.value;
     this.searchFilter.refStartDate = refStartDate
       ? new Date(refStartDate)
       : undefined;
 
-    let refEndDate = this.inputRefDateEndElement.value;
+    const refEndDate = this.inputRefDateEndElement.value;
     this.searchFilter.refEndDate = refEndDate
       ? new Date(refEndDate)
       : undefined;

@@ -81,7 +81,7 @@ export class GuidedTourController extends ModuleView {
    * Get all guided tour from a database */
   //=============================================================================
   async getGuidedTours() {
-    let req = await this.requestService.request('GET', this.url, {
+    const req = await this.requestService.request('GET', this.url, {
       authenticate: false,
     });
     this.guidedTours = JSON.parse(req.responseText);

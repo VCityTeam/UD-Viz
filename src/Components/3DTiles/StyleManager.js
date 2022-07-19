@@ -69,7 +69,7 @@ export class StyleManager {
   registerStyle(name, style) {
     this._updateBufferedMaterials(name, style);
 
-    let existing = this.isStyleRegistered(name);
+    const existing = this.isStyleRegistered(name);
     this.registeredStyles[name] = style;
     return existing;
   }
@@ -94,13 +94,13 @@ export class StyleManager {
    * @param {CityObjectStyle} style The style to register.
    */
   _updateBufferedMaterials(name, style) {
-    let previousStyle = this.registeredStyles[name];
+    const previousStyle = this.registeredStyles[name];
     if (previousStyle !== undefined &&
       previousStyle._bufferedMaterialIndex !== undefined) {
       // Need to keep the buffered material
       style._bufferedMaterialIndex = previousStyle._bufferedMaterialIndex;
-      for (let tileId of Object.keys(style._bufferedMaterialIndex)) {
-        let index = style._bufferedMaterialIndex[tileId];
+      for (const tileId of Object.keys(style._bufferedMaterialIndex)) {
+        const index = style._bufferedMaterialIndex[tileId];
         this.tileBufferedMaterials[tileId][index] = style.materialProps;
       }
     }
@@ -138,7 +138,7 @@ export class StyleManager {
       }
       this._setStyleInTable(cityObjectId, style);
     } else {
-      let styleId = this._registerAnonymousStyle(style);
+      const styleId = this._registerAnonymousStyle(style);
       this._setStyleInTable(cityObjectId, styleId);
     }
   }
@@ -163,7 +163,7 @@ export class StyleManager {
     }
 
     let styleId = null;
-    for (let [anonIndex, anonStyle] of this.anonymousStyles.entries()) {
+    for (const [anonIndex, anonStyle] of this.anonymousStyles.entries()) {
       if (anonStyle.equals(style)) {
         styleId = anonIndex;
         break;
@@ -187,7 +187,7 @@ export class StyleManager {
    */
   _setStyleInTable(cityObjectId, styleIdentifier) {
     if (cityObjectId instanceof CityObjectID) {
-      let tileId = cityObjectId.tileId;
+      const tileId = cityObjectId.tileId;
   
       if (this.styleTable[tileId] === undefined) {
         this.styleTable[tileId] = {};
@@ -199,7 +199,7 @@ export class StyleManager {
       cityObjectId.sort((idA, idB) => {
         return idA.tileId - idB.tileId;
       });
-      for (let id of cityObjectId) {
+      for (const id of cityObjectId) {
         if (this.styleTable[id.tileId] === undefined) {
           this.styleTable[id.tileId] = {};
         }
@@ -224,10 +224,10 @@ export class StyleManager {
     if (this.tileBufferedMaterials[tileId] === undefined) {
       this.tileBufferedMaterials[tileId] = [];
     }
-    let style = this.getStyle(styleIdentifier);
+    const style = this.getStyle(styleIdentifier);
     let bufferedMaterialIndex;
     for (let index = 0; index < this.tileBufferedMaterials[tileId].length; index++) {
-      let bufferedMaterial = this.tileBufferedMaterials[tileId][index];
+      const bufferedMaterial = this.tileBufferedMaterials[tileId][index];
       if (style.materialPropsEquals(bufferedMaterial)) {
         bufferedMaterialIndex = index;
         break;
@@ -259,7 +259,7 @@ export class StyleManager {
         cityObjectId);
       delete this.styleTable[cityObjectId.tileId][cityObjectId.batchId];
     } else if (Array.isArray(cityObjectId)) {
-      for (let id of cityObjectId) {
+      for (const id of cityObjectId) {
         this._removeUsage(this.styleTable[id.tileId][id.batchId], id);
         delete this.styleTable[id.tileId][id.batchId];
       }
@@ -277,8 +277,8 @@ export class StyleManager {
     if (this.styleTable[tileId] === undefined) {
       return;
     }
-    let cityObjectIds = [];
-    for (let batchId of Object.keys(this.styleTable[tileId])) {
+    const cityObjectIds = [];
+    for (const batchId of Object.keys(this.styleTable[tileId])) {
       cityObjectIds.push(new CityObjectID(tileId, Number(batchId)));
     }
     
@@ -305,13 +305,13 @@ export class StyleManager {
    */
   applyToTile(tile) {
     if (this.styleTable[tile.tileId]) {
-      let materials = this.tileBufferedMaterials[tile.tileId] || [];
-      let ranges = [];
-      for (let batchId of Object.keys(this.styleTable[tile.tileId])) {
-        let styleIdentifier = this.styleTable[tile.tileId][batchId];
-        let style = this.getStyle(styleIdentifier);
-        let cityObject = tile.cityObjects[Number(batchId)];
-        let meshId = cityObject.meshId;
+      const materials = this.tileBufferedMaterials[tile.tileId] || [];
+      const ranges = [];
+      for (const batchId of Object.keys(this.styleTable[tile.tileId])) {
+        const styleIdentifier = this.styleTable[tile.tileId][batchId];
+        const style = this.getStyle(styleIdentifier);
+        const cityObject = tile.cityObjects[Number(batchId)];
+        const meshId = cityObject.meshId;
 
         if (!ranges[meshId]) ranges[meshId] = [];
         ranges[meshId].push({
@@ -334,8 +334,8 @@ export class StyleManager {
    * @returns {Array<number>}
    */
   getStyledTiles() {
-    let tiles = [];
-    for (let tileId of Object.keys(this.styleTable)) {
+    const tiles = [];
+    for (const tileId of Object.keys(this.styleTable)) {
       if (tileId !== undefined && Object.keys(this.styleTable[tileId]).length > 0) {
         tiles.push(tileId);
       }
@@ -450,7 +450,7 @@ export class StyleManager {
     if (cityObjectId instanceof CityObjectID) {
       this._removeUsageInTables(styleIdentifier, cityObjectId);
     } else if (Array.isArray(cityObjectId)) {
-      for (let id of cityObjectId) {
+      for (const id of cityObjectId) {
         this._removeUsageInTables(styleIdentifier, id);
       }
     } else {
@@ -465,10 +465,10 @@ export class StyleManager {
    * @param {CityObjectID} cityObjectId The city object ID.
    */
   _removeUsageInTables(styleIdentifier, cityObjectId) {
-    let tileId = cityObjectId.tileId;
-    let batchId = cityObjectId.batchId;
+    const tileId = cityObjectId.tileId;
+    const batchId = cityObjectId.batchId;
     if (typeof(styleIdentifier) === 'string') {
-      let index = this.registeredStyleUsage[styleIdentifier][tileId].findIndex(
+      const index = this.registeredStyleUsage[styleIdentifier][tileId].findIndex(
         bId => bId === batchId);
       this.registeredStyleUsage[styleIdentifier][tileId].splice(index, 1);
       if (this.registeredStyleUsage[styleIdentifier][tileId].length === 0) {
@@ -480,7 +480,7 @@ export class StyleManager {
         }
       }
     } else if (typeof(styleIdentifier) === 'number') {
-      let index = this.anonymousStyleUsage[styleIdentifier][tileId].findIndex(
+      const index = this.anonymousStyleUsage[styleIdentifier][tileId].findIndex(
         bId => bId === batchId);
       this.anonymousStyleUsage[styleIdentifier][tileId].splice(index, 1);
       if (this.anonymousStyleUsage[styleIdentifier][tileId].length === 0) {

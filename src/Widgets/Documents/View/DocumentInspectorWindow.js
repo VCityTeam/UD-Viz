@@ -76,7 +76,7 @@ export class DocumentInspectorWindow extends AbstractDocumentWindow {
     this.window.style.width = '390px';
 
     // Add extensions
-    for (let extension of Object.values(this.extensions)) {
+    for (const extension of Object.values(this.extensions)) {
       this._createExtensionElement(extension);
     }
 

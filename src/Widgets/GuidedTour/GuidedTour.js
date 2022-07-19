@@ -124,7 +124,7 @@ export class GuidedTour extends Window {
     //document.getElementById("guidedTourText2").style.display = "none";
     document.getElementById('guidedTourStartButton').style.display = 'block';
 
-    let currentTour = this.guidedTourController.getCurrentTour();
+    const currentTour = this.guidedTourController.getCurrentTour();
     document.getElementById('guidedTourTitle').innerHTML = currentTour
       ? currentTour.name
       : 'No guided tour';

@@ -65,7 +65,7 @@ const WorldStateModule = class WorldState {
     });
 
     //create others which existed not yet
-    for (let uuid in outdatedGameObjectsJSON) {
+    for (const uuid in outdatedGameObjectsJSON) {
       const json = outdatedGameObjectsJSON[uuid];
       const go = new GameObject(json, null);
       const parent = newGO.find(json.parentUUID);

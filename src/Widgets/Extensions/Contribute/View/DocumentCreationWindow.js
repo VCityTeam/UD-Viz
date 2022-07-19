@@ -115,7 +115,7 @@ export class DocumentCreationWindow extends AbstractDocumentWindow {
      * maxPanSpeed: number, minPanSpeed: number}}
      */
     this.savedControlsSettings = {};
-    for (let key of Object.keys(this.accurateControlsSettings)) {
+    for (const key of Object.keys(this.accurateControlsSettings)) {
       this.savedControlsSettings[key] = this.controls[key];
     }
   }
@@ -150,7 +150,7 @@ export class DocumentCreationWindow extends AbstractDocumentWindow {
   windowCreated() {
     this.hide();
 
-    let reference = this.view.inspectorWindow.window.style;
+    const reference = this.view.inspectorWindow.window.style;
     this.window.style.top = reference.top;
     this.window.style.right = reference.right;
     this.window.style.left = reference.left;
@@ -192,7 +192,7 @@ export class DocumentCreationWindow extends AbstractDocumentWindow {
 
     this._enterEditMode();
 
-    let fileReader = new FileReader();
+    const fileReader = new FileReader();
     fileReader.onload = () => {
       this.documentImageOrienter.setImageSrc(fileReader.result);
       this.view.requestWindowDisplay(this.documentImageOrienter, false);
@@ -206,7 +206,7 @@ export class DocumentCreationWindow extends AbstractDocumentWindow {
    * accuracy.
    */
   _enterEditMode() {
-    for (let [key, val] of Object.entries(this.accurateControlsSettings)) {
+    for (const [key, val] of Object.entries(this.accurateControlsSettings)) {
       this.controls[key] = val;
     }
   }
@@ -215,7 +215,7 @@ export class DocumentCreationWindow extends AbstractDocumentWindow {
    * Resets the controls settings to their default value.
    */
   _exitEditMode() {
-    for (let [key, val] of Object.entries(this.savedControlsSettings)) {
+    for (const [key, val] of Object.entries(this.savedControlsSettings)) {
       this.controls[key] = val;
     }
   }
@@ -246,8 +246,8 @@ export class DocumentCreationWindow extends AbstractDocumentWindow {
    * @private
    */
   _formValidation() {
-    let data = new FormData(this.formElement);
-    for (let entry of data.entries()) {
+    const data = new FormData(this.formElement);
+    for (const entry of data.entries()) {
       if (!entry[1] || entry[1] === '') {
         return false;
       }
@@ -303,7 +303,7 @@ export class DocumentCreationWindow extends AbstractDocumentWindow {
       return;
     }
 
-    let data = new FormData(this.formElement);
+    const data = new FormData(this.formElement);
     data.append('positionX', this.cameraPosition.x);
     data.append('positionY', this.cameraPosition.y);
     data.append('positionZ', this.cameraPosition.z);

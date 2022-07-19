@@ -97,12 +97,12 @@ const WorldModule = class World {
   computePromisesLoad(go, worldContext) {
     //load GameObject
     const promises = [];
-    let params = [worldContext, this.isServerSide, this.modules];
+    const params = [worldContext, this.isServerSide, this.modules];
 
     go.traverse(function (g) {
       const scriptC = g.getComponent(WorldScriptComponent.TYPE);
       if (scriptC) {
-        for (let idScript in scriptC.getScripts()) {
+        for (const idScript in scriptC.getScripts()) {
           const result = scriptC.executeScript(
             idScript,
             WorldScriptComponent.EVENT.LOAD,
@@ -201,7 +201,7 @@ const WorldModule = class World {
         colliderComponent.getShapeWrappers().forEach(function (wrapper) {
           const shape = wrapper.getShape();
           const potentials = shape.potentials();
-          let result = collisions.createResult();
+          const result = collisions.createResult();
           for (const p of potentials) {
             //in ShapeWrapper shape are link to gameObject
             const potentialG = p.getGameObject();
@@ -232,7 +232,7 @@ const WorldModule = class World {
 
         //delete from buffer
         delete _this.collisionsBuffer[child.getUUID()];
-        for (let id in _this.collisionsBuffer) {
+        for (const id in _this.collisionsBuffer) {
           const index = _this.collisionsBuffer[id].indexOf(go.getUUID());
           if (index >= 0) _this.collisionsBuffer[id].splice(index, 1); //remove from the other
         }
@@ -282,7 +282,7 @@ const WorldModule = class World {
         colliderComponent.getShapeWrappers().forEach(function (wrapper) {
           const shape = wrapper.getShape();
           const potentials = shape.potentials();
-          let result = collisions.createResult();
+          const result = collisions.createResult();
           for (const p of potentials) {
             //in ShapeWrapper shape are link to gameObject
             const potentialG = p.getGameObject();

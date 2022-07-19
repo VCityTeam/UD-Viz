@@ -116,7 +116,7 @@ export class DocumentVisualizerWindow extends AbstractDocumentWindow {
    * @private
    */
   _onOpacityChange() {
-    let opacity = this.opacitySliderElement.value;
+    const opacity = this.opacitySliderElement.value;
     this.opacityElement.value = opacity;
     this.imageElement.style.opacity = opacity;
   }
@@ -157,13 +157,13 @@ export class DocumentVisualizerWindow extends AbstractDocumentWindow {
    * @async
    */
   async startTravelToDisplayedDocument() {
-    let currentDoc = this.provider.getDisplayedDocument();
+    const currentDoc = this.provider.getDisplayedDocument();
 
     if (!currentDoc) {
       return;
     }
 
-    let imageSrc = await this.provider.getDisplayedDocumentImage();
+    const imageSrc = await this.provider.getDisplayedDocumentImage();
 
     if (
       isNaN(currentDoc.visualization.positionX) ||
@@ -210,8 +210,7 @@ export class DocumentVisualizerWindow extends AbstractDocumentWindow {
     return new Promise((resolve, reject) => {
       try {
         setTimeout(() => {
-          let intervalHandle;
-          let increaseOpacity = () => {
+          const increaseOpacity = () => {
             let nextValue = Number(this.opacitySliderElement.value) + 0.01;
             this.opacitySliderElement.value = nextValue;
             this._onOpacityChange();
@@ -220,7 +219,7 @@ export class DocumentVisualizerWindow extends AbstractDocumentWindow {
               clearInterval(intervalHandle);
             }
           };
-          intervalHandle = setInterval(increaseOpacity, 15);
+          const intervalHandle = setInterval(increaseOpacity, 15);
           resolve();
         }, 2000);
       } catch (e) {

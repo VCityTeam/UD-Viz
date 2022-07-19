@@ -70,9 +70,9 @@ export class PositionerWindow extends Window {
    */
   _updateFieldsFromCamera() {
     if (this.isVisible) {
-      let camera = this.itownsView.camera.camera3D;
-      let position = camera.position;
-      let quaternion = camera.quaternion;
+      const camera = this.itownsView.camera.camera3D;
+      const position = camera.position;
+      const quaternion = camera.quaternion;
       this.positionXElement.value = position.x;
       this.positionYElement.value = position.y;
       this.positionZElement.value = position.z;
@@ -89,9 +89,9 @@ export class PositionerWindow extends Window {
    * @returns {{position: THREE.Vector3, quaternion: THREE.Quaternion}}
    */
   _getCameraPosition() {
-    let data = new FormData(this.formElement);
-    let position = new THREE.Vector3();
-    let quaternion = new THREE.Quaternion();
+    const data = new FormData(this.formElement);
+    const position = new THREE.Vector3();
+    const quaternion = new THREE.Quaternion();
 
     position.x = Number(data.get('positionX'));
     position.y = Number(data.get('positionY'));
@@ -112,7 +112,7 @@ export class PositionerWindow extends Window {
    * Make the camera travel to the position and orientation in the form fields.
    */
   async _travel() {
-    let camera = this._getCameraPosition();
+    const camera = this._getCameraPosition();
     this.itownsView.controls.initiateTravel(camera.position, 'auto', camera.quaternion,
       true);
   }
@@ -122,7 +122,7 @@ export class PositionerWindow extends Window {
    * orientation.
    */
   _validate() {
-    let camera = this._getCameraPosition();
+    const camera = this._getCameraPosition();
     this.sendEvent(PositionerWindow.EVENT_POSITION_SUBMITTED, camera);
     this.disable();
   }

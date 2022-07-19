@@ -52,7 +52,7 @@ export class WebSocketService {
         _this.socket.removeAllListeners(element);
       });
     } else {
-      for (let event in this.events) {
+      for (const event in this.events) {
         this.socket.removeAllListeners(event);
       }
       this.events = {};

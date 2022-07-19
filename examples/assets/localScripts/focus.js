@@ -50,8 +50,8 @@ module.exports = class Focus {
 
     //compute world transform
     const obj = go2Focus.computeObject3D();
-    let position = new Game.THREE.Vector3();
-    let quaternion = new Game.THREE.Quaternion();
+    const position = new Game.THREE.Vector3();
+    const quaternion = new Game.THREE.Quaternion();
     obj.matrixWorld.decompose(position, quaternion, new Game.THREE.Vector3());
 
     //move the position a bit up (z is up)

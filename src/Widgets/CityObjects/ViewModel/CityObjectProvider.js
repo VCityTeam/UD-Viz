@@ -90,7 +90,7 @@ export class CityObjectProvider extends EventSender {
    * @param {MouseEvent} mouseEvent The mouse click event.
    */
   selectCityObject(mouseEvent) {
-    let cityObject = this.layerManager.pickCityObject(mouseEvent);
+    const cityObject = this.layerManager.pickCityObject(mouseEvent);
     if (cityObject) {
       this.sendEvent(
         CityObjectProvider.EVENT_CITY_OBJECT_SELECTED,
@@ -198,7 +198,7 @@ export class CityObjectProvider extends EventSender {
    * @param {string} value the batch table value to search for.
    */
   selectCityObjectByBatchTable(key, value) {
-    let cityObject = this.layerManager.pickCityObjectByBatchTable(key, value);
+    const cityObject = this.layerManager.pickCityObjectByBatchTable(key, value);
     if (cityObject) {
       if (this.selectedCityObject != cityObject) {
         if (this.selectedCityObject) {
@@ -256,7 +256,7 @@ export class CityObjectProvider extends EventSender {
    * @param {CityObjectFilter} cityObjectFilter The filter to add.
    */
   addFilter(cityObjectFilter) {
-    let label = cityObjectFilter.label;
+    const label = cityObjectFilter.label;
 
     if (this.filters[label] !== undefined) {
       throw 'A filter with this label already exists : ' + label;
@@ -289,7 +289,7 @@ export class CityObjectProvider extends EventSender {
    * layer.
    */
   setLayer(filterLabel, style) {
-    let filter = this.filters[filterLabel];
+    const filter = this.filters[filterLabel];
 
     if (filter === undefined) {
       throw 'No filter found with the label : ' + filterLabel;
@@ -330,7 +330,7 @@ export class CityObjectProvider extends EventSender {
    */
   _updateTilesManager() {
     if (this.selectedCityObject) {
-      let tileManager = this.layerManager.getTilesManagerByLayerID(
+      const tileManager = this.layerManager.getTilesManagerByLayerID(
         this.selectedCityObject.tile.layer.id
       );
 

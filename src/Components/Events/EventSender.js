@@ -66,12 +66,12 @@ export class EventSender {
      * @param data The optional data to pass as parameter.
      */
   async sendEvent(event, data = null) {
-    let listeners = this.eventListeners[event];
+    const listeners = this.eventListeners[event];
     if (listeners) {
-      for (let action of listeners) {
+      for (const action of listeners) {
         action(data);
       }
-      for (let action of this.allEventsListeners) {
+      for (const action of this.allEventsListeners) {
         action(event, data);
       }
     } else {
@@ -86,14 +86,14 @@ export class EventSender {
      * should be the same reference that was used to register it.
      */
   removeEventListener(action) {
-    for (let eventListeners of Object.values(this.eventListeners)) {
-      let index = eventListeners.findIndex((list) => action === list);
+    for (const eventListeners of Object.values(this.eventListeners)) {
+      const index = eventListeners.findIndex((list) => action === list);
       if (index >= 0) {
         eventListeners.splice(index, 1);
       }
     }
 
-    let index = this.allEventsListeners.findIndex((list) => action === list);
+    const index = this.allEventsListeners.findIndex((list) => action === list);
     if (index >= 0) {
       this.allEventsListeners.splice(index, 1);
     }

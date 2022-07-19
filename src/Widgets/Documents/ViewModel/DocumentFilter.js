@@ -32,7 +32,7 @@ export class DocumentFilter {
    * @returns {Array<Document>}
    */
   apply(documents) {
-    let filtered = documents.filter(this.accepts);
+    const filtered = documents.filter(this.accepts);
     return filtered;
   }
 }

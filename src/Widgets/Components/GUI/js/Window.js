@@ -120,7 +120,7 @@ export class Window extends ModuleView {
   appendTo(htmlElement) {
     if (!this.isCreated) {
       this.parentElement = htmlElement;
-      let windowDiv = document.createElement('div');
+      const windowDiv = document.createElement('div');
       windowDiv.innerHTML = this.html;
       windowDiv.id = this.windowId;
       htmlElement.appendChild(windowDiv);
@@ -130,7 +130,7 @@ export class Window extends ModuleView {
         this.headerCloseButton.onclick = this.disable.bind(this);
       }
 
-      for (let extension of this.windowExtensions) {
+      for (const extension of this.windowExtensions) {
         extension.appendTo(this.window);
       }
 
@@ -208,7 +208,7 @@ export class Window extends ModuleView {
      */
   addExtension(label, options) {
     options.id = `${this.windowId}__extensions_${label.toLowerCase().replace(/ +/, '_')}`;
-    let extension = new WindowExtension(label, options);
+    const extension = new WindowExtension(label, options);
     if (this.windowExtensions.find(ext => ext.label === label)) {
       throw 'Extension already exist : ' + label;
     }
@@ -225,14 +225,14 @@ export class Window extends ModuleView {
      * @param {string} label The label identifying the extension to remove.
      */
   removeExtension(label) {
-    let index = this.windowExtensions.findIndex(ext => ext.label === label);
+    const index = this.windowExtensions.findIndex(ext => ext.label === label);
     if (index < 0) {
       throw 'Extension does not exist : ' + label;
     }
 
-    let extension = this.windowExtensions[index];
+    const extension = this.windowExtensions[index];
     if (this.isCreated) {
-      let extensionElement = document.getElementById(extension.id);
+      const extensionElement = document.getElementById(extension.id);
       extensionElement.parentElement.removeChild(extensionElement);
     }
 
@@ -245,7 +245,7 @@ export class Window extends ModuleView {
      * @param {string} label The label identifying the extension to remove.
      */
   isExtensionUsed(label) {
-    let index = this.windowExtensions.findIndex(ext => ext.label === label);
+    const index = this.windowExtensions.findIndex(ext => ext.label === label);
     return (index >= 0);
   }
   //////////// Module view overrides
@@ -278,7 +278,7 @@ export class Window extends ModuleView {
   ////////////////////////////////////////
 
   get isCreated() {
-    let windowDiv = this.window;
+    const windowDiv = this.window;
     return windowDiv !== null && windowDiv !== undefined;
   }
 

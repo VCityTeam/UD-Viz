@@ -100,7 +100,7 @@ const GameObjectModule = class GameObject {
     let update = false;
     for (let index = 0; index < bufferedGO.length; index++) {
       const element = bufferedGO[index];
-      for (let key in this.components) {
+      for (const key in this.components) {
         const component = this.components[key];
 
         update =
@@ -211,7 +211,7 @@ const GameObjectModule = class GameObject {
   initAssetsComponents(manager, bundles = {}, isServerSide = false) {
     if (!this.initialized) {
       this.initialized = true;
-      for (let type in this.components) {
+      for (const type in this.components) {
         const c = this.components[type];
         if (isServerSide && !c.isServerSide()) continue;
         c.initAssets(manager, bundles);
@@ -395,7 +395,7 @@ const GameObjectModule = class GameObject {
 
     if (!jsonMap) return;
 
-    for (let type in jsonMap) {
+    for (const type in jsonMap) {
       const componentJSON = jsonMap[type];
 
       switch (type) {
@@ -491,7 +491,7 @@ const GameObjectModule = class GameObject {
    * @returns {GameObject.Component} the gameobject component
    */
   getComponentByUUID(uuid) {
-    for (let key in this.components) {
+    for (const key in this.components) {
       const c = this.components[key];
       if (c.getUUID() == uuid) return c;
     }
@@ -777,7 +777,7 @@ const GameObjectModule = class GameObject {
     });
 
     const components = {};
-    for (let type in this.components) {
+    for (const type in this.components) {
       const c = this.components[type];
       if (!c.isServerSide() || withServerComponent) {
         components[type] = c.toJSON();
@@ -829,7 +829,7 @@ GameObjectModule.deepCopy = function (gameObject) {
   const cloneJSON = gameObject.toJSON(true);
   //rename uuid
   JSONUtils.parse(cloneJSON, function (json, key) {
-    let keyLowerCase = key.toLowerCase();
+    const keyLowerCase = key.toLowerCase();
     if (keyLowerCase === 'uuid') json[key] = THREE.MathUtils.generateUUID();
 
     if (keyLowerCase === 'name') {

@@ -104,7 +104,7 @@ export class WindowExtension {
    * @returns {HTMLElement}
    */
   findContainer(htmlRoot) {
-    let queries = [];
+    const queries = [];
     if (this.container) {
       queries.push(`[data-ext-container="${this.type}-${this.container}"]`);
       queries.push(`[data-ext-container="${this.container}"]`);
@@ -113,7 +113,7 @@ export class WindowExtension {
     queries.push(`[data-ext-container-default="${this.type}"]`);
     
     let container;
-    for (let query of queries) {
+    for (const query of queries) {
       container = htmlRoot.querySelector(query);
       if (container) {
         break;
@@ -134,7 +134,7 @@ export class WindowExtension {
    * of the window).
    */
   appendTo(htmlElement) {
-    let container = this.findContainer(htmlElement);
+    const container = this.findContainer(htmlElement);
 
     let rootType = '';
     if (this.type === 'div') {
@@ -142,11 +142,11 @@ export class WindowExtension {
     } else if (this.type === 'button') {
       rootType = 'button';
     }
-    let root = document.createElement(rootType);
+    const root = document.createElement(rootType);
     root.id = this.id;
     root.innerHTML = this.html;
 
-    let containerClass = container.dataset.extClass;
+    const containerClass = container.dataset.extClass;
     if (containerClass) {
       root.classList.add(containerClass);
     }

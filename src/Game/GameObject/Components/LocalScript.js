@@ -73,7 +73,7 @@ const LocalScriptModule = class LocalScript {
    * @returns {Object} result of the script execution
    */
   executeScript(id, event, params) {
-    let s = this.scripts[id];
+    const s = this.scripts[id];
 
     if (s[event]) {
       return s[event].apply(s, [this.parent].concat(params));
@@ -92,7 +92,7 @@ const LocalScriptModule = class LocalScript {
     if (outdated) {
       //replace conf and launch an update event
       this.conf = component.conf;
-      for (let id in this.scripts) {
+      for (const id in this.scripts) {
         const s = this.scripts[id];
         s.conf = component.conf;
       }

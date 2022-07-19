@@ -62,7 +62,7 @@ export class CityObjectWindow extends Window {
      */
     this.extensions = [];
 
-    let viewerDiv = document.getElementById('viewerDiv');
+    const viewerDiv = document.getElementById('viewerDiv');
     /**
      * The event listener for mouse clicks.
      *
@@ -147,7 +147,7 @@ export class CityObjectWindow extends Window {
     this.filterWindow.disable();
 
     // Add extensions
-    for (let extension of Object.values(this.extensions)) {
+    for (const extension of Object.values(this.extensions)) {
       this._createExtensionElement(extension);
     }
 
@@ -175,7 +175,7 @@ export class CityObjectWindow extends Window {
    */
   _updateLayerDescription() {
     if (this.isCreated) {
-      let layer = this.provider.getLayer();
+      const layer = this.provider.getLayer();
       if(this.selectedFilterElement){
         if (layer) {
           this.layerColorIndicatorElement.style.display = '';
@@ -272,7 +272,7 @@ export class CityObjectWindow extends Window {
         Batch ID : ${cityObject.batchId}<br>
         Layer : ${cityObject.tile.layer.name}
     `;
-    for (let prop of Object.entries(cityObject.props)) {
+    for (const prop of Object.entries(cityObject.props)) {
       if(prop[0] != 'group' && prop[0] != 'properties'){
         html += `
         <br>${prop[0]} : ${prop[1]}

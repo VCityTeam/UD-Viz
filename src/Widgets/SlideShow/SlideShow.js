@@ -361,7 +361,7 @@ export class SlideShow extends Window {
         return a.name.localeCompare(b.name);
       });
       for (let i = 0; i < files.length; i++) {
-        let file = files[i];
+        const file = files[i];
         if (file) {
           try {
             const reader = new FileReader();
