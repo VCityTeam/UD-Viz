@@ -133,12 +133,9 @@ section {
   padding: 0;
 }
 
-#_all_widget_menu li{
-  padding-top: 15px;
-}
-
 .choiceMenu {
   position: relative;
+  padding-top: 15px;
   height: 40px;
 }
 
@@ -149,19 +146,16 @@ section {
   height: 100%;
   padding: 20px;
   padding-top: 12px;
-  font-size: 24px;
+  font-size: 20px;
+  font-family: 'Segoe UI';
   display: inline-block;
   margin: 0;
   left: 100%;
   top: 0;
   white-space: nowrap;
   box-sizing: border-box;
-  color: white;
+  color: #dbdbdb;
   visibility: hidden;
-  opacity: 0;
-  text-shadow: 1px 1px 1px #0009;
-  box-shadow: 1px 0px 1px -1px #0009, 0px 1px 1px -1px #0009,
-    0px -1px 1px -1px #0009;
 }
 
 .choiceMenu:hover > ._all_widget_menu_hint {
@@ -170,7 +164,7 @@ section {
 }
 
 .choiceMenuSelected > ._all_widget_menu_hint {
-  background-color: #f09f45;
+  background-color: #999eb9;
 }
 
 #activateTemporal:checked ~ header #temporalMenu {
@@ -183,7 +177,7 @@ section {
   right: 0;
   top: 0;
   width: 5px;
-  background-color: #f09f45;
+  background-color: #999eb9;
   content: '';
   z-index: inherit;
 }
@@ -193,13 +187,13 @@ section {
 }
 
 #_all_widget_menu .choiceMenu:hover {
-  background-color: #666666;
+  background-color: #dbdbdb;
 }
 
 .menuIcon {
   display: inline-block;
   width: 23px;
-  margin: 12px 12px 12px 12px;
+  margin: auto 12px auto 12px;
   flex-shrink: 0;
   opacity: 0.9;
 }
