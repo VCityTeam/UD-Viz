@@ -83,9 +83,9 @@ export class AllWidget {
     return /*html*/ `       
             <div id="_all_widget_stuct_main_panel">
                 <nav>
-                    <span class="UD-VIZ Text-Style">
+                    <div class="UD-VIZ Text-Style">
                       UD-VIZ
-                    </span>
+                    </div>
                     <hr>
                     <ul id="${this.menuId}">
                     </ul>

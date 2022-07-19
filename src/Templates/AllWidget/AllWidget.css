@@ -58,7 +58,7 @@ header h1 {
 }
 
 nav {
-  background-color: #222222;
+  background-color: #000000;
   display: inline-block;
   height: 100%;
   z-index: 50001;
@@ -239,9 +239,9 @@ section {
 
 .UD-VIZ {
   width: 69px;
-  height: 27px;
-  margin: 10px 0 39px;
-  font-family: SegoeUI;
+  height: 40px;
+  margin: 30px auto 10px auto;
+  font-family: 'Segoe UI';
   font-size: 2vh;
   font-weight: bold;
   font-stretch: normal;
@@ -250,4 +250,5 @@ section {
   letter-spacing: normal;
   text-align: left;
   color: white;
+  /* align-items: center; */
 }
