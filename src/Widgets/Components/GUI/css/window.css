@@ -21,6 +21,7 @@
     overflow-x: hidden;
     overflow-y: unset;
     cursor: default;
+    font-family: 'Segoe UI';
 }
 
 .window-header .window-title {
