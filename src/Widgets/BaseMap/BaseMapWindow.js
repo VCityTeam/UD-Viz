@@ -7,6 +7,14 @@ import * as itowns from 'itowns';
 import { Window } from '../Components/GUI/js/Window';
 
 export class BaseMap extends Window {
+    /**
+   * Manages multiple WMS sources used as Itowns ColoLayer for background
+   *
+   * @param {itownsView}itownsView An ItownsView.
+   * @param {object} config.baseMapLayers The baseMapLayers
+   * @param {appExtent} vec3 The extent used to set up the layers
+   * @param {appProjection} string The projection used to set up the layers
+   */
   constructor(itownsView, baseMapLayers,appExtent,appProjection) {
     super('baseMap', 'base Map', false);
     this.appExtent= appExtent;
@@ -21,9 +29,13 @@ export class BaseMap extends Window {
     this.window.style.top = 'unset';
     this.window.style.bottom = '10px';
     this.window.style.width = '270px';
-    this.displayLayers();
+    this.displayLayersImage();
   }
 
+  /**
+   * Create a WMSSource and an Itowns ColorLayer from each baseMapLayer.
+   * The first added is visible.
+   */
   createLayers(){
     let i = 0;
     for(let layer of this.baseMapLayers){
@@ -54,8 +66,11 @@ export class BaseMap extends Window {
       i++;
     }
   }
-
-  displayLayers() {
+  /**
+   * Display in the widget an image of the Layer, referenced in the field layer.id.
+   * It can either be an external URL or an image in the asset folder
+   */
+  displayLayersImage() {
     for (let layer of this.baseMapLayers) {
       let new_img = document.createElement('img');
       new_img.src = layer.image;
