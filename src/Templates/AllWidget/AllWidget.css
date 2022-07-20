@@ -232,8 +232,8 @@ section {
 #logo-div{
   position: fixed;
   display: flex;
-  height: 10%;
-  width: 20%;
+  padding: 10px;
+  border-radius: 6px;
   bottom: 6px;
   right: 6px;
   background-color: #d5d5d5cd;
