@@ -145,6 +145,7 @@ export class GameView extends View3D {
 
   /**
    * Initialize this view
+   *
    * @typedef {udviz.Game.WorldState} WorldState
    * @param {WorldState} state first state of this view
    */

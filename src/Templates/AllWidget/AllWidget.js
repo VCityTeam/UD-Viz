@@ -523,6 +523,7 @@ export class AllWidget {
   /**
    * It takes the 3DTilesLayers field from the configuration file, sets up each layer, and adds it to the
    * viewer
+   *
    * @returns The layers object is being returned.
    */
   setupAndAdd3DTilesLayers() {

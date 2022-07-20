@@ -5,6 +5,7 @@ const itowns = require('itowns');
 
 /**
  * Makes the camera move to focus on the target position.
+ *
  * @param {itowns.View} view The iTowns view.
  * @param {itowns.PlanarControls} controls The camera controls.
  * @param {THREE.Vector3} targetPos The target position.

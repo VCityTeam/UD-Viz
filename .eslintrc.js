@@ -22,6 +22,11 @@ module.exports = {
     'jsdoc/check-param-names': 1,
     'jsdoc/check-property-names': 1,
     'jsdoc/check-types': 1,
+    'jsdoc/check-values': 1,
+    'jsdoc/empty-tags': 1,
+    'jsdoc/implements-on-classes': 1, // Recommended
+    'jsdoc/multiline-blocks': 1, // Recommended
+    'jsdoc/newline-after-description': 1, // Recommended
     'linebreak-style': ['error', 'unix'],
     quotes: ['error', 'single'],
     semi: ['error', 'always'],

@@ -109,6 +109,7 @@ const WorldStateComputerModule = class WorldStateComputer {
 
   /**
    * Add a new GameObject to the world and call onAdd when object is loaded
+   *
    *@typedef {import('./GameObject/GameObject')} GameObject
    *
    * @param {GameObject} newGO
@@ -146,6 +147,7 @@ const WorldStateComputerModule = class WorldStateComputer {
 
   /**
    * Compute the current world state
+   *
    *@typedef {import('../Game/WorldState')} WorldState
    *
    * @param withServerComponent
@@ -158,6 +160,7 @@ const WorldStateComputerModule = class WorldStateComputer {
 
 /**
  * Load a world and tick during 1000ms then stop
+ *
  * @typedef {import('../Views/AssetsManager')} AssetsManager
  *
  * @param {World} world the world to load

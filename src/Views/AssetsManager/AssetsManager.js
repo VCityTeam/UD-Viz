@@ -85,6 +85,7 @@ export class AssetsManager {
 
   /**
    * Return worlds loaded
+   *
    * @typedef {object} json
    *
    * @returns {Array<json>} array of worlds

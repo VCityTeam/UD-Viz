@@ -34,6 +34,7 @@ const WorldStateModule = class WorldState {
 
   /**
    * Compute the next state with a given WorldStateDiff
+   *
    * @typedef {this} WorldState
    *
    * @param {WorldStateDiff} diff the WorldStateDiff between two WorldState
