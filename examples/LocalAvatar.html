@@ -50,17 +50,10 @@
           const THREE = udv.THREE;
 
           const MYMAT = new THREE.ShaderMaterial({
-            uniforms: {
-              // logDepthBufFC:{value:1},
-              // opacity: {
-              //   value: 1.0
-              // }
-            },
+            uniforms: {},
             vertexShader: `
     #define NORMAL
     varying vec3 vNormal;
-    //varying float vDepth;
-    //varying vec3 vView;
     varying vec2 vHighPrecisionZW;
     varying float vDistance;
     #include <common>
@@ -68,24 +61,11 @@
     void main() {
       #include <beginnormal_vertex>
       #include <defaultnormal_vertex>
-      //vNormal = normalize( transformedNormal );
       #include <begin_vertex>
       #include <project_vertex>
       #include <logdepthbuf_vertex>
       vNormal = normal;
-      //vView = -(modelViewMatrix * vec4(position.xyz, 1.)).xyz;
-      //vView = vec3(1.0 + gl_Position.w)/1000.;
-      //vDepth = 1.0 + gl_Position.w;
-      //vDepth = log(1.0 + abs(gl_Position.z));
-      //vDepth = gl_Position.w;
-      //vDepth = log(1. + abs(mvPosition.y));
-      //vDepth = -(modelViewMatrix * vec4(position.xyz, 1.)).z;
-      //vDepth = length(-(modelViewMatrix * vec4(position.xyz, 1.)).xyz);
-      //vDepth = log(1. + length(-(modelViewMatrix * vec4(position.xyz, 1.)).xyz));
-      //vDepth = log(1. + length(-(modelViewMatrix * vec4(position.xyz, 1.)).xyz);
-      //
       vHighPrecisionZW = gl_Position.zw;
-      //
       vDistance = length((modelViewMatrix * vec4(position.xyz, 1.)).xyz);
       vDistance /= 1000.;
     }
@@ -93,8 +73,6 @@
             fragmentShader: `
     #define NORMAL
     varying vec3 vNormal;
-    //varying float vDepth;
-    //varying vec3 vView;
     varying vec2 vHighPrecisionZW; 
     varying float vDistance;
     #include <packing>
@@ -106,15 +84,8 @@
       #include <normal_fragment_begin>
       #include <normal_fragment_maps>
       
-      //float depth = 1.;
-      //
-      // float fragCoordZ = 0.5 * vHighPrecisionZW[0] / vHighPrecisionZW[1] + 0.5;
-      // float simplyPackedDepth = 1.0 - fragCoordZ;
-      // float depth = simplyPackedDepth;
-      //float depth = abs(vHighPrecisionZW[0] / vHighPrecisionZW[1]);
       float depth = vDistance;
       depth = clamp(depth, 0., 1.);
-      // gl_FragColor = vec4(packNormalToRGB( normal ), 1.);
       gl_FragColor = vec4(packNormalToRGB( normal ), depth);
     }
   `,
@@ -142,20 +113,12 @@
     varying vec2 vUv;
     vec4 getTex(in vec2 uv)
     {
-      //float fragCoordZ = 0.5 * vHighPrecisionZW[0] / vHighPrecisionZW[1] + 0.5;
-      //float simplyPackedDepth = 1.0 - fragCoordZ;
-      // float simplyPackedDepth = texture2D(tDiffuse, uv).w;
-      // float fragCoordZ = -simplyPackedDepth + 1.0;
       return vec4(
-        // fragCoordZ
         texture2D(tDiffuse, uv)
-        //texture2D(tDiffuse, uv).xyz,
-        //texture2D(tDepth, uv).x
       );
     }
     void main() {
       vec2 texel = vec2( 1.0 / resolution.x, 1.0 / resolution.y );
-      //vec2 texel = vUv;
       // kernel definition (in glsl matrices are filled in column-major order)
       const mat3 Gx = mat3( -1, -2, -1, 0, 0, 0, 1, 2, 1 ); // x direction kernel
       const mat3 Gy = mat3( -1, 0, 1, -2, 0, 2, -1, 0, 1 ); // y direction kernel
@@ -206,31 +169,13 @@
 		uniform sampler2D tMask;
 		uniform vec2 resolution;
 		varying vec2 vUv;
-    //#include <packing>
 		void main() {
       gl_FragColor = vec4(0.);
-      /*
-      //gl_FragColor = vec4(mod(vUv*resolution, vec2(2.)), 0., 1.);
-      //gl_FragColor = vec4(vec2(mod(vUv.x*resolution.x/5., 2.)), 0., 1.);
-      float xgrad = mod(vUv.x*resolution.x, 10.)/10.;
-      if(xgrad > 0.5)
-        gl_FragColor = texture2D(tDiffuse, vUv);
-      else
-        gl_FragColor = texture2D(tMask, vUv);
-      */
       vec4 maskTexel = texture2D(tMask, vUv);
       float maskFactor = max(max(max(maskTexel.x, maskTexel.y), maskTexel.z), maskTexel.w);
-      // gl_FragColor = vec4((1.- maskFactor) * texture2D(tDiffuse, vUv).xyz, 1.);
       if(maskFactor <= 0.05)
       {
         gl_FragColor = texture2D(tDiffuse, vUv);
-        /*
-        //float depth = unpackRGBAToDepth(gl_FragColor);
-        float depth = gl_FragColor.x;
-        //depth = abs(depth)/2.;
-        //gl_FragColor = vec4(vec3(depth), 1.);
-        //gl_FragColor = vec4(vec3(unpackRGBAToDepth(texture2D(tDiffuse, vUv)), 1.);
-        */
       }
       #include <tonemapping_fragment>
       #include <encodings_fragment>

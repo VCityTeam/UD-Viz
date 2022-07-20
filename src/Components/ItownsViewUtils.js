@@ -100,7 +100,8 @@ export function setupAndAdd3DTilesLayers(config, layerManager, itownsView) {
 export function setupAndAddGeoJsonLayers(config, itownsView) {
   // Positional arguments verification
   if (!config['GeoJSONLayers']) {
-    throw 'No GeoJSONLayers field in the configuration file';
+    console.warn('No GeoJSONLayers field in the configuration file');
+    return;
   }
   /**
    * Create an iTowns GeoJson layer based on the specified layerConfig.
