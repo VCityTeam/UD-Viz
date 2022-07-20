@@ -453,7 +453,6 @@ export class View3D {
   /**
    * Sets up a 3D Tiles layer and adds it to the itowns view
    *
-   * @param {string} layerConfig The name of the layer to setup
    */
   setupAndAdd3DTilesLayers() {
     // Positional arguments verification
@@ -475,8 +474,6 @@ export class View3D {
   /**
    * Create an iTowns 3D Tiles layer based on the specified layerConfig.
    *
-   * @param {string} layerConfig The name of the layer to setup from the
-   * generalDemoConfig.json config file
    * @param layer
    */
   setup3DTilesLayer(layer) {

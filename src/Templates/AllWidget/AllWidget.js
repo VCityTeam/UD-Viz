@@ -445,12 +445,11 @@ export class AllWidget {
   /**
    * Create an iTowns 3D Tiles layer based on the specified layerConfig.
    *
-   * @param {string} layerConfig The name of the layer to setup from the
+   * @param {string} layer The name of the layer to setup from the
    * generalDemoConfig.json config file (should be one of the properties
    * of the 3DTilesLayer object in
    * UD-Viz/UD-Viz-Core/examples/data/config/generalDemoConfig.json
    * config file).
-   * @param layer
    */
   setup3DTilesLayer(layer) {
     if (!layer['id'] || !layer['url']) {
@@ -522,14 +521,9 @@ export class AllWidget {
   }
 
   /**
-   * Sets up a 3D Tiles layer and adds it to the itowns view (for the demos
-   * that don't need more granularity than that).
-   *
-   * @param {string} layerConfig The name of the layer to setup from the
-   * generalDemoConfig.json config file (should be one of the properties
-   * of the 3DTilesLayer object in
-   * UD-Viz/UD-Viz-Core/examples/data/config/generalDemoConfig.json
-   * config file).
+   * It takes the 3DTilesLayers field from the configuration file, sets up each layer, and adds it to the
+   * viewer
+   * @returns The layers object is being returned.
    */
   setupAndAdd3DTilesLayers() {
     // Positional arguments verification

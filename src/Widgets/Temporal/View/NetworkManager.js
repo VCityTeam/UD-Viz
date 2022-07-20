@@ -84,8 +84,7 @@ export class NetworkManager {
    * Click on edge = event
    * In both case, a date is passed
    *
-   * @param : callback (function) ( the function to be call when the event is done)
-   * @param callback
+   * @param callback (function) ( the function to be call when the event is done)
    */
   add_event(callback) {
     this.network.on('selectNode', function (params) {

@@ -391,8 +391,7 @@ export class GameView extends View3D {
    * Replace Shadow light if needed
    * Call a render pass
    *
-   * @param {WorldState} state the new state used to update this view
-   * @param states
+   * @param {WorldState[]} states an array of states, the last one being the most recent.
    */
   update(states) {
     const _this = this;

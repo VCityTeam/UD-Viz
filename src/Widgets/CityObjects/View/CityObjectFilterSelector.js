@@ -48,7 +48,7 @@ export class CityObjectFilterSelector {
   /**
    * Triggers when the form is submitted.
    *
-   * @param {FormData} formData The form data corresponding to the filter
+   * TODO param {FormData} formData The form data corresponding to the filter
    * selector form.
    */
   onSubmit() {}

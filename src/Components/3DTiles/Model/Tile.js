@@ -73,8 +73,7 @@ export class Tile {
   /**
    * Returns the material of the mesh
    *
-   * @param {THREE.Mesh}
-   * @param mesh
+   * @param {THREE.Mesh} mesh
    * @returns {THREE.Material}
    */
   getDefaultMaterial(mesh) {

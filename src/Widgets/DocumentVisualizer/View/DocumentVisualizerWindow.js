@@ -135,8 +135,7 @@ export class DocumentVisualizerWindow extends AbstractDocumentWindow {
    * Sets the orientation for the camera. `startTravel` should be called after
    * this method to apply the new orientation.
    *
-   * @param {THREE.Quaternion} position The visualization camera orientation.
-   * @param quaternion
+   * @param {THREE.Quaternion} quaternion The visualization camera orientation.
    */
   setTargetQuaternion(quaternion) {
     this.quaternion = quaternion;

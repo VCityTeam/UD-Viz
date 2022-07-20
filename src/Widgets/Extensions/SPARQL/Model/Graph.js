@@ -12,8 +12,7 @@ export class Graph {
    *
    * @param {SparqlQueryWindow} window the window this graph is attached to.
    * @param {number} height The SVG height.
-   * @param {number} height The SVG width.
-   * @param width
+   * @param {number} width The SVG width.
    */
   constructor(window, height = 500, width = 500) {
     this.window = window;

@@ -48,7 +48,6 @@ export class LayerManager {
   /**
    * Register a new or modify an existing registered style for all tilesManager.
    *
-   * @param {string} name A name to identify the style.
    * @param {CityObjectStyle} style The style to register.
    */
   setStyle(style) {
