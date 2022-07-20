@@ -19,7 +19,8 @@ export class AboutWindow extends ModuleView {
 
     // Create HMTL
     document.getElementById('aboutWindow').innerHTML =
-      `<div id="text">
+      `<h1> About </h1>
+      <div id="text">
              <br>
              <p>This UD-Viz-Core demo is part of the 
              <a target="_blank"
@@ -82,17 +83,7 @@ export class AboutWindow extends ModuleView {
              CC 3.0 BY</a>
          </p>
         </div>
-        <button id="aboutCloseButton">Close</button>
         `;
-
-    // Close the window...when close button is hit
-    document.getElementById('aboutCloseButton').addEventListener(
-      'mousedown',
-      () => {
-        this.disable();
-      },
-      false
-    );
   }
 
   // ///// MODULE VIEW MANAGEMENT
