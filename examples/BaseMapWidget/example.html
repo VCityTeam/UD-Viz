@@ -13,19 +13,12 @@
     <script type="text/javascript">
       let app = new udv.Templates.AllWidget();
 
-      app.start('../assets/config/worldMap_config.json').then((config) => {
-        app.addBaseMapLayer();
-
+      app.start('../assets/config/all_widget_config.json').then((config) => {
         ////// ABOUT MODULE
         const about = new udv.Widgets.AboutWindow();
         app.addModuleView('about', about);
-
-        const baseMaps = new udv.Widgets.baseMaps();
-        app.addModuleView('about', about);
-
-        ////// HELP MODULE
-        const help = new udv.Widgets.Extensions.HelpWindow(config.helpWindow);
-        app.addModuleView('help', help);
+        const baseMaps = new udv.Widgets.BaseMap(app.view3D.getItownsView(),config['baseMapLayers'],app.extent,app.config['projection']);
+        app.addModuleView('baseMap', baseMaps);
       });
     </script>
   </body>
