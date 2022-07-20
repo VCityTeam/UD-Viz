@@ -42,8 +42,7 @@ export function getFirstTileIntersection(intersects) {
   let first_inter = null;
   let dist_min = 0;
   for (const inter of intersects) {
-
-    if(inter.object.visible){
+    if (inter.object.visible) {
       const geomAttributes = inter.object.geometry.attributes;
       if (geomAttributes && geomAttributes._BATCHID) {
         if (!first_inter) {
@@ -137,8 +136,8 @@ export function getTileInLayer(layer, tileId) {
  * BufferGeometry.
  *
  * @param {*} tile The 3DTiles tile object from THREE.js
- * @param {Array<Number>} newColor An array of RGB value between 0 and 1.
- * @param {Array<Number>} [indexArray] Optional. The indexes of vertices to
+ * @param {Array<number>} newColor An array of RGB value between 0 and 1.
+ * @param {Array<number>} [indexArray] Optional. The indexes of vertices to
  * change the color. By default, all vertices has their color changed. The array
  * is assumed to be **sorted** and **contiguous**.
  */
@@ -208,7 +207,6 @@ export function setTileVerticesColor(tile, newColor, indexArray = null) {
  * - `start`: the start index of the group of vertices
  * - `count`: the number of vertices of the group
  * - `material`: the index of the material in the materials array
- *
  * @example
  * // Fetch the tile
  * let tile = getTileInLayer(this.layer, 6);
@@ -308,11 +306,13 @@ export function createTileGroups(tile, materialsProps, ranges) {
         }
       }
       if (
-        meshRanges[meshRanges.length - 1].start + meshRanges[meshRanges.length - 1].count <
+        meshRanges[meshRanges.length - 1].start +
+          meshRanges[meshRanges.length - 1].count <
         total
       ) {
         const start =
-          meshRanges[meshRanges.length - 1].start + meshRanges[meshRanges.length - 1].count;
+          meshRanges[meshRanges.length - 1].start +
+          meshRanges[meshRanges.length - 1].count;
         mesh.geometry.addGroup(start, total - start, 0);
       }
     } else {
@@ -330,7 +330,6 @@ export function createTileGroups(tile, materialsProps, ranges) {
  * is a dictionnary containing two entries :
  * - `material` contains the material parameters, such as `color` or `opacity`.
  * - `batchIDs` contains the batch IDs to be applied the given material.
- *
  * @example
  * // Fetch the tile
  * let tile = getTileInLayer(layer, 6);
@@ -475,6 +474,7 @@ export function removeTileVerticesColor(tile) {
  * for example, you need to call this function to actually see the changes.
  *
  * @param {*} view The iTowns view.
+ * @param layer
  */
 export function updateITownsView(view, layer) {
   try {
@@ -497,7 +497,6 @@ export function updateITownsView(view, layer) {
  * @param {*} tile The 3DTiles tile.
  * @param {*} indexArray The indexes of the vertices. It is assumed to be
  * **sorted** and **contiguous**.
- *
  * @returns {THREE.Vector3} The centroid of the vertices.
  */
 export function getVerticesCentroid(tile, indexArray) {
@@ -532,6 +531,10 @@ export function getVerticesCentroid(tile, indexArray) {
   return vertexCentroid;
 }
 
+/**
+ *
+ * @param tile
+ */
 export function getMeshesFromTile(tile) {
   if (!tile) {
     throw 'Tile not loaded in view';
@@ -554,6 +557,10 @@ export function getMeshesFromTile(tile) {
   return tile.children;
 }
 
+/**
+ *
+ * @param tile
+ */
 export function getObject3DFromTile(tile) {
   if (!tile) {
     throw 'Tile not loaded in view';
@@ -582,7 +589,6 @@ export function getObject3DFromTile(tile) {
  * loaded in the layer will be added to the TI if they're not already present.
  * If no TI is provided, a brand new one will be instantiated with currently
  * loaded tiles.
- *
  * @example
  * let layer = view.getLayerById(config['3DTilesLayerID']);
  * //Fetch the TI
@@ -596,7 +602,6 @@ export function getObject3DFromTile(tile) {
  * let batchId = getBatchIdFromIntersection(firstInter);
  * //Display the building's infos
  * console.log(tilesInfo.tiles[tileId][batchId]);
- *
  * @example
  * let layer = view.getLayerById(config['3DTilesLayerID']);
  * //Initialize the TI

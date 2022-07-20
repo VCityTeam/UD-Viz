@@ -1,8 +1,9 @@
 /** @format */
 
-import { AbstractDocumentWindow } from '../../../Documents/View/AbstractDocumentWindow';
-
+// import for function comments
 import { DocumentCommentsService } from '../services/DocumentCommentsService';
+
+import { AbstractDocumentWindow } from '../../../Documents/View/AbstractDocumentWindow';
 import './DocumentCommentsStyle.css';
 
 /**
@@ -80,12 +81,12 @@ export class DocumentCommentsWindow extends AbstractDocumentWindow {
           div.innerHTML = `
                     <div class="talktext">
                     <p class="talktext-author">${comment.author.firstName} ${
-  comment.author.lastName
-}</p>
+            comment.author.lastName
+          }</p>
                     <p class="talktext-comment">${text}</p>
                     <p class="talktext-date">${new Date(
-    comment.date
-  ).toLocaleString()}</p>
+                      comment.date
+                    ).toLocaleString()}</p>
                     </div>
                 `;
           document.getElementById('documentComments_left').appendChild(div);

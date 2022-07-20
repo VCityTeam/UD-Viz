@@ -1,5 +1,10 @@
 /** @format */
 
+// import for function comments
+import { GeocodingService } from '../services/GeocodingService';
+import { PlanarView } from 'itowns';
+
+// import libraries
 import * as THREE from 'three';
 import * as itowns from 'itowns';
 import proj4 from 'proj4';
@@ -8,14 +13,14 @@ import proj4 from 'proj4';
 import { ModuleView } from '../../../Components/ModuleView/ModuleView';
 import { focusCameraOn } from '../../../../Components/Camera/CameraUtils';
 
-import { GeocodingService } from '../services/GeocodingService';
 import './GeocodingStyle.css';
 
 export class GeocodingView extends ModuleView {
   /**
    * Instantiates the view.
+   *
    * @param {GeocodingService} geocodingService The geocoding service.
-   * @param {udvcore.itowns.PlanarView} planarView The iTowns view.
+   * @param {PlanarView} planarView The iTowns view.
    */
   constructor(geocodingService, planarView) {
     super();
@@ -30,7 +35,7 @@ export class GeocodingView extends ModuleView {
     proj4.defs(
       'EPSG:3946',
       '+proj=lcc +lat_1=45.25 +lat_2=46.75' +
-      ' +lat_0=46 +lon_0=3 +x_0=1700000 +y_0=5200000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs'
+        ' +lat_0=46 +lon_0=3 +x_0=1700000 +y_0=5200000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs'
     );
   }
 
@@ -71,6 +76,7 @@ export class GeocodingView extends ModuleView {
    * Destroys the view.
    */
   dispose() {
+    // eslint-disable-next-line no-unused-vars
     return new Promise((resolve, reject) => {
       if (this.isCreated) {
         const div = this.viewElement;

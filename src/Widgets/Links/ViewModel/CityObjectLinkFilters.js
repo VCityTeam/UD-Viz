@@ -1,11 +1,10 @@
 /** @format */
 
-//Components
+// import for function comments
+import { LinkProvider } from './LinkProvider';
 import { CityObject } from '../../../Components/3DTiles/Model/CityObject';
 
 import { CityObjectFilter } from '../../CityObjects/ViewModel/CityObjectFilter';
-import { LinkProvider } from './LinkProvider';
-
 /**
  * A filter for city objects based how many documents are linked to them.
  */

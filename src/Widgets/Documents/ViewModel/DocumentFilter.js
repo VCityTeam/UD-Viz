@@ -28,7 +28,6 @@ export class DocumentFilter {
    * Applies the filter to the documents.
    *
    * @param {Array<Document>} documents The documents to filter.
-   *
    * @returns {Array<Document>}
    */
   apply(documents) {

@@ -1,14 +1,13 @@
 /** @format */
 
+// import for function comments
 import { DocumentModule } from '../../../Documents/DocumentModule';
 import { DocumentSource } from '../../../Documents/Model/DocumentService';
-import { Document } from '../../../Documents/Model/Document';
+import { ValidationService } from '../Service/ValidationService';
+import { DocumentsInValidationDocumentSource } from '../Service/DocumentsInValidationSource';
 
 //Components
 import { Window } from '../../../Components/GUI/js/Window';
-
-import { ValidationService } from '../Service/ValidationService';
-import { DocumentsInValidationDocumentSource } from '../Service/DocumentsInValidationSource';
 
 /**
  * This class represents the visual elements and their logic for the
@@ -162,10 +161,8 @@ export class ValidationView {
    * Validates the document.
    *
    * @private
-   *
-   * @param {Document} doc The document to validate.
    */
-  _validateDocument(doc) {
+  _validateDocument() {
     if (
       !confirm(
         'Are you sure do validate this document ? ' +

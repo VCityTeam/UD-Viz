@@ -65,7 +65,6 @@ export class ContributeService {
    * Sends the request to update the document.
    *
    * @param {FormData} updatedData The updated document data.
-   *
    * @returns {Document} The updated document.
    */
   async updateDocument(updatedData) {
@@ -93,13 +92,16 @@ export class ContributeService {
    * Sends the request to create the document.
    *
    * @param {FormData} creationData The document data.
-   *
    * @returns {Document} The created document.
    */
   async createDocument(creationData) {
-    const response = await this.requestService.request('POST', this.documentUrl, {
-      body: creationData,
-    });
+    const response = await this.requestService.request(
+      'POST',
+      this.documentUrl,
+      {
+        body: creationData,
+      }
+    );
 
     if (response.status >= 200 && response.status < 300) {
       const created = JSON.parse(response.responseText);

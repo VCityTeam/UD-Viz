@@ -1,8 +1,7 @@
 /** @format */
 
-//Components
+// import for function comments
 import { RequestService } from '../../../Components/Request/RequestService';
-
 import { Link } from './Link';
 
 /**
@@ -53,7 +52,6 @@ export class LinkService {
    * @param {FormData} [filters] Filtering criteria for the link. Possible filters
    * are `source_id` (which must be a document id) and `target_id` (an ID of
    * type `linkType`).
-   *
    * @returns {Promise<Array<Link>>} An array of links.
    */
   async getLinks(linkType, filters = null) {

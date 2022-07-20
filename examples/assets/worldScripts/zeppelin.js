@@ -1,5 +1,6 @@
 /** @format */
 
+// eslint-disable-next-line no-unused-vars
 let Game;
 
 module.exports = class Zeppelin {

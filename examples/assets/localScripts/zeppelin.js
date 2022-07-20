@@ -1,5 +1,6 @@
 /** @format */
 
+// eslint-disable-next-line no-unused-vars
 let udviz;
 
 module.exports = class Zeppelin {
@@ -23,7 +24,6 @@ module.exports = class Zeppelin {
   }
 
   onOutdated() {
-    const go = arguments[0];
     this.updateUI();
   }
 };

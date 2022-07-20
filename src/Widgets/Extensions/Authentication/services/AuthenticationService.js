@@ -2,6 +2,11 @@
 
 import { RequestService } from '../../../../Components/Request/RequestService';
 
+/**
+ *
+ * @param requestService
+ * @param config
+ */
 export function AuthenticationService(requestService, config) {
   this.observers = [];
   this.config = config;
@@ -89,7 +94,7 @@ export function AuthenticationService(requestService, config) {
     const result = (
       await this.requestService.send('POST', this.userUrl, formData, false)
     ).response;
-    const obj = JSON.parse(result);
+    const obj = JSON.parse(result); // eslint-disable-line no-unused-vars
 
     this.notifyObservers();
   };

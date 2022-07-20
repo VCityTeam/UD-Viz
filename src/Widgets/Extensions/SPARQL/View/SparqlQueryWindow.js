@@ -1,10 +1,16 @@
+/** @format */
+
+// import for function comments
+import { LayerManager } from '../../../Components/Components';
+import { CityObjectProvider } from '../../../CityObjects/ViewModel/CityObjectProvider';
+import { SparqlEndpointService } from '../Model/SparqlEndpointService';
+
+// Components
 import { Window } from '../../../Components/GUI/js/Window';
 import { SparqlEndpointResponseProvider } from '../ViewModel/SparqlEndpointResponseProvider';
 import { Graph } from '../Model/Graph';
 import { Table } from '../Model/Table';
 import * as URI from '../Model/URI';
-import { LayerManager } from '../../../Components/Components';
-import { CityObjectProvider } from '../../../CityObjects/ViewModel/CityObjectProvider';
 import { JsonRenderer } from './JsonRenderer';
 import './SparqlQueryWindow.css';
 
@@ -15,6 +21,7 @@ import './SparqlQueryWindow.css';
 export class SparqlQueryWindow extends Window {
   /**
    * Creates a SPARQL query window.
+   *
    * @param {SparqlEndpointResponseProvider} sparqlProvider The SPARQL Endpoint Response Provider
    * @param {CityObjectProvider} cityObjectProvider The City Object Provider
    * @param {LayerManager} layerManager The UD-Viz LayerManager.
@@ -38,6 +45,7 @@ export class SparqlQueryWindow extends Window {
 
     /**
      *A reference to the JsonRenderer class
+     *
      * @type {JsonRenderer}
      */
     this.jsonRenderer = new JsonRenderer();
@@ -99,6 +107,7 @@ LIMIT 100`;
    * Override the windowCreated function. Sets the SparqlEndpointResponseProvider
    * and graph view. Should be called by a `SparqlModuleView`. Once this is done,
    * the window is actually usable ; service event listerers are set here.
+   *
    * @param {SparqlEndpointService} service The SPARQL endpoint service.
    */
   windowCreated() {
@@ -133,8 +142,10 @@ LIMIT 100`;
 
   /**
    * Update the DataView.
-   * @param {Object} data SPARQL query response data.
-   * @param {Object} view_type The selected semantic data view type.
+   *
+   * @param {object} data SPARQL query response data.
+   * @param response
+   * @param {object} view_type The selected semantic data view type.
    */
   updateDataView(response, view_type) {
     console.debug(response);

@@ -29,6 +29,7 @@ export class SparqlEndpointResponseProvider extends EventSender {
 
   /**
    * Query the SPARQL endpoint service
+   *
    * @param {string} query
    */
   async querySparqlEndpointService(query) {

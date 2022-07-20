@@ -15,7 +15,8 @@ import './GuidedTour.css';
  * @param { HTML DOM Element object } guidedTourContainer
  * @param { guidedTourController } guidedTourController : instance of GuidedTourController
  *
-//=============================================================================*/
+//=============================================================================
+ */
 export class GuidedTour extends Window {
   constructor(guidedTourController) {
     super('guidedTour', 'Guided Tour', false);

@@ -1,4 +1,9 @@
 /** @format */
+/**
+ *  @typedef {import('../GameObject')} GameObject
+ *  @typedef {import('../../../Views/GameView/GameView').LocalContext} LocalContext
+ *  @typedef {import('../../../Views/AssetsManager/AssetsManager')} AssetsManager
+ */
 
 const THREE = require('three');
 
@@ -8,6 +13,7 @@ const THREE = require('three');
 const RenderModule = class Render {
   /**
    * Create a new Render component of a GameObject from json
+   *
    * @param {GameObject} parent gameobject of this component
    * @param {JSON} json
    */
@@ -20,7 +26,8 @@ const RenderModule = class Render {
 
     /**
      * id of the 3D model used. Init from the field idRenderData of the json.
-     * @type {String}
+     *
+     * @type {string}
      * @note the field has been renamed, idModel => idRenderData
      */
     this.idRenderData = json.idRenderData || null; //TODO could be an array of id
@@ -42,7 +49,8 @@ const RenderModule = class Render {
 
   /**
    * This component cant run on server side
-   * @returns {Boolean}
+   *
+   * @returns {boolean}
    */
   isServerSide() {
     return false;
@@ -50,6 +58,7 @@ const RenderModule = class Render {
 
   /**
    * Compute this to JSON
+   *
    * @returns {JSON}
    */
   toJSON() {
@@ -71,6 +80,7 @@ const RenderModule = class Render {
 
   /**
    * Set color of the 3D model
+   *
    * @param {THREE.Color} value
    */
   setColor(value) {
@@ -100,6 +110,8 @@ const RenderModule = class Render {
 
   /**
    * Check if the color differed from component and update if needed
+   *
+   * @param outdated
    * @param {JSON} component the component to update to
    * @param {LocalContext} localContext local context of the GameView
    */
@@ -122,6 +134,7 @@ const RenderModule = class Render {
 
   /**
    * Add a custom object 3D to this model
+   *
    * @param {THREE.Object3D} obj
    */
   addObject3D(obj) {
@@ -130,10 +143,10 @@ const RenderModule = class Render {
 
   /**
    * Initialize 3D model
+   *
    * @param {AssetsManager} assetsManager local assetsManager
-   * @param {Shared} udvShared ud-viz/Game/Shared module
    */
-  initAssets(assetsManager, udvShared) {
+  initAssets(assetsManager) {
     this.object3D = new THREE.Object3D();
     this.object3D.name = 'Render Object3D ' + this.parent.getName();
 

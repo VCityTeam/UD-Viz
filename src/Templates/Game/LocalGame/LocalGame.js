@@ -17,7 +17,7 @@ export class LocalGame {
 
   /**
    *
-   * @returns {GameView} return the gameview of the local game
+   * @returns {Views.GameView} return the gameview of the local game
    */
   getGameView() {
     return this.gameView;
@@ -32,14 +32,15 @@ export class LocalGame {
 
   /**
    * Start a local game based on the world, the config and some options
-   * @param {World} world world to start
-   * @param {String} configPath the path of the config file
-   * @param {Object} options
+   *
+   * @param {Game.World} world world to start
+   * @param {string} configPath the path of the config file
+   * @param {object} options
    * @returns
    */
   start(world, configPath, options = {}) {
     const _this = this;
-
+    // eslint-disable-next-line no-unused-vars
     return new Promise((resolve, reject) => {
       Components.SystemUtils.File.loadJSON(configPath).then(function (config) {
         const assetsManager = new AssetsManager();
@@ -58,6 +59,7 @@ export class LocalGame {
   }
 
   startWithAssetsLoaded(world, assetsManager, config, options = {}) {
+    // eslint-disable-next-line no-unused-vars
     return new Promise((resolve, reject) => {
       const worldStateComputer = new Game.WorldStateComputer(
         assetsManager,

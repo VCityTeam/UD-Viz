@@ -1,10 +1,10 @@
 /** @format */
 
 const THREE = require('three');
+const itowns = require('itowns');
 
 /**
  * Makes the camera move to focus on the target position.
- *
  * @param {itowns.View} view The iTowns view.
  * @param {itowns.PlanarControls} controls The camera controls.
  * @param {THREE.Vector3} targetPos The target position.
@@ -43,15 +43,14 @@ export function focusCameraOn(view, controls, targetPos, options = {}) {
   });
 }
 
-
 /**
  * Compute near and far camera attributes to fit a quadrilatere of the extent + height size
- * @param {THREE.Camera} camera 
- * @param {itowns.Extent} extent 
- * @param {Number} height 
+ *
+ * @param {THREE.Camera} camera
+ * @param {itowns.Extent} extent
+ * @param {number} height
  */
 export function computeNearFarCamera(camera, extent, height) {
-
   const points = [
     new THREE.Vector3(extent.west, extent.south, 0),
     new THREE.Vector3(extent.west, extent.south, height),

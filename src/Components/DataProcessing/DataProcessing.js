@@ -9,6 +9,10 @@
  * @returns The same data, without the fields containing an empty value.
  */
 
+/**
+ *
+ * @param formData
+ */
 export function removeEmptyValues(formData) {
   const emptyKeys = [];
   formData.forEach((value, key) => {
@@ -31,10 +35,11 @@ export function removeEmptyValues(formData) {
  * The basic scheme of the URI is defined in the
  * [RFC 2397](https://tools.ietf.org/html/rfc2397), with the mediaType set to
  * `mimeType` and the raw data converted to base64.
+ *
  * @param {ArrayBuffer} arrayBuffer The binary data of the file.
- * @param {String} mimeType The media type. Any type supported by a data URI
+ * @param {string} mimeType The media type. Any type supported by a data URI
  * should work. For images, use `image/png` or `image/jpeg` for instance.
- * @param {Number} chunkSize The size of the chunks used to process the raw
+ * @param {number} chunkSize The size of the chunks used to process the raw
  * data. If you get an exception saying that too many arguments were passed as
  * parameters, try reducing this value.
  */
@@ -66,7 +71,6 @@ export function imageToDataURI(arrayBuffer, mimeType, chunkSize = 8 * 1024) {
  *
  * @param {object} obj
  * @param {string} path
- *
  * @example
  * const obj = {test: {msg: "Hello world !"}};
  * console.log(getAttributeByPath(obj, "test.msg")); // prints "Hello world !";

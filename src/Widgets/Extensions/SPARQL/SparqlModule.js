@@ -1,6 +1,9 @@
+// import for function comments
+import { LayerManager } from '../../Components/Components';
+
+// Components
 import { SparqlEndpointResponseProvider } from './ViewModel/SparqlEndpointResponseProvider';
 import { SparqlModuleView } from './View/SparqlModuleView';
-import { LayerManager } from '../../Components/Components';
 import { CityObjectProvider } from '../../CityObjects/ViewModel/CityObjectProvider';
 
 /**

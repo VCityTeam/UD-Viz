@@ -33,7 +33,8 @@ export class $3DTemporalTileset {
   /**
    * Parses transactions from a json file and creates primary and aggregated
    * transactions.
-   * @param {Object} transactions The json holding the transactions.
+   *
+   * @param {object} transactions The json holding the transactions.
    */
   parseTransactions(transactions) {
     for (let i = 0; i < transactions.length; i++) {

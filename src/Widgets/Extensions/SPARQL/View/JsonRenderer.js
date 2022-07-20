@@ -94,9 +94,6 @@ const renderjson = (function () {
   const text = function (txt) {
     return document.createTextNode(txt);
   };
-  const div = function () {
-    return document.createElement('div');
-  };
   const span = function (classname) {
     const s = document.createElement('span');
     if (classname) s.className = classname;
@@ -115,6 +112,14 @@ const renderjson = (function () {
     return a;
   };
 
+  /**
+   *
+   * @param json
+   * @param indent
+   * @param dont_indent
+   * @param show_level
+   * @param options
+   */
   function _renderjson(json, indent, dont_indent, show_level, options) {
     const my_indent = dont_indent ? '' : indent;
 
@@ -261,8 +266,8 @@ const renderjson = (function () {
       typeof options.replacer == 'function'
         ? options.replacer
         : function (k, v) {
-          return v;
-        };
+            return v;
+          };
     const pre = append(
       document.createElement('pre'),
       _renderjson(json, '', false, options.show_to_level, options)

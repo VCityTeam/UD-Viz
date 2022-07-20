@@ -4,13 +4,13 @@ const BASE_Z_INDEX = 100;
 
 /**
  * Class used to manage windows. Every window is registered into the manager
- * 
+ *
  */
 class WindowManager {
   constructor() {
     /**
      * List of all registered windows.
-     * 
+     *
      * @member {Window[]} windows
      */
     this.windows = [];
@@ -22,8 +22,8 @@ class WindowManager {
 
   /**
    * Registers a window.
-   * 
-   * @param {Window} window 
+   *
+   * @param {Window} window
    */
   registerWindow(window) {
     this.windows.push(window);
@@ -31,8 +31,10 @@ class WindowManager {
       this.createdWindows[window.name] = true;
       window.window.style.zIndex = this.newTopIndex();
       window.window.addEventListener('mousedown', () => {
-        if (window.isCreated
-            && window.window.style.zIndex < this.highestZIndex) {
+        if (
+          window.isCreated &&
+          window.window.style.zIndex < this.highestZIndex
+        ) {
           window.window.style.zIndex = this.newTopIndex();
         }
       });

@@ -1,11 +1,12 @@
 /** @format */
 
+// import for function comments
+import { DocumentModule } from '../../../Documents/DocumentModule';
+import { ContributeService } from '../Service/ContributeService';
+
 //Widgets
 import { AbstractDocumentWindow } from '../../../Documents/View/AbstractDocumentWindow';
 import { DocumentProvider } from '../../../Documents/ViewModel/DocumentProvider';
-import { DocumentModule } from '../../../Documents/DocumentModule';
-
-import { ContributeService } from '../Service/ContributeService';
 
 import './Contribute.css';
 

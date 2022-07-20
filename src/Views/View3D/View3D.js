@@ -269,7 +269,7 @@ export class View3D {
 
   /**
    *
-   * @returns {Boolean} true if html of the webgl rendering isn't catching events
+   * @returns {boolean} true if html of the webgl rendering isn't catching events
    * allowing the css3D html to catch it
    */
   isCatchingEventsCSS3D() {
@@ -278,7 +278,7 @@ export class View3D {
 
   /**
    *
-   * @param {Boolean} value if true allow css3D html elements to catch user events, otherwise no
+   * @param {boolean} value if true allow css3D html elements to catch user events, otherwise no
    */
   catchEventsCSS3D(value) {
     if (value) {
@@ -307,7 +307,7 @@ export class View3D {
 
   /**
    *
-   * @param {Boolean} value if true the css3D renderer stop rendering
+   * @param {boolean} value if true the css3D renderer stop rendering
    */
   setIsRendering(value) {
     this.isRendering = value;
@@ -335,6 +335,7 @@ export class View3D {
 
   /**
    * init the itowns.PlanarView of this view with a given extent
+   *
    * @param {itowns.Extent} extent the extent of the itowns.PlanarView
    */
   initItownsView(extent) {
@@ -451,6 +452,7 @@ export class View3D {
 
   /**
    * Sets up a 3D Tiles layer and adds it to the itowns view
+   *
    * @param {string} layerConfig The name of the layer to setup
    */
   setupAndAdd3DTilesLayers() {
@@ -472,8 +474,10 @@ export class View3D {
 
   /**
    * Create an iTowns 3D Tiles layer based on the specified layerConfig.
+   *
    * @param {string} layerConfig The name of the layer to setup from the
    * generalDemoConfig.json config file
+   * @param layer
    */
   setup3DTilesLayer(layer) {
     if (!layer['id'] || !layer['url']) {

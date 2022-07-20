@@ -1,10 +1,22 @@
 // Code from https://www.w3schools.com/howto/howto_js_draggable.asp
 // Make the DIV element draggable:
+/**
+ *
+ * @param elmnt
+ * @param dragelmnt
+ */
 export function dragElement(elmnt, dragelmnt) {
-  var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
-    
+  var pos1 = 0,
+    pos2 = 0,
+    pos3 = 0,
+    pos4 = 0;
+
   dragelmnt.onmousedown = dragMouseDown;
 
+  /**
+   *
+   * @param e
+   */
   function dragMouseDown(e) {
     e = e || window.event;
     // get the mouse cursor position at startup:
@@ -15,6 +27,10 @@ export function dragElement(elmnt, dragelmnt) {
     document.onmousemove = elementDrag;
   }
 
+  /**
+   *
+   * @param e
+   */
   function elementDrag(e) {
     e = e || window.event;
     e.preventDefault();
@@ -24,11 +40,11 @@ export function dragElement(elmnt, dragelmnt) {
     pos3 = e.clientX;
     pos4 = e.clientY;
     // set the element's new position:
-    let newTop = (elmnt.offsetTop - pos2);
+    let newTop = elmnt.offsetTop - pos2;
     if (newTop < 0) {
       newTop = 0;
     }
-    let newLeft = (elmnt.offsetLeft - pos1);
+    let newLeft = elmnt.offsetLeft - pos1;
     if (newLeft < 0) {
       newLeft = 0;
     }
@@ -36,6 +52,9 @@ export function dragElement(elmnt, dragelmnt) {
     elmnt.style.left = newLeft + 'px';
   }
 
+  /**
+   *
+   */
   function closeDragElement() {
     // stop moving when mouse button is released:
     document.onmouseup = null;

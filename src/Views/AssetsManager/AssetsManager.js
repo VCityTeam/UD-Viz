@@ -45,7 +45,8 @@ export class AssetsManager {
 
   /**
    * return json prefabs
-   * @returns {Object} a map containing prefabs JSON loaded
+   *
+   * @returns {object} a map containing prefabs JSON loaded
    */
   getPrefabs() {
     return this.prefabs;
@@ -53,7 +54,8 @@ export class AssetsManager {
 
   /**
    * Return new model corresponding to the id passed
-   * @param {String} idRenderData id of the model
+   *
+   * @param {string} idRenderData id of the model
    * @returns {Object{'animations' => THREE.AnimationClip[], 'object' => THREE.Object3D}
    */
   createRenderData(idRenderData) {
@@ -83,7 +85,9 @@ export class AssetsManager {
 
   /**
    * Return worlds loaded
-   * @returns {JSONArray[WorldJSON]} array of worlds
+   * @typedef {object} json
+   *
+   * @returns {Array<json>} array of worlds
    */
   getWorldsJSON() {
     return this.worldsJSON;
@@ -126,8 +130,9 @@ export class AssetsManager {
 
   /**
    * Return javascript class with a given id
-   * @param {String} idScript id of the script
-   * @returns {Object} constructor of the class
+   *
+   * @param {string} idScript id of the script
+   * @returns {object} constructor of the class
    */
   fetchWorldScript(idScript) {
     if (!this.worldScripts[idScript])
@@ -137,8 +142,9 @@ export class AssetsManager {
 
   /**
    * Return javascript class with a given id
-   * @param {String} id id of the script
-   * @returns {Object} constructor of the class
+   *
+   * @param {string} id id of the script
+   * @returns {object} constructor of the class
    */
   fetchLocalScript(id) {
     if (!this.localScripts[id]) console.error('no local script with id ', id);
@@ -147,7 +153,8 @@ export class AssetsManager {
 
   /**
    * Create a new GameObject base on a prefab json
-   * @param {String} idprefab id of the prefab
+   *
+   * @param {string} idprefab id of the prefab
    * @returns {GameObject} the gameobject based on a prefab
    */
   createPrefab(idprefab) {
@@ -157,8 +164,9 @@ export class AssetsManager {
 
   /**
    * Return the path of video with a given id
-   * @param {String} idVideo id of the video
-   * @returns {String} path of the video
+   *
+   * @param {string} idVideo id of the video
+   * @returns {string} path of the video
    */
   fetchVideoPath(idVideo) {
     if (!this.conf.videos[idVideo]) console.error('no video with id ', idVideo);
@@ -167,7 +175,8 @@ export class AssetsManager {
 
   /**
    * Return a json GameObject with a given id
-   * @param {String} idprefab id of the prefab
+   *
+   * @param {string} idprefab id of the prefab
    * @returns {JSON} json gameobject
    */
   fetchPrefabJSON(idprefab) {
@@ -254,7 +263,8 @@ export class AssetsManager {
 
   /**
    * Parse model imported according its metadata
-   * @param {String} id id of the model
+   *
+   * @param {string} id id of the model
    * @param {THREE.Object3D} obj the object parsed
    * @param {JSON} modelData metadata
    */
@@ -333,9 +343,10 @@ export class AssetsManager {
 
   /**
    * Load from a server assets described in a config file
+   *
    * @param {JSON} config config file
-   * @param {Html} parentDiv where to add the loadingView
-   * @returns {Array[Promises]} all the promises processed to load assets
+   * @param {HTMLElement} parentDiv where to add the loadingView
+   * @returns {Array<Promise>} all the promises processed to load assets
    */
   loadFromConfig(config = {}, parentDiv = document.body) {
     this.conf = config;
@@ -403,13 +414,15 @@ export class AssetsManager {
       const resultRequire = string.replace(regexRequire, '');
       return resultRequire.replace(regexType, '');
     };
-    const module = import('./AssetsManager');
+
+    const module = import('./AssetsManager'); // eslint-disable-line
 
     if (config.worldScripts) {
       const idLoadingWorldScripts = 'WorldScripts';
       loadingView.addLoadingBar(idLoadingWorldScripts);
 
       promises.push(
+        // eslint-disable-next-line no-unused-vars
         new Promise((resolve, reject) => {
           let count = 0;
           for (const idScript in config.worldScripts) {
@@ -444,6 +457,7 @@ export class AssetsManager {
       loadingView.addLoadingBar(idLoadingLocalScripts);
 
       promises.push(
+        // eslint-disable-next-line no-unused-vars
         new Promise((resolve, reject) => {
           let count = 0;
           for (const idScript in config.localScripts) {
@@ -478,6 +492,7 @@ export class AssetsManager {
       loadingView.addLoadingBar(idLoadingPrefabs);
 
       promises.push(
+        // eslint-disable-next-line no-unused-vars
         new Promise((resolve, reject) => {
           let count = 0;
           for (const idPrefab in config.prefabs) {
@@ -512,6 +527,7 @@ export class AssetsManager {
       loadingView.addLoadingBar(idLoadingWorlds);
 
       promises.push(
+        // eslint-disable-next-line no-unused-vars
         new Promise((resolve, reject) => {
           jquery.get(
             config.worlds.folder + 'index.json',
@@ -552,6 +568,7 @@ export class AssetsManager {
       loadingView.addLoadingBar(idLoadingCss);
 
       promises.push(
+        // eslint-disable-next-line no-unused-vars
         new Promise((resolve, reject) => {
           let count = 0;
           for (const idCss in config.css) {
@@ -582,7 +599,7 @@ export class AssetsManager {
         })
       );
     }
-
+    // eslint-disable-next-line no-unused-vars
     return new Promise((resolve, reject) => {
       Promise.all(promises).then(function () {
         if (loadingView) {
@@ -613,7 +630,7 @@ class LoadingView {
 
   /**
    *
-   * @returns {Html} the element root html of this view
+   * @returns {HTMLElement} the element root html of this view
    */
   html() {
     return this.rootHtml;
@@ -628,8 +645,9 @@ class LoadingView {
 
   /**
    * update the progress bar of the loading bar with an id
-   * @param {String} id of the loading bar
-   * @param {Number} percent the new percent of the bar
+   *
+   * @param {string} id of the loading bar
+   * @param {number} percent the new percent of the bar
    */
   updateProgress(id, percent) {
     this.loadingBars[id].style.width = percent + '%';
@@ -637,7 +655,8 @@ class LoadingView {
 
   /**
    * add a loading bar to this view with a label equals to the id
-   * @param {String} id if of the loading bar to add
+   *
+   * @param {string} id if of the loading bar to add
    */
   addLoadingBar(id) {
     const parent = document.createElement('div');

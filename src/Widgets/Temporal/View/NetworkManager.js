@@ -8,11 +8,11 @@ const Network = require('vis-network').Network;
  */
 export class NetworkManager {
   /**
-     * Constructs a NetworkManager.
-     *
-     * @param {String} id_network - HTML id which will be the container of the graph
-     * data {Dict} - Data about nodes, edges and groups for the graph
-     * {
+   * Constructs a NetworkManager.
+   *
+   * @param {string} id_network - HTML id which will be the container of the graph
+   * data {Dict} - Data about nodes, edges and groups for the graph
+   * {
      nodes:[{
         id:string
         label:string
@@ -28,10 +28,12 @@ export class NetworkManager {
      groups:{id:int
               label:string}
      }
-     * option {Object} - Data about graphics' options for viz.js. See doc for futher details about the possibilities
-     *
-     * network {Vis.Network Object} - hold the network/graph instance created by viz.js
-     */
+   * option {Object} - Data about graphics' options for viz.js. See doc for futher details about the possibilities
+   *
+   * network {Vis.Network Object} - hold the network/graph instance created by viz.js
+   * @param data
+   * @param option
+   */
   constructor(
     id_network = 'mynetwork',
     data = {
@@ -81,7 +83,9 @@ export class NetworkManager {
    * Click on node = event
    * Click on edge = event
    * In both case, a date is passed
+   *
    * @param : callback (function) ( the function to be call when the event is done)
+   * @param callback
    */
   add_event(callback) {
     this.network.on('selectNode', function (params) {

@@ -1,5 +1,9 @@
 /** @format */
 
+// import for function comments
+import { AbstractDocumentWindow } from './View/AbstractDocumentWindow';
+import { DocumentFilter } from './ViewModel/DocumentFilter';
+
 //Components
 import { RequestService } from '../../Components/Request/RequestService';
 
@@ -126,7 +130,6 @@ export class DocumentModule {
    * @param {DocumentSource} newSource The new document source.
    * @param {boolean} [authenticate] Specifies wether authentication should be
    * used for the document fetch requests.
-   *
    * @returns {DocumentSource} The previous document source.
    */
   changeDocumentSource(newSource, authenticate) {

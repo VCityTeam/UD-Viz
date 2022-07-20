@@ -1,8 +1,10 @@
 /** @format */
 
+// import for function comments
+import { LayerManager } from '../../Components/LayerManager/LayerManager';
+
 //Components
 import { Window } from '../../Components/GUI/js/Window';
-import { LayerManager } from '../../Components/LayerManager/LayerManager';
 
 export class LayerChoice extends Window {
   /**
@@ -62,14 +64,14 @@ export class LayerChoice extends Window {
         layers[i].id
       }-spoiler" class="section-title">${layers[i].id}</Label>
                         Visible <input type="checkbox" id="checkbox_${i}" ${
-  layers[i].visible ? 'checked' : ''
-}></input></br>
+        layers[i].visible ? 'checked' : ''
+      }></input></br>
                         <div id="opacity_${i}"> 
                           Opacity : <span id="color_value_opacity_${i}">${
-  layers[i].opacity
-}</span>  <input type ="range" id="range_${i}" min="0" max="1" step = "0.1" value="${
-  layers[i].opacity
-}"></input>
+        layers[i].opacity
+      }</span>  <input type ="range" id="range_${i}" min="0" max="1" step = "0.1" value="${
+        layers[i].opacity
+      }"></input>
                         </div>`;
 
       item.oninput = (event) => {
@@ -82,7 +84,9 @@ export class LayerChoice extends Window {
             event.srcElement.valueAsNumber
           );
         }
-        const span_opacity = document.getElementById('color_value_opacity_' + i);
+        const span_opacity = document.getElementById(
+          'color_value_opacity_' + i
+        );
         span_opacity.innerHTML = `${layers[i].opacity}`;
         this.layerManager.notifyChange();
       };
@@ -124,8 +128,8 @@ export class LayerChoice extends Window {
     const div = document.createElement('div');
     div.innerHTML = `
       All Visible <input type="checkbox" id="checkbox" ${
-  this.layerManager.isOneLayerVisible() ? 'checked' : ''
-}></input></br>
+        this.layerManager.isOneLayerVisible() ? 'checked' : ''
+      }></input></br>
   `;
     div.onchange = (event) => {
       this.layerManager.changeVisibility(event.srcElement.checked);
@@ -165,18 +169,17 @@ export class LayerChoice extends Window {
           tilesManager.focusCamera();
         };
         item.appendChild(itemButton);
-      }
-      else{
+      } else {
         const itemDivOpacity = document.createElement('div');
         itemDivOpacity.id = 'opacity_' + layers[i].id;
-  
+
         const itemRangeOpacity = document.createElement('input');
         itemRangeOpacity.setAttribute('type', 'range');
         itemRangeOpacity.min = 0;
         itemRangeOpacity.max = 1;
         itemRangeOpacity.step = 0.1;
         itemRangeOpacity.value = layers[i].opacity;
-  
+
         itemRangeOpacity.onchange = (event) => {
           this.layerManager.updateOpacity(
             layers[i],
@@ -184,7 +187,7 @@ export class LayerChoice extends Window {
           );
           this.layerManager.notifyChange();
         };
-        
+
         itemDivOpacity.appendChild(itemRangeOpacity);
 
         const itemSpanOpacity = document.createElement('span');

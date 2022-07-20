@@ -1,7 +1,9 @@
 /** @format */
 
-//Components
+// import for function comments
 import { RequestService } from '../../../../Components/Request/RequestService';
+
+//Components
 import { getAttributeByPath } from '../../../../Components/DataProcessing/DataProcessing';
 
 export class GeocodingService {
@@ -28,7 +30,7 @@ export class GeocodingService {
   /**
    * Retrieves the coordinates based on the search string parameter.
    *
-   * @param {String} searchString Either an address or the name of a place.
+   * @param {string} searchString Either an address or the name of a place.
    */
   async getCoordinates(searchString) {
     if (!!this.requestTimeIntervalMs && !this.canDoRequest) {

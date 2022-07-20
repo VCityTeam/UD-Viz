@@ -1,13 +1,14 @@
 /** @format */
 
+// import for function comments
+import { DocumentModule } from '../../Documents/DocumentModule';
+import { LinkProvider } from '../ViewModel/LinkProvider';
+
 //Components
 import { focusCameraOn } from '../../../Components/Camera/CameraUtils';
-
-import { DocumentModule } from '../../Documents/DocumentModule';
 import * as THREE from 'three';
 import { DocumentProvider } from '../../Documents/ViewModel/DocumentProvider';
 import { Link } from '../Model/Link';
-import { LinkProvider } from '../ViewModel/LinkProvider';
 
 /**
  * The interface extensions for the document windows.
@@ -158,13 +159,13 @@ export class DocumentLinkInterface {
       newDivHtml += `<li>
                         ID : ${link.target_id}
                         <span id="${this.linkTravelerId(
-    link
-  )}" class="clickable-text">
+                          link
+                        )}" class="clickable-text">
                         travel
                         </span>
                         <span id="${this.linkDeleterId(
-    link
-  )}" class="clickable-text">
+                          link
+                        )}" class="clickable-text">
                         delete
                         </span>
                       </li>`;

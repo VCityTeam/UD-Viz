@@ -1,8 +1,7 @@
 /** @format */
 
-//Components
+// import for function comments
 import { RequestService } from '../../../../Components/Request/RequestService';
-
 import { DocumentProvider } from '../../../Documents/ViewModel/DocumentProvider';
 
 /**
@@ -60,6 +59,7 @@ export class DocumentCommentsService {
     if (currentDocument !== null && currentDocument !== undefined) {
       const url =
         this.documentUrl + '/' + currentDocument.id + '/' + this.commentRoute;
+      // eslint-disable-next-line no-unused-vars
       const response = (await this.requestService.send('POST', url, formData))
         .response;
     }

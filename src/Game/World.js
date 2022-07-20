@@ -3,7 +3,10 @@
  * each step can export a WorldState
  *
  * @format
+ * @typedef {import('./WorldContext')} WorldContext
+ * @typedef {import('../Game/World')} World
  */
+
 const GameObject = require('./GameObject/GameObject');
 const WorldScriptComponent = require('./GameObject/Components/WorldScript');
 const ColliderComponent = require('./GameObject/Components/Collider');
@@ -11,7 +14,6 @@ const THREE = require('three');
 const WorldState = require('./WorldState');
 const { Collisions } = require('detect-collisions');
 const udvizVersion = require('../../package.json').version;
-const JSONUtils = require('./Components/JSONUtils');
 
 /**
  * Parent Object of GameObjects, handle simulation and store extradata like the geographic origin
@@ -56,7 +58,8 @@ const WorldModule = class World {
 
   /**
    * Register a custom event
-   * @param {String} eventID id of the event
+   *
+   * @param {string} eventID id of the event
    * @param {Function} cb callback to be called when the event is dispatched
    */
   on(eventID, cb) {
@@ -66,7 +69,8 @@ const WorldModule = class World {
 
   /**
    * Notify that a custom event occured
-   * @param {String} eventID id of the event to dispatch
+   *
+   * @param {string} eventID id of the event to dispatch
    * @param {Array} params params to passed to callbacks
    */
   notify(eventID, params) {
@@ -81,6 +85,7 @@ const WorldModule = class World {
 
   /**
    * Load its gameobject
+   *
    * @param {Function} onLoad callback called at the end of the load
    * @param {WorldContext} worldContext this world context
    */
@@ -90,6 +95,7 @@ const WorldModule = class World {
 
   /**
    * Compute all the promises of a gameobject needed at the load event of WorldScripts
+   *
    * @param {GameObject} go the gameobject to compute load promises
    * @param {WorldContext} worldContext this world context
    * @returns {Array[Promise]} An array containing all the promises
@@ -123,6 +129,7 @@ const WorldModule = class World {
    * Init when loaded
    * Register into the collision system
    * Then call a callback onLoad
+   *
    * @param {GameObject} gameObject the gameobject to add
    * @param {WorldContext} worldContext this world context
    * @param {GameObject} parent the gameobject parent may be null
@@ -159,6 +166,7 @@ const WorldModule = class World {
 
   /**
    * Add a gameobject into the collision system
+   *
    * @param {GameObject} go the gameobject to register
    */
   registerGOCollision(go) {
@@ -217,6 +225,7 @@ const WorldModule = class World {
 
   /**
    * Remove a GameObject from the collision system
+   *
    * @param {GameObject} go the gameobject to remove
    */
   unregisterGOCollision(go) {
@@ -242,7 +251,8 @@ const WorldModule = class World {
 
   /**
    * Remove a gameobject from this world
-   * @param {String} uuid the uuid of the gameobject to remove
+   *
+   * @param {string} uuid the uuid of the gameobject to remove
    */
   removeGameObject(uuid) {
     console.log(uuid + ' remove from ', this.name);
@@ -254,6 +264,7 @@ const WorldModule = class World {
 
   /**
    * Simulate one step of the world simulation
+   *
    * @param {WorldContext} worldContext
    */
   tick(worldContext) {
@@ -332,6 +343,8 @@ const WorldModule = class World {
 
   /**
    * Return the current world state
+   *
+   * @param withServerComponent
    * @returns {WorldState}
    */
   computeWorldState(withServerComponent = true) {
@@ -359,6 +372,7 @@ const WorldModule = class World {
 
   /**
    * Return the collision system
+   *
    * @returns {Collisions}
    */
   getCollisions() {
@@ -367,7 +381,8 @@ const WorldModule = class World {
 
   /**
    * Return the uuid of this world
-   * @returns {String}
+   *
+   * @returns {string}
    */
   getUUID() {
     return this.uuid;
@@ -375,7 +390,7 @@ const WorldModule = class World {
 
   /**
    *
-   * @returns {String}
+   * @returns {string}
    */
   getName() {
     return this.name;
@@ -383,6 +398,7 @@ const WorldModule = class World {
 
   /**
    * Return a clone of this
+   *
    * @returns {World}
    */
   clone() {
@@ -391,6 +407,7 @@ const WorldModule = class World {
 
   /**
    * Compute this to JSON
+   *
    * @returns {JSON}
    */
   toJSON() {
@@ -412,6 +429,7 @@ module.exports = WorldModule;
 //Update json data of the world
 
 //return true if version1 < version2
+// eslint-disable-next-line no-unused-vars
 const versionIsInferior = function (version1, version2) {
   const numbers1 = version1.split('.');
   const numbers2 = version2.split('.');

@@ -1,12 +1,13 @@
 /** @format */
 
-//Components
+// import for function comments
 import { RequestService } from '../../Components/Request/RequestService';
-import { Window } from '../Components/GUI/js/Window';
-
-import { LinkService } from './Model/LinkService';
 import { DocumentModule } from '../Documents/DocumentModule';
 import { CityObjectModule } from '../CityObjects/CityObjectModule';
+
+//Components
+import { Window } from '../Components/GUI/js/Window';
+import { LinkService } from './Model/LinkService';
 import { LinkView } from './View/LinkView';
 import { LinkProvider } from './ViewModel/LinkProvider';
 

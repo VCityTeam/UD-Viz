@@ -1,7 +1,10 @@
 /** @format */
+/**
+ * @typedef {import('../../../Views/AssetsManager/AssetsManager')} AssetsManager
+ * @typedef {import('../../../Views/GameView/GameView').LocalContext} LocalContext
+ */
 
 const THREE = require('three');
-const JSONUtils = require('../../Components/JSONUtils');
 
 /**
  * Component used to script a GameObject during the client side update (call from GameView)
@@ -38,8 +41,9 @@ const LocalScriptModule = class LocalScript {
 
   /**
    * Initialize scripts
+   *
    * @param {AssetsManager} assetsManager local assetsManager
-   * @param {Library} bundles set of bundle library used by script
+   * @param {Object} bundles set of bundle library used by script
    */
   initAssets(assetsManager, bundles) {
     const _this = this;
@@ -51,7 +55,8 @@ const LocalScriptModule = class LocalScript {
 
   /**
    * Execute all scripts for a particular event
-   * @param {LocalScript.EVENT} event the event trigger
+   *
+   * @param {LocalScriptModule.EVENT} event the event trigger
    * @param {Array} params parameters pass to scripts
    */
   execute(event, params) {
@@ -67,10 +72,11 @@ const LocalScriptModule = class LocalScript {
 
   /**
    * Execute script with id for a particular event
-   * @param {String} id id of the script executed
-   * @param {LocalScript.EVENT} event event trigger
+   *
+   * @param {string} id id of the script executed
+   * @param {LocalScriptModule.EVENT} event event trigger
    * @param {Array} params parameters pass to the script function
-   * @returns {Object} result of the script execution
+   * @returns {object} result of the script execution
    */
   executeScript(id, event, params) {
     const s = this.scripts[id];
@@ -85,6 +91,8 @@ const LocalScriptModule = class LocalScript {
   /**
    * Check if conf differed with component and
    * notify scripts that conf has changed and fire an UPDATE event
+   *
+   * @param outdated
    * @param {JSON} component the component json to update to
    * @param {LocalContext} localContext
    */
@@ -104,7 +112,7 @@ const LocalScriptModule = class LocalScript {
 
   /**
    *
-   * @returns {Object}
+   * @returns {object}
    */
   getScripts() {
     return this.scripts;
@@ -112,7 +120,8 @@ const LocalScriptModule = class LocalScript {
 
   /**
    * This component cant be run on the server side
-   * @returns {Boolean}
+   *
+   * @returns {boolean}
    */
   isServerSide() {
     return false;
@@ -124,6 +133,7 @@ const LocalScriptModule = class LocalScript {
 
   /**
    * Compute this to JSON
+   *
    * @returns {JSON}
    */
   toJSON() {

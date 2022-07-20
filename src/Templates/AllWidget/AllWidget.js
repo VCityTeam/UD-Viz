@@ -11,6 +11,7 @@ const $3DTemporalTileset = Widgets.$3DTemporalTileset;
 import './AllWidget.css';
 
 import { computeNearFarCamera } from '../../Components/Camera/CameraUtils';
+import { LayerManager } from '../../Widgets/Components/Components';
 
 /**
  * Represents the base HTML content of a demo for UD-Viz and provides methods to
@@ -51,7 +52,12 @@ export class AllWidget {
         //dynamic near far computation
         _this.view.addFrameRequester(
           itowns.MAIN_LOOP_EVENTS.BEFORE_RENDER,
-          computeNearFarCamera.bind(null, _this.view.camera.camera3D, _this.extent, 400)
+          computeNearFarCamera.bind(
+            null,
+            _this.view.camera.camera3D,
+            _this.extent,
+            400
+          )
         );
 
         resolve(_this.config);
@@ -242,9 +248,10 @@ export class AllWidget {
 
   /**
    * Creates a new button in the side menu.
+   *
    * @param moduleId The module id.
    * @param buttonText The text to display in the button.
-   * @param {String} [accessKey] The key binding for the module.
+   * @param {string} [accessKey] The key binding for the module.
    */
   createMenuButton(moduleId, buttonText, accessKey) {
     const button = document.createElement('li');
@@ -283,6 +290,7 @@ export class AllWidget {
 
   /**
    * Creates an authentication frame for the authentication module.
+   *
    * @param authModuleId The id of the authentication module.
    */
   createAuthenticationFrame(authModuleId) {
@@ -344,6 +352,7 @@ export class AllWidget {
 
   /**
    * Returns if the module view is currently enabled or not.
+   *
    * @param moduleId The module id.
    */
   isModuleActive(moduleId) {
@@ -352,6 +361,7 @@ export class AllWidget {
 
   /**
    * Returns the module view class by its id.
+   *
    * @param moduleId The module id.
    */
   getModuleById(moduleId) {
@@ -360,6 +370,7 @@ export class AllWidget {
 
   /**
    * If the module view is enabled, disables it, else, enables it.
+   *
    * @param moduleId The module id.
    */
   toggleModule(moduleId) {
@@ -433,11 +444,13 @@ export class AllWidget {
 
   /**
    * Create an iTowns 3D Tiles layer based on the specified layerConfig.
+   *
    * @param {string} layerConfig The name of the layer to setup from the
    * generalDemoConfig.json config file (should be one of the properties
    * of the 3DTilesLayer object in
    * UD-Viz/UD-Viz-Core/examples/data/config/generalDemoConfig.json
    * config file).
+   * @param layer
    */
   setup3DTilesLayer(layer) {
     if (!layer['id'] || !layer['url']) {
@@ -465,10 +478,10 @@ export class AllWidget {
         } else {
           console.warn(
             'The 3D Tiles extension ' +
-            extensionsConfig[i] +
-            ' specified in generalDemoConfig.json is not supported ' +
-            'by UD-Viz yet. Only 3DTILES_temporal and ' +
-            '3DTILES_batch_table_hierarchy are supported.'
+              extensionsConfig[i] +
+              ' specified in generalDemoConfig.json is not supported ' +
+              'by UD-Viz yet. Only 3DTILES_temporal and ' +
+              '3DTILES_batch_table_hierarchy are supported.'
           );
         }
       }
@@ -501,6 +514,7 @@ export class AllWidget {
 
   /**
    * Adds the specified 3D Tiles layer to the iTowns 3D view.
+   *
    * @param {itowns.C3DTilesLayer} layer The layer to add to itowns view.
    */
   add3DTilesLayer(layer) {
@@ -510,6 +524,7 @@ export class AllWidget {
   /**
    * Sets up a 3D Tiles layer and adds it to the itowns view (for the demos
    * that don't need more granularity than that).
+   *
    * @param {string} layerConfig The name of the layer to setup from the
    * generalDemoConfig.json config file (should be one of the properties
    * of the 3DTilesLayer object in
@@ -540,7 +555,7 @@ export class AllWidget {
     proj4.default.defs(
       'EPSG:3946',
       '+proj=lcc +lat_1=45.25 +lat_2=46.75' +
-      ' +lat_0=46 +lon_0=3 +x_0=1700000 +y_0=5200000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs'
+        ' +lat_0=46 +lon_0=3 +x_0=1700000 +y_0=5200000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs'
     );
 
     // Define geographic extent: CRS, min/max X, min/max Y
@@ -627,6 +642,7 @@ export class AllWidget {
   /**
    * Loads a config file. Module views should only be added after calling
    * this method.
+   *
    * @param filePath The path to the config file.
    */
   async loadConfigFile(filePath) {

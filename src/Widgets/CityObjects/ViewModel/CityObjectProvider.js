@@ -36,7 +36,7 @@ export class CityObjectProvider extends EventSender {
     /**
      * The available filters.
      *
-     * @type {Object.<string, CityObjectFilter>}
+     * @type {Object<string, CityObjectFilter>}
      */
     this.filters = {};
 
@@ -92,10 +92,7 @@ export class CityObjectProvider extends EventSender {
   selectCityObject(mouseEvent) {
     const cityObject = this.layerManager.pickCityObject(mouseEvent);
     if (cityObject) {
-      this.sendEvent(
-        CityObjectProvider.EVENT_CITY_OBJECT_SELECTED,
-        cityObject
-      );
+      this.sendEvent(CityObjectProvider.EVENT_CITY_OBJECT_SELECTED, cityObject);
       if (this.selectedCityObject != cityObject) {
         if (this.selectedCityObject) {
           this.sendEvent(
@@ -128,10 +125,7 @@ export class CityObjectProvider extends EventSender {
   }
 
   changeSelectedCityObject(cityObject) {
-    this.sendEvent(
-      CityObjectProvider.EVENT_CITY_OBJECT_SELECTED,
-      cityObject
-    );
+    this.sendEvent(CityObjectProvider.EVENT_CITY_OBJECT_SELECTED, cityObject);
     if (this.selectedCityObject != cityObject) {
       if (this.selectedCityObject) {
         this.sendEvent(
@@ -146,9 +140,9 @@ export class CityObjectProvider extends EventSender {
         this.selectedCityObject.tile.layer.id
       );
       this.selectedStyle =
-          this.selectedTilesManager.styleManager.getStyleIdentifierAppliedTo(
-            this.selectedCityObject.cityObjectId
-          );
+        this.selectedTilesManager.styleManager.getStyleIdentifierAppliedTo(
+          this.selectedCityObject.cityObjectId
+        );
       this.selectedTilesManager.setStyle(
         this.selectedCityObject.cityObjectId,
         'selected'
@@ -160,19 +154,26 @@ export class CityObjectProvider extends EventSender {
       });
       this.removeLayer();
     }
-    
   }
 
-  focusOnObject(_verticalDistance = 200, _horizontalDistance = 200){
-    if(this.selectedTilesManager && this.selectedCityObject){
-      focusCameraOn(this.selectedTilesManager.view,this.selectedTilesManager.view.controls,this.selectedCityObject.centroid,{
-        verticalDistance:_verticalDistance,horizontalDistance:_horizontalDistance
-      });
+  focusOnObject(_verticalDistance = 200, _horizontalDistance = 200) {
+    if (this.selectedTilesManager && this.selectedCityObject) {
+      focusCameraOn(
+        this.selectedTilesManager.view,
+        this.selectedTilesManager.view.controls,
+        this.selectedCityObject.centroid,
+        {
+          verticalDistance: _verticalDistance,
+          horizontalDistance: _horizontalDistance,
+        }
+      );
     }
   }
   /**
    * Unset the selected city object and sends an `EVENT_CITY_OBJECT_SELECTED`
    * event.
+   *
+   * @param sendEvent
    */
   unselectCityObject(sendEvent = true) {
     if (this.selectedCityObject) {
@@ -194,6 +195,7 @@ export class CityObjectProvider extends EventSender {
 
   /**
    * Select a city object based on a corresponding key,value pair in the batch table.
+   *
    * @param {string} key the batch table key to search by.
    * @param {string} value the batch table value to search for.
    */
@@ -270,7 +272,7 @@ export class CityObjectProvider extends EventSender {
   /**
    * Returns the currently available filters.
    *
-   * @return {Array<CityObjectFilter>} The currently available filters.
+   * @returns {Array<CityObjectFilter>} The currently available filters.
    */
   getFilters() {
     return Object.values(this.filters);

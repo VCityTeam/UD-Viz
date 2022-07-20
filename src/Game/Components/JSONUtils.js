@@ -1,5 +1,7 @@
 /** @format */
 
+import * as THREE from 'three';
+
 const Type = require('./Type');
 
 /**
@@ -9,6 +11,7 @@ const Type = require('./Type');
 module.exports = {
   /**
    * parse float value of a vector3
+   *
    * @param {THREE.Vector3} vector
    */
   parseVector3(vector) {
@@ -19,9 +22,10 @@ module.exports = {
 
   /**
    * Test if two JSON are identical
+   *
    * @param {JSON} j1 first json
    * @param {JSON} j2 second json
-   * @returns {Boolean} true if both json are identical, false otherwise
+   * @returns {boolean} true if both json are identical, false otherwise
    */
   equals(j1, j2) {
     const traverse = function (json1, json2) {
@@ -52,6 +56,7 @@ module.exports = {
 
   /**
    * Overwrite identical field of a json with another one
+   *
    * @param {JSON} jsonOverWrited the json overwritted
    * @param {JSON} jsonModel the json used as model
    */
@@ -73,6 +78,7 @@ module.exports = {
 
   /**
    * Apply a callback to each field of json
+   *
    * @param {JSON} json the json to be parsed
    * @param {Function} cb callback with first argument the json and second the key
    * @returns {JSON} the json parsed
@@ -106,6 +112,7 @@ module.exports = {
 
   /**
    * Parse to float every field of type numeric in json
+   *
    * @param {JSON} json the json to be parsed
    * @returns {JSON} the json parsed
    */
@@ -124,8 +131,9 @@ module.exports = {
 
   /**
    * Transform a json array to a single string
-   * @param {JSONArray} jsonArray the json array to transform
-   * @returns {String} String corresponding to the json array
+   *
+   * @param {Array<object>} jsonArray the json array to transform
+   * @returns {string} String corresponding to the json array
    */
   pack(jsonArray) {
     let result = '';
@@ -143,8 +151,9 @@ module.exports = {
 
   /**
    * Transform a string to a json array
-   * @param {String} string corresponding to a json array pack
-   * @returns {JSONArray} json array corresponding to the string
+   *
+   * @param {string} string corresponding to a json array pack
+   * @returns {Array<object>} json array corresponding to the string
    */
   unpack(string) {
     const splitString = string.split(this.separator);

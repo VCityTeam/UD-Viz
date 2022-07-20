@@ -1,5 +1,11 @@
 /** @format */
 
+// import for function comments
+import { TilesManager } from '../../../Components/Components';
+import { CityObjectStyle } from '../../../Components/3DTiles/Model/CityObjectStyle';
+import { Layer, ColorLayer, ElevationLayer, GeometryLayer } from 'itowns';
+import { CityObject } from '../../../Components/3DTiles/Model/CityObject';
+// Components
 import {
   getFirstTileIntersection,
   getBatchIdFromIntersection,
@@ -21,6 +27,7 @@ export class LayerManager {
 
     /**
      * The set of tiles Manager that have been loaded.
+     *
      * @type {Array<TilesManager>}
      */
     this.tilesManagers = [];
@@ -50,7 +57,7 @@ export class LayerManager {
       tilesManager.applyStyles();
     });
   }
-  
+
   /**
    * Removes all styles currently registered.
    */
@@ -90,6 +97,7 @@ export class LayerManager {
   /**
    * Change the visibilty of all 3DTiles layers
    *
+   * @param bool
    */
   changeVisibility(bool) {
     this.tilesManagers.forEach(function (tilesManager) {
@@ -100,8 +108,9 @@ export class LayerManager {
 
   /**
    * Update the scale of the given layer
-   * @param {itowns.Layer} layer one layer loaded.
-   * @param {float} scale Value of the new scale
+   *
+   * @param {Layer} layer one layer loaded.
+   * @param {number} scale Value of the new scale
    */
   updateScale(layer, scale) {
     layer.scale = scale;
@@ -110,7 +119,10 @@ export class LayerManager {
 
   /**
    * Update the opacity of the given layer
-   * @param {itowns.Layer} layer one layer loaded.
+   *
+   * @typedef {(number)} float
+   *
+   * @param {Layer} layer one layer loaded.
    * @param {float} opacity Value of the new scale
    */
   updateOpacity(layer, opacity) {
@@ -130,7 +142,6 @@ export class LayerManager {
    * Returns the city object under the mouse cursor.
    *
    * @param {MouseEvent} event The mouse event.
-   *
    * @returns {CityObject | undefined}
    */
   pickCityObject(event) {
@@ -167,17 +178,25 @@ export class LayerManager {
    *
    * @param {string} batchTableKey The batch table key to search by.
    * @param {string} batchTableValue The batch table value to search for.
-   *
    * @returns {CityObject | undefined}
    */
   pickCityObjectByBatchTable(batchTableKey, batchTableValue) {
     for (const tilesManager of this.tilesManagers) {
-      if(tilesManager.tiles){
+      if (tilesManager.tiles) {
         for (const tile of tilesManager.tiles) {
-          if(tile){
+          if (tile) {
             if (tile.cityObjects && tile.batchTable) {
-              if(tile.batchTable.content[batchTableKey].includes(batchTableValue)){
-                return [tilesManager,tile.cityObjects[tile.batchTable.content[batchTableKey].indexOf(batchTableValue)]];
+              if (
+                tile.batchTable.content[batchTableKey].includes(batchTableValue)
+              ) {
+                return [
+                  tilesManager,
+                  tile.cityObjects[
+                    tile.batchTable.content[batchTableKey].indexOf(
+                      batchTableValue
+                    )
+                  ],
+                ];
               }
             }
           }
@@ -193,7 +212,6 @@ export class LayerManager {
    *
    * @param {string} batchTableKey The batch table key to search by.
    * @param {string} batchTableValue The batch table value to search for.
-   *
    * @returns {Array<CityObject>}
    */
   pickCityObjectsByBatchTable(batchTableKey, batchTableValue) {
@@ -218,7 +236,6 @@ export class LayerManager {
    * Returns a tilesManager given a layer ID.
    *
    * @param {string} id the layer ID.
-   *
    * @returns {TilesManager}
    */
   getTilesManagerByLayerID(id) {
@@ -237,6 +254,8 @@ export class LayerManager {
   /**
    * Get the number of tiles that have been loaded, across all the tileset that
    * have been loaded
+   *
+   * @typedef {(number)} int
    *
    * @returns {int}
    */
@@ -278,7 +297,7 @@ export class LayerManager {
   /**
    * Get Color layers in the view
    *
-   * @returns {Array<itown.ColorLayer>}
+   * @returns {Array<ColorLayer>}
    */
   getColorLayers() {
     return this.view.getLayers((layer) => layer.isColorLayer);
@@ -287,7 +306,7 @@ export class LayerManager {
   /**
    * Get Elevation layers in the view
    *
-   * @returns {Array<itown.ElevationLayer>}
+   * @returns {Array<ElevationLayer>}
    */
   getElevationLayers() {
     return this.view.getLayers((layer) => layer.isElevationLayer);
@@ -296,7 +315,7 @@ export class LayerManager {
   /**
    * Get Geometry layers in the view
    *
-   * @returns {Array<itown.GeometryLayer>}
+   * @returns {Array<GeometryLayer>}
    */
   getGeometryLayers() {
     return this.view.getLayers((layer) => layer.isGeometryLayer);
@@ -305,7 +324,7 @@ export class LayerManager {
   /**
    * Get Geometry layers in the view, without the planar one
    *
-   * @returns {Array<itown.GeometryLayer>}
+   * @returns {Array<GeometryLayer>}
    */
   getGeometryLayersWithoutPlanar() {
     return this.view.getLayers(

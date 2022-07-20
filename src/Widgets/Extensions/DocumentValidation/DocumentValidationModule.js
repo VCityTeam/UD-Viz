@@ -1,8 +1,9 @@
 /** @format */
 
-//Widgets
+// import for function comments
 import { DocumentModule } from '../../Documents/DocumentModule';
 
+// Comments for the class
 import { ValidationService } from './Service/ValidationService';
 import { DocumentsInValidationDocumentSource } from './Service/DocumentsInValidationSource';
 import { ValidationView } from './View/ValidationView';
@@ -20,6 +21,8 @@ export class DocumentValidationModule {
    * and finally the view elements.
    *
    * @param {DocumentModule} documentModule The documents module.
+   * @param requestService
+   * @param config
    */
   constructor(documentModule, requestService, config) {
     this.validationService = new ValidationService(requestService, config);

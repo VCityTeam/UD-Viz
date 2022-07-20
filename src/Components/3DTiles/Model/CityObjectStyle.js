@@ -2,19 +2,19 @@ import * as THREE from 'three';
 
 /**
  * Represents the style of a tile part. Accepted parameters are :
- * 
+ *
  * - `materialProps` : properties of a THREE.js material.
  */
 export class CityObjectStyle {
   constructor(params) {
     /**
      * THREE.js material properties.
-     * 
-     * @member {any} 
+     *
+     * @member {any}
      */
     this.materialProps = null;
 
-    if (typeof(params) !== 'object') {
+    if (typeof params !== 'object') {
       throw 'TilePartStyle require parameters in its constructor';
     }
 
@@ -27,15 +27,17 @@ export class CityObjectStyle {
     }
 
     // Uniform color representation accros styles
-    if (this.materialProps !== undefined
-      && this.materialProps.color !== undefined) {
-      this.materialProps.color = new THREE.Color(this.materialProps.color);//TODO clean this, a ref dont change its type
+    if (
+      this.materialProps !== undefined &&
+      this.materialProps.color !== undefined
+    ) {
+      this.materialProps.color = new THREE.Color(this.materialProps.color); //TODO clean this, a ref dont change its type
     }
   }
 
   /**
    * Checks if this style is equivalent to another style.
-   * 
+   *
    * @param {CityObjectStyle} otherStyle Another style.
    */
   equals(otherStyle) {
@@ -53,7 +55,7 @@ export class CityObjectStyle {
   /**
    * Checks if the material properties of this object are equivalent to the ones
    * in parameter.
-   * 
+   *
    * @param {any} otherProps Another material properties object.
    */
   materialPropsEquals(otherProps) {

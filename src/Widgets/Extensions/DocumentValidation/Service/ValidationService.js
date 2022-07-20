@@ -1,8 +1,7 @@
 /** @format */
 
-//Components
+// import for function comments
 import { RequestService } from '../../../../Components/Request/RequestService';
-
 import { Document } from '../../../Documents/Model/Document';
 
 /**
@@ -31,8 +30,13 @@ export class ValidationService {
   async validate(doc) {
     const formData = new FormData();
     formData.append('id', doc.id);
-    const response = await this.requestService.request('POST', this.validateUrl, {
-      body: formData,
-    });
+    // eslint-disable-next-line no-unused-vars
+    const response = await this.requestService.request(
+      'POST',
+      this.validateUrl,
+      {
+        body: formData,
+      }
+    );
   }
 }

@@ -41,7 +41,6 @@ export class AttributeFilter extends CityObjectFilter {
    * empty string), equality is tested with the city object.
    *
    * @param {CityObject} cityObject The city object to evaluate.
-   *
    * @returns {boolean} Wether the city object is acceptable.
    */
   accepts(cityObject) {

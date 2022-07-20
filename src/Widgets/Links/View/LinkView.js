@@ -1,12 +1,15 @@
 /** @format */
 
+// import for function comments
 import { DocumentModule } from '../../Documents/DocumentModule';
 import { CityObjectModule } from '../../CityObjects/CityObjectModule';
-import { DocumentLinkInterface } from './DocumentLinkInterface';
-import { CityObjectLinkInterface } from './CityObjectLinkInterface';
 import { LinkProvider } from '../ViewModel/LinkProvider';
 import { DocumentView } from '../../Documents/View/DocumentView';
 import { CityObjectWindow } from '../../CityObjects/View/CityObjectWindow';
+
+// Components
+import { DocumentLinkInterface } from './DocumentLinkInterface';
+import { CityObjectLinkInterface } from './CityObjectLinkInterface';
 
 /**
  * Represents the visual interface of the link module. This class contains

@@ -1,8 +1,11 @@
-import { ModuleView } from '../../../Components/ModuleView/ModuleView';
+// import for function comments
 import { SparqlEndpointResponseProvider } from '../ViewModel/SparqlEndpointResponseProvider';
 import { CityObjectProvider } from '../../../CityObjects/ViewModel/CityObjectProvider';
-import { SparqlQueryWindow } from './SparqlQueryWindow';
 import { LayerManager } from '../../../Components/Components';
+
+// Components
+import { ModuleView } from '../../../Components/ModuleView/ModuleView';
+import { SparqlQueryWindow } from './SparqlQueryWindow';
 
 /**
  * The SPARQL ModuleView class which manages the SPARQL query window.
@@ -45,7 +48,11 @@ export class SparqlModuleView extends ModuleView {
      *
      * @type {SparqlQueryWindow}
      */
-    this.window = new SparqlQueryWindow(this.sparqlProvider, this.cityObjectProvider, this.layerManager);
+    this.window = new SparqlQueryWindow(
+      this.sparqlProvider,
+      this.cityObjectProvider,
+      this.layerManager
+    );
   }
 
   /**

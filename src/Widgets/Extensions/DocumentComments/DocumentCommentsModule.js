@@ -1,10 +1,10 @@
 /** @format */
 
+// import for function comments
 import { DocumentModule } from '../../Documents/DocumentModule';
-
-//Components
 import { RequestService } from '../../../Components/Request/RequestService';
 
+//Components
 import { DocumentCommentsService } from './services/DocumentCommentsService';
 import { DocumentCommentsWindow } from './views/DocumentCommentsWindow';
 

@@ -1,6 +1,8 @@
+// import for function comments
+import { SparqlQueryWindow } from '../View/SparqlQueryWindow';
+
 import * as d3 from 'd3';
 import { tokenizeURI } from './URI';
-import { SparqlQueryWindow } from '../View/SparqlQueryWindow';
 
 export class Graph {
   /**
@@ -9,8 +11,9 @@ export class Graph {
    * https://www.d3indepth.com/zoom-and-pan/
    *
    * @param {SparqlQueryWindow} window the window this graph is attached to.
-   * @param {Number} height The SVG height.
-   * @param {Number} height The SVG width.
+   * @param {number} height The SVG height.
+   * @param {number} height The SVG width.
+   * @param width
    */
   constructor(window, height = 500, width = 500) {
     this.window = window;
@@ -29,7 +32,7 @@ export class Graph {
   /**
    * Create a new graph based on an graph dataset.
    *
-   * @param {Object} data an RDF JSON object.
+   * @param {object} data an RDF JSON object.
    */
   update(data) {
     this.clear();
@@ -47,13 +50,10 @@ export class Graph {
       .forceSimulation(nodes)
       .force(
         'link',
-        d3.forceLink(links).id((d) => d.id))
-      .force(
-        'charge',
-        d3.forceManyBody().strength(-60))
-      .force(
-        'center',
-        d3.forceCenter(this.width / 2, this.height / 2));
+        d3.forceLink(links).id((d) => d.id)
+      )
+      .force('charge', d3.forceManyBody().strength(-60))
+      .force('center', d3.forceCenter(this.width / 2, this.height / 2));
 
     const zoom = d3.zoom().on('zoom', this.handleZoom);
 
@@ -67,7 +67,6 @@ export class Graph {
       .data(links)
       .join('line')
       .attr('stroke-width', (d) => Math.sqrt(d.value));
-
 
     const node = this.svg
       .append('g')
@@ -83,38 +82,51 @@ export class Graph {
         this.window.sendEvent(Graph.EVENT_NODE_CLICKED, d.path[0].textContent);
       })
       .on('mouseover', (event, d) => {
-        event.target.style['stroke'] = setColor(nodes[d.index].color_id, 'white', 'white');
+        event.target.style['stroke'] = setColor(
+          nodes[d.index].color_id,
+          'white',
+          'white'
+        );
         event.target.style['fill'] = setColor(nodes[d.index].color_id, '#333');
-        node_label.filter((e, j) => {
-          return d.index == j;
-        })
+        node_label
+          .filter((e, j) => {
+            return d.index == j;
+          })
           .style('fill', 'white');
-        link_label.filter((e, j) => {
-          return d.index == e.source.index || d.index == e.target.index;
-        })
+        link_label
+          .filter((e) => {
+            return d.index == e.source.index || d.index == e.target.index;
+          })
           .style('fill', 'white');
       })
       .on('mouseout', (event, d) => {
-        event.target.style['stroke'] = setColor(nodes[d.index].color_id, '#ddd', '#111');
+        event.target.style['stroke'] = setColor(
+          nodes[d.index].color_id,
+          '#ddd',
+          '#111'
+        );
         event.target.style['fill'] = setColor(nodes[d.index].color_id, 'black');
-        node_label.filter((e, j) => {
-          return d.index == j;
-        })
+        node_label
+          .filter((e, j) => {
+            return d.index == j;
+          })
           .style('fill', 'grey');
-        link_label.filter((e) => {
-          return d.index == e.source.index || d.index == e.target.index;
-        })
+        link_label
+          .filter((e) => {
+            return d.index == e.source.index || d.index == e.target.index;
+          })
           .style('fill', 'grey');
       })
       .call(this.drag(simulation));
-      
+
     node.append('title').text((d) => d.id);
 
-    const node_label = this.svg.selectAll('.node_label')
+    const node_label = this.svg
+      .selectAll('.node_label')
       .data(nodes)
       .enter()
       .append('text')
-      .text(function (d) { 
+      .text(function (d) {
         const uri = tokenizeURI(d.id);
         return uri.id;
       })
@@ -123,10 +135,11 @@ export class Graph {
       .style('font-family', 'Arial')
       .style('font-size', 10.5)
       .style('text-shadow', '1px 1px black')
-      .attr('class','node_label')
+      .attr('class', 'node_label')
       .call(this.drag(simulation));
-      
-    const link_label = this.svg.selectAll('.link_label')
+
+    const link_label = this.svg
+      .selectAll('.link_label')
       .data(links)
       .enter()
       .append('text')
@@ -139,24 +152,28 @@ export class Graph {
       .style('font-family', 'Arial')
       .style('font-size', 10)
       .style('text-shadow', '1px 1px black')
-      .attr('class','link_label')
+      .attr('class', 'link_label')
       .call(this.drag(simulation));
 
     simulation.on('tick', () => {
       node_label
-        .attr('x', function(d){ return d.x; })
-        .attr('y', function (d) {return d.y - 10; });
+        .attr('x', function (d) {
+          return d.x;
+        })
+        .attr('y', function (d) {
+          return d.y - 10;
+        });
       link
         .attr('x1', (d) => d.source.x)
         .attr('y1', (d) => d.source.y)
         .attr('x2', (d) => d.target.x)
         .attr('y2', (d) => d.target.y);
       link_label
-        .attr('x', function(d) {
-          return ((d.source.x + d.target.x)/2);
+        .attr('x', function (d) {
+          return (d.source.x + d.target.x) / 2;
         })
-        .attr('y', function(d) {
-          return ((d.source.y + d.target.y)/2);
+        .attr('y', function (d) {
+          return (d.source.y + d.target.y) / 2;
         });
       node.attr('cx', (d) => d.x).attr('cy', (d) => d.y);
     });
@@ -164,12 +181,12 @@ export class Graph {
     // Create legend
     this.svg
       .append('text')
-      .attr('x', 10)             
+      .attr('x', 10)
       .attr('y', 16)
       .style('font-size', '14px')
       .style('text-decoration', 'underline')
       .text(legend.title)
-      .style('fill','FloralWhite');
+      .style('fill', 'FloralWhite');
 
     this.svg
       .append('g')
@@ -196,9 +213,8 @@ export class Graph {
       .attr('x', 24)
       .attr('y', (d, i) => 35 + i * 16)
       .text((d) => d)
-      .style('fill','FloralWhite');
+      .style('fill', 'FloralWhite');
   }
-
 
   /**
    * Getter for retrieving the d3 svg.
@@ -209,7 +225,9 @@ export class Graph {
 
   /**
    * return a query response formatted for a D3.js graph.
-   * @return {Object}
+   *
+   * @param data
+   * @returns {object}
    */
   formatResponseDataAsGraph(data) {
     const graphData = {
@@ -222,30 +240,42 @@ export class Graph {
       ],
       legend: {
         title: '',
-        content: []
+        content: [],
       },
-      colorSetOrScale: d3.scaleOrdinal(d3.schemeCategory10)
+      colorSetOrScale: d3.scaleOrdinal(d3.schemeCategory10),
     };
 
     for (const triple of data.results.bindings) {
       /* If the query is formatted using subject, subjectType, predicate, object,
          and objectType variables the node color based on the namespace of the subject
          or object's respective type */
-      if (triple.subject && triple.subjectType && triple.predicate
-          && triple.object && triple.objectType) {
-        if ( // if the subject doesn't exist yet 
+      if (
+        triple.subject &&
+        triple.subjectType &&
+        triple.predicate &&
+        triple.object &&
+        triple.objectType
+      ) {
+        if (
+          // if the subject doesn't exist yet
           graphData.nodes.find((n) => n.id == triple.subject.value) == undefined
         ) {
           const subjectNamespaceId = this.getNamespaceIndex(
             triple.subjectType.value
           );
-          const node = { id: triple.subject.value, color_id: subjectNamespaceId };
+          const node = {
+            id: triple.subject.value,
+            color_id: subjectNamespaceId,
+          };
           graphData.nodes.push(node);
         }
-        if (// if the object doesn't exist yet
+        if (
+          // if the object doesn't exist yet
           graphData.nodes.find((n) => n.id == triple.object.value) == undefined
         ) {
-          const objectNamespaceId = this.getNamespaceIndex(triple.objectType.value);
+          const objectNamespaceId = this.getNamespaceIndex(
+            triple.objectType.value
+          );
           const node = { id: triple.object.value, color_id: objectNamespaceId };
           graphData.nodes.push(node);
         }
@@ -260,13 +290,15 @@ export class Graph {
       } else if (triple.subject && triple.predicate && triple.object) {
         /* If the query is formatted using just subject, predicate, and object,
            variables the node color is left black */
-        if ( // if the subject doesn't exist yet 
+        if (
+          // if the subject doesn't exist yet
           graphData.nodes.find((n) => n.id == triple.subject.value) == undefined
         ) {
           const node = { id: triple.subject.value, color_id: undefined };
           graphData.nodes.push(node);
         }
-        if (// if the object doesn't exist yet
+        if (
+          // if the object doesn't exist yet
           graphData.nodes.find((n) => n.id == triple.object.value) == undefined
         ) {
           const node = { id: triple.object.value, color_id: undefined };
@@ -280,9 +312,10 @@ export class Graph {
         graphData.links.push(link);
         graphData.legend.title = 'Legend';
         graphData.colorSetOrScale = undefined;
-      }
-      else {
-        console.warn('Unrecognized endpoint response format for graph construction');
+      } else {
+        console.warn(
+          'Unrecognized endpoint response format for graph construction'
+        );
       }
     }
     console.debug(graphData);
@@ -291,8 +324,9 @@ export class Graph {
   /**
    * Get the namespace index of a uri. Add the namespace to the array of namespaces
    * if it does not exist.
-   * @param {String} uri the uri to map to a namespace.
-   * @return {Number}
+   *
+   * @param {string} uri the uri to map to a namespace.
+   * @returns {number}
    */
   getNamespaceIndex(uri) {
     const namespace = tokenizeURI(uri).namespace;
@@ -329,21 +363,34 @@ export class Graph {
 
   /**
    * Create a drag effect for graph nodes within the context of a force simulation
+   *
    * @param {d3.forceSimulation} simulation
    * @returns {d3.drag}
    */
   drag(simulation) {
+    /**
+     *
+     * @param event
+     */
     function dragstarted(event) {
       if (!event.active) simulation.alphaTarget(0.3).restart();
       event.subject.fx = event.subject.x;
       event.subject.fy = event.subject.y;
     }
 
+    /**
+     *
+     * @param event
+     */
     function dragged(event) {
       event.subject.fx = event.x;
       event.subject.fy = event.y;
     }
 
+    /**
+     *
+     * @param event
+     */
     function dragended(event) {
       if (!event.active) simulation.alphaTarget(0);
       event.subject.fx = null;
@@ -359,24 +406,49 @@ export class Graph {
 
   /**
    * A handler function for selecting elements to transform during a zoom event
+   *
    * @param {d3.D3ZoomEvent} event
    */
   handleZoom(event) {
     d3.selectAll('svg g')
       .filter((d, i) => i < 2)
-      .attr('height','100%')
-      .attr('width','100%')
+      .attr('height', '100%')
+      .attr('width', '100%')
       //.attr('transform', event.transform)
-      .attr('transform',
-        'translate(' + event.transform.x + ',' + event.transform.y + ') scale(' + event.transform.k + ')');
+      .attr(
+        'transform',
+        'translate(' +
+          event.transform.x +
+          ',' +
+          event.transform.y +
+          ') scale(' +
+          event.transform.k +
+          ')'
+      );
     d3.selectAll('text.node_label')
-      .style('font-size', (10.5/event.transform.k) + 'px')
-      .attr('transform',
-        'translate(' + event.transform.x + ',' + event.transform.y + ') scale(' + event.transform.k + ')');
+      .style('font-size', 10.5 / event.transform.k + 'px')
+      .attr(
+        'transform',
+        'translate(' +
+          event.transform.x +
+          ',' +
+          event.transform.y +
+          ') scale(' +
+          event.transform.k +
+          ')'
+      );
     d3.selectAll('text.link_label')
-      .style('font-size', (10.5/event.transform.k) + 'px')
-      .attr('transform',
-        'translate(' + event.transform.x + ',' + event.transform.y + ') scale(' + event.transform.k + ')');
+      .style('font-size', 10.5 / event.transform.k + 'px')
+      .attr(
+        'transform',
+        'translate(' +
+          event.transform.x +
+          ',' +
+          event.transform.y +
+          ') scale(' +
+          event.transform.k +
+          ')'
+      );
   }
 
   /// EVENTS

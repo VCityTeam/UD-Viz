@@ -1,4 +1,7 @@
 /** @format */
+/**
+ * @typedef {import('../../../Views/AssetsManager/AssetsManager')} AssetsManager
+ */
 
 const THREE = require('three');
 
@@ -24,7 +27,8 @@ const AudioModule = class Audio {
 
   /**
    * This component cant run on server side
-   * @returns {Boolean}
+   *
+   * @returns {boolean}
    */
   isServerSide() {
     return false;
@@ -32,12 +36,13 @@ const AudioModule = class Audio {
 
   dispose() {
     for (const key in this.sounds) {
-      this.sounds[key].pause(); //TODO if shared just pause if not unload 
+      this.sounds[key].pause(); //TODO if shared just pause if not unload
     }
   }
 
   /**
    * Compute this to JSON
+   *
    * @returns {JSON}
    */
   toJSON() {
@@ -51,10 +56,10 @@ const AudioModule = class Audio {
 
   /**
    * Initialize
+   *
    * @param {AssetsManager} assetsManager local assetsManager
-   * @param {Shared} udvShared ud-viz/Game/Shared module
    */
-  initAssets(assetsManager, udvShared) {
+  initAssets(assetsManager) {
     const _this = this;
     this.soundsJSON.forEach(function (idS) {
       _this.sounds[idS] = assetsManager.fetchSound(idS, _this.conf);

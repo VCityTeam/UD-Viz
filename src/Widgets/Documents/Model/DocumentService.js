@@ -62,7 +62,6 @@ export class DocumentService {
    * @param {DocumentSource} docSource The document source.
    * @param {boolean} [authenticate] Specifies if authentication should be used
    * to fetch documents.
-   *
    * @returns {DocumentSource} The previous source.
    */
   setSource(docSource, authenticate = false) {
@@ -81,7 +80,6 @@ export class DocumentService {
    * Fetches the documents from the server and return them in an array.
    *
    * @async
-   *
    * @returns {Promise<Array<Document>>}
    */
   async fetchDocuments() {
@@ -104,7 +102,6 @@ export class DocumentService {
    * Fetches the image corresponding to the given document.
    *
    * @param {Document} doc The document to fetch the image.
-   *
    * @returns {string} The data string of the image.
    */
   async fetchDocumentImage(doc) {
@@ -133,7 +130,6 @@ export class DocumentSource {
    * Returns the URL to retrieve the documents.
    *
    * @abstract
-   *
    * @returns {string}
    */
   getDocumentUrl() {
@@ -144,11 +140,10 @@ export class DocumentSource {
    * Returns the URL to retrieve the image of the document.
    *
    * @param {Document} doc The document.
-   *
    * @abstract
-   *
    * @returns {string}
    */
+  // eslint-disable-next-line no-unused-vars
   getImageUrl(doc) {
     return '';
   }
@@ -207,7 +202,6 @@ class DefaultDocumentSource extends DocumentSource {
 
   /**
    * @override
-   *
    * @param {Document} doc The document.
    */
   getImageUrl(doc) {

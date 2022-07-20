@@ -51,7 +51,7 @@ export class CityObjectFilterSelector {
    * @param {FormData} formData The form data corresponding to the filter
    * selector form.
    */
-  onSubmit(formData) {}
+  onSubmit() {}
 
   /**
    * Adds the HTML content of the filter selector in the given HTLM element.

@@ -1,5 +1,8 @@
 /** @format */
 
+// import for function comments
+import { DocumentVisualizerWindow } from '../../Widgets';
+
 //Widgets
 import { DocumentModule } from '../../Documents/DocumentModule';
 
@@ -21,7 +24,7 @@ export class ContributeModule {
    * Constructs a new contribute module.
    *
    * @param {DocumentModule} documentModule The document module.
-   * @param {DocumentImageOrienter} documentImageOrienter The document image
+   * @param {DocumentVisualizerWindow} documentImageOrienter The document image
    * orienter module.
    * @param {RequestService} requestService The request service.
    * @param {*} itownsView The iTowns view.

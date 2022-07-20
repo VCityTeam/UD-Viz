@@ -1,7 +1,5 @@
 /** @format */
 
-const Game = require('../Game/Game');
-
 /**
  * Poll system (https://en.wikipedia.org/wiki/Polling_(computer_science))
  * Inputs state is stored asynchronously then state is access synchronously by user
@@ -41,7 +39,8 @@ export class InputManager {
 
   /**
    * Disable/Enable this inputManager
-   * @param {Boolean} pause if true command and input are not processed
+   *
+   * @param {boolean} pause if true command and input are not processed
    */
   setPause(pause) {
     this.pause = pause;
@@ -49,6 +48,7 @@ export class InputManager {
 
   /**
    * Used this if a key has not been register in addKeyCommand and you need to know if it's isPressed
+   *
    * @param {Array[String]} keys ids of the key to listen to
    */
   listenKeys(keys) {
@@ -60,8 +60,9 @@ export class InputManager {
 
   /**
    * Return true if the key is pressed, dont forget to listenKeys if no addKeyCommand has been used for this key
-   * @param {String} key id of the key
-   * @returns {Boolean} true if pressed, false otherwise
+   *
+   * @param {string} key id of the key
+   * @returns {boolean} true if pressed, false otherwise
    */
   isPressed(key) {
     return this.keyMap[key];
@@ -69,8 +70,9 @@ export class InputManager {
 
   /**
    * Register a callback for a particular key and event
-   * @param {String} key id of the key if null every key trigger the event
-   * @param {String} eventID id of the event (keyup, keydown)
+   *
+   * @param {string} key id of the key if null every key trigger the event
+   * @param {string} eventID id of the event (keyup, keydown)
    * @param {Function} cb callback called for this event
    */
   addKeyInput(key, eventID, cb) {
@@ -90,7 +92,8 @@ export class InputManager {
 
   /**
    * Add a command for severals keys
-   * @param {Command.TYPE} commandID Type of the command
+   *
+   * @param {import('../Game/Command').TYPE)} commandID Type of the command
    * @param {Array[String]} keys keys assigned
    * @param {Function} cb callback called for must return a Command
    */
@@ -122,7 +125,7 @@ export class InputManager {
 
   /**
    *
-   * @param {Command.TYPE} commandID
+   * @param {import('../Game/Command').TYPE} commandID
    * @param {Array[String]} keys
    */
   removeKeyCommand(commandID, keys) {
@@ -136,7 +139,8 @@ export class InputManager {
 
   /**
    * Add a command for a mouse input
-   * @param {String} eventID id of the mouse to listen to
+   *
+   * @param {string} eventID id of the mouse to listen to
    * @param {Function} cb  must return a Command and take MouseState as first argument
    */
   addMouseCommand(eventID, cb) {
@@ -145,7 +149,7 @@ export class InputManager {
 
   /**
    *
-   * @param {String} eventID
+   * @param {string} eventID
    */
   removeMouseCommand(eventID) {
     delete this.mouseCommands[eventID];
@@ -153,8 +157,9 @@ export class InputManager {
 
   /**
    * Register a callback for a particular mouse event
+   *
    * @param {HTMLElement} element element listened
-   * @param {String} eventID id of the event (mousedown, mouseup, mousemove)
+   * @param {string} eventID id of the event (mousedown, mouseup, mousemove)
    * @param {Function} cb callback called for this event
    */
   addMouseInput(element, eventID, cb) {
@@ -178,6 +183,7 @@ export class InputManager {
 
   /**
    * Start listening
+   *
    * @param {HTMLElement} element the element listened
    */
   startListening(element) {
@@ -238,7 +244,8 @@ export class InputManager {
 
   /**
    * If value is true pointerLock mode is activated else it's exited
-   * @param {Boolean} value
+   *
+   * @param {boolean} value
    */
   setPointerLock(value) {
     this.pointerLock = value;
@@ -247,7 +254,8 @@ export class InputManager {
 
   /**
    * return true if pointerLock is enabled or not
-   * @returns {Boolean}
+   *
+   * @returns {boolean}
    */
   getPointerLock() {
     return this.pointerLock;
@@ -255,7 +263,8 @@ export class InputManager {
 
   /**
    * identify the listener to remove with its callback and remove it of the listening web api
-   * @param {Object} listener
+   *
+   * @param {object} listener
    */
   removeInputListener(listener) {
     for (let index = 0; index < this.listeners.length; index++) {
@@ -297,6 +306,7 @@ export class InputManager {
 
   /**
    * Compute Commands with the last state of keys and mouse
+   *
    * @returns {Array[Command]} commands computed
    */
   computeCommands() {
@@ -334,7 +344,7 @@ export class InputManager {
 
   /**
    *
-   * @returns {HTML}
+   * @returns {HTMLElement}
    */
   getElement() {
     return this.element;
@@ -365,7 +375,7 @@ export class MouseState {
 
   /**
    *
-   * @returns {Boolean} true if the mouse is dragging, false otherwise
+   * @returns {boolean} true if the mouse is dragging, false otherwise
    */
   isDragging() {
     return this.dragging;
@@ -388,6 +398,7 @@ export class MouseState {
 
   /**
    * Start listening to mouse event on the element
+   *
    * @param {HTMLElement} element the element where to catch events
    */
   startListening(element) {
@@ -402,8 +413,9 @@ export class MouseState {
 
   /**
    * Add a listener for a particular event on element
+   *
    * @param {HTMLElement} element element to listen to
-   * @param {String} idEvent mouse events
+   * @param {string} idEvent mouse events
    * @returns {Function} Callback call for this event
    */
   addEvent(element, idEvent) {
@@ -424,7 +436,8 @@ export class MouseState {
 
   /**
    * Access the last Event for eventID
-   * @param {String} eventID id of the mouse event
+   *
+   * @param {string} eventID id of the mouse event
    * @returns {Event} The last event store for this event
    */
   event(eventID) {
@@ -433,8 +446,9 @@ export class MouseState {
 
   /**
    * Return true if this event has been triggered on the last poll
-   * @param {String} eventID
-   * @returns {Boolean} true if the eventID has been triggered
+   *
+   * @param {string} eventID
+   * @returns {boolean} true if the eventID has been triggered
    */
   isTrigger(eventID) {
     return this.mouseMap[eventID];

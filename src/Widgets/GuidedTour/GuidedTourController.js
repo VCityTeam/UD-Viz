@@ -1,12 +1,14 @@
 /** @format */
 
+// import for function comments
+import { RequestService } from '../../Components/Request/RequestService';
+import { DocumentModule } from '../Documents/DocumentModule';
+
 //Components
 import { ModuleView } from '../Components/ModuleView/ModuleView';
-import { RequestService } from '../../Components/Request/RequestService';
 
 import './GuidedTour.css';
 import { GuidedTour } from './GuidedTour.js';
-import { DocumentModule } from '../Documents/DocumentModule'; //TODO should be a components
 
 /**
  * Class: GuidedTourController
@@ -19,23 +21,23 @@ import { DocumentModule } from '../Documents/DocumentModule'; //TODO should be a
  */
 export class GuidedTourController extends ModuleView {
   /**
-  * Constructor for GuidedTourController
-  * The controller reads data from a database to build one or more guided tours
-  * Each guided tour is a succession of "steps"
-  * Each step has a document + tour text + doc text (steps are instances of
-  * the TourStep class)
-  * Multiple guided tours are supported (only one tour is finished for the demo)
-  * For the demo : options.preventUserFromChangingTour allows to hide the buttons for changing tour
-  *
-  * @param { DocumentModule } documentModule The document module.
-  * @param { RequestService } requestService The request service
-  * @param { object } config The UDV config.
-  * @param { object } config.server The server configuration.
-  * @param { string } config.server.url The base URL of the server.
-  * @param { string } config.server.guidedTour The route for guided tours.
-  *
+   * Constructor for GuidedTourController
+   * The controller reads data from a database to build one or more guided tours
+   * Each guided tour is a succession of "steps"
+   * Each step has a document + tour text + doc text (steps are instances of
+   * the TourStep class)
+   * Multiple guided tours are supported (only one tour is finished for the demo)
+   * For the demo : options.preventUserFromChangingTour allows to hide the buttons for changing tour
+   *
+   * @param { DocumentModule } documentModule The document module.
+   * @param { RequestService } requestService The request service
+   * @param { object } config The UDV config.
+   * @param { object } config.server The server configuration.
+   * @param { string } config.server.url The base URL of the server.
+   * @param { string } config.server.guidedTour The route for guided tours.
+   *
   ======================================================================
-  */
+   */
   constructor(documentModule, requestService, config) {
     super();
 
@@ -78,7 +80,8 @@ export class GuidedTourController extends ModuleView {
   }
 
   /**
-   * Get all guided tour from a database */
+   * Get all guided tour from a database
+   */
   //=============================================================================
   async getGuidedTours() {
     const req = await this.requestService.request('GET', this.url, {

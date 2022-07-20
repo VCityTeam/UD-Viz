@@ -112,7 +112,7 @@ module.exports = class LocalAvatar {
 
     //FORWARD
     inputManager.addKeyCommand('move_forward', ['z'], function () {
-      const dt = localContext.getDt();
+      // const dt = localContext.getDt();
       const direction = avatar.computeForwardVector();
       if (checkCollisionFun(direction)) return;
       avatar.move(direction.setLength(translationLength));
@@ -120,7 +120,7 @@ module.exports = class LocalAvatar {
     });
     //BACKWARD
     inputManager.addKeyCommand('move_backward', ['s'], function () {
-      const dt = localContext.getDt();
+      // const dt = localContext.getDt();
       const direction = avatar.computeBackwardVector();
       if (checkCollisionFun(direction)) return;
       avatar.move(direction.setLength(translationLength));

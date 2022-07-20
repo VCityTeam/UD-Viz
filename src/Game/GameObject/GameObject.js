@@ -4,6 +4,11 @@
  * @format
  */
 
+/**
+ * @typedef {import('../../Views/GameView/GameView').LocalContext} LocalContext
+ * @typedef {import('../../Views/AssetsManager/AssetsManager')} AssetsManager
+ */
+
 const THREE = require('three');
 const JSONUtils = require('../Components/JSONUtils');
 
@@ -23,6 +28,8 @@ const THREEUtils = require('../Components/THREEUtils');
 const GameObjectModule = class GameObject {
   /**
    * Create a new GameObject
+   *
+   *  @typedef {GameObjectModule} GameObject
    * @param {JSON} json data to init this
    * @param {GameObject} parent the parent of this (optional)
    */
@@ -52,7 +59,8 @@ const GameObjectModule = class GameObject {
     /**
      * true mean the object is not supposed to move during the game
      * for simulation/network opti
-     * @type {Boolean}
+     *
+     * @type {boolean}
      */
     this.static = json.static || false;
 
@@ -85,7 +93,9 @@ const GameObjectModule = class GameObject {
   /**
    * Client side function since a localContext is needed
    * Update client side component and the Transform of this based on go
+   *
    * @param {GameObject} go the gameobject to upadate to
+   * @param bufferedGO
    * @param {LocalContext} localContext this localcontext
    */
   updateFromGO(go, bufferedGO, localContext) {
@@ -124,6 +134,7 @@ const GameObjectModule = class GameObject {
 
   /**
    * Bind transform of go into this
+   *
    * @param {GameObject} go
    */
   setTransformFromGO(go) {
@@ -136,6 +147,7 @@ const GameObjectModule = class GameObject {
 
   /**
    * Set transform of object3D from json
+   *
    * @param {JSON} json
    */
   setFromTransformJSON(json = {}) {
@@ -174,6 +186,7 @@ const GameObjectModule = class GameObject {
 
   /**
    * Replace data of this with a json object
+   *
    * @param {JSON} json
    */
   setFromJSON(json) {
@@ -204,9 +217,10 @@ const GameObjectModule = class GameObject {
 
   /**
    * Initialize components of this
+   *
    * @param {AssetsManager} manager must implement an assetsmanager interface can be local or server
-   * @param {Library} bundles set of bundle library used by script
-   * @param {Boolean} isServerSide the code is running on a server or in a browser
+   * @param {Object} bundles set of bundle library used by script
+   * @param {boolean} isServerSide the code is running on a server or in a browser
    */
   initAssetsComponents(manager, bundles = {}, isServerSide = false) {
     if (!this.initialized) {
@@ -224,7 +238,8 @@ const GameObjectModule = class GameObject {
 
   /**
    * Return the world transform of this
-   * @returns {Transform}
+   *
+   * @returns {THREEUtils.Transform}
    */
   computeWorldTransform() {
     const result = new THREEUtils.Transform();
@@ -243,6 +258,7 @@ const GameObjectModule = class GameObject {
 
   /**
    * Add vector to position of this
+   *
    * @param {THREE.Vector3} vector
    */
   move(vector) {
@@ -264,6 +280,7 @@ const GameObjectModule = class GameObject {
 
   /**
    * Add vector to rotation of this
+   *
    * @param {THREE.Vector3} vector
    */
   rotate(vector) {
@@ -279,7 +296,8 @@ const GameObjectModule = class GameObject {
 
   /**
    * Return worldScripts of this
-   * @returns {Object}
+   *
+   * @returns {object}
    */
   fetchWorldScripts() {
     const c = this.getComponent(WorldScriptComponent.TYPE);
@@ -295,6 +313,7 @@ const GameObjectModule = class GameObject {
 
   /**
    * Return the default forward vector
+   *
    * @returns {THREE.Vector3}
    */
   getDefaultForward() {
@@ -303,6 +322,7 @@ const GameObjectModule = class GameObject {
 
   /**
    * Return the root gameobject of the graph hierarchy
+   *
    * @returns {GameObject}
    */
   computeRoot() {
@@ -312,6 +332,7 @@ const GameObjectModule = class GameObject {
 
   /**
    * Compute the forward vector of this
+   *
    * @returns {THREE.Vector3}
    */
   computeForwardVector() {
@@ -324,6 +345,7 @@ const GameObjectModule = class GameObject {
 
   /**
    * Compute the backward vector of this
+   *
    * @returns {THREE.Vector3}
    */
   computeBackwardVector() {
@@ -351,7 +373,7 @@ const GameObjectModule = class GameObject {
 
   /**
    *
-   * @returns {Boolean}
+   * @returns {boolean}
    */
   isStatic() {
     return this.static;
@@ -359,7 +381,7 @@ const GameObjectModule = class GameObject {
 
   /**
    *
-   * @returns {Boolean}
+   * @returns {boolean}
    */
   isOutdated() {
     return this.outdated;
@@ -367,7 +389,7 @@ const GameObjectModule = class GameObject {
 
   /**
    *
-   * @param {Boolean} value
+   * @param {boolean} value
    */
   setOutdated(value) {
     this.outdated = value;
@@ -375,7 +397,8 @@ const GameObjectModule = class GameObject {
 
   /**
    * Execute worldscript for a given event
-   * @param {WorldScript.EVENT} event
+   *
+   * @param {(import('../GameObject/Components/WorldScript').EVENT} event
    * @param {Array} params array of arguments for scripts
    * @returns {Array} scripts result
    */
@@ -387,6 +410,7 @@ const GameObjectModule = class GameObject {
 
   /**
    * Set Components with a json object
+   *
    * @param {JSON} json
    */
   setComponentsFromJSON(json) {
@@ -455,7 +479,8 @@ const GameObjectModule = class GameObject {
 
   /**
    * Compute the object3D
-   * @param {Boolean} recursive if true recursive call on children
+   *
+   * @param {boolean} recursive if true recursive call on children
    * @returns {THREE.Object3D} the object3D of this
    */
   computeObject3D(recursive = true) {
@@ -487,7 +512,8 @@ const GameObjectModule = class GameObject {
 
   /**
    * Get a gameobject component with a given uuid
-   * @param {String} uuid the uuid of the component
+   *
+   * @param {string} uuid the uuid of the component
    * @returns {GameObject.Component} the gameobject component
    */
   getComponentByUUID(uuid) {
@@ -501,6 +527,7 @@ const GameObjectModule = class GameObject {
 
   /**
    * Return a clone of this
+   *
    * @returns {GameObject}
    */
   clone() {
@@ -510,8 +537,9 @@ const GameObjectModule = class GameObject {
   /**
    * Apply a callback to all gameobject of the hierarchy
    * Dont apply it to gameobject parent of this
+   *
    * @param {Function} cb the callback to apply take a gameobject as first argument
-   * @returns {Boolean} true stop the propagation (opti) false otherwise
+   * @returns {boolean} true stop the propagation (opti) false otherwise
    */
   traverse(cb) {
     if (cb(this)) return true;
@@ -526,7 +554,8 @@ const GameObjectModule = class GameObject {
 
   /**
    * Find a gameobject into the hierarchy with its uuid
-   * @param {String} uuid the uuid searched
+   *
+   * @param {string} uuid the uuid searched
    * @returns {GameObject} gameobject in the hierarchy with uuid
    */
   find(uuid) {
@@ -544,7 +573,8 @@ const GameObjectModule = class GameObject {
   /**
    * Find a gameobject into the hierarchy with a name
    * return the first one encounter
-   * @param {String} name
+   *
+   * @param {string} name
    * @returns
    */
   findByName(name) {
@@ -561,6 +591,7 @@ const GameObjectModule = class GameObject {
 
   /**
    * Add a child gameobject to this
+   *
    * @param {GameObject} child
    */
   addChild(child) {
@@ -594,7 +625,7 @@ const GameObjectModule = class GameObject {
 
   /**
    *
-   * @returns {String}
+   * @returns {string}
    */
   getParentUUID() {
     return this.parentUUID;
@@ -610,7 +641,7 @@ const GameObjectModule = class GameObject {
 
   /**
    *
-   * @param {String} type
+   * @param {string} type
    * @returns {GameObject/Components}
    */
   getComponent(type) {
@@ -619,7 +650,7 @@ const GameObjectModule = class GameObject {
 
   /**
    *
-   * @param {String} type
+   * @param {string} type
    * @param {GameObject/Components} c
    */
   setComponent(type, c) {
@@ -669,7 +700,7 @@ const GameObjectModule = class GameObject {
 
   /**
    *
-   * @returns {String}
+   * @returns {string}
    */
   getUUID() {
     return this.uuid;
@@ -685,6 +716,7 @@ const GameObjectModule = class GameObject {
 
   /**
    * Set rotation and clamp it
+   *
    * @param {THREE.Vector3} vector
    */
   setRotation(vector) {
@@ -735,7 +767,8 @@ const GameObjectModule = class GameObject {
 
   /**
    * If freeze components and transform are not updated
-   * @param {Boolean} value
+   *
+   * @param {boolean} value
    */
   setFreeze(value) {
     this.freeze = value;
@@ -743,7 +776,7 @@ const GameObjectModule = class GameObject {
 
   /**
    *
-   * @returns {Boolean}
+   * @returns {boolean}
    */
   getFreeze() {
     return this.freeze;
@@ -751,7 +784,7 @@ const GameObjectModule = class GameObject {
 
   /**
    *
-   * @returns {String}
+   * @returns {string}
    */
   getName() {
     return this.name;
@@ -759,7 +792,7 @@ const GameObjectModule = class GameObject {
 
   /**
    *
-   * @param {String} name the new name of the gameobject
+   * @param {string} name the new name of the gameobject
    */
   setName(name) {
     this.name = name;
@@ -767,7 +800,8 @@ const GameObjectModule = class GameObject {
 
   /**
    * Compute this to JSON with or without its server side components
-   * @param {Boolean} withServerComponent
+   *
+   * @param {boolean} withServerComponent
    * @returns {JSON} the json of this
    */
   toJSON(withServerComponent = false) {
@@ -808,9 +842,10 @@ GameObjectModule.TYPE = 'GameObject';
 
 /**
  * Lerp transform of g1 to g2 with a given ratio
+ *
  * @param {GameObject} g1 first gameobject
  * @param {GameObject} g2 sencond
- * @param {Number} ratio a number between 0 => 1
+ * @param {number} ratio a number between 0 => 1
  * @returns {GameObject} g1 interpolated
  */
 GameObjectModule.interpolateInPlace = function (g1, g2, ratio) {
@@ -822,6 +857,7 @@ GameObjectModule.interpolateInPlace = function (g1, g2, ratio) {
 
 /**
  * return a deep copy (new uuid are generated) of a gameObject
+ *
  * @param {GameObject} gameObject
  * @returns {GameObject} a new gameobject with new uuid base on gameObject
  */
@@ -841,9 +877,10 @@ GameObjectModule.deepCopy = function (gameObject) {
 
 /**
  * Search in the object3D the object3D sign with uuid
- * @param {String} uuid the uuid of the gameobject
+ *
+ * @param {string} uuid the uuid of the gameobject
  * @param {THREE.Object3D} obj the 3Dobject where to search
- * @param {Boolean} upSearch true up search false bottom search
+ * @param {boolean} upSearch true up search false bottom search
  * @returns {THREE.Object3D} the object3D sign with the uuid of the gameobject
  */
 GameObjectModule.findObject3D = function (uuid, obj, upSearch = true) {

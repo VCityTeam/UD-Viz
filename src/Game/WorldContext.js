@@ -1,4 +1,8 @@
 /** @format */
+/**
+ * @typedef {import('../Views/AssetsManager')} AssetsManager
+ * @typedef {import('../Game/World')} World
+ */
 
 /**
  * Context used to simulate a World
@@ -47,7 +51,7 @@ module.exports = class WorldContext {
 
   /**
    *
-   * @returns {Number}
+   * @returns {number}
    */
   getDt() {
     return this.dt;
@@ -55,7 +59,7 @@ module.exports = class WorldContext {
 
   /**
    *
-   * @param {Number} value
+   * @param {number} value
    */
   setDt(value) {
     this.dt = value;
@@ -71,7 +75,7 @@ module.exports = class WorldContext {
 
   /**
    *
-   * @returns {Library}
+   * @returns {object}
    */
   getBundles() {
     return this.bundles;

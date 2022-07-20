@@ -1,15 +1,16 @@
 /** @format */
 
-//Components
+// importing fuction summaries
 import { CityObject } from '../../../Components/3DTiles/Model/CityObject';
-import { EventSender } from '../../../Components/Events/EventSender';
 import { CityObjectStyle } from '../../../Components/3DTiles/Model/CityObjectStyle';
-
 import { LinkService } from '../Model/LinkService';
+import { Document } from '../../Documents/Model/Document';
+import { Link } from '../Model/Link';
+
+//Components
+import { EventSender } from '../../../Components/Events/EventSender';
 import { DocumentProvider } from '../../Documents/ViewModel/DocumentProvider';
 import { CityObjectProvider } from '../../CityObjects/ViewModel/CityObjectProvider';
-import { Link } from '../Model/Link';
-import { Document } from '../../Documents/Model/Document';
 import {
   LinkCountFilter,
   LinkedWithDisplayedDocumentFilter,
@@ -348,7 +349,7 @@ export class LinkProvider extends EventSender {
    * Toggles the filter for the documents, based on wether they are linked with
    * the selected city object.
    *
-   * @param {Boolean} [toggle] The desired value (`true` activates the filter).
+   * @param {boolean} [toggle] The desired value (`true` activates the filter).
    * If not specified, the activation state of the filter is simply negated (ie.
    * if the filter was active, it is now inactive and vice-versa)
    */

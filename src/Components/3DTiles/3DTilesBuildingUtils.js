@@ -19,6 +19,11 @@ export function getBuildingIdFromIntersection(inter) {
   return table.content['cityobject.database_id'][bid];
 }
 
+/**
+ *
+ * @param tilesInfo
+ * @param buildingId
+ */
 export function getBuildingInfoFromBuildingId(tilesInfo, buildingId) {
   for (const tileId of Object.keys(tilesInfo.tiles)) {
     const tile = tilesInfo.tiles[tileId];

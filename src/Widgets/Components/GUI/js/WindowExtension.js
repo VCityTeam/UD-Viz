@@ -4,7 +4,7 @@
 export class WindowExtension {
   /**
    * Create a new Window extension object.
-   * 
+   *
    * @param {string} label The unique label for the extension.
    * @param {object} options The options for the extension.
    * @param {string} options.id The ID of the root HTML element.
@@ -14,15 +14,15 @@ export class WindowExtension {
    * this is a `button`, it represents the displayed text. If this is a `div`,
    * it represents the inner HTML content.
    * @param {string} [options.container] The label of the parent container.
-   * @param {function} [options.oncreated] A callback triggered when the
+   * @param {Function} [options.oncreated] A callback triggered when the
    * HTML elements of the extension is effectively created.
-   * @param {function} [options.callback] The callback to call when the user
+   * @param {Function} [options.callback] The callback to call when the user
    * clicks on a `button` extension. This has no effects on `div` extensions.
    */
   constructor(label, options) {
     /**
      * The unique label for the extension.
-     * 
+     *
      * @type {string}
      */
     this.label = label;
@@ -36,7 +36,7 @@ export class WindowExtension {
     }
     /**
      * The ID of the root HTML element.
-     * 
+     *
      * @type {string}
      */
     this.id = options.id;
@@ -48,7 +48,7 @@ export class WindowExtension {
      * The inner HTML content for the extension. If
      * this is a `button`, it represents the displayed text. If this is a `div`,
      * it represents the inner HTML content.
-     * 
+     *
      * @type {string}
      */
     this.html = options.html;
@@ -58,20 +58,23 @@ export class WindowExtension {
     }
     options.type = options.type.toLowerCase();
     if (options.type !== 'div' && options.type !== 'button') {
-      throw 'Wrong type option "' + options.type + 
-        '": only "div" and "button" are supported';
+      throw (
+        'Wrong type option "' +
+        options.type +
+        '": only "div" and "button" are supported'
+      );
     }
     /**
      * The type of the extension. Can either be
      * `button` or `div`.
-     * 
+     *
      * @type {string}
      */
     this.type = options.type;
 
     /**
      * The label of the parent container.
-     * 
+     *
      * @type {string}
      */
     this.container = options.container;
@@ -82,25 +85,24 @@ export class WindowExtension {
     /**
      * The callback to call when the user
      * clicks on a `button` extension. This has no effects on `div` extensions.
-     * 
-     * @type {function}
+     *
+     * @type {Function}
      */
     this.callback = options.callback;
 
     /**
      * A callback triggered when the
      * HTML elements of the extension is effectively created.
-     * 
-     * @type {function}
+     *
+     * @type {Function}
      */
     this.oncreated = options.oncreated;
   }
 
   /**
    * Searches for a HTML node that can contains the extension.
-   * 
+   *
    * @param {HTMLElement} htmlRoot The HTML root to search the container.
-   * 
    * @returns {HTMLElement}
    */
   findContainer(htmlRoot) {
@@ -111,7 +113,7 @@ export class WindowExtension {
     }
     queries.push(`[data-ext-container="${this.type}"]`);
     queries.push(`[data-ext-container-default="${this.type}"]`);
-    
+
     let container;
     for (const query of queries) {
       container = htmlRoot.querySelector(query);
@@ -129,7 +131,7 @@ export class WindowExtension {
 
   /**
    * Adds the extension in the given HTML node.
-   * 
+   *
    * @param {HTMLElement} htmlElement The parent element (should be the root
    * of the window).
    */
@@ -155,7 +157,7 @@ export class WindowExtension {
       root.onclick = this.callback;
     }
     container.appendChild(root);
-    if (typeof(this.oncreated) === 'function') {
+    if (typeof this.oncreated === 'function') {
       this.oncreated();
     }
   }

@@ -1,6 +1,5 @@
 /** @format */
 
-const THREE = require('three');
 const GameObject = require('./GameObject/GameObject');
 const WorldStateDiff = require('./WorldStateDiff');
 
@@ -35,6 +34,8 @@ const WorldStateModule = class WorldState {
 
   /**
    * Compute the next state with a given WorldStateDiff
+   * @typedef {this} WorldState
+   *
    * @param {WorldStateDiff} diff the WorldStateDiff between two WorldState
    * @returns {WorldState} the new WorldState
    */
@@ -93,8 +94,9 @@ const WorldStateModule = class WorldState {
 
   /**
    * Check if there is gameobject with a given uuid
-   * @param {String} uuid uuid to be check
-   * @returns {Boolean} true if there is a gameobject with this uuid, false otherwise
+   *
+   * @param {string} uuid uuid to be check
+   * @returns {boolean} true if there is a gameobject with this uuid, false otherwise
    */
   includes(uuid) {
     if (this.gameObject.find(uuid)) {
@@ -105,6 +107,7 @@ const WorldStateModule = class WorldState {
 
   /**
    * Compute the WorldStateDiff between this and the state passed
+   *
    * @param {WorldState} state the state passed to compute the WorldStateDiff with this
    * @returns {WorldStateDiff} the difference between this and state
    */
@@ -136,6 +139,7 @@ const WorldStateModule = class WorldState {
 
   /**
    * return a clone of this
+   *
    * @returns {WorldState}
    */
   clone() {
@@ -156,7 +160,7 @@ const WorldStateModule = class WorldState {
 
   /**
    *
-   * @returns {Object}
+   * @returns {object}
    */
   getOrigin() {
     return this.origin;
@@ -164,7 +168,7 @@ const WorldStateModule = class WorldState {
 
   /**
    *
-   * @returns {Number}
+   * @returns {number}
    */
   getTimestamp() {
     return this.timestamp;
@@ -180,6 +184,7 @@ const WorldStateModule = class WorldState {
 
   /**
    * Compute this to JSON
+   *
    * @returns {JSON}
    */
   toJSON() {
@@ -201,9 +206,10 @@ WorldStateModule.TYPE = 'WorldState';
 
 /**
  * Compute the state between w1 and w2, interpolating with a given ratio
+ *
  * @param {WorldState} w1 first state if ratio = 0, result = w1
  * @param {WorldState} w2 second state if ratio = 1, result = w2
- * @param {Number} ratio a number between 0 => 1
+ * @param {number} ratio a number between 0 => 1
  * @returns {WorldState} the interpolated state
  */
 WorldStateModule.interpolate = function (w1, w2, ratio) {

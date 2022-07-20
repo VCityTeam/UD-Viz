@@ -1,5 +1,6 @@
 /** @format */
 const WorldState = require('./WorldState');
+const WorldStateDiff = require('./WorldStateDiff');
 
 /**
  * StateComputer working with a distant server
@@ -37,7 +38,7 @@ module.exports = class WorldStateInterpolator {
 
   /**
    *
-   * @returns {Number} delay with the server
+   * @returns {number} delay with the server
    */
   getRenderDelay() {
     return this.renderDelay;
@@ -50,6 +51,7 @@ module.exports = class WorldStateInterpolator {
 
   /**
    * Add a new state
+   *
    * @param {WorldState} state
    */
   onNewState(state) {
@@ -86,7 +88,7 @@ module.exports = class WorldStateInterpolator {
 
   /**
    *
-   * @returns {Number} the current server time
+   * @returns {number} the current server time
    */
   _computeCurrentServerTime() {
     return (
@@ -98,7 +100,7 @@ module.exports = class WorldStateInterpolator {
   }
 
   /**
-   *
+   * @typedef {number} Integer
    * @returns {Integer} the index of the first worldstate before server time
    */
   _computeIndexBaseState() {
@@ -133,6 +135,7 @@ module.exports = class WorldStateInterpolator {
 
   /**
    * Add a new diff to compute a new state
+   *
    * @param {WorldStateDiff} diff
    */
   onNewDiff(diff) {
@@ -144,6 +147,7 @@ module.exports = class WorldStateInterpolator {
 
   /**
    * Init the computer with a first state
+   *
    * @param {WorldState} state the first state received
    */
   onFirstState(state) {
@@ -165,6 +169,7 @@ module.exports = class WorldStateInterpolator {
 
   /**
    * Compute the current world state
+   *
    * @returns {WorldState}
    */
   computeCurrentState() {

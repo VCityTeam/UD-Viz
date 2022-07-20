@@ -2,6 +2,9 @@
 
 const THREE = require('three');
 
+// import for function comments
+import { LayerManager } from '../../../Components/Components';
+
 //Components
 import { Window } from '../../../Components/GUI/js/Window';
 import { CityObjectStyle } from '../../../../Components/3DTiles/Model/CityObjectStyle';
@@ -12,7 +15,7 @@ export class Debug3DTilesWindow extends Window {
   /**
    * Creates the debug window.
    *
-   * @param {layer} layerManager The tiles manager.
+   * @param {LayerManager} layerManager The tiles manager.
    */
   constructor(layerManager) {
     super('3d_tiles_debug', '3DTiles Debug', false);
@@ -49,7 +52,10 @@ export class Debug3DTilesWindow extends Window {
       viewerDiv.removeEventListener('mousemove', moveListener);
 
       if (this.selectedCityObject !== undefined) {
-        this.selectedTilesManager.setStyle(this.selectedCityObject.cityObjectId, this.selectedStyle);
+        this.selectedTilesManager.setStyle(
+          this.selectedCityObject.cityObjectId,
+          this.selectedStyle
+        );
         this.selectedTilesManager.applyStyles();
         this.selectedCityObject = undefined;
         this.selectedTilesManager = undefined;
@@ -136,8 +142,10 @@ export class Debug3DTilesWindow extends Window {
   /**
    * If the user is currently hovering a building, fetches the building ID and
    * displays it in the window.
+   *
    * @param {MouseEvent} event The mouse event.
    */
+  // eslint-disable-next-line no-unused-vars
   onMouseMove(event) {
     // Update the current visible tile count
     const visibleTileCount =
@@ -162,21 +170,32 @@ export class Debug3DTilesWindow extends Window {
         }
 
         if (this.selectedCityObject) {
-          this.selectedTilesManager.setStyle(this.selectedCityObject.cityObjectId, this.selectedStyle);
+          this.selectedTilesManager.setStyle(
+            this.selectedCityObject.cityObjectId,
+            this.selectedStyle
+          );
           this.selectedTilesManager.applyStyles();
         }
 
         this.selectedCityObject = cityObject;
-        this.selectedTilesManager = this.layerManager.getTilesManagerByLayerID(this.selectedCityObject.tile.layer.id);
-        this.selectedStyle = this.selectedTilesManager.styleManager.getStyleIdentifierAppliedTo(this.selectedCityObject.cityObjectId);
-        this.selectedTilesManager.setStyle(this.selectedCityObject.cityObjectId, 'debug_selected');
+        this.selectedTilesManager = this.layerManager.getTilesManagerByLayerID(
+          this.selectedCityObject.tile.layer.id
+        );
+        this.selectedStyle =
+          this.selectedTilesManager.styleManager.getStyleIdentifierAppliedTo(
+            this.selectedCityObject.cityObjectId
+          );
+        this.selectedTilesManager.setStyle(
+          this.selectedCityObject.cityObjectId,
+          'debug_selected'
+        );
         this.selectedTilesManager.applyStyles({
           updateFunction: this.selectedTilesManager.view.notifyChange.bind(
             this.selectedTilesManager.view
           ),
         });
 
-        this.clickDivElement.innerHTML = /*html*/`
+        this.clickDivElement.innerHTML = /*html*/ `
            3D Tiles : ${this.selectedTilesManager.layer.name}<br>
            Vertex indexes : ${cityObject.indexStart} to ${cityObject.indexEnd}
             (${cityObject.indexCount})<br>
@@ -197,7 +216,9 @@ export class Debug3DTilesWindow extends Window {
         '[' + this.groupColorBatchInputElement.value + ']'
       );
       const color = new THREE.Color(this.groupColorColorInputElement.value);
-      const opacity = Number.parseFloat(this.groupColorOpacityInputElement.value);
+      const opacity = Number.parseFloat(
+        this.groupColorOpacityInputElement.value
+      );
       this.layerManager.tilesManagers[0].setStyle(
         new CityObjectID(tileId, batchIds),
         { materialProps: { color, opacity } }

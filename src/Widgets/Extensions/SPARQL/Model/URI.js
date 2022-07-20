@@ -1,8 +1,9 @@
 /**
-   * Tokenize a URI into a namespace and id
-   * @param {string} uri
-   * @returns {Object}
-   */
+ * Tokenize a URI into a namespace and id
+ *
+ * @param {string} uri
+ * @returns {object}
+ */
 export function tokenizeURI(uri) {
   const tokenizedURI = {};
   if (uri.includes('#')) {

@@ -1,6 +1,10 @@
 import { Tile } from './Model/Tile.js';
 import { getVisibleTiles, updateITownsView } from './3DTilesUtils.js';
-import { CityObjectID, CityObject, createCityObjectID } from './Model/CityObject.js';
+import {
+  CityObjectID,
+  CityObject,
+  createCityObjectID,
+} from './Model/CityObject.js';
 import { CityObjectStyle } from './Model/CityObjectStyle.js';
 import { StyleManager } from './StyleManager.js';
 import { EventSender } from '../Events/EventSender.js';
@@ -48,14 +52,14 @@ export class TilesManager extends EventSender {
 
     /**
      * The color used for tiles default style.
-     * 
+     *
      * @type {number}
      */
     this.color = null;
 
     /**
      * The set of tile wrappers that have been loaded.
-     * 
+     *
      * @type {Array<Tile>}
      */
     this.tiles = [];
@@ -93,13 +97,13 @@ export class TilesManager extends EventSender {
      * Keep tracks of the update of tiles. Associate each tile with the UUID of
      * their Object3D during the last update.
      *
-     * @type {Object.<number, string>}
+     * @type {Object<number, string>}
      */
     this.upToDateTileIds = {};
 
     /**
      * Set to true if the tileset has an unique default color
-     * 
+     *
      * @type {boolean}
      */
     this.hasDefaultColor = false;
@@ -111,7 +115,10 @@ export class TilesManager extends EventSender {
     //  loaded (i.e. tileIndex filled), then totalTileCount should be set.
     this.totalTileCount = this.layer.tileset.tiles.length;
     // Set the style for the whole tileset
-    if (this.color !== null && !this.styleManager.isStyleRegistered('default')) {
+    if (
+      this.color !== null &&
+      !this.styleManager.isStyleRegistered('default')
+    ) {
       this.registerStyle('default', {
         materialProps: { opacity: 1, color: this.color },
       });
@@ -129,25 +136,24 @@ export class TilesManager extends EventSender {
     // TODO: Les tuiles d'iTowns devraient etre rendues invisibles plutot
     //  que d'etre déchargées et rechargées. A ce moment là, ce callback
     //  pourra etre dans le if ci dessus
-    if(this.color)
-      this.setStyleToTile(tile.tileId,'default');
-    else
-      this.setDefaultStyleToTile(tile.tileId);
+    if (this.color) this.setStyleToTile(tile.tileId, 'default');
+    else this.setDefaultStyleToTile(tile.tileId);
     this.applyStyleToTile(tile.tileId, { updateView: false });
     this.sendEvent(TilesManager.EVENT_TILE_LOADED, tile);
   }
 
   focusCamera() {
-    if(this.layer.isC3DTilesLayer){
+    if (this.layer.isC3DTilesLayer) {
       const coordinates = this.view.camera.position();
       const extent = this.layer.extent;
-      coordinates.x = (extent.east + extent.west) / 2; 
+      coordinates.x = (extent.east + extent.west) / 2;
       coordinates.y = (extent.north + extent.south) / 2;
       coordinates.z = 200;
-      if(this.layer.tileset.tiles[0])
+      if (this.layer.tileset.tiles[0])
         coordinates.z = this.layer.tileset.tiles[0].boundingVolume.box.max.z;
-      focusCameraOn(this.view,this.view.controls,coordinates, {
-        verticalDistance:200,horizontalDistance:200
+      focusCameraOn(this.view, this.view.controls, coordinates, {
+        verticalDistance: 200,
+        horizontalDistance: 200,
       });
     }
   }
@@ -167,8 +173,7 @@ export class TilesManager extends EventSender {
    * Returns the city object, if the tile is loaded.
    *
    * @param {CityObjectID} cityObjectId The city object identifier.
-   *
-   * @return {CityObject}
+   * @returns {CityObject}
    */
   getCityObject(cityObjectId) {
     if (this.tiles[cityObjectId.tileId] === undefined) {
@@ -188,7 +193,6 @@ export class TilesManager extends EventSender {
    *
    * @param {(cityObject: CityObject) => boolean} predicate The predicate to
    * determine the city object.
-   *
    * @returns {CityObject | undefined} The first city object that matches the
    * predicate, or `undefined` if no city object is found.
    */
@@ -208,7 +212,6 @@ export class TilesManager extends EventSender {
    *
    * @param {(cityObject: CityObject) => boolean} predicate The predicate to
    * determine the city objects.
-   *
    * @returns {Array<CityObject>} An array of all the city object that matches
    * the predicate.
    */
@@ -226,7 +229,7 @@ export class TilesManager extends EventSender {
 
   /**
    * Sets the style of a particular city object.
-   * 
+   *
    * @param {CityObjectID | Array<CityObjectID>} cityObjectId The city object
    * identifier.
    * @param {CityObjectStyle | string} style The desired style.
@@ -254,8 +257,8 @@ export class TilesManager extends EventSender {
 
   /**
    * Sets the style of a particular tile.
-   * 
-   * @param {Int} tileId The tile
+   *
+   * @param {number} tileId The tile
    * identifier.
    * @param {CityObjectStyle | string} style The desired style.
    */
@@ -269,8 +272,8 @@ export class TilesManager extends EventSender {
 
   /**
    * Sets the style of a particular tile.
-   * 
-   * @param {Int} tileId The tile
+   *
+   * @param {number} tileId The tile
    * identifier.
    */
   setDefaultStyleToTile(tileId) {
@@ -284,7 +287,7 @@ export class TilesManager extends EventSender {
 
   /**
    * Sets the style for all the tileset
-   * 
+   *
    * @param {CityObjectStyle | string} style The desired style.
    */
   setStyleToTileset(style) {
@@ -314,9 +317,8 @@ export class TilesManager extends EventSender {
 
   /**
    * Check if a style is registered.
-   * 
-   * @param {string} name Name of the style. 
-   * 
+   *
+   * @param {string} name Name of the style.
    * @returns {boolean} True if the style is registered, false either.
    */
   isStyleRegistered(name) {
@@ -377,7 +379,6 @@ export class TilesManager extends EventSender {
    * Gets the style applied to a given object ID.
    *
    * @param {CityObjectID} cityObjectId The city object ID.
-   *
    * @returns {CityObjectStyle}
    */
   getStyleAppliedTo(cityObjectId) {
@@ -395,9 +396,11 @@ export class TilesManager extends EventSender {
    * view. Default is `udpateITownsView(view, layer)`.
    */
   applyStyles(options = {}) {
-    const updateFunction = options.updateFunction || (() => {
-      this.view.notifyChange();
-    });
+    const updateFunction =
+      options.updateFunction ||
+      (() => {
+        this.view.notifyChange();
+      });
     for (const tile of this.tiles) {
       if (tile === undefined) {
         continue;
@@ -420,11 +423,13 @@ export class TilesManager extends EventSender {
    * view. Default is `udpateITownsView(view, layer)`.
    */
   applyStyleToTile(tileId, options = {}) {
-    const updateView = (options.updateView !== undefined) ?
-      options.updateView : true;
-    const updateFunction = options.updateFunction || (() => {
-      updateITownsView(this.view, this.layer);
-    });
+    const updateView =
+      options.updateView !== undefined ? options.updateView : true;
+    const updateFunction =
+      options.updateFunction ||
+      (() => {
+        updateITownsView(this.view, this.layer);
+      });
 
     const tile = this.tiles[tileId];
     if (tile === undefined) return;
@@ -448,8 +453,7 @@ export class TilesManager extends EventSender {
           this.setDefaultStyleToTile(tile.tileId);
         }
       }
-    }
-    else this.setStyleToTileset('default');
+    } else this.setStyleToTileset('default');
   }
 
   /**
@@ -457,7 +461,6 @@ export class TilesManager extends EventSender {
    * `applyStyles` call.
    *
    * @private
-   *
    * @param {number} tileId The ID of the tile to update.
    */
   _markTileToUpdate(tileId) {
@@ -468,7 +471,6 @@ export class TilesManager extends EventSender {
    * Updates the saved UUID of the tile.
    *
    * @private
-   *
    * @param {Tile} tile The tile to mark.
    */
   _markTileAsUpdated(tile) {
@@ -485,7 +487,6 @@ export class TilesManager extends EventSender {
    * Checks if the style of the tile should be updated.
    *
    * @private
-   *
    * @param {Tile} tile The tile.
    */
   _shouldTileBeUpdated(tile) {

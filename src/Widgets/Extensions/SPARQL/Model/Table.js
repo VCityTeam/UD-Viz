@@ -1,9 +1,12 @@
-import * as d3 from 'd3';
+// import for function comments
 import { SparqlQueryWindow } from '../View/SparqlQueryWindow';
+
+import * as d3 from 'd3';
 
 export class Table {
   /**
    * Create a new Table using D3.
+   *
    * @param {SparqlQueryWindow} window The window the table is attached to.
    */
   constructor(window) {
@@ -19,7 +22,8 @@ export class Table {
 
   /**
    * Render the table.
-   * @param {Object} data The data to render.
+   *
+   * @param {object} data The data to render.
    * @param {Array} columns The columns to render.
    */
   dataAsTable(data, columns) {
@@ -45,6 +49,7 @@ export class Table {
   }
   /**
    * Update the table with new data.
+   *
    * @param {Table} table The table object to update.
    * @param {Event} event The event passed to the update function.
    */
@@ -61,6 +66,7 @@ export class Table {
     //filter data by filtertype
     let dataFilter;
     if (filterValue && filterValue !== '') {
+      // eslint-disable-next-line no-unused-vars
       dataFilter = table.data.filter(function (d, i) {
         if (
           typeof d[column].value === 'string' &&

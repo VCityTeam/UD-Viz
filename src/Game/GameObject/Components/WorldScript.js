@@ -1,4 +1,7 @@
 /** @format */
+/**
+ * @typedef {import('../../../Views/AssetsManager')} AssetsManager
+ */
 
 const THREE = require('three');
 
@@ -37,8 +40,9 @@ const WorldScriptModule = class WorldScript {
 
   /**
    * Initialize scripts
+   *
    * @param {AssetsManager} assetsManager must implement an assetsmanager interface can be local or server
-   * @param {Library} bundles set of bundle library used by script
+   * @param {Object} bundles set of bundle library used by script
    */
   initAssets(assetsManager, bundles) {
     const _this = this;
@@ -50,7 +54,8 @@ const WorldScriptModule = class WorldScript {
 
   /**
    * Execute all scripts for a particular event
-   * @param {WorldScript.EVENT} event the event trigger
+   *
+   * @param {WorldScriptModule.EVENT} event the event trigger
    * @param {Array} params parameters pass to scripts
    */
   execute(event, params) {
@@ -63,10 +68,11 @@ const WorldScriptModule = class WorldScript {
 
   /**
    * Execute script with id for a particular event
-   * @param {String} id id of the script executed
-   * @param {WorldScript.EVENT} event event trigger
+   *
+   * @param {string} id id of the script executed
+   * @param {WorldScriptModule.EVENT} event event trigger
    * @param {Array} params parameters pass to the script function
-   * @returns {Object} result of the script execution
+   * @returns {object} result of the script execution
    */
   executeScript(id, event, params) {
     const s = this.scripts[id];
@@ -84,7 +90,7 @@ const WorldScriptModule = class WorldScript {
 
   /**
    *
-   * @returns {Object}
+   * @returns {object}
    */
   getScripts() {
     return this.scripts;
@@ -96,7 +102,8 @@ const WorldScriptModule = class WorldScript {
 
   /**
    * This component can be run on the server side
-   * @returns {Boolean}
+   *
+   * @returns {boolean}
    */
   isServerSide() {
     return true;
@@ -104,6 +111,7 @@ const WorldScriptModule = class WorldScript {
 
   /**
    * Compute this to JSON
+   *
    * @returns {JSON}
    */
   toJSON() {

@@ -130,7 +130,6 @@ export class DocumentNavigatorWindow extends AbstractDocumentWindow {
    * Callback triggered when the list of filtered documents changes.
    *
    * @private
-   *
    * @param {Array<Document>} documents The new array of filtered documents.
    */
   _onFilteredDocumentsUpdate(documents) {
@@ -145,8 +144,8 @@ export class DocumentNavigatorWindow extends AbstractDocumentWindow {
       item.innerHTML = /*html*/ `
         <div class='doc-title'>${doc.title}</div>
         <div class='doc-info'>Refering ${new Date(
-    doc.refDate
-  ).toLocaleDateString()}</div>
+          doc.refDate
+        ).toLocaleDateString()}</div>
       `;
       item.classList.add('navigator-result-doc');
       item.onclick = () => {
@@ -161,7 +160,6 @@ export class DocumentNavigatorWindow extends AbstractDocumentWindow {
    * Callback triggered when the displayed document changes.
    *
    * @private
-   *
    * @param {Document} document The new displayed documents.
    */
   _onDisplayedDocumentChange(document) {

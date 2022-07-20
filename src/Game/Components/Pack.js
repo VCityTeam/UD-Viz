@@ -12,7 +12,8 @@ const THREE = require('three');
 module.exports = Object.freeze({
   /**
    * Serialize data
-   * @param {Object} obj the object to serialize
+   *
+   * @param {object} obj the object to serialize
    * @returns {SharedArrayBuffer} serialized data
    */
   pack(obj) {
@@ -31,6 +32,7 @@ module.exports = Object.freeze({
 
   /**
    * Unserialize data
+   *
    * @param {SharedArrayBuffer} array serialized data
    * @returns {JSON} object unserialized
    */

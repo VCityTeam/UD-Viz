@@ -9,15 +9,17 @@ export class PositionerWindow extends Window {
     this.itownsView = itownsView;
 
     // Request update every active frame
-    this.itownsView.addFrameRequester(MAIN_LOOP_EVENTS.AFTER_CAMERA_UPDATE,
-      () => this._updateFieldsFromCamera());
+    this.itownsView.addFrameRequester(
+      MAIN_LOOP_EVENTS.AFTER_CAMERA_UPDATE,
+      () => this._updateFieldsFromCamera()
+    );
 
     // Event for position registering
     this.registerEvent(PositionerWindow.EVENT_POSITION_SUBMITTED);
   }
 
   get innerContentHtml() {
-    return /*html*/`
+    return /*html*/ `
       <div class="box-section">
         <h3 class="section-title">Coordinates</h3>
         <form id="${this.formId}">
@@ -85,7 +87,7 @@ export class PositionerWindow extends Window {
 
   /**
    * Retrieve the current camera position from the form fields.
-   * 
+   *
    * @returns {{position: THREE.Vector3, quaternion: THREE.Quaternion}}
    */
   _getCameraPosition() {
@@ -104,7 +106,7 @@ export class PositionerWindow extends Window {
 
     return {
       position,
-      quaternion
+      quaternion,
     };
   }
 
@@ -113,8 +115,12 @@ export class PositionerWindow extends Window {
    */
   async _travel() {
     const camera = this._getCameraPosition();
-    this.itownsView.controls.initiateTravel(camera.position, 'auto', camera.quaternion,
-      true);
+    this.itownsView.controls.initiateTravel(
+      camera.position,
+      'auto',
+      camera.quaternion,
+      true
+    );
   }
 
   /**

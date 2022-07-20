@@ -1,10 +1,13 @@
 /** @format */
 
+// import for function comments
 import { CityObjectModule } from '../../CityObjects/CityObjectModule';
-import { CityObjectFilterSelector } from '../../CityObjects/View/CityObjectFilterSelector';
 import { LinkProvider } from '../ViewModel/LinkProvider';
-import { CityObjectProvider } from '../../CityObjects/ViewModel/CityObjectProvider';
 import { LinkView } from './LinkView';
+
+// Components
+import { CityObjectFilterSelector } from '../../CityObjects/View/CityObjectFilterSelector';
+import { CityObjectProvider } from '../../CityObjects/ViewModel/CityObjectProvider';
 
 /**
  * The interface extensions for the city object window.

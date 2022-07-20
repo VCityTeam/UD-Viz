@@ -46,7 +46,6 @@ export class AttributeFilterSelector extends CityObjectFilterSelector {
    * from the given form data.
    *
    * @override
-   *
    * @param {FormData} formData
    */
   onSubmit(formData) {

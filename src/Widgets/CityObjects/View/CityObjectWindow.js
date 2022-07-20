@@ -2,6 +2,9 @@
 
 const THREE = require('three');
 
+// import for function comments
+import { CityObject } from '../../../Components/3DTiles/Model/CityObject';
+
 //Components
 import { Window } from '../../Components/GUI/js/Window';
 import { CityObjectStyle } from '../../../Components/3DTiles/Model/CityObjectStyle';
@@ -156,7 +159,7 @@ export class CityObjectWindow extends Window {
     this.clearFilterButtonElement.onclick = () => this.provider.removeLayer();
 
     this.clearSelectionButtonElement.onclick = () =>
-      this._clearCityObjectSelection();    
+      this._clearCityObjectSelection();
 
     this.clearSelectionButtonElement.disabled = true;
 
@@ -176,12 +179,13 @@ export class CityObjectWindow extends Window {
   _updateLayerDescription() {
     if (this.isCreated) {
       const layer = this.provider.getLayer();
-      if(this.selectedFilterElement){
+      if (this.selectedFilterElement) {
         if (layer) {
           this.layerColorIndicatorElement.style.display = '';
           this.selectedFilterElement.innerText = layer.filter.toString();
           this.layerColorIndicatorElement.style.background =
-              '#' + new THREE.Color(layer.style.materialProps.color).getHexString();
+            '#' +
+            new THREE.Color(layer.style.materialProps.color).getHexString();
         } else {
           this.selectedFilterElement.innerText = '';
           this.layerColorIndicatorElement.style.display = 'none';
@@ -273,7 +277,7 @@ export class CityObjectWindow extends Window {
         Layer : ${cityObject.tile.layer.name}
     `;
     for (const prop of Object.entries(cityObject.props)) {
-      if(prop[0] != 'group' && prop[0] != 'properties'){
+      if (prop[0] != 'group' && prop[0] != 'properties') {
         html += `
         <br>${prop[0]} : ${prop[1]}
       `;

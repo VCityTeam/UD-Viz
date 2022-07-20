@@ -1,5 +1,6 @@
 /** @format */
 
+// import libraries
 import * as udviz from '../../index';
 import * as THREE from 'three';
 import * as proj4 from 'proj4';
@@ -109,7 +110,7 @@ export class GameView extends View3D {
 
   /**
    *
-   * @param {Boolean} value true go are updated false no
+   * @param {boolean} value true go are updated false no
    */
   setUpdateGameObject(value) {
     this.updateGameObject = value;
@@ -126,6 +127,7 @@ export class GameView extends View3D {
 
   /**
    * register the function into tickRequesters
+   *
    * @param {Function} cb a function that will be call every tick
    */
   addTickRequester(cb) {
@@ -143,12 +145,13 @@ export class GameView extends View3D {
 
   /**
    * Initialize this view
-   *
+   * @typedef {udviz.Game.WorldState} WorldState
    * @param {WorldState} state first state of this view
    */
   start(state = this.interpolator.computeCurrentState()) {
     if (!state) throw new Error('no state');
 
+    // eslint-disable-next-line no-unused-vars
     return new Promise((resolve, reject) => {
       //build itowns view
       const o = state.getOrigin();
@@ -259,7 +262,7 @@ export class GameView extends View3D {
 
     if (value) {
       //creating controls like this put it in this.itownsView.controls
-      const c = new itowns.PlanarControls(this.itownsView, {
+      new itowns.PlanarControls(this.itownsView, {
         handleCollision: false,
         focusOnMouseOver: false,
         focusOnMouseClick: false,
@@ -300,6 +303,7 @@ export class GameView extends View3D {
 
   /**
    * initialize the scene of the itwons view
+   *
    * @param {WorldState} state
    */
   initScene(state) {
@@ -336,7 +340,9 @@ export class GameView extends View3D {
     THREEUtils.initRenderer(renderer, this.skyColor);
 
     //add lights
-    const { directionalLight, ambientLight } = THREEUtils.addLights(this.scene);
+    const { directionalLight /*, ambientLight*/ } = THREEUtils.addLights(
+      this.scene
+    );
 
     //configure shadows based on a config files
     directionalLight.shadow.mapSize = new THREE.Vector2(
@@ -354,6 +360,8 @@ export class GameView extends View3D {
 
   /**
    * dispose this view
+   *
+   * @param keepAssets
    */
   dispose(keepAssets = false) {
     super.dispose();
@@ -384,6 +392,7 @@ export class GameView extends View3D {
    * Call a render pass
    *
    * @param {WorldState} state the new state used to update this view
+   * @param states
    */
   update(states) {
     const _this = this;
@@ -544,6 +553,7 @@ export class GameView extends View3D {
 
   /**
    * force this gameview to update with a specific state
+   *
    * @param {WorldState} state
    */
   forceUpdate(state) {
@@ -564,6 +574,7 @@ export class GameView extends View3D {
   }
 
   /**
+   * @typedef { import("../Views").AssetsManager } AssetsManager
    * @returns {AssetsManager}
    */
   getAssetsManager() {
@@ -589,7 +600,7 @@ export class GameView extends View3D {
 /**
  * Context pass to the GameObject LocalScript to work (TODO this class is relevant ? all attributes could be in gameview class)
  */
-class LocalContext {
+export class LocalContext {
   constructor(gameView) {
     this.dt = 0;
     this.gameView = gameView;
@@ -598,7 +609,7 @@ class LocalContext {
 
   /**
    *
-   * @param {Number} dt delta time of the current frame
+   * @param {number} dt delta time of the current frame
    */
   setDt(dt) {
     this.dt = dt;
@@ -606,7 +617,7 @@ class LocalContext {
 
   /**
    *
-   * @returns {Number}
+   * @returns {number}
    */
   getDt() {
     return this.dt;

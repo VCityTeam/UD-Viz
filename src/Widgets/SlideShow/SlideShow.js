@@ -1,5 +1,10 @@
 /** @format */
 
+// import for function comments
+import { AllWidget } from '../../Templates/Templates';
+import { InputManager } from '../../Components/InputManager';
+import { PlanarView, Extent } from 'itowns';
+
 //Components
 import { Window } from '../Components/GUI/js/Window';
 import * as THREE from 'three';
@@ -7,6 +12,7 @@ import * as THREE from 'three';
 export class SlideShow extends Window {
   /**
    * It initializes the widget.
+   *
    * @param app - the application object
    * @param inputManager - the input manager of the application
    */
@@ -17,9 +23,9 @@ export class SlideShow extends Window {
     this.app = app;
     /**@type {InputManager} */
     this.inputManager = inputManager;
-    /** @type {itowns.Extent} */
+    /** @type {Extent} */
     this.extent = app.extent;
-    /** @type {itowns.PlanarView} */
+    /** @type {PlanarView} */
     this.view = app.view;
     this.conf = app.config.slideShow || null;
 
@@ -47,7 +53,7 @@ export class SlideShow extends Window {
     this.texturesFiles = null;
     this.iCurrentTextureFile = 0;
 
-    /** @type {bool} if true the application update its view3D eachFrame*/
+    /** @type {boolean} if true the application update its view3D eachFrame*/
     this.notifyValue = false;
 
     this.initDefaultTextureFile();
@@ -428,9 +434,9 @@ export class SlideShow extends Window {
 
   /**
    * @param {Array.String} labels List of labels name
-   * @param {String} vectorName Name of the vector
+   * @param {string} vectorName Name of the vector
    * @param {number} step The step of HTMLElement input (type number)
-   * @returns {Object} title => HTMLElement 'h3' ; inputVector => HTMLElement 'div' contains labels and inputs HTMLElements
+   * @returns {object} title => HTMLElement 'h3' ; inputVector => HTMLElement 'div' contains labels and inputs HTMLElements
    */
   createInputVector(labels, vectorName, step = 0.5) {
     const titleVector = document.createElement('h3');

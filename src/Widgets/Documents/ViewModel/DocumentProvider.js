@@ -225,7 +225,6 @@ export class DocumentProvider extends EventSender {
    * URL or a base64 encoded file).
    *
    * @async
-   *
    * @returns {Promise<string | undefined>}
    */
   async getDisplayedDocumentImage() {
