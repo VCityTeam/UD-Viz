@@ -7,7 +7,7 @@ a {
 }
 
 html {
-  font-family: 'Segoe UI';
+  font-family: 'Segoe UI', Arial, sans-serif;
   font-size: 14px;
   height: 100%;
   width: 100%;
@@ -147,7 +147,6 @@ section {
   padding: 20px;
   padding-top: 12px;
   font-size: 20px;
-  font-family: 'Segoe UI';
   display: inline-block;
   margin: 0;
   left: 100%;
@@ -235,7 +234,6 @@ section {
   width: 69px;
   height: 40px;
   margin: 30px auto 10px auto;
-  font-family: 'Segoe UI';
   font-size: 2vh;
   font-weight: bold;
   font-stretch: normal;
