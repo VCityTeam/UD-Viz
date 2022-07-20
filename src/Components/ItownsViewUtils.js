@@ -16,7 +16,6 @@ const $3DTemporalTileset = Widgets.$3DTemporalTileset;
 export function setupAndAdd3DTilesLayers(config, layerManager, itownsView) {
   // Positional arguments verification
   if (!config['3DTilesLayers']) {
-    console.warn('No 3DTilesLayers field in the configuration file');
     return;
   }
 
@@ -100,7 +99,6 @@ export function setupAndAdd3DTilesLayers(config, layerManager, itownsView) {
 export function setupAndAddGeoJsonLayers(config, itownsView) {
   // Positional arguments verification
   if (!config['GeoJSONLayers']) {
-    console.warn('No GeoJSONLayers field in the configuration file');
     return;
   }
   /**
@@ -135,13 +133,10 @@ export function setupAndAddGeoJsonLayers(config, itownsView) {
       style: layerStyle,
     });
     itownsView.addLayer(geojsonLayer);
-    // return geojsonLayer;
   };
 
   const layers = {};
   for (let layer of config['GeoJSONLayers']) {
-    // layers[layer.id] = this.setupGeoJsonLayer(layer);
-    // this.addGeoJsonLayer(layers[layer.id]);
     setupAndAddGeoJsonLayer(layer);
   }
 }
