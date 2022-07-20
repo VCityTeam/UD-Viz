@@ -31,6 +31,8 @@ module.exports = {
     'jsdoc/require-param': 1,
     'jsdoc/require-param-name': 1,
     'jsdoc/require-param-type': 1,
+    'jsdoc/require-property': 1, // Recommended
+    'jsdoc/require-property-description': 1, // Recommended
     'jsdoc/no-undefined-types': ['warn'],
     'linebreak-style': ['error', 'unix'],
     quotes: ['error', 'single'],
