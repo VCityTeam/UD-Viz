@@ -14,11 +14,13 @@
       let app = new udv.Templates.AllWidget();
 
       app.start('../assets/config/baseMap_config.json').then((config) => {
-        ////// ABOUT MODULE
+        ////// About Widget
         const about = new udv.Widgets.AboutWindow();
         app.addModuleView('about', about);
-        const baseMaps = new udv.Widgets.BaseMap(app.view3D.getItownsView(),config['baseMapLayers'],app.extent,app.config['projection']);
-        app.addModuleView('baseMap', baseMaps);
+
+        ////// BaseMap Widget 
+        const baseMap = new udv.Widgets.BaseMap(app.view3D.getItownsView(),config['baseMapLayers'],app.extent,app.config['projection']);
+        app.addModuleView('baseMap', baseMap);
       });
     </script>
   </body>
