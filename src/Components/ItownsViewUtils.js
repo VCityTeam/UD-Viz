@@ -16,7 +16,6 @@ const $3DTemporalTileset = Widgets.$3DTemporalTileset;
 export function setupAndAdd3DTilesLayers(config, layerManager, itownsView) {
   // Positional arguments verification
   if (!config['3DTilesLayers']) {
-    console.warn('No 3DTilesLayers field in the configuration file');
     return;
   }
 
@@ -136,7 +135,6 @@ export function setupAndAddGeoJsonLayers(config, itownsView) {
       style: layerStyle,
     });
     itownsView.addLayer(geojsonLayer);
-    // return geojsonLayer;
   };
 
   for (let layer of config['GeoJSONLayers']) {
