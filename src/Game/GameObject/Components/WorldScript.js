@@ -42,7 +42,7 @@ const WorldScriptModule = class WorldScript {
    * Initialize scripts
    *
    * @param {AssetsManager} assetsManager must implement an assetsmanager interface can be local or server
-   * @param {Object} bundles set of bundle library used by script
+   * @param {object} bundles set of bundle library used by script
    */
   initAssets(assetsManager, bundles) {
     const _this = this;

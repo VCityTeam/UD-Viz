@@ -20,6 +20,8 @@ module.exports = {
     'jsdoc/no-undefined-types': ['warn'],
     'jsdoc/check-access': 1,
     'jsdoc/check-param-names': 1,
+    'jsdoc/check-property-names': 1,
+    'jsdoc/check-types': 1,
     'linebreak-style': ['error', 'unix'],
     quotes: ['error', 'single'],
     semi: ['error', 'always'],

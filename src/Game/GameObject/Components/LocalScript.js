@@ -43,7 +43,7 @@ const LocalScriptModule = class LocalScript {
    * Initialize scripts
    *
    * @param {AssetsManager} assetsManager local assetsManager
-   * @param {Object} bundles set of bundle library used by script
+   * @param {object} bundles set of bundle library used by script
    */
   initAssets(assetsManager, bundles) {
     const _this = this;

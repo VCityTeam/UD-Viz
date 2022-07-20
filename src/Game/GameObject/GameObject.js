@@ -219,7 +219,7 @@ const GameObjectModule = class GameObject {
    * Initialize components of this
    *
    * @param {AssetsManager} manager must implement an assetsmanager interface can be local or server
-   * @param {Object} bundles set of bundle library used by script
+   * @param {object} bundles set of bundle library used by script
    * @param {boolean} isServerSide the code is running on a server or in a browser
    */
   initAssetsComponents(manager, bundles = {}, isServerSide = false) {

@@ -162,7 +162,7 @@ const WorldStateComputerModule = class WorldStateComputer {
  *
  * @param {World} world the world to load
  * @param {AssetsManager} assetsManager manager needed to load world assets
- * @param {Object} bundles bundles needed to load the world
+ * @param {object} bundles bundles needed to load the world
  * @returns
  */
 WorldStateComputerModule.WorldTest = function (world, assetsManager, bundles) {
