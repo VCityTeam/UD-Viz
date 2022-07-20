@@ -13,7 +13,7 @@ export class AboutWindow extends ModuleView {
   constructor() {
     super();
     // Create DOM element
-    let aboutDiv = document.createElement('div');
+    const aboutDiv = document.createElement('div');
     aboutDiv.id = 'aboutWindow';
     document.getElementById('contentSection').append(aboutDiv);
 

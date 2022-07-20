@@ -20,7 +20,7 @@ export class CityObjectModule {
    * @param {LayerManager} layerManager The layer manager.
    * @param {object} config The UDV configuration.
    * @param {object} config.cityObjects The city objects config.
-   * @param {Object.<string, CityObjectStyle>} config.cityObjects.styles The
+   * @param {Object<string, CityObjectStyle>} config.cityObjects.styles The
    * city object styles.
    * @param {CityObjectStyle} config.cityObjects.styles.layerDefault The default
    * style for the layer.
@@ -74,9 +74,9 @@ export class CityObjectModule {
    * this is a `button`, it represents the displayed text. If this is a `div`,
    * it represents the inner HTML content.
    * @param {string} options.container The label of the parent container.
-   * @param {function} [options.oncreated] A callback triggered when the
+   * @param {Function} [options.oncreated] A callback triggered when the
    * HTML elements of the extension is effectively created.
-   * @param {function} [options.callback] The callback to call when the user
+   * @param {Function} [options.callback] The callback to call when the user
    * clicks on a `button` extension. This has no effects on `div` extensions.
    */
   addExtension(label, options) {

@@ -38,7 +38,6 @@ export class CityObjectFilter {
    * a city object is acceptable according to the filter.
    *
    * @param {CityObject} cityObject The city object to evaluate.
-   *
    * @returns {boolean} Wether the city object is acceptable.
    */
   accepts(cityObject) {

@@ -38,7 +38,7 @@ const CommandModule = class Command {
 
   /**
    *
-   * @param {String} id
+   * @param {string} id
    */
   setGameObjectUUID(id) {
     this.gameObjectUUID = id;
@@ -46,7 +46,7 @@ const CommandModule = class Command {
 
   /**
    *
-   * @returns {String}
+   * @returns {string}
    */
   getGameObjectUUID() {
     return this.gameObjectUUID;
@@ -54,7 +54,7 @@ const CommandModule = class Command {
 
   /**
    *
-   * @param {String} userID
+   * @param {string} userID
    */
   setUserID(userID) {
     this.userID = userID;
@@ -62,7 +62,7 @@ const CommandModule = class Command {
 
   /**
    *
-   * @returns {String}
+   * @returns {string}
    */
   getUserID() {
     return this.userID;
@@ -70,6 +70,7 @@ const CommandModule = class Command {
 
   /**
    * Compute this to JSON
+   *
    * @returns {JSON}
    */
   toJSON() {

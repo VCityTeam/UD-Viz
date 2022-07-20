@@ -39,7 +39,8 @@ export class InputManager {
 
   /**
    * Disable/Enable this inputManager
-   * @param {Boolean} pause if true command and input are not processed
+   *
+   * @param {boolean} pause if true command and input are not processed
    */
   setPause(pause) {
     this.pause = pause;
@@ -47,6 +48,7 @@ export class InputManager {
 
   /**
    * Used this if a key has not been register in addKeyCommand and you need to know if it's isPressed
+   *
    * @param {Array[String]} keys ids of the key to listen to
    */
   listenKeys(keys) {
@@ -58,8 +60,9 @@ export class InputManager {
 
   /**
    * Return true if the key is pressed, dont forget to listenKeys if no addKeyCommand has been used for this key
-   * @param {String} key id of the key
-   * @returns {Boolean} true if pressed, false otherwise
+   *
+   * @param {string} key id of the key
+   * @returns {boolean} true if pressed, false otherwise
    */
   isPressed(key) {
     return this.keyMap[key];
@@ -67,8 +70,9 @@ export class InputManager {
 
   /**
    * Register a callback for a particular key and event
-   * @param {String} key id of the key if null every key trigger the event
-   * @param {String} eventID id of the event (keyup, keydown)
+   *
+   * @param {string} key id of the key if null every key trigger the event
+   * @param {string} eventID id of the event (keyup, keydown)
    * @param {Function} cb callback called for this event
    */
   addKeyInput(key, eventID, cb) {
@@ -88,6 +92,7 @@ export class InputManager {
 
   /**
    * Add a command for severals keys
+   *
    * @param {Command.TYPE} commandID Type of the command
    * @param {Array[String]} keys keys assigned
    * @param {Function} cb callback called for must return a Command
@@ -134,7 +139,8 @@ export class InputManager {
 
   /**
    * Add a command for a mouse input
-   * @param {String} eventID id of the mouse to listen to
+   *
+   * @param {string} eventID id of the mouse to listen to
    * @param {Function} cb  must return a Command and take MouseState as first argument
    */
   addMouseCommand(eventID, cb) {
@@ -143,7 +149,7 @@ export class InputManager {
 
   /**
    *
-   * @param {String} eventID
+   * @param {string} eventID
    */
   removeMouseCommand(eventID) {
     delete this.mouseCommands[eventID];
@@ -151,8 +157,9 @@ export class InputManager {
 
   /**
    * Register a callback for a particular mouse event
+   *
    * @param {HTMLElement} element element listened
-   * @param {String} eventID id of the event (mousedown, mouseup, mousemove)
+   * @param {string} eventID id of the event (mousedown, mouseup, mousemove)
    * @param {Function} cb callback called for this event
    */
   addMouseInput(element, eventID, cb) {
@@ -176,6 +183,7 @@ export class InputManager {
 
   /**
    * Start listening
+   *
    * @param {HTMLElement} element the element listened
    */
   startListening(element) {
@@ -236,7 +244,8 @@ export class InputManager {
 
   /**
    * If value is true pointerLock mode is activated else it's exited
-   * @param {Boolean} value
+   *
+   * @param {boolean} value
    */
   setPointerLock(value) {
     this.pointerLock = value;
@@ -245,7 +254,8 @@ export class InputManager {
 
   /**
    * return true if pointerLock is enabled or not
-   * @returns {Boolean}
+   *
+   * @returns {boolean}
    */
   getPointerLock() {
     return this.pointerLock;
@@ -253,7 +263,8 @@ export class InputManager {
 
   /**
    * identify the listener to remove with its callback and remove it of the listening web api
-   * @param {Object} listener
+   *
+   * @param {object} listener
    */
   removeInputListener(listener) {
     for (let index = 0; index < this.listeners.length; index++) {
@@ -288,13 +299,14 @@ export class InputManager {
    * Reset Commands buffer
    */
   resetCommandsBuffer() {
-    for (let id in this.commandsBuffer) {
+    for (const id in this.commandsBuffer) {
       this.commandsBuffer[id] = false;
     }
   }
 
   /**
    * Compute Commands with the last state of keys and mouse
+   *
    * @returns {Array[Command]} commands computed
    */
   computeCommands() {
@@ -303,7 +315,7 @@ export class InputManager {
     const result = [];
 
     //compute key commands
-    for (let id in this.keyCommands) {
+    for (const id in this.keyCommands) {
       //notify on down press and up
       if (this.keyMap[id] || this.isKeyUp(id)) {
         const cmd = this.keyCommands[id]();
@@ -312,7 +324,7 @@ export class InputManager {
     }
 
     //compute mouse commands
-    for (let eventID in this.mouseCommands) {
+    for (const eventID in this.mouseCommands) {
       if (this.mouseState.isTrigger(eventID)) {
         const cmd = this.mouseCommands[eventID].apply(this.mouseState, []);
         if (cmd) result.push(cmd);
@@ -363,7 +375,7 @@ export class MouseState {
 
   /**
    *
-   * @returns {Boolean} true if the mouse is dragging, false otherwise
+   * @returns {boolean} true if the mouse is dragging, false otherwise
    */
   isDragging() {
     return this.dragging;
@@ -386,10 +398,11 @@ export class MouseState {
 
   /**
    * Start listening to mouse event on the element
+   *
    * @param {HTMLElement} element the element where to catch events
    */
   startListening(element) {
-    for (let id in MOUSE_STATE_EVENTS) {
+    for (const id in MOUSE_STATE_EVENTS) {
       this.listeners.push({
         element: element,
         cb: this.addEvent(element, MOUSE_STATE_EVENTS[id]),
@@ -400,8 +413,9 @@ export class MouseState {
 
   /**
    * Add a listener for a particular event on element
+   *
    * @param {HTMLElement} element element to listen to
-   * @param {String} idEvent mouse events
+   * @param {string} idEvent mouse events
    * @returns {Function} Callback call for this event
    */
   addEvent(element, idEvent) {
@@ -422,7 +436,8 @@ export class MouseState {
 
   /**
    * Access the last Event for eventID
-   * @param {String} eventID id of the mouse event
+   *
+   * @param {string} eventID id of the mouse event
    * @returns {Event} The last event store for this event
    */
   event(eventID) {
@@ -431,8 +446,9 @@ export class MouseState {
 
   /**
    * Return true if this event has been triggered on the last poll
-   * @param {String} eventID
-   * @returns {Boolean} true if the eventID has been triggered
+   *
+   * @param {string} eventID
+   * @returns {boolean} true if the eventID has been triggered
    */
   isTrigger(eventID) {
     return this.mouseMap[eventID];
@@ -443,7 +459,7 @@ export class MouseState {
    */
   reset() {
     //reset trigger mousemap
-    for (let idEvent in this.mouseMap) {
+    for (const idEvent in this.mouseMap) {
       this.mouseMap[idEvent] = false;
     }
   }

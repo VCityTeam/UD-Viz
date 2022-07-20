@@ -47,7 +47,7 @@ module.exports = class WorldContext {
 
   /**
    *
-   * @returns {Number}
+   * @returns {number}
    */
   getDt() {
     return this.dt;
@@ -55,7 +55,7 @@ module.exports = class WorldContext {
 
   /**
    *
-   * @param {Number} value
+   * @param {number} value
    */
   setDt(value) {
     this.dt = value;

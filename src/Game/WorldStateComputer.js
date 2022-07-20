@@ -32,7 +32,8 @@ const WorldStateComputerModule = class WorldStateComputer {
 
   /**
    * true tick world false stop ticking world
-   * @param {Boolean} value
+   *
+   * @param {boolean} value
    */
   setPause(value) {
     this.pause = value;
@@ -40,6 +41,7 @@ const WorldStateComputerModule = class WorldStateComputer {
 
   /**
    * Add a callback call at after each tick
+   *
    * @param {Function} cb
    */
   addAfterTickRequester(cb) {
@@ -52,6 +54,7 @@ const WorldStateComputerModule = class WorldStateComputer {
 
   /**
    * Init worldcontext and start ticking
+   *
    * @param {World} world world to tick
    * @param {Function} onLoad call at the end of world load
    */
@@ -94,6 +97,7 @@ const WorldStateComputerModule = class WorldStateComputer {
 
   /**
    * Pass commands for the next tick
+   *
    * @param {Array[Command]} cmds
    */
   onCommands(cmds) {
@@ -105,6 +109,7 @@ const WorldStateComputerModule = class WorldStateComputer {
 
   /**
    * Add a new GameObject to the world and call onAdd when object is loaded
+   *
    * @param {GameObject} newGO
    * @param {Function} onAdd
    */
@@ -121,7 +126,8 @@ const WorldStateComputerModule = class WorldStateComputer {
 
   /**
    * Remove the GameObject with the uuid
-   * @param {String} uuid
+   *
+   * @param {string} uuid
    */
   onRemoveGameObject(uuid) {
     this.worldContext.getWorld().removeGameObject(uuid);
@@ -139,6 +145,8 @@ const WorldStateComputerModule = class WorldStateComputer {
 
   /**
    * Compute the current world state
+   *
+   * @param withServerComponent
    * @returns {WorldState}
    */
   computeCurrentState(withServerComponent = true) {
@@ -148,6 +156,7 @@ const WorldStateComputerModule = class WorldStateComputer {
 
 /**
  * Load a world and tick during 1000ms then stop
+ *
  * @param {World} world the world to load
  * @param {AssetsManager} assetsManager manager needed to load world assets
  * @param {Bundles} bundles bundles needed to load the world

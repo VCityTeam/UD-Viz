@@ -8,64 +8,64 @@ import { WindowExtension } from './WindowExtension.js';
 // You can see an example in UD-Viz-Core/examples/DemoWindow
 /**
  * A simple GUI class to represent a window.
- * 
- * @extends ModuleView
+ *
+ * @augments ModuleView
  */
 export class Window extends ModuleView {
   /**
-     * Creates a window.
-     * 
-     * @param {string} uniqueName The name used to generate HTML ids.
-     * @param {string} title The title of the window.
-     * @param {boolean} hideOnClose Specifies the behaviour of the window when
-     * the 'close' button is hit. If set to true, the window will `hide`. If set
-     * to false, the window will `dispose`.
-     */
+   * Creates a window.
+   *
+   * @param {string} uniqueName The name used to generate HTML ids.
+   * @param {string} title The title of the window.
+   * @param {boolean} hideOnClose Specifies the behaviour of the window when
+   * the 'close' button is hit. If set to true, the window will `hide`. If set
+   * to false, the window will `dispose`.
+   */
   constructor(uniqueName, title, hideOnClose = true) {
     super();
 
     /**
-         * Name of the window. Used to generate unique ids.
-         * 
-         * @member {string}
-         */
+     * Name of the window. Used to generate unique ids.
+     *
+     * @member {string}
+     */
     this.name = uniqueName;
     /**
-         * Title displayed on the window.
-         * 
-         * @member {string}
-         */
+     * Title displayed on the window.
+     *
+     * @member {string}
+     */
     this.title = title;
     /**
-         * Behaviour of the window when the 'close' button is hit. If set to
-         * true, the window will `hide`. If set to false, the window will
-         * `dispose`.
-         * 
-         * @member {boolean}
-         */
+     * Behaviour of the window when the 'close' button is hit. If set to
+     * true, the window will `hide`. If set to false, the window will
+     * `dispose`.
+     *
+     * @member {boolean}
+     */
     this.hideOnClose = hideOnClose;
 
     /**
-         * Defines if the window has its default style. If set to false, you
-         * should override the `html` getter and set the `windowDisplayWhenVisible`
-         * property.
-         * 
-         * @type {true}
-         */
+     * Defines if the window has its default style. If set to false, you
+     * should override the `html` getter and set the `windowDisplayWhenVisible`
+     * property.
+     *
+     * @type {true}
+     */
     this.defaultStyle = true;
 
     /**
-         * Define the css `display` property when the window is visible.
-         * 
-         * @type {string}
-         */
+     * Define the css `display` property when the window is visible.
+     *
+     * @type {string}
+     */
     this.windowDisplayWhenVisible = 'grid';
 
     /**
-         * The list of extensions for this window.
-         * 
-         * @type {Array<WindowExtension>}
-         */
+     * The list of extensions for this window.
+     *
+     * @type {Array<WindowExtension>}
+     */
     this.windowExtensions = [];
 
     this.registerEvent(Window.EVENT_CREATED);
@@ -80,47 +80,43 @@ export class Window extends ModuleView {
   ////////////////////////////////
 
   /**
-     * HTML string representing the inner content of the window.
-     * 
-     * @abstract
-     */
+   * HTML string representing the inner content of the window.
+   *
+   * @abstract
+   */
   get innerContentHtml() {
     return null;
   }
 
-  /** 
-     * Method called when the window is created. During and after the call,
-     * all HTML properties are not null.
-     * 
-     * @abstract
-     */
-  windowCreated() {
-
-  }
+  /**
+   * Method called when the window is created. During and after the call,
+   * all HTML properties are not null.
+   *
+   * @abstract
+   */
+  windowCreated() {}
 
   /**
-     * Method called when the window is destroyed.
-     * 
-     * @abstract
-     */
-  windowDestroyed() {
-
-  }
+   * Method called when the window is destroyed.
+   *
+   * @abstract
+   */
+  windowDestroyed() {}
 
   //////////// Do NOT override these methods
   //////////////////////////////////////////
 
   /**
-     * Creates the HTML elements of the window and add them to the given parent
-     * node. Calls the `windowCreated` hook method and sends two events,
-     * `EVENT_CREATED` and `EVENT_SHOWN`.
-     * 
-     * @param {HTMLElement} htmlElement 
-     */
+   * Creates the HTML elements of the window and add them to the given parent
+   * node. Calls the `windowCreated` hook method and sends two events,
+   * `EVENT_CREATED` and `EVENT_SHOWN`.
+   *
+   * @param {HTMLElement} htmlElement
+   */
   appendTo(htmlElement) {
     if (!this.isCreated) {
       this.parentElement = htmlElement;
-      let windowDiv = document.createElement('div');
+      const windowDiv = document.createElement('div');
       windowDiv.innerHTML = this.html;
       windowDiv.id = this.windowId;
       htmlElement.appendChild(windowDiv);
@@ -130,7 +126,7 @@ export class Window extends ModuleView {
         this.headerCloseButton.onclick = this.disable.bind(this);
       }
 
-      for (let extension of this.windowExtensions) {
+      for (const extension of this.windowExtensions) {
         extension.appendTo(this.window);
       }
 
@@ -141,9 +137,9 @@ export class Window extends ModuleView {
   }
 
   /**
-     * Destroys the window. Calls the `windowDestroyed` hook method and sends an
-     * `EVENT_DESTROYED` event.
-     */
+   * Destroys the window. Calls the `windowDestroyed` hook method and sends an
+   * `EVENT_DESTROYED` event.
+   */
   dispose() {
     if (this.isCreated) {
       this.parentElement.removeChild(this.window);
@@ -154,8 +150,8 @@ export class Window extends ModuleView {
   }
 
   /**
-     * Shows the window. Sends an `EVENT_SHOWN` event.
-     */
+   * Shows the window. Sends an `EVENT_SHOWN` event.
+   */
   show() {
     if (this.isCreated && !this.isVisible) {
       this.window.style.setProperty('display', this.windowDisplayWhenVisible);
@@ -164,8 +160,8 @@ export class Window extends ModuleView {
   }
 
   /**
-     * Hides the window. Sends an `EVENT_DESTROYED` event.
-     */
+   * Hides the window. Sends an `EVENT_DESTROYED` event.
+   */
   hide() {
     if (this.isVisible) {
       this.window.style.setProperty('display', 'none');
@@ -191,25 +187,27 @@ export class Window extends ModuleView {
   //////////////////////////////////
 
   /**
-     * Adds a new extension in the window.
-     * 
-     * @param {string} label The unique label for the extension.
-     * @param {object} options The options for the extension.
-     * @param {string} options.type The type of the extension. Can either be
-     * `button` or `div`.
-     * @param {string} options.html The inner HTML content for the extension. If
-     * this is a `button`, it represents the displayed text. If this is a `div`,
-     * it represents the inner HTML content.
-     * @param {string} options.container The label of the parent container.
-     * @param {function} [options.oncreated] A callback triggered when the
-     * HTML elements of the extension is effectively created.
-     * @param {function} [options.callback] The callback to call when the user
-     * clicks on a `button` extension. This has no effects on `div` extensions.
-     */
+   * Adds a new extension in the window.
+   *
+   * @param {string} label The unique label for the extension.
+   * @param {object} options The options for the extension.
+   * @param {string} options.type The type of the extension. Can either be
+   * `button` or `div`.
+   * @param {string} options.html The inner HTML content for the extension. If
+   * this is a `button`, it represents the displayed text. If this is a `div`,
+   * it represents the inner HTML content.
+   * @param {string} options.container The label of the parent container.
+   * @param {Function} [options.oncreated] A callback triggered when the
+   * HTML elements of the extension is effectively created.
+   * @param {Function} [options.callback] The callback to call when the user
+   * clicks on a `button` extension. This has no effects on `div` extensions.
+   */
   addExtension(label, options) {
-    options.id = `${this.windowId}__extensions_${label.toLowerCase().replace(/ +/, '_')}`;
-    let extension = new WindowExtension(label, options);
-    if (this.windowExtensions.find(ext => ext.label === label)) {
+    options.id = `${this.windowId}__extensions_${label
+      .toLowerCase()
+      .replace(/ +/, '_')}`;
+    const extension = new WindowExtension(label, options);
+    if (this.windowExtensions.find((ext) => ext.label === label)) {
       throw 'Extension already exist : ' + label;
     }
     this.windowExtensions.push(extension);
@@ -220,19 +218,19 @@ export class Window extends ModuleView {
   }
 
   /**
-     * Removes an existing extension from the window.
-     * 
-     * @param {string} label The label identifying the extension to remove.
-     */
+   * Removes an existing extension from the window.
+   *
+   * @param {string} label The label identifying the extension to remove.
+   */
   removeExtension(label) {
-    let index = this.windowExtensions.findIndex(ext => ext.label === label);
+    const index = this.windowExtensions.findIndex((ext) => ext.label === label);
     if (index < 0) {
       throw 'Extension does not exist : ' + label;
     }
 
-    let extension = this.windowExtensions[index];
+    const extension = this.windowExtensions[index];
     if (this.isCreated) {
-      let extensionElement = document.getElementById(extension.id);
+      const extensionElement = document.getElementById(extension.id);
       extensionElement.parentElement.removeChild(extensionElement);
     }
 
@@ -240,32 +238,32 @@ export class Window extends ModuleView {
   }
 
   /**
-     * Removes an existing extension from the window.
-     * 
-     * @param {string} label The label identifying the extension to remove.
-     */
+   * Removes an existing extension from the window.
+   *
+   * @param {string} label The label identifying the extension to remove.
+   */
   isExtensionUsed(label) {
-    let index = this.windowExtensions.findIndex(ext => ext.label === label);
-    return (index >= 0);
+    const index = this.windowExtensions.findIndex((ext) => ext.label === label);
+    return index >= 0;
   }
   //////////// Module view overrides
   //////////////////////////////////
 
   /**
-     * Creates and show the window.
-     * 
-     * @override
-     */
+   * Creates and show the window.
+   *
+   * @override
+   */
   async enableView() {
     this.appendTo(this.parentElement);
     this.show();
   }
 
   /**
-     * If `hideOnClose` is `true`, hides the window. Else, destroys it.
-     * 
-     * @override
-     */
+   * If `hideOnClose` is `true`, hides the window. Else, destroys it.
+   *
+   * @override
+   */
   async disableView() {
     if (this.hideOnClose) {
       this.hide();
@@ -278,12 +276,16 @@ export class Window extends ModuleView {
   ////////////////////////////////////////
 
   get isCreated() {
-    let windowDiv = this.window;
+    const windowDiv = this.window;
     return windowDiv !== null && windowDiv !== undefined;
   }
 
   get isVisible() {
-    return this.isCreated && window.getComputedStyle(this.window).getPropertyValue('display') === this.windowDisplayWhenVisible;
+    return (
+      this.isCreated &&
+      window.getComputedStyle(this.window).getPropertyValue('display') ===
+        this.windowDisplayWhenVisible
+    );
   }
 
   get windowId() {
@@ -340,13 +342,13 @@ export class Window extends ModuleView {
   static get EVENT_CREATED() {
     return 'WINDOW_CREATED';
   }
-  static get EVENT_DESTROYED() { 
-    return 'WINDOW_DESTROYED'; 
+  static get EVENT_DESTROYED() {
+    return 'WINDOW_DESTROYED';
   }
-  static get EVENT_HIDDEN() { 
-    return 'WINDOW_HIDDEN'; 
+  static get EVENT_HIDDEN() {
+    return 'WINDOW_HIDDEN';
   }
-  static get EVENT_SHOWN() { 
-    return 'WINDOW_SHOWN'; 
+  static get EVENT_SHOWN() {
+    return 'WINDOW_SHOWN';
   }
 }

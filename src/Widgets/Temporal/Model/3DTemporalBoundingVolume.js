@@ -10,7 +10,8 @@ export class $3DTemporalBoundingVolume {
   /**
    * Verifies the integrity and stores the data corresponding to the
    * bounding volume part of the 3DTiles_temporal extension.
-   * @param {Object} json The json containing the 3DTiles_temporal
+   *
+   * @param {object} json The json containing the 3DTiles_temporal
    * extension bounding volume part for a given tile.
    */
   constructor(json) {

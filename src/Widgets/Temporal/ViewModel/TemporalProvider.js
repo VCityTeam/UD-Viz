@@ -16,11 +16,12 @@ export class TemporalProvider {
    * Constructs a new temporal provider: initialize data structures
    * used for the view (this.COStyles), initialize the possible
    * city objects styles that displays transactions and set events.
+   *
    * @param {$3DTemporalExtension} tempExtModel The model of the temporal
    * module (i.e. holding data from the 3D Tiles temporal extension).
    * @param {TilesManager} tilesManager The tiles manager associated
    * with the itowns 3D Tiles layer holding the temporal extension.
-   * @param {Number} currentTime The current display time, updated by the
+   * @param {number} currentTime The current display time, updated by the
    * TemporalView.
    */
   constructor(tempExtModel, tilesManager, currentTime) {
@@ -30,12 +31,13 @@ export class TemporalProvider {
 
     this.currentTime = currentTime;
 
-    /** Stores city objects (CO) styles per tile and per date
+    /**
+     * Stores city objects (CO) styles per tile and per date
      * to avoid computing it multiple times. It's actually a map
      * of a map and its structure is:
      * { date: tile : styles[] } } where the position in the styles
      * array is the id of the city object
-     * */
+     */
     this.COStyles = new Map();
 
     this.initCOStyles();
@@ -105,9 +107,10 @@ export class TemporalProvider {
    * Sets the style of a given city object in the tiles manager if this
    * style has been registered in the tiles manager (e.g. in
    * this.initCOStyles()).
-   * @param {Number} tileId Id of the tile of the city object.
-   * @param {Number} cityObjectId Id of the city object.
-   * @param {String} styleName Name of the style to apply.
+   *
+   * @param {number} tileId Id of the tile of the city object.
+   * @param {number} cityObjectId Id of the city object.
+   * @param {string} styleName Name of the style to apply.
    */
   setCityObjectStyle(tileId, cityObjectId, styleName) {
     if (this.tilesManager.isStyleRegistered(styleName)) {
@@ -137,7 +140,7 @@ export class TemporalProvider {
    *
    * @param {$3DTemporalTransaction} transaction The transaction
    * to generate the style name from.
-   *
+   * @param styleName
    * @returns {string} If the transaction is a primary transaction,
    * returns its type. If it is an aggregated transaction, it returns a
    * concatenation of the primary transactions types aggregated in
@@ -271,7 +274,8 @@ export class TemporalProvider {
 
   /**
    * Computes and sets the style of the features of a given tile.
-   * @param {Number} tileId The id of the given tile.
+   *
+   * @param {number} tileId The id of the given tile.
    */
   computeTileState(tileId) {
     // Compute features states
@@ -315,7 +319,8 @@ export class TemporalProvider {
    * is triggered by an event (TilesManager.EVENT_TILE_LOADED)
    * indicating that a new tile content has been loaded (e.g. because it
    * becomes visible by the camera)
-   * @param {Object} tileContent The tile content loaded.
+   *
+   * @param {object} tileContent The tile content loaded.
    */
   changeTileState(tileContent) {
     this.computeTileState(tileContent.tileId);

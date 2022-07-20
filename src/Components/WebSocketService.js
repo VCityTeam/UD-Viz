@@ -42,6 +42,7 @@ export class WebSocketService {
 
   /**
    * Reset all events listened or only the ones listed in events parameter
+   *
    * @param {Array} events list of events to reset can be null
    */
   reset(events) {
@@ -52,7 +53,7 @@ export class WebSocketService {
         _this.socket.removeAllListeners(element);
       });
     } else {
-      for (let event in this.events) {
+      for (const event in this.events) {
         this.socket.removeAllListeners(event);
       }
       this.events = {};
@@ -61,6 +62,7 @@ export class WebSocketService {
 
   /**
    * Assign a callback to a specific event
+   *
    * @param {Shared.Components.Constants} event the event listened
    * @param {Function} callback function called when the event is received
    */
@@ -71,6 +73,7 @@ export class WebSocketService {
 
   /**
    * Fire an event to the server with data attached
+   *
    * @param {Shared.Components.Constants} event the event fired
    * @param {JSON} data data passed
    */

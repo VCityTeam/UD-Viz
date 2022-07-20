@@ -14,6 +14,7 @@ import './GeocodingStyle.css';
 export class GeocodingView extends ModuleView {
   /**
    * Instantiates the view.
+   *
    * @param {GeocodingService} geocodingService The geocoding service.
    * @param {udvcore.itowns.PlanarView} planarView The iTowns view.
    */
@@ -30,7 +31,7 @@ export class GeocodingView extends ModuleView {
     proj4.defs(
       'EPSG:3946',
       '+proj=lcc +lat_1=45.25 +lat_2=46.75' +
-      ' +lat_0=46 +lon_0=3 +x_0=1700000 +y_0=5200000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs'
+        ' +lat_0=46 +lon_0=3 +x_0=1700000 +y_0=5200000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs'
     );
   }
 
@@ -53,7 +54,7 @@ export class GeocodingView extends ModuleView {
    */
   appendToElement(htmlElement) {
     if (!this.isCreated) {
-      let div = document.createElement('div');
+      const div = document.createElement('div');
       div.innerHTML = this.html;
       div.id = this.viewId;
       htmlElement.append(div);
@@ -73,8 +74,8 @@ export class GeocodingView extends ModuleView {
   dispose() {
     return new Promise((resolve, reject) => {
       if (this.isCreated) {
-        let div = this.viewElement;
-        let input = this.searchInputElement;
+        const div = this.viewElement;
+        const input = this.searchInputElement;
         input.style.transition = 'width 0.3s ease-out, opacity 0.4s ease-out';
         input.style.width = '0';
         input.style.opacity = '0';
@@ -98,15 +99,15 @@ export class GeocodingView extends ModuleView {
    */
   async doGeocoding() {
     this.removePins();
-    let searchString = this.searchInputElement.value;
+    const searchString = this.searchInputElement.value;
 
     try {
-      let coords = await this.geocodingService.getCoordinates(searchString);
+      const coords = await this.geocodingService.getCoordinates(searchString);
       coords.forEach((c) => {
-        let { lat, lng } = c;
+        const { lat, lng } = c;
         let i = 0;
         //step 1 : convert the lat/lng to coordinates used by itowns
-        let targetPos = this.getWorldCoordinates(lat, lng);
+        const targetPos = this.getWorldCoordinates(lat, lng);
         if (targetPos.z) {
           //if we could convert the coords (ie. they are on the map)
           //step 2 : add a mesh representing a pin
@@ -195,7 +196,7 @@ export class GeocodingView extends ModuleView {
    */
   async displayError(errorMsg, timeout = 1000) {
     if (this.isCreated) {
-      let box = document.createElement('p');
+      const box = document.createElement('p');
       box.id = this.errorMessageBoxId;
       box.innerHTML = errorMsg;
       this.centeredDivElement.appendChild(box);

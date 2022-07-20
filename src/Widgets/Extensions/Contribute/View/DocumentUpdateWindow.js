@@ -102,14 +102,14 @@ export class DocumentUpdateWindow extends AbstractDocumentWindow {
     this.view.requestWindowDisplay(this, true);
 
     // Sets the position according to the browser (reference)
-    let reference = getComputedStyle(this.view.inspectorWindow.window);
+    const reference = getComputedStyle(this.view.inspectorWindow.window);
     this.window.style.top = reference.top;
     this.window.style.left = reference.left;
     this.window.style.right = reference.right;
     this.window.style.width = reference.width;
 
     // Sets doc attributes in HTML
-    let doc = this.provider.getDisplayedDocument();
+    const doc = this.provider.getDisplayedDocument();
 
     if (!doc) {
       this.disable();
@@ -138,7 +138,7 @@ export class DocumentUpdateWindow extends AbstractDocumentWindow {
    * @private
    */
   async _submitUpdate() {
-    let data = new FormData(this.formElement);
+    const data = new FormData(this.formElement);
     try {
       await this.contributeService.updateDocument(data);
     } catch (e) {

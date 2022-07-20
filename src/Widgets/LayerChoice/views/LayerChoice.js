@@ -53,23 +53,23 @@ export class LayerChoice extends Window {
 
   // Create the description part of ColorLayers
   innerContentColorLayers() {
-    let list = this.colorLayersSpoilerBoxElement;
+    const list = this.colorLayersSpoilerBoxElement;
     list.innerHTML = '';
-    let layers = this.layerManager.getColorLayers();
+    const layers = this.layerManager.getColorLayers();
     for (let i = 0; i < layers.length; i++) {
-      let item = document.createElement('div');
+      const item = document.createElement('div');
       item.innerHTML = `<label for="${
         layers[i].id
       }-spoiler" class="section-title">${layers[i].id}</Label>
                         Visible <input type="checkbox" id="checkbox_${i}" ${
-  layers[i].visible ? 'checked' : ''
-}></input></br>
+        layers[i].visible ? 'checked' : ''
+      }></input></br>
                         <div id="opacity_${i}"> 
                           Opacity : <span id="color_value_opacity_${i}">${
-  layers[i].opacity
-}</span>  <input type ="range" id="range_${i}" min="0" max="1" step = "0.1" value="${
-  layers[i].opacity
-}"></input>
+        layers[i].opacity
+      }</span>  <input type ="range" id="range_${i}" min="0" max="1" step = "0.1" value="${
+        layers[i].opacity
+      }"></input>
                         </div>`;
 
       item.oninput = (event) => {
@@ -82,7 +82,9 @@ export class LayerChoice extends Window {
             event.srcElement.valueAsNumber
           );
         }
-        let span_opacity = document.getElementById('color_value_opacity_' + i);
+        const span_opacity = document.getElementById(
+          'color_value_opacity_' + i
+        );
         span_opacity.innerHTML = `${layers[i].opacity}`;
         this.layerManager.notifyChange();
       };
@@ -92,11 +94,11 @@ export class LayerChoice extends Window {
 
   // Create the description part of ElevationLayers
   innerContentElevationLayers() {
-    let list = this.elevationLayersSpoilerBoxElement;
+    const list = this.elevationLayersSpoilerBoxElement;
     list.innerHTML = '';
-    let layers = this.layerManager.getElevationLayers();
+    const layers = this.layerManager.getElevationLayers();
     for (let i = 0; i < layers.length; i++) {
-      let item = document.createElement('div');
+      const item = document.createElement('div');
       item.innerHTML = `<h3>${layers[i].id}</h3>
                         Scale : <span id="elevation_value_scale_${i}">${layers[i].scale}</span> <input type ="range" id="${i}" min="1" max="10" step = "1" value="${layers[i].scale}"></input>`;
 
@@ -106,7 +108,7 @@ export class LayerChoice extends Window {
           event.srcElement.valueAsNumber
         );
         this.layerManager.notifyChange();
-        let span_elevation = document.getElementById(
+        const span_elevation = document.getElementById(
           'elevation_value_scale_' + i
         );
         span_elevation.innerHTML = `${layers[i].scale}`;
@@ -117,15 +119,15 @@ export class LayerChoice extends Window {
 
   // Create the description part of GeometryLayers
   innerContentGeometryLayers() {
-    let list = this.geometryLayersSpoilerBoxElement;
+    const list = this.geometryLayersSpoilerBoxElement;
     list.innerHTML = '';
-    let layers = this.layerManager.getGeometryLayers();
+    const layers = this.layerManager.getGeometryLayers();
 
-    let div = document.createElement('div');
+    const div = document.createElement('div');
     div.innerHTML = `
       All Visible <input type="checkbox" id="checkbox" ${
-  this.layerManager.isOneLayerVisible() ? 'checked' : ''
-}></input></br>
+        this.layerManager.isOneLayerVisible() ? 'checked' : ''
+      }></input></br>
   `;
     div.onchange = (event) => {
       this.layerManager.changeVisibility(event.srcElement.checked);
@@ -133,15 +135,15 @@ export class LayerChoice extends Window {
     };
     list.append(div);
     for (let i = 0; i < layers.length; i++) {
-      let item = document.createElement('div');
+      const item = document.createElement('div');
       item.id = 'div' + layers[i].id;
       item.className = 'box-section';
       item.innerText = layers[i].id + ' ';
 
-      let itemDivVisibility = document.createElement('span');
+      const itemDivVisibility = document.createElement('span');
       itemDivVisibility.id = 'visible_' + layers[i].id;
 
-      let itemCheckboxVisibility = document.createElement('input');
+      const itemCheckboxVisibility = document.createElement('input');
       itemCheckboxVisibility.setAttribute('type', 'checkbox');
       itemCheckboxVisibility.id = 'checkbox_' + layers[i].id;
       itemCheckboxVisibility.checked = layers[i].visible;
@@ -154,29 +156,28 @@ export class LayerChoice extends Window {
       item.appendChild(itemDivVisibility);
 
       if (layers[i].isC3DTilesLayer) {
-        let itemButton = document.createElement('button');
+        const itemButton = document.createElement('button');
         itemButton.id = 'button_' + layers[i].id;
         itemButton.innerText = 'Focus';
 
         itemButton.onclick = () => {
-          let tilesManager = this.layerManager.getTilesManagerByLayerID(
+          const tilesManager = this.layerManager.getTilesManagerByLayerID(
             layers[i].id
           );
           tilesManager.focusCamera();
         };
         item.appendChild(itemButton);
-      }
-      else{
-        let itemDivOpacity = document.createElement('div');
+      } else {
+        const itemDivOpacity = document.createElement('div');
         itemDivOpacity.id = 'opacity_' + layers[i].id;
-  
-        let itemRangeOpacity = document.createElement('input');
+
+        const itemRangeOpacity = document.createElement('input');
         itemRangeOpacity.setAttribute('type', 'range');
         itemRangeOpacity.min = 0;
         itemRangeOpacity.max = 1;
         itemRangeOpacity.step = 0.1;
         itemRangeOpacity.value = layers[i].opacity;
-  
+
         itemRangeOpacity.onchange = (event) => {
           this.layerManager.updateOpacity(
             layers[i],
@@ -184,10 +185,10 @@ export class LayerChoice extends Window {
           );
           this.layerManager.notifyChange();
         };
-        
+
         itemDivOpacity.appendChild(itemRangeOpacity);
 
-        let itemSpanOpacity = document.createElement('span');
+        const itemSpanOpacity = document.createElement('span');
         itemSpanOpacity.innerText = ' Opacity';
         itemDivOpacity.appendChild(itemSpanOpacity);
         item.appendChild(itemDivOpacity);

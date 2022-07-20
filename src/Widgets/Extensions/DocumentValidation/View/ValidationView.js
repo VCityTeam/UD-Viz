@@ -162,7 +162,6 @@ export class ValidationView {
    * Validates the document.
    *
    * @private
-   *
    * @param {Document} doc The document to validate.
    */
   _validateDocument(doc) {

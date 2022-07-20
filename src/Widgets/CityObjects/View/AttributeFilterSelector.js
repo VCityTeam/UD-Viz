@@ -46,13 +46,12 @@ export class AttributeFilterSelector extends CityObjectFilterSelector {
    * from the given form data.
    *
    * @override
-   *
    * @param {FormData} formData
    */
   onSubmit(formData) {
     this.filter.tileId = Number(formData.get('tileId'));
     this.filter.batchId = Number(formData.get('batchId'));
-    for (let key of formData.keys()) {
+    for (const key of formData.keys()) {
       if (key !== 'tileId' && key !== 'batchId' && key !== 'filterLabel') {
         this.filter.props[key] = formData.get(key);
       }

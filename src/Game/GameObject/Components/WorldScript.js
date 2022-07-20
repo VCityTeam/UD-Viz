@@ -37,6 +37,7 @@ const WorldScriptModule = class WorldScript {
 
   /**
    * Initialize scripts
+   *
    * @param {AssetsManager} assetsManager must implement an assetsmanager interface can be local or server
    * @param {Library} bundles set of bundle library used by script
    */
@@ -50,6 +51,7 @@ const WorldScriptModule = class WorldScript {
 
   /**
    * Execute all scripts for a particular event
+   *
    * @param {WorldScript.EVENT} event the event trigger
    * @param {Array} params parameters pass to scripts
    */
@@ -63,13 +65,14 @@ const WorldScriptModule = class WorldScript {
 
   /**
    * Execute script with id for a particular event
-   * @param {String} id id of the script executed
+   *
+   * @param {string} id id of the script executed
    * @param {WorldScript.EVENT} event event trigger
    * @param {Array} params parameters pass to the script function
-   * @returns {Object} result of the script execution
+   * @returns {object} result of the script execution
    */
   executeScript(id, event, params) {
-    let s = this.scripts[id];
+    const s = this.scripts[id];
 
     if (s[event]) {
       return s[event].apply(s, [this.parent].concat(params));
@@ -84,7 +87,7 @@ const WorldScriptModule = class WorldScript {
 
   /**
    *
-   * @returns {Object}
+   * @returns {object}
    */
   getScripts() {
     return this.scripts;
@@ -96,7 +99,8 @@ const WorldScriptModule = class WorldScript {
 
   /**
    * This component can be run on the server side
-   * @returns {Boolean}
+   *
+   * @returns {boolean}
    */
   isServerSide() {
     return true;
@@ -104,6 +108,7 @@ const WorldScriptModule = class WorldScript {
 
   /**
    * Compute this to JSON
+   *
    * @returns {JSON}
    */
   toJSON() {

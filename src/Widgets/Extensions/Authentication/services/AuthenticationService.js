@@ -2,6 +2,11 @@
 
 import { RequestService } from '../../../../Components/Request/RequestService';
 
+/**
+ *
+ * @param requestService
+ * @param config
+ */
 export function AuthenticationService(requestService, config) {
   this.observers = [];
   this.config = config;
@@ -52,7 +57,7 @@ export function AuthenticationService(requestService, config) {
     const jwt = resultJson.token;
     if (jwt !== undefined && jwt !== null) {
       this.storeToken(jwt);
-      let response = JSON.parse(
+      const response = JSON.parse(
         (await this.requestService.send('GET', this.userMeUrl)).response
       );
       const user = {
@@ -124,7 +129,7 @@ export function AuthenticationService(requestService, config) {
   };
 
   this.getUser = function getUser() {
-    let user = {};
+    const user = {};
     user.token = window.sessionStorage.getItem(this.storageKeys.token);
     if (user.token === null || user.token === undefined) {
       return null;
@@ -138,7 +143,7 @@ export function AuthenticationService(requestService, config) {
 
   this.isUserLoggedIn = function isUserLoggedIn() {
     try {
-      let user = this.getUser();
+      const user = this.getUser();
       return user !== null && user !== undefined;
     } catch (e) {
       console.error(e);
@@ -152,7 +157,7 @@ export function AuthenticationService(requestService, config) {
   };
 
   this.notifyObservers = function () {
-    for (let observer of this.observers) {
+    for (const observer of this.observers) {
       observer();
     }
   };

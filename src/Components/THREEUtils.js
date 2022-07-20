@@ -20,6 +20,7 @@ module.exports = {
   /**
    * Add default lights to a scene
    * one directional and one ambient
+   *
    * @param {THREE.Scene} scene the scene where to add lights
    * @returns {THREE.DirectionalLight, THREE.AmbientLight} lights added
    */
@@ -39,9 +40,10 @@ module.exports = {
 
   /**
    * Initialize the webgl renderer with default values
+   *
    * @param {THREE.WebGLRenderer} renderer the renderer to init
    * @param {THREE.Color} skyColor clear color of the scene
-   * @param {Boolean} clear autoclear, default is false
+   * @param {boolean} clear autoclear, default is false
    */
   initRenderer(renderer, skyColor, clear = false) {
     // Set sky color to blue
@@ -58,9 +60,9 @@ module.exports = {
   /**
    * Place the directional light in order its shadow camera fit the object
    *
-   * @param {Number} offset distance from the bounding sphere of the object to the light
-   * @param {Number} phi phi of spherical coord in radian
-   * @param {Number} theta theta of spherical coord in radian
+   * @param {number} offset distance from the bounding sphere of the object to the light
+   * @param {number} phi phi of spherical coord in radian
+   * @param {number} theta theta of spherical coord in radian
    * @param {THREE.Object3D} obj the object to fit inside the projection plane of the shadow camera
    * @param {THREE.DirectionalLight} dirLight the light with the shadow camera
    */
@@ -160,6 +162,7 @@ module.exports = {
 
     /**
      * Return a clone of this
+     *
      * @returns {Transform}
      */
     clone() {
@@ -172,8 +175,9 @@ module.exports = {
 
     /**
      * Linearly interpolate between this and transform
+     *
      * @param {Transform} transform to interpolate towards.
-     * @param {Number} ratio interpolation factor, typically in the closed interval [0, 1].
+     * @param {number} ratio interpolation factor, typically in the closed interval [0, 1].
      */
     lerp(transform, ratio) {
       this.position.lerp(transform.getPosition(), ratio);
@@ -183,6 +187,7 @@ module.exports = {
 
     /**
      * Compute this to JSON
+     *
      * @returns {JSON}
      */
     toJSON() {
@@ -195,6 +200,7 @@ module.exports = {
 
     /**
      * Set this from a json
+     *
      * @param {JSON} json
      */
     setFromJSON(json) {

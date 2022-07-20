@@ -95,7 +95,7 @@ export class DocumentView extends ModuleView {
    * windows.
    */
   requestWindowDisplay(windowToDisplay, hideOtherWindows = false) {
-    let found =
+    const found =
       this.windows.findIndex((w) => w.windowId === windowToDisplay.windowId) >=
       0;
     if (!found) {
@@ -103,16 +103,16 @@ export class DocumentView extends ModuleView {
     }
 
     if (hideOtherWindows) {
-      for (let window of this.windows) {
+      for (const window of this.windows) {
         if (window.isVisible) {
           this.hiddenWindows.push(window);
           window.hide();
         }
       }
 
-      let listener = () => {
+      const listener = () => {
         windowToDisplay.removeEventListener(listener);
-        for (let window of this.hiddenWindows) {
+        for (const window of this.hiddenWindows) {
           window.show();
         }
         this.hiddenWindows = [];
@@ -128,7 +128,7 @@ export class DocumentView extends ModuleView {
   ///// MODULE VIEW
 
   enableView() {
-    for (let window of this.windows) {
+    for (const window of this.windows) {
       window.appendTo(this.parentElement);
     }
     this.provider.refreshDocumentList();
@@ -136,7 +136,7 @@ export class DocumentView extends ModuleView {
 
   disableView() {
     this.hiddenWindows = [];
-    for (let window of this.windows) {
+    for (const window of this.windows) {
       window.dispose();
     }
   }

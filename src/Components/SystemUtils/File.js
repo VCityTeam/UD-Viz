@@ -8,8 +8,9 @@ const jquery = require('jquery');
 module.exports = {
   /**
    * Download on the local disk an object as JSON
-   * @param {Object} exportObj the object to download
-   * @param {String} exportName the name of the file
+   *
+   * @param {object} exportObj the object to download
+   * @param {string} exportName the name of the file
    */
   downloadObjectAsJson: function (exportObj, exportName) {
     const dataStr =
@@ -25,7 +26,8 @@ module.exports = {
 
   /**
    * Request a json file on a distant server
-   * @param {String} filePath on the distant server
+   *
+   * @param {string} filePath on the distant server
    * @returns {Promise} a promise where the resolve function has as first parameter the json file
    */
   loadJSON(filePath) {
@@ -47,7 +49,8 @@ module.exports = {
 
   /**
    * To be used with an input of type file
-   * @param {Object} e input of type file argument when 'change'
+   *
+   * @param {object} e input of type file argument when 'change'
    * @param {Function} onLoad callback passing the file as text as first argument
    */
   readSingleFileAsText(e, onLoad) {
@@ -66,7 +69,8 @@ module.exports = {
 
   /**
    * To be used with an input of type file
-   * @param {Object} e input of type file argument when 'change'
+   *
+   * @param {object} e input of type file argument when 'change'
    * @param {Function} onLoad callback passing the file as URL as first argument
    */
   readSingleFileAsDataUrl(e, onLoad) {
@@ -85,7 +89,8 @@ module.exports = {
 
   /**
    * Download an image on the local disk
-   * @param {String} url url of the image to download 
+   *
+   * @param {string} url url of the image to download
    * @param {*} filename name of the file on disk
    */
   downloadImageOnDisk(url, filename) {
