@@ -2,6 +2,7 @@
 
 import * as THREE from 'three';
 import { objectEquals } from '../DataProcessing/DataProcessing';
+import { Tile } from './Model/Tile';
 
 /**
  * Search a batch table in a tile. A tile is a THREE.js 3DObject with a
@@ -474,7 +475,7 @@ export function removeTileVerticesColor(tile) {
  * for example, you need to call this function to actually see the changes.
  *
  * @param {*} view The iTowns view.
- * @param layer
+ * @param {object} layer
  */
 export function updateITownsView(view, layer) {
   try {
@@ -533,7 +534,7 @@ export function getVerticesCentroid(tile, indexArray) {
 
 /**
  *
- * @param tile
+ * @param {Tile} tile
  */
 export function getMeshesFromTile(tile) {
   if (!tile) {
@@ -559,7 +560,7 @@ export function getMeshesFromTile(tile) {
 
 /**
  *
- * @param tile
+ * @param {Tile} tile
  */
 export function getObject3DFromTile(tile) {
   if (!tile) {

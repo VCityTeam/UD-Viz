@@ -173,7 +173,7 @@ export class CityObjectProvider extends EventSender {
    * Unset the selected city object and sends an `EVENT_CITY_OBJECT_SELECTED`
    * event.
    *
-   * @param sendEvent
+   * @param {boolean} sendEvent
    */
   unselectCityObject(sendEvent = true) {
     if (this.selectedCityObject) {

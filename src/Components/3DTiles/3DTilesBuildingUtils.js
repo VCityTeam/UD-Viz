@@ -21,8 +21,8 @@ export function getBuildingIdFromIntersection(inter) {
 
 /**
  *
- * @param tilesInfo
- * @param buildingId
+ * @param {object} tilesInfo
+ * @param {number} buildingId
  */
 export function getBuildingInfoFromBuildingId(tilesInfo, buildingId) {
   for (const tileId of Object.keys(tilesInfo.tiles)) {

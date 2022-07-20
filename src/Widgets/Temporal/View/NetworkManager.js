@@ -31,8 +31,8 @@ export class NetworkManager {
    * option {Object} - Data about graphics' options for viz.js. See doc for futher details about the possibilities
    *
    * network {Vis.Network Object} - hold the network/graph instance created by viz.js
-   * @param data
-   * @param option
+   * @param {object} data
+   * @param {object} option
    */
   constructor(
     id_network = 'mynetwork',
@@ -84,7 +84,7 @@ export class NetworkManager {
    * Click on edge = event
    * In both case, a date is passed
    *
-   * @param callback (function) ( the function to be call when the event is done)
+   * @param {callback} callback (function) ( the function to be call when the event is done)
    */
   add_event(callback) {
     this.network.on('selectNode', function (params) {

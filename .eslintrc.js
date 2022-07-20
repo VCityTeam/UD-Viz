@@ -17,16 +17,21 @@ module.exports = {
   },
   rules: {
     'prettier/prettier': ['error'],
-    'jsdoc/no-undefined-types': ['warn'],
     'jsdoc/check-access': 1,
     'jsdoc/check-param-names': 1,
     'jsdoc/check-property-names': 1,
     'jsdoc/check-types': 1,
     'jsdoc/check-values': 1,
     'jsdoc/empty-tags': 1,
-    'jsdoc/implements-on-classes': 1, // Recommended
-    'jsdoc/multiline-blocks': 1, // Recommended
-    'jsdoc/newline-after-description': 1, // Recommended
+    'jsdoc/implements-on-classes': 1,
+    'jsdoc/multiline-blocks': 1,
+    'jsdoc/newline-after-description': 1,
+    'jsdoc/no-multi-asterisks': 1,
+    'jsdoc/require-jsdoc': 1,
+    'jsdoc/require-param': 1,
+    'jsdoc/require-param-name': 1,
+    'jsdoc/require-param-type': 1,
+    'jsdoc/no-undefined-types': ['warn'],
     'linebreak-style': ['error', 'unix'],
     quotes: ['error', 'single'],
     semi: ['error', 'always'],

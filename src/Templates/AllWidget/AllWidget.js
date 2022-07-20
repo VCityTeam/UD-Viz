@@ -134,7 +134,7 @@ export class AllWidget {
   /**
    * Appends the demo HTML to an HTML element.
    *
-   * @param htmlElement The parent node to add the demo into. The
+   * @param {HTMLElement} htmlElement The parent node to add the demo into. The
    * recommended way of implementing the demo is simply to have an
    * empty body and call this method with `document.body` as
    * parameter.
@@ -152,15 +152,15 @@ export class AllWidget {
   /**
    * Adds a new module view to the demo.
    *
-   * @param moduleId A unique id. Must be a string without spaces. It
+   * @param {number} moduleId A unique id. Must be a string without spaces. It
    * will be used to generate some HTML ids in the page. It will also
    * be used to look for an icon to put with the button
-   * @param moduleClass The module view class. Must implement some
+   * @param {module} moduleClass The module view class. Must implement some
    * methods (`enable`, `disable` and `addEventListener`). The
    * recommended way of implementing them is to extend the
    * `ModuleView` class, as explained [on the
    * wiki](https://github.com/MEPP-team/UD-Viz/wiki/Generic-demo-and-modules-with-ModuleView-&-BaseDemo).
-   * @param options An object used to specify various options.
+   * @param {object} options An object used to specify various options.
    * `options.name` allows you to specify the name that will be
    * displayed in the toggle button. By default, it makes a
    * transformation of the id (like this : myModule -> My Module).
@@ -249,8 +249,8 @@ export class AllWidget {
   /**
    * Creates a new button in the side menu.
    *
-   * @param moduleId The module id.
-   * @param buttonText The text to display in the button.
+   * @param {number} moduleId The module id.
+   * @param {string} buttonText The text to display in the button.
    * @param {string} [accessKey] The key binding for the module.
    */
   createMenuButton(moduleId, buttonText, accessKey) {
@@ -291,7 +291,7 @@ export class AllWidget {
   /**
    * Creates an authentication frame for the authentication module.
    *
-   * @param authModuleId The id of the authentication module.
+   * @param {number} authModuleId The id of the authentication module.
    */
   createAuthenticationFrame(authModuleId) {
     const frame = document.createElement('div');
@@ -353,7 +353,7 @@ export class AllWidget {
   /**
    * Returns if the module view is currently enabled or not.
    *
-   * @param moduleId The module id.
+   * @param {number} moduleId The module id.
    */
   isModuleActive(moduleId) {
     return this.moduleActivation[moduleId];
@@ -362,7 +362,7 @@ export class AllWidget {
   /**
    * Returns the module view class by its id.
    *
-   * @param moduleId The module id.
+   * @param {number} moduleId The module id.
    */
   getModuleById(moduleId) {
     return this.modules[moduleId];
@@ -371,7 +371,7 @@ export class AllWidget {
   /**
    * If the module view is enabled, disables it, else, enables it.
    *
-   * @param moduleId The module id.
+   * @param {number} moduleId The module id.
    */
   toggleModule(moduleId) {
     if (!this.isModuleActive(moduleId)) {
@@ -638,7 +638,7 @@ export class AllWidget {
    * Loads a config file. Module views should only be added after calling
    * this method.
    *
-   * @param filePath The path to the config file.
+   * @param {string} filePath The path to the config file.
    */
   async loadConfigFile(filePath) {
     //loading configuration file

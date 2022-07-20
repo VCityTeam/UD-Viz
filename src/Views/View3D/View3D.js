@@ -474,7 +474,7 @@ export class View3D {
   /**
    * Create an iTowns 3D Tiles layer based on the specified layerConfig.
    *
-   * @param layer
+   * @param {object} layer
    */
   setup3DTilesLayer(layer) {
     if (!layer['id'] || !layer['url']) {

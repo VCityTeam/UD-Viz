@@ -24,7 +24,7 @@ export class TemporalView extends ModuleView {
 
     /**
      *
-     * @param newDate
+     * @param {number} newDate
      */
     function currentTimeUpdated(newDate) {
       this.currentTime = Number(newDate);

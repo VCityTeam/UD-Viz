@@ -11,7 +11,7 @@
 
 /**
  *
- * @param formData
+ * @param {object} formData
  */
 export function removeEmptyValues(formData) {
   const emptyKeys = [];

@@ -111,7 +111,7 @@ const RenderModule = class Render {
   /**
    * Check if the color differed from component and update if needed
    *
-   * @param outdated
+   * @param {boolean} outdated
    * @param {JSON} component the component to update to
    * @param {LocalContext} localContext local context of the GameView
    */

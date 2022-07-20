@@ -95,7 +95,7 @@ const GameObjectModule = class GameObject {
    * Update client side component and the Transform of this based on go
    *
    * @param {GameObject} go the gameobject to upadate to
-   * @param bufferedGO
+   * @param {GameObject} bufferedGO
    * @param {LocalContext} localContext this localcontext
    */
   updateFromGO(go, bufferedGO, localContext) {

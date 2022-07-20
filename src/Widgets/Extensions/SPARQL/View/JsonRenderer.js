@@ -114,11 +114,11 @@ const renderjson = (function () {
 
   /**
    *
-   * @param json
-   * @param indent
-   * @param dont_indent
-   * @param show_level
-   * @param options
+   * @param {JSON} json
+   * @param {string} indent
+   * @param {boolean} dont_indent
+   * @param {number} show_level
+   * @param {object} options
    */
   function _renderjson(json, indent, dont_indent, show_level, options) {
     const my_indent = dont_indent ? '' : indent;

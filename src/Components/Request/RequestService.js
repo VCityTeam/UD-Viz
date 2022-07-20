@@ -12,10 +12,10 @@ export function RequestService() {
   this.initialize = function () {};
 
   /**
-   * @param method
-   * @param url
-   * @param body
-   * @param authenticate
+   * @param {string} method
+   * @param {string | URL} url
+   * @param {Document | null} body
+   * @param {boolean} authenticate
    * @deprecated Prefer using `RequestService.request` instead.
    * // eslint-disable-next-line valid-jsdoc
    */

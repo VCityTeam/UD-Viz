@@ -140,7 +140,7 @@ export class TemporalProvider {
    *
    * @param {3DTemporalTransaction} transaction The transaction
    * to generate the style name from.
-   * @param styleName
+   * @param {string} styleName
    * @returns {string} If the transaction is a primary transaction,
    * returns its type. If it is an aggregated transaction, it returns a
    * concatenation of the primary transactions types aggregated in

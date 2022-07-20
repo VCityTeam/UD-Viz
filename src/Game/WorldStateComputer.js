@@ -150,7 +150,7 @@ const WorldStateComputerModule = class WorldStateComputer {
    *
    *@typedef {import('../Game/WorldState')} WorldState
    *
-   * @param withServerComponent
+   * @param {boolean} withServerComponent
    * @returns {WorldState}
    */
   computeCurrentState(withServerComponent = true) {

@@ -13,8 +13,8 @@ export class SlideShow extends Window {
   /**
    * It initializes the widget.
    *
-   * @param app - the application object
-   * @param inputManager - the input manager of the application
+   * @param {object} app - the application object
+   * @param {InputManager}inputManager - the input manager of the application
    */
   constructor(app, inputManager) {
     super('slideShow', 'Slide Show 3D', false);

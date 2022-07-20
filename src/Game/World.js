@@ -344,7 +344,7 @@ const WorldModule = class World {
   /**
    * Return the current world state
    *
-   * @param withServerComponent
+   * @param {boolean} withServerComponent
    * @returns {WorldState}
    */
   computeWorldState(withServerComponent = true) {

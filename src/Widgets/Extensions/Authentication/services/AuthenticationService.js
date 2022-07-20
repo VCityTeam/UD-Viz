@@ -4,8 +4,8 @@ import { RequestService } from '../../../../Components/Request/RequestService';
 
 /**
  *
- * @param requestService
- * @param config
+ * @param {RequestService} requestService
+ * @param {object} config
  */
 export function AuthenticationService(requestService, config) {
   this.observers = [];

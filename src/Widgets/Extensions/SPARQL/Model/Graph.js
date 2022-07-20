@@ -225,7 +225,7 @@ export class Graph {
   /**
    * return a query response formatted for a D3.js graph.
    *
-   * @param data
+   * @param {object} data
    * @returns {object}
    */
   formatResponseDataAsGraph(data) {
@@ -369,7 +369,7 @@ export class Graph {
   drag(simulation) {
     /**
      *
-     * @param event
+     * @param {object} event
      */
     function dragstarted(event) {
       if (!event.active) simulation.alphaTarget(0.3).restart();
@@ -379,7 +379,7 @@ export class Graph {
 
     /**
      *
-     * @param event
+     * @param {object} event
      */
     function dragged(event) {
       event.subject.fx = event.x;
@@ -388,7 +388,7 @@ export class Graph {
 
     /**
      *
-     * @param event
+     * @param {object} event
      */
     function dragended(event) {
       if (!event.active) simulation.alphaTarget(0);

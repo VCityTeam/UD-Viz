@@ -24,7 +24,7 @@ export class EventSender {
    * Registers an event. Should be called by the implementing class to
    * specify its own events.
    *
-   * @param event The event to register. Can be of any type. The class will be
+   * @param {Event} event The event to register. Can be of any type. The class will be
    *              able to send only the events that it has registered.
    */
   registerEvent(event) {
@@ -35,7 +35,7 @@ export class EventSender {
    * Registers an event listener attached to a specific event. The `action`
    * function will be called only when `event` is fired.
    *
-   * @param event The event to listen to.
+   * @param {Event} event The event to listen to.
    * @param {(data: any)} action The function to call.
    */
   addEventListener(event, action) {
@@ -63,8 +63,8 @@ export class EventSender {
    * Sends an event to the listeners. `event` must be first registers through the `registerEvent`
    * method. An argument can be passed but is optional.
    *
-   * @param event The event to fire. Must be first registered.
-   * @param data The optional data to pass as parameter.
+   * @param {Event} event The event to fire. Must be first registered.
+   * @param {object} data The optional data to pass as parameter.
    */
   async sendEvent(event, data = null) {
     const listeners = this.eventListeners[event];

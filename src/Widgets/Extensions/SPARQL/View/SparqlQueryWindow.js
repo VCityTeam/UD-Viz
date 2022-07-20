@@ -141,7 +141,7 @@ LIMIT 100`;
   /**
    * Update the DataView.
    *
-   * @param response
+   * @param {object} response
    * @param {object} view_type The selected semantic data view type.
    */
   updateDataView(response, view_type) {

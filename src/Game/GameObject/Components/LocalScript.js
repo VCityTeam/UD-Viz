@@ -92,7 +92,7 @@ const LocalScriptModule = class LocalScript {
    * Check if conf differed with component and
    * notify scripts that conf has changed and fire an UPDATE event
    *
-   * @param outdated
+   * @param {boolean} outdated
    * @param {JSON} component the component json to update to
    * @param {LocalContext} localContext
    */

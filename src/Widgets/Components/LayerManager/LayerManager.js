@@ -96,7 +96,7 @@ export class LayerManager {
   /**
    * Change the visibilty of all 3DTiles layers
    *
-   * @param bool
+   * @param {boolean} bool
    */
   changeVisibility(bool) {
     this.tilesManagers.forEach(function (tilesManager) {

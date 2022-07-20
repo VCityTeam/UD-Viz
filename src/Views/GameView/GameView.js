@@ -362,7 +362,7 @@ export class GameView extends View3D {
   /**
    * dispose this view
    *
-   * @param keepAssets
+   * @param {boolean} keepAssets
    */
   dispose(keepAssets = false) {
     super.dispose();
