@@ -32,11 +32,13 @@ export class ModuleView extends EventSender {
   // send appropriate events.
   /**
    * Must be overriden by the implementing class. Supposedly enables the view.
+   *
    * @abstract
    */
   async enableView() {}
   /**
    * Must be overriden by the implementing class. Supposedly disables the view.
+   *
    * @abstract
    */
   async disableView() {}

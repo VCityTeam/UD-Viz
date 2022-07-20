@@ -30,7 +30,7 @@ const ColliderModule = class Collider {
 
   /**
    *
-   * @returns {Boolean}
+   * @returns {boolean}
    */
   isBody() {
     return this.body;
@@ -38,6 +38,7 @@ const ColliderModule = class Collider {
 
   /**
    * Nothing has to be initialized (just here because this function is called from GameObject initAssets)
+   *
    * @param {*} assetsManager
    */
   initAssets(assetsManager) {
@@ -76,7 +77,8 @@ const ColliderModule = class Collider {
 
   /**
    * This component can run on the server side
-   * @returns {Boolean}
+   *
+   * @returns {boolean}
    */
   isServerSide() {
     return true;
@@ -104,6 +106,7 @@ const ColliderModule = class Collider {
 
   /**
    * Compute this to JSON
+   *
    * @returns {JSON}
    */
   toJSON() {
@@ -162,6 +165,7 @@ class ShapeWrapper {
    * Create Circle/Polygon of detect-collisions
    * then add an update function to update the worldtransform
    * then attach getter function of the gameobject
+   *
    * @param {JSON} json
    */
   initFromJSON(json) {

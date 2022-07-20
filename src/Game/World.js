@@ -56,7 +56,8 @@ const WorldModule = class World {
 
   /**
    * Register a custom event
-   * @param {String} eventID id of the event
+   *
+   * @param {string} eventID id of the event
    * @param {Function} cb callback to be called when the event is dispatched
    */
   on(eventID, cb) {
@@ -66,7 +67,8 @@ const WorldModule = class World {
 
   /**
    * Notify that a custom event occured
-   * @param {String} eventID id of the event to dispatch
+   *
+   * @param {string} eventID id of the event to dispatch
    * @param {Array} params params to passed to callbacks
    */
   notify(eventID, params) {
@@ -81,6 +83,7 @@ const WorldModule = class World {
 
   /**
    * Load its gameobject
+   *
    * @param {Function} onLoad callback called at the end of the load
    * @param {WorldContext} worldContext this world context
    */
@@ -90,6 +93,7 @@ const WorldModule = class World {
 
   /**
    * Compute all the promises of a gameobject needed at the load event of WorldScripts
+   *
    * @param {GameObject} go the gameobject to compute load promises
    * @param {WorldContext} worldContext this world context
    * @returns {Array[Promise]} An array containing all the promises
@@ -97,12 +101,12 @@ const WorldModule = class World {
   computePromisesLoad(go, worldContext) {
     //load GameObject
     const promises = [];
-    let params = [worldContext, this.isServerSide, this.modules];
+    const params = [worldContext, this.isServerSide, this.modules];
 
     go.traverse(function (g) {
       const scriptC = g.getComponent(WorldScriptComponent.TYPE);
       if (scriptC) {
-        for (let idScript in scriptC.getScripts()) {
+        for (const idScript in scriptC.getScripts()) {
           const result = scriptC.executeScript(
             idScript,
             WorldScriptComponent.EVENT.LOAD,
@@ -123,6 +127,7 @@ const WorldModule = class World {
    * Init when loaded
    * Register into the collision system
    * Then call a callback onLoad
+   *
    * @param {GameObject} gameObject the gameobject to add
    * @param {WorldContext} worldContext this world context
    * @param {GameObject} parent the gameobject parent may be null
@@ -159,6 +164,7 @@ const WorldModule = class World {
 
   /**
    * Add a gameobject into the collision system
+   *
    * @param {GameObject} go the gameobject to register
    */
   registerGOCollision(go) {
@@ -201,7 +207,7 @@ const WorldModule = class World {
         colliderComponent.getShapeWrappers().forEach(function (wrapper) {
           const shape = wrapper.getShape();
           const potentials = shape.potentials();
-          let result = collisions.createResult();
+          const result = collisions.createResult();
           for (const p of potentials) {
             //in ShapeWrapper shape are link to gameObject
             const potentialG = p.getGameObject();
@@ -217,6 +223,7 @@ const WorldModule = class World {
 
   /**
    * Remove a GameObject from the collision system
+   *
    * @param {GameObject} go the gameobject to remove
    */
   unregisterGOCollision(go) {
@@ -232,7 +239,7 @@ const WorldModule = class World {
 
         //delete from buffer
         delete _this.collisionsBuffer[child.getUUID()];
-        for (let id in _this.collisionsBuffer) {
+        for (const id in _this.collisionsBuffer) {
           const index = _this.collisionsBuffer[id].indexOf(go.getUUID());
           if (index >= 0) _this.collisionsBuffer[id].splice(index, 1); //remove from the other
         }
@@ -242,7 +249,8 @@ const WorldModule = class World {
 
   /**
    * Remove a gameobject from this world
-   * @param {String} uuid the uuid of the gameobject to remove
+   *
+   * @param {string} uuid the uuid of the gameobject to remove
    */
   removeGameObject(uuid) {
     console.log(uuid + ' remove from ', this.name);
@@ -254,6 +262,7 @@ const WorldModule = class World {
 
   /**
    * Simulate one step of the world simulation
+   *
    * @param {WorldContext} worldContext
    */
   tick(worldContext) {
@@ -282,7 +291,7 @@ const WorldModule = class World {
         colliderComponent.getShapeWrappers().forEach(function (wrapper) {
           const shape = wrapper.getShape();
           const potentials = shape.potentials();
-          let result = collisions.createResult();
+          const result = collisions.createResult();
           for (const p of potentials) {
             //in ShapeWrapper shape are link to gameObject
             const potentialG = p.getGameObject();
@@ -332,6 +341,8 @@ const WorldModule = class World {
 
   /**
    * Return the current world state
+   *
+   * @param withServerComponent
    * @returns {WorldState}
    */
   computeWorldState(withServerComponent = true) {
@@ -359,6 +370,7 @@ const WorldModule = class World {
 
   /**
    * Return the collision system
+   *
    * @returns {Collisions}
    */
   getCollisions() {
@@ -367,7 +379,8 @@ const WorldModule = class World {
 
   /**
    * Return the uuid of this world
-   * @returns {String}
+   *
+   * @returns {string}
    */
   getUUID() {
     return this.uuid;
@@ -375,7 +388,7 @@ const WorldModule = class World {
 
   /**
    *
-   * @returns {String}
+   * @returns {string}
    */
   getName() {
     return this.name;
@@ -383,6 +396,7 @@ const WorldModule = class World {
 
   /**
    * Return a clone of this
+   *
    * @returns {World}
    */
   clone() {
@@ -391,6 +405,7 @@ const WorldModule = class World {
 
   /**
    * Compute this to JSON
+   *
    * @returns {JSON}
    */
   toJSON() {

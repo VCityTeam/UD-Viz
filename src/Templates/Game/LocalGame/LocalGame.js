@@ -32,9 +32,10 @@ export class LocalGame {
 
   /**
    * Start a local game based on the world, the config and some options
+   *
    * @param {World} world world to start
-   * @param {String} configPath the path of the config file
-   * @param {Object} options
+   * @param {string} configPath the path of the config file
+   * @param {object} options
    * @returns
    */
   start(world, configPath, options = {}) {

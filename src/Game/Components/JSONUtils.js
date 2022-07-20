@@ -9,6 +9,7 @@ const Type = require('./Type');
 module.exports = {
   /**
    * parse float value of a vector3
+   *
    * @param {THREE.Vector3} vector
    */
   parseVector3(vector) {
@@ -19,13 +20,14 @@ module.exports = {
 
   /**
    * Test if two JSON are identical
+   *
    * @param {JSON} j1 first json
    * @param {JSON} j2 second json
-   * @returns {Boolean} true if both json are identical, false otherwise
+   * @returns {boolean} true if both json are identical, false otherwise
    */
   equals(j1, j2) {
     const traverse = function (json1, json2) {
-      for (let key in json1) {
+      for (const key in json1) {
         if (json1[key] instanceof Object) {
           if (json2[key] instanceof Object) {
             if (traverse(json1[key], json2[key])) {
@@ -52,12 +54,13 @@ module.exports = {
 
   /**
    * Overwrite identical field of a json with another one
+   *
    * @param {JSON} jsonOverWrited the json overwritted
    * @param {JSON} jsonModel the json used as model
    */
   overWrite(jsonOverWrited, jsonModel) {
     const traverse = function (json1, json2) {
-      for (let key in json1) {
+      for (const key in json1) {
         if (json1[key] instanceof Object) {
           if (json2[key] instanceof Object) traverse(json1[key], json2[key]);
         } else {
@@ -73,12 +76,13 @@ module.exports = {
 
   /**
    * Apply a callback to each field of json
+   *
    * @param {JSON} json the json to be parsed
    * @param {Function} cb callback with first argument the json and second the key
    * @returns {JSON} the json parsed
    */
   parse(json, cb) {
-    for (let key in json) {
+    for (const key in json) {
       if (json[key] instanceof Object) {
         this.parse(json[key], cb);
       } else {
@@ -90,7 +94,7 @@ module.exports = {
 
   //same as parse but you can pass the name of array that should be not parse
   parseExceptArrays(json, cb, exceptArrays) {
-    for (let key in json) {
+    for (const key in json) {
       if (json[key] instanceof Object) {
         if (json[key] instanceof Array && exceptArrays.includes(key)) {
           cb(json, key);
@@ -106,6 +110,7 @@ module.exports = {
 
   /**
    * Parse to float every field of type numeric in json
+   *
    * @param {JSON} json the json to be parsed
    * @returns {JSON} the json parsed
    */
@@ -124,12 +129,13 @@ module.exports = {
 
   /**
    * Transform a json array to a single string
+   *
    * @param {JSONArray} jsonArray the json array to transform
-   * @returns {String} String corresponding to the json array
+   * @returns {string} String corresponding to the json array
    */
   pack(jsonArray) {
     let result = '';
-    for (let key in jsonArray) {
+    for (const key in jsonArray) {
       result += JSON.stringify(jsonArray[key]);
       result += this.separator;
     }
@@ -143,7 +149,8 @@ module.exports = {
 
   /**
    * Transform a string to a json array
-   * @param {String} string corresponding to a json array pack
+   *
+   * @param {string} string corresponding to a json array pack
    * @returns {JSONArray} json array corresponding to the string
    */
   unpack(string) {

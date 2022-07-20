@@ -9,15 +9,17 @@ export class PositionerWindow extends Window {
     this.itownsView = itownsView;
 
     // Request update every active frame
-    this.itownsView.addFrameRequester(MAIN_LOOP_EVENTS.AFTER_CAMERA_UPDATE,
-      () => this._updateFieldsFromCamera());
+    this.itownsView.addFrameRequester(
+      MAIN_LOOP_EVENTS.AFTER_CAMERA_UPDATE,
+      () => this._updateFieldsFromCamera()
+    );
 
     // Event for position registering
     this.registerEvent(PositionerWindow.EVENT_POSITION_SUBMITTED);
   }
 
   get innerContentHtml() {
-    return /*html*/`
+    return /*html*/ `
       <div class="box-section">
         <h3 class="section-title">Coordinates</h3>
         <form id="${this.formId}">
@@ -70,9 +72,9 @@ export class PositionerWindow extends Window {
    */
   _updateFieldsFromCamera() {
     if (this.isVisible) {
-      let camera = this.itownsView.camera.camera3D;
-      let position = camera.position;
-      let quaternion = camera.quaternion;
+      const camera = this.itownsView.camera.camera3D;
+      const position = camera.position;
+      const quaternion = camera.quaternion;
       this.positionXElement.value = position.x;
       this.positionYElement.value = position.y;
       this.positionZElement.value = position.z;
@@ -85,13 +87,13 @@ export class PositionerWindow extends Window {
 
   /**
    * Retrieve the current camera position from the form fields.
-   * 
+   *
    * @returns {{position: THREE.Vector3, quaternion: THREE.Quaternion}}
    */
   _getCameraPosition() {
-    let data = new FormData(this.formElement);
-    let position = new THREE.Vector3();
-    let quaternion = new THREE.Quaternion();
+    const data = new FormData(this.formElement);
+    const position = new THREE.Vector3();
+    const quaternion = new THREE.Quaternion();
 
     position.x = Number(data.get('positionX'));
     position.y = Number(data.get('positionY'));
@@ -104,7 +106,7 @@ export class PositionerWindow extends Window {
 
     return {
       position,
-      quaternion
+      quaternion,
     };
   }
 
@@ -112,9 +114,13 @@ export class PositionerWindow extends Window {
    * Make the camera travel to the position and orientation in the form fields.
    */
   async _travel() {
-    let camera = this._getCameraPosition();
-    this.itownsView.controls.initiateTravel(camera.position, 'auto', camera.quaternion,
-      true);
+    const camera = this._getCameraPosition();
+    this.itownsView.controls.initiateTravel(
+      camera.position,
+      'auto',
+      camera.quaternion,
+      true
+    );
   }
 
   /**
@@ -122,7 +128,7 @@ export class PositionerWindow extends Window {
    * orientation.
    */
   _validate() {
-    let camera = this._getCameraPosition();
+    const camera = this._getCameraPosition();
     this.sendEvent(PositionerWindow.EVENT_POSITION_SUBMITTED, camera);
     this.disable();
   }

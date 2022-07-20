@@ -36,14 +36,13 @@ export class SparqlEndpointService extends RequestService {
    *
    * @async
    * @param {string} query The query to be sent to the SPARQL endpoint.
-   * @return {Promise<Object>}
+   * @returns {Promise<object>}
    */
   async querySparqlEndpoint(query) {
+    const full_url = this.url + this.url_parameters + encodeURIComponent(query);
+    const options = {};
 
-    let full_url = this.url + this.url_parameters + encodeURIComponent(query);
-    let options = {};
-
-    let request = await this.request('GET', full_url, options);
+    const request = await this.request('GET', full_url, options);
 
     if (request.status !== 200) {
       throw 'Could not query SPARQL endpoint: ' + request.statusText;

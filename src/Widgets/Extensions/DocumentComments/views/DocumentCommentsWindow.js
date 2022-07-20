@@ -70,22 +70,22 @@ export class DocumentCommentsWindow extends AbstractDocumentWindow {
     this.documentCommentsService.getComments().then(
       (comments) => {
         document.getElementById('documentComments_left').innerHTML = '';
-        for (let comment of comments) {
-          let text =
+        for (const comment of comments) {
+          const text =
             typeof comment.description === 'string'
               ? comment.description.replace(/(?:\r\n|\r|\n)/g, '<br>')
               : '';
-          let div = document.createElement('div');
+          const div = document.createElement('div');
           div.className = 'talk-bubble';
           div.innerHTML = `
                     <div class="talktext">
                     <p class="talktext-author">${comment.author.firstName} ${
-  comment.author.lastName
-}</p>
+            comment.author.lastName
+          }</p>
                     <p class="talktext-comment">${text}</p>
                     <p class="talktext-date">${new Date(
-    comment.date
-  ).toLocaleString()}</p>
+                      comment.date
+                    ).toLocaleString()}</p>
                     </div>
                 `;
           document.getElementById('documentComments_left').appendChild(div);
@@ -99,8 +99,8 @@ export class DocumentCommentsWindow extends AbstractDocumentWindow {
   }
 
   async publishComment() {
-    let form = document.getElementById('documentComments_inputForm');
-    let form_data = new FormData(form);
+    const form = document.getElementById('documentComments_inputForm');
+    const form_data = new FormData(form);
     try {
       await this.documentCommentsService.publishComment(form_data).then(() => {
         document.getElementById('documentComments_inputComment').value = '';

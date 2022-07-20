@@ -37,7 +37,7 @@ module.exports = class WorldStateInterpolator {
 
   /**
    *
-   * @returns {Number} delay with the server
+   * @returns {number} delay with the server
    */
   getRenderDelay() {
     return this.renderDelay;
@@ -50,6 +50,7 @@ module.exports = class WorldStateInterpolator {
 
   /**
    * Add a new state
+   *
    * @param {WorldState} state
    */
   onNewState(state) {
@@ -58,7 +59,7 @@ module.exports = class WorldStateInterpolator {
     }
 
     //compute ping
-    let now = Date.now();
+    const now = Date.now();
     this.ping = now - this.lastTimeState;
     this.lastTimeState = now;
 
@@ -86,7 +87,7 @@ module.exports = class WorldStateInterpolator {
 
   /**
    *
-   * @returns {Number} the current server time
+   * @returns {number} the current server time
    */
   _computeCurrentServerTime() {
     return (
@@ -133,17 +134,19 @@ module.exports = class WorldStateInterpolator {
 
   /**
    * Add a new diff to compute a new state
+   *
    * @param {WorldStateDiff} diff
    */
   onNewDiff(diff) {
-    let last = this._getLastStateReceived();
+    const last = this._getLastStateReceived();
     if (!last) throw new Error('no last state');
-    let newState = last.add(diff);
+    const newState = last.add(diff);
     this.onNewState(newState);
   }
 
   /**
    * Init the computer with a first state
+   *
    * @param {WorldState} state the first state received
    */
   onFirstState(state) {
@@ -165,6 +168,7 @@ module.exports = class WorldStateInterpolator {
 
   /**
    * Compute the current world state
+   *
    * @returns {WorldState}
    */
   computeCurrentState() {

@@ -20,6 +20,8 @@ export class DocumentValidationModule {
    * and finally the view elements.
    *
    * @param {DocumentModule} documentModule The documents module.
+   * @param requestService
+   * @param config
    */
   constructor(documentModule, requestService, config) {
     this.validationService = new ValidationService(requestService, config);

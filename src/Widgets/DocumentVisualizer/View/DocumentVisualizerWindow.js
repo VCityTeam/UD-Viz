@@ -116,7 +116,7 @@ export class DocumentVisualizerWindow extends AbstractDocumentWindow {
    * @private
    */
   _onOpacityChange() {
-    let opacity = this.opacitySliderElement.value;
+    const opacity = this.opacitySliderElement.value;
     this.opacityElement.value = opacity;
     this.imageElement.style.opacity = opacity;
   }
@@ -136,6 +136,7 @@ export class DocumentVisualizerWindow extends AbstractDocumentWindow {
    * this method to apply the new orientation.
    *
    * @param {THREE.Quaternion} position The visualization camera orientation.
+   * @param quaternion
    */
   setTargetQuaternion(quaternion) {
     this.quaternion = quaternion;
@@ -157,13 +158,13 @@ export class DocumentVisualizerWindow extends AbstractDocumentWindow {
    * @async
    */
   async startTravelToDisplayedDocument() {
-    let currentDoc = this.provider.getDisplayedDocument();
+    const currentDoc = this.provider.getDisplayedDocument();
 
     if (!currentDoc) {
       return;
     }
 
-    let imageSrc = await this.provider.getDisplayedDocumentImage();
+    const imageSrc = await this.provider.getDisplayedDocumentImage();
 
     if (
       isNaN(currentDoc.visualization.positionX) ||
@@ -211,7 +212,7 @@ export class DocumentVisualizerWindow extends AbstractDocumentWindow {
       try {
         setTimeout(() => {
           let intervalHandle;
-          let increaseOpacity = () => {
+          const increaseOpacity = () => {
             let nextValue = Number(this.opacitySliderElement.value) + 0.01;
             this.opacitySliderElement.value = nextValue;
             this._onOpacityChange();

@@ -22,6 +22,10 @@ export class TemporalView extends ModuleView {
     // by the user in the temporalWindow
     this.currentTime = temporalOptions.currentTime;
 
+    /**
+     *
+     * @param newDate
+     */
     function currentTimeUpdated(newDate) {
       this.currentTime = Number(newDate);
       this.provider.currentTime = this.currentTime; // TODO: verify that the
@@ -31,10 +35,13 @@ export class TemporalView extends ModuleView {
     const refreshCallback = currentTimeUpdated.bind(this);
 
     // Callback to get data asynchronously from the tileset.json
+    /**
+     *
+     */
     function getAsynchronousData() {
-      let versions =
+      const versions =
         this.temporalExtension.temporal_tileset.temporalVersions.versions;
-      let versionTransitions =
+      const versionTransitions =
         this.temporalExtension.temporal_tileset.versionTransitions;
       return [versions, versionTransitions];
     }

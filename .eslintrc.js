@@ -6,7 +6,7 @@ module.exports = {
     es2021: true,
     node: true,
   },
-  extends: ['eslint:recommended', 'prettier', 'plugin:jsdoc/recommended'],
+  extends: ['eslint:recommended', 'prettier', 'jsdoc:recommended'],
   plugins: ['prettier', 'jsdoc'],
   parserOptions: {
     ecmaVersion: 2020,

@@ -263,7 +263,7 @@ export class LinkProvider extends EventSender {
    * @param {Link} link The link to create.
    */
   async createLink(link) {
-    let formData = new FormData();
+    const formData = new FormData();
     formData.append('source_id', link.source_id);
     formData.append('target_id', link.target_id);
     formData.append('centroid_x', link.centroid_x);
@@ -337,8 +337,8 @@ export class LinkProvider extends EventSender {
    * @returns {Array<Document>} The list of linked documents.
    */
   getSelectedCityObjectLinkedDocuments() {
-    let allDocuments = this.documentProvider.getAllDocuments().slice();
-    let docIdsToFind = this.selectedCityObjectLinks.map(
+    const allDocuments = this.documentProvider.getAllDocuments().slice();
+    const docIdsToFind = this.selectedCityObjectLinks.map(
       (link) => link.source_id
     );
     return allDocuments.filter((doc) => docIdsToFind.includes(doc.id));
@@ -348,7 +348,7 @@ export class LinkProvider extends EventSender {
    * Toggles the filter for the documents, based on wether they are linked with
    * the selected city object.
    *
-   * @param {Boolean} [toggle] The desired value (`true` activates the filter).
+   * @param {boolean} [toggle] The desired value (`true` activates the filter).
    * If not specified, the activation state of the filter is simply negated (ie.
    * if the filter was active, it is now inactive and vice-versa)
    */

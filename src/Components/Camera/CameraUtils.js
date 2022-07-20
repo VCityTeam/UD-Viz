@@ -26,7 +26,7 @@ export function focusCameraOn(view, controls, targetPos, options = {}) {
       const verticalDist = options.verticalDistance || 800;
       const horizontalDist = options.horizontalDistance || 1000;
 
-      let cameraPos = view.camera.camera3D.position.clone();
+      const cameraPos = view.camera.camera3D.position.clone();
       const direction = new THREE.Vector3().subVectors(targetPos, cameraPos);
       const currentDist = Math.sqrt(
         direction.x * direction.x + direction.y * direction.y
@@ -43,15 +43,14 @@ export function focusCameraOn(view, controls, targetPos, options = {}) {
   });
 }
 
-
 /**
  * Compute near and far camera attributes to fit a quadrilatere of the extent + height size
- * @param {THREE.Camera} camera 
- * @param {itowns.Extent} extent 
- * @param {Number} height 
+ *
+ * @param {THREE.Camera} camera
+ * @param {itowns.Extent} extent
+ * @param {number} height
  */
 export function computeNearFarCamera(camera, extent, height) {
-
   const points = [
     new THREE.Vector3(extent.west, extent.south, 0),
     new THREE.Vector3(extent.west, extent.south, height),

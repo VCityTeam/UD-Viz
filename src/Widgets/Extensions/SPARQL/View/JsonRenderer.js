@@ -87,7 +87,7 @@ const renderjson = (function () {
   };
   const isempty = function (obj, pl) {
     const keys = pl || Object.keys(obj);
-    for (let i in keys)
+    for (const i in keys)
       if (Object.hasOwnProperty.call(obj, keys[i])) return false;
     return true;
   };
@@ -115,6 +115,14 @@ const renderjson = (function () {
     return a;
   };
 
+  /**
+   *
+   * @param json
+   * @param indent
+   * @param dont_indent
+   * @param show_level
+   * @param options
+   */
   function _renderjson(json, indent, dont_indent, show_level, options) {
     const my_indent = dont_indent ? '' : indent;
 
@@ -222,10 +230,10 @@ const renderjson = (function () {
           themetext('object syntax', '{', null, '\n')
         );
         let last;
-        for (let k in json) last = k;
+        for (const k in json) last = k;
         let keys = options.property_list || Object.keys(json);
         if (options.sort_objects) keys = keys.sort();
-        for (let i in keys) {
+        for (const i in keys) {
           const k = keys[i];
           if (!(k in json)) continue;
           append(
@@ -261,8 +269,8 @@ const renderjson = (function () {
       typeof options.replacer == 'function'
         ? options.replacer
         : function (k, v) {
-          return v;
-        };
+            return v;
+          };
     const pre = append(
       document.createElement('pre'),
       _renderjson(json, '', false, options.show_to_level, options)

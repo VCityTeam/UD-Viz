@@ -45,7 +45,11 @@ export class SparqlModuleView extends ModuleView {
      *
      * @type {SparqlQueryWindow}
      */
-    this.window = new SparqlQueryWindow(this.sparqlProvider, this.cityObjectProvider, this.layerManager);
+    this.window = new SparqlQueryWindow(
+      this.sparqlProvider,
+      this.cityObjectProvider,
+      this.layerManager
+    );
   }
 
   /**

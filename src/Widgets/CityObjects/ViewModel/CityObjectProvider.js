@@ -36,7 +36,7 @@ export class CityObjectProvider extends EventSender {
     /**
      * The available filters.
      *
-     * @type {Object.<string, CityObjectFilter>}
+     * @type {Object<string, CityObjectFilter>}
      */
     this.filters = {};
 
@@ -90,12 +90,9 @@ export class CityObjectProvider extends EventSender {
    * @param {MouseEvent} mouseEvent The mouse click event.
    */
   selectCityObject(mouseEvent) {
-    let cityObject = this.layerManager.pickCityObject(mouseEvent);
+    const cityObject = this.layerManager.pickCityObject(mouseEvent);
     if (cityObject) {
-      this.sendEvent(
-        CityObjectProvider.EVENT_CITY_OBJECT_SELECTED,
-        cityObject
-      );
+      this.sendEvent(CityObjectProvider.EVENT_CITY_OBJECT_SELECTED, cityObject);
       if (this.selectedCityObject != cityObject) {
         if (this.selectedCityObject) {
           this.sendEvent(
@@ -128,10 +125,7 @@ export class CityObjectProvider extends EventSender {
   }
 
   changeSelectedCityObject(cityObject) {
-    this.sendEvent(
-      CityObjectProvider.EVENT_CITY_OBJECT_SELECTED,
-      cityObject
-    );
+    this.sendEvent(CityObjectProvider.EVENT_CITY_OBJECT_SELECTED, cityObject);
     if (this.selectedCityObject != cityObject) {
       if (this.selectedCityObject) {
         this.sendEvent(
@@ -146,9 +140,9 @@ export class CityObjectProvider extends EventSender {
         this.selectedCityObject.tile.layer.id
       );
       this.selectedStyle =
-          this.selectedTilesManager.styleManager.getStyleIdentifierAppliedTo(
-            this.selectedCityObject.cityObjectId
-          );
+        this.selectedTilesManager.styleManager.getStyleIdentifierAppliedTo(
+          this.selectedCityObject.cityObjectId
+        );
       this.selectedTilesManager.setStyle(
         this.selectedCityObject.cityObjectId,
         'selected'
@@ -160,19 +154,26 @@ export class CityObjectProvider extends EventSender {
       });
       this.removeLayer();
     }
-    
   }
 
-  focusOnObject(_verticalDistance = 200, _horizontalDistance = 200){
-    if(this.selectedTilesManager && this.selectedCityObject){
-      focusCameraOn(this.selectedTilesManager.view,this.selectedTilesManager.view.controls,this.selectedCityObject.centroid,{
-        verticalDistance:_verticalDistance,horizontalDistance:_horizontalDistance
-      });
+  focusOnObject(_verticalDistance = 200, _horizontalDistance = 200) {
+    if (this.selectedTilesManager && this.selectedCityObject) {
+      focusCameraOn(
+        this.selectedTilesManager.view,
+        this.selectedTilesManager.view.controls,
+        this.selectedCityObject.centroid,
+        {
+          verticalDistance: _verticalDistance,
+          horizontalDistance: _horizontalDistance,
+        }
+      );
     }
   }
   /**
    * Unset the selected city object and sends an `EVENT_CITY_OBJECT_SELECTED`
    * event.
+   *
+   * @param sendEvent
    */
   unselectCityObject(sendEvent = true) {
     if (this.selectedCityObject) {
@@ -194,11 +195,12 @@ export class CityObjectProvider extends EventSender {
 
   /**
    * Select a city object based on a corresponding key,value pair in the batch table.
+   *
    * @param {string} key the batch table key to search by.
    * @param {string} value the batch table value to search for.
    */
   selectCityObjectByBatchTable(key, value) {
-    let cityObject = this.layerManager.pickCityObjectByBatchTable(key, value);
+    const cityObject = this.layerManager.pickCityObjectByBatchTable(key, value);
     if (cityObject) {
       if (this.selectedCityObject != cityObject) {
         if (this.selectedCityObject) {
@@ -256,7 +258,7 @@ export class CityObjectProvider extends EventSender {
    * @param {CityObjectFilter} cityObjectFilter The filter to add.
    */
   addFilter(cityObjectFilter) {
-    let label = cityObjectFilter.label;
+    const label = cityObjectFilter.label;
 
     if (this.filters[label] !== undefined) {
       throw 'A filter with this label already exists : ' + label;
@@ -270,7 +272,7 @@ export class CityObjectProvider extends EventSender {
   /**
    * Returns the currently available filters.
    *
-   * @return {Array<CityObjectFilter>} The currently available filters.
+   * @returns {Array<CityObjectFilter>} The currently available filters.
    */
   getFilters() {
     return Object.values(this.filters);
@@ -289,7 +291,7 @@ export class CityObjectProvider extends EventSender {
    * layer.
    */
   setLayer(filterLabel, style) {
-    let filter = this.filters[filterLabel];
+    const filter = this.filters[filterLabel];
 
     if (filter === undefined) {
       throw 'No filter found with the label : ' + filterLabel;
@@ -330,7 +332,7 @@ export class CityObjectProvider extends EventSender {
    */
   _updateTilesManager() {
     if (this.selectedCityObject) {
-      let tileManager = this.layerManager.getTilesManagerByLayerID(
+      const tileManager = this.layerManager.getTilesManagerByLayerID(
         this.selectedCityObject.tile.layer.id
       );
 

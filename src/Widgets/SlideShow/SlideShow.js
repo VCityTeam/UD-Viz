@@ -7,6 +7,7 @@ import * as THREE from 'three';
 export class SlideShow extends Window {
   /**
    * It initializes the widget.
+   *
    * @param app - the application object
    * @param inputManager - the input manager of the application
    */
@@ -359,7 +360,7 @@ export class SlideShow extends Window {
         return a.name.localeCompare(b.name);
       });
       for (let i = 0; i < files.length; i++) {
-        let file = files[i];
+        const file = files[i];
         if (file) {
           try {
             const reader = new FileReader();
@@ -426,9 +427,9 @@ export class SlideShow extends Window {
 
   /**
    * @param {Array.String} labels List of labels name
-   * @param {String} vectorName Name of the vector
+   * @param {string} vectorName Name of the vector
    * @param {number} step The step of HTMLElement input (type number)
-   * @returns {Object} title => HTMLElement 'h3' ; inputVector => HTMLElement 'div' contains labels and inputs HTMLElements
+   * @returns {object} title => HTMLElement 'h3' ; inputVector => HTMLElement 'div' contains labels and inputs HTMLElements
    */
   createInputVector(labels, vectorName, step = 0.5) {
     const titleVector = document.createElement('h3');

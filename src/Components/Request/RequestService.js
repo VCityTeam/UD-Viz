@@ -1,14 +1,21 @@
 // Service used to make HTTP requests and manage authentication
 // Wiki : https://github.com/MEPP-team/UD-Viz/wiki/Request-Service#request-service
+/**
+ *
+ */
 export function RequestService() {
   // eslint-disable-next-line no-unused-expressions
   this.authenticationService;
   this.useAuthentication = false;
 
   // eslint-disable-next-line func-names
-  this.initialize = function () { };
+  this.initialize = function () {};
 
   /**
+   * @param method
+   * @param url
+   * @param body
+   * @param authenticate
    * @deprecated Prefer using `RequestService.request` instead.
    * // eslint-disable-next-line valid-jsdoc
    */
@@ -36,9 +43,8 @@ export function RequestService() {
    * the request to use authentication.
    * @param {XMLHttpRequestResponseType} [options.responseType] The expected
    * response type.
-   * @param {Object.<string, string>} [options.urlParameters] A dictionary of
+   * @param {Object<string, string>} [options.urlParameters] A dictionary of
    * URL parameters.
-   *
    * @returns {Promise<XMLHttpRequest>}
    */
   this.request = (method, url, options = {}) => {

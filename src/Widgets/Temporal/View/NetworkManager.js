@@ -8,11 +8,11 @@ const Network = require('vis-network').Network;
  */
 export class NetworkManager {
   /**
-     * Constructs a NetworkManager.
-     *
-     * @param {String} id_network - HTML id which will be the container of the graph
-     * data {Dict} - Data about nodes, edges and groups for the graph
-     * {
+   * Constructs a NetworkManager.
+   *
+   * @param {string} id_network - HTML id which will be the container of the graph
+   * data {Dict} - Data about nodes, edges and groups for the graph
+   * {
      nodes:[{
         id:string
         label:string
@@ -28,10 +28,12 @@ export class NetworkManager {
      groups:{id:int
               label:string}
      }
-     * option {Object} - Data about graphics' options for viz.js. See doc for futher details about the possibilities
-     *
-     * network {Vis.Network Object} - hold the network/graph instance created by viz.js
-     */
+   * option {Object} - Data about graphics' options for viz.js. See doc for futher details about the possibilities
+   *
+   * network {Vis.Network Object} - hold the network/graph instance created by viz.js
+   * @param data
+   * @param option
+   */
   constructor(
     id_network = 'mynetwork',
     data = {
@@ -81,22 +83,24 @@ export class NetworkManager {
    * Click on node = event
    * Click on edge = event
    * In both case, a date is passed
+   *
    * @param : callback (function) ( the function to be call when the event is done)
+   * @param callback
    */
   add_event(callback) {
     this.network.on('selectNode', function (params) {
-      let nodeId = this.getNodeAt(params.pointer.DOM);
-      let node = this.body.nodes[nodeId];
-      let time = node.options.name;
+      const nodeId = this.getNodeAt(params.pointer.DOM);
+      const node = this.body.nodes[nodeId];
+      const time = node.options.name;
       callback(time);
     });
 
     this.network.on('selectEdge', function (params) {
-      let edgeId = this.getEdgeAt(params.pointer.DOM);
-      let connectedNodesId = this.getConnectedNodes(edgeId);
-      let from_time = this.body.nodes[connectedNodesId[0]].options.name;
-      let to_time = this.body.nodes[connectedNodesId[1]].options.name;
-      let time = (from_time / 1 + to_time / 1) / 2;
+      const edgeId = this.getEdgeAt(params.pointer.DOM);
+      const connectedNodesId = this.getConnectedNodes(edgeId);
+      const from_time = this.body.nodes[connectedNodesId[0]].options.name;
+      const to_time = this.body.nodes[connectedNodesId[1]].options.name;
+      const time = (from_time / 1 + to_time / 1) / 2;
       callback(time);
     });
   }

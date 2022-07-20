@@ -95,17 +95,17 @@ export class CityObjectFilterWindow extends Window {
       return;
     }
 
-    let select = this.filterSelectElement;
+    const select = this.filterSelectElement;
 
     select.innerHTML = '';
 
-    let defaultOption = document.createElement('option');
+    const defaultOption = document.createElement('option');
     defaultOption.label = 'no-filter';
     defaultOption.innerText = 'No filter';
     select.appendChild(defaultOption);
 
-    for (let filterSelector of this.filterSelectors) {
-      let option = document.createElement('option');
+    for (const filterSelector of this.filterSelectors) {
+      const option = document.createElement('option');
       option.label = filterSelector.filterLabel;
       option.innerText = filterSelector.displayName;
       select.appendChild(option);
@@ -118,7 +118,7 @@ export class CityObjectFilterWindow extends Window {
    */
   _onFilterSelection() {
     this.filterSectionElement.innerHTML = '';
-    let selector = this._getCurrentSelector();
+    const selector = this._getCurrentSelector();
     if (selector) {
       selector.appendFormFieldsTo(this.filterSectionElement);
     }
@@ -129,7 +129,7 @@ export class CityObjectFilterWindow extends Window {
    * selected the 'No filter' option.
    */
   _getCurrentSelector() {
-    let selected =
+    const selected =
       this.filterSelectElement.options[this.filterSelectElement.selectedIndex]
         .label;
 
@@ -137,7 +137,7 @@ export class CityObjectFilterWindow extends Window {
       return undefined;
     }
 
-    let selector = this.getFilterSelector(selected);
+    const selector = this.getFilterSelector(selected);
 
     if (selector === undefined) {
       throw 'Cannot find selector with label ' + selected;
@@ -151,14 +151,14 @@ export class CityObjectFilterWindow extends Window {
    * sent and the window closes.
    */
   _onSubmit() {
-    let selector = this._getCurrentSelector();
+    const selector = this._getCurrentSelector();
     if (selector === undefined) {
       this.sendEvent(CityObjectFilterWindow.EVENT_FILTER_SELECTED, undefined);
       this.disable();
       return;
     }
 
-    let formData = new FormData(this.filterFormElement);
+    const formData = new FormData(this.filterFormElement);
     selector.onSubmit(formData);
     this.sendEvent(
       CityObjectFilterWindow.EVENT_FILTER_SELECTED,

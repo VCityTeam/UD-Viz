@@ -83,8 +83,7 @@ module.exports = class Commands {
 
   updateUI(go, localCtx) {
     //update ui
-    this.fpsLabel.innerHTML =
-      'Gameview dt = ' + Math.round(localCtx.getDt());
+    this.fpsLabel.innerHTML = 'Gameview dt = ' + Math.round(localCtx.getDt());
   }
 
   tick() {

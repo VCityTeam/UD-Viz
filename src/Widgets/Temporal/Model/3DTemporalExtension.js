@@ -38,6 +38,7 @@ export class $3DTemporalExtension {
      *  a feature is the source (resp. destination) of multiple
      *  transactions. These cases might need to be investigated in more
      *  depth....
+     *
      * @type {Map}
      */
     this.transactionsPerTile = new Map();
@@ -79,6 +80,7 @@ export class $3DTemporalExtension {
    * Fills this.transactionsPerFeature map when the tileset has been loaded
    * (all transactions are stored in the temporal extension part of the
    * tileset).
+   *
    * @param {*} event The evet triggered; holds the temporal part of the
    * extension in event.detail
    */
@@ -115,6 +117,7 @@ export class $3DTemporalExtension {
   /**
    * Triggered when the content of a tile has been loaded. Fills
    * this.transactionsPerTile list with the transaction of this tile.
+   *
    * @param {*} tileContent
    */
   updateTileExtensionModel(tileContent) {

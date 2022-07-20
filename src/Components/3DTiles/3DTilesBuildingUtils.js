@@ -14,16 +14,21 @@ import {
  * @param {*} inter An intersection
  */
 export function getBuildingIdFromIntersection(inter) {
-  let table = getBatchTableFromTile(inter.object);
-  let bid = getBatchIdFromIntersection(inter);
+  const table = getBatchTableFromTile(inter.object);
+  const bid = getBatchIdFromIntersection(inter);
   return table.content['cityobject.database_id'][bid];
 }
 
+/**
+ *
+ * @param tilesInfo
+ * @param buildingId
+ */
 export function getBuildingInfoFromBuildingId(tilesInfo, buildingId) {
-  for (let tileId of Object.keys(tilesInfo.tiles)) {
-    let tile = tilesInfo.tiles[tileId];
-    for (let batchId of Object.keys(tile)) {
-      let buildingInfo = tile[batchId];
+  for (const tileId of Object.keys(tilesInfo.tiles)) {
+    const tile = tilesInfo.tiles[tileId];
+    for (const batchId of Object.keys(tile)) {
+      const buildingInfo = tile[batchId];
       if (buildingInfo.props['cityobject.database_id'] === buildingId) {
         return buildingInfo;
       }
@@ -39,7 +44,7 @@ export function getBuildingInfoFromBuildingId(tilesInfo, buildingId) {
  * @param {Array<number>} color The color.
  */
 export function colorBuilding(layer, buildingInfo, color) {
-  let tile = getTileInLayer(layer, buildingInfo.tileId);
+  const tile = getTileInLayer(layer, buildingInfo.tileId);
   if (!tile) {
     throw 'Building not in the view - tile is not loaded';
   }

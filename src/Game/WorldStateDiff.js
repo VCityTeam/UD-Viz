@@ -20,6 +20,7 @@ module.exports = class WorldStateDiff {
 
   /**
    * return array of json gameobject outdated
+   *
    * @returns {Array[JSON]}
    */
   getOutdatedGameObjectsJSON() {
@@ -28,6 +29,7 @@ module.exports = class WorldStateDiff {
 
   /**
    * return list of the current gameobjects UUID
+   *
    * @returns {Array[String]}
    */
   getGameObjectsUUID() {
@@ -36,7 +38,8 @@ module.exports = class WorldStateDiff {
 
   /**
    * return timestamp of this WorldStateDiff
-   * @returns {Number}
+   *
+   * @returns {number}
    */
   getTimeStamp() {
     return this.timestamp;
@@ -44,6 +47,7 @@ module.exports = class WorldStateDiff {
 
   /**
    * Compute this to JSON
+   *
    * @returns {JSON}
    */
   toJSON() {

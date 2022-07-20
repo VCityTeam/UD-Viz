@@ -47,7 +47,7 @@ export class AuthenticationView extends ModuleView {
   }
 
   appendToElement(htmlElement) {
-    let div = document.createElement('div');
+    const div = document.createElement('div');
     div.innerHTML = this.html();
     div.id = 'loginRegistrationWindow';
     htmlElement.appendChild(div);
@@ -69,35 +69,35 @@ export class AuthenticationView extends ModuleView {
   }
 
   dispose() {
-    let div = document.getElementById('loginRegistrationWindow');
+    const div = document.getElementById('loginRegistrationWindow');
     return div.parentNode.removeChild(div);
   }
 
   displayRegisterError(msg) {
-    let errorField = document.getElementById('RegisterInfo');
+    const errorField = document.getElementById('RegisterInfo');
     errorField.className = 'ErrorBox';
     errorField.innerHTML = msg;
   }
 
   displayLoginError(msg) {
-    let errorField = document.getElementById('LoginInfo');
+    const errorField = document.getElementById('LoginInfo');
     errorField.innerHTML = msg;
   }
 
   displayRegisterSuccess(msg) {
-    let successField = document.getElementById('RegisterInfo');
+    const successField = document.getElementById('RegisterInfo');
     successField.className = 'SuccessBox';
     successField.innerHTML = msg;
   }
 
   isVisible() {
-    let div = document.getElementById('loginRegistrationWindow');
+    const div = document.getElementById('loginRegistrationWindow');
     return div !== undefined && div !== null;
   }
   verifyNotEmptyValuesForm(formIds) {
     var validate = true;
     for (var id in formIds) {
-      let element = document.getElementById(formIds[id]);
+      const element = document.getElementById(formIds[id]);
       element.setAttribute('style', '');
       if (element.value == '') {
         element.setAttribute('style', ' border: 3px solid red');
@@ -108,15 +108,15 @@ export class AuthenticationView extends ModuleView {
   }
   deleteValuesForm(formIds) {
     for (var id in formIds) {
-      let element = document.getElementById(formIds[id]);
+      const element = document.getElementById(formIds[id]);
       element.value = '';
     }
   }
   verifymail() {
     // This regular expression checks an email in the form of 'name@example.com'
-    let RegularExpression =
+    const RegularExpression =
       /^(([^<>()[]\.,;:s@]+(.[^<>()[]\.,;:s@]+)*)|(.+))@(([[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}])|(([a-zA-Z-0-9]+.)+[a-zA-Z]{2,}))$/;
-    let element = document.getElementById('Email');
+    const element = document.getElementById('Email');
     if (RegularExpression.test(element.value)) {
       element.setAttribute('style', '');
       this.displayRegisterError('');

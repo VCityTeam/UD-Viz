@@ -36,7 +36,7 @@ export class AssetsManager {
   }
 
   dispose() {
-    for (let key in this.soundsBuffer) {
+    for (const key in this.soundsBuffer) {
       this.soundsBuffer[key].forEach(function (s) {
         s.unload();
       });
@@ -45,7 +45,8 @@ export class AssetsManager {
 
   /**
    * return json prefabs
-   * @returns {Object} a map containing prefabs JSON loaded
+   *
+   * @returns {object} a map containing prefabs JSON loaded
    */
   getPrefabs() {
     return this.prefabs;
@@ -53,7 +54,8 @@ export class AssetsManager {
 
   /**
    * Return new model corresponding to the id passed
-   * @param {String} idRenderData id of the model
+   *
+   * @param {string} idRenderData id of the model
    * @returns {Object{'animations' => THREE.AnimationClip[], 'object' => THREE.Object3D}
    */
   createRenderData(idRenderData) {
@@ -83,6 +85,7 @@ export class AssetsManager {
 
   /**
    * Return worlds loaded
+   *
    * @returns {JSONArray[WorldJSON]} array of worlds
    */
   getWorldsJSON() {
@@ -126,8 +129,9 @@ export class AssetsManager {
 
   /**
    * Return javascript class with a given id
-   * @param {String} idScript id of the script
-   * @returns {Object} constructor of the class
+   *
+   * @param {string} idScript id of the script
+   * @returns {object} constructor of the class
    */
   fetchWorldScript(idScript) {
     if (!this.worldScripts[idScript])
@@ -137,8 +141,9 @@ export class AssetsManager {
 
   /**
    * Return javascript class with a given id
-   * @param {String} id id of the script
-   * @returns {Object} constructor of the class
+   *
+   * @param {string} id id of the script
+   * @returns {object} constructor of the class
    */
   fetchLocalScript(id) {
     if (!this.localScripts[id]) console.error('no local script with id ', id);
@@ -147,7 +152,8 @@ export class AssetsManager {
 
   /**
    * Create a new GameObject base on a prefab json
-   * @param {String} idprefab id of the prefab
+   *
+   * @param {string} idprefab id of the prefab
    * @returns {GameObject} the gameobject based on a prefab
    */
   createPrefab(idprefab) {
@@ -157,8 +163,9 @@ export class AssetsManager {
 
   /**
    * Return the path of video with a given id
-   * @param {String} idVideo id of the video
-   * @returns {String} path of the video
+   *
+   * @param {string} idVideo id of the video
+   * @returns {string} path of the video
    */
   fetchVideoPath(idVideo) {
     if (!this.conf.videos[idVideo]) console.error('no video with id ', idVideo);
@@ -167,7 +174,8 @@ export class AssetsManager {
 
   /**
    * Return a json GameObject with a given id
-   * @param {String} idprefab id of the prefab
+   *
+   * @param {string} idprefab id of the prefab
    * @returns {JSON} json gameobject
    */
   fetchPrefabJSON(idprefab) {
@@ -274,7 +282,8 @@ export class AssetsManager {
 
   /**
    * Parse model imported according its metadata
-   * @param {String} id id of the model
+   *
+   * @param {string} id id of the model
    * @param {THREE.Object3D} obj the object parsed
    * @param {JSON} modelData metadata
    */
@@ -289,7 +298,7 @@ export class AssetsManager {
     switch (anchor) {
       case 'center':
         {
-          let center = bbox.min.lerp(bbox.max, 0.5);
+          const center = bbox.min.lerp(bbox.max, 0.5);
           obj.position.sub(center);
         }
         break;
@@ -305,7 +314,7 @@ export class AssetsManager {
         break;
       case 'center_min':
         {
-          let centerMin = bbox.min.clone().lerp(bbox.max, 0.5);
+          const centerMin = bbox.min.clone().lerp(bbox.max, 0.5);
           centerMin.z = bbox.min.z;
           obj.position.sub(centerMin);
         }
@@ -353,6 +362,7 @@ export class AssetsManager {
 
   /**
    * Load from a server assets described in a config file
+   *
    * @param {JSON} config config file
    * @param {Html} parentDiv where to add the loadingView
    * @returns {Array[Promises]} all the promises processed to load assets
@@ -383,7 +393,7 @@ export class AssetsManager {
       promises.push(
         new Promise((resolve, reject) => {
           let count = 0;
-          for (let idRenderData in config.renderData) {
+          for (const idRenderData in config.renderData) {
             const id = idRenderData;
             const renderData = config.renderData[id];
             loader.load(
@@ -420,7 +430,7 @@ export class AssetsManager {
     const toEvalCode = function (string) {
       const regexRequire = /^const.*=\W*\n*.*require.*;$/gm;
       const regexType = /^\/\*\*\W*@type.*\*\/$/gm;
-      let resultRequire = string.replace(regexRequire, '');
+      const resultRequire = string.replace(regexRequire, '');
       return resultRequire.replace(regexType, '');
     };
     const module = import('./AssetsManager');
@@ -432,7 +442,7 @@ export class AssetsManager {
       promises.push(
         new Promise((resolve, reject) => {
           let count = 0;
-          for (let idScript in config.worldScripts) {
+          for (const idScript in config.worldScripts) {
             const scriptPath = config.worldScripts[idScript].path;
             jquery.get(
               scriptPath,
@@ -466,7 +476,7 @@ export class AssetsManager {
       promises.push(
         new Promise((resolve, reject) => {
           let count = 0;
-          for (let idScript in config.localScripts) {
+          for (const idScript in config.localScripts) {
             const scriptPath = config.localScripts[idScript].path;
             jquery.get(
               scriptPath,
@@ -500,7 +510,7 @@ export class AssetsManager {
       promises.push(
         new Promise((resolve, reject) => {
           let count = 0;
-          for (let idPrefab in config.prefabs) {
+          for (const idPrefab in config.prefabs) {
             const scriptPath = config.prefabs[idPrefab].path;
             jquery.get(
               scriptPath,
@@ -540,7 +550,7 @@ export class AssetsManager {
               let count = 0;
               _this.worldsJSON = [];
 
-              for (let uuid in indexWorldsJSON) {
+              for (const uuid in indexWorldsJSON) {
                 jquery.get(
                   config.worlds.folder + indexWorldsJSON[uuid],
                   function (worldString) {
@@ -574,7 +584,7 @@ export class AssetsManager {
       promises.push(
         new Promise((resolve, reject) => {
           let count = 0;
-          for (let idCss in config.css) {
+          for (const idCss in config.css) {
             const cssPath = config.css[idCss].path;
             jquery.get(
               cssPath,
@@ -648,8 +658,9 @@ class LoadingView {
 
   /**
    * update the progress bar of the loading bar with an id
-   * @param {String} id of the loading bar
-   * @param {Number} percent the new percent of the bar
+   *
+   * @param {string} id of the loading bar
+   * @param {number} percent the new percent of the bar
    */
   updateProgress(id, percent) {
     this.loadingBars[id].style.width = percent + '%';
@@ -657,7 +668,8 @@ class LoadingView {
 
   /**
    * add a loading bar to this view with a label equals to the id
-   * @param {String} id if of the loading bar to add
+   *
+   * @param {string} id if of the loading bar to add
    */
   addLoadingBar(id) {
     const parent = document.createElement('div');

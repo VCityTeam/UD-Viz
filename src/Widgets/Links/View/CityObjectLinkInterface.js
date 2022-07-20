@@ -63,11 +63,11 @@ export class CityObjectLinkInterface {
     if (!this.linkListElement) {
       return;
     }
-    let docs = this.linkProvider.getSelectedCityObjectLinkedDocuments();
+    const docs = this.linkProvider.getSelectedCityObjectLinkedDocuments();
     let listHtml = `<p class="city-object-title">${docs.length} linked document(s)</p>`;
     if (docs.length > 0) {
       listHtml += '<p class="city-object-value"><ul>';
-      for (let doc of docs) {
+      for (const doc of docs) {
         listHtml += `<li>${doc.title}</li>`;
       }
       listHtml += '</ul></p>';

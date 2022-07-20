@@ -29,10 +29,11 @@ export class SparqlEndpointResponseProvider extends EventSender {
 
   /**
    * Query the SPARQL endpoint service
+   *
    * @param {string} query
    */
   async querySparqlEndpointService(query) {
-    let response = await this.service.querySparqlEndpoint(query);
+    const response = await this.service.querySparqlEndpoint(query);
     await this.sendEvent(
       SparqlEndpointResponseProvider.EVENT_ENDPOINT_RESPONSE_UPDATED,
       JSON.parse(response.responseText)

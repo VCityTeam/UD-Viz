@@ -10,7 +10,8 @@ export class $3DTemporalBatchTable {
   /**
    * Verifies the integrity and stores the data corresponding to the
    * batch table part of the 3DTiles_temporal extension.
-   * @param {Object} json The json containing the 3DTiles_temporal
+   *
+   * @param {object} json The json containing the 3DTiles_temporal
    * extension batch table part for a given tile.
    */
   constructor(json) {
@@ -58,7 +59,8 @@ export class $3DTemporalBatchTable {
   /**
    * Checks that the batch table temporal extension has values for a given
    * identifier.
-   * @param {Number} batchId The identifier to check (identifier in the batch,
+   *
+   * @param {number} batchId The identifier to check (identifier in the batch,
    * i.e. position in the arrays).
    */
   hasInfoForId(batchId) {
@@ -70,6 +72,7 @@ export class $3DTemporalBatchTable {
    * Returns information for the given batchId.
    * Can be used to display information associated with an object
    * picked with the mouse for instance.
+   *
    * @param {*} batchId The given identifier (identifier in the batch,
    * i.e. position in the arrays).
    */

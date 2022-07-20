@@ -109,7 +109,7 @@ export class GameView extends View3D {
 
   /**
    *
-   * @param {Boolean} value true go are updated false no
+   * @param {boolean} value true go are updated false no
    */
   setUpdateGameObject(value) {
     this.updateGameObject = value;
@@ -126,6 +126,7 @@ export class GameView extends View3D {
 
   /**
    * register the function into tickRequesters
+   *
    * @param {Function} cb a function that will be call every tick
    */
   addTickRequester(cb) {
@@ -302,6 +303,7 @@ export class GameView extends View3D {
 
   /**
    * initialize the scene of the itwons view
+   *
    * @param {WorldState} state
    */
   initScene(state) {
@@ -356,6 +358,8 @@ export class GameView extends View3D {
 
   /**
    * dispose this view
+   *
+   * @param keepAssets
    */
   dispose(keepAssets = false) {
     super.dispose();
@@ -386,6 +390,7 @@ export class GameView extends View3D {
    * Call a render pass
    *
    * @param {WorldState} state the new state used to update this view
+   * @param states
    */
   update(states) {
     const _this = this;
@@ -396,7 +401,7 @@ export class GameView extends View3D {
 
     //update lastState with the new one
     if (this.lastState) {
-      let lastGO = this.lastState.getGameObject();
+      const lastGO = this.lastState.getGameObject();
 
       if (this.updateGameObject) {
         //update lastGO
@@ -546,6 +551,7 @@ export class GameView extends View3D {
 
   /**
    * force this gameview to update with a specific state
+   *
    * @param {WorldState} state
    */
   forceUpdate(state) {
@@ -559,7 +565,7 @@ export class GameView extends View3D {
       }
     } else states = [state];
 
-    let old = this.updateGameObject;
+    const old = this.updateGameObject;
     this.updateGameObject = true;
     this.update(states);
     this.updateGameObject = old;
@@ -600,7 +606,7 @@ class LocalContext {
 
   /**
    *
-   * @param {Number} dt delta time of the current frame
+   * @param {number} dt delta time of the current frame
    */
   setDt(dt) {
     this.dt = dt;
@@ -608,7 +614,7 @@ class LocalContext {
 
   /**
    *
-   * @returns {Number}
+   * @returns {number}
    */
   getDt() {
     return this.dt;

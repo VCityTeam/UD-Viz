@@ -267,7 +267,7 @@ export class View3D {
 
   /**
    *
-   * @returns {Boolean} true if html of the webgl rendering isn't catching events
+   * @returns {boolean} true if html of the webgl rendering isn't catching events
    * allowing the css3D html to catch it
    */
   isCatchingEventsCSS3D() {
@@ -276,7 +276,7 @@ export class View3D {
 
   /**
    *
-   * @param {Boolean} value if true allow css3D html elements to catch user events, otherwise no
+   * @param {boolean} value if true allow css3D html elements to catch user events, otherwise no
    */
   catchEventsCSS3D(value) {
     if (value) {
@@ -304,7 +304,7 @@ export class View3D {
 
   /**
    *
-   * @param {Boolean} value if true the css3D renderer stop rendering
+   * @param {boolean} value if true the css3D renderer stop rendering
    */
   setIsRendering(value) {
     this.isRendering = value;
@@ -332,6 +332,7 @@ export class View3D {
 
   /**
    * init the itowns.PlanarView of this view with a given extent
+   *
    * @param {itowns.Extent} extent the extent of the itowns.PlanarView
    */
   initItownsView(extent) {
@@ -344,21 +345,15 @@ export class View3D {
     let tilt = 10;
 
     //assign default value or config value
-    if (this.config && this.config['camera'] && this.config['camera']['position']) {
-      if (this.config['camera']['position']['heading'])
-        heading = this.config['camera']['position']['heading'];
+    if (this.config['itowns'] && this.config['itowns']['camera']) {
+      if (this.config['itowns']['camera']['heading'])
+        heading = this.config['itowns']['camera']['heading'];
 
-      if (this.config['camera']['position']['range'])
-        range = this.config['camera']['position']['range'];
+      if (this.config['itowns']['camera']['range'])
+        range = this.config['itowns']['camera']['range'];
 
-      if (this.config['camera']['position']['tilt'])
-        tilt = this.config['camera']['position']['tilt'];
-
-      if (this.config['camera']['position']['x'])
-        coordinates.x = this.config['camera']['position']['x'];
-
-      if (this.config['camera']['position']['y'])
-        coordinates.y = this.config['camera']['position']['y'];
+      if (this.config['itowns']['camera']['tilt'])
+        tilt = this.config['itowns']['camera']['tilt'];
     }
 
     const placement = {
@@ -367,11 +362,11 @@ export class View3D {
       range: range,
       tilt: tilt,
     };
-    
+
     //maxSubdivisionLevel
     let maxSubdivisionLevel = 3;
     if (this.config.background_image_layer)
-      if(this.config.background_image_layer.maxSubdivisionLevel)
+      if (this.config.background_image_layer.maxSubdivisionLevel)
         maxSubdivisionLevel =
           this.config.background_image_layer.maxSubdivisionLevel;
 
@@ -395,10 +390,157 @@ export class View3D {
     setupAndAdd3DTilesLayers(this.config, this.layerManager, this.itownsView);
     setupAndAddGeoJsonLayers(this.config, this.itownsView);
 
-
     //disable itowns resize
     this.itownsViewResize = this.itownsView.resize.bind(this.itownsView);
     this.itownsView.resize = function () {};
+  }
+
+  /**
+   * Adds WMS imagery layer
+   */
+  addBaseMapLayer() {
+    if (!this.config['background_image_layer']) {
+      console.warn('no background_image_layer in config');
+      return;
+    }
+    const wmsImagerySource = new itowns.WMSSource({
+      extent: this.extent,
+      name: this.config['background_image_layer']['name'],
+      url: this.config['background_image_layer']['url'],
+      version: this.config['background_image_layer']['version'],
+      projection: this.projection,
+      format: this.config['background_image_layer']['format'],
+    });
+
+    // Add a WMS imagery layer
+    const wmsImageryLayer = new itowns.ColorLayer(
+      this.config['background_image_layer']['layer_name'],
+      {
+        updateStrategy: {
+          type: itowns.STRATEGY_DICHOTOMY,
+          options: {},
+        },
+        source: wmsImagerySource,
+        transparent: true,
+      }
+    );
+    this.itownsView.addLayer(wmsImageryLayer);
+  }
+
+  /**
+   * Adds WMS elevation Layer
+   */
+  addElevationLayer() {
+    if (!this.config['elevation_layer']) {
+      console.warn('no elevation_layer in config');
+      return;
+    }
+
+    // Add a WMS elevation source
+    const wmsElevationSource = new itowns.WMSSource({
+      extent: this.extent,
+      url: this.config['elevation_layer']['url'],
+      name: this.config['elevation_layer']['name'],
+      projection: this.projection,
+      heightMapWidth: 256,
+      format: this.config['elevation_layer']['format'],
+    });
+    // Add a WMS elevation layer
+    const wmsElevationLayer = new itowns.ElevationLayer(
+      this.config['elevation_layer']['layer_name'],
+      {
+        useColorTextureElevation: true,
+        colorTextureElevationMinZ: 149,
+        colorTextureElevationMaxZ: 622,
+        source: wmsElevationSource,
+      }
+    );
+    this.itownsView.addLayer(wmsElevationLayer);
+  }
+
+  /**
+   * Sets up a 3D Tiles layer and adds it to the itowns view
+   *
+   * @param {string} layerConfig The name of the layer to setup
+   */
+  setupAndAdd3DTilesLayers() {
+    // Positional arguments verification
+    if (!this.config['3DTilesLayers']) {
+      console.warn('No 3DTilesLayers field in the configuration file');
+      return;
+    }
+
+    this.layerManager = new LayerManager(this.itownsView);
+
+    const layers = {};
+    for (const layer of this.config['3DTilesLayers']) {
+      layers[layer.id] = this.setup3DTilesLayer(layer);
+      itowns.View.prototype.addLayer.call(this.itownsView, layers[layer.id][0]);
+    }
+    return layers;
+  }
+
+  /**
+   * Create an iTowns 3D Tiles layer based on the specified layerConfig.
+   *
+   * @param {string} layerConfig The name of the layer to setup from the
+   * generalDemoConfig.json config file
+   * @param layer
+   */
+  setup3DTilesLayer(layer) {
+    if (!layer['id'] || !layer['url']) {
+      throw 'Your layer does not have url id properties or both. ';
+    }
+
+    const extensionsConfig = layer['extensions'];
+    const extensions = new itowns.C3DTExtensions();
+    if (extensionsConfig) {
+      for (let i = 0; i < extensionsConfig.length; i++) {
+        if (extensionsConfig[i] === '3DTILES_temporal') {
+          extensions.registerExtension('3DTILES_temporal', {
+            [itowns.C3DTilesTypes.batchtable]: $3DTemporalBatchTable,
+            [itowns.C3DTilesTypes.boundingVolume]: $3DTemporalBoundingVolume,
+            [itowns.C3DTilesTypes.tileset]: $3DTemporalTileset,
+          });
+        } else if (extensionsConfig[i] === '3DTILES_batch_table_hierarchy') {
+          extensions.registerExtension('3DTILES_batch_table_hierarchy', {
+            [itowns.C3DTilesTypes.batchtable]:
+              itowns.C3DTBatchTableHierarchyExtension,
+          });
+        } else {
+          console.warn(
+            'The 3D Tiles extension ' +
+              extensionsConfig[i] +
+              ' specified in generalDemoConfig.json is not supported ' +
+              'by UD-Viz yet. Only 3DTILES_temporal and ' +
+              '3DTILES_batch_table_hierarchy are supported.'
+          );
+        }
+      }
+    }
+
+    const $3dTilesLayer = new itowns.C3DTilesLayer(
+      layer['id'],
+      {
+        name: layer['id'],
+        source: new itowns.C3DTilesSource({
+          url: layer['url'],
+        }),
+        registeredExtensions: extensions,
+        overrideMaterials: false,
+      },
+      this.itownsView
+    );
+
+    const $3DTilesManager = new TilesManager(this.itownsView, $3dTilesLayer);
+    if (layer['color']) {
+      const color = parseInt(layer['color']);
+      $3DTilesManager.color = color;
+    }
+
+    this.layerManager.tilesManagers.push($3DTilesManager);
+
+    return [$3dTilesLayer, $3DTilesManager];
   }
 
   getLayerManager() {

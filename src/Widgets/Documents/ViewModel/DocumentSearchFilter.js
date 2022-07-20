@@ -72,7 +72,7 @@ export class DocumentSearchFilter extends DocumentFilter {
    */
   filterDocument(doc) {
     if (this.keywords.length > 0) {
-      for (let keyword of this.keywords) {
+      for (const keyword of this.keywords) {
         if (
           !doc.title.toLowerCase().includes(keyword) &&
           !doc.description.toLowerCase().includes(keyword)

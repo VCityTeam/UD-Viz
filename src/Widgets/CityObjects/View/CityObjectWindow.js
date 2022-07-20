@@ -62,7 +62,7 @@ export class CityObjectWindow extends Window {
      */
     this.extensions = [];
 
-    let viewerDiv = document.getElementById('viewerDiv');
+    const viewerDiv = document.getElementById('viewerDiv');
     /**
      * The event listener for mouse clicks.
      *
@@ -147,7 +147,7 @@ export class CityObjectWindow extends Window {
     this.filterWindow.disable();
 
     // Add extensions
-    for (let extension of Object.values(this.extensions)) {
+    for (const extension of Object.values(this.extensions)) {
       this._createExtensionElement(extension);
     }
 
@@ -156,7 +156,7 @@ export class CityObjectWindow extends Window {
     this.clearFilterButtonElement.onclick = () => this.provider.removeLayer();
 
     this.clearSelectionButtonElement.onclick = () =>
-      this._clearCityObjectSelection();    
+      this._clearCityObjectSelection();
 
     this.clearSelectionButtonElement.disabled = true;
 
@@ -175,13 +175,14 @@ export class CityObjectWindow extends Window {
    */
   _updateLayerDescription() {
     if (this.isCreated) {
-      let layer = this.provider.getLayer();
-      if(this.selectedFilterElement){
+      const layer = this.provider.getLayer();
+      if (this.selectedFilterElement) {
         if (layer) {
           this.layerColorIndicatorElement.style.display = '';
           this.selectedFilterElement.innerText = layer.filter.toString();
           this.layerColorIndicatorElement.style.background =
-              '#' + new THREE.Color(layer.style.materialProps.color).getHexString();
+            '#' +
+            new THREE.Color(layer.style.materialProps.color).getHexString();
         } else {
           this.selectedFilterElement.innerText = '';
           this.layerColorIndicatorElement.style.display = 'none';
@@ -272,8 +273,8 @@ export class CityObjectWindow extends Window {
         Batch ID : ${cityObject.batchId}<br>
         Layer : ${cityObject.tile.layer.name}
     `;
-    for (let prop of Object.entries(cityObject.props)) {
-      if(prop[0] != 'group' && prop[0] != 'properties'){
+    for (const prop of Object.entries(cityObject.props)) {
+      if (prop[0] != 'group' && prop[0] != 'properties') {
         html += `
         <br>${prop[0]} : ${prop[1]}
       `;

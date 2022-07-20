@@ -38,7 +38,7 @@ export class LinkCountFilter extends CityObjectFilter {
    * @param {CityObject} cityObject
    */
   accepts(cityObject) {
-    let linkCount = this.provider.getLinksFromCityObject(cityObject).length;
+    const linkCount = this.provider.getLinksFromCityObject(cityObject).length;
     return linkCount >= this.requiredCount;
   }
 
@@ -78,7 +78,7 @@ export class LinkedWithDisplayedDocumentFilter extends CityObjectFilter {
    * @param {CityObject} cityObject
    */
   accepts(cityObject) {
-    let found = this.provider
+    const found = this.provider
       .getDisplayedDocumentLinks()
       .find(
         (link) => link.target_id == cityObject.props['cityobject.database_id']
@@ -118,7 +118,7 @@ export class LinkedWithFilteredDocumentsFilter extends CityObjectFilter {
    * @param {CityObject} cityObject
    */
   accepts(cityObject) {
-    let found = this.provider
+    const found = this.provider
       .getFilteredDocumentsLinks()
       .find(
         (link) => link.target_id == cityObject.props['cityobject.database_id']
