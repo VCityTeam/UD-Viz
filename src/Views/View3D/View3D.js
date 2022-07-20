@@ -284,7 +284,6 @@ export class View3D {
     } else {
       this.rootWebGL.style.pointerEvents = '';
     }
-    console.log('catch css3D event ', value);
   }
 
   appendBillboard(billboard) {
@@ -362,12 +361,13 @@ export class View3D {
       range: range,
       tilt: tilt,
     };
-
+    
     //maxSubdivisionLevel
     let maxSubdivisionLevel = 3;
-    if (this.config.background_image_layer.maxSubdivisionLevel)
-      maxSubdivisionLevel =
-        this.config.background_image_layer.maxSubdivisionLevel;
+    if (this.config.background_image_layer)
+      if(this.config.background_image_layer.maxSubdivisionLevel)
+        maxSubdivisionLevel =
+          this.config.background_image_layer.maxSubdivisionLevel;
 
     this.itownsView = new itowns.PlanarView(this.rootWebGL, extent, {
       disableSkirt: false,

@@ -100,7 +100,8 @@ export function setupAndAdd3DTilesLayers(config, layerManager, itownsView) {
 export function setupAndAddGeoJsonLayers(config, itownsView) {
   // Positional arguments verification
   if (!config['GeoJSONLayers']) {
-    throw 'No GeoJSONLayers field in the configuration file';
+    console.warn('No "GeoJSONLayers" field in the configuration file');
+    return;
   }
   /**
    * Create an iTowns GeoJson layer based on the specified layerConfig.
@@ -112,10 +113,11 @@ export function setupAndAddGeoJsonLayers(config, itownsView) {
    */
   const setupAndAddGeoJsonLayer = function (layer) {
     if (!layer['id'] || !layer['url'] || !layer['crs']) {
-      throw (
-        'Your layer does not have either "url", "crs" or "id" properties. ' +
+      console.warn(
+        'Your "GeoJsonLayer" field does not have either "url", "crs" or "id" properties. ' +
         '(in UD-Viz/examples/config/all_widget_config.json)'
       );
+      return;
     }
 
     // Declare the data source for the layer
@@ -137,10 +139,7 @@ export function setupAndAddGeoJsonLayers(config, itownsView) {
     // return geojsonLayer;
   };
 
-  const layers = {};
   for (let layer of config['GeoJSONLayers']) {
-    // layers[layer.id] = this.setupGeoJsonLayer(layer);
-    // this.addGeoJsonLayer(layers[layer.id]);
     setupAndAddGeoJsonLayer(layer);
   }
 }
@@ -152,7 +151,10 @@ export function setupAndAddGeoJsonLayers(config, itownsView) {
  * @param {itowns.Extent} extent extent of the view
  */
 export function addBaseMapLayer(config, itownsView, extent) {
-  if (!config['background_image_layer']) return;
+  if (!config['background_image_layer']){
+    console.warn('No "BaseMapLayer" field in the configuration file');
+    return;
+  } 
 
   let wmsImagerySource = new itowns.WMSSource({
     extent: extent,
@@ -184,7 +186,10 @@ export function addBaseMapLayer(config, itownsView, extent) {
  * @param {itowns.Extent} extent extent of the view
  */
 export function addElevationLayer(config, itownsView, extent) {
-  if (!config['elevation_layer']) return;
+  if (!config['elevation_layer']){
+    console.warn('No "ElevationLayer" field in the configuration file');
+    return;
+  } 
 
   // Add a WMS elevation source
   let wmsElevationSource = new itowns.WMSSource({
