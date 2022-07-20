@@ -18,7 +18,8 @@ export class AboutWindow extends ModuleView {
     document.getElementById('contentSection').append(aboutDiv);
 
     // Create HMTL
-    document.getElementById('aboutWindow').innerHTML = `<div id="text">
+    document.getElementById('aboutWindow').innerHTML =
+      `<div id="text">
              <br>
              <p>This UD-Viz-Core demo is part of the 
              <a target="_blank"
@@ -71,6 +72,15 @@ export class AboutWindow extends ModuleView {
                     </li>
                 </ul>
              </p>
+             <p style="display: inline-block; color: white; margin: 0;">
+             Icons made by <a href="https://www.freepik.com/"
+             title="Freepik">Freepik</a> from
+             <a href="https://www.flaticon.com/"
+             title="Flaticon">www.flaticon.com</a><br> is licensed by
+             <a href="http://creativecommons.org/licenses/by/3.0/"
+             title="Creative Commons BY 3.0" target="_blank">
+             CC 3.0 BY</a>
+         </p>
         </div>
         <button id="aboutCloseButton">Close</button>
         `;
