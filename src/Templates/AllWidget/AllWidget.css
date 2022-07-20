@@ -96,6 +96,17 @@ section {
   z-index: 5;
 }
 
+#_all_widget_profile button>img{
+  position: fixed;
+  width: 35px;
+  height: 35px;
+  top: 9px;
+  right: 60px;
+  border-width: 0;
+  background-color: transparent;
+  z-index: 5;
+}
+
 #_all_widget_profile_name {
   display: inline-block;
   color: white;

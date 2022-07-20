@@ -130,7 +130,7 @@ export class AllWidget {
             </div>
             <div id="${this.authenticationMenuLoggedOutId}">
                 <button type="button" id="${this.authenticationLoginButtonId}"
-                class="logInOut">Sign in</button>
+                class="logInOut"><img src="./../../../../examples/assets/icons/user-solid.svg"></button>
             </div>
         `;
   }
