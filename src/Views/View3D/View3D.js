@@ -50,6 +50,7 @@ export class View3D {
     // Ui
     this.ui = document.createElement('div');
     this.ui.classList.add('ui_View3D');
+    this.ui.setAttribute('id', 'ui_View3D');
     this.rootWebGL.appendChild(this.ui);
 
     // Listen resize event
