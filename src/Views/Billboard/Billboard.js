@@ -63,6 +63,11 @@ export class Billboard {
     }
   }
 
+  lookAt(vector) {
+    this.maskObject.lookAt(vector);
+    this.css3DObject.lookAt(vector);
+  }
+
   getMaskObject() {
     return this.maskObject;
   }
