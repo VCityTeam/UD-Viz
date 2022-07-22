@@ -197,6 +197,26 @@ export class AssetsManager {
 
     this.buildGizmo();
     this.buildPointerMouse();
+    this.buildPin();
+  }
+
+  buildPin() {
+    const result = new THREE.Object3D();
+
+    const geometrySphere = new THREE.SphereGeometry(1, 32, 32);
+    const sphere = new THREE.Mesh(geometrySphere, DEFAULT_MATERIAL);
+
+    result.add(sphere);
+
+    const height = 3;
+    const geometryCylinder = new THREE.CylinderGeometry(0.75, 0, height, 32);
+    const cylinder = new THREE.Mesh(geometryCylinder, DEFAULT_MATERIAL);
+    cylinder.translateZ(-height * 0.5);
+    cylinder.rotateOnAxis(new THREE.Vector3(1, 0, 0), Math.PI * 0.5);
+
+    result.add(cylinder);
+
+    this.objects['pin'] = result;
   }
 
   /**
