@@ -55,7 +55,16 @@ export function setupAndAdd3DTilesLayers(config, layerManager, itownsView) {
       }
     }
 
-    const $3dTilesLayer = new itowns.C3DTilesLayer(
+    let overrideMaterial = false;
+    let material;
+    if (layer['pc_size']) {
+      material = new THREE.PointsMaterial({
+        size: layer['pc_size'],
+        vertexColors: true,
+      });
+      overrideMaterial = true;
+    }
+    var $3dTilesLayer = new itowns.C3DTilesLayer(
       layer['id'],
       {
         name: layer['id'],
@@ -63,11 +72,16 @@ export function setupAndAdd3DTilesLayers(config, layerManager, itownsView) {
           url: layer['url'],
         }),
         registeredExtensions: extensions,
-        overrideMaterials: false,
+        overrideMaterials: overrideMaterial,
       },
       itownsView
     );
+    if (overrideMaterial) {
+      $3dTilesLayer.overrideMaterials = material;
+      $3dTilesLayer.material = material;
+    }
 
+    
     const $3DTilesManager = new TilesManager(itownsView, $3dTilesLayer);
 
     if (layer['color']) {
