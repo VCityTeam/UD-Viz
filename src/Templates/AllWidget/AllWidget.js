@@ -35,7 +35,19 @@ export class AllWidget {
         // Use the stable server
         _this.addLogos();
 
-        _this.initView3D();
+        // Initialize iTowns 3D view
+        _this.init3DView();
+
+        //dynamic near far computation
+        _this.view.addFrameRequester(
+          itowns.MAIN_LOOP_EVENTS.BEFORE_RENDER,
+          computeNearFarCamera.bind(
+            null,
+            _this.view.camera.camera3D,
+            _this.extent,
+            400
+          )
+        );
 
         resolve(_this.config);
       });
