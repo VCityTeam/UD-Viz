@@ -228,10 +228,10 @@ export class GameView extends View3D {
             cb(_this.localContext);
           });
 
+          //update Gameview
+          _this.update(_this.interpolator.computeCurrentStates());
           //render
           if (_this.isRendering && !_this.itownsRendering) {
-            //update Gameview
-            _this.update(_this.interpolator.computeCurrentStates());
             //This notably charge missing iTowns tiles according to current view.
             const iV = _this.itownsView;
             if (iV) iV.notifyChange(_this.getCamera());
