@@ -15,6 +15,7 @@ import './Help.css';
 export class HelpWindow extends ModuleView {
   constructor(config = {}) {
     super();
+    this.config = config;
 
     // Button help to open help div
     const helpButton = document.createElement('button');
@@ -29,18 +30,22 @@ export class HelpWindow extends ModuleView {
     //Event for openning help window
     helpButton.addEventListener('mousedown',
       () => {
-        this.enable(this);
+        if (document.getElementById('_widget_layout').style.display == 'block')
+          this.disable(this);
+        else
+          this.enable(this);
       });
+  }
 
-    ///////////// Html elements
-    const helpDiv = document.createElement('div');
-    helpDiv.id = 'helpWindow';
-    document.getElementById('contentSection').append(helpDiv);
-
-    // ////////// Build dynamically the html content
+  /////// MODULE VIEW METHODS
+  enableView() {
+    const widgetlayout = document.getElementById('_widget_layout');
+    widgetlayout.style.setProperty('display', 'block');
+    widgetlayout.innerHTML = '';
+    // Create HMTL
     const promises = [];
-    if (config.htmlPaths && config.htmlPaths.length) {
-      config.htmlPaths.forEach(function (path) {
+    if (this.config.htmlPaths && this.config.htmlPaths.length) {
+      this.config.htmlPaths.forEach(function (path) {
         promises.push(
           new Promise((resolve, reject) => {
             jQuery.ajax({
@@ -48,7 +53,7 @@ export class HelpWindow extends ModuleView {
               url: path,
               datatype: 'html',
               success: (data) => {
-                helpDiv.innerHTML += data;
+                widgetlayout.innerHTML += data;
                 resolve();
               },
               error: (e) => {
@@ -60,27 +65,10 @@ export class HelpWindow extends ModuleView {
         );
       });
     }
-    const closeCallback = this.disable.bind(this);
-    Promise.all(promises).then(function () {
-      // Create close button
-      const closeButton = document.createElement('button');
-      closeButton.id = 'helpCloseButton';
-      closeButton.innerHTML = 'Close';
-      helpDiv.appendChild(closeButton);
-      // Close the window...when close button is hit
-      closeButton.addEventListener('mousedown', closeCallback, false);
-    });
-
-    this.disableView();
-  }
-
-  // ///// MODULE VIEW METHODS
-
-  enableView() {
-    document.getElementById('helpWindow').style.setProperty('display', 'block');
   }
 
   disableView() {
-    document.getElementById('helpWindow').style.setProperty('display', 'none');
+    document.getElementById('_widget_layout').innerHTML = '';
+    document.getElementById('_widget_layout').style.setProperty('display', 'none'); 
   }
 }
