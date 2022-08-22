@@ -263,10 +263,10 @@ section {
 }
 
 .UD-VIZ {
-  width: 69px;
+  width: 60px;
   height: 40px;
   margin: 30px auto 10px auto;
-  font-size: 2vh;
+  font-size: 1.5vh;
   font-weight: bold;
   font-stretch: normal;
   font-style: normal;
@@ -274,5 +274,7 @@ section {
   letter-spacing: normal;
   text-align: left;
   color: white;
+  text-align: center;
+  vertical-align: middle;
   /* align-items: center; */
 }
