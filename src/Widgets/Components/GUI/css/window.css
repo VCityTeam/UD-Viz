@@ -63,12 +63,12 @@
 
     /* A box arround a section */
 .window-inner-content .box-section {
-    background: rgba(255, 255, 255, 0.548);
+    background: rgba(255, 255, 255, 0.168);
     width: auto;
     height: auto;
     margin: 0 0 30px;
     padding: 11px 10px 35px;
-    opacity: 0.2;
+    /* opacity: 0.2; */
     border-radius: 7px;
 }
 
