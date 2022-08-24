@@ -151,3 +151,13 @@ label:after {
 .text-justify {
     text-align: justify;
 }
+
+button{
+    width: auto;
+    height: auto;
+    margin: 5px 133px 0 1px;
+    padding: 5px 6px 6px;
+    border-radius: 4px;
+    background-color: #d1d0de;
+    border: none;
+}
