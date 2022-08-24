@@ -123,7 +123,7 @@ export class Window extends ModuleView {
       if (this.defaultStyle) {
         windowDiv.className = 'window';
         dragElement(windowDiv, this.header);
-        // this.headerCloseButton.onclick = this.disable.bind(this);
+        this.headerCloseButton.onclick = this.disable.bind(this);
       }
 
       for (const extension of this.windowExtensions) {
@@ -173,7 +173,7 @@ export class Window extends ModuleView {
     return `
             <div class="window-header" id="${this.headerId}">
                 <h1 class="window-title" id="${this.headerTitleId}">${this.title}</h1>
-                
+                <button class="window-close-button" id="${this.headerCloseButtonId}">&#10799;</button>
             </div>
             <div class="window-content" id="${this.contentId}">
                 <div class="window-inner-content" id="${this.innerContentId}">
