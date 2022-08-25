@@ -7,7 +7,7 @@ import * as itowns from 'itowns';
 import { Window } from '../Components/GUI/js/Window';
 
 export class BaseMap extends Window {
-    /**
+  /**
    * Manages multiple WMS sources used as Itowns ColoLayer for background
    *
    * @param {itownsView}itownsView An ItownsView.
@@ -39,14 +39,14 @@ export class BaseMap extends Window {
   createLayers(){
     let i = 0;
     for(let layer of this.baseMapLayers){
-      layer.id = "baseMapLayer_"+i;
+      layer.id = 'baseMapLayer_'+i;
       let source = new itowns.WMSSource({
         extent: this.appExtent,
         name: layer.name,
         url: layer.url,
         version: layer.version,
         projection: this.appProjection,
-        format: "image/jpeg",
+        format: 'image/jpeg',
       });
       // Add a WMS imagery layer
       let colorLayer = new itowns.ColorLayer(
