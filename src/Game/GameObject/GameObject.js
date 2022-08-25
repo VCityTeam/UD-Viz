@@ -80,6 +80,9 @@ const GameObjectModule = class GameObject {
 
     //freeze components and transform
     this.freeze = json.freeze || false;
+
+    //list to force certain component to be serialize
+    this.forceSerializeComponents = json.forceSerializeComponents || [];
   }
 
   /**
@@ -784,6 +787,13 @@ const GameObjectModule = class GameObject {
       }
     }
 
+    //add forced serialize component
+    for (let index = 0; index < this.forceSerializeComponents.length; index++) {
+      const type = this.forceSerializeComponents[index];
+      const c = this.components[type];
+      components[type] = c.toJSON();
+    }
+
     return {
       name: this.name,
       type: GameObjectModule.TYPE,
@@ -791,6 +801,7 @@ const GameObjectModule = class GameObject {
       outdated: this.outdated,
       uuid: this.uuid,
       parentUUID: this.parentUUID,
+      forceSerializeComponents: this.forceSerializeComponents,
       components: components,
       children: children,
       transform: {

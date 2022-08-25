@@ -126,6 +126,7 @@ const RenderModule = class Render {
    */
   addObject3D(obj) {
     this.object3D.add(obj);
+    this.setColor(this.color);
   }
 
   /**
