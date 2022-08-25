@@ -73,7 +73,8 @@ export class DocumentInspectorWindow extends AbstractDocumentWindow {
     this.window.style.left = 'unset';
     this.window.style.right = '10px';
     this.window.style.top = '10px';
-    this.window.style.width = '390px';
+    this.window.style.height = 'auto';
+    this.window.style.width = '30%';
     this.window.style.borderRadius = '15px';
 
     // Add extensions

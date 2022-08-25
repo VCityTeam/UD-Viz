@@ -52,7 +52,6 @@ export class PositionerWindow extends Window {
   }
 
   windowCreated() {
-    this.window.style.width = '300px';
 
     this.formElement.onsubmit = () => {
       this._travel();

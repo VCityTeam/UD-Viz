@@ -99,7 +99,6 @@ export class Debug3DTilesWindow extends Window {
   }
 
   windowCreated() {
-    this.window.style.width = '300px';
     this.logTBIButtonElement.onclick = () => {
       this.logTilesManager();
     };
