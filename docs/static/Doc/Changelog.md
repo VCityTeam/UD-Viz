@@ -1,3 +1,18 @@
+    
+# v2.38.0
+    
+* [Issue 349](https://github.com/orgs/VCityTeam/projects/17/views/1): GeoJSON data layer integration via JSON config file  and created an example in the UD-Viz mosaïc
+* [Issue 234](https://github.com/orgs/VCityTeam/projects/17/views/1): Refactoring of the UD-Viz library structure, factorization of the View3D which includes the view itowns as well as the data integration methods in it. 
+* [Issue 249](https://github.com/orgs/VCityTeam/projects/17/views/1): Check for collisions in this local context rather than in the world/server context.
+* [Issue 389](https://github.com/orgs/VCityTeam/projects/17/views/1): Move 3DDebugTiles from extensions to widgets.
+* [Issue 284](https://github.com/orgs/VCityTeam/projects/17/views/1): Assert DRYness between avatar example and demo-bon.
+* [Issue 231](https://github.com/orgs/VCityTeam/projects/17/views/1): Load 3DTiles from distant server instead of local. The 3DTiles are now on a the Liris server.
+* [Issue 361](https://github.com/orgs/VCityTeam/projects/17/views/1): CityObject and 3DTiles Debug widgets can apply style to invisible tiles.
+* [Issue 366](https://github.com/orgs/VCityTeam/projects/17/views/1): Dynamic layer creation, 2 ways to create dynamic layers:
+    * A first way in which a stream of GeoJson created by GAMA is received.
+    * Link to local GeoJson and change every second to give the dynamic effect.
+* [Issue 188](https://github.com/orgs/VCityTeam/projects/17/views/1): Propose in a module a pre_selection of background image layer, coming from IGN for example, and created an example in the UD-Viz mosaïc.
+
 # v2.37.7
 
     - Billboard fixes
