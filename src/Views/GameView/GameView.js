@@ -171,7 +171,6 @@ export class GameView extends View3D {
         };
       } else {
         THREE.Object3D.DefaultUp.set(0, 0, 1);
-        console.log('default up');
 
         //no origin means no itowns view fill attr
         this.scene = new THREE.Scene();
