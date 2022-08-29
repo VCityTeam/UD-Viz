@@ -1,4 +1,6 @@
-    
+# v2.38.1
+    - forceSerializeComponent on GameObject feature
+
 # v2.38.0
     
 * [Issue 349](https://github.com/orgs/VCityTeam/projects/17/views/1): GeoJSON data layer integration via JSON config file  and created an example in the UD-Viz mosaïc
