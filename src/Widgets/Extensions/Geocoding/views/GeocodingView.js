@@ -72,7 +72,7 @@ export class GeocodingView extends ModuleView {
    * Destroys the view.
    */
   dispose() {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       if (this.isCreated) {
         const div = this.viewElement;
         const input = this.searchInputElement;

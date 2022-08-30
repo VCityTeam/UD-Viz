@@ -91,8 +91,6 @@ module.exports = class Commands {
   }
 
   onOutdated() {
-    if (!this.conf.worldComputerDt == undefined) debugger;
-
     this.worldDtLabel.innerHTML =
       'World FPS = ' + Math.round(1000 / this.conf.worldComputerDt);
   }

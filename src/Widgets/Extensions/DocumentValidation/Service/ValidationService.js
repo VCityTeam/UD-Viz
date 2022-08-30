@@ -31,6 +31,7 @@ export class ValidationService {
   async validate(doc) {
     const formData = new FormData();
     formData.append('id', doc.id);
+    // eslint-disable-next-line no-unused-vars
     const response = await this.requestService.request(
       'POST',
       this.validateUrl,

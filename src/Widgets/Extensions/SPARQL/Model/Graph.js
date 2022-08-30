@@ -92,7 +92,7 @@ export class Graph {
           })
           .style('fill', 'white');
         link_label
-          .filter((e, j) => {
+          .filter((e) => {
             return d.index == e.source.index || d.index == e.target.index;
           })
           .style('fill', 'white');

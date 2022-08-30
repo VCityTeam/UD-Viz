@@ -150,7 +150,7 @@ export class GameView extends View3D {
   start(state = this.interpolator.computeCurrentState()) {
     if (!state) throw new Error('no state');
 
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       //build itowns view
       const o = state.getOrigin();
       const r = this.config.game.radiusExtent;
@@ -262,7 +262,7 @@ export class GameView extends View3D {
 
     if (value) {
       //creating controls like this put it in this.itownsView.controls
-      const c = new itowns.PlanarControls(this.itownsView, {
+      new itowns.PlanarControls(this.itownsView, {
         handleCollision: false,
         focusOnMouseOver: false,
         focusOnMouseClick: false,
@@ -340,7 +340,7 @@ export class GameView extends View3D {
     THREEUtils.initRenderer(renderer, this.skyColor);
 
     //add lights
-    const { directionalLight, ambientLight } = THREEUtils.addLights(this.scene);
+    const { directionalLight } = THREEUtils.addLights(this.scene);
 
     //configure shadows based on a config files
     directionalLight.shadow.mapSize = new THREE.Vector2(

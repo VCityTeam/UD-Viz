@@ -55,9 +55,8 @@ const AudioModule = class Audio {
    * Initialize
    *
    * @param {AssetsManager} assetsManager local assetsManager
-   * @param {Shared} udvShared ud-viz/Game/Shared module
    */
-  initAssets(assetsManager, udvShared) {
+  initAssets(assetsManager) {
     const _this = this;
     this.soundsJSON.forEach(function (idS) {
       _this.sounds[idS] = assetsManager.fetchSound(idS, _this.conf);

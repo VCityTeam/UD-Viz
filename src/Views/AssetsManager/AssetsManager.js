@@ -433,14 +433,15 @@ export class AssetsManager {
       const resultRequire = string.replace(regexRequire, '');
       return resultRequire.replace(regexType, '');
     };
-    const module = import('./AssetsManager');
+    // eslint-disable-next-line no-unused-vars
+    const module = import('./AssetsManager'); //DO NOT REMOVE
 
     if (config.worldScripts) {
       const idLoadingWorldScripts = 'WorldScripts';
       loadingView.addLoadingBar(idLoadingWorldScripts);
 
       promises.push(
-        new Promise((resolve, reject) => {
+        new Promise((resolve) => {
           let count = 0;
           for (const idScript in config.worldScripts) {
             const scriptPath = config.worldScripts[idScript].path;
@@ -474,7 +475,7 @@ export class AssetsManager {
       loadingView.addLoadingBar(idLoadingLocalScripts);
 
       promises.push(
-        new Promise((resolve, reject) => {
+        new Promise((resolve) => {
           let count = 0;
           for (const idScript in config.localScripts) {
             const scriptPath = config.localScripts[idScript].path;
@@ -508,7 +509,7 @@ export class AssetsManager {
       loadingView.addLoadingBar(idLoadingPrefabs);
 
       promises.push(
-        new Promise((resolve, reject) => {
+        new Promise((resolve) => {
           let count = 0;
           for (const idPrefab in config.prefabs) {
             const scriptPath = config.prefabs[idPrefab].path;
@@ -542,7 +543,7 @@ export class AssetsManager {
       loadingView.addLoadingBar(idLoadingWorlds);
 
       promises.push(
-        new Promise((resolve, reject) => {
+        new Promise((resolve) => {
           jquery.get(
             config.worlds.folder + 'index.json',
             function (indexString) {
@@ -582,7 +583,7 @@ export class AssetsManager {
       loadingView.addLoadingBar(idLoadingCss);
 
       promises.push(
-        new Promise((resolve, reject) => {
+        new Promise((resolve) => {
           let count = 0;
           for (const idCss in config.css) {
             const cssPath = config.css[idCss].path;
@@ -613,7 +614,7 @@ export class AssetsManager {
       );
     }
 
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       Promise.all(promises).then(function () {
         if (loadingView) {
           loadingView.dispose();

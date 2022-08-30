@@ -13,10 +13,8 @@ module.exports = class UpdateElevationGround {
   }
 
   init() {
-    const _this = this;
-
+    // eslint-disable-next-line no-unused-vars
     const localContext = arguments[1];
-    const gV = localContext.getGameView();
   }
 
   tick() {

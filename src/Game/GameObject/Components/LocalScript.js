@@ -1,7 +1,6 @@
 /** @format */
 
 const THREE = require('three');
-const JSONUtils = require('../../Components/JSONUtils');
 
 /**
  * Component used to script a GameObject during the client side update (call from GameView)

@@ -211,7 +211,6 @@ export class DocumentVisualizerWindow extends AbstractDocumentWindow {
     return new Promise((resolve, reject) => {
       try {
         setTimeout(() => {
-          let intervalHandle;
           const increaseOpacity = () => {
             let nextValue = Number(this.opacitySliderElement.value) + 0.01;
             this.opacitySliderElement.value = nextValue;
@@ -221,7 +220,7 @@ export class DocumentVisualizerWindow extends AbstractDocumentWindow {
               clearInterval(intervalHandle);
             }
           };
-          intervalHandle = setInterval(increaseOpacity, 15);
+          const intervalHandle = setInterval(increaseOpacity, 15);
           resolve();
         }, 2000);
       } catch (e) {

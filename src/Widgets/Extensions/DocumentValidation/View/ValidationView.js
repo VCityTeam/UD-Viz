@@ -2,7 +2,6 @@
 
 import { DocumentModule } from '../../../Documents/DocumentModule';
 import { DocumentSource } from '../../../Documents/Model/DocumentService';
-import { Document } from '../../../Documents/Model/Document';
 
 //Components
 import { Window } from '../../../Components/GUI/js/Window';
@@ -162,9 +161,8 @@ export class ValidationView {
    * Validates the document.
    *
    * @private
-   * @param {Document} doc The document to validate.
    */
-  _validateDocument(doc) {
+  _validateDocument() {
     if (
       !confirm(
         'Are you sure do validate this document ? ' +
