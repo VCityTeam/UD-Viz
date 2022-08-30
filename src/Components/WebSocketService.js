@@ -36,7 +36,7 @@ export class WebSocketService {
     });
 
     this.socket.on('disconnect', (reason) => {
-      console.warn('Disconnected from server. reason = ', reason);
+      alert('Disconnected from server. reason is ', reason);
     });
   }
 
