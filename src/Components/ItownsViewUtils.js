@@ -114,7 +114,7 @@ export function setupAndAddGeoJsonLayers(config, itownsView) {
     if (!layer['id'] || !layer['url'] || !layer['crs']) {
       console.warn(
         'Your "GeoJsonLayer" field does not have either "url", "crs" or "id" properties. ' +
-        '(in UD-Viz/examples/config/all_widget_config.json)'
+          '(in UD-Viz/examples/config/all_widget_config.json)'
       );
       return;
     }
@@ -149,10 +149,10 @@ export function setupAndAddGeoJsonLayers(config, itownsView) {
  * @param {itowns.Extent} extent extent of the view
  */
 export function addBaseMapLayer(config, itownsView, extent) {
-  if (!config['background_image_layer']){
+  if (!config['background_image_layer']) {
     console.warn('No "BaseMapLayer" field in the configuration file');
     return;
-  } 
+  }
 
   let wmsImagerySource = new itowns.WMSSource({
     extent: extent,
@@ -184,10 +184,10 @@ export function addBaseMapLayer(config, itownsView, extent) {
  * @param {itowns.Extent} extent extent of the view
  */
 export function addElevationLayer(config, itownsView, extent) {
-  if (!config['elevation_layer']){
+  if (!config['elevation_layer']) {
     console.warn('No "ElevationLayer" field in the configuration file');
     return;
-  } 
+  }
 
   // Add a WMS elevation source
   let wmsElevationSource = new itowns.WMSSource({
@@ -203,8 +203,10 @@ export function addElevationLayer(config, itownsView, extent) {
     config['elevation_layer']['layer_name'],
     {
       useColorTextureElevation: true,
-      colorTextureElevationMinZ: 144,
-      colorTextureElevationMaxZ: 622,
+      colorTextureElevationMinZ:
+        config['elevation_layer']['colorTextureElevationMinZ'],
+      colorTextureElevationMaxZ:
+        config['elevation_layer']['colorTextureElevationMaxZ'],
       source: wmsElevationSource,
     }
   );
