@@ -63,10 +63,10 @@ export class AllWidget {
     });
     // Define geographic extent: CRS, min/max X, min/max Y
     // area should be one of the properties of the object extents in config file
-    let min_x = parseInt(this.config['extents']['min_x']);
-    let max_x = parseInt(this.config['extents']['max_x']);
-    let min_y = parseInt(this.config['extents']['min_y']);
-    let max_y = parseInt(this.config['extents']['max_y']);
+    const min_x = parseInt(this.config['extents']['min_x']);
+    const max_x = parseInt(this.config['extents']['max_x']);
+    const min_y = parseInt(this.config['extents']['min_y']);
+    const max_y = parseInt(this.config['extents']['max_y']);
     this.extent = new itowns.Extent(
       this.config['projection'],
       min_x,
