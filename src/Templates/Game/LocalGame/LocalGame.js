@@ -41,7 +41,7 @@ export class LocalGame {
   start(world, configPath, options = {}) {
     const _this = this;
 
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       Components.SystemUtils.File.loadJSON(configPath).then(function (config) {
         const assetsManager = new AssetsManager();
         assetsManager
@@ -59,7 +59,7 @@ export class LocalGame {
   }
 
   startWithAssetsLoaded(world, assetsManager, config, options = {}) {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       const worldStateComputer = new Game.WorldStateComputer(
         assetsManager,
         60,

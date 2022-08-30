@@ -1,8 +1,5 @@
 /** @format */
 
-//Components
-import { CityObject } from '../../../Components/3DTiles/Model/CityObject';
-
 /**
  * Represents a filter for city objects. It is basically a function that takes
  * a city object and returns wether it is acceptable.
@@ -37,10 +34,9 @@ export class CityObjectFilter {
    * The function responsible to filter the city objects. It evaluates wether
    * a city object is acceptable according to the filter.
    *
-   * @param {CityObject} cityObject The city object to evaluate.
    * @returns {boolean} Wether the city object is acceptable.
    */
-  accepts(cityObject) {
+  accepts() {
     return true;
   }
 

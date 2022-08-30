@@ -1,11 +1,7 @@
-/** @format */
-
-let Game;
-
 module.exports = class Zeppelin {
+  // eslint-disable-next-line no-unused-vars
   constructor(conf, GameModule) {
     this.conf = conf;
-    Game = GameModule;
   }
 
   //called when this gameobject collider components collides with another one collider components

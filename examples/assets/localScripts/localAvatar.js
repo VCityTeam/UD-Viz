@@ -112,6 +112,7 @@ module.exports = class LocalAvatar {
 
     //FORWARD
     inputManager.addKeyCommand('move_forward', ['z'], function () {
+      // eslint-disable-next-line no-unused-vars
       const dt = localContext.getDt();
       const direction = avatar.computeForwardVector();
       if (checkCollisionFun(direction)) return;
@@ -120,6 +121,7 @@ module.exports = class LocalAvatar {
     });
     //BACKWARD
     inputManager.addKeyCommand('move_backward', ['s'], function () {
+      // eslint-disable-next-line no-unused-vars
       const dt = localContext.getDt();
       const direction = avatar.computeBackwardVector();
       if (checkCollisionFun(direction)) return;

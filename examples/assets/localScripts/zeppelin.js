@@ -1,11 +1,8 @@
 /** @format */
 
-let udviz;
-
 module.exports = class Zeppelin {
-  constructor(conf, udvizBundle) {
+  constructor(conf) {
     this.conf = conf;
-    udviz = udvizBundle;
     this.labelSphereCount = null;
   }
 
@@ -23,7 +20,6 @@ module.exports = class Zeppelin {
   }
 
   onOutdated() {
-    const go = arguments[0];
     this.updateUI();
   }
 };

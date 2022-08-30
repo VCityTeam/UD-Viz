@@ -57,7 +57,6 @@ module.exports = {
     try {
       const file = e.target.files[0];
       if (file) {
-        const _this = this;
         const reader = new FileReader();
         reader.onload = onLoad;
         reader.readAsText(file);
@@ -77,7 +76,6 @@ module.exports = {
     try {
       const file = e.target.files[0];
       if (file) {
-        const _this = this;
         const reader = new FileReader();
         reader.onload = onLoad;
         reader.readAsDataURL(file);

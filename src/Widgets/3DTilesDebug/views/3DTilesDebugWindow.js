@@ -142,6 +142,7 @@ export class Debug3DTilesWindow extends Window {
    *
    * @param {MouseEvent} event The mouse event.
    */
+  // eslint-disable-next-line no-unused-vars
   onMouseMove(event) {
     // Update the current visible tile count
     const visibleTileCount =

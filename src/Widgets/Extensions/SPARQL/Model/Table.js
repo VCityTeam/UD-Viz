@@ -64,7 +64,7 @@ export class Table {
     //filter data by filtertype
     let dataFilter;
     if (filterValue && filterValue !== '') {
-      dataFilter = table.data.filter(function (d, i) {
+      dataFilter = table.data.filter(function (d) {
         if (
           typeof d[column].value === 'string' &&
           d[column].value.includes(filterValue)

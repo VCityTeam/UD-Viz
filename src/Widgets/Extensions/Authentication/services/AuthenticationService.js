@@ -94,7 +94,7 @@ export function AuthenticationService(requestService, config) {
     const result = (
       await this.requestService.send('POST', this.userUrl, formData, false)
     ).response;
-    const obj = JSON.parse(result);
+    JSON.parse(result);
 
     this.notifyObservers();
   };

@@ -141,9 +141,8 @@ const RenderModule = class Render {
    * Initialize 3D model
    *
    * @param {AssetsManager} assetsManager local assetsManager
-   * @param {Shared} udvShared ud-viz/Game/Shared module
    */
-  initAssets(assetsManager, udvShared) {
+  initAssets(assetsManager) {
     this.object3D = new THREE.Object3D();
     this.object3D.name = 'Render Object3D ' + this.parent.getName();
 

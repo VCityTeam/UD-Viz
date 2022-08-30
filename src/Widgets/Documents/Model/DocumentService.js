@@ -139,11 +139,10 @@ export class DocumentSource {
   /**
    * Returns the URL to retrieve the image of the document.
    *
-   * @param {Document} doc The document.
    * @abstract
    * @returns {string}
    */
-  getImageUrl(doc) {
+  getImageUrl() {
     return '';
   }
 }

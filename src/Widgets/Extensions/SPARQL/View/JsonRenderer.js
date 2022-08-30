@@ -94,9 +94,7 @@ const renderjson = (function () {
   const text = function (txt) {
     return document.createTextNode(txt);
   };
-  const div = function () {
-    return document.createElement('div');
-  };
+
   const span = function (classname) {
     const s = document.createElement('span');
     if (classname) s.className = classname;

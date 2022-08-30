@@ -41,6 +41,7 @@ const ColliderModule = class Collider {
    *
    * @param {*} assetsManager
    */
+  // eslint-disable-next-line no-unused-vars
   initAssets(assetsManager) {
     //nada
   }

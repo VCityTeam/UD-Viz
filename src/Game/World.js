@@ -11,7 +11,6 @@ const THREE = require('three');
 const WorldState = require('./WorldState');
 const { Collisions } = require('detect-collisions');
 const udvizVersion = require('../../package.json').version;
-const JSONUtils = require('./Components/JSONUtils');
 
 /**
  * Parent Object of GameObjects, handle simulation and store extradata like the geographic origin
@@ -427,17 +426,17 @@ module.exports = WorldModule;
 //Update json data of the world
 
 //return true if version1 < version2
-const versionIsInferior = function (version1, version2) {
-  const numbers1 = version1.split('.');
-  const numbers2 = version2.split('.');
+// const versionIsInferior = function (version1, version2) {
+//   const numbers1 = version1.split('.');
+//   const numbers2 = version2.split('.');
 
-  for (let index = 0; index < numbers1.length; index++) {
-    const version1Number = parseInt(numbers1[index]);
-    const version2Number = parseInt(numbers2[index]);
-    if (version1Number < version2Number) return true;
-  }
-  return false;
-};
+//   for (let index = 0; index < numbers1.length; index++) {
+//     const version1Number = parseInt(numbers1[index]);
+//     const version2Number = parseInt(numbers2[index]);
+//     if (version1Number < version2Number) return true;
+//   }
+//   return false;
+// };
 
 WorldModule.parseJSON = function (worldJSON) {
   return worldJSON; //for now no patch
