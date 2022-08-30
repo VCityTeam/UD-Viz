@@ -225,8 +225,10 @@ export function addElevationLayer(config, itownsView, extent) {
     config['elevation_layer']['layer_name'],
     {
       useColorTextureElevation: true,
-      colorTextureElevationMinZ: 144,
-      colorTextureElevationMaxZ: 622,
+      colorTextureElevationMinZ:
+        config['elevation_layer']['colorTextureElevationMinZ'],
+      colorTextureElevationMaxZ:
+        config['elevation_layer']['colorTextureElevationMaxZ'],
       source: wmsElevationSource,
     }
   );
