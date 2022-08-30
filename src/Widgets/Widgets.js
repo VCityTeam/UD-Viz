@@ -26,10 +26,9 @@ export { $3DTemporalTileset } from './Temporal/Model/3DTemporalTileset.js';
 
 export { SlideShow } from './SlideShow/SlideShow';
 
-export { Debug3DTilesWindow } from './3DTilesDebug/views/3DTilesDebugWindow'; 
+export { Debug3DTilesWindow } from './3DTilesDebug/views/3DTilesDebugWindow';
 
-export { BaseMap } from './BaseMap/BaseMapWindow'; 
-
+export { BaseMap } from './BaseMap/BaseMapWindow';
 
 import * as Extensions from './Extensions/Extensions';
 export { Extensions };
