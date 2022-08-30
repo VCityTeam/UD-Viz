@@ -39,23 +39,13 @@ export function getBatchIdFromIntersection(inter) {
  * itowns.View.pickObjectsAt
  */
 export function getFirstTileIntersection(intersects) {
-  let first_inter = null;
-  let dist_min = 0;
   for (const inter of intersects) {
-    if (inter.object.visible) {
-      const geomAttributes = inter.object.geometry.attributes;
-      if (geomAttributes && geomAttributes._BATCHID) {
-        if (!first_inter) {
-          first_inter = inter;
-          dist_min = inter.distance;
-        } else if (inter.distance < dist_min) {
-          first_inter = inter;
-          dist_min = inter.distance;
-        }
-      }
+    const tile = getTileFromMesh(inter.object);
+    if (inter.object.visible && tile.visible && tile.content.visible) {
+      return inter;
     }
   }
-  return first_inter;
+  return null;
 }
 
 /**
@@ -559,11 +549,11 @@ export function getMeshesFromTile(tile) {
 
 /**
  *
- * @param tile
+ * @param object
  */
-export function getObject3DFromTile(tile) {
-  if (!tile) {
-    throw 'Tile not loaded in view';
+export function getTileFromMesh(object) {
+  if (!object) {
+    throw 'Object not loaded in view';
   }
 
   //Find the 'Object3D' part of the tile

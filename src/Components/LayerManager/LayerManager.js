@@ -156,7 +156,7 @@ export class LayerManager {
       if (firstInter) {
         const tilesManager = this.getTilesManagerByLayerID(firstInter.layer.id);
         const batchId = getBatchIdFromIntersection(firstInter);
-        const tileId = getObject3DFromTile(firstInter.object).tileId;
+        const tileId = getTileFromMesh(firstInter.object).tileId;
         return tilesManager.tiles[tileId].cityObjects[batchId];
       }
     }
