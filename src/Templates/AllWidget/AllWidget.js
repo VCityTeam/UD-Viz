@@ -403,7 +403,7 @@ export class AllWidget {
    */
   update3DView() {
     // Request itowns view redraw
-    this.view.notifyChange();
+    this.view3D.getItownsView().notifyChange();
   }
 
   ////////////////////////////////////////////////////////
