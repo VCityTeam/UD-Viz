@@ -1,6 +1,5 @@
 /** @format */
 
-const THREE = require('three');
 import * as itowns from 'itowns';
 
 //Components
