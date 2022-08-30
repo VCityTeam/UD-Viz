@@ -347,15 +347,25 @@ export class View3D {
     let tilt = 10;
 
     //assign default value or config value
-    if (this.config['itowns'] && this.config['itowns']['camera']) {
-      if (this.config['itowns']['camera']['heading'])
-        heading = this.config['itowns']['camera']['heading'];
+    if (
+      this.config &&
+      this.config['camera'] &&
+      this.config['camera']['position']
+    ) {
+      if (this.config['camera']['position']['heading'])
+        heading = this.config['camera']['position']['heading'];
 
-      if (this.config['itowns']['camera']['range'])
-        range = this.config['itowns']['camera']['range'];
+      if (this.config['camera']['position']['range'])
+        range = this.config['camera']['position']['range'];
 
-      if (this.config['itowns']['camera']['tilt'])
-        tilt = this.config['itowns']['camera']['tilt'];
+      if (this.config['camera']['position']['tilt'])
+        tilt = this.config['camera']['position']['tilt'];
+
+      if (this.config['camera']['position']['x'])
+        coordinates.x = this.config['camera']['position']['x'];
+
+      if (this.config['camera']['position']['y'])
+        coordinates.y = this.config['camera']['position']['y'];
     }
 
     const placement = {
