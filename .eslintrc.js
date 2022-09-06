@@ -40,6 +40,8 @@ module.exports = {
     'no-multi-assign': ['error'],
     'no-multi-str': ['error'],
     'no-new': ['error'],
+    'no-new-func': ['error'],
+    'no-new-object': ['error'],
     camelcase: 'off',
     'prefer-const': [2, { destructuring: 'any' }],
     'no-duplicate-imports': ['error', { includeExports: true }],
