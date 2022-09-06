@@ -80,7 +80,7 @@ export class StyleManager {
    * @returns {boolean} True if the style is registered, false either.
    */
   isStyleRegistered(name) {
-    return this.registeredStyles[name] !== undefined ? true : false;
+    return this.registeredStyles[name] !== undefined;
   }
 
   /**
