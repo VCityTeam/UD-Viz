@@ -78,9 +78,7 @@ export class GuidedTour extends Window {
       .guidedTourWindowIsActive
       ? 'block'
       : 'none';
-    this.guidedTourWindowIsActive = this.guidedTourWindowIsActive
-      ? false
-      : true;
+    this.guidedTourWindowIsActive = !this.guidedTourWindowIsActive;
 
     if (this.isStart) {
       this.startGuidedTourMode();
