@@ -37,6 +37,8 @@ module.exports = {
     'default-param-last': ['error'],
     'func-name-matching': ['error'],
     'no-else-return': ['error'],
+    'no-multi-assign': ['error'],
+    'no-multi-str': ['error'],
     camelcase: 'off',
     'prefer-const': [2, { destructuring: 'any' }],
     'no-duplicate-imports': ['error', { includeExports: true }],
