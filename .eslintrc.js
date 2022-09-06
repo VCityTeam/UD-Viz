@@ -50,6 +50,7 @@ module.exports = {
     'object-shorthand': ['error', 'never'],
     'spaced-comment': ['error', 'always'],
     radix: ['error', 'as-needed'],
+    yoda: ['error'],
     camelcase: 'off',
     'prefer-const': [2, { destructuring: 'any' }],
     'no-duplicate-imports': ['error', { includeExports: true }],
