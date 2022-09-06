@@ -121,11 +121,10 @@ export class AuthenticationView extends ModuleView {
       element.setAttribute('style', '');
       this.displayRegisterError('');
       return true;
-    } else {
-      element.setAttribute('style', ' border: 3px solid red');
-      this.displayRegisterError('Please insert a valid mail');
-      return false;
     }
+    element.setAttribute('style', ' border: 3px solid red');
+    this.displayRegisterError('Please insert a valid mail');
+    return false;
   }
 
   async logInFunction() {

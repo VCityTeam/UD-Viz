@@ -76,9 +76,8 @@ const WorldScriptModule = class WorldScript {
 
     if (s[event]) {
       return s[event].apply(s, [this.parent].concat(params));
-    } else {
-      return null;
     }
+    return null;
   }
 
   updateFromComponent() {

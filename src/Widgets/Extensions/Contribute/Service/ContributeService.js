@@ -83,9 +83,8 @@ export class ContributeService {
       await this.provider.refreshDocumentList();
       this.provider.setDisplayedDocument(updated);
       return updated;
-    } else {
-      throw response.statusText;
     }
+    throw response.statusText;
   }
 
   /**
@@ -107,9 +106,8 @@ export class ContributeService {
       const created = JSON.parse(response.responseText);
       await this.provider.refreshDocumentList();
       return created;
-    } else {
-      throw response.statusText;
     }
+    throw response.statusText;
   }
 
   /**
@@ -126,8 +124,7 @@ export class ContributeService {
     if (response.status >= 200 && response.status < 300) {
       await this.provider.refreshDocumentList();
       return;
-    } else {
-      throw response.statusText;
     }
+    throw response.statusText;
   }
 }

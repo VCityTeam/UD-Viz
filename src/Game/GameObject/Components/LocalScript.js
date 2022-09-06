@@ -79,9 +79,8 @@ const LocalScriptModule = class LocalScript {
 
     if (s[event]) {
       return s[event].apply(s, [this.parent].concat(params));
-    } else {
-      return false;
     }
+    return false;
   }
 
   /**

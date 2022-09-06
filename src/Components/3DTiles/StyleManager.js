@@ -358,9 +358,8 @@ export class StyleManager {
       return this.registeredStyleUsage[styleIdentifier];
     } else if (typeof styleIdentifier === 'number') {
       return this.anonymousStyleUsage[styleIdentifier];
-    } else {
-      throw 'A style identifier must be a string or a number.';
     }
+    throw 'A style identifier must be a string or a number.';
   }
 
   /**

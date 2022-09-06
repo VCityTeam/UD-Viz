@@ -161,9 +161,8 @@ export class TemporalProvider {
           this.getTransactionStyleName(transaction.transactions[i], styleName);
       }
       return styleName;
-    } else {
-      console.warn('Transaction which is not a primary nor an aggregate.');
     }
+    console.warn('Transaction which is not a primary nor an aggregate.');
   }
 
   /* *** Culling with transactions and colors management     */
