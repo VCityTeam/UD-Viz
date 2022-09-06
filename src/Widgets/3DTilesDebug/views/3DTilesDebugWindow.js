@@ -218,7 +218,7 @@ export class Debug3DTilesWindow extends Window {
       );
       this.layerManager.tilesManagers[0].setStyle(
         new CityObjectID(tileId, batchIds),
-        { materialProps: { color, opacity } }
+        { materialProps: { color: color, opacity: opacity } }
       );
       this.layerManager.tilesManagers[0].applyStyles();
     } catch (e) {

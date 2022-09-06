@@ -11,7 +11,7 @@ module.exports = {
    */
   textureEncoding: THREE.sRGBEncoding,
 
-  addCubeTexture(paths, scene) {
+  addCubeTexture: function (paths, scene) {
     const loader = new THREE.CubeTextureLoader();
     const texture = loader.load(paths);
     scene.background = texture;
@@ -24,7 +24,7 @@ module.exports = {
    * @param {THREE.Scene} scene the scene where to add lights
    * @returns {THREE.DirectionalLight, THREE.AmbientLight} lights added
    */
-  addLights(scene) {
+  addLights: function (scene) {
     //Lights
     const directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
     directionalLight.position.set(100, 100, 500);
@@ -35,7 +35,7 @@ module.exports = {
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.3);
     scene.add(ambientLight);
 
-    return { directionalLight, ambientLight };
+    return { directionalLight: directionalLight, ambientLight: ambientLight };
   },
 
   /**
@@ -45,7 +45,7 @@ module.exports = {
    * @param {THREE.Color} skyColor clear color of the scene
    * @param {boolean} clear autoclear, default is false
    */
-  initRenderer(renderer, skyColor, clear = false) {
+  initRenderer: function (renderer, skyColor, clear = false) {
     // Set sky color to blue
     renderer.setClearColor(skyColor, 1);
     renderer.autoClear = clear;
@@ -66,7 +66,7 @@ module.exports = {
    * @param {THREE.Object3D} obj the object to fit inside the projection plane of the shadow camera
    * @param {THREE.DirectionalLight} dirLight the light with the shadow camera
    */
-  bindLightTransform(offset, phi, theta, obj, dirLight) {
+  bindLightTransform: function (offset, phi, theta, obj, dirLight) {
     // Computing boundingSphere
     const bb = new THREE.Box3().setFromObject(obj);
     const center = bb.getCenter(new THREE.Vector3());

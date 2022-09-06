@@ -30,7 +30,7 @@ module.exports = {
    * @param {string} filePath on the distant server
    * @returns {Promise} a promise where the resolve function has as first parameter the json file
    */
-  loadJSON(filePath) {
+  loadJSON: function (filePath) {
     return new Promise((resolve, reject) => {
       jquery.ajax({
         type: 'GET',
@@ -53,7 +53,7 @@ module.exports = {
    * @param {object} e input of type file argument when 'change'
    * @param {Function} onLoad callback passing the file as text as first argument
    */
-  readSingleFileAsText(e, onLoad) {
+  readSingleFileAsText: function (e, onLoad) {
     try {
       const file = e.target.files[0];
       if (file) {
@@ -72,7 +72,7 @@ module.exports = {
    * @param {object} e input of type file argument when 'change'
    * @param {Function} onLoad callback passing the file as URL as first argument
    */
-  readSingleFileAsDataUrl(e, onLoad) {
+  readSingleFileAsDataUrl: function (e, onLoad) {
     try {
       const file = e.target.files[0];
       if (file) {
@@ -91,7 +91,7 @@ module.exports = {
    * @param {string} url url of the image to download
    * @param {*} filename name of the file on disk
    */
-  downloadImageOnDisk(url, filename) {
+  downloadImageOnDisk: function (url, filename) {
     const imgResult = document.createElement('img');
     imgResult.src = url;
     const link = document.createElement('a');

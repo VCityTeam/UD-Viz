@@ -12,7 +12,7 @@ module.exports = {
    *
    * @param {THREE.Vector3} vector
    */
-  parseVector3(vector) {
+  parseVector3: function (vector) {
     vector.x = parseFloat(vector.x);
     vector.y = parseFloat(vector.y);
     vector.z = parseFloat(vector.z);
@@ -25,7 +25,7 @@ module.exports = {
    * @param {JSON} j2 second json
    * @returns {boolean} true if both json are identical, false otherwise
    */
-  equals(j1, j2) {
+  equals: function (j1, j2) {
     const traverse = function (json1, json2) {
       for (const key in json1) {
         if (json1[key] instanceof Object) {
@@ -58,7 +58,7 @@ module.exports = {
    * @param {JSON} jsonOverWrited the json overwritted
    * @param {JSON} jsonModel the json used as model
    */
-  overWrite(jsonOverWrited, jsonModel) {
+  overWrite: function (jsonOverWrited, jsonModel) {
     const traverse = function (json1, json2) {
       for (const key in json1) {
         if (json1[key] instanceof Object) {
@@ -81,7 +81,7 @@ module.exports = {
    * @param {Function} cb callback with first argument the json and second the key
    * @returns {JSON} the json parsed
    */
-  parse(json, cb) {
+  parse: function (json, cb) {
     for (const key in json) {
       if (json[key] instanceof Object) {
         this.parse(json[key], cb);
@@ -93,7 +93,7 @@ module.exports = {
   },
 
   //Same as parse but you can pass the name of array that should be not parse
-  parseExceptArrays(json, cb, exceptArrays) {
+  parseExceptArrays: function (json, cb, exceptArrays) {
     for (const key in json) {
       if (json[key] instanceof Object) {
         if (json[key] instanceof Array && exceptArrays.includes(key)) {
@@ -114,7 +114,7 @@ module.exports = {
    * @param {JSON} json the json to be parsed
    * @returns {JSON} the json parsed
    */
-  parseNumeric(json) {
+  parseNumeric: function (json) {
     return this.parse(json, function (j, key) {
       if (Type.isNumeric(j[key])) {
         j[key] = parseFloat(j[key]);
@@ -133,7 +133,7 @@ module.exports = {
    * @param {JSONArray} jsonArray the json array to transform
    * @returns {string} String corresponding to the json array
    */
-  pack(jsonArray) {
+  pack: function (jsonArray) {
     let result = '';
     for (const key in jsonArray) {
       result += JSON.stringify(jsonArray[key]);
@@ -153,7 +153,7 @@ module.exports = {
    * @param {string} string corresponding to a json array pack
    * @returns {JSONArray} json array corresponding to the string
    */
-  unpack(string) {
+  unpack: function (string) {
     const splitString = string.split(this.separator);
     const result = {};
     splitString.forEach(function (p) {

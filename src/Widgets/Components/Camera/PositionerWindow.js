@@ -105,8 +105,8 @@ export class PositionerWindow extends Window {
     quaternion.w = Number(data.get('quaternionW'));
 
     return {
-      position,
-      quaternion,
+      position: position,
+      quaternion: quaternion,
     };
   }
 

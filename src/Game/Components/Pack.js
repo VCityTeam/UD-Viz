@@ -16,7 +16,7 @@ module.exports = Object.freeze({
    * @param {object} obj the object to serialize
    * @returns {SharedArrayBuffer} serialized data
    */
-  pack(obj) {
+  pack: function (obj) {
     const OString = JSON.stringify(obj);
     const SABuffer = new SharedArrayBuffer(
       Int32Array.BYTES_PER_ELEMENT * OString.length
@@ -36,7 +36,7 @@ module.exports = Object.freeze({
    * @param {SharedArrayBuffer} array serialized data
    * @returns {JSON} object unserialized
    */
-  unpack(array) {
+  unpack: function (array) {
     const str = String.fromCharCode.apply(this, array);
     return JSON.parse(str);
   },
@@ -45,7 +45,7 @@ module.exports = Object.freeze({
   maxSize: 10000,
   bufferMessage: {},
 
-  splitMessage(message) {
+  splitMessage: function (message) {
     let stringMessage = JSON.stringify(message);
     const messageUUID = THREE.MathUtils.generateUUID();
     const result = [];
@@ -75,7 +75,7 @@ module.exports = Object.freeze({
     return result;
   },
 
-  recomposeMessage(partialMessage) {
+  recomposeMessage: function (partialMessage) {
     const messageUUID = partialMessage.messageUUID;
     if (!this.bufferMessage[messageUUID]) {
       //First partial message
@@ -102,7 +102,7 @@ module.exports = Object.freeze({
     return null; //No complete message receive
   },
 
-  dataUriToBuffer(uri) {
+  dataUriToBuffer: function (uri) {
     if (!/^data:/i.test(uri)) {
       return null; //Its not a Data URI
     }
