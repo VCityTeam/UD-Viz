@@ -81,8 +81,7 @@ export class GeocodingService {
 
     if (results.length > 0) {
       return results;
-    } else {
-      throw 'No result found';
     }
+    throw 'No result found';
   }
 }

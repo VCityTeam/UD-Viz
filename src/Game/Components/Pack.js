@@ -97,10 +97,9 @@ module.exports = Object.freeze({
       }
 
       return JSON.parse(bufferString);
-    } else {
-      //No complete message receive
-      return null;
     }
+
+    return null; //No complete message receive
   },
 
   dataUriToBuffer(uri) {

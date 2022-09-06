@@ -95,9 +95,8 @@ export class GuidedTourController extends ModuleView {
   getCurrentTour() {
     if (this.guidedTours.length != 0) {
       return this.guidedTours[this.currentTourIndex];
-    } else {
-      return null;
     }
+    return null;
   }
 
   /**
@@ -130,9 +129,8 @@ export class GuidedTourController extends ModuleView {
     if (this.getCurrentTour().length != 0) {
       const steps = this.getCurrentTour().extendedDocs;
       return steps[this.currentStepIndex];
-    } else {
-      return null;
     }
+    return null;
   }
 
   /**
