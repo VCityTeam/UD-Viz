@@ -3,7 +3,7 @@
 import { DocumentModule } from '../../../Documents/DocumentModule';
 import { DocumentSource } from '../../../Documents/Model/DocumentService';
 
-//Components
+// Components
 import { Window } from '../../../Components/GUI/js/Window';
 
 import { ValidationService } from '../Service/ValidationService';
@@ -59,7 +59,7 @@ export class ValidationView {
     documentModule.addNavigatorExtension('Validation Filter', {
       type: 'div',
       container: 'filter',
-      html: /*html*/ `
+      html: /* html*/ `
         <label for="${this.switchId}">Validation status : </label>
         <select id="${this.switchId}">
           <option value="validated">Validated documents</option>
@@ -82,8 +82,8 @@ export class ValidationView {
     };
   }
 
-  ///////////////////////////////////////
-  ///// METHODS FOR TRIGERRING VALIDATION
+  // /////////////////////////////////////
+  // /// METHODS FOR TRIGERRING VALIDATION
 
   /**
    * Toggles the visualization of documents in validation, then refreshes the
@@ -181,8 +181,8 @@ export class ValidationView {
       });
   }
 
-  /////////////
-  ///// GETTERS
+  // ///////////
+  // /// GETTERS
 
   get switchId() {
     return 'document-validation-view-switch';

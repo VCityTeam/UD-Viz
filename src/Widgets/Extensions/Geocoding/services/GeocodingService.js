@@ -1,6 +1,6 @@
 /** @format */
 
-//Components
+// Components
 import { RequestService } from '../../../../Components/Request/RequestService';
 import { getAttributeByPath } from '../../../../Components/DataProcessing/DataProcessing';
 
@@ -35,10 +35,10 @@ export class GeocodingService {
       throw 'Cannot perform a request for now.';
     }
 
-    //URL parameters
+    // URL parameters
     const queryString = encodeURIComponent(searchString);
 
-    //Build the URL according to parameter description (in config file)
+    // Build the URL according to parameter description (in config file)
     let url = this.geocodingUrl + '?';
     for (const [paramName, param] of Object.entries(this.parameters)) {
       if (param.fill === 'value') {
@@ -58,7 +58,7 @@ export class GeocodingService {
       url += '&';
     }
 
-    //Make the request
+    // Make the request
     const req = await this.requestService.request('GET', url, {
       authenticate: false,
     });

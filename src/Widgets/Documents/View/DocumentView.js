@@ -1,6 +1,6 @@
 /** @format */
 
-//Components
+// Components
 import { ModuleView } from '../../Components/ModuleView/ModuleView';
 import { Window } from '../../Components/GUI/js/Window';
 
@@ -124,8 +124,8 @@ export class DocumentView extends ModuleView {
     windowToDisplay.show();
   }
 
-  /////////////////
-  ///// MODULE VIEW
+  // ///////////////
+  // /// MODULE VIEW
 
   enableView() {
     for (const window of this.windows) {

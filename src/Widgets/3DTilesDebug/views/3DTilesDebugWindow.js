@@ -2,7 +2,7 @@
 
 const THREE = require('three');
 
-//Components
+// Components
 import { Window } from '../../Components/GUI/js/Window';
 import { CityObjectStyle } from '../../../Components/3DTiles/Model/CityObjectStyle';
 import { CityObjectID } from '../../../Components/3DTiles/Model/CityObject';
@@ -62,7 +62,7 @@ export class Debug3DTilesWindow extends Window {
   }
 
   get innerContentHtml() {
-    return /*html*/ `
+    return /* html*/ `
       <button id="${this.logTBIButtonId}">Log Tiles Manager</button>
       <p id="${this.TBIInfoParagraphId}">0 / ? tiles loaded.</p>
       <p id="${this.visibleTilesParagraphId}">0 tiles visible.</p>
@@ -192,7 +192,7 @@ export class Debug3DTilesWindow extends Window {
           ),
         });
 
-        this.clickDivElement.innerHTML = /*html*/ `
+        this.clickDivElement.innerHTML = /* html*/ `
            3D Tiles : ${this.selectedTilesManager.layer.name}<br>
            Vertex indexes : ${cityObject.indexStart} to ${cityObject.indexEnd}
             (${cityObject.indexCount})<br>
@@ -226,7 +226,7 @@ export class Debug3DTilesWindow extends Window {
     }
   }
 
-  ////// GETTERS
+  // //// GETTERS
 
   get clickDivId() {
     return `${this.windowId}_click_info`;

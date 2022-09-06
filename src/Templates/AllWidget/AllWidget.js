@@ -1,6 +1,6 @@
 /** @format */
 
-//Components
+// Components
 import { SystemUtils, THREEUtils } from '../../Components/Components';
 import { Widgets, itowns, THREE } from '../../index';
 const ModuleView = Widgets.Components.ModuleView;
@@ -78,7 +78,7 @@ export class AllWidget {
    * Returns the basic html content of the demo
    */
   get html() {
-    return /*html*/ `
+    return /* html*/ `
             <header id="${this.headerId}">
                 <div>
                     <h1>UD-Viz &bull;</h1>
@@ -126,7 +126,7 @@ export class AllWidget {
    * about the logged in user.
    */
   get authenticationFrameHtml() {
-    return /*html*/ `
+    return /* html*/ `
             <div id="${this.authenticationMenuLoggedInId}">
                 <div id="${this.authenticationUserNameId}"></div>
                 <button type="button" id="${this.authenticationLogoutButtonId}"
@@ -155,7 +155,7 @@ export class AllWidget {
     htmlElement.appendChild(div);
   }
 
-  //////// MODULE MANAGEMENT
+  // ////// MODULE MANAGEMENT
 
   /**
    * Adds a new module view to the demo.
@@ -192,7 +192,7 @@ export class AllWidget {
       throw 'A module must implement at least an enable() and a disable() methods';
     }
 
-    //Default name is the id transformed this way :
+    // Default name is the id transformed this way :
     // myModule -> My Module
     // my_module -> My module
     let moduleName = moduleId
@@ -234,7 +234,7 @@ export class AllWidget {
 
     switch (type) {
       case AllWidget.MODULE_VIEW:
-        //Create a new button in the menu
+        // Create a new button in the menu
         this.createMenuButton(moduleId, moduleName, binding);
         break;
       case AllWidget.AUTHENTICATION_MODULE:
@@ -271,7 +271,7 @@ export class AllWidget {
     this.menuElement.appendChild(button);
     const icon = document.createElement('img');
 
-    //Creating an icon
+    // Creating an icon
     icon.setAttribute(
       'src',
       `${this.config.assets.iconFolder}/${moduleId}.svg`
@@ -279,13 +279,13 @@ export class AllWidget {
     icon.className = 'menuIcon';
     button.insertBefore(icon, button.firstChild);
 
-    //Define button behavior
+    // Define button behavior
     button.onclick = (() => {
       this.toggleModule(moduleId);
     }).bind(this);
     const moduleClass = this.getModuleById(moduleId);
 
-    //Dynamically color the button
+    // Dynamically color the button
     moduleClass.parentElement = this.viewerDivElement.parentElement;
     moduleClass.addEventListener(ModuleView.EVENT_ENABLED, () => {
       button.className = 'choiceMenu choiceMenuSelected';
@@ -406,9 +406,9 @@ export class AllWidget {
     this.view3D.getItownsView().notifyChange();
   }
 
-  ////////////////////////////////////////////////////////
+  // //////////////////////////////////////////////////////
   // GETTERS FOR HTML IDS AND ELEMENTS OF THE DEMO PAGE //
-  ////////////////////////////////////////////////////////
+  // //////////////////////////////////////////////////////
 
   get mainDivId() {
     return '_all_widget';

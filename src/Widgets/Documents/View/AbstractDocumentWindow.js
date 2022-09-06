@@ -1,6 +1,6 @@
 /** @format */
 
-//Components
+// Components
 import { Window } from '../../Components/GUI/js/Window';
 
 import { DocumentProvider } from '../ViewModel/DocumentProvider';

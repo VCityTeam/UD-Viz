@@ -1,6 +1,6 @@
 /** @format */
 
-//Components
+// Components
 import { focusCameraOn } from '../../../Components/Camera/CameraUtils';
 
 import { DocumentModule } from '../../Documents/DocumentModule';
@@ -51,7 +51,7 @@ export class DocumentLinkInterface {
     // create a new link.
     documentModule.addInspectorExtension('links', {
       type: 'div',
-      html: /*html*/ `
+      html: /* html*/ `
         <input type="checkbox" class="spoiler-check" id="doc-link-spoiler">
         <label for="doc-link-spoiler" class="section-title">Document Links</label>
         <div class="spoiler-box">
@@ -70,7 +70,7 @@ export class DocumentLinkInterface {
     documentModule.addNavigatorExtension('linkFilter', {
       type: 'div',
       container: 'filter',
-      html: /*html*/ `<label for="${this.linkFilterId}">Linked to the selected city object</label>
+      html: /* html*/ `<label for="${this.linkFilterId}">Linked to the selected city object</label>
         <input type="checkbox" id="${this.linkFilterId}">`,
       oncreated: () => {
         this.linkFilterElement.onchange = () =>
@@ -134,8 +134,8 @@ export class DocumentLinkInterface {
     this.linkFilterElement.checked = this.provider.shouldFilterLinkedDocuments;
   }
 
-  ///////////////
-  ///// LINK LIST
+  // /////////////
+  // /// LINK LIST
 
   /**
    * Retrieves all link types, and for each type retrieves the links were the
@@ -183,8 +183,8 @@ export class DocumentLinkInterface {
     }
   }
 
-  ////////////////////
-  ///// LINK OPERATION
+  // //////////////////
+  // /// LINK OPERATION
 
   /**
    * If the target is a city object, moves the camera to focus on its centroid.
@@ -217,8 +217,8 @@ export class DocumentLinkInterface {
     }
   }
 
-  //////////////
-  ////// GETTERS
+  // ////////////
+  // //// GETTERS
 
   get linkListId() {
     return `${this.windowId}_link_list`;

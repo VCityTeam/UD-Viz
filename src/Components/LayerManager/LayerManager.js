@@ -145,8 +145,8 @@ export class LayerManager {
     if (event.currentTarget.id.toUpperCase() === 'VIEWERDIV') {
       // Get the intersecting objects where our mouse pointer is
       let intersections = [];
-      //As the current pickObjectsAt on all layer is not working, we need
-      //to call pickObjectsAt() for each layer.
+      // As the current pickObjectsAt on all layer is not working, we need
+      // to call pickObjectsAt() for each layer.
       for (let i = 0; i < this.tilesManagers.length; i++) {
         intersections = intersections.concat(
           this.view.pickObjectsAt(event, 5, this.tilesManagers[i].layer)

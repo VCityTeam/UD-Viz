@@ -1,6 +1,6 @@
 /** @format */
 
-//Components
+// Components
 import { Window } from '../Components/GUI/js/Window';
 import '../Components/GUI/css/window.css';
 
@@ -22,25 +22,25 @@ export class GuidedTour extends Window {
     super('guidedTour', 'Guided Tour', false);
     this.guidedTourController = guidedTourController;
 
-    this.tourIndex = 1; //Current guided tour. Default is 1 (start)
+    this.tourIndex = 1; // Current guided tour. Default is 1 (start)
 
-    this.stepIndex = 1; //Current step of the guidedtour. Defautt is 1 (start)
+    this.stepIndex = 1; // Current step of the guidedtour. Defautt is 1 (start)
 
     // boolean to control the state of the guided tour window (open/closed)
     this.guidedTourWindowIsActive = true;
 
     this.isStart = true;
 
-    this.currentTour = null; //Current guided tour
-    this.currentStep = null; //Current step of the current guided tour
+    this.currentTour = null; // Current guided tour
+    this.currentStep = null; // Current step of the current guided tour
 
-    //instance of document browser
+    // instance of document browser
     this.documentBrowser = this.guidedTourController.browser;
 
-    //Update browser view
+    // Update browser view
     const guidedTourText2 = document.createElement('div');
     guidedTourText2.id = 'guidedTourText2';
-    //Document.getElementById('docBrowserWindow').appendChild(guidedTourText2);
+    // Document.getElementById('docBrowserWindow').appendChild(guidedTourText2);
   }
 
   get innerContentHtml() {
@@ -72,7 +72,7 @@ export class GuidedTour extends Window {
   }
 
   // Hide or show the guided tour window
-  //=============================================================================
+  // =============================================================================
   toggleGuidedTourWindow() {
     document.getElementById('guidedTourWindow').style.display = this
       .guidedTourWindowIsActive
@@ -87,7 +87,7 @@ export class GuidedTour extends Window {
     }
   }
 
-  //Get all available guided tour from the database
+  // Get all available guided tour from the database
   startGuidedTourMode() {
     this.guidedTourController.getGuidedTours().then(() => {
       this.previewTour();
@@ -97,7 +97,7 @@ export class GuidedTour extends Window {
   /**
    * Initialize the preview of the guided tour
    */
-  //=============================================================================
+  // =============================================================================
   previewTour() {
     document.getElementById('tourCpt').innerHTML =
       'Tour: ' +
@@ -120,7 +120,7 @@ export class GuidedTour extends Window {
       'none';
     document.getElementById('guidedTourNextStepButton').style.display = 'none';
     document.getElementById('guidedTourExitButton').style.display = 'none';
-    //Document.getElementById("guidedTourText2").style.display = "none";
+    // Document.getElementById("guidedTourText2").style.display = "none";
     document.getElementById('guidedTourStartButton').style.display = 'block';
 
     const currentTour = this.guidedTourController.getCurrentTour();
@@ -135,7 +135,7 @@ export class GuidedTour extends Window {
   }
 
   // Update step with current step data
-  //=============================================================================
+  // =============================================================================
   updateStep() {
     this.currentStep = this.guidedTourController.getCurrentStep();
     this.documentBrowser.currentMetadata =
@@ -150,8 +150,8 @@ export class GuidedTour extends Window {
     this.documentBrowser.focusOnDoc();
   }
 
-  //Start guided tour
-  //=============================================================================
+  // Start guided tour
+  // =============================================================================
   startGuidedTour() {
     if (this.guidedTourController.getCurrentTour().extendedDocs.length > 0) {
       this.tourIndex = 1;
@@ -163,13 +163,13 @@ export class GuidedTour extends Window {
       document.getElementById('guidedTourText1').style.height = '60%';
       document.getElementById('tourCpt').style.display = 'none';
     } else {
-      alert('This guided tour is empty'); //Should never happen. If a guided tour
-      //doesn't have steps, then it is not a guided tour
+      alert('This guided tour is empty'); // Should never happen. If a guided tour
+      // doesn't have steps, then it is not a guided tour
     }
   }
 
   // Quit current guided tour
-  //=============================================================================
+  // =============================================================================
   exitGuidedTour() {
     this.guidedTourController.reset();
   }
@@ -177,7 +177,7 @@ export class GuidedTour extends Window {
   /**
    * Update guided tour preview by clicking on "guidedTourNextTourButton" button
    */
-  //=============================================================================
+  // =============================================================================
   nextTour() {
     if (this.tourIndex < this.guidedTourController.guidedTours.length) {
       this.guidedTourController.getNextTour();
@@ -189,7 +189,7 @@ export class GuidedTour extends Window {
   /**
    * Update guided tour preview by clicking on "guidedTourPreviousTourButton" button
    */
-  //=============================================================================
+  // =============================================================================
   previousTour() {
     this.guidedTourController.getPreviousTour();
     if (this.tourIndex > 1) {
@@ -201,7 +201,7 @@ export class GuidedTour extends Window {
   /**
    * Update step by clicking on "guidedTourNextStepButton" button
    */
-  //=============================================================================
+  // =============================================================================
   nextStep() {
     if (
       this.stepIndex <
@@ -216,7 +216,7 @@ export class GuidedTour extends Window {
   /**
    * Update step by clicking on "guidedTourPreviousStepButton" button
    */
-  //=============================================================================
+  // =============================================================================
   previousStep() {
     if (this.stepIndex > 1) {
       this.guidedTourController.getPreviousStep();

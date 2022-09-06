@@ -11,7 +11,7 @@ module.exports = class Avatar {
   }
 
   init() {
-    //A context containing all references needed for scripting game
+    // A context containing all references needed for scripting game
     const worldContext = arguments[1];
     const world = worldContext.getWorld();
 

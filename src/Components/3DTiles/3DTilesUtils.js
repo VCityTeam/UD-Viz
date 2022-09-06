@@ -71,7 +71,7 @@ export function getVisibleTiles(layer) {
       ) {
         const child = node.children[childIndex];
         if (child.type === 'Object3D') {
-          //This child can be a tile or contain tiles so we explore it too
+          // This child can be a tile or contain tiles so we explore it too
           exploreTree(child);
         }
       }
@@ -136,7 +136,7 @@ export function setTileVerticesColor(tile, newColor, indexArray = null) {
     throw 'Tile not loaded in view';
   }
 
-  //Find the 'Mesh' part of the tile
+  // Find the 'Mesh' part of the tile
   while (!!tile.children[0] && !(tile.type === 'Mesh')) {
     tile = tile.children[0];
   }
@@ -149,7 +149,7 @@ export function setTileVerticesColor(tile, newColor, indexArray = null) {
     throw 'Cannot change vertices color';
   }
 
-  //Create the new color array
+  // Create the new color array
   const indexCount = tile.geometry.attributes._BATCHID.count;
   const colors = new Float32Array(indexCount * 3);
 
@@ -158,7 +158,7 @@ export function setTileVerticesColor(tile, newColor, indexArray = null) {
   for (let i = 0; i < indexCount; i++) {
     let vertexColor = newColor;
     if (!!indexArray && (lowerBound > i || upperBound < i)) {
-      //If i is not one of the selected indexes, we keep the previous color
+      // If i is not one of the selected indexes, we keep the previous color
       const previousColor = tile.geometry.attributes.color
         ? tile.geometry.attributes.color.array.slice(i * 3, i * 3 + 3)
         : tile.material.color.toArray();
@@ -170,14 +170,14 @@ export function setTileVerticesColor(tile, newColor, indexArray = null) {
     colors[i * 3 + 2] = vertexColor[2];
   }
 
-  //We need to use the color of the vertices, not the material
+  // We need to use the color of the vertices, not the material
   tile.material.vertexColors = true;
 
   if (!tile.geometry.attributes.color) {
-    //If no vertex color is present, we need to add the BufferAttribute
+    // If no vertex color is present, we need to add the BufferAttribute
     tile.geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
   } else {
-    //Else we need to update the existing attribute
+    // Else we need to update the existing attribute
     tile.geometry.attributes.color.set(colors);
     tile.geometry.attributes.color.needsUpdate = true;
   }
@@ -439,7 +439,7 @@ export function removeTileVerticesColor(tile) {
     throw 'Tile not loaded in view';
   }
 
-  //Find the 'Mesh' part of the tile
+  // Find the 'Mesh' part of the tile
   while (!!tile.children[0] && !(tile.type === 'Mesh')) {
     tile = tile.children[0];
   }
@@ -452,10 +452,10 @@ export function removeTileVerticesColor(tile) {
     throw 'Cannot change vertices color';
   }
 
-  //Remove color attribute
+  // Remove color attribute
   tile.geometry.deleteAttribute('color');
 
-  //We go back to the color of the material
+  // We go back to the color of the material
   tile.material.vertexColors = false;
 }
 
@@ -494,7 +494,7 @@ export function getVerticesCentroid(tile, indexArray) {
     throw 'Tile not loaded in view';
   }
 
-  //Find the 'Mesh' part of the tile
+  // Find the 'Mesh' part of the tile
   while (!!tile.children[0] && !(tile.type === 'Mesh')) {
     tile = tile.children[0];
   }
@@ -530,7 +530,7 @@ export function getMeshesFromTile(tile) {
     throw 'Tile not loaded in view';
   }
 
-  //Find the 'Mesh' part of the tile
+  // Find the 'Mesh' part of the tile
   while (!!tile.children[0] && !(tile.children[0].type === 'Mesh')) {
     tile = tile.children[0];
   }
@@ -556,7 +556,7 @@ export function getTileFromMesh(object) {
     throw 'Object not loaded in view';
   }
 
-  //Find the 'Object3D' part of the tile
+  // Find the 'Object3D' part of the tile
   while (!!object.parent && !(object.type === 'Object3D')) {
     object = object.parent;
   }

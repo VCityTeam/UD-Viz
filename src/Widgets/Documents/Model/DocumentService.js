@@ -1,6 +1,6 @@
 /** @format */
 
-//Components
+// Components
 import { RequestService } from '../../../Components/Request/RequestService';
 import { imageToDataURI } from '../../../Components/DataProcessing/DataProcessing';
 

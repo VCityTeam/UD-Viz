@@ -29,7 +29,7 @@ export class CityObjectLinkInterface {
     // to show them in the document navigator.
     cityObjectModule.addExtension('links', {
       type: 'div',
-      html: /*html*/ `
+      html: /* html*/ `
         <div id="${this.linkListId}">
         </div>
         <button id="${this.showDocsButtonId}">Show in navigator</button>
@@ -75,8 +75,8 @@ export class CityObjectLinkInterface {
     this.linkListElement.innerHTML = listHtml;
   }
 
-  //////////////
-  ////// GETTERS
+  // ////////////
+  // //// GETTERS
 
   get linkListId() {
     return 'city_objects_link_list';
@@ -115,7 +115,7 @@ export class LinkCountFilterSelector extends CityObjectFilterSelector {
   }
 
   get html() {
-    return /*html*/ `
+    return /* html*/ `
       <label for="requiredCount">Required count of linked documents</label>
       <input type="text" name="requiredCount" value="1">
     `;

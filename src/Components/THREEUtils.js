@@ -25,7 +25,7 @@ module.exports = {
    * @returns {THREE.DirectionalLight, THREE.AmbientLight} lights added
    */
   addLights: function (scene) {
-    //Lights
+    // Lights
     const directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
     directionalLight.position.set(100, 100, 500);
     directionalLight.target.position.set(0, 0, 0);

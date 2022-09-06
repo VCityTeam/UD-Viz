@@ -2,7 +2,7 @@
 
 const THREE = require('three');
 
-//TODO these methods inside DataProcessing
+// TODO these methods inside DataProcessing
 
 /**
  * Handle serialization/deserialization of an Object
@@ -41,7 +41,7 @@ module.exports = Object.freeze({
     return JSON.parse(str);
   },
 
-  //WEBSOCKET SPLIT MESSAGE
+  // WEBSOCKET SPLIT MESSAGE
   maxSize: 10000,
   bufferMessage: {},
 
@@ -50,14 +50,14 @@ module.exports = Object.freeze({
     const messageUUID = THREE.MathUtils.generateUUID();
     const result = [];
 
-    //Cut in several message
+    // Cut in several message
     while (stringMessage.length > this.maxSize) {
       const sliceMessage = stringMessage.slice(0, this.maxSize);
       stringMessage = stringMessage.slice(this.maxSize, stringMessage.length);
       result.push({ messageUUID: messageUUID, data: sliceMessage });
     }
 
-    //Add what need
+    // Add what need
     if (stringMessage.length) {
       result.push({
         messageUUID: messageUUID,
@@ -65,7 +65,7 @@ module.exports = Object.freeze({
       });
     }
 
-    //Push info to recompose message
+    // Push info to recompose message
     for (let index = 0; index < result.length; index++) {
       const element = result[index];
       element.index = index;
@@ -78,19 +78,19 @@ module.exports = Object.freeze({
   recomposeMessage: function (partialMessage) {
     const messageUUID = partialMessage.messageUUID;
     if (!this.bufferMessage[messageUUID]) {
-      //First partial message
+      // First partial message
       this.bufferMessage[messageUUID] = {};
     }
 
-    //Record
+    // Record
     this.bufferMessage[messageUUID][partialMessage.index] = partialMessage;
 
-    //Check if all the partial message are here
+    // Check if all the partial message are here
     if (
       Object.keys(this.bufferMessage[messageUUID]).length ==
       partialMessage.totalMessage
     ) {
-      //Can recompose message
+      // Can recompose message
       let bufferString = '';
       for (let index = 0; index < partialMessage.totalMessage; index++) {
         bufferString += this.bufferMessage[messageUUID][index].data;
@@ -99,12 +99,12 @@ module.exports = Object.freeze({
       return JSON.parse(bufferString);
     }
 
-    return null; //No complete message receive
+    return null; // No complete message receive
   },
 
   dataUriToBuffer: function (uri) {
     if (!/^data:/i.test(uri)) {
-      return null; //Its not a Data URI
+      return null; // Its not a Data URI
     }
     // Strip newlines
     uri = uri.replace(/\r?\n/g, '');

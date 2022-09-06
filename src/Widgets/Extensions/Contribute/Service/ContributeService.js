@@ -1,10 +1,10 @@
 /** @format */
 
-//Widgets
+// Widgets
 import { DocumentProvider } from '../../../Documents/ViewModel/DocumentProvider';
 import { Document } from '../../../Documents/Model/Document';
 
-//Components
+// Components
 import { RequestService } from '../../../../Components/Request/RequestService';
 
 /**
@@ -68,7 +68,7 @@ export class ContributeService {
    * @returns {Document} The updated document.
    */
   async updateDocument(updatedData) {
-    //Get current doc data and id
+    // Get current doc data and id
     const currentDoc = this.provider.getDisplayedDocument();
     const id = currentDoc.id;
 

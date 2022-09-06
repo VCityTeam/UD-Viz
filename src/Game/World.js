@@ -19,35 +19,35 @@ const WorldModule = class World {
   constructor(json, options) {
     if (!json) throw new Error('no json');
 
-    //Update json format
+    // Update json format
     json = WorldModule.parseJSON(json);
 
     options = options || {};
 
-    //Collisions system of detect-collisions npm package
+    // Collisions system of detect-collisions npm package
     this.collisions = new Collisions();
     /**
      * ON_ENTER_COLLISION: 'onEnterCollision', //first collsion
      * IS_COLLIDING: 'isColliding', //is colliding
      * ON_LEAVE_COLLISION: 'onLeaveCollision', //on leave collision
      */
-    this.collisionsBuffer = {}; //To handle event above
+    this.collisionsBuffer = {}; // To handle event above
 
-    //uuid
+    // uuid
     this.uuid = json.uuid || THREE.Math.generateUUID();
 
-    //Gameobject
+    // Gameobject
     this.gameObject = new GameObject(json.gameObject);
 
-    //Name of the world
+    // Name of the world
     this.name = json.name || 'default_world';
 
-    //Origin
+    // Origin
     this.origin = json.origin || null;
 
-    /******************INTERNAL***********************/
+    /** ****************INTERNAL*/
 
-    //is running on webpage or node app
+    // is running on webpage or node app
     this.isServerSide = options.isServerSide || false;
     this.modules = options.modules || {};
     this.listeners = {};
@@ -98,7 +98,7 @@ const WorldModule = class World {
    * @returns {Array[Promise]} An array containing all the promises
    */
   computePromisesLoad(go, worldContext) {
-    //Load GameObject
+    // Load GameObject
     const promises = [];
     const params = [worldContext, this.isServerSide, this.modules];
 
@@ -141,7 +141,7 @@ const WorldModule = class World {
       _this.isServerSide
     );
 
-    //INIT EVENT TRIGGER
+    // INIT EVENT TRIGGER
     if (parent) {
       parent.addChild(gameObject);
     } else {
@@ -169,10 +169,10 @@ const WorldModule = class World {
   registerGOCollision(go) {
     const _this = this;
 
-    //Collisions
+    // Collisions
     const collisions = this.collisions;
     go.traverse(function (child) {
-      if (_this.collisionsBuffer[child.getUUID()]) return; //Already add
+      if (_this.collisionsBuffer[child.getUUID()]) return; // Already add
 
       _this.collisionsBuffer[child.getUUID()] = [];
 
@@ -189,7 +189,7 @@ const WorldModule = class World {
    * Check gameobject transform and update this.collisionsBuffer
    */
   updateCollisionBuffer() {
-    //Collisions
+    // Collisions
     const collisions = this.collisions;
     this.gameObject.traverse(function (g) {
       const colliderComponent = g.getComponent(ColliderComponent.TYPE);
@@ -208,7 +208,7 @@ const WorldModule = class World {
           const potentials = shape.potentials();
           const result = collisions.createResult();
           for (const p of potentials) {
-            //In ShapeWrapper shape are link to gameObject
+            // In ShapeWrapper shape are link to gameObject
             const potentialG = p.getGameObject();
             if (!potentialG.isStatic()) continue;
             if (shape.collides(p, result)) {
@@ -228,7 +228,7 @@ const WorldModule = class World {
   unregisterGOCollision(go) {
     const _this = this;
 
-    //Collisions
+    // Collisions
     go.traverse(function (child) {
       const comp = child.getComponent(ColliderComponent.TYPE);
       if (comp) {
@@ -236,11 +236,11 @@ const WorldModule = class World {
           wrapper.getShape().remove();
         });
 
-        //Delete from buffer
+        // Delete from buffer
         delete _this.collisionsBuffer[child.getUUID()];
         for (const id in _this.collisionsBuffer) {
           const index = _this.collisionsBuffer[id].indexOf(go.getUUID());
-          if (index >= 0) _this.collisionsBuffer[id].splice(index, 1); //Remove from the other
+          if (index >= 0) _this.collisionsBuffer[id].splice(index, 1); // Remove from the other
         }
       }
     });
@@ -267,12 +267,12 @@ const WorldModule = class World {
   tick(worldContext) {
     const _this = this;
 
-    //Tick GameObject
+    // Tick GameObject
     this.gameObject.traverse(function (g) {
       g.executeWorldScripts(WorldScriptComponent.EVENT.TICK, [worldContext]);
     });
 
-    //Collisions
+    // Collisions
     const collisions = this.collisions;
     this.gameObject.traverse(function (g) {
       const colliderComponent = g.getComponent(ColliderComponent.TYPE);
@@ -292,15 +292,15 @@ const WorldModule = class World {
           const potentials = shape.potentials();
           const result = collisions.createResult();
           for (const p of potentials) {
-            //In ShapeWrapper shape are link to gameObject
+            // In ShapeWrapper shape are link to gameObject
             const potentialG = p.getGameObject();
             if (!potentialG.isStatic()) continue;
             if (shape.collides(p, result)) {
               collidedGO.push(potentialG.getUUID());
 
-              //G collides with potentialG
+              // G collides with potentialG
               if (buffer.includes(potentialG.getUUID())) {
-                //Already collided
+                // Already collided
                 g.traverse(function (child) {
                   child.executeWorldScripts(
                     WorldScriptComponent.EVENT.IS_COLLIDING,
@@ -308,8 +308,8 @@ const WorldModule = class World {
                   );
                 });
               } else {
-                //OnEnter
-                buffer.push(potentialG.getUUID()); //Register in buffer
+                // OnEnter
+                buffer.push(potentialG.getUUID()); // Register in buffer
                 g.traverse(function (child) {
                   child.executeWorldScripts(
                     WorldScriptComponent.EVENT.ON_ENTER_COLLISION,
@@ -321,7 +321,7 @@ const WorldModule = class World {
           }
         });
 
-        //Notify onExit
+        // Notify onExit
         for (let i = buffer.length - 1; i >= 0; i--) {
           const uuid = buffer[i];
           if (!collidedGO.includes(uuid)) {
@@ -331,7 +331,7 @@ const WorldModule = class World {
                 [uuid, worldContext]
               );
             });
-            buffer.splice(i, 1); //Remove from buffer
+            buffer.splice(i, 1); // Remove from buffer
           }
         }
       }
@@ -351,7 +351,7 @@ const WorldModule = class World {
       origin: this.origin,
     });
 
-    //Everything is not outadted yet
+    // Everything is not outadted yet
     this.getGameObject().traverse(function (g) {
       g.setOutdated(false);
     });
@@ -423,9 +423,9 @@ WorldModule.TYPE = 'World';
 
 module.exports = WorldModule;
 
-//Update json data of the world
+// Update json data of the world
 
-//return true if version1 < version2
+// return true if version1 < version2
 // const versionIsInferior = function (version1, version2) {
 //   const numbers1 = version1.split('.');
 //   const numbers2 = version2.split('.');
@@ -439,7 +439,7 @@ module.exports = WorldModule;
 // };
 
 WorldModule.parseJSON = function (worldJSON) {
-  return worldJSON; //For now no patch
+  return worldJSON; // For now no patch
 
   // const version = worldJSON.version;
   // if (!version) return worldJSON;

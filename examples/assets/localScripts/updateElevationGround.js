@@ -13,10 +13,10 @@ module.exports = class UpdateElevationGround {
   }
 
   tick() {
-    //The gameobject parent of this script
+    // The gameobject parent of this script
     const go = arguments[0];
 
-    //A context containing all data to script clientside script
+    // A context containing all data to script clientside script
     const localContext = arguments[1];
 
     const manager = localContext.getGameView().getLayerManager();
@@ -70,7 +70,7 @@ module.exports = class UpdateElevationGround {
       }
     }
 
-    //Add commands to the computer directly because not produce by the inputmanager
+    // Add commands to the computer directly because not produce by the inputmanager
     const computer = localContext.getGameView().getInterpolator();
     computer.onCommands([
       new Command({ type: Command.TYPE.Z_UPDATE, data: z }),

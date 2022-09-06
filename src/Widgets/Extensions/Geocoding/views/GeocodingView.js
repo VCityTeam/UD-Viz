@@ -4,7 +4,7 @@ import * as THREE from 'three';
 import * as itowns from 'itowns';
 import proj4 from 'proj4';
 
-//Components
+// Components
 import { ModuleView } from '../../../Components/ModuleView/ModuleView';
 import { focusCameraOn } from '../../../../Components/Camera/CameraUtils';
 
@@ -36,7 +36,7 @@ export class GeocodingView extends ModuleView {
   }
 
   get html() {
-    return /*html*/ `
+    return /* html*/ `
       <form id="${this.formId}">
         <div id="${this.centeredDivId}">
           <input id="${this.searchInputId}" type="text"
@@ -106,13 +106,13 @@ export class GeocodingView extends ModuleView {
       coords.forEach((c) => {
         const { lat, lng } = c;
         let i = 0;
-        //Step 1 : convert the lat/lng to coordinates used by itowns
+        // Step 1 : convert the lat/lng to coordinates used by itowns
         const targetPos = this.getWorldCoordinates(lat, lng);
         if (targetPos.z) {
-          //If we could convert the coords (ie. they are on the map)
-          //step 2 : add a mesh representing a pin
+          // If we could convert the coords (ie. they are on the map)
+          // step 2 : add a mesh representing a pin
           this.addPin(targetPos);
-          //Step 3 : if the first result, focus on it (move the camera)
+          // Step 3 : if the first result, focus on it (move the camera)
           if (i === 0) {
             focusCameraOn(this.planarView, this.planarView.controls, targetPos);
           }
@@ -214,8 +214,8 @@ export class GeocodingView extends ModuleView {
     }
   }
 
-  //////////// Helpful getters
-  ////////////////////////////
+  // ////////// Helpful getters
+  // //////////////////////////
 
   get isCreated() {
     return !!this.viewElement;
@@ -269,8 +269,8 @@ export class GeocodingView extends ModuleView {
     return document.getElementById(this.creditId);
   }
 
-  //////////// MODULE VIEW METHODS
-  ////////////////////////////////
+  // ////////// MODULE VIEW METHODS
+  // //////////////////////////////
 
   /**
    * @override

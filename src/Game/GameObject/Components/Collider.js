@@ -11,19 +11,19 @@ const ColliderModule = class Collider {
   constructor(parent, json) {
     if (!json) throw new Error('no json');
 
-    //Gameobject of this component
+    // Gameobject of this component
     this.parent = parent;
 
-    //Uuid
+    // Uuid
     this.uuid = json.uuid || THREE.MathUtils.generateUUID();
 
-    //Shapes in json format
+    // Shapes in json format
     this.shapesJSON = json.shapes || [];
 
-    //Boolean to know if its a physics collisions or not
+    // Boolean to know if its a physics collisions or not
     this.body = json.body || false;
 
-    //Shapes wrappers
+    // Shapes wrappers
     this.shapeWrappers = [];
     this.createShapeWrappers();
   }
@@ -43,7 +43,7 @@ const ColliderModule = class Collider {
    */
   // eslint-disable-next-line no-unused-vars
   initAssets(assetsManager) {
-    //Nada
+    // Nada
   }
 
   /**
@@ -102,7 +102,7 @@ const ColliderModule = class Collider {
   }
 
   updateFromComponent() {
-    //Nada
+    // Nada
   }
 
   /**
@@ -133,16 +133,16 @@ module.exports = ColliderModule;
  */
 class ShapeWrapper {
   constructor(gameObject, json) {
-    //Gameobject of this shapewrapper
+    // Gameobject of this shapewrapper
     this.gameObject = gameObject;
 
-    //Json
+    // Json
     this.json = json;
 
-    //Shape detect-collisions npm package
+    // Shape detect-collisions npm package
     this.shape = null;
 
-    //Init
+    // Init
     this.initFromJSON(json);
   }
 
@@ -197,14 +197,14 @@ class ShapeWrapper {
 
           const polygon = new Polygon(0, 0, points);
 
-          //Attach userData to perform update
+          // Attach userData to perform update
           this.update = function (worldtransform) {
             const points = [];
             json.points.forEach(function (p) {
               const wp = worldtransform.getPosition();
               const point = [p.x + wp.x, p.y + wp.y];
               points.push(point);
-              //TODO handle rotation
+              // TODO handle rotation
             });
             polygon.setPoints(points);
           };
@@ -215,7 +215,7 @@ class ShapeWrapper {
       default:
     }
 
-    //Add a getter to the gameObject
+    // Add a getter to the gameObject
     this.shape.getGameObject = this.getGameObject.bind(this);
   }
 }

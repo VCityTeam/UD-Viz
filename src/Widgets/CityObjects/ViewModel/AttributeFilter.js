@@ -1,6 +1,6 @@
 /** @format */
 
-//Components
+// Components
 import { CityObject } from '../../../Components/3DTiles/Model/CityObject';
 
 import { CityObjectFilter } from './CityObjectFilter';

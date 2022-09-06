@@ -1,41 +1,41 @@
 /** @format */
 
-//ud-viz API
+// ud-viz API
 
-//Components
+// Components
 import * as Components from './Components/Components.js';
 export { Components };
 
-//Widgets
+// Widgets
 import * as Widgets from './Widgets/Widgets.js';
 export { Widgets };
 
-//Game
+// Game
 import * as Game from './Game/Game.js';
 export { Game };
 
-//Templates
+// Templates
 import * as Templates from './Templates/Templates.js';
 export { Templates };
 
-//Views
+// Views
 import * as Views from './Views/Views';
 export { Views };
 
-//External package
+// External package
 
-//itowns
+// itowns
 import * as itowns from 'itowns';
 import * as itownsWidgets from 'itowns/widgets';
 export { itowns, itownsWidgets };
 
-//Jquery
+// Jquery
 import * as jquery from 'jquery';
 export { jquery };
 
-//THREE
+// THREE
 import * as THREE from 'three';
-//Modules of three necessary but not expose in THREE API
+// Modules of three necessary but not expose in THREE API
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { TransformControls } from 'three/examples/jsm/controls/TransformControls';
 import { ConvexGeometry } from 'three/examples/jsm/geometries/ConvexGeometry';
@@ -52,6 +52,6 @@ export {
   ShaderPass,
 };
 
-//Proj4
+// Proj4
 import * as proj4 from 'proj4';
 export { proj4 };

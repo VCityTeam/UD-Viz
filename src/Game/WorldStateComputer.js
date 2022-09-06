@@ -67,7 +67,7 @@ const WorldStateComputerModule = class WorldStateComputer {
     let lastTimeTick = 0;
 
     world.load(function () {
-      //Loop
+      // Loop
       const tick = function () {
         if (_this.pause) return;
 
@@ -79,8 +79,8 @@ const WorldStateComputerModule = class WorldStateComputer {
         }
         lastTimeTick = now;
 
-        wC.getWorld().tick(wC); //Tick with user commands
-        wC.getCommands().length = 0; //Clear commands
+        wC.getWorld().tick(wC); // Tick with user commands
+        wC.getCommands().length = 0; // Clear commands
 
         _this.afterTickRequester.forEach(function (cb) {
           cb();
@@ -141,7 +141,7 @@ const WorldStateComputerModule = class WorldStateComputer {
     return this.worldContext;
   }
 
-  //StateComputer INTERFACE
+  // StateComputer INTERFACE
 
   /**
    * Compute the current world state
@@ -171,7 +171,7 @@ WorldStateComputerModule.WorldTest = function (world, assetsManager, bundles) {
         c.stop();
         console.log('stop test ', world.getName());
         resolve();
-      }, 1000); //Stop after 1000ms
+      }, 1000); // Stop after 1000ms
     });
   });
 };

@@ -1,6 +1,6 @@
 /** @format */
 
-//Components
+// Components
 import { ModuleView } from '../../Components/ModuleView/ModuleView';
 
 import jQuery from 'jquery';
@@ -16,12 +16,12 @@ export class HelpWindow extends ModuleView {
   constructor(config = {}) {
     super();
 
-    ///////////// Html elements
+    // /////////// Html elements
     const helpDiv = document.createElement('div');
     helpDiv.id = 'helpWindow';
     document.getElementById('contentSection').append(helpDiv);
 
-    //////////// Build dynamically the html content
+    // ////////// Build dynamically the html content
     const promises = [];
     if (config.htmlPaths && config.htmlPaths.length) {
       config.htmlPaths.forEach(function (path) {
@@ -46,7 +46,7 @@ export class HelpWindow extends ModuleView {
     }
     const closeCallback = this.disable.bind(this);
     Promise.all(promises).then(function () {
-      //Create close button
+      // Create close button
       const closeButton = document.createElement('button');
       closeButton.id = 'helpCloseButton';
       closeButton.innerHTML = 'Close';
@@ -56,7 +56,7 @@ export class HelpWindow extends ModuleView {
     });
   }
 
-  /////// MODULE VIEW METHODS
+  // ///// MODULE VIEW METHODS
 
   enableView() {
     document.getElementById('helpWindow').style.setProperty('display', 'block');

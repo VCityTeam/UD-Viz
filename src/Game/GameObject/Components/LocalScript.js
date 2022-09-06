@@ -7,23 +7,23 @@ const THREE = require('three');
  */
 const LocalScriptModule = class LocalScript {
   constructor(parent, json) {
-    //Gameobject of this component
+    // Gameobject of this component
     this.parent = parent;
 
-    //Uuid
+    // Uuid
     this.uuid = json.uuid || THREE.MathUtils.generateUUID();
 
-    //Array of localscripts id
+    // Array of localscripts id
     this.idScripts = json.idScripts || [];
 
-    //Type
+    // Type
     this.type = json.type || LocalScriptModule.TYPE;
 
-    //Conf pass to scripts
+    // Conf pass to scripts
     const conf = json.conf || {};
     this.conf = JSON.parse(JSON.stringify(conf));
 
-    //Map of scripts
+    // Map of scripts
     this.scripts = {};
   }
 
@@ -93,7 +93,7 @@ const LocalScriptModule = class LocalScript {
    */
   updateFromComponent(outdated, component, localContext) {
     if (outdated) {
-      //Replace conf and launch an update event
+      // Replace conf and launch an update event
       this.conf = component.conf;
       for (const id in this.scripts) {
         const s = this.scripts[id];
@@ -143,14 +143,14 @@ const LocalScriptModule = class LocalScript {
 
 LocalScriptModule.TYPE = 'LocalScript';
 LocalScriptModule.EVENT = {
-  INIT: 'init', //Before first tick
-  TICK: 'tick', //Every tick
-  ON_NEW_GAMEOBJECT: 'onNewGameObject', //When a go is added
-  ON_OUTDATED: 'onOutdated', //Call when outdated is raised
-  DISPOSE: 'dispose', //Gameview is disposed
-  ON_REMOVE: 'onRemove', //Object is remove from parent
-  ON_COMPONENT_UPDATE: 'onComponentUpdate', //Component updated smthg
-  ON_RESIZE: 'onResize', //On resize window
+  INIT: 'init', // Before first tick
+  TICK: 'tick', // Every tick
+  ON_NEW_GAMEOBJECT: 'onNewGameObject', // When a go is added
+  ON_OUTDATED: 'onOutdated', // Call when outdated is raised
+  DISPOSE: 'dispose', // Gameview is disposed
+  ON_REMOVE: 'onRemove', // Object is remove from parent
+  ON_COMPONENT_UPDATE: 'onComponentUpdate', // Component updated smthg
+  ON_RESIZE: 'onResize', // On resize window
 };
 
 module.exports = LocalScriptModule;

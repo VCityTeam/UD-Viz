@@ -23,7 +23,7 @@ export class AssetsManager {
   constructor() {
     this.conf = null;
 
-    //Manager to load scripts
+    // Manager to load scripts
     this.prefabs = {};
     this.worldScripts = {};
     this.localScripts = {};
@@ -31,7 +31,7 @@ export class AssetsManager {
     this.animations = {};
     this.worldsJSON = null;
 
-    //Buffer
+    // Buffer
     this.soundsBuffer = {};
   }
 
@@ -62,13 +62,13 @@ export class AssetsManager {
     if (!this.objects[idRenderData])
       console.error('no model with id ', idRenderData);
 
-    //Clone Object
+    // Clone Object
     const result = {
       animations: this.createAnimations(idRenderData),
       object: this.objects[idRenderData].clone(),
     };
 
-    //Clone materials as well
+    // Clone materials as well
     result.object.traverse(function (child) {
       if (child.material) {
         child.material = child.material.clone();
@@ -100,18 +100,18 @@ export class AssetsManager {
     let result;
 
     if (!this.soundsBuffer[idSound]) {
-      //First this sound is fetched
+      // First this sound is fetched
       result = new Howl({
         src: confSound.path,
         loop: options.loop || false,
       });
 
-      //Register for unload
+      // Register for unload
       this.soundsBuffer[idSound] = [result];
     } else {
-      //If shared an instance already existing is return
-      //TODO conf is the same for all the audio comp not allowing to have shared and not shared sound in the same comp
-      //TODO remove shared to well dispose sounds
+      // If shared an instance already existing is return
+      // TODO conf is the same for all the audio comp not allowing to have shared and not shared sound in the same comp
+      // TODO remove shared to well dispose sounds
       if (options.shared) {
         result = this.soundsBuffer[idSound][0];
         if (!result) throw new Error('no sound');
@@ -292,7 +292,7 @@ export class AssetsManager {
     const scale = modelData.scale;
     const rotation = modelData.rotation;
 
-    //Anchor point
+    // Anchor point
     const bbox = new THREE.Box3().setFromObject(obj);
     const parent = new THREE.Object3D();
     switch (anchor) {
@@ -322,7 +322,7 @@ export class AssetsManager {
       default:
     }
 
-    //Scale
+    // Scale
     if (scale) {
       const newScale = obj.scale;
       newScale.x *= scale.x;
@@ -331,7 +331,7 @@ export class AssetsManager {
       obj.scale.copy(newScale);
     }
 
-    //Rotation
+    // Rotation
     if (rotation) {
       const newRotation = obj.rotation;
       newRotation.x += rotation.x;
@@ -370,7 +370,7 @@ export class AssetsManager {
   loadFromConfig(config = {}, parentDiv = document.body) {
     this.conf = config;
 
-    /**@type {LoadingView} */
+    /** @type {LoadingView} */
     let loadingView = null;
 
     if (parentDiv) {
@@ -378,10 +378,10 @@ export class AssetsManager {
       parentDiv.appendChild(loadingView.html());
     }
 
-    //Result
+    // Result
     const promises = [];
 
-    //Load config file
+    // Load config file
     const _this = this;
     this.buildNativeModel();
 
@@ -399,15 +399,15 @@ export class AssetsManager {
             loader.load(
               renderData.path,
               (data) => {
-                //Parse
+                // Parse
                 _this.parse(id, data.scene, renderData);
 
                 _this.animations[id] = data.animations;
 
-                //Check if finish
+                // Check if finish
                 count++;
 
-                //Update loading bar
+                // Update loading bar
                 loadingView.updateProgress(
                   idLoadingRenderData,
                   (100 * count) / Object.keys(config.renderData).length
@@ -434,7 +434,7 @@ export class AssetsManager {
       return resultRequire.replace(regexType, '');
     };
     // eslint-disable-next-line no-unused-vars
-    const module = import('./AssetsManager'); //DO NOT REMOVE
+    const module = import('./AssetsManager'); // DO NOT REMOVE
 
     if (config.worldScripts) {
       const idLoadingWorldScripts = 'WorldScripts';
@@ -450,7 +450,7 @@ export class AssetsManager {
               function (scriptString) {
                 scriptString = toEvalCode(scriptString);
                 _this.worldScripts[idScript] = eval(scriptString);
-                //Check if finish
+                // Check if finish
                 count++;
 
                 loadingView.updateProgress(
@@ -484,7 +484,7 @@ export class AssetsManager {
               function (scriptString) {
                 scriptString = toEvalCode(scriptString);
                 _this.localScripts[idScript] = eval(scriptString);
-                //Check if finish
+                // Check if finish
                 count++;
 
                 loadingView.updateProgress(
@@ -518,7 +518,7 @@ export class AssetsManager {
               function (prefabstring) {
                 _this.prefabs[idPrefab] = JSON.parse(prefabstring);
 
-                //Check if finish
+                // Check if finish
                 count++;
 
                 loadingView.updateProgress(
@@ -594,7 +594,7 @@ export class AssetsManager {
                 styleSheet.type = 'text/css';
                 styleSheet.innerText = cssString;
                 document.head.appendChild(styleSheet);
-                //Check if finish
+                // Check if finish
                 count++;
 
                 loadingView.updateProgress(
@@ -638,7 +638,7 @@ class LoadingView {
     label.innerHTML = 'ud-viz';
     this.rootHtml.appendChild(label);
 
-    //Loading bars
+    // Loading bars
     this.loadingBars = {};
   }
 

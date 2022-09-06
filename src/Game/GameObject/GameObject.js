@@ -7,7 +7,7 @@
 const THREE = require('three');
 const JSONUtils = require('../Components/JSONUtils');
 
-//GameObject Components
+// GameObject Components
 const RenderComponent = require('./Components/Render');
 const ColliderComponent = require('./Components/Collider');
 const WorldScriptComponent = require('./Components/WorldScript');
@@ -30,21 +30,21 @@ const GameObjectModule = class GameObject {
   constructor(json, parent) {
     if (!json) throw new Error('no json');
 
-    //Id
+    // Id
     this.uuid = json.uuid || THREE.Math.generateUUID();
 
-    //Components
+    // Components
     this.components = {};
     this.setComponentsFromJSON(json);
 
-    //Name
+    // Name
     this.name = json.name || 'none';
 
-    //Default object3d where transform is stored
+    // Default object3d where transform is stored
     this.object3D = new THREE.Object3D();
     this.object3D.name = this.name + '_object3D';
     this.object3D.rotation.reorder('ZXY');
-    //Stock data in userData
+    // Stock data in userData
     this.object3D.userData = {
       gameObjectUUID: this.getUUID(),
     };
@@ -58,10 +58,10 @@ const GameObjectModule = class GameObject {
      */
     this.static = json.static || false;
 
-    //Outdated flag for network opti
+    // Outdated flag for network opti
     this.outdated = json.outdated || false;
 
-    //Graph hierarchy
+    // Graph hierarchy
     const children = [];
     if (json.children && json.children.length > 0) {
       json.children.forEach((child) => {
@@ -70,20 +70,20 @@ const GameObjectModule = class GameObject {
     }
     this.children = children;
 
-    //Uuid of parent if one
+    // Uuid of parent if one
     this.parentUUID = null;
     this.setParent(parent);
 
-    //Assets has been initialized
+    // Assets has been initialized
     this.initialized = false;
 
-    //Update the object state in updateFromGO (or not)
+    // Update the object state in updateFromGO (or not)
     this.noLocalUpdate = json.noLocalUpdate || false;
 
-    //Freeze components and transform
+    // Freeze components and transform
     this.freeze = json.freeze || false;
 
-    //List to force certain component to be serialize
+    // List to force certain component to be serialize
     this.forceSerializeComponents = json.forceSerializeComponents || [];
   }
 
@@ -99,11 +99,11 @@ const GameObjectModule = class GameObject {
     if (this.noLocalUpdate || this.freeze) return;
 
     if (!go.isStatic()) {
-      //Update transform
+      // Update transform
       this.setTransformFromGO(go);
     }
 
-    //Launch update event for bufferedGO
+    // Launch update event for bufferedGO
     let update = false;
     for (let index = 0; index < bufferedGO.length; index++) {
       const element = bufferedGO[index];
@@ -187,7 +187,7 @@ const GameObjectModule = class GameObject {
    * @param {JSON} json
    */
   setFromJSON(json) {
-    this.components = {}; //Clear
+    this.components = {}; // Clear
     this.setComponentsFromJSON(json);
     this.setFromTransformJSON(json.transform);
     this.name = json.name;
@@ -204,7 +204,7 @@ const GameObjectModule = class GameObject {
         }
       }
       if (!jsonChild) {
-        //C no longer in scene
+        // C no longer in scene
         return;
       }
 
@@ -483,7 +483,7 @@ const GameObjectModule = class GameObject {
   computeObject3D(recursive = true) {
     const obj = this.object3D;
 
-    //Clear children object
+    // Clear children object
     obj.children.length = 0;
 
     const r = this.getComponent(RenderComponent.TYPE);
@@ -493,7 +493,7 @@ const GameObjectModule = class GameObject {
       obj.add(rObj);
     }
 
-    //Add children if recursive
+    // Add children if recursive
     if (recursive) {
       this.children.forEach(function (child) {
         obj.add(child.computeObject3D());
@@ -815,7 +815,7 @@ const GameObjectModule = class GameObject {
       }
     }
 
-    //Add forced serialize component
+    // Add forced serialize component
     for (let index = 0; index < this.forceSerializeComponents.length; index++) {
       const type = this.forceSerializeComponents[index];
       const c = this.components[type];
@@ -868,7 +868,7 @@ GameObjectModule.interpolateInPlace = function (g1, g2, ratio) {
  */
 GameObjectModule.deepCopy = function (gameObject) {
   const cloneJSON = gameObject.toJSON(true);
-  //Rename uuid
+  // Rename uuid
   JSONUtils.parse(cloneJSON, function (json, key) {
     const keyLowerCase = key.toLowerCase();
     if (keyLowerCase === 'uuid') json[key] = THREE.MathUtils.generateUUID();

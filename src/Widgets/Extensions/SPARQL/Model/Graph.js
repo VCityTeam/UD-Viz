@@ -25,7 +25,7 @@ export class Graph {
       .style('display', 'hidden');
   }
 
-  /// Data Functions ///
+  // / Data Functions ///
 
   /**
    * Create a new graph based on an graph dataset.
@@ -357,7 +357,7 @@ export class Graph {
     this.namespaces = [];
   }
 
-  /// Interface Functions ///
+  // / Interface Functions ///
 
   /**
    * Create a drag effect for graph nodes within the context of a force simulation
@@ -412,7 +412,7 @@ export class Graph {
       .filter((d, i) => i < 2)
       .attr('height', '100%')
       .attr('width', '100%')
-      //.attr('transform', event.transform)
+      // .attr('transform', event.transform)
       .attr(
         'transform',
         'translate(' +
@@ -449,7 +449,7 @@ export class Graph {
       );
   }
 
-  /// EVENTS
+  // / EVENTS
 
   static get EVENT_NODE_CLICKED() {
     return 'EVENT_NODE_CLICKED';

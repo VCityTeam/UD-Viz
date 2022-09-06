@@ -1,6 +1,6 @@
 /** @format */
 
-//Components
+// Components
 import { Window } from '../../Components/GUI/js/Window';
 
 import './TemporalWindow.css';
@@ -34,7 +34,7 @@ export class TemporalSliderWindow extends Window {
   }
 
   get innerContentHtml() {
-    return /*html*/ `
+    return /* html*/ `
             <div id="temporalWindow">
             <div id="timeSliderMinDate">${this.minTime}</div>
             <div id="timeSliderMaxDate">${this.maxTime}</div>

@@ -1,6 +1,6 @@
 /** @format */
 
-//Components
+// Components
 import { Window } from '../Components/GUI/js/Window';
 import * as THREE from 'three';
 
@@ -16,33 +16,33 @@ export class SlideShow extends Window {
 
     /** @type {AllWidget} */
     this.app = app;
-    /**@type {InputManager} */
+    /** @type {InputManager} */
     this.inputManager = inputManager;
     /** @type {itowns.Extent} */
     this.extent = app.extent;
     this.conf = app.config.slideShow || null;
 
-    //Content html
+    // Content html
     this.htmlSlideShow = null;
-    //Ids
+    // Ids
     this.coordinatesInputVectorID = null;
     this.rotationInputVectorID = null;
     this.sizeInputVectorID = null;
     this.aspectRatioCheckboxID = null;
     this.slideSelectID = null;
 
-    //Vectors
+    // Vectors
     this.coordinatesVector = new THREE.Vector3();
     this.rotationVector = new THREE.Vector3();
     this.sizeVector = new THREE.Vector2();
 
-    //List of callbacks to set when the window is created
+    // List of callbacks to set when the window is created
     this.callbacksHTMLEl = [];
 
     /** @type {THREE.Mesh} */
     this.plane = null;
 
-    //List of textures with data
+    // List of textures with data
     this.texturesFiles = null;
     this.iCurrentTextureFile = 0;
 
@@ -61,7 +61,7 @@ export class SlideShow extends Window {
     this.initInputListener(app, this.inputManager);
     this.initCBDrop();
     const _this = this;
-    /**A function call each frame by the browser */
+    /** A function call each frame by the browser */
     const tick = function () {
       requestAnimationFrame(tick);
       _this.notifyChangeEachFrame();
@@ -69,7 +69,7 @@ export class SlideShow extends Window {
     tick();
   }
 
-  /**If the notifyValue is true, then update the 3D view*/
+  /** If the notifyValue is true, then update the 3D view*/
   notifyChangeEachFrame() {
     if (this.notifyValue) {
       this.app.update3DView();
@@ -138,7 +138,7 @@ export class SlideShow extends Window {
     }
   }
 
-  /**Create a default texture and fill the first texture file in this.texturesFiles */
+  /** Create a default texture and fill the first texture file in this.texturesFiles */
   initDefaultTextureFile() {
     const canvas = document.createElement('canvas');
     canvas.height = 512;
@@ -189,7 +189,7 @@ export class SlideShow extends Window {
     ];
   }
 
-  /**Create all HTMLElements and fill this.htmlSlideShow*/
+  /** Create all HTMLElements and fill this.htmlSlideShow*/
   initHtml() {
     const htmlSlideShow = document.createElement('div');
     const coordinatesElement = this.createInputVector(
@@ -309,14 +309,14 @@ export class SlideShow extends Window {
     // Clamp number between two values with the following line:
     const clamp = (num, min, max) => Math.min(Math.max(num, min), max);
 
-    //Hide and show the geometryPlane
+    // Hide and show the geometryPlane
     iM.addKeyInput('h', 'keydown', function () {
       if (!_this.plane) return;
       _this.plane.visible = !_this.plane.visible;
       app.update3DView();
     });
 
-    //Change the next slide
+    // Change the next slide
     iM.addKeyInput('ArrowRight', 'keydown', function () {
       if (!_this.plane) return;
       _this.iCurrentTextureFile = clamp(
@@ -331,7 +331,7 @@ export class SlideShow extends Window {
       app.update3DView();
     });
 
-    //Change the previous slide
+    // Change the previous slide
     iM.addKeyInput('ArrowLeft', 'keydown', function () {
       if (!_this.plane) return;
       _this.iCurrentTextureFile = clamp(
@@ -472,7 +472,12 @@ export class SlideShow extends Window {
     };
   }
 
-  /**Function called when aspectRatio is checked*/
+  /**
+   * Function called when aspectRatio is checked
+   *
+   * @param iInput
+   * @param value
+   */
   matchRatio(iInput, value) {
     const linkedSizeElement =
       this.sizeInputVectorDOM.getElementsByTagName('input')[
@@ -487,7 +492,7 @@ export class SlideShow extends Window {
     linkedSizeElement.value = newValue;
   }
 
-  /**Update vectors variables with the values contained in inputs elements in DOM */
+  /** Update vectors variables with the values contained in inputs elements in DOM */
   updateVectors() {
     this.coordinatesVector =
       this.inputVectorToVector(this.coordinatesInputVectorDOM) ||
@@ -503,7 +508,11 @@ export class SlideShow extends Window {
     this.modifyPlane();
   }
 
-  /**Convert inputVector HTMLElement to THREE.Vector*/
+  /**
+   * Convert inputVector HTMLElement to THREE.Vector
+   *
+   * @param inputVector
+   */
   inputVectorToVector(inputVector) {
     const inputEls = inputVector.getElementsByTagName('input');
 
@@ -558,7 +567,7 @@ export class SlideShow extends Window {
     app.update3DView();
   }
 
-  /**Modify this.plane @var {THREE.Mesh} */
+  /** Modify this.plane @var {THREE.Mesh} */
   modifyPlane() {
     if (!this.plane) {
       this.createPlane();
@@ -582,7 +591,7 @@ export class SlideShow extends Window {
     this.app.update3DView();
   }
 
-  /**Create PlaneGeometry Mesh*/
+  /** Create PlaneGeometry Mesh*/
   createPlane() {
     const geometry = new THREE.PlaneGeometry(1, 1);
 
@@ -594,23 +603,23 @@ export class SlideShow extends Window {
     this.plane = new THREE.Mesh(geometry, material);
   }
 
-  //DOM GETTERS
-  /**returns coordinates HTMLElements (inputs+labels) */
+  // DOM GETTERS
+  /** returns coordinates HTMLElements (inputs+labels) */
   get coordinatesInputVectorDOM() {
     return document.getElementById(this.coordinatesInputVectorID);
   }
 
-  /**Return rotation HTMLElement (inputs+labels)*/
+  /** Return rotation HTMLElement (inputs+labels)*/
   get rotationInputVectorDOM() {
     return document.getElementById(this.rotationInputVectorID);
   }
 
-  /**Return size HTMLElement (inputs+labels)*/
+  /** Return size HTMLElement (inputs+labels)*/
   get sizeInputVectorDOM() {
     return document.getElementById(this.sizeInputVectorID);
   }
 
-  /**Return apspect ratio HTMLElement (checkbox)*/
+  /** Return apspect ratio HTMLElement (checkbox)*/
   get aspectRatioCheckboxDOM() {
     return document.getElementById(this.aspectRatioCheckboxID);
   }
@@ -623,7 +632,7 @@ export class SlideShow extends Window {
     return this.texturesFiles[this.iCurrentTextureFile];
   }
 
-  //INPUTS ELEMENTS SETTERS
+  // INPUTS ELEMENTS SETTERS
   /* Setting the values of the input fields in the DOM. */
   setSizeInputs(vec2) {
     const sizeInputEls = this.sizeInputVectorDOM.getElementsByTagName('input');
@@ -684,7 +693,7 @@ export class SlideShow extends Window {
     }
   }
 
-  /**Get size values contained in inputs elements in DOM*/
+  /** Get size values contained in inputs elements in DOM*/
   getSizeValues() {
     const sizeInputEls = this.sizeInputVectorDOM.getElementsByTagName('input');
     return {
@@ -693,7 +702,7 @@ export class SlideShow extends Window {
     };
   }
 
-  /**It adds event listeners to the HTML elements created by the Window class.*/
+  /** It adds event listeners to the HTML elements created by the Window class.*/
   windowCreated() {
     const _this = this;
     // Through this.callbacksHTMLEl and addEventListeners to HTMLElements in DOM (elements which created by Window class)

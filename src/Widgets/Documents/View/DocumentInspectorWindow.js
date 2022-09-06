@@ -33,7 +33,7 @@ export class DocumentInspectorWindow extends AbstractDocumentWindow {
   }
 
   get innerContentHtml() {
-    return /*html*/ `
+    return /* html*/ `
       <div class="box-section">
         <h3 class="section-title">Title: <span id="${this.docTitleId}"></span></h3>
         <div>
@@ -94,8 +94,8 @@ export class DocumentInspectorWindow extends AbstractDocumentWindow {
     );
   }
 
-  ///////////////////////
-  ///// DOCUMENT HANDLING
+  // /////////////////////
+  // /// DOCUMENT HANDLING
 
   /**
    * Triggered when the displayed document change. Updates the HTML fields.
@@ -146,8 +146,8 @@ export class DocumentInspectorWindow extends AbstractDocumentWindow {
     this.docImageElement.src = await this.provider.getDisplayedDocumentImage();
   }
 
-  /////////////
-  ///// GETTERS
+  // ///////////
+  // /// GETTERS
 
   get docTitleId() {
     return `${this.windowId}_title`;

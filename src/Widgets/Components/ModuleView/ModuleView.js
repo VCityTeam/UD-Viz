@@ -23,7 +23,7 @@ export class ModuleView extends EventSender {
     this.registerEvent(ModuleView.EVENT_DISABLED);
   }
 
-  ///////// Overideable methods
+  // /////// Overideable methods
   // These methods should be overriden by the implementing class
   // By default, they do nothing. They are supposed to enable
   // or disable the view. (Can be done by destroying / creating, or
@@ -43,7 +43,7 @@ export class ModuleView extends EventSender {
    */
   async disableView() {}
 
-  ///////// Do not override
+  // /////// Do not override
   // These methods are the public methods called to destroy or
   // create the view.
   /**
@@ -70,7 +70,7 @@ export class ModuleView extends EventSender {
     this.sendEvent(ModuleView.EVENT_DISABLED);
   }
 
-  ///////// Events
+  // /////// Events
   // Events called when enabling / disabling the view
   /**
    * Event sent when the view is enabled

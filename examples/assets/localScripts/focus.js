@@ -9,7 +9,7 @@ module.exports = class Focus {
     udviz = udvizBundle;
     Game = udviz.Game;
 
-    //Quaternion to place the camera
+    // Quaternion to place the camera
     this.quaternionCam = new Game.THREE.Quaternion().setFromEuler(
       new Game.THREE.Euler(Math.PI * 0.5, 0, 0)
     );
@@ -17,7 +17,7 @@ module.exports = class Focus {
       new Game.THREE.Euler(-this.conf.cameraAngle, 0, 0)
     );
 
-    //Initial distance of the camera with the go2Focus
+    // Initial distance of the camera with the go2Focus
     this.distance = this.conf.minDist;
   }
 
@@ -37,27 +37,27 @@ module.exports = class Focus {
   }
 
   tick() {
-    //The gameobject parent of this script
+    // The gameobject parent of this script
     const go = arguments[0];
 
-    //A context containing all data to script clientside script
+    // A context containing all data to script clientside script
     const localContext = arguments[1];
 
-    //Get the go2Focus gameobject by name
+    // Get the go2Focus gameobject by name
     const go2Focus = go.computeRoot().findByName(this.conf.nameGO2Focus);
 
     if (!go2Focus) return;
 
-    //Compute world transform
+    // Compute world transform
     const obj = go2Focus.computeObject3D();
     const position = new Game.THREE.Vector3();
     const quaternion = new Game.THREE.Quaternion();
     obj.matrixWorld.decompose(position, quaternion, new Game.THREE.Vector3());
 
-    //Move the position a bit up (z is up)
+    // Move the position a bit up (z is up)
     position.z += this.conf.offsetZ;
 
-    //Compute camera position
+    // Compute camera position
     const dir = go2Focus
       .getDefaultForward()
       .applyQuaternion(this.quaternionAngle)
@@ -67,7 +67,7 @@ module.exports = class Focus {
     quaternion.multiply(this.quaternionCam);
     quaternion.multiply(this.quaternionAngle);
 
-    //Tweak values in camera object
+    // Tweak values in camera object
     const camera = localContext.getGameView().getCamera();
     camera.position.copy(position);
     camera.quaternion.copy(quaternion);

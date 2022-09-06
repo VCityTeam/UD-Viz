@@ -31,7 +31,7 @@ export class AttributeFilterSelector extends CityObjectFilterSelector {
   }
 
   get html() {
-    return /*html*/ `
+    return /* html*/ `
       <label for="tileId">Tile ID</label>
       <input type="text" name="tileId">
       <label for="batchId">Batch ID</label>

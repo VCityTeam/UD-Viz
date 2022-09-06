@@ -19,7 +19,7 @@ export class PositionerWindow extends Window {
   }
 
   get innerContentHtml() {
-    return /*html*/ `
+    return /* html*/ `
       <div class="box-section">
         <h3 class="section-title">Coordinates</h3>
         <form id="${this.formId}">
@@ -64,8 +64,8 @@ export class PositionerWindow extends Window {
     };
   }
 
-  /////////////////////////
-  ///// POSITION MANAGEMENT
+  // ///////////////////////
+  // /// POSITION MANAGEMENT
 
   /**
    * Updates the form fields from the camera position.
@@ -133,8 +133,8 @@ export class PositionerWindow extends Window {
     this.disable();
   }
 
-  /////////////
-  ///// GETTERS
+  // ///////////
+  // /// GETTERS
 
   get buttonValidateId() {
     return `${this.windowId}_button_validate`;
@@ -216,8 +216,8 @@ export class PositionerWindow extends Window {
     return document.getElementById(this.quaternionWId);
   }
 
-  ////////////
-  ///// EVENTS
+  // //////////
+  // /// EVENTS
 
   static get EVENT_POSITION_SUBMITTED() {
     return 'EVENT_POSITION_SUBMITTED';

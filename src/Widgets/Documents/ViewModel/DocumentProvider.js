@@ -1,6 +1,6 @@
 /** @format */
 
-//Components
+// Components
 import { EventSender } from '../../../Components/Events/EventSender';
 
 import { DocumentService } from '../Model/DocumentService';
@@ -235,8 +235,8 @@ export class DocumentProvider extends EventSender {
     return await this.service.fetchDocumentImage(this.getDisplayedDocument());
   }
 
-  ////////////
-  ///// EVENTS
+  // //////////
+  // /// EVENTS
 
   static get EVENT_FILTERED_DOCS_UPDATED() {
     return 'EVENT_FILTERED_DOCS_UPDATED';

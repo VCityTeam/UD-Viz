@@ -69,7 +69,7 @@ export class DocumentVisualizerWindow extends AbstractDocumentWindow {
   }
 
   get html() {
-    return /*html*/ `
+    return /* html*/ `
       <img id="${this.imageId}"/>
       <div class="controls-panel">
         <button id="${this.closeButtonId}">Close</button>
@@ -106,8 +106,8 @@ export class DocumentVisualizerWindow extends AbstractDocumentWindow {
     );
   }
 
-  //////////////////////
-  ///// TRAVEL & OPACITY
+  // ////////////////////
+  // /// TRAVEL & OPACITY
 
   /**
    * Triggered when the opacity of the slider changes. This method apply the
@@ -229,8 +229,8 @@ export class DocumentVisualizerWindow extends AbstractDocumentWindow {
     });
   }
 
-  /////////////
-  ///// GETTERS
+  // ///////////
+  // /// GETTERS
 
   get closeButtonId() {
     return `${this.windowId}_close_button`;

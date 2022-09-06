@@ -2,7 +2,7 @@
 
 import { DocumentModule } from '../../Documents/DocumentModule';
 
-//Components
+// Components
 import { RequestService } from '../../../Components/Request/RequestService';
 
 import { DocumentCommentsService } from './services/DocumentCommentsService';
