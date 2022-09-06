@@ -614,7 +614,7 @@ export function getTilesInfo(layer, tilesInfo = null) {
   const rootTile = layer.object3d.children[0];
   tilesInfo.tileset = rootTile;
   const tiles = getVisibleTiles(layer);
-  // tiles contains every tile currently loaded in the scene. We iterate
+  // Tiles contains every tile currently loaded in the scene. We iterate
   // over them to visit the ones that we have not visited yet.
   for (const tile of tiles) {
     const tileId = tile.tileId;

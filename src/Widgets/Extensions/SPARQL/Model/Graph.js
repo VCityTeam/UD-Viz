@@ -222,7 +222,7 @@ export class Graph {
   }
 
   /**
-   * return a query response formatted for a D3.js graph.
+   * Return a query response formatted for a D3.js graph.
    *
    * @param data
    * @returns {object}
@@ -255,7 +255,7 @@ export class Graph {
         triple.objectType
       ) {
         if (
-          // if the subject doesn't exist yet
+          // If the subject doesn't exist yet
           graphData.nodes.find((n) => n.id == triple.subject.value) == undefined
         ) {
           const subjectNamespaceId = this.getNamespaceIndex(
@@ -268,7 +268,7 @@ export class Graph {
           graphData.nodes.push(node);
         }
         if (
-          // if the object doesn't exist yet
+          // If the object doesn't exist yet
           graphData.nodes.find((n) => n.id == triple.object.value) == undefined
         ) {
           const objectNamespaceId = this.getNamespaceIndex(
@@ -289,14 +289,14 @@ export class Graph {
         /* If the query is formatted using just subject, predicate, and object,
            variables the node color is left black */
         if (
-          // if the subject doesn't exist yet
+          // If the subject doesn't exist yet
           graphData.nodes.find((n) => n.id == triple.subject.value) == undefined
         ) {
           const node = { id: triple.subject.value, color_id: undefined };
           graphData.nodes.push(node);
         }
         if (
-          // if the object doesn't exist yet
+          // If the object doesn't exist yet
           graphData.nodes.find((n) => n.id == triple.object.value) == undefined
         ) {
           const node = { id: triple.object.value, color_id: undefined };

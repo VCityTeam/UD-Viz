@@ -7,23 +7,23 @@ const THREE = require('three');
  */
 const LocalScriptModule = class LocalScript {
   constructor(parent, json) {
-    //gameobject of this component
+    //Gameobject of this component
     this.parent = parent;
 
-    //uuid
+    //Uuid
     this.uuid = json.uuid || THREE.MathUtils.generateUUID();
 
-    //array of localscripts id
+    //Array of localscripts id
     this.idScripts = json.idScripts || [];
 
-    //type
+    //Type
     this.type = json.type || LocalScriptModule.TYPE;
 
-    //conf pass to scripts
+    //Conf pass to scripts
     const conf = json.conf || {};
     this.conf = JSON.parse(JSON.stringify(conf));
 
-    //map of scripts
+    //Map of scripts
     this.scripts = {};
   }
 
@@ -94,7 +94,7 @@ const LocalScriptModule = class LocalScript {
    */
   updateFromComponent(outdated, component, localContext) {
     if (outdated) {
-      //replace conf and launch an update event
+      //Replace conf and launch an update event
       this.conf = component.conf;
       for (const id in this.scripts) {
         const s = this.scripts[id];
@@ -145,13 +145,13 @@ const LocalScriptModule = class LocalScript {
 LocalScriptModule.TYPE = 'LocalScript';
 LocalScriptModule.EVENT = {
   INIT: 'init', //Before first tick
-  TICK: 'tick', //every tick
-  ON_NEW_GAMEOBJECT: 'onNewGameObject', //when a go is added
-  ON_OUTDATED: 'onOutdated', //call when outdated is raised
-  DISPOSE: 'dispose', //gameview is disposed
-  ON_REMOVE: 'onRemove', //object is remove from parent
-  ON_COMPONENT_UPDATE: 'onComponentUpdate', //component updated smthg
-  ON_RESIZE: 'onResize', //on resize window
+  TICK: 'tick', //Every tick
+  ON_NEW_GAMEOBJECT: 'onNewGameObject', //When a go is added
+  ON_OUTDATED: 'onOutdated', //Call when outdated is raised
+  DISPOSE: 'dispose', //Gameview is disposed
+  ON_REMOVE: 'onRemove', //Object is remove from parent
+  ON_COMPONENT_UPDATE: 'onComponentUpdate', //Component updated smthg
+  ON_RESIZE: 'onResize', //On resize window
 };
 
 module.exports = LocalScriptModule;

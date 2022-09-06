@@ -106,13 +106,13 @@ export class GeocodingView extends ModuleView {
       coords.forEach((c) => {
         const { lat, lng } = c;
         let i = 0;
-        //step 1 : convert the lat/lng to coordinates used by itowns
+        //Step 1 : convert the lat/lng to coordinates used by itowns
         const targetPos = this.getWorldCoordinates(lat, lng);
         if (targetPos.z) {
-          //if we could convert the coords (ie. they are on the map)
+          //If we could convert the coords (ie. they are on the map)
           //step 2 : add a mesh representing a pin
           this.addPin(targetPos);
-          //step 3 : if the first result, focus on it (move the camera)
+          //Step 3 : if the first result, focus on it (move the camera)
           if (i === 0) {
             focusCameraOn(this.planarView, this.planarView.controls, targetPos);
           }

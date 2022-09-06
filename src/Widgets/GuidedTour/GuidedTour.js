@@ -22,25 +22,25 @@ export class GuidedTour extends Window {
     super('guidedTour', 'Guided Tour', false);
     this.guidedTourController = guidedTourController;
 
-    this.tourIndex = 1; //current guided tour. Default is 1 (start)
+    this.tourIndex = 1; //Current guided tour. Default is 1 (start)
 
-    this.stepIndex = 1; //current step of the guidedtour. Defautt is 1 (start)
+    this.stepIndex = 1; //Current step of the guidedtour. Defautt is 1 (start)
 
     // boolean to control the state of the guided tour window (open/closed)
     this.guidedTourWindowIsActive = true;
 
     this.isStart = true;
 
-    this.currentTour = null; //current guided tour
-    this.currentStep = null; //current step of the current guided tour
+    this.currentTour = null; //Current guided tour
+    this.currentStep = null; //Current step of the current guided tour
 
     //instance of document browser
     this.documentBrowser = this.guidedTourController.browser;
 
-    //update browser view
+    //Update browser view
     const guidedTourText2 = document.createElement('div');
     guidedTourText2.id = 'guidedTourText2';
-    //document.getElementById('docBrowserWindow').appendChild(guidedTourText2);
+    //Document.getElementById('docBrowserWindow').appendChild(guidedTourText2);
   }
 
   get innerContentHtml() {
@@ -71,7 +71,7 @@ export class GuidedTour extends Window {
     this.innerContent.style.height = '100%';
   }
 
-  // hide or show the guided tour window
+  // Hide or show the guided tour window
   //=============================================================================
   toggleGuidedTourWindow() {
     document.getElementById('guidedTourWindow').style.display = this
@@ -89,7 +89,7 @@ export class GuidedTour extends Window {
     }
   }
 
-  //get all available guided tour from the database
+  //Get all available guided tour from the database
   startGuidedTourMode() {
     this.guidedTourController.getGuidedTours().then(() => {
       this.previewTour();
@@ -109,7 +109,7 @@ export class GuidedTour extends Window {
     document.getElementById('guidedTourPreviousTourButton').style.display =
       'block';
     document.getElementById('guidedTourNextTourButton').style.display = 'block';
-    // for the demo, until we have more than one finished guided tour
+    // For the demo, until we have more than one finished guided tour
     // we can prevent user from changing tour by hiding the buttons
     if (this.guidedTourController.preventUserFromChangingTour) {
       document.getElementById('guidedTourPreviousTourButton').style.display =
@@ -122,7 +122,7 @@ export class GuidedTour extends Window {
       'none';
     document.getElementById('guidedTourNextStepButton').style.display = 'none';
     document.getElementById('guidedTourExitButton').style.display = 'none';
-    //document.getElementById("guidedTourText2").style.display = "none";
+    //Document.getElementById("guidedTourText2").style.display = "none";
     document.getElementById('guidedTourStartButton').style.display = 'block';
 
     const currentTour = this.guidedTourController.getCurrentTour();
@@ -136,7 +136,7 @@ export class GuidedTour extends Window {
     document.getElementById('guidedTourStepTitle').innerHTML = null;
   }
 
-  // update step with current step data
+  // Update step with current step data
   //=============================================================================
   updateStep() {
     this.currentStep = this.guidedTourController.getCurrentStep();
@@ -152,20 +152,20 @@ export class GuidedTour extends Window {
     this.documentBrowser.focusOnDoc();
   }
 
-  //start guided tour
+  //Start guided tour
   //=============================================================================
   startGuidedTour() {
     if (this.guidedTourController.getCurrentTour().extendedDocs.length > 0) {
       this.tourIndex = 1;
       this.stepIndex = 1;
       this.updateStep();
-      // setup the display (hide & show elements)
+      // Setup the display (hide & show elements)
       this.guidedTourController.toggleGuidedTourButtons(false);
       document.getElementById('guidedTourDocPreviewImg').style.display = 'none';
       document.getElementById('guidedTourText1').style.height = '60%';
       document.getElementById('tourCpt').style.display = 'none';
     } else {
-      alert('This guided tour is empty'); //should never happen. If a guided tour
+      alert('This guided tour is empty'); //Should never happen. If a guided tour
       //doesn't have steps, then it is not a guided tour
     }
   }
@@ -227,7 +227,7 @@ export class GuidedTour extends Window {
     }
   }
 
-  // event listeners (buttons)
+  // Event listeners (buttons)
   initializeButtons() {
     document
       .getElementById('guidedTourNextTourButton')

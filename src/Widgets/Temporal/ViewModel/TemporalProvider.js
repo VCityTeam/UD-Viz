@@ -72,35 +72,35 @@ export class TemporalProvider {
       new CityObjectStyle({
         materialProps: { opacity: 1.0, color: 0xffffff },
       })
-    ); // white
+    ); // White
 
     this.tilesManager.registerStyle(
       'creation',
       new CityObjectStyle({
         materialProps: { opacity: 0.6, color: 0x009900 },
       })
-    ); // green
+    ); // Green
 
     this.tilesManager.registerStyle(
       'demolition',
       new CityObjectStyle({
         materialProps: { opacity: 0.6, color: 0xff0000 },
       })
-    ); // red
+    ); // Red
 
     this.tilesManager.registerStyle(
       'modification',
       new CityObjectStyle({
         materialProps: { opacity: 0.6, color: 0xffd700 },
       })
-    ); // yellow
+    ); // Yellow
 
     this.tilesManager.registerStyle(
       'hide',
       new CityObjectStyle({
         materialProps: { opacity: 0, color: 0xffffff, alphaTest: 0.3 },
       })
-    ); // hidden
+    ); // Hidden
   }
 
   /**
@@ -153,7 +153,7 @@ export class TemporalProvider {
   getTransactionStyleName(transaction, styleName) {
     if (transaction.isPrimary) return transaction.type;
     else if (transaction.isAggregate) {
-      if (styleName === '') styleName = 'aggregate'; // prefix
+      if (styleName === '') styleName = 'aggregate'; // Prefix
       for (let i = 0; i < transaction.transactions.length; i++) {
         styleName =
           styleName +

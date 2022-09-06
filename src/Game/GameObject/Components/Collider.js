@@ -11,19 +11,19 @@ const ColliderModule = class Collider {
   constructor(parent, json) {
     if (!json) throw new Error('no json');
 
-    //gameobject of this component
+    //Gameobject of this component
     this.parent = parent;
 
-    //uuid
+    //Uuid
     this.uuid = json.uuid || THREE.MathUtils.generateUUID();
 
-    //shapes in json format
+    //Shapes in json format
     this.shapesJSON = json.shapes || [];
 
-    //boolean to know if its a physics collisions or not
+    //Boolean to know if its a physics collisions or not
     this.body = json.body || false;
 
-    //shapes wrappers
+    //Shapes wrappers
     this.shapeWrappers = [];
     this.createShapeWrappers();
   }
@@ -43,7 +43,7 @@ const ColliderModule = class Collider {
    */
   // eslint-disable-next-line no-unused-vars
   initAssets(assetsManager) {
-    //nada
+    //Nada
   }
 
   /**
@@ -102,7 +102,7 @@ const ColliderModule = class Collider {
   }
 
   updateFromComponent() {
-    //nada
+    //Nada
   }
 
   /**
@@ -133,16 +133,16 @@ module.exports = ColliderModule;
  */
 class ShapeWrapper {
   constructor(gameObject, json) {
-    //gameobject of this shapewrapper
+    //Gameobject of this shapewrapper
     this.gameObject = gameObject;
 
-    //json
+    //Json
     this.json = json;
 
-    //shape detect-collisions npm package
+    //Shape detect-collisions npm package
     this.shape = null;
 
-    //init
+    //Init
     this.initFromJSON(json);
   }
 
@@ -197,7 +197,7 @@ class ShapeWrapper {
 
           const polygon = new Polygon(0, 0, points);
 
-          //attach userData to perform update
+          //Attach userData to perform update
           this.update = function (worldtransform) {
             const points = [];
             json.points.forEach(function (p) {
@@ -215,7 +215,7 @@ class ShapeWrapper {
       default:
     }
 
-    //add a getter to the gameObject
+    //Add a getter to the gameObject
     this.shape.getGameObject = this.getGameObject.bind(this);
   }
 }

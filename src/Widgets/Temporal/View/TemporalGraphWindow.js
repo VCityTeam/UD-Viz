@@ -20,12 +20,12 @@ import './TemporalWindow.css';
  */
 export class TemporalGraphWindow extends Window {
   constructor(refreshCallback, options = {}) {
-    // option : getAsynchronousData
+    // Option : getAsynchronousData
     super('temporal', 'Temporal Graph Navigation', false);
 
     this.refreshCallback = refreshCallback;
 
-    // graph
+    // Graph
     this.networkManager = new NetworkManager();
     this.networkManager.option = options.viewOptions;
     this.networkManager.getAsynchronousData =
@@ -53,7 +53,7 @@ export class TemporalGraphWindow extends Window {
     // Window size and center text
     this.window.style.setProperty('width', '700px');
     this.window.style.setProperty('height', '215px');
-    //        this.window.style.setProperty('height', '115px');
+    //        This.window.style.setProperty('height', '115px');
     this.window.style.setProperty('text-align', 'center');
 
     // Add graph
@@ -63,7 +63,7 @@ export class TemporalGraphWindow extends Window {
     });
   }
 
-  // change the current date and sync the temporal version to this new date
+  // Change the current date and sync the temporal version to this new date
   changeTime(time) {
     this.currentTime = time;
 

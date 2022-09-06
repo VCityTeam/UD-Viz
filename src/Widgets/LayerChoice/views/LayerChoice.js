@@ -14,7 +14,7 @@ export class LayerChoice extends Window {
     super('layer_choice', 'Layer', false);
 
     /**
-     * the layerManager
+     * The layerManager
      */
     this.layerManager = layerManager;
   }

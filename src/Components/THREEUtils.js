@@ -25,7 +25,7 @@ module.exports = {
    * @returns {THREE.DirectionalLight, THREE.AmbientLight} lights added
    */
   addLights(scene) {
-    //lights
+    //Lights
     const directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
     directionalLight.position.set(100, 100, 500);
     directionalLight.target.position.set(0, 0, 0);
@@ -53,7 +53,7 @@ module.exports = {
     renderer.outputEncoding = this.textureEncoding;
     renderer.setPixelRatio(window.devicePixelRatio);
     renderer.shadowMap.enabled = true;
-    // to antialias the shadow
+    // To antialias the shadow
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   },
 
@@ -67,7 +67,7 @@ module.exports = {
    * @param {THREE.DirectionalLight} dirLight the light with the shadow camera
    */
   bindLightTransform(offset, phi, theta, obj, dirLight) {
-    // computing boundingSphere
+    // Computing boundingSphere
     const bb = new THREE.Box3().setFromObject(obj);
     const center = bb.getCenter(new THREE.Vector3());
     const bsphere = bb.getBoundingSphere(new THREE.Sphere(center));
@@ -77,20 +77,20 @@ module.exports = {
       theta
     );
 
-    // set the light's target
+    // Set the light's target
     dirLight.target.position.copy(center);
     dirLight.target.updateMatrixWorld();
 
-    // convert spherical coordinates in cartesian
+    // Convert spherical coordinates in cartesian
     const vecLightPos = new THREE.Vector3();
     vecLightPos.setFromSpherical(sphericalPoint);
     vecLightPos.add(dirLight.target.position);
 
-    // place directionnal lights
+    // Place directionnal lights
     dirLight.position.copy(vecLightPos);
     dirLight.updateMatrixWorld();
 
-    // set up camera that computes the shadow map
+    // Set up camera that computes the shadow map
     const cameraShadow = dirLight.shadow.camera;
     cameraShadow.near = offset;
     cameraShadow.far = offset + bsphere.radius * 2;

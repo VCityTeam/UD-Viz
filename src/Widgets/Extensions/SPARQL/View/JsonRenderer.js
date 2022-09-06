@@ -213,7 +213,7 @@ const renderjson = (function () {
       );
     }
 
-    // object
+    // Object
     if (isempty(json, options.property_list))
       return themetext(null, my_indent, 'object syntax', '{}');
 

@@ -68,7 +68,7 @@ export class ContributeService {
    * @returns {Document} The updated document.
    */
   async updateDocument(updatedData) {
-    //get current doc data and id
+    //Get current doc data and id
     const currentDoc = this.provider.getDisplayedDocument();
     const id = currentDoc.id;
 

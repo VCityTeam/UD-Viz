@@ -8,25 +8,25 @@ const WorldState = require('./WorldState');
  */
 module.exports = class WorldStateInterpolator {
   constructor(renderDelay, localComputer) {
-    //delay between state received and state computed
+    //Delay between state received and state computed
     this.renderDelay = renderDelay;
 
-    //internal
+    //Internal
     this.states = [];
     this.gameStart = 0;
     this.firstServerTimestamp = 0;
 
-    //batch
+    //Batch
     this._notConsumedStates = [];
 
-    //ping attr computation
-    this.lastTimeState = 0; //buffer
-    this.ping = 0; //time between two new state
+    //Ping attr computation
+    this.lastTimeState = 0; //Buffer
+    this.ping = 0; //Time between two new state
 
     //local game optional (could work with a distant computer via websocket)
     this.localComputer = localComputer;
     if (localComputer) {
-      //register itself in the localcomputer
+      //Register itself in the localcomputer
       const _this = this;
       _this.onFirstState(localComputer.computeCurrentState());
       localComputer.addAfterTickRequester(function () {
@@ -43,7 +43,7 @@ module.exports = class WorldStateInterpolator {
     return this.renderDelay;
   }
 
-  //time between two new state
+  //Time between two new state
   getPing() {
     return this.ping;
   }
@@ -58,7 +58,7 @@ module.exports = class WorldStateInterpolator {
       throw new Error('no state');
     }
 
-    //compute ping
+    //Compute ping
     const now = Date.now();
     this.ping = now - this.lastTimeState;
     this.lastTimeState = now;
@@ -72,7 +72,7 @@ module.exports = class WorldStateInterpolator {
       const stateDeleted = this.states.splice(0, index);
       for (let iStateDel = 0; iStateDel < stateDeleted.length; iStateDel++) {
         const element = stateDeleted[iStateDel];
-        if (!element.hasBeenConsumed()) this._notConsumedStates.push(element); //register states not consumed
+        if (!element.hasBeenConsumed()) this._notConsumedStates.push(element); //Register states not consumed
       }
     }
   }

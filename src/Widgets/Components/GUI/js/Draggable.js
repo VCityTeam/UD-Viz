@@ -19,11 +19,11 @@ export function dragElement(elmnt, dragelmnt) {
    */
   function dragMouseDown(e) {
     e = e || window.event;
-    // get the mouse cursor position at startup:
+    // Get the mouse cursor position at startup:
     pos3 = e.clientX;
     pos4 = e.clientY;
     document.onmouseup = closeDragElement;
-    // call a function whenever the cursor moves:
+    // Call a function whenever the cursor moves:
     document.onmousemove = elementDrag;
   }
 
@@ -34,12 +34,12 @@ export function dragElement(elmnt, dragelmnt) {
   function elementDrag(e) {
     e = e || window.event;
     e.preventDefault();
-    // calculate the new cursor position:
+    // Calculate the new cursor position:
     pos1 = pos3 - e.clientX;
     pos2 = pos4 - e.clientY;
     pos3 = e.clientX;
     pos4 = e.clientY;
-    // set the element's new position:
+    // Set the element's new position:
     let newTop = elmnt.offsetTop - pos2;
     if (newTop < 0) {
       newTop = 0;
@@ -56,7 +56,7 @@ export function dragElement(elmnt, dragelmnt) {
    *
    */
   function closeDragElement() {
-    // stop moving when mouse button is released:
+    // Stop moving when mouse button is released:
     document.onmouseup = null;
     document.onmousemove = null;
   }

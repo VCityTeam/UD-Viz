@@ -11,7 +11,7 @@ module.exports = class WorldGameManager {
   }
 
   init() {
-    //a context containing all references needed for scripting game
+    //A context containing all references needed for scripting game
     const worldContext = arguments[1];
     const world = worldContext.getWorld();
 
@@ -43,7 +43,7 @@ module.exports = class WorldGameManager {
 
     world.addGameObject(this.zeppelin, worldContext, world.getGameObject());
 
-    //add collectable sphere at random position
+    //Add collectable sphere at random position
     const range = 400;
     const minRange = 50;
     for (let i = 0; i < 10; i++) {

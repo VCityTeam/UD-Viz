@@ -24,14 +24,14 @@ const WorldStateComputerModule = class WorldStateComputer {
   }
 
   /**
-   * stop tick of this
+   * Stop tick of this
    */
   stop() {
     if (this.interval) clearInterval(this.interval);
   }
 
   /**
-   * true tick world false stop ticking world
+   * True tick world false stop ticking world
    *
    * @param {boolean} value
    */
@@ -67,7 +67,7 @@ const WorldStateComputerModule = class WorldStateComputer {
     let lastTimeTick = 0;
 
     world.load(function () {
-      //loop
+      //Loop
       const tick = function () {
         if (_this.pause) return;
 
@@ -79,8 +79,8 @@ const WorldStateComputerModule = class WorldStateComputer {
         }
         lastTimeTick = now;
 
-        wC.getWorld().tick(wC); //tick with user commands
-        wC.getCommands().length = 0; //clear commands
+        wC.getWorld().tick(wC); //Tick with user commands
+        wC.getCommands().length = 0; //Clear commands
 
         _this.afterTickRequester.forEach(function (cb) {
           cb();
@@ -171,7 +171,7 @@ WorldStateComputerModule.WorldTest = function (world, assetsManager, bundles) {
         c.stop();
         console.log('stop test ', world.getName());
         resolve();
-      }, 1000); //stop after 1000ms
+      }, 1000); //Stop after 1000ms
     });
   });
 };

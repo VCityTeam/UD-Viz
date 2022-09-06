@@ -22,9 +22,9 @@ export class SlideShow extends Window {
     this.extent = app.extent;
     this.conf = app.config.slideShow || null;
 
-    //content html
+    //Content html
     this.htmlSlideShow = null;
-    //ids
+    //Ids
     this.coordinatesInputVectorID = null;
     this.rotationInputVectorID = null;
     this.sizeInputVectorID = null;
@@ -36,13 +36,13 @@ export class SlideShow extends Window {
     this.rotationVector = new THREE.Vector3();
     this.sizeVector = new THREE.Vector2();
 
-    //list of callbacks to set when the window is created
+    //List of callbacks to set when the window is created
     this.callbacksHTMLEl = [];
 
     /** @type {THREE.Mesh} */
     this.plane = null;
 
-    //list of textures with data
+    //List of textures with data
     this.texturesFiles = null;
     this.iCurrentTextureFile = 0;
 
@@ -472,7 +472,7 @@ export class SlideShow extends Window {
     };
   }
 
-  /**function called when aspectRatio is checked*/
+  /**Function called when aspectRatio is checked*/
   matchRatio(iInput, value) {
     const linkedSizeElement =
       this.sizeInputVectorDOM.getElementsByTagName('input')[
@@ -503,7 +503,7 @@ export class SlideShow extends Window {
     this.modifyPlane();
   }
 
-  /**convert inputVector HTMLElement to THREE.Vector*/
+  /**Convert inputVector HTMLElement to THREE.Vector*/
   inputVectorToVector(inputVector) {
     const inputEls = inputVector.getElementsByTagName('input');
 
@@ -600,17 +600,17 @@ export class SlideShow extends Window {
     return document.getElementById(this.coordinatesInputVectorID);
   }
 
-  /**return rotation HTMLElement (inputs+labels)*/
+  /**Return rotation HTMLElement (inputs+labels)*/
   get rotationInputVectorDOM() {
     return document.getElementById(this.rotationInputVectorID);
   }
 
-  /**return size HTMLElement (inputs+labels)*/
+  /**Return size HTMLElement (inputs+labels)*/
   get sizeInputVectorDOM() {
     return document.getElementById(this.sizeInputVectorID);
   }
 
-  /**return apspect ratio HTMLElement (checkbox)*/
+  /**Return apspect ratio HTMLElement (checkbox)*/
   get aspectRatioCheckboxDOM() {
     return document.getElementById(this.aspectRatioCheckboxID);
   }

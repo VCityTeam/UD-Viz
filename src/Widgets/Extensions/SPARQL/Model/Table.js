@@ -56,12 +56,12 @@ export class Table {
     let filterValue = table.filterInput.value;
 
     let column;
-    //check if element filter input is changed
+    //Check if element filter input is changed
     if (event.target) {
       filterValue = event.target.value;
       column = table.filterSelect.value;
     }
-    //filter data by filtertype
+    //Filter data by filtertype
     let dataFilter;
     if (filterValue && filterValue !== '') {
       dataFilter = table.data.filter(function (d) {
@@ -80,7 +80,7 @@ export class Table {
     } else {
       dataFilter = table.data;
     }
-    //append the header row and click event on column to sort table by table column
+    //Append the header row and click event on column to sort table by table column
     const headers = table.thead
       .append('tr')
       .selectAll('th')
@@ -95,14 +95,14 @@ export class Table {
         headers.attr('class', 'header');
 
         if (table.sortAscending) {
-          //sort tables rows data
+          //Sort tables rows data
           table.rows._groups[0].sort(function (a, b) {
             return d3.ascending(
               a.__data__[d.srcElement.__data__].value,
               b.__data__[d.srcElement.__data__].value
             );
           });
-          //update rows in table
+          //Update rows in table
           table.rows.sort(function (a, b) {
             return d3.descending(b[d], a[d]);
           });
@@ -131,7 +131,7 @@ export class Table {
         .getElementById('_window_sparqlQueryWindow_data_view')
         .appendChild(noResultDiv);
     } else {
-      // create a row for each object in the data
+      // Create a row for each object in the data
       table.rows = table.tbody
         .selectAll('tr')
         .data(dataFilter)

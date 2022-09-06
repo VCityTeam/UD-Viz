@@ -12,7 +12,7 @@ export class $3DTemporalTransactionAggregate extends $3DTemporalTransaction {
     super(json);
 
     this.transactions = {};
-    // type testing is not reliable in javascript therefore we have to use
+    // Type testing is not reliable in javascript therefore we have to use
     // booleans to do so...
     this.isAggregate = true;
   }

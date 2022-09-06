@@ -13,10 +13,10 @@ module.exports = class UpdateElevationGround {
   }
 
   tick() {
-    //the gameobject parent of this script
+    //The gameobject parent of this script
     const go = arguments[0];
 
-    //a context containing all data to script clientside script
+    //A context containing all data to script clientside script
     const localContext = arguments[1];
 
     const manager = localContext.getGameView().getLayerManager();
@@ -53,7 +53,7 @@ module.exports = class UpdateElevationGround {
     );
     this.raycaster.ray.direction = new udviz.THREE.Vector3(0, 0, -1);
 
-    // console.log(this.raycaster.ray);
+    // Console.log(this.raycaster.ray);
     let minDist = Infinity;
     let z = 0;
     for (let index = 0; index < ground.length; index++) {
@@ -70,7 +70,7 @@ module.exports = class UpdateElevationGround {
       }
     }
 
-    //add commands to the computer directly because not produce by the inputmanager
+    //Add commands to the computer directly because not produce by the inputmanager
     const computer = localContext.getGameView().getInterpolator();
     computer.onCommands([
       new Command({ type: Command.TYPE.Z_UPDATE, data: z }),

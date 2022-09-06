@@ -25,41 +25,41 @@ export class View3D {
   constructor(params = {}) {
     const _this = this;
 
-    //root html
+    //Root html
     this.rootHtml = document.createElement('div');
     this.rootHtml.id = 'root_View3D';
 
-    //add to DOM
+    //Add to DOM
     if (params.htmlParent) {
       params.htmlParent.appendChild(this.rootHtml);
     } else {
       document.body.appendChild(this.rootHtml);
     }
 
-    //root webgl
+    //Root webgl
     this.rootWebGL = document.createElement('div');
     this.rootWebGL.id = 'viewerDiv';
 
-    //root css
+    //Root css
     this.rootCss = document.createElement('div');
     this.rootCss.id = 'css_View3D';
 
     this.rootHtml.appendChild(this.rootCss);
     this.rootHtml.appendChild(this.rootWebGL);
 
-    //ui
+    //Ui
     this.ui = document.createElement('div');
     this.ui.classList.add('ui_View3D');
     this.rootWebGL.appendChild(this.ui);
 
-    //listen resize event
+    //Listen resize event
     this.resizeListener = this.onResize.bind(this);
     window.addEventListener('resize', this.resizeListener);
 
-    //conf
+    //Conf
     this.config = params.config || {};
 
-    //projection
+    //Projection
     this.projection = this.config['projection'] || 'EPSG:3946';
     proj4.default.defs(
       this.projection,
@@ -67,24 +67,24 @@ export class View3D {
         ' +lat_0=46 +lon_0=3 +x_0=1700000 +y_0=5200000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs'
     );
 
-    //itowns view
+    //Itowns view
     this.itownsView = null;
-    this.extent = null; //area handle by itowns
+    this.extent = null; //Area handle by itowns
     this.hasItownsControls = params.hasItownsControls || false;
     this.itownsRequesterBeforeRender = function () {
       computeNearFarCamera(_this.getCamera(), _this.getExtent(), 400);
     };
 
-    //pause
+    //Pause
     this.isRendering = true;
 
-    //size of the view
+    //Size of the view
     this.size = new THREE.Vector2();
 
-    //flag
+    //Flag
     this.disposed = false;
 
-    //inputs
+    //Inputs
     this.inputManager = new InputManager();
 
     /**
@@ -95,9 +95,9 @@ export class View3D {
     this.layerManager = null;
 
     //3D rendering attributes
-    this.scene = null; //the three js scene
-    this.renderer = null; //the webgl renderer
-    this.camera = null; //the camera used to render the scene
+    this.scene = null; //The three js scene
+    this.renderer = null; //The webgl renderer
+    this.camera = null; //The camera used to render the scene
 
     //ATTRIBUTES BELOW ARE STILL IN WIP
 
@@ -153,7 +153,7 @@ export class View3D {
       }
     };
 
-    //default catch events
+    //Default catch events
     const catchEventsCSS3D = params.catchEventsCSS3D || false;
     this.catchEventsCSS3D(catchEventsCSS3D);
   }
@@ -212,20 +212,20 @@ export class View3D {
   }
 
   /**
-   * init the css3D renderer
+   * Init the css3D renderer
    */
   initCSS3D() {
     //CSS3DRenderer
     const css3DRenderer = new CSS3DRenderer();
     this.css3DRenderer = css3DRenderer;
 
-    //add html el
+    //Add html el
     this.rootCss.appendChild(css3DRenderer.domElement);
 
-    //create a new scene for the css3D renderer
+    //Create a new scene for the css3D renderer
     this.css3DScene = new THREE.Scene();
 
-    //listen to switch mode between css3D and webgl controls
+    //Listen to switch mode between css3D and webgl controls
     this.inputManager.addMouseInput(
       this.rootWebGL,
       'mousedown',
@@ -238,7 +238,7 @@ export class View3D {
       this.toWebGLEvent
     );
 
-    //start ticking render of css3D renderer
+    //Start ticking render of css3D renderer
     const _this = this;
     const fps = 20;
 
@@ -246,7 +246,7 @@ export class View3D {
     let then = Date.now();
     let delta;
     const tick = function () {
-      if (_this.disposed) return; //stop requesting frame if disposed
+      if (_this.disposed) return; //Stop requesting frame if disposed
 
       requestAnimationFrame(tick);
 
@@ -254,7 +254,7 @@ export class View3D {
       delta = now - then;
 
       if (delta > 1000 / fps) {
-        // update time stuffs
+        // Update time stuffs
         then = now - (delta % 1000) / fps;
 
         if (!_this.isRendering) return;
@@ -263,7 +263,7 @@ export class View3D {
     };
     tick();
 
-    //launch an async resize
+    //Launch an async resize
     setTimeout(this.resizeListener, 100);
   }
 
@@ -322,10 +322,10 @@ export class View3D {
 
   start(extent) {
     this.initItownsView(extent);
-    //start
+    //Start
     this.inputManager.startListening(this.rootWebGL);
 
-    //dynamic near far computation
+    //Dynamic near far computation
     this.itownsView.addFrameRequester(
       itowns.MAIN_LOOP_EVENTS.BEFORE_RENDER,
       this.itownsRequesterBeforeRender
@@ -333,7 +333,7 @@ export class View3D {
   }
 
   /**
-   * init the itowns.PlanarView of this view with a given extent
+   * Init the itowns.PlanarView of this view with a given extent
    *
    * @param {itowns.Extent} extent the extent of the itowns.PlanarView
    */
@@ -346,7 +346,7 @@ export class View3D {
     let range = 3000;
     let tilt = 10;
 
-    //assign default value or config value
+    //Assign default value or config value
     if (
       this.config &&
       this.config['camera'] &&
@@ -375,7 +375,7 @@ export class View3D {
       tilt: tilt,
     };
 
-    //maxSubdivisionLevel
+    //MaxSubdivisionLevel
     let maxSubdivisionLevel = 3;
     if (this.config.background_image_layer)
       if (this.config.background_image_layer.maxSubdivisionLevel)
@@ -389,12 +389,12 @@ export class View3D {
       noControls: !this.hasItownsControls,
     });
 
-    //init 3D rendering attributes with itownsview
+    //Init 3D rendering attributes with itownsview
     this.scene = this.itownsView.scene;
     this.renderer = this.itownsView.mainLoop.gfxEngine.renderer;
     this.camera = this.itownsView.camera.camera3D;
 
-    //layermanager
+    //Layermanager
     this.layerManager = new LayerManager(this.itownsView);
 
     addBaseMapLayer(this.config, this.itownsView, this.extent);
@@ -402,7 +402,7 @@ export class View3D {
     setupAndAdd3DTilesLayers(this.config, this.layerManager, this.itownsView);
     setupAndAddGeoJsonLayers(this.config, this.itownsView);
 
-    //disable itowns resize
+    //Disable itowns resize
     this.itownsViewResize = this.itownsView.resize.bind(this.itownsView);
     this.itownsView.resize = function () {};
   }
