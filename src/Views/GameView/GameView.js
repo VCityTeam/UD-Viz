@@ -20,40 +20,40 @@ import * as THREEUtils from '../../Components/THREEUtils';
  */
 export class GameView extends View3D {
   constructor(params) {
-    //call parent class
+    //Call parent class
     super(params);
 
-    //remove resize listener of parent
+    //Remove resize listener of parent
     window.removeEventListener('resize', this.resizeListener);
     this.resizeListener = this.onResize.bind(this);
-    //add its own
+    //Add its own
     window.addEventListener('resize', this.resizeListener);
 
-    //custom modules pass the localscript context
+    //Custom modules pass the localscript context
     this.localScriptModules = params.localScriptModules || {};
 
-    //assets
+    //Assets
     this.assetsManager = params.assetsManager;
 
-    //object passing states to the view its could work with a local worldcomputer or a distant server via websocket communication
+    //Object passing states to the view its could work with a local worldcomputer or a distant server via websocket communication
     this.interpolator = params.interpolator;
 
-    //object3D
+    //Object3D
     this.object3D = new THREE.Object3D();
     this.object3D.name = 'GameView_Object3D';
 
-    //sky color
+    //Sky color
     this.skyColor = null;
 
-    //the last state processed
+    //The last state processed
     this.lastState = null;
 
-    //stop update of gameobject
+    //Stop update of gameobject
     this.updateGameObject = true;
     if (params.updateGameObject != undefined)
       this.updateGameObject = params.updateGameObject;
 
-    //context pass to the localScript GameObject
+    //Context pass to the localScript GameObject
     this.localContext = new LocalContext(this);
 
     //Current GameObject UUID in the last state
@@ -65,10 +65,10 @@ export class GameView extends View3D {
     this.resizeRequesters = [];
     this.onNewGORequesters = [];
 
-    //userData
+    //UserData
     this.userData = params.userData || {};
 
-    //itowns rendering or not
+    //Itowns rendering or not
     this.itownsRendering = false;
   }
 
@@ -80,7 +80,7 @@ export class GameView extends View3D {
       cb(ctx);
     });
 
-    //notify localscript
+    //Notify localscript
     if (this.lastState) {
       this.lastState.getGameObject().traverse(function (g) {
         const scriptComponent = g.getComponent(LocalScript.TYPE);
@@ -125,7 +125,7 @@ export class GameView extends View3D {
   }
 
   /**
-   * register the function into tickRequesters
+   * Register the function into tickRequesters
    *
    * @param {Function} cb a function that will be call every tick
    */
@@ -133,7 +133,7 @@ export class GameView extends View3D {
     this.tickRequesters.push(cb);
   }
 
-  //allow user to plug a cb when resize method is called
+  //Allow user to plug a cb when resize method is called
   addResizeRequester(cb) {
     this.resizeRequesters.push(cb);
   }
@@ -151,7 +151,7 @@ export class GameView extends View3D {
     if (!state) throw new Error('no state');
 
     return new Promise((resolve) => {
-      //build itowns view
+      //Build itowns view
       const o = state.getOrigin();
       const r = this.config.game.radiusExtent;
       if (o) {
@@ -168,12 +168,12 @@ export class GameView extends View3D {
 
         //TODO disable itowns rendering
         this.itownsView.render = function () {
-          //empty
+          //Empty
         };
       } else {
         THREE.Object3D.DefaultUp.set(0, 0, 1);
 
-        //no origin means no itowns view fill attr
+        //No origin means no itowns view fill attr
         this.scene = new THREE.Scene();
         const canvas = document.createElement('canvas');
         this.rootWebGL.appendChild(canvas);
@@ -183,10 +183,10 @@ export class GameView extends View3D {
           logarithmicDepthBuffer: true,
           alpha: true,
         });
-        this.camera = new THREE.PerspectiveCamera(60, 1, 1, 1000); //default params
+        this.camera = new THREE.PerspectiveCamera(60, 1, 1, 1000); //Default params
         this.scene.add(this.camera);
 
-        //fill custom extent
+        //Fill custom extent
         this.extent = {
           north: r,
           west: -r,
@@ -198,13 +198,13 @@ export class GameView extends View3D {
         };
       }
 
-      //start listening
+      //Start listening
       this.inputManager.startListening(this.rootWebGL);
 
-      //init scene
+      //Init scene
       this.initScene(state);
 
-      //start to tick
+      //Start to tick
       const fps = this.config.game.fps;
 
       let now;
@@ -212,7 +212,7 @@ export class GameView extends View3D {
       let delta;
       const _this = this;
       const tick = function () {
-        if (_this.disposed) return; //stop requesting frame if disposed
+        if (_this.disposed) return; //Stop requesting frame if disposed
 
         requestAnimationFrame(tick);
 
@@ -220,26 +220,26 @@ export class GameView extends View3D {
         delta = now - then;
 
         if (delta > 1000 / fps) {
-          // update time stuffs
+          // Update time stuffs
           then = now - (delta % 1000) / fps;
 
-          //set dt
+          //Set dt
           _this.localContext.setDt(delta);
 
-          //call tick requester
+          //Call tick requester
           _this.tickRequesters.forEach(function (cb) {
             cb(_this.localContext);
           });
 
-          //update Gameview
+          //Update Gameview
           _this.update(_this.interpolator.computeCurrentStates());
-          //render
+          //Render
           if (_this.isRendering && !_this.itownsRendering) {
             //This notably charge missing iTowns tiles according to current view.
             const iV = _this.itownsView;
             if (iV) iV.notifyChange(_this.getCamera());
 
-            //adjust camera params
+            //Adjust camera params
             computeNearFarCamera(_this.getCamera(), _this.extent, 400);
             _this.render();
           }
@@ -248,7 +248,7 @@ export class GameView extends View3D {
       resolve();
       tick();
 
-      //differed a resize event
+      //Differed a resize event
       setTimeout(this.resizeListener, 10);
     });
   }
@@ -261,7 +261,7 @@ export class GameView extends View3D {
     this.itownsRendering = value;
 
     if (value) {
-      //creating controls like this put it in this.itownsView.controls
+      //Creating controls like this put it in this.itownsView.controls
       new itowns.PlanarControls(this.itownsView, {
         handleCollision: false,
         focusOnMouseOver: false,
@@ -269,13 +269,13 @@ export class GameView extends View3D {
         zoomFactor: 0.9,
       });
 
-      //dynamic near far computation
+      //Dynamic near far computation
       this.itownsView.addFrameRequester(
         itowns.MAIN_LOOP_EVENTS.BEFORE_RENDER,
         this.itownsRequesterBeforeRender
       );
 
-      //enable itowns rendering
+      //Enable itowns rendering
       this.itownsView.render = null;
     } else {
       this.itownsView.controls.dispose();
@@ -286,9 +286,9 @@ export class GameView extends View3D {
         this.itownsRequesterBeforeRender
       );
 
-      //disable itowns rendering
+      //Disable itowns rendering
       this.itownsView.render = function () {
-        //empty
+        //Empty
       };
     }
   }
@@ -302,7 +302,7 @@ export class GameView extends View3D {
   }
 
   /**
-   * initialize the scene of the itwons view
+   * Initialize the scene of the itwons view
    *
    * @param {WorldState} state
    */
@@ -317,7 +317,7 @@ export class GameView extends View3D {
       z = o.alt;
     }
 
-    //add the object3D of the Game
+    //Add the object3D of the Game
     //TODO this object should be in World ?
     this.object3D.position.x = x;
     this.object3D.position.y = y;
@@ -328,21 +328,21 @@ export class GameView extends View3D {
       console.error('miss game field in your config');
     }
 
-    //init sky color based on config file
+    //Init sky color based on config file
     this.skyColor = new THREE.Color(
       this.config.game.sky.color.r,
       this.config.game.sky.color.g,
       this.config.game.sky.color.b
     );
 
-    //init renderer
+    //Init renderer
     const renderer = this.getRenderer();
     THREEUtils.initRenderer(renderer, this.skyColor);
 
-    //add lights
+    //Add lights
     const { directionalLight } = THREEUtils.addLights(this.scene);
 
-    //configure shadows based on a config files
+    //Configure shadows based on a config files
     directionalLight.shadow.mapSize = new THREE.Vector2(
       this.config.game.shadowMapSize,
       this.config.game.shadowMapSize
@@ -357,7 +357,7 @@ export class GameView extends View3D {
   }
 
   /**
-   * dispose this view
+   * Dispose this view
    *
    * @param keepAssets
    */
@@ -365,7 +365,7 @@ export class GameView extends View3D {
     super.dispose();
     this.interpolator.stop();
 
-    //notify localscript dispose
+    //Notify localscript dispose
     if (this.lastState) {
       const ctx = this.localContext;
 
@@ -399,12 +399,12 @@ export class GameView extends View3D {
 
     const state = states[states.length - 1];
 
-    //update lastState with the new one
+    //Update lastState with the new one
     if (this.lastState) {
       const lastGO = this.lastState.getGameObject();
 
       if (this.updateGameObject) {
-        //update lastGO
+        //Update lastGO
 
         lastGO.traverse(function (g) {
           const uuid = g.getUUID();
@@ -416,16 +416,16 @@ export class GameView extends View3D {
               if (bGO) bufferedGO.push(bGO);
             });
 
-            //update local components
+            //Update local components
             g.updateFromGO(current, bufferedGO, ctx);
           } else {
-            //do not exist remove it
+            //Do not exist remove it
             g.removeFromParent();
 
-            //remove object3D
+            //Remove object3D
             g.getObject3D().parent.remove(g.getObject3D());
 
-            //localscript notification
+            //Localscript notification
             const scriptComponent = g.getComponent(LocalScript.TYPE);
             if (scriptComponent) {
               scriptComponent.execute(LocalScript.EVENT.ON_REMOVE, [ctx]);
@@ -439,7 +439,7 @@ export class GameView extends View3D {
           const uuid = g.getUUID();
           const old = lastGO.find(uuid);
           if (!old) {
-            //new one add it
+            //New one add it
             const parent = lastGO.find(g.getParentUUID());
             parent.addChild(g);
           }
@@ -450,17 +450,17 @@ export class GameView extends View3D {
         });
       }
 
-      state.setGameObject(lastGO); //set it
+      state.setGameObject(lastGO); //Set it
     } else {
       state.getGameObject().traverse(function (g) {
         newGO.push(g);
       });
     }
 
-    //bufferize
+    //Bufferize
     this.lastState = state;
 
-    //init assets new GO
+    //Init assets new GO
     newGO.forEach(function (g) {
       g.initAssetsComponents(_this.assetsManager, {
         udviz: udviz,
@@ -470,18 +470,18 @@ export class GameView extends View3D {
 
     const go = state.getGameObject();
 
-    //localscript event INIT + ON_NEW_GAMEOBJECT
+    //Localscript event INIT + ON_NEW_GAMEOBJECT
     newGO.forEach(function (g) {
-      // console.log('New GO => ', g.name);
+      // Console.log('New GO => ', g.name);
       _this.currentUUID[g.getUUID()] = true;
 
-      //init newGO localscript
+      //Init newGO localscript
       const scriptComponent = g.getComponent(LocalScript.TYPE);
       if (scriptComponent) {
         scriptComponent.execute(LocalScript.EVENT.INIT, [ctx]);
       }
 
-      //notify other go that a new go has been added
+      //Notify other go that a new go has been added
       go.traverse(function (child) {
         const scriptComponent = child.getComponent(LocalScript.TYPE);
         if (scriptComponent) {
@@ -498,10 +498,10 @@ export class GameView extends View3D {
     //rebuild object
     this.object3D.children.length = 0;
     this.object3D.add(go.computeObject3D());
-    //update matrix
+    //Update matrix
     this.scene.updateMatrixWorld();
 
-    //update shadow
+    //Update shadow
     if (newGO.length) {
       THREEUtils.bindLightTransform(
         10,
@@ -517,40 +517,40 @@ export class GameView extends View3D {
 
     if (this.updateGameObject) {
       go.traverse(function (child) {
-        //tick local script
+        //Tick local script
         const scriptComponent = child.getComponent(LocalScript.TYPE);
         if (scriptComponent) {
           scriptComponent.execute(LocalScript.EVENT.TICK, [ctx]);
         }
 
-        //tick audio component
+        //Tick audio component
         const audioComp = child.getComponent(Audio.TYPE);
         const camera = _this.getCamera();
-        //position in world referential
+        //Position in world referential
         const cameraMatWorldInverse = camera.matrixWorldInverse;
         if (audioComp)
           audioComp.tick(cameraMatWorldInverse, _this.getObject3D().position);
 
-        //render component
+        //Render component
         const renderComp = child.getComponent(Render.TYPE);
         if (renderComp) renderComp.tick(ctx);
       });
     }
   }
 
-  //allow user to set a custom render pass
+  //Allow user to set a custom render pass
   setRender(f) {
     this.render = f;
   }
 
   render() {
-    //render
+    //Render
     this.renderer.clearColor();
     this.renderer.render(this.scene, this.getCamera());
   }
 
   /**
-   * force this gameview to update with a specific state
+   * Force this gameview to update with a specific state
    *
    * @param {WorldState} state
    */

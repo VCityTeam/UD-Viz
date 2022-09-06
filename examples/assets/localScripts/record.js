@@ -33,11 +33,11 @@ module.exports = class Focus {
     replayRecord.onclick = function () {
       console.log('replay record');
 
-      //stop current simulation
+      //Stop current simulation
       gV.getInterpolator().stop();
-      //new interpolator
+      //New interpolator
       const interpolator = new Game.WorldStateInterpolator();
-      //bind record
+      //Bind record
       record.forEach(function (s, index) {
         if (index) {
           interpolator.onNewState(s);
@@ -45,7 +45,7 @@ module.exports = class Focus {
           interpolator.onFirstState(s);
         }
       });
-      //replace the old one in the gameview
+      //Replace the old one in the gameview
       gV.setInterpolator(interpolator);
     };
   }

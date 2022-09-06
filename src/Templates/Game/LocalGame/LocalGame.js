@@ -24,7 +24,7 @@ export class LocalGame {
   }
 
   /**
-   * dispose the application
+   * Dispose the application
    */
   dispose() {
     this.gameView.dispose();
@@ -68,7 +68,7 @@ export class LocalGame {
 
       worldStateComputer.start(world);
 
-      //smooth rendering with delay
+      //Smooth rendering with delay
       const interpolator = new Game.WorldStateInterpolator(
         config.worldStateInterpolator.renderDelay,
         worldStateComputer
@@ -83,7 +83,7 @@ export class LocalGame {
         userData: options.userData,
       });
 
-      //start gameview tick
+      //Start gameview tick
       this.gameView
         .start(worldStateComputer.computeCurrentState())
         .then(function () {

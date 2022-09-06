@@ -7,16 +7,16 @@ const CommandModule = class Command {
   constructor(json) {
     if (!json) throw new Error('no json');
 
-    //type of the command
+    //Type of the command
     this.type = json.type;
 
-    //uuid of the user (TODO remove this for a single uuid)
+    //Uuid of the user (TODO remove this for a single uuid)
     this.userID = json.userID;
 
-    //uuid of the gameobject concerned by this (TODO use a single uuid)
+    //Uuid of the gameobject concerned by this (TODO use a single uuid)
     this.gameObjectUUID = json.gameObjectUUID;
 
-    //data of the command (optional)
+    //Data of the command (optional)
     this.data = json.data || null;
   }
 

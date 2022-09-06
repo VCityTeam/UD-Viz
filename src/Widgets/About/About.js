@@ -6,7 +6,7 @@ import { ModuleView } from '../Components/ModuleView/ModuleView';
 import './About.css';
 
 /**
- * adds an "About" window that can be open/closed with a button
+ * Adds an "About" window that can be open/closed with a button
  * simply include this file in the html, no need to instanciate anything in main.js
  */
 export class AboutWindow extends ModuleView {

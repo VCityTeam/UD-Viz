@@ -23,7 +23,7 @@ export class SparqlEndpointService extends RequestService {
       !!config.sparqlModule.url &&
       !!config.sparqlModule.url_parameters
     ) {
-      // wget "http://localhost:9999/strabon/Query?handle=download&query=%0ASELECT+*%0AWHERE+%7B+%0A%09%3Fs+%3Fp+%3Fo%09%0A%7D%0A&format=SPARQL/JSON&view=HTML"
+      // Wget "http://localhost:9999/strabon/Query?handle=download&query=%0ASELECT+*%0AWHERE+%7B+%0A%09%3Fs+%3Fp+%3Fo%09%0A%7D%0A&format=SPARQL/JSON&view=HTML"
       this.url = config.sparqlModule.url;
       this.url_parameters = config.sparqlModule.url_parameters;
     } else {

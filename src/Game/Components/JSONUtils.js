@@ -8,7 +8,7 @@ const Type = require('./Type');
 
 module.exports = {
   /**
-   * parse float value of a vector3
+   * Parse float value of a vector3
    *
    * @param {THREE.Vector3} vector
    */
@@ -46,7 +46,7 @@ module.exports = {
           }
         }
       }
-      return true; //all check have passed meaning is equals
+      return true; //All check have passed meaning is equals
     };
 
     return traverse(j1, j2);
@@ -92,7 +92,7 @@ module.exports = {
     return json;
   },
 
-  //same as parse but you can pass the name of array that should be not parse
+  //Same as parse but you can pass the name of array that should be not parse
   parseExceptArrays(json, cb, exceptArrays) {
     for (const key in json) {
       if (json[key] instanceof Object) {
@@ -140,7 +140,7 @@ module.exports = {
       result += this.separator;
     }
 
-    //remove seprator at the end
+    //Remove seprator at the end
     if (result.endsWith(this.separator)) {
       result = result.slice(0, result.length - this.separator.length);
     }

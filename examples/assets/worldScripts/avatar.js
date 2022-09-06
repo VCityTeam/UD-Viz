@@ -11,7 +11,7 @@ module.exports = class Avatar {
   }
 
   init() {
-    //a context containing all references needed for scripting game
+    //A context containing all references needed for scripting game
     const worldContext = arguments[1];
     const world = worldContext.getWorld();
 
@@ -42,7 +42,7 @@ module.exports = class Avatar {
     commands.forEach(function (cmd) {
       switch (cmd.getType()) {
         case Shared.Command.TYPE.MOVE_FORWARD:
-          // console.log(dt * speedTranslate);
+          // Console.log(dt * speedTranslate);
           avatar.move(
             avatar.computeForwardVector().setLength(dt * speedTranslate)
           );
@@ -53,11 +53,11 @@ module.exports = class Avatar {
           );
           break;
         case Shared.Command.TYPE.MOVE_LEFT:
-          // console.log(dt * speedRotate);
+          // Console.log(dt * speedRotate);
           avatar.rotate(new Shared.THREE.Vector3(0, 0, speedRotate * dt));
           break;
         case Shared.Command.TYPE.MOVE_RIGHT:
-          // console.log(dt * speedRotate);
+          // Console.log(dt * speedRotate);
           avatar.rotate(new Shared.THREE.Vector3(0, 0, -speedRotate * dt));
           break;
         case Shared.Command.TYPE.Z_UPDATE:

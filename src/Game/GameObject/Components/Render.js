@@ -16,11 +16,11 @@ const RenderModule = class Render {
     /**@type {GameObject} gameobject of this component*/
     this.parent = parent;
 
-    /**uuid of the component. Init from the field uuid of the json (If it does not exist, a uuid is generated). */
+    /**Uuid of the component. Init from the field uuid of the json (If it does not exist, a uuid is generated). */
     this.uuid = json.uuid || THREE.MathUtils.generateUUID();
 
     /**
-     * id of the 3D model used. Init from the field idRenderData of the json.
+     * Id of the 3D model used. Init from the field idRenderData of the json.
      *
      * @type {string}
      * @note the field has been renamed, idModel => idRenderData
@@ -146,7 +146,7 @@ const RenderModule = class Render {
     this.object3D = new THREE.Object3D();
     this.object3D.name = 'Render Object3D ' + this.parent.getName();
 
-    //get the 3D model
+    //Get the 3D model
     if (this.idRenderData) {
       const data = assetsManager.createRenderData(this.idRenderData);
       this.object3D.add(data.object);
@@ -156,7 +156,7 @@ const RenderModule = class Render {
         this.animationMixer = new THREE.AnimationMixer(data.object);
         this.animations.forEach(function (animClip) {
           const action = _this.animationMixer.clipAction(animClip);
-          action.play(); //play action is default behaviour
+          action.play(); //Play action is default behaviour
           _this.actions[animClip.name] = action;
         });
       }

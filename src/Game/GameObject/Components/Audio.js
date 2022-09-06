@@ -7,9 +7,9 @@ const THREE = require('three');
  */
 const AudioModule = class Audio {
   constructor(parent, json) {
-    //gameobject of this component
+    //Gameobject of this component
     this.parent = parent;
-    //uuid
+    //Uuid
     this.uuid = json.uuid || THREE.MathUtils.generateUUID();
 
     this.soundsJSON = json.sounds || [];
@@ -84,7 +84,7 @@ const AudioModule = class Audio {
   }
 
   updateFromComponent() {
-    //nada
+    //Nada
   }
 
   getUUID() {

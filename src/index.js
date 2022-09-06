@@ -22,20 +22,20 @@ export { Templates };
 import * as Views from './Views/Views';
 export { Views };
 
-//external package
+//External package
 
 //itowns
 import * as itowns from 'itowns';
 import * as itownsWidgets from 'itowns/widgets';
 export { itowns, itownsWidgets };
 
-//jquery
+//Jquery
 import * as jquery from 'jquery';
 export { jquery };
 
 //THREE
 import * as THREE from 'three';
-//modules of three necessary but not expose in THREE API
+//Modules of three necessary but not expose in THREE API
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { TransformControls } from 'three/examples/jsm/controls/TransformControls';
 import { ConvexGeometry } from 'three/examples/jsm/geometries/ConvexGeometry';
@@ -52,6 +52,6 @@ export {
   ShaderPass,
 };
 
-//proj4
+//Proj4
 import * as proj4 from 'proj4';
 export { proj4 };

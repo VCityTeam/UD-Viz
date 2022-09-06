@@ -46,7 +46,7 @@ export class Billboard {
     plane.updateMatrixWorld();
     this.maskObject = plane;
 
-    //flag
+    //Flag
     this.select(false);
   }
 

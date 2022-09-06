@@ -13,7 +13,7 @@ module.exports = class LocalAvatar {
     this.intersectionCube = null;
     this.inputManager = null;
 
-    //raycaster for avoiding buildings collisions with avatar
+    //Raycaster for avoiding buildings collisions with avatar
     this.raycaster = new Game.THREE.Raycaster();
   }
 
@@ -21,7 +21,7 @@ module.exports = class LocalAvatar {
     let layerManager = null;
     for (let index = 0; index < tilesManager.length; index++) {
       const element = tilesManager[index];
-      //debugger
+      //Debugger
       if (element.layer.id == layerName) {
         layerManager = element;
         break;
@@ -71,7 +71,7 @@ module.exports = class LocalAvatar {
     //Input manager of the game
     const inputManager = localContext.getGameView().getInputManager();
 
-    //intersection cube
+    //Intersection cube
     const geometry = new Game.THREE.BoxGeometry(1, 1, 1);
     const material = new Game.THREE.MeshBasicMaterial({ color: 0x00ff00 });
     this.intersectionCube = new Game.THREE.Mesh(geometry, material);
@@ -139,7 +139,7 @@ module.exports = class LocalAvatar {
       avatar.rotate(new Game.THREE.Vector3(0, 0, -speedRotate * dt));
     });
 
-    //tick command
+    //Tick command
     gV.addTickRequester(function () {
       inputManager.computeCommands();
     });

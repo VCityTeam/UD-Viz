@@ -68,7 +68,7 @@ export function computeNearFarCamera(camera, extent, height) {
   let max = -Infinity;
   points.forEach(function (p) {
     const pointDir = p.clone().sub(camera.position);
-    const cos = pointDir.dot(dirCamera) / pointDir.length(); //dircamera length is 1
+    const cos = pointDir.dot(dirCamera) / pointDir.length(); //Dircamera length is 1
     const dist = p.distanceTo(camera.position) * cos;
     if (min > dist) min = dist;
     if (max < dist) max = dist;

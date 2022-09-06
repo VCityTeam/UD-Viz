@@ -38,7 +38,7 @@ export class GeocodingService {
     //URL parameters
     const queryString = encodeURIComponent(searchString);
 
-    //build the URL according to parameter description (in config file)
+    //Build the URL according to parameter description (in config file)
     let url = this.geocodingUrl + '?';
     for (const [paramName, param] of Object.entries(this.parameters)) {
       if (param.fill === 'value') {
@@ -58,7 +58,7 @@ export class GeocodingService {
       url += '&';
     }
 
-    //make the request
+    //Make the request
     const req = await this.requestService.request('GET', url, {
       authenticate: false,
     });

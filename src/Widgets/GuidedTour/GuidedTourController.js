@@ -41,7 +41,7 @@ export class GuidedTourController extends ModuleView {
 
     this.guidedTourContainerId = 'guidedTourContainer';
 
-    this.documentModule = documentModule; //instance of DocumentModule
+    this.documentModule = documentModule; //Instance of DocumentModule
 
     this.url = config.server.url + config.server.guidedTour;
 
@@ -55,19 +55,19 @@ export class GuidedTourController extends ModuleView {
 
     this.requestService = requestService;
 
-    // the current step index of the current tour
+    // The current step index of the current tour
     this.currentStepIndex = 0;
 
-    this.guidedTour; //instance of GuidedTour
+    this.guidedTour; //Instance of GuidedTour
 
-    this.preventUserFromChangingTour = false; //put to true to prevent user from
+    this.preventUserFromChangingTour = false; //Put to true to prevent user from
     // changing guided tour
 
     this.initialize();
   }
 
   /**
-   * initialize the controller
+   * Initialize the controller
    */
   //=============================================================================
   initialize() {

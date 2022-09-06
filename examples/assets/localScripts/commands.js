@@ -66,12 +66,12 @@ module.exports = class Commands {
 
     const worldComputer = localContext.getGameView().getInterpolator();
 
-    //send input manager command to the world at each computer tick
+    //Send input manager command to the world at each computer tick
     worldComputer.addAfterTickRequester(function () {
       worldComputer.onCommands(inputManager.computeCommands());
     });
 
-    //example of how to access its custom module
+    //Example of how to access its custom module
     const myCustomModule = gameView.getLocalScriptModules()['myCustomModule'];
     if (myCustomModule)
       inputManager.addKeyInput('l', 'keydown', myCustomModule.print);
@@ -82,7 +82,7 @@ module.exports = class Commands {
   }
 
   updateUI(go, localCtx) {
-    //update ui
+    //Update ui
     this.fpsLabel.innerHTML = 'Gameview dt = ' + Math.round(localCtx.getDt());
   }
 

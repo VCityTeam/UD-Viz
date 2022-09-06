@@ -22,7 +22,7 @@ export class AllWidget {
     this.config = {};
     this.parentElement;
     this.view3D;
-    this.extent; // itowns extent (city limits)
+    this.extent; // Itowns extent (city limits)
   }
 
   start(path) {
@@ -234,7 +234,7 @@ export class AllWidget {
 
     switch (type) {
       case AllWidget.MODULE_VIEW:
-        //create a new button in the menu
+        //Create a new button in the menu
         this.createMenuButton(moduleId, moduleName, binding);
         break;
       case AllWidget.AUTHENTICATION_MODULE:
@@ -271,7 +271,7 @@ export class AllWidget {
     this.menuElement.appendChild(button);
     const icon = document.createElement('img');
 
-    //creating an icon
+    //Creating an icon
     icon.setAttribute(
       'src',
       `${this.config.assets.iconFolder}/${moduleId}.svg`
@@ -279,13 +279,13 @@ export class AllWidget {
     icon.className = 'menuIcon';
     button.insertBefore(icon, button.firstChild);
 
-    //define button behavior
+    //Define button behavior
     button.onclick = (() => {
       this.toggleModule(moduleId);
     }).bind(this);
     const moduleClass = this.getModuleById(moduleId);
 
-    //dynamically color the button
+    //Dynamically color the button
     moduleClass.parentElement = this.viewerDivElement.parentElement;
     moduleClass.addEventListener(ModuleView.EVENT_ENABLED, () => {
       button.className = 'choiceMenu choiceMenuSelected';

@@ -8,7 +8,7 @@ import jQuery from 'jquery';
 import './Help.css';
 
 /**
- * adds a "Help" window that can be open/closed with a button
+ * Adds a "Help" window that can be open/closed with a button
  * simply include this file in the html, no need to instanciate anything in main.js
  */
 
@@ -46,7 +46,7 @@ export class HelpWindow extends ModuleView {
     }
     const closeCallback = this.disable.bind(this);
     Promise.all(promises).then(function () {
-      //create close button
+      //Create close button
       const closeButton = document.createElement('button');
       closeButton.id = 'helpCloseButton';
       closeButton.innerHTML = 'Close';
