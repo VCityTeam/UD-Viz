@@ -173,13 +173,13 @@ export class DocumentVisualizerWindow extends AbstractDocumentWindow {
       return;
     }
 
-    var docViewPos = new THREE.Vector3();
+    const docViewPos = new THREE.Vector3();
     docViewPos.x = parseFloat(currentDoc.visualization.positionX);
     docViewPos.y = parseFloat(currentDoc.visualization.positionY);
     docViewPos.z = parseFloat(currentDoc.visualization.positionZ);
     this.setTargetPosition(docViewPos);
 
-    var docViewQuat = new THREE.Quaternion();
+    const docViewQuat = new THREE.Quaternion();
     docViewQuat.x = parseFloat(currentDoc.visualization.quaternionX);
     docViewQuat.y = parseFloat(currentDoc.visualization.quaternionY);
     docViewQuat.z = parseFloat(currentDoc.visualization.quaternionZ);

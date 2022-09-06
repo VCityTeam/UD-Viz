@@ -100,7 +100,7 @@ export function AuthenticationService(requestService, config) {
   };
 
   this.formCheck = function formCheck(formData, requiredKeys) {
-    for (var key of requiredKeys) {
+    for (const key of requiredKeys) {
       if (formData.get(key) === null) {
         console.error(`Missing key in form : ${key}`);
         return false;
