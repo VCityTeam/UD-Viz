@@ -95,8 +95,8 @@ export class AuthenticationView extends ModuleView {
     return div !== undefined && div !== null;
   }
   verifyNotEmptyValuesForm(formIds) {
-    var validate = true;
-    for (var id in formIds) {
+    let validate = true;
+    for (const id in formIds) {
       const element = document.getElementById(formIds[id]);
       element.setAttribute('style', '');
       if (element.value == '') {
@@ -107,7 +107,7 @@ export class AuthenticationView extends ModuleView {
     return validate;
   }
   deleteValuesForm(formIds) {
-    for (var id in formIds) {
+    for (const id in formIds) {
       const element = document.getElementById(formIds[id]);
       element.value = '';
     }
@@ -132,7 +132,7 @@ export class AuthenticationView extends ModuleView {
     this.displayLoginError('');
     const loginForm = document.getElementById('LoginForm');
     const formData = new FormData(loginForm);
-    var formIds = ['login', 'PasswordLogin'];
+    const formIds = ['login', 'PasswordLogin'];
     if (this.verifyNotEmptyValuesForm(formIds)) {
       try {
         await this.authenticationService.login(formData);
@@ -149,7 +149,7 @@ export class AuthenticationView extends ModuleView {
     this.displayRegisterError('');
     const registerForm = document.getElementById('RegistrationForm');
     const formData = new FormData(registerForm);
-    var formIds = [
+    const formIds = [
       'Firstname',
       'Lastname',
       'Username',

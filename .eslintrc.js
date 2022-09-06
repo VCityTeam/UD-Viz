@@ -21,6 +21,7 @@ module.exports = {
     quotes: ['error', 'single'],
     semi: ['error', 'always'],
     'no-unused-vars': ['error'],
+    'no-var': ['error'],
     camelcase: 'off',
     'prefer-const': [2, { destructuring: 'any' }],
     'no-duplicate-imports': ['error', { includeExports: true }],

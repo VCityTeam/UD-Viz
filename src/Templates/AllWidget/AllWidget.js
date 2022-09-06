@@ -112,10 +112,10 @@ export class AllWidget {
     const imageFolder = this.config.assets.imageFolder;
 
     for (let i = 0; i < logos.length; i++) {
-      var img = document.createElement('img');
+      const img = document.createElement('img');
       img.src = imageFolder.concat('/'.concat(logos[i]));
       img.classList.add('logos');
-      var src = document.getElementById('_all_widget_struct_header_panel');
+      const src = document.getElementById('_all_widget_struct_header_panel');
       src.appendChild(img);
     }
   }

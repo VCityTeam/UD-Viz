@@ -128,7 +128,7 @@ export class GuidedTourController extends ModuleView {
   //=============================================================================
   getCurrentStep() {
     if (this.getCurrentTour().length != 0) {
-      var steps = this.getCurrentTour().extendedDocs;
+      const steps = this.getCurrentTour().extendedDocs;
       return steps[this.currentStepIndex];
     } else {
       return null;

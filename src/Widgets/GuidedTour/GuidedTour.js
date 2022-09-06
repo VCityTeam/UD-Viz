@@ -38,7 +38,7 @@ export class GuidedTour extends Window {
     this.documentBrowser = this.guidedTourController.browser;
 
     //update browser view
-    var guidedTourText2 = document.createElement('div');
+    const guidedTourText2 = document.createElement('div');
     guidedTourText2.id = 'guidedTourText2';
     //document.getElementById('docBrowserWindow').appendChild(guidedTourText2);
   }
