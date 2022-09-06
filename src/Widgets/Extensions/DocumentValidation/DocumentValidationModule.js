@@ -28,7 +28,7 @@ export class DocumentValidationModule {
 
     this.validationSource = new DocumentsInValidationDocumentSource(config);
 
-    new ValidationView(
+    this.validationView = new ValidationView(
       documentModule,
       this.validationService,
       this.validationSource

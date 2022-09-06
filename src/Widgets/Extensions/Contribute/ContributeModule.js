@@ -55,7 +55,10 @@ export class ContributeModule {
       this.contributeService,
       documentModule
     );
-    new DocumentDeletionInterface(documentModule, this.contributeService);
+    this.deletionWindow = new DocumentDeletionInterface(
+      documentModule,
+      this.contributeService
+    );
 
     documentModule.addDocumentWindow(this.creationWindow);
     documentModule.addDocumentWindow(this.updateWindow);
