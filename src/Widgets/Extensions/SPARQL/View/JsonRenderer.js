@@ -262,7 +262,7 @@ const renderjson = (function () {
   }
 
   const renderjson = function renderjson(json) {
-    const options = new Object(renderjson.options);
+    const options = new Object(renderjson.options); // eslint-disable-line no-new-object
     options.replacer =
       typeof options.replacer == 'function'
         ? options.replacer
