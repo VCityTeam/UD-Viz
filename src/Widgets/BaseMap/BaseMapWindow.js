@@ -2,7 +2,7 @@
 
 import * as itowns from 'itowns';
 
-//Components
+// Components
 import { Window } from '../Components/GUI/js/Window';
 
 export class BaseMap extends Window {
@@ -88,7 +88,7 @@ export class BaseMap extends Window {
   }
 
   get innerContentHtml() {
-    return /*html*/ `
+    return /* html*/ `
     <div id="${this.baseDivId}"></div>
     `;
   }

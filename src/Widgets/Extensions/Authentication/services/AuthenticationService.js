@@ -11,9 +11,9 @@ export function AuthenticationService(requestService, config) {
   this.observers = [];
   this.config = config;
   this.loginUrl = `${config.server.url}${config.server.login}`;
-  //Route to manage users (register)
+  // Route to manage users (register)
   this.userUrl = `${config.server.url}${config.server.user}`;
-  //Route to get personal information
+  // Route to get personal information
   this.userMeUrl = `${config.server.url}${config.server.userMe}`;
   this.requestService = new RequestService();
   this.loginRequiredKeys = ['username', 'password'];

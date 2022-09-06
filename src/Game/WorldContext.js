@@ -5,19 +5,19 @@
  */
 module.exports = class WorldContext {
   constructor(params) {
-    //AssetsManager
+    // AssetsManager
     this.assetsManager = params.assetsManager;
 
-    //World
+    // World
     this.world = params.world;
 
-    //Current delta time
+    // Current delta time
     this.dt = 0;
 
-    //Commands
+    // Commands
     this.commands = [];
 
-    //Modules
+    // Modules
     this.bundles = params.bundles;
   }
 

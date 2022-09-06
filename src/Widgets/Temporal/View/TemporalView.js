@@ -1,6 +1,6 @@
 /** @format */
 
-//Components
+// Components
 import { ModuleView } from '../../Components/ModuleView/ModuleView.js';
 
 import { TemporalGraphWindow } from './TemporalGraphWindow.js';
@@ -64,8 +64,8 @@ export class TemporalView extends ModuleView {
     }
   }
 
-  /////////////////
-  ///// MODULE VIEW
+  // ///////////////
+  // /// MODULE VIEW
   enableView() {
     this.temporalWindow.appendTo(this.parentElement);
   }

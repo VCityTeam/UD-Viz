@@ -1,6 +1,6 @@
 /** @format */
 
-//Components
+// Components
 import { CityObjectStyle } from '../../../Components/3DTiles/Model/CityObjectStyle';
 import {
   CityObjectID,
@@ -80,8 +80,8 @@ export class CityObjectProvider extends EventSender {
     this.registerEvent(CityObjectProvider.EVENT_CITY_OBJECT_CHANGED);
   }
 
-  ///////////////////////////
-  ///// CITY OBJECT SELECTION
+  // /////////////////////////
+  // /// CITY OBJECT SELECTION
 
   /**
    * Selects a city object from a mouse event. If a city object is actually
@@ -247,8 +247,8 @@ export class CityObjectProvider extends EventSender {
     this.layerManager.registerStyle('selected', style);
   }
 
-  /////////////
-  ///// FILTERS
+  // ///////////
+  // /// FILTERS
 
   /**
    * Adds a filter to the dictionnary of available filters. The key shall be
@@ -278,8 +278,8 @@ export class CityObjectProvider extends EventSender {
     return Object.values(this.filters);
   }
 
-  //////////////////////
-  ///// LAYER MANAGEMENT
+  // ////////////////////
+  // /// LAYER MANAGEMENT
 
   /**
    * Sets the current layer. The layer is defined by a filter (ie. a set
@@ -366,8 +366,8 @@ export class CityObjectProvider extends EventSender {
     this.layerManager.applyAll3DTilesStyles();
   }
 
-  ////////////
-  ///// EVENTS
+  // //////////
+  // /// EVENTS
 
   static get EVENT_FILTERS_UPDATED() {
     return 'EVENT_FILTERS_UPDATED';

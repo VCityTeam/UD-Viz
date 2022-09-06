@@ -1,9 +1,9 @@
 /** @format */
 
-//Widgets
+// Widgets
 import { DocumentModule } from '../../Documents/DocumentModule';
 
-//Components
+// Components
 import { RequestService } from '../../../Components/Request/RequestService';
 
 import { DocumentCreationWindow } from './View/DocumentCreationWindow';

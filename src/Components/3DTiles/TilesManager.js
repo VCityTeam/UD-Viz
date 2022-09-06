@@ -75,16 +75,16 @@ export class TilesManager extends EventSender {
       }
     }
 
-    ///// EVENTS
-    ///////////
+    // /// EVENTS
+    // /////////
     // Add listener to the 3D Tiles layer for tile loading
     this.layer.onTileContentLoaded = this.loadTile.bind(this);
     // Create an event where a module can add a callback. Fired in
     // this.loadTile().
     this.registerEvent(TilesManager.EVENT_TILE_LOADED);
 
-    ///// STYLE
-    ///////////
+    // /// STYLE
+    // /////////
 
     /**
      * Manages the styles of the city objects.
@@ -507,8 +507,8 @@ export class TilesManager extends EventSender {
     return this.upToDateTileIds[tile.tileId] !== uuid;
   }
 
-  ////////////
-  ///// EVENTS
+  // //////////
+  // /// EVENTS
   static get EVENT_TILE_LOADED() {
     return 'EVENT_TILE_LOADED';
   }

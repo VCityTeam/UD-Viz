@@ -16,14 +16,14 @@ export class WebSocketService {
    * Start communication with the server (the one hosting index.html by default)
    */
   connectToServer() {
-    //Communication protocol
+    // Communication protocol
     const socketProtocol = window.location.protocol.includes('https')
       ? 'wss'
       : 'ws';
 
     const loc = `${window.location.pathname}`;
     const path = loc.substring(0, loc.lastIndexOf('/'));
-    //Instantiate socket and connect to the server serving index.html
+    // Instantiate socket and connect to the server serving index.html
     this.socket = io(`${socketProtocol}://${window.location.host}`, {
       reconnection: false,
       secure: true,

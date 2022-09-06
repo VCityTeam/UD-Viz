@@ -8,24 +8,24 @@
  */
 export class InputManager {
   constructor() {
-    //Mouse commands
+    // Mouse commands
     this.mouseCommands = {};
 
-    //Mouse state
+    // Mouse state
     this.mouseState = new MouseState();
 
-    //To know what command have been done yet (avoid doublon)
+    // To know what command have been done yet (avoid doublon)
     this.commandsBuffer = {};
 
-    //Internal (KeyState)
+    // Internal (KeyState)
     this.keyMap = {};
-    this.keyMapKeyDown = []; //Buffer key down
-    this.keyMapKeyUp = []; //Buffer key up
+    this.keyMapKeyDown = []; // Buffer key down
+    this.keyMapKeyUp = []; // Buffer key up
     this.keyCommands = {};
     this.listeners = [];
     this.element = null;
 
-    //Flag
+    // Flag
     this.pause = false;
   }
 
@@ -81,10 +81,10 @@ export class InputManager {
       if ((key == event.key || key == null) && !_this.pause) cb();
     };
     window.addEventListener(eventID, listener);
-    //Register to dispose it
+    // Register to dispose it
     this.listeners.push({
       element: window,
-      cb: cb, //Keep it to make easier the remove
+      cb: cb, // Keep it to make easier the remove
       id: eventID,
       listener: listener,
     });
@@ -99,21 +99,21 @@ export class InputManager {
    */
   addKeyCommand(commandID, keys, cb) {
     const _this = this;
-    this.commandsBuffer[commandID] = false; //Avoid to stack multiple commands if two key of keys are pressedplo
+    this.commandsBuffer[commandID] = false; // Avoid to stack multiple commands if two key of keys are pressedplo
     keys.forEach(function (key) {
       if (_this.keyCommands[key] != undefined) {
         console.error(key, ' is already assign');
         return;
       }
 
-      //Init keymap
+      // Init keymap
       if (_this.keyMap[key] == undefined) _this.keyMap[key] = false;
 
       _this.keyCommands[key] = function () {
         if (_this.commandsBuffer[commandID]) {
           return null;
         }
-        const cmd = cb(); //The callback must return a command
+        const cmd = cb(); // The callback must return a command
         if (cmd) {
           _this.commandsBuffer[commandID] = true;
           return cmd;
@@ -172,10 +172,10 @@ export class InputManager {
     };
 
     element.addEventListener(eventID, listener);
-    //Register to dispose it
+    // Register to dispose it
     this.listeners.push({
       element: element,
-      cb: cb, //Keep it to make easier the remove
+      cb: cb, // Keep it to make easier the remove
       id: eventID,
       listener: listener,
     });
@@ -190,7 +190,7 @@ export class InputManager {
     const _this = this;
     this.element = element;
 
-    //Start listening key state
+    // Start listening key state
     const keydown = function (event) {
       if (_this.keyMap[event.key] == false) {
         _this.keyMap[event.key] = true;
@@ -209,7 +209,7 @@ export class InputManager {
     window.addEventListener('keyup', keyup);
     this.listeners.push({ element: window, cb: keyup, id: 'keyup' });
 
-    //Start listening mouse state
+    // Start listening mouse state
     this.mouseState.startListening(element);
 
     this.initPointerLock();
@@ -224,12 +224,12 @@ export class InputManager {
     document.exitPointerLock =
       document.exitPointerLock || document.mozExitPointerLock;
 
-    //Gesture require to enter the pointerLock mode are click mousemove keypress keyup
+    // Gesture require to enter the pointerLock mode are click mousemove keypress keyup
     const _this = this;
     const checkPointerLock = function () {
       if (_this.pointerLock && _this.element) {
         try {
-          //Enter pointerLock
+          // Enter pointerLock
           _this.element.requestPointerLock();
         } catch (error) {
           console.error('cant request pointer lock');
@@ -249,7 +249,7 @@ export class InputManager {
    */
   setPointerLock(value) {
     this.pointerLock = value;
-    if (!value) document.exitPointerLock(); //Exit since this not require a gesture
+    if (!value) document.exitPointerLock(); // Exit since this not require a gesture
   }
 
   /**
@@ -286,7 +286,7 @@ export class InputManager {
     });
     this.mouseState.dispose();
 
-    //Reset variables
+    // Reset variables
     this.keyMap = {};
     this.keyCommands = {};
     this.mouseCommands = {};
@@ -310,20 +310,20 @@ export class InputManager {
    * @returns {Array[Command]} commands computed
    */
   computeCommands() {
-    if (this.pause) return []; //If pause no command should be return
+    if (this.pause) return []; // If pause no command should be return
 
     const result = [];
 
-    //Compute key commands
+    // Compute key commands
     for (const id in this.keyCommands) {
-      //Notify on down press and up
+      // Notify on down press and up
       if (this.keyMap[id] || this.isKeyUp(id)) {
         const cmd = this.keyCommands[id]();
         if (cmd) result.push(cmd);
       }
     }
 
-    //Compute mouse commands
+    // Compute mouse commands
     for (const eventID in this.mouseCommands) {
       if (this.mouseState.isTrigger(eventID)) {
         const cmd = this.mouseCommands[eventID].apply(this.mouseState, []);
@@ -331,11 +331,11 @@ export class InputManager {
       }
     }
 
-    //Reset
+    // Reset
     this.mouseState.reset();
     this.resetCommandsBuffer();
 
-    //Reset event key down and key up
+    // Reset event key down and key up
     this.keyMapKeyDown.length = 0;
     this.keyMapKeyUp.length = 0;
 
@@ -385,7 +385,7 @@ export class MouseState {
    * Remove listeners and reset variables
    */
   dispose() {
-    //Reset variables
+    // Reset variables
     this.mouseMap = {};
     this.mouseEvent = {};
     this.dragging = false;
@@ -425,7 +425,7 @@ export class MouseState {
         _this.dragging = true;
       } else if (idEvent === MOUSE_STATE_EVENTS.MOUSE_UP)
         _this.dragging = false;
-      _this.mouseMap[idEvent] = true; //Is trigger
+      _this.mouseMap[idEvent] = true; // Is trigger
       _this.mouseEvent[idEvent] = event;
     };
     element.addEventListener(idEvent, listener);
@@ -458,7 +458,7 @@ export class MouseState {
    * Reset Event triggered
    */
   reset() {
-    //Reset trigger mousemap
+    // Reset trigger mousemap
     for (const idEvent in this.mouseMap) {
       this.mouseMap[idEvent] = false;
     }

@@ -1,6 +1,6 @@
 /** @format */
 
-//Widgets
+// Widgets
 import { AbstractDocumentWindow } from '../../../Documents/View/AbstractDocumentWindow';
 import { DocumentProvider } from '../../../Documents/ViewModel/DocumentProvider';
 import { DocumentModule } from '../../../Documents/DocumentModule';
@@ -40,7 +40,7 @@ export class DocumentUpdateWindow extends AbstractDocumentWindow {
   }
 
   get innerContentHtml() {
-    return /*html*/ `
+    return /* html*/ `
       <div class="box-section">
         <h3 id="${this.docTitleId}" class="section-title"></h3>
         <div>
@@ -86,8 +86,8 @@ export class DocumentUpdateWindow extends AbstractDocumentWindow {
     );
   }
 
-  ///////////////////////
-  ///// WINDOW APPEARANCE
+  // /////////////////////
+  // /// WINDOW APPEARANCE
 
   /**
    * This function is called when the user clicks on the 'Update' button in a
@@ -129,8 +129,8 @@ export class DocumentUpdateWindow extends AbstractDocumentWindow {
       .substring(0, 10);
   }
 
-  /////////////////
-  ///// FORM SUBMIT
+  // ///////////////
+  // /// FORM SUBMIT
 
   /**
    * Called when the user submits the update form. Updates the document.
@@ -146,8 +146,8 @@ export class DocumentUpdateWindow extends AbstractDocumentWindow {
     }
   }
 
-  /////////////
-  ///// GETTERS
+  // ///////////
+  // /// GETTERS
 
   get formId() {
     return `${this.windowId}_form`;

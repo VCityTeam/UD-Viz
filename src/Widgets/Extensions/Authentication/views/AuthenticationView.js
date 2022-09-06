@@ -1,6 +1,6 @@
 /** @format */
 
-//Components
+// Components
 import { ModuleView } from '../../../Components/ModuleView/ModuleView';
 
 import './AuthenticationView.css';
@@ -169,7 +169,7 @@ export class AuthenticationView extends ModuleView {
       }
     }
   }
-  /////// MODULE MANAGEMENT FOR BASE DEMO
+  // ///// MODULE MANAGEMENT FOR BASE DEMO
 
   enableView() {
     this.appendToElement(this.parentElement);

@@ -20,7 +20,7 @@ export class Billboard {
     this.html.style.width = resolution * transform.scale.x + 'px';
     this.html.style.height = resolution * transform.scale.y + 'px';
 
-    //CSS3DOBJECT
+    // CSS3DOBJECT
     const newElement = new CSS3DObject(this.html);
     newElement.position.copy(transform.getPosition());
     newElement.rotation.setFromVector3(transform.getRotation());
@@ -33,8 +33,8 @@ export class Billboard {
     newElement.scale.copy(css3DScale);
     this.css3DObject = newElement;
 
-    //THREE OBJECT
-    //mask
+    // THREE OBJECT
+    // mask
     const geometry = new THREE.PlaneGeometry(
       transform.scale.x,
       transform.scale.y
@@ -46,7 +46,7 @@ export class Billboard {
     plane.updateMatrixWorld();
     this.maskObject = plane;
 
-    //Flag
+    // Flag
     this.select(false);
   }
 

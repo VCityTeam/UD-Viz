@@ -68,7 +68,7 @@ export class LocalGame {
 
       worldStateComputer.start(world);
 
-      //Smooth rendering with delay
+      // Smooth rendering with delay
       const interpolator = new Game.WorldStateInterpolator(
         config.worldStateInterpolator.renderDelay,
         worldStateComputer
@@ -83,7 +83,7 @@ export class LocalGame {
         userData: options.userData,
       });
 
-      //Start gameview tick
+      // Start gameview tick
       this.gameView
         .start(worldStateComputer.computeCurrentState())
         .then(function () {

@@ -2,7 +2,7 @@
 
 const THREE = require('three');
 
-//Components
+// Components
 import { Window } from '../../Components/GUI/js/Window';
 import { CityObjectStyle } from '../../../Components/3DTiles/Model/CityObjectStyle';
 
@@ -108,7 +108,7 @@ export class CityObjectWindow extends Window {
   }
 
   get innerContentHtml() {
-    return /*html*/ `
+    return /* html*/ `
       <div class="box-section" id="${this.filterDivId}">
         <h3 class="section-title">Filter<span class="color-indicator" id="${this.layerColorIndicatorId}"></span></h3>
         <div>
@@ -167,8 +167,8 @@ export class CityObjectWindow extends Window {
     this._updateLayerDescription();
   }
 
-  ///////////////////////
-  ///// LAYER DESCRIPTION
+  // /////////////////////
+  // /// LAYER DESCRIPTION
 
   /**
    * Updates the layer description (filter and style).
@@ -191,8 +191,8 @@ export class CityObjectWindow extends Window {
     }
   }
 
-  /////////////////////
-  ///// FILTER SELECTOR
+  // ///////////////////
+  // /// FILTER SELECTOR
 
   /**
    * Adds a filter selector in the city object filter window.
@@ -228,8 +228,8 @@ export class CityObjectWindow extends Window {
     this.defaultLayerStyle = style;
   }
 
-  ////////////////////////
-  ///// BUILDING SELECTION
+  // //////////////////////
+  // /// BUILDING SELECTION
 
   /**
    * Clears the selected city object.
@@ -266,7 +266,7 @@ export class CityObjectWindow extends Window {
     this.clearSelectionButtonElement.disabled = false;
     this.focusObjectButtonElement.disabled = false;
 
-    let html = /*html*/ `
+    let html = /* html*/ `
       <p class="city-object-title">Attributes</p>
       <p class="city-object-value">
         Tile ID : ${cityObject.tile.tileId}<br>
@@ -284,8 +284,8 @@ export class CityObjectWindow extends Window {
     this.selectedCityObjectElement.innerHTML = html;
   }
 
-  /////////////
-  ///// GETTERS
+  // ///////////
+  // /// GETTERS
 
   get selectFilterButtonId() {
     return `${this.windowId}_filter_button`;

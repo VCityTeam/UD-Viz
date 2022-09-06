@@ -1,6 +1,6 @@
 /** @format */
 
-//Components
+// Components
 import { CityObject } from '../../../Components/3DTiles/Model/CityObject';
 import { EventSender } from '../../../Components/Events/EventSender';
 import { CityObjectStyle } from '../../../Components/3DTiles/Model/CityObjectStyle';

@@ -13,7 +13,7 @@ module.exports = class LocalAvatar {
     this.intersectionCube = null;
     this.inputManager = null;
 
-    //Raycaster for avoiding buildings collisions with avatar
+    // Raycaster for avoiding buildings collisions with avatar
     this.raycaster = new Game.THREE.Raycaster();
   }
 
@@ -21,7 +21,7 @@ module.exports = class LocalAvatar {
     let layerManager = null;
     for (let index = 0; index < tilesManager.length; index++) {
       const element = tilesManager[index];
-      //Debugger
+      // Debugger
       if (element.layer.id == layerName) {
         layerManager = element;
         break;
@@ -68,10 +68,10 @@ module.exports = class LocalAvatar {
     const tilesManager = gV.getLayerManager().tilesManagers;
     const worldOrigin = gV.getObject3D().position;
 
-    //Input manager of the game
+    // Input manager of the game
     const inputManager = localContext.getGameView().getInputManager();
 
-    //Intersection cube
+    // Intersection cube
     const geometry = new Game.THREE.BoxGeometry(1, 1, 1);
     const material = new Game.THREE.MeshBasicMaterial({ color: 0x00ff00 });
     this.intersectionCube = new Game.THREE.Mesh(geometry, material);
@@ -110,7 +110,7 @@ module.exports = class LocalAvatar {
       avatar.move(new Game.THREE.Vector3(0, 0, -zDelta));
     }.bind(this);
 
-    //FORWARD
+    // FORWARD
     inputManager.addKeyCommand('move_forward', ['z'], function () {
       // eslint-disable-next-line no-unused-vars
       const dt = localContext.getDt();
@@ -119,7 +119,7 @@ module.exports = class LocalAvatar {
       avatar.move(direction.setLength(translationLength));
       updateGroundElevationFun();
     });
-    //BACKWARD
+    // BACKWARD
     inputManager.addKeyCommand('move_backward', ['s'], function () {
       // eslint-disable-next-line no-unused-vars
       const dt = localContext.getDt();
@@ -128,18 +128,18 @@ module.exports = class LocalAvatar {
       avatar.move(direction.setLength(translationLength));
       updateGroundElevationFun();
     });
-    //LEFT
+    // LEFT
     inputManager.addKeyCommand('rotate_left', ['q'], function () {
       const dt = localContext.getDt();
       avatar.rotate(new Game.THREE.Vector3(0, 0, speedRotate * dt));
     });
-    //RIGHT
+    // RIGHT
     inputManager.addKeyCommand('rotate_right', ['d'], function () {
       const dt = localContext.getDt();
       avatar.rotate(new Game.THREE.Vector3(0, 0, -speedRotate * dt));
     });
 
-    //Tick command
+    // Tick command
     gV.addTickRequester(function () {
       inputManager.computeCommands();
     });

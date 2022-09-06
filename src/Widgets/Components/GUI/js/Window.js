@@ -76,8 +76,8 @@ export class Window extends ModuleView {
     windowManager.registerWindow(this);
   }
 
-  //////////// Methods to override
-  ////////////////////////////////
+  // ////////// Methods to override
+  // //////////////////////////////
 
   /**
    * HTML string representing the inner content of the window.
@@ -103,8 +103,8 @@ export class Window extends ModuleView {
    */
   windowDestroyed() {}
 
-  //////////// Do NOT override these methods
-  //////////////////////////////////////////
+  // ////////// Do NOT override these methods
+  // ////////////////////////////////////////
 
   /**
    * Creates the HTML elements of the window and add them to the given parent
@@ -183,8 +183,8 @@ export class Window extends ModuleView {
         `;
   }
 
-  //////////// Extensions management
-  //////////////////////////////////
+  // ////////// Extensions management
+  // ////////////////////////////////
 
   /**
    * Adds a new extension in the window.
@@ -246,8 +246,8 @@ export class Window extends ModuleView {
     const index = this.windowExtensions.findIndex((ext) => ext.label === label);
     return index >= 0;
   }
-  //////////// Module view overrides
-  //////////////////////////////////
+  // ////////// Module view overrides
+  // ////////////////////////////////
 
   /**
    * Creates and show the window.
@@ -272,8 +272,8 @@ export class Window extends ModuleView {
     }
   }
 
-  //////////// IDs, HTML and other getters
-  ////////////////////////////////////////
+  // ////////// IDs, HTML and other getters
+  // //////////////////////////////////////
 
   get isCreated() {
     const windowDiv = this.window;
@@ -336,8 +336,8 @@ export class Window extends ModuleView {
     return document.getElementById(this.innerContentId);
   }
 
-  //////////// Events
-  ///////////////////
+  // ////////// Events
+  // /////////////////
 
   static get EVENT_CREATED() {
     return 'WINDOW_CREATED';

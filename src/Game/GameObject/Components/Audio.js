@@ -7,9 +7,9 @@ const THREE = require('three');
  */
 const AudioModule = class Audio {
   constructor(parent, json) {
-    //Gameobject of this component
+    // Gameobject of this component
     this.parent = parent;
-    //Uuid
+    // Uuid
     this.uuid = json.uuid || THREE.MathUtils.generateUUID();
 
     this.soundsJSON = json.sounds || [];
@@ -33,7 +33,7 @@ const AudioModule = class Audio {
 
   dispose() {
     for (const key in this.sounds) {
-      this.sounds[key].pause(); //TODO if shared just pause if not unload
+      this.sounds[key].pause(); // TODO if shared just pause if not unload
     }
   }
 
@@ -76,7 +76,7 @@ const AudioModule = class Audio {
       if (this.conf.autoplay && !sound.playing()) sound.play();
       if (this.conf.volume) sound.volume(this.conf.volume);
 
-      //https://github.com/goldfire/howler.js#documentation
+      // https://github.com/goldfire/howler.js#documentation
       if (this.conf.spatialized) {
         sound.pos(positionAudio.x, positionAudio.y, positionAudio.z);
       }
@@ -84,7 +84,7 @@ const AudioModule = class Audio {
   }
 
   updateFromComponent() {
-    //Nada
+    // Nada
   }
 
   getUUID() {

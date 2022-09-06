@@ -31,7 +31,7 @@ export class CityObjectStyle {
       this.materialProps !== undefined &&
       this.materialProps.color !== undefined
     ) {
-      this.materialProps.color = new THREE.Color(this.materialProps.color); //TODO clean this, a ref dont change its type
+      this.materialProps.color = new THREE.Color(this.materialProps.color); // TODO clean this, a ref dont change its type
     }
   }
 

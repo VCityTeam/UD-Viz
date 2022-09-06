@@ -1,6 +1,6 @@
 /** @format */
 
-//Components
+// Components
 import { Window } from '../../Components/GUI/js/Window';
 
 import { NetworkManager } from './NetworkManager';
@@ -33,7 +33,7 @@ export class TemporalGraphWindow extends Window {
   }
 
   get innerContentHtml() {
-    return /*html*/ `
+    return /* html*/ `
             <div id="temporalWindow">
             <div id="mynetwork"></div>
             </div>

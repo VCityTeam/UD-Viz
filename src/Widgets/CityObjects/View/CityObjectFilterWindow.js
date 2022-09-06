@@ -1,6 +1,6 @@
 /** @format */
 
-//Components
+// Components
 import { Window } from '../../Components/GUI/js/Window';
 
 import { CityObjectFilterSelector } from './CityObjectFilterSelector';
@@ -29,7 +29,7 @@ export class CityObjectFilterWindow extends Window {
   }
 
   get innerContentHtml() {
-    return /*html*/ `
+    return /* html*/ `
       <div class="box-section">
         <h3 class="section-title">Filter selection</h3>
         <form id="${this.filterFormId}">
@@ -167,8 +167,8 @@ export class CityObjectFilterWindow extends Window {
     this.disable();
   }
 
-  /////////////
-  ///// GETTERS
+  // ///////////
+  // /// GETTERS
 
   get filterSelectId() {
     return `${this.windowId}_filters_select`;
@@ -194,8 +194,8 @@ export class CityObjectFilterWindow extends Window {
     return document.getElementById(this.filterSectionId);
   }
 
-  ////////////
-  ///// EVENTS
+  // //////////
+  // /// EVENTS
 
   static get EVENT_FILTER_SELECTED() {
     return 'EVENT_FILTER_SELECTED';

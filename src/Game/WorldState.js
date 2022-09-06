@@ -10,17 +10,17 @@ const WorldStateModule = class WorldState {
   constructor(json) {
     if (!json) throw new Error('no json');
 
-    //Gameobjects
+    // Gameobjects
     this.gameObject = null;
     if (json.gameObject) this.gameObject = new GameObject(json.gameObject);
 
-    //Timestamp
+    // Timestamp
     this.timestamp = json.timestamp || -1;
 
-    //Coord of the origin (itowns)
+    // Coord of the origin (itowns)
     this.origin = json.origin || null;
 
-    //Flag to determine if that state has been consumed/treated by the gameview (or something else)
+    // Flag to determine if that state has been consumed/treated by the gameview (or something else)
     this._consumed = false;
   }
 
@@ -47,24 +47,24 @@ const WorldStateModule = class WorldState {
       const uuid = g.getUUID();
 
       if (!uuidGO.includes(uuid)) {
-        //Delete all gameobject not in diff
+        // Delete all gameobject not in diff
         console.log(g, ' is not in the scene anymore');
         g.removeFromParent();
       } else {
-        //Update the outdated one
+        // Update the outdated one
         const o = outdatedGameObjectsJSON[uuid];
         if (o) {
-          //Update
+          // Update
           g.setFromJSON(o);
-          delete outdatedGameObjectsJSON[uuid]; //Remove it
+          delete outdatedGameObjectsJSON[uuid]; // Remove it
         } else {
-          //G is not outdated
+          // G is not outdated
           g.setOutdated(false);
         }
       }
     });
 
-    //Create others which existed not yet
+    // Create others which existed not yet
     for (const uuid in outdatedGameObjectsJSON) {
       const json = outdatedGameObjectsJSON[uuid];
       const go = new GameObject(json, null);
@@ -72,7 +72,7 @@ const WorldStateModule = class WorldState {
       parent.addChild(go);
     }
 
-    //DEBUG
+    // DEBUG
     let count = 0;
     newGO.traverse(function (g) {
       const uuid = g.getUUID();
@@ -115,13 +115,13 @@ const WorldStateModule = class WorldState {
     const outdatedGameObjectsJSON = {};
     const alreadyInOutdated = [];
     this.gameObject.traverse(function (g) {
-      gameObjectsUUID.push(g.getUUID()); //Register all uuid
+      gameObjectsUUID.push(g.getUUID()); // Register all uuid
       if (!alreadyInOutdated.includes(g)) {
-        //If is not static and is not already register
+        // If is not static and is not already register
         if (!state.includes(g.getUUID()) || g.isOutdated()) {
-          //If not in the last state or outdated
+          // If not in the last state or outdated
           outdatedGameObjectsJSON[g.getUUID()] = g.toJSON();
-          //Avoid to add child of an outdated object twice because toJSON is recursive
+          // Avoid to add child of an outdated object twice because toJSON is recursive
           g.traverse(function (outdated) {
             alreadyInOutdated.push(outdated.getUUID());
           });
@@ -201,7 +201,7 @@ const WorldStateModule = class WorldState {
 
 WorldStateModule.TYPE = 'WorldState';
 
-////STATIC
+// //STATIC
 
 /**
  * Compute the state between w1 and w2, interpolating with a given ratio
@@ -214,14 +214,14 @@ WorldStateModule.TYPE = 'WorldState';
 WorldStateModule.interpolate = function (w1, w2, ratio) {
   if (!w2) return w1;
 
-  //Interpolate go
+  // Interpolate go
   const mapW2 = {};
   w2.getGameObject().traverse(function (go) {
     mapW2[go.getUUID()] = go;
   });
   const result = w1.clone();
   result.gameObject.traverse(function (go) {
-    if (go.isStatic()) return false; //Do not stop propagation
+    if (go.isStatic()) return false; // Do not stop propagation
 
     if (mapW2[go.getUUID()]) {
       GameObject.interpolateInPlace(go, mapW2[go.getUUID()], ratio);

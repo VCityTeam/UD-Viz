@@ -39,7 +39,7 @@ export class DocumentNavigatorWindow extends AbstractDocumentWindow {
   }
 
   get innerContentHtml() {
-    return /*html*/ `
+    return /* html*/ `
       <div class="box-section">
         <h3 class="section-title">
           <span id="${this.docCountId}"></span> Document(s)
@@ -123,8 +123,8 @@ export class DocumentNavigatorWindow extends AbstractDocumentWindow {
     );
   }
 
-  //////////////////////////////
-  ///// DOCUMENT UPDATE TRIGGERS
+  // ////////////////////////////
+  // /// DOCUMENT UPDATE TRIGGERS
 
   /**
    * Callback triggered when the list of filtered documents changes.
@@ -141,7 +141,7 @@ export class DocumentNavigatorWindow extends AbstractDocumentWindow {
     list.innerHTML = '';
     for (const doc of documents) {
       const item = document.createElement('li');
-      item.innerHTML = /*html*/ `
+      item.innerHTML = /* html*/ `
         <div class='doc-title'>${doc.title}</div>
         <div class='doc-info'>Refering ${new Date(
           doc.refDate
@@ -180,8 +180,8 @@ export class DocumentNavigatorWindow extends AbstractDocumentWindow {
     }
   }
 
-  ////////////////////////
-  ///// SEARCH AND FILTERS
+  // //////////////////////
+  // /// SEARCH AND FILTERS
 
   /**
    * Event on the 'search' button click.
@@ -237,8 +237,8 @@ export class DocumentNavigatorWindow extends AbstractDocumentWindow {
     this.provider.refreshDocumentList();
   }
 
-  ////////////
-  //// GETTERS
+  // //////////
+  // // GETTERS
 
   get inputFormId() {
     return `${this.windowId}_form`;

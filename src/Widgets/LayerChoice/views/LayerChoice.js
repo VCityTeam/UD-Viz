@@ -1,6 +1,6 @@
 /** @format */
 
-//Components
+// Components
 import { Window } from '../../Components/GUI/js/Window';
 import { LayerManager } from '../../../Components/LayerManager/LayerManager';
 
@@ -20,7 +20,7 @@ export class LayerChoice extends Window {
   }
 
   get innerContentHtml() {
-    return /*html*/ `
+    return /* html*/ `
     <div id="${this.layerListId}">
         <div class="box-section" id="${this.colorLayersBoxSectionId}"> 
         <input type="checkbox" class="spoiler-check" id="color-layers-spoiler">
@@ -197,9 +197,9 @@ export class LayerChoice extends Window {
       list.appendChild(item);
     }
   }
-  ////// GETTERS
+  // //// GETTERS
 
-  ///ID
+  // /ID
   get colorLayersBoxSectionId() {
     return `box_section_${this.colorLayersId}`;
   }
@@ -240,7 +240,7 @@ export class LayerChoice extends Window {
     return `${this.windowId}_layer_list`;
   }
 
-  ///HTML ELEMENTS
+  // /HTML ELEMENTS
 
   get layerListElement() {
     return document.getElementById(this.layerListId);

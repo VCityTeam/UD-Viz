@@ -22,7 +22,7 @@ export class DocumentCommentsWindow extends AbstractDocumentWindow {
   }
 
   get innerContentHtml() {
-    return /*html*/ `
+    return /* html*/ `
         <div class="innerClass" id="documentComments_innerWindow">
             <div id ="documentComments_left">
 

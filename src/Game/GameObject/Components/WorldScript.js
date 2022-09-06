@@ -7,23 +7,23 @@ const THREE = require('three');
  */
 const WorldScriptModule = class WorldScript {
   constructor(parent, json) {
-    //Gameobject of this component
+    // Gameobject of this component
     this.parent = parent;
 
-    //Uuid
+    // Uuid
     this.uuid = json.uuid || THREE.MathUtils.generateUUID();
 
-    //Array of worldScripts id
+    // Array of worldScripts id
     this.idScripts = json.idScripts || [];
 
-    //Type
+    // Type
     this.type = json.type || WorldScriptModule.TYPE;
 
-    //Conf pass to scripts
+    // Conf pass to scripts
     const conf = json.conf || {};
     this.conf = JSON.parse(JSON.stringify(conf));
 
-    //Map of scripts
+    // Map of scripts
     this.scripts = {};
   }
 
@@ -81,7 +81,7 @@ const WorldScriptModule = class WorldScript {
   }
 
   updateFromComponent() {
-    //Nada
+    // Nada
   }
 
   /**
@@ -123,12 +123,12 @@ const WorldScriptModule = class WorldScript {
 WorldScriptModule.TYPE = 'WorldScript';
 
 WorldScriptModule.EVENT = {
-  INIT: 'init', //When added
-  TICK: 'tick', //Every tick
-  LOAD: 'load', //At world load return promises
-  ON_ENTER_COLLISION: 'onEnterCollision', //First collsion
-  IS_COLLIDING: 'isColliding', //Is colliding
-  ON_LEAVE_COLLISION: 'onLeaveCollision', //On leave collision
+  INIT: 'init', // When added
+  TICK: 'tick', // Every tick
+  LOAD: 'load', // At world load return promises
+  ON_ENTER_COLLISION: 'onEnterCollision', // First collsion
+  IS_COLLIDING: 'isColliding', // Is colliding
+  ON_LEAVE_COLLISION: 'onLeaveCollision', // On leave collision
 };
 
 module.exports = WorldScriptModule;

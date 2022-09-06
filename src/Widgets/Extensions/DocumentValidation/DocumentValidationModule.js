@@ -1,6 +1,6 @@
 /** @format */
 
-//Widgets
+// Widgets
 import { DocumentModule } from '../../Documents/DocumentModule';
 
 import { ValidationService } from './Service/ValidationService';

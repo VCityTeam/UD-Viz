@@ -1,6 +1,6 @@
 /** @format */
 
-//Components
+// Components
 import { TilesManager } from '../../../Components/3DTiles/TilesManager.js';
 import { getVisibleTiles } from '../../../Components/3DTiles/3DTilesUtils.js';
 import { CityObjectStyle } from '../../../Components/3DTiles/Model/CityObjectStyle.js';

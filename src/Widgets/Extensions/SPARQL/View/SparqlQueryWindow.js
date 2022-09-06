@@ -178,7 +178,7 @@ LIMIT 100`;
 
   // SPARQL Window getters //
   get innerContentHtml() {
-    return /*html*/ `
+    return /* html*/ `
       <form id=${this.formId}>
         <label for="${this.queryTextAreaId}">Query:</label></br>
         <textarea id="${this.queryTextAreaId}" rows="20">${this.default_query}</textarea></br>

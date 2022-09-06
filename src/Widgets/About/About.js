@@ -1,6 +1,6 @@
 /** @format */
 
-//Components
+// Components
 import { ModuleView } from '../Components/ModuleView/ModuleView';
 
 import './About.css';
@@ -85,7 +85,7 @@ export class AboutWindow extends ModuleView {
     );
   }
 
-  /////// MODULE VIEW MANAGEMENT
+  // ///// MODULE VIEW MANAGEMENT
   enableView() {
     document
       .getElementById('aboutWindow')

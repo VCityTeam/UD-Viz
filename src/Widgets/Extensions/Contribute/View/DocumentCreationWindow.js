@@ -2,11 +2,11 @@
 
 import * as THREE from 'three';
 
-//Widgets
+// Widgets
 import { DocumentVisualizerWindow } from '../../../DocumentVisualizer/View/DocumentVisualizerWindow';
 import { AbstractDocumentWindow } from '../../../Documents/View/AbstractDocumentWindow';
 
-//Components
+// Components
 import { Window } from '../../../Components/GUI/js/Window';
 import { PositionerWindow } from '../../../Components/Camera/PositionerWindow';
 
@@ -121,7 +121,7 @@ export class DocumentCreationWindow extends AbstractDocumentWindow {
   }
 
   get innerContentHtml() {
-    return /*html*/ `
+    return /* html*/ `
       <div class="box-section">
         <h3 class="section-title">Document data</h3>
         <form id="${this.formId}" class="doc-update-creation-form">
@@ -176,8 +176,8 @@ export class DocumentCreationWindow extends AbstractDocumentWindow {
     });
   }
 
-  /////////////////////////
-  ///// DOCUMENT POSITIONER
+  // ///////////////////////
+  // /// DOCUMENT POSITIONER
 
   /**
    * Displays the document positioning interfaces : the window positioner and
@@ -220,8 +220,8 @@ export class DocumentCreationWindow extends AbstractDocumentWindow {
     }
   }
 
-  //////////
-  ///// FORM
+  // ////////
+  // /// FORM
 
   /**
    * Sets the initial values for the form.
@@ -320,8 +320,8 @@ export class DocumentCreationWindow extends AbstractDocumentWindow {
     }
   }
 
-  /////////////
-  ///// GETTERS
+  // ///////////
+  // /// GETTERS
 
   get buttonPositionId() {
     return `${this.windowId}_button_position`;

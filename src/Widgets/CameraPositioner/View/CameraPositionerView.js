@@ -1,6 +1,6 @@
 /** @format */
 
-//Components
+// Components
 import { ModuleView } from '../../Components/ModuleView/ModuleView';
 import { PositionerWindow } from '../../Components/Camera/PositionerWindow';
 import { Window } from '../../Components/GUI/js/Window';

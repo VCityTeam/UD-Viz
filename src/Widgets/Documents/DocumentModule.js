@@ -1,6 +1,6 @@
 /** @format */
 
-//Components
+// Components
 import { RequestService } from '../../Components/Request/RequestService';
 
 import { DocumentService, DocumentSource } from './Model/DocumentService';
@@ -45,8 +45,8 @@ export class DocumentModule {
     this.view = new DocumentView(this.provider);
   }
 
-  ///////////////
-  ///// EXTENSION
+  // /////////////
+  // /// EXTENSION
 
   /**
    * Adds a new window to display information about documents.

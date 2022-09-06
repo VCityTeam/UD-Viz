@@ -13,10 +13,10 @@ const RenderModule = class Render {
    * @param {JSON} json
    */
   constructor(parent, json) {
-    /**@type {GameObject} gameobject of this component*/
+    /** @type {GameObject} gameobject of this component*/
     this.parent = parent;
 
-    /**Uuid of the component. Init from the field uuid of the json (If it does not exist, a uuid is generated). */
+    /** Uuid of the component. Init from the field uuid of the json (If it does not exist, a uuid is generated). */
     this.uuid = json.uuid || THREE.MathUtils.generateUUID();
 
     /**
@@ -25,9 +25,11 @@ const RenderModule = class Render {
      * @type {string}
      * @note the field has been renamed, idModel => idRenderData
      */
-    this.idRenderData = json.idRenderData || null; //TODO could be an array of id
+    this.idRenderData = json.idRenderData || null; // TODO could be an array of id
 
-    /**Color of the 3D model
+    /**
+     * Color of the 3D model
+     *
      * @type {THREE.Color}
      */
     this.color = new THREE.Color().fromArray(json.color || [1, 1, 1]);
@@ -35,9 +37,9 @@ const RenderModule = class Render {
     /** @type {THREE.Object3D} */
     this.object3D = null;
 
-    /**@type {THREE.AnimationClip[]} */
+    /** @type {THREE.AnimationClip[]} */
     this.animations = null;
-    /**@type {THREE.AnimationMixer} */
+    /** @type {THREE.AnimationMixer} */
     this.animationMixer = null;
     this.actions = {};
   }
@@ -146,7 +148,7 @@ const RenderModule = class Render {
     this.object3D = new THREE.Object3D();
     this.object3D.name = 'Render Object3D ' + this.parent.getName();
 
-    //Get the 3D model
+    // Get the 3D model
     if (this.idRenderData) {
       const data = assetsManager.createRenderData(this.idRenderData);
       this.object3D.add(data.object);
@@ -156,7 +158,7 @@ const RenderModule = class Render {
         this.animationMixer = new THREE.AnimationMixer(data.object);
         this.animations.forEach(function (animClip) {
           const action = _this.animationMixer.clipAction(animClip);
-          action.play(); //Play action is default behaviour
+          action.play(); // Play action is default behaviour
           _this.actions[animClip.name] = action;
         });
       }

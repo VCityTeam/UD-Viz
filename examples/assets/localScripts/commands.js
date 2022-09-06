@@ -25,10 +25,10 @@ module.exports = class Commands {
     this.worldDtLabel = document.createElement('div');
     gameView.appendToUI(this.worldDtLabel);
 
-    //Input manager of the game
+    // Input manager of the game
     const inputManager = localContext.getGameView().getInputManager();
 
-    //FORWARD
+    // FORWARD
     inputManager.addKeyCommand(
       Game.Command.TYPE.MOVE_FORWARD,
       ['z', 'ArrowUp'],
@@ -37,7 +37,7 @@ module.exports = class Commands {
       }
     );
 
-    //BACKWARD
+    // BACKWARD
     inputManager.addKeyCommand(
       Game.Command.TYPE.MOVE_BACKWARD,
       ['s', 'ArrowDown'],
@@ -46,7 +46,7 @@ module.exports = class Commands {
       }
     );
 
-    //LEFT
+    // LEFT
     inputManager.addKeyCommand(
       Game.Command.TYPE.MOVE_LEFT,
       ['q', 'ArrowLeft'],
@@ -55,7 +55,7 @@ module.exports = class Commands {
       }
     );
 
-    //RIGHT
+    // RIGHT
     inputManager.addKeyCommand(
       Game.Command.TYPE.MOVE_RIGHT,
       ['d', 'ArrowRight'],
@@ -66,12 +66,12 @@ module.exports = class Commands {
 
     const worldComputer = localContext.getGameView().getInterpolator();
 
-    //Send input manager command to the world at each computer tick
+    // Send input manager command to the world at each computer tick
     worldComputer.addAfterTickRequester(function () {
       worldComputer.onCommands(inputManager.computeCommands());
     });
 
-    //Example of how to access its custom module
+    // Example of how to access its custom module
     const myCustomModule = gameView.getLocalScriptModules()['myCustomModule'];
     if (myCustomModule)
       inputManager.addKeyInput('l', 'keydown', myCustomModule.print);
@@ -82,7 +82,7 @@ module.exports = class Commands {
   }
 
   updateUI(go, localCtx) {
-    //Update ui
+    // Update ui
     this.fpsLabel.innerHTML = 'Gameview dt = ' + Math.round(localCtx.getDt());
   }
 

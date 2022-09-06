@@ -8,13 +8,13 @@ module.exports = class WorldStateDiff {
   constructor(json) {
     if (!json) throw new Error('no json');
 
-    //Value from t+1 worldstate
+    // Value from t+1 worldstate
     this.timestamp = json.timestamp;
 
-    //Gameobjects uuid
+    // Gameobjects uuid
     this.gameObjectsUUID = json.gameObjectsUUID || [];
 
-    //Gameobject which need update
+    // Gameobject which need update
     this.outdatedGameObjectsJSON = json.outdatedGameObjectsJSON || {};
   }
 
