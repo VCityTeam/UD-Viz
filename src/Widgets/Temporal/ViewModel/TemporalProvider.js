@@ -308,7 +308,6 @@ export class TemporalProvider {
         console.warn(`Cannot compute features states for tile ${tileId}  
         since the temporal extension of the batch table has not yet been 
         loaded for this tile`);
-        return;
       }
     }
   }

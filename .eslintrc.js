@@ -45,6 +45,8 @@ module.exports = {
     'no-global-assign': ['error'],
     'no-shadow-restricted-names': ['error'],
     'no-unneeded-ternary': ['error'],
+    'no-useless-computed-key': ['error'],
+    'no-useless-return': ['error'],
     camelcase: 'off',
     'prefer-const': [2, { destructuring: 'any' }],
     'no-duplicate-imports': ['error', { includeExports: true }],
