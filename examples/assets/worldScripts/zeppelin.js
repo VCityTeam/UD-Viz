@@ -1,6 +1,5 @@
 module.exports = class Zeppelin {
-  // eslint-disable-next-line no-unused-vars
-  constructor(conf, GameModule) {
+  constructor(conf) {
     this.conf = conf;
   }
 
