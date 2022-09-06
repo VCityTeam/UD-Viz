@@ -19,7 +19,8 @@ import * as THREEUtils from './THREEUtils';
 export { THREEUtils };
 
 export {
-  setupAndAdd3DTilesLayers,
+  add3DTilesLayersFromConfig,
+  setup3DTilesLayer,
   addBaseMapLayer,
   addElevationLayer,
   setupAndAddGeoJsonLayers,

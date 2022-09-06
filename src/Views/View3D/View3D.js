@@ -14,7 +14,7 @@ import {
   LayerManager,
   addBaseMapLayer,
   addElevationLayer,
-  setupAndAdd3DTilesLayers,
+  add3DTilesLayersFromConfig,
   setupAndAddGeoJsonLayers,
 } from '../../Components/Components';
 
@@ -399,7 +399,7 @@ export class View3D {
 
     addBaseMapLayer(this.config, this.itownsView, this.extent);
     addElevationLayer(this.config, this.itownsView, this.extent);
-    setupAndAdd3DTilesLayers(this.config, this.layerManager, this.itownsView);
+    add3DTilesLayersFromConfig(this.config, this.layerManager, this.itownsView);
     setupAndAddGeoJsonLayers(this.config, this.itownsView);
 
     // Disable itowns resize
