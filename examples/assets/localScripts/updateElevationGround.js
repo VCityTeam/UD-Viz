@@ -12,11 +12,6 @@ module.exports = class UpdateElevationGround {
     this.raycaster = new udviz.THREE.Raycaster();
   }
 
-  init() {
-    // eslint-disable-next-line no-unused-vars
-    const localContext = arguments[1];
-  }
-
   tick() {
     //the gameobject parent of this script
     const go = arguments[0];
