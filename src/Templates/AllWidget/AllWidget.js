@@ -38,7 +38,7 @@ export class AllWidget {
         // Initialize iTowns 3D view
         _this.init3DView();
 
-        //dynamic near far computation
+        // Dynamic near far computation
         _this.view.addFrameRequester(
           itowns.MAIN_LOOP_EVENTS.BEFORE_RENDER,
           computeNearFarCamera.bind(
