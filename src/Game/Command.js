@@ -108,7 +108,6 @@ CommandModule.TYPE = {
   ROTATE_RIGHT: 'rotate_right',
   INCREASE_SPEED: 'increase_speed',
   DECREASE_SPEED: 'decrease_speed',
-  
 };
 
 module.exports = CommandModule;
