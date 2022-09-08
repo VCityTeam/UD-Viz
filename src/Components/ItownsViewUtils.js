@@ -2,6 +2,7 @@ import * as itowns from 'itowns';
 import { TilesManager } from './Components';
 
 import * as Widgets from '../Widgets/Widgets';
+import { THREE } from '../Game/Game';
 const $3DTemporalBatchTable = Widgets.$3DTemporalBatchTable;
 const $3DTemporalBoundingVolume = Widgets.$3DTemporalBoundingVolume;
 const $3DTemporalTileset = Widgets.$3DTemporalTileset;
