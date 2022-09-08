@@ -64,7 +64,7 @@ export function setupAndAdd3DTilesLayers(config, layerManager, itownsView) {
       });
       overrideMaterial = true;
     }
-    var $3dTilesLayer = new itowns.C3DTilesLayer(
+    const $3dTilesLayer = new itowns.C3DTilesLayer(
       layer['id'],
       {
         name: layer['id'],
@@ -81,7 +81,6 @@ export function setupAndAdd3DTilesLayers(config, layerManager, itownsView) {
       $3dTilesLayer.material = material;
     }
 
-    
     const $3DTilesManager = new TilesManager(itownsView, $3dTilesLayer);
 
     if (layer['color']) {

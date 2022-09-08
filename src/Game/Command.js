@@ -101,7 +101,7 @@ CommandModule.TYPE = {
   Z_UPDATE: 'z_update',
   ESCAPE: 'escape',
   TELEPORT: 'teleport',
-  // 
+  //
   MOVE_UP: 'move_up',
   MOVE_DOWN: 'move_down',
   ROTATE_LEFT: 'rotate_left',
@@ -109,12 +109,12 @@ CommandModule.TYPE = {
   INCREASE_SPEED: 'increase_speed',
   DECREASE_SPEED: 'decrease_speed',
   //
-  MAP : 'map',
-  TORCH : 'torch',
-  INCREASE_ROT_SPEED : 'increase_rot_speed',
-  DECREASE_ROT_SPEED : 'decrease_rot_speed',
-  INCREASE_TORCH_INTENSITY : 'increase_torch_intensity',
-  DECREASE_TORCH_INTENSITY : 'decrease_torch_intensity',
+  MAP: 'map',
+  TORCH: 'torch',
+  INCREASE_ROT_SPEED: 'increase_rot_speed',
+  DECREASE_ROT_SPEED: 'decrease_rot_speed',
+  INCREASE_TORCH_INTENSITY: 'increase_torch_intensity',
+  DECREASE_TORCH_INTENSITY: 'decrease_torch_intensity',
 };
 
 module.exports = CommandModule;
