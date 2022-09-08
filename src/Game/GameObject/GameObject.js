@@ -363,7 +363,7 @@ const GameObjectModule = class GameObject {
       this.object3D.rotation
     );
     // Console.log('coucou UP');
-    const result = new THREE.Vector3(0, 0, 1).applyQuaternion(quaternion);
+    const result = THREE.Object3D.DefaultUp.clone().applyQuaternion(quaternion);
     return result;
   }
 
@@ -377,7 +377,7 @@ const GameObjectModule = class GameObject {
       this.object3D.rotation
     );
     // Console.log('coucou DOWN');
-    const result = new THREE.Vector3(0, 0, -1).applyQuaternion(quaternion);
+    const result = THREE.Object3D.DefaultUp.clone().negate().applyQuaternion(quaternion);
     return result;
   }
 
@@ -392,6 +392,7 @@ const GameObjectModule = class GameObject {
     );
     // Console.log('coucou LEFT');
     const result = new THREE.Vector3(-1, 0, 0).applyQuaternion(quaternion);
+    // const result = this.getDefaultForward().rotateZ(Math.PI/2).applyQuaternion(quaternion);
     return result;
   }
 
@@ -406,6 +407,7 @@ const GameObjectModule = class GameObject {
     );
     // Console.log('coucou RIGHT');
     const result = new THREE.Vector3(1, 0, 0).applyQuaternion(quaternion);
+    // const result = this.getDefaultForward.rotateZ(-Math.PI/2).applyQuaternion(quaternion);
     return result;
   }
 
