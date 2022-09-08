@@ -36,18 +36,7 @@ export class AllWidget {
         _this.addLogos();
 
         // Initialize iTowns 3D view
-        _this.init3DView();
-
-        // Dynamic near far computation
-        _this.view.addFrameRequester(
-          itowns.MAIN_LOOP_EVENTS.BEFORE_RENDER,
-          computeNearFarCamera.bind(
-            null,
-            _this.view.camera.camera3D,
-            _this.extent,
-            400
-          )
-        );
+        _this.initView3D();
 
         resolve(_this.config);
       });
