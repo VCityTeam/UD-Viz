@@ -101,7 +101,7 @@ CommandModule.TYPE = {
   Z_UPDATE: 'z_update',
   ESCAPE: 'escape',
   TELEPORT: 'teleport',
-  //
+  PING_MINI_MAP: 'ping_mini_map',
   MOVE_UP: 'move_up',
   MOVE_DOWN: 'move_down',
   ROTATE_LEFT: 'rotate_left',
