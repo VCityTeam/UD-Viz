@@ -108,13 +108,7 @@ CommandModule.TYPE = {
   ROTATE_RIGHT: 'rotate_right',
   INCREASE_SPEED: 'increase_speed',
   DECREASE_SPEED: 'decrease_speed',
-  //
-  MAP: 'map',
-  TORCH: 'torch',
-  INCREASE_ROT_SPEED: 'increase_rot_speed',
-  DECREASE_ROT_SPEED: 'decrease_rot_speed',
-  INCREASE_TORCH_INTENSITY: 'increase_torch_intensity',
-  DECREASE_TORCH_INTENSITY: 'decrease_torch_intensity',
+  
 };
 
 module.exports = CommandModule;
