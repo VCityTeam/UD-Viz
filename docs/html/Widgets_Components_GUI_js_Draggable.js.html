@@ -31,7 +31,7 @@
 
 
     <title>
-      Game/Command.js
+      Widgets/Components/GUI/js/Draggable.js
     </title>
 
     <!--[if lt IE 9]>
@@ -98,7 +98,7 @@
     <div id="main" class="main-content">
       
       <h1 id='page-title' class="page-title">
-        Game/Command.js
+        Widgets/Components/GUI/js/Draggable.js
       </h1>
       
 
@@ -109,119 +109,69 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>/** @format */
-
+            <pre class="prettyprint source linenums"><code>// Code from https://www.w3schools.com/howto/howto_js_draggable.asp
+// Make the DIV element draggable:
 /**
- * Object computed by the InputManager and pass to a WorldContext for the World simulation
+ *
+ * @param elmnt
+ * @param dragelmnt
  */
-const CommandModule = class Command {
-  constructor(json) {
-    if (!json) throw new Error('no json');
+export function dragElement(elmnt, dragelmnt) {
+  let pos1 = 0,
+    pos2 = 0,
+    pos3 = 0,
+    pos4 = 0;
 
-    // Type of the command
-    this.type = json.type;
+  dragelmnt.onmousedown = dragMouseDown;
 
-    // Uuid of the user (TODO remove this for a single uuid)
-    this.userID = json.userID;
-
-    // Uuid of the gameobject concerned by this (TODO use a single uuid)
-    this.gameObjectUUID = json.gameObjectUUID;
-
-    // Data of the command (optional)
-    this.data = json.data || null;
+  /**
+   *
+   * @param e
+   */
+  function dragMouseDown(e) {
+    e = e || window.event;
+    // Get the mouse cursor position at startup:
+    pos3 = e.clientX;
+    pos4 = e.clientY;
+    document.onmouseup = closeDragElement;
+    // Call a function whenever the cursor moves:
+    document.onmousemove = elementDrag;
   }
 
   /**
    *
-   * @returns {JSON}
+   * @param e
    */
-  getData() {
-    return this.data;
+  function elementDrag(e) {
+    e = e || window.event;
+    e.preventDefault();
+    // Calculate the new cursor position:
+    pos1 = pos3 - e.clientX;
+    pos2 = pos4 - e.clientY;
+    pos3 = e.clientX;
+    pos4 = e.clientY;
+    // Set the element's new position:
+    let newTop = elmnt.offsetTop - pos2;
+    if (newTop &lt; 0) {
+      newTop = 0;
+    }
+    let newLeft = elmnt.offsetLeft - pos1;
+    if (newLeft &lt; 0) {
+      newLeft = 0;
+    }
+    elmnt.style.top = newTop + 'px';
+    elmnt.style.left = newLeft + 'px';
   }
 
   /**
    *
-   * @returns {Command.TYPE}
    */
-  getType() {
-    return this.type;
+  function closeDragElement() {
+    // Stop moving when mouse button is released:
+    document.onmouseup = null;
+    document.onmousemove = null;
   }
-
-  /**
-   *
-   * @param {string} id
-   */
-  setGameObjectUUID(id) {
-    this.gameObjectUUID = id;
-  }
-
-  /**
-   *
-   * @returns {string}
-   */
-  getGameObjectUUID() {
-    return this.gameObjectUUID;
-  }
-
-  /**
-   *
-   * @param {string} userID
-   */
-  setUserID(userID) {
-    this.userID = userID;
-  }
-
-  /**
-   *
-   * @returns {string}
-   */
-  getUserID() {
-    return this.userID;
-  }
-
-  /**
-   * Compute this to JSON
-   *
-   * @returns {JSON}
-   */
-  toJSON() {
-    return {
-      type: this.type,
-      gameObjectUUID: this.gameObjectUUID,
-      userID: this.userID,
-      data: this.data,
-    };
-  }
-};
-
-CommandModule.TYPE = {
-  MOVE_FORWARD_START: 'move_forward_start',
-  MOVE_FORWARD_END: 'move_forward_end',
-  MOVE_BACKWARD_START: 'move_backward_start',
-  MOVE_BACKWARD_END: 'move_backward_end',
-  MOVE_LEFT_START: 'move_left_start',
-  MOVE_LEFT_END: 'move_left_end',
-  MOVE_RIGHT_START: 'move_right_start',
-  MOVE_RIGHT_END: 'move_right_end',
-  MOVE_FORWARD: 'move_forward',
-  MOVE_BACKWARD: 'move_backward',
-  MOVE_LEFT: 'move_left',
-  MOVE_RIGHT: 'move_right',
-  ROTATE: 'rotate',
-  MOVE_TO: 'move_to',
-  Z_UPDATE: 'z_update',
-  ESCAPE: 'escape',
-  TELEPORT: 'teleport',
-  PING_MINI_MAP: 'ping_mini_map',
-  MOVE_UP: 'move_up',
-  MOVE_DOWN: 'move_down',
-  ROTATE_LEFT: 'rotate_left',
-  ROTATE_RIGHT: 'rotate_right',
-  INCREASE_SPEED: 'increase_speed',
-  DECREASE_SPEED: 'decrease_speed',
-};
-
-module.exports = CommandModule;
+}
 </code></pre>
         </article>
     </section>

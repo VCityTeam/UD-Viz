@@ -31,7 +31,7 @@
 
 
     <title>
-      Game/Command.js
+      Widgets/Extensions/Authentication/services/AuthenticationService.js
     </title>
 
     <!--[if lt IE 9]>
@@ -98,7 +98,7 @@
     <div id="main" class="main-content">
       
       <h1 id='page-title' class="page-title">
-        Game/Command.js
+        Widgets/Extensions/Authentication/services/AuthenticationService.js
       </h1>
       
 
@@ -111,117 +111,170 @@
         <article>
             <pre class="prettyprint source linenums"><code>/** @format */
 
+import { RequestService } from '../../../../Components/Request/RequestService';
+
 /**
- * Object computed by the InputManager and pass to a WorldContext for the World simulation
+ *
+ * @param requestService
+ * @param config
  */
-const CommandModule = class Command {
-  constructor(json) {
-    if (!json) throw new Error('no json');
+export function AuthenticationService(requestService, config) {
+  this.observers = [];
+  this.config = config;
+  this.loginUrl = `${config.server.url}${config.server.login}`;
+  // Route to manage users (register)
+  this.userUrl = `${config.server.url}${config.server.user}`;
+  // Route to get personal information
+  this.userMeUrl = `${config.server.url}${config.server.userMe}`;
+  this.requestService = new RequestService();
+  this.loginRequiredKeys = ['username', 'password'];
+  this.registerRequiredKeys = [
+    'username',
+    'firstName',
+    'lastName',
+    'password',
+    'email',
+  ];
+  this.storageKeys = {
+    token: 'user.token',
+    firstname: 'user.firstname',
+    lastname: 'user.lastname',
+    username: 'user.username',
+    email: 'user.email',
+  };
 
-    // Type of the command
-    this.type = json.type;
+  this.requestService = requestService;
 
-    // Uuid of the user (TODO remove this for a single uuid)
-    this.userID = json.userID;
+  this.initialize = function initialize() {
+    this.requestService.setAuthenticationService(this);
+  };
 
-    // Uuid of the gameobject concerned by this (TODO use a single uuid)
-    this.gameObjectUUID = json.gameObjectUUID;
+  this.login = async function login(formData) {
+    if (!this.formCheck(formData, this.loginRequiredKeys)) {
+      throw 'Invalid form';
+    }
 
-    // Data of the command (optional)
-    this.data = json.data || null;
-  }
+    if (this.isUserLoggedIn()) {
+      throw 'Already logged in';
+    }
 
-  /**
-   *
-   * @returns {JSON}
-   */
-  getData() {
-    return this.data;
-  }
+    const result = (
+      await this.requestService.send('POST', this.loginUrl, formData, false)
+    ).response;
+    const resultJson = JSON.parse(result);
+    if (!resultJson) {
+      throw 'Username or password is incorrect';
+    }
+    const jwt = resultJson.token;
+    if (jwt !== undefined &amp;&amp; jwt !== null) {
+      this.storeToken(jwt);
+      const response = JSON.parse(
+        (await this.requestService.send('GET', this.userMeUrl)).response
+      );
+      const user = {
+        firstname: response.firstName,
+        lastname: response.lastName,
+        username: response.username,
+        email: response.email,
+      };
 
-  /**
-   *
-   * @returns {Command.TYPE}
-   */
-  getType() {
-    return this.type;
-  }
+      this.storeUser(user);
 
-  /**
-   *
-   * @param {string} id
-   */
-  setGameObjectUUID(id) {
-    this.gameObjectUUID = id;
-  }
+      this.notifyObservers();
+    } else {
+      throw 'Username or password is incorrect';
+    }
+  };
 
-  /**
-   *
-   * @returns {string}
-   */
-  getGameObjectUUID() {
-    return this.gameObjectUUID;
-  }
+  this.logout = function logout() {
+    if (!this.isUserLoggedIn()) {
+      throw 'Not logged in';
+    }
+    this.removeUserFromSession();
 
-  /**
-   *
-   * @param {string} userID
-   */
-  setUserID(userID) {
-    this.userID = userID;
-  }
+    this.notifyObservers();
+  };
 
-  /**
-   *
-   * @returns {string}
-   */
-  getUserID() {
-    return this.userID;
-  }
+  this.register = async function register(formData) {
+    if (!this.formCheck(formData, this.registerRequiredKeys)) {
+      throw 'Invalid form';
+    }
+    if (this.isUserLoggedIn()) {
+      throw 'Already logged in';
+    }
+    const result = (
+      await this.requestService.send('POST', this.userUrl, formData, false)
+    ).response;
+    JSON.parse(result);
 
-  /**
-   * Compute this to JSON
-   *
-   * @returns {JSON}
-   */
-  toJSON() {
-    return {
-      type: this.type,
-      gameObjectUUID: this.gameObjectUUID,
-      userID: this.userID,
-      data: this.data,
-    };
-  }
-};
+    this.notifyObservers();
+  };
 
-CommandModule.TYPE = {
-  MOVE_FORWARD_START: 'move_forward_start',
-  MOVE_FORWARD_END: 'move_forward_end',
-  MOVE_BACKWARD_START: 'move_backward_start',
-  MOVE_BACKWARD_END: 'move_backward_end',
-  MOVE_LEFT_START: 'move_left_start',
-  MOVE_LEFT_END: 'move_left_end',
-  MOVE_RIGHT_START: 'move_right_start',
-  MOVE_RIGHT_END: 'move_right_end',
-  MOVE_FORWARD: 'move_forward',
-  MOVE_BACKWARD: 'move_backward',
-  MOVE_LEFT: 'move_left',
-  MOVE_RIGHT: 'move_right',
-  ROTATE: 'rotate',
-  MOVE_TO: 'move_to',
-  Z_UPDATE: 'z_update',
-  ESCAPE: 'escape',
-  TELEPORT: 'teleport',
-  PING_MINI_MAP: 'ping_mini_map',
-  MOVE_UP: 'move_up',
-  MOVE_DOWN: 'move_down',
-  ROTATE_LEFT: 'rotate_left',
-  ROTATE_RIGHT: 'rotate_right',
-  INCREASE_SPEED: 'increase_speed',
-  DECREASE_SPEED: 'decrease_speed',
-};
+  this.formCheck = function formCheck(formData, requiredKeys) {
+    for (const key of requiredKeys) {
+      if (formData.get(key) === null) {
+        console.error(`Missing key in form : ${key}`);
+        return false;
+      }
+    }
+    return true;
+  };
 
-module.exports = CommandModule;
+  this.removeUserFromSession = function removeUserFromSession() {
+    window.sessionStorage.removeItem(this.storageKeys.token);
+    window.sessionStorage.removeItem(this.storageKeys.firstname);
+    window.sessionStorage.removeItem(this.storageKeys.lastname);
+    window.sessionStorage.removeItem(this.storageKeys.username);
+    window.sessionStorage.removeItem(this.storageKeys.email);
+  };
+
+  this.storeToken = function (token) {
+    window.sessionStorage.setItem(this.storageKeys.token, token);
+  };
+
+  this.storeUser = function storeUser(user) {
+    window.sessionStorage.setItem(this.storageKeys.firstname, user.firstname);
+    window.sessionStorage.setItem(this.storageKeys.lastname, user.lastname);
+    window.sessionStorage.setItem(this.storageKeys.username, user.username);
+    window.sessionStorage.setItem(this.storageKeys.email, user.email);
+  };
+
+  this.getUser = function getUser() {
+    const user = {};
+    user.token = window.sessionStorage.getItem(this.storageKeys.token);
+    if (user.token === null || user.token === undefined) {
+      return null;
+    }
+    user.firstname = window.sessionStorage.getItem(this.storageKeys.firstname);
+    user.lastname = window.sessionStorage.getItem(this.storageKeys.lastname);
+    user.username = window.sessionStorage.getItem(this.storageKeys.username);
+    user.email = window.sessionStorage.getItem(this.storageKeys.email);
+    return user;
+  };
+
+  this.isUserLoggedIn = function isUserLoggedIn() {
+    try {
+      const user = this.getUser();
+      return user !== null &amp;&amp; user !== undefined;
+    } catch (e) {
+      console.error(e);
+      return false;
+    }
+  };
+
+  // Observers
+  this.addObserver = function (observerFunction) {
+    this.observers.push(observerFunction);
+  };
+
+  this.notifyObservers = function () {
+    for (const observer of this.observers) {
+      observer();
+    }
+  };
+
+  this.initialize();
+}
 </code></pre>
         </article>
     </section>
