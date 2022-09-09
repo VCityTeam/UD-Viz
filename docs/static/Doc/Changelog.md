@@ -1,19 +1,28 @@
+# v2.38.2
+
+- Some ui adjust
+- Add command :
+  - up/down
+  - ping
+  - speed change
+
 # v2.38.1
-    - forceSerializeComponent on GameObject feature
+
+- forceSerializeComponent on GameObject feature
 
 # v2.38.0
-    
-* [Issue 349](https://github.com/orgs/VCityTeam/projects/17/views/1): GeoJSON data layer integration via JSON config file  and created an example in the UD-Viz mosaïc
-* [Issue 234](https://github.com/orgs/VCityTeam/projects/17/views/1): Refactoring of the UD-Viz library structure, factorization of the View3D which includes the view itowns as well as the data integration methods in it. 
-* [Issue 249](https://github.com/orgs/VCityTeam/projects/17/views/1): Check for collisions in this local context rather than in the world/server context.
-* [Issue 389](https://github.com/orgs/VCityTeam/projects/17/views/1): Move 3DDebugTiles from extensions to widgets.
-* [Issue 284](https://github.com/orgs/VCityTeam/projects/17/views/1): Assert DRYness between avatar example and demo-bon.
-* [Issue 231](https://github.com/orgs/VCityTeam/projects/17/views/1): Load 3DTiles from distant server instead of local. The 3DTiles are now on a the Liris server.
-* [Issue 361](https://github.com/orgs/VCityTeam/projects/17/views/1): CityObject and 3DTiles Debug widgets can apply style to invisible tiles.
-* [Issue 366](https://github.com/orgs/VCityTeam/projects/17/views/1): Dynamic layer creation, 2 ways to create dynamic layers:
-    * A first way in which a stream of GeoJson created by GAMA is received.
-    * Link to local GeoJson and change every second to give the dynamic effect.
-* [Issue 188](https://github.com/orgs/VCityTeam/projects/17/views/1): Propose in a module a pre_selection of background image layer, coming from IGN for example, and created an example in the UD-Viz mosaïc.
+
+- [Issue 349](https://github.com/orgs/VCityTeam/projects/17/views/1): GeoJSON data layer integration via JSON config file and created an example in the UD-Viz mosaïc
+- [Issue 234](https://github.com/orgs/VCityTeam/projects/17/views/1): Refactoring of the UD-Viz library structure, factorization of the View3D which includes the view itowns as well as the data integration methods in it.
+- [Issue 249](https://github.com/orgs/VCityTeam/projects/17/views/1): Check for collisions in this local context rather than in the world/server context.
+- [Issue 389](https://github.com/orgs/VCityTeam/projects/17/views/1): Move 3DDebugTiles from extensions to widgets.
+- [Issue 284](https://github.com/orgs/VCityTeam/projects/17/views/1): Assert DRYness between avatar example and demo-bon.
+- [Issue 231](https://github.com/orgs/VCityTeam/projects/17/views/1): Load 3DTiles from distant server instead of local. The 3DTiles are now on a the Liris server.
+- [Issue 361](https://github.com/orgs/VCityTeam/projects/17/views/1): CityObject and 3DTiles Debug widgets can apply style to invisible tiles.
+- [Issue 366](https://github.com/orgs/VCityTeam/projects/17/views/1): Dynamic layer creation, 2 ways to create dynamic layers:
+  - A first way in which a stream of GeoJson created by GAMA is received.
+  - Link to local GeoJson and change every second to give the dynamic effect.
+- [Issue 188](https://github.com/orgs/VCityTeam/projects/17/views/1): Propose in a module a pre_selection of background image layer, coming from IGN for example, and created an example in the UD-Viz mosaïc.
 
 # v2.37.7
 
@@ -28,7 +37,7 @@
 
 # v2.37.5
 
-    - fix: 
+    - fix:
         apply default style for tilesets without color
         layer without color
         selection of non visible object
@@ -39,7 +48,7 @@
 
 # v2.37.4
 
-    - Game engine update    
+    - Game engine update
     - AllWidget template compute dynamic near and far camera
     - New Landing page
     - SlideShow v2
@@ -59,15 +68,16 @@
     - Delete multilayer demo
     - Fix links to 3D Tiles in examples
     - Delete multilayer demo
+
 # v2.37.2
-  
+
     - Gltf aren't rotated at importation
     - Fix one example deployment
     - Add cubemap scene background
 
 # v2.37.1
 
-    - Add onRemove EVENT localscript 
+    - Add onRemove EVENT localscript
     - Fix Inputmanager
     - Add getParent
     - Add billboard example
@@ -76,6 +86,7 @@
     - Remove default style for 3DTiles
 
 # v2.37.0
+
     - update iTowns dependency to 2.37.0
       - update dependencies : proj4j (version ^2.7.5) and three (version 0.135.0)
     - minor documentation updates
