@@ -7,6 +7,15 @@ const $3DTemporalBatchTable = Widgets.$3DTemporalBatchTable;
 const $3DTemporalBoundingVolume = Widgets.$3DTemporalBoundingVolume;
 const $3DTemporalTileset = Widgets.$3DTemporalTileset;
 
+/**
+ * It creates a 3D Tiles layer,
+ * and adds it to the layer manager
+ *
+ * @param {*} layer - the layer object from the config file
+ * @param  {LayerManager_LayerManager} layerManager - the layer manager object
+ * @param {itowns.View} itownsView - the itowns view
+ * @returns {itowns.C3DTilesLayer} A 3D Tiles Layer
+ */
 export function setup3DTilesLayer(layer, layerManager, itownsView) {
   if (!layer['id'] || !layer['url']) {
     throw (
@@ -82,9 +91,10 @@ export function setup3DTilesLayer(layer, layerManager, itownsView) {
 
 /**
  * Setup and add 3D tiles to an itowns view
+ *
  * @param {*} config must contain a 3DTilesLayers field array with each 3d tile url
  * @param {LayerManager} layerManager a layer manager
- * @param {itowns.View} itownsView
+ * @param {itowns.View} itownsView - the itowns view
  * @returns a map of each 3d tiles layer
  */
 export function add3DTilesLayersFromConfig(config, layerManager, itownsView) {
