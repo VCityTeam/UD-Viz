@@ -24,7 +24,6 @@ canvas {
 }
 
 .ui_View3D {
-  background-color: white;
   position: absolute;
   z-index: 2;
 }
