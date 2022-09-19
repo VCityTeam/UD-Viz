@@ -143,16 +143,23 @@ export class InputManager {
    * @param {string} eventID id of the mouse to listen to
    * @param {Function} cb  must return a Command and take MouseState as first argument
    */
-  addMouseCommand(eventID, cb) {
-    this.mouseCommands[eventID] = cb;
+  addMouseCommand(commandID, eventID, cb) {
+    if (!this.mouseCommands[eventID]) {
+      this.mouseCommands[eventID] = {}; //init
+    }
+    if (this.mouseCommands[eventID][commandID])
+      console.warn('there is already cb ' + commandID, eventID);
+    this.mouseCommands[eventID][commandID] = cb;
   }
 
   /**
    *
    * @param {string} eventID
    */
-  removeMouseCommand(eventID) {
-    delete this.mouseCommands[eventID];
+  removeMouseCommand(commandID, eventID) {
+    if (!this.mouseCommands[eventID][commandID])
+      console.warn('nothing to remove ', commandID, eventID);
+    delete this.mouseCommands[eventID][commandID];
   }
 
   /**
@@ -326,8 +333,12 @@ export class InputManager {
     // Compute mouse commands
     for (const eventID in this.mouseCommands) {
       if (this.mouseState.isTrigger(eventID)) {
-        const cmd = this.mouseCommands[eventID].apply(this.mouseState, []);
-        if (cmd) result.push(cmd);
+        const map = this.mouseCommands[eventID];
+
+        for (const commandID in map) {
+          const cmd = map[commandID].apply(this.mouseState, []);
+          if (cmd) result.push(cmd);
+        }
       }
     }
 
