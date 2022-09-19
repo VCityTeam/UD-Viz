@@ -206,6 +206,59 @@ export class AssetsManager {
     this.buildGizmo();
     this.buildPointerMouse();
     this.buildPin();
+    this.buildSignboard();
+  }
+
+  buildSignboard() {
+    const result = new THREE.Object3D();
+
+    const geometryFrameFront = new THREE.PlaneGeometry(1, 1);
+    const geometryFrameBG = new THREE.PlaneGeometry(1, 1);
+    const frameFront = new THREE.Mesh(geometryFrameFront, DEFAULT_MATERIAL);
+    const frameBG = new THREE.Mesh(geometryFrameBG, DEFAULT_MATERIAL);
+    frameFront.name = 'frameFront';
+    frameBG.name = 'frameBG';
+    frameBG.rotation.y = Math.PI;
+    result.add(frameFront);
+    result.add(frameBG);
+
+    const geometryFrameLeft = new THREE.BoxGeometry(0.1, 0.9, 0.1);
+    const geometryFrameRight = new THREE.BoxGeometry(0.1, 0.9, 0.1);
+    const frameLeft = new THREE.Mesh(geometryFrameLeft, DEFAULT_MATERIAL);
+    const frameRight = new THREE.Mesh(geometryFrameRight, DEFAULT_MATERIAL);
+    frameLeft.translateX(-0.5);
+    frameRight.translateX(0.5);
+    frameLeft.name = 'frameLeft';
+    frameRight.name = 'frameRight';
+    result.add(frameLeft);
+    result.add(frameRight);
+
+    const geometryFrameTop = new THREE.BoxGeometry(1.1, 0.1, 0.1);
+    const geometryFrameBottom = new THREE.BoxGeometry(1.1, 0.1, 0.1);
+    const frameTop = new THREE.Mesh(geometryFrameTop, DEFAULT_MATERIAL);
+    const frameBottom = new THREE.Mesh(geometryFrameBottom, DEFAULT_MATERIAL);
+    frameTop.translateY(0.5);
+    frameBottom.translateY(-0.5);
+    frameTop.name = 'frameTop';
+    frameBottom.name = 'frameBottom';
+    result.add(frameTop);
+    result.add(frameBottom);
+
+    const geometrySupportLeft = new THREE.CapsuleGeometry(0.05, 1.5, 3, 32);
+    const geometrySupportRight = new THREE.CapsuleGeometry(0.05, 1.5, 3, 32);
+
+    const supportLeft = new THREE.Mesh(geometrySupportLeft, DEFAULT_MATERIAL);
+    const supportRight = new THREE.Mesh(geometrySupportRight, DEFAULT_MATERIAL);
+    supportLeft.translateX(-0.6);
+    supportLeft.translateY(-0.2);
+    supportRight.translateX(0.6);
+    supportRight.translateY(-0.2);
+    supportLeft.name = 'supportLeft';
+    supportRight.name = 'supportRight';
+    result.add(supportLeft);
+    result.add(supportRight);
+
+    this.objects['signboard'] = result;
   }
 
   buildPin() {
