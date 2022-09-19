@@ -140,12 +140,13 @@ export class InputManager {
   /**
    * Add a command for a mouse input
    *
+   * @param commandID
    * @param {string} eventID id of the mouse to listen to
    * @param {Function} cb  must return a Command and take MouseState as first argument
    */
   addMouseCommand(commandID, eventID, cb) {
     if (!this.mouseCommands[eventID]) {
-      this.mouseCommands[eventID] = {}; //init
+      this.mouseCommands[eventID] = {}; // Init
     }
     if (this.mouseCommands[eventID][commandID])
       console.warn('there is already cb ' + commandID, eventID);
@@ -154,6 +155,7 @@ export class InputManager {
 
   /**
    *
+   * @param commandID
    * @param {string} eventID
    */
   removeMouseCommand(commandID, eventID) {
