@@ -14,6 +14,9 @@ module.exports = class WorldStateDiff {
     // Gameobjects uuid
     this.gameObjectsUUID = json.gameObjectsUUID || [];
 
+    // world UUID
+    this.worldUUID = json.worldUUID;
+
     // Gameobject which need update
     this.outdatedGameObjectsJSON = json.outdatedGameObjectsJSON || {};
   }
@@ -45,6 +48,10 @@ module.exports = class WorldStateDiff {
     return this.timestamp;
   }
 
+  getWorldUUID() {
+    return this.worldUUID;
+  }
+
   /**
    * Compute this to JSON
    *
@@ -53,6 +60,7 @@ module.exports = class WorldStateDiff {
   toJSON() {
     return {
       timestamp: this.timestamp,
+      worldUUID: this.worldUUID,
       gameObjectsUUID: this.gameObjectsUUID,
       outdatedGameObjectsJSON: this.outdatedGameObjectsJSON,
     };

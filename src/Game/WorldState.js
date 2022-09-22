@@ -20,6 +20,9 @@ const WorldStateModule = class WorldState {
     // Coord of the origin (itowns)
     this.origin = json.origin || null;
 
+    //world uuid
+    this.worldUUID = json.worldUUID || -1;
+
     // Flag to determine if that state has been consumed/treated by the gameview (or something else)
     this._consumed = false;
   }
@@ -86,6 +89,7 @@ const WorldStateModule = class WorldState {
       gameObject: newGO.toJSON(true),
       timestamp: diff.getTimeStamp(),
       origin: this.origin,
+      worldUUID: diff.getWorldUUID(),
     });
 
     return result;
@@ -133,6 +137,7 @@ const WorldStateModule = class WorldState {
       gameObjectsUUID: gameObjectsUUID,
       outdatedGameObjectsJSON: outdatedGameObjectsJSON,
       timestamp: this.timestamp,
+      worldUUID: this.worldUUID,
     });
   }
 
@@ -146,6 +151,7 @@ const WorldStateModule = class WorldState {
       gameObject: this.gameObject.toJSON(true),
       timestamp: this.timestamp,
       origin: this.origin,
+      worldUUID: this.worldUUID,
     });
   }
 
@@ -181,6 +187,10 @@ const WorldStateModule = class WorldState {
     return this.gameObject;
   }
 
+  getWorldUUID() {
+    return this.worldUUID;
+  }
+
   /**
    * Compute this to JSON
    *
@@ -195,6 +205,7 @@ const WorldStateModule = class WorldState {
       gameObject: gameObjectData,
       timestamp: this.timestamp,
       origin: this.origin,
+      worldUUID: this.worldUUID,
     };
   }
 };
