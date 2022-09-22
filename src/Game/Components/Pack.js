@@ -10,14 +10,14 @@ const THREE = require('three');
  * TODO opti make a custom serialization for each object and not a generic function
  */
 module.exports = Object.freeze({
-  //URI unpack
-  vector3ArrayFromURIComponent(uriComp) {
+  // URI unpack
+  vector3ArrayFromURIComponent: function (uriComp) {
     const subString = uriComp.split(',');
     if (subString.length != 3) console.warn('wrong uri component');
     return subString;
   },
 
-  eulerArrayFromURIComponent(uriComp) {
+  eulerArrayFromURIComponent: function (uriComp) {
     const subString = uriComp.split(',');
     if (subString.length != 4) console.warn('wrong uri component');
     return subString;

@@ -14,7 +14,7 @@ module.exports = class WorldStateDiff {
     // Gameobjects uuid
     this.gameObjectsUUID = json.gameObjectsUUID || [];
 
-    // world UUID
+    // World UUID
     this.worldUUID = json.worldUUID;
 
     // Gameobject which need update
