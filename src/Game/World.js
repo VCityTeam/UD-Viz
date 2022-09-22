@@ -346,6 +346,7 @@ const WorldModule = class World {
    */
   computeWorldState(withServerComponent = true) {
     const result = new WorldState({
+      worldUUID: this.getUUID(),
       gameObject: this.gameObject.toJSON(withServerComponent),
       timestamp: Date.now(),
       origin: this.origin,
