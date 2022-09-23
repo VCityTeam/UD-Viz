@@ -48,6 +48,10 @@ module.exports = class WorldStateDiff {
     return this.timestamp;
   }
 
+  /**
+   *
+   * @returns {string} uuid of the world
+   */
   getWorldUUID() {
     return this.worldUUID;
   }
