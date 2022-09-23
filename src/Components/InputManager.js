@@ -140,7 +140,7 @@ export class InputManager {
   /**
    * Add a command for a mouse input
    *
-   * @param commandID
+   * @param {string} commandID id of the command
    * @param {string} eventID id of the mouse to listen to
    * @param {Function} cb  must return a Command and take MouseState as first argument
    */
@@ -155,8 +155,8 @@ export class InputManager {
 
   /**
    *
-   * @param commandID
-   * @param {string} eventID
+   * @param {string} commandID id of the command
+   * @param {string} eventID id of the mouse event
    */
   removeMouseCommand(commandID, eventID) {
     if (!this.mouseCommands[eventID][commandID])
