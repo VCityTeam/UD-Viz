@@ -187,6 +187,10 @@ const WorldStateModule = class WorldState {
     return this.gameObject;
   }
 
+  /**
+   *
+   * @returns {string} uuid of the world
+   */
   getWorldUUID() {
     return this.worldUUID;
   }
