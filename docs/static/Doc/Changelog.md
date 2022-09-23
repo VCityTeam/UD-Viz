@@ -1,3 +1,10 @@
+# v2.38.3
+
+    - WorldState reference worldUUID
+    - Pack uri to vector3 and euler
+    - Several callback can be add on the same mouseCommand eventID
+    - Remove background-color View3D
+
 # v2.38.2
 
 - Some ui adjust
