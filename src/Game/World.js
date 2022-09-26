@@ -362,6 +362,7 @@ const WorldModule = class World {
 
   /**
    * This function sets the gameObject property of the current object to the gameObject parameter.
+   *
    * @param {GameObject} gameObject - The game object that this component is attached to.
    */
   setGameObject(gameObject) {

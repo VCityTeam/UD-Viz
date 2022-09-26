@@ -262,7 +262,8 @@ export class GameView extends View3D {
 
     if (value) {
       // Creating controls like this put it in this.itownsView.controls
-      this.planarControl = new itowns.PlanarControls(this.itownsView, {
+      // eslint-disable-next-line no-unused-vars
+      const c = new itowns.PlanarControls(this.itownsView, {
         handleCollision: false,
         focusOnMouseOver: false,
         focusOnMouseClick: false,
