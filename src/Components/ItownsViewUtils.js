@@ -220,6 +220,42 @@ export function addElevationLayer(config, itownsView, extent) {
     return;
   }
 
+  // Url check
+  if (!config['elevation_layer']['url']) {
+    console.warn('Need an url in elevation_layer config');
+    return;
+  }
+
+  // Name check
+  if (!config['elevation_layer']['name']) {
+    console.warn('Need a name in elevation_layer config');
+    return;
+  }
+
+  // Format check
+  if (!config['elevation_layer']['format']) {
+    console.warn('Need a format in elevation_layer config');
+    return;
+  }
+
+  // ColorTextureElevationMinZ check
+  if (!config['elevation_layer']['colorTextureElevationMinZ']) {
+    console.warn('Need a colorTextureElevationMinZ in elevation_layer config');
+    return;
+  }
+
+  // ColorTextureElevationMaxZ check
+  if (!config['elevation_layer']['colorTextureElevationMaxZ']) {
+    console.warn('Need a colorTextureElevationMaxZ in elevation_layer config');
+    return;
+  }
+
+  // Layer_name check
+  if (!config['elevation_layer']['layer_name']) {
+    console.warn('Need a layer_name in elevation_layer config');
+    return;
+  }
+
   // Add a WMS elevation source
   const wmsElevationSource = new itowns.WMSSource({
     extent: extent,
