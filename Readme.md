@@ -6,7 +6,7 @@
 
 UD-Viz is a JavaScript library based on [iTowns](https://github.com/itowns/itowns), using [npm](https://www.npmjs.com/) and [published on the npm package repository](https://www.npmjs.com/package/ud-viz), allowing to visualize, analyse and interact with urban data.
 
-A tutorial of the game engine can be found [here](./Doc/Devel/LocalGameTutorial.md)
+A tutorial of the game engine can be found [here](./docs/static/Doc/Devel/LocalGameTutorial.md)
 
 ### Install node/npm
 For the npm installation refer [here](https://github.com/VCityTeam/UD-SV/blob/master/Tools/ToolNpm.md)
@@ -112,8 +112,7 @@ UD-Viz (repo)
 |    ├── Components             # A set of components used by sub-directories at this level
 |    ├── Templates              # Classes builded with other sub-directory (Game, Widgets, Views) to propose application model
 |    ├── Views                  # Classes of 3D views encapsulating the itowns view
-|    ├── Game                   # A sub-directory offering game engine functionnality
-|    |    ├── Shared            # code that can be executed both and client and server side to simulate a world
+|    ├── Game                   # A sub-directory offering game engine functionnality (node compatible)
 |    |               
 |    └── Widgets                # A sub-directory gathering a set web web widgets (UI)  
 |         ├── Widget_1
@@ -135,9 +134,8 @@ Notes:
         ├── Components 
         |    └── Component_1         # A component shared by the Game and Widgets sub-directories
         |         └── *.js ...       # Component definition
-        ├── Game
-        |    └── Shared      
-        |         └── Component_2    # A component used by the Shared sub-set of the Game sub-directory 
+        ├── Game   
+        |    └── Component_2         # A component used by the Game sub-directory 
         |              └── ...       
         └── Widgets  
              ├── Components

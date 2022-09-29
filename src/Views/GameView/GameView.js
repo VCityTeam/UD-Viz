@@ -359,9 +359,8 @@ export class GameView extends View3D {
   /**
    * Dispose this view
    *
-   * @param keepAssets
    */
-  dispose(keepAssets = false) {
+  dispose() {
     super.dispose();
     this.interpolator.stop();
 
@@ -378,8 +377,6 @@ export class GameView extends View3D {
         if (audioComponent) audioComponent.dispose();
       });
     }
-
-    if (!keepAssets) this.assetsManager.dispose();
   }
 
   /**
@@ -422,13 +419,19 @@ export class GameView extends View3D {
             // Do not exist remove it
             g.removeFromParent();
 
-            // Remove object3D
+            // Render removal
             g.getObject3D().parent.remove(g.getObject3D());
 
-            // Localscript notification
+            // LocalScript removal
             const scriptComponent = g.getComponent(LocalScript.TYPE);
             if (scriptComponent) {
               scriptComponent.execute(LocalScript.EVENT.ON_REMOVE, [ctx]);
+            }
+
+            // Audio removal
+            const audioComponent = g.getComponent(Audio.TYPE);
+            if (audioComponent) {
+              audioComponent.dispose();
             }
 
             delete _this.currentUUID[g.getUUID()];
