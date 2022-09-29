@@ -30,17 +30,6 @@ export class AssetsManager {
     this.objects = {};
     this.animations = {};
     this.worldsJSON = null;
-
-    // Buffer
-    this.soundsBuffer = {};
-  }
-
-  dispose() {
-    for (const key in this.soundsBuffer) {
-      this.soundsBuffer[key].forEach(function (s) {
-        s.unload();
-      });
-    }
   }
 
   /**
@@ -64,7 +53,7 @@ export class AssetsManager {
 
     // Clone Object
     const result = {
-      animations: this.createAnimations(idRenderData),
+      animations: this.animations[idRenderData],
       object: this.objects[idRenderData].clone(),
     };
 
@@ -79,10 +68,6 @@ export class AssetsManager {
     return result;
   }
 
-  createAnimations(idRenderData) {
-    return this.animations[idRenderData];
-  }
-
   /**
    * Return worlds loaded
    *
@@ -92,39 +77,21 @@ export class AssetsManager {
     return this.worldsJSON;
   }
 
-  fetchSound(idSound, options = {}) {
+  /**
+   * Create a Howl instance of the sound
+   * @param {string} idSound
+   * @param {Object} options
+   * @returns
+   */
+  createSound(idSound, options = {}) {
     const confSound = this.conf['sounds'][idSound];
 
     if (!confSound) console.error('no sound with id ', idSound);
 
-    let result;
-
-    if (!this.soundsBuffer[idSound]) {
-      // First this sound is fetched
-      result = new Howl({
-        src: confSound.path,
-        loop: options.loop || false,
-      });
-
-      // Register for unload
-      this.soundsBuffer[idSound] = [result];
-    } else {
-      // If shared an instance already existing is return
-      // TODO conf is the same for all the audio comp not allowing to have shared and not shared sound in the same comp
-      // TODO remove shared to well dispose sounds
-      if (options.shared) {
-        result = this.soundsBuffer[idSound][0];
-        if (!result) throw new Error('no sound');
-      } else {
-        result = new Howl({
-          src: confSound.path,
-          loop: options.loop || false,
-        });
-        this.soundsBuffer[idSound].push(result);
-      }
-    }
-
-    return result;
+    return new Howl({
+      src: confSound.path,
+      loop: options.loop || false,
+    });
   }
 
   /**

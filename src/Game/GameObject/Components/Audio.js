@@ -33,8 +33,32 @@ const AudioModule = class Audio {
 
   dispose() {
     for (const key in this.sounds) {
-      this.sounds[key].pause(); // TODO if shared just pause if not unload
+      this.sounds[key].unload();
     }
+  }
+
+  /**
+   * add dynamically a sound to the comp
+   * @param {string} id
+   * @param {AssetsManager} assetsManager
+   */
+  addSound(id, assetsManager) {
+    if (this.soundsJSON.includes(id)) {
+      console.warn(id, ' already in audio comp');
+      return;
+    }
+
+    this.soundsJSON.push(id);
+    this.sounds[id] = assetsManager.createSound(id, this.conf);
+  }
+
+  /**
+   * remove all sounds of the comp
+   */
+  reset() {
+    this.dispose();
+    this.soundsJSON = [];
+    this.sounds = {};
   }
 
   /**
@@ -59,15 +83,11 @@ const AudioModule = class Audio {
   initAssets(assetsManager) {
     const _this = this;
     this.soundsJSON.forEach(function (idS) {
-      _this.sounds[idS] = assetsManager.fetchSound(idS, _this.conf);
+      _this.sounds[idS] = assetsManager.createSound(idS, _this.conf);
     });
   }
 
   tick(cameraMatrixWorldInverse, refOrigin) {
-    const goPos = this.parent.getPosition().clone();
-    goPos.add(refOrigin);
-    const positionAudio = goPos.clone().applyMatrix4(cameraMatrixWorldInverse);
-
     for (const key in this.sounds) {
       const sound = this.sounds[key];
 
@@ -78,6 +98,12 @@ const AudioModule = class Audio {
 
       // https://github.com/goldfire/howler.js#documentation
       if (this.conf.spatialized) {
+        const goPos = this.parent.getPosition().clone();
+        goPos.add(refOrigin);
+        const positionAudio = goPos
+          .clone()
+          .applyMatrix4(cameraMatrixWorldInverse);
+
         sound.pos(positionAudio.x, positionAudio.y, positionAudio.z);
       }
     }
