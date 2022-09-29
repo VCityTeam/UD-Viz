@@ -79,8 +79,9 @@ export class AssetsManager {
 
   /**
    * Create a Howl instance of the sound
+   *
    * @param {string} idSound
-   * @param {Object} options
+   * @param {object} options
    * @returns
    */
   createSound(idSound, options = {}) {

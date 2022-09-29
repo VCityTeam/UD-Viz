@@ -38,7 +38,8 @@ const AudioModule = class Audio {
   }
 
   /**
-   * add dynamically a sound to the comp
+   * Add dynamically a sound to the comp
+   *
    * @param {string} id
    * @param {AssetsManager} assetsManager
    */
@@ -53,7 +54,7 @@ const AudioModule = class Audio {
   }
 
   /**
-   * remove all sounds of the comp
+   * Remove all sounds of the comp
    */
   reset() {
     this.dispose();
