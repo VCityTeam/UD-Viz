@@ -106,30 +106,6 @@ const RenderModule = class Render {
   }
 
   /**
-   * Check if the color differed from component and update if needed
-   *
-   * @param outdated
-   * @param {JSON} component the component to update to
-   * @param {LocalContext} localContext local context of the GameView
-   */
-  updateFromComponent(outdated, component, localContext) {
-    let result = false;
-
-    if (!this.color.equals(component.getColor())) {
-      this.setColor(component.getColor());
-      result = true;
-    }
-
-    if (this.idRenderData != component.getIdRenderData()) {
-      this.idRenderData = component.getIdRenderData();
-      this.initAssets(localContext.getGameView().getAssetsManager());
-      result = true;
-    }
-
-    return result;
-  }
-
-  /**
    * Add a custom object 3D to this model
    *
    * @param {THREE.Object3D} obj
