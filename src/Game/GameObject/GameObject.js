@@ -88,48 +88,6 @@ const GameObjectModule = class GameObject {
   }
 
   /**
-   * Client side function since a localContext is needed
-   * Update client side component and the Transform of this based on go
-   *
-   * @param {GameObject} go the gameobject to upadate to
-   * @param bufferedGO
-   * @param {LocalContext} localContext this localcontext
-   */
-  updateFromGO(go, bufferedGO, localContext) {
-    if (this.noLocalUpdate || this.freeze) return;
-
-    if (!go.isStatic()) {
-      // Update transform
-      this.setTransformFromGO(go);
-    }
-
-    // Launch update event for bufferedGO
-    let update = false;
-    for (let index = 0; index < bufferedGO.length; index++) {
-      const element = bufferedGO[index];
-      for (const key in this.components) {
-        const component = this.components[key];
-
-        update =
-          update ||
-          component.updateFromComponent(
-            element.isOutdated(),
-            element.getComponent(key),
-            localContext
-          );
-      }
-    }
-
-    if (update) {
-      const localScript = this.getComponent(LocalScriptModule.TYPE);
-      if (localScript)
-        localScript.execute(LocalScriptModule.EVENT.ON_COMPONENT_UPDATE, [
-          localContext,
-        ]);
-    }
-  }
-
-  /**
    * Bind transform of go into this
    *
    * @param {GameObject} go
@@ -855,6 +813,14 @@ const GameObjectModule = class GameObject {
    */
   setName(name) {
     this.name = name;
+  }
+
+  /**
+   *
+   * @returns {boolean}
+   */
+  hasNoLocalUpdate() {
+    return this.noLocalUpdate;
   }
 
   /**

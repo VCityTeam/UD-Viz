@@ -84,28 +84,6 @@ const LocalScriptModule = class LocalScript {
   }
 
   /**
-   * Check if conf differed with component and
-   * notify scripts that conf has changed and fire an UPDATE event
-   *
-   * @param outdated
-   * @param {JSON} component the component json to update to
-   * @param {LocalContext} localContext
-   */
-  updateFromComponent(outdated, component, localContext) {
-    if (outdated) {
-      // Replace conf and launch an update event
-      this.conf = component.conf;
-      for (const id in this.scripts) {
-        const s = this.scripts[id];
-        s.conf = component.conf;
-      }
-      return this.execute(LocalScriptModule.EVENT.ON_OUTDATED, [localContext]);
-    }
-
-    return false;
-  }
-
-  /**
    *
    * @returns {object}
    */

@@ -394,7 +394,7 @@ export class GameView extends View3D {
     const newGO = [];
     const ctx = this.localContext;
 
-    const state = states[states.length - 1];
+    const state = states[states.length - 1]; // The more current of states
 
     // Update lastState with the new one
     if (this.lastState) {
@@ -407,14 +407,88 @@ export class GameView extends View3D {
           const uuid = g.getUUID();
           const current = state.getGameObject().find(uuid);
           if (current) {
-            const bufferedGO = [];
-            states.forEach(function (s) {
-              const bGO = s.getGameObject().find(uuid);
-              if (bGO) bufferedGO.push(bGO);
-            });
+            // Local update
+            if (!g.getFreeze() && !g.hasNoLocalUpdate()) {
+              // Not freeze and has local update
 
-            // Update local components
-            g.updateFromGO(current, bufferedGO, ctx);
+              // if no static update transform
+              if (!g.isStatic()) {
+                // Update transform
+                g.setTransformFromGO(current);
+              }
+
+              // Stack the same go of all states not consumed yet
+              const bufferedGO = [];
+              states.forEach(function (s) {
+                const bGO = s.getGameObject().find(uuid);
+                if (bGO) bufferedGO.push(bGO);
+              });
+
+              // Update local component for bufferedGO
+              let componentHasBeenUpdated = false; // Flag to know if a change of state occured
+
+              const gRenderComp = g.getComponent(Render.TYPE);
+              const gLocalScriptComp = g.getComponent(LocalScript.TYPE);
+
+              for (let index = 0; index < bufferedGO.length; index++) {
+                const element = bufferedGO[index];
+
+                // Render comp
+                if (gRenderComp) {
+                  const bufferedRenderComp = element.getComponent(Render.TYPE);
+
+                  // Check if color change
+                  if (
+                    !gRenderComp
+                      .getColor()
+                      .equals(bufferedRenderComp.getColor())
+                  ) {
+                    gRenderComp.setColor(bufferedRenderComp.getColor());
+                    componentHasBeenUpdated = true; // Notify change
+                  }
+
+                  // Check if idModel change
+                  if (
+                    gRenderComp.getIdRenderData() !=
+                    bufferedRenderComp.getIdRenderData()
+                  ) {
+                    gRenderComp.setIdRenderData(
+                      bufferedRenderComp.getIdRenderData()
+                    );
+                    gRenderComp.initAssets(this.getAssetsManager());
+                    componentHasBeenUpdated = true;
+                  }
+                }
+
+                if (gLocalScriptComp && element.isOutdated()) {
+                  const bufferedLocalScriptComp = element.getComponent(
+                    LocalScript.TYPE
+                  );
+
+                  // Replace conf in localscript component
+                  gLocalScriptComp.conf = bufferedLocalScriptComp.conf;
+                  for (const id in gLocalScriptComp.scripts) {
+                    const s = gLocalScriptComp.scripts[id];
+                    s.conf = bufferedLocalScriptComp.conf; // Replace conf in script
+                  }
+
+                  // Launch event onOutdated
+                  componentHasBeenUpdated =
+                    componentHasBeenUpdated ||
+                    gLocalScriptComp.execute(LocalScript.EVENT.ON_OUTDATED, [
+                      ctx,
+                    ]);
+                }
+              }
+
+              if (componentHasBeenUpdated && gLocalScriptComp) {
+                // Launch event onComponentUpdate
+                gLocalScriptComp.execute(
+                  LocalScript.EVENT.ON_COMPONENT_UPDATE,
+                  [ctx]
+                );
+              }
+            }
           } else {
             // Do not exist remove it
             g.removeFromParent();
