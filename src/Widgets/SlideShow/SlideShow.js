@@ -8,19 +8,21 @@ export class SlideShow extends Window {
   /**
    * It initializes the widget.
    *
-   * @param app - the application object
-   * @param inputManager - the input manager of the application
+   * @param {itowns.PlanarView} itownsView - The itowns view.
+   * @param {Object} config - The configuration of the widget.
+   * @param {itowns.Extent} extent - The extent of the widget.
+   * @param {InputManager} inputManager - the input manager of the application
    */
-  constructor(app, inputManager) {
+  constructor(itownsView, config, extent, inputManager) {
     super('slideShow', 'Slide Show 3D', false);
 
-    /** @type {AllWidget} */
-    this.app = app;
+    /** @type {itowns.PlanarView} */
+    this.conf = config || null;
+    /** @type {itowns.Extent} */
+    this.extent = extent;
+    this.itownsView = itownsView;
     /** @type {InputManager} */
     this.inputManager = inputManager;
-    /** @type {itowns.Extent} */
-    this.extent = app.extent;
-    this.conf = app.config.slideShow || null;
 
     // Content html
     this.htmlSlideShow = null;
@@ -51,14 +53,14 @@ export class SlideShow extends Window {
 
     this.initDefaultTextureFile();
 
-    if (this.conf) {
+    if (this.conf.slideShow) {
       this.setSlideshowInConfig(0);
     }
 
     this.currentTexture = null;
 
     this.initHtml();
-    this.initInputListener(app, this.inputManager);
+    this.initInputListener(itownsView, this.inputManager);
     this.initCBDrop();
     const _this = this;
     /** A function call each frame by the browser */
@@ -72,13 +74,13 @@ export class SlideShow extends Window {
   /** If the notifyValue is true, then update the 3D view*/
   notifyChangeEachFrame() {
     if (this.notifyValue) {
-      this.app.update3DView();
+      this.itownsView.notifyChange();
     }
   }
 
   setSlideshowInConfig(slideIndex) {
     if (isNaN(slideIndex)) return;
-    const conf = this.conf;
+    const conf = this.conf.slideShow;
     const slide = conf[Object.keys(conf)[0]][slideIndex];
     const folder = slide.folder;
     const diapos = slide.diapositives;
@@ -263,7 +265,7 @@ export class SlideShow extends Window {
     slideSelect.appendChild(unsetOptionSlide);
     this.slideSelectID = slideSelect.id;
 
-    const conf = this.conf;
+    const conf = this.conf.slideShow;
     if (conf) {
       for (let i = 0; i < conf[Object.keys(conf)[0]].length; i++) {
         const element = conf[Object.keys(conf)[0]][i];
@@ -292,18 +294,25 @@ export class SlideShow extends Window {
         Math.abs(this.extent.north - this.extent.south)
       )
     );
+    let elevationZ = 42;
+    if (
+      this.conf['elevation_layer'] &&
+      this.conf['elevation_layer']['colorTextureElevationMaxZ']
+    ) {
+      elevationZ = this.conf['elevation_layer']['colorTextureElevationMaxZ'];
+    }
+
     this.setCoordinatesInputs(
-      new THREE.Vector3(extentCenter.x, extentCenter.y, 250)
+      new THREE.Vector3(extentCenter.x, extentCenter.y, elevationZ)
     );
     this.setRotationInputs(new THREE.Vector3(0, 0, 0));
   }
 
   /**
-   * @param {AllWidget} app
    * @param {InputManager} iM
    * Add event listeners to input
    */
-  initInputListener(app, iM) {
+  initInputListener(itownsView, iM) {
     const _this = this;
 
     // Clamp number between two values with the following line:
@@ -313,7 +322,7 @@ export class SlideShow extends Window {
     iM.addKeyInput('h', 'keydown', function () {
       if (!_this.plane) return;
       _this.plane.visible = !_this.plane.visible;
-      app.update3DView();
+      _this.itownsView.notifyChange();
     });
 
     // Change the next slide
@@ -328,7 +337,7 @@ export class SlideShow extends Window {
 
       _this.aspectRatioCheckboxDOM.dispatchEvent(new Event('change'));
 
-      app.update3DView();
+      _this.itownsView.notifyChange();
     });
 
     // Change the previous slide
@@ -342,7 +351,7 @@ export class SlideShow extends Window {
       _this.setTexture(_this.iCurrentTextureFile);
       _this.aspectRatioCheckboxDOM.dispatchEvent(new Event('change'));
 
-      app.update3DView();
+      _this.itownsView.notifyChange();
     });
   }
 
@@ -562,9 +571,8 @@ export class SlideShow extends Window {
     });
 
     this.currentTexture = this.currentTextureFile.texture;
-    const app = this.app;
     this.modifyPlane();
-    app.update3DView();
+    this.itownsView.notifyChange();
   }
 
   /** Modify this.plane @var {THREE.Mesh} */
@@ -587,8 +595,8 @@ export class SlideShow extends Window {
     this.plane.material.map = this.currentTexture || this.plane.material.map;
 
     this.plane.updateMatrixWorld();
-    this.app.view3D.getScene().add(this.plane);
-    this.app.update3DView();
+    this.itownsView.scene.add(this.plane);
+    this.itownsView.notifyChange();
   }
 
   /** Create PlaneGeometry Mesh*/
@@ -718,6 +726,6 @@ export class SlideShow extends Window {
       this.plane.removeFromParent();
       this.plane = null;
     }
-    this.app.update3DView();
+    this.itownsView.notifyChange();
   }
 }

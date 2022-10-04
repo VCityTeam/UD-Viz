@@ -9,16 +9,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   </head>
   <body>
-    <script src="../../dist/release/udv.js"></script>
-    <!-- <script src="../../dist/debug/udv.js"></script> -->
+    <!-- <script src="../../dist/release/udv.js"></script> -->
+    <script src="../../dist/debug/udv.js"></script>
     <script type="text/javascript">
       const app = new udv.Templates.AllWidget();
 
-      const inputManager = new udv.Components.InputManager();
-
       app.start('../assets/config/all_widget_config.json').then((config) => {
-
-        const slideShow = new udv.Widgets.SlideShow(app, inputManager);
+        const slideShow = new udv.Widgets.SlideShow(
+          app.view3D.getItownsView(),
+          config,
+          app.extent,
+          app.view3D.inputManager
+        );
         app.addModuleView('slideShow', slideShow);
       });
     </script>
