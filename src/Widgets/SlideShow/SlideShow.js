@@ -1,5 +1,3 @@
-/** @format */
-
 // Components
 import { Window } from '../Components/GUI/js/Window';
 import * as THREE from 'three';
@@ -9,7 +7,7 @@ export class SlideShow extends Window {
    * It initializes the widget.
    *
    * @param {itowns.PlanarView} itownsView - The itowns view.
-   * @param {Object} config - The configuration of the widget.
+   * @param {object} config - The configuration of the widget.
    * @param {itowns.Extent} extent - The extent of the widget.
    * @param {InputManager} inputManager - the input manager of the application
    */
@@ -48,7 +46,7 @@ export class SlideShow extends Window {
     this.texturesFiles = null;
     this.iCurrentTextureFile = 0;
 
-    /** @type {bool} if true the application update its view3D eachFrame*/
+    /** @type {boolean} if true the application update its view3D eachFrame*/
     this.notifyValue = false;
 
     this.initDefaultTextureFile();
@@ -309,24 +307,24 @@ export class SlideShow extends Window {
   }
 
   /**
-   * @param {InputManager} iM
+   
    * Add event listeners to input
    */
-  initInputListener(itownsView, iM) {
+  initInputListener() {
     const _this = this;
 
     // Clamp number between two values with the following line:
     const clamp = (num, min, max) => Math.min(Math.max(num, min), max);
 
     // Hide and show the geometryPlane
-    iM.addKeyInput('h', 'keydown', function () {
+    this.inputManager.addKeyInput('h', 'keydown', function () {
       if (!_this.plane) return;
       _this.plane.visible = !_this.plane.visible;
       _this.itownsView.notifyChange();
     });
 
     // Change the next slide
-    iM.addKeyInput('ArrowRight', 'keydown', function () {
+    this.inputManager.addKeyInput('ArrowRight', 'keydown', function () {
       if (!_this.plane) return;
       _this.iCurrentTextureFile = clamp(
         _this.iCurrentTextureFile + 1,
@@ -341,7 +339,7 @@ export class SlideShow extends Window {
     });
 
     // Change the previous slide
-    iM.addKeyInput('ArrowLeft', 'keydown', function () {
+    this.inputManager.addKeyInput('ArrowLeft', 'keydown', function () {
       if (!_this.plane) return;
       _this.iCurrentTextureFile = clamp(
         _this.iCurrentTextureFile - 1,
@@ -484,8 +482,8 @@ export class SlideShow extends Window {
   /**
    * Function called when aspectRatio is checked
    *
-   * @param iInput
-   * @param value
+   * @param {number} iInput The index of the input element
+   * @param {number} value The value of the input element
    */
   matchRatio(iInput, value) {
     const linkedSizeElement =
@@ -520,7 +518,8 @@ export class SlideShow extends Window {
   /**
    * Convert inputVector HTMLElement to THREE.Vector
    *
-   * @param inputVector
+   * @param {object} inputVector HTMLElement 'div' contains labels and inputs HTMLElements
+   * @returns {THREE.Vector} vector
    */
   inputVectorToVector(inputVector) {
     const inputEls = inputVector.getElementsByTagName('input');
@@ -612,22 +611,22 @@ export class SlideShow extends Window {
   }
 
   // DOM GETTERS
-  /** returns coordinates HTMLElements (inputs+labels) */
+  /* Return coordinates HTMLElements (inputs+labels) */
   get coordinatesInputVectorDOM() {
     return document.getElementById(this.coordinatesInputVectorID);
   }
 
-  /** Return rotation HTMLElement (inputs+labels)*/
+  /* Return rotation HTMLElement (inputs+labels)*/
   get rotationInputVectorDOM() {
     return document.getElementById(this.rotationInputVectorID);
   }
 
-  /** Return size HTMLElement (inputs+labels)*/
+  /* Return size HTMLElement (inputs+labels)*/
   get sizeInputVectorDOM() {
     return document.getElementById(this.sizeInputVectorID);
   }
 
-  /** Return apspect ratio HTMLElement (checkbox)*/
+  /* Return apspect ratio HTMLElement (checkbox)*/
   get aspectRatioCheckboxDOM() {
     return document.getElementById(this.aspectRatioCheckboxID);
   }
@@ -701,7 +700,11 @@ export class SlideShow extends Window {
     }
   }
 
-  /** Get size values contained in inputs elements in DOM*/
+  /**
+   * Get size values contained in inputs elements in DOM
+   *
+   * @returns {object} sizevalues
+   */
   getSizeValues() {
     const sizeInputEls = this.sizeInputVectorDOM.getElementsByTagName('input');
     return {
