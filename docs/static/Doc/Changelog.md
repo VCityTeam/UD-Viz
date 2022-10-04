@@ -1,3 +1,9 @@
+# v2.38.4
+
+    - Refacto GameView update
+    - Warn if wrong config in elevation_layer
+    - Audio component refacto
+
 # v2.38.3
 
     - WorldState reference worldUUID
