@@ -455,7 +455,7 @@ export class GameView extends View3D {
                     gRenderComp.setIdRenderData(
                       bufferedRenderComp.getIdRenderData()
                     );
-                    gRenderComp.initAssets(this.getAssetsManager());
+                    gRenderComp.initAssets(_this.getAssetsManager());
                     componentHasBeenUpdated = true;
                   }
                 }
