@@ -292,7 +292,7 @@ export class SlideShow extends Window {
         Math.abs(this.extent.north - this.extent.south)
       )
     );
-    let elevationZ = 42;
+    let elevationZ = 0.1;
     if (
       this.conf['elevation_layer'] &&
       this.conf['elevation_layer']['colorTextureElevationMaxZ']
