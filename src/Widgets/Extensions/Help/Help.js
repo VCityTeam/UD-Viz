@@ -27,17 +27,15 @@ export class HelpWindow extends ModuleView {
     imgButton.src = './../../../../examples/assets/icons/help.svg';
     helpButton.append(imgButton);
 
-    //Event for openning help window
-    helpButton.addEventListener('mousedown',
-      () => {
-        if (document.getElementById('_widget_layout').style.display == 'block')
-          this.disable(this);
-        else
-          this.enable(this);
-      });
+    // Event for openning help window
+    helpButton.addEventListener('mousedown', () => {
+      if (document.getElementById('_widget_layout').style.display == 'block')
+        this.disable(this);
+      else this.enable(this);
+    });
   }
 
-  /////// MODULE VIEW METHODS
+  // ///// MODULE VIEW METHODS
   enableView() {
     const widgetlayout = document.getElementById('_widget_layout');
     widgetlayout.style.setProperty('display', 'block');
@@ -69,6 +67,8 @@ export class HelpWindow extends ModuleView {
 
   disableView() {
     document.getElementById('_widget_layout').innerHTML = '';
-    document.getElementById('_widget_layout').style.setProperty('display', 'none'); 
+    document
+      .getElementById('_widget_layout')
+      .style.setProperty('display', 'none');
   }
 }

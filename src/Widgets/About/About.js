@@ -46,7 +46,9 @@ export class AboutWindow extends ModuleView {
   }
 
   disableView() {
-    document.getElementById('_widget_layout').style.setProperty('display', 'none');
+    document
+      .getElementById('_widget_layout')
+      .style.setProperty('display', 'none');
     document.getElementById('_widget_layout').innerHTML = '';
   }
 }

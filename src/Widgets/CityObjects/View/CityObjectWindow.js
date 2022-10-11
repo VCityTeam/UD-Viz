@@ -138,7 +138,6 @@ export class CityObjectWindow extends Window {
   }
 
   windowCreated() {
-
     this.filterWindow.appendTo(this.parentElement);
     this.filterWindow.disable();
 

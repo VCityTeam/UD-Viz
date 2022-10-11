@@ -37,7 +37,6 @@ export class AllWidget {
 
         // Initialize iTowns 3D view
         _this.initView3D();
-        
 
         resolve(_this.config);
       });
@@ -80,7 +79,7 @@ export class AllWidget {
    * Returns the basic html content of the demo
    */
   get html() {
-    return /*html*/ `       
+    return /* html*/ `       
             <div id="_all_widget_stuct_main_panel">
                 <nav>
                     <div class="UD-VIZ Text-Style">
@@ -98,19 +97,19 @@ export class AllWidget {
   }
 
   addLogos() {
-    //path file for all the logo images
+    // Path file for all the logo images
     const logos = this.config.assets.logos;
 
-    //path to the logos folder
+    // Path to the logos folder
     const imageFolder = this.config.assets.imageFolder;
 
-    //create div to integrate all logos images
+    // Create div to integrate all logos images
     const logoDiv = document.createElement('div');
     logoDiv.id = 'logo-div';
     document.getElementById(this.mainDivId).append(logoDiv);
 
     for (let i = 0; i < logos.length; i++) {
-      let img = document.createElement('img');
+      const img = document.createElement('img');
       img.src = imageFolder.concat('/'.concat(logos[i]));
       img.classList.add('logos');
       logoDiv.appendChild(img);

@@ -52,7 +52,6 @@ export class PositionerWindow extends Window {
   }
 
   windowCreated() {
-
     this.formElement.onsubmit = () => {
       this._travel();
       return false;
