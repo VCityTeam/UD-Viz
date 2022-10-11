@@ -128,6 +128,11 @@ section {
   z-index: 5;
 }
 
+#_all_widget_profile button>img:hover{
+  width: 45px;
+  height: 45px;
+}
+
 #_all_widget_profile_name {
   display: inline-block;
   color: white;
@@ -266,7 +271,7 @@ section {
   width: 60px;
   height: 40px;
   margin: 30px auto 10px auto;
-  font-size: 1.5vh;
+  font-size: 15px;
   font-weight: bold;
   font-stretch: normal;
   font-style: normal;
