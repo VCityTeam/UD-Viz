@@ -1,4 +1,4 @@
-# Widgets desciptions
+# Widgets descriptions
 ## Developers
  A web widget is a web page or web application that is embedded as an element of a host web page but which is substantially independent of the host page. In this contexte each widget should be independant and have his own html, css and js file to be integrate in a host page.  
 
