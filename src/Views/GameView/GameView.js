@@ -710,6 +710,44 @@ class LocalContext {
   }
 
   /**
+   * Return the first localscript found with the id passed
+   * @param {*} id id of the localscript
+   * @returns the first localscript found with id
+   */
+  findLocalScriptWithID(id) {
+    let result = null;
+    this.getRootGameObject().traverse(function (child) {
+      const scripts = child.fetchLocalScripts();
+      if (scripts && scripts[id]) {
+        result = scripts[id];
+        return true;
+      }
+      return false;
+    });
+
+    return result;
+  }
+
+  /**
+   * Return the first go found with the id of the localscript passed
+   * @param {*} id id of the localscript
+   * @returns the first go
+   */
+  findGOWithLocalScriptID(id) {
+    let result = null;
+    this.getRootGameObject().traverse(function (child) {
+      const scripts = child.fetchLocalScripts();
+      if (scripts && scripts[id]) {
+        result = child;
+        return true;
+      }
+      return false;
+    });
+
+    return result;
+  }
+
+  /**
    *
    * @returns {GameView}
    */
