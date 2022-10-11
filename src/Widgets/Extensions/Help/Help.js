@@ -29,7 +29,10 @@ export class HelpWindow extends ModuleView {
 
     // Event for openning help window
     helpButton.addEventListener('mousedown', () => {
-      if (document.getElementById('_widget_layout').style.display == 'block')
+      if (
+        document.getElementById('_window_widget_content').style.display ==
+        'block'
+      )
         this.disable(this);
       else this.enable(this);
     });
@@ -37,7 +40,7 @@ export class HelpWindow extends ModuleView {
 
   // ///// MODULE VIEW METHODS
   enableView() {
-    const widgetlayout = document.getElementById('_widget_layout');
+    const widgetlayout = document.getElementById('_window_widget_content');
     widgetlayout.style.setProperty('display', 'block');
     widgetlayout.innerHTML = '';
     // Create HMTL
@@ -66,9 +69,9 @@ export class HelpWindow extends ModuleView {
   }
 
   disableView() {
-    document.getElementById('_widget_layout').innerHTML = '';
+    document.getElementById('_window_widget_content').innerHTML = '';
     document
-      .getElementById('_widget_layout')
+      .getElementById('_window_widget_content')
       .style.setProperty('display', 'none');
   }
 }

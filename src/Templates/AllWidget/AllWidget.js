@@ -90,7 +90,7 @@ export class AllWidget {
                     </ul>
                 </nav>
                 <section id="${this.contentSectionId}">
-                  <div id="_widget_layout"></div>
+                  <div id="_window_widget_content"></div>
                 </section>
             </div>
         `;

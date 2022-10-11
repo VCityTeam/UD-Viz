@@ -17,7 +17,7 @@ export class AboutWindow extends ModuleView {
 
   // ///// MODULE VIEW MANAGEMENT
   enableView() {
-    const widgetlayout = document.getElementById('_widget_layout');
+    const widgetlayout = document.getElementById('_window_widget_content');
     widgetlayout.style.setProperty('display', 'block');
     widgetlayout.innerHTML = '';
     // Create HMTL
@@ -47,8 +47,8 @@ export class AboutWindow extends ModuleView {
 
   disableView() {
     document
-      .getElementById('_widget_layout')
+      .getElementById('_window_widget_content')
       .style.setProperty('display', 'none');
-    document.getElementById('_widget_layout').innerHTML = '';
+    document.getElementById('_window_widget_content').innerHTML = '';
   }
 }
