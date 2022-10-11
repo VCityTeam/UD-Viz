@@ -92,11 +92,6 @@ export class DocumentNavigatorWindow extends AbstractDocumentWindow {
   }
 
   windowCreated() {
-    this.window.style.width = '350px';
-    this.window.style.top = '0px';
-    this.window.style.left = '0px';
-    this.window.style.height = '100%';
-
     // Add extensions
     for (const extension of Object.values(this.extensions)) {
       this._createExtensionElement(extension);
