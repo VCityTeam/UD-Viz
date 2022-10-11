@@ -10,11 +10,18 @@
     "min_y": "-20048966",
     "max_y": "20048966"
   },
-  "helpWindow": {
-    "htmlPaths": [
-      "../assets/html/contribute.html",
-      "../assets/html/camera.html"
-    ]
+  "hmtlWindow":{
+    "helpWindow": {
+      "htmlPaths": [
+        "../assets/html/contribute.html",
+        "../assets/html/camera.html"
+      ]
+    },
+    "aboutWindow": {
+      "htmlPaths": [
+        "../assets/html/about.html"
+      ]
+    }
   },
   "projection": "EPSG:3857",
   "background_image_layer": {

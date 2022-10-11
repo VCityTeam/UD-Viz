@@ -16,16 +16,15 @@
 
       app.start('./assets/config/geojson_config.json').then((config) => {
 
-        ////// REQUEST SERVICE
-        const requestService = new udv.Components.RequestService();
-
         ////// ABOUT MODULE
-        const about = new udv.Widgets.AboutWindow();
+        const about = new udv.Widgets.AboutWindow(config.hmtlWindow.aboutWindow);
         app.addModuleView('about', about);
 
         ////// HELP MODULE
-        const help = new udv.Widgets.Extensions.HelpWindow(config.helpWindow);
-        app.addModuleView('help', help);
+        const help = new udv.Widgets.Extensions.HelpWindow(config.hmtlWindow.helpWindow);
+        
+        ////// REQUEST SERVICE
+        const requestService = new udv.Components.RequestService();
 
         ////// LAYER CHOICE MODULE
         const layerChoice = new udv.Widgets.LayerChoice(app.view3D.getLayerManager());

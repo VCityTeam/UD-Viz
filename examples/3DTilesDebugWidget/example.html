@@ -15,12 +15,11 @@
 
       app.start('../assets/config/all_widget_config.json').then((config) => {
         ////// ABOUT MODULE
-        const about = new udv.Widgets.AboutWindow();
+        const about = new udv.Widgets.AboutWindow(config.hmtlWindow.aboutWindow);
         app.addModuleView('about', about);
 
         ////// HELP MODULE
-        const help = new udv.Widgets.Extensions.HelpWindow(config.helpWindow);
-        app.addModuleView('help', help);
+        const help = new udv.Widgets.Extensions.HelpWindow(config.hmtlWindow.helpWindow);
 
         ////// 3DTILES DEBUG
         const debug3dTilesWindow = new udv.Widgets.Debug3DTilesWindow(

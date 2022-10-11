@@ -15,13 +15,13 @@
       let app = new udv.Templates.AllWidget();
 
       app.start('../assets/config/worldMap_config.json').then((config) => {
+
         ////// ABOUT MODULE
-        const about = new udv.Widgets.AboutWindow();
+        const about = new udv.Widgets.AboutWindow(config.hmtlWindow.aboutWindow);
         app.addModuleView('about', about);
 
         ////// HELP MODULE
-        const help = new udv.Widgets.Extensions.HelpWindow(config.helpWindow);
-        app.addModuleView('help', help);
+        const help = new udv.Widgets.Extensions.HelpWindow(config.hmtlWindow.helpWindow);
       });
     </script>
   </body>
