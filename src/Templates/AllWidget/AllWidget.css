@@ -57,7 +57,7 @@ header h1 {
   grid-template-columns: 60px auto;
 }
 
-#_widget_layout {
+#_window_widget_content {
   position: absolute;
   z-index: 11;
   width: 350px;
@@ -267,7 +267,7 @@ section {
   z-index: 5;
 }
 
-.UD-VIZ {
+.title-ud-viz {
   width: 60px;
   height: 40px;
   margin: 30px auto 10px auto;
