@@ -1,3 +1,6 @@
+
+# v2.39.0
+
 # v2.38.4
 
     - Refacto GameView update
