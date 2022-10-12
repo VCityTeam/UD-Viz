@@ -31,7 +31,7 @@
 
 
     <title>
-      Tutorial: Configuring-the-Document-model-of-an-UDV-deployment
+      Widgets/Components/GUI/js/PositionerWindow.js
     </title>
 
     <!--[if lt IE 9]>
@@ -98,392 +98,246 @@
     <div id="main" class="main-content">
       
       <h1 id='page-title' class="page-title">
-        Tutorial: Configuring-the-Document-model-of-an-UDV-deployment
+        Widgets/Components/GUI/js/PositionerWindow.js
       </h1>
       
 
-      <section>
+      
 
-<header>
+
+
     
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import { Window } from './Window';
+import { MAIN_LOOP_EVENTS } from 'itowns';
+import * as THREE from 'three';
 
-    <h2>Configuring-the-Document-model-of-an-UDV-deployment</h2>
-</header>
+export class PositionerWindow extends Window {
+  constructor(itownsView) {
+    super('camera-positioner', 'Camera Positioner', false);
 
-<article>
-    <h1>WARNING : Outdated document</h1>
-<p>This document describes how the application was originally designed to handle the management of documents in a generic way. Although it is a good idea, we figured that it added too much complexity to the developement process, as more modules came to exist.</p>
-<p>However, hereas this document is outdated, we still think that the method it propose could be useful in the future. That's why we decide to keep it as it is for the moment, even if the described process is not actually implemented.</p>
-<h1>Motivations</h1>
-<p>Providing UD-Viz with a customizable/parameterizable Document model came in response to the general need of having to provide an application while several unknown variables of this application are yet unknown or fuzzy. For example:</p>
-<ul>
-<li>the Document model is not fixed and even when some version is approved at some point, it is likely to evolve with upcoming needs</li>
-<li>the final end users (e.g. a scientific community) as well as their associated requirements are not yet defined</li>
-</ul>
-<p>Having at hand such a &quot;generic/super&quot; application, that can be customized to answer specific and evolving requirements coming from distinct user communities, allows to share/re-use a whole set of code.</p>
-<p>On the UD-Viz (frontend) side, the customization of an UD-Viz front end is done through the edition of a configuration file that is to be realized by the <a href="https://github.com/MEPP-team/RICT/blob/master/Doc/Devel/Needs/Roles.md#deployment-responsible-person">Deployment Responsible Person</a>. It provides a lightweight and convenient configuration of an UD-Viz frontend once the end user provides some version of what he/she needs. Such a configuration can thus be seen as a late statge of the development process.</p>
-<h1>Configuring UD-Viz</h1>
-<p>Some modules/extensions of UD-Viz (e.g. <a href="https://github.com/MEPP-team/UD-Viz/tree/master/UD-Viz-Core/src/Modules/ConsultDoc">ConsultDoc</a>, <a href="https://github.com/MEPP-team/UD-Viz/tree/master/UD-Viz-Core/src/Modules/GuidedTour">GuidedTour</a> or <a href="https://github.com/MEPP-team/UD-Viz/tree/master/UD-Viz-Core/src/Extensions/Contribute">Contribute</a>.
-Depending on the UD-Viz deployment that is realized, the Document Data Structure (DDS) can be customized in order to answer the specific needs of the realized deployment.
-The following documentation explains how to realize such a Document Data Structure (DDS) customization, and in particular how to</p>
-<ul>
-<li>customize the UD-Viz (frontend) with a given specific DDS</li>
-<li>customize the following views of UD-Viz that consume the DDS:
-<ul>
-<li>Document browser view (of ConsultDoc module)</li>
-<li>Document research view (of ConsultDoc module)</li>
-<li>Document creation view (of Contribute extension)</li>
-<li>Document update (view of Contribute extension)</li>
-<li>GuidedTour view</li>
-</ul>
-</li>
-<li>define the external data server (backend) that the considered UD-Viz deployment shall use</li>
-<li>customize the <a href="https://github.com/MEPP-team/UD-Viz-server/tree/master/API_Extended_Document">backend deployment</a> to match the chosen DDS.</li>
-</ul>
-<p>This DDS customization thus concerns the whole UD-Viz system i.e. an UD-Viz front end and the associated backend.</p>
-<h3>Frontend configuration file general structure</h3>
-<p>The <a href="../src/Modules/ConsultDoc/examples/consultDocConfig.json">configuration file</a> holds two main attributes : server and properties.</p>
-<ul>
-<li>&quot;server&quot; holds the server-related information</li>
-<li>&quot;properties&quot; holds the document related information</li>
-</ul>
-<pre class="prettyprint source"><code>{
-    &quot;type&quot;: &quot;class&quot;,
-    &quot;server&quot;:{
-            },
-    &quot;properties&quot;: {    
-                  }
+    this.itownsView = itownsView;
+
+    // Request update every active frame
+    this.itownsView.addFrameRequester(
+      MAIN_LOOP_EVENTS.AFTER_CAMERA_UPDATE,
+      () => this._updateFieldsFromCamera()
+    );
+
+    // Event for position registering
+    this.registerEvent(PositionerWindow.EVENT_POSITION_SUBMITTED);
+  }
+
+  get innerContentHtml() {
+    return /* html*/ `
+      &lt;div class="box-section">
+        &lt;h3 class="section-title">Coordinates&lt;/h3>
+        &lt;form id="${this.formId}">
+          &lt;fieldset>
+            &lt;legend>Position&lt;/legend>
+            &lt;label for="${this.positionXId}">X&lt;/label>
+            &lt;input id="${this.positionXId}" name="positionX" type="text">&lt;br>
+            &lt;label for="${this.positionYId}">Y&lt;/label>
+            &lt;input id="${this.positionYId}" name="positionY" type="text">&lt;br>
+            &lt;label for="${this.positionZId}">Z&lt;/label>
+            &lt;input id="${this.positionZId}" name="positionZ" type="text">&lt;br>
+          &lt;/fieldset>
+          &lt;fieldset>
+            &lt;legend>Quaternion&lt;/legend>
+            &lt;label for="${this.quaternionXId}">X&lt;/label>
+            &lt;input id="${this.quaternionXId}" name="quaternionX" type="text">&lt;br>
+            &lt;label for="${this.quaternionYId}">Y&lt;/label>
+            &lt;input id="${this.quaternionYId}" name="quaternionY" type="text">&lt;br>
+            &lt;label for="${this.quaternionZId}">Z&lt;/label>
+            &lt;input id="${this.quaternionZId}" name="quaternionZ" type="text">&lt;br>
+            &lt;label for="${this.quaternionWId}">W&lt;/label>
+            &lt;input id="${this.quaternionWId}" name="quaternionW" type="text">&lt;br>
+          &lt;/fieldset>
+          &lt;hr>
+          &lt;button id="${this.buttonValidateId}" type="button">Validate&lt;/button>
+          &lt;input id="${this.buttonTravelId}" type="submit" value="Travel">
+        &lt;/form>
+      &lt;/div>
+    `;
+  }
+
+  windowCreated() {
+    this.formElement.onsubmit = () => {
+      this._travel();
+      return false;
+    };
+
+    this.buttonValidateElement.onclick = () => {
+      this._validate();
+    };
+  }
+
+  // ///////////////////////
+  // /// POSITION MANAGEMENT
+
+  /**
+   * Updates the form fields from the camera position.
+   */
+  _updateFieldsFromCamera() {
+    if (this.isVisible) {
+      const camera = this.itownsView.camera.camera3D;
+      const position = camera.position;
+      const quaternion = camera.quaternion;
+      this.positionXElement.value = position.x;
+      this.positionYElement.value = position.y;
+      this.positionZElement.value = position.z;
+      this.quaternionXElement.value = quaternion.x;
+      this.quaternionYElement.value = quaternion.y;
+      this.quaternionZElement.value = quaternion.z;
+      this.quaternionWElement.value = quaternion.w;
+    }
+  }
+
+  /**
+   * Retrieve the current camera position from the form fields.
+   *
+   * @returns {{position: THREE.Vector3, quaternion: THREE.Quaternion}}
+   */
+  _getCameraPosition() {
+    const data = new FormData(this.formElement);
+    const position = new THREE.Vector3();
+    const quaternion = new THREE.Quaternion();
+
+    position.x = Number(data.get('positionX'));
+    position.y = Number(data.get('positionY'));
+    position.z = Number(data.get('positionZ'));
+
+    quaternion.x = Number(data.get('quaternionX'));
+    quaternion.y = Number(data.get('quaternionY'));
+    quaternion.z = Number(data.get('quaternionZ'));
+    quaternion.w = Number(data.get('quaternionW'));
+
+    return {
+      position: position,
+      quaternion: quaternion,
+    };
+  }
+
+  /**
+   * Make the camera travel to the position and orientation in the form fields.
+   */
+  async _travel() {
+    const camera = this._getCameraPosition();
+    this.itownsView.controls.initiateTravel(
+      camera.position,
+      'auto',
+      camera.quaternion,
+      true
+    );
+  }
+
+  /**
+   * Sends the position submitted event with the current camera position and
+   * orientation.
+   */
+  _validate() {
+    const camera = this._getCameraPosition();
+    this.sendEvent(PositionerWindow.EVENT_POSITION_SUBMITTED, camera);
+    this.disable();
+  }
+
+  // ///////////
+  // /// GETTERS
+
+  get buttonValidateId() {
+    return `${this.windowId}_button_validate`;
+  }
+
+  get buttonValidateElement() {
+    return document.getElementById(this.buttonValidateId);
+  }
+
+  get buttonTravelId() {
+    return `${this.windowId}_button_travel`;
+  }
+
+  get buttonTravelElement() {
+    return document.getElementById(this.buttonTravelId);
+  }
+
+  get formId() {
+    return `${this.windowId}_form`;
+  }
+
+  get formElement() {
+    return document.getElementById(this.formId);
+  }
+
+  get positionXId() {
+    return `${this.windowId}_position_x`;
+  }
+
+  get positionXElement() {
+    return document.getElementById(this.positionXId);
+  }
+
+  get positionYId() {
+    return `${this.windowId}_position_y`;
+  }
+
+  get positionYElement() {
+    return document.getElementById(this.positionYId);
+  }
+
+  get positionZId() {
+    return `${this.windowId}_position_z`;
+  }
+
+  get positionZElement() {
+    return document.getElementById(this.positionZId);
+  }
+
+  get quaternionXId() {
+    return `${this.windowId}_quaternion_x`;
+  }
+
+  get quaternionXElement() {
+    return document.getElementById(this.quaternionXId);
+  }
+
+  get quaternionYId() {
+    return `${this.windowId}_quaternion_y`;
+  }
+
+  get quaternionYElement() {
+    return document.getElementById(this.quaternionYId);
+  }
+
+  get quaternionZId() {
+    return `${this.windowId}_quaternion_z`;
+  }
+
+  get quaternionZElement() {
+    return document.getElementById(this.quaternionZId);
+  }
+
+  get quaternionWId() {
+    return `${this.windowId}_quaternion_w`;
+  }
+
+  get quaternionWElement() {
+    return document.getElementById(this.quaternionWId);
+  }
+
+  // //////////
+  // /// EVENTS
+
+  static get EVENT_POSITION_SUBMITTED() {
+    return 'EVENT_POSITION_SUBMITTED';
+  }
 }
 </code></pre>
-<h2>I. Configure dependencies towards an external data server</h2>
-<p>We need to configure the field 'server' by giving the routes to the controller.</p>
-<h2>II. Configuring the document model and the views: document browser, document creation, document update and document research</h2>
-<p>For this configuration, the field &quot;properties&quot; of the configuration file is used.
-&quot;Properties&quot; holds the document attributes (e.g title, subject, referring date, date of publication...).
-It defines :</p>
-<ul>
-<li>the document model = document's attributes</li>
-<li>actions / functionalities on document attributes (e.g if this attribute is optional, if this attribute can be updated...)</li>
-</ul>
-<p>There can be as many attributes as needed. They will be used to create* another json file holding the document model. The frame of this file looks as follows:</p>
-<pre class="prettyprint source"><code>{
-  &quot;Document&quot;: {
-    &quot;type&quot;: &quot;class&quot;,
-    &quot;properties&quot;: {
-      }
-   }
-}
-</code></pre>
-<p>In order to respect the <a href="https://github.com/JorisMillot/APIExtendedDocument/wiki/Documentation-API">static document model</a>, properties have to be set in two different categories: metadata and visualization.</p>
-<pre class="prettyprint source"><code>{
-    &quot;type&quot;: &quot;class&quot;,
-    &quot;server&quot;:{
-            },
-    &quot;properties&quot;: {
-        &quot;metadata&quot;:{
-                   },
-        &quot;visualization&quot;:{
-                        }  
-                   }
-}
-</code></pre>
-<p>An example of the file can be found <a href="../src/Modules/ConsultDoc/examples/consultDocConfig.json">here</a></p>
-<p>Each document attribute has properties that impact the different views of the system (Browser, Creation, Update, Research...). They have to be parametrized.</p>
-<h6>How to parametrize the attributes' properties:</h6>
-<table>
-<thead>
-<tr>
-<th>Property</th>
-<th>Type</th>
-<th>Authorized  values</th>
-<th>Required</th>
-<th>Concerned view</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>name</td>
-<td>string</td>
-<td>document's attribute (title, refDate...)</td>
-<td>yes</td>
-<td>all</td>
-<td></td>
-</tr>
-<tr>
-<td>type</td>
-<td>string</td>
-<td>string date enum</td>
-<td>yes</td>
-<td>all</td>
-<td></td>
-</tr>
-<tr>
-<td>optional</td>
-<td>bool</td>
-<td>true, false</td>
-<td>yes</td>
-<td>all</td>
-<td></td>
-</tr>
-<tr>
-<td>creationID</td>
-<td>string</td>
-<td>create_[name]</td>
-<td>yes if 'optional'=true</td>
-<td>Creation</td>
-<td></td>
-</tr>
-<tr>
-<td>labelCreation</td>
-<td>string</td>
-<td>everything</td>
-<td>yes if 'optional'=true</td>
-<td>Creation</td>
-<td>gives information about the field to the user</td>
-</tr>
-<tr>
-<td>displayable</td>
-<td>bool</td>
-<td>true, false</td>
-<td>yes</td>
-<td>Browser</td>
-<td></td>
-</tr>
-<tr>
-<td>displayID</td>
-<td>string</td>
-<td>must be the same as 'name'</td>
-<td>yes if 'displayable' = true</td>
-<td>Browser</td>
-<td></td>
-</tr>
-<tr>
-<td>label</td>
-<td>string</td>
-<td>false or everything</td>
-<td>yes</td>
-<td>Browser</td>
-<td>If false, no label will be display. Otherwise, the chosen label will be displayed</td>
-</tr>
-<tr>
-<td>updatable</td>
-<td>bool</td>
-<td>true false</td>
-<td>yes</td>
-<td>Update</td>
-<td></td>
-</tr>
-<tr>
-<td>updateID</td>
-<td>string</td>
-<td>update_[name]</td>
-<td>yes</td>
-<td>Update</td>
-<td></td>
-</tr>
-<tr>
-<td>labelUpdate</td>
-<td>string</td>
-<td>false or everything</td>
-<td>no</td>
-<td>Update</td>
-<td></td>
-</tr>
-<tr>
-<td>queryable</td>
-<td>bool</td>
-<td>false, true, keyword</td>
-<td>yes</td>
-<td>Research</td>
-<td></td>
-</tr>
-<tr>
-<td>queryID</td>
-<td>string</td>
-<td>query_[name]</td>
-<td>yes if 'queryable'=true</td>
-<td>Research</td>
-<td></td>
-</tr>
-<tr>
-<td>labelQuery</td>
-<td>string</td>
-<td>false or everything</td>
-<td>yes if 'queryable'=true</td>
-<td>Research</td>
-<td></td>
-</tr>
-</tbody>
-</table>
-<p>Example:</p>
-<pre class="prettyprint source"><code>{
-    &quot;type&quot;: &quot;class&quot;,
-    &quot;server&quot;:{
+        </article>
+    </section>
 
-        ... 
-        server config
-        ...
 
-            },
-    &quot;properties&quot;: {
-        &quot;metadata&quot;:{
-              &quot;description&quot;:{
-                  &quot;name&quot;:&quot;description&quot;,
-                  &quot;type&quot;: &quot;string&quot;,
-                  &quot;optional&quot;: &quot;false&quot;,
-                  &quot;creationID&quot;:&quot;create_description&quot;,
-                  &quot;labelCreation&quot;:&quot;Description: &quot;,
-                  &quot;displayable&quot;:&quot;true&quot;,
-                  &quot;displayID&quot;:&quot;description&quot;,
-                  &quot;updatable&quot;:&quot;true&quot;,
-                  &quot;label&quot;:&quot;Description&quot;,
-                  &quot;updatable&quot;:&quot;true&quot;,
-                  &quot;updateID&quot;:&quot;update_description&quot;,
-                  &quot;labelUpdate&quot;:&quot;Description: &quot;,
-                  &quot;queryable&quot;:&quot;keyword&quot;,
-                  &quot;queryID&quot;:&quot;query_description',
-                  &quot;labelQuery&quot;:&quot;false&quot;
-                            }
-                  ...
-                  other documents attributes and their properties
-                  ...
-                   },
-        &quot;visualization&quot;:{
 
-                  ...
-                  visualization attributes
-                  ...
-
-                        }  
-                   }
-}
-</code></pre>
-<p>What impacts the backend (database, mapping) are the attributes (fields of &quot;properties&quot; themselves (metadata (title, subject...), visualization...). See backend explanation later.</p>
-<h3>Document research view</h3>
-<p>The research view is in form of a html formular. This formular is generated using js library alpaca. For this part, two files need to be created : schema.json and options.json. The files will be created depending on the configuration given in the <a href="../src/Modules/ConsultDoc/examples/consultDocConfig.json">configuration file</a>, that is to say by setting the attributes' properties related to the create view (see <a href="Configuring-the-Document-model-of-an-UD-Viz-deployment.md#how-to-parametrize-the-attributes-properties">table</a>)</p>
-<p>We can allow or disallow the research on an attribute by setting its &quot;queryable&quot; property.</p>
-<p>We offer 3 research modes:</p>
-<ul>
-<li>research by attribute (type, subject..)</li>
-<li>research by keyword</li>
-<li>temporal research (from a date, until a date, in a time period)</li>
-</ul>
-<h4>Research by attribute:</h4>
-<p>The research by attribute can only happen on attributes which are not dates.</p>
-<p>How to set the configuration:</p>
-<ul>
-<li>attribute.queryable = &quot;false&quot;: research on attribute is disabled</li>
-<li>attribute.queryable = &quot;true&quot;: standard attribute research</li>
-</ul>
-<p>Example:</p>
-<p>In the configuration file:</p>
-<ul>
-<li>subject.queryable = &quot;true&quot;
-In the research form, the user will have the choice to enter a value in the field &quot;subject&quot; (example: urbanism). He will get all document whose subject matches the one he chose ( = all documents whose subject is urbanism).</li>
-</ul>
-<h4>Temporal research</h4>
-<p>How to set the configuration:</p>
-<ul>
-<li>attribute.type = &quot;date&quot;</li>
-<li>attribute.queryable = &quot;true&quot;</li>
-</ul>
-<p>Example:</p>
-<ul>
-<li>refDate.type = &quot;date&quot;</li>
-<li>refDate.queryable = &quot;true&quot;</li>
-<li>refDate.labelQuery = &quot;referring date&quot;
-In the research view, two fields will be showed, called &quot;Start referring date&quot; (SRD) and &quot;End referring date&quot; (ERD).
-The user can set both fields or only one one them.</li>
-<li>SRD only is provided: get all documents whose referring date &gt;= given SRD</li>
-<li>ERB only is provided: get all documents whose referring date &lt;= given ERD</li>
-<li>SRD and ERD provided: get all documents whose referring date is between the given SRD end ERD</li>
-</ul>
-<h4>Keyword research</h4>
-<p>The keyword research can only happen on attributes which are not dates.</p>
-<p>How to set the configuration:</p>
-<ul>
-<li>attribute.queryable = &quot;keyword&quot;</li>
-</ul>
-<p>Example:
-In the configuration file:</p>
-<ul>
-<li>description.queryable = &quot;keyword&quot;</li>
-<li>title.queryable = &quot;keyword&quot;</li>
-</ul>
-<p>In the research form, a field &quot;keyword&quot; will be shown. The user writes &quot;plan&quot; in this field and launches the research. He will get all the documents where the word &quot;plan&quot; was found in the title or in the description.</p>
-<p>General example:
-We want to give the user the possibility to launch:</p>
-<ul>
-<li>a temporal research on the date of publication and on the date of reference</li>
-<li>a keyword research in title and description</li>
-<li>a research by attribute on the type and on the subject</li>
-</ul>
-<p>We set the properties in the <a href="../src/Modules/ConsultDoc/examples/consultDocConfig.json">configuration file</a> as explained previously.</p>
-<p>The following figure shows the research view generated by this example:</p>
-<p><img src="Pictures/researchView.png" alt=""></p>
-<h3>Document browser</h3>
-<p>The document browser only uses the properties.metadata.</p>
-<p>How to set the configuration:</p>
-<ul>
-<li>attribute.displaybable = true</li>
-<li>attribute.label = &quot;false&quot; or attribute.label = &quot;whatever you want to write&quot;</li>
-</ul>
-<p>Example:</p>
-<ul>
-<li>refDate.displayable = true</li>
-<li>refDate.label = &quot;Referring date: &quot;
-In the browser, we will have for example (among with other metadata whose displayable property is set to true)</li>
-</ul>
-<p>Referring date: 1945-01-01</p>
-<p>All the attributes (of metadata) that have the &quot;displayable&quot; property set to &quot;true&quot; will be displayed in the Document Browser. If refDate.label = &quot;false&quot;, we have only &quot;1940-01-01&quot;/</p>
-<p>In this example, we want to display only the title of the document without writing that this is the title. So we set title.label = false.</p>
-<p>On the other hand, to differentiate the two dates, we set their label property. refDate.label = &quot;Referring date&quot;, publicationDate.label = &quot;Publication date&quot;</p>
-<p>The order of the attributes in the document model also rules the order of display in the browser.</p>
-<p>In this example, the following browser has been generated:</p>
-<p><img src="Pictures/ExampleBrowser.png" alt=""></p>
-<h3>Creation view</h3>
-<p>The creation view is in form of a html formular. This formular is generated using <a href="http://www.alpacajs.org/">JS library Alpaca</a>.
-To generate the creation form, two files are needed: schema.json and options.json. The files will be created depending on the configuration given in the <a href="../src/Modules/ConsultDoc/examples/consultDocConfig.json">configuration file</a>.</p>
-<p>See associated [design note]</p>
-<p>How to set the configuration:</p>
-<ul>
-<li>attribute.optional = true OR false</li>
-<li>attribute.creationID = create_[name]</li>
-<li>attribute.labelCreation = something you want to say</li>
-</ul>
-<p>Example:</p>
-<ul>
-<li>title.optional = false</li>
-<li>title.creationID = create_title</li>
-<li>title.labelCreation = Title:</li>
-</ul>
-<p>In this example, we set the configuration so that 'title', 'description', 'refDate', 'publicationDate', 'subject' and 'type' must be provided to create a new Document.</p>
-<p>The following figure shows the creation view generated by this example:</p>
-<p><img src="Pictures/createView.png" alt=""></p>
-<p>We could add &quot;rightsholder.optional = true&quot; and in this way, the user would have the option to specify &quot;rightsholder&quot; or not. A field will be created in the creaton form but will not be mandatory.</p>
-<h3>BACKEND:</h3>
-<p>Note: this part is immature</p>
-<p>A file &quot;DocumentModel.json&quot; is created based on the properties set in the configuration file.
-The configuration file triggers (only one time) the generation of a &quot;DocumentModel.json&quot; file.
-This JSON respects the model defined in the <a href="https://github.com/MEPP-team/UD-Viz-server/blob/master/API_Extended_Document/README.md">document model</a>.
-This model is used to (re)create the entity class and (re)generate the DataBase, using this class directly, thanks to the ORM setting up.</p>
-<p>No changes in the back-end will be needed when the document model evolves, but, if the model changes, the DataBase is recreated and data already existing in the DB is lost.</p>
-<p>See <a href="https://github.com/MEPP-team/UD-Viz-server/tree/master/API_Extended_Document">backend</a></p>
-<h3>Things we need to be careful about (not exhaustive)</h3>
-<ul>
-<li>define the ID that need to be consistent (=the same) backend and frontend side</li>
-<li>this is great to have a super configurable application. What are the limit of the modularity? At one point, we may need to settle on some parameters.</li>
-<li>right very good documentation to explain how to write the file</li>
-<li>provide default configuration file</li>
-</ul>
-<h3>Perspectives of evolution</h3>
-<ul>
-<li>use the file to configure &quot;user mode&quot; like: administrator, debug mode, contribute mode...</li>
-</ul>
-</article>
-
-</section>
 
     </div>
 

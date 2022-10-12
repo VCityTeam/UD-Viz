@@ -1,3 +1,14 @@
+
+# v2.39.0
+
+    - Update config file & example html to work with new CSS
+    - Change ExtendedDoc UI
+    - Refacto About & Help module
+    - Add logo user
+    - Better CSS
+        - Change font-family
+        - Change font color
+    - Change Logo & UI
 # v2.38.4
 
     - Refacto GameView update
