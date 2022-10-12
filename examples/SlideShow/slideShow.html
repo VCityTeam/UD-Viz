@@ -22,6 +22,11 @@
           app.view3D.inputManager
         );
         app.addModuleView('slideShow', slideShow);
+ 
+        ////// ABOUT MODULE
+        const about = new udv.Widgets.AboutWindow(config.hmtlWindow.aboutWindow);
+        app.addModuleView('about', about);
+
       });
     </script>
   </body>

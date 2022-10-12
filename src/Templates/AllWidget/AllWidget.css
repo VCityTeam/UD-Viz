@@ -7,7 +7,7 @@ a {
 }
 
 html {
-  font-family: sans-serif;
+  font-family: 'Segoe UI', Arial, sans-serif;
   font-size: 14px;
   height: 100%;
   width: 100%;
@@ -27,7 +27,6 @@ canvas {
 #_all_widget {
   display: grid;
   height: 100%;
-  grid-template-rows: 50px auto;
 }
 
 header {
@@ -58,8 +57,28 @@ header h1 {
   grid-template-columns: 60px auto;
 }
 
+#_window_widget_content {
+  position: absolute;
+  z-index: 11;
+  width: 350px;
+  height: 100%;
+  margin: 0 1112px 0 0;
+  padding: 9px 27px 240px 26px;
+  color: white;
+  font-size: 15px;
+  font-family: 'Segoe UI';
+  font-weight: normal;
+  font-stretch: normal;
+  font-style: normal;
+  line-height: normal;
+  letter-spacing: normal;
+  background-color: rgba(37, 37, 38, 0.9);
+  border: 1px solid rgb(90, 90, 90);
+  pointer-events: auto;
+}
+
 nav {
-  background-color: #222222;
+  background-color: #000000;
   display: inline-block;
   height: 100%;
   z-index: 50001;
@@ -76,6 +95,7 @@ section {
 
 .logos {
   height: 40px;
+  opacity: 1;
   margin: 5px 10px 5px 5px;
 }
 
@@ -88,6 +108,29 @@ section {
 
 #_all_widget_auth_frame_location {
   display: inline-block;
+}
+
+#_all_widget_profile{
+  position: fixed;
+  top: 6px;
+  right: 60px;
+  z-index: 5;
+}
+
+#_all_widget_profile button>img{
+  position: fixed;
+  width: 35px;
+  height: 35px;
+  top: 14px;
+  right: 60px;
+  border-width: 0;
+  background-color: transparent;
+  z-index: 5;
+}
+
+#_all_widget_profile button>img:hover{
+  width: 45px;
+  height: 45px;
 }
 
 #_all_widget_profile_name {
@@ -129,7 +172,8 @@ section {
 
 .choiceMenu {
   position: relative;
-  height: 60px;
+  padding-top: 15px;
+  height: 40px;
 }
 
 ._all_widget_menu_hint {
@@ -139,19 +183,15 @@ section {
   height: 100%;
   padding: 20px;
   padding-top: 12px;
-  font-size: 24px;
+  font-size: 20px;
   display: inline-block;
   margin: 0;
   left: 100%;
   top: 0;
   white-space: nowrap;
   box-sizing: border-box;
-  color: white;
+  color: #dbdbdb;
   visibility: hidden;
-  opacity: 0;
-  text-shadow: 1px 1px 1px #0009;
-  box-shadow: 1px 0px 1px -1px #0009, 0px 1px 1px -1px #0009,
-    0px -1px 1px -1px #0009;
 }
 
 .choiceMenu:hover > ._all_widget_menu_hint {
@@ -160,7 +200,7 @@ section {
 }
 
 .choiceMenuSelected > ._all_widget_menu_hint {
-  background-color: #f09f45;
+  background-color: #999eb9;
 }
 
 #activateTemporal:checked ~ header #temporalMenu {
@@ -173,7 +213,7 @@ section {
   right: 0;
   top: 0;
   width: 5px;
-  background-color: #f09f45;
+  background-color: #999eb9;
   content: '';
   z-index: inherit;
 }
@@ -183,13 +223,13 @@ section {
 }
 
 #_all_widget_menu .choiceMenu:hover {
-  background-color: #666666;
+  background-color: #dbdbdb;
 }
 
 .menuIcon {
   display: inline-block;
-  width: 36px;
-  margin: 12px 12px 12px 12px;
+  width: 23px;
+  margin: auto 12px auto 12px;
   flex-shrink: 0;
   opacity: 0.9;
 }
@@ -213,4 +253,33 @@ section {
 
 #docBrowserWindow {
   top: 50px;
+}
+
+#logo-div{
+  position: fixed;
+  display: flex;
+  padding: 10px;
+  border-radius: 6px;
+  bottom: 6px;
+  right: 6px;
+  background-color: #ffffff37;
+  align-items: center;
+  z-index: 5;
+}
+
+.title-ud-viz {
+  width: 60px;
+  height: 40px;
+  margin: 30px auto 10px auto;
+  font-size: 15px;
+  font-weight: bold;
+  font-stretch: normal;
+  font-style: normal;
+  line-height: normal;
+  letter-spacing: normal;
+  text-align: left;
+  color: white;
+  text-align: center;
+  vertical-align: middle;
+  /* align-items: center; */
 }

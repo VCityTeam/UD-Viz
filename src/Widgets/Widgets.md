@@ -1,14 +1,21 @@
-### Camera Controller
+# Widgets descriptions
+## Developers
+ A web widget is a web page or web application that is embedded as an element of a host web page but which is substantially independent of the host page. In this contexte each widget should be independant and have his own html, css and js file to be integrate in a host page.  
 
-- **Left-click + drag** : User "grabs" the ground (cursor stays at the same spot on the ground) to translate camera on XY axis.
-- **Right-click + drag** : camera rotation around the focus point (ground point at the center of the screen), clamped to avoid going under ground level.
-- **Mousewheel** : smooth zoom toward the ground point under the mouse cursor, adjusted according to the ground distance (zoom is faster the further from the ground and cannot go through the ground).
-- **Mousewheel click** (middle mouse button) : "Smart Zoom". Camera smoothly moves and rotates toward target ground point, at fixed orientation and adjusted distance.
-- **S** : moves and orients camera to the start view
-- **T** : moves and orients camera to top view (high altitude and pointing toward the center of the city)
-
-The camera controller has been merged into itowns ([PR](https://github.com/iTowns/itowns/pull/454)) and is now PlanarControls. It features an animation of camera movement and orientation (called "travel" in the code) which we use to orient the camera with a document (document **oriented view**).
-
+```
+ UD-Viz (repo)
+ ├── src   
+ |    |               
+ |    └── Widgets                # A sub-directory gathering a set web web widgets (UI)  
+ |         ├── Widget_1
+ |         |    ├── css
+ |         |    ├── doc
+ |         |    ├── html
+ |         |    └── js
+ |         ├── Widget_2
+ |         ├── ...
+ |         └── Extensions 
+```
 ## Current features
 
 Each module adds new functionnalities to the application. You can find the code and the documentation (sometimes the documentation is directly in the code) by following the link under each module described below.
@@ -96,6 +103,17 @@ The link module serves as an extension for both _Document_ and _City object_ mod
 - Each step triggers the oriented view of its document, and opens this doc in the doc browser
 - Ability to navigate between steps of a tour (previous, next) and to start/exit a tour
 - Support for multiple guided tours, all loaded from a csv file (visite.csv)
+
+### Camera Controller
+
+- **Left-click + drag** : User "grabs" the ground (cursor stays at the same spot on the ground) to translate camera on XY axis.
+- **Right-click + drag** : camera rotation around the focus point (ground point at the center of the screen), clamped to avoid going under ground level.
+- **Mousewheel** : smooth zoom toward the ground point under the mouse cursor, adjusted according to the ground distance (zoom is faster the further from the ground and cannot go through the ground).
+- **Mousewheel click** (middle mouse button) : "Smart Zoom". Camera smoothly moves and rotates toward target ground point, at fixed orientation and adjusted distance.
+- **S** : moves and orients camera to the start view
+- **T** : moves and orients camera to top view (high altitude and pointing toward the center of the city)
+
+The camera controller has been merged into itowns ([PR](https://github.com/iTowns/itowns/pull/454)) and is now PlanarControls. It features an animation of camera movement and orientation (called "travel" in the code) which we use to orient the camera with a document (document **oriented view**).
 
 ### Others
 

@@ -2,7 +2,7 @@
 
 // Components
 import { ModuleView } from '../../Components/ModuleView/ModuleView';
-import { PositionerWindow } from '../../Components/Camera/PositionerWindow';
+import { PositionerWindow } from '../../Components/GUI/js/PositionerWindow';
 import { Window } from '../../Components/GUI/js/Window';
 
 export class CameraPositionerView extends ModuleView {

@@ -138,11 +138,6 @@ export class CityObjectWindow extends Window {
   }
 
   windowCreated() {
-    this.window.style.left = '10px';
-    this.window.style.top = 'unset';
-    this.window.style.bottom = '10px';
-    this.window.style.width = '270px';
-
     this.filterWindow.appendTo(this.parentElement);
     this.filterWindow.disable();
 

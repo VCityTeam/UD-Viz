@@ -15,16 +15,38 @@ import './Help.css';
 export class HelpWindow extends ModuleView {
   constructor(config = {}) {
     super();
+    this.config = config;
 
-    // /////////// Html elements
-    const helpDiv = document.createElement('div');
-    helpDiv.id = 'helpWindow';
-    document.getElementById('contentSection').append(helpDiv);
+    // Button help to open help div
+    const helpButton = document.createElement('button');
+    helpButton.id = 'help-button';
+    document.getElementById('_all_widget_stuct_main_panel').append(helpButton);
 
-    // ////////// Build dynamically the html content
+    // Image button
+    const imgButton = document.createElement('img');
+    imgButton.src = './../../../../examples/assets/icons/help.svg';
+    helpButton.append(imgButton);
+
+    // Event for openning help window
+    helpButton.addEventListener('mousedown', () => {
+      if (
+        document.getElementById('_window_widget_content').style.display ==
+        'block'
+      )
+        this.disable(this);
+      else this.enable(this);
+    });
+  }
+
+  // ///// MODULE VIEW METHODS
+  enableView() {
+    const widgetlayout = document.getElementById('_window_widget_content');
+    widgetlayout.style.setProperty('display', 'block');
+    widgetlayout.innerHTML = '';
+    // Create HMTL
     const promises = [];
-    if (config.htmlPaths && config.htmlPaths.length) {
-      config.htmlPaths.forEach(function (path) {
+    if (this.config.htmlPaths && this.config.htmlPaths.length) {
+      this.config.htmlPaths.forEach(function (path) {
         promises.push(
           new Promise((resolve, reject) => {
             jQuery.ajax({
@@ -32,7 +54,7 @@ export class HelpWindow extends ModuleView {
               url: path,
               datatype: 'html',
               success: (data) => {
-                helpDiv.innerHTML += data;
+                widgetlayout.innerHTML += data;
                 resolve();
               },
               error: (e) => {
@@ -44,25 +66,12 @@ export class HelpWindow extends ModuleView {
         );
       });
     }
-    const closeCallback = this.disable.bind(this);
-    Promise.all(promises).then(function () {
-      // Create close button
-      const closeButton = document.createElement('button');
-      closeButton.id = 'helpCloseButton';
-      closeButton.innerHTML = 'Close';
-      helpDiv.appendChild(closeButton);
-      // Close the window...when close button is hit
-      closeButton.addEventListener('mousedown', closeCallback, false);
-    });
-  }
-
-  // ///// MODULE VIEW METHODS
-
-  enableView() {
-    document.getElementById('helpWindow').style.setProperty('display', 'block');
   }
 
   disableView() {
-    document.getElementById('helpWindow').style.setProperty('display', 'none');
+    document.getElementById('_window_widget_content').innerHTML = '';
+    document
+      .getElementById('_window_widget_content')
+      .style.setProperty('display', 'none');
   }
 }

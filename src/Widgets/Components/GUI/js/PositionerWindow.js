@@ -1,4 +1,4 @@
-import { Window } from '../GUI/js/Window';
+import { Window } from './Window';
 import { MAIN_LOOP_EVENTS } from 'itowns';
 import * as THREE from 'three';
 
@@ -52,8 +52,6 @@ export class PositionerWindow extends Window {
   }
 
   windowCreated() {
-    this.window.style.width = '300px';
-
     this.formElement.onsubmit = () => {
       this._travel();
       return false;

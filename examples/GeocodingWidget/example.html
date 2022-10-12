@@ -18,12 +18,11 @@
         const requestService = new udv.Components.RequestService();
 
         ////// ABOUT MODULE
-        const about = new udv.Widgets.AboutWindow();
+        const about = new udv.Widgets.AboutWindow(config.hmtlWindow.aboutWindow);
         app.addModuleView('about', about);
 
         ////// HELP MODULE
-        const help = new udv.Widgets.Extensions.HelpWindow(config.helpWindow);
-        app.addModuleView('help', help);
+        const help = new udv.Widgets.Extensions.HelpWindow(config.hmtlWindow.helpWindow);
 
         ////// GEOCODING EXTENSION
         const geocodingService = new udv.Widgets.Extensions.GeocodingService(

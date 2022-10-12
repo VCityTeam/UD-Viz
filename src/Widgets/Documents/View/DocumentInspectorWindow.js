@@ -35,7 +35,7 @@ export class DocumentInspectorWindow extends AbstractDocumentWindow {
   get innerContentHtml() {
     return /* html*/ `
       <div class="box-section">
-        <h3 class="section-title">Title: <span id="${this.docTitleId}"></span></h3>
+        <h3 class="section-title"><span id="${this.docTitleId}"></span></h3>
         <div>
           <img class="inspector-doc-img" src="" alt="Document image"
             id="${this.docImageId}" title="CTRL + Click to open the image">
@@ -73,7 +73,9 @@ export class DocumentInspectorWindow extends AbstractDocumentWindow {
     this.window.style.left = 'unset';
     this.window.style.right = '10px';
     this.window.style.top = '10px';
-    this.window.style.width = '390px';
+    this.window.style.height = 'auto';
+    this.window.style.width = '30%';
+    this.window.style.borderRadius = '15px';
 
     // Add extensions
     for (const extension of Object.values(this.extensions)) {

@@ -1,10 +1,11 @@
 .window {
     position: absolute;
-    top: 100px;
-    left: 100px;
+    top: 0px;
+    left: 0px;
     min-width: 200px;
     min-height: 200px;
-    width: 250px;
+    width: 350px;
+    height: 100%;
     padding: 0;
     resize: both;
     overflow: hidden;
@@ -27,14 +28,15 @@
     margin: 0;
     margin-left: 5px;
     margin-top: -2px;
-    font-size: 18px;
+    font-size: 1.5vh;
 }
 
 .window-close-button {
     position: absolute;
-    height: 26px;
+    height: auto;
     right: 2px;
-    top: 2px;
+    top: -4px;
+    margin: 0px;
     background-color: transparent;
     color: white;
     border: none;
@@ -63,9 +65,13 @@
 
     /* A box arround a section */
 .window-inner-content .box-section {
-    background: rgba(255, 255, 255, 0.1);
-    box-shadow: 0 0 1px 1px inset #00000080;
-    padding: 5px;
+    background: rgba(255, 255, 255, 0.168);
+    width: auto;
+    height: auto;
+    margin: 0 0 30px;
+    padding: 11px 10px 35px;
+    /* opacity: 0.2; */
+    border-radius: 7px;
 }
 
 .window-inner-content .section-title {
@@ -146,4 +152,15 @@ label:after {
 
 .text-justify {
     text-align: justify;
+}
+
+button{
+    width: auto;
+    height: auto;
+    margin: 5px 133px 0 1px;
+    padding: 5px 6px 6px;
+    border-radius: 4px;
+    background-color: #d1d0de;
+    border: none;
+    font-family: 'Segoe UI', Arial, sans-serif;
 }
