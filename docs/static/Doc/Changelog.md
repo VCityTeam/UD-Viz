@@ -1,3 +1,7 @@
+# v2.39.1
+
+    - Remove zindex View3D css
+    - LocalContext method findLocalScriptWithID + findGOWithLocalScriptID
 
 # v2.39.0
 
@@ -9,6 +13,7 @@
         - Change font-family
         - Change font color
     - Change Logo & UI
+
 # v2.38.4
 
     - Refacto GameView update
