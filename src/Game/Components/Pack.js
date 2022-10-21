@@ -1,6 +1,7 @@
 /** @format */
 
 const THREE = require('three');
+const Type = require('./Type');
 
 // TODO these methods inside DataProcessing
 
@@ -13,13 +14,61 @@ module.exports = Object.freeze({
   // URI unpack
   vector3ArrayFromURIComponent: function (uriComp) {
     const subString = uriComp.split(',');
-    if (subString.length != 3) console.warn('wrong uri component');
+
+    if (subString.length != 3) {
+      // Need three component
+      return null;
+    }
+
+    let areNumerics = true;
+    for (let index = 0; index < subString.length; index++) {
+      const element = subString[index];
+      if (!Type.isNumeric(element)) {
+        areNumerics = false;
+        break;
+      }
+    }
+
+    if (!areNumerics) {
+      // All component should be numerics
+      return null;
+    }
+
     return subString;
   },
 
   eulerArrayFromURIComponent: function (uriComp) {
     const subString = uriComp.split(',');
-    if (subString.length != 4) console.warn('wrong uri component');
+
+    if (subString.length != 4) {
+      // Need four components
+      return null;
+    }
+
+    let areNumerics = true;
+
+    // Three first components have to be numerics
+    if (!Type.isNumeric(subString[0])) areNumerics = false;
+    if (!Type.isNumeric(subString[1])) areNumerics = false;
+    if (!Type.isNumeric(subString[2])) areNumerics = false;
+
+    // The last one has to be an euler order
+    let goodEulerOrder = false;
+    if (
+      subString[3] == 'XYZ' ||
+      subString[3] == 'XZY' ||
+      subString[3] == 'ZYX' ||
+      subString[3] == 'ZXY' ||
+      subString[3] == 'YZX' ||
+      subString[3] == 'YXZ'
+    ) {
+      goodEulerOrder = true;
+    }
+
+    if (!areNumerics || !goodEulerOrder) {
+      return null;
+    }
+
     return subString;
   },
 
