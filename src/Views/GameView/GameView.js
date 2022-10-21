@@ -711,6 +711,7 @@ class LocalContext {
 
   /**
    * Return the first localscript found with the id passed
+   *
    * @param {*} id id of the localscript
    * @returns the first localscript found with id
    */
@@ -730,6 +731,7 @@ class LocalContext {
 
   /**
    * Return the first go found with the id of the localscript passed
+   *
    * @param {*} id id of the localscript
    * @returns the first go
    */
