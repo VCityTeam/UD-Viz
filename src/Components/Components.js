@@ -11,6 +11,8 @@ export { TilesManager } from './3DTiles/TilesManager.js';
 
 export { focusCameraOn } from './Camera/CameraUtils';
 
+export { checkParentChild } from './HTMLUtils.js';
+
 export { InputManager } from './InputManager';
 
 export { LayerManager } from './LayerManager/LayerManager.js';
