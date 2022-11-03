@@ -266,7 +266,6 @@ export class GameView extends View3D {
         handleCollision: false,
         focusOnMouseOver: false,
         focusOnMouseClick: false,
-        zoomFactor: 0.9,
       });
 
       // Dynamic near far computation
