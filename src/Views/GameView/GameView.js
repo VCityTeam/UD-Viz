@@ -258,6 +258,12 @@ export class GameView extends View3D {
   }
 
   setItownsRendering(value) {
+    // Only apply changes when value is different
+    if (value == this.itownsRendering) {
+      console.warn('setItownsRendering same value ', value); // DEBUG
+      return;
+    }
+
     this.itownsRendering = value;
 
     if (value) {

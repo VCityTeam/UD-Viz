@@ -16,6 +16,7 @@ import {
   addElevationLayer,
   add3DTilesLayersFromConfig,
   setupAndAddGeoJsonLayers,
+  checkParentChild,
 } from '../../Components/Components';
 
 /**
@@ -108,6 +109,7 @@ export class View3D {
     const raycaster = new THREE.Raycaster();
     this.toCSS3DEvent = function (event) {
       if (_this.isCatchingEventsCSS3D()) return;
+      if (checkParentChild(event.target, _this.ui)) return; // Do not propagate if it's the ui that has been clicked
 
       const el = _this.rootWebGL;
 
