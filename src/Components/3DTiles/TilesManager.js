@@ -136,6 +136,11 @@ export class TilesManager extends EventSender {
     // TODO: Les tuiles d'iTowns devraient etre rendues invisibles plutot
     //  que d'etre déchargées et rechargées. A ce moment là, ce callback
     //  pourra etre dans le if ci dessus
+    
+    // Actually if the app is dealing with a large extent like the earth the unloading process is required
+    // You can filter what tile to request in the itowns.process3dTilesNode with the culling function to decide what to load and unload
+    // the default load what is on screen and unload what is not
+
     if (this.color) this.setStyleToTile(tile.tileId, 'default');
     else this.setDefaultStyleToTile(tile.tileId);
     this.applyStyleToTile(tile.tileId, { updateView: false });
