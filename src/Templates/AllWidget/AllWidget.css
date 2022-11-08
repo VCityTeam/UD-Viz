@@ -58,6 +58,7 @@ header h1 {
 }
 
 #_window_widget_content {
+  display:none;
   position: absolute;
   z-index: 11;
   width: 350px;
