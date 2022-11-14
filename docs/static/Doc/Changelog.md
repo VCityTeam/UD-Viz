@@ -1,3 +1,12 @@
+# v2.39.2
+
+    - Allwidget.css : hide widget_content by default
+    - Some jsdoc
+    - Fix billboard to css method
+    - Remove zoomControl in params
+    - HtmlUtils method checkchildparent
+    - Unpack uri component check
+
 # v2.39.1
 
     - Remove zindex View3D css

@@ -31,7 +31,7 @@
 
 
     <title>
-      Widgets/Extensions/DocumentComments/services/DocumentCommentsService.js
+      Components/HTMLUtils.js
     </title>
 
     <!--[if lt IE 9]>
@@ -98,7 +98,7 @@
     <div id="main" class="main-content">
       
       <h1 id='page-title' class="page-title">
-        Widgets/Extensions/DocumentComments/services/DocumentCommentsService.js
+        Components/HTMLUtils.js
       </h1>
       
 
@@ -109,73 +109,26 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>/** @format */
-
-// Components
-import { RequestService } from '../../../../Components/Request/RequestService';
-
-import { DocumentProvider } from '../../../Documents/ViewModel/DocumentProvider';
-
-/**
- * The service that performs the requests for document comments. This include
- * retrieve and create operations.
+            <pre class="prettyprint source linenums"><code>/**
+ * Check if an html element belong to another one recursively
+ *
+ * @param {HTMLElement} child the html child
+ * @param {HTMLElement} parent the html parent
+ * @returns {boolean} true if the child belong to the parent
  */
-export class DocumentCommentsService {
-  /**
-   * Creates a document comments service.
-   *
-   * @param {DocumentProvider} documentProvider The document provider.
-   * @param {RequestService} requestService The request service.
-   * @param {object} config The UD-Viz config.
-   * @param {object} config.server The server access config.
-   * @param {string} config.server.url The server URL.
-   * @param {string} config.server.document The route for documents.
-   * @param {string} config.server.comment The route for comments.
-   * @param {string} config.server.user The route for users.
-   */
-  constructor(documentProvider, requestService, config) {
-    this.documentProvider = documentProvider;
-
-    this.requestService = requestService;
-
-    this.documentUrl = `${config.server.url}${config.server.document}`;
-    this.commentRoute = config.server.comment;
-    this.authorUrl = `${config.server.url}${config.server.user}`;
-  }
-
-  async getComments() {
-    const currentDocument = this.documentProvider.getDisplayedDocument();
-    if (currentDocument !== null &amp;&amp; currentDocument !== undefined) {
-      const url =
-        this.documentUrl + '/' + currentDocument.id + '/' + this.commentRoute;
-      const response = (
-        await this.requestService.request('GET', url, { authenticate: 'auto' })
-      ).response;
-      const jsonResponse = JSON.parse(response);
-      for (const element of jsonResponse) {
-        const url = this.authorUrl + '/' + element.user_id;
-        const responseAuthor = (
-          await this.requestService.request('GET', url, {
-            authenticate: 'auto',
-          })
-        ).response;
-        element.author = JSON.parse(responseAuthor);
-      }
-      return jsonResponse;
-    }
-    return [];
-  }
-
-  async publishComment(formData) {
-    const currentDocument = this.documentProvider.getDisplayedDocument();
-    if (currentDocument !== null &amp;&amp; currentDocument !== undefined) {
-      const url =
-        this.documentUrl + '/' + currentDocument.id + '/' + this.commentRoute;
-      // eslint-disable-next-line no-unused-vars
-      const response = (await this.requestService.send('POST', url, formData))
-        .response;
+export function checkParentChild(child, parent) {
+  let currentNode = child;
+  let isChild = false;
+  while (currentNode.parentNode) {
+    if (currentNode == parent) {
+      isChild = true;
+      break;
+    } else {
+      currentNode = currentNode.parentNode;
     }
   }
+
+  return isChild;
 }
 </code></pre>
         </article>
