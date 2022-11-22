@@ -97,7 +97,6 @@ const GameObjectModule = class GameObject {
     this.object3D.position.copy(go.object3D.position);
     this.object3D.scale.copy(go.object3D.scale);
     this.object3D.rotation.copy(go.object3D.rotation);
-    this.setOutdated(true);
   }
 
   /**
@@ -136,7 +135,6 @@ const GameObjectModule = class GameObject {
     this.object3D.position.copy(object3D.position);
     this.object3D.scale.copy(object3D.scale);
     this.object3D.rotation.copy(object3D.rotation);
-    this.setOutdated(true);
   }
 
   /**
@@ -220,7 +218,6 @@ const GameObjectModule = class GameObject {
     if (this.freeze) return;
 
     this.object3D.position.add(vector);
-    this.setOutdated(true);
   }
 
   /**
@@ -246,7 +243,6 @@ const GameObjectModule = class GameObject {
     this.object3D.rotateY(vector.y);
 
     this.clampRotation();
-    this.setOutdated(true);
   }
 
   /**
@@ -741,7 +737,6 @@ const GameObjectModule = class GameObject {
 
     this.object3D.rotation.set(vector.x, vector.y, vector.z);
     this.clampRotation();
-    this.setOutdated(true);
   }
 
   /**
@@ -752,7 +747,6 @@ const GameObjectModule = class GameObject {
     if (this.freeze) return;
 
     this.object3D.position.set(vector.x, vector.y, vector.z);
-    this.setOutdated(true);
   }
 
   /**
@@ -771,7 +765,6 @@ const GameObjectModule = class GameObject {
     if (this.freeze) return;
 
     this.object3D.scale.set(vector.x, vector.y, vector.z);
-    this.setOutdated(true);
   }
 
   /**
