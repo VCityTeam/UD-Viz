@@ -413,12 +413,12 @@ export class GameView extends View3D {
           const current = state.getGameObject().find(uuid);
           if (current) {
             // Local update
-            if (!g.getFreeze() && !g.hasNoLocalUpdate()) {
+            if (!current.getFreeze() && !current.hasNoLocalUpdate()) {
               // Not freeze and has local update
 
               // if no static update transform
-              if (!g.isStatic()) {
-                // Update transform
+              if (!current.isStatic()) {
+                // Update transform of the local go
                 g.setTransformFromGO(current);
               }
 
