@@ -11,13 +11,10 @@ const Type = require('./Type');
  * TODO opti make a custom serialization for each object and not a generic function
  */
 module.exports = Object.freeze({
-  // URI unpack
-  vector3ArrayFromURIComponent: function (uriComp) {
-    const subString = uriComp.split(',');
-
+  checkIfSubStringIsVector3: function (subString) {
     if (subString.length != 3) {
       // Need three component
-      return null;
+      return false;
     }
 
     let areNumerics = true;
@@ -31,18 +28,16 @@ module.exports = Object.freeze({
 
     if (!areNumerics) {
       // All component should be numerics
-      return null;
+      return false;
     }
 
-    return subString;
+    return true;
   },
 
-  eulerArrayFromURIComponent: function (uriComp) {
-    const subString = uriComp.split(',');
-
+  checkIfSubStringIsEuler: function (subString) {
     if (subString.length != 4) {
       // Need four components
-      return null;
+      return false;
     }
 
     let areNumerics = true;
@@ -66,10 +61,29 @@ module.exports = Object.freeze({
     }
 
     if (!areNumerics || !goodEulerOrder) {
-      return null;
+      return false;
     }
 
-    return subString;
+    return true;
+  },
+
+  // URI unpack
+  vector3ArrayFromURIComponent: function (uriComp) {
+    const subString = uriComp.split(',');
+
+    if (this.checkIfSubStringIsVector3(subString)) {
+      return subString;
+    }
+    return null;
+  },
+
+  eulerArrayFromURIComponent: function (uriComp) {
+    const subString = uriComp.split(',');
+
+    if (this.checkIfSubStringIsEuler(subString)) {
+      return subString;
+    }
+    return null;
   },
 
   /**
