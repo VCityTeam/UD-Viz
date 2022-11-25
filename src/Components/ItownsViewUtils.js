@@ -237,15 +237,24 @@ export function addElevationLayer(config, itownsView, extent) {
     console.warn('Need a format in elevation_layer config');
     return;
   }
+  const isTextureFormat =
+    config['elevation_layer']['format'] == 'image/jpeg' ||
+    config['elevation_layer']['format'] == 'image/png';
 
   // ColorTextureElevationMinZ check
-  if (!config['elevation_layer']['colorTextureElevationMinZ']) {
+  if (
+    isTextureFormat &&
+    !config['elevation_layer']['colorTextureElevationMinZ']
+  ) {
     console.warn('Need a colorTextureElevationMinZ in elevation_layer config');
     return;
   }
 
   // ColorTextureElevationMaxZ check
-  if (!config['elevation_layer']['colorTextureElevationMaxZ']) {
+  if (
+    isTextureFormat &&
+    !config['elevation_layer']['colorTextureElevationMaxZ']
+  ) {
     console.warn('Need a colorTextureElevationMaxZ in elevation_layer config');
     return;
   }
@@ -265,17 +274,19 @@ export function addElevationLayer(config, itownsView, extent) {
     heightMapWidth: 256,
     format: config['elevation_layer']['format'],
   });
+
+  const elevationLayerConfig = { source: wmsElevationSource };
+  if (isTextureFormat) {
+    elevationLayerConfig['useColorTextureElevation'] = true;
+    elevationLayerConfig['colorTextureElevationMinZ'] =
+      config['elevation_layer']['colorTextureElevationMinZ'];
+    elevationLayerConfig['colorTextureElevationMaxZ'] =
+      config['elevation_layer']['colorTextureElevationMaxZ'];
+  }
   // Add a WMS elevation layer
   const wmsElevationLayer = new itowns.ElevationLayer(
     config['elevation_layer']['layer_name'],
-    {
-      useColorTextureElevation: true,
-      colorTextureElevationMinZ:
-        config['elevation_layer']['colorTextureElevationMinZ'],
-      colorTextureElevationMaxZ:
-        config['elevation_layer']['colorTextureElevationMaxZ'],
-      source: wmsElevationSource,
-    }
+    elevationLayerConfig
   );
   itownsView.addLayer(wmsElevationLayer);
 }
