@@ -189,7 +189,7 @@ export function addBaseMapLayer(config, itownsView, extent) {
     name: config['background_image_layer']['name'],
     url: config['background_image_layer']['url'],
     version: config['background_image_layer']['version'],
-    projection: config['projection'],
+    crs: config['projection'],
     format: config['background_image_layer']['format'],
   });
   // Add a WMS imagery layer
@@ -270,7 +270,7 @@ export function addElevationLayer(config, itownsView, extent) {
     extent: extent,
     url: config['elevation_layer']['url'],
     name: config['elevation_layer']['name'],
-    projection: config['projection'],
+    crs: config['projection'],
     heightMapWidth: 256,
     format: config['elevation_layer']['format'],
   });
