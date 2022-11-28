@@ -29,6 +29,7 @@ export class SlideShow extends Window {
     this.rotationInputVectorID = null;
     this.sizeInputVectorID = null;
     this.aspectRatioCheckboxID = null;
+    this.loopSlideShowCheckboxID = null;
     this.slideSelectID = null;
 
     // Vectors
@@ -253,6 +254,30 @@ export class SlideShow extends Window {
     labelAspectRatio.innerHTML = 'Aspect Ratio';
     htmlSlideShow.appendChild(labelAspectRatio);
 
+    const loopCheckbox = document.createElement('input');
+    loopCheckbox.id = 'loopSlideShow';
+    loopCheckbox.type = 'checkbox';
+    this.callbacksHTMLEl.push({
+      event: 'change',
+      id: loopCheckbox.id,
+      cb: function (event) {
+        if (event.target.checked) {
+          // Const currentW = this.getSizeValues().width;
+          // const w =
+          //   currentW != 0 ? currentW : this.currentTextureFile.size.width;
+          // this.setSizeInputs(new THREE.Vector2(null, w));
+        }
+      },
+    });
+
+    this.loopSlideShowCheckboxID = loopCheckbox.id;
+    htmlSlideShow.appendChild(loopCheckbox);
+
+    const labelLoopSlideShow = document.createElement('label');
+    labelLoopSlideShow.htmlFor = loopCheckbox.id;
+    labelLoopSlideShow.innerHTML = 'Loop SlideShow';
+    htmlSlideShow.appendChild(labelLoopSlideShow);
+
     const slideSelect = document.createElement('select');
     slideSelect.id = 'slideSelect';
     htmlSlideShow.appendChild(slideSelect);
@@ -280,6 +305,9 @@ export class SlideShow extends Window {
         },
       });
     }
+
+    // Loop event
+    setInterval(this.loopSlideSHow, 10);
 
     this.htmlSlideShow = htmlSlideShow;
   }
@@ -608,6 +636,27 @@ export class SlideShow extends Window {
     });
 
     this.plane = new THREE.Mesh(geometry, material);
+  }
+
+  loopSlideSHow() {
+    const _this = this;
+
+    // Clamp number between two values with the following line:
+    const clamp = (num, min, max) => Math.min(Math.max(num, min), max);
+
+    if (!_this.plane) return;
+    _this.iCurrentTextureFile = clamp(
+      _this.iCurrentTextureFile + 1,
+      0,
+      _this.texturesFiles.length - 1
+    );
+    _this.setTexture(_this.iCurrentTextureFile);
+
+    _this.aspectRatioCheckboxDOM.dispatchEvent(new Event('change'));
+
+    _this.itownsView.notifyChange();
+
+    console.log('loop daddy');
   }
 
   // DOM GETTERS
