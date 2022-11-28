@@ -40,6 +40,7 @@ export class SlideShow extends Window {
     this.rotationInputVectorID = null;
     this.sizeInputVectorID = null;
     this.aspectRatioCheckboxID = null;
+    this.loopSlideShowCheckboxID = null;
     this.slideSelectID = null;
 
     // Vectors
@@ -268,6 +269,28 @@ export class SlideShow extends Window {
     labelAspectRatio.htmlFor = aspectRatioCheckbox.id;
     labelAspectRatio.innerHTML = 'Aspect Ratio';
     htmlSlideShow.appendChild(labelAspectRatio);
+
+    const loopCheckbox = document.createElement('input');
+    loopCheckbox.id = 'loopSlideShow';
+    loopCheckbox.type = 'checkbox';
+    this.callbacksHTMLEl.push({
+      event: 'change',
+      id: loopCheckbox.id,
+      cb: function (event) {
+        if (event.target.checked) {
+          // Loop event
+          this.loopSlideSHow(10000);
+        }
+      },
+    });
+
+    this.loopSlideShowCheckboxID = loopCheckbox.id;
+    htmlSlideShow.appendChild(loopCheckbox);
+
+    const labelLoopSlideShow = document.createElement('label');
+    labelLoopSlideShow.htmlFor = loopCheckbox.id;
+    labelLoopSlideShow.innerHTML = 'Loop SlideShow';
+    htmlSlideShow.appendChild(labelLoopSlideShow);
 
     const slideSelect = document.createElement('select');
     slideSelect.id = 'slideSelect';
@@ -632,6 +655,32 @@ export class SlideShow extends Window {
     });
 
     this.plane = new THREE.Mesh(geometry, material);
+  }
+
+  /**
+   * Loop through a slide show
+   *
+   * @param {int} slideInterval interval time in each slides in milliseconds
+   */
+  loopSlideSHow(slideInterval) {
+    const _this = this;
+
+    // Clamp number between two values with the following line:
+    const clamp = (num, min, max) => Math.min(Math.max(num, min), max);
+
+    setInterval(() => {
+      if (!_this.plane) return;
+      _this.iCurrentTextureFile = clamp(
+        _this.iCurrentTextureFile + 1,
+        0,
+        _this.texturesFiles.length - 1
+      );
+      _this.setTexture(_this.iCurrentTextureFile);
+
+      _this.aspectRatioCheckboxDOM.dispatchEvent(new Event('change'));
+
+      _this.itownsView.notifyChange();
+    }, slideInterval);
   }
 
   // DOM GETTERS
