@@ -262,10 +262,8 @@ export class SlideShow extends Window {
       id: loopCheckbox.id,
       cb: function (event) {
         if (event.target.checked) {
-          // Const currentW = this.getSizeValues().width;
-          // const w =
-          //   currentW != 0 ? currentW : this.currentTextureFile.size.width;
-          // this.setSizeInputs(new THREE.Vector2(null, w));
+          // Loop event
+          this.loopSlideSHow(10000);
         }
       },
     });
@@ -305,9 +303,6 @@ export class SlideShow extends Window {
         },
       });
     }
-
-    // Loop event
-    setInterval(this.loopSlideSHow, 10);
 
     this.htmlSlideShow = htmlSlideShow;
   }
@@ -638,25 +633,30 @@ export class SlideShow extends Window {
     this.plane = new THREE.Mesh(geometry, material);
   }
 
-  loopSlideSHow() {
+  /**
+   * Loop through a slide show
+   *
+   * @param {int} slideInterval interval time in each slides in milliseconds
+   */
+  loopSlideSHow(slideInterval) {
     const _this = this;
 
     // Clamp number between two values with the following line:
     const clamp = (num, min, max) => Math.min(Math.max(num, min), max);
 
-    if (!_this.plane) return;
-    _this.iCurrentTextureFile = clamp(
-      _this.iCurrentTextureFile + 1,
-      0,
-      _this.texturesFiles.length - 1
-    );
-    _this.setTexture(_this.iCurrentTextureFile);
+    setInterval(() => {
+      if (!_this.plane) return;
+      _this.iCurrentTextureFile = clamp(
+        _this.iCurrentTextureFile + 1,
+        0,
+        _this.texturesFiles.length - 1
+      );
+      _this.setTexture(_this.iCurrentTextureFile);
 
-    _this.aspectRatioCheckboxDOM.dispatchEvent(new Event('change'));
+      _this.aspectRatioCheckboxDOM.dispatchEvent(new Event('change'));
 
-    _this.itownsView.notifyChange();
-
-    console.log('loop daddy');
+      _this.itownsView.notifyChange();
+    }, slideInterval);
   }
 
   // DOM GETTERS
