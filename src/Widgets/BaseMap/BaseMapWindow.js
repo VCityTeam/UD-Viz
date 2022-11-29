@@ -59,7 +59,7 @@ export class BaseMap extends Window {
         source: source,
         transparent: true,
       });
-      if (i != 0) layer.visible = false;
+      if (i != 0) colorLayer.visible = false;
       this.itownsView.addLayer(colorLayer);
       i++;
     }
