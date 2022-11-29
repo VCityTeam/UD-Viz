@@ -306,6 +306,36 @@ export class SlideShow extends Window {
     labelLoopSlideShow.innerHTML = 'Loop SlideShow';
     loopDiv.appendChild(labelLoopSlideShow);
 
+    const durationLoopInMSDiv = document.createElement('div');
+    htmlSlideShow.appendChild(durationLoopInMSDiv);
+
+    const durationLoopInMSInput = document.createElement('input');
+    durationLoopInMSInput.id = 'durationLoopInputSlideShow';
+    durationLoopInMSInput.type = 'number';
+    durationLoopInMSInput.max = 100;
+    durationLoopInMSInput.min = 1;
+    durationLoopInMSInput.setAttribute('value', this.durationLoopInMS / 1000);
+    durationLoopInMSDiv.step = 0.5;
+    this.callbacksHTMLEl.push({
+      event: 'change',
+      id: durationLoopInMSInput.id,
+      cb: function (event) {
+        this.durationLoopInMS = event.target.value * 1000;
+        if (this.intervalLoop) {
+          clearInterval(this.intervalLoop);
+          this.loopSlideShow();
+        }
+      },
+    });
+
+    this.durationLoopInputID = durationLoopInMSInput.id;
+    durationLoopInMSDiv.appendChild(durationLoopInMSInput);
+
+    const durationLoopInMSLabel = document.createElement('label');
+    durationLoopInMSLabel.htmlFor = durationLoopInMSInput.id;
+    durationLoopInMSLabel.innerHTML = 'Duration Loop (s)';
+    durationLoopInMSDiv.appendChild(durationLoopInMSLabel);
+
     const slideSelect = document.createElement('select');
     slideSelect.id = 'slideSelect';
     htmlSlideShow.appendChild(slideSelect);
@@ -685,8 +715,8 @@ export class SlideShow extends Window {
 
       _this.iCurrentTextureFile = clamp(
         _this.iCurrentTextureFile,
-        0, // min
-        this.texturesFiles.length - 1 //max
+        0, // Min
+        this.texturesFiles.length - 1 // Max
       );
 
       _this.iCurrentTextureFile =
