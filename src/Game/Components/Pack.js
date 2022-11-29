@@ -11,6 +11,12 @@ const Type = require('./Type');
  * TODO opti make a custom serialization for each object and not a generic function
  */
 module.exports = Object.freeze({
+  /**
+   * Take an array of string and check if it is in vector3 format
+   *
+   * @param {Array<string>} subString array of string
+   * @returns {boolean} true if it is vector3 format
+   */
   checkIfSubStringIsVector3: function (subString) {
     if (subString.length != 3) {
       // Need three component
@@ -34,6 +40,12 @@ module.exports = Object.freeze({
     return true;
   },
 
+  /**
+   * Take an array of string and check if it is in euler format
+   *
+   * @param {Array<string>} subString array of string
+   * @returns {boolean} true if it is euler format
+   */
   checkIfSubStringIsEuler: function (subString) {
     if (subString.length != 4) {
       // Need four components
@@ -63,7 +75,12 @@ module.exports = Object.freeze({
     return areNumerics && goodEulerOrder;
   },
 
-  // URI unpack
+  /**
+   * Taking a string from the unpacking URI and splitting it into an array of strings.
+   *
+   * @param {string} uriComp  The string from the unpacking URI
+   * @returns {Array<string>} returns the array of strings if it is in vector3 format, otherwise returns null
+   */
   vector3ArrayFromURIComponent: function (uriComp) {
     const subString = uriComp.split(',');
 
@@ -73,6 +90,12 @@ module.exports = Object.freeze({
     return null;
   },
 
+  /**
+   * Taking a string from the unpacking URI and splitting it into an array of strings.
+   *
+   * @param {string} uriComp The string from the unpacking URI
+   * @returns {Array<string>} returns the array of strings if it is in euler format, otherwise returns null
+   */
   eulerArrayFromURIComponent: function (uriComp) {
     const subString = uriComp.split(',');
 
