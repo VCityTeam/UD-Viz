@@ -17,6 +17,7 @@
     ]
   },
   "projection": "EPSG:3946",
+  "maxSubdivisionLevel": 10,
   "baseMapLayers": [
     {
       "url": "https://download.data.grandlyon.com/wms/grandlyon",
