@@ -139,6 +139,11 @@ export class CityObjectID {
     this.batchId = batchId;
   }
 
+  /**
+   * Return true if the cityobjectId is equal to this
+   * @param {CityObjectID} cityObjectId
+   * @returns true if equal
+   */
   equal(cityObjectId) {
     return (
       this.batchId == cityObjectId.batchId && this.tileId == cityObjectId.tileId
