@@ -47,7 +47,7 @@ export class BaseMap extends Window {
         name: layer.name,
         url: layer.url,
         version: layer.version,
-        projection: this.appProjection,
+        crs: this.appProjection,
         format: 'image/jpeg',
       });
       // Add a WMS imagery layer
