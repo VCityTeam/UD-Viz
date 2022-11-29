@@ -136,14 +136,16 @@ export class SlideShow extends Window {
           video.loop = true;
           video.load();
 
-          const videoTexture = new THREE.VideoTexture(video);
-          _this.texturesFiles[i].texture = videoTexture;
-          _this.texturesFiles[i].video = video;
-          _this.texturesFiles[i].size = {
-            height: video.height,
-            width: video.width,
+          video.onloadedmetadata = function () {
+            const videoTexture = new THREE.VideoTexture(video);
+            _this.texturesFiles[i].texture = videoTexture;
+            _this.texturesFiles[i].video = video;
+            _this.texturesFiles[i].size = {
+              height: video.videoHeight,
+              width: video.videoWidth,
+            };
+            if (i == 0) _this.setTexture(0);
           };
-          if (i == 0) _this.setTexture(0);
         } else {
           console.error(
             this.responseURL,
@@ -279,7 +281,7 @@ export class SlideShow extends Window {
       cb: function (event) {
         if (event.target.checked) {
           // Loop event
-          this.loopSlideSHow(10000);
+          this.loopSlideShow(10000);
         }
       },
     });
@@ -440,20 +442,19 @@ export class SlideShow extends Window {
                 video.loop = true;
                 video.load();
 
-                const videoTexture = new THREE.VideoTexture(video);
-                // Rotate the video texture with
-                // videoTexture.center.set(0.5, 0.5);
-                // videoTexture.rotation = Math.PI / 2;
-                _this.texturesFiles.push({
-                  index: i + 1,
-                  name: file.name,
-                  texture: videoTexture,
-                  video: video,
-                  size: {
+                video.onloadedmetadata = function () {
+                  const videoTexture = new THREE.VideoTexture(video);
+                  // Rotate the video texture with
+                  // videoTexture.center.set(0.5, 0.5);
+                  // videoTexture.rotation = Math.PI / 2;
+                  _this.texturesFiles[i].texture = videoTexture;
+                  _this.texturesFiles[i].video = video;
+                  _this.texturesFiles[i].size = {
                     height: video.videoHeight,
                     width: video.videoWidth,
-                  },
-                });
+                  };
+                  if (i == 0) _this.setTexture(0);
+                };
               }
             };
 
@@ -464,7 +465,6 @@ export class SlideShow extends Window {
         }
       }
       _this.setTexture(0);
-      console.log(_this.texturesFiles);
     });
 
     body.addEventListener(
@@ -534,7 +534,6 @@ export class SlideShow extends Window {
       this.sizeInputVectorDOM.getElementsByTagName('input')[
         iInput == 0 ? 1 : 0
       ];
-
     const height = this.currentTextureFile.size.height;
     const width = this.currentTextureFile.size.width;
     const ratio = width / height;
@@ -660,9 +659,9 @@ export class SlideShow extends Window {
   /**
    * Loop through a slide show
    *
-   * @param {int} slideInterval interval time in each slides in milliseconds
+   * @param {number} slideInterval interval time in each slides in milliseconds
    */
-  loopSlideSHow(slideInterval) {
+  loopSlideShow(slideInterval) {
     const _this = this;
 
     // Clamp number between two values with the following line:
