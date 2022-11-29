@@ -72,11 +72,7 @@ module.exports = Object.freeze({
       goodEulerOrder = true;
     }
 
-    if (!areNumerics || !goodEulerOrder) {
-      return false;
-    }
-
-    return true;
+    return areNumerics && goodEulerOrder;
   },
 
   /**
