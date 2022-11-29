@@ -23,18 +23,12 @@ module.exports = Object.freeze({
       return false;
     }
 
-    let areNumerics = true;
     for (let index = 0; index < subString.length; index++) {
       const element = subString[index];
       if (!Type.isNumeric(element)) {
-        areNumerics = false;
-        break;
+        // All component should be numerics
+        return false;
       }
-    }
-
-    if (!areNumerics) {
-      // All component should be numerics
-      return false;
     }
 
     return true;
@@ -52,15 +46,12 @@ module.exports = Object.freeze({
       return false;
     }
 
-    let areNumerics = true;
-
     // Three first components have to be numerics
-    if (!Type.isNumeric(subString[0])) areNumerics = false;
-    if (!Type.isNumeric(subString[1])) areNumerics = false;
-    if (!Type.isNumeric(subString[2])) areNumerics = false;
+    if (!Type.isNumeric(subString[0])) return false;
+    if (!Type.isNumeric(subString[1])) return false;
+    if (!Type.isNumeric(subString[2])) return false;
 
     // The last one has to be an euler order
-    let goodEulerOrder = false;
     if (
       subString[3] == 'XYZ' ||
       subString[3] == 'XZY' ||
@@ -69,10 +60,9 @@ module.exports = Object.freeze({
       subString[3] == 'YZX' ||
       subString[3] == 'YXZ'
     ) {
-      goodEulerOrder = true;
+      return true;
     }
-
-    return areNumerics && goodEulerOrder;
+    return false;
   },
 
   /**
