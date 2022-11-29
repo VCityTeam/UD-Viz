@@ -378,7 +378,7 @@ export class View3D {
     };
 
     // MaxSubdivisionLevel
-    let maxSubdivisionLevel = 3;
+    let maxSubdivisionLevel = this.config.maxSubdivisionLevel || 3;
     if (this.config.background_image_layer)
       if (this.config.background_image_layer.maxSubdivisionLevel)
         maxSubdivisionLevel =
