@@ -42,6 +42,7 @@ export class SlideShow extends Window {
     this.aspectRatioCheckboxID = null;
     this.loopSlideShowCheckboxID = null;
     this.slideSelectID = null;
+    this.durationLoopInputID = null;
 
     // Vectors
     this.coordinatesVector = new THREE.Vector3();
@@ -63,9 +64,14 @@ export class SlideShow extends Window {
 
     this.initDefaultTextureFile();
 
-    if (this.configSlideShow) {
+    const confSlideShow = this.conf.slideShow;
+
+    if (confSlideShow) {
       this.setSlideshowInConfig(0);
     }
+
+    this.intervalLoop = null;
+    this.durationLoopInMS = confSlideShow.durationLoopInMS || 10000; // Take config value or 10s (10000ms) by default
 
     this.currentTexture = null;
 
@@ -248,6 +254,9 @@ export class SlideShow extends Window {
     });
     htmlSlideShow.appendChild(matchExtentButton);
 
+    const aspectRatioDiv = document.createElement('div');
+    htmlSlideShow.appendChild(aspectRatioDiv);
+
     const aspectRatioCheckbox = document.createElement('input');
     aspectRatioCheckbox.id = 'aspectRatio';
     aspectRatioCheckbox.type = 'checkbox';
@@ -265,12 +274,15 @@ export class SlideShow extends Window {
     });
 
     this.aspectRatioCheckboxID = aspectRatioCheckbox.id;
-    htmlSlideShow.appendChild(aspectRatioCheckbox);
+    aspectRatioDiv.appendChild(aspectRatioCheckbox);
 
     const labelAspectRatio = document.createElement('label');
     labelAspectRatio.htmlFor = aspectRatioCheckbox.id;
     labelAspectRatio.innerHTML = 'Aspect Ratio';
-    htmlSlideShow.appendChild(labelAspectRatio);
+    aspectRatioDiv.appendChild(labelAspectRatio);
+
+    const loopDiv = document.createElement('div');
+    htmlSlideShow.appendChild(loopDiv);
 
     const loopCheckbox = document.createElement('input');
     loopCheckbox.id = 'loopSlideShow';
@@ -279,20 +291,20 @@ export class SlideShow extends Window {
       event: 'change',
       id: loopCheckbox.id,
       cb: function (event) {
+        if (this.intervalLoop) clearInterval(this.intervalLoop);
         if (event.target.checked) {
-          // Loop event
-          this.loopSlideShow(10000);
+          this.loopSlideShow();
         }
       },
     });
 
     this.loopSlideShowCheckboxID = loopCheckbox.id;
-    htmlSlideShow.appendChild(loopCheckbox);
+    loopDiv.appendChild(loopCheckbox);
 
     const labelLoopSlideShow = document.createElement('label');
     labelLoopSlideShow.htmlFor = loopCheckbox.id;
     labelLoopSlideShow.innerHTML = 'Loop SlideShow';
-    htmlSlideShow.appendChild(labelLoopSlideShow);
+    loopDiv.appendChild(labelLoopSlideShow);
 
     const slideSelect = document.createElement('select');
     slideSelect.id = 'slideSelect';
@@ -657,29 +669,35 @@ export class SlideShow extends Window {
   }
 
   /**
-   * Loop through a slide show
+   * Loop through a slide show of textures
    *
-   * @param {number} slideInterval interval time in each slides in milliseconds
    */
-  loopSlideShow(slideInterval) {
+  loopSlideShow() {
     const _this = this;
 
     // Clamp number between two values with the following line:
     const clamp = (num, min, max) => Math.min(Math.max(num, min), max);
 
-    setInterval(() => {
+    const duration = this.durationLoopInMS; // Loop event
+
+    this.intervalLoop = setInterval(() => {
       if (!_this.plane) return;
+
       _this.iCurrentTextureFile = clamp(
-        _this.iCurrentTextureFile + 1,
-        0,
-        _this.texturesFiles.length - 1
+        _this.iCurrentTextureFile,
+        0, // min
+        this.texturesFiles.length - 1 //max
       );
+
+      _this.iCurrentTextureFile =
+        (_this.iCurrentTextureFile + 1) % this.texturesFiles.length; // Loop
+
       _this.setTexture(_this.iCurrentTextureFile);
 
       _this.aspectRatioCheckboxDOM.dispatchEvent(new Event('change'));
 
       _this.itownsView.notifyChange();
-    }, slideInterval);
+    }, duration);
   }
 
   // DOM GETTERS
