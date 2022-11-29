@@ -20,6 +20,10 @@ export { LayerManager } from './LayerManager/LayerManager.js';
 import * as THREEUtils from './THREEUtils';
 export { THREEUtils };
 
+export { getTileFromMesh } from './3DTiles/3DTilesUtils';
+
+export { CityObjectID } from './3DTiles/Model/CityObject';
+
 export {
   add3DTilesLayersFromConfig,
   setup3DTilesLayer,

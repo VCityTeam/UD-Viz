@@ -139,6 +139,12 @@ export class CityObjectID {
     this.batchId = batchId;
   }
 
+  equal(cityObjectId) {
+    return (
+      this.batchId == cityObjectId.batchId && this.tileId == cityObjectId.tileId
+    );
+  }
+
   /**
    * Converts the city object ID into a string, making the class usable as
    * a dictionnary key.
