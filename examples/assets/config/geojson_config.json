@@ -37,14 +37,14 @@
     }
   },
   "projection": "EPSG:3946",
+  "maxSubdivisionLevel": 10,
   "background_image_layer": {
     "url": "https://download.data.grandlyon.com/wms/grandlyon",
     "name": "Ortho2018_Dalle_unique_8cm_CC46",
     "version": "1.3.0",
     "format": "image/jpeg",
     "layer_name": "Base_Map",
-    "transparent": true,
-    "maxSubdivisionLevel": 3
+    "transparent": true
   },
   "elevation_layer": {
     "url": "https://download.data.grandlyon.com/wms/grandlyon",
