@@ -1,3 +1,21 @@
+# v2.39.3
+    - Equal CityObjectID
+    - Change ColorLayers sequence order in BaseMap widget
+    - Decompose Pack method in Game Enfine
+    - Fix: correctly set the layers invisible
+    - Rename projection -> crs BaseMapWindow
+    - Use 'crs' instead of deprecated 'projection'
+    - Support non texture format
+    - Fix temporal camera
+    - Change camera position to see 3DTiles
+    - SlideShow enhancement loop
+    - GameObject are not outdated when transform is modified
+    - Updated-dependencies:
+        dependency-name: loader-utils
+        dependency-type: indirect
+    
+    
+
 # v2.39.2
 
     - Allwidget.css : hide widget_content by default
