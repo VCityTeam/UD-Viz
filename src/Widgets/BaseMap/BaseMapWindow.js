@@ -61,6 +61,7 @@ export class BaseMap extends Window {
       });
       if (i != 0) colorLayer.visible = false;
       this.itownsView.addLayer(colorLayer);
+      itowns.ColorLayersOrdering.moveLayerToIndex(this.itownsView, layer.id, i);
       i++;
     }
   }
