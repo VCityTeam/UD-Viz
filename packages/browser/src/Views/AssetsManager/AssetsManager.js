@@ -1,7 +1,7 @@
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import * as THREE from 'three';
 import * as jquery from 'jquery';
-import GameObject from '../../Game/GameObject/GameObject';
+import { GameObject } from '@ud-viz/core/src/Game/Game';
 import { Howl } from 'howler';
 const THREEUtils = require('../../Components/THREEUtils');
 

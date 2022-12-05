@@ -1,8 +1,8 @@
 import * as Components from '../../../Components/Components.js';
 import { AssetsManager } from '../../../Views/AssetsManager/AssetsManager';
-import * as Game from '../../../Game/Game';
 import * as Views from '../../../Views/Views';
 import * as udviz from '../../../index';
+import { Game } from '@ud-viz/core';
 
 /**
  * A Class contaning method to easily instanciate a local game based on the ud-viz game engine
