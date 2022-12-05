@@ -1,9 +1,13 @@
 {
   "name": "@ud-viz/core",
-  "version": "1.0.0",
+  "version": "3.0.0",
   "description": "ud-viz core library (browser + node compatible)",
   "main": "src",
-  "scripts": {},
+  "scripts": {
+    "build": "cross-env NODE_ENV=production webpack --config=./config/webpack.config.js",
+    "build-debug": "cross-env NODE_ENV=development webpack --config=./config/webpack.config.js",
+    "debug": "nodemon --trace-warnings --verbose --watch src --delay 2500ms ./bin/debug.js -e js"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/VCityTeam/UD-Viz.git"
@@ -12,5 +16,10 @@
   "bugs": {
     "url": "https://github.com/VCityTeam/UD-Viz/issues"
   },
-  "homepage": "https://github.com/VCityTeam/UD-Viz/"
+  "homepage": "https://github.com/VCityTeam/UD-Viz/",
+  "dependencies": {
+    "three": "0.137.5",
+    "detect-collisions": "^2.5.2",
+    "proj4": "^2.7.5"
+  }
 }

@@ -1,5 +1,3 @@
-/** @format */
-
 // ud-viz API
 
 // Components
@@ -9,10 +7,6 @@ export { Components };
 // Widgets
 import * as Widgets from './Widgets/Widgets.js';
 export { Widgets };
-
-// Game
-import * as Game from './Game/Game.js';
-export { Game };
 
 // Templates
 import * as Templates from './Templates/Templates.js';

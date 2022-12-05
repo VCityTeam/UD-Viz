@@ -24,10 +24,6 @@ const commonJsWorldStateComputer = require('./WorldStateComputer');
 
 const commonJsWorldStateInterpolator = require('./WorldStateInterpolator');
 
-const THREE = require('three');
-
-const proj4 = require('proj4');
-
 module.exports = {
   Components: commonJsComponents,
   Command: commonJsCommand,
@@ -41,6 +37,4 @@ module.exports = {
   WorldStateDiff: commonJsWorldStateDiff,
   WorldStateInterpolator: commonJsWorldStateInterpolator,
   WorldStateComputer: commonJsWorldStateComputer,
-  THREE: THREE,
-  proj4: proj4,
 };
