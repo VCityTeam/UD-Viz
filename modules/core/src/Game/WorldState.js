@@ -1,5 +1,3 @@
-
-
 const GameObject = require('./GameObject/GameObject');
 const WorldStateDiff = require('./WorldStateDiff');
 

@@ -1,5 +1,3 @@
-
-
 export { AuthenticationService } from './Authentication/services/AuthenticationService';
 
 export { AuthenticationView } from './Authentication/views/AuthenticationView';

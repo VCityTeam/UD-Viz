@@ -1,5 +1,3 @@
-
-
 import { AbstractDocumentWindow } from '../../../Documents/View/AbstractDocumentWindow';
 
 import { DocumentCommentsService } from '../services/DocumentCommentsService';

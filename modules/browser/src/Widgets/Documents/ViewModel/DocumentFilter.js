@@ -1,5 +1,3 @@
-
-
 import { Document } from '../Model/Document';
 
 /**

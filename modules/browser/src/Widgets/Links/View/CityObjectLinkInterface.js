@@ -1,5 +1,3 @@
-
-
 import { CityObjectModule } from '../../CityObjects/CityObjectModule';
 import { CityObjectFilterSelector } from '../../CityObjects/View/CityObjectFilterSelector';
 import { LinkProvider } from '../ViewModel/LinkProvider';

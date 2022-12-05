@@ -1,5 +1,3 @@
-
-
 // Components
 import { TilesManager } from '../../../Components/3DTiles/TilesManager.js';
 import { getVisibleTiles } from '../../../Components/3DTiles/3DTilesUtils.js';

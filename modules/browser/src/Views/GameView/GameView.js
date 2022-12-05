@@ -1,5 +1,3 @@
-
-
 import * as udviz from '../../index';
 import * as THREE from 'three';
 import * as proj4 from 'proj4';

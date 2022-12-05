@@ -1,5 +1,3 @@
-
-
 import { DocumentSource } from '../../../Documents/Model/DocumentService';
 
 /**

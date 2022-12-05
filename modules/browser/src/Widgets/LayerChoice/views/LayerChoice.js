@@ -1,5 +1,3 @@
-
-
 // Components
 import { Window } from '../../Components/GUI/js/Window';
 import { LayerManager } from '../../../Components/LayerManager/LayerManager';

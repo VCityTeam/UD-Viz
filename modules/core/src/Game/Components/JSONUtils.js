@@ -1,5 +1,3 @@
-
-
 const Type = require('./Type');
 
 /**

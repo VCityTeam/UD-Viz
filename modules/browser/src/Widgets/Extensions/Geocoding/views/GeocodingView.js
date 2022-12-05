@@ -1,5 +1,3 @@
-
-
 import * as THREE from 'three';
 import * as itowns from 'itowns';
 import proj4 from 'proj4';

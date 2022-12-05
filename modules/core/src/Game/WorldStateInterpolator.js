@@ -1,4 +1,3 @@
-
 const WorldState = require('./WorldState');
 
 /**

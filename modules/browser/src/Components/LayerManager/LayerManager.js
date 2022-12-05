@@ -1,5 +1,3 @@
-
-
 import {
   getFirstTileIntersection,
   getBatchIdFromIntersection,

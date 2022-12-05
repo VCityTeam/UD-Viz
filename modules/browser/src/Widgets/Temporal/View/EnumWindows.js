@@ -1,5 +1,3 @@
-
-
 export class EnumTemporalWindow {
   static get SLIDERWINDOW() {
     return 'SLIDERWINDOW';

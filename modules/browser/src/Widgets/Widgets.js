@@ -1,5 +1,3 @@
-
-
 export { GuidedTourController } from './GuidedTour/GuidedTourController';
 
 export { CityObjectModule } from './CityObjects/CityObjectModule';

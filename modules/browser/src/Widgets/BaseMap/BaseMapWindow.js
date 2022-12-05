@@ -1,5 +1,3 @@
-
-
 import * as itowns from 'itowns';
 
 // Components

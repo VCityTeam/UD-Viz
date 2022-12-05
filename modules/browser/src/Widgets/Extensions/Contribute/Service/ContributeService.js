@@ -1,5 +1,3 @@
-
-
 // Widgets
 import { DocumentProvider } from '../../../Documents/ViewModel/DocumentProvider';
 import { Document } from '../../../Documents/Model/Document';

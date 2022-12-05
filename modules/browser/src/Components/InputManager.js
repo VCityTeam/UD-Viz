@@ -1,5 +1,3 @@
-
-
 /**
  * Poll system (https://en.wikipedia.org/wiki/Polling_(computer_science))
  * Inputs state is stored asynchronously then state is access synchronously by user
