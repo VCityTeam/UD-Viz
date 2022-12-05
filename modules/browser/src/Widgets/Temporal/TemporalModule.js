@@ -1,5 +1,3 @@
-
-
 import { $3DTemporalExtension } from './Model/3DTemporalExtension.js';
 import { TemporalProvider } from './ViewModel/TemporalProvider.js';
 import { TemporalView } from './View/TemporalView.js';

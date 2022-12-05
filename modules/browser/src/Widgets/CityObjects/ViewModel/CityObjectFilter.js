@@ -1,5 +1,3 @@
-
-
 /**
  * Represents a filter for city objects. It is basically a function that takes
  * a city object and returns wether it is acceptable.

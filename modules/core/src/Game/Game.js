@@ -1,5 +1,3 @@
-
-
 const commonJsComponents = require('./Components/Components');
 
 const commonJsCommand = require('./Command');

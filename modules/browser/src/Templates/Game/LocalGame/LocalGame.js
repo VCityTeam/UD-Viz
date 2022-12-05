@@ -1,5 +1,3 @@
-
-
 import * as Components from '../../../Components/Components.js';
 import { AssetsManager } from '../../../Views/AssetsManager/AssetsManager';
 import * as Game from '../../../Game/Game';

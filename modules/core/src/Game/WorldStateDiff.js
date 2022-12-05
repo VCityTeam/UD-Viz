@@ -1,5 +1,3 @@
-
-
 /**
  * This object avoid to send WorldState on network and allow to rebuild a WorldState
  * worldstate(t) + worldstatediff(t+1) = worldstate(t+1)

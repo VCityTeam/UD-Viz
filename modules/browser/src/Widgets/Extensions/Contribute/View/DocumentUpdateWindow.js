@@ -1,5 +1,3 @@
-
-
 // Widgets
 import { AbstractDocumentWindow } from '../../../Documents/View/AbstractDocumentWindow';
 import { DocumentProvider } from '../../../Documents/ViewModel/DocumentProvider';

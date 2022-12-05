@@ -1,5 +1,3 @@
-
-
 const exec = require('child-process-promise').exec;
 
 const printExec = function (result) {

@@ -1,5 +1,3 @@
-
-
 import { DocumentProvider } from '../ViewModel/DocumentProvider';
 import { Document } from '../Model/Document';
 import { DocumentSearchFilter } from '../ViewModel/DocumentSearchFilter';

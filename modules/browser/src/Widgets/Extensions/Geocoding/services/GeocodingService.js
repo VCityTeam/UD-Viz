@@ -1,5 +1,3 @@
-
-
 // Components
 import { RequestService } from '../../../../Components/Request/RequestService';
 import { getAttributeByPath } from '../../../../Components/DataProcessing/DataProcessing';

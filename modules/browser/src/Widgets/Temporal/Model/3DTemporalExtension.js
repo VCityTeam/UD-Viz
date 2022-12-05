@@ -1,5 +1,3 @@
-
-
 import { $3DTemporalTileset } from './3DTemporalTileset.js';
 
 /**

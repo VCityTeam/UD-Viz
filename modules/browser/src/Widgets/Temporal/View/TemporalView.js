@@ -1,5 +1,3 @@
-
-
 // Components
 import { ModuleView } from '../../Components/ModuleView/ModuleView.js';
 

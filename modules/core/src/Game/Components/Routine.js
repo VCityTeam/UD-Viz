@@ -1,5 +1,3 @@
-
-
 /**
  * Object used to handle animation
  * TODO refacto this class so user of this dont need to handle tick + onEnd call

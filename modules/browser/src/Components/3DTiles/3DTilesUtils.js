@@ -1,5 +1,3 @@
-
-
 import * as THREE from 'three';
 import { objectEquals } from '../DataProcessing/DataProcessing';
 

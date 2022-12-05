@@ -1,5 +1,3 @@
-
-
 // Components
 import { CityObjectStyle } from '../../Components/3DTiles/Model/CityObjectStyle';
 

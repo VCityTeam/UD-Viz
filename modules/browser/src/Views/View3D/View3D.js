@@ -1,5 +1,3 @@
-
-
 import * as THREE from 'three';
 import * as itowns from 'itowns';
 import { CSS3DRenderer } from 'three/examples/jsm/renderers/CSS3DRenderer';

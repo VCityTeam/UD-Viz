@@ -1,5 +1,3 @@
-
-
 import { CityObjectFilterSelector } from './CityObjectFilterSelector';
 import { CityObjectProvider } from '../ViewModel/CityObjectProvider';
 import { AttributeFilter } from '../ViewModel/AttributeFilter';
