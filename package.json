@@ -1,0 +1,37 @@
+{
+  "name": "ud-viz-monorepo",
+  "description": "Urban Data VIsualiZation framework",
+  "scripts": {
+    "clean": "rm -f -r node_modules & rm -f package-lock.json",
+    "reset": "npm run clean & npm i",
+    "travis": "npm run eslint && npm run build",
+    "eslint-quiet": "eslint --quiet \"src/**/*.js\"",
+    "eslint": "eslint --ignore-path .gitignore \"modules/**/*.js\"",
+    "eslint-fix": "eslint \"src/**/*.js\" --fix",
+    "docs": "jsdoc -c ./docs/jsdoc.json --verbose"
+  },
+  "workspaces": [
+    "modules/*"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/VCityTeam/UD-Viz.git"
+  },
+  "license": "(LGPL-2.1)",
+  "bugs": {
+    "url": "https://github.com/VCityTeam/UD-Viz/issues"
+  },
+  "homepage": "https://github.com/VCityTeam/UD-Viz/",
+  "devDependencies": {
+    "child-process-promise": "^2.2.1",
+    "cross-env": "^7.0.3",
+    "eslint": "^7.32.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-jsdoc": "^39.3.3",
+    "eslint-plugin-prettier": "^4.2.1",
+    "nodemon": "^2.0.12",
+    "prettier": "2.6.2",
+    "webpack": "^5.70.0",
+    "webpack-cli": "^4.9.2"
+  }
+}

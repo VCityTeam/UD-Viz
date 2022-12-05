@@ -13,7 +13,6 @@ const ColliderComponent = require('./Components/Collider');
 const WorldScriptComponent = require('./Components/WorldScript');
 const AudioComponent = require('./Components/Audio');
 const LocalScriptModule = require('./Components/LocalScript');
-const THREEUtils = require('../../Components/THREEUtils');
 
 /**
  * Objects to compose a Game
@@ -192,16 +191,22 @@ const GameObjectModule = class GameObject {
   /**
    * Return the world transform of this
    *
-   * @returns {Transform}
+   * @returns {object}
    */
   computeWorldTransform() {
-    const result = new THREEUtils.Transform();
+    const euler = new THREE.Euler();
+    euler.reorder('ZXY');
+    const result = {
+      position: new THREE.Vector3(),
+      rotation: euler,
+      scale: new THREE.Vector3(),
+    };
 
     let current = this;
     do {
-      result.getPosition().add(current.getPosition());
-      result.getRotation().add(current.getRotation());
-      result.getScale().multiply(current.getScale());
+      result.position.add(current.getPosition());
+      result.rotation.add(current.getRotation());
+      result.scale.multiply(current.getScale());
 
       current = current.parent;
     } while (current);
