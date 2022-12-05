@@ -18,8 +18,10 @@
   },
   "homepage": "https://github.com/VCityTeam/UD-Viz/",
   "dependencies": {
-    "three": "0.137.5",
-    "detect-collisions": "^2.5.2",
-    "proj4": "^2.7.5"
+    "detect-collisions": "^2.5.2"
+  },
+  "peerDependencies": {
+    "proj4": "^2.7.5",
+    "three": "0.137.5"
   }
 }

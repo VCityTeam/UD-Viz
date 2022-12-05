@@ -4,14 +4,9 @@
   "description": "A browser framework extended itowns",
   "main": "src",
   "scripts": {
-    "travis": "npm run eslint && npm run build",
-    "eslint-quiet": "eslint --quiet \"src/**/*.js\"",
-    "eslint": "eslint \"src/**/*.js\"",
-    "eslint-fix": "eslint \"src/**/*.js\" --fix",
     "build": "cross-env NODE_ENV=production webpack --config=./config/webpack.config.js",
     "build-debug": "cross-env NODE_ENV=development webpack --config=./config/webpack.config.js",
-    "debug": "nodemon --trace-warnings --verbose --watch src --delay 2500ms ./bin/debug.js -e js,css,html",
-    "docs": "jsdoc -c ./docs/jsdoc.json --verbose"
+    "debug": "nodemon --trace-warnings --verbose --watch src --delay 2500ms ./bin/debug.js -e js,css,html"
   },
   "files": [
     "src"
@@ -26,28 +21,20 @@
   },
   "homepage": "https://github.com/VCityTeam/UD-Viz/",
   "dependencies": {
-    "@deck.gl/core": "^8.5.0",
-    "@deck.gl/layers": "^8.5.0",
-    "buffer": "^6.0.3",
+    "@ud-viz/core": "../core",
     "d3": "^7.0.1",
     "fetch-sparql-endpoint": "^2.3.1",
     "howler": "^2.2.3",
     "itowns": "2.38.0",
     "jquery": "^3.6.0",
     "socket.io-client": "^4.0.0",
-    "vis-data": "^7.1.2",
     "vis-network": "^9.0.3"
   },
   "dependencyComments": {
     "d3": "required by the SPARQL Module"
   },
   "devDependencies": {
-
-    
     "css-loader": "^6.7.1",
-    
-    "nodemon": "^2.0.12",
-    "style-loader": "^3.3.1",
-    "url-loader": "^4.1.1"
+    "style-loader": "^3.3.1"
   }
 }

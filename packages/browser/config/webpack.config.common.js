@@ -1,10 +1,8 @@
-const path = require('path');
-
 module.exports = {
   entry: ['./src/index.js'],
   output: {
-    filename: 'udv.js',
-    library: 'udv',
+    filename: 'bundle.js',
+    library: 'udvizBrowser',
     libraryTarget: 'umd',
     umdNamedDefine: true,
   },
@@ -16,11 +14,6 @@ module.exports = {
           'style-loader', // Tells webpack how to append CSS to the DOM as a style tag.
           'css-loader', // Tells webpack how to read a CSS file.
         ],
-      },
-      {
-        test: /\.json$/,
-        include: [path.resolve(__dirname, 'src')],
-        loader: 'raw-loader',
       },
     ],
   },

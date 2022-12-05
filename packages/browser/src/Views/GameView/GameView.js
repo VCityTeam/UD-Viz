@@ -1,15 +1,9 @@
-import * as udviz from '../../index';
 import * as THREE from 'three';
 import * as proj4 from 'proj4';
 import * as itowns from 'itowns';
-
-import LocalScript from '../../Game/GameObject/Components/LocalScript';
 import { View3D } from '../View3D/View3D';
-import { Audio, Render } from '../../Game/Game';
-
+import { LocalScript, Audio, Render } from '@ud-viz/core/src/Game/Game';
 import { computeNearFarCamera } from '../../Components/Camera/CameraUtils';
-
-const udvGame = require('../../Game/Game');
 import * as THREEUtils from '../../Components/THREEUtils';
 
 /**
@@ -542,10 +536,11 @@ export class GameView extends View3D {
 
     // Init assets new GO
     newGO.forEach(function (g) {
-      g.initAssetsComponents(_this.assetsManager, {
-        udviz: udviz,
-        Game: udvGame,
-      });
+      console.error('initAssetsComponent method belong to @ud-viz/browser');
+      // g.initAssetsComponents(_this.assetsManager, {
+      //   udviz: udviz,
+      //   Game: udvGame,
+      // });
     });
 
     const go = state.getGameObject();
