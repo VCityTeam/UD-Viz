@@ -1,4 +1,4 @@
-/** @format */
+
 
 // Components
 import { EventSender } from '../../../Components/Events/EventSender';

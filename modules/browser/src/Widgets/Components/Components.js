@@ -1,4 +1,4 @@
-/** @format */
+
 
 export { ModuleView } from './ModuleView/ModuleView.js';
 

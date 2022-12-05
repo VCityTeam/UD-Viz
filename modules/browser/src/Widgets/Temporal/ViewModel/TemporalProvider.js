@@ -1,4 +1,4 @@
-/** @format */
+
 
 // Components
 import { TilesManager } from '../../../Components/3DTiles/TilesManager.js';

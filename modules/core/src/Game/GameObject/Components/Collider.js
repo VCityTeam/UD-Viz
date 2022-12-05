@@ -1,4 +1,4 @@
-/** @format */
+
 
 const THREE = require('three');
 const { Circle, Polygon } = require('detect-collisions');
@@ -60,7 +60,7 @@ const ColliderModule = class Collider {
 
   /**
    *
-   * @returns {Array[ShapeWrapper]}
+   * @returns {Object}
    */
   getShapeWrappers() {
     return this.shapeWrappers;

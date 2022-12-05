@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Adding favicon -->
+    
+
+    <!-- Adding meta -->
+    
+
+    <!-- Adding external script-->
+    
+
+    <!-- Adding external style-->
+    
+
+    <!-- Adding scripts-->
+    
+
+    <!-- Adding style-->
+    
+
+    <!-- Adding overlay script-->
+    
+
+    <!-- Adding overlay style-->
+    
+
+
+    <title>
+      WorldStateComputer.js
+    </title>
+
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/third-party/ionicons.min.css">
+    <link type="text/css" rel="stylesheet" href="styles/third-party/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/reset.css">
+    <link type="text/css" rel="stylesheet" href="styles/clean-jsdoc-theme-base.css">
+    <link type="text/css" rel="stylesheet" href="styles/clean-jsdoc-theme-light.css">
+    
+    <svg aria-hidden="true" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+    style="display:none">
+    <defs>
+        <symbol id="copy-icon" viewbox="0 0 488.3 488.3">
+            <g>
+                <path
+                    d="M314.25,85.4h-227c-21.3,0-38.6,17.3-38.6,38.6v325.7c0,21.3,17.3,38.6,38.6,38.6h227c21.3,0,38.6-17.3,38.6-38.6V124    C352.75,102.7,335.45,85.4,314.25,85.4z M325.75,449.6c0,6.4-5.2,11.6-11.6,11.6h-227c-6.4,0-11.6-5.2-11.6-11.6V124    c0-6.4,5.2-11.6,11.6-11.6h227c6.4,0,11.6,5.2,11.6,11.6V449.6z" />
+                <path
+                    d="M401.05,0h-227c-21.3,0-38.6,17.3-38.6,38.6c0,7.5,6,13.5,13.5,13.5s13.5-6,13.5-13.5c0-6.4,5.2-11.6,11.6-11.6h227    c6.4,0,11.6,5.2,11.6,11.6v325.7c0,6.4-5.2,11.6-11.6,11.6c-7.5,0-13.5,6-13.5,13.5s6,13.5,13.5,13.5c21.3,0,38.6-17.3,38.6-38.6    V38.6C439.65,17.3,422.35,0,401.05,0z" />
+            </g>
+        </symbol>
+        <symbol id='search-icon' viewBox="0 0 512 512">
+            <g>
+                <g>
+                    <path
+                        d="M225.474,0C101.151,0,0,101.151,0,225.474c0,124.33,101.151,225.474,225.474,225.474    c124.33,0,225.474-101.144,225.474-225.474C450.948,101.151,349.804,0,225.474,0z M225.474,409.323    c-101.373,0-183.848-82.475-183.848-183.848S124.101,41.626,225.474,41.626s183.848,82.475,183.848,183.848    S326.847,409.323,225.474,409.323z" />
+                </g>
+            </g>
+            <g>
+                <g>
+                    <path
+                        d="M505.902,476.472L386.574,357.144c-8.131-8.131-21.299-8.131-29.43,0c-8.131,8.124-8.131,21.306,0,29.43l119.328,119.328    c4.065,4.065,9.387,6.098,14.715,6.098c5.321,0,10.649-2.033,14.715-6.098C514.033,497.778,514.033,484.596,505.902,476.472z" />
+                </g>
+            </g>
+        </symbol>
+        <symbol id="down-icon" viewBox="0 0 16 16">
+            <path 
+                fill-rule="evenodd" 
+                clip-rule="evenodd" 
+                d="M12.7803 6.21967C13.0732 6.51256 13.0732 6.98744 12.7803 7.28033L8.53033 11.5303C8.23744 11.8232 7.76256 11.8232 7.46967 11.5303L3.21967 7.28033C2.92678 6.98744 2.92678 6.51256 3.21967 6.21967C3.51256 5.92678 3.98744 5.92678 4.28033 6.21967L8 9.93934L11.7197 6.21967C12.0126 5.92678 12.4874 5.92678 12.7803 6.21967Z"
+            >
+            </path>
+        </symbol>
+    </defs>
+</svg>
+  </head>
+
+  <body>
+
+    <nav class="navbar" id="navbar">
+      <div class="navbar-heading" id="navbar-heading"><a href="index.html"><h2 class="navbar-heading-text">UD-Viz</h2></a></div><div class="search-box" id="search-box"><div class="search-box-input-container"><input class="search-box-input" type="text" placeholder="Search..." id="search-box-input" /><svg class="search-icon" alt="search-icon"><use xlink:href="#search-icon"></use></svg></div><div class="search-item-container" id="search-item-container"><ul class="search-item-ul" id="search-item-ul"></ul></div></div><div class="sidebar-main-content" id="sidebar-main-content"><ul><li class="menu-li"><a href='https://github.com/VCityTeam/UD-Viz' class=' menu-link' id='Github' target=''>Github</a></li><li class="menu-li"><a href='https://ud-viz.vcityliris.data.alpha.grandlyon.com/' class=' menu-link' id='Examples' target=''>Examples</a></li></ul><div class="accordion collapsed" id="8870915" > <h3 class="accordion-heading">Tutorials<svg><use xlink:href="#down-icon"></use></svg></h3><ul class="accordion-content"><li class="accordion-list" id=""><a href="tutorial-Changelog.html">Changelog</a></li><li class="accordion-list" id=""><a href="tutorial-ArchitectureMVCTargetDesign.html">ArchitectureMVCTargetDesign</a></li><li class="accordion-list" id=""><a href="tutorial-Configuring-the-Document-model-of-an-UDV-deployment.html">Configuring-the-Document-model-of-an-UDV-deployment</a></li><li class="accordion-list" id=""><a href="tutorial-LocalGameTutorial.html">LocalGameTutorial</a></li><li class="accordion-list" id=""><a href="tutorial-ReleasePublish.html">ReleasePublish</a></li><li class="accordion-list" id=""><a href="tutorial-Reproducibility.html">Reproducibility</a></li><li class="accordion-list" id=""><a href="tutorial-View3D.html">View3D</a></li><li class="accordion-list" id=""><a href="tutorial-ContributeData.html">ContributeData</a></li></ul> </div><div class="accordion collapsed" id="7257792" > <h3 class="accordion-heading">Classes<svg><use xlink:href="#down-icon"></use></svg></h3><ul class="accordion-content"><li class="accordion collapsed child" id=4231591><div class="accordion-heading child"><a href="AudioModule.html">AudioModule</a><svg><use xlink:href="#down-icon"></use></svg></div><ul class='methods accordion-content'><li data-type='method'><a href="AudioModule.html#addSound">addSound</a></li><li data-type='method'><a href="AudioModule.html#initAssets">initAssets</a></li><li data-type='method'><a href="AudioModule.html#isServerSide">isServerSide</a></li><li data-type='method'><a href="AudioModule.html#reset">reset</a></li><li data-type='method'><a href="AudioModule.html#toJSON">toJSON</a></li></ul></li><li class="accordion collapsed child" id=2401425><div class="accordion-heading child"><a href="ColliderModule.html">ColliderModule</a><svg><use xlink:href="#down-icon"></use></svg></div><ul class='methods accordion-content'><li data-type='method'><a href="ColliderModule.html#createShapeWrappers">createShapeWrappers</a></li><li data-type='method'><a href="ColliderModule.html#getShapesJSON">getShapesJSON</a></li><li data-type='method'><a href="ColliderModule.html#getShapeWrappers">getShapeWrappers</a></li><li data-type='method'><a href="ColliderModule.html#initAssets">initAssets</a></li><li data-type='method'><a href="ColliderModule.html#isBody">isBody</a></li><li data-type='method'><a href="ColliderModule.html#isServerSide">isServerSide</a></li><li data-type='method'><a href="ColliderModule.html#setShapesJSON">setShapesJSON</a></li><li data-type='method'><a href="ColliderModule.html#toJSON">toJSON</a></li><li data-type='method'><a href="ColliderModule.html#update">update</a></li></ul></li><li class="accordion collapsed child" id=4214887><div class="accordion-heading child"><a href="CommandModule.html">CommandModule</a><svg><use xlink:href="#down-icon"></use></svg></div><ul class='methods accordion-content'><li data-type='method'><a href="CommandModule.html#getData">getData</a></li><li data-type='method'><a href="CommandModule.html#getGameObjectUUID">getGameObjectUUID</a></li><li data-type='method'><a href="CommandModule.html#getType">getType</a></li><li data-type='method'><a href="CommandModule.html#getUserID">getUserID</a></li><li data-type='method'><a href="CommandModule.html#setGameObjectUUID">setGameObjectUUID</a></li><li data-type='method'><a href="CommandModule.html#setUserID">setUserID</a></li><li data-type='method'><a href="CommandModule.html#toJSON">toJSON</a></li></ul></li><li class="accordion collapsed child" id=4772780><div class="accordion-heading child"><a href="GameObjectModule.html">GameObjectModule</a><svg><use xlink:href="#down-icon"></use></svg></div><ul class='methods accordion-content'><li data-type='method'><a href="GameObjectModule.html#.deepCopy">deepCopy</a></li><li data-type='method'><a href="GameObjectModule.html#.findObject3D">findObject3D</a></li><li data-type='method'><a href="GameObjectModule.html#.interpolateInPlace">interpolateInPlace</a></li><li data-type='method'><a href="GameObjectModule.html#addChild">addChild</a></li><li data-type='method'><a href="GameObjectModule.html#clampRotation">clampRotation</a></li><li data-type='method'><a href="GameObjectModule.html#clone">clone</a></li><li data-type='method'><a href="GameObjectModule.html#computeBackwardVector">computeBackwardVector</a></li><li data-type='method'><a href="GameObjectModule.html#computeDownVector">computeDownVector</a></li><li data-type='method'><a href="GameObjectModule.html#computeForwardVector">computeForwardVector</a></li><li data-type='method'><a href="GameObjectModule.html#computeLeftVector">computeLeftVector</a></li><li data-type='method'><a href="GameObjectModule.html#computeObject3D">computeObject3D</a></li><li data-type='method'><a href="GameObjectModule.html#computeRightVector">computeRightVector</a></li><li data-type='method'><a href="GameObjectModule.html#computeRoot">computeRoot</a></li><li data-type='method'><a href="GameObjectModule.html#computeUpVector">computeUpVector</a></li><li data-type='method'><a href="GameObjectModule.html#computeWorldTransform">computeWorldTransform</a></li><li data-type='method'><a href="GameObjectModule.html#executeWorldScripts">executeWorldScripts</a></li><li data-type='method'><a href="GameObjectModule.html#fetchWorldScripts">fetchWorldScripts</a></li><li data-type='method'><a href="GameObjectModule.html#find">find</a></li><li data-type='method'><a href="GameObjectModule.html#findByName">findByName</a></li><li data-type='method'><a href="GameObjectModule.html#getChildren">getChildren</a></li><li data-type='method'><a href="GameObjectModule.html#getComponent">getComponent</a></li><li data-type='method'><a href="GameObjectModule.html#getComponentByUUID">getComponentByUUID</a></li><li data-type='method'><a href="GameObjectModule.html#getDefaultForward">getDefaultForward</a></li><li data-type='method'><a href="GameObjectModule.html#getFreeze">getFreeze</a></li><li data-type='method'><a href="GameObjectModule.html#getName">getName</a></li><li data-type='method'><a href="GameObjectModule.html#getParentUUID">getParentUUID</a></li><li data-type='method'><a href="GameObjectModule.html#getPosition">getPosition</a></li><li data-type='method'><a href="GameObjectModule.html#getRotation">getRotation</a></li><li data-type='method'><a href="GameObjectModule.html#getScale">getScale</a></li><li data-type='method'><a href="GameObjectModule.html#getUUID">getUUID</a></li><li data-type='method'><a href="GameObjectModule.html#hasNoLocalUpdate">hasNoLocalUpdate</a></li><li data-type='method'><a href="GameObjectModule.html#initAssetsComponents">initAssetsComponents</a></li><li data-type='method'><a href="GameObjectModule.html#isOutdated">isOutdated</a></li><li data-type='method'><a href="GameObjectModule.html#isStatic">isStatic</a></li><li data-type='method'><a href="GameObjectModule.html#move">move</a></li><li data-type='method'><a href="GameObjectModule.html#removeFromParent">removeFromParent</a></li><li data-type='method'><a href="GameObjectModule.html#rotate">rotate</a></li><li data-type='method'><a href="GameObjectModule.html#setComponent">setComponent</a></li><li data-type='method'><a href="GameObjectModule.html#setComponentsFromJSON">setComponentsFromJSON</a></li><li data-type='method'><a href="GameObjectModule.html#setFreeze">setFreeze</a></li><li data-type='method'><a href="GameObjectModule.html#setFromJSON">setFromJSON</a></li><li data-type='method'><a href="GameObjectModule.html#setFromTransformJSON">setFromTransformJSON</a></li><li data-type='method'><a href="GameObjectModule.html#setName">setName</a></li><li data-type='method'><a href="GameObjectModule.html#setOutdated">setOutdated</a></li><li data-type='method'><a href="GameObjectModule.html#setParent">setParent</a></li><li data-type='method'><a href="GameObjectModule.html#setPosition">setPosition</a></li><li data-type='method'><a href="GameObjectModule.html#setRotation">setRotation</a></li><li data-type='method'><a href="GameObjectModule.html#setScale">setScale</a></li><li data-type='method'><a href="GameObjectModule.html#setTransformFromGO">setTransformFromGO</a></li><li data-type='method'><a href="GameObjectModule.html#toJSON">toJSON</a></li><li data-type='method'><a href="GameObjectModule.html#traverse">traverse</a></li></ul></li><li class="accordion collapsed child" id=4087025><div class="accordion-heading child"><a href="LocalScriptModule.html">LocalScriptModule</a><svg><use xlink:href="#down-icon"></use></svg></div><ul class='methods accordion-content'><li data-type='method'><a href="LocalScriptModule.html#execute">execute</a></li><li data-type='method'><a href="LocalScriptModule.html#executeScript">executeScript</a></li><li data-type='method'><a href="LocalScriptModule.html#getConf">getConf</a></li><li data-type='method'><a href="LocalScriptModule.html#getScripts">getScripts</a></li><li data-type='method'><a href="LocalScriptModule.html#initAssets">initAssets</a></li><li data-type='method'><a href="LocalScriptModule.html#isServerSide">isServerSide</a></li><li data-type='method'><a href="LocalScriptModule.html#toJSON">toJSON</a></li></ul></li><li class="accordion collapsed child" id=1192412><div class="accordion-heading child"><a href="module.html#.exports">exports</a><svg><use xlink:href="#down-icon"></use></svg></div><ul class='methods accordion-content'><li data-type='method'><a href="module.html#.exports#.equals">equals</a></li><li data-type='method'><a href="module.html#.exports#.overWrite">overWrite</a></li><li data-type='method'><a href="module.html#.exports#.pack">pack</a></li><li data-type='method'><a href="module.html#.exports#.parse">parse</a></li><li data-type='method'><a href="module.html#.exports#.parseNumeric">parseNumeric</a></li><li data-type='method'><a href="module.html#.exports#.parseVector3">parseVector3</a></li><li data-type='method'><a href="module.html#.exports#.unpack">unpack</a></li><li data-type='method'><a href="module.html#.exports#_computeCurrentServerTime">_computeCurrentServerTime</a></li><li data-type='method'><a href="module.html#.exports#_computeIndexBaseState">_computeIndexBaseState</a></li><li data-type='method'><a href="module.html#.exports#_getLastStateReceived">_getLastStateReceived</a></li><li data-type='method'><a href="module.html#.exports#computeCurrentState">computeCurrentState</a></li><li data-type='method'><a href="module.html#.exports#getAssetsManager">getAssetsManager</a></li><li data-type='method'><a href="module.html#.exports#getBundles">getBundles</a></li><li data-type='method'><a href="module.html#.exports#getCommands">getCommands</a></li><li data-type='method'><a href="module.html#.exports#getDt">getDt</a></li><li data-type='method'><a href="module.html#.exports#getGameObjectsUUID">getGameObjectsUUID</a></li><li data-type='method'><a href="module.html#.exports#getOutdatedGameObjectsJSON">getOutdatedGameObjectsJSON</a></li><li data-type='method'><a href="module.html#.exports#getRenderDelay">getRenderDelay</a></li><li data-type='method'><a href="module.html#.exports#getTimeStamp">getTimeStamp</a></li><li data-type='method'><a href="module.html#.exports#getWorld">getWorld</a></li><li data-type='method'><a href="module.html#.exports#getWorldUUID">getWorldUUID</a></li><li data-type='method'><a href="module.html#.exports#onFirstState">onFirstState</a></li><li data-type='method'><a href="module.html#.exports#onNewDiff">onNewDiff</a></li><li data-type='method'><a href="module.html#.exports#onNewState">onNewState</a></li><li data-type='method'><a href="module.html#.exports#setDt">setDt</a></li><li data-type='method'><a href="module.html#.exports#setWorld">setWorld</a></li><li data-type='method'><a href="module.html#.exports#stop">stop</a></li><li data-type='method'><a href="module.html#.exports#toJSON">toJSON</a></li></ul></li><li class="accordion collapsed child" id=1254938><div class="accordion-heading child"><a href="RenderModule.html">RenderModule</a><svg><use xlink:href="#down-icon"></use></svg></div><ul class='methods accordion-content'><li data-type='method'><a href="RenderModule.html#addObject3D">addObject3D</a></li><li data-type='method'><a href="RenderModule.html#getColor">getColor</a></li><li data-type='method'><a href="RenderModule.html#getObject3D">getObject3D</a></li><li data-type='method'><a href="RenderModule.html#initAssets">initAssets</a></li><li data-type='method'><a href="RenderModule.html#isServerSide">isServerSide</a></li><li data-type='method'><a href="RenderModule.html#setColor">setColor</a></li><li data-type='method'><a href="RenderModule.html#toJSON">toJSON</a></li></ul></li><li class="accordion collapsed child" id=6978207><div class="accordion-heading child"><a href="ShapeWrapper.html">ShapeWrapper</a><svg><use xlink:href="#down-icon"></use></svg></div><ul class='methods accordion-content'><li data-type='method'><a href="ShapeWrapper.html#getGameObject">getGameObject</a></li><li data-type='method'><a href="ShapeWrapper.html#getShape">getShape</a></li><li data-type='method'><a href="ShapeWrapper.html#initFromJSON">initFromJSON</a></li></ul></li><li class="accordion collapsed child" id=4358855><div class="accordion-heading child"><a href="WorldModule.html">WorldModule</a><svg><use xlink:href="#down-icon"></use></svg></div><ul class='methods accordion-content'><li data-type='method'><a href="WorldModule.html#addGameObject">addGameObject</a></li><li data-type='method'><a href="WorldModule.html#clone">clone</a></li><li data-type='method'><a href="WorldModule.html#computePromisesLoad">computePromisesLoad</a></li><li data-type='method'><a href="WorldModule.html#computeWorldState">computeWorldState</a></li><li data-type='method'><a href="WorldModule.html#getCollisions">getCollisions</a></li><li data-type='method'><a href="WorldModule.html#getGameObject">getGameObject</a></li><li data-type='method'><a href="WorldModule.html#getName">getName</a></li><li data-type='method'><a href="WorldModule.html#getUUID">getUUID</a></li><li data-type='method'><a href="WorldModule.html#load">load</a></li><li data-type='method'><a href="WorldModule.html#notify">notify</a></li><li data-type='method'><a href="WorldModule.html#on">on</a></li><li data-type='method'><a href="WorldModule.html#registerGOCollision">registerGOCollision</a></li><li data-type='method'><a href="WorldModule.html#removeGameObject">removeGameObject</a></li><li data-type='method'><a href="WorldModule.html#setGameObject">setGameObject</a></li><li data-type='method'><a href="WorldModule.html#tick">tick</a></li><li data-type='method'><a href="WorldModule.html#toJSON">toJSON</a></li><li data-type='method'><a href="WorldModule.html#unregisterGOCollision">unregisterGOCollision</a></li><li data-type='method'><a href="WorldModule.html#updateCollisionBuffer">updateCollisionBuffer</a></li></ul></li><li class="accordion collapsed child" id=95882><div class="accordion-heading child"><a href="WorldScriptModule.html">WorldScriptModule</a><svg><use xlink:href="#down-icon"></use></svg></div><ul class='methods accordion-content'><li data-type='method'><a href="WorldScriptModule.html#execute">execute</a></li><li data-type='method'><a href="WorldScriptModule.html#executeScript">executeScript</a></li><li data-type='method'><a href="WorldScriptModule.html#getConf">getConf</a></li><li data-type='method'><a href="WorldScriptModule.html#getScripts">getScripts</a></li><li data-type='method'><a href="WorldScriptModule.html#initAssets">initAssets</a></li><li data-type='method'><a href="WorldScriptModule.html#isServerSide">isServerSide</a></li><li data-type='method'><a href="WorldScriptModule.html#toJSON">toJSON</a></li></ul></li><li class="accordion collapsed child" id=657097><div class="accordion-heading child"><a href="WorldStateComputerModule.html">WorldStateComputerModule</a><svg><use xlink:href="#down-icon"></use></svg></div><ul class='methods accordion-content'><li data-type='method'><a href="WorldStateComputerModule.html#.WorldTest">WorldTest</a></li><li data-type='method'><a href="WorldStateComputerModule.html#addAfterTickRequester">addAfterTickRequester</a></li><li data-type='method'><a href="WorldStateComputerModule.html#computeCurrentState">computeCurrentState</a></li><li data-type='method'><a href="WorldStateComputerModule.html#getWorldContext">getWorldContext</a></li><li data-type='method'><a href="WorldStateComputerModule.html#onAddGameObject">onAddGameObject</a></li><li data-type='method'><a href="WorldStateComputerModule.html#onCommands">onCommands</a></li><li data-type='method'><a href="WorldStateComputerModule.html#onRemoveGameObject">onRemoveGameObject</a></li><li data-type='method'><a href="WorldStateComputerModule.html#setPause">setPause</a></li><li data-type='method'><a href="WorldStateComputerModule.html#start">start</a></li><li data-type='method'><a href="WorldStateComputerModule.html#stop">stop</a></li></ul></li><li class="accordion collapsed child" id=300808><div class="accordion-heading child"><a href="WorldStateModule.html">WorldStateModule</a><svg><use xlink:href="#down-icon"></use></svg></div><ul class='methods accordion-content'><li data-type='method'><a href="WorldStateModule.html#.interpolate">interpolate</a></li><li data-type='method'><a href="WorldStateModule.html#add">add</a></li><li data-type='method'><a href="WorldStateModule.html#clone">clone</a></li><li data-type='method'><a href="WorldStateModule.html#getGameObject">getGameObject</a></li><li data-type='method'><a href="WorldStateModule.html#getOrigin">getOrigin</a></li><li data-type='method'><a href="WorldStateModule.html#getTimestamp">getTimestamp</a></li><li data-type='method'><a href="WorldStateModule.html#getWorldUUID">getWorldUUID</a></li><li data-type='method'><a href="WorldStateModule.html#includes">includes</a></li><li data-type='method'><a href="WorldStateModule.html#setGameObject">setGameObject</a></li><li data-type='method'><a href="WorldStateModule.html#toDiff">toDiff</a></li><li data-type='method'><a href="WorldStateModule.html#toJSON">toJSON</a></li></ul></li></ul> </div><div class="accordion collapsed" id="2462487" > <h3 class="accordion-heading">Global<svg><use xlink:href="#down-icon"></use></svg></h3><ul class="accordion-content"><li class="accordion-list" id=""><a href="global.html#checkIfSubStringIsEuler">checkIfSubStringIsEuler</a></li><li class="accordion-list" id=""><a href="global.html#checkIfSubStringIsVector3">checkIfSubStringIsVector3</a></li><li class="accordion-list" id=""><a href="global.html#eulerArrayFromURIComponent">eulerArrayFromURIComponent</a></li><li class="accordion-list" id=""><a href="global.html#GameObject">GameObject</a></li><li class="accordion-list" id=""><a href="global.html#pack">pack</a></li><li class="accordion-list" id=""><a href="global.html#THREE">THREE</a></li><li class="accordion-list" id=""><a href="global.html#unpack">unpack</a></li><li class="accordion-list" id=""><a href="global.html#vector3ArrayFromURIComponent">vector3ArrayFromURIComponent</a></li></ul> </div>
+      
+
+    </nav>
+    <div class="navbar-ham" id="navbar-ham">
+      <div>
+        <div class="first"></div>
+        <div class="second"></div>
+        <div class="third"></div>
+      </div>
+    </div>
+
+    <div id="main" class="main-content">
+      
+      <h1 id='page-title' class="page-title">
+        WorldStateComputer.js
+      </h1>
+      
+
+      
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>
+
+const World = require('./World');
+const WorldContext = require('./WorldContext');
+
+/**
+ * StateComputer working locally
+ */
+const WorldStateComputerModule = class WorldStateComputer {
+  constructor(assetsManager, fps, bundles) {
+    this.worldContext = new WorldContext({
+      world: null,
+      assetsManager: assetsManager,
+      bundles: bundles,
+    });
+
+    this.fps = fps || 60;
+
+    this.afterTickRequester = [];
+
+    this.pause = false;
+
+    this.interval = null;
+  }
+
+  /**
+   * Stop tick of this
+   */
+  stop() {
+    if (this.interval) clearInterval(this.interval);
+  }
+
+  /**
+   * True tick world false stop ticking world
+   *
+   * @param {boolean} value
+   */
+  setPause(value) {
+    this.pause = value;
+  }
+
+  /**
+   * Add a callback call at after each tick
+   *
+   * @param {Function} cb
+   */
+  addAfterTickRequester(cb) {
+    this.afterTickRequester.push(cb);
+  }
+
+  resetAfterTickRequester() {
+    this.afterTickRequester.length = 0;
+  }
+
+  /**
+   * Init worldcontext and start ticking
+   *
+   * @param {World} world world to tick
+   * @param {Function} onLoad call at the end of world load
+   */
+  start(world, onLoad) {
+    const wC = this.worldContext;
+    const _this = this;
+
+    wC.setWorld(world);
+
+    let lastTimeTick = 0;
+
+    world.load(function () {
+      // Loop
+      const tick = function () {
+        if (_this.pause) return;
+
+        const now = Date.now();
+        if (!lastTimeTick) {
+          wC.setDt(0);
+        } else {
+          wC.setDt(now - lastTimeTick);
+        }
+        lastTimeTick = now;
+
+        wC.getWorld().tick(wC); // Tick with user commands
+        wC.getCommands().length = 0; // Clear commands
+
+        _this.afterTickRequester.forEach(function (cb) {
+          cb();
+        });
+      };
+
+      const fps = _this.fps;
+      if (!fps) throw new Error('no fps');
+      _this.interval = setInterval(tick, 1000 / fps);
+
+      if (onLoad) onLoad();
+    }, this.worldContext);
+  }
+
+  /**
+   * Pass commands for the next tick
+   *
+   * @param {Array[Command]} cmds
+   */
+  onCommands(cmds) {
+    const a = this.worldContext.getCommands();
+    cmds.forEach(function (cmd) {
+      a.push(cmd);
+    });
+  }
+
+  /**
+   * Add a new GameObject to the world and call onAdd when object is loaded
+   *
+   * @param {GameObject} newGO
+   * @param {Function} onAdd
+   */
+  onAddGameObject(newGO, onAdd) {
+    this.worldContext
+      .getWorld()
+      .addGameObject(
+        newGO,
+        this.worldContext,
+        this.worldContext.getWorld().getGameObject(),
+        onAdd
+      );
+  }
+
+  /**
+   * Remove the GameObject with the uuid
+   *
+   * @param {string} uuid
+   */
+  onRemoveGameObject(uuid) {
+    this.worldContext.getWorld().removeGameObject(uuid);
+  }
+
+  /**
+   *
+   * @returns {WorldContext}
+   */
+  getWorldContext() {
+    return this.worldContext;
+  }
+
+  // StateComputer INTERFACE
+
+  /**
+   * Compute the current world state
+   *
+   * @param withServerComponent
+   * @returns {WorldState}
+   */
+  computeCurrentState(withServerComponent = true) {
+    return this.worldContext.getWorld().computeWorldState(withServerComponent);
+  }
+};
+
+/**
+ * Load a world and tick during 1000ms then stop
+ *
+ * @param {World} world the world to load
+ * @param {AssetsManager} assetsManager manager needed to load world assets
+ * @param {Bundles} bundles bundles needed to load the world
+ * @returns
+ */
+WorldStateComputerModule.WorldTest = function (world, assetsManager, bundles) {
+  return new Promise((resolve) => {
+    const c = new WorldStateComputerModule(assetsManager, 60, bundles);
+    c.start(world, function () {
+      console.log(world.getName(), ' has loaded');
+      setTimeout(function () {
+        c.stop();
+        console.log('stop test ', world.getName());
+        resolve();
+      }, 1000); // Stop after 1000ms
+    });
+  });
+};
+
+module.exports = WorldStateComputerModule;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+    </div>
+
+    <footer class="footer" id="footer">
+      Fork: <a href='https://github.com/VCityTeam/UD-Viz'>https://github.com/VCityTeam/UD-Viz</a>
+    </footer>
+
+    <script src="scripts/third-party/prettify.js"></script>
+    <script src="scripts/third-party/lang-css.js"></script>
+    <script type="text/javascript" src="scripts/misc.js"></script>
+
+    <script>prettyPrint();</script>
+    <script src="scripts/linenumber.js"></script>
+    <script src="scripts/fix-code-block.js"></script>
+    <script src="scripts/fix-navbar.js"></script>
+    
+      <script src="scripts/search.js"></script>
+      <script src="scripts/third-party/fuse.js"></script>
+      <script>
+        var list = [{"title":"AudioModule","link":"<a href=\"AudioModule.html\">AudioModule</a>"},{"title":"AudioModule#addSound","link":"<a href=\"AudioModule.html#addSound\">AudioModule &rtrif; addSound</a>"},{"title":"AudioModule#initAssets","link":"<a href=\"AudioModule.html#initAssets\">AudioModule &rtrif; initAssets</a>"},{"title":"AudioModule#isServerSide","link":"<a href=\"AudioModule.html#isServerSide\">AudioModule &rtrif; isServerSide</a>"},{"title":"AudioModule#reset","link":"<a href=\"AudioModule.html#reset\">AudioModule &rtrif; reset</a>"},{"title":"AudioModule#toJSON","link":"<a href=\"AudioModule.html#toJSON\">AudioModule &rtrif; toJSON</a>"},{"title":"ColliderModule","link":"<a href=\"ColliderModule.html\">ColliderModule</a>"},{"title":"ColliderModule#createShapeWrappers","link":"<a href=\"ColliderModule.html#createShapeWrappers\">ColliderModule &rtrif; createShapeWrappers</a>"},{"title":"ColliderModule#getShapesJSON","link":"<a href=\"ColliderModule.html#getShapesJSON\">ColliderModule &rtrif; getShapesJSON</a>"},{"title":"ColliderModule#getShapeWrappers","link":"<a href=\"ColliderModule.html#getShapeWrappers\">ColliderModule &rtrif; getShapeWrappers</a>"},{"title":"ColliderModule#initAssets","link":"<a href=\"ColliderModule.html#initAssets\">ColliderModule &rtrif; initAssets</a>"},{"title":"ColliderModule#isBody","link":"<a href=\"ColliderModule.html#isBody\">ColliderModule &rtrif; isBody</a>"},{"title":"ColliderModule#isServerSide","link":"<a href=\"ColliderModule.html#isServerSide\">ColliderModule &rtrif; isServerSide</a>"},{"title":"ColliderModule#setShapesJSON","link":"<a href=\"ColliderModule.html#setShapesJSON\">ColliderModule &rtrif; setShapesJSON</a>"},{"title":"ColliderModule#toJSON","link":"<a href=\"ColliderModule.html#toJSON\">ColliderModule &rtrif; toJSON</a>"},{"title":"ColliderModule#update","link":"<a href=\"ColliderModule.html#update\">ColliderModule &rtrif; update</a>"},{"title":"CommandModule","link":"<a href=\"CommandModule.html\">CommandModule</a>"},{"title":"CommandModule#getData","link":"<a href=\"CommandModule.html#getData\">CommandModule &rtrif; getData</a>"},{"title":"CommandModule#getGameObjectUUID","link":"<a href=\"CommandModule.html#getGameObjectUUID\">CommandModule &rtrif; getGameObjectUUID</a>"},{"title":"CommandModule#getType","link":"<a href=\"CommandModule.html#getType\">CommandModule &rtrif; getType</a>"},{"title":"CommandModule#getUserID","link":"<a href=\"CommandModule.html#getUserID\">CommandModule &rtrif; getUserID</a>"},{"title":"CommandModule#setGameObjectUUID","link":"<a href=\"CommandModule.html#setGameObjectUUID\">CommandModule &rtrif; setGameObjectUUID</a>"},{"title":"CommandModule#setUserID","link":"<a href=\"CommandModule.html#setUserID\">CommandModule &rtrif; setUserID</a>"},{"title":"CommandModule#toJSON","link":"<a href=\"CommandModule.html#toJSON\">CommandModule &rtrif; toJSON</a>"},{"title":"GameObjectModule","link":"<a href=\"GameObjectModule.html\">GameObjectModule</a>"},{"title":"GameObjectModule.deepCopy","link":"<a href=\"GameObjectModule.html#.deepCopy\">GameObjectModule &rtrif; deepCopy</a>"},{"title":"GameObjectModule.findObject3D","link":"<a href=\"GameObjectModule.html#.findObject3D\">GameObjectModule &rtrif; findObject3D</a>"},{"title":"GameObjectModule.interpolateInPlace","link":"<a href=\"GameObjectModule.html#.interpolateInPlace\">GameObjectModule &rtrif; interpolateInPlace</a>"},{"title":"GameObjectModule#addChild","link":"<a href=\"GameObjectModule.html#addChild\">GameObjectModule &rtrif; addChild</a>"},{"title":"GameObjectModule#clampRotation","link":"<a href=\"GameObjectModule.html#clampRotation\">GameObjectModule &rtrif; clampRotation</a>"},{"title":"GameObjectModule#clone","link":"<a href=\"GameObjectModule.html#clone\">GameObjectModule &rtrif; clone</a>"},{"title":"GameObjectModule#computeBackwardVector","link":"<a href=\"GameObjectModule.html#computeBackwardVector\">GameObjectModule &rtrif; computeBackwardVector</a>"},{"title":"GameObjectModule#computeDownVector","link":"<a href=\"GameObjectModule.html#computeDownVector\">GameObjectModule &rtrif; computeDownVector</a>"},{"title":"GameObjectModule#computeForwardVector","link":"<a href=\"GameObjectModule.html#computeForwardVector\">GameObjectModule &rtrif; computeForwardVector</a>"},{"title":"GameObjectModule#computeLeftVector","link":"<a href=\"GameObjectModule.html#computeLeftVector\">GameObjectModule &rtrif; computeLeftVector</a>"},{"title":"GameObjectModule#computeObject3D","link":"<a href=\"GameObjectModule.html#computeObject3D\">GameObjectModule &rtrif; computeObject3D</a>"},{"title":"GameObjectModule#computeRightVector","link":"<a href=\"GameObjectModule.html#computeRightVector\">GameObjectModule &rtrif; computeRightVector</a>"},{"title":"GameObjectModule#computeRoot","link":"<a href=\"GameObjectModule.html#computeRoot\">GameObjectModule &rtrif; computeRoot</a>"},{"title":"GameObjectModule#computeUpVector","link":"<a href=\"GameObjectModule.html#computeUpVector\">GameObjectModule &rtrif; computeUpVector</a>"},{"title":"GameObjectModule#computeWorldTransform","link":"<a href=\"GameObjectModule.html#computeWorldTransform\">GameObjectModule &rtrif; computeWorldTransform</a>"},{"title":"GameObjectModule#executeWorldScripts","link":"<a href=\"GameObjectModule.html#executeWorldScripts\">GameObjectModule &rtrif; executeWorldScripts</a>"},{"title":"GameObjectModule#fetchWorldScripts","link":"<a href=\"GameObjectModule.html#fetchWorldScripts\">GameObjectModule &rtrif; fetchWorldScripts</a>"},{"title":"GameObjectModule#find","link":"<a href=\"GameObjectModule.html#find\">GameObjectModule &rtrif; find</a>"},{"title":"GameObjectModule#findByName","link":"<a href=\"GameObjectModule.html#findByName\">GameObjectModule &rtrif; findByName</a>"},{"title":"GameObjectModule#getChildren","link":"<a href=\"GameObjectModule.html#getChildren\">GameObjectModule &rtrif; getChildren</a>"},{"title":"GameObjectModule#getComponent","link":"<a href=\"GameObjectModule.html#getComponent\">GameObjectModule &rtrif; getComponent</a>"},{"title":"GameObjectModule#getComponentByUUID","link":"<a href=\"GameObjectModule.html#getComponentByUUID\">GameObjectModule &rtrif; getComponentByUUID</a>"},{"title":"GameObjectModule#getDefaultForward","link":"<a href=\"GameObjectModule.html#getDefaultForward\">GameObjectModule &rtrif; getDefaultForward</a>"},{"title":"GameObjectModule#getFreeze","link":"<a href=\"GameObjectModule.html#getFreeze\">GameObjectModule &rtrif; getFreeze</a>"},{"title":"GameObjectModule#getName","link":"<a href=\"GameObjectModule.html#getName\">GameObjectModule &rtrif; getName</a>"},{"title":"GameObjectModule#getParentUUID","link":"<a href=\"GameObjectModule.html#getParentUUID\">GameObjectModule &rtrif; getParentUUID</a>"},{"title":"GameObjectModule#getPosition","link":"<a href=\"GameObjectModule.html#getPosition\">GameObjectModule &rtrif; getPosition</a>"},{"title":"GameObjectModule#getRotation","link":"<a href=\"GameObjectModule.html#getRotation\">GameObjectModule &rtrif; getRotation</a>"},{"title":"GameObjectModule#getScale","link":"<a href=\"GameObjectModule.html#getScale\">GameObjectModule &rtrif; getScale</a>"},{"title":"GameObjectModule#getUUID","link":"<a href=\"GameObjectModule.html#getUUID\">GameObjectModule &rtrif; getUUID</a>"},{"title":"GameObjectModule#hasNoLocalUpdate","link":"<a href=\"GameObjectModule.html#hasNoLocalUpdate\">GameObjectModule &rtrif; hasNoLocalUpdate</a>"},{"title":"GameObjectModule#initAssetsComponents","link":"<a href=\"GameObjectModule.html#initAssetsComponents\">GameObjectModule &rtrif; initAssetsComponents</a>"},{"title":"GameObjectModule#isOutdated","link":"<a href=\"GameObjectModule.html#isOutdated\">GameObjectModule &rtrif; isOutdated</a>"},{"title":"GameObjectModule#isStatic","link":"<a href=\"GameObjectModule.html#isStatic\">GameObjectModule &rtrif; isStatic</a>"},{"title":"GameObjectModule#move","link":"<a href=\"GameObjectModule.html#move\">GameObjectModule &rtrif; move</a>"},{"title":"GameObjectModule#removeFromParent","link":"<a href=\"GameObjectModule.html#removeFromParent\">GameObjectModule &rtrif; removeFromParent</a>"},{"title":"GameObjectModule#rotate","link":"<a href=\"GameObjectModule.html#rotate\">GameObjectModule &rtrif; rotate</a>"},{"title":"GameObjectModule#setComponent","link":"<a href=\"GameObjectModule.html#setComponent\">GameObjectModule &rtrif; setComponent</a>"},{"title":"GameObjectModule#setComponentsFromJSON","link":"<a href=\"GameObjectModule.html#setComponentsFromJSON\">GameObjectModule &rtrif; setComponentsFromJSON</a>"},{"title":"GameObjectModule#setFreeze","link":"<a href=\"GameObjectModule.html#setFreeze\">GameObjectModule &rtrif; setFreeze</a>"},{"title":"GameObjectModule#setFromJSON","link":"<a href=\"GameObjectModule.html#setFromJSON\">GameObjectModule &rtrif; setFromJSON</a>"},{"title":"GameObjectModule#setFromTransformJSON","link":"<a href=\"GameObjectModule.html#setFromTransformJSON\">GameObjectModule &rtrif; setFromTransformJSON</a>"},{"title":"GameObjectModule#setName","link":"<a href=\"GameObjectModule.html#setName\">GameObjectModule &rtrif; setName</a>"},{"title":"GameObjectModule#setOutdated","link":"<a href=\"GameObjectModule.html#setOutdated\">GameObjectModule &rtrif; setOutdated</a>"},{"title":"GameObjectModule#setParent","link":"<a href=\"GameObjectModule.html#setParent\">GameObjectModule &rtrif; setParent</a>"},{"title":"GameObjectModule#setPosition","link":"<a href=\"GameObjectModule.html#setPosition\">GameObjectModule &rtrif; setPosition</a>"},{"title":"GameObjectModule#setRotation","link":"<a href=\"GameObjectModule.html#setRotation\">GameObjectModule &rtrif; setRotation</a>"},{"title":"GameObjectModule#setScale","link":"<a href=\"GameObjectModule.html#setScale\">GameObjectModule &rtrif; setScale</a>"},{"title":"GameObjectModule#setTransformFromGO","link":"<a href=\"GameObjectModule.html#setTransformFromGO\">GameObjectModule &rtrif; setTransformFromGO</a>"},{"title":"GameObjectModule#toJSON","link":"<a href=\"GameObjectModule.html#toJSON\">GameObjectModule &rtrif; toJSON</a>"},{"title":"GameObjectModule#traverse","link":"<a href=\"GameObjectModule.html#traverse\">GameObjectModule &rtrif; traverse</a>"},{"title":"LocalScriptModule","link":"<a href=\"LocalScriptModule.html\">LocalScriptModule</a>"},{"title":"LocalScriptModule#execute","link":"<a href=\"LocalScriptModule.html#execute\">LocalScriptModule &rtrif; execute</a>"},{"title":"LocalScriptModule#executeScript","link":"<a href=\"LocalScriptModule.html#executeScript\">LocalScriptModule &rtrif; executeScript</a>"},{"title":"LocalScriptModule#getConf","link":"<a href=\"LocalScriptModule.html#getConf\">LocalScriptModule &rtrif; getConf</a>"},{"title":"LocalScriptModule#getScripts","link":"<a href=\"LocalScriptModule.html#getScripts\">LocalScriptModule &rtrif; getScripts</a>"},{"title":"LocalScriptModule#initAssets","link":"<a href=\"LocalScriptModule.html#initAssets\">LocalScriptModule &rtrif; initAssets</a>"},{"title":"LocalScriptModule#isServerSide","link":"<a href=\"LocalScriptModule.html#isServerSide\">LocalScriptModule &rtrif; isServerSide</a>"},{"title":"LocalScriptModule#toJSON","link":"<a href=\"LocalScriptModule.html#toJSON\">LocalScriptModule &rtrif; toJSON</a>"},{"title":"exports","link":"<a href=\"module.html#.exports\">exports</a>"},{"title":"module.exports.equals","link":"<a href=\"module.html#.exports#.equals\">module &rtrif; exports</a>"},{"title":"module.exports.overWrite","link":"<a href=\"module.html#.exports#.overWrite\">module &rtrif; exports</a>"},{"title":"module.exports.pack","link":"<a href=\"module.html#.exports#.pack\">module &rtrif; exports</a>"},{"title":"module.exports.parse","link":"<a href=\"module.html#.exports#.parse\">module &rtrif; exports</a>"},{"title":"module.exports.parseNumeric","link":"<a href=\"module.html#.exports#.parseNumeric\">module &rtrif; exports</a>"},{"title":"module.exports.parseVector3","link":"<a href=\"module.html#.exports#.parseVector3\">module &rtrif; exports</a>"},{"title":"module.exports.unpack","link":"<a href=\"module.html#.exports#.unpack\">module &rtrif; exports</a>"},{"title":"module.exports#_computeCurrentServerTime","link":"<a href=\"module.html#.exports#_computeCurrentServerTime\">module.exports &rtrif; _computeCurrentServerTime</a>"},{"title":"module.exports#_computeIndexBaseState","link":"<a href=\"module.html#.exports#_computeIndexBaseState\">module.exports &rtrif; _computeIndexBaseState</a>"},{"title":"module.exports#_getLastStateReceived","link":"<a href=\"module.html#.exports#_getLastStateReceived\">module.exports &rtrif; _getLastStateReceived</a>"},{"title":"module.exports#computeCurrentState","link":"<a href=\"module.html#.exports#computeCurrentState\">module.exports &rtrif; computeCurrentState</a>"},{"title":"module.exports#getAssetsManager","link":"<a href=\"module.html#.exports#getAssetsManager\">module.exports &rtrif; getAssetsManager</a>"},{"title":"module.exports#getBundles","link":"<a href=\"module.html#.exports#getBundles\">module.exports &rtrif; getBundles</a>"},{"title":"module.exports#getCommands","link":"<a href=\"module.html#.exports#getCommands\">module.exports &rtrif; getCommands</a>"},{"title":"module.exports#getDt","link":"<a href=\"module.html#.exports#getDt\">module.exports &rtrif; getDt</a>"},{"title":"module.exports#getGameObjectsUUID","link":"<a href=\"module.html#.exports#getGameObjectsUUID\">module.exports &rtrif; getGameObjectsUUID</a>"},{"title":"module.exports#getOutdatedGameObjectsJSON","link":"<a href=\"module.html#.exports#getOutdatedGameObjectsJSON\">module.exports &rtrif; getOutdatedGameObjectsJSON</a>"},{"title":"module.exports#getRenderDelay","link":"<a href=\"module.html#.exports#getRenderDelay\">module.exports &rtrif; getRenderDelay</a>"},{"title":"module.exports#getTimeStamp","link":"<a href=\"module.html#.exports#getTimeStamp\">module.exports &rtrif; getTimeStamp</a>"},{"title":"module.exports#getWorld","link":"<a href=\"module.html#.exports#getWorld\">module.exports &rtrif; getWorld</a>"},{"title":"module.exports#getWorldUUID","link":"<a href=\"module.html#.exports#getWorldUUID\">module.exports &rtrif; getWorldUUID</a>"},{"title":"module.exports#onFirstState","link":"<a href=\"module.html#.exports#onFirstState\">module.exports &rtrif; onFirstState</a>"},{"title":"module.exports#onNewDiff","link":"<a href=\"module.html#.exports#onNewDiff\">module.exports &rtrif; onNewDiff</a>"},{"title":"module.exports#onNewState","link":"<a href=\"module.html#.exports#onNewState\">module.exports &rtrif; onNewState</a>"},{"title":"module.exports#setDt","link":"<a href=\"module.html#.exports#setDt\">module.exports &rtrif; setDt</a>"},{"title":"module.exports#setWorld","link":"<a href=\"module.html#.exports#setWorld\">module.exports &rtrif; setWorld</a>"},{"title":"module.exports#stop","link":"<a href=\"module.html#.exports#stop\">module.exports &rtrif; stop</a>"},{"title":"module.exports#toJSON","link":"<a href=\"module.html#.exports#toJSON\">module.exports &rtrif; toJSON</a>"},{"title":"RenderModule","link":"<a href=\"RenderModule.html\">RenderModule</a>"},{"title":"RenderModule#addObject3D","link":"<a href=\"RenderModule.html#addObject3D\">RenderModule &rtrif; addObject3D</a>"},{"title":"RenderModule#getColor","link":"<a href=\"RenderModule.html#getColor\">RenderModule &rtrif; getColor</a>"},{"title":"RenderModule#getObject3D","link":"<a href=\"RenderModule.html#getObject3D\">RenderModule &rtrif; getObject3D</a>"},{"title":"RenderModule#initAssets","link":"<a href=\"RenderModule.html#initAssets\">RenderModule &rtrif; initAssets</a>"},{"title":"RenderModule#isServerSide","link":"<a href=\"RenderModule.html#isServerSide\">RenderModule &rtrif; isServerSide</a>"},{"title":"RenderModule#setColor","link":"<a href=\"RenderModule.html#setColor\">RenderModule &rtrif; setColor</a>"},{"title":"RenderModule#toJSON","link":"<a href=\"RenderModule.html#toJSON\">RenderModule &rtrif; toJSON</a>"},{"title":"ShapeWrapper","link":"<a href=\"ShapeWrapper.html\">ShapeWrapper</a>"},{"title":"ShapeWrapper#getGameObject","link":"<a href=\"ShapeWrapper.html#getGameObject\">ShapeWrapper &rtrif; getGameObject</a>"},{"title":"ShapeWrapper#getShape","link":"<a href=\"ShapeWrapper.html#getShape\">ShapeWrapper &rtrif; getShape</a>"},{"title":"ShapeWrapper#initFromJSON","link":"<a href=\"ShapeWrapper.html#initFromJSON\">ShapeWrapper &rtrif; initFromJSON</a>"},{"title":"WorldModule","link":"<a href=\"WorldModule.html\">WorldModule</a>"},{"title":"WorldModule#addGameObject","link":"<a href=\"WorldModule.html#addGameObject\">WorldModule &rtrif; addGameObject</a>"},{"title":"WorldModule#clone","link":"<a href=\"WorldModule.html#clone\">WorldModule &rtrif; clone</a>"},{"title":"WorldModule#computePromisesLoad","link":"<a href=\"WorldModule.html#computePromisesLoad\">WorldModule &rtrif; computePromisesLoad</a>"},{"title":"WorldModule#computeWorldState","link":"<a href=\"WorldModule.html#computeWorldState\">WorldModule &rtrif; computeWorldState</a>"},{"title":"WorldModule#getCollisions","link":"<a href=\"WorldModule.html#getCollisions\">WorldModule &rtrif; getCollisions</a>"},{"title":"WorldModule#getGameObject","link":"<a href=\"WorldModule.html#getGameObject\">WorldModule &rtrif; getGameObject</a>"},{"title":"WorldModule#getName","link":"<a href=\"WorldModule.html#getName\">WorldModule &rtrif; getName</a>"},{"title":"WorldModule#getUUID","link":"<a href=\"WorldModule.html#getUUID\">WorldModule &rtrif; getUUID</a>"},{"title":"WorldModule#load","link":"<a href=\"WorldModule.html#load\">WorldModule &rtrif; load</a>"},{"title":"WorldModule#notify","link":"<a href=\"WorldModule.html#notify\">WorldModule &rtrif; notify</a>"},{"title":"WorldModule#on","link":"<a href=\"WorldModule.html#on\">WorldModule &rtrif; on</a>"},{"title":"WorldModule#registerGOCollision","link":"<a href=\"WorldModule.html#registerGOCollision\">WorldModule &rtrif; registerGOCollision</a>"},{"title":"WorldModule#removeGameObject","link":"<a href=\"WorldModule.html#removeGameObject\">WorldModule &rtrif; removeGameObject</a>"},{"title":"WorldModule#setGameObject","link":"<a href=\"WorldModule.html#setGameObject\">WorldModule &rtrif; setGameObject</a>"},{"title":"WorldModule#tick","link":"<a href=\"WorldModule.html#tick\">WorldModule &rtrif; tick</a>"},{"title":"WorldModule#toJSON","link":"<a href=\"WorldModule.html#toJSON\">WorldModule &rtrif; toJSON</a>"},{"title":"WorldModule#unregisterGOCollision","link":"<a href=\"WorldModule.html#unregisterGOCollision\">WorldModule &rtrif; unregisterGOCollision</a>"},{"title":"WorldModule#updateCollisionBuffer","link":"<a href=\"WorldModule.html#updateCollisionBuffer\">WorldModule &rtrif; updateCollisionBuffer</a>"},{"title":"WorldScriptModule","link":"<a href=\"WorldScriptModule.html\">WorldScriptModule</a>"},{"title":"WorldScriptModule#execute","link":"<a href=\"WorldScriptModule.html#execute\">WorldScriptModule &rtrif; execute</a>"},{"title":"WorldScriptModule#executeScript","link":"<a href=\"WorldScriptModule.html#executeScript\">WorldScriptModule &rtrif; executeScript</a>"},{"title":"WorldScriptModule#getConf","link":"<a href=\"WorldScriptModule.html#getConf\">WorldScriptModule &rtrif; getConf</a>"},{"title":"WorldScriptModule#getScripts","link":"<a href=\"WorldScriptModule.html#getScripts\">WorldScriptModule &rtrif; getScripts</a>"},{"title":"WorldScriptModule#initAssets","link":"<a href=\"WorldScriptModule.html#initAssets\">WorldScriptModule &rtrif; initAssets</a>"},{"title":"WorldScriptModule#isServerSide","link":"<a href=\"WorldScriptModule.html#isServerSide\">WorldScriptModule &rtrif; isServerSide</a>"},{"title":"WorldScriptModule#toJSON","link":"<a href=\"WorldScriptModule.html#toJSON\">WorldScriptModule &rtrif; toJSON</a>"},{"title":"WorldStateComputerModule","link":"<a href=\"WorldStateComputerModule.html\">WorldStateComputerModule</a>"},{"title":"WorldStateComputerModule.WorldTest","link":"<a href=\"WorldStateComputerModule.html#.WorldTest\">WorldStateComputerModule &rtrif; WorldTest</a>"},{"title":"WorldStateComputerModule#addAfterTickRequester","link":"<a href=\"WorldStateComputerModule.html#addAfterTickRequester\">WorldStateComputerModule &rtrif; addAfterTickRequester</a>"},{"title":"WorldStateComputerModule#computeCurrentState","link":"<a href=\"WorldStateComputerModule.html#computeCurrentState\">WorldStateComputerModule &rtrif; computeCurrentState</a>"},{"title":"WorldStateComputerModule#getWorldContext","link":"<a href=\"WorldStateComputerModule.html#getWorldContext\">WorldStateComputerModule &rtrif; getWorldContext</a>"},{"title":"WorldStateComputerModule#onAddGameObject","link":"<a href=\"WorldStateComputerModule.html#onAddGameObject\">WorldStateComputerModule &rtrif; onAddGameObject</a>"},{"title":"WorldStateComputerModule#onCommands","link":"<a href=\"WorldStateComputerModule.html#onCommands\">WorldStateComputerModule &rtrif; onCommands</a>"},{"title":"WorldStateComputerModule#onRemoveGameObject","link":"<a href=\"WorldStateComputerModule.html#onRemoveGameObject\">WorldStateComputerModule &rtrif; onRemoveGameObject</a>"},{"title":"WorldStateComputerModule#setPause","link":"<a href=\"WorldStateComputerModule.html#setPause\">WorldStateComputerModule &rtrif; setPause</a>"},{"title":"WorldStateComputerModule#start","link":"<a href=\"WorldStateComputerModule.html#start\">WorldStateComputerModule &rtrif; start</a>"},{"title":"WorldStateComputerModule#stop","link":"<a href=\"WorldStateComputerModule.html#stop\">WorldStateComputerModule &rtrif; stop</a>"},{"title":"WorldStateModule","link":"<a href=\"WorldStateModule.html\">WorldStateModule</a>"},{"title":"WorldStateModule.interpolate","link":"<a href=\"WorldStateModule.html#.interpolate\">WorldStateModule &rtrif; interpolate</a>"},{"title":"WorldStateModule#add","link":"<a href=\"WorldStateModule.html#add\">WorldStateModule &rtrif; add</a>"},{"title":"WorldStateModule#clone","link":"<a href=\"WorldStateModule.html#clone\">WorldStateModule &rtrif; clone</a>"},{"title":"WorldStateModule#getGameObject","link":"<a href=\"WorldStateModule.html#getGameObject\">WorldStateModule &rtrif; getGameObject</a>"},{"title":"WorldStateModule#getOrigin","link":"<a href=\"WorldStateModule.html#getOrigin\">WorldStateModule &rtrif; getOrigin</a>"},{"title":"WorldStateModule#getTimestamp","link":"<a href=\"WorldStateModule.html#getTimestamp\">WorldStateModule &rtrif; getTimestamp</a>"},{"title":"WorldStateModule#getWorldUUID","link":"<a href=\"WorldStateModule.html#getWorldUUID\">WorldStateModule &rtrif; getWorldUUID</a>"},{"title":"WorldStateModule#includes","link":"<a href=\"WorldStateModule.html#includes\">WorldStateModule &rtrif; includes</a>"},{"title":"WorldStateModule#setGameObject","link":"<a href=\"WorldStateModule.html#setGameObject\">WorldStateModule &rtrif; setGameObject</a>"},{"title":"WorldStateModule#toDiff","link":"<a href=\"WorldStateModule.html#toDiff\">WorldStateModule &rtrif; toDiff</a>"},{"title":"WorldStateModule#toJSON","link":"<a href=\"WorldStateModule.html#toJSON\">WorldStateModule &rtrif; toJSON</a>"},{"title":"Changelog","link":"Changelog"},{"title":"ArchitectureMVCTargetDesign","link":"ArchitectureMVCTargetDesign"},{"title":"Configuring-the-Document-model-of-an-UDV-deployment","link":"Configuring-the-Document-model-of-an-UDV-deployment"},{"title":"LocalGameTutorial","link":"LocalGameTutorial"},{"title":"ReleasePublish","link":"ReleasePublish"},{"title":"Reproducibility","link":"Reproducibility"},{"title":"View3D","link":"View3D"},{"title":"ContributeData","link":"ContributeData"},{"title":"checkIfSubStringIsEuler","link":"<a href=\"global.html#checkIfSubStringIsEuler\">checkIfSubStringIsEuler</a>"},{"title":"checkIfSubStringIsVector3","link":"<a href=\"global.html#checkIfSubStringIsVector3\">checkIfSubStringIsVector3</a>"},{"title":"eulerArrayFromURIComponent","link":"<a href=\"global.html#eulerArrayFromURIComponent\">eulerArrayFromURIComponent</a>"},{"title":"GameObject","link":"<a href=\"global.html#GameObject\">GameObject</a>"},{"title":"pack","link":"<a href=\"global.html#pack\">pack</a>"},{"title":"THREE","link":"<a href=\"global.html#THREE\">THREE</a>"},{"title":"unpack","link":"<a href=\"global.html#unpack\">unpack</a>"},{"title":"vector3ArrayFromURIComponent","link":"<a href=\"global.html#vector3ArrayFromURIComponent\">vector3ArrayFromURIComponent</a>"}];
+        var options = 
+          setupSearch(list, options)
+      </script>
+    
+
+    
+
+    
+
+    
+
+
+  </body>
+
+</html>

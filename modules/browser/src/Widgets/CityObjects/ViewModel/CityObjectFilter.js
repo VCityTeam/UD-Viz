@@ -1,4 +1,4 @@
-/** @format */
+
 
 /**
  * Represents a filter for city objects. It is basically a function that takes

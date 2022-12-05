@@ -1,4 +1,4 @@
-/** @format */
+
 
 let udviz = null;
 let Game;

@@ -1,4 +1,4 @@
-/** @format */
+
 
 import { Views, itowns, THREE } from 'ud-viz';
 import THREEUtils from 'ud-viz/src/Game/Shared/Components/THREEUtils';

@@ -1,4 +1,4 @@
-/** @format */
+
 
 export class EnumTemporalWindow {
   static get SLIDERWINDOW() {

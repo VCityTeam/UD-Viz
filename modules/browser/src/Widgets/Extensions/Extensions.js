@@ -1,4 +1,4 @@
-/** @format */
+
 
 export { AuthenticationService } from './Authentication/services/AuthenticationService';
 

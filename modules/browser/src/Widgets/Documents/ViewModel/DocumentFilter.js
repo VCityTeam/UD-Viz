@@ -1,4 +1,4 @@
-/** @format */
+
 
 import { Document } from '../Model/Document';
 

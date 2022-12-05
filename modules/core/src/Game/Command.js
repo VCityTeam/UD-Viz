@@ -1,4 +1,4 @@
-/** @format */
+
 
 /**
  * Object computed by the InputManager and pass to a WorldContext for the World simulation

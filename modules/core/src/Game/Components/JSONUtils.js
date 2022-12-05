@@ -1,4 +1,4 @@
-/** @format */
+
 
 const Type = require('./Type');
 

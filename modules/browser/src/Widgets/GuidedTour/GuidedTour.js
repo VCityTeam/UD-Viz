@@ -1,4 +1,4 @@
-/** @format */
+
 
 // Components
 import { Window } from '../Components/GUI/js/Window';

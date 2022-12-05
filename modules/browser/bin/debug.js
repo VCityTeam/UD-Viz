@@ -1,4 +1,4 @@
-/** @format */
+
 
 const exec = require('child-process-promise').exec;
 

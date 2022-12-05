@@ -1,4 +1,4 @@
-/** @format */
+
 
 import * as Components from '../../../Components/Components.js';
 import { AssetsManager } from '../../../Views/AssetsManager/AssetsManager';

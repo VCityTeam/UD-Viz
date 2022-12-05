@@ -1,4 +1,4 @@
-/** @format */
+
 
 // Widgets
 import { DocumentProvider } from '../../../Documents/ViewModel/DocumentProvider';

@@ -1,4 +1,4 @@
-/** @format */
+
 
 // Widgets
 import { AbstractDocumentWindow } from '../../../Documents/View/AbstractDocumentWindow';

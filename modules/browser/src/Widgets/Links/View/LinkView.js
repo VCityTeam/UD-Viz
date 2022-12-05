@@ -1,4 +1,4 @@
-/** @format */
+
 
 import { DocumentModule } from '../../Documents/DocumentModule';
 import { CityObjectModule } from '../../CityObjects/CityObjectModule';

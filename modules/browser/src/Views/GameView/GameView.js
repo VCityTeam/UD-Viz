@@ -1,4 +1,4 @@
-/** @format */
+
 
 import * as udviz from '../../index';
 import * as THREE from 'three';

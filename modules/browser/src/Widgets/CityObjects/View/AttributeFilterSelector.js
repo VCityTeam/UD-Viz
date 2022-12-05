@@ -1,4 +1,4 @@
-/** @format */
+
 
 import { CityObjectFilterSelector } from './CityObjectFilterSelector';
 import { CityObjectProvider } from '../ViewModel/CityObjectProvider';

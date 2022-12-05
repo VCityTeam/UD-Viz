@@ -1,4 +1,4 @@
-/** @format */
+
 
 const commonJsPack = require('./Pack');
 const commonJsRoutine = require('./Routine');

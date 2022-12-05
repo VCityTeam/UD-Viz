@@ -1,4 +1,4 @@
-/** @format */
+
 
 const commonJsComponents = require('./Components/Components');
 

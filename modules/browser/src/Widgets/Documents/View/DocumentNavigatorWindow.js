@@ -1,4 +1,4 @@
-/** @format */
+
 
 import { DocumentProvider } from '../ViewModel/DocumentProvider';
 import { Document } from '../Model/Document';

@@ -1,4 +1,4 @@
-/** @format */
+
 
 import { CityObjectModule } from '../../CityObjects/CityObjectModule';
 import { CityObjectFilterSelector } from '../../CityObjects/View/CityObjectFilterSelector';

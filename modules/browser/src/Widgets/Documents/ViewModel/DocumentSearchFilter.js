@@ -1,4 +1,4 @@
-/** @format */
+
 
 import { DocumentFilter } from './DocumentFilter';
 import { Document } from '../Model/Document';

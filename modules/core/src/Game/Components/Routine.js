@@ -1,4 +1,4 @@
-/** @format */
+
 
 /**
  * Object used to handle animation

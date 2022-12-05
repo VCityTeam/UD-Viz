@@ -1,4 +1,4 @@
-/** @format */
+
 
 const jquery = require('jquery');
 
