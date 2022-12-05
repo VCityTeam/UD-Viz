@@ -5,9 +5,9 @@
     "clean": "rm -f -r node_modules & rm -f package-lock.json",
     "reset": "npm run clean & npm i",
     "travis": "npm run eslint && npm run build",
-    "eslint-quiet": "eslint --quiet \"src/**/*.js\"",
+    "eslint-quiet": "eslint --quiet --ignore-path .gitignore \"modules/**/*.js\"",
     "eslint": "eslint --ignore-path .gitignore \"modules/**/*.js\"",
-    "eslint-fix": "eslint \"src/**/*.js\" --fix",
+    "eslint-fix": "eslint --ignore-path .gitignore \"modules/**/*.js\" --fix",
     "docs": "jsdoc -c ./docs/jsdoc.json --verbose"
   },
   "workspaces": [

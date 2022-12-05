@@ -141,6 +141,7 @@ export class CityObjectID {
 
   /**
    * Return true if the cityobjectId is equal to this
+   *
    * @param {CityObjectID} cityObjectId
    * @returns true if equal
    */
