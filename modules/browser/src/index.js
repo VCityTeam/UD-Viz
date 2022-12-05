@@ -1,4 +1,4 @@
-// ud-viz API
+// Ud-viz API
 
 // Components
 import * as Components from './Components/Components.js';
