@@ -6,7 +6,7 @@
 
 UD-Viz is a JavaScript library based on [iTowns](https://github.com/itowns/itowns), using [npm](https://www.npmjs.com/) and [published on the npm package repository](https://www.npmjs.com/package/ud-viz), allowing to visualize, analyse and interact with urban data.
 
-A tutorial of the game engine can be found [here](./docs/static/Doc/Devel/LocalGameTutorial.md)
+A tutorial of the game engine can be found [here](./docs/static/Devel/LocalGameTutorial.md)
 
 ### Install node/npm
 For the npm installation refer [here](https://github.com/VCityTeam/UD-SV/blob/master/Tools/ToolNpm.md)

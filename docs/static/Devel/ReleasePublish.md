@@ -14,7 +14,7 @@
 - [ ] Remove package-lock.json and node_modules folder, run an `npm install`.
 - [ ] Launch the `npm audit fix` command to scan the project for vulnerabilities and automatically install any compatible updates to vulnerable dependencies
 - [ ] Commit the updated package-lock.json.
-- [ ] Provide content to [`Changelog.md`](https://github.com/VCityTeam/UD-Viz/blob/master/docs/static/Doc/Changelog.md) ([using a Changelog reference](https://softwareengineering.stackexchange.com/questions/83797/is-there-a-point-to-including-a-change-log-in-every-code-file-when-you-are-usi)):
+- [ ] Provide content to [`Changelog.md`](https://github.com/VCityTeam/UD-Viz/blob/master/docs/static/Changelog.md) ([using a Changelog reference](https://softwareengineering.stackexchange.com/questions/83797/is-there-a-point-to-including-a-change-log-in-every-code-file-when-you-are-usi)):
     collecting this content out of git commit messages can be done with something similar to
     `git log | grep -v ^commit | grep -v ^Author | grep -v ^Date | grep -vi merge | grep . | head -n 150 > ChangelogDiff.md`
 - [ ] Update doc with `npm run docs`
@@ -24,7 +24,7 @@
 ```
 
 2.  Create a github release (through the GUI)
-    - copy the new content given in [`Changelog.md`](https://github.com/VCityTeam/UD-Viz/blob/master/docs/static/Doc/Changelog.md) : this duplication doesn't seem to be [DRY](https://en.wikipedia.org/wiki/Don%27t_repeat_yourself) but the Release comments are hosted by github (and will be lost if you migrate to e.g. gitlab) and are not browsable offline.
+    - copy the new content given in [`Changelog.md`](https://github.com/VCityTeam/UD-Viz/blob/master/docs/static/Changelog.md) : this duplication doesn't seem to be [DRY](https://en.wikipedia.org/wiki/Don%27t_repeat_yourself) but the Release comments are hosted by github (and will be lost if you migrate to e.g. gitlab) and are not browsable offline.
     - you might consider using the "Auto-generate release notes" feature
     - note that creating a github release creates an underlying git tag (which can previously be created with a [git tag](https://stackoverflow.com/questions/38675829/how-to-create-releases-for-public-or-private-repository-in-github))
 

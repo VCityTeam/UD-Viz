@@ -126,7 +126,7 @@
 - [ ] Remove package-lock.json and node_modules folder, run an `npm install`.
 - [ ] Launch the `npm audit fix` command to scan the project for vulnerabilities and automatically install any compatible updates to vulnerable dependencies
 - [ ] Commit the updated package-lock.json.
-- [ ] Provide content to [`Changelog.md`](https://github.com/VCityTeam/UD-Viz/blob/master/docs/static/Doc/Changelog.md) ([using a Changelog reference](https://softwareengineering.stackexchange.com/questions/83797/is-there-a-point-to-including-a-change-log-in-every-code-file-when-you-are-usi)):
+- [ ] Provide content to [`Changelog.md`](https://github.com/VCityTeam/UD-Viz/blob/master/docs/static/Changelog.md) ([using a Changelog reference](https://softwareengineering.stackexchange.com/questions/83797/is-there-a-point-to-including-a-change-log-in-every-code-file-when-you-are-usi)):
     collecting this content out of git commit messages can be done with something similar to
     `git log | grep -v ^commit | grep -v ^Author | grep -v ^Date | grep -vi merge | grep . | head -n 150 > ChangelogDiff.md`
 - [ ] Update doc with `npm run docs`
@@ -137,7 +137,7 @@
 <ol start="2">
 <li>Create a github release (through the GUI)
 <ul>
-<li>copy the new content given in <a href="https://github.com/VCityTeam/UD-Viz/blob/master/docs/static/Doc/Changelog.md"><code>Changelog.md</code></a> : this duplication doesn't seem to be <a href="https://en.wikipedia.org/wiki/Don%27t_repeat_yourself">DRY</a> but the Release comments are hosted by github (and will be lost if you migrate to e.g. gitlab) and are not browsable offline.</li>
+<li>copy the new content given in <a href="https://github.com/VCityTeam/UD-Viz/blob/master/docs/static/Changelog.md"><code>Changelog.md</code></a> : this duplication doesn't seem to be <a href="https://en.wikipedia.org/wiki/Don%27t_repeat_yourself">DRY</a> but the Release comments are hosted by github (and will be lost if you migrate to e.g. gitlab) and are not browsable offline.</li>
 <li>you might consider using the &quot;Auto-generate release notes&quot; feature</li>
 <li>note that creating a github release creates an underlying git tag (which can previously be created with a <a href="https://stackoverflow.com/questions/38675829/how-to-create-releases-for-public-or-private-repository-in-github">git tag</a>)</li>
 </ul>
