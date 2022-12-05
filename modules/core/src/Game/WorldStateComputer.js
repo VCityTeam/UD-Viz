@@ -1,4 +1,4 @@
-/** @format */
+
 
 const World = require('./World');
 const WorldContext = require('./WorldContext');

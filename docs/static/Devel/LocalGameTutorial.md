@@ -458,7 +458,7 @@ gameObject: {
 A localscript skeleton is like so:
 
 ```js
-/** @format */
+
 
 let udviz;
 
@@ -679,7 +679,7 @@ Ok now let's add a worldscript to the zeppelin to handle collision.
 Create a new worldscript import it with the config files and create it in the assets.
 
 ```js
-/** @format */
+
 
 let Game;
 
@@ -743,7 +743,7 @@ Here the conf of the _localscript_ is modified, this will trigger a update event
 - The [`zeppelin.js`](/examples/assets/localScripts/zeppelin.js) (_localscript_) looks like this:
 
 ```js
-/** @format */
+
 
 let udviz;
 

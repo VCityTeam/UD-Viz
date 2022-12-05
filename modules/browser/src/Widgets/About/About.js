@@ -1,4 +1,4 @@
-/** @format */
+
 
 // Components
 import { ModuleView } from '../Components/ModuleView/ModuleView';

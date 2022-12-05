@@ -1,4 +1,4 @@
-/** @format */
+
 
 // Widgets
 import { DocumentModule } from '../../Documents/DocumentModule';

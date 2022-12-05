@@ -1,4 +1,4 @@
-/** @format */
+
 
 import * as THREE from 'three';
 import * as THREEUtils from '../../Components/THREEUtils';

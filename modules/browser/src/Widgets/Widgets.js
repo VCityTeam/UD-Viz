@@ -1,4 +1,4 @@
-/** @format */
+
 
 export { GuidedTourController } from './GuidedTour/GuidedTourController';
 

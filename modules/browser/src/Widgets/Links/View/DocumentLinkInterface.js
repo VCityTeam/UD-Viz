@@ -1,4 +1,4 @@
-/** @format */
+
 
 // Components
 import { focusCameraOn } from '../../../Components/Camera/CameraUtils';

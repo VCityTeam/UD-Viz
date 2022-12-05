@@ -1,4 +1,4 @@
-/** @format */
+
 
 import * as itowns from 'itowns';
 

@@ -1,4 +1,4 @@
-/** @format */
+
 
 const THREE = require('three');
 

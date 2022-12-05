@@ -23,6 +23,8 @@
   },
   "homepage": "https://github.com/VCityTeam/UD-Viz/",
   "devDependencies": {
+    "jsdoc": "^3.6.7",
+    "clean-jsdoc-theme": "^3.3.1",
     "child-process-promise": "^2.2.1",
     "cross-env": "^7.0.3",
     "eslint": "^7.32.0",

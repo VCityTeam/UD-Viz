@@ -1,4 +1,4 @@
-/** @format */
+
 
 import { $3DTemporalTransaction } from './3DTemporalTransaction.js';
 

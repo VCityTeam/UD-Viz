@@ -1,4 +1,4 @@
-/** @format */
+
 
 export { Window } from './js/Window.js';
 

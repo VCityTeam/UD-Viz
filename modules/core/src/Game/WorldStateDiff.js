@@ -1,4 +1,4 @@
-/** @format */
+
 
 /**
  * This object avoid to send WorldState on network and allow to rebuild a WorldState

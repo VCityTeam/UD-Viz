@@ -1,4 +1,4 @@
-/** @format */
+
 
 let udviz = null;
 const gameType = require('ud-viz/src/Game/Game');

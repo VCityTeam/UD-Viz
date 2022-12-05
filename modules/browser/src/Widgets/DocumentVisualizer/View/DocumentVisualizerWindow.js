@@ -1,4 +1,4 @@
-/** @format */
+
 
 import { AbstractDocumentWindow } from '../../Documents/View/AbstractDocumentWindow';
 import * as THREE from 'three';

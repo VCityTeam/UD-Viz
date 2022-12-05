@@ -1,4 +1,4 @@
-/** @format */
+
 
 const Network = require('vis-network').Network;
 
