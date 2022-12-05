@@ -535,9 +535,9 @@ export class GameView extends View3D {
     this.lastState = state;
 
     // Init assets new GO
-    newGO.forEach(function (g) {
+    newGO.forEach(function () {
       console.error('initAssetsComponent method belong to @ud-viz/browser');
-      // g.initAssetsComponents(_this.assetsManager, {
+      // G.initAssetsComponents(_this.assetsManager, {
       //   udviz: udviz,
       //   Game: udvGame,
       // });
