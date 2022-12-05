@@ -1,0 +1,15 @@
+{
+  "name": "@ud-viz/node",
+  "version": "1.0.0",
+  "description": "ud-viz node framework",
+  "main": "src",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/VCityTeam/UD-Viz.git"
+  },
+  "license": "(LGPL-2.1)",
+  "bugs": {
+    "url": "https://github.com/VCityTeam/UD-Viz/issues"
+  },
+  "homepage": "https://github.com/VCityTeam/UD-Viz/"
+}
