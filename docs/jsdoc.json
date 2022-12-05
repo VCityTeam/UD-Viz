@@ -27,7 +27,11 @@
     }
   },
   "source": {
-    "include": ["modules/core/src", "modules/browser/src", "modules/node/src"],
+    "include": [
+      "packages/core/src",
+      "packages/browser/src",
+      "packages/node/src"
+    ],
     "excludePattern": "(node_modules/|docs)"
   },
   "templates": {
