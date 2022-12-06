@@ -1,6 +1,6 @@
 {
   "name": "ud-viz-website",
-  "description": "ud-viz website hosting documentationand examples of @ud-viz/browser",
+  "description": "ud-viz website hosting documentation and examples of @ud-viz/browser",
   "main": "src",
   "scripts": {
     "build": "cross-env NODE_ENV=production webpack --config=./webpackConfig/webpack.config.js",

@@ -8,6 +8,7 @@
     "build-core": "npm run build --prefix ./packages/core",
     "build-browser": "npm run build --prefix ./packages/browser",
     "build-node": "npm run build --prefix ./packages/node",
+    "build-website": "npm run build --prefix ./website && npm run build-browser && npm run docs",
     "eslint-quiet": "eslint --quiet --ignore-path .gitignore \"packages/**/*.js\" \"website/**/*.js\"",
     "eslint": "eslint --ignore-path .gitignore \"packages/**/*.js\" \"website/**/*.js\"",
     "eslint-fix": "eslint --ignore-path .gitignore \"packages/**/*.js\" \"website/**/*.js\" --fix",
