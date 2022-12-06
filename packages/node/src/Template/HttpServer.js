@@ -6,10 +6,10 @@ const HttpServerModule = class HttpServer {
   start(config) {
     return new Promise((resolve, reject) => {
       const app = express();
-      //serve
-      app.use(express.static(config.folder)); //what folder is served
+      // Serve
+      app.use(express.static(config.folder)); // What folder is served
 
-      //http server
+      // http server
       app.listen(config.port, function (err) {
         if (err) {
           console.error('Server does not start');
@@ -22,7 +22,7 @@ const HttpServerModule = class HttpServer {
           ' folder ' + config.folder
         );
 
-        resolve(true);
+        resolve();
       });
     });
   }

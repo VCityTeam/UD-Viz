@@ -1,22 +1,23 @@
 {
   "name": "ud-viz-monorepo",
+  "version": "3.0.0",
   "description": "Urban Data VIsualiZation framework",
   "scripts": {
-    "clean": "rm -f -r node_modules && rm -f package-lock.json",
+    "clean": "rm -f -r node_modules && rm -f package-lock.json && rm -f  -r ./packages/**/dist",
     "reset": "npm run clean && npm i",
-    "travis": "npm run eslint && npm run build-core && npm run build-browser",
+    "travis": "npm run eslint && npm run build-core && npm run build-browser && npm run build-node",
     "build-core": "npm run build --prefix ./packages/core",
     "build-browser": "npm run build --prefix ./packages/browser",
     "build-node": "npm run build --prefix ./packages/node",
-    "build-website": "npm run build --prefix ./website && npm run build-browser && npm run docs",
-    "eslint-quiet": "eslint --quiet --ignore-path .gitignore \"packages/**/*.js\" \"website/**/*.js\"",
-    "eslint": "eslint --ignore-path .gitignore \"packages/**/*.js\" \"website/**/*.js\"",
-    "eslint-fix": "eslint --ignore-path .gitignore \"packages/**/*.js\" \"website/**/*.js\" --fix",
-    "docs": "jsdoc -c ./docs/jsdoc.json --verbose"
+    "eslint-quiet": "eslint --quiet --ignore-path .gitignore \"packages/**/*.js\" ",
+    "eslint": "eslint --ignore-path .gitignore \"packages/**/*.js\" ",
+    "eslint-fix": "eslint --ignore-path .gitignore \"packages/**/*.js\"  --fix",
+    "docs": "jsdoc -c ./docs/jsdoc.json --verbose",
+    "debug": "node ./bin/debug.js",
+    "deploy": "npm run build-browser && node ./bin/deploy.js"
   },
   "workspaces": [
-    "packages/*",
-    "website"
+    "packages/*"
   ],
   "repository": {
     "type": "git",
@@ -41,6 +42,7 @@
     "nodemon": "^2.0.12",
     "prettier": "2.6.2",
     "webpack": "^5.70.0",
-    "webpack-cli": "^4.9.2"
+    "webpack-cli": "^4.9.2",
+    "@ud-viz/node": "./packages/node"
   }
 }

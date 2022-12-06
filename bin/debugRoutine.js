@@ -5,4 +5,4 @@ const printExec = function (result) {
   console.log('stderr: \n', result.stderr);
 };
 
-exec('npm run build-debug').then(printExec);
+exec('npm run build-debug --prefix ./packages/browser').then(printExec);

@@ -3,6 +3,9 @@
   "version": "3.0.0",
   "description": "ud-viz node framework",
   "main": "src",
+  "scripts": {
+    "build": "cross-env NODE_ENV=production webpack"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/VCityTeam/UD-Viz.git"
@@ -14,5 +17,8 @@
   "homepage": "https://github.com/VCityTeam/UD-Viz/",
   "dependencies": {
     "express": "^4.17.1"
+  },
+  "devDependencies": {
+    "webpack-node-externals": "^2.5.2"
   }
 }
