@@ -2,9 +2,6 @@ module.exports = {
   entry: ['./src/index.js'],
   output: {
     filename: 'bundle.js',
-    library: 'udvizBrowser',
-    libraryTarget: 'umd',
-    umdNamedDefine: true,
   },
   module: {
     rules: [
