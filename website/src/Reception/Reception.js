@@ -125,26 +125,26 @@ export class ReceptionView {
     addProjectElement(
       'All Widgets',
       containerProject,
-      './examples/AllWidget/example.html',
+      './assets/html/AllWidget.html',
       `This example implements all widgets and extensions currently available. As of today, this includes :
             \n- Temporal            \n- Help & About            \n- Documents            \n- Contribute            \n- Guided tours            \n- Authentication            \n- Documents to validate            \n- Document comments            \n- Geocoding            \n- 3DTiles debug            \n- Camera positioner            \n- Document links`,
-      './assets/img/examples_images/AllWidgets.png'
+      './assets/img/reception/AllWidgets.png'
     );
 
     addProjectElement(
       'Worldmap',
       containerProject,
-      './examples/WorldMap/example.html',
+      './assets/html/WorldMap/example.html',
       'This example use IGN basemap to be able to navigate all over the world',
-      './assets/img/examples_images/WorldMap.png'
+      './assets/img/reception/WorldMap.png'
     );
 
     addProjectElement(
       'Billboard',
       containerProject,
-      './examples/Billboard.html',
+      './assets/html/Billboard.html',
       'This example implements a billboard (ie an embeded html content in a 3D view).',
-      './assets/img/examples_images/billboard.png'
+      './assets/img/reception/billboard.png'
     );
 
     addProjectElement(
@@ -152,7 +152,7 @@ export class ReceptionView {
       containerProject,
       'examples/DocumentWidget/example.html',
       'In this example you can consult documents in a document browser and search them using keywords and other fields.',
-      './assets/img/examples_images/DocumentWidget.png'
+      './assets/img/reception/DocumentWidget.png'
     );
 
     addProjectElement(
@@ -160,7 +160,7 @@ export class ReceptionView {
       containerProject,
       'examples/GeocodingWidget/example.html',
       'Geocoding allows a user to navigate in the city by searching addresses or place names.',
-      './assets/img/examples_images/GeocodingWidget.png'
+      './assets/img/reception/GeocodingWidget.png'
     );
 
     addProjectElement(
@@ -168,7 +168,7 @@ export class ReceptionView {
       containerProject,
       'examples/BaseMapWidget/example.html',
       'BaseMap widget allows a user to select which background to use between those set up in the config file.',
-      './assets/img/examples_images/BaseMapWidget.png'
+      './assets/img/reception/BaseMapWidget.png'
     );
 
     addProjectElement(
@@ -176,7 +176,7 @@ export class ReceptionView {
       containerProject,
       'examples/CameraPositionerWidget/example.html',
       'The camera positioner is a tool that show the coordinates and the orientation of the camera.',
-      './assets/img/examples_images/CameraPositionerWidget.png'
+      './assets/img/reception/CameraPositionerWidget.png'
     );
 
     addProjectElement(
@@ -184,7 +184,7 @@ export class ReceptionView {
       containerProject,
       'examples/SlideShow/slideShow.html',
       'The SlideShow allows to display images and videos on a plane geometry.',
-      './assets/img/examples_images/CameraPositionerWidget.png'
+      './assets/img/reception/CameraPositionerWidget.png'
     );
 
     addProjectElement(
@@ -192,7 +192,7 @@ export class ReceptionView {
       containerProject,
       'examples/3DTilesDebugWidget/example.html',
       '3DTiles Debug displays a window which shows various information about 3DTiles objects and city objects.',
-      './assets/img/examples_images/3DTilesDebugWidget.png'
+      './assets/img/reception/3DTilesDebugWidget.png'
     );
 
     addProjectElement(
@@ -200,7 +200,7 @@ export class ReceptionView {
       containerProject,
       'examples/CityObjectWidget/example.html',
       'This extensions allows the user to explore city objects and color them according to filters.',
-      './assets/img/examples_images/CityObjectWidget.png'
+      './assets/img/reception/CityObjectWidget.png'
     );
 
     addProjectElement(
@@ -208,7 +208,7 @@ export class ReceptionView {
       containerProject,
       'examples/LayerChoiceWidget/example.html',
       'This extensions interact with layers',
-      './assets/img/examples_images/LayerChoiceWidget.png'
+      './assets/img/reception/LayerChoiceWidget.png'
     );
 
     addProjectElement(
@@ -216,39 +216,39 @@ export class ReceptionView {
       containerProject,
       'examples/TemporalWidget/example.html',
       'This extensions allows the user to explore city objects and color them according to filters.',
-      './assets/img/examples_images/TemporalWidget.png'
+      './assets/img/reception/TemporalWidget.png'
     );
 
     addProjectElement(
       'GeoJSON',
       containerProject,
-      './examples/GeoJson.html',
+      './assets/html/GeoJson.html',
       `This example visualizes several GeoJSON datasets (such as bus lines, Velo'v stations, and humidity zones) alongside 3D planar data.`,
-      './assets/img/examples_images/GeoJSON.png'
+      './assets/img/reception/GeoJSON.png'
     );
 
     addProjectElement(
       'Local Avatar Game',
       containerProjectGame,
-      './examples/AvatarGame.html',
+      './assets/html/AvatarGame.html',
       'This example implements a local mini game illustrating an avatar walking in the city',
-      './assets/img/examples_images/AvatarGame.png'
+      './assets/img/reception/AvatarGame.png'
     );
 
     addProjectElement(
       'Local Avatar Game with Shader',
       containerProjectGame,
-      './examples/LocalAvatar.html',
+      './assets/html/LocalAvatar.html',
       'This example implements a local mini game illustrating an avatar walking in the city with collision and shader pass.',
-      './assets/img/examples_images/LocalAvatar.png'
+      './assets/img/reception/LocalAvatar.png'
     );
 
     addProjectElement(
       'Local Zeppelin Game',
       containerProjectGame,
-      './examples/LocalGame.html',
+      './assets/html/LocalGame.html',
       'This example implements a local mini game builded with the ud-viz game engine',
-      './assets/img/examples_images/LocalGame.png'
+      './assets/img/reception/LocalGame.png'
     );
   }
 
