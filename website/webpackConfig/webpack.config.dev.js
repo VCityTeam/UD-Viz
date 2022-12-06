@@ -10,10 +10,12 @@ module.exports = {
   devServer: {
     port: 8000,
     hot: true,
+    static: { directory: path.resolve(__dirname, '../') },
   },
   plugins: [
     new HtmlWebpackPlugin({
       template: 'debug.html',
+      favicon: './favicon.ico',
     }),
   ],
 };

@@ -1,4 +1,5 @@
-import * as udvizBrowser from '@ud-viz/browser';
+import './style.css';
+import { ReceptionView } from './Reception/Reception';
 
-console.log('hi website ', udvizBrowser);
-
+const receptionView = new ReceptionView();
+document.body.appendChild(receptionView.html());

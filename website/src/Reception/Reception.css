@@ -1,25 +1,3 @@
-:root {
-  --background-color: #fff;
-  --secondary-background-color: #f7f7f7;
-
-  --color-blue: #049ef4;
-  --text-color: #444;
-  --secondary-text-color: #9e9e9e;
-
-  --font-size: 16px;
-  --line-height: 26px;
-
-  --border-style: 1px solid #e8e8e8;
-  --header-height: 48px;
-  --panel-width: 300px;
-  --panel-padding: 16px;
-  --icon-size: 20px;
-}
-
-body {
-  padding: 0px;
-}
-
 #panel {
   position: fixed;
   z-index: 100;
@@ -32,6 +10,45 @@ body {
   display: flex;
   flex-direction: column;
   transition: 0s 0s height;
+}
+
+#viewer,
+#content {
+  padding: 0 var(--panel-padding) var(--panel-padding) var(--panel-padding);
+}
+
+#viewer,
+iframe {
+  position: absolute;
+  border: 0px;
+  left: 0;
+  right: 0;
+  height: 100%;
+}
+
+#viewer {
+  padding-left: var(--panel-width);
+}
+
+#panel #content ul {
+  list-style-type: none;
+  padding: 0px;
+  margin: 0px 0 20px 0;
+}
+#panel #content ul li {
+  margin: 1px 0;
+}
+
+#panel #content a {
+  position: relative;
+  color: var(--text-color);
+  text-decoration: none;
+}
+
+#panel #content a:hover,
+#panel #content a:hover .spacer,
+#panel #content .selected {
+  color: var(--color-blue);
 }
 
 #header h1 {
@@ -61,25 +78,7 @@ body {
   color: var(--color-blue);
 }
 
-#viewer,
-#content {
-  padding: 0 var(--panel-padding) var(--panel-padding) var(--panel-padding);
-}
-
-#viewer,
-iframe {
-  position: absolute;
-  border: 0px;
-  left: 0;
-  right: 0;
-  height: 100%;
-}
-
-#viewer {
-  padding-left: var(--panel-width);
-}
-
-.projects_section_title{
+.projects_section_title {
   text-align: center;
 }
 
@@ -114,7 +113,7 @@ iframe {
   height: 100%;
   width: 100%;
   background: rgba(0, 0, 0, 0.399);
-  
+
   color: white;
   font-weight: bold;
   text-decoration: none;
@@ -132,25 +131,4 @@ iframe {
   visibility: visible;
   opacity: 1;
   transform: scale(1.08);
-}
-
-#panel #content ul {
-  list-style-type: none;
-  padding: 0px;
-  margin: 0px 0 20px 0;
-}
-#panel #content ul li {
-  margin: 1px 0;
-}
-
-#panel #content a {
-  position: relative;
-  color: var(--text-color);
-  text-decoration: none;
-}
-
-#panel #content a:hover,
-#panel #content a:hover .spacer,
-#panel #content .selected {
-  color: var(--color-blue);
 }
