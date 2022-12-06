@@ -2,11 +2,11 @@ import udvizBrowserPackage from '@ud-viz/browser/package.json';
 
 import './Reception.css';
 
-//TODO all HARD CODED values should be in a config file
+// TODO all HARD CODED values should be in a config file
 
 export class ReceptionView {
   constructor() {
-    //build html
+    // Build html
     this.rootHtml = document.createElement('section');
 
     const panel = document.createElement('div');

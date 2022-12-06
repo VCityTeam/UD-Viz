@@ -5,7 +5,7 @@
   "scripts": {
     "build": "cross-env NODE_ENV=production webpack --config=./webpackConfig/webpack.config.js",
     "build-debug": "cross-env NODE_ENV=development webpack --config=./webpackConfig/webpack.config.js",
-    "debug": "cross-env NODE_ENV=development webpack serve --config=./webpackConfig/webpack.config.js"
+    "debug": "node ./bin/debug.js"
   },
   "repository": {
     "type": "git",
@@ -20,7 +20,6 @@
     "@ud-viz/browser": "../packages/browser"
   },
   "devDependencies": {
-    "html-webpack-plugin": "^4.5.2",
-    "webpack-dev-server": "^4.11.1"
+    "@ud-viz/node": "../packages/node"
   }
 }
