@@ -40,6 +40,7 @@
 
         const iframe = document.createElement('iframe');
         iframe.src = `${window.location.origin}/examples/assets/html/billboard.html`;
+        console.error('THREEUtils.Transform is deprecated');
         const billboard = new udv.Views.Billboard(
           iframe,
           new udv.Components.THREEUtils.Transform(

@@ -8,13 +8,14 @@
     "build-core": "npm run build --prefix ./packages/core",
     "build-browser": "npm run build --prefix ./packages/browser",
     "build-node": "npm run build --prefix ./packages/node",
-    "eslint-quiet": "eslint --quiet --ignore-path .gitignore \"packages/**/*.js\"",
-    "eslint": "eslint --ignore-path .gitignore \"packages/**/*.js\"",
-    "eslint-fix": "eslint --ignore-path .gitignore \"packages/**/*.js\" --fix",
+    "eslint-quiet": "eslint --quiet --ignore-path .gitignore \"packages/**/*.js\" \"website/**/*.js\"",
+    "eslint": "eslint --ignore-path .gitignore \"packages/**/*.js\" \"website/**/*.js\"",
+    "eslint-fix": "eslint --ignore-path .gitignore \"packages/**/*.js\" \"website/**/*.js\" --fix",
     "docs": "jsdoc -c ./docs/jsdoc.json --verbose"
   },
   "workspaces": [
-    "packages/*"
+    "packages/*",
+    "website"
   ],
   "repository": {
     "type": "git",
