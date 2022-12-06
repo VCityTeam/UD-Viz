@@ -1,5 +1,3 @@
-<!-- @format -->
-
 <!DOCTYPE html>
 <html>
   <head>
@@ -10,60 +8,61 @@
   </head>
   <body>
     <script src="../../dist/debug/bundle.js"></script>
+
     <script>
-      console.log(udvizBrowser);
-    </script>
-    <!-- <script src="../../../packages/browser/dist/release/bundle.js"></script> -->
-    <script type="text/javascript">
-      return;
-      const app = new udvizBrowser.Templates.AllWidget();
+      const app = new udvizWebsite.udvizBrowser.Templates.AllWidget();
 
       app.start('../assets/config/all_widget_config.json').then((config) => {
         ////// REQUEST SERVICE
-        const requestService = new udvizBrowser.Components.RequestService();
+        const requestService =
+          new udvizWebsite.udvizBrowser.Components.RequestService();
 
         ////// ABOUT MODULE
-        const about = new udvizBrowser.Widgets.AboutWindow(
+        const about = new udvizWebsite.udvizBrowser.Widgets.AboutWindow(
           config.hmtlWindow.aboutWindow
         );
         app.addModuleView('about', about);
 
         ////// HELP MODULE
-        const help = new udvizBrowser.Widgets.Extensions.HelpWindow(
-          config.hmtlWindow.helpWindow
-        );
+        const help =
+          new udvizWebsite.udvizBrowser.Widgets.Extensions.HelpWindow(
+            config.hmtlWindow.helpWindow
+          );
 
         ////// AUTHENTICATION MODULE
         const authenticationService =
-          new udvizBrowser.Widgets.Extensions.AuthenticationService(
+          new udvizWebsite.udvizBrowser.Widgets.Extensions.AuthenticationService(
             requestService,
             app.config
           );
 
         const authenticationView =
-          new udvizBrowser.Widgets.Extensions.AuthenticationView(
+          new udvizWebsite.udvizBrowser.Widgets.Extensions.AuthenticationView(
             authenticationService
           );
         app.addModuleView('authentication', authenticationView, {
-          type: udvizBrowser.Templates.AllWidget.AUTHENTICATION_MODULE,
+          type: udvizWebsite.udvizBrowser.Templates.AllWidget
+            .AUTHENTICATION_MODULE,
         });
 
         ////// DOCUMENTS MODULE
-        let documentModule = new udvizBrowser.Widgets.DocumentModule(
-          requestService,
-          app.config
-        );
+        let documentModule =
+          new udvizWebsite.udvizBrowser.Widgets.DocumentModule(
+            requestService,
+            app.config
+          );
         app.addModuleView('documents', documentModule.view);
 
         ////// DOCUMENTS VISUALIZER EXTENSION (to orient the document)
-        const imageOrienter = new udvizBrowser.Widgets.DocumentVisualizerWindow(
-          documentModule,
-          app.view3D.getItownsView(),
-          app.view3D.getItownsView().controls
-        );
+        const imageOrienter =
+          new udvizWebsite.udvizBrowser.Widgets.DocumentVisualizerWindow(
+            documentModule,
+            app.view3D.getItownsView(),
+            app.view3D.getItownsView().controls
+          );
 
         ////// CONTRIBUTE EXTENSION
-        new udvizBrowser.Widgets.Extensions.ContributeModule(
+        new udvizWebsite.udvizBrowser.Widgets.Extensions.ContributeModule(
           documentModule,
           imageOrienter,
           requestService,
@@ -73,54 +72,57 @@
         );
 
         ////// VALIDATION EXTENSION
-        new udvizBrowser.Widgets.Extensions.DocumentValidationModule(
+        new udvizWebsite.udvizBrowser.Widgets.Extensions.DocumentValidationModule(
           documentModule,
           requestService,
           app.config
         );
 
         ////// DOCUMENT COMMENTS
-        new udvizBrowser.Widgets.Extensions.DocumentCommentsModule(
+        new udvizWebsite.udvizBrowser.Widgets.Extensions.DocumentCommentsModule(
           documentModule,
           requestService,
           app.config
         );
 
         ////// GUIDED TOURS MODULE
-        const guidedtour = new udvizBrowser.Widgets.GuidedTourController(
-          documentModule,
-          requestService,
-          app.config
-        );
+        const guidedtour =
+          new udvizWebsite.udvizBrowser.Widgets.GuidedTourController(
+            documentModule,
+            requestService,
+            app.config
+          );
         app.addModuleView('guidedTour', guidedtour, {
           name: 'Guided Tours',
         });
 
         ////// GEOCODING EXTENSION
         const geocodingService =
-          new udvizBrowser.Widgets.Extensions.GeocodingService(
+          new udvizWebsite.udvizBrowser.Widgets.Extensions.GeocodingService(
             requestService,
             app.extent,
             app.config
           );
-        const geocodingView = new udvizBrowser.Widgets.Extensions.GeocodingView(
-          geocodingService,
-          app.view3D.getItownsView()
-        );
+        const geocodingView =
+          new udvizWebsite.udvizBrowser.Widgets.Extensions.GeocodingView(
+            geocodingService,
+            app.view3D.getItownsView()
+          );
         app.addModuleView('geocoding', geocodingView, {
           binding: 's',
           name: 'Address Search',
         });
 
         ////// CITY OBJECTS MODULE
-        let cityObjectModule = new udvizBrowser.Widgets.CityObjectModule(
-          app.view3D.getLayerManager(),
-          app.config
-        );
+        let cityObjectModule =
+          new udvizWebsite.udvizBrowser.Widgets.CityObjectModule(
+            app.view3D.getLayerManager(),
+            app.config
+          );
         app.addModuleView('cityObjects', cityObjectModule.view);
 
         ////// LINKS MODULE
-        new udvizBrowser.Widgets.LinkModule(
+        new udvizWebsite.udvizBrowser.Widgets.LinkModule(
           documentModule,
           cityObjectModule,
           requestService,
@@ -130,34 +132,36 @@
         );
 
         ////// 3DTILES DEBUG
-        const debug3dTilesWindow = new udvizBrowser.Widgets.Debug3DTilesWindow(
-          app.view3D.getLayerManager()
-        );
+        const debug3dTilesWindow =
+          new udvizWebsite.udvizBrowser.Widgets.Debug3DTilesWindow(
+            app.view3D.getLayerManager()
+          );
         app.addModuleView('3dtilesDebug', debug3dTilesWindow, {
           name: '3DTiles Debug',
         });
 
         ////// CAMERA POSITIONER
-        const cameraPosition = new udvizBrowser.Widgets.CameraPositionerView(
-          app.view3D.getItownsView()
-        );
+        const cameraPosition =
+          new udvizWebsite.udvizBrowser.Widgets.CameraPositionerView(
+            app.view3D.getItownsView()
+          );
         app.addModuleView('cameraPositioner', cameraPosition);
 
         // ////// TEMPORAL MODULE
-        // const temporalModule = new udvizBrowser.Widgets.TemporalModule(
+        // const temporalModule = new udvizWebsite.udvizBrowser.Widgets.TemporalModule(
         //   app.view3D.getLayerManager().tilesManagers[0],
         //   app.config.temporalModule
         // );
         // app.addModuleView("temporal", temporalModule.view);
 
         ////// LAYER CHOICE MODULE
-        const layerChoice = new udvizBrowser.Widgets.LayerChoice(
+        const layerChoice = new udvizWebsite.udvizBrowser.Widgets.LayerChoice(
           app.view3D.getLayerManager()
         );
         app.addModuleView('layerChoice', layerChoice);
 
         ///// SLIDESHOW MODULE
-        const slideShow = new udvizBrowser.Widgets.SlideShow(
+        const slideShow = new udvizWebsite.udvizBrowser.Widgets.SlideShow(
           app.view3D.getItownsView(),
           config,
           app.extent,
