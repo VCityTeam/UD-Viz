@@ -35,16 +35,6 @@ const ColliderModule = class Collider {
   }
 
   /**
-   * Nothing has to be initialized (just here because this function is called from GameObject initAssets)
-   *
-   * @param {*} assetsManager
-   */
-  // eslint-disable-next-line no-unused-vars
-  initAssets(assetsManager) {
-    // Nada
-  }
-
-  /**
    * Create ShapeWrappers object from the json shapes
    */
   createShapeWrappers() {

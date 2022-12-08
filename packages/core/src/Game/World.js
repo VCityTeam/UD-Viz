@@ -10,6 +10,10 @@ const ColliderComponent = require('./GameObject/Components/Collider');
 const THREE = require('three');
 const WorldState = require('./WorldState');
 const { Collisions } = require('detect-collisions');
+const {
+  WorldScriptModel,
+  WorldScriptController,
+} = require('./GameObject/Components/WorldScript');
 
 /**
  * Parent Object of GameObjects, handle simulation and store extradata like the geographic origin
@@ -48,6 +52,7 @@ const WorldModule = class World {
 
     // is running on webpage or node app
     this.isServerSide = options.isServerSide || false;
+    if (options.modules) console.error('no modules should be passed');
     this.modules = options.modules || {};
     this.listeners = {};
   }
@@ -118,6 +123,17 @@ const WorldModule = class World {
     return promises;
   }
 
+  dispatchWorldScriptEvent(gameObject, event, params = []) {
+    gameObject.traverse(function (child) {
+      const worldScriptGameComponent = child.getComponent(
+        WorldScriptModel.TYPE
+      );
+      if (worldScriptGameComponent) {
+        worldScriptGameComponent.getController().execute(event, params);
+      }
+    });
+  }
+
   /**
    * Add a GameObject into this world
    * Init Assets components
@@ -134,11 +150,9 @@ const WorldModule = class World {
   addGameObject(gameObject, worldContext, parent, onLoad = null) {
     const _this = this;
 
-    gameObject.initAssetsComponents(
-      worldContext.getAssetsManager(),
-      worldContext.getBundles(),
-      _this.isServerSide
-    );
+    worldContext
+      .getAssetsManager()
+      .initGameObject(gameObject, this.isServerSide);
 
     // INIT EVENT TRIGGER
     if (parent) {
@@ -146,11 +160,7 @@ const WorldModule = class World {
     } else {
       _this.gameObject = gameObject;
     }
-    gameObject.traverse(function (child) {
-      child.executeWorldScripts(WorldScriptComponent.EVENT.INIT, [
-        worldContext,
-      ]);
-    });
+    this.dispatchWorldScriptEvent(gameObject, WorldScriptController.EVENT.INIT);
 
     Promise.all(this.computePromisesLoad(gameObject, worldContext)).then(
       function () {
@@ -261,15 +271,15 @@ const WorldModule = class World {
   /**
    * Simulate one step of the world simulation
    *
-   * @param {WorldContext} worldContext
    */
-  tick(worldContext) {
+  tick() {
     const _this = this;
 
     // Tick GameObject
-    this.gameObject.traverse(function (g) {
-      g.executeWorldScripts(WorldScriptComponent.EVENT.TICK, [worldContext]);
-    });
+    this.dispatchWorldScriptEvent(
+      this.gameObject,
+      WorldScriptController.EVENT.TICK
+    );
 
     // Collisions
     const collisions = this.collisions;
@@ -300,21 +310,19 @@ const WorldModule = class World {
               // G collides with potentialG
               if (buffer.includes(potentialG.getUUID())) {
                 // Already collided
-                g.traverse(function (child) {
-                  child.executeWorldScripts(
-                    WorldScriptComponent.EVENT.IS_COLLIDING,
-                    [result, worldContext]
-                  );
-                });
+                _this.dispatchWorldScriptEvent(
+                  g,
+                  WorldScriptController.EVENT.IS_COLLIDING,
+                  [result]
+                );
               } else {
                 // OnEnter
                 buffer.push(potentialG.getUUID()); // Register in buffer
-                g.traverse(function (child) {
-                  child.executeWorldScripts(
-                    WorldScriptComponent.EVENT.ON_ENTER_COLLISION,
-                    [result, worldContext]
-                  );
-                });
+                _this.dispatchWorldScriptEvent(
+                  g,
+                  WorldScriptController.EVENT.ON_ENTER_COLLISION,
+                  [result]
+                );
               }
             }
           }
@@ -324,12 +332,11 @@ const WorldModule = class World {
         for (let i = buffer.length - 1; i >= 0; i--) {
           const uuid = buffer[i];
           if (!collidedGO.includes(uuid)) {
-            g.traverse(function (child) {
-              child.executeWorldScripts(
-                WorldScriptComponent.EVENT.ON_LEAVE_COLLISION,
-                [uuid, worldContext]
-              );
-            });
+            _this.dispatchWorldScriptEvent(
+              g,
+              WorldScriptController.EVENT.ON_LEAVE_COLLISION,
+              [uuid]
+            );
             buffer.splice(i, 1); // Remove from buffer
           }
         }

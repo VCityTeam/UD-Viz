@@ -21,9 +21,6 @@ export class GameView extends View3D {
     // Add its own
     window.addEventListener('resize', this.resizeListener);
 
-    // Custom modules pass the localscript context
-    this.localScriptModules = params.localScriptModules || {};
-
     // Assets
     this.assetsManager = params.assetsManager;
 
@@ -93,10 +90,6 @@ export class GameView extends View3D {
 
   getLocalContext() {
     return this.localContext;
-  }
-
-  getLocalScriptModules() {
-    return this.localScriptModules;
   }
 
   /**
@@ -535,12 +528,8 @@ export class GameView extends View3D {
     this.lastState = state;
 
     // Init assets new GO
-    newGO.forEach(function () {
-      console.error('initAssetsComponent method belong to @ud-viz/browser');
-      // G.initAssetsComponents(_this.assetsManager, {
-      //   udviz: udviz,
-      //   Game: udvGame,
-      // });
+    newGO.forEach((go) => {
+      this.assetsManager.initGameObject(go, false);
     });
 
     const go = state.getGameObject();

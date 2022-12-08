@@ -8,11 +8,11 @@ const THREE = require('three');
 const JSONUtils = require('../Components/JSONUtils');
 
 // GameObject Components
-const RenderComponent = require('./Components/Render');
-const ColliderComponent = require('./Components/Collider');
-const WorldScriptComponent = require('./Components/WorldScript');
-const AudioComponent = require('./Components/Audio');
-const LocalScriptModule = require('./Components/LocalScript');
+// const RenderModel = require('./Components/Render');
+// const ColliderModel = require('./Components/Collider');
+const WorldScriptModel = require('./Components/WorldScript').WorldScriptModel;
+// const AudioModel = require('./Components/Audio');
+// const LocalScriptModel = require('./Components/LocalScript');
 
 /**
  * Objects to compose a Game
@@ -34,7 +34,7 @@ const GameObjectModule = class GameObject {
 
     // Components
     this.components = {};
-    this.setComponentsFromJSON(json);
+    this.setComponentModelsFromJSON(json);
 
     // Name
     this.name = json.name || 'none';
@@ -83,7 +83,8 @@ const GameObjectModule = class GameObject {
     this.freeze = json.freeze || false;
 
     // List to force certain component to be serialize
-    this.forceSerializeComponents = json.forceSerializeComponents || [];
+    this.forceSerializeComponentModels =
+      json.forceSerializeComponentModels || [];
   }
 
   /**
@@ -143,7 +144,7 @@ const GameObjectModule = class GameObject {
    */
   setFromJSON(json) {
     this.components = {}; // Clear
-    this.setComponentsFromJSON(json);
+    this.setComponentModelsFromJSON(json);
     this.setFromTransformJSON(json.transform);
     this.name = json.name;
     this.static = json.static;
@@ -175,6 +176,7 @@ const GameObjectModule = class GameObject {
    * @param {boolean} isServerSide the code is running on a server or in a browser
    */
   initAssetsComponents(manager, bundles = {}, isServerSide = false) {
+    console.error('DEPRECATED');
     if (!this.initialized) {
       this.initialized = true;
       for (const type in this.components) {
@@ -186,6 +188,11 @@ const GameObjectModule = class GameObject {
     this.children.forEach(function (child) {
       child.initAssetsComponents(manager, bundles, isServerSide);
     });
+  }
+
+  isInitialized() {
+    if (this.initialized) console.warn('GameObject is already initialized');
+    this.initialized = true;
   }
 
   /**
@@ -414,83 +421,71 @@ const GameObjectModule = class GameObject {
   }
 
   /**
-   * Execute worldscript for a given event
-   *
-   * @param {WorldScript.EVENT} event
-   * @param {Array} params array of arguments for scripts
-   * @returns {Array} scripts result
-   */
-  executeWorldScripts(event, params) {
-    const script = this.getComponent(WorldScriptComponent.TYPE);
-    if (!script) return null;
-    return script.execute(event, params);
-  }
-
-  /**
    * Set Components with a json object
    *
    * @param {JSON} json
    */
-  setComponentsFromJSON(json) {
-    const jsonMap = json.components;
+  setComponentModelsFromJSON(json) {
+    const jsonMap = json.componentModels;
     const _this = this;
 
     if (!jsonMap) return;
 
     for (const type in jsonMap) {
-      const componentJSON = jsonMap[type];
+      const componentModelJSON = jsonMap[type];
 
       switch (type) {
-        case RenderComponent.TYPE:
-          if (_this.components[RenderComponent.TYPE])
+        // case RenderComponent.TYPE:
+        //   if (_this.components[RenderComponent.TYPE])
+        //     console.warn('multiple component');
+
+        //   _this.components[RenderComponent.TYPE] = new RenderComponent(
+        //     _this,
+        //     componentModelJSON
+        //   );
+
+        //   break;
+        // case AudioComponent.TYPE:
+        //   if (_this.components[AudioComponent.TYPE])
+        //     console.warn('multiple component');
+
+        //   _this.components[AudioComponent.TYPE] = new AudioComponent(
+        //     _this,
+        //     componentModelJSON
+        //   );
+
+        //   break;
+        case WorldScriptModel.TYPE:
+          if (_this.components[WorldScriptModel.TYPE])
             console.warn('multiple component');
 
-          _this.components[RenderComponent.TYPE] = new RenderComponent(
-            _this,
-            componentJSON
+          _this.components[WorldScriptModel.TYPE] = new GameObjectComponent(
+            new WorldScriptModel(componentModelJSON)
           );
 
           break;
-        case AudioComponent.TYPE:
-          if (_this.components[AudioComponent.TYPE])
-            console.warn('multiple component');
+        // case LocalScriptModule.TYPE:
+        //   if (_this.components[LocalScriptModule.TYPE])
+        //     console.warn('multiple component');
 
-          _this.components[AudioComponent.TYPE] = new AudioComponent(
-            _this,
-            componentJSON
-          );
+        //   _this.components[LocalScriptModule.TYPE] = new LocalScriptModule(
+        //     _this,
+        //     componentModelJSON
+        //   );
 
-          break;
-        case WorldScriptComponent.TYPE:
-          if (_this.components[WorldScriptComponent.TYPE])
-            console.warn('multiple component');
+        //   break;
+        // case ColliderComponent.TYPE:
+        //   if (_this.components[ColliderComponent.TYPE])
+        //     console.warn('multiple component');
 
-          _this.components[WorldScriptComponent.TYPE] =
-            new WorldScriptComponent(_this, componentJSON);
+        //   _this.components[ColliderComponent.TYPE] = new ColliderComponent(
+        //     _this,
+        //     componentModelJSON
+        //   );
 
-          break;
-        case LocalScriptModule.TYPE:
-          if (_this.components[LocalScriptModule.TYPE])
-            console.warn('multiple component');
-
-          _this.components[LocalScriptModule.TYPE] = new LocalScriptModule(
-            _this,
-            componentJSON
-          );
-
-          break;
-        case ColliderComponent.TYPE:
-          if (_this.components[ColliderComponent.TYPE])
-            console.warn('multiple component');
-
-          _this.components[ColliderComponent.TYPE] = new ColliderComponent(
-            _this,
-            componentJSON
-          );
-
-          break;
+        //   break;
         default:
-          console.warn('wrong type component', type, componentJSON);
+          console.warn('wrong type component', type, componentModelJSON);
       }
     }
   }
@@ -537,7 +532,7 @@ const GameObjectModule = class GameObject {
   getComponentByUUID(uuid) {
     for (const key in this.components) {
       const c = this.components[key];
-      if (c.getUUID() == uuid) return c;
+      if (c.getModel().getUUID() == uuid) return c;
     }
 
     return null;
@@ -657,6 +652,10 @@ const GameObjectModule = class GameObject {
     return this.children;
   }
 
+  getComponents() {
+    return this.components;
+  }
+
   /**
    *
    * @param {string} type
@@ -673,47 +672,6 @@ const GameObjectModule = class GameObject {
    */
   setComponent(type, c) {
     this.components[type] = c;
-  }
-
-  addComponent(jsonComponent, manager, bundles, isServerSide) {
-    let c = null;
-
-    switch (jsonComponent.type) {
-      case RenderComponent.TYPE:
-        c = new RenderComponent(this, jsonComponent);
-        break;
-
-      case AudioComponent.TYPE:
-        c = new AudioComponent(this, jsonComponent);
-        break;
-
-      case WorldScriptComponent.TYPE:
-        c = new WorldScriptComponent(this, jsonComponent);
-        break;
-
-      case LocalScriptModule.TYPE:
-        c = new LocalScriptModule(this, jsonComponent);
-        break;
-
-      case ColliderComponent.TYPE:
-        c = new ColliderComponent(this, jsonComponent);
-        break;
-
-      default:
-        console.warn(
-          'wrong jsonComponent.type component',
-          jsonComponent.type,
-          jsonComponent
-        );
-        return;
-    }
-
-    if (isServerSide && !c.isServerSide()) return;
-    c.initAssets(manager, bundles);
-
-    this.setComponent(jsonComponent.type, c);
-
-    return c;
   }
 
   /**
@@ -833,19 +791,23 @@ const GameObjectModule = class GameObject {
       children.push(child.toJSON(withServerComponent));
     });
 
-    const components = {};
+    const componentModels = {};
     for (const type in this.components) {
       const c = this.components[type];
-      if (!c.isServerSide() || withServerComponent) {
-        components[type] = c.toJSON();
+      if (!c.getModel().isServerSide() || withServerComponent) {
+        componentModels[type] = c.getModel().toJSON();
       }
     }
 
-    // Add forced serialize component
-    for (let index = 0; index < this.forceSerializeComponents.length; index++) {
-      const type = this.forceSerializeComponents[index];
+    // Add forced serialize component model
+    for (
+      let index = 0;
+      index < this.forceSerializeComponentModels.length;
+      index++
+    ) {
+      const type = this.forceSerializeComponentModels[index];
       const c = this.components[type];
-      components[type] = c.toJSON();
+      componentModels[type] = c.getModel().toJSON();
     }
 
     return {
@@ -855,8 +817,8 @@ const GameObjectModule = class GameObject {
       outdated: this.outdated,
       uuid: this.uuid,
       parentUUID: this.parentUUID,
-      forceSerializeComponents: this.forceSerializeComponents,
-      components: components,
+      forceSerializeComponentModels: this.forceSerializeComponentModels,
+      componentModels: componentModels,
       children: children,
       transform: {
         position: this.object3D.position.toArray(),
@@ -936,5 +898,24 @@ GameObjectModule.findObject3D = function (uuid, obj, upSearch = true) {
 
   return result;
 };
+
+class GameObjectComponent {
+  constructor(model) {
+    this.model = model;
+    this.controller = null; // will be initialize by assetsManager
+  }
+
+  getModel() {
+    return this.model;
+  }
+
+  getController() {
+    return this.controller;
+  }
+
+  setController(controller) {
+    this.controller = controller;
+  }
+}
 
 module.exports = GameObjectModule;

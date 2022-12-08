@@ -12,6 +12,8 @@ debugServer
       '--trace-warnings',
       '--verbose',
       '--watch',
+      './packages/core/src',
+      '--watch',
       './packages/browser/src',
       '--delay',
       '2500ms',

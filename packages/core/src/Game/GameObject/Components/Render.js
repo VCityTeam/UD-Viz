@@ -119,6 +119,7 @@ const RenderModule = class Render {
    * @param {AssetsManager} assetsManager local assetsManager
    */
   initAssets(assetsManager) {
+    console.error('DEPRECATED');
     this.object3D = new THREE.Object3D();
     this.object3D.name = 'Render Object3D ' + this.parent.getName();
 
@@ -144,6 +145,7 @@ const RenderModule = class Render {
   }
 
   tick(localCtx) {
+    console.error('DEPRECATED');
     if (this.animationMixer) {
       this.animationMixer.update(localCtx.getDt() * 0.001);
     }
