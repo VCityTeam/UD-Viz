@@ -1,9 +1,7 @@
-
-
 <!DOCTYPE html>
 <html>
   <head>
-    <title>GeoJSON example</title>
+    <title>Base Map Widget example</title>
 
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -19,25 +17,18 @@
       const app = new udvizBrowser.Templates.AllWidget();
 
       app.start('./assets/config/default_config.json').then((config) => {
-        ////// ABOUT MODULE
-        const about = new udvizBrowser.Widgets.AboutWindow(
-          config.hmtlWindow.aboutWindow
-        );
+        ////// About Widget
+        const about = new udvizBrowser.Widgets.AboutWindow();
         app.addModuleView('about', about);
 
-        ////// HELP MODULE
-        const help = new udvizBrowser.Widgets.Extensions.HelpWindow(
-          config.hmtlWindow.helpWindow
+        ////// BaseMap Widget
+        const baseMap = new udvizBrowser.Widgets.BaseMap(
+          app.view3D.getItownsView(),
+          config['base_map_layers'],
+          app.extent,
+          app.config['projection']
         );
-
-        ////// REQUEST SERVICE
-        const requestService = new udvizBrowser.Components.RequestService();
-
-        ////// LAYER CHOICE MODULE
-        const layerChoice = new udvizBrowser.Widgets.LayerChoice(
-          app.view3D.getLayerManager()
-        );
-        app.addModuleView('layerChoice', layerChoice);
+        app.addModuleView('baseMap', baseMap);
       });
     </script>
   </body>

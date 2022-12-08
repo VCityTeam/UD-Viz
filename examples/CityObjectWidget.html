@@ -3,7 +3,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>GeoJSON example</title>
+    <title>CityObject Widget example</title>
 
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -19,6 +19,9 @@
       const app = new udvizBrowser.Templates.AllWidget();
 
       app.start('./assets/config/default_config.json').then((config) => {
+        ////// REQUEST SERVICE
+        const requestService = new udvizBrowser.Components.RequestService();
+
         ////// ABOUT MODULE
         const about = new udvizBrowser.Widgets.AboutWindow(
           config.hmtlWindow.aboutWindow
@@ -30,14 +33,12 @@
           config.hmtlWindow.helpWindow
         );
 
-        ////// REQUEST SERVICE
-        const requestService = new udvizBrowser.Components.RequestService();
-
-        ////// LAYER CHOICE MODULE
-        const layerChoice = new udvizBrowser.Widgets.LayerChoice(
-          app.view3D.getLayerManager()
+        ////// CITY OBJECTS MODULE
+        let cityObjectModule = new udvizBrowser.Widgets.CityObjectModule(
+          app.view3D.layerManager,
+          app.config
         );
-        app.addModuleView('layerChoice', layerChoice);
+        app.addModuleView('cityObjects', cityObjectModule.view);
       });
     </script>
   </body>

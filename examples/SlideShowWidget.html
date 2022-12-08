@@ -3,7 +3,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>GeoJSON example</title>
+    <title>SlideShow Widget example</title>
 
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -19,25 +19,19 @@
       const app = new udvizBrowser.Templates.AllWidget();
 
       app.start('./assets/config/default_config.json').then((config) => {
+        const slideShow = new udvizBrowser.Widgets.SlideShow(
+          app.view3D.getItownsView(),
+          config,
+          app.extent,
+          app.view3D.inputManager
+        );
+        app.addModuleView('slideShow', slideShow);
+
         ////// ABOUT MODULE
         const about = new udvizBrowser.Widgets.AboutWindow(
           config.hmtlWindow.aboutWindow
         );
         app.addModuleView('about', about);
-
-        ////// HELP MODULE
-        const help = new udvizBrowser.Widgets.Extensions.HelpWindow(
-          config.hmtlWindow.helpWindow
-        );
-
-        ////// REQUEST SERVICE
-        const requestService = new udvizBrowser.Components.RequestService();
-
-        ////// LAYER CHOICE MODULE
-        const layerChoice = new udvizBrowser.Widgets.LayerChoice(
-          app.view3D.getLayerManager()
-        );
-        app.addModuleView('layerChoice', layerChoice);
       });
     </script>
   </body>

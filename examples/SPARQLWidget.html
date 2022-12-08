@@ -1,48 +1,57 @@
-<!-- @format -->
+
 
 <!DOCTYPE html>
 <html>
   <head>
-    <title>UD-Viz Widget Template example</title>
+    <title>SPARQL Widget example</title>
 
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   </head>
   <body>
-    <script src="../../dist/release/udv.js"></script>
-    <script type="text/javascript">
-      let app = new udv.Templates.AllWidget();
+    <!-- <script src="../packages/browser/dist/release/bundle.js"></script> -->
+    <script src="../packages/browser/dist/debug/bundle.js"></script>
 
-      app.start('../assets/config/sparql_widget_config.json').then(() => {
+    <script type="text/javascript">
+      /* eslint-disable no-new */
+      /* eslint-disable prettier/prettier */
+
+      const app = new udvizBrowser.Templates.AllWidget();
+
+      app.start('./assets/config/default_config.json').then(() => {
         ////// REQUEST SERVICE
-        const requestService = new udv.Components.RequestService();
+        const requestService = new udvizBrowser.Components.RequestService();
 
         ////// ABOUT MODULE
-        const about = new udv.Widgets.AboutWindow(config.hmtlWindow.aboutWindow);
+        const about = new udvizBrowser.Widgets.AboutWindow(
+          config.hmtlWindow.aboutWindow
+        );
         app.addModuleView('about', about);
 
         ////// AUTHENTICATION MODULE
         const authenticationService =
-          new udv.Widgets.Extensions.AuthenticationService(
+          new udvizBrowser.Widgets.Extensions.AuthenticationService(
             requestService,
             app.config
           );
 
         const authenticationView =
-          new udv.Widgets.Extensions.AuthenticationView(authenticationService);
+          new udvizBrowser.Widgets.Extensions.AuthenticationView(
+            authenticationService
+          );
         app.addModuleView('authentication', authenticationView, {
-          type: udv.Templates.AllWidget.AUTHENTICATION_MODULE,
+          type: udvizBrowser.Templates.AllWidget.AUTHENTICATION_MODULE,
         });
 
         ////// CITY OBJECTS MODULE
-        let cityObjectModule = new udv.Widgets.CityObjectModule(
+        let cityObjectModule = new udvizBrowser.Widgets.CityObjectModule(
           app.view3D.getLayerManager(),
           app.config
         );
         app.addModuleView('cityObjects', cityObjectModule.view);
 
         ////// 3DTILES DEBUG
-        const debug3dTilesWindow = new udv.Widgets.Debug3DTilesWindow(
+        const debug3dTilesWindow = new udvizBrowser.Widgets.Debug3DTilesWindow(
           app.view3D.getLayerManager()
         );
         app.addModuleView('3dtilesDebug', debug3dTilesWindow, {
@@ -50,20 +59,20 @@
         });
 
         ////// CAMERA POSITIONER
-        const cameraPosition = new udv.Widgets.CameraPositionerView(
+        const cameraPosition = new udvizBrowser.Widgets.CameraPositionerView(
           app.view,
           app.controls
         );
         app.addModuleView('cameraPositioner', cameraPosition);
 
         ////// LAYER CHOICE MODULE
-        const layerChoice = new udv.Widgets.LayerChoice(
+        const layerChoice = new udvizBrowser.Widgets.LayerChoice(
           app.view3D.getLayerManager()
         );
         app.addModuleView('layerChoice', layerChoice);
 
         ////// SPARQL MODULE
-        const sparqlModule = new udv.Widgets.Extensions.SparqlModule(
+        const sparqlModule = new udvizBrowser.Widgets.Extensions.SparqlModule(
           app.config,
           app.view3D.getLayerManager()
         );
