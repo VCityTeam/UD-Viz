@@ -43,15 +43,13 @@
       });
 
       const app = new udv.Templates.LocalGame();
-      app
-        .start(myWorld, './assets/config/local_game_config.json')
-        .then(function () {
-          //set custom render pass
-          const THREE = udv.THREE;
+      app.start(myWorld, './assets/config/local_game_config.json').then(function () {
+        // set custom render pass
+        const THREE = udv.THREE;
 
-          const MYMAT = new THREE.ShaderMaterial({
-            uniforms: {},
-            vertexShader: `
+        const MYMAT = new THREE.ShaderMaterial({
+          uniforms: {},
+          vertexShader: `
     #define NORMAL
     varying vec3 vNormal;
     varying vec2 vHighPrecisionZW;
@@ -70,7 +68,7 @@
       vDistance /= 1000.;
     }
   `,
-            fragmentShader: `
+          fragmentShader: `
     #define NORMAL
     varying vec3 vNormal;
     varying vec2 vHighPrecisionZW; 
@@ -89,16 +87,16 @@
       gl_FragColor = vec4(packNormalToRGB( normal ), depth);
     }
   `,
-          });
+        });
 
-          const MySobelOperatorShader = {
-            uniforms: {
-              tDiffuse: { value: null },
-              tDepth: { value: null },
-              resolution: new THREE.Uniform(new THREE.Vector2()),
-            },
+        const MySobelOperatorShader = {
+          uniforms: {
+            tDiffuse: { value: null },
+            tDepth: { value: null },
+            resolution: new THREE.Uniform(new THREE.Vector2()),
+          },
 
-            vertexShader: /* glsl */ `
+          vertexShader: /* glsl */ `
 		varying vec2 vUv;
 		void main() {
 			vUv = uv;
@@ -106,7 +104,7 @@
 		}
   `,
 
-            fragmentShader: /* glsl */ `
+          fragmentShader: /* glsl */ `
     uniform sampler2D tDiffuse;
     uniform sampler2D tDepth;
     uniform vec2 resolution;
@@ -147,16 +145,16 @@
       gl_FragColor = sqrt( ( valueGx * valueGx ) + ( valueGy * valueGy ) );
     }
   `,
-          };
+        };
 
-          const MaskShader = {
-            uniforms: {
-              tDiffuse: { value: null },
-              tMask: { value: null },
-              resolution: new THREE.Uniform(new THREE.Vector2()),
-            },
+        const MaskShader = {
+          uniforms: {
+            tDiffuse: { value: null },
+            tMask: { value: null },
+            resolution: new THREE.Uniform(new THREE.Vector2()),
+          },
 
-            vertexShader: /* glsl */ `
+          vertexShader: /* glsl */ `
 		varying vec2 vUv;
 		void main() {
 			vUv = uv;
@@ -164,7 +162,7 @@
 		}
   `,
 
-            fragmentShader: /* glsl */ `
+          fragmentShader: /* glsl */ `
 		uniform sampler2D tDiffuse;
 		uniform sampler2D tMask;
 		uniform vec2 resolution;
@@ -184,77 +182,77 @@
       #include <dithering_fragment>
 		}
   `,
-          };
+        };
 
-          //renderTarget for special effects
-          const renderTargetFX = new THREE.WebGLRenderTarget(0, 0, {
-            depthBuffer: true,
-            stencilBuffer: false,
-            format: THREE.RGBAFormat,
-            type: THREE.FloatType,
-          });
-
-          const gameView = app.getGameView();
-
-          //create custom render pass
-          const renderer = gameView.getRenderer();
-
-          const edgeDetectionComposer = new udv.EffectComposer(
-            renderer,
-            renderTargetFX
-          );
-          const normalsPass = new udv.RenderPass(
-            gameView.getScene(),
-            gameView.getCamera(),
-            MYMAT
-          );
-          edgeDetectionComposer.addPass(normalsPass);
-          const sobelPass = new udv.ShaderPass(MySobelOperatorShader);
-
-          edgeDetectionComposer.addPass(sobelPass);
-          edgeDetectionComposer.renderToScreen = false;
-
-          const finalComposer = new udv.EffectComposer(renderer);
-          const renderPass = new udv.RenderPass(
-            gameView.getScene(),
-            gameView.getCamera()
-          );
-          finalComposer.addPass(renderPass);
-          const compositionPass = new udv.ShaderPass(MaskShader);
-          compositionPass.uniforms.tMask.value = renderTargetFX.texture;
-          finalComposer.addPass(compositionPass);
-
-          //update variables on resize
-          const updateResize = function (ctx) {
-            const size = ctx.getGameView().getSize();
-            renderTargetFX.setSize(size.x, size.y);
-
-            sobelPass.uniforms.resolution.value = new THREE.Vector2(
-              edgeDetectionComposer.writeBuffer.width,
-              edgeDetectionComposer.writeBuffer.height
-            );
-            compositionPass.uniforms.resolution.value = new THREE.Vector2(
-              finalComposer.writeBuffer.width,
-              finalComposer.writeBuffer.height
-            );
-          };
-
-          //launch an init resize update
-          updateResize(gameView.getLocalContext());
-          //record in the resize requester
-          gameView.addResizeRequester(updateResize);
-
-          //define the custom render pass
-          const customRender = function () {
-            edgeDetectionComposer.reset(renderTargetFX);
-            finalComposer.reset();
-            edgeDetectionComposer.render();
-            finalComposer.render();
-          };
-
-          //set the custom render pass
-          gameView.setRender(customRender);
+        // renderTarget for special effects
+        const renderTargetFX = new THREE.WebGLRenderTarget(0, 0, {
+          depthBuffer: true,
+          stencilBuffer: false,
+          format: THREE.RGBAFormat,
+          type: THREE.FloatType,
         });
+
+        const gameView = app.getGameView();
+
+        // create custom render pass
+        const renderer = gameView.getRenderer();
+
+        const edgeDetectionComposer = new udv.EffectComposer(
+          renderer,
+          renderTargetFX
+        );
+        const normalsPass = new udv.RenderPass(
+          gameView.getScene(),
+          gameView.getCamera(),
+          MYMAT
+        );
+        edgeDetectionComposer.addPass(normalsPass);
+        const sobelPass = new udv.ShaderPass(MySobelOperatorShader);
+
+        edgeDetectionComposer.addPass(sobelPass);
+        edgeDetectionComposer.renderToScreen = false;
+
+        const finalComposer = new udv.EffectComposer(renderer);
+        const renderPass = new udv.RenderPass(
+          gameView.getScene(),
+          gameView.getCamera()
+        );
+        finalComposer.addPass(renderPass);
+        const compositionPass = new udv.ShaderPass(MaskShader);
+        compositionPass.uniforms.tMask.value = renderTargetFX.texture;
+        finalComposer.addPass(compositionPass);
+
+        // update variables on resize
+        const updateResize = function (ctx) {
+          const size = ctx.getGameView().getSize();
+          renderTargetFX.setSize(size.x, size.y);
+
+          sobelPass.uniforms.resolution.value = new THREE.Vector2(
+            edgeDetectionComposer.writeBuffer.width,
+            edgeDetectionComposer.writeBuffer.height
+          );
+          compositionPass.uniforms.resolution.value = new THREE.Vector2(
+            finalComposer.writeBuffer.width,
+            finalComposer.writeBuffer.height
+          );
+        };
+
+        // launch an init resize update
+        updateResize(gameView.getLocalContext());
+        // record in the resize requester
+        gameView.addResizeRequester(updateResize);
+
+        // define the custom render pass
+        const customRender = function () {
+          edgeDetectionComposer.reset(renderTargetFX);
+          finalComposer.reset();
+          edgeDetectionComposer.render();
+          finalComposer.render();
+        };
+
+        // set the custom render pass
+        gameView.setRender(customRender);
+      });
     </script>
   </body>
 </html>

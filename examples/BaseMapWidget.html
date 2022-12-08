@@ -17,11 +17,11 @@
       const app = new udvizBrowser.Templates.AllWidget();
 
       app.start('./assets/config/default_config.json').then((config) => {
-        ////// About Widget
+        // //// About Widget
         const about = new udvizBrowser.Widgets.AboutWindow();
         app.addModuleView('about', about);
 
-        ////// BaseMap Widget
+        // //// BaseMap Widget
         const baseMap = new udvizBrowser.Widgets.BaseMap(
           app.view3D.getItownsView(),
           config['base_map_layers'],

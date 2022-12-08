@@ -179,7 +179,7 @@ export function setupAndAddGeoJsonLayers(config, itownsView) {
  * @param {itowns.Extent} extent extent of the view
  */
 export function addBaseMapLayer(config, itownsView, extent) {
-  const baseMapLayerConfig = config.base_map_layers[0]; //the first one is the default one
+  const baseMapLayerConfig = config.base_map_layers[0]; // the first one is the default one
 
   if (!baseMapLayerConfig) {
     console.warn('No "BaseMapLayer" field in the configuration file');

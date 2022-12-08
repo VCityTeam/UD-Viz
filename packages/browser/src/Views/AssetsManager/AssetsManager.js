@@ -44,7 +44,7 @@ export class AssetsManager {
       const c = go.getComponents()[type];
       if (isServerSide && !c.getModel().isServerSide()) continue;
 
-      //create game component controller
+      // create game component controller
 
       const scripts = {};
 

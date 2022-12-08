@@ -95,6 +95,7 @@ const WorldScriptControllerModule = class WorldScriptController {
    * Execute script with id for a particular event
    *
    * @param {string} id id of the script executed
+   * @param script
    * @param {WorldScript.EVENT} event event trigger
    * @param {Array} params parameters pass to the script function
    * @returns {object} result of the script execution
