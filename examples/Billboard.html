@@ -4,33 +4,30 @@
 <html>
   <head>
     <title>Billboard example</title>
-
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   </head>
   <body>
-    <!-- <script src="../dist/debug/udv.js"></script> -->
-    <script src="../dist/release/udv.js"></script>
+    <!-- <script src="../packages/browser/dist/release/bundle.js"></script> -->
+    <script src="../packages/browser/dist/debug/bundle.js"></script>
+
     <script type="text/javascript">
-      udv.Components.SystemUtils.File.loadJSON(
-        './assets/config/all_widget_config.json'
+      udvizBrowser.Components.SystemUtils.File.loadJSON(
+        './assets/config/default_config.json'
       ).then(function (config) {
-        const x = 1832891;
-        const y = 5174952;
-        const r = 1000;
 
-        const projection = 'EPSG:3946';
-
-        const extent = new udv.itowns.Extent(
+        const projection = config['projection'];
+        const extent = new udvizBrowser.itowns.Extent(
           projection,
-          x - r,
-          x + r,
-          y - r,
-          y + r
+          config["extents"].min_x,
+          config["extents"].max_x,
+          config["extents"].min_y,
+          config["extents"].max_y
         );
 
-        const view3D = new udv.Views.View3D({
-          projection: projection,
+
+        const view3D = new udvizBrowser.Views.View3D({
+          projection: ,
           hasItownsControls: true,
           config: config,
         });
@@ -41,12 +38,12 @@
         const iframe = document.createElement('iframe');
         iframe.src = `${window.location.origin}/examples/assets/html/billboard.html`;
         console.error('THREEUtils.Transform is deprecated');
-        const billboard = new udv.Views.Billboard(
+        const billboard = new udvizBrowser.Views.Billboard(
           iframe,
-          new udv.Components.THREEUtils.Transform(
-            new udv.THREE.Vector3(center.x, center.y, 600),
-            new udv.THREE.Vector3(Math.PI * 0.5, Math.PI * 0.2, 0),
-            new udv.THREE.Vector3(20, 20, 20)
+          new udvizBrowser.Components.THREEUtils.Transform(
+            new udvizBrowser.THREE.Vector3(center.x, center.y, 600),
+            new udvizBrowser.THREE.Vector3(Math.PI * 0.5, Math.PI * 0.2, 0),
+            new udvizBrowser.THREE.Vector3(20, 20, 20)
           ),
           100
         );

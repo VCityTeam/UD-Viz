@@ -1,13 +1,12 @@
-
-
 module.exports = {
   env: {
     browser: true,
     es2021: true,
     node: true,
   },
+  globals: { udvizBrowser: true }, // udvizBrowser is the umd (universal module definition) of the @ud-viz/browser bundle
   extends: ['eslint:recommended', 'prettier', 'plugin:jsdoc/recommended'],
-  plugins: ['prettier', 'jsdoc'],
+  plugins: ['prettier', 'jsdoc', 'html'],
   parserOptions: {
     ecmaVersion: 2020,
     sourceType: 'module',
@@ -27,11 +26,6 @@ module.exports = {
     'no-template-curly-in-string': ['error'],
     'no-unmodified-loop-condition': ['error'],
     'no-unreachable-loop': ['error'],
-    'capitalized-comments': [
-      'error',
-      'always',
-      { ignoreInlineComments: true, ignoreConsecutiveComments: true },
-    ],
     'default-case-last': ['error'],
     'default-param-last': ['error'],
     'func-name-matching': ['error'],

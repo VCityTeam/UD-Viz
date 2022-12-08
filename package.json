@@ -9,9 +9,9 @@
     "build-core": "npm run build --prefix ./packages/core",
     "build-browser": "npm run build --prefix ./packages/browser",
     "build-node": "npm run build --prefix ./packages/node",
-    "eslint-quiet": "eslint --quiet --ignore-path .gitignore \"packages/**/*.js\" ",
-    "eslint": "eslint --ignore-path .gitignore \"packages/**/*.js\" ",
-    "eslint-fix": "eslint --ignore-path .gitignore \"packages/**/*.js\"  --fix",
+    "eslint-quiet": "eslint --quiet --ignore-path .gitignore \"packages/**/*.js\" \"examples/AllWidget.html\" ",
+    "eslint": "eslint --ignore-path .gitignore \"packages/**/*.js\" \"examples/AllWidget.html\" ",
+    "eslint-fix": "eslint --ignore-path .gitignore \"packages/**/*.js\" \"examples/AllWidget.html\"  --fix",
     "docs": "jsdoc -c ./docs/jsdoc.json --verbose",
     "debug-examples": "node ./bin/debug.js",
     "deploy": "npm run build-browser && node ./bin/deploy.js"
@@ -29,20 +29,21 @@
   },
   "homepage": "https://github.com/VCityTeam/UD-Viz/",
   "devDependencies": {
-    "jsdoc": "^3.6.7",
-    "clean-jsdoc-theme": "^3.3.1",
+    "@ud-viz/node": "./packages/node",
     "child-process-promise": "^2.2.1",
+    "clean-jsdoc-theme": "^3.3.1",
     "cross-env": "^7.0.3",
+    "css-loader": "^6.7.1",
     "eslint": "^7.32.0",
     "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-html": "^7.1.0",
     "eslint-plugin-jsdoc": "^39.3.3",
     "eslint-plugin-prettier": "^4.2.1",
-    "css-loader": "^6.7.1",
-    "style-loader": "^3.3.1",
+    "jsdoc": "^3.6.7",
     "nodemon": "^2.0.12",
     "prettier": "2.6.2",
+    "style-loader": "^3.3.1",
     "webpack": "^5.70.0",
-    "webpack-cli": "^4.9.2",
-    "@ud-viz/node": "./packages/node"
+    "webpack-cli": "^4.9.2"
   }
 }
