@@ -5,11 +5,10 @@ const WorldContext = require('./WorldContext');
  * StateComputer working locally
  */
 const WorldStateComputerModule = class WorldStateComputer {
-  constructor(assetsManager, fps, bundles) {
+  constructor(assetsManager, fps) {
     this.worldContext = new WorldContext({
       world: null,
       assetsManager: assetsManager,
-      bundles: bundles,
     });
 
     this.fps = fps || 60;

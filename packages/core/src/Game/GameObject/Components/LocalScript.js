@@ -19,7 +19,7 @@ const LocalScriptModule = class LocalScript {
 
     // Conf pass to scripts
     const conf = json.conf || {};
-    this.conf = JSON.parse(JSON.stringify(conf));
+    this.conf = JSON.parse(JSON.stringify(conf)); //deep copy
 
     // Map of scripts
     this.scripts = {};
@@ -40,6 +40,7 @@ const LocalScriptModule = class LocalScript {
    * @param {Library} bundles set of bundle library used by script
    */
   initAssets(assetsManager, bundles) {
+    console.error('DEPRECATED');
     const _this = this;
     this.idScripts.forEach(function (id) {
       const constructor = assetsManager.fetchLocalScript(id);
@@ -54,6 +55,7 @@ const LocalScriptModule = class LocalScript {
    * @param {Array} params parameters pass to scripts
    */
   execute(event, params) {
+    console.error('DEPRECATED');
     const _this = this;
     let result = false;
 
@@ -73,6 +75,7 @@ const LocalScriptModule = class LocalScript {
    * @returns {object} result of the script execution
    */
   executeScript(id, event, params) {
+    console.error('DEPRECATED');
     const s = this.scripts[id];
 
     if (s[event]) {

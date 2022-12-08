@@ -1,4 +1,4 @@
-// Ud-viz API
+// @ud-viz/browser API
 
 // Components
 import * as Components from './Components/Components.js';
@@ -17,6 +17,9 @@ import * as Views from './Views/Views';
 export { Views };
 
 // External package
+
+import * as udvizCore from '@ud-viz/core';
+export { udvizCore };
 
 // itowns
 import * as itowns from 'itowns';

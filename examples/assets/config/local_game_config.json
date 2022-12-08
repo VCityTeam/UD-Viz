@@ -110,5 +110,16 @@
       "color": "0xAC7FD0"
     }
   ],
+  "base_map_layers": [
+    {
+      "url": "https://wxs.ign.fr/choisirgeoportail/geoportail/r/wms",
+      "name": "GEOGRAPHICALGRIDSYSTEMS.PLANIGNV2",
+      "version": "1.3.0",
+      "format": "image/jpeg",
+      "layer_name": "Base_Map",
+      "image": "./assets/img/ign_ortho.png",
+      "transparent": true
+    }
+  ],
   "projection": "EPSG:3946"
 }

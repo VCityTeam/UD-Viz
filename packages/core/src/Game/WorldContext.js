@@ -16,6 +16,7 @@ module.exports = class WorldContext {
     this.commands = [];
 
     // Modules
+    if (params.bundles) console.error('bundles error');
     this.bundles = params.bundles;
   }
 

@@ -30,6 +30,7 @@ const AudioModule = class Audio {
   }
 
   dispose() {
+    console.error('DEPRECATED');
     for (const key in this.sounds) {
       this.sounds[key].unload();
     }
@@ -42,6 +43,7 @@ const AudioModule = class Audio {
    * @param {AssetsManager} assetsManager
    */
   addSound(id, assetsManager) {
+    console.error('DEPRECATED');
     if (this.soundsJSON.includes(id)) {
       console.warn(id, ' already in audio comp');
       return;
@@ -55,6 +57,7 @@ const AudioModule = class Audio {
    * Remove all sounds of the comp
    */
   reset() {
+    console.error('DEPRECATED');
     this.dispose();
     this.soundsJSON = [];
     this.sounds = {};
@@ -80,6 +83,7 @@ const AudioModule = class Audio {
    * @param {AssetsManager} assetsManager local assetsManager
    */
   initAssets(assetsManager) {
+    console.error('DEPRECATED');
     const _this = this;
     this.soundsJSON.forEach(function (idS) {
       _this.sounds[idS] = assetsManager.createSound(idS, _this.conf);
@@ -87,6 +91,7 @@ const AudioModule = class Audio {
   }
 
   tick(cameraMatrixWorldInverse, refOrigin) {
+    console.error('DEPRECATED');
     for (const key in this.sounds) {
       const sound = this.sounds[key];
 

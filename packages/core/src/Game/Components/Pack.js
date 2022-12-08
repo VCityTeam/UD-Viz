@@ -179,6 +179,9 @@ module.exports = Object.freeze({
         bufferString += this.bufferMessage[messageUUID][index].data;
       }
 
+      //clean buffer
+      delete this.bufferMessage[messageUUID];
+
       return JSON.parse(bufferString);
     }
 

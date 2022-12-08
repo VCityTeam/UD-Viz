@@ -1,7 +1,6 @@
 import * as Components from '../../../Components/Components.js';
 import { AssetsManager } from '../../../Views/AssetsManager/AssetsManager';
 import * as Views from '../../../Views/Views';
-import * as udviz from '../../../index';
 import { Game } from '@ud-viz/core';
 
 /**
@@ -58,11 +57,7 @@ export class LocalGame {
 
   startWithAssetsLoaded(world, assetsManager, config, options = {}) {
     return new Promise((resolve) => {
-      const worldStateComputer = new Game.WorldStateComputer(
-        assetsManager,
-        60,
-        { udviz: udviz, Game: Game }
-      );
+      const worldStateComputer = new Game.WorldStateComputer(assetsManager, 60);
 
       worldStateComputer.start(world);
 
@@ -72,12 +67,13 @@ export class LocalGame {
         worldStateComputer
       );
 
+      if (options.localScriptModules) console.error('no localscripts module');
+
       this.gameView = new Views.GameView({
         htmlParent: options.htmlParent || document.body,
         assetsManager: assetsManager,
         interpolator: interpolator,
         config: config,
-        localScriptModules: options.localScriptModules,
         userData: options.userData,
       });
 

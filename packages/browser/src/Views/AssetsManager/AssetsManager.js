@@ -1,7 +1,7 @@
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import * as THREE from 'three';
 import * as jquery from 'jquery';
-import { GameObject } from '@ud-viz/core/src/Game/Game';
+import GameObject from '@ud-viz/core/src/Game/GameObject/GameObject';
 import { Howl } from 'howler';
 const THREEUtils = require('../../Components/THREEUtils');
 
@@ -13,6 +13,10 @@ const DEFAULT_MATERIAL = new THREE.MeshLambertMaterial({
 });
 
 import './AssetsManager.css';
+import {
+  WorldScriptController,
+  WorldScriptModel,
+} from '@ud-viz/core/src/Game/GameObject/Components/WorldScript';
 
 /**
  * Give acess to all assets (image, video, script, worlds, ...)
@@ -28,6 +32,41 @@ export class AssetsManager {
     this.objects = {};
     this.animations = {};
     this.worldsJSON = null;
+  }
+
+  /**
+   *
+   * @param {GameObject} go
+   * @param {*} isServerSide
+   */
+  initGameObject(go, isServerSide) {
+    for (const type in go.getComponents()) {
+      const c = go.getComponents()[type];
+      if (isServerSide && !c.getModel().isServerSide()) continue;
+
+      //create game component controller
+
+      const scripts = {};
+
+      switch (type) {
+        case WorldScriptModel.TYPE:
+          c.getModel()
+            .getIdScripts()
+            .forEach((idScript) => {
+              scripts[idScript] = new this.fetchWorldScript(idScript);
+            });
+          c.setController(new WorldScriptController(scripts));
+          break;
+        default:
+          throw 'Unknown Game Component';
+      }
+    }
+
+    go.isInitialized();
+
+    go.getChildren().forEach((child) => {
+      this.initGameObject(child, isServerSide);
+    });
   }
 
   /**
