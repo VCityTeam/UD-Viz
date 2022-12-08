@@ -201,14 +201,18 @@
     "slides": [
       {
         "name": "diapo1",
-        "folder": "./assets/diapositive1",
-        "diapositives": ["1.jpeg", "2.jpeg", "3.jpeg", "cloudVideo.mp4"]
+        "folder": "./assets/img/slide",
+        "diapositives": ["1.jpeg", "2.jpeg", "3.jpeg"]
       },
       {
         "name": "diapo2",
-        "folder": "./assets/diapositive1",
-        "diapositives": ["11.jpeg", "12.jpeg", "cloudVideo.mp4", "13.jpeg"]
+        "folder": "./assets/img/slide",
+        "diapositives": ["11.jpeg", "12.jpeg", "13.jpeg"]
       }
     ]
+  },
+  "sparqlModule": {
+    "url": "http://localhost:8997/strabon/",
+    "url_parameters": "Query?handle=download&format=SPARQL/JSON&view=HTML&query="
   }
 }

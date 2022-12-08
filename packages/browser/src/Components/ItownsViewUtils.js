@@ -179,22 +179,24 @@ export function setupAndAddGeoJsonLayers(config, itownsView) {
  * @param {itowns.Extent} extent extent of the view
  */
 export function addBaseMapLayer(config, itownsView, extent) {
-  if (!config['background_image_layer']) {
+  const baseMapLayerConfig = config.base_map_layers[0]; //the first one is the default one
+
+  if (!baseMapLayerConfig) {
     console.warn('No "BaseMapLayer" field in the configuration file');
     return;
   }
 
   const wmsImagerySource = new itowns.WMSSource({
     extent: extent,
-    name: config['background_image_layer']['name'],
-    url: config['background_image_layer']['url'],
-    version: config['background_image_layer']['version'],
+    name: baseMapLayerConfig['name'],
+    url: baseMapLayerConfig['url'],
+    version: baseMapLayerConfig['version'],
     crs: config['projection'],
-    format: config['background_image_layer']['format'],
+    format: baseMapLayerConfig['format'],
   });
   // Add a WMS imagery layer
   const wmsImageryLayer = new itowns.ColorLayer(
-    config['background_image_layer']['layer_name'],
+    baseMapLayerConfig['layer_name'],
     {
       updateStrategy: {
         type: itowns.STRATEGY_DICHOTOMY,

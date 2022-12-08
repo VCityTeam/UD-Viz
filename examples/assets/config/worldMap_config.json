@@ -1,7 +1,7 @@
 {
   "assets": {
-    "iconFolder": "../assets/icons",
-    "imageFolder": "../assets/img",
+    "iconFolder": "./assets/svg",
+    "imageFolder": "./assets/img/logo",
     "logos": ["logo-liris.png", "logo-univ-lyon.png"]
   },
   "extents": {
@@ -10,17 +10,16 @@
     "min_y": "-20048966",
     "max_y": "20048966"
   },
-  "hmtlWindow":{
+  "hmtlWindow": {
     "helpWindow": {
+      "icon_path": "./assets/svg/help.svg",
       "htmlPaths": [
-        "../assets/html/contribute.html",
-        "../assets/html/camera.html"
+        "./assets/html/contribute.html",
+        "./assets/html/camera.html"
       ]
     },
     "aboutWindow": {
-      "htmlPaths": [
-        "../assets/html/about.html"
-      ]
+      "htmlPaths": ["./assets/html/about.html"]
     }
   },
   "projection": "EPSG:3857",

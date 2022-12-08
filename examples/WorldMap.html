@@ -1,9 +1,7 @@
-
-
 <!DOCTYPE html>
 <html>
   <head>
-    <title>GeoJSON example</title>
+    <title>World Map example</title>
 
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -18,7 +16,7 @@
 
       const app = new udvizBrowser.Templates.AllWidget();
 
-      app.start('./assets/config/default_config.json').then((config) => {
+      app.start('./assets/config/worldMap_config.json').then((config) => {
         ////// ABOUT MODULE
         const about = new udvizBrowser.Widgets.AboutWindow(
           config.hmtlWindow.aboutWindow
@@ -29,15 +27,6 @@
         const help = new udvizBrowser.Widgets.Extensions.HelpWindow(
           config.hmtlWindow.helpWindow
         );
-
-        ////// REQUEST SERVICE
-        const requestService = new udvizBrowser.Components.RequestService();
-
-        ////// LAYER CHOICE MODULE
-        const layerChoice = new udvizBrowser.Widgets.LayerChoice(
-          app.view3D.getLayerManager()
-        );
-        app.addModuleView('layerChoice', layerChoice);
       });
     </script>
   </body>

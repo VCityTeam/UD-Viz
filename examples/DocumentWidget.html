@@ -1,58 +1,68 @@
-<!-- @format -->
+
 
 <!DOCTYPE html>
 <html>
   <head>
-    <title>UD-Viz Widget Template example</title>
+    <title>Document Widget example</title>
 
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   </head>
   <body>
-    <script src="../../dist/release/udv.js"></script>
-    <script type="text/javascript">
-      let app = new udv.Templates.AllWidget();
+    <!-- <script src="../packages/browser/dist/release/bundle.js"></script> -->
+    <script src="../packages/browser/dist/debug/bundle.js"></script>
 
-      app.start('../assets/config/all_widget_config.json').then((config) => {
+    <script type="text/javascript">
+      /* eslint-disable no-new */
+      /* eslint-disable prettier/prettier */
+      const app = new udvizBrowser.Templates.AllWidget();
+
+      app.start('./assets/config/default_config.json').then((config) => {
         ////// REQUEST SERVICE
-        const requestService = new udv.Components.RequestService();
-        
+        const requestService = new udvizBrowser.Components.RequestService();
+
         ////// ABOUT MODULE
-        const about = new udv.Widgets.AboutWindow(config.hmtlWindow.aboutWindow);
+        const about = new udvizBrowser.Widgets.AboutWindow(
+          config.hmtlWindow.aboutWindow
+        );
         app.addModuleView('about', about);
 
         ////// HELP MODULE
-        const help = new udv.Widgets.Extensions.HelpWindow(config.hmtlWindow.helpWindow);
+        const help = new udvizBrowser.Widgets.Extensions.HelpWindow(
+          config.hmtlWindow.helpWindow
+        );
 
         ////// AUTHENTICATION MODULE
         const authenticationService =
-          new udv.Widgets.Extensions.AuthenticationService(
+          new udvizBrowser.Widgets.Extensions.AuthenticationService(
             requestService,
             app.config
           );
 
         const authenticationView =
-          new udv.Widgets.Extensions.AuthenticationView(authenticationService);
+          new udvizBrowser.Widgets.Extensions.AuthenticationView(
+            authenticationService
+          );
         app.addModuleView('authentication', authenticationView, {
-          type: udv.Templates.AllWidget.AUTHENTICATION_MODULE,
+          type: udvizBrowser.Templates.AllWidget.AUTHENTICATION_MODULE,
         });
 
         ////// DOCUMENTS MODULE
-        let documentModule = new udv.Widgets.DocumentModule(
+        let documentModule = new udvizBrowser.Widgets.DocumentModule(
           requestService,
           app.config
         );
         app.addModuleView('documents', documentModule.view);
 
         ////// DOCUMENTS VISUALIZER EXTENSION (to orient the document)
-        const imageOrienter = new udv.Widgets.DocumentVisualizerWindow(
+        const imageOrienter = new udvizBrowser.Widgets.DocumentVisualizerWindow(
           documentModule,
           app.view3D.getItownsView(),
           app.view3D.getItownsView().controls
         );
 
         ////// CONTRIBUTE EXTENSION
-        new udv.Widgets.Extensions.ContributeModule(
+        new udvizBrowser.Widgets.Extensions.ContributeModule(
           documentModule,
           imageOrienter,
           requestService,
@@ -62,28 +72,28 @@
         );
 
         ////// VALIDATION EXTENSION
-        new udv.Widgets.Extensions.DocumentValidationModule(
+        new udvizBrowser.Widgets.Extensions.DocumentValidationModule(
           documentModule,
           requestService,
           app.config
         );
 
         ////// DOCUMENT COMMENTS EXTENSION
-        new udv.Widgets.Extensions.DocumentCommentsModule(
+        new udvizBrowser.Widgets.Extensions.DocumentCommentsModule(
           documentModule,
           requestService,
           app.config
         );
 
         ////// CITY OBJECTS MODULE
-        let cityObjectModule = new udv.Widgets.CityObjectModule(
+        let cityObjectModule = new udvizBrowser.Widgets.CityObjectModule(
           app.view3D.getLayerManager(),
           app.config
         );
         app.addModuleView('cityObjects', cityObjectModule.view);
 
         ////// LINKS MODULE
-        new udv.Widgets.LinkModule(
+        new udvizBrowser.Widgets.LinkModule(
           documentModule,
           cityObjectModule,
           requestService,
