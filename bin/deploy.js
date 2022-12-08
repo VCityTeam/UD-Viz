@@ -1,7 +1,7 @@
 const HttpServer = require('@ud-viz/node').HttpServer;
 
-const debugServer = new HttpServer();
-debugServer.start({
+const httpServer = new HttpServer();
+httpServer.start({
   folder: './',
   port: 8000,
 });
