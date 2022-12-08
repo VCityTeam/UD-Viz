@@ -22,7 +22,7 @@ export class HelpWindow extends ModuleView {
 
     // Image button
     const imgButton = document.createElement('img');
-    imgButton.src = './../../../../examples/assets/icons/help.svg';
+    imgButton.src = config.icon_path;
     helpButton.append(imgButton);
 
     // Event for openning help window

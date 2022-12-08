@@ -1,5 +1,4 @@
 import * as THREE from 'three';
-import * as THREEUtils from '../../Components/THREEUtils';
 import { CSS3DObject } from 'three/examples/jsm/renderers/CSS3DRenderer';
 import { Color } from 'three';
 
@@ -12,18 +11,18 @@ const BLANK_MATERIAL = new THREE.MeshBasicMaterial({
 });
 
 export class Billboard {
-  constructor(html, transform = new THREEUtils.Transform(), resolution = 1) {
+  constructor(html, position, rotation, scale, resolution = 1) {
     this.uuid = THREE.MathUtils.generateUUID();
     this.html = html;
-    this.html.style.width = resolution * transform.scale.x + 'px';
-    this.html.style.height = resolution * transform.scale.y + 'px';
+    this.html.style.width = resolution * scale.x + 'px';
+    this.html.style.height = resolution * scale.y + 'px';
 
     // CSS3DOBJECT
     const newElement = new CSS3DObject(this.html);
-    newElement.position.copy(transform.getPosition());
-    newElement.rotation.setFromVector3(transform.getRotation());
+    newElement.position.copy(position);
+    newElement.rotation.setFromVector3(rotation);
 
-    const css3DScale = transform.getScale().clone();
+    const css3DScale = scale.clone();
     css3DScale.x *= 1 / resolution;
     css3DScale.y *= 1 / resolution;
     css3DScale.z *= 1 / resolution;
@@ -33,14 +32,11 @@ export class Billboard {
 
     // THREE OBJECT
     // mask
-    const geometry = new THREE.PlaneGeometry(
-      transform.scale.x,
-      transform.scale.y
-    );
+    const geometry = new THREE.PlaneGeometry(scale.x, scale.y);
     const plane = new THREE.Mesh(geometry, BLANK_MATERIAL);
-    plane.position.copy(transform.getPosition());
-    plane.rotation.setFromVector3(transform.getRotation());
-    plane.scale.copy(transform.getScale());
+    plane.position.copy(position);
+    plane.rotation.setFromVector3(rotation);
+    plane.scale.copy(scale);
     plane.updateMatrixWorld();
     this.maskObject = plane;
 

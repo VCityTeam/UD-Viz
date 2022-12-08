@@ -16,7 +16,7 @@ module.exports = {
   },
 
   /**
-   * Add default lights to a scene
+   * Add default lights to a scenedebugger;
    * one directional and one ambient
    *
    * @param {THREE.Scene} scene the scene where to add lights

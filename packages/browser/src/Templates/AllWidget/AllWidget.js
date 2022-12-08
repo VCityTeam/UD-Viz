@@ -128,7 +128,7 @@ export class AllWidget {
             </div>
             <div id="${this.authenticationMenuLoggedOutId}">
                 <button type="button" id="${this.authenticationLoginButtonId}"
-                class="logInOut"><img src="./../../../../examples/assets/icons/user-solid.svg"></button>
+                class="logInOut"><img src="${this.config.icon_authenfication_path}"></button>
             </div>
         `;
   }

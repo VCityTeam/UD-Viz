@@ -12,39 +12,44 @@
     <script src="../packages/browser/dist/debug/bundle.js"></script>
 
     <script type="text/javascript">
+      /* eslint-disable no-new */
+      /* eslint-disable prettier/prettier */
+
       udvizBrowser.Components.SystemUtils.File.loadJSON(
         './assets/config/default_config.json'
       ).then(function (config) {
-
         const projection = config['projection'];
         const extent = new udvizBrowser.itowns.Extent(
           projection,
-          config["extents"].min_x,
-          config["extents"].max_x,
-          config["extents"].min_y,
-          config["extents"].max_y
+          parseFloat(config['extents'].min_x),
+          parseFloat(config['extents'].max_x),
+          parseFloat(config['extents'].min_y),
+          parseFloat(config['extents'].max_y)
         );
 
-
         const view3D = new udvizBrowser.Views.View3D({
-          projection: ,
+          projection: projection,
           hasItownsControls: true,
           config: config,
         });
         view3D.start(extent);
 
+        udvizBrowser.Components.THREEUtils.addLights(view3D.getScene());
+        udvizBrowser.Components.THREEUtils.initRenderer(
+          view3D.getRenderer(),
+          new udvizBrowser.THREE.Color(0x6699cc)
+        );
+
         const center = extent.center();
 
         const iframe = document.createElement('iframe');
         iframe.src = `${window.location.origin}/examples/assets/html/billboard.html`;
-        console.error('THREEUtils.Transform is deprecated');
+
         const billboard = new udvizBrowser.Views.Billboard(
           iframe,
-          new udvizBrowser.Components.THREEUtils.Transform(
-            new udvizBrowser.THREE.Vector3(center.x, center.y, 600),
-            new udvizBrowser.THREE.Vector3(Math.PI * 0.5, Math.PI * 0.2, 0),
-            new udvizBrowser.THREE.Vector3(20, 20, 20)
-          ),
+          new udvizBrowser.THREE.Vector3(center.x, center.y, 600),
+          new udvizBrowser.THREE.Vector3(Math.PI * 0.5, Math.PI * 1.2, 0),
+          new udvizBrowser.THREE.Vector3(20, 20, 20),
           100
         );
         view3D.appendBillboard(billboard);

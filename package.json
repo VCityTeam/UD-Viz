@@ -9,9 +9,9 @@
     "build-core": "npm run build --prefix ./packages/core",
     "build-browser": "npm run build --prefix ./packages/browser",
     "build-node": "npm run build --prefix ./packages/node",
-    "eslint-quiet": "eslint --quiet --ignore-path .gitignore \"packages/**/*.js\" \"examples/AllWidget.html\" ",
-    "eslint": "eslint --ignore-path .gitignore \"packages/**/*.js\" \"examples/AllWidget.html\" ",
-    "eslint-fix": "eslint --ignore-path .gitignore \"packages/**/*.js\" \"examples/AllWidget.html\"  --fix",
+    "eslint-quiet": "eslint --quiet --ignore-path .gitignore \"packages/**/*.js\" \"examples/*.html\" ",
+    "eslint": "eslint --ignore-path .gitignore \"packages/**/*.js\" \"examples/*.html\" ",
+    "eslint-fix": "eslint --ignore-path .gitignore \"packages/**/*.js\" \"examples/*.html\"  --fix",
     "docs": "jsdoc -c ./docs/jsdoc.json --verbose",
     "debug-examples": "node ./bin/debug.js",
     "deploy": "npm run build-browser && node ./bin/deploy.js"

@@ -3,31 +3,40 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>UD-Viz GeoJSON example</title>
+    <title>GeoJSON example</title>
 
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   </head>
   <body>
-    <script src="../../dist/release/udv.js"></script>
-    <!-- <script src="../../dist/debug/udv.js"></script> -->
+    <!-- <script src="../packages/browser/dist/release/bundle.js"></script> -->
+    <script src="../packages/browser/dist/debug/bundle.js"></script>
+
     <script type="text/javascript">
-      let app = new udv.Templates.AllWidget();
+      /* eslint-disable no-new */
+      /* eslint-disable prettier/prettier */
 
-      app.start('./assets/config/geojson_config.json').then((config) => {
+      const app = new udvizBrowser.Templates.AllWidget();
 
+      app.start('./assets/config/default_config.json').then((config) => {
         ////// ABOUT MODULE
-        const about = new udv.Widgets.AboutWindow(config.hmtlWindow.aboutWindow);
+        const about = new udvizBrowser.Widgets.AboutWindow(
+          config.hmtlWindow.aboutWindow
+        );
         app.addModuleView('about', about);
 
         ////// HELP MODULE
-        const help = new udv.Widgets.Extensions.HelpWindow(config.hmtlWindow.helpWindow);
-        
+        const help = new udvizBrowser.Widgets.Extensions.HelpWindow(
+          config.hmtlWindow.helpWindow
+        );
+
         ////// REQUEST SERVICE
-        const requestService = new udv.Components.RequestService();
+        const requestService = new udvizBrowser.Components.RequestService();
 
         ////// LAYER CHOICE MODULE
-        const layerChoice = new udv.Widgets.LayerChoice(app.view3D.getLayerManager());
+        const layerChoice = new udvizBrowser.Widgets.LayerChoice(
+          app.view3D.getLayerManager()
+        );
         app.addModuleView('layerChoice', layerChoice);
       });
     </script>
