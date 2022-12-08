@@ -1,3 +1,3 @@
 module.exports = {
-  HttpServer: require('./Template/HttpServer'),
+  HttpServer: require('./Templates/HttpServer'),
 };
