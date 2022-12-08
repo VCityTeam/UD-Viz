@@ -7,12 +7,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   </head>
   <body>
-    <script src="../packages/browser/dist/release/bundle.js"></script>
-    <!-- <script src="./packages/browser/dist/debug/bundle.js"></script> -->
+    <!-- <script src="../packages/browser/dist/release/bundle.js"></script> -->
+    <script src="../packages/browser/dist/debug/bundle.js"></script>
+
     <script type="text/javascript">
       const app = new udvizBrowser.Templates.AllWidget();
 
-      app.start('./assets/config/all_widget_config.json').then((config) => {
+      app.start('./assets/config/default_widget_config.json').then((config) => {
         ////// REQUEST SERVICE
         const requestService = new udvizBrowser.Components.RequestService();
 
