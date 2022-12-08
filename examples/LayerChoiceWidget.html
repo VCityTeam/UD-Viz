@@ -19,18 +19,18 @@
       const app = new udvizBrowser.Templates.AllWidget();
 
       app.start('./assets/config/default_config.json').then((config) => {
-        ////// ABOUT MODULE
+        // //// ABOUT MODULE
         const about = new udvizBrowser.Widgets.AboutWindow(
           config.hmtlWindow.aboutWindow
         );
         app.addModuleView('about', about);
 
-        ////// HELP MODULE
+        // //// HELP MODULE
         const help = new udvizBrowser.Widgets.Extensions.HelpWindow(
           config.hmtlWindow.helpWindow
         );
 
-        ////// LAYER CHOICE MODULE
+        // //// LAYER CHOICE MODULE
         const layerChoice = new udvizBrowser.Widgets.LayerChoice(
           app.view3D.getLayerManager()
         );

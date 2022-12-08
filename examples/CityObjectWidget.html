@@ -19,25 +19,25 @@
       const app = new udvizBrowser.Templates.AllWidget();
 
       app.start('./assets/config/default_config.json').then((config) => {
-        ////// REQUEST SERVICE
+        // //// REQUEST SERVICE
         const requestService = new udvizBrowser.Components.RequestService();
 
-        ////// ABOUT MODULE
+        // //// ABOUT MODULE
         const about = new udvizBrowser.Widgets.AboutWindow(
           config.hmtlWindow.aboutWindow
         );
         app.addModuleView('about', about);
 
-        ////// HELP MODULE
+        // //// HELP MODULE
         const help = new udvizBrowser.Widgets.Extensions.HelpWindow(
           config.hmtlWindow.helpWindow
         );
 
-        ////// CITY OBJECTS MODULE
-        let cityObjectModule = new udvizBrowser.Widgets.CityObjectModule(
-          app.view3D.layerManager,
-          app.config
-        );
+        // //// CITY OBJECTS MODULE
+        const cityObjectModule = new udvizBrowser.Widgets.CityObjectModule(
+    app.view3D.layerManager,
+    app.config
+  );
         app.addModuleView('cityObjects', cityObjectModule.view);
       });
     </script>

@@ -18,21 +18,21 @@
       const app = new udvizBrowser.Templates.AllWidget();
 
       app.start('./assets/config/default_config.json').then((config) => {
-        ////// REQUEST SERVICE
+        // //// REQUEST SERVICE
         const requestService = new udvizBrowser.Components.RequestService();
 
-        ////// ABOUT MODULE
+        // //// ABOUT MODULE
         const about = new udvizBrowser.Widgets.AboutWindow(
           config.hmtlWindow.aboutWindow
         );
         app.addModuleView('about', about);
 
-        ////// HELP MODULE
+        // //// HELP MODULE
         const help = new udvizBrowser.Widgets.Extensions.HelpWindow(
           config.hmtlWindow.helpWindow
         );
 
-        ////// AUTHENTICATION MODULE
+        // //// AUTHENTICATION MODULE
         const authenticationService =
           new udvizBrowser.Widgets.Extensions.AuthenticationService(
             requestService,
@@ -47,21 +47,21 @@
           type: udvizBrowser.Templates.AllWidget.AUTHENTICATION_MODULE,
         });
 
-        ////// DOCUMENTS MODULE
-        let documentModule = new udvizBrowser.Widgets.DocumentModule(
-          requestService,
-          app.config
-        );
+        // //// DOCUMENTS MODULE
+        const documentModule = new udvizBrowser.Widgets.DocumentModule(
+    requestService,
+    app.config
+  );
         app.addModuleView('documents', documentModule.view);
 
-        ////// DOCUMENTS VISUALIZER EXTENSION (to orient the document)
+        // //// DOCUMENTS VISUALIZER EXTENSION (to orient the document)
         const imageOrienter = new udvizBrowser.Widgets.DocumentVisualizerWindow(
           documentModule,
           app.view3D.getItownsView(),
           app.view3D.getItownsView().controls
         );
 
-        ////// CONTRIBUTE EXTENSION
+        // //// CONTRIBUTE EXTENSION
         new udvizBrowser.Widgets.Extensions.ContributeModule(
           documentModule,
           imageOrienter,
@@ -71,28 +71,28 @@
           app.config
         );
 
-        ////// VALIDATION EXTENSION
+        // //// VALIDATION EXTENSION
         new udvizBrowser.Widgets.Extensions.DocumentValidationModule(
           documentModule,
           requestService,
           app.config
         );
 
-        ////// DOCUMENT COMMENTS EXTENSION
+        // //// DOCUMENT COMMENTS EXTENSION
         new udvizBrowser.Widgets.Extensions.DocumentCommentsModule(
           documentModule,
           requestService,
           app.config
         );
 
-        ////// CITY OBJECTS MODULE
-        let cityObjectModule = new udvizBrowser.Widgets.CityObjectModule(
-          app.view3D.getLayerManager(),
-          app.config
-        );
+        // //// CITY OBJECTS MODULE
+        const cityObjectModule = new udvizBrowser.Widgets.CityObjectModule(
+    app.view3D.getLayerManager(),
+    app.config
+  );
         app.addModuleView('cityObjects', cityObjectModule.view);
 
-        ////// LINKS MODULE
+        // //// LINKS MODULE
         new udvizBrowser.Widgets.LinkModule(
           documentModule,
           cityObjectModule,

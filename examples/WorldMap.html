@@ -17,13 +17,13 @@
       const app = new udvizBrowser.Templates.AllWidget();
 
       app.start('./assets/config/worldMap_config.json').then((config) => {
-        ////// ABOUT MODULE
+        // //// ABOUT MODULE
         const about = new udvizBrowser.Widgets.AboutWindow(
           config.hmtlWindow.aboutWindow
         );
         app.addModuleView('about', about);
 
-        ////// HELP MODULE
+        // //// HELP MODULE
         const help = new udvizBrowser.Widgets.Extensions.HelpWindow(
           config.hmtlWindow.helpWindow
         );

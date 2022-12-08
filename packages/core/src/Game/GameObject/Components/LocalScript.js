@@ -19,7 +19,7 @@ const LocalScriptModule = class LocalScript {
 
     // Conf pass to scripts
     const conf = json.conf || {};
-    this.conf = JSON.parse(JSON.stringify(conf)); //deep copy
+    this.conf = JSON.parse(JSON.stringify(conf)); // deep copy
 
     // Map of scripts
     this.scripts = {};

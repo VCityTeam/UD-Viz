@@ -19,16 +19,16 @@
       const app = new udvizBrowser.Templates.AllWidget();
 
       app.start('./assets/config/default_config.json').then(() => {
-        ////// REQUEST SERVICE
+        // //// REQUEST SERVICE
         const requestService = new udvizBrowser.Components.RequestService();
 
-        ////// ABOUT MODULE
+        // //// ABOUT MODULE
         const about = new udvizBrowser.Widgets.AboutWindow(
           config.hmtlWindow.aboutWindow
         );
         app.addModuleView('about', about);
 
-        ////// AUTHENTICATION MODULE
+        // //// AUTHENTICATION MODULE
         const authenticationService =
           new udvizBrowser.Widgets.Extensions.AuthenticationService(
             requestService,
@@ -43,14 +43,14 @@
           type: udvizBrowser.Templates.AllWidget.AUTHENTICATION_MODULE,
         });
 
-        ////// CITY OBJECTS MODULE
-        let cityObjectModule = new udvizBrowser.Widgets.CityObjectModule(
-          app.view3D.getLayerManager(),
-          app.config
-        );
+        // //// CITY OBJECTS MODULE
+        const cityObjectModule = new udvizBrowser.Widgets.CityObjectModule(
+    app.view3D.getLayerManager(),
+    app.config
+  );
         app.addModuleView('cityObjects', cityObjectModule.view);
 
-        ////// 3DTILES DEBUG
+        // //// 3DTILES DEBUG
         const debug3dTilesWindow = new udvizBrowser.Widgets.Debug3DTilesWindow(
           app.view3D.getLayerManager()
         );
@@ -58,20 +58,20 @@
           name: '3DTiles Debug',
         });
 
-        ////// CAMERA POSITIONER
+        // //// CAMERA POSITIONER
         const cameraPosition = new udvizBrowser.Widgets.CameraPositionerView(
           app.view,
           app.controls
         );
         app.addModuleView('cameraPositioner', cameraPosition);
 
-        ////// LAYER CHOICE MODULE
+        // //// LAYER CHOICE MODULE
         const layerChoice = new udvizBrowser.Widgets.LayerChoice(
           app.view3D.getLayerManager()
         );
         app.addModuleView('layerChoice', layerChoice);
 
-        ////// SPARQL MODULE
+        // //// SPARQL MODULE
         const sparqlModule = new udvizBrowser.Widgets.Extensions.SparqlModule(
           app.config,
           app.view3D.getLayerManager()
