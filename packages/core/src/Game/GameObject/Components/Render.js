@@ -3,17 +3,13 @@ const THREE = require('three');
 /**
  *  Component used to handle the 3D rendering of the GameObject
  */
-const RenderModule = class Render {
+const RenderModelModule = class RenderModel {
   /**
    * Create a new Render component of a GameObject from json
    *
-   * @param {GameObject} parent gameobject of this component
    * @param {JSON} json
    */
-  constructor(parent, json) {
-    /** @type {GameObject} gameobject of this component*/
-    this.parent = parent;
-
+  constructor(json) {
     /** Uuid of the component. Init from the field uuid of the json (If it does not exist, a uuid is generated). */
     this.uuid = json.uuid || THREE.MathUtils.generateUUID();
 
@@ -31,15 +27,6 @@ const RenderModule = class Render {
      * @type {THREE.Color}
      */
     this.color = new THREE.Color().fromArray(json.color || [1, 1, 1]);
-
-    /** @type {THREE.Object3D} */
-    this.object3D = null;
-
-    /** @type {THREE.AnimationClip[]} */
-    this.animations = null;
-    /** @type {THREE.AnimationMixer} */
-    this.animationMixer = null;
-    this.actions = {};
   }
 
   /**
@@ -59,7 +46,7 @@ const RenderModule = class Render {
   toJSON() {
     return {
       uuid: this.uuid,
-      type: RenderModule.TYPE,
+      type: RenderModelModule.TYPE,
       idRenderData: this.idRenderData,
       color: this.color.toArray(),
     };
@@ -121,7 +108,7 @@ const RenderModule = class Render {
   initAssets(assetsManager) {
     console.error('DEPRECATED');
     this.object3D = new THREE.Object3D();
-    this.object3D.name = 'Render Object3D ' + this.parent.getName();
+    this.object3D.name = 'Render Object3D ' + this.uuid;
 
     // Get the 3D model
     if (this.idRenderData) {
@@ -144,13 +131,6 @@ const RenderModule = class Render {
     return this.object3D;
   }
 
-  tick(localCtx) {
-    console.error('DEPRECATED');
-    if (this.animationMixer) {
-      this.animationMixer.update(localCtx.getDt() * 0.001);
-    }
-  }
-
   getActions() {
     return this.actions;
   }
@@ -164,9 +144,9 @@ const RenderModule = class Render {
   }
 };
 
-RenderModule.TYPE = 'Render';
+RenderModelModule.TYPE = 'Render';
 
-RenderModule.bindColor = function (goJSON, color) {
+RenderModelModule.bindColor = function (goJSON, color) {
   try {
     goJSON.components.Render.color = color;
   } catch (e) {
@@ -174,4 +154,4 @@ RenderModule.bindColor = function (goJSON, color) {
   }
 };
 
-module.exports = RenderModule;
+module.exports = { Model: RenderModelModule };

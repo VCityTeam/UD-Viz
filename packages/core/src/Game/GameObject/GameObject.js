@@ -6,13 +6,14 @@
 
 const THREE = require('three');
 const JSONUtils = require('../Components/JSONUtils');
+const Component = require('./Components/Component').Component;
 
 // GameObject Components
 // const RenderModel = require('./Components/Render');
 // const ColliderModel = require('./Components/Collider');
-const WorldScriptModel = require('./Components/WorldScript').WorldScriptModel;
+const WorldScript = require('./Components/WorldScript');
 // const AudioModel = require('./Components/Audio');
-// const LocalScriptModel = require('./Components/LocalScript');
+// const BrowserScriptModel = require('./Components/BrowserScript');
 
 /**
  * Objects to compose a Game
@@ -168,31 +169,13 @@ const GameObjectModule = class GameObject {
     });
   }
 
-  /**
-   * Initialize components of this
-   *
-   * @param {AssetsManager} manager must implement an assetsmanager interface can be local or server
-   * @param {Library} bundles set of bundle library used by script
-   * @param {boolean} isServerSide the code is running on a server or in a browser
-   */
-  initAssetsComponents(manager, bundles = {}, isServerSide = false) {
-    console.error('DEPRECATED');
-    if (!this.initialized) {
-      this.initialized = true;
-      for (const type in this.components) {
-        const c = this.components[type];
-        if (isServerSide && !c.isServerSide()) continue;
-        c.initAssets(manager, bundles);
-      }
-    }
-    this.children.forEach(function (child) {
-      child.initAssetsComponents(manager, bundles, isServerSide);
-    });
+  initialize() {
+    if (this.initialized) console.warn('GameObject is already initialized');
+    this.initialized = true;
   }
 
   isInitialized() {
-    if (this.initialized) console.warn('GameObject is already initialized');
-    this.initialized = true;
+    return this.initialized;
   }
 
   /**
@@ -263,13 +246,13 @@ const GameObjectModule = class GameObject {
    * @returns {object}
    */
   fetchWorldScripts() {
-    const c = this.getComponent(WorldScriptComponent.TYPE);
+    const c = this.getComponent(WorldScript.Model.TYPE);
     if (!c) return null;
-    return c.getScripts();
+    return c.getController().getScripts();
   }
 
-  fetchLocalScripts() {
-    const c = this.getComponent(LocalScriptModule.TYPE);
+  fetchBrowserScripts() {
+    const c = this.getComponent(BrowserScript.TYPE);
     if (!c) return null;
     return c.getScripts();
   }
@@ -455,20 +438,20 @@ const GameObjectModule = class GameObject {
         //   );
 
         //   break;
-        case WorldScriptModel.TYPE:
-          if (_this.components[WorldScriptModel.TYPE])
+        case WorldScript.Model.TYPE:
+          if (_this.components[WorldScript.Model.TYPE])
             console.warn('multiple component');
 
-          _this.components[WorldScriptModel.TYPE] = new GameObjectComponent(
-            new WorldScriptModel(componentModelJSON)
+          _this.components[WorldScript.Model.TYPE] = new Component(
+            new WorldScript.Model(componentModelJSON)
           );
 
           break;
-        // case LocalScriptModule.TYPE:
-        //   if (_this.components[LocalScriptModule.TYPE])
+        // case BrowserScriptModule.TYPE:
+        //   if (_this.components[BrowserScriptModule.TYPE])
         //     console.warn('multiple component');
 
-        //   _this.components[LocalScriptModule.TYPE] = new LocalScriptModule(
+        //   _this.components[BrowserScriptModule.TYPE] = new BrowserScriptModule(
         //     _this,
         //     componentModelJSON
         //   );
@@ -488,35 +471,6 @@ const GameObjectModule = class GameObject {
           console.warn('wrong type component', type, componentModelJSON);
       }
     }
-  }
-
-  /**
-   * Compute the object3D
-   *
-   * @param {boolean} recursive if true recursive call on children
-   * @returns {THREE.Object3D} the object3D of this
-   */
-  computeObject3D(recursive = true) {
-    const obj = this.object3D;
-
-    // Clear children object
-    obj.children.length = 0;
-
-    const r = this.getComponent(RenderComponent.TYPE);
-    if (r) {
-      const rObj = r.getObject3D();
-      if (!rObj) throw new Error('no render object3D');
-      obj.add(rObj);
-    }
-
-    // Add children if recursive
-    if (recursive) {
-      this.children.forEach(function (child) {
-        obj.add(child.computeObject3D());
-      });
-    }
-
-    return obj;
   }
 
   getObject3D() {
@@ -782,19 +736,19 @@ const GameObjectModule = class GameObject {
   /**
    * Compute this to JSON with or without its server side components
    *
-   * @param {boolean} withServerComponent
+   * @param {boolean} withWorldComponent
    * @returns {JSON} the json of this
    */
-  toJSON(withServerComponent = false) {
+  toJSON(withWorldComponent = false) {
     const children = [];
     this.children.forEach((child) => {
-      children.push(child.toJSON(withServerComponent));
+      children.push(child.toJSON(withWorldComponent));
     });
 
     const componentModels = {};
     for (const type in this.components) {
       const c = this.components[type];
-      if (!c.getModel().isServerSide() || withServerComponent) {
+      if (!c.getModel().isWorldComponent() || withWorldComponent) {
         componentModels[type] = c.getModel().toJSON();
       }
     }
@@ -899,23 +853,9 @@ GameObjectModule.findObject3D = function (uuid, obj, upSearch = true) {
   return result;
 };
 
-class GameObjectComponent {
-  constructor(model) {
-    this.model = model;
-    this.controller = null; // will be initialize by assetsManager
-  }
-
-  getModel() {
-    return this.model;
-  }
-
-  getController() {
-    return this.controller;
-  }
-
-  setController(controller) {
-    this.controller = controller;
-  }
-}
-
-module.exports = GameObjectModule;
+module.exports = {
+  GameObject: GameObjectModule,
+  WorldScript: WorldScript,
+  Render: require('./Components/Render'),
+  BrowserScript: require('./Components/BrowserScript'),
+};

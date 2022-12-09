@@ -40,7 +40,7 @@ export class LocalGame {
 
     return new Promise((resolve) => {
       Components.SystemUtils.File.loadJSON(configPath).then(function (config) {
-        const assetsManager = new AssetsManager();
+        const assetsManager = new AssetsManager(options.worldScripts);
         assetsManager
           .loadFromConfig(
             config.assetsManager,
@@ -63,9 +63,14 @@ export class LocalGame {
 
       // Smooth rendering with delay
       const interpolator = new Game.WorldStateInterpolator(
-        config.worldStateInterpolator.renderDelay,
-        worldStateComputer
+        config.worldStateInterpolator.renderDelay
       );
+
+      // register computer into the interpolator
+      interpolator.onFirstState(worldStateComputer.computeCurrentState(false));
+      worldStateComputer.addAfterTickRequester(function () {
+        interpolator.onNewState(worldStateComputer.computeCurrentState(false));
+      });
 
       if (options.localScriptModules) console.error('no localscripts module');
 
@@ -78,11 +83,9 @@ export class LocalGame {
       });
 
       // Start gameview tick
-      this.gameView
-        .start(worldStateComputer.computeCurrentState())
-        .then(function () {
-          resolve();
-        });
+      this.gameView.start().then(function () {
+        resolve();
+      });
     });
   }
 }

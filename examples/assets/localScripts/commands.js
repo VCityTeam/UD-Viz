@@ -1,5 +1,3 @@
-
-
 let udviz;
 let Game = null;
 
@@ -72,7 +70,7 @@ module.exports = class Commands {
     });
 
     // Example of how to access its custom module
-    const myCustomModule = gameView.getLocalScriptModules()['myCustomModule'];
+    const myCustomModule = gameView.getBrowserScriptModules()['myCustomModule'];
     if (myCustomModule)
       inputManager.addKeyInput('l', 'keydown', myCustomModule.print);
 
