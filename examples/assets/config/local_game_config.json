@@ -28,17 +28,6 @@
         }
       }
     },
-    "worldScripts": {
-      "worldGameManager": {
-        "path": "./assets/worldScripts/worldGameManager.js"
-      },
-      "zeppelin": {
-        "path": "./assets/worldScripts/zeppelin.js"
-      },
-      "avatar": {
-        "path": "./assets/worldScripts/avatar.js"
-      }
-    },
     "localScripts": {
       "focus": {
         "path": "./assets/localScripts/focus.js"

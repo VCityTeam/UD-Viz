@@ -2,9 +2,10 @@ import * as THREE from 'three';
 import * as proj4 from 'proj4';
 import * as itowns from 'itowns';
 import { View3D } from '../View3D/View3D';
-import { LocalScript, Audio, Render } from '@ud-viz/core/src/Game/Game';
 import { computeNearFarCamera } from '../../Components/Camera/CameraUtils';
 import * as THREEUtils from '../../Components/THREEUtils';
+import GameObject from '@ud-viz/core/src/Game/GameObject/GameObject';
+import * as BrowserScript from '../../Game/BrowserScript';
 
 /**
  * Main view of an ud-viz game application
@@ -72,9 +73,9 @@ export class GameView extends View3D {
     // Notify localscript
     if (this.lastState) {
       this.lastState.getGameObject().traverse(function (g) {
-        const scriptComponent = g.getComponent(LocalScript.TYPE);
+        const scriptComponent = g.getComponent(GameObject.BrowserScript.Model);
         if (scriptComponent) {
-          scriptComponent.execute(LocalScript.EVENT.ON_RESIZE, [ctx]);
+          scriptComponent.execute(BrowserScript.Controller.EVENT.ON_RESIZE);
         }
       });
     }
@@ -356,12 +357,10 @@ export class GameView extends View3D {
 
     // Notify localscript dispose
     if (this.lastState) {
-      const ctx = this.localContext;
-
       this.lastState.getGameObject().traverse(function (g) {
-        const scriptComponent = g.getComponent(LocalScript.TYPE);
+        const scriptComponent = g.getComponent(GameObject.BrowserScript.Model);
         if (scriptComponent) {
-          scriptComponent.execute(LocalScript.EVENT.DISPOSE, [ctx]);
+          scriptComponent.execute(BrowserScript.Controller.EVENT.DISPOSE);
         }
         const audioComponent = g.getComponent(Audio.TYPE);
         if (audioComponent) audioComponent.dispose();
@@ -372,7 +371,7 @@ export class GameView extends View3D {
   /**
    * Update GameObject with the new state
    * Initialize assets of the new GameObject
-   * Call LocalScript of the GameObject
+   * Call BrowserScript of the GameObject
    * Replace Shadow light if needed
    * Call a render pass
    *
@@ -417,21 +416,26 @@ export class GameView extends View3D {
               // Update local component for bufferedGO
               let componentHasBeenUpdated = false; // Flag to know if a change of state occured
 
-              const gRenderComp = g.getComponent(Render.TYPE);
-              const gLocalScriptComp = g.getComponent(LocalScript.TYPE);
+              const gRenderComp = g.getComponent(GameObject.Render.Model.TYPE);
+              const gBrowserScriptComp = g.getComponent(
+                GameObject.BrowserScript.Model
+              );
 
               for (let index = 0; index < bufferedGO.length; index++) {
                 const element = bufferedGO[index];
 
                 // Render comp
                 if (gRenderComp) {
-                  const bufferedRenderComp = element.getComponent(Render.TYPE);
+                  const bufferedRenderComp = element.getComponent(
+                    GameObject.Render.Model.TYPE
+                  );
 
                   // Check if color change
                   if (
                     !gRenderComp
+                      .getModel()
                       .getColor()
-                      .equals(bufferedRenderComp.getColor())
+                      .equals(bufferedRenderComp.getModel().getColor())
                   ) {
                     gRenderComp.setColor(bufferedRenderComp.getColor());
                     componentHasBeenUpdated = true; // Notify change
@@ -439,43 +443,44 @@ export class GameView extends View3D {
 
                   // Check if idModel change
                   if (
-                    gRenderComp.getIdRenderData() !=
-                    bufferedRenderComp.getIdRenderData()
+                    gRenderComp.getModel().getIdRenderData() !=
+                    bufferedRenderComp.getModel().getIdRenderData()
                   ) {
-                    gRenderComp.setIdRenderData(
-                      bufferedRenderComp.getIdRenderData()
-                    );
-                    gRenderComp.initAssets(_this.getAssetsManager());
+                    gRenderComp
+                      .getController()
+                      .setIdRenderData(
+                        bufferedRenderComp.getModel().getIdRenderData()
+                      );
+
                     componentHasBeenUpdated = true;
                   }
                 }
 
-                if (gLocalScriptComp && element.isOutdated()) {
-                  const bufferedLocalScriptComp = element.getComponent(
-                    LocalScript.TYPE
+                if (gBrowserScriptComp && element.isOutdated()) {
+                  const bufferedBrowserScriptComp = element.getComponent(
+                    GameObject.BrowserScript.Model
                   );
 
                   // Replace conf in localscript component
-                  gLocalScriptComp.conf = bufferedLocalScriptComp.conf;
-                  for (const id in gLocalScriptComp.scripts) {
-                    const s = gLocalScriptComp.scripts[id];
-                    s.conf = bufferedLocalScriptComp.conf; // Replace conf in script
+                  gBrowserScriptComp.conf = bufferedBrowserScriptComp.conf;
+                  for (const id in gBrowserScriptComp.scripts) {
+                    const s = gBrowserScriptComp.scripts[id];
+                    s.conf = bufferedBrowserScriptComp.conf; // Replace conf in script
                   }
 
                   // Launch event onOutdated
                   componentHasBeenUpdated =
                     componentHasBeenUpdated ||
-                    gLocalScriptComp.execute(LocalScript.EVENT.ON_OUTDATED, [
-                      ctx,
-                    ]);
+                    gBrowserScriptComp.execute(
+                      BrowserScript.Controller.EVENT.ON_OUTDATED
+                    );
                 }
               }
 
-              if (componentHasBeenUpdated && gLocalScriptComp) {
+              if (componentHasBeenUpdated && gBrowserScriptComp) {
                 // Launch event onComponentUpdate
-                gLocalScriptComp.execute(
-                  LocalScript.EVENT.ON_COMPONENT_UPDATE,
-                  [ctx]
+                gBrowserScriptComp.execute(
+                  BrowserScript.Controller.EVENT.ON_COMPONENT_UPDATE
                 );
               }
             }
@@ -486,10 +491,12 @@ export class GameView extends View3D {
             // Render removal
             g.getObject3D().parent.remove(g.getObject3D());
 
-            // LocalScript removal
-            const scriptComponent = g.getComponent(LocalScript.TYPE);
+            // BrowserScript removal
+            const scriptComponent = g.getComponent(
+              GameObject.BrowserScript.Model
+            );
             if (scriptComponent) {
-              scriptComponent.execute(LocalScript.EVENT.ON_REMOVE, [ctx]);
+              scriptComponent.execute(BrowserScript.Controller.EVENT.ON_REMOVE);
             }
 
             // Audio removal
@@ -540,19 +547,21 @@ export class GameView extends View3D {
       _this.currentUUID[g.getUUID()] = true;
 
       // Init newGO localscript
-      const scriptComponent = g.getComponent(LocalScript.TYPE);
+      const scriptComponent = g.getComponent(GameObject.BrowserScript.Model);
       if (scriptComponent) {
-        scriptComponent.execute(LocalScript.EVENT.INIT, [ctx]);
+        scriptComponent.execute(BrowserScript.Controller.EVENT.INIT);
       }
 
       // Notify other go that a new go has been added
       go.traverse(function (child) {
-        const scriptComponent = child.getComponent(LocalScript.TYPE);
+        const scriptComponent = child.getComponent(
+          GameObject.BrowserScript.Model
+        );
         if (scriptComponent) {
-          scriptComponent.execute(LocalScript.EVENT.ON_NEW_GAMEOBJECT, [
-            ctx,
-            g,
-          ]);
+          scriptComponent.execute(
+            BrowserScript.Controller.EVENT.ON_NEW_GAMEOBJECT,
+            [g]
+          );
         }
       });
     });
@@ -561,7 +570,7 @@ export class GameView extends View3D {
 
     // rebuild object
     this.object3D.children.length = 0;
-    this.object3D.add(go.computeObject3D());
+    this.object3D.add(this.computeObject3D(go));
     // Update matrix
     this.scene.updateMatrixWorld();
 
@@ -582,9 +591,11 @@ export class GameView extends View3D {
     if (this.updateGameObject) {
       go.traverse(function (child) {
         // Tick local script
-        const scriptComponent = child.getComponent(LocalScript.TYPE);
+        const scriptComponent = child.getComponent(
+          GameObject.BrowserScript.Model
+        );
         if (scriptComponent) {
-          scriptComponent.execute(LocalScript.EVENT.TICK, [ctx]);
+          scriptComponent.execute(BrowserScript.Controller.EVENT.TICK);
         }
 
         // Tick audio component
@@ -596,10 +607,32 @@ export class GameView extends View3D {
           audioComp.tick(cameraMatWorldInverse, _this.getObject3D().position);
 
         // Render component
-        const renderComp = child.getComponent(Render.TYPE);
-        if (renderComp) renderComp.tick(ctx);
+        const renderComp = child.getComponent(GameObject.Render.Model.TYPE);
+        if (renderComp) renderComp.getController().tick(ctx.getDt());
       });
     }
+  }
+
+  computeObject3D(go) {
+    const obj = go.getObject3D();
+
+    // Clear children object
+    obj.children.length = 0;
+
+    const renderComponent = go.getComponent(GameObject.Render.Model.TYPE);
+    if (renderComponent) {
+      const renderController = renderComponent.getController();
+      const rObj = renderController.getObject3D();
+      if (!rObj) throw new Error('no renderController object3D');
+      obj.add(rObj);
+    }
+
+    // Add children if recursive
+    go.getChildren().forEach((child) => {
+      obj.add(this.computeObject3D(child));
+    });
+
+    return obj;
   }
 
   // Allow user to set a custom render pass
@@ -659,7 +692,7 @@ export class GameView extends View3D {
 }
 
 /**
- * Context pass to the GameObject LocalScript to work (TODO this class is relevant ? all attributes could be in gameview class)
+ * Context pass to the GameObject BrowserScript to work (TODO this class is relevant ? all attributes could be in gameview class)
  */
 class LocalContext {
   constructor(gameView) {
@@ -702,10 +735,10 @@ class LocalContext {
    * @param {*} id id of the localscript
    * @returns the first localscript found with id
    */
-  findLocalScriptWithID(id) {
+  findBrowserScriptWithID(id) {
     let result = null;
     this.getRootGameObject().traverse(function (child) {
-      const scripts = child.fetchLocalScripts();
+      const scripts = child.fetchBrowserScripts();
       if (scripts && scripts[id]) {
         result = scripts[id];
         return true;
@@ -722,10 +755,10 @@ class LocalContext {
    * @param {*} id id of the localscript
    * @returns the first go
    */
-  findGOWithLocalScriptID(id) {
+  findGOWithBrowserScriptID(id) {
     let result = null;
     this.getRootGameObject().traverse(function (child) {
-      const scripts = child.fetchLocalScripts();
+      const scripts = child.fetchBrowserScripts();
       if (scripts && scripts[id]) {
         result = child;
         return true;

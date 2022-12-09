@@ -13,21 +13,24 @@ const DEFAULT_MATERIAL = new THREE.MeshLambertMaterial({
 });
 
 import './AssetsManager.css';
-import {
-  WorldScriptController,
-  WorldScriptModel,
-} from '@ud-viz/core/src/Game/GameObject/Components/WorldScript';
+import WorldScript from '@ud-viz/core/src/Game/GameObject/Components/WorldScript';
 
 /**
  * Give acess to all assets (image, video, script, worlds, ...)
  */
 export class AssetsManager {
-  constructor() {
+  constructor(worldScriptsArray) {
     this.conf = null;
 
-    // Manager to load scripts
-    this.prefabs = {};
+    // transform array of worldscripts into a map
     this.worldScripts = {};
+    if (worldScriptsArray) {
+      worldScriptsArray.forEach((ws) => {
+        this.worldScripts[ws.name] = ws;
+      });
+    }
+
+    this.prefabs = {};
     this.localScripts = {};
     this.objects = {};
     this.animations = {};
@@ -38,34 +41,40 @@ export class AssetsManager {
    *
    * @param {GameObject} go
    * @param {*} isServerSide
+   * @param intializeWorldComponent
+   * @param options
    */
-  initGameObject(go, isServerSide) {
-    for (const type in go.getComponents()) {
-      const c = go.getComponents()[type];
-      if (isServerSide && !c.getModel().isServerSide()) continue;
+  initGameObject(go, intializeWorldComponent, options = {}) {
+    if (!go.isInitialized()) {
+      for (const type in go.getComponents()) {
+        const c = go.getComponents()[type];
+        if (intializeWorldComponent != c.getModel().isWorldComponent())
+          continue;
 
-      // create game component controller
+        // create game component controller
 
-      const scripts = {};
-
-      switch (type) {
-        case WorldScriptModel.TYPE:
-          c.getModel()
-            .getIdScripts()
-            .forEach((idScript) => {
-              scripts[idScript] = new this.fetchWorldScript(idScript);
-            });
-          c.setController(new WorldScriptController(scripts));
-          break;
-        default:
-          throw 'Unknown Game Component';
+        switch (type) {
+          case WorldScript.Model.TYPE:
+            c.initController(
+              new WorldScript.Controller(
+                this,
+                c.getModel(),
+                go,
+                options.worldContext
+              )
+            );
+            break;
+          default:
+            throw 'Unknown Game Component';
+        }
       }
+
+      go.initialize();
     }
 
-    go.isInitialized();
-
+    // recursive
     go.getChildren().forEach((child) => {
-      this.initGameObject(child, isServerSide);
+      this.initGameObject(child, intializeWorldComponent);
     });
   }
 
@@ -150,7 +159,7 @@ export class AssetsManager {
    * @param {string} id id of the script
    * @returns {object} constructor of the class
    */
-  fetchLocalScript(id) {
+  fetchBrowserScript(id) {
     if (!this.localScripts[id]) console.error('no local script with id ', id);
     return this.localScripts[id];
   }
@@ -442,71 +451,11 @@ export class AssetsManager {
     const module = import('./AssetsManager'); // DO NOT REMOVE
 
     if (config.worldScripts) {
-      const idLoadingWorldScripts = 'WorldScripts';
-      loadingView.addLoadingBar(idLoadingWorldScripts);
-
-      promises.push(
-        new Promise((resolve) => {
-          let count = 0;
-          for (const idScript in config.worldScripts) {
-            const scriptPath = config.worldScripts[idScript].path;
-            jquery.get(
-              scriptPath,
-              function (scriptString) {
-                scriptString = toEvalCode(scriptString);
-                _this.worldScripts[idScript] = eval(scriptString);
-                // Check if finish
-                count++;
-
-                loadingView.updateProgress(
-                  idLoadingWorldScripts,
-                  (100 * count) / Object.keys(config.worldScripts).length
-                );
-
-                if (count == Object.keys(config.worldScripts).length) {
-                  console.log('World Scripts loaded ', _this.worldScripts);
-                  resolve();
-                }
-              },
-              'text'
-            );
-          }
-        })
-      );
+      console.error('DEPRECATED');
     }
 
     if (config.localScripts) {
-      const idLoadingLocalScripts = 'LocalScripts';
-      loadingView.addLoadingBar(idLoadingLocalScripts);
-
-      promises.push(
-        new Promise((resolve) => {
-          let count = 0;
-          for (const idScript in config.localScripts) {
-            const scriptPath = config.localScripts[idScript].path;
-            jquery.get(
-              scriptPath,
-              function (scriptString) {
-                scriptString = toEvalCode(scriptString);
-                _this.localScripts[idScript] = eval(scriptString);
-                // Check if finish
-                count++;
-
-                loadingView.updateProgress(
-                  idLoadingLocalScripts,
-                  (100 * count) / Object.keys(config.localScripts).length
-                );
-
-                if (count == Object.keys(config.localScripts).length) {
-                  console.log('Local Scripts loaded ', _this.localScripts);
-                  resolve();
-                }
-              },
-              'text'
-            );
-          }
-        })
-      );
+      console.error('DEPRECATED');
     }
 
     if (config.prefabs) {

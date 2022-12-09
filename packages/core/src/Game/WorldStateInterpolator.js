@@ -6,7 +6,7 @@ const WorldState = require('./WorldState');
  * Same system as described here (https://victorzhou.com/blog/build-an-io-game-part-1/#7-client-state)
  */
 module.exports = class WorldStateInterpolator {
-  constructor(renderDelay, localComputer) {
+  constructor(renderDelay) {
     // Delay between state received and state computed
     this.renderDelay = renderDelay;
 
@@ -21,17 +21,6 @@ module.exports = class WorldStateInterpolator {
     // Ping attr computation
     this.lastTimeState = 0; // Buffer
     this.ping = 0; // Time between two new state
-
-    // local game optional (could work with a distant computer via websocket)
-    this.localComputer = localComputer;
-    if (localComputer) {
-      // Register itself in the localcomputer
-      const _this = this;
-      _this.onFirstState(localComputer.computeCurrentState());
-      localComputer.addAfterTickRequester(function () {
-        _this.onNewState(localComputer.computeCurrentState());
-      });
-    }
   }
 
   /**
@@ -116,18 +105,25 @@ module.exports = class WorldStateInterpolator {
   // local computer wrapper methods
 
   getLocalComputer() {
+    console.error('DEPRECATED');
     return this.localComputer;
   }
 
   getWorldContext() {
+    console.error('DEPRECATED');
+
     return this.localComputer.getWorldContext();
   }
 
   addAfterTickRequester(cb) {
+    console.error('DEPRECATED');
+
     return this.localComputer.addAfterTickRequester(cb);
   }
 
   onCommands(cmds) {
+    console.error('DEPRECATED');
+
     return this.localComputer.onCommands(cmds);
   }
 

@@ -4,16 +4,14 @@
  *
  * @format
  */
-const GameObject = require('./GameObject/GameObject');
-const WorldScriptComponent = require('./GameObject/Components/WorldScript');
+
 const ColliderComponent = require('./GameObject/Components/Collider');
 const THREE = require('three');
 const WorldState = require('./WorldState');
 const { Collisions } = require('detect-collisions');
-const {
-  WorldScriptModel,
-  WorldScriptController,
-} = require('./GameObject/Components/WorldScript');
+
+const GameObject = require('./GameObject/GameObject').GameObject;
+const WorldScript = require('./GameObject/Components/WorldScript');
 
 /**
  * Parent Object of GameObjects, handle simulation and store extradata like the geographic origin
@@ -51,7 +49,8 @@ const WorldModule = class World {
     /** ****************INTERNAL*/
 
     // is running on webpage or node app
-    this.isServerSide = options.isServerSide || false;
+    if (options.isServerSide != undefined)
+      console.error('no isServerSide should be passed');
     if (options.modules) console.error('no modules should be passed');
     this.modules = options.modules || {};
     this.listeners = {};
@@ -101,20 +100,22 @@ const WorldModule = class World {
    * @param {WorldContext} worldContext this world context
    * @returns {Array[Promise]} An array containing all the promises
    */
-  computePromisesLoad(go, worldContext) {
+  computePromisesLoad(go) {
     // Load GameObject
     const promises = [];
-    const params = [worldContext, this.isServerSide, this.modules];
 
     go.traverse(function (g) {
-      const scriptC = g.getComponent(WorldScriptComponent.TYPE);
+      const scriptC = g.getComponent(WorldScript.Model.TYPE);
       if (scriptC) {
-        for (const idScript in scriptC.getScripts()) {
-          const result = scriptC.executeScript(
-            idScript,
-            WorldScriptComponent.EVENT.LOAD,
-            params
-          );
+        const scripts = scriptC.getController().getScripts();
+        for (const idScript in scripts) {
+          const result = scriptC
+            .getController()
+            .executeScript(
+              scripts[idScript],
+              WorldScript.Controller.EVENT.LOAD,
+              []
+            );
           if (result) promises.push(result);
         }
       }
@@ -126,7 +127,7 @@ const WorldModule = class World {
   dispatchWorldScriptEvent(gameObject, event, params = []) {
     gameObject.traverse(function (child) {
       const worldScriptGameComponent = child.getComponent(
-        WorldScriptModel.TYPE
+        WorldScript.Model.TYPE
       );
       if (worldScriptGameComponent) {
         worldScriptGameComponent.getController().execute(event, params);
@@ -152,7 +153,7 @@ const WorldModule = class World {
 
     worldContext
       .getAssetsManager()
-      .initGameObject(gameObject, this.isServerSide);
+      .initGameObject(gameObject, true, { worldContext: worldContext });
 
     // INIT EVENT TRIGGER
     if (parent) {
@@ -160,14 +161,15 @@ const WorldModule = class World {
     } else {
       _this.gameObject = gameObject;
     }
-    this.dispatchWorldScriptEvent(gameObject, WorldScriptController.EVENT.INIT);
-
-    Promise.all(this.computePromisesLoad(gameObject, worldContext)).then(
-      function () {
-        _this.registerGOCollision(gameObject);
-        if (onLoad) onLoad();
-      }
+    this.dispatchWorldScriptEvent(
+      gameObject,
+      WorldScript.Controller.EVENT.INIT
     );
+
+    Promise.all(this.computePromisesLoad(gameObject)).then(function () {
+      _this.registerGOCollision(gameObject);
+      if (onLoad) onLoad();
+    });
   }
 
   /**
@@ -278,7 +280,7 @@ const WorldModule = class World {
     // Tick GameObject
     this.dispatchWorldScriptEvent(
       this.gameObject,
-      WorldScriptController.EVENT.TICK
+      WorldScript.Controller.EVENT.TICK
     );
 
     // Collisions
@@ -312,7 +314,7 @@ const WorldModule = class World {
                 // Already collided
                 _this.dispatchWorldScriptEvent(
                   g,
-                  WorldScriptController.EVENT.IS_COLLIDING,
+                  WorldScript.Controller.EVENT.IS_COLLIDING,
                   [result]
                 );
               } else {
@@ -320,7 +322,7 @@ const WorldModule = class World {
                 buffer.push(potentialG.getUUID()); // Register in buffer
                 _this.dispatchWorldScriptEvent(
                   g,
-                  WorldScriptController.EVENT.ON_ENTER_COLLISION,
+                  WorldScript.Controller.EVENT.ON_ENTER_COLLISION,
                   [result]
                 );
               }
@@ -334,7 +336,7 @@ const WorldModule = class World {
           if (!collidedGO.includes(uuid)) {
             _this.dispatchWorldScriptEvent(
               g,
-              WorldScriptController.EVENT.ON_LEAVE_COLLISION,
+              WorldScript.Controller.EVENT.ON_LEAVE_COLLISION,
               [uuid]
             );
             buffer.splice(i, 1); // Remove from buffer
@@ -347,13 +349,13 @@ const WorldModule = class World {
   /**
    * Return the current world state
    *
-   * @param withServerComponent
+   * @param withWorldComponent
    * @returns {WorldState}
    */
-  computeWorldState(withServerComponent = true) {
+  computeWorldState(withWorldComponent = true) {
     const result = new WorldState({
       worldUUID: this.getUUID(),
-      gameObject: this.gameObject.toJSON(withServerComponent),
+      gameObject: this.gameObject.toJSON(withWorldComponent),
       timestamp: Date.now(),
       origin: this.origin,
     });

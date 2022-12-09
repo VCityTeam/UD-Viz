@@ -1,36 +1,11 @@
-const THREE = require('three');
+import { Controller } from '@ud-viz/core/src/Game/GameObject/Components/Component';
 
-/**
- * Component used to script a GameObject during the client side update (call from GameView)
- */
-const LocalScriptModule = class LocalScript {
-  constructor(parent, json) {
-    // Gameobject of this component
-    this.parent = parent;
-
-    // Uuid
-    this.uuid = json.uuid || THREE.MathUtils.generateUUID();
-
-    // Array of localscripts id
-    this.idScripts = json.idScripts || [];
-
-    // Type
-    this.type = json.type || LocalScriptModule.TYPE;
-
-    // Conf pass to scripts
-    const conf = json.conf || {};
-    this.conf = JSON.parse(JSON.stringify(conf)); // deep copy
+const BrowserScriptControllerModule = class BrowserScriptController extends Controller {
+  constructor(assetsManager, model) {
+    super(assetsManager, model);
 
     // Map of scripts
     this.scripts = {};
-  }
-
-  /**
-   *
-   * @returns {JSON}
-   */
-  getConf() {
-    return this.conf;
   }
 
   /**
@@ -43,7 +18,7 @@ const LocalScriptModule = class LocalScript {
     console.error('DEPRECATED');
     const _this = this;
     this.idScripts.forEach(function (id) {
-      const constructor = assetsManager.fetchLocalScript(id);
+      const constructor = assetsManager.fetchBrowserScript(id);
       _this.scripts[id] = new constructor(_this.conf, bundles.udviz);
     });
   }
@@ -51,7 +26,7 @@ const LocalScriptModule = class LocalScript {
   /**
    * Execute all scripts for a particular event
    *
-   * @param {LocalScript.EVENT} event the event trigger
+   * @param {BrowserScript.EVENT} event the event trigger
    * @param {Array} params parameters pass to scripts
    */
   execute(event, params) {
@@ -70,7 +45,9 @@ const LocalScriptModule = class LocalScript {
    * Execute script with id for a particular event
    *
    * @param {string} id id of the script executed
-   * @param {LocalScript.EVENT} event event trigger
+   * @paBrowserBaseModule
+BrowserBaseModuleram {BrowserScript.EVENT} event event trigger
+   * @param event
    * @param {Array} params parameters pass to the script function
    * @returns {object} result of the script execution
    */
@@ -91,37 +68,9 @@ const LocalScriptModule = class LocalScript {
   getScripts() {
     return this.scripts;
   }
-
-  /**
-   * This component cant be run on the server side
-   *
-   * @returns {boolean}
-   */
-  isServerSide() {
-    return false;
-  }
-
-  getUUID() {
-    return this.uuid;
-  }
-
-  /**
-   * Compute this to JSON
-   *
-   * @returns {JSON}
-   */
-  toJSON() {
-    return {
-      uuid: this.uuid,
-      idScripts: this.idScripts,
-      conf: this.conf,
-      type: LocalScriptModule.TYPE,
-    };
-  }
 };
 
-LocalScriptModule.TYPE = 'LocalScript';
-LocalScriptModule.EVENT = {
+BrowserScriptControllerModule.EVENT = {
   INIT: 'init', // Before first tick
   TICK: 'tick', // Every tick
   ON_NEW_GAMEOBJECT: 'onNewGameObject', // When a go is added
@@ -132,4 +81,28 @@ LocalScriptModule.EVENT = {
   ON_RESIZE: 'onResize', // On resize window
 };
 
-module.exports = LocalScriptModule;
+/**
+ *
+ * @param {*} conf
+ * @param {*} context
+ */
+const BrowserScriptBase = class BrowserBase {
+  constructor(conf, context, parentGO) {
+    this.conf = conf;
+    this.parentGameObject = parentGO;
+    this.context = context;
+  }
+};
+
+// Fill the class with the different BrowserControllerModule.EVENT method
+for (const event in BrowserScriptControllerModule.EVENT) {
+  const eventValue = BrowserScriptControllerModule.EVENT[event];
+  BrowserScriptBase.prototype[eventValue] = () => {
+    // empty method override it for custm behavior
+  };
+}
+
+export {
+  BrowserScriptControllerModule as Controller,
+  BrowserScriptBase as Base,
+};

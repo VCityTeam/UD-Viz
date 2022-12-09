@@ -19,7 +19,7 @@ module.exports = class Avatar {
       name: 'avatar',
       components: {
         Render: { idRenderData: 'avatar' },
-        LocalScript: {
+        BrowserScript: {
           idScripts: [],
         },
       },
@@ -36,7 +36,7 @@ module.exports = class Avatar {
     const speedRotate = 0.0006;
     const avatar = this.avatar;
 
-    const ls = avatar.computeRoot().getComponent(Shared.LocalScript.TYPE);
+    const ls = avatar.computeRoot().getComponent(Shared.BrowserScript.TYPE);
     ls.conf.worldComputerDt = dt;
 
     commands.forEach(function (cmd) {

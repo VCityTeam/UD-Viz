@@ -143,11 +143,11 @@ const WorldStateComputerModule = class WorldStateComputer {
   /**
    * Compute the current world state
    *
-   * @param withServerComponent
+   * @param withWorldComponent
    * @returns {WorldState}
    */
-  computeCurrentState(withServerComponent = true) {
-    return this.worldContext.getWorld().computeWorldState(withServerComponent);
+  computeCurrentState(withWorldComponent = true) {
+    return this.worldContext.getWorld().computeWorldState(withWorldComponent);
   }
 };
 

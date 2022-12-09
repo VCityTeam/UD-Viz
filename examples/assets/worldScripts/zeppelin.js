@@ -12,7 +12,7 @@ module.exports = class Zeppelin {
     const goCollided = result.b.getGameObject();
     worldContext.getWorld().removeGameObject(goCollided.getUUID());
 
-    const zeppelinLocalScript = go.fetchLocalScripts()['zeppelin'];
-    zeppelinLocalScript.conf.sphereCount++;
+    const zeppelinBrowserScript = go.fetchBrowserScripts()['zeppelin'];
+    zeppelinBrowserScript.conf.sphereCount++;
   }
 };

@@ -24,7 +24,7 @@ module.exports = class WorldGameManager {
         WorldScript: {
           idScripts: ['zeppelin'],
         },
-        LocalScript: {
+        BrowserScript: {
           idScripts: ['zeppelin'],
           conf: { sphereCount: 0 },
         },

@@ -1,18 +1,14 @@
-const THREE = require('three');
+const { Controller, Model } = require('./Component');
 
 /**
  * Component used to script a GameObject during the world simulation
  */
-const WorldScriptModelModule = class WorldScriptModel {
+const WorldScriptModelModule = class WorldScriptModel extends Model {
   constructor(json) {
-    // Uuid
-    this.uuid = json.uuid || THREE.MathUtils.generateUUID();
+    super(json);
 
     // Array of worldScripts id
     this.idScripts = json.idScripts || [];
-
-    // Type
-    this.type = json.type || WorldScriptModelModule.TYPE;
 
     // Conf pass to scripts
     const conf = json.conf || {};
@@ -36,19 +32,11 @@ const WorldScriptModelModule = class WorldScriptModel {
   }
 
   /**
-   *
-   * @returns
-   */
-  getUUID() {
-    return this.uuid;
-  }
-
-  /**
-   * This component can be run on the server side
+   * This component is running world side
    *
    * @returns {boolean}
    */
-  isServerSide() {
+  isWorldComponent() {
     return true;
   }
 
@@ -74,9 +62,19 @@ WorldScriptModelModule.TYPE = 'WorldScript';
  * @param {*} parentGO
  * @param {*} json
  */
-const WorldScriptControllerModule = class WorldScriptController {
-  constructor(scripts) {
-    this.scripts = scripts;
+const WorldScriptControllerModule = class WorldScriptController extends Controller {
+  constructor(assetsManager, model, parentGO, worldContext) {
+    super(assetsManager, model);
+
+    this.scripts = {};
+    model.getIdScripts().forEach((idScript) => {
+      const constructor = assetsManager.fetchWorldScript(idScript);
+      this.scripts[idScript] = new constructor(
+        model.getConf(),
+        worldContext,
+        parentGO
+      ); // TODO create a parent class assetsmanager
+    });
   }
 
   /**
@@ -86,9 +84,9 @@ const WorldScriptControllerModule = class WorldScriptController {
    * @param {Array} params parameters pass to scripts
    */
   execute(event, params) {
-    this.scripts.forEach((s) => {
-      this.executeScript(s, event, params);
-    });
+    for (const id in this.scripts) {
+      this.executeScript(this.scripts[id], event, params);
+    }
   }
 
   /**
@@ -144,7 +142,7 @@ for (const event in WorldScriptControllerModule.EVENT) {
 }
 
 module.exports = {
-  WorldScriptModel: WorldScriptModelModule,
-  WorldScriptBase: WorldScriptBaseModule,
-  WorldScriptController: WorldScriptControllerModule,
+  Model: WorldScriptModelModule,
+  Base: WorldScriptBaseModule,
+  Controller: WorldScriptControllerModule,
 };
