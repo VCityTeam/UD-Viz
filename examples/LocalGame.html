@@ -11,19 +11,17 @@
     <script src="../packages/browser/dist/debug/bundle.js"></script>
 
     <script type="text/javascript">
-      /* eslint-disable prettier/prettier */
-
-      const myWorld = new udvizBrowser.udvizCore.Game.World({
-        name: 'My World',
-        origin: { lat: 45.7530993, lng: 4.8452654, alt: 300 },
-        gameObject: {
-          name: 'GameManager',
-          static: true,
-          components: {
+            const myWorld = new udvizBrowser.udvizCore.Game.World({
+  name: 'My World',
+  origin: { lat: 45.7530993, lng: 4.8452654, alt: 300 },
+  gameObject: {
+    name: 'GameManager',
+    static: true,
+    componentModels: {
             WorldScript: {
-              idScripts: ['worldGameManager'],
+              idScripts: ['WorldGameManager'],
             },
-            // LocalScript: {
+            // BrowserScript: {
             //   conf: {
             //     nameGO2Focus: 'zeppelin',
             //     cameraAngle: 0.51,
@@ -32,13 +30,27 @@
             //     maxDist: 1000,
             //   },
             //   idScripts: ['focus', 'commands'],
-            // },
-          },
-        },
-      });
+                  // },
+    },
+  },
+});
 
-      const app = new udvizBrowser.Templates.LocalGame();
-      app.start(myWorld, './assets/config/local_game_config.json');
+const WorldScriptBase = udvizBrowser.udvizCore.Game.GameObject.WorldScript.Base;
+const worldScripts = [
+  class WorldGameManager extends WorldScriptBase {
+    constructor(conf, context, parentGO) {
+            super(conf, context, parentGO);
+
+            console.log(this);
+            console.warn('ici');
+    }
+  },
+];
+
+const app = new udvizBrowser.Templates.LocalGame();
+app.start(myWorld, './assets/config/local_game_config.json', {
+  worldScripts: worldScripts,
+});
     </script>
   </body>
 </html>
