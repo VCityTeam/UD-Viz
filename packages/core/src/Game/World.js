@@ -5,12 +5,12 @@
  * @format
  */
 
-const ColliderComponent = require('./GameObject/Components/Collider');
 const THREE = require('three');
 const WorldState = require('./WorldState');
 const { Collisions } = require('detect-collisions');
 
 const GameObject = require('./GameObject/GameObject').GameObject;
+const Collider = require('./GameObject/Components/Collider');
 const WorldScript = require('./GameObject/Components/WorldScript');
 
 /**
@@ -187,11 +187,14 @@ const WorldModule = class World {
 
       _this.collisionsBuffer[child.getUUID()] = [];
 
-      const colliderComponent = child.getComponent(ColliderComponent.TYPE);
+      const colliderComponent = child.getComponent(Collider.Model.TYPE);
       if (colliderComponent) {
-        colliderComponent.getShapeWrappers().forEach(function (wrapper) {
-          collisions.insert(wrapper.getShape());
-        });
+        colliderComponent
+          .getController()
+          .getShapeWrappers()
+          .forEach(function (wrapper) {
+            collisions.insert(wrapper.getShape());
+          });
       }
     });
   }
@@ -203,8 +206,8 @@ const WorldModule = class World {
     // Collisions
     const collisions = this.collisions;
     this.gameObject.traverse(function (g) {
-      const colliderComponent = g.getComponent(ColliderComponent.TYPE);
-      if (colliderComponent) colliderComponent.update();
+      const colliderComponent = g.getComponent(Collider.Model.TYPE);
+      if (colliderComponent) colliderComponent.getController().update();
     });
     collisions.update();
 
@@ -212,21 +215,24 @@ const WorldModule = class World {
 
     this.gameObject.traverse(function (g) {
       if (g.isStatic()) return;
-      const colliderComponent = g.getComponent(ColliderComponent.TYPE);
+      const colliderComponent = g.getComponent(Collider.Model.TYPE);
       if (colliderComponent) {
-        colliderComponent.getShapeWrappers().forEach(function (wrapper) {
-          const shape = wrapper.getShape();
-          const potentials = shape.potentials();
-          const result = collisions.createResult();
-          for (const p of potentials) {
-            // In ShapeWrapper shape are link to gameObject
-            const potentialG = p.getGameObject();
-            if (!potentialG.isStatic()) continue;
-            if (shape.collides(p, result)) {
-              _this.collisionsBuffer[g.getUUID()].push(potentialG.getUUID());
+        colliderComponent
+          .getController()
+          .getShapeWrappers()
+          .forEach(function (wrapper) {
+            const shape = wrapper.getShape();
+            const potentials = shape.potentials();
+            const result = collisions.createResult();
+            for (const p of potentials) {
+              // In ShapeWrapper shape are link to gameObject
+              const potentialG = p.getGameObject();
+              if (!potentialG.isStatic()) continue;
+              if (shape.collides(p, result)) {
+                _this.collisionsBuffer[g.getUUID()].push(potentialG.getUUID());
+              }
             }
-          }
-        });
+          });
       }
     });
   }
@@ -241,11 +247,14 @@ const WorldModule = class World {
 
     // Collisions
     go.traverse(function (child) {
-      const comp = child.getComponent(ColliderComponent.TYPE);
+      const comp = child.getComponent(Collider.Model.TYPE);
       if (comp) {
-        comp.getShapeWrappers().forEach(function (wrapper) {
-          wrapper.getShape().remove();
-        });
+        comp
+          .getController()
+          .getShapeWrappers()
+          .forEach(function (wrapper) {
+            wrapper.getShape().remove();
+          });
 
         // Delete from buffer
         delete _this.collisionsBuffer[child.getUUID()];
@@ -286,49 +295,52 @@ const WorldModule = class World {
     // Collisions
     const collisions = this.collisions;
     this.gameObject.traverse(function (g) {
-      const colliderComponent = g.getComponent(ColliderComponent.TYPE);
-      if (colliderComponent) colliderComponent.update();
+      const colliderComponent = g.getComponent(Collider.Model.TYPE);
+      if (colliderComponent) colliderComponent.getController().update();
     });
     collisions.update();
 
     this.gameObject.traverse(function (g) {
       if (g.isStatic()) return;
-      const colliderComponent = g.getComponent(ColliderComponent.TYPE);
+      const colliderComponent = g.getComponent(Collider.Model.TYPE);
       if (colliderComponent) {
         const collidedGO = [];
         const buffer = _this.collisionsBuffer[g.getUUID()];
 
-        colliderComponent.getShapeWrappers().forEach(function (wrapper) {
-          const shape = wrapper.getShape();
-          const potentials = shape.potentials();
-          const result = collisions.createResult();
-          for (const p of potentials) {
-            // In ShapeWrapper shape are link to gameObject
-            const potentialG = p.getGameObject();
-            if (!potentialG.isStatic()) continue;
-            if (shape.collides(p, result)) {
-              collidedGO.push(potentialG.getUUID());
+        colliderComponent
+          .getController()
+          .getShapeWrappers()
+          .forEach(function (wrapper) {
+            const shape = wrapper.getShape();
+            const potentials = shape.potentials();
+            const result = collisions.createResult();
+            for (const p of potentials) {
+              // In ShapeWrapper shape are link to gameObject
+              const potentialG = p.getGameObject();
+              if (!potentialG.isStatic()) continue;
+              if (shape.collides(p, result)) {
+                collidedGO.push(potentialG.getUUID());
 
-              // G collides with potentialG
-              if (buffer.includes(potentialG.getUUID())) {
-                // Already collided
-                _this.dispatchWorldScriptEvent(
-                  g,
-                  WorldScript.Controller.EVENT.IS_COLLIDING,
-                  [result]
-                );
-              } else {
-                // OnEnter
-                buffer.push(potentialG.getUUID()); // Register in buffer
-                _this.dispatchWorldScriptEvent(
-                  g,
-                  WorldScript.Controller.EVENT.ON_ENTER_COLLISION,
-                  [result]
-                );
+                // G collides with potentialG
+                if (buffer.includes(potentialG.getUUID())) {
+                  // Already collided
+                  _this.dispatchWorldScriptEvent(
+                    g,
+                    WorldScript.Controller.EVENT.IS_COLLIDING,
+                    [result]
+                  );
+                } else {
+                  // OnEnter
+                  buffer.push(potentialG.getUUID()); // Register in buffer
+                  _this.dispatchWorldScriptEvent(
+                    g,
+                    WorldScript.Controller.EVENT.ON_ENTER_COLLISION,
+                    [result]
+                  );
+                }
               }
             }
-          }
-        });
+          });
 
         // Notify onExit
         for (let i = buffer.length - 1; i >= 0; i--) {

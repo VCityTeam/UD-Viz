@@ -5,9 +5,9 @@ import GameObject from '@ud-viz/core/src/Game/GameObject/GameObject';
 import { Howl } from 'howler';
 const THREEUtils = require('../../Components/THREEUtils');
 
-//not the BrowserScript of core beacuse it's import controller and base which are browser side
+//not the BrowserScript of core beacause it's import controller and base which are browser side
 import * as BrowserScript from '../../Game/BrowserScript';
-//not the Render of core beacuse it's import controller and base which are browser side
+//not the Render of core beacause it's import controller and base which are browser side
 import * as Render from '../../Game/Render';
 
 /**
@@ -19,6 +19,7 @@ const DEFAULT_MATERIAL = new THREE.MeshLambertMaterial({
 
 import './AssetsManager.css';
 import { RenderData } from '../../Game/Render';
+import { AudioController } from '../../Game/Audio';
 
 /**
  * Give acess to all assets (image, video, script, worlds, ...)
@@ -67,6 +68,9 @@ export class AssetsManager {
         // create game component controller
 
         switch (type) {
+          case GameObject.Audio.Model.TYPE:
+            c.initController(new AudioController(this, c.getModel(), go));
+            break;
           case GameObject.WorldScript.Model.TYPE:
             c.initController(
               new GameObject.WorldScript.Controller(
@@ -88,7 +92,12 @@ export class AssetsManager {
             );
             break;
           case GameObject.Render.Model.TYPE:
-            c.initController(new Render.Controller(this, c.getModel()));
+            c.initController(new Render.Controller(this, c.getModel(), go));
+            break;
+          case GameObject.Collider.Model.TYPE:
+            c.initController(
+              new GameObject.Collider.Controller(this, c.getModel(), go)
+            );
             break;
           default:
             throw 'Unknown Game Component ' + type;

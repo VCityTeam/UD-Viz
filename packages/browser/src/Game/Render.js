@@ -2,8 +2,8 @@ import { Controller } from '@ud-viz/core/src/Game/GameObject/Components/Componen
 import * as THREE from 'three';
 
 export class RenderController extends Controller {
-  constructor(assetsManager, model) {
-    super(assetsManager, model);
+  constructor(assetsManager, model, parentGO) {
+    super(assetsManager, model, parentGO);
 
     this.renderData = this.assetsManager.createRenderData(
       this.model.getIdRenderData()

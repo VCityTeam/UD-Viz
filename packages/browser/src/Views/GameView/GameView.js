@@ -370,8 +370,8 @@ export class GameView extends View3D {
             .getController()
             .execute(BrowserScript.Controller.EVENT.DISPOSE);
         }
-        const audioComponent = g.getComponent(Audio.TYPE);
-        if (audioComponent) audioComponent.dispose();
+        const audioComponent = g.getComponent(GameObject.Audio.Model.TYPE);
+        if (audioComponent) audioComponent.getController().dispose();
       });
     }
   }
@@ -445,6 +445,7 @@ export class GameView extends View3D {
                       .getColor()
                       .equals(bufferedRenderComp.getModel().getColor())
                   ) {
+                    console.error('DEPRECATED');
                     gRenderComp.setColor(bufferedRenderComp.getColor());
                     componentHasBeenUpdated = true; // Notify change
                   }
@@ -469,12 +470,10 @@ export class GameView extends View3D {
                     GameObject.BrowserScript.Model.TYPE
                   );
 
-                  // Replace conf in localscript component
-                  gBrowserScriptComp.conf = bufferedBrowserScriptComp.conf;
-                  for (const id in gBrowserScriptComp.scripts) {
-                    const s = gBrowserScriptComp.scripts[id];
-                    s.conf = bufferedBrowserScriptComp.conf; // Replace conf in script
-                  }
+                  // Replace conf in browserScript
+                  gBrowserScriptComp
+                    .getController()
+                    .setConf(bufferedBrowserScriptComp.getModel().getConf());
 
                   // Launch event onOutdated
                   componentHasBeenUpdated =
@@ -510,9 +509,9 @@ export class GameView extends View3D {
             }
 
             // Audio removal
-            const audioComponent = g.getComponent(Audio.TYPE);
+            const audioComponent = g.getComponent(GameObject.Audio.Model.TYPE);
             if (audioComponent) {
-              audioComponent.dispose();
+              audioComponent.getController().dispose();
             }
 
             delete _this.currentUUID[g.getUUID()];
@@ -617,12 +616,14 @@ export class GameView extends View3D {
         }
 
         // Tick audio component
-        const audioComp = child.getComponent(Audio.TYPE);
+        const audioComp = child.getComponent(GameObject.Audio.Model.TYPE);
         const camera = _this.getCamera();
         // Position in world referential
         const cameraMatWorldInverse = camera.matrixWorldInverse;
         if (audioComp)
-          audioComp.tick(cameraMatWorldInverse, _this.getObject3D().position);
+          audioComp
+            .getController()
+            .tick(cameraMatWorldInverse, _this.getObject3D().position);
 
         // Render component
         const renderComp = child.getComponent(GameObject.Render.Model.TYPE);

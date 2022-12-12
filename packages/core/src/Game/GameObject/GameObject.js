@@ -8,14 +8,11 @@ const THREE = require('three');
 const JSONUtils = require('../Components/JSONUtils');
 const Component = require('./Components/Component').Component;
 
-// GameObject Components
-// const RenderModel = require('./Components/Render');
-// const ColliderModel = require('./Components/Collider');
-const WorldScript = require('./Components/WorldScript');
+// GameObject Componentsconst WorldScript = require('./Components/WorldScript');
 const BrowserScript = require('./Components/BrowserScript');
 const Render = require('./Components/Render');
-// const AudioModel = require('./Components/Audio');
-// const BrowserScriptModel = require('./Components/BrowserScript');
+const Collider = require('./Components/Collider');
+const Audio = require('./Components/Audio');
 
 /**
  * Objects to compose a Game
@@ -197,7 +194,11 @@ const GameObjectModule = class GameObject {
     let current = this;
     do {
       result.position.add(current.getPosition());
-      result.rotation.add(current.getRotation());
+
+      result.rotation.x += current.getRotation().x;
+      result.rotation.y += current.getRotation().y;
+      result.rotation.z += current.getRotation().z;
+
       result.scale.multiply(current.getScale());
 
       current = current.parent;
@@ -429,16 +430,15 @@ const GameObjectModule = class GameObject {
           );
 
           break;
-        // case AudioComponent.TYPE:
-        //   if (_this.components[AudioComponent.TYPE])
-        //     console.warn('multiple component');
+        case Audio.Model.TYPE:
+          if (_this.components[Audio.Model.TYPE])
+            console.warn('multiple component');
 
-        //   _this.components[AudioComponent.TYPE] = new AudioComponent(
-        //     _this,
-        //     componentModelJSON
-        //   );
+          _this.components[Audio.Model.TYPE] = new Component(
+            new Audio.Model(componentModelJSON)
+          );
 
-        //   break;
+          break;
         case WorldScript.Model.TYPE:
           if (_this.components[WorldScript.Model.TYPE])
             console.warn('multiple component');
@@ -457,16 +457,15 @@ const GameObjectModule = class GameObject {
           );
 
           break;
-        // case ColliderComponent.TYPE:
-        //   if (_this.components[ColliderComponent.TYPE])
-        //     console.warn('multiple component');
+        case Collider.Model.TYPE:
+          if (_this.components[Collider.Model.TYPE])
+            console.warn('multiple component');
 
-        //   _this.components[ColliderComponent.TYPE] = new ColliderComponent(
-        //     _this,
-        //     componentModelJSON
-        //   );
+          _this.components[Collider.Model.TYPE] = new Component(
+            new Collider.Model(componentModelJSON)
+          );
 
-        //   break;
+          break;
         default:
           console.warn('wrong type component', type, componentModelJSON);
       }
@@ -858,4 +857,6 @@ module.exports = {
   WorldScript: WorldScript,
   Render: Render,
   BrowserScript: BrowserScript,
+  Collider: Collider,
+  Audio: Audio,
 };

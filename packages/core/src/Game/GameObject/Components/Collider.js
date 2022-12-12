@@ -1,29 +1,19 @@
-const THREE = require('three');
 const { Circle, Polygon } = require('detect-collisions');
+const { Model, Controller } = require('./Component');
 
 /**
  * Component used to handle collision of a GameObject
  * Support by detect-collisions npm package
  */
-const ColliderModule = class Collider {
-  constructor(parent, json) {
-    if (!json) throw new Error('no json');
-
-    // Gameobject of this component
-    this.parent = parent;
-
-    // Uuid
-    this.uuid = json.uuid || THREE.MathUtils.generateUUID();
+const ColliderModelModule = class ColliderModel extends Model {
+  constructor(json) {
+    super(json);
 
     // Shapes in json format
     this.shapesJSON = json.shapes || [];
 
     // Boolean to know if its a physics collisions or not
     this.body = json.body || false;
-
-    // Shapes wrappers
-    this.shapeWrappers = [];
-    this.createShapeWrappers();
   }
 
   /**
@@ -35,41 +25,11 @@ const ColliderModule = class Collider {
   }
 
   /**
-   * Create ShapeWrappers object from the json shapes
-   */
-  createShapeWrappers() {
-    const shapeWrappers = this.shapeWrappers;
-    const _this = this;
-    this.shapesJSON.forEach(function (json) {
-      const wrapper = new ShapeWrapper(_this.parent, json);
-      shapeWrappers.push(wrapper);
-    });
-  }
-
-  /**
-   *
-   * @returns {object}
-   */
-  getShapeWrappers() {
-    return this.shapeWrappers;
-  }
-
-  /**
-   * Update worldtransform of the shapeWrappers
-   */
-  update() {
-    const worldTransform = this.parent.computeWorldTransform();
-    this.shapeWrappers.forEach(function (b) {
-      b.update(worldTransform);
-    });
-  }
-
-  /**
    * This component can run on the server side
    *
    * @returns {boolean}
    */
-  isServerSide() {
+  isWorldComponent() {
     return true;
   }
 
@@ -97,20 +57,45 @@ const ColliderModule = class Collider {
   toJSON() {
     return {
       uuid: this.uuid,
-      type: ColliderModule.TYPE,
+      type: ColliderModelModule.TYPE,
       shapes: this.shapesJSON,
       body: this.body,
     };
   }
-
-  getUUID() {
-    return this.uuid;
-  }
 };
 
-ColliderModule.TYPE = 'Collider';
+ColliderModelModule.TYPE = 'Collider';
 
-module.exports = ColliderModule;
+class ColliderController extends Controller {
+  constructor(assetsManager, model, parentGO) {
+    super(assetsManager, model, parentGO);
+
+    // Shapes wrappers
+    this.shapeWrappers = [];
+    this.model.getShapesJSON().forEach((shapeJSON) => {
+      const wrapper = new ShapeWrapper(this.parentGameObject, shapeJSON);
+      this.shapeWrappers.push(wrapper);
+    });
+  }
+
+  /**
+   * Update worldtransform of the shapeWrappers
+   */
+  update() {
+    const worldTransform = this.parentGameObject.computeWorldTransform();
+    this.shapeWrappers.forEach(function (b) {
+      b.update(worldTransform);
+    });
+  }
+
+  /**
+   *
+   * @returns {object}
+   */
+  getShapeWrappers() {
+    return this.shapeWrappers;
+  }
+}
 
 /**
  * Object to wrap the Polygon and Circle of the detect-collisions npm package
@@ -164,7 +149,7 @@ class ShapeWrapper {
           );
 
           this.update = function (worldtransform) {
-            const wp = worldtransform.getPosition();
+            const wp = worldtransform.position;
             circle.x = json.center.x + wp.x;
             circle.y = json.center.y + wp.y;
           };
@@ -185,7 +170,7 @@ class ShapeWrapper {
           this.update = function (worldtransform) {
             const points = [];
             json.points.forEach(function (p) {
-              const wp = worldtransform.getPosition();
+              const wp = worldtransform.position;
               const point = [p.x + wp.x, p.y + wp.y];
               points.push(point);
               // TODO handle rotation
@@ -203,3 +188,8 @@ class ShapeWrapper {
     this.shape.getGameObject = this.getGameObject.bind(this);
   }
 }
+
+module.exports = {
+  Model: ColliderModelModule,
+  Controller: ColliderController,
+};
