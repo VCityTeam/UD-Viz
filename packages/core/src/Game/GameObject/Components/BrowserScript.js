@@ -15,6 +15,10 @@ const BrowserScriptModelModule = class BrowserScriptModel extends Model {
     this.conf = JSON.parse(JSON.stringify(conf)); // deep copy
   }
 
+  getIdScripts() {
+    return this.idScripts;
+  }
+
   /**
    *
    * @returns {JSON}
@@ -28,7 +32,7 @@ const BrowserScriptModelModule = class BrowserScriptModel extends Model {
    *
    * @returns {boolean}
    */
-  isServerSide() {
+  isWorldComponent() {
     return false;
   }
 

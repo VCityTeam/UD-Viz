@@ -44,7 +44,7 @@ export class GameView extends View3D {
       this.updateGameObject = params.updateGameObject;
 
     // Context pass to the localScript GameObject
-    this.localContext = new LocalContext(this);
+    this.browserContext = new BrowserContext(this);
 
     // Current GameObject UUID in the last state
     this.currentUUID = {};
@@ -65,7 +65,7 @@ export class GameView extends View3D {
   onResize() {
     super.onResize();
 
-    const ctx = this.localContext;
+    const ctx = this.browserContext;
     this.resizeRequesters.forEach(function (cb) {
       cb(ctx);
     });
@@ -73,9 +73,13 @@ export class GameView extends View3D {
     // Notify localscript
     if (this.lastState) {
       this.lastState.getGameObject().traverse(function (g) {
-        const scriptComponent = g.getComponent(GameObject.BrowserScript.Model);
+        const scriptComponent = g.getComponent(
+          GameObject.BrowserScript.Model.TYPE
+        );
         if (scriptComponent) {
-          scriptComponent.execute(BrowserScript.Controller.EVENT.ON_RESIZE);
+          scriptComponent
+            .getController()
+            .execute(BrowserScript.Controller.EVENT.ON_RESIZE);
         }
       });
     }
@@ -89,8 +93,8 @@ export class GameView extends View3D {
     this.userData[key] = value;
   }
 
-  getLocalContext() {
-    return this.localContext;
+  getBrowserContext() {
+    return this.browserContext;
   }
 
   /**
@@ -210,11 +214,11 @@ export class GameView extends View3D {
           then = now - (delta % 1000) / fps;
 
           // Set dt
-          _this.localContext.setDt(delta);
+          _this.browserContext.setDt(delta);
 
           // Call tick requester
           _this.tickRequesters.forEach(function (cb) {
-            cb(_this.localContext);
+            cb(_this.browserContext);
           });
 
           // Update Gameview
@@ -358,9 +362,13 @@ export class GameView extends View3D {
     // Notify localscript dispose
     if (this.lastState) {
       this.lastState.getGameObject().traverse(function (g) {
-        const scriptComponent = g.getComponent(GameObject.BrowserScript.Model);
+        const scriptComponent = g.getComponent(
+          GameObject.BrowserScript.Model.TYPE
+        );
         if (scriptComponent) {
-          scriptComponent.execute(BrowserScript.Controller.EVENT.DISPOSE);
+          scriptComponent
+            .getController()
+            .execute(BrowserScript.Controller.EVENT.DISPOSE);
         }
         const audioComponent = g.getComponent(Audio.TYPE);
         if (audioComponent) audioComponent.dispose();
@@ -381,7 +389,7 @@ export class GameView extends View3D {
   update(states) {
     const _this = this;
     const newGO = [];
-    const ctx = this.localContext;
+    const ctx = this.browserContext;
 
     const state = states[states.length - 1]; // The more current of states
 
@@ -418,7 +426,7 @@ export class GameView extends View3D {
 
               const gRenderComp = g.getComponent(GameObject.Render.Model.TYPE);
               const gBrowserScriptComp = g.getComponent(
-                GameObject.BrowserScript.Model
+                GameObject.BrowserScript.Model.TYPE
               );
 
               for (let index = 0; index < bufferedGO.length; index++) {
@@ -458,7 +466,7 @@ export class GameView extends View3D {
 
                 if (gBrowserScriptComp && element.isOutdated()) {
                   const bufferedBrowserScriptComp = element.getComponent(
-                    GameObject.BrowserScript.Model
+                    GameObject.BrowserScript.Model.TYPE
                   );
 
                   // Replace conf in localscript component
@@ -471,17 +479,17 @@ export class GameView extends View3D {
                   // Launch event onOutdated
                   componentHasBeenUpdated =
                     componentHasBeenUpdated ||
-                    gBrowserScriptComp.execute(
-                      BrowserScript.Controller.EVENT.ON_OUTDATED
-                    );
+                    gBrowserScriptComp
+                      .getController()
+                      .execute(BrowserScript.Controller.EVENT.ON_OUTDATED);
                 }
               }
 
               if (componentHasBeenUpdated && gBrowserScriptComp) {
                 // Launch event onComponentUpdate
-                gBrowserScriptComp.execute(
-                  BrowserScript.Controller.EVENT.ON_COMPONENT_UPDATE
-                );
+                gBrowserScriptComp
+                  .getController()
+                  .execute(BrowserScript.Controller.EVENT.ON_COMPONENT_UPDATE);
               }
             }
           } else {
@@ -493,10 +501,12 @@ export class GameView extends View3D {
 
             // BrowserScript removal
             const scriptComponent = g.getComponent(
-              GameObject.BrowserScript.Model
+              GameObject.BrowserScript.Model.TYPE
             );
             if (scriptComponent) {
-              scriptComponent.execute(BrowserScript.Controller.EVENT.ON_REMOVE);
+              scriptComponent
+                .getController()
+                .execute(BrowserScript.Controller.EVENT.ON_REMOVE);
             }
 
             // Audio removal
@@ -536,7 +546,9 @@ export class GameView extends View3D {
 
     // Init assets new GO
     newGO.forEach((go) => {
-      this.assetsManager.initGameObject(go, false);
+      this.assetsManager.initGameObject(go, false, {
+        browserContext: this.browserContext,
+      });
     });
 
     const go = state.getGameObject();
@@ -547,21 +559,24 @@ export class GameView extends View3D {
       _this.currentUUID[g.getUUID()] = true;
 
       // Init newGO localscript
-      const scriptComponent = g.getComponent(GameObject.BrowserScript.Model);
+      const scriptComponent = g.getComponent(
+        GameObject.BrowserScript.Model.TYPE
+      );
       if (scriptComponent) {
-        scriptComponent.execute(BrowserScript.Controller.EVENT.INIT);
+        scriptComponent
+          .getController()
+          .execute(BrowserScript.Controller.EVENT.INIT);
       }
 
       // Notify other go that a new go has been added
       go.traverse(function (child) {
         const scriptComponent = child.getComponent(
-          GameObject.BrowserScript.Model
+          GameObject.BrowserScript.Model.TYPE
         );
         if (scriptComponent) {
-          scriptComponent.execute(
-            BrowserScript.Controller.EVENT.ON_NEW_GAMEOBJECT,
-            [g]
-          );
+          scriptComponent
+            .getController()
+            .execute(BrowserScript.Controller.EVENT.ON_NEW_GAMEOBJECT, [g]);
         }
       });
     });
@@ -588,14 +603,17 @@ export class GameView extends View3D {
       });
     }
 
+    //TODO updateGameObject ??? refacto editor
     if (this.updateGameObject) {
       go.traverse(function (child) {
         // Tick local script
         const scriptComponent = child.getComponent(
-          GameObject.BrowserScript.Model
+          GameObject.BrowserScript.Model.TYPE
         );
         if (scriptComponent) {
-          scriptComponent.execute(BrowserScript.Controller.EVENT.TICK);
+          scriptComponent
+            .getController()
+            .execute(BrowserScript.Controller.EVENT.TICK);
         }
 
         // Tick audio component
@@ -694,7 +712,7 @@ export class GameView extends View3D {
 /**
  * Context pass to the GameObject BrowserScript to work (TODO this class is relevant ? all attributes could be in gameview class)
  */
-class LocalContext {
+class BrowserContext {
   constructor(gameView) {
     this.dt = 0;
     this.gameView = gameView;

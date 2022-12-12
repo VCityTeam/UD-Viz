@@ -5,6 +5,11 @@ import GameObject from '@ud-viz/core/src/Game/GameObject/GameObject';
 import { Howl } from 'howler';
 const THREEUtils = require('../../Components/THREEUtils');
 
+//not the BrowserScript of core beacuse it's import controller and base which are browser side
+import * as BrowserScript from '../../Game/BrowserScript';
+//not the Render of core beacuse it's import controller and base which are browser side
+import * as Render from '../../Game/Render';
+
 /**
  * Default material used by native objects
  */
@@ -13,13 +18,13 @@ const DEFAULT_MATERIAL = new THREE.MeshLambertMaterial({
 });
 
 import './AssetsManager.css';
-import WorldScript from '@ud-viz/core/src/Game/GameObject/Components/WorldScript';
+import { RenderData } from '../../Game/Render';
 
 /**
  * Give acess to all assets (image, video, script, worlds, ...)
  */
 export class AssetsManager {
-  constructor(worldScriptsArray) {
+  constructor(worldScriptsArray, browserScriptsArray) {
     this.conf = null;
 
     // transform array of worldscripts into a map
@@ -30,10 +35,18 @@ export class AssetsManager {
       });
     }
 
+    // same for browserScripts
+    this.browserScripts = {};
+    if (browserScriptsArray) {
+      browserScriptsArray.forEach((bs) => {
+        this.browserScripts[bs.name] = bs;
+      });
+    }
+
+    // renderData are loaded async
+    this.renderData = {};
+
     this.prefabs = {};
-    this.localScripts = {};
-    this.objects = {};
-    this.animations = {};
     this.worldsJSON = null;
   }
 
@@ -54,9 +67,9 @@ export class AssetsManager {
         // create game component controller
 
         switch (type) {
-          case WorldScript.Model.TYPE:
+          case GameObject.WorldScript.Model.TYPE:
             c.initController(
-              new WorldScript.Controller(
+              new GameObject.WorldScript.Controller(
                 this,
                 c.getModel(),
                 go,
@@ -64,8 +77,21 @@ export class AssetsManager {
               )
             );
             break;
+          case GameObject.BrowserScript.Model.TYPE:
+            c.initController(
+              new BrowserScript.Controller(
+                this,
+                c.getModel(),
+                go,
+                options.browserContext
+              )
+            );
+            break;
+          case GameObject.Render.Model.TYPE:
+            c.initController(new Render.Controller(this, c.getModel()));
+            break;
           default:
-            throw 'Unknown Game Component';
+            throw 'Unknown Game Component ' + type;
         }
       }
 
@@ -74,7 +100,7 @@ export class AssetsManager {
 
     // recursive
     go.getChildren().forEach((child) => {
-      this.initGameObject(child, intializeWorldComponent);
+      this.initGameObject(child, intializeWorldComponent, options);
     });
   }
 
@@ -94,24 +120,10 @@ export class AssetsManager {
    * @returns {Object{'animations' => THREE.AnimationClip[], 'object' => THREE.Object3D}
    */
   createRenderData(idRenderData) {
-    if (!this.objects[idRenderData])
-      console.error('no model with id ', idRenderData);
+    if (!this.renderData[idRenderData])
+      console.error('no render data with id ', idRenderData);
 
-    // Clone Object
-    const result = {
-      animations: this.animations[idRenderData],
-      object: this.objects[idRenderData].clone(),
-    };
-
-    // Clone materials as well
-    result.object.traverse(function (child) {
-      if (child.material) {
-        child.material = child.material.clone();
-        child.material.needsUpdate = true;
-      }
-    });
-
-    return result;
+    return this.renderData[idRenderData].clone();
   }
 
   /**
@@ -160,8 +172,9 @@ export class AssetsManager {
    * @returns {object} constructor of the class
    */
   fetchBrowserScript(id) {
-    if (!this.localScripts[id]) console.error('no local script with id ', id);
-    return this.localScripts[id];
+    if (!this.browserScripts[id])
+      console.error('no browser script with id ', id);
+    return this.browserScripts[id];
   }
 
   /**
@@ -203,95 +216,19 @@ export class AssetsManager {
   buildNativeModel() {
     const geometryBox = new THREE.BoxGeometry();
     const cube = new THREE.Mesh(geometryBox, DEFAULT_MATERIAL);
-    this.objects['cube'] = cube;
+    this.renderData['cube'] = new RenderData(cube);
 
     const geometrySphere = new THREE.SphereGeometry(1, 32, 32);
     const sphere = new THREE.Mesh(geometrySphere, DEFAULT_MATERIAL);
-    this.objects['sphere'] = sphere;
+    this.renderData['sphere'] = new RenderData(sphere);
 
     const geometryTorus = new THREE.TorusGeometry(10, 0.1, 16, 100);
     const torus = new THREE.Mesh(geometryTorus, DEFAULT_MATERIAL);
-    this.objects['torus'] = torus;
+    this.renderData['torus'] = new RenderData(torus);
 
     const geometryQuad = new THREE.PlaneGeometry();
     const quad = new THREE.Mesh(geometryQuad, DEFAULT_MATERIAL);
-    this.objects['quad'] = quad;
-
-    this.buildGizmo();
-    this.buildPointerMouse();
-    this.buildPin();
-  }
-
-  buildPin() {
-    const result = new THREE.Object3D();
-
-    const geometrySphere = new THREE.SphereGeometry(1, 32, 32);
-    const sphere = new THREE.Mesh(geometrySphere, DEFAULT_MATERIAL);
-
-    result.add(sphere);
-
-    const height = 3;
-    const geometryCylinder = new THREE.CylinderGeometry(0.75, 0, height, 32);
-    const cylinder = new THREE.Mesh(geometryCylinder, DEFAULT_MATERIAL);
-    cylinder.translateZ(-height * 0.5);
-    cylinder.rotateOnAxis(new THREE.Vector3(1, 0, 0), Math.PI * 0.5);
-
-    result.add(cylinder);
-
-    this.objects['pin'] = result;
-  }
-
-  /**
-   * Build 'gizmo' native model
-   */
-  buildGizmo() {
-    const result = new THREE.Object3D();
-
-    const buildArrowGizmo = function (color, direction, rotation) {
-      const scale = 5;
-      const height = scale;
-      const radius = scale / 20;
-      const geo = new THREE.CylinderGeometry(radius, radius, height);
-      const material = new THREE.MeshLambertMaterial({ color: color });
-      const mesh = new THREE.Mesh(geo, material);
-      mesh.position.add(direction.multiplyScalar(height / 2));
-      mesh.rotation.copy(rotation);
-      return mesh;
-    };
-
-    result.add(
-      buildArrowGizmo(
-        'green',
-        new THREE.Vector3(0, 1, 0),
-        new THREE.Euler(0, 0, 0)
-      )
-    );
-    result.add(
-      buildArrowGizmo(
-        'red',
-        new THREE.Vector3(1, 0, 0),
-        new THREE.Euler(0, 0, Math.PI * 0.5)
-      )
-    );
-    result.add(
-      buildArrowGizmo(
-        'blue',
-        new THREE.Vector3(0, 0, 1),
-        new THREE.Euler(Math.PI * 0.5, 0, 0)
-      )
-    );
-
-    this.objects['gizmo'] = result;
-  }
-
-  /**
-   * Build 'pointer_mouse' native model
-   */
-  buildPointerMouse() {
-    const geometry = new THREE.CylinderGeometry(0.15, 0, 0.3, 32);
-    const cylinder = new THREE.Mesh(geometry, DEFAULT_MATERIAL);
-    cylinder.rotateX(Math.PI * 0.5);
-    this.objects['pointer_mouse'] = cylinder;
+    this.renderData['quad'] = new RenderData(quad);
   }
 
   /**
@@ -299,12 +236,12 @@ export class AssetsManager {
    *
    * @param {string} id id of the model
    * @param {THREE.Object3D} obj the object parsed
-   * @param {JSON} modelData metadata
+   * @param {JSON} renderDataConfig metadata
    */
-  parse(id, obj, modelData) {
-    const anchor = modelData.anchor;
-    const scale = modelData.scale;
-    const rotation = modelData.rotation;
+  parseObject3D(obj, renderDataConfig) {
+    const anchor = renderDataConfig.anchor;
+    const scale = renderDataConfig.scale;
+    const rotation = renderDataConfig.rotation;
 
     // Anchor point
     const bbox = new THREE.Box3().setFromObject(obj);
@@ -369,9 +306,7 @@ export class AssetsManager {
       }
     });
 
-    parent.name = id;
-
-    this.objects[id] = parent;
+    return parent;
   }
 
   /**
@@ -408,15 +343,16 @@ export class AssetsManager {
         new Promise((resolve, reject) => {
           let count = 0;
           for (const idRenderData in config.renderData) {
-            const id = idRenderData;
-            const renderData = config.renderData[id];
+            const renderDataConfig = config.renderData[idRenderData];
             loader.load(
-              renderData.path,
-              (data) => {
-                // Parse
-                _this.parse(id, data.scene, renderData);
+              renderDataConfig.path,
+              (result) => {
+                result.scene.name = idRenderData;
 
-                _this.animations[id] = data.animations;
+                this.renderData[idRenderData] = new RenderData(
+                  _this.parseObject3D(result.scene, renderDataConfig),
+                  result.animations
+                );
 
                 // Check if finish
                 count++;
@@ -428,8 +364,7 @@ export class AssetsManager {
                 );
 
                 if (count == Object.keys(config.renderData).length) {
-                  console.log('objects loaded ', this.objects);
-                  console.log('animations loaded ', this.animations);
+                  console.log('render data loaded ', this.renderData);
                   resolve();
                 }
               },
@@ -440,15 +375,6 @@ export class AssetsManager {
         })
       );
     }
-
-    const toEvalCode = function (string) {
-      const regexRequire = /^const.*=\W*\n*.*require.*;$/gm;
-      const regexType = /^\/\*\*\W*@type.*\*\/$/gm;
-      const resultRequire = string.replace(regexRequire, '');
-      return resultRequire.replace(regexType, '');
-    };
-    // eslint-disable-next-line no-unused-vars
-    const module = import('./AssetsManager'); // DO NOT REMOVE
 
     if (config.worldScripts) {
       console.error('DEPRECATED');
@@ -533,39 +459,7 @@ export class AssetsManager {
     }
 
     if (config.css) {
-      const idLoadingCss = 'Css';
-      loadingView.addLoadingBar(idLoadingCss);
-
-      promises.push(
-        new Promise((resolve) => {
-          let count = 0;
-          for (const idCss in config.css) {
-            const cssPath = config.css[idCss].path;
-            jquery.get(
-              cssPath,
-              function (cssString) {
-                const styleSheet = document.createElement('style');
-                styleSheet.type = 'text/css';
-                styleSheet.innerText = cssString;
-                document.head.appendChild(styleSheet);
-                // Check if finish
-                count++;
-
-                loadingView.updateProgress(
-                  idLoadingCss,
-                  (100 * count) / Object.keys(config.css).length
-                );
-
-                if (count == Object.keys(config.css).length) {
-                  console.log('css loaded');
-                  resolve();
-                }
-              },
-              'text'
-            );
-          }
-        })
-      );
+      console.error('DEPRECATED');
     }
 
     return new Promise((resolve) => {

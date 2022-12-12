@@ -12,6 +12,8 @@ const Component = require('./Components/Component').Component;
 // const RenderModel = require('./Components/Render');
 // const ColliderModel = require('./Components/Collider');
 const WorldScript = require('./Components/WorldScript');
+const BrowserScript = require('./Components/BrowserScript');
+const Render = require('./Components/Render');
 // const AudioModel = require('./Components/Audio');
 // const BrowserScriptModel = require('./Components/BrowserScript');
 
@@ -418,16 +420,15 @@ const GameObjectModule = class GameObject {
       const componentModelJSON = jsonMap[type];
 
       switch (type) {
-        // case RenderComponent.TYPE:
-        //   if (_this.components[RenderComponent.TYPE])
-        //     console.warn('multiple component');
+        case Render.Model.TYPE:
+          if (_this.components[Render.Model.TYPE])
+            console.warn('multiple component');
 
-        //   _this.components[RenderComponent.TYPE] = new RenderComponent(
-        //     _this,
-        //     componentModelJSON
-        //   );
+          _this.components[Render.Model.TYPE] = new Component(
+            new Render.Model(componentModelJSON)
+          );
 
-        //   break;
+          break;
         // case AudioComponent.TYPE:
         //   if (_this.components[AudioComponent.TYPE])
         //     console.warn('multiple component');
@@ -447,16 +448,15 @@ const GameObjectModule = class GameObject {
           );
 
           break;
-        // case BrowserScriptModule.TYPE:
-        //   if (_this.components[BrowserScriptModule.TYPE])
-        //     console.warn('multiple component');
+        case BrowserScript.Model.TYPE:
+          if (_this.components[BrowserScript.Model.TYPE])
+            console.warn('multiple component');
 
-        //   _this.components[BrowserScriptModule.TYPE] = new BrowserScriptModule(
-        //     _this,
-        //     componentModelJSON
-        //   );
+          _this.components[BrowserScript.Model.TYPE] = new Component(
+            new BrowserScript.Model(componentModelJSON)
+          );
 
-        //   break;
+          break;
         // case ColliderComponent.TYPE:
         //   if (_this.components[ColliderComponent.TYPE])
         //     console.warn('multiple component');
@@ -856,6 +856,6 @@ GameObjectModule.findObject3D = function (uuid, obj, upSearch = true) {
 module.exports = {
   GameObject: GameObjectModule,
   WorldScript: WorldScript,
-  Render: require('./Components/Render'),
-  BrowserScript: require('./Components/BrowserScript'),
+  Render: Render,
+  BrowserScript: BrowserScript,
 };

@@ -1,13 +1,13 @@
-import * as Components from '../../../Components/Components.js';
-import { AssetsManager } from '../../../Views/AssetsManager/AssetsManager';
-import * as Views from '../../../Views/Views';
+import * as Components from '../../Components/Components.js';
+import { AssetsManager } from '../../Views/AssetsManager/AssetsManager';
+import * as Views from '../../Views/Views';
 import { Game } from '@ud-viz/core';
 
 /**
- * A Class contaning method to easily instanciate a local game based on the ud-viz game engine
+ * A Class contaning method to easily instanciate a browser game based on the ud-viz game engine
  */
 
-export class LocalGame {
+export class BrowserGame {
   constructor() {
     this.gameView = null;
   }
@@ -40,7 +40,10 @@ export class LocalGame {
 
     return new Promise((resolve) => {
       Components.SystemUtils.File.loadJSON(configPath).then(function (config) {
-        const assetsManager = new AssetsManager(options.worldScripts);
+        const assetsManager = new AssetsManager(
+          options.worldScripts,
+          options.browserScripts
+        );
         assetsManager
           .loadFromConfig(
             config.assetsManager,

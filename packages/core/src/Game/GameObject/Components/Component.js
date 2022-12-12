@@ -32,6 +32,10 @@ const ModelModule = class Model {
   isWorldComponent() {
     throw 'Your model should implement a isWorldComponent function';
   }
+
+  toJSON() {
+    throw 'Your model should implement a toJSON function';
+  }
 };
 
 const ControllerModule = class Controller {

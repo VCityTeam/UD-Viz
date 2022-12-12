@@ -16,6 +16,10 @@ export { Templates };
 import * as Views from './Views/Views';
 export { Views };
 
+// Game
+import { Base } from './Game/BrowserScript';
+export { Base as BrowserScriptBase };
+
 // External package
 
 import * as udvizCore from '@ud-viz/core';
