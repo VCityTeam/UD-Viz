@@ -602,7 +602,7 @@ export class GameView extends View3D {
       });
     }
 
-    //TODO updateGameObject ??? refacto editor
+    // TODO updateGameObject ??? refacto editor
     if (this.updateGameObject) {
       go.traverse(function (child) {
         // Tick local script
@@ -718,7 +718,7 @@ export class BrowserContext {
     this.dt = 0;
     this.gameView = gameView;
 
-    //optionals
+    // optionals
     this.webSocketService = null;
     this.worldStateComputer = null;
   }

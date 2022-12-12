@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html>
 <html>
   <head>
@@ -14,7 +12,7 @@
 
     <script type="text/javascript">
       /* eslint-disable no-new */
-      
+
       const app = new udvizBrowser.Templates.AllWidget();
 
       app.start('./assets/config/default_config.json').then((config) => {
@@ -28,7 +26,7 @@
         app.addModuleView('about', about);
 
         // //// HELP MODULE
-        const help = new udvizBrowser.Widgets.Extensions.HelpWindow(
+        new udvizBrowser.Widgets.Extensions.HelpWindow(
           config.hmtlWindow.helpWindow
         );
 
@@ -49,9 +47,9 @@
 
         // //// DOCUMENTS MODULE
         const documentModule = new udvizBrowser.Widgets.DocumentModule(
-    requestService,
-    app.config
-  );
+          requestService,
+          app.config
+        );
         app.addModuleView('documents', documentModule.view);
 
         // //// DOCUMENTS VISUALIZER EXTENSION (to orient the document)
@@ -87,9 +85,9 @@
 
         // //// CITY OBJECTS MODULE
         const cityObjectModule = new udvizBrowser.Widgets.CityObjectModule(
-    app.view3D.getLayerManager(),
-    app.config
-  );
+          app.view3D.getLayerManager(),
+          app.config
+        );
         app.addModuleView('cityObjects', cityObjectModule.view);
 
         // //// LINKS MODULE

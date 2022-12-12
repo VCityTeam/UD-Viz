@@ -45,6 +45,7 @@ const BrowserScriptControllerModule = class BrowserScriptController extends Cont
    * @param {string} id id of the script executed
    * @paBrowserBaseModule
 BrowserBaseModuleram {BrowserScript.EVENT} event event trigger
+   * @param script
    * @param event
    * @param {Array} params parameters pass to the script function
    * @returns {object} result of the script execution

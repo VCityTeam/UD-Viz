@@ -5,9 +5,9 @@ import GameObject from '@ud-viz/core/src/Game/GameObject/GameObject';
 import { Howl } from 'howler';
 const THREEUtils = require('../../Components/THREEUtils');
 
-//not the BrowserScript of core beacause it's import controller and base which are browser side
+// not the BrowserScript of core beacause it's import controller and base which are browser side
 import * as BrowserScript from '../../Game/BrowserScript';
-//not the Render of core beacause it's import controller and base which are browser side
+// not the Render of core beacause it's import controller and base which are browser side
 import * as Render from '../../Game/Render';
 
 /**

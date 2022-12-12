@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Avatar Game Shader example</title>
+
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  </head>
+  <body>
+    <!-- <script src="../packages/browser/dist/release/bundle.js"></script> -->
+    <script src="../packages/browser/dist/debug/bundle.js"></script>
+    <script type="text/javascript">
+      // API
+      const Game = udvizBrowser.udvizCore.Game;
+      const THREE = udvizBrowser.THREE;
+
+      const browserScripts = [
+        udvizBrowser.Templates.FocusGameObject,
+        class Avatar extends udvizBrowser.BrowserScriptBase {
+          constructor(conf, context, parentGO) {
+            super(conf, context, parentGO);
+
+            this.avatar = null;
+            this.intersectionCube = null;
+            this.inputManager = null;
+
+            // Raycaster for avoiding buildings collisions with avatar
+            this.raycaster = new THREE.Raycaster();
+          }
+
+          addObjectToArray(array, tilesManager, idLayer) {
+            let layer = null;
+            for (let index = 0; index < tilesManager.length; index++) {
+              const element = tilesManager[index];
+
+              if (element.layer.id == idLayer) {
+                layer = element;
+                break;
+              }
+            }
+
+            if (!layer) throw new Error('no layer called ', idLayer);
+
+            layer.tiles.forEach(function (t) {
+              const obj = t.getObject3D();
+              if (obj) array.push(obj);
+            });
+          }
+
+          buildingsHit(tilesManager, origin, direction) {
+            const buildings = [];
+            this.addObjectToArray(
+              buildings,
+              tilesManager,
+              '3d-tiles-layer-building'
+            );
+
+            this.raycaster.ray.origin = origin;
+            this.raycaster.ray.direction = direction;
+
+            const intersections = this.raycaster.intersectObjects(
+              buildings,
+              true
+            );
+            if (intersections.length) return intersections[0];
+            return null;
+          }
+
+          groundElevationDelta(tilesManager, origin) {
+            const ground = [];
+            this.addObjectToArray(
+              ground,
+              tilesManager,
+              '3d-tiles-layer-relief'
+            );
+            this.addObjectToArray(ground, tilesManager, '3d-tiles-layer-road');
+
+            const zShift = 500;
+            this.raycaster.ray.origin.set(
+              origin.x,
+              origin.y,
+              origin.z + zShift
+            );
+            this.raycaster.ray.direction.set(0, 0, -1);
+
+            const intersections = this.raycaster.intersectObjects(ground, true);
+            return intersections.length
+              ? intersections[0].distance - zShift
+              : null;
+          }
+
+          init() {
+            this.avatar = this.parentGameObject
+              .computeRoot()
+              .findByName('avatar');
+
+            const gV = this.context.getGameView();
+            const scene = gV.getScene();
+            const tilesManager = gV.getLayerManager().tilesManagers;
+            const worldOrigin = gV.getObject3D().position;
+
+            // Input manager of the game
+            const inputManager = gV.getInputManager();
+
+            // Intersection cube
+            const geometry = new THREE.BoxGeometry(1, 1, 1);
+            const material = new THREE.MeshBasicMaterial({
+              color: 0x00ff00,
+            });
+            this.intersectionCube = new THREE.Mesh(geometry, material);
+            scene.add(this.intersectionCube);
+
+            const dt = this.context.getDt();
+            const translationSpeed = 0.03;
+            const translationLength = translationSpeed * dt;
+            const speedRotate = 0.0006;
+
+            const checkCollisionFun = (direction) => {
+              const origin = this.avatar
+                .getPosition()
+                .clone()
+                .add(worldOrigin)
+                .add(new THREE.Vector3(0, 0, 1));
+              const intersection = this.buildingsHit(
+                tilesManager,
+                origin,
+                direction
+              );
+              const depth = intersection ? intersection.distance : Infinity;
+
+              if (depth != Infinity) {
+                this.intersectionCube.visibility = true;
+                this.intersectionCube.position.copy(intersection.point);
+                this.intersectionCube.updateMatrixWorld();
+              } else {
+                this.intersectionCube.visibility = false;
+              }
+
+              return translationLength > depth;
+            };
+
+            const updateGroundElevationFun = () => {
+              const zDelta = this.groundElevationDelta(
+                tilesManager,
+                this.avatar.getPosition().clone().add(worldOrigin)
+              );
+              if (!zDelta) return;
+              this.avatar.move(new THREE.Vector3(0, 0, -zDelta));
+            };
+
+            // FORWARD
+            inputManager.addKeyCommand('move_forward', ['z'], () => {
+              // eslint-disable-next-line no-unused-vars
+              const dt = this.context.getDt();
+              const direction = this.avatar.computeForwardVector();
+              if (checkCollisionFun(direction)) return;
+              this.avatar.move(direction.setLength(translationLength));
+              updateGroundElevationFun();
+            });
+            // BACKWARD
+            inputManager.addKeyCommand('move_backward', ['s'], () => {
+              // eslint-disable-next-line no-unused-vars
+              const dt = this.context.getDt();
+              const direction = this.avatar.computeBackwardVector();
+              if (checkCollisionFun(direction)) return;
+              this.avatar.move(direction.setLength(translationLength));
+              updateGroundElevationFun();
+            });
+            // LEFT
+            inputManager.addKeyCommand('rotate_left', ['q'], () => {
+              const dt = this.context.getDt();
+              this.avatar.rotate(new THREE.Vector3(0, 0, speedRotate * dt));
+            });
+            // RIGHT
+            inputManager.addKeyCommand('rotate_right', ['d'], () => {
+              const dt = this.context.getDt();
+              this.avatar.rotate(new THREE.Vector3(0, 0, -speedRotate * dt));
+            });
+          }
+        },
+      ];
+
+      const myWorld = new Game.World({
+        name: 'My World',
+        origin: { lat: 45.7530993, lng: 4.8452654, alt: 300 },
+        gameObject: {
+          name: 'GameManager',
+          static: true,
+          componentModels: {
+            BrowserScript: {
+              conf: {
+                nameGO2Focus: 'avatar',
+                cameraAngle: 0,
+                offsetZ: 2,
+                minDist: 5,
+                maxDist: 20,
+              },
+              idScripts: ['FocusGameObject', 'Avatar'],
+            },
+          },
+          children: [
+            {
+              name: 'avatar',
+              noLocalUpdate: true,
+              componentModels: {
+                Render: { idRenderData: 'avatar' },
+              },
+            },
+          ],
+        },
+      });
+
+      const app = new udvizBrowser.Templates.BrowserGame();
+      app
+        .start(myWorld, './assets/config/default_game_config.json', {
+          browserScripts: browserScripts,
+        })
+        .then(function () {
+          // set custom render pass
+          const MYMAT = new THREE.ShaderMaterial({
+            uniforms: {},
+            vertexShader: `
+             #define NORMAL
+             varying vec3 vNormal;
+             varying vec2 vHighPrecisionZW;
+             varying float vDistance;
+             #include <common>
+             #include <logdepthbuf_pars_vertex>
+             void main() {
+               #include <beginnormal_vertex>
+               #include <defaultnormal_vertex>
+               #include <begin_vertex>
+               #include <project_vertex>
+               #include <logdepthbuf_vertex>
+               vNormal = normal;
+               vHighPrecisionZW = gl_Position.zw;
+               vDistance = length((modelViewMatrix * vec4(position.xyz, 1.)).xyz);
+               vDistance /= 1000.;
+             }
+           `,
+            fragmentShader: `
+             #define NORMAL
+             varying vec3 vNormal;
+             varying vec2 vHighPrecisionZW;
+             varying float vDistance;
+             #include <packing>
+             #include <normalmap_pars_fragment>
+             #include <logdepthbuf_pars_fragment>
+             void main() {
+               #include <clipping_planes_fragment>
+               #include <logdepthbuf_fragment>
+               #include <normal_fragment_begin>
+               #include <normal_fragment_maps>
+
+               float depth = vDistance;
+               depth = clamp(depth, 0., 1.);
+               gl_FragColor = vec4(packNormalToRGB( normal ), depth);
+             }
+           `,
+          });
+
+          const MySobelOperatorShader = {
+            uniforms: {
+              tDiffuse: { value: null },
+              tDepth: { value: null },
+              resolution: new THREE.Uniform(new THREE.Vector2()),
+            },
+
+            vertexShader: /* glsl */ `
+           varying vec2 vUv;
+           void main() {
+           	vUv = uv;
+           	gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
+           }
+           `,
+
+            fragmentShader: /* glsl */ `
+             uniform sampler2D tDiffuse;
+             uniform sampler2D tDepth;
+             uniform vec2 resolution;
+             varying vec2 vUv;
+             vec4 getTex(in vec2 uv)
+             {
+               return vec4(
+                 texture2D(tDiffuse, uv)
+               );
+             }
+             void main() {
+               vec2 texel = vec2( 1.0 / resolution.x, 1.0 / resolution.y );
+               // kernel definition (in glsl matrices are filled in column-major order)
+               const mat3 Gx = mat3( -1, -2, -1, 0, 0, 0, 1, 2, 1 ); // x direction kernel
+               const mat3 Gy = mat3( -1, 0, 1, -2, 0, 2, -1, 0, 1 ); // y direction kernel
+               // fetch the 3x3 neighbourhood of a fragment
+               // first column
+               vec4 tx0y0 = getTex(vUv + texel * vec2( -1, -1 ) );
+               vec4 tx0y1 = getTex(vUv + texel * vec2( -1,  0 ) );
+               vec4 tx0y2 = getTex(vUv + texel * vec2( -1,  1 ) );
+               // second column
+               vec4 tx1y0 = getTex(vUv + texel * vec2(  0, -1 ) );
+               vec4 tx1y1 = getTex(vUv + texel * vec2(  0,  0 ) );
+               vec4 tx1y2 = getTex(vUv + texel * vec2(  0,  1 ) );
+               // third column
+               vec4 tx2y0 = getTex(vUv + texel * vec2(  1, -1 ) );
+               vec4 tx2y1 = getTex(vUv + texel * vec2(  1,  0 ) );
+               vec4 tx2y2 = getTex(vUv + texel * vec2(  1,  1 ) );
+               // gradient value in x direction
+               vec4 valueGx = Gx[0][0] * tx0y0 + Gx[1][0] * tx1y0 + Gx[2][0] * tx2y0 +
+                 Gx[0][1] * tx0y1 + Gx[1][1] * tx1y1 + Gx[2][1] * tx2y1 +
+                 Gx[0][2] * tx0y2 + Gx[1][2] * tx1y2 + Gx[2][2] * tx2y2;
+               // gradient value in y direction
+               vec4 valueGy = Gy[0][0] * tx0y0 + Gy[1][0] * tx1y0 + Gy[2][0] * tx2y0 +
+                 Gy[0][1] * tx0y1 + Gy[1][1] * tx1y1 + Gy[2][1] * tx2y1 +
+                 Gy[0][2] * tx0y2 + Gy[1][2] * tx1y2 + Gy[2][2] * tx2y2;
+               // magnitute of the total gradient
+               gl_FragColor = sqrt( ( valueGx * valueGx ) + ( valueGy * valueGy ) );
+             }
+           `,
+          };
+
+          const MaskShader = {
+            uniforms: {
+              tDiffuse: { value: null },
+              tMask: { value: null },
+              resolution: new THREE.Uniform(new THREE.Vector2()),
+            },
+
+            vertexShader: /* glsl */ `
+           varying vec2 vUv;
+           void main() {
+           	vUv = uv;
+           	gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
+           }
+           `,
+
+            fragmentShader: /* glsl */ `
+           uniform sampler2D tDiffuse;
+           uniform sampler2D tMask;
+           uniform vec2 resolution;
+           varying vec2 vUv;
+           void main() {
+               gl_FragColor = vec4(0.);
+               vec4 maskTexel = texture2D(tMask, vUv);
+               float maskFactor = max(max(max(maskTexel.x, maskTexel.y), maskTexel.z), maskTexel.w);
+               if(maskFactor <= 0.05)
+               {
+                 gl_FragColor = texture2D(tDiffuse, vUv);
+               }
+               #include <tonemapping_fragment>
+               #include <encodings_fragment>
+               #include <fog_fragment>
+               #include <premultiplied_alpha_fragment>
+               #include <dithering_fragment>
+           }
+           `,
+          };
+
+          // renderTarget for special effects
+          const renderTargetFX = new THREE.WebGLRenderTarget(0, 0, {
+            depthBuffer: true,
+            stencilBuffer: false,
+            format: THREE.RGBAFormat,
+            type: THREE.FloatType,
+          });
+
+          const gameView = app.getGameView();
+
+          // create custom render pass
+          const renderer = gameView.getRenderer();
+
+          const edgeDetectionComposer = new udvizBrowser.EffectComposer(
+            renderer,
+            renderTargetFX
+          );
+          const normalsPass = new udvizBrowser.RenderPass(
+            gameView.getScene(),
+            gameView.getCamera(),
+            MYMAT
+          );
+          edgeDetectionComposer.addPass(normalsPass);
+          const sobelPass = new udvizBrowser.ShaderPass(MySobelOperatorShader);
+
+          edgeDetectionComposer.addPass(sobelPass);
+          edgeDetectionComposer.renderToScreen = false;
+
+          const finalComposer = new udvizBrowser.EffectComposer(renderer);
+          const renderPass = new udvizBrowser.RenderPass(
+            gameView.getScene(),
+            gameView.getCamera()
+          );
+          finalComposer.addPass(renderPass);
+          const compositionPass = new udvizBrowser.ShaderPass(MaskShader);
+          compositionPass.uniforms.tMask.value = renderTargetFX.texture;
+          finalComposer.addPass(compositionPass);
+
+          // update variables on resize
+          const updateResize = function (ctx) {
+            const size = ctx.getGameView().getSize();
+            renderTargetFX.setSize(size.x, size.y);
+
+            sobelPass.uniforms.resolution.value = new THREE.Vector2(
+              edgeDetectionComposer.writeBuffer.width,
+              edgeDetectionComposer.writeBuffer.height
+            );
+            compositionPass.uniforms.resolution.value = new THREE.Vector2(
+              finalComposer.writeBuffer.width,
+              finalComposer.writeBuffer.height
+            );
+          };
+
+          // launch an init resize update
+          updateResize(gameView.getBrowserContext());
+          // record in the resize requester
+          gameView.addResizeRequester(updateResize);
+
+          // define the custom render pass
+          const customRender = function () {
+            edgeDetectionComposer.reset(renderTargetFX);
+            finalComposer.reset();
+            edgeDetectionComposer.render();
+            finalComposer.render();
+          };
+
+          // set the custom render pass
+          gameView.setRender(customRender);
+        });
+    </script>
+  </body>
+</html>

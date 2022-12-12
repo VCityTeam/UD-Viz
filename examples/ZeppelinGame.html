@@ -165,9 +165,9 @@
               Game.GameObject.BrowserScript.Model.TYPE
             );
 
-            //change conf of the browser script
+            // change conf of the browser script
             browserScriptComp.getModel().conf.sphereCount += 1;
-            this.parentGameObject.setOutdated(true); //notify browserScript onOutdated event
+            this.parentGameObject.setOutdated(true); // notify browserScript onOutdated event
           }
         },
       ];
@@ -181,7 +181,7 @@
 
           init() {
             this.ui = document.createElement('div');
-            this.ui.style.zIndex = 98; //le neuf et le 8
+            this.ui.style.zIndex = 98; // le neuf et le 8
             this.context.getGameView().appendToUI(this.ui);
             this.updateUI();
           }
@@ -193,7 +193,7 @@
           onOutdated() {
             this.updateUI();
 
-            //conf has changed meaning a shpereCount has incremented => play a sound
+            // conf has changed meaning a shpereCount has incremented => play a sound
             const audioComp = this.parentGameObject.getComponent(
               Game.GameObject.Audio.Model.TYPE
             );

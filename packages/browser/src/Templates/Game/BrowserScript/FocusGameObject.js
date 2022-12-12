@@ -42,7 +42,6 @@ export class FocusGameObject extends Base {
   }
 
   tick() {
-    
     // Get the go2Focus gameobject by name
     const go2Focus = this.parentGameObject
       .computeRoot()

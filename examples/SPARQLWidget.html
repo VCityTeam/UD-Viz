@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html>
 <html>
   <head>
@@ -14,10 +12,10 @@
 
     <script type="text/javascript">
       /* eslint-disable no-new */
-      
+
       const app = new udvizBrowser.Templates.AllWidget();
 
-      app.start('./assets/config/default_config.json').then(() => {
+      app.start('./assets/config/default_config.json').then((config) => {
         // //// REQUEST SERVICE
         const requestService = new udvizBrowser.Components.RequestService();
 
@@ -44,9 +42,9 @@
 
         // //// CITY OBJECTS MODULE
         const cityObjectModule = new udvizBrowser.Widgets.CityObjectModule(
-    app.view3D.getLayerManager(),
-    app.config
-  );
+          app.view3D.getLayerManager(),
+          app.config
+        );
         app.addModuleView('cityObjects', cityObjectModule.view);
 
         // //// 3DTILES DEBUG
