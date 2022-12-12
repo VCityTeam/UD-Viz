@@ -85,6 +85,13 @@ export class BrowserGame {
         userData: options.userData,
       });
 
+      //command from input manager are pull from worldstatecomputer
+      worldStateComputer.addAfterTickRequester(() => {
+        worldStateComputer.onCommands(
+          this.gameView.getInputManager().computeCommands()
+        );
+      });
+
       // Start gameview tick
       this.gameView.start().then(function () {
         resolve();

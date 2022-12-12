@@ -1,17 +1,17 @@
 const THREE = require('three');
+const { Model } = require('./Component');
 
 /**
  *  Component used to handle the 3D rendering of the GameObject
  */
-const RenderModelModule = class RenderModel {
+const RenderModelModule = class RenderModel extends Model {
   /**
    * Create a new Render component of a GameObject from json
    *
    * @param {JSON} json
    */
   constructor(json) {
-    /** Uuid of the component. Init from the field uuid of the json (If it does not exist, a uuid is generated). */
-    this.uuid = json.uuid || THREE.MathUtils.generateUUID();
+    super(json);
 
     /**
      * Id of the 3D model used. Init from the field idRenderData of the json.
@@ -54,32 +54,14 @@ const RenderModelModule = class RenderModel {
 
   /**
    *
-   * @returns {THREE.Object3D}
-   */
-  getObject3D() {
-    return this.object3D;
-  }
-
-  /**
-   * Set color of the 3D model
-   *
-   * @param {THREE.Color} value
-   */
-  setColor(value) {
-    this.color = value;
-    if (this.object3D) {
-      this.object3D.traverse(function (c) {
-        if (c.material) c.material.color = value;
-      });
-    }
-  }
-
-  /**
-   *
    * @returns {THREE.Color}
    */
   getColor() {
     return this.color;
+  }
+
+  setColor(color) {
+    this.color = color;
   }
 
   setIdRenderData(value) {
@@ -92,13 +74,5 @@ const RenderModelModule = class RenderModel {
 };
 
 RenderModelModule.TYPE = 'Render';
-
-RenderModelModule.bindColor = function (goJSON, color) {
-  try {
-    goJSON.components.Render.color = color;
-  } catch (e) {
-    throw new Error(e);
-  }
-};
 
 module.exports = { Model: RenderModelModule };

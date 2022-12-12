@@ -68,15 +68,6 @@ module.exports = class Commands {
     worldComputer.addAfterTickRequester(function () {
       worldComputer.onCommands(inputManager.computeCommands());
     });
-
-    // Example of how to access its custom module
-    const myCustomModule = gameView.getBrowserScriptModules()['myCustomModule'];
-    if (myCustomModule)
-      inputManager.addKeyInput('l', 'keydown', myCustomModule.print);
-
-    inputManager.addKeyInput('p', 'keydown', function () {
-      console.log(go.computeRoot());
-    });
   }
 
   updateUI(go, localCtx) {

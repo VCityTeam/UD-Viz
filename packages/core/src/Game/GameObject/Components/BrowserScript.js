@@ -11,8 +11,7 @@ const BrowserScriptModelModule = class BrowserScriptModel extends Model {
     this.idScripts = json.idScripts || [];
 
     // Conf pass to scripts
-    const conf = json.conf || {};
-    this.conf = JSON.parse(JSON.stringify(conf)); // deep copy
+    this.conf = json.conf || {};
   }
 
   getIdScripts() {
@@ -25,6 +24,10 @@ const BrowserScriptModelModule = class BrowserScriptModel extends Model {
    */
   getConf() {
     return this.conf;
+  }
+
+  setConf(conf) {
+    this.conf = conf;
   }
 
   /**

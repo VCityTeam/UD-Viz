@@ -64,7 +64,7 @@ WorldScriptModelModule.TYPE = 'WorldScript';
  */
 const WorldScriptControllerModule = class WorldScriptController extends Controller {
   constructor(assetsManager, model, parentGO, worldContext) {
-    super(assetsManager, model);
+    super(assetsManager, model, parentGO);
 
     this.scripts = {};
     model.getIdScripts().forEach((idScript) => {

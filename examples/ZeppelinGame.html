@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Zeppelin Game example</title>
+
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  </head>
+  <body>
+    <!-- <script src="../packages/browser/dist/release/bundle.js"></script> -->
+    <script src="../packages/browser/dist/debug/bundle.js"></script>
+
+    <script type="text/javascript">
+      // API
+      const Game = udvizBrowser.udvizCore.Game;
+      const WorldScriptBase = Game.GameObject.WorldScript.Base;
+      const Command = Game.Command;
+      const THREE = udvizBrowser.THREE;
+
+      const worldScripts = [
+        class WorldGameManager extends WorldScriptBase {
+          constructor(conf, context, parentGO) {
+            super(conf, context, parentGO);
+
+            // zeppelin gameobject
+            this.zeppelinGO = null;
+          }
+
+          init() {
+            this.zeppelinGO =
+              new udvizBrowser.udvizCore.Game.GameObject.GameObject({
+                name: 'zeppelin',
+                componentModels: {
+                  Audio: {
+                    sounds: ['ballon_pop'],
+                  },
+                  WorldScript: {
+                    idScripts: ['Zeppelin'],
+                  },
+                  BrowserScript: {
+                    idScripts: ['Zeppelin'],
+                    conf: { sphereCount: 0 },
+                  },
+                  Render: { idRenderData: 'zeppelin' },
+                  Collider: {
+                    shapes: [
+                      {
+                        type: 'Circle',
+                        center: { x: 0, y: 0 },
+                        radius: 10,
+                      },
+                    ],
+                  },
+                },
+              });
+
+            const world = this.context.getWorld();
+
+            world.addGameObject(
+              this.zeppelinGO,
+              this.context,
+              world.getGameObject()
+            );
+
+            // Add collectable sphere at random position
+            const range = 400;
+            const minRange = 50;
+            for (let i = 0; i < 10; i++) {
+              let x = (Math.random() - 0.5) * range;
+              let y = (Math.random() - 0.5) * range;
+
+              if (x > 0) {
+                x += minRange;
+              } else {
+                x -= minRange;
+              }
+
+              if (y > 0) {
+                y += minRange;
+              } else {
+                y -= minRange;
+              }
+              const s = this.createCollectableSphere(x, y);
+              world.addGameObject(s, this.context, world.getGameObject());
+            }
+          }
+          createCollectableSphere(x, y) {
+            const size = 10;
+
+            const result = new Game.GameObject.GameObject({
+              name: 'collectable_sphere',
+              static: true,
+              componentModels: {
+                Render: {
+                  idRenderData: 'sphere',
+                  color: [Math.random(), Math.random(), Math.random()],
+                },
+                Collider: {
+                  shapes: [
+                    {
+                      type: 'Circle',
+                      center: { x: 0, y: 0 },
+                      radius: size / 2,
+                    },
+                  ],
+                },
+              },
+              transform: {
+                position: [x, y, size],
+                scale: [size, size, size],
+              },
+            });
+
+            return result;
+          }
+          tick() {
+            const dt = this.context.getDt();
+            const commands = this.context.getCommands();
+            const speedTranslate = 0.05;
+            const speedRotate = 0.0005;
+
+            commands.forEach((cmd) => {
+              switch (cmd.getType()) {
+                case Command.TYPE.MOVE_FORWARD:
+                  this.zeppelinGO.move(
+                    this.zeppelinGO
+                      .computeForwardVector()
+                      .setLength(dt * speedTranslate)
+                  );
+                  break;
+                case Command.TYPE.MOVE_BACKWARD:
+                  this.zeppelinGO.move(
+                    this.zeppelinGO
+                      .computeBackwardVector()
+                      .setLength(dt * speedTranslate)
+                  );
+                  break;
+                case Command.TYPE.MOVE_LEFT:
+                  this.zeppelinGO.rotate(
+                    new THREE.Vector3(0, 0, speedRotate * dt)
+                  );
+                  break;
+                case Command.TYPE.MOVE_RIGHT:
+                  this.zeppelinGO.rotate(
+                    new THREE.Vector3(0, 0, -speedRotate * dt)
+                  );
+                  break;
+                default:
+                  throw new Error('command not handle ', cmd.getType());
+              }
+            });
+          }
+        },
+        class Zeppelin extends WorldScriptBase {
+          constructor(conf, context, parentGO) {
+            super(conf, context, parentGO);
+          }
+
+          // Called when this gameobject collider components collides with another one collider components
+          onEnterCollision(result) {
+            const goCollided = result.b.getGameObject();
+            this.context.getWorld().removeGameObject(goCollided.getUUID());
+
+            const browserScriptComp = this.parentGameObject.getComponent(
+              Game.GameObject.BrowserScript.Model.TYPE
+            );
+
+            //change conf of the browser script
+            browserScriptComp.getModel().conf.sphereCount += 1;
+            this.parentGameObject.setOutdated(true); //notify browserScript onOutdated event
+          }
+        },
+      ];
+
+      const browserScripts = [
+        class Zeppelin extends udvizBrowser.BrowserScriptBase {
+          constructor(conf, context, parentGO) {
+            super(conf, context, parentGO);
+            this.ui = null;
+          }
+
+          init() {
+            this.ui = document.createElement('div');
+            this.ui.style.zIndex = 98; //le neuf et le 8
+            this.context.getGameView().appendToUI(this.ui);
+            this.updateUI();
+          }
+
+          updateUI() {
+            this.ui.innerHTML = 'Sphere count: ' + this.conf.sphereCount;
+          }
+
+          onOutdated() {
+            this.updateUI();
+
+            //conf has changed meaning a shpereCount has incremented => play a sound
+            const audioComp = this.parentGameObject.getComponent(
+              Game.GameObject.Audio.Model.TYPE
+            );
+            audioComp.getController().play('ballon_pop');
+          }
+        },
+        udvizBrowser.Templates.FocusGameObject,
+        udvizBrowser.Templates.CommandController,
+      ];
+
+      const myWorld = new udvizBrowser.udvizCore.Game.World({
+        name: 'My World',
+        origin: { lat: 45.7530993, lng: 4.8452654, alt: 300 },
+        gameObject: {
+          name: 'GameManager',
+          static: true,
+          componentModels: {
+            WorldScript: {
+              idScripts: ['WorldGameManager'],
+            },
+            BrowserScript: {
+              conf: {
+                nameGO2Focus: 'zeppelin',
+              },
+              idScripts: ['FocusGameObject', 'CommandController'],
+            },
+          },
+        },
+      });
+
+      const app = new udvizBrowser.Templates.BrowserGame();
+      app.start(myWorld, './assets/config/default_game_config.json', {
+        worldScripts: worldScripts,
+        browserScripts: browserScripts,
+      });
+    </script>
+  </body>
+</html>

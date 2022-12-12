@@ -21,6 +21,7 @@ const ComponentModule = class Component {
 
 const ModelModule = class Model {
   constructor(json) {
+    if (!json) throw 'no json for model';
     // Uuid
     this.uuid = json.uuid || THREE.MathUtils.generateUUID();
   }
@@ -39,9 +40,10 @@ const ModelModule = class Model {
 };
 
 const ControllerModule = class Controller {
-  constructor(assetsManager, model) {
+  constructor(assetsManager, model, parentGO) {
     this.assetsManager = assetsManager;
     this.model = model;
+    this.parentGameObject = parentGO;
   }
 };
 

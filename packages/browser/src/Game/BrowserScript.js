@@ -2,7 +2,7 @@ import { Controller } from '@ud-viz/core/src/Game/GameObject/Components/Componen
 
 const BrowserScriptControllerModule = class BrowserScriptController extends Controller {
   constructor(assetsManager, model, parentGO, browserContext) {
-    super(assetsManager, model);
+    super(assetsManager, model, parentGO);
 
     this.scripts = {};
     model.getIdScripts().forEach((idScript) => {
@@ -13,6 +13,13 @@ const BrowserScriptControllerModule = class BrowserScriptController extends Cont
         parentGO
       ); // TODO create a parent class assetsmanager
     });
+  }
+
+  setConf(conf) {
+    this.model.setConf(conf);
+    for (const id in this.scripts) {
+      this.scripts[id].setConf(conf);
+    }
   }
 
   /**
@@ -75,6 +82,10 @@ const BrowserScriptBase = class BrowserBase {
     this.conf = conf;
     this.parentGameObject = parentGO;
     this.context = context;
+  }
+
+  setConf(conf) {
+    this.conf = conf;
   }
 };
 
