@@ -1,4 +1,5 @@
 import { Controller } from '@ud-viz/core/src/Game/GameObject/Components/Component';
+import { BrowserContext } from '../Views/GameView/GameView';
 
 const BrowserScriptControllerModule = class BrowserScriptController extends Controller {
   constructor(assetsManager, model, parentGO, browserContext) {
@@ -81,6 +82,10 @@ const BrowserScriptBase = class BrowserBase {
   constructor(conf, context, parentGO) {
     this.conf = conf;
     this.parentGameObject = parentGO;
+
+    /**
+     * @type {BrowserContext}
+     */
     this.context = context;
   }
 

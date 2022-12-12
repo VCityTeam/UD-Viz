@@ -1,26 +1,107 @@
-
-
 <!DOCTYPE html>
 <html>
   <head>
-    <title>UD-Viz Avatar example</title>
+    <title>Avatar Game example</title>
 
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   </head>
   <body>
-    <!-- <script src="../dist/debug/udv.js"></script> -->
-    <script src="../dist/release/udv.js"></script>
+    <!-- <script src="../packages/browser/dist/release/bundle.js"></script> -->
+    <script src="../packages/browser/dist/debug/bundle.js"></script>
     <script type="text/javascript">
-      const myWorld = new udv.Game.World({
+      //API
+      const Game = udvizBrowser.udvizCore.Game;
+      const THREE = udvizBrowser.THREE;
+
+      const worldScripts = [
+        class Avatar extends Game.GameObject.WorldScript.Base {
+          constructor(conf, context, parentGO) {
+            super(conf, context, parentGO);
+
+            this.avatar = null;
+          }
+          init() {
+            const world = this.context.getWorld();
+
+            this.avatar = new Game.GameObject.GameObject({
+              name: 'avatar',
+              componentModels: {
+                Render: { idRenderData: 'avatar' },
+              },
+            });
+
+            world.addGameObject(
+              this.avatar,
+              this.context,
+              world.getGameObject()
+            );
+          }
+
+          tick() {
+            const dt = this.context.getDt();
+            const commands = this.context.getCommands();
+            const speedTranslate = 0.02;
+            const speedRotate = 0.0006;
+
+            commands.forEach((cmd) => {
+              switch (cmd.getType()) {
+                case Game.Command.TYPE.MOVE_FORWARD:
+                  this.avatar.move(
+                    this.avatar
+                      .computeForwardVector()
+                      .setLength(dt * speedTranslate)
+                  );
+                  break;
+                case Game.Command.TYPE.MOVE_BACKWARD:
+                  this.avatar.move(
+                    this.avatar
+                      .computeBackwardVector()
+                      .setLength(dt * speedTranslate)
+                  );
+                  break;
+                case Game.Command.TYPE.MOVE_LEFT:
+                  this.avatar.rotate(new THREE.Vector3(0, 0, speedRotate * dt));
+                  break;
+                case Game.Command.TYPE.MOVE_RIGHT:
+                  this.avatar.rotate(
+                    new THREE.Vector3(0, 0, -speedRotate * dt)
+                  );
+                  break;
+                case Game.Command.TYPE.Z_UPDATE:
+                  if (cmd.getData()) {
+                    const currentPos = this.avatar.getPosition();
+                    this.avatar.setPosition(
+                      new THREE.Vector3(
+                        currentPos.x,
+                        currentPos.y,
+                        cmd.getData()
+                      )
+                    );
+                  }
+                  break;
+                default:
+                  throw new Error('command not handle ', cmd.getType());
+              }
+            });
+          }
+        },
+      ];
+      const browserScripts = [
+        udvizBrowser.Templates.FocusGameObject,
+        udvizBrowser.Templates.CommandController,
+        udvizBrowser.Templates.UpdateElevation3DTiles,
+      ];
+
+      const myWorld = new Game.World({
         name: 'My World',
         origin: { lat: 45.7530993, lng: 4.8452654, alt: 300 },
         gameObject: {
           name: 'GameManager',
           static: true,
-          components: {
+          componentModels: {
             WorldScript: {
-              idScripts: ['avatar'],
+              idScripts: ['Avatar'],
             },
             BrowserScript: {
               conf: {
@@ -29,16 +110,24 @@
                 offsetZ: 2,
                 minDist: 5,
                 maxDist: 20,
-                worldComputerDt: 0,
+                id3DTiles: ['3d-tiles-layer-relief', '3d-tiles-layer-road'],
+                nameGO2Update: 'avatar',
               },
-              idScripts: ['updateElevationGround', 'focus', 'commands'],
+              idScripts: [
+                'UpdateElevation3DTiles',
+                'FocusGameObject',
+                'CommandController',
+              ],
             },
           },
         },
       });
 
-      const app = new udv.Templates.LocalGame();
-      app.start(myWorld, './assets/config/local_game_config.json');
+      const app = new udvizBrowser.Templates.BrowserGame();
+      app.start(myWorld, './assets/config/default_game_config.json', {
+        worldScripts: worldScripts,
+        browserScripts: browserScripts,
+      });
     </script>
   </body>
 </html>

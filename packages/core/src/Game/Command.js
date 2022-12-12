@@ -15,7 +15,10 @@ const CommandModule = class Command {
     this.gameObjectUUID = json.gameObjectUUID;
 
     // Data of the command (optional)
-    this.data = json.data || null;
+    this.data = null;
+    if (json.data != undefined) {
+      this.data = json.data;
+    }
   }
 
   /**

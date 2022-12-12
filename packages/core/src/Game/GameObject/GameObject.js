@@ -8,7 +8,8 @@ const THREE = require('three');
 const JSONUtils = require('../Components/JSONUtils');
 const Component = require('./Components/Component').Component;
 
-// GameObject Componentsconst WorldScript = require('./Components/WorldScript');
+// GameObject Components
+const WorldScript = require('./Components/WorldScript');
 const BrowserScript = require('./Components/BrowserScript');
 const Render = require('./Components/Render');
 const Collider = require('./Components/Collider');

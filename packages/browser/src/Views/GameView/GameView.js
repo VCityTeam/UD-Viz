@@ -713,11 +713,22 @@ export class GameView extends View3D {
 /**
  * Context pass to the GameObject BrowserScript to work (TODO this class is relevant ? all attributes could be in gameview class)
  */
-class BrowserContext {
+export class BrowserContext {
   constructor(gameView) {
     this.dt = 0;
     this.gameView = gameView;
+
+    //optionals
     this.webSocketService = null;
+    this.worldStateComputer = null;
+  }
+
+  setWorldStateComputer(value) {
+    this.worldStateComputer = value;
+  }
+
+  getWorldStateComputer() {
+    return this.worldStateComputer;
   }
 
   /**
