@@ -12,7 +12,7 @@
 
     <script type="text/javascript">
       /* eslint-disable no-new */
-      
+
       const app = new udvizBrowser.Templates.AllWidget();
 
       app.start('./assets/config/worldMap_config.json').then((config) => {
@@ -23,7 +23,7 @@
         app.addModuleView('about', about);
 
         // //// HELP MODULE
-        const help = new udvizBrowser.Widgets.Extensions.HelpWindow(
+        new udvizBrowser.Widgets.Extensions.HelpWindow(
           config.hmtlWindow.helpWindow
         );
       });

@@ -46,7 +46,7 @@ export class RenderController extends Controller {
 
   setColor(color) {
     this.model.setColor(color);
-    //update color in the controller attributes
+    // update color in the controller attributes
     this.renderData.getObject3D().traverse((child) => {
       if (child.material) child.material.color = color;
     });
@@ -58,10 +58,10 @@ export class RenderController extends Controller {
     }
   }
 
-  setIdRenderData(idRenderData) {
-    console.log('TODO');
-    gRenderComp.initAssets(_this.getAssetsManager());
-  }
+  // setIdRenderData(idRenderData) {
+  //   console.log('TODO');
+  //   gRenderComp.initAssets(_this.getAssetsManager());
+  // }
 }
 
 class RenderData {

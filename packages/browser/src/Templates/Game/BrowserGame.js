@@ -85,14 +85,14 @@ export class BrowserGame {
         userData: options.userData,
       });
 
-      //command from input manager are pull from worldstatecomputer
+      // command from input manager are pull from worldstatecomputer
       worldStateComputer.addAfterTickRequester(() => {
         worldStateComputer.onCommands(
           this.gameView.getInputManager().computeCommands()
         );
       });
 
-      //ref worldstate computer
+      // ref worldstate computer
       this.gameView
         .getBrowserContext()
         .setWorldStateComputer(worldStateComputer);

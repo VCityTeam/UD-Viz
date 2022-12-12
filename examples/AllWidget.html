@@ -11,7 +11,7 @@
 
     <script type="text/javascript">
       /* eslint-disable no-new */
-      
+
       const app = new udvizBrowser.Templates.AllWidget();
 
       app.start('./assets/config/default_config.json').then((config) => {
@@ -25,7 +25,9 @@
         app.addModuleView('about', about);
 
         // //// HELP MODULE
-        new udvizBrowser.Widgets.Extensions.HelpWindow(config.hmtlWindow.helpWindow);
+        new udvizBrowser.Widgets.Extensions.HelpWindow(
+          config.hmtlWindow.helpWindow
+        );
 
         // //// AUTHENTICATION MODULE
         const authenticationService =
@@ -91,11 +93,12 @@
         });
 
         // //// GEOCODING EXTENSION
-        const geocodingService = new udvizBrowser.Widgets.Extensions.GeocodingService(
-          requestService,
-          app.extent,
-          app.config
-        );
+        const geocodingService =
+          new udvizBrowser.Widgets.Extensions.GeocodingService(
+            requestService,
+            app.extent,
+            app.config
+          );
         const geocodingView = new udvizBrowser.Widgets.Extensions.GeocodingView(
           geocodingService,
           app.view3D.getItownsView()
