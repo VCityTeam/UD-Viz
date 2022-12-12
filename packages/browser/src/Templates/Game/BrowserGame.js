@@ -92,6 +92,11 @@ export class BrowserGame {
         );
       });
 
+      //ref worldstate computer
+      this.gameView
+        .getBrowserContext()
+        .setWorldStateComputer(worldStateComputer);
+
       // Start gameview tick
       this.gameView.start().then(function () {
         resolve();

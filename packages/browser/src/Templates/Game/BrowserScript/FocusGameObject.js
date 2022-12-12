@@ -42,12 +42,13 @@ export class FocusGameObject extends Base {
   }
 
   tick() {
+    
     // Get the go2Focus gameobject by name
     const go2Focus = this.parentGameObject
       .computeRoot()
       .findByName(this.conf.nameGO2Focus);
 
-    if (!go2Focus) return;
+    if (!go2Focus) throw 'no gameobject';
 
     // Compute world transform
     const obj = this.context.getGameView().computeObject3D(go2Focus);
