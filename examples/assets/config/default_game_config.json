@@ -27,26 +27,6 @@
           "z": 3.14
         }
       }
-    },
-    "localScripts": {
-      "focus": {
-        "path": "./assets/localScripts/focus.js"
-      },
-      "record": {
-        "path": "./assets/localScripts/record.js"
-      },
-      "commands": {
-        "path": "./assets/localScripts/commands.js"
-      },
-      "zeppelin": {
-        "path": "./assets/localScripts/zeppelin.js"
-      },
-      "updateElevationGround": {
-        "path": "./assets/localScripts/updateElevationGround.js"
-      },
-      "localAvatar": {
-        "path": "./assets/localScripts/localAvatar.js"
-      }
     }
   },
   "game": {

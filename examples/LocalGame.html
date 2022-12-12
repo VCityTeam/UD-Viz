@@ -11,43 +11,118 @@
     <script src="../packages/browser/dist/debug/bundle.js"></script>
 
     <script type="text/javascript">
-  const myWorld = new udvizBrowser.udvizCore.Game.World({
-    name: 'My World',
-    origin: { lat: 45.7530993, lng: 4.8452654, alt: 300 },
-    gameObject: {
-      name: 'GameManager',
-      static: true,
-      componentModels: {
-        WorldScript: {
-          idScripts: ['WorldGameManager'],
+      const myWorld = new udvizBrowser.udvizCore.Game.World({
+        name: 'My World',
+        origin: { lat: 45.7530993, lng: 4.8452654, alt: 300 },
+        gameObject: {
+          name: 'GameManager',
+          static: true,
+          componentModels: {
+            WorldScript: {
+              idScripts: ['WorldGameManager'],
+            },
+            BrowserScript: {
+              conf: {
+                nameGO2Focus: 'zeppelin',
+              },
+              idScripts: ['FocusGameObject'],
+            },
+          },
         },
-        // BrowserScript: {
-        //   conf: {
-        //     nameGO2Focus: 'zeppelin',
-        //     cameraAngle: 0.51,
-        //     offsetZ: 10,
-        //     minDist: 50,
-        //     maxDist: 1000,
-        //   },
-        //   idScripts: ['focus', 'commands'],
-        // },
-      },
-  },
-});
+      });
 
-const WorldScriptBase = udvizBrowser.udvizCore.Game.GameObject.WorldScript.Base;
-const worldScripts = [
-  class WorldGameManager extends WorldScriptBase {
-      constructor(conf, context, parentGO) {
-        super(conf, context, parentGO);
-      }
-  },
-];
+      const WorldScriptBase =
+        udvizBrowser.udvizCore.Game.GameObject.WorldScript.Base;
+      const worldScripts = [
+        class WorldGameManager extends WorldScriptBase {
+          constructor(conf, context, parentGO) {
+            super(conf, context, parentGO);
 
-const app = new udvizBrowser.Templates.LocalGame();
-app.start(myWorld, './assets/config/local_game_config.json', {
-  worldScripts: worldScripts,
-});
+            // zeppelin gameobject
+            this.zeppelinGO = null;
+          }
+
+          init() {
+            this.zeppelinGO =
+              new udvizBrowser.udvizCore.Game.GameObject.GameObject({
+                name: 'zeppelin',
+                componentModels: {
+                  WorldScript: {
+                    idScripts: ['Zeppelin'],
+                  },
+                  BrowserScript: {
+                    idScripts: ['Zeppelin'],
+                    conf: { sphereCount: 0 },
+                  },
+                  Render: { idRenderData: 'zeppelin' },
+                  // Collider: {
+                  //   shapes: [
+                  //     {
+                  //       type: 'Circle',
+                  //       center: { x: 0, y: 0 },
+                  //       radius: 10,
+                  //     },
+                  //   ],
+                  // },
+                },
+              });
+
+            const world = this.context.getWorld();
+
+            world.addGameObject(
+              this.zeppelinGO,
+              this.context,
+              world.getGameObject()
+            );
+          }
+        },
+        class Zeppelin extends WorldScriptBase {
+          constructor(conf, context, parentGO) {
+            super(conf, context, parentGO);
+          }
+
+          // Called when this gameobject collider components collides with another one collider components
+          onEnterCollision(result) {
+            const goCollided = result.b.getGameObject();
+            this.context.getWorld().removeGameObject(goCollided.getUUID());
+
+            const zeppelinBrowserScript =
+              this.parentGameObject.fetchBrowserScripts()['Zeppelin'];
+            zeppelinBrowserScript.conf.sphereCount++;
+          }
+        },
+      ];
+
+      const browserScripts = [
+        class Zeppelin extends udvizBrowser.BrowserScriptBase {
+          constructor(conf, context, parentGO) {
+            super(conf, context, parentGO);
+            this.ui = null;
+          }
+
+          init() {
+            this.ui = document.createElement('div');
+            this.ui.style.zIndex = 98; //le neuf et le 8
+            this.context.getGameView().appendToUI(this.ui);
+            this.updateUI();
+          }
+
+          updateUI() {
+            this.ui.innerHTML = 'Sphere count: ' + this.conf.sphereCount;
+          }
+
+          onOutdated() {
+            this.updateUI();
+          }
+        },
+        udvizBrowser.Templates.FocusGameObject,
+      ];
+
+      const app = new udvizBrowser.Templates.BrowserGame();
+      app.start(myWorld, './assets/config/default_game_config.json', {
+        worldScripts: worldScripts,
+        browserScripts: browserScripts,
+      });
     </script>
   </body>
 </html>

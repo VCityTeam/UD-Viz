@@ -1,25 +1,17 @@
 import { Controller } from '@ud-viz/core/src/Game/GameObject/Components/Component';
 
 const BrowserScriptControllerModule = class BrowserScriptController extends Controller {
-  constructor(assetsManager, model) {
+  constructor(assetsManager, model, parentGO, browserContext) {
     super(assetsManager, model);
 
-    // Map of scripts
     this.scripts = {};
-  }
-
-  /**
-   * Initialize scripts
-   *
-   * @param {AssetsManager} assetsManager local assetsManager
-   * @param {Library} bundles set of bundle library used by script
-   */
-  initAssets(assetsManager, bundles) {
-    console.error('DEPRECATED');
-    const _this = this;
-    this.idScripts.forEach(function (id) {
-      const constructor = assetsManager.fetchBrowserScript(id);
-      _this.scripts[id] = new constructor(_this.conf, bundles.udviz);
+    model.getIdScripts().forEach((idScript) => {
+      const constructor = assetsManager.fetchBrowserScript(idScript);
+      this.scripts[idScript] = new constructor(
+        model.getConf(),
+        browserContext,
+        parentGO
+      ); // TODO create a parent class assetsmanager
     });
   }
 
@@ -30,13 +22,11 @@ const BrowserScriptControllerModule = class BrowserScriptController extends Cont
    * @param {Array} params parameters pass to scripts
    */
   execute(event, params) {
-    console.error('DEPRECATED');
-    const _this = this;
     let result = false;
 
-    this.idScripts.forEach(function (idScript) {
-      result = result || _this.executeScript(idScript, event, params);
-    });
+    for (const id in this.scripts) {
+      result = result || this.executeScript(this.scripts[id], event, params);
+    }
 
     return result;
   }
@@ -51,14 +41,8 @@ BrowserBaseModuleram {BrowserScript.EVENT} event event trigger
    * @param {Array} params parameters pass to the script function
    * @returns {object} result of the script execution
    */
-  executeScript(id, event, params) {
-    console.error('DEPRECATED');
-    const s = this.scripts[id];
-
-    if (s[event]) {
-      return s[event].apply(s, [this.parent].concat(params));
-    }
-    return false;
+  executeScript(script, event, params) {
+    return script[event].apply(script, params);
   }
 
   /**

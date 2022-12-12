@@ -34,7 +34,7 @@ const RenderModelModule = class RenderModel {
    *
    * @returns {boolean}
    */
-  isServerSide() {
+  isWorldComponent() {
     return false;
   }
 
@@ -88,59 +88,6 @@ const RenderModelModule = class RenderModel {
 
   getIdRenderData() {
     return this.idRenderData;
-  }
-
-  /**
-   * Add a custom object 3D to this model
-   *
-   * @param {THREE.Object3D} obj
-   */
-  addObject3D(obj) {
-    this.object3D.add(obj);
-    this.setColor(this.color);
-  }
-
-  /**
-   * Initialize 3D model
-   *
-   * @param {AssetsManager} assetsManager local assetsManager
-   */
-  initAssets(assetsManager) {
-    console.error('DEPRECATED');
-    this.object3D = new THREE.Object3D();
-    this.object3D.name = 'Render Object3D ' + this.uuid;
-
-    // Get the 3D model
-    if (this.idRenderData) {
-      const data = assetsManager.createRenderData(this.idRenderData);
-      this.object3D.add(data.object);
-      this.animations = data.animations;
-      if (this.animations && this.animations.length) {
-        const _this = this;
-        this.animationMixer = new THREE.AnimationMixer(data.object);
-        this.animations.forEach(function (animClip) {
-          const action = _this.animationMixer.clipAction(animClip);
-          action.play(); // Play action is default behaviour
-          _this.actions[animClip.name] = action;
-        });
-      }
-    }
-
-    this.setColor(this.color);
-
-    return this.object3D;
-  }
-
-  getActions() {
-    return this.actions;
-  }
-
-  getAnimationMixer() {
-    return this.animationMixer;
-  }
-
-  getUUID() {
-    return this.uuid;
   }
 };
 
