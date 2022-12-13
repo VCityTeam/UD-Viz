@@ -4,7 +4,6 @@
  */
 const WorldCommand = class {
   /**
-   * Create a new command object from a json.
    *
    * @param {object|JSON} json - The JSON  that will be used to create the WorldCommand.
    * @param {string} json.type - Type of the command @see {WorldCommand.TYPE}.
