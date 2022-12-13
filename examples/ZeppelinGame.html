@@ -14,7 +14,7 @@
       // API
       const Game = udvizBrowser.udvizCore.Game;
       const WorldScriptBase = Game.GameObject.WorldScript.Base;
-      const Command = Game.Command;
+      const WorldCommand = Game.WorldCommand;
       const THREE = udvizBrowser.THREE;
 
       const worldScripts = [
@@ -121,26 +121,26 @@
 
             commands.forEach((cmd) => {
               switch (cmd.getType()) {
-                case Command.TYPE.MOVE_FORWARD:
+                case WorldCommand.TYPE.MOVE_FORWARD:
                   this.zeppelinGO.move(
                     this.zeppelinGO
                       .computeForwardVector()
                       .setLength(dt * speedTranslate)
                   );
                   break;
-                case Command.TYPE.MOVE_BACKWARD:
+                case WorldCommand.TYPE.MOVE_BACKWARD:
                   this.zeppelinGO.move(
                     this.zeppelinGO
                       .computeBackwardVector()
                       .setLength(dt * speedTranslate)
                   );
                   break;
-                case Command.TYPE.MOVE_LEFT:
+                case WorldCommand.TYPE.MOVE_LEFT:
                   this.zeppelinGO.rotate(
                     new THREE.Vector3(0, 0, speedRotate * dt)
                   );
                   break;
-                case Command.TYPE.MOVE_RIGHT:
+                case WorldCommand.TYPE.MOVE_RIGHT:
                   this.zeppelinGO.rotate(
                     new THREE.Vector3(0, 0, -speedRotate * dt)
                   );
@@ -201,7 +201,7 @@
           }
         },
         udvizBrowser.Templates.FocusGameObject,
-        udvizBrowser.Templates.CommandController,
+        udvizBrowser.Templates.WorldCommandController,
       ];
 
       const myWorld = new udvizBrowser.udvizCore.Game.World({
@@ -218,7 +218,7 @@
               conf: {
                 nameGO2Focus: 'zeppelin',
               },
-              idScripts: ['FocusGameObject', 'CommandController'],
+              idScripts: ['FocusGameObject', 'WorldCommandController'],
             },
           },
         },

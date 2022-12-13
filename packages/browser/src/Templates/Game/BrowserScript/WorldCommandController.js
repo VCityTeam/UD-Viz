@@ -1,7 +1,7 @@
 import { Base } from '../../../Game/BrowserScript';
-import { Command } from '@ud-viz/core/src/Game/Game';
+import { WorldCommand } from '@ud-viz/core/src/Game/Game';
 
-export class CommandController extends Base {
+export class WorldCommandController extends Base {
   constructor(conf, context, parentGO) {
     super(conf, context, parentGO);
   }
@@ -12,37 +12,37 @@ export class CommandController extends Base {
 
     // FORWARD
     inputManager.addKeyCommand(
-      Command.TYPE.MOVE_FORWARD,
+      WorldCommand.TYPE.MOVE_FORWARD,
       ['z', 'ArrowUp'],
       function () {
-        return new Command({ type: Command.TYPE.MOVE_FORWARD });
+        return new WorldCommand({ type: WorldCommand.TYPE.MOVE_FORWARD });
       }
     );
 
     // BACKWARD
     inputManager.addKeyCommand(
-      Command.TYPE.MOVE_BACKWARD,
+      WorldCommand.TYPE.MOVE_BACKWARD,
       ['s', 'ArrowDown'],
       function () {
-        return new Command({ type: Command.TYPE.MOVE_BACKWARD });
+        return new WorldCommand({ type: WorldCommand.TYPE.MOVE_BACKWARD });
       }
     );
 
     // LEFT
     inputManager.addKeyCommand(
-      Command.TYPE.MOVE_LEFT,
+      WorldCommand.TYPE.MOVE_LEFT,
       ['q', 'ArrowLeft'],
       function () {
-        return new Command({ type: Command.TYPE.MOVE_LEFT });
+        return new WorldCommand({ type: WorldCommand.TYPE.MOVE_LEFT });
       }
     );
 
     // RIGHT
     inputManager.addKeyCommand(
-      Command.TYPE.MOVE_RIGHT,
+      WorldCommand.TYPE.MOVE_RIGHT,
       ['d', 'ArrowRight'],
       function () {
-        return new Command({ type: Command.TYPE.MOVE_RIGHT });
+        return new WorldCommand({ type: WorldCommand.TYPE.MOVE_RIGHT });
       }
     );
   }

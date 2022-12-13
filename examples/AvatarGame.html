@@ -46,29 +46,29 @@
 
             commands.forEach((cmd) => {
               switch (cmd.getType()) {
-                case Game.Command.TYPE.MOVE_FORWARD:
+                case Game.WorldCommand.TYPE.MOVE_FORWARD:
                   this.avatar.move(
                     this.avatar
                       .computeForwardVector()
                       .setLength(dt * speedTranslate)
                   );
                   break;
-                case Game.Command.TYPE.MOVE_BACKWARD:
+                case Game.WorldCommand.TYPE.MOVE_BACKWARD:
                   this.avatar.move(
                     this.avatar
                       .computeBackwardVector()
                       .setLength(dt * speedTranslate)
                   );
                   break;
-                case Game.Command.TYPE.MOVE_LEFT:
+                case Game.WorldCommand.TYPE.MOVE_LEFT:
                   this.avatar.rotate(new THREE.Vector3(0, 0, speedRotate * dt));
                   break;
-                case Game.Command.TYPE.MOVE_RIGHT:
+                case Game.WorldCommand.TYPE.MOVE_RIGHT:
                   this.avatar.rotate(
                     new THREE.Vector3(0, 0, -speedRotate * dt)
                   );
                   break;
-                case Game.Command.TYPE.Z_UPDATE:
+                case Game.WorldCommand.TYPE.Z_UPDATE:
                   if (cmd.getData()) {
                     const currentPos = this.avatar.getPosition();
                     this.avatar.setPosition(
@@ -89,7 +89,7 @@
       ];
       const browserScripts = [
         udvizBrowser.Templates.FocusGameObject,
-        udvizBrowser.Templates.CommandController,
+        udvizBrowser.Templates.WorldCommandController,
         udvizBrowser.Templates.UpdateElevation3DTiles,
       ];
 
@@ -116,7 +116,7 @@
               idScripts: [
                 'UpdateElevation3DTiles',
                 'FocusGameObject',
-                'CommandController',
+                'WorldCommandController',
               ],
             },
           },

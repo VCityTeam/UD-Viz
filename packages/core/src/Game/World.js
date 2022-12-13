@@ -2,7 +2,6 @@
  * Object with all information about a persistant world
  * each step can export a WorldState
  *
- * @format
  */
 
 const THREE = require('three');
