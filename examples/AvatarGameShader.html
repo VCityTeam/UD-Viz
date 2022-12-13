@@ -22,7 +22,6 @@
 
             this.avatar = null;
             this.intersectionCube = null;
-            this.inputManager = null;
 
             // Raycaster for avoiding buildings collisions with avatar
             this.raycaster = new THREE.Raycaster();
@@ -97,7 +96,7 @@
             const gV = this.context.getGameView();
             const scene = gV.getScene();
             const tilesManager = gV.getLayerManager().tilesManagers;
-            const worldOrigin = gV.getObject3D().position;
+            const worldOrigin = this.context.getObject3D().position;
 
             // Input manager of the game
             const inputManager = gV.getInputManager();
@@ -110,9 +109,7 @@
             this.intersectionCube = new THREE.Mesh(geometry, material);
             scene.add(this.intersectionCube);
 
-            const dt = this.context.getDt();
             const translationSpeed = 0.03;
-            const translationLength = translationSpeed * dt;
             const speedRotate = 0.0006;
 
             const checkCollisionFun = (direction) => {
@@ -136,7 +133,7 @@
                 this.intersectionCube.visibility = false;
               }
 
-              return translationLength > depth;
+              return translationSpeed * this.context.getDt() > depth;
             };
 
             const updateGroundElevationFun = () => {
@@ -154,7 +151,9 @@
               const dt = this.context.getDt();
               const direction = this.avatar.computeForwardVector();
               if (checkCollisionFun(direction)) return;
-              this.avatar.move(direction.setLength(translationLength));
+              this.avatar.move(
+                direction.setLength(translationSpeed * this.context.getDt())
+              );
               updateGroundElevationFun();
             });
             // BACKWARD
@@ -163,7 +162,9 @@
               const dt = this.context.getDt();
               const direction = this.avatar.computeBackwardVector();
               if (checkCollisionFun(direction)) return;
-              this.avatar.move(direction.setLength(translationLength));
+              this.avatar.move(
+                direction.setLength(translationSpeed * this.context.getDt())
+              );
               updateGroundElevationFun();
             });
             // LEFT
@@ -393,8 +394,8 @@
           finalComposer.addPass(compositionPass);
 
           // update variables on resize
-          const updateResize = function (ctx) {
-            const size = ctx.getGameView().getSize();
+          const updateResize = function () {
+            const size = gameView.getSize();
             renderTargetFX.setSize(size.x, size.y);
 
             sobelPass.uniforms.resolution.value = new THREE.Vector2(
@@ -408,7 +409,7 @@
           };
 
           // launch an init resize update
-          updateResize(gameView.getBrowserContext());
+          updateResize();
           // record in the resize requester
           gameView.addResizeRequester(updateResize);
 

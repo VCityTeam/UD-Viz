@@ -51,7 +51,7 @@ export class UpdateElevation3DTiles extends Base {
     if (!go) throw 'no go to update';
 
     const pos = go.getPosition();
-    const ref = this.context.getGameView().getObject3D().position;
+    const ref = this.context.getObject3D().position;
 
     this.raycaster.ray.origin = new THREE.Vector3(pos.x, pos.y, 0).add(ref);
     this.raycaster.ray.direction = new THREE.Vector3(0, 0, -1);

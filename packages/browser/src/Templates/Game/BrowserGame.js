@@ -2,6 +2,7 @@ import * as Components from '../../Components/Components.js';
 import { AssetsManager } from '../../Views/AssetsManager/AssetsManager';
 import * as Views from '../../Views/Views';
 import { Game } from '@ud-viz/core';
+import { BrowserContext } from '../../Game/BrowserContext.js';
 
 /**
  * A Class contaning method to easily instanciate a browser game based on the ud-viz game engine
@@ -10,6 +11,7 @@ import { Game } from '@ud-viz/core';
 export class BrowserGame {
   constructor() {
     this.gameView = null;
+    this.browserContext = null;
   }
 
   /**
@@ -59,48 +61,46 @@ export class BrowserGame {
   }
 
   startWithAssetsLoaded(world, assetsManager, config, options = {}) {
-    return new Promise((resolve) => {
-      const worldStateComputer = new Game.WorldStateComputer(assetsManager, 60);
+    const worldStateComputer = new Game.WorldStateComputer(assetsManager, 60);
 
-      worldStateComputer.start(world);
+    worldStateComputer.start(world);
 
-      // Smooth rendering with delay
-      const interpolator = new Game.WorldStateInterpolator(
-        config.worldStateInterpolator.renderDelay
-      );
+    // Smooth rendering with delay
+    const interpolator = new Game.WorldStateInterpolator(
+      config.worldStateInterpolator.renderDelay
+    );
 
-      // register computer into the interpolator
-      interpolator.onFirstState(worldStateComputer.computeCurrentState(false));
-      worldStateComputer.addAfterTickRequester(function () {
-        interpolator.onNewState(worldStateComputer.computeCurrentState(false));
-      });
-
-      if (options.localScriptModules) console.error('no localscripts module');
-
-      this.gameView = new Views.GameView({
-        htmlParent: options.htmlParent || document.body,
-        assetsManager: assetsManager,
-        interpolator: interpolator,
-        config: config,
-        userData: options.userData,
-      });
-
-      // command from input manager are pull from worldstatecomputer
-      worldStateComputer.addAfterTickRequester(() => {
-        worldStateComputer.onCommands(
-          this.gameView.getInputManager().computeCommands()
-        );
-      });
-
-      // ref worldstate computer
-      this.gameView
-        .getBrowserContext()
-        .setWorldStateComputer(worldStateComputer);
-
-      // Start gameview tick
-      this.gameView.start().then(function () {
-        resolve();
-      });
+    // register computer into the interpolator
+    interpolator.onFirstState(worldStateComputer.computeCurrentState(false));
+    worldStateComputer.addAfterTickRequester(function () {
+      interpolator.onNewState(worldStateComputer.computeCurrentState(false));
     });
+
+    if (options.localScriptModules) console.error('no localscripts module');
+
+    this.gameView = new Views.GameView({
+      htmlParent: options.htmlParent || document.body,
+      config: config,
+      userData: options.userData,
+    });
+
+    // command from input manager are pull from worldstatecomputer
+    worldStateComputer.addAfterTickRequester(() => {
+      worldStateComputer.onCommands(
+        this.gameView.getInputManager().computeCommands()
+      );
+    });
+
+    // ref worldstate computer
+    this.browserContext = new BrowserContext(assetsManager, interpolator, {
+      worldStateComputer: worldStateComputer,
+    });
+
+    // Start gameview tick
+    return this.gameView.start(this.browserContext);
+  }
+
+  getBrowserContext() {
+    return this.browserContext;
   }
 }
