@@ -171,7 +171,7 @@ export class GameView extends View3D {
         delta = now - then;
 
         // Call tick requester
-        this.tickRequesters.forEach(function (cb) {
+        this.tickRequesters.forEach((cb) => {
           cb(this);
         });
 
