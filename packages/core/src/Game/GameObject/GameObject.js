@@ -20,7 +20,7 @@ const Audio = require('./Components/Audio');
  * Work with a graph hierarchy
  * GameObject have component to handle different behaviour
  */
-const GameObjectModule = class GameObject {
+const GameObject = class {
   /**
    * Create a new GameObject
    *
@@ -766,7 +766,7 @@ const GameObjectModule = class GameObject {
 
     return {
       name: this.name,
-      type: GameObjectModule.TYPE,
+      type: GameObject.TYPE,
       static: this.static,
       outdated: this.outdated,
       uuid: this.uuid,
@@ -785,7 +785,7 @@ const GameObjectModule = class GameObject {
   }
 };
 
-GameObjectModule.TYPE = 'GameObject';
+GameObject.TYPE = 'GameObject';
 
 /**
  * Lerp transform of g1 to g2 with a given ratio
@@ -795,7 +795,7 @@ GameObjectModule.TYPE = 'GameObject';
  * @param {number} ratio a number between 0 => 1
  * @returns {GameObject} g1 interpolated
  */
-GameObjectModule.interpolateInPlace = function (g1, g2, ratio) {
+GameObject.interpolateInPlace = function (g1, g2, ratio) {
   g1.object3D.position.lerp(g2.object3D.position, ratio);
   g1.object3D.scale.lerp(g2.object3D.scale, ratio);
   g1.object3D.quaternion.slerp(g2.object3D.quaternion, ratio);
@@ -808,7 +808,7 @@ GameObjectModule.interpolateInPlace = function (g1, g2, ratio) {
  * @param {GameObject} gameObject
  * @returns {GameObject} a new gameobject with new uuid base on gameObject
  */
-GameObjectModule.deepCopy = function (gameObject) {
+GameObject.deepCopy = function (gameObject) {
   const cloneJSON = gameObject.toJSON(true);
   // Rename uuid
   JSONUtils.parse(cloneJSON, function (json, key) {
@@ -819,7 +819,7 @@ GameObjectModule.deepCopy = function (gameObject) {
       json[key] = json[key] + ' (clone)';
     }
   });
-  return new GameObjectModule(cloneJSON);
+  return new GameObject(cloneJSON);
 };
 
 /**
@@ -830,7 +830,7 @@ GameObjectModule.deepCopy = function (gameObject) {
  * @param {boolean} upSearch true up search false bottom search
  * @returns {THREE.Object3D} the object3D sign with the uuid of the gameobject
  */
-GameObjectModule.findObject3D = function (uuid, obj, upSearch = true) {
+GameObject.findObject3D = function (uuid, obj, upSearch = true) {
   let result;
   if (upSearch) {
     let current = obj;
@@ -854,7 +854,7 @@ GameObjectModule.findObject3D = function (uuid, obj, upSearch = true) {
 };
 
 module.exports = {
-  GameObject: GameObjectModule,
+  GameObject: GameObject,
   WorldScript: WorldScript,
   Render: Render,
   BrowserScript: BrowserScript,

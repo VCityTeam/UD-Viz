@@ -62,7 +62,7 @@ WorldScriptModelModule.TYPE = 'WorldScript';
  * @param {*} parentGO
  * @param {*} json
  */
-const WorldScriptControllerModule = class WorldScriptController extends Controller {
+const WorldScriptController = class extends Controller {
   constructor(assetsManager, model, parentGO, worldContext) {
     super(assetsManager, model, parentGO);
 
@@ -111,7 +111,8 @@ const WorldScriptControllerModule = class WorldScriptController extends Controll
   }
 };
 
-WorldScriptControllerModule.EVENT = {
+/* Defining the different events that can be triggered by the WorldScriptController. */
+WorldScriptController.EVENT = {
   INIT: 'init', // When added
   TICK: 'tick', // Every tick
   LOAD: 'load', // At world load return promises
@@ -133,9 +134,9 @@ const WorldScriptBaseModule = class WorldScriptBase {
   }
 };
 
-// Fill the class with the different WorldScriptControllerModule.EVENT method
-for (const event in WorldScriptControllerModule.EVENT) {
-  const eventValue = WorldScriptControllerModule.EVENT[event];
+// Fill the class with the different WorldScriptController.EVENT method
+for (const event in WorldScriptController.EVENT) {
+  const eventValue = WorldScriptController.EVENT[event];
   WorldScriptBaseModule.prototype[eventValue] = () => {
     // empty method override it for custm behavior
   };
@@ -144,5 +145,5 @@ for (const event in WorldScriptControllerModule.EVENT) {
 module.exports = {
   Model: WorldScriptModelModule,
   Base: WorldScriptBaseModule,
-  Controller: WorldScriptControllerModule,
+  Controller: WorldScriptController,
 };

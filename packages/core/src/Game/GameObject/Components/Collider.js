@@ -5,7 +5,7 @@ const { Model, Controller } = require('./Component');
  * Component used to handle collision of a GameObject
  * Support by detect-collisions npm package
  */
-const ColliderModelModule = class ColliderModel extends Model {
+const ColliderModel = class extends Model {
   constructor(json) {
     super(json);
 
@@ -57,14 +57,14 @@ const ColliderModelModule = class ColliderModel extends Model {
   toJSON() {
     return {
       uuid: this.uuid,
-      type: ColliderModelModule.TYPE,
+      type: ColliderModel.TYPE,
       shapes: this.shapesJSON,
       body: this.body,
     };
   }
 };
 
-ColliderModelModule.TYPE = 'Collider';
+ColliderModel.TYPE = 'Collider';
 
 class ColliderController extends Controller {
   constructor(assetsManager, model, parentGO) {
@@ -190,6 +190,6 @@ class ShapeWrapper {
 }
 
 module.exports = {
-  Model: ColliderModelModule,
+  Model: ColliderModel,
   Controller: ColliderController,
 };

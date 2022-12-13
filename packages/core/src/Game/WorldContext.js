@@ -1,7 +1,7 @@
 /**
  * Context used to simulate a World
  */
-module.exports = class WorldContext {
+const WorldContext = class {
   constructor(params) {
     // AssetsManager
     this.assetsManager = params.assetsManager;
@@ -76,3 +76,5 @@ module.exports = class WorldContext {
     return this.bundles;
   }
 };
+
+module.exports = WorldContext;

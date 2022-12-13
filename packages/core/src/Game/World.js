@@ -1,65 +1,66 @@
-/**
- * Object with all information about a persistant world
- * each step can export a WorldState
- *
- */
-
 const THREE = require('three');
 const WorldState = require('./WorldState');
 const { Collisions } = require('detect-collisions');
-
 const GameObject = require('./GameObject/GameObject').GameObject;
 const Collider = require('./GameObject/Components/Collider');
 const WorldScript = require('./GameObject/Components/WorldScript');
 
+// jsdoc import
+const WorldContext = require('./WorldContext');
+
 /**
- * Parent Object of GameObjects, handle simulation and store extradata like the geographic origin
+ * @typedef {object} WorldOrigin
+ * @property {number} lng - longitude coordinate of the origin.
+ * @property {number} lat - latitude coordinate of the origin.
+ * @property {number} alt - altitude coordinate of the origin.
  */
-const WorldModule = class World {
-  constructor(json, options) {
+
+/**
+ * Represent a world model and methods to simulated it given a {@link WorldContext}
+ */
+const World = class {
+  /**
+   *
+   * @param {object|JSON} json - The json object that contains the world's data.
+   * @param {object|JSON} json.gameObject - JSON to create the {@link GameObject} of the world.
+   * @param {string} json.name - Name of the world. (optional)
+   * @param {string} json.uuid - UUID of the world. (optional)
+   * @param {WorldOrigin} json.origin - Origin of the world. (optional)
+   */
+  constructor(json) {
+    if (arguments[1]) throw new Error('options is not used anymore');
     if (!json) throw new Error('no json');
 
-    // Update json format
-    json = WorldModule.parseJSON(json);
-
-    options = options || {};
-
-    // Collisions system of detect-collisions npm package
-    this.collisions = new Collisions();
-    /**
-     * ON_ENTER_COLLISION: 'onEnterCollision', //first collsion
-     * IS_COLLIDING: 'isColliding', //is colliding
-     * ON_LEAVE_COLLISION: 'onLeaveCollision', //on leave collision
-     */
-    this.collisionsBuffer = {}; // To handle event above
-
-    // uuid
+    /** @type {string} UUID of the world */
     this.uuid = json.uuid || THREE.Math.generateUUID();
 
-    // Gameobject
+    /** @type {GameObject} GameObject of the world */
     this.gameObject = new GameObject(json.gameObject);
 
-    // Name of the world
-    this.name = json.name || 'default_world';
+    /** @type {string} Name of the world */
+    this.name = json.name || 'default_world_name';
 
-    // Origin
+    /** @type {WorldOrigin} Origin of the world */
     this.origin = json.origin || null;
 
-    /** ****************INTERNAL*/
+    /** @type {Collisions} Collisions system {@link https://www.npmjs.com/package/detect-collisions}*/
+    this.collisions = new Collisions();
 
-    // is running on webpage or node app
-    if (options.isServerSide != undefined)
-      console.error('no isServerSide should be passed');
-    if (options.modules) console.error('no modules should be passed');
-    this.modules = options.modules || {};
+    /**
+     * @type {object} Buffer to handle collision events
+     * @see {WorldScript.Controller.EVENT}
+     */
+    this.collisionsBuffer = {};
+
+    /** @type {object} Listeners of custom events */
     this.listeners = {};
   }
 
   /**
    * Register a custom event
    *
-   * @param {string} eventID id of the event
-   * @param {Function} cb callback to be called when the event is dispatched
+   * @param {string} eventID - Id of the event
+   * @param {Function} cb - Callback to be called when the event is dispatched
    */
   on(eventID, cb) {
     if (!this.listeners[eventID]) this.listeners[eventID] = [];
@@ -67,12 +68,12 @@ const WorldModule = class World {
   }
 
   /**
-   * Notify that a custom event occured
+   * Dispatch custom event to listeners
    *
-   * @param {string} eventID id of the event to dispatch
-   * @param {Array} params params to passed to callbacks
+   * @param {string} eventID - Id of the event to dispatch
+   * @param {Array} params - Params to passed to listeners
    */
-  notify(eventID, params) {
+  dispatch(eventID, params) {
     if (!this.listeners[eventID]) {
       console.warn('no listener on event ', eventID);
     } else {
@@ -86,7 +87,7 @@ const WorldModule = class World {
    * Load its gameobject
    *
    * @param {Function} onLoad callback called at the end of the load
-   * @param {WorldContext} worldContext this world context
+   * @param {WorldContext} worldContext world context to initialize the gameobject
    */
   load(onLoad, worldContext) {
     this.addGameObject(this.gameObject, worldContext, null, onLoad);
@@ -96,11 +97,9 @@ const WorldModule = class World {
    * Compute all the promises of a gameobject needed at the load event of WorldScripts
    *
    * @param {GameObject} go the gameobject to compute load promises
-   * @param {WorldContext} worldContext this world context
    * @returns {Array[Promise]} An array containing all the promises
    */
   computePromisesLoad(go) {
-    // Load GameObject
     const promises = [];
 
     go.traverse(function (g) {
@@ -123,6 +122,13 @@ const WorldModule = class World {
     return promises;
   }
 
+  /**
+   * It will dispatch an event to all the world scripts in the gameobject
+   *
+   * @param {GameObject} gameObject - The gameobject that you want to dispatch the event to.
+   * @param {string} event - The name of the event to dispatch @see {WorldScript.Controller.EVENT}.
+   * @param {Array} params - The params to pass to the {@link WorldScriptController} @see {WorldScript.Controller}.
+   */
   dispatchWorldScriptEvent(gameObject, event, params = []) {
     gameObject.traverse(function (child) {
       const worldScriptGameComponent = child.getComponent(
@@ -136,16 +142,12 @@ const WorldModule = class World {
 
   /**
    * Add a GameObject into this world
-   * Init Assets components
-   * Load GameObject
-   * Init when loaded
-   * Register into the collision system
-   * Then call a callback onLoad
+   * Then call a callback onLoad (optional)
    *
-   * @param {GameObject} gameObject the gameobject to add
-   * @param {WorldContext} worldContext this world context
-   * @param {GameObject} parent the gameobject parent may be null
-   * @param {Function} onLoad callback called when loaded
+   * @param {GameObject} gameObject - The gameobject to add
+   * @param {WorldContext} worldContext - The world context to initialize the gameobject
+   * @param {GameObject} parent - The gameobject parent may be null
+   * @param {Function} onLoad - Callback called when loaded (optional)
    */
   addGameObject(gameObject, worldContext, parent, onLoad = null) {
     const _this = this;
@@ -154,12 +156,12 @@ const WorldModule = class World {
       .getAssetsManager()
       .initGameObject(gameObject, true, { worldContext: worldContext });
 
-    // INIT EVENT TRIGGER
     if (parent) {
       parent.addChild(gameObject);
     } else {
       _this.gameObject = gameObject;
     }
+
     this.dispatchWorldScriptEvent(
       gameObject,
       WorldScript.Controller.EVENT.INIT
@@ -174,17 +176,15 @@ const WorldModule = class World {
   /**
    * Add a gameobject into the collision system
    *
-   * @param {GameObject} go the gameobject to register
+   * @param {GameObject} go - The gameobject to register
    */
   registerGOCollision(go) {
-    const _this = this;
-
-    // Collisions
     const collisions = this.collisions;
-    go.traverse(function (child) {
-      if (_this.collisionsBuffer[child.getUUID()]) return; // Already add
 
-      _this.collisionsBuffer[child.getUUID()] = [];
+    go.traverse((child) => {
+      if (this.collisionsBuffer[child.getUUID()]) return; // Already add
+
+      this.collisionsBuffer[child.getUUID()] = [];
 
       const colliderComponent = child.getComponent(Collider.Model.TYPE);
       if (colliderComponent) {
@@ -199,10 +199,9 @@ const WorldModule = class World {
   }
 
   /**
-   * Check gameobject transform and update this.collisionsBuffer
+   * Update the collision buffer
    */
   updateCollisionBuffer() {
-    // Collisions
     const collisions = this.collisions;
     this.gameObject.traverse(function (g) {
       const colliderComponent = g.getComponent(Collider.Model.TYPE);
@@ -224,7 +223,7 @@ const WorldModule = class World {
             const potentials = shape.potentials();
             const result = collisions.createResult();
             for (const p of potentials) {
-              // In ShapeWrapper shape are link to gameObject
+              /** In {@link ShapeWrapper} shape are link to gameObject*/
               const potentialG = p.getGameObject();
               if (!potentialG.isStatic()) continue;
               if (shape.collides(p, result)) {
@@ -239,12 +238,11 @@ const WorldModule = class World {
   /**
    * Remove a GameObject from the collision system
    *
-   * @param {GameObject} go the gameobject to remove
+   * @param {GameObject} go - The gameobject to remove
    */
   unregisterGOCollision(go) {
     const _this = this;
 
-    // Collisions
     go.traverse(function (child) {
       const comp = child.getComponent(Collider.Model.TYPE);
       if (comp) {
@@ -268,7 +266,7 @@ const WorldModule = class World {
   /**
    * Remove a gameobject from this world
    *
-   * @param {string} uuid the uuid of the gameobject to remove
+   * @param {string} uuid - The uuid of the gameobject to remove
    */
   removeGameObject(uuid) {
     console.log(uuid + ' remove from ', this.name);
@@ -280,18 +278,15 @@ const WorldModule = class World {
 
   /**
    * Simulate one step of the world simulation
-   *
    */
   tick() {
     const _this = this;
 
-    // Tick GameObject
     this.dispatchWorldScriptEvent(
       this.gameObject,
       WorldScript.Controller.EVENT.TICK
     );
 
-    // Collisions
     const collisions = this.collisions;
     this.gameObject.traverse(function (g) {
       const colliderComponent = g.getComponent(Collider.Model.TYPE);
@@ -314,7 +309,7 @@ const WorldModule = class World {
             const potentials = shape.potentials();
             const result = collisions.createResult();
             for (const p of potentials) {
-              // In ShapeWrapper shape are link to gameObject
+              /** In {@link ShapeWrapper} shape are link to gameObject */
               const potentialG = p.getGameObject();
               if (!potentialG.isStatic()) continue;
               if (shape.collides(p, result)) {
@@ -345,6 +340,7 @@ const WorldModule = class World {
         for (let i = buffer.length - 1; i >= 0; i--) {
           const uuid = buffer[i];
           if (!collidedGO.includes(uuid)) {
+            // OnLeave
             _this.dispatchWorldScriptEvent(
               g,
               WorldScript.Controller.EVENT.ON_LEAVE_COLLISION,
@@ -358,10 +354,8 @@ const WorldModule = class World {
   }
 
   /**
-   * Return the current world state
-   *
-   * @param withWorldComponent
-   * @returns {WorldState}
+   * @param {boolean} withWorldComponent - If true, the world component will be included in the world state
+   * @returns {WorldState} - The current world state
    */
   computeWorldState(withWorldComponent = true) {
     const result = new WorldState({
@@ -371,7 +365,7 @@ const WorldModule = class World {
       origin: this.origin,
     });
 
-    // Everything is not outadted yet
+    // Everything is not outdated yet
     this.getGameObject().traverse(function (g) {
       g.setOutdated(false);
     });
@@ -380,52 +374,35 @@ const WorldModule = class World {
   }
 
   /**
-   * This function sets the gameObject property of the current object to the gameObject parameter.
-   *
-   * @param {GameObject} gameObject - The game object that this component is attached to.
-   */
-  setGameObject(gameObject) {
-    this.gameObject = gameObject; // TODO : not to this at runtime when world is being simulated.
-  }
-
-  /**
-   *
-   * @returns {GameObject}
+   * @returns {GameObject} - The root gameobject of this world
    */
   getGameObject() {
     return this.gameObject;
   }
 
   /**
-   * Return the collision system
-   *
-   * @returns {Collisions}
+   * @returns {Collisions} - The collision system
    */
   getCollisions() {
     return this.collisions;
   }
 
   /**
-   * Return the uuid of this world
-   *
-   * @returns {string}
+   * @returns {string} - The uuid of this world
    */
   getUUID() {
     return this.uuid;
   }
 
   /**
-   *
-   * @returns {string}
+   * @returns {string} - The name of this world
    */
   getName() {
     return this.name;
   }
 
   /**
-   * Return a clone of this
-   *
-   * @returns {World}
+   * @returns {this} - A clone of this
    */
   clone() {
     return new World(this.toJSON());
@@ -434,50 +411,19 @@ const WorldModule = class World {
   /**
    * Compute this to JSON
    *
-   * @returns {JSON}
+   * @returns {object|JSON} object serialized in JSON
    */
   toJSON() {
     return {
       gameObject: this.gameObject.toJSON(true),
       name: this.name,
       origin: this.origin,
-      type: WorldModule.TYPE,
+      type: World.TYPE,
       uuid: this.uuid,
     };
   }
 };
 
-WorldModule.TYPE = 'World';
+World.TYPE = 'World';
 
-module.exports = WorldModule;
-
-// Update json data of the world
-
-// return true if version1 < version2
-// const versionIsInferior = function (version1, version2) {
-//   const numbers1 = version1.split('.');
-//   const numbers2 = version2.split('.');
-
-//   for (let index = 0; index < numbers1.length; index++) {
-//     const version1Number = parseInt(numbers1[index]);
-//     const version2Number = parseInt(numbers2[index]);
-//     if (version1Number < version2Number) return true;
-//   }
-//   return false;
-// };
-
-WorldModule.parseJSON = function (worldJSON) {
-  return worldJSON; // For now no patch
-
-  // const version = worldJSON.version;
-  // if (!version) return worldJSON;
-
-  // let newJSON = null;
-  // if (versionIsInferior(version, '2.33.7')) {
-  //   newJSON = from2337To2338(worldJSON); //example of a patch
-  // } else {
-  //   return worldJSON; //if it is up to date
-  // }
-
-  // return WorldModule.parseJSON(newJSON);
-};
+module.exports = World;
