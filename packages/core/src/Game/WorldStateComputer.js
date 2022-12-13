@@ -4,7 +4,7 @@ const WorldContext = require('./WorldContext');
 /**
  * StateComputer working locally
  */
-const WorldStateComputerModule = class WorldStateComputer {
+const WorldStateComputer = class {
   constructor(assetsManager, fps) {
     this.worldContext = new WorldContext({
       world: null,
@@ -159,9 +159,9 @@ const WorldStateComputerModule = class WorldStateComputer {
  * @param {Bundles} bundles bundles needed to load the world
  * @returns
  */
-WorldStateComputerModule.WorldTest = function (world, assetsManager, bundles) {
+WorldStateComputer.WorldTest = function (world, assetsManager, bundles) {
   return new Promise((resolve) => {
-    const c = new WorldStateComputerModule(assetsManager, 60, bundles);
+    const c = new WorldStateComputer(assetsManager, 60, bundles);
     c.start(world, function () {
       console.log(world.getName(), ' has loaded');
       setTimeout(function () {
@@ -173,4 +173,4 @@ WorldStateComputerModule.WorldTest = function (world, assetsManager, bundles) {
   });
 };
 
-module.exports = WorldStateComputerModule;
+module.exports = WorldStateComputer;
