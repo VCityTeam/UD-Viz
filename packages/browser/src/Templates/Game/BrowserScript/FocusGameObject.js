@@ -50,7 +50,7 @@ export class FocusGameObject extends Base {
     if (!go2Focus) throw 'no gameobject';
 
     // Compute world transform
-    const obj = this.context.getGameView().computeObject3D(go2Focus);
+    const obj = this.context.computeObject3D(go2Focus);
     const position = new THREE.Vector3();
     const quaternion = new THREE.Quaternion();
     obj.matrixWorld.decompose(position, quaternion, new THREE.Vector3());
