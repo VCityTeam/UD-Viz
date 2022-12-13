@@ -1,7 +1,9 @@
 /**
  * Object computed by the InputManager and pass to a WorldContext for the World simulation
+ *
+ * @class
  */
-const CommandModule = class Command {
+const WorldCommandModule = class WorldCommand {
   constructor(json) {
     if (!json) throw new Error('no json');
 
@@ -84,7 +86,7 @@ const CommandModule = class Command {
   }
 };
 
-CommandModule.TYPE = {
+WorldCommandModule.TYPE = {
   MOVE_FORWARD_START: 'move_forward_start',
   MOVE_FORWARD_END: 'move_forward_end',
   MOVE_BACKWARD_START: 'move_backward_start',
@@ -111,4 +113,4 @@ CommandModule.TYPE = {
   DECREASE_SPEED: 'decrease_speed',
 };
 
-module.exports = CommandModule;
+module.exports = WorldCommandModule;

@@ -6,3 +6,5 @@ lib
 .vscode
 TODO.txt
 ChangelogDiff.md
+docs/html
+docs/html/*.html

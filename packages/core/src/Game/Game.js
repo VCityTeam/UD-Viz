@@ -1,6 +1,6 @@
 const commonJsComponents = require('./Components/Components');
 
-const commonJsCommand = require('./Command');
+const commonJsCommand = require('./WorldCommand');
 
 const commonJsGameObject = require('./GameObject/GameObject');
 
@@ -16,7 +16,7 @@ const commonJsWorldStateInterpolator = require('./WorldStateInterpolator');
 
 module.exports = {
   Components: commonJsComponents,
-  Command: commonJsCommand,
+  WorldCommand: commonJsCommand,
   GameObject: commonJsGameObject,
   World: commonJsWorld,
   WorldState: commonJsWorldState,

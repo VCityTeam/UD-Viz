@@ -1,7 +1,7 @@
 import { Base } from '../../../Game/BrowserScript';
 import * as THREE from 'three';
 import JSONUtils from '@ud-viz/core/src/Game/Components/JSONUtils';
-import { Command } from '@ud-viz/core/src/Game/Game';
+import { WorldCommand } from '@ud-viz/core/src/Game/Game';
 
 const defaultConfig = {
   id3DTiles: null,
@@ -70,6 +70,8 @@ export class UpdateElevation3DTiles extends Base {
     // Add commands to the computer directly because not produce by the inputmanager
     this.context
       .getWorldStateComputer()
-      .onCommands([new Command({ type: Command.TYPE.Z_UPDATE, data: z })]);
+      .onCommands([
+        new WorldCommand({ type: WorldCommand.TYPE.Z_UPDATE, data: z }),
+      ]);
   }
 }

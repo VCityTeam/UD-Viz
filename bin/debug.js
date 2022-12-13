@@ -8,19 +8,23 @@ debugServer
     port: 8000,
   })
   .then(() => {
-    const child = spawn('nodemon', [
-      '--trace-warnings',
-      '--verbose',
-      '--watch',
-      './packages/core/src',
-      '--watch',
-      './packages/browser/src',
-      '--delay',
-      '2500ms',
-      './bin/debugRoutine.js',
-      '-e',
-      'js,css,html',
-    ]);
+    const child = spawn(
+      'nodemon',
+      [
+        '--trace-warnings',
+        '--verbose',
+        '--watch',
+        './packages/core/src',
+        '--watch',
+        './packages/browser/src',
+        '--delay',
+        '2500ms',
+        './bin/debugRoutine.js',
+        '-e',
+        'js,css,html',
+      ],
+      { shell: true }
+    );
     child.stdout.on('data', (data) => {
       console.log(`child stdout:\n${data}`);
     });
