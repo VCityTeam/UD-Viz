@@ -446,14 +446,6 @@ export class BrowserContext {
     return this.gameView;
   }
 
-  /**
-   *
-   * @returns {THREE.Color} color of the renderer clear color
-   */
-  getSkyColor() {
-    return this.skyColor;
-  }
-
   getInterpolator() {
     return this.interpolator;
   }
