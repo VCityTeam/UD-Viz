@@ -378,11 +378,7 @@ export class View3D {
     };
 
     // MaxSubdivisionLevel
-    let maxSubdivisionLevel = 3;
-    if (this.config.background_image_layer)
-      if (this.config.background_image_layer.maxSubdivisionLevel)
-        maxSubdivisionLevel =
-          this.config.background_image_layer.maxSubdivisionLevel;
+    const maxSubdivisionLevel = this.config.maxSubdivisionLevel || 3;
 
     this.itownsView = new itowns.PlanarView(this.rootWebGL, extent, {
       disableSkirt: false,
