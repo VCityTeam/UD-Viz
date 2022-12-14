@@ -13,7 +13,7 @@
     "eslint": "eslint --ignore-path .gitignore \"packages/**/*.js\" \"examples/*.html\" ",
     "eslint-fix": "eslint --ignore-path .gitignore \"packages/**/*.js\" \"examples/*.html\"  --fix",
     "docs": "jsdoc -c ./docs/jsdoc.json --verbose",
-    "debug-examples": "node ./bin/debug.js",
+    "debug-examples": "nodemon ./bin/debug.js",
     "deploy": "npm run build-browser && node ./bin/deploy.js"
   },
   "workspaces": [
