@@ -5,7 +5,7 @@
   "scripts": {
     "clean": "rm -f -r node_modules && rm -f package-lock.json && rm -f  -r ./packages/**/dist",
     "reset": "npm run clean && npm i",
-    "travis": "npm run eslint && npm run build-core && npm run build-browser && npm run build-node",
+    "travis": "npm run eslint && npm run build-core && npm run build-browser && npm run build-node && npm run test --prefix ./packages/core",
     "build-core": "npm run build --prefix ./packages/core",
     "build-browser": "npm run build --prefix ./packages/browser",
     "build-node": "npm run build --prefix ./packages/node",
