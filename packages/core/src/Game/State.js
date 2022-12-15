@@ -1,5 +1,6 @@
 const StateDiff = require('./StateDiff');
 const Object3D = require('./Object3D/Object3D');
+const JSONUtils = require('../Components/JSONUtils');
 
 /**
  * Store the state of the  at a given time
@@ -33,57 +34,53 @@ const State = class {
    * @returns {State} the new State
    */
   add(diff) {
-    const uuidGO = diff.getGameObjectsUUID();
-    const outdatedGameObjectsJSON = diff.getOutdatedGameObjectsJSON();
+    const objectsUUID = diff.getObjectsUUID();
+    const objects3DToUpdateJSON = diff.getObjects3DToUpdateJSON();
 
-    const newGO = this.gameObject.clone();
-    newGO.traverse(function (g) {
-      const uuid = g.getUUID();
+    const cloneObject3D = this.object3D.clone();
+    cloneObject3D.traverse(function (child) {
+      const uuid = child.uuid;
 
-      if (!uuidGO.includes(uuid)) {
-        // Delete all gameobject not in diff
-        console.log(g, ' is not in the scene anymore');
-        g.removeFromParent();
+      if (!objectsUUID.includes(uuid)) {
+        // Remove object not in diff
+        child.removeFromParent();
       } else {
-        // Update the outdated one
-        const o = outdatedGameObjectsJSON[uuid];
-        if (o) {
+        // Update the one which needs update
+        const object3DJSON = objects3DToUpdateJSON[uuid];
+        if (object3DJSON) {
           // Update
-          g.setFromJSON(o);
-          delete outdatedGameObjectsJSON[uuid]; // Remove it
+          child.updatefromJSON(object3DJSON);
+          delete objects3DToUpdateJSON[uuid]; // Remove it
         } else {
           // G is not outdated
-          g.setOutdated(false);
+          child.setOutdated(false); //maybe useless?
         }
       }
     });
 
-    // Create others which existed not yet
-    for (const uuid in outdatedGameObjectsJSON) {
-      const json = outdatedGameObjectsJSON[uuid];
-      const go = new GameObject(json, null);
-      const parent = newGO.find(json.parentUUID);
-      parent.addChild(go);
+    // Create others which have been added
+    for (const uuid in objects3DToUpdateJSON) {
+      const json = objects3DToUpdateJSON[uuid];
+      const newObject3D = new Object3D(json, null);
+      console.log('parent', json.parentUUID);
+      console.log('gloabl', cloneObject3D.toJSON());
+      const parent = cloneObject3D.getObjectByProperty('uuid', json.parentUUID);
+      parent.add(newObject3D);
     }
 
-    // DEBUG
+    // DEBUG process.DEV_MODE ?
     let count = 0;
-    newGO.traverse(function (g) {
-      const uuid = g.getUUID();
-      if (uuidGO.includes(uuid)) count++;
+    cloneObject3D.traverse(function (child) {
+      if (objectsUUID.includes(child.uuid)) count++;
     });
-    if (uuidGO.length != count) {
+    if (objectsUUID.length != count) {
       throw new Error('count of go error');
     }
 
-    const result = new State({
-      gameObject: newGO.toJSON(true),
+    return new State({
+      object3DJSON: cloneObject3D.toJSON().object,
       timestamp: diff.getTimeStamp(),
-      origin: this.origin,
-      UUID: diff.getUUID(),
     });
-
-    return result;
   }
 
   /**
@@ -93,7 +90,7 @@ const State = class {
    * @returns {boolean} true if there is a gameobject with this uuid, false otherwise
    */
   includes(uuid) {
-    if (this.gameObject.find(uuid)) {
+    if (this.object3D.getObjectByProperty('uuid', uuid)) {
       return true;
     }
     return false;
@@ -105,31 +102,36 @@ const State = class {
    * @param {State} state the state passed to compute the StateDiff with this
    * @returns {StateDiff} the difference between this and state
    */
-  toDiff(state) {
-    const gameObjectsUUID = [];
-    const outdatedGameObjectsJSON = {};
-    const alreadyInOutdated = [];
-    this.gameObject.traverse(function (g) {
-      gameObjectsUUID.push(g.getUUID()); // Register all uuid
-      if (!alreadyInOutdated.includes(g)) {
-        // If is not static and is not already register
-        if (!state.includes(g.getUUID()) || g.isOutdated()) {
+  toDiff(previousState) {
+    const objectsUUID = [];
+    const objects3DToUpdateJSON = {};
+    const alreadyInObjects3DToUpdateJSON = [];
+    this.object3D.traverse((child) => {
+      objectsUUID.push(child.uuid); // Register all uuid
+      if (!alreadyInObjects3DToUpdateJSON.includes(child.uuid)) {
+        // Not present in outdatedObjectsJSON
+        if (!previousState.includes(child.uuid) || child.isOutdated()) {
           // If not in the last state or outdated
-          outdatedGameObjectsJSON[g.getUUID()] = g.toJSON();
+          objects3DToUpdateJSON[child.uuid] = child.toJSON().object;
           // Avoid to add child of an outdated object twice because toJSON is recursive
-          g.traverse(function (outdated) {
-            alreadyInOutdated.push(outdated.getUUID());
+          child.traverse(function (childAlreadyInObjects3DToUpdateJSON) {
+            alreadyInObjects3DToUpdateJSON.push(
+              childAlreadyInObjects3DToUpdateJSON.uuid
+            );
           });
         }
       }
     });
 
     return new StateDiff({
-      gameObjectsUUID: gameObjectsUUID,
-      outdatedGameObjectsJSON: outdatedGameObjectsJSON,
+      objectsUUID: objectsUUID,
+      objects3DToUpdateJSON: objects3DToUpdateJSON,
       timestamp: this.timestamp,
-      UUID: this.UUID,
     });
+  }
+
+  equals(state) {
+    return JSONUtils.equals(this.toJSON(), state.toJSON());
   }
 
   /**
@@ -138,12 +140,7 @@ const State = class {
    * @returns {State}
    */
   clone() {
-    return new State({
-      gameObject: this.gameObject.toJSON(true),
-      timestamp: this.timestamp,
-      origin: this.origin,
-      UUID: this.UUID,
-    });
+    return new State(this.toJSON(true));
   }
 
   /**
@@ -152,14 +149,6 @@ const State = class {
    */
   setGameObject(g) {
     this.gameObject = g;
-  }
-
-  /**
-   *
-   * @returns {object}
-   */
-  getOrigin() {
-    return this.origin;
   }
 
   /**
@@ -174,16 +163,8 @@ const State = class {
    *
    * @returns {GameObject}
    */
-  getGameObject() {
-    return this.gameObject;
-  }
-
-  /**
-   *
-   * @returns {string} uuid of the
-   */
-  getUUID() {
-    return this.UUID;
+  getObject3D() {
+    return this.object3D;
   }
 
   /**
@@ -192,15 +173,10 @@ const State = class {
    * @returns {JSON}
    */
   toJSON() {
-    let gameObjectData = null;
-    if (this.gameObject) gameObjectData = this.gameObject.toJSON();
-
     return {
-      type: StateModule.TYPE,
-      gameObject: gameObjectData,
+      type: State.TYPE,
+      object3DJSON: this.object3D.toJSON(true).object,
       timestamp: this.timestamp,
-      origin: this.origin,
-      UUID: this.UUID,
     };
   }
 };
