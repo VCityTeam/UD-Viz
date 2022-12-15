@@ -1,12 +1,12 @@
 const THREE = require('three');
-const WorldState = require('./WorldState');
+const WorldState = require('./State');
 const { Collisions } = require('detect-collisions');
 const GameObject = require('./GameObject/GameObject').GameObject;
 const Collider = require('./GameObject/Components/Collider');
 const WorldScript = require('./GameObject/Components/WorldScript');
 
 // jsdoc import
-const WorldContext = require('./WorldContext');
+const WorldContext = require('./Context');
 
 /**
  * @typedef {object} WorldOrigin
@@ -151,7 +151,7 @@ const World = class {
    */
   addGameObject(gameObject, worldContext, parent, onLoad = null) {
     const _this = this;
-
+ 
     worldContext
       .getAssetsManager()
       .initGameObject(gameObject, true, { worldContext: worldContext });
@@ -426,4 +426,4 @@ const World = class {
 
 World.TYPE = 'World';
 
-module.exports = World;
+// module.exports = World;

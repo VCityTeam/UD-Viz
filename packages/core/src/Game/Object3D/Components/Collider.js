@@ -1,11 +1,23 @@
 const { Circle, Polygon } = require('detect-collisions');
-const { Model, Controller } = require('./Component');
+const {
+  Component,
+  ModelComponent,
+  ControllerComponent,
+} = require('./Component');
+
+const ColliderComponent = class extends Component {
+  constructor(model) {
+    super(model);
+  }
+};
+
+ColliderComponent.TYPE = 'Collider';
 
 /**
  * Component used to handle collision of a GameObject
  * Support by detect-collisions npm package
  */
-const ColliderModel = class extends Model {
+const ColliderModel = class extends ModelComponent {
   constructor(json) {
     super(json);
 
@@ -22,15 +34,6 @@ const ColliderModel = class extends Model {
    */
   isBody() {
     return this.body;
-  }
-
-  /**
-   * This component can run on the server side
-   *
-   * @returns {boolean}
-   */
-  isWorldComponent() {
-    return true;
   }
 
   /**
@@ -64,16 +67,14 @@ const ColliderModel = class extends Model {
   }
 };
 
-ColliderModel.TYPE = 'Collider';
-
-class ColliderController extends Controller {
-  constructor(assetsManager, model, parentGO) {
-    super(assetsManager, model, parentGO);
+class ColliderController extends ControllerComponent {
+  constructor(model, object3D, context) {
+    super(model, object3D, context);
 
     // Shapes wrappers
     this.shapeWrappers = [];
     this.model.getShapesJSON().forEach((shapeJSON) => {
-      const wrapper = new ShapeWrapper(this.parentGameObject, shapeJSON);
+      const wrapper = new ShapeWrapper(this.object3D, shapeJSON);
       this.shapeWrappers.push(wrapper);
     });
   }
@@ -82,7 +83,7 @@ class ColliderController extends Controller {
    * Update worldtransform of the shapeWrappers
    */
   update() {
-    const worldTransform = this.parentGameObject.computeWorldTransform();
+    const worldTransform = this.object3D.computeWorldTransform();
     this.shapeWrappers.forEach(function (b) {
       b.update(worldTransform);
     });
@@ -101,9 +102,9 @@ class ColliderController extends Controller {
  * Object to wrap the Polygon and Circle of the detect-collisions npm package
  */
 class ShapeWrapper {
-  constructor(gameObject, json) {
+  constructor(object3D, json) {
     // Gameobject of this shapewrapper
-    this.gameObject = gameObject;
+    this.object3D = object3D;
 
     // Json
     this.json = json;
@@ -127,8 +128,8 @@ class ShapeWrapper {
    *
    * @returns {GameObject}
    */
-  getGameObject() {
-    return this.gameObject;
+  getObject3D() {
+    return this.object3D;
   }
 
   /**
@@ -184,12 +185,13 @@ class ShapeWrapper {
       default:
     }
 
-    // Add a getter to the gameObject
-    this.shape.getGameObject = this.getGameObject.bind(this);
+    // Add a getter to the object3D
+    this.shape.getObject3D = this.getObject3D.bind(this);
   }
 }
 
 module.exports = {
+  Component: ColliderComponent,
   Model: ColliderModel,
   Controller: ColliderController,
 };

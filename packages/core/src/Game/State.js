@@ -1,25 +1,18 @@
-const { GameObject } = require('./GameObject/GameObject');
-const WorldStateDiff = require('./WorldStateDiff');
+const StateDiff = require('./StateDiff');
+const Object3D = require('./Object3D/Object3D');
 
 /**
- * Store the state of the world at a given time
+ * Store the state of the  at a given time
  */
-const WorldStateModule = class WorldState {
+const State = class {
   constructor(json) {
     if (!json) throw new Error('no json');
 
     // Gameobjects
-    this.gameObject = null;
-    if (json.gameObject) this.gameObject = new GameObject(json.gameObject);
+    this.object3D = new Object3D(json.object3D);
 
     // Timestamp
     this.timestamp = json.timestamp || -1;
-
-    // Coord of the origin (itowns)
-    this.origin = json.origin || null;
-
-    // World uuid
-    this.worldUUID = json.worldUUID || -1;
 
     // Flag to determine if that state has been consumed/treated by the gameview (or something else)
     this._consumed = false;
@@ -34,10 +27,10 @@ const WorldStateModule = class WorldState {
   }
 
   /**
-   * Compute the next state with a given WorldStateDiff
+   * Compute the next state with a given StateDiff
    *
-   * @param {WorldStateDiff} diff the WorldStateDiff between two WorldState
-   * @returns {WorldState} the new WorldState
+   * @param {StateDiff} diff the StateDiff between two State
+   * @returns {State} the new State
    */
   add(diff) {
     const uuidGO = diff.getGameObjectsUUID();
@@ -83,11 +76,11 @@ const WorldStateModule = class WorldState {
       throw new Error('count of go error');
     }
 
-    const result = new WorldState({
+    const result = new State({
       gameObject: newGO.toJSON(true),
       timestamp: diff.getTimeStamp(),
       origin: this.origin,
-      worldUUID: diff.getWorldUUID(),
+      UUID: diff.getUUID(),
     });
 
     return result;
@@ -107,10 +100,10 @@ const WorldStateModule = class WorldState {
   }
 
   /**
-   * Compute the WorldStateDiff between this and the state passed
+   * Compute the StateDiff between this and the state passed
    *
-   * @param {WorldState} state the state passed to compute the WorldStateDiff with this
-   * @returns {WorldStateDiff} the difference between this and state
+   * @param {State} state the state passed to compute the StateDiff with this
+   * @returns {StateDiff} the difference between this and state
    */
   toDiff(state) {
     const gameObjectsUUID = [];
@@ -131,25 +124,25 @@ const WorldStateModule = class WorldState {
       }
     });
 
-    return new WorldStateDiff({
+    return new StateDiff({
       gameObjectsUUID: gameObjectsUUID,
       outdatedGameObjectsJSON: outdatedGameObjectsJSON,
       timestamp: this.timestamp,
-      worldUUID: this.worldUUID,
+      UUID: this.UUID,
     });
   }
 
   /**
    * Return a clone of this
    *
-   * @returns {WorldState}
+   * @returns {State}
    */
   clone() {
-    return new WorldState({
+    return new State({
       gameObject: this.gameObject.toJSON(true),
       timestamp: this.timestamp,
       origin: this.origin,
-      worldUUID: this.worldUUID,
+      UUID: this.UUID,
     });
   }
 
@@ -187,10 +180,10 @@ const WorldStateModule = class WorldState {
 
   /**
    *
-   * @returns {string} uuid of the world
+   * @returns {string} uuid of the
    */
-  getWorldUUID() {
-    return this.worldUUID;
+  getUUID() {
+    return this.UUID;
   }
 
   /**
@@ -203,28 +196,28 @@ const WorldStateModule = class WorldState {
     if (this.gameObject) gameObjectData = this.gameObject.toJSON();
 
     return {
-      type: WorldStateModule.TYPE,
+      type: StateModule.TYPE,
       gameObject: gameObjectData,
       timestamp: this.timestamp,
       origin: this.origin,
-      worldUUID: this.worldUUID,
+      UUID: this.UUID,
     };
   }
 };
 
-WorldStateModule.TYPE = 'WorldState';
+State.TYPE = 'State';
 
 // //STATIC
 
 /**
  * Compute the state between w1 and w2, interpolating with a given ratio
  *
- * @param {WorldState} w1 first state if ratio = 0, result = w1
- * @param {WorldState} w2 second state if ratio = 1, result = w2
+ * @param {State} w1 first state if ratio = 0, result = w1
+ * @param {State} w2 second state if ratio = 1, result = w2
  * @param {number} ratio a number between 0 => 1
- * @returns {WorldState} the interpolated state
+ * @returns {State} the interpolated state
  */
-WorldStateModule.interpolate = function (w1, w2, ratio) {
+State.interpolate = function (w1, w2, ratio) {
   if (!w2) return w1;
 
   // Interpolate go
@@ -244,4 +237,4 @@ WorldStateModule.interpolate = function (w1, w2, ratio) {
   return result;
 };
 
-module.exports = WorldStateModule;
+module.exports = State;
