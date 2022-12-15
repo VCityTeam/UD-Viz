@@ -1,19 +1,16 @@
-/**
- * Object to render and simulate world
- *
- * @format
- */
-
 const THREE = require('three');
-const JSONUtils = require('../Components/JSONUtils');
-const Component = require('./Components/Component').Component;
+const JSONUtils = require('../../Components/JSONUtils');
+const Collider = require('./Components/Collider');
+const { Base } = require('./Components/Component');
+const Script = require('./Components/Script');
+const packageJSON = require('@ud-viz/core/package.json');
 
 // GameObject Components
-const WorldScript = require('./Components/WorldScript');
-const BrowserScript = require('./Components/BrowserScript');
-const Render = require('./Components/Render');
-const Collider = require('./Components/Collider');
-const Audio = require('./Components/Audio');
+// const WorldScript = require('./Components/WorldScript');
+// const BrowserScript = require('./Components/BrowserScript');
+// const Render = require('./Components/Render');
+// const Collider = require('./Components/Collider');
+// const Audio = require('./Components/Audio');
 
 /**
  * Objects to compose a Game
@@ -853,11 +850,168 @@ GameObject.findObject3D = function (uuid, obj, upSearch = true) {
   return result;
 };
 
-module.exports = {
-  GameObject: GameObject,
-  WorldScript: WorldScript,
-  Render: Render,
-  BrowserScript: BrowserScript,
-  Collider: Collider,
-  Audio: Audio,
+// module.exports = {
+//   GameObject: GameObject,
+//   WorldScript: WorldScript,
+//   Render: Render,
+//   BrowserScript: BrowserScript,
+//   Collider: Collider,
+//   Audio: Audio,
+// };
+
+const Object3D = class extends THREE.Object3D {
+  constructor(json = {}) {
+    super();
+
+    this.name = json.name || '';
+
+    this.static = json.static || false;
+
+    this.outdated = json.outdated || false;
+
+    this.forceUpdate = true;
+    if (json.forceUpdate != undefined) {
+      this.forceUpdate = json.forceUpdate;
+    }
+
+    // List to force certain component to be serialize
+    this.forceToJSONComponent = json.forceToJSONComponent || [];
+
+    /** @type {object} */
+    this.components = {};
+    this.setComponentFromJSON(json.components);
+
+    if (json.children && json.children.length > 0) {
+      json.children.forEach((childJSON) => {
+        this.add(new Object3D(childJSON));
+      });
+    }
+  }
+
+  setOutdated(value) {
+    this.outdated = value;
+  }
+
+  isStatic() {
+    return this.static;
+  }
+
+  setComponentFromJSON(componentsJSON) {
+    if (!componentsJSON) {
+      return;
+    }
+
+    for (const type in componentsJSON) {
+      const componentModelJSON = componentsJSON[type];
+
+      switch (type) {
+        // case Render.Model.TYPE:
+        //   if (_this.components[Render.Model.TYPE])
+        //     console.warn('multiple component');
+
+        //   _this.components[Render.Model.TYPE] = new Component(
+        //     new Render.Model(componentModelJSON)
+        //   );
+
+        //   break;
+        // case Audio.Model.TYPE:
+        //   if (_this.components[Audio.Model.TYPE])
+        //     console.warn('multiple component');
+
+        //   _this.components[Audio.Model.TYPE] = new Component(
+        //     new Audio.Model(componentModelJSON)
+        //   );
+
+        //   break;
+        case Script.Component.TYPE:
+          if (this.components[Script.Component.TYPE])
+            console.warn('multiple component');
+
+          this.components[Script.Component.TYPE] = new Script.Component(
+            new Script.Model(componentModelJSON)
+          );
+
+          break;
+        // case BrowserScript.Model.TYPE:
+        //   if (_this.components[BrowserScript.Model.TYPE])
+        //     console.warn('multiple component');
+
+        //   _this.components[BrowserScript.Model.TYPE] = new Component(
+        //     new BrowserScript.Model(componentModelJSON)
+        //   );
+
+        //   break;
+        case Collider.Component.TYPE:
+          if (this.components[Collider.Component.TYPE])
+            console.warn('multiple component');
+
+          this.components[Collider.Component.TYPE] = new Collider.Component(
+            new Collider.Model(componentModelJSON)
+          );
+
+          break;
+        default:
+          console.warn('wrong type component', type, componentModelJSON);
+      }
+    }
+  }
+
+  getComponents() {
+    return this.components;
+  }
+
+  /**
+   *
+   * @param {string} type
+   * @returns {Base}
+   */
+  getComponent(type) {
+    return this.components[type];
+  }
+
+  clone() {
+    return this.toJSON();
+  }
+
+  toJSON(full = true) {
+    const result = super.toJSON();
+
+    // override metadata to know this is method which compute the JSON
+    result.metadata.version = packageJSON.version;
+    result.metadata.packageName = packageJSON.name;
+
+    // add custom attributes
+    result.object.static = this.static;
+    result.object.outdated = this.outdated;
+    result.object.forceUpdate = this.forceUpdate;
+    if (this.parent) {
+      result.object.parentUUID = this.parent.uuid;
+    }
+
+    // add components
+    const components = {};
+    for (const type in this.components) {
+      const c = this.components[type];
+
+      if (!full && c.getController()) {
+        continue;
+      }
+
+      components[type] = c.getModel().toJSON();
+    }
+
+    // Add forced serialize component model
+    result.object.forceToJSONComponent = this.forceToJSONComponent;
+    for (let index = 0; index < this.forceToJSONComponent.length; index++) {
+      const type = this.forceToJSONComponent[index];
+      const c = this.components[type];
+      components[type] = c.getModel().toJSON();
+    }
+
+    result.components = components;
+
+    return result;
+  }
 };
+
+module.exports = Object3D;

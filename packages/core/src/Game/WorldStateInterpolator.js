@@ -1,4 +1,4 @@
-const WorldState = require('./WorldState');
+const WorldState = require('./State');
 
 /**
  * StateComputer working with a distant server

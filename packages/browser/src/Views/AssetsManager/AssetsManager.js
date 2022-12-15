@@ -59,6 +59,7 @@ export class AssetsManager {
    * @param options
    */
   initGameObject(go, intializeWorldComponent, options = {}) {
+    console.error('DEPRECATED');
     if (!go.isInitialized()) {
       for (const type in go.getComponents()) {
         const c = go.getComponents()[type];
