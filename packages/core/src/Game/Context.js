@@ -3,6 +3,7 @@ const Collider = require('./Object3D/Components/Collider');
 const Script = require('./Object3D/Components/Script');
 const Object3D = require('./Object3D/Object3D');
 const State = require('./State');
+const THREE = require('three');
 
 /**
  * Context used to simulate a World
@@ -60,9 +61,6 @@ const Context = class {
     return new Promise((resolve) => {
       this.initComponentControllers(obj);
 
-      // init is trigger after controllers has been init
-      this.dispatchScriptEvent(obj, Context.EVENT.INIT);
-
       // load object3D
       const promises = [];
 
@@ -80,6 +78,9 @@ const Context = class {
       });
 
       Promise.all(promises).then(() => {
+        // init is trigger after controllers has been init
+        this.dispatchScriptEvent(obj, Context.EVENT.INIT);
+
         this.registerObject3DCollision(obj);
         resolve();
       });
@@ -210,7 +211,7 @@ const Context = class {
 
       this.collisionsBuffer[child.uuid] = [];
 
-      const colliderComponent = child.getComponent(Collider.Model.TYPE);
+      const colliderComponent = child.getComponent(Collider.Component.TYPE);
       if (colliderComponent) {
         colliderComponent
           .getController()
@@ -338,20 +339,33 @@ const Context = class {
     }
   }
 
+  decomposeInCollisionReferential(object3D) {
+    const position = new THREE.Vector3();
+    const quaternion = new THREE.Quaternion();
+    const scale = new THREE.Vector3();
+    object3D.matrixWorld.decompose(position, quaternion, scale);
+
+    position.sub(this.object3D.position);
+
+    return [position, quaternion, scale];
+  }
+
   /**
    * @param {boolean} full - If true, the world component will be included in the world state
    * @returns {WorldState} - The current world state
    */
   toState(full = true) {
-    this.object3D.toJSON(true);
-    // const result = new State(this.object3D.toJSON(full), Date.now());
+    const result = new State({
+      object3DJSON: this.object3D.toJSON(full).object,
+      timestamp: Date.now(),
+    });
 
     // Everything is not outdated yet
     this.object3D.traverse(function (child) {
       child.setOutdated(false);
     });
 
-    // return result;
+    return result;
   }
 
   getObject3D() {

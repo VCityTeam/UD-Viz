@@ -53,7 +53,7 @@ const ScriptModel = class extends ModelComponent {
       uuid: this.uuid,
       idScripts: this.idScripts,
       conf: this.conf,
-      type: ScriptModel.TYPE,
+      type: ScriptComponent.TYPE,
     };
   }
 };

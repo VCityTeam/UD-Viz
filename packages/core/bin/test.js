@@ -39,7 +39,42 @@ const contexts = [
         },
         {
           name: 'child2',
-          components: { Script: { idScripts: ['ChildScript'] } },
+          components: {
+            Script: {
+              idScripts: ['ChildScript'],
+            },
+            Collider: {
+              shapes: [
+                {
+                  type: 'Polygon',
+                  points: [
+                    {
+                      x: 8.693783728871495,
+                      y: -2.031569980084896,
+                      z: -2.99509596824646,
+                    },
+                    {
+                      x: 8.566316776908934,
+                      y: 2.176378423348069,
+                      z: -2.99509596824646,
+                    },
+                    {
+                      x: 4.552634104620665,
+                      y: 2.2362968921661377,
+                      z: -2.99509596824646,
+                    },
+                    {
+                      x: 4.446006354875863,
+                      y: -2.1714045675471425,
+                      z: -2.99509596824646,
+                    },
+                  ],
+                },
+                { type: 'Circle', center: { x: 0, y: 0 }, radius: 10 },
+              ],
+              body: true,
+            },
+          },
         },
       ],
     },
@@ -52,7 +87,6 @@ const contexts = [
 
           init() {
             const state = this.context.toState();
-            console.log(state);
           }
         },
         class ChildScript extends Core.Game.ScriptBase {
