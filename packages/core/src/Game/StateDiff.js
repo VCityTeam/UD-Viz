@@ -2,7 +2,7 @@
  * This object avoid to send State on network and allow to rebuild a State
  * state(t) + statediff(t+1) = state(t+1)
  */
-module.exports = class StateDiff {
+const StateDiff = class {
   constructor(json) {
     if (!json) throw new Error('no json');
 
@@ -10,13 +10,10 @@ module.exports = class StateDiff {
     this.timestamp = json.timestamp;
 
     // Objects3D uuid
-    this.objects3DUUID = json.object3DUUIDS || [];
-
-    //  UUID
-    this.uuid = json.uuid;
+    this.objectsUUID = json.objectsUUID || [];
 
     // Gameobject which need update
-    this.outdatedObjects3DJSON = json.outdatedObjects3DJSON || {};
+    this.objects3DToUpdateJSON = json.objects3DToUpdateJSON || {};
   }
 
   /**
@@ -24,8 +21,8 @@ module.exports = class StateDiff {
    *
    * @returns {Array[JSON]}
    */
-  getOutdatedObjects3DJSON() {
-    return this.outdatedObjects3DJSON;
+  getObjects3DToUpdateJSON() {
+    return this.objects3DToUpdateJSON;
   }
 
   /**
@@ -33,8 +30,8 @@ module.exports = class StateDiff {
    *
    * @returns {Array[String]}
    */
-  getObjects3DUUID() {
-    return this.Objects3DUUID;
+  getObjectsUUID() {
+    return this.objectsUUID;
   }
 
   /**
@@ -47,24 +44,17 @@ module.exports = class StateDiff {
   }
 
   /**
-   *
-   * @returns {string} uuid of the 
-   */
-  getUUID() {
-    return this.UUID;
-  }
-
-  /**
    * Compute this to JSON
    *
    * @returns {JSON}
    */
   toJSON() {
     return {
+      objects3DToUpdateJSON: this.objects3DToUpdateJSON,
+      objectsUUID: this.objectsUUID,
       timestamp: this.timestamp,
-      UUID: this.UUID,
-      Objects3DUUID: this.Objects3DUUID,
-      outdatedObjects3DJSON: this.outdatedObjects3DJSON,
     };
   }
 };
+
+module.exports = StateDiff;

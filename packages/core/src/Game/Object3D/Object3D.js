@@ -863,6 +863,8 @@ const Object3D = class extends THREE.Object3D {
   constructor(json = {}) {
     super();
 
+    if (json.uuid != undefined) this.uuid = json.uuid;
+
     this.name = json.name || '';
 
     this.static = json.static || false;
@@ -879,7 +881,8 @@ const Object3D = class extends THREE.Object3D {
 
     /** @type {object} */
     this.components = {};
-    this.setComponentFromJSON(json.components);
+    this.updateComponentFromJSON(json.components);
+    this.updateMatrixFromJSON(json.matrix);
 
     if (json.children && json.children.length > 0) {
       json.children.forEach((childJSON) => {
@@ -888,15 +891,41 @@ const Object3D = class extends THREE.Object3D {
     }
   }
 
-  setOutdated(value) {
-    this.outdated = value;
+  updateMatrixFromJSON(jsonMatrix) {
+    if (!jsonMatrix) return;
+    this.matrix.fromArray(jsonMatrix);
   }
 
-  isStatic() {
-    return this.static;
+  /**
+   * when using this function components should not have controllers
+   * @param {*} json
+   */
+  updatefromJSON(json) {
+    this.components = {}; // Clear
+    this.updateComponentFromJSON(json.components);
+    this.updateMatrixFromJSON(json.matrix);
+    this.name = json.name;
+    this.static = json.static;
+    this.outdated = json.outdated;
+
+    this.children.forEach(function (child) {
+      let jsonChild;
+      for (let i = 0; i < json.children.length; i++) {
+        if (json.children[i].uuid == child.uuid) {
+          jsonChild = json.children[i];
+          break;
+        }
+      }
+      if (!jsonChild) {
+        // C no longer in scene
+        return;
+      }
+
+      child.updatefromJSON(jsonChild);
+    });
   }
 
-  setComponentFromJSON(componentsJSON) {
+  updateComponentFromJSON(componentsJSON) {
     if (!componentsJSON) {
       return;
     }
@@ -956,6 +985,18 @@ const Object3D = class extends THREE.Object3D {
     }
   }
 
+  setOutdated(value) {
+    this.outdated = value;
+  }
+
+  isOutdated() {
+    return this.outdated;
+  }
+
+  isStatic() {
+    return this.static;
+  }
+
   getComponents() {
     return this.components;
   }
@@ -970,7 +1011,7 @@ const Object3D = class extends THREE.Object3D {
   }
 
   clone() {
-    return this.toJSON();
+    return new Object3D(this.toJSON().object);
   }
 
   toJSON(full = true) {
@@ -987,6 +1028,8 @@ const Object3D = class extends THREE.Object3D {
     if (this.parent) {
       result.object.parentUUID = this.parent.uuid;
     }
+
+    if (result.object.uuid != this.uuid) throw new Error('wrong uuid');
 
     // add components
     const components = {};

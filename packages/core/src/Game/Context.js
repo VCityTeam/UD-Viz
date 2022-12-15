@@ -280,7 +280,7 @@ const Context = class {
           });
 
         // Delete from buffer
-        delete this.collisionsBuffer[child.getUUID()];
+        delete this.collisionsBuffer[child.uuid];
         for (const id in this.collisionsBuffer) {
           const index = this.collisionsBuffer[id].indexOf(object3D.uuid);
           if (index >= 0) this.collisionsBuffer[id].splice(index, 1); // Remove from the other
@@ -351,8 +351,9 @@ const Context = class {
   }
 
   /**
-   * @param {boolean} full - If true, the world component will be included in the world state
-   * @returns {WorldState} - The current world state
+   *
+   * @param {*} full
+   * @returns {State}
    */
   toState(full = true) {
     const result = new State({

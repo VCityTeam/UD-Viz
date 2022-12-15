@@ -34,12 +34,19 @@ module.exports = {
               return false;
             }
           } else {
+            console.log("json2 n'est pas object alors que json1 oui", key);
             return false;
           }
         } else {
           if (json2[key] == json1[key]) {
             continue;
           } else {
+            console.log(
+              'pas meme valeur pour 1 et 2',
+              key,
+              json1[key],
+              json2[key]
+            );
             return false;
           }
         }

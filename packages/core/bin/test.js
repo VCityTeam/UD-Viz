@@ -1,5 +1,5 @@
 const Core = require('../src/index');
-const STOP_TEST = 'stop';
+const TEST_SUCCEED = 'TEST_SUCCEED';
 
 console.log('@udviz/core begin test');
 
@@ -20,8 +20,10 @@ const contexts = [
           }
 
           init() {
-            this.context.addObject3D(new Core.Game.Object3D()).then(() => {
-              this.context.dispatch(STOP_TEST, [1]);
+            const object = new Core.Game.Object3D();
+            this.context.addObject3D(object).then(() => {
+              this.context.removeObject3D(object.uuid);
+              this.context.dispatch(TEST_SUCCEED);
             });
           }
         },
@@ -86,7 +88,28 @@ const contexts = [
           }
 
           init() {
-            const state = this.context.toState();
+            const state1 = this.context.toState();
+            if (!state1.includes(this.context.object3D.uuid))
+              throw new Error('State.includes error');
+
+            // modify object model
+            const child2 = this.context.object3D.getObjectByName('child2');
+            this.context.removeObject3D(child2.uuid);
+            const child1 = this.context.object3D.getObjectByName('child1');
+            child1.setOutdated(true);
+
+            const state2 = this.context.toState();
+            if (state2.includes(child2.uuid))
+              throw new Error('child2 not remove');
+
+            const diff = state2.toDiff(state1);
+
+            const rebuildState = state1.add(diff);
+
+            if (!rebuildState.equals(state2))
+              throw new Error('state not well rebuild');
+
+            this.context.dispatch(TEST_SUCCEED);
           }
         },
         class ChildScript extends Core.Game.ScriptBase {
@@ -111,20 +134,22 @@ engine.start(contexts[currentIndex]).catch((error) => {
 });
 
 // recursive test
-contexts[currentIndex].on(STOP_TEST, () => {
-  console.log(contexts[currentIndex].object3D.name + ' succeed');
-  // test finish
-  engine.stop();
-  currentIndex++;
-  if (currentIndex < contexts.length) {
-    console.log(contexts[currentIndex].object3D.name + ' start');
-    engine.start(contexts[currentIndex]).catch((error) => {
-      console.error(
-        contexts[currentIndex].object3D.name + ' failed => ' + error
-      );
-      process.exit(1);
-    });
-  } else {
-    process.exit(0);
-  }
+contexts.forEach((context) => {
+  context.on(TEST_SUCCEED, () => {
+    console.log(contexts[currentIndex].object3D.name + ' succeed');
+    // test finish
+    engine.stop();
+    currentIndex++;
+    if (currentIndex < contexts.length) {
+      console.log(contexts[currentIndex].object3D.name + ' start');
+      engine.start(contexts[currentIndex]).catch((error) => {
+        console.error(
+          contexts[currentIndex].object3D.name + ' failed => ' + error
+        );
+        process.exit(1);
+      });
+    } else {
+      process.exit(0);
+    }
+  });
 });
