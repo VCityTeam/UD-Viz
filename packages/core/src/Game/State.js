@@ -9,7 +9,7 @@ const State = class {
     if (!json) throw new Error('no json');
 
     // Gameobjects
-    this.object3D = new Object3D(json.object3D);
+    this.object3D = new Object3D(json.object3DJSON);
 
     // Timestamp
     this.timestamp = json.timestamp || -1;

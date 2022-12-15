@@ -83,7 +83,9 @@ class ColliderController extends ControllerComponent {
    * Update worldtransform of the shapeWrappers
    */
   update() {
-    const worldTransform = this.object3D.computeWorldTransform();
+    const worldTransform = this.context.decomposeInCollisionReferential(
+      this.object3D
+    );
     this.shapeWrappers.forEach(function (b) {
       b.update(worldTransform);
     });
@@ -113,7 +115,7 @@ class ShapeWrapper {
     this.shape = null;
 
     // Init
-    this.initFromJSON(json);
+    this.initShapeFromJSON(json);
   }
 
   /**
@@ -139,7 +141,7 @@ class ShapeWrapper {
    *
    * @param {JSON} json
    */
-  initFromJSON(json) {
+  initShapeFromJSON(json) {
     switch (json.type) {
       case 'Circle':
         {
@@ -150,7 +152,7 @@ class ShapeWrapper {
           );
 
           this.update = function (worldtransform) {
-            const wp = worldtransform.position;
+            const wp = worldtransform[0];
             circle.x = json.center.x + wp.x;
             circle.y = json.center.y + wp.y;
           };
@@ -171,7 +173,7 @@ class ShapeWrapper {
           this.update = function (worldtransform) {
             const points = [];
             json.points.forEach(function (p) {
-              const wp = worldtransform.position;
+              const wp = worldtransform[0];
               const point = [p.x + wp.x, p.y + wp.y];
               points.push(point);
               // TODO handle rotation
