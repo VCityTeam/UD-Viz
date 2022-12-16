@@ -1,23 +1,25 @@
 const exec = require('child-process-promise').exec;
-const { spawn } = require('child_process');
+const Tester = require('@ud-viz/node').Tester;
+const path = require('path');
 
 const printExec = function (result) {
   console.log('stdout: \n', result.stdout);
-  console.log('stderr: \n', result.stderr);
+  console.error('stderr: \n', result.stderr);
 };
 
+console.log('Build @ud-viz/core debug');
 exec('npm run build-debug')
+  .catch((error) => {
+    console.error('@ud-viz/core build ', error);
+  })
   .then(printExec)
   .then(() => {
-    const child = spawn('node', ['./bin/test.js'], { shell: true });
-    child.stdout.on('data', (data) => {
-      console.log(`child stdout:\n${data}`);
+    const tester = new Tester();
+    tester.start(path.resolve('./bin/Test')).then(() => {
+      console.log('Build @ud-viz/core test succeed');
     });
-    child.stderr.on('data', (data) => {
-      console.error(`child stderr:\n${data}`);
-    });
-    child.once('close', (error) => {
-      if (error) throw '@ud-viz/core test failed';
-      console.log('@ud-viz/core test success');
-    });
+  })
+  .catch((error) => {
+    console.error('@ud-viz/core test ', error);
+    console.error(error);
   });

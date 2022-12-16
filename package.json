@@ -5,7 +5,7 @@
   "scripts": {
     "clean": "rm -f -r node_modules && rm -f package-lock.json && rm -f  -r ./packages/**/dist",
     "reset": "npm run clean && npm i",
-    "travis": "npm run eslint && npm run build-core && npm run build-browser && npm run build-node && npm run test --prefix ./packages/core",
+    "travis": "npm run eslint && npm run test",
     "build-core": "npm run build --prefix ./packages/core",
     "build-browser": "npm run build --prefix ./packages/browser",
     "build-node": "npm run build --prefix ./packages/node",
@@ -13,8 +13,9 @@
     "eslint": "eslint --ignore-path .gitignore \"packages/**/*.js\" \"examples/*.html\" ",
     "eslint-fix": "eslint --ignore-path .gitignore \"packages/**/*.js\" \"examples/*.html\"  --fix",
     "docs": "jsdoc -c ./docs/jsdoc.json --verbose",
-    "debug-examples": "nodemon ./bin/debug.js",
-    "deploy": "npm run build-browser && node ./bin/deploy.js"
+    "debug-examples": "nodemon ./bin/debugExamples.js",
+    "host": "npm run build-browser && node ./bin/host.js",
+    "test": "node ./bin/test.js"
   },
   "workspaces": [
     "packages/*"
@@ -30,6 +31,7 @@
   "homepage": "https://github.com/VCityTeam/UD-Viz/",
   "devDependencies": {
     "@ud-viz/node": "./packages/node",
+    "chalk": "^5.2.0",
     "child-process-promise": "^2.2.1",
     "clean-jsdoc-theme": "^3.3.1",
     "cross-env": "^7.0.3",
