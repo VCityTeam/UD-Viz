@@ -16,7 +16,8 @@
   },
   "homepage": "https://github.com/VCityTeam/UD-Viz/",
   "dependencies": {
-    "express": "^4.17.1"
+    "express": "^4.17.1",
+    "child-process-promise": "^2.2.1"
   },
   "devDependencies": {
     "webpack-node-externals": "^2.5.2"

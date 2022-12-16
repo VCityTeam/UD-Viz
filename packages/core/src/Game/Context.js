@@ -43,7 +43,13 @@ const Context = class {
   createInstanceOf(id, object3D, modelConf) {
     /** @type {ScriptBase} */
     const constructor = this.classScripts[id];
-    if (!constructor) throw 'no script with id ' + id;
+    if (!constructor) {
+      console.log('script loaded');
+      for (const id in this.classScripts) {
+        console.log(this.classScripts[id]);
+      }
+      throw new Error('no script with id ' + id);
+    }
     return new constructor(this, object3D, modelConf);
   }
 
@@ -78,10 +84,11 @@ const Context = class {
       });
 
       Promise.all(promises).then(() => {
+        this.registerObject3DCollision(obj);
+
         // init is trigger after controllers has been init
         this.dispatchScriptEvent(obj, Context.EVENT.INIT);
 
-        this.registerObject3DCollision(obj);
         resolve();
       });
     }).catch((error) => {
@@ -357,7 +364,7 @@ const Context = class {
    */
   toState(full = true) {
     const result = new State({
-      object3DJSON: this.object3D.toJSON(full).object,
+      object3DJSON: this.object3D.toJSON(full),
       timestamp: Date.now(),
     });
 

@@ -78,7 +78,7 @@ const State = class {
     }
 
     return new State({
-      object3DJSON: cloneObject3D.toJSON().object,
+      object3DJSON: cloneObject3D.toJSON(),
       timestamp: diff.getTimeStamp(),
     });
   }
@@ -112,7 +112,7 @@ const State = class {
         // Not present in outdatedObjectsJSON
         if (!previousState.includes(child.uuid) || child.isOutdated()) {
           // If not in the last state or outdated
-          objects3DToUpdateJSON[child.uuid] = child.toJSON().object;
+          objects3DToUpdateJSON[child.uuid] = child.toJSON();
           // Avoid to add child of an outdated object twice because toJSON is recursive
           child.traverse(function (childAlreadyInObjects3DToUpdateJSON) {
             alreadyInObjects3DToUpdateJSON.push(
@@ -130,6 +130,13 @@ const State = class {
     });
   }
 
+  log() {
+    this.object3D.traverse((child) => {
+      console.log('\x1b[41m', child.name);
+      console.log('\x1b[42m', child.toJSON());
+    });
+  }
+
   equals(state) {
     return JSONUtils.equals(this.toJSON(), state.toJSON());
   }
@@ -141,14 +148,6 @@ const State = class {
    */
   clone() {
     return new State(this.toJSON(true));
-  }
-
-  /**
-   *
-   * @param {GameObject} g
-   */
-  setGameObject(g) {
-    this.gameObject = g;
   }
 
   /**
@@ -175,7 +174,7 @@ const State = class {
   toJSON() {
     return {
       type: State.TYPE,
-      object3DJSON: this.object3D.toJSON(true).object,
+      object3DJSON: this.object3D.toJSON(true),
       timestamp: this.timestamp,
     };
   }

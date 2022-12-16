@@ -860,33 +860,36 @@ GameObject.findObject3D = function (uuid, obj, upSearch = true) {
 // };
 
 const Object3D = class extends THREE.Object3D {
-  constructor(json = {}) {
+  constructor(json) {
     super();
 
-    if (json.uuid != undefined) this.uuid = json.uuid;
+    Object3D.parseJSON(json);
 
-    this.name = json.name || '';
+    if (json.object.uuid != undefined) this.uuid = json.object.uuid;
 
-    this.static = json.static || false;
+    this.name = json.object.name || '';
 
-    this.outdated = json.outdated || false;
+    this.static = json.object.static || false;
+
+    this.outdated = json.object.outdated || false;
 
     this.forceUpdate = true;
-    if (json.forceUpdate != undefined) {
-      this.forceUpdate = json.forceUpdate;
+    if (json.object.forceUpdate != undefined) {
+      this.forceUpdate = json.object.forceUpdate;
     }
 
     // List to force certain component to be serialize
-    this.forceToJSONComponent = json.forceToJSONComponent || [];
+    this.forceToJSONComponent = json.object.forceToJSONComponent || [];
 
     /** @type {object} */
     this.components = {};
-    this.updateComponentFromJSON(json.components);
-    this.updateMatrixFromJSON(json.matrix);
+    this.updateComponentFromJSON(json.object.components);
+    this.updateMatrixFromJSON(json.object.matrix);
 
-    if (json.children && json.children.length > 0) {
-      json.children.forEach((childJSON) => {
-        this.add(new Object3D(childJSON));
+    if (json.object.children && json.object.children.length > 0) {
+      json.object.children.forEach((childJSON) => {
+        // THRRE Object3D toJSON dont have same structure for children
+        this.add(new Object3D({ object: childJSON }));
       });
     }
   }
@@ -901,6 +904,8 @@ const Object3D = class extends THREE.Object3D {
    * @param {*} json
    */
   updatefromJSON(json) {
+    Object3D.parseJSON(json);
+
     this.components = {}; // Clear
     this.updateComponentFromJSON(json.components);
     this.updateMatrixFromJSON(json.matrix);
@@ -1011,7 +1016,7 @@ const Object3D = class extends THREE.Object3D {
   }
 
   clone() {
-    return new Object3D(this.toJSON().object);
+    return new Object3D(this.toJSON());
   }
 
   toJSON(full = true) {
@@ -1054,6 +1059,13 @@ const Object3D = class extends THREE.Object3D {
     result.components = components;
 
     return result;
+  }
+};
+
+Object3D.parseJSON = function (json) {
+  if (!json || !json.object) {
+    console.error(json);
+    throw new Error('wrong formated data json');
   }
 };
 

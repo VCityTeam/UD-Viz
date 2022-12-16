@@ -19,7 +19,7 @@ debugServer
         './packages/browser/src',
         '--delay',
         '2500ms',
-        './bin/debugRoutine.js',
+        './bin/buildDebugBrowser.js',
         '-e',
         'js,css,html',
       ],
