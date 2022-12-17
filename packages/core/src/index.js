@@ -1,4 +1,4 @@
-// @ud-viz/core API
+// @ud-viz/core bundle API
 
 module.exports = {
   Component: {

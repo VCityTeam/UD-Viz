@@ -1,7 +1,7 @@
 const Core = require('../../src/index');
 
 let lastXComputed = null;
-const stateInterpolator = new Core.Game.StateInterpolator(50); // delay
+const stateInterpolator = new Core.Game.StateInterpolator(50); // 50ms delay
 const gameContext = new Core.Game.Context(
   {
     object: {
@@ -23,7 +23,7 @@ const gameContext = new Core.Game.Context(
         }
 
         tick() {
-          this.object3D.position.x += 1 * this.context.getDt();
+          this.object3D.position.x += 1;
           this.object3D.setOutdated(true); // indicate this object needs to be updated
 
           lastXComputed = this.object3D.position.x; //debug
@@ -33,10 +33,10 @@ const gameContext = new Core.Game.Context(
           if (this.previousState) {
             const stateDiff = state.sub(this.previousState);
 
-            //interpolator will received in 1sec the state (like between a browser and a server )
+            //interpolator will received async state (like between a browser and a server )
             setTimeout(() => {
               stateInterpolator.onNewDiff(stateDiff);
-            }, 1000);
+            }, Math.random() * 100);
 
             const rebuildState = this.previousState.add(stateDiff);
 
@@ -48,10 +48,7 @@ const gameContext = new Core.Game.Context(
               throw new Error('state not equals');
             }
           } else {
-            //interpolator will received in 1sec the state (like between a browser and a server )
-            setTimeout(() => {
-              stateInterpolator.onFirstState(state);
-            }, 1000);
+            stateInterpolator.onFirstState(state);
           }
 
           this.previousState = state;
@@ -80,7 +77,7 @@ gameContext.load().then(() => {
 
       const currentX = currentState.getObject3D().position.x;
 
-      if (count < 100) {
+      if (count < 20) {
         count++;
         if (currentX > lastXComputed) {
           console.log(currentState.getObject3D().matrix);
@@ -93,7 +90,15 @@ gameContext.load().then(() => {
         process.exit(0);
       }
 
-      // console.log(count, -currentX + lastXComputed);
+      console.log(
+        count,
+        'x gameProcess = ',
+        lastXComputed,
+        ' x readerProcess = ',
+        currentX,
+        ' ping = ',
+        stateInterpolator.getPing()
+      );
     });
   }, 1000);
 });

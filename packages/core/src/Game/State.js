@@ -204,6 +204,9 @@ State.interpolate = function (s1, s2, ratio) {
     const s2Object = mapState2[object.uuid];
 
     if (s2Object) {
+      object.update();
+      s2Object.update();
+
       // interpolate
       object.position.lerp(s2Object.position, ratio);
       object.scale.lerp(s2Object.scale, ratio);
