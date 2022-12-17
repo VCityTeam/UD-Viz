@@ -870,6 +870,8 @@ const Object3D = class extends THREE.Object3D {
     this.name = json.object.name || '';
 
     this.static = json.object.static || false;
+    // https://threejs.org/docs/#manual/en/introduction/How-to-update-things
+    this.matrixAutoUpdate = !this.static;
 
     this.outdated = json.object.outdated || false;
 
@@ -892,6 +894,10 @@ const Object3D = class extends THREE.Object3D {
         this.add(new Object3D({ object: childJSON }));
       });
     }
+  }
+
+  update() {
+    this.matrix.decompose(this.position, this.quaternion, this.scale);
   }
 
   updateMatrixFromJSON(jsonMatrix) {

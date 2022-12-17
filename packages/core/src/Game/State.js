@@ -184,25 +184,30 @@ State.TYPE = 'State';
 /**
  * Compute the state between w1 and w2, interpolating with a given ratio
  *
- * @param {State} w1 first state if ratio = 0, result = w1
- * @param {State} w2 second state if ratio = 1, result = w2
+ * @param {State} s1 first state if ratio = 0, result = w1
+ * @param {State} s2 second state if ratio = 1, result = w2
  * @param {number} ratio a number between 0 => 1
  * @returns {State} the interpolated state
  */
-State.interpolate = function (w1, w2, ratio) {
-  if (!w2) return w1;
+State.interpolate = function (s1, s2, ratio) {
+  if (!s2) return s1;
 
-  // Interpolate go
-  const mapW2 = {};
-  w2.getGameObject().traverse(function (go) {
-    mapW2[go.getUUID()] = go;
+  // Interpolate object3D
+  const mapState2 = {};
+  s2.getObject3D().traverse(function (object) {
+    mapState2[object.uuid] = object;
   });
-  const result = w1.clone();
-  result.gameObject.traverse(function (go) {
-    if (go.isStatic()) return false; // Do not stop propagation
+  const result = s1.clone();
+  result.getObject3D().traverse(function (object) {
+    if (object.isStatic()) return false; // no need to interpolate
 
-    if (mapW2[go.getUUID()]) {
-      GameObject.interpolateInPlace(go, mapW2[go.getUUID()], ratio);
+    const s2Object = mapState2[object.uuid];
+
+    if (s2Object) {
+      // interpolate
+      object.position.lerp(s2Object.position, ratio);
+      object.scale.lerp(s2Object.scale, ratio);
+      object.quaternion.slerp(s2Object.quaternion, ratio);
     }
   });
 

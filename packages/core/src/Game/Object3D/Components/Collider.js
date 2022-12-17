@@ -4,6 +4,7 @@ const {
   ModelComponent,
   ControllerComponent,
 } = require('./Component');
+const THREE = require('three');
 
 const ColliderComponent = class extends Component {
   constructor(model) {
@@ -83,11 +84,14 @@ class ColliderController extends ControllerComponent {
    * Update worldtransform of the shapeWrappers
    */
   update() {
-    const worldTransform = this.context.decomposeInCollisionReferential(
-      this.object3D
-    );
-    this.shapeWrappers.forEach(function (b) {
-      b.update(worldTransform);
+    const position = new THREE.Vector3();
+    const quaternion = new THREE.Quaternion();
+    const scale = new THREE.Vector3();
+    this.object3D.updateMatrixWorld();
+    this.object3D.matrixWorld.decompose(position, quaternion, scale);
+
+    this.shapeWrappers.forEach((b) => {
+      b.update(position);
     });
   }
 
@@ -151,10 +155,9 @@ class ShapeWrapper {
             parseFloat(json.radius)
           );
 
-          this.update = (worldtransform) => {
-            const wp = worldtransform[0];
-            circle.x = json.center.x + wp.x;
-            circle.y = json.center.y + wp.y;
+          this.update = (origin) => {
+            circle.x = json.center.x + origin.x;
+            circle.y = json.center.y + origin.y;
           };
 
           this.shape = circle;
@@ -170,11 +173,10 @@ class ShapeWrapper {
           const polygon = new Polygon(0, 0, points);
 
           // Attach userData to perform update
-          this.update = function (worldtransform) {
+          this.update = function (origin) {
             const points = [];
             json.points.forEach(function (p) {
-              const wp = worldtransform[0];
-              const point = [p.x + wp.x, p.y + wp.y];
+              const point = [p.x + origin.x, p.y + origin.y];
               points.push(point);
               // TODO handle rotation
             });

@@ -3,7 +3,7 @@ const Collider = require('./Object3D/Components/Collider');
 const Script = require('./Object3D/Components/Script');
 const Object3D = require('./Object3D/Object3D');
 const State = require('./State');
-const THREE = require('three');
+const Command = require('../Components/Command');
 
 /**
  * Context used to simulate a World
@@ -353,21 +353,10 @@ const Context = class {
     }
   }
 
-  /**
-   *
-   * @param {Object3D} object3D
-   * @returns
-   */
-  decomposeInCollisionReferential(object3D) {
-    const position = new THREE.Vector3();
-    const quaternion = new THREE.Quaternion();
-    const scale = new THREE.Vector3();
-    object3D.updateMatrixWorld();
-    object3D.matrixWorld.decompose(position, quaternion, scale);
-
-    position.sub(this.object3D.position);
-
-    return [position, quaternion, scale];
+  onCommand(cmds) {
+    cmds.forEach((cmd) => {
+      this.commands.push(cmd);
+    });
   }
 
   /**
@@ -376,6 +365,9 @@ const Context = class {
    * @returns {State}
    */
   toState(full = true) {
+    // before create a state update matrix since this is attr which is export in toJSON method
+    this.object3D.updateMatrix();
+
     const result = new State({
       object3DJSON: this.object3D.toJSON(full),
       timestamp: Date.now(),
@@ -403,7 +395,7 @@ const Context = class {
 
   /**
    *
-   * @returns {Array[Command]}
+   * @returns {Command[]}
    */
   getCommands() {
     return this.commands;
