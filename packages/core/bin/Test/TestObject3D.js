@@ -16,7 +16,7 @@ context.load().then(() => {
         Collider: {},
         GameScript: {},
         Render: {},
-        // ExternalScript: {},
+        ExternalScript: {},
       },
     },
   });
