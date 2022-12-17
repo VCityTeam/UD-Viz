@@ -4,7 +4,8 @@ const JSONUtils = require('../../Components/JSONUtils');
 
 // @ud-viz/core.Game.Object3D Components
 const { Base } = require('./Components/Component');
-const Script = require('./Components/Script');
+
+const ExternalScript = require('./Components/ExternalScript');
 const GameScript = require('./Components/GameScript');
 const Collider = require('./Components/Collider');
 const Audio = require('./Components/Audio');
@@ -965,15 +966,16 @@ const Object3D = class extends THREE.Object3D {
           );
 
           break;
-        // case BrowserScript.Model.TYPE:
-        //   if (_this.components[BrowserScript.Model.TYPE])
-        //     console.warn('multiple component');
+        case ExternalScript.Component.TYPE:
+          if (this.components[ExternalScript.Component.TYPE])
+            console.warn('multiple component');
 
-        //   _this.components[BrowserScript.Model.TYPE] = new Component(
-        //     new BrowserScript.Model(componentModelJSON)
-        //   );
+          this.components[ExternalScript.Component.TYPE] =
+            new ExternalScript.Component(
+              new ExternalScript.Model(componentModelJSON)
+            );
 
-        //   break;
+          break;
         case Collider.Component.TYPE:
           if (this.components[Collider.Component.TYPE])
             console.warn('multiple component');
