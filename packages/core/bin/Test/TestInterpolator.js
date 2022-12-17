@@ -7,7 +7,7 @@ const gameContext = new Core.Game.Context(
     object: {
       static: false, // this object is going to move in 3D space
       components: {
-        Script: {
+        GameScript: {
           idScripts: ['Script'],
         },
       },

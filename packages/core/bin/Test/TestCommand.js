@@ -7,7 +7,7 @@ const gameContext = new Core.Game.Context(
     object: {
       name: 'Command Test',
       components: {
-        Script: {
+        GameScript: {
           idScripts: ['CommandTest'],
         },
       },

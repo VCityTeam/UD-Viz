@@ -1,10 +1,14 @@
+const packageJSON = require('@ud-viz/core/package.json');
 const THREE = require('three');
 const JSONUtils = require('../../Components/JSONUtils');
-const Collider = require('./Components/Collider');
+
+// @ud-viz/core.Game.Object3D Components
 const { Base } = require('./Components/Component');
 const Script = require('./Components/Script');
+const GameScript = require('./Components/GameScript');
+const Collider = require('./Components/Collider');
 const Audio = require('./Components/Audio');
-const packageJSON = require('@ud-viz/core/package.json');
+const Render = require('./Components/Render');
 
 // GameObject Components
 // const WorldScript = require('./Components/WorldScript');
@@ -934,15 +938,15 @@ const Object3D = class extends THREE.Object3D {
       const componentModelJSON = componentsJSON[type];
 
       switch (type) {
-        // case Render.Model.TYPE:
-        //   if (_this.components[Render.Model.TYPE])
-        //     console.warn('multiple component');
+        case Render.Component.TYPE:
+          if (this.components[Render.Component.TYPE])
+            console.warn('multiple component');
 
-        //   _this.components[Render.Model.TYPE] = new Component(
-        //     new Render.Model(componentModelJSON)
-        //   );
+          this.components[Render.Component.TYPE] = new Render.Component(
+            new Render.Model(componentModelJSON)
+          );
 
-        //   break;
+          break;
         case Audio.Component.TYPE:
           if (this.components[Audio.Component.TYPE])
             console.warn('multiple component');
@@ -952,12 +956,12 @@ const Object3D = class extends THREE.Object3D {
           );
 
           break;
-        case Script.Component.TYPE:
-          if (this.components[Script.Component.TYPE])
+        case GameScript.Component.TYPE:
+          if (this.components[GameScript.Component.TYPE])
             console.warn('multiple component');
 
-          this.components[Script.Component.TYPE] = new Script.Component(
-            new Script.Model(componentModelJSON)
+          this.components[GameScript.Component.TYPE] = new GameScript.Component(
+            new GameScript.Model(componentModelJSON)
           );
 
           break;
@@ -980,7 +984,7 @@ const Object3D = class extends THREE.Object3D {
 
           break;
         default:
-          throw new Error('wrong type component', componentModelJSON);
+          throw new Error('wrong type component ' + type);
       }
     }
   }

@@ -1,20 +1,4 @@
-const {
-  Component,
-  ModelComponent,
-  ControllerComponent,
-} = require('./Component');
-
-const ScriptComponent = class extends Component {
-  /**
-   *
-   * @param {ModelScript} model
-   */
-  constructor(model) {
-    super(model);
-  }
-};
-
-ScriptComponent.TYPE = 'Script';
+const { ModelComponent, ControllerComponent } = require('./Component');
 
 const ScriptModel = class extends ModelComponent {
   constructor(json) {
@@ -42,20 +26,6 @@ const ScriptModel = class extends ModelComponent {
   getIdScripts() {
     return this.idScripts;
   }
-
-  /**
-   * Compute this to JSON
-   *
-   * @returns {JSON}
-   */
-  toJSON() {
-    return {
-      uuid: this.uuid,
-      idScripts: this.idScripts,
-      variables: this.variables,
-      type: ScriptComponent.TYPE,
-    };
-  }
 };
 
 /**
@@ -69,6 +39,7 @@ const ScriptController = class extends ControllerComponent {
 
     this.scripts = {};
     model.getIdScripts().forEach((idScript) => {
+      //context can be different object but they should implement createInstanceOf (parent class dor doc)
       this.scripts[idScript] = context.createInstanceOf(
         idScript,
         object3D,
@@ -112,7 +83,6 @@ const ScriptController = class extends ControllerComponent {
 };
 
 module.exports = {
-  Component: ScriptComponent,
   Model: ScriptModel,
   Controller: ScriptController,
 };

@@ -14,7 +14,9 @@ context.load().then(() => {
       components: {
         Audio: {},
         Collider: {},
-        Script: {},
+        GameScript: {},
+        Render: {},
+        // ExternalScript: {},
       },
     },
   });
