@@ -1,9 +1,17 @@
-const { Model } = require('./Component');
+const { Component, ModelComponent } = require('./Component');
+
+const AudioComponent = class extends Component {
+  constructor(model) {
+    super(model);
+  }
+};
+
+AudioComponent.TYPE = 'Audio';
 
 /**
  *  Component used to handle the 3D Audio of the GameObject
  */
-const AudioModelModule = class AudioModel extends Model {
+const AudioModel = class extends ModelComponent {
   constructor(json) {
     super(json);
 
@@ -21,15 +29,6 @@ const AudioModelModule = class AudioModel extends Model {
   }
 
   /**
-   * This component cant run on server side
-   *
-   * @returns {boolean}
-   */
-  isWorldComponent() {
-    return false;
-  }
-
-  /**
    * Compute this to JSON
    *
    * @returns {JSON}
@@ -39,11 +38,11 @@ const AudioModelModule = class AudioModel extends Model {
       uuid: this.uuid,
       sounds: this.soundsJSON,
       conf: this.conf,
-      type: AudioModelModule.TYPE,
+      type: AudioModel.TYPE,
     };
   }
 };
 
-AudioModelModule.TYPE = 'Audio';
+AudioModel.TYPE = 'Audio';
 
-module.exports = { Model: AudioModelModule };
+module.exports = { Component: AudioComponent, Model: AudioModel };

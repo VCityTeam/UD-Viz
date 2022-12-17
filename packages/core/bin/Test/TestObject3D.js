@@ -8,7 +8,15 @@ const context = new Core.Game.Context(object1JSON, {
 
 context.load().then(() => {
   const newGameObject = new Core.Game.Object3D({
-    object: { name: 'new object', outdated: false },
+    object: {
+      name: 'new object',
+      outdated: false,
+      components: {
+        Audio: {},
+        Collider: {},
+        Script: {},
+      },
+    },
   });
 
   const cloneGameObject = newGameObject.clone();

@@ -3,6 +3,7 @@ const JSONUtils = require('../../Components/JSONUtils');
 const Collider = require('./Components/Collider');
 const { Base } = require('./Components/Component');
 const Script = require('./Components/Script');
+const Audio = require('./Components/Audio');
 const packageJSON = require('@ud-viz/core/package.json');
 
 // GameObject Components
@@ -785,21 +786,6 @@ const GameObject = class {
 GameObject.TYPE = 'GameObject';
 
 /**
- * Lerp transform of g1 to g2 with a given ratio
- *
- * @param {GameObject} g1 first gameobject
- * @param {GameObject} g2 sencond
- * @param {number} ratio a number between 0 => 1
- * @returns {GameObject} g1 interpolated
- */
-GameObject.interpolateInPlace = function (g1, g2, ratio) {
-  g1.object3D.position.lerp(g2.object3D.position, ratio);
-  g1.object3D.scale.lerp(g2.object3D.scale, ratio);
-  g1.object3D.quaternion.slerp(g2.object3D.quaternion, ratio);
-  return g1;
-};
-
-/**
  * Return a deep copy (new uuid are generated) of a gameObject
  *
  * @param {GameObject} gameObject
@@ -957,15 +943,15 @@ const Object3D = class extends THREE.Object3D {
         //   );
 
         //   break;
-        // case Audio.Model.TYPE:
-        //   if (_this.components[Audio.Model.TYPE])
-        //     console.warn('multiple component');
+        case Audio.Component.TYPE:
+          if (this.components[Audio.Component.TYPE])
+            console.warn('multiple component');
 
-        //   _this.components[Audio.Model.TYPE] = new Component(
-        //     new Audio.Model(componentModelJSON)
-        //   );
+          this.components[Audio.Component.TYPE] = new Audio.Component(
+            new Audio.Model(componentModelJSON)
+          );
 
-        //   break;
+          break;
         case Script.Component.TYPE:
           if (this.components[Script.Component.TYPE])
             console.warn('multiple component');
@@ -994,7 +980,7 @@ const Object3D = class extends THREE.Object3D {
 
           break;
         default:
-          console.warn('wrong type component', type, componentModelJSON);
+          throw new Error('wrong type component', componentModelJSON);
       }
     }
   }
