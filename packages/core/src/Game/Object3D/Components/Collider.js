@@ -151,7 +151,7 @@ class ShapeWrapper {
             parseFloat(json.radius)
           );
 
-          this.update = function (worldtransform) {
+          this.update = (worldtransform) => {
             const wp = worldtransform[0];
             circle.x = json.center.x + wp.x;
             circle.y = json.center.y + wp.y;
@@ -163,7 +163,7 @@ class ShapeWrapper {
       case 'Polygon':
         {
           const points = [];
-          json.points.forEach(function (p) {
+          json.points.forEach((p) => {
             points.push([parseFloat(p.x), parseFloat(p.y)]);
           });
 

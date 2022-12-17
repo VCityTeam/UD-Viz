@@ -10,7 +10,7 @@ const StateDiff = class {
     this.timestamp = json.timestamp;
 
     // Objects3D uuid
-    this.objectsUUID = json.objectsUUID || [];
+    this.nextStateObjectsUUID = json.nextStateObjectsUUID || [];
 
     // Gameobject which need update
     this.objects3DToUpdateJSON = json.objects3DToUpdateJSON || {};
@@ -30,8 +30,8 @@ const StateDiff = class {
    *
    * @returns {Array[String]}
    */
-  getObjectsUUID() {
-    return this.objectsUUID;
+  getNextStateObjectsUUID() {
+    return this.nextStateObjectsUUID;
   }
 
   /**
@@ -51,7 +51,7 @@ const StateDiff = class {
   toJSON() {
     return {
       objects3DToUpdateJSON: this.objects3DToUpdateJSON,
-      objectsUUID: this.objectsUUID,
+      nextStateObjectsUUID: this.nextStateObjectsUUID,
       timestamp: this.timestamp,
     };
   }
