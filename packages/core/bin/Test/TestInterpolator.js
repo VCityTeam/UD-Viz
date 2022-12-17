@@ -26,7 +26,7 @@ const gameContext = new Core.Game.Context(
           this.object3D.position.x += 1 * this.context.getDt();
           this.object3D.setOutdated(true); // indicate this object needs to be updated
 
-          lastXComputed = this.object3D.position.x;
+          lastXComputed = this.object3D.position.x; //debug
 
           const state = this.context.toState();
 
@@ -55,14 +55,13 @@ const gameContext = new Core.Game.Context(
 );
 
 gameContext.load().then(() => {
-  const gameProcess = new Core.Component.ProcessInterval({ fps: 100 });
+  const gameProcess = new Core.Component.ProcessInterval({ fps: 60 });
   gameProcess.start((dt) => {
     gameContext.step(dt);
   });
 
-  let lastX = null;
   let count = 0;
-  const readerProcess = new Core.Component.ProcessInterval({ fps: 5 });
+  const readerProcess = new Core.Component.ProcessInterval({ fps: 30 });
   readerProcess.start(() => {
     const states = stateInterpolator.computeCurrentStates();
     if (!states.length) return;
@@ -70,22 +69,19 @@ gameContext.load().then(() => {
 
     const currentX = currentState.getObject3D().position.x;
 
-    if (lastX != null) {
-      if (count < 6) {
-        count++;
-        if (lastX >= currentX) {
-          console.log(currentState.getObject3D().matrix);
-          console.log('currentX = ', currentX);
-          console.log('lastX computed = ', lastXComputed);
-          console.log('lastX = ', lastX);
-          throw new Error('currentX should be superior');
-        }
-      } else {
-        process.exit(0);
+    if (count < 100) {
+      count++;
+      if (currentX > lastXComputed) {
+        console.log(currentState.getObject3D().matrix);
+        console.log('currentX = ', currentX);
+        console.log('lastX computed = ', lastXComputed);
+
+        throw new Error('currentX should be superior');
       }
+    } else {
+      process.exit(0);
     }
 
-    console.log(count, ' currentX = ', currentX);
-    lastX = currentX;
+    console.log(count, -currentX + lastXComputed);
   });
 });

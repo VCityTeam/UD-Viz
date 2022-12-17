@@ -151,8 +151,12 @@ module.exports = class StateInterpolator {
    * @returns {State[]}
    */
   computeCurrentStates() {
-    const result = [];
-    // const result = this._notConsumedStates;
+    if (!this.states.length) {
+      console.log('no state received yet');
+      return [];
+    }
+
+    const result = this._notConsumedStates;
     this._notConsumedStates = [];
     result.push(this.computeCurrentState());
 
