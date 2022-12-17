@@ -1,7 +1,7 @@
 const Core = require('../../src/index');
 
-const stateInterpolator = new Core.Game.StateInterpolator(50); // delay
 let lastXComputed = null;
+const stateInterpolator = new Core.Game.StateInterpolator(50); // delay
 const gameContext = new Core.Game.Context(
   {
     object: {
@@ -32,7 +32,11 @@ const gameContext = new Core.Game.Context(
 
           if (this.previousState) {
             const stateDiff = state.sub(this.previousState);
-            stateInterpolator.onNewDiff(stateDiff);
+
+            //interpolator will received in 1sec the state (like between a browser and a server )
+            setTimeout(() => {
+              stateInterpolator.onNewDiff(stateDiff);
+            }, 1000);
 
             const rebuildState = this.previousState.add(stateDiff);
 
@@ -44,7 +48,10 @@ const gameContext = new Core.Game.Context(
               throw new Error('state not equals');
             }
           } else {
-            stateInterpolator.onFirstState(state);
+            //interpolator will received in 1sec the state (like between a browser and a server )
+            setTimeout(() => {
+              stateInterpolator.onFirstState(state);
+            }, 1000);
           }
 
           this.previousState = state;
@@ -55,33 +62,38 @@ const gameContext = new Core.Game.Context(
 );
 
 gameContext.load().then(() => {
+  // game process here is a kind of server
   const gameProcess = new Core.Component.ProcessInterval({ fps: 60 });
   gameProcess.start((dt) => {
     gameContext.step(dt);
   });
 
-  let count = 0;
-  const readerProcess = new Core.Component.ProcessInterval({ fps: 30 });
-  readerProcess.start(() => {
-    const states = stateInterpolator.computeCurrentStates();
-    if (!states.length) return;
-    const currentState = states[0];
+  // a reader process connect in 1sec
+  setTimeout(() => {
+    let count = 0;
+    // reader process here is a kind of browser client
+    const readerProcess = new Core.Component.ProcessInterval({ fps: 30 });
+    readerProcess.start(() => {
+      const states = stateInterpolator.computeCurrentStates();
+      if (!states.length) return;
+      const currentState = states[0];
 
-    const currentX = currentState.getObject3D().position.x;
+      const currentX = currentState.getObject3D().position.x;
 
-    if (count < 100) {
-      count++;
-      if (currentX > lastXComputed) {
-        console.log(currentState.getObject3D().matrix);
-        console.log('currentX = ', currentX);
-        console.log('lastX computed = ', lastXComputed);
+      if (count < 100) {
+        count++;
+        if (currentX > lastXComputed) {
+          console.log(currentState.getObject3D().matrix);
+          console.log('currentX = ', currentX);
+          console.log('lastX computed = ', lastXComputed);
 
-        throw new Error('currentX should be superior');
+          throw new Error('currentX should be superior');
+        }
+      } else {
+        process.exit(0);
       }
-    } else {
-      process.exit(0);
-    }
 
-    console.log(count, -currentX + lastXComputed);
-  });
+      // console.log(count, -currentX + lastXComputed);
+    });
+  }, 1000);
 });
