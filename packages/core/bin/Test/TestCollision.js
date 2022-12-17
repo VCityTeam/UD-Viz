@@ -49,7 +49,6 @@ const gameContext = new Core.Game.Context(
 
         tick() {
           this.object1.position.x -= 0.01 * this.context.dt;
-          console.log(this.object1.position.x);
         }
 
         createCollider(name, position, isStatic) {

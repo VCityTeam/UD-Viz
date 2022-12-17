@@ -1,34 +1,26 @@
-const WorldState = require('./State');
+const State = require('./State');
 
 /**
  * StateComputer working with a distant server
  * Interpolate states received by server
  * Same system as described here (https://victorzhou.com/blog/build-an-io-game-part-1/#7-client-state)
  */
-module.exports = class WorldStateInterpolator {
-  constructor(renderDelay) {
+module.exports = class StateInterpolator {
+  constructor(delay) {
     // Delay between state received and state computed
-    this.renderDelay = renderDelay;
+    this.delay = delay;
 
     // Internal
     this.states = [];
     this.gameStart = 0;
-    this.firstServerTimestamp = 0;
+    this.firstStateTimestamp = 0;
 
-    // Batch
+    /** @type {State[]} */
     this._notConsumedStates = [];
 
     // Ping attr computation
     this.lastTimeState = 0; // Buffer
     this.ping = 0; // Time between two new state
-  }
-
-  /**
-   *
-   * @returns {number} delay with the server
-   */
-  getRenderDelay() {
-    return this.renderDelay;
   }
 
   // Time between two new state
@@ -39,7 +31,7 @@ module.exports = class WorldStateInterpolator {
   /**
    * Add a new state
    *
-   * @param {WorldState} state
+   * @param {State} state
    */
   onNewState(state) {
     if (!state) {
@@ -67,7 +59,7 @@ module.exports = class WorldStateInterpolator {
 
   /**
    *
-   * @returns {WorldState} the last state received by the server
+   * @returns {State} the last state received by the server
    */
   _getLastStateReceived() {
     return this.states[this.states.length - 1];
@@ -78,12 +70,7 @@ module.exports = class WorldStateInterpolator {
    * @returns {number} the current server time
    */
   _computeCurrentServerTime() {
-    return (
-      this.firstServerTimestamp +
-      Date.now() -
-      this.gameStart -
-      this.getRenderDelay()
-    );
+    return this.firstStateTimestamp + Date.now() - this.gameStart - this.delay;
   }
 
   /**
@@ -98,33 +85,6 @@ module.exports = class WorldStateInterpolator {
       }
     }
     return -1;
-  }
-
-  // PUBLIC METHODS
-
-  // local computer wrapper methods
-
-  getLocalComputer() {
-    console.error('DEPRECATED');
-    return this.localComputer;
-  }
-
-  getWorldContext() {
-    console.error('DEPRECATED');
-
-    return this.localComputer.getWorldContext();
-  }
-
-  addAfterTickRequester(cb) {
-    console.error('DEPRECATED');
-
-    return this.localComputer.addAfterTickRequester(cb);
-  }
-
-  onCommands(cmds) {
-    console.error('DEPRECATED');
-
-    return this.localComputer.onCommands(cmds);
   }
 
   /**
@@ -142,32 +102,23 @@ module.exports = class WorldStateInterpolator {
   /**
    * Init the computer with a first state
    *
-   * @param {WorldState} state the first state received
+   * @param {State} state the first state received
    */
   onFirstState(state) {
-    this.firstServerTimestamp = state.getTimestamp();
+    this.firstStateTimestamp = state.getTimestamp();
     this.gameStart = Date.now();
     this.states.length = 0;
     this.lastTimeState = 0;
     this.onNewState(state);
   }
 
-  // StateComputer INTERFACE
-
-  /**
-   * stop localcomputer if one
-   */
-  stop() {
-    if (this.localComputer) this.localComputer.stop();
-  }
-
   /**
    * Compute the current world state
    *
-   * @returns {WorldState}
+   * @returns {State}
    */
   computeCurrentState() {
-    if (!this.firstServerTimestamp) {
+    if (!this.firstStateTimestamp) {
       return null;
     }
 
@@ -189,17 +140,27 @@ module.exports = class WorldStateInterpolator {
       const ratio =
         (serverTime - baseState.getTimestamp()) /
         (nextState.getTimestamp() - baseState.getTimestamp());
-      result = WorldState.interpolate(baseState, nextState, ratio);
+      result = State.interpolate(baseState, nextState, ratio);
     }
 
     return result;
   }
 
-  // When a view need the current it's called this function
+  /**
+   *
+   * @returns {State[]}
+   */
   computeCurrentStates() {
-    const result = this._notConsumedStates;
+    const result = [];
+    // const result = this._notConsumedStates;
     this._notConsumedStates = [];
     result.push(this.computeCurrentState());
+
+    // update position quaternion scale of object3D of the not consumed state before to return it
+    result.forEach((state) => {
+      state.getObject3D().update();
+    });
+
     return result;
   }
 };
