@@ -875,9 +875,9 @@ const Object3D = class extends THREE.Object3D {
 
     this.outdated = json.object.outdated || false;
 
-    this.gameUpdate = true;
-    if (json.object.gameUpdate != undefined) {
-      this.gameUpdate = json.object.gameUpdate;
+    this.gameContextUpdate = true;
+    if (json.object.gameContextUpdate != undefined) {
+      this.gameContextUpdate = json.object.gameContextUpdate;
     }
 
     // List to force certain component to be serialize
@@ -1038,7 +1038,7 @@ const Object3D = class extends THREE.Object3D {
     // add custom attributes
     result.object.static = this.static;
     result.object.outdated = this.outdated;
-    result.object.gameUpdate = this.gameUpdate;
+    result.object.gameContextUpdate = this.gameContextUpdate;
     if (this.parent) {
       result.object.parentUUID = this.parent.uuid;
     }

@@ -94,7 +94,10 @@ module.exports = class StateInterpolator {
    */
   onNewDiff(diff) {
     const last = this._getLastStateReceived();
-    if (!last) throw new Error('no last state');
+    if (!last) {
+      console.log('no last state');
+      return;
+    }
     const newState = last.add(diff);
     this.onNewState(newState);
   }
