@@ -14,9 +14,10 @@ exec('npm run build-debug')
   })
   .then(printExec)
   .then(() => {
+    console.log('@ud-viz/core builded');
     const tester = new Tester();
     tester.start(path.resolve('./bin/Test')).then(() => {
-      console.log('Build @ud-viz/core test succeed');
+      console.log('@ud-viz/core test succeed');
     });
   })
   .catch((error) => {

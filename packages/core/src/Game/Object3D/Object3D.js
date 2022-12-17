@@ -873,9 +873,9 @@ const Object3D = class extends THREE.Object3D {
 
     this.outdated = json.object.outdated || false;
 
-    this.forceUpdate = true;
-    if (json.object.forceUpdate != undefined) {
-      this.forceUpdate = json.object.forceUpdate;
+    this.gameUpdate = true;
+    if (json.object.gameUpdate != undefined) {
+      this.gameUpdate = json.object.gameUpdate;
     }
 
     // List to force certain component to be serialize
@@ -906,12 +906,14 @@ const Object3D = class extends THREE.Object3D {
   updatefromJSON(json) {
     Object3D.parseJSON(json);
 
+    this.uuid = json.object.uuid;
+
     this.components = {}; // Clear
-    this.updateComponentFromJSON(json.components);
-    this.updateMatrixFromJSON(json.matrix);
-    this.name = json.name;
-    this.static = json.static;
-    this.outdated = json.outdated;
+    this.updateComponentFromJSON(json.object.components);
+    this.updateMatrixFromJSON(json.object.matrix);
+    this.name = json.object.name;
+    this.static = json.object.static;
+    this.outdated = json.object.outdated;
 
     this.children.forEach(function (child) {
       let jsonChild;
@@ -923,6 +925,7 @@ const Object3D = class extends THREE.Object3D {
       }
       if (!jsonChild) {
         // C no longer in scene
+        console.warn('cant find child');
         return;
       }
 
@@ -1029,7 +1032,7 @@ const Object3D = class extends THREE.Object3D {
     // add custom attributes
     result.object.static = this.static;
     result.object.outdated = this.outdated;
-    result.object.forceUpdate = this.forceUpdate;
+    result.object.gameUpdate = this.gameUpdate;
     if (this.parent) {
       result.object.parentUUID = this.parent.uuid;
     }

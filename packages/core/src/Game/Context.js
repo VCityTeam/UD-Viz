@@ -40,7 +40,7 @@ const Context = class {
     }
   }
 
-  createInstanceOf(id, object3D, modelConf) {
+  createInstanceOf(id, object3D, modelVariables) {
     /** @type {ScriptBase} */
     const constructor = this.classScripts[id];
     if (!constructor) {
@@ -50,7 +50,7 @@ const Context = class {
       }
       throw new Error('no script with id ' + id);
     }
-    return new constructor(this, object3D, modelConf);
+    return new constructor(this, object3D, modelVariables);
   }
 
   /**
@@ -215,19 +215,21 @@ const Context = class {
   registerObject3DCollision(object3D) {
     object3D.traverse((child) => {
       if (this.collisionsBuffer[child.uuid]) return; // Already add
-
       this.collisionsBuffer[child.uuid] = [];
 
       const colliderComponent = child.getComponent(Collider.Component.TYPE);
       if (colliderComponent) {
         colliderComponent
-          .getController()
+          /** @type {Context} */ .getController()
           .getShapeWrappers()
           .forEach((wrapper) => {
             this.collisions.insert(wrapper.getShape());
           });
       }
     });
+
+    this.updateCollisionBuffer();
+    // console.log(this.collisionsBuffer);
   }
 
   updateCollision() {
@@ -244,9 +246,9 @@ const Context = class {
   updateCollisionBuffer() {
     this.updateCollision();
 
-    this.gameObject.traverse((child) => {
+    this.object3D.traverse((child) => {
       if (child.isStatic()) return;
-      const colliderComponent = child.getComponent(Collider.Model.TYPE);
+      const colliderComponent = child.getComponent(Collider.Component.TYPE);
       if (colliderComponent) {
         colliderComponent
           .getController()
@@ -260,9 +262,14 @@ const Context = class {
               const potentialObject3D = p.getObject3D();
               if (!potentialObject3D.isStatic()) continue;
               if (shape.collides(p, result)) {
-                this.collisionsBuffer[g.getUUID()].push(
-                  potentialObject3D.getUUID()
-                );
+                if (
+                  !this.collisionsBuffer[child.uuid].includes(
+                    potentialObject3D.uuid
+                  )
+                )
+                  this.collisionsBuffer[child.uuid].push(
+                    potentialObject3D.uuid
+                  );
               }
             }
           });
@@ -313,8 +320,8 @@ const Context = class {
    * @param {string} uuid - The uuid of the gameobject to remove
    */
   removeObject3D(uuid) {
-    console.log(uuid + ' remove from ', this.object3D.name);
     const object3D = this.object3D.getObjectByProperty('uuid', uuid);
+    console.log(object3D.name + ' remove from ', this.object3D.name);
     object3D.removeFromParent();
     this.unregisterObject3DCollision(object3D);
   }
@@ -346,10 +353,16 @@ const Context = class {
     }
   }
 
+  /**
+   *
+   * @param {Object3D} object3D
+   * @returns
+   */
   decomposeInCollisionReferential(object3D) {
     const position = new THREE.Vector3();
     const quaternion = new THREE.Quaternion();
     const scale = new THREE.Vector3();
+    object3D.updateMatrixWorld();
     object3D.matrixWorld.decompose(position, quaternion, scale);
 
     position.sub(this.object3D.position);
@@ -407,11 +420,11 @@ Context.EVENT = {
 };
 
 const ScriptBase = class {
-  constructor(context, object3D, conf) {
+  constructor(context, object3D, variables) {
     /** @type {Context} */
     this.context = context;
     this.object3D = object3D;
-    this.conf = conf;
+    this.variables = variables;
   }
   init() {}
   tick() {}

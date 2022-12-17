@@ -38,21 +38,25 @@ const Tester = class {
 
         let index = 0;
 
-        const process = async (file) => {
+        const process = async () => {
+          const file = files[index];
+
+          if (!file) console.log(index, files);
+
           if (file.isFile()) {
             await this.test(folderPath, file);
           }
 
-          if (files.length >= index) {
+          if (index < files.length - 1) {
             index++;
-            process(files[index]);
+            process();
           } else {
             resolve();
           }
         };
 
         try {
-          process(files[0]);
+          process();
         } catch (error) {
           throw new Error(error);
         }

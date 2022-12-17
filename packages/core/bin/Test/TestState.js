@@ -14,21 +14,36 @@ context.load().then(() => {
     throw new Error('State.includes error');
   }
 
-  const child2 = context.object3D.getObjectByName('child2');
-  context.removeObject3D(child2.uuid);
   const child1 = context.object3D.getObjectByName('child1');
+  const child2 = context.object3D.getObjectByName('child2');
+
+  // modify object3D
+  context.removeObject3D(child2.uuid);
   child1.setOutdated(true);
 
   const state2 = context.toState();
   if (state2.includes(child2.uuid)) throw new Error('child2 not remove');
+  if (!state2.includes(child1.uuid))
+    throw new Error('cant find child1 in state2');
 
-  const diff = state2.toDiff(state1);
+  if (!state2.getObject3D().getObjectByName('child1'))
+    throw new Error('cant find child1 by name in state2');
 
-  const rebuildedState = state1.add(diff);
+  const stateDiff = state2.sub(state1);
 
-  if (!rebuildedState.equals(state2)) {
+  const rebuildedState2 = state1.add(stateDiff);
+
+  const rebuildedChild1 = rebuildedState2
+    .getObject3D()
+    .getObjectByName('child1');
+  if (!rebuildedChild1) {
+    console.log(stateDiff);
+    throw new Error('cant find child1 by name in rebuilded state');
+  }
+
+  if (!rebuildedState2.equals(state2)) {
     state2.log();
-    rebuildedState.log();
+    rebuildedState2.log();
     throw new Error('state not well rebuild');
   }
 });

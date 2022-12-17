@@ -24,15 +24,15 @@ const ScriptModel = class extends ModelComponent {
     this.idScripts = json.idScripts || [];
 
     // Conf pass to scripts
-    this.conf = json.conf || {};
+    this.variables = json.variables || {};
   }
 
   /**
    *
    * @returns {JSON}
    */
-  getConf() {
-    return this.conf;
+  getVariables() {
+    return this.variables;
   }
 
   /**
@@ -52,7 +52,7 @@ const ScriptModel = class extends ModelComponent {
     return {
       uuid: this.uuid,
       idScripts: this.idScripts,
-      conf: this.conf,
+      variables: this.variables,
       type: ScriptComponent.TYPE,
     };
   }
@@ -72,7 +72,7 @@ const ScriptController = class extends ControllerComponent {
       this.scripts[idScript] = context.createInstanceOf(
         idScript,
         object3D,
-        this.model.getConf()
+        this.model.getVariables()
       );
     });
   }

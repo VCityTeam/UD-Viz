@@ -6,7 +6,7 @@
     "packageName": "@ud-viz/core"
   },
   "object": {
-    "name": "compute state test",
+    "name": "TestState",
     "components": { "Script": { "idScripts": ["Hello"] } },
     "children": [
       {

@@ -34,36 +34,33 @@ const State = class {
    * @returns {State} the new State
    */
   add(diff) {
-    const objectsUUID = diff.getObjectsUUID();
+    const nextStateObjectsUUID = diff.getNextStateObjectsUUID();
     const objects3DToUpdateJSON = diff.getObjects3DToUpdateJSON();
 
-    const cloneObject3D = this.object3D.clone();
-    cloneObject3D.traverse(function (child) {
-      const uuid = child.uuid;
+    const object3DUpdated = [];
 
-      if (!objectsUUID.includes(uuid)) {
-        // Remove object not in diff
+    const cloneObject3D = this.object3D.clone();
+
+    cloneObject3D.traverse((child) => {
+      if (!nextStateObjectsUUID.includes(child.uuid)) {
+        // not present in the next state => has been removed
         child.removeFromParent();
       } else {
-        // Update the one which needs update
-        const object3DJSON = objects3DToUpdateJSON[uuid];
+        // Check if an update is needed
+        const object3DJSON = objects3DToUpdateJSON[child.uuid];
         if (object3DJSON) {
-          // Update
           child.updatefromJSON(object3DJSON);
-          delete objects3DToUpdateJSON[uuid]; // Remove it
-        } else {
-          // G is not outdated
-          child.setOutdated(false); //maybe useless?
+          object3DUpdated.push(child.uuid);
         }
       }
     });
 
-    // Create others which have been added
+    // Object3D still present was not in the previous state
     for (const uuid in objects3DToUpdateJSON) {
+      if (object3DUpdated.includes(uuid)) continue;
+
       const json = objects3DToUpdateJSON[uuid];
       const newObject3D = new Object3D(json, null);
-      console.log('parent', json.parentUUID);
-      console.log('gloabl', cloneObject3D.toJSON());
       const parent = cloneObject3D.getObjectByProperty('uuid', json.parentUUID);
       parent.add(newObject3D);
     }
@@ -71,10 +68,10 @@ const State = class {
     // DEBUG process.DEV_MODE ?
     let count = 0;
     cloneObject3D.traverse(function (child) {
-      if (objectsUUID.includes(child.uuid)) count++;
+      if (nextStateObjectsUUID.includes(child.uuid)) count++;
     });
-    if (objectsUUID.length != count) {
-      throw new Error('count of go error');
+    if (nextStateObjectsUUID.length != count) {
+      throw new Error('count of object3D error');
     }
 
     return new State({
@@ -102,16 +99,16 @@ const State = class {
    * @param {State} state the state passed to compute the StateDiff with this
    * @returns {StateDiff} the difference between this and state
    */
-  toDiff(previousState) {
-    const objectsUUID = [];
+  sub(previousState) {
+    const nextStateObjectsUUID = [];
     const objects3DToUpdateJSON = {};
     const alreadyInObjects3DToUpdateJSON = [];
     this.object3D.traverse((child) => {
-      objectsUUID.push(child.uuid); // Register all uuid
+      nextStateObjectsUUID.push(child.uuid); // Register all uuid
       if (!alreadyInObjects3DToUpdateJSON.includes(child.uuid)) {
-        // Not present in outdatedObjectsJSON
+        // Not present in objects3DToUpdateJSON
         if (!previousState.includes(child.uuid) || child.isOutdated()) {
-          // If not in the last state or outdated
+          // If not in the previous state or outdated
           objects3DToUpdateJSON[child.uuid] = child.toJSON();
           // Avoid to add child of an outdated object twice because toJSON is recursive
           child.traverse(function (childAlreadyInObjects3DToUpdateJSON) {
@@ -124,7 +121,7 @@ const State = class {
     });
 
     return new StateDiff({
-      objectsUUID: objectsUUID,
+      nextStateObjectsUUID: nextStateObjectsUUID,
       objects3DToUpdateJSON: objects3DToUpdateJSON,
       timestamp: this.timestamp,
     });
@@ -132,8 +129,8 @@ const State = class {
 
   log() {
     this.object3D.traverse((child) => {
-      console.log('\x1b[41m', child.name);
-      console.log('\x1b[42m', child.toJSON());
+      console.log(child.name);
+      console.log(child.toJSON());
     });
   }
 
@@ -160,7 +157,7 @@ const State = class {
 
   /**
    *
-   * @returns {GameObject}
+   * @returns {Object3D}
    */
   getObject3D() {
     return this.object3D;
