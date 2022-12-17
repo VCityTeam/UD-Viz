@@ -24,7 +24,6 @@ const gameContext = new Core.Game.Context(
           this.context.getCommands().forEach((cmd) => {
             switch (cmd.getType()) {
               case COMMAND_TYPE:
-                console.log('the answser is ', cmd.getData());
                 process.exit(0);
                 break;
               default:

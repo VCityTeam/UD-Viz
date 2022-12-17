@@ -321,7 +321,6 @@ const Context = class {
    */
   removeObject3D(uuid) {
     const object3D = this.object3D.getObjectByProperty('uuid', uuid);
-    console.log(object3D.name + ' remove from ', this.object3D.name);
     object3D.removeFromParent();
     this.unregisterObject3DCollision(object3D);
   }
