@@ -1,10 +1,18 @@
 const THREE = require('three');
-const { Model } = require('./Component');
+const { Component, ModelComponent } = require('./Component');
+
+const RenderComponent = class extends Component {
+  constructor(model) {
+    super(model);
+  }
+};
+
+RenderComponent.TYPE = 'Render';
 
 /**
  *  Component used to handle the 3D rendering of the GameObject
  */
-const RenderModelModule = class RenderModel extends Model {
+const RenderModel = class extends ModelComponent {
   /**
    * Create a new Render component of a GameObject from json
    *
@@ -30,15 +38,6 @@ const RenderModelModule = class RenderModel extends Model {
   }
 
   /**
-   * This component cant run on server side
-   *
-   * @returns {boolean}
-   */
-  isWorldComponent() {
-    return false;
-  }
-
-  /**
    * Compute this to JSON
    *
    * @returns {JSON}
@@ -46,7 +45,7 @@ const RenderModelModule = class RenderModel extends Model {
   toJSON() {
     return {
       uuid: this.uuid,
-      type: RenderModelModule.TYPE,
+      type: RenderModel.TYPE,
       idRenderData: this.idRenderData,
       color: this.color.toArray(),
     };
@@ -73,6 +72,6 @@ const RenderModelModule = class RenderModel extends Model {
   }
 };
 
-RenderModelModule.TYPE = 'Render';
+RenderModel.TYPE = 'Render';
 
-module.exports = { Model: RenderModelModule };
+module.exports = { Component: RenderComponent, Model: RenderModel };

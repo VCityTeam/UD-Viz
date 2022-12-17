@@ -7,7 +7,7 @@ const gameContext = new Core.Game.Context(
       uuid: 'root',
       name: 'Collision Test',
       components: {
-        Script: {
+        GameScript: {
           idScripts: ['CollisionTest'],
         },
       },
@@ -63,7 +63,7 @@ const gameContext = new Core.Game.Context(
                   ],
                   body: true,
                 },
-                Script: {
+                GameScript: {
                   idScripts: ['Collision'],
                 },
               },

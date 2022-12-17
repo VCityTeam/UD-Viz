@@ -7,16 +7,16 @@
   },
   "object": {
     "name": "TestState",
-    "components": { "Script": { "idScripts": ["Hello"] } },
+    "components": { "GameScript": { "idScripts": ["Hello"] } },
     "children": [
       {
         "name": "child1",
-        "components": { "Script": { "idScripts": ["Hello"] } }
+        "components": { "GameScript": { "idScripts": ["Hello"] } }
       },
       {
         "name": "child2",
         "components": {
-          "Script": {
+          "GameScript": {
             "idScripts": ["Hello"]
           },
           "Collider": {

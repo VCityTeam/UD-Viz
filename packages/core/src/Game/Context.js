@@ -4,6 +4,7 @@ const Script = require('./Object3D/Components/Script');
 const Object3D = require('./Object3D/Object3D');
 const State = require('./State');
 const Command = require('../Components/Command');
+const GameScript = require('./Object3D/Components/GameScript');
 
 /**
  * Context used to simulate a World
@@ -71,7 +72,7 @@ const Context = class {
       const promises = [];
 
       obj.traverse(function (child) {
-        const scriptC = child.getComponent(Script.Component.TYPE);
+        const scriptC = child.getComponent(GameScript.Component.TYPE);
         if (scriptC) {
           const scripts = scriptC.getController().getScripts();
           for (const idScript in scripts) {
@@ -170,7 +171,7 @@ const Context = class {
    */
   dispatchScriptEvent(object3D, event, params = []) {
     object3D.traverse(function (child) {
-      const scriptComponent = child.getComponent(Script.Component.TYPE);
+      const scriptComponent = child.getComponent(GameScript.Component.TYPE);
       if (scriptComponent) {
         scriptComponent.getController().execute(event, params);
       }
@@ -190,7 +191,7 @@ const Context = class {
         if (component.getController())
           throw new Error('controller already init ' + child.name);
         switch (type) {
-          case Script.Component.TYPE:
+          case GameScript.Component.TYPE:
             component.initController(
               new Script.Controller(component.getModel(), child, this)
             );
