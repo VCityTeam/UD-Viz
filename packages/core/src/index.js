@@ -12,8 +12,6 @@ module.exports = {
     Context: require('./Game/Context').Context,
     ScriptBase: require('./Game/Context').ScriptBase,
     Object3D: require('./Game/Object3D/Object3D'),
-    State: {
-      Interpolator: require('./Game/State/Interpolator'),
-    },
+    StateInterpolator: require('./Game/State/Interpolator'),
   },
 };
