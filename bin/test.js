@@ -1,5 +1,4 @@
 const exec = require('child-process-promise').exec;
-const Tester = require('@ud-viz/node').Tester;
 
 const printExec = function (result) {
   console.log('stdout: \n', result.stdout);
@@ -35,7 +34,4 @@ exec('npm run build-core')
       });
   });
 
-const tester = new Tester();
-
-// test packages/core
-tester.start('../packages/core/bin/Test/');
+// should run test cmd of all packages

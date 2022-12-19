@@ -1,7 +1,7 @@
 const fs = require('fs');
 const spawn = require('child_process').spawn;
 
-const Tester = class {
+const NodeTester = class {
   constructor() {}
 
   test(folderPath, file) {
@@ -65,4 +65,4 @@ const Tester = class {
   }
 };
 
-module.exports = Tester;
+module.exports = NodeTester;
