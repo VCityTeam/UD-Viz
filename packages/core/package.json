@@ -22,7 +22,6 @@
     "detect-collisions": "^2.5.2"
   },
   "peerDependencies": {
-    "proj4": "^2.7.5",
     "three": "0.137.5"
   }
 }

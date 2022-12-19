@@ -6,7 +6,7 @@
   "scripts": {
     "build": "cross-env NODE_ENV=production webpack --config=./webpackConfig/webpack.config.js",
     "build-debug": "cross-env NODE_ENV=development webpack --config=./webpackConfig/webpack.config.js",
-    "test":"node ./bin/test.js",
+    "test": "node ./bin/test.js",
     "debug": "nodemon --trace-warnings --verbose --watch ./bin/Test/ --watch src --delay 2500ms ./bin/debug.js -e js,css,html"
   },
   "files": [
@@ -30,6 +30,9 @@
     "jquery": "^3.6.0",
     "socket.io-client": "^4.0.0",
     "vis-network": "^9.0.3"
+  },
+  "peerDependencies": {
+    "proj4": "^2.7.5"
   },
   "dependencyComments": {
     "d3": "required by the SPARQL Module"

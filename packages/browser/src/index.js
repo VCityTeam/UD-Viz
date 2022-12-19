@@ -30,24 +30,24 @@ export { View };
 // import * as jquery from 'jquery';
 // export { jquery };
 
-// // THREE
-// import * as THREE from 'three';
-// // Modules of three necessary but not expose in THREE API
-// import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
-// import { TransformControls } from 'three/examples/jsm/controls/TransformControls';
-// import { ConvexGeometry } from 'three/examples/jsm/geometries/ConvexGeometry';
-// import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
-// import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
-// import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass.js';
-// export {
-//   THREE,
-//   OrbitControls,
-//   TransformControls,
-//   ConvexGeometry,
-//   EffectComposer,
-//   RenderPass,
-//   ShaderPass,
-// };
+// THREE
+import * as THREE from 'three';
+// Modules of three necessary but not expose in THREE API => THREE should be a peerDep like itowns to force user library to import it
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+import { TransformControls } from 'three/examples/jsm/controls/TransformControls';
+import { ConvexGeometry } from 'three/examples/jsm/geometries/ConvexGeometry';
+import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
+import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass.js';
+export {
+  THREE,
+  OrbitControls,
+  TransformControls,
+  ConvexGeometry,
+  EffectComposer,
+  RenderPass,
+  ShaderPass,
+};
 
 // // Proj4
 // import * as proj4 from 'proj4';
