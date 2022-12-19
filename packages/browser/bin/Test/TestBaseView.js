@@ -7,6 +7,7 @@
     const THREE = udvizBrowser.THREE;
 
     const baseView = new udvizBrowser.View.Base({});
+    baseView.init3D();
 
     const min = new THREE.Vector2(10, 65);
     const max = new THREE.Vector2(500, 896);
@@ -20,7 +21,16 @@
       console.warn('WARNING: height not well computed');
     }
 
-    // const billboard
+    const billboard = new udvizBrowser.View.Components.Billboard(
+      document.createElement('div'),
+      new THREE.Vector3(),
+      new THREE.Vector3(),
+      new THREE.Vector3(),
+      10
+    );
+
+    baseView.appendBillboard(billboard);
+    baseView.removeBillboard(billboard);
 
     resolve();
   });

@@ -1,4 +1,4 @@
-import { RequestService } from '../../../../Components/Request/RequestService';
+import { RequestService } from '../../Component/RequestService';
 
 /**
  * The SPARQL Endpoint Service which contains connection information and functions

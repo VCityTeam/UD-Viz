@@ -1,6 +1,4 @@
-// Widgets
-import { DocumentModule } from '../../../Documents/DocumentModule';
-
+import { DocumentModule } from '../../Documents/DocumentModule';
 import { ContributeService } from '../Service/ContributeService';
 
 /**

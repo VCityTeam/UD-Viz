@@ -16,6 +16,7 @@ export class GameView extends View3D {
    * @param {*} params
    */
   constructor(params) {
+    console.error('DEPRECATED');
     // Call parent class
     super(params);
 

@@ -1,10 +1,8 @@
-// Components
-import { ModuleView } from '../Components/ModuleView/ModuleView';
-import { RequestService } from '../../Components/Request/RequestService';
-
-import './GuidedTour.css';
+import { ModuleView } from '../../Components/ModuleView/ModuleView';
+import { RequestService } from '../Component/RequestService';
 import { GuidedTour } from './GuidedTour.js';
-import { DocumentModule } from '../Documents/DocumentModule'; // TODO should be a components
+import { DocumentModule } from '../Documents/DocumentModule';
+import './GuidedTour.css';
 
 /**
  * Class: GuidedTourController

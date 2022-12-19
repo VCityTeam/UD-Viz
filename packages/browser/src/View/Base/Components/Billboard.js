@@ -11,6 +11,14 @@ const BLANK_MATERIAL = new THREE.MeshBasicMaterial({
 });
 
 export class Billboard {
+  /**
+   *
+   * @param {HTMLElement} html
+   * @param {THREE.Vector3} position
+   * @param {THREE.Vector3} rotation
+   * @param {THREE.Vector3} scale
+   * @param {number} resolution
+   */
   constructor(html, position, rotation, scale, resolution = 1) {
     this.uuid = THREE.MathUtils.generateUUID();
     this.html = html;

@@ -1,7 +1,5 @@
-// Components
-import { RequestService } from '../../../../Components/Request/RequestService';
-
-import { Document } from '../../../Documents/Model/Document';
+import { RequestService } from '../../Component/RequestService';
+import { Document } from '../../Documents/Model/Document';
 
 /**
  * This class is responsible for the validation requests.

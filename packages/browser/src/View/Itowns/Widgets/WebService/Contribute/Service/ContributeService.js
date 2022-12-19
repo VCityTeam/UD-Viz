@@ -1,9 +1,6 @@
-// Widgets
-import { DocumentProvider } from '../../../Documents/ViewModel/DocumentProvider';
-import { Document } from '../../../Documents/Model/Document';
-
-// Components
-import { RequestService } from '../../../../Components/Request/RequestService';
+import { DocumentProvider } from '../../Documents/ViewModel/DocumentProvider';
+import { Document } from '../../Documents/Model/Document';
+import { RequestService } from '../../Component/RequestService';
 
 /**
  * This class performs the requests on the server to update and create

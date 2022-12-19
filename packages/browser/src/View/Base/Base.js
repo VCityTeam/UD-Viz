@@ -68,40 +68,40 @@ export class Base {
     this.css3DScene = null;
     this.billboards = [];
     const raycaster = new THREE.Raycaster();
-    this.toCSS3DEvent = function (event) {
-      if (_this.isCatchingEventsCSS3D()) return;
-      if (checkParentChild(event.target, _this.ui)) return; // Do not propagate if it's the ui that has been clicked
+    this.toCSS3DEvent = (event) => {
+      if (this.isCatchingEventsCSS3D()) return;
+      if (checkParentChild(event.target, this.ui)) return; // Do not propagate if it's the ui that has been clicked
 
-      const el = _this.rootWebGL;
+      const el = this.rootWebGL;
 
       const mouse = new THREE.Vector2(
         -1 + (2 * event.offsetX) / (el.clientWidth - parseInt(el.offsetLeft)),
         1 - (2 * event.offsetY) / (el.clientHeight - parseInt(el.offsetTop))
       );
 
-      raycaster.setFromCamera(mouse, _this.getCamera());
+      raycaster.setFromCamera(mouse, this.getCamera());
 
-      for (let index = 0; index < _this.billboards.length; index++) {
-        const element = _this.billboards[index];
+      for (let index = 0; index < this.billboards.length; index++) {
+        const element = this.billboards[index];
 
         const i = raycaster.intersectObject(element.getMaskObject());
         if (i.length) {
-          _this.catchEventsCSS3D(true);
+          this.catchEventsCSS3D(true);
           element.select(true);
           return;
         }
       }
     };
 
-    this.toWebGLEvent = function (event) {
-      if (!_this.isCatchingEventsCSS3D()) return;
+    this.toWebGLEvent = (event) => {
+      if (!this.isCatchingEventsCSS3D()) return;
 
       let onBillboard = false;
       if (event.path.length) {
         const firstHoverEl = event.path[0];
 
-        for (let index = 0; index < _this.billboards.length; index++) {
-          const element = _this.billboards[index];
+        for (let index = 0; index < this.billboards.length; index++) {
+          const element = this.billboards[index];
           if (element.getHtml() == firstHoverEl) {
             onBillboard = true;
             break;
@@ -109,8 +109,8 @@ export class Base {
         }
       }
       if (!onBillboard) {
-        _this.catchEventsCSS3D(false);
-        _this.billboards.forEach(function (b) {
+        this.catchEventsCSS3D(false);
+        this.billboards.forEach(function (b) {
           b.select(false);
         });
       }
@@ -119,6 +119,25 @@ export class Base {
     // Default catch events
     const catchEventsCSS3D = options.catchEventsCSS3D || false;
     this.catchEventsCSS3D(catchEventsCSS3D);
+  }
+
+  /**
+   * Initialize Scene + Camera + Renderer with THREE
+   */
+  init3D() {
+    THREE.Object3D.DefaultUp.set(0, 0, 1);
+
+    this.scene = new THREE.Scene();
+    const canvas = document.createElement('canvas');
+    this.rootWebGL.appendChild(canvas);
+    this.renderer = new THREE.WebGLRenderer({
+      canvas: canvas,
+      antialias: true,
+      logarithmicDepthBuffer: true,
+      alpha: true,
+    });
+    this.camera = new THREE.PerspectiveCamera(60, 1, 1, 1000); // Default params
+    this.scene.add(this.camera);
   }
 
   /**
@@ -177,14 +196,13 @@ export class Base {
     this.rootCss.onmousedown = this.toWebGLEvent;
 
     // Start ticking render of css3D renderer
-    const _this = this;
     const fps = 20;
 
     let now;
     let then = Date.now();
     let delta;
-    const tick = function () {
-      if (_this.disposed) return; // Stop requesting frame if disposed
+    const tick = () => {
+      if (this.disposed) return; // Stop requesting frame if disposed
 
       requestAnimationFrame(tick);
 
@@ -195,8 +213,8 @@ export class Base {
         // Update time stuffs
         then = now - (delta % 1000) / fps;
 
-        if (!_this.isRendering) return;
-        css3DRenderer.render(_this.css3DScene, _this.getCamera());
+        if (!this.isRendering) return;
+        css3DRenderer.render(this.css3DScene, this.getCamera());
       }
     };
     tick();
@@ -235,7 +253,7 @@ export class Base {
   }
 
   removeBillboard(billboard) {
-    this.itownsView.scene.remove(billboard.getMaskObject());
+    this.scene.remove(billboard.getMaskObject());
     this.css3DScene.remove(billboard.getCss3DObject());
 
     const index = this.billboards.indexOf(billboard);
@@ -309,3 +327,6 @@ export class Base {
     return this.rootWebGL;
   }
 }
+
+import * as Components from './Components/Components';
+export { Components };
