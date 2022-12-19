@@ -103,7 +103,7 @@ export class Planar extends Base {
     add3DTilesLayersFromConfig(this.config, this.layerManager, this.itownsView);
     setupAndAddGeoJsonLayers(this.config, this.itownsView);
 
-    // Disable itowns resize
+    // Disable itowns resize https://github.com/VCityTeam/UD-Viz/issues/374
     this.itownsViewResize = this.itownsView.resize.bind(this.itownsView);
     this.itownsView.resize = function () {};
   }
