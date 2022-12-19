@@ -1,4 +1,4 @@
-// Service used to make HTTP requests and manage authentication
+// Service used to make authentificate HTTP requests (with a token)
 // Wiki : https://github.com/MEPP-team/UD-Viz/wiki/Request-Service#request-service
 /**
  *
