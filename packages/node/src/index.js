@@ -1,4 +1,5 @@
 module.exports = {
   HttpServer: require('./Templates/HttpServer'),
-  Tester: require('./Templates/Tester'),
+  NodeTester: require('./Templates/NodeTester'),
+  BrowserTester: require('./Templates/BrowserTester'),
 };

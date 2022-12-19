@@ -1,6 +1,4 @@
 const exec = require('child-process-promise').exec;
-const Tester = require('@ud-viz/node').Tester;
-const path = require('path');
 
 const printExec = function (result) {
   console.log('stdout: \n', result.stdout);
@@ -13,14 +11,11 @@ exec('npm run build-debug')
     console.error('@ud-viz/core build ', error);
   })
   .then(printExec)
-  .then(() => {
-    console.log('@ud-viz/core builded');
-    const tester = new Tester();
-    tester.start(path.resolve('./bin/Test')).then(() => {
-      console.log('@ud-viz/core test succeed');
-    });
-  })
-  .catch((error) => {
-    console.error('@ud-viz/core test ', error);
-    console.error(error);
-  });
+  .then(
+    exec('npm run test')
+      .then(printExec)
+      .catch((error) => {
+        console.error('@ud-viz/core test ', error);
+        console.error(error);
+      })
+  );
