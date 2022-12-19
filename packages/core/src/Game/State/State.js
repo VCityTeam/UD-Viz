@@ -1,6 +1,6 @@
-const StateDiff = require('./StateDiff');
-const Object3D = require('./Object3D/Object3D');
-const JSONUtils = require('../Components/JSONUtils');
+const Diff = require('./Diff');
+const Object3D = require('../Object3D/Object3D');
+const JSONUtils = require('../../Components/JSONUtils');
 
 /**
  * Store the state of the  at a given time
@@ -28,9 +28,9 @@ const State = class {
   }
 
   /**
-   * Compute the next state with a given StateDiff
+   * Compute the next state with a given Diff
    *
-   * @param {StateDiff} diff the StateDiff between two State
+   * @param {Diff} diff the Diff between two State
    * @returns {State} the new State
    */
   add(diff) {
@@ -94,10 +94,10 @@ const State = class {
   }
 
   /**
-   * Compute the StateDiff between this and the state passed
+   * Compute the Diff between this and the state passed
    *
-   * @param {State} state the state passed to compute the StateDiff with this
-   * @returns {StateDiff} the difference between this and state
+   * @param {State} state the state passed to compute the Diff with this
+   * @returns {Diff} the difference between this and state
    */
   sub(previousState) {
     const nextStateObjectsUUID = [];
@@ -120,7 +120,7 @@ const State = class {
       }
     });
 
-    return new StateDiff({
+    return new Diff({
       nextStateObjectsUUID: nextStateObjectsUUID,
       objects3DToUpdateJSON: objects3DToUpdateJSON,
       timestamp: this.timestamp,

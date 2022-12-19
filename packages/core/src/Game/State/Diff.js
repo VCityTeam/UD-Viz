@@ -2,7 +2,7 @@
  * This object avoid to send State on network and allow to rebuild a State
  * state(t) + statediff(t+1) = state(t+1)
  */
-const StateDiff = class {
+const Diff = class {
   constructor(json) {
     if (!json) throw new Error('no json');
 
@@ -57,4 +57,4 @@ const StateDiff = class {
   }
 };
 
-module.exports = StateDiff;
+module.exports = Diff;

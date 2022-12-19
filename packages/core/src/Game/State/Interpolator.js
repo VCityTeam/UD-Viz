@@ -5,7 +5,7 @@ const State = require('./State');
  * Interpolate states received by server
  * Same system as described here (https://victorzhou.com/blog/build-an-io-game-part-1/#7-client-state)
  */
-module.exports = class StateInterpolator {
+module.exports = class Interpolator {
   constructor(delay) {
     // Delay between state received and state computed
     this.delay = delay;
