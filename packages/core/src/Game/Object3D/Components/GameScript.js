@@ -1,11 +1,7 @@
 const { Component } = require('./Component');
 const Script = require('./Script');
 
-const GameScriptComponent = class extends Component {
-  constructor(model) {
-    super(model);
-  }
-};
+const GameScriptComponent = class extends Component {};
 
 GameScriptComponent.TYPE = 'GameScript';
 
