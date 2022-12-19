@@ -5,3 +5,13 @@ export { GameView } from './GameView/GameView';
 export { AssetsManager } from './AssetsManager/AssetsManager';
 
 export { Billboard } from './Billboard/Billboard';
+
+export {
+  add3DTilesLayersFromConfig,
+  setup3DTilesLayer,
+  addBaseMapLayer,
+  addElevationLayer,
+  setupAndAddGeoJsonLayers,
+  focusCameraOn,
+  computeNearFarCamera,
+} from './ItownsViewUtils';

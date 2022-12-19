@@ -4,7 +4,7 @@ import io from 'socket.io-client';
  * Handle communication with a server using socket.io-client npm package
  * (https://www.npmjs.com/package/socket.io-client)
  */
-export class WebSocketService {
+export class SocketIOWrapper {
   constructor() {
     this.socket = null;
     this.events = {};
