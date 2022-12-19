@@ -1,7 +1,6 @@
-const NodeTester = require('@ud-viz/node').NodeTester;
+const Test = require('@ud-viz/node').Test;
 const path = require('path');
 
-const nodeTester = new NodeTester();
-nodeTester.start(path.resolve('./bin/Test')).then(() => {
+Test.scripts(path.resolve('./bin/Test')).then(() => {
   console.log('@ud-viz/core test succeed');
 });
