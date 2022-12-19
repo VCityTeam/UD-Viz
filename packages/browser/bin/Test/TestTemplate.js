@@ -5,12 +5,10 @@
      */
     const udvizBrowser = window.udvizBrowser;
 
-    console.log('start test');
-    console.log(udvizBrowser);
+    for (const key in udvizBrowser) {
+      console.log(key);
+    }
 
-    setTimeout(() => {
-      console.log('end test');
-      resolve();
-    }, 5000);
+    resolve();
   });
 };
