@@ -28,7 +28,21 @@ const browserScripts = function (testFolderPath, bundlePath) {
 
             if (files.length) {
               // launch a headless browser
-              const browser = await puppeteer.launch();
+              const browser = await puppeteer.launch({
+                headless: true,
+                args: [
+                  '--disable-gpu',
+                  '--disable-dev-shm-usage',
+                  '--disable-setuid-sandbox',
+                  '--no-first-run',
+                  '--no-sandbox',
+                  '--no-zygote',
+                  '--deterministic-fetch',
+                  '--disable-features=IsolateOrigins',
+                  '--disable-site-isolation-trials',
+                  // '--single-process', => avoid random Target Close
+                ],
+              });
               // console.log('browser opened');
 
               let index = 0;
