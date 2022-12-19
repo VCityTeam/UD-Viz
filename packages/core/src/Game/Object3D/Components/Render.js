@@ -1,11 +1,7 @@
 const THREE = require('three');
 const { Component, ModelComponent } = require('./Component');
 
-const RenderComponent = class extends Component {
-  constructor(model) {
-    super(model);
-  }
-};
+const RenderComponent = class extends Component {};
 
 RenderComponent.TYPE = 'Render';
 
@@ -71,7 +67,5 @@ const RenderModel = class extends ModelComponent {
     return this.idRenderData;
   }
 };
-
-RenderModel.TYPE = 'Render';
 
 module.exports = { Component: RenderComponent, Model: RenderModel };

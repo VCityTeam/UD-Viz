@@ -1,10 +1,6 @@
 const { Component, ModelComponent } = require('./Component');
 
-const AudioComponent = class extends Component {
-  constructor(model) {
-    super(model);
-  }
-};
+const AudioComponent = class extends Component {};
 
 AudioComponent.TYPE = 'Audio';
 
@@ -42,7 +38,5 @@ const AudioModel = class extends ModelComponent {
     };
   }
 };
-
-AudioModel.TYPE = 'Audio';
 
 module.exports = { Component: AudioComponent, Model: AudioModel };

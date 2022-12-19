@@ -6,11 +6,7 @@ const {
 } = require('./Component');
 const THREE = require('three');
 
-const ColliderComponent = class extends Component {
-  constructor(model) {
-    super(model);
-  }
-};
+const ColliderComponent = class extends Component {};
 
 ColliderComponent.TYPE = 'Collider';
 

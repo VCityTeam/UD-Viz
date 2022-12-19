@@ -3,14 +3,17 @@ const Collider = require('./Object3D/Components/Collider');
 const Script = require('./Object3D/Components/Script');
 const Object3D = require('./Object3D/Object3D');
 const State = require('./State');
+const AbstractContext = require('../Components/AbstractContext');
 const Command = require('../Components/Command');
 const GameScript = require('./Object3D/Components/GameScript');
 
 /**
  * Context used to simulate a World
  */
-const Context = class {
-  constructor(object3DJSON, options = {}) {
+const Context = class extends AbstractContext {
+  constructor(arrayClassScript, object3DJSON) {
+    super(arrayClassScript);
+
     /** @type {Object3D} object3D of the world */
     this.object3D = new Object3D(object3DJSON);
 
@@ -31,27 +34,6 @@ const Context = class {
 
     // Commands
     this.commands = [];
-
-    // gamescript
-    this.classScripts = {};
-    if (options.classScripts) {
-      options.classScripts.forEach((gS) => {
-        this.classScripts[gS.name] = gS;
-      });
-    }
-  }
-
-  createInstanceOf(id, object3D, modelVariables) {
-    /** @type {ScriptBase} */
-    const constructor = this.classScripts[id];
-    if (!constructor) {
-      console.log('script loaded');
-      for (const id in this.classScripts) {
-        console.log(this.classScripts[id]);
-      }
-      throw new Error('no script with id ' + id);
-    }
-    return new constructor(this, object3D, modelVariables);
   }
 
   /**

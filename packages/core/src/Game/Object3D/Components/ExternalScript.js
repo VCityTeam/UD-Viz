@@ -1,11 +1,7 @@
 const { Component } = require('./Component');
 const Script = require('./Script');
 
-const ExternalScriptComponent = class extends Component {
-  constructor(model) {
-    super(model);
-  }
-};
+const ExternalScriptComponent = class extends Component {};
 
 ExternalScriptComponent.TYPE = 'ExternalScript';
 

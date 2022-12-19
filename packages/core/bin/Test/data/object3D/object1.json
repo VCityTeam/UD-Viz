@@ -7,6 +7,12 @@
   },
   "object": {
     "name": "add object3D test",
-    "components": { "GameScript": { "idScripts": ["Hello"] } }
+    "components": {
+      "GameScript": { "idScripts": ["Hello"] },
+      "Collider": {},
+      "Render": {},
+      "ExternalScript": {},
+      "Audio": {}
+    }
   }
 }
