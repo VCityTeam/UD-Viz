@@ -1,5 +1,3 @@
-
-
 html {
   height: 100%;
 }
@@ -14,7 +12,7 @@ canvas {
   display: block;
 }
 
-#css_View3D,
+#css_BaseView,
 #viewerDiv {
   width: 100%;
   height: 100%;
@@ -23,10 +21,10 @@ canvas {
   left: 0px;
 }
 
-.ui_View3D {
+.ui_BaseView {
   position: absolute;
 }
 
-.ui_View3D * {
+.ui_BaseView * {
   position: relative;
 }

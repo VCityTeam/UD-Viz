@@ -4,17 +4,13 @@
 import * as Components from './Components/Components.js';
 export { Components };
 
-// Widgets
-// import * as Widgets from './Widgets/Widgets.js';
-// export { Widgets };
-
 // // Templates
 // import * as Templates from './Templates/Templates.js';
 // export { Templates };
 
 // // Views
-// import * as Views from './Views/Views';
-// export { Views };
+import * as View from './View/View';
+export { View };
 
 // // Game
 // import { Base } from './Game/BrowserScript';
