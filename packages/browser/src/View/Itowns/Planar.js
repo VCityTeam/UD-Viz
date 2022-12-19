@@ -10,12 +10,12 @@ import { LayerManager } from './Components/LayerManager/LayerManager';
 
 /**
  * These extensions should belong elsewhere since it should be possible
- * to manipulate Temporal 3DTiles without having a dependelayerManagernce to its widget...
+ * to manipulate Temporal 3DTiles without having a dependence to its widget...
  */
-// import * as Widgets from './Widgets/Widgets';
-// const $3DTemporalBatchTable = Widgets.$3DTemporalBatchTable;
-// const $3DTemporalBoundingVolume = Widgets.$3DTemporalBoundingVolume;
-// const $3DTemporalTileset = Widgets.$3DTemporalTileset;
+import * as Widgets from './Widgets/Widgets';
+const $3DTemporalBatchTable = Widgets.$3DTemporalBatchTable;
+const $3DTemporalBoundingVolume = Widgets.$3DTemporalBoundingVolume;
+const $3DTemporalTileset = Widgets.$3DTemporalTileset;
 
 export class Planar extends Base {
   constructor(options) {
