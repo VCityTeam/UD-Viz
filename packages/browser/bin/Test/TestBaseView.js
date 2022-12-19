@@ -31,6 +31,7 @@
 
     baseView.appendBillboard(billboard);
     baseView.removeBillboard(billboard);
+    baseView.dispose();
 
     resolve();
   });

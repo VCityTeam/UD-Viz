@@ -117,7 +117,7 @@ const browserScripts = function (testFolderPath, bundlePath) {
 const scripts = function (folderPath) {
   return new Promise((resolve) => {
     const test = function (folderPath, file) {
-      return new Promise((resolve, reject) => {
+      return new Promise((resolveTest, rejectTest) => {
         const pathFile = folderPath + '/' + file.name;
 
         const child = spawn('node', [pathFile], {
@@ -134,11 +134,11 @@ const scripts = function (folderPath) {
         child.on('close', (error) => {
           if (error) {
             console.log(file.name, ' failed');
-            reject(error);
+            rejectTest(error);
             return;
           }
           console.log(file.name, ' succeed');
-          resolve();
+          resolveTest();
         });
       });
     };
