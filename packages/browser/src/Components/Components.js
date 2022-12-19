@@ -1,7 +1,6 @@
 export { RequestService } from './Request/RequestService';
 
-import * as SystemUtils from './SystemUtils/SystemUtils';
-export { SystemUtils };
+export { File } from './File';
 
 export { WebSocketService } from './WebSocketService';
 
