@@ -1,7 +1,7 @@
 const Core = require('../../src/index');
 
 let lastXComputed = null;
-const stateInterpolator = new Core.Game.State.Interpolator(50); // 50ms delay
+const stateInterpolator = new Core.Game.StateInterpolator(50); // 50ms delay
 const gameContext = new Core.Game.Context(
   [
     class Script extends Core.Game.ScriptBase {
