@@ -1,6 +1,4 @@
-// Components
-import { RequestService } from '../../Components/Request/RequestService';
-
+import { RequestService } from '../Component/RequestService';
 import { DocumentService, DocumentSource } from './Model/DocumentService';
 import { DocumentProvider } from './ViewModel/DocumentProvider';
 import { DocumentView } from './View/DocumentView';

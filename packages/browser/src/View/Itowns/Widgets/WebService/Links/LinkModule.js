@@ -1,10 +1,8 @@
-// Components
-import { RequestService } from '../../Components/Request/RequestService';
-import { Window } from '../Components/GUI/js/Window';
-
+import { RequestService } from '../Component/RequestService';
+import { Window } from '../../Components/GUI/js/Window';
 import { LinkService } from './Model/LinkService';
 import { DocumentModule } from '../Documents/DocumentModule';
-import { CityObjectModule } from '../CityObjects/CityObjectModule';
+import { CityObjectModule } from '../../CityObjects/CityObjectModule';
 import { LinkView } from './View/LinkView';
 import { LinkProvider } from './ViewModel/LinkProvider';
 

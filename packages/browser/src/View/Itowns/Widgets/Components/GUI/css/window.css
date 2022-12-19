@@ -1,105 +1,105 @@
 .window {
-    position: absolute;
-    top: 0px;
-    left: 0px;
-    min-width: 200px;
-    min-height: 200px;
-    width: 350px;
-    height: 100%;
-    padding: 0;
-    resize: both;
-    overflow: hidden;
-    display: grid;
-    grid-template-rows: 30px auto;
-    box-shadow: 0px 0px 2px 0px rgba(0,0,0,0.75);
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  min-width: 200px;
+  min-height: 200px;
+  width: 350px;
+  height: 100%;
+  padding: 0;
+  resize: both;
+  overflow: hidden;
+  display: grid;
+  grid-template-rows: 30px auto;
+  box-shadow: 0px 0px 2px 0px rgba(0, 0, 0, 0.75);
 }
 
 .window-header {
-    background-color: rgb(0, 0, 0, 0.9);
-    color: #eeeeee;
-    margin: 0;
-    padding: 5px;
-    overflow-x: hidden;
-    overflow-y: unset;
-    cursor: default;
+  background-color: rgb(0, 0, 0, 0.9);
+  color: #eeeeee;
+  margin: 0;
+  padding: 5px;
+  overflow-x: hidden;
+  overflow-y: unset;
+  cursor: default;
 }
 
 .window-header .window-title {
-    margin: 0;
-    margin-left: 5px;
-    margin-top: -2px;
-    font-size: 1.5vh;
+  margin: 0;
+  margin-left: 5px;
+  margin-top: -2px;
+  font-size: 1.5vh;
 }
 
 .window-close-button {
-    position: absolute;
-    height: auto;
-    right: 2px;
-    top: -4px;
-    margin: 0px;
-    background-color: transparent;
-    color: white;
-    border: none;
-    font-size: 20px;
-    font-weight: bold;
-    transition: background-color 0.2s ease;
+  position: absolute;
+  height: auto;
+  right: 2px;
+  top: -4px;
+  margin: 0px;
+  background-color: transparent;
+  color: white;
+  border: none;
+  font-size: 20px;
+  font-weight: bold;
+  transition: background-color 0.2s ease;
 }
 
 .window-close-button:hover {
-    background-color: #f95a5a;
-    cursor: default;
+  background-color: #f95a5a;
+  cursor: default;
 }
 
 .window-content {
-    background-color: rgba(30,30,30,0.9);
-    border: 5px solid rgba(30,30,30,0.1);
-    overflow-y: auto;
-    margin: 0;
+  background-color: rgba(30, 30, 30, 0.9);
+  border: 5px solid rgba(30, 30, 30, 0.1);
+  overflow-y: auto;
+  margin: 0;
 }
 
 .window-inner-content {
-    color: #f2f2f2;
+  color: #f2f2f2;
 }
 
 /* Useful styles that can be used in windows */
 
-    /* A box arround a section */
+/* A box arround a section */
 .window-inner-content .box-section {
-    background: rgba(255, 255, 255, 0.168);
-    width: auto;
-    height: auto;
-    margin: 0 0 30px;
-    padding: 11px 10px 35px;
-    /* opacity: 0.2; */
-    border-radius: 7px;
+  background: rgba(255, 255, 255, 0.168);
+  width: auto;
+  height: auto;
+  margin: 0 0 30px;
+  padding: 11px 10px 35px;
+  /* opacity: 0.2; */
+  border-radius: 7px;
 }
 
 .window-inner-content .section-title {
-    margin: 5px 0 5px 10px;
-    padding: 0;
-    font-size: 20px;
-    font-weight: bold;
-    display: block;
+  margin: 5px 0 5px 10px;
+  padding: 0;
+  font-size: 20px;
+  font-weight: bold;
+  display: block;
 }
 
 .window-inner-content .subsection-title {
-    margin: 7px 0 7px 5px;
-    padding: 0;
-    font-size: 16px;
-    font-weight: bold;
-    display: block;
+  margin: 7px 0 7px 5px;
+  padding: 0;
+  font-size: 16px;
+  font-weight: bold;
+  display: block;
 }
 
-    /* Clickable text */
+/* Clickable text */
 .window-inner-content .clickable-text {
-    cursor: pointer;
+  cursor: pointer;
 }
 
 .window-inner-content .clickable-text:hover {
-    text-decoration: underline;
+  text-decoration: underline;
 }
 
-    /* Some styles for a working "spoiler" div
+/* Some styles for a working "spoiler" div
      * The expected structure should be the following :
      * <input type="checkbox" class="spoiler-check" id="checkid">
      * <label for="checkid">Click here do show the spoiler !</label>
@@ -107,60 +107,55 @@
      * </div>
      */
 .window-inner-content .spoiler-check {
-    display: none;
+  display: none;
 }
 
-.window-inner-content .spoiler-check ~
-label {
-    cursor: pointer;
+.window-inner-content .spoiler-check ~ label {
+  cursor: pointer;
 }
 
-.window-inner-content .spoiler-check ~
-label:after {
-    content: " \25C3";
-    margin-left: 10px;
-    color: rgb(185, 185, 185);
+.window-inner-content .spoiler-check ~ label:after {
+  content: ' \25C3';
+  margin-left: 10px;
+  color: rgb(185, 185, 185);
 }
 
-.window-inner-content .spoiler-check:checked ~
-label:after {
-    content: " \25BE";
+.window-inner-content .spoiler-check:checked ~ label:after {
+  content: ' \25BE';
 }
 
-.window-inner-content .spoiler-check ~
-.spoiler-box {
-    display: none;
+.window-inner-content .spoiler-check ~ .spoiler-box {
+  display: none;
 }
 
-.window-inner-content .spoiler-check:checked ~
-.spoiler-box {
-    display: block;
+.window-inner-content .spoiler-check:checked ~ .spoiler-box {
+  display: block;
 }
 
-     /* Text alignment */
+/* Text alignment */
 .text-left {
-    text-align: left;
+  text-align: left;
 }
 
 .text-right {
-    text-align: right;
+  text-align: right;
 }
 
 .text-center {
-    text-align: center;
+  text-align: center;
 }
 
 .text-justify {
-    text-align: justify;
+  text-align: justify;
 }
 
-button{
-    width: auto;
-    height: auto;
-    margin: 5px 133px 0 1px;
-    padding: 5px 6px 6px;
-    border-radius: 4px;
-    background-color: #d1d0de;
-    border: none;
-    font-family: 'Segoe UI', Arial, sans-serif;
+.window button {
+  width: auto;
+  height: auto;
+  margin: 5px 133px 0 1px;
+  padding: 5px 6px 6px;
+  border-radius: 4px;
+  background-color: #d1d0de;
+  border: none;
+  font-family: 'Segoe UI', Arial, sans-serif;
 }

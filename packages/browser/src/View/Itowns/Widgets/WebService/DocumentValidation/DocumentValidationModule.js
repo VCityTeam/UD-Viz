@@ -1,6 +1,4 @@
-// Widgets
-import { DocumentModule } from '../../Documents/DocumentModule';
-
+import { DocumentModule } from '../Documents/DocumentModule';
 import { ValidationService } from './Service/ValidationService';
 import { DocumentsInValidationDocumentSource } from './Service/DocumentsInValidationSource';
 import { ValidationView } from './View/ValidationView';

@@ -1,6 +1,4 @@
-// Components
-import { RequestService } from '../../../Components/Request/RequestService';
-
+import { RequestService } from '../../Component/RequestService';
 import { Link } from './Link';
 
 /**

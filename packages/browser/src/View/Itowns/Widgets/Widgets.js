@@ -1,14 +1,6 @@
-export { GuidedTourController } from './GuidedTour/GuidedTourController';
-
 export { CityObjectModule } from './CityObjects/CityObjectModule';
 
-export { LinkModule } from './Links/LinkModule';
-
 export { LayerChoice } from './LayerChoice/views/LayerChoice';
-
-export { DocumentModule } from './Documents/DocumentModule';
-
-export { DocumentVisualizerWindow } from './DocumentVisualizer/View/DocumentVisualizerWindow';
 
 export { CameraPositionerView } from './CameraPositioner/View/CameraPositionerView';
 
@@ -28,8 +20,8 @@ export { Debug3DTilesWindow } from './3DTilesDebug/views/3DTilesDebugWindow';
 
 export { BaseMap } from './BaseMap/BaseMapWindow';
 
-import * as Extensions from './Extensions/Extensions';
-export { Extensions };
+import * as WebService from './WebService/WebService';
+export { WebService };
 
 import * as Components from './Components/Components';
 export { Components };

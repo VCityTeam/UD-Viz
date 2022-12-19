@@ -1,11 +1,9 @@
-// Components
-import { CityObject } from '../../../Components/3DTiles/Model/CityObject';
-import { EventSender } from '../../../Components/Events/EventSender';
-import { CityObjectStyle } from '../../../Components/3DTiles/Model/CityObjectStyle';
-
+import { CityObject } from '../../../../Components/3DTiles/Model/CityObject';
+import { EventSender } from '@ud-viz/core/src/Components/EventSender';
+import { CityObjectStyle } from '../../../../Components/3DTiles/Model/CityObjectStyle';
 import { LinkService } from '../Model/LinkService';
 import { DocumentProvider } from '../../Documents/ViewModel/DocumentProvider';
-import { CityObjectProvider } from '../../CityObjects/ViewModel/CityObjectProvider';
+import { CityObjectProvider } from '../../../CityObjects/ViewModel/CityObjectProvider';
 import { Link } from '../Model/Link';
 import { Document } from '../../Documents/Model/Document';
 import {

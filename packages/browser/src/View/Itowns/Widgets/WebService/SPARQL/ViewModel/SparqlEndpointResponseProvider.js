@@ -1,4 +1,4 @@
-import { EventSender } from '../../../../Components/Events/EventSender';
+import { EventSender } from '@ud-viz/core/src/Components/EventSender';
 import { SparqlEndpointService } from '../Model/SparqlEndpointService';
 
 /**

@@ -1,4 +1,4 @@
-import { EventSender } from '../../../Components/Events/EventSender';
+import { EventSender } from '@ud-viz/core/src/Components/EventSender';
 
 /**
  * Represents a basic view for a module. Extending this class is not mandatory to write

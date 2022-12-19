@@ -1,7 +1,8 @@
-// Service used to make authentificate HTTP requests (with a token)
-// Wiki : https://github.com/MEPP-team/UD-Viz/wiki/Request-Service#request-service
+//
 /**
- *
+ *  Used by Widget.WebService
+ *  Service used to make authentificate HTTP requests (with a token)
+ *  Wiki : https://github.com/MEPP-team/UD-Viz/wiki/Request-Service#request-service
  */
 export function RequestService() {
   // eslint-disable-next-line no-unused-expressions

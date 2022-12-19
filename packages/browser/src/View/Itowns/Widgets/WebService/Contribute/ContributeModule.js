@@ -1,9 +1,5 @@
-// Widgets
-import { DocumentModule } from '../../Documents/DocumentModule';
-
-// Components
-import { RequestService } from '../../../Components/Request/RequestService';
-
+import { DocumentModule } from '../Documents/DocumentModule';
+import { RequestService } from '../Component/RequestService';
 import { DocumentCreationWindow } from './View/DocumentCreationWindow';
 import { DocumentUpdateWindow } from './View/DocumentUpdateWindow';
 import { ContributeService } from './Service/ContributeService';

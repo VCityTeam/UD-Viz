@@ -1,7 +1,7 @@
-import { CityObjectModule } from '../../CityObjects/CityObjectModule';
-import { CityObjectFilterSelector } from '../../CityObjects/View/CityObjectFilterSelector';
+import { CityObjectModule } from '../../../CityObjects/CityObjectModule';
+import { CityObjectFilterSelector } from '../../../CityObjects/View/CityObjectFilterSelector';
 import { LinkProvider } from '../ViewModel/LinkProvider';
-import { CityObjectProvider } from '../../CityObjects/ViewModel/CityObjectProvider';
+import { CityObjectProvider } from '../../../CityObjects/ViewModel/CityObjectProvider';
 import { LinkView } from './LinkView';
 
 /**

@@ -1,15 +1,13 @@
-// Components
+import { EventSender } from '@ud-viz/core/src/Components/EventSender';
 import { CityObjectStyle } from '../../../Components/3DTiles/Model/CityObjectStyle';
 import {
   CityObjectID,
   CityObject,
 } from '../../../Components/3DTiles/Model/CityObject';
-import { EventSender } from '../../../Components/Events/EventSender';
+import { focusCameraOn } from '../../../Components/Components';
 import { LayerManager } from '../../../Components/LayerManager/LayerManager';
-
 import { CityObjectFilter } from './CityObjectFilter';
 import { CityObjectLayer } from './CityObjectLayer';
-import { focusCameraOn } from '../../../Components/Camera/CameraUtils';
 /**
  * The city object provider manages the city object by organizing them in two
  * categories : the _layer_ and the _selected city object_. The layer

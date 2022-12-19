@@ -1,6 +1,4 @@
-// Components
-import { focusCameraOn } from '../../../Components/Camera/CameraUtils';
-
+import { focusCameraOn } from '../../../../Components/Components';
 import { DocumentModule } from '../../Documents/DocumentModule';
 import * as THREE from 'three';
 import { DocumentProvider } from '../../Documents/ViewModel/DocumentProvider';

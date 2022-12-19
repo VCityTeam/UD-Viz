@@ -1,6 +1,5 @@
 import { AbstractDocumentWindow } from '../../Documents/View/AbstractDocumentWindow';
 import * as THREE from 'three';
-
 import './DocumentVisualizer.css';
 import { DocumentProvider } from '../../Documents/ViewModel/DocumentProvider';
 import { DocumentModule } from '../../Documents/DocumentModule';

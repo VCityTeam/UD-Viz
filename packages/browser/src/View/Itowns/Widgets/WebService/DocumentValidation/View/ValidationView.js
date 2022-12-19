@@ -1,9 +1,6 @@
-import { DocumentModule } from '../../../Documents/DocumentModule';
-import { DocumentSource } from '../../../Documents/Model/DocumentService';
-
-// Components
+import { DocumentModule } from '../../Documents/DocumentModule';
+import { DocumentSource } from '../../Documents/Model/DocumentService';
 import { Window } from '../../../Components/GUI/js/Window';
-
 import { ValidationService } from '../Service/ValidationService';
 import { DocumentsInValidationDocumentSource } from '../Service/DocumentsInValidationSource';
 

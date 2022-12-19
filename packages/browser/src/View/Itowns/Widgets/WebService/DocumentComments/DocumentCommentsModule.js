@@ -1,8 +1,5 @@
-import { DocumentModule } from '../../Documents/DocumentModule';
-
-// Components
-import { RequestService } from '../../../Components/Request/RequestService';
-
+import { DocumentModule } from '../Documents/DocumentModule';
+import { RequestService } from '../Component/RequestService';
 import { DocumentCommentsService } from './services/DocumentCommentsService';
 import { DocumentCommentsWindow } from './views/DocumentCommentsWindow';
 

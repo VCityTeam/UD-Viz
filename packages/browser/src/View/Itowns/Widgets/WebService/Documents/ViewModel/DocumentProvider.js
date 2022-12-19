@@ -1,6 +1,4 @@
-// Components
-import { EventSender } from '../../../Components/Events/EventSender';
-
+import { EventSender } from '@ud-viz/core/src/Components/EventSender';
 import { DocumentService } from '../Model/DocumentService';
 import { Document } from '../Model/Document';
 import { DocumentFilter } from './DocumentFilter';
