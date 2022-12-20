@@ -300,6 +300,8 @@ export class Base {
 
     if (this.css3DRenderer)
       this.css3DRenderer.setSize(this.size.x, this.size.y);
+
+    console.warn('WARNING: camera + renderer not resize');
   }
 
   /**

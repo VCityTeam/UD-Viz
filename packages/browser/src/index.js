@@ -4,13 +4,13 @@
 import * as Components from './Components/Components.js';
 export { Components };
 
+// Itowns
+import * as Itowns from './Itowns/Itowns';
+export { Itowns };
+
 // // Templates
 // import * as Templates from './Templates/Templates.js';
 // export { Templates };
-
-// // Views
-import * as View from './View/View';
-export { View };
 
 // // Game
 // import { Base } from './Game/BrowserScript';
@@ -21,7 +21,7 @@ export { View };
 // import * as udvizCore from '@ud-viz/core';
 // export { udvizCore };
 
-// // itowns
+// // itowns => should be peerDep to force user to npm i its itowns and not expose it in api (no confusion with itowns above) ?
 // import * as itowns from 'itowns';
 // import * as itownsWidgets from 'itowns/widgets';
 // export { itowns, itownsWidgets };

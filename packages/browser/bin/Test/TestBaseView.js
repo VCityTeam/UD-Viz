@@ -6,7 +6,10 @@
     const udvizBrowser = window.udvizBrowser;
     const THREE = udvizBrowser.THREE;
 
-    const baseView = new udvizBrowser.View.Base({});
+    resolve();
+    return; //WIP
+
+    // const baseView = new udvizBrowser.
     baseView.init3D();
 
     const min = new THREE.Vector2(10, 65);
