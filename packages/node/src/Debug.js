@@ -13,11 +13,11 @@ module.exports = {
         console.error(packageName + ' failed building debug bundle ', error);
       })
       .then(printExec)
+      .then(() => console.log('Test @ud-viz/core'))
       .then(() => {
         exec('npm run test')
           .catch((error) => {
             console.error(packageName + ' test failed', error);
-            console.error(error);
           })
           .then(printExec);
       });
