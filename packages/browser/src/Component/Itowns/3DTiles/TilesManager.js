@@ -8,7 +8,7 @@ import {
 import { CityObjectStyle } from './Model/CityObjectStyle.js';
 import { StyleManager } from './StyleManager.js';
 import EventSender from '@ud-viz/core/src/EventSender';
-import { focusCameraOn } from '../Component';
+import { focusCameraOn } from '../Component/Component';
 
 /**
  * Manages the tiles and the style for city objects.

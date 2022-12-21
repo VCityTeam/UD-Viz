@@ -105,7 +105,7 @@ export class AllWidget {
           heading: heading,
           tilt: tilt,
           range: range,
-          config3DTilesLayer: config['3DTilesLayers'],
+          config3DTilesLayers: config['3DTilesLayers'],
           configBaseMapLayer: config['base_map_layers'][0], // intialiaze with the first one
           configElevationLayer: config['elevation_layer'],
           configGeoJSONLayers: config['GeoJSONLayers'],

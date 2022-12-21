@@ -54,6 +54,6 @@ export {
   ShaderPass,
 };
 
-// // Proj4 => should be peerDep for lib purpose
-// import * as proj4 from 'proj4';
-// export { proj4 };
+// proj4
+import * as proj4 from 'proj4';
+export { proj4 };

@@ -1,8 +1,8 @@
 const THREE = require('three');
 import { Window } from '../../Component/GUI/js/Window';
-import { CityObjectStyle } from '../../../Component/3DTiles/Model/CityObjectStyle';
-import { CityObjectID } from '../../../Component/3DTiles/Model/CityObject';
-import { TilesManager } from '../../../Component/3DTiles/TilesManager';
+import { CityObjectStyle } from '../../../3DTiles/Model/CityObjectStyle';
+import { CityObjectID } from '../../../3DTiles/Model/CityObject';
+import { TilesManager } from '../../../3DTiles/TilesManager';
 
 export class Debug3DTilesWindow extends Window {
   /**
