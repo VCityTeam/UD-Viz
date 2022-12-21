@@ -17,7 +17,7 @@ export class Base {
   constructor(options = {}, init3D = true) {
     // Root html
     this.rootHtml = document.createElement('div');
-    this.rootHtml.id = 'root_ViewBase';
+    this.rootHtml.id = 'root_Frame3DBase';
 
     // Add to DOM
     if (options.htmlParent) {
@@ -32,14 +32,14 @@ export class Base {
 
     // Root css
     this.rootCss = document.createElement('div');
-    this.rootCss.id = 'css_BaseView';
+    this.rootCss.id = 'css_Frame3DBase';
 
     this.rootHtml.appendChild(this.rootCss);
     this.rootHtml.appendChild(this.rootWebGL);
 
     // Ui
     this.ui = document.createElement('div');
-    this.ui.classList.add('ui_BaseView');
+    this.ui.classList.add('ui_Frame3DBase');
     this.rootWebGL.appendChild(this.ui);
 
     // Listen resize event

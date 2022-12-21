@@ -2,8 +2,10 @@ import * as Widget from '../Component/Itowns/Widget/Widget';
 const WidgetView = Widget.Component.WidgetView;
 import { Planar } from '../Component/Frame3D/Planar';
 import FileUtil from '../Component/FileUtil';
+import THREEUtil from '../Component/THREEUtil';
 const itowns = require('itowns');
 const proj4 = require('proj4');
+const THREE = require('three');
 
 import './AllWidget.css';
 
@@ -47,7 +49,7 @@ export class AllWidget {
         // ref config for user
         this.config = config;
         // if a field of the config is required at runtime it should be in state of the object ?
-        console.warn('config should not be ref');
+        console.warn('config should not be ref', config);
 
         this.addLogos();
 
@@ -78,7 +80,7 @@ export class AllWidget {
         let tilt = 10;
 
         // Assign default value or config value
-        if (config && config['camera'] && config['camera']['position']) {
+        if (config['camera'] && config['camera']['position']) {
           if (config['camera']['position']['heading'])
             heading = config['camera']['position']['heading'];
 
@@ -108,6 +110,14 @@ export class AllWidget {
           configElevationLayer: config['elevation_layer'],
           configGeoJSONLayers: config['GeoJSONLayers'],
         });
+
+        THREEUtil.addLights(this.frame3DPlanar.getScene());
+        THREEUtil.initRenderer(
+          this.frame3DPlanar.getRenderer(),
+          new THREE.Color(0x6699cc)
+        );
+
+        this.frame3DPlanar.itownsView.notifyChange();
 
         resolve(config);
       });
