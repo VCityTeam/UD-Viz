@@ -8,6 +8,19 @@
   <body>
     <!-- <script src="../packages/browser/dist/release/bundle.js"></script> -->
     <script src="../packages/browser/dist/debug/bundle.js"></script>
-    <script src="../packages/browser/bin/Test/3_Frame3DBase.js"></script>
+    <script>
+      const udvizBrowser = window.udvizBrowser;
+
+      const extent = new udvizBrowser.itowns.Extent(
+        'EPSG:3946',
+        1837860,
+        1851647,
+        5169347,
+        5180575
+      );
+
+      const frame3DPlanar = new udvizBrowser.Component.Frame3D.Planar(extent);
+      frame3DPlanar.dispose();
+    </script>
   </body>
 </html>
