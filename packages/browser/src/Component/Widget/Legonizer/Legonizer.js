@@ -60,16 +60,39 @@ export class LegonizerWindow extends Window {
 
     this.coordBoxElement.appendChild(inputVector);
 
-    // Button
-    const buttonElement = document.createElement('button');
-    buttonElement.id = 'button_generate_Mockup';
-    buttonElement.textContent = 'Generate Lego Mockup';
+    // Button Selecte an area
+    const buttonSelectionAreaElement = document.createElement('button');
+    buttonSelectionAreaElement.id = 'button_selection';
+    buttonSelectionAreaElement.textContent = 'Select an area';
 
-    this.parametersElement.appendChild(buttonElement);
+    this.coordBoxElement.appendChild(buttonSelectionAreaElement);
+
+    // Button Generate Lego Mockup
+    const buttonGenerateMockupElement = document.createElement('button');
+    buttonGenerateMockupElement.id = 'button_generate_Mockup';
+    buttonGenerateMockupElement.textContent = 'Generate Lego Mockup';
+
+    buttonGenerateMockupElement.addEventListener('click', this.generateMockup);
+
+    this.parametersElement.appendChild(buttonGenerateMockupElement);
   }
 
   windowCreated() {
     this.innerContentCoordinates();
+  }
+
+  generateMockup() {
+    // Create THREE js window with heightmap mesh
+    const mockupWindow = new Window('MockupWindow', 'Mockup Window', true);
+    // mockupWindow.innerContentHtml = `<div id="lego_mockup_window">`;
+    const mockupElement = mockupWindow.header;
+    console.log(mockupElement);
+    mockupElement.style.left = 'unset';
+    mockupElement.style.right = '10px';
+    mockupElement.style.top = '10px';
+    mockupElement.style.height = 'auto';
+    mockupElement.style.width = '30%';
+    mockupElement.style.borderRadius = '15px';
   }
 
   // //// GETTERS
