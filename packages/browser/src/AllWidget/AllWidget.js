@@ -1,7 +1,7 @@
 // Component
 import { SystemUtils, THREEUtils } from '../../Component/Component';
 import { Widgets, itowns, THREE } from '../../index';
-const ModuleView = Widgets.Component.ModuleView;
+const WidgetView = Widgets.Component.WidgetView;
 import './AllWidget.css';
 import { View3D } from '../../Views/Views';
 
@@ -160,8 +160,8 @@ export class AllWidget {
    * @param moduleClass The module view class. Must implement some
    * methods (`enable`, `disable` and `addEventListener`). The
    * recommended way of implementing them is to extend the
-   * `ModuleView` class, as explained [on the
-   * wiki](https://github.com/MEPP-team/UD-Viz/wiki/Generic-demo-and-modules-with-ModuleView-&-BaseDemo).
+   * `WidgetView` class, as explained [on the
+   * wiki](https://github.com/MEPP-team/UD-Viz/wiki/Generic-demo-and-modules-with-WidgetView-&-BaseDemo).
    * @param options An object used to specify various options.
    * `options.name` allows you to specify the name that will be
    * displayed in the toggle button. By default, it makes a
@@ -219,10 +219,10 @@ export class AllWidget {
     this.moduleNames[moduleName] = moduleId;
     this.moduleActivation[moduleId] = false;
 
-    moduleClass.addEventListener(ModuleView.EVENT_ENABLED, () => {
+    moduleClass.addEventListener(WidgetView.EVENT_ENABLED, () => {
       this.moduleActivation[moduleId] = true;
     });
-    moduleClass.addEventListener(ModuleView.EVENT_DISABLED, () => {
+    moduleClass.addEventListener(WidgetView.EVENT_DISABLED, () => {
       this.moduleActivation[moduleId] = false;
     });
 
@@ -281,10 +281,10 @@ export class AllWidget {
 
     // Dynamically color the button
     moduleClass.parentElement = this.viewerDivElement.parentElement;
-    moduleClass.addEventListener(ModuleView.EVENT_ENABLED, () => {
+    moduleClass.addEventListener(WidgetView.EVENT_ENABLED, () => {
       button.className = 'choiceMenu choiceMenuSelected';
     });
-    moduleClass.addEventListener(ModuleView.EVENT_DISABLED, () => {
+    moduleClass.addEventListener(WidgetView.EVENT_DISABLED, () => {
       button.className = 'choiceMenu';
     });
     moduleClass.disable();

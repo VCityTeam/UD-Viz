@@ -20,6 +20,8 @@ export { Debug3DTilesWindow } from './3DTilesDebug/views/3DTilesDebugWindow';
 
 export { BaseMap } from './BaseMap/BaseMapWindow';
 
+export { HelpWindow } from './Help/Help';
+
 import * as WebService from './WebService/WebService';
 export { WebService };
 

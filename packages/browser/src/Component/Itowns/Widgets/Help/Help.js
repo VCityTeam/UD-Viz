@@ -1,5 +1,4 @@
-// Component
-import { ModuleView } from '../../Component/ModuleView/ModuleView';
+import { WidgetView } from '../Component/WidgetView/WidgetView';
 
 import jQuery from 'jquery';
 
@@ -10,7 +9,7 @@ import './Help.css';
  * simply include this file in the html, no need to instanciate anything in main.js
  */
 
-export class HelpWindow extends ModuleView {
+export class HelpWindow extends WidgetView {
   constructor(config = {}) {
     super();
     this.config = config;

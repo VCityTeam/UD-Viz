@@ -1,4 +1,4 @@
-import { ModuleView } from '../../../Component/ModuleView/ModuleView';
+import { WidgetView } from '../../../Component/WidgetView/WidgetView';
 import { Window } from '../../../Component/GUI/js/Window';
 import { DocumentProvider } from '../ViewModel/DocumentProvider';
 import { DocumentNavigatorWindow } from './DocumentNavigatorWindow';
@@ -10,7 +10,7 @@ import { AbstractDocumentWindow } from './AbstractDocumentWindow';
  * and search. It also accepts instances of `AbstractDocumentWindow` as
  * extension windows.
  */
-export class DocumentView extends ModuleView {
+export class DocumentView extends WidgetView {
   /**
    * Creates a document view.
    *

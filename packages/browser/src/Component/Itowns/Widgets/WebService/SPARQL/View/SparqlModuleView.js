@@ -1,13 +1,13 @@
-import { ModuleView } from '../../../Component/ModuleView/ModuleView';
+import { WidgetView } from '../../../Component/WidgetView/WidgetView';
 import { SparqlEndpointResponseProvider } from '../ViewModel/SparqlEndpointResponseProvider';
 import { CityObjectProvider } from '../../../CityObjects/ViewModel/CityObjectProvider';
 import { SparqlQueryWindow } from './SparqlQueryWindow';
 import { LayerManager } from '../../../Component/Component';
 
 /**
- * The SPARQL ModuleView class which manages the SPARQL query window.
+ * The SPARQL WidgetView class which manages the SPARQL query window.
  */
-export class SparqlModuleView extends ModuleView {
+export class SparqlModuleView extends WidgetView {
   /**
    * Creates a new SparqlModuleView.
    *

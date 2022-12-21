@@ -2,12 +2,12 @@ import * as THREE from 'three';
 import * as itowns from 'itowns';
 import proj4 from 'proj4';
 
-import { ModuleView } from '../../../Component/ModuleView/ModuleView';
+import { WidgetView } from '../../../Component/WidgetView/WidgetView';
 import { focusCameraOn } from '../../../../Component/Component';
 import { GeocodingService } from '../services/GeocodingService';
 import './GeocodingStyle.css';
 
-export class GeocodingView extends ModuleView {
+export class GeocodingView extends WidgetView {
   /**
    * Instantiates the view.
    *
