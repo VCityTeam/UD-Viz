@@ -20,25 +20,25 @@
         const requestService = new udvizBrowser.Component.RequestService();
 
         // //// ABOUT MODULE
-        const about = new udvizBrowser.Widgets.AboutWindow(
+        const about = new udvizBrowser.Widget.AboutWindow(
           config.hmtlWindow.aboutWindow
         );
         app.addModuleView('about', about);
 
         // //// HELP MODULE
-        new udvizBrowser.Widgets.Extensions.HelpWindow(
+        new udvizBrowser.Widget.Extensions.HelpWindow(
           config.hmtlWindow.helpWindow
         );
 
         // //// AUTHENTICATION MODULE
         const authenticationService =
-          new udvizBrowser.Widgets.Extensions.AuthenticationService(
+          new udvizBrowser.Widget.Extensions.AuthenticationService(
             requestService,
             app.config
           );
 
         const authenticationView =
-          new udvizBrowser.Widgets.Extensions.AuthenticationView(
+          new udvizBrowser.Widget.Extensions.AuthenticationView(
             authenticationService
           );
         app.addModuleView('authentication', authenticationView, {
@@ -46,21 +46,21 @@
         });
 
         // //// DOCUMENTS MODULE
-        const documentModule = new udvizBrowser.Widgets.DocumentModule(
+        const documentModule = new udvizBrowser.Widget.DocumentModule(
           requestService,
           app.config
         );
         app.addModuleView('documents', documentModule.view);
 
         // //// DOCUMENTS VISUALIZER EXTENSION (to orient the document)
-        const imageOrienter = new udvizBrowser.Widgets.DocumentVisualizerWindow(
+        const imageOrienter = new udvizBrowser.Widget.DocumentVisualizerWindow(
           documentModule,
           app.view3D.getItownsView(),
           app.view3D.getItownsView().controls
         );
 
         // //// CONTRIBUTE EXTENSION
-        new udvizBrowser.Widgets.Extensions.ContributeModule(
+        new udvizBrowser.Widget.Extensions.ContributeModule(
           documentModule,
           imageOrienter,
           requestService,
@@ -70,28 +70,28 @@
         );
 
         // //// VALIDATION EXTENSION
-        new udvizBrowser.Widgets.Extensions.DocumentValidationModule(
+        new udvizBrowser.Widget.Extensions.DocumentValidationModule(
           documentModule,
           requestService,
           app.config
         );
 
         // //// DOCUMENT COMMENTS EXTENSION
-        new udvizBrowser.Widgets.Extensions.DocumentCommentsModule(
+        new udvizBrowser.Widget.Extensions.DocumentCommentsModule(
           documentModule,
           requestService,
           app.config
         );
 
         // //// CITY OBJECTS MODULE
-        const cityObjectModule = new udvizBrowser.Widgets.CityObjectModule(
+        const cityObjectModule = new udvizBrowser.Widget.CityObjectModule(
           app.view3D.getLayerManager(),
           app.config
         );
         app.addModuleView('cityObjects', cityObjectModule.view);
 
         // //// LINKS MODULE
-        new udvizBrowser.Widgets.LinkModule(
+        new udvizBrowser.Widget.LinkModule(
           documentModule,
           cityObjectModule,
           requestService,

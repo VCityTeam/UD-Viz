@@ -1,5 +1,5 @@
-import * as Widgets from './Widgets/Widgets';
-export { Widgets };
+import * as Widget from './Widget/Widget';
+export { Widget };
 
 export { LayerManager } from './LayerManager/LayerManager';
 

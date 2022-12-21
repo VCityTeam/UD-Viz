@@ -8,4 +8,4 @@ Capabilities :
 - Get information about a specific building by clicking on it. Also change its style.
 - Apply color and opacity to city objects in a tile.
 
-This tool also serves as a demonstration for 3DTiles utility classes and functions. You can find their documentation [here](https://github.com/VCityTeam/UD-Viz/blob/master/src/Widgets/Component/3DTiles/Docs/3DTilesInteraction.md).
+This tool also serves as a demonstration for 3DTiles utility classes and functions. You can find their documentation [here](https://github.com/VCityTeam/UD-Viz/blob/master/src/Widget/Component/3DTiles/Docs/3DTilesInteraction.md).

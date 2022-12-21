@@ -17,18 +17,18 @@
 
       app.start('./assets/config/default_config.json').then((config) => {
         // //// ABOUT MODULE
-        const about = new udvizBrowser.Widgets.AboutWindow(
+        const about = new udvizBrowser.Widget.AboutWindow(
           config.hmtlWindow.aboutWindow
         );
         app.addModuleView('about', about);
 
         // //// HELP MODULE
-        new udvizBrowser.Widgets.Extensions.HelpWindow(
+        new udvizBrowser.Widget.Extensions.HelpWindow(
           config.hmtlWindow.helpWindow
         );
 
         // //// 3DTILES DEBUG
-        const debug3dTilesWindow = new udvizBrowser.Widgets.Debug3DTilesWindow(
+        const debug3dTilesWindow = new udvizBrowser.Widget.Debug3DTilesWindow(
           app.view3D.getLayerManager()
         );
         app.addModuleView('3dtilesDebug', debug3dTilesWindow, {

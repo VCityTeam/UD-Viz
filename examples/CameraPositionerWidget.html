@@ -20,18 +20,18 @@
         new udvizBrowser.Component.RequestService();
 
         // //// ABOUT MODULE
-        const about = new udvizBrowser.Widgets.AboutWindow(
+        const about = new udvizBrowser.Widget.AboutWindow(
           config.hmtlWindow.aboutWindow
         );
         app.addModuleView('about', about);
 
         // //// HELP MODULE
-        new udvizBrowser.Widgets.Extensions.HelpWindow(
+        new udvizBrowser.Widget.Extensions.HelpWindow(
           config.hmtlWindow.helpWindow
         );
 
         // //// CAMERA POSITIONER
-        const cameraPosition = new udvizBrowser.Widgets.CameraPositionerView(
+        const cameraPosition = new udvizBrowser.Widget.CameraPositionerView(
           app.view3D.getItownsView()
         );
         app.addModuleView('cameraPositioner', cameraPosition);

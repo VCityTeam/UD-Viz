@@ -100,9 +100,9 @@ When creating a PR (Pull Request) make sure to provide a correct description
 Definitions:
  - [Component](https://en.wikipedia.org/wiki/Component-based_software_engineering):<a name="anchor-ud-viz-component-definition"></a>
    everything thats is necessary to execute only one aspect of a desired functionality (see also [module](https://en.wikipedia.org/wiki/Modular_programming)). 
- - Extension: a component depending on a [web service](https://github.com/VCityTeam/UD-Viz/blob/master/src/Widgets/Extensions/Geocoding/services/GeocodingService.js#L2) in order to be functionnal.
- - Widget ([web widget](https://en.wikipedia.org/wiki/Web_widget)): an embedded element of a host web page but which is substantially independent of the host page (having limited or no interaction with the host). All the widget created in UD-Viz are explain [here](./src/Widgets/Widgets.md).
- - [Template](https://en.wikipedia.org/wiki/Template_method_pattern): a class build on sibling sub-directories (Game, Widgets, Views) components and  proposing an application model
+ - Extension: a component depending on a [web service](https://github.com/VCityTeam/UD-Viz/blob/master/src/Widget/Extensions/Geocoding/services/GeocodingService.js#L2) in order to be functionnal.
+ - Widget ([web widget](https://en.wikipedia.org/wiki/Web_widget)): an embedded element of a host web page but which is substantially independent of the host page (having limited or no interaction with the host). All the widget created in UD-Viz are explain [here](./src/Widget/Widget.md).
+ - [Template](https://en.wikipedia.org/wiki/Template_method_pattern): a class build on sibling sub-directories (Game, Widget, Views) components and  proposing an application model
  - View: decorated/enhanced [iTowns Views](https://www.itowns-project.org/itowns/docs/#api/View/View)
 
 
@@ -110,15 +110,15 @@ Definitions:
 UD-Viz (repo)
 ├── src                         # All the js sources of UD-Viz JS library
 |    ├── Component             # A set of components used by sub-directories at this level
-|    ├── Templates              # Classes builded with other sub-directory (Game, Widgets, Views) to propose application model
+|    ├── Templates              # Classes builded with other sub-directory (Game, Widget, Views) to propose application model
 |    ├── Views                  # Classes of 3D views encapsulating the itowns view
 |    ├── Game                   # A sub-directory offering game engine functionnality (node compatible)
 |    |               
-|    └── Widgets                # A sub-directory gathering a set web web widgets (UI)  
+|    └── Widget                # A sub-directory gathering a set web web widgets (UI)  
 |         ├── Widget_1
 |         ├── Widget_2
 |         ├── ...
-|         └── Extensions        # Widgets depending on an external web service  
+|         └── Extensions        # Widget depending on an external web service  
 ├── ...
 └── webpack.js
 ```
@@ -132,16 +132,16 @@ Notes:
    ```
    └── src         # holds all the js sources that will be build
         ├── Component 
-        |    └── Component_1         # A component shared by the Game and Widgets sub-directories
+        |    └── Component_1         # A component shared by the Game and Widget sub-directories
         |         └── *.js ...       # Component definition
         ├── Game   
         |    └── Component_2         # A component used by the Game sub-directory 
         |              └── ...       
-        └── Widgets  
+        └── Widget  
              ├── Component
              |    └── Component_3    # A component shared by at least two widgets 
              |         └── ...      
              └── Widget_1     
-                  └── Component_4    # A component only used by Widget_1 (of the Widgets sub-directory) 
+                  └── Component_4    # A component only used by Widget_1 (of the Widget sub-directory) 
                        └── ...         
    ```
