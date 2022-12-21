@@ -3,7 +3,7 @@
  * Any part of the code can listen to these events. They can either listen to
  * specific events, or to all events.
  */
-export class EventSender {
+module.exports = class EventSender {
   constructor() {
     /**
      * The listeners attached to a specific event.
@@ -99,4 +99,4 @@ export class EventSender {
       this.allEventsListeners.splice(index, 1);
     }
   }
-}
+};

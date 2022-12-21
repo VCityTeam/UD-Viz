@@ -11,6 +11,9 @@ const ExternalScriptComponentTYPE =
   require('../../src/Game/Component/ExternalScript').Component.TYPE;
 
 console.log('WARNING: this should be done with an interpolator');
+console.log(
+  'WARNING: outside of the src folder class should be access via API'
+);
 
 let controlValue = 42;
 const resultValue = 24;
