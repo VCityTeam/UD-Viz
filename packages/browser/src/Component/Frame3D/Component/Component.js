@@ -12,9 +12,9 @@ import * as itowns from 'itowns';
  * @param config
  * @param itownsView
  */
-export function setupAndAddGeoJsonLayers(config, itownsView) {
+export function setupAndAddGeoJsonLayers(configGeoJSONLayers, itownsView) {
   // Positional arguments verification
-  if (!config['GeoJSONLayers']) {
+  if (!configGeoJSONLayers) {
     console.warn('No "GeoJSONLayers" field in the configuration file');
     return;
   }
@@ -28,8 +28,8 @@ export function setupAndAddGeoJsonLayers(config, itownsView) {
    * config file).
    * @param layer
    */
-  const setupAndAddGeoJsonLayer = function (layer) {
-    if (!layer['id'] || !layer['url'] || !layer['crs']) {
+  const setupAndAddGeoJsonLayer = function (layerConfig) {
+    if (!layerConfig['id'] || !layerConfig['url'] || !layerConfig['crs']) {
       console.warn(
         'Your "GeoJsonLayer" field does not have either "url", "crs" or "id" properties. ' +
           '(in UD-Viz/examples/config/all_widget_config.json)'
@@ -37,17 +37,17 @@ export function setupAndAddGeoJsonLayers(config, itownsView) {
       return;
     }
 
-    // Declare the data source for the layer
+    // Declare the data source for the layerConfig
     const source = new itowns.FileSource({
-      url: layer.url,
-      crs: layer.crs,
+      url: layerConfig.url,
+      crs: layerConfig.crs,
       format: 'application/json',
     });
 
-    const layerStyle = new itowns.Style(layer.style);
+    const layerStyle = new itowns.Style(layerConfig.style);
 
-    const geojsonLayer = new itowns.ColorLayer(layer.id, {
-      name: layer.id,
+    const geojsonLayer = new itowns.ColorLayer(layerConfig.id, {
+      name: layerConfig.id,
       transparent: true,
       source: source,
       style: layerStyle,
@@ -55,7 +55,7 @@ export function setupAndAddGeoJsonLayers(config, itownsView) {
     itownsView.addLayer(geojsonLayer);
   };
 
-  for (const layer of config['GeoJSONLayers']) {
+  for (const layer of configGeoJSONLayers) {
     setupAndAddGeoJsonLayer(layer);
   }
 }
@@ -129,53 +129,47 @@ export function addBaseMapLayer(baseMapLayerConfig, itownsView, extent) {
  * @param {itowns.View} itownsView
  * @param {itowns.Extent} extent extent of the view
  */
-export function addElevationLayer(config, itownsView, extent) {
-  if (!config['elevation_layer']) {
+export function addElevationLayer(configElevationLayer, itownsView, extent) {
+  if (!configElevationLayer) {
     console.warn('No "ElevationLayer" field in the configuration file');
     return;
   }
 
   // Url check
-  if (!config['elevation_layer']['url']) {
+  if (!configElevationLayer['url']) {
     console.warn('Need an url in elevation_layer config');
     return;
   }
 
   // Name check
-  if (!config['elevation_layer']['name']) {
+  if (!configElevationLayer['name']) {
     console.warn('Need a name in elevation_layer config');
     return;
   }
 
   // Format check
-  if (!config['elevation_layer']['format']) {
+  if (!configElevationLayer['format']) {
     console.warn('Need a format in elevation_layer config');
     return;
   }
   const isTextureFormat =
-    config['elevation_layer']['format'] == 'image/jpeg' ||
-    config['elevation_layer']['format'] == 'image/png';
+    configElevationLayer['format'] == 'image/jpeg' ||
+    configElevationLayer['format'] == 'image/png';
 
   // ColorTextureElevationMinZ check
-  if (
-    isTextureFormat &&
-    !config['elevation_layer']['colorTextureElevationMinZ']
-  ) {
+  if (isTextureFormat && !configElevationLayer['colorTextureElevationMinZ']) {
     console.warn('Need a colorTextureElevationMinZ in elevation_layer config');
     return;
   }
 
   // ColorTextureElevationMaxZ check
-  if (
-    isTextureFormat &&
-    !config['elevation_layer']['colorTextureElevationMaxZ']
-  ) {
+  if (isTextureFormat && !configElevationLayer['colorTextureElevationMaxZ']) {
     console.warn('Need a colorTextureElevationMaxZ in elevation_layer config');
     return;
   }
 
   // Layer_name check
-  if (!config['elevation_layer']['layer_name']) {
+  if (!configElevationLayer['layer_name']) {
     console.warn('Need a layer_name in elevation_layer config');
     return;
   }
@@ -183,24 +177,24 @@ export function addElevationLayer(config, itownsView, extent) {
   // Add a WMS elevation source
   const wmsElevationSource = new itowns.WMSSource({
     extent: extent,
-    url: config['elevation_layer']['url'],
-    name: config['elevation_layer']['name'],
-    crs: config['projection'],
+    url: configElevationLayer['url'],
+    name: configElevationLayer['name'],
+    crs: extent.crs,
     heightMapWidth: 256,
-    format: config['elevation_layer']['format'],
+    format: configElevationLayer['format'],
   });
 
   const elevationLayerConfig = { source: wmsElevationSource };
   if (isTextureFormat) {
     elevationLayerConfig['useColorTextureElevation'] = true;
     elevationLayerConfig['colorTextureElevationMinZ'] =
-      config['elevation_layer']['colorTextureElevationMinZ'];
+      configElevationLayer['colorTextureElevationMinZ'];
     elevationLayerConfig['colorTextureElevationMaxZ'] =
-      config['elevation_layer']['colorTextureElevationMaxZ'];
+      configElevationLayer['colorTextureElevationMaxZ'];
   }
   // Add a WMS elevation layer
   const wmsElevationLayer = new itowns.ElevationLayer(
-    config['elevation_layer']['layer_name'],
+    configElevationLayer['layer_name'],
     elevationLayerConfig
   );
   itownsView.addLayer(wmsElevationLayer);
