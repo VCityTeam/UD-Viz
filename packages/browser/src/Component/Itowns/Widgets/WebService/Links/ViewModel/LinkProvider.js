@@ -1,5 +1,5 @@
 import { CityObject } from '../../../../Component/3DTiles/Model/CityObject';
-import { EventSender } from '@ud-viz/core/src/EventSender';
+import EventSender from '@ud-viz/core/src/EventSender';
 import { CityObjectStyle } from '../../../../Component/3DTiles/Model/CityObjectStyle';
 import { LinkService } from '../Model/LinkService';
 import { DocumentProvider } from '../../Documents/ViewModel/DocumentProvider';

@@ -7,7 +7,7 @@ import {
 } from './Model/CityObject.js';
 import { CityObjectStyle } from './Model/CityObjectStyle.js';
 import { StyleManager } from './StyleManager.js';
-import { EventSender } from '@ud-viz/core/src/EventSender';
+import EventSender from '@ud-viz/core/src/EventSender';
 import { focusCameraOn } from '../Component';
 
 /**

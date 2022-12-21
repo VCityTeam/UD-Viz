@@ -1,4 +1,4 @@
-import { EventSender } from '@ud-viz/core/src/EventSender';
+import EventSender from '@ud-viz/core/src/EventSender';
 import { CityObjectStyle } from '../../../Component/3DTiles/Model/CityObjectStyle';
 import {
   CityObjectID,

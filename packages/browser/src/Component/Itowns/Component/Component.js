@@ -224,4 +224,4 @@ export function focusCameraOn(view, controls, targetPos, options = {}) {
   });
 }
 
-export {}
+export { TilesManager } from './3DTiles/TilesManager';
