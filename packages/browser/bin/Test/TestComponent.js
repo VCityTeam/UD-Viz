@@ -5,6 +5,8 @@
      */
     const udvizBrowser = window.udvizBrowser;
 
+    // InputManager Test
+
     const inputManager = new udvizBrowser.Components.InputManager();
     console.log('create an input manager');
     inputManager.startListening(window);
@@ -16,7 +18,7 @@
     inputManager.addMouseInput(window, 'mouseclick', listener);
     inputManager.removeInputListener(listener);
 
-    // do more
+    // AssetsLoader Test
 
     resolve();
   });

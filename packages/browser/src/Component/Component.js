@@ -7,3 +7,5 @@ export * as THREEUtil from './THREEUtil';
 export * as FileUtil from './FileUtil.js';
 
 export { checkParentChild } from './HTMLUtil.js';
+
+export { AssetsLoader } from './AssetsLoader/AssetsLoader.js';
