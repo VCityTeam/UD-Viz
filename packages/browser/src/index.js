@@ -1,4 +1,4 @@
-// @ud-viz/browser API
+// @ud-viz/browser bundle API
 
 // Component
 import * as Component from './Component/Component.js';

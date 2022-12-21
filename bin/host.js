@@ -1,7 +1,7 @@
-const HttpServer = require('@ud-viz/node').HttpServer;
+const ExpressAppWrapper = require('@ud-viz/node').ExpressAppWrapper;
 
-const httpServer = new HttpServer();
-httpServer.start({
+const app = new ExpressAppWrapper();
+app.start({
   folder: './',
   port: 8000,
 });
