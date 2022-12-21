@@ -13,26 +13,21 @@
     <script type="text/javascript">
       /* eslint-disable no-new */
 
-      const app = new udvizBrowser.Templates.AllWidget();
+      const app = new udvizBrowser.AllWidget();
 
       app.start('./assets/config/default_config.json').then((config) => {
+        const Widget = udvizBrowser.Component.Itowns.Widget;
+
         // //// ABOUT MODULE
-        const about = new udvizBrowser.Widget.AboutWindow(
-          config.hmtlWindow.aboutWindow
-        );
+        const about = new Widget.AboutWindow(config.hmtlWindow.aboutWindow);
         app.addModuleView('about', about);
 
         // //// HELP MODULE
-        new udvizBrowser.Widget.Extensions.HelpWindow(
-          config.hmtlWindow.helpWindow
-        );
-
-        // //// REQUEST SERVICE
-        new udvizBrowser.Component.RequestService();
+        new Widget.HelpWindow(config.hmtlWindow.helpWindow); // => help window should be add like other
 
         // //// LAYER CHOICE MODULE
-        const layerChoice = new udvizBrowser.Widget.LayerChoice(
-          app.view3D.getLayerManager()
+        const layerChoice = new Widget.LayerChoice(
+          app.getFrame3DPlanar().getLayerManager()
         );
         app.addModuleView('layerChoice', layerChoice);
       });

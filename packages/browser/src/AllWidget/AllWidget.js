@@ -1,5 +1,10 @@
 import * as Widget from '../Component/Itowns/Widget/Widget';
 const WidgetView = Widget.Component.WidgetView;
+import { Planar } from '../Component/Frame3D/Planar';
+import FileUtil from '../Component/FileUtil';
+const itowns = require('itowns');
+const proj4 = require('proj4');
+
 import './AllWidget.css';
 
 /**
@@ -16,7 +21,17 @@ export class AllWidget {
     this.authService = null;
     this.config = null;
     this.parentElement = null;
-    this.view3D = null;
+
+    /** @type {Planar} */
+    this.frame3DPlanar = null;
+  }
+
+  /**
+   * Wrapper getter
+   * @returns {Planar}
+   */
+  getFrame3DPlanar() {
+    return this.frame3DPlanar;
   }
 
   /**
@@ -28,51 +43,75 @@ export class AllWidget {
     return new Promise((resolve) => {
       this.appendTo(document.body);
 
-      SystemUtils.File.loadJSON(configPath).then((config) => {
+      FileUtil.loadJSON(configPath).then((config) => {
         // ref config for user
         this.config = config;
-        console.warn('Config structure');
+        // if a field of the config is required at runtime it should be in state of the object ?
+        console.warn('config should not be ref');
 
         this.addLogos();
 
-        // Initialize iTowns 3D view
-        // this.initView3D();
+        // initialize frame3DPlanar from config
+        const parentDiv = document.getElementById(this.contentSectionId);
 
-        resolve(this.config);
+        // http://proj4js.org/
+        // define a projection as a string and reference it that way
+        proj4.default.defs(
+          config['crs'],
+          '+proj=lcc +lat_1=45.25 +lat_2=46.75' +
+            ' +lat_0=46 +lon_0=3 +x_0=1700000 +y_0=5200000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs'
+        );
+
+        const extent = new itowns.Extent(
+          config['crs'],
+          parseInt(config['extents']['min_x']),
+          parseInt(config['extents']['max_x']),
+          parseInt(config['extents']['min_y']),
+          parseInt(config['extents']['max_y'])
+        );
+
+        const coordinates = extent.center();
+
+        console.log('config coordinates bad');
+        let heading = -50;
+        let range = 3000;
+        let tilt = 10;
+
+        // Assign default value or config value
+        if (config && config['camera'] && config['camera']['position']) {
+          if (config['camera']['position']['heading'])
+            heading = config['camera']['position']['heading'];
+
+          if (config['camera']['position']['range'])
+            range = config['camera']['position']['range'];
+
+          if (config['camera']['position']['tilt'])
+            tilt = config['camera']['position']['tilt'];
+
+          if (config['camera']['position']['x'])
+            coordinates.x = config['camera']['position']['x'];
+
+          if (config['camera']['position']['y'])
+            coordinates.y = config['camera']['position']['y'];
+        }
+
+        this.frame3DPlanar = new Planar(extent, {
+          htmlParent: parentDiv,
+          hasItownsControls: true,
+          coordinates: coordinates,
+          maxSubdivisionLevel: config['maxSubdivisionLevel'],
+          heading: heading,
+          tilt: tilt,
+          range: range,
+          config3DTilesLayer: config['3DTilesLayers'],
+          configBaseMapLayer: config['base_map_layers'][0], // intialiaze with the first one
+          configElevationLayer: config['elevation_layer'],
+          configGeoJSONLayers: config['GeoJSONLayers'],
+        });
+
+        resolve(config);
       });
     });
-  }
-
-  initView3D() {
-    const parentDiv = document.getElementById(this.contentSectionId);
-    this.view3D = new View3D({
-      config: this.config,
-      htmlParent: parentDiv,
-      hasItownsControls: true,
-    });
-    // Define geographic extent: CRS, min/max X, min/max Y
-    // area should be one of the properties of the object extents in config file
-    const min_x = parseInt(this.config['extents']['min_x']);
-    const max_x = parseInt(this.config['extents']['max_x']);
-    const min_y = parseInt(this.config['extents']['min_y']);
-    const max_y = parseInt(this.config['extents']['max_y']);
-    this.extent = new itowns.Extent(
-      this.config['projection'],
-      min_x,
-      max_x,
-      min_y,
-      max_y
-    );
-    this.view3D.start(this.extent);
-
-    // Lights
-    THREEUtils.addLights(this.view3D.getScene());
-
-    // Set sky color to blue
-    THREEUtils.initRenderer(
-      this.view3D.getRenderer(),
-      new THREE.Color(0x6699cc)
-    );
   }
 
   /**
