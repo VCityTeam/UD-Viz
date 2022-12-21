@@ -64,31 +64,4 @@ export class RenderController extends Controller {
   // }
 }
 
-class RenderData {
-  constructor(object3D, animations = null) {
-    this.object3D = object3D;
-    this.animations = animations;
-  }
-
-  getObject3D() {
-    return this.object3D;
-  }
-
-  getAnimations() {
-    return this.animations;
-  }
-
-  clone() {
-    const cloneObject = this.object3D.clone();
-    cloneObject.traverse((child) => {
-      if (child.material) {
-        child.material = child.material.clone();
-        child.material.needsUpdate = true;
-      }
-    });
-
-    return new RenderData(cloneObject, this.animations);
-  }
-}
-
-export { RenderController as Controller, RenderData };
+export { RenderController as Controller };

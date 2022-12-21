@@ -1,14 +1,9 @@
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import * as THREE from 'three';
 import * as jquery from 'jquery';
-import GameObject from '@ud-viz/core/src/Game/GameObject/GameObject';
 import { Howl } from 'howler';
-const THREEUtils = require('../../Components/THREEUtils');
 
-// not the BrowserScript of core beacause it's import controller and base which are browser side
-import * as BrowserScript from '../../Game/BrowserScript';
-// not the Render of core beacause it's import controller and base which are browser side
-import * as Render from '../../Game/Render';
+import './AssetsLoader.css';
 
 /**
  * Default material used by native objects
@@ -17,94 +12,18 @@ const DEFAULT_MATERIAL = new THREE.MeshLambertMaterial({
   color: 0x00ff00,
 });
 
-import './AssetsManager.css';
-import { RenderData } from '../../Game/Render';
-import { AudioController } from '../../Game/Audio';
-
 /**
  * Give acess to all assets (image, video, script, worlds, ...)
  */
-export class AssetsManager {
+export class AssetsLoader {
   constructor() {
     this.conf = null;
 
     // renderData are loaded async
     this.renderData = {};
 
-    this.prefabs = {};
+    // TODO should a JSON
     this.worldsJSON = null;
-  }
-
-  /**
-   *
-   * @param {GameObject} go
-   * @param {*} isServerSide
-   * @param intializeWorldComponent
-   * @param options
-   */
-  initGameObject(go, intializeWorldComponent, options = {}) {
-    console.error('DEPRECATED');
-    if (!go.isInitialized()) {
-      for (const type in go.getComponents()) {
-        const c = go.getComponents()[type];
-        if (intializeWorldComponent != c.getModel().isWorldComponent())
-          continue;
-
-        // create game component controller
-
-        switch (type) {
-          case GameObject.Audio.Model.TYPE:
-            c.initController(new AudioController(this, c.getModel(), go));
-            break;
-          case GameObject.WorldScript.Model.TYPE:
-            c.initController(
-              new GameObject.WorldScript.Controller(
-                this,
-                c.getModel(),
-                go,
-                options.worldContext
-              )
-            );
-            break;
-          case GameObject.BrowserScript.Model.TYPE:
-            c.initController(
-              new BrowserScript.Controller(
-                this,
-                c.getModel(),
-                go,
-                options.browserContext
-              )
-            );
-            break;
-          case GameObject.Render.Model.TYPE:
-            c.initController(new Render.Controller(this, c.getModel(), go));
-            break;
-          case GameObject.Collider.Model.TYPE:
-            c.initController(
-              new GameObject.Collider.Controller(this, c.getModel(), go)
-            );
-            break;
-          default:
-            throw 'Unknown Game Component ' + type;
-        }
-      }
-
-      go.initialize();
-    }
-
-    // recursive
-    go.getChildren().forEach((child) => {
-      this.initGameObject(child, intializeWorldComponent, options);
-    });
-  }
-
-  /**
-   * Return json prefabs
-   *
-   * @returns {object} a map containing prefabs JSON loaded
-   */
-  getPrefabs() {
-    return this.prefabs;
   }
 
   /**
@@ -145,63 +64,6 @@ export class AssetsManager {
       src: confSound.path,
       loop: options.loop || false,
     });
-  }
-
-  /**
-   * Return javascript class with a given id
-   *
-   * @param {string} idScript id of the script
-   * @returns {object} constructor of the class
-   */
-  fetchWorldScript(idScript) {
-    if (!this.worldScripts[idScript])
-      console.error('no world script with id ', idScript);
-    return this.worldScripts[idScript];
-  }
-
-  /**
-   * Return javascript class with a given id
-   *
-   * @param {string} id id of the script
-   * @returns {object} constructor of the class
-   */
-  fetchBrowserScript(id) {
-    if (!this.browserScripts[id])
-      console.error('no browser script with id ', id);
-    return this.browserScripts[id];
-  }
-
-  /**
-   * Create a new GameObject base on a prefab json
-   *
-   * @param {string} idprefab id of the prefab
-   * @returns {GameObject} the gameobject based on a prefab
-   */
-  createPrefab(idprefab) {
-    if (!this.prefabs[idprefab]) console.error('no prefab with id ', idprefab);
-    return new GameObject(this.prefabs[idprefab]);
-  }
-
-  /**
-   * Return the path of video with a given id
-   *
-   * @param {string} idVideo id of the video
-   * @returns {string} path of the video
-   */
-  fetchVideoPath(idVideo) {
-    if (!this.conf.videos[idVideo]) console.error('no video with id ', idVideo);
-    return this.conf.videos[idVideo].path;
-  }
-
-  /**
-   * Return a json GameObject with a given id
-   *
-   * @param {string} idprefab id of the prefab
-   * @returns {JSON} json gameobject
-   */
-  fetchPrefabJSON(idprefab) {
-    if (!this.prefabs[idprefab]) console.error('no prefab with id ', idprefab);
-    return JSON.parse(JSON.stringify(this.prefabs[idprefab]));
   }
 
   /**
@@ -314,12 +176,8 @@ export class AssetsManager {
     this.conf = config;
 
     /** @type {LoadingView} */
-    let loadingView = null;
-
-    if (parentDiv) {
-      loadingView = new LoadingView();
-      parentDiv.appendChild(loadingView.html());
-    }
+    const loadingView = new LoadingView();
+    parentDiv.appendChild(loadingView.html());
 
     // Result
     const promises = [];
@@ -379,40 +237,11 @@ export class AssetsManager {
     }
 
     if (config.prefabs) {
-      const idLoadingPrefabs = 'Prefabs';
-      loadingView.addLoadingBar(idLoadingPrefabs);
-
-      promises.push(
-        new Promise((resolve) => {
-          let count = 0;
-          for (const idPrefab in config.prefabs) {
-            const scriptPath = config.prefabs[idPrefab].path;
-            jquery.get(
-              scriptPath,
-              function (prefabstring) {
-                _this.prefabs[idPrefab] = JSON.parse(prefabstring);
-
-                // Check if finish
-                count++;
-
-                loadingView.updateProgress(
-                  idLoadingPrefabs,
-                  (100 * count) / Object.keys(config.prefabs).length
-                );
-
-                if (count == Object.keys(config.prefabs).length) {
-                  console.log('prefabs loaded ', _this.prefabs);
-                  resolve();
-                }
-              },
-              'text'
-            );
-          }
-        })
-      );
+      console.error('DEPRECATED PREFABS SHOULD IN SRC');
     }
 
     if (config.worlds) {
+      console.log('WARNING: Refacto this for JSON (and not worldsJSON');
       const idLoadingWorlds = 'Worlds';
       loadingView.addLoadingBar(idLoadingWorlds);
 
@@ -531,5 +360,32 @@ class LoadingView {
     this.loadingBars[id] = progress;
 
     this.rootHtml.appendChild(parent);
+  }
+}
+
+class RenderData {
+  constructor(object3D, animations = null) {
+    this.object3D = object3D;
+    this.animations = animations;
+  }
+
+  getObject3D() {
+    return this.object3D;
+  }
+
+  getAnimations() {
+    return this.animations;
+  }
+
+  clone() {
+    const cloneObject = this.object3D.clone();
+    cloneObject.traverse((child) => {
+      if (child.material) {
+        child.material = child.material.clone();
+        child.material.needsUpdate = true;
+      }
+    });
+
+    return new RenderData(cloneObject, this.animations);
   }
 }
