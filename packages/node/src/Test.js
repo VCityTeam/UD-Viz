@@ -86,7 +86,7 @@ const browserScripts = function (testFolderPath, bundlePath) {
                         'utf8'
                       )
                     )
-                  );
+                  ); // without the eval here console.log are not catch above page.on("console")
 
                   console.log(currentFile.name, ' succeed');
                   // close

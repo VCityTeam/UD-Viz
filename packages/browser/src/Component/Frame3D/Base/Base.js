@@ -121,27 +121,20 @@ export class Base {
     this.catchEventsCSS3D(catchEventsCSS3D);
 
     if (init3D) {
-      this.init3D();
+      THREE.Object3D.DefaultUp.set(0, 0, 1);
+
+      this.scene = new THREE.Scene();
+      const canvas = document.createElement('canvas');
+      this.rootWebGL.appendChild(canvas);
+      this.renderer = new THREE.WebGLRenderer({
+        canvas: canvas,
+        antialias: true,
+        logarithmicDepthBuffer: true,
+        alpha: true,
+      });
+      this.camera = new THREE.PerspectiveCamera(60, 1, 1, 1000); // Default params
+      this.scene.add(this.camera);
     }
-  }
-
-  /**
-   * Initialize Scene + Camera + Renderer with THREE
-   */
-  init3D() {
-    THREE.Object3D.DefaultUp.set(0, 0, 1);
-
-    this.scene = new THREE.Scene();
-    const canvas = document.createElement('canvas');
-    this.rootWebGL.appendChild(canvas);
-    this.renderer = new THREE.WebGLRenderer({
-      canvas: canvas,
-      antialias: true,
-      logarithmicDepthBuffer: true,
-      alpha: true,
-    });
-    this.camera = new THREE.PerspectiveCamera(60, 1, 1, 1000); // Default params
-    this.scene.add(this.camera);
   }
 
   /**
