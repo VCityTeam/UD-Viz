@@ -1,7 +1,7 @@
 {
   "name": "@ud-viz/browser",
   "version": "3.0.0",
-  "description": "A browser framework extended itowns",
+  "description": "Templates application based on itowns/THREE.js framework",
   "main": "src",
   "scripts": {
     "build": "cross-env NODE_ENV=production webpack --config=./webpackConfig/webpack.config.js",
