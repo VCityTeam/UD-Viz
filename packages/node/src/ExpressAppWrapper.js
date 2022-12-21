@@ -1,12 +1,12 @@
 const express = require('express');
 
-const HttpServer = class {
+const ExpressAppWrapper = class {
   constructor() {
-    this.server = null;
+    this.httpServer = null;
   }
 
   stop() {
-    this.server.close();
+    this.httpServer.close();
     console.log('Server stop');
   }
 
@@ -16,8 +16,15 @@ const HttpServer = class {
       // Serve
       app.use(express.static(config.folder)); // What folder is served
 
-      // http server
-      this.server = app.listen(config.port, function (err) {
+      // when a client connect to config.folder
+      // response of app is 200 OK https://developer.mozilla.org/fr/docs/Web/HTTP/Status/200
+      // then response is send to client
+      app.get('', (req, res) => {
+        res.status(200).send();
+      });
+
+      // listen
+      this.httpServer = app.listen(config.port, function (err) {
         if (err) {
           console.error('Server does not start');
           reject();
@@ -35,4 +42,4 @@ const HttpServer = class {
   }
 };
 
-module.exports = HttpServer;
+module.exports = ExpressAppWrapper;

@@ -6,8 +6,7 @@
     const udvizBrowser = window.udvizBrowser;
     const THREE = udvizBrowser.THREE;
 
-    const frame3DBase = new udvizBrowser.Component.Frame3D.Base({});
-    frame3DBase.init3D();
+    const frame3DBase = new udvizBrowser.Component.Frame3D.Base();
     console.log('frame3DBase initialized');
 
     const min = new THREE.Vector2(10, 65);

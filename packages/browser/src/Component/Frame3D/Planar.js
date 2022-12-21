@@ -27,7 +27,7 @@ const $3DTemporalTileset = Widgets.$3DTemporalTileset;
  * @param {itowns.View} itownsView - the itowns view
  * @returns {itowns.C3DTilesLayer} A 3D Tiles Layer
  */
-export function setup3DTilesLayer(layer, layerManager, itownsView) {
+function setup3DTilesLayer(layer, layerManager, itownsView) {
   if (!layer['id'] || !layer['url']) {
     throw (
       'Your layer does not have url id properties or both. ' +
@@ -108,7 +108,7 @@ export function setup3DTilesLayer(layer, layerManager, itownsView) {
  * @param {itowns.View} itownsView - the itowns view
  * @returns a map of each 3d tiles layer
  */
-export function add3DTilesLayersFromConfig(config, layerManager, itownsView) {
+function add3DTilesLayersFromConfig(config, layerManager, itownsView) {
   // Positional arguments verification
   if (!config['3DTilesLayers']) {
     return;
@@ -123,23 +123,37 @@ export function add3DTilesLayersFromConfig(config, layerManager, itownsView) {
 }
 
 export class Planar extends Base {
-  constructor(options) {
-    super(options);
+  /**
+   *
+   * @param {itowns.Extent} extent
+   * @param {*} options
+   */
+  constructor(extent, options = {}) {
+    super(options, false); // do not init3D since itownsView will do it
+
+    console.log(extent);
+
     // Projection
-    this.projection = this.config['projection'] || 'EPSG:3946';
+    this.projection = options.projection || 'EPSG:3946';
     proj4.default.defs(
       this.projection,
       '+proj=lcc +lat_1=45.25 +lat_2=46.75' +
         ' +lat_0=46 +lon_0=3 +x_0=1700000 +y_0=5200000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs'
     );
 
-    // Itowns view
-    this.itownsView = null;
-    this.extent = null; // Area handle by itowns
-    this.hasItownsControls = params.hasItownsControls || false;
-    this.itownsRequesterBeforeRender = function () {
-      computeNearFarCamera(_this.getCamera(), _this.getExtent(), 400);
-    };
+    const hasItownsControls = options.hasItownsControls || false;
+
+    /** @type {itowns.PlanarView} */
+    this.itownsView = new itowns.PlanarView(this.rootWebGL, extent, {
+      disableSkirt: false,
+      // placement: placement,
+      // maxSubdivisionLevel: maxSubdivisionLevel,
+      noControls: !hasItownsControls,
+    });
+
+    // this.itownsRequesterBeforeRender = function () {
+    //   computeNearFarCamera(_this.getCamera(), _this.getExtent(), 400);
+    // };
   }
 
   /**
@@ -221,16 +235,8 @@ export class Planar extends Base {
     return this.itownsView;
   }
 
-  /**
-   *
-   * @returns {itowns.Extent} return the extent of the itowns view
-   */
-  getExtent() {
-    return this.extent;
-  }
-
   onResize() {
-    super.onResize();
+    super.onResize(false); // dont resize three variables since itownsResize is doing it
     this.itownsViewResize(this.size.x, this.size.y);
   }
 

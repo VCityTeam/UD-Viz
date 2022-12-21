@@ -1,5 +1,5 @@
 const puppeteer = require('puppeteer');
-const HttpServer = require('./Templates/HttpServer');
+const ExpressAppWrapper = require('./ExpressAppWrapper');
 const fs = require('fs');
 const spawn = require('child_process').spawn;
 
@@ -13,8 +13,8 @@ const browserScripts = function (testFolderPath, bundlePath) {
   return new Promise((resolve, reject) => {
     // start a server
     const serverPort = 8000;
-    const httpServer = new HttpServer();
-    httpServer
+    const expressAppWrapper = new ExpressAppWrapper();
+    expressAppWrapper
       .start({ folder: './', port: serverPort })
       .then(async () => {
         fs.readdir(
@@ -50,20 +50,27 @@ const browserScripts = function (testFolderPath, bundlePath) {
               const process = async () => {
                 const currentFile = files[index];
                 if (currentFile.isFile()) {
-                  // console.log(currentFile.name + ' start test');
+                  console.log(currentFile.name + ' start test');
 
                   // open a new page
                   const page = await browser.newPage();
 
                   // console log of the page are print in console.log of this process
-                  page.on('console', async (msg) => {
-                    const msgArgs = msg.args();
-                    for (let i = 0; i < msgArgs.length; ++i) {
+                  page
+                    .on('console', (message) =>
                       console.log(
-                        currentFile.name + ': ' + (await msgArgs[i].jsonValue())
-                      );
-                    }
-                  });
+                        `${message.type().toUpperCase()} ${message.text()}`
+                      )
+                    )
+                    .on('pageerror', ({ message }) => console.log(message))
+                    .on('response', (response) =>
+                      console.log(`${response.status()} ${response.url()}`)
+                    )
+                    .on('requestfailed', (request) =>
+                      console.log(
+                        `${request.failure().errorText} ${request.url()}`
+                      )
+                    );
 
                   // page connect to server
                   await page.goto('http://localhost:' + serverPort);
@@ -100,7 +107,7 @@ const browserScripts = function (testFolderPath, bundlePath) {
               // console.log('browser closed');
             }
 
-            httpServer.stop();
+            expressAppWrapper.stop();
             resolve();
           }
         );

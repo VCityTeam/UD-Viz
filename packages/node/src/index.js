@@ -1,5 +1,5 @@
 module.exports = {
-  HttpServer: require('./Templates/HttpServer'),
+  ExpressAppWrapper: require('./ExpressAppWrapper'),
   Test: require('./Test'),
   Debug: require('./Debug'),
 };
