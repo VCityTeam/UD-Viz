@@ -1,5 +1,4 @@
-// Component
-import { CityObject } from '../../../Component/3DTiles/Model/CityObject';
+import { CityObject } from '../../../3DTiles/Model/CityObject';
 
 import { CityObjectFilter } from './CityObjectFilter';
 

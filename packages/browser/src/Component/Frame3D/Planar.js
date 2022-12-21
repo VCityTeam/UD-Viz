@@ -5,7 +5,7 @@ import {
 } from './Component/Component';
 import { computeNearFarCamera } from '../THREEUtil';
 import { Base } from './Base/Base';
-import { LayerManager } from '../Itowns/LayerManager/LayerManager';
+import { LayerManager, TilesManager } from '../Itowns/Itowns';
 const itowns = require('itowns'); // import that way jsdoc resolve type sometime ... lol
 
 /**
@@ -107,14 +107,18 @@ function setup3DTilesLayer(layer, layerManager, itownsView) {
  * @param {itowns.View} itownsView - the itowns view
  * @returns a map of each 3d tiles layer
  */
-function add3DTilesLayersFromConfig(config, layerManager, itownsView) {
+function add3DTilesLayersFromConfig(
+  config3DTilesLayers,
+  layerManager,
+  itownsView
+) {
   // Positional arguments verification
-  if (!config['3DTilesLayers']) {
+  if (!config3DTilesLayers) {
+    console.warn('no 3DTilesLayers config');
     return;
   }
-
   const layers = {};
-  for (const layer of config['3DTilesLayers']) {
+  for (const layer of config3DTilesLayers) {
     layers[layer.id] = setup3DTilesLayer(layer, layerManager, itownsView);
     itowns.View.prototype.addLayer.call(itownsView, layers[layer.id]);
   }
@@ -134,7 +138,7 @@ export class Planar extends Base {
    * @param {number} options.maxSubdivisionLevel
    * @param {object} options.configBaseMapLayer - create a type def to mutualize between here and addBaseMapLayer method
    * @param {object} options.configElevationLayer - create a type def to mutualize between here and addElevationLayer method
-   * @param {object} options.config3DTilesLayer - create a type def to mutualize between here and addElevationLayer method
+   * @param {object} options.config3DTilesLayers - create a type def to mutualize between here and addElevationLayer method
    * @param {object} options.configGeoJSONLayers - create a type def to mutualize between here and addElevationLayer method
    */
   constructor(extent, options = {}) {
@@ -178,9 +182,9 @@ export class Planar extends Base {
     if (options.configElevationLayer) {
       addElevationLayer(options.configElevationLayer, this.itownsView, extent);
     }
-    if (options.config3DTilesLayer) {
+    if (options.config3DTilesLayers) {
       add3DTilesLayersFromConfig(
-        options.config3DTilesLayer,
+        options.config3DTilesLayers,
         this.layerManager,
         this.itownsView
       );

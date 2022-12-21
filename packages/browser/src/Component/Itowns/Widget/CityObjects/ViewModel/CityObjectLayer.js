@@ -1,4 +1,4 @@
-import { CityObjectStyle } from '../../../Component/3DTiles/Model/CityObjectStyle';
+import { CityObjectStyle } from '../../../3DTiles/Model/CityObjectStyle';
 import { CityObjectFilter } from './CityObjectFilter';
 
 /**
