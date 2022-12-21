@@ -2,7 +2,7 @@
 
 // Components
 import { Window } from '../Components/GUI/js/Window';
-// Import jQuery from 'jquery';
+import * as THREE from 'three';
 import './../About/About.css';
 
 /**
@@ -26,40 +26,68 @@ export class LegonizerWindow extends Window {
     </div>`;
   }
 
-  // ///// MODULE VIEW MANAGEMENT
-  // enableView() {
-  //   const widgetlayout = document.getElementById('_window_widget_content');
-  //   widgetlayout.style.setProperty('display', 'block');
-  //   widgetlayout.innerHTML = '';
-  //   // Create HMTL
-  //   const promises = [];
-  //   if (this.config.htmlPaths && this.config.htmlPaths.length) {
-  //     this.config.htmlPaths.forEach(function (path) {
-  //       promises.push(
-  //         new Promise((resolve, reject) => {
-  //           jQuery.ajax({
-  //             type: 'GET',
-  //             url: path,
-  //             datatype: 'html',
-  //             success: (data) => {
-  //               widgetlayout.innerHTML += data;
-  //               resolve();
-  //             },
-  //             error: (e) => {
-  //               console.error(e);
-  //               reject();
-  //             },
-  //           });
-  //         })
-  //       );
-  //     });
-  //   }
-  // }
+  innerContentCoordinates() {
+    const inputVector = document.createElement('div');
+    inputVector.id = 'Coordinates' + '_inputVector';
+    inputVector.style.display = 'inline-flex';
 
-  // disableView() {
-  //   document
-  //     .getElementById('_window_widget_content')
-  //     .style.setProperty('display', 'none');
-  //   document.getElementById('_window_widget_content').innerHTML = '';
-  // }
+    const coordinatesString = ['x', 'y', 'z'];
+
+    for (let i = 0; i < 3; i++) {
+      // //coord Elements
+      const coordElement = document.createElement('div');
+      coordElement.id = coordinatesString[i] + '_grid';
+      coordElement.style.display = 'grid';
+      coordElement.style.width = '30%';
+      coordElement.style.height = 'auto';
+
+      // Label
+      const labelElement = document.createElement('h3');
+      labelElement.textContent = coordinatesString[i];
+
+      // Input
+      const inputElement = document.createElement('input');
+      inputElement.id = 'input' + coordinatesString[i];
+      inputElement.type = 'number';
+      inputElement.style.width = 'inherit';
+      inputElement.setAttribute('value', '0');
+
+      coordElement.appendChild(labelElement);
+      coordElement.appendChild(inputElement);
+
+      inputVector.appendChild(coordElement);
+    }
+
+    this.coordBoxElement.appendChild(inputVector);
+
+    // Button
+    const buttonElement = document.createElement('button');
+    buttonElement.id = 'button_generate_Mockup';
+    buttonElement.textContent = 'Generate Lego Mockup';
+
+    this.parametersElement.appendChild(buttonElement);
+  }
+
+  windowCreated() {
+    this.innerContentCoordinates();
+  }
+
+  // //// GETTERS
+  // /ID
+
+  get coordBoxSectionId() {
+    return `box_section_coordinates`;
+  }
+
+  get paramLegonizerId() {
+    return `div_parameters`;
+  }
+
+  get coordBoxElement() {
+    return document.getElementById(this.coordBoxSectionId);
+  }
+
+  get parametersElement() {
+    return document.getElementById(this.paramLegonizerId);
+  }
 }
