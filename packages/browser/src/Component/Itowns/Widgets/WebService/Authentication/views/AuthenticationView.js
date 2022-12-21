@@ -1,8 +1,8 @@
-import { ModuleView } from '../../../Component/Component';
+import { WidgetView } from '../../../Component/Component';
 
 import './AuthenticationView.css';
 
-export class AuthenticationView extends ModuleView {
+export class AuthenticationView extends WidgetView {
   constructor(authenticationService) {
     super();
     this.authenticationService = authenticationService;

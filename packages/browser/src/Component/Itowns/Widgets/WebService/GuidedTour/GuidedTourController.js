@@ -1,4 +1,4 @@
-import { ModuleView } from '../../Component/ModuleView/ModuleView';
+import { WidgetView } from '../../Component/WidgetView/WidgetView';
 import { RequestService } from '../Component/RequestService';
 import { GuidedTour } from './GuidedTour.js';
 import { DocumentModule } from '../Documents/DocumentModule';
@@ -13,7 +13,7 @@ import './GuidedTour.css';
  * functionalities related to the guided tour (start, exit, next, previous...)
  * GuidedTours are made of steps with properties : index, document, text1 and text2.
  */
-export class GuidedTourController extends ModuleView {
+export class GuidedTourController extends WidgetView {
   /**
    * Constructor for GuidedTourController
    * The controller reads data from a database to build one or more guided tours

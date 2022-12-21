@@ -1,5 +1,5 @@
 // Component
-import { ModuleView } from '../../Component/ModuleView/ModuleView.js';
+import { WidgetView } from '../../Component/WidgetView/WidgetView.js';
 
 import { TemporalGraphWindow } from './TemporalGraphWindow.js';
 import { TemporalSliderWindow } from './TemporalSliderWindow.js';
@@ -9,7 +9,7 @@ import { EnumTemporalWindow } from './EnumWindows.js';
  * The view entrypoint. Initialize the correct window depending on the
  * configuration and hook up the callbacks from the view model to this window.
  */
-export class TemporalView extends ModuleView {
+export class TemporalView extends WidgetView {
   constructor(provider, temporalOptions) {
     super();
 

@@ -1,4 +1,4 @@
-import { ModuleView } from '../Component/ModuleView/ModuleView';
+import { WidgetView } from '../Component/WidgetView/WidgetView';
 import jQuery from 'jquery';
 import './About.css';
 
@@ -6,7 +6,7 @@ import './About.css';
  * Adds an "About" window that can be open/closed with a button
  * simply include this file in the html, no need to instanciate anything in main.js
  */
-export class AboutWindow extends ModuleView {
+export class AboutWindow extends WidgetView {
   constructor(config = {}) {
     super();
     this.config = config;

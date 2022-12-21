@@ -1,5 +1,5 @@
 import { dragElement } from './Draggable.js';
-import { ModuleView } from '../../ModuleView/ModuleView.js';
+import { WidgetView } from '../../WidgetView/WidgetView.js';
 import { windowManager } from './WindowManager.js';
 import { WindowExtension } from './WindowExtension.js';
 
@@ -9,9 +9,9 @@ import { WindowExtension } from './WindowExtension.js';
 /**
  * A simple GUI class to represent a window.
  *
- * @augments ModuleView
+ * @augments WidgetView
  */
-export class Window extends ModuleView {
+export class Window extends WidgetView {
   /**
    * Creates a window.
    *

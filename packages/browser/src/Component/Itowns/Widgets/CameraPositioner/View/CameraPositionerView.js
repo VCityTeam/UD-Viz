@@ -1,9 +1,9 @@
 // Component
-import { ModuleView } from '../../Component/ModuleView/ModuleView';
+import { WidgetView } from '../../Component/WidgetView/WidgetView';
 import { PositionerWindow } from '../../Component/GUI/js/PositionerWindow';
 import { Window } from '../../Component/GUI/js/Window';
 
-export class CameraPositionerView extends ModuleView {
+export class CameraPositionerView extends WidgetView {
   constructor(itownsView) {
     super();
 

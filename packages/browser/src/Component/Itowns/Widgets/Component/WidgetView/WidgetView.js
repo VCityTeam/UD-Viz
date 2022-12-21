@@ -4,9 +4,9 @@ import { EventSender } from '@ud-viz/core/src/EventSender';
  * Represents a basic view for a module. Extending this class is not mandatory to write
  * a module, but is strongly advised as it simplifies the integration is demos.
  */
-export class ModuleView extends EventSender {
+export class WidgetView extends EventSender {
   /**
-   * Creates a new ModuleView.
+   * Creates a new WidgetView.
    */
   constructor() {
     super();
@@ -19,8 +19,8 @@ export class ModuleView extends EventSender {
      */
     this.parentElement = null;
 
-    this.registerEvent(ModuleView.EVENT_ENABLED);
-    this.registerEvent(ModuleView.EVENT_DISABLED);
+    this.registerEvent(WidgetView.EVENT_ENABLED);
+    this.registerEvent(WidgetView.EVENT_DISABLED);
   }
 
   // /////// Overideable methods
@@ -55,7 +55,7 @@ export class ModuleView extends EventSender {
    */
   async enable() {
     await this.enableView();
-    this.sendEvent(ModuleView.EVENT_ENABLED);
+    this.sendEvent(WidgetView.EVENT_ENABLED);
   }
 
   /**
@@ -67,7 +67,7 @@ export class ModuleView extends EventSender {
    */
   async disable() {
     await this.disableView();
-    this.sendEvent(ModuleView.EVENT_DISABLED);
+    this.sendEvent(WidgetView.EVENT_DISABLED);
   }
 
   // /////// Events

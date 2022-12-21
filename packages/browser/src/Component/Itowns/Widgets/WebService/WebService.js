@@ -1,3 +1,7 @@
+// API @ud-viz/browser/src/Component/Itowns/Widget/WebService
+
+// Collection of Itowns Widgets using an external web service (a server which is not the @ud-viz/browser server)
+
 export { AuthenticationService } from './Authentication/services/AuthenticationService';
 
 export { AuthenticationView } from './Authentication/views/AuthenticationView';
@@ -15,8 +19,6 @@ export { DocumentValidationModule } from './DocumentValidation/DocumentValidatio
 export { DocumentVisualizerWindow } from './DocumentVisualizer/View/DocumentVisualizerWindow';
 
 export { SparqlModule } from './SPARQL/SparqlModule';
-
-export { HelpWindow } from './Help/Help';
 
 export { GuidedTourController } from './GuidedTour/GuidedTourController';
 
