@@ -1,2 +1,6 @@
-// export { Planar } from './Planar';
-export { Base, Component } from './Base/Base';
+export { Planar } from './Planar';
+
+export { Base } from './Base/Base';
+
+import * as Component from './Component/Component';
+export { Component };

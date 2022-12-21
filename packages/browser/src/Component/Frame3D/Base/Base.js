@@ -2,9 +2,6 @@ import * as THREE from 'three';
 import { CSS3DRenderer } from 'three/examples/jsm/renderers/CSS3DRenderer';
 import { checkParentChild } from '../../HTMLUtil';
 
-import * as Component from './Component/Component';
-export { Component };
-
 import './Base.css';
 
 export class Base {
@@ -20,6 +17,7 @@ export class Base {
     // Conf
     if (!config) throw new Error('no config');
     this.config = config;
+    console.log('WARNING: for now config is not used');
 
     // Root html
     this.rootHtml = document.createElement('div');
