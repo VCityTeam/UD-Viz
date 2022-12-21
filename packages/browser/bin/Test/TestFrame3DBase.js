@@ -6,21 +6,18 @@
     const udvizBrowser = window.udvizBrowser;
     const THREE = udvizBrowser.THREE;
 
-    resolve();
-    return; //WIP
-
-    // const baseView = new udvizBrowser.
-    baseView.init3D();
+    const frame3DBase = new udvizBrowser.Component.Frame3D.Base({});
+    frame3DBase.init3D();
 
     const min = new THREE.Vector2(10, 65);
     const max = new THREE.Vector2(500, 896);
-    baseView.setDisplaySize(min, max);
+    frame3DBase.setDisplaySize(min, max);
 
-    if (baseView.getSize().x != max.x - min.x) {
+    if (frame3DBase.getSize().x != max.x - min.x) {
       console.warn('WARNING: width not well computed');
     }
 
-    if (baseView.getSize().y != max.y - min.y) {
+    if (frame3DBase.getSize().y != max.y - min.y) {
       console.warn('WARNING: height not well computed');
     }
 
@@ -32,9 +29,9 @@
       10
     );
 
-    baseView.appendBillboard(billboard);
-    baseView.removeBillboard(billboard);
-    baseView.dispose();
+    frame3DBase.appendBillboard(billboard);
+    frame3DBase.removeBillboard(billboard);
+    frame3DBase.dispose();
 
     resolve();
   });

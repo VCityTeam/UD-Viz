@@ -2,6 +2,9 @@ import * as THREE from 'three';
 import { CSS3DRenderer } from 'three/examples/jsm/renderers/CSS3DRenderer';
 import { checkParentChild } from '../../Component/HTMLUtils';
 
+import * as Component from './Component/Component';
+export { Component };
+
 import './Base.css';
 
 export class Base {
@@ -329,6 +332,3 @@ export class Base {
     return this.rootWebGL;
   }
 }
-
-import * as Component from './Component/Component';
-export { Component };

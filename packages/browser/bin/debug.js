@@ -1,2 +1,2 @@
 const Debug = require('@ud-viz/node').Debug;
-Debug.routine(require('../package.json').name, false);
+Debug.routine(require('../package.json').name, true);
