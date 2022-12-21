@@ -17,18 +17,18 @@
 
       app.start('./assets/config/default_config.json').then((config) => {
         // //// ABOUT MODULE
-        const about = new udvizBrowser.Widgets.AboutWindow(
+        const about = new udvizBrowser.Widget.AboutWindow(
           config.hmtlWindow.aboutWindow
         );
         app.addModuleView('about', about);
 
         // //// HELP MODULE
-        new udvizBrowser.Widgets.Extensions.HelpWindow(
+        new udvizBrowser.Widget.Extensions.HelpWindow(
           config.hmtlWindow.helpWindow
         );
 
         // //// TEMPORAL MODULE
-        const temporalModule = new udvizBrowser.Widgets.TemporalModule(
+        const temporalModule = new udvizBrowser.Widget.TemporalModule(
           app.view3D.getLayerManager().tilesManagers[0],
           app.config.temporalModule
         );

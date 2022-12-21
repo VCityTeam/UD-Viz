@@ -28,7 +28,7 @@ export class Base {
 
     // Root webgl
     this.rootWebGL = document.createElement('div');
-    this.rootWebGL.id = 'viewerDiv'; // => So Widgets can access rootWebGL with id
+    this.rootWebGL.id = 'viewerDiv'; // => So Widget can access rootWebGL with id
 
     // Root css
     this.rootCss = document.createElement('div');

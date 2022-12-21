@@ -4,6 +4,8 @@
 import * as Component from './Component/Component.js';
 export { Component };
 
+export { AllWidget } from './AllWidget/AllWidget';
+
 // Itowns
 // import * as Itowns from './Itowns/Itowns';
 // export { Itowns };

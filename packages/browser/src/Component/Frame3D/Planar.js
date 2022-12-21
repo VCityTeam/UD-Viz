@@ -13,10 +13,10 @@ const itowns = require('itowns'); // import that way jsdoc resolve type sometime
  * These extensions should belong elsewhere since it should be possible
  * to manipulate Temporal 3DTiles without having a dependence to its widget...
  */
-import * as Widgets from '../Itowns/Widgets/Widgets';
-const $3DTemporalBatchTable = Widgets.$3DTemporalBatchTable;
-const $3DTemporalBoundingVolume = Widgets.$3DTemporalBoundingVolume;
-const $3DTemporalTileset = Widgets.$3DTemporalTileset;
+import * as Widget from '../Itowns/Widget/Widget';
+const $3DTemporalBatchTable = Widget.$3DTemporalBatchTable;
+const $3DTemporalBoundingVolume = Widget.$3DTemporalBoundingVolume;
+const $3DTemporalTileset = Widget.$3DTemporalTileset;
 
 /**
  * It creates a 3D Tiles layer,
@@ -181,6 +181,7 @@ export class Planar extends Base {
     /** @type {LayerManager} */
     this.layerManager = new LayerManager(this.itownsView);
 
+    // Add optional layer
     if (options.configBaseMapLayer) {
       addBaseMapLayer(options.configBaseMap, this.itownsView, extent);
     }

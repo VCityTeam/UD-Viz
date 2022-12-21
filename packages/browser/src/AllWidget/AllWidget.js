@@ -1,13 +1,10 @@
-// Component
-import { SystemUtils, THREEUtils } from '../../Component/Component';
-import { Widgets, itowns, THREE } from '../../index';
-const WidgetView = Widgets.Component.WidgetView;
+import * as Widget from '../Component/Itowns/Widget/Widget';
+const WidgetView = Widget.Component.WidgetView;
 import './AllWidget.css';
-import { View3D } from '../../Views/Views';
 
 /**
  * Represents the base HTML content of a demo for UD-Viz and provides methods to
- * dynamically add module views.
+ * dynamically add widgets.
  */
 export class AllWidget {
   constructor() {
@@ -16,27 +13,32 @@ export class AllWidget {
     this.moduleActivation = {};
     this.moduleBindings = {};
     this.requireAuthModules = [];
-    this.authService;
-    this.config = {};
-    this.parentElement;
-    this.view3D;
-    this.extent; // Itowns extent (city limits)
+    this.authService = null;
+    this.config = null;
+    this.parentElement = null;
+    this.view3D = null;
   }
 
-  start(path) {
+  /**
+   *
+   * @param {object} configPath - config should be describe here
+   * @returns
+   */
+  start(configPath) {
     return new Promise((resolve) => {
-      const _this = this;
       this.appendTo(document.body);
 
-      SystemUtils.File.loadJSON(path).then((config) => {
-        _this.config = config;
-        // Use the stable server
-        _this.addLogos();
+      SystemUtils.File.loadJSON(configPath).then((config) => {
+        // ref config for user
+        this.config = config;
+        console.warn('Config structure');
+
+        this.addLogos();
 
         // Initialize iTowns 3D view
-        _this.initView3D();
+        // this.initView3D();
 
-        resolve(_this.config);
+        resolve(this.config);
       });
     });
   }
@@ -390,14 +392,6 @@ export class AllWidget {
   // Get module button element
   getModuleButton(moduleId) {
     return document.getElementById(this.getModuleButtonId(moduleId));
-  }
-
-  /*
-   * Updates the 3D view by notifying iTowns that it changed (e.g. because a layer has been added).
-   */
-  update3DView() {
-    // Request itowns view redraw
-    this.view3D.getItownsView().notifyChange();
   }
 
   // //////////////////////////////////////////////////////

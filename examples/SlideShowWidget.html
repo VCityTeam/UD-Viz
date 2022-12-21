@@ -18,7 +18,7 @@
       const app = new udvizBrowser.Templates.AllWidget();
 
       app.start('./assets/config/default_config.json').then((config) => {
-        const slideShow = new udvizBrowser.Widgets.SlideShow(
+        const slideShow = new udvizBrowser.Widget.SlideShow(
           app.view3D.getItownsView(),
           config,
           app.extent,
@@ -27,7 +27,7 @@
         app.addModuleView('slideShow', slideShow);
 
         // //// ABOUT MODULE
-        const about = new udvizBrowser.Widgets.AboutWindow(
+        const about = new udvizBrowser.Widget.AboutWindow(
           config.hmtlWindow.aboutWindow
         );
         app.addModuleView('about', about);

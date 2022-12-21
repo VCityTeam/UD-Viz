@@ -1,4 +1,4 @@
-# Widgets descriptions
+# Widget descriptions
 ## Developers
  A web widget is a web page or web application that is embedded as an element of a host web page but which is substantially independent of the host page. In this contexte each widget should be independant and have his own html, css and js file to be integrate in a host page.  
 
@@ -6,7 +6,7 @@
  UD-Viz (repo)
  ├── src   
  |    |               
- |    └── Widgets                # A sub-directory gathering a set web web widgets (UI)  
+ |    └── Widget                # A sub-directory gathering a set web web widgets (UI)  
  |         ├── Widget_1
  |         |    ├── css
  |         |    ├── doc
@@ -22,26 +22,26 @@ Each module adds new functionnalities to the application. You can find the code 
 
 ### Document
 
-[Go to the module](https://github.com/VCityTeam/UD-Viz/tree/master/src/Widgets/Documents)
+[Go to the module](https://github.com/VCityTeam/UD-Viz/tree/master/src/Widget/Documents)
 
 - Display of documents in a 3D representation of the city, in superposition
 - Filtered research (research by keyword, attribute and/or temporal research)
 - All documents are loaded from an external data server and can be accessed using the **Document Inspector** window.
 
-![](https://github.com/VCityTeam/UD-Viz/blob/master/src/Widgets/Documents/Doc/Pictures/view.png)
+![](https://github.com/VCityTeam/UD-Viz/blob/master/src/Widget/Documents/Doc/Pictures/view.png)
 
 This module has several extensions that add functionalities :
 
 #### Contribute
 
-[Go to the module](https://github.com/VCityTeam/UD-Viz/tree/master/src/Widgets/Extensions/Contribute)
+[Go to the module](https://github.com/VCityTeam/UD-Viz/tree/master/src/Widget/Extensions/Contribute)
 
 - Possibility to create a new document
 - Possibility to edit and delete existing documents
 
 #### Validation
 
-[Go to the module](https://github.com/VCityTeam/UD-Viz/tree/master/src/Widgets/Extensions/DocumentValidation)
+[Go to the module](https://github.com/VCityTeam/UD-Viz/tree/master/src/Widget/Extensions/DocumentValidation)
 
 This extensions works with the _Authentication_ module :
 
@@ -54,7 +54,7 @@ This extensions works with the _Authentication_ module :
 
 #### Comments
 
-[Go to the module](https://github.com/VCityTeam/UD-Viz/tree/master/src/Widgets/Extensions/DocumentComments)
+[Go to the module](https://github.com/VCityTeam/UD-Viz/tree/master/src/Widget/Extensions/DocumentComments)
 
 Requires the _Authentication_ module :
 
@@ -62,7 +62,7 @@ Requires the _Authentication_ module :
 
 ### Authentication
 
-[Go to the module](https://github.com/VCityTeam/UD-Viz/tree/master/src/Widgets/Extensions/Authentication)
+[Go to the module](https://github.com/VCityTeam/UD-Viz/tree/master/src/Widget/Extensions/Authentication)
 
 Adds user management :
 
@@ -71,7 +71,7 @@ Adds user management :
 
 ### Temporal
 
-[Go to the module](https://github.com/VCityTeam/UD-Viz/tree/master/src/Widgets/Temporal)
+[Go to the module](https://github.com/VCityTeam/UD-Viz/tree/master/src/Widget/Temporal)
 
 - Basic slider + input field to select a date
 - Ability to navigate between key dates (arrow buttons)
@@ -80,14 +80,14 @@ Adds user management :
 
 ### City Objects
 
-[Go to the module](https://github.com/VCityTeam/UD-Viz/tree/master/src/Widgets/CityObjects)
+[Go to the module](https://github.com/VCityTeam/UD-Viz/tree/master/src/Widget/CityObjects)
 
 - Selection of a city object, view its details
 - Filter city objects from their attributes
 
 ### Links
 
-[Go to the module](https://github.com/VCityTeam/UD-Viz/tree/master/src/Widgets/Links)
+[Go to the module](https://github.com/VCityTeam/UD-Viz/tree/master/src/Widget/Links)
 
 The link module serves as an extension for both _Document_ and _City object_ modules.
 
@@ -97,7 +97,7 @@ The link module serves as an extension for both _Document_ and _City object_ mod
 
 ### Guided Tour
 
-[Go to the module](https://github.com/VCityTeam/UD-Viz/tree/master/src/Widgets/GuidedTour)
+[Go to the module](https://github.com/VCityTeam/UD-Viz/tree/master/src/Widget/GuidedTour)
 
 - A Guided Tour is a succession of Steps (document + text) that the user can follow
 - Each step triggers the oriented view of its document, and opens this doc in the doc browser
