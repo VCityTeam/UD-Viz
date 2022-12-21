@@ -8,17 +8,12 @@ export class Base {
   /**
    *  Base View of an ud-viz application
    *  expliquer le css renderer and so on
-   * @param {object} config
    * @param {object} options
    * @param {HTMLElement} options.htmlParent
    * @param {boolean} options.catchEventsCSS3D
+   * @param {number} options.css3DRendererFps
    */
-  constructor(config, options = {}) {
-    // Conf
-    if (!config) throw new Error('no config');
-    this.config = config;
-    console.log('WARNING: for now config is not used');
-
+  constructor(options = {}, init3D = true) {
     // Root html
     this.rootHtml = document.createElement('div');
     this.rootHtml.id = 'root_ViewBase';
@@ -66,6 +61,7 @@ export class Base {
 
     // CSS3D attributes
     this.css3DRenderer = null;
+    this.css3DRendererFps = options.css3DRendererFps || 20;
     this.css3DScene = null;
     this.billboards = [];
     const raycaster = new THREE.Raycaster();
@@ -120,6 +116,10 @@ export class Base {
     // Default catch events
     const catchEventsCSS3D = options.catchEventsCSS3D || false;
     this.catchEventsCSS3D(catchEventsCSS3D);
+
+    if (init3D) {
+      this.init3D();
+    }
   }
 
   /**
@@ -197,11 +197,12 @@ export class Base {
     this.rootCss.onmousedown = this.toWebGLEvent;
 
     // Start ticking render of css3D renderer
-    const fps = 20;
+    const fps = this.css3DRendererFps;
 
     let now;
     let then = Date.now();
     let delta;
+    console.log('WARNING: refacto requester frame process');
     const tick = () => {
       if (this.disposed) return; // Stop requesting frame if disposed
 
@@ -269,17 +270,17 @@ export class Base {
     this.isRendering = value;
   }
 
-  start(extent) {
+  start() {
     console.error('DEPRECATED SHOULD BE DONE IN APP');
-    this.initItownsView(extent);
-    // Start
-    // this.inputManager.startListening(this.rootWebGL);
+    // this.initItownsView(extent);
+    // // Start
+    // // this.inputManager.startListening(this.rootWebGL);
 
-    // Dynamic near far computation
-    this.itownsView.addFrameRequester(
-      itowns.MAIN_LOOP_EVENTS.BEFORE_RENDER,
-      this.itownsRequesterBeforeRender
-    );
+    // // Dynamic near far computation
+    // this.itownsView.addFrameRequester(
+    //   itowns.MAIN_LOOP_EVENTS.BEFORE_RENDER,
+    //   this.itownsRequesterBeforeRender
+    // );
   }
 
   getSize() {
@@ -290,7 +291,7 @@ export class Base {
    *
    * @param {*} updateTHREEVariables
    */
-  onResize() {
+  onResize(updateTHREEVariables = true) {
     let offsetLeft = parseInt(this.rootWebGL.style.left);
     if (isNaN(offsetLeft)) offsetLeft = 0;
     let offsetTop = parseInt(this.rootWebGL.style.top);
@@ -302,7 +303,11 @@ export class Base {
     if (this.css3DRenderer)
       this.css3DRenderer.setSize(this.size.x, this.size.y);
 
-    console.warn('WARNING: camera + renderer not resize');
+    if (updateTHREEVariables) {
+      this.camera.aspect = this.size.x / this.size.y;
+      this.camera.updateProjectionMatrix();
+      this.renderer.setSize(this.size.x, this.size.y);
+    }
   }
 
   /**
