@@ -1,6 +1,6 @@
 const Diff = require('./Diff');
 const Object3D = require('../Object3D/Object3D');
-const JSONUtils = require('../../Components/JSONUtils');
+const JSONUtil = require('../../JSONUtil');
 
 /**
  * Store the state of the  at a given time
@@ -135,7 +135,7 @@ const State = class {
   }
 
   equals(state) {
-    return JSONUtils.equals(this.toJSON(), state.toJSON());
+    return JSONUtil.equals(this.toJSON(), state.toJSON());
   }
 
   /**

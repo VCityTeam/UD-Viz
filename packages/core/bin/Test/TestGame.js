@@ -6,10 +6,11 @@
 
 const Core = require('../../src/index');
 const THREE = require('three');
-const ScriptController =
-  require('../../src/Game/Object3D/Components/Script').Controller;
+const ScriptController = require('../../src/Game/Component/Script').Controller;
 const ExternalScriptComponentTYPE =
-  require('../../src/Game/Object3D/Components/ExternalScript').Component.TYPE;
+  require('../../src/Game/Component/ExternalScript').Component.TYPE;
+
+console.log('WARNING: this should be done with an interpolator');
 
 let controlValue = 42;
 const resultValue = 24;
@@ -152,14 +153,8 @@ const gameContext = new Core.Game.Context(
   }
 );
 
-const ExternalScriptTestController = class extends ScriptController {
-  constructor(model, object3D, context) {
-    super(model, object3D, context);
-  }
-};
-
 gameContext.load().then(() => {
-  const gameProcess = new Core.Component.ProcessInterval();
+  const gameProcess = new Core.ProcessInterval();
   const gCtxExternalScriptComponent = gameContext.object3D.getComponent(
     ExternalScriptComponentTYPE
   );
@@ -171,7 +166,7 @@ gameContext.load().then(() => {
   }
 
   gCtxExternalScriptComponent.initController(
-    new ExternalScriptTestController(
+    new ScriptController(
       gCtxExternalScriptComponent.getModel(),
       gameContext.object3D,
       gameContext
@@ -190,7 +185,7 @@ gameContext.load().then(() => {
 
   // throw new Error('test finished');
   setTimeout(() => {
-    const controllerProcess = new Core.Component.ProcessInterval({ fps: 30 });
+    const controllerProcess = new Core.ProcessInterval({ fps: 30 });
     controllerProcess.start(() => {
       const gCtxExternalScriptComponent = gameContext.object3D.getComponent(
         ExternalScriptComponentTYPE

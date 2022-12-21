@@ -1,22 +1,14 @@
 const packageJSON = require('@ud-viz/core/package.json');
 const THREE = require('three');
-const JSONUtils = require('../../Components/JSONUtils');
+const JSONUtil = require('../../JSONUtil');
 
-// @ud-viz/core.Game.Object3D Components
-const { Base } = require('./Components/Component');
-
-const ExternalScript = require('./Components/ExternalScript');
-const GameScript = require('./Components/GameScript');
-const Collider = require('./Components/Collider');
-const Audio = require('./Components/Audio');
-const Render = require('./Components/Render');
-
-// GameObject Components
-// const WorldScript = require('./Components/WorldScript');
-// const BrowserScript = require('./Components/BrowserScript');
-// const Render = require('./Components/Render');
-// const Collider = require('./Components/Collider');
-// const Audio = require('./Components/Audio');
+// @ud-viz/core.Game.Object3D Component
+const { Base } = require('../Component/Component');
+const ExternalScript = require('../Component/ExternalScript');
+const GameScript = require('../Component/GameScript');
+const Collider = require('../Component/Collider');
+const Audio = require('../Component/Audio');
+const Render = require('../Component/Render');
 
 /**
  * Objects to compose a Game
@@ -36,7 +28,7 @@ const GameObject = class {
     // Id
     this.uuid = json.uuid || THREE.Math.generateUUID();
 
-    // Components
+    // Component
     this.components = {};
     this.setComponentModelsFromJSON(json);
 
@@ -113,21 +105,21 @@ const GameObject = class {
 
     if (json.position) {
       this.object3D.position.fromArray(json.position);
-      JSONUtils.parseVector3(this.object3D.position);
+      JSONUtil.parseVector3(this.object3D.position);
     } else {
       this.object3D.position.fromArray([0, 0, 0]);
     }
 
     if (json.rotation) {
       this.object3D.rotation.fromArray(json.rotation);
-      JSONUtils.parseVector3(this.object3D.rotation);
+      JSONUtil.parseVector3(this.object3D.rotation);
     } else {
       this.object3D.rotation.fromArray([0, 0, 0]);
     }
 
     if (json.scale) {
       this.object3D.scale.fromArray(json.scale);
-      JSONUtils.parseVector3(this.object3D.scale);
+      JSONUtil.parseVector3(this.object3D.scale);
     } else {
       this.object3D.scale.fromArray([1, 1, 1]);
     }
@@ -411,7 +403,7 @@ const GameObject = class {
   }
 
   /**
-   * Set Components with a json object
+   * Set Component with a json object
    *
    * @param {JSON} json
    */
@@ -616,7 +608,7 @@ const GameObject = class {
   /**
    *
    * @param {string} type
-   * @returns {GameObject/Components}
+   * @returns {GameObject/Component}
    */
   getComponent(type) {
     return this.components[type];
@@ -625,7 +617,7 @@ const GameObject = class {
   /**
    *
    * @param {string} type
-   * @param {GameObject/Components} c
+   * @param {GameObject/Component} c
    */
   setComponent(type, c) {
     this.components[type] = c;
@@ -799,7 +791,7 @@ GameObject.TYPE = 'GameObject';
 GameObject.deepCopy = function (gameObject) {
   const cloneJSON = gameObject.toJSON(true);
   // Rename uuid
-  JSONUtils.parse(cloneJSON, function (json, key) {
+  JSONUtil.parse(cloneJSON, function (json, key) {
     const keyLowerCase = key.toLowerCase();
     if (keyLowerCase === 'uuid') json[key] = THREE.MathUtils.generateUUID();
 

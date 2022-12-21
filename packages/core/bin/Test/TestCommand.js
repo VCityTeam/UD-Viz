@@ -35,7 +35,7 @@ const gameContext = new Core.Game.Context(
 );
 
 gameContext.load().then(() => {
-  const processInterval = new Core.Component.ProcessInterval({ fps: 51 });
+  const processInterval = new Core.ProcessInterval({ fps: 51 });
   processInterval.start((dt) => {
     gameContext.step(dt);
   });
@@ -43,7 +43,7 @@ gameContext.load().then(() => {
   // wait a bit and send a command
   setTimeout(() => {
     gameContext.onCommand([
-      new Core.Component.Command({
+      new Core.Command({
         type: COMMAND_TYPE,
         data: 42,
       }),

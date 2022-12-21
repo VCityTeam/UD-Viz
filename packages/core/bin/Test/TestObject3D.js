@@ -21,12 +21,7 @@ context.load().then(() => {
 
   const cloneGameObject = newGameObject.clone();
 
-  if (
-    !Core.Component.JSONUtils.equals(
-      cloneGameObject.toJSON(),
-      newGameObject.toJSON()
-    )
-  ) {
+  if (!Core.JSONUtil.equals(cloneGameObject.toJSON(), newGameObject.toJSON())) {
     throw new Error('clone is not equal');
   }
 
@@ -36,10 +31,7 @@ context.load().then(() => {
 
   otherGameObject.updatefromJSON(cloneGameObject.toJSON());
   if (
-    !Core.Component.JSONUtils.equals(
-      cloneGameObject.toJSON(),
-      otherGameObject.toJSON()
-    )
+    !Core.JSONUtil.equals(cloneGameObject.toJSON(), otherGameObject.toJSON())
   ) {
     throw new Error('updateFromJSON not working');
   }

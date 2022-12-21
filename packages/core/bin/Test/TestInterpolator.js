@@ -58,7 +58,7 @@ const gameContext = new Core.Game.Context(
 
 gameContext.load().then(() => {
   // game process here is a kind of server
-  const gameProcess = new Core.Component.ProcessInterval({ fps: 60 });
+  const gameProcess = new Core.ProcessInterval({ fps: 60 });
   gameProcess.start((dt) => {
     gameContext.step(dt);
   });
@@ -67,7 +67,7 @@ gameContext.load().then(() => {
   setTimeout(() => {
     let count = 0;
     // reader process here is a kind of browser client
-    const readerProcess = new Core.Component.ProcessInterval({ fps: 30 });
+    const readerProcess = new Core.ProcessInterval({ fps: 30 });
     readerProcess.start(() => {
       const states = stateInterpolator.computeCurrentStates();
       if (!states.length) return;

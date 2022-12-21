@@ -1,13 +1,11 @@
 // @ud-viz/core bundle API
 
 module.exports = {
-  Component: {
-    Data: require('./Components/Data'),
-    JSONUtils: require('./Components/JSONUtils'),
-    Type: require('./Components/Type'),
-    ProcessInterval: require('./Components/ProcessInterval'),
-    Command: require('./Components/Command'),
-  },
+  Data: require('./Data'),
+  JSONUtil: require('./JSONUtil'),
+  Type: require('./Type'),
+  ProcessInterval: require('./ProcessInterval'),
+  Command: require('./Command'),
   Game: {
     Context: require('./Game/Context').Context,
     ScriptBase: require('./Game/Context').ScriptBase,
