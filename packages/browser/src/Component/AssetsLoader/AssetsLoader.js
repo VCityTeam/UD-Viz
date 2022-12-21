@@ -25,24 +25,8 @@ import { AudioController } from '../../Game/Audio';
  * Give acess to all assets (image, video, script, worlds, ...)
  */
 export class AssetsManager {
-  constructor(worldScriptsArray, browserScriptsArray) {
+  constructor() {
     this.conf = null;
-
-    // transform array of worldscripts into a map
-    this.worldScripts = {};
-    if (worldScriptsArray) {
-      worldScriptsArray.forEach((ws) => {
-        this.worldScripts[ws.name] = ws;
-      });
-    }
-
-    // same for browserScripts
-    this.browserScripts = {};
-    if (browserScriptsArray) {
-      browserScriptsArray.forEach((bs) => {
-        this.browserScripts[bs.name] = bs;
-      });
-    }
 
     // renderData are loaded async
     this.renderData = {};

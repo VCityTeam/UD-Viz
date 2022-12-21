@@ -1,12 +1,12 @@
 // @ud-viz/browser API
 
-// Components
-import * as Components from './Components/Components.js';
-export { Components };
+// Component
+import * as Component from './Component/Component.js';
+export { Component };
 
 // Itowns
-import * as Itowns from './Itowns/Itowns';
-export { Itowns };
+// import * as Itowns from './Itowns/Itowns';
+// export { Itowns };
 
 // // Templates
 // import * as Templates from './Templates/Templates.js';

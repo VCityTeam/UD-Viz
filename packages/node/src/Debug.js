@@ -1,7 +1,7 @@
 const exec = require('child-process-promise').exec;
 
 module.exports = {
-  routine: function (packageName) {
+  routine: function (packageName, withTest = true) {
     const printExec = function (result) {
       console.log('stdout: \n', result.stdout);
       console.error('stderr: \n', result.stderr);
@@ -13,13 +13,15 @@ module.exports = {
         console.error(packageName + ' failed building debug bundle ', error);
       })
       .then(printExec)
-      .then(() => console.log('Test ', packageName))
       .then(() => {
-        exec('npm run test')
-          .catch((error) => {
-            console.error(packageName + ' test failed', error);
-          })
-          .then(printExec);
+        if (withTest) {
+          console.log('Test ', packageName);
+          exec('npm run test')
+            .catch((error) => {
+              console.error(packageName + ' test failed', error);
+            })
+            .then(printExec);
+        }
       });
   },
 };
