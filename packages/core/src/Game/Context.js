@@ -3,7 +3,7 @@ const Collider = require('./Component/Collider');
 const Script = require('./Component/Script');
 const GameScript = require('./Component/GameScript');
 const AbstractContext = require('./Component/AbstractContext');
-const Object3D = require('./Object3D/Object3D');
+const Object3D = require('./Object3D');
 const State = require('./State/State');
 const Command = require('../Command');
 

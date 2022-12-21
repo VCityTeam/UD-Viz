@@ -1,5 +1,5 @@
 const Diff = require('./Diff');
-const Object3D = require('../Object3D/Object3D');
+const Object3D = require('../Object3D');
 const JSONUtil = require('../../JSONUtil');
 
 /**

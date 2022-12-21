@@ -10,7 +10,7 @@ module.exports = {
   Game: {
     Context: require('./Game/Context').Context,
     ScriptBase: require('./Game/Context').ScriptBase,
-    Object3D: require('./Game/Object3D/Object3D'),
+    Object3D: require('./Game/Object3D'),
     StateInterpolator: require('./Game/State/Interpolator'),
   },
 };
