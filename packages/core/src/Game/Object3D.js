@@ -1,14 +1,14 @@
 const packageJSON = require('@ud-viz/core/package.json');
 const THREE = require('three');
-const JSONUtil = require('../../JSONUtil');
+const JSONUtil = require('../JSONUtil');
 
 // @ud-viz/core.Game.Object3D Component
-const { Base } = require('../Component/Component');
-const ExternalScript = require('../Component/ExternalScript');
-const GameScript = require('../Component/GameScript');
-const Collider = require('../Component/Collider');
-const Audio = require('../Component/Audio');
-const Render = require('../Component/Render');
+const { Base } = require('./Component/Component');
+const ExternalScript = require('./Component/ExternalScript');
+const GameScript = require('./Component/GameScript');
+const Collider = require('./Component/Collider');
+const Audio = require('./Component/Audio');
+const Render = require('./Component/Render');
 
 /**
  * Objects to compose a Game
