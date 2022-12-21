@@ -1,4 +1,4 @@
-import { Controller } from '@ud-viz/core/src/Game/GameObject/Components/Component';
+import { Controller } from '@ud-viz/core/src/Game/GameObject/Component/Component';
 import { BrowserContext } from '../Views/GameView/GameView';
 
 const BrowserScriptControllerModule = class BrowserScriptController extends Controller {

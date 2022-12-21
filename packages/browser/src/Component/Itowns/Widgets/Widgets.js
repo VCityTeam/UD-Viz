@@ -23,5 +23,5 @@ export { BaseMap } from './BaseMap/BaseMapWindow';
 import * as WebService from './WebService/WebService';
 export { WebService };
 
-import * as Components from './Components/Components';
-export { Components };
+import * as Component from './Component/Component';
+export { Component };

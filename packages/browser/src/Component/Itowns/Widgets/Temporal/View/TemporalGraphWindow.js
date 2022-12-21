@@ -1,5 +1,5 @@
-// Components
-import { Window } from '../../Components/GUI/js/Window';
+// Component
+import { Window } from '../../Component/GUI/js/Window';
 
 import { NetworkManager } from './NetworkManager';
 import './TemporalWindow.css';

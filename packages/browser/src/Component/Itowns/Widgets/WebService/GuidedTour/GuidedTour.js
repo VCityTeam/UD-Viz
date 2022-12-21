@@ -1,4 +1,4 @@
-import { Window } from '../../Components/GUI/js/Window';
+import { Window } from '../../Component/GUI/js/Window';
 
 import './GuidedTour.css';
 

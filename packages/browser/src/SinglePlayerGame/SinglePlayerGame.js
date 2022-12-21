@@ -1,4 +1,4 @@
-import * as Components from '../../Components/Components.js';
+import * as Component from '../../Component/Component.js';
 import { AssetsManager } from '../../Views/AssetsManager/AssetsManager';
 import * as Views from '../../Views/Views';
 import { Game } from '@ud-viz/core';
@@ -41,7 +41,7 @@ export class BrowserGame {
     const _this = this;
 
     return new Promise((resolve) => {
-      Components.SystemUtils.File.loadJSON(configPath).then(function (config) {
+      Component.SystemUtils.File.loadJSON(configPath).then(function (config) {
         const assetsManager = new AssetsManager(
           options.worldScripts,
           options.browserScripts

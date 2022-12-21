@@ -1,5 +1,5 @@
-// Components
-import { ModuleView } from '../../Components/ModuleView/ModuleView.js';
+// Component
+import { ModuleView } from '../../Component/ModuleView/ModuleView.js';
 
 import { TemporalGraphWindow } from './TemporalGraphWindow.js';
 import { TemporalSliderWindow } from './TemporalSliderWindow.js';

@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { CSS3DRenderer } from 'three/examples/jsm/renderers/CSS3DRenderer';
-import { checkParentChild } from '../../Components/HTMLUtils';
+import { checkParentChild } from '../../Component/HTMLUtils';
 
 import './Base.css';
 
@@ -330,5 +330,5 @@ export class Base {
   }
 }
 
-import * as Components from './Components/Components';
-export { Components };
+import * as Component from './Component/Component';
+export { Component };

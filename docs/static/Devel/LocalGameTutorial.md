@@ -305,7 +305,7 @@ That's it Lyon is here! Now we are going to add our zeppelin.
 
 ## Create a worldscript
 
-First we are going to attach a [`WorldScript`](/src/Game/GameObject/Components/WorldScript.js) to our `GameManager` game object. A world script is used to customize the world simulation, you can put your code in different events called by the game engine.
+First we are going to attach a [`WorldScript`](/src/Game/GameObject/Component/WorldScript.js) to our `GameManager` game object. A world script is used to customize the world simulation, you can put your code in different events called by the game engine.
 
 - In `bootstrap.js`, complete the declaration of the `myWorld` object as the following:
 
@@ -380,7 +380,7 @@ module.exports = class WorldGameManager {
   }
 ```
 
-We create a new gameobject called zeppelin and a [Render](/src/Game/GameObject/Components/Render.js) component is added with an id of the 3D model.
+We create a new gameobject called zeppelin and a [Render](/src/Game/GameObject/Component/Render.js) component is added with an id of the 3D model.
 
 As always when we point to assets with an id, we need to import that asset (here a 3D model). We gonna to use this [one](/examples/assets/models/Zeppelin_Labex_IMU.glb).
 
@@ -419,7 +419,7 @@ Yes a zeppelin appears on the middle of the scene ! trust me...
 
 ## Create a localscript
 
-Ok let's add a [LocalScript](/src/Game/GameObject/Components/LocalScript.js) now to focus this zeppelin with the camera. These scripts are used to customize client-side game.
+Ok let's add a [LocalScript](/src/Game/GameObject/Component/LocalScript.js) now to focus this zeppelin with the camera. These scripts are used to customize client-side game.
 
 - GameManager in `bootstrap.js` becomes:
 
@@ -620,7 +620,7 @@ for (let i = 0; i < 10; i++) {
 
 ok that's nice, now let handle the collision with these objects.
 
-- First add a [Collider](/src/Game/GameObject/Components/Collider.js) component to these spheres in [`worldGameManager.js`](/examples/assets/worldScripts/worldGameManager.js)
+- First add a [Collider](/src/Game/GameObject/Component/Collider.js) component to these spheres in [`worldGameManager.js`](/examples/assets/worldScripts/worldGameManager.js)
 
 ```js
   createCollectableSphere(x, y) {
@@ -654,7 +654,7 @@ ok that's nice, now let handle the collision with these objects.
   }
 ```
 
-- Then add a [Collider](/src/Game/GameObject/Components/Collider.js) component to the zeppelin in the `init` method inside `this.zeppelin` declaration:
+- Then add a [Collider](/src/Game/GameObject/Component/Collider.js) component to the zeppelin in the `init` method inside `this.zeppelin` declaration:
 
 ```js
 this.zeppelin = new Game.GameObject({

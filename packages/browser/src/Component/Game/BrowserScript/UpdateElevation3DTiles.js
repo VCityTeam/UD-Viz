@@ -1,6 +1,6 @@
 import { Base } from '../../../Game/BrowserScript';
 import * as THREE from 'three';
-import JSONUtils from '@ud-viz/core/src/Game/Components/JSONUtils';
+import JSONUtils from '@ud-viz/core/src/Game/Component/JSONUtils';
 import { WorldCommand } from '@ud-viz/core/src/Game/Game';
 
 const defaultConfig = {

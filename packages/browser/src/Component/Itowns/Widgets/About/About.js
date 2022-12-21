@@ -1,5 +1,4 @@
-// Components
-import { ModuleView } from '../Components/ModuleView/ModuleView';
+import { ModuleView } from '../Component/ModuleView/ModuleView';
 import jQuery from 'jquery';
 import './About.css';
 

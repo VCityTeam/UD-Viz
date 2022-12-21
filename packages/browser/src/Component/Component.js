@@ -9,3 +9,6 @@ export * as FileUtil from './FileUtil.js';
 export { checkParentChild } from './HTMLUtil.js';
 
 export { AssetsLoader } from './AssetsLoader/AssetsLoader.js';
+
+import * as Itowns from './Itowns/Itowns';
+export { Itowns };

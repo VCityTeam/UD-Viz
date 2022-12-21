@@ -1,5 +1,5 @@
 import { RequestService } from '../../Component/RequestService';
-import { imageToDataURI } from '@ud-viz/core/src/Components/Data';
+import { imageToDataURI } from '@ud-viz/core/src/Data';
 import { Document } from './Document';
 
 /**

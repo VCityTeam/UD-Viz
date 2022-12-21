@@ -2,13 +2,13 @@ import * as THREE from 'three';
 import * as proj4 from 'proj4';
 import * as itowns from 'itowns';
 import { View3D } from '../View3D/View3D';
-import { computeNearFarCamera } from '../../Components/Camera/CameraUtils';
-import * as THREEUtils from '../../Components/THREEUtils';
+import { computeNearFarCamera } from '../../Component/Camera/CameraUtils';
+import * as THREEUtils from '../../Component/THREEUtils';
 import { BrowserContext } from '../../Game/BrowserContext';
 
 /**
  * Main view of an ud-viz game application
- * This object works with a state computer (./src/Game/Components/interpolator)
+ * This object works with a state computer (./src/Game/Component/interpolator)
  */
 export class GameView extends View3D {
   /**

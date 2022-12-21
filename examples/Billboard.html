@@ -14,7 +14,7 @@
     <script type="text/javascript">
       /* eslint-disable no-new */
       
-      udvizBrowser.Components.SystemUtils.File.loadJSON(
+      udvizBrowser.Component.SystemUtils.File.loadJSON(
         './assets/config/default_config.json'
       ).then(function (config) {
         const projection = config['projection'];
@@ -33,8 +33,8 @@
         });
         view3D.start(extent);
 
-        udvizBrowser.Components.THREEUtils.addLights(view3D.getScene());
-        udvizBrowser.Components.THREEUtils.initRenderer(
+        udvizBrowser.Component.THREEUtils.addLights(view3D.getScene());
+        udvizBrowser.Component.THREEUtils.initRenderer(
           view3D.getRenderer(),
           new udvizBrowser.THREE.Color(0x6699cc)
         );

@@ -1,8 +1,8 @@
-import { ModuleView } from '../../../Components/ModuleView/ModuleView';
+import { ModuleView } from '../../../Component/ModuleView/ModuleView';
 import { SparqlEndpointResponseProvider } from '../ViewModel/SparqlEndpointResponseProvider';
 import { CityObjectProvider } from '../../../CityObjects/ViewModel/CityObjectProvider';
 import { SparqlQueryWindow } from './SparqlQueryWindow';
-import { LayerManager } from '../../../Components/Components';
+import { LayerManager } from '../../../Component/Component';
 
 /**
  * The SPARQL ModuleView class which manages the SPARQL query window.

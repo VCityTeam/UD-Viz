@@ -1,8 +1,8 @@
 import * as THREE from 'three';
 import { DocumentVisualizerWindow } from '../../DocumentVisualizer/View/DocumentVisualizerWindow';
 import { AbstractDocumentWindow } from '../../Documents/View/AbstractDocumentWindow';
-import { Window } from '../../../Components/GUI/js/Window';
-import { PositionerWindow } from '../../../Components/GUI/js/PositionerWindow';
+import { Window } from '../../../Component/GUI/js/Window';
+import { PositionerWindow } from '../../../Component/GUI/js/PositionerWindow';
 import { ContributeService } from '../Service/ContributeService';
 
 export class DocumentCreationWindow extends AbstractDocumentWindow {
