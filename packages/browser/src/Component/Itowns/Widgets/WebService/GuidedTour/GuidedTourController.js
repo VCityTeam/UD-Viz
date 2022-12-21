@@ -1,4 +1,4 @@
-import { ModuleView } from '../../Components/ModuleView/ModuleView';
+import { ModuleView } from '../../Component/ModuleView/ModuleView';
 import { RequestService } from '../Component/RequestService';
 import { GuidedTour } from './GuidedTour.js';
 import { DocumentModule } from '../Documents/DocumentModule';

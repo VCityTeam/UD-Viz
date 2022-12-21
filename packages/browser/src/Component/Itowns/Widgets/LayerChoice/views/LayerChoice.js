@@ -1,6 +1,6 @@
-// Components
-import { Window } from '../../Components/GUI/js/Window';
-import { LayerManager } from '../../../Components/LayerManager/LayerManager';
+// Component
+import { Window } from '../../Component/GUI/js/Window';
+import { LayerManager } from '../../../LayerManager/LayerManager';
 
 export class LayerChoice extends Window {
   /**

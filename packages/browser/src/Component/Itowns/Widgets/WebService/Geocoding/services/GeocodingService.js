@@ -1,5 +1,5 @@
 import { RequestService } from '../../Component/RequestService';
-import { getAttributeByPath } from '@ud-viz/core/src/Components/Data';
+import { getAttributeByPath } from '@ud-viz/core/src/Data';
 
 export class GeocodingService {
   /**

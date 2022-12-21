@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { objectEquals } from '@ud-viz/core/src/Components/Data';
+import { objectEquals } from '@ud-viz/core/src/Data';
 
 /**
  * Search a batch table in a tile. A tile is a THREE.js 3DObject with a

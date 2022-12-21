@@ -1,6 +1,6 @@
 import { SparqlEndpointResponseProvider } from './ViewModel/SparqlEndpointResponseProvider';
 import { SparqlModuleView } from './View/SparqlModuleView';
-import { LayerManager } from '../../Components/Components';
+import { LayerManager } from '../../Component/Component';
 import { CityObjectProvider } from '../../CityObjects/ViewModel/CityObjectProvider';
 
 /**

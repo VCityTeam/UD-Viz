@@ -1,5 +1,5 @@
-// Components
-import { Window } from '../Components/GUI/js/Window';
+// Component
+import { Window } from '../Component/GUI/js/Window';
 import * as THREE from 'three';
 
 export class SlideShow extends Window {

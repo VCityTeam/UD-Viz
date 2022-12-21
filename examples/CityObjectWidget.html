@@ -17,7 +17,7 @@
 
       app.start('./assets/config/default_config.json').then((config) => {
         // //// REQUEST SERVICE
-        new udvizBrowser.Components.RequestService();
+        new udvizBrowser.Component.RequestService();
 
         // //// ABOUT MODULE
         const about = new udvizBrowser.Widgets.AboutWindow(

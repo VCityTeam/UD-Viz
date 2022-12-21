@@ -1,9 +1,9 @@
-import { Window } from '../../../Components/GUI/js/Window';
+import { Window } from '../../../Component/GUI/js/Window';
 import { SparqlEndpointResponseProvider } from '../ViewModel/SparqlEndpointResponseProvider';
 import { Graph } from '../Model/Graph';
 import { Table } from '../Model/Table';
 import * as URI from '../Model/URI';
-import { LayerManager } from '../../../Components/Components';
+import { LayerManager } from '../../../Component/Component';
 import { CityObjectProvider } from '../../../CityObjects/ViewModel/CityObjectProvider';
 import { JsonRenderer } from './JsonRenderer';
 import './SparqlQueryWindow.css';

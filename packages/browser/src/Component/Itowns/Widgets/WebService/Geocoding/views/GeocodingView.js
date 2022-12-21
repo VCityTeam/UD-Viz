@@ -2,8 +2,8 @@ import * as THREE from 'three';
 import * as itowns from 'itowns';
 import proj4 from 'proj4';
 
-import { ModuleView } from '../../../Components/ModuleView/ModuleView';
-import { focusCameraOn } from '../../../../Components/Components';
+import { ModuleView } from '../../../Component/ModuleView/ModuleView';
+import { focusCameraOn } from '../../../../Component/Component';
 import { GeocodingService } from '../services/GeocodingService';
 import './GeocodingStyle.css';
 

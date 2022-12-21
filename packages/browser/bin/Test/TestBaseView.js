@@ -24,7 +24,7 @@
       console.warn('WARNING: height not well computed');
     }
 
-    const billboard = new udvizBrowser.View.Components.Billboard(
+    const billboard = new udvizBrowser.View.Component.Billboard(
       document.createElement('div'),
       new THREE.Vector3(),
       new THREE.Vector3(),

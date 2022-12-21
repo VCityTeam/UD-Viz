@@ -1,5 +1,5 @@
-// Components
-import { ModuleView } from '../../Components/ModuleView/ModuleView';
+// Component
+import { ModuleView } from '../../Component/ModuleView/ModuleView';
 
 import jQuery from 'jquery';
 

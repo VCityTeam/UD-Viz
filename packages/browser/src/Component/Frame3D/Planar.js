@@ -2,11 +2,11 @@ import {
   addBaseMapLayer,
   addElevationLayer,
   setupAndAddGeoJsonLayers,
-} from './Components/Components';
-import { computeNearFarCamera } from '../Base/Components/Components';
+} from './Component/Component';
+import { computeNearFarCamera } from '../Base/Component/Component';
 import { Base } from '../Base/Base';
 import * as proj4 from 'proj4';
-import { LayerManager } from './Components/LayerManager/LayerManager';
+import { LayerManager } from './LayerManager/LayerManager';
 
 /**
  * These extensions should belong elsewhere since it should be possible

@@ -1,7 +1,7 @@
-// Components
-import { SystemUtils, THREEUtils } from '../../Components/Components';
+// Component
+import { SystemUtils, THREEUtils } from '../../Component/Component';
 import { Widgets, itowns, THREE } from '../../index';
-const ModuleView = Widgets.Components.ModuleView;
+const ModuleView = Widgets.Component.ModuleView;
 import './AllWidget.css';
 import { View3D } from '../../Views/Views';
 

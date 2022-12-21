@@ -1,4 +1,4 @@
-import { Controller } from '@ud-viz/core/src/Game/GameObject/Components/Component';
+import { Controller } from '@ud-viz/core/src/Game/GameObject/Component/Component';
 
 export class AudioController extends Controller {
   constructor(assetsManager, model, parentGo) {

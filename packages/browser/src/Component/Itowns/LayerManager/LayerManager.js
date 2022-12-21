@@ -3,7 +3,7 @@ import {
   getBatchIdFromIntersection,
   getTileFromMesh,
   getVisibleTileCount,
-} from '../3DTiles/3DTilesUtils';
+} from '../Component/3DTiles/3DTilesUtils';
 
 export class LayerManager {
   /**

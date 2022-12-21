@@ -109,7 +109,7 @@ Definitions:
 ```
 UD-Viz (repo)
 ├── src                         # All the js sources of UD-Viz JS library
-|    ├── Components             # A set of components used by sub-directories at this level
+|    ├── Component             # A set of components used by sub-directories at this level
 |    ├── Templates              # Classes builded with other sub-directory (Game, Widgets, Views) to propose application model
 |    ├── Views                  # Classes of 3D views encapsulating the itowns view
 |    ├── Game                   # A sub-directory offering game engine functionnality (node compatible)
@@ -131,14 +131,14 @@ Notes:
    its definition directory gets promoted at the level of the two widgets
    ```
    └── src         # holds all the js sources that will be build
-        ├── Components 
+        ├── Component 
         |    └── Component_1         # A component shared by the Game and Widgets sub-directories
         |         └── *.js ...       # Component definition
         ├── Game   
         |    └── Component_2         # A component used by the Game sub-directory 
         |              └── ...       
         └── Widgets  
-             ├── Components
+             ├── Component
              |    └── Component_3    # A component shared by at least two widgets 
              |         └── ...      
              └── Widget_1     

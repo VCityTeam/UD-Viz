@@ -4,7 +4,7 @@ import * as proj4 from 'proj4';
 const THREE = require('three');
 import GameObject from '@ud-viz/core/src/Game/GameObject/GameObject';
 import * as BrowserScript from './BrowserScript';
-import THREEUtils from '../Components/THREEUtils';
+import THREEUtils from '../Component/THREEUtils';
 
 /**
  * Context pass to the GameObject BrowserScript to work (TODO this class is relevant ? all attributes could be in gameview class)

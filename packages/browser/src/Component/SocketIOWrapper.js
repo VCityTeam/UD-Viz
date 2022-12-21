@@ -61,7 +61,7 @@ export class SocketIOWrapper {
   /**
    * Assign a callback to a specific event
    *
-   * @param {Shared.Components.Constants} event the event listened
+   * @param {Shared.Component.Constants} event the event listened
    * @param {Function} callback function called when the event is received
    */
   on(event, callback) {
@@ -72,7 +72,7 @@ export class SocketIOWrapper {
   /**
    * Fire an event to the server with data attached
    *
-   * @param {Shared.Components.Constants} event the event fired
+   * @param {Shared.Component.Constants} event the event fired
    * @param {JSON} data data passed
    */
   emit(event, data) {

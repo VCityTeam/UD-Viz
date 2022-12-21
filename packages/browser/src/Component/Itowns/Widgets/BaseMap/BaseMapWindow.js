@@ -1,7 +1,7 @@
 import * as itowns from 'itowns';
 
-// Components
-import { Window } from '../Components/GUI/js/Window';
+// Component
+import { Window } from '../Component/GUI/js/Window';
 
 export class BaseMap extends Window {
   /**
