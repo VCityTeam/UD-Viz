@@ -1,8 +1,8 @@
 const { spawn } = require('child_process');
-const HttpServer = require('@ud-viz/node').HttpServer;
+const ExpressAppWrapper = require('@ud-viz/node').ExpressAppWrapper;
 
-const debugServer = new HttpServer();
-debugServer
+const app = new ExpressAppWrapper();
+app
   .start({
     folder: './',
     port: 8000,

@@ -7,7 +7,7 @@ import { computeNearFarCamera } from '../THREEUtil';
 import { Base } from './Base/Base';
 import * as proj4 from 'proj4';
 import { LayerManager } from '../Itowns/LayerManager/LayerManager';
-import * as itowns from 'itowns';
+const itowns = require('itowns'); // import that way jsdoc resolve type sometime ... lol
 
 /**
  * These extensions should belong elsewhere since it should be possible
@@ -23,7 +23,7 @@ const $3DTemporalTileset = Widgets.$3DTemporalTileset;
  * and adds it to the layer manager
  *
  * @param {*} layer - the layer object from the config file
- * @param  {LayerManager_LayerManager} layerManager - the layer manager object
+ * @param  {LayerManager} layerManager - the layer manager object
  * @param {itowns.View} itownsView - the itowns view
  * @returns {itowns.C3DTilesLayer} A 3D Tiles Layer
  */
@@ -126,105 +126,82 @@ export class Planar extends Base {
   /**
    *
    * @param {itowns.Extent} extent
-   * @param {*} options
+   * @param {object} options
+   * @param {boolean} options.hasItownsControls
+   * @param {itowns.Coordinates} options.coordinates
+   * @param {number} options.heading
+   * @param {number} options.range
+   * @param {number} options.tilt
+   * @param {number} options.maxSubdivisionLevel
+   * @param {object} options.configBaseMapLayer - create a type def to mutualize between here and addBaseMapLayer method
+   * @param {object} options.configElevationLayer - create a type def to mutualize between here and addElevationLayer method
+   * @param {object} options.config3DTilesLayer - create a type def to mutualize between here and addElevationLayer method
+   * @param {object} options.configGeoJSONLayers - create a type def to mutualize between here and addElevationLayer method
    */
   constructor(extent, options = {}) {
     super(options, false); // do not init3D since itownsView will do it
 
-    console.log(extent);
-
-    // Projection
-    this.projection = options.projection || 'EPSG:3946';
+    // http://proj4js.org/
+    // define a projection as a string and reference it that way
+    console.warn('Why do we need this ?');
     proj4.default.defs(
-      this.projection,
+      extent.crs,
       '+proj=lcc +lat_1=45.25 +lat_2=46.75' +
         ' +lat_0=46 +lon_0=3 +x_0=1700000 +y_0=5200000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs'
     );
 
     const hasItownsControls = options.hasItownsControls || false;
+    const coordinates = options.coordinates || extent.center(); // default coordinates are extent center
+    const heading = options.heading || -50;
+    const range = options.range || 3000;
+    const tilt = options.tilt || 10;
+    const maxSubdivisionLevel = options.maxSubdivisionLevel || 3;
 
     /** @type {itowns.PlanarView} */
     this.itownsView = new itowns.PlanarView(this.rootWebGL, extent, {
       disableSkirt: false,
-      // placement: placement,
-      // maxSubdivisionLevel: maxSubdivisionLevel,
+      placement: {
+        coord: coordinates,
+        heading: heading,
+        range: range,
+        tilt: tilt,
+      },
+      maxSubdivisionLevel: maxSubdivisionLevel,
       noControls: !hasItownsControls,
     });
+    // Disable itowns resize https://github.com/VCityTeam/UD-Viz/issues/374
+    this.itownsViewResize = this.itownsView.resize.bind(this.itownsView);
+    this.itownsView.resize = function () {};
 
-    // this.itownsRequesterBeforeRender = function () {
-    //   computeNearFarCamera(_this.getCamera(), _this.getExtent(), 400);
-    // };
-  }
-
-  /**
-   * Init the itowns.PlanarView of this view with a given extent
-   *
-   * @param {itowns.Extent} extent the extent of the itowns.PlanarView
-   */
-  initItownsView(extent) {
-    this.extent = extent;
-
-    const coordinates = extent.center();
-
-    let heading = -50;
-    let range = 3000;
-    let tilt = 10;
-
-    // Assign default value or config value
-    if (
-      this.config &&
-      this.config['camera'] &&
-      this.config['camera']['position']
-    ) {
-      if (this.config['camera']['position']['heading'])
-        heading = this.config['camera']['position']['heading'];
-
-      if (this.config['camera']['position']['range'])
-        range = this.config['camera']['position']['range'];
-
-      if (this.config['camera']['position']['tilt'])
-        tilt = this.config['camera']['position']['tilt'];
-
-      if (this.config['camera']['position']['x'])
-        coordinates.x = this.config['camera']['position']['x'];
-
-      if (this.config['camera']['position']['y'])
-        coordinates.y = this.config['camera']['position']['y'];
-    }
-
-    const placement = {
-      coord: coordinates,
-      heading: heading,
-      range: range,
-      tilt: tilt,
-    };
-
-    // MaxSubdivisionLevel
-    const maxSubdivisionLevel = this.config['maxSubdivisionLevel'] || 3;
-
-    this.itownsView = new itowns.PlanarView(this.rootWebGL, extent, {
-      disableSkirt: false,
-      placement: placement,
-      maxSubdivisionLevel: maxSubdivisionLevel,
-      noControls: !this.hasItownsControls,
-    });
-
-    // Init 3D rendering attributes with itownsview
+    // fill parent class attributes create by the itownsView
     this.scene = this.itownsView.scene;
     this.renderer = this.itownsView.mainLoop.gfxEngine.renderer;
     this.camera = this.itownsView.camera.camera3D;
 
-    // Layermanager
+    /** @type {LayerManager} */
     this.layerManager = new LayerManager(this.itownsView);
 
-    addBaseMapLayer(this.config, this.itownsView, this.extent);
-    addElevationLayer(this.config, this.itownsView, this.extent);
-    add3DTilesLayersFromConfig(this.config, this.layerManager, this.itownsView);
-    setupAndAddGeoJsonLayers(this.config, this.itownsView);
+    if (options.configBaseMapLayer) {
+      addBaseMapLayer(options.configBaseMap, this.itownsView, extent);
+    }
+    if (options.configElevationLayer) {
+      addElevationLayer(options.configElevationLayer, this.itownsView, extent);
+    }
+    if (options.config3DTilesLayer) {
+      add3DTilesLayersFromConfig(
+        options.config3DTilesLayer,
+        this.layerManager,
+        this.itownsView
+      );
+    }
+    if (options.configGeoJSONLayers) {
+      setupAndAddGeoJsonLayers(options.configGeoJSONLayers, this.itownsView);
+    }
 
-    // Disable itowns resize https://github.com/VCityTeam/UD-Viz/issues/374
-    this.itownsViewResize = this.itownsView.resize.bind(this.itownsView);
-    this.itownsView.resize = function () {};
+    console.log('copute near far is not done');
+    // this.itownsRequesterBeforeRender = function () {
+    //   computeNearFarCamera(_this.getCamera(), _this.getExtent(), 400);
+    // };
   }
 
   /**

@@ -12,6 +12,7 @@ export class Base {
    * @param {HTMLElement} options.htmlParent
    * @param {boolean} options.catchEventsCSS3D
    * @param {number} options.css3DRendererFps
+   * @param {boolean} init3D
    */
   constructor(options = {}, init3D = true) {
     // Root html
@@ -54,10 +55,12 @@ export class Base {
     // Flag
     this.disposed = false;
 
-    // 3D rendering attributes
-    this.scene = null; // The three js scene
-    this.renderer = null; // The webgl renderer
-    this.camera = null; // The camera used to render the scene
+    /** @type {THREE.Scene} */
+    this.scene = null;
+    /** @type {THREE.WebGLRenderer} */
+    this.renderer = null;
+    /** @type {THREE.PerspectiveCamera} */
+    this.camera = null;
 
     // CSS3D attributes
     this.css3DRenderer = null;
@@ -246,6 +249,10 @@ export class Base {
     }
   }
 
+  /**
+   *
+   * @param {*} billboard
+   */
   appendBillboard(billboard) {
     if (!this.css3DRenderer) this.initCSS3D();
 
@@ -254,6 +261,10 @@ export class Base {
     this.billboards.push(billboard);
   }
 
+  /**
+   *
+   * @param {*} billboard
+   */
   removeBillboard(billboard) {
     this.scene.remove(billboard.getMaskObject());
     this.css3DScene.remove(billboard.getCss3DObject());
