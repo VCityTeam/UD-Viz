@@ -104,7 +104,7 @@ const gameContext = new Core.Game.Context(
 );
 
 gameContext.load().then(() => {
-  const processInterval = new Core.Component.ProcessInterval({ fps: 51 });
+  const processInterval = new Core.ProcessInterval({ fps: 51 });
   processInterval.start((dt) => {
     gameContext.step(dt);
   });

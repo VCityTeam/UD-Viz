@@ -1,5 +1,5 @@
 const { ModelComponent, ControllerComponent } = require('./Component');
-const AbstractContext = require('../../../Components/AbstractContext');
+const AbstractContext = require('./AbstractContext.js');
 
 const ScriptModel = class extends ModelComponent {
   constructor(json) {

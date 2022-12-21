@@ -26,7 +26,7 @@ export { Itowns };
 // import * as itownsWidgets from 'itowns/widgets';
 // export { itowns, itownsWidgets };
 
-// // Jquery
+// // Jquery => should be peerDep for lib purpose
 // import * as jquery from 'jquery';
 // export { jquery };
 
@@ -49,6 +49,6 @@ export {
   ShaderPass,
 };
 
-// // Proj4
+// // Proj4 => should be peerDep for lib purpose
 // import * as proj4 from 'proj4';
 // export { proj4 };

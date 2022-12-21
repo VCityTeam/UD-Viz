@@ -4,7 +4,7 @@
   "description": "ud-viz core library (browser + node compatible)",
   "main": "src",
   "scripts": {
-    "test": "node ./bin/test.js",
+    "test": "node --trace-warnings ./bin/test.js",
     "build": "cross-env NODE_ENV=production webpack --config=./webpackConfig/webpack.config.js",
     "build-debug": "cross-env NODE_ENV=development webpack --config=./webpackConfig/webpack.config.js",
     "debug": "nodemon --trace-warnings --verbose --watch src --watch ./bin/Test/**/*.js --delay 2500ms ./bin/debug.js -e js"

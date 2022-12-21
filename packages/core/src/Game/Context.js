@@ -1,11 +1,11 @@
 const { Collisions } = require('detect-collisions');
-const Collider = require('./Object3D/Components/Collider');
-const Script = require('./Object3D/Components/Script');
+const Collider = require('./Component/Collider');
+const Script = require('./Component/Script');
+const GameScript = require('./Component/GameScript');
+const AbstractContext = require('./Component/AbstractContext');
 const Object3D = require('./Object3D/Object3D');
 const State = require('./State/State');
-const AbstractContext = require('../Components/AbstractContext');
-const Command = require('../Components/Command');
-const GameScript = require('./Object3D/Components/GameScript');
+const Command = require('../Command');
 
 /**
  * Context used to simulate a World
