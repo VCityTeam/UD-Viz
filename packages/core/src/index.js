@@ -5,6 +5,7 @@ module.exports = {
   JSONUtil: require('./JSONUtil'),
   Type: require('./Type'),
   ProcessInterval: require('./ProcessInterval'),
+  EventSender: require('./EventSender'),
   Command: require('./Command'),
   Game: {
     Context: require('./Game/Context').Context,
