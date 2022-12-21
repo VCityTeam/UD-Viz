@@ -3,19 +3,124 @@ import {
   addElevationLayer,
   setupAndAddGeoJsonLayers,
 } from './Component/Component';
-import { computeNearFarCamera } from '../Base/Component/Component';
-import { Base } from '../Base/Base';
+import { computeNearFarCamera } from '../THREEUtil';
+import { Base } from './Base/Base';
 import * as proj4 from 'proj4';
-import { LayerManager } from './LayerManager/LayerManager';
+import { LayerManager } from '../Itowns/LayerManager/LayerManager';
+import * as itowns from 'itowns';
 
 /**
  * These extensions should belong elsewhere since it should be possible
  * to manipulate Temporal 3DTiles without having a dependence to its widget...
  */
-import * as Widgets from './Widgets/Widgets';
+import * as Widgets from '../Itowns/Widgets/Widgets';
 const $3DTemporalBatchTable = Widgets.$3DTemporalBatchTable;
 const $3DTemporalBoundingVolume = Widgets.$3DTemporalBoundingVolume;
 const $3DTemporalTileset = Widgets.$3DTemporalTileset;
+
+/**
+ * It creates a 3D Tiles layer,
+ * and adds it to the layer manager
+ *
+ * @param {*} layer - the layer object from the config file
+ * @param  {LayerManager_LayerManager} layerManager - the layer manager object
+ * @param {itowns.View} itownsView - the itowns view
+ * @returns {itowns.C3DTilesLayer} A 3D Tiles Layer
+ */
+export function setup3DTilesLayer(layer, layerManager, itownsView) {
+  if (!layer['id'] || !layer['url']) {
+    throw (
+      'Your layer does not have url id properties or both. ' +
+      '(in UD-Viz/UD-Viz-Core/examples/data/config/generalDemoConfig.json)'
+    );
+  }
+
+  const extensionsConfig = layer['extensions'];
+  const extensions = new itowns.C3DTExtensions();
+  if (extensionsConfig) {
+    for (let i = 0; i < extensionsConfig.length; i++) {
+      if (extensionsConfig[i] === '3DTILES_temporal') {
+        extensions.registerExtension('3DTILES_temporal', {
+          [itowns.C3DTilesTypes.batchtable]: $3DTemporalBatchTable,
+          [itowns.C3DTilesTypes.boundingVolume]: $3DTemporalBoundingVolume,
+          [itowns.C3DTilesTypes.tileset]: $3DTemporalTileset,
+        });
+      } else if (extensionsConfig[i] === '3DTILES_batch_table_hierarchy') {
+        extensions.registerExtension('3DTILES_batch_table_hierarchy', {
+          [itowns.C3DTilesTypes.batchtable]:
+            itowns.C3DTBatchTableHierarchyExtension,
+        });
+      } else {
+        console.warn(
+          'The 3D Tiles extension ' +
+            extensionsConfig[i] +
+            ' specified in generalDemoConfig.json is not supported ' +
+            'by UD-Viz yet. Only 3DTILES_temporal and ' +
+            '3DTILES_batch_table_hierarchy are supported.'
+        );
+      }
+    }
+  }
+
+  let overrideMaterial = false;
+  let material;
+  if (layer['pc_size']) {
+    material = new THREE.PointsMaterial({
+      size: layer['pc_size'],
+      vertexColors: true,
+    });
+    overrideMaterial = true;
+  }
+  const $3dTilesLayer = new itowns.C3DTilesLayer(
+    layer['id'],
+    {
+      name: layer['id'],
+      source: new itowns.C3DTilesSource({
+        url: layer['url'],
+      }),
+      registeredExtensions: extensions,
+      overrideMaterials: overrideMaterial,
+    },
+    itownsView
+  );
+  if (overrideMaterial) {
+    $3dTilesLayer.overrideMaterials = material;
+    $3dTilesLayer.material = material;
+  }
+
+  const $3DTilesManager = new TilesManager(itownsView, $3dTilesLayer);
+
+  if (layer['color']) {
+    const color = parseInt(layer['color']);
+    $3DTilesManager.color = color;
+  }
+
+  layerManager.tilesManagers.push($3DTilesManager);
+
+  return $3dTilesLayer;
+}
+
+/**
+ * Setup and add 3D tiles to an itowns view
+ *
+ * @param {*} config must contain a 3DTilesLayers field array with each 3d tile url
+ * @param {LayerManager} layerManager a layer manager
+ * @param {itowns.View} itownsView - the itowns view
+ * @returns a map of each 3d tiles layer
+ */
+export function add3DTilesLayersFromConfig(config, layerManager, itownsView) {
+  // Positional arguments verification
+  if (!config['3DTilesLayers']) {
+    return;
+  }
+
+  const layers = {};
+  for (const layer of config['3DTilesLayers']) {
+    layers[layer.id] = setup3DTilesLayer(layer, layerManager, itownsView);
+    itowns.View.prototype.addLayer.call(itownsView, layers[layer.id]);
+  }
+  return layers;
+}
 
 export class Planar extends Base {
   constructor(options) {
@@ -133,108 +238,4 @@ export class Planar extends Base {
     super.dispose();
     this.itownsView.dispose();
   }
-}
-
-/**
- * It creates a 3D Tiles layer,
- * and adds it to the layer manager
- *
- * @param {*} layer - the layer object from the config file
- * @param  {LayerManager_LayerManager} layerManager - the layer manager object
- * @param {itowns.View} itownsView - the itowns view
- * @returns {itowns.C3DTilesLayer} A 3D Tiles Layer
- */
-export function setup3DTilesLayer(layer, layerManager, itownsView) {
-  if (!layer['id'] || !layer['url']) {
-    throw (
-      'Your layer does not have url id properties or both. ' +
-      '(in UD-Viz/UD-Viz-Core/examples/data/config/generalDemoConfig.json)'
-    );
-  }
-
-  const extensionsConfig = layer['extensions'];
-  const extensions = new itowns.C3DTExtensions();
-  if (extensionsConfig) {
-    for (let i = 0; i < extensionsConfig.length; i++) {
-      if (extensionsConfig[i] === '3DTILES_temporal') {
-        extensions.registerExtension('3DTILES_temporal', {
-          [itowns.C3DTilesTypes.batchtable]: $3DTemporalBatchTable,
-          [itowns.C3DTilesTypes.boundingVolume]: $3DTemporalBoundingVolume,
-          [itowns.C3DTilesTypes.tileset]: $3DTemporalTileset,
-        });
-      } else if (extensionsConfig[i] === '3DTILES_batch_table_hierarchy') {
-        extensions.registerExtension('3DTILES_batch_table_hierarchy', {
-          [itowns.C3DTilesTypes.batchtable]:
-            itowns.C3DTBatchTableHierarchyExtension,
-        });
-      } else {
-        console.warn(
-          'The 3D Tiles extension ' +
-            extensionsConfig[i] +
-            ' specified in generalDemoConfig.json is not supported ' +
-            'by UD-Viz yet. Only 3DTILES_temporal and ' +
-            '3DTILES_batch_table_hierarchy are supported.'
-        );
-      }
-    }
-  }
-
-  let overrideMaterial = false;
-  let material;
-  if (layer['pc_size']) {
-    material = new THREE.PointsMaterial({
-      size: layer['pc_size'],
-      vertexColors: true,
-    });
-    overrideMaterial = true;
-  }
-  const $3dTilesLayer = new itowns.C3DTilesLayer(
-    layer['id'],
-    {
-      name: layer['id'],
-      source: new itowns.C3DTilesSource({
-        url: layer['url'],
-      }),
-      registeredExtensions: extensions,
-      overrideMaterials: overrideMaterial,
-    },
-    itownsView
-  );
-  if (overrideMaterial) {
-    $3dTilesLayer.overrideMaterials = material;
-    $3dTilesLayer.material = material;
-  }
-
-  const $3DTilesManager = new TilesManager(itownsView, $3dTilesLayer);
-
-  if (layer['color']) {
-    const color = parseInt(layer['color']);
-    $3DTilesManager.color = color;
-  }
-
-  layerManager.tilesManagers.push($3DTilesManager);
-
-  return $3dTilesLayer;
-}
-
-/**
- * Setup and add 3D tiles to an itowns view
- *
- * @param {*} config must contain a 3DTilesLayers field array with each 3d tile url
- * @param {LayerManager} layerManager a layer manager
- * @param {itowns.View} itownsView - the itowns view
- * @returns a map of each 3d tiles layer
- */
-export function add3DTilesLayersFromConfig(config, layerManager, itownsView) {
-  // Positional arguments verification
-  if (!config['3DTilesLayers']) {
-    return;
-  }
-
-  const layers = {};
-  for (const layer of config['3DTilesLayers']) {
-    layers[layer.id] = setup3DTilesLayer(layer, layerManager, itownsView);
-    itowns.View.prototype.addLayer.call(itownsView, layers[layer.id]);
-  }
-  return layers;
 }
