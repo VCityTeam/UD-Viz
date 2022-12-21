@@ -5,7 +5,6 @@ import {
 } from './Component/Component';
 import { computeNearFarCamera } from '../THREEUtil';
 import { Base } from './Base/Base';
-import * as proj4 from 'proj4';
 import { LayerManager } from '../Itowns/LayerManager/LayerManager';
 const itowns = require('itowns'); // import that way jsdoc resolve type sometime ... lol
 
@@ -141,15 +140,6 @@ export class Planar extends Base {
   constructor(extent, options = {}) {
     super(options, false); // do not init3D since itownsView will do it
 
-    // http://proj4js.org/
-    // define a projection as a string and reference it that way
-    console.warn('Why do we need this ?');
-    proj4.default.defs(
-      extent.crs,
-      '+proj=lcc +lat_1=45.25 +lat_2=46.75' +
-        ' +lat_0=46 +lon_0=3 +x_0=1700000 +y_0=5200000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs'
-    );
-
     const hasItownsControls = options.hasItownsControls || false;
     const coordinates = options.coordinates || extent.center(); // default coordinates are extent center
     const heading = options.heading || -50;
@@ -183,7 +173,7 @@ export class Planar extends Base {
 
     // Add optional layer
     if (options.configBaseMapLayer) {
-      addBaseMapLayer(options.configBaseMap, this.itownsView, extent);
+      addBaseMapLayer(options.configBaseMapLayer, this.itownsView, extent);
     }
     if (options.configElevationLayer) {
       addElevationLayer(options.configElevationLayer, this.itownsView, extent);
@@ -211,6 +201,14 @@ export class Planar extends Base {
    */
   getItownsView() {
     return this.itownsView;
+  }
+
+  /**
+   *
+   * @returns {LayerManager}
+   */
+  getLayerManager() {
+    return this.layerManager;
   }
 
   onResize() {

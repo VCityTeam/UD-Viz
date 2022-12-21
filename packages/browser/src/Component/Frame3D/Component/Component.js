@@ -67,11 +67,29 @@ export function setupAndAddGeoJsonLayers(config, itownsView) {
  * @param {itowns.View} itownsView
  * @param {itowns.Extent} extent extent of the view
  */
-export function addBaseMapLayer(config, itownsView, extent) {
-  const baseMapLayerConfig = config.base_map_layers[0]; // the first one is the default one
-
+export function addBaseMapLayer(baseMapLayerConfig, itownsView, extent) {
   if (!baseMapLayerConfig) {
-    console.warn('No "BaseMapLayer" field in the configuration file');
+    console.warn('No baseMap config ');
+    return;
+  }
+
+  if (!baseMapLayerConfig.name) {
+    console.warn('no name in baseMap config');
+    return;
+  }
+
+  if (!baseMapLayerConfig.url) {
+    console.warn('no url in baseMap config');
+    return;
+  }
+
+  if (!baseMapLayerConfig.version) {
+    console.warn('no version in baseMap config');
+    return;
+  }
+
+  if (!baseMapLayerConfig.format) {
+    console.warn('no format in baseMap config');
     return;
   }
 
@@ -80,9 +98,15 @@ export function addBaseMapLayer(config, itownsView, extent) {
     name: baseMapLayerConfig['name'],
     url: baseMapLayerConfig['url'],
     version: baseMapLayerConfig['version'],
-    crs: config['projection'],
+    crs: extent.crs,
     format: baseMapLayerConfig['format'],
   });
+
+  if (!baseMapLayerConfig.layer_name) {
+    console.warn('no layer_name in baseMap config');
+    return;
+  }
+
   // Add a WMS imagery layer
   const wmsImageryLayer = new itowns.ColorLayer(
     baseMapLayerConfig['layer_name'],
