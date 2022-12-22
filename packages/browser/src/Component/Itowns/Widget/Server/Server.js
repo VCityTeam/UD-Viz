@@ -1,6 +1,6 @@
-// API @ud-viz/browser/src/Component/Itowns/Widget/WebService
+// API @ud-viz/browser/src/Component/Itowns/Widget/Server
 
-// Collection of Itowns Widget using an external web service (a server which is not the @ud-viz/browser server)
+// Collection of Itowns Widget using an external server
 
 export { AuthenticationService } from './Authentication/services/AuthenticationService';
 

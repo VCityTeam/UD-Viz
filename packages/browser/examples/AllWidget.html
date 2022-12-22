@@ -16,10 +16,10 @@
         './assets/config/all_widget.json',
         './assets/config/extent.json',
         './assets/config/frame3D_planar.json',
-        './assets/config/widget/server.json',
+        './assets/config/widget/server/spatial_multimedia_db_server.json',
         './assets/config/widget/about.json',
         './assets/config/widget/help.json',
-        './assets/config/widget/geocoding.json',
+        './assets/config/widget/server/geocoding_server.json',
         './assets/config/widget/city_objects.json',
         './assets/config/widget/slide_show.json',
       ]).then((configs) => {
@@ -45,14 +45,14 @@
 
         // //// REQUEST SERVICE
         const requestService =
-          new udvizBrowser.Widget.WebService.Component.RequestService();
+          new udvizBrowser.Widget.Server.Component.RequestService();
 
         // //// AUTHENTICATION MODULE
         const authenticationView =
-          new udvizBrowser.Widget.WebService.AuthenticationView(
-            new udvizBrowser.Widget.WebService.AuthenticationService(
+          new udvizBrowser.Widget.Server.AuthenticationView(
+            new udvizBrowser.Widget.Server.AuthenticationService(
               requestService,
-              configs['server']
+              configs['spatial_multimedia_db_server']
             )
           );
         app.addWidgetView('authentication', authenticationView, {
@@ -67,64 +67,62 @@
         new udvizBrowser.Widget.HelpWindow(configs['help']); // => help window should be add with addWidgetView
 
         // //// DOCUMENTS MODULE
-        const documentModule =
-          new udvizBrowser.Widget.WebService.DocumentModule(
-            requestService,
-            configs['server']
-          );
+        const documentModule = new udvizBrowser.Widget.Server.DocumentModule(
+          requestService,
+          configs['spatial_multimedia_db_server']
+        );
         app.addWidgetView('documents', documentModule.view);
 
         // // DOCUMENTS VISUALIZER EXTENSION (to orient the document)
         const imageOrienter =
-          new udvizBrowser.Widget.WebService.DocumentVisualizerWindow(
-            documentModule, // <== webservice because is use a document module
+          new udvizBrowser.Widget.Server.DocumentVisualizerWindow(
+            documentModule, // <== Server because is use a document module
             app.getFrame3DPlanar().getItownsView(),
             app.getFrame3DPlanar().getItownsView().controls
           );
 
         // //// CONTRIBUTE EXTENSION
-        new udvizBrowser.Widget.WebService.ContributeModule(
+        new udvizBrowser.Widget.Server.ContributeModule(
           documentModule,
           imageOrienter,
           requestService,
           app.getFrame3DPlanar().getItownsView(),
           app.getFrame3DPlanar().getItownsView().controls,
-          configs['server']
+          configs['spatial_multimedia_db_server']
         );
 
         // //// VALIDATION EXTENSION
-        new udvizBrowser.Widget.WebService.DocumentValidationModule(
+        new udvizBrowser.Widget.Server.DocumentValidationModule(
           documentModule,
           requestService,
-          configs['server']
+          configs['spatial_multimedia_db_server']
         );
 
         // //// DOCUMENT COMMENTS
-        new udvizBrowser.Widget.WebService.DocumentCommentsModule(
+        new udvizBrowser.Widget.Server.DocumentCommentsModule(
           documentModule,
           requestService,
-          configs['server']
+          configs['spatial_multimedia_db_server']
         );
 
         // //// GUIDED TOURS MODULE
-        const guidedtour =
-          new udvizBrowser.Widget.WebService.GuidedTourController(
-            documentModule,
-            requestService,
-            configs['server']
-          );
+        const guidedtour = new udvizBrowser.Widget.Server.GuidedTourController(
+          documentModule,
+          requestService,
+          configs['spatial_multimedia_db_server']
+        );
         app.addWidgetView('guidedTour', guidedtour, {
           name: 'Guided Tours',
         });
 
         // //// GEOCODING EXTENSION
         const geocodingService =
-          new udvizBrowser.Widget.WebService.GeocodingService(
+          new udvizBrowser.Widget.Server.GeocodingService(
             requestService,
             extent,
-            configs['geocoding']
+            configs['geocoding_server']
           );
-        const geocodingView = new udvizBrowser.Widget.WebService.GeocodingView(
+        const geocodingView = new udvizBrowser.Widget.Server.GeocodingView(
           geocodingService,
           app.getFrame3DPlanar().getItownsView()
         );
@@ -141,13 +139,13 @@
         app.addWidgetView('cityObjects', cityObjectModule.view);
 
         // //// LINKS MODULE
-        new udvizBrowser.Widget.WebService.LinkModule(
+        new udvizBrowser.Widget.Server.LinkModule(
           documentModule,
           cityObjectModule,
           requestService,
           app.getFrame3DPlanar().getItownsView(),
           app.getFrame3DPlanar().getItownsView().controls,
-          configs['server'],
+          configs['spatial_multimedia_db_server'],
           configs['city_objects']
         );
 

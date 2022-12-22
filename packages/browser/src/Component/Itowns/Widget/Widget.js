@@ -22,8 +22,8 @@ export { BaseMap } from './BaseMap/BaseMapWindow';
 
 export { HelpWindow } from './Help/Help';
 
-import * as WebService from './WebService/WebService';
-export { WebService };
+import * as Server from './Server/Server';
+export { Server };
 
 import * as Component from './Component/Component';
 export { Component };
