@@ -27,7 +27,7 @@ Adding the documents module in a demo is pretty simple :
 ```js
 ////// DOCUMENTS MODULE
 const documentModule = new udvcore.DocumentModule(requestService, baseDemo.config)
-baseDemo.addModuleView('documents', documentModule.view);
+baseDemo.addWidgetView('documents', documentModule.view);
 
 ////// DOCUMENTS VISUALIZER (to orient the document)
 const imageOrienter = new udvcore.DocumentVisualizerWindow(documentModule, baseDemo.view, baseDemo.controls);

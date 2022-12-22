@@ -23,7 +23,7 @@ const geocodingService = new udvcore.GeocodingService(requestService, baseDemo.e
 const geocodingView = new udvcore.GeocodingView(geocodingService, baseDemo.controls, baseDemo.view);
 
 // You can specify a more explicit name than 'geocoding' for the menu button
-baseDemo.addModuleView('geocoding', geocodingView, {name: 'Address search'});
+baseDemo.addWidgetView('geocoding', geocodingView, {name: 'Address search'});
 ```
 
 ### Configuration

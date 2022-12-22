@@ -18,7 +18,7 @@
       app.start('./assets/config/default_config.json').then((config) => {
         // //// About Widget
         const about = new udvizBrowser.Widget.AboutWindow();
-        app.addModuleView('about', about);
+        app.addWidgetView('about', about);
 
         // //// BaseMap Widget
         const baseMap = new udvizBrowser.Widget.BaseMap(
@@ -27,7 +27,7 @@
           app.extent,
           app.config['projection']
         );
-        app.addModuleView('baseMap', baseMap);
+        app.addWidgetView('baseMap', baseMap);
       });
     </script>
   </body>

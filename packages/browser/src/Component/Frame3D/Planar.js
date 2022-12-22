@@ -3,7 +3,6 @@ import {
   addElevationLayer,
   setupAndAddGeoJsonLayers,
 } from './Component/Component';
-import { computeNearFarCamera } from '../THREEUtil';
 import { Base } from './Base/Base';
 import { LayerManager, TilesManager } from '../Itowns/Itowns';
 const itowns = require('itowns'); // import that way jsdoc resolve type sometime ... lol
@@ -192,11 +191,6 @@ export class Planar extends Base {
     if (options.configGeoJSONLayers) {
       setupAndAddGeoJsonLayers(options.configGeoJSONLayers, this.itownsView);
     }
-
-    console.log('copute near far is not done');
-    // this.itownsRequesterBeforeRender = function () {
-    //   computeNearFarCamera(_this.getCamera(), _this.getExtent(), 400);
-    // };
   }
 
   /**
