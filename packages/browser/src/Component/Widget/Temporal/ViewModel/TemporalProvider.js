@@ -1,7 +1,7 @@
-import { TilesManager } from '../../../3DTiles/TilesManager.js';
-import { getVisibleTiles } from '../../../3DTiles/3DTilesUtils.js';
-import { CityObjectStyle } from '../../../3DTiles/Model/CityObjectStyle.js';
-import { CityObjectID } from '../../../3DTiles/Model/CityObject.js';
+import { TilesManager } from '../../../Itowns/3DTiles/TilesManager.js';
+import { getVisibleTiles } from '../../../Itowns/3DTiles/3DTilesUtils.js';
+import { CityObjectStyle } from '../../../Itowns/3DTiles/Model/CityObjectStyle.js';
+import { CityObjectID } from '../../../Itowns/3DTiles/Model/CityObject.js';
 import { $3DTemporalExtension } from '../Model/3DTemporalExtension.js';
 
 /**

@@ -1,4 +1,4 @@
-import { focusCameraOn } from '../../../../Component/Component';
+import { focusCameraOn } from '../../../../Itowns/Component/Component';
 import { DocumentModule } from '../../Documents/DocumentModule';
 import * as THREE from 'three';
 import { DocumentProvider } from '../../Documents/ViewModel/DocumentProvider';
