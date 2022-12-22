@@ -15,18 +15,17 @@ export class DocumentCommentsModule {
    *
    * @param {DocumentModule} documentModule The document module.
    * @param {RequestService} requestService The request service.
-   * @param {object} config The UDV config.
-   * @param {object} config.server The server access config.
-   * @param {string} config.server.url The server URL.
-   * @param {string} config.server.document The route for documents.
-   * @param {string} config.server.comment The route for comments.
-   * @param {string} config.server.user The route for users.
+   * @param {object} configServer The server access config.
+   * @param {string} configServer.url The server URL.
+   * @param {string} configServer.document The route for documents.
+   * @param {string} configServer.comment The route for comments.
+   * @param {string} configServer.user The route for users.
    */
-  constructor(documentModule, requestService, config) {
+  constructor(documentModule, requestService, configServer) {
     this.service = new DocumentCommentsService(
       documentModule.provider,
       requestService,
-      config
+      configServer
     );
 
     this.commentsWindow = new DocumentCommentsWindow(this.service);

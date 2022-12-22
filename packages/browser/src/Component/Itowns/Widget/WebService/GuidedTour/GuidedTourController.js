@@ -25,21 +25,20 @@ export class GuidedTourController extends WidgetView {
    *
    * @param { DocumentModule } documentModule The document module.
    * @param { RequestService } requestService The request service
-   * @param { object } config The UDV config.
-   * @param { object } config.server The server configuration.
-   * @param { string } config.server.url The base URL of the server.
-   * @param { string } config.server.guidedTour The route for guided tours.
+   * @param { object } configServer The server configuration.
+   * @param { string } configServer.url The base URL of the server.
+   * @param { string } configServer.guidedTour The route for guided tours.
    *
   ======================================================================
    */
-  constructor(documentModule, requestService, config) {
+  constructor(documentModule, requestService, configServer) {
     super();
 
     this.guidedTourContainerId = 'guidedTourContainer';
 
     this.documentModule = documentModule; // Instance of DocumentModule
 
-    this.url = config.server.url + config.server.guidedTour;
+    this.url = configServer.url + configServer.guidedTour;
 
     this.browser = this.documentModule.view.inspectorWindow;
 

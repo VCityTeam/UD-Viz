@@ -11,21 +11,20 @@ export class DocumentCommentsService {
    *
    * @param {DocumentProvider} documentProvider The document provider.
    * @param {RequestService} requestService The request service.
-   * @param {object} config The UD-Viz config.
-   * @param {object} config.server The server access config.
-   * @param {string} config.server.url The server URL.
-   * @param {string} config.server.document The route for documents.
-   * @param {string} config.server.comment The route for comments.
-   * @param {string} config.server.user The route for users.
+   * @param {object} configServer The server access config.
+   * @param {string} configServer.url The server URL.
+   * @param {string} configServer.document The route for documents.
+   * @param {string} configServer.comment The route for comments.
+   * @param {string} configServer.user The route for users.
    */
-  constructor(documentProvider, requestService, config) {
+  constructor(documentProvider, requestService, configServer) {
     this.documentProvider = documentProvider;
 
     this.requestService = requestService;
 
-    this.documentUrl = `${config.server.url}${config.server.document}`;
-    this.commentRoute = config.server.comment;
-    this.authorUrl = `${config.server.url}${config.server.user}`;
+    this.documentUrl = `${configServer.url}${configServer.document}`;
+    this.commentRoute = configServer.comment;
+    this.authorUrl = `${configServer.url}${configServer.user}`;
   }
 
   async getComments() {

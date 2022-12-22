@@ -12,12 +12,11 @@ export class ContributeService {
    *
    * @param {RequestService} requestService The request service.
    * @param {DocumentProvider} provider The document provider.
-   * @param {object} config The UD-Viz config.
-   * @param {object} config.server The server configuration.
-   * @param {string} config.server.url The server url.
-   * @param {string} config.server.document The base route for documents.
+   * @param {object} configServer The server configuration.
+   * @param {string} configServer.url The server url.
+   * @param {string} configServer.document The base route for documents.
    */
-  constructor(requestService, provider, config) {
+  constructor(requestService, provider, configServer) {
     /**
      * The request service.
      *
@@ -42,18 +41,18 @@ export class ContributeService {
      *  }
      * }}
      */
-    this.config = config;
+    this.configServer = configServer;
 
     /**
      * The base URL for documents.
      *
      * @type {string}
      */
-    this.documentUrl = this.config.server.url;
+    this.documentUrl = this.configServer.url;
     if (!this.documentUrl.endsWith('/')) {
       this.documentUrl += '/';
     }
-    this.documentUrl += this.config.server.document;
+    this.documentUrl += this.configServer.document;
   }
 
   /**

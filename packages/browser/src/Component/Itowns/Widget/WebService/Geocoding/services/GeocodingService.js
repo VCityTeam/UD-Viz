@@ -7,18 +7,18 @@ export class GeocodingService {
    *
    * @param {RequestService} requestService The request service.
    * @param {*} extent The iTwons extent.
-   * @param {*} config Global configuration.
+   * @param {*} configGeocoding
    */
-  constructor(requestService, extent, config) {
+  constructor(requestService, extent, configGeocoding) {
     this.requestService = requestService;
     this.extent = extent.as('EPSG:4326');
-    this.geocodingUrl = config.geocoding.url;
-    this.parameters = config.geocoding.parameters;
-    this.basePath = config.geocoding.basePath;
-    this.latPath = config.geocoding.result.lat;
-    this.lngPath = config.geocoding.result.lng;
-    this.credit = config.geocoding.credit;
-    this.requestTimeIntervalMs = config.geocoding.requestTimeIntervalMs;
+    this.geocodingUrl = configGeocoding.url;
+    this.parameters = configGeocoding.parameters;
+    this.basePath = configGeocoding.basePath;
+    this.latPath = configGeocoding.result.lat;
+    this.lngPath = configGeocoding.result.lng;
+    this.credit = configGeocoding.credit;
+    this.requestTimeIntervalMs = configGeocoding.requestTimeIntervalMs;
     this.canDoRequest = true;
   }
 

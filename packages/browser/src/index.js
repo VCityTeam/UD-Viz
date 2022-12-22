@@ -12,6 +12,8 @@ export { FileUtil };
 import * as Widget from './Component/Itowns/Widget/Widget';
 export { Widget };
 
+export { InputManager } from './Component/InputManager';
+
 // Itowns
 // import * as Itowns from './Itowns/Itowns';
 // export { Itowns };

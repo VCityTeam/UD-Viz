@@ -20,10 +20,10 @@ export class LinkModule {
    * @param {RequestService} requestService The request service.
    * @param {*} itownsView The iTowns view.
    * @param {*} cameraControls The planar camera controls.
-   * @param {object} config The UD-Viz config.
-   * @param {object} config.server The server configuration.
-   * @param {string} config.server.url The server URL.
-   * @param {string} config.server.link The link route.
+   * @param {object} configServer The server configuration.
+   * @param {string} configServer.url The server URL.
+   * @param {string} configServer.link The link route.
+   * @param {object} configCityObjects - need description
    */
   constructor(
     documentModule,
@@ -31,14 +31,15 @@ export class LinkModule {
     requestService,
     itownsView,
     cameraControls,
-    config
+    configServer,
+    configCityObjects
   ) {
     /**
      * The link service.
      *
      * @type {LinkService}
      */
-    this.service = new LinkService(requestService, config);
+    this.service = new LinkService(requestService, configServer);
 
     /**
      * The link provider.
@@ -49,7 +50,7 @@ export class LinkModule {
       documentModule.provider,
       cityObjectModule.provider,
       this.service,
-      config
+      configCityObjects
     );
     this.provider.fetchLinks().then(() => {
       this.view = new LinkView(

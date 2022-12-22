@@ -17,12 +17,17 @@ export class DocumentValidationModule {
    *
    * @param {DocumentModule} documentModule The documents module.
    * @param requestService
-   * @param config
+   * @param configServer
    */
-  constructor(documentModule, requestService, config) {
-    this.validationService = new ValidationService(requestService, config);
+  constructor(documentModule, requestService, configServer) {
+    this.validationService = new ValidationService(
+      requestService,
+      configServer
+    );
 
-    this.validationSource = new DocumentsInValidationDocumentSource(config);
+    this.validationSource = new DocumentsInValidationDocumentSource(
+      configServer
+    );
 
     this.validationView = new ValidationView(
       documentModule,

@@ -11,15 +11,15 @@ export class DocumentService {
    * Constructs a new document service.
    *
    * @param {RequestService} requestService The request service.
-   * @param {object} config The configuration of UD-Viz.
-   * @param {object} config.server The server configuration.
-   * @param {string} config.server.url The server url.
-   * @param {string} config.server.document The base route for documents.
-   * @param {string} config.server.file The route for document files.
-   * @param {boolean} [config.server.authenticate] If authentication should be
+   * @param {object} configServer The configuration of UD-Viz.
+   * @param {object} configServer The server configuration.
+   * @param {string} configServer.url The server url.
+   * @param {string} configServer.document The base route for documents.
+   * @param {string} configServer.file The route for document files.
+   * @param {boolean} [configServer.authenticate] If authentication should be
    * used for the request.
    */
-  constructor(requestService, config) {
+  constructor(requestService, configServer) {
     /**
      * The request service.
      *
@@ -33,7 +33,7 @@ export class DocumentService {
      * @type {boolean}
      */
     this.authenticate = false;
-    if (config.server.authenticate) {
+    if (configServer.authenticate) {
       this.authenticate = true;
     }
 
@@ -42,7 +42,7 @@ export class DocumentService {
      *
      * @type {DocumentSource}
      */
-    this.source = new DefaultDocumentSource(config);
+    this.source = new DefaultDocumentSource(configServer);
 
     /**
      * The list of documents.
@@ -149,13 +149,12 @@ export class DocumentSource {
 class DefaultDocumentSource extends DocumentSource {
   /**
    *
-   * @param {object} config The configuration of UD-Viz.
-   * @param {object} config.server The server configuration.
-   * @param {string} config.server.url The server url.
-   * @param {string} config.server.document The base route for documents.
-   * @param {string} config.server.file The route for document files.
+   * @param {object} configServer The server configuration.
+   * @param {string} configServer.url The server url.
+   * @param {string} configServer.document The base route for documents.
+   * @param {string} configServer.file The route for document files.
    */
-  constructor(config) {
+  constructor(configServer) {
     super();
 
     /**
@@ -173,18 +172,17 @@ class DefaultDocumentSource extends DocumentSource {
     this.fileRoute;
 
     if (
-      !!config &&
-      !!config.server &&
-      !!config.server.url &&
-      !!config.server.document &&
-      !!config.server.file
+      !!configServer &&
+      !!configServer.url &&
+      !!configServer.document &&
+      !!configServer.file
     ) {
-      this.documentUrl = config.server.url;
+      this.documentUrl = configServer.url;
       if (this.documentUrl.slice(-1) !== '/') {
         this.documentUrl += '/';
       }
-      this.documentUrl += config.server.document;
-      this.fileRoute = config.server.file;
+      this.documentUrl += configServer.document;
+      this.fileRoute = configServer.file;
     } else {
       throw 'The given configuration is incorrect.';
     }

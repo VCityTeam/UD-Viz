@@ -1,0 +1,14 @@
+{
+  "slides": [
+    {
+      "name": "diapo1",
+      "folder": "./assets/img/slide",
+      "diapositives": ["1.jpeg", "2.jpeg", "3.jpeg"]
+    },
+    {
+      "name": "diapo2",
+      "folder": "./assets/img/slide",
+      "diapositives": ["11.jpeg", "12.jpeg", "13.jpeg"]
+    }
+  ]
+}
