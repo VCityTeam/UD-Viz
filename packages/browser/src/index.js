@@ -1,6 +1,6 @@
 // @ud-viz/browser bundle API
 
-// Component
+// Component temporary everything need out of the bundle should be expose TODO_ISSUE
 import * as Component from './Component/Component.js';
 export { Component };
 
@@ -13,14 +13,6 @@ import * as Widget from './Component/Itowns/Widget/Widget';
 export { Widget };
 
 export { InputManager } from './Component/InputManager';
-
-// Itowns
-// import * as Itowns from './Itowns/Itowns';
-// export { Itowns };
-
-// // Templates
-// import * as Templates from './Templates/Templates.js';
-// export { Templates };
 
 // // Game
 // import { Base } from './Game/BrowserScript';
