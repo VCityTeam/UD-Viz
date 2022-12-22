@@ -18,7 +18,7 @@ export class AllWidget {
    * @param {object} config - TODO describe
    */
   constructor(config) {
-    this.config = config;
+    this.config = config; // recommended to not ref the config but to create state in this for what need to be store
 
     // allwidget state
     this.widgets = {};
@@ -29,69 +29,46 @@ export class AllWidget {
     this.authService = null;
     this.parentElement = null;
 
+    /** @type {Planar} */
+    this.frame3DPlanar = null;
+
     // init DOM
-
     this.appendTo(document.body);
-
     this.addLogos();
+  }
 
+  initFrame3DPlanarFromConfig(frame3DPlanarConfig) {
     // initialize frame3DPlanar from config
     const parentDiv = document.getElementById(this.contentSectionId);
 
     // http://proj4js.org/
     // define a projection as a string and reference it that way
     proj4.default.defs(
-      config['crs'],
+      frame3DPlanarConfig.extent.crs,
       '+proj=lcc +lat_1=45.25 +lat_2=46.75' +
         ' +lat_0=46 +lon_0=3 +x_0=1700000 +y_0=5200000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs'
     );
 
     const extent = new itowns.Extent(
-      config['crs'],
-      parseInt(config['extents']['min_x']),
-      parseInt(config['extents']['max_x']),
-      parseInt(config['extents']['min_y']),
-      parseInt(config['extents']['max_y'])
+      frame3DPlanarConfig.extent.crs,
+      parseInt(frame3DPlanarConfig.extent.west),
+      parseInt(frame3DPlanarConfig.extent.east),
+      parseInt(frame3DPlanarConfig.extent.south),
+      parseInt(frame3DPlanarConfig.extent.north)
     );
 
-    const coordinates = extent.center();
-
-    console.log('config coordinates bad');
-    let heading = -50;
-    let range = 3000;
-    let tilt = 10;
-
-    // Assign default value or config value
-    if (config['camera'] && config['camera']['position']) {
-      if (config['camera']['position']['heading'])
-        heading = config['camera']['position']['heading'];
-
-      if (config['camera']['position']['range'])
-        range = config['camera']['position']['range'];
-
-      if (config['camera']['position']['tilt'])
-        tilt = config['camera']['position']['tilt'];
-
-      if (config['camera']['position']['x'])
-        coordinates.x = config['camera']['position']['x'];
-
-      if (config['camera']['position']['y'])
-        coordinates.y = config['camera']['position']['y'];
-    }
-
-    /** @type {Planar} */
     this.frame3DPlanar = new Planar(extent, {
       htmlParent: parentDiv,
       hasItownsControls: true,
-      coordinates: coordinates,
-      maxSubdivisionLevel: config['maxSubdivisionLevel'],
-      heading: heading,
-      tilt: tilt,
-      range: range,
-      config3DTilesLayers: config['3DTilesLayers'],
-      configBaseMapLayer: config['base_map_layers'][0], // intialiaze with the first one
-      configElevationLayer: config['elevation_layer'],
-      configGeoJSONLayers: config['GeoJSONLayers'],
+      coordinates: frame3DPlanarConfig['coordinates'],
+      maxSubdivisionLevel: frame3DPlanarConfig['maxSubdivisionLevel'],
+      heading: frame3DPlanarConfig['heading'],
+      tilt: frame3DPlanarConfig['tilt'],
+      range: frame3DPlanarConfig['range'],
+      config3DTilesLayers: frame3DPlanarConfig['3D_tiles_layers'],
+      configBaseMapLayer: frame3DPlanarConfig['base_map_layer'],
+      configElevationLayer: frame3DPlanarConfig['elevation_layer'],
+      configGeoJSONLayers: frame3DPlanarConfig['geoJSON_layers'],
     });
 
     THREEUtil.addLights(this.frame3DPlanar.getScene());
@@ -147,10 +124,10 @@ export class AllWidget {
 
   addLogos() {
     // Path file for all the logo images
-    const logos = this.config.assets.logos;
+    const logos = this.config.logos;
 
     // Path to the logos folder
-    const imageFolder = this.config.assets.imageFolder;
+    const imageFolder = this.config.imageFolder;
 
     // Create div to integrate all logos images
     const logoDiv = document.createElement('div');
@@ -317,10 +294,7 @@ export class AllWidget {
     const icon = document.createElement('img');
 
     // Creating an icon
-    icon.setAttribute(
-      'src',
-      `${this.config.assets.iconFolder}/${widgetId}.svg`
-    );
+    icon.setAttribute('src', `${this.config.iconFolder}/${widgetId}.svg`);
     icon.className = 'menuIcon';
     button.insertBefore(icon, button.firstChild);
 
