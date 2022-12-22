@@ -2,7 +2,6 @@
 <html>
   <head>
     <title>Temporal Widget example</title>
-
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   </head>
@@ -13,24 +12,46 @@
     <script type="text/javascript">
       /* eslint-disable no-new */
 
-      const app = new udvizBrowser.Templates.AllWidget();
+      udvizBrowser.FileUtil.loadMultipleJSON([
+        './assets/config/all_widget.json',
+        './assets/config/extent.json',
+        './assets/config/frame3D_planar.json',
+        './assets/config/widget/about.json',
+        './assets/config/widget/help.json',
+        './assets/config/widget/temporal.json',
+      ]).then((configs) => {
+        const app = new udvizBrowser.AllWidget(configs['all_widget']);
 
-      app.start('./assets/config/default_config.json').then((config) => {
-        // //// ABOUT MODULE
-        const about = new udvizBrowser.Widget.AboutWindow(
-          config.hmtlWindow.aboutWindow
+        // http://proj4js.org/
+        // define a projection as a string and reference it that way
+        // the definition of the projection should be in config TODO_ISSUE
+        udvizBrowser.proj4.default.defs(
+          configs['extent'].crs,
+          '+proj=lcc +lat_1=45.25 +lat_2=46.75' +
+            ' +lat_0=46 +lon_0=3 +x_0=1700000 +y_0=5200000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs'
         );
+
+        const extent = new udvizBrowser.itowns.Extent(
+          configs['extent'].crs,
+          parseInt(configs['extent'].west),
+          parseInt(configs['extent'].east),
+          parseInt(configs['extent'].south),
+          parseInt(configs['extent'].north)
+        );
+
+        app.initFrame3DPlanarFromConfig(extent, configs['frame3D_planar']);
+
+        // //// ABOUT MODULE
+        const about = new udvizBrowser.Widget.AboutWindow(configs['about']);
         app.addWidgetView('about', about);
 
         // //// HELP MODULE
-        new udvizBrowser.Widget.Extensions.HelpWindow(
-          config.hmtlWindow.helpWindow
-        );
+        new udvizBrowser.Widget.HelpWindow(configs['help']); // => help window should be add with addWidgetView
 
-        // //// TEMPORAL MODULE
+        // TEMPORAL MODULE TODO_ISSUE broken
         const temporalModule = new udvizBrowser.Widget.TemporalModule(
-          app.view3D.getLayerManager().tilesManagers[0],
-          app.config.temporalModule
+          app.getFrame3DPlanar().getLayerManager().tilesManagers[0],
+          configs['temporal']
         );
         app.addWidgetView('temporal', temporalModule.view);
       });
