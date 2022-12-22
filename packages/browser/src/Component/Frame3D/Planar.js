@@ -144,7 +144,13 @@ export class Planar extends Base {
     super(options, false); // do not init3D since itownsView will do it
 
     const hasItownsControls = options.hasItownsControls || false;
-    const coordinates = options.coordinates || extent.center(); // default coordinates are extent center
+    const coordinates = extent.center(); // default coordinates are extent center
+    if (options.coordinates) {
+      if (options.coordinates.x)
+        coordinates.x = parseFloat(options.coordinates.x);
+      if (options.coordinates.y)
+        coordinates.y = parseFloat(options.coordinates.y);
+    }
     const heading = options.heading || -50;
     const range = options.range || 3000;
     const tilt = options.tilt || 10;

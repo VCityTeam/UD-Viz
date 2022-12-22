@@ -46,6 +46,44 @@ module.exports = {
   },
 
   /**
+   *
+   * @param {*} arrayPath
+   * @returns
+   */
+  loadMultipleJSON: function (arrayPath) {
+    return new Promise((resolve, reject) => {
+      const promises = [];
+      const result = {};
+
+      arrayPath.forEach((path) => {
+        promises.push(
+          this.loadJSON(path).then((jsonResult) => {
+            const key = this.computeFileNameFromPath(path);
+            if (result[key]) throw new Error('conflict same key');
+            result[key] = jsonResult;
+          })
+        );
+      });
+
+      Promise.all(promises)
+        .then(() => {
+          resolve(result);
+        })
+        .catch(reject);
+    });
+  },
+
+  /**
+   *
+   * @param {string} path
+   */
+  computeFileNameFromPath: function (path) {
+    const indexLastSlash = path.lastIndexOf('/');
+    const indexLastPoint = path.lastIndexOf('.');
+    return path.slice(indexLastSlash + 1, indexLastPoint);
+  },
+
+  /**
    * To be used with an input of type file
    *
    * @param {object} e input of type file argument when 'change'
