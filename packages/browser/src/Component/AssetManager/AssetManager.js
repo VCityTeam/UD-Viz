@@ -3,7 +3,7 @@ import * as THREE from 'three';
 import * as jquery from 'jquery';
 import { Howl } from 'howler';
 
-import './AssetsLoader.css';
+import './AssetManager.css';
 
 /**
  * Default material used by native objects
@@ -13,9 +13,9 @@ const DEFAULT_MATERIAL = new THREE.MeshLambertMaterial({
 });
 
 /**
- * Give acess to all assets (image, video, script, worlds, ...)
+ * Load async assets (gltf, JSON, ...)
  */
-export class AssetsLoader {
+export class AssetManager {
   constructor() {
     this.conf = null;
 
@@ -24,6 +24,8 @@ export class AssetsLoader {
 
     // TODO should a JSON
     this.worldsJSON = null;
+
+    this.initNativeRenderData();
   }
 
   /**
@@ -69,7 +71,7 @@ export class AssetsLoader {
   /**
    * Build native objects (procedural objects)
    */
-  buildNativeModel() {
+  initNativeRenderData() {
     const geometryBox = new THREE.BoxGeometry();
     const cube = new THREE.Mesh(geometryBox, DEFAULT_MATERIAL);
     this.renderData['cube'] = new RenderData(cube);
@@ -170,7 +172,7 @@ export class AssetsLoader {
    *
    * @param {JSON} config config file
    * @param {Html} parentDiv where to add the loadingView
-   * @returns {Array[Promises]} all the promises processed to load assets
+   * @returns {Promise[]} all the promises processed to load assets
    */
   loadFromConfig(config = {}, parentDiv = document.body) {
     this.conf = config;
@@ -184,7 +186,6 @@ export class AssetsLoader {
 
     // Load config file
     const _this = this;
-    this.buildNativeModel();
 
     if (config.renderData) {
       const idLoadingRenderData = 'RenderData';
@@ -287,9 +288,7 @@ export class AssetsLoader {
 
     return new Promise((resolve) => {
       Promise.all(promises).then(function () {
-        if (loadingView) {
-          loadingView.dispose();
-        }
+        loadingView.dispose();
         resolve();
       });
     });

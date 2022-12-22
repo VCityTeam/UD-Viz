@@ -17,7 +17,7 @@
     inputManager.addMouseInput(window, 'mouseclick', listener);
     inputManager.removeInputListener(listener);
 
-    // AssetsLoader Test
+    // AssetManager Test
 
     resolve();
   });
