@@ -15,3 +15,6 @@ export { Itowns };
 
 import * as Frame3D from './Frame3D/Frame3D';
 export { Frame3D };
+
+import * as Widget from './Widget/Widget';
+export { Widget };
