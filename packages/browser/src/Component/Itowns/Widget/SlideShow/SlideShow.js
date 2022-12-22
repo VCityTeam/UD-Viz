@@ -7,17 +7,17 @@ export class SlideShow extends Window {
    * It initializes the widget.
    *
    * @param {itowns.PlanarView} itownsView - The itowns view.
-   * @param {object} config - The configuration of the widget.
+   * @param {object} configSlideShow - The configuration of the widget. need description
    * @param {itowns.Extent} extent - The extent of the widget.
    * @param {InputManager} inputManager - the input manager of the application
    */
-  constructor(itownsView, config, extent, inputManager) {
+  constructor(itownsView, configSlideShow, extent, inputManager) {
     super('slideShow', 'Slide Show 3D', false);
 
-    /** @type {itowns.PlanarView} */
-    this.conf = config || null;
+    this.configSlideShow = configSlideShow || null;
     /** @type {itowns.Extent} */
     this.extent = extent;
+    /** @type {itowns.PlanarView} */
     this.itownsView = itownsView;
     /** @type {InputManager} */
     this.inputManager = inputManager;
@@ -51,7 +51,7 @@ export class SlideShow extends Window {
 
     this.initDefaultTextureFile();
 
-    if (this.conf.slideShow) {
+    if (this.configSlideShow) {
       this.setSlideshowInConfig(0);
     }
 
@@ -78,7 +78,7 @@ export class SlideShow extends Window {
 
   setSlideshowInConfig(slideIndex) {
     if (isNaN(slideIndex)) return;
-    const conf = this.conf.slideShow;
+    const conf = this.configSlideShow;
     const slide = conf[Object.keys(conf)[0]][slideIndex];
     const folder = slide.folder;
     const diapos = slide.diapositives;
@@ -210,11 +210,7 @@ export class SlideShow extends Window {
     this.rotationInputVectorID = rotationElement.inputVector.id;
     htmlSlideShow.appendChild(rotationElement.inputVector);
 
-    const sizeElement = this.fullputVector(
-      ['Height', 'Width'],
-      'Size',
-      100
-    );
+    const sizeElement = this.fullputVector(['Height', 'Width'], 'Size', 100);
     htmlSlideShow.appendChild(sizeElement.title);
     this.sizeInputVectorID = sizeElement.inputVector.id;
     htmlSlideShow.appendChild(sizeElement.inputVector);
@@ -263,7 +259,7 @@ export class SlideShow extends Window {
     slideSelect.appendChild(unsetOptionSlide);
     this.slideSelectID = slideSelect.id;
 
-    const conf = this.conf.slideShow;
+    const conf = this.configSlideShow;
     if (conf) {
       for (let i = 0; i < conf[Object.keys(conf)[0]].length; i++) {
         const element = conf[Object.keys(conf)[0]][i];
@@ -293,11 +289,14 @@ export class SlideShow extends Window {
       )
     );
     let elevationZ = 0.1;
-    if (
-      this.conf['elevation_layer'] &&
-      this.conf['elevation_layer']['colorTextureElevationMaxZ']
-    ) {
-      elevationZ = this.conf['elevation_layer']['colorTextureElevationMaxZ'];
+
+    const itownsViewLayers = this.itownsView.getLayers();
+    for (let index = 0; index < itownsViewLayers.length; index++) {
+      const layer = itownsViewLayers[index];
+      if (layer.isElevationLayer) {
+        elevationZ = layer.colorTextureElevationMaxZ;
+        break;
+      }
     }
 
     this.setCoordinatesInputs(
