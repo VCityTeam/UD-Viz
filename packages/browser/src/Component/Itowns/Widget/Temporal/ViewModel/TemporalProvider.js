@@ -2,6 +2,7 @@ import { TilesManager } from '../../../3DTiles/TilesManager.js';
 import { getVisibleTiles } from '../../../3DTiles/3DTilesUtils.js';
 import { CityObjectStyle } from '../../../3DTiles/Model/CityObjectStyle.js';
 import { CityObjectID } from '../../../3DTiles/Model/CityObject.js';
+import { $3DTemporalExtension } from '../Model/3DTemporalExtension.js';
 
 /**
  * The ViewModel of the temporal module. Contains intermediate data structures
@@ -22,6 +23,7 @@ export class TemporalProvider {
    * TemporalView.
    */
   constructor(tempExtModel, tilesManager, currentTime) {
+    /** @type {$3DTemporalExtension} */
     this.tempExtModel = tempExtModel;
 
     this.tilesManager = tilesManager;

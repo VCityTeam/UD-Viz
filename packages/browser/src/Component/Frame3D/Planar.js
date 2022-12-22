@@ -6,6 +6,7 @@ import {
 import { Base } from './Base/Base';
 import { LayerManager, TilesManager } from '../Itowns/Itowns';
 const itowns = require('itowns'); // import that way jsdoc resolve type sometime ... lol
+const THREE = require('three');
 
 /**
  * These extensions should belong elsewhere since it should be possible
@@ -52,8 +53,8 @@ function setup3DTilesLayer(layer, layerManager, itownsView) {
         console.warn(
           'The 3D Tiles extension ' +
             extensionsConfig[i] +
-            ' specified in generalDemoConfig.json is not supported ' +
-            'by UD-Viz yet. Only 3DTILES_temporal and ' +
+            ' specified in 3D_tiles_layers is not supported ' +
+            'by @ud-viz/browser yet. Only 3DTILES_temporal and ' +
             '3DTILES_batch_table_hierarchy are supported.'
         );
       }

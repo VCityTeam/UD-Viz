@@ -3,7 +3,7 @@ import { Window } from './Window.js';
 const BASE_Z_INDEX = 100;
 
 /**
- * Class used to manage windows. Every window is registered into the manager
+ * Class used to manage windows lol. Every window is registered into the manager
  *
  */
 class WindowManager {

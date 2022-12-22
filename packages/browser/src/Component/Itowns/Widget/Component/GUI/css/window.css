@@ -12,6 +12,7 @@
   display: grid;
   grid-template-rows: 30px auto;
   box-shadow: 0px 0px 2px 0px rgba(0, 0, 0, 0.75);
+  background-color: #f95a5a; /* test */
 }
 
 .window-header {

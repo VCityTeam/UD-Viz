@@ -115,6 +115,7 @@ export class Window extends WidgetView {
    */
   appendTo(htmlElement) {
     if (!this.isCreated) {
+      // if you are using allwidget.js this.parentElement is intialize when widget is added
       this.parentElement = htmlElement;
       const windowDiv = document.createElement('div');
       windowDiv.innerHTML = this.html;

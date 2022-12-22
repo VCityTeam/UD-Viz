@@ -21,12 +21,14 @@
         './assets/config/widget/help.json',
         './assets/config/widget/server/geocoding_server.json',
         './assets/config/widget/city_objects.json',
+        './assets/config/widget/temporal.json',
         './assets/config/widget/slide_show.json',
       ]).then((configs) => {
         const app = new udvizBrowser.AllWidget(configs['all_widget']);
 
         // http://proj4js.org/
         // define a projection as a string and reference it that way
+        // the definition of the projection should be in config TODO_ISSUE
         udvizBrowser.proj4.default.defs(
           configs['extent'].crs,
           '+proj=lcc +lat_1=45.25 +lat_2=46.75' +
@@ -163,10 +165,10 @@
         );
         app.addWidgetView('cameraPositioner', cameraPosition);
 
-        // ////// TEMPORAL MODULE
+        //// TEMPORAL MODULE TODO_ISSUE broken
         // const temporalModule = new udvizBrowser.Widget.TemporalModule(
-        //   app.view3D.getLayerManager().tilesManagers[0],
-        //   app.config.temporalModule
+        //   app.getFrame3DPlanar().getLayerManager().tilesManagers[0],
+        //   configs['temporal']
         // );
         // app.addWidgetView('temporal', temporalModule.view);
 
