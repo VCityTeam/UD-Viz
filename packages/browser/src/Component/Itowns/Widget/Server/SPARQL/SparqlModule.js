@@ -10,13 +10,11 @@ export class SparqlModule {
   /**
    * Creates a new SPARQL Module.
    *
-   * @param {object} config The configuration of UD-Viz.
-   * @param {object} config.sparqlModule The sparqlModule configuration.
-   * @param {string} config.sparqlModule.url The SPARQL endpoint url.
+   * @param {object} configSparql The sparqlModule configuration.
+   * @param {string} configSparql.url The SPARQL endpoint url.
    * @param {LayerManager} layerManager The UD-Viz LayerManager.
    */
-  constructor(config, layerManager) {
-    this.config = config;
+  constructor(configSparql, layerManager) {
     this.layerManager = layerManager;
 
     /**
@@ -24,7 +22,7 @@ export class SparqlModule {
      *
      * @type {SparqlEndpointResponseProvider}
      */
-    this.sparqlProvider = new SparqlEndpointResponseProvider(this.config);
+    this.sparqlProvider = new SparqlEndpointResponseProvider(configSparql);
 
     /**
      * Provides CityObjects based on mouse event positions or batch table data.
