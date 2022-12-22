@@ -9,10 +9,17 @@ export { AllWidget } from './AllWidget/AllWidget';
 import * as FileUtil from './Component/FileUtil';
 export { FileUtil };
 
+import * as THREEUtil from './Component/THREEUtil';
+export { THREEUtil };
+
 import * as Widget from './Component/Itowns/Widget/Widget';
 export { Widget };
 
 export { InputManager } from './Component/InputManager';
+
+export { Planar as Frame3DPlanar } from './Component/Frame3D/Planar';
+
+export { Billboard } from './Component/Frame3D/Component/Billboard';
 
 // // Game
 // import { Base } from './Game/BrowserScript';
