@@ -10,9 +10,9 @@ export class SparqlEndpointResponseProvider extends EventSender {
   /**
    * Creates a SPARQL Endpoint Provider
    *
-   * @param {SparqlEndpointService} service a SPARQL endpoint service.
+   * @param {object} configSparql - config sparql need description
    */
-  constructor(service) {
+  constructor(configSparql) {
     super();
 
     /**
@@ -20,7 +20,7 @@ export class SparqlEndpointResponseProvider extends EventSender {
      *
      * @type {SparqlEndpointService}
      */
-    this.service = new SparqlEndpointService(service);
+    this.service = new SparqlEndpointService(configSparql);
 
     this.registerEvent(
       SparqlEndpointResponseProvider.EVENT_ENDPOINT_RESPONSE_UPDATED
