@@ -3,7 +3,6 @@ const WidgetView = Widget.Component.WidgetView;
 import { Planar } from '../Component/Frame3D/Planar';
 import THREEUtil from '../Component/THREEUtil';
 const itowns = require('itowns');
-const proj4 = require('proj4');
 const THREE = require('three');
 
 import './AllWidget.css';
