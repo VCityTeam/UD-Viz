@@ -26,15 +26,19 @@ export class LinkProvider extends EventSender {
    * @param {DocumentProvider} documentProvider The document provider.
    * @param {CityObjectProvider} cityObjectProvider The city object provider.
    * @param {LinkService} linkService The link service.
-   * @param {object} config The configuration object for the application.
-   * @param {object} config.cityObjects The object containing the configuration
+   * @param {object} configCityObjects The object containing the configuration
    * for city objects
-   * @param {object} config.cityObjects.styles A dictionary of styles for city
+   * @param {object} configCityObjects.styles A dictionary of styles for city
    * objects.
-   * @param {CityObjectStyle} config.cityObjects.styles.linkedWithDisplayedDocument
+   * @param {CityObjectStyle} configCityObjects.styles.linkedWithDisplayedDocument
    * The style for the city objects linked with displayed documents.
    */
-  constructor(documentProvider, cityObjectProvider, linkService, config) {
+  constructor(
+    documentProvider,
+    cityObjectProvider,
+    linkService,
+    configCityObjects
+  ) {
     super();
 
     /**
@@ -83,7 +87,7 @@ export class LinkProvider extends EventSender {
      * @type {CityObjectStyle}
      */
     this.linkDisplayedDocumentStyle =
-      config.cityObjects.styles.linkedWithDisplayedDocument;
+      configCityObjects.styles.linkedWithDisplayedDocument;
 
     /**
      * A filter for city objects based on wether they are linked with any of the

@@ -9,14 +9,13 @@ export class ValidationService {
    * Constructs a validation service.
    *
    * @param {RequestService} requestService The request service.
-   * @param {object} config The UD-Viz configuration.
-   * @param {object} config.server The configuration for the server.
-   * @param {string} config.server.url The base URL of the server.
-   * @param {string} config.server.validate The route to validating documents.
+   * @param {object} configServer The configuration for the server.
+   * @param {string} configServer.url The base URL of the server.
+   * @param {string} configServer.validate The route to validating documents.
    */
-  constructor(requestService, config) {
+  constructor(requestService, configServer) {
     this.requestService = requestService;
-    this.validateUrl = `${config.server.url}${config.server.validate}`;
+    this.validateUrl = `${configServer.url}${configServer.validate}`;
   }
 
   /**

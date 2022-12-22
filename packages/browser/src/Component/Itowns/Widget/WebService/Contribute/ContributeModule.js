@@ -20,10 +20,9 @@ export class ContributeModule {
    * @param {RequestService} requestService The request service.
    * @param {*} itownsView The iTowns view.
    * @param {*} cameraControls The planar camera controls.
-   * @param {object} config The UDV config.
-   * @param {object} config.server The server configuration.
-   * @param {string} config.server.url The server url.
-   * @param {string} config.server.document The base route for documents.
+   * @param {object} configServer The server configuration.
+   * @param {string} configServer.url The server url.
+   * @param {string} configServer.document The base route for documents.
    */
   constructor(
     documentModule,
@@ -31,12 +30,12 @@ export class ContributeModule {
     requestService,
     itownsView,
     cameraControls,
-    config
+    configServer
   ) {
     this.contributeService = new ContributeService(
       requestService,
       documentModule.provider,
-      config
+      configServer
     );
 
     this.creationWindow = new DocumentCreationWindow(

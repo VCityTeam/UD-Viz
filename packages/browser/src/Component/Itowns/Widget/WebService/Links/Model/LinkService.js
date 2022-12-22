@@ -9,12 +9,11 @@ export class LinkService {
    * Creates a link service Service.
    *
    * @param {RequestService} requestService The request service.
-   * @param {object} config The UD-Viz config.
-   * @param {object} config.server The server configuration.
-   * @param {string} config.server.url The server URL.
-   * @param {string} config.server.link The link route.
+   * @param {object} configServer The server configuration.
+   * @param {string} configServer.url The server URL.
+   * @param {string} configServer.link The link route.
    */
-  constructor(requestService, config) {
+  constructor(requestService, configServer) {
     /**
      * Request service used to perform REST calls.
      */
@@ -25,7 +24,7 @@ export class LinkService {
      * GET url/<type> to retrieve links of this type.
      * POST url/<type> to create a link of this type.
      */
-    this.linkURL = `${config.server.url}${config.server.link}`;
+    this.linkURL = `${configServer.url}${configServer.link}`;
   }
 
   /**

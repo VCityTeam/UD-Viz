@@ -2,18 +2,17 @@ import { RequestService } from '../../Component/RequestService';
 
 /**
  *
- * @param requestService
- * @param config
+ * @param {RequestService} requestService
+ * @param configServer
  */
-export function AuthenticationService(requestService, config) {
+export function AuthenticationService(requestService, configServer) {
   this.observers = [];
-  this.config = config;
-  this.loginUrl = `${config.server.url}${config.server.login}`;
+  this.loginUrl = `${configServer.url}${configServer.login}`;
   // Route to manage users (register)
-  this.userUrl = `${config.server.url}${config.server.user}`;
+  this.userUrl = `${configServer.url}${configServer.user}`;
   // Route to get personal information
-  this.userMeUrl = `${config.server.url}${config.server.userMe}`;
-  this.requestService = new RequestService();
+  this.userMeUrl = `${configServer.url}${configServer.userMe}`;
+
   this.loginRequiredKeys = ['username', 'password'];
   this.registerRequiredKeys = [
     'username',

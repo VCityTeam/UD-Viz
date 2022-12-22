@@ -14,29 +14,28 @@ export class CityObjectModule {
    * module by adding filters.
    *
    * @param {LayerManager} layerManager The layer manager.
-   * @param {object} config The UDV configuration.
-   * @param {object} config.cityObjects The city objects config.
-   * @param {Object<string, CityObjectStyle>} config.cityObjects.styles The
+   * @param {object} configCityObjects The city objects config.
+   * @param {Object<string, CityObjectStyle>} configCityObjects.styles The
    * city object styles.
-   * @param {CityObjectStyle} config.cityObjects.styles.layerDefault The default
+   * @param {CityObjectStyle} configCityObjects.styles.layerDefault The default
    * style for the layer.
-   * @param {CityObjectStyle} config.cityObjects.styles.selection The style
+   * @param {CityObjectStyle} configCityObjects.styles.selection The style
    * for the selected city object.
    */
-  constructor(layerManager, config) {
+  constructor(layerManager, configCityObjects) {
     /**
      * The city object provider, whichs manages the city objects in terms
      * of layer and selected city object.
      */
     this.provider = new CityObjectProvider(layerManager);
-    this.provider.setSelectionStyle(config.cityObjects.styles.selection);
+    this.provider.setSelectionStyle(configCityObjects.styles.selection);
 
     /**
      * The city object view. It consist of a main window, called the city
      * object window.
      */
     this.view = new CityObjectWindow(this.provider);
-    this.view.setDefaultLayerStyle(config.cityObjects.styles.layerDefault);
+    this.view.setDefaultLayerStyle(configCityObjects.styles.layerDefault);
   }
 
   /**

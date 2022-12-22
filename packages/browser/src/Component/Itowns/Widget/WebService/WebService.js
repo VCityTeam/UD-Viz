@@ -25,3 +25,6 @@ export { GuidedTourController } from './GuidedTour/GuidedTourController';
 export { LinkModule } from './Links/LinkModule';
 
 export { DocumentModule } from './Documents/DocumentModule';
+
+import * as Component from './Component/RequestService';
+export { Component };

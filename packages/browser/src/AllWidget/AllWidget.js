@@ -37,25 +37,9 @@ export class AllWidget {
     this.addLogos();
   }
 
-  initFrame3DPlanarFromConfig(frame3DPlanarConfig) {
+  initFrame3DPlanarFromConfig(extent, frame3DPlanarConfig) {
     // initialize frame3DPlanar from config
     const parentDiv = document.getElementById(this.contentSectionId);
-
-    // http://proj4js.org/
-    // define a projection as a string and reference it that way
-    proj4.default.defs(
-      frame3DPlanarConfig.extent.crs,
-      '+proj=lcc +lat_1=45.25 +lat_2=46.75' +
-        ' +lat_0=46 +lon_0=3 +x_0=1700000 +y_0=5200000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs'
-    );
-
-    const extent = new itowns.Extent(
-      frame3DPlanarConfig.extent.crs,
-      parseInt(frame3DPlanarConfig.extent.west),
-      parseInt(frame3DPlanarConfig.extent.east),
-      parseInt(frame3DPlanarConfig.extent.south),
-      parseInt(frame3DPlanarConfig.extent.north)
-    );
 
     this.frame3DPlanar = new Planar(extent, {
       htmlParent: parentDiv,
@@ -156,7 +140,7 @@ export class AllWidget {
             </div>
             <div id="${this.authenticationMenuLoggedOutId}">
                 <button type="button" id="${this.authenticationLoginButtonId}"
-                class="logInOut"><img src="${this.config.icon_authenfication_path}"></button>
+                class="logInOut"><img src="${this.config['icon_autenfication_path']}"></button>
             </div>
         `;
   }
