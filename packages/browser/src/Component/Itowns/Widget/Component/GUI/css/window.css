@@ -37,7 +37,7 @@
   height: auto;
   right: 2px;
   top: -4px;
-  margin: 0px;
+  margin: 0px !important;
   background-color: transparent;
   color: white;
   border: none;
