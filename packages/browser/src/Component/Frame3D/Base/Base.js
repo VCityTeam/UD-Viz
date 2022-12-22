@@ -1,6 +1,8 @@
 import * as THREE from 'three';
 import { CSS3DRenderer } from 'three/examples/jsm/renderers/CSS3DRenderer';
 import { checkParentChild } from '../../HTMLUtil';
+import { Billboard } from '../Component/Billboard';
+import { RequestAnimationFrameProcess } from '../../RequestAnimationFrameProcess';
 
 import './Base.css';
 
@@ -52,8 +54,8 @@ export class Base {
     // Size of the view
     this.size = new THREE.Vector2();
 
-    // Flag
-    this.disposed = false;
+    /** @type {RequestAnimationFrameProcess} process to render css3D */
+    this.css3DProcess = null;
 
     /** @type {THREE.Scene} */
     this.scene = null;
@@ -66,55 +68,8 @@ export class Base {
     this.css3DRenderer = null;
     this.css3DRendererFps = options.css3DRendererFps || 20;
     this.css3DScene = null;
+    /** @type {Billboard[]} */
     this.billboards = [];
-    const raycaster = new THREE.Raycaster();
-    this.toCSS3DEvent = (event) => {
-      if (this.isCatchingEventsCSS3D()) return;
-      if (checkParentChild(event.target, this.ui)) return; // Do not propagate if it's the ui that has been clicked
-
-      const el = this.rootWebGL;
-
-      const mouse = new THREE.Vector2(
-        -1 + (2 * event.offsetX) / (el.clientWidth - parseInt(el.offsetLeft)),
-        1 - (2 * event.offsetY) / (el.clientHeight - parseInt(el.offsetTop))
-      );
-
-      raycaster.setFromCamera(mouse, this.getCamera());
-
-      for (let index = 0; index < this.billboards.length; index++) {
-        const element = this.billboards[index];
-
-        const i = raycaster.intersectObject(element.getMaskObject());
-        if (i.length) {
-          this.catchEventsCSS3D(true);
-          element.select(true);
-          return;
-        }
-      }
-    };
-
-    this.toWebGLEvent = (event) => {
-      if (!this.isCatchingEventsCSS3D()) return;
-
-      let onBillboard = false;
-      if (event.path.length) {
-        const firstHoverEl = event.path[0];
-
-        for (let index = 0; index < this.billboards.length; index++) {
-          const element = this.billboards[index];
-          if (element.getHtml() == firstHoverEl) {
-            onBillboard = true;
-            break;
-          }
-        }
-      }
-      if (!onBillboard) {
-        this.catchEventsCSS3D(false);
-        this.billboards.forEach(function (b) {
-          b.select(false);
-        });
-      }
-    };
 
     // Default catch events
     const catchEventsCSS3D = options.catchEventsCSS3D || false;
@@ -189,33 +144,62 @@ export class Base {
     this.css3DScene = new THREE.Scene();
 
     // Listen to switch mode between css3D and webgl controls
-    this.rootWebGL.onmousedown = this.toCSS3DEvent;
-    this.rootCss.onmousedown = this.toWebGLEvent;
+    const raycaster = new THREE.Raycaster();
+    this.rootWebGL.onmousedown = (event) => {
+      if (this.isCatchingEventsCSS3D()) return;
+      if (checkParentChild(event.target, this.ui)) return; // Do not propagate if it's the ui that has been clicked
 
-    // Start ticking render of css3D renderer
-    const fps = this.css3DRendererFps;
+      const el = this.rootWebGL;
 
-    let now;
-    let then = Date.now();
-    let delta;
-    console.log('WARNING: refacto requester frame process');
-    const tick = () => {
-      if (this.disposed) return; // Stop requesting frame if disposed
+      const mouse = new THREE.Vector2(
+        -1 + (2 * event.offsetX) / (el.clientWidth - parseInt(el.offsetLeft)),
+        1 - (2 * event.offsetY) / (el.clientHeight - parseInt(el.offsetTop))
+      );
 
-      requestAnimationFrame(tick);
+      raycaster.setFromCamera(mouse, this.getCamera());
 
-      now = Date.now();
-      delta = now - then;
+      for (let index = 0; index < this.billboards.length; index++) {
+        const element = this.billboards[index];
 
-      if (delta > 1000 / fps) {
-        // Update time stuffs
-        then = now - (delta % 1000) / fps;
+        const i = raycaster.intersectObject(element.getMaskObject());
+        if (i.length) {
+          this.catchEventsCSS3D(true);
+          element.select(true);
+          return;
+        }
+      }
+    };
+    this.rootCss.onmousedown = (event) => {
+      if (!this.isCatchingEventsCSS3D()) return;
 
+      let onBillboard = false;
+      if (event.path.length) {
+        const firstHoverEl = event.path[0];
+
+        for (let index = 0; index < this.billboards.length; index++) {
+          const element = this.billboards[index];
+          if (element.getHtml() == firstHoverEl) {
+            onBillboard = true;
+            break;
+          }
+        }
+      }
+      if (!onBillboard) {
+        this.catchEventsCSS3D(false);
+        this.billboards.forEach(function (b) {
+          b.select(false);
+        });
+      }
+    };
+
+    // start rendering css3D
+    this.css3DProcess = new RequestAnimationFrameProcess(
+      this.css3DRendererFps,
+      () => {
         if (!this.isRendering) return;
         css3DRenderer.render(this.css3DScene, this.getCamera());
       }
-    };
-    tick();
+    );
 
     // Launch an async resize
     setTimeout(this.resizeListener, 100);
@@ -274,19 +258,6 @@ export class Base {
     this.isRendering = value;
   }
 
-  start() {
-    console.error('DEPRECATED SHOULD BE DONE IN APP');
-    // this.initItownsView(extent);
-    // // Start
-    // // this.inputManager.startListening(this.rootWebGL);
-
-    // // Dynamic near far computation
-    // this.itownsView.addFrameRequester(
-    //   itowns.MAIN_LOOP_EVENTS.BEFORE_RENDER,
-    //   this.itownsRequesterBeforeRender
-    // );
-  }
-
   getSize() {
     return this.size;
   }
@@ -320,7 +291,7 @@ export class Base {
   dispose() {
     window.removeEventListener('resize', this.resizeListener);
     this.html().remove();
-    this.disposed = true;
+    if (this.css3DProcess) this.css3DProcess.stop();
   }
 
   getCamera() {
