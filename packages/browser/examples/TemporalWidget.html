@@ -20,7 +20,7 @@
         const about = new udvizBrowser.Widget.AboutWindow(
           config.hmtlWindow.aboutWindow
         );
-        app.addModuleView('about', about);
+        app.addWidgetView('about', about);
 
         // //// HELP MODULE
         new udvizBrowser.Widget.Extensions.HelpWindow(
@@ -32,7 +32,7 @@
           app.view3D.getLayerManager().tilesManagers[0],
           app.config.temporalModule
         );
-        app.addModuleView('temporal', temporalModule.view);
+        app.addWidgetView('temporal', temporalModule.view);
       });
     </script>
   </body>

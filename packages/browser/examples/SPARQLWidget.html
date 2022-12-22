@@ -23,7 +23,7 @@
         const about = new udvizBrowser.Widget.AboutWindow(
           config.hmtlWindow.aboutWindow
         );
-        app.addModuleView('about', about);
+        app.addWidgetView('about', about);
 
         // //// AUTHENTICATION MODULE
         const authenticationService =
@@ -36,7 +36,7 @@
           new udvizBrowser.Widget.Extensions.AuthenticationView(
             authenticationService
           );
-        app.addModuleView('authentication', authenticationView, {
+        app.addWidgetView('authentication', authenticationView, {
           type: udvizBrowser.Templates.AllWidget.AUTHENTICATION_MODULE,
         });
 
@@ -45,13 +45,13 @@
           app.view3D.getLayerManager(),
           app.config
         );
-        app.addModuleView('cityObjects', cityObjectModule.view);
+        app.addWidgetView('cityObjects', cityObjectModule.view);
 
         // //// 3DTILES DEBUG
         const debug3dTilesWindow = new udvizBrowser.Widget.Debug3DTilesWindow(
           app.view3D.getLayerManager()
         );
-        app.addModuleView('3dtilesDebug', debug3dTilesWindow, {
+        app.addWidgetView('3dtilesDebug', debug3dTilesWindow, {
           name: '3DTiles Debug',
         });
 
@@ -60,20 +60,20 @@
           app.view,
           app.controls
         );
-        app.addModuleView('cameraPositioner', cameraPosition);
+        app.addWidgetView('cameraPositioner', cameraPosition);
 
         // //// LAYER CHOICE MODULE
         const layerChoice = new udvizBrowser.Widget.LayerChoice(
           app.view3D.getLayerManager()
         );
-        app.addModuleView('layerChoice', layerChoice);
+        app.addWidgetView('layerChoice', layerChoice);
 
         // //// SPARQL MODULE
         const sparqlModule = new udvizBrowser.Widget.Extensions.SparqlModule(
           app.config,
           app.view3D.getLayerManager()
         );
-        app.addModuleView('sparqlModule', sparqlModule.view, {
+        app.addWidgetView('sparqlModule', sparqlModule.view, {
           name: 'SPARQL Query',
         });
       });

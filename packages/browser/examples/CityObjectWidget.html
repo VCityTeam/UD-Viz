@@ -23,7 +23,7 @@
         const about = new udvizBrowser.Widget.AboutWindow(
           config.hmtlWindow.aboutWindow
         );
-        app.addModuleView('about', about);
+        app.addWidgetView('about', about);
 
         // //// HELP MODULE
         new udvizBrowser.Widget.Extensions.HelpWindow(
@@ -35,7 +35,7 @@
           app.view3D.layerManager,
           app.config
         );
-        app.addModuleView('cityObjects', cityObjectModule.view);
+        app.addWidgetView('cityObjects', cityObjectModule.view);
       });
     </script>
   </body>

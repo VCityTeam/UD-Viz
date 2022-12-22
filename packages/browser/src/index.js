@@ -6,6 +6,12 @@ export { Component };
 
 export { AllWidget } from './AllWidget/AllWidget';
 
+import * as FileUtil from './Component/FileUtil';
+export { FileUtil };
+
+import * as Widget from './Component/Itowns/Widget/Widget';
+export { Widget };
+
 // Itowns
 // import * as Itowns from './Itowns/Itowns';
 // export { Itowns };

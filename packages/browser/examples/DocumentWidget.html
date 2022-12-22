@@ -23,7 +23,7 @@
         const about = new udvizBrowser.Widget.AboutWindow(
           config.hmtlWindow.aboutWindow
         );
-        app.addModuleView('about', about);
+        app.addWidgetView('about', about);
 
         // //// HELP MODULE
         new udvizBrowser.Widget.Extensions.HelpWindow(
@@ -41,7 +41,7 @@
           new udvizBrowser.Widget.Extensions.AuthenticationView(
             authenticationService
           );
-        app.addModuleView('authentication', authenticationView, {
+        app.addWidgetView('authentication', authenticationView, {
           type: udvizBrowser.Templates.AllWidget.AUTHENTICATION_MODULE,
         });
 
@@ -50,7 +50,7 @@
           requestService,
           app.config
         );
-        app.addModuleView('documents', documentModule.view);
+        app.addWidgetView('documents', documentModule.view);
 
         // //// DOCUMENTS VISUALIZER EXTENSION (to orient the document)
         const imageOrienter = new udvizBrowser.Widget.DocumentVisualizerWindow(
@@ -88,7 +88,7 @@
           app.view3D.getLayerManager(),
           app.config
         );
-        app.addModuleView('cityObjects', cityObjectModule.view);
+        app.addWidgetView('cityObjects', cityObjectModule.view);
 
         // //// LINKS MODULE
         new udvizBrowser.Widget.LinkModule(

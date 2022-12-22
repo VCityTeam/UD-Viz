@@ -20,7 +20,7 @@
         const about = new udvizBrowser.Widget.AboutWindow(
           config.hmtlWindow.aboutWindow
         );
-        app.addModuleView('about', about);
+        app.addWidgetView('about', about);
 
         // //// HELP MODULE
         new udvizBrowser.Widget.Extensions.HelpWindow(
@@ -31,7 +31,7 @@
         const debug3dTilesWindow = new udvizBrowser.Widget.Debug3DTilesWindow(
           app.view3D.getLayerManager()
         );
-        app.addModuleView('3dtilesDebug', debug3dTilesWindow, {
+        app.addWidgetView('3dtilesDebug', debug3dTilesWindow, {
           name: '3DTiles Debug',
         });
       });

@@ -1,7 +1,6 @@
 import * as Widget from '../Component/Itowns/Widget/Widget';
 const WidgetView = Widget.Component.WidgetView;
 import { Planar } from '../Component/Frame3D/Planar';
-import FileUtil from '../Component/FileUtil';
 import THREEUtil from '../Component/THREEUtil';
 const itowns = require('itowns');
 const proj4 = require('proj4');
@@ -14,114 +13,115 @@ import './AllWidget.css';
  * dynamically add widgets.
  */
 export class AllWidget {
-  constructor() {
-    this.modules = {};
-    this.moduleNames = {};
-    this.moduleActivation = {};
-    this.moduleBindings = {};
-    this.requireAuthModules = [];
+  /**
+   *
+   * @param {object} config - TODO describe
+   */
+  constructor(config) {
+    this.config = config;
+
+    // allwidget state
+    this.widgets = {};
+    this.widgetNames = {};
+    this.widgetActivation = {};
+    this.widgetBindings = {};
+    this.requireAuthWidgets = [];
     this.authService = null;
-    this.config = null;
     this.parentElement = null;
 
-    /** @type {Planar} */
-    this.frame3DPlanar = null;
-  }
+    // init DOM
 
-  /**
-   * Wrapper getter
-   * @returns {Planar}
-   */
-  getFrame3DPlanar() {
-    return this.frame3DPlanar;
+    this.appendTo(document.body);
+
+    this.addLogos();
+
+    // initialize frame3DPlanar from config
+    const parentDiv = document.getElementById(this.contentSectionId);
+
+    // http://proj4js.org/
+    // define a projection as a string and reference it that way
+    proj4.default.defs(
+      config['crs'],
+      '+proj=lcc +lat_1=45.25 +lat_2=46.75' +
+        ' +lat_0=46 +lon_0=3 +x_0=1700000 +y_0=5200000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs'
+    );
+
+    const extent = new itowns.Extent(
+      config['crs'],
+      parseInt(config['extents']['min_x']),
+      parseInt(config['extents']['max_x']),
+      parseInt(config['extents']['min_y']),
+      parseInt(config['extents']['max_y'])
+    );
+
+    const coordinates = extent.center();
+
+    console.log('config coordinates bad');
+    let heading = -50;
+    let range = 3000;
+    let tilt = 10;
+
+    // Assign default value or config value
+    if (config['camera'] && config['camera']['position']) {
+      if (config['camera']['position']['heading'])
+        heading = config['camera']['position']['heading'];
+
+      if (config['camera']['position']['range'])
+        range = config['camera']['position']['range'];
+
+      if (config['camera']['position']['tilt'])
+        tilt = config['camera']['position']['tilt'];
+
+      if (config['camera']['position']['x'])
+        coordinates.x = config['camera']['position']['x'];
+
+      if (config['camera']['position']['y'])
+        coordinates.y = config['camera']['position']['y'];
+    }
+
+    /** @type {Planar} */
+    this.frame3DPlanar = new Planar(extent, {
+      htmlParent: parentDiv,
+      hasItownsControls: true,
+      coordinates: coordinates,
+      maxSubdivisionLevel: config['maxSubdivisionLevel'],
+      heading: heading,
+      tilt: tilt,
+      range: range,
+      config3DTilesLayers: config['3DTilesLayers'],
+      configBaseMapLayer: config['base_map_layers'][0], // intialiaze with the first one
+      configElevationLayer: config['elevation_layer'],
+      configGeoJSONLayers: config['GeoJSONLayers'],
+    });
+
+    THREEUtil.addLights(this.frame3DPlanar.getScene());
+    THREEUtil.initRenderer(
+      this.frame3DPlanar.getRenderer(),
+      new THREE.Color(0x6699cc)
+    );
+
+    // requester compute near far
+    this.frame3DPlanar
+      .getItownsView()
+      .addFrameRequester(itowns.MAIN_LOOP_EVENTS.AFTER_CAMERA_UPDATE, () => {
+        // z is HARDCODED https://github.com/VCityTeam/UD-Viz/issues/469
+        const min = new THREE.Vector3(extent.west, extent.south, 0);
+        const max = new THREE.Vector3(extent.east, extent.north, 500);
+
+        THREEUtil.computeNearFarCamera(
+          this.frame3DPlanar.getCamera(),
+          min,
+          max
+        );
+      });
   }
 
   /**
    *
-   * @param {object} configPath - config should be describe here
-   * @returns
+   * @returns {Planar}
    */
-  start(configPath) {
-    return new Promise((resolve) => {
-      this.appendTo(document.body);
-
-      FileUtil.loadJSON(configPath).then((config) => {
-        // ref config for user
-        this.config = config;
-        // if a field of the config is required at runtime it should be in state of the object ?
-        console.warn('config should not be ref', config);
-
-        this.addLogos();
-
-        // initialize frame3DPlanar from config
-        const parentDiv = document.getElementById(this.contentSectionId);
-
-        // http://proj4js.org/
-        // define a projection as a string and reference it that way
-        proj4.default.defs(
-          config['crs'],
-          '+proj=lcc +lat_1=45.25 +lat_2=46.75' +
-            ' +lat_0=46 +lon_0=3 +x_0=1700000 +y_0=5200000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs'
-        );
-
-        const extent = new itowns.Extent(
-          config['crs'],
-          parseInt(config['extents']['min_x']),
-          parseInt(config['extents']['max_x']),
-          parseInt(config['extents']['min_y']),
-          parseInt(config['extents']['max_y'])
-        );
-
-        const coordinates = extent.center();
-
-        console.log('config coordinates bad');
-        let heading = -50;
-        let range = 3000;
-        let tilt = 10;
-
-        // Assign default value or config value
-        if (config['camera'] && config['camera']['position']) {
-          if (config['camera']['position']['heading'])
-            heading = config['camera']['position']['heading'];
-
-          if (config['camera']['position']['range'])
-            range = config['camera']['position']['range'];
-
-          if (config['camera']['position']['tilt'])
-            tilt = config['camera']['position']['tilt'];
-
-          if (config['camera']['position']['x'])
-            coordinates.x = config['camera']['position']['x'];
-
-          if (config['camera']['position']['y'])
-            coordinates.y = config['camera']['position']['y'];
-        }
-
-        this.frame3DPlanar = new Planar(extent, {
-          htmlParent: parentDiv,
-          hasItownsControls: true,
-          coordinates: coordinates,
-          maxSubdivisionLevel: config['maxSubdivisionLevel'],
-          heading: heading,
-          tilt: tilt,
-          range: range,
-          config3DTilesLayers: config['3DTilesLayers'],
-          configBaseMapLayer: config['base_map_layers'][0], // intialiaze with the first one
-          configElevationLayer: config['elevation_layer'],
-          configGeoJSONLayers: config['GeoJSONLayers'],
-        });
-
-        THREEUtil.addLights(this.frame3DPlanar.getScene());
-        THREEUtil.initRenderer(
-          this.frame3DPlanar.getRenderer(),
-          new THREE.Color(0x6699cc)
-        );
-
-        this.frame3DPlanar.itownsView.notifyChange();
-
-        resolve(config);
-      });
-    });
+  getFrame3DPlanar() {
+    return this.frame3DPlanar;
   }
 
   /**
@@ -200,57 +200,57 @@ export class AllWidget {
     htmlElement.appendChild(div);
   }
 
-  // ////// MODULE MANAGEMENT
+  // ////// WIDGET MANAGEMENT
 
   /**
-   * Adds a new module view to the demo.
+   * Adds a new widget view to the demo.
    *
-   * @param moduleId A unique id. Must be a string without spaces. It
+   * @param widgetId A unique id. Must be a string without spaces. It
    * will be used to generate some HTML ids in the page. It will also
    * be used to look for an icon to put with the button
-   * @param moduleClass The module view class. Must implement some
+   * @param widgetClass The widget view class. Must implement some
    * methods (`enable`, `disable` and `addEventListener`). The
    * recommended way of implementing them is to extend the
    * `WidgetView` class, as explained [on the
-   * wiki](https://github.com/MEPP-team/UD-Viz/wiki/Generic-demo-and-modules-with-WidgetView-&-BaseDemo).
+   * wiki](https://github.com/MEPP-team/UD-Viz/wiki/Generic-demo-and-widgets-with-WidgetView-&-BaseDemo).
    * @param options An object used to specify various options.
    * `options.name` allows you to specify the name that will be
    * displayed in the toggle button. By default, it makes a
-   * transformation of the id (like this : myModule -> My Module).
-   * `options.type` is the "type" of the module view that defines how
-   * it is added to the demo. The default value is `MODULE_VIEW`,
+   * transformation of the id (like this : myWidget -> My Widget).
+   * `options.type` is the "type" of the widget view that defines how
+   * it is added to the demo. The default value is `WIDGET_VIEW`,
    * which simply adds a toggle button to the side menu. If set to
-   * `AUTHENTICATION_MODULE`, an authentication frame will be created
+   * `AUTHENTICATION_WIDGET`, an authentication frame will be created
    * in the upper left corner of the page to contain informations
    * about the user. `options.requireAuth` allows you to
-   * specify if this module can be shown without authentication (ie.
+   * specify if this widget can be shown without authentication (ie.
    * if no user is logged in). The default value is `false`. If set to
-   * `true`, and no athentication module was loaded, it has no effect
-   * (the module view will be shown). `options.binding` is the shortcut
-   * key code to toggle the module. By default, no shortcut is created.
+   * `true`, and no athentication widget was loaded, it has no effect
+   * (the widget view will be shown). `options.binding` is the shortcut
+   * key code to toggle the widget. By default, no shortcut is created.
    */
-  addModuleView(moduleId, moduleClass, options = {}) {
+  addWidgetView(widgetId, widgetClass, options = {}) {
     if (
-      typeof moduleClass.enable !== 'function' ||
-      typeof moduleClass.disable !== 'function'
+      typeof widgetClass.enable !== 'function' ||
+      typeof widgetClass.disable !== 'function'
     ) {
-      throw 'A module must implement at least an enable() and a disable() methods';
+      throw 'A widget must implement at least an enable() and a disable() methods';
     }
 
     // Default name is the id transformed this way :
-    // myModule -> My Module
-    // my_module -> My module
-    let moduleName = moduleId
+    // myWidget -> My Widget
+    // my_widget -> My widget
+    let widgetName = widgetId
       .replace(/([A-Z])/g, ' $1')
       .replace(/_/g, ' ')
       .replace(/^./, (str) => str.toUpperCase());
-    let type = AllWidget.MODULE_VIEW;
+    let type = AllWidget.WIDGET_VIEW;
     let requireAuth = false;
     if (options) {
       if (options.type) {
         if (
-          options.type === AllWidget.MODULE_VIEW ||
-          options.type === AllWidget.AUTHENTICATION_MODULE
+          options.type === AllWidget.WIDGET_VIEW ||
+          options.type === AllWidget.AUTHENTICATION_WIDGET
         ) {
           type = options.type;
         } else {
@@ -258,7 +258,7 @@ export class AllWidget {
         }
       }
       if (options.name) {
-        moduleName = options.name;
+        widgetName = options.name;
       }
       if (options.requireAuth) {
         requireAuth = options.requireAuth;
@@ -266,49 +266,49 @@ export class AllWidget {
     }
     const binding = options.binding;
 
-    this.modules[moduleId] = moduleClass;
-    this.moduleNames[moduleName] = moduleId;
-    this.moduleActivation[moduleId] = false;
+    this.widgets[widgetId] = widgetClass;
+    this.widgetNames[widgetName] = widgetId;
+    this.widgetActivation[widgetId] = false;
 
-    moduleClass.addEventListener(WidgetView.EVENT_ENABLED, () => {
-      this.moduleActivation[moduleId] = true;
+    widgetClass.addEventListener(WidgetView.EVENT_ENABLED, () => {
+      this.widgetActivation[widgetId] = true;
     });
-    moduleClass.addEventListener(WidgetView.EVENT_DISABLED, () => {
-      this.moduleActivation[moduleId] = false;
+    widgetClass.addEventListener(WidgetView.EVENT_DISABLED, () => {
+      this.widgetActivation[widgetId] = false;
     });
 
     switch (type) {
-      case AllWidget.MODULE_VIEW:
+      case AllWidget.WIDGET_VIEW:
         // Create a new button in the menu
-        this.createMenuButton(moduleId, moduleName, binding);
+        this.createMenuButton(widgetId, widgetName, binding);
         break;
-      case AllWidget.AUTHENTICATION_MODULE:
-        this.createAuthenticationFrame(moduleId);
+      case AllWidget.AUTHENTICATION_WIDGET:
+        this.createAuthenticationFrame(widgetId);
         break;
       default:
-        throw `Unknown module type : ${type}`;
+        throw `Unknown widget type : ${type}`;
     }
 
     if (requireAuth) {
-      this.requireAuthModules.push(moduleId);
+      this.requireAuthWidgets.push(widgetId);
       this.updateAuthentication();
     }
 
     if (binding) {
-      this.moduleBindings[binding] = moduleId;
+      this.widgetBindings[binding] = widgetId;
     }
   }
 
   /**
    * Creates a new button in the side menu.
    *
-   * @param moduleId The module id.
+   * @param widgetId The widget id.
    * @param buttonText The text to display in the button.
-   * @param {string} [accessKey] The key binding for the module.
+   * @param {string} [accessKey] The key binding for the widget.
    */
-  createMenuButton(moduleId, buttonText, accessKey) {
+  createMenuButton(widgetId, buttonText, accessKey) {
     const button = document.createElement('li');
-    button.id = this.getModuleButtonId(moduleId);
+    button.id = this.getWidgetButtonId(widgetId);
     button.innerHTML = `<p class="_all_widget_menu_hint">${buttonText}</p>`;
     if (accessKey) {
       button.accessKey = accessKey;
@@ -319,43 +319,43 @@ export class AllWidget {
     // Creating an icon
     icon.setAttribute(
       'src',
-      `${this.config.assets.iconFolder}/${moduleId}.svg`
+      `${this.config.assets.iconFolder}/${widgetId}.svg`
     );
     icon.className = 'menuIcon';
     button.insertBefore(icon, button.firstChild);
 
     // Define button behavior
     button.onclick = (() => {
-      this.toggleModule(moduleId);
+      this.toggleWidget(widgetId);
     }).bind(this);
-    const moduleClass = this.getModuleById(moduleId);
+    const widgetClass = this.getWidgetById(widgetId);
 
     // Dynamically color the button
-    moduleClass.parentElement = this.viewerDivElement.parentElement;
-    moduleClass.addEventListener(WidgetView.EVENT_ENABLED, () => {
+    widgetClass.parentElement = this.viewerDivElement.parentElement;
+    widgetClass.addEventListener(WidgetView.EVENT_ENABLED, () => {
       button.className = 'choiceMenu choiceMenuSelected';
     });
-    moduleClass.addEventListener(WidgetView.EVENT_DISABLED, () => {
+    widgetClass.addEventListener(WidgetView.EVENT_DISABLED, () => {
       button.className = 'choiceMenu';
     });
-    moduleClass.disable();
+    widgetClass.disable();
   }
 
   /**
-   * Creates an authentication frame for the authentication module.
+   * Creates an authentication frame for the authentication widget.
    *
-   * @param authModuleId The id of the authentication module.
+   * @param authWidgetId The id of the authentication widget.
    */
-  createAuthenticationFrame(authModuleId) {
+  createAuthenticationFrame(authWidgetId) {
     const frame = document.createElement('div');
     frame.id = this.authenticationFrameId;
     frame.innerHTML = this.authenticationFrameHtml;
     document.getElementById('_all_widget_stuct_main_panel').append(frame);
-    const authView = this.getModuleById(authModuleId);
+    const authView = this.getWidgetById(authWidgetId);
     authView.parentElement = this.viewerDivElement.parentElement;
     const authService = authView.authenticationService;
     this.authenticationLoginButtonElement.onclick = () => {
-      if (this.isModuleActive(authModuleId)) {
+      if (this.isWidgetActive(authWidgetId)) {
         authView.disable();
       } else {
         authView.enable();
@@ -376,12 +376,12 @@ export class AllWidget {
 
   /**
    * This method should be called when the authentication state changes
-   *  (ie. a user log in / out), or when a module is added. It has two
+   *  (ie. a user log in / out), or when a widget is added. It has two
    *  purposes :
    *  1. To update the upper-left square of the side menu (which contains
    *     use informations)
-   *  2. To show / hide the modules that require authentication (as defined
-   *     by the `options` parameter in the method `addModuleView`
+   *  2. To show / hide the widgets that require authentication (as defined
+   *     by the `options` parameter in the method `addWidgetView`
    */
   updateAuthentication() {
     if (this.authService) {
@@ -390,57 +390,57 @@ export class AllWidget {
         this.authenticationMenuLoggedInElement.hidden = false;
         this.authenticationMenuLoggedOutElement.hidden = true;
         this.authenticationUserNameElement.innerHTML = `Logged in as <em>${user.firstname} ${user.lastname}</em>`;
-        for (const mid of this.requireAuthModules) {
-          this.getModuleButton(mid).style.removeProperty('display');
+        for (const mid of this.requireAuthWidgets) {
+          this.getWidgetButton(mid).style.removeProperty('display');
         }
       } else {
         this.authenticationMenuLoggedInElement.hidden = true;
         this.authenticationMenuLoggedOutElement.hidden = false;
-        for (const mid of this.requireAuthModules) {
-          this.getModuleButton(mid).style.setProperty('display', 'none');
+        for (const mid of this.requireAuthWidgets) {
+          this.getWidgetButton(mid).style.setProperty('display', 'none');
         }
       }
     }
   }
 
   /**
-   * Returns if the module view is currently enabled or not.
+   * Returns if the widget view is currently enabled or not.
    *
-   * @param moduleId The module id.
+   * @param widgetId The widget id.
    */
-  isModuleActive(moduleId) {
-    return this.moduleActivation[moduleId];
+  isWidgetActive(widgetId) {
+    return this.widgetActivation[widgetId];
   }
 
   /**
-   * Returns the module view class by its id.
+   * Returns the widget view class by its id.
    *
-   * @param moduleId The module id.
+   * @param widgetId The widget id.
    */
-  getModuleById(moduleId) {
-    return this.modules[moduleId];
+  getWidgetById(widgetId) {
+    return this.widgets[widgetId];
   }
 
   /**
-   * If the module view is enabled, disables it, else, enables it.
+   * If the widget view is enabled, disables it, else, enables it.
    *
-   * @param moduleId The module id.
+   * @param widgetId The widget id.
    */
-  toggleModule(moduleId) {
-    if (!this.isModuleActive(moduleId)) {
-      this.getModuleById(moduleId).enable();
+  toggleWidget(widgetId) {
+    if (!this.isWidgetActive(widgetId)) {
+      this.getWidgetById(widgetId).enable();
     } else {
-      this.getModuleById(moduleId).disable();
+      this.getWidgetById(widgetId).disable();
     }
   }
 
-  getModuleButtonId(moduleId) {
-    return `_all_widget_menu_button${moduleId}`;
+  getWidgetButtonId(widgetId) {
+    return `_all_widget_menu_button${widgetId}`;
   }
 
-  // Get module button element
-  getModuleButton(moduleId) {
-    return document.getElementById(this.getModuleButtonId(moduleId));
+  // Get widget button element
+  getWidgetButton(widgetId) {
+    return document.getElementById(this.getWidgetButtonId(widgetId));
   }
 
   // //////////////////////////////////////////////////////
@@ -539,11 +539,11 @@ export class AllWidget {
     return document.getElementById(this.authenticationUserNameId);
   }
 
-  static get MODULE_VIEW() {
-    return 'MODULE_VIEW';
+  static get WIDGET_VIEW() {
+    return 'WIDGET_VIEW';
   }
 
-  static get AUTHENTICATION_MODULE() {
-    return 'AUTHENTICATION_MODULE';
+  static get AUTHENTICATION_WIDGET() {
+    return 'AUTHENTICATION_WIDGET';
   }
 }

@@ -21,7 +21,7 @@ let app = new udv.Templates.AllWidget();
 app.start('./path-to-my-configuration-file/config.json').then(() => {
   ////// SPARQL MODULE
   const sparqlModule = new udv.Widget.Extensions.SparqlModule(app.config, app.layerManager);
-  app.addModuleView('sparqlModule', sparqlModule.view, {
+  app.addWidgetView('sparqlModule', sparqlModule.view, {
     name: 'SPARQL Query'
   });
 });
