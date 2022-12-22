@@ -2,7 +2,6 @@
 <html>
   <head>
     <title>Document Widget example</title>
-
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   </head>
@@ -13,91 +12,114 @@
     <script type="text/javascript">
       /* eslint-disable no-new */
 
-      const app = new udvizBrowser.Templates.AllWidget();
+      udvizBrowser.FileUtil.loadMultipleJSON([
+        './assets/config/all_widget.json',
+        './assets/config/extent.json',
+        './assets/config/frame3D_planar.json',
+        './assets/config/widget/server/spatial_multimedia_db_server.json',
+        './assets/config/widget/about.json',
+        './assets/config/widget/help.json',
+        './assets/config/widget/city_objects.json',
+      ]).then((configs) => {
+        const app = new udvizBrowser.AllWidget(configs['all_widget']);
 
-      app.start('./assets/config/default_config.json').then((config) => {
+        // http://proj4js.org/
+        // define a projection as a string and reference it that way
+        // the definition of the projection should be in config TODO_ISSUE
+        udvizBrowser.proj4.default.defs(
+          configs['extent'].crs,
+          '+proj=lcc +lat_1=45.25 +lat_2=46.75' +
+            ' +lat_0=46 +lon_0=3 +x_0=1700000 +y_0=5200000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs'
+        );
+
+        const extent = new udvizBrowser.itowns.Extent(
+          configs['extent'].crs,
+          parseInt(configs['extent'].west),
+          parseInt(configs['extent'].east),
+          parseInt(configs['extent'].south),
+          parseInt(configs['extent'].north)
+        );
+
+        app.initFrame3DPlanarFromConfig(extent, configs['frame3D_planar']);
+
         // //// REQUEST SERVICE
-        const requestService = new udvizBrowser.Component.RequestService();
+        const requestService =
+          new udvizBrowser.Widget.Server.Component.RequestService();
+
+        // //// AUTHENTICATION MODULE
+        const authenticationView =
+          new udvizBrowser.Widget.Server.AuthenticationView(
+            new udvizBrowser.Widget.Server.AuthenticationService(
+              requestService,
+              configs['spatial_multimedia_db_server']
+            )
+          );
+        app.addWidgetView('authentication', authenticationView, {
+          type: udvizBrowser.AllWidget.AUTHENTICATION_WIDGET,
+        });
 
         // //// ABOUT MODULE
-        const about = new udvizBrowser.Widget.AboutWindow(
-          config.hmtlWindow.aboutWindow
-        );
+        const about = new udvizBrowser.Widget.AboutWindow(configs['about']);
         app.addWidgetView('about', about);
 
         // //// HELP MODULE
-        new udvizBrowser.Widget.Extensions.HelpWindow(
-          config.hmtlWindow.helpWindow
-        );
-
-        // //// AUTHENTICATION MODULE
-        const authenticationService =
-          new udvizBrowser.Widget.Extensions.AuthenticationService(
-            requestService,
-            app.config
-          );
-
-        const authenticationView =
-          new udvizBrowser.Widget.Extensions.AuthenticationView(
-            authenticationService
-          );
-        app.addWidgetView('authentication', authenticationView, {
-          type: udvizBrowser.Templates.AllWidget.AUTHENTICATION_MODULE,
-        });
+        new udvizBrowser.Widget.HelpWindow(configs['help']); // => help window should be add with addWidgetView
 
         // //// DOCUMENTS MODULE
-        const documentModule = new udvizBrowser.Widget.DocumentModule(
+        const documentModule = new udvizBrowser.Widget.Server.DocumentModule(
           requestService,
-          app.config
+          configs['spatial_multimedia_db_server']
         );
         app.addWidgetView('documents', documentModule.view);
 
-        // //// DOCUMENTS VISUALIZER EXTENSION (to orient the document)
-        const imageOrienter = new udvizBrowser.Widget.DocumentVisualizerWindow(
-          documentModule,
-          app.view3D.getItownsView(),
-          app.view3D.getItownsView().controls
-        );
+        // // DOCUMENTS VISUALIZER EXTENSION (to orient the document)
+        const imageOrienter =
+          new udvizBrowser.Widget.Server.DocumentVisualizerWindow(
+            documentModule, // <== Server because is use a document module
+            app.getFrame3DPlanar().getItownsView(),
+            app.getFrame3DPlanar().getItownsView().controls
+          );
 
         // //// CONTRIBUTE EXTENSION
-        new udvizBrowser.Widget.Extensions.ContributeModule(
+        new udvizBrowser.Widget.Server.ContributeModule(
           documentModule,
           imageOrienter,
           requestService,
-          app.view3D.getItownsView(),
-          app.view3D.getItownsView().controls,
-          app.config
+          app.getFrame3DPlanar().getItownsView(),
+          app.getFrame3DPlanar().getItownsView().controls,
+          configs['spatial_multimedia_db_server']
         );
 
         // //// VALIDATION EXTENSION
-        new udvizBrowser.Widget.Extensions.DocumentValidationModule(
+        new udvizBrowser.Widget.Server.DocumentValidationModule(
           documentModule,
           requestService,
-          app.config
+          configs['spatial_multimedia_db_server']
         );
 
-        // //// DOCUMENT COMMENTS EXTENSION
-        new udvizBrowser.Widget.Extensions.DocumentCommentsModule(
+        // //// DOCUMENT COMMENTS
+        new udvizBrowser.Widget.Server.DocumentCommentsModule(
           documentModule,
           requestService,
-          app.config
+          configs['spatial_multimedia_db_server']
         );
 
         // //// CITY OBJECTS MODULE
         const cityObjectModule = new udvizBrowser.Widget.CityObjectModule(
-          app.view3D.getLayerManager(),
-          app.config
+          app.getFrame3DPlanar().getLayerManager(),
+          configs['city_objects']
         );
         app.addWidgetView('cityObjects', cityObjectModule.view);
 
         // //// LINKS MODULE
-        new udvizBrowser.Widget.LinkModule(
+        new udvizBrowser.Widget.Server.LinkModule(
           documentModule,
           cityObjectModule,
           requestService,
-          app.view3D.getItownsView(),
-          app.view3D.getItownsView().controls,
-          app.config
+          app.getFrame3DPlanar().getItownsView(),
+          app.getFrame3DPlanar().getItownsView().controls,
+          configs['spatial_multimedia_db_server'],
+          configs['city_objects']
         );
       });
     </script>
