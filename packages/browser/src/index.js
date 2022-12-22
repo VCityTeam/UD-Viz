@@ -12,7 +12,7 @@ export { FileUtil };
 import * as THREEUtil from './Component/THREEUtil';
 export { THREEUtil };
 
-import * as Widget from './Component/Itowns/Widget/Widget';
+import * as Widget from './Component/Widget/Widget';
 export { Widget };
 
 export { InputManager } from './Component/InputManager';

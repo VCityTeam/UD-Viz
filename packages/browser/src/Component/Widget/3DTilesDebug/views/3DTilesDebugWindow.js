@@ -1,8 +1,8 @@
 const THREE = require('three');
 import { Window } from '../../Component/GUI/js/Window';
-import { CityObjectStyle } from '../../../3DTiles/Model/CityObjectStyle';
-import { CityObjectID } from '../../../3DTiles/Model/CityObject';
-import { TilesManager } from '../../../3DTiles/TilesManager';
+import { CityObjectStyle } from '../../../Itowns/3DTiles/Model/CityObjectStyle';
+import { CityObjectID } from '../../../Itowns/3DTiles/Model/CityObject';
+import { TilesManager } from '../../../Itowns/3DTiles/TilesManager';
 
 export class Debug3DTilesWindow extends Window {
   /**
@@ -88,7 +88,7 @@ export class Debug3DTilesWindow extends Window {
         This debug window uses the 3DTilesUtils methods. Use it to find
         information about buildings and city objects.<br>
         See the <a href="../docs/3DTilesDebug.md">documentation
-        of the tool</a> and the <a href="../../../Utils/3DTiles/3DTilesUtils.md">documentation about utility
+        of the tool</a> and the <a href="../../../Utils/Itowns/3DTiles/3DTilesUtils.md">documentation about utility
         functions for 3DTiles and buildings</a>.
       </div>
     `;

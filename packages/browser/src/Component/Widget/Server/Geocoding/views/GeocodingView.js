@@ -3,7 +3,7 @@ import * as itowns from 'itowns';
 import proj4 from 'proj4';
 
 import { WidgetView } from '../../../Component/WidgetView/WidgetView';
-import { focusCameraOn } from '../../../../Component/Component';
+import { focusCameraOn } from '../../../../Itowns/Component/Component';
 import { GeocodingService } from '../services/GeocodingService';
 import './GeocodingStyle.css';
 

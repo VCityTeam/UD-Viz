@@ -12,7 +12,7 @@ const THREE = require('three');
  * These extensions should belong elsewhere since it should be possible
  * to manipulate Temporal 3DTiles without having a dependence to its widget...
  */
-import * as Widget from '../Itowns/Widget/Widget';
+import * as Widget from '../Widget/Widget';
 const $3DTemporalBatchTable = Widget.$3DTemporalBatchTable;
 const $3DTemporalBoundingVolume = Widget.$3DTemporalBoundingVolume;
 const $3DTemporalTileset = Widget.$3DTemporalTileset;

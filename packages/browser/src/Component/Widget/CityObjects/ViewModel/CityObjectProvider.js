@@ -1,8 +1,11 @@
 import EventSender from '@ud-viz/core/src/EventSender';
-import { CityObjectStyle } from '../../../3DTiles/Model/CityObjectStyle';
-import { CityObjectID, CityObject } from '../../../3DTiles/Model/CityObject';
-import { focusCameraOn } from '../../../Component/Component';
-import { LayerManager } from '../../../LayerManager/LayerManager';
+import { CityObjectStyle } from '../../../Itowns/3DTiles/Model/CityObjectStyle';
+import {
+  CityObjectID,
+  CityObject,
+} from '../../../Itowns/3DTiles/Model/CityObject';
+import { focusCameraOn } from '../../../Itowns/Component/Component';
+import { LayerManager } from '../../../Itowns/LayerManager/LayerManager';
 import { CityObjectFilter } from './CityObjectFilter';
 import { CityObjectLayer } from './CityObjectLayer';
 /**

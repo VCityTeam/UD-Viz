@@ -1,4 +1,4 @@
-import * as Widget from '../Component/Itowns/Widget/Widget';
+import * as Widget from '../Component/Widget/Widget';
 const WidgetView = Widget.Component.WidgetView;
 import { Planar } from '../Component/Frame3D/Planar';
 import THREEUtil from '../Component/THREEUtil';
