@@ -1,9 +1,5 @@
 // @ud-viz/browser bundle API
 
-// Component temporary everything need out of the bundle should be expose TODO_ISSUE
-// import * as Component from './Component/Component.js';
-// export { Component };
-
 export { AllWidget } from './AllWidget/AllWidget';
 
 import * as FileUtil from './Component/FileUtil';
@@ -20,6 +16,8 @@ export { InputManager } from './Component/InputManager';
 export { Planar as Frame3DPlanar } from './Component/Frame3D/Planar';
 
 export { Billboard } from './Component/Frame3D/Component/Billboard';
+
+export { RequestAnimationFrameProcess } from './Component/RequestAnimationFrameProcess';
 
 // // Game
 // import { Base } from './Game/BrowserScript';

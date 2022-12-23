@@ -190,6 +190,9 @@ export class Base {
         });
       }
     };
+
+    // need an async call to resize
+    setTimeout(this.resizeListener, 10);
   }
 
   renderCSS3D() {

@@ -103,6 +103,7 @@ iframe {
 
 .projects_section_title {
   text-align: center;
+  color: var(--color-blue);
 }
 
 .projects {
