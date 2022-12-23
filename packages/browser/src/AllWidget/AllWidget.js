@@ -59,21 +59,6 @@ export class AllWidget {
       this.frame3DPlanar.getRenderer(),
       new THREE.Color(0x6699cc)
     );
-
-    // requester compute near far
-    this.frame3DPlanar
-      .getItownsView()
-      .addFrameRequester(itowns.MAIN_LOOP_EVENTS.AFTER_CAMERA_UPDATE, () => {
-        // z is HARDCODED https://github.com/VCityTeam/UD-Viz/issues/469
-        const min = new THREE.Vector3(extent.west, extent.south, 0);
-        const max = new THREE.Vector3(extent.east, extent.north, 500);
-
-        THREEUtil.computeNearFarCamera(
-          this.frame3DPlanar.getCamera(),
-          min,
-          max
-        );
-      });
   }
 
   /**

@@ -48,7 +48,7 @@
 
 .window-close-button:hover {
   background-color: #f95a5a;
-  cursor: default;
+  cursor: pointer;
 }
 
 .window-content {

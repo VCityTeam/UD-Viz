@@ -3,6 +3,7 @@ import {
   addElevationLayer,
   setupAndAddGeoJsonLayers,
 } from './Component/Component';
+import { computeNearFarCamera } from '../THREEUtil';
 import { Base } from './Base/Base';
 import { LayerManager, TilesManager } from '../Itowns/Itowns';
 const itowns = require('itowns'); // import that way jsdoc resolve type sometime ... lol
@@ -131,6 +132,7 @@ export class Planar extends Base {
    * @param {itowns.Extent} extent
    * @param {object} options
    * @param {boolean} options.hasItownsControls
+   * @param {boolean} options.useItownsMainLoop - rendering is done in itowns.mainLoop default is true
    * @param {itowns.Coordinates} options.coordinates
    * @param {number} options.heading
    * @param {number} options.range
@@ -167,8 +169,11 @@ export class Planar extends Base {
         tilt: tilt,
       },
       maxSubdivisionLevel: maxSubdivisionLevel,
-      noControls: !hasItownsControls,
+      noControls: true, // no controls to use the method enableItownsViewControls to handle params pass to PlanarControls
     });
+
+    if (hasItownsControls) this.enableItownsViewControls(true);
+
     // Disable itowns resize https://github.com/VCityTeam/UD-Viz/issues/374
     this.itownsViewResize = this.itownsView.resize.bind(this.itownsView);
     this.itownsView.resize = function () {};
@@ -199,7 +204,70 @@ export class Planar extends Base {
       setupAndAddGeoJsonLayers(options.configGeoJSONLayers, this.itownsView);
     }
 
-    console.log('should compute near far here instaed of allwidget ?');
+    let useItownsMainLoop = true;
+    if (options.useItownsMainLoop != undefined)
+      useItownsMainLoop = options.useItownsMainLoop;
+    if (useItownsMainLoop) {
+      // by default itownsView is rendering
+
+      // requester compute near far
+      this.itownsView.addFrameRequester(
+        itowns.MAIN_LOOP_EVENTS.AFTER_CAMERA_UPDATE,
+        () => {
+          // z is HARDCODED https://github.com/VCityTeam/UD-Viz/issues/469
+          const min = new THREE.Vector3(extent.west, extent.south, 0);
+          const max = new THREE.Vector3(extent.east, extent.north, 500);
+
+          computeNearFarCamera(this.camera, min, max);
+        }
+      );
+
+      // requester rendering css3D
+      this.itownsView.addFrameRequester(
+        itowns.MAIN_LOOP_EVENTS.BEFORE_RENDER,
+        () => {
+          this.renderCSS3D();
+        }
+      );
+    } else {
+      // disable itownsView render
+      this.enableItownsViewRendering(false);
+    }
+  }
+
+  enableItownsViewRendering(value) {
+    if (value) {
+      this.itownsView.render = null;
+    } else {
+      this.itownsView.render = () => {};
+    }
+  }
+
+  enableItownsViewControls(value) {
+    if (
+      (value && this.itownsView.controls) ||
+      (!value && !this.itownsView.controls)
+    ) {
+      console.log('no change to apply');
+      return;
+    }
+
+    if (value) {
+      /* eslint-disable no-new */
+      new itowns.PlanarControls(this.itownsView, {
+        handleCollision: false,
+        focusOnMouseOver: false,
+        focusOnMouseClick: false,
+      });
+    } else {
+      this.itownsView.controls.dispose();
+      this.itownsView.controls = null;
+    }
+  }
+
+  setIsRendering(value) {
+    super.setIsRendering(value); // css3D rendering
+    this.enableItownsViewRendering(value); // itownsView rendering
   }
 
   /**

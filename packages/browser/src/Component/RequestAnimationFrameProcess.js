@@ -1,7 +1,11 @@
 export class RequestAnimationFrameProcess {
-  constructor(fps, process) {
+  constructor(fps) {
     this.stopped = false;
 
+    this.fps = fps;
+  }
+
+  start(requester) {
     let now;
     let then = Date.now();
     let delta;
@@ -13,10 +17,10 @@ export class RequestAnimationFrameProcess {
       now = Date.now();
       delta = now - then;
 
-      if (delta > 1000 / fps) {
+      if (delta > 1000 / this.fps) {
         // Update time stuffs
-        then = now - (delta % 1000) / fps;
-        process(delta);
+        then = now - (delta % 1000) / this.fps;
+        requester(delta);
       }
     };
     tick();

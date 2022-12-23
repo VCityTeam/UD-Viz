@@ -86,33 +86,28 @@
       viewer.setAttribute('id', 'viewer');
       section.appendChild(viewer);
 
-      const titleProjectUdviz = document.createElement('h1');
-      titleProjectUdviz.classList.add('projects_section_title');
-      titleProjectUdviz.innerHTML = '@ud-viz/browser';
-      viewer.appendChild(titleProjectUdviz);
+      const createContainer = function (id) {
+        const titleContainer = document.createElement('h1');
+        titleContainer.classList.add('projects_section_title');
+        titleContainer.innerHTML = id;
+        viewer.appendChild(titleContainer);
 
-      const containerProject = document.createElement('div');
-      containerProject.setAttribute('id', 'prj_udviz');
-      containerProject.classList.add('projects');
-      viewer.appendChild(containerProject);
+        const container = document.createElement('div');
+        container.setAttribute('id', id);
+        container.classList.add('projects');
+        viewer.appendChild(container);
+      };
 
-      const titleProjectUdvizGame = document.createElement('h1');
-      titleProjectUdvizGame.classList.add('projects_section_title');
-      titleProjectUdvizGame.innerHTML = '@ud-viz/browser Game';
-      viewer.appendChild(titleProjectUdvizGame);
+      createContainer('AllWidget');
+      createContainer('Frame3D');
 
-      const containerProjectGame = document.createElement('div');
-      containerProjectGame.setAttribute('id', 'prj_udgame');
-      containerProjectGame.classList.add('projects');
-      viewer.appendChild(containerProjectGame);
-
-      const addProjectElement = (name, parentEl, href, title, srcImg) => {
+      const addProjectElement = (name, idParent, href, title, srcImg) => {
         const newProject = document.createElement('a');
         newProject.href = href;
         newProject.title = title;
         newProject.target = '_blank';
         newProject.rel = 'noopener';
-        parentEl.appendChild(newProject);
+        document.getElementById(idParent).appendChild(newProject);
 
         const newProjectImg = document.createElement('img');
         newProjectImg.src = srcImg;
@@ -126,7 +121,7 @@
 
       addProjectElement(
         'All Widget',
-        containerProject,
+        'AllWidget',
         './packages/browser/examples/AllWidget.html',
         `This example implements all widgets and extensions currently available. As of today, this includes :
         \n- Temporal            \n- Help & About            \n- Documents            \n- Contribute            \n- Guided tours            \n- Authentication            \n- Documents to validate            \n- Document comments            \n- Geocoding            \n- 3DTiles debug            \n- Camera positioner            \n- Document links`,
@@ -135,7 +130,7 @@
 
       addProjectElement(
         'Worldmap',
-        containerProject,
+        'AllWidget',
         './packages/browser/examples/WorldMap.html',
         'This example use IGN basemap to be able to navigate all over the world',
         './packages/browser/examples/assets/img/mosaic/WorldMap.png'
@@ -143,7 +138,7 @@
 
       addProjectElement(
         'Billboard',
-        containerProject,
+        'Frame3D',
         './packages/browser/examples/Billboard.html',
         'This example implements a billboard (ie an embeded html content in a 3D view).',
         './packages/browser/examples/assets/img/mosaic/billboard.png'
@@ -151,7 +146,7 @@
 
       addProjectElement(
         'Document Widget',
-        containerProject,
+        'AllWidget',
         './packages/browser/examples/DocumentWidget.html',
         'In this example you can consult documents in a document browser and search them using keywords and other fields.',
         './packages/browser/examples/assets/img/mosaic/DocumentWidget.png'
@@ -159,7 +154,7 @@
 
       addProjectElement(
         'Geocoding Widget',
-        containerProject,
+        'AllWidget',
         './packages/browser/examples/GeocodingWidget.html',
         'Geocoding allows a user to navigate in the city by searching addresses or place names.',
         './packages/browser/examples/assets/img/mosaic/GeocodingWidget.png'
@@ -167,7 +162,7 @@
 
       addProjectElement(
         'BaseMap Widget',
-        containerProject,
+        'AllWidget',
         './packages/browser/examples/BaseMapWidget.html',
         'BaseMap widget allows a user to select which background to use between those set up in the config file.',
         './packages/browser/examples/assets/img/mosaic/BaseMapWidget.png'
@@ -175,7 +170,7 @@
 
       addProjectElement(
         'Camera Positioner Widget',
-        containerProject,
+        'AllWidget',
         './packages/browser/examples/CameraPositionerWidget.html',
         'The camera positioner is a tool that show the coordinates and the orientation of the camera.',
         './packages/browser/examples/assets/img/mosaic/CameraPositionerWidget.png'
@@ -183,7 +178,7 @@
 
       addProjectElement(
         'Slideshow Widget',
-        containerProject,
+        'AllWidget',
         './packages/browser/examples/SlideShowWidget.html',
         'The SlideShow allows to display images and videos on a plane geometry.',
         './packages/browser/examples/assets/img/mosaic/CameraPositionerWidget.png'
@@ -191,7 +186,7 @@
 
       addProjectElement(
         '3DTilesDebug Widget',
-        containerProject,
+        'AllWidget',
         './packages/browser/examples/3DTilesDebugWidget.html',
         '3DTiles Debug displays a window which shows various information about 3DTiles objects and city objects.',
         './packages/browser/examples/assets/img/mosaic/3DTilesDebugWidget.png'
@@ -199,7 +194,7 @@
 
       addProjectElement(
         'CityObject Widget',
-        containerProject,
+        'AllWidget',
         './packages/browser/examples/CityObjectWidget.html',
         'This extensions allows the user to explore city objects and color them according to filters.',
         './packages/browser/examples/assets/img/mosaic/CityObjectWidget.png'
@@ -207,15 +202,15 @@
 
       addProjectElement(
         'LayerChoice Widget',
-        containerProject,
+        'AllWidget',
         './packages/browser/examples/LayerChoiceWidget.html',
         'This extensions interact with layers',
         './packages/browser/examples/assets/img/mosaic/LayerChoiceWidget.png'
       );
 
-      // addProjectElement(
+      // addProjectElement(containerProject
       //   'Temporal Widget',
-      //   containerProject,
+      //   "AllWidget",
       //   './packages/browser/examples/TemporalWidget.html',
       //   'This extensions allows the user to explore city objects and color them according to filters.',
       //   './packages/browser/examples/assets/img/mosaic/TemporalWidget.png'
@@ -223,7 +218,7 @@
 
       addProjectElement(
         'GeoJSON',
-        containerProject,
+        'AllWidget',
         './packages/browser/examples/GeoJson.html',
         `This example visualizes several GeoJSON datasets (such as bus lines, Velo'v stations, and humidity zones) alongside 3D planar data.`,
         './packages/browser/examples/assets/img/mosaic/GeoJSON.png'
@@ -231,35 +226,35 @@
 
       // addProjectElement(
       //   'SPARQL',
-      //   containerProject,
+      //   "AllWidget",
       //   './packages/browser/examples/SPARQLWidget.html',
       //   `This example illustrate the SPARQL Widget`,
       //   './packages/browser/examples/assets/img/mosaic/GeoJSON.png'
       // );
 
-      addProjectElement(
-        'Avatar Game',
-        containerProjectGame,
-        './packages/browser/examples/AvatarGame.html',
-        'This example implements a local mini game illustrating an avatar walking in the city',
-        './packages/browser/examples/assets/img/mosaic/AvatarGame.png'
-      );
+      // addProjectElement(
+      //   'Avatar Game',
+      //   "SinglePlayerGame",
+      //   './packages/browser/examples/AvatarGame.html',
+      //   'This example implements a local mini game illustrating an avatar walking in the city',
+      //   './packages/browser/examples/assets/img/mosaic/AvatarGame.png'
+      // );
 
-      addProjectElement(
-        'Avatar Game with Shader',
-        containerProjectGame,
-        './packages/browser/examples/AvatarGameShader.html',
-        'This example implements a local mini game illustrating an avatar walking in the city with collision and shader pass.',
-        './packages/browser/examples/assets/img/mosaic/AvatarGameShader.png'
-      );
+      // addProjectElement(
+      //   'Avatar Game with Shader',
+      //   containerProjectGame,
+      //   './packages/browser/examples/AvatarGameShader.html',
+      //   'This example implements a local mini game illustrating an avatar walking in the city with collision and shader pass.',
+      //   './packages/browser/examples/assets/img/mosaic/AvatarGameShader.png'
+      // );
 
-      addProjectElement(
-        'Zeppelin Game',
-        containerProjectGame,
-        './packages/browser/examples/ZeppelinGame.html',
-        'This example implements a local mini game builded with the ud-viz game engine',
-        './packages/browser/examples/assets/img/mosaic/ZeppelinGame.png'
-      );
+      // addProjectElement(
+      //   'Zeppelin Game',
+      //   containerProjectGame,
+      //   './packages/browser/examples/ZeppelinGame.html',
+      //   'This example implements a local mini game builded with the ud-viz game engine',
+      //   './packages/browser/examples/assets/img/mosaic/ZeppelinGame.png'
+      // );
     </script>
   </body>
 </html>
