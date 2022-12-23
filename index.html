@@ -99,6 +99,7 @@
       };
 
       createContainer('AllWidget');
+      createContainer('SinglePlayerGamePlanar');
       createContainer('Frame3D');
 
       const addProjectElement = (name, idParent, href, title, srcImg) => {
@@ -248,13 +249,13 @@
       //   './packages/browser/examples/assets/img/mosaic/AvatarGameShader.png'
       // );
 
-      // addProjectElement(
-      //   'Zeppelin Game',
-      //   containerProjectGame,
-      //   './packages/browser/examples/ZeppelinGame.html',
-      //   'This example implements a local mini game builded with the ud-viz game engine',
-      //   './packages/browser/examples/assets/img/mosaic/ZeppelinGame.png'
-      // );
+      addProjectElement(
+        'Zeppelin Game',
+        'SinglePlayerGamePlanar',
+        './packages/browser/examples/ZeppelinGame.html',
+        'This example implements a single player game planar',
+        './packages/browser/examples/assets/img/mosaic/ZeppelinGame.png'
+      );
     </script>
   </body>
 </html>
