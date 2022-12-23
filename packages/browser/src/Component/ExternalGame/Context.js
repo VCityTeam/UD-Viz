@@ -56,6 +56,7 @@ export class Context {
     /** @type {THREE.Object3D} */
     this.object3D = new THREE.Object3D();
     this.object3D.name = 'External_Game_Context_Object3D';
+    this.frame3D.scene.add(this.object3D);
 
     /** @type {object} */
     this.currentUUID = {};
@@ -377,12 +378,8 @@ export class Context {
       });
     });
 
-    // rebuild object
-    // this.object3D.children.length = 0;
-    // this.object3D.add(this.computeObject3D(go));
-    // Update matrix
-    this.object3D.updateMatrixWorld();
-    this.frame3D.scene.updateMatrixWorld();
+    // Update matrix ?
+    // this.object3D.updateMatrixWorld();
 
     // Update shadow
     if (newGO.length) {
@@ -443,7 +440,6 @@ export class Context {
           );
           break;
         case Game.Component.Render.TYPE:
-          console.log(go.name, 'init render controller');
           component.initController(
             new RenderController(component.getModel(), go, this.assetManager)
           );
@@ -484,28 +480,6 @@ export class Context {
     }
     return new constructor(this, object3D, modelVariables);
   }
-
-  // updateObject3D(go) {
-  //   const obj = go.getObject3D();
-
-  //   // Clear children object
-  //   obj.children.length = 0;
-
-  //   const renderComponent = go.getComponent(GameObject.Render.Model.TYPE);
-  //   if (renderComponent) {
-  //     const renderController = renderComponent.getController();
-  //     const rObj = renderController.getObject3D();
-  //     if (!rObj) throw new Error('no renderController object3D');
-  //     obj.add(rObj);
-  //   }
-
-  //   // Add children if recursive
-  //   go.getChildren().forEach((child) => {
-  //     obj.add(this.computeObject3D(child));
-  //   });
-
-  //   return obj;
-  // }
 
   // Util method
 

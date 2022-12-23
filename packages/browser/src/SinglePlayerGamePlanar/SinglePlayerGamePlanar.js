@@ -3,13 +3,7 @@ import { InputManager } from '../Component/InputManager';
 import { Planar } from '../Component/Frame3D/Frame3D';
 import { Game } from '@ud-viz/core';
 import { RequestAnimationFrameProcess } from '../Component/RequestAnimationFrameProcess';
-const THREE = require('three');
-const itowns = require('itowns');
-const THREEUtil = require('../Component/THREEUtil');
 import * as ExternalGame from '../Component/ExternalGame/ExternalGame';
-
-//DEBUG
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 
 /**
  * A Class contaning method to easily instanciate a browser game based on the ud-viz game engine
@@ -28,7 +22,7 @@ export class SinglePlayerGamePlanar {
    * @returns
    */
   start(extent, gameObject3DJSON, options = {}) {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       // initialize planar
       const frame3DPlanarConfig = options.frame3DPlanarConfig || {};
 
@@ -92,20 +86,6 @@ export class SinglePlayerGamePlanar {
 
         // step external game context
 
-        // DEBUG THREE CONTROLLER
-        // const elementToListen =
-        //   frame3DPlanar.itownsView.mainLoop.gfxEngine.label2dRenderer
-        //     .domElement;
-        // const orbitControls = new OrbitControls(
-        //   frame3DPlanar.camera,
-        //   elementToListen
-        // );
-        // orbitControls.target.copy(externalGameContext.object3D.position);
-
-        const s = assetManager.createRenderData('cube').getObject3D();
-        s.scale.set(100, 100, 100);
-        externalGameContext.object3D.add(s);
-
         // METHOD 1 ITOWNS MAIN LOOP BAD RENDERING NO CONTROL DT
 
         // frame3DPlanar.itownsView.addFrameRequester(
@@ -120,8 +100,7 @@ export class SinglePlayerGamePlanar {
         const process = new RequestAnimationFrameProcess(30);
         process.start((dt) => {
           externalGameContext.step(dt, interpolator.computeCurrentStates());
-          // orbitControls.update();
-          frame3DPlanar.itownsView.notifyChange(frame3DPlanar.camera);
+          frame3DPlanar.itownsView.notifyChange(frame3DPlanar.camera); // => for to load 3DTiles
           frame3DPlanar
             .getRenderer()
             .render(frame3DPlanar.getScene(), frame3DPlanar.getCamera());
@@ -132,6 +111,8 @@ export class SinglePlayerGamePlanar {
           console.log('external game context ', externalGameContext);
           console.log('game context ', gameContext);
         });
+
+        resolve();
       });
     });
   }
