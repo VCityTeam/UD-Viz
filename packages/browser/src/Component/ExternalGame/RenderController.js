@@ -1,21 +1,29 @@
-import { Controller } from '@ud-viz/core/src/Game/GameObject/Component/Component';
+import { Game } from '@ud-viz/core';
 import * as THREE from 'three';
+import { AssetManager } from '../Component';
 
-export class RenderController extends Controller {
-  constructor(assetsManager, model, parentGO) {
-    super(assetsManager, model, parentGO);
+export class RenderController extends Game.Component.Controller {
+  /**
+   *
+   * @param {*} model
+   * @param {*} parentGO
+   * @param {AssetManager} assetManager
+   */
+  constructor(model, parentGO, assetManager) {
+    super(model, parentGO);
+
+    this.assetManager = assetManager;
+
+    /** @type {RenderData} */
+    this.renderData = null;
+
+    /** @type {THREE.AnimationMixer} */
+    this.animationMixer = null;
 
     this.renderData = this.assetsManager.createRenderData(
       this.model.getIdRenderData()
     );
 
-    /** @type {THREE.AnimationMixer} */
-    this.animationMixer = null;
-
-    this.init();
-  }
-
-  init() {
     const animations = this.renderData.getAnimations();
     if (animations && animations.length) {
       this.animationMixer = new THREE.AnimationMixer(
@@ -28,6 +36,9 @@ export class RenderController extends Controller {
     }
 
     this.setColor(this.model.getColor());
+
+    // register in parent
+    this.parentGO.add(this.renderData.getObject3D());
   }
 
   /**

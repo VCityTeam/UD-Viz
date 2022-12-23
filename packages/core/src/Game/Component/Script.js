@@ -1,6 +1,6 @@
-const { ModelComponent, ControllerComponent } = require('./Component');
+const { Model, Controller } = require('./Component');
 
-const ScriptModel = class extends ModelComponent {
+const ScriptModel = class extends Model {
   constructor(json) {
     super(json);
 
@@ -33,7 +33,7 @@ const ScriptModel = class extends ModelComponent {
  * @param {*} parentGO
  * @param {*} json
  */
-const ScriptController = class extends ControllerComponent {
+const ScriptController = class extends Controller {
   /**
    *
    * @param {*} model

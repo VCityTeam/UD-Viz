@@ -11,7 +11,7 @@ const Component = class {
 
   /**
    *
-   * @returns { ModelComponent }
+   * @returns { Model }
    */
   getModel() {
     return this.model;
@@ -28,7 +28,7 @@ const Component = class {
 
 Component.TYPE = 'Component';
 
-const ModelComponent = class {
+const Model = class {
   constructor(json) {
     if (!json) throw 'no json for model';
     // Uuid
@@ -44,7 +44,7 @@ const ModelComponent = class {
   }
 };
 
-const ControllerComponent = class {
+const Controller = class {
   constructor(model, object3D) {
     this.model = model;
     this.object3D = object3D;
@@ -53,6 +53,6 @@ const ControllerComponent = class {
 
 module.exports = {
   Component: Component,
-  ModelComponent: ModelComponent,
-  ControllerComponent: ControllerComponent,
+  Model: Model,
+  Controller: Controller,
 };

@@ -1,5 +1,5 @@
 const THREE = require('three');
-const { Component, ModelComponent } = require('./Component');
+const { Component, Model } = require('./Component');
 
 const RenderComponent = class extends Component {};
 
@@ -8,7 +8,7 @@ RenderComponent.TYPE = 'Render';
 /**
  *  Component used to handle the 3D rendering of the GameObject
  */
-const RenderModel = class extends ModelComponent {
+const RenderModel = class extends Model {
   /**
    * Create a new Render component of a GameObject from json
    *

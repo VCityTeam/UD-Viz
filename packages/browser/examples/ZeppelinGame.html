@@ -216,7 +216,6 @@
 
           const game = new udvizBrowser.SinglePlayerGamePlanar(extent, {
             frame3DPlanarConfig: configs['frame3D_planar'],
-            sceneConfig: configs['scene'],
           });
 
           game.start(
@@ -240,6 +239,7 @@
             {
               assetManager: assetManager,
               gameScriptClass: gameScriptClass,
+              sceneConfig: configs['scene'],
             }
           );
         });

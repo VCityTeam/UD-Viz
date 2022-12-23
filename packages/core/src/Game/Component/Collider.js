@@ -1,9 +1,5 @@
 const { Circle, Polygon } = require('detect-collisions');
-const {
-  Component,
-  ModelComponent,
-  ControllerComponent,
-} = require('./Component');
+const { Component, Model, Controller } = require('./Component');
 const THREE = require('three');
 
 const ColliderComponent = class extends Component {};
@@ -14,7 +10,7 @@ ColliderComponent.TYPE = 'Collider';
  * Component used to handle collision of a GameObject
  * Support by detect-collisions npm package
  */
-const ColliderModel = class extends ModelComponent {
+const ColliderModel = class extends Model {
   constructor(json) {
     super(json);
 
@@ -64,7 +60,7 @@ const ColliderModel = class extends ModelComponent {
   }
 };
 
-class ColliderController extends ControllerComponent {
+class ColliderController extends Controller {
   constructor(model, object3D) {
     super(model, object3D);
 

@@ -850,6 +850,9 @@ const Object3D = class extends THREE.Object3D {
 
     if (json.object.uuid != undefined) this.uuid = json.object.uuid;
 
+    /** the uuid of the parent when this has been toJSON */
+    this.parentUUID = json.object.parentUUID || null;
+
     this.name = json.object.name || '';
 
     this.static = json.object.static || false;
@@ -877,6 +880,10 @@ const Object3D = class extends THREE.Object3D {
         this.add(new Object3D({ object: childJSON }));
       });
     }
+  }
+
+  hasGameContextUpdate() {
+    return this.gameContextUpdate;
   }
 
   updateMatrixFromJSON(jsonMatrix) {

@@ -38,38 +38,6 @@ export class SinglePlayerGamePlanar {
       configElevationLayer: frame3DPlanarConfig['elevation_layer'],
       configGeoJSONLayers: frame3DPlanarConfig['geoJSON_layers'],
     });
-
-    if (options.sceneConfig) {
-      // Init renderer
-      THREEUtil.initRenderer(
-        this.frame3DPlanar.getRenderer(),
-        new THREE.Color(
-          options.sceneConfig.sky.color.r,
-          options.sceneConfig.sky.color.g,
-          options.sceneConfig.sky.color.b
-        )
-      );
-
-      // Add lights
-      const { directionalLight } = THREEUtil.addLights(
-        this.frame3DPlanar.getScene()
-      );
-
-      // Configure shadows based on a config files
-      directionalLight.shadow.mapSize = new THREE.Vector2(
-        options.sceneConfig.shadowMapSize,
-        options.sceneConfig.shadowMapSize
-      );
-      directionalLight.castShadow = true;
-      directionalLight.shadow.bias = -0.0005;
-
-      if (options.sceneConfig.sky.paths) {
-        THREEUtil.addCubeTexture(
-          options.sceneConfig.sky.paths,
-          this.frame3DPlanar.getScene()
-        );
-      }
-    }
   }
 
   /**
@@ -109,7 +77,8 @@ export class SinglePlayerGamePlanar {
         const externalGameContext = new ExternalGame.Context(
           this.frame3DPlanar,
           assetManager,
-          inputManager
+          inputManager,
+          { sceneConfig: options.sceneConfig }
         );
 
         // step external game context => no controls on the dt...
