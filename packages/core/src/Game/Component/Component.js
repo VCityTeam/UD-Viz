@@ -45,10 +45,9 @@ const ModelComponent = class {
 };
 
 const ControllerComponent = class {
-  constructor(model, object3D, context) {
+  constructor(model, object3D) {
     this.model = model;
     this.object3D = object3D;
-    this.context = context;
   }
 };
 

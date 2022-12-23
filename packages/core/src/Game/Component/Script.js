@@ -1,5 +1,4 @@
 const { ModelComponent, ControllerComponent } = require('./Component');
-const AbstractContext = require('./AbstractContext.js');
 
 const ScriptModel = class extends ModelComponent {
   constructor(json) {
@@ -39,20 +38,10 @@ const ScriptController = class extends ControllerComponent {
    *
    * @param {*} model
    * @param {*} object3D
-   * @param {AbstractContext} context
    */
-  constructor(model, object3D, context) {
-    super(model, object3D, context);
-
-    this.scripts = {};
-    model.getIdScripts().forEach((idScript) => {
-      // context can be different object but they should implement createInstanceOf (parent class dor doc)
-      this.scripts[idScript] = context.createInstanceOf(
-        idScript,
-        object3D,
-        this.model.getVariables()
-      );
-    });
+  constructor(model, object3D, scripts) {
+    super(model, object3D);
+    this.scripts = scripts;
   }
 
   /**

@@ -2,8 +2,8 @@ const Core = require('../../src/index');
 const THREE = require('three');
 
 const gameContext = new Core.Game.Context(
-  [
-    class CollisionTest extends Core.Game.ScriptBase {
+  {
+    CollisionTest: class extends Core.Game.ScriptBase {
       constructor(context, object3D, variables) {
         super(context, object3D, variables);
 
@@ -61,7 +61,7 @@ const gameContext = new Core.Game.Context(
         return result;
       }
     },
-    class Collision extends Core.Game.ScriptBase {
+    Collision: class extends Core.Game.ScriptBase {
       constructor(context, object3D, variables) {
         super(context, object3D, variables);
 
@@ -89,7 +89,7 @@ const gameContext = new Core.Game.Context(
         process.exit(0);
       }
     },
-  ],
+  },
   {
     object: {
       uuid: 'root',
