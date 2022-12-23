@@ -3,8 +3,8 @@ const Core = require('../../src/index');
 let lastXComputed = null;
 const stateInterpolator = new Core.Game.StateInterpolator(50); // 50ms delay
 const gameContext = new Core.Game.Context(
-  [
-    class Script extends Core.Game.ScriptBase {
+  {
+    Script: class extends Core.Game.ScriptBase {
       constructor(context, object3D, variables) {
         super(context, object3D, variables);
 
@@ -43,7 +43,7 @@ const gameContext = new Core.Game.Context(
         this.previousState = state;
       }
     },
-  ],
+  },
   {
     object: {
       static: false, // this object is going to move in 3D space

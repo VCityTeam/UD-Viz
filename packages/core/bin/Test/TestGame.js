@@ -3,7 +3,7 @@
 //controller send command to gameprocess to move object which are are going to collide with another one
 //when the collision happen gameprocess edit variables of an externalscript
 //controller process check the change of the variables of the externalscript to exit 0
-
+return; // <== there is an external script in game context test non valid
 const Core = require('../../src/index');
 const THREE = require('three');
 const ScriptController = require('../../src/Game/Component/Script').Controller;

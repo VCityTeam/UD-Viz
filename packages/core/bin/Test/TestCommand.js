@@ -3,8 +3,8 @@ const Core = require('../../src/index');
 const COMMAND_TYPE = 'cmd_type';
 
 const gameContext = new Core.Game.Context(
-  [
-    class CommandTest extends Core.Game.ScriptBase {
+  {
+    CommandTest: class extends Core.Game.ScriptBase {
       constructor(context, object3D, variables) {
         super(context, object3D, variables);
       }
@@ -21,7 +21,7 @@ const gameContext = new Core.Game.Context(
         });
       }
     },
-  ],
+  },
   {
     object: {
       name: 'Command Test',

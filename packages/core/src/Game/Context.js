@@ -2,7 +2,6 @@ const { Collisions } = require('detect-collisions');
 const Collider = require('./Component/Collider');
 const Script = require('./Component/Script');
 const GameScript = require('./Component/GameScript');
-const AbstractContext = require('./Component/AbstractContext');
 const Object3D = require('./Object3D');
 const State = require('./State/State');
 const Command = require('../Command');
@@ -10,9 +9,10 @@ const Command = require('../Command');
 /**
  * Context used to simulate a World
  */
-const Context = class extends AbstractContext {
-  constructor(arrayClassScript, object3DJSON) {
-    super(arrayClassScript);
+const Context = class {
+  constructor(gameScriptClass, object3DJSON) {
+    /** @type {class{}} */
+    this.gameScriptClass = gameScriptClass;
 
     /** @type {Object3D} object3D of the world */
     this.object3D = new Object3D(object3DJSON);
@@ -34,6 +34,18 @@ const Context = class extends AbstractContext {
 
     // Commands
     this.commands = [];
+  }
+
+  createInstanceOf(id, object3D, modelVariables) {
+    const constructor = this.gameScriptClass[id];
+    if (!constructor) {
+      console.log('script loaded');
+      for (const id in this.gameScriptClass) {
+        console.log(this.gameScriptClass[id]);
+      }
+      throw new Error('no script with id ' + id);
+    }
+    return new constructor(this, object3D, modelVariables);
   }
 
   /**
@@ -172,15 +184,26 @@ const Context = class extends AbstractContext {
         const component = child.getComponent(type);
         if (component.getController())
           throw new Error('controller already init ' + child.name);
+        const scripts = {};
         switch (type) {
           case GameScript.Component.TYPE:
+            component
+              .getModel()
+              .getIdScripts()
+              .forEach((idScript) => {
+                scripts[idScript] = this.createInstanceOf(
+                  idScript,
+                  child,
+                  component.getModel().getVariables()
+                );
+              });
             component.initController(
-              new Script.Controller(component.getModel(), child, this)
+              new Script.Controller(component.getModel(), child, scripts)
             );
             break;
           case Collider.Component.TYPE:
             component.initController(
-              new Collider.Controller(component.getModel(), child, this)
+              new Collider.Controller(component.getModel(), child)
             );
             break;
           default:

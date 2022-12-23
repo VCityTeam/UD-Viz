@@ -65,8 +65,8 @@ const ColliderModel = class extends ModelComponent {
 };
 
 class ColliderController extends ControllerComponent {
-  constructor(model, object3D, context) {
-    super(model, object3D, context);
+  constructor(model, object3D) {
+    super(model, object3D);
 
     // Shapes wrappers
     this.shapeWrappers = [];
