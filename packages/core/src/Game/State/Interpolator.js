@@ -163,11 +163,6 @@ module.exports = class Interpolator {
     this._notConsumedStates = [];
     result.push(this.computeCurrentState());
 
-    // update position quaternion scale of object3D of the not consumed state before to return it
-    result.forEach((state) => {
-      state.getObject3D().update();
-    });
-
     return result;
   }
 };

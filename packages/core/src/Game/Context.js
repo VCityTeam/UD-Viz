@@ -347,9 +347,6 @@ const Context = class extends AbstractContext {
    * @returns {State}
    */
   toState(full = true) {
-    // before create a state update matrix since this is attr which is export in toJSON method
-    this.object3D.updateMatrix();
-
     const result = new State({
       object3DJSON: this.object3D.toJSON(full),
       timestamp: Date.now(),

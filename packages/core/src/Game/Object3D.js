@@ -879,13 +879,10 @@ const Object3D = class extends THREE.Object3D {
     }
   }
 
-  update() {
-    this.matrix.decompose(this.position, this.quaternion, this.scale);
-  }
-
   updateMatrixFromJSON(jsonMatrix) {
     if (!jsonMatrix) return;
     this.matrix.fromArray(jsonMatrix);
+    this.matrix.decompose(this.position, this.quaternion, this.scale);
   }
 
   /**
@@ -1013,6 +1010,7 @@ const Object3D = class extends THREE.Object3D {
   }
 
   toJSON(full = true) {
+    this.updateMatrix();
     const result = super.toJSON();
 
     // override metadata to know this is method which compute the JSON
