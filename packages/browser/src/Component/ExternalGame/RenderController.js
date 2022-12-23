@@ -6,11 +6,11 @@ export class RenderController extends Game.Component.Controller {
   /**
    *
    * @param {*} model
-   * @param {*} parentGO
+   * @param {*} object3D
    * @param {AssetManager} assetManager
    */
-  constructor(model, parentGO, assetManager) {
-    super(model, parentGO);
+  constructor(model, object3D, assetManager) {
+    super(model, object3D);
 
     this.assetManager = assetManager;
 
@@ -20,7 +20,7 @@ export class RenderController extends Game.Component.Controller {
     /** @type {THREE.AnimationMixer} */
     this.animationMixer = null;
 
-    this.renderData = this.assetsManager.createRenderData(
+    this.renderData = this.assetManager.createRenderData(
       this.model.getIdRenderData()
     );
 
@@ -38,7 +38,7 @@ export class RenderController extends Game.Component.Controller {
     this.setColor(this.model.getColor());
 
     // register in parent
-    this.parentGO.add(this.renderData.getObject3D());
+    this.object3D.add(this.renderData.getObject3D());
   }
 
   /**

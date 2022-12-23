@@ -6,7 +6,7 @@
     const udvizBrowser = window.udvizBrowser;
 
     // InputManager Test
-    const inputManager = new udvizBrowser.Component.InputManager();
+    const inputManager = new udvizBrowser.InputManager();
     console.log('create an input manager');
     inputManager.startListening(window);
     console.log('input manager start listening');

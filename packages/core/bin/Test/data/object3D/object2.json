@@ -16,6 +16,7 @@
       {
         "name": "child2",
         "components": {
+          "ExternalScript": {},
           "GameScript": {
             "idScripts": ["Hello"]
           },

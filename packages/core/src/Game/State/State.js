@@ -144,7 +144,7 @@ const State = class {
    * @returns {State}
    */
   clone() {
-    return new State(this.toJSON(true));
+    return new State(this.toJSON());
   }
 
   /**

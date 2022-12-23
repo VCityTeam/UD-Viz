@@ -8,6 +8,12 @@ export { SinglePlayerGamePlanar } from './SinglePlayerGamePlanar/SinglePlayerGam
 
 // Template.Component
 
+import * as ExternalScriptTemplate from './Component/ExternalGame/ScriptTemplate/ScriptTemplate';
+export { ExternalScriptTemplate };
+
+import * as ExternalGame from './Component/ExternalGame/ExternalGame';
+export { ExternalGame };
+
 import * as FileUtil from './Component/FileUtil';
 export { FileUtil };
 
@@ -22,6 +28,8 @@ export { InputManager } from './Component/InputManager';
 export { AssetManager } from './Component/AssetManager/AssetManager';
 
 export { Planar as Frame3DPlanar } from './Component/Frame3D/Planar';
+
+export { Base as Frame3DBase } from './Component/Frame3D/Base/Base';
 
 export { Billboard } from './Component/Frame3D/Component/Billboard';
 

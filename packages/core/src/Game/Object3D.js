@@ -846,38 +846,39 @@ const Object3D = class extends THREE.Object3D {
   constructor(json) {
     super();
 
-    Object3D.parseJSON(json);
+    this.isGameObject3D = true; // => tag it to make the difference between this and THREE.Object3D
 
-    if (json.object.uuid != undefined) this.uuid = json.object.uuid;
+    json = Object3D.parseJSON(json);
+
+    if (json.uuid != undefined) this.uuid = json.uuid;
 
     /** the uuid of the parent when this has been toJSON */
-    this.parentUUID = json.object.parentUUID || null;
+    this.parentUUID = json.parentUUID || null;
 
-    this.name = json.object.name || '';
+    this.name = json.name || '';
 
-    this.static = json.object.static || false;
+    this.static = json.static || false;
     // https://threejs.org/docs/#manual/en/introduction/How-to-update-things
     this.matrixAutoUpdate = !this.static;
 
-    this.outdated = json.object.outdated || false;
+    this.outdated = json.outdated || false;
 
     this.gameContextUpdate = true;
-    if (json.object.gameContextUpdate != undefined) {
-      this.gameContextUpdate = json.object.gameContextUpdate;
+    if (json.gameContextUpdate != undefined) {
+      this.gameContextUpdate = json.gameContextUpdate;
     }
 
     // List to force certain component to be serialize
-    this.forceToJSONComponent = json.object.forceToJSONComponent || [];
+    this.forceToJSONComponent = json.forceToJSONComponent || [];
 
     /** @type {object} */
     this.components = {};
-    this.updateComponentFromJSON(json.object.components);
-    this.updateMatrixFromJSON(json.object.matrix);
+    this.updateComponentFromJSON(json.components);
+    this.updateMatrixFromJSON(json.matrix);
 
-    if (json.object.children && json.object.children.length > 0) {
-      json.object.children.forEach((childJSON) => {
-        // THRRE Object3D toJSON dont have same structure for children
-        this.add(new Object3D({ object: childJSON }));
+    if (json.children) {
+      json.children.forEach((childJSON) => {
+        this.add(new Object3D(childJSON));
       });
     }
   }
@@ -897,16 +898,16 @@ const Object3D = class extends THREE.Object3D {
    * @param {*} json
    */
   updatefromJSON(json) {
-    Object3D.parseJSON(json);
+    json = Object3D.parseJSON(json);
 
-    this.uuid = json.object.uuid;
+    this.uuid = json.uuid;
 
     this.components = {}; // Clear
-    this.updateComponentFromJSON(json.object.components);
-    this.updateMatrixFromJSON(json.object.matrix);
-    this.name = json.object.name;
-    this.static = json.object.static;
-    this.outdated = json.object.outdated;
+    this.updateComponentFromJSON(json.components);
+    this.updateMatrixFromJSON(json.matrix);
+    this.name = json.name;
+    this.static = json.static;
+    this.outdated = json.outdated;
 
     this.children.forEach(function (child) {
       let jsonChild;
@@ -1016,26 +1017,35 @@ const Object3D = class extends THREE.Object3D {
     return new Object3D(this.toJSON());
   }
 
-  toJSON(full = true) {
+  /**
+   * do not use the THREE.Object3D parent method
+   * @param {*} full
+   * @returns
+   */
+  toJSON(full = true, withMetadata = false) {
+    const result = {};
+
+    result.children = [];
+    this.children.forEach((child) => {
+      result.children.push(child.toJSON(full, false));
+    });
+
+    // update matrix
     this.updateMatrix();
-    const result = super.toJSON();
+    result.matrix = this.matrix.toArray();
 
-    // override metadata to know this is method which compute the JSON
-    result.metadata.version = packageJSON.version;
-    result.metadata.packageName = packageJSON.name;
-
-    // add custom attributes
-    result.object.static = this.static;
-    result.object.outdated = this.outdated;
-    result.object.gameContextUpdate = this.gameContextUpdate;
+    // other attributes
+    result.uuid = this.uuid;
+    result.name = this.name;
+    result.static = this.static;
+    result.outdated = this.outdated;
+    result.gameContextUpdate = this.gameContextUpdate;
     if (this.parent) {
-      result.object.parentUUID = this.parent.uuid;
+      result.parentUUID = this.parent.uuid;
     }
 
-    if (result.object.uuid != this.uuid) throw new Error('wrong uuid');
-
     // add components
-    const components = {};
+    result.components = {};
     for (const type in this.components) {
       const c = this.components[type];
 
@@ -1043,28 +1053,46 @@ const Object3D = class extends THREE.Object3D {
         continue;
       }
 
-      components[type] = c.getModel().toJSON();
+      result.components[type] = c.getModel().toJSON();
     }
 
-    // Add forced serialize component model
-    result.object.forceToJSONComponent = this.forceToJSONComponent;
+    // Add to json the forced component
+    result.forceToJSONComponent = this.forceToJSONComponent;
     for (let index = 0; index < this.forceToJSONComponent.length; index++) {
       const type = this.forceToJSONComponent[index];
       const c = this.components[type];
-      components[type] = c.getModel().toJSON();
+      result.components[type] = c.getModel().toJSON();
     }
 
-    result.components = components;
-
+    if (withMetadata) {
+      // metadata to know this is method which compute the JSON
+      return {
+        metadata: {
+          type: Object3D.name,
+          method: this.toJSON.name,
+          version: packageJSON.version,
+          packageName: packageJSON.name,
+        },
+        object: result,
+      };
+    }
     return result;
   }
 };
 
 Object3D.parseJSON = function (json) {
-  if (!json || !json.object) {
+  if (!json) {
     console.error(json);
-    throw new Error('wrong formated data json');
+    throw new Error('no json');
   }
+
+  // check if object
+  if (json.object) {
+    // metadata should be in json.metadata
+    // do stuff like versioning then return the object
+    return json.object;
+  }
+  return json;
 };
 
 module.exports = Object3D;

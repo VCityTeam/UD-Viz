@@ -1,4 +1,5 @@
 const exec = require('child-process-promise').exec;
+const spawn = require('child_process').spawn;
 
 module.exports = {
   routine: function (packageName, withTest = true) {
@@ -16,11 +17,23 @@ module.exports = {
       .then(() => {
         if (withTest) {
           console.log('Test ', packageName);
-          exec('npm run test')
-            .catch((error) => {
-              console.error(packageName + ' test failed', error);
-            })
-            .then(printExec);
+
+          const child = spawn('node', ['./bin/test.js'], {
+            shell: true,
+          });
+
+          child.stdout.on('data', (data) => {
+            console.log(`${data}`);
+          });
+          child.stderr.on('data', (data) => {
+            console.error('\x1b[31m', `ERROR :${data}`);
+          });
+
+          // exec('npm run test')
+          //   .catch((error) => {
+          //     console.error(packageName + ' test failed', error);
+          //   })
+          //   .then(printExec);
         }
       });
   },

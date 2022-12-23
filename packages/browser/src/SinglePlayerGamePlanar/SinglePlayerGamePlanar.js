@@ -73,11 +73,13 @@ export class SinglePlayerGamePlanar {
 
         // init external game context
         const assetManager = options.assetManager || new AssetManager();
+        const externalGameScriptClass = options.externalGameScriptClass || {};
 
         const externalGameContext = new ExternalGame.Context(
           this.frame3DPlanar,
           assetManager,
           inputManager,
+          externalGameScriptClass,
           { sceneConfig: options.sceneConfig }
         );
 

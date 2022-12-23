@@ -161,6 +161,7 @@ const scripts = function (folderPath) {
         if (!file) console.log(index, files);
 
         if (file.isFile()) {
+          console.log(file.name, ' start');
           await test(folderPath, file);
         }
 

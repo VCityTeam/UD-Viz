@@ -1,6 +1,6 @@
-import { Base } from '../../../Game/BrowserScript';
+import { ExternalScriptBase } from '../Context';
 import * as THREE from 'three';
-import JSONUtils from '@ud-viz/core/src/Game/Component/JSONUtils';
+import { JSONUtil } from '@ud-viz/core';
 
 const defaultConfig = {
   cameraAngle: 0.51,
@@ -10,11 +10,11 @@ const defaultConfig = {
   nameGO2Focus: null,
 };
 
-export class FocusGameObject extends Base {
+export class FocusGameObject extends ExternalScriptBase {
   constructor(conf, context, parentGO) {
     // Overwrite conf
     const overWriteConf = JSON.parse(JSON.stringify(defaultConfig));
-    JSONUtils.overWrite(overWriteConf, conf);
+    JSONUtil.overWrite(overWriteConf, conf);
     super(overWriteConf, context, parentGO);
 
     // Quaternion to place the camera
