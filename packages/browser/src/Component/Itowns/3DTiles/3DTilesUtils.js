@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { objectEquals } from '@ud-viz/core/src/Data';
+import { Data } from '@ud-viz/core';
 
 /**
  * Search a batch table in a tile. A tile is a THREE.js 3DObject with a
@@ -349,7 +349,7 @@ export function createTileGroupsFromBatchIDs(tile, groups) {
 
     // Check if a similar material has been added
     let materialIndex = materials.findIndex((mat) => {
-      return objectEquals(mat, group.material);
+      return Data.objectEquals(mat, group.material);
     });
     if (materialIndex < 0) {
       // If the material is new, push it

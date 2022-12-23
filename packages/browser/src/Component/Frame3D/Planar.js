@@ -198,6 +198,8 @@ export class Planar extends Base {
     if (options.configGeoJSONLayers) {
       setupAndAddGeoJsonLayers(options.configGeoJSONLayers, this.itownsView);
     }
+
+    console.log('should compute near far here instaed of allwidget ?');
   }
 
   /**

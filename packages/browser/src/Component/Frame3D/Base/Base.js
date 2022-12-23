@@ -2,7 +2,6 @@ import * as THREE from 'three';
 import { CSS3DRenderer } from 'three/examples/jsm/renderers/CSS3DRenderer';
 import { checkParentChild } from '../../HTMLUtil';
 import { Billboard } from '../Component/Billboard';
-import { RequestAnimationFrameProcess } from '../../RequestAnimationFrameProcess';
 
 import './Base.css';
 
@@ -51,23 +50,24 @@ export class Base {
     // Pause
     this.isRendering = true;
 
-    // Size of the view
+    /** @type {THREE.Vector2} Size of the frame3D */
     this.size = new THREE.Vector2();
-
-    /** @type {RequestAnimationFrameProcess} process to render css3D */
-    this.css3DProcess = null;
 
     /** @type {THREE.Scene} */
     this.scene = null;
+
     /** @type {THREE.WebGLRenderer} */
     this.renderer = null;
+
     /** @type {THREE.PerspectiveCamera} */
     this.camera = null;
 
-    // CSS3D attributes
+    /** @type {CSS3DRenderer} */
     this.css3DRenderer = null;
-    this.css3DRendererFps = options.css3DRendererFps || 20;
+
+    /** @type {THREE.Scene} */
     this.css3DScene = null;
+
     /** @type {Billboard[]} */
     this.billboards = [];
 
@@ -134,11 +134,10 @@ export class Base {
    */
   initCSS3D() {
     // CSS3DRenderer
-    const css3DRenderer = new CSS3DRenderer();
-    this.css3DRenderer = css3DRenderer;
+    this.css3DRenderer = new CSS3DRenderer();
 
     // Add html el
-    this.rootCss.appendChild(css3DRenderer.domElement);
+    this.rootCss.appendChild(this.css3DRenderer.domElement);
 
     // Create a new scene for the css3D renderer
     this.css3DScene = new THREE.Scene();
@@ -191,18 +190,11 @@ export class Base {
         });
       }
     };
+  }
 
-    // start rendering css3D
-    this.css3DProcess = new RequestAnimationFrameProcess(
-      this.css3DRendererFps,
-      () => {
-        if (!this.isRendering) return;
-        css3DRenderer.render(this.css3DScene, this.getCamera());
-      }
-    );
-
-    // Launch an async resize
-    setTimeout(this.resizeListener, 100);
+  renderCSS3D() {
+    if (!this.isRendering || !this.css3DRenderer) return;
+    this.css3DRenderer.render(this.css3DScene, this.getCamera());
   }
 
   /**
@@ -291,7 +283,6 @@ export class Base {
   dispose() {
     window.removeEventListener('resize', this.resizeListener);
     this.html().remove();
-    if (this.css3DProcess) this.css3DProcess.stop();
   }
 
   getCamera() {

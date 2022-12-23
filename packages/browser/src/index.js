@@ -1,8 +1,8 @@
 // @ud-viz/browser bundle API
 
 // Component temporary everything need out of the bundle should be expose TODO_ISSUE
-import * as Component from './Component/Component.js';
-export { Component };
+// import * as Component from './Component/Component.js';
+// export { Component };
 
 export { AllWidget } from './AllWidget/AllWidget';
 
