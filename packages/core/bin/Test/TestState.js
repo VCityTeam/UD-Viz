@@ -11,6 +11,11 @@ context.load().then(() => {
     console.error('uuid ', context.object3D.uuid);
     throw new Error('State.includes error');
   }
+  const noFullState1 = context.toState(false);
+
+  if (state1.equals(noFullState1)) {
+    throw new Error('toState not working');
+  }
 
   const child1 = context.object3D.getObjectByName('child1');
   const child2 = context.object3D.getObjectByName('child2');

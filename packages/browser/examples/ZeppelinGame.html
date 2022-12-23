@@ -14,40 +14,37 @@
       const gameScriptClass = {
         WorldGameManager: class extends udvizBrowser.Core.Game.ScriptBase {
           init() {
-            return;
             this.zeppelinGO = new udvizBrowser.Core.Game.Object3D({
-              name: 'zeppelin',
-              componentModels: {
-                Audio: {
-                  sounds: ['ballon_pop'],
-                },
-                WorldScript: {
-                  idScripts: ['Zeppelin'],
-                },
-                BrowserScript: {
-                  idScripts: ['Zeppelin'],
-                  conf: { sphereCount: 0 },
-                },
-                Render: { idRenderData: 'zeppelin' },
-                Collider: {
-                  shapes: [
-                    {
-                      type: 'Circle',
-                      center: { x: 0, y: 0 },
-                      radius: 10,
-                    },
-                  ],
+              object: {
+                name: 'zeppelin',
+                components: {
+                  // Audio: {
+                  //   sounds: ['ballon_pop'],
+                  // },
+                  GameScript: {
+                    idScripts: ['Zeppelin'],
+                  },
+                  ExternalScript: {
+                    idScripts: ['Zeppelin'],
+                    conf: { sphereCount: 0 },
+                  },
+                  Render: { idRenderData: 'zeppelin' },
+                  Collider: {
+                    shapes: [
+                      {
+                        type: 'Circle',
+                        center: { x: 0, y: 0 },
+                        radius: 10,
+                      },
+                    ],
+                  },
                 },
               },
             });
 
-            const world = this.context.getWorld();
+            this.context.addObject3D(this.zeppelinGO);
 
-            world.addGameObject(
-              this.zeppelinGO,
-              this.context,
-              world.getGameObject()
-            );
+            return;
 
             // Add collectable sphere at random position
             const range = 400;
@@ -183,11 +180,27 @@
         // udvizBrowser.Templates.WorldCommandController,
       ];
 
-      // const app = new udvizBrowser.Templates.BrowserGame();
-      // app.start(myWorld, './assets/config/default_game_config.json', {
-      //   worldScripts: worldScripts,
-      //   browserScripts: browserScripts,
-      // });
+      const externalGameScriptClass = {
+        Zeppelin: class extends udvizBrowser.ExternalGame.ScriptBase {
+          init() {
+            this.ui = document.createElement('div');
+            this.ui.style.zIndex = 98; // le neuf et le 8
+            this.context.frame3D.appendToUI(this.ui);
+            this.updateUI();
+          }
+          updateUI() {
+            this.ui.innerHTML = 'Sphere count: ' + this.variables.sphereCount;
+          }
+          onOutdated() {
+            this.updateUI();
+            // conf has changed meaning a shpereCount has incremented => play a sound
+            const audioComp = this.object3D.getComponent(
+              udvizBrowser.Core.Game.Component.Audio.TYPE
+            );
+            audioComp.getController().play('ballon_pop');
+          }
+        },
+      };
 
       udvizBrowser.FileUtil.loadMultipleJSON([
         './assets/config/extent.json',
@@ -227,18 +240,19 @@
                   GameScript: {
                     idScripts: ['WorldGameManager'],
                   },
-                  // BrowserScript: {
-                  //   conf: {
-                  //     nameGO2Focus: 'zeppelin',
-                  //   },
-                  //   idScripts: ['FocusGameObject', 'WorldCommandController'],
-                  // },
+                  ExternalScript: {
+                    variables: {
+                      nameGO2Focus: 'zeppelin',
+                    },
+                    // idScripts: ['FocusGameObject', 'WorldCommandController'],
+                  },
                 },
               },
             },
             {
               assetManager: assetManager,
               gameScriptClass: gameScriptClass,
+              externalGameScriptClass: externalGameScriptClass,
               sceneConfig: configs['scene'],
             }
           );

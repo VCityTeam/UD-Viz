@@ -1,1 +1,1 @@
-export { Context } from './Context';
+export { Context, ExternalScriptBase as ScriptBase } from './Context';

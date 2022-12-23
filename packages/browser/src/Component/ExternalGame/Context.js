@@ -109,8 +109,10 @@ export class Context {
     this.gameView.addResizeRequester(() => {
       // Notify localscript
       if (this.currentGameObject3D) {
-        this.currentGameObject3D.traverse(function (g) {
-          const scriptComponent = g.getComponent(
+        this.currentGameObject3D.traverse(function (child) {
+          if (!child.isGameObject3D) return;
+
+          const scriptComponent = child.getComponent(
             GameObject.BrowserScript.Model.TYPE
           );
           if (scriptComponent) {
@@ -176,6 +178,8 @@ export class Context {
     if (this.currentGameObject3D) {
       if (updateGameObject) {
         this.currentGameObject3D.traverse((child) => {
+          if (!child.isGameObject3D) return;
+
           const current = state
             .getObject3D()
             .getObjectByProperty('uuid', child.uuid);
@@ -298,6 +302,8 @@ export class Context {
         });
 
         state.getObject3D().traverse((child) => {
+          if (!child.isGameObject3D) return; // => this one should be useless since Game.State should be only compose of GameObject3D
+
           const old = this.currentGameObject3D.getObjectByProperty(
             'uuid',
             child.uuid
@@ -325,8 +331,10 @@ export class Context {
       // add object3D to the context
       this.object3D.add(this.currentGameObject3D);
 
-      state.getObject3D().traverse((g) => {
-        newGO.push(g);
+      this.currentGameObject3D.traverse((child) => {
+        if (!child.isGameObject3D) return; // => this one should be useless since Game.State should be only compose of GameObject3D
+
+        newGO.push(child);
       });
     }
 
@@ -355,6 +363,8 @@ export class Context {
 
       // Notify other go that a new go has been added
       this.currentGameObject3D.traverse((child) => {
+        if (!child.isGameObject3D) return;
+
         const otherScriptComponent = child.getComponent(
           Game.Component.ExternalScript.TYPE
         );
@@ -386,6 +396,8 @@ export class Context {
     // TODO updateGameObject ??? refacto editor
     if (updateGameObject) {
       this.currentGameObject3D.traverse((child) => {
+        if (!child.isGameObject3D) return;
+
         // Tick local script
         const scriptComponent = child.getComponent(
           Game.Component.ExternalScript.TYPE
@@ -417,47 +429,42 @@ export class Context {
    * @param {Game.Object3D} go
    */
   initComponentControllers(go) {
-    go.traverse((child) => {
-      const components = child.getComponents();
-      for (const type in components) {
-        const component = child.getComponent(type);
-        if (component.getController())
-          throw new Error('controller already init ' + child.name);
-        const scripts = {};
-        switch (type) {
-          case Game.Component.Render.TYPE:
-            component.initController(
-              new RenderController(
-                component.getModel(),
-                child,
-                this.assetManager
-              )
-            );
-            break;
-          case Game.Component.ExternalScript.TYPE:
-            component
-              .getModel()
-              .getIdScripts()
-              .forEach((idScript) => {
-                scripts[idScript] = this.createInstanceOf(
-                  idScript,
-                  child,
-                  component.getModel().getVariables()
-                );
-              });
-            component.initController(
-              new Game.Component.ScriptController(
-                component.getModel(),
-                child,
-                scripts
-              )
-            );
-            break;
-          default:
-          // no need to initialize controller for this component
-        }
+    const components = go.getComponents();
+    for (const type in components) {
+      const component = go.getComponent(type);
+      if (component.getController()) {
+        throw new Error('controller already init ' + go.name);
       }
-    });
+      const scripts = {};
+      switch (type) {
+        case Game.Component.Render.TYPE:
+          component.initController(
+            new RenderController(component.getModel(), go, this.assetManager)
+          );
+          break;
+        case Game.Component.ExternalScript.TYPE:
+          component
+            .getModel()
+            .getIdScripts()
+            .forEach((idScript) => {
+              scripts[idScript] = this.createInstanceOf(
+                idScript,
+                go,
+                component.getModel().getVariables()
+              );
+            });
+          component.initController(
+            new Game.Component.ScriptController(
+              component.getModel(),
+              go,
+              scripts
+            )
+          );
+          break;
+        default:
+        // no need to initialize controller for this component
+      }
+    }
   }
 
   createInstanceOf(id, object3D, modelVariables) {
@@ -509,6 +516,7 @@ export class Context {
   findBrowserScriptWithID(id) {
     let result = null;
     this.getRootGameObject().traverse(function (child) {
+      if (!child.isGameObject3D) return;
       const scripts = child.fetchBrowserScripts();
       if (scripts && scripts[id]) {
         result = scripts[id];
@@ -529,6 +537,8 @@ export class Context {
   findGOWithBrowserScriptID(id) {
     let result = null;
     this.getRootGameObject().traverse(function (child) {
+      if (!child.isGameObject3D) return;
+
       const scripts = child.fetchBrowserScripts();
       if (scripts && scripts[id]) {
         result = child;
@@ -552,7 +562,7 @@ Context.EVENT = {
   ON_RESIZE: 'onResize', // On resize window
 };
 
-const ExternalScriptBase = class {
+export class ExternalScriptBase {
   /**
    * constructor should not be rewrite use init instead
    * @param {Context} context
@@ -573,4 +583,4 @@ const ExternalScriptBase = class {
   onRemove() {}
   onComponentUpdate() {}
   onResize() {}
-};
+}

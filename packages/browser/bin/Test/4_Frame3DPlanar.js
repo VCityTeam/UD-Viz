@@ -23,7 +23,7 @@
       5180575
     );
 
-    const frame3DPlanar = new udvizBrowser.Component.Frame3D.Planar(extent);
+    const frame3DPlanar = new udvizBrowser.Frame3DPlanar(extent);
     frame3DPlanar.dispose();
 
     resolve();

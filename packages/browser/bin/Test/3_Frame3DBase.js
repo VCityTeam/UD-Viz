@@ -6,7 +6,7 @@
     const udvizBrowser = window.udvizBrowser;
     const THREE = udvizBrowser.THREE;
 
-    const frame3DBase = new udvizBrowser.Component.Frame3D.Base();
+    const frame3DBase = new udvizBrowser.Frame3DBase();
     console.log('frame3DBase initialized');
 
     const min = new THREE.Vector2(10, 65);
@@ -21,7 +21,7 @@
       console.warn('WARNING: height not well computed');
     }
 
-    const billboard = new udvizBrowser.Component.Frame3D.Component.Billboard(
+    const billboard = new udvizBrowser.Billboard(
       document.createElement('div'),
       new THREE.Vector3(),
       new THREE.Vector3(),
