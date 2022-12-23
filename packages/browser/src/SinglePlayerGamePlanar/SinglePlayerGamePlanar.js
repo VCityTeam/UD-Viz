@@ -4,7 +4,9 @@ import { Planar } from '../Component/Frame3D/Frame3D';
 import { Game } from '@ud-viz/core';
 import { RequestAnimationFrameProcess } from '../Component/RequestAnimationFrameProcess';
 const THREE = require('three');
+const itowns = require('itowns');
 const THREEUtil = require('../Component/THREEUtil');
+import * as ExternalGame from '../Component/ExternalGame/ExternalGame';
 // import * as Views from '../../Views/Views';
 // import { Game } from '@ud-viz/core';
 // import { BrowserContext } from '../../Game/BrowserContext.js';
@@ -76,13 +78,8 @@ export class SinglePlayerGamePlanar {
    */
   start(gameObject3DJSON, options = {}) {
     return new Promise((resolve, reject) => {
-      /** @type {AssetManager} */
-      const assetManager = options.assetManager || new AssetManager();
-
-      /** @type {InputManager} */
-      const inputManager = options.inputManager || new InputManager();
-
-      const gameScriptClass = options.gameScriptClass || [];
+      // init game process
+      const gameScriptClass = options.gameScriptClass || {};
       const gameContext = new Game.Context(gameScriptClass, gameObject3DJSON);
       gameContext.load().then(() => {
         const interpolator = new Game.StateInterpolator(
@@ -95,12 +92,33 @@ export class SinglePlayerGamePlanar {
         const gameProcess = new RequestAnimationFrameProcess(
           options.gameProcessFps
         );
+
+        // create an input manager to plug it directly in game process
+        const inputManager = options.inputManager || new InputManager();
+
         gameProcess.start((dt) => {
           // game loop
           gameContext.onCommand(inputManager.computeCommands()); // pull commands
           gameContext.step(dt); // simulate
           interpolator.onNewState(gameContext.toState(false)); // send new state of the game to interpolator
         });
+
+        // init external game context
+        const assetManager = options.assetManager || new AssetManager();
+
+        const externalGameContext = new ExternalGame.Context(
+          this.frame3DPlanar,
+          assetManager,
+          inputManager
+        );
+
+        // step external game context => no controls on the dt...
+        this.frame3DPlanar.itownsView.addFrameRequester(
+          itowns.MAIN_LOOP_EVENTS.UPDATE_START,
+          (dt) => {
+            externalGameContext.step(dt, interpolator.computeCurrentStates());
+          }
+        );
       });
     });
   }

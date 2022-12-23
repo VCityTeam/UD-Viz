@@ -11,8 +11,8 @@
     <script src="../dist/debug/bundle.js"></script>
 
     <script type="text/javascript">
-      const gameScriptClass = [
-        class WorldGameManager extends udvizBrowser.Core.Game.ScriptBase {
+      const gameScriptClass = {
+        WorldGameManager: class extends udvizBrowser.Core.Game.ScriptBase {
           init() {
             return;
             this.zeppelinGO = new udvizBrowser.Core.Game.Object3D({
@@ -138,7 +138,7 @@
             });
           }
         },
-        class Zeppelin extends udvizBrowser.Core.Game.ScriptBase {
+        Zeppelin: class extends udvizBrowser.Core.Game.ScriptBase {
           // Called when this gameobject collider components collides with another one collider components
           onEnterCollision(result) {
             const goCollided = result.b.getGameObject();
@@ -153,7 +153,7 @@
             this.parentGameObject.setOutdated(true); // notify browserScript onOutdated event
           }
         },
-      ];
+      };
 
       const browserScripts = [
         // class Zeppelin extends udvizBrowser.BrowserScriptBase {

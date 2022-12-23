@@ -63,5 +63,3 @@ export class RenderController extends Controller {
   //   gRenderComp.initAssets(_this.getAssetsManager());
   // }
 }
-
-export { RenderController as Controller };

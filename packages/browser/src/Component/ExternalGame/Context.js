@@ -1,44 +1,41 @@
-import { GameView } from '../Views/GameView/GameView';
-import WorldStateInterpolator from '@ud-viz/core/src/Game/WorldStateInterpolator';
 import * as proj4 from 'proj4';
 const THREE = require('three');
-import GameObject from '@ud-viz/core/src/Game/GameObject/GameObject';
-import * as BrowserScript from './BrowserScript';
-import THREEUtils from '../Component/THREEUtils';
+import * as THREEUtil from '../THREEUtil';
+import { AssetManager, Frame3D, InputManager } from '../Component';
+import { Game } from '@ud-viz/core';
 
 /**
  * Context pass to the GameObject BrowserScript to work (TODO this class is relevant ? all attributes could be in gameview class)
  */
-export class BrowserContext {
-  constructor(assetsManager, interpolator, options = {}) {
+export class Context {
+  /**
+   *
+   * @param {Frame3D} frame3D - could be a Frame3DBase or a Frame3DPlanar
+   * @param {AssetManager} assetsManager
+   * @param {InputManager} inputManager
+   */
+  constructor(frame3D, assetsManager, inputManager) {
+    /** @type {number} */
     this.dt = 0;
 
-    /**
-     * @type {GameView}
-     */
-    this.gameView = null; //has to be initialize
+    /** @type {Frame3D} */
+    this.frame3D = frame3D;
 
-    // Assets
+    /** @type {AssetManager} */
     this.assetsManager = assetsManager;
 
-    /**
-     * @type {WorldStateInterpolator}
-     */
-    this.interpolator = interpolator;
+    /** @type {InputManager} */
+    this.inputManager = inputManager;
 
-    // Object3D
+    /** @type {THREE.Object3D} */
     this.object3D = new THREE.Object3D();
-    this.object3D.name = 'BrowserContext_Object3D';
+    this.object3D.name = 'External_Game_Context_Object3D';
 
-    // Current GameObject UUID in the last state
+    /** @type {object} */
     this.currentUUID = {};
 
-    // The last state processed
+    /** @type {Game.State} */
     this.lastState = null;
-
-    // optionals
-    this.webSocketService = options.webSocketService;
-    this.worldStateComputer = options.worldStateComputer;
   }
 
   init(gameView) {
@@ -48,7 +45,7 @@ export class BrowserContext {
     this.gameView.addResizeRequester(() => {
       // Notify localscript
       if (this.lastState) {
-        this.lastState.getGameObject().traverse(function (g) {
+        this.lastState.getObject3D().traverse(function (g) {
           const scriptComponent = g.getComponent(
             GameObject.BrowserScript.Model.TYPE
           );
@@ -64,7 +61,7 @@ export class BrowserContext {
     this.gameView.addOnDisposeRequester(() => {
       // Notify localscript dispose
       if (this.lastState) {
-        this.lastState.getGameObject().traverse(function (g) {
+        this.lastState.getObject3D().traverse(function (g) {
           const scriptComponent = g.getComponent(
             GameObject.BrowserScript.Model.TYPE
           );
@@ -102,31 +99,28 @@ export class BrowserContext {
     return this.assetsManager;
   }
 
-  setWorldStateComputer(value) {
-    this.worldStateComputer = value;
-  }
-
-  getWorldStateComputer() {
-    return this.worldStateComputer;
-  }
-
-  step(dt, updateGameObject, onNewGOListeners) {
-    this.dt = dt; //ref it for BrowserScript
+  /**
+   *
+   * @param {number} dt - delta time
+   * @param {Game.State[]} states - new states to update to
+   * @param {boolean} updateGameObject
+   */
+  step(dt, states, updateGameObject = true) {
+    this.dt = dt; // ref it for external scripts
 
     const newGO = [];
-    const states = this.interpolator.computeCurrentStates();
     const state = states[states.length - 1]; // The more current of states
 
     // Update lastState with the new one
     if (this.lastState) {
-      const lastGO = this.lastState.getGameObject();
+      const lastGO = this.lastState.getObject3D();
 
       if (updateGameObject) {
         // Update lastGO
 
         lastGO.traverse((g) => {
           const uuid = g.getUUID();
-          const current = state.getGameObject().find(uuid);
+          const current = state.getObject3D().find(uuid);
           if (current) {
             // Local update
             if (!current.getFreeze() && !current.hasNoLocalUpdate()) {
@@ -141,7 +135,7 @@ export class BrowserContext {
               // Stack the same go of all states not consumed yet
               const bufferedGO = [];
               states.forEach((s) => {
-                const bGO = s.getGameObject().find(uuid);
+                const bGO = s.getObject3D().find(uuid);
                 if (bGO) bufferedGO.push(bGO);
               });
 
@@ -242,7 +236,7 @@ export class BrowserContext {
           }
         });
 
-        state.getGameObject().traverse((g) => {
+        state.getObject3D().traverse((g) => {
           const uuid = g.getUUID();
           const old = lastGO.find(uuid);
           if (!old) {
@@ -259,7 +253,7 @@ export class BrowserContext {
 
       state.setGameObject(lastGO); // Set it
     } else {
-      state.getGameObject().traverse((g) => {
+      state.getObject3D().traverse((g) => {
         newGO.push(g);
       });
     }
@@ -274,7 +268,7 @@ export class BrowserContext {
       });
     });
 
-    const go = state.getGameObject();
+    const go = state.getObject3D();
 
     // Localscript event INIT + ON_NEW_GAMEOBJECT
     newGO.forEach((g) => {
@@ -320,10 +314,6 @@ export class BrowserContext {
         this.object3D,
         this.gameView.directionalLight
       );
-
-      onNewGOListeners.forEach((cb) => {
-        cb(this, newGO);
-      });
     }
 
     // TODO updateGameObject ??? refacto editor
@@ -386,16 +376,8 @@ export class BrowserContext {
     return this.dt;
   }
 
-  setWebSocketService(w) {
-    this.webSocketService = w;
-  }
-
-  getWebSocketService() {
-    return this.webSocketService;
-  }
-
   getRootGameObject() {
-    return this.lastState.getGameObject().computeRoot();
+    return this.lastState.getObject3D().computeRoot();
   }
 
   /**
@@ -436,18 +418,6 @@ export class BrowserContext {
     });
 
     return result;
-  }
-
-  /**
-   *
-   * @returns {GameView}
-   */
-  getGameView() {
-    return this.gameView;
-  }
-
-  getInterpolator() {
-    return this.interpolator;
   }
 
   getObject3D() {
