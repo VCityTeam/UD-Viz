@@ -1027,6 +1027,7 @@ const Object3D = class extends THREE.Object3D {
 
     result.children = [];
     this.children.forEach((child) => {
+      if (!child.isGameObject3D) return;
       result.children.push(child.toJSON(full, false));
     });
 

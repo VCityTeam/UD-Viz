@@ -151,6 +151,8 @@ export class AssetManager {
       }
     });
 
+    parent.name = obj.name + '_parsed_';
+
     return parent;
   }
 

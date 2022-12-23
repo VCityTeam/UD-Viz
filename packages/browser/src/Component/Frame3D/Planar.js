@@ -229,9 +229,6 @@ export class Planar extends Base {
           this.renderCSS3D();
         }
       );
-    } else {
-      // disable itownsView render
-      this.enableItownsViewRendering(false);
     }
   }
 

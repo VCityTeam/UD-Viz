@@ -7,45 +7,45 @@ const THREE = require('three');
 const itowns = require('itowns');
 const THREEUtil = require('../Component/THREEUtil');
 import * as ExternalGame from '../Component/ExternalGame/ExternalGame';
-// import * as Views from '../../Views/Views';
-// import { Game } from '@ud-viz/core';
-// import { BrowserContext } from '../../Game/BrowserContext.js';
+
+//DEBUG
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 
 /**
  * A Class contaning method to easily instanciate a browser game based on the ud-viz game engine
  */
 export class SinglePlayerGamePlanar {
-  /**
-   *
-   * @param {itowns.Extent} extent
-   * @param {object} options
-   * @param {object} options.frame3DPlanarConfig - create a typedef
-   * @param {object} options.sceneConfig
-   */
-  constructor(extent, options = {}) {
-    const frame3DPlanarConfig = options.frame3DPlanarConfig || {};
-
-    /** @type {Planar} */
-    this.frame3DPlanar = new Planar(extent, {
-      hasItownsControls: false,
-      coordinates: frame3DPlanarConfig['coordinates'],
-      maxSubdivisionLevel: frame3DPlanarConfig['maxSubdivisionLevel'],
-      heading: frame3DPlanarConfig['heading'],
-      tilt: frame3DPlanarConfig['tilt'],
-      range: frame3DPlanarConfig['range'],
-      config3DTilesLayers: frame3DPlanarConfig['3D_tiles_layers'],
-      configBaseMapLayer: frame3DPlanarConfig['base_map_layer'],
-      configElevationLayer: frame3DPlanarConfig['elevation_layer'],
-      configGeoJSONLayers: frame3DPlanarConfig['geoJSON_layers'],
-    });
+  constructor() {
+    // nothing for now
   }
 
   /**
    *
-   * @param {object|JSON} gameObject3DJSON
+   * @param {*} extent
+   * @param {*} gameObject3DJSON
+   * @param {*} options
+   * @param {InputManager} options.inputManager
+   * @returns
    */
-  start(gameObject3DJSON, options = {}) {
+  start(extent, gameObject3DJSON, options = {}) {
     return new Promise((resolve, reject) => {
+      // initialize planar
+      const frame3DPlanarConfig = options.frame3DPlanarConfig || {};
+
+      /** @type {Planar} */
+      const frame3DPlanar = new Planar(extent, {
+        hasItownsControls: false,
+        coordinates: frame3DPlanarConfig['coordinates'],
+        maxSubdivisionLevel: frame3DPlanarConfig['maxSubdivisionLevel'],
+        heading: frame3DPlanarConfig['heading'],
+        tilt: frame3DPlanarConfig['tilt'],
+        range: frame3DPlanarConfig['range'],
+        config3DTilesLayers: frame3DPlanarConfig['3D_tiles_layers'],
+        configBaseMapLayer: frame3DPlanarConfig['base_map_layer'],
+        configElevationLayer: frame3DPlanarConfig['elevation_layer'],
+        configGeoJSONLayers: frame3DPlanarConfig['geoJSON_layers'],
+      });
+
       // init game process
       const gameScriptClass = options.gameScriptClass || {};
       const gameContext = new Game.Context(gameScriptClass, gameObject3DJSON);
@@ -62,6 +62,7 @@ export class SinglePlayerGamePlanar {
         );
 
         // create an input manager to plug it directly in game process
+        /** @type {InputManager} */
         const inputManager = options.inputManager || new InputManager();
 
         gameProcess.start((dt) => {
@@ -72,24 +73,65 @@ export class SinglePlayerGamePlanar {
         });
 
         // init external game context
+
+        /** @type {AssetManager} */
         const assetManager = options.assetManager || new AssetManager();
         const externalGameScriptClass = options.externalGameScriptClass || {};
 
         const externalGameContext = new ExternalGame.Context(
-          this.frame3DPlanar,
+          frame3DPlanar,
           assetManager,
           inputManager,
           externalGameScriptClass,
           { sceneConfig: options.sceneConfig }
         );
 
-        // step external game context => no controls on the dt...
-        this.frame3DPlanar.itownsView.addFrameRequester(
-          itowns.MAIN_LOOP_EVENTS.UPDATE_START,
-          (dt) => {
-            externalGameContext.step(dt, interpolator.computeCurrentStates());
-          }
-        );
+        // position of the external game context object extent center
+        const center = extent.center();
+        externalGameContext.object3D.position.set(center.x, center.y, 300); // TODO 300 is HARD CODED
+
+        // step external game context
+
+        // DEBUG THREE CONTROLLER
+        // const elementToListen =
+        //   frame3DPlanar.itownsView.mainLoop.gfxEngine.label2dRenderer
+        //     .domElement;
+        // const orbitControls = new OrbitControls(
+        //   frame3DPlanar.camera,
+        //   elementToListen
+        // );
+        // orbitControls.target.copy(externalGameContext.object3D.position);
+
+        const s = assetManager.createRenderData('cube').getObject3D();
+        s.scale.set(100, 100, 100);
+        externalGameContext.object3D.add(s);
+
+        // METHOD 1 ITOWNS MAIN LOOP BAD RENDERING NO CONTROL DT
+
+        // frame3DPlanar.itownsView.addFrameRequester(
+        //   itowns.MAIN_LOOP_EVENTS.UPDATE_START,
+        //   (dt) => {
+        //     externalGameContext.step(dt, interpolator.computeCurrentStates());
+        //   }
+        // );
+
+        // METHOD 2 REQUESTANIMATIONFRAME
+        frame3DPlanar.enableItownsViewRendering(false);
+        const process = new RequestAnimationFrameProcess(30);
+        process.start((dt) => {
+          externalGameContext.step(dt, interpolator.computeCurrentStates());
+          // orbitControls.update();
+          frame3DPlanar.itownsView.notifyChange(frame3DPlanar.camera);
+          frame3DPlanar
+            .getRenderer()
+            .render(frame3DPlanar.getScene(), frame3DPlanar.getCamera());
+        });
+
+        // DEBUG PRINT
+        inputManager.addKeyInput('p', 'keyup', () => {
+          console.log('external game context ', externalGameContext);
+          console.log('game context ', gameContext);
+        });
       });
     });
   }

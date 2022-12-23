@@ -3,6 +3,7 @@ const THREE = require('three');
 import { AssetManager, Frame3D, InputManager, THREEUtil } from '../Component';
 import { Game, JSONUtil } from '@ud-viz/core';
 import { RenderController } from './RenderController';
+import { AudioController } from './AudioController';
 
 const defaultConfigScene = {
   shadowMapSize: 2046,
@@ -184,7 +185,7 @@ export class Context {
             .getObject3D()
             .getObjectByProperty('uuid', child.uuid);
           if (current) {
-            if (!current.hasGameContextUpdate()) {
+            if (current.hasGameContextUpdate()) {
               if (!current.isStatic()) {
                 // if no static update transform
                 child.position.copy(current.position);
@@ -380,7 +381,8 @@ export class Context {
     // this.object3D.children.length = 0;
     // this.object3D.add(this.computeObject3D(go));
     // Update matrix
-    // this.gameView.scene.updateMatrixWorld();
+    this.object3D.updateMatrixWorld();
+    this.frame3D.scene.updateMatrixWorld();
 
     // Update shadow
     if (newGO.length) {
@@ -412,9 +414,7 @@ export class Context {
         if (audioComp) {
           const camera = this.frame3D.getCamera();
           const cameraMatWorldInverse = camera.matrixWorldInverse;
-          audioComp
-            .getController()
-            .tick(cameraMatWorldInverse, this.getObject3D().position);
+          audioComp.getController().tick(cameraMatWorldInverse);
         }
 
         // Render component
@@ -437,7 +437,13 @@ export class Context {
       }
       const scripts = {};
       switch (type) {
+        case Game.Component.Audio.TYPE:
+          component.initController(
+            new AudioController(component.getModel(), go, this.assetManager)
+          );
+          break;
         case Game.Component.Render.TYPE:
+          console.log(go.name, 'init render controller');
           component.initController(
             new RenderController(component.getModel(), go, this.assetManager)
           );

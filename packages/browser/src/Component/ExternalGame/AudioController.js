@@ -1,12 +1,15 @@
-import { Controller } from '@ud-viz/core/src/Game/GameObject/Component/Component';
+import { Game } from '@ud-viz/core';
+const THREE = require('three');
 
-export class AudioController extends Controller {
-  constructor(assetsManager, model, parentGo) {
-    super(assetsManager, model, parentGo);
+export class AudioController extends Game.Component.Controller {
+  constructor(model, object3D, assetManager) {
+    super(model, object3D);
+
+    this.assetManager = assetManager;
 
     this.sounds = {};
     this.model.getSoundsJSON().forEach((idS) => {
-      this.sounds[idS] = this.assetsManager.createSound(
+      this.sounds[idS] = this.assetManager.createSound(
         idS,
         this.model.getConf()
       );
@@ -28,7 +31,7 @@ export class AudioController extends Controller {
     }
   }
 
-  tick(cameraMatrixWorldInverse, refOrigin) {
+  tick(cameraMatrixWorldInverse) {
     for (const key in this.sounds) {
       const sound = this.sounds[key];
 
@@ -40,11 +43,13 @@ export class AudioController extends Controller {
 
       // https://github.com/goldfire/howler.js#documentation
       if (this.model.getConf().spatialized) {
-        const goPos = this.parentGameObject.getPosition().clone();
-        goPos.add(refOrigin);
-        const positionAudio = goPos
-          .clone()
-          .applyMatrix4(cameraMatrixWorldInverse);
+        const worldPosition = new THREE.Vector3();
+        this.object3D.matrixWorld.decompose(worldPosition);
+
+        // in camera referential
+        const positionAudio = worldPosition.applyMatrix4(
+          cameraMatrixWorldInverse
+        );
         sound.pos(positionAudio.x, positionAudio.y, positionAudio.z);
       }
     }

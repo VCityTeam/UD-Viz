@@ -1,4 +1,5 @@
 const THREE = require('three');
+// const Object3D = require('../Object3D'); import here break webpack certainly due to circular ref
 
 const Component = class {
   constructor(model) {
@@ -47,6 +48,7 @@ const Model = class {
 const Controller = class {
   constructor(model, object3D) {
     this.model = model;
+    /** @type {Object3D} */
     this.object3D = object3D;
   }
 };

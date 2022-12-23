@@ -14,15 +14,15 @@ export class RenderController extends Game.Component.Controller {
 
     this.assetManager = assetManager;
 
-    /** @type {RenderData} */
-    this.renderData = null;
-
     /** @type {THREE.AnimationMixer} */
     this.animationMixer = null;
 
+    /** @type {RenderData} */
     this.renderData = this.assetManager.createRenderData(
       this.model.getIdRenderData()
     );
+
+    this.renderData.object3D.name = 'Render_Controller_' + this.object3D.name;
 
     const animations = this.renderData.getAnimations();
     if (animations && animations.length) {
