@@ -1,5 +1,5 @@
 import { RequestService } from '../../Component/RequestService';
-import { getAttributeByPath } from '@ud-viz/core/src/Data';
+import { Data } from '@ud-viz/core';
 
 export class GeocodingService {
   /**
@@ -63,8 +63,8 @@ export class GeocodingService {
     const results = (this.basePath ? response[this.basePath] : response).map(
       (res) => {
         return {
-          lat: Number(getAttributeByPath(res, this.latPath)),
-          lng: Number(getAttributeByPath(res, this.lngPath)),
+          lat: Number(Data.getAttributeByPath(res, this.latPath)),
+          lng: Number(Data.getAttributeByPath(res, this.lngPath)),
         };
       }
     );

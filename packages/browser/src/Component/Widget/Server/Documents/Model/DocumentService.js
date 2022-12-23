@@ -1,5 +1,5 @@
 import { RequestService } from '../../Component/RequestService';
-import { imageToDataURI } from '@ud-viz/core/src/Data';
+import { Data } from '@ud-viz/core';
 import { Document } from './Document';
 
 /**
@@ -107,7 +107,7 @@ export class DocumentService {
       authenticate: this.authenticate,
     });
     if (req.status >= 200 && req.status < 300) {
-      return imageToDataURI(
+      return Data.imageToDataURI(
         req.response,
         req.getResponseHeader('Content-Type')
       );
