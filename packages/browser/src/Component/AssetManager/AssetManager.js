@@ -1,7 +1,7 @@
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import * as THREE from 'three';
-import * as jquery from 'jquery';
 import { Howl } from 'howler';
+import { textureEncoding } from '../THREEUtil';
 
 import './AssetManager.css';
 
@@ -19,11 +19,8 @@ export class AssetManager {
   constructor() {
     this.conf = null;
 
-    // renderData are loaded async
+    // some renderData can be loadeded async with loadFromConfig
     this.renderData = {};
-
-    // TODO should a JSON
-    this.worldsJSON = null;
 
     this.initNativeRenderData();
   }
@@ -39,15 +36,6 @@ export class AssetManager {
       console.error('no render data with id ', idRenderData);
 
     return this.renderData[idRenderData].clone();
-  }
-
-  /**
-   * Return worlds loaded
-   *
-   * @returns {JSONArray[WorldJSON]} array of worlds
-   */
-  getWorldsJSON() {
-    return this.worldsJSON;
   }
 
   /**
@@ -157,8 +145,7 @@ export class AssetManager {
         child.receiveShadow = true;
       }
       if (child.material) {
-        if (child.material.map)
-          child.material.map.encoding = THREEUtils.textureEncoding;
+        if (child.material.map) child.material.map.encoding = textureEncoding;
         child.material.side = THREE.FrontSide;
         child.material.needsUpdate = true;
       }
@@ -184,11 +171,11 @@ export class AssetManager {
     // Result
     const promises = [];
 
-    // Load config file
+    // Load config file now only render data which is a gltf wrapper
     const _this = this;
 
     if (config.renderData) {
-      const idLoadingRenderData = 'RenderData';
+      const idLoadingRenderData = '3D';
       loadingView.addLoadingBar(idLoadingRenderData);
 
       const loader = new GLTFLoader();
@@ -229,63 +216,6 @@ export class AssetManager {
       );
     }
 
-    if (config.worldScripts) {
-      console.error('DEPRECATED');
-    }
-
-    if (config.localScripts) {
-      console.error('DEPRECATED');
-    }
-
-    if (config.prefabs) {
-      console.error('DEPRECATED PREFABS SHOULD IN SRC');
-    }
-
-    if (config.worlds) {
-      console.log('WARNING: Refacto this for JSON (and not worldsJSON');
-      const idLoadingWorlds = 'Worlds';
-      loadingView.addLoadingBar(idLoadingWorlds);
-
-      promises.push(
-        new Promise((resolve) => {
-          jquery.get(
-            config.worlds.folder + 'index.json',
-            function (indexString) {
-              const indexWorldsJSON = JSON.parse(indexString);
-              let count = 0;
-              _this.worldsJSON = [];
-
-              for (const uuid in indexWorldsJSON) {
-                jquery.get(
-                  config.worlds.folder + indexWorldsJSON[uuid],
-                  function (worldString) {
-                    count++;
-                    _this.worldsJSON.push(JSON.parse(worldString));
-
-                    loadingView.updateProgress(
-                      idLoadingWorlds,
-                      (100 * count) / Object.keys(indexWorldsJSON).length
-                    );
-
-                    if (count == Object.keys(indexWorldsJSON).length) {
-                      console.log('worlds loaded ', _this.worldsJSON);
-                      resolve();
-                    }
-                  },
-                  'text'
-                );
-              }
-            },
-            'text'
-          );
-        })
-      );
-    }
-
-    if (config.css) {
-      console.error('DEPRECATED');
-    }
-
     return new Promise((resolve) => {
       Promise.all(promises).then(function () {
         loadingView.dispose();
@@ -303,10 +233,14 @@ class LoadingView {
     this.rootHtml = document.createElement('div');
     this.rootHtml.classList.add('assetsLoadingView');
 
+    this.parentLoadingBar = document.createElement('div');
+    this.parentLoadingBar.classList.add('parent_loading_bar_asset');
+    this.rootHtml.appendChild(this.parentLoadingBar);
+
     const label = document.createElement('div');
     label.classList.add('loadingLabel_Assets');
-    label.innerHTML = 'ud-viz';
-    this.rootHtml.appendChild(label);
+    label.innerHTML = 'Loading assets';
+    this.parentLoadingBar.appendChild(label);
 
     // Loading bars
     this.loadingBars = {};
@@ -353,12 +287,11 @@ class LoadingView {
 
     const label = document.createElement('div');
     label.innerHTML = id;
-    label.classList.add('labelBar-Assets');
     parent.appendChild(label);
 
     this.loadingBars[id] = progress;
 
-    this.rootHtml.appendChild(parent);
+    this.parentLoadingBar.appendChild(parent);
   }
 }
 

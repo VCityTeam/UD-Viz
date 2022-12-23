@@ -1,6 +1,12 @@
 // @ud-viz/browser bundle API
 
+// Template
+
 export { AllWidget } from './AllWidget/AllWidget';
+
+export { SinglePlayerGamePlanar } from './SinglePlayerGamePlanar/SinglePlayerGamePlanar';
+
+// Template.Component
 
 import * as FileUtil from './Component/FileUtil';
 export { FileUtil };
@@ -13,11 +19,16 @@ export { Widget };
 
 export { InputManager } from './Component/InputManager';
 
+export { AssetManager } from './Component/AssetManager/AssetManager';
+
 export { Planar as Frame3DPlanar } from './Component/Frame3D/Planar';
 
 export { Billboard } from './Component/Frame3D/Component/Billboard';
 
 export { RequestAnimationFrameProcess } from './Component/RequestAnimationFrameProcess';
+
+import * as Core from '@ud-viz/core';
+export { Core };
 
 // // Game
 // import { Base } from './Game/BrowserScript';
@@ -27,10 +38,8 @@ export { RequestAnimationFrameProcess } from './Component/RequestAnimationFrameP
  * External packages => These packages should be peerDep to force user of @ud-viz/browser to npm i them
  * Make a second index.js (indexBundle.js) so examples can still work
  * Like itowns => https://github.com/iTowns/itowns/blob/master/src/MainBundle.js
+ * @ud-viz/core also ?
  */
-
-// import * as udvizCore from '@ud-viz/core';
-// export { udvizCore };
 
 // itowns
 import * as itowns from 'itowns';

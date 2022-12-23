@@ -8,7 +8,7 @@ const State = require('./State');
 module.exports = class Interpolator {
   constructor(delay) {
     // Delay between state received and state computed
-    this.delay = delay;
+    this.delay = delay || 100;
 
     // Internal
     this.states = [];

@@ -1,0 +1,27 @@
+{
+  "sounds": {
+    "ballon_pop": {
+      "path": "./assets/sounds/ballon_pop.wav"
+    }
+  },
+  "renderData": {
+    "zeppelin": {
+      "path": "./assets/models/Zeppelin_Labex_IMU.glb",
+      "anchor": "center_min",
+      "rotation": {
+        "x": 0,
+        "y": 0,
+        "z": 1.57
+      }
+    },
+    "avatar": {
+      "path": "./assets/models/avatar_capuchon.glb",
+      "anchor": "center_min",
+      "rotation": {
+        "x": 0,
+        "y": 0,
+        "z": 3.14
+      }
+    }
+  }
+}

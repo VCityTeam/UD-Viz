@@ -391,6 +391,12 @@ Context.EVENT = {
 };
 
 const ScriptBase = class {
+  /**
+   * constructor should not be rewrite use init instead
+   * @param {Context} context
+   * @param {Object3D} object3D
+   * @param {object|JSON} variables
+   */
   constructor(context, object3D, variables) {
     /** @type {Context} */
     this.context = context;

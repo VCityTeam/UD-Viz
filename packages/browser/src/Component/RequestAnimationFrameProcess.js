@@ -2,7 +2,7 @@ export class RequestAnimationFrameProcess {
   constructor(fps) {
     this.stopped = false;
 
-    this.fps = fps;
+    this.fps = fps || 30;
   }
 
   start(requester) {
