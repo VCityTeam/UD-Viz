@@ -13,5 +13,12 @@ module.exports = {
     Object3D: require('./Game/Object3D'),
     StateInterpolator: require('./Game/State/Interpolator'),
     State: require('./Game/State/State'),
+    Component: {
+      Render: require('./Game/Component/Render').Component,
+      Audio: require('./Game/Component/Audio').Component,
+      ExternalScript: require('./Game/Component/ExternalScript').Component,
+      ScriptController: require('./Game/Component/Script').Controller,
+      Controller: require('./Game/Component/Component').Controller,
+    },
   },
 };

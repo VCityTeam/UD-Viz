@@ -1,4 +1,4 @@
-const { Component, ModelComponent } = require('./Component');
+const { Component, Model } = require('./Component');
 
 const AudioComponent = class extends Component {};
 
@@ -7,7 +7,7 @@ AudioComponent.TYPE = 'Audio';
 /**
  *  Component used to handle the 3D Audio of the GameObject
  */
-const AudioModel = class extends ModelComponent {
+const AudioModel = class extends Model {
   constructor(json) {
     super(json);
 
