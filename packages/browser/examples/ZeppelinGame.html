@@ -15,36 +15,32 @@
         WorldGameManager: class extends udvizBrowser.Core.Game.ScriptBase {
           init() {
             this.zeppelinGO = new udvizBrowser.Core.Game.Object3D({
-              object: {
-                name: 'zeppelin',
-                components: {
-                  // Audio: {
-                  //   sounds: ['ballon_pop'],
-                  // },
-                  GameScript: {
-                    idScripts: ['Zeppelin'],
-                  },
-                  ExternalScript: {
-                    idScripts: ['Zeppelin'],
-                    conf: { sphereCount: 0 },
-                  },
-                  Render: { idRenderData: 'zeppelin' },
-                  Collider: {
-                    shapes: [
-                      {
-                        type: 'Circle',
-                        center: { x: 0, y: 0 },
-                        radius: 10,
-                      },
-                    ],
-                  },
+              name: 'zeppelin',
+              components: {
+                Audio: {
+                  sounds: ['ballon_pop'],
+                },
+                GameScript: {
+                  idScripts: ['Zeppelin'],
+                },
+                ExternalScript: {
+                  idScripts: ['Zeppelin'],
+                  variables: { sphereCount: 0 },
+                },
+                Render: { idRenderData: 'zeppelin' },
+                Collider: {
+                  shapes: [
+                    {
+                      type: 'Circle',
+                      center: { x: 0, y: 0 },
+                      radius: 10,
+                    },
+                  ],
                 },
               },
             });
 
             this.context.addObject3D(this.zeppelinGO);
-
-            return;
 
             // Add collectable sphere at random position
             const range = 400;
@@ -65,16 +61,16 @@
                 y -= minRange;
               }
               const s = this.createCollectableSphere(x, y);
-              world.addGameObject(s, this.context, world.getGameObject());
+              this.context.addObject3D(s);
             }
           }
           createCollectableSphere(x, y) {
             const size = 10;
 
-            const result = new Game.GameObject.GameObject({
+            const result = new udvizBrowser.Core.Game.Object3D({
               name: 'collectable_sphere',
               static: true,
-              componentModels: {
+              components: {
                 Render: {
                   idRenderData: 'sphere',
                   color: [Math.random(), Math.random(), Math.random()],
@@ -89,11 +85,10 @@
                   ],
                 },
               },
-              transform: {
-                position: [x, y, size],
-                scale: [size, size, size],
-              },
             });
+
+            result.position.set(x, y, size);
+            result.scale.set(size, size, size);
 
             return result;
           }
@@ -141,44 +136,16 @@
             const goCollided = result.b.getGameObject();
             this.context.getWorld().removeGameObject(goCollided.getUUID());
 
-            const browserScriptComp = this.parentGameObject.getComponent(
-              Game.GameObject.BrowserScript.Model.TYPE
+            const browserScriptComp = this.object3D.getComponent(
+              udvizBrowser.Core.Game.Component.ExternalScript.TYPE
             );
 
             // change conf of the browser script
             browserScriptComp.getModel().conf.sphereCount += 1;
-            this.parentGameObject.setOutdated(true); // notify browserScript onOutdated event
+            this.object3D.setOutdated(true); // notify browserScript onOutdated event
           }
         },
       };
-
-      const browserScripts = [
-        // class Zeppelin extends udvizBrowser.BrowserScriptBase {
-        //   constructor(conf, context, parentGO) {
-        //     super(conf, context, parentGO);
-        //     this.ui = null;
-        //   }
-        //   init() {
-        //     this.ui = document.createElement('div');
-        //     this.ui.style.zIndex = 98; // le neuf et le 8
-        //     this.context.getGameView().appendToUI(this.ui);
-        //     this.updateUI();
-        //   }
-        //   updateUI() {
-        //     this.ui.innerHTML = 'Sphere count: ' + this.conf.sphereCount;
-        //   }
-        //   onOutdated() {
-        //     this.updateUI();
-        //     // conf has changed meaning a shpereCount has incremented => play a sound
-        //     const audioComp = this.parentGameObject.getComponent(
-        //       Game.GameObject.Audio.Model.TYPE
-        //     );
-        //     audioComp.getController().play('ballon_pop');
-        //   }
-        // },
-        // udvizBrowser.Templates.FocusGameObject,
-        // udvizBrowser.Templates.WorldCommandController,
-      ];
 
       const externalGameScriptClass = {
         Zeppelin: class extends udvizBrowser.ExternalGame.ScriptBase {
@@ -200,6 +167,7 @@
             audioComp.getController().play('ballon_pop');
           }
         },
+        FocusGameObject: udvizBrowser.ExternalScriptTemplate.FocusGameObject,
       };
 
       udvizBrowser.FileUtil.loadMultipleJSON([
@@ -227,25 +195,22 @@
             parseInt(configs['extent'].north)
           );
 
-          const game = new udvizBrowser.SinglePlayerGamePlanar(extent, {
-            frame3DPlanarConfig: configs['frame3D_planar'],
-          });
+          const game = new udvizBrowser.SinglePlayerGamePlanar();
 
           game.start(
+            extent,
             {
-              object: {
-                name: 'GameManager',
-                static: true,
-                components: {
-                  GameScript: {
-                    idScripts: ['WorldGameManager'],
+              name: 'GameManager',
+              static: true,
+              components: {
+                GameScript: {
+                  idScripts: ['WorldGameManager'],
+                },
+                ExternalScript: {
+                  variables: {
+                    nameGO2Focus: 'zeppelin',
                   },
-                  ExternalScript: {
-                    variables: {
-                      nameGO2Focus: 'zeppelin',
-                    },
-                    // idScripts: ['FocusGameObject', 'WorldCommandController'],
-                  },
+                  idScripts: ['FocusGameObject']//, 'CommandController'],
                 },
               },
             },
@@ -254,6 +219,7 @@
               gameScriptClass: gameScriptClass,
               externalGameScriptClass: externalGameScriptClass,
               sceneConfig: configs['scene'],
+              frame3DPlanarConfig: configs['frame3D_planar'],
             }
           );
         });
