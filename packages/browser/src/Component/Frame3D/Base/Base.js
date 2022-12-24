@@ -75,6 +75,11 @@ export class Base {
     const catchEventsCSS3D = options.catchEventsCSS3D || false;
     this.catchEventsCSS3D(catchEventsCSS3D);
 
+    // listeners Base.EVENT (why not using eventSender of ud-viz/core ?)
+    this.listeners = {};
+    this.listeners[Base.EVENT.DISPOSE] = [];
+    this.listeners[Base.EVENT.RESIZE] = [];
+
     if (init3D) {
       THREE.Object3D.DefaultUp.set(0, 0, 1);
 
@@ -90,6 +95,12 @@ export class Base {
       this.camera = new THREE.PerspectiveCamera(60, 1, 1, 1000); // Default params
       this.scene.add(this.camera);
     }
+  }
+
+  on(eventID, listener) {
+    if (!this.listeners[eventID])
+      throw new Error('this event is not a Base.EVENT');
+    this.listeners[eventID].push(listener);
   }
 
   /**
@@ -278,6 +289,10 @@ export class Base {
       this.camera.updateProjectionMatrix();
       this.renderer.setSize(this.size.x, this.size.y);
     }
+
+    this.listeners[Base.EVENT.RESIZE].forEach((listener) => {
+      listener(this);
+    });
   }
 
   /**
@@ -286,6 +301,21 @@ export class Base {
   dispose() {
     window.removeEventListener('resize', this.resizeListener);
     this.html().remove();
+
+    this.listeners[Base.EVENT.DISPOSE].forEach((listener) => {
+      listener(this);
+    });
+  }
+
+  // Allow user to set a custom render pass
+  setRender(f) {
+    this.render = f;
+  }
+
+  render() {
+    // Render
+    this.renderer.clearColor();
+    this.renderer.render(this.scene, this.camera);
   }
 
   getCamera() {
@@ -304,3 +334,8 @@ export class Base {
     return this.rootWebGL;
   }
 }
+
+Base.EVENT = {
+  DISPOSE: 'dispose',
+  RESIZE: 'resize',
+};

@@ -1,9 +1,9 @@
-import * as proj4 from 'proj4';
 const THREE = require('three');
-import { AssetManager, Frame3D, InputManager, THREEUtil } from '../Component';
+import { AssetManager, InputManager, THREEUtil } from '../Component';
 import { Game, JSONUtil } from '@ud-viz/core';
 import { RenderController } from './RenderController';
 import { AudioController } from './AudioController';
+import { Base } from '../Frame3D/Frame3D';
 
 const defaultConfigScene = {
   shadowMapSize: 2046,
@@ -27,7 +27,7 @@ const defaultConfigScene = {
 export class Context {
   /**
    *
-   * @param {Frame3D} frame3D - could be a Frame3DBase or a Frame3DPlanar
+   * @param {Base} frame3D - could be a Frame3DBase or a Frame3DPlanar
    * @param {AssetManager} assetManager
    * @param {InputManager} inputManager
    */
@@ -44,7 +44,7 @@ export class Context {
     /** @type {class{}} */
     this.externalGameScriptClass = externalGameScriptClass;
 
-    /** @type {Frame3D} */
+    /** @type {Base} */
     this.frame3D = frame3D;
 
     /** @type {AssetManager} */
@@ -58,7 +58,7 @@ export class Context {
     this.object3D.name = 'External_Game_Context_Object3D';
     this.frame3D.scene.add(this.object3D);
 
-    /** @type {object} */
+    /** @type {object} store uuid of object3D in context use to identify new one incoming*/
     this.currentUUID = {};
 
     /** @type {Game.Object3D} */
@@ -70,6 +70,39 @@ export class Context {
     this.configScene = overWriteConf;
     this.directionalLight = null;
     this.initScene();
+
+    // register listener
+    this.frame3D.on(Base.EVENT.DISPOSE, () => {
+      if (this.currentGameObject3D) {
+        this.currentGameObject3D.traverse(function (child) {
+          if (!child.isGameObject3D) return;
+
+          const scriptComponent = child.getComponent(
+            Game.Component.ExternalScript.TYPE
+          );
+          if (scriptComponent) {
+            scriptComponent.getController().execute(Context.EVENT.DISPOSE);
+          }
+          const audioComponent = child.getComponent(Game.Component.Audio.TYPE);
+          if (audioComponent) audioComponent.getController().dispose();
+        });
+      }
+    });
+
+    this.frame3D.on(Base.EVENT.RESIZE, () => {
+      if (this.currentGameObject3D) {
+        this.currentGameObject3D.traverse(function (child) {
+          if (!child.isGameObject3D) return;
+
+          const scriptComponent = child.getComponent(
+            Game.Component.ExternalScript.TYPE
+          );
+          if (scriptComponent) {
+            scriptComponent.getController().execute(Context.EVENT.ON_RESIZE);
+          }
+        });
+      }
+    });
   }
 
   initScene() {
@@ -101,66 +134,6 @@ export class Context {
         this.frame3D.getScene()
       );
     }
-  }
-
-  //should be remove
-  init(gameView) {
-    this.gameView = gameView;
-
-    //Register requesters in gameview
-    this.gameView.addResizeRequester(() => {
-      // Notify localscript
-      if (this.currentGameObject3D) {
-        this.currentGameObject3D.traverse(function (child) {
-          if (!child.isGameObject3D) return;
-
-          const scriptComponent = child.getComponent(
-            GameObject.BrowserScript.Model.TYPE
-          );
-          if (scriptComponent) {
-            scriptComponent
-              .getController()
-              .execute(BrowserScript.Controller.EVENT.ON_RESIZE);
-          }
-        });
-      }
-    });
-
-    this.gameView.addOnDisposeRequester(() => {
-      // Notify localscript dispose
-      if (this.currentGameObject3D) {
-        this.currentGameObject3D.traverse(function (g) {
-          const scriptComponent = g.getComponent(
-            GameObject.BrowserScript.Model.TYPE
-          );
-          if (scriptComponent) {
-            scriptComponent
-              .getController()
-              .execute(BrowserScript.Controller.EVENT.DISPOSE);
-          }
-          const audioComponent = g.getComponent(GameObject.Audio.Model.TYPE);
-          if (audioComponent) audioComponent.getController().dispose();
-        });
-      }
-    });
-
-    const firstState = this.interpolator.computeCurrentState();
-    if (!firstState) throw 'Interpolator has no state';
-
-    // Place its object3D in world
-    let x = 0;
-    let y = 0;
-    let z = 0;
-    const o = firstState.getOrigin();
-    if (o) {
-      [x, y] = proj4.default(this.gameView.projection).forward([o.lng, o.lat]);
-      z = o.alt;
-    }
-    this.object3D.position.x = x;
-    this.object3D.position.y = y;
-    this.object3D.position.z = z;
-
-    return firstState;
   }
 
   /**
@@ -333,8 +306,6 @@ export class Context {
           }
         });
       }
-
-      // state.setGameObject(lastGO); // Set it
     } else {
       // first state
       this.currentGameObject3D = state.getObject3D();
@@ -348,17 +319,12 @@ export class Context {
       });
     }
 
-    // Bufferize
-    // this.currentGameObject3D = state;
-
     // Init Game.Object3D component controllers of the new Game.Object3D
     newGO.forEach((go) => {
       this.initComponentControllers(go);
     });
 
-    // const go = state.getObject3D();
-
-    // Localscript event INIT + ON_NEW_GAMEOBJECT
+    // External Script INIT + ON_NEW_GAMEOBJECT
     newGO.forEach((g) => {
       // Console.log('New GO => ', g.name);
       this.currentUUID[g.uuid] = true;
@@ -491,10 +457,6 @@ export class Context {
 
   // Util method
 
-  getRootGameObject() {
-    return this.currentGameObject3D.computeRoot();
-  }
-
   /**
    * Return the first localscript found with the id passed
    *
@@ -503,7 +465,7 @@ export class Context {
    */
   findBrowserScriptWithID(id) {
     let result = null;
-    this.getRootGameObject().traverse(function (child) {
+    this.object3D.traverse(function (child) {
       if (!child.isGameObject3D) return;
       const scripts = child.fetchBrowserScripts();
       if (scripts && scripts[id]) {
@@ -524,7 +486,7 @@ export class Context {
    */
   findGOWithBrowserScriptID(id) {
     let result = null;
-    this.getRootGameObject().traverse(function (child) {
+    this.object3D.traverse(function (child) {
       if (!child.isGameObject3D) return;
 
       const scripts = child.fetchBrowserScripts();
@@ -536,6 +498,24 @@ export class Context {
     });
 
     return result;
+  }
+
+  forceUpdate() {
+    console.error('DEPRECATED');
+    // let states = [];
+    // if (!state) {
+    //   const computer = this.interpolator.getLocalComputer();
+    //   if (computer) {
+    //     states = [computer.computeCurrentState()];
+    //   } else {
+    //     throw new Error('no local computer');
+    //   }
+    // } else states = [state];
+
+    // const old = this.updateGameObject;
+    // this.updateGameObject = true;
+    // this.update(states);
+    // this.updateGameObject = old;
   }
 }
 
@@ -560,15 +540,17 @@ export class ExternalScriptBase {
   constructor(context, object3D, variables) {
     /** @type {Context} */
     this.context = context;
+    /** @type {Game.Object3D} */
     this.object3D = object3D;
+    /** @type {object} */
     this.variables = variables;
   }
   init() {}
   tick() {}
   onNewGameObject() {}
   onOutdated() {}
-  dispose() {}
   onRemove() {}
   onComponentUpdate() {}
+  dispose() {}
   onResize() {}
 }
