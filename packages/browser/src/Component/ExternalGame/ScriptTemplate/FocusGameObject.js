@@ -1,6 +1,6 @@
 import { ExternalScriptBase } from '../Context';
 import * as THREE from 'three';
-import { JSONUtil } from '@ud-viz/core';
+import { Game, JSONUtil } from '@ud-viz/core';
 
 const defaultVariables = {
   cameraAngle: 0.51,
@@ -44,7 +44,6 @@ export class FocusGameObject extends ExternalScriptBase {
   }
 
   tick() {
-    // return;
     // Get the go2Focus gameobject by name
     const go2Focus = this.context.object3D.getObjectByProperty(
       'name',
@@ -62,11 +61,9 @@ export class FocusGameObject extends ExternalScriptBase {
     position.z += this.variables.offsetZ;
 
     // Compute camera position
-    const dir = new THREE.Vector3(0, 1, 0)
+    const dir = Game.Object3D.DefaultForward()
       .applyQuaternion(this.quaternionAngle)
       .applyQuaternion(quaternion);
-    // go2Focus.getWorldDirection(dir).applyQuaternion(this.quaternionAngle);
-    // .applyQuaternion(quaternion);
 
     position.sub(dir.setLength(this.distance));
     quaternion.multiply(this.quaternionCam);

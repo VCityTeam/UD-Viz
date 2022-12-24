@@ -861,6 +861,7 @@ const Object3D = class extends THREE.Object3D {
     // https://threejs.org/docs/#manual/en/introduction/How-to-update-things
     this.matrixAutoUpdate = !this.static;
 
+    // maybe find another name
     this.outdated = json.outdated || false;
 
     this.gameContextUpdate = true;
@@ -909,7 +910,7 @@ const Object3D = class extends THREE.Object3D {
     this.static = json.static;
     this.outdated = json.outdated;
 
-    this.children.forEach(function (child) {
+    this.children.forEach((child) => {
       let jsonChild;
       for (let i = 0; i < json.children.length; i++) {
         if (json.children[i].uuid == child.uuid) {
@@ -918,8 +919,7 @@ const Object3D = class extends THREE.Object3D {
         }
       }
       if (!jsonChild) {
-        // C no longer in scene
-        console.warn('cant find child');
+        // console.warn(child.name, ' no longer in ', this.name);
         return;
       }
 
@@ -1017,6 +1017,19 @@ const Object3D = class extends THREE.Object3D {
     return new Object3D(this.toJSON());
   }
 
+  // possibility to stop the propagation +
+  // Remove a object3D can't be done while parent is traversing
+  traverse(cb) {
+    if (cb(this)) return true;
+
+    for (let index = 0; index < this.children.length; index++) {
+      const element = this.children[index];
+      if (element.traverse(cb)) return true;
+    }
+
+    return false;
+  }
+
   /**
    * do not use the THREE.Object3D parent method
    * @param {*} full
@@ -1094,6 +1107,35 @@ Object3D.parseJSON = function (json) {
     return json.object;
   }
   return json;
+};
+
+// Util
+
+Object3D.DefaultForward = function () {
+  return new THREE.Vector3(0, 1, 0);
+};
+
+Object3D.computeForwardVector = function (object3D) {
+  return this.DefaultForward().applyQuaternion(object3D.quaternion);
+};
+
+Object3D.moveForward = function (object3D, value) {
+  object3D.position.add(
+    Object3D.computeForwardVector(object3D).setLength(value)
+  );
+};
+
+Object3D.moveBackward = function (object3D, value) {
+  object3D.position.add(
+    Object3D.computeForwardVector(object3D).negate().setLength(value)
+  );
+};
+
+Object3D.rotate = function (object3D, euler) {
+  // shoudl check euler order
+  object3D.rotateZ(euler.z);
+  object3D.rotateX(euler.x);
+  object3D.rotateY(euler.y);
 };
 
 module.exports = Object3D;

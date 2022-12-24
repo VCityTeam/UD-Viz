@@ -182,16 +182,17 @@ export class Context {
         this.currentGameObject3D.traverse((child) => {
           if (!child.isGameObject3D) return;
 
-          const current = state
+          const gameContextChild = state
             .getObject3D()
             .getObjectByProperty('uuid', child.uuid);
-          if (current) {
-            if (current.hasGameContextUpdate()) {
-              if (!current.isStatic()) {
+          if (gameContextChild) {
+            // still present in game context
+            if (child.hasGameContextUpdate()) {
+              if (!child.isStatic()) {
                 // if no static update transform
-                child.position.copy(current.position);
-                child.scale.copy(current.scale);
-                child.rotation.copy(current.rotation);
+                child.position.copy(gameContextChild.position);
+                child.scale.copy(gameContextChild.scale);
+                child.rotation.copy(gameContextChild.rotation);
               }
 
               // Stack the same go of all states not consumed yet
@@ -214,13 +215,14 @@ export class Context {
               );
 
               for (let index = 0; index < bufferedGO.length; index++) {
-                const element = bufferedGO[index];
+                const gameContextGONotConsumned = bufferedGO[index];
 
                 // Render comp
                 if (childRenderComp) {
-                  const bufferedRenderComp = element.getComponent(
-                    Game.Component.Render.TYPE
-                  );
+                  const bufferedRenderComp =
+                    gameContextGONotConsumned.getComponent(
+                      Game.Component.Render.TYPE
+                    );
 
                   // Check if color change
                   if (
@@ -239,6 +241,7 @@ export class Context {
                     childRenderComp.getModel().getIdRenderData() !=
                     bufferedRenderComp.getModel().getIdRenderData()
                   ) {
+                    console.error('DEPRECATED');
                     childRenderComp
                       .getController()
                       .setIdRenderData(
@@ -249,16 +252,21 @@ export class Context {
                   }
                 }
 
-                if (childExternalScriptComp && element.isOutdated()) {
-                  const bufferedExternalScriptComp = element.getComponent(
-                    Game.Component.ExternalScript.TYPE
-                  );
+                if (
+                  childExternalScriptComp &&
+                  gameContextGONotConsumned.isOutdated()
+                ) {
+                  const bufferedExternalScriptComp =
+                    gameContextGONotConsumned.getComponent(
+                      Game.Component.ExternalScript.TYPE
+                    );
 
-                  // Replace conf in external script
-                  console.error('DEPRECATED');
+                  // Replace variables in external script
                   childExternalScriptComp
                     .getController()
-                    .setConf(bufferedExternalScriptComp.getModel().getConf());
+                    .setVariables(
+                      bufferedExternalScriptComp.getModel().getVariables()
+                    );
 
                   // Launch event onOutdated
                   componentHasBeenUpdated =
@@ -378,8 +386,8 @@ export class Context {
       });
     });
 
-    // Update matrix ?
-    // this.object3D.updateMatrixWorld();
+    // Update matrixWorld
+    this.object3D.updateMatrixWorld();
 
     // Update shadow
     if (newGO.length) {

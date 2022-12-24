@@ -51,6 +51,8 @@ const State = class {
         if (object3DJSON) {
           child.updatefromJSON(object3DJSON);
           object3DUpdated.push(child.uuid);
+        } else {
+          child.setOutdated(false); // => this object is no longer outdated
         }
       }
     });

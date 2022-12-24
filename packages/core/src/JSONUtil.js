@@ -58,13 +58,21 @@ module.exports = {
   },
 
   /**
-   * Overwrite identical field of a json with another one
+   * Overwrite identical field of a json with another one + create ones in jsonModel which are not in overwrited
    *
    * @param {JSON} jsonOverWrited the json overwritted
    * @param {JSON} jsonModel the json used as model
    */
   overWrite: function (jsonOverWrited, jsonModel) {
     const traverse = function (json1, json2) {
+      // write the ones not in jsonOverWrited
+      for (const key in json2) {
+        if (json1[key] == undefined) {
+          json1[key] = json2[key];
+        }
+      }
+
+      // check in jsonOverWrited the ones existing in jsonModel
       for (const key in json1) {
         if (json1[key] instanceof Object) {
           if (json2[key] instanceof Object) traverse(json1[key], json2[key]);
