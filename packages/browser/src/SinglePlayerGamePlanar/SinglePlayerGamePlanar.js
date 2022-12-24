@@ -92,6 +92,11 @@ export class SinglePlayerGamePlanar {
           { sceneConfig: options.sceneConfig }
         );
 
+        // indicate to the external context how to send command to gamecontext (could be with websocket)
+        externalGameContext.sendCommandToGameContext = (cmds) => {
+          gameContext.onCommand(cmds);
+        };
+
         // position of the external game context object extent center
         const center = extent.center();
         externalGameContext.object3D.position.set(center.x, center.y, 300); // TODO 300 is HARD CODED

@@ -1,6 +1,6 @@
 const THREE = require('three');
 import { AssetManager, InputManager, THREEUtil } from '../Component';
-import { Game, JSONUtil } from '@ud-viz/core';
+import { Game, JSONUtil, Command } from '@ud-viz/core';
 import { RenderController } from './RenderController';
 import { AudioController } from './AudioController';
 import { Base } from '../Frame3D/Frame3D';
@@ -45,7 +45,7 @@ export class Context {
     this.externalGameScriptClass = externalGameScriptClass;
 
     /** @type {Base} */
-    this.frame3D = frame3D;
+    this.frame3D = frame3D; // maybe create two attributes one planar and the other one base to have autocompletion
 
     /** @type {AssetManager} */
     this.assetManager = assetManager;
@@ -516,6 +516,15 @@ export class Context {
     // this.updateGameObject = true;
     // this.update(states);
     // this.updateGameObject = old;
+  }
+
+  /**
+   *
+   * @param {Command[]} cmds
+   */
+  sendCommandToGameContext(cmds) {
+    console.log(cmds, ' cant be sent');
+    console.error('this method has to be implement in your app template');
   }
 }
 

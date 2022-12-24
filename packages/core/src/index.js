@@ -26,6 +26,7 @@ module.exports = {
       MOVE_BACKWARD: 'move_backward',
       MOVE_LEFT: 'move_left',
       MOVE_RIGHT: 'move_right',
+      Z_UPDATE: 'z_update',
     },
   },
 };
