@@ -98,7 +98,7 @@ export class SinglePlayerGamePlanar {
 
         // step external game context
 
-        // METHOD 1 ITOWNS MAIN LOOP BAD RENDERING NO CONTROL DT
+        // METHOD 1 ITOWNS MAIN LOOP NO SMOOTH RENDERING NO CONTROL DT
 
         // frame3DPlanar.itownsView.addFrameRequester(
         //   itowns.MAIN_LOOP_EVENTS.UPDATE_START,
@@ -114,9 +114,7 @@ export class SinglePlayerGamePlanar {
           // external game loop
           externalGameContext.step(dt, interpolator.computeCurrentStates()); // simulate
           frame3DPlanar.itownsView.notifyChange(frame3DPlanar.camera); // => to load 3DTiles
-          frame3DPlanar
-            .getRenderer()
-            .render(frame3DPlanar.getScene(), frame3DPlanar.getCamera()); // render
+          frame3DPlanar.render();
         });
 
         // DEBUG PRINT
@@ -128,76 +126,5 @@ export class SinglePlayerGamePlanar {
         resolve();
       });
     });
-  }
-
-  /**
-   * Start a local game based on the world, the config and some options
-   *
-   * @param {World} world world to start
-   * @param {string} configPath the path of the config file
-   * @param {object} options
-   * @returns
-   */
-  // start(world, configPath, options = {}) {
-  //   const _this = this;
-
-  //   return new Promise((resolve) => {
-  //     Component.SystemUtils.File.loadJSON(configPath).then(function (config) {
-  //       const assetsManager = new AssetsManager(
-  //         options.worldScripts,
-  //         options.browserScripts
-  //       );
-  //       assetsManager
-  //         .loadFromConfig(
-  //           config.assetsManager,
-  //           options.htmlParent || document.body
-  //         )
-  //         .then(function () {
-  //           _this
-  //             .startWithAssetsLoaded(world, assetsManager, config, options)
-  //             .then(resolve);
-  //         });
-  //     });
-  //   });
-  // }
-
-  startWithAssetsLoaded(world, assetsManager, config, options = {}) {
-    const worldStateComputer = new Game.WorldStateComputer(assetsManager, 60);
-
-    worldStateComputer.start(world);
-
-    // Smooth rendering with delay
-    const interpolator = new Game.WorldStateInterpolator(
-      config.worldStateInterpolator.renderDelay
-    );
-
-    // register computer into the interpolator
-    interpolator.onFirstState(worldStateComputer.computeCurrentState(false));
-    worldStateComputer.addAfterTickRequester(function () {
-      interpolator.onNewState(worldStateComputer.computeCurrentState(false));
-    });
-
-    if (options.localScriptModules) console.error('no localscripts module');
-
-    this.gameView = new Views.GameView({
-      htmlParent: options.htmlParent || document.body,
-      config: config,
-      userData: options.userData,
-    });
-
-    // command from input manager are pull from worldstatecomputer
-    worldStateComputer.addAfterTickRequester(() => {
-      worldStateComputer.onCommands(
-        this.gameView.getInputManager().computeCommands()
-      );
-    });
-
-    // ref worldstate computer
-    this.browserContext = new BrowserContext(assetsManager, interpolator, {
-      worldStateComputer: worldStateComputer,
-    });
-
-    // Start gameview tick
-    return this.gameView.start(this.browserContext);
   }
 }
