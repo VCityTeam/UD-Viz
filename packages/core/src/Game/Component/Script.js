@@ -1,4 +1,5 @@
 const { Model, Controller } = require('./Component');
+const JSONUtil = require('../../JSONUtil');
 
 const ScriptModel = class extends Model {
   constructor(json) {
@@ -75,6 +76,13 @@ const ScriptController = class extends Controller {
    */
   getScripts() {
     return this.scripts;
+  }
+
+  setVariables(variables) {
+    this.model.variables = variables;
+    for (const id in this.scripts) {
+      JSONUtil.overWrite(this.scripts[id].variables, variables);
+    }
   }
 };
 

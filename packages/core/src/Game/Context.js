@@ -139,11 +139,10 @@ const Context = class {
             }
           });
 
-        // Notify onExit
+        // Notify onLeave
         for (let i = buffer.length - 1; i >= 0; i--) {
           const uuid = buffer[i];
           if (!collidedObject3D.includes(uuid)) {
-            // OnLeave
             this.dispatchScriptEvent(child, Context.EVENT.ON_LEAVE_COLLISION, [
               uuid,
             ]);
@@ -321,12 +320,12 @@ const Context = class {
   }
 
   /**
-   * Remove a gameobject from this world
+   * Remove a object3D
    *
    * @param {string} uuid - The uuid of the gameobject to remove
    */
   removeObject3D(uuid) {
-    const object3D = this.object3D.getObjectByProperty('uuid', uuid);
+    const object3D = this.object3D.getObjectByProperty('uuid', uuid); 
     object3D.removeFromParent();
     this.unregisterObject3DCollision(object3D);
   }

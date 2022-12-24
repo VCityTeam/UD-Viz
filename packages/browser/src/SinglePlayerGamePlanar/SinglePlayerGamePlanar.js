@@ -48,7 +48,8 @@ export class SinglePlayerGamePlanar {
           options.interpolatorDelay
         );
         // initialize interpolator
-        interpolator.onFirstState(gameContext.toState(false)); // false because no need to send game component
+        let previousGameState = gameContext.toState(false); // false because no need to send game component
+        interpolator.onFirstState(previousGameState);
 
         // start process gameContext
         const gameProcess = new RequestAnimationFrameProcess(
@@ -58,12 +59,23 @@ export class SinglePlayerGamePlanar {
         // create an input manager to plug it directly in game process
         /** @type {InputManager} */
         const inputManager = options.inputManager || new InputManager();
+        inputManager.startListening(frame3DPlanar.html());
 
         gameProcess.start((dt) => {
           // game loop
           gameContext.onCommand(inputManager.computeCommands()); // pull commands
           gameContext.step(dt); // simulate
-          interpolator.onNewState(gameContext.toState(false)); // send new state of the game to interpolator
+
+          // here we compute a diff with the last game state (we could just send a newState to the interpolator)
+          // but this is to test multiplayer (isOutdated is used in diff forcing the update transform in external context)
+          // isOutdated is also used to notify external script maybe we should use two boolean TODO_ISSUE
+          const newState = gameContext.toState(false);
+          const stateDiff = newState.sub(previousGameState);
+          previousGameState = newState;
+
+          // console.log(stateDiff);
+
+          interpolator.onNewDiff(stateDiff); // send new diff of the game to interpolator
         });
 
         // init external game context
@@ -99,11 +111,12 @@ export class SinglePlayerGamePlanar {
         frame3DPlanar.enableItownsViewRendering(false);
         const process = new RequestAnimationFrameProcess(30);
         process.start((dt) => {
-          externalGameContext.step(dt, interpolator.computeCurrentStates());
-          frame3DPlanar.itownsView.notifyChange(frame3DPlanar.camera); // => for to load 3DTiles
+          // external game loop
+          externalGameContext.step(dt, interpolator.computeCurrentStates()); // simulate
+          frame3DPlanar.itownsView.notifyChange(frame3DPlanar.camera); // => to load 3DTiles
           frame3DPlanar
             .getRenderer()
-            .render(frame3DPlanar.getScene(), frame3DPlanar.getCamera());
+            .render(frame3DPlanar.getScene(), frame3DPlanar.getCamera()); // render
         });
 
         // DEBUG PRINT

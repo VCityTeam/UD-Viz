@@ -20,5 +20,12 @@ module.exports = {
       ScriptController: require('./Game/Component/Script').Controller,
       Controller: require('./Game/Component/Component').Controller,
     },
+    // CONSTANT should be maybe elsewhere for now it's okay
+    CONSTANT: {
+      MOVE_FORWARD: 'move_forward',
+      MOVE_BACKWARD: 'move_backward',
+      MOVE_LEFT: 'move_left',
+      MOVE_RIGHT: 'move_right',
+    },
   },
 };
