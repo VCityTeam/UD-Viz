@@ -10,32 +10,17 @@
     <!-- <script src="../dist/release/bundle.js"></script> -->
     <script src="../dist/debug/bundle.js"></script>
     <script type="text/javascript">
-      // API
-      const Game = udvizBrowser.udvizCore.Game;
-      const THREE = udvizBrowser.THREE;
-
-      const worldScripts = [
-        class Avatar extends Game.GameObject.WorldScript.Base {
-          constructor(conf, context, parentGO) {
-            super(conf, context, parentGO);
-
-            this.avatar = null;
-          }
-          init() {
-            const world = this.context.getWorld();
-
-            this.avatar = new Game.GameObject.GameObject({
+      const gameScriptClass = {
+        Avatar: class extends udvizBrowser.Core.Game.ScriptBase {
+          load() {
+            this.avatar = new udvizBrowser.Core.Game.Object3D({
               name: 'avatar',
-              componentModels: {
+              components: {
                 Render: { idRenderData: 'avatar' },
               },
             });
 
-            world.addGameObject(
-              this.avatar,
-              this.context,
-              world.getGameObject()
-            );
+            return this.context.addObject3D(this.avatar);
           }
 
           tick() {
@@ -46,38 +31,38 @@
 
             commands.forEach((cmd) => {
               switch (cmd.getType()) {
-                case Game.WorldCommand.TYPE.MOVE_FORWARD:
-                  this.avatar.move(
-                    this.avatar
-                      .computeForwardVector()
-                      .setLength(dt * speedTranslate)
+                case udvizBrowser.Core.Game.CONSTANT.MOVE_FORWARD:
+                  udvizBrowser.Core.Game.Object3D.moveForward(
+                    this.avatar,
+                    dt * speedTranslate
                   );
+                  this.avatar.setOutdated(true); // => object has been moved need an update in external context
                   break;
-                case Game.WorldCommand.TYPE.MOVE_BACKWARD:
-                  this.avatar.move(
-                    this.avatar
-                      .computeBackwardVector()
-                      .setLength(dt * speedTranslate)
+                case udvizBrowser.Core.Game.CONSTANT.MOVE_BACKWARD:
+                  udvizBrowser.Core.Game.Object3D.moveBackward(
+                    this.avatar,
+                    dt * speedTranslate
                   );
+                  this.avatar.setOutdated(true);
                   break;
-                case Game.WorldCommand.TYPE.MOVE_LEFT:
-                  this.avatar.rotate(new THREE.Vector3(0, 0, speedRotate * dt));
-                  break;
-                case Game.WorldCommand.TYPE.MOVE_RIGHT:
-                  this.avatar.rotate(
-                    new THREE.Vector3(0, 0, -speedRotate * dt)
+                case udvizBrowser.Core.Game.CONSTANT.MOVE_LEFT:
+                  udvizBrowser.Core.Game.Object3D.rotate(
+                    this.avatar,
+                    new udvizBrowser.THREE.Vector3(0, 0, speedRotate * dt)
                   );
+                  this.avatar.setOutdated(true);
                   break;
-                case Game.WorldCommand.TYPE.Z_UPDATE:
-                  if (cmd.getData()) {
-                    const currentPos = this.avatar.getPosition();
-                    this.avatar.setPosition(
-                      new THREE.Vector3(
-                        currentPos.x,
-                        currentPos.y,
-                        cmd.getData()
-                      )
-                    );
+                case udvizBrowser.Core.Game.CONSTANT.MOVE_RIGHT:
+                  udvizBrowser.Core.Game.Object3D.rotate(
+                    this.avatar,
+                    new udvizBrowser.THREE.Vector3(0, 0, -speedRotate * dt)
+                  );
+                  this.avatar.setOutdated(true);
+                  break;
+                case udvizBrowser.Core.Game.CONSTANT.Z_UPDATE:
+                  if (cmd.data) {
+                    this.avatar.position.z = cmd.data;
+                    this.avatar.setOutdated(true);
                   }
                   break;
                 default:
@@ -86,47 +71,77 @@
             });
           }
         },
-      ];
-      const browserScripts = [
-        udvizBrowser.Templates.FocusGameObject,
-        udvizBrowser.Templates.WorldCommandController,
-        udvizBrowser.Templates.UpdateElevation3DTiles,
-      ];
+      };
+      const externalGameScriptClass = {
+        FocusGameObject: udvizBrowser.ExternalScriptTemplate.FocusGameObject,
+        CommandController:
+          udvizBrowser.ExternalScriptTemplate.CommandController,
+        UpdateZWithElevationLayer:
+          udvizBrowser.ExternalScriptTemplate.UpdateZWithElevationLayer,
+      };
 
-      const myWorld = new Game.World({
-        name: 'My World',
-        origin: { lat: 45.7530993, lng: 4.8452654, alt: 300 },
-        gameObject: {
-          name: 'GameManager',
-          static: true,
-          componentModels: {
-            WorldScript: {
-              idScripts: ['Avatar'],
-            },
-            BrowserScript: {
-              conf: {
-                nameGO2Focus: 'avatar',
-                cameraAngle: 0,
-                offsetZ: 2,
-                minDist: 5,
-                maxDist: 20,
-                id3DTiles: ['3d-tiles-layer-relief', '3d-tiles-layer-road'],
-                nameGO2Update: 'avatar',
+      udvizBrowser.FileUtil.loadMultipleJSON([
+        './assets/config/extent.json',
+        './assets/config/assetManager.json',
+        './assets/config/frame3D_planar.json',
+        './assets/config/scene.json',
+      ]).then((configs) => {
+        const assetManager = new udvizBrowser.AssetManager();
+        assetManager.loadFromConfig(configs['assetManager']).then(() => {
+          // http://proj4js.org/
+          // define a projection as a string and reference it that way
+          // the definition of the projection should be in config TODO_ISSUE
+          udvizBrowser.proj4.default.defs(
+            configs['extent'].crs,
+            '+proj=lcc +lat_1=45.25 +lat_2=46.75' +
+              ' +lat_0=46 +lon_0=3 +x_0=1700000 +y_0=5200000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs'
+          );
+
+          const extent = new udvizBrowser.itowns.Extent(
+            configs['extent'].crs,
+            parseInt(configs['extent'].west),
+            parseInt(configs['extent'].east),
+            parseInt(configs['extent'].south),
+            parseInt(configs['extent'].north)
+          );
+
+          const game = new udvizBrowser.SinglePlayerGamePlanar();
+          game.start(
+            extent,
+            {
+              name: 'GameManager',
+              static: true,
+              components: {
+                GameScript: {
+                  idScripts: ['Avatar'],
+                },
+                ExternalScript: {
+                  variables: {
+                    nameGO2Focus: 'avatar',
+                    cameraAngle: 0,
+                    offsetZ: 2,
+                    minDist: 5,
+                    maxDist: 20,
+                    nameGO2UpdateZ: 'avatar',
+                    updateZCrs: configs['extent'].crs,
+                  },
+                  idScripts: [
+                    'UpdateZWithElevationLayer',
+                    'FocusGameObject',
+                    'CommandController',
+                  ],
+                },
               },
-              idScripts: [
-                'UpdateElevation3DTiles',
-                'FocusGameObject',
-                'WorldCommandController',
-              ],
             },
-          },
-        },
-      });
-
-      const app = new udvizBrowser.Templates.BrowserGame();
-      app.start(myWorld, './assets/config/default_game_config.json', {
-        worldScripts: worldScripts,
-        browserScripts: browserScripts,
+            {
+              assetManager: assetManager,
+              gameScriptClass: gameScriptClass,
+              externalGameScriptClass: externalGameScriptClass,
+              sceneConfig: configs['scene'],
+              frame3DPlanarConfig: configs['frame3D_planar'],
+            }
+          );
+        });
       });
     </script>
   </body>
