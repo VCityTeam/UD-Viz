@@ -535,7 +535,7 @@ tick() {
       switch (cmd.getType()) {
         case Game.Command.TYPE.MOVE_FORWARD:
           zeppelin.move(
-            zeppelin.computeForwardVector().setLength(dt * speedTranslate)
+            zeppelin.computeForward().setLength(dt * speedTranslate)
           );
           break;
         case Game.Command.TYPE.MOVE_BACKWARD:

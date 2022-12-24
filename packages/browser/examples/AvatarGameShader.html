@@ -10,217 +10,248 @@
     <!-- <script src="../dist/release/bundle.js"></script> -->
     <script src="../dist/debug/bundle.js"></script>
     <script type="text/javascript">
-      // API
-      const Game = udvizBrowser.udvizCore.Game;
       const THREE = udvizBrowser.THREE;
 
-      const browserScripts = [
-        udvizBrowser.Templates.FocusGameObject,
-        class Avatar extends udvizBrowser.BrowserScriptBase {
-          constructor(conf, context, parentGO) {
-            super(conf, context, parentGO);
+      udvizBrowser.FileUtil.loadMultipleJSON([
+        './assets/config/extent.json',
+        './assets/config/assetManager.json',
+        './assets/config/frame3D_planar.json',
+        './assets/config/scene.json',
+      ]).then((configs) => {
+        const assetManager = new udvizBrowser.AssetManager();
+        assetManager.loadFromConfig(configs['assetManager']).then(() => {
+          // http://proj4js.org/
+          // define a projection as a string and reference it that way
+          // the definition of the projection should be in config TODO_ISSUE
+          udvizBrowser.proj4.default.defs(
+            configs['extent'].crs,
+            '+proj=lcc +lat_1=45.25 +lat_2=46.75' +
+              ' +lat_0=46 +lon_0=3 +x_0=1700000 +y_0=5200000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs'
+          );
 
-            this.avatar = null;
-            this.intersectionCube = null;
+          const extent = new udvizBrowser.itowns.Extent(
+            configs['extent'].crs,
+            parseInt(configs['extent'].west),
+            parseInt(configs['extent'].east),
+            parseInt(configs['extent'].south),
+            parseInt(configs['extent'].north)
+          );
 
-            // Raycaster for avoiding buildings collisions with avatar
-            this.raycaster = new THREE.Raycaster();
-          }
+          const externalGameScriptClass = {
+            FocusGameObject:
+              udvizBrowser.ExternalScriptTemplate.FocusGameObject,
+            Avatar: class extends udvizBrowser.ExternalGame.ScriptBase {
+              constructor(context, object3D, variables) {
+                super(context, object3D, variables);
 
-          addObjectToArray(array, tilesManager, idLayer) {
-            let layer = null;
-            for (let index = 0; index < tilesManager.length; index++) {
-              const element = tilesManager[index];
+                this.avatar = null;
+                this.intersectionCube = null;
 
-              if (element.layer.id == idLayer) {
-                layer = element;
-                break;
-              }
-            }
-
-            if (!layer) throw new Error('no layer called ', idLayer);
-
-            layer.tiles.forEach(function (t) {
-              const obj = t.getObject3D();
-              if (obj) array.push(obj);
-            });
-          }
-
-          buildingsHit(tilesManager, origin, direction) {
-            const buildings = [];
-            this.addObjectToArray(
-              buildings,
-              tilesManager,
-              '3d-tiles-layer-building'
-            );
-
-            this.raycaster.ray.origin = origin;
-            this.raycaster.ray.direction = direction;
-
-            const intersections = this.raycaster.intersectObjects(
-              buildings,
-              true
-            );
-            if (intersections.length) return intersections[0];
-            return null;
-          }
-
-          groundElevationDelta(tilesManager, origin) {
-            const ground = [];
-            this.addObjectToArray(
-              ground,
-              tilesManager,
-              '3d-tiles-layer-relief'
-            );
-            this.addObjectToArray(ground, tilesManager, '3d-tiles-layer-road');
-
-            const zShift = 500;
-            this.raycaster.ray.origin.set(
-              origin.x,
-              origin.y,
-              origin.z + zShift
-            );
-            this.raycaster.ray.direction.set(0, 0, -1);
-
-            const intersections = this.raycaster.intersectObjects(ground, true);
-            return intersections.length
-              ? intersections[0].distance - zShift
-              : null;
-          }
-
-          init() {
-            this.avatar = this.parentGameObject
-              .computeRoot()
-              .findByName('avatar');
-
-            const gV = this.context.getGameView();
-            const scene = gV.getScene();
-            const tilesManager = gV.getLayerManager().tilesManagers;
-            const worldOrigin = this.context.getObject3D().position;
-
-            // Input manager of the game
-            const inputManager = gV.getInputManager();
-
-            // Intersection cube
-            const geometry = new THREE.BoxGeometry(1, 1, 1);
-            const material = new THREE.MeshBasicMaterial({
-              color: 0x00ff00,
-            });
-            this.intersectionCube = new THREE.Mesh(geometry, material);
-            scene.add(this.intersectionCube);
-
-            const translationSpeed = 0.03;
-            const speedRotate = 0.0006;
-
-            const checkCollisionFun = (direction) => {
-              const origin = this.avatar
-                .getPosition()
-                .clone()
-                .add(worldOrigin)
-                .add(new THREE.Vector3(0, 0, 1));
-              const intersection = this.buildingsHit(
-                tilesManager,
-                origin,
-                direction
-              );
-              const depth = intersection ? intersection.distance : Infinity;
-
-              if (depth != Infinity) {
-                this.intersectionCube.visibility = true;
-                this.intersectionCube.position.copy(intersection.point);
-                this.intersectionCube.updateMatrixWorld();
-              } else {
-                this.intersectionCube.visibility = false;
+                // Raycaster for avoiding buildings collisions with avatar
+                this.raycaster = new THREE.Raycaster();
               }
 
-              return translationSpeed * this.context.getDt() > depth;
-            };
+              addObjectToArray(array, tilesManager, idLayers) {
+                for (let index = 0; index < tilesManager.length; index++) {
+                  const element = tilesManager[index];
 
-            const updateGroundElevationFun = () => {
-              const zDelta = this.groundElevationDelta(
-                tilesManager,
-                this.avatar.getPosition().clone().add(worldOrigin)
-              );
-              if (!zDelta) return;
-              this.avatar.move(new THREE.Vector3(0, 0, -zDelta));
-            };
+                  if (idLayers.includes(element.layer.id)) {
+                    array.push(element.layer.root);
+                  }
+                }
+              }
 
-            // FORWARD
-            inputManager.addKeyCommand('move_forward', ['z'], () => {
-              // eslint-disable-next-line no-unused-vars
-              const dt = this.context.getDt();
-              const direction = this.avatar.computeForwardVector();
-              if (checkCollisionFun(direction)) return;
-              this.avatar.move(
-                direction.setLength(translationSpeed * this.context.getDt())
-              );
-              updateGroundElevationFun();
-            });
-            // BACKWARD
-            inputManager.addKeyCommand('move_backward', ['s'], () => {
-              // eslint-disable-next-line no-unused-vars
-              const dt = this.context.getDt();
-              const direction = this.avatar.computeBackwardVector();
-              if (checkCollisionFun(direction)) return;
-              this.avatar.move(
-                direction.setLength(translationSpeed * this.context.getDt())
-              );
-              updateGroundElevationFun();
-            });
-            // LEFT
-            inputManager.addKeyCommand('rotate_left', ['q'], () => {
-              const dt = this.context.getDt();
-              this.avatar.rotate(new THREE.Vector3(0, 0, speedRotate * dt));
-            });
-            // RIGHT
-            inputManager.addKeyCommand('rotate_right', ['d'], () => {
-              const dt = this.context.getDt();
-              this.avatar.rotate(new THREE.Vector3(0, 0, -speedRotate * dt));
-            });
-          }
-        },
-      ];
+              buildingsHit(tilesManager, origin, direction) {
+                const buildings = [];
+                this.addObjectToArray(buildings, tilesManager, [
+                  'Lyon-1',
+                  'Lyon-2',
+                  'Lyon-3',
+                  'Lyon-4',
+                  'Lyon-5',
+                  'Lyon-6',
+                  'Lyon-7',
+                  'Lyon-8',
+                ]);
 
-      const myWorld = new Game.World({
-        name: 'My World',
-        origin: { lat: 45.7530993, lng: 4.8452654, alt: 300 },
-        gameObject: {
-          name: 'GameManager',
-          static: true,
-          componentModels: {
-            BrowserScript: {
-              conf: {
-                nameGO2Focus: 'avatar',
-                cameraAngle: 0,
-                offsetZ: 2,
-                minDist: 5,
-                maxDist: 20,
-              },
-              idScripts: ['FocusGameObject', 'Avatar'],
+                this.raycaster.ray.origin = origin;
+                this.raycaster.ray.direction = direction;
+
+                const intersections = this.raycaster.intersectObjects(
+                  buildings,
+                  true
+                );
+                if (intersections.length) return intersections[0];
+                return null;
+              }
+
+              init() {
+                this.avatar = this.context.object3D.getObjectByProperty(
+                  'name',
+                  'avatar'
+                );
+                if (!this.avatar) throw new Error('no avatar in context');
+                const scene = this.context.frame3D.getScene();
+                if (!this.context.frame3D.itownsView)
+                  throw new Error('this script works with Frame3DPlanar');
+                const tilesManager =
+                  this.context.frame3D.getLayerManager().tilesManagers;
+                const worldOrigin = this.context.object3D.position;
+
+                // Input manager of the game
+                const inputManager = this.context.inputManager;
+
+                // Intersection cube
+                const geometry = new THREE.BoxGeometry(1, 1, 1);
+                const material = new THREE.MeshBasicMaterial({
+                  color: 0x00ff00,
+                });
+                this.intersectionCube = new THREE.Mesh(geometry, material);
+                scene.add(this.intersectionCube);
+
+                const translationSpeed = 0.03;
+                const speedRotate = 0.0006;
+
+                const checkCollisionFun = (direction) => {
+                  const origin = this.avatar.position
+                    .clone()
+                    .add(worldOrigin)
+                    .add(new THREE.Vector3(0, 0, 1));
+                  const intersection = this.buildingsHit(
+                    tilesManager,
+                    origin,
+                    direction
+                  );
+                  const depth = intersection ? intersection.distance : Infinity;
+
+                  if (depth != Infinity) {
+                    this.intersectionCube.visibility = true;
+                    this.intersectionCube.position.copy(intersection.point);
+                    this.intersectionCube.updateMatrixWorld();
+                  } else {
+                    this.intersectionCube.visibility = false;
+                  }
+
+                  return translationSpeed * this.context.dt > depth;
+                };
+
+                const updateZ = () => {
+                  const parentGOWorldPos = new THREE.Vector3();
+                  this.avatar.parent.matrixWorld.decompose(
+                    parentGOWorldPos,
+                    new THREE.Quaternion(),
+                    new THREE.Vector3()
+                  );
+                  const goWorldPos = new THREE.Vector3();
+                  this.avatar.matrixWorld.decompose(
+                    goWorldPos,
+                    new THREE.Quaternion(),
+                    new THREE.Vector3()
+                  );
+
+                  const coordAvatar = new udvizBrowser.itowns.Coordinates(
+                    configs['extent'].crs, // => need a projection system
+                    goWorldPos
+                  );
+
+                  const zAvatar =
+                    udvizBrowser.itowns.DEMUtils.getElevationValueAt(
+                      this.context.frame3D.itownsView.tileLayer,
+                      coordAvatar,
+                      1 // PRECISE_READ_Z
+                    ) - parentGOWorldPos.z;
+
+                  if (!isNaN(zAvatar)) {
+                    this.avatar.position.z = zAvatar;
+                  }
+                };
+                updateZ();
+
+                const Object3D = udvizBrowser.Core.Game.Object3D;
+
+                // FORWARD
+                inputManager.addKeyCommand('move_forward', ['z'], () => {
+                  // eslint-disable-next-line no-unused-vars
+                  const dt = this.context.dt;
+                  const direction = Object3D.computeForward(this.avatar);
+                  if (checkCollisionFun(direction)) return;
+                  this.avatar.position.add(
+                    direction.setLength(translationSpeed * this.context.dt)
+                  );
+                  updateZ();
+                });
+                // BACKWARD
+                inputManager.addKeyCommand('move_backward', ['s'], () => {
+                  // eslint-disable-next-line no-unused-vars
+                  const dt = this.context.dt;
+                  const direction = Object3D.computeBackward(this.avatar);
+                  if (checkCollisionFun(direction)) return;
+                  this.avatar.position.add(
+                    direction.setLength(translationSpeed * this.context.dt)
+                  );
+                  updateZ();
+                });
+                // LEFT
+                inputManager.addKeyCommand('rotate_left', ['q'], () => {
+                  const dt = this.context.dt;
+                  Object3D.rotate(
+                    this.avatar,
+                    new THREE.Vector3(0, 0, speedRotate * dt)
+                  );
+                });
+                // RIGHT
+                inputManager.addKeyCommand('rotate_right', ['d'], () => {
+                  const dt = this.context.dt;
+                  Object3D.rotate(
+                    this.avatar,
+                    new THREE.Vector3(0, 0, -speedRotate * dt)
+                  );
+                });
+              }
             },
-          },
-          children: [
-            {
-              name: 'avatar',
-              noLocalUpdate: true,
-              componentModels: {
-                Render: { idRenderData: 'avatar' },
-              },
-            },
-          ],
-        },
-      });
+          };
 
-      const app = new udvizBrowser.Templates.BrowserGame();
-      app
-        .start(myWorld, './assets/config/default_game_config.json', {
-          browserScripts: browserScripts,
-        })
-        .then(function () {
-          // set custom render pass
-          const MYMAT = new THREE.ShaderMaterial({
-            uniforms: {},
-            vertexShader: `
+          const game = new udvizBrowser.SinglePlayerGamePlanar();
+          game
+            .start(
+              extent,
+              {
+                name: 'GameManager',
+                static: true,
+                components: {
+                  ExternalScript: {
+                    variables: {
+                      nameGO2Focus: 'avatar',
+                      cameraAngle: 0,
+                      offsetZ: 2,
+                      minDist: 5,
+                      maxDist: 20,
+                    },
+                    idScripts: ['FocusGameObject', 'Avatar'],
+                  },
+                },
+                children: [
+                  {
+                    name: 'avatar',
+                    gameContextUpdate: false, // this object is not using the gamecontext (maybe create a template dedicate)
+                    components: {
+                      Render: { idRenderData: 'avatar' },
+                    },
+                  },
+                ],
+              },
+              {
+                assetManager: assetManager,
+                externalGameScriptClass: externalGameScriptClass,
+                sceneConfig: configs['scene'],
+                frame3DPlanarConfig: configs['frame3D_planar'],
+              }
+            )
+            .then(() => {
+              // set custom render pass
+              const MYMAT = new THREE.ShaderMaterial({
+                uniforms: {},
+                vertexShader: `
              #define NORMAL
              varying vec3 vNormal;
              varying vec2 vHighPrecisionZW;
@@ -239,7 +270,7 @@
                vDistance /= 1000.;
              }
            `,
-            fragmentShader: `
+                fragmentShader: `
              #define NORMAL
              varying vec3 vNormal;
              varying vec2 vHighPrecisionZW;
@@ -258,16 +289,16 @@
                gl_FragColor = vec4(packNormalToRGB( normal ), depth);
              }
            `,
-          });
+              });
 
-          const MySobelOperatorShader = {
-            uniforms: {
-              tDiffuse: { value: null },
-              tDepth: { value: null },
-              resolution: new THREE.Uniform(new THREE.Vector2()),
-            },
+              const MySobelOperatorShader = {
+                uniforms: {
+                  tDiffuse: { value: null },
+                  tDepth: { value: null },
+                  resolution: new THREE.Uniform(new THREE.Vector2()),
+                },
 
-            vertexShader: /* glsl */ `
+                vertexShader: /* glsl */ `
            varying vec2 vUv;
            void main() {
            	vUv = uv;
@@ -275,7 +306,7 @@
            }
            `,
 
-            fragmentShader: /* glsl */ `
+                fragmentShader: /* glsl */ `
              uniform sampler2D tDiffuse;
              uniform sampler2D tDepth;
              uniform vec2 resolution;
@@ -316,16 +347,16 @@
                gl_FragColor = sqrt( ( valueGx * valueGx ) + ( valueGy * valueGy ) );
              }
            `,
-          };
+              };
 
-          const MaskShader = {
-            uniforms: {
-              tDiffuse: { value: null },
-              tMask: { value: null },
-              resolution: new THREE.Uniform(new THREE.Vector2()),
-            },
+              const MaskShader = {
+                uniforms: {
+                  tDiffuse: { value: null },
+                  tMask: { value: null },
+                  resolution: new THREE.Uniform(new THREE.Vector2()),
+                },
 
-            vertexShader: /* glsl */ `
+                vertexShader: /* glsl */ `
            varying vec2 vUv;
            void main() {
            	vUv = uv;
@@ -333,7 +364,7 @@
            }
            `,
 
-            fragmentShader: /* glsl */ `
+                fragmentShader: /* glsl */ `
            uniform sampler2D tDiffuse;
            uniform sampler2D tMask;
            uniform vec2 resolution;
@@ -353,77 +384,82 @@
                #include <dithering_fragment>
            }
            `,
-          };
+              };
 
-          // renderTarget for special effects
-          const renderTargetFX = new THREE.WebGLRenderTarget(0, 0, {
-            depthBuffer: true,
-            stencilBuffer: false,
-            format: THREE.RGBAFormat,
-            type: THREE.FloatType,
-          });
+              // renderTarget for special effects
+              const renderTargetFX = new THREE.WebGLRenderTarget(0, 0, {
+                depthBuffer: true,
+                stencilBuffer: false,
+                format: THREE.RGBAFormat,
+                type: THREE.FloatType,
+              });
 
-          const gameView = app.getGameView();
+              // create custom render pass
+              const renderer = game.frame3DPlanar.getRenderer();
+              const camera = game.frame3DPlanar.getCamera();
+              const scene = game.frame3DPlanar.getScene();
 
-          // create custom render pass
-          const renderer = gameView.getRenderer();
+              const edgeDetectionComposer = new udvizBrowser.EffectComposer(
+                renderer,
+                renderTargetFX
+              );
+              const normalsPass = new udvizBrowser.RenderPass(
+                scene,
+                camera,
+                MYMAT
+              );
+              edgeDetectionComposer.addPass(normalsPass);
+              const sobelPass = new udvizBrowser.ShaderPass(
+                MySobelOperatorShader
+              );
 
-          const edgeDetectionComposer = new udvizBrowser.EffectComposer(
-            renderer,
-            renderTargetFX
-          );
-          const normalsPass = new udvizBrowser.RenderPass(
-            gameView.getScene(),
-            gameView.getCamera(),
-            MYMAT
-          );
-          edgeDetectionComposer.addPass(normalsPass);
-          const sobelPass = new udvizBrowser.ShaderPass(MySobelOperatorShader);
+              edgeDetectionComposer.addPass(sobelPass);
+              edgeDetectionComposer.renderToScreen = false;
 
-          edgeDetectionComposer.addPass(sobelPass);
-          edgeDetectionComposer.renderToScreen = false;
+              const finalComposer = new udvizBrowser.EffectComposer(renderer);
+              const renderPass = new udvizBrowser.RenderPass(scene, camera);
+              finalComposer.addPass(renderPass);
+              const compositionPass = new udvizBrowser.ShaderPass(MaskShader);
+              compositionPass.uniforms.tMask.value = renderTargetFX.texture;
+              finalComposer.addPass(compositionPass);
 
-          const finalComposer = new udvizBrowser.EffectComposer(renderer);
-          const renderPass = new udvizBrowser.RenderPass(
-            gameView.getScene(),
-            gameView.getCamera()
-          );
-          finalComposer.addPass(renderPass);
-          const compositionPass = new udvizBrowser.ShaderPass(MaskShader);
-          compositionPass.uniforms.tMask.value = renderTargetFX.texture;
-          finalComposer.addPass(compositionPass);
+              // update variables on resize
+              const updateResize = function () {
+                const size = game.frame3DPlanar.getSize();
+                renderTargetFX.setSize(size.x, size.y);
 
-          // update variables on resize
-          const updateResize = function () {
-            const size = gameView.getSize();
-            renderTargetFX.setSize(size.x, size.y);
+                sobelPass.uniforms.resolution.value = new THREE.Vector2(
+                  edgeDetectionComposer.writeBuffer.width,
+                  edgeDetectionComposer.writeBuffer.height
+                );
+                compositionPass.uniforms.resolution.value = new THREE.Vector2(
+                  finalComposer.writeBuffer.width,
+                  finalComposer.writeBuffer.height
+                );
+              };
 
-            sobelPass.uniforms.resolution.value = new THREE.Vector2(
-              edgeDetectionComposer.writeBuffer.width,
-              edgeDetectionComposer.writeBuffer.height
-            );
-            compositionPass.uniforms.resolution.value = new THREE.Vector2(
-              finalComposer.writeBuffer.width,
-              finalComposer.writeBuffer.height
-            );
-          };
+              // record in resize event
+              game.frame3DPlanar.on(
+                udvizBrowser.Frame3DBase.EVENT.RESIZE,
+                updateResize
+              );
 
-          // launch an init resize update
-          updateResize();
-          // record in the resize requester
-          gameView.addResizeRequester(updateResize);
+              // resize event to init
+              game.frame3DPlanar.onResize();
 
-          // define the custom render pass
-          const customRender = function () {
-            edgeDetectionComposer.reset(renderTargetFX);
-            finalComposer.reset();
-            edgeDetectionComposer.render();
-            finalComposer.render();
-          };
+              // define the custom render pass
+              const customRender = function () {
+                edgeDetectionComposer.reset(renderTargetFX);
+                finalComposer.reset();
+                edgeDetectionComposer.render();
+                finalComposer.render();
+              };
 
-          // set the custom render pass
-          gameView.setRender(customRender);
+              // set the custom render pass
+              game.frame3DPlanar.setRender(customRender);
+            });
         });
+      });
     </script>
   </body>
 </html>

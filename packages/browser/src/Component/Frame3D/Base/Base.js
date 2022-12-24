@@ -51,7 +51,7 @@ export class Base {
     this.isRendering = true;
 
     /** @type {THREE.Vector2} Size of the frame3D */
-    this.size = new THREE.Vector2();
+    this.size = new THREE.Vector2(1, 1);
 
     /** @type {THREE.Scene} */
     this.scene = null;
@@ -211,6 +211,21 @@ export class Base {
     this.css3DRenderer.render(this.css3DScene, this.getCamera());
   }
 
+  // Allow user to set a custom render pass
+  setRender(f) {
+    this.render = () => {
+      if (!this.isRendering) return; // encapsulate to stop with isRendering flag
+      f();
+    };
+  }
+
+  render() {
+    // Default Render
+    if (!this.isRendering) return;
+    this.renderer.clearColor();
+    this.renderer.render(this.scene, this.camera);
+  }
+
   /**
    *
    * @returns {boolean} true if html of the webgl rendering isn't catching events
@@ -305,17 +320,6 @@ export class Base {
     this.listeners[Base.EVENT.DISPOSE].forEach((listener) => {
       listener(this);
     });
-  }
-
-  // Allow user to set a custom render pass
-  setRender(f) {
-    this.render = f;
-  }
-
-  render() {
-    // Render
-    this.renderer.clearColor();
-    this.renderer.render(this.scene, this.camera);
   }
 
   getCamera() {
