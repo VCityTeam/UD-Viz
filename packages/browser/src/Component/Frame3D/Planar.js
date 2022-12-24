@@ -262,11 +262,6 @@ export class Planar extends Base {
     }
   }
 
-  setIsRendering(value) {
-    super.setIsRendering(value); // css3D rendering
-    this.enableItownsViewRendering(value); // itownsView rendering
-  }
-
   /**
    *
    * @returns {itowns.PlanarView} the itowns view

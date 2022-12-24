@@ -10,7 +10,7 @@ import * as ExternalGame from '../Component/ExternalGame/ExternalGame';
  */
 export class SinglePlayerGamePlanar {
   constructor() {
-    // nothing for now
+    this.frame3DPlanar = null;
   }
 
   /**
@@ -39,6 +39,7 @@ export class SinglePlayerGamePlanar {
         configElevationLayer: frame3DPlanarConfig['elevation_layer'],
         configGeoJSONLayers: frame3DPlanarConfig['geoJSON_layers'],
       });
+      this.frame3DPlanar = frame3DPlanar;
 
       // init game process
       const gameScriptClass = options.gameScriptClass || {};
@@ -100,6 +101,7 @@ export class SinglePlayerGamePlanar {
         // position of the external game context object extent center
         const center = extent.center();
         externalGameContext.object3D.position.set(center.x, center.y, 300); // TODO 300 is HARD CODED
+        externalGameContext.object3D.updateMatrixWorld();
 
         // step external game context
 

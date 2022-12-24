@@ -280,7 +280,7 @@ const GameObject = class {
    *
    * @returns {THREE.Vector3}
    */
-  computeForwardVector() {
+  computeForward() {
     const quaternion = new THREE.Quaternion().setFromEuler(
       this.object3D.rotation
     );
@@ -298,7 +298,7 @@ const GameObject = class {
       new THREE.Vector3(0, 0, 1),
       Math.PI
     );
-    return this.computeForwardVector().applyQuaternion(quaternion);
+    return this.computeForward().applyQuaternion(quaternion);
   }
 
   /**
@@ -1115,19 +1115,21 @@ Object3D.DefaultForward = function () {
   return new THREE.Vector3(0, 1, 0);
 };
 
-Object3D.computeForwardVector = function (object3D) {
+Object3D.computeForward = function (object3D) {
   return this.DefaultForward().applyQuaternion(object3D.quaternion);
 };
 
+Object3D.computeBackward = function (object3D) {
+  return this.computeForward(object3D).negate();
+};
+
 Object3D.moveForward = function (object3D, value) {
-  object3D.position.add(
-    Object3D.computeForwardVector(object3D).setLength(value)
-  );
+  object3D.position.add(Object3D.computeForward(object3D).setLength(value));
 };
 
 Object3D.moveBackward = function (object3D, value) {
   object3D.position.add(
-    Object3D.computeForwardVector(object3D).negate().setLength(value)
+    Object3D.computeForward(object3D).negate().setLength(value)
   );
 };
 

@@ -322,6 +322,8 @@ export class Context {
     // Init Game.Object3D component controllers of the new Game.Object3D
     newGO.forEach((go) => {
       this.initComponentControllers(go);
+      // update matrix world so even object.static have a correct since the autoupdate is disable
+      go.updateMatrixWorld(true);
     });
 
     // External Script INIT + ON_NEW_GAMEOBJECT
