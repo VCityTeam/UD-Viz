@@ -1,0 +1,8 @@
+{
+  "url": "https://download.data.grandlyon.com/wms/grandlyon",
+  "name": "MNT2018_Altitude_2m",
+  "format": "image/jpeg",
+  "layer_name": "wms_elevation_test",
+  "colorTextureElevationMinZ": 149,
+  "colorTextureElevationMaxZ": 622
+}

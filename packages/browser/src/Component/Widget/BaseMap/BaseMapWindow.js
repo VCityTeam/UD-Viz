@@ -13,12 +13,10 @@ export class BaseMap extends Window {
    * @param {appProjection} string The projection used to set up the layers
    * @param baseMapLayers
    * @param appExtent
-   * @param appProjection
    */
-  constructor(itownsView, baseMapLayers, appExtent, appProjection) {
+  constructor(itownsView, baseMapLayers, appExtent) {
     super('baseMap', 'base Map', false);
     this.appExtent = appExtent;
-    this.appProjection = appProjection;
     this.baseMapLayers = baseMapLayers;
     this.itownsView = itownsView;
     this.createLayers();
@@ -45,7 +43,7 @@ export class BaseMap extends Window {
         name: layer.name,
         url: layer.url,
         version: layer.version,
-        crs: this.appProjection,
+        crs: this.appExtent.crs,
         format: 'image/jpeg',
       });
       // Add a WMS imagery layer
@@ -83,7 +81,7 @@ export class BaseMap extends Window {
     for (const layer of this.baseMapLayers) {
       this.itownsView.getLayerById(layer.id).visible = layer.id == layerID;
     }
-    this.itownsView.notifyChange();
+    this.itownsView.notifyChange(this.itownsView.camera.camera3D);
   }
 
   get innerContentHtml() {

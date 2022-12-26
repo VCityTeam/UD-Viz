@@ -81,10 +81,14 @@
       };
 
       udvizBrowser.FileUtil.loadMultipleJSON([
-        './assets/config/extent.json',
+        './assets/config/extent_lyon.json',
         './assets/config/assetManager.json',
-        './assets/config/frame3D_planar.json',
+        './assets/config/frame3D_planars.json',
         './assets/config/scene.json',
+        './assets/config/layer/3DTiles.json',
+        './assets/config/layer/base_maps.json',
+        './assets/config/layer/elevation.json',
+        './assets/config/layer/geoJSONs.json',
       ]).then((configs) => {
         const assetManager = new udvizBrowser.AssetManager();
         assetManager.loadFromConfig(configs['assetManager']).then(() => {
@@ -92,17 +96,17 @@
           // define a projection as a string and reference it that way
           // the definition of the projection should be in config TODO_ISSUE
           udvizBrowser.proj4.default.defs(
-            configs['extent'].crs,
+            configs['extent_lyon'].crs,
             '+proj=lcc +lat_1=45.25 +lat_2=46.75' +
               ' +lat_0=46 +lon_0=3 +x_0=1700000 +y_0=5200000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs'
           );
 
           const extent = new udvizBrowser.itowns.Extent(
-            configs['extent'].crs,
-            parseInt(configs['extent'].west),
-            parseInt(configs['extent'].east),
-            parseInt(configs['extent'].south),
-            parseInt(configs['extent'].north)
+            configs['extent_lyon'].crs,
+            parseInt(configs['extent_lyon'].west),
+            parseInt(configs['extent_lyon'].east),
+            parseInt(configs['extent_lyon'].south),
+            parseInt(configs['extent_lyon'].north)
           );
 
           const game = new udvizBrowser.SinglePlayerGamePlanar();
@@ -123,7 +127,7 @@
                     minDist: 5,
                     maxDist: 20,
                     nameGO2UpdateZ: 'avatar',
-                    updateZCrs: configs['extent'].crs,
+                    updateZCrs: configs['extent_lyon'].crs,
                   },
                   idScripts: [
                     'UpdateZWithElevationLayer',
@@ -138,7 +142,11 @@
               gameScriptClass: gameScriptClass,
               externalGameScriptClass: externalGameScriptClass,
               sceneConfig: configs['scene'],
-              frame3DPlanarConfig: configs['frame3D_planar'],
+              frame3DPlanarConfig: configs['frame3D_planars'][0],
+              config3DTilesLayers: configs['3DTiles'],
+              configBaseMapLayer: configs['base_maps'][0],
+              configElevationLayer: configs['elevation'],
+              configGeoJSONLayers: configs['geoJSONs'],
             }
           );
         });

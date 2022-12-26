@@ -38,6 +38,13 @@ export { RequestAnimationFrameProcess } from './Component/RequestAnimationFrameP
 import * as Core from '@ud-viz/core';
 export { Core };
 
+export {
+  add3DTilesLayers,
+  addBaseMapLayer,
+  addElevationLayer,
+  addGeoJsonLayers,
+} from './Component/Itowns/AddLayerFromConfig';
+
 // // Game
 // import { Base } from './Game/BrowserScript';
 // export { Base as BrowserScriptBase };
