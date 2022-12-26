@@ -2,8 +2,13 @@ import * as Widget from '../Component/Widget/Widget';
 const WidgetView = Widget.Component.WidgetView;
 import { Planar } from '../Component/Frame3D/Planar';
 import THREEUtil from '../Component/THREEUtil';
-const itowns = require('itowns');
 const THREE = require('three');
+import {
+  add3DTilesLayers,
+  addBaseMapLayer,
+  addElevationLayer,
+  addGeoJsonLayers,
+} from '../Component/Itowns/AddLayerFromConfig';
 
 import './AllWidget.css';
 
@@ -14,10 +19,10 @@ import './AllWidget.css';
 export class AllWidget {
   /**
    *
-   * @param {object} config - TODO describe
+   * @param {object} configAllWidget - TODO describe
    */
-  constructor(config) {
-    this.config = config; // recommended to not ref the config but to create state in this for what need to be store
+  constructor(extent, configAllWidget, configFrame3DPlanar, options = {}) {
+    this.configAllWidget = configAllWidget; // recommended to not ref the configAllWidget but to create state in this for what need to be store
 
     // allwidget state
     this.widgets = {};
@@ -28,37 +33,64 @@ export class AllWidget {
     this.authService = null;
     this.parentElement = null;
 
-    /** @type {Planar} */
-    this.frame3DPlanar = null;
-
     // init DOM
     this.appendTo(document.body);
     this.addLogos();
+
+    /** @type {Planar} */
+    this.frame3DPlanar = this.createFrame3DPlanarFromConfig(
+      extent,
+      document.getElementById(this.contentSectionId),
+      configFrame3DPlanar
+    );
+
+    if (options.config3DTilesLayers) {
+      add3DTilesLayers(
+        options.config3DTilesLayers,
+        this.frame3DPlanar.layerManager,
+        this.frame3DPlanar.itownsView
+      );
+    }
+    if (options.configBaseMapLayer) {
+      addBaseMapLayer(
+        options.configBaseMapLayer,
+        this.frame3DPlanar.itownsView,
+        extent
+      );
+    }
+    if (options.configElevationLayer) {
+      addElevationLayer(
+        options.configElevationLayer,
+        this.frame3DPlanar.itownsView,
+        extent
+      );
+    }
+    if (options.configGeoJSONLayers) {
+      addGeoJsonLayers(
+        options.configGeoJSONLayers,
+        this.frame3DPlanar.itownsView
+      );
+    }
   }
 
-  initFrame3DPlanarFromConfig(extent, frame3DPlanarConfig) {
-    // initialize frame3DPlanar from config
-    const parentDiv = document.getElementById(this.contentSectionId);
-
-    this.frame3DPlanar = new Planar(extent, {
+  createFrame3DPlanarFromConfig(extent, parentDiv, configFrame3DPlanar) {
+    const frame3DPlanar = new Planar(extent, {
       htmlParent: parentDiv,
       hasItownsControls: true,
-      coordinates: frame3DPlanarConfig['coordinates'],
-      maxSubdivisionLevel: frame3DPlanarConfig['maxSubdivisionLevel'],
-      heading: frame3DPlanarConfig['heading'],
-      tilt: frame3DPlanarConfig['tilt'],
-      range: frame3DPlanarConfig['range'],
-      config3DTilesLayers: frame3DPlanarConfig['3D_tiles_layers'],
-      configBaseMapLayer: frame3DPlanarConfig['base_map_layer'],
-      configElevationLayer: frame3DPlanarConfig['elevation_layer'],
-      configGeoJSONLayers: frame3DPlanarConfig['geoJSON_layers'],
+      coordinates: configFrame3DPlanar['coordinates'],
+      maxSubdivisionLevel: configFrame3DPlanar['maxSubdivisionLevel'],
+      heading: configFrame3DPlanar['heading'],
+      tilt: configFrame3DPlanar['tilt'],
+      range: configFrame3DPlanar['range'],
     });
 
-    THREEUtil.addLights(this.frame3DPlanar.getScene());
+    THREEUtil.addLights(frame3DPlanar.getScene());
     THREEUtil.initRenderer(
-      this.frame3DPlanar.getRenderer(),
+      frame3DPlanar.getRenderer(),
       new THREE.Color(0x6699cc)
     );
+
+    return frame3DPlanar;
   }
 
   /**
@@ -92,10 +124,10 @@ export class AllWidget {
 
   addLogos() {
     // Path file for all the logo images
-    const logos = this.config.logos;
+    const logos = this.configAllWidget.logos;
 
     // Path to the logos folder
-    const imageFolder = this.config.imageFolder;
+    const imageFolder = this.configAllWidget.imageFolder;
 
     // Create div to integrate all logos images
     const logoDiv = document.createElement('div');
@@ -124,7 +156,7 @@ export class AllWidget {
             </div>
             <div id="${this.authenticationMenuLoggedOutId}">
                 <button type="button" id="${this.authenticationLoginButtonId}"
-                class="logInOut"><img src="${this.config['icon_autenfication_path']}"></button>
+                class="logInOut"><img src="${this.configAllWidget['icon_autenfication_path']}"></button>
             </div>
         `;
   }
@@ -262,7 +294,10 @@ export class AllWidget {
     const icon = document.createElement('img');
 
     // Creating an icon
-    icon.setAttribute('src', `${this.config.iconFolder}/${widgetId}.svg`);
+    icon.setAttribute(
+      'src',
+      `${this.configAllWidget.iconFolder}/${widgetId}.svg`
+    );
     icon.className = 'menuIcon';
     button.insertBefore(icon, button.firstChild);
 

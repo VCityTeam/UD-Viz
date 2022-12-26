@@ -4,6 +4,12 @@ import { Planar } from '../Component/Frame3D/Frame3D';
 import { Game } from '@ud-viz/core';
 import { RequestAnimationFrameProcess } from '../Component/RequestAnimationFrameProcess';
 import * as ExternalGame from '../Component/ExternalGame/ExternalGame';
+import {
+  add3DTilesLayers,
+  addBaseMapLayer,
+  addElevationLayer,
+  addGeoJsonLayers,
+} from '../Component/Itowns/AddLayerFromConfig';
 
 /**
  * A Class contaning method to easily instanciate a browser game based on the ud-viz game engine
@@ -34,12 +40,37 @@ export class SinglePlayerGamePlanar {
         heading: frame3DPlanarConfig['heading'],
         tilt: frame3DPlanarConfig['tilt'],
         range: frame3DPlanarConfig['range'],
-        config3DTilesLayers: frame3DPlanarConfig['3D_tiles_layers'],
-        configBaseMapLayer: frame3DPlanarConfig['base_map_layer'],
-        configElevationLayer: frame3DPlanarConfig['elevation_layer'],
-        configGeoJSONLayers: frame3DPlanarConfig['geoJSON_layers'],
       });
       this.frame3DPlanar = frame3DPlanar;
+
+      // add layers
+      if (options.configBaseMapLayer) {
+        addBaseMapLayer(
+          options.configBaseMapLayer,
+          frame3DPlanar.itownsView,
+          extent
+        );
+      }
+
+      if (options.configElevationLayer) {
+        addElevationLayer(
+          options.configElevationLayer,
+          frame3DPlanar.itownsView,
+          extent
+        );
+      }
+
+      if (options.config3DTilesLayers) {
+        add3DTilesLayers(
+          options.config3DTilesLayers,
+          frame3DPlanar.layerManager,
+          frame3DPlanar.itownsView
+        );
+      }
+
+      if (options.configGeoJSONLayers) {
+        addGeoJsonLayers(options.configGeoJSONLayers, frame3DPlanar.itownsView);
+      }
 
       // init game process
       const gameScriptClass = options.gameScriptClass || {};

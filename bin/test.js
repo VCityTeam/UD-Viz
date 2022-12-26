@@ -1,4 +1,5 @@
 const exec = require('child-process-promise').exec;
+const Test = require('@ud-viz/node').Test;
 
 const printExec = function (result) {
   console.log('stdout: \n', result.stdout);
@@ -30,8 +31,16 @@ exec('npm run build-core')
             console.error(error);
             process.exit(1);
           })
-          .then(printExec);
+          .then(printExec)
+          .then(() => {
+            Test.scripts('./packages/core/bin/Test').then(() => {
+              Test.browserScripts(
+                './packages/browser/bin/Test',
+                './packages/browser/dist/release/bundle.js'
+              ).then(() => {
+                Test.html('./packages/browser/examples');
+              });
+            });
+          });
       });
   });
-
-// should run test cmd of all packages
