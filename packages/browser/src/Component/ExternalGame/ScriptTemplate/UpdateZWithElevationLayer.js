@@ -45,7 +45,6 @@ export class UpdateZWithElevationLayer extends ExternalScriptBase {
       1 // PRECISE_READ_Z
     );
 
-    // Add commands to the computer directly because not produce by the inputmanager
     this.context.sendCommandToGameContext([
       new Command({
         type: Game.CONSTANT.Z_UPDATE,
