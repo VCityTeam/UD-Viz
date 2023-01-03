@@ -1,7 +1,6 @@
 const puppeteer = require('puppeteer');
 const ExpressAppWrapper = require('./ExpressAppWrapper');
 const fs = require('fs');
-const { response } = require('express');
 const spawn = require('child_process').spawn;
 
 const serverPort = 8000;
