@@ -53,6 +53,7 @@ export {
  * External packages => These packages should be peerDep to force user of @ud-viz/browser to npm i them
  * Make a second index.js (indexBundle.js) so examples can still work
  * Like itowns => https://github.com/iTowns/itowns/blob/master/src/MainBundle.js
+ *
  * @ud-viz/core also ?
  */
 

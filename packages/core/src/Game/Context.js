@@ -216,6 +216,7 @@ const Context = class {
    * Add a object3D into the collision system
    *
    * @param {Object3D} go - The object3D to register
+   * @param object3D
    */
   registerObject3DCollision(object3D) {
     object3D.traverse((child) => {
@@ -286,6 +287,7 @@ const Context = class {
    * Remove a GameObject from the collision system
    *
    * @param {GameObject} go - The gameobject to remove
+   * @param object3D
    */
   unregisterObject3DCollision(object3D) {
     object3D.traverse((child) => {
@@ -325,7 +327,7 @@ const Context = class {
    * @param {string} uuid - The uuid of the gameobject to remove
    */
   removeObject3D(uuid) {
-    const object3D = this.object3D.getObjectByProperty('uuid', uuid); 
+    const object3D = this.object3D.getObjectByProperty('uuid', uuid);
     object3D.removeFromParent();
     this.unregisterObject3DCollision(object3D);
   }
@@ -415,6 +417,7 @@ Context.EVENT = {
 const ScriptBase = class {
   /**
    * constructor should not be rewrite use init instead
+   *
    * @param {Context} context
    * @param {Object3D} object3D
    * @param {object|JSON} variables

@@ -99,6 +99,7 @@ const State = class {
    * Compute the Diff between this and the state passed
    *
    * @param {State} state the state passed to compute the Diff with this
+   * @param previousState
    * @returns {Diff} the difference between this and state
    */
   sub(previousState) {

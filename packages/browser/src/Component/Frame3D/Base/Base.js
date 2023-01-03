@@ -9,6 +9,7 @@ export class Base {
   /**
    *  Base View of an ud-viz application
    *  expliquer le css renderer and so on
+   *
    * @param {object} options
    * @param {HTMLElement} options.htmlParent
    * @param {boolean} options.catchEventsCSS3D

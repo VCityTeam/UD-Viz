@@ -97,6 +97,7 @@ function setup3DTilesLayer(layer, layerManager, itownsView) {
  * Setup and add 3D tiles to an itowns view
  *
  * @param {*} config must contain a 3DTilesLayers field array with each 3d tile url
+ * @param config3DTilesLayers
  * @param {LayerManager} layerManager a layer manager
  * @param {itowns.View} itownsView - the itowns view
  * @returns a map of each 3d tiles layer
@@ -129,6 +130,7 @@ export function add3DTilesLayers(
  * UD-Viz/examples/config/all_widget_config.json
  * config file).
  * @param config
+ * @param configGeoJSONLayers
  * @param itownsView
  */
 export function addGeoJsonLayers(configGeoJSONLayers, itownsView) {
@@ -183,6 +185,7 @@ export function addGeoJsonLayers(configGeoJSONLayers, itownsView) {
  * Add Base map layer to an itowns view
  *
  * @param {*} config must contains a field background_image_layer
+ * @param baseMapLayerConfig
  * @param {itowns.View} itownsView
  * @param {itowns.Extent} extent extent of the view
  */
@@ -245,6 +248,7 @@ export function addBaseMapLayer(baseMapLayerConfig, itownsView, extent) {
  * Add Elevation map layer to an itowns view
  *
  * @param {*} config must contains a field elevation_layer
+ * @param configElevationLayer
  * @param {itowns.View} itownsView
  * @param {itowns.Extent} extent extent of the view
  */

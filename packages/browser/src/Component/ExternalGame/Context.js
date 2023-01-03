@@ -30,6 +30,8 @@ export class Context {
    * @param {Base} frame3D - could be a Frame3DBase or a Frame3DPlanar
    * @param {AssetManager} assetManager
    * @param {InputManager} inputManager
+   * @param externalGameScriptClass
+   * @param options
    */
   constructor(
     frame3D,
@@ -544,6 +546,7 @@ Context.EVENT = {
 export class ExternalScriptBase {
   /**
    * constructor should not be rewrite use init instead
+   *
    * @param {Context} context
    * @param {Object3D} object3D
    * @param {object|JSON} variables

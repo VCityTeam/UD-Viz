@@ -896,6 +896,7 @@ const Object3D = class extends THREE.Object3D {
 
   /**
    * when using this function components should not have controllers
+   *
    * @param {*} json
    */
   updatefromJSON(json) {
@@ -1032,7 +1033,9 @@ const Object3D = class extends THREE.Object3D {
 
   /**
    * do not use the THREE.Object3D parent method
+   *
    * @param {*} full
+   * @param withMetadata
    * @returns
    */
   toJSON(full = true, withMetadata = false) {

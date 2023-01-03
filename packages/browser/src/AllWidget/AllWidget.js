@@ -19,7 +19,10 @@ import './AllWidget.css';
 export class AllWidget {
   /**
    *
+   * @param extent
    * @param {object} configAllWidget - TODO describe
+   * @param configFrame3DPlanar
+   * @param options
    */
   constructor(extent, configAllWidget, configFrame3DPlanar, options = {}) {
     this.configAllWidget = configAllWidget; // recommended to not ref the configAllWidget but to create state in this for what need to be store
