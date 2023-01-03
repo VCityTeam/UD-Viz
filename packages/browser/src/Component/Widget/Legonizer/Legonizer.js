@@ -74,7 +74,7 @@ export class LegonizerWindow extends Window {
     buttonSelectionAreaElement.id = 'button_selection';
     buttonSelectionAreaElement.textContent = 'Select an area';
 
-    buttonSelectionAreaElement.addEventListener('click', this.selectArea);
+    // ButtonSelectionAreaElement.addEventListener('dragging');
 
     this.coordBoxElement.appendChild(buttonSelectionAreaElement);
 
@@ -140,28 +140,20 @@ export class LegonizerWindow extends Window {
       this.boxSelector = object;
       this.view3D.getScene().add(object);
 
-      // This.orbitCtrls = new OrbitControls(
-      //   this.view3D.getCamera(),
-      //   this.view3D.getCamera().domElement
-      // );
-      // this.orbitCtrls.update();
-      // debugger;
       this.transformCtrls = new TransformControls(
         this.view3D.getCamera(),
-        this.view3D.getRenderer().domElement
+        this.view3D.getItownsView().mainLoop.gfxEngine.label2dRenderer.domElement
       );
-
-      // Control.update();
-
-      this.transformCtrls.addEventListener(
-        'dragging-changed',
-        function (event) {
-          this.view3D.getItownsView().controls.enabled = !event.value;
-        }
-      );
+      this.transformCtrls.addEventListener('change', (event) => {
+        this.view3D.getItownsView().controls.dispose();
+        this.view3D.getItownsView().notifyChange(this.view3D.getCamera());
+        this.transformCtrls.updateMatrixWorld();
+      });
 
       this.view3D.getScene().add(this.transformCtrls);
     }
+    this.view3D.getItownsView().controls.enableRotation = false;
+    console.log(this.view3D.getItownsView().controls.enableRotation);
 
     this.boxSelector.visible = true;
     // HTML content
@@ -213,7 +205,7 @@ export class LegonizerWindow extends Window {
   }
 
   selectArea() {
-    console.log('selection');
+    console.log(this.view3D.getItownsView());
   }
 
   // //// GETTERS
