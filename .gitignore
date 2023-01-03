@@ -1,5 +1,4 @@
 .idea/
-docs/html
 node_modules
 dist
 lib
