@@ -3,6 +3,8 @@
 // Components
 import { Window } from '../Components/GUI/js/Window';
 import * as THREE from 'three';
+// Import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+import { TransformControls } from 'three/examples/jsm/controls/TransformControls.js';
 import { MAIN_LOOP_EVENTS } from 'itowns';
 import './../About/About.css';
 
@@ -16,17 +18,9 @@ export class LegonizerWindow extends Window {
 
     this.view3D = view3D;
 
-    // List of callbacks to set when the window is created
-    this.callbacksHTMLEl = [];
+    this.boxSelector;
 
-    this.boxSelector = null;
-
-    // Request update every active frame
-    this.view3D
-      .getItownsView()
-      .addFrameRequester(MAIN_LOOP_EVENTS.AFTER_CAMERA_UPDATE, () =>
-        this._updateFieldsFromBoxSelector()
-      );
+    this.transformCtrls;
   }
 
   get innerContentHtml() {
@@ -80,6 +74,8 @@ export class LegonizerWindow extends Window {
     buttonSelectionAreaElement.id = 'button_selection';
     buttonSelectionAreaElement.textContent = 'Select an area';
 
+    buttonSelectionAreaElement.addEventListener('click', this.selectArea);
+
     this.coordBoxElement.appendChild(buttonSelectionAreaElement);
 
     // Button Generate Lego Mockup
@@ -128,26 +124,60 @@ export class LegonizerWindow extends Window {
   }
 
   windowCreated() {
-    const geometry = new THREE.BoxGeometry(200, 200, 200);
-    const object = new THREE.Mesh(
-      geometry,
-      new THREE.MeshLambertMaterial({ color: 0x00ff00 })
-    );
+    if (!this.boxSelector) {
+      const geometry = new THREE.BoxGeometry(200, 200, 200);
+      const object = new THREE.Mesh(
+        geometry,
+        new THREE.MeshLambertMaterial({ color: 0x00ff00 })
+      );
 
-    object.position.x = this.view3D.extent.center().x;
-    object.position.y = this.view3D.extent.center().y;
-    object.position.z = 200;
+      object.position.x = this.view3D.extent.center().x;
+      object.position.y = this.view3D.extent.center().y;
+      object.position.z = 200;
 
-    object.updateMatrixWorld();
+      object.updateMatrixWorld();
 
-    this.boxSelector = object;
+      this.boxSelector = object;
+      this.view3D.getScene().add(object);
 
+      // This.orbitCtrls = new OrbitControls(
+      //   this.view3D.getCamera(),
+      //   this.view3D.getCamera().domElement
+      // );
+      // this.orbitCtrls.update();
+      // debugger;
+      this.transformCtrls = new TransformControls(
+        this.view3D.getCamera(),
+        this.view3D.getRenderer().domElement
+      );
+
+      // Control.update();
+
+      this.transformCtrls.addEventListener(
+        'dragging-changed',
+        function (event) {
+          this.view3D.getItownsView().controls.enabled = !event.value;
+        }
+      );
+
+      this.view3D.getScene().add(this.transformCtrls);
+    }
+
+    this.boxSelector.visible = true;
+    // HTML content
     this.innerContentCoordinates();
     this.innerContentScale();
 
-    this.view3D.getItownsView().scene.add(object);
+    this.transformCtrls.visible = true;
+    this.transformCtrls.attach(this.boxSelector);
+    this.transformCtrls.updateMatrixWorld();
 
-    debugger;
+    // Request update every active frame
+    this.view3D
+      .getItownsView()
+      .addFrameRequester(MAIN_LOOP_EVENTS.AFTER_CAMERA_UPDATE, () =>
+        this._updateFieldsFromBoxSelector()
+      );
   }
 
   /**
@@ -162,6 +192,12 @@ export class LegonizerWindow extends Window {
     }
   }
 
+  windowDestroyed() {
+    this.boxSelector.visible = false;
+    this.transformCtrls.attach(this.boxSelector);
+    this.transformCtrls.visible = false;
+  }
+
   generateMockup() {
     // Create THREE js window with heightmap mesh
     const mockupWindow = new Window('MockupWindow', 'Mockup Window', true);
@@ -174,6 +210,10 @@ export class LegonizerWindow extends Window {
     mockupElement.style.height = 'auto';
     mockupElement.style.width = '30%';
     mockupElement.style.borderRadius = '15px';
+  }
+
+  selectArea() {
+    console.log('selection');
   }
 
   // //// GETTERS
