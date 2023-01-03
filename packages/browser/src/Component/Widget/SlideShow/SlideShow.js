@@ -192,7 +192,7 @@ export class SlideShow extends Window {
   /** Create all HTMLElements and fill this.htmlSlideShow*/
   initHtml() {
     const htmlSlideShow = document.createElement('div');
-    const coordinatesElement = this.fullputVector(
+    const coordinatesElement = this.createInputVector(
       ['X', 'Y', 'Z'],
       'Coordinates',
       100
@@ -201,7 +201,7 @@ export class SlideShow extends Window {
     this.coordinatesInputVectorID = coordinatesElement.inputVector.id;
     htmlSlideShow.appendChild(coordinatesElement.inputVector);
 
-    const rotationElement = this.fullputVector(
+    const rotationElement = this.createInputVector(
       ['X', 'Y', 'Z'],
       'Rotation',
       0.1
@@ -210,7 +210,7 @@ export class SlideShow extends Window {
     this.rotationInputVectorID = rotationElement.inputVector.id;
     htmlSlideShow.appendChild(rotationElement.inputVector);
 
-    const sizeElement = this.fullputVector(['Height', 'Width'], 'Size', 100);
+    const sizeElement = this.createInputVector(['Height', 'Width'], 'Size', 100);
     htmlSlideShow.appendChild(sizeElement.title);
     this.sizeInputVectorID = sizeElement.inputVector.id;
     htmlSlideShow.appendChild(sizeElement.inputVector);
@@ -437,7 +437,7 @@ export class SlideShow extends Window {
    * @param {number} step The step of HTMLElement input (type number)
    * @returns {object} title => HTMLElement 'h3' ; inputVector => HTMLElement 'div' contains labels and inputs HTMLElements
    */
-  fullputVector(labels, vectorName, step = 0.5) {
+  createInputVector(labels, vectorName, step = 0.5) {
     const titleVector = document.createElement('h3');
     titleVector.innerHTML = vectorName;
 

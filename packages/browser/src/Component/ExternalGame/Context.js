@@ -66,6 +66,8 @@ export class Context {
     /** @type {Game.Object3D} */
     this.currentGameObject3D = null;
 
+    this.userData = options.userData || {};
+
     // Overwrite conf
     const overWriteConf = JSON.parse(JSON.stringify(defaultConfigScene));
     JSONUtil.overWrite(overWriteConf, options.sceneConfig || {});
