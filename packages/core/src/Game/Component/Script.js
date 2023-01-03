@@ -39,6 +39,7 @@ const ScriptController = class extends Controller {
    *
    * @param {*} model
    * @param {*} object3D
+   * @param scripts
    */
   constructor(model, object3D, scripts) {
     super(model, object3D);
