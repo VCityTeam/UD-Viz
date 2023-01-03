@@ -210,7 +210,11 @@ export class SlideShow extends Window {
     this.rotationInputVectorID = rotationElement.inputVector.id;
     htmlSlideShow.appendChild(rotationElement.inputVector);
 
-    const sizeElement = this.createInputVector(['Height', 'Width'], 'Size', 100);
+    const sizeElement = this.createInputVector(
+      ['Height', 'Width'],
+      'Size',
+      100
+    );
     htmlSlideShow.appendChild(sizeElement.title);
     this.sizeInputVectorID = sizeElement.inputVector.id;
     htmlSlideShow.appendChild(sizeElement.inputVector);
