@@ -3,6 +3,7 @@
 // Components
 import { Window } from '../Components/GUI/js/Window';
 import * as THREE from 'three';
+import { MAIN_LOOP_EVENTS } from 'itowns';
 import './../About/About.css';
 
 /**
@@ -14,6 +15,18 @@ export class LegonizerWindow extends Window {
     super('legonizer', 'Legonizer', false);
 
     this.view3D = view3D;
+
+    // List of callbacks to set when the window is created
+    this.callbacksHTMLEl = [];
+
+    this.boxSelector = null;
+
+    // Request update every active frame
+    this.view3D
+      .getItownsView()
+      .addFrameRequester(MAIN_LOOP_EVENTS.AFTER_CAMERA_UPDATE, () =>
+        this._updateFieldsFromBoxSelector()
+      );
   }
 
   get innerContentHtml() {
@@ -36,11 +49,11 @@ export class LegonizerWindow extends Window {
     const coordinatesString = ['x', 'y', 'z'];
 
     for (let i = 0; i < 3; i++) {
-      // //coord Elements
+      // Coord Elements
       const coordElement = document.createElement('div');
       coordElement.id = coordinatesString[i] + '_grid';
       coordElement.style.display = 'grid';
-      coordElement.style.width = '30%';
+      coordElement.style.width = '100%';
       coordElement.style.height = 'auto';
 
       // Label
@@ -49,7 +62,7 @@ export class LegonizerWindow extends Window {
 
       // Input
       const inputElement = document.createElement('input');
-      inputElement.id = 'input' + coordinatesString[i];
+      inputElement.id = 'input_' + coordinatesString[i];
       inputElement.type = 'number';
       inputElement.style.width = 'inherit';
       inputElement.setAttribute('value', '0');
@@ -115,8 +128,6 @@ export class LegonizerWindow extends Window {
   }
 
   windowCreated() {
-    this.innerContentCoordinates();
-    this.innerContentScale();
     const geometry = new THREE.BoxGeometry(200, 200, 200);
     const object = new THREE.Mesh(
       geometry,
@@ -125,15 +136,36 @@ export class LegonizerWindow extends Window {
 
     object.position.x = this.view3D.extent.center().x;
     object.position.y = this.view3D.extent.center().y;
-    object.position.z = this.view3D.extent.center().z;
+    object.position.z = 200;
+
+    object.updateMatrixWorld();
+
+    this.boxSelector = object;
+
+    this.innerContentCoordinates();
+    this.innerContentScale();
 
     this.view3D.getItownsView().scene.add(object);
+
+    debugger;
+  }
+
+  /**
+   * Updates the form fields from the box selector position.
+   */
+  _updateFieldsFromBoxSelector() {
+    if (this.isVisible) {
+      const position = this.boxSelector.position;
+      this.inputCoordXElement.value = position.x;
+      this.inputCoordYElement.value = position.y;
+      this.inputCoordZElement.value = position.z;
+    }
   }
 
   generateMockup() {
     // Create THREE js window with heightmap mesh
     const mockupWindow = new Window('MockupWindow', 'Mockup Window', true);
-    // MockupWindow.innerContentHtml = `<div id="lego_mockup_window">`;
+    mockupWindow.innerContentHtml = `<div id="lego_mockup_window">`;
     const mockupElement = mockupWindow.header;
     console.log(mockupElement);
     mockupElement.style.left = 'unset';
@@ -159,6 +191,18 @@ export class LegonizerWindow extends Window {
     return `div_parameters`;
   }
 
+  get inputCoordinateXId() {
+    return `input_x`;
+  }
+
+  get inputCoordinateYId() {
+    return `input_y`;
+  }
+
+  get inputCoordinateZId() {
+    return `input_z`;
+  }
+
   get coordBoxElement() {
     return document.getElementById(this.coordBoxSectionId);
   }
@@ -169,5 +213,17 @@ export class LegonizerWindow extends Window {
 
   get scaleBoxElement() {
     return document.getElementById(this.scaleSectionId);
+  }
+
+  get inputCoordXElement() {
+    return document.getElementById(this.inputCoordinateXId);
+  }
+
+  get inputCoordYElement() {
+    return document.getElementById(this.inputCoordinateYId);
+  }
+
+  get inputCoordZElement() {
+    return document.getElementById(this.inputCoordinateZId);
   }
 }
