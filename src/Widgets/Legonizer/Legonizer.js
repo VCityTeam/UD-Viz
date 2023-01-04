@@ -141,7 +141,7 @@ export class LegonizerWindow extends Window {
 
   windowCreated() {
     if (!this.boxSelector) {
-      const geometry = new THREE.BoxGeometry(200, 200, 200);
+      const geometry = new THREE.BoxGeometry(1, 1, 1);
       const object = new THREE.Mesh(
         geometry,
         new THREE.MeshLambertMaterial({
@@ -188,9 +188,10 @@ export class LegonizerWindow extends Window {
     // Request update every active frame
     this.view3D
       .getItownsView()
-      .addFrameRequester(MAIN_LOOP_EVENTS.AFTER_CAMERA_UPDATE, () =>
-        this._updateFieldsFromBoxSelector()
-      );
+      .addFrameRequester(MAIN_LOOP_EVENTS.AFTER_CAMERA_UPDATE, () => {
+        this._updateFieldsFromBoxSelector();
+        // this.selectArea(this.itownsController);
+      });
 
     // // RECALCULER LES CONTROLS
     // const planarControl = new itowns.PlanarControls(
@@ -245,41 +246,38 @@ export class LegonizerWindow extends Window {
   selectArea(value) {
     this.itownsController = value;
     const view3D = this.view3D;
+    const selectionGeometry = this.boxSelector;
 
     if (value == true) {
+      console.log('Itowns');
       this.buttonSelectionElement.textContent = 'Select an area';
-      this.boxSelector.updateMatrixWorld();
-      // This.view3D.getItownsView().controls.dispose();
-      // RECALCULER LES CONTROLS
-      const planarControl = new itowns.PlanarControls(
-        this.view3D.getItownsView(),
-        {
-          handleCollision: false,
-          focusOnMouseOver: false,
-          focusOnMouseClick: false,
-        }
-      );
-      console.log(this.boxSelector);
 
-      this.view3D.getItownsView().controls = planarControl;
+      // Itowns control
+      const planarControl = new itowns.PlanarControls(view3D.getItownsView());
+      console.log('add control');
 
-      this.view3D.getItownsView().notifyChange(this.view3D.getCamera());
+      // Remove pointer lock
+      view3D.getInputManager().setPointerLock(false);
 
-      // Remove listeners
-      const manager = view3D.getInputManager();
-      this.listeners.forEach((listener) => {
-        manager.removeInputListener(listener);
-      });
-      this.listeners.length = 0;
+      // Enable itowns rendering
+      view3D.setIsRendering(true);
+
+      view3D.getItownsView().notifyChange(this.view3D.getCamera());
+      this.removeListeners();
     } else {
+      console.log('Selection');
+      this.buttonSelectionElement.textContent = 'Finish';
+
       // Remove itowns controls
-      this.view3D.getItownsView().controls.dispose();
+      view3D.getItownsView().controls.dispose();
+      console.log('dispose');
+      view3D.getItownsView().controls = null;
+
+      view3D.setIsRendering(false);
 
       // Add listeners
       const manager = view3D.getInputManager();
       const rootWelGL = view3D.getRootWebGL();
-
-      this.buttonSelectionElement.textContent = 'Finish';
 
       let isDragging = false;
 
@@ -309,6 +307,7 @@ export class LegonizerWindow extends Window {
         selectAreaObject.position.z = (minZ + maxZ) * 0.5;
         selectAreaObject.scale.z = 50 + maxZ - minZ; // 50 higher to see it
         selectAreaObject.updateMatrixWorld();
+        view3D.getItownsView().notifyChange();
       };
 
       const worldCoordStart = new THREE.Vector3();
@@ -339,7 +338,7 @@ export class LegonizerWindow extends Window {
 
         updateSelectAreaObject();
 
-        this.view3D.getScene().add(selectAreaObject);
+        view3D.getScene().add(selectAreaObject);
       };
       manager.addMouseInput(rootWelGL, 'mousedown', dragStart);
 
@@ -354,23 +353,23 @@ export class LegonizerWindow extends Window {
       const dragEnd = () => {
         if (!isDragging) return; // Was not dragging
 
-        this.boxSelector.position.x = selectAreaObject.position.x;
-        this.boxSelector.position.y = selectAreaObject.position.y;
-        this.boxSelector.position.z = selectAreaObject.position.z;
-
-        console.log(selectAreaObject.scale);
-        this.boxSelector.scale.x = selectAreaObject.scale.x;
-        this.boxSelector.scale.y = selectAreaObject.scale.y;
-        this.boxSelector.scale.z = selectAreaObject.scale.z;
-
-        const cloneSelected = selectAreaObject.clone();
-        view3D.getScene().add(cloneSelected);
-
         view3D.getScene().remove(selectAreaObject);
         isDragging = false;
 
         if (worldCoordStart.equals(worldCoordCurrent)) return; // It is not an area
-        console.log(this.boxSelector.scale);
+
+        this.boxSelector.position.x = selectAreaObject.position.x;
+        this.boxSelector.position.y = selectAreaObject.position.y;
+        this.boxSelector.position.z = selectAreaObject.position.z;
+
+        this.boxSelector.scale.x = selectAreaObject.scale.x;
+        this.boxSelector.scale.y = selectAreaObject.scale.y;
+        this.boxSelector.scale.z = selectAreaObject.scale.z;
+
+        // Const cloneSelected = selectAreaObject.clone();
+        // view3D.getScene().add(cloneSelected);
+        selectionGeometry.updateMatrixWorld();
+        view3D.getItownsView().notifyChange(this.view3D.getCamera());
       };
       manager.addMouseInput(rootWelGL, 'mouseup', dragEnd);
 
@@ -379,6 +378,15 @@ export class LegonizerWindow extends Window {
       this.listeners.push(dragging);
       this.listeners.push(dragEnd);
     }
+  }
+
+  removeListeners() {
+    // Remove listeners
+    const manager = this.view3D.getInputManager();
+    this.listeners.forEach((listener) => {
+      manager.removeInputListener(listener);
+    });
+    this.listeners.length = 0;
   }
 
   // //// GETTERS
