@@ -16,6 +16,7 @@ before_install:
   - npm --version
 
 install:
+  - npm install
   - npm install --global remark-cli remark-validate-links
 
 jobs:
