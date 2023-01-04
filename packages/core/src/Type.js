@@ -1,5 +1,11 @@
 module.exports = {
-  // https://stackoverflow.com/questions/175739/built-in-way-in-javascript-to-check-if-a-string-is-a-valid-number
+  /**
+   * Check if a string is a valid number
+   * inspired of https://stackoverflow.com/questions/175739/built-in-way-in-javascript-to-check-if-a-string-is-a-valid-number
+   *
+   * @param {string} str - string to check
+   * @returns {boolean} true if it's a valid number
+   */
   isNumeric: function (str) {
     if (str === 0) return true;
     if (str instanceof Object) return false;
