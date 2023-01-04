@@ -24,7 +24,9 @@ export class LegonizerWindow extends Window {
 
     this.transformCtrls;
 
-    this.selection = true;
+    this.itownsController = true;
+
+    this.listeners = [];
   }
 
   get innerContentHtml() {
@@ -58,15 +60,23 @@ export class LegonizerWindow extends Window {
       const labelElement = document.createElement('h3');
       labelElement.textContent = coordinatesString[i];
 
-      // Input
+      // Input pos
       const inputElement = document.createElement('input');
       inputElement.id = 'input_' + coordinatesString[i];
       inputElement.type = 'number';
       inputElement.style.width = 'inherit';
       inputElement.setAttribute('value', '0');
 
+      // Input Scale
+      const inputScaleElement = document.createElement('input');
+      inputScaleElement.id = 'input_scale_' + coordinatesString[i];
+      inputScaleElement.type = 'number';
+      inputScaleElement.style.width = 'inherit';
+      inputScaleElement.setAttribute('value', '0');
+
       coordElement.appendChild(labelElement);
       coordElement.appendChild(inputElement);
+      coordElement.appendChild(inputScaleElement);
 
       inputVector.appendChild(coordElement);
     }
@@ -79,7 +89,7 @@ export class LegonizerWindow extends Window {
     buttonSelectionAreaElement.textContent = 'Select an area';
 
     buttonSelectionAreaElement.onclick = () => {
-      this.selectArea();
+      this.selectArea(!this.itownsController);
     };
 
     this.coordBoxElement.appendChild(buttonSelectionAreaElement);
@@ -134,7 +144,11 @@ export class LegonizerWindow extends Window {
       const geometry = new THREE.BoxGeometry(200, 200, 200);
       const object = new THREE.Mesh(
         geometry,
-        new THREE.MeshLambertMaterial({ color: 0x00ff00 })
+        new THREE.MeshLambertMaterial({
+          color: 0x00ff00,
+          opacity: 0.3,
+          transparent: true,
+        })
       );
 
       object.position.x = this.view3D.extent.center().x;
@@ -145,32 +159,31 @@ export class LegonizerWindow extends Window {
 
       // Box selector
       this.boxSelector = object;
-      this.view3D.getScene().add(object);
+      this.view3D.getScene().add(this.boxSelector);
 
-      this.transformCtrls = new TransformControls(
-        this.view3D.getCamera(),
-        this.view3D.getItownsView().mainLoop.gfxEngine.label2dRenderer.domElement
-      );
+      // This.transformCtrls = new TransformControls(
+      //   this.view3D.getCamera(),
+      //   this.view3D.getItownsView().mainLoop.gfxEngine.label2dRenderer.domElement
+      // );
 
-      // Update view when the box selector is changed
-      this.transformCtrls.addEventListener('change', () => {
-        this.view3D.getItownsView().controls.dispose();
-        this.view3D.getItownsView().notifyChange(this.view3D.getCamera());
-        this.transformCtrls.updateMatrixWorld();
-      });
+      // // Update view when the box selector is changed
+      // this.transformCtrls.addEventListener('change', () => {
+      //   this.view3D.getItownsView().controls.dispose();
+      //   this.view3D.getItownsView().notifyChange(this.view3D.getCamera());
+      //   this.transformCtrls.updateMatrixWorld();
+      // });
 
-      this.view3D.getScene().add(this.transformCtrls);
+      // this.view3D.getScene().add(this.transformCtrls);
     }
-    this.view3D.getItownsView().controls.enableRotation = false;
 
     this.boxSelector.visible = true;
     // HTML content
     this.innerContentCoordinates();
     this.innerContentScale();
 
-    this.transformCtrls.visible = true;
-    this.transformCtrls.attach(this.boxSelector);
-    this.transformCtrls.updateMatrixWorld();
+    // This.transformCtrls.visible = true;
+    // this.transformCtrls.attach(this.boxSelector);
+    // this.transformCtrls.updateMatrixWorld();
 
     // Request update every active frame
     this.view3D
@@ -179,16 +192,16 @@ export class LegonizerWindow extends Window {
         this._updateFieldsFromBoxSelector()
       );
 
-    // RECALCULER LES CONTROLS
-    const planarControl = new itowns.PlanarControls(
-      this.view3D.getItownsView(),
-      {
-        handleCollision: false,
-        focusOnMouseOver: false,
-        focusOnMouseClick: false,
-      }
-    );
-    this.view3D.getItownsView().controls = planarControl;
+    // // RECALCULER LES CONTROLS
+    // const planarControl = new itowns.PlanarControls(
+    //   this.view3D.getItownsView(),
+    //   {
+    //     handleCollision: false,
+    //     focusOnMouseOver: false,
+    //     focusOnMouseClick: false,
+    //   }
+    // );
+    // this.view3D.getItownsView().controls = planarControl;
     // Console.log(planarControl);
   }
 
@@ -201,6 +214,10 @@ export class LegonizerWindow extends Window {
       this.inputCoordXElement.value = position.x;
       this.inputCoordYElement.value = position.y;
       this.inputCoordZElement.value = position.z;
+
+      this.inputCoordScaleXElement.value = this.boxSelector.scale.x;
+      this.inputCoordScaleYElement.value = this.boxSelector.scale.y;
+      this.inputCoordScaleZElement.value = this.boxSelector.scale.z;
     }
   }
 
@@ -225,24 +242,51 @@ export class LegonizerWindow extends Window {
   }
 
   // Select Area from 3DTiles
-  selectArea() {
-    if (this.selection) {
+  selectArea(value) {
+    this.itownsController = value;
+    const view3D = this.view3D;
+
+    if (value == true) {
+      this.buttonSelectionElement.textContent = 'Select an area';
+      this.boxSelector.updateMatrixWorld();
+      // This.view3D.getItownsView().controls.dispose();
+      // RECALCULER LES CONTROLS
+      const planarControl = new itowns.PlanarControls(
+        this.view3D.getItownsView(),
+        {
+          handleCollision: false,
+          focusOnMouseOver: false,
+          focusOnMouseClick: false,
+        }
+      );
+      console.log(this.boxSelector);
+
+      this.view3D.getItownsView().controls = planarControl;
+
+      this.view3D.getItownsView().notifyChange(this.view3D.getCamera());
+
+      // Remove listeners
+      const manager = view3D.getInputManager();
+      this.listeners.forEach((listener) => {
+        manager.removeInputListener(listener);
+      });
+      this.listeners.length = 0;
+    } else {
       // Remove itowns controls
       this.view3D.getItownsView().controls.dispose();
-
-      this.buttonSelectionElement.textContent = 'Finish';
-      const view3D = this.view3D;
 
       // Add listeners
       const manager = view3D.getInputManager();
       const rootWelGL = view3D.getRootWebGL();
+
+      this.buttonSelectionElement.textContent = 'Finish';
 
       let isDragging = false;
 
       const geometry = new THREE.BoxGeometry(1, 1, 1);
       const material = new THREE.MeshBasicMaterial({
         color: 0x0000ff,
-        opacity: 0.3,
+        opacity: 0.5,
         transparent: true,
       });
       const selectAreaObject = new THREE.Mesh(geometry, material);
@@ -264,6 +308,7 @@ export class LegonizerWindow extends Window {
         maxZ = Math.max(maxZ, result.z);
         selectAreaObject.position.z = (minZ + maxZ) * 0.5;
         selectAreaObject.scale.z = 50 + maxZ - minZ; // 50 higher to see it
+        selectAreaObject.updateMatrixWorld();
       };
 
       const worldCoordStart = new THREE.Vector3();
@@ -273,7 +318,7 @@ export class LegonizerWindow extends Window {
       const updateSelectAreaObject = () => {
         center.lerpVectors(worldCoordStart, worldCoordCurrent, 0.5);
 
-        // Place on the xy plane
+        // Place on the x y plane
         selectAreaObject.position.x = center.x;
         selectAreaObject.position.y = center.y;
 
@@ -309,48 +354,30 @@ export class LegonizerWindow extends Window {
       const dragEnd = () => {
         if (!isDragging) return; // Was not dragging
 
+        this.boxSelector.position.x = selectAreaObject.position.x;
+        this.boxSelector.position.y = selectAreaObject.position.y;
+        this.boxSelector.position.z = selectAreaObject.position.z;
+
+        console.log(selectAreaObject.scale);
+        this.boxSelector.scale.x = selectAreaObject.scale.x;
+        this.boxSelector.scale.y = selectAreaObject.scale.y;
+        this.boxSelector.scale.z = selectAreaObject.scale.z;
+
+        const cloneSelected = selectAreaObject.clone();
+        view3D.getScene().add(cloneSelected);
+
         view3D.getScene().remove(selectAreaObject);
         isDragging = false;
 
         if (worldCoordStart.equals(worldCoordCurrent)) return; // It is not an area
-
-        // edit conf go
-        // const ws = this.localCtx.getWebSocketService();
-        // const ImuvConstants = view3D.getLocalScriptModules()['ImuvConstants'];
-        // const localScriptComp = this.go.getComponent(Game.LocalScript.TYPE);
-        // ws.emit(ImuvConstants.WEBSOCKET.MSG_TYPES.EDIT_CONF_COMPONENT, {
-        //   goUUID: this.go.getUUID(),
-        //   componentUUID: localScriptComp.getUUID(),
-        //   key: 'area',
-        //   value: {
-        //     start: worldCoordStart.toArray(),
-        //     end: worldCoordCurrent.toArray(),
-        //   },
-        // });
+        console.log(this.boxSelector.scale);
       };
       manager.addMouseInput(rootWelGL, 'mouseup', dragEnd);
 
       // Record for further dispose
-      // this.listeners.push(dragStart);
-      // this.listeners.push(dragging);
-      // this.listeners.push(dragEnd);
-
-      this.selection = false;
-    } else {
-      this.buttonSelectionElement.textContent = 'Select an area';
-
-      // RECALCULER LES CONTROLS
-      const planarControl = new itowns.PlanarControls(
-        this.view3D.getItownsView(),
-        {
-          handleCollision: false,
-          focusOnMouseOver: false,
-          focusOnMouseClick: false,
-        }
-      );
-      this.view3D.getItownsView().controls = planarControl;
-
-      this.selection = true;
+      this.listeners.push(dragStart);
+      this.listeners.push(dragging);
+      this.listeners.push(dragEnd);
     }
   }
 
@@ -385,6 +412,18 @@ export class LegonizerWindow extends Window {
     return `button_selection`;
   }
 
+  get inputCoordinateScaleXId() {
+    return `input_scale_x`;
+  }
+
+  get inputCoordinateScaleYId() {
+    return `input_scale_y`;
+  }
+
+  get inputCoordinateScaleZId() {
+    return `input_scale_z`;
+  }
+
   get coordBoxElement() {
     return document.getElementById(this.coordBoxSectionId);
   }
@@ -407,6 +446,18 @@ export class LegonizerWindow extends Window {
 
   get inputCoordZElement() {
     return document.getElementById(this.inputCoordinateZId);
+  }
+
+  get inputCoordScaleXElement() {
+    return document.getElementById(this.inputCoordinateScaleXId);
+  }
+
+  get inputCoordScaleYElement() {
+    return document.getElementById(this.inputCoordinateScaleYId);
+  }
+
+  get inputCoordScaleZElement() {
+    return document.getElementById(this.inputCoordinateScaleZId);
   }
 
   get buttonSelectionElement() {
