@@ -1,64 +1,27 @@
 const packageJSON = require('@ud-viz/core/package.json');
 const THREE = require('three');
-const { Base } = require('./Component/Component');
+const { Component } = require('./Component/Component');
 const ExternalScript = require('./Component/ExternalScript');
 const GameScript = require('./Component/GameScript');
 const Collider = require('./Component/Collider');
 const Audio = require('./Component/Audio');
 const Render = require('./Component/Render');
-
-/**
- * Return a deep copy (new uuid are generated) of a gameObject
- *
- * @param {GameObject} gameObject
- * @returns {GameObject} a new gameobject with new uuid base on gameObject
- */
-// GameObject.deepCopy = function (gameObject) {
-//   const cloneJSON = gameObject.toJSON(true);
-//   // Rename uuid
-//   JSONUtil.parse(cloneJSON, function (json, key) {
-//     const keyLowerCase = key.toLowerCase();
-//     if (keyLowerCase === 'uuid') json[key] = THREE.MathUtils.generateUUID();
-
-//     if (keyLowerCase === 'name') {
-//       json[key] = json[key] + ' (clone)';
-//     }
-//   });
-//   return new GameObject(cloneJSON);
-// };
-
-// /**
-//  * Search in the object3D the object3D sign with uuid
-//  *
-//  * @param {string} uuid the uuid of the gameobject
-//  * @param {THREE.Object3D} obj the 3Dobject where to search
-//  * @param {boolean} upSearch true up search false bottom search
-//  * @returns {THREE.Object3D} the object3D sign with the uuid of the gameobject
-//  */
-// GameObject.findObject3D = function (uuid, obj, upSearch = true) {
-//   let result;
-//   if (upSearch) {
-//     let current = obj;
-//     while (current) {
-//       if (current.userData.gameObjectUUID == uuid) {
-//         result = current;
-//         break;
-//       }
-
-//       current = current.parent;
-//     }
-//   } else {
-//     obj.traverse(function (child) {
-//       if (child.userData.gameObjectUUID == uuid) {
-//         result = child;
-//       }
-//     });
-//   }
-
-//   return result;
-// };
+const JSONUtil = require('../JSONUtil');
 
 const Object3D = class extends THREE.Object3D {
+  /**
+   * Base class extended {@link THREE.Object3D} to compose 3D scene of ud-viz game
+   *
+   * @param {object} json - json to configure the object3D
+   * @param {string=} json.uuid - uuid
+   * @param {string=} json.parentUUID - uuid of this parent object3D
+   * @param {string} [json.name=""] - name
+   * @param {boolean=} [json.static=false] - static
+   * @param {boolean=} [json.outdated=false] - outdated
+   * @param {boolean=} [json.gameContextUpdate=true] - should be update from the game context
+   * @param {string[]=} [json.forceToJSONComponent=[]] - force certain component to be export in json
+   * @param {object<string,object>=} [json.components={}] - components @see Component
+   */
   constructor(json) {
     super();
 
@@ -223,8 +186,8 @@ const Object3D = class extends THREE.Object3D {
 
   /**
    *
-   * @param {string} type
-   * @returns {Base}
+   * @param {string} type - type of the component
+   * @returns {Component} - component of type
    */
   getComponent(type) {
     return this.components[type];
@@ -357,6 +320,26 @@ Object3D.rotate = function (object3D, euler) {
   object3D.rotateZ(euler.z);
   object3D.rotateX(euler.x);
   object3D.rotateY(euler.y);
+};
+
+/**
+ * Return a deep copy (new uuid are generated) of a gameObject
+ *
+ * @param {GameObject} gameObject
+ * @returns {GameObject} a new gameobject with new uuid base on gameObject
+ */
+Object3D.deepCopy = function (object3D) {
+  const cloneJSON = object3D.toJSON(true);
+  // Rename uuid
+  JSONUtil.parse(cloneJSON, function (json, key) {
+    const keyLowerCase = key.toLowerCase();
+    if (keyLowerCase === 'uuid') json[key] = THREE.MathUtils.generateUUID();
+
+    if (keyLowerCase === 'name') {
+      json[key] = 'Clone of ' + json[key];
+    }
+  });
+  return new Object3D(cloneJSON);
 };
 
 module.exports = Object3D;

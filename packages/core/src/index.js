@@ -1,5 +1,6 @@
-// @ud-viz/core bundle API
-
+/**
+ * ud-viz core library (browser + node compatible)
+ */
 module.exports = {
   Data: require('./Data'),
   JSONUtil: require('./JSONUtil'),
@@ -20,7 +21,9 @@ module.exports = {
       ScriptController: require('./Game/Component/Script').Controller,
       Controller: require('./Game/Component/Component').Controller,
     },
-    // CONSTANT should be maybe elsewhere for now it's okay
+    /**
+     * Constant used in Game
+     */
     CONSTANT: {
       MOVE_FORWARD: 'move_forward',
       MOVE_BACKWARD: 'move_backward',

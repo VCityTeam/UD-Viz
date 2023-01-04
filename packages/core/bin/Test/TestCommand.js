@@ -13,6 +13,7 @@ const gameContext = new Core.Game.Context(
         this.context.getCommands().forEach((cmd) => {
           switch (cmd.getType()) {
             case COMMAND_TYPE:
+              console.log(cmd);
               process.exit(0);
               break;
             default:
@@ -45,7 +46,6 @@ gameContext.load().then(() => {
     gameContext.onCommand([
       new Core.Command({
         type: COMMAND_TYPE,
-        data: 42,
       }),
     ]);
   }, 1000);

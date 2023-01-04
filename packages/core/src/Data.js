@@ -1,99 +1,131 @@
 const THREE = require('three');
 const Type = require('./Type');
 
-class PartialMessage {
-  constructor(messageUUID, data) {
-    this.messageUUID = messageUUID;
+class PartialString {
+  /**
+   * Part of a global string
+   *
+   * @param {string} stringUUID - uuid of the initial string splited
+   * @param {string} data - part of the initial string
+   */
+  constructor(stringUUID, data) {
+    /** @type {string} - uuid of the initial string splited */
+    this.stringUUID = stringUUID;
+
+    /** @type {string} - part of the initial string */
     this.data = data;
+
+    /** @type {number} - index of the position of this in the initial string */
     this.index = -1;
-    this.totalMessage = -1;
+
+    /** @type {number} - total number of partial string of the initial string */
+    this.totalPartialStringCount = -1;
   }
 
+  /**
+   * Set the index of this
+   *
+   * @param {number} index - index of this
+   */
   setIndex(index) {
     this.index = index;
   }
 
-  setTotalMessage(value) {
-    this.totalMessage = value;
+  /**
+   * Set the total partial string count
+   *
+   * @param {number} value - total partial string count of this
+   */
+  setTotalPartialStringCount(value) {
+    this.totalPartialStringCount = value;
   }
 }
 
-class MessageComposer {
+class StringComposer {
+  /**
+   * Recompose string with {@link PartialString}
+   */
   constructor() {
-    this.bufferMessage = {};
+    /** @type {Object<string,Object<number,PartialString>>} - buffer of all string being recompose */
+    this.buffer = {};
   }
 
   /**
+   * Recompose a string with a partial string
    *
-   * @param {PartialMessage} partialMessage
-   * @returns
+   * @param {PartialString} partialString - part of a string being recompose
+   * @returns {string|null} - return null if the recomposition still need partial string, the initial string otherwise
    */
-  recomposeMessage(partialMessage) {
-    const messageUUID = partialMessage.messageUUID;
-    if (!this.bufferMessage[messageUUID]) {
-      // First partial message
-      this.bufferMessage[messageUUID] = {};
+  recompose(partialString) {
+    const stringUUID = partialString.stringUUID;
+    if (!this.buffer[stringUUID]) {
+      // First partial string of this string
+      this.buffer[stringUUID] = {};
     }
 
-    // Record
-    this.bufferMessage[messageUUID][partialMessage.index] = partialMessage;
+    // Record partial string
+    this.buffer[stringUUID][partialString.index] = partialString;
 
-    // Check if all the partial message are here
+    // Check if all the partial string are here
     if (
-      Object.keys(this.bufferMessage[messageUUID]).length ==
-      partialMessage.totalMessage
+      Object.keys(this.buffer[stringUUID]).length ==
+      partialString.totalPartialStringCount
     ) {
-      // Can recompose message
+      // Can recompose initial string
       let bufferString = '';
-      for (let index = 0; index < partialMessage.totalMessage; index++) {
-        bufferString += this.bufferMessage[messageUUID][index].data;
+      for (
+        let index = 0;
+        index < partialString.totalPartialStringCount;
+        index++
+      ) {
+        bufferString += this.buffer[stringUUID][index].data;
       }
 
       // clean buffer
-      delete this.bufferMessage[messageUUID];
+      delete this.buffer[stringUUID];
 
-      return JSON.parse(bufferString);
+      return bufferString;
     }
 
-    return null; // No complete message receive
+    return null; // No complete
   }
 }
 
-MessageComposer.MAX_MESSAGE_SIZE = 10000;
+/**
+ * Max size of the data of a {@link PartialString}
+ */
+StringComposer.MAX_STRING_SIZE = 10000;
 
 /**
+ * Split a large string (superior at {@link StringComposer.MAX_STRING_SIZE}) into {@link PartialString}
  *
- * @param {string} message
- * @returns {PartialMessage[]}
+ * @param {string} largeString - a string with a size superior at {@link StringComposer.MAX_STRING_SIZE}
+ * @returns {PartialString[]} - an array containing all the {@link PartialString}
  */
-MessageComposer.splitMessage = function (message) {
-  let stringMessage = JSON.stringify(message);
-  const messageUUID = THREE.MathUtils.generateUUID();
+StringComposer.splitString = function (largeString) {
+  const stringUUID = THREE.MathUtils.generateUUID();
   const result = [];
 
-  // Cut in several message
-  while (stringMessage.length > MessageComposer.MAX_MESSAGE_SIZE) {
-    const sliceMessage = stringMessage.slice(
-      0,
-      MessageComposer.MAX_MESSAGE_SIZE
+  // Cut in several partial message
+  while (largeString.length > StringComposer.MAX_STRING_SIZE) {
+    const sliceMessage = largeString.slice(0, StringComposer.MAX_STRING_SIZE);
+    largeString = largeString.slice(
+      StringComposer.MAX_STRING_SIZE,
+      largeString.length
     );
-    stringMessage = stringMessage.slice(
-      MessageComposer.MAX_MESSAGE_SIZE,
-      stringMessage.length
-    );
-    result.push(new PartialMessage(messageUUID, sliceMessage));
+    result.push(new PartialString(stringUUID, sliceMessage));
   }
 
   // Add what need
-  if (stringMessage.length) {
-    result.push(new PartialMessage(messageUUID, stringMessage));
+  if (largeString.length) {
+    result.push(new PartialString(stringUUID, largeString));
   }
 
-  // Push info to recompose message
+  // Push info to recompose string
   for (let index = 0; index < result.length; index++) {
-    const partialMessage = result[index];
-    partialMessage.setIndex(index);
-    partialMessage.setTotalMessage(result.length);
+    const partialString = result[index];
+    partialString.setIndex(index);
+    partialString.setTotalPartialStringCount(result.length);
   }
 
   return result;
@@ -102,19 +134,19 @@ MessageComposer.splitMessage = function (message) {
 /**
  * Take an array of string and check if it is in vector3 format
  *
- * @param {Array<string>} subString array of string
- * @returns {boolean} true if it is vector3 format
+ * @param {Array<string>} subString - array of string
+ * @returns {boolean} - true if it is vector3 format
  */
 function checkIfSubStringIsVector3(subString) {
   if (subString.length != 3) {
-    // Need three component
+    // Need three string
     return false;
   }
 
   for (let index = 0; index < subString.length; index++) {
     const element = subString[index];
     if (!Type.isNumeric(element)) {
-      // All component should be numerics
+      // All string should be numerics
       return false;
     }
   }
@@ -125,16 +157,16 @@ function checkIfSubStringIsVector3(subString) {
 /**
  * Take an array of string and check if it is in euler format
  *
- * @param {Array<string>} subString array of string
- * @returns {boolean} true if it is euler format
+ * @param {Array<string>} subString - array of string
+ * @returns {boolean} - true if it is euler format
  */
 function checkIfSubStringIsEuler(subString) {
   if (subString.length != 4) {
-    // Need four components
+    // Need four string
     return false;
   }
 
-  // Three first components have to be numerics
+  // Three first string have to be numerics
   if (!Type.isNumeric(subString[0])) return false;
   if (!Type.isNumeric(subString[1])) return false;
   if (!Type.isNumeric(subString[2])) return false;
@@ -156,8 +188,8 @@ function checkIfSubStringIsEuler(subString) {
 /**
  * Taking a string from the unpacking URI and splitting it into an array of strings.
  *
- * @param {string} uriComp  The string from the unpacking URI
- * @returns {Array<string>} returns the array of strings if it is in vector3 format, otherwise returns null
+ * @param {string} uriComp - The string from the unpacking URI
+ * @returns {Array<string>} - returns the array of strings if it is in vector3 format, otherwise returns null
  */
 function vector3ArrayFromURIComponent(uriComp) {
   const subString = uriComp.split(',');
@@ -171,8 +203,8 @@ function vector3ArrayFromURIComponent(uriComp) {
 /**
  * Taking a string from the unpacking URI and splitting it into an array of strings.
  *
- * @param {string} uriComp The string from the unpacking URI
- * @returns {Array<string>} returns the array of strings if it is in euler format, otherwise returns null
+ * @param {string} uriComp - The string from the unpacking URI
+ * @returns {Array<string>} - returns the array of strings if it is in euler format, otherwise returns null
  */
 function eulerArrayFromURIComponent(uriComp) {
   const subString = uriComp.split(',');
@@ -184,10 +216,10 @@ function eulerArrayFromURIComponent(uriComp) {
 }
 
 /**
- * Serialize data
+ * Convert an Object into a Int32Array
  *
- * @param {object} obj the object to serialize
- * @returns {SharedArrayBuffer} serialized data
+ * @param {object} obj - object to convert
+ * @returns {Int32Array} - array converted
  */
 function objectToInt32Array(obj) {
   const OString = JSON.stringify(obj);
@@ -204,10 +236,10 @@ function objectToInt32Array(obj) {
 }
 
 /**
- * Unserialize data
+ * Convert a Int32Array into an Object
  *
- * @param {SharedArrayBuffer} array serialized data
- * @returns {JSON} object unserialized
+ * @param {Int32Array} array - array to convert
+ * @returns {JSON} - object converted
  */
 function int32ArrayToObject(array) {
   const str = String.fromCharCode.apply(this, array);
@@ -215,9 +247,10 @@ function int32ArrayToObject(array) {
 }
 
 /**
+ * Convert a data URI into a Buffer
  *
- * @param {*} uri
- * @returns
+ * @param {string} uri - data uri to convert
+ * @returns {Buffer|null} - the buffer of the data uri or null if uri is not a data uri
  */
 function dataUriToBuffer(uri) {
   if (!/^data:/i.test(uri)) {
@@ -269,9 +302,8 @@ function dataUriToBuffer(uri) {
  * body. To check if a value is empty, this function just convert it into
  * a boolean.
  *
- * @format
  * @param {FormData} formData The form data.
- * @returns The same data, without the fields containing an empty value.
+ * @returns {FormData} The same data, without the fields containing an empty value.
  */
 function removeEmptyValues(formData) {
   const emptyKeys = [];
@@ -302,6 +334,7 @@ function removeEmptyValues(formData) {
  * @param {number} chunkSize The size of the chunks used to process the raw
  * data. If you get an exception saying that too many arguments were passed as
  * parameters, try reducing this value.
+ * @returns {string} - data uri
  */
 function imageToDataURI(arrayBuffer, mimeType, chunkSize = 8 * 1024) {
   // The response is a raw file, we need to convert it to base64
@@ -331,6 +364,7 @@ function imageToDataURI(arrayBuffer, mimeType, chunkSize = 8 * 1024) {
  *
  * @param {object} obj
  * @param {string} path
+ * @returns {*}
  * @example
  * const obj = {test: {msg: "Hello world !"}};
  * console.log(getAttributeByPath(obj, "test.msg")); // prints "Hello world !";
@@ -352,8 +386,9 @@ function getAttributeByPath(obj, path) {
  * Checks the equality of two objects by their properties. For two objects to
  * be equal, they must have the same keys and the same values.
  *
- * @param {any} a An object.
- * @param {any} b An object.
+ * @param {any} a - An object.
+ * @param {any} b - An object.
+ * @returns {boolean} - true if equals
  */
 function objectEquals(a, b) {
   // Set of a's keys
@@ -374,8 +409,8 @@ function objectEquals(a, b) {
 }
 
 module.exports = {
-  PartialMessage: PartialMessage,
-  MessageComposer: MessageComposer,
+  PartialString: PartialString,
+  StringComposer: StringComposer,
   checkIfSubStringIsEuler: checkIfSubStringIsEuler,
   checkIfSubStringIsVector3: checkIfSubStringIsVector3,
   vector3ArrayFromURIComponent: vector3ArrayFromURIComponent,
