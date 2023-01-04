@@ -11,7 +11,7 @@ export class Planar extends Base {
    * @param {object} options
    * @param {boolean} options.hasItownsControls
    * @param {boolean} options.useItownsMainLoop - rendering is done in itowns.mainLoop default is true
-   * @param {itowns.Coordinates} options.coordinates
+   * @param {itowns.Coordinates} options.coordinates - itowns coordinates of the initial camera position
    * @param {number} options.heading
    * @param {number} options.range
    * @param {number} options.tilt

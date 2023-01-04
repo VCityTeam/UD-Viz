@@ -20,38 +20,47 @@ const Object3D = class extends THREE.Object3D {
    * @param {boolean=} [json.outdated=false] - outdated
    * @param {boolean=} [json.gameContextUpdate=true] - should be update from the game context
    * @param {string[]=} [json.forceToJSONComponent=[]] - force certain component to be export in json
-   * @param {object<string,object>=} [json.components={}] - components @see Component
+   * @param {Object<string,object>=} [json.components={}] - components {@link Component}
+   * @param {Array=} [json.matrix] - matrix
+   * @param {object[]} [json.children] - json of children of object3D
    */
   constructor(json) {
     super();
 
-    this.isGameObject3D = true; // => tag it to make the difference between this and THREE.Object3D
+    /** @type {boolean} tag to make difference between this and THREE.Object3D */
+    this.isGameObject3D = true;
 
     json = Object3D.parseJSON(json);
 
-    if (json.uuid != undefined) this.uuid = json.uuid;
+    if (json.uuid != undefined) {
+      /** @type {string} - uuid of object3D */
+      this.uuid = json.uuid;
+    }
 
-    /** the uuid of the parent when this has been toJSON */
+    /** @type {string|null} - uuid of the parent object3D */
     this.parentUUID = json.parentUUID || null;
 
+    /** @type {string} - name of object3D */
     this.name = json.name || '';
 
+    /** @type {boolean} - true if the object3D is not going to move in space */
     this.static = json.static || false;
     // https://threejs.org/docs/#manual/en/introduction/How-to-update-things
     this.matrixAutoUpdate = !this.static;
 
-    // maybe find another name
+    /** @type {boolean} - true if object3D model has changed */
     this.outdated = json.outdated || false;
 
+    /** @type {boolean} - true if object3D should consider game context update  */
     this.gameContextUpdate = true;
     if (json.gameContextUpdate != undefined) {
       this.gameContextUpdate = json.gameContextUpdate;
     }
 
-    // List to force certain component to be serialize
+    /** @type {string[]} - force certain component to be export in json */
     this.forceToJSONComponent = json.forceToJSONComponent || [];
 
-    /** @type {object} */
+    /** @type {Object<string,object>} */
     this.components = {};
     this.updateComponentFromJSON(json.components);
     this.updateMatrixFromJSON(json.matrix);
@@ -63,10 +72,19 @@ const Object3D = class extends THREE.Object3D {
     }
   }
 
+  /**
+   *
+   * @returns {boolean} - true if this has game context update
+   */
   hasGameContextUpdate() {
     return this.gameContextUpdate;
   }
 
+  /**
+   *
+   * @param {Array} jsonMatrix - array of the matrix
+   * @returns {void}
+   */
   updateMatrixFromJSON(jsonMatrix) {
     if (!jsonMatrix) return;
     this.matrix.fromArray(jsonMatrix);
@@ -74,9 +92,15 @@ const Object3D = class extends THREE.Object3D {
   }
 
   /**
-   * when using this function components should not have controllers
    *
-   * @param {*} json
+   * @param {object} json - json to update from
+   * @param {string=} json.uuid - uuid
+   * @param {Object<string,object>=} [json.components={}] - components {@link Component}
+   * @param {Array=} [json.matrix] - matrix
+   * @param {string} [json.name=""] - name
+   * @param {boolean=} [json.static=false] - static
+   * @param {boolean=} [json.outdated=false] - outdated
+   * @param {object[]} [json.children] - json of children of object3D
    */
   updatefromJSON(json) {
     json = Object3D.parseJSON(json);
@@ -107,6 +131,10 @@ const Object3D = class extends THREE.Object3D {
     });
   }
 
+  /**
+   *
+   * @param {Object<string,object>} componentsJSON - json components to update from
+   */
   updateComponentFromJSON(componentsJSON) {
     if (!componentsJSON) {
       return;
@@ -168,18 +196,34 @@ const Object3D = class extends THREE.Object3D {
     }
   }
 
+  /**
+   *
+   * @param {boolean} value - true if object3D is outdated (model has changed)
+   */
   setOutdated(value) {
     this.outdated = value;
   }
 
+  /**
+   *
+   * @returns {boolean} - true if object3D is outdated (model has changed)
+   */
   isOutdated() {
     return this.outdated;
   }
 
+  /**
+   *
+   * @returns {boolean} - true if object3D is static
+   */
   isStatic() {
     return this.static;
   }
 
+  /**
+   *
+   * @returns {Object<string,object>} - components of object3D @see Component
+   */
   getComponents() {
     return this.components;
   }
@@ -193,12 +237,26 @@ const Object3D = class extends THREE.Object3D {
     return this.components[type];
   }
 
+  /**
+   *
+   * @returns {Object3D} - clone of object3D
+   */
   clone() {
     return new Object3D(this.toJSON());
   }
 
-  // possibility to stop the propagation +
-  // Remove a object3D can't be done while parent is traversing
+  /**
+   * @callback TraverseCallback
+   * @param {Object3D} object3D - the object3D traversed
+   */
+
+  /**
+   * Apply a callback to object3D and its children recursively like {@link THREE.Object3D}
+   * This is not exactly the same one since there is the possibility to stop the traverse and the possibility to remove an object3D while parent is traversed
+   *
+   * @param {TraverseCallback} cb - callback to apply to object3D and its children recursively
+   * @returns {boolean} - true when traverse should be stop
+   */
   traverse(cb) {
     if (cb(this)) return true;
 
@@ -211,11 +269,10 @@ const Object3D = class extends THREE.Object3D {
   }
 
   /**
-   * do not use the THREE.Object3D parent method
    *
-   * @param {*} full
-   * @param withMetadata
-   * @returns
+   * @param {boolean=} [full=true] - component with controllers should be added to the result
+   * @param {boolean=} [withMetadata=false] - add metadata to the result
+   * @returns {object} - object of the object3D if withMetatdata = false, otherwise the object is store in result.object and metadata in result.metadata
    */
   toJSON(full = true, withMetadata = false) {
     const result = {};
@@ -276,6 +333,12 @@ const Object3D = class extends THREE.Object3D {
   }
 };
 
+/**
+ * If json has metadata update object of object3D if not nothing is done
+ *
+ * @param {object} json - json of object3D
+ * @returns {object} - json object of object3D
+ */
 Object3D.parseJSON = function (json) {
   if (!json) {
     console.error(json);
@@ -291,30 +354,60 @@ Object3D.parseJSON = function (json) {
   return json;
 };
 
-// Util
-
+/**
+ *
+ * @returns {THREE.Vector3} - Default forward of Object3D
+ */
 Object3D.DefaultForward = function () {
   return new THREE.Vector3(0, 1, 0);
 };
 
+/**
+ *
+ * @param {Object3D} object3D - object3D to compute forward vector
+ * @returns {THREE.Vector3} - forward vector of object3D
+ */
 Object3D.computeForward = function (object3D) {
   return this.DefaultForward().applyQuaternion(object3D.quaternion);
 };
 
+/**
+ *
+ * @param {Object3D} object3D - object3D to compute backward vector
+ * @returns {THREE.Vector3} - backward vector of object3D
+ */
 Object3D.computeBackward = function (object3D) {
   return this.computeForward(object3D).negate();
 };
 
+/**
+ * Move forward object3D of a certain value
+ *
+ * @param {Object3D} object3D - object3D to move forward
+ * @param {number} value - amount to move forward
+ */
 Object3D.moveForward = function (object3D, value) {
   object3D.position.add(Object3D.computeForward(object3D).setLength(value));
 };
 
+/**
+ * Move backward object3D of a certain value
+ *
+ * @param {Object3D} object3D - object3D to move backward
+ * @param {number} value - amount to move backward
+ */
 Object3D.moveBackward = function (object3D, value) {
   object3D.position.add(
     Object3D.computeForward(object3D).negate().setLength(value)
   );
 };
 
+/**
+ * Rotate an object3D with an euler
+ *
+ * @param {Object3D} object3D - object3D to rotate
+ * @param {THREE.Euler} euler - euler to rotate from
+ */
 Object3D.rotate = function (object3D, euler) {
   // shoudl check euler order
   object3D.rotateZ(euler.z);
@@ -323,10 +416,10 @@ Object3D.rotate = function (object3D, euler) {
 };
 
 /**
- * Return a deep copy (new uuid are generated) of a gameObject
+ * Return a deep copy of object3D (uuids and name are regenerated)
  *
- * @param {GameObject} gameObject
- * @returns {GameObject} a new gameobject with new uuid base on gameObject
+ * @param {Object3D} object3D - object3D to deep copy
+ * @returns {Object3D} - deep copy of object3D
  */
 Object3D.deepCopy = function (object3D) {
   const cloneJSON = object3D.toJSON(true);
