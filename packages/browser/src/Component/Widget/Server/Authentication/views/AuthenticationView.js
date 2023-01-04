@@ -111,10 +111,12 @@ export class AuthenticationView extends WidgetView {
   }
   verifymail() {
     // This regular expression checks an email in the form of 'name@example.com'
-    const RegularExpression =
-      /^(([^<>()[]\.,;:s@]+(.[^<>()[]\.,;:s@]+)*)|(.+))@(([[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}])|(([a-zA-Z-0-9]+.)+[a-zA-Z]{2,}))$/;
+    const emailRegex = new RegExp(
+      /^[A-Za-z0-9_!#$%&'*+/=?`{|}~^.-]+@[A-Za-z0-9.-]+$/,
+      'gm'
+    );
     const element = document.getElementById('Email');
-    if (RegularExpression.test(element.value)) {
+    if (emailRegex.test(element.value)) {
       element.setAttribute('style', '');
       this.displayRegisterError('');
       return true;
