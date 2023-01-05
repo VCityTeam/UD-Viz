@@ -44,7 +44,7 @@ const gameContext = new Core.Game.Context(
       }
     },
   },
-  {
+  new Core.Game.Object3D({
     object: {
       static: false, // this object is going to move in 3D space
       components: {
@@ -53,7 +53,7 @@ const gameContext = new Core.Game.Context(
         },
       },
     },
-  }
+  })
 );
 
 gameContext.load().then(() => {
