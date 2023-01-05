@@ -2,36 +2,47 @@ const Diff = require('./Diff');
 const Object3D = require('../Object3D');
 const JSONUtil = require('../../JSONUtil');
 
-/**
- * Store the state of the  at a given time
- */
 const State = class {
-  constructor(json) {
-    if (!json) throw new Error('no json');
+  /**
+   * Store state of context at a given time
+   *
+   * @param {Object3D} object3D - context root object3D
+   * @param {number} timestamp - time
+   */
+  constructor(object3D, timestamp) {
+    if (!object3D || !timestamp) throw new Error('need parameters');
 
-    // Gameobjects
-    this.object3D = new Object3D(json.object3DJSON);
+    /** @type {Object3D} - context root object3D */
+    this.object3D = object3D;
 
-    // Timestamp
-    this.timestamp = json.timestamp || -1;
+    /** @type {number} - time when the state has been created in ms */
+    this.timestamp = timestamp;
 
-    // Flag to determine if that state has been consumed/treated by the gameview (or something else)
+    /** @type {boolean} - flag to determine if state has been consumed/treated */
     this._consumed = false;
   }
 
+  /**
+   *
+   * @param {boolean} value - new consumed value
+   */
   setConsumed(value) {
     this._consumed = value;
   }
 
+  /**
+   *
+   * @returns {boolean} - return true if state has been consumed/treated
+   */
   hasBeenConsumed() {
     return this._consumed;
   }
 
   /**
-   * Compute the next state with a given Diff
+   * Compute next state based on a {@link Diff}
    *
-   * @param {Diff} diff the Diff between two State
-   * @returns {State} the new State
+   * @param {Diff} diff - diff between two State
+   * @returns {State} - next state
    */
   add(diff) {
     const nextStateObjectsUUID = diff.getNextStateObjectsUUID();
@@ -57,9 +68,10 @@ const State = class {
       }
     });
 
-    // Object3D still present was not in the previous state
     for (const uuid in objects3DToUpdateJSON) {
-      if (object3DUpdated.includes(uuid)) continue;
+      if (object3DUpdated.includes(uuid)) continue; // already update
+
+      // still not updated => did not find parent object3D
 
       const json = objects3DToUpdateJSON[uuid];
       const newObject3D = new Object3D(json, null);
@@ -67,26 +79,23 @@ const State = class {
       parent.add(newObject3D);
     }
 
-    // DEBUG process.DEV_MODE ?
-    let count = 0;
-    cloneObject3D.traverse(function (child) {
-      if (nextStateObjectsUUID.includes(child.uuid)) count++;
-    });
-    if (nextStateObjectsUUID.length != count) {
-      throw new Error('count of object3D error');
-    }
+    // DEBUG
+    // let count = 0;
+    // cloneObject3D.traverse(function (child) {
+    //   if (nextStateObjectsUUID.includes(child.uuid)) count++;
+    // });
+    // if (nextStateObjectsUUID.length != count) {
+    //   throw new Error('count of object3D error');
+    // }
 
-    return new State({
-      object3DJSON: cloneObject3D.toJSON(),
-      timestamp: diff.getTimeStamp(),
-    });
+    return new State(cloneObject3D, diff.getTimeStamp());
   }
 
   /**
-   * Check if there is gameobject with a given uuid
+   * Check if there is an object3D with a given uuid
    *
-   * @param {string} uuid uuid to be check
-   * @returns {boolean} true if there is a gameobject with this uuid, false otherwise
+   * @param {string} uuid - uuid to be check
+   * @returns {boolean} - true if there is an object3D with this uuid, false otherwise
    */
   includes(uuid) {
     if (this.object3D.getObjectByProperty('uuid', uuid)) {
@@ -96,11 +105,10 @@ const State = class {
   }
 
   /**
-   * Compute the Diff between this and the state passed
+   * Compute the diff between this and previous state
    *
-   * @param {State} state the state passed to compute the Diff with this
-   * @param previousState
-   * @returns {Diff} the difference between this and state
+   * @param {State} previousState - state passed to compute the diff with this
+   * @returns {Diff} diff between this and previousState
    */
   sub(previousState) {
     const nextStateObjectsUUID = [];
@@ -130,29 +138,31 @@ const State = class {
     });
   }
 
-  log() {
-    this.object3D.traverse((child) => {
-      console.log(child.name);
-      console.log(child.toJSON());
-    });
-  }
-
+  /**
+   *
+   * @param {State} state - state to compare to
+   * @returns {boolean} - true if states are equal
+   */
   equals(state) {
-    return JSONUtil.equals(this.toJSON(), state.toJSON());
+    if (state.timestamp != this.timestamp) return false;
+    if (
+      !JSONUtil.equals(this.object3D.toJSON(true), state.object3D.toJSON(true))
+    )
+      return false;
+    return true;
   }
 
   /**
-   * Return a clone of this
    *
-   * @returns {State}
+   * @returns {State} - clone of state
    */
   clone() {
-    return new State(this.toJSON());
+    return new State(this.object3D.clone(), this.timestamp);
   }
 
   /**
    *
-   * @returns {number}
+   * @returns {number} - state timestamp
    */
   getTimestamp() {
     return this.timestamp;
@@ -160,37 +170,20 @@ const State = class {
 
   /**
    *
-   * @returns {Object3D}
+   * @returns {Object3D} - state object3D
    */
   getObject3D() {
     return this.object3D;
   }
-
-  /**
-   * Compute this to JSON
-   *
-   * @returns {JSON}
-   */
-  toJSON() {
-    return {
-      type: State.TYPE,
-      object3DJSON: this.object3D.toJSON(true),
-      timestamp: this.timestamp,
-    };
-  }
 };
 
-State.TYPE = 'State';
-
-// //STATIC
-
 /**
- * Compute the state between w1 and w2, interpolating with a given ratio
+ * Compute a state interpolated between s1 and s2 with a given ratio
  *
- * @param {State} s1 first state if ratio = 0, result = w1
- * @param {State} s2 second state if ratio = 1, result = w2
- * @param {number} ratio a number between 0 => 1
- * @returns {State} the interpolated state
+ * @param {State} s1 - first state if ratio = 0, result = s1
+ * @param {State} s2 - second state if ratio = 1, result = s2
+ * @param {number} ratio - a number between 0 => 1
+ * @returns {State} - interpolated state
  */
 State.interpolate = function (s1, s2, ratio) {
   if (!s2) return s1;

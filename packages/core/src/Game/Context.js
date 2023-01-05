@@ -403,10 +403,10 @@ const Context = class {
    * @returns {State} - current state of context
    */
   toState(full = true) {
-    const result = new State({
-      object3DJSON: this.object3D.toJSON(full),
-      timestamp: Date.now(),
-    });
+    const result = new State(
+      new Object3D(this.object3D.toJSON(full)),
+      Date.now()
+    );
 
     // Everything is not outdated yet
     this.object3D.traverse(function (child) {
