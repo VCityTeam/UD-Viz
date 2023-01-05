@@ -19,7 +19,7 @@ import './AssetManager.css';
  */
 
 /**
- * @typedef {object} AssetManagerConfig - Contains configs of assets
+ * @typedef {object} AssetManagerConfig - Contains configs of assets.
  * @property {Object<string,SoundsConfig>} sounds {@link SoundsConfig}
  * @property {Object<string,RenderDataConfig>} renderData {@link RenderDataConfig}
  */
@@ -32,7 +32,6 @@ const DEFAULT_MATERIAL = new THREE.MeshLambertMaterial({
 });
 
 /**
- * @class
  * @classdesc Load async assets (gltf, JSON, ...) from a config file and create render data, sounds, and native objects.
  */
 export class AssetManager {
@@ -42,6 +41,9 @@ export class AssetManager {
   constructor() {
     /** @type {AssetManagerConfig} */
     this.conf = null;
+
+    /** @type {Object<string,string>} */
+    this.soundIDPath = {};
 
     /** @type {Object<string,RenderData>}*/
     this.renderData = {};
@@ -71,11 +73,11 @@ export class AssetManager {
    * @returns {Howl} - Used to control the sound
    */
   createSound(idSound, options = {}) {
-    const confSound = this.conf['sounds'][idSound];
+    const pathSound = this.soundIDPath[idSound];
 
-    if (!confSound) console.error('no sound with id ', idSound);
+    if (!pathSound) console.error('no sound with id ', idSound);
     return new Howl({
-      src: confSound.path,
+      src: pathSound,
       loop: options.loop || false,
     });
   }
@@ -103,103 +105,20 @@ export class AssetManager {
   }
 
   /**
-   * It takes an object and a configuration object and returns a new object with the anchor point,
-   * scale, and rotation applied
-   *
-   * @param {THREE.Object3D} object3D - The object to be parsed.
-   * @param {RenderDataConfig} renderDataConfig {@link RenderDataConfig}
-   * @returns {THREE.Object3D} A parent object with the object as a child.
-   */
-  parseObject3D(object3D, renderDataConfig) {
-    const anchor = renderDataConfig.anchor;
-    const scale = renderDataConfig.scale;
-    const rotation = renderDataConfig.rotation;
-
-    // Anchor point
-    const bbox = new THREE.Box3().setFromObject(object3D);
-    const parent = new THREE.Object3D();
-    switch (anchor) {
-      case 'center':
-        {
-          const center = bbox.min.lerp(bbox.max, 0.5);
-          object3D.position.sub(center);
-        }
-        break;
-      case 'max':
-        {
-          object3D.position.sub(bbox.max);
-        }
-        break;
-      case 'min':
-        {
-          object3D.position.sub(bbox.min);
-        }
-        break;
-      case 'center_min':
-        {
-          const centerMin = bbox.min.clone().lerp(bbox.max, 0.5);
-          centerMin.z = bbox.min.z;
-          object3D.position.sub(centerMin);
-        }
-        break;
-      default:
-    }
-
-    // Scale
-    if (scale) {
-      const newScale = object3D.scale;
-      newScale.x *= scale.x;
-      newScale.y *= scale.y;
-      newScale.z *= scale.z;
-      object3D.scale.copy(newScale);
-    }
-
-    // Rotation
-    if (rotation) {
-      const newRotation = object3D.rotation;
-      newRotation.x += rotation.x;
-      newRotation.y += rotation.y;
-      newRotation.z += rotation.z;
-      object3D.rotation.copy(newRotation);
-    }
-
-    parent.add(object3D);
-
-    parent.traverse(function (child) {
-      if (child.geometry) {
-        child.castShadow = true;
-        child.receiveShadow = true;
-      }
-      if (child.material) {
-        if (child.material.map) child.material.map.encoding = textureEncoding;
-        child.material.side = THREE.FrontSide;
-        child.material.needsUpdate = true;
-      }
-    });
-
-    parent.name = object3D.name + '_parsed_';
-
-    return parent;
-  }
-
-  /**
    * Load a 3D render data from a config. Then create the {@link LoadingView} process.
    *
    * @param {AssetManagerConfig} config configuration details
    * @param {HTMLDivElement} [parentDiv=document.body] where to add the loadingView
-   * @returns {Promise[]} all the promises processed to load assets
+   * @returns {Promise} promise processed to load assets
    */
   loadFromConfig(config = {}, parentDiv = document.body) {
     this.conf = config;
-
     /** @type {LoadingView}*/
     const loadingView = new LoadingView();
     parentDiv.appendChild(loadingView.html());
 
     /** @type {Promise[]} */
     const promises = [];
-
-    const _this = this;
 
     if (config.renderData) {
       const idLoadingRenderData = '3D';
@@ -217,7 +136,8 @@ export class AssetManager {
                 result.scene.name = idRenderData;
 
                 this.renderData[idRenderData] = new RenderData(
-                  _this.parseObject3D(result.scene, renderDataConfig),
+                  result.scene,
+                  renderDataConfig,
                   result.animations
                 );
 
@@ -337,17 +257,86 @@ class RenderData {
    * It takes an object3D and an optional animations object, and sets the object3D and animations
    * properties of the object
    *
-   * @param {THREE.Object3D} object3D - The object that will be animated.
+   * @param {THREE.Object3D} object3D - The object to add.
+   * @param {RenderDataConfig} [renderDataConfig = {}]  - Contains path, anchor, scale and rotation.
    * @param {THREE.AnimationClip[]} [animations=null] - An array of animations.
    */
-  constructor(object3D, animations = null) {
-    this.object3D = object3D;
+  constructor(object3D, renderDataConfig = {}, animations = null) {
+    /** @type {THREE.Object3D} Parent object of the object3D to set up*/
+    this.parentObject3D = new THREE.Object3D();
+
+    const anchor = renderDataConfig.anchor;
+    const scale = renderDataConfig.scale;
+    const rotation = renderDataConfig.rotation;
+
+    // Anchor point
+    const bbox = new THREE.Box3().setFromObject(object3D);
+    switch (anchor) {
+      case 'center':
+        {
+          const center = bbox.min.lerp(bbox.max, 0.5);
+          object3D.position.sub(center);
+        }
+        break;
+      case 'max':
+        {
+          object3D.position.sub(bbox.max);
+        }
+        break;
+      case 'min':
+        {
+          object3D.position.sub(bbox.min);
+        }
+        break;
+      case 'center_min':
+        {
+          const centerMin = bbox.min.clone().lerp(bbox.max, 0.5);
+          centerMin.z = bbox.min.z;
+          object3D.position.sub(centerMin);
+        }
+        break;
+      default:
+    }
+
+    // Scale
+    if (scale) {
+      const newScale = object3D.scale;
+      newScale.x *= scale.x;
+      newScale.y *= scale.y;
+      newScale.z *= scale.z;
+      object3D.scale.copy(newScale);
+    }
+
+    // Rotation
+    if (rotation) {
+      const newRotation = object3D.rotation;
+      newRotation.x += rotation.x;
+      newRotation.y += rotation.y;
+      newRotation.z += rotation.z;
+      object3D.rotation.copy(newRotation);
+    }
+
+    this.parentObject3D.add(object3D);
+
+    this.parentObject3D.traverse(function (child) {
+      if (child.geometry) {
+        child.castShadow = true;
+        child.receiveShadow = true;
+      }
+      if (child.material) {
+        if (child.material.map) child.material.map.encoding = textureEncoding;
+        child.material.side = THREE.FrontSide;
+        child.material.needsUpdate = true;
+      }
+    });
+
+    this.parentObject3D.name = object3D.name + '_set_up_';
 
     this.animations = animations;
   }
 
   getObject3D() {
-    return this.object3D;
+    return this.parentObject3D;
   }
 
   getAnimations() {
