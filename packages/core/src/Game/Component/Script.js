@@ -2,19 +2,26 @@ const { Model, Controller } = require('./Component');
 const JSONUtil = require('../../JSONUtil');
 
 const ScriptModel = class extends Model {
+  /**
+   * Model of object3D script component
+   *
+   * @param {object} json - json to configure script model
+   * @param {Array<string>=} json.idScripts - ids of scripts
+   * @param {object=} json.variables - custom global variables for scripts
+   */
   constructor(json) {
     super(json);
 
-    // Array of worldScripts id
+    /** @type {Array<string>} - ids of scripts */
     this.idScripts = json.idScripts || [];
 
-    // Conf pass to scripts
+    /** @type {object} - custom global variables passed to scripts */
     this.variables = json.variables || {};
   }
 
   /**
    *
-   * @returns {JSON}
+   * @returns {object} - script model variables
    */
   getVariables() {
     return this.variables;
@@ -22,35 +29,33 @@ const ScriptModel = class extends Model {
 
   /**
    *
-   * @returns *
+   * @returns {Array<string>} - script model ids scripts
    */
   getIdScripts() {
     return this.idScripts;
   }
 };
 
-/**
- *
- * @param {*} parentGO
- * @param {*} json
- */
 const ScriptController = class extends Controller {
   /**
+   * Controller of object3D script component
    *
-   * @param {*} model
-   * @param {*} object3D
-   * @param scripts
+   * @param {ScriptModel} model - model of this controller
+   * @param {Object3D} object3D - object3D parent of the script component
+   * @param {Object<string,object>} scripts - instances of scripts
    */
   constructor(model, object3D, scripts) {
     super(model, object3D);
+
+    /** @type {Object<string,object>} - instances of scripts */
     this.scripts = scripts;
   }
 
   /**
    * Execute all scripts for a particular event
    *
-   * @param {WorldScript.EVENT} event the event trigger
-   * @param {Array} params parameters pass to scripts
+   * @param {string} event - event trigger (event should be a method of the script instances)
+   * @param {Array} params - parameters pass to scripts
    */
   execute(event, params) {
     for (const id in this.scripts) {
@@ -59,13 +64,12 @@ const ScriptController = class extends Controller {
   }
 
   /**
-   * Execute script with id for a particular event
+   * Execute a script for a particular event
    *
-   * @param {string} id id of the script executed
-   * @param script
-   * @param {WorldScript.EVENT} event event trigger
-   * @param {Array} params parameters pass to the script function
-   * @returns {object} result of the script execution
+   * @param {object} script - instance of script (class)
+   * @param {string} event - event trigger (event should be a method of the script instance)
+   * @param {Array} params - parameters to pass to the script
+   * @returns {*} - value return by the script
    */
   executeScript(script, event, params) {
     return script[event].apply(script, params);
@@ -73,12 +77,17 @@ const ScriptController = class extends Controller {
 
   /**
    *
-   * @returns {object}
+   * @returns {Object<string,object>} - script controllers scripts
    */
   getScripts() {
     return this.scripts;
   }
 
+  /**
+   * Modify variables of the model + overwrite variables in scripts
+   *
+   * @param {object} variables - new variables of this script controller
+   */
   setVariables(variables) {
     this.model.variables = variables;
     for (const id in this.scripts) {
