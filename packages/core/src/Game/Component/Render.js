@@ -1,42 +1,34 @@
 const THREE = require('three');
 const { Component, Model } = require('./Component');
 
+/**
+ * Render object3D component
+ */
 const RenderComponent = class extends Component {};
 
 RenderComponent.TYPE = 'Render';
 
-/**
- *  Component used to handle the 3D rendering of the GameObject
- */
 const RenderModel = class extends Model {
   /**
-   * Create a new Render component of a GameObject from json
+   * Render object3D component model store data to render an object3D (in an external context), a render controller should be implemented to use it
    *
-   * @param {JSON} json
+   * @param {object} json - json to configure render model
+   * @param {string=} json.idRenderData - id of render data (could be an id link to gltf, obj file)
+   * @param {Array<number>} [json.color=[1,1,1]] - [r,g,b] format color
    */
   constructor(json) {
     super(json);
 
-    /**
-     * Id of the 3D model used. Init from the field idRenderData of the json.
-     *
-     * @type {string}
-     * @note the field has been renamed, idModel => idRenderData
-     */
-    this.idRenderData = json.idRenderData || null; // TODO could be an array of id
+    /** @type {string} - different id of render data */
+    this.idRenderData = json.idRenderData || null;
 
-    /**
-     * Color of the 3D model
-     *
-     * @type {THREE.Color}
-     */
+    /** @type {THREE.Color} - color to apply to the 3D model */
     this.color = new THREE.Color().fromArray(json.color || [1, 1, 1]);
   }
 
   /**
-   * Compute this to JSON
    *
-   * @returns {JSON}
+   * @returns {object} - export render model to json object
    */
   toJSON() {
     return {
@@ -49,20 +41,32 @@ const RenderModel = class extends Model {
 
   /**
    *
-   * @returns {THREE.Color}
+   * @returns {THREE.Color} - render model color
    */
   getColor() {
     return this.color;
   }
 
+  /**
+   *
+   * @param {THREE.Color} color - new color of render model
+   */
   setColor(color) {
     this.color = color;
   }
 
+  /**
+   *
+   * @param {string} value - new id render data of render model
+   */
   setIdRenderData(value) {
     this.idRenderData = value;
   }
 
+  /**
+   *
+   * @returns {string} - script model id render data
+   */
   getIdRenderData() {
     return this.idRenderData;
   }
