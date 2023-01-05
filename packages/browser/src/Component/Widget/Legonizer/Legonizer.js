@@ -22,11 +22,15 @@ export class LegonizerWindow extends Window {
 
     this.boxSelector;
 
+    this.legoPrevisualisation;
+
     this.transformCtrls;
 
     this.itownsController = true;
 
     this.listeners = [];
+
+    this.ratio = 3;
   }
 
   get innerContentHtml() {
@@ -125,7 +129,7 @@ export class LegonizerWindow extends Window {
 
       // Input
       const inputElement = document.createElement('input');
-      inputElement.id = 'input' + coordinatesString[i];
+      inputElement.id = 'input_' + coordinatesString[i];
       inputElement.type = 'number';
       inputElement.style.width = 'inherit';
       inputElement.setAttribute('value', '0');
@@ -161,6 +165,27 @@ export class LegonizerWindow extends Window {
       this.boxSelector = object;
       this.view3D.getScene().add(this.boxSelector);
 
+      const geometryLego = new THREE.BoxGeometry(
+        this.ratio,
+        this.ratio,
+        (this.ratio * 9.6) / 7.8 // Lego dimension
+      );
+      const objectLego = new THREE.Mesh(
+        geometryLego,
+        new THREE.MeshLambertMaterial({
+          color: 0x00ff00,
+        })
+      );
+
+      objectLego.position.x = object.position.x;
+      objectLego.position.y = object.position.y;
+      objectLego.position.z = 300;
+
+      objectLego.updateMatrixWorld();
+
+      this.legoPrevisualisation = objectLego;
+      this.view3D.getScene().add(this.legoPrevisualisation);
+
       // Transform controls
       this.transformCtrls = new TransformControls(
         this.view3D.getCamera(),
@@ -172,7 +197,7 @@ export class LegonizerWindow extends Window {
         console.log(event);
         if (event.value) {
           this.view3D.getItownsView().controls.dispose();
-          // View3D.getItownsView().controls = null;
+          this.view3D.getItownsView().controls = null;
           this.view3D.getItownsView().notifyChange(this.view3D.getCamera());
           this.transformCtrls.updateMatrixWorld();
         } else {
@@ -180,7 +205,6 @@ export class LegonizerWindow extends Window {
             this.view3D.getItownsView()
           );
         }
-
       });
 
       this.view3D.getScene().add(this.transformCtrls);
@@ -191,28 +215,12 @@ export class LegonizerWindow extends Window {
     this.innerContentCoordinates();
     this.innerContentScale();
 
-    // This.transformCtrls.visible = true;
-    // this.transformCtrls.attach(this.boxSelector);
-    // this.transformCtrls.updateMatrixWorld();
-
     // Request update every active frame
     this.view3D
       .getItownsView()
       .addFrameRequester(MAIN_LOOP_EVENTS.AFTER_CAMERA_UPDATE, () => {
         this._updateFieldsFromBoxSelector();
       });
-
-    // // RECALCULER LES CONTROLS
-    // const planarControl = new itowns.PlanarControls(
-    //   this.view3D.getItownsView(),
-    //   {
-    //     handleCollision: false,
-    //     focusOnMouseOver: false,
-    //     focusOnMouseClick: false,
-    //   }
-    // );
-    // this.view3D.getItownsView().controls = planarControl;
-    // Console.log(planarControl);
   }
 
   /**
@@ -228,6 +236,14 @@ export class LegonizerWindow extends Window {
       this.inputCoordScaleXElement.value = this.boxSelector.scale.x;
       this.inputCoordScaleYElement.value = this.boxSelector.scale.y;
       this.inputCoordScaleZElement.value = this.boxSelector.scale.z;
+
+      this.inputLegoScaleXElement.value = Math.trunc(
+        this.boxSelector.scale.x / this.ratio / 32.0
+      );
+
+      this.inputLegoScaleYElement.value = Math.trunc(
+        Math.abs(this.boxSelector.scale.y) / this.ratio / 32
+      );
     }
   }
 
@@ -376,13 +392,16 @@ export class LegonizerWindow extends Window {
         this.boxSelector.position.y = selectAreaObject.position.y;
         this.boxSelector.position.z = selectAreaObject.position.z;
 
-        this.boxSelector.scale.x = selectAreaObject.scale.x;
-        this.boxSelector.scale.y = selectAreaObject.scale.y;
-        this.boxSelector.scale.z = selectAreaObject.scale.z;
+        this.boxSelector.scale.x = Math.trunc(selectAreaObject.scale.x);
+        this.boxSelector.scale.y = Math.trunc(selectAreaObject.scale.y);
+        this.boxSelector.scale.z = Math.trunc(selectAreaObject.scale.z);
 
-        // Const cloneSelected = selectAreaObject.clone();
-        // view3D.getScene().add(cloneSelected);
+        this.legoPrevisualisation.position.x = selectAreaObject.position.x;
+        this.legoPrevisualisation.position.y = selectAreaObject.position.y;
+        this.legoPrevisualisation.position.z = selectAreaObject.position.z + 50;
+
         selectionGeometry.updateMatrixWorld();
+        this.legoPrevisualisation.updateMatrixWorld();
         view3D.getItownsView().notifyChange(this.view3D.getCamera());
       };
       manager.addMouseInput(rootWelGL, 'mouseup', dragEnd);
@@ -446,6 +465,14 @@ export class LegonizerWindow extends Window {
     return `input_scale_z`;
   }
 
+  get inputLegoXId() {
+    return `input_x count lego plate`;
+  }
+
+  get inputLegoYId() {
+    return `input_y count lego plate`;
+  }
+
   get coordBoxElement() {
     return document.getElementById(this.coordBoxSectionId);
   }
@@ -484,5 +511,13 @@ export class LegonizerWindow extends Window {
 
   get buttonSelectionElement() {
     return document.getElementById(this.buttonSelectionId);
+  }
+
+  get inputLegoScaleXElement() {
+    return document.getElementById(this.inputLegoXId);
+  }
+
+  get inputLegoScaleYElement() {
+    return document.getElementById(this.inputLegoYId);
   }
 }
