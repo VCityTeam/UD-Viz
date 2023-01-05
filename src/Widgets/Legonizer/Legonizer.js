@@ -161,19 +161,29 @@ export class LegonizerWindow extends Window {
       this.boxSelector = object;
       this.view3D.getScene().add(this.boxSelector);
 
-      // This.transformCtrls = new TransformControls(
-      //   this.view3D.getCamera(),
-      //   this.view3D.getItownsView().mainLoop.gfxEngine.label2dRenderer.domElement
-      // );
+      // Transform controls
+      this.transformCtrls = new TransformControls(
+        this.view3D.getCamera(),
+        this.view3D.getItownsView().mainLoop.gfxEngine.label2dRenderer.domElement
+      );
 
-      // // Update view when the box selector is changed
-      // this.transformCtrls.addEventListener('change', () => {
-      //   this.view3D.getItownsView().controls.dispose();
-      //   this.view3D.getItownsView().notifyChange(this.view3D.getCamera());
-      //   this.transformCtrls.updateMatrixWorld();
-      // });
+      // Update view when the box selector is changed
+      this.transformCtrls.addEventListener('dragging-changed', (event) => {
+        console.log(event);
+        if (event.value) {
+          this.view3D.getItownsView().controls.dispose();
+          // View3D.getItownsView().controls = null;
+          this.view3D.getItownsView().notifyChange(this.view3D.getCamera());
+          this.transformCtrls.updateMatrixWorld();
+        } else {
+          const planarControl = new itowns.PlanarControls(
+            this.view3D.getItownsView()
+          );
+        }
 
-      // this.view3D.getScene().add(this.transformCtrls);
+      });
+
+      this.view3D.getScene().add(this.transformCtrls);
     }
 
     this.boxSelector.visible = true;
@@ -190,7 +200,6 @@ export class LegonizerWindow extends Window {
       .getItownsView()
       .addFrameRequester(MAIN_LOOP_EVENTS.AFTER_CAMERA_UPDATE, () => {
         this._updateFieldsFromBoxSelector();
-        // this.selectArea(this.itownsController);
       });
 
     // // RECALCULER LES CONTROLS
@@ -249,12 +258,10 @@ export class LegonizerWindow extends Window {
     const selectionGeometry = this.boxSelector;
 
     if (value == true) {
-      console.log('Itowns');
       this.buttonSelectionElement.textContent = 'Select an area';
 
       // Itowns control
       const planarControl = new itowns.PlanarControls(view3D.getItownsView());
-      console.log('add control');
 
       // Remove pointer lock
       view3D.getInputManager().setPointerLock(false);
@@ -264,13 +271,20 @@ export class LegonizerWindow extends Window {
 
       view3D.getItownsView().notifyChange(this.view3D.getCamera());
       this.removeListeners();
+
+      this.transformCtrls.visible = true;
+      this.transformCtrls.attach(this.boxSelector);
+      this.transformCtrls.updateMatrixWorld();
     } else {
-      console.log('Selection');
       this.buttonSelectionElement.textContent = 'Finish';
+
+      if (this.transformCtrls) {
+        this.transformCtrls.detach(this.boxSelector);
+        this.transformCtrls.visible = false;
+      }
 
       // Remove itowns controls
       view3D.getItownsView().controls.dispose();
-      console.log('dispose');
       view3D.getItownsView().controls = null;
 
       view3D.setIsRendering(false);
