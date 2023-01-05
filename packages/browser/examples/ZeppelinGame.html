@@ -7,8 +7,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   </head>
   <body>
-    <script src="../dist/release/bundle.js"></script>
-    <!-- <script src="../dist/debug/bundle.js"></script> -->
+    <!-- <script src="../dist/release/bundle.js"></script> -->
+    <script src="../dist/debug/bundle.js"></script>
 
     <script type="text/javascript">
       const gameScriptClass = {
@@ -206,45 +206,67 @@
             parseInt(configs['extent_lyon'].north)
           );
 
-          const game = new udvizBrowser.SinglePlayerGamePlanar();
-
-          game.start(
-            extent,
-            {
-              name: 'root',
-              static: true,
-              components: {
-                Audio: {
-                  sounds: ['ballon_pop'],
+          const gameObject3D = new udvizBrowser.Core.Game.Object3D({
+            name: 'root',
+            static: true,
+            components: {
+              Audio: {
+                sounds: ['ballon_pop'],
+              },
+              GameScript: {
+                idScripts: ['GameContextManager'],
+              },
+              ExternalScript: {
+                variables: {
+                  nameGO2Focus: 'zeppelin',
+                  sphereCount: 0,
+                  cameraAngle: 0.1,
                 },
-                GameScript: {
-                  idScripts: ['GameContextManager'],
-                },
-                ExternalScript: {
-                  variables: {
-                    nameGO2Focus: 'zeppelin',
-                    sphereCount: 0,
-                    cameraAngle: 0.1,
-                  },
-                  idScripts: [
-                    'FocusGameObject',
-                    'CommandController',
-                    'ExternalContextManager',
-                  ],
-                },
+                idScripts: [
+                  'FocusGameObject',
+                  'CommandController',
+                  'ExternalContextManager',
+                ],
               },
             },
-            {
-              assetManager: assetManager,
-              gameScriptClass: gameScriptClass,
-              externalGameScriptClass: externalGameScriptClass,
-              sceneConfig: configs['scene'],
-              frame3DPlanarConfig: configs['frame3D_planars'][0],
-              config3DTilesLayers: configs['3DTiles'],
-              configBaseMapLayer: configs['base_maps'][0],
-              configElevationLayer: configs['elevation'],
-              configGeoJSONLayers: configs['geoJSONs'],
-            }
+          });
+
+          const frame3DPlanar = new udvizBrowser.Frame3DPlanar(
+            extent,
+            configs['frame3D_planars'][0]
+          );
+          const game = new udvizBrowser.SinglePlayerGamePlanar();
+
+          game.start(extent, gameObject3D, {
+            assetManager: assetManager,
+            gameScriptClass: gameScriptClass,
+            externalGameScriptClass: externalGameScriptClass,
+            sceneConfig: configs['scene'],
+            frame3DPlanar: frame3DPlanar,
+          });
+
+          // /// ADD LAYERS
+          udvizBrowser.add3DTilesLayers(
+            configs['3DTiles'],
+            frame3DPlanar.layerManager,
+            frame3DPlanar.itownsView
+          );
+
+          udvizBrowser.addBaseMapLayer(
+            configs['base_maps'][0],
+            frame3DPlanar.itownsView,
+            extent
+          );
+
+          udvizBrowser.addElevationLayer(
+            configs['elevation'],
+            frame3DPlanar.itownsView,
+            extent
+          );
+
+          udvizBrowser.addGeoJsonLayers(
+            configs['geoJSONs'],
+            frame3DPlanar.itownsView
           );
         });
       });

@@ -163,6 +163,10 @@ export class AssetManager {
       );
     }
 
+    if (config.sounds) {
+      this.soundIDPath = this.conf.sounds;
+    }
+
     return new Promise((resolve) => {
       Promise.all(promises).then(function () {
         loadingView.dispose();
@@ -258,41 +262,42 @@ class RenderData {
    * properties of the object
    *
    * @param {THREE.Object3D} object3D - The object to add.
+   * @param childObject3D
    * @param {RenderDataConfig} [renderDataConfig = {}]  - Contains path, anchor, scale and rotation.
    * @param {THREE.AnimationClip[]} [animations=null] - An array of animations.
    */
-  constructor(object3D, renderDataConfig = {}, animations = null) {
+  constructor(childObject3D, renderDataConfig = {}, animations = null) {
     /** @type {THREE.Object3D} Parent object of the object3D to set up*/
-    this.parentObject3D = new THREE.Object3D();
+    this.object3D = new THREE.Object3D();
 
     const anchor = renderDataConfig.anchor;
     const scale = renderDataConfig.scale;
     const rotation = renderDataConfig.rotation;
 
     // Anchor point
-    const bbox = new THREE.Box3().setFromObject(object3D);
+    const bbox = new THREE.Box3().setFromObject(childObject3D);
     switch (anchor) {
       case 'center':
         {
           const center = bbox.min.lerp(bbox.max, 0.5);
-          object3D.position.sub(center);
+          childObject3D.position.sub(center);
         }
         break;
       case 'max':
         {
-          object3D.position.sub(bbox.max);
+          childObject3D.position.sub(bbox.max);
         }
         break;
       case 'min':
         {
-          object3D.position.sub(bbox.min);
+          childObject3D.position.sub(bbox.min);
         }
         break;
       case 'center_min':
         {
           const centerMin = bbox.min.clone().lerp(bbox.max, 0.5);
           centerMin.z = bbox.min.z;
-          object3D.position.sub(centerMin);
+          childObject3D.position.sub(centerMin);
         }
         break;
       default:
@@ -300,25 +305,25 @@ class RenderData {
 
     // Scale
     if (scale) {
-      const newScale = object3D.scale;
+      const newScale = childObject3D.scale;
       newScale.x *= scale.x;
       newScale.y *= scale.y;
       newScale.z *= scale.z;
-      object3D.scale.copy(newScale);
+      childObject3D.scale.copy(newScale);
     }
 
     // Rotation
     if (rotation) {
-      const newRotation = object3D.rotation;
+      const newRotation = childObject3D.rotation;
       newRotation.x += rotation.x;
       newRotation.y += rotation.y;
       newRotation.z += rotation.z;
-      object3D.rotation.copy(newRotation);
+      childObject3D.rotation.copy(newRotation);
     }
 
-    this.parentObject3D.add(object3D);
+    this.object3D.add(childObject3D);
 
-    this.parentObject3D.traverse(function (child) {
+    this.object3D.traverse(function (child) {
       if (child.geometry) {
         child.castShadow = true;
         child.receiveShadow = true;
@@ -330,13 +335,13 @@ class RenderData {
       }
     });
 
-    this.parentObject3D.name = object3D.name + '_set_up_';
+    this.object3D.name = childObject3D.name + '_set_up_';
 
     this.animations = animations;
   }
 
   getObject3D() {
-    return this.parentObject3D;
+    return this.object3D;
   }
 
   getAnimations() {
@@ -357,6 +362,6 @@ class RenderData {
       }
     });
 
-    return new RenderData(cloneObject, this.animations);
+    return new RenderData(cloneObject, {}, this.animations);
   }
 }

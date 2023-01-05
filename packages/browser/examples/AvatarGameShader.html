@@ -215,44 +215,47 @@
             },
           };
 
+          const gameObject3D = new udvizBrowser.Core.Game.Object3D({
+            name: 'GameManager',
+            static: true,
+            components: {
+              ExternalScript: {
+                variables: {
+                  nameGO2Focus: 'avatar',
+                  cameraAngle: 0,
+                  offsetZ: 2,
+                  minDist: 5,
+                  maxDist: 20,
+                },
+                idScripts: ['FocusGameObject', 'Avatar'],
+              },
+            },
+            children: [
+              {
+                name: 'avatar',
+                gameContextUpdate: false, // this object is not using the gamecontext (maybe create a template dedicate)
+                components: {
+                  Render: { idRenderData: 'avatar' },
+                },
+              },
+            ],
+          });
+
+          const frame3DPlanar = new udvizBrowser.Frame3DPlanar(
+            extent,
+            configs['frame3D_planars'][0]
+          );
           const game = new udvizBrowser.SinglePlayerGamePlanar();
           game
             .start(
               extent,
-              {
-                name: 'GameManager',
-                static: true,
-                components: {
-                  ExternalScript: {
-                    variables: {
-                      nameGO2Focus: 'avatar',
-                      cameraAngle: 0,
-                      offsetZ: 2,
-                      minDist: 5,
-                      maxDist: 20,
-                    },
-                    idScripts: ['FocusGameObject', 'Avatar'],
-                  },
-                },
-                children: [
-                  {
-                    name: 'avatar',
-                    gameContextUpdate: false, // this object is not using the gamecontext (maybe create a template dedicate)
-                    components: {
-                      Render: { idRenderData: 'avatar' },
-                    },
-                  },
-                ],
-              },
+              gameObject3D,
+
               {
                 assetManager: assetManager,
                 externalGameScriptClass: externalGameScriptClass,
                 sceneConfig: configs['scene'],
-                frame3DPlanarConfig: configs['frame3D_planars'][0],
-                config3DTilesLayers: configs['3DTiles'],
-                configBaseMapLayer: configs['base_maps'][0],
-                configElevationLayer: configs['elevation'],
-                configGeoJSONLayers: configs['geoJSONs'],
+                frame3DPlanar: frame3DPlanar,
               }
             )
             .then(() => {
@@ -466,6 +469,30 @@
               // set the custom render pass
               game.frame3DPlanar.setRender(customRender);
             });
+
+          // /// ADD LAYERS
+          udvizBrowser.add3DTilesLayers(
+            configs['3DTiles'],
+            frame3DPlanar.layerManager,
+            frame3DPlanar.itownsView
+          );
+
+          udvizBrowser.addBaseMapLayer(
+            configs['base_maps'][0],
+            frame3DPlanar.itownsView,
+            extent
+          );
+
+          udvizBrowser.addElevationLayer(
+            configs['elevation'],
+            frame3DPlanar.itownsView,
+            extent
+          );
+
+          udvizBrowser.addGeoJsonLayers(
+            configs['geoJSONs'],
+            frame3DPlanar.itownsView
+          );
         });
       });
     </script>

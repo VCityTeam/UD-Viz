@@ -4,77 +4,44 @@ import { Frame3DPlanar } from '../Component/Frame3D/Frame3D';
 import { Game } from '@ud-viz/core';
 import { RequestAnimationFrameProcess } from '../Component/RequestAnimationFrameProcess';
 import * as ExternalGame from '../Component/ExternalGame/ExternalGame';
-import {
-  add3DTilesLayers,
-  addBaseMapLayer,
-  addElevationLayer,
-  addGeoJsonLayers,
-} from '../Component/Itowns/AddLayerFromConfig';
+
+import { Extent } from 'itowns';
+import { ExternalScriptBase } from '../Component/ExternalGame/Context';
 
 /**
- * A Class contaning method to easily instanciate a browser game based on the ud-viz game engine
+ * @classdesc A Class contaning method to easily instanciate a browser game based on the ud-viz game engine
  */
 export class SinglePlayerGamePlanar {
   constructor() {
+    /** @type {Frame3DPlanar} */
     this.frame3DPlanar = null;
   }
 
   /**
-   *
-   * @param {*} extent
-   * @param {*} gameObject3DJSON
-   * @param {*} options
-   * @param {InputManager} options.inputManager
-   * @returns
+   * @param {Extent} extent - Geographical bounding rectangle. {@link http://www.itowns-project.org/itowns/docs/#api/Geographic/Extent Extent}
+   * @param {Game.Object3D} gameObject3D - Game object used to create the {@link Game.Context}
+   * @param {object} options - options
+   * @param {AssetManager} [options.assetManager] - {@link AssetManager}
+   * @param {Object<string, ExternalScriptBase>} [options.externalGameScriptClass] - Class that can be reference by {@link GameScript} of an object3D
+   * @param {Frame3DPlanar} [options.frame3DPlanar] - {@link Frame3DPlanar}
+   * @param {Object<string, Game.ScriptBase>} [options.gameScriptClass] - Class that can be reference by {@link GameScript} of an object3D
+   * @param {number} [options.gameProcessFps] - Frame per second
+   * @param {InputManager} [options.inputManager] - {@link InputManager}
+   * @param {number} [options.interpolatorDelay] - Delay between state received and state computed
+   * @param {object} [options.sceneConfig] - config of the scene give at the instanciation of External.Context
+   * @returns {Promise} start promise
    */
-  start(extent, gameObject3DJSON, options = {}) {
+  start(extent, gameObject3D, options = {}) {
     return new Promise((resolve) => {
       // initialize planar
-      const frame3DPlanarConfig = options.frame3DPlanarConfig || {};
-
       /** @type {Frame3DPlanar} */
-      const frame3DPlanar = new Frame3DPlanar(extent, {
-        hasItownsControls: false,
-        coordinates: frame3DPlanarConfig['coordinates'],
-        maxSubdivisionLevel: frame3DPlanarConfig['maxSubdivisionLevel'],
-        heading: frame3DPlanarConfig['heading'],
-        tilt: frame3DPlanarConfig['tilt'],
-        range: frame3DPlanarConfig['range'],
-      });
-      this.frame3DPlanar = frame3DPlanar;
-
-      // add layers
-      if (options.configBaseMapLayer) {
-        addBaseMapLayer(
-          options.configBaseMapLayer,
-          frame3DPlanar.itownsView,
-          extent
-        );
-      }
-
-      if (options.configElevationLayer) {
-        addElevationLayer(
-          options.configElevationLayer,
-          frame3DPlanar.itownsView,
-          extent
-        );
-      }
-
-      if (options.config3DTilesLayers) {
-        add3DTilesLayers(
-          options.config3DTilesLayers,
-          frame3DPlanar.layerManager,
-          frame3DPlanar.itownsView
-        );
-      }
-
-      if (options.configGeoJSONLayers) {
-        addGeoJsonLayers(options.configGeoJSONLayers, frame3DPlanar.itownsView);
-      }
+      this.frame3DPlanar =
+        options.frame3DPlanar ||
+        new Frame3DPlanar(extent, { hasItownsControls: false });
 
       // init game process
       const gameScriptClass = options.gameScriptClass || {};
-      const gameContext = new Game.Context(gameScriptClass, gameObject3DJSON);
+      const gameContext = new Game.Context(gameScriptClass, gameObject3D);
       gameContext.load().then(() => {
         const interpolator = new Game.StateInterpolator(
           options.interpolatorDelay
@@ -91,7 +58,7 @@ export class SinglePlayerGamePlanar {
         // create an input manager to plug it directly in game process
         /** @type {InputManager} */
         const inputManager = options.inputManager || new InputManager();
-        inputManager.startListening(frame3DPlanar.html());
+        inputManager.startListening(this.frame3DPlanar.html());
 
         gameProcess.start((dt) => {
           // game loop
@@ -117,7 +84,7 @@ export class SinglePlayerGamePlanar {
         const externalGameScriptClass = options.externalGameScriptClass || {};
 
         const externalGameContext = new ExternalGame.Context(
-          frame3DPlanar,
+          this.frame3DPlanar,
           assetManager,
           inputManager,
           externalGameScriptClass,
@@ -138,7 +105,7 @@ export class SinglePlayerGamePlanar {
 
         // METHOD 1 ITOWNS MAIN LOOP NO SMOOTH RENDERING NO CONTROL DT
 
-        // frame3DPlanar.itownsView.addFrameRequester(
+        // this.frame3DPlanar.itownsView.addFrameRequester(
         //   itowns.MAIN_LOOP_EVENTS.UPDATE_START,
         //   (dt) => {
         //     externalGameContext.step(dt, interpolator.computeCurrentStates());
@@ -146,13 +113,13 @@ export class SinglePlayerGamePlanar {
         // );
 
         // METHOD 2 REQUESTANIMATIONFRAME
-        frame3DPlanar.enableItownsViewRendering(false);
+        this.frame3DPlanar.enableItownsViewRendering(false);
         const process = new RequestAnimationFrameProcess(30);
         process.start((dt) => {
           // external game loop
           externalGameContext.step(dt, interpolator.computeCurrentStates()); // simulate
-          frame3DPlanar.itownsView.notifyChange(frame3DPlanar.camera); // => to load 3DTiles
-          frame3DPlanar.render();
+          this.frame3DPlanar.itownsView.notifyChange(this.frame3DPlanar.camera); // => to load 3DTiles
+          this.frame3DPlanar.render();
         });
 
         // DEBUG PRINT

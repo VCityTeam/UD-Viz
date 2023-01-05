@@ -23,7 +23,7 @@ export class Frame3DPlanar extends Frame3DBase {
    * @param {Frame3DPlanarOption} [options={}] - {@link Frame3DPlanarOption}
    * @param {boolean} [options.hasItownsControls=false] - if true initialize PlanarControl
    * @param {boolean} [options.useItownsMainLoop=true] - rendering is done in itowns.mainLoop
-   * @param {itowns.Coordinates} options.coordinates - itowns coordinates of the initial camera position
+   * @param {itowns.Coordinates} options.coordinates - itowns coordinates of the initial camera position. {@link http://www.itowns-project.org/itowns/docs/#api/Geographic/Coordinates Coordinates}
    * @param {number} [options.heading=-50] - camera heading
    * @param {number} [options.range=3000] - camera range
    * @param {number} [options.tilt=10] - camera tilt

@@ -54,7 +54,7 @@ export {
  * Make a second index.js (indexBundle.js) so examples can still work
  * Like itowns => https://github.com/iTowns/itowns/blob/master/src/MainBundle.js
  *
- * @ud-viz/core also ?
+ * - @ud-viz/core also ?
  */
 
 // itowns
