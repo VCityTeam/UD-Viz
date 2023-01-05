@@ -27,9 +27,9 @@ export { InputManager } from './Component/InputManager';
 
 export { AssetManager } from './Component/AssetManager/AssetManager';
 
-export { Planar as Frame3DPlanar } from './Component/Frame3D/Planar';
+export { Frame3DPlanar } from './Component/Frame3D/Frame3DPlanar';
 
-export { Base as Frame3DBase } from './Component/Frame3D/Base/Base';
+export { Frame3DBase } from './Component/Frame3D/Frame3DBase/Frame3DBase';
 
 export { Billboard } from './Component/Frame3D/Component/Billboard';
 

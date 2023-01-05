@@ -3,13 +3,14 @@ import { CSS3DRenderer } from 'three/examples/jsm/renderers/CSS3DRenderer';
 import { checkParentChild } from '../../HTMLUtil';
 import { Billboard } from '../Component/Billboard';
 
-import './Base.css';
+import './Frame3DBase.css';
 
-export class Base {
+/**
+ * @classdesc The basic view of an ud-viz application
+ * @todo expliquer le css renderer and so on
+ */
+export class Frame3DBase {
   /**
-   *  Base View of an ud-viz application
-   *  expliquer le css renderer and so on
-   *
    * @param {object} options
    * @param {HTMLElement} options.htmlParent
    * @param {boolean} options.catchEventsCSS3D
@@ -76,10 +77,10 @@ export class Base {
     const catchEventsCSS3D = options.catchEventsCSS3D || false;
     this.catchEventsCSS3D(catchEventsCSS3D);
 
-    // listeners Base.EVENT (why not using eventSender of ud-viz/core ?)
+    // listeners Frame3DBase.EVENT (why not using eventSender of ud-viz/core ?)
     this.listeners = {};
-    this.listeners[Base.EVENT.DISPOSE] = [];
-    this.listeners[Base.EVENT.RESIZE] = [];
+    this.listeners[Frame3DBase.EVENT.DISPOSE] = [];
+    this.listeners[Frame3DBase.EVENT.RESIZE] = [];
 
     if (init3D) {
       THREE.Object3D.DefaultUp.set(0, 0, 1);
@@ -100,7 +101,7 @@ export class Base {
 
   on(eventID, listener) {
     if (!this.listeners[eventID])
-      throw new Error('this event is not a Base.EVENT');
+      throw new Error('this event is not a Frame3DBase.EVENT');
     this.listeners[eventID].push(listener);
   }
 
@@ -306,7 +307,7 @@ export class Base {
       this.renderer.setSize(this.size.x, this.size.y);
     }
 
-    this.listeners[Base.EVENT.RESIZE].forEach((listener) => {
+    this.listeners[Frame3DBase.EVENT.RESIZE].forEach((listener) => {
       listener(this);
     });
   }
@@ -318,7 +319,7 @@ export class Base {
     window.removeEventListener('resize', this.resizeListener);
     this.html().remove();
 
-    this.listeners[Base.EVENT.DISPOSE].forEach((listener) => {
+    this.listeners[Frame3DBase.EVENT.DISPOSE].forEach((listener) => {
       listener(this);
     });
   }
@@ -340,7 +341,7 @@ export class Base {
   }
 }
 
-Base.EVENT = {
+Frame3DBase.EVENT = {
   DISPOSE: 'dispose',
   RESIZE: 'resize',
 };

@@ -1,30 +1,30 @@
 import * as Widget from '../Component/Widget/Widget';
 const WidgetView = Widget.Component.WidgetView;
-import { Planar } from '../Component/Frame3D/Planar';
-import THREEUtil from '../Component/THREEUtil';
-const THREE = require('three');
 import {
-  add3DTilesLayers,
-  addBaseMapLayer,
-  addElevationLayer,
-  addGeoJsonLayers,
-} from '../Component/Itowns/AddLayerFromConfig';
-
+  Frame3DPlanar,
+  Frame3DPlanarOption,
+} from '../Component/Frame3D/Frame3DPlanar';
 import './AllWidget.css';
 
+import THREEUtil from '../Component/THREEUtil';
+const THREE = require('three');
+
+const itowns = require('itowns');
 /**
- * Represents the base HTML content of a demo for UD-Viz and provides methods to
- * dynamically add widgets.
+ * @class Represents the base HTML content of a demo for UD-Viz and provides methods to dynamically add widgets.
  */
 export class AllWidget {
   /**
    *
-   * @param extent
-   * @param {object} configAllWidget - TODO describe
-   * @param configFrame3DPlanar
-   * @param options
+   * @param {itowns.Extent} extent - Geographical bounding rectangle @see {@link http://www.itowns-project.org/itowns/docs/#api/Geographic/Extent Extent}
+   * @param {object} configAllWidget - Contains differents paths
+   * @param {string} configAllWidget.iconFolder - Path of the icons' folder
+   * @param {string} configAllWidget.logosFolder - Path of the logos' folder
+   * @param {string[]} configAllWidget.logos - Array of paths of logos' file
+   * @param {string} configAllWidget.icon_autenfication_path - Path of authentification's icon file
+   * @param {Frame3DPlanarOption} configFrame3DPlanar - Config to create instance of {@link Frame3DPlanar}
    */
-  constructor(extent, configAllWidget, configFrame3DPlanar, options = {}) {
+  constructor(extent, configAllWidget, configFrame3DPlanar) {
     this.configAllWidget = configAllWidget; // recommended to not ref the configAllWidget but to create state in this for what need to be store
 
     // allwidget state
@@ -40,44 +40,24 @@ export class AllWidget {
     this.appendTo(document.body);
     this.addLogos();
 
-    /** @type {Planar} */
+    /** @type {Frame3DPlanar} */
     this.frame3DPlanar = this.createFrame3DPlanarFromConfig(
       extent,
       document.getElementById(this.contentSectionId),
       configFrame3DPlanar
     );
-
-    if (options.config3DTilesLayers) {
-      add3DTilesLayers(
-        options.config3DTilesLayers,
-        this.frame3DPlanar.layerManager,
-        this.frame3DPlanar.itownsView
-      );
-    }
-    if (options.configBaseMapLayer) {
-      addBaseMapLayer(
-        options.configBaseMapLayer,
-        this.frame3DPlanar.itownsView,
-        extent
-      );
-    }
-    if (options.configElevationLayer) {
-      addElevationLayer(
-        options.configElevationLayer,
-        this.frame3DPlanar.itownsView,
-        extent
-      );
-    }
-    if (options.configGeoJSONLayers) {
-      addGeoJsonLayers(
-        options.configGeoJSONLayers,
-        this.frame3DPlanar.itownsView
-      );
-    }
   }
 
+  /**
+   * It creates a 3D planar frame from a configuration object
+   *
+   * @param {itowns.Extent} extent - Geographical bounding rectangle @see {@link http://www.itowns-project.org/itowns/docs/#api/Geographic/Extent Extent}
+   * @param {HTMLDivElement} parentDiv - the HTML element in which the 3D frame will be created.
+   * @param {object} configFrame3DPlanar - the configuration object for the frame3DPlanar
+   * @returns {Frame3DPlanar} A new Frame3DPlanar object.
+   */
   createFrame3DPlanarFromConfig(extent, parentDiv, configFrame3DPlanar) {
-    const frame3DPlanar = new Planar(extent, {
+    const frame3DPlanar = new Frame3DPlanar(extent, {
       htmlParent: parentDiv,
       hasItownsControls: true,
       coordinates: configFrame3DPlanar['coordinates'],
@@ -98,14 +78,14 @@ export class AllWidget {
 
   /**
    *
-   * @returns {Planar}
+   * @returns {Frame3DPlanar} return `this.frame3DPlanar`
    */
   getFrame3DPlanar() {
     return this.frame3DPlanar;
   }
 
   /**
-   * Returns the basic html content of the demo
+   * @returns {string} Returns the basic html content of the demo
    */
   get html() {
     return /* html*/ `       
@@ -125,6 +105,9 @@ export class AllWidget {
         `;
   }
 
+  /**
+   * It creates a div element, adds an id to it, appends it to the main div, and then adds all the logos to it
+   */
   addLogos() {
     // Path file for all the logo images
     const logos = this.configAllWidget.logos;
@@ -146,7 +129,8 @@ export class AllWidget {
   }
 
   /**
-   * Returns the html element representing the upper-left frame of the UI,
+   
+   * @returns {string} Returns the html element representing the upper-left frame of the UI,
    * which contains informations
    * about the logged in user.
    */
@@ -167,7 +151,7 @@ export class AllWidget {
   /**
    * Appends the demo HTML to an HTML element.
    *
-   * @param htmlElement The parent node to add the demo into. The
+   * @param {HTMLDivElement} htmlElement The parent node to add the demo into. The
    * recommended way of implementing the demo is simply to have an
    * empty body and call this method with `document.body` as
    * parameter.
@@ -185,29 +169,30 @@ export class AllWidget {
   /**
    * Adds a new widget view to the demo.
    *
-   * @param widgetId A unique id. Must be a string without spaces. It
+   * @param {number} widgetId A unique id. Must be a string without spaces. It
    * will be used to generate some HTML ids in the page. It will also
    * be used to look for an icon to put with the button
-   * @param widgetClass The widget view class. Must implement some
+   * @param {object} widgetClass The widget view class. Must implement some
    * methods (`enable`, `disable` and `addEventListener`). The
    * recommended way of implementing them is to extend the
    * `WidgetView` class, as explained [on the
    * wiki](https://github.com/MEPP-team/UD-Viz/wiki/Generic-demo-and-widgets-with-WidgetView-&-BaseDemo).
-   * @param options An object used to specify various options.
-   * `options.name` allows you to specify the name that will be
+   * @param {object} options - An object used to specify various options.
+   * @param {string} options.name - Allows you to specify the name that will be
    * displayed in the toggle button. By default, it makes a
    * transformation of the id (like this : myWidget -> My Widget).
-   * `options.type` is the "type" of the widget view that defines how
+   * @param {string} options.type - Is the "type" of the widget view that defines how
    * it is added to the demo. The default value is `WIDGET_VIEW`,
    * which simply adds a toggle button to the side menu. If set to
    * `AUTHENTICATION_WIDGET`, an authentication frame will be created
    * in the upper left corner of the page to contain informations
-   * about the user. `options.requireAuth` allows you to
+   * about the user.
+   * @param {boolean} options.requireAuth - Allows you to
    * specify if this widget can be shown without authentication (ie.
    * if no user is logged in). The default value is `false`. If set to
    * `true`, and no athentication widget was loaded, it has no effect
-   * (the widget view will be shown). `options.binding` is the shortcut
-   * key code to toggle the widget. By default, no shortcut is created.
+   * (the widget view will be shown).
+   * @param {string} [options.binding] is the shortcut key code to toggle the widget. .
    */
   addWidgetView(widgetId, widgetClass, options = {}) {
     if (
@@ -282,8 +267,8 @@ export class AllWidget {
   /**
    * Creates a new button in the side menu.
    *
-   * @param widgetId The widget id.
-   * @param buttonText The text to display in the button.
+   * @param {number} widgetId The widget id.
+   * @param {string} buttonText The text to display in the button.
    * @param {string} [accessKey] The key binding for the widget.
    */
   createMenuButton(widgetId, buttonText, accessKey) {
@@ -324,7 +309,7 @@ export class AllWidget {
   /**
    * Creates an authentication frame for the authentication widget.
    *
-   * @param authWidgetId The id of the authentication widget.
+   * @param {string} authWidgetId The id of the authentication widget.
    */
   createAuthenticationFrame(authWidgetId) {
     const frame = document.createElement('div');
@@ -384,18 +369,21 @@ export class AllWidget {
   }
 
   /**
-   * Returns if the widget view is currently enabled or not.
+   * If the widgetActivation object has a property with the name of the widgetId, then return true,
+   * otherwise return false.
    *
-   * @param widgetId The widget id.
+   * @param {string} widgetId - The id of the widget to check.
+   * @returns {boolean} A boolean value.
    */
   isWidgetActive(widgetId) {
     return this.widgetActivation[widgetId];
   }
 
   /**
-   * Returns the widget view class by its id.
+   * Given a widget ID, return the widget object.
    *
-   * @param widgetId The widget id.
+   * @param {string} widgetId - The id of the widget to get.
+   * @returns {object} The widget with the given id.
    */
   getWidgetById(widgetId) {
     return this.widgets[widgetId];
@@ -404,7 +392,7 @@ export class AllWidget {
   /**
    * If the widget view is enabled, disables it, else, enables it.
    *
-   * @param widgetId The widget id.
+   * @param {string} widgetId The widget id.
    */
   toggleWidget(widgetId) {
     if (!this.isWidgetActive(widgetId)) {
