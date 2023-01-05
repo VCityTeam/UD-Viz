@@ -3,7 +3,7 @@ import { AssetManager, InputManager, THREEUtil } from '../Component';
 import { Game, JSONUtil, Command } from '@ud-viz/core';
 import { RenderController } from './RenderController';
 import { AudioController } from './AudioController';
-import { Base } from '../Frame3D/Frame3D';
+import { Frame3DBase } from '../Frame3D/Frame3D';
 
 const defaultConfigScene = {
   shadowMapSize: 2046,
@@ -27,7 +27,7 @@ const defaultConfigScene = {
 export class Context {
   /**
    *
-   * @param {Base} frame3D - could be a Frame3DBase or a Frame3DPlanar
+   * @param {Frame3DBase} frame3D - could be a Frame3DBase or a Frame3DPlanar
    * @param {AssetManager} assetManager
    * @param {InputManager} inputManager
    * @param externalGameScriptClass
@@ -76,7 +76,7 @@ export class Context {
     this.initScene();
 
     // register listener
-    this.frame3D.on(Base.EVENT.DISPOSE, () => {
+    this.frame3D.on(Frame3DBase.EVENT.DISPOSE, () => {
       if (this.currentGameObject3D) {
         this.currentGameObject3D.traverse(function (child) {
           if (!child.isGameObject3D) return;
@@ -93,7 +93,7 @@ export class Context {
       }
     });
 
-    this.frame3D.on(Base.EVENT.RESIZE, () => {
+    this.frame3D.on(Frame3DBase.EVENT.RESIZE, () => {
       if (this.currentGameObject3D) {
         this.currentGameObject3D.traverse(function (child) {
           if (!child.isGameObject3D) return;

@@ -16,7 +16,7 @@ const itowns = require('itowns');
 export class AllWidget {
   /**
    *
-   * @param {itowns.Extent} extent - Geographical bounding rectangle @see {@link http://www.itowns-project.org/itowns/docs/#api/Geographic/Extent Extent}
+   * @param {itowns.Extent} extent - Geographical bounding rectangle. {@link http://www.itowns-project.org/itowns/docs/#api/Geographic/Extent Extent}
    * @param {object} configAllWidget - Contains differents paths
    * @param {string} configAllWidget.iconFolder - Path of the icons' folder
    * @param {string} configAllWidget.logosFolder - Path of the logos' folder
@@ -51,7 +51,7 @@ export class AllWidget {
   /**
    * It creates a 3D planar frame from a configuration object
    *
-   * @param {itowns.Extent} extent - Geographical bounding rectangle @see {@link http://www.itowns-project.org/itowns/docs/#api/Geographic/Extent Extent}
+   * @param {itowns.Extent} extent - Geographical bounding rectangle. {@link http://www.itowns-project.org/itowns/docs/#api/Geographic/Extent Extent}
    * @param {HTMLDivElement} parentDiv - the HTML element in which the 3D frame will be created.
    * @param {object} configFrame3DPlanar - the configuration object for the frame3DPlanar
    * @returns {Frame3DPlanar} A new Frame3DPlanar object.
