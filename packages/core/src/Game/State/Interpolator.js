@@ -1,37 +1,51 @@
 const State = require('./State');
+const Diff = require('./Diff');
 
-/**
- * StateComputer working with a distant server
- * Interpolate states received by server
- * Same system as described here (https://victorzhou.com/blog/build-an-io-game-part-1/#7-client-state)
- */
 module.exports = class Interpolator {
+  /**
+   * Handle reception of states over time and can on demand compute current states that need to be processed.
+   * Current states are delivered/computed with a delay and can be interpolated in order to "smooth" them
+   * see {@link State} to have a better understanding
+   *
+   * Very inspired (quite identical) from there {@link https://victorzhou.com/blog/build-an-io-game-part-1/#7-client-state}
+   *
+   * @param {number} [delay=100] - delay between state received and state delivered/computed
+   */
   constructor(delay) {
-    // Delay between state received and state computed
+    /** @type {number} - delay between state received and state delivered */
     this.delay = delay || 100;
 
-    // Internal
+    /** @type {State[]} - buffer of states received */
     this.states = [];
-    this.gameStart = 0;
+
+    /** @type {number} - interpolator start time */
+    this.startTimestamp = 0;
+
+    /** @type {number} - time of the first state received */
     this.firstStateTimestamp = 0;
 
-    /** @type {State[]} */
+    /** @type {State[]} - buffer of states deprecated (out of time) but not treated (not deliver/compute)*/
     this._notConsumedStates = [];
 
-    // Ping attr computation
-    this.lastTimeState = 0; // Buffer
-    this.ping = 0; // Time between two new state
+    /** @type {number} - time of the last state received */
+    this.lastTimeState = 0;
+
+    /** @type {number} - time between last state received and the previous one */
+    this.ping = 0;
   }
 
-  // Time between two new state
+  /**
+   *
+   * @returns {number} - interpolator ping
+   */
   getPing() {
     return this.ping;
   }
 
   /**
-   * Add a new state
+   * Add a new state to interpolator
    *
-   * @param {State} state
+   * @param {State} state - new state receive
    */
   onNewState(state) {
     if (!state) {
@@ -45,7 +59,7 @@ module.exports = class Interpolator {
 
     this.states.push(state);
 
-    // Keep only one worldstate before the current server time
+    // Keep only one state before the current server time
     const index = this._computeIndexBaseState();
 
     if (index > 0) {
@@ -59,23 +73,26 @@ module.exports = class Interpolator {
 
   /**
    *
-   * @returns {State} the last state received by the server
+   * @returns {State} - the last state received
    */
   _getLastStateReceived() {
     return this.states[this.states.length - 1];
   }
 
   /**
+   * Compute current server time, server is the entity where states are computed
    *
-   * @returns {number} the current server time
+   * @returns {number} - current server time
    */
   _computeCurrentServerTime() {
-    return this.firstStateTimestamp + Date.now() - this.gameStart - this.delay;
+    return (
+      this.firstStateTimestamp + Date.now() - this.startTimestamp - this.delay
+    );
   }
 
   /**
    *
-   * @returns {Integer} the index of the first worldstate before server time
+   * @returns {number} - the index of the first state before server time
    */
   _computeIndexBaseState() {
     const serverTime = this._computeCurrentServerTime();
@@ -88,9 +105,9 @@ module.exports = class Interpolator {
   }
 
   /**
-   * Add a new diff to compute a new state
+   * Compute the next state based on a {@link Diff}
    *
-   * @param {WorldStateDiff} diff
+   * @param {Diff} diff - diff received
    */
   onNewDiff(diff) {
     const last = this._getLastStateReceived();
@@ -103,22 +120,22 @@ module.exports = class Interpolator {
   }
 
   /**
-   * Init the computer with a first state
+   * Init interpolator attributes with a first state
    *
-   * @param {State} state the first state received
+   * @param {State} state - first state received
    */
   onFirstState(state) {
     this.firstStateTimestamp = state.getTimestamp();
-    this.gameStart = Date.now();
+    this.startTimestamp = Date.now();
     this.states.length = 0;
     this.lastTimeState = 0;
     this.onNewState(state);
   }
 
   /**
-   * Compute the current world state
+   * Deliver/Compute current state
    *
-   * @returns {State}
+   * @returns {State} - current state
    */
   computeCurrentState() {
     if (!this.firstStateTimestamp) {
@@ -150,8 +167,9 @@ module.exports = class Interpolator {
   }
 
   /**
+   * Deliver/Compute current state + add the ones not treated/consumed
    *
-   * @returns {State[]}
+   * @returns {State[]} - current states
    */
   computeCurrentStates() {
     if (!this.states.length) {
