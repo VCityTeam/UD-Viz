@@ -1,20 +1,32 @@
 import { computeNearFarCamera } from '../THREEUtil';
-import { Base } from './Base/Base';
+import { Frame3DBase } from './Frame3DBase/Frame3DBase';
 import { LayerManager } from '../Itowns/Itowns';
 const itowns = require('itowns'); // import that way jsdoc resolve type sometime ... lol
 const THREE = require('three');
 
-export class Planar extends Base {
+/**
+ * @typedef {object} Frame3DPlanarOption
+ * @property {boolean} hasItownsControls - If true enable Itowns View Controls
+ * @property {boolean} useItownsMainLoop - Rendering is done in itowns.mainLoop default is true
+ * @property {itowns.Coordinates} coordinates {@link http://www.itowns-project.org/itowns/docs/#api/Geographic/Coordinates Coordinates}
+ * @property {number} heading - Camera heading placement
+ * @property {number} range -  Camera range placement
+ * @property {number} tilt - Camera tilt placement
+ * @property {number} maxSubdivisionLevel - TODO
+ */
+
+/** @classdesc It's a class that extends the {@link Base} class and adds a PlanarView to it */
+export class Frame3DPlanar extends Frame3DBase {
   /**
    *
-   * @param {itowns.Extent} extent
-   * @param {object} options
-   * @param {boolean} options.hasItownsControls
-   * @param {boolean} options.useItownsMainLoop - rendering is done in itowns.mainLoop default is true
+   * @param {itowns.Extent} extent - Geographical bounding rectangle. {@link http://www.itowns-project.org/itowns/docs/#api/Geographic/Extent Extent}
+   * @param {Frame3DPlanarOption} [options={}] - {@link Frame3DPlanarOption}
+   * @param {boolean} [options.hasItownsControls=false] - if true initialize PlanarControl
+   * @param {boolean} [options.useItownsMainLoop=true] - rendering is done in itowns.mainLoop
    * @param {itowns.Coordinates} options.coordinates - itowns coordinates of the initial camera position
-   * @param {number} options.heading
-   * @param {number} options.range
-   * @param {number} options.tilt
+   * @param {number} [options.heading=-50] - camera heading
+   * @param {number} [options.range=3000] - camera range
+   * @param {number} [options.tilt=10] - camera tilt
    * @param {number} options.maxSubdivisionLevel
    */
   constructor(extent, options = {}) {

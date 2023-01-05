@@ -48,13 +48,33 @@
         const app = new udvizBrowser.AllWidget(
           extent,
           configs['all_widget'],
-          configs['frame3D_planars'][0],
-          {
-            config3DTilesLayers: configs['3DTiles'],
-            configBaseMapLayer: configs['base_maps'][0],
-            configElevationLayer: configs['elevation'],
-            configGeoJSONLayers: configs['geoJSONs'],
-          }
+          configs['frame3D_planars'][0]
+        );
+
+        const frame3DPlanar = app.getFrame3DPlanar();
+
+        // /// ADD LAYERS
+        udvizBrowser.add3DTilesLayers(
+          configs['3DTiles'],
+          frame3DPlanar.layerManager,
+          frame3DPlanar.itownsView
+        );
+
+        udvizBrowser.addBaseMapLayer(
+          configs['base_maps'][0],
+          frame3DPlanar.itownsView,
+          extent
+        );
+
+        udvizBrowser.addElevationLayer(
+          configs['elevation'],
+          frame3DPlanar.itownsView,
+          extent
+        );
+
+        udvizBrowser.addGeoJsonLayers(
+          configs['geoJSONs'],
+          frame3DPlanar.itownsView
         );
 
         // //// REQUEST SERVICE

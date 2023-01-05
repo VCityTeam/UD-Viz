@@ -6,6 +6,25 @@ import { textureEncoding } from '../THREEUtil';
 import './AssetManager.css';
 
 /**
+ * @typedef {object} RenderDataConfig - Contains path, anchor, scale and rotation.
+ * @property {string} anchor - Values: center | max | min | center_min
+ * @property {{x:number,y:number,z:number}} scale - Object's local scale
+ * @property {{x:number,y:number,z:number}} rotation - Object's local rotation
+ * @property {string} path - Path to the 3D data file
+ */
+
+/**
+ * @typedef {object} SoundsConfig - Contains path
+ * @property {string} path - Path to the audio file
+ */
+
+/**
+ * @typedef {object} AssetManagerConfig - Contains configs of assets
+ * @property {Object<string,SoundsConfig>} sounds {@link SoundsConfig}
+ * @property {Object<string,RenderDataConfig>} renderData {@link RenderDataConfig}
+ */
+
+/**
  * Default material used by native objects
  */
 const DEFAULT_MATERIAL = new THREE.MeshLambertMaterial({
@@ -13,23 +32,28 @@ const DEFAULT_MATERIAL = new THREE.MeshLambertMaterial({
 });
 
 /**
- * Load async assets (gltf, JSON, ...)
+ * @class
+ * @classdesc Load async assets (gltf, JSON, ...) from a config file and create render data, sounds, and native objects.
  */
 export class AssetManager {
+  /**
+   * Initialize the native render data.
+   */
   constructor() {
+    /** @type {AssetManagerConfig} */
     this.conf = null;
 
-    // some renderData can be loadeded async with loadFromConfig
+    /** @type {Object<string,RenderData>}*/
     this.renderData = {};
 
     this.initNativeRenderData();
   }
 
   /**
-   * Return new model corresponding to the id passed
+   * Return new renderData corresponding to the id passed
    *
-   * @param {string} idRenderData id of the model
-   * @returns {Object{'animations' => THREE.AnimationClip[], 'object' => THREE.Object3D}
+   * @param {string} idRenderData - Id of the renderData
+   * @returns {RenderData} - A clone of the renderData object
    */
   createRenderData(idRenderData) {
     if (!this.renderData[idRenderData])
@@ -39,17 +63,17 @@ export class AssetManager {
   }
 
   /**
-   * Create a Howl instance of the sound
+   * Create a a new Howl object with the given idSound and options.
    *
-   * @param {string} idSound
-   * @param {object} options
-   * @returns
+   * @param {string} idSound - Id of sounds in config
+   * @param {object} [options={}] - Arguments to create Howl object.
+   * @param {boolean} options.loop - Set to true to automatically loop the sound forever.
+   * @returns {Howl} - Used to control the sound
    */
   createSound(idSound, options = {}) {
     const confSound = this.conf['sounds'][idSound];
 
     if (!confSound) console.error('no sound with id ', idSound);
-
     return new Howl({
       src: confSound.path,
       loop: options.loop || false,
@@ -57,7 +81,8 @@ export class AssetManager {
   }
 
   /**
-   * Build native objects (procedural objects)
+   * Build native objects (procedural objects) and stores them in `this.renderData` object.
+   *
    */
   initNativeRenderData() {
     const geometryBox = new THREE.BoxGeometry();
@@ -78,42 +103,43 @@ export class AssetManager {
   }
 
   /**
-   * Parse model imported according its metadata
+   * It takes an object and a configuration object and returns a new object with the anchor point,
+   * scale, and rotation applied
    *
-   * @param {string} id id of the model
-   * @param {THREE.Object3D} obj the object parsed
-   * @param {JSON} renderDataConfig metadata
+   * @param {THREE.Object3D} object3D - The object to be parsed.
+   * @param {RenderDataConfig} renderDataConfig {@link RenderDataConfig}
+   * @returns {THREE.Object3D} A parent object with the object as a child.
    */
-  parseObject3D(obj, renderDataConfig) {
+  parseObject3D(object3D, renderDataConfig) {
     const anchor = renderDataConfig.anchor;
     const scale = renderDataConfig.scale;
     const rotation = renderDataConfig.rotation;
 
     // Anchor point
-    const bbox = new THREE.Box3().setFromObject(obj);
+    const bbox = new THREE.Box3().setFromObject(object3D);
     const parent = new THREE.Object3D();
     switch (anchor) {
       case 'center':
         {
           const center = bbox.min.lerp(bbox.max, 0.5);
-          obj.position.sub(center);
+          object3D.position.sub(center);
         }
         break;
       case 'max':
         {
-          obj.position.sub(bbox.max);
+          object3D.position.sub(bbox.max);
         }
         break;
       case 'min':
         {
-          obj.position.sub(bbox.min);
+          object3D.position.sub(bbox.min);
         }
         break;
       case 'center_min':
         {
           const centerMin = bbox.min.clone().lerp(bbox.max, 0.5);
           centerMin.z = bbox.min.z;
-          obj.position.sub(centerMin);
+          object3D.position.sub(centerMin);
         }
         break;
       default:
@@ -121,23 +147,23 @@ export class AssetManager {
 
     // Scale
     if (scale) {
-      const newScale = obj.scale;
+      const newScale = object3D.scale;
       newScale.x *= scale.x;
       newScale.y *= scale.y;
       newScale.z *= scale.z;
-      obj.scale.copy(newScale);
+      object3D.scale.copy(newScale);
     }
 
     // Rotation
     if (rotation) {
-      const newRotation = obj.rotation;
+      const newRotation = object3D.rotation;
       newRotation.x += rotation.x;
       newRotation.y += rotation.y;
       newRotation.z += rotation.z;
-      obj.rotation.copy(newRotation);
+      object3D.rotation.copy(newRotation);
     }
 
-    parent.add(obj);
+    parent.add(object3D);
 
     parent.traverse(function (child) {
       if (child.geometry) {
@@ -151,29 +177,28 @@ export class AssetManager {
       }
     });
 
-    parent.name = obj.name + '_parsed_';
+    parent.name = object3D.name + '_parsed_';
 
     return parent;
   }
 
   /**
-   * Load from a server assets described in a config file
+   * Load a 3D render data from a config. Then create the {@link LoadingView} process.
    *
-   * @param {JSON} config config file
-   * @param {Html} parentDiv where to add the loadingView
+   * @param {AssetManagerConfig} config configuration details
+   * @param {HTMLDivElement} [parentDiv=document.body] where to add the loadingView
    * @returns {Promise[]} all the promises processed to load assets
    */
   loadFromConfig(config = {}, parentDiv = document.body) {
     this.conf = config;
 
-    /** @type {LoadingView} */
+    /** @type {LoadingView}*/
     const loadingView = new LoadingView();
     parentDiv.appendChild(loadingView.html());
 
-    // Result
+    /** @type {Promise[]} */
     const promises = [];
 
-    // Load config file now only render data which is a gltf wrapper
     const _this = this;
 
     if (config.renderData) {
@@ -196,7 +221,6 @@ export class AssetManager {
                   result.animations
                 );
 
-                // Check if finish
                 count++;
 
                 // Update loading bar
@@ -205,6 +229,7 @@ export class AssetManager {
                   (100 * count) / Object.keys(config.renderData).length
                 );
 
+                // Check if finish
                 if (count == Object.keys(config.renderData).length) {
                   console.log('render data loaded ', this.renderData);
                   resolve();
@@ -228,43 +253,50 @@ export class AssetManager {
 }
 
 /**
- * A view in which loading bar can be added
+ * @class A view in which loading bar can be added
  */
 class LoadingView {
+  /**
+   * It creates a root HTML, then adds HTML elements for the loading bar.
+   */
   constructor() {
+    /** @type {HTMLDivElement} */
     this.rootHtml = document.createElement('div');
     this.rootHtml.classList.add('assetsLoadingView');
 
+    /** @type {HTMLDivElement} */
     this.parentLoadingBar = document.createElement('div');
     this.parentLoadingBar.classList.add('parent_loading_bar_asset');
     this.rootHtml.appendChild(this.parentLoadingBar);
 
-    const label = document.createElement('div');
+    /** @type {HTMLDivElement} */
+    const label = document.createElement('label');
     label.classList.add('loadingLabel_Assets');
     label.innerHTML = 'Loading assets';
     this.parentLoadingBar.appendChild(label);
 
-    // Loading bars
+    /** @type {Object<string,HTMLDivElement>} Loading bars */
     this.loadingBars = {};
   }
 
   /**
    *
-   * @returns {Html} the element root html of this view
+   * @returns {HTMLDivElement} the element root html of this view
    */
   html() {
     return this.rootHtml;
   }
 
   /**
-   * Dispose this view
+   * Removes the root HTML element from the view. {@link LoadingView}
    */
   dispose() {
     this.rootHtml.remove();
   }
 
   /**
-   * Update the progress bar of the loading bar with an id
+   * Updates the progress bar of a loading bar with the given id.
+   * Sets the width of the loading bar with the given percent.
    *
    * @param {string} id of the loading bar
    * @param {number} percent the new percent of the bar
@@ -297,9 +329,20 @@ class LoadingView {
   }
 }
 
+/**
+ * @class Contains a THREE.Object3D and an array of animations
+ */
 class RenderData {
+  /**
+   * It takes an object3D and an optional animations object, and sets the object3D and animations
+   * properties of the object
+   *
+   * @param {THREE.Object3D} object3D - The object that will be animated.
+   * @param {THREE.AnimationClip[]} [animations=null] - An array of animations.
+   */
   constructor(object3D, animations = null) {
     this.object3D = object3D;
+
     this.animations = animations;
   }
 
@@ -311,6 +354,11 @@ class RenderData {
     return this.animations;
   }
 
+  /**
+   * It clones the object3D and then clones all of the materials in the object3D
+   *
+   * @returns {RenderData} A new RenderData object with a cloned object3D and the same animations.
+   */
   clone() {
     const cloneObject = this.object3D.clone();
     cloneObject.traverse((child) => {

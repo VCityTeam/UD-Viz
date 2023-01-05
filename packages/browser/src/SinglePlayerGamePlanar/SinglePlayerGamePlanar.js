@@ -1,6 +1,6 @@
 import { AssetManager } from '../Component/AssetManager/AssetManager';
 import { InputManager } from '../Component/InputManager';
-import { Planar } from '../Component/Frame3D/Frame3D';
+import { Frame3DPlanar } from '../Component/Frame3D/Frame3D';
 import { Game } from '@ud-viz/core';
 import { RequestAnimationFrameProcess } from '../Component/RequestAnimationFrameProcess';
 import * as ExternalGame from '../Component/ExternalGame/ExternalGame';
@@ -32,8 +32,8 @@ export class SinglePlayerGamePlanar {
       // initialize planar
       const frame3DPlanarConfig = options.frame3DPlanarConfig || {};
 
-      /** @type {Planar} */
-      const frame3DPlanar = new Planar(extent, {
+      /** @type {Frame3DPlanar} */
+      const frame3DPlanar = new Frame3DPlanar(extent, {
         hasItownsControls: false,
         coordinates: frame3DPlanarConfig['coordinates'],
         maxSubdivisionLevel: frame3DPlanarConfig['maxSubdivisionLevel'],
