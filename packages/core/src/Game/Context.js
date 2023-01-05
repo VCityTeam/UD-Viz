@@ -6,36 +6,44 @@ const Object3D = require('./Object3D');
 const State = require('./State/State');
 const Command = require('../Command');
 
-/**
- * Context used to simulate a World
- */
 const Context = class {
-  constructor(gameScriptClass, object3DJSON) {
-    /** @type {class{}} */
+  /**
+   * Handle Game collisions + {@link ScriptBase}
+   *
+   * @param {Object<string,ScriptBase>} gameScriptClass - map of class extended {@link ScriptBase}
+   * @param {Object3D} object3D - root game object3D
+   */
+  constructor(gameScriptClass, object3D) {
+    /** @type {Object<string,ScriptBase>} - class that can be reference by {@link GameScript} of an object3D */
     this.gameScriptClass = gameScriptClass;
 
-    /** @type {Object3D} object3D of the world */
-    this.object3D = new Object3D(object3DJSON);
+    /** @type {Object3D} root game object3D */
+    this.object3D = object3D;
 
     /** @type {Collisions} Collisions system {@link https://www.npmjs.com/package/detect-collisions}*/
     this.collisions = new Collisions();
 
-    /**
-     * @type {object} Buffer to handle collision events
-     * @see {Context.EVENT}
-     */
+    /** @type {Object<string,string>} Buffer to handle collision events {@link Context.EVENT} */
     this.collisionsBuffer = {};
 
-    /** @type {object} Listeners of custom events */
+    /** @type {Object<string,Function[]} Listeners of custom events */
     this.listeners = {};
 
-    // Current delta time
+    /** @type {number} delta time */
     this.dt = 0;
 
-    // Commands
+    /** @type {Command[]} buffer of commands to apply at the next step */
     this.commands = [];
   }
 
+  /**
+   * Create a class instance of game script class for an object3D  given an id
+   *
+   * @param {string} id - id of the class
+   * @param {Object3D} object3D - object3D that is going to use this instance
+   * @param {object} modelVariables - custom variables associated to this instance
+   * @returns {ScriptBase} - instance of the class bind with object3D and modelVariables
+   */
   createInstanceOf(id, object3D, modelVariables) {
     const constructor = this.gameScriptClass[id];
     if (!constructor) {
@@ -51,18 +59,24 @@ const Context = class {
   /**
    * Load its object3D
    *
-   * @param {Function} onLoad callback called at the end of the load
-   * @param {WorldContext} worldContext world context to initialize the object3D
+   * @returns {Promise} - promise resolving at the end of the load
    */
   load() {
     return this.loadObject3D(this.object3D);
   }
 
+  /**
+   * Load an object3D into context
+   *
+   * @param {Object3D} obj - object3D to load
+   * @returns {Promise} - promise resolving at the end of the load
+   */
   loadObject3D(obj) {
     return new Promise((resolve) => {
+      // init game component controllers of object3D
       this.initComponentControllers(obj);
 
-      // load object3D
+      // compute promises
       const promises = [];
 
       obj.traverse(function (child) {
@@ -81,7 +95,7 @@ const Context = class {
       Promise.all(promises).then(() => {
         this.registerObject3DCollision(obj);
 
-        // init is trigger after controllers has been init
+        // trigger Context.EVENT.INIT
         this.dispatchScriptEvent(obj, Context.EVENT.INIT);
 
         resolve();
@@ -91,12 +105,16 @@ const Context = class {
     });
   }
 
+  /**
+   * Step context
+   *
+   * @param {number} dt - new delta time of step
+   */
   step(dt) {
     this.dt = dt;
 
     this.dispatchScriptEvent(this.object3D, Context.EVENT.TICK);
 
-    // collision trigger event
     this.updateCollision();
 
     this.object3D.traverse((child) => {
@@ -156,11 +174,11 @@ const Context = class {
   }
 
   /**
-   * It will dispatch an event to all the world scripts in the object3D
+   * It will dispatch an event to all {@link ScriptBase} in object3D
    *
-   * @param {Object3D} object3D - The object3D that you want to dispatch the event to.
-   * @param {string} event - The name of the event to dispatch @see {Context.EVENT}.
-   * @param {Array} params - The params to pass to the {@link WorldScriptController} @see {WorldScript.Controller}.
+   * @param {Object3D} object3D - object3D that you want to dispatch the event to.
+   * @param {string} event - name of the event to dispatch see possible value in {@link Context.EVENT}
+   * @param {*[]} params - params to pass to {@link ScriptBase}
    */
   dispatchScriptEvent(object3D, event, params = []) {
     object3D.traverse(function (child) {
@@ -172,9 +190,9 @@ const Context = class {
   }
 
   /**
+   * Initialize controllers used in context
    *
-   * @param {Object3D} obj
-   * @returns
+   * @param {Object3D} obj - object3D to initialize controllers
    */
   initComponentControllers(obj) {
     obj.traverse((child) => {
@@ -215,8 +233,7 @@ const Context = class {
   /**
    * Add a object3D into the collision system
    *
-   * @param {Object3D} go - The object3D to register
-   * @param object3D
+   * @param {Object3D} object3D - object3D to register
    */
   registerObject3DCollision(object3D) {
     object3D.traverse((child) => {
@@ -238,6 +255,9 @@ const Context = class {
     // console.log(this.collisionsBuffer);
   }
 
+  /**
+   * Update root object3D collider controller + update collisions system
+   */
   updateCollision() {
     this.object3D.traverse((child) => {
       const colliderComponent = child.getComponent(Collider.Component.TYPE);
@@ -286,8 +306,7 @@ const Context = class {
   /**
    * Remove a GameObject from the collision system
    *
-   * @param {GameObject} go - The gameobject to remove
-   * @param object3D
+   * @param {Object3D} object3D - object3D to remove
    */
   unregisterObject3DCollision(object3D) {
     object3D.traverse((child) => {
@@ -310,6 +329,13 @@ const Context = class {
     });
   }
 
+  /**
+   * Add an object3D in context. If a parentUUID is specifed it will be add to its, root otherwise
+   *
+   * @param {Object3D} obj - object3D to add
+   * @param {string=} parentUUID - uuid of parent object3D
+   * @returns {Promise} - promise resolving when add
+   */
   addObject3D(obj, parentUUID = null) {
     if (parentUUID) {
       const parent = this.object3D.getObjectByProperty('uuid', parentUUID);
@@ -322,9 +348,9 @@ const Context = class {
   }
 
   /**
-   * Remove a object3D
+   * Remove a object3D of context
    *
-   * @param {string} uuid - The uuid of the gameobject to remove
+   * @param {string} uuid - uuid of the object3D to remove
    */
   removeObject3D(uuid) {
     const object3D = this.object3D.getObjectByProperty('uuid', uuid);
@@ -347,18 +373,23 @@ const Context = class {
    * Dispatch custom event to listeners
    *
    * @param {string} eventID - Id of the event to dispatch
-   * @param {Array} params - Params to passed to listeners
+   * @param {Array} args - Params to passed to listeners
    */
-  dispatch(eventID, params) {
+  dispatch(eventID, args) {
     if (!this.listeners[eventID]) {
       console.warn('no listener on event ', eventID);
     } else {
       this.listeners[eventID].forEach(function (cb) {
-        cb(params);
+        cb(args);
       });
     }
   }
 
+  /**
+   * Pass new commands to apply at the next step
+   *
+   * @param {Command[]} cmds - new commands to apply at the next step
+   */
   onCommand(cmds) {
     cmds.forEach((cmd) => {
       this.commands.push(cmd);
@@ -366,9 +397,10 @@ const Context = class {
   }
 
   /**
+   * Convert context root object3D to {@link State} and reset outdated attributes of all object3D
    *
-   * @param {*} full
-   * @returns {State}
+   * @param {boolean} full - model of object3D with controllers should be export
+   * @returns {State} - current state of context
    */
   toState(full = true) {
     const result = new State({
@@ -384,13 +416,17 @@ const Context = class {
     return result;
   }
 
+  /**
+   *
+   * @returns {Object3D} - context root object3D
+   */
   getObject3D() {
     return this.object3D;
   }
 
   /**
    *
-   * @returns {number}
+   * @returns {number} - context delta time
    */
   getDt() {
     return this.dt;
@@ -398,44 +434,69 @@ const Context = class {
 
   /**
    *
-   * @returns {Command[]}
+   * @returns {Command[]} - context buffer commands
    */
   getCommands() {
     return this.commands;
   }
 };
 
+/**
+ * Events triggered by context to {@link ScriptBase}
+ */
 Context.EVENT = {
-  TICK: 'tick', // Every tick
-  INIT: 'init', // Every tick
-  LOAD: 'load', // When loading
-  ON_ENTER_COLLISION: 'onEnterCollision', // First collsion
-  IS_COLLIDING: 'isColliding', // Is colliding
-  ON_LEAVE_COLLISION: 'onLeaveCollision', // On leave collision
+  LOAD: 'load',
+  INIT: 'init',
+  TICK: 'tick',
+  ON_ENTER_COLLISION: 'onEnterCollision',
+  IS_COLLIDING: 'isColliding',
+  ON_LEAVE_COLLISION: 'onLeaveCollision',
 };
 
 const ScriptBase = class {
   /**
-   * constructor should not be rewrite use init instead
+   * Skeleton of a game context script, different {@link Context.EVENT} are trigger by {@link Context}
    *
-   * @param {Context} context
-   * @param {Object3D} object3D
-   * @param {object|JSON} variables
+   * @param {Context} context - context of this script
+   * @param {Object3D} object3D - object3D bind (attach) to this script
+   * @param {object} variables - custom variables bind (attach) to this script
    */
   constructor(context, object3D, variables) {
-    /** @type {Context} */
+    /** @type {Context} - context of this script */
     this.context = context;
+    /** @type {Object3D} - object3D attach to this script */
     this.object3D = object3D;
+    /** @type {object} - custom variables attach to this script */
     this.variables = variables;
   }
-  init() {}
-  tick() {}
+  /**
+   * call after object3D controllers initialized
+   *
+   * @returns {Promise=} - promise when object3D has loaded
+   */
   load() {
     // return null by default
     return null;
   }
+  /**
+   * call after object3D load and register in collision system
+   */
+  init() {}
+  /**
+   * call every step
+   */
+  tick() {}
+  /**
+   * call if object3D is not static and first collide a static object3D (object3D must have {@link Collider})
+   */
   onEnterCollision() {}
+  /**
+   * call if object3D is not static and is colliding a static object3D (object3D must have {@link Collider})
+   */
   isColliding() {}
+  /**
+   * call if object3D is not static and was colliding a static object3D (object3D must have {@link Collider})
+   */
   onLeaveCollision() {}
 };
 

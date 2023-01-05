@@ -2,7 +2,10 @@ const Core = require('../../src/index');
 const object2JSON = require('./data/object3D/object2.json');
 const HelloScript = require('./data/scripts/Hello');
 
-const context = new Core.Game.Context({ Hello: HelloScript }, object2JSON);
+const context = new Core.Game.Context(
+  { Hello: HelloScript },
+  new Core.Game.Object3D(object2JSON)
+);
 
 context.load().then(() => {
   const state1 = context.toState();

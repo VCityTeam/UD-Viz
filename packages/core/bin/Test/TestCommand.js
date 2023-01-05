@@ -23,7 +23,7 @@ const gameContext = new Core.Game.Context(
       }
     },
   },
-  {
+  new Core.Game.Object3D({
     object: {
       name: 'Command Test',
       components: {
@@ -32,7 +32,7 @@ const gameContext = new Core.Game.Context(
         },
       },
     },
-  }
+  })
 );
 
 gameContext.load().then(() => {

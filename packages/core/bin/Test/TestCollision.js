@@ -90,7 +90,7 @@ const gameContext = new Core.Game.Context(
       }
     },
   },
-  {
+  new Core.Game.Object3D({
     object: {
       uuid: 'root',
       name: 'Collision Test',
@@ -100,7 +100,7 @@ const gameContext = new Core.Game.Context(
         },
       },
     },
-  }
+  })
 );
 
 gameContext.load().then(() => {
