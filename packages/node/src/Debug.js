@@ -1,7 +1,18 @@
 const exec = require('child-process-promise').exec;
 const spawn = require('child_process').spawn;
 
+/**
+ * Debug tools for UD-VIZ mono repository
+ */
 module.exports = {
+  /**
+   * Common routine of debug for -@ud-viz/* packages
+   * First build debug bundle with an "npm run build-debug"
+   * Then launch test with "node ./bin/test.js" if option withTest is true
+   *
+   * @param {string} packageName - name of package being debugged for log purpose
+   * @param {boolean} withTest - test should be part of the routine
+   */
   routine: function (packageName, withTest = true) {
     const printExec = function (result) {
       console.log('stdout: \n', result.stdout);
@@ -28,12 +39,6 @@ module.exports = {
           child.stderr.on('data', (data) => {
             console.error('\x1b[31m', `ERROR :${data}`);
           });
-
-          // exec('npm run test')
-          //   .catch((error) => {
-          //     console.error(packageName + ' test failed', error);
-          //   })
-          //   .then(printExec);
         }
       });
   },

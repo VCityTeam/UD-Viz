@@ -6,10 +6,16 @@ const spawn = require('child_process').spawn;
 const serverPort = 8000;
 
 /**
+ * Test browser scripts by opening a new page on a puppeteer browser and evaluating the script, script should have a structure like below
  *
- * @param {*} testFolderPath
- * @param {*} bundlePath
- * @returns
+ * @example () => {
+ *  return new Promise((resolve)=>{
+ *    //do test
+ *    resolve(); // test succeed
+ *  }};
+ * @param {string} testFolderPath - path of the folder where scripts belong
+ * @param {string} bundlePath - path of the bundle needed for scripts to work
+ * @returns {Promise} - promise resolving when test have passed
  */
 const browserScripts = function (testFolderPath, bundlePath) {
   return folderInBrowserPage(testFolderPath, async (page, currentFile) => {
@@ -22,14 +28,18 @@ const browserScripts = function (testFolderPath, bundlePath) {
     // test script
     await page.evaluate(
       eval(fs.readFileSync(testFolderPath + '/' + currentFile.name, 'utf8'))
-    ); // without the eval here console.log are not catch above page.on("console")
+    ); // without the eval here console.log are not catch
   });
 };
 
 /**
+ * Test scripts by spawning them and waiting the process to exit, script should have a structure like below
  *
- * @param {*} folderPath
- * @returns
+ * @example
+ * //do test
+ * process.exit(0);// test succeed
+ * @param {string} folderPath - path of the folder where scripts belong
+ * @returns {Promise} - a promise resolving when test have passed
  */
 const scripts = function (folderPath) {
   return new Promise((resolve) => {
@@ -92,6 +102,12 @@ const scripts = function (folderPath) {
   });
 };
 
+/**
+ * Open html files in a page of a puppeteer browser in order to catch error
+ *
+ * @param {string} folderPath - path of the folder where html files belong
+ * @returns {Promise} - promise resolving when test have passed
+ */
 const html = function (folderPath) {
   return folderInBrowserPage(folderPath, async (page, currentFile) => {
     // page connect to html file
@@ -106,6 +122,19 @@ const html = function (folderPath) {
   });
 };
 
+/**
+ * @callback pageTest
+ * @param {puppeteer.Page} page - page where the test is going to be done
+ * @param {fs.Dirent} currentFile - file being tested
+ * @returns {Promise} - promise resolving when test has passed
+ */
+
+/**
+ *
+ * @param {string} testFolderPath - path of the folder where belong files to test
+ * @param {pageTest} pageTest - description of the test
+ * @returns {Promise} - a promise resolving when test have passed
+ */
 const folderInBrowserPage = function (testFolderPath, pageTest) {
   return new Promise((resolve, reject) => {
     // start a server
@@ -146,7 +175,7 @@ const folderInBrowserPage = function (testFolderPath, pageTest) {
               const process = async () => {
                 const currentFile = files[index];
                 if (currentFile.isFile()) {
-                  console.log(currentFile.name + ' start test');
+                  console.log('\n\n' + currentFile.name + ' start test');
 
                   // open a new page
                   const page = await browser.newPage();
