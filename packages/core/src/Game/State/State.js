@@ -1,6 +1,6 @@
 const Diff = require('./Diff');
 const Object3D = require('../Object3D');
-const JSONUtil = require('../../JSONUtil');
+const Data = require('../../Data');
 
 const State = class {
   /**
@@ -145,11 +145,10 @@ const State = class {
    */
   equals(state) {
     if (state.timestamp != this.timestamp) return false;
-    if (
-      !JSONUtil.equals(this.object3D.toJSON(true), state.object3D.toJSON(true))
-    )
-      return false;
-    return true;
+    return Data.objectEquals(
+      this.object3D.toJSON(true),
+      state.object3D.toJSON(true)
+    );
   }
 
   /**

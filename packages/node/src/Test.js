@@ -42,7 +42,7 @@ const scripts = function (folderPath) {
         });
 
         child.stdout.on('data', (data) => {
-          console.log(file.name + ` :\n${data}`);
+          console.log(`${data}`);
         });
         child.stderr.on('data', (data) => {
           console.error('\x1b[31m', file.name + ` ERROR :\n${data}`);
@@ -71,7 +71,7 @@ const scripts = function (folderPath) {
         if (!file) console.log(index, files);
 
         if (file.isFile()) {
-          console.log(file.name, ' start');
+          console.log('\n\n' + file.name, ' start');
           await test(folderPath, file);
         }
 

@@ -1,11 +1,12 @@
 const { Model, Controller } = require('./Component');
-const JSONUtil = require('../../JSONUtil');
+const Data = require('../../Data');
 
 const ScriptModel = class extends Model {
   /**
    * Model of object3D script component
    *
    * @param {object} json - json to configure script model
+   * @param {string} json.uuid - uuid of script model
    * @param {Array<string>=} json.idScripts - ids of scripts
    * @param {object=} json.variables - custom global variables for scripts
    */
@@ -91,7 +92,7 @@ const ScriptController = class extends Controller {
   setVariables(variables) {
     this.model.variables = variables;
     for (const id in this.scripts) {
-      JSONUtil.overWrite(this.scripts[id].variables, variables);
+      Data.objectOverWrite(this.scripts[id].variables, variables);
     }
   }
 };

@@ -3,7 +3,6 @@
  */
 module.exports = {
   Data: require('./Data'),
-  JSONUtil: require('./JSONUtil'),
   Type: require('./Type'),
   ProcessInterval: require('./ProcessInterval'),
   EventSender: require('./EventSender'),

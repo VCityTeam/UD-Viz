@@ -2,28 +2,49 @@ const { Circle, Polygon } = require('detect-collisions');
 const { Component, Model, Controller } = require('./Component');
 const THREE = require('three');
 
+/**
+ * Collider object3D component, this component use {@link https://www.npmjs.com/package/detect-collisions}, note that collisions are handle in 2D
+ */
 const ColliderComponent = class extends Component {};
 
 ColliderComponent.TYPE = 'Collider';
 
 /**
- * Component used to handle collision of a GameObject
- * Support by detect-collisions npm package
+ * @typedef {object} PolygonJSON - json object to configure {@link Polygon} of {@link https://www.npmjs.com/package/detect-collisions}
+ * @property {string} type - to identify this is a Polygon must be equal to "Polygon"
+ * @property {Array<{x,y}>} points - points of the polygon
  */
+
+/**
+ * @typedef {object} CircleJSON - json object to configure {@link Circle} of {@link https://www.npmjs.com/package/detect-collisions}
+ * @property {string} type - to identify this is a Circle must be equal to "Circle"
+ * @property {{x,y}} center - center of the circle
+ * @property {number} radius - radius of the circle
+ */
+
 const ColliderModel = class extends Model {
+  /**
+   * Model of a collider component
+   *
+   * @param {object} json - object to configure collider model
+   * @param {string} json.uuid - uuid collider model
+   * @param {Array<PolygonJSON|CircleJSON>=} json.shapes - shapes of collisions
+   * @param {boolean} json.body - if true this is a physics collisions
+   * @todo body should be handle by context (meaning context move according the physic of the collision)
+   */
   constructor(json) {
     super(json);
 
-    // Shapes in json format
+    /** @type {Array<PolygonJSON|CircleJSON>} - shapes of collisions */
     this.shapesJSON = json.shapes || [];
 
-    // Boolean to know if its a physics collisions or not
+    /** @type {boolean} - if true this is a physics collision */
     this.body = json.body || false;
   }
 
   /**
    *
-   * @returns {boolean}
+   * @returns {boolean} - body of collider model
    */
   isBody() {
     return this.body;
@@ -31,24 +52,15 @@ const ColliderModel = class extends Model {
 
   /**
    *
-   * @param {JSON} json
-   */
-  setShapesJSON(json) {
-    this.shapesJSON = json;
-  }
-
-  /**
-   *
-   * @returns {JSON}
+   * @returns {Array<PolygonJSON|CircleJSON>} - shapes json of collider model
    */
   getShapesJSON() {
     return this.shapesJSON;
   }
 
   /**
-   * Compute this to JSON
    *
-   * @returns {JSON}
+   * @returns {object} - export collider model to json object
    */
   toJSON() {
     return {
@@ -61,11 +73,19 @@ const ColliderModel = class extends Model {
 };
 
 class ColliderController extends Controller {
+  /**
+   * Controller collider component
+   *
+   * @param {ColliderModel} model - model controller
+   * @param {object} object3D - object3D parent of this collider component
+   */
   constructor(model, object3D) {
     super(model, object3D);
 
-    // Shapes wrappers
+    /** @type {ShapeWrapper[]} - shapes wrapper {@link ShapeWrapper} */
     this.shapeWrappers = [];
+
+    // initialize shape wrapper from model shapesJSON
     this.model.getShapesJSON().forEach((shapeJSON) => {
       const wrapper = new ShapeWrapper(this.object3D, shapeJSON);
       this.shapeWrappers.push(wrapper);
@@ -89,34 +109,35 @@ class ColliderController extends Controller {
 
   /**
    *
-   * @returns {object}
+   * @returns {ShapeWrapper[]} - shape wrappers of controller
    */
   getShapeWrappers() {
     return this.shapeWrappers;
   }
 }
 
-/**
- * Object to wrap the Polygon and Circle of the detect-collisions npm package
- */
 class ShapeWrapper {
+  /**
+   * Wrap {@link Polygon} or {@link Circle} of {@link https://www.npmjs.com/package/detect-collisions}
+   *
+   * @param {object} object3D - object 3D parent of the controller collider
+   * @param {PolygonJSON|CircleJSON} json - shapeJSON
+   */
   constructor(object3D, json) {
-    // Gameobject of this shapewrapper
+    /** @type {object} - object3D parent of the controller collider */
     this.object3D = object3D;
 
-    // Json
+    /** @type {PolygonJSON|CircleJSON} - shape JSON */
     this.json = json;
 
-    // Shape detect-collisions npm package
+    /** @type {Polygon|Circle} - {@link Circle} or {@link Polygon} of {@link https://www.npmjs.com/package/detect-collisions} */
     this.shape = null;
-
-    // Init
     this.initShapeFromJSON(json);
   }
 
   /**
    *
-   * @returns {Circle/Polygon}
+   * @returns {Polygon|Circle} - shape of {@link https://www.npmjs.com/package/detect-collisions}
    */
   getShape() {
     return this.shape;
@@ -124,18 +145,16 @@ class ShapeWrapper {
 
   /**
    *
-   * @returns {GameObject}
+   * @returns {object} - object3D of shape wrapper
    */
   getObject3D() {
     return this.object3D;
   }
 
   /**
-   * Create Circle/Polygon of detect-collisions
-   * then add an update function to update the worldtransform
-   * then attach getter function of the gameobject
+   * Initialize shape of {@link https://www.npmjs.com/package/detect-collisions} and update method then attach a getter to the object3D to the shape
    *
-   * @param {JSON} json
+   * @param {PolygonJSON|CircleJSON} json - shape json
    */
   initShapeFromJSON(json) {
     switch (json.type) {
@@ -147,6 +166,11 @@ class ShapeWrapper {
             parseFloat(json.radius)
           );
 
+          /**
+           * update world transform of shape
+           *
+           * @param {{x:number,y:number}} origin - origin in world
+           */
           this.update = (origin) => {
             circle.x = json.center.x + origin.x;
             circle.y = json.center.y + origin.y;
@@ -164,13 +188,17 @@ class ShapeWrapper {
 
           const polygon = new Polygon(0, 0, points);
 
-          // Attach userData to perform update
+          /**
+           * update world transform of shape
+           *
+           * @param {{x:number,y:number}} origin - origin in world
+           * @todo rotation is not handle
+           */
           this.update = function (origin) {
             const points = [];
             json.points.forEach(function (p) {
               const point = [p.x + origin.x, p.y + origin.y];
               points.push(point);
-              // TODO handle rotation
             });
             polygon.setPoints(points);
           };
@@ -181,7 +209,9 @@ class ShapeWrapper {
       default:
     }
 
-    // Add a getter to the object3D
+    /**
+     * attach a getter to the shape so its object3D attach can be access in colllide result {@link Context}
+     */
     this.shape.getObject3D = this.getObject3D.bind(this);
   }
 }

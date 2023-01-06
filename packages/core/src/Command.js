@@ -2,7 +2,7 @@ const Command = class {
   /**
    * Create a Command (this class can be used to make different process communicate together)
    *
-   * @param {object} json - json to configure the command
+   * @param {object} json - json object to configure the command
    * @param {string} json.type - Type of the command
    * @param {object=} json.data - Data of the command
    */
@@ -36,9 +36,8 @@ const Command = class {
   }
 
   /**
-   * Compute this to JSON
    *
-   * @returns {object} object serialized in JSON
+   * @returns {object} - export to json object command
    */
   toJSON() {
     return {

@@ -239,7 +239,7 @@ function objectToInt32Array(obj) {
  * Convert a Int32Array into an Object
  *
  * @param {Int32Array} array - array to convert
- * @returns {JSON} - object converted
+ * @returns {object} - object converted
  */
 function int32ArrayToObject(array) {
   const str = String.fromCharCode.apply(this, array);
@@ -383,29 +383,100 @@ function getAttributeByPath(obj, path) {
 }
 
 /**
- * Checks the equality of two objects by their properties. For two objects to
- * be equal, they must have the same keys and the same values.
+ * Check if two json object are equals
  *
- * @param {any} a - An object.
- * @param {any} b - An object.
- * @returns {boolean} - true if equals
+ * @param {object} j1 - first json object
+ * @param {object} j2 - second json object
+ * @returns {boolean} - true if both json are equals, false otherwise
  */
-function objectEquals(a, b) {
-  // Set of a's keys
-  const keys = new Set(Object.keys(a));
-  for (const key of Object.keys(b)) {
-    if (!keys.has(key)) {
-      // If b has a key unknown to a, they aren't equal
-      return false;
+function objectEquals(j1, j2) {
+  const traverse = function (json1, json2) {
+    for (const key in json1) {
+      if (json1[key] instanceof Object) {
+        if (json2[key] instanceof Object) {
+          if (traverse(json1[key], json2[key])) {
+            continue;
+          } else {
+            return false;
+          }
+        } else {
+          return false;
+        }
+      } else {
+        if (json2[key] == json1[key]) {
+          continue;
+        } else {
+          return false;
+        }
+      }
+    }
+    return true; // All check have passed meaning is equals
+  };
+
+  return traverse(j1, j2);
+}
+
+/**
+ * Overwrite identical key of jsonOverWrited with the one matching in jsonModel
+ * Create key of jsonModel which are not in jsonOverWrited
+ *
+ * @param {object} jsonOverWrited - json object overwrited
+ * @param {object} jsonModel - json object used as model to overwrite
+ */
+function objectOverWrite(jsonOverWrited, jsonModel) {
+  const traverse = function (json1, json2) {
+    // write the ones not in jsonOverWrited
+    for (const key in json2) {
+      if (json1[key] == undefined) {
+        json1[key] = json2[key];
+      }
+    }
+
+    // check in jsonOverWrited the ones existing in jsonModel
+    for (const key in json1) {
+      if (json1[key] instanceof Object) {
+        if (json2[key] instanceof Object) traverse(json1[key], json2[key]);
+      } else {
+        if (json2[key] != undefined) {
+          json1[key] = json2[key];
+        }
+      }
+    }
+  };
+
+  traverse(jsonOverWrited, jsonModel);
+}
+
+/**
+ * Apply a callback to each key value couple of a json object
+ *
+ * @param {object} json - json object to parse
+ * @param {Function} cb - callback to apply (first argument is the object containing the key and second is the key)
+ * @returns {object} - json object parsed
+ */
+function objectParse(json, cb) {
+  for (const key in json) {
+    if (json[key] instanceof Object) {
+      this.parse(json[key], cb);
+    } else {
+      cb(json, key);
     }
   }
-  for (const key of keys) {
-    // For each key of a, b must also have the key and the values must be equal
-    if (b[key] === undefined || a[key] !== b[key]) {
-      return false;
+  return json;
+}
+
+/**
+ * Replace all valid number string in a json object by a float
+ *
+ * @param {object} json - json object to parse
+ * @returns {object} - json object parsed
+ */
+function objectParseNumeric(json) {
+  return this.parse(json, function (j, key) {
+    if (Type.isNumeric(j[key])) {
+      j[key] = parseFloat(j[key]);
     }
-  }
-  return true;
+  });
 }
 
 module.exports = {
@@ -422,4 +493,7 @@ module.exports = {
   imageToDataURI: imageToDataURI,
   getAttributeByPath: getAttributeByPath,
   objectEquals: objectEquals,
+  objectOverWrite: objectOverWrite,
+  objectParse: objectParse,
+  objectParseNumeric: objectParseNumeric,
 };

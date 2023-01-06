@@ -6,7 +6,7 @@ const GameScript = require('./Component/GameScript');
 const Collider = require('./Component/Collider');
 const Audio = require('./Component/Audio');
 const Render = require('./Component/Render');
-const JSONUtil = require('../JSONUtil');
+const Data = require('../Data');
 
 const Object3D = class extends THREE.Object3D {
   /**
@@ -424,7 +424,7 @@ Object3D.rotate = function (object3D, euler) {
 Object3D.deepCopy = function (object3D) {
   const cloneJSON = object3D.toJSON(true);
   // Rename uuid
-  JSONUtil.parse(cloneJSON, function (json, key) {
+  Data.objectParse(cloneJSON, function (json, key) {
     const keyLowerCase = key.toLowerCase();
     if (keyLowerCase === 'uuid') json[key] = THREE.MathUtils.generateUUID();
 
