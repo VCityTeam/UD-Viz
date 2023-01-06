@@ -1,15 +1,31 @@
 const express = require('express');
+const http = require('http'); // just for doc
 
 const ExpressAppWrapper = class {
+  /**
+   * Wrapper of an express app
+   */
   constructor() {
+    /** @type {http.Server} - a node http server */
     this.httpServer = null;
   }
 
+  /**
+   * Close http server
+   */
   stop() {
     this.httpServer.close();
     console.log('Server stop');
   }
 
+  /**
+   * Start http server to listen on a certain port
+   *
+   * @param {object} config - object to configure express app
+   * @param {string} config.folder - path of the folder to serve
+   * @param {number} config.port - port on which server should listen
+   * @returns {Promise} - promise resolving when server is listening
+   */
   start(config) {
     return new Promise((resolve, reject) => {
       const app = express();
