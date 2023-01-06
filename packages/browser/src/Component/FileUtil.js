@@ -5,7 +5,7 @@ const jquery = require('jquery');
  */
 module.exports = {
   /**
-   * Download on the local disk an object as JSON
+   * Download on the local disk an object as .json
    *
    * @param {object} exportObj the object to download
    * @param {string} exportName the name of the file

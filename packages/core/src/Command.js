@@ -1,4 +1,4 @@
-const Command = class {
+module.exports = class Command {
   /**
    * Create a Command (this class can be used to make different process communicate together)
    *
@@ -46,5 +46,3 @@ const Command = class {
     };
   }
 };
-
-module.exports = Command;
