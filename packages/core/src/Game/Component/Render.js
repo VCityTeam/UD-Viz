@@ -13,6 +13,7 @@ const RenderModel = class extends Model {
    * Render object3D component model store data to render an object3D (in an external context), a render controller should be implemented to use it
    *
    * @param {object} json - json to configure render model
+   * @param {string} json.uuid - uuid render model
    * @param {string=} json.idRenderData - id of render data (could be an id link to gltf, obj file)
    * @param {Array<number>} [json.color=[1,1,1]] - [r,g,b] format color
    */
