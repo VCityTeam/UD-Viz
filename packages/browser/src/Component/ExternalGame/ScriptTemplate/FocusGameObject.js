@@ -1,6 +1,6 @@
 import { ExternalScriptBase } from '../Context';
 import * as THREE from 'three';
-import { Game, JSONUtil } from '@ud-viz/core';
+import { Game, Data } from '@ud-viz/core';
 
 const defaultVariables = {
   cameraAngle: 0.51,
@@ -14,7 +14,7 @@ export class FocusGameObject extends ExternalScriptBase {
   constructor(context, object3D, variables) {
     // Overwrite conf
     const overWriteVariables = JSON.parse(JSON.stringify(defaultVariables));
-    JSONUtil.overWrite(overWriteVariables, variables);
+    Data.objectOverWrite(overWriteVariables, variables);
     super(context, object3D, overWriteVariables);
 
     // Quaternion to place the camera

@@ -1,17 +1,16 @@
 import io from 'socket.io-client';
 
-/**
- * Handle communication with a server using socket.io-client npm package
- * (https://www.npmjs.com/package/socket.io-client)
- */
 export class SocketIOWrapper {
+  /**
+   * Socket io client wrapper {@link https://www.npmjs.com/package/socket.io-client}, used to manage a websocket communication
+   */
   constructor() {
     this.socket = null;
     this.events = {};
   }
 
   /**
-   * Start communication with the server (the one hosting index.html by default)
+   * Start websocket communication with window.location.host
    */
   connectToServer() {
     // Communication protocol
@@ -41,7 +40,7 @@ export class SocketIOWrapper {
   /**
    * Reset all events listened or only the ones listed in events parameter
    *
-   * @param {Array} events list of events to reset can be null
+   * @param {Array<string>=} events - list of events to reset
    */
   reset(events) {
     if (events) {
@@ -59,10 +58,10 @@ export class SocketIOWrapper {
   }
 
   /**
-   * Assign a callback to a specific event
+   * Register a callback on an event
    *
-   * @param {Shared.Component.Constants} event the event listened
-   * @param {Function} callback function called when the event is received
+   * @param {string} event - event id
+   * @param {(...args: any[]) => void} callback - callback called when the event is received
    */
   on(event, callback) {
     this.events[event] = true;
@@ -70,10 +69,10 @@ export class SocketIOWrapper {
   }
 
   /**
-   * Fire an event to the server with data attached
+   * Emit an event to the server with attach data
    *
-   * @param {Shared.Component.Constants} event the event fired
-   * @param {JSON} data data passed
+   * @param {string} event - event id
+   * @param {object} data - attached data (all serializable data are supported)
    */
   emit(event, data) {
     this.socket.emit(event, data);

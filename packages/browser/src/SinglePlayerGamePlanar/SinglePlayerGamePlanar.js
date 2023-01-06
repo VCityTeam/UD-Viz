@@ -5,101 +5,108 @@ import { Game } from '@ud-viz/core';
 import { RequestAnimationFrameProcess } from '../Component/RequestAnimationFrameProcess';
 import * as ExternalGame from '../Component/ExternalGame/ExternalGame';
 
-import { Extent } from 'itowns';
-import { ExternalScriptBase } from '../Component/ExternalGame/Context';
-
 /**
- * @classdesc A Class contaning method to easily instanciate a browser game based on the ud-viz game engine
+ * @classdesc Create a single player game in a {@link Frame3DPlanar}
  */
 export class SinglePlayerGamePlanar {
-  constructor() {
-    /** @type {Frame3DPlanar} */
-    this.frame3DPlanar = null;
+  /**
+   *
+   * @param {Game.Object3D} gameObject3D - root game object3D of your game
+   * @param {Frame3DPlanar} frame3DPlanar - frame3DPlanar where the game is taking place
+   * @param {AssetManager} assetManager - assetManager of the game {@link AssetManager}
+   * @param {InputManager} inputManager - input manager of the game {@link InputManager}
+   * @param {object} options - single player game planar options
+   * @param {Object<string,Game.ScriptBase>=} options.gameScriptClass - custom game scripts class of your object3D
+   * @param {{x:number,y:number,z:number}=} options.gameOrigin - position of the external game context object3D
+   * @param {Object<string,ExternalGame.ScriptBase>=} options.externalGameScriptClass - custom external scripts class of your object3D
+   * @param {object=} options.sceneConfig - configuration of the scene 3D {@link ExternalGame.Context}
+   * @param {number=} options.interpolatorDelay - delay between state computed in game process and the ones in external context
+   */
+  constructor(
+    gameObject3D,
+    frame3DPlanar,
+    assetManager,
+    inputManager,
+    options = {}
+  ) {
+    /** @type {Game.Object3D} - root game object3D */
+    this.gameObject3D = gameObject3D;
+
+    /** @type {Game.Context} - game script + collision context */
+    this.gameContext = new Game.Context(
+      options.gameScriptClass || {},
+      gameObject3D
+    );
+
+    /** @type {Frame3DPlanar} - game view */
+    this.frame3DPlanar = frame3DPlanar;
+
+    /** @type {AssetManager} - asset manager */
+    this.assetManager = assetManager;
+
+    /** @type {InputManager} - input manager */
+    this.inputManager = inputManager;
+
+    /** @type {ExternalGame.Context} - render audio external script context */
+    this.externalGameContext = new ExternalGame.Context(
+      this.frame3DPlanar,
+      assetManager,
+      inputManager,
+      options.externalGameScriptClass || {},
+      { sceneConfig: options.sceneConfig }
+    );
+
+    if (options.gameOrigin) {
+      this.externalGameContext.object3D.position.set(
+        options.gameOrigin.x,
+        options.gameOrigin.y,
+        options.gameOrigin.z
+      );
+      this.externalGameContext.object3D.updateMatrixWorld();
+    }
+
+    /** @type {Game.StateInterpolator} - interpolator to smooth comminucation between the two process */
+    this.interpolator = new Game.StateInterpolator(options.interpolatorDelay);
   }
 
   /**
-   * @param {Extent} extent - Geographical bounding rectangle. {@link http://www.itowns-project.org/itowns/docs/#api/Geographic/Extent Extent}
-   * @param {Game.Object3D} gameObject3D - Game object used to create the {@link Game.Context}
-   * @param {object} options - options
-   * @param {AssetManager} [options.assetManager] - {@link AssetManager}
-   * @param {Object<string, ExternalScriptBase>} [options.externalGameScriptClass] - Class that can be reference by {@link GameScript} of an object3D
-   * @param {Frame3DPlanar} [options.frame3DPlanar] - {@link Frame3DPlanar}
-   * @param {Object<string, Game.ScriptBase>} [options.gameScriptClass] - Class that can be reference by {@link GameScript} of an object3D
-   * @param {number} [options.gameProcessFps] - Frame per second
-   * @param {InputManager} [options.inputManager] - {@link InputManager}
-   * @param {number} [options.interpolatorDelay] - Delay between state received and state computed
-   * @param {object} [options.sceneConfig] - config of the scene give at the instanciation of External.Context
-   * @returns {Promise} start promise
+   *
+   * @returns {Promise} - promise resolving when game has started
    */
-  start(extent, gameObject3D, options = {}) {
+  start() {
     return new Promise((resolve) => {
-      // initialize planar
-      /** @type {Frame3DPlanar} */
-      this.frame3DPlanar =
-        options.frame3DPlanar ||
-        new Frame3DPlanar(extent, { hasItownsControls: false });
-
-      // init game process
-      const gameScriptClass = options.gameScriptClass || {};
-      const gameContext = new Game.Context(gameScriptClass, gameObject3D);
-      gameContext.load().then(() => {
-        const interpolator = new Game.StateInterpolator(
-          options.interpolatorDelay
-        );
+      this.gameContext.load().then(() => {
         // initialize interpolator
-        let previousGameState = gameContext.toState(false); // false because no need to send game component
-        interpolator.onFirstState(previousGameState);
+        let previousGameState = this.gameContext.toState(false); // false because no need to send game component
+        this.interpolator.onFirstState(previousGameState);
 
         // start process gameContext
-        const gameProcess = new RequestAnimationFrameProcess(
-          options.gameProcessFps
-        );
+        const gameProcess = new RequestAnimationFrameProcess(60);
 
-        // create an input manager to plug it directly in game process
-        /** @type {InputManager} */
-        const inputManager = options.inputManager || new InputManager();
-        inputManager.startListening(this.frame3DPlanar.html());
+        // plug inputmanager directly in game process
+        this.inputManager.startListening(this.frame3DPlanar.html());
 
         gameProcess.start((dt) => {
           // game loop
-          gameContext.onCommand(inputManager.computeCommands()); // pull commands
-          gameContext.step(dt); // simulate
+          this.gameContext.onCommand(this.inputManager.computeCommands()); // pull commands
+          this.gameContext.step(dt); // simulate
 
           // here we compute a diff with the last game state (we could just send a newState to the interpolator)
           // but this is to test multiplayer (isOutdated is used in diff forcing the update transform in external context)
           // isOutdated is also used to notify external script maybe we should use two boolean TODO_ISSUE
-          const newState = gameContext.toState(false);
+          const newState = this.gameContext.toState(false);
           const stateDiff = newState.sub(previousGameState);
           previousGameState = newState;
 
           // console.log(stateDiff);
 
-          interpolator.onNewDiff(stateDiff); // send new diff of the game to interpolator
+          this.interpolator.onNewDiff(stateDiff); // send new diff of the game to interpolator
         });
 
-        // init external game context
-
-        /** @type {AssetManager} */
-        const assetManager = options.assetManager || new AssetManager();
-        const externalGameScriptClass = options.externalGameScriptClass || {};
-
-        const externalGameContext = new ExternalGame.Context(
-          this.frame3DPlanar,
-          assetManager,
-          inputManager,
-          externalGameScriptClass,
-          { sceneConfig: options.sceneConfig }
-        );
-
         // indicate to the external context how to send command to gamecontext (could be with websocket)
-        externalGameContext.sendCommandToGameContext = (cmds) => {
-          gameContext.onCommand(cmds);
+        this.externalGameContext.sendCommandToGameContext = (cmds) => {
+          this.gameContext.onCommand(cmds);
         };
-
-        // position of the external game context object extent center
-        const center = extent.center();
-        externalGameContext.object3D.position.set(center.x, center.y, 300); // TODO 300 is HARD CODED
-        externalGameContext.object3D.updateMatrixWorld();
 
         // step external game context
 
@@ -108,7 +115,7 @@ export class SinglePlayerGamePlanar {
         // this.frame3DPlanar.itownsView.addFrameRequester(
         //   itowns.MAIN_LOOP_EVENTS.UPDATE_START,
         //   (dt) => {
-        //     externalGameContext.step(dt, interpolator.computeCurrentStates());
+        //     this.externalGameContext.step(dt, this.interpolator.computeCurrentStates());
         //   }
         // );
 
@@ -117,15 +124,17 @@ export class SinglePlayerGamePlanar {
         const process = new RequestAnimationFrameProcess(30);
         process.start((dt) => {
           // external game loop
-          externalGameContext.step(dt, interpolator.computeCurrentStates()); // simulate
+          this.externalGameContext.step(
+            dt,
+            this.interpolator.computeCurrentStates()
+          ); // simulate
           this.frame3DPlanar.itownsView.notifyChange(this.frame3DPlanar.camera); // => to load 3DTiles
           this.frame3DPlanar.render();
         });
 
         // DEBUG PRINT
-        inputManager.addKeyInput('p', 'keyup', () => {
-          console.log('external game context ', externalGameContext);
-          console.log('game context ', gameContext);
+        this.inputManager.addKeyInput('p', 'keyup', () => {
+          console.log('game ', this);
         });
 
         resolve();

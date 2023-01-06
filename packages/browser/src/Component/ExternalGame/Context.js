@@ -1,6 +1,6 @@
 const THREE = require('three');
 import { AssetManager, InputManager, THREEUtil } from '../Component';
-import { Game, JSONUtil, Command } from '@ud-viz/core';
+import { Game, Data, Command } from '@ud-viz/core';
 import { RenderController } from './RenderController';
 import { AudioController } from './AudioController';
 import { Frame3DBase } from '../Frame3D/Frame3D';
@@ -70,7 +70,7 @@ export class Context {
 
     // Overwrite conf
     const overWriteConf = JSON.parse(JSON.stringify(defaultConfigScene));
-    JSONUtil.overWrite(overWriteConf, options.sceneConfig || {});
+    Data.objectOverWrite(overWriteConf, options.sceneConfig || {});
     this.configScene = overWriteConf;
     this.directionalLight = null;
     this.initScene();

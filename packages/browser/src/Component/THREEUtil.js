@@ -1,7 +1,7 @@
 const THREE = require('three');
 
 /**
- * Set of class/function for a high level use of THREE.js
+ * Set of function for a high level use of THREE.js
  */
 module.exports = {
   /**
@@ -16,11 +16,11 @@ module.exports = {
   },
 
   /**
-   * Add default lights to a scenedebugger;
+   * Add default lights to a scene 3D
    * one directional and one ambient
    *
-   * @param {THREE.Scene} scene the scene where to add lights
-   * @returns {THREE.DirectionalLight, THREE.AmbientLight} lights added
+   * @param {THREE.Scene} scene - the scene where to add lights
+   * @returns {{directionalLight:THREE.DirectionalLight, ambientLight:THREE.AmbientLight}} - lights added
    */
   addLights: function (scene) {
     // Lights
@@ -39,9 +39,9 @@ module.exports = {
   /**
    * Initialize the webgl renderer with default values
    *
-   * @param {THREE.WebGLRenderer} renderer the renderer to init
-   * @param {THREE.Color} skyColor clear color of the scene
-   * @param {boolean} clear autoclear, default is false
+   * @param {THREE.WebGLRenderer} renderer - the renderer to init
+   * @param {THREE.Color} skyColor - clear color of the scene
+   * @param {boolean} clear - autoclear, default is false
    */
   initRenderer: function (renderer, skyColor, clear = false) {
     // Set sky color to blue
@@ -58,11 +58,11 @@ module.exports = {
   /**
    * Place the directional light in order its shadow camera fit the object
    *
-   * @param {number} offset distance from the bounding sphere of the object to the light
-   * @param {number} phi phi of spherical coord in radian
-   * @param {number} theta theta of spherical coord in radian
-   * @param {THREE.Object3D} obj the object to fit inside the projection plane of the shadow camera
-   * @param {THREE.DirectionalLight} dirLight the light with the shadow camera
+   * @param {number} offset - distance from the bounding sphere of the object to the light
+   * @param {number} phi - phi of spherical coord in radian
+   * @param {number} theta - theta of spherical coord in radian
+   * @param {THREE.Object3D} obj - the object to fit inside the projection plane of the shadow camera
+   * @param {THREE.DirectionalLight} dirLight - the light with the shadow camera
    */
   bindLightTransform: function (offset, phi, theta, obj, dirLight) {
     // Computing boundingSphere
@@ -100,10 +100,11 @@ module.exports = {
   },
 
   /**
+   * Compute near and far of camera in order to wrap a box define by a min and max value
    *
-   * @param {*} camera
-   * @param {*} min
-   * @param {*} max
+   * @param {THREE.PerspectiveCamera} camera - camera to compute near and far
+   * @param {THREE.Vector3} min - min coord of box
+   * @param {THREE.Vector3} max - max coord of box
    */
   computeNearFarCamera: function (camera, min, max) {
     const points = [

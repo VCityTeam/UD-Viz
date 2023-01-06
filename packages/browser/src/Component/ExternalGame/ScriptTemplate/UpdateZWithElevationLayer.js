@@ -1,6 +1,6 @@
 import { ExternalScriptBase } from '../Context';
 import * as THREE from 'three';
-import { Command, Game, JSONUtil } from '@ud-viz/core';
+import { Command, Game, Data } from '@ud-viz/core';
 const itowns = require('itowns');
 
 const defaultVariables = {
@@ -12,7 +12,7 @@ export class UpdateZWithElevationLayer extends ExternalScriptBase {
   constructor(context, object3D, variables) {
     // Overwrite variables
     const overWriteVariables = JSON.parse(JSON.stringify(defaultVariables));
-    JSONUtil.overWrite(overWriteVariables, variables);
+    Data.objectOverWrite(overWriteVariables, variables);
     super(context, object3D, overWriteVariables);
   }
 
