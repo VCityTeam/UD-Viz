@@ -31,10 +31,16 @@
         const app = new udvizBrowser.AllWidget(
           extent,
           configs['all_widget'],
-          configs['frame3D_planars'][1],
-          {
-            configBaseMapLayer: configs['base_maps'][0],
-          }
+          configs['frame3D_planars'][1]
+        );
+
+        const frame3DPlanar = app.getFrame3DPlanar();
+
+        // /// ADD LAYER
+        udvizBrowser.addBaseMapLayer(
+          configs['base_maps'][0],
+          frame3DPlanar.itownsView,
+          extent
         );
 
         // //// ABOUT MODULE
