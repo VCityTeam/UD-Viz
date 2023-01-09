@@ -3,8 +3,19 @@ import { AssetManager, InputManager, THREEUtil } from '../Component';
 import { Game, Data, Command } from '@ud-viz/core';
 import { RenderController } from './RenderController';
 import { AudioController } from './AudioController';
-import { Frame3DBase } from '../Frame3D/Frame3D';
+import { Frame3DBase, Frame3DPlanar } from '../Frame3D/Frame3D';
 
+/**
+ * @typedef SceneConfig
+ * @property {number} shadowMapSize - size of shadow map
+ * @property {object} sky - sky property
+ * @property {{r:number,g:number,b:number}} sky.color - rgb color (value are between [0,1])
+ * @property {{offset:number,phi:number,theta:number}} sky.sun_position - position of the sun in sheprical coord (phi theta) + an offset {@link THREEUtil.bindLightTransform}
+ */
+
+/**
+ * @type {SceneConfig} Default scene 3D config
+ */
 const defaultConfigScene = {
   shadowMapSize: 2046,
   sky: {
@@ -21,17 +32,17 @@ const defaultConfigScene = {
   },
 };
 
-/**
- * Context pass to the GameObject BrowserScript to work (TODO this class is relevant ? all attributes could be in gameview class)
- */
 export class Context {
   /**
+   * Handle {@link RenderController} + external script {@link Game.Component.ScriptController} + {@link AudioController}
    *
-   * @param {Frame3DBase} frame3D - could be a Frame3DBase or a Frame3DPlanar
-   * @param {AssetManager} assetManager
-   * @param {InputManager} inputManager
-   * @param externalGameScriptClass
-   * @param options
+   * @param {Frame3DBase|Frame3DPlanar} frame3D - frame3D view of the game
+   * @param {AssetManager} assetManager - asset manager {@link AssetManager}
+   * @param {InputManager} inputManager - input manager {@link InputManager}
+   * @param {Object<string,ExternalScriptBase>} externalGameScriptClass - custom external script {@link ExternalScriptBase}
+   * @param {object} options - options of context
+   * @param {object} options.userData - user data of context
+   * @param {SceneConfig} options.sceneConfig - config of the scene 3D
    */
   constructor(
     frame3D,
@@ -40,38 +51,41 @@ export class Context {
     externalGameScriptClass,
     options = {}
   ) {
-    /** @type {number} */
+    /** @type {number} - delta time of context */
     this.dt = 0;
 
-    /** @type {class{}} */
+    /** @type {Object<string,ExternalScriptBase>} - custom {@link ExternalScriptBase} that can be used by object3D */
     this.externalGameScriptClass = externalGameScriptClass;
 
-    /** @type {Base} */
-    this.frame3D = frame3D; // maybe create two attributes one planar and the other one base to have autocompletion
+    /** @type {Frame3DBase|Frame3DPlanar} - frame3D view of game */
+    this.frame3D = frame3D;
 
-    /** @type {AssetManager} */
+    /** @type {AssetManager} - asset manager */
     this.assetManager = assetManager;
 
-    /** @type {InputManager} */
+    /** @type {InputManager} - input manager */
     this.inputManager = inputManager;
 
-    /** @type {THREE.Object3D} */
+    /** @type {THREE.Object3D} - root object3D */
     this.object3D = new THREE.Object3D();
     this.object3D.name = 'External_Game_Context_Object3D';
-    this.frame3D.scene.add(this.object3D);
+    this.frame3D.scene.add(this.object3D); // add it to the frame3D scene
 
-    /** @type {object} store uuid of object3D in context use to identify new one incoming*/
+    /** @type {object<string,boolean>} - register uuid of object3D in context to identify new one incoming*/
     this.currentUUID = {};
 
-    /** @type {Game.Object3D} */
+    /** @type {Game.Object3D} - current root gameobject3D (child of this.object3D) */
     this.currentGameObject3D = null;
 
+    /** @type {object} - user data context */
     this.userData = options.userData || {};
 
     // Overwrite conf
     const overWriteConf = JSON.parse(JSON.stringify(defaultConfigScene));
     Data.objectOverWrite(overWriteConf, options.sceneConfig || {});
+    /** @type {SceneConfig} - config of scene 3D */
     this.configScene = overWriteConf;
+    /** @type {THREE.DirectionalLight} - directional light of scene 3D */
     this.directionalLight = null;
     this.initScene();
 
@@ -109,6 +123,9 @@ export class Context {
     });
   }
 
+  /**
+   * Init scene 3D with this.configScene {@link SceneConfig}
+   */
   initScene() {
     // Init renderer
     THREEUtil.initRenderer(
@@ -141,10 +158,12 @@ export class Context {
   }
 
   /**
+   * Step context
    *
-   * @param {number} dt - delta time
-   * @param {Game.State[]} states - new states to update to
-   * @param {boolean} updateGameObject
+   * @param {number} dt - new delta time context
+   * @param {Game.State[]} states - new states to update context current gameobject3D
+   * @param {boolean} [updateGameObject=true] - if false controllers are not going to tick
+   * @todo remove updateGameObject
    */
   step(dt, states, updateGameObject = true) {
     this.dt = dt; // ref it for external scripts
@@ -268,7 +287,7 @@ export class Context {
             // Do not exist remove it
             child.removeFromParent();
 
-            // BrowserScript removal
+            // external script event remove
             const scriptComponent = child.getComponent(
               Game.Component.ExternalScript.TYPE
             );
@@ -403,7 +422,7 @@ export class Context {
 
   /**
    *
-   * @param {Game.Object3D} go
+   * @param {Game.Object3D} go - gameobject3D to init controllers
    */
   initComponentControllers(go) {
     const components = go.getComponents();
@@ -449,6 +468,14 @@ export class Context {
     }
   }
 
+  /**
+   * Create a class instance of external game script class for an object3D  given an id
+   *
+   * @param {string} id - id of the class
+   * @param {Game.Object3D} object3D - object3D that is going to use this instance
+   * @param {object} modelVariables - custom variables associated to this instance
+   * @returns {ExternalScriptBase} - instance of the class bind with object3D and modelVariables
+   */
   createInstanceOf(id, object3D, modelVariables) {
     const constructor = this.externalGameScriptClass[id];
     if (!constructor) {
@@ -461,13 +488,11 @@ export class Context {
     return new constructor(this, object3D, modelVariables);
   }
 
-  // Util method
-
   /**
-   * Return the first localscript found with the id passed
    *
-   * @param {*} id id of the localscript
-   * @returns the first localscript found with id
+   * @param {string} id - id of script
+   * @returns {ExternalScriptBase|null} - first external script with id or null if none are found
+   * @todo need refacto
    */
   findBrowserScriptWithID(id) {
     let result = null;
@@ -485,10 +510,10 @@ export class Context {
   }
 
   /**
-   * Return the first go found with the id of the localscript passed
    *
-   * @param {*} id id of the localscript
-   * @returns the first go
+   * @param {string} id - id of script
+   * @returns {Game.Object3D|null} - first game object3D with external script id or null if none are found
+   * @todo need refacto
    */
   findGOWithBrowserScriptID(id) {
     let result = null;
@@ -506,6 +531,9 @@ export class Context {
     return result;
   }
 
+  /**
+   * @todo need refacto
+   */
   forceUpdate() {
     console.error('DEPRECATED');
     // let states = [];
@@ -525,8 +553,9 @@ export class Context {
   }
 
   /**
+   * This method need to be implemented by user
    *
-   * @param {Command[]} cmds
+   * @param {Command[]} cmds - commands to send to game context
    */
   sendCommandToGameContext(cmds) {
     console.log(cmds, ' cant be sent');
