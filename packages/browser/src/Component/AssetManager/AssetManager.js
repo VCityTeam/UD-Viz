@@ -256,7 +256,7 @@ class LoadingView {
 /**
  * @class Contains a THREE.Object3D and an array of animations
  */
-class RenderData {
+export class RenderData {
   /**
    * It takes an object3D and an optional animations object, and sets the object3D and animations
    * properties of the object

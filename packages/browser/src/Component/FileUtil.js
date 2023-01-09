@@ -7,8 +7,8 @@ module.exports = {
   /**
    * Download on the local disk an object as .json
    *
-   * @param {object} exportObj the object to download
-   * @param {string} exportName the name of the file
+   * @param {object} exportObj - object to download
+   * @param {string} exportName - name of file
    */
   downloadObjectAsJson: function (exportObj, exportName) {
     const dataStr =
@@ -25,8 +25,8 @@ module.exports = {
   /**
    * Request a json file on a distant server
    *
-   * @param {string} filePath on the distant server
-   * @returns {Promise} a promise where the resolve function has as first parameter the json file
+   * @param {string} filePath - on the distant server
+   * @returns {Promise} - promise resolving when .json loaded and pass it as first param
    */
   loadJSON: function (filePath) {
     return new Promise((resolve, reject) => {
@@ -46,9 +46,16 @@ module.exports = {
   },
 
   /**
+   * Load multiples .json files
    *
-   * @param {*} arrayPath
-   * @returns
+   * @param {string[]} arrayPath - path of .json files to loaded
+   * @returns {Promise} - promise reolving when .json files loaded, each .json file can be access by the filename
+   * @example
+   * loadMultipleJSON(["./some_folder/filename1.json","./another_folder/filename2.json"])
+   *  .then((configs)=>{
+   *    const contentFilename1 = configs["filename1"]
+   *    const contentFilename2 = configs["filename2"]
+   * })
    */
   loadMultipleJSON: function (arrayPath) {
     return new Promise((resolve, reject) => {
@@ -75,7 +82,10 @@ module.exports = {
 
   /**
    *
-   * @param {string} path
+   * @param {string} path - path of file
+   * @returns {string} - name of file
+   * @example
+   * console.log(computeFilename("./some_folder/another_folder/filename.whatever"))// log filename
    */
   computeFileNameFromPath: function (path) {
     const indexLastSlash = path.lastIndexOf('/');
@@ -84,10 +94,15 @@ module.exports = {
   },
 
   /**
+   * @callback FileReaderCallback
+   * @param {ProgressEvent<FileReader>} event - file reader event
+   */
+
+  /**
    * To be used with an input of type file
    *
-   * @param {object} e input of type file argument when 'change'
-   * @param {Function} onLoad callback passing the file as text as first argument
+   * @param {object} e - input of type file argument when 'change'
+   * @param {FileReaderCallback | null} onLoad - callback when file loaded
    */
   readSingleFileAsText: function (e, onLoad) {
     try {
@@ -106,7 +121,7 @@ module.exports = {
    * To be used with an input of type file
    *
    * @param {object} e input of type file argument when 'change'
-   * @param {Function} onLoad callback passing the file as URL as first argument
+   * @param {FileReaderCallback} onLoad - callback when file loaded
    */
   readSingleFileAsDataUrl: function (e, onLoad) {
     try {
@@ -124,8 +139,8 @@ module.exports = {
   /**
    * Download an image on the local disk
    *
-   * @param {string} url url of the image to download
-   * @param {*} filename name of the file on disk
+   * @param {string} url - url of the image to download
+   * @param {string} filename - name of the file on disk
    */
   downloadImageOnDisk: function (url, filename) {
     const imgResult = document.createElement('img');

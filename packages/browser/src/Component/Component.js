@@ -8,7 +8,7 @@ export * as FileUtil from './FileUtil.js';
 
 export { checkParentChild } from './HTMLUtil.js';
 
-export { AssetManager } from './AssetManager/AssetManager.js';
+export { AssetManager, RenderData } from './AssetManager/AssetManager.js';
 
 import * as Itowns from './Itowns/Itowns';
 export { Itowns };

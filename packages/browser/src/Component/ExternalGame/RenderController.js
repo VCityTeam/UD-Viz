@@ -1,27 +1,30 @@
 import { Game } from '@ud-viz/core';
 import * as THREE from 'three';
-import { AssetManager } from '../Component';
+import { AssetManager, RenderData } from '../Component';
 
 export class RenderController extends Game.Component.Controller {
   /**
+   * Render component controller
    *
-   * @param {*} model
-   * @param {*} object3D
-   * @param {AssetManager} assetManager
+   * @param {Game.Component.Model} model - model of component controller
+   * @param {Game.Object3D} object3D - object3D of controller
+   * @param {AssetManager} assetManager - asset manager
    */
   constructor(model, object3D, assetManager) {
     super(model, object3D);
 
+    /** @type {AssetManager} - asset manager */
     this.assetManager = assetManager;
 
-    /** @type {THREE.AnimationMixer} */
+    /** @type {THREE.AnimationMixer|null} - animation mixer only instanciated if there is animations in render data */
     this.animationMixer = null;
 
-    /** @type {RenderData} */
+    /** @type {RenderData} - render data */
     this.renderData = this.assetManager.createRenderData(
       this.model.getIdRenderData()
     );
 
+    // rename object3D
     this.renderData.object3D.name = 'Render_Controller_' + this.object3D.name;
 
     const animations = this.renderData.getAnimations();
@@ -35,6 +38,7 @@ export class RenderController extends Game.Component.Controller {
       });
     }
 
+    // update color
     this.setColor(this.model.getColor());
 
     // register in parent
@@ -42,19 +46,27 @@ export class RenderController extends Game.Component.Controller {
   }
 
   /**
-   * Add a custom object 3D
+   * Add object 3D
    *
-   * @param {THREE.Object3D} obj
+   * @param {THREE.Object3D} obj - object3D to add
    */
   addObject3D(obj) {
     this.renderData.getObject3D().add(obj);
     this.setColor(this.model.getColor());
   }
 
+  /**
+   *
+   * @returns {THREE.Object3D} - object3D controller
+   */
   getObject3D() {
     return this.renderData.getObject3D();
   }
 
+  /**
+   *
+   * @param {THREE.Color} color - new value color controller
+   */
   setColor(color) {
     this.model.setColor(color);
     // update color in the controller attributes
@@ -63,14 +75,13 @@ export class RenderController extends Game.Component.Controller {
     });
   }
 
+  /**
+   *
+   * @param {number} dt - delta time to update animations
+   */
   tick(dt) {
     if (this.animationMixer) {
       this.animationMixer.update(dt * 0.001);
     }
   }
-
-  // setIdRenderData(idRenderData) {
-  //   console.log('TODO');
-  //   gRenderComp.initAssets(_this.getAssetsManager());
-  // }
 }
