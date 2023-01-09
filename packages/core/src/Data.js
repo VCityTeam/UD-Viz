@@ -362,9 +362,9 @@ function imageToDataURI(arrayBuffer, mimeType, chunkSize = 8 * 1024) {
  * nested (does not contain any dot), the function is equivalent to `obj[path]`.
  *
  *
- * @param {object} obj
- * @param {string} path
- * @returns {*}
+ * @param {object} obj - object to get attribute
+ * @param {string} path - path to get the attribute
+ * @returns {*} - attribute vaue
  * @example
  * const obj = {test: {msg: "Hello world !"}};
  * console.log(getAttributeByPath(obj, "test.msg")); // prints "Hello world !";

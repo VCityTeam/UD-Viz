@@ -42,7 +42,7 @@ const ScriptController = class extends Controller {
    * Controller of object3D script component
    *
    * @param {ScriptModel} model - model of this controller
-   * @param {Object3D} object3D - object3D parent of the script component
+   * @param {object} object3D - object3D parent of the script component
    * @param {Object<string,object>} scripts - instances of scripts
    */
   constructor(model, object3D, scripts) {
