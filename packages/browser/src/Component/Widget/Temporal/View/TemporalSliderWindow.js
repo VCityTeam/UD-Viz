@@ -3,17 +3,23 @@ import { Window } from '../../Component/GUI/js/Window';
 
 import './TemporalWindow.css';
 
+// JSDOC
+import { TemporalOptions } from '../TemporalModule';
 /**
  * Handles the GUI part enabling the user to specify the chosen "time" (year)
  * of observation for displayal of the (3D) scene.
  * Note that it is not the Temporal View's responsability to
  * alter/modify/update the scene according to the user specified moment (but
  * only to trigger the possible hook-ups).
- *
- * @param refreshCallback : callback to be called when the time has changed.
- * @param options : optional parameters (min time, max time and current time)
  */
 export class TemporalSliderWindow extends Window {
+  /**
+   * It creates a new temporal navigation widget, and sets up some default values for the minimum and
+   * maximum times that can be displayed, the current time, and the time step
+   *
+   * @param {Function} refreshCallback - Callback to be called when the time has changed.
+   * @param {TemporalOptions} [options] - optional parameters (min time, max time and current time)
+   */
   constructor(refreshCallback, options = {}) {
     super('temporal', 'Temporal Navigation', false);
 

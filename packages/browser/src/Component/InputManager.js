@@ -399,10 +399,10 @@ export class MouseState {
    * Listen to the MOUSE_STATE_EVENTS and store the mouse state to then be access synchronously
    */
   constructor() {
-    /** @type {object<string,boolean>} - register if a mouse event is trigger or not */
+    /** @type {Object<string,boolean>} - register if a mouse event is trigger or not */
     this.mouseMap = {};
 
-    /** @type {object<string,Event>} - register event native js to pass it later synchronously */
+    /** @type {Object<string,Event>} - register event native js to pass it later synchronously */
     this.mouseEvent = {};
 
     /** @type {boolean} - true if the mouse is dragging */

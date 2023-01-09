@@ -12,11 +12,15 @@ import './TemporalWindow.css';
  * alter/modify/update the scene according to the user specified moment (but
  * only to trigger the possible hook-ups).
  * This View represents a timestamp with the Moment.js library.
- *
- * @param refreshCallback : callback to be called when the time has changed.
- * @param options : optional parameters (min time, max time and current time)
  */
 export class TemporalGraphWindow extends Window {
+  /**
+   * It creates a new instance of the `TemporalGraphNavigation` class, which is a subclass of the
+   * `GraphNavigation` class
+   *
+   * @param {Function} refreshCallback - Callback to be called when the time has changed.
+   * @param {object} [options={}] - Optional parameters (min time, max time and current time).
+   */
   constructor(refreshCallback, options = {}) {
     // Option : getAsynchronousData
     super('temporal', 'Temporal Graph Navigation', false);

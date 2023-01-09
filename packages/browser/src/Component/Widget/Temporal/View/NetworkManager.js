@@ -1,36 +1,29 @@
-const Network = require('vis-network').Network;
+import { Options as VisNetworkOptions, Network } from 'vis-network';
 
 /**
- * Manager for the graph
+ * Manager for the graph.
  * It take care of all data needed by vis.js
  */
 export class NetworkManager {
   /**
    * Constructs a NetworkManager.
    *
-   * @param {string} id_network - HTML id which will be the container of the graph
-   * data {Dict} - Data about nodes, edges and groups for the graph
-   * {
-     nodes:[{
-        id:string
-        label:string
-        level:int
-        title:string
-        startDate:int
-        }]
-     edges:[{
-        id:string
-        from:string
-        to:string
-        }]
-     groups:{id:int
-              label:string}
-     }
-   * option {Object} - Data about graphics' options for viz.js. See doc for futher details about the possibilities
-   *
-   * network {Vis.Network Object} - hold the network/graph instance created by viz.js
-   * @param data
-   * @param option
+   * @param {string} [id_network=mynetwork] - HTML id which will be the container of the graph
+   * @param {object} [data] - Data about nodes, edges and groups will be used to create the network.
+   * @param {object[]} [data.nodes=null] - Array of nodes objects
+   * @param {string} data.nodes[].id - id of a node
+   * @param {string} data.nodes[].label - Label of a node
+   * @param {number} data.nodes[].level - Level of a node
+   * @param {string} data.nodes[].title - Title of a node
+   * @param {number} data.nodes[].startDate - Start date of a node
+   * @param {object[]} [data.edges=null] - Array of edges objects
+   * @param {string} data.edges[].id - id of a edge
+   * @param {string} data.edges[].from - `from` attribute of a edge
+   * @param {string} data.edges[].to - `to` attribute of a edge
+   * @param {object} data.groups - Groups data
+   * @param {number} data.groups.id - id of groups
+   * @param {string} data.groups.label - label of groups
+   * @param {VisNetworkOptions} [option=null]  - Data about graphics' options for viz.js. See doc for futher details about the possibilities
    */
   constructor(
     id_network = 'mynetwork',
@@ -44,6 +37,7 @@ export class NetworkManager {
     },
     option = null
   ) {
+    /** @type {Network} hold the network/graph instance created by viz.js */
     this.network = null;
     this.data = data;
     this.option = option;
@@ -82,8 +76,7 @@ export class NetworkManager {
    * Click on edge = event
    * In both case, a date is passed
    *
-   * @param : callback (function) ( the function to be call when the event is done)
-   * @param callback
+   * @param {Function} callback - the function to be called when a node or edge is clicked.
    */
   add_event(callback) {
     this.network.on('selectNode', function (params) {
