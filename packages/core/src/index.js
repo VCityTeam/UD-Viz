@@ -19,6 +19,7 @@ module.exports = {
       ExternalScript: require('./Game/Component/ExternalScript').Component,
       ScriptController: require('./Game/Component/Script').Controller,
       Controller: require('./Game/Component/Component').Controller,
+      Model: require('./Game/Component/Component').Model,
     },
     /**
      * Constant used in Game

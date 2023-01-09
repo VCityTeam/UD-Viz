@@ -1,9 +1,9 @@
 /**
  * Check if an html element belong to another one recursively
  *
- * @param {HTMLElement} child the html child
- * @param {HTMLElement} parent the html parent
- * @returns {boolean} true if the child belong to the parent
+ * @param {HTMLElement} child - html child
+ * @param {HTMLElement} parent - html parent
+ * @returns {boolean} - true if child belong to parent
  */
 export function checkParentChild(child, parent) {
   let currentNode = child;
