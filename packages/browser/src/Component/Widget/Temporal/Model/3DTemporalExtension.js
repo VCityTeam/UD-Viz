@@ -116,7 +116,7 @@ export class $3DTemporalExtension {
    * Triggered when the content of a tile has been loaded. Fills
    * this.transactionsPerTile list with the transaction of this tile.
    *
-   * @param {*} tileContent
+   * @param {*} tileContent - Content of a tile
    */
   updateTileExtensionModel(tileContent) {
     this.temporalBoundingVolumes.set(

@@ -3,7 +3,6 @@
  * extension. See the spec in
  * ./jsonSchemas/3DTILES_temporal.transaction.schema.json
  *
- * @format
  */
 
 export class $3DTemporalTransaction {

@@ -3,7 +3,6 @@
  * extension. See the spec in
  * ./jsonSchemas/3DTILES_temporal.batchTable.schema.json
  *
- * @format
  */
 
 export class $3DTemporalBatchTable {
@@ -60,8 +59,8 @@ export class $3DTemporalBatchTable {
    * Checks that the batch table temporal extension has values for a given
    * identifier.
    *
-   * @param {number} batchId The identifier to check (identifier in the batch,
-   * i.e. position in the arrays).
+   * @param {number} batchId The identifier to check (identifier in the batch, i.e. position in the arrays).
+   * @returns {boolean} True if `this.startDates[batchId]` is filled
    */
   hasInfoForId(batchId) {
     // The constructor ensures that the three arrays have the same size.
@@ -73,8 +72,8 @@ export class $3DTemporalBatchTable {
    * Can be used to display information associated with an object
    * picked with the mouse for instance.
    *
-   * @param {*} batchId The given identifier (identifier in the batch,
-   * i.e. position in the arrays).
+   * @param {number} batchId The given identifier (identifier in the batch, i.e. position in the arrays).
+   * @returns {{featureId:number,startDate:number,endDate:number}} object containing infos
    */
   getInfoById(batchId) {
     if (!this.hasInfoForId(batchId)) {

@@ -3,7 +3,6 @@
  * extension. See the spec in
  * ./jsonSchemas/3DTILES_temporal.boundingVolume.schema.json
  *
- * @format
  */
 
 export class $3DTemporalBoundingVolume {

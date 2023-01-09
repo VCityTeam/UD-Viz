@@ -1,6 +1,17 @@
 import { $3DTemporalExtension } from './Model/3DTemporalExtension.js';
 import { TemporalProvider } from './ViewModel/TemporalProvider.js';
 import { TemporalView } from './View/TemporalView.js';
+import { TilesManager } from '../../Itowns/3DTiles/TilesManager.js';
+
+/**
+ * @typedef {object} TemporalOptions - options for initializing the temporal module.
+ * @property {number} currentTime - Current year
+ * @property {string} view - window type {@link EnumWindows}
+ * @property {number} minTime - Minimum year
+ * @property {number} maxTime - Maximum year
+ * @property {number} timeStep - Step of the temporal slider
+ * @property {Function} getAsynchronousData - DON'T USE should be removed, only use like a variable
+ */
 
 /**
  * Entrypoint of the temporal module (that can be instanciated in the demos)
@@ -11,7 +22,7 @@ export class TemporalModule {
    *
    * @param {TilesManager} tilesManager - The tiles manager associated with
    * the 3D Tiles layer with temporal extension.
-   * @param {object} temporalOptions - options for initializing the temporal
+   * @param {TemporalOptions} temporalOptions - options for initializing the temporal
    * module.
     };
    */

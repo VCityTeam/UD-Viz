@@ -3,7 +3,6 @@
  * extension. See the spec in
  * ./jsonSchemas/3DTILES_temporal.version.schema.json
  *
- * @format
  */
 
 export class $3DTemporalVersion {

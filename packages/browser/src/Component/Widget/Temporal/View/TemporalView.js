@@ -5,24 +5,34 @@ import { TemporalGraphWindow } from './TemporalGraphWindow.js';
 import { TemporalSliderWindow } from './TemporalSliderWindow.js';
 import { EnumTemporalWindow } from './EnumWindows.js';
 
+// JSDOC Import
+import { TemporalProvider } from '../ViewModel/TemporalProvider.js';
+import { TemporalOptions } from '../TemporalModule.js';
 /**
  * The view entrypoint. Initialize the correct window depending on the
  * configuration and hook up the callbacks from the view model to this window.
  */
 export class TemporalView extends WidgetView {
+  /**
+   * It creates a temporal window (either a slider or a graph) and binds it to the temporal extension
+   *
+   * @param {TemporalProvider} provider - The provider that will be used to fetch the tiles.
+   * @param {TemporalOptions} temporalOptions - options for initializing the temporal module
+   */
   constructor(provider, temporalOptions) {
     super();
 
+    /** @type {TemporalProvider} Setting the provider to the provider that is passed in. */
     this.provider = provider;
 
-    // ******* Temporal window
-    // Declare a callback to update this.currentTime when it is changed
-    // by the user in the temporalWindow
+    /** @type {number} Setting the current time to the current time. */
     this.currentTime = temporalOptions.currentTime;
 
     /**
+     * It updates the current time
+     * and then tells the provider to update the visible tiles
      *
-     * @param newDate
+     * @param {string} newDate - the new date that the user has selected.
      */
     function currentTimeUpdated(newDate) {
       this.currentTime = Number(newDate);
@@ -30,11 +40,15 @@ export class TemporalView extends WidgetView {
       // flow is good with MVVM
       this.provider.changeVisibleTilesStates();
     }
+
+    // ******* Temporal window
+    /** Declare a callback to update `this.currentTime` when it is changed by the user in the `temporalWindow` */
     const refreshCallback = currentTimeUpdated.bind(this);
 
-    // Callback to get data asynchronously from the tileset.json
     /**
+     * Callback to get data asynchronously from the `tileset.json`
      *
+     * @returns {Array} An array of two elements: `versions` and `versionTransitions`
      */
     function getAsynchronousData() {
       const versions =

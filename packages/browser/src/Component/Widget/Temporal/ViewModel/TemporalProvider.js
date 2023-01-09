@@ -4,6 +4,9 @@ import { CityObjectStyle } from '../../../Itowns/3DTiles/Model/CityObjectStyle.j
 import { CityObjectID } from '../../../Itowns/3DTiles/Model/CityObject.js';
 import { $3DTemporalExtension } from '../Model/3DTemporalExtension.js';
 
+// JSDOC
+import { $3DTemporalTransaction } from '../Model/3DTemporalTransaction.js';
+
 /**
  * The ViewModel of the temporal module. Contains intermediate data structures
  * between the model and the view as well as the logic for city objects and
@@ -139,8 +142,8 @@ export class TemporalProvider {
    *
    * @param {$3DTemporalTransaction} transaction The transaction
    * to generate the style name from.
-   * @param styleName
-   * @returns {string} If the transaction is a primary transaction,
+   * @param {string} styleName Style
+   * @returns {string | null} If the transaction is a primary transaction,
    * returns its type. If it is an aggregated transaction, it returns a
    * concatenation of the primary transactions types aggregated in
    * transaction, prefixed by 'aggregate'. Currently, no style are
@@ -162,6 +165,7 @@ export class TemporalProvider {
       return styleName;
     }
     console.warn('Transaction which is not a primary nor an aggregate.');
+    return null;
   }
 
   /* *** Culling with transactions and colors management     */
