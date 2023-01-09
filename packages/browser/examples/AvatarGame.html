@@ -140,14 +140,24 @@
             configs['frame3D_planars'][0]
           );
 
-          const game = new udvizBrowser.SinglePlayerGamePlanar();
-          game.start(extent, gameObject3D, {
-            assetManager: assetManager,
-            gameScriptClass: gameScriptClass,
-            externalGameScriptClass: externalGameScriptClass,
-            sceneConfig: configs['scene'],
-            frame3DPlanar: frame3DPlanar,
-          });
+          const game = new udvizBrowser.SinglePlayerGamePlanar(
+            gameObject3D,
+            frame3DPlanar,
+            assetManager,
+            new udvizBrowser.InputManager(),
+            {
+              gameScriptClass: gameScriptClass,
+              externalGameScriptClass: externalGameScriptClass,
+              sceneConfig: configs['scene'],
+              gameOrigin: {
+                x: extent.center().x,
+                y: extent.center().y,
+                z: 300,
+              },
+            }
+          );
+
+          game.start();
 
           // /// ADD LAYERS
           udvizBrowser.add3DTilesLayers(

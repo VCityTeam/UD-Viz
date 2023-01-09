@@ -245,24 +245,28 @@
             extent,
             configs['frame3D_planars'][0]
           );
-          const game = new udvizBrowser.SinglePlayerGamePlanar();
-          game
-            .start(
-              extent,
-              gameObject3D,
 
-              {
-                assetManager: assetManager,
-                externalGameScriptClass: externalGameScriptClass,
-                sceneConfig: configs['scene'],
-                frame3DPlanar: frame3DPlanar,
-              }
-            )
-            .then(() => {
-              // set custom render pass
-              const MYMAT = new THREE.ShaderMaterial({
-                uniforms: {},
-                vertexShader: `
+          const game = new udvizBrowser.SinglePlayerGamePlanar(
+            gameObject3D,
+            frame3DPlanar,
+            assetManager,
+            new udvizBrowser.InputManager(),
+            {
+              externalGameScriptClass: externalGameScriptClass,
+              sceneConfig: configs['scene'],
+              gameOrigin: {
+                x: extent.center().x,
+                y: extent.center().y,
+                z: 300,
+              },
+            }
+          );
+
+          game.start().then(() => {
+            // set custom render pass
+            const MYMAT = new THREE.ShaderMaterial({
+              uniforms: {},
+              vertexShader: `
              #define NORMAL
              varying vec3 vNormal;
              varying vec2 vHighPrecisionZW;
@@ -281,7 +285,7 @@
                vDistance /= 1000.;
              }
            `,
-                fragmentShader: `
+              fragmentShader: `
              #define NORMAL
              varying vec3 vNormal;
              varying vec2 vHighPrecisionZW;
@@ -300,16 +304,16 @@
                gl_FragColor = vec4(packNormalToRGB( normal ), depth);
              }
            `,
-              });
+            });
 
-              const MySobelOperatorShader = {
-                uniforms: {
-                  tDiffuse: { value: null },
-                  tDepth: { value: null },
-                  resolution: new THREE.Uniform(new THREE.Vector2()),
-                },
+            const MySobelOperatorShader = {
+              uniforms: {
+                tDiffuse: { value: null },
+                tDepth: { value: null },
+                resolution: new THREE.Uniform(new THREE.Vector2()),
+              },
 
-                vertexShader: /* glsl */ `
+              vertexShader: /* glsl */ `
            varying vec2 vUv;
            void main() {
            	vUv = uv;
@@ -317,7 +321,7 @@
            }
            `,
 
-                fragmentShader: /* glsl */ `
+              fragmentShader: /* glsl */ `
              uniform sampler2D tDiffuse;
              uniform sampler2D tDepth;
              uniform vec2 resolution;
@@ -358,16 +362,16 @@
                gl_FragColor = sqrt( ( valueGx * valueGx ) + ( valueGy * valueGy ) );
              }
            `,
-              };
+            };
 
-              const MaskShader = {
-                uniforms: {
-                  tDiffuse: { value: null },
-                  tMask: { value: null },
-                  resolution: new THREE.Uniform(new THREE.Vector2()),
-                },
+            const MaskShader = {
+              uniforms: {
+                tDiffuse: { value: null },
+                tMask: { value: null },
+                resolution: new THREE.Uniform(new THREE.Vector2()),
+              },
 
-                vertexShader: /* glsl */ `
+              vertexShader: /* glsl */ `
            varying vec2 vUv;
            void main() {
            	vUv = uv;
@@ -375,7 +379,7 @@
            }
            `,
 
-                fragmentShader: /* glsl */ `
+              fragmentShader: /* glsl */ `
            uniform sampler2D tDiffuse;
            uniform sampler2D tMask;
            uniform vec2 resolution;
@@ -395,80 +399,80 @@
                #include <dithering_fragment>
            }
            `,
-              };
+            };
 
-              // renderTarget for special effects
-              const renderTargetFX = new THREE.WebGLRenderTarget(0, 0, {
-                depthBuffer: true,
-                stencilBuffer: false,
-                format: THREE.RGBAFormat,
-                type: THREE.FloatType,
-              });
-
-              // create custom render pass
-              const renderer = game.frame3DPlanar.getRenderer();
-              const camera = game.frame3DPlanar.getCamera();
-              const scene = game.frame3DPlanar.getScene();
-
-              const edgeDetectionComposer = new udvizBrowser.EffectComposer(
-                renderer,
-                renderTargetFX
-              );
-              const normalsPass = new udvizBrowser.RenderPass(
-                scene,
-                camera,
-                MYMAT
-              );
-              edgeDetectionComposer.addPass(normalsPass);
-              const sobelPass = new udvizBrowser.ShaderPass(
-                MySobelOperatorShader
-              );
-
-              edgeDetectionComposer.addPass(sobelPass);
-              edgeDetectionComposer.renderToScreen = false;
-
-              const finalComposer = new udvizBrowser.EffectComposer(renderer);
-              const renderPass = new udvizBrowser.RenderPass(scene, camera);
-              finalComposer.addPass(renderPass);
-              const compositionPass = new udvizBrowser.ShaderPass(MaskShader);
-              compositionPass.uniforms.tMask.value = renderTargetFX.texture;
-              finalComposer.addPass(compositionPass);
-
-              // update variables on resize
-              const updateResize = function () {
-                const size = game.frame3DPlanar.getSize();
-                renderTargetFX.setSize(size.x, size.y);
-
-                sobelPass.uniforms.resolution.value = new THREE.Vector2(
-                  edgeDetectionComposer.writeBuffer.width,
-                  edgeDetectionComposer.writeBuffer.height
-                );
-                compositionPass.uniforms.resolution.value = new THREE.Vector2(
-                  finalComposer.writeBuffer.width,
-                  finalComposer.writeBuffer.height
-                );
-              };
-
-              // record in resize event
-              game.frame3DPlanar.on(
-                udvizBrowser.Frame3DBase.EVENT.RESIZE,
-                updateResize
-              );
-
-              // resize event to init
-              game.frame3DPlanar.onResize();
-
-              // define the custom render pass
-              const customRender = function () {
-                edgeDetectionComposer.reset(renderTargetFX);
-                finalComposer.reset();
-                edgeDetectionComposer.render();
-                finalComposer.render();
-              };
-
-              // set the custom render pass
-              game.frame3DPlanar.setRender(customRender);
+            // renderTarget for special effects
+            const renderTargetFX = new THREE.WebGLRenderTarget(0, 0, {
+              depthBuffer: true,
+              stencilBuffer: false,
+              format: THREE.RGBAFormat,
+              type: THREE.FloatType,
             });
+
+            // create custom render pass
+            const renderer = game.frame3DPlanar.getRenderer();
+            const camera = game.frame3DPlanar.getCamera();
+            const scene = game.frame3DPlanar.getScene();
+
+            const edgeDetectionComposer = new udvizBrowser.EffectComposer(
+              renderer,
+              renderTargetFX
+            );
+            const normalsPass = new udvizBrowser.RenderPass(
+              scene,
+              camera,
+              MYMAT
+            );
+            edgeDetectionComposer.addPass(normalsPass);
+            const sobelPass = new udvizBrowser.ShaderPass(
+              MySobelOperatorShader
+            );
+
+            edgeDetectionComposer.addPass(sobelPass);
+            edgeDetectionComposer.renderToScreen = false;
+
+            const finalComposer = new udvizBrowser.EffectComposer(renderer);
+            const renderPass = new udvizBrowser.RenderPass(scene, camera);
+            finalComposer.addPass(renderPass);
+            const compositionPass = new udvizBrowser.ShaderPass(MaskShader);
+            compositionPass.uniforms.tMask.value = renderTargetFX.texture;
+            finalComposer.addPass(compositionPass);
+
+            // update variables on resize
+            const updateResize = function () {
+              const size = game.frame3DPlanar.getSize();
+              renderTargetFX.setSize(size.x, size.y);
+
+              sobelPass.uniforms.resolution.value = new THREE.Vector2(
+                edgeDetectionComposer.writeBuffer.width,
+                edgeDetectionComposer.writeBuffer.height
+              );
+              compositionPass.uniforms.resolution.value = new THREE.Vector2(
+                finalComposer.writeBuffer.width,
+                finalComposer.writeBuffer.height
+              );
+            };
+
+            // record in resize event
+            game.frame3DPlanar.on(
+              udvizBrowser.Frame3DBase.EVENT.RESIZE,
+              updateResize
+            );
+
+            // resize event to init
+            game.frame3DPlanar.onResize();
+
+            // define the custom render pass
+            const customRender = function () {
+              edgeDetectionComposer.reset(renderTargetFX);
+              finalComposer.reset();
+              edgeDetectionComposer.render();
+              finalComposer.render();
+            };
+
+            // set the custom render pass
+            game.frame3DPlanar.setRender(customRender);
+          });
 
           // /// ADD LAYERS
           udvizBrowser.add3DTilesLayers(
