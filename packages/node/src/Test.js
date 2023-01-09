@@ -109,21 +109,30 @@ const scripts = function (folderPath) {
  * @returns {Promise} - promise resolving when test have passed
  */
 const html = function (folderPath) {
-  return folderInBrowserPage(folderPath, async (page, currentFile) => {
-    // page connect to html file
-    await page.goto(
-      'http://localhost:' +
-        serverPort +
-        '/' +
-        folderPath +
-        '/' +
-        currentFile.name
-    );
+  return folderInBrowserPage(folderPath, (page, currentFile) => {
+    return new Promise((resolve) => {
+      // page connect to html file
+      page
+        .goto(
+          'http://localhost:' +
+            serverPort +
+            '/' +
+            folderPath +
+            '/' +
+            currentFile.name
+        )
+        .then(() => {
+          // wait 1 sec
+          setTimeout(() => {
+            resolve();
+          }, 1000);
+        });
+    });
   });
 };
 
 /**
- * @callback pageTest
+ * @callback PageTestFile
  * @param {puppeteer.Page} page - page where the test is going to be done
  * @param {fs.Dirent} currentFile - file being tested
  * @returns {Promise} - promise resolving when test has passed
@@ -132,7 +141,7 @@ const html = function (folderPath) {
 /**
  *
  * @param {string} testFolderPath - path of the folder where belong files to test
- * @param {pageTest} pageTest - description of the test
+ * @param {PageTestFile} pageTest - description of the test
  * @returns {Promise} - a promise resolving when test have passed
  */
 const folderInBrowserPage = function (testFolderPath, pageTest) {

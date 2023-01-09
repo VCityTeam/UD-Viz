@@ -6,6 +6,11 @@ const Object3D = require('./Object3D');
 const State = require('./State/State');
 const Command = require('../Command');
 
+/**
+ * @callback ContextListener
+ * @param {*} params - params pass when event is dispatched
+ */
+
 const Context = class {
   /**
    * Handle Game collisions + {@link ScriptBase}
@@ -26,7 +31,7 @@ const Context = class {
     /** @type {Object<string,string>} Buffer to handle collision events {@link Context.EVENT} */
     this.collisionsBuffer = {};
 
-    /** @type {Object<string,Function[]} Listeners of custom events */
+    /** @type {Object<string,ContextListener[]>} Listeners of custom events */
     this.listeners = {};
 
     /** @type {number} delta time */

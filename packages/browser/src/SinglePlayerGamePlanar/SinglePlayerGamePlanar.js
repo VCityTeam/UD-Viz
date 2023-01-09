@@ -29,9 +29,6 @@ export class SinglePlayerGamePlanar {
     inputManager,
     options = {}
   ) {
-    /** @type {Game.Object3D} - root game object3D */
-    this.gameObject3D = gameObject3D;
-
     /** @type {Game.Context} - game script + collision context */
     this.gameContext = new Game.Context(
       options.gameScriptClass || {},

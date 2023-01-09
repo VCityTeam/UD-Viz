@@ -1,47 +1,6 @@
 const THREE = require('three');
 // const Object3D = require('../Object3D'); => this break build webpack phase (circular ref?)
 
-const Component = class {
-  /**
-   * Wrapper of a controller and a model
-   *
-   * @param {Model} model - model of this component
-   */
-  constructor(model) {
-    /** @type {Model} */
-    this.model = model;
-
-    /** @type {Controller} */
-    this.controller = null; // will be initialize by context
-  }
-
-  /**
-   *
-   * @returns { Model } - model of component
-   */
-  getModel() {
-    return this.model;
-  }
-
-  /**
-   *
-   * @returns {Controller} - controller of component
-   */
-  getController() {
-    return this.controller;
-  }
-
-  /**
-   *
-   * @param {Controler} controller - controller of this component
-   */
-  initController(controller) {
-    this.controller = controller;
-  }
-};
-
-Component.TYPE = 'Component';
-
 const Model = class {
   /**
    * Model object3D component
@@ -87,6 +46,47 @@ const Controller = class {
     this.object3D = object3D;
   }
 };
+
+const Component = class {
+  /**
+   * Wrapper of a controller and a model
+   *
+   * @param {Model} model - model of this component
+   */
+  constructor(model) {
+    /** @type {Model} - component model */
+    this.model = model;
+
+    /** @type {Controller|null} - component controller, is initialized by a context */
+    this.controller = null; // will be initialize by context
+  }
+
+  /**
+   *
+   * @returns { Model } - model of component
+   */
+  getModel() {
+    return this.model;
+  }
+
+  /**
+   *
+   * @returns {Controller} - controller of component
+   */
+  getController() {
+    return this.controller;
+  }
+
+  /**
+   *
+   * @param {Controller} controller - controller of this component
+   */
+  initController(controller) {
+    this.controller = controller;
+  }
+};
+
+Component.TYPE = 'Component';
 
 module.exports = {
   Component: Component,
