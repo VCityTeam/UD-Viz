@@ -2,12 +2,23 @@
 import { Window } from '../Component/GUI/js/Window';
 import * as THREE from 'three';
 
+/** @typedef {import("../../InputManager")} InputManager */
+/** @typedef {import("itowns")} itowns*/
+/**
+ * @typedef {object} TextureFile
+ * @property {number} index Index of the file (use to order file)
+ * @property {string} name Name of the file
+ * @property {THREE.CanvasTexture|THREE.VideoTexture} texture Texture to apply on the plane
+ * @property {{height:number,width:number}} size Size of the texture
+ * @property {HTMLVideoElement} [video] Html video element if it is an video texture.
+ */
 export class SlideShow extends Window {
   /**
    * It initializes the widget.
    *
    * @param {itowns.PlanarView} itownsView - The itowns view.
    * @param {object} configSlideShow - The configuration of the widget. need description
+   * @param {Array<{name:string,folder:string,diapositives:Array<string>}>} configSlideShow.slides - Array of slide object
    * @param {itowns.Extent} extent - The extent of the widget.
    * @param {InputManager} inputManager - the input manager of the application
    */
@@ -22,7 +33,7 @@ export class SlideShow extends Window {
     /** @type {InputManager} */
     this.inputManager = inputManager;
 
-    // Content html
+    /** @type {HTMLElement} Content html */
     this.htmlSlideShow = null;
     // Ids
     this.coordinatesInputVectorID = null;
@@ -36,13 +47,13 @@ export class SlideShow extends Window {
     this.rotationVector = new THREE.Vector3();
     this.sizeVector = new THREE.Vector2();
 
-    // List of callbacks to set when the window is created
+    /** @type {{event:string,id:number,cb:Function}[]} List of callbacks to set when the window is created  */
     this.callbacksHTMLEl = [];
 
     /** @type {THREE.Mesh} */
     this.plane = null;
 
-    // List of textures with data
+    /** @type {TextureFile[]} List of textures with data*/
     this.texturesFiles = null;
     this.iCurrentTextureFile = 0;
 
@@ -76,6 +87,11 @@ export class SlideShow extends Window {
     }
   }
 
+  /**
+   * It loads the textures and videos of the slideshow and stores them in the `this.texturesFiles` array
+   *
+   * @param {number} slideIndex - the index of the slideshow in the config file
+   */
   setSlideshowInConfig(slideIndex) {
     if (isNaN(slideIndex)) return;
     const conf = this.configSlideShow;
@@ -138,7 +154,7 @@ export class SlideShow extends Window {
     }
   }
 
-  /** Create a default texture and fill the first texture file in this.texturesFiles */
+  /** Create a default texture and fill the first texture file in `this.texturesFiles` */
   initDefaultTextureFile() {
     const canvas = document.createElement('canvas');
     canvas.height = 512;
@@ -189,7 +205,7 @@ export class SlideShow extends Window {
     ];
   }
 
-  /** Create all HTMLElements and fill this.htmlSlideShow*/
+  /** Create all HTMLElements and fill `this.htmlSlideShow`*/
   initHtml() {
     const htmlSlideShow = document.createElement('div');
     const coordinatesElement = this.createInputVector(
@@ -284,6 +300,9 @@ export class SlideShow extends Window {
     this.htmlSlideShow = htmlSlideShow;
   }
 
+  /**
+   * It sets the size, coordinates and rotation inputs to the values of the extent
+   */
   matchExtent() {
     const extentCenter = this.extent.center();
     this.setSizeInputs(
@@ -310,7 +329,6 @@ export class SlideShow extends Window {
   }
 
   /**
-   
    * Add event listeners to input
    */
   initInputListener() {
@@ -439,7 +457,7 @@ export class SlideShow extends Window {
    * @param {Array.String} labels List of labels name
    * @param {string} vectorName Name of the vector
    * @param {number} step The step of HTMLElement input (type number)
-   * @returns {object} title => HTMLElement 'h3' ; inputVector => HTMLElement 'div' contains labels and inputs HTMLElements
+   * @returns {{title:HTMLHeadingElement, inputVector:HTMLDivElement}} The `inputVector` 'div' contains labels and inputs HTMLElements
    */
   createInputVector(labels, vectorName, step = 0.5) {
     const titleVector = document.createElement('h3');
@@ -521,7 +539,7 @@ export class SlideShow extends Window {
   /**
    * Convert inputVector HTMLElement to THREE.Vector
    *
-   * @param {object} inputVector HTMLElement 'div' contains labels and inputs HTMLElements
+   * @param {HTMLDivElement} inputVector HTMLElement 'div' contains labels and inputs HTMLElements
    * @returns {THREE.Vector} vector
    */
   inputVectorToVector(inputVector) {
@@ -551,8 +569,9 @@ export class SlideShow extends Window {
   }
 
   /**
-   * @param {*} iText
-   * Set this.currentTexture
+   * Set `this.currentTexture`
+   *
+   * @param {number} iText The index of the texture to set
    */
   setTexture(iText) {
     const _this = this;
@@ -577,7 +596,7 @@ export class SlideShow extends Window {
     this.itownsView.notifyChange();
   }
 
-  /** Modify this.plane @var {THREE.Mesh} */
+  /** Modify `this.plane` {THREE.Mesh} */
   modifyPlane() {
     if (!this.plane) {
       this.createPlane();
@@ -601,7 +620,9 @@ export class SlideShow extends Window {
     this.itownsView.notifyChange();
   }
 
-  /** Create PlaneGeometry Mesh*/
+  /**
+   * It creates a PlaneGeometry and a MeshBasicMaterial, to create the Mesh `this.plane`
+   */
   createPlane() {
     const geometry = new THREE.PlaneGeometry(1, 1);
 
@@ -706,7 +727,7 @@ export class SlideShow extends Window {
   /**
    * Get size values contained in inputs elements in DOM
    *
-   * @returns {object} sizevalues
+   * @returns {{height:number,width:number}} sizevalues
    */
   getSizeValues() {
     const sizeInputEls = this.sizeInputVectorDOM.getElementsByTagName('input');
