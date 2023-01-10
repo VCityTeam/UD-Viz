@@ -9,6 +9,7 @@ import * as itowns from 'itowns';
 import { TransformControls } from 'three/examples/jsm/controls/TransformControls.js';
 import { MAIN_LOOP_EVENTS } from 'itowns';
 import './../About/About.css';
+import { updateMockUpObject } from './MockUpUtils.js';
 
 /**
  *
@@ -103,7 +104,9 @@ export class LegonizerWindow extends Window {
     buttonGenerateMockupElement.id = 'button_generate_Mockup';
     buttonGenerateMockupElement.textContent = 'Generate Lego Mockup';
 
-    buttonGenerateMockupElement.addEventListener('click', this.generateMockup);
+    buttonGenerateMockupElement.onclick = () => {
+      this.generateMockup();
+    };
 
     this.parametersElement.appendChild(buttonGenerateMockupElement);
   }
@@ -237,12 +240,12 @@ export class LegonizerWindow extends Window {
       this.inputCoordScaleYElement.value = this.boxSelector.scale.y;
       this.inputCoordScaleZElement.value = this.boxSelector.scale.z;
 
-      this.inputLegoScaleXElement.value = Math.trunc(
-        this.boxSelector.scale.x / this.ratio / 32.0
+      this.inputLegoScaleXElement.value = Math.abs(
+        Math.trunc(this.boxSelector.scale.x / this.ratio / 32.0)
       );
 
-      this.inputLegoScaleYElement.value = Math.trunc(
-        Math.abs(this.boxSelector.scale.y) / this.ratio / 32
+      this.inputLegoScaleYElement.value = Math.abs(
+        Math.trunc(Math.abs(this.boxSelector.scale.y) / this.ratio / 32)
       );
     }
   }
@@ -254,24 +257,22 @@ export class LegonizerWindow extends Window {
   }
 
   generateMockup() {
-    // Create THREE js window with heightmap mesh
-    const mockupWindow = new Window('MockupWindow', 'Mockup Window', true);
-    mockupWindow.innerContentHtml = `<div id="lego_mockup_window">`;
-    const mockupElement = mockupWindow.header;
-    console.log(mockupElement);
-    mockupElement.style.left = 'unset';
-    mockupElement.style.right = '10px';
-    mockupElement.style.top = '10px';
-    mockupElement.style.height = 'auto';
-    mockupElement.style.width = '30%';
-    mockupElement.style.borderRadius = '15px';
+    const bufferBox = this.boxSelector.clone();
+    bufferBox.geometry.applyMatrix4(bufferBox.matrixWorld);
+    bufferBox.geometry.computeBoundingBox();
+
+    const dataSelected = updateMockUpObject(
+      this.view3D.getLayerManager(),
+      bufferBox.geometry.boundingBox
+    );
+
+    console.log(dataSelected);
   }
 
   // Select Area from 3DTiles
   selectArea(value) {
     this.itownsController = value;
     const view3D = this.view3D;
-    const selectionGeometry = this.boxSelector;
 
     if (value == true) {
       this.buttonSelectionElement.textContent = 'Select an area';
@@ -400,7 +401,14 @@ export class LegonizerWindow extends Window {
         this.legoPrevisualisation.position.y = selectAreaObject.position.y;
         this.legoPrevisualisation.position.z = selectAreaObject.position.z + 50;
 
-        selectionGeometry.updateMatrixWorld();
+        selectAreaObject.updateMatrixWorld();
+        // selectAreaObject.geometry.computeBoundingBox();
+        console.log(selectAreaObject.geometry.boundingBox);
+
+        this.boxSelector.updateMatrixWorld();
+        // this.boxSelector.geometry = selectAreaObject.geometry;
+        console.log(this.boxSelector.geometry);
+
         this.legoPrevisualisation.updateMatrixWorld();
         view3D.getItownsView().notifyChange(this.view3D.getCamera());
       };
