@@ -1,7 +1,17 @@
-import { ExternalScriptBase } from '../Context';
+import { ExternalScriptBase, Context } from '../Context';
 import * as THREE from 'three';
 import { Game, Data } from '@ud-viz/core';
 
+/**
+ * @typedef FocusGameObjectVariables
+ * @property {number} cameraAngle - minus angle on x of the camera angle
+ * @property {number} minDist - minimum distance from the gameobject3D
+ * @property {number} maxDist - maximum distance from the gameobject3D
+ * @property {number} offsetZ - offset the camera position on z
+ * @property {string} nameGO2Focus - name of the gameobject3D to focus
+ */
+
+/** @type {FocusGameObjectVariables} - default variables */
 const defaultVariables = {
   cameraAngle: 0.51,
   minDist: 50,
@@ -11,6 +21,13 @@ const defaultVariables = {
 };
 
 export class FocusGameObject extends ExternalScriptBase {
+  /**
+   * Focus a gameobject3D according a name
+   *
+   * @param {Context} context - external game context
+   * @param {Game.Object3D} object3D - object3D of this script
+   * @param {FocusGameObjectVariables} variables - variables {@link FocusGameObjectVariables}
+   */
   constructor(context, object3D, variables) {
     // Overwrite conf
     const overWriteVariables = JSON.parse(JSON.stringify(defaultVariables));
@@ -30,6 +47,7 @@ export class FocusGameObject extends ExternalScriptBase {
   }
 
   init() {
+    // register wheel event to modify the distance
     this.context.inputManager.addMouseInput(
       this.context.frame3D.html(),
       'wheel',
@@ -43,6 +61,9 @@ export class FocusGameObject extends ExternalScriptBase {
     );
   }
 
+  /**
+   * Update camera position
+   */
   tick() {
     // Get the go2Focus gameobject by name
     const go2Focus = this.context.object3D.getObjectByProperty(
