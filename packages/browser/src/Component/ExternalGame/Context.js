@@ -71,7 +71,7 @@ export class Context {
     this.object3D.name = 'External_Game_Context_Object3D';
     this.frame3D.scene.add(this.object3D); // add it to the frame3D scene
 
-    /** @type {object<string,boolean>} - register uuid of object3D in context to identify new one incoming*/
+    /** @type {Object<string,boolean>} - register uuid of object3D in context to identify new one incoming*/
     this.currentUUID = {};
 
     /** @type {Game.Object3D} - current root gameobject3D (child of this.object3D) */
@@ -349,12 +349,9 @@ export class Context {
       go.updateMatrixWorld(true);
     });
 
-    // External Script INIT + ON_NEW_GAMEOBJECT
     newGO.forEach((g) => {
-      // Console.log('New GO => ', g.name);
       this.currentUUID[g.uuid] = true;
 
-      // Init newGO localscript
       const scriptComponent = g.getComponent(
         Game.Component.ExternalScript.TYPE
       );
@@ -563,39 +560,69 @@ export class Context {
   }
 }
 
+/**
+ * Event triggered by context to {@link ExternalScriptBase}
+ */
 Context.EVENT = {
-  INIT: 'init', // Before first tick
-  TICK: 'tick', // Every tick
-  ON_NEW_GAMEOBJECT: 'onNewGameObject', // When a go is added
-  ON_OUTDATED: 'onOutdated', // Call when outdated is raised
-  DISPOSE: 'dispose', // frame3D is disposed
-  ON_REMOVE: 'onRemove', // Object is remove from parent
-  ON_COMPONENT_UPDATE: 'onComponentUpdate', // Component updated smthg
-  ON_RESIZE: 'onResize', // On resize window
+  INIT: 'init',
+  TICK: 'tick',
+  ON_NEW_GAMEOBJECT: 'onNewGameObject',
+  ON_OUTDATED: 'onOutdated',
+  DISPOSE: 'dispose',
+  ON_REMOVE: 'onRemove',
+  ON_COMPONENT_UPDATE: 'onComponentUpdate',
+  ON_RESIZE: 'onResize',
 };
 
 export class ExternalScriptBase {
   /**
-   * constructor should not be rewrite use init instead
+   * Skeleton of a game context script, different {@link Context.EVENT} are trigger by {@link Context}
    *
-   * @param {Context} context
-   * @param {Object3D} object3D
-   * @param {object|JSON} variables
+   * @param {Context} context - context of this script
+   * @param {Game.Object3D} object3D - object3D bind (attach) to this script
+   * @param {object} variables - custom variables bind (attach) to this script
    */
   constructor(context, object3D, variables) {
-    /** @type {Context} */
+    /** @type {Context} - context of this script */
     this.context = context;
-    /** @type {Game.Object3D} */
+    /** @type {Game.Object3D} - object3D attach to this script */
     this.object3D = object3D;
-    /** @type {object} */
+    /** @type {object} - custom variables attach to this script */
     this.variables = variables;
   }
+  /**
+   * call after an object3D has been added to context
+   */
   init() {}
+  /**
+   * call every step
+   */
   tick() {}
-  onNewGameObject() {}
+  /**
+   * call when a new gameobject3Ds have been added to context
+   *
+   * @param {Game.Object3D[]} newGameObjects - array of the new gameobject3Ds
+   */
+  // eslint-disable-next-line no-unused-vars
+  onNewGameObject(newGameObjects) {}
+  /**
+   * call every time your game object3D model has changed
+   */
   onOutdated() {}
+  /**
+   * call when this gameobject 3D is removed from context
+   */
   onRemove() {}
+  /**
+   * call when an external script onOutdated return true
+   */
   onComponentUpdate() {}
+  /**
+   * call when frame3D is disposed
+   */
   dispose() {}
+  /**
+   * call when frame3D is resized
+   */
   onResize() {}
 }
