@@ -1,13 +1,25 @@
 import { Game } from '@ud-viz/core';
+import { Howl } from 'howler';
+import { AssetManager } from '../Component';
 const THREE = require('three');
 
 export class AudioController extends Game.Component.Controller {
+  /**
+   * Audio component controller
+   *
+   * @param {Game.Component.Model} model - component model
+   * @param {Game.Object3D} object3D - object3D of component
+   * @param {AssetManager} assetManager - asset manager
+   */
   constructor(model, object3D, assetManager) {
     super(model, object3D);
 
+    /** @type {AssetManager} - asset manager */
     this.assetManager = assetManager;
 
+    /** @type {Object<string,Howl>} - sounds of controller */
     this.sounds = {};
+    // initialize this.sounds with asset manager
     this.model.getSoundsJSON().forEach((idS) => {
       this.sounds[idS] = this.assetManager.createSound(
         idS,
@@ -16,14 +28,25 @@ export class AudioController extends Game.Component.Controller {
     });
   }
 
+  /**
+   *
+   * @param {string} id - id of the sound to play
+   */
   play(id) {
     this.sounds[id].play();
   }
 
+  /**
+   *
+   * @returns {Object<string,Howl>} - sounds controller
+   */
   getSounds() {
     return this.sounds;
   }
 
+  /**
+   * Unload all Howl sounds
+   */
   dispose() {
     for (const key in this.sounds) {
       this.sounds[key].unload();
@@ -31,6 +54,11 @@ export class AudioController extends Game.Component.Controller {
     }
   }
 
+  /**
+   * Tick controller
+   *
+   * @param {THREE.Matrix4} cameraMatrixWorldInverse - camera matrix world inverse
+   */
   tick(cameraMatrixWorldInverse) {
     for (const key in this.sounds) {
       const sound = this.sounds[key];

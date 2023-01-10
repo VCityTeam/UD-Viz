@@ -15,6 +15,7 @@ const serverPort = 8000;
  *  }};
  * @param {string} testFolderPath - path of the folder where scripts belong
  * @param {string} bundlePath - path of the bundle needed for scripts to work
+ * @todo goto necessary ?
  * @returns {Promise} - promise resolving when test have passed
  */
 const browserScripts = function (testFolderPath, bundlePath) {

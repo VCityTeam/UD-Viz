@@ -3,6 +3,10 @@ import * as THREE from 'three';
 import { Command, Game, Data } from '@ud-viz/core';
 const itowns = require('itowns');
 
+/**
+ * 
+ */
+
 const defaultVariables = {
   nameGO2UpdateZ: null,
   updateZCrs: 'EPSG:3946', // this is used to project avatar on elevation layer
