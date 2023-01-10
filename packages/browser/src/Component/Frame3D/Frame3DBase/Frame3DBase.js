@@ -5,20 +5,19 @@ import { Billboard } from '../Component/Billboard';
 
 import './Frame3DBase.css';
 
-/**
- * @classdesc The basic view of an ud-viz application
- * @todo expliquer le css renderer and so on
- */
 export class Frame3DBase {
   /**
-   * @param {object} options
-   * @param {HTMLElement} options.htmlParent
-   * @param {boolean} options.catchEventsCSS3D
-   * @param {number} options.css3DRendererFps
-   * @param {boolean} init3D
+   * Basic Frame3D wrap different html element to handle CSS3D rendering {@link CSS3DRenderer}.
+   * It's possible to add {@link Billboard} to this.
+   * Composed with {@link THREE.Scene} + {@link THREE.PerspectiveCamera} + {@link THREE.WebGLRenderer}.
+   *
+   * @param {object} options - options to configure frame3Dbase
+   * @param {HTMLElement} [options.htmlParent=document.body] - html parent element of root html frame3DBase
+   * @param {boolean} [options.catchEventsCSS3D=false] - event are catch by css3D element (ie {@link Billboard})
+   * @param {boolean} [init3D=true] - {@link THREE.Scene} + {@link THREE.PerspectiveCamera} + {@link THREE.WebGLRenderer} should be init
    */
   constructor(options = {}, init3D = true) {
-    // Root html
+    /** @type {HTMLDivElement} - root html */
     this.rootHtml = document.createElement('div');
     this.rootHtml.id = 'root_Frame3DBase';
 
@@ -29,60 +28,63 @@ export class Frame3DBase {
       document.body.appendChild(this.rootHtml);
     }
 
-    // Root webgl
+    /** @type {HTMLDivElement} - root webgl (where canvas is added) */
     this.rootWebGL = document.createElement('div');
     this.rootWebGL.id = 'viewerDiv'; // => So Widget can access rootWebGL with id
 
-    // Root css
+    /** @type {HTMLDivElement} - root css (where css3Delement are added) */
     this.rootCss = document.createElement('div');
     this.rootCss.id = 'css_Frame3DBase';
 
     this.rootHtml.appendChild(this.rootCss);
     this.rootHtml.appendChild(this.rootWebGL);
 
-    // Ui
+    /** @type {HTMLDivElement} - where ui element should be added */
     this.ui = document.createElement('div');
     this.ui.classList.add('ui_Frame3DBase');
     this.rootWebGL.appendChild(this.ui);
 
-    // Listen resize event
+    /** @type {Function} - reference resize listener to remove it on dispose */
     this.resizeListener = this.onResize.bind(this);
     window.addEventListener('resize', this.resizeListener);
 
-    // Pause
+    /** @type {boolean} - flag to stop rendering 3D */
     this.isRendering = true;
 
     /** @type {THREE.Vector2} Size of the frame3D */
     this.size = new THREE.Vector2(1, 1);
 
-    /** @type {THREE.Scene} */
+    /** @type {THREE.Scene} - canvas scene 3D */
     this.scene = null;
 
-    /** @type {THREE.WebGLRenderer} */
+    /** @type {THREE.WebGLRenderer} - canvas renderer */
     this.renderer = null;
 
-    /** @type {THREE.PerspectiveCamera} */
+    /** @type {THREE.PerspectiveCamera} - camera 3D */
     this.camera = null;
 
-    /** @type {CSS3DRenderer} */
+    /** @type {CSS3DRenderer} - css renderer */
     this.css3DRenderer = null;
 
-    /** @type {THREE.Scene} */
+    /** @type {THREE.Scene} - css scene */
     this.css3DScene = null;
 
-    /** @type {Billboard[]} */
+    /** @type {Billboard[]} - current billboards in frame3D */
     this.billboards = [];
 
     // Default catch events
     const catchEventsCSS3D = options.catchEventsCSS3D || false;
     this.catchEventsCSS3D(catchEventsCSS3D);
 
-    // listeners Frame3DBase.EVENT (why not using eventSender of ud-viz/core ?)
+    /** @type {Object<string,Function[]>} - listeners of {@link Frame3DBase.EVENT} */
     this.listeners = {};
-    this.listeners[Frame3DBase.EVENT.DISPOSE] = [];
-    this.listeners[Frame3DBase.EVENT.RESIZE] = [];
+    for (const key in Frame3DBase.EVENT) {
+      this.listeners[Frame3DBase.EVENT[key]] = [];
+    }
 
     if (init3D) {
+      // Initialize 3D
+
       THREE.Object3D.DefaultUp.set(0, 0, 1);
 
       this.scene = new THREE.Scene();
@@ -99,6 +101,12 @@ export class Frame3DBase {
     }
   }
 
+  /**
+   * Register a listener on a {@link Frame3DBase.EVENT}
+   *
+   * @param {string} eventID - event to add listener {@link Frame3DBase.EVENT}
+   * @param {Function} listener - callback to call on eventID
+   */
   on(eventID, listener) {
     if (!this.listeners[eventID])
       throw new Error('this event is not a Frame3DBase.EVENT');
@@ -106,6 +114,7 @@ export class Frame3DBase {
   }
 
   /**
+   * Resize with css html element
    *
    * @param {THREE.Vector2} min coordinate min in pixel
    * @param {THREE.Vector2} max coordinate max in pixel
@@ -128,7 +137,7 @@ export class Frame3DBase {
 
   /**
    *
-   * @param {HTMLElement} el the html element to add to the ui
+   * @param {HTMLElement} el - html element to add to ui
    */
   appendToUI(el) {
     this.ui.appendChild(el);
@@ -136,7 +145,7 @@ export class Frame3DBase {
 
   /**
    *
-   * @returns {HTMLElement} the root html of this view
+   * @returns {HTMLDivElement} - frame3DBase root html
    */
   html() {
     return this.rootHtml;
@@ -157,6 +166,8 @@ export class Frame3DBase {
 
     // Listen to switch mode between css3D and webgl controls
     const raycaster = new THREE.Raycaster();
+
+    // check if enter css3D event
     this.rootWebGL.onmousedown = (event) => {
       if (this.isCatchingEventsCSS3D()) return;
       if (checkParentChild(event.target, this.ui)) return; // Do not propagate if it's the ui that has been clicked
@@ -181,6 +192,8 @@ export class Frame3DBase {
         }
       }
     };
+
+    // check if enter canvas webgl event
     this.rootCss.onmousedown = (event) => {
       if (!this.isCatchingEventsCSS3D()) return;
 
@@ -208,12 +221,21 @@ export class Frame3DBase {
     setTimeout(this.resizeListener, 10);
   }
 
+  /**
+   * Render css3D
+   *
+   * @returns {void}
+   */
   renderCSS3D() {
     if (!this.isRendering || !this.css3DRenderer) return;
     this.css3DRenderer.render(this.css3DScene, this.getCamera());
   }
 
-  // Allow user to set a custom render pass
+  /**
+   * Customize how to render the frame3D
+   *
+   * @param {Function} f - custom rendering function
+   */
   setRender(f) {
     this.render = () => {
       if (!this.isRendering) return; // encapsulate to stop with isRendering flag
@@ -221,6 +243,11 @@ export class Frame3DBase {
     };
   }
 
+  /**
+   * Render scene3D
+   *
+   * @returns {void}
+   */
   render() {
     // Default Render
     if (!this.isRendering) return;
@@ -230,8 +257,7 @@ export class Frame3DBase {
 
   /**
    *
-   * @returns {boolean} true if html of the webgl rendering isn't catching events
-   * allowing the css3D html to catch it
+   * @returns {boolean} - false if root webgl is catching events, true if it's root css
    */
   isCatchingEventsCSS3D() {
     return this.rootWebGL.style.pointerEvents === 'none';
@@ -239,7 +265,7 @@ export class Frame3DBase {
 
   /**
    *
-   * @param {boolean} value if true allow css3D html elements to catch user events, otherwise no
+   * @param {boolean} value - if true allow css3D html elements to catch user events, otherwise no
    */
   catchEventsCSS3D(value) {
     if (value) {
@@ -251,7 +277,7 @@ export class Frame3DBase {
 
   /**
    *
-   * @param {*} billboard
+   * @param {Billboard} billboard - billboard to add in frame3D
    */
   appendBillboard(billboard) {
     if (!this.css3DRenderer) this.initCSS3D();
@@ -263,7 +289,7 @@ export class Frame3DBase {
 
   /**
    *
-   * @param {*} billboard
+   * @param {Billboard} billboard - billboard to remove
    */
   removeBillboard(billboard) {
     this.scene.remove(billboard.getMaskObject());
@@ -275,19 +301,24 @@ export class Frame3DBase {
 
   /**
    *
-   * @param {boolean} value if true the css3D renderer stop rendering
+   * @param {boolean} value - false => stop rendering, otherwise true
    */
   setIsRendering(value) {
     this.isRendering = value;
   }
 
+  /**
+   *
+   * @returns {THREE.Vector2} - size of frame3D
+   */
   getSize() {
     return this.size;
   }
 
   /**
+   * Resize frame3D
    *
-   * @param {*} updateTHREEVariables
+   * @param {boolean} [updateTHREEVariables=true] - camera and renderer should be updated
    */
   onResize(updateTHREEVariables = true) {
     let offsetLeft = parseInt(this.rootWebGL.style.left);
@@ -308,7 +339,7 @@ export class Frame3DBase {
     }
 
     this.listeners[Frame3DBase.EVENT.RESIZE].forEach((listener) => {
-      listener(this);
+      listener();
     });
   }
 
@@ -320,27 +351,46 @@ export class Frame3DBase {
     this.html().remove();
 
     this.listeners[Frame3DBase.EVENT.DISPOSE].forEach((listener) => {
-      listener(this);
+      listener();
     });
   }
 
+  /**
+   *
+   * @returns {THREE.PerspectiveCamera} - camera 3D
+   */
   getCamera() {
     return this.camera;
   }
 
+  /**
+   *
+   * @returns {THREE.Scene} - scene 3D
+   */
   getScene() {
     return this.scene;
   }
 
+  /**
+   *
+   * @returns {THREE.WebGLRenderer} - renderer 3D
+   */
   getRenderer() {
     return this.renderer;
   }
 
+  /**
+   *
+   * @returns {HTMLDivElement} - root webgl
+   */
   getRootWebGL() {
     return this.rootWebGL;
   }
 }
 
+/**
+ * Events triggered by {@link Frame3DBase}
+ */
 Frame3DBase.EVENT = {
   DISPOSE: 'dispose',
   RESIZE: 'resize',

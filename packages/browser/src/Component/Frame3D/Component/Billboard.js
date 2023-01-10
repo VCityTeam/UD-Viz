@@ -2,6 +2,9 @@ import * as THREE from 'three';
 import { CSS3DObject } from 'three/examples/jsm/renderers/CSS3DRenderer';
 import { Color } from 'three';
 
+/**
+ * Material making an "hole" in a {@link THREE.Scene} to see html css3D behind
+ */
 const BLANK_MATERIAL = new THREE.MeshBasicMaterial({
   side: THREE.DoubleSide,
   opacity: 0,
@@ -12,20 +15,26 @@ const BLANK_MATERIAL = new THREE.MeshBasicMaterial({
 
 export class Billboard {
   /**
+   * Composed of a {@link CSS3DObject} containing html and a {@link THREE.Object3D} superposing each other
    *
-   * @param {HTMLElement} html
-   * @param {THREE.Vector3} position
-   * @param {THREE.Vector3} rotation
-   * @param {THREE.Vector3} scale
-   * @param {number} resolution
+   * @param {HTMLElement} html - html of billboard
+   * @param {THREE.Vector3} position - position in world referential
+   * @param {THREE.Vector3} rotation - rotation in world referential
+   * @param {THREE.Vector3} scale - scale in world referential
+   * @param {number} [resolution=1] - increase size of html element
    */
   constructor(html, position, rotation, scale, resolution = 1) {
+    /** @type {string} - uuid */
     this.uuid = THREE.MathUtils.generateUUID();
+
+    /** @type {HTMLElement} - html element of css3Dobject */
     this.html = html;
+
+    // scale html size
     this.html.style.width = resolution * scale.x + 'px';
     this.html.style.height = resolution * scale.y + 'px';
 
-    // CSS3DOBJECT
+    // initialize css3Dobject
     const newElement = new CSS3DObject(this.html);
     newElement.position.copy(position);
     newElement.rotation.setFromVector3(rotation);
@@ -36,26 +45,39 @@ export class Billboard {
     css3DScale.z *= 1 / resolution;
 
     newElement.scale.copy(css3DScale);
+
+    /** @type {CSS3DObject} - css3D object */
     this.css3DObject = newElement;
 
-    // THREE OBJECT
-    // mask
+    // initiliaze THREE.Object3D (mask)
     const geometry = new THREE.PlaneGeometry(scale.x, scale.y);
     const plane = new THREE.Mesh(geometry, BLANK_MATERIAL);
     plane.position.copy(position);
     plane.rotation.setFromVector3(rotation);
     plane.scale.copy(scale);
     plane.updateMatrixWorld();
+
+    /** @type {THREE.Object3D} - mask superposing css3DObject */
     this.maskObject = plane;
 
-    // Flag
-    this.select(false);
+    /** @type {boolean} - selected (css style is different if true or false) */
+    this.isSelected = false;
+    this.select(this.isSelected);
   }
 
+  /**
+   *
+   * @returns {HTMLElement} - html element
+   */
   getHtml() {
     return this.html;
   }
 
+  /**
+   * Set if this is selected or not and update css style
+   *
+   * @param {boolean} value - new selected value
+   */
   select(value) {
     this.isSelected = value;
     if (value) {
@@ -65,15 +87,28 @@ export class Billboard {
     }
   }
 
+  /**
+   * Optionally, the x, y and z components of the world space position. Rotates the object to face a point in world space. This method does not support objects having non-uniformly-scaled parent(s).
+   *
+   * @param {THREE.Vector3} vector - vector to lookAt
+   */
   lookAt(vector) {
     this.maskObject.lookAt(vector);
     this.css3DObject.lookAt(vector);
   }
 
+  /**
+   *
+   * @returns {THREE.Object3D} - mask object3D
+   */
   getMaskObject() {
     return this.maskObject;
   }
 
+  /**
+   *
+   * @returns {CSS3DObject} - css3D object
+   */
   getCss3DObject() {
     return this.css3DObject;
   }
