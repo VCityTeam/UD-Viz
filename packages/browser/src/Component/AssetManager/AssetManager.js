@@ -261,8 +261,7 @@ export class RenderData {
    * It takes an object3D and an optional animations object, and sets the object3D and animations
    * properties of the object
    *
-   * @param {THREE.Object3D} object3D - The object to add.
-   * @param childObject3D
+   * @param {THREE.Object3D} childObject3D - The object to add.
    * @param {RenderDataConfig} [renderDataConfig = {}]  - Contains path, anchor, scale and rotation.
    * @param {THREE.AnimationClip[]} [animations=null] - An array of animations.
    */

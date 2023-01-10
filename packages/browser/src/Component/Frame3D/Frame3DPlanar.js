@@ -1,7 +1,7 @@
 import { computeNearFarCamera } from '../THREEUtil';
 import { Frame3DBase } from './Frame3DBase/Frame3DBase';
 import { LayerManager } from '../Itowns/Itowns';
-const itowns = require('itowns'); // import that way jsdoc resolve type sometime ... lol
+const itowns = require('itowns');
 const THREE = require('three');
 
 /**
@@ -24,10 +24,10 @@ export class Frame3DPlanar extends Frame3DBase {
    * @param {boolean} [options.hasItownsControls=false] - if true initialize PlanarControl
    * @param {boolean} [options.useItownsMainLoop=true] - rendering is done in itowns.mainLoop
    * @param {itowns.Coordinates} options.coordinates - itowns coordinates of the initial camera position. {@link http://www.itowns-project.org/itowns/docs/#api/Geographic/Coordinates Coordinates}
-   * @param {number} [options.heading=-50] - camera heading
-   * @param {number} [options.range=3000] - camera range
-   * @param {number} [options.tilt=10] - camera tilt
-   * @param {number} options.maxSubdivisionLevel
+   * @param {number} [options.heading=-50] - camera heading placement
+   * @param {number} [options.range=3000] - camera range placement
+   * @param {number} [options.tilt=10] - camera tilt placement
+   * @param {number} options.maxSubdivisionLevel - Maximum subdivision level for PlanarLayer
    */
   constructor(extent, options = {}) {
     super(options, false); // do not init3D since itownsView will do it
@@ -45,7 +45,7 @@ export class Frame3DPlanar extends Frame3DBase {
     const tilt = options.tilt || 10;
     const maxSubdivisionLevel = options.maxSubdivisionLevel || 3;
 
-    /** @type {itowns.PlanarView} */
+    /** @type {itowns.PlanarView} - planar view */
     this.itownsView = new itowns.PlanarView(this.rootWebGL, extent, {
       disableSkirt: false,
       placement: {
@@ -69,7 +69,7 @@ export class Frame3DPlanar extends Frame3DBase {
     this.renderer = this.itownsView.mainLoop.gfxEngine.renderer;
     this.camera = this.itownsView.camera.camera3D;
 
-    /** @type {LayerManager} */
+    /** @type {LayerManager} - layer manager */
     this.layerManager = new LayerManager(this.itownsView);
 
     let useItownsMainLoop = true;
@@ -100,6 +100,11 @@ export class Frame3DPlanar extends Frame3DBase {
     }
   }
 
+  /**
+   * Disable/enable itowns rendering from itowns.mainLoop
+   *
+   * @param {boolean} value - true enable / false disable
+   */
   enableItownsViewRendering(value) {
     if (value) {
       this.itownsView.render = null;
@@ -108,6 +113,12 @@ export class Frame3DPlanar extends Frame3DBase {
     }
   }
 
+  /**
+   * Enable / disable PlanarControls
+   *
+   * @param {boolean} value - true enable / false disable
+   * @returns {void}
+   */
   enableItownsViewControls(value) {
     if (
       (value && this.itownsView.controls) ||
@@ -132,7 +143,7 @@ export class Frame3DPlanar extends Frame3DBase {
 
   /**
    *
-   * @returns {itowns.PlanarView} the itowns view
+   * @returns {itowns.PlanarView} - itowns view
    */
   getItownsView() {
     return this.itownsView;
@@ -140,17 +151,23 @@ export class Frame3DPlanar extends Frame3DBase {
 
   /**
    *
-   * @returns {LayerManager}
+   * @returns {LayerManager} - layer manager
    */
   getLayerManager() {
     return this.layerManager;
   }
 
+  /**
+   * Resize Frame3D
+   */
   onResize() {
     super.onResize(false); // dont resize three variables since itownsResize is doing it
     this.itownsViewResize(this.size.x, this.size.y);
   }
 
+  /**
+   * Dispose Frame3D
+   */
   dispose() {
     super.dispose();
     this.itownsView.dispose();
