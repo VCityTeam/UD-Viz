@@ -102,7 +102,6 @@ LIMIT 100`;
    * and graph view. Should be called by a `SparqlModuleView`. Once this is done,
    * the window is actually usable ; service event listerers are set here.
    *
-   * @param {SparqlEndpointService} service The SPARQL endpoint service.
    */
   windowCreated() {
     this.form.onsubmit = () => {
@@ -137,8 +136,7 @@ LIMIT 100`;
   /**
    * Update the DataView.
    *
-   * @param {object} data SPARQL query response data.
-   * @param response
+   * @param {object} response SPARQL query response data.
    * @param {object} view_type The selected semantic data view type.
    */
   updateDataView(response, view_type) {
