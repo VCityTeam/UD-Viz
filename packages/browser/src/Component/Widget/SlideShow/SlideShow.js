@@ -739,8 +739,6 @@ export class SlideShow extends Window {
 
   /** It adds event listeners to the HTML elements created by the Window class.*/
   windowCreated() {
-    // TODO_ISSUE each time window is created event listener are add should be done one time
-    // or they should be remove and add when window created or destroyed
     const _this = this;
     // Through this.callbacksHTMLEl and addEventListeners to HTMLElements in DOM (elements which created by Window class)
     this.callbacksHTMLEl.forEach(function (element) {

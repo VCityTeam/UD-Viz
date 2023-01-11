@@ -20,7 +20,7 @@
   "bugs": {
     "url": "https://github.com/VCityTeam/UD-Viz/issues"
   },
-  "homepage": "https://github.com/VCityTeam/UD-Viz/",
+  "homepage": "https://github.com/VCityTeam/UD-Viz/packages/browser",
   "dependencies": {
     "@ud-viz/core": "../core",
     "d3": "^7.0.1",

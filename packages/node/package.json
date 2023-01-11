@@ -14,7 +14,7 @@
   "bugs": {
     "url": "https://github.com/VCityTeam/UD-Viz/issues"
   },
-  "homepage": "https://github.com/VCityTeam/UD-Viz/",
+  "homepage": "https://github.com/VCityTeam/UD-Viz/packages/node",
   "dependencies": {
     "express": "^4.17.1",
     "child-process-promise": "^2.2.1",
