@@ -40,7 +40,7 @@ export class LegoMockupVisualizer {
 
     this.scene.background = new THREE.Color('lightblue');
 
-    const renderer = new THREE.WebGLRenderer();
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setSize(
       this.sceneElement.clientWidth,
       this.sceneElement.clientHeight
@@ -50,16 +50,18 @@ export class LegoMockupVisualizer {
     this.camera.position.z = -20;
     this.camera.position.y = 15;
 
-    const light = new THREE.DirectionalLight(0xffffff, 2);
-    light.position.set(1, 1, 1);
+    const light = new THREE.DirectionalLight(0xffffff, 1);
+    light.position.set(-20, 20, 20);
+    const light2 = light.clone();
+    light2.position.set(20, 20, -20);
     this.scene.add(light);
+    this.scene.add(light2);
 
     const geometry = new THREE.BoxGeometry(32, 1, 32);
     const material = new THREE.MeshPhongMaterial({ color: 'brown' });
     const terrain = new THREE.Mesh(geometry, material);
 
     terrain.position.y = -1;
-
     this.scene.add(terrain);
 
     const orbit = new OrbitControls(this.camera, renderer.domElement);
@@ -79,13 +81,10 @@ export class LegoMockupVisualizer {
         const value = heightMapX[i];
         if (value != 0) {
           for (let h = 0; h < value; h++) {
-            const geometry = new THREE.BoxGeometry(1, 1, 1);
+            const geometry = new THREE.BoxGeometry(1, 1.230769230769231, 1);
             const material = new THREE.MeshPhongMaterial({ color: 'green' });
             const cube = new THREE.Mesh(geometry, material);
-
-            cube.position.x = i - 16;
-            cube.position.y = h;
-            cube.position.z = j - 16;
+            cube.position.set(i - 16, h + 0.230769230769231 * h, j - 16);
             this.scene.add(cube);
           }
         }
