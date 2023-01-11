@@ -1,8 +1,8 @@
 /**
  * Tokenize a URI into a namespace and id
  *
- * @param {string} uri
- * @returns {object}
+ * @param {string} uri The URI to be tokenized
+ * @returns {{namespace:string, id:number}} object of the URI tokenized
  */
 export function tokenizeURI(uri) {
   const tokenizedURI = {};
