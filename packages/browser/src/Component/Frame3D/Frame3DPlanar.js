@@ -6,13 +6,13 @@ const THREE = require('three');
 
 /**
  * @typedef {object} Frame3DPlanarOption
- * @property {boolean} hasItownsControls - If true enable Itowns View Controls
- * @property {boolean} useItownsMainLoop - Rendering is done in itowns.mainLoop default is true
+ * @property {boolean} [hasItownsControls=false] - If true enable Itowns View Controls
+ * @property {boolean} [useItownsMainLoop=true] - Rendering is done in itowns.mainLoop
  * @property {itowns.Coordinates} coordinates {@link http://www.itowns-project.org/itowns/docs/#api/Geographic/Coordinates Coordinates}
- * @property {number} heading - Camera heading placement
- * @property {number} range -  Camera range placement
- * @property {number} tilt - Camera tilt placement
- * @property {number} maxSubdivisionLevel - TODO
+ * @property {number} [heading=-50] - Camera heading placement
+ * @property {number} [range=3000] -  Camera range placement
+ * @property {number} [tilt=10] - Camera tilt placement
+ * @property {number} [maxSubdivisionLevel=3] - Maximum subdivision level for PlanarLayer
  */
 
 /** @classdesc It's a class that extends the {@link Base} class and adds a PlanarView to it */
@@ -21,13 +21,6 @@ export class Frame3DPlanar extends Frame3DBase {
    *
    * @param {itowns.Extent} extent - Geographical bounding rectangle. {@link http://www.itowns-project.org/itowns/docs/#api/Geographic/Extent Extent}
    * @param {Frame3DPlanarOption} [options={}] - {@link Frame3DPlanarOption}
-   * @param {boolean} [options.hasItownsControls=false] - if true initialize PlanarControl
-   * @param {boolean} [options.useItownsMainLoop=true] - rendering is done in itowns.mainLoop
-   * @param {itowns.Coordinates} options.coordinates - itowns coordinates of the initial camera position. {@link http://www.itowns-project.org/itowns/docs/#api/Geographic/Coordinates Coordinates}
-   * @param {number} [options.heading=-50] - camera heading placement
-   * @param {number} [options.range=3000] - camera range placement
-   * @param {number} [options.tilt=10] - camera tilt placement
-   * @param {number} options.maxSubdivisionLevel - Maximum subdivision level for PlanarLayer
    */
   constructor(extent, options = {}) {
     super(options, false); // do not init3D since itownsView will do it

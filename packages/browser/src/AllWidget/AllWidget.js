@@ -53,7 +53,7 @@ export class AllWidget {
    *
    * @param {itowns.Extent} extent - Geographical bounding rectangle. {@link http://www.itowns-project.org/itowns/docs/#api/Geographic/Extent Extent}
    * @param {HTMLDivElement} parentDiv - the HTML element in which the 3D frame will be created.
-   * @param {object} configFrame3DPlanar - the configuration object for the frame3DPlanar
+   * @param {Frame3DPlanarOption} configFrame3DPlanar - the configuration object for the frame3DPlanar
    * @returns {Frame3DPlanar} A new Frame3DPlanar object.
    */
   createFrame3DPlanarFromConfig(extent, parentDiv, configFrame3DPlanar) {
