@@ -10,6 +10,11 @@ import { TransformControls } from 'three/examples/jsm/controls/TransformControls
 import { MAIN_LOOP_EVENTS } from 'itowns';
 import './../About/About.css';
 import { updateMockUpObject } from './MockUpUtils.js';
+import {
+  createHeightMapFromBufferGeometry,
+  generateCSVwithHeightMap,
+  transformBBToLegoPlates,
+} from 'legonizer';
 
 /**
  *
@@ -241,7 +246,7 @@ export class LegonizerWindow extends Window {
       this.inputCoordScaleZElement.value = this.boxSelector.scale.z;
 
       this.inputLegoScaleXElement.value = Math.abs(
-        Math.trunc(this.boxSelector.scale.x / this.ratio / 32.0)
+        Math.trunc(this.boxSelector.scale.x / this.ratio / 32)
       );
 
       this.inputLegoScaleYElement.value = Math.abs(
@@ -257,16 +262,38 @@ export class LegonizerWindow extends Window {
   }
 
   generateMockup() {
-    const bufferBox = this.boxSelector.clone();
-    bufferBox.geometry.applyMatrix4(bufferBox.matrixWorld);
-    bufferBox.geometry.computeBoundingBox();
+    const bufferBoxGeometry = this.boxSelector.geometry.clone();
+    bufferBoxGeometry.applyMatrix4(this.boxSelector.matrixWorld);
+    bufferBoxGeometry.computeBoundingBox();
 
-    const dataSelected = updateMockUpObject(
-      this.view3D.getLayerManager(),
-      bufferBox.geometry.boundingBox
+    this.boxSelector.updateMatrixWorld();
+
+    const listBBLegoPlates = transformBBToLegoPlates(
+      bufferBoxGeometry.boundingBox,
+      this.inputLegoScaleXElement.value,
+      this.inputLegoScaleYElement.value
     );
 
-    console.log(dataSelected);
+    listBBLegoPlates.forEach((element) => {
+      const dataSelected = updateMockUpObject(
+        this.view3D.getLayerManager(),
+        element
+      );
+
+      const heightmap = createHeightMapFromBufferGeometry(
+        dataSelected.geometry,
+        50
+      );
+      generateCSVwithHeightMap(heightmap);
+    });
+
+    // Console.log(dataSelected);
+    // const heightmap = createHeightMapFromBufferGeometry(
+    //   dataSelected.geometry,
+    //   50
+    // );
+    // console.log('generate csv');
+    // generateCSVwithHeightMap(heightmap);
   }
 
   // Select Area from 3DTiles
@@ -402,11 +429,11 @@ export class LegonizerWindow extends Window {
         this.legoPrevisualisation.position.z = selectAreaObject.position.z + 50;
 
         selectAreaObject.updateMatrixWorld();
-        // selectAreaObject.geometry.computeBoundingBox();
+        // SelectAreaObject.geometry.computeBoundingBox();
         console.log(selectAreaObject.geometry.boundingBox);
 
         this.boxSelector.updateMatrixWorld();
-        // this.boxSelector.geometry = selectAreaObject.geometry;
+        // This.boxSelector.geometry = selectAreaObject.geometry;
         console.log(this.boxSelector.geometry);
 
         this.legoPrevisualisation.updateMatrixWorld();
