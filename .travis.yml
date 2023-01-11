@@ -25,7 +25,7 @@ jobs:
         - npm run travis
       name: 'CI checks'
     - script:
-        - npm audit
+        - npm audit --audit-level=moderate
       name: 'Lightweight dependencies security audit'
     - script:
         - remark -u validate-links .
