@@ -90,7 +90,7 @@ export class SinglePlayerGamePlanar {
 
           // here we compute a diff with the last game state (we could just send a newState to the interpolator)
           // but this is to test multiplayer (isOutdated is used in diff forcing the update transform in external context)
-          // isOutdated is also used to notify external script maybe we should use two boolean TODO_ISSUE
+          // isOutdated is also used to notify external script maybe we should use two boolean ? but no since isOutdated means object3D model has changed anyway
           const newState = this.gameContext.toState(false);
           const stateDiff = newState.sub(previousGameState);
           previousGameState = newState;

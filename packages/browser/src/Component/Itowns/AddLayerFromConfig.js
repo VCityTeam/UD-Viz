@@ -161,7 +161,7 @@ export function addGeoJsonLayers(configGeoJSONLayers, itownsView) {
     // Declare the data source for the layerConfig
     const source = new itowns.FileSource({
       url: layerConfig.url,
-      crs: layerConfig.crs, // should be the extent ? TODO_ISSUE
+      crs: layerConfig.crs, // should be the extent ?
       format: 'application/json',
     });
 
