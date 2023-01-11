@@ -1,0 +1,10 @@
+
+
+#legoVisualizerScene{
+    position: absolute;
+    width: 30%;
+    height: 30%;
+    z-index: 101;
+    right: 0%;
+    top: 10%;
+}
