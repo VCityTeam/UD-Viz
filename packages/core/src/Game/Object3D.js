@@ -94,13 +94,13 @@ const Object3D = class extends THREE.Object3D {
   /**
    *
    * @param {object} json - json to update from
-   * @param {string=} json.uuid - uuid
+   * @param {string} json.uuid - uuid
    * @param {Object<string,object>=} [json.components={}] - components {@link Component}
    * @param {Array=} [json.matrix] - matrix
-   * @param {string} [json.name=""] - name
-   * @param {boolean=} [json.static=false] - static
-   * @param {boolean=} [json.outdated=false] - outdated
-   * @param {object[]} [json.children] - json of children of object3D
+   * @param {string} json.name - name
+   * @param {boolean} json.static - static
+   * @param {boolean} json.outdated - outdated
+   * @param {object[]} json.children - json of children of object3D
    */
   updatefromJSON(json) {
     json = Object3D.parseJSON(json);
