@@ -363,12 +363,12 @@ export class Graph {
   /**
    * Create a drag effect for graph nodes within the context of a force simulation
    *
-   * @param {d3.forceSimulation} simulation force simulation
-   * @returns {d3.drag} drag behavior
+   * @param {d3.Simulation} simulation force simulation
+   * @returns {d3.DragBehavior} drag behavior
    */
   drag(simulation) {
     /**
-     * @param {import('d3').D3DragEvent} event -
+     * @param {d3.D3DragEvent} event -
      */
     function dragstarted(event) {
       if (!event.active) simulation.alphaTarget(0.3).restart();
@@ -377,7 +377,7 @@ export class Graph {
     }
 
     /**
-     * @param {import('d3').D3DragEvent} event -
+     * @param {d3.D3DragEvent} event -
      */
     function dragged(event) {
       event.subject.fx = event.x;
@@ -385,7 +385,7 @@ export class Graph {
     }
 
     /**
-     * @param {import('d3').D3DragEvent} event -
+     * @param {d3.D3DragEvent} event -
      */
     function dragended(event) {
       if (!event.active) simulation.alphaTarget(0);
