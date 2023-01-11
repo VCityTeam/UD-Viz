@@ -20,7 +20,7 @@ const RenderModel = class extends Model {
   constructor(json) {
     super(json);
 
-    /** @type {string} - different id of render data */
+    /** @type {string} - id of render data */
     this.idRenderData = json.idRenderData || null;
 
     /** @type {THREE.Color} - color to apply to the 3D model */

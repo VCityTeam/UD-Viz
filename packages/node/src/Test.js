@@ -20,9 +20,6 @@ const serverPort = 8000;
  */
 const browserScripts = function (testFolderPath, bundlePath) {
   return folderInBrowserPage(testFolderPath, async (page, currentFile) => {
-    // page connect to server
-    await page.goto('http://localhost:' + serverPort);
-    // console.log(currentFile.name, ' connect to server');
     // import bundle.js
     await page.evaluate(fs.readFileSync(bundlePath, 'utf8'));
     // console.log(currentFile.name, ' has imported bundle');
