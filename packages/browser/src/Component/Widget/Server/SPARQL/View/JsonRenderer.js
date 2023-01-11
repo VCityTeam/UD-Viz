@@ -112,14 +112,27 @@ const renderjson = (function () {
     };
     return a;
   };
-
   /**
+   * @typedef {object} OptionsRenderJSON
+   * @property {string} hide todo
+   * @property {string} show todo
+   * @property {number} max_string_length  The maximum length of a string to be displayed.
+   * @property {Function} collapse_msg A function that takes in a number and returns a string.
+   * @property {Function} replacer A function that takes in a key and a value and returns a value.
+   * @property {Array} property_list An array of properties to be displayed.
+   * @property {number} show_to_level The number of levels to expand when rendering. The default is 0, which
+   starts with everything collapsed. As a special case, if level is the string
+   "all" then it will start with everything expanded.
+   */
+  /**
+   * It takes a JSON object and returns a DOM element that renders the JSON object
    *
-   * @param json
-   * @param indent
-   * @param dont_indent
-   * @param show_level
-   * @param options
+   * @param {object} json - The JSON object to be rendered
+   * @param {string} indent - The indentation string to use.
+   * @param {string} dont_indent - If true, don't indent the current line.
+   * @param {number} show_level - The number of levels to show.
+   * @param {OptionsRenderJSON} options - Options of render
+   * @returns {string} A function that takes in a json object and returns a string.
    */
   function _renderjson(json, indent, dont_indent, show_level, options) {
     const my_indent = dont_indent ? '' : indent;
@@ -262,6 +275,7 @@ const renderjson = (function () {
   }
 
   const renderjson = function renderjson(json) {
+    /** @type {OptionsRenderJSON} */
     const options = new Object(renderjson.options); // eslint-disable-line no-new-object
     options.replacer =
       typeof options.replacer == 'function'
