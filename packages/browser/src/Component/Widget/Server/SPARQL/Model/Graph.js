@@ -10,8 +10,7 @@ export class Graph {
    *
    * @param {SparqlQueryWindow} window the window this graph is attached to.
    * @param {number} height The SVG height.
-   * @param {number} height The SVG width.
-   * @param width
+   * @param {number} width The SVG width.
    */
   constructor(window, height = 500, width = 500) {
     this.window = window;
@@ -216,6 +215,8 @@ export class Graph {
 
   /**
    * Getter for retrieving the d3 svg.
+   *
+   * @returns {SVGSVGElement} return `this.svg.node()`
    */
   get canvas() {
     return this.svg.node();
@@ -224,8 +225,8 @@ export class Graph {
   /**
    * Return a query response formatted for a D3.js graph.
    *
-   * @param data
-   * @returns {object}
+   * @param {object} data Response data
+   * @returns {{nodes:Array<{id:string,color_id:number}>,links:Array<{source:string,target:string,value:number}>,legend:{title:string,content:Array},colorSetOrScale:Function}} Response data formated into graph
    */
   formatResponseDataAsGraph(data) {
     const graphData = {
@@ -324,7 +325,7 @@ export class Graph {
    * if it does not exist.
    *
    * @param {string} uri the uri to map to a namespace.
-   * @returns {number}
+   * @returns {number} Nanespace Index
    */
   getNamespaceIndex(uri) {
     const namespace = tokenizeURI(uri).namespace;
@@ -362,13 +363,12 @@ export class Graph {
   /**
    * Create a drag effect for graph nodes within the context of a force simulation
    *
-   * @param {d3.forceSimulation} simulation
-   * @returns {d3.drag}
+   * @param {d3.forceSimulation} simulation force simulation
+   * @returns {d3.drag} drag behavior
    */
   drag(simulation) {
     /**
-     *
-     * @param event
+     * @param {import('d3').D3DragEvent} event -
      */
     function dragstarted(event) {
       if (!event.active) simulation.alphaTarget(0.3).restart();
@@ -377,8 +377,7 @@ export class Graph {
     }
 
     /**
-     *
-     * @param event
+     * @param {import('d3').D3DragEvent} event -
      */
     function dragged(event) {
       event.subject.fx = event.x;
@@ -386,8 +385,7 @@ export class Graph {
     }
 
     /**
-     *
-     * @param event
+     * @param {import('d3').D3DragEvent} event -
      */
     function dragended(event) {
       if (!event.active) simulation.alphaTarget(0);
@@ -405,7 +403,7 @@ export class Graph {
   /**
    * A handler function for selecting elements to transform during a zoom event
    *
-   * @param {d3.D3ZoomEvent} event
+   * @param {d3.D3ZoomEvent} event -
    */
   handleZoom(event) {
     d3.selectAll('svg g')

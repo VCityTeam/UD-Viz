@@ -30,7 +30,7 @@ export class SparqlEndpointService extends RequestService {
    *
    * @async
    * @param {string} query The query to be sent to the SPARQL endpoint.
-   * @returns {Promise<object>}
+   * @returns {Promise<object>} If the request is not successful, it throws an error. If successful, it returns the request.
    */
   async querySparqlEndpoint(query) {
     const full_url = this.url + this.url_parameters + encodeURIComponent(query);
