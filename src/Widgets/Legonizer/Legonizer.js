@@ -274,8 +274,10 @@ export class LegonizerWindow extends Window {
       this.inputLegoScaleYElement.value
     );
 
+    const legoVisu = new LegoMockupVisualizer(this.view3D);
+
     // Generate all lego plates with bounding box
-    let index = 0;
+    const index = 0;
     let heightmap;
     listBBLegoPlates.forEach((element) => {
       const dataSelected = updateMockUpObject(
@@ -283,16 +285,16 @@ export class LegonizerWindow extends Window {
         element
       );
 
-      heightmap = createHeightMapFromBufferGeometry(
-        dataSelected.geometry,
-        32
-      );
+      heightmap = createHeightMapFromBufferGeometry(dataSelected.geometry, 32);
+
+      legoVisu.addLegoPlateSimulation(heightmap);
 
       // Create CSV files
       // generateCSVwithHeightMap(heightmap, 'legoPlates_' + index + '.csv');
       // index++;
     });
-    const legoVisu = new LegoMockupVisualizer(this.view3D, heightmap);
+
+    
   }
 
   // Select Area from 3DTiles
