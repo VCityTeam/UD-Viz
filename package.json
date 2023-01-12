@@ -31,9 +31,8 @@
   "homepage": "https://github.com/VCityTeam/UD-Viz/",
   "devDependencies": {
     "@ud-viz/node": "./packages/node",
-    "better-docs": "^2.7.2",
     "child-process-promise": "^2.2.1",
-    "clean-jsdoc-theme": "^3.3.1",
+    "clean-jsdoc-theme": "^4.2.2",
     "cross-env": "^7.0.3",
     "css-loader": "^6.7.1",
     "eslint": "^7.32.0",

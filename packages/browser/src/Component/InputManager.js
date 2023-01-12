@@ -5,6 +5,9 @@ const Command = require('@ud-viz/core').Command;
  * @param {Event} event - native event
  */
 
+/**
+ * @class
+ */
 export class InputManager {
   /**
    * Manage user inputs with a poll system (https://en.wikipedia.org/wiki/Polling_(computer_science))
@@ -393,6 +396,9 @@ const MOUSE_STATE_EVENTS = {
   MOUSE_CLICK: 'click',
 };
 
+/**
+ * @class
+ */
 export class MouseState {
   /**
    * Poll system (https://en.wikipedia.org/wiki/Polling_(computer_science))
