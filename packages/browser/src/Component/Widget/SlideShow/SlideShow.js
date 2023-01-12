@@ -11,15 +11,36 @@ import * as THREE from 'three';
  * @property {{height:number,width:number}} size Size of the texture
  * @property {HTMLVideoElement} [video] Html video element if it is an video texture.
  */
+
+/**
+ * @example
+ * Config Example
+ * {
+  "slides": [
+    {
+      "name": "diapo1",
+      "folder": "./assets/img/slide",
+      "diapositives": ["1.jpeg", "2.jpeg", "3.jpeg"]
+    },
+    {
+      "name": "diapo2",
+      "folder": "./assets/img/slide",
+      "diapositives": ["11.jpeg", "12.jpeg", "13.jpeg"]
+    }
+  ]
+}
+ * @classdesc Slideshow Widget class
+ */
 export class SlideShow extends Window {
   /**
    * It initializes the widget.
+   *
    *
    * @param {itowns.PlanarView} itownsView - The itowns view.
    * @param {object} configSlideShow - The configuration of the widget. need description
    * @param {Array<{name:string,folder:string,diapositives:Array<string>}>,durationLoopInSec:number,textureRotation:number} configSlideShow.slides - Array of slide object
    * @param {itowns.Extent} extent - The extent of the widget.
-   * @param {import("../../InputManager").InputManager} inputManager - the input manager of the application
+   * @param {import('../../InputManager').InputManager} inputManager - the input manager of the application
    */
   constructor(itownsView, configSlideShow, extent, inputManager) {
     super('slideShow', 'Slide Show 3D', false);
@@ -83,7 +104,9 @@ export class SlideShow extends Window {
     tick();
   }
 
-  /** If the notifyValue is true, then update the 3D view*/
+  /**
+   * If the notifyValue is true, then update the 3D view
+   */
   notifyChangeEachFrame() {
     if (this.notifyValue) {
       this.itownsView.notifyChange();

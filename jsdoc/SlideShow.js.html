@@ -72,7 +72,7 @@
             
             <nav>
                 
-                    <h2><a href="index.html">Documentation</a></h2><div class="category"><h3>Classes</h3><ul><li><a href="SlideShow_SlideShow.html">SlideShow</a></li></ul><h3><a href="global.html">Global</a></h3></div>
+                    <h2><a href="index.html">Documentation</a></h2><div class="category"><h3>Classes</h3><ul><li><a href="SlideShow.html">SlideShow</a></li></ul><h3><a href="global.html">Global</a></h3></div>
                 
             </nav>
         </div>
@@ -102,15 +102,39 @@ import * as THREE from 'three';
  * @property {{height:number,width:number}} size Size of the texture
  * @property {HTMLVideoElement} [video] Html video element if it is an video texture.
  */
+
+/**
+ * @example
+ * Config Exemples :
+ * {
+  "slides": [
+    {
+      "name": "diapo1",
+      "folder": "./assets/img/slide",
+      "diapositives": ["1.jpeg", "2.jpeg", "3.jpeg"]
+    },
+    {
+      "name": "diapo2",
+      "folder": "./assets/img/slide",
+      "diapositives": ["11.jpeg", "12.jpeg", "13.jpeg"]
+    }
+  ]
+}
+ * @classdesc Slideshow Widget class
+ */
 export class SlideShow extends Window {
   /**
    * It initializes the widget.
    *
+   *
    * @param {itowns.PlanarView} itownsView - The itowns view.
    * @param {object} configSlideShow - The configuration of the widget. need description
-   * @param {Array&lt;{name:string,folder:string,diapositives:Array&lt;string>}>} configSlideShow.slides - Array of slide object
+   * @param {Array&lt;object>} configSlideShow.slides - Array of slide Object
+   * @param {string} configSlideShow.slides[].name - Name of a slideshow
+   * @param {string} configSlideShow.slides[].folder - Path of the folder
+   * @param {Array&lt;string>} configSlideShow.slides[].diapositives - Array of path of name files
    * @param {itowns.Extent} extent - The extent of the widget.
-   * @param {import("../../InputManager").InputManager} inputManager - the input manager of the application
+   * @param {import('../../InputManager').InputManager} inputManager - the input manager of the application
    */
   constructor(itownsView, configSlideShow, extent, inputManager) {
     super('slideShow', 'Slide Show 3D', false);
@@ -170,7 +194,9 @@ export class SlideShow extends Window {
     tick();
   }
 
-  /** If the notifyValue is true, then update the 3D view*/
+  /**
+   * If the notifyValue is true, then update the 3D view
+   */
   notifyChangeEachFrame() {
     if (this.notifyValue) {
       this.itownsView.notifyChange();
