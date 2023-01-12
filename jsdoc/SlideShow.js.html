@@ -1,4 +1,95 @@
-// Component
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title> SlideShow.js</title>
+
+  <script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="./build/entry.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+  <link href="https://fonts.googleapis.com/css?family=Roboto:100,400,700|Inconsolata,700" rel="stylesheet">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+  <link type="text/css" rel="stylesheet" href="https://jmblog.github.io/color-themes-for-google-code-prettify/themes/tomorrow-night.min.css">
+  <link type="text/css" rel="stylesheet" href="styles/app.min.css">
+  <link type="text/css" rel="stylesheet" href="styles/iframe.css">
+  <link type="text/css" rel="stylesheet" href="">
+  <script async defer src="https://buttons.github.io/buttons.js"></script>
+
+  
+</head>
+
+
+
+<body class="layout small-header">
+    <div id="stickyNavbarOverlay"></div>
+    
+
+<div class="top-nav">
+    <div class="inner">
+        <a id="hamburger" role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+        </a>
+        <div class="logo">
+            
+            
+        </div>
+        <div class="menu">
+            
+            <div class="navigation">
+                <a
+                    href="index.html"
+                    class="link"
+                >
+                    Documentation
+                </a>
+                
+                
+                
+            </div>
+        </div>
+    </div>
+</div>
+    <div id="main">
+        <div
+            class="sidebar "
+            id="sidebarNav"
+        >
+            
+                <div class="search-wrapper">
+                    <input id="search" type="text" placeholder="Search docs..." class="input">
+                </div>
+            
+            <nav>
+                
+                    <h2><a href="index.html">Documentation</a></h2><div class="category"><h3>Classes</h3><ul><li><a href="SlideShow_SlideShow.html">SlideShow</a></li></ul><h3><a href="global.html">Global</a></h3></div>
+                
+            </nav>
+        </div>
+        <div class="core" id="main-content-wrapper">
+            <div class="content">
+                <header class="page-title">
+                    <p>Source</p>
+                    <h1>SlideShow.js</h1>
+                </header>
+                
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>// Component
 import { Window } from '../Component/GUI/js/Window';
 import * as THREE from 'three';
 
@@ -17,7 +108,7 @@ export class SlideShow extends Window {
    *
    * @param {itowns.PlanarView} itownsView - The itowns view.
    * @param {object} configSlideShow - The configuration of the widget. need description
-   * @param {Array<{name:string,folder:string,diapositives:Array<string>}>,durationLoopInSec:number,textureRotation:number} configSlideShow.slides - Array of slide object
+   * @param {Array&lt;{name:string,folder:string,diapositives:Array&lt;string>}>} configSlideShow.slides - Array of slide object
    * @param {itowns.Extent} extent - The extent of the widget.
    * @param {import("../../InputManager").InputManager} inputManager - the input manager of the application
    */
@@ -39,17 +130,14 @@ export class SlideShow extends Window {
     this.rotationInputVectorID = null;
     this.sizeInputVectorID = null;
     this.aspectRatioCheckboxID = null;
-    this.loopSlideShowCheckboxID = null;
     this.slideSelectID = null;
-    this.durationLoopInputID = null;
-    this.counterLoopTimeDivID = null;
 
     // Vectors
     this.coordinatesVector = new THREE.Vector3();
     this.rotationVector = new THREE.Vector3();
     this.sizeVector = new THREE.Vector2();
 
-    /** @type {Array<{event:string,id:number,cb:Function}>} List of callbacks to set when the window is created  */
+    /** @type {Array&lt;{event:string,id:number,cb:Function}>} List of callbacks to set when the window is created  */
     this.callbacksHTMLEl = [];
 
     /** @type {THREE.Mesh} */
@@ -62,18 +150,17 @@ export class SlideShow extends Window {
     /** @type {boolean} if true the application update its view3D eachFrame*/
     this.notifyValue = false;
 
-    this.defaultTexture = null;
     this.initDefaultTextureFile();
 
-    this.intervalLoop = null;
-    this.counterIntervalLoop = null;
-    this.durationLoopInSec = configSlideShow.durationLoopInSec || 10; // Take config value or 10s by default
-    this.textureRotation = configSlideShow.textureRotation || 0;
-    this.textureRotation = (this.textureRotation * Math.PI) / 180.0;
+    if (this.configSlideShow) {
+      this.setSlideshowInConfig(0);
+    }
+
     this.currentTexture = null;
 
     this.initHtml();
-
+    this.initInputListener(itownsView, this.inputManager);
+    this.initCBDrop();
     const _this = this;
     /** A function call each frame by the browser */
     const tick = function () {
@@ -104,162 +191,60 @@ export class SlideShow extends Window {
     this.texturesFiles = [];
     this.iCurrentTextureFile = 0;
 
-    for (let i = 0; i < diapos.length; i++) {
-      this.texturesFiles.push(this.createDefaultTextureFile(i));
+    const _this = this;
+    for (let i = 0; i &lt; diapos.length; i++) {
+      this.texturesFiles.push({
+        index: i,
+        name: diapos[i],
+        texture: this.defaultTexture,
+        size: {
+          height: this.defaultTexture.image.height,
+          width: this.defaultTexture.image.width,
+        },
+      });
+
       const xhr = new XMLHttpRequest();
       xhr.open('GET', folder.concat('/'.concat(diapos[i])));
 
-      xhr.onload = (response) => {
-        const type = response.target.getResponseHeader('Content-Type');
+      xhr.onload = function () {
+        const type = this.getResponseHeader('Content-Type');
         if (type.includes('image')) {
-          new THREE.TextureLoader().load(
-            response.target.responseURL,
-            (texture) => {
-              // Rotate the texture with
-              texture.center.set(0.5, 0.5);
-              texture.rotation = this.textureRotation;
-              this.texturesFiles[i] = {
-                index: i,
-                name: diapos[i],
-                size: {
-                  height: texture.image.height,
-                  width: texture.image.width,
-                },
-                texture: texture,
-              };
-              if (i == 0) this.setTexture(0);
-            }
-          );
+          new THREE.TextureLoader().load(this.responseURL, function (texture) {
+            _this.texturesFiles[i].texture = texture;
+            _this.texturesFiles[i].size = {
+              height: texture.image.height,
+              width: texture.image.width,
+            };
+            if (i == 0) _this.setTexture(0);
+          });
         } else if (type.includes('video')) {
           const video = document.createElement('video');
-          video.src = response.target.responseURL;
+          video.src = this.responseURL;
           video.autoplay = true;
           video.muted = true;
           video.loop = true;
           video.load();
 
-          video.onloadedmetadata = () => {
-            const videoTexture = new THREE.VideoTexture(video);
-            // Rotate the texture with
-            videoTexture.center.set(0.5, 0.5);
-            videoTexture.rotation = this.textureRotation;
-            this.texturesFiles[i] = {
-              index: i,
-              name: diapos[i],
-              size: {
-                height: video.videoHeight,
-                width: video.videoWidth,
-              },
-              texture: videoTexture,
-              video: video,
-            };
-
-            if (i == 0) this.setTexture(0);
+          const videoTexture = new THREE.VideoTexture(video);
+          _this.texturesFiles[i].texture = videoTexture;
+          _this.texturesFiles[i].video = video;
+          _this.texturesFiles[i].size = {
+            height: video.height,
+            width: video.width,
           };
+          if (i == 0) _this.setTexture(0);
         } else {
           console.error(
-            response.target.responseURL,
+            this.responseURL,
             ' is not a valid video or image file'
           );
         }
       };
       xhr.send();
     }
-    this.setTexture(0);
   }
 
-  /** Set the callback function of event 'drop' @warn !event.preventDefault! */
-  initCBDrop() {
-    const body = document.body;
-
-    const drop = (event) => {
-      event.preventDefault();
-      if (!this.plane) return;
-      const files = Array.from(event.dataTransfer.files);
-
-      files.sort(function (a, b) {
-        return a.name.localeCompare(b.name);
-      });
-
-      this.texturesFiles = [];
-      for (let i = 0; i < files.length; i++) {
-        this.texturesFiles.push(this.createDefaultTextureFile(i));
-        const file = files[i];
-        if (file) {
-          try {
-            const reader = new FileReader();
-
-            reader.onload = (data) => {
-              if (file.type.includes('image/')) {
-                new THREE.TextureLoader().load(
-                  data.target.result,
-                  (texture) => {
-                    // Rotate the texture with
-                    texture.center.set(0.5, 0.5);
-                    texture.rotation = this.textureRotation;
-                    this.texturesFiles[i] = {
-                      index: i,
-                      name: file.name,
-                      texture: texture,
-                      size: {
-                        height: texture.image.height,
-                        width: texture.image.width,
-                      },
-                    };
-                    if (i == 0) this.setTexture(0);
-                  }
-                );
-              } else if (file.type.includes('video/')) {
-                const video = document.createElement('video');
-                video.src = data.target.result;
-                video.autoplay = true;
-                video.muted = true;
-                video.loop = true;
-                video.load();
-
-                video.onloadedmetadata = () => {
-                  const videoTexture = new THREE.VideoTexture(video);
-                  // Rotate the video texture with
-                  videoTexture.center.set(0.5, 0.5);
-                  videoTexture.rotation = this.textureRotation;
-                  this.texturesFiles[i] = {
-                    index: i,
-                    name: file.name,
-                    texture: videoTexture,
-                    video: video,
-                    size: {
-                      height: video.videoHeight,
-                      width: video.videoWidth,
-                    },
-                  };
-                  if (i == 0) this.setTexture(0);
-                };
-              }
-            };
-
-            reader.readAsDataURL(file);
-          } catch (e) {
-            throw new Error(e);
-          }
-        }
-      }
-      this.setTexture(0);
-    };
-    body.addEventListener('drop', drop);
-
-    const dragover = (event) => {
-      event.preventDefault();
-    };
-
-    body.addEventListener('dragover', dragover, false);
-
-    this.addEventListener(Window.EVENT_DISABLED, () => {
-      body.removeEventListener('drop', drop);
-      body.removeEventListener('dragover', dragover);
-    });
-  }
-
-  /** Create a default texture and pu in `this.defaultTexture` */
+  /** Create a default texture and fill the first texture file in `this.texturesFiles` */
   initDefaultTextureFile() {
     const canvas = document.createElement('canvas');
     canvas.height = 512;
@@ -277,7 +262,7 @@ export class SlideShow extends Window {
       'MidnightBlue',
       'MediumVioletRed',
     ];
-    for (let i = 0; i < colors.length; i++) {
+    for (let i = 0; i &lt; colors.length; i++) {
       ctx.beginPath();
       const gradient = ctx.createLinearGradient(0, 0, 0, canvas.width);
       gradient.addColorStop(0, colors[i]);
@@ -300,25 +285,14 @@ export class SlideShow extends Window {
     ctx.fillText(stringDefaultTexture, 256, 256);
 
     this.defaultTexture = new THREE.CanvasTexture(canvas);
-  }
-
-  /**
-   * It creates a new texture file object with the default texture and returns it
-   *
-   * @param {number} index - The index of the texture file.
-   * @returns {TextureFile} A new texture file object.
-   */
-  createDefaultTextureFile(index) {
-    const newTextureFile = {
-      index: index,
-      name: 'DEFAULT',
-      texture: this.defaultTexture,
-      size: {
-        height: this.defaultTexture.image.height,
-        width: this.defaultTexture.image.width,
+    this.texturesFiles = [
+      {
+        index: 0,
+        name: 'First',
+        texture: this.defaultTexture,
+        size: { height: canvas.height, width: canvas.width },
       },
-    };
-    return newTextureFile;
+    ];
   }
 
   /** Create all HTMLElements and fill `this.htmlSlideShow`*/
@@ -361,9 +335,6 @@ export class SlideShow extends Window {
     });
     htmlSlideShow.appendChild(matchExtentButton);
 
-    const aspectRatioDiv = document.createElement('div');
-    htmlSlideShow.appendChild(aspectRatioDiv);
-
     const aspectRatioCheckbox = document.createElement('input');
     aspectRatioCheckbox.id = 'aspectRatio';
     aspectRatioCheckbox.type = 'checkbox';
@@ -381,73 +352,12 @@ export class SlideShow extends Window {
     });
 
     this.aspectRatioCheckboxID = aspectRatioCheckbox.id;
-    aspectRatioDiv.appendChild(aspectRatioCheckbox);
+    htmlSlideShow.appendChild(aspectRatioCheckbox);
 
     const labelAspectRatio = document.createElement('label');
     labelAspectRatio.htmlFor = aspectRatioCheckbox.id;
     labelAspectRatio.innerHTML = 'Aspect Ratio';
-    aspectRatioDiv.appendChild(labelAspectRatio);
-
-    const loopDiv = document.createElement('div');
-    htmlSlideShow.appendChild(loopDiv);
-
-    const loopCheckbox = document.createElement('input');
-    loopCheckbox.id = 'loopSlideShow';
-    loopCheckbox.type = 'checkbox';
-    this.callbacksHTMLEl.push({
-      event: 'change',
-      id: loopCheckbox.id,
-      cb: function (event) {
-        if (this.intervalLoop) this.stopLoopSlideShow();
-        if (event.target.checked) {
-          this.loopSlideShow();
-        }
-      },
-    });
-
-    this.loopSlideShowCheckboxID = loopCheckbox.id;
-    loopDiv.appendChild(loopCheckbox);
-
-    const labelLoopSlideShow = document.createElement('label');
-    labelLoopSlideShow.htmlFor = loopCheckbox.id;
-    labelLoopSlideShow.innerHTML = 'Loop SlideShow';
-    loopDiv.appendChild(labelLoopSlideShow);
-
-    const durationLoopInSecDiv = document.createElement('div');
-    htmlSlideShow.appendChild(durationLoopInSecDiv);
-
-    const durationLoopInSecInput = document.createElement('input');
-    durationLoopInSecInput.id = 'durationLoopInputSlideShow';
-    durationLoopInSecInput.type = 'number';
-    durationLoopInSecInput.max = 100;
-    durationLoopInSecInput.min = 1;
-    durationLoopInSecInput.setAttribute('value', this.durationLoopInSec);
-    durationLoopInSecDiv.step = 0.5;
-    this.callbacksHTMLEl.push({
-      event: 'change',
-      id: durationLoopInSecInput.id,
-      cb: function (event) {
-        this.durationLoopInSec = parseFloat(event.target.value);
-        if (this.intervalLoop) {
-          this.restartLoopSlideShow();
-        }
-      },
-    });
-
-    this.durationLoopInputID = durationLoopInSecInput.id;
-    durationLoopInSecDiv.appendChild(durationLoopInSecInput);
-
-    const durationLoopInSecLabel = document.createElement('label');
-    durationLoopInSecLabel.htmlFor = durationLoopInSecInput.id;
-    durationLoopInSecLabel.innerHTML = 'Duration Loop (s)';
-    durationLoopInSecDiv.appendChild(durationLoopInSecLabel);
-
-    const counterLoopTimeDiv = document.createElement('div');
-    counterLoopTimeDiv.id = 'counterLoopTimeDivSlideShow';
-    counterLoopTimeDiv.innerHTML = this.durationLoopInSec;
-
-    this.counterLoopTimeDivID = counterLoopTimeDiv.id;
-    durationLoopInSecDiv.appendChild(counterLoopTimeDiv);
+    htmlSlideShow.appendChild(labelAspectRatio);
 
     const slideSelect = document.createElement('select');
     slideSelect.id = 'slideSelect';
@@ -461,7 +371,7 @@ export class SlideShow extends Window {
 
     const conf = this.configSlideShow;
     if (conf) {
-      for (let i = 0; i < conf[Object.keys(conf)[0]].length; i++) {
+      for (let i = 0; i &lt; conf[Object.keys(conf)[0]].length; i++) {
         const element = conf[Object.keys(conf)[0]][i];
         const option = document.createElement('option');
         option.value = i;
@@ -494,7 +404,7 @@ export class SlideShow extends Window {
     let elevationZ = 0.1;
 
     const itownsViewLayers = this.itownsView.getLayers();
-    for (let index = 0; index < itownsViewLayers.length; index++) {
+    for (let index = 0; index &lt; itownsViewLayers.length; index++) {
       const layer = itownsViewLayers[index];
       if (layer.isElevationLayer) {
         elevationZ = layer.colorTextureElevationMaxZ;
@@ -512,79 +422,125 @@ export class SlideShow extends Window {
    * Add event listeners to input
    */
   initInputListener() {
-    const hidePlane = () => {
-      if (!this.plane) return;
-      this.plane.visible = !this.plane.visible;
-      this.itownsView.notifyChange();
-    };
+    const _this = this;
+
+    // Clamp number between two values with the following line:
+    const clamp = (num, min, max) => Math.min(Math.max(num, min), max);
 
     // Hide and show the geometryPlane
-    this.inputManager.addKeyInput('h', 'keydown', hidePlane);
-
-    const next = () => {
-      this.nextSlide();
-      this.restartLoopSlideShow();
-    };
+    this.inputManager.addKeyInput('h', 'keydown', function () {
+      if (!_this.plane) return;
+      _this.plane.visible = !_this.plane.visible;
+      _this.itownsView.notifyChange();
+    });
 
     // Change the next slide
-    this.inputManager.addKeyInput('ArrowRight', 'keydown', next);
+    this.inputManager.addKeyInput('ArrowRight', 'keydown', function () {
+      if (!_this.plane) return;
+      _this.iCurrentTextureFile = clamp(
+        _this.iCurrentTextureFile + 1,
+        0,
+        _this.texturesFiles.length - 1
+      );
+      _this.setTexture(_this.iCurrentTextureFile);
 
-    const previous = () => {
-      this.previousSlide();
-      this.restartLoopSlideShow();
-    };
+      _this.aspectRatioCheckboxDOM.dispatchEvent(new Event('change'));
+
+      _this.itownsView.notifyChange();
+    });
 
     // Change the previous slide
-    this.inputManager.addKeyInput('ArrowLeft', 'keydown', previous);
+    this.inputManager.addKeyInput('ArrowLeft', 'keydown', function () {
+      if (!_this.plane) return;
+      _this.iCurrentTextureFile = clamp(
+        _this.iCurrentTextureFile - 1,
+        0,
+        _this.texturesFiles.length - 1
+      );
+      _this.setTexture(_this.iCurrentTextureFile);
+      _this.aspectRatioCheckboxDOM.dispatchEvent(new Event('change'));
 
-    const hideUI = () => {
-      const htmlElement = document.getElementById(this.windowId); // -sale mais je veux rentrer chez moi
-
-      if (!htmlElement) return;
-
-      if (htmlElement.style.display == 'none') {
-        htmlElement.style.display = '';
-      } else {
-        htmlElement.style.display = 'none';
-      }
-    };
-
-    this.inputManager.addKeyInput('s', 'keydown', hideUI);
-
-    this.addEventListener(Window.EVENT_DISABLED, () => {
-      this.inputManager.removeInputListener(hidePlane);
-      this.inputManager.removeInputListener(next);
-      this.inputManager.removeInputListener(previous);
-      this.inputManager.removeInputListener(hideUI);
+      _this.itownsView.notifyChange();
     });
   }
 
-  nextSlide() {
-    if (!this.plane) return;
+  /** Set the callback function of event 'drop' @warn !event.preventDefault! */
+  initCBDrop() {
+    const _this = this;
+    const body = document.body;
+    body.addEventListener('drop', function (event) {
+      event.preventDefault();
+      if (!_this.plane) return;
+      _this.initDefaultTextureFile();
+      const files = Array.from(event.dataTransfer.files);
 
-    this.iCurrentTextureFile =
-      (this.iCurrentTextureFile + 1) % this.texturesFiles.length; // Loop
+      files.sort(function (a, b) {
+        return a.name.localeCompare(b.name);
+      });
+      for (let i = 0; i &lt; files.length; i++) {
+        const file = files[i];
+        if (file) {
+          try {
+            const reader = new FileReader();
 
-    this.setTexture(this.iCurrentTextureFile);
+            reader.onload = function (data) {
+              if (file.type.includes('image/')) {
+                new THREE.TextureLoader().load(
+                  data.target.result,
+                  function (texture) {
+                    _this.texturesFiles.push({
+                      index: i + 1,
+                      name: file.name,
+                      texture: texture,
+                      size: {
+                        height: texture.image.height,
+                        width: texture.image.width,
+                      },
+                    });
+                  }
+                );
+              } else if (file.type.includes('video/')) {
+                const video = document.createElement('video');
+                video.src = data.target.result;
+                video.autoplay = true;
+                video.muted = true;
+                video.loop = true;
+                video.load();
 
-    this.aspectRatioCheckboxDOM.dispatchEvent(new Event('change'));
+                const videoTexture = new THREE.VideoTexture(video);
+                // Rotate the video texture with
+                // videoTexture.center.set(0.5, 0.5);
+                // videoTexture.rotation = Math.PI / 2;
+                _this.texturesFiles.push({
+                  index: i + 1,
+                  name: file.name,
+                  texture: videoTexture,
+                  video: video,
+                  size: {
+                    height: video.videoHeight,
+                    width: video.videoWidth,
+                  },
+                });
+              }
+            };
 
-    this.itownsView.notifyChange();
-  }
+            reader.readAsDataURL(file);
+          } catch (e) {
+            throw new Error(e);
+          }
+        }
+      }
+      _this.setTexture(0);
+      console.log(_this.texturesFiles);
+    });
 
-  previousSlide() {
-    if (!this.plane) return;
-
-    this.iCurrentTextureFile =
-      this.iCurrentTextureFile - 1 < 0
-        ? this.texturesFiles.length - 1
-        : this.iCurrentTextureFile - 1;
-
-    this.setTexture(this.iCurrentTextureFile);
-
-    this.aspectRatioCheckboxDOM.dispatchEvent(new Event('change'));
-
-    this.itownsView.notifyChange();
+    body.addEventListener(
+      'dragover',
+      function (event) {
+        event.preventDefault();
+      },
+      false
+    );
   }
 
   /**
@@ -600,7 +556,7 @@ export class SlideShow extends Window {
     const inputVector = document.createElement('div');
     inputVector.id = vectorName + '_inputVector';
     inputVector.style.display = 'grid';
-    for (let iInput = 0; iInput < labels.length; iInput++) {
+    for (let iInput = 0; iInput &lt; labels.length; iInput++) {
       const labelElement = document.createElement('label');
       labelElement.innerHTML = labels[iInput];
 
@@ -645,6 +601,7 @@ export class SlideShow extends Window {
       this.sizeInputVectorDOM.getElementsByTagName('input')[
         iInput == 0 ? 1 : 0
       ];
+
     const height = this.currentTextureFile.size.height;
     const width = this.currentTextureFile.size.width;
     const ratio = width / height;
@@ -707,18 +664,19 @@ export class SlideShow extends Window {
    * @param {number} iText The index of the texture to set
    */
   setTexture(iText) {
-    if (this.currentTextureFile && this.currentTextureFile.video) {
+    const _this = this;
+    if (this.currentTextureFile.video) {
       this.currentTextureFile.video.pause();
       this.currentTextureFile.video.currentTime = 0;
       this.notifyValue = false;
     }
 
-    this.texturesFiles.forEach((tf) => {
+    this.texturesFiles.forEach(function (tf) {
       if (tf.index == iText) {
-        this.iCurrentTextureFile = tf.index;
+        _this.iCurrentTextureFile = tf.index;
         if (tf.video) {
           tf.video.play();
-          this.notifyValue = true;
+          _this.notifyValue = true;
         }
       }
     });
@@ -766,39 +724,6 @@ export class SlideShow extends Window {
     this.plane = new THREE.Mesh(geometry, material);
   }
 
-  /**
-   * Loop through a slide show of textures
-   *
-   */
-  loopSlideShow() {
-    if (!this.loopCheckboxDOM.checked) return;
-    const durationInMS = this.durationLoopInSec * 1000; // Loop event
-    this.counterLoopTimeDivDOM.innerHTML = this.durationLoopInSec;
-    this.intervalLoop = setInterval(() => {
-      this.nextSlide();
-    }, durationInMS);
-
-    this.counterIntervalLoop = setInterval(() => {
-      this.updateCounterLoop();
-    }, 100);
-  }
-
-  updateCounterLoop() {
-    const value = parseFloat(this.counterLoopTimeDivDOM.innerHTML);
-    const newValue = value - 0.1 <= 0 ? this.durationLoopInSec : value - 0.1;
-    this.counterLoopTimeDivDOM.innerHTML = newValue.toFixed(1);
-  }
-
-  stopLoopSlideShow() {
-    clearInterval(this.intervalLoop);
-    clearInterval(this.counterIntervalLoop);
-  }
-
-  restartLoopSlideShow() {
-    this.stopLoopSlideShow();
-    this.loopSlideShow();
-  }
-
   // DOM GETTERS
   /* Return coordinates HTMLElements (inputs+labels) */
   get coordinatesInputVectorDOM() {
@@ -818,14 +743,6 @@ export class SlideShow extends Window {
   /* Return apspect ratio HTMLElement (checkbox)*/
   get aspectRatioCheckboxDOM() {
     return document.getElementById(this.aspectRatioCheckboxID);
-  }
-
-  get counterLoopTimeDivDOM() {
-    return document.getElementById(this.counterLoopTimeDivID);
-  }
-
-  get loopCheckboxDOM() {
-    return document.getElementById(this.loopSlideShowCheckboxID);
   }
 
   get innerContentHtml() {
@@ -912,16 +829,11 @@ export class SlideShow extends Window {
 
   /** It adds event listeners to the HTML elements created by the Window class.*/
   windowCreated() {
-    if (this.configSlideShow) {
-      this.setSlideshowInConfig(0);
-    }
-    this.initInputListener();
-    this.initCBDrop();
-
+    const _this = this;
     // Through this.callbacksHTMLEl and addEventListeners to HTMLElements in DOM (elements which created by Window class)
-    this.callbacksHTMLEl.forEach((element) => {
+    this.callbacksHTMLEl.forEach(function (element) {
       const htmlElement = document.getElementById(element.id);
-      htmlElement.addEventListener(element.event, element.cb.bind(this));
+      htmlElement.addEventListener(element.event, element.cb.bind(_this));
     });
     this.matchExtent();
   }
@@ -931,7 +843,38 @@ export class SlideShow extends Window {
       this.plane.removeFromParent();
       this.plane = null;
     }
-
     this.itownsView.notifyChange();
   }
 }
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+            </div>
+            
+            <footer class="footer">
+                <div class="content has-text-centered">
+                    <p>Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.11</a></p>
+                    <p class="sidebar-created-by">
+                        <a href="https://github.com/SoftwareBrothers/better-docs" target="_blank">BetterDocs theme</a> provided with <i class="fas fa-heart"></i> by
+                        <a href="http://softwarebrothers.co" target="_blank">SoftwareBrothers - JavaScript Development Agency</a>
+                    </p>
+                </div>
+            </footer>
+            
+        </div>
+        <div id="side-nav" class="side-nav">
+        </div>
+    </div>
+<script src="scripts/app.min.js"></script>
+<script>PR.prettyPrint();</script>
+<script src="scripts/linenumber.js"> </script>
+
+<script src="scripts/search.js"> </script>
+
+
+</body>
+</html>
