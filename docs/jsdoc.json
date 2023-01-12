@@ -4,7 +4,7 @@
     "node_modules/jsdoc-tsimport-plugin/index.js"
   ],
   "source": {
-    "include": ["packages/browser/src/Component/Widget/SlideShow"],
+    "include": ["packages/browser/src"],
     "includePattern": ".js$",
     "excludePattern": "(node_modules/|docs)"
   },
@@ -15,13 +15,44 @@
     "search": true
   },
   "opts": {
-    "destination": "./jsdoc",
+    "destination": "./docs/htmlTest",
+    "tutorials": "./docs/static",
     "recurse": true,
     "readme": "./readme.md",
-    "template": "node_modules/better-docs"
+    "template": "node_modules/clean-jsdoc-theme",
+    "theme_opts": {
+      "theme": "light",
+      "title": "UD-Viz",
+      "footer": "Fork: <a href='https://github.com/VCityTeam/UD-Viz'>https://github.com/VCityTeam/UD-Viz</a>",
+      "displayModuleHeader": true,
+      "menu": [
+        {
+          "title": "Github",
+          "id": "Github",
+          "link": "https://github.com/VCityTeam/UD-Viz"
+        },
+        {
+          "title": "Examples",
+          "id": "Examples",
+          "link": "https://ud-viz.vcityliris.data.alpha.grandlyon.com/"
+        }
+      ],
+      "sections": ["Tutorials", "Classes", "Modules", "Global"],
+      "include_css": ["docs/custom.css"],
+      "resizeable": {
+        "navbar": {
+          "min": "300",
+          "max": "600"
+        }
+      }
+    }
   },
   "tags": {
     "allowUnknownTags": ["optional"],
     "dictionaries": ["jsdoc", "closure"]
+  },
+  "markdown": {
+    "hardwrap": false,
+    "idInHeadings": true
   }
 }
