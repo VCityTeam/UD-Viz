@@ -27,6 +27,7 @@ export class FocusGameObject extends ExternalScriptBase {
    * @param {Context} context - external game context
    * @param {Game.Object3D} object3D - object3D of this script
    * @param {FocusGameObjectVariables} variables - variables {@link FocusGameObjectVariables}
+   * @todo refacto with cameraman
    */
   constructor(context, object3D, variables) {
     // Overwrite conf
@@ -62,7 +63,7 @@ export class FocusGameObject extends ExternalScriptBase {
   }
 
   /**
-   * Update camera position
+   * Update camera position if a gameobject has been found
    */
   tick() {
     // Get the go2Focus gameobject by name
@@ -71,7 +72,9 @@ export class FocusGameObject extends ExternalScriptBase {
       this.variables.nameGO2Focus
     );
 
-    if (!go2Focus) throw 'no gameobject';
+    if (!go2Focus) {
+      return;
+    }
 
     // Compute world transform
     const position = new THREE.Vector3();
