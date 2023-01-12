@@ -16,7 +16,7 @@ const Object3D = class extends THREE.Object3D {
    * @param {string=} json.uuid - uuid
    * @param {string=} json.parentUUID - uuid of this parent object3D
    * @param {string} [json.name=""] - name
-   * @param {boolean=} [json.static=false] - static
+   * @param {boolean=} [json.static=false] - static default is false
    * @param {boolean=} [json.outdated=false] - outdated
    * @param {boolean=} [json.gameContextUpdate=true] - should be update from the game context
    * @param {string[]=} [json.forceToJSONComponent=[]] - force certain component to be export in json

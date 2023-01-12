@@ -3,6 +3,8 @@ import { Command, Game } from '@ud-viz/core';
 
 /**
  * Register key command to send MOVE_FORWARD + MOVE_BACKWARD + MOVE_RIGHT + MOVE_LEFT to game context
+ *
+ * @todo use component instead
  */
 export class CommandController extends ExternalScriptBase {
   init() {
