@@ -1,3 +1,7 @@
 .method-member-container {
   overflow: auto;
 }
+
+div.member-item-container {
+  display: none;
+}
