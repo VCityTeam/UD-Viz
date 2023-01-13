@@ -3,7 +3,15 @@ import { Document } from '../Model/Document';
 import { AbstractDocumentWindow } from './AbstractDocumentWindow';
 
 /**
- * The window responsible for displaying the currently displayed document, as
+ * @typedef {object} DocumentInspectorExtension
+ * @property {string} type 'panel | 'button'
+ * @property {string} [container]
+ * @property {string} id ID
+ * @property {import('../DocumentModule').cbInspectorOptionsExtension} callback
+ * @property {html} string
+ */
+/**
+ * @class The window responsible for displaying the currently displayed document, as
  * defined in the document provider. It also serves as a container to add
  * extension buttons.
  */
@@ -18,14 +26,7 @@ export class DocumentInspectorWindow extends AbstractDocumentWindow {
      * Represents a list of extensions. An extension can either be a button or
      * a panel.
      *
-     * @type {Object.<string, {
-     *  type: 'button' | 'panel',
-     *  container?: string,
-     *  label: string,
-     *  id: string,
-     *  callback?: (doc: Document) => any,
-     *  html: string
-     * }>}
+     * @type {Object<string, DocumentInspectorExtension>}
      */
     this.extensions = {};
   }

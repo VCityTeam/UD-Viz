@@ -47,12 +47,17 @@ export class DocumentModule {
   /**
    * Adds a new window to display information about documents.
    *
-   * @param {AbstractDocumentWindow} newWindow The window to add.
+   * @param {import('./View/AbstractDocumentWindow').AbstractDocumentWindow} newWindow The window to add.
    */
   addDocumentWindow(newWindow) {
     this.view.addDocumentWindow(newWindow);
   }
 
+  /**
+   * @callback cbInspectorOptionsExtension
+   * @param {Document} doc
+   * @returns {any}
+   */
   /**
    * Creates a new extension for the document browser. An extension can be
    * either a command button or a panel. An extension should be identified by
@@ -68,7 +73,7 @@ export class DocumentModule {
    * @param {string} options.html The inside HTML of the
    * extension. For a button, this will be the displayed text. For a panel, it
    * will be the inside HTML.
-   * @param {(doc: Document) => any} [options.callback] The callback to call
+   * @param {cbInspectorOptionsExtension} [options.callback] The callback to call
    * for a button.
    */
   addInspectorExtension(label, options) {
@@ -85,6 +90,12 @@ export class DocumentModule {
   }
 
   /**
+   * @callback cbNavigatorOptionsExtension
+   * @param {Array<Document>} doc
+   * @returns {any}
+   */
+
+  /**
    * Creates a new extension for the document search. An extension can be
    * either a command button or a panel. An extension should be identified by
    * a unique label.
@@ -99,7 +110,7 @@ export class DocumentModule {
    * @param {string} options.html The inside HTML of the
    * extension. For a button, this will be the displayed text. For a panel, it
    * will be the inside HTML.
-   * @param {(doc: Document[]) => any} [options.callback] The callback to call
+   * @param {cbNavigatorOptionsExtension} [options.callback] The callback to call
    * for a button.
    */
   addNavigatorExtension(label, options) {
@@ -131,12 +142,17 @@ export class DocumentModule {
   /**
    * Adds a filter to the filtering pipeline.
    *
-   * @param {DocumentFilter} filter The new filter to add.
+   * @param {import('./ViewModel/DocumentFilter').DocumentFilter} filter The new filter to add.
    */
   addFilter(filter) {
     this.provider.addFilter(filter);
   }
 
+  /**
+   * @callback cbAction
+   * @param {any} data
+   * @returns {any}
+   */
   /**
    * Adds an event listener to the document provider. There are two types
    * of events :
@@ -148,7 +164,7 @@ export class DocumentModule {
    * @param {string} event The event to register. Can only be
    * `DocumentModule.EVENT_FILTERED_DOCS_UPDATED` or
    * `DocumentModule.EVENT_DISPLAYED_DOC_CHANGED`
-   * @param {(data: any) => any} action The listener.
+   * @param {cbAction} action The listener.
    */
   addEventListener(event, action) {
     this.provider.addEventListener(event, action);
@@ -157,7 +173,7 @@ export class DocumentModule {
   /**
    * Removes an event listener from the document provider.
    *
-   * @param {(data: any) => data} action The listener to remove.
+   * @param {cbAction} action The listener to remove.
    */
   removeEventListener(action) {
     this.provider.removeEventListener(action);
