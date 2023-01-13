@@ -24,60 +24,58 @@
           }
 
           tick() {
-            const dt = this.context.getDt();
-            const commands = this.context.getCommands();
-            const speedTranslate = 0.02;
-            const speedRotate = 0.0006;
-
-            commands.forEach((cmd) => {
-              switch (cmd.getType()) {
-                case udvizBrowser.Core.Game.CONSTANT.MOVE_FORWARD:
-                  udvizBrowser.Core.Game.Object3D.moveForward(
-                    this.avatar,
-                    dt * speedTranslate
-                  );
-                  this.avatar.setOutdated(true); // => object has been moved need an update in external context
-                  break;
-                case udvizBrowser.Core.Game.CONSTANT.MOVE_BACKWARD:
-                  udvizBrowser.Core.Game.Object3D.moveBackward(
-                    this.avatar,
-                    dt * speedTranslate
-                  );
-                  this.avatar.setOutdated(true);
-                  break;
-                case udvizBrowser.Core.Game.CONSTANT.MOVE_LEFT:
-                  udvizBrowser.Core.Game.Object3D.rotate(
-                    this.avatar,
-                    new udvizBrowser.THREE.Vector3(0, 0, speedRotate * dt)
-                  );
-                  this.avatar.setOutdated(true);
-                  break;
-                case udvizBrowser.Core.Game.CONSTANT.MOVE_RIGHT:
-                  udvizBrowser.Core.Game.Object3D.rotate(
-                    this.avatar,
-                    new udvizBrowser.THREE.Vector3(0, 0, -speedRotate * dt)
-                  );
-                  this.avatar.setOutdated(true);
-                  break;
-                case udvizBrowser.Core.Game.CONSTANT.Z_UPDATE:
-                  if (cmd.data) {
-                    this.avatar.position.z = cmd.data;
-                    this.avatar.setOutdated(true);
-                  }
-                  break;
-                default:
-                  throw new Error('command not handle ', cmd.getType());
-              }
-            });
+            udvizBrowser.Core.Game.ScriptTemplate.Component.applyNativeCommands(
+              this.context.commands,
+              this.avatar,
+              this.context.dt
+            );
           }
         },
       };
       const externalGameScriptClass = {
-        FocusGameObject: udvizBrowser.ExternalScriptTemplate.FocusGameObject,
-        CommandController:
-          udvizBrowser.ExternalScriptTemplate.CommandController,
-        UpdateZWithElevationLayer:
-          udvizBrowser.ExternalScriptTemplate.UpdateZWithElevationLayer,
+        Avatar: class extends udvizBrowser.ExternalGame.ScriptBase {
+          init() {
+            this.avatar = this.context.object3D.getObjectByProperty(
+              'name',
+              'avatar'
+            );
+
+            this.cameraman = new udvizBrowser.ExternalScriptTemplate.Cameraman(
+              this.context.frame3D.camera
+            );
+
+            this.cameraman.followObject3D(
+              this.avatar,
+              this.variables.camera_distance,
+              this.variables.camera_offset,
+              this.variables.camera_angle
+            );
+
+            const commandController =
+              new udvizBrowser.ExternalScriptTemplate.CommandController(
+                this.context.inputManager
+              );
+
+            commandController.addNativeCommands();
+          }
+
+          tick() {
+            // cameraman need to be ticked
+            this.cameraman.tick(this.context.dt);
+
+            this.context.sendCommandToGameContext([
+              new udvizBrowser.Core.Command({
+                type: udvizBrowser.Core.Game.ScriptTemplate.Constants.COMMAND
+                  .Z_UPDATE,
+                data: udvizBrowser.ExternalScriptTemplate.computeRelativeElevationFromGround(
+                  this.avatar,
+                  this.context.frame3D.itownsView.tileLayer,
+                  this.variables.update_z_crs
+                ),
+              }),
+            ]);
+          }
+        },
       };
 
       udvizBrowser.FileUtil.loadMultipleJSON([
@@ -118,19 +116,12 @@
               },
               ExternalScript: {
                 variables: {
-                  nameGO2Focus: 'avatar',
-                  cameraAngle: 0,
-                  offsetZ: 2,
-                  minDist: 5,
-                  maxDist: 20,
-                  nameGO2UpdateZ: 'avatar',
-                  updateZCrs: configs['extent_lyon'].crs,
+                  update_z_crs: configs['extent_lyon'].crs,
+                  camera_distance: 10,
+                  camera_offset: new udvizBrowser.THREE.Vector3(0, 0, 2),
+                  camera_angle: 0,
                 },
-                idScripts: [
-                  'UpdateZWithElevationLayer',
-                  'FocusGameObject',
-                  'CommandController',
-                ],
+                idScripts: ['Avatar'],
               },
             },
           });
