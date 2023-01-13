@@ -4,7 +4,15 @@ import { DocumentSearchFilter } from '../ViewModel/DocumentSearchFilter';
 import { AbstractDocumentWindow } from './AbstractDocumentWindow';
 
 /**
- * Represents the navigator window for the documents. It contains the filters on
+ * @typedef {object} DocumentNavigatorExtension
+ * @property {string} type 'panel | 'button'
+ * @property {string} [container]
+ * @property {string} id ID
+ * @property {import('../DocumentModule').cbNavigatorOptionsExtension} callback
+ * @property {html} string
+ */
+/**
+ * @class Represents the navigator window for the documents. It contains the filters on
  * the fields of a document.
  */
 export class DocumentNavigatorWindow extends AbstractDocumentWindow {
@@ -25,13 +33,7 @@ export class DocumentNavigatorWindow extends AbstractDocumentWindow {
      * Represents a list of extensions. An extension can either be a button or
      * a panel.
      *
-     * @type {Object.<string, {
-     *  type: 'button' | 'panel',
-     *  label: string,
-     *  id: string,
-     *  callback?: (doc: Document[]) => any,
-     *  html: string
-     * }>}
+     * @type {Object<string, DocumentNavigatorExtension>}
      */
     this.extensions = {};
   }

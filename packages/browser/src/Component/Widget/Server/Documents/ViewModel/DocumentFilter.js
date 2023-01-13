@@ -4,11 +4,21 @@ import { Document } from '../Model/Document';
  * A filter for documents. It is essentially a function that determines if a
  * document is acceptable or not.
  */
+
+/**
+ * @callback cbAccepts
+ * @param {Document} document
+ * @returns {boolean}
+ */
+
+/**
+ * @class
+ */
 export class DocumentFilter {
   /**
    * Constructs a new document filter, from an acceptation function.
    *
-   * @param {(Document) => boolean} accepts The function responsible to filter
+   * @param {cbAccepts} accepts The function responsible to filter
    * the documents. It must evaluate wether a document is acceptable according
    * to the filter.
    */
@@ -17,7 +27,7 @@ export class DocumentFilter {
      * The function responsible to filter the documents. It must evaluate wether
      * a document is acceptable according to the filter.
      *
-     * @type {(Document) => boolean}
+     * @type {cbAccepts}
      */
     this.accepts = accepts;
   }

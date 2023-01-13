@@ -1,9 +1,4 @@
-/**
- * Represents a document.
- *
- * @format
- */
-
+/** @class Represents a document. */
 export class Document {
   /**
    * Creates a new document.
