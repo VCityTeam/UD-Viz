@@ -40,6 +40,15 @@ export class Cameraman {
     }
   }
 
+  /**
+   * Compute camera transform (position + quaternion) to focus object3D
+   *
+   * @param {THREE.Object3D} object3D - object3D to focus
+   * @param {number} distance - distance from object3D
+   * @param {THREE.Vector3} offset - offset camera position
+   * @param {number} angle - angle on x
+   * @returns {{position:THREE.Vector3,quaternion:THREE.Quaternion}} - transform of camera
+   */
   computeCameraTransform(object3D, distance, offset, angle) {
     // Compute world transform
     const position = new THREE.Vector3();
@@ -67,15 +76,36 @@ export class Cameraman {
     return { position: position, quaternion: quaternion };
   }
 
+  /**
+   * Cameraman start following object3D target
+   *
+   * @param {THREE.Object3D} object3D - object3D to focus
+   * @param {number} distance - distance from object3D
+   * @param {THREE.Vector3} offset - offset camera position
+   * @param {number} angle - angle on x
+   */
   followObject3D(object3D, distance, offset, angle) {
     if (this.target) console.warn('already was a target');
     this.target = new Target(object3D, distance, offset, angle);
   }
 
+  /**
+   * Stop following object3D target
+   */
   stopFollowObject3D() {
     this.target = null;
   }
 
+  /**
+   * Cameraman move to object3D
+   *
+   * @param {THREE.Object3D} object3D - object3D to focus
+   * @param {number} duration - time of movement in ms
+   * @param {number} distance - distance from object3D
+   * @param {THREE.Vector3} offset - offset camera position
+   * @param {number} angle - angle on x
+   * @returns {Promise} - promise resolving when movement is done resolve with true if movement occured false otherwise
+   */
   moveToObject3D(object3D, duration, distance, offset, angle) {
     return new Promise((resolve) => {
       if (this.currentMovement) {
@@ -113,6 +143,14 @@ export class Cameraman {
     });
   }
 
+  /**
+   * Move camera to transform (position + quaternion)
+   *
+   * @param {THREE.Vector3} position - target camera position
+   * @param {THREE.Quaternion} quaternion - target camera quaternion
+   * @param {number} duration - time of movement in ms
+   * @returns {Promise<boolean>} - promise resolving when movement is done resolve with true if movement occured false otherwise
+   */
   moveToTransform(position, quaternion, duration) {
     return new Promise((resolve) => {
       if (this.currentMovement) {
@@ -145,6 +183,14 @@ export class Cameraman {
 }
 
 class Target {
+  /**
+   * Buffer object which store all data to keep following an object3D target
+   *
+   * @param {THREE.Object3D} object3D - object3D to focus
+   * @param {number} distance - distance from object3D
+   * @param {THREE.Vector3} offset - offset camera position
+   * @param {number} angle - angle on x
+   */
   constructor(object3D, distance, offset, angle) {
     this.object3D = object3D;
     this.distance = distance;

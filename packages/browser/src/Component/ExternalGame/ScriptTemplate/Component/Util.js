@@ -2,9 +2,10 @@ import * as itowns from 'itowns';
 import * as THREE from 'three';
 
 /**
+ * Compute relative elevation from ground of a Object3D
  *
  * @param {THREE.Object3D} object3D - object3D
- * @param {*} tileLayer - tile layer used to compute elevation
+ * @param {itowns.TiledGeometryLayer} tileLayer - tile layer used to compute elevation
  * @param {string} crs - coordinates referential system
  * @returns {number} - relative elevation
  */
