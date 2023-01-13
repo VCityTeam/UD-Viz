@@ -1,0 +1,15 @@
+#splashScreen {
+  background-color: rgb(25, 47, 108);
+  width: 100%;
+  height: 100%;
+  transition: all 3s;
+}
+
+.label_splashscreen {
+  left: 50%;
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  font-size: xxx-large;
+  color: rgb(255, 255, 255);
+}
