@@ -8,6 +8,7 @@ import { computeRelativeElevationFromGround } from '../Component/Util';
 import './DragAndDropAvatar.css';
 
 const defaultVariables = {
+  camera_duration: 2000,
   camera_offset: new THREE.Vector3(0, 0, 2),
   camera_angle: 0,
   camera_distance: 7,
@@ -31,6 +32,12 @@ export class DragAndDropAvatar extends ExternalScriptBase {
 
     /** @type {Game.Object3D} - avatar */
     this.avatar = null; // no avatar for now
+
+    /** @type {THREE.Vector3} - record where was camera position */
+    this.itownsCameraPosition = new THREE.Vector3();
+
+    /** @type {THREE.Quaternion} - record where was camera quaternion */
+    this.itownsCameraQuaternion = new THREE.Quaternion();
 
     /** @type {HTMLDivElement} - leave avatar mode button */
     this.leaveAvatarModeButton = document.createElement('button');
@@ -109,11 +116,15 @@ export class DragAndDropAvatar extends ExternalScriptBase {
       this.context.frame3D.enableItownsViewControls(false);
       this.dragAndDropElement.remove();
 
+      // record where was the camera
+      this.itownsCameraPosition.copy(this.context.frame3D.camera.position);
+      this.itownsCameraQuaternion.copy(this.context.frame3D.camera.quaternion);
+
       // traveling to focus avatar
       this.cameraman
         .moveToObject3D(
           this.avatar,
-          2000,
+          this.variables.camera_duration,
           this.variables.camera_distance,
           this.variables.camera_offset,
           this.variables.camera_angle
@@ -135,7 +146,22 @@ export class DragAndDropAvatar extends ExternalScriptBase {
           this.context.frame3D.appendToUI(this.leaveAvatarModeButton);
         });
     } else {
-      this.context.frame3D.appendToUI(this.dragAndDropElement);
+      this.leaveAvatarModeButton.remove();
+      this.commandController.removeCommand();
+      this.cameraman.stopFollowObject3D();
+
+      this.cameraman
+        .moveToTransform(
+          this.itownsCameraPosition,
+          this.itownsCameraQuaternion,
+          this.variables.camera_duration
+        )
+        .then((movementSucceed) => {
+          if (!movementSucceed) throw new Error('cameraman error');
+
+          this.context.frame3D.appendToUI(this.dragAndDropElement);
+          this.context.frame3D.enableItownsViewControls(true);
+        });
     }
   }
 

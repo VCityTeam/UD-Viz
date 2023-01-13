@@ -72,6 +72,10 @@ export class Cameraman {
     this.target = new Target(object3D, distance, offset, angle);
   }
 
+  stopFollowObject3D() {
+    this.target = null;
+  }
+
   moveToObject3D(object3D, duration, distance, offset, angle) {
     return new Promise((resolve) => {
       if (this.currentMovement) {
@@ -93,6 +97,36 @@ export class Cameraman {
           offset,
           angle
         );
+
+        const p = position.clone().lerp(startPos, 1 - ratio);
+        const q = quaternion.clone().slerp(startQuat, 1 - ratio);
+
+        this.camera.position.copy(p);
+        this.camera.quaternion.copy(q);
+        this.camera.updateProjectionMatrix();
+
+        if (ratio >= 1) {
+          this.currentMovement = null;
+          resolve(true);
+        }
+      };
+    });
+  }
+
+  moveToTransform(position, quaternion, duration) {
+    return new Promise((resolve) => {
+      if (this.currentMovement) {
+        resolve(false);
+        return;
+      }
+      const startPos = this.camera.position.clone();
+      const startQuat = this.camera.quaternion.clone();
+      let currentTime = 0;
+
+      this.currentMovement = (dt) => {
+        currentTime += dt;
+        let ratio = currentTime / duration;
+        ratio = Math.min(Math.max(0, ratio), 1);
 
         const p = position.clone().lerp(startPos, 1 - ratio);
         const q = quaternion.clone().slerp(startQuat, 1 - ratio);
