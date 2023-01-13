@@ -5,6 +5,7 @@ const THREE = require('three');
 
 module.exports = {
   /**
+   * Apply native commands {@link Constants.COMMAND} to an object3D
    *
    * @param {Command[]} commands - native commands handle by script template
    * @param {Object3D} object3D - native commands handle by script template

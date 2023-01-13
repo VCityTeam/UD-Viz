@@ -27,6 +27,7 @@ const defaultVariables = {
 
 export class DragAndDropAvatar extends ExternalScriptBase {
   /**
+   * Drag and drop ui element in city to pass in avatar mode
    *
    * @param {Context} context - external game context
    * @param {Game.Object3D} object3D - object3D attach to this script
@@ -124,6 +125,11 @@ export class DragAndDropAvatar extends ExternalScriptBase {
     }
   }
 
+  /**
+   * Update state of this based on there is an avatar or not
+   *
+   * @param {Game.Object3D} avatar - avatar game object3D
+   */
   setAvatar(avatar) {
     this.avatar = avatar;
 

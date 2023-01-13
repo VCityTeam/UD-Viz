@@ -34,7 +34,7 @@ const MAPPING = {
 
 export class CommandController {
   /**
-   * Add/remove command controls (should be tick)
+   * Add/remove native command controls
    *
    * @param {InputManager} inputManager - initmanager to control
    */
@@ -43,6 +43,9 @@ export class CommandController {
     this.inputManager = inputManager;
   }
 
+  /**
+   * Add native commands in input manager
+   */
   addNativeCommands() {
     for (const key in MAPPING) {
       const map = MAPPING[key];
@@ -52,6 +55,9 @@ export class CommandController {
     }
   }
 
+  /**
+   * Remove native commands in input manager
+   */
   removeNativeCommands() {
     for (const key in MAPPING) {
       const map = MAPPING[key];
