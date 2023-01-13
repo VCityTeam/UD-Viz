@@ -42,8 +42,6 @@
           );
 
           const externalGameScriptClass = {
-            FocusGameObject:
-              udvizBrowser.ExternalScriptTemplate.FocusGameObject,
             Avatar: class extends udvizBrowser.ExternalGame.ScriptBase {
               constructor(context, object3D, variables) {
                 super(context, object3D, variables);
@@ -95,6 +93,19 @@
                   'avatar'
                 );
                 if (!this.avatar) throw new Error('no avatar in context');
+
+                this.cameraman =
+                  new udvizBrowser.ExternalScriptTemplate.Cameraman(
+                    this.context.frame3D.camera
+                  );
+
+                this.cameraman.followObject3D(
+                  this.avatar,
+                  this.variables.camera_distance,
+                  this.variables.camera_offset,
+                  this.variables.camera_angle
+                );
+
                 const scene = this.context.frame3D.getScene();
                 if (!this.context.frame3D.itownsView)
                   throw new Error('this script works with Frame3DPlanar');
@@ -140,30 +151,12 @@
                 };
 
                 const updateZ = () => {
-                  const parentGOWorldPos = new THREE.Vector3();
-                  this.avatar.parent.matrixWorld.decompose(
-                    parentGOWorldPos,
-                    new THREE.Quaternion(),
-                    new THREE.Vector3()
-                  );
-                  const goWorldPos = new THREE.Vector3();
-                  this.avatar.matrixWorld.decompose(
-                    goWorldPos,
-                    new THREE.Quaternion(),
-                    new THREE.Vector3()
-                  );
-
-                  const coordAvatar = new udvizBrowser.itowns.Coordinates(
-                    extent.crs, // => need a projection system
-                    goWorldPos
-                  );
-
                   const zAvatar =
-                    udvizBrowser.itowns.DEMUtils.getElevationValueAt(
+                    udvizBrowser.ExternalScriptTemplate.computeRelativeElevationFromGround(
+                      this.avatar,
                       this.context.frame3D.itownsView.tileLayer,
-                      coordAvatar,
-                      1 // PRECISE_READ_Z
-                    ) - parentGOWorldPos.z;
+                      this.variables.update_z_crs
+                    );
 
                   if (!isNaN(zAvatar)) {
                     this.avatar.position.z = zAvatar;
@@ -212,6 +205,11 @@
                   );
                 });
               }
+
+              tick() {
+                // cameraman need to be ticked
+                this.cameraman.tick(this.context.dt);
+              }
             },
           };
 
@@ -221,13 +219,12 @@
             components: {
               ExternalScript: {
                 variables: {
-                  nameGO2Focus: 'avatar',
-                  cameraAngle: 0,
-                  offsetZ: 2,
-                  minDist: 5,
-                  maxDist: 20,
+                  update_z_crs: configs['extent_lyon'].crs,
+                  camera_distance: 10,
+                  camera_offset: new udvizBrowser.THREE.Vector3(0, 0, 2),
+                  camera_angle: 0,
                 },
-                idScripts: ['FocusGameObject', 'Avatar'],
+                idScripts: ['Avatar'],
               },
             },
             children: [

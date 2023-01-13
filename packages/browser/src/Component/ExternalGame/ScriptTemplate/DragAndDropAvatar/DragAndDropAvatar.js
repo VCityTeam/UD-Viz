@@ -1,4 +1,4 @@
-import { ExternalScriptBase } from '../../Context';
+import { ExternalScriptBase, Context } from '../../Context';
 import * as THREE from 'three';
 import { Command, Game, Data } from '@ud-viz/core';
 import { Cameraman } from '../Component/Cameraman';
@@ -7,6 +7,16 @@ import { computeRelativeElevationFromGround } from '../Component/Util';
 
 import './DragAndDropAvatar.css';
 
+/**
+ * @typedef DragAndDropAvatarVariables
+ * @property {number} camera_duration - time for camera movement in ms
+ * @property {number} camera_offset - offset to positioned camera behind object3D
+ * @property {number} camera_angle - angle on x to positioned camera behind object3D
+ * @property {number} camera_distance - distance to positioned camera behind object3D
+ * @property {string} update_z_crs - projection used to update z elevation of avatar
+ */
+
+/** @type {DragAndDropAvatarVariables} - default variables */
 const defaultVariables = {
   camera_duration: 2000,
   camera_offset: new THREE.Vector3(0, 0, 2),
@@ -16,6 +26,12 @@ const defaultVariables = {
 };
 
 export class DragAndDropAvatar extends ExternalScriptBase {
+  /**
+   *
+   * @param {Context} context - external game context
+   * @param {Game.Object3D} object3D - object3D attach to this script
+   * @param {DragAndDropAvatarVariables} variables - variables of script
+   */
   constructor(context, object3D, variables) {
     // Overwrite default variables
     const overWriteVariables = JSON.parse(JSON.stringify(defaultVariables));
@@ -140,14 +156,14 @@ export class DragAndDropAvatar extends ExternalScriptBase {
           );
 
           // register command in input manager
-          this.commandController.addCommand();
+          this.commandController.addNativeCommands();
 
           // add ui to switch back to planar controls
           this.context.frame3D.appendToUI(this.leaveAvatarModeButton);
         });
     } else {
       this.leaveAvatarModeButton.remove();
-      this.commandController.removeCommand();
+      this.commandController.removeNativeCommands();
       this.cameraman.stopFollowObject3D();
 
       this.cameraman

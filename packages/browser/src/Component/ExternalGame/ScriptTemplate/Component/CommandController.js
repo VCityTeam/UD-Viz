@@ -43,7 +43,7 @@ export class CommandController {
     this.inputManager = inputManager;
   }
 
-  addCommand() {
+  addNativeCommands() {
     for (const key in MAPPING) {
       const map = MAPPING[key];
       this.inputManager.addKeyCommand(map.id, map.keys, () => {
@@ -52,7 +52,7 @@ export class CommandController {
     }
   }
 
-  removeCommand() {
+  removeNativeCommands() {
     for (const key in MAPPING) {
       const map = MAPPING[key];
       this.inputManager.removeKeyCommand(map.id, map.keys);

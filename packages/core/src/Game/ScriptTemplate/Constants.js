@@ -2,6 +2,7 @@
  * Constant used in GameScriptTemplate & ExternalScriptTemplate
  */
 module.exports = {
+  // Native commands
   COMMAND: {
     MOVE_FORWARD: 'move_forward',
     MOVE_BACKWARD: 'move_backward',

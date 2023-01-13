@@ -13,7 +13,9 @@
     <script type="text/javascript">
       const gameScriptClass = {
         GameContextManager: class extends udvizBrowser.Core.Game.ScriptBase {
-          init() {
+          load() {
+            const promises = [];
+
             this.zeppelinGO = new udvizBrowser.Core.Game.Object3D({
               name: 'zeppelin',
               static: false, // => this Game.Object3D is going to move
@@ -34,7 +36,7 @@
               },
             });
 
-            this.context.addObject3D(this.zeppelinGO);
+            promises.push(this.context.addObject3D(this.zeppelinGO));
 
             // Add collectable sphere at random position
             const range = 400;
@@ -55,8 +57,10 @@
                 y -= minRange;
               }
               const s = this.createCollectableSphere(x, y);
-              this.context.addObject3D(s);
+              promises.push(this.context.addObject3D(s));
             }
+
+            return promises;
           }
           createCollectableSphere(x, y) {
             const size = 10;
@@ -89,45 +93,11 @@
         },
         Zeppelin: class extends udvizBrowser.Core.Game.ScriptBase {
           tick() {
-            const dt = this.context.getDt();
-            const commands = this.context.getCommands();
-            const speedTranslate = 0.05;
-            const speedRotate = 0.0005;
-
-            commands.forEach((cmd) => {
-              switch (cmd.getType()) {
-                case udvizBrowser.Core.Game.CONSTANT.MOVE_FORWARD:
-                  udvizBrowser.Core.Game.Object3D.moveForward(
-                    this.object3D,
-                    dt * speedTranslate
-                  );
-                  this.object3D.setOutdated(true); // => object has been moved need an update in external context
-                  break;
-                case udvizBrowser.Core.Game.CONSTANT.MOVE_BACKWARD:
-                  udvizBrowser.Core.Game.Object3D.moveBackward(
-                    this.object3D,
-                    dt * speedTranslate
-                  );
-                  this.object3D.setOutdated(true);
-                  break;
-                case udvizBrowser.Core.Game.CONSTANT.MOVE_LEFT:
-                  udvizBrowser.Core.Game.Object3D.rotate(
-                    this.object3D,
-                    new udvizBrowser.THREE.Vector3(0, 0, speedRotate * dt)
-                  );
-                  this.object3D.setOutdated(true);
-                  break;
-                case udvizBrowser.Core.Game.CONSTANT.MOVE_RIGHT:
-                  udvizBrowser.Core.Game.Object3D.rotate(
-                    this.object3D,
-                    new udvizBrowser.THREE.Vector3(0, 0, -speedRotate * dt)
-                  );
-                  this.object3D.setOutdated(true);
-                  break;
-                default:
-                  throw new Error('command not handle ', cmd.getType());
-              }
-            });
+            udvizBrowser.Core.Game.ScriptTemplate.Component.applyNativeCommands(
+              this.context.commands,
+              this.object3D,
+              this.context.dt
+            );
           }
           // Called when this gameobject collider components collides with another one collider components
           onEnterCollision(result) {
@@ -159,10 +129,35 @@
             this.ui.style.zIndex = 98; // le neuf et le 8
             this.context.frame3D.appendToUI(this.ui);
             this.updateUI();
+
+            this.cameraman = new udvizBrowser.ExternalScriptTemplate.Cameraman(
+              this.context.frame3D.camera
+            );
+
+            this.cameraman.followObject3D(
+              this.context.object3D.getObjectByProperty('name', 'zeppelin'),
+              this.variables.camera_distance,
+              this.variables.camera_offset,
+              this.variables.camera_angle
+            );
+
+            const commandController =
+              new udvizBrowser.ExternalScriptTemplate.CommandController(
+                this.context.inputManager
+              );
+
+            commandController.addNativeCommands();
           }
+
+          tick() {
+            // cameraman need to be ticked
+            this.cameraman.tick(this.context.dt);
+          }
+
           updateUI() {
             this.ui.innerHTML = 'Sphere count: ' + this.variables.sphereCount;
           }
+
           onOutdated() {
             this.updateUI();
             // conf has changed meaning a shpereCount has incremented => play a sound
@@ -172,9 +167,6 @@
             audioComp.getController().play('ballon_pop');
           }
         },
-        FocusGameObject: udvizBrowser.ExternalScriptTemplate.FocusGameObject,
-        CommandController:
-          udvizBrowser.ExternalScriptTemplate.CommandController,
       };
 
       udvizBrowser.FileUtil.loadMultipleJSON([
@@ -218,15 +210,12 @@
               },
               ExternalScript: {
                 variables: {
-                  nameGO2Focus: 'zeppelin',
                   sphereCount: 0,
-                  cameraAngle: 0.1,
+                  camera_distance: 60,
+                  camera_offset: new udvizBrowser.THREE.Vector3(0, 0, 15),
+                  camera_angle: 0.2,
                 },
-                idScripts: [
-                  'FocusGameObject',
-                  'CommandController',
-                  'ExternalContextManager',
-                ],
+                idScripts: ['ExternalContextManager'],
               },
             },
           });
