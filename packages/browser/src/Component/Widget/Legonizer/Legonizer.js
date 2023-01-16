@@ -78,6 +78,7 @@ export class LegonizerWindow extends Window {
       inputElement.style.width = 'inherit';
       inputElement.setAttribute('value', '0');
 
+      // Event Listener
       inputElement.addEventListener('change', (event) => {
         const value = event.target.value;
         if (value) {
@@ -157,6 +158,23 @@ export class LegonizerWindow extends Window {
       inputElement.type = 'number';
       inputElement.style.width = 'inherit';
       inputElement.setAttribute('value', '0');
+
+      // Event listener
+      inputElement.addEventListener('change', (event) => {
+        const value = event.target.value;
+        if (value) {
+          const scaleX =
+            parseInt(this.inputLegoScaleXElement.value) * this.ratio * 32;
+
+          const scaleY =
+            parseInt(this.inputLegoScaleYElement.value) * this.ratio * 32;
+
+          this.boxSelector.scale.set(scaleX, scaleY, this.boxSelector.scale.z);
+          this.boxSelector.updateMatrixWorld();
+          this.transformCtrls.updateMatrixWorld();
+          this.view3D.getItownsView().notifyChange();
+        }
+      });
 
       scaleElement.appendChild(labelElement);
       scaleElement.appendChild(inputElement);
