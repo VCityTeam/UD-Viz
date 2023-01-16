@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+import { TransformControls } from 'three/examples/jsm/controls/TransformControls.js';
 import * as itowns from 'itowns';
 import './LegoVisualizerScene.css';
 
@@ -47,8 +48,8 @@ export class LegoMockupVisualizer {
     );
     this.sceneElement.appendChild(renderer.domElement);
 
-    this.camera.position.z = -20;
-    this.camera.position.y = 15;
+    this.camera.position.set(20, 10, 20);
+    this.camera.lookAt(0, 2, 0);
 
     const light = new THREE.DirectionalLight(0xffffff, 1);
     light.position.set(-20, 20, 20);
@@ -57,24 +58,43 @@ export class LegoMockupVisualizer {
     this.scene.add(light);
     this.scene.add(light2);
 
-    const geometry = new THREE.BoxGeometry(32, 1, 32);
-    const material = new THREE.MeshPhongMaterial({ color: 'brown' });
-    const terrain = new THREE.Mesh(geometry, material);
-
-    terrain.position.y = -1;
-    this.scene.add(terrain);
-
     const orbit = new OrbitControls(this.camera, renderer.domElement);
     orbit.update();
     orbit.addEventListener('change', () => {
       renderer.render(this.scene, this.camera);
     });
 
+    const geometry = new THREE.BoxGeometry(1, 1, 2);
+    const material = new THREE.MeshPhongMaterial({ color: 'blue' });
+    const terrain = new THREE.Mesh(geometry, material);
+
+    terrain.position.set(0, 10, 0);
+
+    const control = new TransformControls(this.camera, renderer.domElement);
+    control.addEventListener('change', () => {
+      renderer.render(this.scene, this.camera);
+    });
+
+    control.addEventListener('dragging-changed', function (event) {
+      orbit.enabled = !event.value;
+    });
+
+    this.scene.add(terrain);
+    control.attach(terrain);
+    this.scene.add(control);
+
     renderer.render(this.scene, this.camera);
-    this.camera.lookAt(terrain);
+    // This.camera.lookAt(terrain);
   }
 
-  addLegoPlateSimulation(heightMap) {
+  addLegoPlateSimulation(heightMap, xPlates, yPlates) {
+    const geometry = new THREE.BoxGeometry(32, 1, 32);
+    const material = new THREE.MeshPhongMaterial({ color: 'brown' });
+    const terrain = new THREE.Mesh(geometry, material);
+
+    terrain.position.set(xPlates * 32, -1, yPlates * 32);
+    this.scene.add(terrain);
+
     for (let j = 0; j < heightMap.length; j++) {
       const heightMapX = heightMap[j];
       for (let i = 0; i < heightMapX.length; i++) {
@@ -84,7 +104,11 @@ export class LegoMockupVisualizer {
             const geometry = new THREE.BoxGeometry(1, 1.230769230769231, 1);
             const material = new THREE.MeshPhongMaterial({ color: 'green' });
             const cube = new THREE.Mesh(geometry, material);
-            cube.position.set(i - 16, h + 0.230769230769231 * h, j - 16);
+            cube.position.set(
+              i + xPlates * 32,
+              h + 0.230769230769231 * h,
+              j + yPlates * 32
+            );
             this.scene.add(cube);
           }
         }
