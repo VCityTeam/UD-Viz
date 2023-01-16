@@ -65,15 +65,13 @@ export class SlideShow extends Window {
 
     this.initDefaultTextureFile();
 
-    const confSlideShow = this.conf.slideShow;
-
-    if (confSlideShow) {
+    if (configSlideShow) {
       this.setSlideshowInConfig(0);
     }
 
     this.intervalLoop = null;
     this.counterIntervalLoop = null;
-    this.durationLoopInSec = confSlideShow.durationLoopInSec || 10; // Take config value or 10s by default
+    this.durationLoopInSec = configSlideShow.durationLoopInSec || 10; // Take config value or 10s by default
 
     this.currentTexture = null;
 
@@ -444,7 +442,9 @@ export class SlideShow extends Window {
     if (!this.plane) return;
 
     this.iCurrentTextureFile =
-      (this.iCurrentTextureFile - 1) % this.texturesFiles.length; // Loop
+      this.iCurrentTextureFile - 1 < 0
+        ? this.texturesFiles.length - 1
+        : this.iCurrentTextureFile - 1;
 
     this.setTexture(this.iCurrentTextureFile);
 
@@ -718,6 +718,7 @@ export class SlideShow extends Window {
    *
    */
   loopSlideShow() {
+    if (!this.loopCheckboxDOM.checked) return;
     const durationInMS = this.durationLoopInSec * 1000; // Loop event
     this.counterLoopTimeDivDOM.innerHTML = this.durationLoopInSec;
     this.intervalLoop = setInterval(() => {
@@ -768,6 +769,10 @@ export class SlideShow extends Window {
 
   get counterLoopTimeDivDOM() {
     return document.getElementById(this.counterLoopTimeDivID);
+  }
+
+  get loopCheckboxDOM() {
+    return document.getElementById(this.loopSlideShowCheckboxID);
   }
 
   get innerContentHtml() {
@@ -854,11 +859,10 @@ export class SlideShow extends Window {
 
   /** It adds event listeners to the HTML elements created by the Window class.*/
   windowCreated() {
-    const _this = this;
     // Through this.callbacksHTMLEl and addEventListeners to HTMLElements in DOM (elements which created by Window class)
-    this.callbacksHTMLEl.forEach(function (element) {
+    this.callbacksHTMLEl.forEach((element) => {
       const htmlElement = document.getElementById(element.id);
-      htmlElement.addEventListener(element.event, element.cb.bind(_this));
+      htmlElement.addEventListener(element.event, element.cb.bind(this));
     });
     this.matchExtent();
   }
