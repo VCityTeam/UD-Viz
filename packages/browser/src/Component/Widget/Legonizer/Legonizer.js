@@ -182,6 +182,30 @@ export class LegonizerWindow extends Window {
       inputVector.appendChild(scaleElement);
     }
 
+    // Label
+    const labelElement = document.createElement('h3');
+    labelElement.textContent = 'Ratio parameter';
+
+    // Input pos
+    const inputElement = document.createElement('input');
+    inputElement.id = 'input_ratio';
+    inputElement.type = 'number';
+    inputElement.style.width = 'inherit';
+    inputElement.setAttribute('value', '0');
+
+    inputElement.addEventListener('change', (event) => {
+      const value = event.target.value;
+      if (value) {
+        this.ratio = this.inputRatioElement.value;
+
+        this.boxSelector.updateMatrixWorld();
+        this.transformCtrls.updateMatrixWorld();
+        this.view3D.getItownsView().notifyChange();
+      }
+    });
+
+    this.scaleBoxElement.appendChild(labelElement);
+    this.scaleBoxElement.appendChild(inputElement);
     this.scaleBoxElement.appendChild(inputVector);
   }
 
@@ -286,6 +310,8 @@ export class LegonizerWindow extends Window {
       this.inputLegoScaleYElement.value = Math.abs(
         Math.trunc(Math.abs(this.boxSelector.scale.y) / this.ratio / 32)
       );
+
+      this.inputRatioElement.value = this.ratio;
     }
   }
 
@@ -300,14 +326,6 @@ export class LegonizerWindow extends Window {
     const bufferBoxGeometry = this.boxSelector.geometry.clone();
     bufferBoxGeometry.applyMatrix4(this.boxSelector.matrixWorld);
     bufferBoxGeometry.computeBoundingBox();
-
-    console.log(this.boxSelector.scale);
-
-    // Const listBBLegoPlates = transformBBToLegoPlates(
-    //   bufferBoxGeometry.boundingBox,
-    //   this.inputLegoScaleXElement.value,
-    //   this.inputLegoScaleYElement.value
-    // );
 
     const xPlates = parseInt(this.inputLegoScaleXElement.value);
     const yPlates = parseInt(this.inputLegoScaleYElement.value);
@@ -327,29 +345,6 @@ export class LegonizerWindow extends Window {
 
     legoVisu.addLegoPlateSimulation(heightmap, 0, 0);
     generateCSVwithHeightMap(heightmap, 'legoPlates_' + 0 + '_' + 0 + '.csv');
-
-    // Generate all lego plates with bounding box
-    // for (let j = 0; j < listBBLegoPlates.length; j++) {
-    //   const listBBcolumns = listBBLegoPlates[j];
-    //   for (let i = 0; i < listBBcolumns.length; i++) {
-    //     const dataSelected = updateMockUpObject(
-    //       this.view3D.getLayerManager(),
-    //       listBBcolumns[i]
-    //     );
-    //     const heightmap = createHeightMapFromBufferGeometry(
-    //       dataSelected.geometry,
-    //       32
-    //     );
-
-    //     legoVisu.addLegoPlateSimulation(heightmap, i, j);
-
-    //     // Create CSV files
-    //     // generateCSVwithHeightMap(
-    //     //   heightmap,
-    //     //   'legoPlates_' + j + '_' + i + '.csv'
-    //     // );
-    //   }
-    // }
   }
 
   // Select Area from 3DTiles
@@ -542,6 +537,10 @@ export class LegonizerWindow extends Window {
     return `input_z`;
   }
 
+  get inputRatioId() {
+    return `input_ratio`;
+  }
+
   get buttonSelectionId() {
     return `button_selection`;
   }
@@ -600,6 +599,10 @@ export class LegonizerWindow extends Window {
 
   get inputCoordScaleZElement() {
     return document.getElementById(this.inputCoordinateScaleZId);
+  }
+
+  get inputRatioElement() {
+    return document.getElementById(this.inputRatioId);
   }
 
   get buttonSelectionElement() {
