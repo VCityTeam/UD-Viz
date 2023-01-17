@@ -41,6 +41,7 @@
     "eslint-plugin-jsdoc": "^39.6.4",
     "eslint-plugin-prettier": "^4.2.1",
     "jsdoc": "^3.6.11",
+    "jsdoc-memberof-namespace": "^2.2.0",
     "jsdoc-tsimport-plugin": "^1.0.5",
     "nodemon": "^2.0.12",
     "prettier": "2.6.2",

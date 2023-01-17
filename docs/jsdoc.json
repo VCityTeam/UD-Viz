@@ -1,10 +1,15 @@
 {
   "plugins": [
     "plugins/markdown",
-    "node_modules/jsdoc-tsimport-plugin/index.js"
+    "node_modules/jsdoc-tsimport-plugin/index.js",
+    "node_modules/jsdoc-memberof-namespace"
   ],
   "source": {
-    "include": ["packages/browser/src"],
+    "include": [
+      "packages/core/src",
+      "packages/node/src",
+      "packages/browser/src"
+    ],
     "includePattern": ".js$",
     "excludePattern": "(node_modules/|docs)"
   },
@@ -12,7 +17,11 @@
   "templates": {
     "cleverLinks": false,
     "monospaceLinks": true,
-    "search": true
+    "search": true,
+    "default": {
+      "includeDate": false,
+      "useLongnameInNav": true
+    }
   },
   "opts": {
     "destination": "./docs/htmlTest",
