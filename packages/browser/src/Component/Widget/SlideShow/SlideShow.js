@@ -423,6 +423,18 @@ export class SlideShow extends Window {
       this.previousSlide();
       this.restartLoopSlideShow();
     });
+
+    this.inputManager.addKeyInput('s', 'keydown', () => {
+      const htmlElement = document.getElementById(this.windowId); // -sale mais je veux rentrer chez moi
+
+      if (!htmlElement) return;
+
+      if (htmlElement.style.display == 'none') {
+        htmlElement.style.display = '';
+      } else {
+        htmlElement.style.display = 'none';
+      }
+    });
   }
 
   nextSlide() {
