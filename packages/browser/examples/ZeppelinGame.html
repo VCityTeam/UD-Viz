@@ -60,7 +60,7 @@
               promises.push(this.context.addObject3D(s));
             }
 
-            return promises;
+            return Promise.all(promises);
           }
           createCollectableSphere(x, y) {
             const size = 10;
@@ -137,7 +137,7 @@
             this.cameraman.followObject3D(
               this.context.object3D.getObjectByProperty('name', 'zeppelin'),
               this.variables.camera_distance,
-              this.variables.camera_offset,
+              new udvizBrowser.THREE.Vector3(0, 0, 15),
               this.variables.camera_angle
             );
 
@@ -212,7 +212,6 @@
                 variables: {
                   sphereCount: 0,
                   camera_distance: 60,
-                  camera_offset: new udvizBrowser.THREE.Vector3(0, 0, 15),
                   camera_angle: 0.2,
                 },
                 idScripts: ['ExternalContextManager'],
