@@ -63,6 +63,7 @@ export class SlideShow extends Window {
     /** @type {boolean} if true the application update its view3D eachFrame*/
     this.notifyValue = false;
 
+    this.defaultTexture = null;
     this.initDefaultTextureFile();
 
     if (configSlideShow) {
@@ -108,32 +109,28 @@ export class SlideShow extends Window {
     this.texturesFiles = [];
     this.iCurrentTextureFile = 0;
 
-    const _this = this;
     for (let i = 0; i < diapos.length; i++) {
-      this.texturesFiles.push({
-        index: i,
-        name: diapos[i],
-        texture: this.defaultTexture,
-        size: {
-          height: this.defaultTexture.image.height,
-          width: this.defaultTexture.image.width,
-        },
-      });
-
+      this.texturesFiles.push(this.createDefaultTextureFile(i));
       const xhr = new XMLHttpRequest();
       xhr.open('GET', folder.concat('/'.concat(diapos[i])));
 
-      xhr.onload = function () {
-        const type = this.getResponseHeader('Content-Type');
+      xhr.onload = (response) => {
+        const type = response.target.getResponseHeader('Content-Type');
         if (type.includes('image')) {
-          new THREE.TextureLoader().load(this.responseURL, function (texture) {
-            _this.texturesFiles[i].texture = texture;
-            _this.texturesFiles[i].size = {
-              height: texture.image.height,
-              width: texture.image.width,
-            };
-            if (i == 0) _this.setTexture(0);
-          });
+          new THREE.TextureLoader().load(
+            response.target.responseURL,
+            (texture) => {
+              this.texturesFiles[i] = {
+                name: diapos[i],
+                size: {
+                  height: texture.image.height,
+                  width: texture.image.width,
+                },
+                texture: texture,
+              };
+              if (i == 0) this.setTexture(0);
+            }
+          );
         } else if (type.includes('video')) {
           const video = document.createElement('video');
           video.src = this.responseURL;
@@ -142,19 +139,29 @@ export class SlideShow extends Window {
           video.loop = true;
           video.load();
 
-          video.onloadedmetadata = function () {
+          video.onloadedmetadata = () => {
             const videoTexture = new THREE.VideoTexture(video);
-            _this.texturesFiles[i].texture = videoTexture;
-            _this.texturesFiles[i].video = video;
-            _this.texturesFiles[i].size = {
+            this.texturesFiles[i].texture = videoTexture;
+            this.texturesFiles[i].video = video;
+            this.texturesFiles[i].size = {
               height: video.videoHeight,
               width: video.videoWidth,
             };
-            if (i == 0) _this.setTexture(0);
+            this.texturesFiles[i] = {
+              name: diapos[i],
+              size: {
+                height: video.videoHeight,
+                width: video.videoWidth,
+              },
+              texture: videoTexture,
+              video: video,
+            };
+
+            if (i == 0) this.setTexture(0);
           };
         } else {
           console.error(
-            this.responseURL,
+            response.target.responseURL,
             ' is not a valid video or image file'
           );
         }
@@ -163,7 +170,7 @@ export class SlideShow extends Window {
     }
   }
 
-  /** Create a default texture and fill the first texture file in `this.texturesFiles` */
+  /** Create a default texture and pu in `this.defaultTexture` */
   initDefaultTextureFile() {
     const canvas = document.createElement('canvas');
     canvas.height = 512;
@@ -204,14 +211,25 @@ export class SlideShow extends Window {
     ctx.fillText(stringDefaultTexture, 256, 256);
 
     this.defaultTexture = new THREE.CanvasTexture(canvas);
-    this.texturesFiles = [
-      {
-        index: 0,
-        name: 'First',
-        texture: this.defaultTexture,
-        size: { height: canvas.height, width: canvas.width },
+  }
+
+  /**
+   * It creates a new texture file object with the default texture and returns it
+   *
+   * @param {number} index - The index of the texture file.
+   * @returns {TextureFile} A new texture file object.
+   */
+  createDefaultTextureFile(index) {
+    const newTextureFile = {
+      index: index,
+      name: 'DEFAULT',
+      texture: this.defaultTexture,
+      size: {
+        height: this.defaultTexture.image.height,
+        width: this.defaultTexture.image.width,
       },
-    ];
+    };
+    return newTextureFile;
   }
 
   /** Create all HTMLElements and fill `this.htmlSlideShow`*/
@@ -467,37 +485,38 @@ export class SlideShow extends Window {
 
   /** Set the callback function of event 'drop' @warn !event.preventDefault! */
   initCBDrop() {
-    const _this = this;
     const body = document.body;
-    body.addEventListener('drop', function (event) {
+    body.addEventListener('drop', (event) => {
       event.preventDefault();
-      if (!_this.plane) return;
-      _this.initDefaultTextureFile();
+      if (!this.plane) return;
       const files = Array.from(event.dataTransfer.files);
 
       files.sort(function (a, b) {
         return a.name.localeCompare(b.name);
       });
+
+      this.texturesFiles = [];
       for (let i = 0; i < files.length; i++) {
+        this.texturesFiles.push(this.createDefaultTextureFile(i));
         const file = files[i];
         if (file) {
           try {
             const reader = new FileReader();
 
-            reader.onload = function (data) {
+            reader.onload = (data) => {
               if (file.type.includes('image/')) {
                 new THREE.TextureLoader().load(
                   data.target.result,
-                  function (texture) {
-                    _this.texturesFiles.push({
-                      index: i + 1,
+                  (texture) => {
+                    this.texturesFiles[i] = {
+                      index: i,
                       name: file.name,
                       texture: texture,
                       size: {
                         height: texture.image.height,
                         width: texture.image.width,
                       },
-                    });
+                    };
                   }
                 );
               } else if (file.type.includes('video/')) {
@@ -508,13 +527,13 @@ export class SlideShow extends Window {
                 video.loop = true;
                 video.load();
 
-                video.onloadedmetadata = function () {
+                video.onloadedmetadata = () => {
                   const videoTexture = new THREE.VideoTexture(video);
                   // Rotate the video texture with
                   // videoTexture.center.set(0.5, 0.5);
                   // videoTexture.rotation = Math.PI / 2;
-                  _this.texturesFiles.push({
-                    index: i + 1,
+                  this.texturesFiles[i] = {
+                    index: i,
                     name: file.name,
                     texture: videoTexture,
                     video: video,
@@ -522,7 +541,7 @@ export class SlideShow extends Window {
                       height: video.videoHeight,
                       width: video.videoWidth,
                     },
-                  });
+                  };
                 };
               }
             };
@@ -533,7 +552,7 @@ export class SlideShow extends Window {
           }
         }
       }
-      _this.setTexture(0);
+      this.setTexture(0);
     });
 
     body.addEventListener(
