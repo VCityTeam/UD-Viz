@@ -1,3 +1,4 @@
+/** @namespace udvcore */
 /**
  * ud-viz core library (browser + node compatible)
  */

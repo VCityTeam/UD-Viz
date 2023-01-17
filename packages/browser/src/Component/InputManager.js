@@ -6,6 +6,11 @@ const Command = require('@ud-viz/core').Command;
  */
 
 /**
+ * @callback CommandCallback
+ * @returns {Command}
+ */
+
+/**
  * @class
  */
 export class InputManager {
@@ -31,7 +36,7 @@ export class InputManager {
     /** @type {string[]} - register if a key state is up */
     this.keyMapKeyUp = [];
 
-    /** @type {Object<string,function():Command>} - register a callback associated to a key event */
+    /** @type {CommandCallback} - register a callback associated to a key event */
     this.keyCommands = {};
 
     /** @type {Array<{element:HTMLElement,id:string,cb:EventCallback,listener:EventCallback}>} - register listeners to dispose them */

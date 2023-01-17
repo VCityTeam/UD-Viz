@@ -1,5 +1,3 @@
-// @ud-viz/browser bundle API
-
 // Template
 
 export { AllWidget } from './AllWidget/AllWidget';

@@ -5,6 +5,7 @@ const Model = class {
   /**
    * Model object3D component
    *
+   * @memberof Game.Component
    * @param {object} json - object to configure model
    * @param {string=} json.uuid - uuid model
    */
@@ -31,6 +32,7 @@ const Model = class {
   }
 };
 
+/** @class */
 const Controller = class {
   /**
    * Controller object3D component

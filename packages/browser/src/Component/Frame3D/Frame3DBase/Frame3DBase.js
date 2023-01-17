@@ -5,6 +5,7 @@ import { Billboard } from '../Component/Billboard';
 
 import './Frame3DBase.css';
 
+/** @class*/
 export class Frame3DBase {
   /**
    * Basic Frame3D wrap different html element to handle CSS3D rendering {@link CSS3DRenderer}.

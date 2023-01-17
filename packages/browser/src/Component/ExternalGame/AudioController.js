@@ -3,6 +3,7 @@ import { Howl } from 'howler';
 import { AssetManager } from '../Component';
 const THREE = require('three');
 
+/** @class */
 export class AudioController extends Game.Component.Controller {
   /**
    * Audio component controller

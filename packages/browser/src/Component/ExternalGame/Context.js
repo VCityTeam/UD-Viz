@@ -32,10 +32,11 @@ const defaultConfigScene = {
   },
 };
 
+/** @class */
 export class Context {
   /**
+   * @memberof @udviz/browser
    * Handle {@link RenderController} + external script {@link Game.Component.ScriptController} + {@link AudioController}
-   *
    * @param {Frame3DBase|Frame3DPlanar} frame3D - frame3D view of the game
    * @param {AssetManager} assetManager - asset manager {@link AssetManager}
    * @param {InputManager} inputManager - input manager {@link InputManager}
