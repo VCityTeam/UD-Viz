@@ -14,27 +14,38 @@ export class SocketIOWrapper {
    * Start websocket communication with window.location.host
    */
   connectToServer() {
-    // Communication protocol
-    const socketProtocol = window.location.protocol.includes('https')
-      ? 'wss'
-      : 'ws';
+    return new Promise((resolve, reject) => {
+      // Communication protocol
+      const socketProtocol = window.location.protocol.includes('https')
+        ? 'wss'
+        : 'ws';
 
-    const loc = `${window.location.pathname}`;
-    const path = loc.substring(0, loc.lastIndexOf('/'));
-    // Instantiate socket and connect to the server serving index.html
-    this.socket = io(`${socketProtocol}://${window.location.host}`, {
-      reconnection: false,
-      secure: true,
-      transports: ['polling', 'websocket'],
-      path: path + '/socket.io/',
-    });
+      // const loc = `${window.location.pathname}`;
+      // const path = loc.substring(0, loc.lastIndexOf('/'));
 
-    this.socket.on('connect', () => {
-      console.log('Connected to server!');
-    });
+      // Instantiate socket and connect to the server serving index.html
+      this.socket = io(`${socketProtocol}://${window.location.host}`, {
+        reconnection: false,
+        secure: true,
+        transports: ['polling', 'websocket'],
+        // path: path + '/socket.io/',
+      });
 
-    this.socket.on('disconnect', (reason) => {
-      alert('Disconnected from server. reason is ', reason);
+      // connected
+      this.socket.on('connect', () => {
+        console.log('Connected to server!');
+        resolve();
+      });
+
+      // error
+      this.socket.on('connect_error', () => {
+        reject();
+      });
+
+      // disconnect
+      this.socket.on('disconnect', (reason) => {
+        alert('Disconnected from server. reason is ', reason);
+      });
     });
   }
 

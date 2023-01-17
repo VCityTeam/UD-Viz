@@ -6,6 +6,8 @@ export { AllWidget } from './AllWidget/AllWidget';
 
 export { SinglePlayerGamePlanar } from './SinglePlayerGamePlanar/SinglePlayerGamePlanar';
 
+export { MultiPlayerGamePlanar } from './MultiPlayerGamePlanar/MultiPlayerGamePlanar';
+
 // Template.Component
 
 import * as ExternalScriptTemplate from './Component/ExternalGame/ScriptTemplate/ScriptTemplate';
@@ -24,6 +26,8 @@ import * as Widget from './Component/Widget/Widget';
 export { Widget };
 
 export { InputManager } from './Component/InputManager';
+
+export { SocketIOWrapper } from './Component/SocketIOWrapper';
 
 export { AssetManager } from './Component/AssetManager/AssetManager';
 
