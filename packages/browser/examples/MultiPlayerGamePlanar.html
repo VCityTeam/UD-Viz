@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>MultiPlayer example</title>
+
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  </head>
+  <body>
+    <!-- <script src="../dist/release/bundle.js"></script> -->
+    <script src="../dist/debug/bundle.js"></script>
+
+    <script>
+      const socketIOWrapper = new udvizBrowser.SocketIOWrapper();
+      socketIOWrapper.connectToServer().then(() => {
+        const app = new udvizBrowser.MultiPlayerGamePlanar(socketIOWrapper);
+        app.start();
+      });
+    </script>
+  </body>
+</html>

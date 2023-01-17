@@ -9,6 +9,8 @@ module.exports = {
    * @type {import('./ExpressAppWrapper')}
    */
   ExpressAppWrapper: require('./ExpressAppWrapper'),
+  /** @type {import('./GameService')} */
+  GameService: require('./GameService'),
   /** @type {import('./Test')} */
   Test: require('./Test'),
   /** @type {import('./Debug')} */
