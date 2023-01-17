@@ -16,7 +16,7 @@ const Context = class {
    * Handle Game collisions + {@link ScriptBase}
    *
    * @param {Object<string,ScriptBase>} gameScriptClass - map of class extended {@link ScriptBase}
-   * @param {Object3D} object3D - root game object3D
+   * @param {Game.Object3D} object3D - root game object3D
    */
   constructor(gameScriptClass, object3D) {
     /** @type {Object<string,ScriptBase>} - class that can be reference by {@link GameScript} of an object3D */
