@@ -123,7 +123,7 @@ const html = function (folderPath) {
           // wait 1 sec
           setTimeout(() => {
             resolve();
-          }, 1000);
+          }, 3000);
         });
     });
   });
@@ -217,9 +217,10 @@ const folderInBrowserPage = function (testFolderPath, pageTest) {
 
                   await pageTest(page, currentFile);
 
-                  console.log(currentFile.name, ' succeed');
                   // close
                   await page.close();
+
+                  console.log(currentFile.name, ' succeed');
 
                   // console.log(currentFile.name, ' close page');
                 }

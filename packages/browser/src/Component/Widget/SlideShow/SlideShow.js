@@ -40,7 +40,10 @@ export class SlideShow extends Window {
     this.rotationInputVectorID = null;
     this.sizeInputVectorID = null;
     this.aspectRatioCheckboxID = null;
+    this.loopSlideShowCheckboxID = null;
     this.slideSelectID = null;
+    this.durationLoopInputID = null;
+    this.counterLoopTimeDivID = null;
 
     // Vectors
     this.coordinatesVector = new THREE.Vector3();
@@ -62,9 +65,13 @@ export class SlideShow extends Window {
 
     this.initDefaultTextureFile();
 
-    if (this.configSlideShow) {
+    if (configSlideShow) {
       this.setSlideshowInConfig(0);
     }
+
+    this.intervalLoop = null;
+    this.counterIntervalLoop = null;
+    this.durationLoopInSec = configSlideShow.durationLoopInSec || 10; // Take config value or 10s by default
 
     this.currentTexture = null;
 
@@ -135,14 +142,16 @@ export class SlideShow extends Window {
           video.loop = true;
           video.load();
 
-          const videoTexture = new THREE.VideoTexture(video);
-          _this.texturesFiles[i].texture = videoTexture;
-          _this.texturesFiles[i].video = video;
-          _this.texturesFiles[i].size = {
-            height: video.height,
-            width: video.width,
+          video.onloadedmetadata = function () {
+            const videoTexture = new THREE.VideoTexture(video);
+            _this.texturesFiles[i].texture = videoTexture;
+            _this.texturesFiles[i].video = video;
+            _this.texturesFiles[i].size = {
+              height: video.videoHeight,
+              width: video.videoWidth,
+            };
+            if (i == 0) _this.setTexture(0);
           };
-          if (i == 0) _this.setTexture(0);
         } else {
           console.error(
             this.responseURL,
@@ -245,6 +254,9 @@ export class SlideShow extends Window {
     });
     htmlSlideShow.appendChild(matchExtentButton);
 
+    const aspectRatioDiv = document.createElement('div');
+    htmlSlideShow.appendChild(aspectRatioDiv);
+
     const aspectRatioCheckbox = document.createElement('input');
     aspectRatioCheckbox.id = 'aspectRatio';
     aspectRatioCheckbox.type = 'checkbox';
@@ -262,12 +274,73 @@ export class SlideShow extends Window {
     });
 
     this.aspectRatioCheckboxID = aspectRatioCheckbox.id;
-    htmlSlideShow.appendChild(aspectRatioCheckbox);
+    aspectRatioDiv.appendChild(aspectRatioCheckbox);
 
     const labelAspectRatio = document.createElement('label');
     labelAspectRatio.htmlFor = aspectRatioCheckbox.id;
     labelAspectRatio.innerHTML = 'Aspect Ratio';
-    htmlSlideShow.appendChild(labelAspectRatio);
+    aspectRatioDiv.appendChild(labelAspectRatio);
+
+    const loopDiv = document.createElement('div');
+    htmlSlideShow.appendChild(loopDiv);
+
+    const loopCheckbox = document.createElement('input');
+    loopCheckbox.id = 'loopSlideShow';
+    loopCheckbox.type = 'checkbox';
+    this.callbacksHTMLEl.push({
+      event: 'change',
+      id: loopCheckbox.id,
+      cb: function (event) {
+        if (this.intervalLoop) this.stopLoopSlideShow();
+        if (event.target.checked) {
+          this.loopSlideShow();
+        }
+      },
+    });
+
+    this.loopSlideShowCheckboxID = loopCheckbox.id;
+    loopDiv.appendChild(loopCheckbox);
+
+    const labelLoopSlideShow = document.createElement('label');
+    labelLoopSlideShow.htmlFor = loopCheckbox.id;
+    labelLoopSlideShow.innerHTML = 'Loop SlideShow';
+    loopDiv.appendChild(labelLoopSlideShow);
+
+    const durationLoopInSecDiv = document.createElement('div');
+    htmlSlideShow.appendChild(durationLoopInSecDiv);
+
+    const durationLoopInSecInput = document.createElement('input');
+    durationLoopInSecInput.id = 'durationLoopInputSlideShow';
+    durationLoopInSecInput.type = 'number';
+    durationLoopInSecInput.max = 100;
+    durationLoopInSecInput.min = 1;
+    durationLoopInSecInput.setAttribute('value', this.durationLoopInSec);
+    durationLoopInSecDiv.step = 0.5;
+    this.callbacksHTMLEl.push({
+      event: 'change',
+      id: durationLoopInSecInput.id,
+      cb: function (event) {
+        this.durationLoopInSec = parseFloat(event.target.value);
+        if (this.intervalLoop) {
+          this.restartLoopSlideShow();
+        }
+      },
+    });
+
+    this.durationLoopInputID = durationLoopInSecInput.id;
+    durationLoopInSecDiv.appendChild(durationLoopInSecInput);
+
+    const durationLoopInSecLabel = document.createElement('label');
+    durationLoopInSecLabel.htmlFor = durationLoopInSecInput.id;
+    durationLoopInSecLabel.innerHTML = 'Duration Loop (s)';
+    durationLoopInSecDiv.appendChild(durationLoopInSecLabel);
+
+    const counterLoopTimeDiv = document.createElement('div');
+    counterLoopTimeDiv.id = 'counterLoopTimeDivSlideShow';
+    counterLoopTimeDiv.innerHTML = this.durationLoopInSec;
+
+    this.counterLoopTimeDivID = counterLoopTimeDiv.id;
+    durationLoopInSecDiv.appendChild(counterLoopTimeDiv);
 
     const slideSelect = document.createElement('select');
     slideSelect.id = 'slideSelect';
@@ -332,46 +405,52 @@ export class SlideShow extends Window {
    * Add event listeners to input
    */
   initInputListener() {
-    const _this = this;
-
-    // Clamp number between two values with the following line:
-    const clamp = (num, min, max) => Math.min(Math.max(num, min), max);
-
     // Hide and show the geometryPlane
-    this.inputManager.addKeyInput('h', 'keydown', function () {
-      if (!_this.plane) return;
-      _this.plane.visible = !_this.plane.visible;
-      _this.itownsView.notifyChange();
+    this.inputManager.addKeyInput('h', 'keydown', () => {
+      if (!this.plane) return;
+      this.plane.visible = !this.plane.visible;
+      this.itownsView.notifyChange();
     });
 
     // Change the next slide
-    this.inputManager.addKeyInput('ArrowRight', 'keydown', function () {
-      if (!_this.plane) return;
-      _this.iCurrentTextureFile = clamp(
-        _this.iCurrentTextureFile + 1,
-        0,
-        _this.texturesFiles.length - 1
-      );
-      _this.setTexture(_this.iCurrentTextureFile);
-
-      _this.aspectRatioCheckboxDOM.dispatchEvent(new Event('change'));
-
-      _this.itownsView.notifyChange();
+    this.inputManager.addKeyInput('ArrowRight', 'keydown', () => {
+      this.nextSlide();
+      this.restartLoopSlideShow();
     });
 
     // Change the previous slide
-    this.inputManager.addKeyInput('ArrowLeft', 'keydown', function () {
-      if (!_this.plane) return;
-      _this.iCurrentTextureFile = clamp(
-        _this.iCurrentTextureFile - 1,
-        0,
-        _this.texturesFiles.length - 1
-      );
-      _this.setTexture(_this.iCurrentTextureFile);
-      _this.aspectRatioCheckboxDOM.dispatchEvent(new Event('change'));
-
-      _this.itownsView.notifyChange();
+    this.inputManager.addKeyInput('ArrowLeft', 'keydown', () => {
+      this.previousSlide();
+      this.restartLoopSlideShow();
     });
+  }
+
+  nextSlide() {
+    if (!this.plane) return;
+
+    this.iCurrentTextureFile =
+      (this.iCurrentTextureFile + 1) % this.texturesFiles.length; // Loop
+
+    this.setTexture(this.iCurrentTextureFile);
+
+    this.aspectRatioCheckboxDOM.dispatchEvent(new Event('change'));
+
+    this.itownsView.notifyChange();
+  }
+
+  previousSlide() {
+    if (!this.plane) return;
+
+    this.iCurrentTextureFile =
+      this.iCurrentTextureFile - 1 < 0
+        ? this.texturesFiles.length - 1
+        : this.iCurrentTextureFile - 1;
+
+    this.setTexture(this.iCurrentTextureFile);
+
+    this.aspectRatioCheckboxDOM.dispatchEvent(new Event('change'));
+
+    this.itownsView.notifyChange();
   }
 
   /** Set the callback function of event 'drop' @warn !event.preventDefault! */
@@ -417,20 +496,22 @@ export class SlideShow extends Window {
                 video.loop = true;
                 video.load();
 
-                const videoTexture = new THREE.VideoTexture(video);
-                // Rotate the video texture with
-                // videoTexture.center.set(0.5, 0.5);
-                // videoTexture.rotation = Math.PI / 2;
-                _this.texturesFiles.push({
-                  index: i + 1,
-                  name: file.name,
-                  texture: videoTexture,
-                  video: video,
-                  size: {
-                    height: video.videoHeight,
-                    width: video.videoWidth,
-                  },
-                });
+                video.onloadedmetadata = function () {
+                  const videoTexture = new THREE.VideoTexture(video);
+                  // Rotate the video texture with
+                  // videoTexture.center.set(0.5, 0.5);
+                  // videoTexture.rotation = Math.PI / 2;
+                  _this.texturesFiles.push({
+                    index: i + 1,
+                    name: file.name,
+                    texture: videoTexture,
+                    video: video,
+                    size: {
+                      height: video.videoHeight,
+                      width: video.videoWidth,
+                    },
+                  });
+                };
               }
             };
 
@@ -441,7 +522,6 @@ export class SlideShow extends Window {
         }
       }
       _this.setTexture(0);
-      console.log(_this.texturesFiles);
     });
 
     body.addEventListener(
@@ -511,7 +591,6 @@ export class SlideShow extends Window {
       this.sizeInputVectorDOM.getElementsByTagName('input')[
         iInput == 0 ? 1 : 0
       ];
-
     const height = this.currentTextureFile.size.height;
     const width = this.currentTextureFile.size.width;
     const ratio = width / height;
@@ -575,7 +654,7 @@ export class SlideShow extends Window {
    */
   setTexture(iText) {
     const _this = this;
-    if (this.currentTextureFile.video) {
+    if (this.currentTextureFile && this.currentTextureFile.video) {
       this.currentTextureFile.video.pause();
       this.currentTextureFile.video.currentTime = 0;
       this.notifyValue = false;
@@ -634,6 +713,39 @@ export class SlideShow extends Window {
     this.plane = new THREE.Mesh(geometry, material);
   }
 
+  /**
+   * Loop through a slide show of textures
+   *
+   */
+  loopSlideShow() {
+    if (!this.loopCheckboxDOM.checked) return;
+    const durationInMS = this.durationLoopInSec * 1000; // Loop event
+    this.counterLoopTimeDivDOM.innerHTML = this.durationLoopInSec;
+    this.intervalLoop = setInterval(() => {
+      this.nextSlide();
+    }, durationInMS);
+
+    this.counterIntervalLoop = setInterval(() => {
+      this.updateCounterLoop();
+    }, 100);
+  }
+
+  updateCounterLoop() {
+    const value = parseFloat(this.counterLoopTimeDivDOM.innerHTML);
+    const newValue = value - 0.1 <= 0 ? this.durationLoopInSec : value - 0.1;
+    this.counterLoopTimeDivDOM.innerHTML = newValue.toFixed(1);
+  }
+
+  stopLoopSlideShow() {
+    clearInterval(this.intervalLoop);
+    clearInterval(this.counterIntervalLoop);
+  }
+
+  restartLoopSlideShow() {
+    this.stopLoopSlideShow();
+    this.loopSlideShow();
+  }
+
   // DOM GETTERS
   /* Return coordinates HTMLElements (inputs+labels) */
   get coordinatesInputVectorDOM() {
@@ -653,6 +765,14 @@ export class SlideShow extends Window {
   /* Return apspect ratio HTMLElement (checkbox)*/
   get aspectRatioCheckboxDOM() {
     return document.getElementById(this.aspectRatioCheckboxID);
+  }
+
+  get counterLoopTimeDivDOM() {
+    return document.getElementById(this.counterLoopTimeDivID);
+  }
+
+  get loopCheckboxDOM() {
+    return document.getElementById(this.loopSlideShowCheckboxID);
   }
 
   get innerContentHtml() {
@@ -739,11 +859,10 @@ export class SlideShow extends Window {
 
   /** It adds event listeners to the HTML elements created by the Window class.*/
   windowCreated() {
-    const _this = this;
     // Through this.callbacksHTMLEl and addEventListeners to HTMLElements in DOM (elements which created by Window class)
-    this.callbacksHTMLEl.forEach(function (element) {
+    this.callbacksHTMLEl.forEach((element) => {
       const htmlElement = document.getElementById(element.id);
-      htmlElement.addEventListener(element.event, element.cb.bind(_this));
+      htmlElement.addEventListener(element.event, element.cb.bind(this));
     });
     this.matchExtent();
   }

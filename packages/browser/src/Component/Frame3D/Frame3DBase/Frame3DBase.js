@@ -39,7 +39,7 @@ export class Frame3DBase {
     this.rootHtml.appendChild(this.rootCss);
     this.rootHtml.appendChild(this.rootWebGL);
 
-    /** @type {HTMLDivElement} - where ui element should be added */
+    /** @type {HTMLDivElement} - where ui element should be added (note that you have to handle manually z-index element composing ui, should it be automatically ?) */
     this.ui = document.createElement('div');
     this.ui.classList.add('ui_Frame3DBase');
     this.rootWebGL.appendChild(this.ui);
@@ -198,8 +198,12 @@ export class Frame3DBase {
       if (!this.isCatchingEventsCSS3D()) return;
 
       let onBillboard = false;
-      if (event.path.length) {
-        const firstHoverEl = event.path[0];
+
+      // compatible chrome & firefox
+      const path = event.path || (event.composedPath && event.composedPath());
+
+      if (path.length) {
+        const firstHoverEl = path[0];
 
         for (let index = 0; index < this.billboards.length; index++) {
           const element = this.billboards[index];

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Avatar Game example</title>
+    <title>Drag And Drop Avatar example</title>
 
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -9,75 +9,8 @@
   <body>
     <script src="../dist/release/bundle.js"></script>
     <!-- <script src="../dist/debug/bundle.js"></script> -->
+
     <script type="text/javascript">
-      const gameScriptClass = {
-        Avatar: class extends udvizBrowser.Core.Game.ScriptBase {
-          load() {
-            this.avatar = new udvizBrowser.Core.Game.Object3D({
-              name: 'avatar',
-              components: {
-                Render: { idRenderData: 'avatar' },
-              },
-            });
-
-            return this.context.addObject3D(this.avatar);
-          }
-
-          tick() {
-            udvizBrowser.Core.Game.ScriptTemplate.Component.applyNativeCommands(
-              this.context.commands,
-              this.avatar,
-              this.context.dt
-            );
-          }
-        },
-      };
-      const externalGameScriptClass = {
-        Avatar: class extends udvizBrowser.ExternalGame.ScriptBase {
-          init() {
-            this.avatar = this.context.object3D.getObjectByProperty(
-              'name',
-              'avatar'
-            );
-
-            this.cameraman = new udvizBrowser.ExternalScriptTemplate.Cameraman(
-              this.context.frame3D.camera
-            );
-
-            this.cameraman.followObject3D(
-              this.avatar,
-              this.variables.camera_distance,
-              new udvizBrowser.THREE.Vector3(0, 0, 2),
-              this.variables.camera_angle
-            );
-
-            const commandController =
-              new udvizBrowser.ExternalScriptTemplate.CommandController(
-                this.context.inputManager
-              );
-
-            commandController.addNativeCommands();
-          }
-
-          tick() {
-            // cameraman need to be ticked
-            this.cameraman.tick(this.context.dt);
-
-            this.context.sendCommandToGameContext([
-              new udvizBrowser.Core.Command({
-                type: udvizBrowser.Core.Game.ScriptTemplate.Constants.COMMAND
-                  .Z_UPDATE,
-                data: udvizBrowser.ExternalScriptTemplate.computeRelativeElevationFromGround(
-                  this.avatar,
-                  this.context.frame3D.itownsView.tileLayer,
-                  this.variables.update_z_crs
-                ),
-              }),
-            ]);
-          }
-        },
-      };
-
       udvizBrowser.FileUtil.loadMultipleJSON([
         './assets/config/extent_lyon.json',
         './assets/config/assetManager.json',
@@ -108,23 +41,23 @@
           );
 
           const gameObject3D = new udvizBrowser.Core.Game.Object3D({
-            name: 'GameManager',
             static: true,
             components: {
               GameScript: {
-                idScripts: ['Avatar'],
+                idScripts: ['DragAndDropAvatar'],
+                variables: {
+                  idRenderDataAvatar: 'avatar', // render data your avatar should use
+                },
               },
               ExternalScript: {
-                variables: {
-                  update_z_crs: configs['extent_lyon'].crs,
-                  camera_distance: 10,
-                  camera_angle: 0,
-                },
-                idScripts: ['Avatar'],
+                variables: {},
+                idScripts: ['DragAndDropAvatar'],
               },
             },
           });
 
+          // add dynamically hasItownsControls attributes in config
+          configs['frame3D_planars'][0].hasItownsControls = true;
           const frame3DPlanar = new udvizBrowser.Frame3DPlanar(
             extent,
             configs['frame3D_planars'][0]
@@ -136,8 +69,14 @@
             assetManager,
             new udvizBrowser.InputManager(),
             {
-              gameScriptClass: gameScriptClass,
-              externalGameScriptClass: externalGameScriptClass,
+              externalGameScriptClass: {
+                DragAndDropAvatar:
+                  udvizBrowser.ExternalScriptTemplate.DragAndDropAvatar,
+              },
+              gameScriptClass: {
+                DragAndDropAvatar:
+                  udvizBrowser.Core.Game.ScriptTemplate.DragAndDropAvatar,
+              },
               sceneConfig: configs['scene'],
               gameOrigin: {
                 x: extent.center().x,

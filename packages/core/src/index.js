@@ -13,6 +13,7 @@ module.exports = {
     Object3D: require('./Game/Object3D'),
     StateInterpolator: require('./Game/State/Interpolator'),
     State: require('./Game/State/State'),
+    ScriptTemplate: require('./Game/ScriptTemplate/ScriptTemplate'),
     Component: {
       Render: require('./Game/Component/Render').Component,
       Audio: require('./Game/Component/Audio').Component,
@@ -20,16 +21,6 @@ module.exports = {
       ScriptController: require('./Game/Component/Script').Controller,
       Controller: require('./Game/Component/Component').Controller,
       Model: require('./Game/Component/Component').Model,
-    },
-    /**
-     * Constant used in Game
-     */
-    CONSTANT: {
-      MOVE_FORWARD: 'move_forward',
-      MOVE_BACKWARD: 'move_backward',
-      MOVE_LEFT: 'move_left',
-      MOVE_RIGHT: 'move_right',
-      Z_UPDATE: 'z_update',
     },
   },
 };

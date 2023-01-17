@@ -1,3 +1,4 @@
-export { FocusGameObject } from './FocusGameObject';
-export { CommandController } from './CommandController';
-export { UpdateZWithElevationLayer } from './UpdateZWithElevationLayer';
+export { DragAndDropAvatar } from './DragAndDropAvatar/DragAndDropAvatar';
+export { Cameraman } from './Component/Cameraman';
+export { CommandController } from './Component/CommandController';
+export { computeRelativeElevationFromGround } from './Component/Util';

@@ -281,9 +281,6 @@ export class Context {
               }
             }
           } else {
-            // Render removal
-            child.parent.remove(child);
-
             // Do not exist remove it
             child.removeFromParent();
 
@@ -302,6 +299,19 @@ export class Context {
             if (audioComponent) {
               audioComponent.getController().dispose();
             }
+
+            // notify other that child is removed
+            this.currentGameObject3D.traverse((otherGameObject) => {
+              if (!otherGameObject.isGameObject3D) return;
+              const externalComp = otherGameObject.getComponent(
+                Game.Component.ExternalScript.TYPE
+              );
+              if (externalComp) {
+                externalComp
+                  .getController()
+                  .execute(Context.EVENT.ON_GAMEOBJECT_REMOVED, [child]);
+              }
+            });
 
             delete this.currentUUID[child.uuid];
           }
@@ -325,7 +335,7 @@ export class Context {
           }
 
           if (!this.currentUUID[child.uuid]) {
-            newGO.push(child.uuid);
+            newGO.push(child);
           }
         });
       }
@@ -567,6 +577,7 @@ Context.EVENT = {
   INIT: 'init',
   TICK: 'tick',
   ON_NEW_GAMEOBJECT: 'onNewGameObject',
+  ON_GAMEOBJECT_REMOVED: 'onGameObjectRemoved',
   ON_OUTDATED: 'onOutdated',
   DISPOSE: 'dispose',
   ON_REMOVE: 'onRemove',
@@ -599,12 +610,19 @@ export class ExternalScriptBase {
    */
   tick() {}
   /**
-   * call when a new gameobject3Ds have been added to context
+   * call when a new gameobject3D have been added to context
    *
-   * @param {Game.Object3D[]} newGameObjects - array of the new gameobject3Ds
+   * @param {Game.Object3D} newGameObject - new gameobject3D
    */
   // eslint-disable-next-line no-unused-vars
-  onNewGameObject(newGameObjects) {}
+  onNewGameObject(newGameObject) {}
+  /**
+   * call when a gameobject3D have been removed from context
+   *
+   * @param {Game.Object3D} gameobject3DRemoved - gameobject3D removed
+   */
+  // eslint-disable-next-line no-unused-vars
+  onGameObjectRemoved(gameobject3DRemoved) {}
   /**
    * call every time your game object3D model has changed
    */
