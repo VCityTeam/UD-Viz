@@ -47,7 +47,7 @@
             this.cameraman.followObject3D(
               this.avatar,
               this.variables.camera_distance,
-              this.variables.camera_offset,
+              new udvizBrowser.THREE.Vector3(0, 0, 2),
               this.variables.camera_angle
             );
 
@@ -118,7 +118,6 @@
                 variables: {
                   update_z_crs: configs['extent_lyon'].crs,
                   camera_distance: 10,
-                  camera_offset: new udvizBrowser.THREE.Vector3(0, 0, 2),
                   camera_angle: 0,
                 },
                 idScripts: ['Avatar'],

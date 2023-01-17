@@ -45,7 +45,7 @@ export class Cameraman {
    *
    * @param {THREE.Object3D} object3D - object3D to focus
    * @param {number} distance - distance from object3D
-   * @param {THREE.Vector3} offset - offset camera position
+   * @param {{x:number,y:number,z:number}} offset - offset camera position
    * @param {number} angle - angle on x
    * @returns {{position:THREE.Vector3,quaternion:THREE.Quaternion}} - transform of camera
    */
@@ -56,7 +56,7 @@ export class Cameraman {
     object3D.matrixWorld.decompose(position, quaternion, new THREE.Vector3());
 
     // offset position
-    position.add(offset);
+    position.add(new THREE.Vector3(offset.x, offset.y, offset.z));
 
     // Compute camera position
     const quaternionAngle = new THREE.Quaternion().setFromEuler(
@@ -81,7 +81,7 @@ export class Cameraman {
    *
    * @param {THREE.Object3D} object3D - object3D to focus
    * @param {number} distance - distance from object3D
-   * @param {THREE.Vector3} offset - offset camera position
+   * @param {{x:number,y:number,z:number}} offset - offset camera position
    * @param {number} angle - angle on x
    */
   followObject3D(object3D, distance, offset, angle) {
@@ -102,7 +102,7 @@ export class Cameraman {
    * @param {THREE.Object3D} object3D - object3D to focus
    * @param {number} duration - time of movement in ms
    * @param {number} distance - distance from object3D
-   * @param {THREE.Vector3} offset - offset camera position
+   * @param {{x:number,y:number,z:number}} offset - offset camera position
    * @param {number} angle - angle on x
    * @returns {Promise} - promise resolving when movement is done resolve with true if movement occured false otherwise
    */
@@ -116,6 +116,11 @@ export class Cameraman {
       const startQuat = this.camera.quaternion.clone();
       let currentTime = 0;
 
+      /**
+       *  This function is going to be tick in `this.tick`.
+       *
+       * @type {Movement} @see Movement
+       */
       this.currentMovement = (dt) => {
         currentTime += dt;
         let ratio = currentTime / duration;
@@ -161,6 +166,11 @@ export class Cameraman {
       const startQuat = this.camera.quaternion.clone();
       let currentTime = 0;
 
+      /**
+       *  This function is going to be tick in `this.tick`.
+       *
+       * @type {Movement} @see Movement
+       */
       this.currentMovement = (dt) => {
         currentTime += dt;
         let ratio = currentTime / duration;
@@ -188,7 +198,7 @@ class Target {
    *
    * @param {THREE.Object3D} object3D - object3D to focus
    * @param {number} distance - distance from object3D
-   * @param {THREE.Vector3} offset - offset camera position
+   * @param {{x:number,y:number,z:number}} offset - offset camera position
    * @param {number} angle - angle on x
    */
   constructor(object3D, distance, offset, angle) {
