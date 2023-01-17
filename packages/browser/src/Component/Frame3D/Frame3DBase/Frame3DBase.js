@@ -198,8 +198,12 @@ export class Frame3DBase {
       if (!this.isCatchingEventsCSS3D()) return;
 
       let onBillboard = false;
-      if (event.path.length) {
-        const firstHoverEl = event.path[0];
+
+      // compatible chrome & firefox
+      const path = event.path || (event.composedPath && event.composedPath());
+
+      if (path.length) {
+        const firstHoverEl = path[0];
 
         for (let index = 0; index < this.billboards.length; index++) {
           const element = this.billboards[index];
