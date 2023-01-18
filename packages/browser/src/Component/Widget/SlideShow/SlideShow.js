@@ -77,8 +77,7 @@ export class SlideShow extends Window {
     this.currentTexture = null;
 
     this.initHtml();
-    this.initInputListener(itownsView, this.inputManager);
-    this.initCBDrop();
+
     const _this = this;
     /** A function call each frame by the browser */
     const tick = function () {
@@ -165,6 +164,7 @@ export class SlideShow extends Window {
             ' is not a valid video or image file'
           );
         }
+        this.setTexture(0);
       };
       xhr.send();
     }
@@ -423,26 +423,32 @@ export class SlideShow extends Window {
    * Add event listeners to input
    */
   initInputListener() {
-    // Hide and show the geometryPlane
-    this.inputManager.addKeyInput('h', 'keydown', () => {
+    const hidePlane = () => {
       if (!this.plane) return;
       this.plane.visible = !this.plane.visible;
       this.itownsView.notifyChange();
-    });
+    };
 
-    // Change the next slide
-    this.inputManager.addKeyInput('ArrowRight', 'keydown', () => {
+    // Hide and show the geometryPlane
+    this.inputManager.addKeyInput('h', 'keydown', hidePlane);
+
+    const next = () => {
       this.nextSlide();
       this.restartLoopSlideShow();
-    });
+    };
 
-    // Change the previous slide
-    this.inputManager.addKeyInput('ArrowLeft', 'keydown', () => {
+    // Change the next slide
+    this.inputManager.addKeyInput('ArrowRight', 'keydown', next);
+
+    const previous = () => {
       this.previousSlide();
       this.restartLoopSlideShow();
-    });
+    };
 
-    this.inputManager.addKeyInput('s', 'keydown', () => {
+    // Change the previous slide
+    this.inputManager.addKeyInput('ArrowLeft', 'keydown', previous);
+
+    const hideUI = () => {
       const htmlElement = document.getElementById(this.windowId); // -sale mais je veux rentrer chez moi
 
       if (!htmlElement) return;
@@ -452,6 +458,15 @@ export class SlideShow extends Window {
       } else {
         htmlElement.style.display = 'none';
       }
+    };
+
+    this.inputManager.addKeyInput('s', 'keydown', hideUI);
+
+    this.addEventListener(Window.EVENT_DISABLED, () => {
+      this.inputManager.removeInputListener(hidePlane);
+      this.inputManager.removeInputListener(next);
+      this.inputManager.removeInputListener(previous);
+      this.inputManager.removeInputListener(hideUI);
     });
   }
 
@@ -486,7 +501,8 @@ export class SlideShow extends Window {
   /** Set the callback function of event 'drop' @warn !event.preventDefault! */
   initCBDrop() {
     const body = document.body;
-    body.addEventListener('drop', (event) => {
+
+    const drop = (event) => {
       event.preventDefault();
       if (!this.plane) return;
       const files = Array.from(event.dataTransfer.files);
@@ -517,6 +533,7 @@ export class SlideShow extends Window {
                         width: texture.image.width,
                       },
                     };
+                    if (i == 0) this.setTexture(0);
                   }
                 );
               } else if (file.type.includes('video/')) {
@@ -542,6 +559,7 @@ export class SlideShow extends Window {
                       width: video.videoWidth,
                     },
                   };
+                  if (i == 0) this.setTexture(0);
                 };
               }
             };
@@ -553,15 +571,19 @@ export class SlideShow extends Window {
         }
       }
       this.setTexture(0);
-    });
+    };
+    body.addEventListener('drop', drop);
 
-    body.addEventListener(
-      'dragover',
-      function (event) {
-        event.preventDefault();
-      },
-      false
-    );
+    const dragover = (event) => {
+      event.preventDefault();
+    };
+
+    body.addEventListener('dragover', dragover, false);
+
+    this.addEventListener(Window.EVENT_DISABLED, () => {
+      body.removeEventListener('drop', drop);
+      body.removeEventListener('dragover', dragover);
+    });
   }
 
   /**
@@ -890,6 +912,9 @@ export class SlideShow extends Window {
 
   /** It adds event listeners to the HTML elements created by the Window class.*/
   windowCreated() {
+    this.initInputListener();
+    this.initCBDrop();
+
     // Through this.callbacksHTMLEl and addEventListeners to HTMLElements in DOM (elements which created by Window class)
     this.callbacksHTMLEl.forEach((element) => {
       const htmlElement = document.getElementById(element.id);
@@ -903,6 +928,7 @@ export class SlideShow extends Window {
       this.plane.removeFromParent();
       this.plane = null;
     }
+
     this.itownsView.notifyChange();
   }
 }
