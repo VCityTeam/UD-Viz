@@ -57,9 +57,14 @@ export class AllWidget {
    * @returns {Frame3DPlanar} A new Frame3DPlanar object.
    */
   createFrame3DPlanarFromConfig(extent, parentDiv, configFrame3DPlanar) {
+    let hasItownsControls = true;
+    if (configFrame3DPlanar['hasItownsControls'] != undefined) {
+      hasItownsControls = configFrame3DPlanar['hasItownsControls'];
+    }
+
     const frame3DPlanar = new Frame3DPlanar(extent, {
       htmlParent: parentDiv,
-      hasItownsControls: true,
+      hasItownsControls: hasItownsControls,
       coordinates: configFrame3DPlanar['coordinates'],
       maxSubdivisionLevel: configFrame3DPlanar['maxSubdivisionLevel'],
       heading: configFrame3DPlanar['heading'],
