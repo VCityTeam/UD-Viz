@@ -77,7 +77,7 @@ export class Frame3DPlanar extends Frame3DBase {
         () => {
           // z is HARDCODED https://github.com/VCityTeam/UD-Viz/issues/469
           const min = new THREE.Vector3(extent.west, extent.south, 0);
-          const max = new THREE.Vector3(extent.east, extent.north, 500);
+          const max = new THREE.Vector3(extent.east, extent.north, 1000);
 
           computeNearFarCamera(this.camera, min, max);
         }

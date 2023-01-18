@@ -130,8 +130,9 @@ module.exports = {
       if (maxDist < dist) maxDist = dist;
     });
 
-    camera.near = Math.max(minDist, 0.000001);
-    camera.far = maxDist;
+    const epsilon = 10;
+    camera.near = Math.max(minDist - epsilon, 0.000001);
+    camera.far = maxDist + epsilon;
 
     camera.updateProjectionMatrix();
   },
