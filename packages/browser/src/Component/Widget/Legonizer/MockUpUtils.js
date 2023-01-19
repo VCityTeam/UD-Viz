@@ -45,8 +45,16 @@ export function updateMockUpObject(layerManager, areaSelected) {
         materialIndex
       );
 
-      positionsMockUp.push(...positions);
-      normalsMockUp.push(...normals);
+      // positionsMockUp.push(...positions);
+      // normalsMockUp.push(...normals);
+
+      positions.forEach((p) => {
+        positionsMockUp.push(p);
+      });
+
+      normals.forEach((n) => {
+        normalsMockUp.push(n);
+      });
     };
 
     layerManager.tilesManagers.forEach((tileManager) => {
@@ -140,9 +148,14 @@ export function updateMockUpObject(layerManager, areaSelected) {
                   new Components.CityObjectID(tileId, currentBatchID)
                 );
 
-                const gmlID =
+                let gmlID =
                   tileManager.tiles[tileId].cityObjects[currentBatchID].props
                     .gml_id;
+
+                if (!gmlID)
+                  gmlID =
+                    tileManager.tiles[tileId].cityObjects[currentBatchID].props
+                      .id;
 
                 if (!gmlIds.includes(gmlID)) gmlIds.push(gmlID);
               }
@@ -219,7 +232,8 @@ export function updateMockUpObject(layerManager, areaSelected) {
 
             const cityObject = tileManager.getCityObject(cityObjectId);
 
-            const gmlID = cityObject.props.gml_id;
+            let gmlID = cityObject.props.gml_id;
+            if (!gmlID) gmlID = cityObject.props.id;
 
             if (gmlIds.includes(gmlID)) {
               // Cityobject having a gmlid intersecting
