@@ -10,5 +10,6 @@
       "folder": "./assets/img/slide",
       "diapositives": ["11.jpeg", "12.jpeg", "13.jpeg"]
     }
-  ]
+  ],
+  "textureRotation": 0
 }
