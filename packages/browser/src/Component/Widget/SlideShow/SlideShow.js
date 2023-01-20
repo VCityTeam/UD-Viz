@@ -18,7 +18,7 @@ export class SlideShow extends Window {
    *
    * @param {itowns.PlanarView} itownsView - The itowns view.
    * @param {object} configSlideShow - The configuration of the widget. need description
-   * @param {Array<{name:string,folder:string,diapositives:Array<string>}>} configSlideShow.slides - Array of slide object
+   * @param {Array<{name:string,folder:string,diapositives:Array<string>}>,durationLoopInSec:number,textureRotation:number} configSlideShow.slides - Array of slide object
    * @param {itowns.Extent} extent - The extent of the widget.
    * @param {InputManager} inputManager - the input manager of the application
    */
@@ -69,7 +69,8 @@ export class SlideShow extends Window {
     this.intervalLoop = null;
     this.counterIntervalLoop = null;
     this.durationLoopInSec = configSlideShow.durationLoopInSec || 10; // Take config value or 10s by default
-
+    this.textureRotation = configSlideShow.textureRotation || 0;
+    this.textureRotation = (this.textureRotation * Math.PI) / 180.0;
     this.currentTexture = null;
 
     this.initHtml();
@@ -115,6 +116,9 @@ export class SlideShow extends Window {
           new THREE.TextureLoader().load(
             response.target.responseURL,
             (texture) => {
+              // Rotate the texture with
+              texture.center.set(0.5, 0.5);
+              texture.rotation = this.textureRotation;
               this.texturesFiles[i] = {
                 index: i,
                 name: diapos[i],
@@ -137,6 +141,9 @@ export class SlideShow extends Window {
 
           video.onloadedmetadata = () => {
             const videoTexture = new THREE.VideoTexture(video);
+            // Rotate the texture with
+            videoTexture.center.set(0.5, 0.5);
+            videoTexture.rotation = this.textureRotation;
             this.texturesFiles[i] = {
               index: i,
               name: diapos[i],
@@ -188,6 +195,9 @@ export class SlideShow extends Window {
                 new THREE.TextureLoader().load(
                   data.target.result,
                   (texture) => {
+                    // Rotate the texture with
+                    texture.center.set(0.5, 0.5);
+                    texture.rotation = this.textureRotation;
                     this.texturesFiles[i] = {
                       index: i,
                       name: file.name,
@@ -211,8 +221,8 @@ export class SlideShow extends Window {
                 video.onloadedmetadata = () => {
                   const videoTexture = new THREE.VideoTexture(video);
                   // Rotate the video texture with
-                  // videoTexture.center.set(0.5, 0.5);
-                  // videoTexture.rotation = Math.PI / 2;
+                  videoTexture.center.set(0.5, 0.5);
+                  videoTexture.rotation = this.textureRotation;
                   this.texturesFiles[i] = {
                     index: i,
                     name: file.name,
