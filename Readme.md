@@ -17,7 +17,7 @@ UD-Viz is a 3-package JavaScript framework for creating web applications for vis
 **Index**
 
 - [UD-Viz : Urban Data Vizualisation](#ud-viz--urban-data-vizualisation)
-    - [Directory Hierarchy](#directory-hierarchy)
+  - [Directory Hierarchy](#directory-hierarchy)
   - [Getting Started](#getting-started)
     - [Installing node/npm](#installing-nodenpm)
     - [Installing the UD-Viz framework per se](#installing-the-ud-viz-framework-per-se)
@@ -178,7 +178,6 @@ It run [debugExamples.js](./bin/debugExamples.js):
 - Run an [ExpressAppWrapper](./packages/node/src/ExpressAppWrapper.js)
 - Run a watched routine [buildDebugBrowser.js](./bin/buildDebugBrowser.js) with [nodemon](https://www.npmjs.com/package/nodemon).
 
-
 ### Continuous Integration (Travis CI)
 
 Each time origin/master branch is impacted by changes, Travis CI is triggered. It does a set of jobs describe in [travis.yml](./.travis.yml).
@@ -190,8 +189,9 @@ Jobs list :
 - `remark -u validate-links .`: Command of the package [remark-validate-links](https://www.npmjs.com/package/remark-validate-links) which check dead link in markdown.
 
 ### Contributing
+
 For information on the accepted coding style, submitting Issues, and submitting Pull Requests see [Contributing.md](./docs/static/Devel/Contributing.md)
 
-
 ### Publishing
+
 For creating a new release see [ReleasePublish.md](./docs/static/Devel/ReleasePublish.md)
