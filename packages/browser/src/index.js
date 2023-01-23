@@ -4,6 +4,8 @@
 
 export { AllWidget } from './AllWidget/AllWidget';
 
+export { MockUp } from './MockUp/MockUp';
+
 export { SinglePlayerGamePlanar } from './SinglePlayerGamePlanar/SinglePlayerGamePlanar';
 
 // Template.Component
