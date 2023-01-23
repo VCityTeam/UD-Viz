@@ -1,0 +1,159 @@
+ 
+  #_MockUp {
+    display: grid;
+    height: 100%;
+  }
+  
+  header h1 {
+    display: inline-block;
+    color: white;
+    margin: 5px;
+    font-size: 28px;
+    height: 100%;
+  }
+  
+  #_MockUp_struct_header_panel {
+    text-align: right;
+    padding-right: 10px;
+  }
+  
+  #_MockUp_stuct_main_panel {
+    display: grid;
+    grid-template-columns: 60px auto;
+  }
+  
+  nav {
+    background-color: #000000;
+    display: inline-block;
+    height: 100%;
+    z-index: 50001;
+  }
+  
+  section {
+    position: relative;
+    height: 100%;
+  }
+  
+  #openSidebar {
+    display: none;
+  }
+  
+  .logos {
+    height: 40px;
+    opacity: 1;
+    margin: 5px 10px 5px 5px;
+  }
+  
+  .choiceMenu:hover,
+  #openSidebar:hover,
+  #openHamburger:hover,
+  #closeHamburger:hover {
+    cursor: pointer;
+  }
+
+  
+  #_MockUp_menu {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .choiceMenu {
+    position: relative;
+    padding-top: 15px;
+    height: 40px;
+  }
+  
+  ._MockUp_menu_hint {
+    position: absolute;
+    background-color: #666666;
+    z-index: 50000;
+    height: 100%;
+    padding: 20px;
+    padding-top: 12px;
+    font-size: 20px;
+    display: inline-block;
+    margin: 0;
+    left: 100%;
+    top: 0;
+    white-space: nowrap;
+    box-sizing: border-box;
+    color: #dbdbdb;
+    visibility: hidden;
+  }
+  
+  .choiceMenu:hover > ._MockUp_menu_hint {
+    visibility: visible;
+    opacity: 1;
+  }
+  
+  .choiceMenuSelected > ._MockUp_menu_hint {
+    background-color: #999eb9;
+  }
+  
+  
+  .choiceMenuSelected::after {
+    position: absolute;
+    height: 100%;
+    right: 0;
+    top: 0;
+    width: 5px;
+    background-color: #999eb9;
+    content: '';
+    z-index: inherit;
+  }
+  
+  .nonVisible {
+    display: none;
+  }
+  
+  #_MockUp_menu .choiceMenu:hover {
+    background-color: #dbdbdb;
+  }
+  
+  .menuIcon {
+    display: inline-block;
+    width: 23px;
+    margin: auto 12px auto 12px;
+    flex-shrink: 0;
+    opacity: 0.9;
+  }
+  
+  #openSidebar:checked ~ #_MockUp_menu {
+    display: block;
+    transform: translateX(0);
+  }
+
+  
+  #docBrowserWindow {
+    top: 50px;
+  }
+  
+  #logo-div{
+    position: fixed;
+    display: flex;
+    padding: 10px;
+    border-radius: 6px;
+    bottom: 6px;
+    right: 6px;
+    background-color: #ffffff37;
+    align-items: center;
+    z-index: 5;
+  }
+  
+  .title-ud-viz {
+    width: 60px;
+    height: 40px;
+    margin: 30px auto 10px auto;
+    font-size: 15px;
+    font-weight: bold;
+    font-stretch: normal;
+    font-style: normal;
+    line-height: normal;
+    letter-spacing: normal;
+    text-align: left;
+    color: white;
+    text-align: center;
+    vertical-align: middle;
+    /* align-items: center; */
+  }
+  
