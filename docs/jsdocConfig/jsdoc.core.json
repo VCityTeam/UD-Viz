@@ -1,0 +1,10 @@
+{
+  "source": {
+    "include": ["packages/core/src"]
+  },
+  "opts": {
+    "destination": "./docs/htmlTest/core",
+    "theme_opts": { "title": "@ud-viz/core" },
+    "readme": "./packages/core/readme.md"
+  }
+}

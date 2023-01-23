@@ -1,0 +1,12 @@
+{
+  "source": {
+    "include": ["./bin"]
+  },
+  "opts": {
+    "destination": "./docs/htmlTest/",
+    "theme_opts": {
+      "title": "@ud-viz"
+    },
+    "readme": "./README.md"
+  }
+}
