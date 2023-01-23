@@ -1,8 +1,7 @@
 {
   "plugins": [
     "plugins/markdown",
-    "node_modules/jsdoc-tsimport-plugin/index.js",
-    "node_modules/jsdoc-memberof-namespace"
+    "node_modules/jsdoc-tsimport-plugin/index.js"
   ],
   "source": {
     "include": [
@@ -19,8 +18,8 @@
     "monospaceLinks": true,
     "search": true,
     "default": {
-      "includeDate": false,
-      "useLongnameInNav": true
+      "includeDate": true,
+      "useLongnameInNav": false
     }
   },
   "opts": {
@@ -46,7 +45,7 @@
           "link": "https://ud-viz.vcityliris.data.alpha.grandlyon.com/"
         }
       ],
-      "sections": ["Tutorials", "Classes", "Modules", "Global"],
+      "sections": ["Tutorials", "Classes", "Modules", "Global", "Namespaces"],
       "include_css": ["docs/custom.css"],
       "resizeable": {
         "navbar": {

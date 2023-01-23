@@ -12,7 +12,6 @@ const Object3D = class extends THREE.Object3D {
   /**
    * Base class extended {@link THREE.Object3D} to compose 3D scene of ud-viz game
    *
-   * @memberof Game
    * @param {object} json - json to configure the object3D
    * @param {string=} json.uuid - uuid
    * @param {string=} json.parentUUID - uuid of this parent object3D

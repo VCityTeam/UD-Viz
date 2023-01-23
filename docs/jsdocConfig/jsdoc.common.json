@@ -1,0 +1,90 @@
+{
+  "plugins": [
+    "plugins/markdown",
+    "node_modules/jsdoc-tsimport-plugin/index.js"
+  ],
+  "source": {
+    "includePattern": ".js$",
+    "excludePattern": "(node_modules/|docs)"
+  },
+  "sourceType": "module",
+  "templates": {
+    "cleverLinks": false,
+    "monospaceLinks": true,
+    "search": true,
+    "default": {
+      "includeDate": true,
+      "useLongnameInNav": false
+    }
+  },
+  "opts": {
+    "tutorials": "./docs/static",
+    "recurse": true,
+    "template": "node_modules/clean-jsdoc-theme",
+    "theme_opts": {
+      "theme": "light",
+      "footer": "Fork: <a href='https://github.com/VCityTeam/UD-Viz'>https://github.com/VCityTeam/UD-Viz</a>",
+      "displayModuleHeader": true,
+      "menu": [
+        {
+          "title": "udviz",
+          "id": "udvizHome",
+          "link": "/docs/htmlTest"
+        },
+        {
+          "title": "udvizBrowser",
+          "id": "udvizBrowser",
+          "link": "/docs/htmlTest/browser"
+        },
+        {
+          "title": "udvizCore",
+          "id": "udvizCore",
+          "link": "/docs/htmlTest/core"
+        },
+        {
+          "title": "udvizNode",
+          "id": "udvizNode",
+          "link": "/docs/htmlTest/node"
+        },
+        {
+          "title": "Github",
+          "id": "Github",
+          "link": "https://github.com/VCityTeam/UD-Viz",
+          "target": "_blank"
+        },
+        {
+          "title": "Examples",
+          "id": "Examples",
+          "link": "https://ud-viz.vcityliris.data.alpha.grandlyon.com/",
+          "target": "_blank"
+        }
+      ],
+      "sections": [
+        "Classes",
+        "Modules",
+        "Externals",
+        "Events",
+        "Namespaces",
+        "Mixins",
+        "Tutorials",
+        "Interfaces",
+        "Global"
+      ],
+      "include_css": ["docs/custom.css"],
+      "resizeable": {
+        "navbar": {
+          "min": "300",
+          "max": "600"
+        }
+      }
+    }
+  },
+  "tags": {
+    "allowUnknownTags": ["optional"],
+    "dictionaries": ["jsdoc", "closure"]
+  },
+  "markdown": {
+    "hardwrap": false,
+    "idInHeadings": true
+  }
+}
