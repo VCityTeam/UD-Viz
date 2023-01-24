@@ -77,6 +77,8 @@ export class CityObject {
 
   /**
    * Last index of the vertex array.
+   *
+   * @returns {number} The index of the last vertex of the CityObject
    */
   get indexEnd() {
     return this.indexStart + this.indexCount - 1;
@@ -84,6 +86,8 @@ export class CityObject {
 
   /**
    * Get the identifier of this CityObject default style
+   *
+   * @returns {string} The ID of the default style
    */
   get defaultStyleId() {
     return 'default' + this.tile.tileId + 'm' + this.meshId;
@@ -95,7 +99,7 @@ export class CityObject {
  *
  * @param {{tileId: number, batchId: number | Array<number>}} object A
  * dictionnary with two keys, `tileId` and `batchId`.
- * @returns {CityObjectID}
+ * @returns {CityObjectID} The created CityObject ID
  */
 export function createCityObjectID(object) {
   if (
@@ -142,8 +146,8 @@ export class CityObjectID {
   /**
    * Return true if the cityobjectId is equal to this
    *
-   * @param {CityObjectID} cityObjectId
-   * @returns true if equal
+   * @param {CityObjectID} cityObjectId The CityObjectID to compare with this CityObjectID
+   * @returns {boolean} true if equal
    */
   equal(cityObjectId) {
     return (
@@ -155,7 +159,7 @@ export class CityObjectID {
    * Converts the city object ID into a string, making the class usable as
    * a dictionnary key.
    *
-   * @returns {string}
+   * @returns {string} The CityObjectID as string
    */
   toString() {
     return `CityObject-${this.tileId}-${this.batchId}`;
