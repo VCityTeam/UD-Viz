@@ -1,5 +1,5 @@
 import { WidgetView } from '../../../Component/WidgetView/WidgetView';
-import { SparqlEndpointResponseProvider } from '../ViewModel/SparqlEndpointResponseProvider';
+import { SparqlEndpointResponseProvider } from '../Service/SparqlEndpointResponseProvider';
 import { CityObjectProvider } from '../../../CityObjects/ViewModel/CityObjectProvider';
 import { SparqlQueryWindow } from './SparqlQueryWindow';
 import { LayerManager } from '../../../Component/Component';

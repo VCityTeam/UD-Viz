@@ -1,4 +1,4 @@
-import { SparqlEndpointResponseProvider } from './ViewModel/SparqlEndpointResponseProvider';
+import { SparqlEndpointResponseProvider } from './Service/SparqlEndpointResponseProvider';
 import { SparqlWidgetView } from './View/SparqlWidgetView';
 import { LayerManager } from '../../Component/Component';
 import { CityObjectProvider } from '../../CityObjects/ViewModel/CityObjectProvider';

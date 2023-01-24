@@ -1,5 +1,5 @@
 import { Window } from '../../../Component/GUI/js/Window';
-import { SparqlEndpointResponseProvider } from '../ViewModel/SparqlEndpointResponseProvider';
+import { SparqlEndpointResponseProvider } from '../Service/SparqlEndpointResponseProvider';
 import { Graph } from '../Model/Graph';
 import { Table } from '../Model/Table';
 import * as URI from '../Model/URI';
