@@ -172,7 +172,7 @@ export class LayerManager {
    * @returns {import("../3DTiles/Model/CityObject").CityObject | undefined} The picked CItyObject
    */
   pickCityObjectByBatchTable(batchTableKey, batchTableValue) {
-    for (let tilesManager of this.layerManager.tilesManagers) {
+    for (let tilesManager of this.tilesManagers) {
       if (!tilesManager.tiles) {
         continue
       }
@@ -197,7 +197,7 @@ export class LayerManager {
    */
   pickCityObjectsByBatchTable(batchTableKey, batchTableValue) {
     const cityObjects = [];
-    for (let tilesManager of this.layerManager.tilesManagers) {
+    for (let tilesManager of this.tilesManagers) {
       if (!tilesManager.tiles) {
         continue
       }
