@@ -179,7 +179,7 @@ export class TilesManager extends EventSender {
    * Returns the city object, if the tile is loaded.
    *
    * @param {CityObjectID} cityObjectId The city object identifier.
-   * @returns {CityObject}
+   * @returns {CityObject} The CityObject with the corresponding ID
    */
   getCityObject(cityObjectId) {
     if (this.tiles[cityObjectId.tileId] === undefined) {
@@ -264,8 +264,7 @@ export class TilesManager extends EventSender {
   /**
    * Sets the style of a particular tile.
    *
-   * @param {Int} tileId The tile
-   * identifier.
+   * @param {number} tileId The tile identifier.
    * @param {CityObjectStyle | string} style The desired style.
    */
   setStyleToTile(tileId, style) {
@@ -279,8 +278,7 @@ export class TilesManager extends EventSender {
   /**
    * Sets the style of a particular tile.
    *
-   * @param {Int} tileId The tile
-   * identifier.
+   * @param {number} tileId The tile identifier.
    */
   setDefaultStyleToTile(tileId) {
     if (this.tiles[tileId]) {
@@ -385,7 +383,7 @@ export class TilesManager extends EventSender {
    * Gets the style applied to a given object ID.
    *
    * @param {CityObjectID} cityObjectId The city object ID.
-   * @returns {CityObjectStyle}
+   * @returns {CityObjectStyle} The style corresponding to the ID
    */
   getStyleAppliedTo(cityObjectId) {
     if (!(cityObjectId instanceof CityObjectID)) {
@@ -494,6 +492,7 @@ export class TilesManager extends EventSender {
    *
    * @private
    * @param {Tile} tile The tile.
+   * @returns {boolean} True if the style of the tile should be updated
    */
   _shouldTileBeUpdated(tile) {
     const object3d = tile.getObject3D();
