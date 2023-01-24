@@ -1,4 +1,5 @@
 const THREE = require('three');
+const itowns = require('itowns');
 
 /**
  * Makes the camera move to focus on the target position.
@@ -16,6 +17,7 @@ const THREE = require('three');
  * position.
  * - `horizontalDistance` : Desired distance of the camera from the target
  * position.
+ * @returns {Promise} Promise of the camera focusing on target
  */
 export function focusCameraOn(view, controls, targetPos, options = {}) {
   return new Promise((resolve, reject) => {

@@ -1,6 +1,6 @@
 const THREE = require('three');
 const itowns = require('itowns');
-import { TilesManager } from './Itowns';
+import { TilesManager, LayerManager } from './Itowns';
 
 /**
  * These extensions should belong elsewhere since it should be possible
@@ -96,11 +96,10 @@ function setup3DTilesLayer(layer, layerManager, itownsView) {
 /**
  * Setup and add 3D tiles to an itowns view
  *
- * @param {*} config must contain a 3DTilesLayers field array with each 3d tile url
- * @param config3DTilesLayers
+ * @param {object} config3DTilesLayers An object containing 3D Tiles layers configs
  * @param {LayerManager} layerManager a layer manager
  * @param {itowns.View} itownsView - the itowns view
- * @returns a map of each 3d tiles layer
+ * @returns {Map<itowns.C3DTilesLayer>} a map of each 3d tiles layer
  */
 export function add3DTilesLayers(
   config3DTilesLayers,
@@ -110,7 +109,7 @@ export function add3DTilesLayers(
   // Positional arguments verification
   if (!config3DTilesLayers) {
     console.warn('no 3DTilesLayers config');
-    return;
+    return undefined;
   }
   const layers = {};
   for (const layer of config3DTilesLayers) {
@@ -124,14 +123,8 @@ export function add3DTilesLayers(
  * Sets up a GeoJson layers and adds them to the itowns view (for the demos
  * that don't need more granularity than that).
  *
- * @param {string} layerConfig The name of the layer to setup from the
- * generalDemoConfig.json config file (should be one of the properties
- * of the 3DTilesLayer object in
- * UD-Viz/examples/config/all_widget_config.json
- * config file).
- * @param config
- * @param configGeoJSONLayers
- * @param itownsView
+ * @param {object} configGeoJSONLayers An object containing GeoJSON layers configs
+ * @param {itowns.View} itownsView - the itowns view
  */
 export function addGeoJsonLayers(configGeoJSONLayers, itownsView) {
   // Positional arguments verification
@@ -147,7 +140,6 @@ export function addGeoJsonLayers(configGeoJSONLayers, itownsView) {
    * of the GeoJsonLayer object in
    * UD-Viz/examples/config/all_widget_config.json
    * config file).
-   * @param layer
    */
   const setupAndAddGeoJsonLayer = function (layerConfig) {
     if (!layerConfig['id'] || !layerConfig['url'] || !layerConfig['crs']) {
@@ -184,9 +176,8 @@ export function addGeoJsonLayers(configGeoJSONLayers, itownsView) {
 /**
  * Add Base map layer to an itowns view
  *
- * @param {*} config must contains a field background_image_layer
- * @param baseMapLayerConfig
- * @param {itowns.View} itownsView
+ * @param {object} baseMapLayerConfig An object with the config of the base map
+ * @param {itowns.View} itownsView The iTowns view
  * @param {itowns.Extent} extent extent of the view
  */
 export function addBaseMapLayer(baseMapLayerConfig, itownsView, extent) {
@@ -247,9 +238,8 @@ export function addBaseMapLayer(baseMapLayerConfig, itownsView, extent) {
 /**
  * Add Elevation map layer to an itowns view
  *
- * @param {*} config must contains a field elevation_layer
- * @param configElevationLayer
- * @param {itowns.View} itownsView
+ * @param {object} configElevationLayer An object with the config of the elevation layer
+ * @param {itowns.View} itownsView The iTowns view
  * @param {itowns.Extent} extent extent of the view
  */
 export function addElevationLayer(configElevationLayer, itownsView, extent) {
