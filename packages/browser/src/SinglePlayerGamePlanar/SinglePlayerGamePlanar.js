@@ -103,7 +103,7 @@ export class SinglePlayerGamePlanar {
 
         gameProcess.start((dt) => {
           // game loop
-          this.gameContext.onCommand(this.inputManager.computeCommands()); // pull commands
+          this.gameContext.onCommands(this.inputManager.computeCommands()); // pull commands
           this.gameContext.step(dt); // simulate
 
           // here we compute a diff with the last game state (we could just send a newState to the interpolator)
@@ -120,7 +120,7 @@ export class SinglePlayerGamePlanar {
 
         // indicate to the external context how to send command to gamecontext (could be with websocket)
         this.externalGameContext.sendCommandToGameContext = (cmds) => {
-          this.gameContext.onCommand(cmds);
+          this.gameContext.onCommands(cmds);
         };
 
         // step external game context

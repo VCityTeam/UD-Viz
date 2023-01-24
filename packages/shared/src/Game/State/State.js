@@ -187,6 +187,18 @@ const State = class {
   getObject3D() {
     return this.object3D;
   }
+
+  /**
+   * export state to serializable json object
+   *
+   * @returns {object} - serializable json object
+   */
+  toJSON() {
+    return {
+      object3D: this.object3D.toJSON(),
+      timestamp: this.timestamp,
+    };
+  }
 };
 
 /**

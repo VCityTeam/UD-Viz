@@ -92,10 +92,8 @@
         },
         Zeppelin: class extends udvizBrowser.Shared.Game.ScriptBase {
           tick() {
-            udvizBrowser.Shared.Game.ScriptTemplate.Component.applyNativeCommands(
-              this.context.commands,
-              this.object3D,
-              this.context.dt
+            udvizBrowser.Core.Game.ScriptTemplate.Component.applyNativeCommands(
+              this.context
             );
           }
           // Called when this gameobject collider components collides with another one collider components
@@ -133,8 +131,13 @@
               this.context.frame3D.camera
             );
 
+            const zeppelin = this.context.object3D.getObjectByProperty(
+              'name',
+              'zeppelin'
+            );
+
             this.cameraman.followObject3D(
-              this.context.object3D.getObjectByProperty('name', 'zeppelin'),
+              zeppelin,
               this.variables.camera_distance,
               new udvizBrowser.THREE.Vector3(0, 0, 15),
               this.variables.camera_angle
@@ -145,7 +148,7 @@
                 this.context.inputManager
               );
 
-            commandController.addNativeCommands();
+            commandController.addNativeCommands(zeppelin.uuid);
           }
 
           tick() {

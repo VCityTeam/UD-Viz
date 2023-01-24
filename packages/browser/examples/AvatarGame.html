@@ -24,10 +24,8 @@
           }
 
           tick() {
-            udvizBrowser.Shared.Game.ScriptTemplate.Component.applyNativeCommands(
-              this.context.commands,
-              this.avatar,
-              this.context.dt
+            udvizBrowser.Core.Game.ScriptTemplate.Component.applyNativeCommands(
+              this.context
             );
           }
         },
@@ -56,7 +54,7 @@
                 this.context.inputManager
               );
 
-            commandController.addNativeCommands();
+            commandController.addNativeCommands(this.avatar.uuid);
           }
 
           tick() {
@@ -64,14 +62,19 @@
             this.cameraman.tick(this.context.dt);
 
             this.context.sendCommandToGameContext([
-              new udvizBrowser.Shared.Command({
-                type: udvizBrowser.Shared.Game.ScriptTemplate.Constants.COMMAND
-                  .Z_UPDATE,
-                data: udvizBrowser.ExternalScriptTemplate.computeRelativeElevationFromGround(
-                  this.avatar,
-                  this.context.frame3D.itownsView.tileLayer,
-                  this.variables.update_z_crs
-                ),
+              new udvizBrowser.Core.Command({
+                type: udvizBrowser.Core.Game.ScriptTemplate.Constants.COMMAND
+                  .UPDATE_TRANSFORM,
+                data: {
+                  object3DUUID: this.avatar.uuid,
+                  position: {
+                    z: udvizBrowser.ExternalScriptTemplate.computeRelativeElevationFromGround(
+                      this.avatar,
+                      this.context.frame3D.itownsView.tileLayer,
+                      this.variables.update_z_crs
+                    ),
+                  },
+                },
               }),
             ]);
           }

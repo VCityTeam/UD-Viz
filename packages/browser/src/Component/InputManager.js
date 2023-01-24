@@ -391,7 +391,10 @@ export class InputManager {
         const map = this.mouseCommands[eventID];
 
         for (const commandID in map) {
-          const cmd = map[commandID].apply(this.mouseState, []);
+          const cmd = map[commandID].call(
+            undefined, // no context pass
+            this.mouseState.mouseEvent[eventID]
+          );
           if (cmd) result.push(cmd);
         }
       }

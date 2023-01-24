@@ -8,7 +8,7 @@ module.exports = {
     MOVE_BACKWARD: 'move_backward',
     ROTATE_LEFT: 'rotate_left',
     ROTATE_RIGHT: 'rotate_right',
-    Z_UPDATE: 'z_update',
+    UPDATE_TRANSFORM: 'update_transform',
     ADD_AVATAR: 'add_avatar',
     REMOVE_AVATAR: 'remove_avatar',
   },

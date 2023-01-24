@@ -5,7 +5,7 @@
   "main": "src",
   "scripts": {
     "build": "cross-env NODE_ENV=production webpack",
-    "debug": "nodemon --trace-warnings --verbose --watch src --delay 2500ms ./bin/debugGameService.js -e js,css,html"
+    "debug": "nodemon --trace-warnings --verbose --watch src --delay 2500ms ./examples/example1.js -e js,css,html"
   },
   "files": [
     "src"
