@@ -26,6 +26,7 @@ export class Table {
    * @param {Array} columns The columns to render.
    */
   dataAsTable(data, columns) {
+    console.log(data);
     this.data = data;
     this.columns = columns;
     this.filter_div = document.createElement('div');
@@ -54,7 +55,7 @@ export class Table {
    */
   static update(table, event) {
     table.clearTable();
-    let filterValue = table.filterInput.value;
+    const filterValue = table.filterInput.value;
 
     let column;
     // Check if element filter input is changed
@@ -156,7 +157,10 @@ export class Table {
           return d.col;
         })
         .text(function (d) {
-          return d.row[d.col].value;
+          if (d.row[d.col] && d.row[d.col].value) {
+            return d.row[d.col].value;
+          }
+          return "";
         })
         .on('click', (d) => {
           const col = d.target.__data__.col;
