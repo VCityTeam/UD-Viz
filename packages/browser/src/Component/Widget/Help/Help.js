@@ -10,19 +10,19 @@ import './Help.css';
  */
 
 export class HelpWindow extends WidgetView {
-  /**
-   * Creates a HelpWindow
-   *
-   * @param {object} config The config of the Window
-   */
-  constructor(config = {}) {
+  constructor(uiParent, config = {}) {
     super();
     this.config = config;
+    this.uiParent = uiParent;
+
+    this.helpWindow = document.createElement('div');
+    this.helpWindow.id = '_help_window';
+    document.getElementById(this.uiParent.id).append(this.helpWindow);
 
     // Button help to open help div
     const helpButton = document.createElement('button');
-    helpButton.id = 'help-button';
-    document.getElementById('_all_widget_stuct_main_panel').append(helpButton);
+    helpButton.id = '_help_button';
+    document.getElementById(this.helpWindow.id).append(helpButton);
 
     // Image button
     const imgButton = document.createElement('img');
@@ -31,10 +31,7 @@ export class HelpWindow extends WidgetView {
 
     // Event for openning help window
     helpButton.addEventListener('mousedown', () => {
-      if (
-        document.getElementById('_window_widget_content').style.display ==
-        'block'
-      )
+      if (document.getElementById(this.helpWindow.id).style.display == 'block')
         this.disable(this);
       else this.enable(this);
     });
@@ -42,9 +39,10 @@ export class HelpWindow extends WidgetView {
 
   // ///// MODULE VIEW METHODS
   enableView() {
-    const widgetlayout = document.getElementById('_window_widget_content');
-    widgetlayout.style.setProperty('display', 'block');
-    widgetlayout.innerHTML = '';
+    // this.helpWindow = document.getElementById(this.parentElement);
+    document.getElementById(this.uiParent.id).append(this.helpWindow);
+    this.helpWindow.style.setProperty('display', 'block');
+    this.helpWindow.innerHTML = '';
     // Create HMTL
     const promises = [];
     if (this.config.htmlPaths && this.config.htmlPaths.length) {
@@ -56,7 +54,7 @@ export class HelpWindow extends WidgetView {
               url: path,
               datatype: 'html',
               success: (data) => {
-                widgetlayout.innerHTML += data;
+                this.helpWindow.innerHTML += data;
                 resolve();
               },
               error: (e) => {
@@ -71,9 +69,7 @@ export class HelpWindow extends WidgetView {
   }
 
   disableView() {
-    document.getElementById('_window_widget_content').innerHTML = '';
-    document
-      .getElementById('_window_widget_content')
-      .style.setProperty('display', 'none');
+    this.helpWindow.innerHTML = '';
+    this.helpWindow.style.setProperty('display', 'none');
   }
 }
