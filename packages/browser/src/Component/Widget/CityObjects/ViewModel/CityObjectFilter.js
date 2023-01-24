@@ -1,4 +1,8 @@
 /**
+ * @callback FilterCityObjects
+ * @param {boolean} accepts - check if the cityObject is acceptable
+ */
+/**
  * Represents a filter for city objects. It is basically a function that takes
  * a city object and returns wether it is acceptable.
  */
@@ -8,7 +12,7 @@ export class CityObjectFilter {
    * acceptation function was provided, the filter accepts all city objects.
    *
    * @param {string} label The unique label identifying the filter.
-   * @param {(CityObject) => boolean} [accepts] The function responsible to
+   * @param {FilterCityObjects} accepts The function responsible to
    * filter the city objects. It must evaluate wether a city object is
    * acceptable according to the filter.
    */
@@ -41,6 +45,8 @@ export class CityObjectFilter {
   /**
    * Returns a descriptive string of the filter. By default, it returns the
    * label.
+   *
+   * @returns {string} The label of the filter
    */
   toString() {
     return this.label;

@@ -13,7 +13,7 @@ export class CityObjectModule {
    * filters. Other modules can extend the functionnalities of the city object
    * module by adding filters.
    *
-   * @param {LayerManager} layerManager The layer manager.
+   * @param {import("../../Itowns/LayerManager").LayerManager} layerManager The layer manager.
    * @param {object} configCityObjects The city objects config.
    * @param {Object<string, CityObjectStyle>} configCityObjects.styles The
    * city object styles.
@@ -91,6 +91,7 @@ export class CityObjectModule {
    * Removes an existing extension in the city object window.
    *
    * @param {string} label The extension label.
+   * @returns {boolean} True if the extension is used
    */
   isExtensionUsed(label) {
     return this.view.isExtensionUsed(label);
@@ -99,7 +100,7 @@ export class CityObjectModule {
   /**
    * Adds a filter selector in the city object filter window.
    *
-   * @param {CityObjectFilterSelector} filterSelector The filter selector to
+   * @param {import("./View/CityObjectFilterSelector").CityObjectFilterSelector} filterSelector The filter selector to
    * add.
    */
   addFilterSelector(filterSelector) {

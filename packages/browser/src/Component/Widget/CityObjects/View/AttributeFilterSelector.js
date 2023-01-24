@@ -44,7 +44,7 @@ export class AttributeFilterSelector extends CityObjectFilterSelector {
    * from the given form data.
    *
    * @override
-   * @param {FormData} formData
+   * @param {FormData} formData Form data containing city object's information
    */
   onSubmit(formData) {
     this.filter.tileId = Number(formData.get('tileId'));

@@ -236,7 +236,7 @@ export class CityObjectWindow extends Window {
   /**
    * Updates the description for the selected city object.
    *
-   * @param {CityObject} cityObject The selected city object.
+   * @param {import("../../../Itowns/3DTiles/Model/CityObject").CityObject} cityObject The selected city object.
    */
   _updateSelectedCityObjectDescription(cityObject) {
     if (!this.isCreated) {
