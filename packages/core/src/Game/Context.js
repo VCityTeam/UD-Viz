@@ -13,7 +13,7 @@ const Command = require('../Command');
 /**
  * MODULE Context
  *
- * @module Context
+ * @exports Context
  */
 
 /** @class */

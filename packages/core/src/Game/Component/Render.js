@@ -3,11 +3,14 @@ const { Component, Model } = require('./Component');
 
 /**
  * Render object3D component
+ *
+ * @see module:Render
  */
 const RenderComponent = class extends Component {};
 
 RenderComponent.TYPE = 'Render';
 
+/** @see module:Render */
 const RenderModel = class extends Model {
   /**
    * Render object3D component model store data to render an object3D (in an external context), a render controller should be implemented to use it
@@ -20,10 +23,18 @@ const RenderModel = class extends Model {
   constructor(json) {
     super(json);
 
-    /** @type {string} - id of render data */
+    /**
+     * id of render data
+     *
+     *  @type {string}
+     */
     this.idRenderData = json.idRenderData || null;
 
-    /** @type {THREE.Color} - color to apply to the 3D model */
+    /**
+     * color to apply to the 3D model
+     *
+     * @type {THREE.Color}
+     */
     this.color = new THREE.Color().fromArray(json.color || [1, 1, 1]);
   }
 
@@ -72,5 +83,14 @@ const RenderModel = class extends Model {
     return this.idRenderData;
   }
 };
-
-module.exports = { Component: RenderComponent, Model: RenderModel };
+/**
+ * MODULE Render
+ *
+ * @exports Render
+ */
+module.exports = {
+  /** @see RenderComponent */
+  Component: RenderComponent,
+  /** @see RenderModel */
+  Model: RenderModel,
+};

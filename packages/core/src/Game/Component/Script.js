@@ -1,6 +1,10 @@
 const { Model, Controller } = require('./Component');
 const Data = require('../../Data');
 
+/**
+ * @see module:Script
+ * @class
+ */
 const ScriptModel = class extends Model {
   /**
    * Model of object3D script component
@@ -13,10 +17,18 @@ const ScriptModel = class extends Model {
   constructor(json) {
     super(json);
 
-    /** @type {Array<string>} - ids of scripts */
+    /**
+     * ids of scripts
+     *
+     * @type {Array<string>}
+     */
     this.idScripts = json.idScripts || [];
 
-    /** @type {object} - custom global variables passed to scripts */
+    /**
+     * custom global variables passed to scripts
+     *
+     * @type {object}
+     */
     this.variables = json.variables || {};
   }
 
@@ -37,6 +49,10 @@ const ScriptModel = class extends Model {
   }
 };
 
+/**
+ * @see module:Script
+ * @class
+ */
 const ScriptController = class extends Controller {
   /**
    * Controller of object3D script component
@@ -48,7 +64,11 @@ const ScriptController = class extends Controller {
   constructor(model, object3D, scripts) {
     super(model, object3D);
 
-    /** @type {Object<string,object>} - instances of scripts */
+    /**
+     * instances of scripts
+     *
+     * @type {Object<string,object>}
+     */
     this.scripts = scripts;
   }
 
@@ -97,7 +117,14 @@ const ScriptController = class extends Controller {
   }
 };
 
+/**
+ * MODULE Script
+ *
+ * @exports Script
+ */
 module.exports = {
+  /** @see ScriptModel*/
   Model: ScriptModel,
+  /** @see ScriptController*/
   Controller: ScriptController,
 };

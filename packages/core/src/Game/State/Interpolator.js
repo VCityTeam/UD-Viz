@@ -13,25 +13,53 @@ class Interpolator {
    * @param {number} [delay=100] - delay between state received and state delivered/computed
    */
   constructor(delay) {
-    /** @type {number} - delay between state received and state delivered */
+    /**
+     * delay between state received and state delivered
+     *
+     * @type {number}
+     */
     this.delay = delay || 100;
 
-    /** @type {State[]} - buffer of states received */
+    /**
+     * buffer of states received
+     *
+     * @type {State[]}
+     */
     this.states = [];
 
-    /** @type {number} - interpolator start time */
+    /**
+     * interpolator start time
+     *
+     * @type {number}
+     */
     this.startTimestamp = 0;
 
-    /** @type {number} - time of the first state received */
+    /**
+     * time of the first state received
+     *
+     * @type {number}
+     */
     this.firstStateTimestamp = 0;
 
-    /** @type {State[]} - buffer of states deprecated (out of time) but not treated (not deliver/compute)*/
+    /**
+     * buffer of states deprecated (out of time) but not treated (not deliver/compute)
+     *
+     * @type {State[]}
+     */
     this._notConsumedStates = [];
 
-    /** @type {number} - time of the last state received */
+    /**
+     * time of the last state received
+     *
+     * @type {number}
+     */
     this.lastTimeState = 0;
 
-    /** @type {number} - time between last state received and the previous one */
+    /**
+     * time between last state received and the previous one
+     *
+     * @type {number}
+     */
     this.ping = 0;
   }
 

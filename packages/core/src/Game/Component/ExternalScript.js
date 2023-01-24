@@ -3,11 +3,16 @@ const Script = require('./Script');
 
 /**
  * ExternalScript object3D component
+ *
+ * @see module:ExternalScript
  */
 const ExternalScriptComponent = class extends Component {};
 
 ExternalScriptComponent.TYPE = 'ExternalScript';
 
+/**
+ * @see module:ExternalScript
+ */
 const ExternalScriptModel = class extends Script.Model {
   /**
    *
@@ -23,7 +28,14 @@ const ExternalScriptModel = class extends Script.Model {
   }
 };
 
+/**
+ * MODULE ExternalScript
+ *
+ * @exports ExternalScript
+ */
 module.exports = {
+  /** @see ExternalScriptComponent*/
   Component: ExternalScriptComponent,
+  /** @see ExternalScriptModel*/
   Model: ExternalScriptModel,
 };
