@@ -2,6 +2,7 @@ const Diff = require('./Diff');
 const Object3D = require('../Object3D');
 const Data = require('../../Data');
 
+/** @class */
 const State = class {
   /**
    * Store state of context at a given time
@@ -12,13 +13,25 @@ const State = class {
   constructor(object3D, timestamp) {
     if (!object3D || !timestamp) throw new Error('need parameters');
 
-    /** @type {Object3D} - context root object3D */
+    /**
+     * context root object3D
+     *
+     * @type {Object3D}
+     */
     this.object3D = object3D;
 
-    /** @type {number} - time when the state has been created in ms */
+    /**
+     * time when the state has been created in ms
+     *
+     * @type {number}
+     */
     this.timestamp = timestamp;
 
-    /** @type {boolean} - flag to determine if state has been consumed/treated */
+    /**
+     * flag to determine if state has been consumed/treated
+     *
+     * @type {boolean}
+     */
     this._consumed = false;
   }
 

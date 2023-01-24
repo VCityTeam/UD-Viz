@@ -1,14 +1,9 @@
 const { Component, Model } = require('./Component');
 
 /**
- * MODULE Audio
- *
- * @module Audio
- */
-
-/**
  * Audio object3D component
  *
+ * @see module:Audio
  * @class
  */
 const AudioComponent = class extends Component {};
@@ -18,6 +13,7 @@ AudioComponent.TYPE = 'Audio';
 /**
  * Audio object3D ModelComponent
  *
+ * @see module:Audio
  * @class
  */
 const AudioModel = class extends Model {
@@ -77,4 +73,14 @@ const AudioModel = class extends Model {
   }
 };
 
-module.exports = { Component: AudioComponent, Model: AudioModel };
+/**
+ * MODULE Audio
+ *
+ * @exports Audio
+ */
+module.exports = {
+  /** @see AudioComponent */
+  Component: AudioComponent,
+  /** @see AudioModel */
+  Model: AudioModel,
+};

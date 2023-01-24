@@ -3,7 +3,7 @@ const THREE = require('three');
 /**
  * MODULE Component
  *
- * @module Component
+ * @exports Component
  */
 
 /** @class  Model object3D component */

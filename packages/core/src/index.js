@@ -3,7 +3,7 @@
 /**
  * ud-viz core library (browser + node compatible)
  *
- * @module @ud-viz/core
+ * @exports @ud-viz/core
  */
 module.exports = {
   /** @type {import("./Data")} */

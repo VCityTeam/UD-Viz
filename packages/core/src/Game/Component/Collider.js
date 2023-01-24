@@ -3,19 +3,6 @@ const { Component, Model, Controller } = require('./Component');
 const THREE = require('three');
 
 /**
- * @typedef {object} PolygonJSON - json object to configure {@link Polygon} of {@link https://www.npmjs.com/package/detect-collisions}
- * @property {string} type - to identify this is a Polygon must be equal to "Polygon"
- * @property {Array<{x,y}>} points - points of the polygon
- */
-
-/**
- * @typedef {object} CircleJSON - json object to configure {@link Circle} of {@link https://www.npmjs.com/package/detect-collisions}
- * @property {string} type - to identify this is a Circle must be equal to "Circle"
- * @property {{x,y}} center - center of the circle
- * @property {number} radius - radius of the circle
- */
-
-/**
  * Collider object3D component, this component use {@link https://www.npmjs.com/package/detect-collisions}, note that collisions are handle in 2D
  *
  * @see module:Collider
@@ -26,7 +13,7 @@ const ColliderComponent = class extends Component {};
 ColliderComponent.TYPE = 'Collider';
 
 /**
- *  @see module:Collider
+ * @see module:Collider
  * @class
  */
 const ColliderModel = class extends Model {
@@ -104,7 +91,7 @@ class ColliderController extends Controller {
     /**
      * shapes wrapper {@link ShapeWrapper}
      *
-     * @type {import("./Collider").ShapeWrapper}
+     * @type {ShapeWrapper}
      */
     this.shapeWrappers = [];
 
@@ -138,6 +125,19 @@ class ColliderController extends Controller {
     return this.shapeWrappers;
   }
 }
+
+/**
+ * @typedef {object} PolygonJSON - json object to configure {@link Polygon} of {@link https://www.npmjs.com/package/detect-collisions}
+ * @property {string} type - to identify this is a Polygon must be equal to "Polygon"
+ * @property {Array<{x,y}>} points - points of the polygon
+ */
+
+/**
+ * @typedef {object} CircleJSON - json object to configure {@link Circle} of {@link https://www.npmjs.com/package/detect-collisions}
+ * @property {string} type - to identify this is a Circle must be equal to "Circle"
+ * @property {{x,y}} center - center of the circle
+ * @property {number} radius - radius of the circle
+ */
 
 /**
  * @class
@@ -257,7 +257,7 @@ class ShapeWrapper {
 /**
  * MODULE Collider
  *
- * @module Collider
+ * @exports Collider
  */
 
 module.exports = {

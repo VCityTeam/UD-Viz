@@ -3,11 +3,16 @@ const Script = require('./Script');
 
 /**
  * GameScript object3D component
+ *
+ * @see module:GameScript
  */
 const GameScriptComponent = class extends Component {};
 
 GameScriptComponent.TYPE = 'GameScript';
 
+/**
+ * @see module:GameScript
+ */
 const GameScriptModel = class extends Script.Model {
   /**
    *
@@ -23,7 +28,14 @@ const GameScriptModel = class extends Script.Model {
   }
 };
 
+/**
+ * MODULE GameScript
+ *
+ * @exports GameScript
+ */
 module.exports = {
+  /** @see GameScriptComponent */
   Component: GameScriptComponent,
+  /** @see GameScriptModel */
   Model: GameScriptModel,
 };

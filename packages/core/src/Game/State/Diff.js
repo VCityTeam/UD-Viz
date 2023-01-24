@@ -1,3 +1,4 @@
+/** @class */
 const Diff = class {
   /**
    * Store difference between two following states (state(t) + diff(t,t+1) = state(t+1))
@@ -10,13 +11,25 @@ const Diff = class {
   constructor(json) {
     if (!json) throw new Error('no json');
 
-    /** @type {number} - time of state(t+1) */
+    /**
+     * time of state(t+1)
+     *
+     * @type {number}
+     */
     this.timestamp = json.timestamp;
 
-    /** @type {Array<string>} - uuids object3D present in state(t+1) */
+    /**
+     * uuids object3D present in state(t+1)
+     *
+     * @type {Array<string>}
+     */
     this.nextStateObjectsUUID = json.nextStateObjectsUUID;
 
-    /** @type {Object<string,object>} - map uuid object3D to object3D json where outdated (model has changed) */
+    /**
+     * map uuid object3D to object3D json where outdated (model has changed)
+     *
+     * @type {Object<string,object>}
+     */
     this.objects3DToUpdateJSON = json.objects3DToUpdateJSON;
   }
 
