@@ -79,6 +79,7 @@ export class CityObjectFilterWindow extends Window {
    * Returns the filter selector corresponding to the given filter label.
    *
    * @param {string} filterLabel The label of the filter.
+   * @returns {CityObjectFilterSelector} The filter selector with the correspondig label
    */
   getFilterSelector(filterLabel) {
     return this.filterSelectors.find((fs) => fs.filterLabel === filterLabel);
@@ -125,6 +126,8 @@ export class CityObjectFilterWindow extends Window {
   /**
    * Returns the current filter selector, or `undefined` if the user has
    * selected the 'No filter' option.
+   *
+   * @returns {CityObjectFilterSelector} The current filter selector
    */
   _getCurrentSelector() {
     const selected =

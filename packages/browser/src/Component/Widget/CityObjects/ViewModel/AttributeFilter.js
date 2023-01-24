@@ -64,6 +64,8 @@ export class AttributeFilter extends CityObjectFilter {
   /**
    * If no attribute is set, returns 'All city objects'. Otherwise, returns
    * 'Attributes' with the list of the conditions.
+   *
+   * @returns {string} Attributes as string
    */
   toString() {
     let result = '';

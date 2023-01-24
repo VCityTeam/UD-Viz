@@ -3,7 +3,6 @@
  * stores additional HTML that can be put in a form if the filter accepts
  * parameters.
  *
- * @format
  */
 
 export class CityObjectFilterSelector {
@@ -30,10 +29,11 @@ export class CityObjectFilterSelector {
     this.displayName = displayName;
   }
 
+  // TODO
   /**
    * The HTML that will be put in the filter form.
    *
-   * @returns {string}
+   * @returns {string} The HTML as string
    */
   get html() {
     return `
