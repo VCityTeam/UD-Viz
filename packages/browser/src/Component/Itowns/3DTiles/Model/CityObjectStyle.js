@@ -39,6 +39,7 @@ export class CityObjectStyle {
    * Checks if this style is equivalent to another style.
    *
    * @param {CityObjectStyle} otherStyle Another style.
+   * @returns {boolean} True if all the properties of the styles are equal
    */
   equals(otherStyle) {
     if (!(otherStyle instanceof CityObjectStyle)) {
@@ -56,7 +57,8 @@ export class CityObjectStyle {
    * Checks if the material properties of this object are equivalent to the ones
    * in parameter.
    *
-   * @param {any} otherProps Another material properties object.
+   * @param {object} otherProps Another material properties object.
+   * @returns {boolean} True if the props are equal
    */
   materialPropsEquals(otherProps) {
     if (this.materialProps === otherProps) {
