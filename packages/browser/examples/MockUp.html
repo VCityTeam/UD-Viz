@@ -16,6 +16,7 @@
         './assets/config/all_widget.json',
         './assets/config/extent_lyon.json',
         './assets/config/frame3D_planars.json',
+        './assets/config/widget/about.json',
         './assets/config/widget/server/geocoding_server.json',
         './assets/config/widget/slide_show.json',
         './assets/config/layer/3DTiles.json',
@@ -72,13 +73,15 @@
           frame3DPlanar.itownsView
         );
 
-        // // //// ABOUT MODULE
-        // const about = new udvizBrowser.Widget.AboutWindow(configs['about']);
-        // app.addWidgetView('about', about);
+        // //// ABOUT MODULE
+        const about = new udvizBrowser.Widget.AboutWindow(configs['about']);
+        about.parentElement = frame3DPlanar.ui;
+        app.addWidgetView('about', about);
 
-        // // //// HELP MODULE
-        // new udvizBrowser.Widget.HelpWindow(configs['help']); // => help window should be add with addWidgetView
-      });
+        // //// HELP MODULE
+        const help = new udvizBrowser.Widget.HelpWindow(frame3DPlanar.getRootWebGL(), configs['help']); // => help window should be add with addWidgetView
+        help.parentElement = 
+    });
     </script>
   </body>
 </html>
