@@ -19,8 +19,9 @@ export class SparqlQueryWindow extends Window {
    * @param {SparqlEndpointResponseProvider} sparqlProvider The SPARQL Endpoint Response Provider
    * @param {CityObjectProvider} cityObjectProvider The City Object Provider
    * @param {LayerManager} layerManager The UD-Viz LayerManager.
+   * @param {object} configSparql The sparqlModule configuration.
    */
-  constructor(sparqlProvider, cityObjectProvider, layerManager) {
+  constructor(sparqlProvider, cityObjectProvider, layerManager, sparqlConfig) {
     super('sparqlQueryWindow', 'SPARQL Query');
 
     /**
@@ -56,7 +57,7 @@ export class SparqlQueryWindow extends Window {
      *
      * @type {Graph}
      */
-    this.graph = new Graph(this);
+    this.graph = new Graph(this, sparqlConfig);
 
     /**
      * Contains the D3 table to display RDF data.

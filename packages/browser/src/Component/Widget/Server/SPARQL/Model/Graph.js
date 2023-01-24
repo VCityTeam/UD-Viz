@@ -9,16 +9,29 @@ export class Graph {
    * https://www.d3indepth.com/zoom-and-pan/
    *
    * @param {SparqlQueryWindow} window the window this graph is attached to.
-   * @param {number} height The SVG height.
-   * @param {number} width The SVG width.
-   * @param {number} fontSize The font size to use for node and link labels.
-   *                          This doesn't (yet) affect the legend font size.
+   * @param {Object} configSparql The sparqlModule configuration.
+   * @param {number} configSparql.height The SVG height.
+   * @param {number} configSparql.width The SVG width.
+   * @param {number} configSparql.fontSize The font size to use for node and link labels.
+   * @param {Object} configSparql.prefixes Prefix declarations which will replace text labels in the Legend.
+   *                                       This doesn't (yet) affect the legend font size.
    */
-  constructor(window, height = 500, width = 500, fontSize = 4) {
+  constructor(window, configSparql) {
+    if (
+      !configSparql ||
+      !configSparql.height ||
+      !configSparql.width ||
+      !configSparql.fontSize ||
+      !configSparql.prefixes) {
+        // console.log(configSparql);
+        throw 'The given "sparqlModule" configuration is incorrect.';
+    }
+
     this.window = window;
-    this.height = height;
-    this.width = width;
-    this.fontSize = fontSize;
+    this.height = configSparql.height;
+    this.width = configSparql.width;
+    this.fontSize = configSparql.fontSize;
+    this.knownPrefixes = configSparql.prefixes;
     this.typeList = [];
     this.svg = d3
       .create('svg')
@@ -26,53 +39,6 @@ export class Graph {
       .attr('viewBox', [0, 0, this.width, this.height])
       .style('display', 'hidden');
     // TODO: add prefixes dynamically using user query definitions 
-    this.knownPrefixes = new Map([
-      // Common prefixes
-      ['http://www.w3.org/1999/02/22-rdf-syntax-ns#', 'rdf'],
-      ['http://www.w3.org/2000/01/rdf-schema#', 'rdfs'],
-      ['http://www.w3.org/2002/07/owl#', 'owl'],
-      ['http://www.w3.org/2001/XMLSchema#', 'xsd'],
-      ['https://w3id.org/list#', 'list'],
-      ['http://www.w3.org/2004/02/skos/core#', 'skos'],
-      ['http://www.opengis.net/gml#', 'gml'],
-      ['http://www.opengis.net/ont/gml#', 'gmlowl'],
-      ['http://www.opengis.net/def/uom/OGC/1.0/', 'units'],
-      ['http://www.opengis.net/ont/geosparql#', 'geo'],
-      ['http://www.opengis.net/def/function/geosparql/', 'geof'],
-      ['http://strdf.di.uoa.gr/ontology#', 'strdf'],
-      ['http://www.w3.org/1999/xlink#', 'xlink'],
-      
-      // IFC2x3 Prefixes 
-      ['https://w3id.org/express#', 'express'],
-      ['http://standards.buildingsmart.org/IFC/DEV/IFC2x3/TC1/OWL#', 'ifc'],
-      
-      // CityGML 2.0 prefixes
-      ['https://raw.githubusercontent.com/VCityTeam/UD-Graph/master/Ontologies/CityGML/2.0/core#', 'core'],
-      ['https://raw.githubusercontent.com/VCityTeam/UD-Graph/master/Ontologies/CityGML/2.0/building#', 'bldg'],
-      ['https://raw.githubusercontent.com/VCityTeam/UD-Graph/master/Ontologies/CityGML/2.0/bridge#', 'brid'],
-      ['https://raw.githubusercontent.com/VCityTeam/UD-Graph/master/Ontologies/CityGML/2.0/landuse#', 'luse'],
-      ['https://raw.githubusercontent.com/VCityTeam/UD-Graph/master/Ontologies/CityGML/2.0/appearance#', 'app'],
-      ['https://raw.githubusercontent.com/VCityTeam/UD-Graph/master/Ontologies/CityGML/2.0/relief#', 'dem'],
-      ['https://raw.githubusercontent.com/VCityTeam/UD-Graph/master/Ontologies/CityGML/2.0/cityfurniture#', 'frn'],
-      ['https://raw.githubusercontent.com/VCityTeam/UD-Graph/master/Ontologies/CityGML/2.0/generics#', 'gen'],
-      ['https://raw.githubusercontent.com/VCityTeam/UD-Graph/master/Ontologies/CityGML/2.0/cityobjectgroup#', 'grp'],
-      ['https://raw.githubusercontent.com/VCityTeam/UD-Graph/master/Ontologies/CityGML/2.0/texturedsurface#', 'tex'],
-      ['https://raw.githubusercontent.com/VCityTeam/UD-Graph/master/Ontologies/CityGML/2.0/tunnel#', 'tun'],
-      ['https://raw.githubusercontent.com/VCityTeam/UD-Graph/master/Ontologies/CityGML/2.0/vegetation#', 'veg'],
-      ['https://raw.githubusercontent.com/VCityTeam/UD-Graph/master/Ontologies/CityGML/2.0/waterbody#', 'wtr'],
-      
-      // Versioning prefixes
-      ['https://raw.githubusercontent.com/VCityTeam/UD-Graph/master/Ontologies/CityGML/3.0/versioning#', 'vers'],
-      ['https://raw.githubusercontent.com/VCityTeam/UD-Graph/master/Ontologies/Workspace/3.0/transactiontypes#', 'type'],
-      
-      // Dataset prefixes
-      ['https://github.com/VCityTeam/UD-Graph/DOUA_BATI_2009-2018_Workspace#', 'vt'],
-      ['https://raw.githubusercontent.com/VCityTeam/Datasets/ifc_doua#', 'inst'],
-      ['https://github.com/VCityTeam/UD-Graph/DOUA_BATI_2009_stripped_split#', 'v2009'],
-      ['https://github.com/VCityTeam/UD-Graph/DOUA_BATI_2012_stripped_split#', 'v2012'],
-      ['https://github.com/VCityTeam/UD-Graph/DOUA_BATI_2015_stripped_split#', 'v2015'],
-      ['https://github.com/VCityTeam/UD-Graph/DOUA_BATI_2018_stripped_split#', 'v2018'],
-    ]);
   }
 
   /// Data Functions ///
@@ -372,9 +338,9 @@ export class Graph {
   getNodeColorId(uri) {
     const tURI = tokenizeURI(uri);
     let prefixedId = uri;
-    for (const prefix of this.knownPrefixes.entries()) {
-      if (prefix[0] == tURI.namespace) {
-        prefixedId = `${prefix[1]}:${tURI.id}`;
+    for (const key in this.knownPrefixes) {
+      if (key == tURI.namespace) {
+        prefixedId = `${this.knownPrefixes[key]}:${tURI.id}`;
       }
     }
 

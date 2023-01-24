@@ -45,7 +45,8 @@ export class SparqlModule {
     this.view = new SparqlWidgetView(
       this.sparqlProvider,
       this.cityObjectProvider,
-      this.layerManager
+      this.layerManager,
+      configSparql
     );
   }
 }
