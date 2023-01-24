@@ -4,6 +4,8 @@ import {
   getTileFromMesh,
   getVisibleTileCount,
 } from '../3DTiles/3DTilesUtils';
+import { TilesManager } from '../3DTiles/TilesManager';
+import * as itowns from 'itowns';
 
 export class LayerManager {
   /**
@@ -29,7 +31,7 @@ export class LayerManager {
    * Register a new or modify an existing registered style for all tilesManager.
    *
    * @param {string} name A name to identify the style.
-   * @param {CityObjectStyle} style The style to register.
+   * @param {import("../3DTiles/Model/CityObjectStyle").CityObjectStyle} style The style to register.
    */
   registerStyle(name, style) {
     this.tilesManagers.forEach(function (tilesManager) {
@@ -40,8 +42,7 @@ export class LayerManager {
   /**
    * Register a new or modify an existing registered style for all tilesManager.
    *
-   * @param {string} name A name to identify the style.
-   * @param {CityObjectStyle} style The style to register.
+   * @param {import("../3DTiles/Model/CityObjectStyle").CityObjectStyle} style The style to register.
    */
   setStyle(style) {
     this.tilesManagers.forEach(function (tilesManager) {
@@ -75,7 +76,7 @@ export class LayerManager {
   /**
    * Check if at least one 3DTiles layer is visible
    *
-   * @returns {boolean}
+   * @returns {boolean} True if at least one layer is visble
    */
   isOneLayerVisible() {
     for (let i = 0; i < this.tilesManagers.length; i++) {
@@ -89,7 +90,7 @@ export class LayerManager {
   /**
    * Change the visibilty of all 3DTiles layers
    *
-   * @param bool
+   * @param {boolean} bool The value to set layer visibility
    */
   changeVisibility(bool) {
     this.tilesManagers.forEach(function (tilesManager) {
@@ -102,7 +103,7 @@ export class LayerManager {
    * Update the scale of the given layer
    *
    * @param {itowns.Layer} layer one layer loaded.
-   * @param {float} scale Value of the new scale
+   * @param {number} scale Value of the new scale
    */
   updateScale(layer, scale) {
     layer.scale = scale;
@@ -113,7 +114,7 @@ export class LayerManager {
    * Update the opacity of the given layer
    *
    * @param {itowns.Layer} layer one layer loaded.
-   * @param {float} opacity Value of the new scale
+   * @param {number} opacity Value of the new scale
    */
   updateOpacity(layer, opacity) {
     layer.opacity = opacity;
@@ -132,7 +133,7 @@ export class LayerManager {
    * Returns the city object under the mouse cursor.
    *
    * @param {MouseEvent} event The mouse event.
-   * @returns {CityObject | undefined}
+   * @returns {import("../3DTiles/Model/CityObject").CityObject | undefined} The picked CityObject
    */
   pickCityObject(event) {
     /**
@@ -168,7 +169,7 @@ export class LayerManager {
    *
    * @param {string} batchTableKey The batch table key to search by.
    * @param {string} batchTableValue The batch table value to search for.
-   * @returns {CityObject | undefined}
+   * @returns {import("../3DTiles/Model/CityObject").CityObject | undefined} The picked CItyObject
    */
   pickCityObjectByBatchTable(batchTableKey, batchTableValue) {
     for (const tilesManager of this.tilesManagers) {
@@ -202,7 +203,7 @@ export class LayerManager {
    *
    * @param {string} batchTableKey The batch table key to search by.
    * @param {string} batchTableValue The batch table value to search for.
-   * @returns {Array<CityObject>}
+   * @returns {Array<import("../3DTiles/Model/CityObject").CityObject>} An array of picked CityObject
    */
   pickCityObjectsByBatchTable(batchTableKey, batchTableValue) {
     const cityObjects = [];
@@ -226,16 +227,19 @@ export class LayerManager {
    * Returns a tilesManager given a layer ID.
    *
    * @param {string} id the layer ID.
-   * @returns {TilesManager}
+   * @returns {TilesManager} The TilesManager handling the layer
    */
   getTilesManagerByLayerID(id) {
     for (let i = 0; i < this.tilesManagers.length; i++) {
       if (this.tilesManagers[i].layer.id === id) return this.tilesManagers[i];
     }
+    return undefined;
   }
 
   /**
    * Get all Layers loaded in the view.
+   *
+   * @returns {Array<itowns.Layer>} An array of iTowns layers
    */
   getLayers() {
     return this.view.getLayers();
@@ -245,7 +249,7 @@ export class LayerManager {
    * Get the number of tiles that have been loaded, across all the tileset that
    * have been loaded
    *
-   * @returns {int}
+   * @returns {number} The number of loaded tiles
    */
   getLoaded3DTilesTileCount() {
     let loadedTileCount = 0;
@@ -258,7 +262,7 @@ export class LayerManager {
   /**
    * Get the number of tiles across all the tileset
    *
-   * @returns {int}
+   * @returns {number} The number of tiles in all layers
    */
   getTotal3DTilesTileCount() {
     let totalTileCount = 0;
@@ -272,7 +276,7 @@ export class LayerManager {
    * Get the number of tiles visible, across all the tileset that
    * have been loaded
    *
-   * @returns {int}
+   * @returns {number} The number of visible tiles
    */
   getVisible3DTilesTileCountFromLayers() {
     let visibleTileCount = 0;
@@ -285,7 +289,7 @@ export class LayerManager {
   /**
    * Get Color layers in the view
    *
-   * @returns {Array<itown.ColorLayer>}
+   * @returns {Array<itowns.ColorLayer>} An array of all ColorLayers
    */
   getColorLayers() {
     return this.view.getLayers((layer) => layer.isColorLayer);
@@ -294,7 +298,7 @@ export class LayerManager {
   /**
    * Get Elevation layers in the view
    *
-   * @returns {Array<itown.ElevationLayer>}
+   * @returns {Array<itowns.ElevationLayer>} An array of all ElevationLayers
    */
   getElevationLayers() {
     return this.view.getLayers((layer) => layer.isElevationLayer);
@@ -303,7 +307,7 @@ export class LayerManager {
   /**
    * Get Geometry layers in the view
    *
-   * @returns {Array<itown.GeometryLayer>}
+   * @returns {Array<itowns.GeometryLayer>} An array of all GeometryLayers
    */
   getGeometryLayers() {
     return this.view.getLayers((layer) => layer.isGeometryLayer);
@@ -312,7 +316,7 @@ export class LayerManager {
   /**
    * Get Geometry layers in the view, without the planar one
    *
-   * @returns {Array<itown.GeometryLayer>}
+   * @returns {Array<itowns.GeometryLayer>} An array of all GeometryLayers, except the planar
    */
   getGeometryLayersWithoutPlanar() {
     return this.view.getLayers(
