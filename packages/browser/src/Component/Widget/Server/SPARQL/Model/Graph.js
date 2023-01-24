@@ -47,9 +47,10 @@ export class Graph {
   /**
    * Create a new graph based on an graph dataset.
    *
-   * @param {object} data an RDF JSON object.
+   * @param {object} response an RDF JSON object.
    */
-  update(data) {
+  update(response) {
+    const data = this.formatResponseData(response);
     this.clear();
 
     const links = data.links.map((d) => Object.create(d));
@@ -256,19 +257,19 @@ export class Graph {
   /**
    * Getter for retrieving the d3 svg.
    *
-   * @returns {d3.svg.node}
+   * @returns {d3.svg.node} return the D3 svg object that represents the graph
    */
-  get canvas() {
+  get svg() {
     return this.svg.node();
   }
 
   /**
-   * return a query response formatted for a D3.js graph.
+   * return a SPARQL endpoint query response formatted for a D3.js graph.
    *
-   * @param {object} data An object containing graph data from a SparqlRespone
-   * @returns {object}
+   * @param {object} response A JSON object returned by a SparqlEndpointResponseProvider.EVENT_ENDPOINT_RESPONSE_UPDATED event
+   * @returns {object} A data object formatted for constructing a D3.js graph svg
    */
-  formatResponseDataAsGraph(data) {
+  formatResponseData(response) {
     const graphData = {
       nodes: [
         // { id: 'x', color_id: 1 },
@@ -285,18 +286,18 @@ export class Graph {
     };
 
     if (
-      data.head.vars.includes('subject') &&
-      data.head.vars.includes('predicate') &&
-      data.head.vars.includes('object')
+      response.head.vars.includes('subject') &&
+      response.head.vars.includes('predicate') &&
+      response.head.vars.includes('object')
     ) {
       if (
-        data.head.vars.includes('subjectType') &&
-        data.head.vars.includes('objectType')
+        response.head.vars.includes('subjectType') &&
+        response.head.vars.includes('objectType')
       ) {
         /* If the query is formatted using subject, subjectType, predicate, object,
            and objectType variables the node color based on the type of the subject
            or object's respective type */
-        for (const triple of data.results.bindings) {
+        for (const triple of response.results.bindings) {
           if (
             // if the subject doesn't exist yet
             graphData.nodes.find((n) => n.id == triple.subject.value) ==
@@ -336,7 +337,7 @@ export class Graph {
       } else {
         /* If the query is formatted using just subject, predicate, and object,
            variables the node color is left black */
-        for (const triple of data.results.bindings) {
+        for (const triple of response.results.bindings) {
           if (
             // if the subject doesn't exist yet
             graphData.nodes.find((n) => n.id == triple.subject.value) ==
@@ -373,11 +374,11 @@ export class Graph {
     return graphData;
   }
   /**
-   * Get the color ID of a uri. Add the uri to the type array
-   * if it does not exist.
+   * Get the id (or index) of a uri from the typeList. Each type in the type list is used
+   * to color nodes in the graph. If the uri does not exist in the typeList, add the uri.
    *
-   * @param {string} uri the uri to map to a color id.
-   * @returns {number}
+   * @param {string} uri the uri to map to a color index.
+   * @returns {number} the index of the color
    */
   getNodeColorId(uri) {
     const tURI = tokenizeURI(uri);
@@ -422,13 +423,13 @@ export class Graph {
   /**
    * Create a drag effect for graph nodes within the context of a force simulation
    *
-   * @param {d3.forceSimulation} simulation
-   * @returns {d3.drag}
+   * @param {d3.forceSimulation} simulation The active D3 force simulation of the graph
+   * @returns {d3.drag} a D3 drag function to enable dragging nodes within the graph
    */
   drag(simulation) {
     /**
      *
-     * @param event
+     * @param {d3.D3DragEvent} event the drag event containing information on which node is being clicked and dragged
      */
     function dragstarted(event) {
       if (!event.active) simulation.alphaTarget(0.3).restart();
@@ -438,7 +439,7 @@ export class Graph {
 
     /**
      *
-     * @param event
+     * @param {d3.D3DragEvent} event the drag event containing information on which node is being clicked and dragged
      */
     function dragged(event) {
       event.subject.fx = event.x;
@@ -447,7 +448,7 @@ export class Graph {
 
     /**
      *
-     * @param event
+     * @param {d3.D3DragEvent} event the drag event containing information on which node is being clicked and dragged
      */
     function dragended(event) {
       if (!event.active) simulation.alphaTarget(0);
@@ -465,7 +466,7 @@ export class Graph {
   /**
    * A handler function for selecting elements to transform during a zoom event
    *
-   * @param {d3.D3ZoomEvent} event
+   * @param {d3.D3ZoomEvent} event the zoom event containing information on how the svg canvas is being translated and scaled
    */
   handleZoom(event) {
     d3.selectAll('svg g')
