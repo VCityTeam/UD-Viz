@@ -1,5 +1,5 @@
 /** @class */
-module.exports = class Command {
+class Command {
   /**
    * Create a Command (this class can be used to make different process communicate together)
    *
@@ -10,10 +10,18 @@ module.exports = class Command {
   constructor(json) {
     if (!json) throw new Error('no json');
 
-    /** @type {string} Type of the command */
+    /**
+     * Type of the command
+     *
+     * @type {string}
+     */
     this.type = json.type;
 
-    /** @type {object|null} Data of the command */
+    /**
+     * Data of the command
+     *
+     * @type {object|null}
+     */
     this.data = null;
     if (json.data != undefined) {
       this.data = json.data;
@@ -46,4 +54,6 @@ module.exports = class Command {
       data: this.data,
     };
   }
-};
+}
+
+module.exports = Command;

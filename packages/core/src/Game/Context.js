@@ -5,39 +5,75 @@ const GameScript = require('./Component/GameScript');
 const Object3D = require('./Object3D');
 const State = require('./State/State');
 const Command = require('../Command');
-
 /**
  * @callback ContextListener
  * @param {*} params - params pass when event is dispatched
  */
+
+/**
+ * MODULE Context
+ *
+ * @module Context
+ */
+
 /** @class */
 const Context = class {
   /**
    * Handle Game collisions + {@link ScriptBase}
    *
-   * @param {Object<string,ScriptBase>} gameScriptClass - map of class extended {@link ScriptBase}
+   * @param {Object<string,import("./Context").ScriptBase>} gameScriptClass - map of class extended {@link ScriptBase}
    * @param {Object3D} object3D - root game object3D
    */
   constructor(gameScriptClass, object3D) {
-    /** @type {Object<string,ScriptBase>} - class that can be reference by {@link GameScript} of an object3D */
+    /**
+     * class that can be reference by {@link GameScript} of an object3D
+     *
+     * @type {Object<string,import("./Context").ScriptBase>}
+     */
     this.gameScriptClass = gameScriptClass;
 
-    /** @type {Object3D} root game object3D */
+    /**
+     * root game object3D
+     *
+     * @type {import("./Object3D").Object3D}
+     */
     this.object3D = object3D;
 
-    /** @type {Collisions} Collisions system {@link https://www.npmjs.com/package/detect-collisions}*/
+    /**
+     * Collisions system {@link https://www.npmjs.com/package/detect-collisions}
+     *
+     * @type {Collisions}
+     */
     this.collisions = new Collisions();
 
-    /** @type {Object<string,string>} Buffer to handle collision events {@link Context.EVENT} */
+    /**
+     * Buffer to handle collision events {@link Context.EVENT}
+     *
+     * @type {Object<string,string>}
+     */
     this.collisionsBuffer = {};
 
-    /** @type {Object<string,ContextListener[]>} Listeners of custom events */
+    /**
+     * Listeners of custom events
+     *
+     * @type {Object<string,ContextListener[]>}
+     */
+
     this.listeners = {};
 
-    /** @type {number} delta time */
+    /**
+     * delta time
+     *
+     * @type {number}
+     */
     this.dt = 0;
 
-    /** @type {Command[]} buffer of commands to apply at the next step */
+    /**
+     * buffer of commands to apply at the next step
+     *
+     * @type {Command[]}
+     */
+
     this.commands = [];
   }
 
@@ -47,7 +83,7 @@ const Context = class {
    * @param {string} id - id of the class
    * @param {Object3D} object3D - object3D that is going to use this instance
    * @param {object} modelVariables - custom variables associated to this instance
-   * @returns {ScriptBase} - instance of the class bind with object3D and modelVariables
+   * @returns {import("./Context").ScriptBase} - instance of the class bind with object3D and modelVariables
    */
   createInstanceOf(id, object3D, modelVariables) {
     const constructor = this.gameScriptClass[id];
@@ -73,7 +109,7 @@ const Context = class {
   /**
    * Load an object3D into context
    *
-   * @param {Object3D} obj - object3D to load
+   * @param {import("./Object3D").Object3D} obj - object3D to load
    * @returns {Promise} - promise resolving at the end of the load
    */
   loadObject3D(obj) {
@@ -181,9 +217,9 @@ const Context = class {
   /**
    * It will dispatch an event to all {@link ScriptBase} in object3D
    *
-   * @param {Object3D} object3D - object3D that you want to dispatch the event to.
+   * @param {import("./Object3D").Object3D} object3D - object3D that you want to dispatch the event to.
    * @param {string} event - name of the event to dispatch see possible value in {@link Context.EVENT}
-   * @param {*[]} params - params to pass to {@link ScriptBase}
+   * @param {any[]} params - params to pass to {@link ScriptBase}
    */
   dispatchScriptEvent(object3D, event, params = []) {
     object3D.traverse(function (child) {
@@ -238,7 +274,7 @@ const Context = class {
   /**
    * Add a object3D into the collision system
    *
-   * @param {Object3D} object3D - object3D to register
+   * @param {import("./Object3D").Object3D} object3D - object3D to register
    */
   registerObject3DCollision(object3D) {
     object3D.traverse((child) => {
@@ -448,6 +484,8 @@ const Context = class {
 
 /**
  * Events triggered by context to {@link ScriptBase}
+ *
+ * @type {Object<string,string>}
  */
 Context.EVENT = {
   LOAD: 'load',
@@ -458,6 +496,9 @@ Context.EVENT = {
   ON_LEAVE_COLLISION: 'onLeaveCollision',
 };
 
+/**
+ * @class
+ */
 const ScriptBase = class {
   /**
    * Skeleton of a game context script, different {@link Context.EVENT} are trigger by {@link Context}
@@ -467,11 +508,23 @@ const ScriptBase = class {
    * @param {object} variables - custom variables bind (attach) to this script
    */
   constructor(context, object3D, variables) {
-    /** @type {Context} - context of this script */
+    /**
+     * context of this script
+     *
+     * @type {Context}
+     */
     this.context = context;
-    /** @type {Object3D} - object3D attach to this script */
+    /**
+     * object3D attach to this script
+     *
+     * @type {Object3D}
+     */
     this.object3D = object3D;
-    /** @type {object} - custom variables attach to this script */
+    /**
+     * custom variables attach to this script
+     *
+     * @type {object}
+     */
     this.variables = variables;
   }
   /**

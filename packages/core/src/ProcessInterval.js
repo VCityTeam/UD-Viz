@@ -3,6 +3,7 @@
  * @param {number} dt
  */
 
+/** @class */
 const ProcessInterval = class {
   /**
    * Create a loop process based on the setInterval native js method
@@ -11,13 +12,25 @@ const ProcessInterval = class {
    * @param {number} [options.fps=60] - frame rate per second of the process
    */
   constructor(options = {}) {
-    /** @type {number} - frame rate per second of the process*/
+    /**
+     * frame rate per second of the process
+     *
+     * @type {number}
+     */
     this.fps = options.fps || 60;
 
-    /** @type {ProcessIntervalTickRequester[]} - buffer of the ProcessIntervalTickRequester */
+    /**
+     * buffer of the ProcessIntervalTickRequester
+     *
+     * @type {ProcessIntervalTickRequester[]}
+     */
     this.tickRequesters = [];
 
-    /** @type {boolean} - if true the process is not going to call ProcessIntervalTickRequester */
+    /**
+     * if true the process is not going to call ProcessIntervalTickRequester
+     *
+     * @type {boolean}
+     */
     this.pause = false;
   }
 

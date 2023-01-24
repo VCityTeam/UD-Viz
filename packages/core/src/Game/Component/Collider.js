@@ -3,13 +3,6 @@ const { Component, Model, Controller } = require('./Component');
 const THREE = require('three');
 
 /**
- * Collider object3D component, this component use {@link https://www.npmjs.com/package/detect-collisions}, note that collisions are handle in 2D
- */
-const ColliderComponent = class extends Component {};
-
-ColliderComponent.TYPE = 'Collider';
-
-/**
  * @typedef {object} PolygonJSON - json object to configure {@link Polygon} of {@link https://www.npmjs.com/package/detect-collisions}
  * @property {string} type - to identify this is a Polygon must be equal to "Polygon"
  * @property {Array<{x,y}>} points - points of the polygon
@@ -22,23 +15,43 @@ ColliderComponent.TYPE = 'Collider';
  * @property {number} radius - radius of the circle
  */
 
+/**
+ * Collider object3D component, this component use {@link https://www.npmjs.com/package/detect-collisions}, note that collisions are handle in 2D
+ *
+ * @class
+ */
+const ColliderComponent = class extends Component {};
+
+ColliderComponent.TYPE = 'Collider';
+
+/**
+ * @class
+ */
 const ColliderModel = class extends Model {
   /**
    * Model of a collider component
    *
    * @param {object} json - object to configure collider model
    * @param {string} json.uuid - uuid collider model
-   * @param {Array<PolygonJSON|CircleJSON>=} json.shapes - shapes of collisions
+   * @param {Array<PolygonJSON|CircleJSON>} [json.shapes] - shapes of collisions
    * @param {boolean} json.body - if true this is a physics collisions
    * @todo body should be handle by context (meaning context move according the physic of the collision)
    */
   constructor(json) {
     super(json);
 
-    /** @type {Array<PolygonJSON|CircleJSON>} - shapes of collisions */
+    /**
+     * shapes of collisions
+     *
+     * @type {Array<PolygonJSON|CircleJSON>}
+     */
     this.shapesJSON = json.shapes || [];
 
-    /** @type {boolean} - if true this is a physics collision */
+    /**
+     * if true this is a physics collision
+     *
+     * @type {boolean}
+     */
     this.body = json.body || false;
   }
 
@@ -72,20 +85,27 @@ const ColliderModel = class extends Model {
   }
 };
 
+/**
+ * @class
+ */
 class ColliderController extends Controller {
   /**
    * Controller collider component
    *
    * @param {ColliderModel} model - model controller
-   * @param {object} object3D - object3D parent of this collider component
+   * @param {import("../Object3D").Object3D} object3D - object3D parent of this collider component
    */
   constructor(model, object3D) {
     super(model, object3D);
 
-    /** @type {ShapeWrapper[]} - shapes wrapper {@link ShapeWrapper} */
+    /**
+     * shapes wrapper {@link ShapeWrapper}
+     *
+     * @type {import("./Collider").ShapeWrapper}
+     */
     this.shapeWrappers = [];
 
-    // initialize shape wrapper from model shapesJSON
+    /**  initialize shape wrapper from model shapesJSON */
     this.model.getShapesJSON().forEach((shapeJSON) => {
       const wrapper = new ShapeWrapper(this.object3D, shapeJSON);
       this.shapeWrappers.push(wrapper);
@@ -116,6 +136,9 @@ class ColliderController extends Controller {
   }
 }
 
+/**
+ * @class
+ */
 class ShapeWrapper {
   /**
    * Wrap {@link Polygon} or {@link Circle} of {@link https://www.npmjs.com/package/detect-collisions}
@@ -124,13 +147,25 @@ class ShapeWrapper {
    * @param {PolygonJSON|CircleJSON} json - shapeJSON
    */
   constructor(object3D, json) {
-    /** @type {object} - object3D parent of the controller collider */
+    /**
+     * object3D parent of the controller collider
+     *
+     * @type {object}
+     */
     this.object3D = object3D;
 
-    /** @type {PolygonJSON|CircleJSON} - shape JSON */
+    /**
+     * shape JSON
+     *
+     * @type {PolygonJSON|CircleJSON}
+     */
     this.json = json;
 
-    /** @type {Polygon|Circle} - {@link Circle} or {@link Polygon} of {@link https://www.npmjs.com/package/detect-collisions} */
+    /**
+     * {@link Circle} or {@link Polygon} of {@link https://www.npmjs.com/package/detect-collisions}
+     *
+     * @type {Polygon|Circle}
+     */
     this.shape = null;
     this.initShapeFromJSON(json);
   }
@@ -216,8 +251,21 @@ class ShapeWrapper {
   }
 }
 
+/**
+ * MODULE Collider
+ *
+ * @module  Collider
+ */
+
 module.exports = {
+  /**
+   * API FOR {@link ColliderComponent}
+   *
+   * @type{@typeof ColliderComponent}
+   */
   Component: ColliderComponent,
+  /** @class API FOR {@link ColliderModel}*/
   Model: ColliderModel,
+  /** @class API FOR {@link ColliderController}*/
   Controller: ColliderController,
 };

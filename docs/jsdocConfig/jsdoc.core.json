@@ -1,6 +1,18 @@
 {
   "source": {
-    "include": ["packages/core/src"]
+    "include": [
+      "packages/core/src/EventSender.js",
+      "packages/core/src/Command.js",
+      "packages/core/src/Data.js",
+      "packages/core/src/index.js",
+      "packages/core/src/ProcessInterval.js",
+      "packages/core/src/Type.js",
+      "packages/core/src/Game/Context.js",
+      "packages/core/src/Game/Object3D.js",
+      "packages/core/src/Game/Component/Component.js",
+      "packages/core/src/Game/Component/Audio.js",
+      "packages/core/src/Game/Component/Collider.js"
+    ]
   },
   "opts": {
     "destination": "./docs/htmlTest/core",
