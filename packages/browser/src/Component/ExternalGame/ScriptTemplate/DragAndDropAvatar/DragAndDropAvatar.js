@@ -122,12 +122,17 @@ export class DragAndDropAvatar extends ExternalScriptBase {
       // send Z_Update to game context
       this.context.sendCommandToGameContext([
         new Command({
-          type: Game.ScriptTemplate.Constants.COMMAND.Z_UPDATE,
-          data: computeRelativeElevationFromGround(
-            this.avatar,
-            this.context.frame3D.itownsView.tileLayer,
-            this.variables.update_z_crs
-          ),
+          type: Game.ScriptTemplate.Constants.COMMAND.UPDATE_TRANSFORM,
+          data: {
+            object3DUUID: this.avatar.uuid,
+            position: {
+              z: computeRelativeElevationFromGround(
+                this.avatar,
+                this.context.frame3D.itownsView.tileLayer,
+                this.variables.update_z_crs
+              ),
+            },
+          },
         }),
       ]);
     }
@@ -170,7 +175,7 @@ export class DragAndDropAvatar extends ExternalScriptBase {
           );
 
           // register command in input manager
-          this.commandController.addNativeCommands();
+          this.commandController.addNativeCommands(this.avatar.uuid);
 
           // add ui to switch back to planar controls
           this.context.frame3D.appendToUI(this.leaveAvatarModeButton);

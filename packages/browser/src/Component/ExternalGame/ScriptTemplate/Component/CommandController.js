@@ -51,11 +51,14 @@ export class CommandController {
   /**
    * Add native commands in input manager
    */
-  addNativeCommands() {
+  addNativeCommands(object3DUUID) {
     for (const key in MAPPING) {
       const map = MAPPING[key];
       this.inputManager.addKeyCommand(map.id, map.keys, () => {
-        return new Command({ type: map.cmdType });
+        return new Command({
+          type: map.cmdType,
+          data: { object3DUUID: object3DUUID }, // object3D to control
+        });
       });
     }
   }

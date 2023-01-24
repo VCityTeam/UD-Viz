@@ -9,10 +9,11 @@ module.exports = {
    * @type {import('./ExpressAppWrapper')}
    */
   ExpressAppWrapper: require('./ExpressAppWrapper'),
-  /** @type {import('./GameService')} */
-  GameService: require('./GameService'),
+  /** @type {import('./Game')} */
+  Game: require('./Game/Game'),
   /** @type {import('./Test')} */
   Test: require('./Test'),
   /** @type {import('./Debug')} */
   Debug: require('./Debug'),
+  Core: require('@ud-viz/core'),
 };

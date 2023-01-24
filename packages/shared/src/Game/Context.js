@@ -431,7 +431,7 @@ const Context = class {
    *
    * @param {Command[]} cmds - new commands to apply at the next step
    */
-  onCommand(cmds) {
+  onCommands(cmds) {
     cmds.forEach((cmd) => {
       this.commands.push(cmd);
     });

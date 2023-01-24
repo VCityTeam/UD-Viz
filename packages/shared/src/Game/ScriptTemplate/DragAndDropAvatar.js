@@ -24,7 +24,7 @@ module.exports = class DragAndDropAvatar extends ScriptBase {
   }
 
   tick() {
-    applyNativeCommands(this.context.commands, this.avatar, this.context.dt);
+    applyNativeCommands(this.context);
 
     // apply commands specific at drag and drop avatar
     this.context.commands.forEach((command) => {
