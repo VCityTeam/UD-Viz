@@ -1,7 +1,7 @@
 /**
  * `MODULE` Type
  *
- * @module Type
+ * @exports Type
  */
 module.exports = {
   /**

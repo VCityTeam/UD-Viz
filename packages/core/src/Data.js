@@ -4,7 +4,7 @@ const Type = require('./Type');
 /**
  * `MODULE` Data
  *
- * @module Data
+ * @exports Data
  */
 
 /**

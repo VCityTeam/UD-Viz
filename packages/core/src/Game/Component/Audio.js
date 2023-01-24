@@ -1,12 +1,6 @@
 const { Component, Model } = require('./Component');
 
 /**
- * MODULE Audio
- *
- * @module Audio
- */
-
-/**
  * Audio object3D component
  *
  * @see module:Audio
