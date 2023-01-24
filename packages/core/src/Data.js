@@ -1,6 +1,15 @@
 const THREE = require('three');
 const Type = require('./Type');
 
+/**
+ * MODULE Data
+ *
+ * @module Data
+ */
+
+/**
+ * @class
+ */
 class PartialString {
   /**
    * Part of a global string
@@ -9,16 +18,32 @@ class PartialString {
    * @param {string} data - part of the initial string
    */
   constructor(stringUUID, data) {
-    /** @type {string} - uuid of the initial string splited */
+    /**
+     * uuid of the initial string splited
+     *
+     *  @type {string}
+     */
     this.stringUUID = stringUUID;
 
-    /** @type {string} - part of the initial string */
+    /**
+     * part of the initial string
+     *
+     *  @type {string}
+     */
     this.data = data;
 
-    /** @type {number} - index of the position of this in the initial string */
+    /**
+     * index of the position of this in the initial string
+     *
+     *  @type {number}
+     */
     this.index = -1;
 
-    /** @type {number} - total number of partial string of the initial string */
+    /**
+     * total number of partial string of the initial string
+     *
+     *  @type {number}
+     */
     this.totalPartialStringCount = -1;
   }
 
@@ -41,12 +66,19 @@ class PartialString {
   }
 }
 
+/**
+ * @class
+ */
 class StringComposer {
   /**
    * Recompose string with {@link PartialString}
    */
   constructor() {
-    /** @type {Object<string,Object<number,PartialString>>} - buffer of all string being recompose */
+    /**
+     * buffer of all string being recompose
+     *
+     * @type {Object<string,Object<number,PartialString>>}
+     */
     this.buffer = {};
   }
 
@@ -93,12 +125,16 @@ class StringComposer {
 
 /**
  * Max size of the data of a {@link PartialString}
+ *
+ * @memberof StringComposer
+ * @type {number}
  */
 StringComposer.MAX_STRING_SIZE = 10000;
 
 /**
  * Split a large string (superior at {@link StringComposer.MAX_STRING_SIZE}) into {@link PartialString}
  *
+ * @memberof StringComposer
  * @param {string} largeString - a string with a size superior at {@link StringComposer.MAX_STRING_SIZE}
  * @returns {PartialString[]} - an array containing all the {@link PartialString}
  */
@@ -361,7 +397,6 @@ function imageToDataURI(arrayBuffer, mimeType, chunkSize = 8 * 1024) {
  * the path qualifiers must be separated by dots ('.'). If the path is not
  * nested (does not contain any dot), the function is equivalent to `obj[path]`.
  *
- *
  * @param {object} obj - object to get attribute
  * @param {string} path - path to get the attribute
  * @returns {*} - attribute vaue
@@ -478,7 +513,6 @@ function objectParseNumeric(json) {
     }
   });
 }
-
 module.exports = {
   PartialString: PartialString,
   StringComposer: StringComposer,

@@ -13,51 +13,87 @@ const Object3D = class extends THREE.Object3D {
    * Base class extended {@link THREE.Object3D} to compose 3D scene of ud-viz game
    *
    * @param {object} json - json to configure the object3D
-   * @param {string=} json.uuid - uuid
-   * @param {string=} json.parentUUID - uuid of this parent object3D
+   * @param {string} [json.uuid] - uuid
+   * @param {string} [json.parentUUID] - uuid of this parent object3D
    * @param {string} [json.name=""] - name
-   * @param {boolean=} [json.static=false] - static default is false
-   * @param {boolean=} [json.outdated=false] - outdated
-   * @param {boolean=} [json.gameContextUpdate=true] - should be update from the game context
-   * @param {string[]=} [json.forceToJSONComponent=[]] - force certain component to be export in json
-   * @param {Object<string,object>=} [json.components={}] - components {@link Component}
-   * @param {Array=} [json.matrix] - matrix
+   * @param {boolean} [json.static=false] - static
+   * @param {boolean} [json.outdated=false] - outdated
+   * @param {boolean} [json.gameContextUpdate=true] - should be update from the game context
+   * @param {Array<string>} [json.forceToJSONComponent=[]] - force certain component to be export in json
+   * @param {Object<string,object>} [json.components={}] - components {@link Component}
+   * @param {Array} [json.matrix] - matrix
    * @param {object[]} [json.children] - json of children of object3D
    */
   constructor(json) {
     super();
 
-    /** @type {boolean} tag to make difference between this and THREE.Object3D */
+    /**
+     * tag to make difference between this and THREE.Object3D
+     *
+     * @type {boolean}
+     */
     this.isGameObject3D = true;
 
     json = Object3D.parseJSON(json);
 
     if (json.uuid != undefined) {
-      /** @type {string} - uuid of object3D */
+      /**
+       * uuid of object3D
+       *
+       * @type {string}
+       */
       this.uuid = json.uuid;
     }
 
-    /** @type {string|null} - uuid of the parent object3D */
+    /**
+     * uuid of the parent object3D
+     *
+     * @type {string|null}
+     */
     this.parentUUID = json.parentUUID || null;
 
-    /** @type {string} - name of object3D */
+    /**
+     * name of object3D
+     *
+     * @type {string}
+     */
     this.name = json.name || '';
 
-    /** @type {boolean} - true if the object3D is not going to move in space */
+    /**
+     * true if the object3D is not going to move in space
+     *
+     * @type {boolean}
+     */
     this.static = json.static || false;
-    // https://threejs.org/docs/#manual/en/introduction/How-to-update-things
+    /**
+     * {@link https://threejs.org/docs/#manual/en/introduction/How-to-update-things}
+     *
+     * @type {boolean}
+     */
     this.matrixAutoUpdate = !this.static;
 
-    /** @type {boolean} - true if object3D model has changed */
+    /**
+     * true if object3D model has changed
+     *
+     * @type {boolean}
+     */
     this.outdated = json.outdated || false;
 
-    /** @type {boolean} - true if object3D should consider game context update  */
+    /**
+     * true if object3D should consider game context update
+     *
+     * @type {boolean}
+     */
     this.gameContextUpdate = true;
     if (json.gameContextUpdate != undefined) {
       this.gameContextUpdate = json.gameContextUpdate;
     }
 
-    /** @type {string[]} - force certain component to be export in json */
+    /**
+     * force certain component to be export in json
+     *
+     * @type {string[]}
+     */
     this.forceToJSONComponent = json.forceToJSONComponent || [];
 
     /** @type {Object<string,object>} */

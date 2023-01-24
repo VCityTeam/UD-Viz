@@ -1,7 +1,8 @@
 const State = require('./State');
 const Diff = require('./Diff');
 
-module.exports = class Interpolator {
+/** @class */
+class Interpolator {
   /**
    * Handle reception of states over time and can on demand compute current states that need to be processed.
    * Current states are delivered/computed with a delay and can be interpolated in order to "smooth" them
@@ -183,4 +184,6 @@ module.exports = class Interpolator {
 
     return result;
   }
-};
+}
+
+module.exports = Interpolator;

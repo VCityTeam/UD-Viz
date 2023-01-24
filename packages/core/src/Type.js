@@ -1,3 +1,8 @@
+/**
+ * MODULE Type
+ *
+ * @module Type
+ */
 module.exports = {
   /**
    * Check if a string is a valid number

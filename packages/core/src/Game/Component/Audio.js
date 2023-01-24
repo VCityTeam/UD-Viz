@@ -1,28 +1,49 @@
 const { Component, Model } = require('./Component');
 
 /**
+ * MODULE Audio
+ *
+ * @module Audio
+ */
+
+/**
  * Audio object3D component
+ *
+ * @class
  */
 const AudioComponent = class extends Component {};
 
 AudioComponent.TYPE = 'Audio';
 
+/**
+ * Audio object3D ModelComponent
+ *
+ * @class
+ */
 const AudioModel = class extends Model {
   /**
    * Audio model component
    *
    * @param {object} json - json object to configure model
    * @param {string} json.uuid - uuid model
-   * @param {string[]=} json.sounds - array of sound id needed for this component
+   * @param {string[]} [json.sounds] - array of sound id needed for this component
    * @param {object} json.conf - configuration of sounds
    */
   constructor(json) {
     super(json);
 
-    /** @type {string[]} - array of sound id needed for this component */
+    /**
+     * array of sound id needed for this component
+     *
+     * @type {string[]}
+     */
     this.soundsJSON = json.sounds || [];
 
-    /** @type {object} - configuration of sounds */
+    /**
+     * configuration of sounds
+     *
+     * @type {object}
+     */
     this.conf = json.conf || {};
   }
 

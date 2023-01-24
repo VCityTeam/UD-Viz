@@ -9,7 +9,8 @@
  * @param {*} data - data
  */
 
-module.exports = class EventSender {
+/** @class */
+class EventSender {
   /**
    * Class to manage events. Represents an object that can send events.
    * Any part of the code can listen to these events. They can either listen to
@@ -111,4 +112,6 @@ module.exports = class EventSender {
       this.allEventsListeners.splice(index, 1);
     }
   }
-};
+}
+
+module.exports = EventSender;
