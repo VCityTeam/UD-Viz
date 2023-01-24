@@ -149,17 +149,16 @@ export class SparqlQueryWindow extends Window {
   /**
    * Update the DataView.
    *
-   * @param {object} data SPARQL query response data.
-   * @param response
-   * @param {object} view_type The selected semantic data view type.
+   * @param {object} response A JSON object returned by a SparqlEndpointResponseProvider.EVENT_ENDPOINT_RESPONSE_UPDATED event
+   * @param {string} view_type The selected semantic data view type.
    */
   updateDataView(response, view_type) {
-    console.debug(response);
+    console.info(response);
     this.clearDataView();
     switch (view_type) {
       case 'graph':
-        this.graph.update(this.graph.formatResponseDataAsGraph(response));
-        this.dataView.append(this.graph.canvas);
+        this.graph.update(response);
+        this.dataView.append(this.graph.svg);
         break;
       case 'json':
         this.jsonRenderer.renderjson.set_icons('▶', '▼');
