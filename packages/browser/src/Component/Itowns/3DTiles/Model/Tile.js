@@ -54,7 +54,7 @@ export class Tile {
    * Returns the Object3D representing the tile. This is the root object of the
    * tile and it contains the batch table.
    *
-   * @returns {THREE.Object3D}
+   * @returns {THREE.Object3D} The Object3D representing the tile
    */
   getObject3D() {
     return getTileInLayer(this.layer, this.tileId);
@@ -64,7 +64,7 @@ export class Tile {
    * Returns the Meshes of the tile. The Meshes contain the geometry and the
    * material properties.
    *
-   * @returns {THREE.Mesh}
+   * @returns {Array<THREE.Mesh>} The THREE.js meshes in the tile
    */
   getMeshes() {
     return this.getObject3D().children[0].children;
@@ -73,9 +73,8 @@ export class Tile {
   /**
    * Returns the material of the mesh
    *
-   * @param {THREE.Mesh}
-   * @param mesh
-   * @returns {THREE.Material}
+   * @param {THREE.Mesh} mesh A THREE.js mesh
+   * @returns {THREE.Material} The material of the mesh
    */
   getDefaultMaterial(mesh) {
     const material = Array.isArray(mesh.material)
@@ -88,7 +87,7 @@ export class Tile {
    * Checks if the tile is currently visible in the scene, ie. if an Object3D
    * with the same ID is present in the tileset.
    *
-   * @returns {boolean}
+   * @returns {boolean} True if the tile is visible
    */
   isVisible() {
     return this.getObject3D() !== undefined;
@@ -97,7 +96,7 @@ export class Tile {
   /**
    * Checks if the `cityObjects` attribute has been filled with city objects.
    *
-   * @returns {boolean}
+   * @returns {boolean} True if this tile has loaded CityObjects
    */
   isLoaded() {
     return this.cityObjects !== null;
@@ -106,8 +105,8 @@ export class Tile {
   /**
    * Checks whether the batch table have a specifc attribute
    *
-   * @param {string} attributeName
-   * @returns {boolean}
+   * @param {string} attributeName The name of an attribute
+   * @returns {boolean} True if the batch table of the tile contains the attribute
    */
   asAttributeInBatchTable(attributeName) {
     return attributeName in this.batchTable.content;
@@ -117,7 +116,7 @@ export class Tile {
    * If visible, parse the Object3D and the Mesh of the tile to create the
    * city objects.
    *
-   * @param {TilesManager} tilesManager
+   * @param {TilesManager} tilesManager The TilesManager handling this tile
    */
   loadCityObjects(tilesManager) {
     if (this.isLoaded()) {
