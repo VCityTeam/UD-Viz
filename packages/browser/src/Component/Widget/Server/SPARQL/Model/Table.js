@@ -26,7 +26,7 @@ export class Table {
    * @param {Array} columns The columns to render.
    */
   dataAsTable(data, columns) {
-    console.log(data);
+    // console.log(data);
     this.data = data;
     this.columns = columns;
     this.filter_div = document.createElement('div');

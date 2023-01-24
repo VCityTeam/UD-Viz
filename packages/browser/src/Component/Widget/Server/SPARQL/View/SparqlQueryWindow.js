@@ -3,7 +3,7 @@ import { SparqlEndpointResponseProvider } from '../Service/SparqlEndpointRespons
 import { Graph } from '../Model/Graph';
 import { Table } from '../Model/Table';
 import * as URI from '../Model/URI';
-import { LayerManager } from '../../../Component/Component';
+import { LayerManager } from '../../../../Itowns/LayerManager/LayerManager';
 import { CityObjectProvider } from '../../../CityObjects/ViewModel/CityObjectProvider';
 import { JsonRenderer } from './JsonRenderer';
 import { focusCameraOn } from '../../../../Itowns/Component/Component';
@@ -108,15 +108,15 @@ export class SparqlQueryWindow extends Window {
         'gml_id',
         URI.tokenizeURI(node_text).id
       );
-      let tilesManagerAndcityObject = this.cityObjectProvider.pickCityObjectByBatchTable(
+      const cityObject = this.layerManager.pickCityObjectByBatchTable(
         'gml_id',
         URI.tokenizeURI(node_text).id
       )
-      if (tilesManagerAndcityObject) {
+      if (cityObject) {
         focusCameraOn(
           this.layerManager.view,
           this.layerManager.view.controls,
-          tilesManagerAndcityObject[1].centroid,
+          cityObject.centroid,
           {
             verticalDistance: 200,
             horizontalDistance: 200

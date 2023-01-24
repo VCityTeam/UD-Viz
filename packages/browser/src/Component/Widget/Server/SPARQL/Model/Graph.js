@@ -11,11 +11,14 @@ export class Graph {
    * @param {SparqlQueryWindow} window the window this graph is attached to.
    * @param {number} height The SVG height.
    * @param {number} width The SVG width.
+   * @param {number} fontSize The font size to use for node and link labels.
+   *                          This doesn't (yet) affect the legend font size.
    */
-  constructor(window, height = 500, width = 500) {
+  constructor(window, height = 500, width = 500, fontSize = 4) {
     this.window = window;
     this.height = height;
     this.width = width;
+    this.fontSize = fontSize;
     this.typeList = [];
     this.svg = d3
       .create('svg')
@@ -98,7 +101,8 @@ export class Graph {
         d3.forceLink(links).id((d) => d.id))
       .force(
         'charge',
-        d3.forceManyBody().strength(-60))
+        d3.forceManyBody()
+          .strength(-60))
       .force(
         'center',
         d3.forceCenter(this.width / 2, this.height / 2));
@@ -128,7 +132,7 @@ export class Graph {
       .attr('stroke', (d) => setColor(d.color_id, '#ddd', '#111'))
       .attr('fill', (d) => setColor(d.color_id, 'black'))
       .on('click', (event) => {
-        this.window.sendEvent(Graph.EVENT_NODE_CLICKED, event.path[0].textContent);
+        this.window.sendEvent(Graph.EVENT_NODE_CLICKED, event.target.textContent);
       })
       .on('mouseover', (event, d) => {
         event.target.style['stroke'] = setColor(nodes[d.index].color_id, 'white', 'white');
@@ -143,7 +147,7 @@ export class Graph {
         })
           .style('fill', 'white')
           .style('opacity', '1');
-        this.window.sendEvent(Graph.EVENT_NODE_MOUSEOVER, event.path[0].textContent);
+        this.window.sendEvent(Graph.EVENT_NODE_MOUSEOVER, event.target.textContent);
       })
       .on('mouseout', (event, d) => {
         event.target.style['stroke'] = setColor(nodes[d.index].color_id, '#ddd', '#111');
@@ -158,7 +162,7 @@ export class Graph {
         })
           .style('fill', 'grey')
           .style('opacity', '0.5');
-          this.window.sendEvent(Graph.EVENT_NODE_MOUSEOUT, event.path[0].textContent);
+          this.window.sendEvent(Graph.EVENT_NODE_MOUSEOUT, event.target.textContent);
       })
       .call(this.drag(simulation));
       
@@ -174,14 +178,14 @@ export class Graph {
       })
       .style('text-anchor', 'middle')
       .style('font-family', 'Arial')
-      .style('font-size', 10.5)
+      .style('font-size', this.fontSize)
       .style('text-shadow', '1px 1px black')
       .style('fill', 'grey')
       .style('opacity', '0.5')
       // .style('fill', 'white')
       // .style('visibility', 'hidden')
-      .attr('class','node_label')
-      .call(this.drag(simulation));
+      .style('pointer-events', 'none')
+      .attr('class','node_label');
       
     const link_label = this.svg.selectAll('.link_label')
       .data(links)
@@ -193,14 +197,14 @@ export class Graph {
       })
       .style('text-anchor', 'middle')
       .style('font-family', 'Arial')
-      .style('font-size', 10)
+      .style('font-size', this.fontSize)
       .style('text-shadow', '1px 1px black')
       .style('fill', 'grey')
       .style('opacity', '0.5')
       // .style('fill', 'white')
       // .style('visibility', 'hidden')
-      .attr('class','link_label')
-      .call(this.drag(simulation));
+      .style('pointer-events', 'none')
+      .attr('class','link_label');
 
     simulation.on('tick', () => {
       node_label
@@ -224,9 +228,9 @@ export class Graph {
     // Create legend
     this.svg
       .append('text')
-      .attr('x', 10)             
+      .attr('x', 14)             
       .attr('y', 16)
-      .style('font-size', '14px')
+      .style('font-size', '18px')
       .style('text-decoration', 'underline')
       .text(legend.title)
       .style('fill','FloralWhite');
@@ -256,7 +260,8 @@ export class Graph {
       .attr('x', 24)
       .attr('y', (d, i) => 35 + i * 16)
       .text((d) => d)
-      .style('fill','FloralWhite');
+      .style('fill','FloralWhite')
+      .style('font-size', '14px');
   }
 
 
@@ -447,11 +452,11 @@ export class Graph {
       .attr('transform',
         'translate(' + event.transform.x + ',' + event.transform.y + ') scale(' + event.transform.k + ')');
     d3.selectAll('text.node_label')
-      .style('font-size', (10.5/event.transform.k) + 'px')
+      .style('font-size', (this.fontSize/event.transform.k) + 'px')
       .attr('transform',
         'translate(' + event.transform.x + ',' + event.transform.y + ') scale(' + event.transform.k + ')');
     d3.selectAll('text.link_label')
-      .style('font-size', (10.5/event.transform.k) + 'px')
+      .style('font-size', (this.fontSize/event.transform.k) + 'px')
       .attr('transform',
         'translate(' + event.transform.x + ',' + event.transform.y + ') scale(' + event.transform.k + ')');
   }
