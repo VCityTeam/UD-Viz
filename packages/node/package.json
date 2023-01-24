@@ -21,6 +21,7 @@
     "puppeteer": "^19.4.1"
   },
   "devDependencies": {
-    "webpack-node-externals": "^2.5.2"
+    "webpack-node-externals": "^2.5.2",
+    "string-replace-middleware": "^1.0.2"
   }
 }

@@ -13,8 +13,8 @@
     "eslint": "eslint --ignore-path .gitignore \"packages/**/*.js\" \"packages/**/*.html\" ",
     "eslint-fix": "eslint --ignore-path .gitignore \"packages/**/*.js\" \"packages/**/*.html\"  --fix",
     "docs": "jsdoc -c ./docs/jsdoc.json --verbose",
-    "debug-examples": "node ./bin/debugExamples.js",
-    "host": "npm run build-browser && node ./bin/host.js",
+    "debug-examples": "cross-env NODE_ENV=development node ./bin/debugExamples.js",
+    "host": "npm run build-browser && cross-env NODE_ENV=production node ./bin/host.js",
     "test": "node ./bin/test.js"
   },
   "workspaces": [

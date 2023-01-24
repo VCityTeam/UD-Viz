@@ -1,5 +1,8 @@
 const express = require('express');
 const http = require('http'); // just for doc
+const { stringReplace } = require('string-replace-middleware');
+
+const NODE_ENV = process.env.NODE_ENV || 'development';
 
 const ExpressAppWrapper = class {
   /**
@@ -29,6 +32,18 @@ const ExpressAppWrapper = class {
   start(config) {
     return new Promise((resolve, reject) => {
       const app = express();
+
+      app.use(
+        stringReplace(
+          {
+            RUN_MODE: NODE_ENV === 'production' ? 'release' : 'debug',
+          },
+          {
+            contentTypeFilterRegexp: /text\/html/,
+          }
+        )
+      );
+
       // Serve
       app.use(express.static(config.folder)); // What folder is served
 
