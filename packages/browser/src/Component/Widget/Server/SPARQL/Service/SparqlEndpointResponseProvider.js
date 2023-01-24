@@ -1,5 +1,5 @@
 import { EventSender } from '@ud-viz/shared';
-import { SparqlEndpointService } from '../Model/SparqlEndpointService';
+import { SparqlEndpointService } from './SparqlEndpointService';
 
 /**
  * Creates a SPARQL Endpoint Provider which manages treating SPARQL endpoint
