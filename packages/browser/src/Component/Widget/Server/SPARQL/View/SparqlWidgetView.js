@@ -20,36 +20,15 @@ export class SparqlWidgetView extends WidgetView {
     super();
 
     /**
-     * The SPARQL Endpoint Response Provider
-     *
-     * @type {SparqlEndpointResponseProvider}
-     */
-    this.sparqlProvider = sparqlProvider;
-
-    /**
-     * The Extended City Object Provider
-     *
-     * @type {CityObjectProvider}
-     */
-    this.cityObjectProvider = cityObjectProvider;
-
-    /**
-     * The UD-Viz LayerManager.
-     *
-     * @type {LayerManager}
-     */
-    this.layerManager = layerManager;
-
-    /**
      * Contains a SparqlQueryWindow for capturing user input and displaying
      * query results.
      *
      * @type {SparqlQueryWindow}
      */
     this.window = new SparqlQueryWindow(
-      this.sparqlProvider,
-      this.cityObjectProvider,
-      this.layerManager,
+      sparqlProvider,
+      cityObjectProvider,
+      layerManager,
       configSparql
     );
   }

@@ -158,7 +158,7 @@ export class SparqlQueryWindow extends Window {
     switch (view_type) {
       case 'graph':
         this.graph.update(response);
-        this.dataView.append(this.graph.svg);
+        this.dataView.append(this.graph.canvas);
         break;
       case 'json':
         this.jsonRenderer.renderjson.set_icons('▶', '▼');
