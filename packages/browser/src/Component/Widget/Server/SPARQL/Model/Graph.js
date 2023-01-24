@@ -39,7 +39,6 @@ export class Graph {
       .attr('class', 'd3_graph')
       .attr('viewBox', [0, 0, this.width, this.height])
       .style('display', 'hidden');
-    // TODO: add prefixes dynamically using user query definitions
   }
 
   // / Data Functions ///
@@ -218,13 +217,14 @@ export class Graph {
     // Create legend
     this.svg
       .append('text')
-      .attr('x', 14)
-      .attr('y', 16)
+      .attr('x', 12)
+      .attr('y', 24)
       .style('font-size', '18px')
       .style('text-decoration', 'underline')
       .text(legend.title)
       .style('fill', 'FloralWhite');
 
+    // legend colors
     this.svg
       .append('g')
       .attr('stroke', '#111')
@@ -232,8 +232,8 @@ export class Graph {
       .selectAll('rect')
       .data(legend.content)
       .join('rect')
-      .attr('x', 10)
-      .attr('y', (d, i) => 25 + i * 16)
+      .attr('x', 12)
+      .attr('y', (d, i) => 32 + i * 16)
       .attr('width', 10)
       .attr('height', 10)
       .style('fill', (d, i) => {
@@ -242,13 +242,14 @@ export class Graph {
       .append('title')
       .text((d) => d);
 
+    // legend text
     this.svg
       .append('g')
       .selectAll('text')
       .data(legend.content)
       .join('text')
-      .attr('x', 24)
-      .attr('y', (d, i) => 35 + i * 16)
+      .attr('x', 26)
+      .attr('y', (d, i) => 41 + i * 16)
       .text((d) => d)
       .style('fill', 'FloralWhite')
       .style('font-size', '14px');
@@ -257,9 +258,9 @@ export class Graph {
   /**
    * Getter for retrieving the d3 svg.
    *
-   * @returns {d3.svg.node} return the D3 svg object that represents the graph
+   * @returns {d3.svg.node} return the D3 svg object that represents the graph's "canvas"
    */
-  get svg() {
+  get canvas() {
     return this.svg.node();
   }
 
