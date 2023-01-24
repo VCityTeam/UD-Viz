@@ -27,7 +27,7 @@ export class StyleManager {
      * Stores which city objects use which registered style. It maps the style
      * identifier with an array of tile IDs, mapped to arrays of batch IDs.
      *
-     * @type {Object.<string, Array<Object.<number, Array<number>>}
+     * @type {Object<string, Array<Object<number, Array<number>>>>}
      */
     this.registeredStyleUsage = {};
 
@@ -35,7 +35,7 @@ export class StyleManager {
      * Stores which city objects use which anonymous style. It maps the style
      * identifier with an array of tile IDs, mapped to arrays of batch IDs.
      *
-     * @type {Object.<number, Array<Object.<number, Array<number>>}
+     * @type {Object<number, Array<Object<number, Array<number>>>>}
      */
     this.anonymousStyleUsage = {};
 
@@ -110,7 +110,7 @@ export class StyleManager {
    *
    * @param {string|number} identifier The name (if registered) or ID of the
    * style (if anonymous).
-   * @returns {CityObjectStyle}
+   * @returns {CityObjectStyle} The style corresponding to the identifier
    */
   getStyle(identifier) {
     if (typeof identifier === 'string') {
@@ -330,28 +330,28 @@ export class StyleManager {
   }
 
   /**
-   * Returns the list of tiles that have a style applied to them.
+   * Returns the list of tile IDs that have a style applied to them.
    *
-   * @returns {Array<number>}
+   * @returns {Array<number>} An array of tile IDs
    */
   getStyledTiles() {
-    const tiles = [];
+    const tileIds = [];
     for (const tileId of Object.keys(this.styleTable)) {
       if (
         tileId !== undefined &&
         Object.keys(this.styleTable[tileId]).length > 0
       ) {
-        tiles.push(tileId);
+        tileIds.push(tileId);
       }
     }
-    return tiles;
+    return tileIds;
   }
 
   /**
    * Retrieves the list of objects that uses a given style.
    *
    * @param {string | number} styleIdentifier The style identifier.
-   * @returns {Object<number, Array<number>>}
+   * @returns {Object<number, Array<number>>} The list of objects that uses a given style
    */
   getStyleUsage(styleIdentifier) {
     if (typeof styleIdentifier === 'string') {
