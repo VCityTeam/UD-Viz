@@ -6,7 +6,7 @@
   "scripts": {
     "build": "cross-env NODE_ENV=production webpack --config=./webpackConfig/webpack.config.js",
     "build-debug": "cross-env NODE_ENV=development webpack --config=./webpackConfig/webpack.config.js",
-    "test": "node ./bin/test.js",
+    "test": "cross-env NODE_ENV=development node ./bin/test.js",
     "debug": "nodemon --trace-warnings --verbose --watch ./bin/Test/ --watch src --delay 2500ms ./bin/debug.js -e js,css,html"
   },
   "files": [
