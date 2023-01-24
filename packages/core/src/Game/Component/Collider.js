@@ -18,6 +18,7 @@ const THREE = require('three');
 /**
  * Collider object3D component, this component use {@link https://www.npmjs.com/package/detect-collisions}, note that collisions are handle in 2D
  *
+ * @see module:Collider
  * @class
  */
 const ColliderComponent = class extends Component {};
@@ -25,6 +26,7 @@ const ColliderComponent = class extends Component {};
 ColliderComponent.TYPE = 'Collider';
 
 /**
+ *  @see module:Collider
  * @class
  */
 const ColliderModel = class extends Model {
@@ -86,6 +88,7 @@ const ColliderModel = class extends Model {
 };
 
 /**
+ * @see module:Collider
  * @class
  */
 class ColliderController extends Controller {
@@ -254,18 +257,14 @@ class ShapeWrapper {
 /**
  * MODULE Collider
  *
- * @module  Collider
+ * @module Collider
  */
 
 module.exports = {
-  /**
-   * API FOR {@link ColliderComponent}
-   *
-   * @type{@typeof ColliderComponent}
-   */
+  /** @see ColliderComponent */
   Component: ColliderComponent,
-  /** @class API FOR {@link ColliderModel}*/
+  /** @see ColliderModel */
   Model: ColliderModel,
-  /** @class API FOR {@link ColliderController}*/
+  /** @see ColliderController */
   Controller: ColliderController,
 };
