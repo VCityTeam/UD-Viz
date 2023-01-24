@@ -187,10 +187,10 @@ export class SparqlQueryWindow extends Window {
   toggleQueryTextArea() {
     if (this.queryTextArea.style.display == 'none') {
       this.queryTextArea.style.display = 'inherit';
-      this.toggleQueryTextAreaButton.textContent = 'ᐁ';
+      this.toggleQueryTextAreaButton.textContent = '▼';
     } else {
       this.queryTextArea.style.display = 'none';
-      this.toggleQueryTextAreaButton.textContent = 'ᐊ';
+      this.toggleQueryTextAreaButton.textContent = '▶';
     }
   }
 
@@ -230,9 +230,9 @@ export class SparqlQueryWindow extends Window {
           <option value="ifcSlabCountQuery">Count Ifc Slabs in Building</option>
           <option value="ifcSlabByIDQuery">Select Ifc Slab by ID</option>
         </select>
-        <button id="${this.toggleQueryTextAreaButtonId}">ᐊ</button>
+        <button id="${this.toggleQueryTextAreaButtonId}">▶</button>
         <form id=${this.formId}>
-          <textarea id="${this.queryTextAreaId}" rows="20">${this.defaultQueryPrefixes}${this.defaultQuery}</textarea>
+          <textarea id="${this.queryTextAreaId}" rows="20" style="display:none">${this.defaultQueryPrefixes}${this.defaultQuery}</textarea>
           <input id="${this.submitButtonId}" type="submit" value="Send"/>
           <label>Results Format: </label>
           <select id="${this.resultSelectId}">
