@@ -6,7 +6,8 @@ import { Data } from '@ud-viz/core';
  * 3-level hierarchy : Object3D > Scene > Mesh. This function searches into the
  * for the batch table (which is located in the Object3D level).
  *
- * @param {*} tile A 3DTiles tile object from THREE.js.
+ * @param {object} tile A 3DTiles tile object from THREE.js.
+ * @returns {object} The batch table of the tile
  */
 export function getBatchTableFromTile(tile) {
   if (tile.batchTable) {
@@ -22,7 +23,8 @@ export function getBatchTableFromTile(tile) {
  * 3 points of the intersection triangle and retrieves the corresponding batch
  * ID in the intersection tile.
  *
- * @param {*} inter An intersection
+ * @param {object} inter An intersection
+ * @returns {number} The batch ID of the intersected geometry
  */
 export function getBatchIdFromIntersection(inter) {
   const index = inter.face.a;
@@ -33,8 +35,9 @@ export function getBatchIdFromIntersection(inter) {
  * Get the first intersection object where the target is a 3D object with
  * a batch id (a.k.a. the "Mesh" of a tile).
  *
- * @param {Array<any>} intersects The array of intersections, provided by
+ * @param {Array<object>} intersects The array of intersections, provided by
  * itowns.View.pickObjectsAt
+ * @returns {object} The first intersection of a visible tile
  */
 export function getFirstTileIntersection(intersects) {
   for (const inter of intersects) {
@@ -52,6 +55,7 @@ export function getFirstTileIntersection(intersects) {
  * find all tiles and return them in a flattened array.
  *
  * @param {*} layer The 3DTiles layer.
+ * @returns {Array<object>} An array of all visible tiles
  */
 export function getVisibleTiles(layer) {
   const rootTile = layer.object3d.children[0];
@@ -83,6 +87,7 @@ export function getVisibleTiles(layer) {
  * Counts the number of 3DTiles tiles displayed by the view.
  *
  * @param {*} layer The 3DTiles layer.
+ * @returns {number} The number of visible tiles
  */
 export function getVisibleTileCount(layer) {
   return getVisibleTiles(layer).length;
@@ -93,6 +98,7 @@ export function getVisibleTileCount(layer) {
  *
  * @param {*} rootTile The root tile of the 3DTiles tileset.
  * @param {*} tileId The tile id.
+ * @returns {object} A 3DTiles tile object from THREE.js.
  */
 export function getTileInTileset(rootTile, tileId) {
   let i = 0;
@@ -111,7 +117,8 @@ export function getTileInTileset(rootTile, tileId) {
  * Find the tile in the 3DTiles layer with the specifid ID.
  *
  * @param {*} layer The 3DTiles layer.
- * @param {*} tileId The tile id.
+ * @param {number} tileId The tile id.
+ * @returns {object} A 3DTiles tile object from THREE.js.
  */
 export function getTileInLayer(layer, tileId) {
   const rootTile = layer.object3d.children[0];
@@ -119,6 +126,7 @@ export function getTileInLayer(layer, tileId) {
   return tile;
 }
 
+// #OBSOLETE
 /**
  * Changes the color of a tile, or specific vertices of the tile, using the
  * BufferGeometry.
@@ -462,7 +470,7 @@ export function removeTileVerticesColor(tile) {
  * for example, you need to call this function to actually see the changes.
  *
  * @param {*} view The iTowns view.
- * @param layer
+ * @param {*} layer An iTowns layer
  */
 export function updateITownsView(view, layer) {
   try {
@@ -520,8 +528,10 @@ export function getVerticesCentroid(tile, indexArray) {
 }
 
 /**
+ * Returns all the THREE.js meshes in the tile
  *
- * @param tile
+ * @param {object} tile A 3DTiles tile object from THREE.js.
+ * @returns {Array<THREE.Mesh>} An array of the THREE.js meshes in the tile
  */
 export function getMeshesFromTile(tile) {
   if (!tile) {
@@ -546,8 +556,10 @@ export function getMeshesFromTile(tile) {
 }
 
 /**
+ * Returns the tile in which a mesh is contained
  *
- * @param object
+ * @param {THREE.mesh} object A THREE.js mesh
+ * @returns {object} A 3DTiles tile object from THREE.js.
  */
 export function getTileFromMesh(object) {
   if (!object) {
@@ -596,6 +608,7 @@ export function getTileFromMesh(object) {
  * let tilesInfo = getTilesBatchInfo(layer);
  * //When the visible tiles change, update the TI
  * tilesInfo = getTilesBatchInfo(layer, tilesInfo);
+ * @returns {object} An object holding the information of a tile
  */
 export function getTilesInfo(layer, tilesInfo = null) {
   // Instantiate the TI if it does not exist
