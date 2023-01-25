@@ -18,10 +18,10 @@
   "dependencies": {
     "express": "^4.17.1",
     "child-process-promise": "^2.2.1",
-    "puppeteer": "^19.4.1"
+    "puppeteer": "^19.4.1",
+    "string-replace-middleware": "^1.0.2"
   },
   "devDependencies": {
-    "webpack-node-externals": "^2.5.2",
-    "string-replace-middleware": "^1.0.2"
+    "webpack-node-externals": "^2.5.2"
   }
 }
