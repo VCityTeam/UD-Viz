@@ -541,10 +541,14 @@ export class Context {
    * @returns {ExternalScriptBase|null} - first external script with id or null if none are found
    * @todo need refacto
    */
-  findBrowserScriptWithID(id) {
+  findExternalScriptWithID(id) {
     let result = null;
     this.object3D.traverse(function (child) {
       if (!child.isGameObject3D) return;
+
+      // const externalScriptCom
+
+
       const scripts = child.fetchBrowserScripts();
       if (scripts && scripts[id]) {
         result = scripts[id];

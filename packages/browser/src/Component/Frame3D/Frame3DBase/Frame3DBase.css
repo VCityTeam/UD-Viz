@@ -23,6 +23,8 @@ canvas {
 
 .ui_Frame3DBase {
   position: absolute;
+  width: 100%;
+  height: 100%;
 }
 
 .ui_Frame3DBase * {

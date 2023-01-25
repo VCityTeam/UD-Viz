@@ -59,8 +59,6 @@ module.exports = {
               updatedObject3D.position.z = command.data.position.z;
               updatedObject3D.setOutdated(true);
             }
-
-            console.log(updatedObject3D.uuid);
           }
           break;
         default:
