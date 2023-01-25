@@ -15,8 +15,6 @@ const itowns = require('itowns');
  */
 export class MockUp {
   constructor(extent, configFrame3DPlanar) {
-    // allwidget state
-
     // this.addLogos();
 
     /** @type {Frame3DPlanar} */
@@ -25,6 +23,14 @@ export class MockUp {
       document.getElementById(this.contentSectionId),
       configFrame3DPlanar
     );
+
+    // About window
+    const about = new Widget.AboutWindow('./assets/config/widget/about.json');
+    about.parentElement = this.getFrame3DPlanar().getRootWebGL();
+    about.enableView();
+
+    // //// HELP MODULE
+    // new udvizBrowser.Widget.HelpWindow(configs['help']); // => help window should be add with addWidgetView
   }
 
   /**
@@ -69,26 +75,6 @@ export class MockUp {
   }
 
   /**
-   * @returns {string} Returns the basic html content of the demo
-   */
-  get html() {
-    return /* html*/ `       
-            <div id="_MockUp_stuct_main_panel">
-                <nav>
-                    <div class="title-ud-viz Text-Style">
-                      UD-VIZ
-                    </div>
-                    <hr>
-                    <ul id="${this.menuId}">
-                    </ul>
-                </nav>
-                <section id="${this.contentSectionId}">
-                </section>
-            </div>
-        `;
-  }
-
-  /**
    * It creates a div element, adds an id to it, appends it to the main div, and then adds all the logos to it
    */
   addLogos() {
@@ -101,7 +87,7 @@ export class MockUp {
     // Create div to integrate all logos images
     const logoDiv = document.createElement('div');
     logoDiv.id = 'logo-div';
-    document.getElementById(this.mainDivId).append(logoDiv);
+    document.getElementById(this.viewerDivId).append(logoDiv);
 
     for (let i = 0; i < logos.length; i++) {
       const img = document.createElement('img');
@@ -115,40 +101,12 @@ export class MockUp {
   // GETTERS FOR HTML IDS AND ELEMENTS OF THE DEMO PAGE //
   // //////////////////////////////////////////////////////
 
-  get mainDivId() {
-    return '_MockUp';
-  }
-
-  get headerId() {
-    return '_MockUp_header';
-  }
-
   get headerElement() {
     return document.getElementById(this.headerId);
   }
 
   get viewerDivId() {
     return 'viewerDiv';
-  }
-
-  get viewerDivElement() {
-    return document.getElementById(this.viewerDivId);
-  }
-
-  get menuId() {
-    return '_MockUp_menu';
-  }
-
-  get menuElement() {
-    return document.getElementById(this.menuId);
-  }
-
-  get authenticationUserNameElement() {
-    return document.getElementById(this.authenticationUserNameId);
-  }
-
-  get contentSectionId() {
-    return 'contentSection';
   }
 
   get contentSectionElement() {
