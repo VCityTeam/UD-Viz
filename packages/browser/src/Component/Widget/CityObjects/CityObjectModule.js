@@ -3,6 +3,12 @@ import { CityObjectProvider } from './ViewModel/CityObjectProvider';
 import { CityObjectWindow } from './View/CityObjectWindow';
 
 /**
+ * @callback ActionCB
+ * @param {any} data
+ * @returns {any}
+ */
+
+/**
  * Manages the city objects and allows the user to visualize them with
  * filters. Other modules can extend the functionnalities of the city object
  * module by adding filters.
@@ -13,7 +19,7 @@ export class CityObjectModule {
    * filters. Other modules can extend the functionnalities of the city object
    * module by adding filters.
    *
-   * @param {import("../../Itowns/LayerManager").LayerManager} layerManager The layer manager.
+   * @param {import("../../Itowns/LayerManager/LayerManager").LayerManager} layerManager The layer manager.
    * @param {object} configCityObjects The city objects config.
    * @param {Object<string, CityObjectStyle>} configCityObjects.styles The
    * city object styles.
@@ -42,7 +48,7 @@ export class CityObjectModule {
    * Adds an event listener to the city object provider.
    *
    * @param {string} event The event of the city object provider.
-   * @param {(data: any) => any} action The listener method.
+   * @param {ActionCB} action The listener method.
    */
   addEventListener(event, action) {
     this.provider.addEventListener(event, action);
@@ -51,7 +57,7 @@ export class CityObjectModule {
   /**
    * Removes the event listener from the city object provider.
    *
-   * @param {(data: any) => any} action The listener to remove.
+   * @param {ActionCB} action The listener to remove.
    */
   removeEventListener(action) {
     this.provider.removeEventListener(action);
