@@ -29,22 +29,22 @@
         {
           "title": "udviz",
           "id": "udvizHome",
-          "link": "/docs/htmlTest"
+          "link": "/docs/html"
         },
         {
           "title": "udvizBrowser",
           "id": "udvizBrowser",
-          "link": "/docs/htmlTest/browser"
+          "link": "/docs/html/browser"
         },
         {
           "title": "udvizCore",
           "id": "udvizCore",
-          "link": "/docs/htmlTest/core"
+          "link": "/docs/html/core"
         },
         {
           "title": "udvizNode",
           "id": "udvizNode",
-          "link": "/docs/htmlTest/node"
+          "link": "/docs/html/node"
         },
         {
           "title": "Github",

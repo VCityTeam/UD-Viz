@@ -23,7 +23,7 @@
     }
   },
   "opts": {
-    "destination": "./docs/htmlTest",
+    "destination": "./docs/html",
     "tutorials": "./docs/static",
     "recurse": true,
     "readme": "./readme.md",
