@@ -1,6 +1,6 @@
 const THREE = require('three');
 const itowns = require('itowns');
-
+/** @module @ud-viz/browser/Components */
 /**
  * Makes the camera move to focus on the target position.
  *

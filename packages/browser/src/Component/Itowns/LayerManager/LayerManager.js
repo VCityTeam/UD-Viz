@@ -7,6 +7,7 @@ import {
 import { TilesManager } from '../3DTiles/TilesManager';
 import * as itowns from 'itowns';
 
+/** @class */
 export class LayerManager {
   /**
    * Creates a new TilesManager from an iTowns view and the 3DTiles layer.
@@ -64,7 +65,7 @@ export class LayerManager {
    * Applies the current styles added with `setStyle` or `addStyle`.
    *
    * @param {object} options Options of the method.
-   * @param {() => any} [options.updateFunction] The function used to update the
+   * @param {Function} [options.updateFunction] The function used to update the. () => any.
    * view. Default is `udpateITownsView(view, layer)`.
    */
   applyAll3DTilesStyles(options = {}) {

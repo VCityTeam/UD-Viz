@@ -11,14 +11,14 @@ import { EventSender } from '@ud-viz/core';
 import { focusCameraOn } from '../Component/Component';
 
 /**
- * Manages the tiles and the style for city objects.
+ * @class Manages the tiles and the style for city objects.
  */
 export class TilesManager extends EventSender {
   /**
    * Creates a new TilesManager from an iTowns view and the 3DTiles layer.
    *
-   * @param {*} view The iTowns view.
-   * @param {*} layer The 3DTiles layer.
+   * @param {import('itowns').View} view The iTowns view.
+   * @param {import('itowns').C3DTilesLayer} layer The 3DTiles layer.
    */
   constructor(view, layer) {
     super();
@@ -194,10 +194,16 @@ export class TilesManager extends EventSender {
   }
 
   /**
+   * @callback predicateCB
+   * @param {CityObject} cityObject
+   * @returns {boolean}
+   */
+
+  /**
    * Search and returns the first city object that matches the given predicate.
    * If no city object matches the predicate, `undefined` is returned.
    *
-   * @param {(cityObject: CityObject) => boolean} predicate The predicate to
+   * @param {predicateCB} predicate The predicate to
    * determine the city object.
    * @returns {CityObject | undefined} The first city object that matches the
    * predicate, or `undefined` if no city object is found.
@@ -216,7 +222,7 @@ export class TilesManager extends EventSender {
   /**
    * Search and returns all city objects that matches the given predicate.
    *
-   * @param {(cityObject: CityObject) => boolean} predicate The predicate to
+   * @param {predicateCB} predicate The predicate to
    * determine the city objects.
    * @returns {Array<CityObject>} An array of all the city object that matches
    * the predicate.
@@ -396,7 +402,7 @@ export class TilesManager extends EventSender {
    * Applies the current styles added with `setStyle` or `addStyle`.
    *
    * @param {object} options Options of the method.
-   * @param {() => any} [options.updateFunction] The function used to update the
+   * @param {Function} [options.updateFunction] The function used to update the. () => any.
    * view. Default is `udpateITownsView(view, layer)`.
    */
   applyStyles(options = {}) {
@@ -423,7 +429,7 @@ export class TilesManager extends EventSender {
    * @param {object} options Options of the apply function.
    * @param {boolean} [options.updateView] Whether the view should update at the
    * end of the method. Default value is `true`.
-   * @param {() => any} [options.updateFunction] The function used to update the
+   * @param {Function} [options.updateFunction] The function used to update the. () => any.
    * view. Default is `udpateITownsView(view, layer)`.
    */
   applyStyleToTile(tileId, options = {}) {
