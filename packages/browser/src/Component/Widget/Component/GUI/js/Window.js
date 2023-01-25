@@ -113,7 +113,7 @@ export class Window extends WidgetView {
    * node. Calls the `windowCreated` hook method and sends two events,
    * `EVENT_CREATED` and `EVENT_SHOWN`.
    *
-   * @param {HTMLElement} htmlElement
+   * @param {HTMLElement} htmlElement Append the window to a parent HTML element
    */
   appendTo(htmlElement) {
     if (!this.isCreated) {
@@ -244,6 +244,7 @@ export class Window extends WidgetView {
    * Removes an existing extension from the window.
    *
    * @param {string} label The label identifying the extension to remove.
+   * @returns {boolean} True if the extension is used
    */
   isExtensionUsed(label) {
     const index = this.windowExtensions.findIndex((ext) => ext.label === label);

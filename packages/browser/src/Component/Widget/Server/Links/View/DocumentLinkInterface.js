@@ -14,8 +14,8 @@ export class DocumentLinkInterface {
    *
    * @param {DocumentModule} documentModule The document module.
    * @param {LinkProvider} linkProvider The link provider.
-   * @param {*} itownsView The iTowns view.
-   * @param {*} cameraControls The camera controls.
+   * @param {import('itowns').PlanarView} itownsView The iTowns view.
+   * @param {import('itowns').PlanarControls} cameraControls The camera controls.
    */
   constructor(documentModule, linkProvider, itownsView, cameraControls) {
     /**

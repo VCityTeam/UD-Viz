@@ -81,6 +81,9 @@ export class DocumentVisualizerWindow extends AbstractDocumentWindow {
     `;
   }
 
+  /**
+   * Set window style and add events once the window is created
+   */
   windowCreated() {
     this.hide();
     this.window.classList.add('orienter-box');
@@ -95,6 +98,9 @@ export class DocumentVisualizerWindow extends AbstractDocumentWindow {
     };
   }
 
+  /**
+   * Add event listener on document changed
+   */
   documentWindowReady() {
     // Dispose the window when the displayed document change
     this.provider.addEventListener(
@@ -132,8 +138,7 @@ export class DocumentVisualizerWindow extends AbstractDocumentWindow {
    * Sets the orientation for the camera. `startTravel` should be called after
    * this method to apply the new orientation.
    *
-   * @param {THREE.Quaternion} position The visualization camera orientation.
-   * @param quaternion
+   * @param {THREE.Quaternion} quaternion The visualization camera orientation.
    */
   setTargetQuaternion(quaternion) {
     this.quaternion = quaternion;

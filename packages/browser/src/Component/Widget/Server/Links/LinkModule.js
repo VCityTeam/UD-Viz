@@ -18,8 +18,8 @@ export class LinkModule {
    * @param {DocumentModule} documentModule The document module.
    * @param {CityObjectModule} cityObjectModule The city objects module.
    * @param {RequestService} requestService The request service.
-   * @param {*} itownsView The iTowns view.
-   * @param {*} cameraControls The planar camera controls.
+   * @param {import('itowns').PlanarView} itownsView The iTowns view.
+   * @param {import('itowns').PlanarControls} cameraControls The planar camera controls.
    * @param {object} configServer The server configuration.
    * @param {string} configServer.url The server URL.
    * @param {string} configServer.link The link route.

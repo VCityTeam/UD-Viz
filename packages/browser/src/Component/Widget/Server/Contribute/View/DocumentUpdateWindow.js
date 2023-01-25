@@ -62,6 +62,9 @@ export class DocumentUpdateWindow extends AbstractDocumentWindow {
     `;
   }
 
+  /**
+   * Add events when the window is created
+   */
   windowCreated() {
     this.hide();
 
@@ -75,6 +78,9 @@ export class DocumentUpdateWindow extends AbstractDocumentWindow {
     };
   }
 
+  /**
+   * Add event listener on document changed
+   */
   documentWindowReady() {
     this.provider.addEventListener(
       DocumentProvider.EVENT_DISPLAYED_DOC_CHANGED,

@@ -7,12 +7,9 @@ export class BaseMap extends Window {
   /**
    * Manages multiple WMS sources used as Itowns ColoLayer for background
    *
-   * @param {itownsView}itownsView An ItownsView.
-   * @param {object} config.baseMapLayers The baseMapLayers
-   * @param {appExtent} vec3 The extent used to set up the layers
-   * @param {appProjection} string The projection used to set up the layers
-   * @param baseMapLayers
-   * @param appExtent
+   * @param {itowns.View} itownsView An ItownsView.
+   * @param {object} baseMapLayers The baseMapLayers
+   * @param {itowns.Extent} appExtent The extent used to set up the layers
    */
   constructor(itownsView, baseMapLayers, appExtent) {
     super('baseMap', 'base Map', false);
@@ -22,6 +19,9 @@ export class BaseMap extends Window {
     this.createLayers();
   }
 
+  /**
+   * Set Window style and display layers images when the window is created
+   */
   windowCreated() {
     this.window.style.left = '10px';
     this.window.style.top = 'unset';
@@ -77,6 +77,11 @@ export class BaseMap extends Window {
     }
   }
 
+  /**
+   * It makes the layer with the given ID visible and hides all the other layers
+   *
+   * @param {string} layerID - the id of the layer to be displayed
+   */
   changeVisibleLayer(layerID) {
     for (const layer of this.baseMapLayers) {
       this.itownsView.getLayerById(layer.id).visible = layer.id == layerID;

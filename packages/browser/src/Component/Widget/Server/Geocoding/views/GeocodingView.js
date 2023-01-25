@@ -12,7 +12,7 @@ export class GeocodingView extends WidgetView {
    * Instantiates the view.
    *
    * @param {GeocodingService} geocodingService The geocoding service.
-   * @param {udvcore.itowns.PlanarView} planarView The iTowns view.
+   * @param {import('itowns').PlanarView} planarView The iTowns view.
    */
   constructor(geocodingService, planarView) {
     super();
@@ -162,8 +162,8 @@ export class GeocodingView extends WidgetView {
   /**
    * Places the given mesh into the scene, orienting it towards the bottom.
    *
-   * @param {THREE.Mesh} mesh
-   * @param {THREE.Vector3} position
+   * @param {THREE.Mesh} mesh The THREE.js mesh to add
+   * @param {THREE.Vector3} position The position of the mesh
    */
   async addMeshToScene(mesh, position) {
     mesh.position.copy(position);

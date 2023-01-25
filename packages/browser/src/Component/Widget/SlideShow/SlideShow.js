@@ -2,7 +2,6 @@
 import { Window } from '../Component/GUI/js/Window';
 import * as THREE from 'three';
 
-/** @typedef {import("itowns")} itowns*/
 /**
  * @typedef {object} TextureFile
  * @property {number} index Index of the file (use to order file)
@@ -36,19 +35,24 @@ export class SlideShow extends Window {
    * It initializes the widget.
    *
    *
-   * @param {itowns.PlanarView} itownsView - The itowns view.
+   * @param {import('itowns').PlanarView} itownsView - The itowns view.
    * @param {object} configSlideShow - The configuration of the widget. need description
-   * @param {Array<{name:string,folder:string,diapositives:Array<string>}>,durationLoopInSec:number,textureRotation:number} configSlideShow.slides - Array of slide object
-   * @param {itowns.Extent} extent - The extent of the widget.
+   * @param {Array<object>} configSlideShow.slides - Array of slide Object
+   * @param {string} configSlideShow.slides[].name - Name of a slideshow
+   * @param {string} configSlideShow.slides[].folder - Path of the folder
+   * @param {Array<string>} configSlideShow.slides[].diapositives - Array of path of name files
+   * @param {number} configSlideShow.durationLoopInSec - Seconds between two slides
+   * @param {number} configSlideShow.textureRotation - Rotation in degrees of textures
+   * @param {import('itowns').Extent} extent - The extent of the widget.
    * @param {import('../../InputManager').InputManager} inputManager - the input manager of the application
    */
   constructor(itownsView, configSlideShow, extent, inputManager) {
     super('slideShow', 'Slide Show 3D', false);
 
     this.configSlideShow = configSlideShow || null;
-    /** @type {itowns.Extent} */
+    /** @type {import('itowns').Extent} */
     this.extent = extent;
-    /** @type {itowns.PlanarView} */
+    /** @type {import('itowns').PlanarView} */
     this.itownsView = itownsView;
     /** @type {import("../../InputManager").InputManager} */
     this.inputManager = inputManager;

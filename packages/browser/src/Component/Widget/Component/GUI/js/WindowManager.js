@@ -23,7 +23,7 @@ class WindowManager {
   /**
    * Registers a window.
    *
-   * @param {Window} window
+   * @param {Window} window The window to register
    */
   registerWindow(window) {
     this.windows.push(window);

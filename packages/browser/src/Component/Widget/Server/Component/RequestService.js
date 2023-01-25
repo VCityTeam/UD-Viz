@@ -13,10 +13,11 @@ export function RequestService() {
   this.initialize = function () {};
 
   /**
-   * @param method
-   * @param url
-   * @param body
-   * @param authenticate
+   * @param {string} method The HTTP method
+   * @param {string} url The requested URL
+   * @param {FormData | string} body The request body
+   * @param {boolean} authenticate Set to true if you want to authenticate
+   * @returns {Promise} The request promise
    * @deprecated Prefer using `RequestService.request` instead.
    * // eslint-disable-next-line valid-jsdoc
    */
@@ -42,11 +43,11 @@ export function RequestService() {
    * @param {FormData | string} [options.body] The request body
    * @param {boolean} [options.authenticate] Set to `false` if you don't want
    * the request to use authentication.
-   * @param {XMLHttpRequestResponseType} [options.responseType] The expected
+   * @param {string} [options.responseType] The expected
    * response type.
    * @param {Object<string, string>} [options.urlParameters] A dictionary of
    * URL parameters.
-   * @returns {Promise<XMLHttpRequest>}
+   * @returns {Promise<XMLHttpRequest>} Request promise
    */
   this.request = (method, url, options = {}) => {
     const args = options || {};

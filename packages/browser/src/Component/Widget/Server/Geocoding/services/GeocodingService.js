@@ -6,8 +6,8 @@ export class GeocodingService {
    * Instantiates the geocoding service.
    *
    * @param {RequestService} requestService The request service.
-   * @param {*} extent The iTwons extent.
-   * @param {*} configGeocoding
+   * @param {import('itowns').Extent} extent The iTwons extent.
+   * @param {object} configGeocoding Geocoding config
    */
   constructor(requestService, extent, configGeocoding) {
     this.requestService = requestService;

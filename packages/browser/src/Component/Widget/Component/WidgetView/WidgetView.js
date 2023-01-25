@@ -74,6 +74,8 @@ export class WidgetView extends EventSender {
   // Events called when enabling / disabling the view
   /**
    * Event sent when the view is enabled
+   *
+   * @returns {string} The event
    */
   static get EVENT_ENABLED() {
     return 'WIDGET_VIEW_ENABLED';
@@ -81,6 +83,8 @@ export class WidgetView extends EventSender {
 
   /**
    * Event sent when the view is disabled
+   *
+   * @returns {string} The event
    */
   static get EVENT_DISABLED() {
     return 'WIDGET_VIEW_DISABLED';

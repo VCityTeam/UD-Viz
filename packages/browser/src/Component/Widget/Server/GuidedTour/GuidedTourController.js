@@ -28,8 +28,6 @@ export class GuidedTourController extends WidgetView {
    * @param { object } configServer The server configuration.
    * @param { string } configServer.url The base URL of the server.
    * @param { string } configServer.guidedTour The route for guided tours.
-   *
-  ======================================================================
    */
   constructor(documentModule, requestService, configServer) {
     super();
@@ -64,7 +62,6 @@ export class GuidedTourController extends WidgetView {
   /**
    * Initialize the controller
    */
-  // =============================================================================
   initialize() {
     this.guidedTour = new GuidedTour(this);
     this.guidedTour.addEventListener(GuidedTour.EVENT_DESTROYED, () => {
@@ -75,7 +72,6 @@ export class GuidedTourController extends WidgetView {
   /**
    * Get all guided tour from a database
    */
-  // =============================================================================
   async getGuidedTours() {
     const req = await this.requestService.request('GET', this.url, {
       authenticate: false,
@@ -85,8 +81,9 @@ export class GuidedTourController extends WidgetView {
 
   /**
    * Returns the current guided tour if there are any
+   *
+   * @returns {GuidedTour} Current guided tour
    */
-  // =============================================================================
   getCurrentTour() {
     if (this.guidedTours.length != 0) {
       return this.guidedTours[this.currentTourIndex];
@@ -96,8 +93,9 @@ export class GuidedTourController extends WidgetView {
 
   /**
    * Sets the current guided tour to the next guided tour and returns it.
+   *
+   * @returns {GuidedTour} Next guided tour
    */
-  // =============================================================================
   getNextTour() {
     if (this.currentTourIndex < this.guidedTours.length) {
       this.currentTourIndex++;
@@ -107,8 +105,9 @@ export class GuidedTourController extends WidgetView {
 
   /**
    * Sets the current guided tour to the previous guided tour and returns it.
+   *
+   * @returns {GuidedTour} Previous guided tour
    */
-  // =============================================================================
   getPreviousTour() {
     if (this.currentTourIndex > 0) {
       this.currentTourIndex--;
@@ -118,8 +117,9 @@ export class GuidedTourController extends WidgetView {
 
   /**
    * Returns the current tour step
+   *
+   * @returns {*} Current step
    */
-  // =============================================================================
   getCurrentStep() {
     if (this.getCurrentTour().length != 0) {
       const steps = this.getCurrentTour().extendedDocs;
@@ -130,8 +130,9 @@ export class GuidedTourController extends WidgetView {
 
   /**
    * Sets the current step to the previous step and returns it.
+   *
+   * @returns {*} Previous step
    */
-  // =============================================================================
   getPreviousStep() {
     if (this.currentStepIndex > 0) {
       this.currentStepIndex--;
@@ -141,8 +142,9 @@ export class GuidedTourController extends WidgetView {
 
   /**
    * Sets the current step to the next step and returns it.
+   *
+   * @returns {*} Next step
    */
-  // =============================================================================
   getNextStep() {
     if (this.currentStepIndex < this.getCurrentTour().extendedDocs.length) {
       this.currentStepIndex++;

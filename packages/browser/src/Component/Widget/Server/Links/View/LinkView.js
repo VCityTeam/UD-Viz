@@ -18,8 +18,8 @@ export class LinkView {
    * @param {DocumentModule} documentModule The document module.
    * @param {CityObjectModule} cityObjectModule The city object module.
    * @param {LinkProvider} linkProvider The link service.
-   * @param {*} itownsView The iTowns view.
-   * @param {*} cameraControls The planar camera controls
+   * @param {import('itowns').PlanarView} itownsView The iTowns view.
+   * @param {import('itowns').PlanarControls} cameraControls The planar camera controls
    */
   constructor(
     documentModule,

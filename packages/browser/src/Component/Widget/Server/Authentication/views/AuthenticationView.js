@@ -3,11 +3,20 @@ import { WidgetView } from '../../../Component/Component';
 import './AuthenticationView.css';
 
 export class AuthenticationView extends WidgetView {
+  /**
+   *
+   * @param {Function} authenticationService Authentication service
+   */
   constructor(authenticationService) {
     super();
     this.authenticationService = authenticationService;
   }
 
+  /**
+   * Returns the HTML as string
+   *
+   * @returns {string} HTML as string
+   */
   html() {
     return `
             <form id="RegistrationForm">\
@@ -43,6 +52,11 @@ export class AuthenticationView extends WidgetView {
         `;
   }
 
+  /**
+   * Append the window to a parent HTML element
+   *
+   * @param {HTMLElement} htmlElement The parent HTML element
+   */
   appendToElement(htmlElement) {
     const div = document.createElement('div');
     div.innerHTML = this.html();
@@ -65,32 +79,63 @@ export class AuthenticationView extends WidgetView {
     };
   }
 
+  /**
+   * Dispose the window
+   *
+   * @returns {HTMLElement} The disposed HTML node
+   */
   dispose() {
     const div = document.getElementById('loginRegistrationWindow');
     return div.parentNode.removeChild(div);
   }
 
+  /**
+   * Display the register error
+   *
+   * @param {string} msg The message to display
+   */
   displayRegisterError(msg) {
     const errorField = document.getElementById('RegisterInfo');
     errorField.className = 'ErrorBox';
     errorField.innerHTML = msg;
   }
 
+  /**
+   * Display the login error
+   *
+   * @param {string} msg The message to display
+   */
   displayLoginError(msg) {
     const errorField = document.getElementById('LoginInfo');
     errorField.innerHTML = msg;
   }
 
+  /**
+   * Display the register success message
+   *
+   * @param {string} msg The message to display
+   */
   displayRegisterSuccess(msg) {
     const successField = document.getElementById('RegisterInfo');
     successField.className = 'SuccessBox';
     successField.innerHTML = msg;
   }
 
+  /**
+   * Check if the window is visible
+   *
+   * @returns {boolean} True if the window is visible
+   */
   isVisible() {
     const div = document.getElementById('loginRegistrationWindow');
     return div !== undefined && div !== null;
   }
+
+  /**
+   *
+   * @param {Array<number|string>} formIds Array of IDs
+   * @returns {boolean} True if all form values aren't empty
+   */
   verifyNotEmptyValuesForm(formIds) {
     let validate = true;
     for (const id in formIds) {
@@ -103,12 +148,24 @@ export class AuthenticationView extends WidgetView {
     }
     return validate;
   }
+
+  /**
+   * Delete the values of the form
+   *
+   * @param {Array<number|string>} formIds Array of IDs
+   */
   deleteValuesForm(formIds) {
     for (const id in formIds) {
       const element = document.getElementById(formIds[id]);
       element.value = '';
     }
   }
+
+  /**
+   * Check if the mail is correct
+   *
+   * @returns {boolean} True if the the mail if correct
+   */
   verifymail() {
     // This regular expression checks an email in the form of 'name@example.com'
     const emailRegex = new RegExp(
@@ -126,6 +183,9 @@ export class AuthenticationView extends WidgetView {
     return false;
   }
 
+  /**
+   * Login
+   */
   async logInFunction() {
     this.displayLoginError('');
     const loginForm = document.getElementById('LoginForm');
@@ -143,6 +203,9 @@ export class AuthenticationView extends WidgetView {
     }
   }
 
+  /**
+   * Register a new user
+   */
   async registerFunction() {
     this.displayRegisterError('');
     const registerForm = document.getElementById('RegistrationForm');
@@ -170,10 +233,16 @@ export class AuthenticationView extends WidgetView {
   }
   // ///// MODULE MANAGEMENT FOR BASE DEMO
 
+  /**
+   * Enable the view
+   */
   enableView() {
     this.appendToElement(this.parentElement);
   }
 
+  /**
+   * Dispose the view
+   */
   disableView() {
     this.dispose();
   }

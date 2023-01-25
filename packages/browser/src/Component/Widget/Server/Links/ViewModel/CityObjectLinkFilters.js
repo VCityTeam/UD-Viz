@@ -31,13 +31,19 @@ export class LinkCountFilter extends CityObjectFilter {
    * Accepts city objects that have at least `this.requiredCount` linked
    * documents.
    *
-   * @param {CityObject} cityObject
+   * @param {CityObject} cityObject The CItyObject
+   * @returns {boolean} True if the CItyObject is accepted
    */
   accepts(cityObject) {
     const linkCount = this.provider.getLinksFromCityObject(cityObject).length;
     return linkCount >= this.requiredCount;
   }
 
+  /**
+   * Returns the required count of linked documents as string
+   *
+   * @returns {string} Required linked documents as string
+   */
   toString() {
     let str = 'At least ' + this.requiredCount + ' linked document';
     if (this.requiredCount > 1) {
@@ -71,7 +77,8 @@ export class LinkedWithDisplayedDocumentFilter extends CityObjectFilter {
   /**
    * Accepts city objects that are linked with the currently displayed document.
    *
-   * @param {CityObject} cityObject
+   * @param {CityObject} cityObject The CityObject
+   * @returns {boolean} True if the CityObject is accepted
    */
   accepts(cityObject) {
     const found = this.provider
@@ -82,6 +89,11 @@ export class LinkedWithDisplayedDocumentFilter extends CityObjectFilter {
     return !!found;
   }
 
+  /**
+   * Return a string saying the cityObject is linked to the displayed document
+   *
+   * @returns {string} String 'Linked to the displayed document'
+   */
   toString() {
     return 'Linked to the displayed document';
   }
@@ -111,7 +123,8 @@ export class LinkedWithFilteredDocumentsFilter extends CityObjectFilter {
   /**
    * Accepts city objects that are linked with the currently filtered documents.
    *
-   * @param {CityObject} cityObject
+   * @param {CityObject} cityObject The CityObect
+   * @returns {boolean} True if the CityObject is accepted
    */
   accepts(cityObject) {
     const found = this.provider
@@ -122,6 +135,11 @@ export class LinkedWithFilteredDocumentsFilter extends CityObjectFilter {
     return !!found;
   }
 
+  /**
+   * Return a string saying the cityObject is linked to the filtered documents
+   *
+   * @returns {string} String 'Linked to the filtered documents'
+   */
   toString() {
     return 'Linked to the filtered documents';
   }
