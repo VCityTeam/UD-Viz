@@ -9,7 +9,10 @@ const ExpressAppWrapper = class {
    * Wrapper of an express app
    */
   constructor() {
-    /** @type {http.Server} - a node http server */
+    /**
+     * a node http server
+     *
+      @type {http.Server}  */
     this.httpServer = null;
   }
 
