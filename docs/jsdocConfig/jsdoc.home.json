@@ -3,7 +3,7 @@
     "include": ["./bin"]
   },
   "opts": {
-    "destination": "./docs/htmlTest/",
+    "destination": "./docs/html/",
     "theme_opts": {
       "title": "@ud-viz"
     },

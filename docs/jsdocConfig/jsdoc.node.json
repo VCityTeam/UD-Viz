@@ -3,7 +3,7 @@
     "include": ["packages/node/src"]
   },
   "opts": {
-    "destination": "./docs/htmlTest/node",
+    "destination": "./docs/html/node",
     "theme_opts": { "title": "@ud-viz/node" },
     "readme": "./packages/node/readme.md"
   }

@@ -3,7 +3,7 @@
     "include": ["packages/browser/src"]
   },
   "opts": {
-    "destination": "./docs/htmlTest/browser",
+    "destination": "./docs/html/browser",
     "theme_opts": { "title": "@ud-viz/browser" },
     "readme": "./packages/browser/readme.md"
   }

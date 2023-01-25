@@ -1,0 +1,15 @@
+.method-member-container {
+  overflow: auto;
+}
+
+div.member-item-container {
+  display: none;
+}
+
+.navbar-item {
+  align-self: center;
+}
+
+.navbar-item a {
+  text-align: center;
+}

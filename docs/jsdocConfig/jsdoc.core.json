@@ -3,7 +3,7 @@
     "include": ["packages/core/src/"]
   },
   "opts": {
-    "destination": "./docs/htmlTest/core",
+    "destination": "./docs/html/core",
     "theme_opts": { "title": "@ud-viz/core" },
     "readme": "./packages/core/readme.md"
   }
