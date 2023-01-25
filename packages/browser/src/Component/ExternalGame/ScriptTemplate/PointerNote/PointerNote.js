@@ -1,8 +1,8 @@
-import { ExternalScriptBase } from '../Context';
+import { ExternalScriptBase } from '../../Context';
 import { Command, Game } from '@ud-viz/core';
 import * as THREE from 'three';
 
-export class MultiPointerItowns extends ExternalScriptBase {
+export class PointerNote extends ExternalScriptBase {
   init() {
     console.log(this);
 
@@ -32,5 +32,12 @@ export class MultiPointerItowns extends ExternalScriptBase {
         }
       );
     }
+
+    // ui
+    const rootHtml = document.createElement('div');
+    rootHtml.classList.add('root_html_pointer_note');
+
+    // fetch root ui
+    // const pointerNoteUI = this.context.
   }
 }

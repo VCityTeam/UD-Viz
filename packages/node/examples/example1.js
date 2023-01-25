@@ -11,8 +11,7 @@ expressAppWrapper
     const gameService = new Game.SocketService(expressAppWrapper.httpServer);
     gameService.initializeGameThreads(
       {
-        Object3DSync:
-          'package:@ud-viz/core/src/Game/ScriptTemplate/Object3DSync.js',
+        Example: 'package:@ud-viz/core/src/Game/ScriptTemplate/Example.js',
         GameManager: 'file:examples/script/gameScript/gameManager.js',
       },
       [
@@ -20,7 +19,10 @@ expressAppWrapper
           static: true,
           components: {
             GameScript: {
-              idScripts: ['GameManager', 'Object3DSync'],
+              idScripts: ['GameManager', 'Example'],
+            },
+            ExternalScript: {
+              idScripts: ['PointerNoteUI'],
             },
           },
         }),

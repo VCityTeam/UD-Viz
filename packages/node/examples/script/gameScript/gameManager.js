@@ -11,9 +11,10 @@ module.exports = class GameManager extends Core.Game.ScriptBase {
         components: {
           Render: {
             idRenderData: 'sphere',
+            color: [Math.random(), Math.random(), Math.random()],
           },
           ExternalScript: {
-            idScripts: ['MultiPointerItowns'],
+            idScripts: ['PointerNote'],
             variables: {
               socketID: socketID,
             },

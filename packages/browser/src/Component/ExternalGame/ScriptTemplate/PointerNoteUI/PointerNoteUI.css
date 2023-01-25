@@ -1,0 +1,25 @@
+.root_pointer_note_ui {
+  background-color: red;
+  z-index: 2;
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  min-width: 200px;
+  transform: translate(-100%, 0px);
+  transition: 1s;
+}
+
+.fold_button_pointer_note_ui {
+  background-color: green;
+  height: 100%;
+  width: 20px;
+  border-radius: 0px 20px 20px 0px;
+  float: right;
+  transform: translate(100%, 0px);
+  cursor: pointer;
+}
+
+.fold_button_pointer_note_ui:hover {
+  background-color: aqua;
+}
