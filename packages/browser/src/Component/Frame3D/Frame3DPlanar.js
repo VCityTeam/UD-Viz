@@ -38,7 +38,10 @@ export class Frame3DPlanar extends Frame3DBase {
     const tilt = options.tilt || 10;
     const maxSubdivisionLevel = options.maxSubdivisionLevel || 3;
 
-    /** @type {itowns.PlanarView} - planar view */
+    /**
+     * planar view
+     *
+      @type {itowns.PlanarView} */
     this.itownsView = new itowns.PlanarView(this.rootWebGL, extent, {
       disableSkirt: false,
       placement: {
@@ -62,7 +65,10 @@ export class Frame3DPlanar extends Frame3DBase {
     this.renderer = this.itownsView.mainLoop.gfxEngine.renderer;
     this.camera = this.itownsView.camera.camera3D;
 
-    /** @type {LayerManager} - layer manager */
+    /**
+     * layer manager
+     *
+      @type {LayerManager} */
     this.layerManager = new LayerManager(this.itownsView);
 
     let useItownsMainLoop = true;

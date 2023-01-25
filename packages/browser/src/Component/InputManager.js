@@ -18,34 +18,64 @@ export class InputManager {
    * Manage user inputs with a poll system (https://en.wikipedia.org/wiki/Polling_(computer_science))
    */
   constructor() {
-    /** @type {Object<string,Object<string,function(MouseState):Command>>} - register callback associated to an event + command id */
+    /**
+     * register callback associated to an event + command id
+     *
+      @type {Object<string,Object<string,function(MouseState):Command>>} */
     this.mouseCommands = {};
 
-    /** @type {MouseState} - store state of the mouse */
+    /**
+     * store state of the mouse
+     *
+      @type {MouseState} */
     this.mouseState = new MouseState();
 
-    /** @type {Object<string,boolean>} - avoid a command to be computed two times if multiple keys are attach to it */
+    /**
+     * avoid a command to be computed two times if multiple keys are attach to it
+     *
+      @type {Object<string,boolean>} */
     this.commandsBuffer = {};
 
-    /** @type {Object<string,boolean>} - register if a key is pressed or not */
+    /**
+     * register if a key is pressed or not
+     *
+      @type {Object<string,boolean>} */
     this.keyMap = {};
 
-    /** @type {string[]} - register if a key state is down */
+    /**
+     * register if a key state is down
+     *
+      @type {string[]} */
     this.keyMapKeyDown = [];
 
-    /** @type {string[]} - register if a key state is up */
+    /**
+     * register if a key state is up
+     *
+      @type {string[]} */
     this.keyMapKeyUp = [];
 
-    /** @type {CommandCallback} - register a callback associated to a key event */
+    /**
+     * register a callback associated to a key event
+     *
+      @type {CommandCallback}  */
     this.keyCommands = {};
 
-    /** @type {Array<{element:HTMLElement,id:string,cb:EventCallback,listener:EventCallback}>} - register listeners to dispose them */
+    /**
+     * register listeners to dispose them
+     *
+      @type {Array<{element:HTMLElement,id:string,cb:EventCallback,listener:EventCallback}>} */
     this.listeners = [];
 
-    /** @type {HTMLElement} - element catching mouse event  */
+    /**
+     * element catching mouse event
+     *
+      @type {HTMLElement} */
     this.element = null;
 
-    /** @type {boolean} - if true {@link EventCallback} and {@link CommandCallback} are not called */
+    /**
+     * if true {@link EventCallback} and {@link CommandCallback} are not called
+     *
+      @type {boolean} */
     this.pause = false;
   }
 
@@ -410,16 +440,28 @@ export class MouseState {
    * Listen to the MOUSE_STATE_EVENTS and store the mouse state to then be access synchronously
    */
   constructor() {
-    /** @type {Object<string,boolean>} - register if a mouse event is trigger or not */
+    /**
+     * register if a mouse event is trigger or not
+     *
+      @type {Object<string,boolean>} */
     this.mouseMap = {};
 
-    /** @type {Object<string,Event>} - register event native js to pass it later synchronously */
+    /**
+     * register event native js to pass it later synchronously
+     *
+      @type {Object<string,Event>} */
     this.mouseEvent = {};
 
-    /** @type {boolean} - true if the mouse is dragging */
+    /**
+     * true if the mouse is dragging
+     *
+      @type {boolean} */
     this.dragging = false;
 
-    /** @type {Array<{element:HTMLElement,cb:EventCallback,id:string}>} - register all listeners to well dispose them on dipose */
+    /**
+     * register all listeners to well dispose them on dipose
+     *
+      @type {Array<{element:HTMLElement,cb:EventCallback,id:string}>} */
     this.listeners = [];
   }
 

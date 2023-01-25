@@ -29,22 +29,37 @@ export class SinglePlayerGamePlanar {
     inputManager,
     options = {}
   ) {
-    /** @type {Game.Context} - game script + collision context */
+    /**
+     * game script + collision context
+     *
+      @type {Game.Context} */
     this.gameContext = new Game.Context(
       options.gameScriptClass || {},
       gameObject3D
     );
 
-    /** @type {Frame3DPlanar} - game view */
+    /**
+     * game view
+     *
+      @type {Frame3DPlanar}  */
     this.frame3DPlanar = frame3DPlanar;
 
-    /** @type {AssetManager} - asset manager */
+    /**
+     * asset manager
+     *
+      @type {AssetManager} */
     this.assetManager = assetManager;
 
-    /** @type {InputManager} - input manager */
+    /**
+     * input manager
+     *
+      @type {InputManager} */
     this.inputManager = inputManager;
 
-    /** @type {ExternalGame.Context} - render audio external script context */
+    /**
+     * render audio external script context
+     *
+      @type {ExternalGame.Context} */
     this.externalGameContext = new ExternalGame.Context(
       this.frame3DPlanar,
       assetManager,
@@ -62,7 +77,10 @@ export class SinglePlayerGamePlanar {
       this.externalGameContext.object3D.updateMatrixWorld();
     }
 
-    /** @type {Game.StateInterpolator} - interpolator to smooth comminucation between the two process */
+    /**
+     * interpolator to smooth comminucation between the two process
+     *
+      @type {Game.StateInterpolator} */
     this.interpolator = new Game.StateInterpolator(options.interpolatorDelay);
   }
 

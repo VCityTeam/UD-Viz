@@ -37,7 +37,10 @@ export class NetworkManager {
     },
     option = null
   ) {
-    /** @type {Network} hold the network/graph instance created by viz.js */
+    /**
+     * hold the network/graph instance created by viz.js
+     *
+      @type {Network} */
     this.network = null;
     this.data = data;
     this.option = option;

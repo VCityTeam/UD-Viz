@@ -40,7 +40,7 @@ export class SocketIOWrapper {
   /**
    * Reset all events listened or only the ones listed in events parameter
    *
-   * @param {Array<string>=} events - list of events to reset
+   * @param {Array<string>} events - list of events to reset
    */
   reset(events) {
     if (events) {
@@ -58,10 +58,14 @@ export class SocketIOWrapper {
   }
 
   /**
+   * @callback cbSocketIO
+   * @param {...*} args Args
+   */
+  /**
    * Register a callback on an event
    *
    * @param {string} event - event id
-   * @param {(...args: any[]) => void} callback - callback called when the event is received
+   * @param {cbSocketIO} callback - callback called when the event is received
    */
   on(event, callback) {
     this.events[event] = true;

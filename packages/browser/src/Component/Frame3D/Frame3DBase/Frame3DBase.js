@@ -18,7 +18,10 @@ export class Frame3DBase {
    * @param {boolean} [init3D=true] - {@link THREE.Scene} + {@link THREE.PerspectiveCamera} + {@link THREE.WebGLRenderer} should be init
    */
   constructor(options = {}, init3D = true) {
-    /** @type {HTMLDivElement} - root html */
+    /**
+     * root html 
+     *
+      @type {HTMLDivElement} */
     this.rootHtml = document.createElement('div');
     this.rootHtml.id = 'root_Frame3DBase';
 
@@ -29,55 +32,94 @@ export class Frame3DBase {
       document.body.appendChild(this.rootHtml);
     }
 
-    /** @type {HTMLDivElement} - root webgl (where canvas is added) */
+    /**
+     * root webgl (where canvas is added)
+     *
+      @type {HTMLDivElement}  */
     this.rootWebGL = document.createElement('div');
     this.rootWebGL.id = 'viewerDiv'; // => So Widget can access rootWebGL with id
 
-    /** @type {HTMLDivElement} - root css (where css3Delement are added) */
+    /**
+     * root css (where css3Delement are added)
+     *
+      @type {HTMLDivElement}  */
     this.rootCss = document.createElement('div');
     this.rootCss.id = 'css_Frame3DBase';
 
     this.rootHtml.appendChild(this.rootCss);
     this.rootHtml.appendChild(this.rootWebGL);
 
-    /** @type {HTMLDivElement} - where ui element should be added (note that you have to handle manually z-index element composing ui, should it be automatically ?) */
+    /**
+     * where ui element should be added
+     *
+      @type {HTMLDivElement} */
     this.ui = document.createElement('div');
     this.ui.classList.add('ui_Frame3DBase');
     this.rootWebGL.appendChild(this.ui);
 
-    /** @type {Function} - reference resize listener to remove it on dispose */
+    /**
+     * reference resize listener to remove it on dispose
+     *
+      @type {Function} */
     this.resizeListener = this.onResize.bind(this);
     window.addEventListener('resize', this.resizeListener);
 
-    /** @type {boolean} - flag to stop rendering 3D */
+    /**
+     * flag to stop rendering 3D
+     *
+      @type {boolean} */
     this.isRendering = true;
 
-    /** @type {THREE.Vector2} Size of the frame3D */
+    /**
+     * Size of the frame3D
+     *
+      @type {THREE.Vector2} */
     this.size = new THREE.Vector2(1, 1);
 
-    /** @type {THREE.Scene} - canvas scene 3D */
+    /**
+     * canvas scene 3D
+     *
+      @type {THREE.Scene} */
     this.scene = null;
 
-    /** @type {THREE.WebGLRenderer} - canvas renderer */
+    /**
+     * canvas renderer
+     *
+      @type {THREE.WebGLRenderer} */
     this.renderer = null;
 
-    /** @type {THREE.PerspectiveCamera} - camera 3D */
+    /**
+     * camera 3D
+     *
+      @type {THREE.PerspectiveCamera} */
     this.camera = null;
 
-    /** @type {CSS3DRenderer} - css renderer */
+    /**
+     * css renderer
+     *
+      @type {CSS3DRenderer} */
     this.css3DRenderer = null;
 
-    /** @type {THREE.Scene} - css scene */
+    /**
+     * css scene
+     *
+      @type {THREE.Scene} */
     this.css3DScene = null;
 
-    /** @type {Billboard[]} - current billboards in frame3D */
+    /**
+     * current billboards in frame3D
+     *
+      @type {Billboard[]} */
     this.billboards = [];
 
     // Default catch events
     const catchEventsCSS3D = options.catchEventsCSS3D || false;
     this.catchEventsCSS3D(catchEventsCSS3D);
 
-    /** @type {Object<string,Function[]>} - listeners of {@link Frame3DBase.EVENT} */
+    /**
+     * listeners of {@link Frame3DBase.EVENT}
+     *
+      @type {Object<string,Function[]>} */
     this.listeners = {};
     for (const key in Frame3DBase.EVENT) {
       this.listeners[Frame3DBase.EVENT[key]] = [];

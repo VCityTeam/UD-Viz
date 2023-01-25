@@ -57,7 +57,10 @@ export class SlideShow extends Window {
     /** @type {import("../../InputManager").InputManager} */
     this.inputManager = inputManager;
 
-    /** @type {HTMLElement} Content html */
+    /**
+     * Content html 
+     *
+      @type {HTMLElement} */
     this.htmlSlideShow = null;
     // Ids
     this.coordinatesInputVectorID = null;
@@ -74,17 +77,26 @@ export class SlideShow extends Window {
     this.rotationVector = new THREE.Vector3();
     this.sizeVector = new THREE.Vector2();
 
-    /** @type {Array<{event:string,id:number,cb:Function}>} List of callbacks to set when the window is created  */
+    /**
+     * List of callbacks to set when the window is created
+     *
+      @type {Array<{event:string,id:number,cb:Function}>}  */
     this.callbacksHTMLEl = [];
 
     /** @type {THREE.Mesh} */
     this.plane = null;
 
-    /** @type {TextureFile[]} List of textures with data*/
+    /**
+     * List of textures with data
+     *
+      @type {TextureFile[]} */
     this.texturesFiles = null;
     this.iCurrentTextureFile = 0;
 
-    /** @type {boolean} if true the application update its view3D eachFrame*/
+    /**
+     * if true the application update its view3D eachFrame
+     *
+      @type {boolean} */
     this.notifyValue = false;
 
     this.defaultTexture = null;
