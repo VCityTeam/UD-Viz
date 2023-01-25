@@ -3,20 +3,21 @@ import { Window } from '../../Component/GUI/js/Window';
 import { CityObjectStyle } from '../../../Itowns/3DTiles/Model/CityObjectStyle';
 import { CityObjectID } from '../../../Itowns/3DTiles/Model/CityObject';
 import { TilesManager } from '../../../Itowns/3DTiles/TilesManager';
+import { LayerManager } from '../../../Itowns/Itowns';
 
 export class Debug3DTilesWindow extends Window {
   /**
    * Creates the debug window.
    *
-   * @param {layer} layerManager The tiles manager.
+   * @param {LayerManager} layerManager The layer manager.
    */
   constructor(layerManager) {
     super('3d_tiles_debug', '3DTiles Debug', false);
 
     /**
-     * The tiles manager.
+     * The layer manager.
      *
-     * @type {layerManager}
+     * @type {LayerManager}
      */
     this.layerManager = layerManager;
     // Selection
