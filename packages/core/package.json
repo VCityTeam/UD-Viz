@@ -1,7 +1,7 @@
 {
   "name": "@ud-viz/core",
   "version": "3.0.0",
-  "description": "ud-viz core library (browser + node compatible)",
+  "description": "UD-Viz shared Browser+Node framework",
   "main": "src",
   "scripts": {
     "test": "node --trace-warnings ./bin/test.js",

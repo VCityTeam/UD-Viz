@@ -1,7 +1,7 @@
 {
   "name": "@ud-viz/node",
   "version": "3.0.0",
-  "description": "ud-viz node framework",
+  "description": "UD-Viz Node-side framework",
   "main": "src",
   "scripts": {
     "build": "cross-env NODE_ENV=production webpack"

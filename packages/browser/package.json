@@ -1,7 +1,7 @@
 {
   "name": "@ud-viz/browser",
   "version": "3.0.0",
-  "description": "Browser framework with templates based on itowns/THREE.js",
+  "description": "UD-Viz Browser-side framework for building iTowns/Three.js-based 3D geospatial urban data applications",
   "main": "src",
   "scripts": {
     "build": "cross-env NODE_ENV=production webpack --config=./webpackConfig/webpack.config.js",

@@ -158,6 +158,7 @@ consists in
 2.  configure your editor/IDE to use Unix-style endings
 
 ### Debugging the examples
+
 The browser package contains several "example" applications that showcase different UD-Viz components and serve as templates for creating demos with UD-Viz.
 
 ```bash
