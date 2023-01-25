@@ -11,7 +11,6 @@ export class DocumentService {
    * Constructs a new document service.
    *
    * @param {RequestService} requestService The request service.
-   * @param {object} configServer The configuration of UD-Viz.
    * @param {object} configServer The server configuration.
    * @param {string} configServer.url The server url.
    * @param {string} configServer.document The base route for documents.
@@ -76,7 +75,7 @@ export class DocumentService {
    * Fetches the documents from the server and return them in an array.
    *
    * @async
-   * @returns {Promise<Array<Document>>}
+   * @returns {Promise<Array<Document>>} A promise with an array of fetched documents
    */
   async fetchDocuments() {
     const req = await this.requestService.request(
@@ -126,7 +125,7 @@ export class DocumentSource {
    * Returns the URL to retrieve the documents.
    *
    * @abstract
-   * @returns {string}
+   * @returns {string} The document URL
    */
   getDocumentUrl() {
     return '';
@@ -136,7 +135,7 @@ export class DocumentSource {
    * Returns the URL to retrieve the image of the document.
    *
    * @abstract
-   * @returns {string}
+   * @returns {string} The image URL
    */
   getImageUrl() {
     return '';

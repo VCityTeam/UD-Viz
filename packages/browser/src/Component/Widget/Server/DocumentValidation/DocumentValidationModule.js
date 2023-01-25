@@ -2,6 +2,7 @@ import { DocumentModule } from '../Documents/DocumentModule';
 import { ValidationService } from './Service/ValidationService';
 import { DocumentsInValidationDocumentSource } from './Service/DocumentsInValidationSource';
 import { ValidationView } from './View/ValidationView';
+import { RequestService } from '../Component/RequestService';
 
 /**
  * The document extension to manage documents validation. It allows the user to
@@ -16,8 +17,8 @@ export class DocumentValidationModule {
    * and finally the view elements.
    *
    * @param {DocumentModule} documentModule The documents module.
-   * @param requestService
-   * @param configServer
+   * @param {RequestService} requestService The request service
+   * @param {object} configServer The server configuration
    */
   constructor(documentModule, requestService, configServer) {
     this.validationService = new ValidationService(

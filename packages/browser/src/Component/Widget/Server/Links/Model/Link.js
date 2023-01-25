@@ -2,7 +2,6 @@
  * Represents a link between a document and a target (in this example, the
  * only valid target types are city objects).
  *
- * @format
  */
 
 export class Link {

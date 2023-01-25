@@ -6,10 +6,9 @@ import { AbstractDocumentWindow } from './AbstractDocumentWindow';
 /**
  * @typedef {object} DocumentNavigatorExtension
  * @property {string} type 'panel | 'button'
- * @property {string} [container]
+ * @property {string} [container] The container
  * @property {string} id ID
- * @property {import('../DocumentModule').cbNavigatorOptionsExtension} callback
- * @property {html} string
+ * @property {import('../DocumentModule').cbNavigatorOptionsExtension} callback Callback on extension options
  */
 /**
  * @class Represents the navigator window for the documents. It contains the filters on
@@ -91,6 +90,9 @@ export class DocumentNavigatorWindow extends AbstractDocumentWindow {
     `;
   }
 
+  /**
+   * Add extensions once the window is created
+   */
   windowCreated() {
     // Add extensions
     for (const extension of Object.values(this.extensions)) {
@@ -106,6 +108,9 @@ export class DocumentNavigatorWindow extends AbstractDocumentWindow {
     };
   }
 
+  /**
+   * Add event listeners on documents
+   */
   documentWindowReady() {
     this.provider.addFilter(this.searchFilter);
 

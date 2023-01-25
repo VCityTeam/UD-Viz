@@ -27,6 +27,11 @@ export class DocumentCommentsService {
     this.authorUrl = `${configServer.url}${configServer.user}`;
   }
 
+  /**
+   * Get the comments as JSON object
+   *
+   * @returns {object} Comment as JSON object
+   */
   async getComments() {
     const currentDocument = this.documentProvider.getDisplayedDocument();
     if (currentDocument !== null && currentDocument !== undefined) {
@@ -50,6 +55,11 @@ export class DocumentCommentsService {
     return [];
   }
 
+  /**
+   * Publish the comments
+   *
+   * @param {FormData} formData The form data containing the comments
+   */
   async publishComment(formData) {
     const currentDocument = this.documentProvider.getDisplayedDocument();
     if (currentDocument !== null && currentDocument !== undefined) {

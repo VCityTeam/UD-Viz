@@ -21,10 +21,21 @@ export class DocumentsInValidationDocumentSource extends DocumentSource {
     this.fileRoute = configServer.file;
   }
 
+  /**
+   * Returns the URL of the document to validate
+   *
+   * @returns {string} The URL of the document
+   */
   getDocumentUrl() {
     return this.documentToValidateUrl;
   }
 
+  /**
+   * Returns the URL of the image of the document
+   *
+   * @param {Document} doc The document
+   * @returns {string} The URL of the image
+   */
   getImageUrl(doc) {
     return this.documentUrl + '/' + doc.id + '/' + this.fileRoute;
   }

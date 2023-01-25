@@ -6,7 +6,7 @@ export class LayerChoice extends Window {
   /**
    * Creates the layer choice windows
    *
-   * @param {LayerManager} layerManager
+   * @param {LayerManager} layerManager The LayerManager holding iTowns layers
    */
   constructor(layerManager) {
     super('layer_choice', 'Layer', false);
@@ -43,13 +43,18 @@ export class LayerChoice extends Window {
     `;
   }
 
+  /**
+   * Set layers once the window is created
+   */
   windowCreated() {
     this.innerContentColorLayers();
     this.innerContentElevationLayers();
     this.innerContentGeometryLayers();
   }
 
-  // Create the description part of ColorLayers
+  /**
+   * Create the description part of ColorLayers
+   */
   innerContentColorLayers() {
     const list = this.colorLayersSpoilerBoxElement;
     list.innerHTML = '';
@@ -90,7 +95,9 @@ export class LayerChoice extends Window {
     }
   }
 
-  // Create the description part of ElevationLayers
+  /**
+   * Create the description part of ElevationLayers
+   */
   innerContentElevationLayers() {
     const list = this.elevationLayersSpoilerBoxElement;
     list.innerHTML = '';
@@ -115,7 +122,9 @@ export class LayerChoice extends Window {
     }
   }
 
-  // Create the description part of GeometryLayers
+  /**
+   * Create the description part of GeometryLayers
+   */
   innerContentGeometryLayers() {
     const list = this.geometryLayersSpoilerBoxElement;
     list.innerHTML = '';

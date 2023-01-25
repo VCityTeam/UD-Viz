@@ -10,6 +10,11 @@ import './Help.css';
  */
 
 export class HelpWindow extends WidgetView {
+  /**
+   * Creates a HelpWindow
+   *
+   * @param {object} config The config of the Window
+   */
   constructor(config = {}) {
     super();
     this.config = config;

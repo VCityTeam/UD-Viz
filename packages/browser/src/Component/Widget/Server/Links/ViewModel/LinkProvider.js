@@ -286,6 +286,7 @@ export class LinkProvider extends EventSender {
    * Returns the links from a list of documents.
    *
    * @param {Array<Document>} docs A list of documents.
+   * @returns {Array<Link>} Filtered links
    */
   getLinksFromDocuments(docs) {
     return this.links.filter(
@@ -297,6 +298,7 @@ export class LinkProvider extends EventSender {
    * Returns the links from a city object.
    *
    * @param {CityObject} cityObject The city object.
+   * @returns {Array<Link>} Filtered links
    */
   getLinksFromCityObject(cityObject) {
     return this.links.filter(

@@ -4,6 +4,11 @@ import { PositionerWindow } from '../../Component/GUI/js/PositionerWindow';
 import { Window } from '../../Component/GUI/js/Window';
 
 export class CameraPositionerView extends WidgetView {
+  /**
+   * Creates a new CameraPositionerView
+   *
+   * @param {import('itowns').PlanarView} itownsView - the itowns view object
+   */
   constructor(itownsView) {
     super();
 
@@ -14,10 +19,16 @@ export class CameraPositionerView extends WidgetView {
     );
   }
 
+  /**
+   * Append the window to the parent element
+   */
   enableView() {
     this.positionerWindow.appendTo(this.parentElement);
   }
 
+  /**
+   * Dispose the window
+   */
   disableView() {
     this.positionerWindow.dispose();
   }

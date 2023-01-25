@@ -178,7 +178,7 @@ export class DocumentProvider extends EventSender {
   /**
    * Returns the list of all documents.
    *
-   * @returns {Array<Document>}
+   * @returns {Array<Document>} An array with all documents
    */
   getAllDocuments() {
     return this.allDocuments;
@@ -187,7 +187,7 @@ export class DocumentProvider extends EventSender {
   /**
    * Returns the filtered list of documents.
    *
-   * @returns {Array<Document>}
+   * @returns {Array<Document>} An array with filtered documents
    */
   getFilteredDocuments() {
     return this.filteredDocuments;
@@ -196,7 +196,7 @@ export class DocumentProvider extends EventSender {
   /**
    * Returns the currently displayed document.
    *
-   * @returns {Document | undefined}
+   * @returns {Document | undefined} The displayed document
    */
   getDisplayedDocument() {
     if (this.displayedDocumentIndex === undefined) {
@@ -209,7 +209,7 @@ export class DocumentProvider extends EventSender {
   /**
    * Returns the displayed document index.
    *
-   * @returns {number | undefined}
+   * @returns {number | undefined} The index of the displayed document
    */
   getDisplayedDocumentIndex() {
     return this.displayedDocumentIndex;
@@ -221,7 +221,7 @@ export class DocumentProvider extends EventSender {
    * URL or a base64 encoded file).
    *
    * @async
-   * @returns {Promise<string | undefined>}
+   * @returns {Promise<string | undefined>} A promise for the document image
    */
   async getDisplayedDocumentImage() {
     if (this.displayedDocumentIndex === undefined) {

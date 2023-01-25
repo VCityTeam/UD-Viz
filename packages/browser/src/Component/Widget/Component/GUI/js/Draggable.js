@@ -2,8 +2,8 @@
 // Make the DIV element draggable:
 /**
  *
- * @param elmnt
- * @param dragelmnt
+ * @param {HTMLElement} elmnt The draggable window
+ * @param {HTMLElement} dragelmnt The element used to drag the window
  */
 export function dragElement(elmnt, dragelmnt) {
   let pos1 = 0,
@@ -15,7 +15,7 @@ export function dragElement(elmnt, dragelmnt) {
 
   /**
    *
-   * @param e
+   * @param {event} e Mouse down event
    */
   function dragMouseDown(e) {
     e = e || window.event;
@@ -29,7 +29,7 @@ export function dragElement(elmnt, dragelmnt) {
 
   /**
    *
-   * @param e
+   * @param {event} e Mouse move event
    */
   function elementDrag(e) {
     e = e || window.event;

@@ -103,7 +103,7 @@ export class WindowExtension {
    * Searches for a HTML node that can contains the extension.
    *
    * @param {HTMLElement} htmlRoot The HTML root to search the container.
-   * @returns {HTMLElement}
+   * @returns {HTMLElement} Returns the HTML element containing the window
    */
   findContainer(htmlRoot) {
     const queries = [];

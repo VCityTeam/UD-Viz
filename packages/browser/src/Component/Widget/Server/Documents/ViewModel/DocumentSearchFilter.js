@@ -67,6 +67,7 @@ export class DocumentSearchFilter extends DocumentFilter {
    * The function to filter the documents.
    *
    * @param {Document} doc The document to filter.
+   * @returns {boolean} True if the document is accepted
    */
   filterDocument(doc) {
     if (this.keywords.length > 0) {

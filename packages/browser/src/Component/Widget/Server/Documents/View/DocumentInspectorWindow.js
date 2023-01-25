@@ -5,10 +5,9 @@ import { AbstractDocumentWindow } from './AbstractDocumentWindow';
 /**
  * @typedef {object} DocumentInspectorExtension
  * @property {string} type 'panel | 'button'
- * @property {string} [container]
+ * @property {string} [container] The container for extension buttons
  * @property {string} id ID
- * @property {import('../DocumentModule').cbInspectorOptionsExtension} callback
- * @property {html} string
+ * @property {import('../DocumentModule').cbInspectorOptionsExtension} callback Callback on extension options
  */
 /**
  * @class The window responsible for displaying the currently displayed document, as
@@ -68,6 +67,9 @@ export class DocumentInspectorWindow extends AbstractDocumentWindow {
     `;
   }
 
+  /**
+   * Set window style once the window is created
+   */
   windowCreated() {
     this.window.style.left = 'unset';
     this.window.style.right = '10px';
@@ -88,6 +90,9 @@ export class DocumentInspectorWindow extends AbstractDocumentWindow {
     };
   }
 
+  /**
+   * Add event listener on displayed documebt changed
+   */
   documentWindowReady() {
     this.provider.addEventListener(
       DocumentProvider.EVENT_DISPLAYED_DOC_CHANGED,

@@ -8,7 +8,7 @@ import { Document } from '../Model/Document';
 /**
  * @callback cbAccepts
  * @param {Document} document
- * @returns {boolean}
+ * @returns {boolean} True if accepted
  */
 
 /**
@@ -36,7 +36,7 @@ export class DocumentFilter {
    * Applies the filter to the documents.
    *
    * @param {Array<Document>} documents The documents to filter.
-   * @returns {Array<Document>}
+   * @returns {Array<Document>} An array of filtered documents
    */
   apply(documents) {
     const filtered = documents.filter(this.accepts);

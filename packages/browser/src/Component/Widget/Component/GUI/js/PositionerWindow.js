@@ -3,6 +3,11 @@ import { MAIN_LOOP_EVENTS } from 'itowns';
 import * as THREE from 'three';
 
 export class PositionerWindow extends Window {
+  /**
+   * Creates a PositionerWindow
+   *
+   * @param {import('itowns').PlanarView} itownsView - the itowns view object
+   */
   constructor(itownsView) {
     super('camera-positioner', 'Camera Positioner', false);
 
@@ -86,7 +91,7 @@ export class PositionerWindow extends Window {
   /**
    * Retrieve the current camera position from the form fields.
    *
-   * @returns {{position: THREE.Vector3, quaternion: THREE.Quaternion}}
+   * @returns {{position: THREE.Vector3, quaternion: THREE.Quaternion}} Returns a position and a rotation
    */
   _getCameraPosition() {
     const data = new FormData(this.formElement);

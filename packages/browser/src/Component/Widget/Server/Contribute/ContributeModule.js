@@ -4,6 +4,7 @@ import { DocumentCreationWindow } from './View/DocumentCreationWindow';
 import { DocumentUpdateWindow } from './View/DocumentUpdateWindow';
 import { ContributeService } from './Service/ContributeService';
 import { DocumentDeletionInterface } from './View/DocumentDeletionInterface';
+import { DocumentVisualizerWindow } from '../DocumentVisualizer/View/DocumentVisualizerWindow';
 
 /**
  * This module is used to manage the update, deletion and creation of documents.
@@ -15,7 +16,7 @@ export class ContributeModule {
    * Constructs a new contribute module.
    *
    * @param {DocumentModule} documentModule The document module.
-   * @param {DocumentImageOrienter} documentImageOrienter The document image
+   * @param {DocumentVisualizerWindow} documentImageOrienter The document image
    * orienter module.
    * @param {RequestService} requestService The request service.
    * @param {*} itownsView The iTowns view.

@@ -11,8 +11,8 @@ export class DocumentCreationWindow extends AbstractDocumentWindow {
    *
    * @param {ContributeService} contributeService The contribute service to
    * perform requests.
-   * @param {*} itownsView The iTowns view.
-   * @param {*} cameraControls The planar camera controls.
+   * @param {import('itowns').PlanarView} itownsView The iTowns view.
+   * @param {import('itowns').PlanarControls} cameraControls The planar camera controls.
    * @param {DocumentVisualizerWindow} documentImageOrienter The document image orienter module.
    */
   constructor(
@@ -236,6 +236,7 @@ export class DocumentCreationWindow extends AbstractDocumentWindow {
    * Checks if the form is ready to be validated. Every entry must have a
    * non-empty value, and the camera position / orientation must have been set.
    *
+   * @returns {boolean} True if the validagion succeded
    * @private
    */
   _formValidation() {
