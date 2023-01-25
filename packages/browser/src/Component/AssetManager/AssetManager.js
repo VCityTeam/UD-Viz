@@ -199,7 +199,10 @@ class LoadingView {
     label.innerHTML = 'Loading assets';
     this.parentLoadingBar.appendChild(label);
 
-    /** @type {Object<string,HTMLDivElement>} Loading bars */
+    /**
+     * Loading bars 
+     *
+      @type {Object<string,HTMLDivElement>} */
     this.loadingBars = {};
   }
 
@@ -266,7 +269,10 @@ export class RenderData {
    * @param {THREE.AnimationClip[]} [animations=null] - An array of animations.
    */
   constructor(childObject3D, renderDataConfig = {}, animations = null) {
-    /** @type {THREE.Object3D} Parent object of the object3D to set up*/
+    /**
+     * Parent object of the object3D to set up
+     *
+      @type {THREE.Object3D} */
     this.object3D = new THREE.Object3D();
 
     const anchor = renderDataConfig.anchor;

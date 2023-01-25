@@ -5,17 +5,27 @@ export class RequestAnimationFrameProcess {
    * @param {number} [fps=30] - frame rate per second
    */
   constructor(fps) {
-    /** @type {boolean} - false if the is still running */
+    /**
+     * false if the is still running
+     *
+      @type {boolean} */
     this.stopped = false;
 
-    /** @type {number} - frame rate per second */
+    /**
+     * frame rate per second 
+     *
+      @type {number} */
     this.fps = fps || 30;
   }
 
   /**
+   * @callback cbTickAnimationFrame
+   * @param {number} dt Delta time between ticks
+   */
+  /**
    * Start process
    *
-   * @param {(dt:number)=>void} requester - callback to call at each tick
+   * @param {cbTickAnimationFrame} requester - callback to call at each tick
    */
   start(requester) {
     let now;

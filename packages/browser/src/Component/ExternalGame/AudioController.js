@@ -15,10 +15,16 @@ export class AudioController extends Game.Component.Controller {
   constructor(model, object3D, assetManager) {
     super(model, object3D);
 
-    /** @type {AssetManager} - asset manager */
+    /**
+     * asset manager 
+     *
+      @type {AssetManager}*/
     this.assetManager = assetManager;
 
-    /** @type {Object<string,Howl>} - sounds of controller */
+    /**
+     * sounds of controller
+     *
+       @type {Object<string,Howl>} */
     this.sounds = {};
     // initialize this.sounds with asset manager
     this.model.getSoundsJSON().forEach((idS) => {

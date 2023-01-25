@@ -62,9 +62,14 @@ export class CityObjectWindow extends Window {
 
     const viewerDiv = document.getElementById('viewerDiv');
     /**
+     * @callback cbMouseEvent
+     * @param {MouseEvent} event - file reader event
+     * @returns {any} Result
+     */
+    /**
      * The event listener for mouse clicks.
      *
-     * @type {(event: MouseEvent) => any}
+     * @type {cbMouseEvent}
      */
     this.mouseClickListener = (event) => {
       this.provider.selectCityObject(event);

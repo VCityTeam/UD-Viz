@@ -22,10 +22,16 @@ export class TemporalView extends WidgetView {
   constructor(provider, temporalOptions) {
     super();
 
-    /** @type {TemporalProvider} Setting the provider to the provider that is passed in. */
+    /**
+     * Setting the provider to the provider that is passed in.
+     *
+      @type {TemporalProvider}  */
     this.provider = provider;
 
-    /** @type {number} Setting the current time to the current time. */
+    /**
+     * Setting the current time to the current time.
+     *
+      @type {number}  */
     this.currentTime = temporalOptions.currentTime;
 
     /**

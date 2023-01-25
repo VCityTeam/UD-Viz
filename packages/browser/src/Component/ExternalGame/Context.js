@@ -14,7 +14,9 @@ import { Frame3DBase, Frame3DPlanar } from '../Frame3D/Frame3D';
  */
 
 /**
- * @type {SceneConfig} Default scene 3D config
+ *  Default scene 3D config
+ *
+ * @type {SceneConfig}
  */
 const defaultConfigScene = {
   shadowMapSize: 2046,
@@ -52,41 +54,74 @@ export class Context {
     externalGameScriptClass,
     options = {}
   ) {
-    /** @type {number} - delta time of context */
+    /**
+     * delta time of context
+     *
+      @type {number}  */
     this.dt = 0;
 
-    /** @type {Object<string,ExternalScriptBase>} - custom {@link ExternalScriptBase} that can be used by object3D */
+    /**
+     * custom {@link ExternalScriptBase} that can be used by object3D
+     *
+      @type {Object<string,ExternalScriptBase>}  */
     this.externalGameScriptClass = externalGameScriptClass;
 
-    /** @type {Frame3DBase|Frame3DPlanar} - frame3D view of game */
+    /**
+     * frame3D view of game
+     *
+      @type {Frame3DBase|Frame3DPlanar}  */
     this.frame3D = frame3D;
 
-    /** @type {AssetManager} - asset manager */
+    /**
+     * asset manager
+     *
+      @type {AssetManager}  */
     this.assetManager = assetManager;
 
-    /** @type {InputManager} - input manager */
+    /**
+     * input manager 
+     *
+      @type {InputManager}  */
     this.inputManager = inputManager;
 
-    /** @type {THREE.Object3D} - root object3D */
+    /**
+     * root object3D
+     *
+      @type {THREE.Object3D}  */
     this.object3D = new THREE.Object3D();
     this.object3D.name = 'External_Game_Context_Object3D';
     this.frame3D.scene.add(this.object3D); // add it to the frame3D scene
 
-    /** @type {Object<string,boolean>} - register uuid of object3D in context to identify new one incoming*/
+    /**
+     * register uuid of object3D in context to identify new one incoming
+     *
+      @type {Object<string,boolean>} */
     this.currentUUID = {};
 
-    /** @type {Game.Object3D} - current root gameobject3D (child of this.object3D) */
+    /**
+     * current root gameobject3D (child of this.object3D)
+     *
+      @type {Game.Object3D} */
     this.currentGameObject3D = null;
 
-    /** @type {object} - user data context */
+    /**
+     * user data context
+     *
+      @type {object}  */
     this.userData = options.userData || {};
 
     // Overwrite conf
     const overWriteConf = JSON.parse(JSON.stringify(defaultConfigScene));
     Data.objectOverWrite(overWriteConf, options.sceneConfig || {});
-    /** @type {SceneConfig} - config of scene 3D */
+    /**
+     * config of scene 3D
+     *
+      @type {SceneConfig}  */
     this.configScene = overWriteConf;
-    /** @type {THREE.DirectionalLight} - directional light of scene 3D */
+    /**
+     * directional light of scene 3D
+     *
+      @type {THREE.DirectionalLight} */
     this.directionalLight = null;
     this.initScene();
 
@@ -595,11 +630,17 @@ export class ExternalScriptBase {
    * @param {object} variables - custom variables bind (attach) to this script
    */
   constructor(context, object3D, variables) {
-    /** @type {Context} - context of this script */
+    /**
+     * context of this script
+     *
+      @type {Context}  */
     this.context = context;
-    /** @type {Game.Object3D} - object3D attach to this script */
+    /** object3D attach to this script@type {Game.Object3D}  */
     this.object3D = object3D;
-    /** @type {object} - custom variables attach to this script */
+    /**
+     * custom variables attach to this script
+     *
+      @type {object}  */
     this.variables = variables;
   }
   /**

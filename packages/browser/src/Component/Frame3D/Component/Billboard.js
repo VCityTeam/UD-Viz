@@ -24,10 +24,16 @@ export class Billboard {
    * @param {number} [resolution=1] - increase size of html element
    */
   constructor(html, position, rotation, scale, resolution = 1) {
-    /** @type {string} - uuid */
+    /**
+     * uuid
+     *
+      @type {string} */
     this.uuid = THREE.MathUtils.generateUUID();
 
-    /** @type {HTMLElement} - html element of css3Dobject */
+    /**
+     * html element of css3Dobject
+     *
+      @type {HTMLElement} */
     this.html = html;
 
     // scale html size
@@ -46,7 +52,10 @@ export class Billboard {
 
     newElement.scale.copy(css3DScale);
 
-    /** @type {CSS3DObject} - css3D object */
+    /**
+     * css3D object
+     *
+      @type {CSS3DObject}  */
     this.css3DObject = newElement;
 
     // initiliaze THREE.Object3D (mask)
@@ -57,10 +66,16 @@ export class Billboard {
     plane.scale.copy(scale);
     plane.updateMatrixWorld();
 
-    /** @type {THREE.Object3D} - mask superposing css3DObject */
+    /**
+     * mask superposing css3DObject
+     *
+      @type {THREE.Object3D} */
     this.maskObject = plane;
 
-    /** @type {boolean} - selected (css style is different if true or false) */
+    /**
+     * selected (css style is different if true or false)
+     *
+      @type {boolean} */
     this.isSelected = false;
     this.select(this.isSelected);
   }

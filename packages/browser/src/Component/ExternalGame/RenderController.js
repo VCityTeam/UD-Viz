@@ -13,13 +13,22 @@ export class RenderController extends Game.Component.Controller {
   constructor(model, object3D, assetManager) {
     super(model, object3D);
 
-    /** @type {AssetManager} - asset manager */
+    /**
+     * asset manager
+     *
+      @type {AssetManager} */
     this.assetManager = assetManager;
 
-    /** @type {THREE.AnimationMixer|null} - animation mixer only instanciated if there is animations in render data */
+    /**
+     * animation mixer only instanciated if there is animations in render data
+     *
+      @type {THREE.AnimationMixer|null} */
     this.animationMixer = null;
 
-    /** @type {RenderData} - render data */
+    /**
+     * render data
+     *
+      @type {RenderData} */
     this.renderData = this.assetManager.createRenderData(
       this.model.getIdRenderData()
     );
