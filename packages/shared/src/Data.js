@@ -474,7 +474,7 @@ function objectOverWrite(jsonOverWrited, jsonModel) {
       } else {
         if (json2[key] != undefined) {
           json1[key] = json2[key];
-        }
+        }    /** @type {THREE.Object3D} - root object3D */
       }
     }
   };
@@ -513,9 +513,26 @@ function objectParseNumeric(json) {
     }
   });
 }
+
+/**
+ * Check if both array are equals
+ *
+ * @param {Array} a1 - array 1
+ * @param {Array} a2 - array 2
+ * @returns {boolean} - true if equals
+ */
+function arrayEquals(a1, a2) {
+  if (a1.length !== a2.length) return false;
+  for (let i = 0; i < a1.length; i++) {
+    if (a1[i] !== a2[i]) return false;
+  }
+  return true;
+}
+
 module.exports = {
   PartialString: PartialString,
   StringComposer: StringComposer,
+  arrayEquals: arrayEquals,
   checkIfSubStringIsEuler: checkIfSubStringIsEuler,
   checkIfSubStringIsVector3: checkIfSubStringIsVector3,
   vector3ArrayFromURIComponent: vector3ArrayFromURIComponent,

@@ -262,10 +262,10 @@ export class Context {
 
                   // Check if color change
                   if (
-                    !childRenderComp
-                      .getModel()
-                      .getColor()
-                      .equals(bufferedRenderComp.getModel().getColor())
+                    !Data.arrayEquals(
+                      childRenderComp.getModel().getColor(),
+                      bufferedRenderComp.getModel().getColor()
+                    )
                   ) {
                     console.error('DEPRECATED');
                     childRenderComp.setColor(bufferedRenderComp.getColor());
@@ -546,10 +546,13 @@ export class Context {
     this.object3D.traverse(function (child) {
       if (!child.isGameObject3D) return;
 
-      // const externalScriptCom
+      const externalScriptComp = child.getComponent(
+        Game.Component.ExternalScript.TYPE
+      );
 
+      if (!externalScriptComp) return;
 
-      const scripts = child.fetchBrowserScripts();
+      const scripts = externalScriptComp.getController().getScripts();
       if (scripts && scripts[id]) {
         result = scripts[id];
         return true;

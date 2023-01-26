@@ -18,7 +18,7 @@ const RenderModel = class extends Model {
    * @param {object} json - json to configure render model
    * @param {string} json.uuid - uuid render model
    * @param {string=} json.idRenderData - id of render data (could be an id link to gltf, obj file)
-   * @param {Array<number>} [json.color=[1,1,1]] - [r,g,b] format color
+   * @param {Array<number>} [json.color=[1,1,1,1]] - [r,g,b,a] format color
    */
   constructor(json) {
     super(json);
@@ -30,12 +30,8 @@ const RenderModel = class extends Model {
      */
     this.idRenderData = json.idRenderData || null;
 
-    /**
-     * color to apply to the 3D model
-     *
-     * @type {THREE.Color}
-     */
-    this.color = new THREE.Color().fromArray(json.color || [1, 1, 1]);
+    /** @type {THREE.Color} - color to apply to the 3D model */
+    this.color = json.color || [1, 1, 1, 1];
   }
 
   /**
@@ -47,13 +43,13 @@ const RenderModel = class extends Model {
       uuid: this.uuid,
       type: RenderModel.TYPE,
       idRenderData: this.idRenderData,
-      color: this.color.toArray(),
+      color: this.color,
     };
   }
 
   /**
    *
-   * @returns {THREE.Color} - render model color
+   * @returns {Array<number>} - render model color rgba
    */
   getColor() {
     return this.color;
@@ -61,7 +57,7 @@ const RenderModel = class extends Model {
 
   /**
    *
-   * @param {THREE.Color} color - new color of render model
+   * @param {Array<number>} color - new color of render model
    */
   setColor(color) {
     this.color = color;

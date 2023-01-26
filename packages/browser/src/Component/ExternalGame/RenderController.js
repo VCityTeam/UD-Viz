@@ -74,13 +74,29 @@ export class RenderController extends Game.Component.Controller {
 
   /**
    *
-   * @param {THREE.Color} color - new value color controller
+   * @param {Array<number>} color - new value color controller rgba
    */
   setColor(color) {
+    if (color.length != 4) throw new Error('color format should be rgba');
+
+    const alpha = color[3];
+
+    // only change color TODO handle alpha
     this.model.setColor(color);
     // update color in the controller attributes
+    const threeColor = new THREE.Color().fromArray(color);
     this.renderData.getObject3D().traverse((child) => {
-      if (child.material) child.material.color = color;
+      if (child.material) {
+        child.material.color = threeColor;
+        if (alpha < 1) {
+          // handle opacity
+          child.material.opacity = alpha;
+          child.material.transparent = true;
+          child.renderOrder = 1; // patch for futurologue not working
+        } else {
+          child.material.transparent = false;
+        }
+      }
     });
   }
 
