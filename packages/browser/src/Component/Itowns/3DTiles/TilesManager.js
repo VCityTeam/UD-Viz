@@ -110,6 +110,11 @@ export class TilesManager extends EventSender {
     this.hasDefaultColor = false;
   }
 
+  /**
+   * Load a tile by creating the CityObjects and applying the style to the tile
+   *
+   * @param {Tile} tile The tile to load
+   */
   loadTile(tile) {
     // Update the totalTileCount.
     // TODO: this should be managed with an event: when the tileset is
@@ -148,6 +153,9 @@ export class TilesManager extends EventSender {
     this.sendEvent(TilesManager.EVENT_TILE_LOADED, tile);
   }
 
+  /**
+   * Focus the camera on the 3D Tiles layer
+   */
   focusCamera() {
     if (this.layer.isC3DTilesLayer) {
       const coordinates = this.view.camera.position();
