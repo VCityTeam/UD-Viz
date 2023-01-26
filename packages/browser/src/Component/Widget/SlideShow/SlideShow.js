@@ -173,7 +173,7 @@ export class SlideShow extends Window {
           const video = document.createElement('video');
           video.src = response.target.responseURL;
           video.autoplay = true;
-          video.muted = true;
+          video.muted = false;
           video.loop = true;
           video.load();
 
@@ -252,7 +252,7 @@ export class SlideShow extends Window {
                 const video = document.createElement('video');
                 video.src = data.target.result;
                 video.autoplay = true;
-                video.muted = true;
+                video.muted = false;
                 video.loop = true;
                 video.load();
 
