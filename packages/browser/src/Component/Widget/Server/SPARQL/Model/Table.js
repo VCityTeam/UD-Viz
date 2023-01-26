@@ -1,6 +1,7 @@
 import * as d3 from 'd3';
 import { SparqlQueryWindow } from '../View/SparqlQueryWindow';
 
+/** @class */
 export class Table {
   /**
    * Create a new Table using D3.

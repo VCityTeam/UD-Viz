@@ -8,7 +8,11 @@ import { InputManager } from '../../../Component';
  * @property {string} cmdType - type command to send to game context
  */
 
-/** @type {Object<string,Mapping>} - default mapping of controller */
+/**
+ * Default mapping of controller
+ *
+ * @type {Object<string,Mapping>}
+ */
 const MAPPING = {
   FORWARD: {
     id: 'forward',
@@ -32,6 +36,7 @@ const MAPPING = {
   },
 };
 
+/** @class */
 export class CommandController {
   /**
    * Add/remove native command controls
@@ -39,7 +44,7 @@ export class CommandController {
    * @param {InputManager} inputManager - initmanager to control
    */
   constructor(inputManager) {
-    /** @type {InputManager} - input manager */
+    /** @type {InputManager} */
     this.inputManager = inputManager;
   }
 

@@ -3,6 +3,11 @@ import * as itowns from 'itowns';
 // Component
 import { Window } from '../Component/GUI/js/Window';
 
+/**
+ * It manages multiple WMS sources used as Itowns ColoLayer for background.
+ *
+ * @class
+ */
 export class BaseMap extends Window {
   /**
    * Manages multiple WMS sources used as Itowns ColoLayer for background
@@ -13,8 +18,11 @@ export class BaseMap extends Window {
    */
   constructor(itownsView, baseMapLayers, appExtent) {
     super('baseMap', 'base Map', false);
+    /** @type {itowns.Extent} */
     this.appExtent = appExtent;
+    /** @type {object} */
     this.baseMapLayers = baseMapLayers;
+    /** @type {itowns.View} */
     this.itownsView = itownsView;
     this.createLayers();
   }

@@ -3,6 +3,7 @@ import { WidgetView } from '../../Component/WidgetView/WidgetView';
 import { PositionerWindow } from '../../Component/GUI/js/PositionerWindow';
 import { Window } from '../../Component/GUI/js/Window';
 
+/** @class */
 export class CameraPositionerView extends WidgetView {
   /**
    * Creates a new CameraPositionerView

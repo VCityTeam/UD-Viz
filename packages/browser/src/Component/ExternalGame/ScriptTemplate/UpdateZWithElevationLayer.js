@@ -18,6 +18,7 @@ const defaultVariables = {
   updateZCrs: 'EPSG:3946',
 };
 
+/** @class */
 export class UpdateZWithElevationLayer extends ExternalScriptBase {
   /**
    * Send command to game context to update z position with an itowns elevation layer

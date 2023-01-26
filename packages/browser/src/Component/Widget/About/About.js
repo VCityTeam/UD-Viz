@@ -5,14 +5,26 @@ import './About.css';
 /**
  * Adds an "About" window that can be open/closed with a button
  * simply include this file in the html, no need to instanciate anything in main.js
+ *
+ * @class
  */
 export class AboutWindow extends WidgetView {
+  /**
+   * The constructor function is a special function that is called when a new instance of the class is
+   * created
+   *
+   * @param {object} [config] - This is the configuration object that is passed to the constructor.
+   */
   constructor(config = {}) {
     super();
+    /** @type {object} */
     this.config = config;
   }
 
-  // ///// MODULE VIEW MANAGEMENT
+  /**
+   * MODULE VIEW MANAGEMENT
+   * It takes an array of paths to HTML files, loads them, and appends them to the widget layout
+   */
   enableView() {
     const widgetlayout = document.getElementById('_window_widget_content');
     widgetlayout.style.setProperty('display', 'block');
@@ -42,6 +54,9 @@ export class AboutWindow extends WidgetView {
     }
   }
 
+  /**
+   * It disables the view by hiding it and clearing its contents
+   */
   disableView() {
     document
       .getElementById('_window_widget_content')

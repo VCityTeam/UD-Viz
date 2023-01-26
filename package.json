@@ -17,6 +17,7 @@
     "docs-node": "cross-env PACKAGE=node jsdoc -c ./docs/jsdocConfig/jsdoc.js",
     "docs-home": "cross-env PACKAGE=home jsdoc -c ./docs/jsdocConfig/jsdoc.js",
     "docs": "npm run docs-browser ; npm run docs-node ; npm run docs-core ; npm run docs-home",
+    "dev-docs": "nodemon --watch ./packages/core/src --watch ./packages/browser/src --watch ./packages/node/src --exec 'rm -rf ./docs/html && npm run docs'",
     "debug-examples": "cross-env NODE_ENV=development node ./bin/debugExamples.js",
     "host": "npm run build-browser && cross-env NODE_ENV=production node ./bin/host.js",
     "test": "cross-env NODE_ENV=production node ./bin/test.js"

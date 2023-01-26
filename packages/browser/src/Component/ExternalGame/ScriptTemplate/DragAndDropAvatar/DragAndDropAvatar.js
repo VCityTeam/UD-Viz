@@ -16,7 +16,7 @@ import './DragAndDropAvatar.css';
  * @property {string} update_z_crs - projection used to update z elevation of avatar
  */
 
-/** @type {DragAndDropAvatarVariables} - default variables */
+/** @type {DragAndDropAvatarVariables}*/
 const defaultVariables = {
   camera_duration: 2000,
   camera_offset: { x: 0, y: 0, z: 2 },
@@ -25,6 +25,7 @@ const defaultVariables = {
   update_z_crs: 'EPSG:3946', // the one of lyon by default /!\ must have been define before
 };
 
+/** @class */
 export class DragAndDropAvatar extends ExternalScriptBase {
   /**
    * Drag and drop ui element in city to pass in avatar mode
@@ -41,22 +42,26 @@ export class DragAndDropAvatar extends ExternalScriptBase {
   }
 
   init() {
-    /** @type {Cameraman} - cameraman */
+    /** @type {Cameraman} */
     this.cameraman = new Cameraman(this.context.frame3D.camera);
 
-    /** @type {CommandController} - command controller */
+    /** @type {CommandController} */
     this.commandController = new CommandController(this.context.inputManager);
 
-    /** @type {Game.Object3D} - avatar */
+    /** @type {Game.Object3D} */
     this.avatar = null; // no avatar for now
 
-    /** @type {THREE.Vector3} - record where was camera position */
+    /** @type {THREE.Vector3} */
     this.itownsCameraPosition = new THREE.Vector3();
 
-    /** @type {THREE.Quaternion} - record where was camera quaternion */
+    /**
+     * record where was camera quaternion
+     *
+     * @type {THREE.Quaternion}
+     */
     this.itownsCameraQuaternion = new THREE.Quaternion();
 
-    /** @type {HTMLDivElement} - leave avatar mode button */
+    /** @type {HTMLDivElement} */
     this.leaveAvatarModeButton = document.createElement('button');
     this.leaveAvatarModeButton.innerHTML = 'Leave avatar mode';
     this.leaveAvatarModeButton.classList.add('leave_avatar_mode');
@@ -70,7 +75,7 @@ export class DragAndDropAvatar extends ExternalScriptBase {
       ]);
     };
 
-    /** @type {HTMLDivElement} - drag and drop avatar element */
+    /** @type {HTMLDivElement} */
     this.dragAndDropElement = document.createElement('div');
     this.dragAndDropElement.classList.add('drag_and_drop_avatar');
     this.dragAndDropElement.innerHTML = 'Drag And Drop Avatar';
@@ -107,6 +112,9 @@ export class DragAndDropAvatar extends ExternalScriptBase {
     };
   }
 
+  /**
+   * It computes the elevation of the avatar and sends it to the game context
+   */
   tick() {
     this.cameraman.tick(this.context.dt);
 

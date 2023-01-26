@@ -1,5 +1,6 @@
 import io from 'socket.io-client';
 
+/** @class */
 export class SocketIOWrapper {
   /**
    * Socket io client wrapper {@link https://www.npmjs.com/package/socket.io-client}, used to manage a websocket communication

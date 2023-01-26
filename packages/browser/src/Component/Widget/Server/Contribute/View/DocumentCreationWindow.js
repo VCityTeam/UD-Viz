@@ -5,6 +5,7 @@ import { Window } from '../../../Component/GUI/js/Window';
 import { PositionerWindow } from '../../../Component/GUI/js/PositionerWindow';
 import { ContributeService } from '../Service/ContributeService';
 
+/** @class */
 export class DocumentCreationWindow extends AbstractDocumentWindow {
   /**
    * Creates a new document creation window.

@@ -4,6 +4,8 @@ import { Color } from 'three';
 
 /**
  * Material making an "hole" in a {@link THREE.Scene} to see html css3D behind
+ *
+ * @type {THREE.MeshBasicMaterial}
  */
 const BLANK_MATERIAL = new THREE.MeshBasicMaterial({
   side: THREE.DoubleSide,
@@ -12,7 +14,7 @@ const BLANK_MATERIAL = new THREE.MeshBasicMaterial({
   blending: THREE.NoBlending,
   color: new Color(0, 0, 0),
 });
-
+/** @class */
 export class Billboard {
   /**
    * Composed of a {@link CSS3DObject} containing html and a {@link THREE.Object3D} superposing each other

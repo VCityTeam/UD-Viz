@@ -6,17 +6,33 @@ import { $3DTemporalVersion } from './3DTemporalVersion.js';
  * Implements the tileset part of the 3DTILES_temporal
  * extension. See the spec in
  * ./jsonSchemas/3DTILES_temporal.tileset.schema.json
+ *
+ * @class
  */
 export class $3DTemporalTileset {
+  /**
+   * A constructor function that creates a new object.
+   *
+   * @param {object} json - The JSON object that was returned from the server.
+   * @param {string} json.startDate - startDate
+   * @param {string} json.endDate - endDate
+   * @param {object} json.transactions - transactions
+   * @param {object} json.versions - versions
+   */
   constructor(json) {
+    /** @type {string} */
     this.startDate = json.startDate;
+    /** @type {string} */
     this.endDate = json.endDate;
 
+    /** @type {Array<object>} */
     this.transactions = [];
-    // Fill this.transactions
+    /** Fill this.transactions */
     this.parseTransactions(json.transactions);
 
+    /** @type {$3DTemporalVersion} */
     this.temporalVersions = new $3DTemporalVersion(json.versions);
+    /** @type {object} */
     this.versionTransitions = json.versionTransitions;
 
     // Trapped by 3DTemporalExtension.js that stores this instance of
@@ -52,6 +68,12 @@ export class $3DTemporalTileset {
     }
   }
 
+  /**
+   * It returns a string that is the name of the event that is triggered when a temporal tileset is
+   * loaded
+   *
+   * @returns {string} A string.
+   */
   static get TEMPORAL_TILESET_LOADED() {
     return 'TEMPORAL_TILESET_LOADED';
   }
