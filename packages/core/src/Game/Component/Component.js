@@ -1,7 +1,7 @@
 const THREE = require('three');
 // const Object3D = require('../Object3D'); => this break build webpack phase (circular ref?)
 /**
- * MODULE Component
+ * `MODULE` Component
  *
  * @exports Component
  */

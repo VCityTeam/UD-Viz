@@ -3,6 +3,12 @@ const ExpressAppWrapper = require('./ExpressAppWrapper');
 const fs = require('fs');
 const spawn = require('child_process').spawn;
 
+/**
+ * `MODULE` Test
+ *
+ * @module Test
+ */
+
 const serverPort = 8000;
 
 /**

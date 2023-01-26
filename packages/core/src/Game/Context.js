@@ -11,7 +11,7 @@ const Command = require('../Command');
  */
 
 /**
- * MODULE Context
+ * `MODULE` Context
  *
  * @exports Context
  */

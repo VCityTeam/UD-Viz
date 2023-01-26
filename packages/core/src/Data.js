@@ -2,9 +2,9 @@ const THREE = require('three');
 const Type = require('./Type');
 
 /**
- * MODULE Data
+ * `MODULE` Data
  *
- * @exports Data
+ * @module Data
  */
 
 /**
