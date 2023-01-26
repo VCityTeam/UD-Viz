@@ -74,7 +74,7 @@ const AudioModel = class extends Model {
 };
 
 /**
- * MODULE Audio
+ * `MODULE` Audio
  *
  * @exports Audio
  */

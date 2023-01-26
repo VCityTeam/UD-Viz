@@ -255,7 +255,7 @@ class ShapeWrapper {
 }
 
 /**
- * MODULE Collider
+ * `MODULE` Collider
  *
  * @exports Collider
  */

@@ -29,7 +29,7 @@ const ExternalScriptModel = class extends Script.Model {
 };
 
 /**
- * MODULE ExternalScript
+ * `MODULE` ExternalScript
  *
  * @exports ExternalScript
  */

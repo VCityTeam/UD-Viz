@@ -29,7 +29,7 @@ const GameScriptModel = class extends Script.Model {
 };
 
 /**
- * MODULE GameScript
+ * `MODULE` GameScript
  *
  * @exports GameScript
  */

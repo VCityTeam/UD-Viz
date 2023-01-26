@@ -118,7 +118,7 @@ const ScriptController = class extends Controller {
 };
 
 /**
- * MODULE Script
+ * `MODULE` Script
  *
  * @exports Script
  */

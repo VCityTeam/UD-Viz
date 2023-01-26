@@ -2,6 +2,10 @@ const exec = require('child-process-promise').exec;
 const spawn = require('child_process').spawn;
 
 /**
+ * `MODULE` Debug
+ *
+  @module Debug */
+/**
  * Debug tools for UD-VIZ mono repository
  */
 module.exports = {

@@ -84,7 +84,7 @@ const RenderModel = class extends Model {
   }
 };
 /**
- * MODULE Render
+ * `MODULE` Render
  *
  * @exports Render
  */
