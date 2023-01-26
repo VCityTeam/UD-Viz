@@ -172,7 +172,7 @@ export class SlideShow extends Window {
         } else if (type.includes('video')) {
           const video = document.createElement('video');
           video.src = response.target.responseURL;
-          video.autoplay = true;
+          video.autoplay = false;
           video.muted = false;
           video.loop = true;
           video.load();
@@ -251,7 +251,7 @@ export class SlideShow extends Window {
               } else if (file.type.includes('video/')) {
                 const video = document.createElement('video');
                 video.src = data.target.result;
-                video.autoplay = true;
+                video.autoplay = false;
                 video.muted = false;
                 video.loop = true;
                 video.load();
@@ -601,10 +601,10 @@ export class SlideShow extends Window {
   nextSlide() {
     if (!this.plane) return;
 
-    this.iCurrentTextureFile =
+    const newIndexTextureFile =
       (this.iCurrentTextureFile + 1) % this.texturesFiles.length; // Loop
 
-    this.setTexture(this.iCurrentTextureFile);
+    this.setTexture(newIndexTextureFile);
 
     this.aspectRatioCheckboxDOM.dispatchEvent(new Event('change'));
 
@@ -614,12 +614,12 @@ export class SlideShow extends Window {
   previousSlide() {
     if (!this.plane) return;
 
-    this.iCurrentTextureFile =
+    const newIndexTextureFile =
       this.iCurrentTextureFile - 1 < 0
         ? this.texturesFiles.length - 1
         : this.iCurrentTextureFile - 1;
 
-    this.setTexture(this.iCurrentTextureFile);
+    this.setTexture(newIndexTextureFile);
 
     this.aspectRatioCheckboxDOM.dispatchEvent(new Event('change'));
 
