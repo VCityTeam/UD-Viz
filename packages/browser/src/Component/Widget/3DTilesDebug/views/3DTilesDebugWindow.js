@@ -5,6 +5,7 @@ import { CityObjectID } from '../../../Itowns/3DTiles/Model/CityObject';
 import { TilesManager } from '../../../Itowns/3DTiles/TilesManager';
 import { LayerManager } from '../../../Itowns/Itowns';
 
+/** @class */
 export class Debug3DTilesWindow extends Window {
   /**
    * Creates the debug window.

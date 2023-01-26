@@ -5,6 +5,7 @@
  *
  */
 
+/** @class */
 export class $3DTemporalBoundingVolume {
   /**
    * Verifies the integrity and stores the data corresponding to the
@@ -26,7 +27,9 @@ export class $3DTemporalBoundingVolume {
           'requires an endDate. Refer to the spec.'
       );
     }
+    /** @type {number} */
     this.startDate = json.startDate;
+    /** @type {number} */
     this.endDate = json.endDate;
   }
 }

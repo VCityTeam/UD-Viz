@@ -4,6 +4,10 @@ import { DocumentView } from './DocumentView';
 
 import './DocumentWindow.css';
 
+/**
+ * It's a window that can be displayed by a `DocumentView` and that can be used to display a document provided by a `DocumentProvider` 
+ *
+  @class */
 export class AbstractDocumentWindow extends Window {
   /**
    * Constructs an abstract document window from a name.

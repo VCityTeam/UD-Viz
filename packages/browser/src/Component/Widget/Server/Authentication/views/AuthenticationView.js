@@ -2,6 +2,11 @@ import { WidgetView } from '../../../Component/Component';
 
 import './AuthenticationView.css';
 
+/**
+ *  It's a view that displays a login and registration form
+ *
+ * @class
+ */
 export class AuthenticationView extends WidgetView {
   /**
    *
@@ -9,6 +14,7 @@ export class AuthenticationView extends WidgetView {
    */
   constructor(authenticationService) {
     super();
+    /** It's a constructor that takes an authentication service as parameter */
     this.authenticationService = authenticationService;
   }
 
@@ -184,7 +190,8 @@ export class AuthenticationView extends WidgetView {
   }
 
   /**
-   * Login
+   * It verifies that the login and password fields are not empty, then it calls the login function of
+   * the authentication service
    */
   async logInFunction() {
     this.displayLoginError('');

@@ -6,6 +6,7 @@ import { Game } from '@ud-viz/core';
  * @param {number} dt - delta time movement
  */
 
+/** @class */
 export class Cameraman {
   /**
    * Handle camera movement (you need to tick it)
@@ -13,10 +14,14 @@ export class Cameraman {
    * @param {THREE.PerspectiveCamera} camera - camera to move
    */
   constructor(camera) {
-    /** @type {THREE.PerspectiveCamera} - camera handle by cameraman */
+    /**
+     * camera handle by cameraman
+     *
+     * @type {THREE.PerspectiveCamera}
+     */
     this.camera = camera;
 
-    /** @type {Movement|null} - the current movement */
+    /** @type {Movement|null} */
     this.currentMovement = null;
   }
 
@@ -119,7 +124,8 @@ export class Cameraman {
       /**
        *  This function is going to be tick in `this.tick`.
        *
-       * @type {Movement} @see Movement
+       * @see Movement
+       * @type {Movement}
        */
       this.currentMovement = (dt) => {
         currentTime += dt;
@@ -167,9 +173,9 @@ export class Cameraman {
       let currentTime = 0;
 
       /**
-       *  This function is going to be tick in `this.tick`.
+       *  This function is going to be tick in `this.tick`. @see Movement
        *
-       * @type {Movement} @see Movement
+       * @type {Movement}
        */
       this.currentMovement = (dt) => {
         currentTime += dt;
@@ -192,6 +198,7 @@ export class Cameraman {
   }
 }
 
+/** @class */
 class Target {
   /**
    * Buffer object which store all data to keep following an object3D target
