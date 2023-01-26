@@ -2,15 +2,18 @@
  * Constant used in GameScriptTemplate & ExternalScriptTemplate
  */
 module.exports = {
-  // Native commands
   COMMAND: {
+    // Native commands
     MOVE_FORWARD: 'move_forward',
     MOVE_BACKWARD: 'move_backward',
     ROTATE_LEFT: 'rotate_left',
     ROTATE_RIGHT: 'rotate_right',
     UPDATE_TRANSFORM: 'update_transform',
+    UPDATE_EXTERNALSCRIPT_VARIABLES: 'update_externalscript_variables',
+    // Not native
     ADD_AVATAR: 'add_avatar',
     REMOVE_AVATAR: 'remove_avatar',
+    ADD_NOTE: 'add_note',
   },
   NAME: {
     AVATAR: 'avatar',

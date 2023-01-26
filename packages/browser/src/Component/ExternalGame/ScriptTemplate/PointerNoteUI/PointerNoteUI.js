@@ -12,7 +12,7 @@ export class PointerNoteUI extends ExternalScriptBase {
     foldButton.classList.add('fold_button_pointer_note_ui');
     rootHtml.appendChild(foldButton);
 
-    let fold = true;
+    let fold = false;
     foldButton.onclick = () => {
       if (fold) {
         rootHtml.style.transform = 'translate(0%,0%)';
@@ -21,5 +21,22 @@ export class PointerNoteUI extends ExternalScriptBase {
       }
       fold = !fold;
     };
+
+    this.uiContainer = document.createElement('div');
+    this.uiContainer.classList.add('container_pointer_note_ui');
+    rootHtml.appendChild(this.uiContainer);
+
+    // bug planar control bug
+    // this.context.frame3D.enableItownsViewControls(false);
+    rootHtml.onmouseenter = () => {
+      this.context.frame3D.enableItownsViewControls(false);
+    };
+    rootHtml.onmouseleave = () => {
+      this.context.frame3D.enableItownsViewControls(true);
+    };
+  }
+
+  appendToHtml(el) {
+    this.uiContainer.appendChild(el);
   }
 }

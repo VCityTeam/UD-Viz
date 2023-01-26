@@ -1,17 +1,22 @@
 .root_pointer_note_ui {
-  background-color: red;
+  background-color: #b7b7b7;
   z-index: 2;
   position: absolute;
   left: 0;
   top: 0;
   height: 100%;
-  min-width: 200px;
-  transform: translate(-100%, 0px);
+  width: 200px;
+  transform: translate(0%, 0px);
   transition: 1s;
 }
 
+.container_pointer_note_ui {
+  display: flex;
+  flex-direction: column;
+}
+
 .fold_button_pointer_note_ui {
-  background-color: green;
+  background-color: rgb(45, 108, 110);
   height: 100%;
   width: 20px;
   border-radius: 0px 20px 20px 0px;
@@ -21,5 +26,5 @@
 }
 
 .fold_button_pointer_note_ui:hover {
-  background-color: aqua;
+  background-color: rgb(84, 188, 188);
 }

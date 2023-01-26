@@ -1,4 +1,5 @@
 const Object3D = require('../../Object3D');
+const { Component } = require('../../Component/ExternalScript');
 const Constants = require('../Constants');
 const THREE = require('three');
 
@@ -21,6 +22,10 @@ module.exports = {
       );
 
       if (!updatedObject3D) return;
+
+      const externalScriptComponent = updatedObject3D.getComponent(
+        Component.TYPE
+      );
 
       switch (command.type) {
         case Constants.COMMAND.MOVE_FORWARD:
@@ -59,6 +64,34 @@ module.exports = {
               updatedObject3D.position.z = command.data.position.z;
               updatedObject3D.setOutdated(true);
             }
+          }
+          if (command.data.scale) {
+            if (!isNaN(command.data.scale.x)) {
+              updatedObject3D.scale.x = command.data.scale.x;
+              updatedObject3D.setOutdated(true);
+            }
+            if (!isNaN(command.data.scale.y)) {
+              updatedObject3D.scale.y = command.data.scale.y;
+              updatedObject3D.setOutdated(true);
+            }
+            if (!isNaN(command.data.scale.z)) {
+              updatedObject3D.scale.z = command.data.scale.z;
+              updatedObject3D.setOutdated(true);
+            }
+          }
+          break;
+        case Constants.COMMAND.UPDATE_EXTERNALSCRIPT_VARIABLES:
+          if (externalScriptComponent) {
+            externalScriptComponent.getModel().variables[
+              command.data.nameVariable
+            ] = command.data.variableValue;
+            updatedObject3D.setOutdated(true);
+            // console.log(
+            //   'update ',
+            //   command.data.nameVariable,
+            //   ' set with ',
+            //   command.data.variableValue
+            // );
           }
           break;
         default:
