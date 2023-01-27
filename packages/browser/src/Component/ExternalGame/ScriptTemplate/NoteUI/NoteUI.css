@@ -1,4 +1,4 @@
-.root_pointer_note_ui {
+.root_note_ui {
   background-color: #b7b7b7;
   z-index: 2;
   position: absolute;
@@ -10,12 +10,12 @@
   transition: 1s;
 }
 
-.container_pointer_note_ui {
+.container_note_ui {
   display: flex;
   flex-direction: column;
 }
 
-.fold_button_pointer_note_ui {
+.fold_button_note_ui {
   background-color: rgb(45, 108, 110);
   height: 100%;
   width: 20px;
@@ -25,6 +25,6 @@
   cursor: pointer;
 }
 
-.fold_button_pointer_note_ui:hover {
+.fold_button_note_ui:hover {
   background-color: rgb(84, 188, 188);
 }

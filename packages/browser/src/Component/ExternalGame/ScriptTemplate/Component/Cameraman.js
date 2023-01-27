@@ -196,6 +196,38 @@ export class Cameraman {
       };
     });
   }
+
+  /**
+   * Move camera to bounding box
+   *
+   * @param {THREE.Box3} bb - bounding box
+   * @param {number} duration - time movement in ms
+   * @returns {Promise<boolean>} - promise resolving when movement is done resolve with true if movement occured false otherwise
+   */
+  moveToBoundingBox(bb, duration) {
+    const center = bb.getCenter(new THREE.Vector3());
+    const radius = bb.min.distanceTo(bb.max) * 0.5;
+
+    // compute new distance between camera and center of object/sphere
+    const h = radius / Math.tan((this.camera.fov / 2) * THREE.Math.DEG2RAD);
+    const dir = new THREE.Vector3(1, 1, 1).normalize(); // hard coded direction
+    const newPos = new THREE.Vector3().addVectors(center, dir.setLength(h));
+    const oldRot = this.camera.rotation.clone();
+    const oldPos = this.camera.position.clone();
+    this.camera.position.copy(newPos);
+    this.camera.lookAt(center);
+    this.camera.updateProjectionMatrix();
+    const targetRot = this.camera.rotation.clone();
+    this.camera.rotation.copy(oldRot);
+    this.camera.position.copy(oldPos);
+    this.camera.updateProjectionMatrix();
+
+    return this.moveToTransform(
+      newPos,
+      new THREE.Quaternion().setFromEuler(targetRot),
+      duration
+    );
+  }
 }
 
 /** @class */

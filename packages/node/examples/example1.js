@@ -22,7 +22,7 @@ expressAppWrapper
               idScripts: ['GameManager', 'Example'],
             },
             ExternalScript: {
-              idScripts: ['PointerNoteUI'],
+              idScripts: ['NoteUI'],
             },
           },
         }),

@@ -1,5 +1,5 @@
 const { Core, Game } = require('../../../src/index');
-const THREE = require('three'); // not sure about this maybe should be in Core
+const THREE = require('three'); // not sure about this maybe should be in Core to be imported with index
 
 module.exports = class GameManager extends Core.Game.ScriptBase {
   init() {
@@ -7,24 +7,33 @@ module.exports = class GameManager extends Core.Game.ScriptBase {
     this.socketObjects3D = {};
 
     this.context.on(Game.Thread.EVENT.ON_NEW_SOCKET_WRAPPER, (socketID) => {
+      const pointerUUID = THREE.MathUtils.generateUUID();
+
       const newSocketObject3D = new Core.Game.Object3D({
-        name: 'SocketObject3D',
+        static: true,
+        components: {
+          ExternalScript: {
+            idScripts: ['NoteService'],
+            variables: {
+              socketID: socketID, // to know in external script this is the socket pointer
+              nameSocket: 'Default name',
+              pointerUUID: pointerUUID, // to easily ref pointer in NoteService script
+            },
+          },
+        },
+      });
+
+      const pointerObject3D = new Core.Game.Object3D({
+        uuid: pointerUUID,
         components: {
           Render: {
             idRenderData: 'sphere',
             color: [Math.random(), Math.random(), Math.random(), 0.5],
           },
-          ExternalScript: {
-            idScripts: ['PointerNote'],
-            variables: {
-              socketID: socketID,
-              nameSocket: 'Default name',
-              notes: [],
-            },
-          },
         },
       });
-      newSocketObject3D.scale.set(10, 10, 10);
+      pointerObject3D.scale.set(50, 50, 50);
+      newSocketObject3D.add(pointerObject3D);
       this.context.addObject3D(newSocketObject3D);
       this.socketObjects3D[socketID] = newSocketObject3D;
     });
@@ -46,15 +55,30 @@ module.exports = class GameManager extends Core.Game.ScriptBase {
         const data = cmd.getData();
 
         const socketObject3D = this.socketObjects3D[data.socketID];
-        const externalGameScript = socketObject3D.getComponent(
-          Core.Game.Component.ExternalScript.TYPE
-        );
-        externalGameScript.getModel().variables.notes.push({
-          uuid: THREE.MathUtils.generateUUID(),
-          position: data.position,
-          scale: data.scale,
-          message: data.message,
+
+        const note = new Core.Game.Object3D({
+          name: 'Note',
+          static: true,
+          userData: {
+            isNote: true, // type this object
+          },
+          components: {
+            Render: {
+              idRenderData: ['sphere'],
+              color: data.color,
+            },
+            ExternalScript: {
+              idScripts: ['Note'],
+              variables: {
+                message: data.message,
+              },
+            },
+          },
         });
+        note.position.copy(data.position);
+        note.scale.copy(data.scale);
+
+        socketObject3D.add(note);
       }
     });
   }
