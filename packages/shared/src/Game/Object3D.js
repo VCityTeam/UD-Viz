@@ -13,8 +13,9 @@ const Object3D = class extends THREE.Object3D {
    * Base class extended {@link THREE.Object3D} to compose 3D scene of ud-viz game
    *
    * @param {object} json - json to configure the object3D
-   * @param {string} [json.uuid] - uuid
-   * @param {string} [json.parentUUID] - uuid of this parent object3D
+   * @param {string=} json.uuid - uuid
+   * @param {string=} json.parentUUID - uuid of this parent object3D
+   * @param {object=} json.userData - userData
    * @param {string} [json.name=""] - name
    * @param {boolean} [json.static=false] - static
    * @param {boolean} [json.outdated=false] - outdated
@@ -52,11 +53,10 @@ const Object3D = class extends THREE.Object3D {
      */
     this.parentUUID = json.parentUUID || null;
 
-    /**
-     * name of object3D
-     *
-     * @type {string}
-     */
+    /** @type {object} - user data */
+    this.userData = json.userData || {};
+
+    /** @type {string} - name    /** @type {THREE.Object3D} - root object3D */ of object3D */
     this.name = json.name || '';
 
     /**
@@ -332,6 +332,7 @@ const Object3D = class extends THREE.Object3D {
     if (this.parent) {
       result.parentUUID = this.parent.uuid;
     }
+    result.userData = this.userData;
 
     // add components
     result.components = {};
@@ -469,6 +470,22 @@ Object3D.deepCopy = function (object3D) {
     }
   });
   return new Object3D(cloneJSON);
+};
+
+/**
+ * Fetch the first gameobject3D in the hierarchy
+ *
+ * @param {THREE.Object3D} object3D - object3D to search in
+ * @returns {Object3D} - first gameobject3D encounter
+ */
+Object3D.First = function (object3D) {
+  let result = object3D;
+
+  while (!result.isGameObject3D && result.parent) {
+    result = result.parent;
+  }
+
+  return result;
 };
 
 module.exports = Object3D;

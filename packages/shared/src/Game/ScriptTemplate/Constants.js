@@ -10,6 +10,7 @@ module.exports = {
     ROTATE_RIGHT: 'rotate_right',
     UPDATE_TRANSFORM: 'update_transform',
     UPDATE_EXTERNALSCRIPT_VARIABLES: 'update_externalscript_variables',
+    REMOVE_OBJECT3D: 'remove_object3D',
     // Not native
     ADD_AVATAR: 'add_avatar',
     REMOVE_AVATAR: 'remove_avatar',

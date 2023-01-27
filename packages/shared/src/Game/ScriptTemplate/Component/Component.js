@@ -83,7 +83,7 @@ module.exports = {
         case Constants.COMMAND.UPDATE_EXTERNALSCRIPT_VARIABLES:
           if (externalScriptComponent) {
             externalScriptComponent.getModel().variables[
-              command.data.nameVariable
+              command.data.variableName
             ] = command.data.variableValue;
             updatedObject3D.setOutdated(true);
             // console.log(
@@ -93,6 +93,9 @@ module.exports = {
             //   command.data.variableValue
             // );
           }
+          break;
+        case Constants.COMMAND.REMOVE_OBJECT3D:
+          context.removeObject3D(updatedObject3D.uuid);
           break;
         default:
           break;
