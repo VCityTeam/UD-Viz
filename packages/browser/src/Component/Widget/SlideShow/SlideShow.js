@@ -966,6 +966,7 @@ export class SlideShow extends Window {
   }
 
   windowDestroyed() {
+    this.stopLoopSlideShow();
     if (this.plane) {
       this.plane.removeFromParent();
       this.plane = null;
