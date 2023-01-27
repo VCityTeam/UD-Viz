@@ -3,9 +3,7 @@
   top: 0px;
   left: 0px;
   min-width: 200px;
-  min-height: 200px;
   width: 350px;
-  height: 100%;
   padding: 0;
   resize: both;
   overflow: hidden;
@@ -20,10 +18,9 @@
   background-color: rgb(0, 0, 0, 0.9);
   color: #eeeeee;
   margin: 0;
-  padding: 5px;
-  overflow-x: hidden;
-  overflow-y: unset;
   cursor: default;
+  display: flex;
+  align-items: center;
 }
 
 .window-header .window-title {
@@ -33,21 +30,27 @@
   font-size: 1.5vh;
 }
 
-.window-close-button {
-  position: absolute;
+.window-close-button,
+.window-reduce-button {
+  margin: 0px;
   height: auto;
-  right: 2px;
-  top: -4px;
-  margin: 0px !important;
   background-color: transparent;
   color: white;
   border: none;
   font-size: 20px;
   font-weight: bold;
   transition: background-color 0.2s ease;
+  align-self: center;
+  width: 25px !important;
 }
 
-.window-close-button:hover {
+/*margin-left : auto*/
+.window-reduce-button {
+  margin: 0 0 0 auto !important;
+}
+
+.window-close-button:hover,
+.window-reduce-button:hover {
   background-color: #f95a5a;
   cursor: pointer;
 }
@@ -154,7 +157,6 @@
 .window button {
   width: auto;
   height: auto;
-  margin: 5px 133px 0 1px;
   padding: 5px 6px 6px;
   border-radius: 4px;
   background-color: #d1d0de;

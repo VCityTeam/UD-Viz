@@ -74,6 +74,7 @@ export class Window extends WidgetView {
     this.registerEvent(Window.EVENT_DESTROYED);
     this.registerEvent(Window.EVENT_SHOWN);
     this.registerEvent(Window.EVENT_HIDDEN);
+    this.registerEvent(Window.EVENT_REDUCED);
 
     windowManager.registerWindow(this);
   }
@@ -126,6 +127,7 @@ export class Window extends WidgetView {
       if (this.defaultStyle) {
         windowDiv.className = 'window';
         dragElement(windowDiv, this.header);
+        this.headerReduceButton.onclick = this.reduce.bind(this);
         this.headerCloseButton.onclick = this.disable.bind(this);
       }
 
@@ -163,7 +165,7 @@ export class Window extends WidgetView {
   }
 
   /**
-   * Hides the window. Sends an `EVENT_DESTROYED` event.
+   * Hides the window. Sends an `EVENT_HIDDEN` event.
    */
   hide() {
     if (this.isVisible) {
@@ -172,10 +174,27 @@ export class Window extends WidgetView {
     }
   }
 
+  /**
+   * Reduce a Window to its header. Sends an `EVENT_REDUCED` event.
+   */
+  reduce() {
+    if (!this.contentIsVisible) {
+      this.content.style.display = 'block';
+      this.window.style.height = 'auto';
+      this.window.style.resize = 'both';
+    } else {
+      this.content.style.display = 'none';
+      this.window.style.height = getComputedStyle(this.header).height;
+      this.window.style.resize = 'none';
+      this.sendEvent(Window.EVENT_REDUCED);
+    }
+  }
+
   get html() {
     return `
             <div class="window-header" id="${this.headerId}">
                 <h1 class="window-title" id="${this.headerTitleId}">${this.title}</h1>
+                <button class="window-reduce-button" id="${this.headerReduceButtonId}">-</button>
                 <button class="window-close-button" id="${this.headerCloseButtonId}">&#10799;</button>
             </div>
             <div class="window-content" id="${this.contentId}">
@@ -292,6 +311,15 @@ export class Window extends WidgetView {
     );
   }
 
+  /**
+   * If the content's display property is not equal to none, then return true, otherwise return false.
+   *
+   * @returns {boolean} The value of the display property of the content element.
+   */
+  get contentIsVisible() {
+    return getComputedStyle(this.content).getPropertyValue('display') != 'none';
+  }
+
   get windowId() {
     return `_window_${this.name}`;
   }
@@ -324,6 +352,14 @@ export class Window extends WidgetView {
     return document.getElementById(this.headerCloseButtonId);
   }
 
+  get headerReduceButtonId() {
+    return `_window_header_reduce_button_${this.name}`;
+  }
+
+  get headerReduceButton() {
+    return document.getElementById(this.headerReduceButtonId);
+  }
+
   get contentId() {
     return `_window_content_${this.name}`;
   }
@@ -354,5 +390,8 @@ export class Window extends WidgetView {
   }
   static get EVENT_SHOWN() {
     return 'WINDOW_SHOWN';
+  }
+  static get EVENT_REDUCED() {
+    return 'WINDOW_REDUCED';
   }
 }
