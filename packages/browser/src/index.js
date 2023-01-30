@@ -1,3 +1,5 @@
+/** @file @ud-viz/browser API */
+
 // Template
 
 export { AllWidget } from './AllWidget/AllWidget';
