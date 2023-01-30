@@ -7,6 +7,7 @@ import {
 import './Mockup.css';
 
 import THREEUtil from '../Component/THREEUtil';
+import { addLogos } from '../Component/HTMLUtil';
 const THREE = require('three');
 
 const itowns = require('itowns');
@@ -14,20 +15,22 @@ const itowns = require('itowns');
  * @class Represents the base HTML content of a demo for UD-Viz and provides methods to dynamically add widgets.
  */
 export class MockUp {
-  constructor(extent, configFrame3DPlanar) {
+  constructor(extent, config) {
     // this.addLogos();
 
     /** @type {Frame3DPlanar} */
     this.frame3DPlanar = this.createFrame3DPlanarFromConfig(
       extent,
       document.getElementById(this.contentSectionId),
-      configFrame3DPlanar
+      config['frame3D_planars'][0]
     );
 
     // About window
-    const about = new Widget.AboutWindow('./assets/config/widget/about.json');
+    const about = new Widget.AboutWindow(config['about']);
     about.parentElement = this.getFrame3DPlanar().getRootWebGL();
     about.enableView();
+
+    addLogos(this.frame3DPlanar.ui, config['']);
 
     // //// HELP MODULE
     // new udvizBrowser.Widget.HelpWindow(configs['help']); // => help window should be add with addWidgetView
@@ -72,29 +75,6 @@ export class MockUp {
    */
   getFrame3DPlanar() {
     return this.frame3DPlanar;
-  }
-
-  /**
-   * It creates a div element, adds an id to it, appends it to the main div, and then adds all the logos to it
-   */
-  addLogos() {
-    // Path file for all the logo images
-    const logos = this.configAllWidget.logos;
-
-    // Path to the logos folder
-    const imageFolder = this.configAllWidget.imageFolder;
-
-    // Create div to integrate all logos images
-    const logoDiv = document.createElement('div');
-    logoDiv.id = 'logo-div';
-    document.getElementById(this.viewerDivId).append(logoDiv);
-
-    for (let i = 0; i < logos.length; i++) {
-      const img = document.createElement('img');
-      img.src = imageFolder.concat('/'.concat(logos[i]));
-      img.classList.add('logos');
-      logoDiv.appendChild(img);
-    }
   }
 
   // //////////////////////////////////////////////////////

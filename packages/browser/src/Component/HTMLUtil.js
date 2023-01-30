@@ -19,3 +19,29 @@ export function checkParentChild(child, parent) {
 
   return isChild;
 }
+
+/**
+ * Method to creates a div element, adds an id to it, appends it to the main div, and then adds all the logos to it
+ *
+ * @param {HTMLElement} htmlElement parent div to set logos
+ * @param {Object} configLogos File path where all the logos are located
+ */
+export function addLogos(htmlElement, configLogos) {
+  // Path file for all the logo images
+  const logos = configLogos.logos;
+
+  // Path to the logos folder
+  const imageFolder = configLogos.imageFolder;
+
+  // Create div to integrate all logos images
+  const logoDiv = document.createElement('div');
+  logoDiv.id = 'logo-div';
+  document.getElementById(htmlElement.id).append(logoDiv);
+
+  for (let i = 0; i < logos.length; i++) {
+    const img = document.createElement('img');
+    img.src = imageFolder.concat('/'.concat(logos[i]));
+    img.classList.add('logos');
+    logoDiv.appendChild(img);
+  }
+}
