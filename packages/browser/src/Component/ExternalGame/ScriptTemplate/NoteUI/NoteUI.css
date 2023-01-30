@@ -1,6 +1,6 @@
 .root_note_ui {
   background-color: #b7b7b7;
-  z-index: 2;
+  z-index: 5;
   position: absolute;
   left: 0;
   top: 0;
@@ -13,6 +13,7 @@
 .container_note_ui {
   display: flex;
   flex-direction: column;
+  color: white;
 }
 
 .fold_button_note_ui {

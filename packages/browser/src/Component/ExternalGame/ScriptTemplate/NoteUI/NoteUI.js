@@ -1,6 +1,7 @@
 import { ExternalScriptBase } from '../../Context';
 import { checkParentChild } from '../../../HTMLUtil';
 import * as THREE from 'three';
+import { Game } from '@ud-viz/core';
 
 import './NoteUI.css';
 
@@ -28,14 +29,11 @@ export class NoteUI extends ExternalScriptBase {
     this.uiContainer.classList.add('container_note_ui');
     rootHtml.appendChild(this.uiContainer);
 
-    // bug planar control bug
-    // this.context.frame3D.enableItownsViewControls(false);
-    rootHtml.onmouseenter = () => {
-      this.context.frame3D.enableItownsViewControls(false);
-    };
-    rootHtml.onmouseleave = () => {
-      this.context.frame3D.enableItownsViewControls(true);
-    };
+    // instruction
+    const intructionsHtml = document.createElement('div');
+    intructionsHtml.innerHTML =
+      'n : Add Note<br>- : Decrease pointer scale<br>+ : Increase pointer scale';
+    this.uiContainer.appendChild(intructionsHtml);
 
     // allow to click on note
     const raycaster = new THREE.Raycaster();
@@ -70,7 +68,13 @@ export class NoteUI extends ExternalScriptBase {
         });
 
         if (closestNote) {
-          console.log(closestNote.userData.message);
+          const externalScriptComp = closestNote.getComponent(
+            Game.Component.ExternalScript.TYPE
+          );
+          externalScriptComp
+            .getController()
+            .getScripts()
+            ['Note'].displayNoteMessageHtml();
         }
       }
     );

@@ -2,7 +2,6 @@ const ScriptBase = require('../Context').ScriptBase;
 const Context = require('../Context').Context;
 const Constants = require('./Constants');
 const Object3D = require('../Object3D');
-const { applyNativeCommands } = require('./Component/Component');
 
 /**
  * @typedef DragAndDropAvatarVariables - what variables this script need to work
@@ -24,8 +23,6 @@ module.exports = class DragAndDropAvatar extends ScriptBase {
   }
 
   tick() {
-    applyNativeCommands(this.context);
-
     // apply commands specific at drag and drop avatar
     this.context.commands.forEach((command) => {
       switch (command.type) {

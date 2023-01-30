@@ -11,7 +11,7 @@ const path = require('path');
 const EVENT_KEY = 0;
 const DATA_KEY = 1;
 
-const GameThread = class {
+const Thread = class {
   constructor(path) {
     this.worker = new workerThreads.Worker(path);
 
@@ -32,7 +32,7 @@ const GameThread = class {
 
   addSocketWrapper(socketWrapper) {
     this.socketWrappers.push(socketWrapper);
-    this.post(GameThread.EVENT.ON_NEW_SOCKET_WRAPPER, socketWrapper.socket.id);
+    this.post(Thread.EVENT.ON_NEW_SOCKET_WRAPPER, socketWrapper.socket.id);
 
     // reset commands link
     socketWrapper.socket.removeAllListeners(
@@ -41,7 +41,7 @@ const GameThread = class {
     socketWrapper.socket.on(
       Constant.WEBSOCKET.MSG_TYPE.COMMANDS,
       (commands) => {
-        this.post(GameThread.EVENT.COMMANDS, commands);
+        this.post(Thread.EVENT.COMMANDS, commands);
       }
     );
   }
@@ -74,7 +74,7 @@ const GameThread = class {
       const objectMessage = Data.int32ArrayToObject(int32ArrayMessage);
       const data = objectMessage[DATA_KEY];
       switch (objectMessage[EVENT_KEY]) {
-        case GameThread.EVENT.INIT:
+        case Thread.EVENT.INIT:
           // import gamescript class
           for (const key in data.gameScriptsPath) {
             const classPath = data.gameScriptsPath[key];
@@ -112,29 +112,29 @@ const GameThread = class {
               const currentState = gameContext.toState(false); // false because no need to send component already controlled
               // post state to main thread
               const message = {};
-              message[EVENT_KEY] = GameThread.EVENT.CURRENT_STATE;
+              message[EVENT_KEY] = Thread.EVENT.CURRENT_STATE;
               message[DATA_KEY] = currentState.toJSON();
               parentPort.postMessage(Data.objectToInt32Array(message));
             });
           });
           break;
-        case GameThread.EVENT.COMMANDS:
+        case Thread.EVENT.COMMANDS:
           commands = [];
           data.forEach(function (c) {
             commands.push(new Command(c));
           });
           gameContext.onCommands(commands);
           break;
-        case GameThread.EVENT.ADD_OBJECT3D:
+        case Thread.EVENT.ADD_OBJECT3D:
           gameContext.addObject3D(data.object3D, data.parentUUID);
           break;
-        case GameThread.EVENT.ON_NEW_SOCKET_WRAPPER:
-          gameContext.dispatch(GameThread.EVENT.ON_NEW_SOCKET_WRAPPER, data);
+        case Thread.EVENT.ON_NEW_SOCKET_WRAPPER:
+          gameContext.dispatch(Thread.EVENT.ON_NEW_SOCKET_WRAPPER, data);
           break;
-        case GameThread.EVENT.ON_SOCKET_WRAPPER_REMOVE:
-          gameContext.dispatch(GameThread.EVENT.ON_SOCKET_WRAPPER_REMOVE, data);
+        case Thread.EVENT.ON_SOCKET_WRAPPER_REMOVE:
+          gameContext.dispatch(Thread.EVENT.ON_SOCKET_WRAPPER_REMOVE, data);
           break;
-        case GameThread.EVENT.STOP:
+        case Thread.EVENT.STOP:
           console.log(gameContext.object3D.name, ' stop');
           process.exit(0);
           break; // mandatory to respect the rules of the linter
@@ -145,7 +145,7 @@ const GameThread = class {
   }
 };
 
-GameThread.EVENT = {
+Thread.EVENT = {
   // parent => child
   INIT: 'init',
   COMMANDS: 'commands',
@@ -157,4 +157,4 @@ GameThread.EVENT = {
   CURRENT_STATE: 'current_state',
 };
 
-module.exports = GameThread;
+module.exports = Thread;

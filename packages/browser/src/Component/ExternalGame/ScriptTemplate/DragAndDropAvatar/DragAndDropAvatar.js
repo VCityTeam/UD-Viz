@@ -1,9 +1,9 @@
 import { ExternalScriptBase, Context } from '../../Context';
 import * as THREE from 'three';
-import { Command, Game, Data } from '@ud-viz/shared';
-import { Cameraman } from '../Component/Cameraman';
+import { Command, Game, Data } from '@ud-viz/core';
 import { CommandController } from '../Component/CommandController';
 import { computeRelativeElevationFromGround } from '../Component/Util';
+import { CameraManager } from '../CameraManager';
 
 import './DragAndDropAvatar.css';
 
@@ -42,8 +42,12 @@ export class DragAndDropAvatar extends ExternalScriptBase {
   }
 
   init() {
-    /** @type {Cameraman} */
-    this.cameraman = new Cameraman(this.context.frame3D.camera);
+    /** @type {CameraManager} - camera manager */
+    this.cameraManager = this.context.findExternalScriptWithID('CameraManager');
+    if (!this.cameraManager)
+      throw new Error(
+        'this script is dependent of CameraManager script template'
+      );
 
     /** @type {CommandController} */
     this.commandController = new CommandController(this.context.inputManager);
@@ -83,7 +87,7 @@ export class DragAndDropAvatar extends ExternalScriptBase {
     this.context.frame3D.appendToUI(this.dragAndDropElement);
 
     // drag and drop behavior
-    this.context.frame3D.rootWebGL.ondragend = (event) => {
+    this.context.frame3D.html().ondragend = (event) => {
       if (event.target != this.dragAndDropElement) return;
 
       // compute where the avatar should be teleported
@@ -101,23 +105,12 @@ export class DragAndDropAvatar extends ExternalScriptBase {
         }),
       ]);
     };
-
-    // planar controls eat events (have to be disposed) => should be an issue for itowns
-    this.dragAndDropElement.onmouseenter = () => {
-      this.context.frame3D.enableItownsViewControls(false);
-    };
-    this.dragAndDropElement.onmouseleave = () => {
-      if (this.avatar) return; // do reactivate control if there is an avatar
-      this.context.frame3D.enableItownsViewControls(true);
-    };
   }
 
   /**
    * It computes the elevation of the avatar and sends it to the game context
    */
   tick() {
-    this.cameraman.tick(this.context.dt);
-
     if (this.avatar) {
       // send Z_Update to game context
       this.context.sendCommandToGameContext([
@@ -156,7 +149,7 @@ export class DragAndDropAvatar extends ExternalScriptBase {
       this.itownsCameraQuaternion.copy(this.context.frame3D.camera.quaternion);
 
       // traveling to focus avatar
-      this.cameraman
+      this.cameraManager
         .moveToObject3D(
           this.avatar,
           this.variables.camera_duration,
@@ -165,9 +158,9 @@ export class DragAndDropAvatar extends ExternalScriptBase {
           this.variables.camera_angle
         )
         .then((movementSucceed) => {
-          if (!movementSucceed) throw new Error('cameraman error');
+          if (!movementSucceed) throw new Error('camera manager error');
 
-          this.cameraman.followObject3D(
+          this.cameraManager.followObject3D(
             this.avatar,
             this.variables.camera_distance,
             this.variables.camera_offset,
@@ -183,16 +176,16 @@ export class DragAndDropAvatar extends ExternalScriptBase {
     } else {
       this.leaveAvatarModeButton.remove();
       this.commandController.removeNativeCommands();
-      this.cameraman.stopFollowObject3D();
+      this.cameraManager.stopFollowObject3D();
 
-      this.cameraman
+      this.cameraManager
         .moveToTransform(
           this.itownsCameraPosition,
           this.itownsCameraQuaternion,
           this.variables.camera_duration
         )
         .then((movementSucceed) => {
-          if (!movementSucceed) throw new Error('cameraman error');
+          if (!movementSucceed) throw new Error('camera manager error');
 
           this.context.frame3D.appendToUI(this.dragAndDropElement);
           this.context.frame3D.enableItownsViewControls(true);

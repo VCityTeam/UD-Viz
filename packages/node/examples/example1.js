@@ -11,7 +11,8 @@ expressAppWrapper
     const gameService = new Game.SocketService(expressAppWrapper.httpServer);
     gameService.initializeGameThreads(
       {
-        Example: 'package:@ud-viz/core/src/Game/ScriptTemplate/Example.js',
+        NativeCommandManager:
+          'package:@ud-viz/core/src/Game/ScriptTemplate/NativeCommandManager.js',
         GameManager: 'file:examples/script/gameScript/gameManager.js',
       },
       [
@@ -22,7 +23,7 @@ expressAppWrapper
               idScripts: ['GameManager', 'Example'],
             },
             ExternalScript: {
-              idScripts: ['NoteUI'],
+              idScripts: ['NoteUI', 'CameraManager'],
             },
           },
         }),

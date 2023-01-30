@@ -46,8 +46,6 @@ module.exports = class GameManager extends Core.Game.ScriptBase {
   }
 
   tick() {
-    Core.Game.ScriptTemplate.Component.applyNativeCommands(this.context);
-
     this.context.commands.forEach((cmd) => {
       if (
         cmd.getType() == Core.Game.ScriptTemplate.Constants.COMMAND.ADD_NOTE
@@ -64,7 +62,7 @@ module.exports = class GameManager extends Core.Game.ScriptBase {
           },
           components: {
             Render: {
-              idRenderData: ['sphere'],
+              idRenderData: 'sphere',
               color: data.color,
             },
             ExternalScript: {

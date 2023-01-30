@@ -50,6 +50,14 @@ export class NoteService extends ExternalScriptBase {
       nameInput.value = this.variables.nameSocket;
       this.rootHtml.appendChild(nameInput);
 
+      // to not conflict with other key event while typing
+      nameInput.onfocus = () => {
+        this.context.inputManager.setPause(true);
+      };
+      nameInput.onblur = () => {
+        this.context.inputManager.setPause(false);
+      };
+
       // edit name
       nameInput.onchange = () => {
         this.context.sendCommandToGameContext([
@@ -72,11 +80,15 @@ export class NoteService extends ExternalScriptBase {
 
     // edit pointer sphere attr ui
     if (this.isSocketScript) {
+      const stepScale = 2;
+      const minScale = 1;
+      const maxScale = 500;
+
       const sphereScale = document.createElement('input');
       sphereScale.type = 'range';
-      sphereScale.step = 0.01;
-      sphereScale.min = 1;
-      sphereScale.max = 1000;
+      sphereScale.step = stepScale;
+      sphereScale.min = minScale;
+      sphereScale.max = maxScale;
       sphereScale.value = pointerObject.scale.x; // scale is the same on all dim
       this.rootHtml.appendChild(sphereScale);
 
@@ -95,6 +107,44 @@ export class NoteService extends ExternalScriptBase {
           }),
         ]);
       };
+
+      this.context.inputManager.addKeyInput('+', 'keypress', () => {
+        let newValue = pointerObject.scale.x + stepScale;
+        newValue = Math.max(Math.min(newValue, maxScale), minScale);
+        this.context.sendCommandToGameContext([
+          new Command({
+            type: Game.ScriptTemplate.Constants.COMMAND.UPDATE_TRANSFORM,
+            data: {
+              object3DUUID: pointerObject.uuid,
+              scale: {
+                x: newValue,
+                y: newValue,
+                z: newValue,
+              },
+            },
+          }),
+        ]);
+        sphereScale.value = newValue; // update ui
+      });
+
+      this.context.inputManager.addKeyInput('-', 'keypress', () => {
+        let newValue = pointerObject.scale.x - stepScale;
+        newValue = Math.max(Math.min(newValue, maxScale), minScale);
+        this.context.sendCommandToGameContext([
+          new Command({
+            type: Game.ScriptTemplate.Constants.COMMAND.UPDATE_TRANSFORM,
+            data: {
+              object3DUUID: pointerObject.uuid,
+              scale: {
+                x: newValue,
+                y: newValue,
+                z: newValue,
+              },
+            },
+          }),
+        ]);
+        sphereScale.value = newValue; // update ui
+      });
 
       // update pointer note position
       this.context.inputManager.addMouseCommand(

@@ -4,7 +4,7 @@ const Thread = require('./Thread');
 const SocketWrapper = require('./SocketWrapper');
 const GameThread = require('./Thread');
 
-module.exports = class GameService {
+module.exports = class SocketService {
   constructor(httpServer, options = {}) {
     const io = socketio(httpServer, {
       pingInterval: options.pingInterval || 2000,

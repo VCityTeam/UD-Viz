@@ -11,7 +11,9 @@
 
     <script type="text/javascript">
       const gameScriptClass = {
-        Avatar: class extends udvizBrowser.Shared.Game.ScriptBase {
+        NativeCommandManager:
+          udvizBrowser.Core.Game.ScriptTemplate.NativeCommandManager,
+        Avatar: class extends udvizBrowser.Core.Game.ScriptBase {
           load() {
             this.avatar = new udvizBrowser.Shared.Game.Object3D({
               name: 'avatar',
@@ -22,15 +24,10 @@
 
             return this.context.addObject3D(this.avatar);
           }
-
-          tick() {
-            udvizBrowser.Core.Game.ScriptTemplate.Component.applyNativeCommands(
-              this.context
-            );
-          }
         },
       };
       const externalGameScriptClass = {
+        CameraManager: udvizBrowser.ExternalScriptTemplate.CameraManager,
         Avatar: class extends udvizBrowser.ExternalGame.ScriptBase {
           init() {
             this.avatar = this.context.object3D.getObjectByProperty(
@@ -38,11 +35,10 @@
               'avatar'
             );
 
-            this.cameraman = new udvizBrowser.ExternalScriptTemplate.Cameraman(
-              this.context.frame3D.camera
-            );
+            this.cameraManager =
+              this.context.findExternalScriptWithID('CameraManager');
 
-            this.cameraman.followObject3D(
+            this.cameraManager.followObject3D(
               this.avatar,
               this.variables.camera_distance,
               new udvizBrowser.THREE.Vector3(0, 0, 2),
@@ -58,9 +54,6 @@
           }
 
           tick() {
-            // cameraman need to be ticked
-            this.cameraman.tick(this.context.dt);
-
             this.context.sendCommandToGameContext([
               new udvizBrowser.Core.Command({
                 type: udvizBrowser.Core.Game.ScriptTemplate.Constants.COMMAND
@@ -115,7 +108,7 @@
             static: true,
             components: {
               GameScript: {
-                idScripts: ['Avatar'],
+                idScripts: ['Avatar', 'NativeCommandManager'],
               },
               ExternalScript: {
                 variables: {
@@ -123,7 +116,7 @@
                   camera_distance: 10,
                   camera_angle: 0,
                 },
-                idScripts: ['Avatar'],
+                idScripts: ['Avatar', 'CameraManager'],
               },
             },
           });
