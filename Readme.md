@@ -160,6 +160,7 @@ consists in
 ### Debugging the examples
 
 The browser package contains several "example" applications that showcase different UD-Viz components and serve as templates for creating demos with UD-Viz.
+TODO add git clone, link-local,debug-examples
 
 ```bash
 npm run debug-examples
