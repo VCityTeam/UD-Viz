@@ -20,7 +20,7 @@ expressAppWrapper
           static: true,
           components: {
             GameScript: {
-              idScripts: ['GameManager', 'Example'],
+              idScripts: ['GameManager', 'NativeCommandManager'],
             },
             ExternalScript: {
               idScripts: ['NoteUI', 'CameraManager'],
