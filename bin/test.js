@@ -9,7 +9,7 @@ const printExec = function (result) {
 console.log('Build @ud-viz/core');
 exec('npm run build-core')
   .catch((error) => {
-    console.log('@ud-viz/core build failded');
+    console.log('@ud-viz/core build failed');
     console.error(error);
     process.exit(1); //
   })
@@ -18,7 +18,7 @@ exec('npm run build-core')
     console.log('Build @ud-viz/browser');
     exec('npm run build-browser')
       .catch((error) => {
-        console.log('@ud-viz/browser build failded');
+        console.log('@ud-viz/browser build failed');
         console.error(error);
         process.exit(1);
       })
@@ -27,7 +27,7 @@ exec('npm run build-core')
         console.log('Build @ud-viz/node');
         exec('npm run build-node')
           .catch((error) => {
-            console.log('@ud-viz/node build failded');
+            console.log('@ud-viz/node build failed');
             console.error(error);
             process.exit(1);
           })
