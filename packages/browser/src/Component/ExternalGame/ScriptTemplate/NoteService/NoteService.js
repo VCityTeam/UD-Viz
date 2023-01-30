@@ -196,6 +196,8 @@ export class NoteService extends ExternalScriptBase {
         const textAreaMessage = document.createElement('textarea');
         menu.appendChild(textAreaMessage);
 
+        textAreaMessage.focus(); // focus by default text area
+
         const cancelButton = document.createElement('button');
         cancelButton.innerHTML = 'Cancel';
         menu.appendChild(cancelButton);
