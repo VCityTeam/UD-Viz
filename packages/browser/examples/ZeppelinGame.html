@@ -11,7 +11,9 @@
 
     <script type="text/javascript">
       const gameScriptClass = {
-        GameContextManager: class extends udvizBrowser.Shared.Game.ScriptBase {
+        NativeCommandManager:
+          udvizBrowser.Core.Game.ScriptTemplate.NativeCommandManager,
+        GameContextManager: class extends udvizBrowser.Core.Game.ScriptBase {
           load() {
             const promises = [];
 
@@ -70,7 +72,7 @@
               components: {
                 Render: {
                   idRenderData: 'sphere',
-                  color: [Math.random(), Math.random(), Math.random()],
+                  color: [Math.random(), Math.random(), Math.random(), 1],
                 },
                 Collider: {
                   shapes: [
@@ -90,12 +92,7 @@
             return result;
           }
         },
-        Zeppelin: class extends udvizBrowser.Shared.Game.ScriptBase {
-          tick() {
-            udvizBrowser.Core.Game.ScriptTemplate.Component.applyNativeCommands(
-              this.context
-            );
-          }
+        Zeppelin: class extends udvizBrowser.Core.Game.ScriptBase {
           // Called when this gameobject collider components collides with another one collider components
           onEnterCollision(result) {
             const goCollided = result.b.getObject3D();
@@ -119,6 +116,7 @@
       };
 
       const externalGameScriptClass = {
+        CameraManager: udvizBrowser.ExternalScriptTemplate.CameraManager,
         ExternalContextManager: class extends udvizBrowser.ExternalGame
           .ScriptBase {
           init() {
@@ -127,16 +125,15 @@
             this.context.frame3D.appendToUI(this.ui);
             this.updateUI();
 
-            this.cameraman = new udvizBrowser.ExternalScriptTemplate.Cameraman(
-              this.context.frame3D.camera
-            );
+            this.cameraManager =
+              this.context.findExternalScriptWithID('CameraManager');
 
             const zeppelin = this.context.object3D.getObjectByProperty(
               'name',
               'zeppelin'
             );
 
-            this.cameraman.followObject3D(
+            this.cameraManager.followObject3D(
               zeppelin,
               this.variables.camera_distance,
               new udvizBrowser.THREE.Vector3(0, 0, 15),
@@ -149,11 +146,6 @@
               );
 
             commandController.addNativeCommands(zeppelin.uuid);
-          }
-
-          tick() {
-            // cameraman need to be ticked
-            this.cameraman.tick(this.context.dt);
           }
 
           updateUI() {
@@ -208,7 +200,7 @@
                 sounds: ['ballon_pop'],
               },
               GameScript: {
-                idScripts: ['GameContextManager'],
+                idScripts: ['GameContextManager', 'NativeCommandManager'],
               },
               ExternalScript: {
                 variables: {
@@ -216,7 +208,7 @@
                   camera_distance: 60,
                   camera_angle: 0.2,
                 },
-                idScripts: ['ExternalContextManager'],
+                idScripts: ['ExternalContextManager', 'CameraManager'],
               },
             },
           });

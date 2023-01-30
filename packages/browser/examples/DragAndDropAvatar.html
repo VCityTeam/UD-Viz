@@ -43,14 +43,14 @@
             static: true,
             components: {
               GameScript: {
-                idScripts: ['DragAndDropAvatar'],
+                idScripts: ['DragAndDropAvatar', 'NativeCommandManager'],
                 variables: {
                   idRenderDataAvatar: 'avatar', // render data your avatar should use
                 },
               },
               ExternalScript: {
                 variables: {},
-                idScripts: ['DragAndDropAvatar'],
+                idScripts: ['DragAndDropAvatar', 'CameraManager'],
               },
             },
           });
@@ -69,10 +69,14 @@
             new udvizBrowser.InputManager(),
             {
               externalGameScriptClass: {
+                CameraManager:
+                  udvizBrowser.ExternalScriptTemplate.CameraManager,
                 DragAndDropAvatar:
                   udvizBrowser.ExternalScriptTemplate.DragAndDropAvatar,
               },
               gameScriptClass: {
+                NativeCommandManager:
+                  udvizBrowser.Core.Game.ScriptTemplate.NativeCommandManager,
                 DragAndDropAvatar:
                   udvizBrowser.Shared.Game.ScriptTemplate.DragAndDropAvatar,
               },

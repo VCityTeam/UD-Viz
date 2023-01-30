@@ -1,37 +1,26 @@
 import * as THREE from 'three';
-import { Game } from '@ud-viz/shared';
+import { Game } from '@ud-viz/core';
+import { ExternalScriptBase } from '../Context';
 
 /**
  * @callback Movement
  * @param {number} dt - delta time movement
  */
 
-/** @class */
-export class Cameraman {
-  /**
-   * Handle camera movement (you need to tick it)
-   *
-   * @param {THREE.PerspectiveCamera} camera - camera to move
-   */
-  constructor(camera) {
-    /**
-     * camera handle by cameraman
-     *
-     * @type {THREE.PerspectiveCamera}
-     */
-    this.camera = camera;
+export class CameraManager extends ExternalScriptBase {
+  constructor(context, object3D, variables) {
+    super(context, object3D, variables);
 
     /** @type {Movement|null} */
     this.currentMovement = null;
+
+    /** @type {Target|null} - target object3D */
+    this.target = null;
   }
 
-  /**
-   *
-   * @param {number} dt - tick delta time
-   */
-  tick(dt) {
+  tick() {
     if (this.currentMovement) {
-      this.currentMovement(dt);
+      this.currentMovement(this.context.dt);
     } else if (this.target) {
       const { position, quaternion } = this.computeCameraTransform(
         this.target.object3D,
@@ -39,9 +28,9 @@ export class Cameraman {
         this.target.offset,
         this.target.angle
       );
-      this.camera.position.copy(position);
-      this.camera.quaternion.copy(quaternion);
-      this.camera.updateProjectionMatrix();
+      this.context.frame3D.camera.position.copy(position);
+      this.context.frame3D.camera.quaternion.copy(quaternion);
+      this.context.frame3D.camera.updateProjectionMatrix();
     }
   }
 
@@ -82,7 +71,7 @@ export class Cameraman {
   }
 
   /**
-   * Cameraman start following object3D target
+   * Camera start following object3D target
    *
    * @param {THREE.Object3D} object3D - object3D to focus
    * @param {number} distance - distance from object3D
@@ -102,7 +91,7 @@ export class Cameraman {
   }
 
   /**
-   * Cameraman move to object3D
+   * Camera move to object3D
    *
    * @param {THREE.Object3D} object3D - object3D to focus
    * @param {number} duration - time of movement in ms
@@ -117,8 +106,8 @@ export class Cameraman {
         resolve(false);
         return;
       }
-      const startPos = this.camera.position.clone();
-      const startQuat = this.camera.quaternion.clone();
+      const startPos = this.context.frame3D.camera.position.clone();
+      const startQuat = this.context.frame3D.camera.quaternion.clone();
       let currentTime = 0;
 
       /**
@@ -142,9 +131,9 @@ export class Cameraman {
         const p = position.clone().lerp(startPos, 1 - ratio);
         const q = quaternion.clone().slerp(startQuat, 1 - ratio);
 
-        this.camera.position.copy(p);
-        this.camera.quaternion.copy(q);
-        this.camera.updateProjectionMatrix();
+        this.context.frame3D.camera.position.copy(p);
+        this.context.frame3D.camera.quaternion.copy(q);
+        this.context.frame3D.camera.updateProjectionMatrix();
 
         if (ratio >= 1) {
           this.currentMovement = null;
@@ -168,8 +157,8 @@ export class Cameraman {
         resolve(false);
         return;
       }
-      const startPos = this.camera.position.clone();
-      const startQuat = this.camera.quaternion.clone();
+      const startPos = this.context.frame3D.camera.position.clone();
+      const startQuat = this.context.frame3D.camera.quaternion.clone();
       let currentTime = 0;
 
       /**
@@ -185,9 +174,9 @@ export class Cameraman {
         const p = position.clone().lerp(startPos, 1 - ratio);
         const q = quaternion.clone().slerp(startQuat, 1 - ratio);
 
-        this.camera.position.copy(p);
-        this.camera.quaternion.copy(q);
-        this.camera.updateProjectionMatrix();
+        this.context.frame3D.camera.position.copy(p);
+        this.context.frame3D.camera.quaternion.copy(q);
+        this.context.frame3D.camera.updateProjectionMatrix();
 
         if (ratio >= 1) {
           this.currentMovement = null;
@@ -209,18 +198,20 @@ export class Cameraman {
     const radius = bb.min.distanceTo(bb.max) * 0.5;
 
     // compute new distance between camera and center of object/sphere
-    const h = radius / Math.tan((this.camera.fov / 2) * THREE.Math.DEG2RAD);
+    const h =
+      radius /
+      Math.tan((this.context.frame3D.camera.fov / 2) * THREE.Math.DEG2RAD);
     const dir = new THREE.Vector3(1, 1, 1).normalize(); // hard coded direction
     const newPos = new THREE.Vector3().addVectors(center, dir.setLength(h));
-    const oldRot = this.camera.rotation.clone();
-    const oldPos = this.camera.position.clone();
-    this.camera.position.copy(newPos);
-    this.camera.lookAt(center);
-    this.camera.updateProjectionMatrix();
-    const targetRot = this.camera.rotation.clone();
-    this.camera.rotation.copy(oldRot);
-    this.camera.position.copy(oldPos);
-    this.camera.updateProjectionMatrix();
+    const oldRot = this.context.frame3D.camera.rotation.clone();
+    const oldPos = this.context.frame3D.camera.position.clone();
+    this.context.frame3D.camera.position.copy(newPos);
+    this.context.frame3D.camera.lookAt(center);
+    this.context.frame3D.camera.updateProjectionMatrix();
+    const targetRot = this.context.frame3D.camera.rotation.clone();
+    this.context.frame3D.camera.rotation.copy(oldRot);
+    this.context.frame3D.camera.position.copy(oldPos);
+    this.context.frame3D.camera.updateProjectionMatrix();
 
     return this.moveToTransform(
       newPos,

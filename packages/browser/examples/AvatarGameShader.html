@@ -42,6 +42,7 @@
           );
 
           const externalGameScriptClass = {
+            CameraManager: udvizBrowser.ExternalScriptTemplate.CameraManager,
             Avatar: class extends udvizBrowser.ExternalGame.ScriptBase {
               constructor(context, object3D, variables) {
                 super(context, object3D, variables);
@@ -94,12 +95,10 @@
                 );
                 if (!this.avatar) throw new Error('no avatar in context');
 
-                this.cameraman =
-                  new udvizBrowser.ExternalScriptTemplate.Cameraman(
-                    this.context.frame3D.camera
-                  );
+                this.cameraManager =
+                  this.context.findExternalScriptWithID('CameraManager');
 
-                this.cameraman.followObject3D(
+                this.cameraManager.followObject3D(
                   this.avatar,
                   this.variables.camera_distance,
                   new udvizBrowser.THREE.Vector3(0, 0, 2),
@@ -205,11 +204,6 @@
                   );
                 });
               }
-
-              tick() {
-                // cameraman need to be ticked
-                this.cameraman.tick(this.context.dt);
-              }
             },
           };
 
@@ -223,7 +217,7 @@
                   camera_distance: 10,
                   camera_angle: 0,
                 },
-                idScripts: ['Avatar'],
+                idScripts: ['Avatar', 'CameraManager'],
               },
             },
             children: [

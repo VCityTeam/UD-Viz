@@ -1,7 +1,5 @@
 .root_html_pointer_note {
   width: 100%;
-  background-color: inherit;
-  color: inherit;
   -webkit-user-select: none; /* Safari */
   -moz-user-select: none; /* Firefox */
   -ms-user-select: none; /* IE10+/Edge */
@@ -15,6 +13,7 @@
 .root_html_pointer_note input {
   background-color: inherit;
   color: inherit;
+  z-index: 6;
 }
 
 .root_menu_message_note {
@@ -27,4 +26,9 @@
 
 .root_menu_message_note textarea {
   min-height: 100px;
+  z-index: 3;
+}
+
+.root_menu_message_note button {
+  cursor: pointer;
 }

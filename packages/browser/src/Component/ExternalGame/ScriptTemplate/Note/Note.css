@@ -1,0 +1,14 @@
+.note_message {
+  z-index: 2;
+  position: absolute;
+  background-color: aliceblue;
+  padding: 5px;
+  border-radius: 5px;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+}
+
+.note_message button {
+  cursor: pointer;
+}
