@@ -50,6 +50,8 @@ export class CommandController {
 
   /**
    * Add native commands in input manager
+   *
+   * @param {string} object3DUUID - uuid of the object3D to contol
    */
   addNativeCommands(object3DUUID) {
     for (const key in MAPPING) {
