@@ -153,7 +153,7 @@ const folderInBrowserPage = function (testFolderPath, pageTest) {
     // start a server
     const expressAppWrapper = new ExpressAppWrapper();
     expressAppWrapper
-      .start({ folder: './', port: serverPort })
+      .start({ folder: './', port: serverPort, withGameSocketService: true })
       .then(async () => {
         fs.readdir(
           testFolderPath,

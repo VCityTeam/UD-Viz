@@ -4,12 +4,7 @@
  *   @exports udvizNode
  */
 module.exports = {
-  /**
-   * @see ExpressAppWrapper
-   * @type {import('./ExpressAppWrapper')}
-   */
   ExpressAppWrapper: require('./ExpressAppWrapper'),
-  /** @type {import('./Game')} */
   Game: require('./Game/Game'),
   /** @type {import('./Test')} */
   Test: require('./Test'),

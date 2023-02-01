@@ -4,8 +4,22 @@ import { Context } from '../Component/ExternalGame/Context';
 import { Frame3DPlanar } from '../Component/Frame3D/Frame3DPlanar';
 import { RequestAnimationFrameProcess } from '../Component/RequestAnimationFrameProcess';
 import { InputManager } from '../Component/InputManager';
+import { AssetManager } from '../Component/AssetManager/AssetManager';
+import * as ExternalGame from '../Component/ExternalGame/ExternalGame';
 
 export class MultiPlayerGamePlanar {
+  /**
+   *
+   * @param {SocketIOWrapper} socketIOWrapper - socket to communicate with gamesocketservice
+   * @param {Frame3DPlanar} frame3DPlanar - frame3DPlanar where the game is taking place
+   * @param {AssetManager} assetManager - assetManager of the game {@link AssetManager}
+   * @param {InputManager} inputManager - input manager of the game {@link InputManager}
+   * @param {object} options - multi player game planar options
+   * @param {{x:number,y:number,z:number}=} options.gameOrigin - position of the external game context object3D
+   * @param {Object<string,ExternalGame.ScriptBase>=} options.externalGameScriptClass - custom external scripts class of your object3D
+   * @param {object=} options.sceneConfig - configuration of the scene 3D {@link ExternalGame.Context}
+   * @param {number=} options.interpolatorDelay - delay between state computed in game process and the ones in external context
+   */
   constructor(
     socketIOWrapper,
     frame3DPlanar,
@@ -47,6 +61,9 @@ export class MultiPlayerGamePlanar {
     this.interpolator = new Game.StateInterpolator(options.interpolatorDelay);
   }
 
+  /**
+   * Start game communication with server
+   */
   start() {
     this.externalGameContext.sendCommandToGameContext = (cmds) => {
       this.socketIOWrapper.emit(Constant.WEBSOCKET.MSG_TYPE.COMMANDS, cmds);
