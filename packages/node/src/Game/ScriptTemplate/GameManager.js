@@ -1,5 +1,6 @@
-const { Core, Game } = require('../../../src/index');
-const THREE = require('three'); // not sure about this maybe should be in Core to be imported with index
+const Core = require('@ud-viz/core');
+const Game = require('../Game');
+const THREE = require('three');
 
 module.exports = class GameManager extends Core.Game.ScriptBase {
   init() {

@@ -1,11 +1,29 @@
 const { Constant, Game } = require('@ud-viz/core');
+const Socket = require('socket.io').Socket;
 
 module.exports = class SocketWrapper {
+  /**
+   * Send game state to client
+   *
+   * @param {Socket} socket - socket to wrap
+   */
   constructor(socket) {
+    /**
+     * @type {Socket} - socket embeded
+     */
     this.socket = socket;
+
+    /**
+     * @type {Game.State|null} - last state send to client use to compute GameStateDiff
+     */
     this.lastStateSend = null;
   }
 
+  /**
+   * Send a statediff or a state to client
+   *
+   * @param {object} stateJSON - state serialized
+   */
   sendState(stateJSON) {
     const state = new Game.State(
       new Game.Object3D(stateJSON.object3D),
