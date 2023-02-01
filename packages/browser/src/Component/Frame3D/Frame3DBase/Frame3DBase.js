@@ -51,8 +51,8 @@ export class Frame3DBase {
     this.ui.classList.add('ui_Frame3DBase');
 
     // add dom layer
-    this.rootHtml.appendChild(this.rootCss);
     this.rootHtml.appendChild(this.ui);
+    this.rootHtml.appendChild(this.rootCss);
     this.rootHtml.appendChild(this.rootWebGL);
 
     /**
