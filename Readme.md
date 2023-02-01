@@ -80,8 +80,6 @@ npm install # resolve dependencies based on the package.json (and package-lock.j
 npm run link-local # use the local code instead of the modules published on npm
 ```
 
-> ❕If you have cloned an **out-of-release** version you will need to **run** the `npm run link-local` command (_to be able to use the local code instead of the modules published on npm_).
-
 ### Run an example urban data web application
 
 To quickly build and locally host the examples landing page which links to several [UD-Viz example applications](./packages/browser/examples/).
