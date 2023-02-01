@@ -56,7 +56,7 @@ const Object3D = class extends THREE.Object3D {
     /** @type {object} - user data */
     this.userData = json.userData || {};
 
-    /** @type {string} - name    /** @type {THREE.Object3D} - root object3D */ of object3D */
+    /** @type {string} - name of object3D */
     this.name = json.name || '';
 
     /**

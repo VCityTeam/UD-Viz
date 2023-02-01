@@ -21,10 +21,12 @@ module.exports = class SocketService {
   }
 
   /**
+   * Launch thread running game context simulation
    *
-   * @param {*} gameScriptClass
-   * @param {Game.Object3D[]} gameObjects3D
-   * @param {*} threadPath
+   * @param {string[]} gameScriptsPath - class needed by game context
+   * @param {Game.Object3D} gameObjects3D - gameobject3D to simulate
+   * @param {string} threadPath - path to game thread routine
+   * @param {string=} entryGameObject3DUUID - uuid of default gameobject to connect socket connected
    */
   initializeGameThreads(
     gameScriptsPath,

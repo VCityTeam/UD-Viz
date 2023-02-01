@@ -474,7 +474,7 @@ function objectOverWrite(jsonOverWrited, jsonModel) {
       } else {
         if (json2[key] != undefined) {
           json1[key] = json2[key];
-        }    /** @type {THREE.Object3D} - root object3D */
+        }
       }
     }
   };
