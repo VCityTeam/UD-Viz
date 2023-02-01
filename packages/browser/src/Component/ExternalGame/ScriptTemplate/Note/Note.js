@@ -82,8 +82,6 @@ export class Note extends ExternalScriptBase {
   }
 
   tick() {
-    this.cameraManager.tick(this.context.dt);
-
     if (this.noteMessageHtml.parentElement) {
       // compute position on screen
       const widthHalf = window.innerWidth / 2,
