@@ -17,24 +17,23 @@ UD-Viz is a 3-package JavaScript framework for creating web applications for vis
 **Index**
 
 - [UD-Viz : Urban Data Vizualisation](#ud-viz--urban-data-vizualisation)
-  - [Directory Hierarchy](#directory-hierarchy)
+    - [Directory Hierarchy](#directory-hierarchy)
   - [Getting Started](#getting-started)
     - [Installing node/npm](#installing-nodenpm)
     - [Installing the UD-Viz framework per se](#installing-the-ud-viz-framework-per-se)
     - [Run an example urban data web application](#run-an-example-urban-data-web-application)
+    - [Documentation](#documentation)
   - [Developers](#developers)
     - [Pre-requisites](#pre-requisites)
     - [Npm Scripts](#npm-scripts)
-    - [Documentation](#documentation)
-    - [Development Environment Tips](#development-environment-tips)
-      - [Notes for VSCode users](#notes-for-vscode-users)
-    - [Tips for Windows developers](#tips-for-windows-developers)
     - [Debugging the examples](#debugging-the-examples)
-    - [Continuous Integration (Travis)](#continuous-integration-travis)
-    - [Submitting a Pull Request](#submitting-a-pull-request)
-      - [Prior to PR-submission 1: assert coding style and build](#prior-to-pr-submission-1-assert-coding-style-and-build)
-        - [Coding style (Linter)](#coding-style-linter)
-      - [Prior to PR-submission 2: functional testing](#prior-to-pr-submission-2-functional-testing)
+    - [Environment Tips](#environment-tips)
+      - [IDE](#ide)
+        - [VisualStudio Code](#visualstudio-code)
+      - [OS](#os)
+        - [Windows](#windows)
+    - [Continuous Integration (Travis CI)](#continuous-integration-travis-ci)
+    - [Contribute](#contribute)
 
 ### Directory Hierarchy
 
@@ -45,6 +44,7 @@ UD-Viz (repo)
 ├── packages
 |    ├── browser              # UD-Viz Browser-side framework
 |    ├── core                 # UD-Viz shared Browser+Node framework
+|    ├── node # UD-Viz Node-side framework
 ├── .eslintrc.js              # Linting rules and configuration
 ├── .gitignore                # Files/folders ignored by Git
 ├── .prettierrc               # Formatting rules
@@ -122,7 +122,7 @@ Developing UD-Viz applications requires knowledge about :
 | `npm run eslint-quiet`   | Run the linter without displaying warnings, only errors                                                                                                                                                                                                             |
 | `npm run eslint-fix`     | Run the linter and attempt to fix errors and warning automatically                                                                                                                                                                                                  |
 | `npm run test`           | Build the 3 packages and tests core and browser scripts. Uses [this test script](./bin/test.js)                                                                                                                                                                     |
-| `npm run travis`         | Run `npm run eslint` and `npm run test`. Also ran by CI. See [here](#continuous-integration-travis) for more information                                                                                                                                            |
+| `npm run assert-code`         | Run `npm run eslint` and `npm run test`. Also ran by CI. See [here](#continuous-integration-travis-ci) for more information                                                                                                                                            |
 | `npm run docs-core`      | Generate the [JSDOC core package documentation](./docs/jsdocConfig/jsdoc.core.json)                                                                                                                                                                                 |
 | `npm run docs-browser`   | Generate the [JSDOC browser package documentation](./docs/jsdocConfig/jsdoc.browser.json)                                                                                                                                                                           |
 | `npm run docs-node`      | Generate the [JSDOC node package documentation](./docs/jsdocConfig/jsdoc.node.json)                                                                                                                                                                                 |
@@ -174,6 +174,17 @@ consists in
 
 1.  setting git's `core.autocrlf` to `false` (e.g. with `git config --global core.autocrlf false`)
 2.  configure your editor/IDE to use Unix-style endings
+
+### Continuous Integration (Travis CI)
+
+Each time origin/master branch is impacted by changes, Travis CI is triggered. It does a set of jobs describe in [travis.yml](./.travis.yml). 
+
+Jobs list :
+
+- `npm run assert-code`: Run linter, build bundles and run tests
+- `npm audit --audit-level=moderate`: Npm native command ([npm-audit](https://docs.npmjs.com/cli/v6/commands/npm-audit)) which check packages dependencies vulnerabilities.
+- `remark -u validate-links .`: Command of the package [remark-validate-links](https://www.npmjs.com/package/remark-validate-links) which check dead link in markdown.
+
 
 ### Contribute
 
