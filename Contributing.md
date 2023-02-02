@@ -22,7 +22,7 @@ Notice that UD-Viz coding style uses a unix `linebreak-style` (aka `LF` as newli
 
 ## Submiting Pull Request (PR) 
 
-### Prior to PR-submission : assert coding style and build
+### Prior to PR-submission
 
 - Commit (`git commit`) with representative messages (commit messages end-up collected in the PR message and eventually release explanations).
 - Make sure your code is mature for a review.  
