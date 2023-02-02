@@ -9,11 +9,11 @@
     "build-core": "npm run build --prefix ./packages/core",
     "build-browser": "npm run build --prefix ./packages/browser",
     "build-node": "npm run build --prefix ./packages/node",
-    "debug-examples": "node ./bin/debugExamples.js",
+    "debug-examples": "cross-env NODE_ENV=development node ./bin/debugExamples.js",
     "eslint": "eslint --ignore-path .gitignore \"packages/**/*.js\" \"packages/**/*.html\" ",
     "eslint-quiet": "eslint --quiet --ignore-path .gitignore \"packages/**/*.js\" \"packages/**/*.html\" ",
     "eslint-fix": "eslint --ignore-path .gitignore \"packages/**/*.js\" \"packages/**/*.html\"  --fix",
-    "test": "node ./bin/test.js",
+    "test": "cross-env NODE_ENV=production node ./bin/test.js",
     "travis": "npm run eslint && npm run test",
     "docs-core": "cross-env PACKAGE=core jsdoc -c ./docs/jsdocConfig/jsdoc.js",
     "docs-browser": "cross-env PACKAGE=browser jsdoc -c ./docs/jsdocConfig/jsdoc.js",
@@ -21,9 +21,7 @@
     "docs-home": "cross-env PACKAGE=home jsdoc -c ./docs/jsdocConfig/jsdoc.js",
     "docs": "rm -rf ./docs/html && npm run docs-browser ; npm run docs-node ; npm run docs-core ; npm run docs-home",
     "dev-docs": "nodemon --watch ./packages/core/src --watch ./packages/browser/src --watch ./packages/node/src --delay 2500ms --exec 'rm -rf ./docs/html && npm run docs' ",
-    "debug-examples": "cross-env NODE_ENV=development node ./bin/debugExamples.js",
-    "host": "npm run build-browser && cross-env NODE_ENV=production node ./bin/host.js",
-    "test": "cross-env NODE_ENV=production node ./bin/test.js"
+    "host": "npm run build-browser && cross-env NODE_ENV=production node ./bin/host.js"
   },
   "workspaces": [
     "packages/*"
