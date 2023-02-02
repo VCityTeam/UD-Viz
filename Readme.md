@@ -40,7 +40,7 @@ UD-Viz is a 3-package JavaScript framework for creating web applications for vis
 
 ```
 UD-Viz (repo)
-├── bin                       # Global NodeJS development and
+├── bin                       # Global NodeJS development and deployment
 ├── docs                      # Developer and User documentation
 ├── packages
 |    ├── browser              # UD-Viz Browser-side framework
@@ -85,7 +85,7 @@ npm run link-local # use the local code instead of the modules published on npm
 To quickly build and locally host the examples landing page which links to several [UD-Viz example applications](./packages/browser/examples/).
 
 ```bash
-npm run host
+npm run start
 ```
 
 After running go to [localhost:8000](http://localhost:8000).
@@ -122,7 +122,8 @@ Developing UD-Viz applications requires knowledge about :
 | `npm run docs-node`      | Generate the [JSDOC node package documentation](./docs/jsdocConfig/jsdoc.node.json)                                                                                                                                                                                 |
 | `npm run docs-home`      | Generate the [JSDOC documentation landing page](./docs/jsdocConfig/jsdoc.home.json)                                                                                                                                                                                 |
 | `npm run docs`           | Run `npm run docs-core`, `npm run docs-browser`, `npm run docs-node`, and `npm run docs-home`                                                                                                                                                                       |
-| `npm run host`           | Run `npm run build-browser` and host the bundle with [an express server](./bin/host.js). <br>http://locahost:8000/                                                                                                                                                  |
+| `npm run host`           | host the bundle with [an express server](./bin/host.js). <br>http://locahost:8000/                                                                                                                                                                                  |
+| `npm run start`          | Run `npm run build-browser` and `npm run host`                                                                                                                                                                                                                      |
 
 For Windows users:
 
