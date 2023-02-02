@@ -96,10 +96,11 @@ After running go to [localhost:8000](http://localhost:8000).
 
 Developing UD-Viz applications requires knowledge about :
 
-- [JS](https://github.com/VCityTeam/UD-SV/blob/master/UD-Doc/Devel/ToolJavaScript.md)
+- [JavaScript](https://developer.mozilla.org/en-US/docs/Web/javascript)
 - [node.js](https://en.wikipedia.org/wiki/Node.js)
 - [npm](<https://en.wikipedia.org/wiki/Npm_(software)>)
 - [three.js](https://threejs.org/)
+- [iTowns](http://www.itowns-project.org)
 
 ### Npm Scripts
 
