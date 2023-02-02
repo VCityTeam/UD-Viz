@@ -90,6 +90,12 @@ npm run start
 
 After running go to [localhost:8000](http://localhost:8000).
 
+### Documentation
+
+[Online documentation](https://vcityteam.github.io/UD-Viz/html/index.html)
+
+Refer to this [Readme](./docs/Readme.md) to re-generate it and for more information.
+
 ## Developers
 
 ### Pre-requisites
@@ -130,25 +136,36 @@ For Windows users:
 
 > In order to use scripts that launch a shell script with Powershell: `npm config set script-shell "C:\\Program Files\\git\\bin\\bash.exe"`
 
-### Documentation
+### Debugging the examples
 
-The [browsable documentation](https://vcityteam.github.io/UD-Viz/html/index.html) is generated
-[within this repository](./docs/html/index.html).
+The browser package contains several "example" applications that showcase different UD-Viz components and serve as templates for creating demos with UD-Viz.
 
-Refer to this [Readme](./docs/Readme.md) to re-generate it and for more information.
+```bash
+npm run debug-examples
+```
 
-### Development Environment Tips
+It run [debugExamples.js](./bin/debugExamples.js):
 
-#### Notes for VSCode users
+- Run an [ExpressAppWrapper](./packages/node/src/ExpressAppWrapper.js)
+- Run a watched routine [buildDebugBrowser.js](./bin/buildDebugBrowser.js) with [nodemon](https://www.npmjs.com/package/nodemon).
 
-VSCode is the recommended development environment.
+### Environment Tips
+
+#### IDE
+
+> VSCode is recommended.
+
+##### VisualStudio Code
+
 When using [Visual Studio Code](https://code.visualstudio.com/), you can install the following extentions to make your life easier:
 
 - [eslint](https://www.digitalocean.com/community/tutorials/linting-and-formatting-with-eslint-in-vs-code) - allows you e.g. to automatically fix the coding style e.g. [when saving a file](https://www.digitalocean.com/community/tutorials/linting-and-formatting-with-eslint-in-vs-code).
 - [Prettier](https://prettier.io/) - JS, JSON, CSS, and HTML formatter.
 - [Mintlify](https://marketplace.visualstudio.com/items?itemName=mintlify.document) - AI-powered documentation generator. (may require rewriting by a human)
 
-### Tips for Windows developers
+#### OS
+
+##### Windows
 
 As configured, the coding style requires a Linux style newline characters which might be overwritten in Windows environments
 (both by `git` and/or your editor) to become `CRLF`. When such changes happen eslint will warn about "incorrect" newline characters
@@ -158,15 +175,6 @@ consists in
 
 1.  setting git's `core.autocrlf` to `false` (e.g. with `git config --global core.autocrlf false`)
 2.  configure your editor/IDE to use Unix-style endings
-
-### Debugging the examples
-
-The browser package contains several "example" applications that showcase different UD-Viz components and serve as templates for creating demos with UD-Viz.
-TODO add git clone, link-local,debug-examples
-
-```bash
-npm run debug-examples
-```
 
 ### Submitting a Pull Request
 
