@@ -35,7 +35,6 @@ UD-Viz is a 3-package JavaScript framework for creating web applications for vis
       - [Prior to PR-submission 1: assert coding style and build](#prior-to-pr-submission-1-assert-coding-style-and-build)
         - [Coding style (Linter)](#coding-style-linter)
       - [Prior to PR-submission 2: functional testing](#prior-to-pr-submission-2-functional-testing)
-    - [Submitting a Release](#submitting-a-release)
 
 ### Directory Hierarchy
 
@@ -196,5 +195,3 @@ A developer must thus at least) check that all the
 #### PR Submission
 
 When creating a PR (Pull Request) make sure to provide a correct description
-
-### Submitting a Release
