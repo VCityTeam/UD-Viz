@@ -122,7 +122,6 @@ Developing UD-Viz applications requires knowledge about :
 | `npm run docs-node`      | Generate the [JSDOC node package documentation](./docs/jsdocConfig/jsdoc.node.json)                                                                                                                                                                                 |
 | `npm run docs-home`      | Generate the [JSDOC documentation landing page](./docs/jsdocConfig/jsdoc.home.json)                                                                                                                                                                                 |
 | `npm run docs`           | Run `npm run docs-core`, `npm run docs-browser`, `npm run docs-node`, and `npm run docs-home`                                                                                                                                                                       |
-| `npm run host-docs`      | Host the docs folder with [an express server](./bin/hostDocs.js).<br> http://locahost:8001/html/                                                                                                                                                                    |
 | `npm run host`           | Run `npm run build-browser` and host the bundle with [an express server](./bin/host.js). <br>http://locahost:8000/                                                                                                                                                  |
 
 For Windows users:

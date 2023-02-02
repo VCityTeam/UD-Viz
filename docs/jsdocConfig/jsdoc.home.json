@@ -5,7 +5,29 @@
   "opts": {
     "destination": "./docs/html/",
     "theme_opts": {
-      "title": "@ud-viz"
+      "title": "@ud-viz",
+      "menu": [
+        {
+          "title": "udviz",
+          "id": "udvizHome",
+          "link": "./"
+        },
+        {
+          "title": "udvizBrowser",
+          "id": "udvizBrowser",
+          "link": "./browser"
+        },
+        {
+          "title": "udvizCore",
+          "id": "udvizCore",
+          "link": "./core"
+        },
+        {
+          "title": "udvizNode",
+          "id": "udvizNode",
+          "link": "./node"
+        }
+      ]
     },
     "readme": "./Readme.md"
   }

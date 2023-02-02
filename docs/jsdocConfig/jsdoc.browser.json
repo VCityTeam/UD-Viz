@@ -4,7 +4,31 @@
   },
   "opts": {
     "destination": "./docs/html/browser",
-    "theme_opts": { "title": "@ud-viz/browser" },
+    "theme_opts": {
+      "title": "@ud-viz/browser",
+      "menu": [
+        {
+          "title": "udviz",
+          "id": "udvizHome",
+          "link": "../"
+        },
+        {
+          "title": "udvizBrowser",
+          "id": "udvizBrowser",
+          "link": "../browser"
+        },
+        {
+          "title": "udvizCore",
+          "id": "udvizCore",
+          "link": "../core"
+        },
+        {
+          "title": "udvizNode",
+          "id": "udvizNode",
+          "link": "../node"
+        }
+      ]
+    },
     "readme": "./packages/browser/readme.md"
   }
 }

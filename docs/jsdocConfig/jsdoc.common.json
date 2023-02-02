@@ -27,26 +27,6 @@
       "displayModuleHeader": true,
       "menu": [
         {
-          "title": "udviz",
-          "id": "udvizHome",
-          "link": "/html"
-        },
-        {
-          "title": "udvizBrowser",
-          "id": "udvizBrowser",
-          "link": "/html/browser"
-        },
-        {
-          "title": "udvizCore",
-          "id": "udvizCore",
-          "link": "/html/core"
-        },
-        {
-          "title": "udvizNode",
-          "id": "udvizNode",
-          "link": "/html/node"
-        },
-        {
           "title": "Github",
           "id": "Github",
           "link": "https://github.com/VCityTeam/UD-Viz",
