@@ -1,57 +1,73 @@
 # @ud-viz/browser
-[![NPM package version](https://badgen.net/npm/v/ud-viz)](https://npmjs.com/package/ud-viz)
 
-@ud-viz/browser is a JavaScript library based on [iTowns](https://github.com/itowns/itowns), using [npm](https://www.npmjs.com/) and [published on the npm package repository](https://www.npmjs.com/package/ud-viz), allowing to visualize, analyze and interact with urban data.
+[![NPM package version](https://badgen.net/npm/v/@ud-viz/browser)](https://npmjs.com/package/@ud-viz/browser)
 
+[@ud-viz/browser](https://npmjs.com/package/@ud-viz/browser) is a npm package based on [iTowns](https://github.com/itowns/itowns) allowing to visualize, analyze and interact with urban data. It also depends on [@ud-viz/core](https://npmjs.com/package/@ud-viz/core) package.
 
-* [UD-Viz-Template](https://github.com/VCityTeam/UD-Viz-Template) (demonstration) application,
+- [@ud-viz/browser](#ud-vizbrowser)
+  - [Directory Hierarchy](#directory-hierarchy)
+  - [Getting started](#getting-started)
+  - [Developers](#developers)
+    - [Pre-requisites](#pre-requisites)
+    - [Npm scripts](#npm-scripts)
+    - [Debugging](#debugging)
 
-## Sources directory layout (organizational principles)
-Definitions:
- - [Component](https://en.wikipedia.org/wiki/Component-based_software_engineering):<a name="anchor-ud-viz-component-definition"></a>
-   everything thats is necessary to execute only one aspect of a desired functionality (see also [module](https://en.wikipedia.org/wiki/Modular_programming)). 
- - Extension: a component depending on a [web service](https://github.com/VCityTeam/UD-Viz/blob/master/src/Widget/Extensions/Geocoding/services/GeocodingService.js#L2) in order to be functionnal.
- - Widget ([web widget](https://en.wikipedia.org/wiki/Web_widget)): an embedded element of a host web page but which is substantially independent of the host page (having limited or no interaction with the host). All the widget created in UD-Viz are explain [here](./src/Widget/Widget.md).
- - [Template](https://en.wikipedia.org/wiki/Template_method_pattern): a class build on sibling sub-directories (Game, Widget, Views) components and  proposing an application model
- - View: decorated/enhanced [iTowns Views](https://www.itowns-project.org/itowns/docs/#api/View/View)
-
+### Directory Hierarchy
 
 ```
 UD-Viz (repo)
-├── src                         # All the js sources of UD-Viz JS library
-|    ├── Component             # A set of components used by sub-directories at this level
-|    ├── Templates              # Classes builded with other sub-directory (Game, Widget, Views) to propose application model
-|    ├── Views                  # Classes of 3D views encapsulating the itowns view
-|    ├── Game                   # A sub-directory offering game engine functionnality (node compatible)
-|    |               
-|    └── Widget                # A sub-directory gathering a set web web widgets (UI)  
-|         ├── Widget_1
-|         ├── Widget_2
-|         ├── ...
-|         └── Extensions        # Widget depending on an external web service  
-├── ...
-└── webpack.js
+├── bin                  # Global NodeJS development
+├── src                  # JS, CSS files composing the package
+|    ├── AllWidget                  # UI template for ud-viz demo using widgets
+|    ├── Component                  # Template component used to compose applications
+|         ├── AssetManager                        # Manage asset loading
+|         ├── ExternalGame                        # Browser-side game engine
+|         ├── Frame3D                             # Wrapper of 3D view
+|         ├── Itowns                              # iTowns framework overlay
+|         ├── Widget                              # UI to interact with data
+|         ├── Component.js                        # API of Component module
+|         ├── FileUtil.js                         # Utils to manipulate files
+|         ├── HTMLUtil.js                         # Utils to manipulate html
+|         ├── InputManager.js                     # Manage user inputs
+|         ├── RequestAnimationFrameProcess.js     # Used to launch an asynchronous process
+|         ├── SocketIOWrapper.js                  # Manage a websocket communication
+|         ├── THREEUtil.js                        # THREE framework overlay
+|    ├── SinglePlayerGamePlanar     # Single Game template for ud-viz using game engine
+|    ├── index.js                   # API description (webpack entry point)
+├── webpackConfig        # Configs of bundles' creation
+├── examples             # Examples of the package (html files importing bundle)
+├── package.json         # Global npm project description
+├── Readme.md            # It's a me, Mario!
 ```
 
-Notes:
- * The position of a specific component in the sub-folder hierarchy reflects
-   how it is shared/re-used by sub-directories. For example if a given component 
-   is only used by a single widget, then it gets defined within that widget 
-   folder. But when another component usage is shared by two widgets then 
-   its definition directory gets promoted at the level of the two widgets
-   ```
-   └── src         # holds all the js sources that will be build
-        ├── Component 
-        |    └── Component_1         # A component shared by the Game and Widget sub-directories
-        |         └── *.js ...       # Component definition
-        ├── Game   
-        |    └── Component_2         # A component used by the Game sub-directory 
-        |              └── ...       
-        └── Widget  
-             ├── Component
-             |    └── Component_3    # A component shared by at least two widgets 
-             |         └── ...      
-             └── Widget_1     
-                  └── Component_4    # A component only used by Widget_1 (of the Widget sub-directory) 
-                       └── ...         
-   ```
+## Getting started
+
+See [here](../../Readme.md#getting-started).
+
+## Developers
+
+### Pre-requisites
+
+See [here](../../Readme.md#pre-requisites).
+
+### Npm scripts
+
+| Script                | Description                                                                                                                                                                   |
+| --------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `npm run build`       | Create a [webpack](https://webpack.js.org/) bundle in [production](./webpackConfig/webpack.config.prod.js) mode. See [webpack.config.js](./webpackConfig/webpack.config.js)   |
+| `npm run build-debug` | Create a [webpack](https://webpack.js.org/) bundle in [developpement](./webpackConfig/webpack.config.dev.js) mode. See [webpack.config.js](./webpackConfig/webpack.config.js) |
+| `npm run test`        | Run browser scripts and examples html. Uses [this test script](./bin/test.js)                                                                                                 |
+| `npm run debug`       | Launch a watcher for debugging. See [here](#debugging) for more information                                                                                                   |
+
+### Debugging
+
+For debugging run:
+
+```bash
+npm run debug
+```
+
+It run a watched routine [debug.js](./bin/debug.js) with [nodemon](https://www.npmjs.com/package/nodemon):
+
+- Run a `npm run build-debug`
+- Can run `npm run test` (not by default).
