@@ -2,7 +2,8 @@
 
 const THREE = require('three');
 
-import * as Components from '../../Component';
+import { getTileFromMesh } from '../../Itowns/3DTiles/3DTilesUtils';
+import { CityObjectID } from '../../Itowns/3DTiles/Model/CityObject'
 
 /**
  *
@@ -69,7 +70,7 @@ export function updateMockUpObject(layerManager, areaSelected) {
       // Add cityobject intersecting area
       object.traverse((child) => {
         if (child.geometry && !child.userData.metadata.children) {
-          const tileId = Components.Itowns.LayerManagergetTileFromMesh(child).tileId;
+          const tileId = getTileFromMesh(child).tileId;
 
           // Check if its belong to the area
           const bb = child.geometry.boundingBox;
@@ -145,7 +146,7 @@ export function updateMockUpObject(layerManager, areaSelected) {
 
                 // Record cityobject id and gml id for further pass
                 cityObjectIDs.push(
-                  new Components.CityObjectID(tileId, currentBatchID)
+                  new CityObjectID(tileId, currentBatchID)
                 );
 
                 let gmlID =
@@ -208,7 +209,7 @@ export function updateMockUpObject(layerManager, areaSelected) {
       // Add missing batch if not intersected
       object.traverse((child) => {
         if (child.geometry && !child.userData.metadata.children) {
-          const tileId = Components.getTileFromMesh(child).tileId;
+          const tileId = getTileFromMesh(child).tileId;
 
           // Atributes
           const positions = child.geometry.attributes.position.array;
@@ -228,7 +229,7 @@ export function updateMockUpObject(layerManager, areaSelected) {
 
           for (let i = 0; i < batchIds.length; i++) {
             const batchID = batchIds[i];
-            const cityObjectId = new Components.CityObjectID(tileId, batchID);
+            const cityObjectId = new CityObjectID(tileId, batchID);
 
             const cityObject = tileManager.getCityObject(cityObjectId);
 
