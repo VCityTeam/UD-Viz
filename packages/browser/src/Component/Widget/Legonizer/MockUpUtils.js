@@ -2,7 +2,7 @@
 
 const THREE = require('three');
 
-import * as Components from '../../Components/Components';
+import * as Components from '../../Component';
 
 /**
  *
@@ -69,7 +69,7 @@ export function updateMockUpObject(layerManager, areaSelected) {
       // Add cityobject intersecting area
       object.traverse((child) => {
         if (child.geometry && !child.userData.metadata.children) {
-          const tileId = Components.getTileFromMesh(child).tileId;
+          const tileId = Components.Itowns.LayerManagergetTileFromMesh(child).tileId;
 
           // Check if its belong to the area
           const bb = child.geometry.boundingBox;
