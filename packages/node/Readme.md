@@ -16,15 +16,14 @@
 
 ```
 UD-Viz/packages/node
-├── bin                  # Global NodeJS development
-├── src                  # JS files composing the package
-|    ├── Debug                  # Dev tools for debugging
-|    ├── ExpressAppWrapper                  # @ud-viz/browser dedicate back-end
-|    ├── Test                  # Dev tools for test
+├── src                     # JS files composing the package
+|    ├── Debug.js                   # Common routine of debug for @ud-viz/* packages
+|    ├── ExpressAppWrapper.js       # Wrapper of an express app (@ud-viz/browser dedicate back-end)
 |    ├── index.js                   # API description (webpack entry point)
-├── package.json         # Global npm project description
-├── Readme.md            # It's a me, Mario!
-├── webpack.config.js        # Config of bundle creation
+|    ├── Test.js                    # Module for testing @ud-viz/browser scripts and examples html.
+├── package.json            # Global npm project description
+├── Readme.md               # It's a me, Mario!
+├── webpack.config.js       # Config of bundle creation
 ```
 
 > See [repo](https://github.com/VCityTeam/UD-Viz/blob/master/packages/node)
@@ -41,12 +40,11 @@ See [here](../../Readme.md#pre-requisites).
 
 ### Npm scripts
 
-| Script                | Description                                                                                                                                                                   |
-| --------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `npm run build`       | Create a [webpack](https://webpack.js.org/) bundle, this command is just here for test purpose|
+| Script          | Description                                                                                    |
+| --------------- | ---------------------------------------------------------------------------------------------- |
+| `npm run build` | Create a [webpack](https://webpack.js.org/) bundle, this command is just here for test purpose |
 
 > See [repo](https://github.com/VCityTeam/UD-Viz/blob/master/packages/node)
-
 
 ### Debugging
 
