@@ -77,11 +77,8 @@ export class Frame3DPlanar extends Frame3DBase {
       this.itownsView.addFrameRequester(
         itowns.MAIN_LOOP_EVENTS.AFTER_CAMERA_UPDATE,
         () => {
-          // z is HARDCODED https://github.com/VCityTeam/UD-Viz/issues/469
-          const min = new THREE.Vector3(extent.west, extent.south, 0);
-          const max = new THREE.Vector3(extent.east, extent.north, 1000);
-
-          computeNearFarCamera(this.camera, min, max);
+          const bb = new THREE.Box3().setFromObject(this.scene);
+          computeNearFarCamera(this.camera, bb.min, bb.max);
         }
       );
 
