@@ -16,23 +16,23 @@
 
 ```
 UD-Viz/packages/core
-├── bin                  # Global NodeJS development
-├── src                  # JS files composing the package
-|    ├── Game                       # Core-side game engine
+├── bin                                 # Global NodeJS development
+├── src                                 # JS files composing the package
+|    ├── Game                           # Core-side game engine
 |         ├── Component                 # Components of `Game.Object3D`
 |         ├── ScriptTemplate            # JS scripts template of Core-side game engine
 |         ├── State                     # Game state
 |         ├── Context.js                # Handle scripts, collisions and model of a game
 |         ├── Object3D.js               # Game node of a 3D scene
-|    ├── Command.js                 # Basic command object
-|    ├── Data.js                    # Module for data processing (split string, converts to uri...)
-|    ├── EventSender.js             # Manage custom events
-|    ├── index.js                   # API description (webpack entry point)
-|    ├── ProcessInterval.js         # Manage loop processes
-|    ├── Type.js                    # Check if a string is a valid number
-├── webpackConfig        # Configs of bundles' creation
-├── package.json         # Global npm project description
-├── Readme.md            # It's a me, Mario!
+|    ├── Command.js                     # Basic command object
+|    ├── Data.js                        # Module for data processing (split string, converts to uri...)
+|    ├── EventSender.js                 # Manage custom events
+|    ├── index.js                       # API description (webpack entry point)
+|    ├── ProcessInterval.js             # Manage loop processes
+|    ├── Type.js                        # Check if a string is a valid number
+├── webpackConfig                       # Configs of bundles' creation
+├── package.json                        # Global npm project description
+├── Readme.md                           # It's a me, Mario!
 ```
 
 > See [repo](https://github.com/VCityTeam/UD-Viz/blob/master/packages/core)

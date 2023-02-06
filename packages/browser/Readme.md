@@ -16,11 +16,11 @@
 
 ```
 UD-Viz/packages/browser
-├── bin                  # Global NodeJS development
-├── examples             # Examples of the package (html files importing bundle)
-├── src                  # JS, CSS files composing the package
-|    ├── AllWidget                  # UI template for ud-viz demo using widgets
-|    ├── Component                  # Template component used to compose applications
+├── bin                                           # Global NodeJS development
+├── examples                                      # Examples of the package (html files importing bundle)
+├── src                                           # JS, CSS files composing the package
+|    ├── AllWidget                                # UI template for ud-viz demo using widgets
+|    ├── Component                                # Template component used to compose applications
 |         ├── AssetManager                        # Manage asset loading
 |         ├── ExternalGame                        # Browser-side game engine
 |         ├── Frame3D                             # Wrapper of 3D view
@@ -33,11 +33,11 @@ UD-Viz/packages/browser
 |         ├── RequestAnimationFrameProcess.js     # Used to launch an asynchronous process
 |         ├── SocketIOWrapper.js                  # Manage a websocket communication
 |         ├── THREEUtil.js                        # THREE framework overlay
-|    ├── SinglePlayerGamePlanar     # Single Game template for ud-viz using game engine
-|    ├── index.js                   # API description (webpack entry point)
-├── webpackConfig        # Configs of bundles' creation
-├── package.json         # Global npm project description
-├── Readme.md            # It's a me, Mario!
+|    ├── SinglePlayerGamePlanar                   # Single Game template for ud-viz using game engine
+|    ├── index.js                                 # API description (webpack entry point)
+├── webpackConfig                                 # Configs of bundles' creation
+├── package.json                                  # Global npm project description
+├── Readme.md                                     # It's a me, Mario!
 ```
 
 > See [repo](https://github.com/VCityTeam/UD-Viz/blob/master/packages/browser)

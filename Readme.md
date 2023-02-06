@@ -41,10 +41,10 @@ UD-Viz is a 3-package JavaScript framework for creating web applications for vis
 UD-Viz (repo)
 ├── bin                       # Global NodeJS development and deployment
 ├── docs                      # Developer and User documentation
-├── packages
+├── packages                  # Packages folder
 |    ├── browser              # UD-Viz Browser-side framework
 |    ├── core                 # UD-Viz shared Browser+Node framework
-|    ├── node # UD-Viz Node-side framework
+|    ├── node                 # UD-Viz Node-side framework
 ├── .eslintrc.js              # Linting rules and configuration
 ├── .gitignore                # Files/folders ignored by Git
 ├── .prettierrc               # Formatting rules
