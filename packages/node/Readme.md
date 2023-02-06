@@ -20,7 +20,7 @@ UD-Viz/packages/node
 |    ├── Debug.js                   # Common routine of debug for @ud-viz/* packages
 |    ├── ExpressAppWrapper.js       # Wrapper of an express app (@ud-viz/browser dedicate back-end)
 |    ├── index.js                   # API description (webpack entry point)
-|    ├── Test.js                    # Module for testing @ud-viz/browser scripts and examples html.
+|    ├── Test.js                    # Module for testing @ud-viz/* packages.
 ├── package.json            # Global npm project description
 ├── Readme.md               # It's a me, Mario!
 ├── webpack.config.js       # Config of bundle creation
