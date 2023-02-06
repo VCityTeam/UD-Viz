@@ -2,7 +2,7 @@
 
 [![NPM package version](https://badgen.net/npm/v/@ud-viz/core)](https://npmjs.com/package/@ud-viz/core)
 
-[@ud-viz/core](https://npmjs.com/package/@ud-viz/core) is a npm package based on [iTowns](https://github.com/itowns/itowns) allowing to visualize, analyze and interact with urban data. It also depends on [@ud-viz/core](https://npmjs.com/package/@ud-viz/core) package.
+[@ud-viz/core](https://npmjs.com/package/@ud-viz/core) is a npm package based on [Three.js](https://threejs.org/) including data processing and model plus a game engine.
 
 - [@ud-viz/core](#ud-vizcore)
     - [Directory Hierarchy](#directory-hierarchy)
@@ -17,15 +17,15 @@
 ```
 UD-Viz/packages/core
 ├── bin                  # Global NodeJS development
-├── src                  # JS, CSS files composing the package
+├── src                  # JS files composing the package
 |    ├── Game                       # Core-side game engine
 |         ├── Component                 # Components of `Game.Object3D`
-|         ├── ScriptTemplate            # JS scripts files
-|         ├── State                     # States conduct game
-|         ├── Context.js                # Take care of scripts and game collisions
-|         ├── Object3D.js               # A part of the 3D game's scene
-|    ├── Command.js                 # Create `Command` from json
-|    ├── Data.js                    # Module for data (split string, converts to uri...)
+|         ├── ScriptTemplate            # JS scripts template of Core-side game engine
+|         ├── State                     # Game state
+|         ├── Context.js                # Handle scripts, collisions and model of a game
+|         ├── Object3D.js               # Game node of a 3D scene
+|    ├── Command.js                 # Basic command object
+|    ├── Data.js                    # Module for data processing (split string, converts to uri...)
 |    ├── EventSender.js             # Manage custom events
 |    ├── index.js                   # API description (webpack entry point)
 |    ├── ProcessInterval.js         # Manage loop processes
