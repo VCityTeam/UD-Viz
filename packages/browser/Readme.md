@@ -5,7 +5,7 @@
 [@ud-viz/browser](https://npmjs.com/package/@ud-viz/browser) is a npm package based on [iTowns](https://github.com/itowns/itowns) allowing to visualize, analyze and interact with urban data. It also depends on [@ud-viz/core](https://npmjs.com/package/@ud-viz/core) package.
 
 - [@ud-viz/browser](#ud-vizbrowser)
-  - [Directory Hierarchy](#directory-hierarchy)
+    - [Directory Hierarchy](#directory-hierarchy)
   - [Getting started](#getting-started)
   - [Developers](#developers)
     - [Pre-requisites](#pre-requisites)
@@ -15,7 +15,7 @@
 ### Directory Hierarchy
 
 ```
-UD-Viz (repo)
+UD-Viz/packages/browser
 ├── bin                  # Global NodeJS development
 ├── src                  # JS, CSS files composing the package
 |    ├── AllWidget                  # UI template for ud-viz demo using widgets
@@ -39,6 +39,8 @@ UD-Viz (repo)
 ├── package.json         # Global npm project description
 ├── Readme.md            # It's a me, Mario!
 ```
+
+> See [repo](https://github.com/VCityTeam/UD-Viz/blob/master/packages/browser)
 
 ## Getting started
 
