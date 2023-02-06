@@ -2,7 +2,7 @@
 
 [![NPM package version](https://badgen.net/npm/v/@ud-viz/core)](https://npmjs.com/package/@ud-viz/core)
 
-[@ud-viz/core](https://npmjs.com/package/@ud-viz/core) is a npm package based on [iTowns](https://github.com/itowns/itowns) allowing to visualize, analyze and interact with urban data. It also depends on [@ud-viz/core](https://npmjs.com/package/@ud-viz/core) package.
+[@ud-viz/core](https://npmjs.com/package/@ud-viz/core) is a npm package browser-side/node-side compatible for UD-Viz framework.
 
 - [@ud-viz/core](#ud-vizcore)
     - [Directory Hierarchy](#directory-hierarchy)
