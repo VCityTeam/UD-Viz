@@ -17,6 +17,7 @@
 ```
 UD-Viz/packages/browser
 ├── bin                  # Global NodeJS development
+├── examples             # Examples of the package (html files importing bundle)
 ├── src                  # JS, CSS files composing the package
 |    ├── AllWidget                  # UI template for ud-viz demo using widgets
 |    ├── Component                  # Template component used to compose applications
@@ -35,7 +36,6 @@ UD-Viz/packages/browser
 |    ├── SinglePlayerGamePlanar     # Single Game template for ud-viz using game engine
 |    ├── index.js                   # API description (webpack entry point)
 ├── webpackConfig        # Configs of bundles' creation
-├── examples             # Examples of the package (html files importing bundle)
 ├── package.json         # Global npm project description
 ├── Readme.md            # It's a me, Mario!
 ```
@@ -60,6 +60,9 @@ See [here](../../Readme.md#pre-requisites).
 | `npm run build-debug` | Create a [webpack](https://webpack.js.org/) bundle in [developpement](./webpackConfig/webpack.config.dev.js) mode. See [webpack.config.js](./webpackConfig/webpack.config.js) |
 | `npm run test`        | Run browser scripts and examples html. Uses [this test script](./bin/test.js)                                                                                                 |
 | `npm run debug`       | Launch a watcher for debugging. See [here](#debugging) for more information                                                                                                   |
+
+> See [repo](https://github.com/VCityTeam/UD-Viz/blob/master/packages/browser)
+
 
 ### Debugging
 

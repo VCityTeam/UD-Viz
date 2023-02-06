@@ -2,7 +2,7 @@
 
 [![NPM package version](https://badgen.net/npm/v/@ud-viz/node)](https://npmjs.com/package/@ud-viz/node)
 
-[@ud-viz/node](https://npmjs.com/package/@ud-viz/node) is an npm package that allows you to run a custom express server for applications using the @ud-viz framework. It also depends on [@ud-viz/core](https://npmjs.com/package/@ud-viz/core) package.
+[@ud-viz/node](https://npmjs.com/package/@ud-viz/node) is a npm package including dev tools plus dedicate [@ud-viz/browser](https://npmjs.com/package/@ud-viz/browser) back-end service based on [@ud-viz/core](https://npmjs.com/package/@ud-viz/core) package.
 
 - [@ud-viz/node](#ud-viznode)
     - [Directory Hierarchy](#directory-hierarchy)
@@ -10,19 +10,20 @@
   - [Developers](#developers)
     - [Pre-requisites](#pre-requisites)
     - [Npm scripts](#npm-scripts)
+    - [Debugging](#debugging)
 
 ### Directory Hierarchy
 
 ```
 UD-Viz/packages/node
-├── src                     # JS, CSS files composing the package
+├── src                     # JS files composing the package
 |    ├── Debug.js                   # Common routine of debug for @ud-viz/* packages
-|    ├── ExpressAppWrapper.js       # Wrapper of an express app
+|    ├── ExpressAppWrapper.js       # Wrapper of an express app (@ud-viz/browser dedicate back-end)
 |    ├── index.js                   # API description (webpack entry point)
 |    ├── Test.js                    # Module for testing @ud-viz/browser scripts and examples html.
-├── webpack.config.js       # Configs of bundles' creation
 ├── package.json            # Global npm project description
 ├── Readme.md               # It's a me, Mario!
+├── webpack.config.js       # Config of bundle creation
 ```
 
 > See [repo](https://github.com/VCityTeam/UD-Viz/blob/master/packages/node)
@@ -39,6 +40,12 @@ See [here](../../Readme.md#pre-requisites).
 
 ### Npm scripts
 
-| Script          | Description                                                                                                                                                   |
-| --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `npm run build` | Create a [webpack](https://webpack.js.org/) bundle in [production](./webpackConfig/webpack.config.prod.js) mode. See [webpack.config.js](./webpack.config.js) |
+| Script          | Description                                                                                    |
+| --------------- | ---------------------------------------------------------------------------------------------- |
+| `npm run build` | Create a [webpack](https://webpack.js.org/) bundle, this command is just here for test purpose |
+
+> See [repo](https://github.com/VCityTeam/UD-Viz/blob/master/packages/node)
+
+### Debugging
+
+To debugging the [ExpressAppWrapper](./src/ExpressAppWrapper.js) back-end see [here](../../Readme.md#debugging-the-examples)
