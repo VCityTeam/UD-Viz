@@ -1,5 +1,6 @@
 /** @file Running the build-debug script in the browser package. */
 
+const ExpressAppWrapper = require('@ud-viz/node').ExpressAppWrapper;
 const exec = require('child-process-promise').exec;
 
 /**
@@ -13,4 +14,12 @@ const printExec = function (result) {
 };
 
 /** Running the build-debug script in the browser package. */
-exec('npm run build-debug --prefix ./packages/browser').then(printExec);
+exec('npm run build-debug --prefix ./packages/browser')
+  .then(printExec)
+  .then(() => {
+    const app = new ExpressAppWrapper();
+    app.start({
+      folder: './',
+      port: 8000,
+    });
+  });
