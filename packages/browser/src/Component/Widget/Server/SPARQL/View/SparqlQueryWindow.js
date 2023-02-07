@@ -107,7 +107,7 @@ export class SparqlQueryWindow extends Window {
     }).then(() => {
       // Once query text is updated, update the query select dropdown
       // and query text area
-      console.log(this.queries);
+      // console.log(this.queries);
       this.updateQueryDropdown(this.queries);
       this.updateQueryTextArea(0);
       this.updateResultDropdown(0);
