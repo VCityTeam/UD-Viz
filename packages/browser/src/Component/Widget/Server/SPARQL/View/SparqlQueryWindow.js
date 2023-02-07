@@ -69,9 +69,9 @@ export class SparqlQueryWindow extends Window {
     this.table = new Table(this);
 
     /**
-     * Store the queries of the SparqlQueryWindow from the config. 
-     * 
-     * @type {Object}
+     * Store the queries of the SparqlQueryWindow from the config.
+     *
+     * @type {object}
      */
     this.queries = configSparql['queries'];
 
@@ -87,11 +87,10 @@ export class SparqlQueryWindow extends Window {
    * the window is actually usable ; service event listerers are set here.
    */
   windowCreated() {
-    
     // Get queries from text files and update the this.queries
-    new Promise ((resolve, reject) => {
+    new Promise((resolve, reject) => {
       const promises = [];
-      this.queries.forEach(query => {
+      this.queries.forEach((query) => {
         promises.push(
           loadTextFile(query.filepath).then((result) => {
             query.text = result;
@@ -112,7 +111,7 @@ export class SparqlQueryWindow extends Window {
       this.updateQueryTextArea(0);
       this.updateResultDropdown(0);
     });
-    
+
     this.toggleQueryTextAreaButton.onclick = () => this.toggleQueryTextArea();
     this.querySelect.onchange = () => {
       this.updateQueryTextArea(this.querySelect.value);
@@ -241,15 +240,11 @@ export class SparqlQueryWindow extends Window {
 
   updateResultDropdown(index) {
     // this is a weird work around to correctly do this.resultSelect.children.forEach
-    while (0 < this.resultSelect.children.length) {
-      this.resultSelect.removeChild(
-        this.resultSelect.children.item(0)
-      );
+    while (this.resultSelect.children.length > 0) {
+      this.resultSelect.removeChild(this.resultSelect.children.item(0));
     }
 
-    const formats = Object.entries(
-      this.queries[Number(index)].formats
-    );
+    const formats = Object.entries(this.queries[Number(index)].formats);
     formats.forEach(([k, v]) => {
       const option = document.createElement('option');
       option.value = k;
