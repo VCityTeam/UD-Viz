@@ -164,42 +164,31 @@ export class LayerManager {
   }
 
   /**
-   * Returns the city object which corresponds to a key,value pair in a tilesManager
-   * batch table. The first city object whose batch table entry matches the criteria
-   * is returned.
+   * Returns the first city object which corresponds to a key,value pair in a tilesManager's
+   * batch table.
    *
    * @param {string} batchTableKey The batch table key to search by.
    * @param {string} batchTableValue The batch table value to search for.
    * @returns {import("../3DTiles/Model/CityObject").CityObject | undefined} The picked CItyObject
    */
   pickCityObjectByBatchTable(batchTableKey, batchTableValue) {
-    for (const tilesManager of this.tilesManagers) {
-      if (tilesManager.tiles) {
-        for (const tile of tilesManager.tiles) {
-          if (tile) {
-            if (tile.cityObjects && tile.batchTable) {
-              if (
-                tile.batchTable.content[batchTableKey].includes(batchTableValue)
-              ) {
-                return [
-                  tilesManager,
-                  tile.cityObjects[
-                    tile.batchTable.content[batchTableKey].indexOf(
-                      batchTableValue
-                    )
-                  ],
-                ];
-              }
-            }
-          }
+    for (let tilesManager of this.layerManager.tilesManagers) {
+      if (!tilesManager.tiles) {
+        continue
+      }
+      for (let tile of tilesManager.tiles) {
+        if (!tile || !tile.cityObjects || !tile.batchTable || !tile.batchTable.content[batchTableKey] || !tile.batchTable.content[batchTableKey].includes(batchTableValue)) {
+          continue
         }
+        return tile.cityObjects[tile.batchTable.content[batchTableKey].indexOf(batchTableValue)];
       }
     }
+    console.warn('WARNING: cityObject not found with key, value pair: ' + batchTableKey + ', ' + batchTableValue);
     return undefined;
   }
 
   /**
-   * Returns the city objects which corresponds to a key,value pair in a tilesManager
+   * Returns the city objects which corresponds to a key,value pair in any tilesManager's
    * batch table.
    *
    * @param {string} batchTableKey The batch table key to search by.
@@ -208,18 +197,19 @@ export class LayerManager {
    */
   pickCityObjectsByBatchTable(batchTableKey, batchTableValue) {
     const cityObjects = [];
-    for (let i = 0; i < this.tilesManagers.length; i++) {
-      for (let j = 0; j < this.tilesManagers[i].tiles.length; j++) {
-        if (this.tilesManagers[i].tiles[j].batchTable != null) {
-          const batchTableContent =
-            this.tilesManagers[i].tiles[j].batchTable.content;
-          for (let k = 0; k < batchTableContent.id.length; k++) {
-            if (batchTableContent[batchTableKey][k] == batchTableValue) {
-              cityObjects.push(this.tilesManagers[i].tiles[j].cityObjects[k]);
-            }
-          }
-        }
+    for (let tilesManager of this.layerManager.tilesManagers) {
+      if (!tilesManager.tiles) {
+        continue
       }
+      for (let tile of tilesManager.tiles) {
+        if (!tile || !tile.cityObjects || !tile.batchTable || !tile.batchTable.content[batchTableKey] || !tile.batchTable.content[batchTableKey].includes(batchTableValue)) {
+          continue
+        }
+        cityObjects.push(tile.cityObjects[tile.batchTable.content[batchTableKey].indexOf(batchTableValue)]);
+      }
+    }
+    if (cityObjects.length == 0) {
+      console.warn('WARNING: cityObjects not found with key, value pair: ' + batchTableKey + ', ' + batchTableValue);
     }
     return cityObjects;
   }

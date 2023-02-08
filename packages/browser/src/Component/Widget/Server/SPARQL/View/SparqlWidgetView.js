@@ -7,9 +7,9 @@ import { LayerManager } from '../../../Component/Component';
 /**
  * The SPARQL WidgetView class which manages the SPARQL query window.
  */
-export class SparqlModuleView extends WidgetView {
+export class SparqlWidgetView extends WidgetView {
   /**
-   * Creates a new SparqlModuleView.
+   * Creates a new SparqlWidgetView.
    *
    * @param {SparqlEndpointResponseProvider} sparqlProvider The SPARQL Endpoint Response Provider
    * @param {CityObjectProvider} cityObjectProvider The City Object Provider

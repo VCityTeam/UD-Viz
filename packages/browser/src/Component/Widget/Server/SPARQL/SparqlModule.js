@@ -1,5 +1,5 @@
 import { SparqlEndpointResponseProvider } from './ViewModel/SparqlEndpointResponseProvider';
-import { SparqlModuleView } from './View/SparqlModuleView';
+import { SparqlWidgetView } from './View/SparqlWidgetView';
 import { LayerManager } from '../../Component/Component';
 import { CityObjectProvider } from '../../CityObjects/ViewModel/CityObjectProvider';
 
@@ -15,6 +15,12 @@ export class SparqlModule {
    * @param {LayerManager} layerManager The UD-Viz LayerManager.
    */
   constructor(configSparql, layerManager) {
+
+    /**
+     * Manages data layers visualized in the application.
+     *
+     * @type {LayerManager}
+     */    
     this.layerManager = layerManager;
 
     /**
@@ -32,11 +38,11 @@ export class SparqlModule {
     this.cityObjectProvider = new CityObjectProvider(this.layerManager);
 
     /**
-     * Contains a SparqlModuleView for managing the user interface and view.
+     * Contains a SparqlWidgetView for managing the user interface and view.
      *
-     * @type {SparqlModuleView}
+     * @type {SparqlWidgetView}
      */
-    this.view = new SparqlModuleView(
+    this.view = new SparqlWidgetView(
       this.sparqlProvider,
       this.cityObjectProvider,
       this.layerManager

@@ -16,13 +16,16 @@ export class SparqlEndpointService extends RequestService {
   constructor(configSparql) {
     super();
 
-    if (!!configSparql && !!configSparql.url && !!configSparql.url_parameters) {
-      // Wget "http://localhost:9999/strabon/Query?handle=download&query=%0ASELECT+*%0AWHERE+%7B+%0A%09%3Fs+%3Fp+%3Fo%09%0A%7D%0A&format=SPARQL/JSON&view=HTML"
-      this.url = configSparql.url;
-      this.url_parameters = configSparql.url_parameters;
-    } else {
-      throw 'The given "sparqlModule" configuration is incorrect.';
+    if (
+      !configSparql ||
+      !configSparql.url ||
+      !configSparql.url_parameters) {
+        console.log(configSparql);
+        throw 'The given "sparqlModule" configuration is incorrect.';
     }
+    // wget "http://localhost:9999/strabon/Query?handle=download&query=%0ASELECT+*%0AWHERE+%7B+%0A%09%3Fs+%3Fp+%3Fo%09%0A%7D%0A&format=SPARQL/JSON&view=HTML"
+    this.url = configSparql.url;
+    this.url_parameters = configSparql.url_parameters;
   }
 
   /**
