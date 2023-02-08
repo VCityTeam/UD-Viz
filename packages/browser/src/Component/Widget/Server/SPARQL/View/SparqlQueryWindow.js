@@ -16,12 +16,13 @@ import './SparqlQueryWindow.css';
 export class SparqlQueryWindow extends Window {
   /**
    * Creates a SPARQL query window.
+   *
    * @param {SparqlEndpointResponseProvider} sparqlProvider The SPARQL Endpoint Response Provider
    * @param {CityObjectProvider} cityObjectProvider The City Object Provider
    * @param {LayerManager} layerManager The UD-Viz LayerManager.
    * @param {object} configSparql The sparqlModule configuration.
    */
-  constructor(sparqlProvider, cityObjectProvider, layerManager, sparqlConfig) {
+  constructor(sparqlProvider, cityObjectProvider, layerManager, configSparql) {
     super('sparqlQueryWindow', 'SPARQL Query');
 
     /**
@@ -57,7 +58,7 @@ export class SparqlQueryWindow extends Window {
      *
      * @type {Graph}
      */
-    this.graph = new Graph(this, sparqlConfig);
+    this.graph = new Graph(this, configSparql);
 
     /**
      * Contains the D3 table to display RDF data.
@@ -71,7 +72,7 @@ export class SparqlQueryWindow extends Window {
      *
      * @type {string}
      */
-    
+
     this.registerEvent(Graph.EVENT_NODE_CLICKED);
     this.registerEvent(Graph.EVENT_NODE_MOUSEOVER);
     this.registerEvent(Graph.EVENT_NODE_MOUSEOUT);
@@ -82,12 +83,12 @@ export class SparqlQueryWindow extends Window {
    * Override the windowCreated function. Sets the SparqlEndpointResponseProvider
    * and graph view. Should be called by a `SparqlWidgetView`. Once this is done,
    * the window is actually usable ; service event listerers are set here.
-   * @param {SparqlEndpointService} service The SPARQL endpoint service.
    */
   windowCreated() {
     this.toggleQueryTextAreaButton.onclick = () => this.toggleQueryTextArea();
 
-    this.querySelect.onchange = () => this.updateQueryTextArea(this.querySelect.value);
+    this.querySelect.onchange = () =>
+      this.updateQueryTextArea(this.querySelect.value);
 
     this.form.onsubmit = () => {
       console.log('submit');
@@ -112,7 +113,7 @@ export class SparqlQueryWindow extends Window {
       const cityObject = this.layerManager.pickCityObjectByBatchTable(
         'gml_id',
         URI.tokenizeURI(node_text).id
-      )
+      );
       if (cityObject) {
         focusCameraOn(
           this.layerManager.view,
@@ -120,7 +121,7 @@ export class SparqlQueryWindow extends Window {
           cityObject.centroid,
           {
             verticalDistance: 200,
-            horizontalDistance: 200
+            horizontalDistance: 200,
           }
         );
       }
@@ -147,8 +148,10 @@ export class SparqlQueryWindow extends Window {
 
   /**
    * Update the DataView.
-   * @param {Object} data SPARQL query response data.
-   * @param {Object} view_type The selected semantic data view type.
+   *
+   * @param {object} data SPARQL query response data.
+   * @param response
+   * @param {object} view_type The selected semantic data view type.
    */
   updateDataView(response, view_type) {
     console.debug(response);
@@ -198,30 +201,36 @@ export class SparqlQueryWindow extends Window {
   updateQueryTextArea(value) {
     switch (value) {
       case 'versionQuery':
-        this.queryTextArea.textContent = this.defaultQueryPrefixes + this.versionQuery;
+        this.queryTextArea.textContent =
+          this.defaultQueryPrefixes + this.versionQuery;
         break;
       case 'buildingByIDQuery':
-        this.queryTextArea.textContent = this.defaultQueryPrefixes + this.buildingByIDQuery;
+        this.queryTextArea.textContent =
+          this.defaultQueryPrefixes + this.buildingByIDQuery;
         break;
       case 'ifcSlabQuery':
-        this.queryTextArea.textContent = this.defaultQueryPrefixes + this.ifcSlabQuery;
+        this.queryTextArea.textContent =
+          this.defaultQueryPrefixes + this.ifcSlabQuery;
         break;
       case 'ifcSlabCountQuery':
-        this.queryTextArea.textContent = this.defaultQueryPrefixes + this.ifcSlabCountQuery;
+        this.queryTextArea.textContent =
+          this.defaultQueryPrefixes + this.ifcSlabCountQuery;
         break;
       case 'ifcSlabByIDQuery':
-        this.queryTextArea.textContent = this.defaultQueryPrefixes + this.ifcSlabByIDQuery;
+        this.queryTextArea.textContent =
+          this.defaultQueryPrefixes + this.ifcSlabByIDQuery;
         break;
       default:
-        console.warn(`Query select dropdown value: ${value} is not recognized`)
-        this.queryTextArea.textContent = this.defaultQueryPrefixes + this.defaultQuery;
+        console.warn(`Query select dropdown value: ${value} is not recognized`);
+        this.queryTextArea.textContent =
+          this.defaultQueryPrefixes + this.defaultQuery;
         break;
     }
   }
 
   // SPARQL Window getters //
   get innerContentHtml() {
-    return /*html*/ `
+    return /* html*/ `
       <div class="box-section">
         <label>Select Query: </label>
         <select id="${this.querySelectId}">
@@ -432,7 +441,7 @@ LIMIT 30`;
   }
 
   get toggleQueryTextAreaButtonId() {
-    return `${this.windowId}_toggle_query_text_area_button`
+    return `${this.windowId}_toggle_query_text_area_button`;
   }
 
   get toggleQueryTextAreaButton() {

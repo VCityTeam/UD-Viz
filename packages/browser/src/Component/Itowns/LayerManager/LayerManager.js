@@ -172,18 +172,31 @@ export class LayerManager {
    * @returns {import("../3DTiles/Model/CityObject").CityObject | undefined} The picked CItyObject
    */
   pickCityObjectByBatchTable(batchTableKey, batchTableValue) {
-    for (let tilesManager of this.tilesManagers) {
+    for (const tilesManager of this.tilesManagers) {
       if (!tilesManager.tiles) {
-        continue
+        continue;
       }
-      for (let tile of tilesManager.tiles) {
-        if (!tile || !tile.cityObjects || !tile.batchTable || !tile.batchTable.content[batchTableKey] || !tile.batchTable.content[batchTableKey].includes(batchTableValue)) {
-          continue
+      for (const tile of tilesManager.tiles) {
+        if (
+          !tile ||
+          !tile.cityObjects ||
+          !tile.batchTable ||
+          !tile.batchTable.content[batchTableKey] ||
+          !tile.batchTable.content[batchTableKey].includes(batchTableValue)
+        ) {
+          continue;
         }
-        return tile.cityObjects[tile.batchTable.content[batchTableKey].indexOf(batchTableValue)];
+        return tile.cityObjects[
+          tile.batchTable.content[batchTableKey].indexOf(batchTableValue)
+        ];
       }
     }
-    console.warn('WARNING: cityObject not found with key, value pair: ' + batchTableKey + ', ' + batchTableValue);
+    console.warn(
+      'WARNING: cityObject not found with key, value pair: ' +
+        batchTableKey +
+        ', ' +
+        batchTableValue
+    );
     return undefined;
   }
 
@@ -197,19 +210,34 @@ export class LayerManager {
    */
   pickCityObjectsByBatchTable(batchTableKey, batchTableValue) {
     const cityObjects = [];
-    for (let tilesManager of this.tilesManagers) {
+    for (const tilesManager of this.tilesManagers) {
       if (!tilesManager.tiles) {
-        continue
+        continue;
       }
-      for (let tile of tilesManager.tiles) {
-        if (!tile || !tile.cityObjects || !tile.batchTable || !tile.batchTable.content[batchTableKey] || !tile.batchTable.content[batchTableKey].includes(batchTableValue)) {
-          continue
+      for (const tile of tilesManager.tiles) {
+        if (
+          !tile ||
+          !tile.cityObjects ||
+          !tile.batchTable ||
+          !tile.batchTable.content[batchTableKey] ||
+          !tile.batchTable.content[batchTableKey].includes(batchTableValue)
+        ) {
+          continue;
         }
-        cityObjects.push(tile.cityObjects[tile.batchTable.content[batchTableKey].indexOf(batchTableValue)]);
+        cityObjects.push(
+          tile.cityObjects[
+            tile.batchTable.content[batchTableKey].indexOf(batchTableValue)
+          ]
+        );
       }
     }
     if (cityObjects.length == 0) {
-      console.warn('WARNING: cityObjects not found with key, value pair: ' + batchTableKey + ', ' + batchTableValue);
+      console.warn(
+        'WARNING: cityObjects not found with key, value pair: ' +
+          batchTableKey +
+          ', ' +
+          batchTableValue
+      );
     }
     return cityObjects;
   }

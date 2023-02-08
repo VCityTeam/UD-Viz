@@ -40,8 +40,8 @@ export class SparqlEndpointResponseProvider extends EventSender {
     );
   }
 
-  ////////////
-  ///// EVENTS
+  // //////////
+  // /// EVENTS
 
   static get EVENT_ENDPOINT_RESPONSE_UPDATED() {
     return 'EVENT_ENDPOINT_RESPONSE_UPDATED';

@@ -9,11 +9,11 @@ export class Graph {
    * https://www.d3indepth.com/zoom-and-pan/
    *
    * @param {SparqlQueryWindow} window the window this graph is attached to.
-   * @param {Object} configSparql The sparqlModule configuration.
+   * @param {object} configSparql The sparqlModule configuration.
    * @param {number} configSparql.height The SVG height.
    * @param {number} configSparql.width The SVG width.
    * @param {number} configSparql.fontSize The font size to use for node and link labels.
-   * @param {Object} configSparql.prefixes Prefix declarations which will replace text labels in the Legend.
+   * @param {object} configSparql.prefixes Prefix declarations which will replace text labels in the Legend.
    *                                       This doesn't (yet) affect the legend font size.
    */
   constructor(window, configSparql) {
@@ -22,9 +22,10 @@ export class Graph {
       !configSparql.height ||
       !configSparql.width ||
       !configSparql.fontSize ||
-      !configSparql.prefixes) {
-        // console.log(configSparql);
-        throw 'The given "sparqlModule" configuration is incorrect.';
+      !configSparql.prefixes
+    ) {
+      // console.log(configSparql);
+      throw 'The given "sparqlModule" configuration is incorrect.';
     }
 
     this.window = window;
@@ -38,15 +39,15 @@ export class Graph {
       .attr('class', 'd3_graph')
       .attr('viewBox', [0, 0, this.width, this.height])
       .style('display', 'hidden');
-    // TODO: add prefixes dynamically using user query definitions 
+    // TODO: add prefixes dynamically using user query definitions
   }
 
-  /// Data Functions ///
+  // / Data Functions ///
 
   /**
    * Create a new graph based on an graph dataset.
    *
-   * @param {Object} data an RDF JSON object.
+   * @param {object} data an RDF JSON object.
    */
   update(data) {
     this.clear();
@@ -64,14 +65,10 @@ export class Graph {
       .forceSimulation(nodes)
       .force(
         'link',
-        d3.forceLink(links).id((d) => d.id))
-      .force(
-        'charge',
-        d3.forceManyBody()
-          .strength(-60))
-      .force(
-        'center',
-        d3.forceCenter(this.width / 2, this.height / 2));
+        d3.forceLink(links).id((d) => d.id)
+      )
+      .force('charge', d3.forceManyBody().strength(-60))
+      .force('center', d3.forceCenter(this.width / 2, this.height / 2));
 
     const zoom = d3.zoom().on('zoom', this.handleZoom);
 
@@ -86,7 +83,6 @@ export class Graph {
       .join('line')
       .attr('stroke-width', (d) => Math.sqrt(d.value));
 
-
     const node = this.svg
       .append('g')
       .selectAll('circle')
@@ -98,47 +94,69 @@ export class Graph {
       .attr('stroke', (d) => setColor(d.color_id, '#ddd', '#111'))
       .attr('fill', (d) => setColor(d.color_id, 'black'))
       .on('click', (event) => {
-        this.window.sendEvent(Graph.EVENT_NODE_CLICKED, event.target.textContent);
+        this.window.sendEvent(
+          Graph.EVENT_NODE_CLICKED,
+          event.target.textContent
+        );
       })
       .on('mouseover', (event, d) => {
-        event.target.style['stroke'] = setColor(nodes[d.index].color_id, 'white', 'white');
+        event.target.style['stroke'] = setColor(
+          nodes[d.index].color_id,
+          'white',
+          'white'
+        );
         event.target.style['fill'] = setColor(nodes[d.index].color_id, '#333');
-        node_label.filter((e, j) => {
-          return d.index == j;
-        })
+        node_label
+          .filter((e, j) => {
+            return d.index == j;
+          })
           .style('fill', 'white')
           .style('opacity', '1');
-        link_label.filter((e, j) => {
-          return d.index == e.source.index || d.index == e.target.index;
-        })
+        link_label
+          .filter((e) => {
+            return d.index == e.source.index || d.index == e.target.index;
+          })
           .style('fill', 'white')
           .style('opacity', '1');
-        this.window.sendEvent(Graph.EVENT_NODE_MOUSEOVER, event.target.textContent);
+        this.window.sendEvent(
+          Graph.EVENT_NODE_MOUSEOVER,
+          event.target.textContent
+        );
       })
       .on('mouseout', (event, d) => {
-        event.target.style['stroke'] = setColor(nodes[d.index].color_id, '#ddd', '#111');
+        event.target.style['stroke'] = setColor(
+          nodes[d.index].color_id,
+          '#ddd',
+          '#111'
+        );
         event.target.style['fill'] = setColor(nodes[d.index].color_id, 'black');
-        node_label.filter((e, j) => {
-          return d.index == j;
-        })
+        node_label
+          .filter((e, j) => {
+            return d.index == j;
+          })
           .style('fill', 'grey')
           .style('opacity', '0.5');
-        link_label.filter((e) => {
-          return d.index == e.source.index || d.index == e.target.index;
-        })
+        link_label
+          .filter((e) => {
+            return d.index == e.source.index || d.index == e.target.index;
+          })
           .style('fill', 'grey')
           .style('opacity', '0.5');
-          this.window.sendEvent(Graph.EVENT_NODE_MOUSEOUT, event.target.textContent);
+        this.window.sendEvent(
+          Graph.EVENT_NODE_MOUSEOUT,
+          event.target.textContent
+        );
       })
       .call(this.drag(simulation));
-      
+
     node.append('title').text((d) => d.id);
 
-    const node_label = this.svg.selectAll('.node_label')
+    const node_label = this.svg
+      .selectAll('.node_label')
       .data(nodes)
       .enter()
       .append('text')
-      .text(function (d) { 
+      .text(function (d) {
         const uri = tokenizeURI(d.id);
         return uri.id;
       })
@@ -151,9 +169,10 @@ export class Graph {
       // .style('fill', 'white')
       // .style('visibility', 'hidden')
       .style('pointer-events', 'none')
-      .attr('class','node_label');
-      
-    const link_label = this.svg.selectAll('.link_label')
+      .attr('class', 'node_label');
+
+    const link_label = this.svg
+      .selectAll('.link_label')
       .data(links)
       .enter()
       .append('text')
@@ -170,23 +189,27 @@ export class Graph {
       // .style('fill', 'white')
       // .style('visibility', 'hidden')
       .style('pointer-events', 'none')
-      .attr('class','link_label');
+      .attr('class', 'link_label');
 
     simulation.on('tick', () => {
       node_label
-        .attr('x', function(d){ return d.x; })
-        .attr('y', function (d) {return d.y - 10; });
+        .attr('x', function (d) {
+          return d.x;
+        })
+        .attr('y', function (d) {
+          return d.y - 10;
+        });
       link
         .attr('x1', (d) => d.source.x)
         .attr('y1', (d) => d.source.y)
         .attr('x2', (d) => d.target.x)
         .attr('y2', (d) => d.target.y);
       link_label
-        .attr('x', function(d) {
-          return ((d.source.x + d.target.x)/2);
+        .attr('x', function (d) {
+          return (d.source.x + d.target.x) / 2;
         })
-        .attr('y', function(d) {
-          return ((d.source.y + d.target.y)/2);
+        .attr('y', function (d) {
+          return (d.source.y + d.target.y) / 2;
         });
       node.attr('cx', (d) => d.x).attr('cy', (d) => d.y);
     });
@@ -194,12 +217,12 @@ export class Graph {
     // Create legend
     this.svg
       .append('text')
-      .attr('x', 14)             
+      .attr('x', 14)
       .attr('y', 16)
       .style('font-size', '18px')
       .style('text-decoration', 'underline')
       .text(legend.title)
-      .style('fill','FloralWhite');
+      .style('fill', 'FloralWhite');
 
     this.svg
       .append('g')
@@ -226,13 +249,14 @@ export class Graph {
       .attr('x', 24)
       .attr('y', (d, i) => 35 + i * 16)
       .text((d) => d)
-      .style('fill','FloralWhite')
+      .style('fill', 'FloralWhite')
       .style('font-size', '14px');
   }
 
-
   /**
    * Getter for retrieving the d3 svg.
+   *
+   * @returns {d3.svg.node}
    */
   get canvas() {
     return this.svg.node();
@@ -240,7 +264,9 @@ export class Graph {
 
   /**
    * return a query response formatted for a D3.js graph.
-   * @return {Object}
+   *
+   * @param {object} data An object containing graph data from a SparqlRespone
+   * @returns {object}
    */
   formatResponseDataAsGraph(data) {
     const graphData = {
@@ -253,35 +279,46 @@ export class Graph {
       ],
       legend: {
         title: '',
-        content: []
+        content: [],
       },
-      colorSetOrScale: d3.scaleOrdinal(d3.schemeCategory10)
+      colorSetOrScale: d3.scaleOrdinal(d3.schemeCategory10),
     };
-    
-    if (data.head.vars.includes("subject") && data.head.vars.includes("predicate") && data.head.vars.includes("object")) {
-      if (data.head.vars.includes("subjectType") && data.head.vars.includes("objectType")) {
+
+    if (
+      data.head.vars.includes('subject') &&
+      data.head.vars.includes('predicate') &&
+      data.head.vars.includes('object')
+    ) {
+      if (
+        data.head.vars.includes('subjectType') &&
+        data.head.vars.includes('objectType')
+      ) {
         /* If the query is formatted using subject, subjectType, predicate, object,
            and objectType variables the node color based on the type of the subject
            or object's respective type */
         for (const triple of data.results.bindings) {
-          if ( // if the subject doesn't exist yet 
-            graphData.nodes.find((n) => n.id == triple.subject.value) == undefined
+          if (
+            // if the subject doesn't exist yet
+            graphData.nodes.find((n) => n.id == triple.subject.value) ==
+            undefined
           ) {
-            const subjectTypeId = this.getNodeColorId(
-              triple.subjectType.value
-            );
+            const subjectTypeId = this.getNodeColorId(triple.subjectType.value);
             const node = { id: triple.subject.value, color_id: subjectTypeId };
             graphData.nodes.push(node);
           }
-          if (// if the object doesn't exist yet
-            graphData.nodes.find((n) => n.id == triple.object.value) == undefined
+          if (
+            // if the object doesn't exist yet
+            graphData.nodes.find((n) => n.id == triple.object.value) ==
+            undefined
           ) {
             let objectTypeId;
-            if (// if there is an objectType
+            if (
+              // if there is an objectType
               triple.objectType
             ) {
               objectTypeId = this.getNodeColorId(triple.objectType.value);
-            } else { // if not color it black
+            } else {
+              // if not color it black
               objectTypeId = undefined;
             }
             const node = { id: triple.object.value, color_id: objectTypeId };
@@ -300,14 +337,18 @@ export class Graph {
         /* If the query is formatted using just subject, predicate, and object,
            variables the node color is left black */
         for (const triple of data.results.bindings) {
-          if ( // if the subject doesn't exist yet 
-            graphData.nodes.find((n) => n.id == triple.subject.value) == undefined
+          if (
+            // if the subject doesn't exist yet
+            graphData.nodes.find((n) => n.id == triple.subject.value) ==
+            undefined
           ) {
             const node = { id: triple.subject.value, color_id: undefined };
             graphData.nodes.push(node);
           }
-          if (// if the object doesn't exist yet
-            graphData.nodes.find((n) => n.id == triple.object.value) == undefined
+          if (
+            // if the object doesn't exist yet
+            graphData.nodes.find((n) => n.id == triple.object.value) ==
+            undefined
           ) {
             const node = { id: triple.object.value, color_id: undefined };
             graphData.nodes.push(node);
@@ -323,7 +364,9 @@ export class Graph {
         }
       }
     } else {
-      console.warn('Unrecognized endpoint response format for graph construction');
+      console.warn(
+        'Unrecognized endpoint response format for graph construction'
+      );
     }
 
     console.debug(graphData);
@@ -332,8 +375,9 @@ export class Graph {
   /**
    * Get the color ID of a uri. Add the uri to the type array
    * if it does not exist.
-   * @param {String} uri the uri to map to a color id.
-   * @return {Number}
+   *
+   * @param {string} uri the uri to map to a color id.
+   * @returns {number}
    */
   getNodeColorId(uri) {
     const tURI = tokenizeURI(uri);
@@ -373,25 +417,38 @@ export class Graph {
     this.typeList = [];
   }
 
-  /// Interface Functions ///
+  // / Interface Functions ///
 
   /**
    * Create a drag effect for graph nodes within the context of a force simulation
+   *
    * @param {d3.forceSimulation} simulation
    * @returns {d3.drag}
    */
   drag(simulation) {
+    /**
+     *
+     * @param event
+     */
     function dragstarted(event) {
       if (!event.active) simulation.alphaTarget(0.3).restart();
       event.subject.fx = event.subject.x;
       event.subject.fy = event.subject.y;
     }
 
+    /**
+     *
+     * @param event
+     */
     function dragged(event) {
       event.subject.fx = event.x;
       event.subject.fy = event.y;
     }
 
+    /**
+     *
+     * @param event
+     */
     function dragended(event) {
       if (!event.active) simulation.alphaTarget(0);
       event.subject.fx = null;
@@ -407,27 +464,52 @@ export class Graph {
 
   /**
    * A handler function for selecting elements to transform during a zoom event
+   *
    * @param {d3.D3ZoomEvent} event
    */
   handleZoom(event) {
     d3.selectAll('svg g')
       .filter((d, i) => i < 2)
-      .attr('height','100%')
-      .attr('width','100%')
-      //.attr('transform', event.transform)
-      .attr('transform',
-        'translate(' + event.transform.x + ',' + event.transform.y + ') scale(' + event.transform.k + ')');
+      .attr('height', '100%')
+      .attr('width', '100%')
+      // .attr('transform', event.transform)
+      .attr(
+        'transform',
+        'translate(' +
+          event.transform.x +
+          ',' +
+          event.transform.y +
+          ') scale(' +
+          event.transform.k +
+          ')'
+      );
     d3.selectAll('text.node_label')
-      .style('font-size', (this.fontSize/event.transform.k) + 'px')
-      .attr('transform',
-        'translate(' + event.transform.x + ',' + event.transform.y + ') scale(' + event.transform.k + ')');
+      .style('font-size', this.fontSize / event.transform.k + 'px')
+      .attr(
+        'transform',
+        'translate(' +
+          event.transform.x +
+          ',' +
+          event.transform.y +
+          ') scale(' +
+          event.transform.k +
+          ')'
+      );
     d3.selectAll('text.link_label')
-      .style('font-size', (this.fontSize/event.transform.k) + 'px')
-      .attr('transform',
-        'translate(' + event.transform.x + ',' + event.transform.y + ') scale(' + event.transform.k + ')');
+      .style('font-size', this.fontSize / event.transform.k + 'px')
+      .attr(
+        'transform',
+        'translate(' +
+          event.transform.x +
+          ',' +
+          event.transform.y +
+          ') scale(' +
+          event.transform.k +
+          ')'
+      );
   }
 
-  /// EVENTS
+  // / EVENTS
 
   static get EVENT_NODE_CLICKED() {
     return 'EVENT_NODE_CLICKED';
