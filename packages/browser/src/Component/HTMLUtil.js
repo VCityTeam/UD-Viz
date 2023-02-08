@@ -36,7 +36,7 @@ export function addLogos(htmlElement, configLogos) {
   // Create div to integrate all logos images
   const logoDiv = document.createElement('div');
   logoDiv.id = 'logo-div';
-  document.getElementById(htmlElement.id).append(logoDiv);
+  htmlElement.append(logoDiv);
 
   for (let i = 0; i < logos.length; i++) {
     const img = document.createElement('img');

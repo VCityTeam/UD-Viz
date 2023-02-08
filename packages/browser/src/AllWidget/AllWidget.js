@@ -7,6 +7,7 @@ import {
 import './AllWidget.css';
 
 import THREEUtil from '../Component/THREEUtil';
+import { addLogos } from '../Component/HTMLUtil';
 const THREE = require('three');
 
 const itowns = require('itowns');
@@ -38,7 +39,7 @@ export class AllWidget {
 
     // init DOM
     this.appendTo(document.body);
-    this.addLogos();
+    addLogos(this.frame3DPlanar.ui, configAllWidget['icon']);
 
     /** @type {Frame3DPlanar} */
     this.frame3DPlanar = this.createFrame3DPlanarFromConfig(
@@ -108,29 +109,6 @@ export class AllWidget {
                 </section>
             </div>
         `;
-  }
-
-  /**
-   * It creates a div element, adds an id to it, appends it to the main div, and then adds all the logos to it
-   */
-  addLogos() {
-    // Path file for all the logo images
-    const logos = this.configAllWidget.logos;
-
-    // Path to the logos folder
-    const imageFolder = this.configAllWidget.imageFolder;
-
-    // Create div to integrate all logos images
-    const logoDiv = document.createElement('div');
-    logoDiv.id = 'logo-div';
-    document.getElementById(this.mainDivId).append(logoDiv);
-
-    for (let i = 0; i < logos.length; i++) {
-      const img = document.createElement('img');
-      img.src = imageFolder.concat('/'.concat(logos[i]));
-      img.classList.add('logos');
-      logoDiv.appendChild(img);
-    }
   }
 
   /**

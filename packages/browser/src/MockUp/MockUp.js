@@ -1,5 +1,4 @@
 import * as Widget from '../Component/Widget/Widget';
-const WidgetView = Widget.Component.WidgetView;
 import {
   Frame3DPlanar,
   Frame3DPlanarOption,
@@ -16,8 +15,6 @@ const itowns = require('itowns');
  */
 export class MockUp {
   constructor(extent, config) {
-    // this.addLogos();
-
     /** @type {Frame3DPlanar} */
     this.frame3DPlanar = this.createFrame3DPlanarFromConfig(
       extent,
@@ -30,7 +27,7 @@ export class MockUp {
     about.parentElement = this.getFrame3DPlanar().getRootWebGL();
     about.enableView();
 
-    addLogos(this.frame3DPlanar.ui, config['']);
+    addLogos(this.frame3DPlanar.ui, config['icon']);
 
     // //// HELP MODULE
     // new udvizBrowser.Widget.HelpWindow(configs['help']); // => help window should be add with addWidgetView
