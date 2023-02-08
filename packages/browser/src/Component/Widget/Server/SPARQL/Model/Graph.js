@@ -16,20 +16,68 @@ export class Graph {
     this.window = window;
     this.height = height;
     this.width = width;
-    this.namespaces = [];
+    this.typeList = [];
     this.svg = d3
       .create('svg')
       .attr('class', 'd3_graph')
       .attr('viewBox', [0, 0, this.width, this.height])
       .style('display', 'hidden');
+    // TODO: add prefixes dynamically using user query definitions 
+    this.knownPrefixes = new Map([
+      // Common prefixes
+      ['http://www.w3.org/1999/02/22-rdf-syntax-ns#', 'rdf'],
+      ['http://www.w3.org/2000/01/rdf-schema#', 'rdfs'],
+      ['http://www.w3.org/2002/07/owl#', 'owl'],
+      ['http://www.w3.org/2001/XMLSchema#', 'xsd'],
+      ['https://w3id.org/list#', 'list'],
+      ['http://www.w3.org/2004/02/skos/core#', 'skos'],
+      ['http://www.opengis.net/gml#', 'gml'],
+      ['http://www.opengis.net/ont/gml#', 'gmlowl'],
+      ['http://www.opengis.net/def/uom/OGC/1.0/', 'units'],
+      ['http://www.opengis.net/ont/geosparql#', 'geo'],
+      ['http://www.opengis.net/def/function/geosparql/', 'geof'],
+      ['http://strdf.di.uoa.gr/ontology#', 'strdf'],
+      ['http://www.w3.org/1999/xlink#', 'xlink'],
+      
+      // IFC2x3 Prefixes 
+      ['https://w3id.org/express#', 'express'],
+      ['http://standards.buildingsmart.org/IFC/DEV/IFC2x3/TC1/OWL#', 'ifc'],
+      
+      // CityGML 2.0 prefixes
+      ['https://raw.githubusercontent.com/VCityTeam/UD-Graph/master/Ontologies/CityGML/2.0/core#', 'core'],
+      ['https://raw.githubusercontent.com/VCityTeam/UD-Graph/master/Ontologies/CityGML/2.0/building#', 'bldg'],
+      ['https://raw.githubusercontent.com/VCityTeam/UD-Graph/master/Ontologies/CityGML/2.0/bridge#', 'brid'],
+      ['https://raw.githubusercontent.com/VCityTeam/UD-Graph/master/Ontologies/CityGML/2.0/landuse#', 'luse'],
+      ['https://raw.githubusercontent.com/VCityTeam/UD-Graph/master/Ontologies/CityGML/2.0/appearance#', 'app'],
+      ['https://raw.githubusercontent.com/VCityTeam/UD-Graph/master/Ontologies/CityGML/2.0/relief#', 'dem'],
+      ['https://raw.githubusercontent.com/VCityTeam/UD-Graph/master/Ontologies/CityGML/2.0/cityfurniture#', 'frn'],
+      ['https://raw.githubusercontent.com/VCityTeam/UD-Graph/master/Ontologies/CityGML/2.0/generics#', 'gen'],
+      ['https://raw.githubusercontent.com/VCityTeam/UD-Graph/master/Ontologies/CityGML/2.0/cityobjectgroup#', 'grp'],
+      ['https://raw.githubusercontent.com/VCityTeam/UD-Graph/master/Ontologies/CityGML/2.0/texturedsurface#', 'tex'],
+      ['https://raw.githubusercontent.com/VCityTeam/UD-Graph/master/Ontologies/CityGML/2.0/tunnel#', 'tun'],
+      ['https://raw.githubusercontent.com/VCityTeam/UD-Graph/master/Ontologies/CityGML/2.0/vegetation#', 'veg'],
+      ['https://raw.githubusercontent.com/VCityTeam/UD-Graph/master/Ontologies/CityGML/2.0/waterbody#', 'wtr'],
+      
+      // Versioning prefixes
+      ['https://raw.githubusercontent.com/VCityTeam/UD-Graph/master/Ontologies/CityGML/3.0/versioning#', 'vers'],
+      ['https://raw.githubusercontent.com/VCityTeam/UD-Graph/master/Ontologies/Workspace/3.0/transactiontypes#', 'type'],
+      
+      // Dataset prefixes
+      ['https://github.com/VCityTeam/UD-Graph/DOUA_BATI_2009-2018_Workspace#', 'vt'],
+      ['https://raw.githubusercontent.com/VCityTeam/Datasets/ifc_doua#', 'inst'],
+      ['https://github.com/VCityTeam/UD-Graph/DOUA_BATI_2009_stripped_split#', 'v2009'],
+      ['https://github.com/VCityTeam/UD-Graph/DOUA_BATI_2012_stripped_split#', 'v2012'],
+      ['https://github.com/VCityTeam/UD-Graph/DOUA_BATI_2015_stripped_split#', 'v2015'],
+      ['https://github.com/VCityTeam/UD-Graph/DOUA_BATI_2018_stripped_split#', 'v2018'],
+    ]);
   }
 
-  // / Data Functions ///
+  /// Data Functions ///
 
   /**
    * Create a new graph based on an graph dataset.
    *
-   * @param {object} data an RDF JSON object.
+   * @param {Object} data an RDF JSON object.
    */
   update(data) {
     this.clear();
@@ -39,7 +87,7 @@ export class Graph {
     const legend = data.legend;
     const setColor = function (d, default_color, override_color = undefined) {
       if (override_color && data.colorSetOrScale) return override_color;
-      if (data.colorSetOrScale) return data.colorSetOrScale(d);
+      else if (data.colorSetOrScale) return data.colorSetOrScale(d);
       return default_color;
     };
 
@@ -47,10 +95,13 @@ export class Graph {
       .forceSimulation(nodes)
       .force(
         'link',
-        d3.forceLink(links).id((d) => d.id)
-      )
-      .force('charge', d3.forceManyBody().strength(-60))
-      .force('center', d3.forceCenter(this.width / 2, this.height / 2));
+        d3.forceLink(links).id((d) => d.id))
+      .force(
+        'charge',
+        d3.forceManyBody().strength(-60))
+      .force(
+        'center',
+        d3.forceCenter(this.width / 2, this.height / 2));
 
     const zoom = d3.zoom().on('zoom', this.handleZoom);
 
@@ -65,6 +116,7 @@ export class Graph {
       .join('line')
       .attr('stroke-width', (d) => Math.sqrt(d.value));
 
+
     const node = this.svg
       .append('g')
       .selectAll('circle')
@@ -75,68 +127,63 @@ export class Graph {
       .attr('stroke-width', 0.75)
       .attr('stroke', (d) => setColor(d.color_id, '#ddd', '#111'))
       .attr('fill', (d) => setColor(d.color_id, 'black'))
-      .on('click', (d) => {
-        this.window.sendEvent(Graph.EVENT_NODE_CLICKED, d.path[0].textContent);
+      .on('click', (event) => {
+        this.window.sendEvent(Graph.EVENT_NODE_CLICKED, event.path[0].textContent);
       })
       .on('mouseover', (event, d) => {
-        event.target.style['stroke'] = setColor(
-          nodes[d.index].color_id,
-          'white',
-          'white'
-        );
+        event.target.style['stroke'] = setColor(nodes[d.index].color_id, 'white', 'white');
         event.target.style['fill'] = setColor(nodes[d.index].color_id, '#333');
-        node_label
-          .filter((e, j) => {
-            return d.index == j;
-          })
-          .style('fill', 'white');
-        link_label
-          .filter((e) => {
-            return d.index == e.source.index || d.index == e.target.index;
-          })
-          .style('fill', 'white');
+        node_label.filter((e, j) => {
+          return d.index == j;
+        })
+          .style('fill', 'white')
+          .style('opacity', '1');
+        link_label.filter((e, j) => {
+          return d.index == e.source.index || d.index == e.target.index;
+        })
+          .style('fill', 'white')
+          .style('opacity', '1');
+        this.window.sendEvent(Graph.EVENT_NODE_MOUSEOVER, event.path[0].textContent);
       })
       .on('mouseout', (event, d) => {
-        event.target.style['stroke'] = setColor(
-          nodes[d.index].color_id,
-          '#ddd',
-          '#111'
-        );
+        event.target.style['stroke'] = setColor(nodes[d.index].color_id, '#ddd', '#111');
         event.target.style['fill'] = setColor(nodes[d.index].color_id, 'black');
-        node_label
-          .filter((e, j) => {
-            return d.index == j;
-          })
-          .style('fill', 'grey');
-        link_label
-          .filter((e) => {
-            return d.index == e.source.index || d.index == e.target.index;
-          })
-          .style('fill', 'grey');
+        node_label.filter((e, j) => {
+          return d.index == j;
+        })
+          .style('fill', 'grey')
+          .style('opacity', '0.5');
+        link_label.filter((e) => {
+          return d.index == e.source.index || d.index == e.target.index;
+        })
+          .style('fill', 'grey')
+          .style('opacity', '0.5');
+          this.window.sendEvent(Graph.EVENT_NODE_MOUSEOUT, event.path[0].textContent);
       })
       .call(this.drag(simulation));
-
+      
     node.append('title').text((d) => d.id);
 
-    const node_label = this.svg
-      .selectAll('.node_label')
+    const node_label = this.svg.selectAll('.node_label')
       .data(nodes)
       .enter()
       .append('text')
-      .text(function (d) {
+      .text(function (d) { 
         const uri = tokenizeURI(d.id);
         return uri.id;
       })
       .style('text-anchor', 'middle')
-      .style('fill', 'grey')
       .style('font-family', 'Arial')
       .style('font-size', 10.5)
       .style('text-shadow', '1px 1px black')
-      .attr('class', 'node_label')
+      .style('fill', 'grey')
+      .style('opacity', '0.5')
+      // .style('fill', 'white')
+      // .style('visibility', 'hidden')
+      .attr('class','node_label')
       .call(this.drag(simulation));
-
-    const link_label = this.svg
-      .selectAll('.link_label')
+      
+    const link_label = this.svg.selectAll('.link_label')
       .data(links)
       .enter()
       .append('text')
@@ -145,32 +192,31 @@ export class Graph {
         return label.id;
       })
       .style('text-anchor', 'middle')
-      .style('fill', 'grey')
       .style('font-family', 'Arial')
       .style('font-size', 10)
       .style('text-shadow', '1px 1px black')
-      .attr('class', 'link_label')
+      .style('fill', 'grey')
+      .style('opacity', '0.5')
+      // .style('fill', 'white')
+      // .style('visibility', 'hidden')
+      .attr('class','link_label')
       .call(this.drag(simulation));
 
     simulation.on('tick', () => {
       node_label
-        .attr('x', function (d) {
-          return d.x;
-        })
-        .attr('y', function (d) {
-          return d.y - 10;
-        });
+        .attr('x', function(d){ return d.x; })
+        .attr('y', function (d) {return d.y - 10; });
       link
         .attr('x1', (d) => d.source.x)
         .attr('y1', (d) => d.source.y)
         .attr('x2', (d) => d.target.x)
         .attr('y2', (d) => d.target.y);
       link_label
-        .attr('x', function (d) {
-          return (d.source.x + d.target.x) / 2;
+        .attr('x', function(d) {
+          return ((d.source.x + d.target.x)/2);
         })
-        .attr('y', function (d) {
-          return (d.source.y + d.target.y) / 2;
+        .attr('y', function(d) {
+          return ((d.source.y + d.target.y)/2);
         });
       node.attr('cx', (d) => d.x).attr('cy', (d) => d.y);
     });
@@ -178,12 +224,12 @@ export class Graph {
     // Create legend
     this.svg
       .append('text')
-      .attr('x', 10)
+      .attr('x', 10)             
       .attr('y', 16)
       .style('font-size', '14px')
       .style('text-decoration', 'underline')
       .text(legend.title)
-      .style('fill', 'FloralWhite');
+      .style('fill','FloralWhite');
 
     this.svg
       .append('g')
@@ -210,23 +256,20 @@ export class Graph {
       .attr('x', 24)
       .attr('y', (d, i) => 35 + i * 16)
       .text((d) => d)
-      .style('fill', 'FloralWhite');
+      .style('fill','FloralWhite');
   }
+
 
   /**
    * Getter for retrieving the d3 svg.
-   *
-   * @returns {SVGSVGElement} return `this.svg.node()`
    */
   get canvas() {
     return this.svg.node();
   }
 
   /**
-   * Return a query response formatted for a D3.js graph.
-   *
-   * @param {object} data Response data
-   * @returns {{nodes:Array<{id:string,color_id:number}>,links:Array<{source:string,target:string,value:number}>,legend:{title:string,content:Array},colorSetOrScale:Function}} Response data formated into graph
+   * return a query response formatted for a D3.js graph.
+   * @return {Object}
    */
   formatResponseDataAsGraph(data) {
     const graphData = {
@@ -239,100 +282,101 @@ export class Graph {
       ],
       legend: {
         title: '',
-        content: [],
+        content: []
       },
-      colorSetOrScale: d3.scaleOrdinal(d3.schemeCategory10),
+      colorSetOrScale: d3.scaleOrdinal(d3.schemeCategory10)
     };
-
-    for (const triple of data.results.bindings) {
-      /* If the query is formatted using subject, subjectType, predicate, object,
-         and objectType variables the node color based on the namespace of the subject
-         or object's respective type */
-      if (
-        triple.subject &&
-        triple.subjectType &&
-        triple.predicate &&
-        triple.object &&
-        triple.objectType
-      ) {
-        if (
-          // If the subject doesn't exist yet
-          graphData.nodes.find((n) => n.id == triple.subject.value) == undefined
-        ) {
-          const subjectNamespaceId = this.getNamespaceIndex(
-            triple.subjectType.value
-          );
-          const node = {
-            id: triple.subject.value,
-            color_id: subjectNamespaceId,
+    
+    if (data.head.vars.includes("subject") && data.head.vars.includes("predicate") && data.head.vars.includes("object")) {
+      if (data.head.vars.includes("subjectType") && data.head.vars.includes("objectType")) {
+        /* If the query is formatted using subject, subjectType, predicate, object,
+           and objectType variables the node color based on the type of the subject
+           or object's respective type */
+        for (const triple of data.results.bindings) {
+          if ( // if the subject doesn't exist yet 
+            graphData.nodes.find((n) => n.id == triple.subject.value) == undefined
+          ) {
+            const subjectTypeId = this.getNodeColorId(
+              triple.subjectType.value
+            );
+            const node = { id: triple.subject.value, color_id: subjectTypeId };
+            graphData.nodes.push(node);
+          }
+          if (// if the object doesn't exist yet
+            graphData.nodes.find((n) => n.id == triple.object.value) == undefined
+          ) {
+            let objectTypeId;
+            if (// if there is an objectType
+              triple.objectType
+            ) {
+              objectTypeId = this.getNodeColorId(triple.objectType.value);
+            } else { // if not color it black
+              objectTypeId = undefined;
+            }
+            const node = { id: triple.object.value, color_id: objectTypeId };
+            graphData.nodes.push(node);
+          }
+          const link = {
+            source: triple.subject.value,
+            target: triple.object.value,
+            label: triple.predicate.value,
           };
-          graphData.nodes.push(node);
+          graphData.links.push(link);
+          graphData.legend.title = 'Legend';
+          graphData.legend.content = this.typeList;
         }
-        if (
-          // If the object doesn't exist yet
-          graphData.nodes.find((n) => n.id == triple.object.value) == undefined
-        ) {
-          const objectNamespaceId = this.getNamespaceIndex(
-            triple.objectType.value
-          );
-          const node = { id: triple.object.value, color_id: objectNamespaceId };
-          graphData.nodes.push(node);
-        }
-        const link = {
-          source: triple.subject.value,
-          target: triple.object.value,
-          label: triple.predicate.value,
-        };
-        graphData.links.push(link);
-        graphData.legend.title = 'Namespaces';
-        graphData.legend.content = this.namespaces;
-      } else if (triple.subject && triple.predicate && triple.object) {
+      } else {
         /* If the query is formatted using just subject, predicate, and object,
            variables the node color is left black */
-        if (
-          // If the subject doesn't exist yet
-          graphData.nodes.find((n) => n.id == triple.subject.value) == undefined
-        ) {
-          const node = { id: triple.subject.value, color_id: undefined };
-          graphData.nodes.push(node);
+        for (const triple of data.results.bindings) {
+          if ( // if the subject doesn't exist yet 
+            graphData.nodes.find((n) => n.id == triple.subject.value) == undefined
+          ) {
+            const node = { id: triple.subject.value, color_id: undefined };
+            graphData.nodes.push(node);
+          }
+          if (// if the object doesn't exist yet
+            graphData.nodes.find((n) => n.id == triple.object.value) == undefined
+          ) {
+            const node = { id: triple.object.value, color_id: undefined };
+            graphData.nodes.push(node);
+          }
+          const link = {
+            source: triple.subject.value,
+            target: triple.object.value,
+            label: triple.predicate.value,
+          };
+          graphData.links.push(link);
+          graphData.legend.title = '';
+          graphData.colorSetOrScale = undefined;
         }
-        if (
-          // If the object doesn't exist yet
-          graphData.nodes.find((n) => n.id == triple.object.value) == undefined
-        ) {
-          const node = { id: triple.object.value, color_id: undefined };
-          graphData.nodes.push(node);
-        }
-        const link = {
-          source: triple.subject.value,
-          target: triple.object.value,
-          label: triple.predicate.value,
-        };
-        graphData.links.push(link);
-        graphData.legend.title = 'Legend';
-        graphData.colorSetOrScale = undefined;
-      } else {
-        console.warn(
-          'Unrecognized endpoint response format for graph construction'
-        );
       }
+    } else {
+      console.warn('Unrecognized endpoint response format for graph construction');
     }
+
     console.debug(graphData);
     return graphData;
   }
   /**
-   * Get the namespace index of a uri. Add the namespace to the array of namespaces
+   * Get the color ID of a uri. Add the uri to the type array
    * if it does not exist.
-   *
-   * @param {string} uri the uri to map to a namespace.
-   * @returns {number} Nanespace Index
+   * @param {String} uri the uri to map to a color id.
+   * @return {Number}
    */
-  getNamespaceIndex(uri) {
-    const namespace = tokenizeURI(uri).namespace;
-    if (!this.namespaces.includes(namespace)) {
-      this.namespaces.push(namespace);
+  getNodeColorId(uri) {
+    const tURI = tokenizeURI(uri);
+    let prefixedId = uri;
+    for (const prefix of this.knownPrefixes.entries()) {
+      if (prefix[0] == tURI.namespace) {
+        prefixedId = `${prefix[1]}:${tURI.id}`;
+      }
     }
-    return this.namespaces.findIndex((d) => d == namespace);
+
+    if (!this.typeList.includes(prefixedId)) {
+      this.typeList.push(prefixedId);
+    }
+    return this.typeList.findIndex((d) => d == prefixedId);
   }
 
   /**
@@ -355,38 +399,28 @@ export class Graph {
   clear() {
     this.svg.selectAll('g').remove();
     this.svg.selectAll('text').remove();
-    this.namespaces = [];
+    this.typeList = [];
   }
 
-  // / Interface Functions ///
+  /// Interface Functions ///
 
   /**
    * Create a drag effect for graph nodes within the context of a force simulation
-   *
-   * @param {d3.Simulation} simulation force simulation
-   * @returns {d3.DragBehavior} drag behavior
+   * @param {d3.forceSimulation} simulation
+   * @returns {d3.drag}
    */
   drag(simulation) {
-    /**
-     * @param {d3.D3DragEvent} event -
-     */
     function dragstarted(event) {
       if (!event.active) simulation.alphaTarget(0.3).restart();
       event.subject.fx = event.subject.x;
       event.subject.fy = event.subject.y;
     }
 
-    /**
-     * @param {d3.D3DragEvent} event -
-     */
     function dragged(event) {
       event.subject.fx = event.x;
       event.subject.fy = event.y;
     }
 
-    /**
-     * @param {d3.D3DragEvent} event -
-     */
     function dragended(event) {
       if (!event.active) simulation.alphaTarget(0);
       event.subject.fx = null;
@@ -402,52 +436,27 @@ export class Graph {
 
   /**
    * A handler function for selecting elements to transform during a zoom event
-   *
-   * @param {d3.D3ZoomEvent} event -
+   * @param {d3.D3ZoomEvent} event
    */
   handleZoom(event) {
     d3.selectAll('svg g')
       .filter((d, i) => i < 2)
-      .attr('height', '100%')
-      .attr('width', '100%')
-      // .attr('transform', event.transform)
-      .attr(
-        'transform',
-        'translate(' +
-          event.transform.x +
-          ',' +
-          event.transform.y +
-          ') scale(' +
-          event.transform.k +
-          ')'
-      );
+      .attr('height','100%')
+      .attr('width','100%')
+      //.attr('transform', event.transform)
+      .attr('transform',
+        'translate(' + event.transform.x + ',' + event.transform.y + ') scale(' + event.transform.k + ')');
     d3.selectAll('text.node_label')
-      .style('font-size', 10.5 / event.transform.k + 'px')
-      .attr(
-        'transform',
-        'translate(' +
-          event.transform.x +
-          ',' +
-          event.transform.y +
-          ') scale(' +
-          event.transform.k +
-          ')'
-      );
+      .style('font-size', (10.5/event.transform.k) + 'px')
+      .attr('transform',
+        'translate(' + event.transform.x + ',' + event.transform.y + ') scale(' + event.transform.k + ')');
     d3.selectAll('text.link_label')
-      .style('font-size', 10.5 / event.transform.k + 'px')
-      .attr(
-        'transform',
-        'translate(' +
-          event.transform.x +
-          ',' +
-          event.transform.y +
-          ') scale(' +
-          event.transform.k +
-          ')'
-      );
+      .style('font-size', (10.5/event.transform.k) + 'px')
+      .attr('transform',
+        'translate(' + event.transform.x + ',' + event.transform.y + ') scale(' + event.transform.k + ')');
   }
 
-  // / EVENTS
+  /// EVENTS
 
   static get EVENT_NODE_CLICKED() {
     return 'EVENT_NODE_CLICKED';

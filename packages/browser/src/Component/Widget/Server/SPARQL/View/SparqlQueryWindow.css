@@ -10,6 +10,8 @@
 
 #_window_inner_content_sparqlQueryWindow {
   overflow: inherit;
+  font-size: 20px;
+  font-weight: bold;
 }
 
 #_window_sparqlQueryWindow_form {
@@ -17,12 +19,25 @@
   height: 100%;
 }
 
+#_window_sparqlQueryWindow_query_select {
+  margin-bottom: 2px;
+}
+
 #_window_sparqlQueryWindow_query_text_area {
   width: 100%;
   height: 100%;
-  min-height: 150px;
+  margin-top: 4px;
+  margin-bottom: 4px;
+  display: none;
   resize: vertical;
   box-sizing: border-box;
+}
+
+#_window_sparqlQueryWindow_toggle_query_text_area_button {
+  background: none;
+  border: 0;
+  padding: 1px 4px 1px 4px;
+  color: white;
 }
 
 #_window_sparqlQueryWindow_query_button {
@@ -33,7 +48,8 @@
 #_window_sparqlQueryWindow_data_view {
   width: 100%;
   height: 100%;
-  background-color: rgba(218, 218, 218, 0.08);
+  font-size: 12px;
+  font-weight: normal;
 }
 
 #_window_sparqlQueryWindow_filter{

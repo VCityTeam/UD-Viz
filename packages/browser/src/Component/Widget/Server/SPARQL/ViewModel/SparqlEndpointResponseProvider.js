@@ -10,7 +10,7 @@ export class SparqlEndpointResponseProvider extends EventSender {
   /**
    * Creates a SPARQL Endpoint Provider
    *
-   * @param {object} configSparql - config sparql need description
+   * @param {object} configSparql - The SPARQL Widget configuration
    */
   constructor(configSparql) {
     super();
@@ -40,8 +40,8 @@ export class SparqlEndpointResponseProvider extends EventSender {
     );
   }
 
-  // //////////
-  // /// EVENTS
+  ////////////
+  ///// EVENTS
 
   static get EVENT_ENDPOINT_RESPONSE_UPDATED() {
     return 'EVENT_ENDPOINT_RESPONSE_UPDATED';
