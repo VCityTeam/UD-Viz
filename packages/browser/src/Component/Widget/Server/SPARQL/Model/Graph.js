@@ -21,10 +21,9 @@ export class Graph {
       !configSparql ||
       !configSparql.height ||
       !configSparql.width ||
-      !configSparql.fontSize ||
-      !configSparql.prefixes
+      !configSparql.fontSize
     ) {
-      // console.log(configSparql);
+      console.log(configSparql);
       throw 'The given "sparqlModule" configuration is incorrect.';
     }
 

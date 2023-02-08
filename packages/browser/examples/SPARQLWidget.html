@@ -12,17 +12,15 @@
       /* eslint-disable no-new */
 
       udvizBrowser.FileUtil.loadMultipleJSON([
-        './assets/config/all_widget.json',
-        './assets/config/extent_lyon.json',
-        './assets/config/frame3D_planars.json',
-        './assets/config/widget/server/spatial_multimedia_db_server.json',
-        './assets/config/widget/about.json',
-        './assets/config/widget/help.json',
-        './assets/config/widget/server/sparql_server.json',
-        './assets/config/layer/3DTiles.json',
-        './assets/config/layer/base_maps.json',
-        './assets/config/layer/elevation.json',
-        './assets/config/layer/geoJSONs.json',
+      './assets/config/all_widget.json',
+      './assets/config/extent_lyon.json',
+      './assets/config/frame3D_planars.json',
+      './assets/config/layer/3DTiles.json',
+      './assets/config/layer/base_maps.json',
+      './assets/config/layer/elevation.json',
+      './assets/config/widget/about.json',
+      './assets/config/widget/help.json',
+      './assets/config/widget/server/sparql_server.json'
       ]).then((configs) => {
         // http://proj4js.org/
         // define a projection as a string and reference it that way
@@ -67,28 +65,6 @@
           frame3DPlanar.itownsView,
           extent
         );
-
-        udvizBrowser.addGeoJsonLayers(
-          configs['geoJSONs'],
-          frame3DPlanar.itownsView,
-          extent
-        );
-
-        // //// REQUEST SERVICE
-        const requestService =
-          new udvizBrowser.Widget.Server.Component.RequestService();
-
-        // //// AUTHENTICATION MODULE
-        const authenticationView =
-          new udvizBrowser.Widget.Server.AuthenticationView(
-            new udvizBrowser.Widget.Server.AuthenticationService(
-              requestService,
-              configs['spatial_multimedia_db_server']
-            )
-          );
-        app.addWidgetView('authentication', authenticationView, {
-          type: udvizBrowser.AllWidget.AUTHENTICATION_WIDGET,
-        });
 
         // //// ABOUT MODULE
         const about = new udvizBrowser.Widget.AboutWindow(configs['about']);
