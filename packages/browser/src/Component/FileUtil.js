@@ -46,6 +46,29 @@ module.exports = {
   },
 
   /**
+   * Request a text file on a distant server
+   *
+   * @param {string} filePath - on the distant server
+   * @returns {Promise} - promise resolving when file loaded and pass it as first param
+   */
+  loadTextFile: function (filePath) {
+    return new Promise((resolve, reject) => {
+      jquery.ajax({
+        type: 'GET',
+        url: filePath,
+        datatype: 'text',
+        success: (data) => {
+          resolve(data);
+        },
+        error: (e) => {
+          console.error(e);
+          reject();
+        },
+      });
+    });
+  },
+
+  /**
    * Load multiples .json files
    *
    * @param {string[]} arrayPath - path of .json files to loaded
