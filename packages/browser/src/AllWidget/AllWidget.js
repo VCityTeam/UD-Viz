@@ -39,7 +39,6 @@ export class AllWidget {
 
     // init DOM
     this.appendTo(document.body);
-    addLogos(this.frame3DPlanar.ui, configAllWidget['icon']);
 
     /** @type {Frame3DPlanar} */
     this.frame3DPlanar = this.createFrame3DPlanarFromConfig(
@@ -47,6 +46,8 @@ export class AllWidget {
       document.getElementById(this.contentSectionId),
       configFrame3DPlanar
     );
+
+    addLogos(this.frame3DPlanar.ui, configAllWidget);
   }
 
   /**

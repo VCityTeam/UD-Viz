@@ -18,12 +18,12 @@ export class HelpWindow extends WidgetView {
     this.helpWindow = document.createElement('div');
     this.helpWindow.id = '_help_window';
     this.helpWindow.style.setProperty('display', 'none');
-    document.getElementById(this.uiParent.id).append(this.helpWindow);
+    this.uiParent.append(this.helpWindow);
 
     // Button help to open help div
     const helpButton = document.createElement('button');
     helpButton.id = '_help_button';
-    document.getElementById(this.uiParent.id).append(helpButton);
+    this.uiParent.append(helpButton);
 
     // Image button
     const imgButton = document.createElement('img');
@@ -40,7 +40,7 @@ export class HelpWindow extends WidgetView {
 
   // ///// MODULE VIEW METHODS
   enableView() {
-    document.getElementById(this.uiParent.id).append(this.helpWindow);
+    this.uiParent.append(this.helpWindow);
     this.helpWindow.style.setProperty('display', 'block');
     this.helpWindow.innerHTML = '';
     // Create HMTL
