@@ -83,7 +83,8 @@ export class SparqlQueryWindow extends Window {
 
   /**
    * Override the windowCreated function. Sets the SparqlEndpointResponseProvider
-   * and graph view. Should be called by a `SparqlWidgetView`. Once this is done,
+   * and graph view. Also updates this.queries with the queries declared in the configuration file
+   * Should be called by a `SparqlWidgetView`. Once this is done,
    * the window is actually usable ; service event listerers are set here.
    */
   windowCreated() {
@@ -225,10 +226,23 @@ export class SparqlQueryWindow extends Window {
     }
   }
 
+  /**
+   * Update the this.queryTextArea with the text of the query that was selected in the dropdown
+   *
+   * @param {number} index - The index of the query in the this.queries array
+   */
   updateQueryTextArea(index) {
     this.queryTextArea.textContent = this.queries[Number(index)].text;
   }
 
+  /**
+   * Update this.querySelect options using an array of queries. For each element in the array,
+   * create an option element, set the innerHTML of the option to the query's title,
+   * set the value of the option to the index of the query in the array, then append
+   * the option to this.querySelect
+   *
+   * @param {Array<object>} queries - An array of objects that contain a query title and the query text itself
+   */
   updateQueryDropdown(queries) {
     for (let index = 0; index < queries.length; index++) {
       const option = document.createElement('option');
@@ -238,8 +252,14 @@ export class SparqlQueryWindow extends Window {
     }
   }
 
+  /**
+   * Remove all the children of this.resultSelect, then adds new children options based
+   * on the formats declared in each query configuration from from this.queries
+   *
+   * @param {number} index - the index of the query in the queries array
+   */
   updateResultDropdown(index) {
-    // this is a weird work around to correctly do this.resultSelect.children.forEach
+    // this is a weird work around to do this.resultSelect.children.forEach(...)
     while (this.resultSelect.children.length > 0) {
       this.resultSelect.removeChild(this.resultSelect.children.item(0));
     }
