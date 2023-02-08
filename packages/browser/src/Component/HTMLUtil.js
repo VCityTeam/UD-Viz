@@ -24,7 +24,7 @@ export function checkParentChild(child, parent) {
  * Method to creates a div element, adds an id to it, appends it to the main div, and then adds all the logos to it
  *
  * @param {HTMLElement} htmlElement parent div to set logos
- * @param {Object} configLogos File path where all the logos are located
+ * @param {object} configLogos File path where all the logos are located
  */
 export function addLogos(htmlElement, configLogos) {
   // Path file for all the logo images
