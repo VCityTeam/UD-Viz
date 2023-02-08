@@ -11,7 +11,7 @@ const THREE = require('three');
 
 const itowns = require('itowns');
 /**
- * @class Represents the base HTML content of a demo for UD-Viz and provides methods to dynamically add widgets.
+ * @class Simple templates with only the frame3D view and the about widget
  */
 export class MockUp {
   constructor(extent, config) {
@@ -22,15 +22,17 @@ export class MockUp {
       config['frame3D_planars'][0]
     );
 
-    // About window
-    const about = new Widget.AboutWindow(config['about']);
-    about.parentElement = this.getFrame3DPlanar().getRootWebGL();
-    about.enableView();
-
     addLogos(this.frame3DPlanar.ui, config['icon']);
 
-    // //// HELP MODULE
-    // new udvizBrowser.Widget.HelpWindow(configs['help']); // => help window should be add with addWidgetView
+    const inputManager = new udvizBrowser.InputManager(); // Needto create an input manager for the SlideShow
+    const slideShow = new Widget.SlideShow(
+      this.frame3DPlanar.getItownsView(),
+      config['slide_show'],
+      extent,
+      inputManager
+    );
+    slideShow.parentElement = this.getFrame3DPlanar().getRootWebGL(); // Set the parent HMTL to display the slide show div
+    slideShow.enable();
   }
 
   /**
