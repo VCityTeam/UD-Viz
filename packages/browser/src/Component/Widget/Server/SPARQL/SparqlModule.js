@@ -15,12 +15,11 @@ export class SparqlModule {
    * @param {LayerManager} layerManager The UD-Viz LayerManager.
    */
   constructor(configSparql, layerManager) {
-
     /**
      * Manages data layers visualized in the application.
      *
      * @type {LayerManager}
-     */    
+     */
     this.layerManager = layerManager;
 
     /**

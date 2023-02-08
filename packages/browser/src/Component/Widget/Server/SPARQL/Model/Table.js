@@ -55,7 +55,7 @@ export class Table {
    */
   static update(table, event) {
     table.clearTable();
-    const filterValue = table.filterInput.value;
+    let filterValue = table.filterInput.value;
 
     let column;
     // Check if element filter input is changed
@@ -160,7 +160,7 @@ export class Table {
           if (d.row[d.col] && d.row[d.col].value) {
             return d.row[d.col].value;
           }
-          return "";
+          return '';
         })
         .on('click', (d) => {
           const col = d.target.__data__.col;
