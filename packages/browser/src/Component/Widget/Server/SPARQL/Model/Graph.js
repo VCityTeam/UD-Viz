@@ -384,8 +384,8 @@ export class Graph {
     const tURI = tokenizeURI(uri);
     let prefixedId = uri;
     for (const key in this.knownPrefixes) {
-      if (key == tURI.namespace) {
-        prefixedId = `${this.knownPrefixes[key]}:${tURI.id}`;
+      if (this.knownPrefixes[key] == tURI.namespace) {
+        prefixedId = `${key}:${tURI.id}`;
       }
     }
 
