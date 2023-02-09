@@ -1,6 +1,6 @@
-const Core = require('../../../../src/index');
+const Shared = require('../../../../src/index');
 
-module.exports = class Hello extends Core.Game.ScriptBase {
+module.exports = class Hello extends Shared.Game.ScriptBase {
   constructor(context, object3D, conf) {
     super(context, object3D, conf);
 

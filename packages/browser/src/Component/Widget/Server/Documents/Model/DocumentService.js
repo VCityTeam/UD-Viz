@@ -1,5 +1,5 @@
 import { RequestService } from '../../Component/RequestService';
-import { Data } from '@ud-viz/core';
+import { Data } from '@ud-viz/shared';
 import { Document } from './Document';
 
 /**

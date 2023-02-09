@@ -17,13 +17,14 @@ before_install:
 
 install:
   - npm install
+  - npm run link-local
   - npm install --global remark-cli remark-validate-links
 
 jobs:
   include:
     - script:
-        - npm run travis
-      name: 'CI checks'
+        - npm run assert-code
+      name: 'Lint, build and test'
     - script:
         - npm audit --audit-level=moderate
       name: 'Lightweight dependencies security audit'

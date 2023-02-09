@@ -3,7 +3,7 @@
     "version": "3.0.0",
     "type": "Object",
     "generator": "Object3D.toJSON",
-    "packageName": "@ud-viz/core"
+    "packageName": "@ud-viz/shared"
   },
   "object": {
     "name": "TestState",

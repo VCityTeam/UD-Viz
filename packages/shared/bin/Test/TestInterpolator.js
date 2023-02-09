@@ -1,10 +1,10 @@
-const Core = require('../../src/index');
+const Shared = require('../../src/index');
 
 let lastXComputed = null;
-const stateInterpolator = new Core.Game.StateInterpolator(50); // 50ms delay
-const gameContext = new Core.Game.Context(
+const stateInterpolator = new Shared.Game.StateInterpolator(50); // 50ms delay
+const gameContext = new Shared.Game.Context(
   {
-    Script: class extends Core.Game.ScriptBase {
+    Script: class extends Shared.Game.ScriptBase {
       constructor(context, object3D, variables) {
         super(context, object3D, variables);
 
@@ -44,7 +44,7 @@ const gameContext = new Core.Game.Context(
       }
     },
   },
-  new Core.Game.Object3D({
+  new Shared.Game.Object3D({
     object: {
       static: false, // this object is going to move in 3D space
       components: {
@@ -58,7 +58,7 @@ const gameContext = new Core.Game.Context(
 
 gameContext.load().then(() => {
   // game process here is a kind of server
-  const gameProcess = new Core.ProcessInterval({ fps: 60 });
+  const gameProcess = new Shared.ProcessInterval({ fps: 60 });
   gameProcess.start((dt) => {
     gameContext.step(dt);
   });
@@ -67,7 +67,7 @@ gameContext.load().then(() => {
   setTimeout(() => {
     let count = 0;
     // reader process here is a kind of browser client
-    const readerProcess = new Core.ProcessInterval({ fps: 30 });
+    const readerProcess = new Shared.ProcessInterval({ fps: 30 });
     readerProcess.start(() => {
       const states = stateInterpolator.computeCurrentStates();
       if (!states.length) return;

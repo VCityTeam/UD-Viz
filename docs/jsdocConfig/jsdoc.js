@@ -2,7 +2,7 @@ const { merge } = require('webpack-merge');
 
 const jsdocJson = {
   common: require('./jsdoc.common.json'),
-  core: require('./jsdoc.core.json'),
+  shared: require('./jsdoc.shared.json'),
   node: require('./jsdoc.node.json'),
   browser: require('./jsdoc.browser.json'),
   home: require('./jsdoc.home.json'),
@@ -16,8 +16,8 @@ switch (process.env.PACKAGE) {
   case 'node':
     config = merge(jsdocJson.common, jsdocJson.node);
     break;
-  case 'core':
-    config = merge(jsdocJson.common, jsdocJson.core);
+  case 'shared':
+    config = merge(jsdocJson.common, jsdocJson.shared);
     break;
   case 'home':
     config = merge(jsdocJson.common, jsdocJson.home);

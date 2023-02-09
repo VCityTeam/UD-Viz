@@ -164,7 +164,7 @@
                 };
                 updateZ();
 
-                const Object3D = udvizBrowser.Core.Game.Object3D;
+                const Object3D = udvizBrowser.Shared.Game.Object3D;
 
                 // FORWARD
                 inputManager.addKeyCommand('move_forward', ['z'], () => {
@@ -213,7 +213,7 @@
             },
           };
 
-          const gameObject3D = new udvizBrowser.Core.Game.Object3D({
+          const gameObject3D = new udvizBrowser.Shared.Game.Object3D({
             name: 'GameManager',
             static: true,
             components: {

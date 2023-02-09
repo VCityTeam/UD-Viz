@@ -1,4 +1,4 @@
-import { Game } from '@ud-viz/core';
+import { Game } from '@ud-viz/shared';
 import * as THREE from 'three';
 import { AssetManager, RenderData } from '../Component';
 

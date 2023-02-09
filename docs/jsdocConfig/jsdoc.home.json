@@ -5,8 +5,30 @@
   "opts": {
     "destination": "./docs/html/",
     "theme_opts": {
-      "title": "@ud-viz"
+      "title": "@ud-viz",
+      "menu": [
+        {
+          "title": "udviz",
+          "id": "udvizHome",
+          "link": "./"
+        },
+        {
+          "title": "udvizBrowser",
+          "id": "udvizBrowser",
+          "link": "./browser"
+        },
+        {
+          "title": "udvizShared",
+          "id": "udvizShared",
+          "link": "./shared"
+        },
+        {
+          "title": "udvizNode",
+          "id": "udvizNode",
+          "link": "./node"
+        }
+      ]
     },
-    "readme": "./README.md"
+    "readme": "./Readme.md"
   }
 }

@@ -1,6 +1,6 @@
 import { ExternalScriptBase, Context } from '../Context';
 import * as THREE from 'three';
-import { Command, Game, Data } from '@ud-viz/core';
+import { Command, Game, Data } from '@ud-viz/shared';
 const itowns = require('itowns');
 
 /**

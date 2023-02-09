@@ -1,21 +1,21 @@
-const Core = require('../../src/index');
+const Shared = require('../../src/index');
 
-if (!Core.Data.checkIfSubStringIsEuler(['1.2', '15', '45', 'XYZ'])) {
+if (!Shared.Data.checkIfSubStringIsEuler(['1.2', '15', '45', 'XYZ'])) {
   throw new Error('should be true');
 }
 
-if (Core.Data.checkIfSubStringIsEuler(['1.2', '15', '45', 'hello'])) {
+if (Shared.Data.checkIfSubStringIsEuler(['1.2', '15', '45', 'hello'])) {
   throw new Error('should be false');
 }
 
 // string composer test
 
 let bigString = '';
-for (let i = 0; i < Core.Data.StringComposer.MAX_STRING_SIZE * 4; i++) {
+for (let i = 0; i < Shared.Data.StringComposer.MAX_STRING_SIZE * 4; i++) {
   bigString += Math.random().toString(36).slice(2, 7);
 }
 
-const partialStrings = Core.Data.StringComposer.splitString(bigString);
+const partialStrings = Shared.Data.StringComposer.splitString(bigString);
 
 // shuffle partialStrings
 const randomize = (values) => {
@@ -37,7 +37,7 @@ const randomize = (values) => {
 
 randomize(partialStrings);
 
-const stringComposer = new Core.Data.StringComposer();
+const stringComposer = new Shared.Data.StringComposer();
 let recomposed = false;
 partialStrings.forEach((partialString) => {
   const bigStringRecomposed = stringComposer.recompose(partialString);

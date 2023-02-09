@@ -35,8 +35,8 @@ export { Billboard } from './Component/Frame3D/Component/Billboard';
 
 export { RequestAnimationFrameProcess } from './Component/RequestAnimationFrameProcess';
 
-import * as Core from '@ud-viz/core';
-export { Core };
+import * as Shared from '@ud-viz/shared';
+export { Shared };
 
 export {
   add3DTilesLayers,
@@ -54,7 +54,7 @@ export {
  * Make a second index.js (indexBundle.js) so examples can still work
  * Like itowns => https://github.com/iTowns/itowns/blob/master/src/MainBundle.js
  *
- * - @ud-viz/core also ?
+ * - @ud-viz/shared also ?
  */
 
 // itowns

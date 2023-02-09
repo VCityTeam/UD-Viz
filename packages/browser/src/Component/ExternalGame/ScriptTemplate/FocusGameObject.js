@@ -1,6 +1,6 @@
 import { ExternalScriptBase, Context } from '../Context';
 import * as THREE from 'three';
-import { Game, Data } from '@ud-viz/core';
+import { Game, Data } from '@ud-viz/shared';
 
 /**
  * @typedef FocusGameObjectVariables

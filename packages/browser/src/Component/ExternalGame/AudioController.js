@@ -1,4 +1,4 @@
-import { Game } from '@ud-viz/core';
+import { Game } from '@ud-viz/shared';
 import { Howl } from 'howler';
 import { AssetManager } from '../Component';
 const THREE = require('three');

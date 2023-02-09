@@ -1,11 +1,11 @@
 {
   "source": {
-    "include": ["packages/node/src"]
+    "include": ["packages/shared/src/"]
   },
   "opts": {
-    "destination": "./docs/html/node",
+    "destination": "./docs/html/shared",
     "theme_opts": {
-      "title": "@ud-viz/node",
+      "title": "@ud-viz/shared",
       "menu": [
         {
           "title": "udviz",
@@ -29,6 +29,6 @@
         }
       ]
     },
-    "readme": "./packages/node/Readme.md"
+    "readme": "./packages/shared/Readme.md"
   }
 }

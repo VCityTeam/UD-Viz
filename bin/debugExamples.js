@@ -1,34 +1,25 @@
-const { spawn } = require('child_process');
-const ExpressAppWrapper = require('@ud-viz/node').ExpressAppWrapper;
+/** @file Running the build-debug script in the browser package. */
 
-const app = new ExpressAppWrapper();
-app
-  .start({
-    folder: './',
-    port: 8000,
-  })
+const ExpressAppWrapper = require('@ud-viz/node').ExpressAppWrapper;
+const exec = require('child-process-promise').exec;
+
+/**
+ * It prints the stdout and stderr of a result object
+ *
+ * @param {{stdout:string,stderr:string}} result - The result of the command execution.
+ */
+const printExec = function (result) {
+  console.log('stdout: \n', result.stdout);
+  console.log('stderr: \n', result.stderr);
+};
+
+/** Running the build-debug script in the browser package. */
+exec('npm run build-debug --prefix ./packages/browser')
+  .then(printExec)
   .then(() => {
-    const child = spawn(
-      'nodemon',
-      [
-        '--trace-warnings',
-        '--verbose',
-        '--watch',
-        './packages/core/src',
-        '--watch',
-        './packages/browser/src',
-        '--delay',
-        '2500ms',
-        './bin/buildDebugBrowser.js',
-        '-e',
-        'js,css,html',
-      ],
-      { shell: true }
-    );
-    child.stdout.on('data', (data) => {
-      console.log(`child stdout:\n${data}`);
-    });
-    child.stderr.on('data', (data) => {
-      console.error(`child stderr:\n${data}`);
+    const app = new ExpressAppWrapper();
+    app.start({
+      folder: './',
+      port: 8000,
     });
   });

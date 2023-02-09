@@ -39,7 +39,7 @@
             parseInt(configs['extent_lyon'].north)
           );
 
-          const gameObject3D = new udvizBrowser.Core.Game.Object3D({
+          const gameObject3D = new udvizBrowser.Shared.Game.Object3D({
             static: true,
             components: {
               GameScript: {
@@ -74,7 +74,7 @@
               },
               gameScriptClass: {
                 DragAndDropAvatar:
-                  udvizBrowser.Core.Game.ScriptTemplate.DragAndDropAvatar,
+                  udvizBrowser.Shared.Game.ScriptTemplate.DragAndDropAvatar,
               },
               sceneConfig: configs['scene'],
               gameOrigin: {

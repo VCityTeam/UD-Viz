@@ -1,4 +1,4 @@
-const packageJSON = require('@ud-viz/core/package.json');
+const packageJSON = require('@ud-viz/shared/package.json');
 const THREE = require('three');
 const { Component } = require('./Component/Component');
 const ExternalScript = require('./Component/ExternalScript');

@@ -1,7 +1,7 @@
 {
   "name": "@ud-viz/browser",
   "version": "3.0.0",
-  "description": "Browser framework with templates based on itowns/THREE.js",
+  "description": "UD-Viz Browser-side framework for building iTowns/Three.js-based 3D geospatial urban data applications",
   "main": "src",
   "scripts": {
     "build": "cross-env NODE_ENV=production webpack --config=./webpackConfig/webpack.config.js",
@@ -22,7 +22,7 @@
   },
   "homepage": "https://github.com/VCityTeam/UD-Viz/packages/browser",
   "dependencies": {
-    "@ud-viz/core": "../core",
+    "@ud-viz/shared": "3.0.0",
     "d3": "^7.0.1",
     "fetch-sparql-endpoint": "^2.3.1",
     "howler": "^2.2.3",

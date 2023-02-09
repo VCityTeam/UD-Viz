@@ -7,7 +7,7 @@ import '../css/window.css';
 
 // Documentation is on the Wiki
 // URL : https://github.com/MEPP-team/UD-Viz/wiki/Window-Framework
-// You can see an example in UD-Viz-Core/examples/DemoWindow
+// You can see an example in UD-Viz-Shared/examples/DemoWindow
 /**
  * A simple GUI class to represent a window.
  *
