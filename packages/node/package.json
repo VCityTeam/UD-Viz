@@ -16,6 +16,7 @@
   },
   "homepage": "https://github.com/VCityTeam/UD-Viz/packages/node",
   "dependencies": {
+    "@ud-viz/shared": "3.0.0",
     "express": "^4.17.1",
     "child-process-promise": "^2.2.1",
     "puppeteer": "^19.4.1",

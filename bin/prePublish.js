@@ -29,6 +29,14 @@ const changeVersionPackageJSON = function (path) {
     console.log(path, '[x]');
     const content = JSON.parse(fs.readFileSync(path));
     content.version = version;
+
+    // update dependencie
+    for (const key in content.dependencies) {
+      if (key.startsWith('@ud-viz/')) {
+        content.dependencies[key] = version;
+      }
+    }
+
     fs.writeFileSync(path, JSON.stringify(content));
     exec('npx prettier ' + path + ' -w')
       .then(printExec)
