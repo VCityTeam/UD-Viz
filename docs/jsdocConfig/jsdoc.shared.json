@@ -29,6 +29,6 @@
         }
       ]
     },
-    "readme": "./packages/shared/readme.md"
+    "readme": "./packages/shared/Readme.md"
   }
 }

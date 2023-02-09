@@ -29,6 +29,6 @@
         }
       ]
     },
-    "readme": "./packages/node/readme.md"
+    "readme": "./packages/node/Readme.md"
   }
 }
