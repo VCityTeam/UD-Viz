@@ -4,7 +4,7 @@
 // //when the collision happen gameprocess edit variables of an externalscript
 // //controller process check the change of the variables of the externalscript to exit 0
 // return; // <== there is an external script in game context test non valid
-// const Core = require('../../src/index');
+// const Shared = require('../../src/index');
 // const THREE = require('three');
 // const ScriptController = require('../../src/Game/Component/Script').Controller;
 // const ExternalScriptComponentTYPE =
@@ -17,13 +17,13 @@
 
 // let controlValue = 42;
 // const resultValue = 24;
-// const externalScriptTest = class ESTest extends Core.Game.ScriptBase {
+// const externalScriptTest = class ESTest extends Shared.Game.ScriptBase {
 //   constructor(context, object3D, variables) {
 //     super(context, object3D, variables);
 //   }
 // };
 
-// const gameScriptCollisionSystem = class GSCollisionSystem extends Core.Game
+// const gameScriptCollisionSystem = class GSCollisionSystem extends Shared.Game
 //   .ScriptBase {
 //   constructor(context, object3D, variables) {
 //     super(context, object3D, variables);
@@ -61,7 +61,7 @@
 //   }
 
 //   createCollider(name, position, isStatic) {
-//     const result = new Core.Game.Object3D({
+//     const result = new Shared.Game.Object3D({
 //       object: {
 //         static: isStatic,
 //         name: name,
@@ -83,7 +83,7 @@
 //   }
 // };
 
-// const gameScriptCollision = class GSCollision extends Core.Game.ScriptBase {
+// const gameScriptCollision = class GSCollision extends Shared.Game.ScriptBase {
 //   constructor(context, object3D, variables) {
 //     super(context, object3D, variables);
 
@@ -136,7 +136,7 @@
 //   }
 // };
 
-// const gameContext = new Core.Game.Context(
+// const gameContext = new Shared.Game.Context(
 //   [gameScriptCollisionSystem, gameScriptCollision, externalScriptTest],
 //   {
 //     object: {
@@ -157,7 +157,7 @@
 // );
 
 // gameContext.load().then(() => {
-//   const gameProcess = new Core.ProcessInterval();
+//   const gameProcess = new Shared.ProcessInterval();
 //   const gCtxExternalScriptComponent = gameContext.object3D.getComponent(
 //     ExternalScriptComponentTYPE
 //   );
@@ -188,7 +188,7 @@
 
 //   // throw new Error('test finished');
 //   setTimeout(() => {
-//     const controllerProcess = new Core.ProcessInterval({ fps: 30 });
+//     const controllerProcess = new Shared.ProcessInterval({ fps: 30 });
 //     controllerProcess.start(() => {
 //       const gCtxExternalScriptComponent = gameContext.object3D.getComponent(
 //         ExternalScriptComponentTYPE

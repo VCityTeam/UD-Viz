@@ -11,11 +11,11 @@
 
     <script type="text/javascript">
       const gameScriptClass = {
-        GameContextManager: class extends udvizBrowser.Core.Game.ScriptBase {
+        GameContextManager: class extends udvizBrowser.Shared.Game.ScriptBase {
           load() {
             const promises = [];
 
-            this.zeppelinGO = new udvizBrowser.Core.Game.Object3D({
+            this.zeppelinGO = new udvizBrowser.Shared.Game.Object3D({
               name: 'zeppelin',
               static: false, // => this Game.Object3D is going to move
               components: {
@@ -64,7 +64,7 @@
           createCollectableSphere(x, y) {
             const size = 10;
 
-            const result = new udvizBrowser.Core.Game.Object3D({
+            const result = new udvizBrowser.Shared.Game.Object3D({
               name: 'collectable_sphere',
               static: true,
               components: {
@@ -90,9 +90,9 @@
             return result;
           }
         },
-        Zeppelin: class extends udvizBrowser.Core.Game.ScriptBase {
+        Zeppelin: class extends udvizBrowser.Shared.Game.ScriptBase {
           tick() {
-            udvizBrowser.Core.Game.ScriptTemplate.Component.applyNativeCommands(
+            udvizBrowser.Shared.Game.ScriptTemplate.Component.applyNativeCommands(
               this.context.commands,
               this.object3D,
               this.context.dt
@@ -110,7 +110,7 @@
             );
 
             const externalScriptComp = gameManager.getComponent(
-              udvizBrowser.Core.Game.Component.ExternalScript.TYPE
+              udvizBrowser.Shared.Game.Component.ExternalScript.TYPE
             );
 
             // change variables of an external script
@@ -161,7 +161,7 @@
             this.updateUI();
             // conf has changed meaning a shpereCount has incremented => play a sound
             const audioComp = this.object3D.getComponent(
-              udvizBrowser.Core.Game.Component.Audio.TYPE
+              udvizBrowser.Shared.Game.Component.Audio.TYPE
             );
             audioComp.getController().play('ballon_pop');
           }
@@ -197,7 +197,7 @@
             parseInt(configs['extent_lyon'].north)
           );
 
-          const gameObject3D = new udvizBrowser.Core.Game.Object3D({
+          const gameObject3D = new udvizBrowser.Shared.Game.Object3D({
             name: 'root',
             static: true,
             components: {

@@ -1,10 +1,10 @@
-const Core = require('../../src/index');
+const Shared = require('../../src/index');
 
 const COMMAND_TYPE = 'cmd_type';
 
-const gameContext = new Core.Game.Context(
+const gameContext = new Shared.Game.Context(
   {
-    CommandTest: class extends Core.Game.ScriptBase {
+    CommandTest: class extends Shared.Game.ScriptBase {
       constructor(context, object3D, variables) {
         super(context, object3D, variables);
       }
@@ -23,7 +23,7 @@ const gameContext = new Core.Game.Context(
       }
     },
   },
-  new Core.Game.Object3D({
+  new Shared.Game.Object3D({
     object: {
       name: 'Command Test',
       components: {
@@ -36,7 +36,7 @@ const gameContext = new Core.Game.Context(
 );
 
 gameContext.load().then(() => {
-  const processInterval = new Core.ProcessInterval({ fps: 51 });
+  const processInterval = new Shared.ProcessInterval({ fps: 51 });
   processInterval.start((dt) => {
     gameContext.step(dt);
   });
@@ -44,7 +44,7 @@ gameContext.load().then(() => {
   // wait a bit and send a command
   setTimeout(() => {
     gameContext.onCommand([
-      new Core.Command({
+      new Shared.Command({
         type: COMMAND_TYPE,
       }),
     ]);

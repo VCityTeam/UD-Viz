@@ -102,7 +102,7 @@ For an example of configuration, see the `temporalModule` object in the
 To use the temporal module with the graph view. 
 You need to specify some graphics options.
 
-Inside the file `UDV-Core\examples\data\config\generalDemoConfig.json` 
+Inside the file `UDV-Shared\examples\data\config\generalDemoConfig.json` 
 we add a new field : temporalGraphWindow. 
 In there you will find information related to the temporal 
 graph window.

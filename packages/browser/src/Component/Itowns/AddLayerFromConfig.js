@@ -24,7 +24,7 @@ function setup3DTilesLayer(layer, layerManager, itownsView) {
   if (!layer['id'] || !layer['url']) {
     throw (
       'Your layer does not have url id properties or both. ' +
-      '(in UD-Viz/UD-Viz-Core/examples/data/config/generalDemoConfig.json)'
+      '(in UD-Viz/UD-Viz-Shared/examples/data/config/generalDemoConfig.json)'
     );
   }
 

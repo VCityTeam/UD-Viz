@@ -1,9 +1,9 @@
-const Core = require('../../src/index');
+const Shared = require('../../src/index');
 const THREE = require('three');
 
-const gameContext = new Core.Game.Context(
+const gameContext = new Shared.Game.Context(
   {
-    CollisionTest: class extends Core.Game.ScriptBase {
+    CollisionTest: class extends Shared.Game.ScriptBase {
       constructor(context, object3D, variables) {
         super(context, object3D, variables);
 
@@ -40,7 +40,7 @@ const gameContext = new Core.Game.Context(
       }
 
       createCollider(name, position, isStatic) {
-        const result = new Core.Game.Object3D({
+        const result = new Shared.Game.Object3D({
           object: {
             static: isStatic,
             name: name,
@@ -61,7 +61,7 @@ const gameContext = new Core.Game.Context(
         return result;
       }
     },
-    Collision: class extends Core.Game.ScriptBase {
+    Collision: class extends Shared.Game.ScriptBase {
       constructor(context, object3D, variables) {
         super(context, object3D, variables);
 
@@ -90,7 +90,7 @@ const gameContext = new Core.Game.Context(
       }
     },
   },
-  new Core.Game.Object3D({
+  new Shared.Game.Object3D({
     object: {
       uuid: 'root',
       name: 'Collision Test',
@@ -104,7 +104,7 @@ const gameContext = new Core.Game.Context(
 );
 
 gameContext.load().then(() => {
-  const processInterval = new Core.ProcessInterval({ fps: 51 });
+  const processInterval = new Shared.ProcessInterval({ fps: 51 });
   processInterval.start((dt) => {
     gameContext.step(dt);
   });

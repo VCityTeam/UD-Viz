@@ -18,9 +18,9 @@
 UD-Viz/packages/core
 ├── bin                                 # Global NodeJS development
 ├── src                                 # JS files composing the package
-|    ├── Game                           # Core-side game engine
+|    ├── Game                           # Shared-side game engine
 |         ├── Component                 # Components of `Game.Object3D`
-|         ├── ScriptTemplate            # JS scripts template of Core-side game engine
+|         ├── ScriptTemplate            # JS scripts template of Shared-side game engine
 |         ├── State                     # Game state
 |         ├── Context.js                # Handle scripts, collisions and model of a game
 |         ├── Object3D.js               # Game node of a 3D scene

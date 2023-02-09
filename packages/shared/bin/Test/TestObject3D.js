@@ -1,14 +1,14 @@
-const Core = require('../../src');
+const Shared = require('../../src');
 const object1JSON = require('./data/object3D/object1.json');
 const HelloScript = require('./data/scripts/Hello');
 
-const context = new Core.Game.Context(
+const context = new Shared.Game.Context(
   { Hello: HelloScript },
-  new Core.Game.Object3D(object1JSON)
+  new Shared.Game.Object3D(object1JSON)
 );
 
 context.load().then(() => {
-  const newGameObject = new Core.Game.Object3D({
+  const newGameObject = new Shared.Game.Object3D({
     object: {
       name: 'new object',
       outdated: false,
@@ -25,18 +25,18 @@ context.load().then(() => {
   const cloneGameObject = newGameObject.clone();
 
   if (
-    !Core.Data.objectEquals(cloneGameObject.toJSON(), newGameObject.toJSON())
+    !Shared.Data.objectEquals(cloneGameObject.toJSON(), newGameObject.toJSON())
   ) {
     throw new Error('clone is not equal');
   }
 
-  const otherGameObject = new Core.Game.Object3D({
+  const otherGameObject = new Shared.Game.Object3D({
     object: { name: 'other object', outdated: true },
   });
 
   otherGameObject.updatefromJSON(cloneGameObject.toJSON());
   if (
-    !Core.Data.objectEquals(cloneGameObject.toJSON(), otherGameObject.toJSON())
+    !Shared.Data.objectEquals(cloneGameObject.toJSON(), otherGameObject.toJSON())
   ) {
     throw new Error('updateFromJSON not working');
   }

@@ -1,10 +1,10 @@
-const Core = require('../../src/index');
+const Shared = require('../../src/index');
 const object2JSON = require('./data/object3D/object2.json');
 const HelloScript = require('./data/scripts/Hello');
 
-const context = new Core.Game.Context(
+const context = new Shared.Game.Context(
   { Hello: HelloScript },
-  new Core.Game.Object3D(object2JSON)
+  new Shared.Game.Object3D(object2JSON)
 );
 
 context.load().then(() => {

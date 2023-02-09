@@ -2,7 +2,7 @@ module.exports = {
   entry: ['./src/index.js'],
   output: {
     filename: 'bundle.js',
-    library: 'udvizCore',
+    library: 'udvizShared',
     libraryTarget: 'umd',
     umdNamedDefine: true,
   },

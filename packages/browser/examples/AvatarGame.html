@@ -11,9 +11,9 @@
 
     <script type="text/javascript">
       const gameScriptClass = {
-        Avatar: class extends udvizBrowser.Core.Game.ScriptBase {
+        Avatar: class extends udvizBrowser.Shared.Game.ScriptBase {
           load() {
-            this.avatar = new udvizBrowser.Core.Game.Object3D({
+            this.avatar = new udvizBrowser.Shared.Game.Object3D({
               name: 'avatar',
               components: {
                 Render: { idRenderData: 'avatar' },
@@ -24,7 +24,7 @@
           }
 
           tick() {
-            udvizBrowser.Core.Game.ScriptTemplate.Component.applyNativeCommands(
+            udvizBrowser.Shared.Game.ScriptTemplate.Component.applyNativeCommands(
               this.context.commands,
               this.avatar,
               this.context.dt
@@ -64,8 +64,8 @@
             this.cameraman.tick(this.context.dt);
 
             this.context.sendCommandToGameContext([
-              new udvizBrowser.Core.Command({
-                type: udvizBrowser.Core.Game.ScriptTemplate.Constants.COMMAND
+              new udvizBrowser.Shared.Command({
+                type: udvizBrowser.Shared.Game.ScriptTemplate.Constants.COMMAND
                   .Z_UPDATE,
                 data: udvizBrowser.ExternalScriptTemplate.computeRelativeElevationFromGround(
                   this.avatar,
@@ -107,7 +107,7 @@
             parseInt(configs['extent_lyon'].north)
           );
 
-          const gameObject3D = new udvizBrowser.Core.Game.Object3D({
+          const gameObject3D = new udvizBrowser.Shared.Game.Object3D({
             name: 'GameManager',
             static: true,
             components: {

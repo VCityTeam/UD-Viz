@@ -35,8 +35,8 @@ export { Billboard } from './Component/Frame3D/Component/Billboard';
 
 export { RequestAnimationFrameProcess } from './Component/RequestAnimationFrameProcess';
 
-import * as Core from '@ud-viz/shared';
-export { Core };
+import * as Shared from '@ud-viz/shared';
+export { Shared };
 
 export {
   add3DTilesLayers,
