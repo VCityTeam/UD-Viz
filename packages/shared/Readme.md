@@ -4,7 +4,7 @@
 
 [@ud-viz/shared](https://npmjs.com/package/@ud-viz/shared) is a npm package based on [Three.js](https://threejs.org/) including data processing and model plus a game engine.
 
-- [@ud-viz/shared](#ud-vizcore)
+- [@ud-viz/shared](#ud-vizshared)
     - [Directory Hierarchy](#directory-hierarchy)
   - [Getting started](#getting-started)
   - [Developers](#developers)
@@ -15,7 +15,7 @@
 ### Directory Hierarchy
 
 ```
-UD-Viz/packages/core
+UD-Viz/packages/shared
 ├── bin                                 # Global NodeJS development
 ├── src                                 # JS files composing the package
 |    ├── Game                           # Shared-side game engine
@@ -35,7 +35,7 @@ UD-Viz/packages/core
 ├── Readme.md                           # It's a me, Mario!
 ```
 
-> See [repo](https://github.com/VCityTeam/UD-Viz/blob/master/packages/core)
+> See [repo](https://github.com/VCityTeam/UD-Viz/blob/master/packages/shared)
 
 ## Getting started
 
@@ -53,7 +53,7 @@ See [here](../../Readme.md#pre-requisites).
 | --------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `npm run build`       | Create a [webpack](https://webpack.js.org/) bundle in [production](./webpackConfig/webpack.config.prod.js) mode. See [webpack.config.js](./webpackConfig/webpack.config.js)   |
 | `npm run build-debug` | Create a [webpack](https://webpack.js.org/) bundle in [developpement](./webpackConfig/webpack.config.dev.js) mode. See [webpack.config.js](./webpackConfig/webpack.config.js) |
-| `npm run test`        | Run core scripts. Uses [this test script](./bin/test.js)                                                                                                                      |
+| `npm run test`        | Run shared scripts. Uses [this test script](./bin/test.js)                                                                                                                      |
 | `npm run debug`       | Launch a watcher for debugging. See [here](#debugging) for more information                                                                                                   |
 
 ### Debugging

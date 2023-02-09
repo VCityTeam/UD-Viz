@@ -17,7 +17,7 @@
   "bugs": {
     "url": "https://github.com/VCityTeam/UD-Viz/issues"
   },
-  "homepage": "https://github.com/VCityTeam/UD-Viz/packages/core",
+  "homepage": "https://github.com/VCityTeam/UD-Viz/packages/shared",
   "dependencies": {
     "detect-collisions": "^2.5.2"
   },

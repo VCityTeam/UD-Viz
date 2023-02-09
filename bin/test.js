@@ -7,7 +7,7 @@ const printExec = function (result) {
 };
 
 console.log('Build @ud-viz/shared');
-exec('npm run build-core')
+exec('npm run build-shared')
   .catch((error) => {
     console.log('@ud-viz/shared build failed');
     console.error(error);
@@ -33,7 +33,7 @@ exec('npm run build-core')
           })
           .then(printExec)
           .then(() => {
-            Test.scripts('./packages/core/bin/Test').then(() => {
+            Test.scripts('./packages/shared/bin/Test').then(() => {
               Test.browserScripts(
                 './packages/browser/bin/Test',
                 './packages/browser/dist/release/bundle.js'

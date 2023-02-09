@@ -1,7 +1,7 @@
 /* eslint-disable jsdoc/require-property-description */
 
 /**
- * ud-viz core library (browser + node compatible)
+ * ud-viz shared library (browser + node compatible)
  *
  * @exports udvizShared
  */

@@ -22,7 +22,7 @@
   },
   "homepage": "https://github.com/VCityTeam/UD-Viz/packages/browser",
   "dependencies": {
-    "@ud-viz/shared": "../core",
+    "@ud-viz/shared": "../shared",
     "d3": "^7.0.1",
     "fetch-sparql-endpoint": "^2.3.1",
     "howler": "^2.2.3",
