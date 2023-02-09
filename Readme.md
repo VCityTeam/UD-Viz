@@ -10,9 +10,9 @@ UD-Viz is a 3-package JavaScript framework for creating web applications for vis
 
 **UD-Viz Packages:**
 
-- [Shared](./packages/shared/Readme.md)
-- [Browser](./packages/browser/Readme.md)
-- [Node](./packages/node/Readme.md)
+- [Shared](./packages/shared)
+- [Browser](./packages/browser)
+- [Node](./packages/node)
 
 **Index**
 
@@ -43,7 +43,7 @@ UD-Viz (repo)
 ├── docs                      # Developer and User documentation
 ├── packages                  # Packages folder
 |    ├── browser              # UD-Viz Browser-side framework
-|    ├── shared                 # UD-Viz shared Browser+Node framework
+|    ├── shared               # UD-Viz shared Browser+Node framework
 |    ├── node                 # UD-Viz Node-side framework
 ├── .eslintrc.js              # Linting rules and configuration
 ├── .gitignore                # Files/folders ignored by Git
