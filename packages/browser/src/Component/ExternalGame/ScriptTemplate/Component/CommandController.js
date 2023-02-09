@@ -1,4 +1,4 @@
-import { Game, Command } from '@ud-viz/core';
+import { Game, Command } from '@ud-viz/shared';
 import { InputManager } from '../../../Component';
 
 /**

@@ -1,6 +1,6 @@
 const THREE = require('three');
 import { AssetManager, InputManager, THREEUtil } from '../Component';
-import { Game, Data, Command } from '@ud-viz/core';
+import { Game, Data, Command } from '@ud-viz/shared';
 import { RenderController } from './RenderController';
 import { AudioController } from './AudioController';
 import { Frame3DBase, Frame3DPlanar } from '../Frame3D/Frame3D';

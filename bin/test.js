@@ -6,10 +6,10 @@ const printExec = function (result) {
   console.error('stderr: \n', result.stderr);
 };
 
-console.log('Build @ud-viz/core');
+console.log('Build @ud-viz/shared');
 exec('npm run build-core')
   .catch((error) => {
-    console.log('@ud-viz/core build failed');
+    console.log('@ud-viz/shared build failed');
     console.error(error);
     process.exit(1); //
   })

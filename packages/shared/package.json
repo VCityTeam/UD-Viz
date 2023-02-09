@@ -1,5 +1,5 @@
 {
-  "name": "@ud-viz/core",
+  "name": "@ud-viz/shared",
   "version": "3.0.0",
   "description": "UD-Viz shared Browser+Node framework",
   "main": "src",

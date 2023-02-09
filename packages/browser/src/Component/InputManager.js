@@ -1,4 +1,4 @@
-const Command = require('@ud-viz/core').Command;
+const Command = require('@ud-viz/shared').Command;
 
 /**
  * @callback EventCallback

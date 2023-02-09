@@ -1,7 +1,7 @@
 import { AssetManager } from '../Component/AssetManager/AssetManager';
 import { InputManager } from '../Component/InputManager';
 import { Frame3DPlanar } from '../Component/Frame3D/Frame3D';
-import { Game } from '@ud-viz/core';
+import { Game } from '@ud-viz/shared';
 import { RequestAnimationFrameProcess } from '../Component/RequestAnimationFrameProcess';
 import * as ExternalGame from '../Component/ExternalGame/ExternalGame';
 

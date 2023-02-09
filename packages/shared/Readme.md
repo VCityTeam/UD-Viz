@@ -1,10 +1,10 @@
-# @ud-viz/core
+# @ud-viz/shared
 
-[![NPM package version](https://badgen.net/npm/v/@ud-viz/core)](https://npmjs.com/package/@ud-viz/core)
+[![NPM package version](https://badgen.net/npm/v/@ud-viz/shared)](https://npmjs.com/package/@ud-viz/shared)
 
-[@ud-viz/core](https://npmjs.com/package/@ud-viz/core) is a npm package based on [Three.js](https://threejs.org/) including data processing and model plus a game engine.
+[@ud-viz/shared](https://npmjs.com/package/@ud-viz/shared) is a npm package based on [Three.js](https://threejs.org/) including data processing and model plus a game engine.
 
-- [@ud-viz/core](#ud-vizcore)
+- [@ud-viz/shared](#ud-vizcore)
     - [Directory Hierarchy](#directory-hierarchy)
   - [Getting started](#getting-started)
   - [Developers](#developers)

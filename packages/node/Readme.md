@@ -2,7 +2,7 @@
 
 [![NPM package version](https://badgen.net/npm/v/@ud-viz/node)](https://npmjs.com/package/@ud-viz/node)
 
-[@ud-viz/node](https://npmjs.com/package/@ud-viz/node) is a npm package including dev tools plus dedicate [@ud-viz/browser](https://npmjs.com/package/@ud-viz/browser) back-end service based on [@ud-viz/core](https://npmjs.com/package/@ud-viz/core) package.
+[@ud-viz/node](https://npmjs.com/package/@ud-viz/node) is a npm package including dev tools plus dedicate [@ud-viz/browser](https://npmjs.com/package/@ud-viz/browser) back-end service based on [@ud-viz/shared](https://npmjs.com/package/@ud-viz/shared) package.
 
 - [@ud-viz/node](#ud-viznode)
     - [Directory Hierarchy](#directory-hierarchy)
