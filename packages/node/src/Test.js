@@ -178,7 +178,7 @@ const folderInBrowserPage = function (testFolderPath, pageTest) {
                   '--deterministic-fetch',
                   '--disable-features=IsolateOrigins',
                   '--disable-site-isolation-trials',
-                  // '--single-process', => avoid random Target Close
+                  '--disable-web-security', // allow cross request origin'
                 ],
               });
               // console.log('browser opened');
