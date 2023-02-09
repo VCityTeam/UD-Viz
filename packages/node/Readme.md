@@ -2,13 +2,12 @@
 
 [![NPM package version](https://badgen.net/npm/v/@ud-viz/node)](https://npmjs.com/package/@ud-viz/node)
 
-[@ud-viz/node](https://npmjs.com/package/@ud-viz/node) is a npm package including dev tools plus dedicate [@ud-viz/browser](https://npmjs.com/package/@ud-viz/browser) back-end service based on [@ud-viz/shared](https://npmjs.com/package/@ud-viz/shared) package.
+[@ud-viz/node](https://npmjs.com/package/@ud-viz/node) is a npm package including dev tools plus a dedicated [@ud-viz/browser](https://npmjs.com/package/@ud-viz/browser) back-end service based on the [@ud-viz/shared](https://npmjs.com/package/@ud-viz/shared) package.
 
 - [@ud-viz/node](#ud-viznode)
     - [Directory Hierarchy](#directory-hierarchy)
   - [Getting started](#getting-started)
   - [Developers](#developers)
-    - [Pre-requisites](#pre-requisites)
     - [Npm scripts](#npm-scripts)
     - [Debugging](#debugging)
 
@@ -17,8 +16,8 @@
 ```
 UD-Viz/packages/node
 ├── src                             # JS files composing the package
-|    ├── Debug.js                   # Common routine of debug for @ud-viz/* packages
-|    ├── ExpressAppWrapper.js       # Wrapper of an express app (@ud-viz/browser dedicate back-end)
+|    ├── Debug.js                   # Debugging routine for @ud-viz/* packages
+|    ├── ExpressAppWrapper.js       # Express app wrapper for @ud-viz/browser (dedicated back-end)
 |    ├── index.js                   # API description (webpack entry point)
 |    ├── Test.js                    # Module for testing @ud-viz/* packages.
 ├── package.json                    # Global npm project description
@@ -26,17 +25,13 @@ UD-Viz/packages/node
 ├── webpack.config.js               # Config of bundle creation
 ```
 
-> See [repo](https://github.com/VCityTeam/UD-Viz/blob/master/packages/node)
-
 ## Getting started
 
-See [here](../../Readme.md#getting-started).
+See [here](https://github.com/VCityTeam/UD-Viz/blob/master/Readme.md#getting-started).
 
 ## Developers
 
-### Pre-requisites
-
-See [here](../../Readme.md#pre-requisites).
+For pre-requisites see [here](https://github.com/VCityTeam/UD-Viz/blob/master/Readme.md#pre-requisites).
 
 ### Npm scripts
 
@@ -44,8 +39,7 @@ See [here](../../Readme.md#pre-requisites).
 | --------------- | ---------------------------------------------------------------------------------------------- |
 | `npm run build` | Create a [webpack](https://webpack.js.org/) bundle, this command is just here for test purpose |
 
-> See [repo](https://github.com/VCityTeam/UD-Viz/blob/master/packages/node)
 
 ### Debugging
 
-To debugging the [ExpressAppWrapper](./src/ExpressAppWrapper.js) back-end see [here](../../Readme.md#debugging-the-examples)
+To debug the [ExpressAppWrapper](./src/ExpressAppWrapper.js) back-end see [here](../../Readme.md#debugging-the-examples)
