@@ -36,7 +36,10 @@ context.load().then(() => {
 
   otherGameObject.updatefromJSON(cloneGameObject.toJSON());
   if (
-    !Shared.Data.objectEquals(cloneGameObject.toJSON(), otherGameObject.toJSON())
+    !Shared.Data.objectEquals(
+      cloneGameObject.toJSON(),
+      otherGameObject.toJSON()
+    )
   ) {
     throw new Error('updateFromJSON not working');
   }
