@@ -17,7 +17,7 @@ UD-Viz is a 3-package JavaScript framework for creating web applications for vis
 **Index**
 
 - [UD-Viz : Urban Data Vizualisation](#ud-viz--urban-data-vizualisation)
-  - [Directory Hierarchy](#directory-hierarchy)
+    - [Directory Hierarchy](#directory-hierarchy)
   - [Getting Started](#getting-started)
     - [Installing node/npm](#installing-nodenpm)
     - [Installing the UD-Viz framework per se](#installing-the-ud-viz-framework-per-se)
@@ -123,6 +123,7 @@ Developing UD-Viz applications requires knowledge about :
 | `npm run eslint-fix`     | Run the linter and attempt to fix errors and warning automatically                                                                                                                                                                                                  |
 | `npm run test`           | Build the 3 packages and tests shared, browser scripts and examples html. Uses [this test script](./bin/test.js)                                                                                                                                                      |
 | `npm run assert-code`    | Run `npm run eslint` and `npm run test`. Also ran by CI. See [here](#continuous-integration-travis-ci) for more information                                                                                                                                         |
+| `npm run pre-publish`    | Change version in all package.json ( eg `npm run pre-publish x.x.x` ). See [this script](./bin/prePublish.js) |
 | `npm run docs-shared`      | Generate the [JSDOC shared package documentation](./docs/jsdocConfig/jsdoc.shared.json)                                                                                                                                                                                 |
 | `npm run docs-browser`   | Generate the [JSDOC browser package documentation](./docs/jsdocConfig/jsdoc.browser.json)                                                                                                                                                                           |
 | `npm run docs-node`      | Generate the [JSDOC node package documentation](./docs/jsdocConfig/jsdoc.node.json)                                                                                                                                                                                 |
@@ -187,4 +188,4 @@ Jobs list :
 
 ### Contribute
 
-See [Contributing.md](./Contributing.md)
+See [Contributing.md](./docs/static/Devel/Contributing.md)

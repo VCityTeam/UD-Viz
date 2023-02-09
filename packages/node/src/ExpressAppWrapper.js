@@ -1,6 +1,7 @@
 const express = require('express');
 const http = require('http'); // just for doc
 const { stringReplace } = require('string-replace-middleware');
+const udvizVersion = require('@ud-viz/node/package.json').version;
 
 const NODE_ENV = process.env.NODE_ENV || 'development';
 
@@ -40,6 +41,17 @@ const ExpressAppWrapper = class {
         stringReplace(
           {
             RUN_MODE: NODE_ENV === 'production' ? 'release' : 'debug',
+          },
+          {
+            contentTypeFilterRegexp: /text\/html/,
+          }
+        )
+      );
+
+      app.use(
+        stringReplace(
+          {
+            UDVIZ_VERSION: udvizVersion,
           },
           {
             contentTypeFilterRegexp: /text\/html/,

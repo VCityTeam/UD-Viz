@@ -15,6 +15,7 @@
     "eslint-fix": "eslint --ignore-path .gitignore \"packages/**/*.js\" \"packages/**/*.html\"  --fix",
     "test": "cross-env NODE_ENV=production node ./bin/test.js",
     "assert-code": "npm run eslint && npm run test",
+    "pre-publish": "node ./bin/prePublish.js",
     "docs-shared": "cross-env PACKAGE=shared jsdoc -c ./docs/jsdocConfig/jsdoc.js",
     "docs-browser": "cross-env PACKAGE=browser jsdoc -c ./docs/jsdocConfig/jsdoc.js",
     "docs-node": "cross-env PACKAGE=node jsdoc -c ./docs/jsdocConfig/jsdoc.js",
