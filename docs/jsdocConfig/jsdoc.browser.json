@@ -18,9 +18,9 @@
           "link": "../browser"
         },
         {
-          "title": "udvizCore",
-          "id": "udvizCore",
-          "link": "../core"
+          "title": "udvizShared",
+          "id": "udvizShared",
+          "link": "../shared"
         },
         {
           "title": "udvizNode",

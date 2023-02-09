@@ -1,11 +1,11 @@
 {
   "source": {
-    "include": ["packages/core/src/"]
+    "include": ["packages/shared/src/"]
   },
   "opts": {
-    "destination": "./docs/html/core",
+    "destination": "./docs/html/shared",
     "theme_opts": {
-      "title": "@ud-viz/core",
+      "title": "@ud-viz/shared",
       "menu": [
         {
           "title": "udviz",
@@ -18,9 +18,9 @@
           "link": "../browser"
         },
         {
-          "title": "udvizCore",
-          "id": "udvizCore",
-          "link": "../core"
+          "title": "udvizShared",
+          "id": "udvizShared",
+          "link": "../shared"
         },
         {
           "title": "udvizNode",
@@ -29,6 +29,6 @@
         }
       ]
     },
-    "readme": "./packages/core/readme.md"
+    "readme": "./packages/shared/readme.md"
   }
 }
