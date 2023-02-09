@@ -49,11 +49,11 @@
         const frame3DPlanar = app.getFrame3DPlanar();
 
         // /// ADD LAYERS => this is broken ERROR No extension manager registered for extension  3DTILES_temporal and for class boundingVolume
-        // udvizBrowser.add3DTilesLayers(
-        //   configs['3DTiles_temporal'],
-        //   frame3DPlanar.layerManager,
-        //   frame3DPlanar.itownsView
-        // );
+        udvizBrowser.add3DTilesLayers(
+          configs['3DTiles_temporal'],
+          frame3DPlanar.layerManager,
+          frame3DPlanar.itownsView
+        );
 
         udvizBrowser.addBaseMapLayer(
           configs['base_maps'][0],
@@ -80,11 +80,11 @@
         new udvizBrowser.Widget.HelpWindow(configs['help']); // => help window should be add with addWidgetView
 
         // TEMPORAL MODULE TODO_ISSUE broken
-        // const temporalModule = new udvizBrowser.Widget.TemporalModule(
-        //   app.getFrame3DPlanar().getLayerManager().tilesManagers[0],
-        //   configs['temporal']
-        // );
-        // app.addWidgetView('temporal', temporalModule.view);
+        const temporalModule = new udvizBrowser.Widget.TemporalModule(
+          app.getFrame3DPlanar().getLayerManager().tilesManagers[0],
+          configs['temporal']
+        );
+        app.addWidgetView('temporal', temporalModule.view);
       });
     </script>
   </body>
