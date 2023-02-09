@@ -1,3 +1,18 @@
+# v3.0.0
+- JSDOC overhaul
+- Decompose UD-Viz into a 3 package repository :
+  - [Shared](https://github.com/VCityTeam/UD-Viz/tree/master/packages/shared)
+  - [Browser](https://github.com/VCityTeam/UD-Viz/tree/master/packages/browser)
+  - [Node](https://github.com/VCityTeam/UD-Viz/tree/master/packages/node)
+- Bug fixes for :
+  - test suite
+  - code auditing
+  - video loading
+  - compute near/far
+  - all widget api
+  - load texture files
+  - browser examples
+
 # v2.39.3
 
     - Equal CityObjectID
