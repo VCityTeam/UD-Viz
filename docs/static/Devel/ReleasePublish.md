@@ -2,7 +2,7 @@
 
 1. Create a new branch for the release, e.g. `release-x.x.x` from the `master` branch.
 2. Change the monorepo version `npm run pre-publish x.x.x`
-3. Pick relevant commit message in ./docs/static/ChangelogDiff.md to put them in ./docs/static/Changelog.md (Reformulate if necessary)
+3. Pick relevant commit message in ./docs/static/ChangelogDiff.txt to put them in ./docs/static/Changelog.md (Reformulate if necessary)
 4. Run `npm run docs`
 5. Follow the [prior PR submission](./Contributing.md#prior-to-pr-submission)
 6. Push your branch to the main repository (This branch will be used to create the release tag)
