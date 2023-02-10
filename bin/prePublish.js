@@ -2,6 +2,7 @@ const fs = require('fs');
 const exec = require('child-process-promise').exec;
 
 const version = process.argv[2];
+if (!version) throw new Error('no version argument found');
 
 const subStringVersion = version.split('.');
 if (subStringVersion.length != 3)
@@ -48,6 +49,7 @@ changeVersionPackageJSON('./packages/shared/package.json').then(() => {
   changeVersionPackageJSON('./packages/browser/package.json').then(() => {
     changeVersionPackageJSON('./packages/node/package.json').then(() => {
       changeVersionPackageJSON('./package.json').then(() => {
+        console.log('Start reset');
         exec('npm run reset')
           .then(printExec)
           .then(() => {

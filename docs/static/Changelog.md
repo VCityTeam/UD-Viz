@@ -1,17 +1,42 @@
 # v3.0.0
+
 - JSDOC overhaul
-- Decompose UD-Viz into a 3 package repository :
-  - [Shared](https://github.com/VCityTeam/UD-Viz/tree/master/packages/shared)
-  - [Browser](https://github.com/VCityTeam/UD-Viz/tree/master/packages/browser)
-  - [Node](https://github.com/VCityTeam/UD-Viz/tree/master/packages/node)
-- Bug fixes for :
-  - test suite
-  - code auditing
-  - video loading
-  - compute near/far
-  - all widget api
-  - load texture files
-  - browser examples
+- UD-Viz repository becomes a 3-package **mono-repo** :
+
+  - Decompose the ud-viz package into 2 packages :
+    - [@ud-viz/shared](https://github.com/VCityTeam/UD-Viz/tree/master/packages/shared)
+    - [@ud-viz/browser](https://github.com/VCityTeam/UD-Viz/tree/master/packages/browser)
+  - Add a new package
+    - [@ud-viz/node](https://github.com/VCityTeam/UD-Viz/tree/master/packages/node)
+  - 4 package.json: **mono-repo**, **browser**, **shared**, **node**
+
+- **browser**, **shared**: Add a set of tests for and scripts/features (html files in **browser** are tested with puppeteer)
+
+- **browser**:
+
+  - Delete `View3D` and `GameView`. The notion of View is now assured by `Frame3DBase` and `Frame3DPlanar`.
+  - Creation of `ExternalContext`
+  - All configs are now split by features
+  - Widgets take as arguments their config and not allWidget config anymore
+  - API breaking changes
+  - Bug fixes for :
+    - video loading
+    - load texture files
+
+- **shared**:
+
+  - Delete `World`.
+  - Refacto of `Context`
+  - `GameObject` becomes `Object3D` and now extends `THREE.Object3D`
+
+- **node**:
+
+  - Write an `ExpressAppWrapper`
+
+- **Documentation**:
+  - 5 Readmes : **mono-repo**, **browser**, **shared**, **node**, **documentation**.
+  - `Contributing.md`
+  - `ReleasePublish.md` updated
 
 # v2.39.3
 
@@ -29,8 +54,6 @@
     - Updated-dependencies:
         dependency-name: loader-utils
         dependency-type: indirect
-    
-    
 
 # v2.39.2
 
