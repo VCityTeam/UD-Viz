@@ -174,6 +174,91 @@ export function addGeoJsonLayers(configGeoJSONLayers, itownsView) {
 }
 
 /**
+ * Sets up LabelLayers and adds them to the itowns view.
+ * The source of a LabelLayer can be either a WFS source or a File source.
+ * The features in the source must be Point geometries.
+ *
+ * @param {object} configLabelLayers An object containing layers configs
+ * @param {itowns.View} itownsView - the itowns view
+ */
+export function addLabelLayers(configLabelLayers, itownsView) {
+  // Positional arguments verification
+  if (!configLabelLayers) {
+    console.warn('No "labelLayers" field in the configuration file');
+    return;
+  }
+  /**
+   * Create an iTowns LabelLayer based on the specified layerConfig.
+   *
+   * @param {object} layerConfig The JSON config of the layer
+   * @param {string} layerConfig.id The ID of the layer
+   * @param {string} layerConfig.sourceType The type of the source, should be either "file" or "wfs"
+   * @param {object} layerConfig.style The iTowns style of the label layer
+   * @param {string} layerConfig.url The URL of the layer
+   * @param {string} layerConfig.crs The CRS of the layer
+   * @param {string} layerConfig.name If the source is WFS, the name of the source
+   * @param {object} layerConfig.zoom The min/max zoom to display the layer
+   */
+  const setupAndAddLabelLayer = function (layerConfig) {
+    if (
+      !layerConfig['id'] ||
+      !layerConfig['url'] ||
+      !layerConfig['crs'] ||
+      !layerConfig['sourceType']
+    ) {
+      console.warn(
+        'Your "LabelLayer" field does not have either "url", "crs", "id" or "sourceType" properties. '
+      );
+      return;
+    }
+
+    let source = null;
+
+    // Declare the data source for the LabelLayer
+    if (layerConfig['sourceType'] == 'file') {
+      source = new itowns.FileSource({
+        url: layerConfig.url,
+        crs: layerConfig.crs,
+        format: 'application/json',
+      });
+    } else if (layerConfig['sourceType'] == 'wfs') {
+      source = new itowns.WFSSource({
+        url: layerConfig.url,
+        version: '2.0.0',
+        typeName: layerConfig.name,
+        crs: layerConfig.crs,
+        format: 'application/json',
+      });
+    } else {
+      console.warn(
+        'Unsupported LabelLayer sourceType ' + layerConfig['sourceType']
+      );
+      return;
+    }
+
+    const layerStyle = new itowns.Style(layerConfig.style);
+
+    const zoom = { min: 0 };
+    if (layerConfig.zoom) {
+      if (layerConfig.zoom.min) zoom.min = layerConfig.zoom.min;
+      if (layerConfig.zoom.max) zoom.max = layerConfig.zoom.max;
+    }
+
+    const labelLayer = new itowns.LabelLayer(layerConfig.id, {
+      transparent: true,
+      source: source,
+      style: layerStyle,
+      zoom: zoom,
+    });
+    itownsView.addLayer(labelLayer);
+  };
+
+  for (const layer of configLabelLayers) {
+    setupAndAddLabelLayer(layer);
+  }
+}
+
+/**
  * Add Base map layer to an itowns view
  *
  * @param {object} baseMapLayerConfig An object with the config of the base map

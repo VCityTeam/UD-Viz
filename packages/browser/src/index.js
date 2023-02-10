@@ -43,6 +43,7 @@ export {
   addBaseMapLayer,
   addElevationLayer,
   addGeoJsonLayers,
+  addLabelLayers,
 } from './Component/Itowns/AddLayerFromConfig';
 
 // // Game
