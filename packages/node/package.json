@@ -6,6 +6,9 @@
   "scripts": {
     "build": "cross-env NODE_ENV=production webpack"
   },
+  "files": [
+    "src"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/VCityTeam/UD-Viz.git"
