@@ -9,6 +9,9 @@
     "test": "node --trace-warnings ./bin/test.js",
     "debug": "nodemon --trace-warnings --verbose --watch src --watch ./bin/Test/**/*.js --delay 2500ms ./bin/debug.js -e js"
   },
+  "files": [
+    "src"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/VCityTeam/UD-Viz.git"
