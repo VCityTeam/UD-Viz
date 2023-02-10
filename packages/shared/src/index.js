@@ -6,6 +6,7 @@
  * @exports udvizShared
  */
 module.exports = {
+  Constant: require('./Constants'),
   /** @type {import("./Data")} */
   Data: require('./Data'),
   /** @type {import("./Type")} */
@@ -37,6 +38,7 @@ module.exports = {
     Object3D: require('./Game/Object3D'),
     StateInterpolator: require('./Game/State/Interpolator'),
     State: require('./Game/State/State'),
+    StateDiff: require('./Game/State/Diff'),
     ScriptTemplate: require('./Game/ScriptTemplate/ScriptTemplate'),
     Component: {
       Render: require('./Game/Component/Render').Component,

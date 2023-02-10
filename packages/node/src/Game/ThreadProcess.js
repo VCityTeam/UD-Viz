@@ -1,6 +1,6 @@
 const path = require('path');
 const workerThreads = require('worker_threads');
-const { Data, Game, ProcessInterval, Command } = require('@ud-viz/core');
+const { Data, Game, ProcessInterval, Command } = require('@ud-viz/shared');
 const Thread = require('./Thread');
 
 if (workerThreads.isMainThread) {

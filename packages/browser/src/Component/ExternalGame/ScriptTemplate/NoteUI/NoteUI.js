@@ -1,7 +1,7 @@
 import { ExternalScriptBase } from '../../Context';
 import { checkParentChild } from '../../../HTMLUtil';
 import * as THREE from 'three';
-import { Game } from '@ud-viz/core';
+import { Game } from '@ud-viz/shared';
 
 import './NoteUI.css';
 

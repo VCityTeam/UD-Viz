@@ -1,4 +1,4 @@
-const { Constant, Game } = require('@ud-viz/core');
+const { Constant, Game } = require('@ud-viz/shared');
 const Socket = require('socket.io').Socket;
 
 module.exports = class SocketWrapper {

@@ -10,5 +10,5 @@ module.exports = {
   Test: require('./Test'),
   /** @type {import('./Debug')} */
   Debug: require('./Debug'),
-  Core: require('@ud-viz/core'),
+  Shared: require('@ud-viz/shared'),
 };

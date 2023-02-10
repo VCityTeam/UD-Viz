@@ -1,8 +1,8 @@
-const Core = require('@ud-viz/core');
+const Shared = require('@ud-viz/shared');
 const Game = require('../Game');
 const THREE = require('three');
 
-module.exports = class GameManager extends Core.Game.ScriptBase {
+module.exports = class GameManager extends Shared.Game.ScriptBase {
   init() {
     /** @type {object} - sockets object3D connected */
     this.socketObjects3D = {};
@@ -10,7 +10,7 @@ module.exports = class GameManager extends Core.Game.ScriptBase {
     this.context.on(Game.Thread.EVENT.ON_NEW_SOCKET_WRAPPER, (socketID) => {
       const pointerUUID = THREE.MathUtils.generateUUID();
 
-      const newSocketObject3D = new Core.Game.Object3D({
+      const newSocketObject3D = new Shared.Game.Object3D({
         static: true,
         components: {
           ExternalScript: {
@@ -24,7 +24,7 @@ module.exports = class GameManager extends Core.Game.ScriptBase {
         },
       });
 
-      const pointerObject3D = new Core.Game.Object3D({
+      const pointerObject3D = new Shared.Game.Object3D({
         uuid: pointerUUID,
         components: {
           Render: {
@@ -49,13 +49,13 @@ module.exports = class GameManager extends Core.Game.ScriptBase {
   tick() {
     this.context.commands.forEach((cmd) => {
       if (
-        cmd.getType() == Core.Game.ScriptTemplate.Constants.COMMAND.ADD_NOTE
+        cmd.getType() == Shared.Game.ScriptTemplate.Constants.COMMAND.ADD_NOTE
       ) {
         const data = cmd.getData();
 
         const socketObject3D = this.socketObjects3D[data.socketID];
 
-        const note = new Core.Game.Object3D({
+        const note = new Shared.Game.Object3D({
           name: 'Note',
           static: true,
           userData: {

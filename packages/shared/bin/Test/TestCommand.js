@@ -43,7 +43,7 @@ gameContext.load().then(() => {
 
   // wait a bit and send a command
   setTimeout(() => {
-    gameContext.onCommand([
+    gameContext.onCommands([
       new Shared.Command({
         type: COMMAND_TYPE,
       }),
