@@ -20,4 +20,4 @@ In order to publish the package to [npmjs](https://www.npmjs.com/) package repos
 
 1. Authenticate on npmjs with `npm login` and use the vcity account together with proper credentials.
    Note: because the npmjs authentication mode of the `vcity`account is currently configured to [One-Time-Password (OTP) over email](https://docs.npmjs.com/receiving-a-one-time-password-over-email) you will need to be part of the `vcity@liris.cnrs.fr` email alias forwarder to receive the OTP and be patient about it (the reception delay can be up to a couple minutes).
-1. `npm publish --workspaces`
+1. `npm publish --workspaces --access=public`
