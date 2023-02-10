@@ -1,5 +1,5 @@
 const workerThreads = require('worker_threads');
-const { Data, Constant } = require('@ud-viz/core');
+const { Data, Constant } = require('@ud-viz/shared');
 const path = require('path');
 const SocketWrapper = require('./SocketWrapper');
 

@@ -2,7 +2,7 @@ const express = require('express');
 const http = require('http'); // just for doc
 const { stringReplace } = require('string-replace-middleware');
 const udvizVersion = require('@ud-viz/node/package.json').version;
-const Core = require('@ud-viz/core');
+const Shared = require('@ud-viz/shared');
 const Game = require('./Game/Game');
 const path = require('path');
 
@@ -105,11 +105,11 @@ const ExpressAppWrapper = class {
           this.gameSocketService.initializeGameThreads(
             {
               NativeCommandManager:
-                'package:@ud-viz/core/src/Game/ScriptTemplate/NativeCommandManager.js',
+                'package:@ud-viz/shared/src/Game/ScriptTemplate/NativeCommandManager.js',
               GameManager: 'file:' + gameManagerScriptPath,
             },
             [
-              new Core.Game.Object3D({
+              new Shared.Game.Object3D({
                 name: 'Note Game',
                 static: true,
                 components: {

@@ -1,5 +1,5 @@
 import { ExternalScriptBase } from '../../Context';
-import { Game, Command } from '@ud-viz/core';
+import { Game, Command } from '@ud-viz/shared';
 import * as THREE from 'three';
 
 import './Note.css';

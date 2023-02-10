@@ -12,8 +12,8 @@
     <script type="text/javascript">
       const gameScriptClass = {
         NativeCommandManager:
-          udvizBrowser.Core.Game.ScriptTemplate.NativeCommandManager,
-        Avatar: class extends udvizBrowser.Core.Game.ScriptBase {
+          udvizBrowser.Shared.Game.ScriptTemplate.NativeCommandManager,
+        Avatar: class extends udvizBrowser.Shared.Game.ScriptBase {
           load() {
             this.avatar = new udvizBrowser.Shared.Game.Object3D({
               name: 'avatar',
@@ -55,8 +55,8 @@
 
           tick() {
             this.context.sendCommandToGameContext([
-              new udvizBrowser.Core.Command({
-                type: udvizBrowser.Core.Game.ScriptTemplate.Constants.COMMAND
+              new udvizBrowser.Shared.Command({
+                type: udvizBrowser.Shared.Game.ScriptTemplate.Constants.COMMAND
                   .UPDATE_TRANSFORM,
                 data: {
                   object3DUUID: this.avatar.uuid,

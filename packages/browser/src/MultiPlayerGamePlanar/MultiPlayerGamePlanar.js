@@ -1,5 +1,5 @@
 import { SocketIOWrapper } from '../Component/SocketIOWrapper';
-import { Constant, Game } from '@ud-viz/core';
+import { Constant, Game } from '@ud-viz/shared';
 import { Context } from '../Component/ExternalGame/Context';
 import { Frame3DPlanar } from '../Component/Frame3D/Frame3DPlanar';
 import { RequestAnimationFrameProcess } from '../Component/RequestAnimationFrameProcess';

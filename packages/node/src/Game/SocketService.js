@@ -1,5 +1,5 @@
 const socketio = require('socket.io');
-const { Game, Constant } = require('@ud-viz/core');
+const { Game, Constant } = require('@ud-viz/shared');
 const Thread = require('./Thread');
 const SocketWrapper = require('./SocketWrapper');
 const GameThread = require('./Thread');
