@@ -9,6 +9,7 @@
   - Add a new package
     - [@ud-viz/node](https://github.com/VCityTeam/UD-Viz/tree/master/packages/node)
   - 4 package.json: **mono-repo**, **browser**, **shared**, **node**
+  - All eslint's warnings are fixed
 
 - **browser**, **shared**: Add a set of tests for and scripts/features (html files in **browser** are tested with puppeteer)
 
