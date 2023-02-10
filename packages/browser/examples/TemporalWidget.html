@@ -81,8 +81,7 @@
 
         // TEMPORAL MODULE TODO_ISSUE broken
         const temporalModule = new udvizBrowser.Widget.TemporalModule(
-          app.getFrame3DPlanar().getLayerManager().tilesManagers[0],
-          configs['temporal']
+          app.getFrame3DPlanar().getLayerManager().tilesManagers[0]
         );
         app.addWidgetView('temporal', temporalModule.view);
       });
