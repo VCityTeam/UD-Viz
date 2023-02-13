@@ -40,10 +40,22 @@
 
         const app = new udvizBrowser.MockUp(
           extent,
-          configs
+          configs['frame3D_planars'][0],
+          configs['icon']
         );
 
         const frame3DPlanar = app.getFrame3DPlanar();
+
+        const inputManager = new udvizBrowser.InputManager(); // Need to create an input manager for the SlideShow
+        const slideShow = new udvizBrowser.Widget.SlideShow(
+          frame3DPlanar.getItownsView(),
+          configs['slide_show'],
+          extent,
+          inputManager
+        );
+        
+        app.addWidget(slideShow);
+
 
         // /// ADD LAYERS
         udvizBrowser.add3DTilesLayers(

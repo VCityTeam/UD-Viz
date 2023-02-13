@@ -1,4 +1,3 @@
-import * as Widget from '../Component/Widget/Widget';
 import {
   Frame3DPlanar,
   Frame3DPlanarOption,
@@ -7,32 +6,29 @@ import './Mockup.css';
 
 import THREEUtil from '../Component/THREEUtil';
 import { addLogos } from '../Component/HTMLUtil';
+import { Widget } from '../Component/Component';
 const THREE = require('three');
 
 const itowns = require('itowns');
 /**
  * @class Simple templates with only the frame3D view and the about widget
+ * @param {Frame3DPlanarOption} configFrame3D - Config to create instance of {@link Frame3DPlanar}
+ * @param {object} configIcons - Contains differents paths
+ * @param {string} configIcons.iconFolder - Path of the icons' folder
+ * @param {string} configIcons.logosFolder - Path of the logos' folder
+ * @param {string[]} configIcons.logos - Array of paths of logos' file
+ * @param {string} configIcons.icon_autenfication_path - Path of authentification's icon file
  */
 export class MockUp {
-  constructor(extent, config) {
+  constructor(extent, configFrame3D, configIcons) {
     /** @type {Frame3DPlanar} */
     this.frame3DPlanar = this.createFrame3DPlanarFromConfig(
       extent,
       document.getElementById(this.contentSectionId),
-      config['frame3D_planars'][0]
+      configFrame3D
     );
 
-    addLogos(this.frame3DPlanar.ui, config['icon']);
-
-    const inputManager = new udvizBrowser.InputManager(); // Needto create an input manager for the SlideShow
-    const slideShow = new Widget.SlideShow(
-      this.frame3DPlanar.getItownsView(),
-      config['slide_show'],
-      extent,
-      inputManager
-    );
-    slideShow.parentElement = this.getFrame3DPlanar().getRootWebGL(); // Set the parent HMTL to display the slide show div
-    slideShow.enable();
+    addLogos(this.frame3DPlanar.ui, configIcons);
   }
 
   /**
@@ -76,19 +72,12 @@ export class MockUp {
     return this.frame3DPlanar;
   }
 
-  // //////////////////////////////////////////////////////
-  // GETTERS FOR HTML IDS AND ELEMENTS OF THE DEMO PAGE //
-  // //////////////////////////////////////////////////////
-
-  get headerElement() {
-    return document.getElementById(this.headerId);
-  }
-
-  get viewerDivId() {
-    return 'viewerDiv';
-  }
-
-  get contentSectionElement() {
-    return document.getElementById(this.contentSectionId);
+  /**
+   * Method to integrate an UD-Viz widget in a  {@link Frame3DPlanar}
+   * @param {Widget} widget Widget object to integrate in the 3D scene
+   */
+  addWidget(widget) {
+    widget.parentElement = this.getFrame3DPlanar().getRootWebGL(); // Set the parent HMTL to display the widget div
+    widget.enable();
   }
 }

@@ -19,4 +19,4 @@ export { Frame3D };
 import * as Widget from './Widget/Widget';
 export { Widget };
 
-import './logos.css'
+import './logos.css';
