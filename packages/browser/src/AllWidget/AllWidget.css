@@ -94,11 +94,6 @@ section {
   display: none;
 }
 
-.logos {
-  height: 40px;
-  opacity: 1;
-  margin: 5px 10px 5px 5px;
-}
 
 .choiceMenu:hover,
 #openSidebar:hover,
@@ -254,18 +249,6 @@ section {
 
 #docBrowserWindow {
   top: 50px;
-}
-
-#logo-div{
-  position: fixed;
-  display: flex;
-  padding: 10px;
-  border-radius: 6px;
-  bottom: 6px;
-  right: 6px;
-  background-color: #ffffff37;
-  align-items: center;
-  z-index: 5;
 }
 
 .title-ud-viz {
