@@ -10,39 +10,29 @@ import './Help.css';
  */
 
 export class HelpWindow extends WidgetView {
-  constructor(uiParent, config = {}) {
+  constructor(config = {}) {
     super();
     this.config = config;
-    this.uiParent = uiParent;
-
-    this.helpWindow = document.createElement('div');
-    this.helpWindow.id = '_help_window';
-    this.helpWindow.style.setProperty('display', 'none');
-    this.uiParent.append(this.helpWindow);
-
-    // Button help to open help div
-    const helpButton = document.createElement('button');
-    helpButton.id = '_help_button';
-    this.uiParent.append(helpButton);
-
-    // Image button
-    const imgButton = document.createElement('img');
-    imgButton.src = config.icon_path;
-    helpButton.append(imgButton);
-
-    // Event for openning help window
-    helpButton.addEventListener('mousedown', () => {
-      if (document.getElementById(this.helpWindow.id).style.display == 'block')
-        this.disable(this);
-      else this.enable(this);
-    });
+    this.createHTML();
+    this.createButtonToEnableWidget();
   }
 
   // ///// MODULE VIEW METHODS
   enableView() {
-    this.uiParent.append(this.helpWindow);
     this.helpWindow.style.setProperty('display', 'block');
     this.helpWindow.innerHTML = '';
+  }
+
+  disableView() {
+    this.helpWindow.innerHTML = '';
+    this.helpWindow.style.setProperty('display', 'none');
+  }
+
+  createHTML() {
+    this.helpWindow = document.createElement('div');
+    this.helpWindow.id = '_help_window';
+    this.helpWindow.style.setProperty('display', 'none');
+
     // Create HMTL
     const promises = [];
     if (this.config.htmlPaths && this.config.htmlPaths.length) {
@@ -66,10 +56,26 @@ export class HelpWindow extends WidgetView {
         );
       });
     }
+    if (this.parentElement) this.parentElement.append(this.helpWindow);
   }
 
-  disableView() {
-    this.helpWindow.innerHTML = '';
-    this.helpWindow.style.setProperty('display', 'none');
+  createButtonToEnableWidget() {
+    // Button help to open help div
+    const helpButton = document.createElement('button');
+    helpButton.id = '_help_button';
+
+    // Image button
+    const imgButton = document.createElement('img');
+    imgButton.src = this.config.icon_path;
+    helpButton.append(imgButton);
+
+    // Event for openning help window
+    helpButton.addEventListener('mousedown', () => {
+      if (document.getElementById(this.helpWindow.id).style.display == 'block')
+        this.disable(this);
+      else this.enable(this);
+    });
+
+    if (this.parentElement) this.parentElement.append(helpButton);
   }
 }
