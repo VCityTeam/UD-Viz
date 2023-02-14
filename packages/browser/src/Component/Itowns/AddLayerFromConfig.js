@@ -125,8 +125,9 @@ export function add3DTilesLayers(
  *
  * @param {object} configGeoJSONLayers An object containing GeoJSON layers configs
  * @param {itowns.View} itownsView - the itowns view
+ * @param {itowns.Extent} extent extent of the view
  */
-export function addGeoJsonLayers(configGeoJSONLayers, itownsView) {
+export function addGeoJsonLayers(configGeoJSONLayers, itownsView, extent) {
   // Positional arguments verification
   if (!configGeoJSONLayers) {
     console.warn('No "GeoJSONLayers" field in the configuration file');
@@ -142,9 +143,9 @@ export function addGeoJsonLayers(configGeoJSONLayers, itownsView) {
    * config file).
    */
   const setupAndAddGeoJsonLayer = function (layerConfig) {
-    if (!layerConfig['id'] || !layerConfig['url'] || !layerConfig['crs']) {
+    if (!layerConfig['id'] || !layerConfig['url']) {
       console.warn(
-        'Your "GeoJsonLayer" field does not have either "url", "crs" or "id" properties. ' +
+        'Your "GeoJsonLayer" field does not have either "url" or "id" properties. ' +
           '(in UD-Viz/examples/config/all_widget_config.json)'
       );
       return;
@@ -153,7 +154,7 @@ export function addGeoJsonLayers(configGeoJSONLayers, itownsView) {
     // Declare the data source for the layerConfig
     const source = new itowns.FileSource({
       url: layerConfig.url,
-      crs: layerConfig.crs, // should be the extent ?
+      crs: extent.crs, // should be the extent ?
       format: 'application/json',
     });
 
