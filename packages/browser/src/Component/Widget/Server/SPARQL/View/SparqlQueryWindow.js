@@ -22,6 +22,13 @@ export class SparqlQueryWindow extends Window {
    * @param {CityObjectProvider} cityObjectProvider The City Object Provider
    * @param {LayerManager} layerManager The UD-Viz LayerManager.
    * @param {object} configSparql The sparqlModule configuration.
+   * @param {object} configSparql.queries Query configurations
+   * @param {object} configSparql.queries.title The query title
+   * @param {object} configSparql.queries.filepath The path to the file which contains the query text
+   * @param {object} configSparql.queries.formats Configuration for which visualizations are allowed
+   *                                              with this query. Should be an object of key, value
+   *                                              pairs. The keys of these pairs should correspond
+   *                                              with the cases in the updateDataView() function.
    */
   constructor(sparqlProvider, cityObjectProvider, layerManager, configSparql) {
     super('sparqlQueryWindow', 'SPARQL Query');

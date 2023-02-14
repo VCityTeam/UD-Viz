@@ -53,7 +53,7 @@ WHERE {
     a ?subjectType .
   ?object a bldg:Building .
   ?object a ?objectType .
-  vt:version_2018 vers:Version.versionMember ?object .
+  vt:version_2012 vers:Version.versionMember ?object .
   
   FILTER(?subjectType != owl:NamedIndividual)
   FILTER(?objectType != owl:NamedIndividual)

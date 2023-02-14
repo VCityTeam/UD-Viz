@@ -1,53 +1,23 @@
 # SPARQL Module
 
-The SPARQL Module adds basic functionality to query and visualize Semantic Web data in UD-Viz.
+The SPARQL Module adds basic functionality to query and visualize Semantic Web data stored in a Strabon Triple-store from a UD-Viz interface.
 
 ## Basic functionalities
 
 The basic functionalities of the SPARQL module include:
 - Query a [SPARQL Endpoint](https://github.com/VCityTeam/UD-SV/blob/master/Vocabulary/Readme.md#SPARQL-Endpoint) via HTTP request.
 - Data is returned in the form of RDF and vizualised with [D3.js](https://d3js.org/) as a graph.
-- The vizualised graph data can be used to select and highlight corresponding to city objects.
+- The vizualised graph data can be used to select, focus on, and highlight corresponding to city objects.
 
 ## Usage
 
-Adding the documents module in a demo is straightforward :
-
-```js
-import * as udv from 'ud-viz'
-
-let app = new udv.Templates.AllWidget();
-
-app.start('./path-to-my-configuration-file/config.json').then(() => {
-  ////// SPARQL MODULE
-  const sparqlModule = new udv.Widget.Extensions.SparqlModule(app.config, app.layerManager);
-  app.addWidgetView('sparqlModule', sparqlModule.view, {
-    name: 'SPARQL Query'
-  });
-});
-```
-
-### Required configuration
-
-The minimal configuration required to make the SPARQL module work is the following :
-
-```json
-{
-  "sparqlModule": {
-    "url": "http://localhost:9999/strabon/",
-    "url_parameters": "Query?handle=download&format=SPARQL/JSON&view=HTML&query="
-  },
-}
-```
-
-- `sparqlModule.url` represents the base URL for the server. 
-- `sparqlModule.url_parameters` represents the URL parameters to query the server via an HTTP request.
-
-The SPARQL Query Service expects the URL to correspond to a REST API, where query routes are in the form `{url}{url_parameters}`
+For an example of how to the SPARQL Widget to a UD-Viz web application see the [SPARQLWidget example](https://github.com/VCityTeam/UD-Viz/blob/master/packages/browser/examples/SPARQLWidget.html)
 
 ### User Interface
 
 The Interface is composed of a **SPARQL Query** window containing a text box for composing queries to send to a [SPARQL Endpoint](https://github.com/VCityTeam/UD-SV/blob/master/Vocabulary/Readme.md#SPARQL-Endpoint).
+
+![SPARQL widget interface](/docs/static/Widget/Extensions/SPARQL/Pictures/interface.png)
 
 The *Results Format* dropdown menu can be used to select how the query results will be visualised. Currently 3 formats are supported:
 - [Graph](#Graph)
@@ -107,6 +77,32 @@ The table view features a filter for searching for data within a column. In addi
 The JSON view returns a collapsible representation of the query reponse.
 
 ![JSON view demonstraction](/docs/static/Widget/Extensions/SPARQL/Pictures/sparql-widget-json-demo.gif)
+
+### Widget Configuration
+
+The minimal configuration required to make the SPARQL module work is the following :
+
+```json
+{
+  "sparqlModule": {
+    "height": 500,
+    "width": 500,
+    "fontSize": 4,
+    "url": "http://localhost:9999/strabon/",
+    "url_parameters": "Query?handle=download&format=SPARQL/JSON&view=HTML&query="
+  }
+}
+```
+- `height` the height (in pixels) of a d3 canvas for visualizing graphs
+- `width` the width (in pixels) of a d3 canvas for visualizing graphs
+- `fontSize` fontsize to be used in the d3 canvas for labeling graph nodes
+- `sparqlModule.url` represents the base URL for the server. 
+- `sparqlModule.url_parameters` represents the URL parameters to query the server via an HTTP request.
+
+The SPARQL Query Service for interfacing with Strabon expects the URL to correspond to a REST API, where query routes are in the form `{url}{url_parameters}`
+
+Parameters can also be configured to define custom queries in the interface:
+See the [graph documentation](https://vcityteam.github.io/UD-Viz/html/browser/Graph_Graph.html) for more information
 
 ## Code architecture
 
