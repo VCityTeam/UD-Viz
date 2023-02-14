@@ -180,8 +180,9 @@ export function addGeoJsonLayers(configGeoJSONLayers, itownsView) {
  *
  * @param {object} configLabelLayers An object containing layers configs
  * @param {itowns.View} itownsView - the itowns view
+ * @param {itowns.Extent} extent extent of the view
  */
-export function addLabelLayers(configLabelLayers, itownsView) {
+export function addLabelLayers(configLabelLayers, itownsView, extent) {
   // Positional arguments verification
   if (!configLabelLayers) {
     console.warn('No "labelLayers" field in the configuration file');
@@ -195,7 +196,6 @@ export function addLabelLayers(configLabelLayers, itownsView) {
    * @param {string} layerConfig.sourceType The type of the source, should be either "file" or "wfs"
    * @param {object} layerConfig.style The iTowns style of the label layer
    * @param {string} layerConfig.url The URL of the layer
-   * @param {string} layerConfig.crs The CRS of the layer
    * @param {string} layerConfig.name If the source is WFS, the name of the source
    * @param {object} layerConfig.zoom The min/max zoom to display the layer
    */
@@ -203,11 +203,10 @@ export function addLabelLayers(configLabelLayers, itownsView) {
     if (
       !layerConfig['id'] ||
       !layerConfig['url'] ||
-      !layerConfig['crs'] ||
       !layerConfig['sourceType']
     ) {
       console.warn(
-        'Your "LabelLayer" field does not have either "url", "crs", "id" or "sourceType" properties. '
+        'Your "LabelLayer" field does not have either "url", "id" or "sourceType" properties. '
       );
       return;
     }
@@ -218,7 +217,7 @@ export function addLabelLayers(configLabelLayers, itownsView) {
     if (layerConfig['sourceType'] == 'file') {
       source = new itowns.FileSource({
         url: layerConfig.url,
-        crs: layerConfig.crs,
+        crs: extent.crs,
         format: 'application/json',
       });
     } else if (layerConfig['sourceType'] == 'wfs') {
@@ -226,7 +225,7 @@ export function addLabelLayers(configLabelLayers, itownsView) {
         url: layerConfig.url,
         version: '2.0.0',
         typeName: layerConfig.name,
-        crs: layerConfig.crs,
+        crs: extent.crs,
         format: 'application/json',
       });
     } else {

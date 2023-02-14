@@ -3,7 +3,6 @@
         "id": "Mairies de la métropole de Lyon",
         "url": "https://download.data.grandlyon.com/wfs/grandlyon?SERVICE=WFS&VERSION=2.0.0&request=GetFeature&typename=adr_voie_lieu.adrmairiepct_2_0_0&outputFormat=application/json;%20subtype=geojson&SRSNAME=EPSG:3946&startIndex=0",
         "sourceType": "file",
-        "crs": "EPSG:3946",
         "zoom": {
             "min": 3
         },
@@ -23,7 +22,6 @@
         "sourceType": "wfs",
         "version": "2.0.0",
         "name": "BDCARTO_BDD_WLD_WGS84G:zone_habitat_mairie",
-        "crs": "EPSG:3946",
         "format": "application/json",
         "zoom": {
             "min": 2
