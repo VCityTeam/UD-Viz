@@ -16,7 +16,12 @@ export class SparqlWidgetView extends WidgetView {
    * @param {LayerManager} layerManager The UD-Viz LayerManager.
    * @param {object} configSparqlWidget The sparqlModule view configuration.
    */
-  constructor(sparqlProvider, cityObjectProvider, layerManager, configSparqlWidget) {
+  constructor(
+    sparqlProvider,
+    cityObjectProvider,
+    layerManager,
+    configSparqlWidget
+  ) {
     super();
 
     /**

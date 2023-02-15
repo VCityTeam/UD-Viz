@@ -71,7 +71,6 @@ export class CityObjectProvider extends EventSender {
      */
     this.defaultSelectionStyle = { materialProps: { color: 0x13ddef } };
 
-
     if (configStyles && configStyles.selection) {
       this.setSelectionStyle(configStyles.selection);
     }
