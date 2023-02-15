@@ -107,8 +107,8 @@ export class SparqlQueryWindow extends Window {
       });
 
       Promise.all(promises)
-        .then((e) => {
-          resolve(e);
+        .then(() => {
+          resolve();
         })
         .catch(reject);
     }).then(() => {

@@ -32,13 +32,7 @@ export class DocumentNavigatorWindow extends AbstractDocumentWindow {
      * Represents a list of extensions. An extension can either be a button or
      * a panel.
      *
-     * @type {Object<string, {
-     *  type: 'button' | 'panel',
-     *  label: string,
-     *  id: string,
-     *  callback?: (doc: Document[]) => any,
-     *  html: string
-     * }>}
+     * @type {Object<string, DocumentNavigatorExtension>}
      */
     this.extensions = {};
   }

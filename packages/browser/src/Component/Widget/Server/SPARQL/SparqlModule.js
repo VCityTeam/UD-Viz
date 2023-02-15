@@ -11,13 +11,13 @@ export class SparqlModule {
    * Creates a new SPARQL Module.
    *
    * @param {object} configSparqlServer The sparql server configuration.
-   * @param {object} configSparqlView The sparqlWidget view configuration.
+   * @param {object|undefined} configSparqlWidget The sparqlWidget view configuration.
    * @param {LayerManager} layerManager The UD-Viz LayerManager.
    * @param {CityObjectProvider} cityObjectProvider A cityObjectProvider used to provide interaction between the SPARQL widget view and CityObjects.
    */
   constructor(
     configSparqlServer,
-    configSparqlView,
+    configSparqlWidget,
     layerManager,
     cityObjectProvider
   ) {
@@ -46,14 +46,17 @@ export class SparqlModule {
 
     /**
      * Contains a SparqlWidgetView for managing the user interface and view.
+     * Created if a configSparqlWidget is passed to the module.
      *
      * @type {SparqlWidgetView}
      */
-    this.view = new SparqlWidgetView(
-      this.sparqlProvider,
-      this.cityObjectProvider,
-      this.layerManager,
-      configSparqlView
-    );
+    if (configSparqlWidget) {
+      this.view = new SparqlWidgetView(
+        this.sparqlProvider,
+        this.cityObjectProvider,
+        this.layerManager,
+        configSparqlWidget
+      );
+    }
   }
 }
