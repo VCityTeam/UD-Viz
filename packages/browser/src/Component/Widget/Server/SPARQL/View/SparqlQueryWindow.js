@@ -21,16 +21,21 @@ export class SparqlQueryWindow extends Window {
    * @param {SparqlEndpointResponseProvider} sparqlProvider The SPARQL Endpoint Response Provider
    * @param {CityObjectProvider} cityObjectProvider The City Object Provider
    * @param {LayerManager} layerManager The UD-Viz LayerManager.
-   * @param {object} configSparql The sparqlModule view configuration.
-   * @param {object} configSparql.queries Query configurations
-   * @param {object} configSparql.queries.title The query title
-   * @param {object} configSparql.queries.filepath The path to the file which contains the query text
-   * @param {object} configSparql.queries.formats Configuration for which visualizations are allowed
+   * @param {object} configSparqlWidget The sparqlModule view configuration.
+   * @param {object} configSparqlWidget.queries Query configurations
+   * @param {object} configSparqlWidget.queries.title The query title
+   * @param {object} configSparqlWidget.queries.filepath The path to the file which contains the query text
+   * @param {object} configSparqlWidget.queries.formats Configuration for which visualizations are allowed
    *                                              with this query. Should be an object of key, value
    *                                              pairs. The keys of these pairs should correspond
    *                                              with the cases in the updateDataView() function.
    */
-  constructor(sparqlProvider, cityObjectProvider, layerManager, configSparql) {
+  constructor(
+    sparqlProvider,
+    cityObjectProvider,
+    layerManager,
+    configSparqlWidget
+  ) {
     super('sparqlQueryWindow', 'SPARQL Query');
 
     /**
@@ -66,7 +71,7 @@ export class SparqlQueryWindow extends Window {
      *
      * @type {Graph}
      */
-    this.graph = new Graph(this, configSparql);
+    this.graph = new Graph(this, configSparqlWidget);
 
     /**
      * Contains the D3 table to display RDF data.
@@ -80,7 +85,7 @@ export class SparqlQueryWindow extends Window {
      *
      * @type {object}
      */
-    this.queries = configSparql['queries'];
+    this.queries = configSparqlWidget['queries'];
 
     this.registerEvent(Graph.EVENT_NODE_CLICKED);
     this.registerEvent(Graph.EVENT_NODE_MOUSEOVER);
@@ -96,22 +101,16 @@ export class SparqlQueryWindow extends Window {
    */
   windowCreated() {
     // Get queries from text files and update the this.queries
-    new Promise((resolve, reject) => {
-      const promises = [];
-      this.queries.forEach((query) => {
-        promises.push(
-          loadTextFile(query.filepath).then((result) => {
-            query.text = result;
-          })
-        );
-      });
-
-      Promise.all(promises)
-        .then(() => {
-          resolve();
+    const promises = [];
+    this.queries.forEach((query) => {
+      promises.push(
+        loadTextFile(query.filepath).then((result) => {
+          query.text = result;
         })
-        .catch(reject);
-    }).then(() => {
+      );
+    });
+
+    Promise.all(promises).then(() => {
       // Once query text is updated, update the query select dropdown
       // and query text area
       // console.log(this.queries);

@@ -9,29 +9,29 @@ export class Graph {
    * https://www.d3indepth.com/zoom-and-pan/
    *
    * @param {SparqlQueryWindow} window the window this graph is attached to.
-   * @param {object} configSparql The sparqlModule configuration.
-   * @param {number} configSparql.height The SVG height.
-   * @param {number} configSparql.width The SVG width.
-   * @param {number} configSparql.fontSize The font size to use for node and link labels.
-   * @param {object} configSparql.prefixes Prefix declarations which will replace text labels in the Legend.
+   * @param {object} configSparqlWidget The sparqlModule configuration.
+   * @param {number} configSparqlWidget.height The SVG height.
+   * @param {number} configSparqlWidget.width The SVG width.
+   * @param {number} configSparqlWidget.fontSize The font size to use for node and link labels.
+   * @param {object} configSparqlWidget.prefixes Prefix declarations which will replace text labels in the Legend.
    *                                       This doesn't (yet) affect the legend font size.
    */
-  constructor(window, configSparql) {
+  constructor(window, configSparqlWidget) {
     if (
-      !configSparql ||
-      !configSparql.height ||
-      !configSparql.width ||
-      !configSparql.fontSize
+      !configSparqlWidget ||
+      !configSparqlWidget.height ||
+      !configSparqlWidget.width ||
+      !configSparqlWidget.fontSize
     ) {
-      console.log(configSparql);
+      console.log(configSparqlWidget);
       throw 'The given "sparqlModule" configuration is incorrect.';
     }
 
     this.window = window;
-    this.height = configSparql.height;
-    this.width = configSparql.width;
-    this.fontSize = configSparql.fontSize;
-    this.knownPrefixes = configSparql.prefixes;
+    this.height = configSparqlWidget.height;
+    this.width = configSparqlWidget.width;
+    this.fontSize = configSparqlWidget.fontSize;
+    this.knownPrefixes = configSparqlWidget.prefixes;
     this.typeList = [];
     this.svg = d3
       .create('svg')

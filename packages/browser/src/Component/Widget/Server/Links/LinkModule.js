@@ -23,7 +23,7 @@ export class LinkModule {
    * @param {object} configServer The server configuration.
    * @param {string} configServer.url The server URL.
    * @param {string} configServer.link The link route.
-   * @param {object} configCityObjects - need description
+   * @param {object} configStyles - need description
    */
   constructor(
     documentModule,
@@ -32,7 +32,7 @@ export class LinkModule {
     itownsView,
     cameraControls,
     configServer,
-    configCityObjects
+    configStyles
   ) {
     /**
      * The link service.
@@ -50,7 +50,7 @@ export class LinkModule {
       documentModule.provider,
       cityObjectModule.provider,
       this.service,
-      configCityObjects
+      configStyles
     );
     this.provider.fetchLinks().then(() => {
       this.view = new LinkView(

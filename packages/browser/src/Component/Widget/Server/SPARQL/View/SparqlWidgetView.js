@@ -14,9 +14,9 @@ export class SparqlWidgetView extends WidgetView {
    * @param {SparqlEndpointResponseProvider} sparqlProvider The SPARQL Endpoint Response Provider
    * @param {CityObjectProvider} cityObjectProvider The City Object Provider
    * @param {LayerManager} layerManager The UD-Viz LayerManager.
-   * @param {object} configSparql The sparqlModule view configuration.
+   * @param {object} configSparqlWidget The sparqlModule view configuration.
    */
-  constructor(sparqlProvider, cityObjectProvider, layerManager, configSparql) {
+  constructor(sparqlProvider, cityObjectProvider, layerManager, configSparqlWidget) {
     super();
 
     /**
@@ -29,7 +29,7 @@ export class SparqlWidgetView extends WidgetView {
       sparqlProvider,
       cityObjectProvider,
       layerManager,
-      configSparql
+      configSparqlWidget
     );
   }
 

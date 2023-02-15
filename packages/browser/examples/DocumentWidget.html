@@ -18,7 +18,7 @@
         './assets/config/server/spatial_multimedia_db_server.json',
         './assets/config/widget/about.json',
         './assets/config/widget/help.json',
-        './assets/config/widget/city_objects.json',
+        './assets/config/styles.json',
         './assets/config/layer/3DTiles.json',
         './assets/config/layer/base_maps.json',
         './assets/config/layer/elevation.json',
@@ -136,10 +136,16 @@
           configs['spatial_multimedia_db_server']
         );
 
+        // //// CITY OBJECTS PROVIDER
+        const cityObjectProvider = new udvizBrowser.Widget.CityObjectProvider(
+          app.getFrame3DPlanar().getLayerManager(),
+          configs['styles']
+        );
+
         // //// CITY OBJECTS MODULE
         const cityObjectModule = new udvizBrowser.Widget.CityObjectModule(
-          app.getFrame3DPlanar().getLayerManager(),
-          configs['city_objects']
+          cityObjectProvider,
+          configs['styles']
         );
         app.addWidgetView('cityObjects', cityObjectModule.view);
 
@@ -151,7 +157,7 @@
           app.getFrame3DPlanar().getItownsView(),
           app.getFrame3DPlanar().getItownsView().controls,
           configs['spatial_multimedia_db_server'],
-          configs['city_objects']
+          configs['styles']
         );
       });
     </script>
