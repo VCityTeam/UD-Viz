@@ -27,14 +27,19 @@ const ExpressAppWrapper = class {
 
   /**
    * Close http server + stop gamesocketservice if one
+   *
+   * @returns {Promise} - a promise resolving when express app wrapper has closed all its related process
    */
   stop() {
+    let result = Promise.resolve();
+
     if (this.gameSocketService) {
-      this.gameSocketService.stop();
+      // if there is a gamesocket service promise returned is resolved when all thread have been closed
+      result = this.gameSocketService.stop();
     }
     this.httpServer.close();
-    console.log('WARNING: async is not handle yet');
-    console.log('ExpressAppWrapper is going to stop');
+
+    return result;
   }
 
   /**
