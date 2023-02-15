@@ -2,8 +2,6 @@
   "height": 500,
   "width": 500,
   "fontSize": 4,
-  "url": "https://demo.liris.cnrs.fr/vcity/geodatadays/strabon/",
-  "url_parameters": "Query?handle=download&format=SPARQL/JSON&view=HTML&query=",
   "queries": [
     {
       "title": "Select Buildings from Version (2012)",

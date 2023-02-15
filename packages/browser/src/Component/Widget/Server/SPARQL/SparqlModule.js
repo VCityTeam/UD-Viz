@@ -10,11 +10,17 @@ export class SparqlModule {
   /**
    * Creates a new SPARQL Module.
    *
-   * @param {object} configSparql The sparqlModule configuration.
-   * @param {string} configSparql.url The SPARQL endpoint url.
+   * @param {object} configSparqlServer The sparql server configuration.
+   * @param {object} configSparqlView The sparqlWidget view configuration.
    * @param {LayerManager} layerManager The UD-Viz LayerManager.
+   * @param {CityObjectProvider} cityObjectProvider A cityObjectProvider used to provide interaction between the SPARQL widget view and CityObjects.
    */
-  constructor(configSparql, layerManager) {
+  constructor(
+    configSparqlServer,
+    configSparqlView,
+    layerManager,
+    cityObjectProvider
+  ) {
     /**
      * Manages data layers visualized in the application.
      *
@@ -27,14 +33,16 @@ export class SparqlModule {
      *
      * @type {SparqlEndpointResponseProvider}
      */
-    this.sparqlProvider = new SparqlEndpointResponseProvider(configSparql);
+    this.sparqlProvider = new SparqlEndpointResponseProvider(
+      configSparqlServer
+    );
 
     /**
      * Provides CityObjects based on mouse event positions or batch table data.
      *
      * @type {CityObjectProvider}
      */
-    this.cityObjectProvider = new CityObjectProvider(this.layerManager);
+    this.cityObjectProvider = cityObjectProvider;
 
     /**
      * Contains a SparqlWidgetView for managing the user interface and view.
@@ -45,7 +53,7 @@ export class SparqlModule {
       this.sparqlProvider,
       this.cityObjectProvider,
       this.layerManager,
-      configSparql
+      configSparqlView
     );
   }
 }

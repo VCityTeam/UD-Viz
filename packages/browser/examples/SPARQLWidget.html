@@ -20,8 +20,10 @@
       './assets/config/layer/elevation.json',
       './assets/config/widget/about.json',
       './assets/config/widget/help.json',
+      './assets/config/widget/city_objects.json',
       './assets/config/widget/temporal.json',
-      './assets/config/widget/server/sparql_server.json'
+      './assets/config/widget/sparql_view.json',
+      './assets/config/server/sparql_server.json'
       ]).then((configs) => {
         // http://proj4js.org/
         // define a projection as a string and reference it that way
@@ -94,6 +96,13 @@
         );
         app.addWidgetView('layerChoice', layerChoice);
         
+        // //// CITY OBJECTS MODULE
+        const cityObjectModule = new udvizBrowser.Widget.CityObjectModule(
+          app.getFrame3DPlanar().getLayerManager(),
+          configs['city_objects']
+        );
+        app.addWidgetView('cityObjects', cityObjectModule.view);
+
         // TEMPORAL MODULE
         const temporalModule = new udvizBrowser.Widget.TemporalModule(
           app.getFrame3DPlanar().getLayerManager().tilesManagers[0],
@@ -104,7 +113,9 @@
         // //// SPARQL MODULE
         const sparqlModule = new udvizBrowser.Widget.Server.SparqlModule(
           configs['sparql_server'],
-          app.getFrame3DPlanar().getLayerManager()
+          configs['sparql_view'],
+          app.getFrame3DPlanar().getLayerManager(),
+          cityObjectModule.provider
         );
         app.addWidgetView('sparqlModule', sparqlModule.view, {
           name: 'SPARQL Query',
