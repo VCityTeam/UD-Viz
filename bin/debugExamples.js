@@ -13,13 +13,13 @@ const printExec = function (result) {
   console.log('stderr: \n', result.stderr);
 };
 
+// run an express app wrapper with a gamesocket service
 const app = new ExpressAppWrapper();
-app
-  .start({
-    folder: './',
-    port: 8000,
-    withGameSocketService: true,
-  })
-  .then(() => {
-    exec('npm run build-debug --prefix ./packages/browser').then(printExec);
-  });
+app.start({
+  folder: './',
+  port: 8000,
+  withGameSocketService: true,
+});
+
+// run a build debug browser bundle
+exec('npm run build-debug --prefix ./packages/browser').then(printExec);
