@@ -60,32 +60,32 @@
   background-color: rgba(30,30,30,0.7);
 }
 
-table {
+#_window_sparqlQueryWindow_data_view table {
   border: 1px solid white;
   width: 100%;
   height: 100%;
-  margin-top:24px !important;
+  margin-top:24px;
 }
 
-thead {
+#_window_sparqlQueryWindow_data_view thead {
   color: #90EE90;
   margin:auto;
-  border: 1px solid white !important;
+  border: 1px solid white;
 }
 
-tr {
-  border: 1px solid white !important;
+#_window_sparqlQueryWindow_data_view tr {
+  border: 1px solid white;
 }
 
-td {
-  border: 1px solid white !important;
+#_window_sparqlQueryWindow_data_view td {
+  border: 1px solid white;
 }
 
-th.des:after {
+#_window_sparqlQueryWindow_data_view th.des:after {
   content: "\21E9";
 }
 
-th.aes:after {
+#_window_sparqlQueryWindow_data_view th.aes:after {
   content: "\21E7";
 }
 
