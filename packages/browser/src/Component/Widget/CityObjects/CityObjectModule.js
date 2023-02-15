@@ -20,7 +20,6 @@ export class CityObjectModule {
    * module by adding filters.
    *
    * @param {CityObjectProvider} cityObjectProvider The cityObjectProvider.
-   * @param {object} configCityObjects The city objects config.
    * @param {Object<string, CityObjectStyle>} configStyles The city object styles.
    * @param {CityObjectStyle} configStyles.layerDefault The default
    * style for the layer.
