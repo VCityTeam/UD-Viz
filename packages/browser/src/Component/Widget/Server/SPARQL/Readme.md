@@ -84,9 +84,9 @@ The JSON view returns a collapsible representation of the query reponse.
 The SPARQL code is divided into 3 subfolders:
 ```mermaid
 flowchart TD
-  A(SPARQL Module) --> Model
-  A(SPARQL Module) --> Server
-  A(SPARQL Module) --> View
+  A(SPARQL) --> Model
+  A(SPARQL) --> Server
+  A(SPARQL) --> View
 ```
 
 - The model classes are responsible for providing data structures for storing and formating the data returned by the server.

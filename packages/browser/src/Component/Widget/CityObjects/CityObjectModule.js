@@ -19,29 +19,25 @@ export class CityObjectModule {
    * filters. Other modules can extend the functionnalities of the city object
    * module by adding filters.
    *
-   * @param {import("../../Itowns/LayerManager/LayerManager").LayerManager} layerManager The layer manager.
+   * @param {CityObjectProvider} cityObjectProvider The cityObjectProvider.
    * @param {object} configCityObjects The city objects config.
-   * @param {Object<string, CityObjectStyle>} configCityObjects.styles The
-   * city object styles.
-   * @param {CityObjectStyle} configCityObjects.styles.layerDefault The default
+   * @param {Object<string, CityObjectStyle>} configStyles The city object styles.
+   * @param {CityObjectStyle} configStyles.layerDefault The default
    * style for the layer.
-   * @param {CityObjectStyle} configCityObjects.styles.selection The style
-   * for the selected city object.
    */
-  constructor(layerManager, configCityObjects) {
+  constructor(cityObjectProvider, configStyles) {
     /**
      * The city object provider, whichs manages the city objects in terms
      * of layer and selected city object.
      */
-    this.provider = new CityObjectProvider(layerManager);
-    this.provider.setSelectionStyle(configCityObjects.styles.selection);
+    this.provider = cityObjectProvider;
 
     /**
      * The city object view. It consist of a main window, called the city
      * object window.
      */
     this.view = new CityObjectWindow(this.provider);
-    this.view.setDefaultLayerStyle(configCityObjects.styles.layerDefault);
+    this.view.setDefaultLayerStyle(configStyles.layerDefault);
   }
 
   /**

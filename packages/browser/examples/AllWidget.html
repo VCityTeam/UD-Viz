@@ -19,7 +19,7 @@
         './assets/config/widget/about.json',
         './assets/config/widget/help.json',
         './assets/config/server/geocoding_server.json',
-        './assets/config/widget/city_objects.json',
+        './assets/config/styles.json',
         './assets/config/widget/temporal.json',
         './assets/config/widget/slide_show.json',
         './assets/config/layer/3DTiles.json',
@@ -172,10 +172,16 @@
           name: 'Address Search',
         });
 
+        // //// CITY OBJECTS PROVIDER
+        const cityObjectProvider = new udvizBrowser.Widget.CityObjectProvider(
+          app.getFrame3DPlanar().getLayerManager(),
+          configs['styles']
+        );
+
         // //// CITY OBJECTS MODULE
         const cityObjectModule = new udvizBrowser.Widget.CityObjectModule(
-          app.getFrame3DPlanar().getLayerManager(),
-          configs['city_objects']
+          cityObjectProvider,
+          configs['styles']
         );
         app.addWidgetView('cityObjects', cityObjectModule.view);
 
@@ -187,7 +193,7 @@
           app.getFrame3DPlanar().getItownsView(),
           app.getFrame3DPlanar().getItownsView().controls,
           configs['spatial_multimedia_db_server'],
-          configs['city_objects']
+          configs['styles']
         );
 
         // //// 3DTILES DEBUG

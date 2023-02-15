@@ -1,5 +1,7 @@
 export { CityObjectModule } from './CityObjects/CityObjectModule';
 
+export { CityObjectProvider } from './CityObjects/ViewModel/CityObjectProvider';
+
 export { LayerChoice } from './LayerChoice/views/LayerChoice';
 
 export { CameraPositionerView } from './CameraPositioner/View/CameraPositionerView';

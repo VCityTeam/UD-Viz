@@ -18,7 +18,9 @@ export { DocumentValidationModule } from './DocumentValidation/DocumentValidatio
 
 export { DocumentVisualizerWindow } from './DocumentVisualizer/View/DocumentVisualizerWindow';
 
-export { SparqlModule } from './SPARQL/SparqlModule';
+export { SparqlWidgetView } from './SPARQL/View/SparqlWidgetView';
+
+export { SparqlEndpointResponseProvider } from './SPARQL/Service/SparqlEndpointResponseProvider';
 
 export { GuidedTourController } from './GuidedTour/GuidedTourController';
 

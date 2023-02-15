@@ -19,8 +19,11 @@ export class CityObjectProvider extends EventSender {
    * Constructs a city object provider, using a layer manager.
    *
    * @param {LayerManager} layerManager The layer manager.
+   * @param {object|undefined} configStyles The style configuration.
+   * @param {CityObjectStyle} configStyles.selection The style
+   * for the selected city object.
    */
-  constructor(layerManager) {
+  constructor(layerManager, configStyles) {
     super();
     /**
      * The tiles manager.
@@ -67,6 +70,11 @@ export class CityObjectProvider extends EventSender {
      * @type {CityObjectStyle | string}
      */
     this.defaultSelectionStyle = { materialProps: { color: 0x13ddef } };
+
+
+    if (configStyles && configStyles.selection) {
+      this.setSelectionStyle(configStyles.selection);
+    }
 
     // Event registration
     this.registerEvent(CityObjectProvider.EVENT_FILTERS_UPDATED);
