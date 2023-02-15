@@ -21,7 +21,7 @@ export class SparqlQueryWindow extends Window {
    * @param {SparqlEndpointResponseProvider} sparqlProvider The SPARQL Endpoint Response Provider
    * @param {CityObjectProvider} cityObjectProvider The City Object Provider
    * @param {LayerManager} layerManager The UD-Viz LayerManager.
-   * @param {object} configSparql The sparqlModule configuration.
+   * @param {object} configSparql The sparqlModule view configuration.
    * @param {object} configSparql.queries Query configurations
    * @param {object} configSparql.queries.title The query title
    * @param {object} configSparql.queries.filepath The path to the file which contains the query text

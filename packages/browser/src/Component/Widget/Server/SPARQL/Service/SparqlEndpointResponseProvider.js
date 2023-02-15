@@ -10,7 +10,7 @@ export class SparqlEndpointResponseProvider extends EventSender {
   /**
    * Creates a SPARQL Endpoint Provider
    *
-   * @param {object} configSparql - The SPARQL Widget configuration
+   * @param {object} configSparql - The SPARQL server configuration
    */
   constructor(configSparql) {
     super();
