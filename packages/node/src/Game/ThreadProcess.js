@@ -83,10 +83,6 @@ parentPort.on('message', (int32ArrayMessage) => {
     case Thread.EVENT.ON_SOCKET_WRAPPER_REMOVE:
       gameContext.dispatch(Thread.EVENT.ON_SOCKET_WRAPPER_REMOVE, data);
       break;
-    case Thread.EVENT.STOP:
-      console.log(gameContext.object3D.name, ' stop');
-      process.exit(0);
-      break; // mandatory to respect the rules of the linter
     default:
       console.warn(objectMessage, ' not handle');
   }

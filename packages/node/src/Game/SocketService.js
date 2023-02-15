@@ -33,16 +33,22 @@ module.exports = class SocketService {
 
   /**
    * Stop threads + disconnect socket client + close websocket connection
+   *
+   * @returns {Promise} - a promise resolving when all thread have been closed
    */
   stop() {
+    const promises = [];
+
     for (const key in this.threads) {
       const thread = this.threads[key];
-      thread.post(Thread.EVENT.STOP, {});
+      promises.push(thread.worker.terminate());
     }
 
     this.io.disconnectSockets();
 
     this.io.close();
+
+    return Promise.all(promises);
   }
 
   /**

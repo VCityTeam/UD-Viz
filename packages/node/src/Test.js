@@ -243,8 +243,7 @@ const folderInBrowserPage = function (testFolderPath, pageTest) {
               // console.log('browser closed');
             }
 
-            expressAppWrapper.stop();
-            resolve();
+            expressAppWrapper.stop().then(resolve);
           }
         );
       })
