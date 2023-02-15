@@ -13,7 +13,7 @@ export class Graph {
    * @param {number} configSparqlWidget.height The SVG height.
    * @param {number} configSparqlWidget.width The SVG width.
    * @param {number} configSparqlWidget.fontSize The font size to use for node and link labels.
-   * @param {object} configSparqlWidget.prefixes Prefix declarations which will replace text labels in the Legend.
+   * @param {object} configSparqlWidget.namespaceLabels Prefix declarations which will replace text labels in the Legend.
    *                                       This doesn't (yet) affect the legend font size.
    */
   constructor(window, configSparqlWidget) {
@@ -31,7 +31,7 @@ export class Graph {
     this.height = configSparqlWidget.height;
     this.width = configSparqlWidget.width;
     this.fontSize = configSparqlWidget.fontSize;
-    this.knownPrefixes = configSparqlWidget.prefixes;
+    this.knownNamespaceLabels = configSparqlWidget.namespaceLabels;
     this.typeList = [];
     this.svg = d3
       .create('svg')
@@ -383,9 +383,9 @@ export class Graph {
   getNodeColorId(uri) {
     const tURI = tokenizeURI(uri);
     let prefixedId = uri;
-    for (const key in this.knownPrefixes) {
-      if (this.knownPrefixes[key] == tURI.namespace) {
-        prefixedId = `${key}:${tURI.id}`;
+    for (const namespace in this.knownNamespaceLabels) {
+      if (namespace == tURI.namespace) {
+        prefixedId = `${this.knownNamespaceLabels[namespace]}:${tURI.id}`;
       }
     }
 
