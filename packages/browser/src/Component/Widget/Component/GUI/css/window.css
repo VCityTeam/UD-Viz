@@ -31,7 +31,7 @@
 }
 
 .window-close-button,
-.window-reduce-button {
+.window-toggle-content-visibility-button {
   margin: 0px;
   height: auto;
   background-color: transparent;
@@ -45,12 +45,12 @@
 }
 
 /*margin-left : auto*/
-.window-reduce-button {
+.window-toggle-content-visibility-button {
   margin: 0 0 0 auto !important;
 }
 
 .window-close-button:hover,
-.window-reduce-button:hover {
+.window-toggle-content-visibility-button:hover {
   background-color: #f95a5a;
   cursor: pointer;
 }
