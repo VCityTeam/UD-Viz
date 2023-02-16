@@ -127,7 +127,8 @@ export class Window extends WidgetView {
       if (this.defaultStyle) {
         windowDiv.className = 'window';
         dragElement(windowDiv, this.header);
-        this.headerReduceButton.onclick = this.reduce.bind(this);
+        this.headerToggleContentVisibilityButton.onclick =
+          this.toggleContentVisibility.bind(this);
         this.headerCloseButton.onclick = this.disable.bind(this);
       }
 
@@ -175,9 +176,9 @@ export class Window extends WidgetView {
   }
 
   /**
-   * Reduce a Window to its header. Sends an `EVENT_REDUCED` event.
+   * If the content is not visible, make it visible, otherwise make it invisible
    */
-  reduce() {
+  toggleContentVisibility() {
     if (!this.contentIsVisible) {
       this.content.style.display = 'block';
       this.window.style.height = 'auto';
@@ -194,7 +195,7 @@ export class Window extends WidgetView {
     return `
             <div class="window-header" id="${this.headerId}">
                 <h1 class="window-title" id="${this.headerTitleId}">${this.title}</h1>
-                <button class="window-reduce-button" id="${this.headerReduceButtonId}">-</button>
+                <button class="window-toggle-content-visibility-button" id="${this.headerToggleContentVisibilityButtonId}">-</button>
                 <button class="window-close-button" id="${this.headerCloseButtonId}">&#10799;</button>
             </div>
             <div class="window-content" id="${this.contentId}">
@@ -352,12 +353,12 @@ export class Window extends WidgetView {
     return document.getElementById(this.headerCloseButtonId);
   }
 
-  get headerReduceButtonId() {
-    return `_window_header_reduce_button_${this.name}`;
+  get headerToggleContentVisibilityButtonId() {
+    return `_window_header_toggle_content_visibility_button_${this.name}`;
   }
 
-  get headerReduceButton() {
-    return document.getElementById(this.headerReduceButtonId);
+  get headerToggleContentVisibilityButton() {
+    return document.getElementById(this.headerToggleContentVisibilityButtonId);
   }
 
   get contentId() {
