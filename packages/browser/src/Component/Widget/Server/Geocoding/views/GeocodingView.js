@@ -150,6 +150,7 @@ export class GeocodingView extends WidgetView {
     const cylGeom = new THREE.CylinderGeometry(1, 8, pinHeight, 8);
     const cylMat = new THREE.MeshToonMaterial({ color: 0xff0000 });
     const cylMesh = new THREE.Mesh(cylGeom, cylMat);
+    cylMesh.rotation.x = -Math.PI * 0.5;
     position.z += pinHeight / 2;
     this.addMeshToScene(cylMesh, position);
     const sphereGeom = new THREE.SphereGeometry(10, 16, 16);
@@ -167,8 +168,6 @@ export class GeocodingView extends WidgetView {
    */
   async addMeshToScene(mesh, position) {
     mesh.position.copy(position);
-    mesh.lookAt(new THREE.Vector3(0, 0, 0));
-    mesh.rotateX(Math.PI);
     mesh.updateMatrixWorld();
     this.planarView.scene.add(mesh);
     this.meshes.push(mesh);
