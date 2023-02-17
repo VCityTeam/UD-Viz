@@ -29,9 +29,5 @@ jobs:
         - npm audit --audit-level=moderate
       name: 'Lightweight dependencies security audit'
     - script:
-        - remark -u validate-links .
-        - export warnings=`remark -u validate-links UD-Viz 2>&1 | grep warning | grep "Link to unknown" | wc -l` &&
-          if [ $warnings -gt $FAILURE_THRESHOLD ]; then
-          exit 1;
-          fi
+        - npm run validate-links
       name: 'Markdown link checks'
