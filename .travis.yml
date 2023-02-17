@@ -9,16 +9,12 @@ branches:
   only:
     - master
 
-env:
-  - FAILURE_THRESHOLD=9
-
 before_install:
   - npm --version
 
 install:
   - npm install
   - npm run link-local
-  - npm install --global remark-cli remark-validate-links
 
 jobs:
   include:
