@@ -1,4 +1,3 @@
-const THREE = require('three');
 const { Component, Model } = require('./Component');
 
 /**
