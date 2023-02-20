@@ -21,6 +21,9 @@ export class CameraManager extends ExternalScriptBase {
     this.target = null;
   }
 
+  /**
+   * Step the current movement if there is not follow a target if not nothing
+   */
   tick() {
     if (this.currentMovement) {
       this.currentMovement(this.context.dt);

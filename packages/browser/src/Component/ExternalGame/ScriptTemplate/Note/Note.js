@@ -6,6 +6,7 @@ import './Note.css';
 import { CameraManager } from '../CameraManager';
 import { moveHtmlToWorldPosition } from '../Component/Util';
 
+/** @classdesc - note game object script handle ui and some camera movement */
 export class Note extends ExternalScriptBase {
   init() {
     // html message note

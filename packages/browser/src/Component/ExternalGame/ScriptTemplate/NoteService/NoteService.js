@@ -5,6 +5,7 @@ import * as THREE from 'three';
 import './NoteService.css';
 import { moveHtmlToWorldPosition } from '../Component/Util';
 
+/** @classdesc - Manage note for a specific socket */
 export class NoteService extends ExternalScriptBase {
   init() {
     /** 

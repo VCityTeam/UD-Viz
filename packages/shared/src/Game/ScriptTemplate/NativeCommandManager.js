@@ -5,7 +5,7 @@ const Constants = require('./Constants');
 const THREE = require('three');
 
 /**
- * Manage native command
+ * @classdesc - Manage native command
  */
 module.exports = class NativeCommandManager extends ScriptBase {
   tick() {
