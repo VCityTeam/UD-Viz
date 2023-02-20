@@ -27,16 +27,25 @@ export class MultiPlayerGamePlanar {
     inputManager,
     options = {}
   ) {
-    /** @type {SocketIOWrapper} - websocket communication */
+    /**
+     *  websocket communication
+     *  
+     @type {SocketIOWrapper} */
     this.socketIOWrapper = socketIOWrapper;
 
-    /** @type {Frame3DPlanar} - game view */
+    /** 
+     * game view
+     *  
+     @type {Frame3DPlanar} */
     this.frame3DPlanar = frame3DPlanar;
 
     /** @type {InputManager} */
     this.inputManager = inputManager;
 
-    /** @type {Context} - render audio external script context */
+    /** 
+     * render audio external script context
+     * 
+     @type {Context} */
     this.externalGameContext = new Context(
       this.frame3DPlanar,
       assetManager,
@@ -57,7 +66,10 @@ export class MultiPlayerGamePlanar {
       this.externalGameContext.object3D.updateMatrixWorld();
     }
 
-    /** @type {Game.StateInterpolator} - interpolator to smooth comminucation between the two process */
+    /** 
+     * interpolator to smooth comminucation between the two process
+     *  
+     @type {Game.StateInterpolator} */
     this.interpolator = new Game.StateInterpolator(options.interpolatorDelay);
   }
 

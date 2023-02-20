@@ -35,7 +35,11 @@ export class Note extends ExternalScriptBase {
       noteButton.innerHTML = this.variables.message.slice(0, threshold) + '...'; // display a part of the message
     }
 
-    /** @type {CameraManager} - camera manager */
+    /** 
+     *
+     * camera manager
+     *  
+     @type {CameraManager} */
     this.cameraManager = this.context.findExternalScriptWithID('CameraManager');
     noteButton.onclick = () => {
       this.context.frame3D.enableItownsViewControls(false);

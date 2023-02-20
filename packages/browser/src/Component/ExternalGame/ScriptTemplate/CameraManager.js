@@ -14,7 +14,10 @@ export class CameraManager extends ExternalScriptBase {
     /** @type {Movement|null} */
     this.currentMovement = null;
 
-    /** @type {Target|null} - target object3D */
+    /**
+     * target object3D
+     *
+     @type {Target|null} */
     this.target = null;
   }
 

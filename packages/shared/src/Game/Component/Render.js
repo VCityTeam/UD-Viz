@@ -30,7 +30,10 @@ const RenderModel = class extends Model {
      */
     this.idRenderData = json.idRenderData || null;
 
-    /** @type {THREE.Color} - color to apply to the 3D model */
+    /**
+     *  color to apply to the 3D model
+     *  
+     @type {Array<number>} */
     this.color = json.color || [1, 1, 1, 1];
   }
 

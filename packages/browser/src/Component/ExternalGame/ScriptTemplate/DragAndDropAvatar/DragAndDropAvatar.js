@@ -42,7 +42,10 @@ export class DragAndDropAvatar extends ExternalScriptBase {
   }
 
   init() {
-    /** @type {CameraManager} - camera manager */
+    /**
+     * camera manager
+     *  
+     @type {CameraManager} */
     this.cameraManager = this.context.findExternalScriptWithID('CameraManager');
     if (!this.cameraManager)
       throw new Error(

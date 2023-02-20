@@ -7,7 +7,10 @@ import { moveHtmlToWorldPosition } from '../Component/Util';
 
 export class NoteService extends ExternalScriptBase {
   init() {
-    /** @type {boolean} - determine if this is the socket script of the user */
+    /** 
+     *  determine if this is the socket script of the user
+     *  
+     @type {boolean} */
     this.isSocketScript =
       this.variables.socketID == this.context.socketIOWrapper.socket.id;
 
@@ -148,7 +151,10 @@ export class NoteService extends ExternalScriptBase {
         }
       );
 
-      /** @type {MenuEditNote} - menu to edit note */
+      /** 
+       * menu to edit note
+       *  
+       @type {MenuEditNote} */
       this.menuEditNote = null;
       this.context.inputManager.addKeyInput('n', 'keyup', () => {
         if (this.menuEditNote) return; // there is already a this.menuEditNote
@@ -266,8 +272,12 @@ class MenuEditNote {
   }
 
   /**
+   * @callback addButtonNoteCallback
+   * @param {string} textAreaValue - current value of the textarea
+   */
+  /**
    *
-   * @param {(string)=>void} f - callback call when add note button is clicked (first param is the textarea value of menu)
+   * @param {addButtonNoteCallback} f - callback call when add note button is clicked (first param is the textarea value of menu)
    */
   setAddNoteButtonCallback(f) {
     this.addNoteButton.onclick = () => {

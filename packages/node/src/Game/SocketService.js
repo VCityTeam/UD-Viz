@@ -24,10 +24,16 @@ module.exports = class SocketService {
 
     this.io.on('connection', this.onSocketConnection.bind(this));
 
-    /** @type {Object<string,GameThread>} - threads running a gamecontext */
+    /**
+     *  threads running a gamecontext
+     *  
+     @type {Object<string,GameThread>} */
     this.threads = {};
 
-    /** @type {Object<string,SocketWrapper>} - socket wrappers currently connected */
+    /** 
+     * socket wrappers currently connected
+     * 
+     @type {Object<string,SocketWrapper>}  */
     this.socketWrappers = {};
   }
 
