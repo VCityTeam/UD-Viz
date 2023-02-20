@@ -75,7 +75,7 @@ const scripts = function (folderPath) {
     };
 
     fs.readdir(folderPath, { withFileTypes: true }, (err, files) => {
-      if (!files.length) return;
+      if (!files || !files.length) return;
 
       let index = 0;
 
