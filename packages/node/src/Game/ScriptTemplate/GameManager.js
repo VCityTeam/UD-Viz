@@ -10,7 +10,7 @@ module.exports = class GameManager extends Shared.Game.ScriptBase {
     /**
      * sockets object3D connected
      *
-     * @type {object} */
+     @type {object} */
     this.socketObjects3D = {};
 
     this.context.on(Game.Thread.EVENT.ON_NEW_SOCKET_WRAPPER, (socketID) => {
