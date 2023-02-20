@@ -46,7 +46,10 @@ export class Frame3DBase {
     this.rootCss = document.createElement('div');
     this.rootCss.id = 'css_Frame3DBase';
 
-    /** @type {HTMLDivElement} - where ui element should be added (note that you have to handle manually z-index element composing ui, should it be automatically ?) */
+    /** 
+     * where ui element should be added (note that you have to handle manually z-index element composing ui, should it be automatically ?) 
+     *  
+     @type {HTMLDivElement}*/
     this.ui = document.createElement('div');
     this.ui.classList.add('ui_Frame3DBase');
 

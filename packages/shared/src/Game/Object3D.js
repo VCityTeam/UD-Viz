@@ -53,10 +53,16 @@ const Object3D = class extends THREE.Object3D {
      */
     this.parentUUID = json.parentUUID || null;
 
-    /** @type {object} - user data */
+    /**
+     *  user data
+     *  
+     @type {object} */
     this.userData = json.userData || {};
 
-    /** @type {string} - name of object3D */
+    /**
+     * name of object3D
+     *  
+      @type {string}*/
     this.name = json.name || '';
 
     /**

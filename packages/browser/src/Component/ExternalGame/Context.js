@@ -4,7 +4,6 @@ import { Game, Data, Command } from '@ud-viz/shared';
 import { RenderController } from './RenderController';
 import { AudioController } from './AudioController';
 import { Frame3DBase, Frame3DPlanar } from '../Frame3D/Frame3D';
-import { SocketIOWrapper } from '../SocketIOWrapper';
 
 /**
  * @typedef SceneConfig
@@ -85,7 +84,10 @@ export class Context {
       @type {InputManager}  */
     this.inputManager = inputManager;
 
-    /** @type {SocketIOWrapper} - socket io wrapper */
+    /**
+     * socket io wrapper
+     *  
+      @type {import('../SocketIOWrapper')}  */
     this.socketIOWrapper = options.socketIOWrapper || null;
 
     /**

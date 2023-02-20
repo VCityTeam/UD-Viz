@@ -8,7 +8,10 @@ if (workerThreads.isMainThread) {
 }
 
 const parentPort = workerThreads.parentPort;
-/** @type {Game.Context} - thread game context */
+/** 
+ * thread game context
+ *  
+ @type {Game.Context} */
 let gameContext = null;
 let commands = null;
 const gameScriptClass = {};

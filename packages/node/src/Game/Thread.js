@@ -9,8 +9,9 @@ const Thread = class {
    */
   constructor() {
     /**
-     * @type {workerThreads.Worker} - worker
-     */
+     *  worker
+     * 
+     @type {workerThreads.Worker}*/
     this.worker = new workerThreads.Worker(
       path.resolve(__dirname, './ThreadProcess.js')
     );
@@ -18,7 +19,10 @@ const Thread = class {
     /** @type {Object<string,Function>} */
     this.callbacks = {};
 
-    /** @type {Array<SocketWrapper>} - current socket wrapper connected in thread */
+    /**  
+     * current socket wrapper connected in thread
+     * 
+    @type {Array<SocketWrapper>}*/
     this.socketWrappers = [];
 
     // listen

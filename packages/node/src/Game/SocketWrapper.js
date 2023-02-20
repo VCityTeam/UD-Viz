@@ -9,13 +9,15 @@ module.exports = class SocketWrapper {
    */
   constructor(socket) {
     /**
-     * @type {Socket} - socket embeded
-     */
+     * socket embeded
+     *  
+     @type {Socket}*/
     this.socket = socket;
 
     /**
-     * @type {Game.State|null} - last state send to client use to compute GameStateDiff
-     */
+     *  last state send to client use to compute GameStateDiff
+     * 
+     @type {Game.State|null} */
     this.lastStateSend = null;
   }
 
