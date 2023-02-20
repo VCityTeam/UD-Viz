@@ -3,6 +3,7 @@ import { Command, Game } from '@ud-viz/shared';
 import * as THREE from 'three';
 
 import './NoteService.css';
+import { moveHtmlToWorldPosition } from '../Component/Util';
 
 export class NoteService extends ExternalScriptBase {
   init() {
@@ -92,57 +93,37 @@ export class NoteService extends ExternalScriptBase {
       sphereScale.value = pointerObject.scale.x; // scale is the same on all dim
       this.rootHtml.appendChild(sphereScale);
 
-      sphereScale.onchange = () => {
+      const sendCommandScale = (value) => {
         this.context.sendCommandToGameContext([
           new Command({
             type: Game.ScriptTemplate.Constants.COMMAND.UPDATE_TRANSFORM,
             data: {
               object3DUUID: pointerObject.uuid,
               scale: {
-                x: sphereScale.value,
-                y: sphereScale.value,
-                z: sphereScale.value,
+                x: value,
+                y: value,
+                z: value,
               },
             },
           }),
         ]);
       };
 
+      sphereScale.onchange = () => {
+        sendCommandScale(sphereScale.value);
+      };
+
       this.context.inputManager.addKeyInput('+', 'keypress', () => {
         let newValue = pointerObject.scale.x + stepScale;
         newValue = Math.max(Math.min(newValue, maxScale), minScale);
-        this.context.sendCommandToGameContext([
-          new Command({
-            type: Game.ScriptTemplate.Constants.COMMAND.UPDATE_TRANSFORM,
-            data: {
-              object3DUUID: pointerObject.uuid,
-              scale: {
-                x: newValue,
-                y: newValue,
-                z: newValue,
-              },
-            },
-          }),
-        ]);
+        sendCommandScale(newValue);
         sphereScale.value = newValue; // update ui
       });
 
       this.context.inputManager.addKeyInput('-', 'keypress', () => {
         let newValue = pointerObject.scale.x - stepScale;
         newValue = Math.max(Math.min(newValue, maxScale), minScale);
-        this.context.sendCommandToGameContext([
-          new Command({
-            type: Game.ScriptTemplate.Constants.COMMAND.UPDATE_TRANSFORM,
-            data: {
-              object3DUUID: pointerObject.uuid,
-              scale: {
-                x: newValue,
-                y: newValue,
-                z: newValue,
-              },
-            },
-          }),
-        ]);
+        sendCommandScale(newValue);
         sphereScale.value = newValue; // update ui
       });
 
@@ -151,7 +132,6 @@ export class NoteService extends ExternalScriptBase {
         'update_pointer_object3D',
         'mousemove',
         (event) => {
-          // compute where the avatar should be teleported
           const worldPosition = new THREE.Vector3();
           this.context.frame3D.itownsView.getPickingPositionFromDepth(
             new THREE.Vector2(event.offsetX, event.offsetY),
@@ -168,54 +148,23 @@ export class NoteService extends ExternalScriptBase {
         }
       );
 
-      // leave a note
-      let menu = null;
+      /** @type {MenuEditNote} - menu to edit note */
+      this.menuEditNote = null;
       this.context.inputManager.addKeyInput('n', 'keyup', () => {
-        if (menu) return; // there is already a menu
-        this.context.frame3D.enableItownsViewControls(false);
+        if (this.menuEditNote) return; // there is already a this.menuEditNote
 
         // register position and scale cursor
         const p = pointerObject.position.clone();
         const s = pointerObject.scale.clone();
 
-        // compute position on screen
-        const widthHalf = window.innerWidth / 2,
-          heightHalf = window.innerHeight / 2;
-        const pOnScreen = pointerObject.getWorldPosition(new THREE.Vector3());
-        pOnScreen.project(this.context.frame3D.camera);
-        pOnScreen.x = pOnScreen.x * widthHalf + widthHalf;
-        pOnScreen.y = -(pOnScreen.y * heightHalf) + heightHalf;
+        this.menuEditNote = new MenuEditNote(
+          pointerObject.getWorldPosition(new THREE.Vector3())
+        );
 
-        // create a menu to edit message note
-        menu = document.createElement('div');
-        menu.classList.add('root_menu_message_note');
-        menu.style.left = pOnScreen.x + 'px';
-        menu.style.top = pOnScreen.y + 'px';
-        this.context.frame3D.appendToUI(menu);
+        this.menuEditNote.setAddNoteButtonCallback((message) => {
+          this.menuEditNote.html().remove();
+          this.menuEditNote = null;
 
-        const textAreaMessage = document.createElement('textarea');
-        menu.appendChild(textAreaMessage);
-
-        textAreaMessage.focus(); // focus by default text area
-
-        const cancelButton = document.createElement('button');
-        cancelButton.innerHTML = 'Cancel';
-        menu.appendChild(cancelButton);
-
-        const closeMenu = () => {
-          this.context.frame3D.enableItownsViewControls(true);
-          menu.remove();
-          menu = null;
-        };
-
-        cancelButton.onclick = closeMenu;
-
-        const addNoteButton = document.createElement('button');
-        addNoteButton.innerHTML = 'Add note';
-        menu.appendChild(addNoteButton);
-
-        addNoteButton.onclick = () => {
-          closeMenu();
           this.context.sendCommandToGameContext([
             new Command({
               type: Game.ScriptTemplate.Constants.COMMAND.ADD_NOTE,
@@ -224,12 +173,29 @@ export class NoteService extends ExternalScriptBase {
                 position: p,
                 scale: s,
                 color: colorPointer,
-                message: textAreaMessage.value,
+                message: message,
               },
             }),
           ]);
-        };
+        });
+
+        this.menuEditNote.setCloseButtonCallback(() => {
+          this.menuEditNote.html().remove();
+          this.menuEditNote = null;
+        });
+
+        this.context.frame3D.appendToUI(this.menuEditNote.html());
       });
+    }
+  }
+
+  tick() {
+    if (this.menuEditNote) {
+      moveHtmlToWorldPosition(
+        this.menuEditNote.html(),
+        this.menuEditNote.getWorldPosition().clone(),
+        this.context.frame3D.camera
+      );
     }
   }
 
@@ -246,5 +212,66 @@ export class NoteService extends ExternalScriptBase {
 
   onRemove() {
     this.rootHtml.remove();
+  }
+}
+
+class MenuEditNote {
+  /**
+   *
+   * @param {THREE.Vector3} worldPosition - where in scene this menu should be
+   */
+  constructor(worldPosition) {
+    /** @type {THREE.Vector3} */
+    this.worldPosition = worldPosition;
+
+    this.rootHtml = document.createElement('div');
+    this.rootHtml.classList.add('root_menu_message_note');
+
+    this.textAreaMessage = document.createElement('textarea');
+    this.rootHtml.appendChild(this.textAreaMessage);
+
+    this.textAreaMessage.focus(); // cant focus textarea force it there (patch)
+
+    this.closeButton = document.createElement('button');
+    this.closeButton.innerHTML = 'Close';
+    this.rootHtml.appendChild(this.closeButton);
+
+    this.addNoteButton = document.createElement('button');
+    this.addNoteButton.innerHTML = 'Add note';
+    this.rootHtml.appendChild(this.addNoteButton);
+  }
+
+  /**
+   *
+   * @returns {THREE.Vector3} - menu position in world
+   */
+  getWorldPosition() {
+    return this.worldPosition;
+  }
+
+  /**
+   *
+   * @returns {HTMLElement} - root html menu
+   */
+  html() {
+    return this.rootHtml;
+  }
+
+  /**
+   *
+   * @param {Function} f - callback call when close button is clicked
+   */
+  setCloseButtonCallback(f) {
+    this.closeButton.onclick = f;
+  }
+
+  /**
+   *
+   * @param {(string)=>void} f - callback call when add note button is clicked (first param is the textarea value of menu)
+   */
+  setAddNoteButtonCallback(f) {
+    this.addNoteButton.onclick = () => {
+      f(this.textAreaMessage.value);
+    };
   }
 }

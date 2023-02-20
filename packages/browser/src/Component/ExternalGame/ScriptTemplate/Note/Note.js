@@ -4,6 +4,7 @@ import * as THREE from 'three';
 
 import './Note.css';
 import { CameraManager } from '../CameraManager';
+import { moveHtmlToWorldPosition } from '../Component/Util';
 
 export class Note extends ExternalScriptBase {
   init() {
@@ -83,16 +84,11 @@ export class Note extends ExternalScriptBase {
 
   tick() {
     if (this.noteMessageHtml.parentElement) {
-      // compute position on screen
-      const widthHalf = window.innerWidth / 2,
-        heightHalf = window.innerHeight / 2;
-      const pOnScreen = this.object3D.getWorldPosition(new THREE.Vector3());
-      pOnScreen.project(this.context.frame3D.camera);
-      pOnScreen.x = pOnScreen.x * widthHalf + widthHalf;
-      pOnScreen.y = -(pOnScreen.y * heightHalf) + heightHalf;
-
-      this.noteMessageHtml.style.left = pOnScreen.x + 'px';
-      this.noteMessageHtml.style.top = pOnScreen.y + 'px';
+      moveHtmlToWorldPosition(
+        this.noteMessageHtml,
+        this.object3D.getWorldPosition(new THREE.Vector3()),
+        this.context.frame3D.camera
+      );
     }
   }
 
