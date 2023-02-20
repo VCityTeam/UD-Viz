@@ -5,6 +5,7 @@ import { Game } from '@ud-viz/shared';
 
 import './NoteUI.css';
 
+/** @classdesc - Manage global ui of the note feature */
 export class NoteUI extends ExternalScriptBase {
   init() {
     const rootHtml = document.createElement('div');

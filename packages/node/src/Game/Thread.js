@@ -3,6 +3,9 @@ const { Data, Constant } = require('@ud-viz/shared');
 const path = require('path');
 const SocketWrapper = require('./SocketWrapper');
 
+/**
+ * @classdesc - {@link workerThreads} wrapper, different event can be send/receive by the thread
+ */
 const Thread = class {
   /**
    * Manage communication between socket wrapper and worker thread

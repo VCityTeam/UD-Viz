@@ -4,9 +4,11 @@ const Thread = require('./Thread');
 const SocketWrapper = require('./SocketWrapper');
 const GameThread = require('./Thread');
 
+/**
+ * @classdesc Websocket game service, create threads to simulate gameobject + socket
+ */
 module.exports = class SocketService {
   /**
-   * Websocket game service
    *
    * @param {import('http').Server} httpServer - http server
    * @param {object} options - options

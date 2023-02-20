@@ -2,6 +2,9 @@ const Shared = require('@ud-viz/shared');
 const Game = require('../Game');
 const THREE = require('three');
 
+/**
+ * @classdesc note game manager (add/remove socket game object + add note)
+ */
 module.exports = class GameManager extends Shared.Game.ScriptBase {
   init() {
     /**

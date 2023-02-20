@@ -7,6 +7,9 @@ import { InputManager } from '../Component/InputManager';
 import { AssetManager } from '../Component/AssetManager/AssetManager';
 import * as ExternalGame from '../Component/ExternalGame/ExternalGame';
 
+/**
+ * @classdesc Create a multi player game in a {@link Frame3DPlanar}
+ */
 export class MultiPlayerGamePlanar {
   /**
    *
@@ -91,7 +94,7 @@ export class MultiPlayerGamePlanar {
           stateJSON.timestamp
         );
 
-        console.log(state);
+        // console.log(state);
 
         this.interpolator.onFirstState(state);
         this.inputManager.startListening(this.frame3DPlanar.rootWebGL);

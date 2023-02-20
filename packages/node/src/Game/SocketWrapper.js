@@ -1,6 +1,9 @@
 const { Constant, Game } = require('@ud-viz/shared');
 const Socket = require('socket.io').Socket;
 
+/**
+ * @classdesc - wrapper of a socket {@link Socket} + buffer of the last game state send to client (allow to send stateDiff)
+ */
 module.exports = class SocketWrapper {
   /**
    * Send game state to client
