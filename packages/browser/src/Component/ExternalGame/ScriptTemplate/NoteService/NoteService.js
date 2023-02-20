@@ -230,8 +230,6 @@ class MenuEditNote {
     this.textAreaMessage = document.createElement('textarea');
     this.rootHtml.appendChild(this.textAreaMessage);
 
-    this.textAreaMessage.focus(); // cant focus textarea force it there (patch)
-
     this.closeButton = document.createElement('button');
     this.closeButton.innerHTML = 'Close';
     this.rootHtml.appendChild(this.closeButton);
@@ -239,6 +237,8 @@ class MenuEditNote {
     this.addNoteButton = document.createElement('button');
     this.addNoteButton.innerHTML = 'Add note';
     this.rootHtml.appendChild(this.addNoteButton);
+
+    this.textAreaMessage.focus(); // cant focus textarea force it there (patch)
   }
 
   /**
