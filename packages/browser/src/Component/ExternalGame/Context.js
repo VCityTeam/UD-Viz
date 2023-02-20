@@ -541,7 +541,6 @@ export class Context {
    *
    * @param {string} id - id of script
    * @returns {ExternalScriptBase|null} - first external script with id or null if none are found
-   * @todo need refacto
    */
   findExternalScriptWithID(id) {
     let result = null;
@@ -569,14 +568,19 @@ export class Context {
    *
    * @param {string} id - id of script
    * @returns {Game.Object3D|null} - first game object3D with external script id or null if none are found
-   * @todo need refacto
    */
-  findGOWithBrowserScriptID(id) {
+  findGameObjectWithExternalScriptID(id) {
     let result = null;
     this.object3D.traverse(function (child) {
       if (!child.isGameObject3D) return;
 
-      const scripts = child.fetchBrowserScripts();
+      const externalScriptComp = child.getComponent(
+        Game.Component.ExternalScript.TYPE
+      );
+
+      if (!externalScriptComp) return;
+
+      const scripts = externalScriptComp.getController().getScripts();
       if (scripts && scripts[id]) {
         result = child;
         return true;
@@ -588,7 +592,7 @@ export class Context {
   }
 
   /**
-   * @todo need refacto
+   * @todo need refacto will surely be useless since editor in imuv is going to be rebuild
    */
   forceUpdate() {
     console.error('DEPRECATED');
