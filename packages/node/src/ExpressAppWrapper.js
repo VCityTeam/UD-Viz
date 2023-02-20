@@ -48,7 +48,7 @@ const ExpressAppWrapper = class {
    * @param {object} config - object to configure express app
    * @param {string} config.folder - path of the folder to serve
    * @param {number} config.port - port on which server should listen
-   * @param {boolean} [config.withGameSocketService=false] - initialize a gamesocketservice
+   * @param {boolean} [config.withDefaultGameSocketService=false] - initialize a gamesocketservice
    * @returns {Promise} - promise resolving when server is listening
    */
   start(config) {
@@ -97,7 +97,7 @@ const ExpressAppWrapper = class {
           'folder ' + config.folder
         );
 
-        if (config.withGameSocketService) {
+        if (config.withDefaultGameSocketService) {
           // initialize a default game socket service
 
           this.gameSocketService = new Game.SocketService(this.httpServer);

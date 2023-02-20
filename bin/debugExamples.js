@@ -18,7 +18,7 @@ const app = new ExpressAppWrapper();
 app.start({
   folder: './',
   port: 8000,
-  withGameSocketService: true,
+  withDefaultGameSocketService: true,
 });
 
 // run a build debug browser bundle
