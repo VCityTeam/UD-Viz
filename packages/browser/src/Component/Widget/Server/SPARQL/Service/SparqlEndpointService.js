@@ -1,4 +1,5 @@
 import { RequestService } from '../../Component/RequestService';
+import { SparqlEngineRequest } from '../Model/SparqlEngineRequest';
 
 /**
  * The SPARQL Endpoint Service which contains connection information and functions
@@ -11,18 +12,17 @@ export class SparqlEndpointService extends RequestService {
    *
    * @param {object} configSparql The sparqlModule configuration.
    * @param {string} configSparql.url The SPARQL server url.
-   * @param {string} configSparql.url_parameters The SPARQL endpoint url parameters.
    */
   constructor(configSparql) {
     super();
 
-    if (!configSparql || !configSparql.url || !configSparql.url_parameters) {
+    if (!configSparql || !configSparql.url) {
       console.log(configSparql);
-      throw 'The given "sparqlModule" configuration is incorrect.';
+      throw 'SPARQL endpoint engine config is incorrect.';
     }
     // wget "http://localhost:9999/strabon/Query?handle=download&query=%0ASELECT+*%0AWHERE+%7B+%0A%09%3Fs+%3Fp+%3Fo%09%0A%7D%0A&format=SPARQL/JSON&view=HTML"
     this.url = configSparql.url;
-    this.url_parameters = configSparql.url_parameters;
+    this.engine = configSparql.engine;
   }
 
   /**
@@ -33,10 +33,15 @@ export class SparqlEndpointService extends RequestService {
    * @returns {Promise<object>} If the request is not successful, it throws an error. If successful, it returns the request.
    */
   async querySparqlEndpoint(query) {
-    const full_url = this.url + this.url_parameters + encodeURIComponent(query);
     const options = {};
+    const sparqlEngineRequest = new SparqlEngineRequest({
+      url: this.url,
+      query: query,
+      engine: this.engine,
+      options: options
+    })
 
-    const request = await this.request('GET', full_url, options);
+    const request = await this.request(sparqlEngineRequest.method, sparqlEngineRequest.fullUrl, sparqlEngineRequest.options);
 
     if (request.status !== 200) {
       throw 'Could not query SPARQL endpoint: ' + request.statusText;

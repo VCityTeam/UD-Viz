@@ -106,15 +106,15 @@ The module takes two configuration files:
 The minimal configuration required to make a SPARQL server class work is the following :
 ```json
 {
-  "url": "http://localhost:9999/strabon/",
-  "url_parameters": "Query?handle=download&format=SPARQL/JSON&view=HTML&query="
+  "url": "http://localhost:9999/",
+  "engine": "strabon"
 }
 ```
 
-- `sparqlModule.url` represents the base URL for the server. 
-- `sparqlModule.url_parameters` represents the URL parameters to query the server via an HTTP request.
+- `sparqlModule.url` represents the base URL for the SPARQL server. 
+- `sparqlModule.engine` represents the SPARQL engine used
 
-The SPARQL Query Service for interfacing with Strabon expects the URL to correspond to a REST API, where query routes are in the form `{url}{url_parameters}`
+The SPARQL Query Service for interfacing with the selected SPARQL engine expects the URL to correspond to a REST API, where query routes are in the form `{url}`
 
 Parameters can also be configured to define custom queries in the interface:
 See the [SparqlEndpointService](https://vcityteam.github.io/UD-Viz/html/browser/SparqlEndpointService.html) documentation for more information
