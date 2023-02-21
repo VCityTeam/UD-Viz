@@ -11,6 +11,7 @@ import * as itowns from 'itowns';
 import * as THREE from 'three';
 
 import './SparqlQueryWindow.css';
+import { Workspace } from '../Model/Workspace';
 
 /**
  * The SPARQL query window class which provides the user interface for querying
@@ -82,7 +83,7 @@ export class SparqlQueryWindow extends EventSender {
      *
      * @type {Table}
      */
-    this.workspace = new WorkspaceGraph(this, configSparqlWidget);
+    this.workspace = new Workspace(this, configSparqlWidget);
 
     /**
      * Store the queries of the SparqlQueryWindow from the config.

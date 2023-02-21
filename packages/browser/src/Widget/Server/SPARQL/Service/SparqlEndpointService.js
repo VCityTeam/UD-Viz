@@ -9,20 +9,20 @@ export class SparqlEndpointService extends RequestService {
    * Creates a SPARQLEndpointService object for communicating with a SPARQL Endpoint
    * based on a given configuration
    *
-   * @param {object} configSparql The sparqlModule configuration.
-   * @param {string} configSparql.url The SPARQL server url.
-   * @param {string} configSparql.url_parameters The SPARQL endpoint url parameters.
+   * @param {object} configSparqlServer The sparqlModule configuration.
+   * @param {string} configSparqlServer.url The SPARQL server url.
+   * @param {string} configSparqlServer.url_parameters The SPARQL endpoint url parameters.
    */
-  constructor(configSparql) {
+  constructor(configSparqlServer) {
     super();
 
-    if (!configSparql || !configSparql.url || !configSparql.url_parameters) {
-      console.log(configSparql);
-      throw 'The given "sparqlModule" configuration is incorrect.';
+    if (!configSparqlServer || !configSparqlServer.url || !configSparqlServer.url_parameters) {
+      console.log(configSparqlServer);
+      throw 'The given "configSparqlServer" configuration is incorrect.';
     }
     // wget "http://localhost:9999/strabon/Query?handle=download&query=%0ASELECT+*%0AWHERE+%7B+%0A%09%3Fs+%3Fp+%3Fo%09%0A%7D%0A&format=SPARQL/JSON&view=HTML"
-    this.url = configSparql.url;
-    this.url_parameters = configSparql.url_parameters;
+    this.url = configSparqlServer.url;
+    this.url_parameters = configSparqlServer.url_parameters;
   }
 
   /**
