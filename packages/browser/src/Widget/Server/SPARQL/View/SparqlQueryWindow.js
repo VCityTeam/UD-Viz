@@ -50,6 +50,13 @@ export class SparqlQueryWindow extends EventSender {
     this.itownsView = itownsView;
 
     /**
+     * The Temporal Provider
+     *
+     * @type {TemporalProvider}
+     */
+    this.temporalProvider = temporalProvider;
+
+    /**
      *A reference to the JsonRenderer class
      *
      * @type {JsonRenderer}
@@ -69,6 +76,13 @@ export class SparqlQueryWindow extends EventSender {
      * @type {Table}
      */
     this.table = new Table(this);
+
+    /**
+     * Contains the D3 table to display RDF data.
+     *
+     * @type {Table}
+     */
+    this.workspace = new WorkspaceGraph(this, configSparqlWidget);
 
     /**
      * Store the queries of the SparqlQueryWindow from the config.
@@ -232,6 +246,10 @@ export class SparqlQueryWindow extends EventSender {
         );
         this.dataView.style['height'] = '500px';
         this.dataView.style['overflow'] = 'scroll';
+        break;
+      case 'workspace':
+        this.workspace.update(this.workspace.formatResponseDataAsGraph(response));
+        this.dataView.append(this.workspace.canvas);
         break;
       default:
         console.error('This result format is not supported: ' + view_type);

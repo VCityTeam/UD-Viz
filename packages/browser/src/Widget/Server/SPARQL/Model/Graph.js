@@ -43,7 +43,7 @@ export class Graph {
   // / Data Functions ///
 
   /**
-   * Create a new graph based on an graph dataset.
+   * Create a new graph based on a graph dataset.
    *
    * @param {object} response an RDF JSON object.
    */
@@ -373,6 +373,7 @@ export class Graph {
     console.debug(graphData);
     return graphData;
   }
+
   /**
    * Get the id (or index) of a uri from the typeList. Each type in the type list is used
    * to color nodes in the graph. If the uri does not exist in the typeList, add the uri.
