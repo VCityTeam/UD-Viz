@@ -492,7 +492,7 @@ function objectOverWrite(jsonOverWrited, jsonModel) {
 function objectParse(json, cb) {
   for (const key in json) {
     if (json[key] instanceof Object) {
-      this.parse(json[key], cb);
+      objectParse(json[key], cb);
     } else {
       cb(json, key);
     }

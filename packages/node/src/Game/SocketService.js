@@ -5,6 +5,11 @@ const SocketWrapper = require('./SocketWrapper');
 const GameThread = require('./Thread');
 
 /**
+ * @callback SocketConnectionCallback
+ * @param {socketio.Socket} socket
+ */
+
+/**
  * @classdesc Websocket game service, create threads to simulate gameobject + socket
  */
 module.exports = class SocketService {
@@ -14,6 +19,7 @@ module.exports = class SocketService {
    * @param {object} options - options
    * @param {number} [options.pingInterval=2000] - ping interval of the socket connection in ms
    * @param {number} [options.pingTimeout=5000] - ping timeout in ms
+   * @param {Array<SocketConnectionCallback>} [options.socketConnectionCallbacks=[]] - callback to apply when socket is connected
    */
   constructor(httpServer, options = {}) {
     /**
@@ -23,6 +29,9 @@ module.exports = class SocketService {
       pingInterval: options.pingInterval || 2000,
       pingTimeout: options.pingTimeout || 5000,
     });
+
+    /** @type {Array<SocketConnectionCallback>} */
+    this.socketConnectionCallbacks = options.socketConnectionCallbacks || [];
 
     this.io.on('connection', this.onSocketConnection.bind(this));
 
@@ -64,14 +73,20 @@ module.exports = class SocketService {
    *
    * @param {string[]} gameScriptsPath - class needed by game context
    * @param {Game.Object3D} gameObjects3D - gameobject3D to simulate
+   * @param {string} threadProcessPath - path to the thread process
    * @param {string=} entryGameObject3DUUID - uuid of default gameobject to connect socket connected
    */
-  initializeGameThreads(gameScriptsPath, gameObjects3D, entryGameObject3DUUID) {
+  initializeGameThreads(
+    gameScriptsPath,
+    gameObjects3D,
+    threadProcessPath,
+    entryGameObject3DUUID
+  ) {
     // default gameobject3D when socket connect
     this.entryGameObject3DUUID = entryGameObject3DUUID || gameObjects3D[0].uuid;
 
     gameObjects3D.forEach((gameObject3D) => {
-      this.threads[gameObject3D.uuid] = new Thread();
+      this.threads[gameObject3D.uuid] = new Thread(threadProcessPath);
       this.threads[gameObject3D.uuid].post(Thread.EVENT.INIT, {
         gameScriptsPath: gameScriptsPath,
         gameObject3D: gameObject3D,
@@ -89,7 +104,7 @@ module.exports = class SocketService {
   }
 
   /**
-   *
+   *init
    * @param {socketio.Socket} socket - new socket connected to game service
    */
   onSocketConnection(socket) {
@@ -98,6 +113,11 @@ module.exports = class SocketService {
 
     // wait for client to be ready for game
     socket.on(Constant.WEBSOCKET.MSG_TYPE.READY_FOR_GAME, () => {
+      if (!this.threads[this.entryGameObject3DUUID]) {
+        console.warn('no thread');
+        return;
+      }
+
       this.threads[this.entryGameObject3DUUID].addSocketWrapper(socketWrapper);
     });
 
@@ -122,6 +142,11 @@ module.exports = class SocketService {
           );
         }
       }
+    });
+
+    // apply callbacks
+    this.socketConnectionCallbacks.forEach((c) => {
+      c(socket);
     });
   }
 };

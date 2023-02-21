@@ -1,7 +1,7 @@
 const workerThreads = require('worker_threads');
 const { Data, Constant } = require('@ud-viz/shared');
-const path = require('path');
 const SocketWrapper = require('./SocketWrapper');
+const path = require('path');
 
 /**
  * @classdesc - {@link workerThreads} wrapper, different event can be send/receive by the thread
@@ -9,15 +9,16 @@ const SocketWrapper = require('./SocketWrapper');
 const Thread = class {
   /**
    * Manage communication between socket wrapper and worker thread
+   *
+   * @param {string} threadProcessPath - path to the thread process
    */
-  constructor() {
+  constructor(threadProcessPath) {
     /**
      *  worker
      * 
      @type {workerThreads.Worker}*/
-    this.worker = new workerThreads.Worker(
-      path.resolve(__dirname, './ThreadProcess.js')
-    );
+
+    this.worker = new workerThreads.Worker(threadProcessPath);
 
     /** @type {Object<string,Function>} */
     this.callbacks = {};
