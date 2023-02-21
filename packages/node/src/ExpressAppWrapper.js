@@ -1,12 +1,17 @@
 const express = require('express');
 const http = require('http'); // just for doc
-const { stringReplace } = require('string-replace-middleware');
 const udvizVersion = require('@ud-viz/node/package.json').version;
 const Shared = require('@ud-viz/shared');
 const Game = require('./Game/Game');
 const path = require('path');
 
 const NODE_ENV = process.env.NODE_ENV || 'development';
+
+const {
+  stringReplace,
+} = require('string-replace-middleware/dist/string-replace-middleware.cjs.' +
+  NODE_ENV +
+  '.js'); // import a commonjs version of string replace
 
 const ExpressAppWrapper = class {
   /**
@@ -129,7 +134,7 @@ const ExpressAppWrapper = class {
             ]
           );
 
-          console.log('GameSocketService initialized');
+          console.log('Default GameSocketService initialized');
         }
 
         resolve();

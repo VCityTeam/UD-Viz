@@ -390,6 +390,9 @@ Object3D.parseJSON = function (json) {
 
   // check if object
   if (json.object) {
+    if (!json.metadata) {
+      console.info('no metadata');
+    }
     // metadata should be in json.metadata
     // do stuff like versioning then return the object
     return json.object;

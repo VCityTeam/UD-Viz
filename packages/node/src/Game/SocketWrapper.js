@@ -9,8 +9,9 @@ module.exports = class SocketWrapper {
    * Send game state to client
    *
    * @param {Socket} socket - socket to wrap
+   * @param {object=} userData - user data
    */
-  constructor(socket) {
+  constructor(socket, userData = {}) {
     /**
      * socket embeded
      *  
@@ -22,6 +23,9 @@ module.exports = class SocketWrapper {
      * 
      @type {Game.State|null} */
     this.lastStateSend = null;
+
+    /** @type {object} */
+    this.userData = userData;
   }
 
   /**

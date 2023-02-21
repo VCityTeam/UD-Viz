@@ -41,7 +41,7 @@ export class SocketIOWrapper {
 
       // disconnect
       this.socket.on('disconnect', (reason) => {
-        alert('Disconnected from server. reason is ', reason);
+        console.info('Disconnected from server. reason is ', reason);
       });
     });
   }
