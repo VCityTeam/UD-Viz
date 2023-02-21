@@ -24,7 +24,7 @@ export class Graph {
       !configSparqlWidget.fontSize
     ) {
       console.log(configSparqlWidget);
-      throw 'The given "sparqlModule" configuration is incorrect.';
+      throw 'The given "configSparqlWidget" configuration is incorrect.';
     }
 
     this.window = window;
