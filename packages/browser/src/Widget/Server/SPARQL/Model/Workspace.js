@@ -16,7 +16,7 @@ export class Workspace extends Graph {
    *                                       This doesn't (yet) affect the legend font size.
    */
   constructor(window, configSparqlWidget) {
-    this.super(window, configSparqlWidget);
+    super(window, configSparqlWidget);
   }
 
   /**
