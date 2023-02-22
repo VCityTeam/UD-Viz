@@ -10,9 +10,15 @@ const GameThread = require('./Thread');
  */
 
 /**
+ * @callback SocketReadyForGameCallback
+ * @param {socketio.Socket} socket
+ * @param {Thread} thread
+ */
+
+/**
  * @classdesc Websocket game service, create threads to simulate gameobject + socket
  */
-module.exports = class SocketService {
+const SocketService = class {
   /**
    *
    * @param {import('http').Server} httpServer - http server
@@ -20,6 +26,7 @@ module.exports = class SocketService {
    * @param {number} [options.pingInterval=2000] - ping interval of the socket connection in ms
    * @param {number} [options.pingTimeout=5000] - ping timeout in ms
    * @param {Array<SocketConnectionCallback>} [options.socketConnectionCallbacks=[]] - callback to apply when socket is connected
+   * @param {Array<SocketReadyForGameCallback>} [options.socketReadyForGameCallbacks=[]] - callback to apply when socket is ready for game
    */
   constructor(httpServer, options = {}) {
     /**
@@ -32,6 +39,10 @@ module.exports = class SocketService {
 
     /** @type {Array<SocketConnectionCallback>} */
     this.socketConnectionCallbacks = options.socketConnectionCallbacks || [];
+
+    /** @type {Array<SocketReadyForGameCallback>} */
+    this.socketReadyForGameCallbacks =
+      options.socketReadyForGameCallbacks || [];
 
     this.io.on('connection', this.onSocketConnection.bind(this));
 
@@ -117,6 +128,11 @@ module.exports = class SocketService {
       }
 
       this.threads[this.entryGameObject3DUUID].addSocketWrapper(socketWrapper);
+
+      // apply callbacks
+      this.socketReadyForGameCallbacks.forEach((c) => {
+        c(socket, this.threads[this.entryGameObject3DUUID]);
+      });
     });
 
     socket.on('disconnect', () => {
@@ -148,3 +164,5 @@ module.exports = class SocketService {
     });
   }
 };
+
+module.exports = SocketService;

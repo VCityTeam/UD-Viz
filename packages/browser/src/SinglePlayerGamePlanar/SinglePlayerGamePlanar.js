@@ -57,6 +57,12 @@ export class SinglePlayerGamePlanar {
     this.inputManager = inputManager;
 
     /**
+     * interpolator to smooth comminucation between the two process
+     *
+      @type {Game.StateInterpolator} */
+    this.interpolator = new Game.StateInterpolator(options.interpolatorDelay);
+
+    /**
      * render audio external script context
      *
       @type {ExternalGame.Context} */
@@ -65,7 +71,7 @@ export class SinglePlayerGamePlanar {
       assetManager,
       inputManager,
       options.externalGameScriptClass || {},
-      { sceneConfig: options.sceneConfig }
+      { sceneConfig: options.sceneConfig, interpolator: this.interpolator }
     );
 
     if (options.gameOrigin) {
@@ -76,12 +82,6 @@ export class SinglePlayerGamePlanar {
       );
       this.externalGameContext.object3D.updateMatrixWorld();
     }
-
-    /**
-     * interpolator to smooth comminucation between the two process
-     *
-      @type {Game.StateInterpolator} */
-    this.interpolator = new Game.StateInterpolator(options.interpolatorDelay);
   }
 
   /**

@@ -15,7 +15,6 @@ module.exports = {
   ProcessInterval: require('./ProcessInterval'),
   /** @type {import("./EventSender").EventSender} */
   EventSender: require('./EventSender'),
-  /** @type {import("./Command").Command} */
   Command: require('./Command'),
   Game: {
     Context: require('./Game/Context').Context,
