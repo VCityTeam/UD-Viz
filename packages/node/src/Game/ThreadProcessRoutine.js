@@ -50,7 +50,10 @@ module.exports = function routine(gameScriptClass = {}) {
         gameContext.onCommands(commands);
         break;
       case Thread.EVENT.ADD_OBJECT3D:
-        gameContext.addObject3D(data.object3D, data.parentUUID);
+        gameContext.addObject3D(
+          new Game.Object3D(data.object3D),
+          data.parentUUID
+        );
         break;
       case Thread.EVENT.ON_NEW_SOCKET_WRAPPER:
         gameContext.dispatch(Thread.EVENT.ON_NEW_SOCKET_WRAPPER, data);

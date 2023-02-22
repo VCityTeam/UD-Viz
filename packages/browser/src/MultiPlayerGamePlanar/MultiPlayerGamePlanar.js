@@ -1,5 +1,5 @@
 import { SocketIOWrapper } from '../Component/SocketIOWrapper';
-import { Constant, Game } from '@ud-viz/shared';
+import { Constant, Data, Game } from '@ud-viz/shared';
 import { Context } from '../Component/ExternalGame/Context';
 import { Frame3DPlanar } from '../Component/Frame3D/Frame3DPlanar';
 import { RequestAnimationFrameProcess } from '../Component/RequestAnimationFrameProcess';
@@ -46,6 +46,12 @@ export class MultiPlayerGamePlanar {
     this.inputManager = inputManager;
 
     /** 
+     * interpolator to smooth comminucation between the two process
+     *  
+     @type {Game.StateInterpolator} */
+    this.interpolator = new Game.StateInterpolator(options.interpolatorDelay);
+
+    /** 
      * render audio external script context
      * 
      @type {Context} */
@@ -57,6 +63,7 @@ export class MultiPlayerGamePlanar {
       {
         sceneConfig: options.sceneConfig,
         socketIOWrapper: this.socketIOWrapper,
+        interpolator: this.interpolator,
       }
     );
 
@@ -68,12 +75,6 @@ export class MultiPlayerGamePlanar {
       );
       this.externalGameContext.object3D.updateMatrixWorld();
     }
-
-    /** 
-     * interpolator to smooth comminucation between the two process
-     *  
-     @type {Game.StateInterpolator} */
-    this.interpolator = new Game.StateInterpolator(options.interpolatorDelay);
   }
 
   /**
@@ -83,6 +84,14 @@ export class MultiPlayerGamePlanar {
     this.externalGameContext.sendCommandToGameContext = (cmds) => {
       this.socketIOWrapper.emit(Constant.WEBSOCKET.MSG_TYPE.COMMANDS, cmds);
     };
+
+    this.socketIOWrapper.on(
+      Constant.WEBSOCKET.MSG_TYPE.EXTERNAL_CONTEXT_USER_DATA,
+      (data) => {
+        Data.objectOverWrite(this.externalGameContext.userData, data);
+        console.log(this.externalGameContext.userData);
+      }
+    );
 
     // start listening on socket events
     this.socketIOWrapper.on(
@@ -94,7 +103,7 @@ export class MultiPlayerGamePlanar {
           stateJSON.timestamp
         );
 
-        // console.log(state);
+        console.log(state);
 
         this.interpolator.onFirstState(state);
         this.inputManager.startListening(this.frame3DPlanar.rootWebGL);

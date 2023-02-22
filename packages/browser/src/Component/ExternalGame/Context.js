@@ -45,6 +45,8 @@ export class Context {
    * @param {Object<string,ExternalScriptBase>} externalGameScriptClass - custom external script {@link ExternalScriptBase}
    * @param {object} options - options of context
    * @param {object} options.userData - user data of context
+   * @param {object} options.socketIOWrapper - socket io wrapper if multi
+   * @param {object} options.interpolator - interpolator
    * @param {SceneConfig} options.sceneConfig - config of the scene 3D
    */
   constructor(
@@ -87,8 +89,14 @@ export class Context {
     /**
      * socket io wrapper
      *  
-      @type {import('../SocketIOWrapper')}  */
+      @type {import('../SocketIOWrapper')|null}  */
     this.socketIOWrapper = options.socketIOWrapper || null;
+
+    /**
+     * interpolator
+     *  
+      @type {object|null}  */
+    this.interpolator = options.interpolator || null;
 
     /**
      * root object3D
@@ -530,7 +538,7 @@ export class Context {
     if (!constructor) {
       console.log('script loaded');
       for (const id in this.externalGameScriptClass) {
-        console.log(this.externalGameScriptClass[id]);
+        console.log(this.externalGameScriptClass[id].name);
       }
       throw new Error('no script with id ' + id);
     }
@@ -540,11 +548,13 @@ export class Context {
   /**
    *
    * @param {string} id - id of script
+   * @param {Game.Object3D} [object3D=this.object3D] - object3D to traverse to find the external script (default is the root game object3D)
    * @returns {ExternalScriptBase|null} - first external script with id or null if none are found
    */
-  findExternalScriptWithID(id) {
+  findExternalScriptWithID(id, object3D = this.object3D) {
     let result = null;
-    this.object3D.traverse(function (child) {
+
+    object3D.traverse(function (child) {
       if (!child.isGameObject3D) return;
 
       const externalScriptComp = child.getComponent(

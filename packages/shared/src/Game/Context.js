@@ -480,6 +480,33 @@ const Context = class {
   getCommands() {
     return this.commands;
   }
+
+  /**
+   *
+   * @param {string} id - id of script
+   * @param {Object3D} [object3D=this.object3D] - object3D to traverse to find the game script (default is the root game object3D)
+   * @returns {ScriptBase|null} - first game script with id or null if none are found
+   */
+  findGameScriptWithID(id, object3D = this.object3D) {
+    let result = null;
+
+    object3D.traverse(function (child) {
+      if (!child.isGameObject3D) return;
+
+      const gameScriptComp = child.getComponent(GameScript.Component.TYPE);
+
+      if (!gameScriptComp) return;
+
+      const scripts = gameScriptComp.getController().getScripts();
+      if (scripts && scripts[id]) {
+        result = scripts[id];
+        return true;
+      }
+      return false;
+    });
+
+    return result;
+  }
 };
 
 /**
