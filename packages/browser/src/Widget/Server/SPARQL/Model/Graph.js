@@ -10,11 +10,11 @@ export class Graph {
    *
    * @param {SparqlQueryWindow} window the window this graph is attached to.
    * @param {object} configSparqlWidget The sparqlModule configuration.
-   * @param {number} configSparqlWidget.height The SVG height.
-   * @param {number} configSparqlWidget.width The SVG width.
+   * @param {number} configSparqlWidget.height The SVG canvas height.
+   * @param {number} configSparqlWidget.width The SVG canvas width.
    * @param {number} configSparqlWidget.fontSize The font size to use for node and link labels.
    * @param {object} configSparqlWidget.namespaceLabels Prefix declarations which will replace text labels in the Legend.
-   *                                       This doesn't (yet) affect the legend font size.
+   *                                                    This doesn't (yet) affect the legend font size.
    */
   constructor(window, configSparqlWidget) {
     if (
@@ -38,25 +38,104 @@ export class Graph {
       .attr('class', 'd3_graph')
       .attr('viewBox', [0, 0, this.width, this.height])
       .style('display', 'hidden');
+    this.data = undefined;
   }
 
   // / Data Functions ///
 
   /**
-   * Create a new graph based on a graph dataset.
+   * return a SPARQL endpoint query response formatted for a D3.js based graph.
    *
-   * @param {object} response an RDF JSON object.
+   * @param {object} response A JSON object returned by a SparqlEndpointResponseProvider.EVENT_ENDPOINT_RESPONSE_UPDATED event
+   * @returns {object} A data object formatted for constructing a D3.js graph svg
+   */
+  formatResponseData(response) {
+    const graphData = {
+      nodes: [
+        // { id: 'x', color_id: 1 },
+        // { id: 'y', color_id: 2, type:MyClass },
+      ],
+      links: [
+        // { source: 'x', target: 'y', label: 1 }
+      ],
+      legend: {
+        title: 'Legend',
+        content: [],
+      },
+      colorSetOrScale: d3.scaleOrdinal(d3.schemeCategory10),
+    };
+
+    /* If the query is formatted using subject, predicate, object, and optionally
+      subjectType and objectType variables the node color based on the type of the
+      subject or object's respective type */
+    if (
+      !response.head.vars.includes('subject') ||
+      !response.head.vars.includes('predicate') ||
+      !response.head.vars.includes('object')
+    ) {
+      throw(
+        'Missing endpoint response bindings for graph construction. Needs at least "subject", "predicate", "object". Found binding: ' + response.head.vars
+      );
+    }
+    for (const triple of response.results.bindings) {
+      if (
+        // if the subject doesn't exist yet
+        graphData.nodes.find((n) => n.id == triple.subject.value) ==
+        undefined
+      ) {
+        const node = { id: triple.subject.value };
+        if (
+          // if there is a subjectType assign a type and color id
+          triple.subjectType
+        ) {
+          node.type = triple.subjectType.value;
+          node.color_id = this.getNodeColorId(triple.subjectType.value);
+        }
+        graphData.nodes.push(node);
+      }
+      if (
+        // if the object doesn't exist yet
+        graphData.nodes.find((n) => n.id == triple.object.value) ==
+        undefined
+      ) {
+        const node = { id: triple.object.value };
+        if (
+          // if there is an objectType assign a color id
+          triple.objectType
+        ) {
+          node.type = triple.objectType.value;
+          node.color_id = this.getNodeColorId(triple.objectType.value);
+        }
+        graphData.nodes.push(node);
+      }
+      const link = {
+        source: triple.subject.value,
+        target: triple.object.value,
+        label: triple.predicate.value,
+      };
+      graphData.links.push(link);
+      graphData.legend.content = this.typeList;
+    }
+
+    console.debug(graphData);
+    return graphData;
+  }
+
+  /**
+   * Clear and update the d3 SVG canvas based on the data from a graph dataset.
+   *
+   * @param {object} response an RDF JSON object ideally formatted by this.formatResponseData().
    */
   update(response) {
-    const data = this.formatResponseData(response);
     this.clear();
+    this.data = this.formatResponseData(response);
 
-    const links = data.links.map((d) => Object.create(d));
-    const nodes = data.nodes.map((d) => Object.create(d));
-    const legend = data.legend;
+    const links = this.data.links.map((d) => Object.create(d));
+    const nodes = this.data.nodes.map((d) => Object.create(d));
+    const legend = this.data.legend;
     const setColor = function (d, default_color, override_color = undefined) {
-      if (override_color && data.colorSetOrScale) return override_color;
-      else if (data.colorSetOrScale) return data.colorSetOrScale(d);
+      if (override_color && this.data.colorSetOrScale) return override_color;
+      else if (this.data.colorSetOrScale) return this.data.colorSetOrScale(d);
       return default_color;
     };
 
@@ -264,114 +343,32 @@ export class Graph {
   }
 
   /**
-   * return a SPARQL endpoint query response formatted for a D3.js graph.
+   * Get a data node by index.
    *
-   * @param {object} response A JSON object returned by a SparqlEndpointResponseProvider.EVENT_ENDPOINT_RESPONSE_UPDATED event
-   * @returns {object} A data object formatted for constructing a D3.js graph svg
+   * @param {number} d the index of the node
+   * @returns {object} return the object that represents the datum of a node
    */
-  formatResponseData(response) {
-    const graphData = {
-      nodes: [
-        // { id: 'x', color_id: 1 },
-        // { id: 'y', color_id: 2 },
-      ],
-      links: [
-        // { source: 'x', target: 'y', value: 1 }
-      ],
-      legend: {
-        title: '',
-        content: [],
-      },
-      colorSetOrScale: d3.scaleOrdinal(d3.schemeCategory10),
-    };
+  getNode(d) {
+    return this.data.nodes[d];
+  }
 
-    if (
-      response.head.vars.includes('subject') &&
-      response.head.vars.includes('predicate') &&
-      response.head.vars.includes('object')
-    ) {
+  /**
+   * Get all of the links associated with a node by node index.
+   *
+   * @param {number} d the index of the node
+   * @returns {Array<object>} return the objects that represents the datum of the links connected to a node
+   */
+  getLinks(d) {
+    let links = [];
+    const nodeID = this.getNode(d).id;
+    this.data.links.forEach(element => {
       if (
-        response.head.vars.includes('subjectType') &&
-        response.head.vars.includes('objectType')
-      ) {
-        /* If the query is formatted using subject, subjectType, predicate, object,
-           and objectType variables the node color based on the type of the subject
-           or object's respective type */
-        for (const triple of response.results.bindings) {
-          if (
-            // if the subject doesn't exist yet
-            graphData.nodes.find((n) => n.id == triple.subject.value) ==
-            undefined
-          ) {
-            const subjectTypeId = this.getNodeColorId(triple.subjectType.value);
-            const node = { id: triple.subject.value, color_id: subjectTypeId };
-            graphData.nodes.push(node);
-          }
-          if (
-            // if the object doesn't exist yet
-            graphData.nodes.find((n) => n.id == triple.object.value) ==
-            undefined
-          ) {
-            let objectTypeId;
-            if (
-              // if there is an objectType
-              triple.objectType
-            ) {
-              objectTypeId = this.getNodeColorId(triple.objectType.value);
-            } else {
-              // if not color it black
-              objectTypeId = undefined;
-            }
-            const node = { id: triple.object.value, color_id: objectTypeId };
-            graphData.nodes.push(node);
-          }
-          const link = {
-            source: triple.subject.value,
-            target: triple.object.value,
-            label: triple.predicate.value,
-          };
-          graphData.links.push(link);
-          graphData.legend.title = 'Legend';
-          graphData.legend.content = this.typeList;
-        }
-      } else {
-        /* If the query is formatted using just subject, predicate, and object,
-           variables the node color is left black */
-        for (const triple of response.results.bindings) {
-          if (
-            // if the subject doesn't exist yet
-            graphData.nodes.find((n) => n.id == triple.subject.value) ==
-            undefined
-          ) {
-            const node = { id: triple.subject.value, color_id: undefined };
-            graphData.nodes.push(node);
-          }
-          if (
-            // if the object doesn't exist yet
-            graphData.nodes.find((n) => n.id == triple.object.value) ==
-            undefined
-          ) {
-            const node = { id: triple.object.value, color_id: undefined };
-            graphData.nodes.push(node);
-          }
-          const link = {
-            source: triple.subject.value,
-            target: triple.object.value,
-            label: triple.predicate.value,
-          };
-          graphData.links.push(link);
-          graphData.legend.title = '';
-          graphData.colorSetOrScale = undefined;
-        }
+        element.source == nodeID ||
+        element.target == nodeID) {
+        links.push(element);
       }
-    } else {
-      console.warn(
-        'Unrecognized endpoint response format for graph construction'
-      );
-    }
-
-    console.debug(graphData);
-    return graphData;
+    });
+    return links;
   }
 
   /**
