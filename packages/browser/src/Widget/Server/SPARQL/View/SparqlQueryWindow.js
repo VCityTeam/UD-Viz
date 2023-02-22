@@ -51,11 +51,11 @@ export class SparqlQueryWindow extends EventSender {
     this.itownsView = itownsView;
 
     /**
-     * The Temporal Provider
+     * The Temporal Providers associated with each potential scenario
+     * @type {Array<TemporalProvider>} 
      *
-     * @type {TemporalProvider}
      */
-    this.temporalProvider = temporalProvider;
+    this.temporalProviders = temporalProviders;
 
     /**
      *A reference to the JsonRenderer class
@@ -79,7 +79,7 @@ export class SparqlQueryWindow extends EventSender {
     this.table = new Table(this);
 
     /**
-     * Contains the D3 table to display RDF data.
+     * Contains the D3 table to display Workspace RDF data.
      *
      * @type {Table}
      */
