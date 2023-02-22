@@ -249,7 +249,7 @@ export class SparqlQueryWindow extends EventSender {
         this.dataView.style['overflow'] = 'scroll';
         break;
       case 'workspace':
-        this.workspace.update(this.workspace.formatResponseDataAsGraph(response));
+        this.workspace.update(response);
         this.dataView.append(this.workspace.canvas);
         break;
       default:
