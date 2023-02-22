@@ -77,7 +77,6 @@ module.exports = class SocketService {
    * @param {string=} entryGameObject3DUUID - uuid of default gameobject to connect socket connected
    */
   initializeGameThreads(
-    gameScriptsPath,
     gameObjects3D,
     threadProcessPath,
     entryGameObject3DUUID
@@ -88,7 +87,6 @@ module.exports = class SocketService {
     gameObjects3D.forEach((gameObject3D) => {
       this.threads[gameObject3D.uuid] = new Thread(threadProcessPath);
       this.threads[gameObject3D.uuid].post(Thread.EVENT.INIT, {
-        gameScriptsPath: gameScriptsPath,
         gameObject3D: gameObject3D,
       });
 
