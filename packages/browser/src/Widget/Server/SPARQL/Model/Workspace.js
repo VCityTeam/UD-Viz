@@ -70,7 +70,6 @@ export class Workspace extends Graph {
       .attr('stroke', (d) => setColor(d.color_id, '#ddd', '#111'))
       .attr('fill', (d) => setColor(d.color_id, 'black'))
       .on('click', (event, d) => {
-
         this.window.sendEvent(
           Workspace.EVENT_WORKSPACE_NODE_CLICKED,
           d.index
@@ -135,7 +134,7 @@ export class Workspace extends Graph {
       .append('text')
       .text(function (d) {
         const uri = tokenizeURI(d.id);
-        return uri.id;
+        return uri.localname;
       })
       .style('text-anchor', 'middle')
       .style('font-family', 'Arial')
@@ -155,7 +154,7 @@ export class Workspace extends Graph {
       .append('text')
       .text(function (d) {
         const label = tokenizeURI(d.label);
-        return label.id;
+        return label.localname;
       })
       .style('text-anchor', 'middle')
       .style('font-family', 'Arial')
@@ -230,6 +229,60 @@ export class Workspace extends Graph {
       .text((d) => d)
       .style('fill', 'FloralWhite')
       .style('font-size', '14px');
+  }
+
+  /**
+   * Given the index of a node, return the node of the first Scenario links to it using Scenario.versionMember.
+   * The uri should belong to a node of type Version. 
+   *
+   * @param {string} d the index of the Version node
+   * @returns {object|undefined} return the object that represents the datum of a node
+   */
+  getVersionScenarioByIndex(d) {
+    const uri = this.getNodeByIndex(d).id;
+    return getVersionScenarioByUri(uri);
+  }
+
+  /**
+   * Given the index of a node, return the node of the first Scenario links to it using Scenario.versionMember.
+   * The uri should belong to a node of type Version. 
+   *
+   * @param {string} uri the URI of the Version node
+   * @returns {object|undefined} return the object that represents the datum of a node
+   */
+  getVersionScenarioByUri(uri) {
+    const memberLink = this.data.links.find(element => {
+      return (
+        tokenizeURI(element.label).localname == 'Scenario.versionMember' &&
+        element.target == uri
+      );
+    });
+    if (memberLink) {
+      return this.getNodeByUri(memberLink.source);
+    }
+    console.warn(`No Scenario found for version with uri: ${uri}`)
+    return undefined;
+  }
+
+  /**
+   * Given the index of a node, return the node of the first Scenario links to it using Scenario.versionTransitionMember.
+   * The uri should belong to a node of type VersionTransition. 
+   *
+   * @param {string} uri the URI of the Version node
+   * @returns {object|undefined} return the object that represents the datum of a node
+   */
+  getVersionTransitionScenarioByUri(uri) {
+    const memberLink = this.data.links.find(element => {
+      return (
+        tokenizeURI(element.label).localname == 'Scenario.versionTransitionMember' &&
+        element.target == uri
+      );
+    });
+    if (memberLink) {
+      return this.getNodeByUri(memberLink.source);
+    }
+    console.warn(`No Scenario found for versionTransition with uri: ${uri}`)
+    return undefined;
   }
 
   /// EVENTS

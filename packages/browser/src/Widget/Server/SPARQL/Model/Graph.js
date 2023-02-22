@@ -236,7 +236,7 @@ export class Graph {
       .append('text')
       .text(function (d) {
         const uri = tokenizeURI(d.id);
-        return uri.id;
+        return uri.localname;
       })
       .style('text-anchor', 'middle')
       .style('font-family', 'Arial')
@@ -256,7 +256,7 @@ export class Graph {
       .append('text')
       .text(function (d) {
         const label = tokenizeURI(d.label);
-        return label.id;
+        return label.localname;
       })
       .style('text-anchor', 'middle')
       .style('font-family', 'Arial')
@@ -348,8 +348,20 @@ export class Graph {
    * @param {number} d the index of the node
    * @returns {object} return the object that represents the datum of a node
    */
-  getNode(d) {
+  getNodeByIndex(d) {
     return this.data.nodes[d];
+  }
+
+  /**
+   * Get a data node by uri.
+   *
+   * @param {number} uri the uri of the node
+   * @returns {object|undefined} return the object that represents the datum of a node
+   */
+  getNodeByUri(uri) {
+    return this.data.nodes.find(element => {
+      return element.id == uri;
+    });
   }
 
   /**
@@ -358,13 +370,23 @@ export class Graph {
    * @param {number} d the index of the node
    * @returns {Array<object>} return the objects that represents the datum of the links connected to a node
    */
-  getLinks(d) {
+  getLinksByIndex(d) {
+    const uri = this.getNodeByIndex(d).id;
+    return this.getLinksByUri(uri);
+  }
+
+  /**
+   * Get all of the links associated with a node by node uri.
+   *
+   * @param {number} uri the uri of the node
+   * @returns {Array<object>} return the objects that represents the datum of the links connected to a node
+   */
+  getLinksByUri(uri) {
     let links = [];
-    const nodeID = this.getNode(d).id;
     this.data.links.forEach(element => {
       if (
-        element.source == nodeID ||
-        element.target == nodeID) {
+        element.source == uri ||
+        element.target == uri) {
         links.push(element);
       }
     });
@@ -383,7 +405,7 @@ export class Graph {
     let prefixedId = uri;
     for (const namespace in this.knownNamespaceLabels) {
       if (namespace == tURI.namespace) {
-        prefixedId = `${this.knownNamespaceLabels[namespace]}:${tURI.id}`;
+        prefixedId = `${this.knownNamespaceLabels[namespace]}:${tURI.localname}`;
       }
     }
 
