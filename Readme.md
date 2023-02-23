@@ -76,8 +76,3 @@ npm run start
 
 After running go to [localhost:8000](http://localhost:8000).
 
-### Documentation
-
-[Online documentation](https://vcityteam.github.io/UD-Viz/html/index.html)
-
-Refer to this [Readme](./docs/Readme.md) to re-generate it and for more information.
