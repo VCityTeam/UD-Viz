@@ -25,6 +25,18 @@ export class CameraManager extends ExternalScriptBase {
      *
      @type {Target|null} */
     this.target = null;
+
+    /** 
+     * When computing camera transform obstacle is considered in the computation
+     *  
+     @type {THREE.Object3D} */
+    this.obstacle = null;
+
+    /** 
+     * Raycaster to avoid obstacle
+     *  
+     @type {THREE.Raycaster} */
+    this.raycaster = new THREE.Raycaster();
   }
 
   init() {
@@ -48,6 +60,14 @@ export class CameraManager extends ExternalScriptBase {
       this.context.frame3D.camera.quaternion.copy(quaternion);
       this.context.frame3D.camera.updateProjectionMatrix();
     }
+  }
+
+  /**
+   *
+   * @param {THREE.Object3D} value - obstacle
+   */
+  setObstacle(value) {
+    this.obstacle = value;
   }
 
   /**
@@ -76,6 +96,16 @@ export class CameraManager extends ExternalScriptBase {
     const dir = Game.Object3D.DefaultForward()
       .applyQuaternion(quaternionAngle)
       .applyQuaternion(quaternion);
+
+    // if there is an obstacle compute distance so camera postion is not inside obstacle
+    if (this.obstacle) {
+      // compute intersection
+      this.raycaster.set(position, dir.clone().negate());
+      const intersects = this.raycaster.intersectObject(this.obstacle, true);
+      if (intersects.length) {
+        distance = Math.min(distance, intersects[0].distance);
+      }
+    }
 
     position.sub(dir.setLength(distance));
     quaternion.multiply(
