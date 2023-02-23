@@ -1,6 +1,6 @@
 import { Game } from '@ud-viz/shared';
 import * as THREE from 'three';
-import { AssetManager, RenderData } from '../Component';
+import { AssetManager, RenderData } from '../../Component';
 
 export class RenderController extends Game.Component.Controller {
   /**

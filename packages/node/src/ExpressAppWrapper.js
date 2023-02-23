@@ -7,11 +7,16 @@ const path = require('path');
 
 const NODE_ENV = process.env.NODE_ENV || 'development';
 
-const {
-  stringReplace,
-} = require('string-replace-middleware/dist/string-replace-middleware.cjs.' +
-  NODE_ENV +
-  '.js'); // import a commonjs version of string replace
+let pathStringReplace = null;
+if (NODE_ENV === 'development') {
+  pathStringReplace =
+    'string-replace-middleware/dist/string-replace-middleware.cjs.development.js';
+} else {
+  pathStringReplace =
+    'string-replace-middleware/dist/string-replace-middleware.cjs.production.min.js';
+}
+
+const { stringReplace } = require(pathStringReplace); // import a commonjs version of string replace
 
 const ExpressAppWrapper = class {
   /**
@@ -107,9 +112,10 @@ const ExpressAppWrapper = class {
 
           this.gameSocketService = new Game.SocketService(this.httpServer);
 
+          console.error('deprecated use a bundle generation instead');
           const gameManagerScriptPath = path.resolve(
             __dirname,
-            './Game/ScriptTemplate/GameManager.js'
+            './Game/ScriptTemplate/NoteGameManager.js'
           );
 
           this.gameSocketService.initializeGameThreads(
@@ -124,7 +130,7 @@ const ExpressAppWrapper = class {
                 static: true,
                 components: {
                   GameScript: {
-                    idScripts: ['GameManager', 'NativeCommandManager'],
+                    idScripts: ['NoteGameManager', 'NativeCommandManager'],
                   },
                   ExternalScript: {
                     idScripts: ['NoteUI', 'CameraManager'],

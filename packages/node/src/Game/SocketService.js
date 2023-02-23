@@ -82,7 +82,6 @@ const SocketService = class {
   /**
    * Launch thread running game context simulation
    *
-   * @param {string[]} gameScriptsPath - class needed by game context
    * @param {Game.Object3D} gameObjects3D - gameobject3D to simulate
    * @param {string} threadProcessPath - path to the thread process
    * @param {string=} entryGameObject3DUUID - uuid of default gameobject to connect socket connected
@@ -113,7 +112,8 @@ const SocketService = class {
   }
 
   /**
-   *init
+   * init
+   *
    * @param {socketio.Socket} socket - new socket connected to game service
    */
   onSocketConnection(socket) {

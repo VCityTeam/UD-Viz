@@ -33,6 +33,8 @@ module.exports = class NativeCommandManager extends ScriptBase {
   }
 
   tick() {
+    // Check if there is map
+
     this.context.commands.forEach((command) => {
       if (!command.data) return;
 

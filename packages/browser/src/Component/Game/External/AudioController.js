@@ -1,6 +1,6 @@
 import { Game } from '@ud-viz/shared';
 import { Howl } from 'howler';
-import { AssetManager } from '../Component';
+import { AssetManager } from '../../AssetManager/AssetManager';
 const THREE = require('three');
 
 /** @class */

@@ -10,10 +10,10 @@ export { MultiPlayerGamePlanar } from './MultiPlayerGamePlanar/MultiPlayerGamePl
 
 // Template.Component
 
-import * as ExternalScriptTemplate from './Component/ExternalGame/ScriptTemplate/ScriptTemplate';
+import * as ExternalScriptTemplate from './Component/Game/External/ScriptTemplate/ScriptTemplate';
 export { ExternalScriptTemplate };
 
-import * as ExternalGame from './Component/ExternalGame/ExternalGame';
+import * as ExternalGame from './Component/Game/External/ExternalGame';
 export { ExternalGame };
 
 import * as FileUtil from './Component/FileUtil';

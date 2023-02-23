@@ -1,11 +1,10 @@
 import { SocketIOWrapper } from '../Component/SocketIOWrapper';
 import { Constant, Data, Game } from '@ud-viz/shared';
-import { Context } from '../Component/ExternalGame/Context';
 import { Frame3DPlanar } from '../Component/Frame3D/Frame3DPlanar';
 import { RequestAnimationFrameProcess } from '../Component/RequestAnimationFrameProcess';
 import { InputManager } from '../Component/InputManager';
 import { AssetManager } from '../Component/AssetManager/AssetManager';
-import * as ExternalGame from '../Component/ExternalGame/ExternalGame';
+import * as ExternalGame from '../Component/Game/External/ExternalGame';
 
 /**
  * @classdesc Create a multi player game in a {@link Frame3DPlanar}
@@ -55,7 +54,7 @@ export class MultiPlayerGamePlanar {
      * render audio external script context
      * 
      @type {Context} */
-    this.externalGameContext = new Context(
+    this.externalGameContext = new ExternalGame.Context(
       this.frame3DPlanar,
       assetManager,
       inputManager,
