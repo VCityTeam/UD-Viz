@@ -4,10 +4,11 @@
 [![CI status](https://travis-ci.com/VCityTeam/UD-Viz.svg?branch=master)](https://app.travis-ci.com/github/VCityTeam/UD-Viz)
 [![Documentation Status](https://readthedocs.org/projects/ansicolortags/badge/?version=latest)](http://vcityteam.github.io/UD-Viz/html/index.html)
 
-UD-Viz is a 3-package JavaScript framework for creating web applications for visualizing and interacting with geospatial 3D urban data. Code is [open source](https://en.wikipedia.org/wiki/Open_source?useskin=vector) on licence LGPL 2.1 ([LICENSE.md](./LICENSE.md)).
+UD-Viz is a 3-package JavaScript framework for creating web applications for visualizing and interacting with geospatial 3D urban data. 
 
 [Online documentation](https://vcityteam.github.io/UD-Viz/html/index.html) &mdash;
 [Developers](#developers) &mdash;
+[License](./LICENSE.md) &mdash;
 [Getting Started](#getting-started)
 
 **Online demos**:
