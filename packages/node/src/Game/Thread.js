@@ -1,7 +1,6 @@
 const workerThreads = require('worker_threads');
 const { Data, Constant } = require('@ud-viz/shared');
 const SocketWrapper = require('./SocketWrapper');
-const path = require('path');
 
 /**
  * @classdesc - {@link workerThreads} wrapper, different event can be send/receive by the thread

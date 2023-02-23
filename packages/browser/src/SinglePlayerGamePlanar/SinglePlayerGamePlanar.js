@@ -3,7 +3,7 @@ import { InputManager } from '../Component/InputManager';
 import { Frame3DPlanar } from '../Component/Frame3D/Frame3D';
 import { Game } from '@ud-viz/shared';
 import { RequestAnimationFrameProcess } from '../Component/RequestAnimationFrameProcess';
-import * as ExternalGame from '../Component/ExternalGame/ExternalGame';
+import * as ExternalGame from '../Component/Game/External/ExternalGame';
 
 /**
  * @classdesc Create a single player game in a {@link Frame3DPlanar}
