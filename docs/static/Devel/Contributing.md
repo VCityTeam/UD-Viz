@@ -9,7 +9,7 @@
 
 ## Coding style (Linter)
 
-The JavaScript files coding style is defined with [eslint](https://eslint.org/) through the [.eslintrc.js configuration file](.eslintrc.js).
+The JavaScript files coding style is defined with [eslint](https://eslint.org/) through the [.eslintrc.js configuration file](/.eslintrc.js).
 It can be checked (e.g. prior to a commit) with the `npm run eslint` command.
 Notice that UD-Viz coding style uses a unix `linebreak-style` (aka `LF` as newline character).
 
