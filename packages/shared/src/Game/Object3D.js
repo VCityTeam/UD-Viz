@@ -35,6 +35,9 @@ const Object3D = class extends THREE.Object3D {
      */
     this.isGameObject3D = true;
 
+    // default Game.Object3D Euler order
+    this.rotation.reorder('ZXY');
+
     json = Object3D.parseJSON(json);
 
     if (json.uuid != undefined) {
@@ -445,6 +448,34 @@ Object3D.moveForward = function (object3D, value) {
 Object3D.moveBackward = function (object3D, value) {
   object3D.position.add(
     Object3D.computeForward(object3D).negate().setLength(value)
+  );
+};
+
+/**
+ * Move letf object3D of a certain value
+ *
+ * @param {Object3D} object3D - object3D to move left
+ * @param {number} value - amount to move left
+ */
+Object3D.moveLeft = function (object3D, value) {
+  object3D.position.add(
+    Object3D.computeForward(object3D)
+      .applyAxisAngle(new THREE.Vector3(0, 0, 1), Math.PI * 0.5)
+      .setLength(value)
+  );
+};
+
+/**
+ * Move right object3D of a certain value
+ *
+ * @param {Object3D} object3D - object3D to move right
+ * @param {number} value - amount to move right
+ */
+Object3D.moveRight = function (object3D, value) {
+  object3D.position.add(
+    Object3D.computeForward(object3D)
+      .applyAxisAngle(new THREE.Vector3(0, 0, 1), -Math.PI * 0.5)
+      .setLength(value)
   );
 };
 
