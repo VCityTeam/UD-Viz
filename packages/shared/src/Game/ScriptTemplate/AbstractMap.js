@@ -15,11 +15,18 @@ module.exports = class AbstractMap extends ScriptBase {
     console.error('abstract method');
   }
 
+  tick() {
+    this.context.object3D.traverse((child) => {
+      if (child.isStatic()) return;
+      this.updateElevation(child);
+    });
+  }
+
   getHeightValue(x, y, size = this.heightmapSize, values = this.heightValues) {
     // TODO heightmap are square
     const pixelWorldUnit = {
-      width: this.conf.heightmap_geometry.size / size,
-      height: this.conf.heightmap_geometry.size / size,
+      width: this.variables.heightmap_geometry.size / size,
+      height: this.variables.heightmap_geometry.size / size,
     };
 
     const center = size / 2;
@@ -36,7 +43,7 @@ module.exports = class AbstractMap extends ScriptBase {
       j: Math.floor(coordHeightmap.y),
     };
 
-    const hMin = this.conf.heightmap_geometry.min;
+    const hMin = this.variables.heightmap_geometry.min;
 
     const getPixelHeight = function (i, j, weight) {
       // clamp
@@ -70,12 +77,12 @@ module.exports = class AbstractMap extends ScriptBase {
 
   updateElevation(gameObject) {
     const elevation = this.getHeightValue(
-      gameObject.getPosition().x,
-      gameObject.getPosition().y
+      gameObject.position.x,
+      gameObject.position.y
     );
 
     if (!isNaN(elevation)) {
-      gameObject.getPosition().z = OFFSET_ELEVATION + elevation;
+      gameObject.position.z = OFFSET_ELEVATION + elevation;
       return true;
     }
     return false;

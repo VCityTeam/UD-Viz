@@ -15,7 +15,7 @@ const defaultVariables = {
 /**
  * @classdesc - Manage native command
  */
-module.exports = class NativeCommandManager extends ScriptBase {
+const NativeCommandManager = class extends ScriptBase {
   constructor(context, object3D, variables) {
     const overWriteVariables = JSON.parse(JSON.stringify(defaultVariables));
     Data.objectOverWrite(overWriteVariables, variables);
@@ -33,8 +33,6 @@ module.exports = class NativeCommandManager extends ScriptBase {
   }
 
   tick() {
-    // Check if there is map
-
     this.context.commands.forEach((command) => {
       if (!command.data) return;
 
@@ -54,21 +52,19 @@ module.exports = class NativeCommandManager extends ScriptBase {
 
       switch (command.type) {
         case Constants.COMMAND.MOVE_FORWARD:
-          Object3D.moveForward(
+          NativeCommandManager.moveForward(
             updatedObject3D,
             this.variables.speedTranslate * this.context.dt
           );
-          updatedObject3D.setOutdated(true);
           break;
         case Constants.COMMAND.MOVE_BACKWARD:
-          Object3D.moveBackward(
+          NativeCommandManager.moveBackward(
             updatedObject3D,
             this.variables.speedTranslate * this.context.dt
           );
-          updatedObject3D.setOutdated(true);
           break;
         case Constants.COMMAND.ROTATE_LEFT:
-          Object3D.rotate(
+          NativeCommandManager.rotate(
             updatedObject3D,
             new THREE.Vector3(
               0,
@@ -76,10 +72,9 @@ module.exports = class NativeCommandManager extends ScriptBase {
               this.variables.speedRotate * this.context.dt
             )
           );
-          updatedObject3D.setOutdated(true);
           break;
         case Constants.COMMAND.ROTATE_RIGHT:
-          Object3D.rotate(
+          NativeCommandManager.rotate(
             updatedObject3D,
             new THREE.Vector3(
               0,
@@ -87,7 +82,6 @@ module.exports = class NativeCommandManager extends ScriptBase {
               -this.variables.speedRotate * this.context.dt
             )
           );
-          updatedObject3D.setOutdated(true);
           break;
         case Constants.COMMAND.UPDATE_TRANSFORM:
           if (command.data.position) {
@@ -261,20 +255,28 @@ module.exports = class NativeCommandManager extends ScriptBase {
 
     // move objectsMoving
     this.objectsMoving[Constants.COMMAND.MOVE_FORWARD_START].forEach((o) => {
-      Object3D.moveForward(o, this.variables.speedTranslate * this.context.dt);
-      o.setOutdated(true);
+      NativeCommandManager.moveForward(
+        o,
+        this.variables.speedTranslate * this.context.dt
+      );
     });
     this.objectsMoving[Constants.COMMAND.MOVE_BACKWARD_START].forEach((o) => {
-      Object3D.moveBackward(o, this.variables.speedTranslate * this.context.dt);
-      o.setOutdated(true);
+      NativeCommandManager.moveBackward(
+        o,
+        this.variables.speedTranslate * this.context.dt
+      );
     });
     this.objectsMoving[Constants.COMMAND.MOVE_LEFT_START].forEach((o) => {
-      Object3D.moveLeft(o, this.variables.speedTranslate * this.context.dt);
-      o.setOutdated(true);
+      NativeCommandManager.moveLeft(
+        o,
+        this.variables.speedTranslate * this.context.dt
+      );
     });
     this.objectsMoving[Constants.COMMAND.MOVE_RIGHT_START].forEach((o) => {
-      Object3D.moveRight(o, this.variables.speedTranslate * this.context.dt);
-      o.setOutdated(true);
+      NativeCommandManager.moveRight(
+        o,
+        this.variables.speedTranslate * this.context.dt
+      );
     });
   }
 
@@ -294,3 +296,73 @@ module.exports = class NativeCommandManager extends ScriptBase {
     }
   }
 };
+
+/**
+ * Move forward object3D of a certain value
+ *
+ * @param {Object3D} object3D - object3D to move forward
+ * @param {number} value - amount to move forward
+ */
+NativeCommandManager.moveForward = function (object3D, value) {
+  object3D.position.add(Object3D.computeForward(object3D).setLength(value));
+  object3D.setOutdated(true);
+};
+
+/**
+ * Move backward object3D of a certain value
+ *
+ * @param {Object3D} object3D - object3D to move backward
+ * @param {number} value - amount to move backward
+ */
+NativeCommandManager.moveBackward = function (object3D, value) {
+  object3D.position.add(
+    Object3D.computeForward(object3D).negate().setLength(value)
+  );
+  object3D.setOutdated(true);
+};
+
+/**
+ * Move letf object3D of a certain value
+ *
+ * @param {Object3D} object3D - object3D to move left
+ * @param {number} value - amount to move left
+ */
+NativeCommandManager.moveLeft = function (object3D, value) {
+  object3D.position.add(
+    Object3D.computeForward(object3D)
+      .applyAxisAngle(new THREE.Vector3(0, 0, 1), Math.PI * 0.5)
+      .setLength(value)
+  );
+  object3D.setOutdated(true);
+};
+
+/**
+ * Move right object3D of a certain value
+ *
+ * @param {Object3D} object3D - object3D to move right
+ * @param {number} value - amount to move right
+ */
+NativeCommandManager.moveRight = function (object3D, value) {
+  object3D.position.add(
+    Object3D.computeForward(object3D)
+      .applyAxisAngle(new THREE.Vector3(0, 0, 1), -Math.PI * 0.5)
+      .setLength(value)
+  );
+  object3D.setOutdated(true);
+};
+
+/**
+ * Rotate an object3D with an euler
+ *
+ * @param {Object3D} object3D - object3D to rotate
+ * @param {THREE.Euler} euler - euler to rotate from
+ */
+NativeCommandManager.rotate = function (object3D, euler) {
+  // shoudl check euler order
+  object3D.rotateZ(euler.z);
+  object3D.rotateX(euler.x);
+  object3D.rotateY(euler.y);
+  object3D.setOutdated(true);
+};
+
+module.exports = NativeCommandManager;

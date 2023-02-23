@@ -430,69 +430,6 @@ Object3D.computeBackward = function (object3D) {
 };
 
 /**
- * Move forward object3D of a certain value
- *
- * @param {Object3D} object3D - object3D to move forward
- * @param {number} value - amount to move forward
- */
-Object3D.moveForward = function (object3D, value) {
-  object3D.position.add(Object3D.computeForward(object3D).setLength(value));
-};
-
-/**
- * Move backward object3D of a certain value
- *
- * @param {Object3D} object3D - object3D to move backward
- * @param {number} value - amount to move backward
- */
-Object3D.moveBackward = function (object3D, value) {
-  object3D.position.add(
-    Object3D.computeForward(object3D).negate().setLength(value)
-  );
-};
-
-/**
- * Move letf object3D of a certain value
- *
- * @param {Object3D} object3D - object3D to move left
- * @param {number} value - amount to move left
- */
-Object3D.moveLeft = function (object3D, value) {
-  object3D.position.add(
-    Object3D.computeForward(object3D)
-      .applyAxisAngle(new THREE.Vector3(0, 0, 1), Math.PI * 0.5)
-      .setLength(value)
-  );
-};
-
-/**
- * Move right object3D of a certain value
- *
- * @param {Object3D} object3D - object3D to move right
- * @param {number} value - amount to move right
- */
-Object3D.moveRight = function (object3D, value) {
-  object3D.position.add(
-    Object3D.computeForward(object3D)
-      .applyAxisAngle(new THREE.Vector3(0, 0, 1), -Math.PI * 0.5)
-      .setLength(value)
-  );
-};
-
-/**
- * Rotate an object3D with an euler
- *
- * @param {Object3D} object3D - object3D to rotate
- * @param {THREE.Euler} euler - euler to rotate from
- */
-Object3D.rotate = function (object3D, euler) {
-  // shoudl check euler order
-  object3D.rotateZ(euler.z);
-  object3D.rotateX(euler.x);
-  object3D.rotateY(euler.y);
-};
-
-/**
  * Return a deep copy of object3D (uuids and name are regenerated)
  *
  * @param {Object3D} object3D - object3D to deep copy
