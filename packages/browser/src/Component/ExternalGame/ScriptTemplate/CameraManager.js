@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { Game } from '@ud-viz/shared';
+import { Game, Data } from '@ud-viz/shared';
 import { ExternalScriptBase } from '../Context';
 
 /**
@@ -7,9 +7,15 @@ import { ExternalScriptBase } from '../Context';
  * @param {number} dt - delta time movement
  */
 
+const defaultVariables = {
+  fov: 60,
+};
+
 export class CameraManager extends ExternalScriptBase {
   constructor(context, object3D, variables) {
-    super(context, object3D, variables);
+    const overWriteVariables = JSON.parse(JSON.stringify(defaultVariables));
+    Data.objectOverWrite(overWriteVariables, variables);
+    super(context, object3D, overWriteVariables);
 
     /** @type {Movement|null} */
     this.currentMovement = null;
@@ -19,6 +25,10 @@ export class CameraManager extends ExternalScriptBase {
      *
      @type {Target|null} */
     this.target = null;
+  }
+
+  init() {
+    this.context.frame3D.camera.fov = this.variables.fov;
   }
 
   /**
