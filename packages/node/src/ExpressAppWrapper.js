@@ -7,16 +7,18 @@ const path = require('path');
 
 const NODE_ENV = process.env.NODE_ENV || 'development';
 
-let pathStringReplace = null;
-if (NODE_ENV === 'development') {
-  pathStringReplace =
-    'string-replace-middleware/dist/string-replace-middleware.cjs.development.js';
-} else {
-  pathStringReplace =
-    'string-replace-middleware/dist/string-replace-middleware.cjs.production.min.js';
-}
+// not working
+// let pathStringReplace =
+//   'string-replace-middleware/dist/string-replace-middleware.cjs.';
+// if (NODE_ENV === 'development') {
+//   pathStringReplace += 'development.js';
+// } else {
+//   pathStringReplace += 'production.min.js';
+// }
 
-const { stringReplace } = require(pathStringReplace); // import a commonjs version of string replace
+const {
+  stringReplace,
+} = require('string-replace-middleware/dist/string-replace-middleware.cjs.development.js'); // import a commonjs version of string replace
 
 const ExpressAppWrapper = class {
   /**
