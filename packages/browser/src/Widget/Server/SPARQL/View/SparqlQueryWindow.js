@@ -202,22 +202,33 @@ export class SparqlQueryWindow extends EventSender {
     //   () => console.warn('DEPRECATED') // same reason as above
     // );
 
-    this.addEventListener(Table.EVENT_CELL_CLICKED, (cell_text) => {
-      const clickedResult = fetchC3DTileFeatureWithNodeText(cell_text);
+    this.addEventListener(Table.EVENT_CELL_CLICKED, (cell_text) =>
+      this.cityObjectProvider.selectCityObjectByBatchTable(
+        'gml_id',
+        getUriLocalname(cell_text)
+      )
+    );
+        
+    this.addEventListener(Workspace.EVENT_WORKSPACE_NODE_CLICKED, (index) => {
+      /* find the first scenario that contains the clicked node,
+       * find the temporal the geometry layer with the same name, and
+       * set the current time to the averaged timestamps linked to the node
+       */ 
+      console.debug(`workspace node clicked with localname ${getUriLocalname(this.workspace.getNodeByIndex(index).id)} and type ${getUriLocalname(this.workspace.getNodeByIndex(index).type)}`)
 
-      if (!clickedResult) return;
-
-      focusCameraOn(
-        this.itownsView,
-        this.itownsView.controls,
-        clickedResult.layer
-          .computeWorldBox3(clickedResult.feature)
-          .getCenter(new THREE.Vector3()),
-        {
-          verticalDistance: 200,
-          horizontalDistance: 200,
-        }
-      );
+      const scenarioLayer = this.workspace.getScenarioLayerByIndex(index, this.layerManager);
+      const scenarioTemporalProvider = this.temporalProviders.find( provider => {
+        return provider.tilesManager.layer == scenarioLayer;
+      });
+      console.debug(`found a scenarioLayer and a matching temporalProvider`);
+      console.debug(scenarioLayer);
+      console.debug(scenarioTemporalProvider);
+      
+      const timestamps = this.workspace.getBitemporalTimestampsByIndex(index);
+      const timestampAverage = (timestamps.validTo - timestamps.validFrom) / 2 + timestamps.validFrom;
+      console.debug(`timestamp average: ${timestampAverage}`);
+      scenarioTemporalProvider.currentTime = parseInt(timestampAverage);
+      scenarioTemporalProvider.changeVisibleTilesStates();
     });
   }
 
