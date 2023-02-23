@@ -6,6 +6,10 @@
 
 UD-Viz is a 3-package JavaScript framework for creating web applications for visualizing and interacting with geospatial 3D urban data. Code is [open source](https://en.wikipedia.org/wiki/Open_source?useskin=vector) on licence LGPL 2.1 ([LICENSE.md](./LICENSE.md)).
 
+[Online documentation](https://vcityteam.github.io/UD-Viz/html/index.html) &mdash;
+[Developers](#developers) &mdash;
+[Getting Started](#getting-started)
+
 **Online demos**:
 
 * [Ud-Viz examples](https://ud-viz.vcityliris.data.alpha.grandlyon.com/)
@@ -19,7 +23,6 @@ UD-Viz is a 3-package JavaScript framework for creating web applications for vis
 
 **Index**
 
-- [UD-Viz : Urban Data Vizualisation](#ud-viz--urban-data-vizualisation)
   - [Directory Hierarchy](#directory-hierarchy)
   - [Getting Started](#getting-started)
     - [Installing node/npm](#installing-nodenpm)
