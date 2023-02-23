@@ -3,6 +3,7 @@ import { SparqlEndpointResponseProvider } from '../Service/SparqlEndpointRespons
 import { CityObjectProvider } from '../../../CityObjects/ViewModel/CityObjectProvider';
 import { SparqlQueryWindow } from './SparqlQueryWindow';
 import { LayerManager } from '../../../../Itowns/LayerManager/LayerManager';
+import { Itowns } from '../../../../Itowns/Itowns';
 
 /**
  * The SPARQL WidgetView class which manages the SPARQL query window.
