@@ -1,5 +1,5 @@
 import * as d3 from 'd3';
-import { tokenizeURI } from './URI';
+import { getUriLocalname, tokenizeURI } from './URI';
 import { SparqlQueryWindow } from '../View/SparqlQueryWindow';
 
 export class Graph {
@@ -235,8 +235,7 @@ export class Graph {
       .enter()
       .append('text')
       .text(function (d) {
-        const uri = tokenizeURI(d.id);
-        return uri.localname;
+        return getUriLocalname(d.id);
       })
       .style('text-anchor', 'middle')
       .style('font-family', 'Arial')
@@ -255,8 +254,7 @@ export class Graph {
       .enter()
       .append('text')
       .text(function (d) {
-        const label = tokenizeURI(d.label);
-        return label.localname;
+        return getUriLocalname(d.label);
       })
       .style('text-anchor', 'middle')
       .style('font-family', 'Arial')

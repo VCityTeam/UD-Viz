@@ -1,5 +1,5 @@
 import * as d3 from 'd3';
-import { tokenizeURI } from './URI';
+import { getUriLocalname, tokenizeURI } from './URI';
 import { Graph } from './Graph';
 import { SparqlQueryWindow } from '../View/SparqlQueryWindow';
 
@@ -133,8 +133,7 @@ export class Workspace extends Graph {
       .enter()
       .append('text')
       .text(function (d) {
-        const uri = tokenizeURI(d.id);
-        return uri.localname;
+        return getUriLocalname(d.id);
       })
       .style('text-anchor', 'middle')
       .style('font-family', 'Arial')
@@ -153,8 +152,7 @@ export class Workspace extends Graph {
       .enter()
       .append('text')
       .text(function (d) {
-        const label = tokenizeURI(d.label);
-        return label.localname;
+        return getUriLocalname(d.label);
       })
       .style('text-anchor', 'middle')
       .style('font-family', 'Arial')
@@ -253,7 +251,7 @@ export class Workspace extends Graph {
   getVersionScenarioByUri(uri) {
     const memberLink = this.data.links.find(element => {
       return (
-        tokenizeURI(element.label).localname == 'Scenario.versionMember' &&
+        getUriLocalname(element.label) == 'Scenario.versionMember' &&
         element.target == uri
       );
     });
@@ -274,7 +272,7 @@ export class Workspace extends Graph {
   getVersionTransitionScenarioByUri(uri) {
     const memberLink = this.data.links.find(element => {
       return (
-        tokenizeURI(element.label).localname == 'Scenario.versionTransitionMember' &&
+        getUriLocalname(element.label) == 'Scenario.versionTransitionMember' &&
         element.target == uri
       );
     });
