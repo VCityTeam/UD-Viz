@@ -1,4 +1,5 @@
 const ScriptBase = require('../Context').ScriptBase;
+const AbstractMap = require('./AbstractMap');
 const Object3D = require('../Object3D');
 const { Component } = require('../Component/ExternalScript');
 const Constants = require('./Constants');
@@ -33,6 +34,8 @@ const NativeCommandManager = class extends ScriptBase {
   }
 
   tick() {
+    const map = this.context.findGameScriptWithID('Map');
+
     this.context.commands.forEach((command) => {
       if (!command.data) return;
 
@@ -54,13 +57,15 @@ const NativeCommandManager = class extends ScriptBase {
         case Constants.COMMAND.MOVE_FORWARD:
           NativeCommandManager.moveForward(
             updatedObject3D,
-            this.variables.speedTranslate * this.context.dt
+            this.variables.speedTranslate * this.context.dt,
+            map
           );
           break;
         case Constants.COMMAND.MOVE_BACKWARD:
           NativeCommandManager.moveBackward(
             updatedObject3D,
-            this.variables.speedTranslate * this.context.dt
+            this.variables.speedTranslate * this.context.dt,
+            map
           );
           break;
         case Constants.COMMAND.ROTATE_LEFT:
@@ -257,25 +262,29 @@ const NativeCommandManager = class extends ScriptBase {
     this.objectsMoving[Constants.COMMAND.MOVE_FORWARD_START].forEach((o) => {
       NativeCommandManager.moveForward(
         o,
-        this.variables.speedTranslate * this.context.dt
+        this.variables.speedTranslate * this.context.dt,
+        map
       );
     });
     this.objectsMoving[Constants.COMMAND.MOVE_BACKWARD_START].forEach((o) => {
       NativeCommandManager.moveBackward(
         o,
-        this.variables.speedTranslate * this.context.dt
+        this.variables.speedTranslate * this.context.dt,
+        map
       );
     });
     this.objectsMoving[Constants.COMMAND.MOVE_LEFT_START].forEach((o) => {
       NativeCommandManager.moveLeft(
         o,
-        this.variables.speedTranslate * this.context.dt
+        this.variables.speedTranslate * this.context.dt,
+        map
       );
     });
     this.objectsMoving[Constants.COMMAND.MOVE_RIGHT_START].forEach((o) => {
       NativeCommandManager.moveRight(
         o,
-        this.variables.speedTranslate * this.context.dt
+        this.variables.speedTranslate * this.context.dt,
+        map
       );
     });
   }
@@ -302,10 +311,14 @@ const NativeCommandManager = class extends ScriptBase {
  *
  * @param {Object3D} object3D - object3D to move forward
  * @param {number} value - amount to move forward
+ * @param {AbstractMap} map - map script
  */
-NativeCommandManager.moveForward = function (object3D, value) {
-  object3D.position.add(Object3D.computeForward(object3D).setLength(value));
-  object3D.setOutdated(true);
+NativeCommandManager.moveForward = function (object3D, value, map) {
+  NativeCommandManager.move(
+    object3D,
+    Object3D.computeForward(object3D).setLength(value),
+    map
+  );
 };
 
 /**
@@ -313,12 +326,14 @@ NativeCommandManager.moveForward = function (object3D, value) {
  *
  * @param {Object3D} object3D - object3D to move backward
  * @param {number} value - amount to move backward
+ * @param {AbstractMap} map - map script
  */
-NativeCommandManager.moveBackward = function (object3D, value) {
-  object3D.position.add(
-    Object3D.computeForward(object3D).negate().setLength(value)
+NativeCommandManager.moveBackward = function (object3D, value, map) {
+  NativeCommandManager.move(
+    object3D,
+    Object3D.computeForward(object3D).negate().setLength(value),
+    map
   );
-  object3D.setOutdated(true);
 };
 
 /**
@@ -326,14 +341,16 @@ NativeCommandManager.moveBackward = function (object3D, value) {
  *
  * @param {Object3D} object3D - object3D to move left
  * @param {number} value - amount to move left
+ * @param {AbstractMap} map - map script
  */
-NativeCommandManager.moveLeft = function (object3D, value) {
-  object3D.position.add(
+NativeCommandManager.moveLeft = function (object3D, value, map) {
+  NativeCommandManager.move(
+    object3D,
     Object3D.computeForward(object3D)
       .applyAxisAngle(new THREE.Vector3(0, 0, 1), Math.PI * 0.5)
-      .setLength(value)
+      .setLength(value),
+    map
   );
-  object3D.setOutdated(true);
 };
 
 /**
@@ -341,13 +358,34 @@ NativeCommandManager.moveLeft = function (object3D, value) {
  *
  * @param {Object3D} object3D - object3D to move right
  * @param {number} value - amount to move right
+ * @param {AbstractMap} map - map script
  */
-NativeCommandManager.moveRight = function (object3D, value) {
-  object3D.position.add(
+NativeCommandManager.moveRight = function (object3D, value, map) {
+  NativeCommandManager.move(
+    object3D,
     Object3D.computeForward(object3D)
       .applyAxisAngle(new THREE.Vector3(0, 0, 1), -Math.PI * 0.5)
-      .setLength(value)
+      .setLength(value),
+    map
   );
+};
+
+/**
+ * Move object3D on a map
+ *
+ * @param {Object3D} object3D - object3D to move
+ * @param {THREE.Vector3} vector - move vector
+ * @param {AbstractMap} map - map script
+ */
+NativeCommandManager.move = function (object3D, vector, map) {
+  const oldPosition = object3D.position.clone();
+  object3D.position.add(vector);
+  if (map) {
+    const isOutOfMap = !map.updateElevation(object3D);
+    if (isOutOfMap) {
+      object3D.position.copy(oldPosition);
+    }
+  }
   object3D.setOutdated(true);
 };
 

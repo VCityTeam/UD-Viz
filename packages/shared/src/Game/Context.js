@@ -5,6 +5,8 @@ const GameScript = require('./Component/GameScript');
 const Object3D = require('./Object3D');
 const State = require('./State/State');
 const Command = require('../Command');
+const THREE = require('three');
+
 /**
  * @callback ContextListener
  * @param {*} params - params pass when event is dispatched
@@ -156,7 +158,7 @@ const Context = class {
 
     this.dispatchScriptEvent(this.object3D, Context.EVENT.TICK);
 
-    this.updateCollision();
+    this.updateCollision(this.object3D);
 
     this.object3D.traverse((child) => {
       if (child.isStatic()) return;
@@ -173,8 +175,8 @@ const Context = class {
             const potentials = shape.potentials();
             const result = this.collisions.createResult();
             for (const p of potentials) {
-              /** In {@link ShapeWrapper} shape are link to object3D */
-              const potentialObject3D = p.getObject3D();
+              /** In {@link ShapeWrapper} shape are link to shapewrapper */
+              const potentialObject3D = p.getWrapper().getObject3D();
               if (!potentialObject3D.isStatic()) continue;
               if (shape.collides(p, result)) {
                 collidedObject3D.push(potentialObject3D.uuid);
@@ -193,6 +195,23 @@ const Context = class {
                     Context.EVENT.ON_ENTER_COLLISION,
                     [result]
                   );
+                }
+
+                // move position of the no static object3D according the collide result
+                if (
+                  colliderComponent.getModel().isBody() &&
+                  p.getWrapper().isBody()
+                ) {
+                  child.position.sub(
+                    new THREE.Vector3(
+                      result.overlap * result.overlap_x,
+                      result.overlap * result.overlap_y,
+                      0
+                    )
+                  );
+                  child.setOutdated(true);
+                  // child position has changed updated collider
+                  this.updateCollision(child);
                 }
               }
             }
@@ -297,10 +316,12 @@ const Context = class {
   }
 
   /**
-   * Update root object3D collider controller + update collisions system
+   * Update object3D collider controller + update collisions system
+   *
+   * @param {Object3D} object3D - object3D to update
    */
-  updateCollision() {
-    this.object3D.traverse((child) => {
+  updateCollision(object3D) {
+    object3D.traverse((child) => {
       const colliderComponent = child.getComponent(Collider.Component.TYPE);
       if (colliderComponent) colliderComponent.getController().update();
     });
@@ -311,7 +332,7 @@ const Context = class {
    * Update the collision buffer
    */
   updateCollisionBuffer() {
-    this.updateCollision();
+    this.updateCollision(this.object3D);
 
     this.object3D.traverse((child) => {
       if (child.isStatic()) return;
@@ -326,7 +347,7 @@ const Context = class {
             const result = this.collisions.createResult();
             for (const p of potentials) {
               /** In {@link ShapeWrapper} shape are link to gameObject*/
-              const potentialObject3D = p.getObject3D();
+              const potentialObject3D = p.getWrapper().getObject3D();
               if (!potentialObject3D.isStatic()) continue;
               if (shape.collides(p, result)) {
                 if (
