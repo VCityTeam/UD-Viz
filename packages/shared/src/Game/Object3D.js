@@ -449,4 +449,21 @@ Object3D.deepCopy = function (object3D) {
   return new Object3D(cloneJSON);
 };
 
+/**
+ *
+ * Parse parent object till finding a gameobject
+ *
+ * @param {THREE.Object3D} object - object to fetch into
+ * @returns {Object3D} - first gameobject found in hierarchy
+ */
+Object3D.fetchFirstGameObject3D = function (object) {
+  if (object.isGameObject3D) return object;
+
+  let result = object;
+  while (result && !result.isGameObject3D) {
+    result = result.parent;
+  }
+  return result;
+};
+
 module.exports = Object3D;

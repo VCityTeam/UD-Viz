@@ -26,6 +26,7 @@ module.exports = {
     ScriptTemplate: require('./Game/ScriptTemplate/ScriptTemplate'),
     Component: {
       Render: require('./Game/Component/Render').Component,
+      Collider: require('./Game/Component/Collider').Component,
       Audio: require('./Game/Component/Audio').Component,
       ExternalScript: require('./Game/Component/ExternalScript').Component,
       ScriptController: require('./Game/Component/Script').Controller,

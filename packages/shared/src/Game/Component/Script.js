@@ -90,9 +90,10 @@ const ScriptController = class extends Controller {
    * @param {object} script - instance of script (class)
    * @param {string} event - event trigger (event should be a method of the script instance)
    * @param {Array} params - parameters to pass to the script
-   * @returns {*} - value return by the script
+   * @returns {*} - value return by the script (null if no event associated at ths script)
    */
   executeScript(script, event, params) {
+    if (!script[event]) return null;
     return script[event].apply(script, params);
   }
 

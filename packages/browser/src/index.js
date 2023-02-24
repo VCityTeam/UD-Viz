@@ -50,9 +50,7 @@ export {
   addLabelLayers,
 } from './Component/Itowns/AddLayerFromConfig';
 
-// // Game
-// import { Base } from './Game/BrowserScript';
-// export { Base as BrowserScriptBase };
+export { checkParentChild } from './Component/HTMLUtil';
 
 /**
  * External packages => These packages should be peerDep to force user of @ud-viz/browser to npm i them
