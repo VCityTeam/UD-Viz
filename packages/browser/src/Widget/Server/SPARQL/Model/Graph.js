@@ -133,9 +133,10 @@ export class Graph {
     const links = this.data.links.map((d) => Object.create(d));
     const nodes = this.data.nodes.map((d) => Object.create(d));
     const legend = this.data.legend;
+    const colorScale = this.data.colorSetOrScale;
     const setColor = function (d, default_color, override_color = undefined) {
-      if (override_color && this.data.colorSetOrScale) return override_color;
-      else if (this.data.colorSetOrScale) return this.data.colorSetOrScale(d);
+      if (override_color && colorScale) return override_color;
+      else if (colorScale) return colorScale(d);
       return default_color;
     };
 
