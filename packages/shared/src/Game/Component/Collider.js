@@ -97,7 +97,11 @@ class ColliderController extends Controller {
 
     /**  initialize shape wrapper from model shapesJSON */
     this.model.getShapesJSON().forEach((shapeJSON) => {
-      const wrapper = new ShapeWrapper(this.object3D, shapeJSON);
+      const wrapper = new ShapeWrapper(
+        this.object3D,
+        shapeJSON,
+        this.model.isBody()
+      );
       this.shapeWrappers.push(wrapper);
     });
   }
@@ -148,8 +152,9 @@ class ShapeWrapper {
    *
    * @param {object} object3D - object 3D parent of the controller collider
    * @param {PolygonJSON|CircleJSON} json - shapeJSON
+   * @param {boolean} body - shape body
    */
-  constructor(object3D, json) {
+  constructor(object3D, json, body) {
     /**
      * object3D parent of the controller collider
      *
@@ -164,6 +169,9 @@ class ShapeWrapper {
      */
     this.json = json;
 
+    /** @type {boolean} */
+    this.body = body; // TODO shape of detect have a isStatic attr
+
     /**
      * {@link Circle} or {@link Polygon} of {@link https://www.npmjs.com/package/detect-collisions}
      *
@@ -171,6 +179,14 @@ class ShapeWrapper {
      */
     this.shape = null;
     this.initShapeFromJSON(json);
+  }
+
+  /**
+   *
+   * @returns {boolean} - body
+   */
+  isBody() {
+    return this.body;
   }
 
   /**
@@ -247,10 +263,10 @@ class ShapeWrapper {
       default:
     }
 
-    /**
-     * attach a getter to the shape so its object3D attach can be access in colllide result {@link Context}
-     */
-    this.shape.getObject3D = this.getObject3D.bind(this);
+    // attach a getter to the shape so its object3D attach can be access in colllide result {@link Context}
+    this.shape.getWrapper = () => {
+      return this;
+    };
   }
 }
 
