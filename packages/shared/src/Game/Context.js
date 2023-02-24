@@ -184,16 +184,34 @@ const Context = class {
                 // child collides with potentialObject3D
                 if (buffer.includes(potentialObject3D.uuid)) {
                   // Already collided
-                  this.dispatchScriptEvent(child, Context.EVENT.IS_COLLIDING, [
-                    result,
-                  ]);
+                  this.dispatchScriptEvent(
+                    child,
+                    Context.EVENT.IS_COLLIDING,
+                    [potentialObject3D],
+                    false
+                  );
+                  this.dispatchScriptEvent(
+                    potentialObject3D,
+                    Context.EVENT.IS_COLLIDING,
+                    [child],
+                    false
+                  );
                 } else {
                   // OnEnter
                   buffer.push(potentialObject3D.uuid); // Register in buffer
+
+                  // notify both gameobject
                   this.dispatchScriptEvent(
                     child,
                     Context.EVENT.ON_ENTER_COLLISION,
-                    [result]
+                    [potentialObject3D],
+                    false
+                  );
+                  this.dispatchScriptEvent(
+                    potentialObject3D,
+                    Context.EVENT.ON_ENTER_COLLISION,
+                    [child],
+                    false
                   );
                 }
 
@@ -221,9 +239,23 @@ const Context = class {
         for (let i = buffer.length - 1; i >= 0; i--) {
           const uuid = buffer[i];
           if (!collidedObject3D.includes(uuid)) {
-            this.dispatchScriptEvent(child, Context.EVENT.ON_LEAVE_COLLISION, [
-              uuid,
-            ]);
+            const gameObjectCollided = this.object3D.getObjectByProperty(
+              'uuid',
+              uuid
+            );
+
+            this.dispatchScriptEvent(
+              child,
+              Context.EVENT.ON_LEAVE_COLLISION,
+              [gameObjectCollided],
+              false
+            );
+            this.dispatchScriptEvent(
+              gameObjectCollided,
+              Context.EVENT.ON_LEAVE_COLLISION,
+              [child],
+              false
+            );
             buffer.splice(i, 1); // Remove from buffer
           }
         }
@@ -239,14 +271,22 @@ const Context = class {
    * @param {import("./Object3D").Object3D} object3D - object3D that you want to dispatch the event to.
    * @param {string} event - name of the event to dispatch see possible value in {@link Context.EVENT}
    * @param {any[]} params - params to pass to {@link ScriptBase}
+   * @param {boolean} [recursive=true] - traverse object3D child if true
    */
-  dispatchScriptEvent(object3D, event, params = []) {
-    object3D.traverse(function (child) {
-      const scriptComponent = child.getComponent(GameScript.Component.TYPE);
+  dispatchScriptEvent(object3D, event, params = [], recursive = true) {
+    if (recursive) {
+      object3D.traverse(function (child) {
+        const scriptComponent = child.getComponent(GameScript.Component.TYPE);
+        if (scriptComponent) {
+          scriptComponent.getController().execute(event, params);
+        }
+      });
+    } else {
+      const scriptComponent = object3D.getComponent(GameScript.Component.TYPE);
       if (scriptComponent) {
         scriptComponent.getController().execute(event, params);
       }
-    });
+    }
   }
 
   /**
@@ -312,7 +352,6 @@ const Context = class {
     });
 
     this.updateCollisionBuffer();
-    // console.log(this.collisionsBuffer);
   }
 
   /**
@@ -333,6 +372,10 @@ const Context = class {
    */
   updateCollisionBuffer() {
     this.updateCollision(this.object3D);
+
+    for (const uuid in this.collisionsBuffer) {
+      this.collisionsBuffer[uuid].length = 0; // reset buffer
+    }
 
     this.object3D.traverse((child) => {
       if (child.isStatic()) return;
@@ -363,6 +406,25 @@ const Context = class {
           });
       }
     });
+
+    this.logCollisionBuffer('update collision buffer');
+  }
+
+  logCollisionBuffer(tag) {
+    console.log('**************************** LOG_COLLISION_BUFFER' + tag);
+    for (const id in this.collisionsBuffer) {
+      const bufferArray = this.collisionsBuffer[id];
+      if (bufferArray.length) {
+        console.log(
+          this.object3D.getObjectByProperty('uuid', id).name,
+          'collide with'
+        );
+        bufferArray.forEach((idc) => {
+          console.log(this.object3D.getObjectByProperty('uuid', idc).name);
+        });
+      }
+    }
+    console.log('****************************');
   }
 
   /**
@@ -594,16 +656,22 @@ const ScriptBase = class {
   tick() {}
   /**
    * call if object3D is not static and first collide a static object3D (object3D must have {@link Collider})
+   *
+   * @param {Object3D} object3D - object3D collided
    */
-  onEnterCollision() {}
+  onEnterCollision(object3D) {}
   /**
    * call if object3D is not static and is colliding a static object3D (object3D must have {@link Collider})
+   *
+   * @param {Object3D} object3D - object3D collided
    */
-  isColliding() {}
+  isColliding(object3D) {}
   /**
    * call if object3D is not static and was colliding a static object3D (object3D must have {@link Collider})
+   *
+   * @param {Object3D} object3D - object3D collided leaving
    */
-  onLeaveCollision() {}
+  onLeaveCollision(object3D) {}
 };
 
 module.exports = {

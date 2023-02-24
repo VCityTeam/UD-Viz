@@ -13,45 +13,41 @@ export class RenderController extends Game.Component.Controller {
   constructor(model, object3D, assetManager) {
     super(model, object3D);
 
-    /**
-     * asset manager
-     *
-      @type {AssetManager} */
+    /** @type {AssetManager} - asset manager */
     this.assetManager = assetManager;
 
-    /**
-     * animation mixer only instanciated if there is animations in render data
-     *
-      @type {THREE.AnimationMixer|null} */
+    /** @type {THREE.AnimationMixer|null} - animation mixer only instanciated if there is animations in render data */
     this.animationMixer = null;
 
-    /**
-     * render data
-     *
-      @type {RenderData} */
-    this.renderData = this.assetManager.createRenderData(
-      this.model.getIdRenderData()
-    );
+    /** @type {RenderData} - render data */
+    this.renderData = null;
 
-    // rename object3D
-    this.renderData.object3D.name = 'Render_Controller_' + this.object3D.name;
+    /** @type {THREE.AnimationMixer} */
+    this.animationMixer = null;
 
-    const animations = this.renderData.getAnimations();
-    if (animations && animations.length) {
-      this.animationMixer = new THREE.AnimationMixer(
-        this.renderData.getObject3D()
+    if (this.model.getIdRenderData()) {
+      this.renderData = this.assetManager.createRenderData(
+        this.model.getIdRenderData()
       );
-      animations.forEach((animClip) => {
-        const action = this.animationMixer.clipAction(animClip);
-        action.play(); // Play action is default behaviour
-      });
+      const animations = this.renderData.getAnimations();
+      if (animations && animations.length) {
+        this.animationMixer = new THREE.AnimationMixer(
+          this.renderData.getObject3D()
+        );
+        animations.forEach((animClip) => {
+          const action = this.animationMixer.clipAction(animClip);
+          action.play(); // Play action is default behaviour
+        });
+      }
+    } else {
+      this.renderData = new RenderData(new THREE.Object3D());
     }
-
-    // update color
-    this.setColor(this.model.getColor());
 
     // register in parent
     this.object3D.add(this.renderData.getObject3D());
+
+    // update color
+    this.setColor(this.model.getColor());
   }
 
   /**

@@ -9,6 +9,7 @@ module.exports = function routine(gameScriptClass = {}) {
 
   const parentPort = workerThreads.parentPort;
 
+  /** @type {Game.Context} */
   let gameContext = null;
   let commands = null;
 
