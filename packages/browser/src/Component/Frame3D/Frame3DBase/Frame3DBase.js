@@ -75,7 +75,8 @@ export class Frame3DBase {
      * Size of the frame3D
      *
       @type {THREE.Vector2} */
-    this.size = new THREE.Vector2(1, 1);
+    this.size = new THREE.Vector2();
+    this.updateSize();
 
     /**
      * canvas scene 3D
@@ -369,13 +370,7 @@ export class Frame3DBase {
    * @param {boolean} [updateTHREEVariables=true] - camera and renderer should be updated
    */
   onResize(updateTHREEVariables = true) {
-    let offsetLeft = parseInt(this.rootWebGL.style.left);
-    if (isNaN(offsetLeft)) offsetLeft = 0;
-    let offsetTop = parseInt(this.rootWebGL.style.top);
-    if (isNaN(offsetTop)) offsetTop = 0;
-
-    this.size.x = window.innerWidth - offsetLeft;
-    this.size.y = window.innerHeight - offsetTop;
+    this.updateSize();
 
     if (this.css3DRenderer)
       this.css3DRenderer.setSize(this.size.x, this.size.y);
@@ -389,6 +384,19 @@ export class Frame3DBase {
     this.listeners[Frame3DBase.EVENT.RESIZE].forEach((listener) => {
       listener();
     });
+  }
+
+  /**
+   * update `this.size`
+   */
+  updateSize() {
+    let offsetLeft = parseInt(this.rootWebGL.style.left);
+    if (isNaN(offsetLeft)) offsetLeft = 0;
+    let offsetTop = parseInt(this.rootWebGL.style.top);
+    if (isNaN(offsetTop)) offsetTop = 0;
+
+    this.size.x = window.innerWidth - offsetLeft;
+    this.size.y = window.innerHeight - offsetTop;
   }
 
   /**
