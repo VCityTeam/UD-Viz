@@ -45,11 +45,11 @@ const NativeCommandManager = class extends ScriptBase {
         command.data.object3DUUID
       );
 
-      if (!updatedObject3D) return;
+      let externalScriptComponent = null;
 
-      const externalScriptComponent = updatedObject3D.getComponent(
-        Component.TYPE
-      );
+      if (updatedObject3D) {
+        externalScriptComponent = updatedObject3D.getComponent(Component.TYPE);
+      }
 
       let indexObjectMoving = -1;
 
@@ -248,7 +248,10 @@ const NativeCommandManager = class extends ScriptBase {
           }
           break;
         case Constants.COMMAND.ADD_OBJECT3D:
-          console.error('no implemented');
+          this.context.addObject3D(
+            new Object3D(command.data.object3D),
+            command.data.parentUUID
+          );
           break;
         case Constants.COMMAND.REMOVE_OBJECT3D:
           this.context.removeObject3D(updatedObject3D.uuid);
