@@ -276,7 +276,7 @@ const Object3D = class extends THREE.Object3D {
   /**
    *
    * @param {string} type - type of the component
-   * @returns {Component} - component of type
+   * @returns {object} - component of type
    */
   getComponent(type) {
     return this.components[type];
