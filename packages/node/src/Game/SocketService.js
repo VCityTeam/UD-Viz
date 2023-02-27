@@ -5,12 +5,12 @@ const SocketWrapper = require('./SocketWrapper');
 const GameThread = require('./Thread');
 
 /**
- * @callback SocketConnectionCallback
+ * @callback SocketCallback
  * @param {socketio.Socket} socket
  */
 
 /**
- * @callback SocketReadyForGameCallback
+ * @callback SocketThreadCallback
  * @param {socketio.Socket} socket
  * @param {Thread} thread
  */
@@ -25,8 +25,9 @@ const SocketService = class {
    * @param {object} options - options
    * @param {number} [options.pingInterval=2000] - ping interval of the socket connection in ms
    * @param {number} [options.pingTimeout=5000] - ping timeout in ms
-   * @param {Array<SocketConnectionCallback>} [options.socketConnectionCallbacks=[]] - callback to apply when socket is connected
-   * @param {Array<SocketReadyForGameCallback>} [options.socketReadyForGameCallbacks=[]] - callback to apply when socket is ready for game
+   * @param {Array<SocketCallback>} [options.socketConnectionCallbacks=[]] - callback to apply when socket is connected
+   * @param {Array<SocketCallback>} [options.socketDisconnectionCallbacks=[]] - callback to apply when socket is connected
+   * @param {Array<SocketThreadCallback>} [options.socketReadyForGameCallbacks=[]] - callback to apply when socket is ready for game
    */
   constructor(httpServer, options = {}) {
     /**
@@ -37,10 +38,14 @@ const SocketService = class {
       pingTimeout: options.pingTimeout || 5000,
     });
 
-    /** @type {Array<SocketConnectionCallback>} */
+    /** @type {Array<SocketCallback>} */
     this.socketConnectionCallbacks = options.socketConnectionCallbacks || [];
 
-    /** @type {Array<SocketReadyForGameCallback>} */
+    /** @type {Array<SocketCallback>} */
+    this.socketDisconnectionCallbacks =
+      options.socketDisconnectionCallbacks || [];
+
+    /** @type {Array<SocketThreadCallback>} */
     this.socketReadyForGameCallbacks =
       options.socketReadyForGameCallbacks || [];
 
@@ -137,7 +142,6 @@ const SocketService = class {
 
     socket.on('disconnect', () => {
       console.log('socket', socket.id, 'disconnected');
-      delete this.socketWrappers[socket.id]; // remove from current socket connected
       // remove socketwrapper in thread
       for (const key in this.threads) {
         const s = this.threads[key].socketWrappers.filter((el) => {
@@ -154,8 +158,12 @@ const SocketService = class {
             GameThread.EVENT.ON_SOCKET_WRAPPER_REMOVE,
             socket.id
           );
+          this.socketDisconnectionCallbacks.forEach((c) => {
+            c(socket, this.threads[key]);
+          });
         }
       }
+      delete this.socketWrappers[socket.id]; // remove from current socket connected
     });
 
     // apply callbacks
