@@ -125,6 +125,7 @@ export class MultiPlayerGamePlanar {
           );
 
           // render
+          this.frame3DPlanar.itownsView.notifyChange(this.frame3DPlanar.camera); // => to load 3DTiles + trigger mainloop event
           this.frame3DPlanar.render();
         });
       }
