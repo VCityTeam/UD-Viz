@@ -407,7 +407,7 @@ const Context = class {
       }
     });
 
-    this.logCollisionBuffer('update collision buffer');
+    // this.logCollisionBuffer('update collision buffer');
   }
 
   logCollisionBuffer(tag) {

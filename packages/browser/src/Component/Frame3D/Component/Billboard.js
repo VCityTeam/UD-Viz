@@ -14,6 +14,7 @@ const BLANK_MATERIAL = new THREE.MeshBasicMaterial({
   blending: THREE.NoBlending,
   color: new Color(0, 0, 0),
 });
+
 /** @class */
 export class Billboard {
   /**
@@ -23,9 +24,9 @@ export class Billboard {
    * @param {THREE.Vector3} position - position in world referential
    * @param {THREE.Vector3} rotation - rotation in world referential
    * @param {THREE.Vector3} scale - scale in world referential
-   * @param {number} [resolution=1] - increase size of html element
+   * @param {number} [scalar=1] - increase size of html element
    */
-  constructor(html, position, rotation, scale, resolution = 1) {
+  constructor(html, position, rotation, scale, scalar = 1) {
     /**
      * uuid
      *
@@ -39,8 +40,8 @@ export class Billboard {
     this.html = html;
 
     // scale html size
-    this.html.style.width = resolution * scale.x + 'px';
-    this.html.style.height = resolution * scale.y + 'px';
+    this.html.style.width = scalar * scale.x + 'px';
+    this.html.style.height = scalar * scale.y + 'px';
 
     // initialize css3Dobject
     const newElement = new CSS3DObject(this.html);
@@ -48,9 +49,9 @@ export class Billboard {
     newElement.rotation.setFromVector3(rotation);
 
     const css3DScale = scale.clone();
-    css3DScale.x *= 1 / resolution;
-    css3DScale.y *= 1 / resolution;
-    css3DScale.z *= 1 / resolution;
+    css3DScale.x *= 1 / scalar;
+    css3DScale.y *= 1 / scalar;
+    css3DScale.z *= 1 / scalar;
 
     newElement.scale.copy(css3DScale);
 
