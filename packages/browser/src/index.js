@@ -90,3 +90,7 @@ export {
 // proj4
 import * as proj4 from 'proj4';
 export { proj4 };
+
+// jquery
+import * as jquery from 'jquery';
+export { jquery };
