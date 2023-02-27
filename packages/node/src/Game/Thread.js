@@ -92,6 +92,7 @@ Thread.EVENT = {
   INIT: 'init',
   COMMANDS: 'commands',
   ADD_OBJECT3D: 'add_object3D',
+  REMOVE_OBJECT3D: 'remove_object3D',
   ON_NEW_SOCKET_WRAPPER: 'on_new_socket_wrapper',
   ON_SOCKET_WRAPPER_REMOVE: 'on_socket_wrapper_remove',
   // child => parent

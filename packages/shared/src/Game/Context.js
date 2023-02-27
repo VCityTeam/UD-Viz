@@ -478,8 +478,12 @@ const Context = class {
    */
   removeObject3D(uuid) {
     const object3D = this.object3D.getObjectByProperty('uuid', uuid);
-    object3D.removeFromParent();
-    this.unregisterObject3DCollision(object3D);
+    if (object3D) {
+      object3D.removeFromParent();
+      this.unregisterObject3DCollision(object3D);
+    } else {
+      console.warn('no object with uuid = ', uuid);
+    }
   }
 
   /**

@@ -56,6 +56,9 @@ module.exports = function routine(gameScriptClass = {}) {
           data.parentUUID
         );
         break;
+      case Thread.EVENT.REMOVE_OBJECT3D:
+        gameContext.removeObject3D(data);
+        break;
       case Thread.EVENT.ON_NEW_SOCKET_WRAPPER:
         gameContext.dispatch(Thread.EVENT.ON_NEW_SOCKET_WRAPPER, data);
         break;
