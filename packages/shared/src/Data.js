@@ -469,7 +469,11 @@ function objectOverWrite(jsonOverWrited, jsonModel) {
 
     // check in jsonOverWrited the ones existing in jsonModel
     for (const key in json1) {
-      if (json1[key] instanceof Object) {
+      if (json1[key] instanceof Array) {
+        if (json2[key] instanceof Array) {
+          json1[key] = json2[key]; // array are replaced
+        }
+      } else if (json1[key] instanceof Object) {
         if (json2[key] instanceof Object) traverse(json1[key], json2[key]);
       } else {
         if (json2[key] != undefined) {

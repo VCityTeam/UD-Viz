@@ -8,6 +8,12 @@ if (Shared.Data.checkIfSubStringIsEuler(['1.2', '15', '45', 'hello'])) {
   throw new Error('should be false');
 }
 
+// overwrite
+const json1 = { a: ['a'], b: ['b'] };
+const json2 = { a: [], b: [] };
+Shared.Data.objectOverWrite(json1, json2);
+if (!Shared.Data.objectEquals(json1, json2)) throw new Error('wrong overwrite');
+
 // string composer test
 
 let bigString = '';

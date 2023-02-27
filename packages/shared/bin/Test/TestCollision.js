@@ -47,7 +47,7 @@ const gameContext = new Shared.Game.Context(
             components: {
               Collider: {
                 shapes: [{ type: 'Circle', center: { x: 0, y: 0 }, radius: 1 }],
-                body: true,
+                body: false,
               },
               GameScript: {
                 idScripts: ['Collision'],
