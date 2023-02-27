@@ -10,6 +10,12 @@ export { MultiPlayerGamePlanar } from './MultiPlayerGamePlanar/MultiPlayerGamePl
 
 // Template.Component
 
+export { TilesManager } from './Component/Itowns/3DTiles/TilesManager';
+
+export { getTileFromMesh } from './Component/Itowns/3DTiles/3DTilesUtils';
+
+export { CityObjectID } from './Component/Itowns/3DTiles/Model/CityObject';
+
 import * as ExternalScriptTemplate from './Component/Game/External/ScriptTemplate/ScriptTemplate';
 export { ExternalScriptTemplate };
 
