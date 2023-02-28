@@ -257,6 +257,10 @@ export class InputManager {
    * @param {HTMLElement} element - element listened by mouse
    */
   startListening(element) {
+    if (this.element) {
+      this.dispose(); // was listening dispose old listener and start listening this element
+    }
+
     const _this = this;
     this.element = element;
 
@@ -484,11 +488,12 @@ export class MouseState {
     this.mouseMap = {};
     this.mouseEvent = {};
     this.dragging = false;
-    this.listeners = [];
 
     this.listeners.forEach(function (l) {
       l.element.removeEventListener(l.id, l.cb);
     });
+
+    this.listeners = [];
   }
 
   /**

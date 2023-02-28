@@ -39,7 +39,7 @@ module.exports = class SocketWrapper {
       stateJSON.timestamp
     );
 
-    if (!this.lastState) {
+    if (!this.lastStateSend) {
       // there is no last state meaning it's the first time the user is notify for this game
       this.socket.emit(Constant.WEBSOCKET.MSG_TYPE.NEW_GAME, {
         state: stateJSON,
@@ -47,10 +47,10 @@ module.exports = class SocketWrapper {
     } else {
       this.socket.emit(
         Constant.WEBSOCKET.MSG_TYPE.GAME_DIFF,
-        state.sub(this.lastState)
+        state.sub(this.lastStateSend)
       );
     }
 
-    this.lastState = state;
+    this.lastStateSend = state;
   }
 };
