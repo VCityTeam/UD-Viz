@@ -72,7 +72,7 @@ export class Context {
      * frame3D view of game
      *
       @type {Frame3DBase|Frame3DPlanar}  */
-    this.frame3D = frame3D;
+    this.frame3D = null;
 
     /**
      * asset manager
@@ -104,7 +104,6 @@ export class Context {
       @type {THREE.Object3D}  */
     this.object3D = new THREE.Object3D();
     this.object3D.name = 'External_Game_Context_Object3D';
-    this.frame3D.scene.add(this.object3D); // add it to the frame3D scene
 
     /**
      * register uuid of object3D in context to identify new one incoming
@@ -137,7 +136,12 @@ export class Context {
      *
       @type {THREE.DirectionalLight} */
     this.directionalLight = null;
-    this.initScene();
+
+    this.initFrame3D(frame3D);
+  }
+
+  initFrame3D(frame3D) {
+    this.frame3D = frame3D;
 
     // register listener
     this.frame3D.on(Frame3DBase.EVENT.DISPOSE, () => {
@@ -171,6 +175,20 @@ export class Context {
         });
       }
     });
+
+    this.frame3D.scene.add(this.object3D); // add it to the frame3D scene
+
+    this.initScene();
+  }
+
+  reset(newFrame3D) {
+    this.currentUUID = {};
+    if (this.currentGameObject3D) {
+      this.object3D.remove(this.currentGameObject3D);
+      this.currentGameObject3D = null;
+    }
+
+    this.initFrame3D(newFrame3D);
   }
 
   /**

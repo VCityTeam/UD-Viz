@@ -35,7 +35,7 @@ const SocketService = class {
      */
     this.io = new socketio.Server(httpServer, {
       pingInterval: options.pingInterval || 2000,
-      pingTimeout: options.pingTimeout || 5000,
+      pingTimeout: options.pingTimeout || 20000, // 20sec
     });
 
     /** @type {Array<SocketCallback>} */
@@ -152,17 +152,15 @@ const SocketService = class {
         if (s.length > 0) {
           if (s.length != 1)
             throw new Error('socket should only be there once');
-          const index = this.threads[key].socketWrappers.indexOf(s[0]);
-          this.threads[key].socketWrappers.splice(index, 1);
-          this.threads[key].post(
-            GameThread.EVENT.ON_SOCKET_WRAPPER_REMOVE,
-            socket.id
-          );
+
+          this.threads[key].removeSocketWrapper(s[0]);
+
           this.socketDisconnectionCallbacks.forEach((c) => {
             c(socket, this.threads[key]);
           });
         }
       }
+
       delete this.socketWrappers[socket.id]; // remove from current socket connected
     });
 

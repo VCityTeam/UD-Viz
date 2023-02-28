@@ -48,6 +48,9 @@ const Thread = class {
     this.socketWrappers.push(socketWrapper);
     this.post(Thread.EVENT.ON_NEW_SOCKET_WRAPPER, socketWrapper.socket.id);
 
+    // reset last state of socket wrapper
+    socketWrapper.lastStateSend = null;
+
     // reset commands link
     socketWrapper.socket.removeAllListeners(
       Constant.WEBSOCKET.MSG_TYPE.COMMANDS
@@ -58,6 +61,22 @@ const Thread = class {
         this.post(Thread.EVENT.COMMANDS, commands);
       }
     );
+  }
+
+  /**
+   *
+   * @param {SocketWrapper} socketWrapper - socket wrapper to remove
+   * @returns {boolean} - true if removed
+   */
+  removeSocketWrapper(socketWrapper) {
+    const index = this.socketWrappers.indexOf(socketWrapper);
+    if (index >= 0) this.socketWrappers.splice(index, 1);
+    this.post(Thread.EVENT.ON_SOCKET_WRAPPER_REMOVE, socketWrapper.socket.id);
+    socketWrapper.socket.removeAllListeners(
+      Constant.WEBSOCKET.MSG_TYPE.COMMANDS
+    );
+
+    return index >= 0;
   }
 
   /**

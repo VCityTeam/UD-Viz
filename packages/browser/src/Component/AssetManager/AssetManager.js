@@ -78,7 +78,16 @@ export class AssetManager {
     if (!pathSound) console.error('no sound with id ', idSound);
     return new Howl({
       src: pathSound,
+      preload: true,
+      format: ['webm'],
+      html5: true,
       loop: options.loop || false,
+      onload: () => {
+        console.log(pathSound, ' has loaded');
+      },
+      onloaderror: () => {
+        console.warn('failed to load sound :', pathSound);
+      },
     });
   }
 
