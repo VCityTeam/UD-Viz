@@ -29,6 +29,7 @@ module.exports = {
       Collider: require('./Game/Component/Collider').Component,
       Audio: require('./Game/Component/Audio').Component,
       ExternalScript: require('./Game/Component/ExternalScript').Component,
+      GameScript: require('./Game/Component/GameScript').Component,
       ScriptController: require('./Game/Component/Script').Controller,
       Controller: require('./Game/Component/Component').Controller,
       Model: require('./Game/Component/Component').Model,

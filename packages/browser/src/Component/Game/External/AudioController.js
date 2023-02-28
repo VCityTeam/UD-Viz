@@ -56,7 +56,7 @@ export class AudioController extends Game.Component.Controller {
    */
   dispose() {
     for (const key in this.sounds) {
-      if (this.sounds[key]._state != 'unloaded') {
+      if (this.sounds[key]._state == 'loaded') {
         this.sounds[key].unload();
       }
       delete this.sounds[key];

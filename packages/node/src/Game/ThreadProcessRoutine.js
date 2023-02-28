@@ -15,6 +15,8 @@ module.exports = function routine(gameScriptClass = {}) {
 
     const parentPort = workerThreads.parentPort;
 
+    const threadContext = new ThreadContext(parentPort);
+
     /** @type {Game.Context} */
     let gameContext = null;
     let commands = null;
@@ -22,6 +24,10 @@ module.exports = function routine(gameScriptClass = {}) {
     parentPort.on('message', (int32ArrayMessage) => {
       const objectMessage = Data.int32ArrayToObject(int32ArrayMessage);
       const data = objectMessage[Thread.KEY.DATA];
+
+      // dispatch for custom event
+      threadContext.dispatch(objectMessage[Thread.KEY.TYPE], data);
+
       switch (objectMessage[Thread.KEY.TYPE]) {
         case Thread.EVENT.INIT:
           gameContext = new Game.Context(
@@ -49,7 +55,9 @@ module.exports = function routine(gameScriptClass = {}) {
               gameContext.object3D.uuid
             );
 
-            resolve(new ThreadContext(gameContext, parentPort));
+            threadContext.initGameContext(gameContext);
+
+            resolve(threadContext);
           });
           break;
         case Thread.EVENT.COMMANDS:
@@ -75,17 +83,37 @@ module.exports = function routine(gameScriptClass = {}) {
           gameContext.dispatch(Thread.EVENT.ON_SOCKET_WRAPPER_REMOVE, data);
           break;
         default:
-          console.warn(objectMessage, ' not handle');
+          console.warn(objectMessage[Thread.KEY.TYPE], ' not handle natively');
       }
     });
   });
 };
 
 class ThreadContext {
-  constructor(gameContext, parentPort) {
+  constructor(parentPort) {
     /** @type {Game.Context} */
-    this.gameContext = gameContext;
+    this.gameContext = null;
 
     this.parentPort = parentPort;
+
+    this.callbacks = {};
+  }
+
+  initGameContext(value) {
+    this.gameContext = value;
+  }
+
+  on(eventID, callback) {
+    for (const event in Thread.EVENT) {
+      if (Thread.EVENT[event] === eventID) {
+        throw new Error('native ThreadProcess event');
+      }
+    }
+
+    this.callbacks[eventID] = callback;
+  }
+
+  dispatch(eventID, data) {
+    if (this.callbacks[eventID]) this.callbacks[eventID](data);
   }
 }
