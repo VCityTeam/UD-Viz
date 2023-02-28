@@ -1,6 +1,5 @@
 const packageJSON = require('@ud-viz/shared/package.json');
 const THREE = require('three');
-const { Component } = require('./Component/Component');
 const ExternalScript = require('./Component/ExternalScript');
 const GameScript = require('./Component/GameScript');
 const Collider = require('./Component/Collider');
