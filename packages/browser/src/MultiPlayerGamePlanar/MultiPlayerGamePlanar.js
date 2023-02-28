@@ -117,6 +117,7 @@ export class MultiPlayerGamePlanar {
 
         // check if a game was already running
         if (this.interpolator._getLastStateReceived()) {
+          // replace frame3D
           this.frame3DPlanar.dispose();
 
           this.frame3DPlanar = new Frame3DPlanar(

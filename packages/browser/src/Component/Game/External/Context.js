@@ -182,11 +182,11 @@ export class Context {
   }
 
   reset(newFrame3D) {
-    this.currentUUID = {};
     if (this.currentGameObject3D) {
       this.object3D.remove(this.currentGameObject3D);
       this.currentGameObject3D = null;
     }
+    this.currentUUID = {};
 
     this.initFrame3D(newFrame3D);
   }

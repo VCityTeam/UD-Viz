@@ -79,14 +79,40 @@ export class AssetManager {
     return new Howl({
       src: pathSound,
       preload: true,
-      format: ['webm'],
       html5: true,
       loop: options.loop || false,
       onload: () => {
         console.log(pathSound, ' has loaded');
       },
-      onloaderror: () => {
-        console.warn('failed to load sound :', pathSound);
+      onloaderror: (id, err) => {
+        // refer here https://github.com/goldfire/howler.js
+        console.warn('error while loading ', pathSound, err);
+        // eslint-disable-next-line no-undef
+        console.info(Howler._codecs, ' are the supported Howler codecs');
+        switch (err) {
+          case 1:
+            console.warn(
+              "The fetching process for the media resource was aborted by the user agent at the user's request."
+            );
+            break;
+          case 2:
+            console.warn(
+              'A network error of some description caused the user agent to stop fetching the media resource, after the resource was established to be usable.'
+            );
+            break;
+          case 3:
+            console.warn(
+              'An error of some description occurred while decoding the media resource, after the resource was established to be usable.'
+            );
+            break;
+          case 4:
+            console.warn(
+              'The media resource indicated by the src attribute or assigned media provider object was not suitable.'
+            );
+            break;
+          default:
+            console.warn('unknow error');
+        }
       },
     });
   }
