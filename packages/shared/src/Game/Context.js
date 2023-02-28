@@ -663,18 +663,21 @@ const ScriptBase = class {
    *
    * @param {Object3D} object3D - object3D collided
    */
+  // eslint-disable-next-line no-unused-vars
   onEnterCollision(object3D) {}
   /**
    * call if object3D is not static and is colliding a static object3D (object3D must have {@link Collider})
    *
    * @param {Object3D} object3D - object3D collided
    */
+  // eslint-disable-next-line no-unused-vars
   isColliding(object3D) {}
   /**
    * call if object3D is not static and was colliding a static object3D (object3D must have {@link Collider})
    *
    * @param {Object3D} object3D - object3D collided leaving
    */
+  // eslint-disable-next-line no-unused-vars
   onLeaveCollision(object3D) {}
 };
 
