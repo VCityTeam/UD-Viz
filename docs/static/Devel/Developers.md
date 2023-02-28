@@ -32,14 +32,11 @@ As configured, the coding style requires a Linux style newline characters which 
 In order to avoid such difficulties, the [recommended pratice](https://stackoverflow.com/questions/1967370/git-replacing-lf-with-crlf)
 consists in
 
-1.  setting git's `core.autocrlf` to `false` (e.g. with `git config --global core.autocrlf false`)
-2.  configure your editor/IDE to use Unix-style endings
+1. setting git's `core.autocrlf` to `false` (e.g. with `git config --global core.autocrlf false`)
+2. configure your editor/IDE to use Unix-style endings
+3. In order to use scripts that launch a shell script with Powershell: `npm config set script-shell "C:\\Program Files\\git\\bin\\bash.exe"`
 
 ## Npm Scripts
-
-For **Windows** users:
-
-> In order to use scripts that launch a shell script with Powershell: `npm config set script-shell "C:\\Program Files\\git\\bin\\bash.exe"`
 
 | Script                   | Description                                                                                                                                                                                                                                                           |
 | ------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
