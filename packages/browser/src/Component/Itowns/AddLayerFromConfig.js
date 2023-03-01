@@ -20,7 +20,7 @@ const $3DTemporalTileset = Widget.$3DTemporalTileset;
  * @param {itowns.View} itownsView - the itowns view
  * @returns {itowns.C3DTilesLayer} A 3D Tiles Layer
  */
-function setup3DTilesLayer(layer, layerManager, itownsView) {
+export function setup3DTilesLayer(layer, layerManager, itownsView) {
   if (!layer['id'] || !layer['url']) {
     throw (
       'Your layer does not have url id properties or both. ' +
