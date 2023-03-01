@@ -52,14 +52,15 @@ export class CommandController {
    * Add native commands in input manager
    *
    * @param {string} object3DUUID - uuid of the object3D to contol
+   * @param {boolean} withMap - move command are ignoring map
    */
-  addNativeCommands(object3DUUID) {
+  addNativeCommands(object3DUUID, withMap = true) {
     for (const key in MAPPING) {
       const map = MAPPING[key];
       this.inputManager.addKeyCommand(map.id, map.keys, () => {
         return new Command({
           type: map.cmdType,
-          data: { object3DUUID: object3DUUID }, // object3D to control
+          data: { object3DUUID: object3DUUID, withMap: withMap }, // object3D to control
         });
       });
     }

@@ -58,14 +58,16 @@ const NativeCommandManager = class extends ScriptBase {
           NativeCommandManager.moveForward(
             updatedObject3D,
             this.variables.speedTranslate * this.context.dt,
-            map
+            map,
+            command.data.withMap
           );
           break;
         case Constants.COMMAND.MOVE_BACKWARD:
           NativeCommandManager.moveBackward(
             updatedObject3D,
             this.variables.speedTranslate * this.context.dt,
-            map
+            map,
+            command.data.withMap
           );
           break;
         case Constants.COMMAND.ROTATE_LEFT:
@@ -315,12 +317,19 @@ const NativeCommandManager = class extends ScriptBase {
  * @param {Object3D} object3D - object3D to move forward
  * @param {number} value - amount to move forward
  * @param {AbstractMap} map - map script
+ * @param {boolean} [withMap=true] - map should be consider
  */
-NativeCommandManager.moveForward = function (object3D, value, map) {
+NativeCommandManager.moveForward = function (
+  object3D,
+  value,
+  map,
+  withMap = true
+) {
   NativeCommandManager.move(
     object3D,
     Object3D.computeForward(object3D).setLength(value),
-    map
+    map,
+    withMap
   );
 };
 
@@ -330,12 +339,19 @@ NativeCommandManager.moveForward = function (object3D, value, map) {
  * @param {Object3D} object3D - object3D to move backward
  * @param {number} value - amount to move backward
  * @param {AbstractMap} map - map script
+ * @param {boolean} [withMap=true] - map should be consider
  */
-NativeCommandManager.moveBackward = function (object3D, value, map) {
+NativeCommandManager.moveBackward = function (
+  object3D,
+  value,
+  map,
+  withMap = true
+) {
   NativeCommandManager.move(
     object3D,
     Object3D.computeForward(object3D).negate().setLength(value),
-    map
+    map,
+    withMap
   );
 };
 
@@ -345,14 +361,21 @@ NativeCommandManager.moveBackward = function (object3D, value, map) {
  * @param {Object3D} object3D - object3D to move left
  * @param {number} value - amount to move left
  * @param {AbstractMap} map - map script
+ * @param {boolean} [withMap=true] - map should be consider
  */
-NativeCommandManager.moveLeft = function (object3D, value, map) {
+NativeCommandManager.moveLeft = function (
+  object3D,
+  value,
+  map,
+  withMap = true
+) {
   NativeCommandManager.move(
     object3D,
     Object3D.computeForward(object3D)
       .applyAxisAngle(new THREE.Vector3(0, 0, 1), Math.PI * 0.5)
       .setLength(value),
-    map
+    map,
+    withMap
   );
 };
 
@@ -362,14 +385,21 @@ NativeCommandManager.moveLeft = function (object3D, value, map) {
  * @param {Object3D} object3D - object3D to move right
  * @param {number} value - amount to move right
  * @param {AbstractMap} map - map script
+ * @param {boolean} [withMap=true] - map should be consider
  */
-NativeCommandManager.moveRight = function (object3D, value, map) {
+NativeCommandManager.moveRight = function (
+  object3D,
+  value,
+  map,
+  withMap = true
+) {
   NativeCommandManager.move(
     object3D,
     Object3D.computeForward(object3D)
       .applyAxisAngle(new THREE.Vector3(0, 0, 1), -Math.PI * 0.5)
       .setLength(value),
-    map
+    map,
+    withMap
   );
 };
 
@@ -379,11 +409,12 @@ NativeCommandManager.moveRight = function (object3D, value, map) {
  * @param {Object3D} object3D - object3D to move
  * @param {THREE.Vector3} vector - move vector
  * @param {AbstractMap} map - map script
+ * @param {boolean} withMap - map should be consider
  */
-NativeCommandManager.move = function (object3D, vector, map) {
+NativeCommandManager.move = function (object3D, vector, map, withMap) {
   const oldPosition = object3D.position.clone();
   object3D.position.add(vector);
-  if (map) {
+  if (map && withMap) {
     const isOutOfMap = !map.updateElevation(object3D);
     if (isOutOfMap) {
       object3D.position.copy(oldPosition);
