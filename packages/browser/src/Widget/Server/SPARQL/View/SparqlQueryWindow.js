@@ -348,14 +348,52 @@ export class SparqlQueryWindow extends EventSender {
    */
   getTransactionChain(gml_id){
     this.gml_id = gml_id;
-    const result = this.sparqlProvider.querySparqlEndpointService(this.transationChainQuerry);
-
+    const result = this.sparqlProvider.querySparqlEndpointService(this.transationChainQuery);
     return result;
   }
 
-  get transationChainQuerry() {
+  get transationChainQuery() {
     return /* SPARQL */ `
+    # Workspace prefixes
+PREFIX vers: <https://dataset-dl.liris.cnrs.fr/rdf-owl-urban-data-ontologies/Ontologies/CityGML/3.0/versioning#>
+PREFIX wksp: <https://dataset-dl.liris.cnrs.fr/rdf-owl-urban-data-ontologies/Ontologies/Workspace/3.0/workspace#>
+PREFIX type: <https://dataset-dl.liris.cnrs.fr/rdf-owl-urban-data-ontologies/Ontologies/Workspace/3.0/transactiontypes#>
 
+# Dataset prefixes
+PREFIX ws:   <https://dataset-dl.liris.cnrs.fr/rdf-owl-urban-data-ontologies/Datasets/GratteCiel_Workspace_2009_2018/3.0/GratteCiel_2009_2018_Workspace#>
+PREFIX v2009: <https://dataset-dl.liris.cnrs.fr/rdf-owl-urban-data-ontologies/Datasets/GratteCiel_Workspace_2009_2018/3.0/GratteCiel_2009_split#>
+PREFIX v2009b: <https://dataset-dl.liris.cnrs.fr/rdf-owl-urban-data-ontologies/Datasets/GratteCiel_Workspace_2009_2018/3.0/GratteCiel_2009_alt_split#>
+PREFIX v2012: <https://dataset-dl.liris.cnrs.fr/rdf-owl-urban-data-ontologies/Datasets/GratteCiel_Workspace_2009_2018/3.0/GratteCiel_2012_split#>
+PREFIX v2012b: <https://dataset-dl.liris.cnrs.fr/rdf-owl-urban-data-ontologies/Datasets/GratteCiel_Workspace_2009_2018/3.0/GratteCiel_2012_alt_split#>
+PREFIX v2015: <https://dataset-dl.liris.cnrs.fr/rdf-owl-urban-data-ontologies/Datasets/GratteCiel_Workspace_2009_2018/3.0/GratteCiel_2015_split#>
+PREFIX v2018: <https://dataset-dl.liris.cnrs.fr/rdf-owl-urban-data-ontologies/Datasets/GratteCiel_Workspace_2009_2018/3.0/GratteCiel_2018_split#>
+PREFIX vt2009_2012: <https://dataset-dl.liris.cnrs.fr/rdf-owl-urban-data-ontologies/Datasets/GratteCiel_Workspace_2009_2018/3.0/Transition_2009_2012#>
+PREFIX vt2009_2009b: <https://dataset-dl.liris.cnrs.fr/rdf-owl-urban-data-ontologies/Datasets/GratteCiel_Workspace_2009_2018/3.0/Transition_2009_2009b#>
+PREFIX vt2009b_2012b: <https://dataset-dl.liris.cnrs.fr/rdf-owl-urban-data-ontologies/Datasets/GratteCiel_Workspace_2009_2018/3.0/Transition_2009b_2012b#>
+PREFIX vt2012b_2015: <https://dataset-dl.liris.cnrs.fr/rdf-owl-urban-data-ontologies/Datasets/GratteCiel_Workspace_2009_2018/3.0/Transition_2012b_2015#>
+PREFIX vt2012_2015: <https://dataset-dl.liris.cnrs.fr/rdf-owl-urban-data-ontologies/Datasets/GratteCiel_Workspace_2009_2018/3.0/Transition_2012_2015#>
+PREFIX vt2015_2018: <https://dataset-dl.liris.cnrs.fr/rdf-owl-urban-data-ontologies/Datasets/GratteCiel_Workspace_2009_2018/3.0/Transition_2015_2018#>
+
+
+# return a the transactions connected to a city objects URI through a distance of 4
+
+#SELECT DISTINCT ?transition ?transaction ?sourceGmlId ?sourceVersion ?targetGmlId ?targetVersion
+SELECT ?gmlID ?gmlID_future_1 ?gmlID_future_2 ?gmlID_future_3 ?gmlID_future_4
+WHERE {
+  ?gmlID ^vers:Transaction.oldFeature|^vers:Transaction.newFeature ?transaction .
+  # search forward in time
+  OPTIONAL {
+    ?transaction vers:Transaction.newFeature ?gmlID_future_1 .
+  } OPTIONAL {
+    ?transaction vers:Transaction.newFeature/^vers:Transaction.oldFeature/vers:Transaction.newFeature ?gmlID_future_2 .
+  } OPTIONAL {
+    ?transaction vers:Transaction.newFeature/^vers:Transaction.oldFeature/vers:Transaction.newFeature/^vers:Transaction.oldFeature/vers:Transaction.newFeature ?gmlID_future_3 .
+  } OPTIONAL {
+    ?transaction vers:Transaction.newFeature/^vers:Transaction.oldFeature/vers:Transaction.newFeature/^vers:Transaction.oldFeature/vers:Transaction.newFeature/^vers:Transaction.oldFeature/vers:Transaction.newFeature ?gmlID_future_4 .
+  }
+
+  FILTER REGEX( str(?gmlID), ".*${this.gml_id}" ) 
+}
     `;
   }
 
