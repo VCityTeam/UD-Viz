@@ -80,7 +80,7 @@ module.exports = class AbstractMap extends ScriptBase {
 
   /**
    *
-   * @param {Object3D} gameObject
+   * @param {Object3D} gameObject - object to update elevation
    * @returns {boolean} - true if elevation has been updated false if object is out of map
    */
   updateElevation(gameObject) {
