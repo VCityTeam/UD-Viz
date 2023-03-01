@@ -1,17 +1,29 @@
 import * as THREE from 'three';
 import { Game, Data } from '@ud-viz/shared';
-import { ExternalScriptBase } from '../Context';
+import { ExternalScriptBase, Context } from '../Context';
 
 /**
  * @callback Movement
  * @param {number} dt - delta time movement
  */
 
+/**
+ * @typedef {object} NativeCommandManagerVariables
+ * @property {number} fov - default fov of the camera
+ */
+
+/** @type {NativeCommandManagerVariables} */
 const defaultVariables = {
   fov: 60,
 };
 
 export class CameraManager extends ExternalScriptBase {
+  /**
+   *
+   * @param {Context} context
+   * @param {Game.Object3D} object3D
+   * @param {NativeCommandManagerVariables} variables
+   */
   constructor(context, object3D, variables) {
     const overWriteVariables = JSON.parse(JSON.stringify(defaultVariables));
     Data.objectOverWrite(overWriteVariables, variables);
