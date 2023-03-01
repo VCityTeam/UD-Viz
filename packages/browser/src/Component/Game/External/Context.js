@@ -141,6 +141,10 @@ export class Context {
   }
 
   initFrame3D(frame3D) {
+    if (this.frame3D) {
+      this.frame3D.scene.remove(this.object3D);
+    }
+
     this.frame3D = frame3D;
 
     // register listener

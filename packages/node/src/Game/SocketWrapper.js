@@ -43,6 +43,7 @@ module.exports = class SocketWrapper {
       // there is no last state meaning it's the first time the user is notify for this game
       this.socket.emit(Constant.WEBSOCKET.MSG_TYPE.NEW_GAME, {
         state: stateJSON,
+        userData: this.userData,
       });
     } else {
       this.socket.emit(

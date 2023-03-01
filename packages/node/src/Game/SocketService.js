@@ -27,7 +27,7 @@ const SocketService = class {
    * @param {number} [options.pingTimeout=5000] - ping timeout in ms
    * @param {Array<SocketCallback>} [options.socketConnectionCallbacks=[]] - callback to apply when socket is connected
    * @param {Array<SocketCallback>} [options.socketDisconnectionCallbacks=[]] - callback to apply when socket is connected
-   * @param {Array<SocketThreadCallback>} [options.socketReadyForGameCallbacks=[]] - callback to apply when socket is ready for game
+   * @param {Array<SocketThreadCallback>} [options.socketReadyForGamePromises=[]] - callback to apply when socket is ready for game
    */
   constructor(httpServer, options = {}) {
     /**
@@ -46,8 +46,7 @@ const SocketService = class {
       options.socketDisconnectionCallbacks || [];
 
     /** @type {Array<SocketThreadCallback>} */
-    this.socketReadyForGameCallbacks =
-      options.socketReadyForGameCallbacks || [];
+    this.socketReadyForGamePromises = options.socketReadyForGamePromises || [];
 
     this.io.on('connection', this.onSocketConnection.bind(this));
 
@@ -132,11 +131,17 @@ const SocketService = class {
         return;
       }
 
-      this.threads[this.entryGameObject3DUUID].addSocketWrapper(socketWrapper);
+      // apply promises
+      const promises = [];
+      this.socketReadyForGamePromises.forEach((c) => {
+        const p = c(socket, this.threads[this.entryGameObject3DUUID]);
+        if (p) promises.push(p);
+      });
 
-      // apply callbacks
-      this.socketReadyForGameCallbacks.forEach((c) => {
-        c(socket, this.threads[this.entryGameObject3DUUID]);
+      Promise.all(promises).then(() => {
+        this.threads[this.entryGameObject3DUUID].addSocketWrapper(
+          socketWrapper
+        );
       });
     });
 
