@@ -95,25 +95,22 @@ export class MultiPlayerGamePlanar {
       this.socketIOWrapper.emit(Constant.WEBSOCKET.MSG_TYPE.COMMANDS, cmds);
     };
 
-    this.socketIOWrapper.on(
-      Constant.WEBSOCKET.MSG_TYPE.EXTERNAL_CONTEXT_USER_DATA,
-      (data) => {
-        Data.objectOverWrite(this.externalGameContext.userData, data);
-        console.log(this.externalGameContext.userData);
-      }
-    );
-
     // start listening on socket events
     this.socketIOWrapper.on(
       Constant.WEBSOCKET.MSG_TYPE.NEW_GAME,
       (gameData) => {
+        console.log(gameData);
+
         const stateJSON = gameData.state;
         const state = new Game.State(
           new Game.Object3D(stateJSON.object3D),
           stateJSON.timestamp
         );
 
-        console.log(state);
+        Data.objectOverWrite(
+          this.externalGameContext.userData,
+          gameData.userData
+        );
 
         // check if a game was already running
         if (this.interpolator._getLastStateReceived()) {

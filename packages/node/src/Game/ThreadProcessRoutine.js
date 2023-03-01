@@ -24,9 +24,13 @@ module.exports = function routine(gameScriptClass = {}) {
     parentPort.on('message', (int32ArrayMessage) => {
       const objectMessage = Data.int32ArrayToObject(int32ArrayMessage);
       const data = objectMessage[Thread.KEY.DATA];
+      const applyUUID = objectMessage[Thread.KEY.APPLY_UUID];
+      const promises = [];
 
-      // dispatch for custom event
-      threadContext.dispatch(objectMessage[Thread.KEY.TYPE], data);
+      // dispatch for custom event & record promise associated for apply resolve
+      promises.push(
+        threadContext.dispatch(objectMessage[Thread.KEY.TYPE], data, applyUUID)
+      );
 
       switch (objectMessage[Thread.KEY.TYPE]) {
         case Thread.EVENT.INIT:
@@ -35,30 +39,33 @@ module.exports = function routine(gameScriptClass = {}) {
             new Game.Object3D(data.gameObject3D)
           );
 
-          gameContext.load().then(() => {
-            const process = new ProcessInterval({ fps: 60 });
-            process.start((dt) => {
-              // simulation
-              gameContext.step(dt);
-              const currentState = gameContext.toState(false); // false because no need to send component already controlled
-              // post state to main thread
-              const message = {};
-              message[Thread.KEY.TYPE] = Thread.EVENT.CURRENT_STATE;
-              message[Thread.KEY.DATA] = currentState.toJSON();
-              parentPort.postMessage(Data.objectToInt32Array(message));
-            });
+          // init is not sync record promise
+          promises.push(
+            gameContext.load().then(() => {
+              const process = new ProcessInterval({ fps: 60 });
+              process.start((dt) => {
+                // simulation
+                gameContext.step(dt);
+                const currentState = gameContext.toState(false); // false because no need to send component already controlled
+                // post state to main thread
+                const message = {};
+                message[Thread.KEY.TYPE] = Thread.EVENT.CURRENT_STATE;
+                message[Thread.KEY.DATA] = currentState.toJSON();
+                parentPort.postMessage(Data.objectToInt32Array(message));
+              });
 
-            console.log(
-              'Thread process ',
-              gameContext.object3D.name,
-              ' initialized',
-              gameContext.object3D.uuid
-            );
+              console.log(
+                'Thread process ',
+                gameContext.object3D.name,
+                ' initialized',
+                gameContext.object3D.uuid
+              );
 
-            threadContext.initGameContext(gameContext);
+              threadContext.initGameContext(gameContext);
 
-            resolve(threadContext);
-          });
+              resolve(threadContext);
+            })
+          );
           break;
         case Thread.EVENT.COMMANDS:
           commands = [];
@@ -68,9 +75,12 @@ module.exports = function routine(gameScriptClass = {}) {
           gameContext.onCommands(commands);
           break;
         case Thread.EVENT.ADD_OBJECT3D:
-          gameContext.addObject3D(
-            new Game.Object3D(data.object3D),
-            data.parentUUID
+          // add is not sync record in promises for apply
+          promises.push(
+            gameContext.addObject3D(
+              new Game.Object3D(data.object3D),
+              data.parentUUID
+            )
           );
           break;
         case Thread.EVENT.REMOVE_OBJECT3D:
@@ -85,6 +95,16 @@ module.exports = function routine(gameScriptClass = {}) {
         default:
           console.warn(objectMessage[Thread.KEY.TYPE], ' not handle natively');
       }
+
+      if (applyUUID) {
+        Promise.all(promises).then(() => {
+          console.log(objectMessage[Thread.KEY.TYPE], ' applied');
+          const applyResolveMessage = {};
+          applyResolveMessage[Thread.KEY.TYPE] = Thread.EVENT.APPLY_RESOLVE;
+          applyResolveMessage[Thread.KEY.DATA] = applyUUID;
+          parentPort.postMessage(Data.objectToInt32Array(applyResolveMessage));
+        });
+      }
     });
   });
 };
@@ -96,24 +116,27 @@ class ThreadContext {
 
     this.parentPort = parentPort;
 
-    this.callbacks = {};
+    this.promises = {};
   }
 
   initGameContext(value) {
     this.gameContext = value;
   }
 
-  on(eventID, callback) {
+  on(eventID, promise) {
     for (const event in Thread.EVENT) {
       if (Thread.EVENT[event] === eventID) {
         throw new Error('native ThreadProcess event');
       }
     }
 
-    this.callbacks[eventID] = callback;
+    this.promises[eventID] = promise;
   }
 
-  dispatch(eventID, data) {
-    if (this.callbacks[eventID]) this.callbacks[eventID](data);
+  dispatch(eventID, data, applyUUID) {
+    if (this.promises[eventID]) {
+      return this.promises[eventID](data, applyUUID);
+    }
+    return Promise.resolve();
   }
 }

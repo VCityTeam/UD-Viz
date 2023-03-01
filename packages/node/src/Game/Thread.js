@@ -1,6 +1,7 @@
 const workerThreads = require('worker_threads');
 const { Data, Constant } = require('@ud-viz/shared');
 const SocketWrapper = require('./SocketWrapper');
+const THREE = require('three');
 
 /**
  * @classdesc - {@link workerThreads} wrapper, different event can be send/receive by the thread
@@ -28,6 +29,9 @@ const Thread = class {
     @type {Array<SocketWrapper>}*/
     this.socketWrappers = [];
 
+    /** @type {Object<string,Function>} */
+    this._resolveApply = {};
+
     // listen
     this.worker.on('message', (int32ArrayMessage) => {
       const objectMessage = Data.int32ArrayToObject(int32ArrayMessage);
@@ -36,6 +40,14 @@ const Thread = class {
           objectMessage[Thread.KEY.DATA]
         );
       }
+    });
+
+    this.on(Thread.EVENT.APPLY_RESOLVE, (applyUUID) => {
+      console.log('resolve', applyUUID);
+      const resolve = this._resolveApply[applyUUID];
+      if (!resolve) throw new Error('no resolve for ', applyUUID);
+      resolve();
+      delete this._resolveApply[applyUUID];
     });
   }
 
@@ -101,6 +113,19 @@ const Thread = class {
   on(msgType, callback) {
     this.callbacks[msgType] = callback;
   }
+
+  apply(msgType, data) {
+    return new Promise((resolve) => {
+      const object = {};
+      object[Thread.KEY.TYPE] = msgType;
+      object[Thread.KEY.DATA] = data;
+      const applyUUID = THREE.MathUtils.generateUUID();
+      object[Thread.KEY.APPLY_UUID] = applyUUID;
+      this.worker.postMessage(Data.objectToInt32Array(object));
+
+      this._resolveApply[applyUUID] = resolve;
+    });
+  }
 };
 
 /**
@@ -116,6 +141,7 @@ Thread.EVENT = {
   ON_SOCKET_WRAPPER_REMOVE: 'on_socket_wrapper_remove',
   // child => parent
   CURRENT_STATE: 'current_state',
+  APPLY_RESOLVE: 'apply_resolve',
 };
 
 /**
@@ -124,6 +150,7 @@ Thread.EVENT = {
 Thread.KEY = {
   DATA: 0,
   TYPE: 1,
+  APPLY_UUID: 2, // mean main thread is waiting an answer from child thread to resolve apply promise
 };
 
 module.exports = Thread;
