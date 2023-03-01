@@ -20,9 +20,9 @@ const defaultVariables = {
 export class CameraManager extends ExternalScriptBase {
   /**
    *
-   * @param {Context} context
-   * @param {Game.Object3D} object3D
-   * @param {NativeCommandManagerVariables} variables
+   * @param {Context} context - game external context
+   * @param {Game.Object3D} object3D - object3D attach to this script
+   * @param {NativeCommandManagerVariables} variables - script variables
    */
   constructor(context, object3D, variables) {
     const overWriteVariables = JSON.parse(JSON.stringify(defaultVariables));

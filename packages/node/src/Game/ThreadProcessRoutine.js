@@ -115,7 +115,7 @@ module.exports = function routine(gameScriptClass = {}) {
 class ThreadContext {
   /**
    *
-   * @param {workerThreads.MessagePort} parentPort
+   * @param {workerThreads.MessagePort} parentPort - parent port of this thread
    */
   constructor(parentPort) {
     /** @type {Game.Context} */
@@ -124,7 +124,7 @@ class ThreadContext {
     /** @type {workerThreads.MessagePort} */
     this.parentPort = parentPort;
 
-    /** @type {object<string,Promise>} */
+    /** @type {Object<string,Promise>} */
     this.promises = {};
   }
 

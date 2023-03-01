@@ -117,8 +117,9 @@ const Thread = class {
   }
 
   /**
-   * Same as `this.post` but return a promise resolving when thread child has applied message 
-   * 
+   * Same as `this.post` but return a promise resolving when thread child has applied message
+   *
+   *
    * @param {string} msgType - message type
    * @param {object} data - seriablizable data
    * @returns {Promise} - promise resolving when thread child has applied message

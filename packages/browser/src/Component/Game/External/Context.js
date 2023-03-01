@@ -141,8 +141,9 @@ export class Context {
   }
 
   /**
-   * 
-   * @param {Frame3DPlanar|Frame3DBase} frame3D - intialize frame3D of context 
+   *
+   *
+   * @param {Frame3DPlanar|Frame3DBase} frame3D - intialize frame3D of context
    */
   initFrame3D(frame3D) {
     if (this.frame3D) {
@@ -191,8 +192,8 @@ export class Context {
 
   /**
    * Reset context state and initialize the new frame3D
-   * 
-   * @param {Frame3DPlanar|Frame3DBase} newFrame3D - new frame3D to reset with 
+   *
+   * @param {Frame3DPlanar|Frame3DBase} newFrame3D - new frame3D to reset with
    */
   reset(newFrame3D) {
     if (this.currentGameObject3D) {
