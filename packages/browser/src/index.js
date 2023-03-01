@@ -43,6 +43,7 @@ import * as Shared from '@ud-viz/shared';
 export { Shared };
 
 export {
+  setup3DTilesLayer,
   add3DTilesLayers,
   addBaseMapLayer,
   addElevationLayer,
