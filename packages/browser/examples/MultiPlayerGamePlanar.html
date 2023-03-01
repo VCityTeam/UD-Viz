@@ -41,19 +41,16 @@
 
           // add dynamically hasItownsControls attributes in config
           configs['frame3D_planars'][0].hasItownsControls = true;
-          const frame3DPlanar = new udvizBrowser.Frame3DPlanar(
-            extent,
-            configs['frame3D_planars'][0]
-          );
 
           const socketIOWrapper = new udvizBrowser.SocketIOWrapper();
           socketIOWrapper.connectToServer().then(() => {
             const multiGame = new udvizBrowser.MultiPlayerGamePlanar(
               socketIOWrapper,
-              frame3DPlanar,
+              extent,
               assetManager,
               new udvizBrowser.InputManager(),
               {
+                frame3DPlanarOptions: configs['frame3D_planars'][0],
                 externalGameScriptClass: {
                   CameraManager:
                     udvizBrowser.ExternalScriptTemplate.CameraManager,
@@ -70,32 +67,31 @@
               }
             );
             multiGame.start();
+            // /// ADD LAYERS
+            udvizBrowser.add3DTilesLayers(
+              configs['3DTiles'],
+              multiGame.frame3DPlanar.layerManager,
+              multiGame.frame3DPlanar.itownsView
+            );
+
+            udvizBrowser.addBaseMapLayer(
+              configs['base_maps'][0],
+              multiGame.frame3DPlanar.itownsView,
+              extent
+            );
+
+            udvizBrowser.addElevationLayer(
+              configs['elevation'],
+              multiGame.frame3DPlanar.itownsView,
+              extent
+            );
+
+            udvizBrowser.addGeoJsonLayers(
+              configs['geoJSONs'],
+              multiGame.frame3DPlanar.itownsView,
+              extent
+            );
           });
-
-          // /// ADD LAYERS
-          udvizBrowser.add3DTilesLayers(
-            configs['3DTiles'],
-            frame3DPlanar.layerManager,
-            frame3DPlanar.itownsView
-          );
-
-          udvizBrowser.addBaseMapLayer(
-            configs['base_maps'][0],
-            frame3DPlanar.itownsView,
-            extent
-          );
-
-          udvizBrowser.addElevationLayer(
-            configs['elevation'],
-            frame3DPlanar.itownsView,
-            extent
-          );
-
-          udvizBrowser.addGeoJsonLayers(
-            configs['geoJSONs'],
-            frame3DPlanar.itownsView,
-            extent
-          );
         });
       });
     </script>

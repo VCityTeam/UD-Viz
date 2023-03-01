@@ -18,6 +18,7 @@ const Thread = class {
      * 
      @type {workerThreads.Worker}*/
 
+    console.log('start thread @ ', threadProcessPath);
     this.worker = new workerThreads.Worker(threadProcessPath);
 
     /** @type {Object<string,Function>} */

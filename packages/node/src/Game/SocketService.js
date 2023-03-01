@@ -2,7 +2,6 @@ const socketio = require('socket.io');
 const { Game, Constant } = require('@ud-viz/shared');
 const Thread = require('./Thread');
 const SocketWrapper = require('./SocketWrapper');
-const GameThread = require('./Thread');
 
 /**
  * @callback SocketCallback
@@ -53,7 +52,7 @@ const SocketService = class {
     /**
      *  threads running a gamecontext
      *  
-     @type {Object<string,GameThread>} */
+     @type {Object<string,Thread>} */
     this.threads = {};
 
     /** 
