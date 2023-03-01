@@ -92,6 +92,12 @@ export class SparqlQueryWindow extends EventSender {
      */
     this.queries = configSparqlWidget['queries'];
 
+    /**
+     * Gml_id linked to the cityObject
+     * @type {string}
+     */
+    this.gml_id;
+
     this.registerEvent(Graph.EVENT_NODE_CLICKED);
     this.registerEvent(Graph.EVENT_NODE_MOUSEOVER);
     this.registerEvent(Graph.EVENT_NODE_MOUSEOUT);
@@ -332,6 +338,25 @@ export class SparqlQueryWindow extends EventSender {
       option.innerHTML = v;
       this.resultSelect.appendChild(option);
     });
+  }
+
+  /**
+   * 
+   * @param {string} gml_id
+   * 
+   * @returns {Array<Array<string>>}
+   */
+  getTransactionChain(gml_id){
+    this.gml_id = gml_id;
+    const result = this.sparqlProvider.querySparqlEndpointService(this.transationChainQuerry);
+
+    return result;
+  }
+
+  get transationChainQuerry() {
+    return /* SPARQL */ `
+
+    `;
   }
 
   // SPARQL Window getters //
