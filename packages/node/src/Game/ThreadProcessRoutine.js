@@ -29,7 +29,7 @@ module.exports = function routine(gameScriptClass = {}) {
 
       // dispatch for custom event & record promise associated for apply resolve
       promises.push(
-        threadContext.dispatch(objectMessage[Thread.KEY.TYPE], data, applyUUID)
+        threadContext.dispatch(objectMessage[Thread.KEY.TYPE], data)
       );
 
       switch (objectMessage[Thread.KEY.TYPE]) {
@@ -109,20 +109,39 @@ module.exports = function routine(gameScriptClass = {}) {
   });
 };
 
+/**
+ * @class class containing all information to manipulate a worker thread
+ */
 class ThreadContext {
+  /**
+   *
+   * @param {workerThreads.MessagePort} parentPort
+   */
   constructor(parentPort) {
     /** @type {Game.Context} */
     this.gameContext = null;
 
+    /** @type {workerThreads.MessagePort} */
     this.parentPort = parentPort;
 
+    /** @type {object<string,Promise>} */
     this.promises = {};
   }
 
+  /**
+   *
+   * @param {Game.Context} value - game context of thread
+   */
   initGameContext(value) {
     this.gameContext = value;
   }
 
+  /**
+   * Add a listener to parent thread message
+   *
+   * @param {string} eventID - event id
+   * @param {()=>Promise|undefined} promise - callback return a promise or nothing
+   */
   on(eventID, promise) {
     for (const event in Thread.EVENT) {
       if (Thread.EVENT[event] === eventID) {
@@ -133,9 +152,15 @@ class ThreadContext {
     this.promises[eventID] = promise;
   }
 
-  dispatch(eventID, data, applyUUID) {
+  /**
+   *
+   * @param {string} eventID - event to notify listener of
+   * @param {object} data - serializable data
+   * @returns {Promise} - promise resolving when event has finished
+   */
+  dispatch(eventID, data) {
     if (this.promises[eventID]) {
-      return this.promises[eventID](data, applyUUID);
+      return this.promises[eventID](data);
     }
     return Promise.resolve();
   }

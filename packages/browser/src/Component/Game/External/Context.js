@@ -140,6 +140,10 @@ export class Context {
     this.initFrame3D(frame3D);
   }
 
+  /**
+   * 
+   * @param {Frame3DPlanar|Frame3DBase} frame3D - intialize frame3D of context 
+   */
   initFrame3D(frame3D) {
     if (this.frame3D) {
       this.frame3D.scene.remove(this.object3D);
@@ -185,6 +189,11 @@ export class Context {
     this.initScene();
   }
 
+  /**
+   * Reset context state and initialize the new frame3D
+   * 
+   * @param {Frame3DPlanar|Frame3DBase} newFrame3D - new frame3D to reset with 
+   */
   reset(newFrame3D) {
     if (this.currentGameObject3D) {
       this.object3D.remove(this.currentGameObject3D);

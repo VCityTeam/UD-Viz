@@ -1,4 +1,5 @@
 const { ScriptBase } = require('../Context');
+const Object3D = require('../Object3D');
 
 const OFFSET_ELEVATION = 0.2;
 
@@ -15,7 +16,16 @@ module.exports = class AbstractMap extends ScriptBase {
     console.error('abstract method');
   }
 
-  getHeightValue(x, y, size = this.heightmapSize, values = this.heightValues) {
+  /**
+   *
+   * @param {number} x - x coord game ref position
+   * @param {number} y - y coord game ref position
+   * @returns {number|NaN} - return elevation or NaN is x,y is out of map heightmap image
+   */
+  getHeightValue(x, y) {
+    const size = this.heightmapSize;
+    const values = this.heightValues;
+
     // TODO heightmap are square
     const pixelWorldUnit = {
       width: this.variables.heightmap_geometry.size / size,
@@ -68,6 +78,11 @@ module.exports = class AbstractMap extends ScriptBase {
     return getPixelHeight(indexMin.i, indexMin.j, 1);
   }
 
+  /**
+   *
+   * @param {Object3D} gameObject
+   * @returns {boolean} - true if elevation has been updated false if object is out of map
+   */
   updateElevation(gameObject) {
     const elevation = this.getHeightValue(
       gameObject.position.x,

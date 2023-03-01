@@ -133,7 +133,7 @@ const SocketService = class {
       // apply promises
       const promises = [];
       this.socketReadyForGamePromises.forEach((c) => {
-        const p = c(socket, this.threads[this.entryGameObject3DUUID]);
+        const p = c(socketWrapper, this.threads[this.entryGameObject3DUUID]);
         if (p) promises.push(p);
       });
 
@@ -160,7 +160,7 @@ const SocketService = class {
           this.threads[key].removeSocketWrapper(s[0]);
 
           this.socketDisconnectionCallbacks.forEach((c) => {
-            c(socket, this.threads[key]);
+            c(s[0], this.threads[key]);
           });
         }
       }
@@ -170,7 +170,7 @@ const SocketService = class {
 
     // apply callbacks
     this.socketConnectionCallbacks.forEach((c) => {
-      c(socket);
+      c(socketWrapper);
     });
   }
 };

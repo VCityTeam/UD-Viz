@@ -43,6 +43,7 @@ const Thread = class {
       }
     });
 
+    // wait resolve signal from child thread
     this.on(Thread.EVENT.APPLY_RESOLVE, (applyUUID) => {
       console.log('resolve', applyUUID);
       const resolve = this._resolveApply[applyUUID];
@@ -115,6 +116,13 @@ const Thread = class {
     this.callbacks[msgType] = callback;
   }
 
+  /**
+   * Same as `this.post` but return a promise resolving when thread child has applied message 
+   * 
+   * @param {string} msgType - message type
+   * @param {object} data - seriablizable data
+   * @returns {Promise} - promise resolving when thread child has applied message
+   */
   apply(msgType, data) {
     return new Promise((resolve) => {
       const object = {};
