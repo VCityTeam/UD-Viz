@@ -15,13 +15,6 @@ module.exports = class AbstractMap extends ScriptBase {
     console.error('abstract method');
   }
 
-  tick() {
-    this.context.object3D.traverse((child) => {
-      if (child.isStatic()) return;
-      this.updateElevation(child);
-    });
-  }
-
   getHeightValue(x, y, size = this.heightmapSize, values = this.heightValues) {
     // TODO heightmap are square
     const pixelWorldUnit = {
