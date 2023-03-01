@@ -4,6 +4,7 @@ const udvizVersion = require('@ud-viz/node/package.json').version;
 const Shared = require('@ud-viz/shared');
 const Game = require('./Game/Game');
 const path = require('path');
+const exec = require('child-process-promise').exec;
 
 const NODE_ENV = process.env.NODE_ENV || 'development';
 
@@ -114,38 +115,40 @@ const ExpressAppWrapper = class {
 
           this.gameSocketService = new Game.SocketService(this.httpServer);
 
-          console.error('deprecated use a bundle generation instead');
-          const gameManagerScriptPath = path.resolve(
-            __dirname,
-            './Game/ScriptTemplate/NoteGameManager.js'
-          );
+          // build default thread bundle
+          exec('npm run build-default-thread --prefix ./packages/node')
+            .then((result) => {
+              console.log('stdout: \n', result.stdout);
+              console.log('stderr: \n', result.stderr);
+            })
+            .then(() => {
+              this.gameSocketService.initializeGameThreads(
+                [
+                  new Shared.Game.Object3D({
+                    name: 'Note Game',
+                    static: true,
+                    components: {
+                      GameScript: {
+                        idScripts: ['NoteGameManager', 'NativeCommandManager'],
+                      },
+                      ExternalScript: {
+                        idScripts: ['NoteUI', 'CameraManager'],
+                      },
+                    },
+                  }),
+                ],
+                path.resolve(
+                  __dirname,
+                  '../dist/default_thread/release/default_thread.js'
+                )
+              );
 
-          this.gameSocketService.initializeGameThreads(
-            {
-              NativeCommandManager:
-                'package:@ud-viz/shared/src/Game/ScriptTemplate/NativeCommandManager.js',
-              GameManager: 'file:' + gameManagerScriptPath,
-            },
-            [
-              new Shared.Game.Object3D({
-                name: 'Note Game',
-                static: true,
-                components: {
-                  GameScript: {
-                    idScripts: ['NoteGameManager', 'NativeCommandManager'],
-                  },
-                  ExternalScript: {
-                    idScripts: ['NoteUI', 'CameraManager'],
-                  },
-                },
-              }),
-            ]
-          );
-
-          console.log('Default GameSocketService initialized');
+              console.log('Default GameSocketService initialized');
+              resolve();
+            });
+        } else {
+          resolve();
         }
-
-        resolve();
       });
     });
   }
