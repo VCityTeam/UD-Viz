@@ -259,9 +259,8 @@ export class LayerManager {
    * Remove a a layer and its tilesManager given a layer ID.
    *
    * @param {string} id the layer ID.
-   * @returns {TilesManager}
    */
-  removeLayerByLayerID(id) {
+  remove3DTilesLayerByLayerID(id) {
     for (let i = 0; i < this.tilesManagers.length; i++) {
       if (this.tilesManagers[i].layer.id === id) {
         this.view.removeLayer(id);
