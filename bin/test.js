@@ -1,5 +1,9 @@
+const Constant = require('./Constant');
+
 const exec = require('child-process-promise').exec;
 const Test = require('@ud-viz/node').Test;
+
+const cp = require('node:child_process');
 
 const printExec = function (result) {
   console.log('stdout: \n', result.stdout);
@@ -38,7 +42,18 @@ exec('npm run build-shared')
                 './packages/browser/bin/Test',
                 './packages/browser/dist/release/bundle.js'
               ).then(() => {
-                Test.html('./packages/browser/examples');
+                const fork = cp.fork(`${__dirname}/host.js`);
+                fork.on('message', (message) => {
+                  if (message == Constant.MESSAGE.READY) {
+                    console.log(
+                      'Host is ready ' + message + '=> start testing ./examples'
+                    );
+                    Test.html('./examples', Constant.DEFAULT_PORT).then(() => {
+                      fork.kill();
+                      process.exit(0); // stop test process
+                    });
+                  }
+                });
               });
             });
           });

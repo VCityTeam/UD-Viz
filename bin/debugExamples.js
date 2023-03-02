@@ -1,7 +1,6 @@
 /** @file Running the build-debug script in the browser package. */
-
-const ExpressAppWrapper = require('@ud-viz/node').ExpressAppWrapper;
 const exec = require('child-process-promise').exec;
+const spawn = require('child_process').spawn;
 
 /**
  * It prints the stdout and stderr of a result object
@@ -13,13 +12,18 @@ const printExec = function (result) {
   console.log('stderr: \n', result.stderr);
 };
 
-// run an express app wrapper with a gamesocket service
-const app = new ExpressAppWrapper();
-app.start({
-  folder: './',
-  port: 8000,
-  withDefaultGameSocketService: true,
-});
-
 // run a build debug browser bundle
 exec('npm run build-debug --prefix ./packages/browser').then(printExec);
+
+const child = spawn('cross-env NODE_ENV=development node', ['./bin/host.js'], {
+  shell: true,
+});
+
+child.stdout.on('data', (data) => {
+  console.log(`${data}`);
+});
+child.stderr.on('data', (data) => {
+  console.error('\x1b[31m', 'host' + ` ERROR :\n${data}`);
+});
+
+// exec('cross-env NODE_ENV=development node ./bin/host.js').then(printExec);
