@@ -5,7 +5,6 @@
   "scripts": {
     "clean": "rm -f -r node_modules && rm -f package-lock.json && rm -f  -r ./packages/**/dist",
     "reset": "npm run clean && npm i",
-    "link-local": "npm link ./packages/shared ; npm link ./packages/browser ; npm link ./packages/node",
     "build-shared": "npm run build --prefix ./packages/shared",
     "build-browser": "npm run build --prefix ./packages/browser",
     "build-node": "npm run build --prefix ./packages/node",
