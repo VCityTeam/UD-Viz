@@ -44,4 +44,4 @@ For pre-requisites see [here](https://github.com/VCityTeam/UD-Viz/blob/master/Re
 
 ### Debugging
 
-To debug the [ExpressAppWrapper](./src/ExpressAppWrapper.js) back-end see [here](../../Readme.md#debugging-the-examples)
+To debug the [ExpressAppWrapper](./src/ExpressAppWrapper.js) back-end see [here](../../docs/static/Devel/Developers.md#debugging-the-examples)
