@@ -23,6 +23,8 @@ const spawn = require('child_process').spawn;
  */
 const browserScripts = function (testFolderPath, bundlePath) {
   return folderInBrowserPage(testFolderPath, async (page, currentFile) => {
+    console.log('\n\nstart testing script ', currentFile.name);
+
     // import bundle.js
     await page.evaluate(fs.readFileSync(bundlePath, 'utf8'));
     // console.log(currentFile.name, ' has imported bundle');
@@ -30,6 +32,8 @@ const browserScripts = function (testFolderPath, bundlePath) {
     await page.evaluate(
       eval(fs.readFileSync(testFolderPath + '/' + currentFile.name, 'utf8'))
     ); // without the eval here console.log are not catch
+
+    console.log(currentFile.name, ' test succeed');
   });
 };
 
@@ -112,7 +116,14 @@ const scripts = function (folderPath) {
  */
 const html = function (folderPath, port) {
   return folderInBrowserPage(folderPath, (page, currentFile) => {
+    // check if file is an html file
+    const indexLastPoint = currentFile.name.lastIndexOf('.');
+    const fileFormat = currentFile.name.slice(indexLastPoint + 1);
+    if (fileFormat != 'html') return Promise.resolve();
+
     return new Promise((resolve) => {
+      console.log('\n\nstart testing html ', currentFile.name);
+
       // page connect to html file
       page
         .goto(
@@ -121,6 +132,7 @@ const html = function (folderPath, port) {
         .then(() => {
           // wait 1 sec
           setTimeout(() => {
+            console.log(currentFile.name, ' test succeed');
             resolve();
           }, 3000);
         });
@@ -173,8 +185,6 @@ const folderInBrowserPage = function (testFolderPath, pageTest) {
         const process = async () => {
           const currentFile = files[index];
           if (currentFile.isFile()) {
-            console.log('\n\n' + currentFile.name + ' start test');
-
             // open a new page
             const page = await browser.newPage();
 
@@ -208,8 +218,6 @@ const folderInBrowserPage = function (testFolderPath, pageTest) {
 
             // close
             await page.close();
-
-            console.log(currentFile.name, ' succeed');
 
             // console.log(currentFile.name, ' close page');
           }

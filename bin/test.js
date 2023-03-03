@@ -45,12 +45,16 @@ exec('npm run build-shared')
                 const fork = cp.fork(`${__dirname}/host.js`);
                 fork.on('message', (message) => {
                   if (message == Constant.MESSAGE.READY) {
-                    console.log(
-                      'Host is ready ' + message + '=> start testing ./examples'
-                    );
-                    Test.html('./examples', Constant.DEFAULT_PORT).then(() => {
-                      fork.kill();
-                      process.exit(0); // stop test process
+                    console.log('Host is ready');
+                    // index.html
+                    Test.html('.', Constant.DEFAULT_PORT).then(() => {
+                      // examples/*.html
+                      Test.html('./examples', Constant.DEFAULT_PORT).then(
+                        () => {
+                          fork.kill();
+                          process.exit(0); // stop test process
+                        }
+                      );
                     });
                   }
                 });

@@ -4,6 +4,7 @@
   "description": "Urban Data VIsualiZation framework",
   "scripts": {
     "clean": "rm -f -r node_modules && rm -f package-lock.json && rm -f  -r ./packages/**/dist",
+    "clear-node": "sudo killall -9 node",
     "reset": "npm run clean && npm i",
     "build-shared": "npm run build --prefix ./packages/shared",
     "build-browser": "npm run build --prefix ./packages/browser",
