@@ -40,7 +40,7 @@ See [here](https://github.com/VCityTeam/UD-Viz/blob/master/Readme.md#getting-sta
 
 ## Developers
 
-For pre-requisites see [here](https://github.com/VCityTeam/UD-Viz/blob/master/Readme.md#pre-requisites).
+For pre-requisites see [here](https://github.com/VCityTeam/UD-Viz/blob/master/docs/static/Devel/Developers.md#pre-requisites).
 
 ### Npm scripts
 
