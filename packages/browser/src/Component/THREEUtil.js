@@ -136,4 +136,28 @@ module.exports = {
 
     camera.updateProjectionMatrix();
   },
+
+  /**
+   * Move camera transform so the rectangle define by min & max (in the xy plane) fit the entire screen
+   *
+   * @param {THREE.PerspectiveCamera} camera - camera to update
+   * @param {THREE.Vector2} min - min coord of the rectangle
+   * @param {THREE.Vector2} max - max coord of the rectangle
+   * @todo rectangle is not force to be in xy plane
+   */
+  cameraFitRectangle: function (camera, min, max) {
+    const center = min.clone().lerp(max, 0.5);
+    const width = max.x - min.x;
+    const height = max.y - min.y;
+    const fov = camera.fov * (Math.PI / 180); // fov radian
+    const fovh = 2 * Math.atan(Math.tan(fov / 2) * camera.aspect);
+    const dx = Math.abs(height / 2 / Math.tan(fovh / 2));
+    const dy = Math.abs(width / 2 / Math.tan(fov / 2));
+    const distance = Math.max(dx, dy);
+
+    camera.position.copy(center);
+    camera.position.z = distance;
+    camera.rotation.set(0, 0, -Math.PI / 2);
+    camera.updateProjectionMatrix();
+  },
 };

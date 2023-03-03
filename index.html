@@ -33,7 +33,7 @@
         'href',
         'https://github.com/VCityTeam/UD-Viz/releases'
       );
-      versionLink.innerHTML = "UDVIZ_VERSION";
+      versionLink.innerHTML = 'UDVIZ_VERSION';
       h1.appendChild(versionLink);
 
       const contentWrapper = document.createElement('div');
@@ -102,6 +102,7 @@
       createContainer('SinglePlayerGamePlanar');
       createContainer('MultiPlayerGamePlanar');
       createContainer('Frame3D');
+      createContainer('THREEUtil');
 
       const addProjectElement = (name, idParent, href, title, srcImg) => {
         const newProject = document.createElement('a');
@@ -144,6 +145,14 @@
         './packages/browser/examples/Billboard.html',
         'This example implements a billboard (ie an embeded html content in a 3D view).',
         './packages/browser/examples/assets/img/mosaic/billboard.png'
+      );
+
+      addProjectElement(
+        'Fit Extent',
+        'THREEUtil',
+        './packages/browser/examples/FitExtent.html',
+        'This example implements the THREEUtil function cameraFitRectangle where rectangle to fit is the itowns extent ',
+        './packages/browser/examples/assets/img/mosaic/fit_extent.png'
       );
 
       addProjectElement(
@@ -212,7 +221,7 @@
 
       addProjectElement(
         'Temporal Widget',
-        "AllWidget",
+        'AllWidget',
         './packages/browser/examples/TemporalWidget.html',
         'This extensions allows the user to explore city objects and color them according to filters.',
         './packages/browser/examples/assets/img/mosaic/TemporalWidget.png'
@@ -228,7 +237,7 @@
 
       addProjectElement(
         'SPARQL',
-        "AllWidget",
+        'AllWidget',
         './packages/browser/examples/SPARQLWidget.html',
         `This example illustrate the SPARQL Widget`,
         './packages/browser/examples/assets/img/mosaic/GeoJSON.png'
