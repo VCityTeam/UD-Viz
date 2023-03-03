@@ -63,7 +63,6 @@ Clone the UD-Viz repository and install requirements with npm
 git clone https://github.com/VCityTeam/UD-Viz.git
 cd UD-Viz
 npm install # resolve dependencies based on the package.json (and package-lock.json if it exists)
-npm run link-local # use the local code instead of the modules published on npm
 ```
 
 ### Run an example urban data web application
