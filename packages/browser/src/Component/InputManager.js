@@ -203,7 +203,7 @@ export class InputManager {
    *
    * @param {string} commandID - id of the command
    * @param {string} eventID - id of the mouse to listen to
-   * @param {function(MouseState):Command} cb - callback called at event
+   * @param {function(Event):Command} cb - callback called at event
    */
   addMouseCommand(commandID, eventID, cb) {
     if (!this.mouseCommands[eventID]) {
