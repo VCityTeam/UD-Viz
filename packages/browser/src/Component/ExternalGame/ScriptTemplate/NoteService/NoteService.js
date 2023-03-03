@@ -136,9 +136,11 @@ export class NoteService extends ExternalScriptBase {
         'update_pointer_object3D',
         'mousemove',
         (event) => {
+          const mouse = new THREE.Vector2(event.clientX, event.clientY);
+
           const worldPosition = new THREE.Vector3();
           this.context.frame3D.itownsView.getPickingPositionFromDepth(
-            new THREE.Vector2(event.offsetX, event.offsetY),
+            mouse,
             worldPosition
           );
 
