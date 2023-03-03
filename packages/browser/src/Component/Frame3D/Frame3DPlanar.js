@@ -56,10 +56,6 @@ export class Frame3DPlanar extends Frame3DBase {
 
     if (hasItownsControls) this.enableItownsViewControls(true);
 
-    // Disable itowns resize https://github.com/VCityTeam/UD-Viz/issues/374
-    this.itownsViewResize = this.itownsView.resize.bind(this.itownsView);
-    this.itownsView.resize = function () {};
-
     // fill parent class attributes create by the itownsView
     this.scene = this.itownsView.scene;
     this.renderer = this.itownsView.mainLoop.gfxEngine.renderer;
@@ -161,7 +157,6 @@ export class Frame3DPlanar extends Frame3DBase {
    */
   onResize() {
     super.onResize(false); // dont resize three variables since itownsResize is doing it
-    this.itownsViewResize(this.size.x, this.size.y);
   }
 
   /**
