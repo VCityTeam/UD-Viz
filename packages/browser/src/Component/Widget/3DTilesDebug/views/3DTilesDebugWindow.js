@@ -61,7 +61,7 @@ export class Debug3DTilesWindow extends Window {
 
   get innerContentHtml() {
     return /* html*/ `
-      <button id="${this.logTBIButtonId}">Log Tiles Manager</button>
+      <button id="${this.logTBIButtonId}">Log LayerManager in console</button>
       <p id="${this.TBIInfoParagraphId}">0 / ? tiles loaded.</p>
       <p id="${this.visibleTilesParagraphId}">0 tiles visible.</p>
       <h3>Selected building</h3>
