@@ -348,11 +348,11 @@ export class SparqlQueryWindow extends EventSender {
    */
   getTransactionChain(gml_id){
     this.gml_id = gml_id;
-    const result = this.sparqlProvider.querySparqlEndpointService(this.transationChainQuery);
+    const result = this.sparqlProvider.querySparqlEndpointService(this.transactionChainQuery);
     return result;
   }
 
-  get transationChainQuery() {
+  get transactionChainQuery() {
     return /* SPARQL */ `
     # Workspace prefixes
 PREFIX vers: <https://dataset-dl.liris.cnrs.fr/rdf-owl-urban-data-ontologies/Ontologies/CityGML/3.0/versioning#>
