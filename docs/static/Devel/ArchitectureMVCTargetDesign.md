@@ -73,7 +73,7 @@ We propose a nomenclature to use when working with classes in a module, so that 
 
 ## Documents module
 
-[[Detailed documentation](../../../packages/browser/src/Component/Widget/Server/Documents/README.md)]
+[[Detailed documentation](./UD_Viz_Browser/Documents/README.md)]
 
 The documents module follows an MVVM architecture :
 

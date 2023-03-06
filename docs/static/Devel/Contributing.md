@@ -32,7 +32,7 @@ Notice that UD-Viz coding style uses a unix `linebreak-style` (aka `LF` as newli
 
 ⚠️ When your PR is open each push on your branch will trigger Travis CI jobs.
 
-> `npm run assert-code` will `npm run eslint` and `npm run test`. Also ran by CI. See [here](../../../Readme.md#npm-scripts) for more information.
+> `npm run assert-code` will `npm run eslint` and `npm run test`. Also ran by CI. See [here](./Developers.md#npm-scripts) for more information.
 
 Before submitting a pull request, and because [UD-Viz still misses some tests](https://github.com/VCityTeam/UD-SV/issues/34),
 **non-regression testing must be done manually**.
