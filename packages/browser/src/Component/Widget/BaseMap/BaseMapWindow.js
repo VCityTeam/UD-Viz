@@ -1,57 +1,65 @@
 import * as itowns from 'itowns';
-
-// Component
-import { Window } from '../Component/GUI/js/Window';
+import { findChildByID } from '../../HTMLUtil';
 
 /**
  * It manages multiple WMS sources used as Itowns ColoLayer for background.
  *
  * @class
  */
-export class BaseMap extends Window {
+export class BaseMap {
   /**
    * Manages multiple WMS sources used as Itowns ColoLayer for background
    *
    * @param {itowns.View} itownsView An ItownsView.
-   * @param {object} baseMapLayers The baseMapLayers
+   * @param {object} baseMapLayersConfig The baseMapLayersConfig config
    * @param {itowns.Extent} appExtent The extent used to set up the layers
    */
-  constructor(itownsView, baseMapLayers, appExtent) {
-    super('baseMap', 'base Map', false);
-    /** @type {itowns.Extent} */
-    this.appExtent = appExtent;
+  constructor(itownsView, baseMapLayersConfig, appExtent) {
+    /** @type {HTMLElement} */
+    this.rootHtml = document.createElement('div');
+    this.rootHtml.innerHTML = this.innerContentHtml;
+
     /** @type {object} */
-    this.baseMapLayers = baseMapLayers;
+    this.baseMapLayersConfig = baseMapLayersConfig;
+
     /** @type {itowns.View} */
     this.itownsView = itownsView;
-    this.createLayers();
+
+    this.createLayers(appExtent);
+    this.displayLayersImage();
   }
 
   /**
-   * Set Window style and display layers images when the window is created
+   *
+   * @returns {HTMLElement} - root html
    */
-  windowCreated() {
-    this.window.style.left = '10px';
-    this.window.style.top = 'unset';
-    this.window.style.bottom = '10px';
-    this.window.style.width = '270px';
-    this.displayLayersImage();
+  html() {
+    return this.rootHtml;
+  }
+
+  /**
+   * Remove root html from DOM
+   */
+  dispose() {
+    this.rootHtml.remove();
   }
 
   /**
    * Create a WMSSource and an Itowns ColorLayer from each baseMapLayer.
    * The first added is visible.
+   *
+   * @param {itowns.Extent} appExtent - application extent
    */
-  createLayers() {
+  createLayers(appExtent) {
     let i = 0;
-    for (const layer of this.baseMapLayers) {
+    for (const layer of this.baseMapLayersConfig) {
       layer.id = 'baseMapLayer_' + i;
       const source = new itowns.WMSSource({
-        extent: this.appExtent,
+        extent: appExtent,
         name: layer.name,
         url: layer.url,
         version: layer.version,
-        crs: this.appExtent.crs,
+        crs: appExtent.crs,
         format: 'image/jpeg',
       });
       // Add a WMS imagery layer
@@ -74,11 +82,11 @@ export class BaseMap extends Window {
    * It can either be an external URL or an image in the asset folder
    */
   displayLayersImage() {
-    for (const layer of this.baseMapLayers) {
+    for (const layer of this.baseMapLayersConfig) {
       const new_img = document.createElement('img');
       new_img.src = layer.image;
       new_img.id = layer.id + '_img';
-      new_img.width = 250;
+      new_img.width = 250; // icon dimension are hardcoded
       new_img.height = 200;
       new_img.onclick = () => this.changeVisibleLayer(layer.id);
       this.baseDivElement.appendChild(new_img);
@@ -91,7 +99,7 @@ export class BaseMap extends Window {
    * @param {string} layerID - the id of the layer to be displayed
    */
   changeVisibleLayer(layerID) {
-    for (const layer of this.baseMapLayers) {
+    for (const layer of this.baseMapLayersConfig) {
       this.itownsView.getLayerById(layer.id).visible = layer.id == layerID;
     }
     this.itownsView.notifyChange(this.itownsView.camera.camera3D);
@@ -104,10 +112,10 @@ export class BaseMap extends Window {
   }
 
   get baseDivId() {
-    return `${this.windowId}_baseMap_div`;
+    return `View_baseMap_div`;
   }
 
   get baseDivElement() {
-    return document.getElementById(this.baseDivId);
+    return findChildByID(this.rootHtml, this.baseDivId);
   }
 }
