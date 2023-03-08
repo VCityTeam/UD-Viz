@@ -9,20 +9,22 @@ The `TilesManager` utility class, located in `TilesManager.js` is a useful tool 
 
 ## Summary
 
-1. [Code examples](#code-examples)
-    1. [Create and update the manager](#Create-and-update-the-manager)
-    2. [Pick a city object](#Pick-a-city-object)
-    3. [Set the style for one or many city objects](#Set-the-style-for-one-or-many-city-objects)
-    4. [Define named styles](#Define-named-styles)
-    5. [Remove styles](#Remove-styles)
-2. [Model](#Model)
-    1. [Tile](#Tile)
-    2. [City object](#city-object)
-        1. [City object identifier](#City-object-identifier)
-    3. [City object style](#city-object-style)
-3. [Logic](#Logic)
-    1. [Tiles management](#Tiles-management)
-    1. [Style management](#Style-management)
+- [3DTiles interaction : model, tiles manager \& style manager](#3dtiles-interaction--model-tiles-manager--style-manager)
+  - [Summary](#summary)
+  - [Code examples](#code-examples)
+    - [Create and update the manager](#create-and-update-the-manager)
+    - [Pick a city object](#pick-a-city-object)
+    - [Set the style for one or many city objects](#set-the-style-for-one-or-many-city-objects)
+    - [Define named styles](#define-named-styles)
+    - [Remove styles](#remove-styles)
+  - [Model](#model)
+    - [Tile](#tile)
+    - [City object](#city-object)
+      - [City object identifier](#city-object-identifier)
+    - [City object style](#city-object-style)
+  - [Logic](#logic)
+    - [Tiles management](#tiles-management)
+    - [Style management](#style-management)
 
 ## Code examples
 
@@ -118,7 +120,7 @@ There are two main object representing the 3DTiles hierarchy : `Tile` and `CityO
 
 ### Tile
 
-[Model/Tile.js](../Model/Tile.js)
+[Model/Tile.js](../../../../../packages/browser/src/Component/Itowns/3DTiles/Model/Tile.js)
 
 The `Tile` object represents a tile. It contains the batch table and the reference to its city objects.
 
@@ -151,7 +153,7 @@ constructor(layer, tileId)
 
 ### City object
 
-[Model/CityObject.js](../Model/CityObject.js)
+[Model/CityObject.js](../../../../../packages/browser/src/Component/Itowns/3DTiles/Model/CityObject.js)
 
 The `CityObject` class represents a city object. It contains useful geometry properties, such as the vertex indexes or the centroid. It also contains the properties of the batch table.
 
@@ -211,7 +213,7 @@ let cityObjectId = createCityObjectID({tileId: 6, batchId: 64});
 
 ### City object style
 
-[Model/CityObjectStyle.js](../Model/CityObjectStyle.js)
+[Model/CityObjectStyle.js](../../../../../packages/browser/src/Component/Itowns/3DTiles/Model/CityObjectStyle.js)
 
 The `CityObjectStyle` object represents a style that can be applied to a city object. For the moment, the only option available is to change the material. In order to to that, the `materialProps` property stores THREE.js material parameters, as defined in [the THREE.js documentation](https://threejs.org/docs/index.html#api/en/materials/MeshLambertMaterial).
 
