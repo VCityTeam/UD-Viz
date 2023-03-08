@@ -16,6 +16,7 @@
     "test": "cross-env NODE_ENV=production node ./bin/test.js",
     "assert-code": "npm run eslint && npm run test",
     "validate-links": "node ./bin/remarkValidateLinks.js",
+    "travis-jobs": "npm run assert-code && npm audit --audit-level=low && npm run validate-links",
     "pre-publish": "node ./bin/prePublish.js",
     "docs-shared": "cross-env PACKAGE=shared jsdoc -c ./docs/jsdocConfig/jsdoc.js",
     "docs-browser": "cross-env PACKAGE=browser jsdoc -c ./docs/jsdocConfig/jsdoc.js",
