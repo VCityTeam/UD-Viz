@@ -28,7 +28,7 @@ Each module adds new functionnalities to the application. You can find the code 
 - Filtered research (research by keyword, attribute and/or temporal research)
 - All documents are loaded from an external data server and can be accessed using the **Document Inspector** window.
 
-![documents_view](./Server/Documents/Doc/Pictures/view.png)
+![documents_view](../Documents/Pictures/view.png)
 
 This module has several extensions that add functionalities :
 

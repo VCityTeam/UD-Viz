@@ -31,7 +31,7 @@ See [here](https://github.com/VCityTeam/UD-Viz/blob/master/Readme.md#getting-sta
 
 ## Developers
 
-For pre-requisites see [here](https://github.com/VCityTeam/UD-Viz/blob/master/Readme.md#pre-requisites).
+For pre-requisites see [here](https://github.com/VCityTeam/UD-Viz/blob/master/docs/static/Devel/Developers.md#pre-requisites).
 
 ### Npm scripts
 
@@ -44,4 +44,4 @@ For pre-requisites see [here](https://github.com/VCityTeam/UD-Viz/blob/master/Re
 
 ### Debugging
 
-To debug the [ExpressAppWrapper](./src/ExpressAppWrapper.js) back-end see [here](../../docs/static/Devel/Developers.md#debugging-the-examples)
+To debug the [ExpressAppWrapper](../node/src/ExpressAppWrapper.js) back-end see [here](../../docs/static/Devel/Developers.md#debugging-the-examples)
