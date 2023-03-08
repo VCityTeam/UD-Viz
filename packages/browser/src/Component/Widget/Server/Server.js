@@ -6,27 +6,24 @@ export { AuthenticationService } from './Authentication/services/AuthenticationS
 
 export { AuthenticationView } from './Authentication/views/AuthenticationView';
 
-export { DocumentCommentsModule } from './DocumentComments/DocumentCommentsModule';
+// export { DocumentCommentsModule } from './DocumentComments/DocumentCommentsModule';
 
-export { GeocodingService } from './Geocoding/services/GeocodingService';
+// export { GeocodingService } from './Geocoding/services/GeocodingService';
 
-export { GeocodingView } from './Geocoding/views/GeocodingView';
+// export { GeocodingView } from './Geocoding/views/GeocodingView';
 
-export { ContributeModule } from './Contribute/ContributeModule';
+// export { ContributeModule } from './Contribute/ContributeModule';
 
-export { DocumentValidationModule } from './DocumentValidation/DocumentValidationModule';
+// export { DocumentValidationModule } from './DocumentValidation/DocumentValidationModule';
 
-export { DocumentVisualizerWindow } from './DocumentVisualizer/View/DocumentVisualizerWindow';
+// export { DocumentVisualizerWindow } from './DocumentVisualizer/View/DocumentVisualizerWindow';
 
-export { SparqlWidgetView } from './SPARQL/View/SparqlWidgetView';
+// export { SparqlWidgetView } from './SPARQL/View/SparqlWidgetView';
 
-export { SparqlEndpointResponseProvider } from './SPARQL/Service/SparqlEndpointResponseProvider';
+// export { SparqlEndpointResponseProvider } from './SPARQL/Service/SparqlEndpointResponseProvider';
 
-export { GuidedTourController } from './GuidedTour/GuidedTourController';
+// export { GuidedTourController } from './GuidedTour/GuidedTourController';
 
-export { LinkModule } from './Links/LinkModule';
+// export { LinkModule } from './Links/LinkModule';
 
-export { DocumentModule } from './Documents/DocumentModule';
-
-import * as Component from './Component/RequestService';
-export { Component };
+// export { DocumentModule } from './Documents/DocumentModule';

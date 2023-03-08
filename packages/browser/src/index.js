@@ -2,7 +2,7 @@
 
 // Template
 
-export { AllWidget } from './AllWidget/AllWidget';
+// export { AllWidget } from './AllWidget/AllWidget';
 
 export { SinglePlayerGamePlanar } from './SinglePlayerGamePlanar/SinglePlayerGamePlanar';
 
@@ -30,6 +30,8 @@ import * as Widget from './Component/Widget/Widget';
 export { Widget };
 
 export { InputManager } from './Component/InputManager';
+
+export { RequestService } from './Component/RequestService';
 
 export { SocketIOWrapper } from './Component/SocketIOWrapper';
 
