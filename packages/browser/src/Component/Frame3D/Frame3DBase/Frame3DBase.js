@@ -185,6 +185,12 @@ export class Frame3DBase {
    * @param {HTMLElement} el - html element to add to ui
    */
   appendToUI(el) {
+    /**
+     * can be override in css with !important
+     * (but very usefull since in 99.9% we want our el to have a z-index of 2 since ui is beside rootcss and rootwebl)
+     */
+    el.style.zIndex = Frame3DBase.DEFAULT_UI_Z_INDEX;
+
     this.ui.appendChild(el);
   }
 
@@ -443,6 +449,8 @@ export class Frame3DBase {
     return this.rootWebGL;
   }
 }
+
+Frame3DBase.DEFAULT_UI_Z_INDEX = 2;
 
 /**
  * Events triggered by {@link Frame3DBase}

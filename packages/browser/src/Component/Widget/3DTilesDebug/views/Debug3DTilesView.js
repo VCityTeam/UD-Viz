@@ -1,20 +1,18 @@
 const THREE = require('three');
-import { Window } from '../../Component/GUI/js/Window';
 import { CityObjectStyle } from '../../../Itowns/3DTiles/Model/CityObjectStyle';
 import { CityObjectID } from '../../../Itowns/3DTiles/Model/CityObject';
 import { TilesManager } from '../../../Itowns/3DTiles/TilesManager';
 import { LayerManager } from '../../../Itowns/Itowns';
+import { findChildByID } from '../../../HTMLUtil';
 
 /** @class */
-export class Debug3DTilesWindow extends Window {
+export class Debug3DTilesView {
   /**
    * Creates the debug window.
    *
    * @param {LayerManager} layerManager The layer manager.
    */
   constructor(layerManager) {
-    super('3d_tiles_debug', '3DTiles Debug', false);
-
     /**
      * The layer manager.
      *
@@ -28,35 +26,79 @@ export class Debug3DTilesWindow extends Window {
         materialProps: { color: 0x00ff00 },
       })
     );
-    this.selectedCityObject = undefined;
-    this.selectedTilesManager = undefined;
+    this.selectedCityObject = null;
+    this.selectedTilesManager = null;
 
-    const viewerDiv = document.getElementById('viewerDiv');
-    const clickListener = (event) => {
-      this.onMouseClick(event);
-    };
-    const moveListener = (event) => {
-      this.onMouseMove(event);
-    };
-    this.addEventListener(Window.EVENT_ENABLED, () => {
-      viewerDiv.addEventListener('mousedown', clickListener);
-      viewerDiv.addEventListener('mousemove', moveListener);
-    });
-    this.addEventListener(Window.EVENT_DISABLED, () => {
-      viewerDiv.removeEventListener('mousedown', clickListener);
-      viewerDiv.removeEventListener('mousemove', moveListener);
+    this.clickListener = this.onMouseClick.bind(this);
+    this.moveListener = this.onMouseMove.bind(this);
 
-      if (this.selectedCityObject !== undefined) {
-        this.selectedTilesManager.setStyle(
-          this.selectedCityObject.cityObjectId,
-          this.selectedStyle
-        );
-        this.selectedTilesManager.applyStyles();
-        this.selectedCityObject = undefined;
-        this.selectedTilesManager = undefined;
-        this.selectedStyle = undefined;
-      }
-    });
+    /** @type {HTMLElement} */
+    this.rootHtml = document.createElement('div');
+    this.rootHtml.innerHTML = this.innerContentHtml;
+
+    // CALLBACKS
+    this.logTBIButtonElement.onclick = () => {
+      this.logLayerManager();
+    };
+    // Sets the number of loaded tiles and add an event for dynamic change of this value.
+    this.updateTBIInfoParagraphElement();
+    for (let i = 0; i < this.layerManager.tilesManagers.length; i++) {
+      this.layerManager.tilesManagers[i].addEventListener(
+        TilesManager.EVENT_TILE_LOADED,
+        (tile) => this.updateTBIInfoParagraphElement(tile)
+      );
+    }
+    this.groupColorOpacityInputElement.oninput = () => {
+      this.groupColorOpacitySpanElement.innerText =
+        this.groupColorOpacityInputElement.value;
+    };
+    this.groupColorFormElement.onsubmit = () => {
+      this.submitStyleForm();
+      return false;
+    };
+  }
+
+  /**
+   * remove root html from dom + unselect city object
+   */
+  dispose() {
+    this.rootHtml.remove();
+    if (this.selectedCityObject !== null) {
+      this.selectedTilesManager.setStyle(
+        this.selectedCityObject.cityObjectId,
+        this.selectedStyle
+      );
+      this.selectedTilesManager.applyStyles();
+      this.selectedCityObject = null;
+      this.selectedTilesManager = null;
+      this.selectedStyle = null;
+    }
+  }
+
+  /**
+   *
+   * @param {HTMLElement} div - html element to add event listener
+   */
+  addListenerTo(div) {
+    div.addEventListener('mousedown', this.clickListener);
+    div.addEventListener('mousemove', this.moveListener);
+  }
+
+  /**
+   *
+   * @param {HTMLElement} div - html to remove event listener from
+   */
+  removeListenerFrom(div) {
+    div.removeEventListener('mousedown', this.clickListener);
+    div.removeEventListener('mousemove', this.moveListener);
+  }
+
+  /**
+   *
+   * @returns {HTMLElement} - root html
+   */
+  html() {
+    return this.rootHtml;
   }
 
   get innerContentHtml() {
@@ -96,28 +138,6 @@ export class Debug3DTilesWindow extends Window {
     `;
   }
 
-  windowCreated() {
-    this.logTBIButtonElement.onclick = () => {
-      this.logTilesManager();
-    };
-    // Sets the number of loaded tiles and add an event for dynamic change of this value.
-    this.updateTBIInfoParagraphElement();
-    for (let i = 0; i < this.layerManager.tilesManagers.length; i++) {
-      this.layerManager.tilesManagers[i].addEventListener(
-        TilesManager.EVENT_TILE_LOADED,
-        (tile) => this.updateTBIInfoParagraphElement(tile)
-      );
-    }
-    this.groupColorOpacityInputElement.oninput = () => {
-      this.groupColorOpacitySpanElement.innerText =
-        this.groupColorOpacityInputElement.value;
-    };
-    this.groupColorFormElement.onsubmit = () => {
-      this.submitStyleForm();
-      return false;
-    };
-  }
-
   /**
    * Updates the number of loaded 3D Tiles tiles.
    */
@@ -129,7 +149,7 @@ export class Debug3DTilesWindow extends Window {
   /**
    * Logs the TBI in the console.
    */
-  logTilesManager() {
+  logLayerManager() {
     console.log(this.layerManager);
   }
 
@@ -157,7 +177,7 @@ export class Debug3DTilesWindow extends Window {
   onMouseClick(event) {
     const cityObject = this.layerManager.pickCityObject(event);
 
-    if (cityObject !== undefined) {
+    if (cityObject) {
       if (cityObject != this.selectedCityObject) {
         for (const [key, value] of Object.entries(cityObject.props)) {
           this.clickDivElement.innerHTML += `<br>${key} : ${value}`;
@@ -226,82 +246,82 @@ export class Debug3DTilesWindow extends Window {
   // //// GETTERS
 
   get clickDivId() {
-    return `${this.windowId}_click_info`;
+    return `3D_tiles_widget_view_click_info`;
   }
 
   get clickDivElement() {
-    return document.getElementById(this.clickDivId);
+    return findChildByID(this.rootHtml, this.clickDivId);
   }
 
   get logTBIButtonId() {
-    return `${this.windowId}_log_button`;
+    return `3D_tiles_widget_view_log_button`;
   }
 
   get logTBIButtonElement() {
-    return document.getElementById(this.logTBIButtonId);
+    return findChildByID(this.rootHtml, this.logTBIButtonId);
   }
 
   get TBIInfoParagraphId() {
-    return `${this.windowId}_tbi_p`;
+    return `3D_tiles_widget_view_tbi_p`;
   }
 
   get TBIInfoParagraphElement() {
-    return document.getElementById(this.TBIInfoParagraphId);
+    return findChildByID(this.rootHtml, this.TBIInfoParagraphId);
   }
 
   get visibleTilesParagraphId() {
-    return `${this.windowId}_visible_tiles_p`;
+    return `3D_tiles_widget_view_visible_tiles_p`;
   }
 
   get visibleTilesParagraphElement() {
-    return document.getElementById(this.visibleTilesParagraphId);
+    return findChildByID(this.rootHtml, this.visibleTilesParagraphId);
   }
 
   get groupColorFormId() {
-    return `${this.windowId}_form_groups`;
+    return `3D_tiles_widget_view_form_groups`;
   }
 
   get groupColorFormElement() {
-    return document.getElementById(this.groupColorFormId);
+    return findChildByID(this.rootHtml, this.groupColorFormId);
   }
 
   get groupColorTileInputId() {
-    return `${this.windowId}_form_groups_tileid`;
+    return `3D_tiles_widget_view_form_groups_tileid`;
   }
 
   get groupColorTileInputElement() {
-    return document.getElementById(this.groupColorTileInputId);
+    return findChildByID(this.rootHtml, this.groupColorTileInputId);
   }
 
   get groupColorBatchInputId() {
-    return `${this.windowId}_form_groups_batchid`;
+    return `3D_tiles_widget_view_form_groups_batchid`;
   }
 
   get groupColorBatchInputElement() {
-    return document.getElementById(this.groupColorBatchInputId);
+    return findChildByID(this.rootHtml, this.groupColorBatchInputId);
   }
 
   get groupColorColorInputId() {
-    return `${this.windowId}_form_groups_color`;
+    return `3D_tiles_widget_view_form_groups_color`;
   }
 
   get groupColorColorInputElement() {
-    return document.getElementById(this.groupColorColorInputId);
+    return findChildByID(this.rootHtml, this.groupColorColorInputId);
   }
 
   get groupColorOpacityInputId() {
-    return `${this.windowId}_form_groups_opacity`;
+    return `3D_tiles_widget_view_form_groups_opacity`;
   }
 
   get groupColorOpacityInputElement() {
-    return document.getElementById(this.groupColorOpacityInputId);
+    return findChildByID(this.rootHtml, this.groupColorOpacityInputId);
   }
 
   get groupColorOpacitySpanId() {
-    return `${this.windowId}_form_groups_opacity_span`;
+    return `3D_tiles_widget_view_form_groups_opacity_span`;
   }
 
   get groupColorOpacitySpanElement() {
-    return document.getElementById(this.groupColorOpacitySpanId);
+    return findChildByID(this.rootHtml, this.groupColorOpacitySpanId);
   }
 }

@@ -6,10 +6,9 @@ import { TilesManager, LayerManager } from './Itowns';
  * These extensions should belong elsewhere since it should be possible
  * to manipulate Temporal 3DTiles without having a dependence to its widget...
  */
-import * as Widget from '../Widget/Widget';
-const $3DTemporalBatchTable = Widget.$3DTemporalBatchTable;
-const $3DTemporalBoundingVolume = Widget.$3DTemporalBoundingVolume;
-const $3DTemporalTileset = Widget.$3DTemporalTileset;
+import { $3DTemporalBatchTable } from '../Widget/Temporal/Model/3DTemporalBatchTable';
+import { $3DTemporalBoundingVolume } from '../Widget/Temporal/Model/3DTemporalBoundingVolume';
+import { $3DTemporalTileset } from '../Widget/Temporal/Model/3DTemporalTileset';
 
 /**
  * It creates a 3D Tiles layer,
