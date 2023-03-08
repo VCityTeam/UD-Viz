@@ -2,7 +2,7 @@
 
 This document is about the following file :
 
-- [3DTilesUtils](../3DTilesUtils.js)
+- [3DTilesUtils](../../../../../packages/browser/src/Component/Itowns/3DTiles/3DTilesUtils.js)
 
 ## Helper functions for 3DTiles
 
