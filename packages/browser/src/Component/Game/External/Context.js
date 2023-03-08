@@ -569,8 +569,8 @@ export class Context {
     const constructor = this.externalGameScriptClass[id];
     if (!constructor) {
       console.log('script loaded');
-      for (const id in this.externalGameScriptClass) {
-        console.log(this.externalGameScriptClass[id].name);
+      for (const key in this.externalGameScriptClass) {
+        console.log(this.externalGameScriptClass[key].name);
       }
       throw new Error('no script with id ' + id);
     }

@@ -25,7 +25,7 @@ const SocketService = class {
    * @param {number} [options.pingInterval=2000] - ping interval of the socket connection in ms
    * @param {number} [options.pingTimeout=5000] - ping timeout in ms
    * @param {Array<SocketCallback>} [options.socketConnectionCallbacks=[]] - callback to apply when socket is connected
-   * @param {Array<SocketCallback>} [options.socketDisconnectionCallbacks=[]] - callback to apply when socket is connected
+   * @param {Array<SocketCallback>} [options.socketDisconnectionCallbacks=[]] - callback to apply when socket is disconnected
    * @param {Array<SocketThreadCallback>} [options.socketReadyForGamePromises=[]] - callback to apply when socket is ready for game
    */
   constructor(httpServer, options = {}) {

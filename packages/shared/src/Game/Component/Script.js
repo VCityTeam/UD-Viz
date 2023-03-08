@@ -93,7 +93,10 @@ const ScriptController = class extends Controller {
    * @returns {*} - value return by the script (null if no event associated at ths script)
    */
   executeScript(script, event, params) {
-    if (!script[event]) return null;
+    if (!script[event]) {
+      console.warn('No Event ' + event + ' on script ' + script.name);
+      return null;
+    }
     return script[event].apply(script, params);
   }
 
