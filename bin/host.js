@@ -4,4 +4,5 @@ const app = new ExpressAppWrapper();
 app.start({
   folder: './',
   port: 8000,
+  withDefaultGameSocketService: true,
 });
