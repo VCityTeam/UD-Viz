@@ -1,4 +1,4 @@
-import { WidgetView } from '../../../Component/Component';
+import { findChildByID } from '../../../../HTMLUtil';
 
 import './AuthenticationView.css';
 
@@ -7,15 +7,25 @@ import './AuthenticationView.css';
  *
  * @class
  */
-export class AuthenticationView extends WidgetView {
+export class AuthenticationView {
   /**
    *
    * @param {Function} authenticationService Authentication service
    */
   constructor(authenticationService) {
-    super();
     /** It's a constructor that takes an authentication service as parameter */
     this.authenticationService = authenticationService;
+
+    /** @type {HTMLElement} */
+    this.rootHtml = this.createHtml();
+  }
+
+  /**
+   *
+   * @returns {HTMLElement} - root html
+   */
+  html() {
+    return this.rootHtml;
   }
 
   /**
@@ -23,8 +33,10 @@ export class AuthenticationView extends WidgetView {
    *
    * @returns {string} HTML as string
    */
-  html() {
-    return `
+  createHtml() {
+    const result = document.createElement('div');
+    result.id = AuthenticationView.HTML_ID;
+    result.innerHTML = `
             <form id="RegistrationForm">\
                 <h2>Registration</h2> \
                 <h3 id="RegisterInfo" class=""></h3>
@@ -56,43 +68,32 @@ export class AuthenticationView extends WidgetView {
             </form>\
             <button id="loginRegistrationCloseButton">Close</button>\
         `;
-  }
 
-  /**
-   * Append the window to a parent HTML element
-   *
-   * @param {HTMLElement} htmlElement The parent HTML element
-   */
-  appendToElement(htmlElement) {
-    const div = document.createElement('div');
-    div.innerHTML = this.html();
-    div.id = 'loginRegistrationWindow';
-    htmlElement.appendChild(div);
-    document.getElementById('loginRegistrationCloseButton').onclick = () => {
-      this.disable();
+    // register callbacks
+    findChildByID(result, 'loginRegistrationCloseButton').onclick = () => {
+      this.dispose();
     };
-    document.getElementById('LoginButton').onclick = () => {
+    findChildByID(result, 'LoginButton').onclick = () => {
       this.logInFunction();
     };
-    document.getElementById('RegisterButton').onclick = () => {
+    findChildByID(result, 'RegisterButton').onclick = () => {
       this.registerFunction();
     };
-    document.getElementById('PasswordRegistration').onkeypress = () => {
+    findChildByID(result, 'PasswordRegistration').onkeypress = () => {
       if (event.key == 'Enter') this.registerFunction();
     };
-    document.getElementById('PasswordLogin').onkeypress = () => {
+    findChildByID(result, 'PasswordLogin').onkeypress = () => {
       if (event.key == 'Enter') this.logInFunction();
     };
+
+    return result;
   }
 
   /**
-   * Dispose the window
-   *
-   * @returns {HTMLElement} The disposed HTML node
+   * Remove its root html from the DOM
    */
   dispose() {
-    const div = document.getElementById('loginRegistrationWindow');
-    return div.parentNode.removeChild(div);
+    this.rootHtml.remove();
   }
 
   /**
@@ -201,10 +202,11 @@ export class AuthenticationView extends WidgetView {
     if (this.verifyNotEmptyValuesForm(formIds)) {
       try {
         await this.authenticationService.login(formData);
-        this.disable();
       } catch (e) {
         if (e.status === 401) {
           this.displayLoginError('Login or password invalid');
+        } else {
+          this.displayLoginError(e);
         }
       }
     }
@@ -233,24 +235,11 @@ export class AuthenticationView extends WidgetView {
         if (e.status == '422') {
           this.displayRegisterError('The user already exist');
         } else {
-          this.displayRegisterError(e.response);
+          this.displayRegisterError(e.response || e);
         }
       }
     }
   }
-  // ///// MODULE MANAGEMENT FOR BASE DEMO
-
-  /**
-   * Enable the view
-   */
-  enableView() {
-    this.appendToElement(this.parentElement);
-  }
-
-  /**
-   * Dispose the view
-   */
-  disableView() {
-    this.dispose();
-  }
 }
+
+AuthenticationView.HTML_ID = 'loginRegistrationWindow'; // => means we should create only one authentificationView

@@ -1,4 +1,3 @@
-//
 /**
  *  Used by Widget.WebService
  *  Service used to make authentificate HTTP requests (with a token)
