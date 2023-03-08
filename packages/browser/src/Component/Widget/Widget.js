@@ -20,7 +20,7 @@ export { About } from './About/About';
 
 export { Debug3DTilesView } from './3DTilesDebug/views/Debug3DTilesView';
 
-// export { BaseMap } from './BaseMap/BaseMapWindow';
+export { BaseMap } from './BaseMap/BaseMapWindow';
 
 // export { HelpWindow } from './Help/Help';
 
