@@ -12,7 +12,7 @@ the [documention can be found here](https://github.com/VCityTeam/UD-SV/3DTilesTe
 
 ## Design of the temporal module
 
-The entrypoint of the temporal module is [TemporalModule.js](../TemporalModule.js).
+The entrypoint of the temporal module is [TemporalModule.js](../../../../../packages/browser/src/Component/Widget/Temporal/TemporalModule.js).
 
 The module is designed following the MVVM pattern which is one of the preffered
 patterns to design UD-Viz modules (see [UD-Viz architecture notes](../../../../../../../docs/static/Devel/ArchitectureMVCTargetDesign.md)).

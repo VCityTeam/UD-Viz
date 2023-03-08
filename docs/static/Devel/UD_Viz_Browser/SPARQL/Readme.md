@@ -20,9 +20,9 @@ The Interface is composed of a **SPARQL Query** window containing a text box for
 ![SPARQL widget interface](/docs/static/Widget/Extensions/SPARQL/Pictures/interface.png)
 
 The *Results Format* dropdown menu can be used to select how the query results will be visualised. Currently 3 formats are supported:
-- [Graph](#Graph)
-- [Table](#Table)
-- [JSON](#JSON)
+- [Graph](#graph-view)
+- [Table](#table)
+- [JSON](#json)
 
 #### Graph View
 A displayed graph can be zoomed in and out using the mouse wheel and panned by clicking and dragging the background of the graph. In addition, nodes can be moved by clicking and dragging them.
