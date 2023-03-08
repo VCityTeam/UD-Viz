@@ -6,7 +6,7 @@
 
 // export { CameraPositionerView } from './CameraPositioner/View/CameraPositionerView';
 
-// export { AboutWindow } from './About/About';
+export { About } from './About/About';
 
 // export { TemporalModule } from './Temporal/TemporalModule';
 
