@@ -1,6 +1,6 @@
 const exec = require('child-process-promise').exec;
 
-const FAILURE_THRESHOLD = 74; // TODO this threshold should lower help please
+const FAILURE_THRESHOLD = 0; // no warning should be found
 
 exec('npx remark -u validate-links .').then((result) => {
   console.log(result.stderr);

@@ -15,18 +15,18 @@ the [documention can be found here](https://github.com/VCityTeam/UD-SV/3DTilesTe
 The entrypoint of the temporal module is [TemporalModule.js](../../../../../packages/browser/src/Component/Widget/Temporal/TemporalModule.js).
 
 The module is designed following the MVVM pattern which is one of the preffered
-patterns to design UD-Viz modules (see [UD-Viz architecture notes](../../../../../../../docs/static/Devel/ArchitectureMVCTargetDesign.md)).
+patterns to design UD-Viz modules (see [UD-Viz architecture notes](../../ArchitectureMVCTargetDesign.md)).
 
 ### The model
 
-The entrypoint of the model is[3DTemporalExtension](../Model/3DTemporalExtension.js). 
+The entrypoint of the model is[3DTemporalExtension](../../../../../packages/browser/src/Component/Widget/Temporal/Model/3DTemporalExtension.js). 
 The other classes of the model parse the content of the 3DTILES_temporal
 extensions pieces scattered in the 3D Tiles classes (e.g. in the bounding
 volume or in the batch table).
 
 ### The view model
 
-[TemporalProvider.js](../ViewModel/TemporalProvider.js) holds the view model of
+[TemporalProvider.js](../../../../../packages/browser/src/Component/Widget/Temporal/ViewModel/TemporalProvider.js) holds the view model of
 this module. It maintains a structure describing city objects display states:
 whether they should be displayed or not depending on the date and if yes
 with which style: e.g. color, opacity, etc. The style is for instance useful to
@@ -48,7 +48,7 @@ The temporal provider also manages updates of the model.
 
 ### The view
 
-The entrypoint of the view is [TemporalView.js](../View/TemporalView.js).
+The entrypoint of the view is [TemporalView.js](../../../../../packages/browser/src/Component/Widget/Temporal/View/TemporalView.js).
 It declares the windows and associates events between windows and the view model.
 
 The view is composed of two windows: the `SLIDERWINDOW` and the `GRAPHWINDOW`.
@@ -228,36 +228,36 @@ The code for parsing and storing the temporal tileset can be found in the [model
 
 ### Concerning the relationship between the slider position and the data update
 
-A [TemporalView calls](../View/TemporalView.js#L46) a [refreshCallback](../View/TemporalView.js#L31) function every time the slider is moved.
-* The refreshCallback is defined as the [TemporalView::currentTimeUpdated(...)](../View/TemporalView.js#L25) function.
-* The TemporalView passes this refreshCallback to the [TemporalSliderWindow constructor](../View/TemporalView.js#L46) .
-* Eventually the callback is [invoked by the TemporalSliderWindow](../View/TemporalSliderWindow.js#L88) when e.g. the slider is acted upon the user.
+A [TemporalView calls](../../../../../packages/browser/src/Component/Widget/Temporal/View/TemporalView.js#L46) a [refreshCallback](../../../../../packages/browser/src/Component/Widget/Temporal/View/TemporalView.js#L31) function every time the slider is moved.
+* The refreshCallback is defined as the [TemporalView::currentTimeUpdated(...)](../../../../../packages/browser/src/Component/Widget/Temporal/View/TemporalView.js#L25) function.
+* The TemporalView passes this refreshCallback to the [TemporalSliderWindow constructor](../../../../../packages/browser/src/Component/Widget/Temporal/View/TemporalView.js#L46) .
+* Eventually the callback is [invoked by the TemporalSliderWindow](../../../../../packages/browser/src/Component/Widget/Temporal/View/TemporalSliderWindow.js#L88) when e.g. the slider is acted upon the user.
 
-In order to get the proper slide-bar refresh, the [TemporalView::currentTimeUpdated(...)](../View/TemporalView.js#L25) callback function uses a [provider](../View/TemporalView.js#L18) (that is [handled over to the constructor](../TemporalModule.js#L29)) that triggers a [provider.changeVisibleTilesStates()](../View/TemporalView.js#L29).
-* In turn the [TemporalProvider::changeVisibleTilesStates() function](../ViewModel/TemporalProvider.js#L333) uses 
-  * a [TileManager](../ViewModel/TemporalProvider.js#L334) ([provided to the constructor](../ViewModel/TemporalProvider.js#L29)) to retrieve the visible tiles,
-  * a [`$3DTemporalExtension` model](../TemporalModule.js#L21) (also [provided to the constructor](../ViewModel/TemporalProvider.js#L27))  
-* Both those `TileManager` and `model` are [provided to the TemporalProvider at instantiation](../TemporalModule.js#L24) and it is this instantiantion context that instantiates the [`$3DTemporalExtension` model](../TemporalModule.js#L21)
+In order to get the proper slide-bar refresh, the [TemporalView::currentTimeUpdated(...)](../../../../../packages/browser/src/Component/Widget/Temporal/View/TemporalView.js#L25) callback function uses a [provider](../../../../../packages/browser/src/Component/Widget/Temporal/View/TemporalView.js#L18) (that is [handled over to the constructor](../../../../../packages/browser/src/Component/Widget/Temporal/TemporalModule.js#L29)) that triggers a [provider.changeVisibleTilesStates()](../../../../../packages/browser/src/Component/Widget/Temporal/View/TemporalView.js#L29).
+* In turn the [TemporalProvider::changeVisibleTilesStates() function](../../../../../packages/browser/src/Component/Widget/Temporal/ViewModel/TemporalProvider.js#L333) uses 
+  * a [TileManager](../../../../../packages/browser/src/Component/Widget/Temporal/ViewModel/TemporalProvider.js#L334) ([provided to the constructor](../../../../../packages/browser/src/Component/Widget/Temporal/ViewModel/TemporalProvider.js#L29)) to retrieve the visible tiles,
+  * a [`$3DTemporalExtension` model](../../../../../packages/browser/src/Component/Widget/Temporal/TemporalModule.js#L21) (also [provided to the constructor](../../../../../packages/browser/src/Component/Widget/Temporal/ViewModel/TemporalProvider.js#L27))  
+* Both those `TileManager` and `model` are [provided to the TemporalProvider at instantiation](../../../../../packages/browser/src/Component/Widget/Temporal/TemporalModule.js#L24) and it is this instantiantion context that instantiates the [`$3DTemporalExtension` model](../../../../../packages/browser/src/Component/Widget/Temporal/TemporalModule.js#L21)
 
-Now, [TemporalProvider::changeVisibleTilesStates() function](../ViewModel/TemporalProvider.js#L333) calls [TemporalProvider::computeTileState()](../ViewModel/TemporalProvider.js#L336) for each `tiles[i].tileId` that [is visible](../ViewModel/TemporalProvider.js#L334)
-[TemporalProvider::computeTileState()](../ViewModel/TemporalProvider.js#L336) 
-  uses the [`TemporalProvider.COStyles`](../ViewModel/TemporalProvider.js#L39)
+Now, [TemporalProvider::changeVisibleTilesStates() function](../../../../../packages/browser/src/Component/Widget/Temporal/ViewModel/TemporalProvider.js#L333) calls [TemporalProvider::computeTileState()](../../../../../packages/browser/src/Component/Widget/Temporal/ViewModel/TemporalProvider.js#L336) for each `tiles[i].tileId` that [is visible](../../../../../packages/browser/src/Component/Widget/Temporal/ViewModel/TemporalProvider.js#L334)
+[TemporalProvider::computeTileState()](../../../../../packages/browser/src/Component/Widget/Temporal/ViewModel/TemporalProvider.js#L336) 
+  uses the [`TemporalProvider.COStyles`](../../../../../packages/browser/src/Component/Widget/Temporal/ViewModel/TemporalProvider.js#L39)
   optimization data structure that `computeTileState()`
-* [initializes on first traversal](../ViewModel/TemporalProvider.js#L296)
-* updates/set the [features rendering style on further traveral](../ViewModel/TemporalProvider.js#L287)
+* [initializes on first traversal](../../../../../packages/browser/src/Component/Widget/Temporal/ViewModel/TemporalProvider.js#L296)
+* updates/set the [features rendering style on further traveral](../../../../../packages/browser/src/Component/Widget/Temporal/ViewModel/TemporalProvider.js#L287)
 
-In order to [set the rendering mode (display styles)](../ViewModel/TemporalProvider.js#L336) of the features of tile (for a given currentTime), `TemporalProvider::computeTileState()` calls [TemporalProvider::culling()](../ViewModel/TemporalProvider.js#L178) that 
-* If the feature exists at the currentTime, [displays it in gray](../ViewModel/TemporalProvider.js#L188),
+In order to [set the rendering mode (display styles)](../../../../../packages/browser/src/Component/Widget/Temporal/ViewModel/TemporalProvider.js#L336) of the features of tile (for a given currentTime), `TemporalProvider::computeTileState()` calls [TemporalProvider::culling()](../../../../../packages/browser/src/Component/Widget/Temporal/ViewModel/TemporalProvider.js#L178) that 
+* If the feature exists at the currentTime, [displays it in gray](../../../../../packages/browser/src/Component/Widget/Temporal/ViewModel/TemporalProvider.js#L188),
 * If there is a transaction between the feature and another feature at the currentTime AND
-  * if the currentTime lies within the first half duration of the transaction THEN [displayed geometry is the one of the old feature](../ViewModel/TemporalProvider.js#L211) and [set the color](../ViewModel/TemporalProvider.js#L211)
-  * if the currentTime lies within the second half of the duration THEN [the displayed geometry is the one of the new feature](../ViewModel/TemporalProvider.js#L229) and [set the color](../ViewModel/TemporalProvider.js#L229)
+  * if the currentTime lies within the first half duration of the transaction THEN [displayed geometry is the one of the old feature](../../../../../packages/browser/src/Component/Widget/Temporal/ViewModel/TemporalProvider.js#L211) and [set the color](../../../../../packages/browser/src/Component/Widget/Temporal/ViewModel/TemporalProvider.js#L211)
+  * if the currentTime lies within the second half of the duration THEN [the displayed geometry is the one of the new feature](../../../../../packages/browser/src/Component/Widget/Temporal/ViewModel/TemporalProvider.js#L229) and [set the color](../../../../../packages/browser/src/Component/Widget/Temporal/ViewModel/TemporalProvider.js#L229)
 * If there is no existing feature or transaction at the currentTime :
-  * If there a feature that exists in the next vintage, [display it as green (construction)](../ViewModel/TemporalProvider.js#L253)
-  * If there a feature that exists in the previous vintage, [display it as red (destruction)](../ViewModel/TemporalProvider.js#L253)
-  * Otherwise [hide the feature](../ViewModel/TemporalProvider.js#L264)
+  * If there a feature that exists in the next vintage, [display it as green (construction)](../../../../../packages/browser/src/Component/Widget/Temporal/ViewModel/TemporalProvider.js#L253)
+  * If there a feature that exists in the previous vintage, [display it as red (destruction)](../../../../../packages/browser/src/Component/Widget/Temporal/ViewModel/TemporalProvider.js#L253)
+  * Otherwise [hide the feature](../../../../../packages/browser/src/Component/Widget/Temporal/ViewModel/TemporalProvider.js#L264)
 
 Hence, all the features for all the vintages are always present, but their rendering mode depends on the `currentTime` value.  
 
 ### Concerning the client side color rendering 
 
-The rendering style is hardcoded in the [TemporalProvider:: initCOStyles()](../ViewModel/TemporalProvider.js#L67) function.
+The rendering style is hardcoded in the [TemporalProvider:: initCOStyles()](../../../../../packages/browser/src/Component/Widget/Temporal/ViewModel/TemporalProvider.js#L67) function.
