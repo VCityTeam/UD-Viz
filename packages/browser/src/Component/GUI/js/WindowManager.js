@@ -3,8 +3,9 @@ import { Window } from './Window.js';
 const BASE_Z_INDEX = 100;
 
 /**
- * Class used to manage windows lol. Every window is registered into the manager
+ * Class used to manage windows. Every window is registered into the manager
  *
+ * @todo window is a native word in web API another one should be used
  */
 class WindowManager {
   constructor() {
