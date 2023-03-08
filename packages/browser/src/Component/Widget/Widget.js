@@ -18,7 +18,7 @@
 
 // export { SlideShow } from './SlideShow/SlideShow';
 
-// export { Debug3DTilesWindow } from './3DTilesDebug/views/3DTilesDebugWindow';
+export { Debug3DTilesView } from './3DTilesDebug/views/Debug3DTilesView';
 
 // export { BaseMap } from './BaseMap/BaseMapWindow';
 

@@ -12,11 +12,8 @@
       /* eslint-disable no-new */
 
       udvizBrowser.FileUtil.loadMultipleJSON([
-        './assets/config/all_widget.json',
         './assets/config/extent_lyon.json',
         './assets/config/frame3D_planars.json',
-        './assets/config/widget/about.json',
-        './assets/config/widget/help.json',
         './assets/config/layer/3DTiles.json',
         './assets/config/layer/base_maps.json',
         './assets/config/layer/elevation.json',
@@ -39,13 +36,17 @@
           parseInt(configs['extent_lyon'].north)
         );
 
-        const app = new udvizBrowser.AllWidget(
+        configs['frame3D_planars'][0].hasItownsControls = true;
+        const frame3DPlanar = new udvizBrowser.Frame3DPlanar(
           extent,
-          configs['all_widget'],
           configs['frame3D_planars'][0]
         );
 
-        const frame3DPlanar = app.getFrame3DPlanar();
+        udvizBrowser.THREEUtil.addLights(frame3DPlanar.getScene());
+        udvizBrowser.THREEUtil.initRenderer(
+          frame3DPlanar.getRenderer(),
+          new udvizBrowser.THREE.Color(0x6699cc)
+        );
 
         // /// ADD LAYERS
         udvizBrowser.add3DTilesLayers(
@@ -72,20 +73,26 @@
           extent
         );
 
-        // //// ABOUT MODULE
-        const about = new udvizBrowser.Widget.AboutWindow(configs['about']);
-        app.addWidgetView('about', about);
-
-        // //// HELP MODULE
-        new udvizBrowser.Widget.HelpWindow(configs['help']); // => help window should be add with addWidgetView
-
         // //// 3DTILES DEBUG
-        const debug3dTilesWindow = new udvizBrowser.Widget.Debug3DTilesWindow(
-          app.getFrame3DPlanar().getLayerManager()
+        const debug3dTilesWindow = new udvizBrowser.Widget.Debug3DTilesView(
+          frame3DPlanar.getLayerManager()
         );
-        app.addWidgetView('3dtilesDebug', debug3dTilesWindow, {
-          name: '3DTiles Debug',
-        });
+        const parent = document.createElement('div');
+        parent.style.backgroundColor = 'white';
+        parent.style.width = 'fit-content';
+        parent.appendChild(debug3dTilesWindow.html());
+        debug3dTilesWindow.addListenerTo(frame3DPlanar.rootWebGL);
+
+        const closeButton = document.createElement('button');
+        closeButton.innerHTML = 'Close';
+        closeButton.onclick = () => {
+          debug3dTilesWindow.dispose();
+          debug3dTilesWindow.removeListenerFrom(frame3DPlanar.rootWebGL);
+          parent.remove();
+        };
+        parent.appendChild(closeButton);
+
+        frame3DPlanar.appendToUI(parent);
       });
     </script>
   </body>
