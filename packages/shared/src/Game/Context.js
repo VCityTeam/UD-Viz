@@ -91,8 +91,8 @@ const Context = class {
     const constructor = this.gameScriptClass[id];
     if (!constructor) {
       console.log('script loaded');
-      for (const id in this.gameScriptClass) {
-        console.log(this.gameScriptClass[id]);
+      for (const key in this.gameScriptClass) {
+        console.log(this.gameScriptClass[key]);
       }
       throw new Error('no script with id ' + id);
     }
