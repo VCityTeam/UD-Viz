@@ -67,9 +67,6 @@ export {
   CityObject,
   CityObjectID
 } from './Component/Itowns/3DTiles/Model/CityObject';
-// // Game
-// import { Base } from './Game/BrowserScript';
-// export { Base as BrowserScriptBase };
 
 /**
  * External packages => These packages should be peerDep to force user of @ud-viz/browser to npm i them
