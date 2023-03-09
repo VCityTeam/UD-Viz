@@ -134,33 +134,26 @@ export class LayerManager {
    * Returns the city object under the mouse cursor.
    *
    * @param {MouseEvent} event The mouse event.
-   * @returns {import("../3DTiles/Model/CityObject").CityObject | undefined} The picked CityObject
+   * @returns {import("../3DTiles/Model/CityObject").CityObject | null} The picked CityObject
    */
   pickCityObject(event) {
-    /**
-     * Make sure the event is captured by a click listener attached
-     * to the div#viewerDiv, which contains the iTowns canvas. All click
-     * listeners should be instantiated this way as of iTowns 2.24.0
-     */
-    if (event.currentTarget.id.toUpperCase() === 'VIEWERDIV') {
-      // Get the intersecting objects where our mouse pointer is
-      let intersections = [];
-      // As the current pickObjectsAt on all layer is not working, we need
-      // to call pickObjectsAt() for each layer.
-      for (let i = 0; i < this.tilesManagers.length; i++) {
-        intersections = intersections.concat(
-          this.view.pickObjectsAt(event, 5, this.tilesManagers[i].layer)
-        );
-      }
-      const firstInter = getFirstTileIntersection(intersections);
-      if (firstInter) {
-        const tilesManager = this.getTilesManagerByLayerID(firstInter.layer.id);
-        const batchId = getBatchIdFromIntersection(firstInter);
-        const tileId = getTileFromMesh(firstInter.object).tileId;
-        return tilesManager.tiles[tileId].cityObjects[batchId];
-      }
+    // Get the intersecting objects where our mouse pointer is
+    let intersections = [];
+    // As the current pickObjectsAt on all layer is not working, we need
+    // to call pickObjectsAt() for each layer.
+    for (let i = 0; i < this.tilesManagers.length; i++) {
+      intersections = intersections.concat(
+        this.view.pickObjectsAt(event, 5, this.tilesManagers[i].layer)
+      );
     }
-    return undefined;
+    const firstInter = getFirstTileIntersection(intersections);
+    if (firstInter) {
+      const tilesManager = this.getTilesManagerByLayerID(firstInter.layer.id);
+      const batchId = getBatchIdFromIntersection(firstInter);
+      const tileId = getTileFromMesh(firstInter.object).tileId;
+      return tilesManager.tiles[tileId].cityObjects[batchId];
+    }
+    return null;
   }
 
   /**
