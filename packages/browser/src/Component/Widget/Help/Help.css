@@ -1,6 +1,4 @@
-
-
-#help-button{
+#help-button {
   position: fixed;
   width: 45px;
   height: 45px;
@@ -11,12 +9,12 @@
   z-index: 5;
 }
 
-#help-button:hover{
+#help-button:hover {
   width: 50px;
   height: 50px;
 }
 
-#help-button img{
+#help-button img {
   margin: auto;
 }
 
@@ -42,6 +40,6 @@
   }
 }
 
-hr {
+#helpWindow hr {
   color: white;
 }

@@ -22,7 +22,7 @@ export { Debug3DTilesView } from './3DTilesDebug/views/Debug3DTilesView';
 
 export { BaseMap } from './BaseMap/BaseMapWindow';
 
-// export { HelpWindow } from './Help/Help';
+export { HelpWindow } from './Help/Help';
 
 import * as Server from './Server/Server';
 export { Server };
