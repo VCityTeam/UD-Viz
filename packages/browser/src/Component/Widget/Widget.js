@@ -4,7 +4,7 @@
 
 // export { LayerChoice } from './LayerChoice/views/LayerChoice';
 
-// export { CameraPositionerView } from './CameraPositioner/View/CameraPositionerView';
+export { CameraPositioner } from './CameraPositioner/CameraPositioner';
 
 export { About } from './About/About';
 
