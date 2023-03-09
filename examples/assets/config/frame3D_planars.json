@@ -17,5 +17,15 @@
       "x": 1842345,
       "y": 5175327
     }
+  },
+  {
+    "hasItownsControls": true,
+    "range": 3000,
+    "heading": -49.6,
+    "tilt": 17,
+    "coordinates": {
+      "x": 1844753,
+      "y": 5174961
+    }
   }
 ]

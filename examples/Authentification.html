@@ -15,14 +15,10 @@
       udvizBrowser.FileUtil.loadMultipleJSON([
         './assets/config/server/spatial_multimedia_db_server.json',
       ]).then((configs) => {
-        // //// REQUEST SERVICE
-        const requestService = new udvizBrowser.RequestService();
-
-        // //// AUTHENTICATION MODULE
         const authenticationView =
           new udvizBrowser.Widget.Server.AuthenticationView(
             new udvizBrowser.Widget.Server.AuthenticationService(
-              requestService,
+              new udvizBrowser.RequestService(),
               configs['spatial_multimedia_db_server']
             )
           );
