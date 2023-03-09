@@ -1,19 +1,22 @@
-// Component
-import { Window } from '../../Component/GUI/js/Window';
-
 import { CityObjectFilterSelector } from './CityObjectFilterSelector';
+import { EventSender } from '@ud-viz/shared';
+import { findChildByID } from '../../../HTMLUtil';
 
 /**
  * The filter selection window. This window allows the user to pick a filter
  * through the list of `FilterSelector`s. A filter selector is associated with
  * a filter and can offer some parameters through a form.
  */
-export class CityObjectFilterWindow extends Window {
+export class CityObjectFilterWindow extends EventSender {
   /**
    * Creates a city object filter window.
    */
   constructor() {
-    super('cityObjectsFilters', 'City Objects - Filters', true);
+    super();
+
+    /** @type {HTMLElement} */
+    this.rootHtml = document.createElement('div');
+    this.rootHtml.innerHTML = this.innerContentHtml;
 
     /**
      * The list of filter selectors.
@@ -24,6 +27,24 @@ export class CityObjectFilterWindow extends Window {
 
     // Event registration
     this.registerEvent(CityObjectFilterWindow.EVENT_FILTER_SELECTED);
+
+    // callbacks
+    this._createFilterSelect();
+
+    this.filterSelectElement.oninput = () => this._onFilterSelection();
+
+    this.filterFormElement.onsubmit = () => {
+      this._onSubmit();
+      return false;
+    };
+  }
+
+  html() {
+    return this.rootHtml;
+  }
+
+  dispose() {
+    this.rootHtml.remove();
   }
 
   get innerContentHtml() {
@@ -39,23 +60,6 @@ export class CityObjectFilterWindow extends Window {
         </form>
       </div>
     `;
-  }
-
-  windowCreated() {
-    this.window.style.left = '290px';
-    this.window.style.top = 'unset';
-    this.window.style.bottom = '10px';
-    this.window.style.width = '270px';
-    this.window.style.minHeight = 'unset';
-
-    this._createFilterSelect();
-
-    this.filterSelectElement.oninput = () => this._onFilterSelection();
-
-    this.filterFormElement.onsubmit = () => {
-      this._onSubmit();
-      return false;
-    };
   }
 
   /**
@@ -155,7 +159,7 @@ export class CityObjectFilterWindow extends Window {
     const selector = this._getCurrentSelector();
     if (selector === undefined) {
       this.sendEvent(CityObjectFilterWindow.EVENT_FILTER_SELECTED, undefined);
-      this.disable();
+
       return;
     }
 
@@ -165,34 +169,33 @@ export class CityObjectFilterWindow extends Window {
       CityObjectFilterWindow.EVENT_FILTER_SELECTED,
       selector.filterLabel
     );
-    this.disable();
   }
 
   // ///////////
   // /// GETTERS
 
   get filterSelectId() {
-    return `${this.windowId}_filters_select`;
+    return `city_object_filter_filters_select`;
   }
 
   get filterSelectElement() {
-    return document.getElementById(this.filterSelectId);
+    return findChildByID(this.rootHtml, this.filterSelectId);
   }
 
   get filterFormId() {
-    return `${this.windowId}_filter_form`;
+    return `city_object_filter_filter_form`;
   }
 
   get filterFormElement() {
-    return document.getElementById(this.filterFormId);
+    return findChildByID(this.rootHtml, this.filterFormId);
   }
 
   get filterSectionId() {
-    return `${this.windowId}_filter_section`;
+    return `city_object_filter_filter_section`;
   }
 
   get filterSectionElement() {
-    return document.getElementById(this.filterSectionId);
+    return findChildByID(this.rootHtml, this.filterSectionId);
   }
 
   // //////////
