@@ -11,7 +11,7 @@ The basic functionalities of the SPARQL module include:
 
 ## Usage
 
-For an example of how to the SPARQL Widget to a UD-Viz web application see the [SPARQLWidget example](https://github.com/VCityTeam/UD-Viz/blob/master/packages/browser/examples/SPARQLWidget.html)
+For an example of how to the SPARQL Widget to a UD-Viz web application see the [SPARQLWidget example](https://github.com/VCityTeam/UD-Viz/blob/master/examples/SPARQLWidget.html)
 
 ### User Interface
 
