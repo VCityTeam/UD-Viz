@@ -1,13 +1,13 @@
 const THREE = require('three');
 
-// Component
-import { Window } from '../../Component/GUI/js/Window';
 import { CityObjectStyle } from '../../../Itowns/3DTiles/Model/CityObjectStyle';
 
 import { CityObjectProvider } from '../ViewModel/CityObjectProvider';
 import { CityObjectFilterSelector } from './CityObjectFilterSelector';
 import { CityObjectFilterWindow } from './CityObjectFilterWindow';
 import { AttributeFilterSelector } from './AttributeFilterSelector';
+
+import { findChildByID } from '../../../HTMLUtil';
 
 import './CityObjectWindow.css';
 
@@ -16,14 +16,16 @@ import './CityObjectWindow.css';
  * for the currently highlighted layer (filter and style), as well as the
  * selected city object.
  */
-export class CityObjectWindow extends Window {
+export class CityObjectWindow {
   /**
    * Constructs the window from the provider.
    *
    * @param {CityObjectProvider} provider The city object provider.
    */
   constructor(provider) {
-    super('cityObjects', 'City Objects', false);
+    /** @type {HTMLElement} */
+    this.rootHtml = document.createElement('div');
+    this.rootHtml.innerHTML = this.innerContentHtml;
 
     /**
      * The city object provider.
@@ -60,7 +62,6 @@ export class CityObjectWindow extends Window {
      */
     this.extensions = [];
 
-    const viewerDiv = document.getElementById('viewerDiv');
     /**
      * @callback cbMouseEvent
      * @param {MouseEvent} event - file reader event
@@ -75,14 +76,7 @@ export class CityObjectWindow extends Window {
       this.provider.selectCityObject(event);
       this.provider.applyStyles();
     };
-    this.addEventListener(Window.EVENT_ENABLED, () => {
-      viewerDiv.addEventListener('mousedown', this.mouseClickListener);
-    });
-    this.addEventListener(Window.EVENT_DISABLED, () => {
-      this.provider.removeLayer();
-      this.provider.unselectCityObject();
-      viewerDiv.removeEventListener('mousedown', this.mouseClickListener);
-    });
+    this.htmlListened = null;
 
     // Adding a filter selector for the attribute filter
     this.filterWindow.addFilterSelector(
@@ -108,6 +102,48 @@ export class CityObjectWindow extends Window {
 
     this._updateLayerDescription();
     this._updateSelectedCityObjectDescription();
+
+    // Add extensions
+    for (const extension of Object.values(this.extensions)) {
+      this._createExtensionElement(extension);
+    }
+
+    this.clearFilterButtonElement.onclick = () => this.provider.removeLayer();
+
+    this.clearSelectionButtonElement.onclick = () =>
+      this._clearCityObjectSelection();
+
+    this.clearSelectionButtonElement.disabled = true;
+
+    this.focusObjectButtonElement.onclick = () => this.provider.focusOnObject();
+
+    this.focusObjectButtonElement.disabled = true;
+  }
+
+  addListenerTo(div) {
+    div.addEventListener('mousedown', this.mouseClickListener);
+    this.htmlListened = div;
+  }
+
+  removeListener() {
+    if (this.htmlListened)
+      this.htmlListened.removeEventListener(
+        'mousedown',
+        this.mouseClickListener
+      );
+  }
+
+  html() {
+    return this.rootHtml;
+  }
+
+  dispose() {
+    this.rootHtml.remove();
+
+    this.provider.removeLayer();
+    this.provider.unselectCityObject();
+
+    this.removeListener();
   }
 
   get innerContentHtml() {
@@ -116,7 +152,6 @@ export class CityObjectWindow extends Window {
         <h3 class="section-title">Filter<span class="color-indicator" id="${this.layerColorIndicatorId}"></span></h3>
         <div>
           <p class="city-object-title">
-            <button id="${this.selectFilterButtonId}">Select</button>
             <button id="${this.clearFilterButtonId}">Clear</button>
           </p>
           <p class="city-object-value" id="${this.selectedFilterId}"></p>
@@ -138,31 +173,6 @@ export class CityObjectWindow extends Window {
         </div>
       </div>
     `;
-  }
-
-  windowCreated() {
-    this.filterWindow.appendTo(this.parentElement);
-    this.filterWindow.disable();
-
-    // Add extensions
-    for (const extension of Object.values(this.extensions)) {
-      this._createExtensionElement(extension);
-    }
-
-    this.selectFilterButtonElement.onclick = () => this.filterWindow.enable();
-
-    this.clearFilterButtonElement.onclick = () => this.provider.removeLayer();
-
-    this.clearSelectionButtonElement.onclick = () =>
-      this._clearCityObjectSelection();
-
-    this.clearSelectionButtonElement.disabled = true;
-
-    this.focusObjectButtonElement.onclick = () => this.provider.focusOnObject();
-
-    this.focusObjectButtonElement.disabled = true;
-
-    this._updateLayerDescription();
   }
 
   // /////////////////////
@@ -244,10 +254,6 @@ export class CityObjectWindow extends Window {
    * @param {import("../../../Itowns/3DTiles/Model/CityObject").CityObject} cityObject The selected city object.
    */
   _updateSelectedCityObjectDescription(cityObject) {
-    if (!this.isCreated) {
-      return;
-    }
-
     this.selectionColorIndicatorElement.style.background =
       '#' +
       new THREE.Color(
@@ -285,75 +291,67 @@ export class CityObjectWindow extends Window {
   // ///////////
   // /// GETTERS
 
-  get selectFilterButtonId() {
-    return `${this.windowId}_filter_button`;
-  }
-
-  get selectFilterButtonElement() {
-    return document.getElementById(this.selectFilterButtonId);
-  }
-
   get selectedFilterId() {
-    return `${this.windowId}_selected_filter`;
+    return `city_object_main_selected_filter`;
   }
 
   get selectedFilterElement() {
-    return document.getElementById(this.selectedFilterId);
+    return findChildByID(this.rootHtml, this.selectedFilterId);
   }
 
   get focusObjectButtonId() {
-    return `${this.windowId}_focus_object`;
+    return `city_object_main_focus_object`;
   }
 
   get focusObjectButtonElement() {
-    return document.getElementById(this.focusObjectButtonId);
+    return findChildByID(this.rootHtml, this.focusObjectButtonId);
   }
 
   get clearFilterButtonId() {
-    return `${this.windowId}_co_clear_filter_button`;
+    return `city_object_main_co_clear_filter_button`;
   }
 
   get clearFilterButtonElement() {
-    return document.getElementById(this.clearFilterButtonId);
+    return findChildByID(this.rootHtml, this.clearFilterButtonId);
   }
 
   get selectedCityObjectId() {
-    return `${this.windowId}_co_selected_paragraph`;
+    return `city_object_main_co_selected_paragraph`;
   }
 
   get selectedCityObjectElement() {
-    return document.getElementById(this.selectedCityObjectId);
+    return findChildByID(this.rootHtml, this.selectedCityObjectId);
   }
 
   get clearSelectionButtonId() {
-    return `${this.windowId}_co_clear_selection_button`;
+    return `city_object_main_co_clear_selection_button`;
   }
 
   get clearSelectionButtonElement() {
-    return document.getElementById(this.clearSelectionButtonId);
+    return findChildByID(this.rootHtml, this.clearSelectionButtonId);
   }
 
   get layerColorIndicatorId() {
-    return `${this.windowId}_layer_color_indicator`;
+    return `city_object_main_layer_color_indicator`;
   }
 
   get layerColorIndicatorElement() {
-    return document.getElementById(this.layerColorIndicatorId);
+    return findChildByID(this.rootHtml, this.layerColorIndicatorId);
   }
 
   get selectionColorIndicatorId() {
-    return `${this.windowId}_selection_color_indicator`;
+    return `city_object_main_selection_color_indicator`;
   }
 
   get selectionColorIndicatorElement() {
-    return document.getElementById(this.selectionColorIndicatorId);
+    return findChildByID(this.rootHtml, this.selectionColorIndicatorId);
   }
 
   get filterDivId() {
-    return `${this.windowId}_filter_div`;
+    return `city_object_main_filter_div`;
   }
 
   get filterDivElement() {
-    return document.getElementById(this.filterDivId);
+    return findChildByID(this.rootHtml, this.filterDivId);
   }
 }
