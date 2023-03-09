@@ -37,7 +37,7 @@ export class Frame3DBase {
      *
       @type {HTMLDivElement}  */
     this.rootWebGL = document.createElement('div');
-    this.rootWebGL.id = 'viewerDiv'; // => So Widget can access rootWebGL with id
+    this.rootWebGL.id = 'webGL_Frame3DBase';
 
     /**
      * root css (where css3Delement are added)
