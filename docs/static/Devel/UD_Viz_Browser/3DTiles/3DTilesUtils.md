@@ -60,7 +60,7 @@ The batch table objects represent a 3DTiles batch table. It has two attributes :
 
 Below is an example batch table with one attribute, called "cityobject.database_id".
 
-![Batch table example](batch_table_example.png)
+![Batch table example](./batch_table_example.png)
 
 ### Geometry attributes
 

@@ -6,7 +6,7 @@ Developing UD-Viz applications requires knowledge about :
 
 - [JavaScript](https://developer.mozilla.org/en-US/docs/Web/javascript)
 - [node.js](https://en.wikipedia.org/wiki/Node.js)
-- [npm](<https://en.wikipedia.org/wiki/Npm_(software)>)
+- [npm](https://en.wikipedia.org/wiki/Npm_(software))
 - [three.js](https://threejs.org/)
 - [iTowns](http://www.itowns-project.org)
 

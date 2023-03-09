@@ -17,7 +17,7 @@ For an example of how to the SPARQL Widget to a UD-Viz web application see the [
 
 The Interface is composed of a **SPARQL Query** window containing a text box for composing queries to send to a [SPARQL Endpoint](https://github.com/VCityTeam/UD-SV/blob/master/Vocabulary/Readme.md#SPARQL-Endpoint).
 
-![SPARQL widget interface](/docs/static/Widget/Extensions/SPARQL/Pictures/interface.png)
+![SPARQL widget interface](./Pictures/interface.png)
 
 The *Results Format* dropdown menu can be used to select how the query results will be visualised. Currently 3 formats are supported:
 - [Graph](#graph-view)
@@ -27,7 +27,7 @@ The *Results Format* dropdown menu can be used to select how the query results w
 #### Graph View
 A displayed graph can be zoomed in and out using the mouse wheel and panned by clicking and dragging the background of the graph. In addition, nodes can be moved by clicking and dragging them.
 
-![Vizualize SPARQL query result in D3](/docs/static/Widget/Extensions/SPARQL/Pictures/sparql-widget-demo.gif)
+![Vizualize SPARQL query result in D3](./Pictures/sparql-widget-demo.gif)
 
 In order to propery colorize the nodes of a graph a SPARQL query must be formulated following a simple subject-predicate-object [RDF triple](https://github.com/VCityTeam/UD-SV/blob/master/Vocabulary/Readme.md#triple) structure. Colors will be assigned as a function each node's `rdf:type`. Thus 4 data must be selected:
 - ?subject
@@ -67,17 +67,17 @@ WHERE {
 
 If the URIs of nodes in the graph correspond with identifiers of objects in the tileset batch table, they can be selected as shown below.
 
-![Pick City Object from Graph](/docs/static/Widget/Extensions/SPARQL/Pictures/pickcityobjectfromgraph.gif)
+![Pick City Object from Graph](./Pictures/pickcityobjectfromgraph.gif)
 
 #### Table
 The table view features a filter for searching for data within a column. In addition rows can be sorted in ascending or descending order by column.
 
-![Table view demonstraction](/docs/static/Widget/Extensions/SPARQL/Pictures/sparql-widget-table-demo.gif)
+![Table view demonstraction](./Pictures/sparql-widget-table-demo.gif)
 
 #### JSON
 The JSON view returns a collapsible representation of the query reponse.
 
-![JSON view demonstraction](/docs/static/Widget/Extensions/SPARQL/Pictures/sparql-widget-json-demo.gif)
+![JSON view demonstraction](./Pictures/sparql-widget-json-demo.gif)
 
 ## Code architecture
 

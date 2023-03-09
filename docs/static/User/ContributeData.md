@@ -15,7 +15,7 @@ contributions are possible.
 
 As a first step, you can try to navigate in the 3D scene with the following controls:
 
-![](Pictures/UserDoc/controls.PNG)
+![](./Pictures/UserDoc/controls.PNG)
 
 ## Creating an account
 
@@ -23,18 +23,18 @@ Before starting contributing, you need to create an account. To do so, you must
 click on the _Sign in_ button on the upper-left corner of
 [the application](http://rict.liris.cnrs.fr/UDVDemo/UDV/UDV-Core/examples/DemoStable/Demo.html):
 
-![](Pictures/UserDoc/UDVHome.png)
+![](./Pictures/UserDoc/UDVHome.png)
 
 Then, you need to fill the _Registration form_ and click on _Register_:
 
-![](Pictures/UserDoc/registration.png)
+![](./Pictures/UserDoc/registration.png)
 
 You're account is now created! You can now log in with the _Login_ form on the right.
 
 Once you're logged in, you should see your name on the upper-left corner of
 the application:
 
-![](Pictures/UserDoc/loggedIn.png)
+![](./Pictures/UserDoc/loggedIn.png)
 
 **Note**: Your account gives you **contributor** rights, meaning that
 when you [add a document](#adding-a-document), it is not published right away.
@@ -50,12 +50,12 @@ are images (jpeg or png).
 You can see existing documents by opening the **Document** module from the
 left side menu:
 
-![](Pictures/UserDoc/documentsMenu.png)
+![](./Pictures/UserDoc/documentsMenu.png)
 
 Clicking on this menu opens the **Document Navigator** and the **Document
 Inspector**.
 
-![](Pictures/UserDoc/documentsModule.png)
+![](./Pictures/UserDoc/documentsModule.png)
 
 These two windows allow to consult the documentation that has
 already been added by contributors and validated by administrators.
@@ -81,7 +81,7 @@ The **Document Inspector** (window on the right) allows to:
 To add a document, click on **Create a new document** in the **Document
 Navigator**. The **Document creation window** opens:
 
-![](Pictures/UserDoc/docCreation.png)
+![](./Pictures/UserDoc/docCreation.png)
 
 To add your document, you need to:
 
@@ -111,30 +111,30 @@ To add your document, you need to:
 Before placing your document, you might want to go to a specific address where you
 will place it. This is possible using the **address search module**:
 
-![](Pictures/UserDoc/addressSearchMenu.png)
+![](./Pictures/UserDoc/addressSearchMenu.png)
 
 By clicking on the magnifying glass on the menu, a search bar will open in the top-center
 of the screen:
 
-![](Pictures/UserDoc/addressSearchModule.png)
+![](./Pictures/UserDoc/addressSearchModule.png)
 
 Type in the address you're looking for and hit enter. This will initiate a
 travel to the address and will identify the result in the 3D scene with a red
 pin:
 
-![](Pictures/UserDoc/addressSearchExample.png)
+![](./Pictures/UserDoc/addressSearchExample.png)
 
 You can now close the **address search** module by clicking on the loop in the
 left-side menu and start placing your document by clicking on **Set
 position** in the **Document Creation** window. This will display your document
 in overlay to the 3D scene:
 
-![](Pictures/UserDoc/docSetPosition.png)
+![](./Pictures/UserDoc/docSetPosition.png)
 
 To place your document, you can play with its opacity and move in the scene
 to be rightly placed above the 3D geometry. For instance:
 
-![](Pictures/UserDoc/docPositionSet.png)
+![](./Pictures/UserDoc/docPositionSet.png)
 
 Once you've found the right position, click on Validate in the **Camera
 Positioner** window situated on the left side of the screen.
