@@ -1,20 +1,32 @@
-// Component
-import { Window } from '../../Component/GUI/js/Window';
 import { LayerManager } from '../../../Itowns/LayerManager/LayerManager';
+import { findChildByID } from '../../../HTMLUtil';
 
-export class LayerChoice extends Window {
+export class LayerChoice {
   /**
    * Creates the layer choice windows
    *
    * @param {LayerManager} layerManager The LayerManager holding iTowns layers
    */
   constructor(layerManager) {
-    super('layer_choice', 'Layer', false);
+    this.rootHtml = document.createElement('div');
+    this.rootHtml.innerHTML = this.innerContentHtml;
 
     /**
      * The layerManager
      */
     this.layerManager = layerManager;
+
+    this.innerContentColorLayers();
+    this.innerContentElevationLayers();
+    this.innerContentGeometryLayers();
+  }
+
+  html() {
+    return this.rootHtml;
+  }
+
+  dispose() {
+    this.rootHtml.remove();
   }
 
   get innerContentHtml() {
@@ -41,15 +53,6 @@ export class LayerChoice extends Window {
     </div>
 
     `;
-  }
-
-  /**
-   * Set layers once the window is created
-   */
-  windowCreated() {
-    this.innerContentColorLayers();
-    this.innerContentElevationLayers();
-    this.innerContentGeometryLayers();
   }
 
   /**
@@ -85,9 +88,7 @@ export class LayerChoice extends Window {
             event.srcElement.valueAsNumber
           );
         }
-        const span_opacity = document.getElementById(
-          'color_value_opacity_' + i
-        );
+        const span_opacity = findChildByID(item, 'color_value_opacity_' + i);
         span_opacity.innerHTML = `${layers[i].opacity}`;
         this.layerManager.notifyChange();
       };
@@ -113,7 +114,8 @@ export class LayerChoice extends Window {
           event.srcElement.valueAsNumber
         );
         this.layerManager.notifyChange();
-        const span_elevation = document.getElementById(
+        const span_elevation = findChildByID(
+          item,
           'elevation_value_scale_' + i
         );
         span_elevation.innerHTML = `${layers[i].scale}`;
@@ -216,7 +218,7 @@ export class LayerChoice extends Window {
   }
 
   get colorLayersId() {
-    return `${this.windowId}_color_layers`;
+    return `layer_choice_color_layers`;
   }
 
   get elevationLayersBoxSectionId() {
@@ -228,7 +230,7 @@ export class LayerChoice extends Window {
   }
 
   get elevationLayersId() {
-    return `${this.windowId}_elevation_layers`;
+    return `layer_choice_elevation_layers`;
   }
 
   get geometryLayersBoxSectionId() {
@@ -240,52 +242,52 @@ export class LayerChoice extends Window {
   }
 
   get geometryLayersId() {
-    return `${this.windowId}_geometry_layers`;
+    return `layer_choice_geometry_layers`;
   }
 
   get layerListId() {
-    return `${this.windowId}_layer_list`;
+    return `layer_choice_layer_list`;
   }
 
   // /HTML ELEMENTS
 
   get layerListElement() {
-    return document.getElementById(this.layerListId);
+    return findChildByID(this.rootHtml, this.layerListId);
   }
 
   get colorLayersBoxSectionElement() {
-    return document.getElementById(this.colorLayersBoxSectionId);
+    return findChildByID(this.rootHtml, this.colorLayersBoxSectionId);
   }
 
   get colorLayersSpoilerBoxElement() {
-    return document.getElementById(this.colorLayersSpoilerBoxId);
+    return findChildByID(this.rootHtml, this.colorLayersSpoilerBoxId);
   }
 
   get colorLayerListElement() {
-    return document.getElementById(this.colorLayersId);
+    return findChildByID(this.rootHtml, this.colorLayersId);
   }
 
   get elevationLayersBoxSectionElement() {
-    return document.getElementById(this.elevationLayersBoxSectionId);
+    return findChildByID(this.rootHtml, this.elevationLayersBoxSectionId);
   }
 
   get elevationLayersSpoilerBoxElement() {
-    return document.getElementById(this.elevationLayersSpoilerBoxId);
+    return findChildByID(this.rootHtml, this.elevationLayersSpoilerBoxId);
   }
 
   get elevationLayerListElement() {
-    return document.getElementById(this.elevationLayersId);
+    return findChildByID(this.rootHtml, this.elevationLayersId);
   }
 
   get geometryLayersBoxSectionElement() {
-    return document.getElementById(this.geometryLayersBoxSectionId);
+    return findChildByID(this.rootHtml, this.geometryLayersBoxSectionId);
   }
 
   get geometryLayersSpoilerBoxElement() {
-    return document.getElementById(this.geometryLayersSpoilerBoxId);
+    return findChildByID(this.rootHtml, this.geometryLayersSpoilerBoxId);
   }
 
   get geometryLayerListElement() {
-    return document.getElementById(this.geometryLayersId);
+    return findChildByID(this.rootHtml, this.geometryLayersId);
   }
 }
