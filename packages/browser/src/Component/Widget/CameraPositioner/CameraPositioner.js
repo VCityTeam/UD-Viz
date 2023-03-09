@@ -1,15 +1,16 @@
-import { Window } from './Window';
 import { MAIN_LOOP_EVENTS } from 'itowns';
 import * as THREE from 'three';
+import { findChildByID } from '../../HTMLUtil';
+import { EventSender } from '@ud-viz/shared';
 
-export class PositionerWindow extends Window {
+export class CameraPositioner extends EventSender {
   /**
-   * Creates a PositionerWindow
+   * Creates a CameraPositioner
    *
    * @param {import('itowns').PlanarView} itownsView - the itowns view object
    */
   constructor(itownsView) {
-    super('camera-positioner', 'Camera Positioner', false);
+    super();
 
     this.itownsView = itownsView;
 
@@ -19,14 +20,42 @@ export class PositionerWindow extends Window {
       () => this._updateFieldsFromCamera()
     );
 
+    this.rootHtml = document.createElement('div');
+    this.rootHtml.innerHTML = this.innerContentHtml;
+
+    // callbacks
+    this.formElement.onsubmit = () => {
+      this._travel();
+      return false;
+    };
+
+    this.buttonValidateElement.onclick = () => {
+      this._validate();
+    };
+
     // Event for position registering
-    this.registerEvent(PositionerWindow.EVENT_POSITION_SUBMITTED);
+    this.registerEvent(CameraPositioner.EVENT_POSITION_SUBMITTED);
+  }
+
+  /**
+   *
+   * @returns {HTMLElement} - html
+   */
+  html() {
+    return this.rootHtml;
+  }
+
+  /**
+   * remove html from DOM
+   */
+  dispose() {
+    this.rootHtml.remove();
   }
 
   get innerContentHtml() {
     return /* html*/ `
       <div class="box-section">
-        <h3 class="section-title">Coordinates</h3>
+        <h3>Coordinates</h3>
         <form id="${this.formId}">
           <fieldset>
             <legend>Position</legend>
@@ -56,17 +85,6 @@ export class PositionerWindow extends Window {
     `;
   }
 
-  windowCreated() {
-    this.formElement.onsubmit = () => {
-      this._travel();
-      return false;
-    };
-
-    this.buttonValidateElement.onclick = () => {
-      this._validate();
-    };
-  }
-
   // ///////////////////////
   // /// POSITION MANAGEMENT
 
@@ -74,7 +92,8 @@ export class PositionerWindow extends Window {
    * Updates the form fields from the camera position.
    */
   _updateFieldsFromCamera() {
-    if (this.isVisible) {
+    if (this.rootHtml.parentElement) {
+      // html is present in DOM update fields
       const camera = this.itownsView.camera.camera3D;
       const position = camera.position;
       const quaternion = camera.quaternion;
@@ -132,91 +151,90 @@ export class PositionerWindow extends Window {
    */
   _validate() {
     const camera = this._getCameraPosition();
-    this.sendEvent(PositionerWindow.EVENT_POSITION_SUBMITTED, camera);
-    this.disable();
+    this.sendEvent(CameraPositioner.EVENT_POSITION_SUBMITTED, camera);
   }
 
   // ///////////
   // /// GETTERS
 
   get buttonValidateId() {
-    return `${this.windowId}_button_validate`;
+    return `camera_positioner_button_validate`;
   }
 
   get buttonValidateElement() {
-    return document.getElementById(this.buttonValidateId);
+    return findChildByID(this.rootHtml, this.buttonValidateId);
   }
 
   get buttonTravelId() {
-    return `${this.windowId}_button_travel`;
+    return `camera_positioner_button_travel`;
   }
 
   get buttonTravelElement() {
-    return document.getElementById(this.buttonTravelId);
+    return findChildByID(this.rootHtml, this.buttonTravelId);
   }
 
   get formId() {
-    return `${this.windowId}_form`;
+    return `camera_positioner_form`;
   }
 
   get formElement() {
-    return document.getElementById(this.formId);
+    return findChildByID(this.rootHtml, this.formId);
   }
 
   get positionXId() {
-    return `${this.windowId}_position_x`;
+    return `camera_positioner_position_x`;
   }
 
   get positionXElement() {
-    return document.getElementById(this.positionXId);
+    return findChildByID(this.rootHtml, this.positionXId);
   }
 
   get positionYId() {
-    return `${this.windowId}_position_y`;
+    return `camera_positioner_position_y`;
   }
 
   get positionYElement() {
-    return document.getElementById(this.positionYId);
+    return findChildByID(this.rootHtml, this.positionYId);
   }
 
   get positionZId() {
-    return `${this.windowId}_position_z`;
+    return `camera_positioner_position_z`;
   }
 
   get positionZElement() {
-    return document.getElementById(this.positionZId);
+    return findChildByID(this.rootHtml, this.positionZId);
   }
 
   get quaternionXId() {
-    return `${this.windowId}_quaternion_x`;
+    return `camera_positioner_quaternion_x`;
   }
 
   get quaternionXElement() {
-    return document.getElementById(this.quaternionXId);
+    return findChildByID(this.rootHtml, this.quaternionXId);
   }
 
   get quaternionYId() {
-    return `${this.windowId}_quaternion_y`;
+    return `camera_positioner_quaternion_y`;
   }
 
   get quaternionYElement() {
-    return document.getElementById(this.quaternionYId);
+    return findChildByID(this.rootHtml, this.quaternionYId);
   }
 
   get quaternionZId() {
-    return `${this.windowId}_quaternion_z`;
+    return `camera_positioner_quaternion_z`;
   }
 
   get quaternionZElement() {
-    return document.getElementById(this.quaternionZId);
+    return findChildByID(this.rootHtml, this.quaternionZId);
   }
 
   get quaternionWId() {
-    return `${this.windowId}_quaternion_w`;
+    return `camera_positioner_quaternion_w`;
   }
 
   get quaternionWElement() {
-    return document.getElementById(this.quaternionWId);
+    return findChildByID(this.rootHtml, this.quaternionWId);
   }
 
   // //////////
