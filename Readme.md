@@ -69,7 +69,7 @@ npm install # resolve dependencies based on the package.json (and package-lock.j
 
 ### Run an example urban data web application
 
-To quickly build and locally host the examples landing page which links to several [UD-Viz example applications](./packages/browser/examples/).
+To quickly build and locally host the examples landing page which links to several [UD-Viz example applications](./examples/).
 
 ```bash
 npm run start
