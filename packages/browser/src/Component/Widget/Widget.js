@@ -16,7 +16,7 @@ export { About } from './About/About';
 
 // export { $3DTemporalTileset } from './Temporal/Model/3DTemporalTileset.js';
 
-// export { SlideShow } from './SlideShow/SlideShow';
+export { SlideShow } from './SlideShow/SlideShow';
 
 export { Debug3DTilesView } from './3DTilesDebug/views/Debug3DTilesView';
 

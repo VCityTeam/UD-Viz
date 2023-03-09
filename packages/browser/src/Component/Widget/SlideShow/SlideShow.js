@@ -1,6 +1,5 @@
-// Component
-import { Window } from '../Component/GUI/js/Window';
 import * as THREE from 'three';
+import { findChildByID } from '../../HTMLUtil';
 
 /**
  * @typedef {object} TextureFile
@@ -30,7 +29,7 @@ import * as THREE from 'three';
 }
  * @classdesc Slideshow Widget class
  */
-export class SlideShow extends Window {
+export class SlideShow {
   /**
    * It initializes the widget.
    *
@@ -47,8 +46,6 @@ export class SlideShow extends Window {
    * @param {import('../../InputManager').InputManager} inputManager - the input manager of the application
    */
   constructor(itownsView, configSlideShow, extent, inputManager) {
-    super('slideShow', 'Slide Show 3D', false);
-
     this.configSlideShow = configSlideShow || null;
     /** @type {import('itowns').Extent} */
     this.extent = extent;
@@ -61,7 +58,7 @@ export class SlideShow extends Window {
      * Content html 
      *
       @type {HTMLElement} */
-    this.htmlSlideShow = null;
+    this.rootHtml = null;
     // Ids
     this.coordinatesInputVectorID = null;
     this.rotationInputVectorID = null;
@@ -118,6 +115,14 @@ export class SlideShow extends Window {
       _this.notifyChangeEachFrame();
     };
     tick();
+  }
+
+  html() {
+    return this.rootHtml;
+  }
+
+  dispose() {
+    this.rootHtml.remove();
   }
 
   /**
@@ -360,35 +365,35 @@ export class SlideShow extends Window {
     return newTextureFile;
   }
 
-  /** Create all HTMLElements and fill `this.htmlSlideShow`*/
+  /** Create all HTMLElements and fill `this.rootHtml`*/
   initHtml() {
-    const htmlSlideShow = document.createElement('div');
+    const rootHtml = document.createElement('div');
     const coordinatesElement = this.createInputVector(
       ['X', 'Y', 'Z'],
       'Coordinates',
       100
     );
-    htmlSlideShow.appendChild(coordinatesElement.title);
+    rootHtml.appendChild(coordinatesElement.title);
     this.coordinatesInputVectorID = coordinatesElement.inputVector.id;
-    htmlSlideShow.appendChild(coordinatesElement.inputVector);
+    rootHtml.appendChild(coordinatesElement.inputVector);
 
     const rotationElement = this.createInputVector(
       ['X', 'Y', 'Z'],
       'Rotation',
       0.1
     );
-    htmlSlideShow.appendChild(rotationElement.title);
+    rootHtml.appendChild(rotationElement.title);
     this.rotationInputVectorID = rotationElement.inputVector.id;
-    htmlSlideShow.appendChild(rotationElement.inputVector);
+    rootHtml.appendChild(rotationElement.inputVector);
 
     const sizeElement = this.createInputVector(
       ['Height', 'Width'],
       'Size',
       100
     );
-    htmlSlideShow.appendChild(sizeElement.title);
+    rootHtml.appendChild(sizeElement.title);
     this.sizeInputVectorID = sizeElement.inputVector.id;
-    htmlSlideShow.appendChild(sizeElement.inputVector);
+    rootHtml.appendChild(sizeElement.inputVector);
 
     const matchExtentButton = document.createElement('button');
     matchExtentButton.id = '_button_match_extent';
@@ -398,10 +403,10 @@ export class SlideShow extends Window {
       id: matchExtentButton.id,
       cb: this.matchExtent,
     });
-    htmlSlideShow.appendChild(matchExtentButton);
+    rootHtml.appendChild(matchExtentButton);
 
     const aspectRatioDiv = document.createElement('div');
-    htmlSlideShow.appendChild(aspectRatioDiv);
+    rootHtml.appendChild(aspectRatioDiv);
 
     const aspectRatioCheckbox = document.createElement('input');
     aspectRatioCheckbox.id = 'aspectRatio';
@@ -428,7 +433,7 @@ export class SlideShow extends Window {
     aspectRatioDiv.appendChild(labelAspectRatio);
 
     const loopDiv = document.createElement('div');
-    htmlSlideShow.appendChild(loopDiv);
+    rootHtml.appendChild(loopDiv);
 
     const loopCheckbox = document.createElement('input');
     loopCheckbox.id = 'loopSlideShow';
@@ -453,7 +458,7 @@ export class SlideShow extends Window {
     loopDiv.appendChild(labelLoopSlideShow);
 
     const durationLoopInSecDiv = document.createElement('div');
-    htmlSlideShow.appendChild(durationLoopInSecDiv);
+    rootHtml.appendChild(durationLoopInSecDiv);
 
     const durationLoopInSecInput = document.createElement('input');
     durationLoopInSecInput.id = 'durationLoopInputSlideShow';
@@ -490,7 +495,7 @@ export class SlideShow extends Window {
 
     const slideSelect = document.createElement('select');
     slideSelect.id = 'slideSelect';
-    htmlSlideShow.appendChild(slideSelect);
+    rootHtml.appendChild(slideSelect);
 
     const unsetOptionSlide = document.createElement('option');
     unsetOptionSlide.value = 'null';
@@ -516,7 +521,7 @@ export class SlideShow extends Window {
       });
     }
 
-    this.htmlSlideShow = htmlSlideShow;
+    this.rootHtml = rootHtml;
   }
 
   /**
@@ -577,14 +582,10 @@ export class SlideShow extends Window {
     this.inputManager.addKeyInput('ArrowLeft', 'keydown', previous);
 
     const hideUI = () => {
-      const htmlElement = document.getElementById(this.windowId); // -sale mais je veux rentrer chez moi
-
-      if (!htmlElement) return;
-
-      if (htmlElement.style.display == 'none') {
-        htmlElement.style.display = '';
+      if (this.rootHtml.style.display == 'none') {
+        this.rootHtml.style.display = '';
       } else {
-        htmlElement.style.display = 'none';
+        this.rootHtml.style.display = 'none';
       }
     };
 
@@ -868,7 +869,7 @@ export class SlideShow extends Window {
   }
 
   get innerContentHtml() {
-    return this.htmlSlideShow.outerHTML;
+    return this.rootHtml.outerHTML;
   }
 
   get currentTextureFile() {
