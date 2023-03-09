@@ -1,6 +1,3 @@
-// Component
-import { WidgetView } from '../../Component/WidgetView/WidgetView.js';
-
 import { TemporalGraphWindow } from './TemporalGraphWindow.js';
 import { TemporalSliderWindow } from './TemporalSliderWindow.js';
 import { EnumTemporalWindow } from './EnumWindows.js';
@@ -12,7 +9,7 @@ import { TemporalOptions } from '../TemporalModule.js';
  * The view entrypoint. Initialize the correct window depending on the
  * configuration and hook up the callbacks from the view model to this window.
  */
-export class TemporalView extends WidgetView {
+export class TemporalView {
   /**
    * It creates a temporal window (either a slider or a graph) and binds it to the temporal extension
    *
@@ -20,8 +17,6 @@ export class TemporalView extends WidgetView {
    * @param {TemporalOptions} temporalOptions - options for initializing the temporal module
    */
   constructor(provider, temporalOptions) {
-    super();
-
     /**
      * Setting the provider to the provider that is passed in.
      *
@@ -82,13 +77,11 @@ export class TemporalView extends WidgetView {
     }
   }
 
-  // ///////////////
-  // /// MODULE VIEW
-  enableView() {
-    this.temporalWindow.appendTo(this.parentElement);
+  html() {
+    return this.temporalWindow.html();
   }
 
-  disableView() {
+  dispose() {
     this.temporalWindow.dispose();
   }
 }

@@ -8,13 +8,13 @@ export { CameraPositioner } from './CameraPositioner/CameraPositioner';
 
 export { About } from './About/About';
 
-// export { TemporalModule } from './Temporal/TemporalModule';
+export { TemporalModule } from './Temporal/TemporalModule';
 
-// export { $3DTemporalBatchTable } from './Temporal/Model/3DTemporalBatchTable.js';
+export { $3DTemporalBatchTable } from './Temporal/Model/3DTemporalBatchTable.js';
 
-// export { $3DTemporalBoundingVolume } from './Temporal/Model/3DTemporalBoundingVolume.js';
+export { $3DTemporalBoundingVolume } from './Temporal/Model/3DTemporalBoundingVolume.js';
 
-// export { $3DTemporalTileset } from './Temporal/Model/3DTemporalTileset.js';
+export { $3DTemporalTileset } from './Temporal/Model/3DTemporalTileset.js';
 
 export { SlideShow } from './SlideShow/SlideShow';
 

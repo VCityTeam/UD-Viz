@@ -1,6 +1,3 @@
-// Component
-import { Window } from '../../Component/GUI/js/Window';
-
 import { NetworkManager } from './NetworkManager';
 import './TemporalWindow.css';
 
@@ -13,7 +10,7 @@ import './TemporalWindow.css';
  * only to trigger the possible hook-ups).
  * This View represents a timestamp with the Moment.js library.
  */
-export class TemporalGraphWindow extends Window {
+export class TemporalGraphWindow {
   /**
    * It creates a new instance of the `TemporalGraphNavigation` class, which is a subclass of the
    * `GraphNavigation` class
@@ -22,8 +19,11 @@ export class TemporalGraphWindow extends Window {
    * @param {object} [options={}] - Optional parameters (min time, max time and current time).
    */
   constructor(refreshCallback, options = {}) {
+    console.error('DEPRECATED');
     // Option : getAsynchronousData
-    super('temporal', 'Temporal Graph Navigation', false);
+
+    this.rootHtml = document.createElement('div');
+    this.rootHtml.setAttribute('id', 'temporalWindow');
 
     this.refreshCallback = refreshCallback;
 
@@ -32,6 +32,35 @@ export class TemporalGraphWindow extends Window {
     this.networkManager.option = options.viewOptions;
     this.networkManager.getAsynchronousData =
       options.temporalWindow.getAsynchronousData;
+
+    // Magical code to center an absolute positionned window
+    this.rootHtml.style.setProperty('left', '0');
+    this.rootHtml.style.setProperty('right', '0');
+    this.rootHtml.style.setProperty('margin-left', 'auto');
+    this.rootHtml.style.setProperty('margin-right', 'auto');
+    // Put it at the bottom of the page
+    this.rootHtml.style.setProperty('top', 'unset');
+    this.rootHtml.style.setProperty('bottom', '0');
+    this.rootHtml.style.setProperty('margin-bottom', 'auto');
+    // Window size and center text
+    this.rootHtml.style.setProperty('width', '700px');
+    this.rootHtml.style.setProperty('height', '215px');
+    //        this.rootHtml.style.setProperty('height', '115px');
+    this.rootHtml.style.setProperty('text-align', 'center');
+
+    // Add graph
+    this.networkManager.init();
+    this.networkManager.add_event((param) => {
+      this.changeTime(param);
+    });
+  }
+
+  html() {
+    return this.rootHtml;
+  }
+
+  dispose() {
+    this.rootHtml.remove();
   }
 
   get innerContentHtml() {
@@ -40,29 +69,6 @@ export class TemporalGraphWindow extends Window {
             <div id="mynetwork"></div>
             </div>
         `;
-  }
-
-  windowCreated() {
-    // Magical code to center an absolute positionned window
-    this.window.style.setProperty('left', '0');
-    this.window.style.setProperty('right', '0');
-    this.window.style.setProperty('margin-left', 'auto');
-    this.window.style.setProperty('margin-right', 'auto');
-    // Put it at the bottom of the page
-    this.window.style.setProperty('top', 'unset');
-    this.window.style.setProperty('bottom', '0');
-    this.window.style.setProperty('margin-bottom', 'auto');
-    // Window size and center text
-    this.window.style.setProperty('width', '700px');
-    this.window.style.setProperty('height', '215px');
-    //        This.window.style.setProperty('height', '115px');
-    this.window.style.setProperty('text-align', 'center');
-
-    // Add graph
-    this.networkManager.init();
-    this.networkManager.add_event((param) => {
-      this.changeTime(param);
-    });
   }
 
   // Change the current date and sync the temporal version to this new date
