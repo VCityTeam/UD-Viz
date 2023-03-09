@@ -31,6 +31,7 @@ export class Debug3DTilesView {
 
     this.clickListener = this.onMouseClick.bind(this);
     this.moveListener = this.onMouseMove.bind(this);
+    this.htmlElementListened = null;
 
     /** @type {HTMLElement} */
     this.rootHtml = document.createElement('div');
@@ -73,6 +74,8 @@ export class Debug3DTilesView {
       this.selectedTilesManager = null;
       this.selectedStyle = null;
     }
+
+    this.removeListener();
   }
 
   /**
@@ -82,15 +85,25 @@ export class Debug3DTilesView {
   addListenerTo(div) {
     div.addEventListener('mousedown', this.clickListener);
     div.addEventListener('mousemove', this.moveListener);
+
+    this.htmlElementListened = div;
   }
 
   /**
    *
-   * @param {HTMLElement} div - html to remove event listener from
+   * remove event listener from html listened
    */
-  removeListenerFrom(div) {
-    div.removeEventListener('mousedown', this.clickListener);
-    div.removeEventListener('mousemove', this.moveListener);
+  removeListener() {
+    if (this.htmlElementListened) {
+      this.htmlElementListened.removeEventListener(
+        'mousedown',
+        this.clickListener
+      );
+      this.htmlElementListened.removeEventListener(
+        'mousemove',
+        this.moveListener
+      );
+    }
   }
 
   /**

@@ -66,7 +66,6 @@
         closeButton.innerHTML = 'Close';
         closeButton.onclick = () => {
           debug3dTilesWindow.dispose();
-          debug3dTilesWindow.removeListenerFrom(frame3DPlanar.rootWebGL);
           parent.remove();
         };
         parent.appendChild(closeButton);
