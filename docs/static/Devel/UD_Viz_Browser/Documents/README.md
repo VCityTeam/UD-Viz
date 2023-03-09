@@ -11,12 +11,12 @@ The module is also extensible, which means that other modules can serve as plug-
 
 ## Basic functionalities
 
-In the [example](/examples/DocumentWidget), you can view how to implement this modules. It can:
+In the [example](../../../../../examples/DocumentWidget.html), you can view how to implement this modules. It can:
 
 - Fetch all documents from the server. It's actually the default comportement (and may change in the future for scaling purpose). The user can filter the retrieved list according to some filters: keywords in the title/description, subject, publication or refering date.
 - Display the details of one particular documents, and navigate through the documents list. The navigation can be done either by selecting a document in the document list, or by using navigation arrows in the document inspector.
 
-![The look of the documents module](Pictures/view.png)
+![The look of the documents module](./Pictures/view.png)
 
 The demo also includes the `DocumentVisualizer` module, that adds an "Orient" button in the document inspector. When pressed, the button moves the camera to the "visualization" position specified in the document, and the image of the document is displayed in superposition to the scene.
 
@@ -58,7 +58,7 @@ The documents module depends on the utility `RequestService` to perform HTTP req
 
 The document visualizer depends on the documents module, and the iTowns view and camera controls from the demo.
 
-![Dependencies graph](Pictures/dependencies.png)
+![Dependencies graph](./Pictures/dependencies.png)
 
 ## Code architecture
 

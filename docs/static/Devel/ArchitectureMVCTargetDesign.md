@@ -77,7 +77,7 @@ We propose a nomenclature to use when working with classes in a module, so that 
 
 The documents module follows an MVVM architecture :
 
-![](Pictures/DocumentsArchitecture.png)
+![](./Pictures/DocumentsArchitecture.png)
 
 The model holds the documents and make requests to the server, the view model filter those documents and the view displays the filtered documents.
 
@@ -104,7 +104,7 @@ The code is separated in two main parts : the view and the service. It ressemble
 * The service makes the appropriate request to the server, and processes the received data
 * It then notifies the listeners. The service follows a simple implementation of the [Observer pattern](https://en.wikipedia.org/wiki/Observer_pattern) where observers are just callbacks without arguments (called listeners). The view has subscribed to the service when it was created, so it received the notification of the service and can update itself.
 
-![](Pictures/ViewServiceArchitecture.png)
+![](./Pictures/ViewServiceArchitecture.png)
 
 ### Services
 

@@ -9,7 +9,7 @@
 
 ## Coding style (Linter)
 
-The JavaScript files coding style is defined with [eslint](https://eslint.org/) through the [.eslintrc.js configuration file](/.eslintrc.js).
+The JavaScript files coding style is defined with [eslint](https://eslint.org/) through the [.eslintrc.js configuration file](../../../.eslintrc.js).
 It can be checked (e.g. prior to a commit) with the `npm run eslint` command.
 Notice that UD-Viz coding style uses a unix `linebreak-style` (aka `LF` as newline character).
 
@@ -37,7 +37,7 @@ Notice that UD-Viz coding style uses a unix `linebreak-style` (aka `LF` as newli
 Before submitting a pull request, and because [UD-Viz still misses some tests](https://github.com/VCityTeam/UD-SV/issues/34),
 **non-regression testing must be done manually**.
 A developer must thus at least check that all the
-[demo examples](/packages/browser/examples/)
+[demo examples](../../../examples/)
 (they should function similar to [their online deployment](https://ud-viz.vcityliris.data.alpha.grandlyon.com/)) are still effective.
 
 > Note that you should interact with ui (user interface) for complete tests.

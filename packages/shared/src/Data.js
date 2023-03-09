@@ -533,6 +533,17 @@ function arrayEquals(a1, a2) {
   return true;
 }
 
+/**
+ * Compute the last string after the . in the filename
+ *
+ * @param {string} filename - file name
+ * @returns {string} - file format
+ */
+function computeFileFormat(filename) {
+  const indexLastPoint = filename.lastIndexOf('.');
+  return filename.slice(indexLastPoint + 1);
+}
+
 module.exports = {
   PartialString: PartialString,
   StringComposer: StringComposer,
@@ -551,4 +562,5 @@ module.exports = {
   objectOverWrite: objectOverWrite,
   objectParse: objectParse,
   objectParseNumeric: objectParseNumeric,
+  computeFileFormat: computeFileFormat,
 };

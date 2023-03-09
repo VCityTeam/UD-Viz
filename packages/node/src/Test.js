@@ -1,6 +1,7 @@
 const puppeteer = require('puppeteer');
 const fs = require('fs');
 const spawn = require('child_process').spawn;
+const { Data } = require('@ud-viz/shared');
 
 /**
  * `MODULE` Test
@@ -117,9 +118,8 @@ const scripts = function (folderPath) {
 const html = function (folderPath, port) {
   return folderInBrowserPage(folderPath, (page, currentFile) => {
     // check if file is an html file
-    const indexLastPoint = currentFile.name.lastIndexOf('.');
-    const fileFormat = currentFile.name.slice(indexLastPoint + 1);
-    if (fileFormat != 'html') return Promise.resolve();
+    if (Data.computeFileFormat(currentFile.name) != 'html')
+      return Promise.resolve();
 
     return new Promise((resolve) => {
       console.log('\n\nstart testing html ', currentFile.name);

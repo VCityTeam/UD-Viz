@@ -10,8 +10,7 @@ UD-Viz is a 3-package JavaScript framework for creating web applications for vis
 [Developers](./docs/static/Devel/Developers.md) &mdash;
 [License](./LICENSE.md) &mdash;
 [Getting Started](#getting-started)
-[test](/home/imuv/projects/UD-Viz/Readme.md)
-[test_1](/bad/imuv/projects/UD-Viz/Readme.md)
+
 
 **Online demos**:
 
