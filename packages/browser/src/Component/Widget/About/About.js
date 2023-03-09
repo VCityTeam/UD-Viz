@@ -17,6 +17,7 @@ export class About {
   constructor(config = {}) {
     /** @type {HTMLElement} */
     this.rootHtml = document.createElement('div');
+    this.rootHtml.setAttribute('id', 'aboutWindow');
 
     // Create HMTL
     if (config.htmlPaths && config.htmlPaths.length) {
