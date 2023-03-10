@@ -150,7 +150,7 @@ export class Window extends WidgetView {
     if (this.isCreated) {
       this.parentElement.removeChild(this.window);
 
-      this.windowDestroyed();
+      this.windowDestroyed(); // destroyed or disposed ? who knows
       this.sendEvent(Window.EVENT_DESTROYED);
     }
   }

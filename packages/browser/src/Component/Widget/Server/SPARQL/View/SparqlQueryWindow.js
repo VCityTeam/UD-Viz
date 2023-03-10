@@ -1,4 +1,3 @@
-import { Window } from '../../../Component/GUI/js/Window';
 import { SparqlEndpointResponseProvider } from '../Service/SparqlEndpointResponseProvider';
 import { Graph } from '../Model/Graph';
 import { Table } from '../Model/Table';
@@ -7,14 +6,17 @@ import { LayerManager } from '../../../../Itowns/LayerManager/LayerManager';
 import { CityObjectProvider } from '../../../CityObjects/ViewModel/CityObjectProvider';
 import { JsonRenderer } from './JsonRenderer';
 import { focusCameraOn } from '../../../../Itowns/Component/Component';
-import './SparqlQueryWindow.css';
 import { loadTextFile } from '../../../../FileUtil';
+import { EventSender } from '@ud-viz/shared';
+import { findChildByID } from '../../../../HTMLUtil';
+
+import './SparqlQueryWindow.css';
 
 /**
  * The SPARQL query window class which provides the user interface for querying
  * a SPARQL endpoint and displaying the endpoint response.
  */
-export class SparqlQueryWindow extends Window {
+export class SparqlQueryWindow extends EventSender {
   /**
    * Creates a SPARQL query window.
    *
@@ -36,7 +38,12 @@ export class SparqlQueryWindow extends Window {
     layerManager,
     configSparqlWidget
   ) {
-    super('sparqlQueryWindow', 'SPARQL Query');
+    super();
+
+    /** @type {HTMLElement} */
+    this.rootHtml = document.createElement('div');
+    this.rootHtml.setAttribute('id', '_window_sparqlQueryWindow');
+    this.rootHtml.innerHTML = this.innerContentHtml;
 
     /**
      * The SPARQL Endpoint Response Provider
@@ -91,15 +98,14 @@ export class SparqlQueryWindow extends Window {
     this.registerEvent(Graph.EVENT_NODE_MOUSEOVER);
     this.registerEvent(Graph.EVENT_NODE_MOUSEOUT);
     this.registerEvent(Table.EVENT_CELL_CLICKED);
-  }
 
-  /**
-   * Override the windowCreated function. Sets the SparqlEndpointResponseProvider
-   * and graph view. Also updates this.queries with the queries declared in the configuration file
-   * Should be called by a `SparqlWidgetView`. Once this is done,
-   * the window is actually usable ; service event listerers are set here.
-   */
-  windowCreated() {
+    /**
+     * Sets the SparqlEndpointResponseProvider
+     * and graph view. Also updates this.queries with the queries declared in the configuration file
+     * Should be called by a `SparqlWidgetView`. Once this is done,
+     * the window is actually usable ; service event listerers are set here.
+     */
+
     // Get queries from text files and update the this.queries
     const promises = [];
     this.queries.forEach((query) => {
@@ -136,7 +142,7 @@ export class SparqlQueryWindow extends Window {
       (response) =>
         this.updateDataView(
           response,
-          document.getElementById(this.resultSelectId).value
+          findChildByID(this.rootHtml, this.resultSelectId).value
         )
     );
 
@@ -179,6 +185,14 @@ export class SparqlQueryWindow extends Window {
         URI.tokenizeURI(cell_text).id
       )
     );
+  }
+
+  html() {
+    return this.rootHtml;
+  }
+
+  dispose() {
+    this.rootHtml.remove();
   }
 
   /**
@@ -297,58 +311,58 @@ export class SparqlQueryWindow extends Window {
   }
 
   get dataViewId() {
-    return `${this.windowId}_data_view`;
+    return `sparql_window_data_view`;
   }
 
   get dataView() {
-    return document.getElementById(this.dataViewId);
+    return findChildByID(this.rootHtml, this.dataViewId);
   }
 
   get formId() {
-    return `${this.windowId}_form`;
+    return `sparql_window_form`;
   }
 
   get form() {
-    return document.getElementById(this.formId);
+    return findChildByID(this.rootHtml, this.formId);
   }
 
   get querySelectId() {
-    return `${this.windowId}_query_select`;
+    return `sparql_window_query_select`;
   }
 
   get querySelect() {
-    return document.getElementById(this.querySelectId);
+    return findChildByID(this.rootHtml, this.querySelectId);
   }
 
   get resultSelectId() {
-    return `${this.windowId}_result_select`;
+    return `sparql_window_result_select`;
   }
 
   get resultSelect() {
-    return document.getElementById(this.resultSelectId);
+    return findChildByID(this.rootHtml, this.resultSelectId);
   }
 
   get submitButtonId() {
-    return `${this.windowId}_submit_button`;
+    return `sparql_window_submit_button`;
   }
 
   get submitButton() {
-    return document.getElementById(this.submitButtonId);
+    return findChildByID(this.rootHtml, this.submitButtonId);
   }
 
   get queryTextAreaId() {
-    return `${this.windowId}_query_text_area`;
+    return `sparql_window_query_text_area`;
   }
 
   get queryTextArea() {
-    return document.getElementById(this.queryTextAreaId);
+    return findChildByID(this.rootHtml, this.queryTextAreaId);
   }
 
   get toggleQueryTextAreaButtonId() {
-    return `${this.windowId}_toggle_query_text_area_button`;
+    return `sparql_window_toggle_query_text_area_button`;
   }
 
   get toggleQueryTextAreaButton() {
-    return document.getElementById(this.toggleQueryTextAreaButtonId);
+    return findChildByID(this.rootHtml, this.toggleQueryTextAreaButtonId);
   }
 }
