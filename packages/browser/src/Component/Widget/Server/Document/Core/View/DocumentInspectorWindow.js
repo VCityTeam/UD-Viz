@@ -2,6 +2,8 @@ import { DocumentProvider } from '../ViewModel/DocumentProvider';
 import { Document } from '../Model/Document';
 import { AbstractDocumentWindow } from './AbstractDocumentWindow';
 
+import { findChildByID } from '../../../../../HTMLUtil';
+
 /**
  * @typedef {object} DocumentInspectorExtension
  * @property {string} type 'panel | 'button'
@@ -21,6 +23,9 @@ export class DocumentInspectorWindow extends AbstractDocumentWindow {
   constructor() {
     super('Inspector');
 
+    this.rootHtml = document.createElement('div');
+    this.rootHtml.innerHTML = this.innerContentHtml;
+
     /**
      * Represents a list of extensions. An extension can either be a button or
      * a panel.
@@ -28,6 +33,33 @@ export class DocumentInspectorWindow extends AbstractDocumentWindow {
      * @type {Object<string, DocumentInspectorExtension>}
      */
     this.extensions = {};
+
+    /** @todo should be in a css file */
+    this.rootHtml.style.left = 'unset';
+    this.rootHtml.style.right = '10px';
+    this.rootHtml.style.top = '10px';
+    this.rootHtml.style.height = 'auto';
+    this.rootHtml.style.width = '30%';
+    this.rootHtml.style.borderRadius = '15px';
+
+    // Add extensions
+    for (const extension of Object.values(this.extensions)) {
+      this._createExtensionElement(extension);
+    }
+
+    this.docImageElement.onclick = (event) => {
+      if (event.ctrlKey) {
+        window.open(this.docImageElement.src);
+      }
+    };
+  }
+
+  html() {
+    return this.rootHtml;
+  }
+
+  dispose() {
+    this.rootHtml.remove();
   }
 
   get innerContentHtml() {
@@ -65,29 +97,6 @@ export class DocumentInspectorWindow extends AbstractDocumentWindow {
 
       </div>
     `;
-  }
-
-  /**
-   * Set window style once the window is created
-   */
-  windowCreated() {
-    this.window.style.left = 'unset';
-    this.window.style.right = '10px';
-    this.window.style.top = '10px';
-    this.window.style.height = 'auto';
-    this.window.style.width = '30%';
-    this.window.style.borderRadius = '15px';
-
-    // Add extensions
-    for (const extension of Object.values(this.extensions)) {
-      this._createExtensionElement(extension);
-    }
-
-    this.docImageElement.onclick = (event) => {
-      if (event.ctrlKey) {
-        window.open(this.docImageElement.src);
-      }
-    };
   }
 
   /**
@@ -136,9 +145,6 @@ export class DocumentInspectorWindow extends AbstractDocumentWindow {
    * @param {Document} newDocument The new displayed document.
    */
   async _fillFieldsFromDocument(newDocument) {
-    if (!this.isCreated) {
-      return;
-    }
     this.docTitleElement.innerText = newDocument.title;
     this.docDescriptionElement.innerText = newDocument.description;
     this.docSourceElement.innerText = newDocument.source;
@@ -156,58 +162,58 @@ export class DocumentInspectorWindow extends AbstractDocumentWindow {
   // /// GETTERS
 
   get docTitleId() {
-    return `${this.windowId}_title`;
+    return `document_inspector_title`;
   }
 
   get docTitleElement() {
-    return document.getElementById(this.docTitleId);
+    return findChildByID(this.rootHtml, this.docTitleId);
   }
 
   get docDescriptionId() {
-    return `${this.windowId}_desc`;
+    return `document_inspector_desc`;
   }
 
   get docDescriptionElement() {
-    return document.getElementById(this.docDescriptionId);
+    return findChildByID(this.rootHtml, this.docDescriptionId);
   }
 
   get docSourceId() {
-    return `${this.windowId}_source`;
+    return `document_inspector_source`;
   }
 
   get docSourceElement() {
-    return document.getElementById(this.docSourceId);
+    return findChildByID(this.rootHtml, this.docSourceId);
   }
 
   get docRightsHolderId() {
-    return `${this.windowId}_rights_holder`;
+    return `document_inspector_rights_holder`;
   }
 
   get docRightsHolderElement() {
-    return document.getElementById(this.docRightsHolderId);
+    return findChildByID(this.rootHtml, this.docRightsHolderId);
   }
 
   get docPubDateId() {
-    return `${this.windowId}_pub_date`;
+    return `document_inspector_pub_date`;
   }
 
   get docPubDateElement() {
-    return document.getElementById(this.docPubDateId);
+    return findChildByID(this.rootHtml, this.docPubDateId);
   }
 
   get docRefDateId() {
-    return `${this.windowId}_ref_date`;
+    return `document_inspector_ref_date`;
   }
 
   get docRefDateElement() {
-    return document.getElementById(this.docRefDateId);
+    return findChildByID(this.rootHtml, this.docRefDateId);
   }
 
   get docImageId() {
-    return `${this.windowId}_image`;
+    return `document_inspector_image`;
   }
 
   get docImageElement() {
-    return document.getElementById(this.docImageId);
+    return findChildByID(this.rootHtml, this.docImageId);
   }
 }

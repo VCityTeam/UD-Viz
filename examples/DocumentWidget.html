@@ -90,10 +90,17 @@
         };
 
         // //// DOCUMENTS MODULE
-        const documentModule = new udvizBrowser.Widget.Server.DocumentModule(
+        const documentModule = new udvizBrowser.Widget.Server.Document.Core(
           requestService,
           configs['spatial_multimedia_db_server']
         );
+
+        const parent = document.createElement('div');
+        parent.style.width = 'fit-content';
+        parent.style.backgroundColor = 'purple';
+        parent.appendChild(documentModule.view.html());
+
+        frame3DPlanar.appendToUI(parent);
 
         // // DOCUMENTS VISUALIZER EXTENSION (to orient the document)
         // const imageOrienter =

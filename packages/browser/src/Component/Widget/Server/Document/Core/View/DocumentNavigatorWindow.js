@@ -2,6 +2,7 @@ import { DocumentProvider } from '../ViewModel/DocumentProvider';
 import { Document } from '../Model/Document';
 import { DocumentSearchFilter } from '../ViewModel/DocumentSearchFilter';
 import { AbstractDocumentWindow } from './AbstractDocumentWindow';
+import { findChildByID } from '../../../../../HTMLUtil';
 
 /**
  * @typedef {object} DocumentNavigatorExtension
@@ -21,6 +22,10 @@ export class DocumentNavigatorWindow extends AbstractDocumentWindow {
   constructor() {
     super('Navigator');
 
+    /** @type {HTMLElement} */
+    this.rootHtml = document.createElement('div');
+    this.rootHtml.innerHTML = this.innerContentHtml;
+
     /**
      * The filter corresponding to the research fields.
      *
@@ -35,6 +40,28 @@ export class DocumentNavigatorWindow extends AbstractDocumentWindow {
      * @type {Object<string, DocumentNavigatorExtension>}
      */
     this.extensions = {};
+
+    // Add extensions
+    for (const extension of Object.values(this.extensions)) {
+      this._createExtensionElement(extension);
+    }
+
+    // init callbacks
+    this.inputFormElement.onsubmit = () => {
+      this.search();
+      return false;
+    };
+    this.clearButtonElement.onclick = () => {
+      this.clear();
+    };
+  }
+
+  html() {
+    return this.rootHtml;
+  }
+
+  dispose() {
+    this.rootHtml.remove();
   }
 
   get innerContentHtml() {
@@ -88,24 +115,6 @@ export class DocumentNavigatorWindow extends AbstractDocumentWindow {
       
       </div>
     `;
-  }
-
-  /**
-   * Add extensions once the window is created
-   */
-  windowCreated() {
-    // Add extensions
-    for (const extension of Object.values(this.extensions)) {
-      this._createExtensionElement(extension);
-    }
-
-    this.inputFormElement.onsubmit = () => {
-      this.search();
-      return false;
-    };
-    this.clearButtonElement.onclick = () => {
-      this.clear();
-    };
   }
 
   /**
@@ -242,90 +251,90 @@ export class DocumentNavigatorWindow extends AbstractDocumentWindow {
   // // GETTERS
 
   get inputFormId() {
-    return `${this.windowId}_form`;
+    return `document_navigator_form`;
   }
 
   get inputFormElement() {
-    return document.getElementById(this.inputFormId);
+    return findChildByID(this.rootHtml, this.inputFormId);
   }
 
   get clearButtonId() {
-    return `${this.windowId}_button_clear`;
+    return `document_navigator_button_clear`;
   }
 
   get clearButtonElement() {
-    return document.getElementById(this.clearButtonId);
+    return findChildByID(this.rootHtml, this.clearButtonId);
   }
 
   get documentListId() {
-    return `${this.windowId}_document_list`;
+    return `document_navigator_document_list`;
   }
 
   get documentListElement() {
-    return document.getElementById(this.documentListId);
+    return findChildByID(this.rootHtml, this.documentListId);
   }
 
   get inputKeywordsId() {
-    return `${this.windowId}_input_Keywords`;
+    return `document_navigator_input_Keywords`;
   }
 
   get inputKeywordsElement() {
-    return document.getElementById(this.inputKeywordsId);
+    return findChildByID(this.rootHtml, this.inputKeywordsId);
   }
 
   get inputSourceId() {
-    return `${this.windowId}_input_Source`;
+    return `document_navigator_input_Source`;
   }
 
   get inputSourceElement() {
-    return document.getElementById(this.inputSourceId);
+    return findChildByID(this.rootHtml, this.inputSourceId);
   }
 
   get inputRightsHolderId() {
-    return `${this.windowId}_rights_holder`;
+    return `document_navigator_rights_holder`;
   }
 
   get inputRightsHolderElement() {
-    return document.getElementById(this.inputRightsHolderId);
+    return findChildByID(this.rootHtml, this.inputRightsHolderId);
   }
 
   get inputPubDateStartId() {
-    return `${this.windowId}_input_Publication`;
+    return `document_navigator_input_Publication`;
   }
 
   get inputPubDateStartElement() {
-    return document.getElementById(this.inputPubDateStartId);
+    return findChildByID(this.rootHtml, this.inputPubDateStartId);
   }
 
   get inputPubDateEndId() {
-    return `${this.windowId}_input_Publication_End`;
+    return `document_navigator_input_Publication_End`;
   }
 
   get inputPubDateEndElement() {
-    return document.getElementById(this.inputPubDateEndId);
+    return findChildByID(this.rootHtml, this.inputPubDateEndId);
   }
 
   get inputRefDateStartId() {
-    return `${this.windowId}_input_Reference`;
+    return `document_navigator_input_Reference`;
   }
 
   get inputRefDateStartElement() {
-    return document.getElementById(this.inputRefDateStartId);
+    return findChildByID(this.rootHtml, this.inputRefDateStartId);
   }
 
   get inputRefDateEndId() {
-    return `${this.windowId}_input_Reference_End`;
+    return `document_navigator_input_Reference_End`;
   }
 
   get inputRefDateEndElement() {
-    return document.getElementById(this.inputRefDateEndId);
+    return findChildByID(this.rootHtml, this.inputRefDateEndId);
   }
 
   get docCountId() {
-    return `${this.windowId}_doc_count`;
+    return `document_navigator_doc_count`;
   }
 
   get docCountElement() {
-    return document.getElementById(this.docCountId);
+    return findChildByID(this.rootHtml, this.docCountId);
   }
 }

@@ -1,5 +1,3 @@
-import { WidgetView } from '../../../Component/WidgetView/WidgetView';
-import { Window } from '../../../Component/GUI/js/Window';
 import { DocumentProvider } from '../ViewModel/DocumentProvider';
 import { DocumentNavigatorWindow } from './DocumentNavigatorWindow';
 import { DocumentInspectorWindow } from './DocumentInspectorWindow';
@@ -10,14 +8,15 @@ import { AbstractDocumentWindow } from './AbstractDocumentWindow';
  * and search. It also accepts instances of `AbstractDocumentWindow` as
  * extension windows.
  */
-export class DocumentView extends WidgetView {
+export class DocumentView {
   /**
    * Creates a document view.
    *
    * @param {DocumentProvider} provider The document provider.
    */
   constructor(provider) {
-    super();
+    /** @type {HTMLElement} */
+    this.rootHtml = document.createElement('div');
 
     /**
      * The document provider.
@@ -32,6 +31,7 @@ export class DocumentView extends WidgetView {
      * @type {DocumentNavigatorWindow}
      */
     this.navigatorWindow = new DocumentNavigatorWindow();
+    this.rootHtml.appendChild(this.navigatorWindow.html());
 
     /**
      * The inspector window.
@@ -39,6 +39,7 @@ export class DocumentView extends WidgetView {
      * @type {DocumentInspectorWindow}
      */
     this.inspectorWindow = new DocumentInspectorWindow();
+    this.rootHtml.appendChild(this.inspectorWindow.html());
 
     /**
      * The different windows of the view.
@@ -54,15 +55,16 @@ export class DocumentView extends WidgetView {
      */
     this.hiddenWindows = [];
 
-    this.addDocumentWindow(this.navigatorWindow);
-    this.addDocumentWindow(this.inspectorWindow);
+    // this.addDocumentWindow(this.navigatorWindow);
+    // this.addDocumentWindow(this.inspectorWindow);
+  }
 
-    this.navigatorWindow.addEventListener(Window.EVENT_DISABLED, () => {
-      this.disable();
-    });
-    this.inspectorWindow.addEventListener(Window.EVENT_DISABLED, () => {
-      this.disable();
-    });
+  html() {
+    return this.rootHtml;
+  }
+
+  dispose() {
+    this.rootHtml.remove();
   }
 
   /**
@@ -123,17 +125,17 @@ export class DocumentView extends WidgetView {
   // ///////////////
   // /// MODULE VIEW
 
-  enableView() {
-    for (const window of this.windows) {
-      window.appendTo(this.parentElement);
-    }
-    this.provider.refreshDocumentList();
-  }
+  // enableView() {
+  //   for (const window of this.windows) {
+  //     window.appendTo(this.parentElement);
+  //   }
+  //   this.provider.refreshDocumentList();
+  // }
 
-  disableView() {
-    this.hiddenWindows = [];
-    for (const window of this.windows) {
-      window.dispose();
-    }
-  }
+  // disableView() {
+  //   this.hiddenWindows = [];
+  //   for (const window of this.windows) {
+  //     window.dispose();
+  //   }
+  // }
 }

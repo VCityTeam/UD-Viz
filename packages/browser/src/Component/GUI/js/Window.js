@@ -1,5 +1,5 @@
 import { dragElement } from './Draggable.js';
-import { WidgetView } from '../../WidgetView/WidgetView.js';
+import { EventSender } from '@ud-viz/shared';
 import { windowManager } from './WindowManager.js';
 import { WindowExtension } from './WindowExtension.js';
 
@@ -8,12 +8,8 @@ import '../css/window.css';
 // Documentation is on the Wiki
 // URL : https://github.com/MEPP-team/UD-Viz/wiki/Window-Framework
 // You can see an example in UD-Viz-Shared/examples/DemoWindow
-/**
- * A simple GUI class to represent a window.
- *
- * @augments WidgetView
- */
-export class Window extends WidgetView {
+
+export class Window extends EventSender {
   /**
    * Creates a window.
    *
