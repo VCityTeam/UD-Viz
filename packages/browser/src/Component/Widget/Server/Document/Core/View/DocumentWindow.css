@@ -14,7 +14,7 @@
 .search-form input[type='text'],
 .search-form select {
   box-sizing: border-box;
-  width: 100%;
+  /* width: 100%; */
 }
 
 .search-form .date-wrapper span {

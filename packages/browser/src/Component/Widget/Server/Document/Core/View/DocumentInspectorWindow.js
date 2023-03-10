@@ -1,6 +1,5 @@
 import { DocumentProvider } from '../ViewModel/DocumentProvider';
 import { Document } from '../Model/Document';
-import { AbstractDocumentWindow } from './AbstractDocumentWindow';
 
 import { findChildByID } from '../../../../../HTMLUtil';
 
@@ -16,12 +15,12 @@ import { findChildByID } from '../../../../../HTMLUtil';
  * defined in the document provider. It also serves as a container to add
  * extension buttons.
  */
-export class DocumentInspectorWindow extends AbstractDocumentWindow {
+export class DocumentInspectorWindow {
   /**
    * Constructs a documents inspector window.
    */
-  constructor() {
-    super('Inspector');
+  constructor(provider) {
+    this.provider = provider;
 
     this.rootHtml = document.createElement('div');
     this.rootHtml.innerHTML = this.innerContentHtml;
@@ -35,12 +34,7 @@ export class DocumentInspectorWindow extends AbstractDocumentWindow {
     this.extensions = {};
 
     /** @todo should be in a css file */
-    this.rootHtml.style.left = 'unset';
-    this.rootHtml.style.right = '10px';
-    this.rootHtml.style.top = '10px';
-    this.rootHtml.style.height = 'auto';
     this.rootHtml.style.width = '30%';
-    this.rootHtml.style.borderRadius = '15px';
 
     // Add extensions
     for (const extension of Object.values(this.extensions)) {
@@ -52,6 +46,11 @@ export class DocumentInspectorWindow extends AbstractDocumentWindow {
         window.open(this.docImageElement.src);
       }
     };
+
+    this.provider.addEventListener(
+      DocumentProvider.EVENT_DISPLAYED_DOC_CHANGED,
+      (doc) => this.onDisplayedDocumentChange(doc)
+    );
   }
 
   html() {
@@ -97,16 +96,6 @@ export class DocumentInspectorWindow extends AbstractDocumentWindow {
 
       </div>
     `;
-  }
-
-  /**
-   * Add event listener on displayed documebt changed
-   */
-  documentWindowReady() {
-    this.provider.addEventListener(
-      DocumentProvider.EVENT_DISPLAYED_DOC_CHANGED,
-      (doc) => this.onDisplayedDocumentChange(doc)
-    );
   }
 
   // /////////////////////

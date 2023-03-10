@@ -1,7 +1,6 @@
 import { DocumentProvider } from '../ViewModel/DocumentProvider';
 import { Document } from '../Model/Document';
 import { DocumentSearchFilter } from '../ViewModel/DocumentSearchFilter';
-import { AbstractDocumentWindow } from './AbstractDocumentWindow';
 import { findChildByID } from '../../../../../HTMLUtil';
 
 /**
@@ -15,12 +14,12 @@ import { findChildByID } from '../../../../../HTMLUtil';
  * @class Represents the navigator window for the documents. It contains the filters on
  * the fields of a document.
  */
-export class DocumentNavigatorWindow extends AbstractDocumentWindow {
+export class DocumentNavigatorWindow {
   /**
    * Creates a document navigator window.
    */
-  constructor() {
-    super('Navigator');
+  constructor(provider) {
+    this.provider = provider;
 
     /** @type {HTMLElement} */
     this.rootHtml = document.createElement('div');
@@ -54,6 +53,17 @@ export class DocumentNavigatorWindow extends AbstractDocumentWindow {
     this.clearButtonElement.onclick = () => {
       this.clear();
     };
+
+    this.provider.addFilter(this.searchFilter);
+
+    this.provider.addEventListener(
+      DocumentProvider.EVENT_FILTERED_DOCS_UPDATED,
+      (documents) => this._onFilteredDocumentsUpdate(documents)
+    );
+    this.provider.addEventListener(
+      DocumentProvider.EVENT_DISPLAYED_DOC_CHANGED,
+      (doc) => this._onDisplayedDocumentChange(doc)
+    );
   }
 
   html() {
@@ -117,22 +127,6 @@ export class DocumentNavigatorWindow extends AbstractDocumentWindow {
     `;
   }
 
-  /**
-   * Add event listeners on documents
-   */
-  documentWindowReady() {
-    this.provider.addFilter(this.searchFilter);
-
-    this.provider.addEventListener(
-      DocumentProvider.EVENT_FILTERED_DOCS_UPDATED,
-      (documents) => this._onFilteredDocumentsUpdate(documents)
-    );
-    this.provider.addEventListener(
-      DocumentProvider.EVENT_DISPLAYED_DOC_CHANGED,
-      (doc) => this._onDisplayedDocumentChange(doc)
-    );
-  }
-
   // ////////////////////////////
   // /// DOCUMENT UPDATE TRIGGERS
 
@@ -143,10 +137,6 @@ export class DocumentNavigatorWindow extends AbstractDocumentWindow {
    * @param {Array<Document>} documents The new array of filtered documents.
    */
   _onFilteredDocumentsUpdate(documents) {
-    if (!this.isCreated) {
-      return;
-    }
-
     const list = this.documentListElement;
     list.innerHTML = '';
     for (const doc of documents) {
@@ -173,9 +163,6 @@ export class DocumentNavigatorWindow extends AbstractDocumentWindow {
    * @param {Document} document The new displayed documents.
    */
   _onDisplayedDocumentChange(document) {
-    if (!this.isCreated) {
-      return;
-    }
     const previouslySelected =
       this.documentListElement.querySelector('.document-selected');
     if (previouslySelected) {

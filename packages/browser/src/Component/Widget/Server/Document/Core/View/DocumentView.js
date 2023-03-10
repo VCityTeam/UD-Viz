@@ -1,7 +1,8 @@
 import { DocumentProvider } from '../ViewModel/DocumentProvider';
 import { DocumentNavigatorWindow } from './DocumentNavigatorWindow';
 import { DocumentInspectorWindow } from './DocumentInspectorWindow';
-import { AbstractDocumentWindow } from './AbstractDocumentWindow';
+
+import './DocumentWindow.css';
 
 /**
  * The entry point of the document view. It holds the two main windows, inspector
@@ -19,18 +20,11 @@ export class DocumentView {
     this.rootHtml = document.createElement('div');
 
     /**
-     * The document provider.
-     *
-     * @type {DocumentProvider}
-     */
-    this.provider = provider;
-
-    /**
      * The search window.
      *
      * @type {DocumentNavigatorWindow}
      */
-    this.navigatorWindow = new DocumentNavigatorWindow();
+    this.navigatorWindow = new DocumentNavigatorWindow(provider);
     this.rootHtml.appendChild(this.navigatorWindow.html());
 
     /**
@@ -38,25 +32,16 @@ export class DocumentView {
      *
      * @type {DocumentInspectorWindow}
      */
-    this.inspectorWindow = new DocumentInspectorWindow();
+    this.inspectorWindow = new DocumentInspectorWindow(provider);
     this.rootHtml.appendChild(this.inspectorWindow.html());
 
     /**
-     * The different windows of the view.
+     * The document provider.
      *
-     * @type {Array<AbstractDocumentWindow>}
+     * @type {DocumentProvider}
      */
-    this.windows = [];
-
-    /**
-     * The windows that have been temporarily hidden.
-     *
-     * @type {Array<AbstractDocumentWindow>}
-     */
-    this.hiddenWindows = [];
-
-    // this.addDocumentWindow(this.navigatorWindow);
-    // this.addDocumentWindow(this.inspectorWindow);
+    this.provider = provider;
+    this.provider.refreshDocumentList();
   }
 
   html() {
@@ -74,6 +59,7 @@ export class DocumentView {
    * @param {AbstractDocumentWindow} newWindow The window to add.
    */
   addDocumentWindow(newWindow) {
+    console.error('DEPRECATED');
     if (!(newWindow instanceof AbstractDocumentWindow)) {
       throw (
         'Only instances of AbstractDocumentWindow can be added to the ' +
@@ -93,6 +79,7 @@ export class DocumentView {
    * windows.
    */
   requestWindowDisplay(windowToDisplay, hideOtherWindows = false) {
+    console.error('DEPRECATED');
     const found =
       this.windows.findIndex((w) => w.windowId === windowToDisplay.windowId) >=
       0;
