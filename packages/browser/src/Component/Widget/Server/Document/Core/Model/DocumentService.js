@@ -1,4 +1,4 @@
-import { RequestService } from '../../Component/RequestService';
+import { RequestService } from '../../../../../RequestService';
 import { Data } from '@ud-viz/shared';
 import { Document } from './Document';
 

@@ -1,6 +1,6 @@
-import { Window } from '../../../Component/GUI/js/Window';
 import { DocumentProvider } from '../ViewModel/DocumentProvider';
 import { DocumentView } from './DocumentView';
+import { EventSender } from '@ud-viz/shared';
 
 import './DocumentWindow.css';
 
@@ -8,18 +8,17 @@ import './DocumentWindow.css';
  * It's a window that can be displayed by a `DocumentView` and that can be used to display a document provided by a `DocumentProvider` 
  *
   @class */
-export class AbstractDocumentWindow extends Window {
+export class AbstractDocumentWindow extends EventSender {
   /**
    * Constructs an abstract document window from a name.
    *
    * @param {string} name The name of the window.
    */
   constructor(name) {
-    super(
-      `document2-${name.replace(/ +/, '-').toLowerCase()}`,
-      `Document - ${name}`,
-      true
-    );
+    super();
+
+    /** @type {string} */
+    this.name = name;
 
     /**
      * The document provider.
