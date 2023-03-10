@@ -18,9 +18,9 @@ export { AuthenticationView } from './Authentication/views/AuthenticationView';
 
 // export { DocumentVisualizerWindow } from './DocumentVisualizer/View/DocumentVisualizerWindow';
 
-// export { SparqlWidgetView } from './SPARQL/View/SparqlWidgetView';
+export { SparqlQueryWindow } from './SPARQL/View/SparqlQueryWindow';
 
-// export { SparqlEndpointResponseProvider } from './SPARQL/Service/SparqlEndpointResponseProvider';
+export { SparqlEndpointResponseProvider } from './SPARQL/Service/SparqlEndpointResponseProvider';
 
 // export { GuidedTourController } from './GuidedTour/GuidedTourController';
 
