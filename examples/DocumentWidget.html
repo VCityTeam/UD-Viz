@@ -4,6 +4,7 @@
     <title>Document Widget example</title>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./assets/css/default.css" />
   </head>
   <body>
     <script src="../packages/browser/dist/RUN_MODE/bundle.js"></script>
@@ -12,17 +13,13 @@
       /* eslint-disable no-new */
 
       udvizBrowser.FileUtil.loadMultipleJSON([
-        './assets/config/all_widget.json',
         './assets/config/extent_lyon.json',
         './assets/config/frame3D_planars.json',
         './assets/config/server/spatial_multimedia_db_server.json',
-        './assets/config/widget/about.json',
-        './assets/config/widget/help.json',
         './assets/config/styles.json',
         './assets/config/layer/3DTiles.json',
         './assets/config/layer/base_maps.json',
         './assets/config/layer/elevation.json',
-        './assets/config/layer/geoJSONs.json',
       ]).then((configs) => {
         // http://proj4js.org/
         // define a projection as a string and reference it that way
@@ -41,13 +38,10 @@
           parseInt(configs['extent_lyon'].north)
         );
 
-        const app = new udvizBrowser.AllWidget(
+        const frame3DPlanar = new udvizBrowser.Frame3DPlanar(
           extent,
-          configs['all_widget'],
-          configs['frame3D_planars'][0]
+          configs['frame3D_planars'][2]
         );
-
-        const frame3DPlanar = app.getFrame3DPlanar();
 
         // /// ADD LAYERS
         udvizBrowser.add3DTilesLayers(
@@ -68,15 +62,14 @@
           extent
         );
 
-        udvizBrowser.addGeoJsonLayers(
-          configs['geoJSONs'],
-          frame3DPlanar.itownsView,
-          extent
+        udvizBrowser.THREEUtil.addLights(frame3DPlanar.getScene());
+        udvizBrowser.THREEUtil.initRenderer(
+          frame3DPlanar.getRenderer(),
+          new udvizBrowser.THREE.Color(0x6699cc)
         );
 
         // //// REQUEST SERVICE
-        const requestService =
-          new udvizBrowser.Widget.Server.Component.RequestService();
+        const requestService = new udvizBrowser.RequestService();
 
         // //// AUTHENTICATION MODULE
         const authenticationView =
@@ -86,79 +79,77 @@
               configs['spatial_multimedia_db_server']
             )
           );
-        app.addWidgetView('authentication', authenticationView, {
-          type: udvizBrowser.AllWidget.AUTHENTICATION_WIDGET,
-        });
 
-        // //// ABOUT MODULE
-        const about = new udvizBrowser.Widget.AboutWindow(configs['about']);
-        app.addWidgetView('about', about);
-
-        // //// HELP MODULE
-        new udvizBrowser.Widget.HelpWindow(configs['help']); // => help window should be add with addWidgetView
+        const toggleAuthView = document.createElement('button');
+        toggleAuthView.innerHTML = 'Show Authentification';
+        frame3DPlanar.appendToUI(toggleAuthView);
+        toggleAuthView.onclick = () => {
+          if (!authenticationView.html().parentElement) {
+            frame3DPlanar.appendToUI(authenticationView.html());
+          }
+        };
 
         // //// DOCUMENTS MODULE
         const documentModule = new udvizBrowser.Widget.Server.DocumentModule(
           requestService,
           configs['spatial_multimedia_db_server']
         );
-        app.addWidgetView('documents', documentModule.view);
 
         // // DOCUMENTS VISUALIZER EXTENSION (to orient the document)
-        const imageOrienter =
-          new udvizBrowser.Widget.Server.DocumentVisualizerWindow(
-            documentModule, // <== Server because is use a document module
-            app.getFrame3DPlanar().getItownsView(),
-            app.getFrame3DPlanar().getItownsView().controls
-          );
+        // const imageOrienter =
+        //   new udvizBrowser.Widget.Server.DocumentVisualizerWindow(
+        //     documentModule, // <== Server because is use a document module
+        //     app.getFrame3DPlanar().getItownsView(),
+        //     app.getFrame3DPlanar().getItownsView().controls
+        //   );
 
         // //// CONTRIBUTE EXTENSION
-        new udvizBrowser.Widget.Server.ContributeModule(
-          documentModule,
-          imageOrienter,
-          requestService,
-          app.getFrame3DPlanar().getItownsView(),
-          app.getFrame3DPlanar().getItownsView().controls,
-          configs['spatial_multimedia_db_server']
-        );
+        // new udvizBrowser.Widget.Server.ContributeModule(
+        //   documentModule,
+        //   imageOrienter,
+        //   requestService,
+        //   app.getFrame3DPlanar().getItownsView(),
+        //   app.getFrame3DPlanar().getItownsView().controls,
+        //   configs['spatial_multimedia_db_server']
+        // );
 
         // //// VALIDATION EXTENSION
-        new udvizBrowser.Widget.Server.DocumentValidationModule(
-          documentModule,
-          requestService,
-          configs['spatial_multimedia_db_server']
-        );
+        // new udvizBrowser.Widget.Server.DocumentValidationModule(
+        //   documentModule,
+        //   requestService,
+        //   configs['spatial_multimedia_db_server']
+        // );
 
-        // //// DOCUMENT COMMENTS
-        new udvizBrowser.Widget.Server.DocumentCommentsModule(
-          documentModule,
-          requestService,
-          configs['spatial_multimedia_db_server']
-        );
+        // // //// DOCUMENT COMMENTS
+        // new udvizBrowser.Widget.Server.DocumentCommentsModule(
+        //   documentModule,
+        //   requestService,
+        //   configs['spatial_multimedia_db_server']
+        // );
 
         // //// CITY OBJECTS PROVIDER
-        const cityObjectProvider = new udvizBrowser.Widget.CityObjectProvider(
-          app.getFrame3DPlanar().getLayerManager(),
-          configs['styles']
-        );
+        // const cityObjectProvider = new udvizBrowser.Widget.CityObjectProvider(
+        //   app.getFrame3DPlanar().getLayerManager(),
+        //   configs['styles']
+        // );
 
-        // //// CITY OBJECTS MODULE
-        const cityObjectModule = new udvizBrowser.Widget.CityObjectModule(
-          cityObjectProvider,
-          configs['styles']
-        );
-        app.addWidgetView('cityObjects', cityObjectModule.view);
+        // // //// CITY OBJECTS MODULE
+        // const cityObjectModule = new udvizBrowser.Widget.CityObjectModule(
+        //   cityObjectProvider,
+        //   configs['styles']
+        // );
+        // app.addWidgetView('cityObjects', cityObjectModule.view);
 
-        // //// LINKS MODULE
-        new udvizBrowser.Widget.Server.LinkModule(
-          documentModule,
-          cityObjectModule,
-          requestService,
-          app.getFrame3DPlanar().getItownsView(),
-          app.getFrame3DPlanar().getItownsView().controls,
-          configs['spatial_multimedia_db_server'],
-          configs['styles']
-        );
+        // // //// LINKS MODULE
+        // new udvizBrowser.Widget.Server.LinkModule(
+        //   documentModule,
+        //   cityObjectModule,
+        //   requestService,
+        //   app.getFrame3DPlanar().getItownsView(),
+        //   app.getFrame3DPlanar().getItownsView().controls,
+        //   configs['spatial_multimedia_db_server'],
+        //   configs['styles']
+        // );
       });
     </script>
   </body>
