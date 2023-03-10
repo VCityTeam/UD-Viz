@@ -1,13 +1,13 @@
 import * as THREE from 'three';
 import * as itowns from 'itowns';
 import proj4 from 'proj4';
-
-import { WidgetView } from '../../../Component/WidgetView/WidgetView';
+import { findChildByID } from '../../../../HTMLUtil';
 import { focusCameraOn } from '../../../../Itowns/Component/Component';
 import { GeocodingService } from '../services/GeocodingService';
+
 import './GeocodingStyle.css';
 
-export class GeocodingView extends WidgetView {
+export class GeocodingView {
   /**
    * Instantiates the view.
    *
@@ -15,10 +15,23 @@ export class GeocodingView extends WidgetView {
    * @param {import('itowns').PlanarView} planarView The iTowns view.
    */
   constructor(geocodingService, planarView) {
-    super();
+    this.rootHtml = document.createElement('div');
+    this.rootHtml.setAttribute('id', this.viewId);
+    this.rootHtml.innerHTML = this.innerHtmlContent;
+
     this.geocodingService = geocodingService;
     this.planarView = planarView;
     this.meshes = [];
+
+    this.creditElement.innerHTML = this.geocodingService.credit;
+
+    this.formElement.onsubmit = () => {
+      this.doGeocoding();
+      return false;
+    };
+
+    // https://github.com/VCityTeam/UD-Viz/issues/559
+    // if crs EPSG:3946 has not be defined define it here
 
     // Define EPSG:3946 projection which is the projection used in the 3D view
     // (planarView of iTowns). It is indeed needed in getWorldCoordinates()
@@ -31,7 +44,7 @@ export class GeocodingView extends WidgetView {
     );
   }
 
-  get html() {
+  get innerHtmlContent() {
     return /* html*/ `
       <form id="${this.formId}">
         <div id="${this.centeredDivId}">
@@ -43,25 +56,8 @@ export class GeocodingView extends WidgetView {
     `;
   }
 
-  /**
-   * Appends the view div to the DOM.
-   *
-   * @param {HTMLElement} htmlElement An HTML element
-   */
-  appendToElement(htmlElement) {
-    if (!this.isCreated) {
-      const div = document.createElement('div');
-      div.innerHTML = this.html;
-      div.id = this.viewId;
-      htmlElement.append(div);
-
-      this.creditElement.innerHTML = this.geocodingService.credit;
-
-      this.formElement.onsubmit = () => {
-        this.doGeocoding();
-        return false;
-      };
-    }
+  html() {
+    return this.rootHtml;
   }
 
   /**
@@ -69,22 +65,17 @@ export class GeocodingView extends WidgetView {
    */
   dispose() {
     return new Promise((resolve) => {
-      if (this.isCreated) {
-        const div = this.viewElement;
-        const input = this.searchInputElement;
-        input.style.transition = 'width 0.3s ease-out, opacity 0.4s ease-out';
-        input.style.width = '0';
-        input.style.opacity = '0';
-        input.ontransitionend = (event) => {
-          if (event.propertyName === 'opacity') {
-            div.parentElement.removeChild(div);
-            this.removePins();
-            resolve();
-          }
-        };
-      } else {
-        resolve();
-      }
+      const input = this.searchInputElement;
+      input.style.transition = 'width 0.3s ease-out, opacity 0.4s ease-out';
+      input.style.width = '0';
+      input.style.opacity = '0';
+      input.ontransitionend = (event) => {
+        if (event.propertyName === 'opacity') {
+          this.rootHtml.remove();
+          this.removePins();
+          resolve();
+        }
+      };
     });
   }
 
@@ -99,20 +90,17 @@ export class GeocodingView extends WidgetView {
 
     try {
       const coords = await this.geocodingService.getCoordinates(searchString);
-      coords.forEach((c) => {
+      coords.forEach((c, i) => {
         const { lat, lng } = c;
-        let i = 0;
+
         // Step 1 : convert the lat/lng to coordinates used by itowns
         const targetPos = this.getWorldCoordinates(lat, lng);
-        if (targetPos.z) {
-          // If we could convert the coords (ie. they are on the map)
-          // step 2 : add a mesh representing a pin
-          this.addPin(targetPos);
-          // Step 3 : if the first result, focus on it (move the camera)
-          if (i === 0) {
-            focusCameraOn(this.planarView, this.planarView.controls, targetPos);
-          }
-          i += 1;
+        // If we could convert the coords (ie. they are on the map)
+        // step 2 : add a mesh representing a pin
+        this.addPin(targetPos);
+        // Step 3 : if the first result, focus on it (move the camera)
+        if (i === 0) {
+          focusCameraOn(this.planarView, this.planarView.controls, targetPos);
         }
       });
     } catch (e) {
@@ -135,7 +123,7 @@ export class GeocodingView extends WidgetView {
       this.planarView.tileLayer,
       coords
     );
-    const targetZ = elevation ? elevation : undefined;
+    const targetZ = elevation ? elevation : 0;
     return new THREE.Vector3(targetX, targetY, targetZ);
   }
 
@@ -181,6 +169,7 @@ export class GeocodingView extends WidgetView {
       this.planarView.scene.remove(pin);
     });
     this.meshes = [];
+    this.planarView.notifyChange();
   }
 
   /**
@@ -190,38 +179,30 @@ export class GeocodingView extends WidgetView {
    * @param {number} timeout The timeout of the message in ms.
    */
   async displayError(errorMsg, timeout = 1000) {
-    if (this.isCreated) {
-      const box = document.createElement('p');
-      box.id = this.errorMessageBoxId;
-      box.innerHTML = errorMsg;
-      this.centeredDivElement.appendChild(box);
-      box.addEventListener('transitionend', (evt) => {
-        if (evt.propertyName === 'opacity') {
-          this.centeredDivElement.removeChild(box);
-        }
-      });
-      setTimeout(() => {
-        box.style.transition = 'opacity 0.4s ease-out';
-        box.style.opacity = '0';
-      }, timeout);
-    } else {
-      throw 'Cannot display error messages when the window is not created';
-    }
+    const box = document.createElement('p');
+    box.id = this.errorMessageBoxId;
+    box.innerHTML = errorMsg;
+    this.centeredDivElement.appendChild(box);
+    box.addEventListener('transitionend', (evt) => {
+      if (evt.propertyName === 'opacity') {
+        this.centeredDivElement.removeChild(box);
+      }
+    });
+    setTimeout(() => {
+      box.style.transition = 'opacity 0.4s ease-out';
+      box.style.opacity = '0';
+    }, timeout);
   }
 
   // ////////// Helpful getters
   // //////////////////////////
-
-  get isCreated() {
-    return !!this.viewElement;
-  }
 
   get viewId() {
     return '_geocoding_view';
   }
 
   get viewElement() {
-    return document.getElementById(this.viewId);
+    return findChildByID(this.rootHtml, this.viewId);
   }
 
   get formId() {
@@ -229,7 +210,7 @@ export class GeocodingView extends WidgetView {
   }
 
   get formElement() {
-    return document.getElementById(this.formId);
+    return findChildByID(this.rootHtml, this.formId);
   }
 
   get searchInputId() {
@@ -237,7 +218,7 @@ export class GeocodingView extends WidgetView {
   }
 
   get searchInputElement() {
-    return document.getElementById(this.searchInputId);
+    return findChildByID(this.rootHtml, this.searchInputId);
   }
 
   get centeredDivId() {
@@ -245,7 +226,7 @@ export class GeocodingView extends WidgetView {
   }
 
   get centeredDivElement() {
-    return document.getElementById(this.centeredDivId);
+    return findChildByID(this.rootHtml, this.centeredDivId);
   }
 
   get errorMessageBoxId() {
@@ -261,23 +242,6 @@ export class GeocodingView extends WidgetView {
   }
 
   get creditElement() {
-    return document.getElementById(this.creditId);
-  }
-
-  // ////////// MODULE VIEW METHODS
-  // //////////////////////////////
-
-  /**
-   * @override
-   */
-  async enableView() {
-    this.appendToElement(this.parentElement);
-  }
-
-  /**
-   * @override
-   */
-  async disableView() {
-    await this.dispose();
+    return findChildByID(this.rootHtml, this.creditId);
   }
 }

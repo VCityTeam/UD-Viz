@@ -4,6 +4,7 @@
     <title>Geocoding example</title>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./assets/css/default.css" />
   </head>
   <body>
     <script src="../packages/browser/dist/RUN_MODE/bundle.js"></script>
@@ -12,16 +13,10 @@
       /* eslint-disable no-new */
 
       udvizBrowser.FileUtil.loadMultipleJSON([
-        './assets/config/all_widget.json',
         './assets/config/extent_lyon.json',
         './assets/config/frame3D_planars.json',
-        './assets/config/widget/about.json',
-        './assets/config/widget/help.json',
         './assets/config/server/geocoding_server.json',
-        './assets/config/layer/3DTiles.json',
         './assets/config/layer/base_maps.json',
-        './assets/config/layer/elevation.json',
-        './assets/config/layer/geoJSONs.json',
       ]).then((configs) => {
         // http://proj4js.org/
         // define a projection as a string and reference it that way
@@ -40,20 +35,12 @@
           parseInt(configs['extent_lyon'].north)
         );
 
-        const app = new udvizBrowser.AllWidget(
+        const frame3DPlanar = new udvizBrowser.Frame3DPlanar(
           extent,
-          configs['all_widget'],
-          configs['frame3D_planars'][0]
+          configs['frame3D_planars'][2]
         );
-
-        const frame3DPlanar = app.getFrame3DPlanar();
 
         // /// ADD LAYERS
-        udvizBrowser.add3DTilesLayers(
-          configs['3DTiles'],
-          frame3DPlanar.layerManager,
-          frame3DPlanar.itownsView
-        );
 
         udvizBrowser.addBaseMapLayer(
           configs['base_maps'][0],
@@ -61,44 +48,33 @@
           extent
         );
 
-        udvizBrowser.addElevationLayer(
-          configs['elevation'],
-          frame3DPlanar.itownsView,
-          extent
-        );
-
-        udvizBrowser.addGeoJsonLayers(
-          configs['geoJSONs'],
-          frame3DPlanar.itownsView,
-          extent
+        udvizBrowser.THREEUtil.addLights(frame3DPlanar.getScene());
+        udvizBrowser.THREEUtil.initRenderer(
+          frame3DPlanar.getRenderer(),
+          new udvizBrowser.THREE.Color(0x6699cc)
         );
 
         // //// REQUEST SERVICE
-        const requestService =
-          new udvizBrowser.Widget.Server.Component.RequestService();
-
-        // //// ABOUT MODULE
-        const about = new udvizBrowser.Widget.AboutWindow(configs['about']);
-        app.addWidgetView('about', about);
-
-        // //// HELP MODULE
-        new udvizBrowser.Widget.HelpWindow(configs['help']); // => help window should be add with addWidgetView
+        const requestService = new udvizBrowser.RequestService();
 
         // //// GEOCODING EXTENSION
-        const geocodingService =
+        const geocodingView = new udvizBrowser.Widget.Server.GeocodingView(
           new udvizBrowser.Widget.Server.GeocodingService(
             requestService,
             extent,
             configs['geocoding_server']
-          );
-        const geocodingView = new udvizBrowser.Widget.Server.GeocodingView(
-          geocodingService,
-          app.getFrame3DPlanar().getItownsView()
+          ),
+          frame3DPlanar.getItownsView()
         );
-        app.addWidgetView('geocoding', geocodingView, {
-          binding: 's',
-          name: 'Address Search',
-        });
+
+        frame3DPlanar.appendToUI(geocodingView.html());
+
+        const closeButton = document.createElement('button');
+        closeButton.innerText = 'Close';
+        closeButton.onclick = () => {
+          geocodingView.dispose();
+        };
+        frame3DPlanar.appendToUI(closeButton);
       });
     </script>
   </body>
