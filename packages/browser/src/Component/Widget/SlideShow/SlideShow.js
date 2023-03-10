@@ -55,10 +55,11 @@ export class SlideShow {
     this.inputManager = inputManager;
 
     /**
-     * Content html 
+     * Root html of wlideshow view 
      *
       @type {HTMLElement} */
     this.rootHtml = null;
+
     // Ids
     this.coordinatesInputVectorID = null;
     this.rotationInputVectorID = null;
@@ -108,11 +109,29 @@ export class SlideShow {
 
     this.initHtml();
 
-    const _this = this;
+    if (this.configSlideShow) {
+      this.setSlideshowInConfig(0);
+    }
+
+    // listeners
+    this.dropListener = null;
+    this.dragOverListener = null;
+    this.nextListener = null;
+    this.previousListener = null;
+    this.hideUIListener = null;
+    this.hidePlaneListener = null;
+
+    // Through this.callbacksHTMLEl and addEventListeners to HTMLElements in DOM (elements which created by Window class)
+    this.callbacksHTMLEl.forEach((element) => {
+      const htmlElement = findChildByID(this.rootHtml, element.id);
+      htmlElement.addEventListener(element.event, element.cb.bind(this));
+    });
+    this.matchExtent();
+
     /** A function call each frame by the browser */
-    const tick = function () {
+    const tick = () => {
       requestAnimationFrame(tick);
-      _this.notifyChangeEachFrame();
+      this.notifyChangeEachFrame();
     };
     tick();
   }
@@ -121,8 +140,33 @@ export class SlideShow {
     return this.rootHtml;
   }
 
+  addListeners() {
+    this.initCBDrop();
+    this.initInputListener();
+  }
+
+  removeListeners() {
+    this.inputManager.removeInputListener(this.hidePlaneListener);
+    this.inputManager.removeInputListener(this.hideUIListener);
+    this.inputManager.removeInputListener(this.previousListener);
+    this.inputManager.removeInputListener(this.nextListener);
+
+    document.body.removeEventListener('drop', this.dropListener);
+    document.body.removeEventListener('dragover', this.dragOverListener);
+  }
+
   dispose() {
     this.rootHtml.remove();
+
+    this.stopLoopSlideShow();
+    if (this.plane) {
+      this.plane.removeFromParent();
+      this.plane = null;
+    }
+
+    this.itownsView.notifyChange();
+
+    this.removeListeners();
   }
 
   /**
@@ -216,7 +260,7 @@ export class SlideShow {
   initCBDrop() {
     const body = document.body;
 
-    const drop = (event) => {
+    this.dropListener = (event) => {
       event.preventDefault();
       if (!this.plane) return;
       const files = Array.from(event.dataTransfer.files);
@@ -289,18 +333,13 @@ export class SlideShow {
       }
       this.setTexture(0);
     };
-    body.addEventListener('drop', drop);
+    body.addEventListener('drop', this.dropListener);
 
-    const dragover = (event) => {
+    this.dragover = (event) => {
       event.preventDefault();
     };
 
-    body.addEventListener('dragover', dragover, false);
-
-    this.addEventListener(Window.EVENT_DISABLED, () => {
-      body.removeEventListener('drop', drop);
-      body.removeEventListener('dragover', dragover);
-    });
+    body.addEventListener('dragover', this.dragover, false);
   }
 
   /** Create a default texture and pu in `this.defaultTexture` */
@@ -556,32 +595,36 @@ export class SlideShow {
    * Add event listeners to input
    */
   initInputListener() {
-    const hidePlane = () => {
+    this.hidePlaneListener = () => {
       if (!this.plane) return;
       this.plane.visible = !this.plane.visible;
       this.itownsView.notifyChange();
     };
 
     // Hide and show the geometryPlane
-    this.inputManager.addKeyInput('h', 'keydown', hidePlane);
+    this.inputManager.addKeyInput('h', 'keydown', this.hidePlaneListener);
 
-    const next = () => {
+    this.nextListener = () => {
       this.nextSlide();
       this.restartLoopSlideShow();
     };
 
     // Change the next slide
-    this.inputManager.addKeyInput('ArrowRight', 'keydown', next);
+    this.inputManager.addKeyInput('ArrowRight', 'keydown', this.nextListener);
 
-    const previous = () => {
+    this.previousListener = () => {
       this.previousSlide();
       this.restartLoopSlideShow();
     };
 
     // Change the previous slide
-    this.inputManager.addKeyInput('ArrowLeft', 'keydown', previous);
+    this.inputManager.addKeyInput(
+      'ArrowLeft',
+      'keydown',
+      this.previousListener
+    );
 
-    const hideUI = () => {
+    this.hideUIListener = () => {
       if (this.rootHtml.style.display == 'none') {
         this.rootHtml.style.display = '';
       } else {
@@ -589,14 +632,7 @@ export class SlideShow {
       }
     };
 
-    this.inputManager.addKeyInput('s', 'keydown', hideUI);
-
-    this.addEventListener(Window.EVENT_DISABLED, () => {
-      this.inputManager.removeInputListener(hidePlane);
-      this.inputManager.removeInputListener(next);
-      this.inputManager.removeInputListener(previous);
-      this.inputManager.removeInputListener(hideUI);
-    });
+    this.inputManager.addKeyInput('s', 'keydown', this.hideUIListener);
   }
 
   nextSlide() {
@@ -788,7 +824,7 @@ export class SlideShow {
     this.plane.material.map = this.currentTexture || this.plane.material.map;
 
     this.plane.updateMatrixWorld();
-    this.itownsView.scene.add(this.plane);
+    // this.itownsView.scene.add(this.plane);
     this.itownsView.notifyChange();
   }
 
@@ -842,30 +878,30 @@ export class SlideShow {
   // DOM GETTERS
   /* Return coordinates HTMLElements (inputs+labels) */
   get coordinatesInputVectorDOM() {
-    return document.getElementById(this.coordinatesInputVectorID);
+    return findChildByID(this.rootHtml, this.coordinatesInputVectorID);
   }
 
   /* Return rotation HTMLElement (inputs+labels)*/
   get rotationInputVectorDOM() {
-    return document.getElementById(this.rotationInputVectorID);
+    return findChildByID(this.rootHtml, this.rotationInputVectorID);
   }
 
   /* Return size HTMLElement (inputs+labels)*/
   get sizeInputVectorDOM() {
-    return document.getElementById(this.sizeInputVectorID);
+    return findChildByID(this.rootHtml, this.sizeInputVectorID);
   }
 
   /* Return apspect ratio HTMLElement (checkbox)*/
   get aspectRatioCheckboxDOM() {
-    return document.getElementById(this.aspectRatioCheckboxID);
+    return findChildByID(this.rootHtml, this.aspectRatioCheckboxID);
   }
 
   get counterLoopTimeDivDOM() {
-    return document.getElementById(this.counterLoopTimeDivID);
+    return findChildByID(this.rootHtml, this.counterLoopTimeDivID);
   }
 
   get loopCheckboxDOM() {
-    return document.getElementById(this.loopSlideShowCheckboxID);
+    return findChildByID(this.rootHtml, this.loopSlideShowCheckboxID);
   }
 
   get innerContentHtml() {
@@ -948,31 +984,5 @@ export class SlideShow {
       height: parseInt(sizeInputEls[0].value),
       width: parseInt(sizeInputEls[1].value),
     };
-  }
-
-  /** It adds event listeners to the HTML elements created by the Window class.*/
-  windowCreated() {
-    if (this.configSlideShow) {
-      this.setSlideshowInConfig(0);
-    }
-    this.initInputListener();
-    this.initCBDrop();
-
-    // Through this.callbacksHTMLEl and addEventListeners to HTMLElements in DOM (elements which created by Window class)
-    this.callbacksHTMLEl.forEach((element) => {
-      const htmlElement = document.getElementById(element.id);
-      htmlElement.addEventListener(element.event, element.cb.bind(this));
-    });
-    this.matchExtent();
-  }
-
-  windowDestroyed() {
-    this.stopLoopSlideShow();
-    if (this.plane) {
-      this.plane.removeFromParent();
-      this.plane = null;
-    }
-
-    this.itownsView.notifyChange();
   }
 }

@@ -183,13 +183,12 @@ export class Frame3DBase {
   /**
    *
    * @param {HTMLElement} el - html element to add to ui
+   * @param {number|null} [zIndex=Frame3DBase.DEFAULT_UI_Z_INDEX] - value of zIndex | if null no style is applied
    */
-  appendToUI(el) {
-    /**
-     * can be override in css with !important
-     * (but very usefull since in 99.9% we want our el to have a z-index of 2 since ui is beside rootcss and rootwebl)
-     */
-    el.style.zIndex = Frame3DBase.DEFAULT_UI_Z_INDEX;
+  appendToUI(el, zIndex = Frame3DBase.DEFAULT_UI_Z_INDEX) {
+    if (!isNaN(zIndex)) {
+      el.style.zIndex = zIndex;
+    }
 
     this.ui.appendChild(el);
   }
