@@ -61,8 +61,8 @@
         parent.appendChild(closeButton);
 
         frame3DPlanar.appendToUI(parent);
-
-        console.error('WIP');
+        slideShow.addListeners();
+        frame3DPlanar.scene.add(slideShow.plane);
       });
     </script>
   </body>
