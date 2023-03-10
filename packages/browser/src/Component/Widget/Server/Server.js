@@ -8,9 +8,9 @@ export { AuthenticationView } from './Authentication/views/AuthenticationView';
 
 // export { DocumentCommentsModule } from './DocumentComments/DocumentCommentsModule';
 
-// export { GeocodingService } from './Geocoding/services/GeocodingService';
+export { GeocodingService } from './Geocoding/services/GeocodingService';
 
-// export { GeocodingView } from './Geocoding/views/GeocodingView';
+export { GeocodingView } from './Geocoding/views/GeocodingView';
 
 // export { ContributeModule } from './Contribute/ContributeModule';
 
