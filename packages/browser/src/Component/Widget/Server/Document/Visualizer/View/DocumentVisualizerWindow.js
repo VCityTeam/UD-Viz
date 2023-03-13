@@ -1,6 +1,5 @@
 import * as THREE from 'three';
 import { DocumentProvider } from '../../Core/ViewModel/DocumentProvider';
-import { DocumentModule } from '../../Core/DocumentModule';
 import { findChildByID } from '../../../../../HTMLUtil';
 
 import './DocumentVisualizer.css';
@@ -14,7 +13,6 @@ export class DocumentVisualizerWindow {
   /**
    * Creates a new document image orienter.
    *
-   * @param {DocumentModule} documentModule The document module.
    * @param {*} itownsView The iTowns view.
    * @param {*} cameraControls The planar camera controls.
    * @param {*} provider document provider

@@ -15,9 +15,6 @@ import { findChildByID } from '../../../../../HTMLUtil';
  * the fields of a document.
  */
 export class DocumentNavigatorWindow {
-  /**
-   * Creates a document navigator window.
-   */
   constructor(provider) {
     this.provider = provider;
 
