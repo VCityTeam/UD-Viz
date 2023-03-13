@@ -17,4 +17,5 @@
 
 .ui_Frame3DBase * {
   position: relative;
+  z-index: 2;
 }

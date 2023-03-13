@@ -55,7 +55,7 @@ export class CameraPositioner extends EventSender {
   get innerContentHtml() {
     return /* html*/ `
       <div class="box-section">
-        <h3>Coordinates</h3>
+        <h3 class="section-title">Coordinates</h3>
         <form id="${this.formId}">
           <fieldset>
             <legend>Position</legend>

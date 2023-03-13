@@ -39,6 +39,8 @@ export class DocumentModule {
      * @type {DocumentView}
      */
     this.view = new DocumentView(this.provider);
+
+    this.provider.refreshDocumentList();
   }
 
   /**
