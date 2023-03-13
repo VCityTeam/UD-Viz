@@ -57,7 +57,7 @@ export {
   addLabelLayers,
 } from './Component/Itowns/AddLayerFromConfig';
 
-export { checkParentChild } from './Component/HTMLUtil';
+export * from './Component/HTMLUtil';
 
 /**
  * @class CityObject

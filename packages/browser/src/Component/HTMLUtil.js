@@ -39,3 +39,13 @@ export function findChildByID(element, childID) {
 
   return null;
 }
+
+/**
+ *
+ * @param {HTMLElement} element - element to remove children from
+ */
+export function clearChildren(element) {
+  while (element.firstChild) {
+    element.firstChild.remove();
+  }
+}

@@ -1,6 +1,6 @@
-import { DocumentProvider } from '../../Documents/ViewModel/DocumentProvider';
-import { Document } from '../../Documents/Model/Document';
-import { RequestService } from '../../Component/RequestService';
+import { DocumentProvider } from '../../Core/ViewModel/DocumentProvider';
+import { Document } from '../../Core/Model/Document';
+import { RequestService } from '../../../../../RequestService';
 
 /**
  * This class performs the requests on the server to update and create
