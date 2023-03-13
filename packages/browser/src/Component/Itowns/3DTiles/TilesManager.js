@@ -59,6 +59,13 @@ export class TilesManager extends EventSender {
     this.color = null;
 
     /**
+     * The opacity used for tiles default style.
+     *
+     * @type {number}
+     */
+    this.opacity = null;
+
+    /**
      * The set of tile wrappers that have been loaded.
      *
      * @type {Array<Tile>}
@@ -126,7 +133,7 @@ export class TilesManager extends EventSender {
       !this.styleManager.isStyleRegistered('default')
     ) {
       this.registerStyle('default', {
-        materialProps: { opacity: 1, color: this.color },
+        materialProps: { opacity: this.opacity, color: this.color },
       });
       this.hasDefaultColor = true;
     }
