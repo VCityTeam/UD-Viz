@@ -35,11 +35,7 @@ export class DocumentCreationWindow {
      */
     this.contributeService = contributeService;
 
-    /**
-     * The camera positioner utility tool.
-     *
-     * @type {PositionerWindow}
-     */
+    /** @type {CameraPositioner} */
     this.positioner = new CameraPositioner(itownsView, cameraControls);
     this.positioner.addEventListener(
       CameraPositioner.EVENT_POSITION_SUBMITTED,
