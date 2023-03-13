@@ -112,13 +112,18 @@
 
         frame3DPlanar.appendToUI(parentInspector);
 
-        // // DOCUMENTS VISUALIZER EXTENSION (to orient the document)
-        // const imageOrienter =
-        //   new udvizBrowser.Widget.Server.DocumentVisualizerWindow(
-        //     documentModule, // <== Server because is use a document module
-        //     app.getFrame3DPlanar().getItownsView(),
-        //     app.getFrame3DPlanar().getItownsView().controls
-        //   );
+        // DOCUMENTS VISUALIZER EXTENSION (to orient the document)
+        const visualizerView =
+          new udvizBrowser.Widget.Server.Document.VisualizerView(
+            frame3DPlanar.getItownsView(),
+            frame3DPlanar.getItownsView().controls,
+            documentModule.provider
+          );
+
+        documentModule.view.inspectorWindow.addButton('Visualize', async () => {
+          await visualizerView.startTravelToDisplayedDocument();
+          frame3DPlanar.appendToUI(visualizerView.html());
+        });
 
         // //// CONTRIBUTE EXTENSION
         // new udvizBrowser.Widget.Server.ContributeModule(
