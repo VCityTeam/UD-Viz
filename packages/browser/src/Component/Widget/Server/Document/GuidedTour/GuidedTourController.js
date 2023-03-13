@@ -1,7 +1,9 @@
-import { WidgetView } from '../../Component/WidgetView/WidgetView';
-import { RequestService } from '../Component/RequestService';
+import { RequestService } from '../../../../RequestService';
 import { GuidedTour } from './GuidedTour.js';
-import { DocumentModule } from '../Documents/DocumentModule';
+import { DocumentModule } from '../Core/DocumentModule';
+
+import { findChildByID } from '../../../../HTMLUtil';
+
 import './GuidedTour.css';
 
 /**
@@ -13,7 +15,7 @@ import './GuidedTour.css';
  * functionalities related to the guided tour (start, exit, next, previous...)
  * GuidedTours are made of steps with properties : index, document, text1 and text2.
  */
-export class GuidedTourController extends WidgetView {
+export class GuidedTourController {
   /**
    * Constructor for GuidedTourController
    * The controller reads data from a database to build one or more guided tours
@@ -30,8 +32,6 @@ export class GuidedTourController extends WidgetView {
    * @param { string } configServer.guidedTour The route for guided tours.
    */
   constructor(documentModule, requestService, configServer) {
-    super();
-
     this.guidedTourContainerId = 'guidedTourContainer';
 
     this.documentModule = documentModule; // Instance of DocumentModule
@@ -51,22 +51,10 @@ export class GuidedTourController extends WidgetView {
     // The current step index of the current tour
     this.currentStepIndex = 0;
 
-    this.guidedTour; // Instance of GuidedTour
+    this.guidedTour = new GuidedTour(this);
 
     this.preventUserFromChangingTour = false; // Put to true to prevent user from
     // changing guided tour
-
-    this.initialize();
-  }
-
-  /**
-   * Initialize the controller
-   */
-  initialize() {
-    this.guidedTour = new GuidedTour(this);
-    this.guidedTour.addEventListener(GuidedTour.EVENT_DESTROYED, () => {
-      this.disable();
-    });
   }
 
   /**
@@ -77,6 +65,7 @@ export class GuidedTourController extends WidgetView {
       authenticate: false,
     });
     this.guidedTours = JSON.parse(req.responseText);
+    if (!this.guidedTours.length) console.warn('NO GUIDED TOUR ON SERVER');
   }
 
   /**
@@ -167,31 +156,29 @@ export class GuidedTourController extends WidgetView {
   // Hide or show previous / next buttons in browser window
   // =============================================================================
   toggleGuidedTourButtons(active) {
-    document.getElementById('guidedTourPreviousTourButton').style.display =
-      active ? 'block' : 'none';
-    document.getElementById('guidedTourNextTourButton').style.display = active
-      ? 'block'
-      : 'none';
-    document.getElementById('guidedTourPreviousStepButton').style.display =
-      active ? 'none' : 'block';
-    document.getElementById('guidedTourNextStepButton').style.display = active
-      ? 'none'
-      : 'block';
-    document.getElementById('guidedTourStartButton').style.display = active
-      ? 'block'
-      : 'none';
-    document.getElementById('guidedTourExitButton').style.display = active
-      ? 'none'
-      : 'block';
-  }
-
-  // ///// MODULE MANAGEMENT FOR BASE DEMO
-
-  enableView() {
-    this.guidedTour.appendTo(this.parentElement);
-  }
-
-  disableView() {
-    this.guidedTour.dispose();
+    findChildByID(
+      this.guidedTour.html(),
+      'guidedTourPreviousTourButton'
+    ).style.display = active ? 'block' : 'none';
+    findChildByID(
+      this.guidedTour.html(),
+      'guidedTourNextTourButton'
+    ).style.display = active ? 'block' : 'none';
+    findChildByID(
+      this.guidedTour.html(),
+      'guidedTourPreviousStepButton'
+    ).style.display = active ? 'none' : 'block';
+    findChildByID(
+      this.guidedTour.html(),
+      'guidedTourNextStepButton'
+    ).style.display = active ? 'none' : 'block';
+    findChildByID(
+      this.guidedTour.html(),
+      'guidedTourStartButton'
+    ).style.display = active ? 'block' : 'none';
+    findChildByID(
+      this.guidedTour.html(),
+      'guidedTourExitButton'
+    ).style.display = active ? 'none' : 'block';
   }
 }
