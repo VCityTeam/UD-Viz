@@ -1,40 +1,28 @@
-import { AbstractDocumentWindow } from '../../Documents/View/AbstractDocumentWindow';
 import * as THREE from 'three';
+import { DocumentProvider } from '../../Core/ViewModel/DocumentProvider';
+import { DocumentModule } from '../../Core/DocumentModule';
+import { findChildByID } from '../../../../../HTMLUtil';
+
 import './DocumentVisualizer.css';
-import { DocumentProvider } from '../../Documents/ViewModel/DocumentProvider';
-import { DocumentModule } from '../../Documents/DocumentModule';
 
 /**
  * Represents the document visualizer, under the form of an oriented image. It
  * is a window without its default style, centered in the view with an opacity
  * control.
  */
-export class DocumentVisualizerWindow extends AbstractDocumentWindow {
+export class DocumentVisualizerWindow {
   /**
    * Creates a new document image orienter.
    *
    * @param {DocumentModule} documentModule The document module.
    * @param {*} itownsView The iTowns view.
    * @param {*} cameraControls The planar camera controls.
+   * @param {*} provider document provider
    */
-  constructor(documentModule, itownsView, cameraControls) {
-    super('Image Orienter');
-    // Remove the default style of the window
-    this.defaultStyle = false;
-    this.windowDisplayWhenVisible = 'block';
-
-    // Add the image orienter as a document window
-    documentModule.addDocumentWindow(this);
-    documentModule.addInspectorExtension('Orient', {
-      type: 'button',
-      container: 'left',
-      html: 'Visualize',
-      callback: async () => {
-        this.disable();
-        await this.startTravelToDisplayedDocument();
-        this.requestDisplay();
-      },
-    });
+  constructor(itownsView, cameraControls, provider) {
+    this.rootHtml = document.createElement('div');
+    this.rootHtml.innerHTML = this.innerContentHtml;
+    this.rootHtml.classList.add('orienter-box');
 
     /**
      * The iTowns view.
@@ -63,9 +51,35 @@ export class DocumentVisualizerWindow extends AbstractDocumentWindow {
      * @type {THREE.Quaternion}
      */
     this.quaternion = undefined;
+
+    // document provider
+    this.provider = provider;
+
+    // callbacks
+    this.closeButtonElement.onclick = () => {
+      this.dispose();
+    };
+
+    this.opacitySliderElement.oninput = () => {
+      this._onOpacityChange();
+    };
+
+    // Dispose the window when the displayed document change
+    this.provider.addEventListener(
+      DocumentProvider.EVENT_DISPLAYED_DOC_CHANGED,
+      () => this.dispose()
+    );
   }
 
-  get html() {
+  html() {
+    return this.rootHtml;
+  }
+
+  dispose() {
+    this.rootHtml.remove();
+  }
+
+  get innerContentHtml() {
     return /* html*/ `
       <img id="${this.imageId}"/>
       <div class="controls-panel">
@@ -79,34 +93,6 @@ export class DocumentVisualizerWindow extends AbstractDocumentWindow {
         </div>
       </div>
     `;
-  }
-
-  /**
-   * Set window style and add events once the window is created
-   */
-  windowCreated() {
-    this.hide();
-    this.window.classList.add('orienter-box');
-    this.window.style.position = 'absolute';
-
-    this.closeButtonElement.onclick = () => {
-      this.disable();
-    };
-
-    this.opacitySliderElement.oninput = () => {
-      this._onOpacityChange();
-    };
-  }
-
-  /**
-   * Add event listener on document changed
-   */
-  documentWindowReady() {
-    // Dispose the window when the displayed document change
-    this.provider.addEventListener(
-      DocumentProvider.EVENT_DISPLAYED_DOC_CHANGED,
-      () => this.disable()
-    );
   }
 
   // ////////////////////
@@ -235,34 +221,34 @@ export class DocumentVisualizerWindow extends AbstractDocumentWindow {
   // /// GETTERS
 
   get closeButtonId() {
-    return `${this.windowId}_close_button`;
+    return `document_visualizer_close_button`;
   }
 
   get closeButtonElement() {
-    return document.getElementById(this.closeButtonId);
+    return findChildByID(this.rootHtml, this.closeButtonId);
   }
 
   get opacitySliderId() {
-    return `${this.windowId}_opacity_slider`;
+    return `document_visualizer_opacity_slider`;
   }
 
   get opacitySliderElement() {
-    return document.getElementById(this.opacitySliderId);
+    return findChildByID(this.rootHtml, this.opacitySliderId);
   }
 
   get opacityId() {
-    return `${this.windowId}_opacity`;
+    return `document_visualizer_opacity`;
   }
 
   get opacityElement() {
-    return document.getElementById(this.opacityId);
+    return findChildByID(this.rootHtml, this.opacityId);
   }
 
   get imageId() {
-    return `${this.windowId}_image`;
+    return `document_visualizer_image`;
   }
 
   get imageElement() {
-    return document.getElementById(this.imageId);
+    return findChildByID(this.rootHtml, this.imageId);
   }
 }
