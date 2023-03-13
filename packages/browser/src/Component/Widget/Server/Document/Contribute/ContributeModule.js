@@ -1,10 +1,8 @@
-import { DocumentModule } from '../Documents/DocumentModule';
-import { RequestService } from '../Component/RequestService';
+import { RequestService } from '../../../../RequestService';
 import { DocumentCreationWindow } from './View/DocumentCreationWindow';
 import { DocumentUpdateWindow } from './View/DocumentUpdateWindow';
 import { ContributeService } from './Service/ContributeService';
-import { DocumentDeletionInterface } from './View/DocumentDeletionInterface';
-import { DocumentVisualizerWindow } from '../DocumentVisualizer/View/DocumentVisualizerWindow';
+import { DocumentVisualizerWindow } from '../Visualizer/View/DocumentVisualizerWindow';
 
 /**
  * This module is used to manage the update, deletion and creation of documents.
@@ -15,8 +13,8 @@ export class ContributeModule {
   /**
    * Constructs a new contribute module.
    *
-   * @param {DocumentModule} documentModule The document module.
-   * @param {DocumentVisualizerWindow} documentImageOrienter The document image
+   * @param {object} provider The document provider.
+   * @param {DocumentVisualizerWindow} documentVisualizer The document image
    * orienter module.
    * @param {RequestService} requestService The request service.
    * @param {*} itownsView The iTowns view.
@@ -24,18 +22,20 @@ export class ContributeModule {
    * @param {object} configServer The server configuration.
    * @param {string} configServer.url The server url.
    * @param {string} configServer.document The base route for documents.
+   * @param {HTMLElement} parentElementVisualizer - parent element of the visualizer html
    */
   constructor(
-    documentModule,
-    documentImageOrienter,
+    provider,
+    documentVisualizer,
     requestService,
     itownsView,
     cameraControls,
-    configServer
+    configServer,
+    parentElementVisualizer
   ) {
     this.contributeService = new ContributeService(
       requestService,
-      documentModule.provider,
+      provider,
       configServer
     );
 
@@ -43,18 +43,13 @@ export class ContributeModule {
       this.contributeService,
       itownsView,
       cameraControls,
-      documentImageOrienter
-    );
-    this.updateWindow = new DocumentUpdateWindow(
-      this.contributeService,
-      documentModule
-    );
-    this.deletionWindow = new DocumentDeletionInterface(
-      documentModule,
-      this.contributeService
+      documentVisualizer,
+      parentElementVisualizer
     );
 
-    documentModule.addDocumentWindow(this.creationWindow);
-    documentModule.addDocumentWindow(this.updateWindow);
+    this.updateWindow = new DocumentUpdateWindow(
+      this.contributeService,
+      provider
+    );
   }
 }

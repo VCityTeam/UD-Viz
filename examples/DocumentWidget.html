@@ -125,6 +125,58 @@
           frame3DPlanar.appendToUI(visualizerView.html());
         });
 
+        const parentBottomRight = document.createElement('div');
+        parentBottomRight.style.position = 'absolute';
+        parentBottomRight.style.backgroundColor = 'red';
+        parentBottomRight.style.bottom = '0px';
+        parentBottomRight.style.right = '0px';
+        frame3DPlanar.appendToUI(parentBottomRight);
+
+        // DOCUMENT CONTRIBUTE
+
+        const documentContribute =
+          new udvizBrowser.Widget.Server.Document.Contribute(
+            documentModule.provider,
+            visualizerView,
+            requestService,
+            frame3DPlanar.getItownsView(),
+            frame3DPlanar.getItownsView().controls,
+            configs['spatial_multimedia_db_server'],
+            frame3DPlanar.ui
+          );
+
+        documentModule.view.inspectorWindow.addButton('Update', async () => {
+          await documentContribute.updateWindow.updateFromDisplayedDocument();
+          udvizBrowser.clearChildren(parentBottomRight);
+          parentBottomRight.appendChild(documentContribute.updateWindow.html());
+        });
+
+        documentModule.view.inspectorWindow.addButton('Delete', async () => {
+          if (
+            !confirm(
+              'You are going to delete the document. This operation ' +
+                'is irreversible. Do you want to continue ?'
+            )
+          ) {
+            return;
+          }
+          try {
+            await documentContribute.contributeService.deleteDocument();
+          } catch (e) {
+            alert(e);
+          }
+        });
+
+        documentModule.view.navigatorWindow.addButton(
+          'Create new document',
+          () => {
+            udvizBrowser.clearChildren(parentBottomRight);
+            parentBottomRight.appendChild(
+              documentContribute.creationWindow.html()
+            );
+          }
+        );
+
         // //// CONTRIBUTE EXTENSION
         // new udvizBrowser.Widget.Server.ContributeModule(
         //   documentModule,

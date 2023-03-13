@@ -1,12 +1,11 @@
 import * as THREE from 'three';
-import { DocumentVisualizerWindow } from '../../DocumentVisualizer/View/DocumentVisualizerWindow';
-import { AbstractDocumentWindow } from '../../Documents/View/AbstractDocumentWindow';
-import { Window } from '../../../Component/GUI/js/Window';
-import { PositionerWindow } from '../../../Component/GUI/js/PositionerWindow';
+import { DocumentVisualizerWindow } from '../../Visualizer/View/DocumentVisualizerWindow';
+import { CameraPositioner } from '../../../../CameraPositioner/CameraPositioner';
 import { ContributeService } from '../Service/ContributeService';
+import { findChildByID } from '../../../../../HTMLUtil';
 
 /** @class */
-export class DocumentCreationWindow extends AbstractDocumentWindow {
+export class DocumentCreationWindow {
   /**
    * Creates a new document creation window.
    *
@@ -14,15 +13,20 @@ export class DocumentCreationWindow extends AbstractDocumentWindow {
    * perform requests.
    * @param {import('itowns').PlanarView} itownsView The iTowns view.
    * @param {import('itowns').PlanarControls} cameraControls The planar camera controls.
-   * @param {DocumentVisualizerWindow} documentImageOrienter The document image orienter module.
+   * @param {DocumentVisualizerWindow} documentVisualizer The document image orienter module.
+   * @param {HTMLElement} parentElementVisualizer - element to add visualizer to
    */
   constructor(
     contributeService,
     itownsView,
     cameraControls,
-    documentImageOrienter
+    documentVisualizer,
+    parentElementVisualizer
   ) {
-    super('Creation');
+    this.rootHtml = document.createElement('div');
+    this.rootHtml.innerHTML = this.innerContentHtml;
+
+    this.parentElementVisualizer = parentElementVisualizer;
 
     /**
      * The contribute service to perform requests.
@@ -36,13 +40,10 @@ export class DocumentCreationWindow extends AbstractDocumentWindow {
      *
      * @type {PositionerWindow}
      */
-    this.positioner = new PositionerWindow(itownsView, cameraControls);
+    this.positioner = new CameraPositioner(itownsView, cameraControls);
     this.positioner.addEventListener(
-      PositionerWindow.EVENT_POSITION_SUBMITTED,
+      CameraPositioner.EVENT_POSITION_SUBMITTED,
       (data) => this._registerPositionAndQuaternion(data)
-    );
-    this.addEventListener(Window.EVENT_DISABLED, () =>
-      this.positioner.disable()
     );
 
     /**
@@ -71,20 +72,7 @@ export class DocumentCreationWindow extends AbstractDocumentWindow {
      *
      * @type {DocumentVisualizerWindow}
      */
-    this.documentImageOrienter = documentImageOrienter;
-    // Listeners to close both the positioner and the image orienter at the
-    // same time.
-    this.documentImageOrienter.addEventListener(Window.EVENT_DISABLED, () => {
-      if (this.positioner.isVisible) {
-        this.positioner.disable();
-      }
-    });
-    this.positioner.addEventListener(Window.EVENT_DISABLED, () => {
-      this._exitEditMode();
-      if (this.documentImageOrienter.isVisible) {
-        this.documentImageOrienter.disable();
-      }
-    });
+    this.documentVisualizer = documentVisualizer;
 
     /**
      * The settings for an accurate movement of the camera. These settings
@@ -112,6 +100,29 @@ export class DocumentCreationWindow extends AbstractDocumentWindow {
     for (const key of Object.keys(this.accurateControlsSettings)) {
       this.savedControlsSettings[key] = this.controls[key];
     }
+
+    // callbacks
+    this.formElement.onsubmit = () => {
+      this._submitCreation();
+      return false;
+    };
+
+    this.formElement.oninput = () => this._updateFormButtons();
+
+    this.buttonPositionElement.onclick = () => this._startPositioningDocument();
+
+    this._initForm();
+  }
+
+  html() {
+    return this.rootHtml;
+  }
+
+  dispose() {
+    this.positioner.dispose();
+    this.rootHtml.remove();
+    this._exitEditMode();
+    this.documentVisualizer.dispose();
   }
 
   get innerContentHtml() {
@@ -141,35 +152,6 @@ export class DocumentCreationWindow extends AbstractDocumentWindow {
     `;
   }
 
-  windowCreated() {
-    this.hide();
-
-    const reference = this.view.inspectorWindow.window.style;
-    this.window.style.top = reference.top;
-    this.window.style.right = reference.right;
-    this.window.style.left = reference.left;
-    this.window.style.width = reference.width;
-
-    this.formElement.onsubmit = () => {
-      this._submitCreation();
-      return false;
-    };
-
-    this.formElement.oninput = () => this._updateFormButtons();
-
-    this.buttonPositionElement.onclick = () => this._startPositioningDocument();
-
-    this._initForm();
-  }
-
-  documentWindowReady() {
-    this.view.navigatorWindow.addExtension('Create', {
-      type: 'button',
-      html: 'Create a new document',
-      callback: () => this.view.requestWindowDisplay(this, true),
-    });
-  }
-
   // ///////////////////////
   // /// DOCUMENT POSITIONER
 
@@ -180,16 +162,14 @@ export class DocumentCreationWindow extends AbstractDocumentWindow {
    * @private
    */
   _startPositioningDocument() {
-    this.positioner.appendTo(this.parentElement);
-    this.positioner.window.style.left = '10px';
-    this.positioner.window.style.top = '10px';
+    this.rootHtml.appendChild(this.positioner.html());
 
     this._enterEditMode();
 
     const fileReader = new FileReader();
     fileReader.onload = () => {
-      this.documentImageOrienter.setImageSrc(fileReader.result);
-      this.view.requestWindowDisplay(this.documentImageOrienter, false);
+      this.documentVisualizer.setImageSrc(fileReader.result);
+      this.parentElementVisualizer.appendChild(this.documentVisualizer.html());
     };
     fileReader.readAsDataURL(this.docImageElement.files[0]);
   }
@@ -309,7 +289,7 @@ export class DocumentCreationWindow extends AbstractDocumentWindow {
 
     try {
       await this.contributeService.createDocument(data);
-      this.disable();
+      this.dispose();
     } catch (e) {
       alert(e);
     }
@@ -319,82 +299,82 @@ export class DocumentCreationWindow extends AbstractDocumentWindow {
   // /// GETTERS
 
   get buttonPositionId() {
-    return `${this.windowId}_button_position`;
+    return `document_contribute_creation_button_position`;
   }
 
   get buttonPositionElement() {
-    return document.getElementById(this.buttonPositionId);
+    return findChildByID(this.rootHtml, this.buttonPositionId);
   }
 
   get buttonCreateId() {
-    return `${this.windowId}_button_creation`;
+    return `document_contribute_creation_button_creation`;
   }
 
   get buttonCreateElement() {
-    return document.getElementById(this.buttonCreateId);
+    return findChildByID(this.rootHtml, this.buttonCreateId);
   }
 
   get formId() {
-    return `${this.windowId}_form`;
+    return `document_contribute_creation_form`;
   }
 
   get formElement() {
-    return document.getElementById(this.formId);
+    return findChildByID(this.rootHtml, this.formId);
   }
 
   get docTitleId() {
-    return `${this.windowId}_title`;
+    return `document_contribute_creation_title`;
   }
 
   get docTitleElement() {
-    return document.getElementById(this.docTitleId);
+    return findChildByID(this.rootHtml, this.docTitleId);
   }
 
   get docImageId() {
-    return `${this.windowId}_image`;
+    return `document_contribute_creation_image`;
   }
 
   get docImageElement() {
-    return document.getElementById(this.docImageId);
+    return findChildByID(this.rootHtml, this.docImageId);
   }
 
   get sourceId() {
-    return `${this.windowId}_source`;
+    return `document_contribute_creation_source`;
   }
 
   get sourceElement() {
-    return document.getElementById(this.sourceId);
+    return findChildByID(this.rootHtml, this.sourceId);
   }
 
   get docRightsHolderId() {
-    return `${this.windowId}_rights_holder`;
+    return `document_contribute_creation_rights_holder`;
   }
 
   get docRightsHolderElement() {
-    return document.getElementById(this.docRightsHolderId);
+    return findChildByID(this.rootHtml, this.docRightsHolderId);
   }
 
   get descriptionId() {
-    return `${this.windowId}_description`;
+    return `document_contribute_creation_description`;
   }
 
   get descriptionElement() {
-    return document.getElementById(this.descriptionId);
+    return findChildByID(this.rootHtml, this.descriptionId);
   }
 
   get pubDateId() {
-    return `${this.windowId}_pub_date`;
+    return `document_contribute_creation_pub_date`;
   }
 
   get pubDateElement() {
-    return document.getElementById(this.pubDateId);
+    return findChildByID(this.rootHtml, this.pubDateId);
   }
 
   get refDateId() {
-    return `${this.windowId}_ref_date`;
+    return `document_contribute_creation_ref_date`;
   }
 
   get refDateElement() {
-    return document.getElementById(this.refDateId);
+    return findChildByID(this.rootHtml, this.refDateId);
   }
 }

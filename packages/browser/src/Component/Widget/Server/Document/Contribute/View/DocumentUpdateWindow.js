@@ -1,7 +1,6 @@
-import { AbstractDocumentWindow } from '../../Documents/View/AbstractDocumentWindow';
-import { DocumentProvider } from '../../Documents/ViewModel/DocumentProvider';
-import { DocumentModule } from '../../Documents/DocumentModule';
+import { DocumentProvider } from '../../Core/ViewModel/DocumentProvider';
 import { ContributeService } from '../Service/ContributeService';
+import { findChildByID } from '../../../../../HTMLUtil';
 
 import './Contribute.css';
 
@@ -9,16 +8,17 @@ import './Contribute.css';
  * This window is used to update a document. It contains a form that allows to
  * manipulate
  */
-export class DocumentUpdateWindow extends AbstractDocumentWindow {
+export class DocumentUpdateWindow {
   /**
    * Creates a new document update window.
    *
    * @param {ContributeService} contributeService The contribute service to
    * perform requests.
-   * @param {DocumentModule} documentModule The document module.
+   * @param {object} provider - document provider
    */
-  constructor(contributeService, documentModule) {
-    super('Update');
+  constructor(contributeService, provider) {
+    this.rootHtml = document.createElement('div');
+    this.rootHtml.innerHTML = this.innerContentHtml;
 
     /**
      * The contribute service to perform requests.
@@ -27,12 +27,28 @@ export class DocumentUpdateWindow extends AbstractDocumentWindow {
      */
     this.contributeService = contributeService;
 
-    documentModule.addInspectorExtension('Update', {
-      type: 'button',
-      container: 'right',
-      html: 'Update',
-      callback: () => this._initWindow(),
-    });
+    this.formElement.onsubmit = () => {
+      this._submitUpdate();
+      return false;
+    };
+
+    this.cancelButtonElement.onclick = () => {
+      this.dispose();
+    };
+
+    this.provider = provider;
+    this.provider.addEventListener(
+      DocumentProvider.EVENT_DISPLAYED_DOC_CHANGED,
+      () => this.dispose()
+    );
+  }
+
+  html() {
+    return this.rootHtml;
+  }
+
+  dispose() {
+    this.rootHtml.remove();
   }
 
   get innerContentHtml() {
@@ -62,32 +78,6 @@ export class DocumentUpdateWindow extends AbstractDocumentWindow {
     `;
   }
 
-  /**
-   * Add events when the window is created
-   */
-  windowCreated() {
-    this.hide();
-
-    this.formElement.onsubmit = () => {
-      this._submitUpdate();
-      return false;
-    };
-
-    this.cancelButtonElement.onclick = () => {
-      this.disable();
-    };
-  }
-
-  /**
-   * Add event listener on document changed
-   */
-  documentWindowReady() {
-    this.provider.addEventListener(
-      DocumentProvider.EVENT_DISPLAYED_DOC_CHANGED,
-      () => this.disable()
-    );
-  }
-
   // /////////////////////
   // /// WINDOW APPEARANCE
 
@@ -99,22 +89,12 @@ export class DocumentUpdateWindow extends AbstractDocumentWindow {
    *
    * @private
    */
-  async _initWindow() {
-    // Request the display
-    this.view.requestWindowDisplay(this, true);
-
-    // Sets the position according to the browser (reference)
-    const reference = getComputedStyle(this.view.inspectorWindow.window);
-    this.window.style.top = reference.top;
-    this.window.style.left = reference.left;
-    this.window.style.right = reference.right;
-    this.window.style.width = reference.width;
-
+  async updateFromDisplayedDocument() {
     // Sets doc attributes in HTML
     const doc = this.provider.getDisplayedDocument();
 
     if (!doc) {
-      this.disable();
+      this.dispose();
       return;
     }
 
@@ -152,74 +132,74 @@ export class DocumentUpdateWindow extends AbstractDocumentWindow {
   // /// GETTERS
 
   get formId() {
-    return `${this.windowId}_form`;
+    return `contribute_update_form`;
   }
 
   get formElement() {
-    return document.getElementById(this.formId);
+    return findChildByID(this.rootHtml, this.formId);
   }
 
   get docTitleId() {
-    return `${this.windowId}_title`;
+    return `contribute_update_title`;
   }
 
   get docTitleElement() {
-    return document.getElementById(this.docTitleId);
+    return findChildByID(this.rootHtml, this.docTitleId);
   }
 
   get cancelButtonId() {
-    return `${this.windowId}_cancel`;
+    return `contribute_update_cancel`;
   }
 
   get cancelButtonElement() {
-    return document.getElementById(this.cancelButtonId);
+    return findChildByID(this.rootHtml, this.cancelButtonId);
   }
 
   get docImageId() {
-    return `${this.windowId}_image`;
+    return `contribute_update_image`;
   }
 
   get docImageElement() {
-    return document.getElementById(this.docImageId);
+    return findChildByID(this.rootHtml, this.docImageId);
   }
 
   get sourceId() {
-    return `${this.windowId}_source`;
+    return `contribute_update_source`;
   }
 
   get sourceElement() {
-    return document.getElementById(this.sourceId);
+    return findChildByID(this.rootHtml, this.sourceId);
   }
 
   get docRightsHolderId() {
-    return `${this.windowId}_rights_holder`;
+    return `contribute_update_rights_holder`;
   }
 
   get docRightsHolderElement() {
-    return document.getElementById(this.docRightsHolderId);
+    return findChildByID(this.rootHtml, this.docRightsHolderId);
   }
 
   get descriptionId() {
-    return `${this.windowId}_description`;
+    return `contribute_update_description`;
   }
 
   get descriptionElement() {
-    return document.getElementById(this.descriptionId);
+    return findChildByID(this.rootHtml, this.descriptionId);
   }
 
   get pubDateId() {
-    return `${this.windowId}_pub_date`;
+    return `contribute_update_pub_date`;
   }
 
   get pubDateElement() {
-    return document.getElementById(this.pubDateId);
+    return findChildByID(this.rootHtml, this.pubDateId);
   }
 
   get refDateId() {
-    return `${this.windowId}_ref_date`;
+    return `contribute_update_ref_date`;
   }
 
   get refDateElement() {
-    return document.getElementById(this.refDateId);
+    return findChildByID(this.rootHtml, this.refDateId);
   }
 }
