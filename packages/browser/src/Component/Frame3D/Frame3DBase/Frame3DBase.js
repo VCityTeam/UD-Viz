@@ -183,13 +183,8 @@ export class Frame3DBase {
   /**
    *
    * @param {HTMLElement} el - html element to add to ui
-   * @param {number|null} [zIndex=Frame3DBase.DEFAULT_UI_Z_INDEX] - value of zIndex | if null no style is applied
    */
-  appendToUI(el, zIndex = Frame3DBase.DEFAULT_UI_Z_INDEX) {
-    if (!isNaN(zIndex)) {
-      el.style.zIndex = zIndex;
-    }
-
+  appendToUI(el) {
     this.ui.appendChild(el);
   }
 
@@ -448,8 +443,6 @@ export class Frame3DBase {
     return this.rootWebGL;
   }
 }
-
-Frame3DBase.DEFAULT_UI_Z_INDEX = 2;
 
 /**
  * Events triggered by {@link Frame3DBase}
