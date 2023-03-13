@@ -1,8 +1,7 @@
-import { DocumentModule } from '../Documents/DocumentModule';
 import { ValidationService } from './Service/ValidationService';
 import { DocumentsInValidationDocumentSource } from './Service/DocumentsInValidationSource';
 import { ValidationView } from './View/ValidationView';
-import { RequestService } from '../Component/RequestService';
+import { RequestService } from '../../../../RequestService';
 
 /**
  * The document extension to manage documents validation. It allows the user to
@@ -16,11 +15,17 @@ export class DocumentValidationModule {
    * manage HTTP requests, a validation source to change the retrieving URL
    * and finally the view elements.
    *
-   * @param {DocumentModule} documentModule The documents module.
+   * @param {object} provider document provider
    * @param {RequestService} requestService The request service
    * @param {object} configServer The server configuration
+   * @param {HTMLElement} parentElementValidateButton Where to add the validate button
    */
-  constructor(documentModule, requestService, configServer) {
+  constructor(
+    provider,
+    requestService,
+    configServer,
+    parentElementValidateButton
+  ) {
     this.validationService = new ValidationService(
       requestService,
       configServer
@@ -31,9 +36,10 @@ export class DocumentValidationModule {
     );
 
     this.validationView = new ValidationView(
-      documentModule,
+      provider,
       this.validationService,
-      this.validationSource
+      this.validationSource,
+      parentElementValidateButton
     );
   }
 }

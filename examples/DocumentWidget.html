@@ -120,10 +120,13 @@
             documentModule.provider
           );
 
-        documentModule.view.inspectorWindow.addButton('Visualize', async () => {
+        const visualizeButton = document.createElement('button');
+        visualizeButton.innerHTML = 'Visualize';
+        visualizeButton.onclick = async () => {
           await visualizerView.startTravelToDisplayedDocument();
           frame3DPlanar.appendToUI(visualizerView.html());
-        });
+        };
+        documentModule.view.inspectorWindow.html().appendChild(visualizeButton);
 
         const parentBottomRight = document.createElement('div');
         parentBottomRight.style.position = 'absolute';
@@ -145,13 +148,18 @@
             frame3DPlanar.ui
           );
 
-        documentModule.view.inspectorWindow.addButton('Update', async () => {
+        const updateButton = document.createElement('button');
+        updateButton.innerHTML = 'Update';
+        updateButton.onclick = async () => {
           await documentContribute.updateWindow.updateFromDisplayedDocument();
           udvizBrowser.clearChildren(parentBottomRight);
           parentBottomRight.appendChild(documentContribute.updateWindow.html());
-        });
+        };
+        documentModule.view.inspectorWindow.html().appendChild(updateButton);
 
-        documentModule.view.inspectorWindow.addButton('Delete', async () => {
+        const deleteButton = document.createElement('button');
+        deleteButton.innerHTML = 'Delete';
+        deleteButton.onclick = async () => {
           if (
             !confirm(
               'You are going to delete the document. This operation ' +
@@ -165,34 +173,33 @@
           } catch (e) {
             alert(e);
           }
-        });
+        };
+        documentModule.view.inspectorWindow.html().appendChild(deleteButton);
 
-        documentModule.view.navigatorWindow.addButton(
-          'Create new document',
-          () => {
-            udvizBrowser.clearChildren(parentBottomRight);
-            parentBottomRight.appendChild(
-              documentContribute.creationWindow.html()
-            );
-          }
-        );
+        const createDocumentButton = document.createElement('button');
+        createDocumentButton.innerHTML = 'Create new document';
+        createDocumentButton.onclick = () => {
+          udvizBrowser.clearChildren(parentBottomRight);
+          parentBottomRight.appendChild(
+            documentContribute.creationWindow.html()
+          );
+        };
+        documentModule.view.navigatorWindow
+          .html()
+          .appendChild(createDocumentButton);
 
-        // //// CONTRIBUTE EXTENSION
-        // new udvizBrowser.Widget.Server.ContributeModule(
-        //   documentModule,
-        //   imageOrienter,
-        //   requestService,
-        //   app.getFrame3DPlanar().getItownsView(),
-        //   app.getFrame3DPlanar().getItownsView().controls,
-        //   configs['spatial_multimedia_db_server']
-        // );
+        // DOCUMENT VALIDATION
+        const documentValidation =
+          new udvizBrowser.Widget.Server.Document.Validation(
+            documentModule.provider,
+            requestService,
+            configs['spatial_multimedia_db_server'],
+            documentModule.view.inspectorWindow.html()
+          );
 
-        // //// VALIDATION EXTENSION
-        // new udvizBrowser.Widget.Server.DocumentValidationModule(
-        //   documentModule,
-        //   requestService,
-        //   configs['spatial_multimedia_db_server']
-        // );
+        documentModule.view.navigatorWindow
+          .html()
+          .appendChild(documentValidation.validationView.html());
 
         // // //// DOCUMENT COMMENTS
         // new udvizBrowser.Widget.Server.DocumentCommentsModule(

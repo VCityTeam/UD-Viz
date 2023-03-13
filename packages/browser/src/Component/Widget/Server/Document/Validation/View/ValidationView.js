@@ -1,8 +1,8 @@
-import { DocumentModule } from '../../Documents/DocumentModule';
-import { DocumentSource } from '../../Documents/Model/DocumentService';
-import { Window } from '../../../Component/GUI/js/Window';
+import { DocumentSource } from '../../Core/Model/DocumentService';
 import { ValidationService } from '../Service/ValidationService';
 import { DocumentsInValidationDocumentSource } from '../Service/DocumentsInValidationSource';
+
+import { findChildByID } from '../../../../../HTMLUtil';
 
 /**
  * This class represents the visual elements and their logic for the
@@ -17,13 +17,33 @@ export class ValidationView {
   /**
    * Creates the view.
    *
-   * @param {DocumentModule} documentModule The document module.
+   * @param {object} provider The document module.
    * @param {ValidationService} validationService The validation service.
    * @param {DocumentsInValidationDocumentSource} validationSource The source
    * for documents in validation
+   * @param {HTMLElement} parentElementValidateButton Where to add the validate button
    */
-  constructor(documentModule, validationService, validationSource) {
-    this.documentModule = documentModule;
+  constructor(
+    provider,
+    validationService,
+    validationSource,
+    parentElementValidateButton
+  ) {
+    this.rootHtml = document.createElement('div');
+    this.rootHtml.innerHTML = `
+        <label for="${this.switchId}">Validation status : </label>
+        <select id="${this.switchId}">
+          <option value="validated">Validated documents</option>
+          <option value="in-validation">Documents in validation</option>
+        </select>
+      `;
+
+    this.parentElementValidateButton = parentElementValidateButton;
+
+    this.validateButton = null;
+
+    this.provider = provider;
+
     this.validationService = validationService;
 
     /**
@@ -49,32 +69,19 @@ export class ValidationView {
      */
     this.validationSource = validationSource;
 
-    // Adds a panel to inform the user about the documents he/she is currently
-    // viewing, and give him the possibility to switch.
-    documentModule.addNavigatorExtension('Validation Filter', {
-      type: 'div',
-      container: 'filter',
-      html: /* html*/ `
-        <label for="${this.switchId}">Validation status : </label>
-        <select id="${this.switchId}">
-          <option value="validated">Validated documents</option>
-          <option value="in-validation">Documents in validation</option>
-        </select>
-      `,
-    });
-
-    documentModule.view.navigatorWindow.addEventListener(
-      Window.EVENT_CREATED,
-      () => this._initView()
-    );
-  }
-
-  _initView() {
     this.switchElement.value = 'validated';
     this._toggleValidation();
     this.switchElement.onchange = () => {
       this._toggleValidation();
     };
+  }
+
+  html() {
+    return this.rootHtml;
+  }
+
+  dispose() {
+    this.rootHtml.remove();
   }
 
   // /////////////////////////////////////
@@ -96,7 +103,7 @@ export class ValidationView {
       this._showValidatedDocuments();
     }
 
-    this.documentModule.refreshDocumentList().then(
+    this.provider.refreshDocumentList().then(
       () => {},
       (reason) => {
         this._showValidatedDocuments();
@@ -115,18 +122,15 @@ export class ValidationView {
    */
   _showDocumentsInValidation() {
     // Change the document source
-    this.previousDocumentSource = this.documentModule.changeDocumentSource(
+    this.previousDocumentSource = this.provider.service.setSource(
       this.validationSource,
       true
     );
 
-    // Adds the validate button
-    this.documentModule.addInspectorExtension('Validate', {
-      type: 'button',
-      container: 'right',
-      html: 'Validate',
-      callback: (doc) => this._validateDocument(doc),
-    });
+    this.validateButton = document.createElement('button');
+    this.validateButton.innerHTML = 'Validate';
+    this.validateButton.onclick = () => this._validateDocument();
+    this.parentElementValidateButton.appendChild(this.validateButton);
   }
 
   /**
@@ -140,13 +144,11 @@ export class ValidationView {
       return;
     }
 
-    this.documentModule.changeDocumentSource(
-      this.previousDocumentSource,
-      false
-    );
+    this.provider.service.setSource(this.previousDocumentSource, false);
 
     try {
-      this.documentModule.removeBrowserExtension('Validate');
+      // this.documentModule.removeBrowserExtension('Validate');
+      this.validateButton.remove();
     } catch (_) {
       // Validate does not exist
     }
@@ -167,12 +169,12 @@ export class ValidationView {
       return;
     }
     this.validationService
-      .validate(this.documentModule.provider.getDisplayedDocument())
+      .validate(this.provider.getDisplayedDocument())
       .catch((reason) => {
         alert(reason.statusText);
       })
       .then(() => {
-        this.documentModule.refreshDocumentList();
+        this.provider.refreshDocumentList();
       });
   }
 
@@ -184,6 +186,6 @@ export class ValidationView {
   }
 
   get switchElement() {
-    return document.getElementById(this.switchId);
+    return findChildByID(this.rootHtml, this.switchId);
   }
 }

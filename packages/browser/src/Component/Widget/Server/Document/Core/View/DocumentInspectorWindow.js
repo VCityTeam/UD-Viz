@@ -97,14 +97,6 @@ export class DocumentInspectorWindow {
     `;
   }
 
-  addButton(label, callback) {
-    const button = document.createElement('button');
-    button.innerHTML = label;
-    button.onclick = callback;
-
-    this.rootHtml.appendChild(button);
-  }
-
   // /////////////////////
   // /// DOCUMENT HANDLING
 

@@ -1,4 +1,4 @@
-import { DocumentSource } from '../../Documents/Model/DocumentService';
+import { DocumentSource } from '../../Core/Model/DocumentService';
 
 /**
  * The document source for documents in validation.
