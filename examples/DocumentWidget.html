@@ -90,7 +90,7 @@
         };
 
         // DOCUMENTS MODULE
-        const documentModule = new udvizBrowser.Widget.Server.Document.Core(
+        const documentCore = new udvizBrowser.Widget.Server.Document.Core(
           requestService,
           configs['spatial_multimedia_db_server']
         );
@@ -98,7 +98,7 @@
         const parentNavigator = document.createElement('div');
         parentNavigator.style.width = '200px';
         parentNavigator.style.backgroundColor = 'purple';
-        parentNavigator.appendChild(documentModule.view.navigatorWindow.html());
+        parentNavigator.appendChild(documentCore.view.navigatorWindow.html());
 
         frame3DPlanar.appendToUI(parentNavigator);
 
@@ -108,7 +108,7 @@
         parentInspector.style.right = '0px';
         parentInspector.style.top = '0px';
         parentInspector.style.backgroundColor = 'yellow';
-        parentInspector.appendChild(documentModule.view.inspectorWindow.html());
+        parentInspector.appendChild(documentCore.view.inspectorWindow.html());
 
         frame3DPlanar.appendToUI(parentInspector);
 
@@ -117,7 +117,7 @@
           new udvizBrowser.Widget.Server.Document.VisualizerView(
             frame3DPlanar.getItownsView(),
             frame3DPlanar.getItownsView().controls,
-            documentModule.provider
+            documentCore.provider
           );
 
         const visualizeButton = document.createElement('button');
@@ -126,7 +126,7 @@
           await visualizerView.startTravelToDisplayedDocument();
           frame3DPlanar.appendToUI(visualizerView.html());
         };
-        documentModule.view.inspectorWindow.html().appendChild(visualizeButton);
+        documentCore.view.inspectorWindow.html().appendChild(visualizeButton);
 
         const parentBottomRight = document.createElement('div');
         parentBottomRight.style.position = 'absolute';
@@ -139,7 +139,7 @@
 
         const documentContribute =
           new udvizBrowser.Widget.Server.Document.Contribute(
-            documentModule.provider,
+            documentCore.provider,
             visualizerView,
             requestService,
             frame3DPlanar.getItownsView(),
@@ -155,7 +155,7 @@
           udvizBrowser.clearChildren(parentBottomRight);
           parentBottomRight.appendChild(documentContribute.updateWindow.html());
         };
-        documentModule.view.inspectorWindow.html().appendChild(updateButton);
+        documentCore.view.inspectorWindow.html().appendChild(updateButton);
 
         const deleteButton = document.createElement('button');
         deleteButton.innerHTML = 'Delete';
@@ -174,7 +174,7 @@
             alert(e);
           }
         };
-        documentModule.view.inspectorWindow.html().appendChild(deleteButton);
+        documentCore.view.inspectorWindow.html().appendChild(deleteButton);
 
         const createDocumentButton = document.createElement('button');
         createDocumentButton.innerHTML = 'Create new document';
@@ -184,26 +184,26 @@
             documentContribute.creationWindow.html()
           );
         };
-        documentModule.view.navigatorWindow
+        documentCore.view.navigatorWindow
           .html()
           .appendChild(createDocumentButton);
 
         // DOCUMENT VALIDATION
         const documentValidation =
           new udvizBrowser.Widget.Server.Document.Validation(
-            documentModule.provider,
+            documentCore.provider,
             requestService,
             configs['spatial_multimedia_db_server'],
-            documentModule.view.inspectorWindow.html()
+            documentCore.view.inspectorWindow.html()
           );
 
-        documentModule.view.navigatorWindow
+        documentCore.view.navigatorWindow
           .html()
           .appendChild(documentValidation.validationView.html());
 
         // DOCUMENT COMMENTS
         const documentComment = new udvizBrowser.Widget.Server.Document.Comment(
-          documentModule.provider,
+          documentCore.provider,
           requestService,
           configs['spatial_multimedia_db_server']
         );
@@ -216,30 +216,36 @@
           parentBottomRight.appendChild(documentComment.commentsWindow.html());
         };
 
-        documentModule.view.inspectorWindow.html().appendChild(commentButton);
-        // //// CITY OBJECTS PROVIDER
-        // const cityObjectProvider = new udvizBrowser.Widget.CityObjectProvider(
-        //   app.getFrame3DPlanar().getLayerManager(),
-        //   configs['styles']
-        // );
+        documentCore.view.inspectorWindow.html().appendChild(commentButton);
 
-        // // //// CITY OBJECTS MODULE
-        // const cityObjectModule = new udvizBrowser.Widget.CityObjectModule(
-        //   cityObjectProvider,
-        //   configs['styles']
-        // );
-        // app.addWidgetView('cityObjects', cityObjectModule.view);
+        // LINK MODULE
+        const cityObjectModule = new udvizBrowser.Widget.CityObjectModule(
+          new udvizBrowser.Widget.CityObjectProvider(
+            frame3DPlanar.getLayerManager(),
+            configs['styles'] // one
+          ),
+          configs['styles'] // two
+        );
 
-        // // //// LINKS MODULE
-        // new udvizBrowser.Widget.Server.LinkModule(
-        //   documentModule,
-        //   cityObjectModule,
-        //   requestService,
-        //   app.getFrame3DPlanar().getItownsView(),
-        //   app.getFrame3DPlanar().getItownsView().controls,
-        //   configs['spatial_multimedia_db_server'],
-        //   configs['styles']
-        // );
+        const documentLink = new udvizBrowser.Widget.Server.Document.Link(
+          documentCore.provider,
+          cityObjectModule,
+          requestService,
+          frame3DPlanar.getItownsView(),
+          frame3DPlanar.getItownsView().controls,
+          configs['spatial_multimedia_db_server'],
+          configs['styles'] // three merguez !
+        );
+
+        cityObjectModule.view.addListenerTo(frame3DPlanar.rootWebGL); // so city object can be select
+
+        documentCore.view.navigatorWindow
+          .html()
+          .appendChild(documentLink.view.documentInterface.navigatorHtml());
+
+        documentCore.view.inspectorWindow
+          .html()
+          .appendChild(documentLink.view.documentInterface.inspectorHtml());
       });
     </script>
   </body>

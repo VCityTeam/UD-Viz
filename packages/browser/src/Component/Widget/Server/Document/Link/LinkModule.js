@@ -1,8 +1,7 @@
-import { RequestService } from '../Component/RequestService';
-import { Window } from '../../Component/GUI/js/Window';
+import { RequestService } from '../../../../RequestService';
 import { LinkService } from './Model/LinkService';
-import { DocumentModule } from '../Documents/DocumentModule';
-import { CityObjectModule } from '../../CityObjects/CityObjectModule';
+import { DocumentProvider } from '../Core/ViewModel/DocumentProvider';
+import { CityObjectModule } from '../../../CityObjects/CityObjectModule';
 import { LinkView } from './View/LinkView';
 import { LinkProvider } from './ViewModel/LinkProvider';
 
@@ -15,7 +14,7 @@ export class LinkModule {
   /**
    * Creates the link module.
    *
-   * @param {DocumentModule} documentModule The document module.
+   * @param {DocumentProvider} documentProvider The document provider.
    * @param {CityObjectModule} cityObjectModule The city objects module.
    * @param {RequestService} requestService The request service.
    * @param {import('itowns').PlanarView} itownsView The iTowns view.
@@ -26,7 +25,7 @@ export class LinkModule {
    * @param {object} configStyles - need description
    */
   constructor(
-    documentModule,
+    documentProvider,
     cityObjectModule,
     requestService,
     itownsView,
@@ -47,30 +46,21 @@ export class LinkModule {
      * @type {LinkProvider}
      */
     this.provider = new LinkProvider(
-      documentModule.provider,
+      documentProvider,
       cityObjectModule.provider,
       this.service,
       configStyles
     );
-    this.provider.fetchLinks().then(() => {
-      this.view = new LinkView(
-        documentModule,
-        cityObjectModule,
-        this.provider,
-        itownsView,
-        cameraControls
-      );
-    });
 
-    documentModule.view.addEventListener(Window.EVENT_DISABLED, () => {
-      if (!cityObjectModule.provider.getLayer()) {
-        return;
-      }
-      if (
-        cityObjectModule.provider.getLayer().filter.label === 'linkDisplayedDoc'
-      ) {
-        cityObjectModule.provider.removeLayer();
-      }
-    });
+    /**
+     * @todo this.view is not create after fetchLinks Promise is that a problem ?
+     */
+    this.provider.fetchLinks();
+    this.view = new LinkView(
+      cityObjectModule,
+      this.provider,
+      itownsView,
+      cameraControls
+    );
   }
 }

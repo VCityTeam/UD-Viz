@@ -1,8 +1,10 @@
-import { CityObjectModule } from '../../../CityObjects/CityObjectModule';
-import { CityObjectFilterSelector } from '../../../CityObjects/View/CityObjectFilterSelector';
+import { CityObjectModule } from '../../../../CityObjects/CityObjectModule';
+import { CityObjectFilterSelector } from '../../../../CityObjects/View/CityObjectFilterSelector';
 import { LinkProvider } from '../ViewModel/LinkProvider';
-import { CityObjectProvider } from '../../../CityObjects/ViewModel/CityObjectProvider';
+import { CityObjectProvider } from '../../../../CityObjects/ViewModel/CityObjectProvider';
 import { LinkView } from './LinkView';
+
+import { findChildByID } from '../../../../../HTMLUtil';
 
 /**
  * The interface extensions for the city object window.
@@ -22,24 +24,12 @@ export class CityObjectLinkInterface {
     this.linkCountFilterSelector = new LinkCountFilterSelector(linkProvider);
     cityObjectModule.addFilterSelector(this.linkCountFilterSelector);
 
-    // Adds an extension in the 'selected city object' panel of the city object
-    // window. Displays the links of the selected city objects and a button
-    // to show them in the document navigator.
-    cityObjectModule.addExtension('links', {
-      type: 'div',
-      html: /* html*/ `
+    this.rootHtml = document.createElement('div');
+    this.rootHtml.innerHTML = `
         <div id="${this.linkListId}">
         </div>
         <button id="${this.showDocsButtonId}">Show in navigator</button>
-      `,
-      oncreated: () => {
-        this._updateLinkList();
-        this.showDocsButtonElement.onclick = () => {
-          linkView.requestDisplayDocuments();
-          linkProvider.toggleLinkedDocumentsFilter(true);
-        };
-      },
-    });
+      `;
 
     /**
      * The link provider.
@@ -52,6 +42,14 @@ export class CityObjectLinkInterface {
       CityObjectProvider.EVENT_CITY_OBJECT_SELECTED,
       () => this._updateLinkList()
     );
+
+    // init
+    cityObjectModule.view.html().appendChild(this.rootHtml);
+    this._updateLinkList();
+    this.showDocsButtonElement.onclick = () => {
+      linkView.requestDisplayDocuments();
+      linkProvider.toggleLinkedDocumentsFilter(true);
+    };
   }
 
   /**
@@ -81,7 +79,7 @@ export class CityObjectLinkInterface {
   }
 
   get linkListElement() {
-    return document.getElementById(this.linkListId);
+    return findChildByID(this.rootHtml, this.linkListId);
   }
 
   get showDocsButtonId() {
@@ -89,7 +87,7 @@ export class CityObjectLinkInterface {
   }
 
   get showDocsButtonElement() {
-    return document.getElementById(this.showDocsButtonId);
+    return findChildByID(this.rootHtml, this.showDocsButtonId);
   }
 }
 

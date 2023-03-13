@@ -1,5 +1,5 @@
-import { CityObject } from '../../../../Itowns/3DTiles/Model/CityObject';
-import { CityObjectFilter } from '../../../CityObjects/ViewModel/CityObjectFilter';
+import { CityObject } from '../../../../../Itowns/3DTiles/Model/CityObject';
+import { CityObjectFilter } from '../../../../CityObjects/ViewModel/CityObjectFilter';
 import { LinkProvider } from './LinkProvider';
 
 /**
