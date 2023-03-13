@@ -14,8 +14,6 @@ export { TilesManager } from './Component/Itowns/3DTiles/TilesManager';
 
 export { getTileFromMesh } from './Component/Itowns/3DTiles/3DTilesUtils';
 
-export { CityObjectID } from './Component/Itowns/3DTiles/Model/CityObject';
-
 import * as ExternalScriptTemplate from './Component/Game/External/ScriptTemplate/ScriptTemplate';
 export { ExternalScriptTemplate };
 
@@ -65,7 +63,7 @@ export { checkParentChild } from './Component/HTMLUtil';
  */
 export {
   CityObject,
-  CityObjectID
+  CityObjectID,
 } from './Component/Itowns/3DTiles/Model/CityObject';
 
 /**
