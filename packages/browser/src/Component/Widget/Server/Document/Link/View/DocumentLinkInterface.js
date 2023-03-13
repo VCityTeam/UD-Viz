@@ -1,9 +1,10 @@
-import { focusCameraOn } from '../../../../Itowns/Component/Component';
-import { DocumentModule } from '../../Documents/DocumentModule';
 import * as THREE from 'three';
-import { DocumentProvider } from '../../Documents/ViewModel/DocumentProvider';
+import { focusCameraOn } from '../../../../../Itowns/Component/Component';
+import { DocumentProvider } from '../../Core/ViewModel/DocumentProvider';
 import { Link } from '../Model/Link';
 import { LinkProvider } from '../ViewModel/LinkProvider';
+
+import { findChildByID } from '../../../../../HTMLUtil';
 
 /**
  * The interface extensions for the document windows.
@@ -12,12 +13,27 @@ export class DocumentLinkInterface {
   /**
    * Constructs the document link interface.
    *
-   * @param {DocumentModule} documentModule The document module.
    * @param {LinkProvider} linkProvider The link provider.
    * @param {import('itowns').PlanarView} itownsView The iTowns view.
    * @param {import('itowns').PlanarControls} cameraControls The camera controls.
    */
-  constructor(documentModule, linkProvider, itownsView, cameraControls) {
+  constructor(linkProvider, itownsView, cameraControls) {
+    this.inspectorRootHtml = document.createElement('div');
+    this.inspectorRootHtml.innerHTML = `
+        <input type="checkbox" class="spoiler-check" id="doc-link-spoiler">
+        <label for="doc-link-spoiler" class="section-title">Document Links</label>
+        <div class="spoiler-box">
+          <div id="${this.linkListId}">
+
+          </div>
+          <button id="${this.highlightDocButtonId}">Highlight city objects</button>
+          <button id="${this.createLinkButtonId}">Select & link a city object</button>
+        </div>`;
+
+    this.navigatorRootHtml = document.createElement('div');
+    this.navigatorRootHtml.innerHTML = `<label for="${this.linkFilterId}">Linked to the selected city object</label>
+        <input type="checkbox" id="${this.linkFilterId}">`;
+
     /**
      * The link provider.
      *
@@ -42,38 +58,6 @@ export class DocumentLinkInterface {
      */
     this.cameraControls = cameraControls;
 
-    // Adds the extension for the displayed documents. This extension shows the
-    // links and adds two buttons to highlight the linked city objects, and
-    // create a new link.
-    documentModule.addInspectorExtension('links', {
-      type: 'div',
-      html: /* html*/ `
-        <input type="checkbox" class="spoiler-check" id="doc-link-spoiler">
-        <label for="doc-link-spoiler" class="section-title">Document Links</label>
-        <div class="spoiler-box">
-          <div id="${this.linkListId}">
-          
-          </div>
-          <button id="${this.highlightDocButtonId}">Highlight city objects</button>
-          <button id="${this.createLinkButtonId}">Select & link a city object</button>
-        </div>`,
-      oncreated: () => this._init(),
-    });
-
-    // Adds an extension in the navigator window to show the status of the
-    // 'link' filter for documents (the filter based on wether the document is
-    // linked with the selected city object).
-    documentModule.addNavigatorExtension('linkFilter', {
-      type: 'div',
-      container: 'filter',
-      html: /* html*/ `<label for="${this.linkFilterId}">Linked to the selected city object</label>
-        <input type="checkbox" id="${this.linkFilterId}">`,
-      oncreated: () => {
-        this.linkFilterElement.onchange = () =>
-          this.provider.toggleLinkedDocumentsFilter();
-      },
-    });
-
     linkProvider.addEventListener(
       DocumentProvider.EVENT_FILTERED_DOCS_UPDATED,
       () => this._updateLinkFilter()
@@ -83,6 +67,24 @@ export class DocumentLinkInterface {
       DocumentProvider.EVENT_DISPLAYED_DOC_CHANGED,
       () => this._updateLinkList()
     );
+
+    this._init();
+    this.linkFilterElement.onchange = () => {
+      this.provider.toggleLinkedDocumentsFilter();
+    };
+  }
+
+  inspectorHtml() {
+    return this.inspectorRootHtml;
+  }
+
+  navigatorHtml() {
+    return this.navigatorRootHtml;
+  }
+
+  dispose() {
+    this.inspectorRootHtml.remove();
+    this.navigatorRootHtml.remove();
   }
 
   /**
@@ -170,10 +172,10 @@ export class DocumentLinkInterface {
     this.linkListElement.innerHTML = '';
     this.linkListElement.appendChild(newDiv);
     for (const link of links) {
-      document.getElementById(this.linkTravelerId(link)).onclick = () => {
+      findChildByID(newDiv, this.linkTravelerId(link)).onclick = () => {
         this._travelToLink(link);
       };
-      document.getElementById(this.linkDeleterId(link)).onclick = () => {
+      findChildByID(newDiv, this.linkDeleterId(link)).onclick = () => {
         this._deleteLink(link);
       };
     }
@@ -217,11 +219,11 @@ export class DocumentLinkInterface {
   // //// GETTERS
 
   get linkListId() {
-    return `${this.windowId}_link_list`;
+    return `document_link_interface_link_list`;
   }
 
   get linkListElement() {
-    return document.getElementById(this.linkListId);
+    return findChildByID(this.inspectorRootHtml, this.linkListId);
   }
 
   get linkFilterId() {
@@ -229,7 +231,7 @@ export class DocumentLinkInterface {
   }
 
   get linkFilterElement() {
-    return document.getElementById(this.linkFilterId);
+    return findChildByID(this.navigatorRootHtml, this.linkFilterId);
   }
 
   linkTravelerId(link) {
@@ -241,18 +243,18 @@ export class DocumentLinkInterface {
   }
 
   get highlightDocButtonId() {
-    return `${this.windowId}_highlight_doc_button`;
+    return `document_link_interface_highlight_doc_button`;
   }
 
   get highlightDocButtonElement() {
-    return document.getElementById(this.highlightDocButtonId);
+    return findChildByID(this.inspectorRootHtml, this.highlightDocButtonId);
   }
 
   get createLinkButtonId() {
-    return `${this.windowId}_create_link`;
+    return `document_link_interface_create_link`;
   }
 
   get createLinkButtonElement() {
-    return document.getElementById(this.createLinkButtonId);
+    return findChildByID(this.inspectorRootHtml, this.createLinkButtonId);
   }
 }

@@ -1,17 +1,17 @@
-import { CityObject } from '../../../../Itowns/3DTiles/Model/CityObject';
 import { EventSender } from '@ud-viz/shared';
-import { CityObjectStyle } from '../../../../Itowns/3DTiles/Model/CityObjectStyle';
+import { CityObject } from '../../../../../Itowns/3DTiles/Model/CityObject';
+import { CityObjectStyle } from '../../../../../Itowns/3DTiles/Model/CityObjectStyle';
+import { CityObjectProvider } from '../../../../CityObjects/ViewModel/CityObjectProvider';
 import { LinkService } from '../Model/LinkService';
-import { DocumentProvider } from '../../Documents/ViewModel/DocumentProvider';
-import { CityObjectProvider } from '../../../CityObjects/ViewModel/CityObjectProvider';
+import { DocumentProvider } from '../../Core/ViewModel/DocumentProvider';
+import { Document } from '../../Core/Model/Document';
+import { DocumentFilter } from '../../Core/ViewModel/DocumentFilter';
 import { Link } from '../Model/Link';
-import { Document } from '../../Documents/Model/Document';
 import {
   LinkCountFilter,
   LinkedWithDisplayedDocumentFilter,
   LinkedWithFilteredDocumentsFilter,
 } from './CityObjectLinkFilters';
-import { DocumentFilter } from '../../Documents/ViewModel/DocumentFilter';
 
 /**
  * The link provider is responsible to manage links fetched from the server,
