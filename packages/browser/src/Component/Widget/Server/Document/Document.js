@@ -5,3 +5,5 @@ export { DocumentVisualizerWindow as VisualizerView } from './Visualizer/View/Do
 export { ContributeModule as Contribute } from './Contribute/ContributeModule';
 
 export { DocumentValidationModule as Validation } from './Validation/DocumentValidationModule';
+
+export { DocumentCommentsModule as Comment } from './Comment/DocumentCommentsModule';
