@@ -13,11 +13,8 @@
       /* eslint-disable no-new */
 
       udvizBrowser.FileUtil.loadMultipleJSON([
-        './assets/config/all_widget.json',
         './assets/config/extent_world.json',
         './assets/config/frame3D_planars.json',
-        './assets/config/widget/about.json',
-        './assets/config/widget/help.json',
         './assets/config/layer/base_maps.json',
       ]).then((configs) => {
         const extent = new udvizBrowser.itowns.Extent(
@@ -28,13 +25,10 @@
           parseInt(configs['extent_world'].north)
         );
 
-        const app = new udvizBrowser.AllWidget(
+        const frame3DPlanar = new udvizBrowser.Frame3DPlanar(
           extent,
-          configs['all_widget'],
           configs['frame3D_planars'][1]
         );
-
-        const frame3DPlanar = app.getFrame3DPlanar();
 
         // /// ADD LAYER
         udvizBrowser.addBaseMapLayer(
@@ -42,13 +36,6 @@
           frame3DPlanar.itownsView,
           extent
         );
-
-        // //// ABOUT MODULE
-        const about = new udvizBrowser.Widget.AboutWindow(configs['about']);
-        app.addWidgetView('about', about);
-
-        // //// HELP MODULE
-        new udvizBrowser.Widget.HelpWindow(configs['help']); // => help window should be add with addWidgetView
       });
     </script>
   </body>

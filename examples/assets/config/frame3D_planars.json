@@ -9,6 +9,7 @@
     }
   },
   {
+    "hasItownsControls": true,
     "maxSubdivisionLevel": 10,
     "range": 10000000,
     "heading": 1,

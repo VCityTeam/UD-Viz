@@ -13,14 +13,9 @@
       /* eslint-disable no-new */
 
       udvizBrowser.FileUtil.loadMultipleJSON([
-        './assets/config/all_widget.json',
         './assets/config/extent_lyon.json',
         './assets/config/frame3D_planars.json',
-        './assets/config/widget/about.json',
-        './assets/config/widget/help.json',
-        './assets/config/layer/3DTiles.json',
         './assets/config/layer/base_maps.json',
-        './assets/config/layer/elevation.json',
         './assets/config/layer/geoJSONs.json',
       ]).then((configs) => {
         // http://proj4js.org/
@@ -40,29 +35,15 @@
           parseInt(configs['extent_lyon'].north)
         );
 
-        const app = new udvizBrowser.AllWidget(
+        const frame3DPlanar = new udvizBrowser.Frame3DPlanar(
           extent,
-          configs['all_widget'],
-          configs['frame3D_planars'][0]
+          configs['frame3D_planars'][2]
         );
-
-        const frame3DPlanar = app.getFrame3DPlanar();
 
         // /// ADD LAYERS
-        udvizBrowser.add3DTilesLayers(
-          configs['3DTiles'],
-          frame3DPlanar.layerManager,
-          frame3DPlanar.itownsView
-        );
 
         udvizBrowser.addBaseMapLayer(
           configs['base_maps'][0],
-          frame3DPlanar.itownsView,
-          extent
-        );
-
-        udvizBrowser.addElevationLayer(
-          configs['elevation'],
           frame3DPlanar.itownsView,
           extent
         );
@@ -72,19 +53,6 @@
           frame3DPlanar.itownsView,
           extent
         );
-
-        // //// ABOUT MODULE
-        const about = new udvizBrowser.Widget.AboutWindow(configs['about']);
-        app.addWidgetView('about', about);
-
-        // //// HELP MODULE
-        new udvizBrowser.Widget.HelpWindow(configs['help']); // => help window should be add with addWidgetView
-
-        // //// LAYER CHOICE MODULE
-        const layerChoice = new udvizBrowser.Widget.LayerChoice(
-          app.getFrame3DPlanar().getLayerManager()
-        );
-        app.addWidgetView('layerChoice', layerChoice);
       });
     </script>
   </body>
