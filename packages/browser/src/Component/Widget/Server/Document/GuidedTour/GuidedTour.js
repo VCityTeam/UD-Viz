@@ -1,11 +1,12 @@
-import { Window } from '../../Component/GUI/js/Window';
+import { findChildByID } from '../../../../HTMLUtil';
+import { EventSender } from '@ud-viz/shared';
 
 import './GuidedTour.css';
 
 /**
  * Class: GuidedTour
  * Description :
- * The GuidedTour is an object handling the guidedtour view
+ * The GuidedTour is an object handling the guidedtour view (should be rename GuidedTourView then)
  *
  *
  * @param { HTMLElement} guidedTourContainer The container of the guided tour
@@ -13,9 +14,13 @@ import './GuidedTour.css';
  *
 //=============================================================================
  */
-export class GuidedTour extends Window {
+export class GuidedTour extends EventSender {
   constructor(guidedTourController) {
-    super('guidedTour', 'Guided Tour', false);
+    super();
+
+    this.rootHtml = document.createElement('div');
+    this.rootHtml.innerHTML = this.innerContentHtml;
+
     this.guidedTourController = guidedTourController;
 
     this.tourIndex = 1; // Current guided tour. Default is 1 (start)
@@ -36,7 +41,18 @@ export class GuidedTour extends Window {
     // Update browser view
     const guidedTourText2 = document.createElement('div');
     guidedTourText2.id = 'guidedTourText2';
-    // Document.getElementById('docBrowserWindow').appendChild(guidedTourText2);
+    // findChildByID(this.rootHtml,'docBrowserWindow').appendChild(guidedTourText2);
+
+    this.initializeButtons();
+    this.startGuidedTourMode();
+  }
+
+  html() {
+    return this.rootHtml;
+  }
+
+  dispose() {
+    this.rootHtml.remove();
   }
 
   get innerContentHtml() {
@@ -58,23 +74,10 @@ export class GuidedTour extends Window {
   }
 
   /**
-   * Set the style once the window is created
-   */
-  windowCreated() {
-    this.initializeButtons();
-    this.startGuidedTourMode();
-    this.window.style.width = '440px';
-    this.window.style.height = '470px';
-    this.window.style.top = '375px';
-    this.window.style.left = '10px';
-    this.innerContent.style.height = '100%';
-  }
-
-  /**
    * Hide or show the guided tour window
    */
   toggleGuidedTourWindow() {
-    document.getElementById('guidedTourWindow').style.display = this
+    findChildByID(this.rootHtml, 'guidedTourWindow').style.display = this
       .guidedTourWindowIsActive
       ? 'block'
       : 'none';
@@ -100,39 +103,44 @@ export class GuidedTour extends Window {
    * Initialize the preview of the guided tour
    */
   previewTour() {
-    document.getElementById('tourCpt').innerHTML =
+    findChildByID(this.rootHtml, 'tourCpt').innerHTML =
       'Tour: ' +
       this.tourIndex +
       ' out of ' +
       this.guidedTourController.guidedTours.length;
-    document.getElementById('guidedTourPreviousTourButton').style.display =
+    findChildByID(this.rootHtml, 'guidedTourPreviousTourButton').style.display =
       'block';
-    document.getElementById('guidedTourNextTourButton').style.display = 'block';
+    findChildByID(this.rootHtml, 'guidedTourNextTourButton').style.display =
+      'block';
     // For the demo, until we have more than one finished guided tour
     // we can prevent user from changing tour by hiding the buttons
     if (this.guidedTourController.preventUserFromChangingTour) {
-      document.getElementById('guidedTourPreviousTourButton').style.display =
-        'none';
-      document.getElementById('guidedTourNextTourButton').style.display =
+      findChildByID(
+        this.rootHtml,
+        'guidedTourPreviousTourButton'
+      ).style.display = 'none';
+      findChildByID(this.rootHtml, 'guidedTourNextTourButton').style.display =
         'none';
     }
 
-    document.getElementById('guidedTourPreviousStepButton').style.display =
+    findChildByID(this.rootHtml, 'guidedTourPreviousStepButton').style.display =
       'none';
-    document.getElementById('guidedTourNextStepButton').style.display = 'none';
-    document.getElementById('guidedTourExitButton').style.display = 'none';
-    // Document.getElementById("guidedTourText2").style.display = "none";
-    document.getElementById('guidedTourStartButton').style.display = 'block';
+    findChildByID(this.rootHtml, 'guidedTourNextStepButton').style.display =
+      'none';
+    findChildByID(this.rootHtml, 'guidedTourExitButton').style.display = 'none';
+    // findChildByID(this.rootHtml,"guidedTourText2").style.display = "none";
+    findChildByID(this.rootHtml, 'guidedTourStartButton').style.display =
+      'block';
 
     const currentTour = this.guidedTourController.getCurrentTour();
-    document.getElementById('guidedTourTitle').innerHTML = currentTour
+    findChildByID(this.rootHtml, 'guidedTourTitle').innerHTML = currentTour
       ? currentTour.name
       : 'No guided tour';
-    document.getElementById('guidedTourText1').innerHTML = currentTour
+    findChildByID(this.rootHtml, 'guidedTourText1').innerHTML = currentTour
       ? currentTour.description
       : 'Please add guided tours';
-    document.getElementById('guidedTourText1').style.height = '45%';
-    document.getElementById('guidedTourStepTitle').innerHTML = null;
+    findChildByID(this.rootHtml, 'guidedTourText1').style.height = '45%';
+    findChildByID(this.rootHtml, 'guidedTourStepTitle').innerHTML = null;
   }
 
   /**
@@ -145,9 +153,9 @@ export class GuidedTour extends Window {
     this.documentBrowser.currentDoc =
       this.guidedTourController.getCurrentStep().document;
     this.documentBrowser.updateBrowser();
-    document.getElementById('guidedTourText1').innerHTML =
+    findChildByID(this.rootHtml, 'guidedTourText1').innerHTML =
       this.currentStep.text1;
-    document.getElementById('guidedTourStepTitle').innerHTML =
+    findChildByID(this.rootHtml, 'guidedTourStepTitle').innerHTML =
       this.currentStep.title;
     this.documentBrowser.focusOnDoc();
   }
@@ -156,15 +164,18 @@ export class GuidedTour extends Window {
    * Start guided tour
    */
   startGuidedTour() {
-    if (this.guidedTourController.getCurrentTour().extendedDocs.length > 0) {
+    const currentTour = this.guidedTourController.getCurrentTour();
+
+    if (currentTour && currentTour.extendedDocs.length > 0) {
       this.tourIndex = 1;
       this.stepIndex = 1;
       this.updateStep();
       // Setup the display (hide & show elements)
       this.guidedTourController.toggleGuidedTourButtons(false);
-      document.getElementById('guidedTourDocPreviewImg').style.display = 'none';
-      document.getElementById('guidedTourText1').style.height = '60%';
-      document.getElementById('tourCpt').style.display = 'none';
+      findChildByID(this.rootHtml, 'guidedTourDocPreviewImg').style.display =
+        'none';
+      findChildByID(this.rootHtml, 'guidedTourText1').style.height = '60%';
+      findChildByID(this.rootHtml, 'tourCpt').style.display = 'none';
     } else {
       alert('This guided tour is empty'); // Should never happen. If a guided tour
       // doesn't have steps, then it is not a guided tour
@@ -229,23 +240,33 @@ export class GuidedTour extends Window {
    *  Event listeners (buttons)
    */
   initializeButtons() {
-    document
-      .getElementById('guidedTourNextTourButton')
-      .addEventListener('mousedown', this.nextTour.bind(this), false);
-    document
-      .getElementById('guidedTourPreviousTourButton')
-      .addEventListener('mousedown', this.previousTour.bind(this), false);
-    document
-      .getElementById('guidedTourStartButton')
-      .addEventListener('mousedown', this.startGuidedTour.bind(this), false);
-    document
-      .getElementById('guidedTourNextStepButton')
-      .addEventListener('mousedown', this.nextStep.bind(this), false);
-    document
-      .getElementById('guidedTourPreviousStepButton')
-      .addEventListener('mousedown', this.previousStep.bind(this), false);
-    document
-      .getElementById('guidedTourExitButton')
-      .addEventListener('mousedown', this.exitGuidedTour.bind(this), false);
+    findChildByID(this.rootHtml, 'guidedTourNextTourButton').addEventListener(
+      'mousedown',
+      this.nextTour.bind(this),
+      false
+    );
+    findChildByID(
+      this.rootHtml,
+      'guidedTourPreviousTourButton'
+    ).addEventListener('mousedown', this.previousTour.bind(this), false);
+    findChildByID(this.rootHtml, 'guidedTourStartButton').addEventListener(
+      'mousedown',
+      this.startGuidedTour.bind(this),
+      false
+    );
+    findChildByID(this.rootHtml, 'guidedTourNextStepButton').addEventListener(
+      'mousedown',
+      this.nextStep.bind(this),
+      false
+    );
+    findChildByID(
+      this.rootHtml,
+      'guidedTourPreviousStepButton'
+    ).addEventListener('mousedown', this.previousStep.bind(this), false);
+    findChildByID(this.rootHtml, 'guidedTourExitButton').addEventListener(
+      'mousedown',
+      this.exitGuidedTour.bind(this),
+      false
+    );
   }
 }

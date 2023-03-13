@@ -9,3 +9,5 @@ export { DocumentValidationModule as Validation } from './Validation/DocumentVal
 export { DocumentCommentsModule as Comment } from './Comment/DocumentCommentsModule';
 
 export { LinkModule as Link } from './Link/LinkModule';
+
+export { GuidedTourController } from './GuidedTour/GuidedTourController';
