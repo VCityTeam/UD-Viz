@@ -68,10 +68,10 @@
           new udvizBrowser.THREE.Color(0x6699cc)
         );
 
-        // //// REQUEST SERVICE
+        // REQUEST SERVICE
         const requestService = new udvizBrowser.RequestService();
 
-        // //// AUTHENTICATION MODULE
+        // AUTHENTICATION MODULE
         const authenticationView =
           new udvizBrowser.Widget.Server.AuthenticationView(
             new udvizBrowser.Widget.Server.AuthenticationService(
@@ -89,7 +89,7 @@
           }
         };
 
-        // //// DOCUMENTS MODULE
+        // DOCUMENTS MODULE
         const documentModule = new udvizBrowser.Widget.Server.Document.Core(
           requestService,
           configs['spatial_multimedia_db_server']
@@ -201,13 +201,22 @@
           .html()
           .appendChild(documentValidation.validationView.html());
 
-        // // //// DOCUMENT COMMENTS
-        // new udvizBrowser.Widget.Server.DocumentCommentsModule(
-        //   documentModule,
-        //   requestService,
-        //   configs['spatial_multimedia_db_server']
-        // );
+        // DOCUMENT COMMENTS
+        const documentComment = new udvizBrowser.Widget.Server.Document.Comment(
+          documentModule.provider,
+          requestService,
+          configs['spatial_multimedia_db_server']
+        );
 
+        const commentButton = document.createElement('button');
+        commentButton.innerHTML = 'Comment';
+        commentButton.onclick = async () => {
+          udvizBrowser.clearChildren(parentBottomRight);
+          await documentComment.commentsWindow.getComments();
+          parentBottomRight.appendChild(documentComment.commentsWindow.html());
+        };
+
+        documentModule.view.inspectorWindow.html().appendChild(commentButton);
         // //// CITY OBJECTS PROVIDER
         // const cityObjectProvider = new udvizBrowser.Widget.CityObjectProvider(
         //   app.getFrame3DPlanar().getLayerManager(),

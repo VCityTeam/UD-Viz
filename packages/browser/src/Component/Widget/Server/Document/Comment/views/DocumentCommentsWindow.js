@@ -1,12 +1,13 @@
-import { AbstractDocumentWindow } from '../../Documents/View/AbstractDocumentWindow';
 import { DocumentCommentsService } from '../services/DocumentCommentsService';
+import { findChildByID } from '../../../../../HTMLUtil';
+
 import './DocumentCommentsStyle.css';
 
 /**
  * A window to display the comments associated to a document. Also serves as
  * a comments creation interface.
  */
-export class DocumentCommentsWindow extends AbstractDocumentWindow {
+export class DocumentCommentsWindow {
   /**
    * Creates a document comments window to add in the document browser.
    *
@@ -14,8 +15,22 @@ export class DocumentCommentsWindow extends AbstractDocumentWindow {
    * service.
    */
   constructor(documentCommentsService) {
-    super('Comments');
+    this.rootHtml = document.createElement('div');
+    this.rootHtml.innerHTML = this.innerContentHtml;
+
     this.documentCommentsService = documentCommentsService;
+
+    findChildByID(this.rootHtml, 'documentComments_inputButton').onclick =
+      this.publishComment.bind(this);
+    this.getComments();
+  }
+
+  html() {
+    return this.rootHtml;
+  }
+
+  dispose() {
+    this.rootHtml.remove();
   }
 
   get innerContentHtml() {
@@ -38,69 +53,51 @@ export class DocumentCommentsWindow extends AbstractDocumentWindow {
         `;
   }
 
-  windowCreated() {
-    this.hide();
-
-    this.window.style.width = '500px';
-    this.window.style.height = '500px';
-    this.window.style.left = '290px';
-    this.window.style.top = '10px';
-    this.innerContent.style.height = '100%';
-    document.getElementById('documentComments_inputButton').onclick =
-      this.publishComment.bind(this);
-    this.getComments();
-  }
-
-  documentWindowReady() {
-    this.view.inspectorWindow.addExtension('Comments', {
-      type: 'button',
-      container: 'left',
-      html: 'Comments',
-      callback: () => {
-        this.view.requestWindowDisplay(this);
-        this.getComments();
-      },
-    });
-  }
-
   getComments() {
-    this.documentCommentsService.getComments().then(
-      (comments) => {
-        document.getElementById('documentComments_left').innerHTML = '';
-        for (const comment of comments) {
-          const text =
-            typeof comment.description === 'string'
-              ? comment.description.replace(/(?:\r\n|\r|\n)/g, '<br>')
-              : '';
-          const div = document.createElement('div');
-          div.className = 'talk-bubble';
-          div.innerHTML = `
+    return new Promise((resolve, reject) => {
+      this.documentCommentsService.getComments().then(
+        (comments) => {
+          findChildByID(this.rootHtml, 'documentComments_left').innerHTML = '';
+          for (const comment of comments) {
+            const text =
+              typeof comment.description === 'string'
+                ? comment.description.replace(/(?:\r\n|\r|\n)/g, '<br>')
+                : '';
+            const div = document.createElement('div');
+            div.className = 'talk-bubble';
+            div.innerHTML = `
                     <div class="talktext">
                     <p class="talktext-author">${comment.author.firstName} ${
-            comment.author.lastName
-          }</p>
+              comment.author.lastName
+            }</p>
                     <p class="talktext-comment">${text}</p>
                     <p class="talktext-date">${new Date(
                       comment.date
                     ).toLocaleString()}</p>
                     </div>
                 `;
-          document.getElementById('documentComments_left').appendChild(div);
+            findChildByID(this.rootHtml, 'documentComments_left').appendChild(
+              div
+            );
+          }
+          resolve();
+        },
+        (reason) => {
+          alert(reason);
+          this.dispose();
+          reject();
         }
-      },
-      (reason) => {
-        alert(reason);
-        this.disable();
-      }
-    );
+      );
+    });
   }
 
   async publishComment() {
-    const form = document.getElementById('documentComments_inputForm');
+    const form = findChildByID(this.rootHtml, 'documentComments_inputForm');
     const form_data = new FormData(form);
     try {
       await this.documentCommentsService.publishComment(form_data).then(() => {
-        document.getElementById('documentComments_inputComment').value = '';
+        findChildByID(this.rootHtml, 'documentComments_inputComment').value =
+          '';
         this.getComments();
       });
     } catch (e) {
