@@ -16,16 +16,12 @@ export class DocumentView {
    * @param {DocumentProvider} provider The document provider.
    */
   constructor(provider) {
-    /** @type {HTMLElement} */
-    this.rootHtml = document.createElement('div');
-
     /**
      * The search window.
      *
      * @type {DocumentNavigatorWindow}
      */
     this.navigatorWindow = new DocumentNavigatorWindow(provider);
-    this.rootHtml.appendChild(this.navigatorWindow.html());
 
     /**
      * The inspector window.
@@ -33,7 +29,6 @@ export class DocumentView {
      * @type {DocumentInspectorWindow}
      */
     this.inspectorWindow = new DocumentInspectorWindow(provider);
-    this.rootHtml.appendChild(this.inspectorWindow.html());
 
     /**
      * The document provider.
@@ -42,14 +37,6 @@ export class DocumentView {
      */
     this.provider = provider;
     this.provider.refreshDocumentList();
-  }
-
-  html() {
-    return this.rootHtml;
-  }
-
-  dispose() {
-    this.rootHtml.remove();
   }
 
   /**

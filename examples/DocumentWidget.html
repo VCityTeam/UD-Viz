@@ -95,12 +95,22 @@
           configs['spatial_multimedia_db_server']
         );
 
-        const parent = document.createElement('div');
-        parent.style.width = 'fit-content';
-        parent.style.backgroundColor = 'purple';
-        parent.appendChild(documentModule.view.html());
+        const parentNavigator = document.createElement('div');
+        parentNavigator.style.width = '200px';
+        parentNavigator.style.backgroundColor = 'purple';
+        parentNavigator.appendChild(documentModule.view.navigatorWindow.html());
 
-        frame3DPlanar.appendToUI(parent);
+        frame3DPlanar.appendToUI(parentNavigator);
+
+        const parentInspector = document.createElement('div');
+        parentInspector.style.width = 'fit-content';
+        parentInspector.style.position = 'absolute';
+        parentInspector.style.right = '0px';
+        parentInspector.style.top = '0px';
+        parentInspector.style.backgroundColor = 'yellow';
+        parentInspector.appendChild(documentModule.view.inspectorWindow.html());
+
+        frame3DPlanar.appendToUI(parentInspector);
 
         // // DOCUMENTS VISUALIZER EXTENSION (to orient the document)
         // const imageOrienter =

@@ -18,6 +18,8 @@ import { findChildByID } from '../../../../../HTMLUtil';
 export class DocumentInspectorWindow {
   /**
    * Constructs a documents inspector window.
+   *
+   * @param {object} provider - document provider
    */
   constructor(provider) {
     this.provider = provider;
@@ -32,9 +34,6 @@ export class DocumentInspectorWindow {
      * @type {Object<string, DocumentInspectorExtension>}
      */
     this.extensions = {};
-
-    /** @todo should be in a css file */
-    this.rootHtml.style.width = '30%';
 
     // Add extensions
     for (const extension of Object.values(this.extensions)) {
