@@ -229,7 +229,7 @@
 
         const documentLink = new udvizBrowser.Widget.Server.Document.Link(
           documentCore.provider,
-          cityObjectModule,
+          cityObjectModule, // module should be manipulated from this scope and not doing dark things inside link module
           requestService,
           frame3DPlanar.getItownsView(),
           frame3DPlanar.getItownsView().controls,
