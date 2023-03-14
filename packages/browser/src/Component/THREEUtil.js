@@ -1,9 +1,89 @@
 const THREE = require('three');
+const { Data } = require('@ud-viz/shared');
+
+/**
+ * @typedef SceneConfig
+ * @property {number} shadowMapSize - size of shadow map
+ * @property {object} sky - sky property
+ * @property {{r:number,g:number,b:number}} sky.color - rgb color (value are between [0,1])
+ * @property {{offset:number,phi:number,theta:number}} sky.sun_position - position of the sun in sheprical coord (phi theta) + an offset {@link THREEUtil.bindLightTransform}
+ */
 
 /**
  * Set of function for a high level use of THREE.js
  */
 module.exports = {
+  /**
+   *  Default scene 3D config
+   *
+   * @type {SceneConfig}
+   */
+  defaultConfigScene: {
+    shadowMapSize: 2046,
+    sky: {
+      color: {
+        r: 0.4,
+        g: 0.6,
+        b: 0.8,
+      },
+      sun_position: {
+        offset: 10,
+        phi: 1,
+        theta: 0.3,
+      },
+    },
+  },
+  /**
+   * Init scene 3D with {@link SceneConfig}
+   *
+   * @param {THREE.WebGLRenderer} renderer - webgl renderer
+   * @param {THREE.Scene} scene - scene
+   * @param {SceneConfig|null} config - config
+   * @param {THREE.Object3D|null} object3D - object to focus with shadow map
+   * @returns {THREE.DirectionalLight} - directional light created
+   */
+  initScene: function (renderer, scene, config, object3D) {
+    const configToApply = JSON.parse(JSON.stringify(this.defaultConfigScene));
+    Data.objectOverWrite(configToApply, config);
+
+    // Init renderer
+    this.initRenderer(
+      renderer,
+      new THREE.Color(
+        configToApply.sky.color.r,
+        configToApply.sky.color.g,
+        configToApply.sky.color.b
+      )
+    );
+
+    // Add lights
+    const { directionalLight } = this.addLights(scene);
+
+    // Configure shadows based on a config files
+    directionalLight.shadow.mapSize = new THREE.Vector2(
+      configToApply.shadowMapSize,
+      configToApply.shadowMapSize
+    );
+    directionalLight.castShadow = true;
+    directionalLight.shadow.bias = -0.0005;
+
+    if (configToApply.sky.paths) {
+      this.addCubeTexture(configToApply.sky.paths, scene);
+    }
+
+    if (object3D) {
+      this.bindLightTransform(
+        configToApply.sky.sun_position.offset,
+        configToApply.sky.sun_position.phi,
+        configToApply.sky.sun_position.theta,
+        object3D,
+        directionalLight
+      );
+    }
+
+    return directionalLight; // return the directional light
+  },
+
   /**
    * Texture encoding used to have the right color of the .glb model + have an alpha channel
    */

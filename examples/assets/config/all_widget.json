@@ -1,6 +1,0 @@
-{
-  "iconFolder": "./assets/svg",
-  "imageFolder": "./assets/img/logo",
-  "logos": ["logo-liris.png", "logo-univ-lyon.png"],
-  "icon_autenfication_path": "./assets/svg/user-solid.svg"
-}

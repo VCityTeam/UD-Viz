@@ -23,10 +23,10 @@ export class Frame3DBase {
      *
       @type {HTMLDivElement} */
     this.rootHtml = document.createElement('div');
-    this.rootHtml.id = 'root_Frame3DBase';
+    this.rootHtml.classList.add('root_Frame3DBase');
 
     // Add to DOM
-    if (options.htmlParent) {
+    if (options.htmlParent instanceof HTMLElement) {
       options.htmlParent.appendChild(this.rootHtml);
     } else {
       document.body.appendChild(this.rootHtml);
@@ -37,14 +37,14 @@ export class Frame3DBase {
      *
       @type {HTMLDivElement}  */
     this.rootWebGL = document.createElement('div');
-    this.rootWebGL.id = 'webGL_Frame3DBase';
+    this.rootWebGL.classList.add('webGL_Frame3DBase');
 
     /**
      * root css (where css3Delement are added)
      *
       @type {HTMLDivElement}  */
     this.rootCss = document.createElement('div');
-    this.rootCss.id = 'css_Frame3DBase';
+    this.rootCss.classList.add('css_Frame3DBase');
 
     /** 
      * where ui element should be added (note that you have to handle manually z-index element composing ui, should it be automatically ?) 

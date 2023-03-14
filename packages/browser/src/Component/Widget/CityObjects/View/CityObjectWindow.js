@@ -40,6 +40,7 @@ export class CityObjectWindow {
      * @type {CityObjectFilterWindow}
      */
     this.filterWindow = new CityObjectFilterWindow();
+    this.rootHtml.appendChild(this.filterWindow.html());
 
     /**
      * The style for the layer chosen by the user, through the filter window.
@@ -121,6 +122,7 @@ export class CityObjectWindow {
   }
 
   addListenerTo(div) {
+    this.removeListener();
     div.addEventListener('mousedown', this.mouseClickListener);
     this.htmlListened = div;
   }

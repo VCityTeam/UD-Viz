@@ -67,7 +67,6 @@
         parent.style.backgroundColor = 'white';
         parent.style.width = 'fit-content';
         parent.appendChild(cityObjectModule.view.html());
-        parent.appendChild(cityObjectModule.view.filterWindow.html());
 
         cityObjectModule.view.addListenerTo(frame3DPlanar.rootWebGL);
 
@@ -75,7 +74,6 @@
         closeButton.innerHTML = 'Close';
         closeButton.onclick = () => {
           cityObjectModule.view.dispose();
-          cityObjectModule.view.filterWindow.dispose();
           parent.remove();
         };
         parent.appendChild(closeButton);

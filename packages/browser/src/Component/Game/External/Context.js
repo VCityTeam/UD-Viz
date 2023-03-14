@@ -5,35 +5,6 @@ import { RenderController } from './RenderController';
 import { AudioController } from './AudioController';
 import { Frame3DBase, Frame3DPlanar } from '../../Frame3D/Frame3D';
 
-/**
- * @typedef SceneConfig
- * @property {number} shadowMapSize - size of shadow map
- * @property {object} sky - sky property
- * @property {{r:number,g:number,b:number}} sky.color - rgb color (value are between [0,1])
- * @property {{offset:number,phi:number,theta:number}} sky.sun_position - position of the sun in sheprical coord (phi theta) + an offset {@link THREEUtil.bindLightTransform}
- */
-
-/**
- *  Default scene 3D config
- *
- * @type {SceneConfig}
- */
-const defaultConfigScene = {
-  shadowMapSize: 2046,
-  sky: {
-    color: {
-      r: 0.4,
-      g: 0.6,
-      b: 0.8,
-    },
-    sun_position: {
-      offset: 10,
-      phi: 1,
-      theta: 0.3,
-    },
-  },
-};
-
 /** @class */
 export class Context {
   /**
@@ -47,7 +18,7 @@ export class Context {
    * @param {object} options.userData - user data of context
    * @param {object} options.socketIOWrapper - socket io wrapper if multi
    * @param {object} options.interpolator - interpolator
-   * @param {SceneConfig} options.sceneConfig - config of the scene 3D
+   * @param {object} options.sceneConfig - config of the scene 3D {@link THREEUtil}
    */
   constructor(
     frame3D,
@@ -124,12 +95,14 @@ export class Context {
     this.userData = options.userData || {};
 
     // Overwrite conf
-    const overWriteConf = JSON.parse(JSON.stringify(defaultConfigScene));
+    const overWriteConf = JSON.parse(
+      JSON.stringify(THREEUtil.defaultConfigScene)
+    );
     Data.objectOverWrite(overWriteConf, options.sceneConfig || {});
     /**
-     * config of scene 3D
+     * config of scene 3D {@link THREEUtil}
      *
-      @type {SceneConfig}  */
+      @type {object}  */
     this.configScene = overWriteConf;
     /**
      * directional light of scene 3D
@@ -187,7 +160,11 @@ export class Context {
 
     this.frame3D.scene.add(this.object3D); // add it to the frame3D scene
 
-    this.initScene();
+    this.directionalLight = THREEUtil.initScene(
+      this.frame3D.renderer,
+      this.frame3D.scene,
+      this.configScene
+    );
   }
 
   /**
@@ -203,40 +180,6 @@ export class Context {
     this.currentUUID = {};
 
     this.initFrame3D(newFrame3D);
-  }
-
-  /**
-   * Init scene 3D with this.configScene {@link SceneConfig}
-   */
-  initScene() {
-    // Init renderer
-    THREEUtil.initRenderer(
-      this.frame3D.getRenderer(),
-      new THREE.Color(
-        this.configScene.sky.color.r,
-        this.configScene.sky.color.g,
-        this.configScene.sky.color.b
-      )
-    );
-
-    // Add lights
-    const { directionalLight } = THREEUtil.addLights(this.frame3D.getScene());
-    this.directionalLight = directionalLight;
-
-    // Configure shadows based on a config files
-    this.directionalLight.shadow.mapSize = new THREE.Vector2(
-      this.configScene.shadowMapSize,
-      this.configScene.shadowMapSize
-    );
-    this.directionalLight.castShadow = true;
-    this.directionalLight.shadow.bias = -0.0005;
-
-    if (this.configScene.sky.paths) {
-      THREEUtil.addCubeTexture(
-        this.configScene.sky.paths,
-        this.frame3D.getScene()
-      );
-    }
   }
 
   /**

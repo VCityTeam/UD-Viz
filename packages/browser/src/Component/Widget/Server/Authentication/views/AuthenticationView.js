@@ -1,4 +1,5 @@
 import { findChildByID } from '../../../../HTMLUtil';
+import { AuthenticationService } from '../services/AuthenticationService';
 
 import './AuthenticationView.css';
 
@@ -13,7 +14,7 @@ export class AuthenticationView {
    * @param {Function} authenticationService Authentication service
    */
   constructor(authenticationService) {
-    /** It's a constructor that takes an authentication service as parameter */
+    /** @type {AuthenticationService} */
     this.authenticationService = authenticationService;
 
     /** @type {HTMLElement} */

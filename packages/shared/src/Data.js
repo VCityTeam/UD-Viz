@@ -459,6 +459,8 @@ function objectEquals(j1, j2) {
  * @param {object} jsonModel - json object used as model to overwrite
  */
 function objectOverWrite(jsonOverWrited, jsonModel) {
+  if (!jsonModel) return;
+
   const traverse = function (json1, json2) {
     // write the ones not in jsonOverWrited
     for (const key in json2) {
