@@ -161,7 +161,6 @@ export class SlideShow {
     this.stopLoopSlideShow();
     if (this.plane) {
       this.plane.removeFromParent();
-      this.plane = null;
     }
 
     this.itownsView.notifyChange();

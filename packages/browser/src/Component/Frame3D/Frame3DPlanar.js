@@ -121,7 +121,7 @@ export class Frame3DPlanar extends Frame3DBase {
     }
 
     if (value) {
-      /* eslint-disable no-new */
+      // eslint-disable-next-line no-new
       new itowns.PlanarControls(this.itownsView, {
         handleCollision: false,
         focusOnMouseOver: false,

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Window example</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./assets/css/default.css" />
+  </head>
+  <body>
+    <script src="../packages/browser/dist/RUN_MODE/bundle.js"></script>
+
+    <script type="text/javascript">
+      const randomContent = document.createElement('div');
+      randomContent.style.width = '300px';
+      randomContent.style.height = '600px';
+      randomContent.style.backgroundColor = 'red';
+
+      const input = document.createElement('input');
+      input.setAttribute('type', 'color');
+      randomContent.appendChild(input);
+
+      input.oninput = () => {
+        randomContent.style.backgroundColor = input.value;
+      };
+
+      const text = document.createElement('p');
+      text.innerHTML =
+        'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam cursus ante in odio tincidunt, vel eleifend eros tincidunt. Curabitur at tellus nec mauris hendrerit facilisis. Etiam sed consectetur nibh, sed tempus urna. Praesent luctus elementum nisl. Aenean ac felis non orci volutpat molestie. Nulla et laoreet elit, vitae rutrum mi. Sed id rutrum mauris. Donec sodales sapien ac gravida tristique. Vivamus metus urna, cursus consectetur risus a, porttitor gravida est. Donec felis magna, finibus vel ante a, efficitur molestie nunc. Aliquam malesuada ligula diam, in ultricies urna dignissim vitae. Aenean id metus nec ante euismod sagittis. Vestibulum ac nibh erat. Donec ultrices ante leo, ut tincidunt sapien auctor id. Etiam ac nibh scelerisque, interdum elit quis, vehicula arcu. Pellentesque maximus, urna nec varius vestibulum, ipsum urna lobortis arcu, eget rhoncus augue eros at libero. Nunc efficitur tempus mauris a euismod. Vivamus id quam id dolor ullamcorper dapibus.';
+      randomContent.appendChild(text);
+
+      const elementWindow = new udvizBrowser.Window('Name', 'Title');
+      elementWindow.appendTo(document.body);
+      elementWindow.addToContent(randomContent);
+    </script>
+  </body>
+</html>

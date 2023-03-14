@@ -2,13 +2,15 @@
 
 // Template
 
-// export { AllWidget } from './AllWidget/AllWidget';
+export { AllWidget } from './AllWidget/Template';
 
 export { SinglePlayerGamePlanar } from './SinglePlayerGamePlanar/SinglePlayerGamePlanar';
 
 export { MultiPlayerGamePlanar } from './MultiPlayerGamePlanar/MultiPlayerGamePlanar';
 
 // Template.Component
+
+export * from './Component/GUI/GUI';
 
 export { TilesManager } from './Component/Itowns/3DTiles/TilesManager';
 
@@ -37,9 +39,7 @@ export { SocketIOWrapper } from './Component/SocketIOWrapper';
 
 export { AssetManager } from './Component/AssetManager/AssetManager';
 
-export { Frame3DPlanar } from './Component/Frame3D/Frame3DPlanar';
-
-export { Frame3DBase } from './Component/Frame3D/Frame3DBase/Frame3DBase';
+export { Frame3DPlanar, Frame3DBase } from './Component/Frame3D/Frame3D';
 
 export { Billboard } from './Component/Frame3D/Component/Billboard';
 

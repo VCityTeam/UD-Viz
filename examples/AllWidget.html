@@ -10,10 +10,8 @@
     <script src="../packages/browser/dist/RUN_MODE/bundle.js"></script>
 
     <script type="text/javascript">
-      /* eslint-disable no-new */
-
       udvizBrowser.FileUtil.loadMultipleJSON([
-        './assets/config/all_widget.json',
+        './assets/config/scene.json',
         './assets/config/extent_lyon.json',
         './assets/config/frame3D_planars.json',
         './assets/config/server/spatial_multimedia_db_server.json',
@@ -48,192 +46,68 @@
 
         const app = new udvizBrowser.AllWidget(
           extent,
-          configs['all_widget'],
-          configs['frame3D_planars'][0]
+          configs['frame3D_planars'][2],
+          configs['scene']
         );
 
-        const frame3DPlanar = app.getFrame3DPlanar();
-
-        // /// ADD LAYERS
-        udvizBrowser.add3DTilesLayers(
-          configs['3DTiles'],
-          frame3DPlanar.layerManager,
-          frame3DPlanar.itownsView
-        );
-
-        udvizBrowser.addBaseMapLayer(
-          configs['base_maps'][0],
-          frame3DPlanar.itownsView,
-          extent
-        );
-
-        udvizBrowser.addElevationLayer(
-          configs['elevation'],
-          frame3DPlanar.itownsView,
-          extent
-        );
-
-        udvizBrowser.addGeoJsonLayers(
-          configs['geoJSONs'],
-          frame3DPlanar.itownsView,
-          extent
-        );
-
-        udvizBrowser.addLabelLayers(
-          configs['labels'],
-          frame3DPlanar.itownsView,
-          extent
-        );
-
-        // //// REQUEST SERVICE
-        const requestService =
-          new udvizBrowser.Widget.Server.Component.RequestService();
-
-        // //// AUTHENTICATION MODULE
-        const authenticationView =
-          new udvizBrowser.Widget.Server.AuthenticationView(
-            new udvizBrowser.Widget.Server.AuthenticationService(
-              requestService,
-              configs['spatial_multimedia_db_server']
-            )
-          );
-        app.addWidgetView('authentication', authenticationView, {
-          type: udvizBrowser.AllWidget.AUTHENTICATION_WIDGET,
+        app.addLayers({
+          $3DTiles: configs['3DTiles'],
+          elevation: configs['elevation'],
+          baseMap: configs['base_maps'][0],
+          labels: configs['labels'],
+          geoJSON: configs['geoJSONs'],
         });
 
-        // //// ABOUT MODULE
-        const about = new udvizBrowser.Widget.AboutWindow(configs['about']);
-        app.addWidgetView('about', about);
+        app.addLogos([
+          './assets/img/logo/logo-grand-lyon.png',
+          './assets/img/logo/logo-imu.png',
+          './assets/img/logo/logo-liris.png',
+          './assets/img/logo/logo-univ-lyon.png',
+        ]);
 
-        // //// HELP MODULE
-        new udvizBrowser.Widget.HelpWindow(configs['help']); // => help window should be add with addWidgetView
-
-        // //// DOCUMENTS MODULE
-        const documentModule = new udvizBrowser.Widget.Server.DocumentModule(
-          requestService,
-          configs['spatial_multimedia_db_server']
-        );
-        app.addWidgetView('documents', documentModule.view);
-
-        // // DOCUMENTS VISUALIZER EXTENSION (to orient the document)
-        const imageOrienter =
-          new udvizBrowser.Widget.Server.DocumentVisualizerWindow(
-            documentModule, // <== Server because is use a document module
-            app.getFrame3DPlanar().getItownsView(),
-            app.getFrame3DPlanar().getItownsView().controls
-          );
-
-        // //// CONTRIBUTE EXTENSION
-        new udvizBrowser.Widget.Server.ContributeModule(
-          documentModule,
-          imageOrienter,
-          requestService,
-          app.getFrame3DPlanar().getItownsView(),
-          app.getFrame3DPlanar().getItownsView().controls,
-          configs['spatial_multimedia_db_server']
-        );
-
-        // //// VALIDATION EXTENSION
-        new udvizBrowser.Widget.Server.DocumentValidationModule(
-          documentModule,
-          requestService,
-          configs['spatial_multimedia_db_server']
-        );
-
-        // //// DOCUMENT COMMENTS
-        new udvizBrowser.Widget.Server.DocumentCommentsModule(
-          documentModule,
-          requestService,
-          configs['spatial_multimedia_db_server']
-        );
-
-        // //// GUIDED TOURS MODULE
-        const guidedtour = new udvizBrowser.Widget.Server.GuidedTourController(
-          documentModule,
-          requestService,
-          configs['spatial_multimedia_db_server']
-        );
-        app.addWidgetView('guidedTour', guidedtour, {
-          name: 'Guided Tours',
-        });
-
-        // //// GEOCODING EXTENSION
-        const geocodingService =
-          new udvizBrowser.Widget.Server.GeocodingService(
-            requestService,
-            extent,
-            configs['geocoding_server']
-          );
-        const geocodingView = new udvizBrowser.Widget.Server.GeocodingView(
-          geocodingService,
-          app.getFrame3DPlanar().getItownsView()
-        );
-        app.addWidgetView('geocoding', geocodingView, {
-          binding: 's',
-          name: 'Address Search',
-        });
-
-        // //// CITY OBJECTS PROVIDER
-        const cityObjectProvider = new udvizBrowser.Widget.CityObjectProvider(
-          app.getFrame3DPlanar().getLayerManager(),
-          configs['styles']
-        );
-
-        // //// CITY OBJECTS MODULE
-        const cityObjectModule = new udvizBrowser.Widget.CityObjectModule(
-          cityObjectProvider,
-          configs['styles']
-        );
-        app.addWidgetView('cityObjects', cityObjectModule.view);
-
-        // //// LINKS MODULE
-        new udvizBrowser.Widget.Server.LinkModule(
-          documentModule,
-          cityObjectModule,
-          requestService,
-          app.getFrame3DPlanar().getItownsView(),
-          app.getFrame3DPlanar().getItownsView().controls,
+        app.addWidgetAuthentication(
           configs['spatial_multimedia_db_server'],
-          configs['styles']
+          './assets/svg/user-solid.svg'
         );
 
-        // //// 3DTILES DEBUG
-        const debug3dTilesWindow = new udvizBrowser.Widget.Debug3DTilesWindow(
-          app.getFrame3DPlanar().getLayerManager()
+        app.addWidgetAbout(configs['about'], './assets/svg/about.svg');
+
+        app.addWidgetHelp(configs['help'], './assets/svg/help.svg');
+
+        app.addWidgetGeocoding(
+          configs['geocoding_server'],
+          './assets/svg/geocoding.svg'
         );
-        app.addWidgetView('3dtilesDebug', debug3dTilesWindow, {
-          name: '3DTiles Debug',
-        });
 
-        // //// CAMERA POSITIONER
-        const cameraPosition = new udvizBrowser.Widget.CameraPositionerView(
-          app.getFrame3DPlanar().getItownsView()
+        app.addWidgetCityObject(
+          configs['styles'],
+          './assets/svg/cityObjects.svg'
         );
-        app.addWidgetView('cameraPositioner', cameraPosition);
 
-        // // TEMPORAL MODULE TODO_ISSUE broken
-        // const temporalModule = new udvizBrowser.Widget.TemporalModule(
-        //   app.getFrame3DPlanar().getLayerManager().tilesManagers[0],
-        //   configs['temporal']
-        // );
-        // app.addWidgetView('temporal', temporalModule.view);
+        app.addWidgetDebug3DTiles('./assets/svg/3dtilesDebug.svg');
 
-        // //// LAYER CHOICE MODULE
-        const layerChoice = new udvizBrowser.Widget.LayerChoice(
-          app.getFrame3DPlanar().getLayerManager()
+        app.addWidgetDocument(
+          configs['spatial_multimedia_db_server'],
+          configs['styles'],
+          './assets/svg/documents.svg'
         );
-        app.addWidgetView('layerChoice', layerChoice);
 
-        // /// SLIDESHOW MODULE
-        const inputManager = new udvizBrowser.InputManager(); // app don't have an input manager create one here
-        const slideShow = new udvizBrowser.Widget.SlideShow(
-          app.getFrame3DPlanar().getItownsView(),
+        app.addWidgetGuidedTour(
+          configs['spatial_multimedia_db_server'],
+          './assets/svg/guidedTour.svg'
+        );
+
+        app.addWidgetCameraPositioner('./assets/svg/cameraPositioner.svg');
+
+        // this widget need that some temporal layers has been add because otherwiser no extension is registered and this is bugging
+        // app.addWidgetTemporal(configs['temporal'], './assets/svg/temporal.svg');
+
+        app.addWidgetLayerChoice('./assets/svg/layerChoice.svg');
+
+        app.addWidgetSlideShow(
           configs['slide_show'],
-          extent,
-          inputManager
+          './assets/svg/slideShow.svg'
         );
-
-        app.addWidgetView('slideShow', slideShow);
       });
     </script>
   </body>

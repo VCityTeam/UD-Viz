@@ -1,8 +1,7 @@
-#aboutWindow {
+/* #aboutWindow {
   z-index: 11;
   width: 350px;
   height: 100%;
-  margin: 0 1112px 0 0;
   padding: 9px 27px 240px 26px;
   color: white;
   font-size: 15px;
@@ -31,4 +30,4 @@
   background-color: white;
   color: black;
   pointer-events: auto;
-}
+} */

@@ -1,4 +1,4 @@
-a {
+/* a {
   color: lightgreen;
 }
 
@@ -24,10 +24,7 @@ canvas {
   position: absolute;
 }
 
-#_all_widget {
-  display: grid;
-  height: 100%;
-}
+
 
 header {
   background-color: #333333;
@@ -52,38 +49,11 @@ header h1 {
   padding-right: 10px;
 }
 
-#_all_widget_stuct_main_panel {
-  display: grid;
-  grid-template-columns: 60px auto;
-}
 
-#_window_widget_content {
-  display:none;
-  position: absolute;
-  z-index: 11;
-  width: 350px;
-  height: 100%;
-  margin: 0 1112px 0 0;
-  padding: 9px 27px 240px 26px;
-  color: white;
-  font-size: 15px;
-  font-family: 'Segoe UI';
-  font-weight: normal;
-  font-stretch: normal;
-  font-style: normal;
-  line-height: normal;
-  letter-spacing: normal;
-  background-color: rgba(37, 37, 38, 0.9);
-  border: 1px solid rgb(90, 90, 90);
-  pointer-events: auto;
-}
 
-nav {
-  background-color: #000000;
-  display: inline-block;
-  height: 100%;
-  z-index: 50001;
-}
+
+
+
 
 section {
   position: relative;
@@ -94,11 +64,7 @@ section {
   display: none;
 }
 
-.logos {
-  height: 40px;
-  opacity: 1;
-  margin: 5px 10px 5px 5px;
-}
+
 
 .choiceMenu:hover,
 #openSidebar:hover,
@@ -107,64 +73,9 @@ section {
   cursor: pointer;
 }
 
-#_all_widget_auth_frame_location {
-  display: inline-block;
-}
 
-#_all_widget_profile{
-  position: fixed;
-  top: 6px;
-  right: 60px;
-  z-index: 5;
-}
 
-#_all_widget_profile button>img{
-  position: fixed;
-  width: 35px;
-  height: 35px;
-  top: 14px;
-  right: 60px;
-  border-width: 0;
-  background-color: transparent;
-  z-index: 5;
-}
 
-#_all_widget_profile button>img:hover{
-  width: 45px;
-  height: 45px;
-}
-
-#_all_widget_profile_name {
-  display: inline-block;
-  color: white;
-  font-size: 20px;
-  padding: 10px;
-}
-
-#_all_widget_profile_name em {
-  font-style: normal;
-  font-weight: bold;
-  font-variant: small-caps;
-}
-
-.logInOut {
-  display: inline-block;
-  border: 0;
-  background: 0;
-  color: lightgreen;
-  padding: 11px;
-  font-size: 18px;
-  text-decoration: underline;
-  font-style: italic;
-}
-
-#loginRegistration {
-  left: 23%;
-}
-
-.logInOut:hover {
-  cursor: pointer;
-}
 
 #_all_widget_menu {
   list-style: none;
@@ -255,8 +166,70 @@ section {
 #docBrowserWindow {
   top: 50px;
 }
+*/
 
-#logo-div{
+:root {
+  --all_widget-color-one: #e5007b;
+  --all-widget-color-two: whitesmoke;
+  --all-widget-color-three: rgba(1, 1, 1, 0.3);
+  --all-widget-color-four: #63e500;
+}
+
+/********************************************* SIDE BAR*/
+
+._all_widget_menu_sidebar {
+  background-color: var(--all_widget-color-one);
+  width: 60px;
+  height: 100%;
+  z-index: 3;
+}
+
+._all_widget_menu_sidebar img {
+  width: 50px;
+  height: 50px;
+  padding: 5px;
+}
+
+._all_widget_menu_sidebar img:hover {
+  cursor: pointer;
+}
+
+._all_widget_menu_sidebar_img_selected {
+  background-color: var(--all-widget-color-four);
+}
+
+.ud-viz-label {
+  color: var(--all-widget-color-two);
+  font-size: 15px;
+  font-weight: bold;
+  text-align: center;
+  padding: 20px 0px 20px 0px;
+}
+
+/********************************************* PAN SIDEBAR*/
+._all_widget_pan_menu_sidebar {
+  width: 400px;
+  position: absolute;
+  background-color: var(--all-widget-color-four);
+  padding-left: 70px; /*bad but padding left is > at menusidebar width*/
+  left: 0;
+  top: 0;
+  height: 100%;
+  transform: translate(-100%, 0%);
+  transition: 0.5s;
+  overflow-y: auto;
+}
+
+._all_widget_pan_menu_sidebar_container {
+  background-color: var(--all-widget-color-three);
+  border-radius: 5px;
+  margin: 5px;
+  padding: 5px;
+}
+
+/********************************************** LOGO */
+
+#logo-container {
   position: fixed;
   display: flex;
   padding: 10px;
@@ -268,19 +241,70 @@ section {
   z-index: 5;
 }
 
-.title-ud-viz {
-  width: 60px;
+.logo {
   height: 40px;
-  margin: 30px auto 10px auto;
-  font-size: 15px;
-  font-weight: bold;
-  font-stretch: normal;
-  font-style: normal;
-  line-height: normal;
-  letter-spacing: normal;
-  text-align: left;
+  opacity: 1;
+  margin: 5px 10px 5px 5px;
+}
+
+/*********************************** AUTHENTIFICATION */
+
+#_all_widget_profile {
+  position: fixed;
+  top: 6px;
+  right: 60px;
+  z-index: 5;
+}
+
+.logInOut {
+  display: inline-block;
+  border: 0;
+  background: 0;
+  color: lightgreen;
+  padding: 11px;
+  font-size: 18px;
+  text-decoration: underline;
+  font-style: italic;
+}
+
+.logInOut:hover {
+  cursor: pointer;
+}
+
+#_all_widget_profile img {
+  position: fixed;
+  width: 35px;
+  height: 35px;
+  top: 14px;
+  right: 60px;
+  border-width: 0;
+  background-color: transparent;
+  z-index: 5;
+}
+
+#_all_widget_profile img:hover {
+  width: 45px;
+  height: 45px;
+  cursor: pointer;
+}
+
+#_all_widget_profile_name {
+  display: inline-block;
   color: white;
-  text-align: center;
-  vertical-align: middle;
-  /* align-items: center; */
+  font-size: 20px;
+  padding: 10px;
+}
+
+#_all_widget_profile_name em {
+  font-style: normal;
+  font-weight: bold;
+  font-variant: small-caps;
+}
+
+#_all_widget_auth_frame_location {
+  display: inline-block;
+}
+
+#loginRegistration {
+  left: 23%;
 }

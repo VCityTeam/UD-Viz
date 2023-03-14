@@ -17,7 +17,7 @@ export class Window extends EventSender {
    * @param {string} title The title of the window.
    * @param {boolean} hideOnClose Specifies the behaviour of the window when
    * the 'close' button is hit. If set to true, the window will `hide`. If set
-   * to false, the window will `dispose`.
+   * to false, the window will `destroy`.
    */
   constructor(uniqueName, title, hideOnClose = true) {
     super();
@@ -37,7 +37,7 @@ export class Window extends EventSender {
     /**
      * Behaviour of the window when the 'close' button is hit. If set to
      * true, the window will `hide`. If set to false, the window will
-     * `dispose`.
+     * `destroy`.
      *
      * @member {boolean}
      */
@@ -114,7 +114,6 @@ export class Window extends EventSender {
    */
   appendTo(htmlElement) {
     if (!this.isCreated) {
-      // if you are using allwidget.js this.parentElement is intialize when widget is added
       this.parentElement = htmlElement;
       const windowDiv = document.createElement('div');
       windowDiv.innerHTML = this.html;
@@ -125,7 +124,7 @@ export class Window extends EventSender {
         dragElement(windowDiv, this.header);
         this.headerToggleContentVisibilityButton.onclick =
           this.toggleContentVisibility.bind(this);
-        this.headerCloseButton.onclick = this.disable.bind(this);
+        this.headerCloseButton.onclick = this.destroy.bind(this);
       }
 
       for (const extension of this.windowExtensions) {
@@ -142,11 +141,11 @@ export class Window extends EventSender {
    * Destroys the window. Calls the `windowDestroyed` hook method and sends an
    * `EVENT_DESTROYED` event.
    */
-  dispose() {
+  destroy() {
     if (this.isCreated) {
       this.parentElement.removeChild(this.window);
 
-      this.windowDestroyed(); // destroyed or disposed ? who knows
+      this.windowDestroyed();
       this.sendEvent(Window.EVENT_DESTROYED);
     }
   }
@@ -187,6 +186,10 @@ export class Window extends EventSender {
     }
   }
 
+  addToContent(child) {
+    this.innerContent.appendChild(child);
+  }
+
   get html() {
     return `
             <div class="window-header" id="${this.headerId}">
@@ -196,7 +199,6 @@ export class Window extends EventSender {
             </div>
             <div class="window-content" id="${this.contentId}">
                 <div class="window-inner-content" id="${this.innerContentId}">
-                    ${this.innerContentHtml}
                 </div>
             </div>
         `;
@@ -288,7 +290,7 @@ export class Window extends EventSender {
     if (this.hideOnClose) {
       this.hide();
     } else {
-      this.dispose();
+      this.destroy();
     }
   }
 
