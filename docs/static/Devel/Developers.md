@@ -82,7 +82,7 @@ Jobs list :
 
 - `npm run assert-code`: Run linter, build bundles and run tests
 - `npm audit --audit-level=moderate`: Npm native command ([npm-audit](https://docs.npmjs.com/cli/v6/commands/npm-audit)) which check packages dependencies vulnerabilities.
-- `remark -u validate-links .`: Command of the package [remark-validate-links](https://www.npmjs.com/package/remark-validate-links) which check dead link in markdown.
+- `npm run validate-links`: Run this [script](../../../bin/remarkValidateLinks.js) which check if links are not broken.
 
 ## Contributing
 
