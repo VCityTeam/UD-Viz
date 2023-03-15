@@ -1,6 +1,7 @@
 const puppeteer = require('puppeteer');
 const fs = require('fs');
 const spawn = require('child_process').spawn;
+const { PendingXHR } = require('pending-xhr-puppeteer');
 
 /**
  * `MODULE` Test
@@ -124,17 +125,44 @@ const html = function (folderPath, port) {
     return new Promise((resolve) => {
       console.log('\n\nstart testing html ', currentFile.name);
 
+      const pendingXHR = new PendingXHR(page);
+
       // page connect to html file
       page
         .goto(
           'http://localhost:' + port + '/' + folderPath + '/' + currentFile.name
         )
-        .then(() => {
-          // wait 1 sec
-          setTimeout(() => {
-            console.log(currentFile.name, ' test succeed');
-            resolve();
-          }, 3000);
+        .then(async () => {
+          const delay = (duration) => {
+            return new Promise((resolve) => {
+              setTimeout(resolve, duration);
+            });
+          };
+
+          // since some request can generate other request (load a config to perform another request for example)
+          // we are waiting for all current request to finish then wait a bit and do that recursively
+          const waitRequest = async () => {
+            console.log('START WAITING REQUEST');
+            await pendingXHR.waitForAllXhrFinished();
+            console.log('XHR REQUEST FINISHED');
+            console.log('WAIT 10 ms');
+            await delay(10);
+            console.log('CHECK IF NEW PENDING REQUEST');
+            // const iframes = await page.$$('iframe');
+            // for (let index = 0; index < iframes.length; index++) {
+            //   const iframe = iframes[index];
+            //   console.log(iframe);
+            // }
+            if (pendingXHR.pendingXhrCount() > 0) {
+              console.log('THERE ARE NEW PENDING REQUEST');
+              await waitRequest(); // recursive
+            }
+            console.log('THERE ARE NOT NEW PENDING REQUEST');
+          };
+
+          await waitRequest();
+          console.log(currentFile.name, ' test succeed');
+          resolve();
         });
     });
   });
