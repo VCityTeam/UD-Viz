@@ -737,6 +737,7 @@ export class AllWidget {
         sideBarButton.classList.add('_all_widget_menu_sidebar_img_selected');
         this.slideShow.addListeners();
         this.frame3DPlanar.scene.add(this.slideShow.plane);
+        this.frame3DPlanar.itownsView.notifyChange();
       }
     };
   }
