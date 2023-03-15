@@ -1,522 +1,792 @@
-import * as Widget from '../Component/Widget/Widget';
-const WidgetView = Widget.Component.WidgetView;
+import * as itowns from 'itowns';
 import {
+  checkParentChild,
+  InputManager,
+  RequestService,
+  THREEUtil,
+  clearChildren,
   Frame3DPlanar,
-  Frame3DPlanarOption,
-} from '../Component/Frame3D/Frame3DPlanar';
+  add3DTilesLayers,
+  addBaseMapLayer,
+  addElevationLayer,
+  addGeoJsonLayers,
+  addLabelLayers,
+} from '../Component/Component';
+
+import packageInfo from '../../package.json';
+
+import * as Widget from '../Component/Widget/Widget';
+
 import './AllWidget.css';
 
-import THREEUtil from '../Component/THREEUtil';
-const THREE = require('three');
-
-const itowns = require('itowns');
-/**
- * @class Represents the base HTML content of a demo for UD-Viz and provides methods to dynamically add widgets.
- */
 export class AllWidget {
   /**
    *
-   * @param {itowns.Extent} extent - Geographical bounding rectangle. {@link http://www.itowns-project.org/itowns/docs/#api/Geographic/Extent Extent}
-   * @param {object} configAllWidget - Contains differents paths
-   * @param {string} configAllWidget.iconFolder - Path of the icons' folder
-   * @param {string} configAllWidget.logosFolder - Path of the logos' folder
-   * @param {string[]} configAllWidget.logos - Array of paths of logos' file
-   * @param {string} configAllWidget.icon_autenfication_path - Path of authentification's icon file
-   * @param {Frame3DPlanarOption} configFrame3DPlanar - Config to create instance of {@link Frame3DPlanar}
+   * @param {itowns.Extent} extent - itowns extent
+   * @param {import('../Component/Frame3D/Frame3DPlanar').Frame3DPlanarOption} frame3DPlanarOptions - frame 3D planar option
+   * @param {import('../Component/THREEUtil').SceneConfig|null} [sceneConfig] - config to init scene
    */
-  constructor(extent, configAllWidget, configFrame3DPlanar) {
-    this.configAllWidget = configAllWidget; // recommended to not ref the configAllWidget but to create state in this for what need to be store
-
-    // allwidget state
-    this.widgets = {};
-    this.widgetNames = {};
-    this.widgetActivation = {};
-    this.widgetBindings = {};
-    this.requireAuthWidgets = [];
-    this.authService = null;
-    this.parentElement = null;
-
-    // init DOM
-    this.appendTo(document.body);
-    this.addLogos();
+  constructor(extent, frame3DPlanarOptions, sceneConfig) {
+    /** @type {itowns.Extent} */
+    this.extent = extent; // ref it to add layers then
 
     /** @type {Frame3DPlanar} */
-    this.frame3DPlanar = this.createFrame3DPlanarFromConfig(
-      extent,
-      document.getElementById(this.contentSectionId),
-      configFrame3DPlanar
+    this.frame3DPlanar = new Frame3DPlanar(extent, frame3DPlanarOptions);
+
+    THREEUtil.initScene(
+      this.frame3DPlanar.renderer,
+      this.frame3DPlanar.scene,
+      sceneConfig
     );
+
+    /** @type {RequestService} */
+    this.requestService = new RequestService();
+
+    // HTML ELEMENT NEEDED TO BE REFERENCED
+
+    // ROOT UI
+
+    /** @type {HTMLElement} */
+    this.rootUI = null;
+
+    // CHILD ROOT UI
+
+    /** @type {HTMLElement} */
+    this.menuSideBar = null;
+
+    /** @type {HTMLElement} */
+    this.logoContainer = null;
+
+    // CHILD AUTHENTICATION FRAME
+
+    /** @type {HTMLElement} */
+    this.authenticationMenuLoggedIn = null;
+
+    /** @type {HTMLElement} */
+    this.authenticationMenuLoggedOut = null;
+
+    /** @type {HTMLElement} */
+    this.authenticationUserNameID = null;
+
+    /** @type {HTMLElement} */
+    this.authenticationButtonLogOut = null;
+
+    /** @type {HTMLElement} */
+    this.buttonLogIn = null;
+
+    // WIDGET (not all reference are used but can be that way for now)
+
+    /** @type {Widget.Server.AuthenticationView|null} */
+    this.authenticationView = null;
+
+    /** @type {Widget.About|null} */
+    this.about = null;
+
+    /** @type {Widget.HelpWindow|null} */
+    this.helpWindow = null;
+
+    /** @type {Widget.Server.GeocodingView|null} */
+    this.geocodingView = null;
+
+    /** @type {Widget.CityObjectProvider} */
+    this.cityObjectProvider = null;
+
+    /** @type {Widget.CityObjectModule} */
+    this.cityObjectModule = null;
+
+    /** @type {Widget.Debug3DTilesView} */
+    this.debug3DTilesView = null;
+
+    /** @type {Widget.Server.Document.Core} */
+    this.documentCore = null;
+
+    /** @type {Widget.Server.Document.GuidedTourController} */
+    this.guidedTourController = null;
+
+    /** @type {Widget.CameraPositioner} */
+    this.cameraPositioner = null;
+
+    /** @type {Widget.TemporalModule} */
+    this.temporalModule = null;
+
+    /** @type {Widget.LayerChoice} */
+    this.layerChoice = null;
+
+    /** @type {Widget.SlideShow} */
+    this.slideShow = null;
+
+    // INTIALIZE
+    this.initUI();
   }
 
   /**
-   * It creates a 3D planar frame from a configuration object
    *
-   * @param {itowns.Extent} extent - Geographical bounding rectangle. {@link http://www.itowns-project.org/itowns/docs/#api/Geographic/Extent Extent}
-   * @param {HTMLDivElement} parentDiv - the HTML element in which the 3D frame will be created.
-   * @param {Frame3DPlanarOption} configFrame3DPlanar - the configuration object for the frame3DPlanar
-   * @returns {Frame3DPlanar} A new Frame3DPlanar object.
+   * @returns {HTMLElement} root html
    */
-  createFrame3DPlanarFromConfig(extent, parentDiv, configFrame3DPlanar) {
-    let hasItownsControls = true;
-    if (configFrame3DPlanar['hasItownsControls'] != undefined) {
-      hasItownsControls = configFrame3DPlanar['hasItownsControls'];
-    }
+  html() {
+    return this.frame3DPlanar.rootHtml;
+  }
 
-    const frame3DPlanar = new Frame3DPlanar(extent, {
-      htmlParent: parentDiv,
-      hasItownsControls: hasItownsControls,
-      coordinates: configFrame3DPlanar['coordinates'],
-      maxSubdivisionLevel: configFrame3DPlanar['maxSubdivisionLevel'],
-      heading: configFrame3DPlanar['heading'],
-      tilt: configFrame3DPlanar['tilt'],
-      range: configFrame3DPlanar['range'],
+  /**
+   * Dispose
+   */
+  dispose() {
+    this.frame3DPlanar.dispose();
+  }
+
+  /**
+   * Add layers of geo data
+   *
+   * @param {object} configs - different config
+   * @todo describe all configs
+   */
+  addLayers(configs) {
+    if (configs.$3DTiles) {
+      add3DTilesLayers(
+        configs.$3DTiles,
+        this.frame3DPlanar.layerManager,
+        this.frame3DPlanar.itownsView
+      );
+    }
+    if (configs.elevation) {
+      addElevationLayer(
+        configs.elevation,
+        this.frame3DPlanar.itownsView,
+        this.extent
+      );
+    }
+    if (configs.baseMap) {
+      addBaseMapLayer(
+        configs.baseMap,
+        this.frame3DPlanar.itownsView,
+        this.extent
+      );
+    }
+    if (configs.labels) {
+      addLabelLayers(
+        configs.labels,
+        this.frame3DPlanar.itownsView,
+        this.extent
+      );
+    }
+    if (configs.geoJSON) {
+      addGeoJsonLayers(
+        configs.geoJSON,
+        this.frame3DPlanar.itownsView,
+        this.extent
+      );
+    }
+  }
+
+  /**
+   * Add a logo in the logo container
+   *
+   * @param {string} pathLogoArray - path to your logo image
+   */
+  addLogos(pathLogoArray) {
+    pathLogoArray.forEach((pathLogo) => {
+      const logo = document.createElement('img');
+      logo.classList.add('logo');
+      logo.src = pathLogo;
+      this.logoContainer.appendChild(logo);
     });
-
-    THREEUtil.addLights(frame3DPlanar.getScene());
-    THREEUtil.initRenderer(
-      frame3DPlanar.getRenderer(),
-      new THREE.Color(0x6699cc)
-    );
-
-    return frame3DPlanar;
   }
 
   /**
-   *
-   * @returns {Frame3DPlanar} return `this.frame3DPlanar`
+   * Init default ui skeleton
    */
-  getFrame3DPlanar() {
-    return this.frame3DPlanar;
-  }
+  initUI() {
+    // Menu Side bar
+    this.menuSideBar = document.createElement('div');
+    this.menuSideBar.classList.add('_all_widget_menu_sidebar');
+    this.frame3DPlanar.appendToUI(this.menuSideBar);
+    {
+      // title
+      const titleNavBar = document.createElement('div');
+      titleNavBar.classList.add('ud-viz-label');
+      titleNavBar.innerHTML = 'UD-VIZ ' + packageInfo.version;
+      this.menuSideBar.appendChild(titleNavBar);
 
-  /**
-   * @returns {string} Returns the basic html content of the demo
-   */
-  get html() {
-    return /* html*/ `       
-            <div id="_all_widget_stuct_main_panel">
-                <nav>
-                    <div class="title-ud-viz Text-Style">
-                      UD-VIZ
-                    </div>
-                    <hr>
-                    <ul id="${this.menuId}">
-                    </ul>
-                </nav>
-                <section id="${this.contentSectionId}">
-                  <div id="_window_widget_content"></div>
-                </section>
-            </div>
-        `;
-  }
-
-  /**
-   * It creates a div element, adds an id to it, appends it to the main div, and then adds all the logos to it
-   */
-  addLogos() {
-    // Path file for all the logo images
-    const logos = this.configAllWidget.logos;
-
-    // Path to the logos folder
-    const imageFolder = this.configAllWidget.imageFolder;
-
-    // Create div to integrate all logos images
-    const logoDiv = document.createElement('div');
-    logoDiv.id = 'logo-div';
-    document.getElementById(this.mainDivId).append(logoDiv);
-
-    for (let i = 0; i < logos.length; i++) {
-      const img = document.createElement('img');
-      img.src = imageFolder.concat('/'.concat(logos[i]));
-      img.classList.add('logos');
-      logoDiv.appendChild(img);
-    }
-  }
-
-  /**
-   
-   * @returns {string} Returns the html element representing the upper-left frame of the UI,
-   * which contains informations
-   * about the logged in user.
-   */
-  get authenticationFrameHtml() {
-    return /* html*/ `
-            <div id="${this.authenticationMenuLoggedInId}">
-                <div id="${this.authenticationUserNameId}"></div>
-                <button type="button" id="${this.authenticationLogoutButtonId}"
-                class="logInOut">Logout</button>
-            </div>
-            <div id="${this.authenticationMenuLoggedOutId}">
-                <button type="button" id="${this.authenticationLoginButtonId}"
-                class="logInOut"><img src="${this.configAllWidget['icon_autenfication_path']}"></button>
-            </div>
-        `;
-  }
-
-  /**
-   * Appends the demo HTML to an HTML element.
-   *
-   * @param {HTMLDivElement} htmlElement The parent node to add the demo into. The
-   * recommended way of implementing the demo is simply to have an
-   * empty body and call this method with `document.body` as
-   * parameter.
-   */
-  appendTo(htmlElement) {
-    this.parentElement = htmlElement;
-    const div = document.createElement('div');
-    div.innerHTML = this.html;
-    div.id = this.mainDivId;
-    htmlElement.appendChild(div);
-  }
-
-  // ////// WIDGET MANAGEMENT
-
-  /**
-   * Adds a new widget view to the demo.
-   *
-   * @param {number} widgetId A unique id. Must be a string without spaces. It
-   * will be used to generate some HTML ids in the page. It will also
-   * be used to look for an icon to put with the button
-   * @param {object} widgetClass The widget view class. Must implement some
-   * methods (`enable`, `disable` and `addEventListener`). The
-   * recommended way of implementing them is to extend the
-   * `WidgetView` class, as explained [on the
-   * wiki](https://github.com/MEPP-team/UD-Viz/wiki/Generic-demo-and-widgets-with-WidgetView-&-BaseDemo).
-   * @param {object} options - An object used to specify various options.
-   * @param {string} options.name - Allows you to specify the name that will be
-   * displayed in the toggle button. By default, it makes a
-   * transformation of the id (like this : myWidget -> My Widget).
-   * @param {string} options.type - Is the "type" of the widget view that defines how
-   * it is added to the demo. The default value is `WIDGET_VIEW`,
-   * which simply adds a toggle button to the side menu. If set to
-   * `AUTHENTICATION_WIDGET`, an authentication frame will be created
-   * in the upper left corner of the page to contain informations
-   * about the user.
-   * @param {boolean} options.requireAuth - Allows you to
-   * specify if this widget can be shown without authentication (ie.
-   * if no user is logged in). The default value is `false`. If set to
-   * `true`, and no athentication widget was loaded, it has no effect
-   * (the widget view will be shown).
-   * @param {string} [options.binding] is the shortcut key code to toggle the widget. .
-   */
-  addWidgetView(widgetId, widgetClass, options = {}) {
-    if (
-      typeof widgetClass.enable !== 'function' ||
-      typeof widgetClass.disable !== 'function'
-    ) {
-      throw 'A widget must implement at least an enable() and a disable() methods';
+      // hr
+      const hrElement = document.createElement('hr');
+      this.menuSideBar.appendChild(hrElement);
     }
 
-    // Default name is the id transformed this way :
-    // myWidget -> My Widget
-    // my_widget -> My widget
-    let widgetName = widgetId
-      .replace(/([A-Z])/g, ' $1')
-      .replace(/_/g, ' ')
-      .replace(/^./, (str) => str.toUpperCase());
-    let type = AllWidget.WIDGET_VIEW;
-    let requireAuth = false;
-    if (options) {
-      if (options.type) {
-        if (
-          options.type === AllWidget.WIDGET_VIEW ||
-          options.type === AllWidget.AUTHENTICATION_WIDGET
-        ) {
-          type = options.type;
-        } else {
-          throw `Invalid value for option 'type' : '${options.type}'`;
+    // Pan Menu Side bar
+    this.panMenuSideBar = new PanMenuSideBar();
+    this.frame3DPlanar.appendToUI(this.panMenuSideBar.html());
+
+    // Logo container
+    this.logoContainer = document.createElement('div');
+    this.logoContainer.setAttribute('id', 'logo-container');
+    this.frame3DPlanar.appendToUI(this.logoContainer);
+  }
+
+  // ADD METHOD WIDGET
+
+  addWidgetAuthentication(configServer, pathAuthenticationIcon) {
+    const initAuthenticationFrame = () => {
+      // Authentication Frame
+      const authenticationFrame = document.createElement('div');
+      authenticationFrame.setAttribute('id', '_all_widget_profile');
+      this.frame3DPlanar.appendToUI(authenticationFrame);
+      {
+        // Authentication Menu Logged in
+        this.authenticationMenuLoggedIn = document.createElement('div');
+        this.authenticationMenuLoggedIn.setAttribute(
+          'id',
+          '_all_widget_profile_menu_logged_in'
+        );
+        authenticationFrame.appendChild(this.authenticationMenuLoggedIn);
+        {
+          // User Name
+          this.authenticationUserNameID = document.createElement('div');
+          this.authenticationUserNameID.setAttribute(
+            'id',
+            '_all_widget_profile_name'
+          );
+          this.authenticationMenuLoggedIn.appendChild(
+            this.authenticationUserNameID
+          );
+
+          // Button log out
+          this.authenticationButtonLogOut = document.createElement('button');
+          this.authenticationButtonLogOut.classList.add('logInOut');
+          this.authenticationButtonLogOut.innerHTML = 'Logout';
+          this.authenticationButtonLogOut.setAttribute(
+            'id',
+            '_all_widget_button_logout'
+          );
+          this.authenticationMenuLoggedIn.appendChild(
+            this.authenticationButtonLogOut
+          );
+        }
+
+        // Authentication Menu Logged out
+        this.authenticationMenuLoggedOut = document.createElement('div');
+        this.authenticationMenuLoggedOut.setAttribute(
+          'id',
+          '_all_widget_profile_menu_logged_out'
+        );
+        authenticationFrame.appendChild(this.authenticationMenuLoggedOut);
+        {
+          // button log in
+          this.buttonLogIn = document.createElement('img');
+          this.buttonLogIn.setAttribute('id', '_all_widget_button_login');
+          this.buttonLogIn.classList.add('logInout');
+          this.buttonLogIn.src = pathAuthenticationIcon;
+          this.authenticationMenuLoggedOut.appendChild(this.buttonLogIn);
         }
       }
-      if (options.name) {
-        widgetName = options.name;
-      }
-      if (options.requireAuth) {
-        requireAuth = options.requireAuth;
-      }
-    }
-    const binding = options.binding;
+    };
 
-    this.widgets[widgetId] = widgetClass;
-    this.widgetNames[widgetName] = widgetId;
-    this.widgetActivation[widgetId] = false;
+    const updateAuthenticationFrame = () => {
+      if (!this.authenticationView) return;
 
-    widgetClass.addEventListener(WidgetView.EVENT_ENABLED, () => {
-      this.widgetActivation[widgetId] = true;
-    });
-    widgetClass.addEventListener(WidgetView.EVENT_DISABLED, () => {
-      this.widgetActivation[widgetId] = false;
-    });
+      const service = this.authenticationView.authenticationService;
 
-    switch (type) {
-      case AllWidget.WIDGET_VIEW:
-        // Create a new button in the menu
-        this.createMenuButton(widgetId, widgetName, binding);
-        break;
-      case AllWidget.AUTHENTICATION_WIDGET:
-        this.createAuthenticationFrame(widgetId);
-        break;
-      default:
-        throw `Unknown widget type : ${type}`;
-    }
+      if (service.isUserLoggedIn()) {
+        const user = service.getUser();
+        this.authenticationMenuLoggedIn.hidden = false;
+        this.authenticationMenuLoggedOut.hidden = true;
+        this.authenticationUserNameID.innerHTML = `Logged in as <em>${user.firstname} ${user.lastname}</em>`;
 
-    if (requireAuth) {
-      this.requireAuthWidgets.push(widgetId);
-      this.updateAuthentication();
-    }
-
-    if (binding) {
-      this.widgetBindings[binding] = widgetId;
-    }
-  }
-
-  /**
-   * Creates a new button in the side menu.
-   *
-   * @param {number} widgetId The widget id.
-   * @param {string} buttonText The text to display in the button.
-   * @param {string} [accessKey] The key binding for the widget.
-   */
-  createMenuButton(widgetId, buttonText, accessKey) {
-    const button = document.createElement('li');
-    button.id = this.getWidgetButtonId(widgetId);
-    button.innerHTML = `<p class="_all_widget_menu_hint">${buttonText}</p>`;
-    if (accessKey) {
-      button.accessKey = accessKey;
-    }
-    this.menuElement.appendChild(button);
-    const icon = document.createElement('img');
-
-    // Creating an icon
-    icon.setAttribute(
-      'src',
-      `${this.configAllWidget.iconFolder}/${widgetId}.svg`
-    );
-    icon.className = 'menuIcon';
-    button.insertBefore(icon, button.firstChild);
-
-    // Define button behavior
-    button.onclick = (() => {
-      this.toggleWidget(widgetId);
-    }).bind(this);
-    const widgetClass = this.getWidgetById(widgetId);
-
-    // Dynamically color the button
-    widgetClass.parentElement = this.viewerDivElement.parentElement;
-    widgetClass.addEventListener(WidgetView.EVENT_ENABLED, () => {
-      button.className = 'choiceMenu choiceMenuSelected';
-    });
-    widgetClass.addEventListener(WidgetView.EVENT_DISABLED, () => {
-      button.className = 'choiceMenu';
-    });
-    widgetClass.disable();
-  }
-
-  /**
-   * Creates an authentication frame for the authentication widget.
-   *
-   * @param {string} authWidgetId The id of the authentication widget.
-   */
-  createAuthenticationFrame(authWidgetId) {
-    const frame = document.createElement('div');
-    frame.id = this.authenticationFrameId;
-    frame.innerHTML = this.authenticationFrameHtml;
-    document.getElementById('_all_widget_stuct_main_panel').append(frame);
-    const authView = this.getWidgetById(authWidgetId);
-    authView.parentElement = this.viewerDivElement.parentElement;
-    const authService = authView.authenticationService;
-    this.authenticationLoginButtonElement.onclick = () => {
-      if (this.isWidgetActive(authWidgetId)) {
-        authView.disable();
+        if (this.authenticationView.html().parentElement) {
+          this.authenticationView.dispose();
+        }
       } else {
-        authView.enable();
+        this.authenticationMenuLoggedIn.hidden = true;
+        this.authenticationMenuLoggedOut.hidden = false;
       }
     };
-    this.authenticationLogoutButtonElement.onclick = () => {
+
+    // intialize ui
+    initAuthenticationFrame();
+
+    // create widget view
+    this.authenticationView = new Widget.Server.AuthenticationView(
+      new Widget.Server.AuthenticationService(this.requestService, configServer)
+    );
+
+    // link button event
+    this.buttonLogIn.onclick = () => {
+      this.frame3DPlanar.appendToUI(this.authenticationView.html());
+    };
+
+    this.authenticationButtonLogOut.onclick = () => {
       try {
-        authService.logout();
+        this.authenticationView.authenticationService.logout();
       } catch (e) {
         console.error(e);
       }
     };
 
-    authService.addObserver(this.updateAuthentication.bind(this));
-    this.authService = authService;
-    this.updateAuthentication();
+    // listen for user state changes
+    this.authenticationView.authenticationService.addObserver(
+      updateAuthenticationFrame.bind(this)
+    );
+    updateAuthenticationFrame();
   }
 
-  /**
-   * This method should be called when the authentication state changes
-   *  (ie. a user log in / out), or when a widget is added. It has two
-   *  purposes :
-   *  1. To update the upper-left square of the side menu (which contains
-   *     use informations)
-   *  2. To show / hide the widgets that require authentication (as defined
-   *     by the `options` parameter in the method `addWidgetView`
-   */
-  updateAuthentication() {
-    if (this.authService) {
-      if (this.authService.isUserLoggedIn()) {
-        const user = this.authService.getUser();
-        this.authenticationMenuLoggedInElement.hidden = false;
-        this.authenticationMenuLoggedOutElement.hidden = true;
-        this.authenticationUserNameElement.innerHTML = `Logged in as <em>${user.firstname} ${user.lastname}</em>`;
-        for (const mid of this.requireAuthWidgets) {
-          this.getWidgetButton(mid).style.removeProperty('display');
-        }
+  addWidgetAbout(configAbout, pathIcon) {
+    this.about = new Widget.About(configAbout);
+
+    const sideBarButton = document.createElement('img');
+    sideBarButton.src = pathIcon;
+    this.menuSideBar.appendChild(sideBarButton);
+
+    sideBarButton.onclick = () => {
+      if (this.about.html().parentElement) {
+        this.panMenuSideBar.remove(this.about.html());
+        this.about.dispose();
+        sideBarButton.classList.remove('_all_widget_menu_sidebar_img_selected');
       } else {
-        this.authenticationMenuLoggedInElement.hidden = true;
-        this.authenticationMenuLoggedOutElement.hidden = false;
-        for (const mid of this.requireAuthWidgets) {
-          this.getWidgetButton(mid).style.setProperty('display', 'none');
+        this.panMenuSideBar.add('About', this.about.html());
+        sideBarButton.classList.add('_all_widget_menu_sidebar_img_selected');
+      }
+    };
+  }
+
+  addWidgetHelp(configHelp, pathIcon) {
+    this.helpWindow = new Widget.HelpWindow(configHelp);
+
+    const sideBarButton = document.createElement('img');
+    sideBarButton.src = pathIcon;
+    this.menuSideBar.appendChild(sideBarButton);
+
+    sideBarButton.onclick = () => {
+      if (this.helpWindow.html().parentElement) {
+        this.panMenuSideBar.remove(this.helpWindow.html());
+        this.helpWindow.dispose();
+        sideBarButton.classList.remove('_all_widget_menu_sidebar_img_selected');
+      } else {
+        this.panMenuSideBar.add('Help', this.helpWindow.html());
+        sideBarButton.classList.add('_all_widget_menu_sidebar_img_selected');
+      }
+    };
+  }
+
+  addWidgetGeocoding(configServer, pathIcon) {
+    this.geocodingView = new Widget.Server.GeocodingView(
+      new Widget.Server.GeocodingService(
+        this.requestService,
+        this.extent,
+        configServer
+      ),
+      this.frame3DPlanar.itownsView
+    );
+
+    const sideBarButton = document.createElement('img');
+    sideBarButton.src = pathIcon;
+    this.menuSideBar.appendChild(sideBarButton);
+
+    sideBarButton.onclick = () => {
+      if (this.geocodingView.html().parentElement) {
+        this.geocodingView.dispose().then(() => {
+          sideBarButton.classList.remove(
+            '_all_widget_menu_sidebar_img_selected'
+          );
+        });
+      } else {
+        this.frame3DPlanar.appendToUI(this.geocodingView.html());
+        sideBarButton.classList.add('_all_widget_menu_sidebar_img_selected');
+      }
+    };
+  }
+
+  addWidgetCityObject(configStyles, pathIcon) {
+    if (!this.cityObjectProvider) {
+      this.cityObjectProvider = new Widget.CityObjectProvider(
+        this.frame3DPlanar.layerManager,
+        configStyles
+      );
+    }
+
+    this.cityObjectModule = new Widget.CityObjectModule(
+      this.cityObjectProvider,
+      configStyles
+    );
+
+    const sideBarButton = document.createElement('img');
+    sideBarButton.src = pathIcon;
+    this.menuSideBar.appendChild(sideBarButton);
+
+    sideBarButton.onclick = () => {
+      if (this.cityObjectModule.view.html().parentElement) {
+        this.panMenuSideBar.remove(this.cityObjectModule.view.html());
+        this.cityObjectModule.view.dispose();
+        sideBarButton.classList.remove('_all_widget_menu_sidebar_img_selected');
+      } else {
+        this.panMenuSideBar.add(
+          'CityObject',
+          this.cityObjectModule.view.html()
+        );
+        this.cityObjectModule.view.addListenerTo(this.frame3DPlanar.rootWebGL);
+        sideBarButton.classList.add('_all_widget_menu_sidebar_img_selected');
+      }
+    };
+  }
+
+  addWidgetDebug3DTiles(pathIcon) {
+    this.debug3DTilesView = new Widget.Debug3DTilesView(
+      this.frame3DPlanar.layerManager
+    );
+
+    const sideBarButton = document.createElement('img');
+    sideBarButton.src = pathIcon;
+    this.menuSideBar.appendChild(sideBarButton);
+
+    sideBarButton.onclick = () => {
+      if (this.debug3DTilesView.html().parentElement) {
+        this.panMenuSideBar.remove(this.debug3DTilesView.html());
+        this.debug3DTilesView.dispose();
+        sideBarButton.classList.remove('_all_widget_menu_sidebar_img_selected');
+      } else {
+        this.debug3DTilesView.addListenerTo(this.frame3DPlanar.rootWebGL);
+        this.panMenuSideBar.add('Debug 3D Tiles', this.debug3DTilesView.html());
+        sideBarButton.classList.add('_all_widget_menu_sidebar_img_selected');
+      }
+    };
+  }
+
+  addWidgetDocument(configServer, configStyles, pathIcon) {
+    const rootDocumentHtml = document.createElement('div');
+    const parentHtmlFeature = document.createElement('div');
+
+    // CORE
+    this.documentCore = new Widget.Server.Document.Core(
+      this.requestService,
+      configServer
+    );
+
+    // VISUALIZER
+    const visualizerView = new Widget.Server.Document.VisualizerView(
+      this.frame3DPlanar.getItownsView(),
+      this.frame3DPlanar.getItownsView().controls,
+      this.documentCore.provider
+    );
+
+    const visualizeButton = document.createElement('button');
+    visualizeButton.innerHTML = 'Visualize';
+    visualizeButton.onclick = async () => {
+      await visualizerView.startTravelToDisplayedDocument();
+      this.frame3DPlanar.appendToUI(visualizerView.html());
+    };
+    this.documentCore.view.inspectorWindow.html().appendChild(visualizeButton);
+
+    // CONTRIBUTE
+
+    const documentContribute = new Widget.Server.Document.Contribute(
+      this.documentCore.provider,
+      visualizerView,
+      this.requestService,
+      this.frame3DPlanar.getItownsView(),
+      this.frame3DPlanar.getItownsView().controls,
+      configServer,
+      this.frame3DPlanar.ui
+    );
+
+    const updateButton = document.createElement('button');
+    updateButton.innerHTML = 'Update';
+    updateButton.onclick = async () => {
+      await documentContribute.updateWindow.updateFromDisplayedDocument();
+      clearChildren(parentHtmlFeature);
+      parentHtmlFeature.appendChild(documentContribute.updateWindow.html());
+    };
+    this.documentCore.view.inspectorWindow.html().appendChild(updateButton);
+
+    const deleteButton = document.createElement('button');
+    deleteButton.innerHTML = 'Delete';
+    deleteButton.onclick = async () => {
+      if (
+        !confirm(
+          'You are going to delete the document. This operation ' +
+            'is irreversible. Do you want to continue ?'
+        )
+      ) {
+        return;
+      }
+      try {
+        await documentContribute.contributeService.deleteDocument();
+      } catch (e) {
+        alert(e);
+      }
+    };
+    this.documentCore.view.inspectorWindow.html().appendChild(deleteButton);
+
+    const createDocumentButton = document.createElement('button');
+    createDocumentButton.innerHTML = 'Create new document';
+    createDocumentButton.onclick = () => {
+      clearChildren(parentHtmlFeature);
+      parentHtmlFeature.appendChild(documentContribute.creationWindow.html());
+    };
+    this.documentCore.view.navigatorWindow
+      .html()
+      .appendChild(createDocumentButton);
+
+    // VALIDATION
+    const documentValidation =
+      new udvizBrowser.Widget.Server.Document.Validation(
+        this.documentCore.provider,
+        this.requestService,
+        configServer,
+        this.documentCore.view.inspectorWindow.html()
+      );
+
+    this.documentCore.view.navigatorWindow
+      .html()
+      .appendChild(documentValidation.validationView.html());
+
+    // COMMENT
+    const documentComment = new udvizBrowser.Widget.Server.Document.Comment(
+      this.documentCore.provider,
+      this.requestService,
+      configServer
+    );
+
+    const commentButton = document.createElement('button');
+    commentButton.innerHTML = 'Comment';
+    commentButton.onclick = async () => {
+      clearChildren(parentHtmlFeature);
+      await documentComment.commentsWindow.getComments();
+      parentHtmlFeature.appendChild(documentComment.commentsWindow.html());
+    };
+
+    this.documentCore.view.inspectorWindow.html().appendChild(commentButton);
+
+    // LINK MODULE
+    if (this.cityObjectModule) {
+      const documentLink = new Widget.Server.Document.Link(
+        this.documentCore.provider,
+        this.cityObjectModule, // module should be manipulated from this scope and not doing dark things inside link module
+        this.requestService,
+        this.frame3DPlanar.getItownsView(),
+        this.frame3DPlanar.getItownsView().controls,
+        configServer,
+        configStyles
+      );
+
+      this.documentCore.view.navigatorWindow
+        .html()
+        .appendChild(documentLink.view.documentInterface.navigatorHtml());
+
+      this.documentCore.view.inspectorWindow
+        .html()
+        .appendChild(documentLink.view.documentInterface.inspectorHtml());
+    } else {
+      console.warn(
+        'You should add first a cityObject widget to benefit of the link feature'
+      );
+    }
+
+    // PLUG WITH SIDEBAR BUTTON
+    const sideBarButton = document.createElement('img');
+    sideBarButton.src = pathIcon;
+    this.menuSideBar.appendChild(sideBarButton);
+
+    sideBarButton.onclick = () => {
+      if (rootDocumentHtml.parentElement) {
+        this.panMenuSideBar.remove(rootDocumentHtml);
+        this.documentCore.view.navigatorWindow.dispose();
+        this.documentCore.view.inspectorWindow.dispose();
+
+        if (!this.cityObjectModule.view.html().parentElement) {
+          // city object module is not open remove listener
+          this.cityObjectModule.view.removeListener();
         }
+
+        sideBarButton.classList.remove('_all_widget_menu_sidebar_img_selected');
+      } else {
+        // rebuild rootDocument
+        clearChildren(rootDocumentHtml);
+        clearChildren(parentHtmlFeature);
+        rootDocumentHtml.appendChild(
+          this.documentCore.view.navigatorWindow.html()
+        );
+        rootDocumentHtml.appendChild(
+          this.documentCore.view.inspectorWindow.html()
+        );
+        rootDocumentHtml.appendChild(parentHtmlFeature);
+        this.panMenuSideBar.add('Document', rootDocumentHtml);
+        sideBarButton.classList.add('_all_widget_menu_sidebar_img_selected');
+
+        // so city object can be select by cityobject module
+        this.cityObjectModule.view.addListenerTo(this.frame3DPlanar.rootWebGL);
+      }
+    };
+  }
+
+  addWidgetGuidedTour(configServer, pathIcon) {
+    if (!this.documentCore) {
+      /**
+       * @todo should we handle that ? same for link with cityobjectmodule
+       */
+      console.warn('You should addWidgetDocument first');
+      return;
+    }
+
+    this.guidedTourController = new Widget.Server.Document.GuidedTourController(
+      this.documentCore,
+      this.requestService,
+      configServer
+    );
+
+    const sideBarButton = document.createElement('img');
+    sideBarButton.src = pathIcon;
+    this.menuSideBar.appendChild(sideBarButton);
+
+    sideBarButton.onclick = () => {
+      if (this.guidedTourController.guidedTour.html().parentElement) {
+        this.panMenuSideBar.remove(this.guidedTourController.guidedTour.html());
+        this.guidedTourController.guidedTour.dispose();
+        sideBarButton.classList.remove('_all_widget_menu_sidebar_img_selected');
+      } else {
+        this.panMenuSideBar.add(
+          'Guided Tour',
+          this.guidedTourController.guidedTour.html()
+        );
+        sideBarButton.classList.add('_all_widget_menu_sidebar_img_selected');
+      }
+    };
+  }
+
+  addWidgetCameraPositioner(pathIcon) {
+    this.cameraPositioner = new Widget.CameraPositioner(
+      this.frame3DPlanar.itownsView
+    );
+
+    const sideBarButton = document.createElement('img');
+    sideBarButton.src = pathIcon;
+    this.menuSideBar.appendChild(sideBarButton);
+
+    sideBarButton.onclick = () => {
+      if (this.cameraPositioner.html().parentElement) {
+        this.panMenuSideBar.remove(this.cameraPositioner.html());
+        this.cameraPositioner.dispose();
+        sideBarButton.classList.remove('_all_widget_menu_sidebar_img_selected');
+      } else {
+        this.panMenuSideBar.add(
+          'Camera Positioner',
+          this.cameraPositioner.html()
+        );
+        sideBarButton.classList.add('_all_widget_menu_sidebar_img_selected');
+      }
+    };
+  }
+
+  addWidgetTemporal(configTemporal, pathIcon) {
+    this.temporalModule = new Widget.TemporalModule(
+      this.frame3DPlanar.getLayerManager().tilesManagers[0],
+      configTemporal
+    );
+
+    const sideBarButton = document.createElement('img');
+    sideBarButton.src = pathIcon;
+    this.menuSideBar.appendChild(sideBarButton);
+
+    sideBarButton.onclick = () => {
+      if (this.temporalModule.view.html().parentElement) {
+        this.panMenuSideBar.remove(this.temporalModule.view.html());
+        this.temporalModule.view.dispose();
+        sideBarButton.classList.remove('_all_widget_menu_sidebar_img_selected');
+      } else {
+        this.panMenuSideBar.add('Temporal', this.temporalModule.view.html());
+        sideBarButton.classList.add('_all_widget_menu_sidebar_img_selected');
+      }
+    };
+  }
+
+  addWidgetLayerChoice(pathIcon) {
+    this.layerChoice = new Widget.LayerChoice(this.frame3DPlanar.layerManager);
+
+    const sideBarButton = document.createElement('img');
+    sideBarButton.src = pathIcon;
+    this.menuSideBar.appendChild(sideBarButton);
+
+    sideBarButton.onclick = () => {
+      if (this.layerChoice.html().parentElement) {
+        this.panMenuSideBar.remove(this.layerChoice.html());
+        this.layerChoice.dispose();
+        sideBarButton.classList.remove('_all_widget_menu_sidebar_img_selected');
+      } else {
+        this.panMenuSideBar.add('Layer Choice', this.layerChoice.html());
+        sideBarButton.classList.add('_all_widget_menu_sidebar_img_selected');
+      }
+    };
+  }
+
+  addWidgetSlideShow(configSlideShow, pathIcon) {
+    this.slideShow = new Widget.SlideShow(
+      this.frame3DPlanar.itownsView,
+      configSlideShow,
+      this.extent,
+      new InputManager()
+    );
+
+    const sideBarButton = document.createElement('img');
+    sideBarButton.src = pathIcon;
+    this.menuSideBar.appendChild(sideBarButton);
+
+    sideBarButton.onclick = () => {
+      if (this.slideShow.html().parentElement) {
+        this.panMenuSideBar.remove(this.slideShow.html());
+        this.slideShow.dispose();
+        sideBarButton.classList.remove('_all_widget_menu_sidebar_img_selected');
+      } else {
+        this.panMenuSideBar.add('Layer Choice', this.slideShow.html());
+        sideBarButton.classList.add('_all_widget_menu_sidebar_img_selected');
+        this.slideShow.addListeners();
+        this.frame3DPlanar.scene.add(this.slideShow.plane);
+      }
+    };
+  }
+}
+
+class PanMenuSideBar {
+  constructor() {
+    this.rootHtml = document.createElement('div');
+    this.rootHtml.classList.add('_all_widget_pan_menu_sidebar');
+
+    this.containers = [];
+  }
+
+  add(label, el) {
+    const newContainer = document.createElement('div');
+    newContainer.innerHTML = label;
+    newContainer.classList.add('_all_widget_pan_menu_sidebar_container');
+    newContainer.appendChild(el);
+    this.containers.push(newContainer);
+    this.rootHtml.appendChild(newContainer);
+    this.fold(false);
+  }
+
+  remove(el) {
+    for (let index = 0; index < this.containers.length; index++) {
+      const container = this.containers[index];
+      if (checkParentChild(el, container)) {
+        container.remove();
+        el.remove();
+        this.containers.splice(index, 1);
+        break;
       }
     }
+
+    this.foldIfEmpty();
   }
 
-  /**
-   * If the widgetActivation object has a property with the name of the widgetId, then return true,
-   * otherwise return false.
-   *
-   * @param {string} widgetId - The id of the widget to check.
-   * @returns {boolean} A boolean value.
-   */
-  isWidgetActive(widgetId) {
-    return this.widgetActivation[widgetId];
+  foldIfEmpty() {
+    if (!this.rootHtml.firstChild) this.fold(true);
   }
 
-  /**
-   * Given a widget ID, return the widget object.
-   *
-   * @param {string} widgetId - The id of the widget to get.
-   * @returns {object} The widget with the given id.
-   */
-  getWidgetById(widgetId) {
-    return this.widgets[widgetId];
-  }
-
-  /**
-   * If the widget view is enabled, disables it, else, enables it.
-   *
-   * @param {string} widgetId The widget id.
-   */
-  toggleWidget(widgetId) {
-    if (!this.isWidgetActive(widgetId)) {
-      this.getWidgetById(widgetId).enable();
+  fold(value) {
+    if (value) {
+      this.rootHtml.style.transform = 'translate(-100%,0%)';
     } else {
-      this.getWidgetById(widgetId).disable();
+      this.rootHtml.style.transform = 'translate(0%,0%)';
     }
   }
 
-  getWidgetButtonId(widgetId) {
-    return `_all_widget_menu_button${widgetId}`;
-  }
-
-  // Get widget button element
-  getWidgetButton(widgetId) {
-    return document.getElementById(this.getWidgetButtonId(widgetId));
-  }
-
-  // //////////////////////////////////////////////////////
-  // GETTERS FOR HTML IDS AND ELEMENTS OF THE DEMO PAGE //
-  // //////////////////////////////////////////////////////
-
-  get mainDivId() {
-    return '_all_widget';
-  }
-
-  get headerId() {
-    return '_all_widget_header';
-  }
-
-  get headerElement() {
-    return document.getElementById(this.headerId);
-  }
-
-  get authFrameLocationId() {
-    return '_all_widget_auth_frame_location';
-  }
-
-  get authFrameLocationElement() {
-    return document.getElementById(this.authFrameLocationId);
-  }
-
-  get contentSectionId() {
-    return 'contentSection';
-  }
-
-  get contentSectionElement() {
-    return document.getElementById(this.contentSectionId);
-  }
-
-  get viewerDivId() {
-    return 'viewerDiv';
-  }
-
-  get viewerDivElement() {
-    return document.getElementById(this.viewerDivId);
-  }
-
-  get menuId() {
-    return '_all_widget_menu';
-  }
-
-  get menuElement() {
-    return document.getElementById(this.menuId);
-  }
-
-  get authenticationFrameId() {
-    return '_all_widget_profile';
-  }
-
-  get authenticationFrameElement() {
-    return document.getElementById(this.authenticationFrameId);
-  }
-
-  get authenticationLogoutButtonId() {
-    return '_all_widget_button_logout';
-  }
-
-  get authenticationLogoutButtonElement() {
-    return document.getElementById(this.authenticationLogoutButtonId);
-  }
-
-  get authenticationLoginButtonId() {
-    return '_all_widget_button_login';
-  }
-
-  get authenticationLoginButtonElement() {
-    return document.getElementById(this.authenticationLoginButtonId);
-  }
-
-  get authenticationMenuLoggedInId() {
-    return '_all_widget_profile_menu_logged_in';
-  }
-
-  get authenticationMenuLoggedInElement() {
-    return document.getElementById(this.authenticationMenuLoggedInId);
-  }
-
-  get authenticationMenuLoggedOutId() {
-    return '_all_widget_profile_menu_logged_out';
-  }
-
-  get authenticationMenuLoggedOutElement() {
-    return document.getElementById(this.authenticationMenuLoggedOutId);
-  }
-
-  get authenticationUserNameId() {
-    return '_all_widget_profile_name';
-  }
-
-  get authenticationUserNameElement() {
-    return document.getElementById(this.authenticationUserNameId);
-  }
-
-  static get WIDGET_VIEW() {
-    return 'WIDGET_VIEW';
-  }
-
-  static get AUTHENTICATION_WIDGET() {
-    return 'AUTHENTICATION_WIDGET';
+  html() {
+    return this.rootHtml;
   }
 }

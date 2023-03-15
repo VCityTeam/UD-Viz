@@ -2,7 +2,8 @@ export { SocketIOWrapper } from './SocketIOWrapper.js';
 
 export { InputManager } from './InputManager';
 
-export * from './THREEUtil';
+import * as THREEUtil from './THREEUtil';
+export { THREEUtil };
 
 export * from './FileUtil.js';
 
