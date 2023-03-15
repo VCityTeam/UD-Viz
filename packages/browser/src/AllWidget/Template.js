@@ -1,22 +1,21 @@
-import { Frame3DPlanar } from '../Component/Frame3D/Frame3D';
-import {
-  add3DTilesLayers,
-  addBaseMapLayer,
-  addElevationLayer,
-  addGeoJsonLayers,
-  addLabelLayers,
-} from '../Component/Itowns/AddLayerFromConfig';
 import * as itowns from 'itowns';
 import {
   checkParentChild,
   InputManager,
   RequestService,
   THREEUtil,
+  clearChildren,
+  Frame3DPlanar,
+  add3DTilesLayers,
+  addBaseMapLayer,
+  addElevationLayer,
+  addGeoJsonLayers,
+  addLabelLayers,
 } from '../Component/Component';
+
 import * as Widget from '../Component/Widget/Widget';
 
 import './AllWidget.css';
-import { clearChildren } from '../Component/HTMLUtil';
 
 export class AllWidget {
   /**
