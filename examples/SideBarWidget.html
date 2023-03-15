@@ -15,12 +15,14 @@
         './assets/config/extent_lyon.json',
         './assets/config/frame3D_planars.json',
         './assets/config/server/spatial_multimedia_db_server.json',
-        './assets/config/widget/about.json',
-        './assets/config/widget/help.json',
         './assets/config/server/geocoding_server.json',
+        './assets/config/server/sparql_server.json',
         './assets/config/styles.json',
+        './assets/config/widget/help.json',
+        './assets/config/widget/about.json',
         './assets/config/widget/temporal.json',
         './assets/config/widget/slide_show.json',
+        './assets/config/widget/sparql_widget.json',
         './assets/config/layer/3DTiles.json',
         './assets/config/layer/base_maps.json',
         './assets/config/layer/elevation.json',
@@ -107,6 +109,12 @@
         app.addWidgetSlideShow(
           configs['slide_show'],
           './assets/svg/slideShow.svg'
+        );
+
+        app.addWidgetSparql(
+          configs['sparql_server'],
+          configs['sparql_widget'],
+          './assets/svg/sparqlModule.svg'
         );
       });
     </script>

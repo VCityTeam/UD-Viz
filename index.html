@@ -98,11 +98,13 @@
         viewer.appendChild(container);
       };
 
-      createContainer('AllWidget');
+      createContainer('SideBarWidget');
+      createContainer('Widget');
       createContainer('SinglePlayerGamePlanar');
       createContainer('MultiPlayerGamePlanar');
       createContainer('Frame3D');
       createContainer('THREEUtil');
+      createContainer('GUI');
 
       const addProjectElement = (name, idParent, href, title, srcImg) => {
         const newProject = document.createElement('a');
@@ -123,17 +125,17 @@
       };
 
       addProjectElement(
-        'All Widget',
-        'AllWidget',
-        './examples/AllWidget.html',
-        `This example implements all widgets and extensions currently available. As of today, this includes :
+        'SideBarWidget',
+        'SideBarWidget',
+        './examples/SideBarWidget.html',
+        `This example implements a sidebar template implementing widgets. As of today, this includes :
         \n- Temporal            \n- Help & About            \n- Documents            \n- Contribute            \n- Guided tours            \n- Authentication            \n- Documents to validate            \n- Document comments            \n- Geocoding            \n- 3DTiles debug            \n- Camera positioner            \n- Document links`,
         './examples/assets/img/mosaic/AllWidgets.png'
       );
 
       addProjectElement(
         'Worldmap',
-        'AllWidget',
+        'Frame3D',
         './examples/WorldMap.html',
         'This example use IGN basemap to be able to navigate all over the world',
         './examples/assets/img/mosaic/WorldMap.png'
@@ -157,7 +159,7 @@
 
       addProjectElement(
         'Document Widget',
-        'AllWidget',
+        'Widget',
         './examples/DocumentWidget.html',
         'In this example you can consult documents in a document browser and search them using keywords and other fields.',
         './examples/assets/img/mosaic/DocumentWidget.png'
@@ -165,7 +167,7 @@
 
       addProjectElement(
         'Geocoding Widget',
-        'AllWidget',
+        'Widget',
         './examples/GeocodingWidget.html',
         'Geocoding allows a user to navigate in the city by searching addresses or place names.',
         './examples/assets/img/mosaic/GeocodingWidget.png'
@@ -173,7 +175,7 @@
 
       addProjectElement(
         'BaseMap Widget',
-        'AllWidget',
+        'Widget',
         './examples/BaseMapWidget.html',
         'BaseMap widget allows a user to select which background to use between those set up in the config file.',
         './examples/assets/img/mosaic/BaseMapWidget.png'
@@ -181,7 +183,7 @@
 
       addProjectElement(
         'Camera Positioner Widget',
-        'AllWidget',
+        'Widget',
         './examples/CameraPositionerWidget.html',
         'The camera positioner is a tool that show the coordinates and the orientation of the camera.',
         './examples/assets/img/mosaic/CameraPositionerWidget.png'
@@ -189,7 +191,7 @@
 
       addProjectElement(
         'Slideshow Widget',
-        'AllWidget',
+        'Widget',
         './examples/SlideShowWidget.html',
         'The SlideShow allows to display images and videos on a plane geometry.',
         './examples/assets/img/mosaic/CameraPositionerWidget.png'
@@ -197,7 +199,7 @@
 
       addProjectElement(
         '3DTilesDebug Widget',
-        'AllWidget',
+        'Widget',
         './examples/Debug3DTilesView.html',
         '3DTiles Debug displays a window which shows various information about 3DTiles objects and city objects.',
         './examples/assets/img/mosaic/3DTilesDebugWidget.png'
@@ -205,7 +207,7 @@
 
       addProjectElement(
         'CityObject Widget',
-        'AllWidget',
+        'Widget',
         './examples/CityObjectWidget.html',
         'This extensions allows the user to explore city objects and color them according to filters.',
         './examples/assets/img/mosaic/CityObjectWidget.png'
@@ -213,7 +215,7 @@
 
       addProjectElement(
         'LayerChoice Widget',
-        'AllWidget',
+        'Widget',
         './examples/LayerChoiceWidget.html',
         'This extensions interact with layers',
         './examples/assets/img/mosaic/LayerChoiceWidget.png'
@@ -221,7 +223,7 @@
 
       addProjectElement(
         'Temporal Widget',
-        "AllWidget",
+        'Widget',
         './examples/TemporalWidget.html',
         'This extensions allows the user to explore city objects and color them according to filters.',
         './examples/assets/img/mosaic/TemporalWidget.png'
@@ -229,7 +231,7 @@
 
       addProjectElement(
         'GeoJSON',
-        'AllWidget',
+        'Frame3D',
         './examples/GeoJson.html',
         `This example visualizes several GeoJSON datasets (such as bus lines, Velo'v stations, and humidity zones) alongside 3D planar data.`,
         './examples/assets/img/mosaic/GeoJSON.png'
@@ -237,7 +239,7 @@
 
       addProjectElement(
         'SPARQL',
-        "AllWidget",
+        'Widget',
         './examples/SPARQLWidget.html',
         `This example illustrate the SPARQL Widget`,
         './examples/assets/img/mosaic/GeoJSON.png'
@@ -280,6 +282,46 @@
         'MultiPlayerGamePlanar',
         './examples/MultiPlayerGamePlanar.html',
         'This example allow to share note in city',
+        './examples/assets/img/mosaic/Note_Game.png'
+      );
+
+      addProjectElement(
+        'About',
+        'Widget',
+        './examples/About.html',
+        'This example illstrate the about widget',
+        './examples/assets/img/mosaic/Note_Game.png'
+      );
+
+      addProjectElement(
+        'Authentification',
+        'Widget',
+        './examples/Authentification.html',
+        'This example illustrate the authentication widget',
+        './examples/assets/img/mosaic/Note_Game.png'
+      );
+
+      addProjectElement(
+        'Guided tour',
+        'Widget',
+        './examples/GuidedTour.html',
+        'This example illustrate the guided tour widget',
+        './examples/assets/img/mosaic/Note_Game.png'
+      );
+
+      addProjectElement(
+        'Help',
+        'Widget',
+        './examples/Help.html',
+        'This example illustrate the help widget',
+        './examples/assets/img/mosaic/Note_Game.png'
+      );
+
+      addProjectElement(
+        'Window',
+        'GUI',
+        './examples/Window.html',
+        'This example illustrate the gui element window',
         './examples/assets/img/mosaic/Note_Game.png'
       );
     </script>
