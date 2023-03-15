@@ -2,7 +2,7 @@
 
 // Template
 
-export { AllWidget } from './AllWidget/Template';
+export { AllWidget } from './AllWidget/AllWidget';
 
 export { SinglePlayerGamePlanar } from './SinglePlayerGamePlanar/SinglePlayerGamePlanar';
 
