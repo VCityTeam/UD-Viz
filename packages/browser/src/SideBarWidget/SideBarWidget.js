@@ -44,12 +44,7 @@ export class SideBarWidget {
 
     // HTML ELEMENT NEEDED TO BE REFERENCED
 
-    // ROOT UI
-
-    /** @type {HTMLElement} */
-    this.rootUI = null;
-
-    // CHILD ROOT UI
+    // CHILD UI
 
     /** @type {HTMLElement} */
     this.menuSideBar = null;
