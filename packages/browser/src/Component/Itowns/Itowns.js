@@ -11,6 +11,6 @@ export { LayerManager } from './LayerManager/LayerManager';
 /** @class TilesManager */
 export { TilesManager } from './3DTiles/TilesManager';
 
-import * as Component from './Component/Component';
-/** @member {module:udvizBrowser/Itowns/Component} Component */
-export { Component };
+export * from './AddLayerFromConfig';
+
+export * from './Component/Component';
