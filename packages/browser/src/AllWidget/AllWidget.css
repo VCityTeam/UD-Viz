@@ -3,20 +3,22 @@
   --all-widget-color-two: whitesmoke;
   --all-widget-color-three: rgba(1, 1, 1, 0.3);
   --all-widget-color-four: #63e500;
+
+  --all-widget-sidebar-width: 60px;
 }
 
 /********************************************* SIDE BAR*/
 
 ._all_widget_menu_sidebar {
   background-color: var(--all_widget-color-one);
-  width: 60px;
+  width: var(--all-widget-sidebar-width);
   height: 100%;
   z-index: 3;
 }
 
 ._all_widget_menu_sidebar img {
-  width: 50px;
-  height: 50px;
+  width: calc(var(--all-widget-sidebar-width) - 10px);
+  height: calc(var(--all-widget-sidebar-width) - 10px);
   padding: 5px;
 }
 
@@ -41,7 +43,7 @@
   width: 400px;
   position: absolute;
   background-color: var(--all-widget-color-four);
-  padding-left: 70px; /*bad but padding left is > at menusidebar width*/
+  padding-left: var(--all-widget-sidebar-width);
   left: 0;
   top: 0;
   height: 100%;
