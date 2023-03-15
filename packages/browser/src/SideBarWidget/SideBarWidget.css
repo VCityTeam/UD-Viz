@@ -1,37 +1,37 @@
 :root {
-  --all_widget-color-one: #e5007b;
-  --all-widget-color-two: whitesmoke;
-  --all-widget-color-three: rgba(1, 1, 1, 0.3);
-  --all-widget-color-four: #63e500;
+  --sidebar_widget-color-one: #e5007b;
+  --sidebar-widget-color-two: whitesmoke;
+  --sidebar-widget-color-three: rgba(1, 1, 1, 0.3);
+  --sidebar-widget-color-four: #63e500;
 
-  --all-widget-sidebar-width: 60px;
+  --sidebar-widget-sidebar-width: 60px;
 }
 
 /********************************************* SIDE BAR*/
 
-._all_widget_menu_sidebar {
-  background-color: var(--all_widget-color-one);
-  width: var(--all-widget-sidebar-width);
+._sidebar_widget_menu_sidebar {
+  background-color: var(--sidebar_widget-color-one);
+  width: var(--sidebar-widget-sidebar-width);
   height: 100%;
   z-index: 3;
 }
 
-._all_widget_menu_sidebar img {
-  width: calc(var(--all-widget-sidebar-width) - 10px);
-  height: calc(var(--all-widget-sidebar-width) - 10px);
+._sidebar_widget_menu_sidebar img {
+  width: calc(var(--sidebar-widget-sidebar-width) - 10px);
+  height: calc(var(--sidebar-widget-sidebar-width) - 10px);
   padding: 5px;
 }
 
-._all_widget_menu_sidebar img:hover {
+._sidebar_widget_menu_sidebar img:hover {
   cursor: pointer;
 }
 
-._all_widget_menu_sidebar_img_selected {
-  background-color: var(--all-widget-color-four);
+._sidebar_widget_menu_sidebar_img_selected {
+  background-color: var(--sidebar-widget-color-four);
 }
 
 .ud-viz-label {
-  color: var(--all-widget-color-two);
+  color: var(--sidebar-widget-color-two);
   font-size: 15px;
   font-weight: bold;
   text-align: center;
@@ -39,11 +39,11 @@
 }
 
 /********************************************* PAN SIDEBAR*/
-._all_widget_pan_menu_sidebar {
+._sidebar_widget_pan_menu_sidebar {
   width: 400px;
   position: absolute;
-  background-color: var(--all-widget-color-four);
-  padding-left: var(--all-widget-sidebar-width);
+  background-color: var(--sidebar-widget-color-four);
+  padding-left: var(--sidebar-widget-sidebar-width);
   left: 0;
   top: 0;
   height: 100%;
@@ -52,8 +52,8 @@
   overflow-y: auto;
 }
 
-._all_widget_pan_menu_sidebar_container {
-  background-color: var(--all-widget-color-three);
+._sidebar_widget_pan_menu_sidebar_container {
+  background-color: var(--sidebar-widget-color-three);
   border-radius: 5px;
   margin: 5px;
   padding: 5px;
@@ -81,7 +81,7 @@
 
 /*********************************** AUTHENTIFICATION */
 
-#_all_widget_profile {
+#_sidebar_widget_profile {
   position: fixed;
   top: 6px;
   right: 60px;
@@ -103,7 +103,7 @@
   cursor: pointer;
 }
 
-#_all_widget_profile img {
+#_sidebar_widget_profile img {
   position: fixed;
   width: 35px;
   height: 35px;
@@ -114,26 +114,26 @@
   z-index: 5;
 }
 
-#_all_widget_profile img:hover {
+#_sidebar_widget_profile img:hover {
   width: 45px;
   height: 45px;
   cursor: pointer;
 }
 
-#_all_widget_profile_name {
+#_sidebar_widget_profile_name {
   display: inline-block;
   color: white;
   font-size: 20px;
   padding: 10px;
 }
 
-#_all_widget_profile_name em {
+#_sidebar_widget_profile_name em {
   font-style: normal;
   font-weight: bold;
-  font-variant: small-caps;
+  font-variant: smsidebar-caps;
 }
 
-#_all_widget_auth_frame_location {
+#_sidebar_widget_auth_frame_location {
   display: inline-block;
 }
 

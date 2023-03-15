@@ -17,9 +17,9 @@ import packageInfo from '../../package.json';
 
 import * as Widget from '../Component/Widget/Widget';
 
-import './AllWidget.css';
+import './SideBarWidget.css';
 
-export class AllWidget {
+export class SideBarWidget {
   /**
    *
    * @param {itowns.Extent} extent - itowns extent
@@ -198,7 +198,7 @@ export class AllWidget {
   initUI() {
     // Menu Side bar
     this.menuSideBar = document.createElement('div');
-    this.menuSideBar.classList.add('_all_widget_menu_sidebar');
+    this.menuSideBar.classList.add('_sidebar_widget_menu_sidebar');
     this.frame3DPlanar.appendToUI(this.menuSideBar);
     {
       // title
@@ -228,14 +228,14 @@ export class AllWidget {
     const initAuthenticationFrame = () => {
       // Authentication Frame
       const authenticationFrame = document.createElement('div');
-      authenticationFrame.setAttribute('id', '_all_widget_profile');
+      authenticationFrame.setAttribute('id', '_sidebar_widget_profile');
       this.frame3DPlanar.appendToUI(authenticationFrame);
       {
         // Authentication Menu Logged in
         this.authenticationMenuLoggedIn = document.createElement('div');
         this.authenticationMenuLoggedIn.setAttribute(
           'id',
-          '_all_widget_profile_menu_logged_in'
+          '_sidebar_widget_profile_menu_logged_in'
         );
         authenticationFrame.appendChild(this.authenticationMenuLoggedIn);
         {
@@ -243,7 +243,7 @@ export class AllWidget {
           this.authenticationUserNameID = document.createElement('div');
           this.authenticationUserNameID.setAttribute(
             'id',
-            '_all_widget_profile_name'
+            '_sidebar_widget_profile_name'
           );
           this.authenticationMenuLoggedIn.appendChild(
             this.authenticationUserNameID
@@ -255,7 +255,7 @@ export class AllWidget {
           this.authenticationButtonLogOut.innerHTML = 'Logout';
           this.authenticationButtonLogOut.setAttribute(
             'id',
-            '_all_widget_button_logout'
+            '_sidebar_widget_button_logout'
           );
           this.authenticationMenuLoggedIn.appendChild(
             this.authenticationButtonLogOut
@@ -266,13 +266,13 @@ export class AllWidget {
         this.authenticationMenuLoggedOut = document.createElement('div');
         this.authenticationMenuLoggedOut.setAttribute(
           'id',
-          '_all_widget_profile_menu_logged_out'
+          '_sidebar_widget_profile_menu_logged_out'
         );
         authenticationFrame.appendChild(this.authenticationMenuLoggedOut);
         {
           // button log in
           this.buttonLogIn = document.createElement('img');
-          this.buttonLogIn.setAttribute('id', '_all_widget_button_login');
+          this.buttonLogIn.setAttribute('id', '_sidebar_widget_button_login');
           this.buttonLogIn.classList.add('logInout');
           this.buttonLogIn.src = pathAuthenticationIcon;
           this.authenticationMenuLoggedOut.appendChild(this.buttonLogIn);
@@ -339,10 +339,10 @@ export class AllWidget {
       if (this.about.html().parentElement) {
         this.panMenuSideBar.remove(this.about.html());
         this.about.dispose();
-        sideBarButton.classList.remove('_all_widget_menu_sidebar_img_selected');
+        sideBarButton.classList.remove('_sidebar_widget_menu_sidebar_img_selected');
       } else {
         this.panMenuSideBar.add('About', this.about.html());
-        sideBarButton.classList.add('_all_widget_menu_sidebar_img_selected');
+        sideBarButton.classList.add('_sidebar_widget_menu_sidebar_img_selected');
       }
     };
   }
@@ -358,10 +358,10 @@ export class AllWidget {
       if (this.helpWindow.html().parentElement) {
         this.panMenuSideBar.remove(this.helpWindow.html());
         this.helpWindow.dispose();
-        sideBarButton.classList.remove('_all_widget_menu_sidebar_img_selected');
+        sideBarButton.classList.remove('_sidebar_widget_menu_sidebar_img_selected');
       } else {
         this.panMenuSideBar.add('Help', this.helpWindow.html());
-        sideBarButton.classList.add('_all_widget_menu_sidebar_img_selected');
+        sideBarButton.classList.add('_sidebar_widget_menu_sidebar_img_selected');
       }
     };
   }
@@ -384,12 +384,12 @@ export class AllWidget {
       if (this.geocodingView.html().parentElement) {
         this.geocodingView.dispose().then(() => {
           sideBarButton.classList.remove(
-            '_all_widget_menu_sidebar_img_selected'
+            '_sidebar_widget_menu_sidebar_img_selected'
           );
         });
       } else {
         this.frame3DPlanar.appendToUI(this.geocodingView.html());
-        sideBarButton.classList.add('_all_widget_menu_sidebar_img_selected');
+        sideBarButton.classList.add('_sidebar_widget_menu_sidebar_img_selected');
       }
     };
   }
@@ -415,14 +415,14 @@ export class AllWidget {
       if (this.cityObjectModule.view.html().parentElement) {
         this.panMenuSideBar.remove(this.cityObjectModule.view.html());
         this.cityObjectModule.view.dispose();
-        sideBarButton.classList.remove('_all_widget_menu_sidebar_img_selected');
+        sideBarButton.classList.remove('_sidebar_widget_menu_sidebar_img_selected');
       } else {
         this.panMenuSideBar.add(
           'CityObject',
           this.cityObjectModule.view.html()
         );
         this.cityObjectModule.view.addListenerTo(this.frame3DPlanar.rootWebGL);
-        sideBarButton.classList.add('_all_widget_menu_sidebar_img_selected');
+        sideBarButton.classList.add('_sidebar_widget_menu_sidebar_img_selected');
       }
     };
   }
@@ -440,11 +440,11 @@ export class AllWidget {
       if (this.debug3DTilesView.html().parentElement) {
         this.panMenuSideBar.remove(this.debug3DTilesView.html());
         this.debug3DTilesView.dispose();
-        sideBarButton.classList.remove('_all_widget_menu_sidebar_img_selected');
+        sideBarButton.classList.remove('_sidebar_widget_menu_sidebar_img_selected');
       } else {
         this.debug3DTilesView.addListenerTo(this.frame3DPlanar.rootWebGL);
         this.panMenuSideBar.add('Debug 3D Tiles', this.debug3DTilesView.html());
-        sideBarButton.classList.add('_all_widget_menu_sidebar_img_selected');
+        sideBarButton.classList.add('_sidebar_widget_menu_sidebar_img_selected');
       }
     };
   }
@@ -595,7 +595,7 @@ export class AllWidget {
           this.cityObjectModule.view.removeListener();
         }
 
-        sideBarButton.classList.remove('_all_widget_menu_sidebar_img_selected');
+        sideBarButton.classList.remove('_sidebar_widget_menu_sidebar_img_selected');
       } else {
         // rebuild rootDocument
         clearChildren(rootDocumentHtml);
@@ -608,7 +608,7 @@ export class AllWidget {
         );
         rootDocumentHtml.appendChild(parentHtmlFeature);
         this.panMenuSideBar.add('Document', rootDocumentHtml);
-        sideBarButton.classList.add('_all_widget_menu_sidebar_img_selected');
+        sideBarButton.classList.add('_sidebar_widget_menu_sidebar_img_selected');
 
         // so city object can be select by cityobject module
         this.cityObjectModule.view.addListenerTo(this.frame3DPlanar.rootWebGL);
@@ -639,13 +639,13 @@ export class AllWidget {
       if (this.guidedTourController.guidedTour.html().parentElement) {
         this.panMenuSideBar.remove(this.guidedTourController.guidedTour.html());
         this.guidedTourController.guidedTour.dispose();
-        sideBarButton.classList.remove('_all_widget_menu_sidebar_img_selected');
+        sideBarButton.classList.remove('_sidebar_widget_menu_sidebar_img_selected');
       } else {
         this.panMenuSideBar.add(
           'Guided Tour',
           this.guidedTourController.guidedTour.html()
         );
-        sideBarButton.classList.add('_all_widget_menu_sidebar_img_selected');
+        sideBarButton.classList.add('_sidebar_widget_menu_sidebar_img_selected');
       }
     };
   }
@@ -663,13 +663,13 @@ export class AllWidget {
       if (this.cameraPositioner.html().parentElement) {
         this.panMenuSideBar.remove(this.cameraPositioner.html());
         this.cameraPositioner.dispose();
-        sideBarButton.classList.remove('_all_widget_menu_sidebar_img_selected');
+        sideBarButton.classList.remove('_sidebar_widget_menu_sidebar_img_selected');
       } else {
         this.panMenuSideBar.add(
           'Camera Positioner',
           this.cameraPositioner.html()
         );
-        sideBarButton.classList.add('_all_widget_menu_sidebar_img_selected');
+        sideBarButton.classList.add('_sidebar_widget_menu_sidebar_img_selected');
       }
     };
   }
@@ -688,10 +688,10 @@ export class AllWidget {
       if (this.temporalModule.view.html().parentElement) {
         this.panMenuSideBar.remove(this.temporalModule.view.html());
         this.temporalModule.view.dispose();
-        sideBarButton.classList.remove('_all_widget_menu_sidebar_img_selected');
+        sideBarButton.classList.remove('_sidebar_widget_menu_sidebar_img_selected');
       } else {
         this.panMenuSideBar.add('Temporal', this.temporalModule.view.html());
-        sideBarButton.classList.add('_all_widget_menu_sidebar_img_selected');
+        sideBarButton.classList.add('_sidebar_widget_menu_sidebar_img_selected');
       }
     };
   }
@@ -707,10 +707,10 @@ export class AllWidget {
       if (this.layerChoice.html().parentElement) {
         this.panMenuSideBar.remove(this.layerChoice.html());
         this.layerChoice.dispose();
-        sideBarButton.classList.remove('_all_widget_menu_sidebar_img_selected');
+        sideBarButton.classList.remove('_sidebar_widget_menu_sidebar_img_selected');
       } else {
         this.panMenuSideBar.add('Layer Choice', this.layerChoice.html());
-        sideBarButton.classList.add('_all_widget_menu_sidebar_img_selected');
+        sideBarButton.classList.add('_sidebar_widget_menu_sidebar_img_selected');
       }
     };
   }
@@ -731,10 +731,10 @@ export class AllWidget {
       if (this.slideShow.html().parentElement) {
         this.panMenuSideBar.remove(this.slideShow.html());
         this.slideShow.dispose();
-        sideBarButton.classList.remove('_all_widget_menu_sidebar_img_selected');
+        sideBarButton.classList.remove('_sidebar_widget_menu_sidebar_img_selected');
       } else {
         this.panMenuSideBar.add('Layer Choice', this.slideShow.html());
-        sideBarButton.classList.add('_all_widget_menu_sidebar_img_selected');
+        sideBarButton.classList.add('_sidebar_widget_menu_sidebar_img_selected');
         this.slideShow.addListeners();
         this.frame3DPlanar.scene.add(this.slideShow.plane);
         this.frame3DPlanar.itownsView.notifyChange();
@@ -746,7 +746,7 @@ export class AllWidget {
 class PanMenuSideBar {
   constructor() {
     this.rootHtml = document.createElement('div');
-    this.rootHtml.classList.add('_all_widget_pan_menu_sidebar');
+    this.rootHtml.classList.add('_sidebar_widget_pan_menu_sidebar');
 
     this.containers = [];
   }
@@ -754,7 +754,7 @@ class PanMenuSideBar {
   add(label, el) {
     const newContainer = document.createElement('div');
     newContainer.innerHTML = label;
-    newContainer.classList.add('_all_widget_pan_menu_sidebar_container');
+    newContainer.classList.add('_sidebar_widget_pan_menu_sidebar_container');
     newContainer.appendChild(el);
     this.containers.push(newContainer);
     this.rootHtml.appendChild(newContainer);
