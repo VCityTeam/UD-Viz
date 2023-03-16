@@ -134,6 +134,7 @@ const html = function (folderPath, port) {
         )
         .then(async () => {
           const delay = (duration) => {
+            console.log('wait ', duration, ' ms');
             return new Promise((resolve) => {
               setTimeout(resolve, duration);
             });
@@ -141,25 +142,26 @@ const html = function (folderPath, port) {
 
           // since some request can generate other request (load a config to perform another request for example)
           // we are waiting for all current request to finish then wait a bit and do that recursively
+          const timeToWaitNewAsyncXHR = 50;
           const waitRequest = async () => {
-            console.log('START WAITING REQUEST');
-            await pendingXHR.waitForAllXhrFinished();
-            console.log('XHR REQUEST FINISHED');
-            console.log('WAIT 10 ms');
-            await delay(10);
-            console.log('CHECK IF NEW PENDING REQUEST');
-            // const iframes = await page.$$('iframe');
-            // for (let index = 0; index < iframes.length; index++) {
-            //   const iframe = iframes[index];
-            //   console.log(iframe);
-            // }
-            if (pendingXHR.pendingXhrCount() > 0) {
-              console.log('THERE ARE NEW PENDING REQUEST');
-              await waitRequest(); // recursive
+            const pendingCount = pendingXHR.pendingXhrCount();
+            if (pendingCount) {
+              console.log('WAITING ', pendingCount, ' XHR');
+              await pendingXHR.waitForAllXhrFinished();
+              console.log('XHR FINISHED');
+              await delay(timeToWaitNewAsyncXHR);
+              console.log('CHECK IF NEW PENDING XHR');
+              // const iframes = await page.$$('iframe');
+              // for (let index = 0; index < iframes.length; index++) {
+              //   const iframe = iframes[index];
+              //   console.log(iframe);
+              // }
+              if (pendingXHR.pendingXhrCount() > 0) {
+                await waitRequest(); // recursive
+              }
             }
-            console.log('THERE ARE NOT NEW PENDING REQUEST');
           };
-
+          await delay(timeToWaitNewAsyncXHR);
           await waitRequest();
           console.log(currentFile.name, ' test succeed');
           resolve();
