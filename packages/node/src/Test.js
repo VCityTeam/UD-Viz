@@ -123,46 +123,86 @@ const html = function (folderPath, port) {
     if (fileFormat != 'html') return Promise.resolve();
 
     return new Promise((resolve) => {
-      console.log('\n\nstart testing html ', currentFile.name);
+      console.log('\n\nSTART TESTING', currentFile.name);
 
       const pendingXHR = new PendingXHR(page);
+
+      const intervalLog = setInterval(() => {
+        console.log(pendingXHR.pendingXhrCount(), ' PENDING XHR');
+      }, 5000);
 
       // page connect to html file
       page
         .goto(
-          'http://localhost:' + port + '/' + folderPath + '/' + currentFile.name
+          'http://localhost:' +
+            port +
+            '/' +
+            folderPath +
+            '/' +
+            currentFile.name,
+          { waitUntil: 'domcontentloaded', timeout: 30000 } // waitUntil: "networkIdle0" is not trigger when a canvas is rendering...
         )
         .then(async () => {
-          const delay = (duration) => {
-            console.log('wait ', duration, ' ms');
-            return new Promise((resolve) => {
-              setTimeout(resolve, duration);
+          console.log('PAGE CONNECTED TO ', currentFile.name);
+
+          const waitForNewXHR = async () => {
+            // this minTime Promise is to let time to async page process to generate new XHR
+            const minTimePromise = new Promise((resolve) => {
+              const minTimeToWaitNewAsyncXHR = 500; // 500ms
+              setTimeout(resolve, minTimeToWaitNewAsyncXHR);
+            });
+
+            // code take from there => https://stackoverflow.com/questions/46160929/puppeteer-wait-for-all-images-to-load-then-take-screenshot
+            console.log('wait for element in page to load');
+            await page.evaluate(async () => {
+              // wait images
+              const selectors = Array.from(document.querySelectorAll('img'));
+              await Promise.all(
+                selectors.map((img) => {
+                  if (img.complete) return;
+                  return new Promise((resolve, reject) => {
+                    img.addEventListener('load', resolve);
+                    img.addEventListener('error', reject);
+                  });
+                })
+              );
+
+              // wait iframe
+              const iframes = Array.from(document.querySelectorAll('iframe'));
+              await Promise.all(
+                iframes.map((iframe) => {
+                  if (iframe.contentWindow.document.readyState === 'complete')
+                    return;
+                  return new Promise((resolve, reject) => {
+                    iframe.addEventListener('load', resolve);
+                    iframe.addEventListener('error', reject);
+                  });
+                })
+              );
+            });
+            console.log('element loaded');
+
+            return minTimePromise.catch((reason) => {
+              throw new Error('Error while waiting new XHR ', reason);
             });
           };
 
           // since some request can generate other request (load a config to perform another request for example)
-          // we are waiting for all current request to finish then wait a bit and do that recursively
-          const timeToWaitNewAsyncXHR = 50;
-          const waitRequest = async () => {
+          // we are waiting for all current request to finish then wait new XHR and do that recursively
+
+          const waitAllXHR = async () => {
+            await pendingXHR.waitForAllXhrFinished();
+            await waitForNewXHR();
             const pendingCount = pendingXHR.pendingXhrCount();
             if (pendingCount) {
               console.log('WAITING ', pendingCount, ' XHR');
-              await pendingXHR.waitForAllXhrFinished();
-              console.log('XHR FINISHED');
-              await delay(timeToWaitNewAsyncXHR);
-              console.log('CHECK IF NEW PENDING XHR');
-              // const iframes = await page.$$('iframe');
-              // for (let index = 0; index < iframes.length; index++) {
-              //   const iframe = iframes[index];
-              //   console.log(iframe);
-              // }
-              if (pendingXHR.pendingXhrCount() > 0) {
-                await waitRequest(); // recursive
-              }
+              await waitAllXHR();
             }
           };
-          await delay(timeToWaitNewAsyncXHR);
-          await waitRequest();
+
+          await waitAllXHR();
+
+          clearInterval(intervalLog);
           console.log(currentFile.name, ' test succeed');
           resolve();
         });

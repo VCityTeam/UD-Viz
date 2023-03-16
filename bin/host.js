@@ -53,6 +53,7 @@ app
         // if can send message to parent notify it
         if (process.send) {
           process.send(Constant.MESSAGE.READY);
+          console.log('Host is ready');
         }
       });
   });
