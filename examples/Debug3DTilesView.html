@@ -60,14 +60,6 @@
         parent.appendChild(debug3dTilesWindow.html());
         debug3dTilesWindow.addListenerTo(frame3DPlanar.rootWebGL);
 
-        const closeButton = document.createElement('button');
-        closeButton.innerHTML = 'Close';
-        closeButton.onclick = () => {
-          debug3dTilesWindow.dispose();
-          parent.remove();
-        };
-        parent.appendChild(closeButton);
-
         frame3DPlanar.appendToUI(parent);
       });
     </script>

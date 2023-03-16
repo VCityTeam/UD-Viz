@@ -50,14 +50,6 @@
         parent.style.width = 'fit-content';
         parent.appendChild(slideShow.html());
 
-        const closeButton = document.createElement('button');
-        closeButton.innerHTML = 'Close';
-        closeButton.onclick = () => {
-          slideShow.dispose();
-          parent.remove();
-        };
-        parent.appendChild(closeButton);
-
         frame3DPlanar.appendToUI(parent);
         slideShow.addListeners();
         frame3DPlanar.scene.add(slideShow.plane);

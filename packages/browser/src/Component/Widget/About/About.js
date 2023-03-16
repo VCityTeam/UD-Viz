@@ -1,5 +1,4 @@
 import jQuery from 'jquery';
-import './About.css';
 
 /**
  * Adds an "About" window that can be open/closed with a button

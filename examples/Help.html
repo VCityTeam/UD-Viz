@@ -14,13 +14,6 @@
         (config) => {
           const help = new udvizBrowser.Widget.HelpWindow(config);
           document.body.appendChild(help.html());
-
-          const closeButton = document.createElement('button');
-          closeButton.innerHTML = 'Close';
-          closeButton.onclick = () => {
-            help.dispose();
-          };
-          document.body.appendChild(closeButton);
         }
       );
     </script>
