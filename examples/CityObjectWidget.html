@@ -70,14 +70,6 @@
 
         cityObjectModule.view.addListenerTo(frame3DPlanar.rootWebGL);
 
-        const closeButton = document.createElement('button');
-        closeButton.innerHTML = 'Close';
-        closeButton.onclick = () => {
-          cityObjectModule.view.dispose();
-          parent.remove();
-        };
-        parent.appendChild(closeButton);
-
         frame3DPlanar.appendToUI(parent);
       });
     </script>

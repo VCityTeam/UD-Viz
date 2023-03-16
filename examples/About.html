@@ -14,13 +14,6 @@
         (config) => {
           const about = new udvizBrowser.Widget.About(config);
           document.body.appendChild(about.html());
-
-          const closeButton = document.createElement('button');
-          closeButton.innerHTML = 'Close';
-          closeButton.onclick = () => {
-            about.dispose();
-          };
-          document.body.appendChild(closeButton);
         }
       );
     </script>

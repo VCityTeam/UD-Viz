@@ -53,13 +53,6 @@
         parent.style.width = 'fit-content';
         parent.appendChild(cameraPosition.html());
         frame3DPlanar.appendToUI(parent);
-
-        const closeButton = document.createElement('button');
-        closeButton.innerHTML = 'Close';
-        closeButton.onclick = () => {
-          cameraPosition.dispose();
-        };
-        frame3DPlanar.appendToUI(closeButton);
       });
     </script>
   </body>

@@ -72,14 +72,6 @@
         );
 
         frame3DPlanar.appendToUI(temporalModule.view.html());
-
-        const closeButton = document.createElement('button');
-        closeButton.innerHTML = 'Close';
-        frame3DPlanar.appendToUI(closeButton);
-
-        closeButton.onclick = () => {
-          temporalModule.view.dispose();
-        };
       });
     </script>
   </body>

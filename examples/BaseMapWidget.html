@@ -45,13 +45,6 @@
         );
 
         frame3DPlanar.appendToUI(baseMap.html());
-
-        const closeButton = document.createElement('button');
-        closeButton.innerHTML = 'Close';
-        closeButton.onclick = () => {
-          baseMap.dispose();
-        };
-        frame3DPlanar.appendToUI(closeButton);
       });
     </script>
   </body>

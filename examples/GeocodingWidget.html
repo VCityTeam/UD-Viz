@@ -66,13 +66,6 @@
         );
 
         frame3DPlanar.appendToUI(geocodingView.html());
-
-        const closeButton = document.createElement('button');
-        closeButton.innerText = 'Close';
-        closeButton.onclick = () => {
-          geocodingView.dispose();
-        };
-        frame3DPlanar.appendToUI(closeButton);
       });
     </script>
   </body>
