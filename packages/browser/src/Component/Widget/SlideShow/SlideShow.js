@@ -85,8 +85,8 @@ export class SlideShow {
      * List of textures with data
      *
       @type {TextureFile[]} */
-    this.texturesFiles = null;
-    this.iCurrentTextureFile = 0;
+    this.textureFiles = null;
+    this.currentTextureFile = null;
 
     /**
      * if true the application update its view3D eachFrame
@@ -175,7 +175,7 @@ export class SlideShow {
   }
 
   /**
-   * It loads the textures and videos of the slideshow and stores them in the `this.texturesFiles` array
+   * It loads the textures and videos of the slideshow and stores them in the `this.textureFiles` array
    *
    * @param {number} slideIndex - the index of the slideshow in the config file
    */
@@ -185,11 +185,10 @@ export class SlideShow {
     const slide = conf[Object.keys(conf)[0]][slideIndex];
     const folder = slide.folder;
     const diapos = slide.diapositives;
-    this.texturesFiles = [];
-    this.iCurrentTextureFile = 0;
+    this.textureFiles = [];
 
     for (let i = 0; i < diapos.length; i++) {
-      this.texturesFiles.push(this.createDefaultTextureFile(i));
+      this.textureFiles.push(this.createDefaultTextureFile(i));
       const xhr = new XMLHttpRequest();
       xhr.open('GET', folder.concat('/'.concat(diapos[i])));
 
@@ -202,7 +201,7 @@ export class SlideShow {
               // Rotate the texture with
               texture.center.set(0.5, 0.5);
               texture.rotation = this.textureRotation;
-              this.texturesFiles[i] = {
+              this.textureFiles[i] = {
                 index: i,
                 name: diapos[i],
                 size: {
@@ -227,7 +226,7 @@ export class SlideShow {
             // Rotate the texture with
             videoTexture.center.set(0.5, 0.5);
             videoTexture.rotation = this.textureRotation;
-            this.texturesFiles[i] = {
+            this.textureFiles[i] = {
               index: i,
               name: diapos[i],
               size: {
@@ -265,9 +264,9 @@ export class SlideShow {
         return a.name.localeCompare(b.name);
       });
 
-      this.texturesFiles = [];
+      this.textureFiles = [];
       for (let i = 0; i < files.length; i++) {
-        this.texturesFiles.push(this.createDefaultTextureFile(i));
+        this.textureFiles.push(this.createDefaultTextureFile(i));
         const file = files[i];
         if (file) {
           try {
@@ -281,7 +280,7 @@ export class SlideShow {
                     // Rotate the texture with
                     texture.center.set(0.5, 0.5);
                     texture.rotation = this.textureRotation;
-                    this.texturesFiles[i] = {
+                    this.textureFiles[i] = {
                       index: i,
                       name: file.name,
                       texture: texture,
@@ -306,7 +305,7 @@ export class SlideShow {
                   // Rotate the video texture with
                   videoTexture.center.set(0.5, 0.5);
                   videoTexture.rotation = this.textureRotation;
-                  this.texturesFiles[i] = {
+                  this.textureFiles[i] = {
                     index: i,
                     name: file.name,
                     texture: videoTexture,
@@ -638,7 +637,7 @@ export class SlideShow {
     if (!this.plane) return;
 
     const newIndexTextureFile =
-      (this.iCurrentTextureFile + 1) % this.texturesFiles.length; // Loop
+      (this.iCurrentTextureFile + 1) % this.textureFiles.length; // Loop
 
     this.setTexture(newIndexTextureFile);
 
@@ -652,7 +651,7 @@ export class SlideShow {
 
     const newIndexTextureFile =
       this.iCurrentTextureFile - 1 < 0
-        ? this.texturesFiles.length - 1
+        ? this.textureFiles.length - 1
         : this.iCurrentTextureFile - 1;
 
     this.setTexture(newIndexTextureFile);
@@ -788,9 +787,9 @@ export class SlideShow {
       this.notifyValue = false;
     }
 
-    this.texturesFiles.forEach((tf) => {
+    this.textureFiles.forEach((tf) => {
       if (tf.index == iText) {
-        this.iCurrentTextureFile = tf.index;
+        this.currentTextureFile = tf;
         if (tf.video) {
           tf.video.play();
           this.notifyValue = true;
@@ -907,8 +906,8 @@ export class SlideShow {
     return this.rootHtml.outerHTML;
   }
 
-  get currentTextureFile() {
-    return this.texturesFiles[this.iCurrentTextureFile];
+  get iCurrentTextureFile() {
+    return this.currentTextureFile.index;
   }
 
   // INPUTS ELEMENTS SETTERS
