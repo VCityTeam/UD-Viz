@@ -641,8 +641,6 @@ export class SlideShow {
 
     this.setTexture(newIndexTextureFile);
 
-    this.aspectRatioCheckboxDOM.dispatchEvent(new Event('change'));
-
     this.itownsView.notifyChange();
   }
 
@@ -655,8 +653,6 @@ export class SlideShow {
         : this.iCurrentTextureFile - 1;
 
     this.setTexture(newIndexTextureFile);
-
-    this.aspectRatioCheckboxDOM.dispatchEvent(new Event('change'));
 
     this.itownsView.notifyChange();
   }
@@ -800,6 +796,7 @@ export class SlideShow {
     this.currentTexture = this.currentTextureFile.texture;
     this.modifyPlane();
     this.itownsView.notifyChange();
+    this.aspectRatioCheckboxDOM.dispatchEvent(new Event('change'));
   }
 
   /** Modify `this.plane` {THREE.Mesh} */
