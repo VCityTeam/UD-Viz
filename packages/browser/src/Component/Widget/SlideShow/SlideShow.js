@@ -257,6 +257,8 @@ export class SlideShow {
 
     this.dropListener = (event) => {
       event.preventDefault();
+      // Setting the value of the select element to null.
+      this.slideSelectDOM.value = null;
       if (!this.plane) return;
       const files = Array.from(event.dataTransfer.files);
 
@@ -547,7 +549,7 @@ export class SlideShow {
         slideSelect.appendChild(option);
       }
       this.callbacksHTMLEl.push({
-        event: 'change',
+        event: 'input',
         id: slideSelect.id,
         cb: function (event) {
           this.setSlideshowInConfig(event.target.value);
@@ -897,6 +899,10 @@ export class SlideShow {
 
   get loopCheckboxDOM() {
     return findChildByID(this.rootHtml, this.loopSlideShowCheckboxID);
+  }
+
+  get slideSelectDOM() {
+    return findChildByID(this.rootHtml, this.slideSelectID);
   }
 
   get innerContentHtml() {
