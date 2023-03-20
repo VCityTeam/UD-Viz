@@ -43,16 +43,13 @@ export class SlideShow {
    * @param {number} configSlideShow.durationLoopInSec - Seconds between two slides
    * @param {number} configSlideShow.textureRotation - Rotation in degrees of textures
    * @param {import('itowns').Extent} extent - The extent of the widget.
-   * @param {import('../../InputManager').InputManager} inputManager - the input manager of the application
    */
-  constructor(itownsView, configSlideShow, extent, inputManager) {
+  constructor(itownsView, configSlideShow, extent) {
     this.configSlideShow = configSlideShow || null;
     /** @type {import('itowns').Extent} */
     this.extent = extent;
     /** @type {import('itowns').PlanarView} */
     this.itownsView = itownsView;
-    /** @type {import("../../InputManager").InputManager} */
-    this.inputManager = inputManager;
 
     /**
      * Root html of wlideshow view 
@@ -146,10 +143,10 @@ export class SlideShow {
   }
 
   removeListeners() {
-    this.inputManager.removeInputListener(this.hidePlaneListener);
-    this.inputManager.removeInputListener(this.hideUIListener);
-    this.inputManager.removeInputListener(this.previousListener);
-    this.inputManager.removeInputListener(this.nextListener);
+    window.removeEventListener(this.hidePlaneListener);
+    window.removeEventListener(this.hideUIListener);
+    window.removeEventListener(this.previousListener);
+    window.removeEventListener(this.nextListener);
 
     document.body.removeEventListener('drop', this.dropListener);
     document.body.removeEventListener('dragover', this.dragOverListener);
@@ -594,36 +591,38 @@ export class SlideShow {
    * Add event listeners to input
    */
   initInputListener() {
-    this.hidePlaneListener = () => {
+    this.hidePlaneListener = (event) => {
+      if (event.key != 'h') return;
       if (!this.plane) return;
       this.plane.visible = !this.plane.visible;
       this.itownsView.notifyChange();
     };
 
     // Hide and show the geometryPlane
-    this.inputManager.addKeyInput('h', 'keydown', this.hidePlaneListener);
+    window.addEventListener('keydown', this.hidePlaneListener);
 
-    this.nextListener = () => {
+    this.nextListener = (event) => {
+      if (event.key != 'ArrowRight') return;
       this.nextSlide();
       this.restartLoopSlideShow();
     };
 
     // Change the next slide
-    this.inputManager.addKeyInput('ArrowRight', 'keydown', this.nextListener);
+    window.addEventListener('keydown', this.nextListener);
 
-    this.previousListener = () => {
+    this.previousListener = (event) => {
+      if (event.key != 'ArrowLeft') return;
+
       this.previousSlide();
       this.restartLoopSlideShow();
     };
 
     // Change the previous slide
-    this.inputManager.addKeyInput(
-      'ArrowLeft',
-      'keydown',
-      this.previousListener
-    );
+    window.addEventListener('keydown', this.previousListener);
 
-    this.hideUIListener = () => {
+    this.hideUIListener = (event) => {
+      if (event.key != 's') return;
+
       if (this.rootHtml.style.display == 'none') {
         this.rootHtml.style.display = '';
       } else {
@@ -631,7 +630,8 @@ export class SlideShow {
       }
     };
 
-    this.inputManager.addKeyInput('s', 'keydown', this.hideUIListener);
+    /* Hide the roothtml without dispose the widget */
+    window.addEventListener('keydown', this.hideUIListener);
   }
 
   nextSlide() {
