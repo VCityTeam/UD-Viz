@@ -1,7 +1,6 @@
 import * as itowns from 'itowns';
 import {
   checkParentChild,
-  InputManager,
   RequestService,
   THREEUtil,
   clearChildren,
@@ -753,8 +752,7 @@ export class SideBarWidget {
     this.slideShow = new Widget.SlideShow(
       this.frame3DPlanar.itownsView,
       configSlideShow,
-      this.extent,
-      new InputManager()
+      this.extent
     );
 
     const sideBarButton = document.createElement('img');

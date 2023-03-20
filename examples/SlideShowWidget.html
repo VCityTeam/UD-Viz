@@ -48,12 +48,10 @@
         frame3DPlanar.camera.rotation.set(0, 0, 0);
 
         // /// SLIDESHOW MODULE
-        const inputManager = new udvizBrowser.InputManager(); // app don't have an input manager create one here
         const slideShow = new udvizBrowser.Widget.SlideShow(
           frame3DPlanar.getItownsView(),
           configs['slide_show'],
-          extent,
-          inputManager
+          extent
         );
         const parent = document.createElement('div');
         parent.style.backgroundColor = 'white';
