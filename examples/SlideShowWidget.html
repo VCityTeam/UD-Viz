@@ -32,10 +32,20 @@
           parseInt(configs['extent_lyon'].north)
         );
 
-        const frame3DPlanar = new udvizBrowser.Frame3DPlanar(
-          extent,
-          configs['frame3D_planars'][2]
-        );
+        const frame3DPlanar = new udvizBrowser.Frame3DPlanar(extent, {
+          hasItownsControls: true,
+        });
+
+        const fitExtent = () => {
+          udvizBrowser.THREEUtil.cameraFitRectangle(
+            frame3DPlanar.camera,
+            new udvizBrowser.THREE.Vector2(extent.west, extent.south),
+            new udvizBrowser.THREE.Vector2(extent.east, extent.north)
+          );
+          frame3DPlanar.itownsView.notifyChange(frame3DPlanar.camera);
+        };
+        fitExtent();
+        frame3DPlanar.camera.rotation.set(0, 0, 0);
 
         // /// SLIDESHOW MODULE
         const inputManager = new udvizBrowser.InputManager(); // app don't have an input manager create one here
