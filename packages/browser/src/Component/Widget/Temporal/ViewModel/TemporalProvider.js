@@ -72,28 +72,28 @@ export class TemporalProvider {
     this.tilesManager.registerStyle(
       'noTransaction',
       new CityObjectStyle({
-        materialProps: { opacity: 1.0, color: 0xffffff },
+        materialProps: { opacity: 0.1, color: 0xffffff, alphaTest: 0.3 },
       })
     ); // White
 
     this.tilesManager.registerStyle(
       'creation',
       new CityObjectStyle({
-        materialProps: { opacity: 0.6, color: 0x009900 },
+        materialProps: { opacity: 1, color: 0x009900 },
       })
     ); // Green
 
     this.tilesManager.registerStyle(
       'demolition',
       new CityObjectStyle({
-        materialProps: { opacity: 0.6, color: 0xff0000 },
+        materialProps: { opacity: 1, color: 0xff0000 },
       })
     ); // Red
 
     this.tilesManager.registerStyle(
       'modification',
       new CityObjectStyle({
-        materialProps: { opacity: 0.6, color: 0xffd700 },
+        materialProps: { opacity: 1, color: 0xffd700 },
       })
     ); // Yellow
 
@@ -106,14 +106,14 @@ export class TemporalProvider {
     this.tilesManager.registerStyle(
       'union',
       new CityObjectStyle({
-        materialProps: { opacity: 0.6, color: 'blue' },
+        materialProps: { opacity: 1, color: 'blue' },
       })
     ); // blue
 
     this.tilesManager.registerStyle(
       'division',
       new CityObjectStyle({
-        materialProps: { opacity: 0.6, color: 'orange' },
+        materialProps: { opacity: 1, color: 'orange' },
       })
     ); // orange
   }
