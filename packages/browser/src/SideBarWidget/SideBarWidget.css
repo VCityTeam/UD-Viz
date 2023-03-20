@@ -1,8 +1,8 @@
 :root {
-  --sidebar_widget-color-one: #e5007b;
-  --sidebar-widget-color-two: whitesmoke;
-  --sidebar-widget-color-three: rgba(1, 1, 1, 0.3);
-  --sidebar-widget-color-four: #63e500;
+  --sidebar_widget-color-one: black;
+  --sidebar-widget-color-two: #838383;
+  --sidebar-widget-color-three: rgba(255, 255, 255, 0.3);
+  --sidebar-widget-color-four: white;
 
   --sidebar-widget-sidebar-width: 60px;
 }
@@ -27,11 +27,11 @@
 }
 
 ._sidebar_widget_menu_sidebar_img_selected {
-  background-color: var(--sidebar-widget-color-four);
+  background-color: var(--sidebar-widget-color-two);
 }
 
 .ud-viz-label {
-  color: var(--sidebar-widget-color-two);
+  color: var(--sidebar-widget-color-four);
   font-size: 15px;
   font-weight: bold;
   text-align: center;
@@ -42,7 +42,7 @@
 ._sidebar_widget_pan_menu_sidebar {
   width: 400px;
   position: absolute;
-  background-color: var(--sidebar-widget-color-four);
+  background-color: var(--sidebar-widget-color-two);
   padding-left: var(--sidebar-widget-sidebar-width);
   left: 0;
   top: 0;
