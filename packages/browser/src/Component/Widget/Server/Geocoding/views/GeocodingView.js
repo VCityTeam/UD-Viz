@@ -61,22 +61,11 @@ export class GeocodingView {
   }
 
   /**
-   * Destroys the view.
+   * Dispose the view.
    */
   dispose() {
-    return new Promise((resolve) => {
-      const input = this.searchInputElement;
-      input.style.transition = 'width 0.3s ease-out, opacity 0.4s ease-out';
-      input.style.width = '0';
-      input.style.opacity = '0';
-      input.ontransitionend = (event) => {
-        if (event.propertyName === 'opacity') {
-          this.rootHtml.remove();
-          this.removePins();
-          resolve();
-        }
-      };
-    });
+    this.rootHtml.remove();
+    this.removePins();
   }
 
   /**

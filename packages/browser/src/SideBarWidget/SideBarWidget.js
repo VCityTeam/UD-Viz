@@ -388,11 +388,10 @@ export class SideBarWidget {
 
     sideBarButton.onclick = () => {
       if (this.geocodingView.html().parentElement) {
-        this.geocodingView.dispose().then(() => {
-          sideBarButton.classList.remove(
-            '_sidebar_widget_menu_sidebar_img_selected'
-          );
-        });
+        this.geocodingView.dispose();
+        sideBarButton.classList.remove(
+          '_sidebar_widget_menu_sidebar_img_selected'
+        );
       } else {
         this.frame3DPlanar.appendToUI(this.geocodingView.html());
         sideBarButton.classList.add(
