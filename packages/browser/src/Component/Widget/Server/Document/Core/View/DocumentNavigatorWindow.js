@@ -1,15 +1,12 @@
 import { DocumentProvider } from '../ViewModel/DocumentProvider';
 import { Document } from '../Model/Document';
 import { DocumentSearchFilter } from '../ViewModel/DocumentSearchFilter';
-import { findChildByID } from '../../../../../HTMLUtil';
+import {
+  createDateIntervalInput,
+  createDisplayableContainer,
+  createLabelInput,
+} from '../../../../../HTMLUtil';
 
-/**
- * @typedef {object} DocumentNavigatorExtension
- * @property {string} type 'panel | 'button'
- * @property {string} [container] The container
- * @property {string} id ID
- * @property {import('../DocumentModule').cbNavigatorOptionsExtension} callback Callback on extension options
- */
 /**
  * @class Represents the navigator window for the documents. It contains the filters on
  * the fields of a document.
@@ -20,7 +17,7 @@ export class DocumentNavigatorWindow {
 
     /** @type {HTMLElement} */
     this.rootHtml = document.createElement('div');
-    this.rootHtml.innerHTML = this.innerContentHtml;
+    this.initHtml();
 
     /**
      * The filter corresponding to the research fields.
@@ -28,19 +25,6 @@ export class DocumentNavigatorWindow {
      * @type {DocumentSearchFilter}
      */
     this.searchFilter = new DocumentSearchFilter();
-
-    /**
-     * Represents a list of extensions. An extension can either be a button or
-     * a panel.
-     *
-     * @type {Object<string, DocumentNavigatorExtension>}
-     */
-    this.extensions = {};
-
-    // Add extensions
-    for (const extension of Object.values(this.extensions)) {
-      this._createExtensionElement(extension);
-    }
 
     // init callbacks
     this.inputFormElement.onsubmit = () => {
@@ -71,6 +55,90 @@ export class DocumentNavigatorWindow {
     this.rootHtml.remove();
   }
 
+  initHtml() {
+    // document list container
+    const documentList = document.createElement('div');
+    this.rootHtml.appendChild(documentList);
+    {
+      // label document count
+      const labelDocCount = document.createElement('h3');
+      {
+        this.docCountElement = document.createElement('span');
+        labelDocCount.appendChild(this.docCountElement);
+        labelDocCount.innerText = 'Document(s)';
+      }
+
+      // list
+      const listContainer = document.createElement('div');
+      {
+        this.documentListElement = document.createElement('ul');
+        listContainer.appendChild(this.documentListElement);
+      }
+    }
+
+    // document filter container
+    const documentFilters = document.createElement('div');
+    this.rootHtml.appendChild(documentFilters);
+    {
+      // filter displayable element
+      const { parentFilters, containerFilters } =
+        createDisplayableContainer('Filters');
+      documentFilters.appendChild(parentFilters);
+      {
+        const { parentAttributes, containerAttributes } =
+          createDisplayableContainer('Attributes');
+        containerFilters.appendChild(parentAttributes);
+        this.inputFormElement = containerAttributes;
+
+        {
+          // keywords
+          const { parentKeyWords, inputKeyWords } = createLabelInput(
+            'Keywords',
+            'text'
+          );
+          containerAttributes.appendChild(parentKeyWords);
+          this.inputKeywordsElement = inputKeyWords;
+
+          // publication date
+          const {
+            publicationParent,
+            publicationInputStart,
+            publicationInputEnd,
+          } = createDateIntervalInput('Publication Date');
+          containerAttributes.appendChild(publicationParent);
+          this.inputPubDateStartElement = publicationInputStart;
+          this.inputPubDateEndElement = publicationInputEnd;
+
+          // ref date
+          const { refParent, refInputStart, refInputEnd } =
+            createDateIntervalInput('Refering Date');
+          containerAttributes.appendChild(refParent);
+          this.inputRefDateStartElement = refInputStart;
+          this.inputRefDateEndElement = refInputEnd;
+
+          // source
+          const { parentSource, inputSource } = createLabelInput(
+            'Source',
+            'text'
+          );
+          containerAttributes.appendChild(parentSource);
+          this.inputSourceElement = inputSource;
+
+          // right holder
+          const { parentRightsHolder, inputRightsHolder } = createLabelInput(
+            'Rights holder',
+            'text'
+          );
+          containerAttributes.appendChild(parentRightsHolder);
+          this.inputRightsHolderElement = inputRightsHolder;
+
+          // clear button
+          this.clearButtonElement = document.createElement('button');
+        }
+      }
+    }
+  }
+
   get innerContentHtml() {
     return /* html*/ `
       <div class="box-section">
@@ -79,11 +147,9 @@ export class DocumentNavigatorWindow {
         </h3>
         <div class="documents-list">
           <ul id="${this.documentListId}">
-
           </ul>
         </div>
         <div data-ext-container-default="button">
-
         </div>
       </div>
       <div class="box-section">
@@ -91,7 +157,6 @@ export class DocumentNavigatorWindow {
         <label for="doc-filters-spoiler" class="section-title">Filters</label>
         <div class="spoiler-box" id="${this.inputFormId}">
           <div data-ext-container="filter">
-
           </div>
           <input type="checkbox" class="spoiler-check" id="doc-search-spoiler">
           <label for="doc-search-spoiler" class="subsection-title">Attributes</label>
@@ -118,8 +183,7 @@ export class DocumentNavigatorWindow {
           </form>
         </div>
       </div>
-      <div data-ext-container="bottom" data-ext-container-default="div">
-      
+      <div data-ext-container="bottom" data-ext-container-default="div">     
       </div>
     `;
   }
@@ -234,91 +298,91 @@ export class DocumentNavigatorWindow {
   // //////////
   // // GETTERS
 
-  get inputFormId() {
-    return `document_navigator_form`;
-  }
+  // get inputFormId() {
+  //   return `document_navigator_form`;
+  // }
 
-  get inputFormElement() {
-    return findChildByID(this.rootHtml, this.inputFormId);
-  }
+  // get inputFormElement() {
+  //   return findChildByID(this.rootHtml, this.inputFormId);
+  // }
 
-  get clearButtonId() {
-    return `document_navigator_button_clear`;
-  }
+  // get clearButtonId() {
+  //   return `document_navigator_button_clear`;
+  // }
 
-  get clearButtonElement() {
-    return findChildByID(this.rootHtml, this.clearButtonId);
-  }
+  // get clearButtonElement() {
+  //   return findChildByID(this.rootHtml, this.clearButtonId);
+  // }
 
-  get documentListId() {
-    return `document_navigator_document_list`;
-  }
+  // get documentListId() {
+  //   return `document_navigator_document_list`;
+  // }
 
-  get documentListElement() {
-    return findChildByID(this.rootHtml, this.documentListId);
-  }
+  // get documentListElement() {
+  //   return findChildByID(this.rootHtml, this.documentListId);
+  // }
 
-  get inputKeywordsId() {
-    return `document_navigator_input_Keywords`;
-  }
+  // get inputKeywordsId() {
+  //   return `document_navigator_input_Keywords`;
+  // }
 
-  get inputKeywordsElement() {
-    return findChildByID(this.rootHtml, this.inputKeywordsId);
-  }
+  // get inputKeywordsElement() {
+  //   return findChildByID(this.rootHtml, this.inputKeywordsId);
+  // }
 
-  get inputSourceId() {
-    return `document_navigator_input_Source`;
-  }
+  // get inputSourceId() {
+  //   return `document_navigator_input_Source`;
+  // }
 
-  get inputSourceElement() {
-    return findChildByID(this.rootHtml, this.inputSourceId);
-  }
+  // get inputSourceElement() {
+  //   return findChildByID(this.rootHtml, this.inputSourceId);
+  // }
 
-  get inputRightsHolderId() {
-    return `document_navigator_rights_holder`;
-  }
+  // get inputRightsHolderId() {
+  //   return `document_navigator_rights_holder`;
+  // }
 
-  get inputRightsHolderElement() {
-    return findChildByID(this.rootHtml, this.inputRightsHolderId);
-  }
+  // get inputRightsHolderElement() {
+  //   return findChildByID(this.rootHtml, this.inputRightsHolderId);
+  // }
 
-  get inputPubDateStartId() {
-    return `document_navigator_input_Publication`;
-  }
+  // get inputPubDateStartId() {
+  //   return `document_navigator_input_Publication`;
+  // }
 
-  get inputPubDateStartElement() {
-    return findChildByID(this.rootHtml, this.inputPubDateStartId);
-  }
+  // get inputPubDateStartElement() {
+  //   return findChildByID(this.rootHtml, this.inputPubDateStartId);
+  // }
 
-  get inputPubDateEndId() {
-    return `document_navigator_input_Publication_End`;
-  }
+  // get inputPubDateEndId() {
+  //   return `document_navigator_input_Publication_End`;
+  // }
 
-  get inputPubDateEndElement() {
-    return findChildByID(this.rootHtml, this.inputPubDateEndId);
-  }
+  // get inputPubDateEndElement() {
+  //   return findChildByID(this.rootHtml, this.inputPubDateEndId);
+  // }
 
-  get inputRefDateStartId() {
-    return `document_navigator_input_Reference`;
-  }
+  // get inputRefDateStartId() {
+  //   return `document_navigator_input_Reference`;
+  // }
 
-  get inputRefDateStartElement() {
-    return findChildByID(this.rootHtml, this.inputRefDateStartId);
-  }
+  // get inputRefDateStartElement() {
+  //   return findChildByID(this.rootHtml, this.inputRefDateStartId);
+  // }
 
-  get inputRefDateEndId() {
-    return `document_navigator_input_Reference_End`;
-  }
+  // get inputRefDateEndId() {
+  //   return `document_navigator_input_Reference_End`;
+  // }
 
-  get inputRefDateEndElement() {
-    return findChildByID(this.rootHtml, this.inputRefDateEndId);
-  }
+  // get inputRefDateEndElement() {
+  //   return findChildByID(this.rootHtml, this.inputRefDateEndId);
+  // }
 
-  get docCountId() {
-    return `document_navigator_doc_count`;
-  }
+  // get docCountId() {
+  //   return `document_navigator_doc_count`;
+  // }
 
-  get docCountElement() {
-    return findChildByID(this.rootHtml, this.docCountId);
-  }
+  // get docCountElement() {
+  //   return findChildByID(this.rootHtml, this.docCountId);
+  // }
 }
