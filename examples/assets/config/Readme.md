@@ -7,4 +7,4 @@ This document makes a link between configuration files inside this directory and
 | [frame3D_planars](./frame3D_planars.json) | [Frame3DPlanar](../../../packages/browser/src/Component/Frame3D/Frame3DPlanar.js) | Array of different Frame3DPlanar configuration |
 | [extent_world](./extent_world.json) | Library user (used in examples/*.html)  | World extent |
 | [extent_lyon](./extent_lyon.json) | Library user (used in examples/*.html)  | Lyon extent |
-| [assetManager](./assetManager.json) | ../../../packages/browser/src/Component/AssetManager/AssetManager.js  | Sound + RenderData |
+| [assetManager](./assetManager.json) | [AssetManager](../../../packages/browser/src/Component/AssetManager/AssetManager.js)  | Sound + RenderData |
