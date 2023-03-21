@@ -9,11 +9,26 @@
 
 /********************************************* SIDE BAR*/
 
+::-webkit-scrollbar {
+  width: 9px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background-color: rgba(155, 155, 155, 0.5);
+  border-radius: 20px;
+  border: transparent;
+}
+
 ._sidebar_widget_menu_sidebar {
   background-color: var(--sidebar_widget-color-one);
   width: var(--sidebar-widget-sidebar-width);
   height: 100%;
   z-index: 3;
+  overflow: auto;
+  scrollbar-width: thin;
+  padding-right: 10px;
 }
 
 ._sidebar_widget_menu_sidebar img {
