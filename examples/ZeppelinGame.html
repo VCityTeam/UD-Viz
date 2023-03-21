@@ -95,9 +95,7 @@
         },
         Zeppelin: class extends udvizBrowser.Shared.Game.ScriptBase {
           // Called when this gameobject collider components collides with another one collider components
-          onEnterCollision(result) {
-            const goCollided = result.b.getObject3D();
-
+          onEnterCollision(goCollided) {
             this.context.removeObject3D(goCollided.uuid);
 
             const gameManager = this.context.object3D.getObjectByProperty(
@@ -202,6 +200,9 @@
               },
               GameScript: {
                 idScripts: ['GameContextManager', 'NativeCommandManager'],
+                variables: {
+                  speedRotate: 0.0005,
+                },
               },
               ExternalScript: {
                 variables: {
