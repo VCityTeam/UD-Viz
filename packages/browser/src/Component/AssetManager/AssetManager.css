@@ -10,8 +10,6 @@
 }
 
 .barBackground-Assets {
-  width: 50%;
-  margin-left: 25%;
   margin-top: 5px;
   color: var(--color-assetManager);
 }
@@ -24,9 +22,10 @@
 }
 
 .parent_loading_bar_asset {
+  transform: translate(-50%, -50%);
   top: 50%;
-  position: relative;
-  transform: translateY(-50%);
+  position: absolute;
+  left: 50%;
 }
 
 .loadingLabel_Assets {
