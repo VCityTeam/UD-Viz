@@ -124,7 +124,7 @@
                 this.intersectionCube = new THREE.Mesh(geometry, material);
                 scene.add(this.intersectionCube);
 
-                const translationSpeed = 0.03;
+                const translationSpeed = 0.01;
                 const speedRotate = 0.0006;
 
                 const checkCollisionFun = (direction) => {
@@ -191,18 +191,12 @@
                 // LEFT
                 inputManager.addKeyCommand('rotate_left', ['q'], () => {
                   const dt = this.context.dt;
-                  Object3D.rotate(
-                    this.avatar,
-                    new THREE.Vector3(0, 0, speedRotate * dt)
-                  );
+                  this.avatar.rotateZ(speedRotate * dt);
                 });
                 // RIGHT
                 inputManager.addKeyCommand('rotate_right', ['d'], () => {
                   const dt = this.context.dt;
-                  Object3D.rotate(
-                    this.avatar,
-                    new THREE.Vector3(0, 0, -speedRotate * dt)
-                  );
+                  this.avatar.rotateZ(-speedRotate * dt);
                 });
               }
             },
@@ -215,7 +209,7 @@
               ExternalScript: {
                 variables: {
                   update_z_crs: configs['extent_lyon'].crs,
-                  camera_distance: 10,
+                  camera_distance: 5,
                   camera_angle: 0,
                 },
                 idScripts: ['Avatar', 'CameraManager'],

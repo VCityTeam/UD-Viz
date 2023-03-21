@@ -110,11 +110,14 @@
             components: {
               GameScript: {
                 idScripts: ['Avatar', 'NativeCommandManager'],
+                variables: {
+                  speedRotate: 0.0005,
+                },
               },
               ExternalScript: {
                 variables: {
                   update_z_crs: configs['extent_lyon'].crs,
-                  camera_distance: 10,
+                  camera_distance: 5,
                   camera_angle: 0,
                 },
                 idScripts: ['Avatar', 'CameraManager'],
