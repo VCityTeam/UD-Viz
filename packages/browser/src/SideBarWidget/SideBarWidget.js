@@ -73,12 +73,6 @@ export class SideBarWidget {
     /** @type {Widget.Server.AuthenticationView|null} */
     this.authenticationView = null;
 
-    /** @type {Widget.About|null} */
-    this.about = null;
-
-    /** @type {Widget.HelpWindow|null} */
-    this.helpWindow = null;
-
     /** @type {Widget.Server.GeocodingView|null} */
     this.geocodingView = null;
 
@@ -323,52 +317,6 @@ export class SideBarWidget {
       updateAuthenticationFrame.bind(this)
     );
     updateAuthenticationFrame();
-  }
-
-  addWidgetAbout(configAbout, pathIcon) {
-    this.about = new Widget.About(configAbout);
-
-    const sideBarButton = document.createElement('img');
-    sideBarButton.src = pathIcon;
-    this.menuSideBar.appendChild(sideBarButton);
-
-    sideBarButton.onclick = () => {
-      if (this.about.html().parentElement) {
-        this.panMenuSideBar.remove(this.about.html());
-        this.about.dispose();
-        sideBarButton.classList.remove(
-          '_sidebar_widget_menu_sidebar_img_selected'
-        );
-      } else {
-        this.panMenuSideBar.add('About', this.about.html());
-        sideBarButton.classList.add(
-          '_sidebar_widget_menu_sidebar_img_selected'
-        );
-      }
-    };
-  }
-
-  addWidgetHelp(configHelp, pathIcon) {
-    this.helpWindow = new Widget.HelpWindow(configHelp);
-
-    const sideBarButton = document.createElement('img');
-    sideBarButton.src = pathIcon;
-    this.menuSideBar.appendChild(sideBarButton);
-
-    sideBarButton.onclick = () => {
-      if (this.helpWindow.html().parentElement) {
-        this.panMenuSideBar.remove(this.helpWindow.html());
-        this.helpWindow.dispose();
-        sideBarButton.classList.remove(
-          '_sidebar_widget_menu_sidebar_img_selected'
-        );
-      } else {
-        this.panMenuSideBar.add('Help', this.helpWindow.html());
-        sideBarButton.classList.add(
-          '_sidebar_widget_menu_sidebar_img_selected'
-        );
-      }
-    };
   }
 
   addWidgetGeocoding(configServer, pathIcon) {
@@ -806,6 +754,27 @@ export class SideBarWidget {
         );
       } else {
         this.panMenuSideBar.add('Sparql', this.sparqlQueryWindow.html());
+        sideBarButton.classList.add(
+          '_sidebar_widget_menu_sidebar_img_selected'
+        );
+      }
+    };
+  }
+
+  addCustomHtml(pathIcon, customHtml, label) {
+    const sideBarButton = document.createElement('img');
+    sideBarButton.src = pathIcon;
+    this.menuSideBar.appendChild(sideBarButton);
+
+    sideBarButton.onclick = () => {
+      if (customHtml.parentElement) {
+        this.panMenuSideBar.remove(customHtml);
+        customHtml.remove();
+        sideBarButton.classList.remove(
+          '_sidebar_widget_menu_sidebar_img_selected'
+        );
+      } else {
+        this.panMenuSideBar.add(label, customHtml);
         sideBarButton.classList.add(
           '_sidebar_widget_menu_sidebar_img_selected'
         );

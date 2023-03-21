@@ -6,8 +6,6 @@ export { LayerChoice } from './LayerChoice/views/LayerChoice';
 
 export { CameraPositioner } from './CameraPositioner/CameraPositioner';
 
-export { About } from './About/About';
-
 export { TemporalModule } from './Temporal/TemporalModule';
 
 export { $3DTemporalBatchTable } from './Temporal/Model/3DTemporalBatchTable.js';
@@ -21,8 +19,6 @@ export { SlideShow } from './SlideShow/SlideShow';
 export { Debug3DTilesView } from './3DTilesDebug/views/Debug3DTilesView';
 
 export { BaseMap } from './BaseMap/BaseMapWindow';
-
-export { HelpWindow } from './Help/Help';
 
 import * as Server from './Server/Server';
 export { Server };
