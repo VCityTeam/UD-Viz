@@ -1,3 +1,5 @@
+import { MathUtils } from 'three';
+
 /**
  * Check if an html element belong to another one recursively
  *
@@ -48,4 +50,91 @@ export function clearChildren(element) {
   while (element.firstChild) {
     element.firstChild.remove();
   }
+}
+
+/**
+ * Create a button to toggle visibility of the content in a container
+ *
+ * @param {string} label - label of the container
+ * @returns {{parent:HTMLElement,container:HTMLElement}} - parent is the element to add container is the element to fill
+ */
+export function createDisplayableContainer(label) {
+  const parent = document.createElement('div');
+  const displayableButton = document.createElement('div');
+  parent.appendChild(displayableButton);
+  const container = document.createElement('div');
+  parent.appendChild(container);
+
+  let hidden = true; // true by default
+  displayableButton.innerText = 'Display ' + label;
+  container.hidden = true;
+  displayableButton.onclick = () => {
+    hidden = !hidden;
+    container.hidden = hidden;
+    if (hidden) {
+      displayableButton.innerText = 'Display ' + label;
+    } else {
+      displayableButton.innerText = 'Hide ' + label;
+    }
+  };
+
+  return { parent: parent, container: container };
+}
+
+/**
+ *
+ * @param {string} labelText - label text
+ * @param {string} inputType - input type
+ * @returns {{parent:HTMLElement,input:HTMLElement}} - parent is the element to add input is the input element
+ */
+export function createLabelInput(labelText, inputType) {
+  const container = document.createElement('div');
+  const label = document.createElement('label');
+  label.innerText = labelText;
+  const input = document.createElement('input');
+
+  const uuid = MathUtils.generateUUID();
+  input.setAttribute('id', uuid);
+  input.setAttribute('type', inputType);
+  label.htmlFor = uuid;
+
+  container.appendChild(label);
+  container.appendChild(input);
+
+  return { container: container, input: input };
+}
+
+/**
+ *
+ * @param {string} labelText
+ * @returns {{parent:HTMLElement,inputStartDate:HTMLElement,inputEndDate:HTMLElement}}
+ */
+export function createDateIntervalInput(labelText) {
+  const parent = document.createElement('div');
+
+  const label = document.createElement('label');
+  label.innerText = labelText;
+  parent.appendChild(label);
+
+  // start date interval
+  const startFromSpan = document.createElement('span');
+  startFromSpan.innerText = 'From';
+  parent.appendChild(startFromSpan);
+  const inputStartDate = document.createElement('input');
+  inputStartDate.setAttribute('type', 'date');
+  parent.appendChild(inputStartDate);
+
+  // end date interval
+  const endFromSpan = document.createElement('span');
+  endFromSpan.innerText = 'To';
+  parent.appendChild(endFromSpan);
+  const inputEndDate = document.createElement('input');
+  inputEndDate.setAttribute('type', 'date');
+  parent.appendChild(inputEndDate);
+
+  return {
+    parent: parent,
+    inputStartDate: inputStartDate,
+    inputEndDate: inputEndDate,
+  };
 }
