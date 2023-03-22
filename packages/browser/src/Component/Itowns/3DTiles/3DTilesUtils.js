@@ -16,28 +16,29 @@ export function appendWireframeToTileset(tile, threshOldAngle = 30) {
     tile.children[0].children[0].geometry &&
     tile.children[0].children[0].geometry.isBufferGeometry
   ) {
-    const geom = tile.children[0].children[0];
-    if (!geom.userData.hasOutlier) {
-      // This bool avoid to create multiple outliers for one geometry
-      geom.userData.hasOutlier = true;
+    for (const geom of tile.children[0].children) {
+      if (!geom.userData.hasOutlier) {
+        // This bool avoid to create multiple outliers for one geometry
+        geom.userData.hasOutlier = true;
 
-      // THREE.EdgesGeometry needs triangle indices to be created.
-      // Create a new array for the indices
-      const indices = [];
+        // THREE.EdgesGeometry needs triangle indices to be created.
+        // Create a new array for the indices
+        const indices = [];
 
-      // Iterate over every group of three vertices in the unindexed mesh and add the corresponding indices to the indices array
-      for (let i = 0; i < geom.geometry.attributes.position.count; i += 3) {
-        indices.push(i, i + 1, i + 2);
+        // Iterate over every group of three vertices in the unindexed mesh and add the corresponding indices to the indices array
+        for (let i = 0; i < geom.geometry.attributes.position.count; i += 3) {
+          indices.push(i, i + 1, i + 2);
+        }
+        geom.geometry.setIndex(indices);
+
+        // Create Outliers
+        const geo = new THREE.EdgesGeometry(geom.geometry, threshOldAngle);
+        const mat = new THREE.LineBasicMaterial({
+          color: 0x000000,
+        });
+        const edges = new THREE.LineSegments(geo, mat);
+        geom.add(edges);
       }
-      geom.geometry.setIndex(indices);
-
-      // Create Outliers
-      const geo = new THREE.EdgesGeometry(geom.geometry, threshOldAngle);
-      const mat = new THREE.LineBasicMaterial({
-        color: 0x000000,
-      });
-      const edges = new THREE.LineSegments(geo, mat);
-      geom.add(edges);
     }
   }
 }
