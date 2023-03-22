@@ -5,6 +5,7 @@ import { TilesManager } from './TilesManager';
  * Create a geometric outliers for each tile of a tileset when its geometry is loaded
  * Each outlier tile geometry does not keep the batchid for each outliers.
  * May be slow to create / load.
+ *
  * @param {TilesManager} tilesManager A TilesManage object from UD-Viz.
  */
 export function createOutliersOfTileset(tilesManager) {
@@ -13,7 +14,7 @@ export function createOutliersOfTileset(tilesManager) {
     function (tile) {
       if (tilesManager.tiles[tile.tileId] != undefined) {
         if (tilesManager.tiles[tile.tileId].cityObjects != undefined) {
-          let geom =
+          const geom =
             tilesManager.tiles[tile.tileId].getObject3D().children[0]
               .children[0];
           if (!geom.hasOutlier) {
@@ -35,12 +36,12 @@ export function createOutliersOfTileset(tilesManager) {
             }
             geom.geometry.setIndex(indices);
 
-            //Create Outliers
-            var geo = new THREE.EdgesGeometry(geom.geometry, 30); // or WireframeGeometry
-            var mat = new THREE.LineBasicMaterial({
+            // Create Outliers
+            const geo = new THREE.EdgesGeometry(geom.geometry, 30); // or WireframeGeometry
+            const mat = new THREE.LineBasicMaterial({
               color: 0x000000,
             });
-            var wireframe = new THREE.LineSegments(geo, mat);
+            const wireframe = new THREE.LineSegments(geo, mat);
             geom.add(wireframe);
           }
         }
@@ -53,6 +54,7 @@ export function createOutliersOfTileset(tilesManager) {
  * Create a geometric outliers for each tile of a tileset when its geometry is loaded
  * Each outlier tile geometry keep the batchid for each outliers to apply styles on a specific outlier using a CityObjectID.
  * This method is slower than createOutliersOfTileset().
+ *
  * @param {TilesManager} tilesManager A TilesManage object from UD-Viz.
  */
 export function createOutliersWithBatchIDOfTileset(tilesManager) {
@@ -61,7 +63,7 @@ export function createOutliersWithBatchIDOfTileset(tilesManager) {
     function (tile) {
       if (tilesManager.tiles[tile.tileId] != undefined) {
         if (tilesManager.tiles[tile.tileId].cityObjects != undefined) {
-          let geom =
+          const geom =
             tilesManager.tiles[tile.tileId].getObject3D().children[0]
               .children[0];
           if (!geom.hasOutlier) {
@@ -72,11 +74,11 @@ export function createOutliersWithBatchIDOfTileset(tilesManager) {
             // Get the geometry that have the same _BATCHID to create its own outlier
             let startIndex = 0;
 
-            // Position array that will be filled with each geometry ordered by _BATCHID 
-            var pos = new Array();
+            // Position array that will be filled with each geometry ordered by _BATCHID
+            const pos = new Array();
 
             // BatchID array that will be filled with _BATCHID
-            var batchid = new Array();
+            const batchid = new Array();
 
             // Iterate through each _BATCHID geometry
             for (let i = 1; i < geom.geometry.attributes._BATCHID.count; i++) {
@@ -84,7 +86,7 @@ export function createOutliersWithBatchIDOfTileset(tilesManager) {
                 geom.geometry.attributes._BATCHID.array[i - 1] !=
                 geom.geometry.attributes._BATCHID.array[i]
               ) {
-                let positionByBatchId = new THREE.BufferAttribute(
+                const positionByBatchId = new THREE.BufferAttribute(
                   geom.geometry.attributes.position.array.slice(
                     startIndex,
                     i * 3
@@ -93,7 +95,7 @@ export function createOutliersWithBatchIDOfTileset(tilesManager) {
                 );
 
                 // Create a geometry for this _BATCHID
-                let mesh = new THREE.BufferGeometry();
+                const mesh = new THREE.BufferGeometry();
                 mesh.setAttribute('position', positionByBatchId);
 
                 // THREE.EdgesGeometry needs triangle indices to be created.
@@ -107,9 +109,9 @@ export function createOutliersWithBatchIDOfTileset(tilesManager) {
                 mesh.setIndex(indices);
 
                 // Create the outlier geometry for this _BATCHID
-                let edges = new THREE.EdgesGeometry(mesh, 30);
+                const edges = new THREE.EdgesGeometry(mesh, 30);
 
-                // Add this outlier geometry to the outlier geometry of the tile 
+                // Add this outlier geometry to the outlier geometry of the tile
                 for (let l = 0; l < edges.attributes.position.count * 3; l++)
                   pos.push(edges.attributes.position.array[l]);
                 // Fill the _BATCHID buffer
@@ -120,13 +122,13 @@ export function createOutliersWithBatchIDOfTileset(tilesManager) {
               }
             }
 
-            var mat = new THREE.LineBasicMaterial({ color: 0x000000 });
-            let tileEdges = new THREE.EdgesGeometry();
+            const mat = new THREE.LineBasicMaterial({ color: 0x000000 });
+            const tileEdges = new THREE.EdgesGeometry();
             tileEdges.setAttribute(
               'position',
               new THREE.BufferAttribute(Float32Array.from(pos), 3)
             );
-            let wireframe = new THREE.LineSegments(tileEdges, mat);
+            const wireframe = new THREE.LineSegments(tileEdges, mat);
             wireframe.geometry.setAttribute(
               '_BATCHID',
               new THREE.BufferAttribute(Int32Array.from(batchid), 1)

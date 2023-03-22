@@ -10,7 +10,11 @@ export * from './Component/GUI/GUI';
 
 export { TilesManager } from './Component/Itowns/3DTiles/TilesManager';
 
-export { getTileFromMesh,createOutliersOfTileset, createOutliersWithBatchIDOfTileset } from './Component/Itowns/3DTiles/3DTilesUtils';
+export {
+  getTileFromMesh,
+  createOutliersOfTileset,
+  createOutliersWithBatchIDOfTileset,
+} from './Component/Itowns/3DTiles/3DTilesUtils';
 
 import * as ExternalScriptTemplate from './Component/Game/External/ScriptTemplate/ScriptTemplate';
 export { ExternalScriptTemplate };
