@@ -38,10 +38,16 @@ app
                 static: true,
                 components: {
                   GameScript: {
-                    idScripts: ['NoteGameManager', 'NativeCommandManager'],
+                    idScripts: [
+                      udvizNode.Game.ScriptTemplate.NoteGameManager.CLASS_ID,
+                      Game.ScriptTemplate.NativeCommandManager.CLASS_ID,
+                    ],
                   },
                   ExternalScript: {
-                    idScripts: ['NoteUI', 'CameraManager'],
+                    /**
+                     * ditto how to make node script to know class id of an external script
+                     */
+                    idScripts: ['note_ui_id', 'camera_manager_id'],
                   },
                 },
               }),

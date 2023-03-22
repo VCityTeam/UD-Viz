@@ -258,7 +258,7 @@ export class CameraManager extends ExternalScriptBase {
     // compute new distance between camera and center of object/sphere
     const h =
       radius /
-      Math.tan((this.context.frame3D.camera.fov / 2) * THREE.Math.DEG2RAD);
+      Math.tan((this.context.frame3D.camera.fov / 2) * (Math.PI / 180));
     const dir = new THREE.Vector3(1, 1, 1).normalize(); // hard coded direction
     const newPos = new THREE.Vector3().addVectors(center, dir.setLength(h));
     const oldRot = this.context.frame3D.camera.rotation.clone();
@@ -276,6 +276,10 @@ export class CameraManager extends ExternalScriptBase {
       new THREE.Quaternion().setFromEuler(targetRot),
       duration
     );
+  }
+
+  static get CLASS_ID() {
+    return 'camera_manager_id';
   }
 }
 

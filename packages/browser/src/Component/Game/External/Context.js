@@ -34,10 +34,41 @@ export class Context {
     this.dt = 0;
 
     /**
+     *
+     * @returns {Object<string,ExternalScriptBase>} - formated gamescript class
+     */
+    const formatExternalGameScriptClass = () => {
+      const result = {};
+
+      const parse = (object) => {
+        for (const key in object) {
+          const value = object[key];
+
+          if (value.prototype instanceof ExternalScriptBase) {
+            if (result[value.CLASS_ID])
+              throw new Error('no unique id ' + value.CLASS_ID);
+            result[value.CLASS_ID] = value;
+          } else if (value instanceof Object) {
+            parse(value);
+          } else {
+            console.error(object, value, key, object.name);
+            throw new Error(
+              'wrong value type ' + typeof object + ' key ' + key
+            );
+          }
+        }
+      };
+
+      parse(externalGameScriptClass);
+
+      return result;
+    };
+
+    /**
      * custom {@link ExternalScriptBase} that can be used by object3D
      *
       @type {Object<string,ExternalScriptBase>}  */
-    this.externalGameScriptClass = externalGameScriptClass;
+    this.externalGameScriptClass = formatExternalGameScriptClass();
 
     /**
      * frame3D view of game
@@ -687,4 +718,9 @@ export class ExternalScriptBase {
    * call when frame3D is resized
    */
   onResize() {}
+
+  static get CLASS_ID() {
+    console.error(this.name);
+    throw new Error('this is abstract class you should override CLASS_ID');
+  }
 }

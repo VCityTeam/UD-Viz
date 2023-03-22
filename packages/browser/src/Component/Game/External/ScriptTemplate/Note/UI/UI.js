@@ -1,12 +1,12 @@
-import { ExternalScriptBase } from '../../Context';
-import { checkParentChild } from '../../../../HTMLUtil';
+import { ExternalScriptBase } from '../../../Context';
+import { checkParentChild } from '../../../../../HTMLUtil';
 import * as THREE from 'three';
 import { Game } from '@ud-viz/shared';
 
-import './NoteUI.css';
+import './UI.css';
 
 /** @classdesc - Manage global ui of the note feature */
-export class NoteUI extends ExternalScriptBase {
+export class UI extends ExternalScriptBase {
   init() {
     const rootHtml = document.createElement('div');
     rootHtml.classList.add('root_note_ui');
@@ -83,5 +83,9 @@ export class NoteUI extends ExternalScriptBase {
 
   appendToHtml(el) {
     this.uiContainer.appendChild(el);
+  }
+
+  static get CLASS_ID() {
+    return 'note_ui_id';
   }
 }
