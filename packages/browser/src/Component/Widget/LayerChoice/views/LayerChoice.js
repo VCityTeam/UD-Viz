@@ -1,5 +1,5 @@
 import { LayerManager } from '../../../Itowns/LayerManager/LayerManager';
-import { findChildByID } from '../../../HTMLUtil';
+import { createDisplayable, findChildByID } from '../../../HTMLUtil';
 
 export class LayerChoice {
   /**
@@ -8,17 +8,24 @@ export class LayerChoice {
    * @param {LayerManager} layerManager The LayerManager holding iTowns layers
    */
   constructor(layerManager) {
-    this.rootHtml = document.createElement('div');
-    this.rootHtml.innerHTML = this.innerContentHtml;
+    /** @type {HTMLElement} */
+    this.rootHtml = null;
+
+    /** @type {HTMLElement} */
+    this.colorLayersSpoilerBoxElement = null;
+
+    /** @type {HTMLElement} */
+    this.elevationLayersSpoilerBoxElement = null;
+
+    /** @type {HTMLElement} */
+    this.geometryLayersSpoilerBoxElement = null;
 
     /**
      * The layerManager
      */
     this.layerManager = layerManager;
 
-    this.innerContentColorLayers();
-    this.innerContentElevationLayers();
-    this.innerContentGeometryLayers();
+    this.initHtml();
   }
 
   html() {
@@ -29,30 +36,28 @@ export class LayerChoice {
     this.rootHtml.remove();
   }
 
-  get innerContentHtml() {
-    return /* html*/ `
-    <div id="${this.layerListId}">
-        <div class="box-section" id="${this.colorLayersBoxSectionId}"> 
-        <input type="checkbox" class="spoiler-check" id="color-layers-spoiler">
-        <label for="color-layers-spoiler" class="section-title">Color Layers</Label>
-          <div class="spoiler-box" id="${this.colorLayersSpoilerBoxId}">
-          </div>
-        </div>
-      <div class="box-section" id="${this.elevationLayersBoxSectionId}"> 
-      <input type="checkbox" class="spoiler-check" id="elevation-layers-spoiler">
-      <label for="elevation-layers-spoiler" class="section-title">Elevation Layers</Label>
-        <div class="spoiler-box" id="${this.elevationLayersSpoilerBoxId}">
-        </div>
-      </div>
-      <div class="box-section" id=${this.geometryLayersBoxSectionId}> 
-        <input type="checkbox" class="spoiler-check" id="geometry-layers-spoiler">
-        <label for="geometry-layers-spoiler" class="section-title">Geometry Layers</Label>
-        <div class="spoiler-box" id="${this.geometryLayersSpoilerBoxId}">
-        </div>
-      </div>
-    </div>
+  initHtml() {
+    this.rootHtml = document.createElement('div');
+    {
+      // color
+      const displayableColor = createDisplayable('Color Layers');
+      this.rootHtml.appendChild(displayableColor.parent);
+      this.colorLayersSpoilerBoxElement = displayableColor.container;
 
-    `;
+      // elevation
+      const displayableElevation = createDisplayable('Elevation Layer');
+      this.rootHtml.appendChild(displayableElevation.parent);
+      this.elevationLayersSpoilerBoxElement = displayableElevation.container;
+
+      // geometry
+      const displayableGeometry = createDisplayable('Geometry Layers');
+      this.rootHtml.appendChild(displayableGeometry.parent);
+      this.geometryLayersSpoilerBoxElement = displayableGeometry.container;
+    }
+
+    this.innerContentColorLayers();
+    this.innerContentElevationLayers();
+    this.innerContentGeometryLayers();
   }
 
   /**
@@ -205,89 +210,5 @@ export class LayerChoice {
 
       list.appendChild(item);
     }
-  }
-  // //// GETTERS
-
-  // /ID
-  get colorLayersBoxSectionId() {
-    return `box_section_${this.colorLayersId}`;
-  }
-
-  get colorLayersSpoilerBoxId() {
-    return `spoiler_box_${this.colorLayersId}`;
-  }
-
-  get colorLayersId() {
-    return `layer_choice_color_layers`;
-  }
-
-  get elevationLayersBoxSectionId() {
-    return `box_section_${this.elevationLayersId}`;
-  }
-
-  get elevationLayersSpoilerBoxId() {
-    return `spoiler_box_${this.elevationLayersId}`;
-  }
-
-  get elevationLayersId() {
-    return `layer_choice_elevation_layers`;
-  }
-
-  get geometryLayersBoxSectionId() {
-    return `box_section_${this.geometryLayersId}`;
-  }
-
-  get geometryLayersSpoilerBoxId() {
-    return `spoiler_box_${this.geometryLayersId}`;
-  }
-
-  get geometryLayersId() {
-    return `layer_choice_geometry_layers`;
-  }
-
-  get layerListId() {
-    return `layer_choice_layer_list`;
-  }
-
-  // /HTML ELEMENTS
-
-  get layerListElement() {
-    return findChildByID(this.rootHtml, this.layerListId);
-  }
-
-  get colorLayersBoxSectionElement() {
-    return findChildByID(this.rootHtml, this.colorLayersBoxSectionId);
-  }
-
-  get colorLayersSpoilerBoxElement() {
-    return findChildByID(this.rootHtml, this.colorLayersSpoilerBoxId);
-  }
-
-  get colorLayerListElement() {
-    return findChildByID(this.rootHtml, this.colorLayersId);
-  }
-
-  get elevationLayersBoxSectionElement() {
-    return findChildByID(this.rootHtml, this.elevationLayersBoxSectionId);
-  }
-
-  get elevationLayersSpoilerBoxElement() {
-    return findChildByID(this.rootHtml, this.elevationLayersSpoilerBoxId);
-  }
-
-  get elevationLayerListElement() {
-    return findChildByID(this.rootHtml, this.elevationLayersId);
-  }
-
-  get geometryLayersBoxSectionElement() {
-    return findChildByID(this.rootHtml, this.geometryLayersBoxSectionId);
-  }
-
-  get geometryLayersSpoilerBoxElement() {
-    return findChildByID(this.rootHtml, this.geometryLayersSpoilerBoxId);
-  }
-
-  get geometryLayerListElement() {
-    return findChildByID(this.rootHtml, this.geometryLayersId);
   }
 }
