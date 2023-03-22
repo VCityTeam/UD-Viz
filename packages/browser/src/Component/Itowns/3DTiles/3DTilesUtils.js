@@ -1,5 +1,4 @@
 import * as THREE from 'three';
-import { TilesManager } from './TilesManager';
 
 /**
  * Create a geometric outliers for each tile of a tileset when its geometry is loaded
@@ -17,6 +16,7 @@ export function appendWireframeToTileset(tile, threshOldAngle = 30) {
     tile.children[0].children[0].geometry.isBufferGeometry
   ) {
     for (const geom of tile.children[0].children) {
+      console.log(geom);
       if (!geom.userData.hasOutlier) {
         // This bool avoid to create multiple outliers for one geometry
         geom.userData.hasOutlier = true;
@@ -48,90 +48,85 @@ export function appendWireframeToTileset(tile, threshOldAngle = 30) {
  * Each outlier tile geometry keep the batchid for each outliers to apply styles on a specific outlier using a CityObjectID.
  * This method is slower than createOutliersOfTileset().
  *
- * @param {TilesManager} tilesManager A TilesManage object from UD-Viz.
+ * @param {THREE.Object3D} tile  A 3DObject (should be a tile send by Tilesmanager.EVENT_TILE_LOADED)
+ * @param {number} threshOldAngle  An edge is only rendered if the angle (in degrees) between the face normals of the adjoining faces exceeds this value. default = 1 degree.
  */
-export function appendWireframeByBatchIDToTileset(tilesManager) {
-  tilesManager.addEventListener(
-    TilesManager.EVENT_TILE_LOADED,
-    function (tile) {
-      if (tilesManager.tiles[tile.tileId] != undefined) {
-        if (tilesManager.tiles[tile.tileId].cityObjects != undefined) {
-          const geom =
-            tilesManager.tiles[tile.tileId].getObject3D().children[0]
-              .children[0];
-          if (!geom.hasOutlier) {
-            // This event can be triggered multiple times, even when the geometry is loaded.
-            // This bool avoid to create multiple outliers for one geometry
-            geom.hasOutlier = true;
+export function appendWireframeByBatchIDToTileset(tile, threshOldAngle = 30) {
+  if (
+    tile.children[0] &&
+    tile.children[0].children[0] &&
+    tile.children[0].children[0].geometry &&
+    tile.children[0].children[0].geometry.isBufferGeometry
+  ) {
+    for (const geom of tile.children[0].children) {
+      if (!geom.userData.hasOutlier) {
+        // This event can be triggered multiple times, even when the geometry is loaded.
+        // This bool avoid to create multiple outliers for one geometry
+        geom.userData.hasOutlier = true;
 
-            // Get the geometry that have the same _BATCHID to create its own outlier
-            let startIndex = 0;
+        // Get the geometry that have the same _BATCHID to create its own outlier
+        let startIndex = 0;
 
-            // Position array that will be filled with each geometry ordered by _BATCHID
-            const pos = new Array();
+        // Position array that will be filled with each geometry ordered by _BATCHID
+        const pos = new Array();
 
-            // BatchID array that will be filled with _BATCHID
-            const batchid = new Array();
+        // BatchID array that will be filled with _BATCHID
+        const batchid = new Array();
 
-            // Iterate through each _BATCHID geometry
-            for (let i = 1; i < geom.geometry.attributes._BATCHID.count; i++) {
-              if (
-                geom.geometry.attributes._BATCHID.array[i - 1] !=
-                geom.geometry.attributes._BATCHID.array[i]
-              ) {
-                const positionByBatchId = new THREE.BufferAttribute(
-                  geom.geometry.attributes.position.array.slice(
-                    startIndex,
-                    i * 3
-                  ),
-                  3
-                );
+        // Iterate through each _BATCHID geometry
+        for (let i = 1; i < geom.geometry.attributes._BATCHID.count; i++) {
+          if (
+            geom.geometry.attributes._BATCHID.array[i - 1] !=
+            geom.geometry.attributes._BATCHID.array[i]
+          ) {
+            const positionByBatchId = new THREE.BufferAttribute(
+              geom.geometry.attributes.position.array.slice(startIndex, i * 3),
+              3
+            );
 
-                // Create a geometry for this _BATCHID
-                const mesh = new THREE.BufferGeometry();
-                mesh.setAttribute('position', positionByBatchId);
+            // Create a geometry for this _BATCHID
+            const mesh = new THREE.BufferGeometry();
+            mesh.setAttribute('position', positionByBatchId);
 
-                // THREE.EdgesGeometry needs triangle indices to be created.
-                // Create a new array for the indices
-                const indices = [];
+            // THREE.EdgesGeometry needs triangle indices to be created.
+            // Create a new array for the indices
+            const indices = [];
 
-                // Iterate over every group of three vertices in the unindexed mesh and add the corresponding indices to the indices array
-                for (let j = 0; j < mesh.attributes.position.count; j += 3) {
-                  indices.push(j, j + 1, j + 2);
-                }
-                mesh.setIndex(indices);
-
-                // Create the outlier geometry for this _BATCHID
-                const edges = new THREE.EdgesGeometry(mesh, 30);
-
-                // Add this outlier geometry to the outlier geometry of the tile
-                for (let l = 0; l < edges.attributes.position.count * 3; l++)
-                  pos.push(edges.attributes.position.array[l]);
-                // Fill the _BATCHID buffer
-                for (let l = 0; l < edges.attributes.position.count; l++)
-                  batchid.push(geom.geometry.attributes._BATCHID.array[i - 1]);
-
-                startIndex = i * 3;
-              }
+            // Iterate over every group of three vertices in the unindexed mesh and add the corresponding indices to the indices array
+            for (let j = 0; j < mesh.attributes.position.count; j += 3) {
+              indices.push(j, j + 1, j + 2);
             }
+            mesh.setIndex(indices);
 
-            const mat = new THREE.LineBasicMaterial({ color: 0x000000 });
-            const tileEdges = new THREE.EdgesGeometry();
-            tileEdges.setAttribute(
-              'position',
-              new THREE.BufferAttribute(Float32Array.from(pos), 3)
-            );
-            const wireframe = new THREE.LineSegments(tileEdges, mat);
-            wireframe.geometry.setAttribute(
-              '_BATCHID',
-              new THREE.BufferAttribute(Int32Array.from(batchid), 1)
-            );
-            geom.add(wireframe);
+            // Create the outlier geometry for this _BATCHID
+            const edges = new THREE.EdgesGeometry(mesh, threshOldAngle);
+
+            // Add this outlier geometry to the outlier geometry of the tile
+            for (let l = 0; l < edges.attributes.position.count * 3; l++)
+              pos.push(edges.attributes.position.array[l]);
+            // Fill the _BATCHID buffer
+            for (let l = 0; l < edges.attributes.position.count; l++)
+              batchid.push(geom.geometry.attributes._BATCHID.array[i - 1]);
+
+            startIndex = i * 3;
           }
         }
+
+        const mat = new THREE.LineBasicMaterial({ color: 0x000000 });
+        const tileEdges = new THREE.EdgesGeometry();
+        tileEdges.setAttribute(
+          'position',
+          new THREE.BufferAttribute(Float32Array.from(pos), 3)
+        );
+        const wireframe = new THREE.LineSegments(tileEdges, mat);
+        wireframe.geometry.setAttribute(
+          '_BATCHID',
+          new THREE.BufferAttribute(Int32Array.from(batchid), 1)
+        );
+        geom.add(wireframe);
       }
     }
-  );
+  }
 }
 
 /**
