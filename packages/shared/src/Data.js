@@ -489,21 +489,21 @@ function objectOverWrite(jsonOverWrited, jsonModel) {
 }
 
 /**
- * Apply a callback to each key value couple of a json object
+ * Apply a callback to each key value couple of an object
  *
- * @param {object} json - json object to parse
+ * @param {object} object - object to parse
  * @param {Function} cb - callback to apply (first argument is the object containing the key and second is the key)
- * @returns {object} - json object parsed
+ * @returns {object} - object parsed
  */
-function objectParse(json, cb) {
-  for (const key in json) {
-    if (json[key] instanceof Object) {
-      objectParse(json[key], cb);
+function objectParse(object, cb) {
+  for (const key in object) {
+    if (object[key] instanceof Object) {
+      objectParse(object[key], cb);
     } else {
-      cb(json, key);
+      cb(object, key);
     }
   }
-  return json;
+  return object;
 }
 
 /**

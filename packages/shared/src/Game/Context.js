@@ -28,11 +28,42 @@ const Context = class {
    */
   constructor(gameScriptClass, object3D) {
     /**
+     *
+     * @returns {Object<string,import("./Context").ScriptBase>} - formated gamescript class
+     */
+    const formatGameScriptClass = () => {
+      const result = {};
+
+      const parse = (object) => {
+        for (const key in object) {
+          const value = object[key];
+
+          if (value.prototype instanceof ScriptBase) {
+            if (result[value.CLASS_ID])
+              throw new Error('no unique id ' + value.CLASS_ID);
+            result[value.CLASS_ID] = value;
+          } else if (value instanceof Object) {
+            parse(value);
+          } else {
+            console.error(object, value, key, object.name);
+            throw new Error(
+              'wrong value type ' + typeof object + ' key ' + key
+            );
+          }
+        }
+      };
+
+      parse(gameScriptClass);
+
+      return result;
+    };
+
+    /**
      * class that can be reference by {@link GameScript} of an object3D
      *
      * @type {Object<string,import("./Context").ScriptBase>}
      */
-    this.gameScriptClass = gameScriptClass;
+    this.gameScriptClass = formatGameScriptClass();
 
     /**
      * root game object3D
@@ -679,6 +710,10 @@ const ScriptBase = class {
    */
   // eslint-disable-next-line no-unused-vars
   onLeaveCollision(object3D) {}
+
+  static get CLASS_ID() {
+    throw new Error('this is abstract class you should override CLASS_ID');
+  }
 };
 
 module.exports = {

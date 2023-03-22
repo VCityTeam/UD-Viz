@@ -88,20 +88,21 @@ const SocketService = class {
    * @param {Game.Object3D} gameObjects3D - gameobject3D to simulate
    * @param {string} threadProcessPath - path to the thread process
    * @param {string=} entryGameObject3DUUID - uuid of default gameobject to connect socket connected
+   * @returns {Promise} - a promises resolving when all thread have been initialized
    */
-  initializeGameThreads(
-    gameObjects3D,
-    threadProcessPath,
-    entryGameObject3DUUID
-  ) {
+  loadGameThreads(gameObjects3D, threadProcessPath, entryGameObject3DUUID) {
+    const promises = [];
+
     // default gameobject3D when socket connect
     this.entryGameObject3DUUID = entryGameObject3DUUID || gameObjects3D[0].uuid;
 
     gameObjects3D.forEach((gameObject3D) => {
       this.threads[gameObject3D.uuid] = new Thread(threadProcessPath);
-      this.threads[gameObject3D.uuid].post(Thread.EVENT.INIT, {
-        gameObject3D: gameObject3D,
-      });
+      promises.push(
+        this.threads[gameObject3D.uuid].apply(Thread.EVENT.INIT, {
+          gameObject3D: gameObject3D,
+        })
+      );
 
       this.threads[gameObject3D.uuid].on(
         Thread.EVENT.CURRENT_STATE,
@@ -112,6 +113,8 @@ const SocketService = class {
         }
       );
     });
+
+    return Promise.all(promises);
   }
 
   /**
