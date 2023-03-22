@@ -6,9 +6,10 @@ import { TilesManager } from './TilesManager';
  * Each outlier tile geometry does not keep the batchid for each outliers.
  * May be slow to create / load.
  *
- * @param {TilesManager} tilesManager A TilesManager object from UD-Viz.
+ * @param {THREE.Object3D} tile  A 3DObject (should be a tile send by Tilesmanager.EVENT_TILE_LOADED)
+ * @param {number} threshOldAngle  An edge is only rendered if the angle (in degrees) between the face normals of the adjoining faces exceeds this value. default = 1 degree.
  */
-export function appendWireframeToTileset(tile, threshOldAngles = 30) {
+export function appendWireframeToTileset(tile, threshOldAngle = 30) {
   if (
     tile.children[0] &&
     tile.children[0].children[0] &&
@@ -31,7 +32,7 @@ export function appendWireframeToTileset(tile, threshOldAngles = 30) {
       geom.geometry.setIndex(indices);
 
       // Create Outliers
-      const geo = new THREE.EdgesGeometry(geom.geometry, threshOldAngles);
+      const geo = new THREE.EdgesGeometry(geom.geometry, threshOldAngle);
       const mat = new THREE.LineBasicMaterial({
         color: 0x000000,
       });
