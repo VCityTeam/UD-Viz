@@ -6,48 +6,39 @@ import { TilesManager } from './TilesManager';
  * Each outlier tile geometry does not keep the batchid for each outliers.
  * May be slow to create / load.
  *
- * @param {TilesManager} tilesManager A TilesManage object from UD-Viz.
+ * @param {TilesManager} tilesManager A TilesManager object from UD-Viz.
  */
-export function createOutliersOfTileset(tilesManager) {
-  tilesManager.addEventListener(
-    TilesManager.EVENT_TILE_LOADED,
-    function (tile) {
-      if (tilesManager.tiles[tile.tileId] != undefined) {
-        if (tilesManager.tiles[tile.tileId].cityObjects != undefined) {
-          const geom =
-            tilesManager.tiles[tile.tileId].getObject3D().children[0]
-              .children[0];
-          if (!geom.hasOutlier) {
-            // This event can be triggered multiple times, even when the geometry is loaded.
-            // This bool avoid to create multiple outliers for one geometry
-            geom.hasOutlier = true;
+export function appendWireframeToTileset(tile, threshOldAngles = 30) {
+  if (
+    tile.children[0] &&
+    tile.children[0].children[0] &&
+    tile.children[0].children[0].geometry &&
+    tile.children[0].children[0].geometry.isBufferGeometry
+  ) {
+    const geom = tile.children[0].children[0];
+    if (!geom.userData.hasOutlier) {
+      // This bool avoid to create multiple outliers for one geometry
+      geom.userData.hasOutlier = true;
 
-            // THREE.EdgesGeometry needs triangle indices to be created.
-            // Create a new array for the indices
-            const indices = [];
+      // THREE.EdgesGeometry needs triangle indices to be created.
+      // Create a new array for the indices
+      const indices = [];
 
-            // Iterate over every group of three vertices in the unindexed mesh and add the corresponding indices to the indices array
-            for (
-              let i = 0;
-              i < geom.geometry.attributes.position.count;
-              i += 3
-            ) {
-              indices.push(i, i + 1, i + 2);
-            }
-            geom.geometry.setIndex(indices);
-
-            // Create Outliers
-            const geo = new THREE.EdgesGeometry(geom.geometry, 30); // or WireframeGeometry
-            const mat = new THREE.LineBasicMaterial({
-              color: 0x000000,
-            });
-            const wireframe = new THREE.LineSegments(geo, mat);
-            geom.add(wireframe);
-          }
-        }
+      // Iterate over every group of three vertices in the unindexed mesh and add the corresponding indices to the indices array
+      for (let i = 0; i < geom.geometry.attributes.position.count; i += 3) {
+        indices.push(i, i + 1, i + 2);
       }
+      geom.geometry.setIndex(indices);
+
+      // Create Outliers
+      const geo = new THREE.EdgesGeometry(geom.geometry, threshOldAngles);
+      const mat = new THREE.LineBasicMaterial({
+        color: 0x000000,
+      });
+      const edges = new THREE.LineSegments(geo, mat);
+      geom.add(edges);
     }
-  );
+  }
 }
 
 /**
@@ -57,7 +48,7 @@ export function createOutliersOfTileset(tilesManager) {
  *
  * @param {TilesManager} tilesManager A TilesManage object from UD-Viz.
  */
-export function createOutliersWithBatchIDOfTileset(tilesManager) {
+export function appendWireframeByBatchIDToTileset(tilesManager) {
   tilesManager.addEventListener(
     TilesManager.EVENT_TILE_LOADED,
     function (tile) {

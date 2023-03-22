@@ -12,8 +12,8 @@ export { TilesManager } from './Component/Itowns/3DTiles/TilesManager';
 
 export {
   getTileFromMesh,
-  createOutliersOfTileset,
-  createOutliersWithBatchIDOfTileset,
+  appendWireframeToTileset,
+  appendWireframeByBatchIDToTileset,
 } from './Component/Itowns/3DTiles/3DTilesUtils';
 
 import * as ExternalScriptTemplate from './Component/Game/External/ScriptTemplate/ScriptTemplate';
