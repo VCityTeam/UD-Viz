@@ -1,12 +1,13 @@
-import { ExternalScriptBase } from '../../Context';
+import { ExternalScriptBase } from '../../../Context';
 import { Command, Game } from '@ud-viz/shared';
 import * as THREE from 'three';
 
-import './NoteService.css';
-import { moveHtmlToWorldPosition } from '../Component/Util';
+import './SocketService.css';
+import { moveHtmlToWorldPosition } from '../../Component/Util';
+import { UI } from '../UI/UI';
 
 /** @classdesc - Manage note for a specific socket */
-export class NoteService extends ExternalScriptBase {
+export class SocketService extends ExternalScriptBase {
   init() {
     /** 
      *  determine if this is the socket script of the user
@@ -24,7 +25,8 @@ export class NoteService extends ExternalScriptBase {
     this.rootHtml = document.createElement('div');
     this.rootHtml.classList.add('root_html_pointer_note');
     // fetch root ui
-    const noteUI = this.context.findExternalScriptWithID('NoteUI');
+
+    const noteUI = this.context.findExternalScriptWithID(UI.CLASS_ID);
     noteUI.appendToHtml(this.rootHtml);
 
     // color
@@ -221,6 +223,10 @@ export class NoteService extends ExternalScriptBase {
 
   onRemove() {
     this.rootHtml.remove();
+  }
+
+  static get CLASS_ID() {
+    return 'note_service_id';
   }
 }
 

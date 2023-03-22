@@ -309,6 +309,10 @@ const NativeCommandManager = class extends ScriptBase {
       );
     }
   }
+
+  static get CLASS_ID() {
+    return 'native_command_manager_id';
+  }
 };
 
 /**

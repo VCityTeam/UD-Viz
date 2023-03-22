@@ -52,13 +52,10 @@
               new udvizBrowser.InputManager(),
               {
                 frame3DPlanarOptions: configs['frame3D_planars'][0],
-                externalGameScriptClass: {
-                  CameraManager:
-                    udvizBrowser.ExternalScriptTemplate.CameraManager,
-                  NoteService: udvizBrowser.ExternalScriptTemplate.NoteService,
-                  NoteUI: udvizBrowser.ExternalScriptTemplate.NoteUI,
-                  Note: udvizBrowser.ExternalScriptTemplate.Note,
-                },
+                externalGameScriptClass: [
+                  udvizBrowser.ExternalScriptTemplate.CameraManager,
+                  udvizBrowser.ExternalScriptTemplate.Note,
+                ],
                 sceneConfig: configs['scene'],
                 gameOrigin: {
                   x: extent.center().x,
