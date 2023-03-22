@@ -4,7 +4,11 @@ import { DocumentProvider } from '../../Core/ViewModel/DocumentProvider';
 import { Link } from '../Model/Link';
 import { LinkProvider } from '../ViewModel/LinkProvider';
 
-import { findChildByID } from '../../../../../HTMLUtil';
+import {
+  createDisplayable,
+  createLabelInput,
+  findChildByID,
+} from '../../../../../HTMLUtil';
 
 /**
  * The interface extensions for the document windows.
@@ -18,21 +22,25 @@ export class DocumentLinkInterface {
    * @param {import('itowns').PlanarControls} cameraControls The camera controls.
    */
   constructor(linkProvider, itownsView, cameraControls) {
-    this.inspectorRootHtml = document.createElement('div');
-    this.inspectorRootHtml.innerHTML = `
-        <input type="checkbox" class="spoiler-check" id="doc-link-spoiler">
-        <label for="doc-link-spoiler" class="section-title">Document Links</label>
-        <div class="spoiler-box">
-          <div id="${this.linkListId}">
+    /** @type {HTMLElement} */
+    this.inspectorRootHtml = null;
 
-          </div>
-          <button id="${this.highlightDocButtonId}">Highlight city objects</button>
-          <button id="${this.createLinkButtonId}">Select & link a city object</button>
-        </div>`;
+    /** @type {HTMLElement} */
+    this.linkListElement = null;
 
-    this.navigatorRootHtml = document.createElement('div');
-    this.navigatorRootHtml.innerHTML = `<label for="${this.linkFilterId}">Linked to the selected city object</label>
-        <input type="checkbox" id="${this.linkFilterId}">`;
+    /** @type {HTMLElement} */
+    this.highlightDocButtonElement = null;
+
+    /** @type {HTMLElement} */
+    this.createLinkButtonElement = null;
+
+    /** @type {HTMLElement} */
+    this.navigatorRootHtml = null;
+
+    /** @type {HTMLElement} */
+    this.linkFilterElement = null;
+
+    this.initHtml();
 
     /**
      * The link provider.
@@ -72,6 +80,43 @@ export class DocumentLinkInterface {
     this.linkFilterElement.onchange = () => {
       this.provider.toggleLinkedDocumentsFilter();
     };
+  }
+
+  initHtml() {
+    // inspector html
+    this.inspectorRootHtml = document.createElement('div');
+    {
+      const displayableDocLink = createDisplayable('Document Links');
+      this.inspectorRootHtml.appendChild(displayableDocLink.parent);
+      {
+        // list
+        this.linkListElement = document.createElement('div');
+        displayableDocLink.container.appendChild(this.linkListElement);
+
+        // highlight button
+        this.highlightDocButtonElement = document.createElement('button');
+        this.highlightDocButtonElement.innerText = 'Highlight city objects';
+        displayableDocLink.container.appendChild(
+          this.highlightDocButtonElement
+        );
+
+        // select button
+        this.createLinkButtonElement = document.createElement('button');
+        this.createLinkButtonElement.innerText = 'Select & link a city object';
+        displayableDocLink.container.appendChild(this.createLinkButtonElement);
+      }
+    }
+
+    this.navigatorRootHtml = document.createElement('div');
+    {
+      // label input
+      const labelInputLinkFilter = createLabelInput(
+        'Linked to the selected city object',
+        'checkbox'
+      );
+      this.linkFilterElement = labelInputLinkFilter.input;
+      this.navigatorRootHtml.appendChild(labelInputLinkFilter.parent);
+    }
   }
 
   inspectorHtml() {
@@ -218,43 +263,11 @@ export class DocumentLinkInterface {
   // ////////////
   // //// GETTERS
 
-  get linkListId() {
-    return `document_link_interface_link_list`;
-  }
-
-  get linkListElement() {
-    return findChildByID(this.inspectorRootHtml, this.linkListId);
-  }
-
-  get linkFilterId() {
-    return 'city_object_link_filter';
-  }
-
-  get linkFilterElement() {
-    return findChildByID(this.navigatorRootHtml, this.linkFilterId);
-  }
-
   linkTravelerId(link) {
     return `${this.linkListId}_${link.id}_travel`;
   }
 
   linkDeleterId(link) {
     return `${this.linkListId}_${link.id}_delete`;
-  }
-
-  get highlightDocButtonId() {
-    return `document_link_interface_highlight_doc_button`;
-  }
-
-  get highlightDocButtonElement() {
-    return findChildByID(this.inspectorRootHtml, this.highlightDocButtonId);
-  }
-
-  get createLinkButtonId() {
-    return `document_link_interface_create_link`;
-  }
-
-  get createLinkButtonElement() {
-    return findChildByID(this.inspectorRootHtml, this.createLinkButtonId);
   }
 }
