@@ -534,9 +534,9 @@ export class SideBarWidget {
       clearChildren(parentHtmlFeature);
       parentHtmlFeature.appendChild(documentContribute.creationWindow.html());
     };
-    this.documentCore.view.navigatorWindow
-      .html()
-      .appendChild(createDocumentButton);
+    this.documentCore.view.navigatorWindow.documentListContainer.appendChild(
+      createDocumentButton
+    );
 
     // VALIDATION
     const documentValidation = new Widget.Server.Document.Validation(
@@ -546,9 +546,9 @@ export class SideBarWidget {
       this.documentCore.view.inspectorWindow.html()
     );
 
-    this.documentCore.view.navigatorWindow
-      .html()
-      .appendChild(documentValidation.validationView.html());
+    this.documentCore.view.navigatorWindow.displayableFiltersContainer.appendChild(
+      documentValidation.validationView.html()
+    );
 
     // COMMENT
     const documentComment = new Widget.Server.Document.Comment(
@@ -579,9 +579,9 @@ export class SideBarWidget {
         configStyles
       );
 
-      this.documentCore.view.navigatorWindow
-        .html()
-        .appendChild(documentLink.view.documentInterface.navigatorHtml());
+      this.documentCore.view.navigatorWindow.displayableFiltersContainer.appendChild(
+        documentLink.view.documentInterface.navigatorHtml()
+      );
 
       this.documentCore.view.inspectorWindow
         .html()

@@ -58,9 +58,9 @@ export function clearChildren(element) {
  * @param {string} label - label of the container
  * @returns {{parent:HTMLElement,container:HTMLElement}} - parent is the element to add container is the element to fill
  */
-export function createDisplayableContainer(label) {
+export function createDisplayable(label) {
   const parent = document.createElement('div');
-  const displayableButton = document.createElement('div');
+  const displayableButton = document.createElement('button');
   parent.appendChild(displayableButton);
   const container = document.createElement('div');
   parent.appendChild(container);
@@ -88,7 +88,7 @@ export function createDisplayableContainer(label) {
  * @returns {{parent:HTMLElement,input:HTMLElement}} - parent is the element to add input is the input element
  */
 export function createLabelInput(labelText, inputType) {
-  const container = document.createElement('div');
+  const parent = document.createElement('div');
   const label = document.createElement('label');
   label.innerText = labelText;
   const input = document.createElement('input');
@@ -98,10 +98,10 @@ export function createLabelInput(labelText, inputType) {
   input.setAttribute('type', inputType);
   label.htmlFor = uuid;
 
-  container.appendChild(label);
-  container.appendChild(input);
+  parent.appendChild(label);
+  parent.appendChild(input);
 
-  return { container: container, input: input };
+  return { parent: parent, input: input };
 }
 
 /**
@@ -117,17 +117,17 @@ export function createDateIntervalInput(labelText) {
   parent.appendChild(label);
 
   // start date interval
-  const startFromSpan = document.createElement('span');
-  startFromSpan.innerText = 'From';
-  parent.appendChild(startFromSpan);
+  const startFromDiv = document.createElement('div');
+  startFromDiv.innerText = 'From';
+  parent.appendChild(startFromDiv);
   const inputStartDate = document.createElement('input');
   inputStartDate.setAttribute('type', 'date');
   parent.appendChild(inputStartDate);
 
   // end date interval
-  const endFromSpan = document.createElement('span');
-  endFromSpan.innerText = 'To';
-  parent.appendChild(endFromSpan);
+  const endFromDiv = document.createElement('div');
+  endFromDiv.innerText = 'To';
+  parent.appendChild(endFromDiv);
   const inputEndDate = document.createElement('input');
   inputEndDate.setAttribute('type', 'date');
   parent.appendChild(inputEndDate);

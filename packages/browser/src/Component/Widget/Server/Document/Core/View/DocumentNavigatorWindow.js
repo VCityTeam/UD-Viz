@@ -3,7 +3,7 @@ import { Document } from '../Model/Document';
 import { DocumentSearchFilter } from '../ViewModel/DocumentSearchFilter';
 import {
   createDateIntervalInput,
-  createDisplayableContainer,
+  createDisplayable,
   createLabelInput,
 } from '../../../../../HTMLUtil';
 
@@ -16,7 +16,47 @@ export class DocumentNavigatorWindow {
     this.provider = provider;
 
     /** @type {HTMLElement} */
-    this.rootHtml = document.createElement('div');
+    this.rootHtml = null;
+
+    /** @type {HTMLElement} */
+    this.documentListContainer = null;
+
+    /** @type {HTMLElement} */
+    this.docCountElement = null;
+
+    /** @type {HTMLElement} */
+    this.documentListElement = null;
+
+    /** @type {HTMLElement} */
+    this.displayableFiltersContainer = null;
+
+    /** @type {HTMLElement} */
+    this.inputFormElement = null;
+
+    /** @type {HTMLElement} */
+    this.inputKeywordsElement = null;
+
+    /** @type {HTMLElement} */
+    this.inputPubDateStartElement = null;
+
+    /** @type {HTMLElement} */
+    this.inputPubDateEndElement = null;
+
+    /** @type {HTMLElement} */
+    this.inputRefDateStartElement = null;
+
+    /** @type {HTMLElement} */
+    this.inputRefDateEndElement = null;
+
+    /** @type {HTMLElement} */
+    this.inputSourceElement = null;
+
+    /** @type {HTMLElement} */
+    this.inputRightsHolderElement = null;
+
+    /** @type {HTMLElement} */
+    this.clearButtonElement = null;
+
     this.initHtml();
 
     /**
@@ -56,136 +96,89 @@ export class DocumentNavigatorWindow {
   }
 
   initHtml() {
-    // document list container
-    const documentList = document.createElement('div');
-    this.rootHtml.appendChild(documentList);
+    this.rootHtml = document.createElement('div');
+    this.rootHtml.classList.add('root-document-navigator');
+
     {
-      // label document count
-      const labelDocCount = document.createElement('h3');
+      // document list container
+      this.documentListContainer = document.createElement('div');
+      this.rootHtml.appendChild(this.documentListContainer);
       {
-        this.docCountElement = document.createElement('span');
-        labelDocCount.appendChild(this.docCountElement);
-        labelDocCount.innerText = 'Document(s)';
+        // label document count
+        const labelDocCount = document.createElement('h3');
+        this.documentListContainer.appendChild(labelDocCount);
+        {
+          this.docCountElement = document.createElement('span');
+          labelDocCount.appendChild(this.docCountElement);
+          labelDocCount.innerText = 'Document(s)';
+        }
+
+        // list
+        const listContainer = document.createElement('div');
+        listContainer.classList.add('documents-list');
+        this.documentListContainer.appendChild(listContainer);
+        {
+          this.documentListElement = document.createElement('ul');
+          listContainer.appendChild(this.documentListElement);
+        }
       }
 
-      // list
-      const listContainer = document.createElement('div');
-      {
-        this.documentListElement = document.createElement('ul');
-        listContainer.appendChild(this.documentListElement);
-      }
-    }
-
-    // document filter container
-    const documentFilters = document.createElement('div');
-    this.rootHtml.appendChild(documentFilters);
-    {
       // filter displayable element
-      const { parentFilters, containerFilters } =
-        createDisplayableContainer('Filters');
-      documentFilters.appendChild(parentFilters);
+      const displayableFilters = createDisplayable('Filters');
+      this.rootHtml.appendChild(displayableFilters.parent);
+      this.displayableFiltersContainer = displayableFilters.container;
       {
-        const { parentAttributes, containerAttributes } =
-          createDisplayableContainer('Attributes');
-        containerFilters.appendChild(parentAttributes);
-        this.inputFormElement = containerAttributes;
+        const displayableAttributes = createDisplayable('Attributes');
+        this.displayableFiltersContainer.appendChild(
+          displayableAttributes.parent
+        );
+        this.inputFormElement = displayableAttributes.container;
 
         {
           // keywords
-          const { parentKeyWords, inputKeyWords } = createLabelInput(
-            'Keywords',
-            'text'
+          const labelInputKeywords = createLabelInput('Keywords', 'text');
+          displayableAttributes.container.appendChild(
+            labelInputKeywords.parent
           );
-          containerAttributes.appendChild(parentKeyWords);
-          this.inputKeywordsElement = inputKeyWords;
+          this.inputKeywordsElement = labelInputKeywords.input;
 
           // publication date
-          const {
-            publicationParent,
-            publicationInputStart,
-            publicationInputEnd,
-          } = createDateIntervalInput('Publication Date');
-          containerAttributes.appendChild(publicationParent);
-          this.inputPubDateStartElement = publicationInputStart;
-          this.inputPubDateEndElement = publicationInputEnd;
+          const dateIntervalInputPub =
+            createDateIntervalInput('Publication Date');
+          displayableAttributes.container.appendChild(
+            dateIntervalInputPub.parent
+          );
+          this.inputPubDateStartElement = dateIntervalInputPub.inputStartDate;
+          this.inputPubDateEndElement = dateIntervalInputPub.inputEndDate;
 
           // ref date
-          const { refParent, refInputStart, refInputEnd } =
-            createDateIntervalInput('Refering Date');
-          containerAttributes.appendChild(refParent);
-          this.inputRefDateStartElement = refInputStart;
-          this.inputRefDateEndElement = refInputEnd;
+          const dateIntervalInputRef = createDateIntervalInput('Refering Date');
+          displayableAttributes.container.appendChild(
+            dateIntervalInputRef.parent
+          );
+          this.inputRefDateStartElement = dateIntervalInputRef.inputStartDate;
+          this.inputRefDateEndElement = dateIntervalInputRef.inputEndDate;
 
           // source
-          const { parentSource, inputSource } = createLabelInput(
-            'Source',
-            'text'
-          );
-          containerAttributes.appendChild(parentSource);
-          this.inputSourceElement = inputSource;
+          const labelInputSource = createLabelInput('Source', 'text');
+          displayableAttributes.container.appendChild(labelInputSource.parent);
+          this.inputSourceElement = labelInputSource.input;
 
           // right holder
-          const { parentRightsHolder, inputRightsHolder } = createLabelInput(
+          const labelInputRightsHolder = createLabelInput(
             'Rights holder',
             'text'
           );
-          containerAttributes.appendChild(parentRightsHolder);
-          this.inputRightsHolderElement = inputRightsHolder;
+          displayableAttributes.container.appendChild(
+            labelInputRightsHolder.parent
+          );
+          this.inputRightsHolderElement = labelInputRightsHolder.input;
 
           // clear button
           this.clearButtonElement = document.createElement('button');
         }
       }
     }
-  }
-
-  get innerContentHtml() {
-    return /* html*/ `
-      <div class="box-section">
-        <h3 class="section-title">
-          <span id="${this.docCountId}"></span> Document(s)
-        </h3>
-        <div class="documents-list">
-          <ul id="${this.documentListId}">
-          </ul>
-        </div>
-        <div data-ext-container-default="button">
-        </div>
-      </div>
-      <div class="box-section">
-        <input type="checkbox" class="spoiler-check" id="doc-filters-spoiler">
-        <label for="doc-filters-spoiler" class="section-title">Filters</label>
-        <div class="spoiler-box" id="${this.inputFormId}">
-          <div data-ext-container="filter">
-          </div>
-          <input type="checkbox" class="spoiler-check" id="doc-search-spoiler">
-          <label for="doc-search-spoiler" class="subsection-title">Attributes</label>
-          <form class="search-form spoiler-box" id="${this.inputFormId}">
-            <label for="${this.inputKeywordsId}">Keywords</label>
-            <input type="text" id="${this.inputKeywordsId}">
-            <label for="${this.inputPubDateStartId}">Publication date</label>
-            <div class="date-wrapper">
-              <span>From</span><input type="date" id="${this.inputPubDateStartId}"><br>
-              <span>To</span><input type="date" id="${this.inputPubDateEndId}">
-            </div>
-            <label for="${this.inputRefDateStartId}">Refering date</label>
-            <div class="date-wrapper">
-              <span>From</span><input type="date" id="${this.inputRefDateStartId}"><br>
-              <span>To</span><input type="date" id="${this.inputRefDateEndId}">
-            </div>
-            <label for="${this.inputSourceId}">Source</label>
-            <input type="text" id="${this.inputSourceId}">
-            <label for="${this.inputRightsHolderId}">Rights holder</label>
-            <input type="text" id="${this.inputRightsHolderId}">
-            <hr>
-            <input type="submit" value="Filter">
-            <button id="${this.clearButtonId}">Clear</button>
-          </form>
-        </div>
-      </div>
-      <div data-ext-container="bottom" data-ext-container-default="div">     
-      </div>
-    `;
   }
 
   // ////////////////////////////
@@ -294,95 +287,4 @@ export class DocumentNavigatorWindow {
     this.inputPubDateStartElement.value = '';
     this.provider.refreshDocumentList();
   }
-
-  // //////////
-  // // GETTERS
-
-  // get inputFormId() {
-  //   return `document_navigator_form`;
-  // }
-
-  // get inputFormElement() {
-  //   return findChildByID(this.rootHtml, this.inputFormId);
-  // }
-
-  // get clearButtonId() {
-  //   return `document_navigator_button_clear`;
-  // }
-
-  // get clearButtonElement() {
-  //   return findChildByID(this.rootHtml, this.clearButtonId);
-  // }
-
-  // get documentListId() {
-  //   return `document_navigator_document_list`;
-  // }
-
-  // get documentListElement() {
-  //   return findChildByID(this.rootHtml, this.documentListId);
-  // }
-
-  // get inputKeywordsId() {
-  //   return `document_navigator_input_Keywords`;
-  // }
-
-  // get inputKeywordsElement() {
-  //   return findChildByID(this.rootHtml, this.inputKeywordsId);
-  // }
-
-  // get inputSourceId() {
-  //   return `document_navigator_input_Source`;
-  // }
-
-  // get inputSourceElement() {
-  //   return findChildByID(this.rootHtml, this.inputSourceId);
-  // }
-
-  // get inputRightsHolderId() {
-  //   return `document_navigator_rights_holder`;
-  // }
-
-  // get inputRightsHolderElement() {
-  //   return findChildByID(this.rootHtml, this.inputRightsHolderId);
-  // }
-
-  // get inputPubDateStartId() {
-  //   return `document_navigator_input_Publication`;
-  // }
-
-  // get inputPubDateStartElement() {
-  //   return findChildByID(this.rootHtml, this.inputPubDateStartId);
-  // }
-
-  // get inputPubDateEndId() {
-  //   return `document_navigator_input_Publication_End`;
-  // }
-
-  // get inputPubDateEndElement() {
-  //   return findChildByID(this.rootHtml, this.inputPubDateEndId);
-  // }
-
-  // get inputRefDateStartId() {
-  //   return `document_navigator_input_Reference`;
-  // }
-
-  // get inputRefDateStartElement() {
-  //   return findChildByID(this.rootHtml, this.inputRefDateStartId);
-  // }
-
-  // get inputRefDateEndId() {
-  //   return `document_navigator_input_Reference_End`;
-  // }
-
-  // get inputRefDateEndElement() {
-  //   return findChildByID(this.rootHtml, this.inputRefDateEndId);
-  // }
-
-  // get docCountId() {
-  //   return `document_navigator_doc_count`;
-  // }
-
-  // get docCountElement() {
-  //   return findChildByID(this.rootHtml, this.docCountId);
-  // }
 }
