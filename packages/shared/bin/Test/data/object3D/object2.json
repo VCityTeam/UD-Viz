@@ -7,18 +7,18 @@
   },
   "object": {
     "name": "TestState",
-    "components": { "GameScript": { "idScripts": ["Hello"] } },
+    "components": { "GameScript": { "idScripts": ["HELLO SCRIPT ID"] } },
     "children": [
       {
         "name": "child1",
-        "components": { "GameScript": { "idScripts": ["Hello"] } }
+        "components": { "GameScript": { "idScripts": ["HELLO SCRIPT ID"] } }
       },
       {
         "name": "child2",
         "components": {
           "ExternalScript": {},
           "GameScript": {
-            "idScripts": ["Hello"]
+            "idScripts": ["HELLO SCRIPT ID"]
           },
           "Collider": {
             "shapes": [

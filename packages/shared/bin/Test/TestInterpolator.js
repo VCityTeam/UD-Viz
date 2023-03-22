@@ -2,54 +2,59 @@ const Shared = require('../../src/index');
 
 let lastXComputed = null;
 const stateInterpolator = new Shared.Game.StateInterpolator(50); // 50ms delay
+
+const Script1 = class extends Shared.Game.ScriptBase {
+  constructor(context, object3D, variables) {
+    super(context, object3D, variables);
+
+    this.previousState = null;
+  }
+
+  tick() {
+    this.object3D.position.x += 1;
+    this.object3D.setOutdated(true); // indicate this object needs to be updated
+
+    lastXComputed = this.object3D.position.x; // debug
+
+    const state = this.context.toState();
+
+    if (this.previousState) {
+      const stateDiff = state.sub(this.previousState);
+
+      // interpolator will received async state (like between a browser and a server )
+      setTimeout(() => {
+        stateInterpolator.onNewDiff(stateDiff);
+      }, Math.random() * 100);
+
+      const rebuildState = this.previousState.add(stateDiff);
+
+      if (!rebuildState.equals(state)) {
+        console.log(state.getObject3D().matrix);
+        console.log(rebuildState.getObject3D().matrix);
+        console.log(stateDiff);
+
+        throw new Error('state not equals');
+      }
+    } else {
+      stateInterpolator.onFirstState(state);
+    }
+
+    this.previousState = state;
+  }
+
+  static get CLASS_ID() {
+    return 'ID CLASS';
+  }
+};
+
 const gameContext = new Shared.Game.Context(
-  {
-    Script: class extends Shared.Game.ScriptBase {
-      constructor(context, object3D, variables) {
-        super(context, object3D, variables);
-
-        this.previousState = null;
-      }
-
-      tick() {
-        this.object3D.position.x += 1;
-        this.object3D.setOutdated(true); // indicate this object needs to be updated
-
-        lastXComputed = this.object3D.position.x; // debug
-
-        const state = this.context.toState();
-
-        if (this.previousState) {
-          const stateDiff = state.sub(this.previousState);
-
-          // interpolator will received async state (like between a browser and a server )
-          setTimeout(() => {
-            stateInterpolator.onNewDiff(stateDiff);
-          }, Math.random() * 100);
-
-          const rebuildState = this.previousState.add(stateDiff);
-
-          if (!rebuildState.equals(state)) {
-            console.log(state.getObject3D().matrix);
-            console.log(rebuildState.getObject3D().matrix);
-            console.log(stateDiff);
-
-            throw new Error('state not equals');
-          }
-        } else {
-          stateInterpolator.onFirstState(state);
-        }
-
-        this.previousState = state;
-      }
-    },
-  },
+  [Script1],
   new Shared.Game.Object3D({
     object: {
       static: false, // this object is going to move in 3D space
       components: {
         GameScript: {
-          idScripts: ['Script'],
+          idScripts: [Script1.CLASS_ID],
         },
       },
     },

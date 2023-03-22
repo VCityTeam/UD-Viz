@@ -30,29 +30,30 @@ app
     exec('npm run build-default-thread --prefix ./packages/node')
       .then(printExec)
       .then(() => {
-        gameSocketService.initializeGameThreads(
-          [
-            new Game.Object3D({
-              name: 'Note Game',
-              static: true,
-              components: {
-                GameScript: {
-                  idScripts: ['NoteGameManager', 'NativeCommandManager'],
+        gameSocketService
+          .loadGameThreads(
+            [
+              new Game.Object3D({
+                name: 'Note Game',
+                static: true,
+                components: {
+                  GameScript: {
+                    idScripts: ['NoteGameManager', 'NativeCommandManager'],
+                  },
+                  ExternalScript: {
+                    idScripts: ['NoteUI', 'CameraManager'],
+                  },
                 },
-                ExternalScript: {
-                  idScripts: ['NoteUI', 'CameraManager'],
-                },
-              },
-            }),
-          ],
-          './packages/node/dist/default_thread/release/default_thread.js'
-        );
-
-        console.log('Default GameSocketService initialized');
-
-        // if can send message to parent notify it
-        if (process.send) {
-          process.send(Constant.MESSAGE.READY);
-        }
+              }),
+            ],
+            './packages/node/dist/default_thread/release/default_thread.js'
+          )
+          .then(() => {
+            console.log('Default GameSocketService initialized');
+            // if can send message to parent notify it
+            if (process.send) {
+              process.send(Constant.MESSAGE.READY);
+            }
+          });
       });
   });
