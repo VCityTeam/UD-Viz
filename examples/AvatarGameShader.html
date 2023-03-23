@@ -42,164 +42,173 @@
             parseInt(configs['extent_lyon'].north)
           );
 
-          const externalGameScriptClass = {
-            CameraManager: udvizBrowser.ExternalScriptTemplate.CameraManager,
-            Avatar: class extends udvizBrowser.ExternalGame.ScriptBase {
-              constructor(context, object3D, variables) {
-                super(context, object3D, variables);
+          const AvatarExternalGameScript = class extends udvizBrowser
+            .ExternalGame.ScriptBase {
+            constructor(context, object3D, variables) {
+              super(context, object3D, variables);
 
-                this.avatar = null;
-                this.intersectionCube = null;
+              this.avatar = null;
+              this.intersectionCube = null;
 
-                // Raycaster for avoiding buildings collisions with avatar
-                this.raycaster = new THREE.Raycaster();
-              }
+              // Raycaster for avoiding buildings collisions with avatar
+              this.raycaster = new THREE.Raycaster();
+            }
 
-              addObjectToArray(array, tilesManager, idLayers) {
-                for (let index = 0; index < tilesManager.length; index++) {
-                  const element = tilesManager[index];
+            addObjectToArray(array, tilesManager, idLayers) {
+              for (let index = 0; index < tilesManager.length; index++) {
+                const element = tilesManager[index];
 
-                  if (idLayers.includes(element.layer.id)) {
-                    array.push(element.layer.root);
-                  }
+                if (idLayers.includes(element.layer.id)) {
+                  array.push(element.layer.root);
                 }
               }
+            }
 
-              buildingsHit(tilesManager, origin, direction) {
-                const buildings = [];
-                this.addObjectToArray(buildings, tilesManager, [
-                  'Lyon-1',
-                  'Lyon-2',
-                  'Lyon-3',
-                  'Lyon-4',
-                  'Lyon-5',
-                  'Lyon-6',
-                  'Lyon-7',
-                  'Lyon-8',
-                ]);
+            buildingsHit(tilesManager, origin, direction) {
+              const buildings = [];
+              this.addObjectToArray(buildings, tilesManager, [
+                'Lyon-1',
+                'Lyon-2',
+                'Lyon-3',
+                'Lyon-4',
+                'Lyon-5',
+                'Lyon-6',
+                'Lyon-7',
+                'Lyon-8',
+              ]);
 
-                this.raycaster.ray.origin = origin;
-                this.raycaster.ray.direction = direction;
+              this.raycaster.ray.origin = origin;
+              this.raycaster.ray.direction = direction;
 
-                const intersections = this.raycaster.intersectObjects(
-                  buildings,
-                  true
+              const intersections = this.raycaster.intersectObjects(
+                buildings,
+                true
+              );
+              if (intersections.length) return intersections[0];
+              return null;
+            }
+
+            init() {
+              this.avatar = this.context.object3D.getObjectByProperty(
+                'name',
+                'avatar'
+              );
+              if (!this.avatar) throw new Error('no avatar in context');
+
+              this.cameraManager = this.context.findExternalScriptWithID(
+                udvizBrowser.ExternalScriptTemplate.CameraManager.CLASS_ID
+              );
+
+              this.cameraManager.followObject3D(
+                this.avatar,
+                this.variables.camera_distance,
+                new udvizBrowser.THREE.Vector3(0, 0, 2),
+                this.variables.camera_angle
+              );
+
+              const scene = this.context.frame3D.getScene();
+              if (!this.context.frame3D.itownsView)
+                throw new Error('this script works with Frame3DPlanar');
+              const tilesManager =
+                this.context.frame3D.getLayerManager().tilesManagers;
+              const worldOrigin = this.context.object3D.position;
+
+              // Input manager of the game
+              const inputManager = this.context.inputManager;
+
+              // Intersection cube
+              const geometry = new THREE.BoxGeometry(1, 1, 1);
+              const material = new THREE.MeshBasicMaterial({
+                color: 0x00ff00,
+              });
+              this.intersectionCube = new THREE.Mesh(geometry, material);
+              scene.add(this.intersectionCube);
+
+              const translationSpeed = 0.03;
+              const speedRotate = 0.0006;
+
+              const checkCollisionFun = (direction) => {
+                const origin = this.avatar.position
+                  .clone()
+                  .add(worldOrigin)
+                  .add(new THREE.Vector3(0, 0, 1));
+                const intersection = this.buildingsHit(
+                  tilesManager,
+                  origin,
+                  direction
                 );
-                if (intersections.length) return intersections[0];
-                return null;
-              }
+                const depth = intersection ? intersection.distance : Infinity;
 
-              init() {
-                this.avatar = this.context.object3D.getObjectByProperty(
-                  'name',
-                  'avatar'
-                );
-                if (!this.avatar) throw new Error('no avatar in context');
+                if (depth != Infinity) {
+                  this.intersectionCube.visibility = true;
+                  this.intersectionCube.position.copy(intersection.point);
+                  this.intersectionCube.updateMatrixWorld();
+                } else {
+                  this.intersectionCube.visibility = false;
+                }
 
-                this.cameraManager =
-                  this.context.findExternalScriptWithID('CameraManager');
+                return translationSpeed * this.context.dt > depth;
+              };
 
-                this.cameraManager.followObject3D(
-                  this.avatar,
-                  this.variables.camera_distance,
-                  new udvizBrowser.THREE.Vector3(0, 0, 2),
-                  this.variables.camera_angle
-                );
-
-                const scene = this.context.frame3D.getScene();
-                if (!this.context.frame3D.itownsView)
-                  throw new Error('this script works with Frame3DPlanar');
-                const tilesManager =
-                  this.context.frame3D.getLayerManager().tilesManagers;
-                const worldOrigin = this.context.object3D.position;
-
-                // Input manager of the game
-                const inputManager = this.context.inputManager;
-
-                // Intersection cube
-                const geometry = new THREE.BoxGeometry(1, 1, 1);
-                const material = new THREE.MeshBasicMaterial({
-                  color: 0x00ff00,
-                });
-                this.intersectionCube = new THREE.Mesh(geometry, material);
-                scene.add(this.intersectionCube);
-
-                const translationSpeed = 0.01;
-                const speedRotate = 0.0006;
-
-                const checkCollisionFun = (direction) => {
-                  const origin = this.avatar.position
-                    .clone()
-                    .add(worldOrigin)
-                    .add(new THREE.Vector3(0, 0, 1));
-                  const intersection = this.buildingsHit(
-                    tilesManager,
-                    origin,
-                    direction
+              const updateZ = () => {
+                const zAvatar =
+                  udvizBrowser.ExternalScriptTemplate.computeRelativeElevationFromGround(
+                    this.avatar,
+                    this.context.frame3D.itownsView.tileLayer,
+                    this.variables.update_z_crs
                   );
-                  const depth = intersection ? intersection.distance : Infinity;
 
-                  if (depth != Infinity) {
-                    this.intersectionCube.visibility = true;
-                    this.intersectionCube.position.copy(intersection.point);
-                    this.intersectionCube.updateMatrixWorld();
-                  } else {
-                    this.intersectionCube.visibility = false;
-                  }
+                if (!isNaN(zAvatar)) {
+                  this.avatar.position.z = zAvatar;
+                }
+              };
+              updateZ();
 
-                  return translationSpeed * this.context.dt > depth;
-                };
+              const Object3D = udvizBrowser.Shared.Game.Object3D;
 
-                const updateZ = () => {
-                  const zAvatar =
-                    udvizBrowser.ExternalScriptTemplate.computeRelativeElevationFromGround(
-                      this.avatar,
-                      this.context.frame3D.itownsView.tileLayer,
-                      this.variables.update_z_crs
-                    );
-
-                  if (!isNaN(zAvatar)) {
-                    this.avatar.position.z = zAvatar;
-                  }
-                };
+              // FORWARD
+              inputManager.addKeyCommand('move_forward', ['z'], () => {
+                // eslint-disable-next-line no-unused-vars
+                const dt = this.context.dt;
+                const direction = Object3D.computeForward(this.avatar);
+                if (checkCollisionFun(direction)) return;
+                this.avatar.position.add(
+                  direction.setLength(translationSpeed * this.context.dt)
+                );
                 updateZ();
+              });
+              // BACKWARD
+              inputManager.addKeyCommand('move_backward', ['s'], () => {
+                // eslint-disable-next-line no-unused-vars
+                const dt = this.context.dt;
+                const direction = Object3D.computeBackward(this.avatar);
+                if (checkCollisionFun(direction)) return;
+                this.avatar.position.add(
+                  direction.setLength(translationSpeed * this.context.dt)
+                );
+                updateZ();
+              });
+              // LEFT
+              inputManager.addKeyCommand('rotate_left', ['q'], () => {
+                const dt = this.context.dt;
+                Object3D.rotate(
+                  this.avatar,
+                  new THREE.Vector3(0, 0, speedRotate * dt)
+                );
+              });
+              // RIGHT
+              inputManager.addKeyCommand('rotate_right', ['d'], () => {
+                const dt = this.context.dt;
+                Object3D.rotate(
+                  this.avatar,
+                  new THREE.Vector3(0, 0, -speedRotate * dt)
+                );
+              });
+            }
 
-                const Object3D = udvizBrowser.Shared.Game.Object3D;
-
-                // FORWARD
-                inputManager.addKeyCommand('move_forward', ['z'], () => {
-                  // eslint-disable-next-line no-unused-vars
-                  const dt = this.context.dt;
-                  const direction = Object3D.computeForward(this.avatar);
-                  if (checkCollisionFun(direction)) return;
-                  this.avatar.position.add(
-                    direction.setLength(translationSpeed * this.context.dt)
-                  );
-                  updateZ();
-                });
-                // BACKWARD
-                inputManager.addKeyCommand('move_backward', ['s'], () => {
-                  // eslint-disable-next-line no-unused-vars
-                  const dt = this.context.dt;
-                  const direction = Object3D.computeBackward(this.avatar);
-                  if (checkCollisionFun(direction)) return;
-                  this.avatar.position.add(
-                    direction.setLength(translationSpeed * this.context.dt)
-                  );
-                  updateZ();
-                });
-                // LEFT
-                inputManager.addKeyCommand('rotate_left', ['q'], () => {
-                  const dt = this.context.dt;
-                  this.avatar.rotateZ(speedRotate * dt);
-                });
-                // RIGHT
-                inputManager.addKeyCommand('rotate_right', ['d'], () => {
-                  const dt = this.context.dt;
-                  this.avatar.rotateZ(-speedRotate * dt);
-                });
-              }
-            },
+            static get CLASS_ID() {
+              return 'avatar_game_id';
+            }
           };
 
           const gameObject3D = new udvizBrowser.Shared.Game.Object3D({
@@ -212,7 +221,10 @@
                   camera_distance: 5,
                   camera_angle: 0,
                 },
-                idScripts: ['Avatar', 'CameraManager'],
+                idScripts: [
+                  AvatarExternalGameScript.CLASS_ID,
+                  udvizBrowser.ExternalScriptTemplate.CameraManager.CLASS_ID,
+                ],
               },
             },
             children: [
@@ -237,7 +249,10 @@
             assetManager,
             new udvizBrowser.InputManager(),
             {
-              externalGameScriptClass: externalGameScriptClass,
+              externalGameScriptClass: [
+                AvatarExternalGameScript,
+                udvizBrowser.ExternalScriptTemplate.CameraManager,
+              ],
               sceneConfig: configs['scene'],
               gameOrigin: {
                 x: extent.center().x,
