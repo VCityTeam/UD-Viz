@@ -20,7 +20,7 @@ const Script1 = class extends Shared.Game.ScriptBase {
     });
   }
 
-  static get CLASS_ID() {
+  static get ID_SCRIPT() {
     return 'Command test script';
   }
 };
@@ -32,7 +32,7 @@ const gameContext = new Shared.Game.Context(
       name: 'Command Test',
       components: {
         GameScript: {
-          idScripts: [Script1.CLASS_ID],
+          idScripts: [Script1.ID_SCRIPT],
         },
       },
     },

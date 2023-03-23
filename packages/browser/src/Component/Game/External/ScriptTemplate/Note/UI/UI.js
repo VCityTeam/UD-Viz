@@ -85,7 +85,7 @@ export class UI extends ExternalScriptBase {
     this.uiContainer.appendChild(el);
   }
 
-  static get CLASS_ID() {
-    return Game.ScriptTemplate.Constants.CLASS_ID.NoteUI;
+  static get ID_SCRIPT() {
+    return Game.ScriptTemplate.Constants.ID_SCRIPT.NoteUI;
   }
 }

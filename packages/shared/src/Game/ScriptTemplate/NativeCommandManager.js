@@ -310,7 +310,7 @@ const NativeCommandManager = class extends ScriptBase {
     }
   }
 
-  static get CLASS_ID() {
+  static get ID_SCRIPT() {
     return 'native_command_manager_id';
   }
 };

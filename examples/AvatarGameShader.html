@@ -96,7 +96,7 @@
               if (!this.avatar) throw new Error('no avatar in context');
 
               this.cameraManager = this.context.findExternalScriptWithID(
-                udvizBrowser.ExternalScriptTemplate.CameraManager.CLASS_ID
+                udvizBrowser.ExternalScriptTemplate.CameraManager.ID_SCRIPT
               );
 
               this.cameraManager.followObject3D(
@@ -200,7 +200,7 @@
               });
             }
 
-            static get CLASS_ID() {
+            static get ID_SCRIPT() {
               return 'avatar_game_id';
             }
           };
@@ -216,8 +216,8 @@
                   camera_angle: 0,
                 },
                 idScripts: [
-                  AvatarExternalGameScript.CLASS_ID,
-                  udvizBrowser.ExternalScriptTemplate.CameraManager.CLASS_ID,
+                  AvatarExternalGameScript.ID_SCRIPT,
+                  udvizBrowser.ExternalScriptTemplate.CameraManager.ID_SCRIPT,
                 ],
               },
             },

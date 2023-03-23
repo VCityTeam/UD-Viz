@@ -29,7 +29,7 @@ const Script1 = class extends Shared.Game.ScriptBase {
     process.exit(0);
   }
 
-  static get CLASS_ID() {
+  static get ID_SCRIPT() {
     return 'Collision';
   }
 };
@@ -81,7 +81,7 @@ const Script2 = class extends Shared.Game.ScriptBase {
             body: false,
           },
           GameScript: {
-            idScripts: [Script1.CLASS_ID],
+            idScripts: [Script1.ID_SCRIPT],
           },
         },
       },
@@ -92,7 +92,7 @@ const Script2 = class extends Shared.Game.ScriptBase {
     return result;
   }
 
-  static get CLASS_ID() {
+  static get ID_SCRIPT() {
     return 'Collision Test';
   }
 };
@@ -105,7 +105,7 @@ const gameContext = new Shared.Game.Context(
       name: 'Collision Test',
       components: {
         GameScript: {
-          idScripts: [Script2.CLASS_ID],
+          idScripts: [Script2.ID_SCRIPT],
         },
       },
     },

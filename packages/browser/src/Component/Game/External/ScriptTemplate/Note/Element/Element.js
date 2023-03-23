@@ -43,7 +43,7 @@ export class Element extends ExternalScriptBase {
      *  
      @type {CameraManager} */
     this.cameraManager = this.context.findExternalScriptWithID(
-      CameraManager.CLASS_ID
+      CameraManager.ID_SCRIPT
     );
     noteButton.onclick = () => {
       this.context.frame3D.enableItownsViewControls(false);
@@ -64,7 +64,7 @@ export class Element extends ExternalScriptBase {
     const scriptParent = this.object3D.parent
       .getComponent(Game.Component.ExternalScript.TYPE)
       .getController()
-      .getScripts()[SocketService.CLASS_ID];
+      .getScripts()[SocketService.ID_SCRIPT];
 
     scriptParent.addNoteButton(this.containerButtons);
 
@@ -105,7 +105,7 @@ export class Element extends ExternalScriptBase {
     this.containerButtons.remove();
   }
 
-  static get CLASS_ID() {
-    return Game.ScriptTemplate.Constants.CLASS_ID.NoteElement;
+  static get ID_SCRIPT() {
+    return Game.ScriptTemplate.Constants.ID_SCRIPT.NoteElement;
   }
 }

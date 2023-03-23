@@ -26,7 +26,7 @@ export class SocketService extends ExternalScriptBase {
     this.rootHtml.classList.add('root_html_pointer_note');
     // fetch root ui
 
-    const noteUI = this.context.findExternalScriptWithID(UI.CLASS_ID);
+    const noteUI = this.context.findExternalScriptWithID(UI.ID_SCRIPT);
     noteUI.appendToHtml(this.rootHtml);
 
     // color
@@ -225,8 +225,8 @@ export class SocketService extends ExternalScriptBase {
     this.rootHtml.remove();
   }
 
-  static get CLASS_ID() {
-    return Game.ScriptTemplate.Constants.CLASS_ID.NoteSocketService;
+  static get ID_SCRIPT() {
+    return Game.ScriptTemplate.Constants.ID_SCRIPT.NoteSocketService;
   }
 }
 

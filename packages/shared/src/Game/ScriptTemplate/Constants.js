@@ -32,7 +32,7 @@ module.exports = {
   /**
    * These id ar declared here in ud-viz/shared script template constant because these ids have to known by browser and node
    */
-  CLASS_ID: {
+  ID_SCRIPT: {
     CameraManager: 'camera_manager_id',
     NoteElement: 'note_element_id',
     NoteSocketService: 'note_socket_service_id',

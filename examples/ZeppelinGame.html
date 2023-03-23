@@ -21,7 +21,7 @@
             static: false, // => this Game.Object3D is going to move
             components: {
               GameScript: {
-                idScripts: [ZeppelinGameScript.CLASS_ID],
+                idScripts: [ZeppelinGameScript.ID_SCRIPT],
               },
               Render: { idRenderData: 'zeppelin' },
               Collider: {
@@ -91,7 +91,7 @@
           return result;
         }
 
-        static get CLASS_ID() {
+        static get ID_SCRIPT() {
           return 'game_context_manager_id';
         }
       };
@@ -116,7 +116,7 @@
           gameManager.setOutdated(true); // notify external onOutdated event
         }
 
-        static get CLASS_ID() {
+        static get ID_SCRIPT() {
           return 'zeppelin_game_script_id';
         }
       };
@@ -130,7 +130,7 @@
           this.updateUI();
 
           this.cameraManager = this.context.findExternalScriptWithID(
-            udvizBrowser.ExternalScriptTemplate.CameraManager.CLASS_ID
+            udvizBrowser.ExternalScriptTemplate.CameraManager.ID_SCRIPT
           );
 
           const zeppelin = this.context.object3D.getObjectByProperty(
@@ -166,7 +166,7 @@
           audioComp.getController().play('ballon_pop');
         }
 
-        static get CLASS_ID() {
+        static get ID_SCRIPT() {
           return 'external_game_context_id';
         }
       };
@@ -209,9 +209,9 @@
               },
               GameScript: {
                 idScripts: [
-                  GameContextManager.CLASS_ID,
+                  GameContextManager.ID_SCRIPT,
                   udvizBrowser.Shared.Game.ScriptTemplate.NativeCommandManager
-                    .CLASS_ID,
+                    .ID_SCRIPT,
                 ],
                 variables: {
                   speedRotate: 0.0005,
@@ -224,8 +224,8 @@
                   camera_angle: 0.2,
                 },
                 idScripts: [
-                  ExternalGameContextManager.CLASS_ID,
-                  udvizBrowser.ExternalScriptTemplate.CameraManager.CLASS_ID,
+                  ExternalGameContextManager.ID_SCRIPT,
+                  udvizBrowser.ExternalScriptTemplate.CameraManager.ID_SCRIPT,
                 ],
               },
             },

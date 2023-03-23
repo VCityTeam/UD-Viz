@@ -42,7 +42,7 @@ const Script1 = class extends Shared.Game.ScriptBase {
     this.previousState = state;
   }
 
-  static get CLASS_ID() {
+  static get ID_SCRIPT() {
     return 'ID CLASS';
   }
 };
@@ -54,7 +54,7 @@ const gameContext = new Shared.Game.Context(
       static: false, // this object is going to move in 3D space
       components: {
         GameScript: {
-          idScripts: [Script1.CLASS_ID],
+          idScripts: [Script1.ID_SCRIPT],
         },
       },
     },

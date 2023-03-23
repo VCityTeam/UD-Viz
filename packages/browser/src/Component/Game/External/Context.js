@@ -45,9 +45,9 @@ export class Context {
           const value = object[key];
 
           if (value.prototype instanceof ExternalScriptBase) {
-            if (result[value.CLASS_ID])
-              throw new Error('no unique id ' + value.CLASS_ID);
-            result[value.CLASS_ID] = value;
+            if (result[value.ID_SCRIPT])
+              throw new Error('no unique id ' + value.ID_SCRIPT);
+            result[value.ID_SCRIPT] = value;
           } else if (value instanceof Object) {
             parse(value);
           } else {
@@ -719,8 +719,8 @@ export class ExternalScriptBase {
    */
   onResize() {}
 
-  static get CLASS_ID() {
+  static get ID_SCRIPT() {
     console.error(this.name);
-    throw new Error('this is abstract class you should override CLASS_ID');
+    throw new Error('this is abstract class you should override ID_SCRIPT');
   }
 }
