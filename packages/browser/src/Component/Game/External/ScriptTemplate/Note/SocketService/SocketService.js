@@ -226,7 +226,7 @@ export class SocketService extends ExternalScriptBase {
   }
 
   static get CLASS_ID() {
-    return 'note_service_id';
+    return Game.ScriptTemplate.Constants.CLASS_ID.NoteSocketService;
   }
 }
 

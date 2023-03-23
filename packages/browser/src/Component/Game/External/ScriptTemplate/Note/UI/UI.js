@@ -86,6 +86,6 @@ export class UI extends ExternalScriptBase {
   }
 
   static get CLASS_ID() {
-    return 'note_ui_id';
+    return Game.ScriptTemplate.Constants.CLASS_ID.NoteUI;
   }
 }
