@@ -11,155 +11,164 @@
     <script src="../packages/browser/dist/RUN_MODE/bundle.js"></script>
 
     <script type="text/javascript">
-      const gameScriptClass = {
-        NativeCommandManager:
-          udvizBrowser.Shared.Game.ScriptTemplate.NativeCommandManager,
-        GameContextManager: class extends udvizBrowser.Shared.Game.ScriptBase {
-          load() {
-            const promises = [];
+      const GameContextManager = class extends udvizBrowser.Shared.Game
+        .ScriptBase {
+        load() {
+          const promises = [];
 
-            this.zeppelinGO = new udvizBrowser.Shared.Game.Object3D({
-              name: 'zeppelin',
-              static: false, // => this Game.Object3D is going to move
-              components: {
-                GameScript: {
-                  idScripts: ['Zeppelin'],
-                },
-                Render: { idRenderData: 'zeppelin' },
-                Collider: {
-                  shapes: [
-                    {
-                      type: 'Circle',
-                      center: { x: 0, y: 0 },
-                      radius: 10,
-                    },
-                  ],
-                },
+          this.zeppelinGO = new udvizBrowser.Shared.Game.Object3D({
+            name: 'zeppelin',
+            static: false, // => this Game.Object3D is going to move
+            components: {
+              GameScript: {
+                idScripts: [ZeppelinGameScript.CLASS_ID],
               },
-            });
+              Render: { idRenderData: 'zeppelin' },
+              Collider: {
+                shapes: [
+                  {
+                    type: 'Circle',
+                    center: { x: 0, y: 0 },
+                    radius: 10,
+                  },
+                ],
+              },
+            },
+          });
 
-            promises.push(this.context.addObject3D(this.zeppelinGO));
+          promises.push(this.context.addObject3D(this.zeppelinGO));
 
-            // Add collectable sphere at random position
-            const range = 400;
-            const minRange = 50;
-            for (let i = 0; i < 10; i++) {
-              let x = (Math.random() - 0.5) * range;
-              let y = (Math.random() - 0.5) * range;
+          // Add collectable sphere at random position
+          const range = 400;
+          const minRange = 50;
+          for (let i = 0; i < 10; i++) {
+            let x = (Math.random() - 0.5) * range;
+            let y = (Math.random() - 0.5) * range;
 
-              if (x > 0) {
-                x += minRange;
-              } else {
-                x -= minRange;
-              }
-
-              if (y > 0) {
-                y += minRange;
-              } else {
-                y -= minRange;
-              }
-              const s = this.createCollectableSphere(x, y);
-              promises.push(this.context.addObject3D(s));
+            if (x > 0) {
+              x += minRange;
+            } else {
+              x -= minRange;
             }
 
-            return Promise.all(promises);
+            if (y > 0) {
+              y += minRange;
+            } else {
+              y -= minRange;
+            }
+            const s = this.createCollectableSphere(x, y);
+            promises.push(this.context.addObject3D(s));
           }
-          createCollectableSphere(x, y) {
-            const size = 10;
 
-            const result = new udvizBrowser.Shared.Game.Object3D({
-              name: 'collectable_sphere',
-              static: true,
-              components: {
-                Render: {
-                  idRenderData: 'sphere',
-                  color: [Math.random(), Math.random(), Math.random(), 1],
-                },
-                Collider: {
-                  shapes: [
-                    {
-                      type: 'Circle',
-                      center: { x: 0, y: 0 },
-                      radius: size / 2,
-                    },
-                  ],
-                },
+          return Promise.all(promises);
+        }
+        createCollectableSphere(x, y) {
+          const size = 10;
+
+          const result = new udvizBrowser.Shared.Game.Object3D({
+            name: 'collectable_sphere',
+            static: true,
+            components: {
+              Render: {
+                idRenderData: 'sphere',
+                color: [Math.random(), Math.random(), Math.random(), 1],
               },
-            });
+              Collider: {
+                shapes: [
+                  {
+                    type: 'Circle',
+                    center: { x: 0, y: 0 },
+                    radius: size / 2,
+                  },
+                ],
+              },
+            },
+          });
 
-            result.position.set(x, y, size);
-            result.scale.set(size, size, size);
+          result.position.set(x, y, size);
+          result.scale.set(size, size, size);
 
-            return result;
-          }
-        },
-        Zeppelin: class extends udvizBrowser.Shared.Game.ScriptBase {
-          // Called when this gameobject collider components collides with another one collider components
-          onEnterCollision(goCollided) {
-            this.context.removeObject3D(goCollided.uuid);
+          return result;
+        }
 
-            const gameManager = this.context.object3D.getObjectByProperty(
-              'name',
-              'root'
-            );
-
-            const externalScriptComp = gameManager.getComponent(
-              udvizBrowser.Shared.Game.Component.ExternalScript.TYPE
-            );
-
-            // change variables of an external script
-            externalScriptComp.getModel().variables.sphereCount += 1;
-            gameManager.setOutdated(true); // notify external onOutdated event
-          }
-        },
+        static get CLASS_ID() {
+          return 'game_context_manager_id';
+        }
       };
 
-      const externalGameScriptClass = {
-        CameraManager: udvizBrowser.ExternalScriptTemplate.CameraManager,
-        ExternalContextManager: class extends udvizBrowser.ExternalGame
-          .ScriptBase {
-          init() {
-            this.ui = document.createElement('div');
-            this.ui.style.zIndex = 98; // le neuf et le 8
-            this.context.frame3D.appendToUI(this.ui);
-            this.updateUI();
+      const ZeppelinGameScript = class extends udvizBrowser.Shared.Game
+        .ScriptBase {
+        // Called when this gameobject collider components collides with another one collider components
+        onEnterCollision(goCollided) {
+          this.context.removeObject3D(goCollided.uuid);
 
-            this.cameraManager =
-              this.context.findExternalScriptWithID('CameraManager');
+          const gameManager = this.context.object3D.getObjectByProperty(
+            'name',
+            'root'
+          );
 
-            const zeppelin = this.context.object3D.getObjectByProperty(
-              'name',
-              'zeppelin'
+          const externalScriptComp = gameManager.getComponent(
+            udvizBrowser.Shared.Game.Component.ExternalScript.TYPE
+          );
+
+          // change variables of an external script
+          externalScriptComp.getModel().variables.sphereCount += 1;
+          gameManager.setOutdated(true); // notify external onOutdated event
+        }
+
+        static get CLASS_ID() {
+          return 'zeppelin_game_script_id';
+        }
+      };
+
+      const ExternalGameContextManager = class extends udvizBrowser.ExternalGame
+        .ScriptBase {
+        init() {
+          this.ui = document.createElement('div');
+          this.ui.style.zIndex = 98; // le neuf et le 8
+          this.context.frame3D.appendToUI(this.ui);
+          this.updateUI();
+
+          this.cameraManager = this.context.findExternalScriptWithID(
+            udvizBrowser.ExternalScriptTemplate.CameraManager.CLASS_ID
+          );
+
+          const zeppelin = this.context.object3D.getObjectByProperty(
+            'name',
+            'zeppelin'
+          );
+
+          this.cameraManager.followObject3D(
+            zeppelin,
+            this.variables.camera_distance,
+            new udvizBrowser.THREE.Vector3(0, 0, 15),
+            this.variables.camera_angle
+          );
+
+          const commandController =
+            new udvizBrowser.ExternalScriptTemplate.CommandController(
+              this.context.inputManager
             );
 
-            this.cameraManager.followObject3D(
-              zeppelin,
-              this.variables.camera_distance,
-              new udvizBrowser.THREE.Vector3(0, 0, 15),
-              this.variables.camera_angle
-            );
+          commandController.addNativeCommands(zeppelin.uuid);
+        }
 
-            const commandController =
-              new udvizBrowser.ExternalScriptTemplate.CommandController(
-                this.context.inputManager
-              );
+        updateUI() {
+          this.ui.innerHTML = 'Sphere count: ' + this.variables.sphereCount;
+        }
 
-            commandController.addNativeCommands(zeppelin.uuid);
-          }
+        onOutdated() {
+          this.updateUI();
+          // conf has changed meaning a shpereCount has incremented => play a sound
+          const audioComp = this.object3D.getComponent(
+            udvizBrowser.Shared.Game.Component.Audio.TYPE
+          );
+          audioComp.getController().play('ballon_pop');
+        }
 
-          updateUI() {
-            this.ui.innerHTML = 'Sphere count: ' + this.variables.sphereCount;
-          }
-
-          onOutdated() {
-            this.updateUI();
-            // conf has changed meaning a shpereCount has incremented => play a sound
-            const audioComp = this.object3D.getComponent(
-              udvizBrowser.Shared.Game.Component.Audio.TYPE
-            );
-            audioComp.getController().play('ballon_pop');
-          }
-        },
+        static get CLASS_ID() {
+          return 'external_game_context_id';
+        }
       };
 
       udvizBrowser.FileUtil.loadMultipleJSON([
@@ -199,7 +208,11 @@
                 sounds: ['ballon_pop'],
               },
               GameScript: {
-                idScripts: ['GameContextManager', 'NativeCommandManager'],
+                idScripts: [
+                  GameContextManager.CLASS_ID,
+                  udvizBrowser.Shared.Game.ScriptTemplate.NativeCommandManager
+                    .CLASS_ID,
+                ],
                 variables: {
                   speedRotate: 0.0005,
                 },
@@ -210,7 +223,10 @@
                   camera_distance: 60,
                   camera_angle: 0.2,
                 },
-                idScripts: ['ExternalContextManager', 'CameraManager'],
+                idScripts: [
+                  ExternalGameContextManager.CLASS_ID,
+                  udvizBrowser.ExternalScriptTemplate.CameraManager.CLASS_ID,
+                ],
               },
             },
           });
@@ -226,8 +242,15 @@
             assetManager,
             new udvizBrowser.InputManager(),
             {
-              gameScriptClass: gameScriptClass,
-              externalGameScriptClass: externalGameScriptClass,
+              gameScriptClass: [
+                udvizBrowser.Shared.Game.ScriptTemplate.NativeCommandManager,
+                GameContextManager,
+                ZeppelinGameScript,
+              ],
+              externalGameScriptClass: [
+                udvizBrowser.ExternalScriptTemplate.CameraManager,
+                ExternalGameContextManager,
+              ],
               sceneConfig: configs['scene'],
               gameOrigin: {
                 x: extent.center().x,

@@ -44,7 +44,12 @@
             static: true,
             components: {
               GameScript: {
-                idScripts: ['DragAndDropAvatar', 'NativeCommandManager'],
+                idScripts: [
+                  udvizBrowser.Shared.Game.ScriptTemplate.DragAndDropAvatar
+                    .CLASS_ID,
+                  udvizBrowser.Shared.Game.ScriptTemplate.NativeCommandManager
+                    .CLASS_ID,
+                ],
                 variables: {
                   idRenderDataAvatar: 'avatar', // render data your avatar should use
                   speedRotate: 0.0005,
@@ -52,16 +57,18 @@
               },
               ExternalScript: {
                 variables: {},
-                idScripts: ['DragAndDropAvatar', 'CameraManager'],
+                idScripts: [
+                  udvizBrowser.ExternalScriptTemplate.DragAndDropAvatar
+                    .CLASS_ID,
+                  udvizBrowser.ExternalScriptTemplate.CameraManager.CLASS_ID,
+                ],
               },
             },
           });
 
-          // add dynamically hasItownsControls attributes in config
-          configs['frame3D_planars'][0].hasItownsControls = true;
           const frame3DPlanar = new udvizBrowser.Frame3DPlanar(
             extent,
-            configs['frame3D_planars'][0]
+            configs['frame3D_planars'][2]
           );
 
           const game = new udvizBrowser.SinglePlayerGamePlanar(
@@ -70,18 +77,14 @@
             assetManager,
             new udvizBrowser.InputManager(),
             {
-              externalGameScriptClass: {
-                CameraManager:
-                  udvizBrowser.ExternalScriptTemplate.CameraManager,
-                DragAndDropAvatar:
-                  udvizBrowser.ExternalScriptTemplate.DragAndDropAvatar,
-              },
-              gameScriptClass: {
-                NativeCommandManager:
-                  udvizBrowser.Shared.Game.ScriptTemplate.NativeCommandManager,
-                DragAndDropAvatar:
-                  udvizBrowser.Shared.Game.ScriptTemplate.DragAndDropAvatar,
-              },
+              externalGameScriptClass: [
+                udvizBrowser.ExternalScriptTemplate.DragAndDropAvatar,
+                udvizBrowser.ExternalScriptTemplate.CameraManager,
+              ],
+              gameScriptClass: [
+                udvizBrowser.Shared.Game.ScriptTemplate.NativeCommandManager,
+                udvizBrowser.Shared.Game.ScriptTemplate.DragAndDropAvatar,
+              ],
               sceneConfig: configs['scene'],
               gameOrigin: {
                 x: extent.center().x,

@@ -46,7 +46,9 @@ export class DragAndDropAvatar extends ExternalScriptBase {
      * camera manager
      *  
      @type {CameraManager} */
-    this.cameraManager = this.context.findExternalScriptWithID('CameraManager');
+    this.cameraManager = this.context.findExternalScriptWithID(
+      CameraManager.CLASS_ID
+    );
     if (!this.cameraManager)
       throw new Error(
         'this script is dependent of CameraManager script template'
@@ -207,5 +209,9 @@ export class DragAndDropAvatar extends ExternalScriptBase {
     if (newGO.name === Game.ScriptTemplate.Constants.NAME.AVATAR) {
       this.setAvatar(newGO);
     }
+  }
+
+  static get CLASS_ID() {
+    return 'drag_and_drop_avatar_id';
   }
 }
