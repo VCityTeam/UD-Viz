@@ -59,8 +59,11 @@
         );
 
         // ADD OUTLIERS
-        for(const tilesManager of frame3DPlanar.layerManager.tilesManagers)
-          tilesManager.addEventListener(udvizBrowser.TilesManager.EVENT_TILE_LOADED,function(tile){udvizBrowser.appendWireframeToTileset(tile);});
+        for (const tilesManager of frame3DPlanar.layerManager.tilesManagers)
+          tilesManager.addEventListener(
+            udvizBrowser.TilesManager.EVENT_TILE_LOADED,
+            udvizBrowser.appendWireframeToTileset
+          );
       });
     </script>
   </body>
