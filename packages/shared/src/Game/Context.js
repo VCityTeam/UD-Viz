@@ -39,9 +39,9 @@ const Context = class {
           const value = object[key];
 
           if (value.prototype instanceof ScriptBase) {
-            if (result[value.CLASS_ID])
-              throw new Error('no unique id ' + value.CLASS_ID);
-            result[value.CLASS_ID] = value;
+            if (result[value.ID_SCRIPT])
+              throw new Error('no unique id ' + value.ID_SCRIPT);
+            result[value.ID_SCRIPT] = value;
           } else if (value instanceof Object) {
             parse(value);
           } else {
@@ -711,8 +711,8 @@ const ScriptBase = class {
   // eslint-disable-next-line no-unused-vars
   onLeaveCollision(object3D) {}
 
-  static get CLASS_ID() {
-    throw new Error('this is abstract class you should override CLASS_ID');
+  static get ID_SCRIPT() {
+    throw new Error('this is abstract class you should override ID_SCRIPT');
   }
 };
 

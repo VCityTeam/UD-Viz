@@ -21,7 +21,7 @@ module.exports = class NoteGameManager extends Shared.Game.ScriptBase {
         components: {
           ExternalScript: {
             idScripts: [
-              Shared.Game.ScriptTemplate.Constants.CLASS_ID.NoteSocketService,
+              Shared.Game.ScriptTemplate.Constants.ID_SCRIPT.NoteSocketService,
             ],
             variables: {
               socketID: socketID, // to know in external script this is the socket pointer
@@ -76,7 +76,7 @@ module.exports = class NoteGameManager extends Shared.Game.ScriptBase {
             },
             ExternalScript: {
               idScripts: [
-                Shared.Game.ScriptTemplate.Constants.CLASS_ID.NoteElement,
+                Shared.Game.ScriptTemplate.Constants.ID_SCRIPT.NoteElement,
               ],
               variables: {
                 message: data.message,
@@ -92,7 +92,7 @@ module.exports = class NoteGameManager extends Shared.Game.ScriptBase {
     });
   }
 
-  static get CLASS_ID() {
+  static get ID_SCRIPT() {
     return 'note_game_manager_id';
   }
 };

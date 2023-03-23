@@ -24,7 +24,7 @@
           return this.context.addObject3D(this.avatar);
         }
 
-        static get CLASS_ID() {
+        static get ID_SCRIPT() {
           return 'avatar_game_script_id';
         }
       };
@@ -38,7 +38,7 @@
           );
 
           this.cameraManager = this.context.findExternalScriptWithID(
-            udvizBrowser.ExternalScriptTemplate.CameraManager.CLASS_ID
+            udvizBrowser.ExternalScriptTemplate.CameraManager.ID_SCRIPT
           );
 
           this.cameraManager.followObject3D(
@@ -75,7 +75,7 @@
           ]);
         }
 
-        static get CLASS_ID() {
+        static get ID_SCRIPT() {
           return 'avatar_external_game_script_id';
         }
       };
@@ -115,9 +115,9 @@
             components: {
               GameScript: {
                 idScripts: [
-                  AvatarGameScript.CLASS_ID,
+                  AvatarGameScript.ID_SCRIPT,
                   udvizBrowser.Shared.Game.ScriptTemplate.NativeCommandManager
-                    .CLASS_ID,
+                    .ID_SCRIPT,
                 ],
                 variables: {
                   speedRotate: 0.0005,
@@ -130,8 +130,8 @@
                   camera_angle: 0,
                 },
                 idScripts: [
-                  AvatarExternalGameScript.CLASS_ID,
-                  udvizBrowser.ExternalScriptTemplate.CameraManager.CLASS_ID,
+                  AvatarExternalGameScript.ID_SCRIPT,
+                  udvizBrowser.ExternalScriptTemplate.CameraManager.ID_SCRIPT,
                 ],
               },
             },

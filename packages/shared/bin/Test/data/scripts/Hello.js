@@ -7,7 +7,7 @@ module.exports = class Hello extends Shared.Game.ScriptBase {
     console.log('Hello Game from ', this.object3D.name);
   }
 
-  static get CLASS_ID() {
+  static get ID_SCRIPT() {
     return 'HELLO SCRIPT ID';
   }
 };

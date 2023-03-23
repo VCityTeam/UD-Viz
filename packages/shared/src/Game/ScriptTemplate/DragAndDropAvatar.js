@@ -46,7 +46,7 @@ module.exports = class DragAndDropAvatar extends ScriptBase {
     });
   }
 
-  static get CLASS_ID() {
+  static get ID_SCRIPT() {
     return 'drag_and_drop_avatar_id';
   }
 };

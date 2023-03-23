@@ -39,8 +39,8 @@ app
                 components: {
                   GameScript: {
                     idScripts: [
-                      udvizNode.Game.ScriptTemplate.NoteGameManager.CLASS_ID,
-                      Game.ScriptTemplate.NativeCommandManager.CLASS_ID,
+                      udvizNode.Game.ScriptTemplate.NoteGameManager.ID_SCRIPT,
+                      Game.ScriptTemplate.NativeCommandManager.ID_SCRIPT,
                     ],
                   },
                   ExternalScript: {
@@ -48,8 +48,8 @@ app
                      * ditto how to make node script to know class id of an external script
                      */
                     idScripts: [
-                      Game.ScriptTemplate.Constants.CLASS_ID.NoteUI,
-                      Game.ScriptTemplate.Constants.CLASS_ID.CameraManager,
+                      Game.ScriptTemplate.Constants.ID_SCRIPT.NoteUI,
+                      Game.ScriptTemplate.Constants.ID_SCRIPT.CameraManager,
                     ],
                   },
                 },
