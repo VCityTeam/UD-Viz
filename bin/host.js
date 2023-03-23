@@ -44,9 +44,6 @@ app
                     ],
                   },
                   ExternalScript: {
-                    /**
-                     * ditto how to make node script to know class id of an external script
-                     */
                     idScripts: [
                       Game.ScriptTemplate.Constants.ID_SCRIPT.NoteUI,
                       Game.ScriptTemplate.Constants.ID_SCRIPT.CameraManager,
