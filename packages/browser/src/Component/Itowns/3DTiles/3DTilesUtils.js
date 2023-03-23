@@ -16,7 +16,6 @@ export function appendWireframeToTileset(tile, threshOldAngle = 30) {
     tile.children[0].children[0].geometry.isBufferGeometry
   ) {
     for (const geom of tile.children[0].children) {
-      console.log(geom);
       if (!geom.userData.hasOutlier) {
         // This bool avoid to create multiple outliers for one geometry
         geom.userData.hasOutlier = true;
