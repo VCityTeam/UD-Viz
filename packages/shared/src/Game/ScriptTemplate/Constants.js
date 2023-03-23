@@ -29,4 +29,13 @@ module.exports = {
   NAME: {
     AVATAR: 'avatar',
   },
+  /**
+   * These id ar declared here in ud-viz/shared script template constant because these ids have to known by browser and node
+   */
+  CLASS_ID: {
+    CameraManager: 'camera_manager_id',
+    NoteElement: 'note_element_id',
+    NoteSocketService: 'note_socket_service_id',
+    NoteUI: 'note_ui_id',
+  },
 };

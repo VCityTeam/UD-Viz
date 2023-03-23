@@ -20,16 +20,9 @@ module.exports = class NoteGameManager extends Shared.Game.ScriptBase {
         static: true,
         components: {
           ExternalScript: {
-            /**
-             * to know this id 4 ways
-             * import something from browser (hum kind of awkward)
-             * create script constant in ud-viz/shared that browser and node could know (could be that)
-             * pass it as variables (also like it but this force the host script to require("@ud-viz/browser") kind the same as 1st solution)
-             * assume to let a string there (for now i did that as it's the more simplier way but the more dirty)
-             *
-             * what do you think ?
-             */
-            idScripts: ['note_service_id'],
+            idScripts: [
+              Shared.Game.ScriptTemplate.Constants.CLASS_ID.NoteSocketService,
+            ],
             variables: {
               socketID: socketID, // to know in external script this is the socket pointer
               nameSocket: 'Default name',
@@ -82,10 +75,9 @@ module.exports = class NoteGameManager extends Shared.Game.ScriptBase {
               color: data.color,
             },
             ExternalScript: {
-              /**
-               * same as above with note_service_id
-               */
-              idScripts: ['note_id'],
+              idScripts: [
+                Shared.Game.ScriptTemplate.Constants.CLASS_ID.NoteElement,
+              ],
               variables: {
                 message: data.message,
               },

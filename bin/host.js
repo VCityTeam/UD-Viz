@@ -47,7 +47,10 @@ app
                     /**
                      * ditto how to make node script to know class id of an external script
                      */
-                    idScripts: ['note_ui_id', 'camera_manager_id'],
+                    idScripts: [
+                      Game.ScriptTemplate.Constants.CLASS_ID.NoteUI,
+                      Game.ScriptTemplate.Constants.CLASS_ID.CameraManager,
+                    ],
                   },
                 },
               }),

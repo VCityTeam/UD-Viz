@@ -279,7 +279,7 @@ export class CameraManager extends ExternalScriptBase {
   }
 
   static get CLASS_ID() {
-    return 'camera_manager_id';
+    return Game.ScriptTemplate.Constants.CLASS_ID.CameraManager;
   }
 }
 

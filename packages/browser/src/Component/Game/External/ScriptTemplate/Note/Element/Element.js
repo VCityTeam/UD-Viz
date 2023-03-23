@@ -106,6 +106,6 @@ export class Element extends ExternalScriptBase {
   }
 
   static get CLASS_ID() {
-    return 'note_id';
+    return Game.ScriptTemplate.Constants.CLASS_ID.NoteElement;
   }
 }
