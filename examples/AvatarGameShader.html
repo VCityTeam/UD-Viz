@@ -191,18 +191,12 @@
               // LEFT
               inputManager.addKeyCommand('rotate_left', ['q'], () => {
                 const dt = this.context.dt;
-                Object3D.rotate(
-                  this.avatar,
-                  new THREE.Vector3(0, 0, speedRotate * dt)
-                );
+                this.avatar.rotateZ(speedRotate * dt);
               });
               // RIGHT
               inputManager.addKeyCommand('rotate_right', ['d'], () => {
                 const dt = this.context.dt;
-                Object3D.rotate(
-                  this.avatar,
-                  new THREE.Vector3(0, 0, -speedRotate * dt)
-                );
+                this.avatar.rotateZ(-speedRotate * dt);
               });
             }
 
