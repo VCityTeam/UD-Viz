@@ -45,7 +45,6 @@ const Thread = class {
 
     // wait resolve signal from child thread
     this.on(Thread.EVENT.APPLY_RESOLVE, (applyUUID) => {
-      console.log('resolve', applyUUID);
       const resolve = this._resolveApply[applyUUID];
       if (!resolve) throw new Error('no resolve for ', applyUUID);
       resolve();
