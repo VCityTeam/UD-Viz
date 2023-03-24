@@ -1,5 +1,5 @@
-import { $3DTemporalPrimaryTransaction } from '../Model/3DTemporalPrimaryTransaction.js';
-import { $3DTemporalTransactionAggregate } from '../Model/3DTemporalTransactionAggregate.js';
+import { $3DTemporalPrimaryTransaction } from './3DTemporalPrimaryTransaction.js';
+import { $3DTemporalTransactionAggregate } from './3DTemporalTransactionAggregate.js';
 import { $3DTemporalVersion } from './3DTemporalVersion.js';
 
 /**

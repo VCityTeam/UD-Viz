@@ -1,4 +1,4 @@
-import { $3DTemporalExtension } from './Model/3DTemporalExtension.js';
+import { $3DTemporalExtension } from '../../Itowns/TemporalModel/3DTemporalExtension';
 import { TemporalProvider } from './ViewModel/TemporalProvider.js';
 import { TemporalView } from './View/TemporalView.js';
 import { TilesManager } from '../../Itowns/3DTiles/TilesManager.js';

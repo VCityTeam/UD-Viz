@@ -2,10 +2,10 @@ import { TilesManager } from '../../../Itowns/3DTiles/TilesManager.js';
 import { getVisibleTiles } from '../../../Itowns/3DTiles/3DTilesUtils.js';
 import { CityObjectStyle } from '../../../Itowns/3DTiles/Model/CityObjectStyle.js';
 import { CityObjectID } from '../../../Itowns/3DTiles/Model/CityObject.js';
-import { $3DTemporalExtension } from '../Model/3DTemporalExtension.js';
+import { $3DTemporalExtension } from '../../../Itowns/TemporalModel/3DTemporalExtension.js';
 
 // JSDOC
-import { $3DTemporalTransaction } from '../Model/3DTemporalTransaction.js';
+import { $3DTemporalTransaction } from '../../../Itowns/TemporalModel/3DTemporalTransaction';
 
 /**
  * The ViewModel of the temporal module. Contains intermediate data structures

@@ -1,14 +1,9 @@
 const THREE = require('three');
 const itowns = require('itowns');
 import { TilesManager, LayerManager } from './Itowns';
-
-/**
- * These extensions should belong elsewhere since it should be possible
- * to manipulate Temporal 3DTiles without having a dependence to its widget...
- */
-import { $3DTemporalBatchTable } from '../Widget/Temporal/Model/3DTemporalBatchTable';
-import { $3DTemporalBoundingVolume } from '../Widget/Temporal/Model/3DTemporalBoundingVolume';
-import { $3DTemporalTileset } from '../Widget/Temporal/Model/3DTemporalTileset';
+import { $3DTemporalBatchTable } from './TemporalModel/3DTemporalBatchTable';
+import { $3DTemporalBoundingVolume } from './TemporalModel/3DTemporalBoundingVolume';
+import { $3DTemporalTileset } from './TemporalModel/3DTemporalTileset';
 
 /**
  * It creates a 3D Tiles layer,
