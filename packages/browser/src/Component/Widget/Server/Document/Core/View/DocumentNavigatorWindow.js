@@ -106,11 +106,11 @@ export class DocumentNavigatorWindow {
       {
         // label document count
         const labelDocCount = document.createElement('h3');
+        labelDocCount.innerText = 'Document(s)';
         this.documentListContainer.appendChild(labelDocCount);
         {
           this.docCountElement = document.createElement('span');
           labelDocCount.appendChild(this.docCountElement);
-          labelDocCount.innerText = 'Document(s)';
         }
 
         // list
