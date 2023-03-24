@@ -65,13 +65,11 @@ export function createDisplayable(label) {
   const container = document.createElement('div');
   parent.appendChild(container);
 
-  let hidden = true; // true by default
   displayableButton.innerText = 'Display ' + label;
   container.hidden = true;
   displayableButton.onclick = () => {
-    hidden = !hidden;
-    container.hidden = hidden;
-    if (hidden) {
+    container.hidden = !container.hidden;
+    if (container.hidden) {
       displayableButton.innerText = 'Display ' + label;
     } else {
       displayableButton.innerText = 'Hide ' + label;
@@ -116,25 +114,20 @@ export function createDateIntervalInput(labelText) {
   label.innerText = labelText;
   parent.appendChild(label);
 
-  // start date interval
-  const startFromDiv = document.createElement('div');
-  startFromDiv.innerText = 'From';
-  parent.appendChild(startFromDiv);
-  const inputStartDate = document.createElement('input');
-  inputStartDate.setAttribute('type', 'date');
-  parent.appendChild(inputStartDate);
+  const createLabelInputDate = (dateLabelText) => {
+    const dateLabel = document.createElement('div');
+    dateLabel.innerText = dateLabelText;
+    parent.appendChild(dateLabel);
+    const inputDate = document.createElement('input');
+    inputDate.setAttribute('type', 'date');
+    parent.appendChild(inputDate);
 
-  // end date interval
-  const endFromDiv = document.createElement('div');
-  endFromDiv.innerText = 'To';
-  parent.appendChild(endFromDiv);
-  const inputEndDate = document.createElement('input');
-  inputEndDate.setAttribute('type', 'date');
-  parent.appendChild(inputEndDate);
+    return inputDate;
+  };
 
   return {
     parent: parent,
-    inputStartDate: inputStartDate,
-    inputEndDate: inputEndDate,
+    inputStartDate: createLabelInputDate('From'),
+    inputEndDate: createLabelInputDate('To'),
   };
 }

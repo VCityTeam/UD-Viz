@@ -264,10 +264,10 @@ export class DocumentLinkInterface {
   // //// GETTERS
 
   linkTravelerId(link) {
-    return `${this.linkListId}_${link.id}_travel`;
+    return `document_link_interface_link_list${link.id}_travel`;
   }
 
   linkDeleterId(link) {
-    return `${this.linkListId}_${link.id}_delete`;
+    return `document_link_interface_link_list${link.id}_delete`;
   }
 }
