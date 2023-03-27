@@ -4,7 +4,7 @@
 
 // export { LayerChoice } from './LayerChoice/views/LayerChoice';
 
-// export { CameraPositioner } from './CameraPositioner/CameraPositioner';
+export { CameraPositioner } from './CameraPositioner/CameraPositioner';
 
 // export { TemporalModule } from './Temporal/TemporalModule';
 
