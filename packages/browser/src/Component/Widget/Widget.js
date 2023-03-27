@@ -2,7 +2,7 @@
 
 // export { CityObjectProvider } from './CityObjects/ViewModel/CityObjectProvider';
 
-// export { LayerChoice } from './LayerChoice/views/LayerChoice';
+export { LayerChoice } from './LayerChoice/views/LayerChoice';
 
 export { CameraPositioner } from './CameraPositioner/CameraPositioner';
 
