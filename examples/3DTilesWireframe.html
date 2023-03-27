@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>3D Tiles Outliers example</title>
+    <title>3D Tiles Wireframe example</title>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="./assets/css/default.css" />
@@ -15,6 +15,7 @@
         './assets/config/frame3D_planars.json',
         './assets/config/layer/3DTiles.json',
         './assets/config/layer/base_maps.json',
+        './assets/config/layer/elevation.json',
       ]).then((configs) => {
         // http://proj4js.org/
         // define a projection as a string and reference it that way
@@ -44,12 +45,19 @@
           new udvizBrowser.THREE.Color(0x6699cc)
         );
 
-        // ADD LAYER
+        // ADD BASE MAP
         udvizBrowser.addBaseMapLayer(
           configs['base_maps'][0],
           frame3DPlanar.itownsView,
           extent
         );
+
+        // ADD ELEVATION LAYER
+        udvizBrowser.addElevationLayer(
+            configs['elevation'],
+            frame3DPlanar.itownsView,
+            extent
+          );
 
         // ADD LAYERS
         udvizBrowser.add3DTilesLayers(
