@@ -1,14 +1,14 @@
-import { AssetManager } from '../Component/AssetManager/AssetManager';
-import { InputManager } from '../Component/InputManager';
-import { Frame3DPlanar } from '../Component/Frame3D/Frame3D';
+import { AssetManager } from '../../AssetManager/AssetManager';
+import { InputManager } from '../../InputManager';
+import { Frame3DPlanar } from '../../Frame3D/Frame3D';
 import { Game } from '@ud-viz/shared';
-import { RequestAnimationFrameProcess } from '../Component/RequestAnimationFrameProcess';
-import * as ExternalGame from '../Component/Game/External/ExternalGame';
+import { RequestAnimationFrameProcess } from '../../RequestAnimationFrameProcess';
+import * as ExternalGame from './ExternalGame';
 
 /**
  * @classdesc Create a single player game in a {@link Frame3DPlanar}
  */
-export class SinglePlayerGamePlanar {
+export class SinglePlanarProcess {
   /**
    *
    * @param {Game.Object3D} gameObject3D - root game object3D of your game

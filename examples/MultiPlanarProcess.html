@@ -42,7 +42,7 @@
 
           const socketIOWrapper = new udvizBrowser.SocketIOWrapper();
           socketIOWrapper.connectToServer().then(() => {
-            const multiGame = new udvizBrowser.MultiPlayerGamePlanar(
+            const multiGame = new udvizBrowser.ExternalGame.MultiPlanarProcess(
               socketIOWrapper,
               extent,
               assetManager,

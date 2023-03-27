@@ -1,19 +1,19 @@
-import { SocketIOWrapper } from '../Component/SocketIOWrapper';
+import { SocketIOWrapper } from '../../SocketIOWrapper';
 import { Constant, Data, Game } from '@ud-viz/shared';
 import {
   Frame3DPlanar,
   Frame3DPlanarOption,
-} from '../Component/Frame3D/Frame3DPlanar';
-import { RequestAnimationFrameProcess } from '../Component/RequestAnimationFrameProcess';
-import { InputManager } from '../Component/InputManager';
-import { AssetManager } from '../Component/AssetManager/AssetManager';
-import * as ExternalGame from '../Component/Game/External/ExternalGame';
+} from '../../Frame3D/Frame3DPlanar';
+import { RequestAnimationFrameProcess } from '../../RequestAnimationFrameProcess';
+import { InputManager } from '../../InputManager';
+import { AssetManager } from '../../AssetManager/AssetManager';
+import * as ExternalGame from './ExternalGame';
 import * as itowns from 'itowns';
 
 /**
  * @classdesc Create a multi player game in a {@link Frame3DPlanar}
  */
-export class MultiPlayerGamePlanar {
+export class MultiPlanarProcess {
   /**
    *
    * @param {SocketIOWrapper} socketIOWrapper - socket to communicate with gamesocketservice
