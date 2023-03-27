@@ -272,7 +272,7 @@ export class InputManager {
       }
     };
     window.addEventListener('keydown', keydown);
-    this.listeners.push({ element: window, cb: keydown, id: 'keydown' });
+    this.listeners.push({ element: window, listener: keydown, id: 'keydown' });
 
     const keyup = function (event) {
       if (_this.keyMap[event.key] == true) {
@@ -281,7 +281,7 @@ export class InputManager {
       }
     };
     window.addEventListener('keyup', keyup);
-    this.listeners.push({ element: window, cb: keyup, id: 'keyup' });
+    this.listeners.push({ element: window, listener: keyup, id: 'keyup' });
 
     // Start listening mouse state
     this.mouseState.startListening(element);
@@ -356,7 +356,7 @@ export class InputManager {
    */
   dispose() {
     this.listeners.forEach(function (l) {
-      l.element.removeEventListener(l.id, l.cb);
+      l.element.removeEventListener(l.id, l.listener);
     });
     this.mouseState.dispose();
 
@@ -385,7 +385,6 @@ export class InputManager {
       if (this.keyMap[id] || this.isKeyUp(id)) {
         const cmd = this.keyCommands[id]();
         if (cmd) result.push(cmd);
-        this.mouseCommands;
       }
     }
 
@@ -468,7 +467,7 @@ export class MouseState {
     /**
      * register all listeners to well dispose them on dipose
      *
-      @type {Array<{element:HTMLElement,cb:EventCallback,id:string}>} */
+      @type {Array<{element:HTMLElement,listener:EventCallback,id:string}>} */
     this.listeners = [];
   }
 
@@ -490,7 +489,7 @@ export class MouseState {
     this.dragging = false;
 
     this.listeners.forEach(function (l) {
-      l.element.removeEventListener(l.id, l.cb);
+      l.element.removeEventListener(l.id, l.listener);
     });
 
     this.listeners = [];
@@ -505,7 +504,7 @@ export class MouseState {
     for (const id in MOUSE_STATE_EVENTS) {
       this.listeners.push({
         element: element,
-        cb: this.addEvent(element, MOUSE_STATE_EVENTS[id]),
+        listener: this.addEvent(element, MOUSE_STATE_EVENTS[id]),
         id: MOUSE_STATE_EVENTS[id],
       });
     }
