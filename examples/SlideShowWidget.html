@@ -10,71 +10,73 @@
     <script src="../packages/browser/dist/RUN_MODE/bundle.js"></script>
 
     <script type="text/javascript">
-      udvizBrowser.loadMultipleJSON([
-        './assets/config/extent_lyon.json',
-        './assets/config/frame3D_planars.json',
-        './assets/config/widget/slide_show.json',
-      ]).then((configs) => {
-        // http://proj4js.org/
-        // define a projection as a string and reference it that way
-        // the definition of the projection should be in config TODO_ISSUE
-        udvizBrowser.proj4.default.defs(
-          configs['extent_lyon'].crs,
-          '+proj=lcc +lat_1=45.25 +lat_2=46.75' +
-            ' +lat_0=46 +lon_0=3 +x_0=1700000 +y_0=5200000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs'
-        );
-
-        const extent = new udvizBrowser.itowns.Extent(
-          configs['extent_lyon'].crs,
-          parseInt(configs['extent_lyon'].west),
-          parseInt(configs['extent_lyon'].east),
-          parseInt(configs['extent_lyon'].south),
-          parseInt(configs['extent_lyon'].north)
-        );
-
-        const frame3DPlanar = new udvizBrowser.Frame3DPlanar(extent, {
-          hasItownsControls: true,
-        });
-
-        const fitExtent = () => {
-          udvizBrowser.cameraFitRectangle(
-            frame3DPlanar.camera,
-            new udvizBrowser.THREE.Vector2(extent.west, extent.south),
-            new udvizBrowser.THREE.Vector2(extent.east, extent.north)
+      udvizBrowser
+        .loadMultipleJSON([
+          './assets/config/extent_lyon.json',
+          './assets/config/frame3D_planars.json',
+          './assets/config/widget/slide_show.json',
+        ])
+        .then((configs) => {
+          // http://proj4js.org/
+          // define a projection as a string and reference it that way
+          // the definition of the projection should be in config TODO_ISSUE
+          udvizBrowser.proj4.default.defs(
+            configs['extent_lyon'].crs,
+            '+proj=lcc +lat_1=45.25 +lat_2=46.75' +
+              ' +lat_0=46 +lon_0=3 +x_0=1700000 +y_0=5200000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs'
           );
-          frame3DPlanar.itownsView.notifyChange(frame3DPlanar.camera);
-        };
-        fitExtent();
-        frame3DPlanar.camera.rotation.set(0, 0, 0);
 
-        // /// SLIDESHOW MODULE
-        const slideShow = new udvizBrowser.Widget.SlideShow(
-          frame3DPlanar.getItownsView(),
-          configs['slide_show'],
-          extent
-        );
-        const parent = document.createElement('div');
-        parent.style.backgroundColor = 'white';
-        parent.style.width = 'fit-content';
-        parent.appendChild(slideShow.html());
+          const extent = new udvizBrowser.itowns.Extent(
+            configs['extent_lyon'].crs,
+            parseInt(configs['extent_lyon'].west),
+            parseInt(configs['extent_lyon'].east),
+            parseInt(configs['extent_lyon'].south),
+            parseInt(configs['extent_lyon'].north)
+          );
 
-        const hideUIListener = (event) => {
-          if (event.key.toLowerCase() != 's') return;
+          const frame3DPlanar = new udvizBrowser.Frame3DPlanar(extent, {
+            hasItownsControls: true,
+          });
 
-          if (slideShow.html().style.display == 'none') {
-            slideShow.html().style.display = '';
-          } else {
-            slideShow.html().style.display = 'none';
-          }
-        };
+          const fitExtent = () => {
+            udvizBrowser.THREEUtil.cameraFitRectangle(
+              frame3DPlanar.camera,
+              new udvizBrowser.THREE.Vector2(extent.west, extent.south),
+              new udvizBrowser.THREE.Vector2(extent.east, extent.north)
+            );
+            frame3DPlanar.itownsView.notifyChange(frame3DPlanar.camera);
+          };
+          fitExtent();
+          frame3DPlanar.camera.rotation.set(0, 0, 0);
 
-        /* Hide the roothtml without dispose the widget */
-        window.addEventListener('keydown', hideUIListener);
+          // /// SLIDESHOW MODULE
+          const slideShow = new udvizBrowser.Widget.SlideShow(
+            frame3DPlanar.getItownsView(),
+            configs['slide_show'],
+            extent
+          );
+          const parent = document.createElement('div');
+          parent.style.backgroundColor = 'white';
+          parent.style.width = 'fit-content';
+          parent.appendChild(slideShow.html());
 
-        frame3DPlanar.appendToUI(parent);
-        slideShow.addListeners();
-        frame3DPlanar.scene.add(slideShow.plane);
-      });
+          const hideUIListener = (event) => {
+            if (event.key.toLowerCase() != 's') return;
+
+            if (slideShow.html().style.display == 'none') {
+              slideShow.html().style.display = '';
+            } else {
+              slideShow.html().style.display = 'none';
+            }
+          };
+
+          /* Hide the roothtml without dispose the widget */
+          window.addEventListener('keydown', hideUIListener);
+
+          frame3DPlanar.appendToUI(parent);
+          slideShow.addListeners();
+          frame3DPlanar.scene.add(slideShow.plane);
+        });
     </script>
   </body>
 </html>
