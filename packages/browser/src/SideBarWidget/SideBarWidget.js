@@ -2,7 +2,6 @@ import * as itowns from 'itowns';
 import {
   checkParentChild,
   RequestService,
-  THREEUtil,
   clearChildren,
   Frame3DPlanar,
   add3DTilesLayers,
@@ -10,11 +9,14 @@ import {
   addElevationLayer,
   addGeoJsonLayers,
   addLabelLayers,
+  Widget,
+  Game,
+  InputManager,
 } from '../Component/Component';
 
-import packageInfo from '../../package.json';
+import * as Shared from '@ud-viz/shared';
 
-import * as Widget from '../Component/Widget/Widget';
+import packageInfo from '../../package.json';
 
 import './SideBarWidget.css';
 
@@ -23,20 +25,13 @@ export class SideBarWidget {
    *
    * @param {itowns.Extent} extent - itowns extent
    * @param {import('../Component/Frame3D/Frame3DPlanar').Frame3DPlanarOption} frame3DPlanarOptions - frame 3D planar option
-   * @param {import('../Component/THREEUtil').SceneConfig|null} [sceneConfig] - config to init scene
    */
-  constructor(extent, frame3DPlanarOptions, sceneConfig) {
+  constructor(extent, frame3DPlanarOptions) {
     /** @type {itowns.Extent} */
     this.extent = extent; // ref it to add layers then
 
     /** @type {Frame3DPlanar} */
     this.frame3DPlanar = new Frame3DPlanar(extent, frame3DPlanarOptions);
-
-    THREEUtil.initScene(
-      this.frame3DPlanar.renderer,
-      this.frame3DPlanar.scene,
-      sceneConfig
-    );
 
     /** @type {RequestService} */
     this.requestService = new RequestService();
@@ -424,7 +419,6 @@ export class SideBarWidget {
     // VISUALIZER
     const visualizerView = new Widget.Server.Document.VisualizerView(
       this.frame3DPlanar.getItownsView(),
-      this.frame3DPlanar.getItownsView().controls,
       this.documentCore.provider
     );
 
@@ -769,7 +763,6 @@ export class SideBarWidget {
     sideBarButton.onclick = () => {
       if (customHtml.parentElement) {
         this.panMenuSideBar.remove(customHtml);
-        customHtml.remove();
         sideBarButton.classList.remove(
           '_sidebar_widget_menu_sidebar_img_selected'
         );
@@ -780,6 +773,60 @@ export class SideBarWidget {
         );
       }
     };
+  }
+  addDragAndDropAvatar(pathIcon, assetManager, idRenderDataAvatar) {
+    const rootHtml = document.createElement('div');
+
+    // create a single planar process using drag and drop game template
+    const singleProcessPlanar = new Game.External.SinglePlanarProcess(
+      new Shared.Game.Object3D({
+        static: true,
+        components: {
+          GameScript: {
+            idScripts: [
+              Shared.Game.ScriptTemplate.DragAndDropAvatar.ID_SCRIPT,
+              Shared.Game.ScriptTemplate.NativeCommandManager.ID_SCRIPT,
+            ],
+            variables: {
+              idRenderDataAvatar: idRenderDataAvatar,
+              speedRotate: 0.0005,
+            },
+          },
+          ExternalScript: {
+            idScripts: [
+              Game.External.ScriptTemplate.DragAndDropAvatar.ID_SCRIPT,
+              Game.External.ScriptTemplate.CameraManager.ID_SCRIPT,
+            ],
+          },
+        },
+      }),
+      this.frame3DPlanar,
+      assetManager,
+      new InputManager(),
+      {
+        gameScriptClass: [
+          Shared.Game.ScriptTemplate.DragAndDropAvatar,
+          Shared.Game.ScriptTemplate.NativeCommandManager,
+        ],
+        externalGameScriptClass: [
+          Game.External.ScriptTemplate.DragAndDropAvatar,
+          Game.External.ScriptTemplate.CameraManager,
+        ],
+        gameOrigin: {
+          x: this.extent.center().x,
+          y: this.extent.center().y,
+          z: 0,
+        },
+      }
+    );
+
+    // tell to the drag and drop external script where to add its html
+    singleProcessPlanar.externalGameContext.userData.dragAndDropAvatarRootHtml =
+      rootHtml;
+
+    singleProcessPlanar.start();
+
+    this.addCustomHtml(pathIcon, rootHtml, 'Drag and drop avatar');
   }
 }
 

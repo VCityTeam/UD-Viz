@@ -1,2 +1,3 @@
-export { Context, ScriptBase } from './External/ExternalGame';
+import * as External from './External/ExternalGame';
+export { External };
 export { Map } from './ScriptTemplate/ScriptTemplate';

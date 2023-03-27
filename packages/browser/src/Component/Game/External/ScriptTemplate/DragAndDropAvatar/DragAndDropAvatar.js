@@ -89,7 +89,12 @@ export class DragAndDropAvatar extends ExternalScriptBase {
     this.dragAndDropElement.classList.add('drag_and_drop_avatar');
     this.dragAndDropElement.innerHTML = 'Drag And Drop Avatar';
     this.dragAndDropElement.draggable = true;
-    this.context.frame3D.appendToUI(this.dragAndDropElement);
+
+    /** @type {HTMLElement} */
+    this.rootHtml = this.context.userData.dragAndDropAvatarRootHtml;
+
+    // append drag and drop element
+    this.appendToHtml(this.dragAndDropElement);
 
     // drag and drop behavior
     this.context.frame3D.html().ondragend = (event) => {
@@ -110,6 +115,14 @@ export class DragAndDropAvatar extends ExternalScriptBase {
         }),
       ]);
     };
+  }
+
+  appendToHtml(el) {
+    if (this.rootHtml) {
+      this.rootHtml.appendChild(el);
+    } else {
+      this.context.frame3D.appendToUI(el);
+    }
   }
 
   /**
@@ -176,7 +189,7 @@ export class DragAndDropAvatar extends ExternalScriptBase {
           this.commandController.addNativeCommands(this.avatar.uuid);
 
           // add ui to switch back to planar controls
-          this.context.frame3D.appendToUI(this.leaveAvatarModeButton);
+          this.appendToHtml(this.leaveAvatarModeButton);
         });
     } else {
       this.leaveAvatarModeButton.remove();
@@ -192,7 +205,7 @@ export class DragAndDropAvatar extends ExternalScriptBase {
         .then((movementSucceed) => {
           if (!movementSucceed) throw new Error('camera manager error');
 
-          this.context.frame3D.appendToUI(this.dragAndDropElement);
+          this.appendToHtml(this.dragAndDropElement);
           this.context.frame3D.enableItownsViewControls(true);
         });
     }

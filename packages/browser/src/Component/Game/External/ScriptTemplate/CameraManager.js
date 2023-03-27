@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { Game, Data } from '@ud-viz/shared';
+import { Game } from '@ud-viz/shared';
 import { ExternalScriptBase, Context } from '../Context';
 
 /**
@@ -7,27 +7,15 @@ import { ExternalScriptBase, Context } from '../Context';
  * @param {number} dt - delta time movement
  */
 
-/**
- * @typedef {object} NativeCommandManagerVariables
- * @property {number} fov - default fov of the camera
- */
-
-/** @type {NativeCommandManagerVariables} */
-const defaultVariables = {
-  fov: 60,
-};
-
 export class CameraManager extends ExternalScriptBase {
   /**
    *
    * @param {Context} context - game external context
    * @param {Game.Object3D} object3D - object3D attach to this script
-   * @param {NativeCommandManagerVariables} variables - script variables
+   * @param {object} variables - script variables
    */
   constructor(context, object3D, variables) {
-    const overWriteVariables = JSON.parse(JSON.stringify(defaultVariables));
-    Data.objectOverWrite(overWriteVariables, variables);
-    super(context, object3D, overWriteVariables);
+    super(context, object3D, variables);
 
     /** @type {Movement|null} */
     this.currentMovement = null;
@@ -49,10 +37,6 @@ export class CameraManager extends ExternalScriptBase {
      *  
      @type {THREE.Raycaster} */
     this.raycaster = new THREE.Raycaster();
-  }
-
-  init() {
-    this.context.frame3D.camera.fov = this.variables.fov;
   }
 
   /**

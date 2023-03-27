@@ -9,6 +9,7 @@
       "y": 5174961
     },
     "sceneConfig": {
+      "cameraFov": 90,
       "shadowMapSize": 2046,
       "sky": {
         "paths": [
@@ -43,6 +44,7 @@
       "y": 5175327
     },
     "sceneConfig": {
+      "cameraFov": 90,
       "shadowMapSize": 2046,
       "sky": {
         "paths": [
@@ -76,6 +78,7 @@
       "y": 5174961
     },
     "sceneConfig": {
+      "cameraFov": 30,
       "shadowMapSize": 2046,
       "sky": {
         "paths": [

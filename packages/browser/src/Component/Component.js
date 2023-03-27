@@ -17,4 +17,8 @@ export * from './Itowns/Itowns';
 
 export * from './Frame3D/Frame3D';
 
-export * from './Widget/Widget';
+import * as Widget from './Widget/Widget';
+export { Widget };
+
+import * as Game from './Game/Game';
+export { Game };
