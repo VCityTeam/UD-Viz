@@ -67,26 +67,67 @@
               multiGame.frame3DPlanar.itownsView
             );
 
-            udvizBrowser.addBaseMapLayer(
-              configs['base_maps'][0],
-              multiGame.frame3DPlanar.itownsView,
-              extent
+            const extent = new udvizBrowser.itowns.Extent(
+              configs['extent_lyon'].crs,
+              parseInt(configs['extent_lyon'].west),
+              parseInt(configs['extent_lyon'].east),
+              parseInt(configs['extent_lyon'].south),
+              parseInt(configs['extent_lyon'].north)
             );
 
-            udvizBrowser.addElevationLayer(
-              configs['elevation'],
-              multiGame.frame3DPlanar.itownsView,
-              extent
-            );
+            // add dynamically hasItownsControls attributes in config
+            configs['frame3D_planars'][0].hasItownsControls = true;
 
-            udvizBrowser.addGeoJsonLayers(
-              configs['geoJSONs'],
-              multiGame.frame3DPlanar.itownsView,
-              extent
-            );
+            const socketIOWrapper = new udvizBrowser.SocketIOWrapper();
+            socketIOWrapper.connectToServer().then(() => {
+              const multiGame = new udvizBrowser.MultiPlayerGamePlanar(
+                socketIOWrapper,
+                extent,
+                assetManager,
+                new udvizBrowser.InputManager(),
+                {
+                  frame3DPlanarOptions: configs['frame3D_planars'][0],
+                  externalGameScriptClass: {
+                    CameraManager: udvizBrowser.CameraManager,
+                    NoteService: udvizBrowser.NoteService,
+                    NoteUI: udvizBrowser.NoteUI,
+                    Note: udvizBrowser.Note,
+                  },
+                  sceneConfig: configs['scene'],
+                  gameOrigin: {
+                    x: extent.center().x,
+                    y: extent.center().y,
+                    z: 300,
+                  },
+                }
+              );
+              multiGame.start();
+              // /// ADD LAYERS
+              udvizBrowser.add3DTilesLayers(
+                configs['3DTiles'],
+                multiGame.frame3DPlanar.itownsView
+              );
+
+              udvizBrowser.addBaseMapLayer(
+                configs['base_maps'][0],
+                multiGame.frame3DPlanar.itownsView,
+                extent
+              );
+
+              udvizBrowser.addElevationLayer(
+                configs['elevation'],
+                multiGame.frame3DPlanar.itownsView,
+                extent
+              );
+
+              udvizBrowser.addGeoJsonLayers(
+                configs['geoJSONs'],
+                multiGame.frame3DPlanar.itownsView,
+                extent
+              );
+            });
           });
         });
-      });
     </script>
   </body>
 </html>

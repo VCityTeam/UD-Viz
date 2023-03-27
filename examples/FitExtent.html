@@ -10,7 +10,7 @@
     <script src="../packages/browser/dist/RUN_MODE/bundle.js"></script>
 
     <script type="text/javascript">
-      udvizBrowser.FileUtil.loadMultipleJSON([
+      udvizBrowser.loadMultipleJSON([
         './assets/config/extent_lyon.json',
       ]).then((configs) => {
         // http://proj4js.org/
@@ -41,7 +41,7 @@
         frame3DPlanar.appendToUI(button);
 
         const fitExtent = () => {
-          udvizBrowser.THREEUtil.cameraFitRectangle(
+          udvizBrowser.cameraFitRectangle(
             frame3DPlanar.camera,
             new udvizBrowser.THREE.Vector2(extent.west, extent.south),
             new udvizBrowser.THREE.Vector2(extent.east, extent.north)

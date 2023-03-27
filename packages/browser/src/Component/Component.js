@@ -16,4 +16,8 @@ export * from './ItownsUtil';
 
 export * from './Frame3D/Frame3D';
 
+export * from './GUI/GUI';
+
+export * from './Game/Game';
+
 // export * from './Widget/Widget';
