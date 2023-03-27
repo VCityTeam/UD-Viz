@@ -12,7 +12,7 @@ export { AssetManager, RenderData } from './AssetManager/AssetManager.js';
 
 export { RequestService } from './RequestService';
 
-// export * from './ItownsUtil';
+export * from './ItownsUtil';
 
 export * from './Frame3D/Frame3D';
 
