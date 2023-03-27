@@ -4,10 +4,6 @@
 
 export { SideBarWidget } from './SideBarWidget/SideBarWidget';
 
-export { SinglePlayerGamePlanar } from './SinglePlayerGamePlanar/SinglePlayerGamePlanar';
-
-export { MultiPlayerGamePlanar } from './MultiPlayerGamePlanar/MultiPlayerGamePlanar';
-
 // Template.Component
 
 export * from './Component/GUI/GUI';
@@ -81,9 +77,9 @@ import * as itowns from 'itowns';
 import * as itownsWidgets from 'itowns/widgets';
 export { itowns, itownsWidgets };
 
-// // Jquery => should be peerDep for lib purpose
-// import * as jquery from 'jquery';
-// export { jquery };
+// Jquery => should be peerDep for lib purpose
+import * as jquery from 'jquery';
+export { jquery };
 
 // THREE
 import * as THREE from 'three';
@@ -106,7 +102,3 @@ export {
 // proj4
 import * as proj4 from 'proj4';
 export { proj4 };
-
-// jquery
-import * as jquery from 'jquery';
-export { jquery };

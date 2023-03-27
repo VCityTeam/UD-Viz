@@ -91,6 +91,8 @@ const NativeCommandManager = class extends ScriptBase {
           );
           break;
         case Constants.COMMAND.UPDATE_TRANSFORM:
+          if (!updatedObject3D) break; // updated object 3D is needed for this command
+
           if (command.data.position) {
             if (!isNaN(command.data.position.x)) {
               updatedObject3D.position.x = command.data.position.x;
