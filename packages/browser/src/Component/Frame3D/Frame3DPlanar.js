@@ -68,6 +68,7 @@ export class Frame3DPlanar extends Frame3DBase {
 
     /** @type {THREE.DirectionalLight} */
     this.directionalLight = THREEUtil.initScene(
+      this.camera,
       this.renderer,
       this.scene,
       this.sceneConfig

@@ -14,10 +14,9 @@ export class DocumentVisualizerWindow {
    * Creates a new document image orienter.
    *
    * @param {*} itownsView The iTowns view.
-   * @param {*} cameraControls The planar camera controls.
    * @param {*} provider document provider
    */
-  constructor(itownsView, cameraControls, provider) {
+  constructor(itownsView, provider) {
     this.rootHtml = document.createElement('div');
     this.rootHtml.innerHTML = this.innerContentHtml;
     this.rootHtml.classList.add('orienter-box');
@@ -28,13 +27,6 @@ export class DocumentVisualizerWindow {
      * @type {any}
      */
     this.itownsView = itownsView;
-
-    /**
-     * The camera controls.
-     *
-     * @type {any}
-     */
-    this.cameraControls = cameraControls;
 
     /**
      * The visualization camera position.
@@ -187,11 +179,18 @@ export class DocumentVisualizerWindow {
    * @async
    */
   startTravel() {
+    if (!this.itownsView.controls) return; // when PR https://github.com/iTowns/itowns/pull/2046 enabled this would be useless
+
     this.imageElement.style.opacity = 0;
     this.opacitySliderElement.value = 0;
     this.opacityElement.value = 0;
 
-    this.cameraControls.initiateTravel(this.position, 2, this.quaternion, true);
+    this.itownsView.controls.initiateTravel(
+      this.position,
+      2,
+      this.quaternion,
+      true
+    );
     this.itownsView.notifyChange();
 
     return new Promise((resolve, reject) => {

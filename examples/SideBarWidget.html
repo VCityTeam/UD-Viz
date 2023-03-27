@@ -11,7 +11,7 @@
 
     <script type="text/javascript">
       udvizBrowser.FileUtil.loadMultipleJSON([
-        './assets/config/scene.json',
+        './assets/config/assetManager.json',
         './assets/config/extent_lyon.json',
         './assets/config/frame3D_planars.json',
         './assets/config/server/spatial_multimedia_db_server.json',
@@ -46,8 +46,7 @@
 
         const app = new udvizBrowser.SideBarWidget(
           extent,
-          configs['frame3D_planars'][2],
-          configs['scene']
+          configs['frame3D_planars'][2]
         );
 
         app.addLayers({
@@ -124,6 +123,15 @@
           configs['sparql_widget'],
           './assets/svg/sparqlModule.svg'
         );
+
+        const assetManager = new udvizBrowser.AssetManager();
+        assetManager.loadFromConfig(configs['assetManager']).then(() => {
+          app.addDragAndDropAvatar(
+            './assets/svg/user-solid.svg',
+            assetManager,
+            'avatar'
+          );
+        });
       });
     </script>
   </body>

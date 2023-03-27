@@ -3,6 +3,7 @@ const { Data } = require('@ud-viz/shared');
 
 /**
  * @typedef SceneConfig
+ * @property {number} cameraFov - default camera fov
  * @property {number} shadowMapSize - size of shadow map
  * @property {object} sky - sky property
  * @property {{r:number,g:number,b:number}} sky.color - rgb color (value are between [0,1])
@@ -19,6 +20,7 @@ module.exports = {
    * @type {SceneConfig}
    */
   defaultConfigScene: {
+    cameraFov: 60,
     shadowMapSize: 2046,
     sky: {
       color: {
@@ -36,15 +38,18 @@ module.exports = {
   /**
    * Init scene 3D with {@link SceneConfig}
    *
+   * @param {THREE.PerspectiveCamera} camera - camera rendering scene
    * @param {THREE.WebGLRenderer} renderer - webgl renderer
    * @param {THREE.Scene} scene - scene
    * @param {SceneConfig|null} config - config
    * @param {THREE.Object3D|null} object3D - object to focus with shadow map
    * @returns {THREE.DirectionalLight} - directional light created
    */
-  initScene: function (renderer, scene, config, object3D) {
+  initScene: function (camera, renderer, scene, config, object3D) {
     const configToApply = JSON.parse(JSON.stringify(this.defaultConfigScene));
     Data.objectOverWrite(configToApply, config);
+
+    camera.fov = config.cameraFov;
 
     // Init renderer
     this.initRenderer(
