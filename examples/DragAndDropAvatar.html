@@ -57,9 +57,9 @@
               ExternalScript: {
                 variables: {},
                 idScripts: [
-                  udvizBrowser.ExternalScriptTemplate.DragAndDropAvatar
+                  udvizBrowser.DragAndDropAvatar
                     .ID_SCRIPT,
-                  udvizBrowser.ExternalScriptTemplate.CameraManager.ID_SCRIPT,
+                  udvizBrowser.CameraManager.ID_SCRIPT,
                 ],
               },
             },
@@ -77,8 +77,8 @@
             new udvizBrowser.InputManager(),
             {
               externalGameScriptClass: [
-                udvizBrowser.ExternalScriptTemplate.DragAndDropAvatar,
-                udvizBrowser.ExternalScriptTemplate.CameraManager,
+                udvizBrowser.DragAndDropAvatar,
+                udvizBrowser.CameraManager,
               ],
               gameScriptClass: [
                 udvizBrowser.Shared.Game.ScriptTemplate.NativeCommandManager,
@@ -97,7 +97,6 @@
           // /// ADD LAYERS
           udvizBrowser.add3DTilesLayers(
             configs['3DTiles'],
-            frame3DPlanar.layerManager,
             frame3DPlanar.itownsView
           );
 
