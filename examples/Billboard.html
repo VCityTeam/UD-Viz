@@ -10,7 +10,7 @@
     <script src="../packages/browser/dist/RUN_MODE/bundle.js"></script>
 
     <script type="text/javascript">
-      udvizBrowser.FileUtil.loadMultipleJSON([
+      udvizBrowser.loadMultipleJSON([
         './assets/config/extent_lyon.json',
         './assets/config/frame3D_planars.json',
         './assets/config/layer/3DTiles.json',
@@ -60,7 +60,6 @@
 
         udvizBrowser.add3DTilesLayers(
           configs['3DTiles'],
-          frame3DPlanar.layerManager,
           frame3DPlanar.itownsView
         );
 
@@ -70,8 +69,8 @@
           extent
         );
 
-        udvizBrowser.THREEUtil.addLights(frame3DPlanar.getScene());
-        udvizBrowser.THREEUtil.initRenderer(
+        udvizBrowser.addLights(frame3DPlanar.getScene());
+        udvizBrowser.initRenderer(
           frame3DPlanar.getRenderer(),
           new udvizBrowser.THREE.Color(0x6699cc)
         );
