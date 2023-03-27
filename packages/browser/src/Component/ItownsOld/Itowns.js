@@ -6,11 +6,11 @@
  */
 
 /** @class LayerManager */
-export { LayerManager } from './LayerManager/LayerManager';
+// export { LayerManager } from './LayerManager/LayerManager';
 
 /** @class TilesManager */
-export { TilesManager } from './3DTiles/TilesManager';
+// export { TilesManager } from './3DTiles/TilesManager';
 
 export * from './AddLayerFromConfig';
 
-export * from './Component/Component';
+// export * from './Component/Component';

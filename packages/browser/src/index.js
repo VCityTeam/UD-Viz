@@ -2,67 +2,11 @@
 
 // Template
 
-export { SideBarWidget } from './SideBarWidget/SideBarWidget';
+// export { SideBarWidget } from './SideBarWidget/SideBarWidget';
 
 // Template.Component
 
-export * from './Component/GUI/GUI';
-
-export { TilesManager } from './Component/Itowns/3DTiles/TilesManager';
-
-export { getTileFromMesh } from './Component/Itowns/3DTiles/3DTilesUtils';
-
-import * as ExternalScriptTemplate from './Component/Game/External/ScriptTemplate/ScriptTemplate';
-export { ExternalScriptTemplate };
-
-import * as ExternalGame from './Component/Game/External/ExternalGame';
-export { ExternalGame };
-
-import * as FileUtil from './Component/FileUtil';
-export { FileUtil };
-
-import * as THREEUtil from './Component/THREEUtil';
-export { THREEUtil };
-
-import * as Widget from './Component/Widget/Widget';
-export { Widget };
-
-export { InputManager } from './Component/InputManager';
-
-export { RequestService } from './Component/RequestService';
-
-export { SocketIOWrapper } from './Component/SocketIOWrapper';
-
-export { AssetManager } from './Component/AssetManager/AssetManager';
-
-export { Frame3DPlanar, Frame3DBase } from './Component/Frame3D/Frame3D';
-
-export { Billboard } from './Component/Frame3D/Component/Billboard';
-
-export { RequestAnimationFrameProcess } from './Component/RequestAnimationFrameProcess';
-
-import * as Shared from '@ud-viz/shared';
-export { Shared };
-
-export {
-  setup3DTilesLayer,
-  add3DTilesLayers,
-  addBaseMapLayer,
-  addElevationLayer,
-  addGeoJsonLayers,
-  addLabelLayers,
-} from './Component/Itowns/AddLayerFromConfig';
-
-export * from './Component/HTMLUtil';
-
-/**
- * @class CityObject
- * @class CityObjectID
- */
-export {
-  CityObject,
-  CityObjectID,
-} from './Component/Itowns/3DTiles/Model/CityObject';
+export * from './Component/Component';
 
 /**
  * External packages => These packages should be peerDep to force user of @ud-viz/browser to npm i them
@@ -71,6 +15,10 @@ export {
  *
  * - @ud-viz/shared also ?
  */
+
+// shared
+import * as Shared from '@ud-viz/shared';
+export { Shared };
 
 // itowns
 import * as itowns from 'itowns';
