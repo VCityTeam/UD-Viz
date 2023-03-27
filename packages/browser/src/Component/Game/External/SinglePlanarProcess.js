@@ -19,7 +19,6 @@ export class SinglePlanarProcess {
    * @param {Object<string,Game.ScriptBase>=} options.gameScriptClass - custom game scripts class of your object3D
    * @param {{x:number,y:number,z:number}=} options.gameOrigin - position of the external game context object3D
    * @param {Object<string,ExternalGame.ScriptBase>=} options.externalGameScriptClass - custom external scripts class of your object3D
-   * @param {object=} options.sceneConfig - configuration of the scene 3D {@link ExternalGame.Context}
    * @param {number=} options.interpolatorDelay - delay between state computed in game process and the ones in external context
    */
   constructor(
@@ -71,7 +70,7 @@ export class SinglePlanarProcess {
       assetManager,
       inputManager,
       options.externalGameScriptClass || {},
-      { sceneConfig: options.sceneConfig, interpolator: this.interpolator }
+      { interpolator: this.interpolator }
     );
 
     if (options.gameOrigin) {
