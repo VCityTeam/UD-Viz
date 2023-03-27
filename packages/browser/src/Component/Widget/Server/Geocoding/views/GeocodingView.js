@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import * as itowns from 'itowns';
 import proj4 from 'proj4';
 import { findChildByID } from '../../../../HTMLUtil';
-import { focusCameraOn } from '../../../../Itowns/Component/Component';
+import { focusCameraOn } from '../../../../ItownsUtil';
 import { GeocodingService } from '../services/GeocodingService';
 
 import './GeocodingStyle.css';
