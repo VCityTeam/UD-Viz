@@ -16,7 +16,6 @@
           './assets/config/extent_lyon.json',
           './assets/config/assetManager.json',
           './assets/config/frame3D_planars.json',
-          './assets/config/scene.json',
           './assets/config/layer/3DTiles.json',
           './assets/config/layer/base_maps.json',
           './assets/config/layer/elevation.json',
@@ -47,7 +46,7 @@
 
             const socketIOWrapper = new udvizBrowser.SocketIOWrapper();
             socketIOWrapper.connectToServer().then(() => {
-              const multiGame = new udvizBrowser.MultiPlayerGamePlanar(
+              const multiGame = new udvizBrowser.MultiPlanarProcess(
                 socketIOWrapper,
                 extent,
                 assetManager,

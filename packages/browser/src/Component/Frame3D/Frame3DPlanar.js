@@ -1,8 +1,4 @@
-import {
-  computeNearFarCamera,
-  initScene,
-  defaultConfigScene,
-} from '../THREEUtil';
+import * as THREEUtil from '../THREEUtil';
 import { Frame3DBase } from './Frame3DBase/Frame3DBase';
 const itowns = require('itowns');
 const THREE = require('three');
@@ -66,10 +62,10 @@ export class Frame3DPlanar extends Frame3DBase {
     this.camera = this.itownsView.camera.camera3D;
 
     /** @type {import('../THREEUtil').SceneConfig} */
-    this.sceneConfig = options.sceneConfig || defaultConfigScene;
+    this.sceneConfig = options.sceneConfig || THREEUtil.defaultConfigScene;
 
     /** @type {THREE.DirectionalLight} */
-    this.directionalLight = initScene(
+    this.directionalLight = THREEUtil.initScene(
       this.camera,
       this.renderer,
       this.scene,
@@ -87,7 +83,7 @@ export class Frame3DPlanar extends Frame3DBase {
         itowns.MAIN_LOOP_EVENTS.AFTER_CAMERA_UPDATE,
         () => {
           const bb = new THREE.Box3().setFromObject(this.scene);
-          computeNearFarCamera(this.camera, bb.min, bb.max);
+          THREEUtil.computeNearFarCamera(this.camera, bb.min, bb.max);
         }
       );
 
