@@ -4,6 +4,31 @@
 const THREE = require('three');
 const itowns = require('itowns');
 
+/** C3DTileLayer Systtem Style buffering => this extended class should be propose to itowns */
+
+class extendC3DTileLayer extends itowns.C3DTilesLayer {
+  constructor(...args) {
+    super(...args);
+
+    // override the tile load content
+    const originalCallback = this.onTileContentLoaded;
+    this.onTileContentLoaded = () => {
+      originalCallback();
+
+      // do other stuff
+      this.root.traverse((child) => {
+        if (!child.geometry) return;
+        console.log(child.material);
+      });
+    };
+  }
+
+  dispose() {
+    super.dispose(); // do not know if dispose
+    console.log('dispose');
+  }
+}
+
 /**  ADD LAYER TO ITOWNS VIEW FROM CONFIG */
 
 /**
@@ -59,15 +84,20 @@ export function setup3DTilesLayer(layer, itownsView) {
   }
 
   let overrideMaterial = false;
-  let material;
+  let material = null;
   if (layer['pc_size']) {
     material = new THREE.PointsMaterial({
       size: layer['pc_size'],
       vertexColors: true,
     });
     overrideMaterial = true;
+  } else if (layer['color']) {
+    overrideMaterial = new THREE.MeshStandardMaterial({
+      color: new THREE.Color(layer['color']),
+    });
   }
-  const $3dTilesLayer = new itowns.C3DTilesLayer(
+  /** @type {extendC3DTileLayer} */
+  const $3dTilesLayer = new extendC3DTileLayer(
     layer['id'],
     {
       name: layer['id'],
@@ -76,22 +106,10 @@ export function setup3DTilesLayer(layer, itownsView) {
       }),
       registeredExtensions: extensions,
       overrideMaterials: overrideMaterial,
+      material: material,
     },
     itownsView
   );
-  if (overrideMaterial) {
-    $3dTilesLayer.overrideMaterials = material;
-    $3dTilesLayer.material = material;
-  }
-
-  const $3DTilesManager = new TilesManager(itownsView, $3dTilesLayer);
-
-  if (layer['color']) {
-    const color = parseInt(layer['color']);
-    $3DTilesManager.color = color;
-  }
-
-  layerManager.tilesManagers.push($3DTilesManager);
 
   return $3dTilesLayer;
 }
@@ -101,13 +119,13 @@ export function setup3DTilesLayer(layer, itownsView) {
  *
  * @param {object} config3DTilesLayers An object containing 3D Tiles layers configs
  * @param {itowns.View} itownsView - the itowns view
- * @returns {Map<itowns.C3DTilesLayer>} a map of each 3d tiles layer
+ * @returns {Map<itowns.C3DTilesLayer>|null} a map of each 3d tiles layer, null if no config
  */
 export function add3DTilesLayers(config3DTilesLayers, itownsView) {
   // Positional arguments verification
   if (!config3DTilesLayers) {
     console.warn('no 3DTilesLayers config');
-    return undefined;
+    return null;
   }
   const layers = {};
   for (const layer of config3DTilesLayers) {
