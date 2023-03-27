@@ -18,7 +18,7 @@
 
 // export { Debug3DTilesView } from './3DTilesDebug/views/Debug3DTilesView';
 
-// export { BaseMap } from './BaseMap/BaseMapWindow';
+export { BaseMap } from './BaseMap/BaseMapWindow';
 
 import * as Server from './Server/Server';
 export { Server };
