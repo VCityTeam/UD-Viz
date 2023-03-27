@@ -21,4 +21,5 @@ export * from './GUI/GUI';
 
 export * from './Game/Game';
 
-// export * from './Widget/Widget';
+import * as Widget from './Widget/Widget';
+export { Widget };
