@@ -190,12 +190,6 @@ export class Context {
     });
 
     this.frame3D.scene.add(this.object3D); // add it to the frame3D scene
-
-    this.directionalLight = THREEUtil.initScene(
-      this.frame3D.renderer,
-      this.frame3D.scene,
-      this.configScene
-    );
   }
 
   /**
@@ -446,11 +440,11 @@ export class Context {
     // Update shadow
     if (newGO.length) {
       THREEUtil.bindLightTransform(
-        this.configScene.sky.sun_position.offset,
-        this.configScene.sky.sun_position.phi,
-        this.configScene.sky.sun_position.theta,
+        this.frame3D.sceneConfig.sky.sun_position.offset,
+        this.frame3D.sceneConfig.sky.sun_position.phi,
+        this.frame3D.sceneConfig.sky.sun_position.theta,
         this.object3D,
-        this.directionalLight
+        this.frame3D.directionalLight
       );
     }
 

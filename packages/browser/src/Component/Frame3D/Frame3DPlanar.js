@@ -1,6 +1,7 @@
 import { computeNearFarCamera } from '../THREEUtil';
 import { Frame3DBase } from './Frame3DBase/Frame3DBase';
 import { LayerManager } from '../Itowns/Itowns';
+import { THREEUtil } from '../Component';
 const itowns = require('itowns');
 const THREE = require('three');
 
@@ -13,6 +14,7 @@ const THREE = require('three');
  * @property {number} [range=3000] -  Camera range placement
  * @property {number} [tilt=10] - Camera tilt placement
  * @property {number} [maxSubdivisionLevel=3] - Maximum subdivision level for PlanarLayer
+ * @property {import('../THREEUtil').SceneConfig} sceneConfig - scene config
  */
 
 /** @classdesc It's a class that extends the {@link Base} class and adds a PlanarView to it */
@@ -60,6 +62,16 @@ export class Frame3DPlanar extends Frame3DBase {
     this.scene = this.itownsView.scene;
     this.renderer = this.itownsView.mainLoop.gfxEngine.renderer;
     this.camera = this.itownsView.camera.camera3D;
+
+    /** @type {import('../THREEUtil').SceneConfig} */
+    this.sceneConfig = options.sceneConfig || THREEUtil.defaultConfigScene;
+
+    /** @type {THREE.DirectionalLight} */
+    this.directionalLight = THREEUtil.initScene(
+      this.renderer,
+      this.scene,
+      this.sceneConfig
+    );
 
     /**
      * layer manager
