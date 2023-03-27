@@ -24,7 +24,6 @@ export class MultiPlanarProcess {
    * @param {Frame3DPlanarOption} options.frame3DPlanarOptions - options frame3Dplanar {@link Frame3DPlanarOption}
    * @param {{x:number,y:number,z:number}=} options.gameOrigin - position of the external game context object3D
    * @param {Object<string,ExternalGame.ScriptBase>=} options.externalGameScriptClass - custom external scripts class of your object3D
-   * @param {object=} options.sceneConfig - configuration of the scene 3D {@link ExternalGame.Context}
    * @param {number=} options.interpolatorDelay - delay between state computed in game process and the ones in external context
    */
   constructor(
@@ -71,7 +70,6 @@ export class MultiPlanarProcess {
       inputManager,
       options.externalGameScriptClass || {},
       {
-        sceneConfig: options.sceneConfig,
         socketIOWrapper: this.socketIOWrapper,
         interpolator: this.interpolator,
       }

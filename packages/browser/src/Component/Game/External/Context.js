@@ -18,7 +18,6 @@ export class Context {
    * @param {object} options.userData - user data of context
    * @param {object} options.socketIOWrapper - socket io wrapper if multi
    * @param {object} options.interpolator - interpolator
-   * @param {object} options.sceneConfig - config of the scene 3D {@link THREEUtil}
    */
   constructor(
     frame3D,
@@ -124,22 +123,6 @@ export class Context {
      *
       @type {object}  */
     this.userData = options.userData || {};
-
-    // Overwrite conf
-    const overWriteConf = JSON.parse(
-      JSON.stringify(THREEUtil.defaultConfigScene)
-    );
-    Data.objectOverWrite(overWriteConf, options.sceneConfig || {});
-    /**
-     * config of scene 3D {@link THREEUtil}
-     *
-      @type {object}  */
-    this.configScene = overWriteConf;
-    /**
-     * directional light of scene 3D
-     *
-      @type {THREE.DirectionalLight} */
-    this.directionalLight = null;
 
     this.initFrame3D(frame3D);
   }
