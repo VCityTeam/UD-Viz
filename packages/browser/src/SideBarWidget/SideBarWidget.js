@@ -776,6 +776,10 @@ export class SideBarWidget {
   }
 
   addDragAndDropAvatar(pathIcon, assetManager, idRenderDataAvatar) {
+    console.warn(
+      'Drag and drop avatar is still experimental, since it can conflict with camera movement of other widget, notice also that itowns.MAIN_LOOP is quite hacked see SinglePlanarProcess start method'
+    );
+
     const rootHtml = document.createElement('div');
 
     // create a single planar process using drag and drop game template
