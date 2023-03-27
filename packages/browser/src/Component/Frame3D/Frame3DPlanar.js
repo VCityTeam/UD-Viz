@@ -1,7 +1,9 @@
-import { computeNearFarCamera } from '../THREEUtil';
+import {
+  computeNearFarCamera,
+  initScene,
+  defaultConfigScene,
+} from '../THREEUtil';
 import { Frame3DBase } from './Frame3DBase/Frame3DBase';
-import { LayerManager } from '../Itowns/Itowns';
-import { THREEUtil } from '../Component';
 const itowns = require('itowns');
 const THREE = require('three');
 
@@ -64,21 +66,15 @@ export class Frame3DPlanar extends Frame3DBase {
     this.camera = this.itownsView.camera.camera3D;
 
     /** @type {import('../THREEUtil').SceneConfig} */
-    this.sceneConfig = options.sceneConfig || THREEUtil.defaultConfigScene;
+    this.sceneConfig = options.sceneConfig || defaultConfigScene;
 
     /** @type {THREE.DirectionalLight} */
-    this.directionalLight = THREEUtil.initScene(
+    this.directionalLight = initScene(
       this.camera,
       this.renderer,
       this.scene,
       this.sceneConfig
     );
-
-    /**
-     * layer manager
-     *
-      @type {LayerManager} */
-    this.layerManager = new LayerManager(this.itownsView);
 
     let useItownsMainLoop = true;
     if (options.useItownsMainLoop != undefined)

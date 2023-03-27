@@ -1,25 +1,29 @@
+// If functions declare here are needed by widgets these functions should be propose to itowns
+// If not this function are just meant to be use in an @ud-viz/browser eg in Template
+
 const THREE = require('three');
 const itowns = require('itowns');
-import { TilesManager, LayerManager } from './Itowns';
+
+/**  ADD LAYER TO ITOWNS VIEW FROM CONFIG */
 
 /**
  * These extensions should belong elsewhere since it should be possible
  * to manipulate Temporal 3DTiles without having a dependence to its widget...
+ * https://github.com/VCityTeam/UD-Viz/issues/587
  */
-import { $3DTemporalBatchTable } from '../Widget/Temporal/Model/3DTemporalBatchTable';
-import { $3DTemporalBoundingVolume } from '../Widget/Temporal/Model/3DTemporalBoundingVolume';
-import { $3DTemporalTileset } from '../Widget/Temporal/Model/3DTemporalTileset';
+import { $3DTemporalBatchTable } from './Widget/Temporal/Model/3DTemporalBatchTable';
+import { $3DTemporalBoundingVolume } from './Widget/Temporal/Model/3DTemporalBoundingVolume';
+import { $3DTemporalTileset } from './Widget/Temporal/Model/3DTemporalTileset';
 
 /**
  * It creates a 3D Tiles layer,
  * and adds it to the layer manager
  *
  * @param {*} layer - the layer object from the config file
- * @param  {LayerManager} layerManager - the layer manager object
  * @param {itowns.View} itownsView - the itowns view
  * @returns {itowns.C3DTilesLayer} A 3D Tiles Layer
  */
-export function setup3DTilesLayer(layer, layerManager, itownsView) {
+export function setup3DTilesLayer(layer, itownsView) {
   if (!layer['id'] || !layer['url']) {
     throw (
       'Your layer does not have url id properties or both. ' +
@@ -96,15 +100,10 @@ export function setup3DTilesLayer(layer, layerManager, itownsView) {
  * Setup and add 3D tiles to an itowns view
  *
  * @param {object} config3DTilesLayers An object containing 3D Tiles layers configs
- * @param {LayerManager} layerManager a layer manager
  * @param {itowns.View} itownsView - the itowns view
  * @returns {Map<itowns.C3DTilesLayer>} a map of each 3d tiles layer
  */
-export function add3DTilesLayers(
-  config3DTilesLayers,
-  layerManager,
-  itownsView
-) {
+export function add3DTilesLayers(config3DTilesLayers, itownsView) {
   // Positional arguments verification
   if (!config3DTilesLayers) {
     console.warn('no 3DTilesLayers config');
@@ -112,7 +111,7 @@ export function add3DTilesLayers(
   }
   const layers = {};
   for (const layer of config3DTilesLayers) {
-    layers[layer.id] = setup3DTilesLayer(layer, layerManager, itownsView);
+    layers[layer.id] = setup3DTilesLayer(layer, itownsView);
     itowns.View.prototype.addLayer.call(itownsView, layers[layer.id]);
   }
   return layers;
