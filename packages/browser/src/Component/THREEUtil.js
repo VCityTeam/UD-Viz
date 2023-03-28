@@ -247,8 +247,6 @@ module.exports = {
   },
   /**
    * Traverse a THREE.Object3D and append in each Object3D children a THREE.LineSegment geometry  representing its wireframe
-   * May be slow to create / load.
-   *
    * @param {THREE.Object3D} object3D  An Object3D from three
    * @param {number} threshOldAngle  An edge is only rendered if the angle (in degrees) between the face normals of the adjoining faces exceeds this value. default = 1 degree.
    */
@@ -291,16 +289,14 @@ module.exports = {
   /**
    * Traverse a THREE.Object3D and append in each Object3D children a THREE.LineSegment geometry  representing its wireframe.
    * Each wireframe geometry will keep the associated attribute value.
-   * This method is slower than appendWireframeToObject3D.
-   *
    * @param {THREE.Object3D} object3D  An Object3D from three
    * @param {number} threshOldAngle  An edge is only rendered if the angle (in degrees) between the face normals of the adjoining faces exceeds this value. default = 1 degree.
    * @param {string} nameOfGeometryAttribute The attribute used to split each geometry of the BufferGeometry
    */
   appendWireframeByGeometryAttributeToObject3D: function (
     object3D,
-    threshOldAngle = 30,
-    nameOfGeometryAttribute = '_BATCHID'
+    nameOfGeometryAttribute,
+    threshOldAngle = 30
   ) {
     object3D.traverse((child) => {
       if (
@@ -313,16 +309,16 @@ module.exports = {
         // This bool avoid to create multiple wireframes for one geometry
         child.userData.hasWireframe = true;
 
-        // Get the geometry that have the same _BATCHID to create its own wireframe
+        // Get the geometry that have the same value in the geometric attribute to create its own wireframe
         let startIndex = 0;
 
-        // Position array that will be filled with each geometry ordered by _BATCHID
+        // Position array that will be filled with each geometry
         const pos = new Array();
 
-        // BatchID array that will be filled with _BATCHID
-        const batchid = new Array();
+        // Array that will be filled with the geometric attribute
+        const attributeArray = new Array();
 
-        // Iterate through each _BATCHID geometry
+        // Iterate through each geometry
         for (
           let i = 1;
           i < child.geometry.attributes[nameOfGeometryAttribute].count;
@@ -332,14 +328,14 @@ module.exports = {
             child.geometry.attributes[nameOfGeometryAttribute].array[i - 1] !=
             child.geometry.attributes[nameOfGeometryAttribute].array[i]
           ) {
-            const positionByBatchId = new THREE.BufferAttribute(
+            const positionByAttribute = new THREE.BufferAttribute(
               child.geometry.attributes.position.array.slice(startIndex, i * 3),
               3
             );
 
-            // Create a geometry that have the same value of the "nameOfGeometryAttribute"
+            // Get all points that have the same value of the "nameOfGeometryAttribute"
             const mesh = new THREE.BufferGeometry();
-            mesh.setAttribute('position', positionByBatchId);
+            mesh.setAttribute('position', positionByAttribute);
 
             // THREE.EdgesGeometry needs triangle indices to be created.
             // Create a new array for the indices
@@ -357,9 +353,9 @@ module.exports = {
             // Add this wireframe geometry to the global wireframe geometry
             for (let l = 0; l < edges.attributes.position.count * 3; l++)
               pos.push(edges.attributes.position.array[l]);
-            // Fill the _BATCHID buffer
+            // Fill the attribute buffer
             for (let l = 0; l < edges.attributes.position.count; l++)
-              batchid.push(
+              attributeArray.push(
                 child.geometry.attributes[nameOfGeometryAttribute].array[i - 1]
               );
 
@@ -375,8 +371,8 @@ module.exports = {
         );
         const wireframe = new THREE.LineSegments(geomEdges, mat);
         wireframe.geometry.setAttribute(
-          '_BATCHID',
-          new THREE.BufferAttribute(Int32Array.from(batchid), 1)
+          nameOfGeometryAttribute,
+          new THREE.BufferAttribute(Int32Array.from(attributeArray), 1)
         );
         wireframe.userData.isWireframe = true;
         child.add(wireframe);
