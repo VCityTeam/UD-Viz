@@ -245,4 +245,129 @@ module.exports = {
     camera.rotation.set(0, 0, -Math.PI / 2);
     camera.updateProjectionMatrix();
   },
+  /**
+   * Traverse a THREE.Object3D and append in children for each Object3D with a geometry a THREE.LineSegment representing its wireframe
+   * Each outlier tile geometry does not keep the batchid for each outliers.
+   * May be slow to create / load.
+   *
+   * @param {THREE.Object3D} object3D  A 3DObject (should be a tile send by Tilesmanager.EVENT_TILE_LOADED)
+   * @param {number} threshOldAngle  An edge is only rendered if the angle (in degrees) between the face normals of the adjoining faces exceeds this value. default = 1 degree.
+   */
+  appendWireframeToTileset: function (object3D, threshOldAngle = 30) {
+    object3D.traverse((child) => {
+      if (
+        child.geometry &&
+        child.geometry.isBufferGeometry &&
+        !child.userData.isOutlier &&
+        !child.geometry.userData.hasOutlier
+      ) {
+        // This bool avoid to create multiple outliers for one geometry
+        child.userData.hasOutlier = true;
+
+        // THREE.EdgesGeometry needs triangle indices to be created.
+        // Create a new array for the indices
+        const indices = [];
+
+        // Iterate over every group of three vertices in the unindexed mesh and add the corresponding indices to the indices array
+        for (let i = 0; i < child.geometry.attributes.position.count; i += 3) {
+          indices.push(i, i + 1, i + 2);
+        }
+        child.geometry.setIndex(indices);
+
+        // Create Outliers
+        const geo = new THREE.EdgesGeometry(child.geometry, threshOldAngle);
+        const mat = new THREE.LineBasicMaterial({
+          color: 0x000000,
+        });
+        const edges = new THREE.LineSegments(geo, mat);
+        edges.userData.isOutlier = true;
+        child.add(edges);
+      }
+    });
+  },
+
+  /**
+   * Traverse a THREE.Object3D and append in children for each Object3D with a geometry a THREE.LineSegment representing its wireframe
+   * Each wireframe tile geometry keep the batchid for each wireframe to apply styles on a specific wireframe using a CityObjectID.
+   * This method is slower than appendWireframeToTileset().
+   *
+   * @param {THREE.Object3D} object3D  A 3DObject (should be a tile send by Tilesmanager.EVENT_TILE_LOADED)
+   * @param {number} threshOldAngle  An edge is only rendered if the angle (in degrees) between the face normals of the adjoining faces exceeds this value. default = 1 degree.
+   */
+  appendWireframeByBatchIDToTileset: function (object3D, threshOldAngle = 30) {
+    object3D.traverse((child) => {
+      if (
+        child.geometry &&
+        child.geometry.isBufferGeometry &&
+        !child.userData.isOutlier &&
+        !child.geometry.userData.hasOutlier
+      ) {
+        // This event can be triggered multiple times, even when the geometry is loaded.
+        // This bool avoid to create multiple outliers for one geometry
+        child.userData.hasOutlier = true;
+
+        // Get the geometry that have the same _BATCHID to create its own outlier
+        let startIndex = 0;
+
+        // Position array that will be filled with each geometry ordered by _BATCHID
+        const pos = new Array();
+
+        // BatchID array that will be filled with _BATCHID
+        const batchid = new Array();
+
+        // Iterate through each _BATCHID geometry
+        for (let i = 1; i < child.geometry.attributes._BATCHID.count; i++) {
+          if (
+            child.geometry.attributes._BATCHID.array[i - 1] !=
+            child.geometry.attributes._BATCHID.array[i]
+          ) {
+            const positionByBatchId = new THREE.BufferAttribute(
+              child.geometry.attributes.position.array.slice(startIndex, i * 3),
+              3
+            );
+
+            // Create a geometry for this _BATCHID
+            const mesh = new THREE.BufferGeometry();
+            mesh.setAttribute('position', positionByBatchId);
+
+            // THREE.EdgesGeometry needs triangle indices to be created.
+            // Create a new array for the indices
+            const indices = [];
+
+            // Iterate over every group of three vertices in the unindexed mesh and add the corresponding indices to the indices array
+            for (let j = 0; j < mesh.attributes.position.count; j += 3) {
+              indices.push(j, j + 1, j + 2);
+            }
+            mesh.setIndex(indices);
+
+            // Create the outlier geometry for this _BATCHID
+            const edges = new THREE.EdgesGeometry(mesh, threshOldAngle);
+
+            // Add this outlier geometry to the outlier geometry of the tile
+            for (let l = 0; l < edges.attributes.position.count * 3; l++)
+              pos.push(edges.attributes.position.array[l]);
+            // Fill the _BATCHID buffer
+            for (let l = 0; l < edges.attributes.position.count; l++)
+              batchid.push(child.geometry.attributes._BATCHID.array[i - 1]);
+
+            startIndex = i * 3;
+          }
+        }
+
+        const mat = new THREE.LineBasicMaterial({ color: 0x000000 });
+        const tileEdges = new THREE.EdgesGeometry();
+        tileEdges.setAttribute(
+          'position',
+          new THREE.BufferAttribute(Float32Array.from(pos), 3)
+        );
+        const edges = new THREE.LineSegments(tileEdges, mat);
+        edges.geometry.setAttribute(
+          '_BATCHID',
+          new THREE.BufferAttribute(Int32Array.from(batchid), 1)
+        );
+        edges.userData.isOutlier = true;
+        child.add(edges);
+      }
+    });
+  },
 };
