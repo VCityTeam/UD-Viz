@@ -26,13 +26,13 @@
     "d3": "^7.0.1",
     "fetch-sparql-endpoint": "^2.3.1",
     "howler": "^2.2.3",
-    "itowns": "2.39.0",
+    "itowns": "file:../../../itowns",
     "jquery": "^3.6.0",
     "socket.io-client": "^4.0.0",
     "vis-network": "^9.0.3"
   },
   "peerDependencies": {
-    "proj4": "^2.7.5"
+    "proj4": "^2.8.0"
   },
   "dependencyComments": {
     "d3": "required by the SPARQL Module"

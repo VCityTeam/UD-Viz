@@ -12,8 +12,13 @@ const printExec = function (result) {
   console.log('stderr: \n', result.stderr);
 };
 
+// itowns transpile
 // run a build debug browser bundle
-exec('npm run build-debug --prefix ./packages/browser').then(printExec);
+// exec('npm run transpile --prefix ../itowns')
+//   .then(printExec)
+//   .then(() => {
+//   });
+    exec('npm run build-debug --prefix ./packages/browser').then(printExec);
 
 const child = spawn('cross-env NODE_ENV=development node', ['./bin/host.js'], {
   shell: true,
