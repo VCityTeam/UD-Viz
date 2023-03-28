@@ -247,6 +247,7 @@ module.exports = {
   },
   /**
    * Traverse a THREE.Object3D and append in each Object3D children a THREE.LineSegment geometry  representing its wireframe
+   *
    * @param {THREE.Object3D} object3D  An Object3D from three
    * @param {number} threshOldAngle  An edge is only rendered if the angle (in degrees) between the face normals of the adjoining faces exceeds this value. default = 1 degree.
    */
@@ -289,9 +290,10 @@ module.exports = {
   /**
    * Traverse a THREE.Object3D and append in each Object3D children a THREE.LineSegment geometry  representing its wireframe.
    * Each wireframe geometry will keep the associated attribute value.
+   *
    * @param {THREE.Object3D} object3D  An Object3D from three
-   * @param {number} threshOldAngle  An edge is only rendered if the angle (in degrees) between the face normals of the adjoining faces exceeds this value. default = 1 degree.
    * @param {string} nameOfGeometryAttribute The attribute used to split each geometry of the BufferGeometry
+   * @param {number} threshOldAngle  An edge is only rendered if the angle (in degrees) between the face normals of the adjoining faces exceeds this value. default = 1 degree.
    */
   appendWireframeByGeometryAttributeToObject3D: function (
     object3D,
