@@ -4,31 +4,6 @@
 const THREE = require('three');
 const itowns = require('itowns');
 
-/** C3DTileLayer Systtem Style buffering => this extended class should be propose to itowns */
-
-class extendC3DTileLayer extends itowns.C3DTilesLayer {
-  constructor(...args) {
-    super(...args);
-
-    // override the tile load content
-    const originalCallback = this.onTileContentLoaded;
-    this.onTileContentLoaded = () => {
-      originalCallback();
-
-      // do other stuff
-      this.root.traverse((child) => {
-        if (!child.geometry) return;
-        console.log(child.material);
-      });
-    };
-  }
-
-  dispose() {
-    super.dispose(); // do not know if dispose
-    console.log('dispose');
-  }
-}
-
 /**  ADD LAYER TO ITOWNS VIEW FROM CONFIG */
 
 /**
@@ -93,11 +68,11 @@ export function setup3DTilesLayer(layer, itownsView) {
     overrideMaterial = true;
   } else if (layer['color']) {
     overrideMaterial = new THREE.MeshStandardMaterial({
-      color: new THREE.Color(layer['color']),
+      color: new THREE.Color(parseInt(layer['color'])),
     });
   }
-  /** @type {extendC3DTileLayer} */
-  const $3dTilesLayer = new extendC3DTileLayer(
+  /** @type {itowns.C3DTilesLayer} */
+  const $3dTilesLayer = new itowns.C3DTilesLayer(
     layer['id'],
     {
       name: layer['id'],
@@ -110,6 +85,18 @@ export function setup3DTilesLayer(layer, itownsView) {
     },
     itownsView
   );
+
+  // $3dTilesLayer.addEventListener(
+  //   itowns.C3DTilesLayer.EVENT_TILE_CONTENT_LOADED,
+  //   ({ tile }) => {
+  //     console.log('TILE LOADED');
+  //     tile.traverse((child) => {
+  //       if (child.geometry) {
+  //         console.log(child);
+  //       }
+  //     });
+  //   }
+  // );
 
   return $3dTilesLayer;
 }
@@ -433,6 +420,7 @@ export function addElevationLayer(configElevationLayer, itownsView, extent) {
  * - `horizontalDistance` : Desired distance of the camera from the target
  * position.
  * @returns {Promise} Promise of the camera focusing on target
+ * @todo this function is used by widget should be contribute to itowns or be remove
  */
 export function focusCameraOn(view, controls, targetPos, options = {}) {
   return new Promise((resolve, reject) => {
@@ -456,4 +444,46 @@ export function focusCameraOn(view, controls, targetPos, options = {}) {
       reject(e);
     }
   });
+}
+
+/**
+ *
+ * Focus a C3DTiles Layer
+ *
+ * @param {itowns.PlanarView} itownsView - view
+ * @param {itowns.C3DTilesLayer} layer - layer to focus
+ * @todo this function is used by widget should be contribue or removed
+ */
+export function focusC3DTilesLayer(itownsView, layer) {
+  if (!layer.isC3DTilesLayer) return;
+
+  const coordinates = itownsView.camera.position();
+  const extent = layer.extent;
+  coordinates.x = (extent.east + extent.west) / 2;
+  coordinates.y = (extent.north + extent.south) / 2;
+  coordinates.z = 200;
+  if (layer.tileset.tiles[0])
+    coordinates.z = layer.tileset.tiles[0].boundingVolume.box.max.z;
+  focusCameraOn(itownsView, itownsView.controls, coordinates, {
+    verticalDistance: 200,
+    horizontalDistance: 200,
+  });
+}
+
+/**
+ * Search up in the hierarchy to find tileID
+ *
+ * @param {THREE.Object3D} object - three object to look into
+ * @returns {number|null} tileID of this object or null if none
+ * @todo this function is used by widget should be contribue or removed
+ */
+export function findTileID(object) {
+  let currentObject = object;
+  let result = currentObject.tileId;
+  while (!result && currentObject.parent) {
+    currentObject = currentObject.parent;
+    result = currentObject.tileId;
+  }
+
+  return result;
 }

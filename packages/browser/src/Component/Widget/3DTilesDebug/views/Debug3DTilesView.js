@@ -1,34 +1,34 @@
 const THREE = require('three');
-import { CityObjectStyle } from '../../../Itowns/3DTiles/Model/CityObjectStyle';
-import { CityObjectID } from '../../../Itowns/3DTiles/Model/CityObject';
-import { TilesManager } from '../../../Itowns/3DTiles/TilesManager';
-import { LayerManager } from '../../../Itowns/Itowns';
 import { findChildByID } from '../../../HTMLUtil';
+import * as itowns from 'itowns';
+import { findTileID } from '../../../ItownsUtil';
 
 /** @class */
 export class Debug3DTilesView {
   /**
    * Creates the debug window.
    *
-   * @param {LayerManager} layerManager The layer manager.
+   * @param {itowns.PlanarView} itownsView - itowns view.
    */
-  constructor(layerManager) {
+  constructor(itownsView) {
     /**
-     * The layer manager.
+     *  itowns view
      *
-     * @type {LayerManager}
+     * @type {itowns.PlanarView}
      */
-    this.layerManager = layerManager;
-    // Selection
-    this.layerManager.registerStyle(
-      'debug_selected',
-      new CityObjectStyle({
-        materialProps: { color: 0x00ff00 },
-      })
-    );
-    this.selectedCityObject = null;
-    this.selectedTilesManager = null;
+    this.itownsView = itownsView;
 
+    /** @type {itowns.Style} */
+    this.selectionStyle = new itowns.Style({
+      fill: {
+        color: 'green',
+      },
+    });
+
+    /** @type {itowns.C3DTilesLayerTileBatchID} */
+    this.selectedID = null;
+
+    // listeners
     this.clickListener = this.onMouseClick.bind(this);
     this.moveListener = this.onMouseMove.bind(this);
     this.htmlElementListened = null;
@@ -43,12 +43,27 @@ export class Debug3DTilesView {
     };
     // Sets the number of loaded tiles and add an event for dynamic change of this value.
     this.updateTBIInfoParagraphElement();
-    for (let i = 0; i < this.layerManager.tilesManagers.length; i++) {
-      this.layerManager.tilesManagers[i].addEventListener(
-        TilesManager.EVENT_TILE_LOADED,
-        (tile) => this.updateTBIInfoParagraphElement(tile)
+    const c3DTilesLayers = this.itownsView
+      .getLayers()
+      .filter((el) => el.isC3DTilesLayer == true);
+
+    this.totalTilesCount = -1;
+    c3DTilesLayers.forEach((layer) => {
+      layer.addEventListener(
+        itowns.C3DTilesLayer.EVENT_TILE_CONTENT_LOADED,
+        () => {
+          // total tiles count (very not optimized but readbale and this is a debug tool)
+          this.totalTilesCount = 0;
+          c3DTilesLayers.forEach((l) => {
+            if (!l.tileset) return; // tileset not loaded i guess
+            this.totalTilesCount += l.tileset.tiles.length;
+          });
+
+          this.updateTBIInfoParagraphElement();
+        }
       );
-    }
+    });
+
     this.groupColorOpacityInputElement.oninput = () => {
       this.groupColorOpacitySpanElement.innerText =
         this.groupColorOpacityInputElement.value;
@@ -101,7 +116,7 @@ export class Debug3DTilesView {
       );
       this.htmlElementListened.removeEventListener(
         'mousemove',
-        this.moveListener
+        this.moveListenertotalTileCount
       );
     }
   }
@@ -155,8 +170,25 @@ export class Debug3DTilesView {
    * Updates the number of loaded 3D Tiles tiles.
    */
   updateTBIInfoParagraphElement() {
+    const countTileWithBatchTable = () => {
+      let result = 0;
+      const c3DTilesLayers = this.itownsView
+        .getLayers()
+        .filter((el) => el.isC3DTilesLayer == true);
+      c3DTilesLayers.forEach((layer) => {
+        if (!layer.root) return;
+        layer.root.traverse((childLayer) => {
+          if (childLayer.batchTable) result++;
+        });
+      });
+
+      return result;
+    };
+
     if (this.TBIInfoParagraphElement)
-      this.TBIInfoParagraphElement.innerText = `${this.layerManager.getLoaded3DTilesTileCount()} / ${this.layerManager.getTotal3DTilesTileCount()} tiles loaded. (first tile is the root tile which has no geometry)`;
+      this.TBIInfoParagraphElement.innerText = `${countTileWithBatchTable()} - ${
+        this.totalTilesCount
+      } tiles loaded. (first tile is the root tile which has no geometry)`;
   }
 
   /**
@@ -174,10 +206,33 @@ export class Debug3DTilesView {
    */
   // eslint-disable-next-line no-unused-vars
   onMouseMove(event) {
-    // Update the current visible tile count
-    const visibleTileCount =
-      this.layerManager.getVisible3DTilesTileCountFromLayers();
-    this.visibleTilesParagraphElement.innerText = `${visibleTileCount} tiles visible.`;
+    const c3DTilesLayers = this.itownsView
+      .getLayers()
+      .filter((el) => el.isC3DTilesLayer == true);
+    let tileWithBatchTableCount = 0;
+    c3DTilesLayers.forEach((layer) => {
+      if (!layer.root) return;
+      layer.root.traverse((child) => {
+        if (child.batchTable) tileWithBatchTableCount++;
+      });
+    });
+    this.visibleTilesParagraphElement.innerText = `${tileWithBatchTableCount} node with batchTable.`;
+  }
+
+  setSelectedID(value) {
+    if (this.selectedID) {
+      if (!this.selectedID.equals(value)) {
+        // unselect old selected ID could be a view methods ??? or C3DTilesLayer method ??
+        const layerOfOldSelection = this.itownsView.getLayerById(
+          this.selectedID.layerID
+        );
+        layerOfOldSelection.applyStyle(this.selectedID);
+        debugger;
+      }
+      return; // nothing to do
+    }
+
+    this.selectedID = value;
   }
 
   /**
@@ -188,14 +243,37 @@ export class Debug3DTilesView {
    * @param {MouseEvent} event The mouse event.
    */
   onMouseClick(event) {
-    const cityObject = this.layerManager.pickCityObject(event);
+    // pick result from C3DTilesLayers
+    const intersects = this.itownsView.pickObjectsAt(
+      event,
+      5,
+      this.itownsView.getLayers().filter((el) => el.isC3DTilesLayer == true)
+    );
 
-    if (cityObject) {
+    if (intersects.length) {
+      const clickedLayer = intersects[0].layer;
+      const batchInfo = clickedLayer.getInfoFromIntersectObject([
+        intersects[0],
+      ]);
+
+      // display batchTable
+      for (const [key, value] of Object.entries(batchInfo.batchTable)) {
+        this.clickDivElement.innerHTML += `<br>${key} : ${value}`;
+      }
+
+      const tileID = findTileID(intersects[0].object);
+      if (!tileID) throw new Error('no tileID in object');
+
+      this.setSelectedID(
+        new itowns.C3DTilesLayerTileBatchID(
+          clickedLayer.id,
+          tileID,
+          batchInfo.batchID
+        )
+      );
+
+      return;
       if (cityObject != this.selectedCityObject) {
-        for (const [key, value] of Object.entries(cityObject.props)) {
-          this.clickDivElement.innerHTML += `<br>${key} : ${value}`;
-        }
-
         if (this.selectedCityObject) {
           this.selectedTilesManager.setStyle(
             this.selectedCityObject.cityObjectId,

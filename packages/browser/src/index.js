@@ -22,8 +22,9 @@ export { Shared };
 
 // itowns
 import * as itowns from 'itowns';
-import * as itownsWidgets from 'itowns/widgets';
-export { itowns, itownsWidgets };
+// import * as itownsWidgets from 'itowns/widgets';
+// export { itowns, itownsWidgets };
+export { itowns };
 
 // Jquery => should be peerDep for lib purpose
 import * as jquery from 'jquery';

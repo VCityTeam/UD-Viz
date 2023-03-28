@@ -16,7 +16,7 @@ export { CameraPositioner } from './CameraPositioner/CameraPositioner';
 
 export { SlideShow } from './SlideShow/SlideShow';
 
-// export { Debug3DTilesView } from './3DTilesDebug/views/Debug3DTilesView';
+export { Debug3DTilesView } from './3DTilesDebug/views/Debug3DTilesView';
 
 export { BaseMap } from './BaseMap/BaseMapWindow';
 

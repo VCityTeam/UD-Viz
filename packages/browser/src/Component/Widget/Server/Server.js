@@ -2,9 +2,9 @@
 
 // Collection of Itowns Widget using an external server
 
-// export { AuthenticationService } from './Authentication/services/AuthenticationService';
+export { AuthenticationService } from './Authentication/services/AuthenticationService';
 
-// export { AuthenticationView } from './Authentication/views/AuthenticationView';
+export { AuthenticationView } from './Authentication/views/AuthenticationView';
 
 export { GeocodingService } from './Geocoding/services/GeocodingService';
 
