@@ -106,14 +106,14 @@ export class TemporalProvider {
     this.tilesManager.registerStyle(
       'union',
       new CityObjectStyle({
-        materialProps: { opacity: 1, color: 'blue' },
+        materialProps: { opacity: 0, color: 'blue' },
       })
     ); // blue
 
     this.tilesManager.registerStyle(
       'division',
       new CityObjectStyle({
-        materialProps: { opacity: 1, color: '#ff7300' },
+        materialProps: { opacity: 0, color: '#ff7300' },
       })
     ); // orange
   }
