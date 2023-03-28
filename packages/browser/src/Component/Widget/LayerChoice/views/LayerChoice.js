@@ -1,13 +1,13 @@
-import { LayerManager } from '../../../Itowns/LayerManager/LayerManager';
 import { createDisplayable, findChildByID } from '../../../HTMLUtil';
+import * as itowns from 'itowns';
+import { focusC3DTilesLayer } from '../../../ItownsUtil';
 
 export class LayerChoice {
   /**
-   * Creates the layer choice windows
    *
-   * @param {LayerManager} layerManager The LayerManager holding iTowns layers
+   * @param {itowns.PlanarView} itownView - itowns view
    */
-  constructor(layerManager) {
+  constructor(itownView) {
     /** @type {HTMLElement} */
     this.rootHtml = null;
 
@@ -20,10 +20,8 @@ export class LayerChoice {
     /** @type {HTMLElement} */
     this.geometryLayersSpoilerBoxElement = null;
 
-    /**
-     * The layerManager
-     */
-    this.layerManager = layerManager;
+    /** @type {itowns.PlanarView} */
+    this.itownView = itownView;
 
     this.initHtml();
   }
@@ -66,7 +64,9 @@ export class LayerChoice {
   innerContentColorLayers() {
     const list = this.colorLayersSpoilerBoxElement;
     list.innerHTML = '';
-    const layers = this.layerManager.getColorLayers();
+    const layers = this.itownView
+      .getLayers()
+      .filter((el) => el.isColorLayer == true);
     for (let i = 0; i < layers.length; i++) {
       const item = document.createElement('div');
       item.innerHTML = `<label for="${
@@ -88,14 +88,11 @@ export class LayerChoice {
           layers[i].visible = event.srcElement.checked;
         }
         if (event.srcElement.id === 'range_' + i) {
-          this.layerManager.updateOpacity(
-            layers[i],
-            event.srcElement.valueAsNumber
-          );
+          layers[i].opacity = event.srcElement.valueAsNumber;
         }
         const span_opacity = findChildByID(item, 'color_value_opacity_' + i);
         span_opacity.innerHTML = `${layers[i].opacity}`;
-        this.layerManager.notifyChange();
+        this.itownView.notifyChange();
       };
       list.appendChild(item);
     }
@@ -107,18 +104,17 @@ export class LayerChoice {
   innerContentElevationLayers() {
     const list = this.elevationLayersSpoilerBoxElement;
     list.innerHTML = '';
-    const layers = this.layerManager.getElevationLayers();
+    const layers = this.itownView
+      .getLayers()
+      .filter((el) => el.isElevationLayer == true);
     for (let i = 0; i < layers.length; i++) {
       const item = document.createElement('div');
       item.innerHTML = `<h3>${layers[i].id}</h3>
-                        Scale : <span id="elevation_value_scale_${i}">${layers[i].scale}</span> <input type ="range" id="${i}" min="1" max="10" step = "1" value="${layers[i].scale}"></input>`;
+                        Scale : <span id="elevation_value_scale_${i}">${layers[i].scale}</span> <input type ="range" id="${i}" min="1" max="10" step = "0.01" value="${layers[i].scale}"></input>`;
 
       item.oninput = (event) => {
-        this.layerManager.updateScale(
-          layers[i],
-          event.srcElement.valueAsNumber
-        );
-        this.layerManager.notifyChange();
+        layers[i].scale = event.srcElement.valueAsNumber;
+        this.itownView.notifyChange();
         const span_elevation = findChildByID(
           item,
           'elevation_value_scale_' + i
@@ -135,17 +131,31 @@ export class LayerChoice {
   innerContentGeometryLayers() {
     const list = this.geometryLayersSpoilerBoxElement;
     list.innerHTML = '';
-    const layers = this.layerManager.getGeometryLayers();
+    const layers = this.itownView
+      .getLayers()
+      .filter((el) => el.isGeometryLayer == true);
 
     const div = document.createElement('div');
+
+    const isOneLayerVisible = () => {
+      const allLayers = this.itownView.getLayers();
+      for (let index = 0; index < allLayers.length; index++) {
+        const element = allLayers[index];
+        if (element.visible) return true;
+      }
+      return false;
+    };
+
     div.innerHTML = `
       All Visible <input type="checkbox" id="checkbox" ${
-        this.layerManager.isOneLayerVisible() ? 'checked' : ''
+        isOneLayerVisible() ? 'checked' : ''
       }></input></br>
   `;
     div.onchange = (event) => {
-      this.layerManager.changeVisibility(event.srcElement.checked);
-      this.layerManager.notifyChange();
+      layers.forEach((layer) => {
+        layer.visible = event.srcElement.checked;
+      });
+      this.itownView.notifyChange();
     };
     list.append(div);
     for (let i = 0; i < layers.length; i++) {
@@ -163,7 +173,7 @@ export class LayerChoice {
       itemCheckboxVisibility.checked = layers[i].visible;
       itemCheckboxVisibility.onclick = (event) => {
         layers[i].visible = event.srcElement.checked;
-        this.layerManager.notifyChange();
+        this.itownView.notifyChange();
       };
 
       itemDivVisibility.appendChild(itemCheckboxVisibility);
@@ -175,10 +185,7 @@ export class LayerChoice {
         itemButton.innerText = 'Focus';
 
         itemButton.onclick = () => {
-          const tilesManager = this.layerManager.getTilesManagerByLayerID(
-            layers[i].id
-          );
-          tilesManager.focusCamera();
+          focusC3DTilesLayer(this.itownView, layers[i]);
         };
         item.appendChild(itemButton);
       } else {
@@ -193,11 +200,9 @@ export class LayerChoice {
         itemRangeOpacity.value = layers[i].opacity;
 
         itemRangeOpacity.onchange = (event) => {
-          this.layerManager.updateOpacity(
-            layers[i],
-            event.srcElement.valueAsNumber
-          );
-          this.layerManager.notifyChange();
+          // this is not working well check itowns bug ?
+          layers[i].opacity = event.srcElement.opacity;
+          this.itownView.notifyChange();
         };
 
         itemDivOpacity.appendChild(itemRangeOpacity);
