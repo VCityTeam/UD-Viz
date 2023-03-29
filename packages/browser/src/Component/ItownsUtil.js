@@ -487,3 +487,25 @@ export function findTileID(object) {
 
   return result;
 }
+
+/**
+ *
+ * @param {itowns.C3DTilesLayer} layer - where to look
+ * @param {number} tileId - tile id
+ * @returns {THREE.Object3D|null} - mesh
+ * @todo should we should create a class TileObject3D to have a robust way to get tileobject3D content
+ */
+export function findMeshFromTileID(layer, tileId) {
+  const tileObject3D = layer.root.getObjectByProperty('tileId', tileId);
+  if (!tileObject3D) return null;
+
+  let result = null;
+  tileObject3D.traverse((child) => {
+    if (child.isMesh && !child.userData.isStyleObject3D) {
+      if (result) console.warn('multiple result possible');
+      result = child;
+    }
+  });
+
+  return result;
+}

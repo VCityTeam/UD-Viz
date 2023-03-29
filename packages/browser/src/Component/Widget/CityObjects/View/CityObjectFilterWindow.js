@@ -50,7 +50,7 @@ export class CityObjectFilterWindow extends EventSender {
   get innerContentHtml() {
     return /* html*/ `
       <div class="box-section">
-        <h3 class="section-title">Filter selection</h3>
+        <h3 class="section-title">Layer filter selection</h3>
         <form id="${this.filterFormId}">
           <select name="filterLabel" id="${this.filterSelectId}">
           </select>
@@ -94,10 +94,6 @@ export class CityObjectFilterWindow extends EventSender {
    * Also adds a 'No filter' option.
    */
   _createFilterSelect() {
-    if (!this.isCreated) {
-      return;
-    }
-
     const select = this.filterSelectElement;
 
     select.innerHTML = '';

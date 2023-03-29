@@ -1,4 +1,3 @@
-import { CityObjectStyle } from '../../Itowns/3DTiles/Model/CityObjectStyle';
 import { CityObjectProvider } from './ViewModel/CityObjectProvider';
 import { CityObjectWindow } from './View/CityObjectWindow';
 
@@ -20,11 +19,8 @@ export class CityObjectModule {
    * module by adding filters.
    *
    * @param {CityObjectProvider} cityObjectProvider The cityObjectProvider.
-   * @param {Object<string, CityObjectStyle>} configStyles The city object styles.
-   * @param {CityObjectStyle} configStyles.layerDefault The default
-   * style for the layer.
    */
-  constructor(cityObjectProvider, configStyles) {
+  constructor(cityObjectProvider) {
     /**
      * The city object provider, whichs manages the city objects in terms
      * of layer and selected city object.
@@ -36,7 +32,6 @@ export class CityObjectModule {
      * object window.
      */
     this.view = new CityObjectWindow(this.provider);
-    this.view.setDefaultLayerStyle(configStyles.layerDefault);
   }
 
   /**
