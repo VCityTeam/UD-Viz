@@ -16,8 +16,7 @@
 }
 
 .city-object-filter-section input[type='text'] {
-  width: 100%;
-  box-sizing: border-box;
+  display: block;
 }
 
 .color-indicator {
