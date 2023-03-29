@@ -23,6 +23,7 @@ export class Debug3DTilesView {
       fill: {
         color: 'green',
       },
+      stroke: { color: 'red', opacity: 0.3 },
     });
 
     /** @type {itowns.C3DTilesLayerTileBatchID} */
@@ -79,15 +80,8 @@ export class Debug3DTilesView {
    */
   dispose() {
     this.rootHtml.remove();
-    if (this.selectedCityObject !== null) {
-      this.selectedTilesManager.setStyle(
-        this.selectedCityObject.cityObjectId,
-        this.selectedStyle
-      );
-      this.selectedTilesManager.applyStyles();
-      this.selectedCityObject = null;
-      this.selectedTilesManager = null;
-      this.selectedStyle = null;
+    if (this.selectedID) {
+      this.setSelectedID(null);
     }
 
     this.removeListener();
@@ -192,10 +186,12 @@ export class Debug3DTilesView {
   }
 
   /**
-   * Logs the TBI in the console.
+   * Logs the C3DTileslayer in the console.
    */
-  logLayerManager() {
-    console.log(this.layerManager);
+  logC3DTilesLayer() {
+    console.log(
+      this.itownsView.getLayers().filter((el) => el.isC3DTilesLayer === true)
+    );
   }
 
   /**
@@ -226,13 +222,22 @@ export class Debug3DTilesView {
         const layerOfOldSelection = this.itownsView.getLayerById(
           this.selectedID.layerID
         );
-        layerOfOldSelection.applyStyle(this.selectedID);
-        debugger;
+        layerOfOldSelection.applyStyle(this.selectedID); // will apply default style
+        this.itownsView.notifyChange();
+      } else {
+        return; // nothing to do
       }
-      return; // nothing to do
     }
 
     this.selectedID = value;
+
+    if (this.selectedID) {
+      this.itownsView
+        .getLayerById(this.selectedID.layerID)
+        .applyStyle(this.selectedID, this.selectionStyle);
+
+      this.itownsView.notifyChange();
+    }
   }
 
   /**
@@ -252,17 +257,24 @@ export class Debug3DTilesView {
 
     if (intersects.length) {
       const clickedLayer = intersects[0].layer;
-      const batchInfo = clickedLayer.getInfoFromIntersectObject([
-        intersects[0],
-      ]);
-
-      // display batchTable
-      for (const [key, value] of Object.entries(batchInfo.batchTable)) {
-        this.clickDivElement.innerHTML += `<br>${key} : ${value}`;
-      }
+      const batchInfo = clickedLayer.getInfoFromIntersectObject(intersects); // pass all array since style object can be clicked see how to deal with that
 
       const tileID = findTileID(intersects[0].object);
       if (!tileID) throw new Error('no tileID in object');
+
+      if (batchInfo) {
+        // if a style object is clicked no batch info are associated to it
+
+        // display batchTable
+        for (const [key, value] of Object.entries(batchInfo.batchTable)) {
+          this.clickDivElement.innerHTML = `<br>${key} : ${value}`;
+        }
+        this.clickDivElement.innerHTML = /* html*/ `
+            Layer Name : ${clickedLayer.name}<br>
+            Batch ID : ${batchInfo.batchID}<br>
+            Tile ID : ${tileID}
+          `;
+      }
 
       this.setSelectedID(
         new itowns.C3DTilesLayerTileBatchID(
@@ -271,67 +283,38 @@ export class Debug3DTilesView {
           batchInfo.batchID
         )
       );
-
-      return;
-      if (cityObject != this.selectedCityObject) {
-        if (this.selectedCityObject) {
-          this.selectedTilesManager.setStyle(
-            this.selectedCityObject.cityObjectId,
-            this.selectedStyle
-          );
-          this.selectedTilesManager.applyStyles();
-        }
-
-        this.selectedCityObject = cityObject;
-        this.selectedTilesManager = this.layerManager.getTilesManagerByLayerID(
-          this.selectedCityObject.tile.layer.id
-        );
-        this.selectedStyle =
-          this.selectedTilesManager.styleManager.getStyleIdentifierAppliedTo(
-            this.selectedCityObject.cityObjectId
-          );
-        this.selectedTilesManager.setStyle(
-          this.selectedCityObject.cityObjectId,
-          'debug_selected'
-        );
-        this.selectedTilesManager.applyStyles({
-          updateFunction: this.selectedTilesManager.view.notifyChange.bind(
-            this.selectedTilesManager.view
-          ),
-        });
-
-        this.clickDivElement.innerHTML = /* html*/ `
-           3D Tiles : ${this.selectedTilesManager.layer.name}<br>
-           Vertex indexes : ${cityObject.indexStart} to ${cityObject.indexEnd}
-            (${cityObject.indexCount})<br>
-           Batch ID : ${cityObject.batchId}<br>
-           Tile ID : ${cityObject.tile.tileId}
-         `;
-      }
     }
   }
 
   /**
    * Creates the new style.
+   *
+   * @todo possiblity to select a C3DTilesLayer
    */
   submitStyleForm() {
-    try {
-      const tileId = Number.parseInt(this.groupColorTileInputElement.value);
-      const batchIds = JSON.parse(
-        '[' + this.groupColorBatchInputElement.value + ']'
-      );
-      const color = new THREE.Color(this.groupColorColorInputElement.value);
-      const opacity = Number.parseFloat(
-        this.groupColorOpacityInputElement.value
-      );
-      this.layerManager.tilesManagers[0].setStyle(
-        new CityObjectID(tileId, batchIds),
-        { materialProps: { color: color, opacity: opacity } }
-      );
-      this.layerManager.tilesManagers[0].applyStyles();
-    } catch (e) {
-      alert(e);
-    }
+    const tileId = Number.parseInt(this.groupColorTileInputElement.value);
+    const batchIds = JSON.parse(
+      '[' + this.groupColorBatchInputElement.value + ']'
+    );
+    const styleInForm = new itowns.Style({
+      fill: {
+        color: new THREE.Color(this.groupColorColorInputElement.value),
+        opacity: Number.parseFloat(this.groupColorOpacityInputElement.value),
+      },
+    });
+
+    // apply for all C3DTileLayers
+    this.itownsView.getLayers().forEach((layer) => {
+      if (!layer.isC3DTilesLayer) return;
+      batchIds.forEach((bid) => {
+        layer.applyStyle(
+          new itowns.C3DTilesLayerTileBatchID(layer.id, tileId, bid),
+          styleInForm,
+          false
+        );
+        this.itownsView.notifyChange();
+      });
+    });
   }
 
   // //// GETTERS
