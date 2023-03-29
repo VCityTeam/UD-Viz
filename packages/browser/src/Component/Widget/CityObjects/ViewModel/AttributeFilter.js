@@ -1,5 +1,3 @@
-import { CityObject } from '../../../Itowns/3DTiles/Model/CityObject';
-
 import { CityObjectFilter } from './CityObjectFilter';
 
 /**

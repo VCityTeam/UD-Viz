@@ -1,13 +1,13 @@
 import { EventSender } from '@ud-viz/shared';
-import { CityObjectStyle } from '../../../Itowns/3DTiles/Model/CityObjectStyle';
 import {
-  CityObjectID,
-  CityObject,
-} from '../../../Itowns/3DTiles/Model/CityObject';
-import { focusCameraOn } from '../../../Itowns/Component/Component';
-import { LayerManager } from '../../../Itowns/LayerManager/LayerManager';
+  focusCameraOn,
+  findTileID,
+  findMeshFromTileID,
+} from '../../../ItownsUtil';
 import { CityObjectFilter } from './CityObjectFilter';
-import { CityObjectLayer } from './CityObjectLayer';
+import * as itowns from 'itowns';
+import * as THREE from 'three';
+
 /**
  * The city object provider manages the city object by organizing them in two
  * categories : the _layer_ and the _selected city object_. The layer
@@ -15,22 +15,10 @@ import { CityObjectLayer } from './CityObjectLayer';
  * filter.
  */
 export class CityObjectProvider extends EventSender {
-  /**
-   * Constructs a city object provider, using a layer manager.
-   *
-   * @param {LayerManager} layerManager The layer manager.
-   * @param {object|undefined} configStyles The style configuration.
-   * @param {CityObjectStyle} configStyles.selection The style
-   * for the selected city object.
-   */
-  constructor(layerManager, configStyles) {
+  constructor(itownsView) {
     super();
-    /**
-     * The tiles manager.
-     *
-     * @type {LayerManager}
-     */
-    this.layerManager = layerManager;
+
+    this.itownsView = itownsView;
 
     /**
      * The available filters.
@@ -40,40 +28,37 @@ export class CityObjectProvider extends EventSender {
     this.filters = {};
 
     /**
-     * The current highlighted layer.
+     * The current filter used. all filter are record in this.filters and can be found with thei label
+     * @todo do that with an uid
      *
-     * @type {CityObjectLayer}
+     * @type {string}
      */
-    this.cityObjectLayer = undefined;
-
-    /**
-     * The array of city objects in the layer.
-     *
-     * @type {Array<CityObjectID>}
-     */
-    this.layerCityObjectIds = [];
-
-    /**
-     * The selected city object.
-     *
-     * @type {CityObject}
-     */
-    this.selectedCityObject = undefined;
-
-    this.selectedTilesManager = undefined;
-
-    this.selectedStyle = undefined;
+    this.currentFilterLabel = null;
 
     /**
      * The style applied to the selected city object.
      *
-     * @type {CityObjectStyle | string}
+     * @type {itowns.Style}
      */
-    this.defaultSelectionStyle = { materialProps: { color: 0x13ddef } };
+    this.selectionStyle = new itowns.Style({
+      fill: {
+        color: 'purple',
+      },
+      stroke: {
+        color: 'red',
+        opacity: 0.5,
+      },
+    });
 
-    if (configStyles && configStyles.selection) {
-      this.setSelectionStyle(configStyles.selection);
-    }
+    /** @type {itowns.Style} */
+    this.layerSelectionStyle = new itowns.Style({
+      fill: {
+        color: 'green',
+      },
+    });
+
+    /** @type {itowns.C3DTilesLayerTileBatchID} */
+    this.selectedID = null;
 
     // Event registration
     this.registerEvent(CityObjectProvider.EVENT_FILTERS_UPDATED);
@@ -83,175 +68,143 @@ export class CityObjectProvider extends EventSender {
     this.registerEvent(CityObjectProvider.EVENT_CITY_OBJECT_CHANGED);
   }
 
-  // /////////////////////////
-  // /// CITY OBJECT SELECTION
+  selectFromMouseEvent(event) {
+    const intersects = this.itownsView.pickObjectsAt(
+      event,
+      5,
+      this.itownsView.getLayers().filter((el) => el.isC3DTilesLayer == true)
+    );
+
+    if (intersects.length) {
+      const clickedLayer = intersects[0].layer;
+      const batchInfo = clickedLayer.getInfoFromIntersectObject(intersects); // pass all array since style object can be clicked see how to deal with that
+
+      const tileID = findTileID(intersects[0].object);
+      if (!tileID) throw new Error('no tileID in object');
+
+      this.setSelectedID(
+        new itowns.C3DTilesLayerTileBatchID(
+          clickedLayer.id,
+          tileID,
+          batchInfo.batchID
+        )
+      );
+    }
+  }
 
   /**
-   * Selects a city object from a mouse event. If a city object is actually
-   * under the mouse, the `EVENT_CITY_OBJECT_SELECTED` event is sent.
    *
-   * @param {MouseEvent} mouseEvent The mouse click event.
+   * @param {itowns.C3DTilesLayerTileBatchID} value - new selected id
    */
-  selectCityObject(mouseEvent) {
-    const cityObject = this.layerManager.pickCityObject(mouseEvent);
-    if (cityObject) {
-      this.sendEvent(CityObjectProvider.EVENT_CITY_OBJECT_SELECTED, cityObject);
-      if (this.selectedCityObject != cityObject) {
-        if (this.selectedCityObject) {
-          this.sendEvent(
-            CityObjectProvider.EVENT_CITY_OBJECT_CHANGED,
-            cityObject
-          );
-          this.unselectCityObject(false);
-        }
+  setSelectedID(value) {
+    if (this.selectedID) {
+      if (!this.selectedID.equals(value)) {
+        // unselect old selected ID could be a view methods ??? or C3DTilesLayer method ??
+        const layerOfOldSelection = this.itownsView.getLayerById(
+          this.selectedID.layerID
+        );
+        layerOfOldSelection.applyStyle(this.selectedID); // will apply default style
+        this.itownsView.notifyChange();
+      } else {
+        return; // nothing to do
+      }
+    }
 
-        this.selectedCityObject = cityObject;
-        this.selectedTilesManager = this.layerManager.getTilesManagerByLayerID(
-          this.selectedCityObject.tile.layer.id
-        );
-        this.selectedStyle =
-          this.selectedTilesManager.styleManager.getStyleIdentifierAppliedTo(
-            this.selectedCityObject.cityObjectId
+    this.selectedID = value;
+
+    if (this.selectedID) {
+      this.itownsView
+        .getLayerById(this.selectedID.layerID)
+        .applyStyle(this.selectedID, this.selectionStyle);
+
+      this.itownsView.notifyChange();
+    }
+  }
+
+  setCurrentFilterLabel(filterLabel) {
+    // update style
+    const updateStyleFromFilter = (style, filter) => {
+      this.itownsView
+        .getLayers()
+        .filter((el) => el.isC3DTilesLayer == true)
+        .forEach((c3DTilesLayer) => {
+          const tileObject3D = c3DTilesLayer.root.getObjectByProperty(
+            'tileId',
+            filter.tileId
           );
-        this.selectedTilesManager.setStyle(
-          this.selectedCityObject.cityObjectId,
-          'selected'
-        );
-        this.selectedTilesManager.applyStyles({
-          updateFunction: this.selectedTilesManager.view.notifyChange.bind(
-            this.selectedTilesManager.view
-          ),
+
+          // such a pain to find this batchtable should be more easy
+          let batchTable = null;
+          tileObject3D.traverse((child) => {
+            batchTable = child.batchTable || batchTable;
+          });
+
+          const info = batchTable.getInfoById(filter.batchId);
+          let equals = true;
+          for (const key in filter.props) {
+            if (info[key] !== filter.props[key]) {
+              equals = false;
+              break;
+            }
+          }
+          // for now apply style just according tile id and batch id but for the futur equals should be used
+          if (true) {
+            c3DTilesLayer.applyStyle(
+              new itowns.C3DTilesLayerTileBatchID(
+                c3DTilesLayer.id,
+                filter.tileId,
+                filter.batchId
+              ),
+              style
+            );
+          }
         });
-        this.removeLayer();
-      }
+    };
+
+    if (this.currentFilterLabel) {
+      // unapply style
+      const oldFilter = this.filters[this.currentFilterLabel];
+      updateStyleFromFilter(null, oldFilter);
     }
-  }
 
-  changeSelectedCityObject(cityObject) {
-    this.sendEvent(CityObjectProvider.EVENT_CITY_OBJECT_SELECTED, cityObject);
-    if (this.selectedCityObject != cityObject) {
-      if (this.selectedCityObject) {
-        this.sendEvent(
-          CityObjectProvider.EVENT_CITY_OBJECT_CHANGED,
-          cityObject
-        );
-        this.unselectCityObject(false);
-      }
+    this.currentFilterLabel = filterLabel;
 
-      this.selectedCityObject = cityObject;
-      this.selectedTilesManager = this.layerManager.getTilesManagerByLayerID(
-        this.selectedCityObject.tile.layer.id
-      );
-      this.selectedStyle =
-        this.selectedTilesManager.styleManager.getStyleIdentifierAppliedTo(
-          this.selectedCityObject.cityObjectId
-        );
-      this.selectedTilesManager.setStyle(
-        this.selectedCityObject.cityObjectId,
-        'selected'
-      );
-      this.selectedTilesManager.applyStyles({
-        updateFunction: this.selectedTilesManager.view.notifyChange.bind(
-          this.selectedTilesManager.view
-        ),
-      });
-      this.removeLayer();
+    const newFilter = this.filters[this.currentFilterLabel];
+
+    this.sendEvent(CityObjectProvider.EVENT_LAYER_CHANGED, newFilter);
+    if (newFilter) {
+      updateStyleFromFilter(this.layerSelectionStyle, newFilter);
     }
+
+    this.itownsView.notifyChange();
   }
 
-  focusOnObject(_verticalDistance = 200, _horizontalDistance = 200) {
-    if (this.selectedTilesManager && this.selectedCityObject) {
-      focusCameraOn(
-        this.selectedTilesManager.view,
-        this.selectedTilesManager.view.controls,
-        this.selectedCityObject.centroid,
-        {
-          verticalDistance: _verticalDistance,
-          horizontalDistance: _horizontalDistance,
-        }
-      );
-    }
-  }
-  /**
-   * Unset the selected city object and sends an `EVENT_CITY_OBJECT_SELECTED`
-   * event.
-   *
-   * @param {boolean} sendEvent True if an event should be send when a city object is selected
-   */
-  unselectCityObject(sendEvent = true) {
-    if (this.selectedCityObject) {
-      this.selectedTilesManager.setStyle(
-        this.selectedCityObject.cityObjectId,
-        this.selectedStyle
-      );
-      this.selectedTilesManager.applyStyles();
-    }
-    if (sendEvent)
-      this.sendEvent(
-        CityObjectProvider.EVENT_CITY_OBJECT_UNSELECTED,
-        this.selectedCityObject
-      );
-    this.selectedTilesManager = undefined;
-    this.selectedStyle = undefined;
-    this.selectedCityObject = undefined;
+  focusSelection() {
+    if (!this.selectedID) return;
+
+    const layer = this.itownsView.getLayerById(this.selectedID.layerID);
+
+    const mesh = findMeshFromTileID(layer, this.selectedID.tileID);
+    const infoBatchID = itowns.computeInfoFromAttributes(
+      mesh,
+      '_BATCHID',
+      this.selectedID.batchID
+    );
+
+    /** @type {THREE.Box3} */
+    const box3 = infoBatchID.box3; // in local referential
+    const target = box3
+      .applyMatrix4(mesh.matrixWorld)
+      .getCenter(new THREE.Vector3());
+
+    focusCameraOn(this.itownsView, this.itownsView.controls, target, {
+      verticalDistance: 200,
+      horizontalDistance: 200,
+    });
   }
 
-  /**
-   * Select a city object based on a corresponding key,value pair in the batch table.
-   *
-   * @param {string} key the batch table key to search by.
-   * @param {string} value the batch table value to search for.
-   */
-  selectCityObjectByBatchTable(key, value) {
-    const cityObject = this.layerManager.pickCityObjectByBatchTable(key, value);
-    if (cityObject) {
-      if (this.selectedCityObject != cityObject) {
-        if (this.selectedCityObject) {
-          this.sendEvent(
-            CityObjectProvider.EVENT_CITY_OBJECT_CHANGED,
-            cityObject
-          );
-          this.unselectCityObject();
-        } else {
-          this.sendEvent(
-            CityObjectProvider.EVENT_CITY_OBJECT_SELECTED,
-            cityObject
-          );
-        }
-        this.selectedCityObject = cityObject;
-        this.selectedTilesManager = this.layerManager.getTilesManagerByLayerID(
-          this.selectedCityObject.tile.layer.id
-        );
-        this.selectedStyle =
-          this.selectedTilesManager.styleManager.getStyleIdentifierAppliedTo(
-            this.selectedCityObject.cityObjectId
-          );
-        this.selectedTilesManager.setStyle(
-          this.selectedCityObject.cityObjectId,
-          'selected'
-        );
-        this.selectedTilesManager.applyStyles({
-          updateFunction: this.selectedTilesManager.view.notifyChange.bind(
-            this.selectedTilesManager.view
-          ),
-        });
-        this.removeLayer();
-      }
-    }
-  }
-
-  /**
-   * Sets the style for the selected city object.
-   *
-   * @param {CityObjectStyle | string} style The style.
-   */
-  setSelectionStyle(style) {
-    this.defaultSelectionStyle = style;
-    this.layerManager.registerStyle('selected', style);
-  }
-
-  // ///////////
-  // /// FILTERS
+  // // ///////////
+  // // /// FILTERS
 
   /**
    * Adds a filter to the dictionnary of available filters. The key shall be
@@ -270,103 +223,6 @@ export class CityObjectProvider extends EventSender {
     this.filters[label] = cityObjectFilter;
 
     this.sendEvent(CityObjectProvider.EVENT_FILTERS_UPDATED, this.filters);
-  }
-
-  /**
-   * Returns the currently available filters.
-   *
-   * @returns {Array<CityObjectFilter>} The currently available filters.
-   */
-  getFilters() {
-    return Object.values(this.filters);
-  }
-
-  // ////////////////////
-  // /// LAYER MANAGEMENT
-
-  /**
-   * Sets the current layer. The layer is defined by a filter (ie. a set
-   * of city objects) and a style. Sends the `EVENT_LAYER_CHANGED` event.
-   *
-   * @param {string} filterLabel Label of the filter that defines the layer.
-   * The filter must first be registered using `addFilter`.
-   * @param {CityObjectStyle | string} style The style to associate to the
-   * layer.
-   */
-  setLayer(filterLabel, style) {
-    const filter = this.filters[filterLabel];
-
-    if (filter === undefined) {
-      throw 'No filter found with the label : ' + filterLabel;
-    }
-
-    this.cityObjectLayer = new CityObjectLayer(filter, style);
-
-    this.sendEvent(CityObjectProvider.EVENT_LAYER_CHANGED, filter);
-
-    this.unselectCityObject();
-
-    this.applyStyles();
-  }
-
-  /**
-   * Returns the current layer.
-   *
-   * @returns {CityObjectLayer} The current layer.
-   */
-  getLayer() {
-    return this.cityObjectLayer;
-  }
-
-  /**
-   * Unsets the current layer. Sends the `EVENT_LAYER_CHANGED` event.
-   */
-  removeLayer() {
-    this.cityObjectLayer = undefined;
-    this.sendEvent(CityObjectProvider.EVENT_LAYER_CHANGED, undefined);
-    this.applyStyles();
-  }
-
-  /**
-   * Updates the tiles manager so that it has the correct styles associated with
-   * the right city objects.
-   *
-   * @private
-   */
-  _updateTilesManager() {
-    if (this.selectedCityObject) {
-      const tileManager = this.layerManager.getTilesManagerByLayerID(
-        this.selectedCityObject.tile.layer.id
-      );
-
-      if (this.cityObjectLayer === undefined) {
-        this.layerCityObjectIds = [];
-      } else {
-        this.layerCityObjectIds = tileManager
-          .findAllCityObjects(this.cityObjectLayer.filter.accepts)
-          .map((co) => co.cityObjectId);
-
-        tileManager.setStyle(
-          this.layerCityObjectIds,
-          this.cityObjectLayer.style
-        );
-      }
-
-      tileManager.setStyle(
-        this.selectedCityObject.cityObjectId,
-        this.defaultSelectionStyle
-      );
-    }
-  }
-
-  /**
-   * Apply the styles to the tiles manager. This function is necessary as the
-   * event for tile loading does not exist yet. In the future, it shouldn't be
-   * necessary to manually call this function.
-   */
-  applyStyles() {
-    this._updateTilesManager();
-    this.layerManager.applyAll3DTilesStyles();
   }
 
   // //////////

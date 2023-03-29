@@ -1,11 +1,9 @@
 const THREE = require('three');
-
-import { CityObjectStyle } from '../../../Itowns/3DTiles/Model/CityObjectStyle';
-
 import { CityObjectProvider } from '../ViewModel/CityObjectProvider';
 import { CityObjectFilterSelector } from './CityObjectFilterSelector';
 import { CityObjectFilterWindow } from './CityObjectFilterWindow';
 import { AttributeFilterSelector } from './AttributeFilterSelector';
+import * as itowns from 'itowns';
 
 import { findChildByID } from '../../../HTMLUtil';
 
@@ -20,6 +18,7 @@ export class CityObjectWindow {
   /**
    * Constructs the window from the provider.
    *
+   * @param {itowns.PlanarView} itownsView view.
    * @param {CityObjectProvider} provider The city object provider.
    */
   constructor(provider) {
@@ -43,40 +42,35 @@ export class CityObjectWindow {
     this.rootHtml.appendChild(this.filterWindow.html());
 
     /**
-     * The style for the layer chosen by the user, through the filter window.
-     *
-     * @type {CityObjectStyle | string}
-     */
-    this.defaultLayerStyle = { materialProps: { color: 0xffa14f } };
-
-    /**
-     * Wether the use is currently selecting a city object.
-     *
-     * @type {boolean}
-     */
-    this.isSelectingCityObject = false;
-
-    /**
-     * The list of extensions
-     *
-     * @type {Array<{html: string, label: string, id: string}>}
-     */
-    this.extensions = [];
-
-    /**
      * @callback cbMouseEvent
      * @param {MouseEvent} event - file reader event
      * @returns {any} Result
      */
+
+    const updateUI = () => {
+      if (this.provider.selectedID) {
+        this.focusObjectButtonElement.disabled = false;
+        this.clearSelectionButtonElement.disabled = false;
+      } else {
+        this.focusObjectButtonElement.disabled = true;
+        this.clearSelectionButtonElement.disabled = true;
+      }
+      this._updateLayerDescription();
+      this._updateSelectedCityObjectDescription();
+    };
+    updateUI();
+
     /**
      * The event listener for mouse clicks.
      *
      * @type {cbMouseEvent}
      */
     this.mouseClickListener = (event) => {
-      this.provider.selectCityObject(event);
-      this.provider.applyStyles();
+      this.provider.selectFromMouseEvent(event);
+      updateUI();
     };
+
+    /** @type {HTMLElement|null} */
     this.htmlListened = null;
 
     // Adding a filter selector for the attribute filter
@@ -88,37 +82,24 @@ export class CityObjectWindow {
     // the layer in the provider.
     this.filterWindow.addEventListener(
       CityObjectFilterWindow.EVENT_FILTER_SELECTED,
-      (filterLabel) => this._onFilterSelected(filterLabel)
-    );
-    // The event listener for the layer change. Updates the layer description.
-    this.provider.addEventListener(CityObjectProvider.EVENT_LAYER_CHANGED, () =>
-      this._updateLayerDescription()
-    );
-
-    // Event listener for city object selection
-    this.provider.addEventListener(
-      CityObjectProvider.EVENT_CITY_OBJECT_SELECTED,
-      (cityObject) => this._updateSelectedCityObjectDescription(cityObject)
+      (filterLabel) => {
+        this._onFilterSelected(filterLabel);
+        updateUI();
+      }
     );
 
-    this._updateLayerDescription();
-    this._updateSelectedCityObjectDescription();
+    this.clearFilterButtonElement.onclick = () => {
+      this.provider.setCurrentFilterLabel(null);
+      updateUI();
+    };
 
-    // Add extensions
-    for (const extension of Object.values(this.extensions)) {
-      this._createExtensionElement(extension);
-    }
+    this.clearSelectionButtonElement.onclick = () => {
+      this.provider.setSelectedID(null);
+      updateUI();
+    };
 
-    this.clearFilterButtonElement.onclick = () => this.provider.removeLayer();
-
-    this.clearSelectionButtonElement.onclick = () =>
-      this._clearCityObjectSelection();
-
-    this.clearSelectionButtonElement.disabled = true;
-
-    this.focusObjectButtonElement.onclick = () => this.provider.focusOnObject();
-
-    this.focusObjectButtonElement.disabled = true;
+    this.focusObjectButtonElement.onclick = () =>
+      this.provider.focusSelection();
   }
 
   addListenerTo(div) {
@@ -184,19 +165,19 @@ export class CityObjectWindow {
    * Updates the layer description (filter and style).
    */
   _updateLayerDescription() {
-    if (this.isCreated) {
-      const layer = this.provider.getLayer();
-      if (this.selectedFilterElement) {
-        if (layer) {
-          this.layerColorIndicatorElement.style.display = '';
-          this.selectedFilterElement.innerText = layer.filter.toString();
-          this.layerColorIndicatorElement.style.background =
-            '#' +
-            new THREE.Color(layer.style.materialProps.color).getHexString();
-        } else {
-          this.selectedFilterElement.innerText = '';
-          this.layerColorIndicatorElement.style.display = 'none';
-        }
+    if (this.selectedFilterElement) {
+      if (this.provider.currentFilterLabel) {
+        this.layerColorIndicatorElement.style.display = '';
+        this.selectedFilterElement.innerText =
+          this.provider.filters[this.provider.currentFilterLabel].toString(); // ouch
+        this.layerColorIndicatorElement.style.background =
+          '#' +
+          new THREE.Color(
+            this.provider.layerSelectionStyle.fill.color
+          ).getHexString();
+      } else {
+        this.selectedFilterElement.innerText = '';
+        this.layerColorIndicatorElement.style.display = 'none';
       }
     }
   }
@@ -222,72 +203,64 @@ export class CityObjectWindow {
    */
   _onFilterSelected(filterLabel) {
     if (filterLabel) {
-      this.provider.setLayer(filterLabel, this.defaultLayerStyle);
+      this.provider.setCurrentFilterLabel(filterLabel); // this is used as an uid
     } else {
-      this.provider.removeLayer();
+      this.provider.setCurrentFilterLabel(null);
     }
-  }
-
-  /**
-   * Sets the default style for the layer defined by the user (through the
-   * filter selection window).
-   *
-   * @param {CityObjectStyle | string} style The default style for the layer.
-   */
-  setDefaultLayerStyle(style) {
-    this.defaultLayerStyle = style;
   }
 
   // //////////////////////
   // /// BUILDING SELECTION
 
   /**
-   * Clears the selected city object.
-   */
-  _clearCityObjectSelection() {
-    this.provider.unselectCityObject();
-    this.provider.applyStyles();
-    this._updateSelectedCityObjectDescription();
-  }
-
-  /**
    * Updates the description for the selected city object.
    *
-   * @param {import("../../../Itowns/3DTiles/Model/CityObject").CityObject} cityObject The selected city object.
    */
-  _updateSelectedCityObjectDescription(cityObject) {
+  _updateSelectedCityObjectDescription() {
     this.selectionColorIndicatorElement.style.background =
       '#' +
-      new THREE.Color(
-        this.provider.defaultSelectionStyle.materialProps.color
-      ).getHexString();
+      new THREE.Color(this.provider.selectionStyle.fill.color).getHexString();
 
-    if (!cityObject) {
+    if (!this.provider.selectedID) {
       this.selectedCityObjectElement.innerHTML = '';
       this.clearSelectionButtonElement.disabled = true;
       this.focusObjectButtonElement.disabled = true;
-      return;
-    }
-
-    this.clearSelectionButtonElement.disabled = false;
-    this.focusObjectButtonElement.disabled = false;
-
-    let html = /* html*/ `
+    } else {
+      let html = /* html*/ `
       <p class="city-object-title">Attributes</p>
       <p class="city-object-value">
-        Tile ID : ${cityObject.tile.tileId}<br>
-        Batch ID : ${cityObject.batchId}<br>
-        Layer : ${cityObject.tile.layer.name}
+        Tile ID : ${this.provider.selectedID.tileID}<br>
+        Batch ID : ${this.provider.selectedID.batchID}<br>
+        Layer : ${
+          this.provider.itownsView.getLayerById(
+            this.provider.selectedID.layerID
+          ).name
+        }
     `;
-    for (const prop of Object.entries(cityObject.props)) {
-      if (prop[0] != 'group' && prop[0] != 'properties') {
-        html += `
+
+      // this looks very ugly but need some refacto in itowns to get things done better
+      const tileObject3D = this.provider.itownsView
+        .getLayerById(this.provider.selectedID.layerID)
+        .root.getObjectByProperty('tileId', this.provider.selectedID.tileID);
+
+      // such a pain to find this batchtable should be more easy
+      let batchTable = null;
+      tileObject3D.traverse((child) => {
+        batchTable = child.batchTable || batchTable;
+      });
+
+      const info = batchTable.getInfoById(this.provider.selectedID.batchID);
+
+      for (const prop in info) {
+        if (prop[0] != 'group' && prop[0] != 'properties') {
+          html += `
         <br>${prop[0]} : ${prop[1]}
       `;
+        }
       }
+      html += '</p>';
+      this.selectedCityObjectElement.innerHTML = html;
     }
-    html += '</p>';
-    this.selectedCityObjectElement.innerHTML = html;
   }
 
   // ///////////

@@ -18,7 +18,7 @@ export class CityObjectFilter {
    */
   constructor(label, accepts) {
     /**
-     * The unique identifier of the filter.
+     * The unique identifier of the filter. this is an uid though
      *
      * @type {string}
      */
@@ -27,7 +27,7 @@ export class CityObjectFilter {
     if (typeof accepts === 'function') {
       this.accepts = accepts;
     } else {
-      // Necessary if inheritance is used, I'm not sure why though
+      // Necessary if inheritance is used, I'm not sure why though lol
       this.accepts = this.accepts.bind(this);
     }
   }

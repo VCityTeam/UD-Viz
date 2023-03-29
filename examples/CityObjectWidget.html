@@ -10,68 +10,60 @@
     <script src="../packages/browser/dist/RUN_MODE/bundle.js"></script>
 
     <script type="text/javascript">
-      udvizBrowser.loadMultipleJSON([
-        './assets/config/extent_lyon.json',
-        './assets/config/frame3D_planars.json',
-        './assets/config/styles.json',
-        './assets/config/layer/3DTiles.json',
-      ]).then((configs) => {
-        // http://proj4js.org/
-        // define a projection as a string and reference it that way
-        // the definition of the projection should be in config TODO_ISSUE
-        udvizBrowser.itowns.proj4.defs(
-          configs['extent_lyon'].crs,
-          '+proj=lcc +lat_1=45.25 +lat_2=46.75' +
-            ' +lat_0=46 +lon_0=3 +x_0=1700000 +y_0=5200000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs'
-        );
+      udvizBrowser
+        .loadMultipleJSON([
+          './assets/config/extent_lyon.json',
+          './assets/config/frame3D_planars.json',
+          './assets/config/layer/3DTiles.json',
+        ])
+        .then((configs) => {
+          // http://proj4js.org/
+          // define a projection as a string and reference it that way
+          // the definition of the projection should be in config TODO_ISSUE
+          udvizBrowser.itowns.proj4.defs(
+            configs['extent_lyon'].crs,
+            '+proj=lcc +lat_1=45.25 +lat_2=46.75' +
+              ' +lat_0=46 +lon_0=3 +x_0=1700000 +y_0=5200000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs'
+          );
 
-        const extent = new udvizBrowser.itowns.Extent(
-          configs['extent_lyon'].crs,
-          parseInt(configs['extent_lyon'].west),
-          parseInt(configs['extent_lyon'].east),
-          parseInt(configs['extent_lyon'].south),
-          parseInt(configs['extent_lyon'].north)
-        );
+          const extent = new udvizBrowser.itowns.Extent(
+            configs['extent_lyon'].crs,
+            parseInt(configs['extent_lyon'].west),
+            parseInt(configs['extent_lyon'].east),
+            parseInt(configs['extent_lyon'].south),
+            parseInt(configs['extent_lyon'].north)
+          );
 
-        const frame3DPlanar = new udvizBrowser.Frame3DPlanar(
-          extent,
-          configs['frame3D_planars'][2]
-        );
+          const frame3DPlanar = new udvizBrowser.Frame3DPlanar(
+            extent,
+            configs['frame3D_planars'][2]
+          );
 
-        // /// ADD LAYERS
-        udvizBrowser.add3DTilesLayers(
-          configs['3DTiles'],
-          frame3DPlanar.layerManager,
-          frame3DPlanar.itownsView
-        );
+          // /// ADD LAYERS
+          udvizBrowser.add3DTilesLayers(
+            configs['3DTiles'],
+            frame3DPlanar.itownsView
+          );
 
-        udvizBrowser.addLights(frame3DPlanar.getScene());
-        udvizBrowser.initRenderer(
-          frame3DPlanar.getRenderer(),
-          new udvizBrowser.THREE.Color(0x6699cc)
-        );
+          // //// CITY OBJECTS PROVIDER
+          const cityObjectProvider = new udvizBrowser.Widget.CityObjectProvider(
+            frame3DPlanar.itownsView
+          ); // TODO should remove from udvizBrowser API
 
-        // //// CITY OBJECTS PROVIDER
-        const cityObjectProvider = new udvizBrowser.Widget.CityObjectProvider(
-          frame3DPlanar.getLayerManager(),
-          configs['styles']
-        );
+          // //// CITY OBJECTS MODULE
+          const cityObjectModule = new udvizBrowser.Widget.CityObjectModule(
+            cityObjectProvider
+          );
 
-        // //// CITY OBJECTS MODULE
-        const cityObjectModule = new udvizBrowser.Widget.CityObjectModule(
-          cityObjectProvider,
-          configs['styles']
-        );
+          const parent = document.createElement('div');
+          parent.style.backgroundColor = 'white';
+          parent.style.width = 'fit-content';
+          parent.appendChild(cityObjectModule.view.html());
 
-        const parent = document.createElement('div');
-        parent.style.backgroundColor = 'white';
-        parent.style.width = 'fit-content';
-        parent.appendChild(cityObjectModule.view.html());
+          cityObjectModule.view.addListenerTo(frame3DPlanar.rootWebGL);
 
-        cityObjectModule.view.addListenerTo(frame3DPlanar.rootWebGL);
-
-        frame3DPlanar.appendToUI(parent);
-      });
+          frame3DPlanar.appendToUI(parent);
+        });
     </script>
   </body>
 </html>

@@ -1,5 +1,7 @@
-import { CityObjectStyle } from '../../../Itowns/3DTiles/Model/CityObjectStyle';
 import { CityObjectFilter } from './CityObjectFilter';
+import * as itowns from 'itowns';
+
+throw new Error('DEPRECATED');
 
 /**
  * A layer represents an association between a set of city objects and a style.
@@ -10,7 +12,7 @@ export class CityObjectLayer {
    * Constructs a layer from a filter and a style.
    *
    * @param {CityObjectFilter} filter The filter associated with the layer.
-   * @param {CityObjectStyle | string} style The style associated with the
+   * @param {itowns.Style} style The style associated with the
    * layer.
    */
   constructor(filter, style) {
@@ -28,7 +30,7 @@ export class CityObjectLayer {
     /**
      * The style associated with the layer.
      *
-     * @type {CityObjectStyle | string}
+     * @type {itowns.Style}
      */
     this.style = style;
   }
