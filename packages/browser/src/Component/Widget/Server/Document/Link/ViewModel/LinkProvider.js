@@ -1,6 +1,4 @@
 import { EventSender } from '@ud-viz/shared';
-import { CityObject } from '../../../../../Itowns/3DTiles/Model/CityObject';
-import { CityObjectStyle } from '../../../../../Itowns/3DTiles/Model/CityObjectStyle';
 import { CityObjectProvider } from '../../../../CityObjects/ViewModel/CityObjectProvider';
 import { LinkService } from '../Model/LinkService';
 import { DocumentProvider } from '../../Core/ViewModel/DocumentProvider';
@@ -12,6 +10,7 @@ import {
   LinkedWithDisplayedDocumentFilter,
   LinkedWithFilteredDocumentsFilter,
 } from './CityObjectLinkFilters';
+import * as itowns from 'itowns';
 
 /**
  * The link provider is responsible to manage links fetched from the server,
@@ -26,12 +25,8 @@ export class LinkProvider extends EventSender {
    * @param {DocumentProvider} documentProvider The document provider.
    * @param {CityObjectProvider} cityObjectProvider The city object provider.
    * @param {LinkService} linkService The link service.
-   * @param {object} configStyles A dictionary of styles for city
-   * objects.
-   * @param {CityObjectStyle} configStyles.linkedWithDisplayedDocument
-   * The style for the city objects linked with displayed documents.
    */
-  constructor(documentProvider, cityObjectProvider, linkService, configStyles) {
+  constructor(documentProvider, cityObjectProvider, linkService) {
     super();
 
     /**
@@ -79,7 +74,11 @@ export class LinkProvider extends EventSender {
      *
      * @type {CityObjectStyle}
      */
-    this.linkDisplayedDocumentStyle = configStyles.linkedWithDisplayedDocument;
+    this.linkDisplayedDocumentStyle = new itowns.Style({
+      fill: {
+        color: 'magenta',
+      },
+    });
 
     /**
      * A filter for city objects based on wether they are linked with any of the
@@ -192,7 +191,6 @@ export class LinkProvider extends EventSender {
   _onDisplayedDocumentChange(doc) {
     this.displayedDocument = doc;
     this.displayedDocumentLinks = doc ? this.getLinksFromDocuments([doc]) : [];
-    this.cityObjectProvider.applyStyles();
     this.sendEvent(DocumentProvider.EVENT_DISPLAYED_DOC_CHANGED, doc);
   }
 
@@ -206,7 +204,6 @@ export class LinkProvider extends EventSender {
   _onFilteredDocumentsUpdate(docs) {
     this.filteredDocuments = docs;
     this.filteredDocumentsLinks = this.getLinksFromDocuments(docs);
-    this.cityObjectProvider.applyStyles();
     this.sendEvent(DocumentProvider.EVENT_FILTERED_DOCS_UPDATED, docs);
   }
 

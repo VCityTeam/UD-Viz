@@ -82,13 +82,17 @@ export class CityObjectProvider extends EventSender {
       const tileID = findTileID(intersects[0].object);
       if (!tileID) throw new Error('no tileID in object');
 
-      this.setSelectedID(
-        new itowns.C3DTilesLayerTileBatchID(
-          clickedLayer.id,
-          tileID,
-          batchInfo.batchID
-        )
-      );
+      if (batchInfo) {
+        this.setSelectedID(
+          new itowns.C3DTilesLayerTileBatchID(
+            clickedLayer.id,
+            tileID,
+            batchInfo.batchID
+          )
+        );
+      }
+    } else {
+      this.setSelectedID(null);
     }
   }
 

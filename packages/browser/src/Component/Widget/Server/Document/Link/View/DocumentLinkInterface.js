@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { focusCameraOn } from '../../../../../Itowns/Component/Component';
+import { focusCameraOn } from '../../../../../ItownsUtil';
 import { DocumentProvider } from '../../Core/ViewModel/DocumentProvider';
 import { Link } from '../Model/Link';
 import { LinkProvider } from '../ViewModel/LinkProvider';

@@ -263,7 +263,7 @@ export class Debug3DTilesView {
       if (!tileID) throw new Error('no tileID in object');
 
       if (batchInfo) {
-        // if a style object is clicked no batch info are associated to it
+        // if a style object is clicked no batch info are associated to it todo create an object in itowns reserved as style object3D ?
 
         // display batchTable
         for (const [key, value] of Object.entries(batchInfo.batchTable)) {
@@ -274,15 +274,16 @@ export class Debug3DTilesView {
             Batch ID : ${batchInfo.batchID}<br>
             Tile ID : ${tileID}
           `;
+        this.setSelectedID(
+          new itowns.C3DTilesLayerTileBatchID(
+            clickedLayer.id,
+            tileID,
+            batchInfo.batchID
+          )
+        );
+      } else {
+        this.setSelectedID(null);
       }
-
-      this.setSelectedID(
-        new itowns.C3DTilesLayerTileBatchID(
-          clickedLayer.id,
-          tileID,
-          batchInfo.batchID
-        )
-      );
     }
   }
 
@@ -304,17 +305,19 @@ export class Debug3DTilesView {
     });
 
     // apply for all C3DTileLayers
+    console.time();
     this.itownsView.getLayers().forEach((layer) => {
       if (!layer.isC3DTilesLayer) return;
       batchIds.forEach((bid) => {
         layer.applyStyle(
           new itowns.C3DTilesLayerTileBatchID(layer.id, tileId, bid),
-          styleInForm,
-          false
+          styleInForm
         );
-        this.itownsView.notifyChange();
       });
     });
+    console.log('apply styles');
+    console.timeEnd();
+    this.itownsView.notifyChange(this.itownsView.camera.camera3D); // itowns bug looks to not update materials
   }
 
   // //// GETTERS
