@@ -7,55 +7,20 @@ const itowns = require('itowns');
 /**  ADD LAYER TO ITOWNS VIEW FROM CONFIG */
 
 /**
- * These extensions should belong elsewhere since it should be possible
- * to manipulate Temporal 3DTiles without having a dependence to its widget...
- * https://github.com/VCityTeam/UD-Viz/issues/587
- */
-import { $3DTemporalBatchTable } from './Widget/Temporal/Model/3DTemporalBatchTable';
-import { $3DTemporalBoundingVolume } from './Widget/Temporal/Model/3DTemporalBoundingVolume';
-import { $3DTemporalTileset } from './Widget/Temporal/Model/3DTemporalTileset';
-
-/**
  * It creates a 3D Tiles layer,
  * and adds it to the layer manager
  *
  * @param {*} layer - the layer object from the config file
  * @param {itowns.View} itownsView - the itowns view
+ * @param {object} extensions - optional extensions
  * @returns {itowns.C3DTilesLayer} A 3D Tiles Layer
  */
-export function setup3DTilesLayer(layer, itownsView) {
+export function setup3DTilesLayer(layer, itownsView, extensions = null) {
   if (!layer['id'] || !layer['url']) {
     throw (
       'Your layer does not have url id properties or both. ' +
       '(in UD-Viz/UD-Viz-Shared/examples/data/config/generalDemoConfig.json)'
     );
-  }
-
-  const extensionsConfig = layer['extensions'];
-  const extensions = new itowns.C3DTExtensions();
-  if (extensionsConfig) {
-    for (let i = 0; i < extensionsConfig.length; i++) {
-      if (extensionsConfig[i] === '3DTILES_temporal') {
-        extensions.registerExtension('3DTILES_temporal', {
-          [itowns.C3DTilesTypes.batchtable]: $3DTemporalBatchTable,
-          [itowns.C3DTilesTypes.boundingVolume]: $3DTemporalBoundingVolume,
-          [itowns.C3DTilesTypes.tileset]: $3DTemporalTileset,
-        });
-      } else if (extensionsConfig[i] === '3DTILES_batch_table_hierarchy') {
-        extensions.registerExtension('3DTILES_batch_table_hierarchy', {
-          [itowns.C3DTilesTypes.batchtable]:
-            itowns.C3DTBatchTableHierarchyExtension,
-        });
-      } else {
-        console.warn(
-          'The 3D Tiles extension ' +
-            extensionsConfig[i] +
-            ' specified in 3D_tiles_layers is not supported ' +
-            'by @ud-viz/browser yet. Only 3DTILES_temporal and ' +
-            '3DTILES_batch_table_hierarchy are supported.'
-        );
-      }
-    }
   }
 
   let overrideMaterial = false;

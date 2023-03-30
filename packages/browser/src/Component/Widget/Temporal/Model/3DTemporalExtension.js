@@ -55,6 +55,9 @@ export class $3DTemporalExtension {
 
     // Events
     // $3DTemporalTileset triggers an event when it is loaded
+    /**
+     * @todo do not do this !!!!
+     */
     window.addEventListener(
       $3DTemporalTileset.TEMPORAL_TILESET_LOADED,
       this.temporalTilesetLoaded.bind(this)
