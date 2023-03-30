@@ -46,7 +46,7 @@ export class CityObjectProvider extends EventSender {
       },
       stroke: {
         color: 'red',
-        opacity: 0.5,
+        opacity: 0.2,
       },
     });
 
@@ -60,7 +60,7 @@ export class CityObjectProvider extends EventSender {
     /** @type {itowns.C3DTilesLayerTileBatchID} */
     this.selectedID = null;
 
-    // Event registration
+    // Event registration not sure if all this event are still used
     this.registerEvent(CityObjectProvider.EVENT_FILTERS_UPDATED);
     this.registerEvent(CityObjectProvider.EVENT_LAYER_CHANGED);
     this.registerEvent(CityObjectProvider.EVENT_CITY_OBJECT_SELECTED);
