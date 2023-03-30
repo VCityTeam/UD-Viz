@@ -37,6 +37,9 @@ export class $3DTemporalTileset {
 
     // Trapped by 3DTemporalExtension.js that stores this instance of
     // $3DTemporalTileset
+    /**
+     * do not do this
+     */
     window.dispatchEvent(
       new CustomEvent($3DTemporalTileset.TEMPORAL_TILESET_LOADED, {
         detail: { temporalTileset: this },

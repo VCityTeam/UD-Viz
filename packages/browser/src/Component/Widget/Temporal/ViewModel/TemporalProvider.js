@@ -1,8 +1,6 @@
-import { TilesManager } from '../../../Itowns/3DTiles/TilesManager.js';
-import { getVisibleTiles } from '../../../Itowns/3DTiles/3DTilesUtils.js';
-import { CityObjectStyle } from '../../../Itowns/3DTiles/Model/CityObjectStyle.js';
-import { CityObjectID } from '../../../Itowns/3DTiles/Model/CityObject.js';
+// import { getVisibleTiles } from '../../../Itowns/3DTiles/3DTilesUtils.js';
 import { $3DTemporalExtension } from '../Model/3DTemporalExtension.js';
+import * as itowns from 'itowns';
 
 // JSDOC
 import { $3DTemporalTransaction } from '../Model/3DTemporalTransaction.js';
@@ -20,16 +18,16 @@ export class TemporalProvider {
    *
    * @param {$3DTemporalExtension} tempExtModel The model of the temporal
    * module (i.e. holding data from the 3D Tiles temporal extension).
-   * @param {TilesManager} tilesManager The tiles manager associated
-   * with the itowns 3D Tiles layer holding the temporal extension.
+   * @param {itowns.PlanarView} itownsView view
    * @param {number} currentTime The current display time, updated by the
    * TemporalView.
    */
-  constructor(tempExtModel, tilesManager, currentTime) {
+  constructor(tempExtModel, itownsView, currentTime) {
     /** @type {$3DTemporalExtension} */
     this.tempExtModel = tempExtModel;
 
-    this.tilesManager = tilesManager;
+    /** @type {itowns.PlanarView} */
+    this.itownsView = itownsView;
 
     this.currentTime = currentTime;
 
@@ -40,26 +38,35 @@ export class TemporalProvider {
      * { date: tile : styles[] } } where the position in the styles
      * array is the id of the city object
      */
+    this.stylesMap = new Map();
+    this.initStyleMap();
+
+    /** @type {Map} */
     this.COStyles = new Map();
 
-    this.initCOStyles();
+    this.itownsView
+      .getLayers()
+      .filter((el) => {
+        el.isC3DTilesLayer == true;
+      })
+      .forEach((layer) => {
+        debugger
+        layer.addEventListener(
+          itowns.C3DTilesLayer.EVENT_TILE_CONTENT_LOADED,
+          ({ tile }) => {
+            // Initializes the model. One part of this model is filled when the
+            // temporal extension is loaded by iTowns; an other part is filled
+            // with the event declared below (when a tile is loaded).
+            // See the comment at the end of the $3DTemporalExtension constructor
+            // for more details.
+            this.tempExtModel.updateTileExtensionModel(tile);
 
-    // Initializes the model. One part of this model is filled when the
-    // temporal extension is loaded by iTowns; an other part is filled
-    // with the event declared below (when a tile is loaded).
-    // See the comment at the end of the $3DTemporalExtension constructor
-    // for more details.
-    this.tilesManager.addEventListener(
-      TilesManager.EVENT_TILE_LOADED,
-      this.tempExtModel.updateTileExtensionModel.bind(this.tempExtModel)
-    );
-
-    // When a tile is loaded, we compute the state of its city objects (e.g.
-    // should they be displayed or not and in which color, etc.)
-    this.tilesManager.addEventListener(
-      TilesManager.EVENT_TILE_LOADED,
-      this.changeTileState.bind(this)
-    );
+            // When a tile is loaded, we compute the state of its city objects (e.g.
+            // should they be displayed or not and in which color, etc.)
+            this.changeTileState(tile);
+          }
+        );
+      });
   }
 
   /**
@@ -67,42 +74,39 @@ export class TemporalProvider {
    * transactions (see 3DTiles_temporal extension for more information
    * on transactions). The names of the styles match transaction names,
    * except for 'noTransaction' dans 'hide'.
+   *
+   * @todo key of styleMap should static variable of this class
    */
-  initCOStyles() {
-    this.tilesManager.registerStyle(
-      'noTransaction',
-      new CityObjectStyle({
-        materialProps: { opacity: 1.0, color: 0xffffff },
-      })
-    ); // White
-
-    this.tilesManager.registerStyle(
-      'creation',
-      new CityObjectStyle({
-        materialProps: { opacity: 0.6, color: 0x009900 },
-      })
-    ); // Green
-
-    this.tilesManager.registerStyle(
-      'demolition',
-      new CityObjectStyle({
-        materialProps: { opacity: 0.6, color: 0xff0000 },
-      })
-    ); // Red
-
-    this.tilesManager.registerStyle(
-      'modification',
-      new CityObjectStyle({
-        materialProps: { opacity: 0.6, color: 0xffd700 },
-      })
-    ); // Yellow
-
-    this.tilesManager.registerStyle(
-      'hide',
-      new CityObjectStyle({
-        materialProps: { opacity: 0, color: 0xffffff, alphaTest: 0.3 },
-      })
-    ); // Hidden
+  initStyleMap() {
+    this.stylesMap['noTransaction'] = new itowns.Style({
+      fill: {
+        color: 'white',
+      },
+    });
+    this.stylesMap['creation'] = new itowns.Style({
+      fill: {
+        color: 'green',
+        opacity: 0.6,
+      },
+    });
+    this.stylesMap['demolition'] = new itowns.Style({
+      fill: {
+        color: 'red',
+        opacity: 0.6,
+      },
+    });
+    this.stylesMap['modification'] = new itowns.Style({
+      fill: {
+        color: 'yellow',
+        opacity: 0.6,
+      },
+    });
+    this.stylesMap['hide'] = new itowns.Style({
+      fill: {
+        color: 'white', // hide could be a default style
+        opacity: 0,
+      },
+    });
   }
 
   /**
@@ -114,6 +118,12 @@ export class TemporalProvider {
    * @param {number} cityObjectId Id of the city object.
    * @param {string} styleName Name of the style to apply.
    */
+  // export { $3DTemporalBatchTable } from './Temporal/Model/3DTemporalBatchTable.js';
+
+  // export { $3DTemporalBoundingVolume } from './Temporal/Model/3DTemporalBoundingVolume.js';
+
+  // export { $3DTemporalTileset } from './Temporal/Model/3DTemporalTileset.js';
+
   setCityObjectStyle(tileId, cityObjectId, styleName) {
     if (this.tilesManager.isStyleRegistered(styleName)) {
       this.tilesManager.setStyle(
@@ -337,10 +347,13 @@ export class TemporalProvider {
    * TemporalView when the time of the view is updated.
    */
   changeVisibleTilesStates() {
-    const tiles = getVisibleTiles(this.tilesManager.layer);
-    for (let i = 0; i < tiles.length; i++) {
-      this.computeTileState(tiles[i].tileId);
-    }
-    this.tilesManager.applyStyles();
+    this.itownsView
+      .getLayers()
+      .filter((el) => el.isC3DTilesLayer == true)
+      .forEach((layer) => {
+        layer.tileset.tiles.forEach((tile) => {
+          this.computeTileState(tile.tileId);
+        });
+      });
   }
 }
