@@ -1,4 +1,4 @@
-import { CityObjectFilter } from '../../../../CityObjects/ViewModel/CityObjectFilter';
+// import { CityObjectFilter } from '../../../../CityObjects/ViewModel/CityObjectFilter';
 import { LinkProvider } from './LinkProvider';
 
 /**

@@ -1,6 +1,6 @@
-export { CityObjectModule } from './CityObjects/CityObjectModule';
+// export { CityObjectModule } from './CityObjects/CityObjectModule';
 
-export { CityObjectProvider } from './CityObjects/ViewModel/CityObjectProvider';
+// export { CityObjectProvider } from './CityObjects/ViewModel/CityObjectProvider';
 
 export { LayerChoice } from './LayerChoice/views/LayerChoice';
 
@@ -10,7 +10,7 @@ export { TemporalModule } from './Temporal/TemporalModule';
 
 export { SlideShow } from './SlideShow/SlideShow';
 
-export { Debug3DTilesView } from './3DTilesDebug/views/Debug3DTilesView';
+// export { Debug3DTilesView } from './3DTilesDebug/views/Debug3DTilesView';
 
 export { BaseMap } from './BaseMap/BaseMapWindow';
 

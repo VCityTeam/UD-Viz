@@ -1,5 +1,5 @@
 import { EventSender } from '@ud-viz/shared';
-import { CityObjectProvider } from '../../../../CityObjects/ViewModel/CityObjectProvider';
+// import { CityObjectProvider } from '../../../../CityObjects/ViewModel/CityObjectProvider';
 import { LinkService } from '../Model/LinkService';
 import { DocumentProvider } from '../../Core/ViewModel/DocumentProvider';
 import { Document } from '../../Core/Model/Document';
