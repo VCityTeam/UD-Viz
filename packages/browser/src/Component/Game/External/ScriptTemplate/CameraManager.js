@@ -249,11 +249,9 @@ export class CameraManager extends ExternalScriptBase {
     const oldPos = this.context.frame3D.camera.position.clone();
     this.context.frame3D.camera.position.copy(newPos);
     this.context.frame3D.camera.lookAt(center);
-    this.context.frame3D.camera.updateProjectionMatrix();
     const targetRot = this.context.frame3D.camera.rotation.clone();
     this.context.frame3D.camera.rotation.copy(oldRot);
     this.context.frame3D.camera.position.copy(oldPos);
-    this.context.frame3D.camera.updateProjectionMatrix();
 
     return this.moveToTransform(
       newPos,
