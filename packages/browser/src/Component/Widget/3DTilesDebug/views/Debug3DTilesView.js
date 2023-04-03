@@ -26,8 +26,8 @@ export class Debug3DTilesView {
       stroke: { color: 'red', opacity: 0.3 },
     });
 
-    /** @type {itowns.C3DTilesLayerTileBatchID} */
-    this.selectedID = null;
+    /** @type {itowns.BatchElement} */
+    this.selectedBatchElement = null;
 
     // listeners
     this.clickListener = this.onMouseClick.bind(this);
@@ -80,8 +80,8 @@ export class Debug3DTilesView {
    */
   dispose() {
     this.rootHtml.remove();
-    if (this.selectedID) {
-      this.setSelectedID(null);
+    if (this.selectedBatchElement) {
+      this.setSelectedBatchElement(null);
     }
 
     this.removeListener();
@@ -215,27 +215,20 @@ export class Debug3DTilesView {
     this.visibleTilesParagraphElement.innerText = `${tileWithBatchTableCount} node with batchTable.`;
   }
 
-  setSelectedID(value) {
-    if (this.selectedID) {
-      if (!this.selectedID.equals(value)) {
-        // unselect old selected ID could be a view methods ??? or C3DTilesLayer method ??
-        const layerOfOldSelection = this.itownsView.getLayerById(
-          this.selectedID.layerID
-        );
-        layerOfOldSelection.applyStyle(this.selectedID); // will apply default style
+  setSelectedBatchElement(value) {
+    if (this.selectedBatchElement) {
+      if (!this.selectedBatchElement == value) {
+        this.selectedBatchElement.setUserData('selected', false);
         this.itownsView.notifyChange();
       } else {
         return; // nothing to do
       }
     }
 
-    this.selectedID = value;
+    this.selectedBatchElement = value;
 
-    if (this.selectedID) {
-      this.itownsView
-        .getLayerById(this.selectedID.layerID)
-        .applyStyle(this.selectedID, this.selectionStyle);
-
+    if (this.selectedBatchElement) {
+      this.selectedBatchElement.setUserData('selected', true);
       this.itownsView.notifyChange();
     }
   }
@@ -257,32 +250,24 @@ export class Debug3DTilesView {
 
     if (intersects.length) {
       const clickedLayer = intersects[0].layer;
-      const batchInfo = clickedLayer.getInfoFromIntersectObject(intersects); // pass all array since style object can be clicked see how to deal with that
+      const batchElement =
+        clickedLayer.getBatchElementFromIntersectsArray(intersects); // pass all array since style object can be clicked see how to deal with that
 
-      const tileID = findTileID(intersects[0].object);
-      if (!tileID) throw new Error('no tileID in object');
-
-      if (batchInfo) {
+      if (batchElement) {
         // if a style object is clicked no batch info are associated to it todo create an object in itowns reserved as style object3D ?
 
         // display batchTable
-        for (const [key, value] of Object.entries(batchInfo.batchTable)) {
+        for (const [key, value] of Object.entries(batchInfo.info.batchTable)) {
           this.clickDivElement.innerHTML = `<br>${key} : ${value}`;
         }
         this.clickDivElement.innerHTML += /* html*/ `
             <br>Layer Name : ${clickedLayer.name}<br>
-            Batch ID : ${batchInfo.batchID}<br>
-            Tile ID : ${tileID}
+            Batch ID : ${batchElement.batchId}<br>
+            Tile ID : ${findTileID(intersects[0].object)}
           `;
-        this.setSelectedID(
-          new itowns.C3DTilesLayerTileBatchID(
-            clickedLayer.id,
-            tileID,
-            batchInfo.batchID
-          )
-        );
+        this.setSelectedBatchElement(batchElement);
       } else {
-        this.setSelectedID(null);
+        this.setSelectedBatchElement(null);
       }
     }
   }
@@ -306,15 +291,22 @@ export class Debug3DTilesView {
 
     // apply for all C3DTileLayers
     console.time();
-    this.itownsView.getLayers().forEach((layer) => {
-      if (!layer.isC3DTilesLayer) return;
-      batchIds.forEach((bid) => {
-        layer.applyStyle(
-          new itowns.C3DTilesLayerTileBatchID(layer.id, tileId, bid),
-          styleInForm
-        );
+    this.itownsView
+      .getLayers()
+      .filter((el) => el.isC3DTilesLayer)
+      .forEach((layer) => {
+
+        layer.batchElementsArray().forEach((be)=>{
+          
+        })
+
+        batchIds.forEach((bid) => {
+          layer.applyStyle(
+            new itowns.C3DTilesLayerTileBatchID(layer.id, tileId, bid),
+            styleInForm
+          );
+        });
       });
-    });
     console.log('apply styles');
     console.timeEnd();
     this.itownsView.notifyChange(this.itownsView.camera.camera3D); // itowns bug looks to not update materials
