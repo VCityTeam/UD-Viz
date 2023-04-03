@@ -104,8 +104,8 @@ export function createLabelInput(labelText, inputType) {
 
 /**
  *
- * @param {string} labelText
- * @returns {{parent:HTMLElement,inputStartDate:HTMLElement,inputEndDate:HTMLElement}}
+ * @param {string} labelText - text of the label
+ * @returns {{parent:HTMLElement,inputStartDate:HTMLElement,inputEndDate:HTMLElement}} - date interval object
  */
 export function createDateIntervalInput(labelText) {
   const parent = document.createElement('div');
