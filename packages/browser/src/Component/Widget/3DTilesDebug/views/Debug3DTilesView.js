@@ -269,8 +269,8 @@ export class Debug3DTilesView {
         for (const [key, value] of Object.entries(batchInfo.batchTable)) {
           this.clickDivElement.innerHTML = `<br>${key} : ${value}`;
         }
-        this.clickDivElement.innerHTML = /* html*/ `
-            Layer Name : ${clickedLayer.name}<br>
+        this.clickDivElement.innerHTML += /* html*/ `
+            <br>Layer Name : ${clickedLayer.name}<br>
             Batch ID : ${batchInfo.batchID}<br>
             Tile ID : ${tileID}
           `;
