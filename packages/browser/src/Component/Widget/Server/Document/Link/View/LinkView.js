@@ -1,7 +1,7 @@
-import { CityObjectModule } from '../../../../CityObjects/CityObjectModule';
-import { CityObjectWindow } from '../../../../CityObjects/View/CityObjectWindow';
+// import { CityObjectModule } from '../../../../CityObjects/CityObjectModule';
+// import { CityObjectWindow } from '../../../../CityObjects/View/CityObjectWindow';
 import { DocumentLinkInterface } from './DocumentLinkInterface';
-import { CityObjectLinkInterface } from './CityObjectLinkInterface';
+// import { CityObjectLinkInterface } from './CityObjectLinkInterface';
 import { LinkProvider } from '../ViewModel/LinkProvider';
 
 /**

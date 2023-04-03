@@ -1,7 +1,7 @@
 import { RequestService } from '../../../../RequestService';
 import { LinkService } from './Model/LinkService';
 import { DocumentProvider } from '../Core/ViewModel/DocumentProvider';
-import { CityObjectModule } from '../../../CityObjects/CityObjectModule';
+// import { CityObjectModule } from '../../../CityObjects/CityObjectModule';
 import { LinkView } from './View/LinkView';
 import { LinkProvider } from './ViewModel/LinkProvider';
 
