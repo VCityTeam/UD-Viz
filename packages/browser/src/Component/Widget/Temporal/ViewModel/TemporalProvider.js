@@ -50,7 +50,6 @@ export class TemporalProvider {
         el.isC3DTilesLayer == true;
       })
       .forEach((layer) => {
-        debugger
         layer.addEventListener(
           itowns.C3DTilesLayer.EVENT_TILE_CONTENT_LOADED,
           ({ tile }) => {
