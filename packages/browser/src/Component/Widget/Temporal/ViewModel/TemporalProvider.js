@@ -79,7 +79,7 @@ export class TemporalProvider {
     this.tilesManager.registerStyle(
       'creation',
       new CityObjectStyle({
-        materialProps: { opacity: 1, color: 0x009900 },
+        materialProps: { opacity: 1, color: 0x009900, alphaTest: 0.3 },
       })
     ); // Green
 
@@ -93,7 +93,7 @@ export class TemporalProvider {
     this.tilesManager.registerStyle(
       'modification',
       new CityObjectStyle({
-        materialProps: { opacity: 1, color: 0xffd700 },
+        materialProps: { opacity: 1, color: 0xffd700, alphaTest: 0.3 },
       })
     ); // Yellow
 
