@@ -48,12 +48,6 @@
           frame3DPlanar.itownsView
         );
 
-        udvizBrowser.addLights(frame3DPlanar.getScene());
-        udvizBrowser.initRenderer(
-          frame3DPlanar.getRenderer(),
-          new udvizBrowser.THREE.Color(0x6699cc)
-        );
-
         // //// CITY OBJECTS PROVIDER
         const cityObjectProvider = new udvizBrowser.Widget.CityObjectProvider(
           frame3DPlanar.getLayerManager(),
