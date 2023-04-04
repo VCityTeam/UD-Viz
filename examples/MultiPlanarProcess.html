@@ -41,9 +41,6 @@
               parseInt(configs['extent_lyon'].north)
             );
 
-            // add dynamically hasItownsControls attributes in config
-            configs['frame3D_planars'][0].hasItownsControls = true;
-
             const socketIOWrapper = new udvizBrowser.SocketIOWrapper();
             socketIOWrapper.connectToServer().then(() => {
               const multiGame = new udvizBrowser.MultiPlanarProcess(
@@ -52,7 +49,7 @@
                 assetManager,
                 new udvizBrowser.InputManager(),
                 {
-                  frame3DPlanarOptions: configs['frame3D_planars'][0],
+                  frame3DPlanarOptions: configs['frame3D_planars'][2],
                   externalGameScriptClass: [
                     udvizBrowser.CameraManager,
                     udvizBrowser.Note,

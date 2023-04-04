@@ -14,5 +14,5 @@ export { GeocodingView } from './Geocoding/views/GeocodingView';
 
 // export { SparqlEndpointResponseProvider } from './SPARQL/Service/SparqlEndpointResponseProvider';
 
-import * as Document from './Document/Document';
-export { Document };
+// import * as Document from './Document/Document';
+// export { Document };
