@@ -1,4 +1,4 @@
 {
-  "url": "https://demo.liris.cnrs.fr/vcity/geodatadays/strabon/",
-  "url_parameters": "Query?handle=download&format=SPARQL/JSON&view=HTML&query="
+  "url": "https://demo.liris.cnrs.fr/vcity/geodatadays/",
+  "engine": "strabon"
 }
