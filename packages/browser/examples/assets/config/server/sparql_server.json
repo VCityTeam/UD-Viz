@@ -1,4 +1,4 @@
 {
-  "url": "http://localhost:9011/",
-  "engine": "blazegraph"
+  "url": "https://demo.liris.cnrs.fr/vcity/geodatadays/",
+  "engine": "strabon"
 }
