@@ -13,7 +13,7 @@ export class SparqlEndpointService extends RequestService {
    * @param {object} configSparql The sparqlModule configuration.
    * @param {string} configSparql.url The SPARQL server url.
    */
-  constructor(configSparqlServer) {
+  constructor(configSparql) {
     super();
 
     if (!configSparql || !configSparql.url) {
