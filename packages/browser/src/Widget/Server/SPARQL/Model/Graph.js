@@ -137,4 +137,13 @@ export class Graph {
     });
     return links;
   }
+
+  /**
+   * Remove nodes and lines from the SVG.
+   */
+  clear() {
+    this.nodes = [];
+    this.links = [];
+    this.typeList = [];
+  }
 }
