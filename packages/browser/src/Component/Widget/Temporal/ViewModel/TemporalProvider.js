@@ -72,7 +72,11 @@ export class TemporalProvider {
     this.tilesManager.registerStyle(
       'noTransaction',
       new CityObjectStyle({
+<<<<<<< HEAD
         materialProps: { opacity: 0, color: 0xffffff, alphaTest: 0.3 },
+=======
+        materialProps: { opacity: 1, color: 0xffffff, alphaTest: 0.3 },
+>>>>>>> 6bc4b7e2 (revert notransactioncolor; add queries)
       })
     ); // White
 
