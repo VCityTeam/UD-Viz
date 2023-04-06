@@ -277,13 +277,6 @@ export class D3GraphCanvas {
     this.svg.selectAll('text').remove();
   }
 
-  /**
-   * Remove nodes and lines from the SVG.
-   */
-  clearData() {
-    this.data = new Graph();
-  }
-
   // / Interface Functions ///
 
   /**

@@ -137,9 +137,8 @@ export class SparqlQueryWindow extends EventSender {
     };
 
     this.resetButton.onclick = () => {
-      console.log('here');
       this.d3Graph.clearCanvas();
-      this.d3Graph.clearData();
+      this.d3Graph.data.clear();
     }
 
     this.sparqlProvider.addEventListener(
