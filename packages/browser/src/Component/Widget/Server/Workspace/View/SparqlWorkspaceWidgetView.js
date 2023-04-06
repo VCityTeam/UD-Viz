@@ -1,13 +1,12 @@
-import { WidgetView } from '../../../Component/WidgetView/WidgetView';
-import { SparqlEndpointResponseProvider } from '../Service/SparqlEndpointResponseProvider';
+import { SparqlEndpointResponseProvider, SparqlWidgetView } from '../../Server';
 import { CityObjectProvider } from '../../../CityObjects/ViewModel/CityObjectProvider';
-import { SparqlQueryWindow } from './SparqlQueryWindow';
+import { SparqlWorkspaceQueryWindow } from './SparqlWorkspaceQueryWindow';
 import { LayerManager } from '../../../../Itowns/LayerManager/LayerManager';
 
 /**
  * The SPARQL WidgetView class which manages the SPARQL query window.
  */
-export class SparqlWidgetView extends WidgetView {
+export class SparqlWorkspaceWidgetView extends SparqlWidgetView {
   /**
    * Creates a new SparqlWidgetView.
    *
@@ -24,15 +23,20 @@ export class SparqlWidgetView extends WidgetView {
     layerManager,
     configSparqlWidget
   ) {
-    super();
-
+    super(
+      sparqlProvider,
+      cityObjectProvider,
+      temporalProviders,
+      layerManager,
+      configSparqlWidget
+    );
     /**
-     * Contains a SparqlQueryWindow for capturing user input and displaying
+     * Contains a SparqlWorkspaceQueryWindow for capturing user input and displaying
      * query results.
      *
-     * @type {SparqlQueryWindow}
+     * @type {SparqlWorkspaceQueryWindow}
      */
-    this.window = new SparqlQueryWindow(
+    this.window = new SparqlWorkspaceQueryWindow(
       sparqlProvider,
       cityObjectProvider,
       temporalProviders,
