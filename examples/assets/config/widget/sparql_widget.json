@@ -4,39 +4,18 @@
   "fontSize": 4,
   "queries": [
     {
-      "title": "Select Buildings from Version (2012)",
+      "title": "Select Versions and Version Transitions",
       "formats": {
-        "graph": "Graph",
-        "table": "Table",
-        "json": "JSON"
+        "graph": "Graph"
       },
-      "filepath": "./assets/queries/version.rq"
+      "filepath": "./assets/queries/versions.rq"
     },
     {
-      "title": "Select Building by ID",
+      "title": "Select the Transition (with Transactions) between two Versions",
       "formats": {
-        "graph": "Graph",
-        "table": "Table",
-        "json": "JSON"
+        "graph": "Graph"
       },
-      "filepath": "./assets/queries/buildingByIDQuery.rq"
-    },
-    {
-      "title": "Select Slabs from Building",
-      "formats": {
-        "graph": "Graph",
-        "table": "Table",
-        "json": "JSON"
-      },
-      "filepath": "./assets/queries/ifcSlabQuery.rq"
-    },
-    {
-      "title": "Count Slabs in Building",
-      "formats": {
-        "table": "Table",
-        "json": "JSON"
-      },
-      "filepath": "./assets/queries/ifcSlabCountQuery.rq"
+      "filepath": "./assets/queries/versionTransition.rq"
     }
   ],
   "namespaceLabels": {

@@ -1,0 +1,52 @@
+# Common prefixes
+PREFIX rdf:    <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs:   <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX owl:    <http://www.w3.org/2002/07/owl#>
+PREFIX xsd:    <http://www.w3.org/2001/XMLSchema#>
+PREFIX list:   <https://w3id.org/list#>
+PREFIX skos:   <http://www.w3.org/2004/02/skos/core#>
+PREFIX gml:    <http://www.opengis.net/gml#>
+PREFIX gmlowl: <http://www.opengis.net/ont/gml#>
+PREFIX units:  <http://www.opengis.net/def/uom/OGC/1.0/>
+PREFIX geo:    <http://www.opengis.net/ont/geosparql#>
+PREFIX geof:   <http://www.opengis.net/def/function/geosparql/>
+PREFIX strdf:  <http://strdf.di.uoa.gr/ontology#>
+PREFIX xlink:  <http://www.w3.org/1999/xlink#>
+
+# CityGML 3.0 prefixes
+PREFIX core3: <https://raw.githubusercontent.com/VCityTeam/UD-Graph/master/Ontologies/CityGML/3.0/core#>
+PREFIX con3: <https://raw.githubusercontent.com/VCityTeam/UD-Graph/master/Ontologies/CityGML/3.0/construction#>
+PREFIX bldg3: <https://raw.githubusercontent.com/VCityTeam/UD-Graph/master/Ontologies/CityGML/3.0/building#>
+PREFIX vers3: <https://raw.githubusercontent.com/VCityTeam/UD-Graph/master/Ontologies/CityGML/3.0/versioning#>
+
+# Dataset prefixes
+PREFIX data: <https://github.com/VCityTeam/UD-Graph/DOUA_BATI_2009-2018_Workspace#>
+
+# return a versioning graph (versionTransitions, and versions) and their immediate properties
+
+SELECT DISTINCT ?subject ?subjectType ?predicate ?object ?objectType
+WHERE {
+  {
+    ?subject a vers3:Version ;
+      ?predicate ?object .
+    ?subject a ?subjectType .
+    OPTIONAL {
+      ?object a ?objectType .
+    }
+    FILTER(?subject = data:version_2012 || ?subject = data:version_2015)
+  } UNION {
+    ?subject a vers3:VersionTransition ;
+      ?predicate ?object .
+    ?subject a ?subjectType .
+    OPTIONAL {
+      ?object a ?objectType .
+    }
+  }
+  FILTER(?predicate != rdf:type)
+  FILTER(?predicate != vers3:Version.versionMember)
+  FILTER(?predicate != vers3:VersionTransition.transaction)
+  FILTER(?subject != owl:NamedIndividual)
+  FILTER(?object != owl:NamedIndividual)
+  FILTER(?subjectType != owl:NamedIndividual)
+  FILTER(?objectType != owl:NamedIndividual)
+}
