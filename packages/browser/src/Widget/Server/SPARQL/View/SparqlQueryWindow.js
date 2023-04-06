@@ -131,9 +131,16 @@ export class SparqlQueryWindow extends EventSender {
 
     this.form.onsubmit = () => {
       console.log('submit');
+      console.debug(this.queryTextArea.value);
       this.sparqlProvider.querySparqlEndpointService(this.queryTextArea.value);
       return false;
     };
+
+    this.resetButton.onclick = () => {
+      console.log('here');
+      this.d3Graph.clearCanvas();
+      this.d3Graph.clearData();
+    }
 
     this.sparqlProvider.addEventListener(
       SparqlEndpointResponseProvider.EVENT_ENDPOINT_RESPONSE_UPDATED,
@@ -217,7 +224,7 @@ export class SparqlQueryWindow extends EventSender {
    * @param {string} view_type The selected semantic data view type.
    */
   updateDataView(response, view_type) {
-    console.info(response);
+    console.debug(response);
     this.clearDataView();
     switch (view_type) {
       case 'graph':
@@ -267,7 +274,7 @@ export class SparqlQueryWindow extends EventSender {
    * @param {number} index - The index of the query in the this.queries array
    */
   updateQueryTextArea(index) {
-    this.queryTextArea.textContent = this.queries[Number(index)].text;
+    this.queryTextArea.value = this.queries[Number(index)].text;
   }
 
   /**
@@ -400,9 +407,10 @@ WHERE {
         <form id=${this.formId}>
           <textarea id="${this.queryTextAreaId}" rows="20" style="display:none"></textarea>
           <input id="${this.submitButtonId}" type="submit" value="Send"/>
-          <label>Results Format: </label>
-          <select id="${this.resultSelectId}"></select>
         </form>
+        <label>Results Format: </label>
+        <select id="${this.resultSelectId}"></select>
+        <button id="${this.resetButtonId}">Reset Graph</button>
       </div>
       <div id="${this.dataViewId}" class="box-selection"/>`;
   }
@@ -445,6 +453,14 @@ WHERE {
 
   get submitButton() {
     return findChildByID(this.domElement, this.submitButtonId);
+  }
+
+  get resetButtonId() {
+    return `${this.windowId}_reset_button`;
+  }
+
+  get resetButton() {
+    return document.getElementById(this.resetButtonId);
   }
 
   get queryTextAreaId() {

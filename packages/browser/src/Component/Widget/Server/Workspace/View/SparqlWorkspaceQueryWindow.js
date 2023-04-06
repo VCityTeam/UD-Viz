@@ -66,14 +66,6 @@ export class SparqlWorkspaceQueryWindow extends SparqlQueryWindow {
          * find the temporal the geometry layer with the same name, and
          * set the current time to the averaged timestamps linked to the node
          */
-        console.debug(
-          `workspace node clicked with localname ${getUriLocalname(
-            this.d3Graph.data.getNodeByIndex(index).id
-          )} and type ${getUriLocalname(
-            this.d3Graph.data.getNodeByIndex(index).type
-          )}`
-        );
-
         const scenarioLayer = this.d3Graph.data.getScenarioLayerByIndex(
           index,
           this.layerManager
@@ -87,14 +79,22 @@ export class SparqlWorkspaceQueryWindow extends SparqlQueryWindow {
         console.debug(scenarioLayer);
         console.debug(scenarioTemporalProvider);
 
-        const timestamps =
-          this.d3Graph.data.getBitemporalTimestampsByIndex(index);
-        const timestampAverage =
-          (timestamps.validTo - timestamps.validFrom) / 2 +
-          timestamps.validFrom;
-        console.debug(`timestamp average: ${timestampAverage}`);
-        scenarioTemporalProvider.currentTime = parseInt(timestampAverage);
-        scenarioTemporalProvider.changeVisibleTilesStates();
+        // if a layer is found, make sure it is visible and hide all other layers
+        if (scenarioLayer) {
+          this.layerManager.changeVisibility(false)
+          scenarioLayer.visible = true;
+          this.layerManager.notifyChange();
+          
+          const timestamps =
+            this.d3Graph.data.getBitemporalTimestampsByIndex(index);
+          const timestampAverage =
+            (timestamps.validTo - timestamps.validFrom) / 2 +
+            timestamps.validFrom;
+          console.debug(`timestamp average: ${timestampAverage}`);
+          scenarioTemporalProvider.currentTime = parseInt(timestampAverage);
+          scenarioTemporalProvider.changeVisibleTilesStates();
+        }
+
       }
     });
   }
