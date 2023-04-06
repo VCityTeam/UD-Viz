@@ -1,5 +1,3 @@
-import { tokenizeURI } from '../Model/URI';
-
 /** @class */
 export class Graph {
   /**
@@ -85,18 +83,10 @@ export class Graph {
    * @returns {number} the index of the color
    */
   getNodeColorId(uri) {
-    const tURI = tokenizeURI(uri);
-    let prefixedId = uri;
-    for (const namespace in this.knownNamespaceLabels) {
-      if (namespace == tURI.namespace) {
-        prefixedId = `${this.knownNamespaceLabels[namespace]}:${tURI.localname}`;
-      }
+    if (!this.typeList.includes(uri)) {
+      this.typeList.push(uri);
     }
-
-    if (!this.typeList.includes(prefixedId)) {
-      this.typeList.push(prefixedId);
-    }
-    return this.typeList.findIndex((d) => d == prefixedId);
+    return this.typeList.findIndex((d) => d == uri);
   }
 
   /**
