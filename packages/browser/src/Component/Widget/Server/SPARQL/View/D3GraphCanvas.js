@@ -1,5 +1,5 @@
 import * as d3 from 'd3';
-import { getUriLocalname } from '../Model/URI';
+import { getUriLocalname, tokenizeURI } from '../Model/URI';
 import { SparqlQueryWindow } from './SparqlQueryWindow';
 import { Graph } from '../Model/Graph';
 
@@ -56,7 +56,7 @@ export class D3GraphCanvas {
 
     const links = this.data.links.map((d) => Object.create(d));
     const nodes = this.data.nodes.map((d) => Object.create(d));
-    const legend = this.data.typeList;
+    const legend = this.prefixLegend(this.data.typeList);
     const colorScale = this.colorSetOrScale;
     const setColor = function (d, default_color, override_color = undefined) {
       if (override_color && colorScale) return override_color;
@@ -369,6 +369,29 @@ export class D3GraphCanvas {
           event.transform.k +
           ')'
       );
+  }
+
+  /**
+   * Check if a list of URIs have namespaces in the known namespace list. If so, replace
+   * the namespace of the URI with a prefix. The known namespace list is declared in a
+   * configuration file.
+   *
+   * @param {Array<string>} legendContent the list of uris representing the content of the legend0
+   * @returns {Array<string>} returns the legend content with prefixes
+   */
+  prefixLegend(legendContent) {
+    const prefixedLegendContent = [];
+    for (const uri in legendContent) {
+      const tURI = tokenizeURI(legendContent[uri]);
+      if (Object.keys(this.knownNamespaceLabels).includes(tURI.namespace)) {
+        prefixedLegendContent.push(
+          `${this.knownNamespaceLabels[tURI.namespace]}:${tURI.localname}`
+        );
+      } else {
+        prefixedLegendContent.push(legendContent[uri]);
+      }
+    }
+    return prefixedLegendContent;
   }
 
   // / EVENTS
