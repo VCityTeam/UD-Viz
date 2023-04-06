@@ -33,7 +33,6 @@ export class D3GraphCanvas {
     this.width = configSparqlWidget.width;
     this.fontSize = configSparqlWidget.fontSize;
     this.knownNamespaceLabels = configSparqlWidget.namespaceLabels;
-    this.typeList = [];
     this.svg = d3
       .create('svg')
       .attr('class', 'd3_graph')
@@ -51,7 +50,7 @@ export class D3GraphCanvas {
    * @param {object} response an RDF JSON object ideally formatted by this.formatResponseData().
    */
   update(response) {
-    this.clear();
+    this.clearCanvas();
     this.data.formatResponseData(response);
 
     const links = this.data.links.map((d) => Object.create(d));
@@ -273,10 +272,16 @@ export class D3GraphCanvas {
   /**
    * Remove nodes and lines from the SVG.
    */
-  clear() {
+  clearCanvas() {
     this.svg.selectAll('g').remove();
     this.svg.selectAll('text').remove();
-    this.typeList = [];
+  }
+
+  /**
+   * Remove nodes and lines from the SVG.
+   */
+  clearData() {
+    this.data = new Graph();
   }
 
   // / Interface Functions ///
