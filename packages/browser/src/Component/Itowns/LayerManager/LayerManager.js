@@ -214,7 +214,9 @@ export class LayerManager {
       if (!tilesManager.tiles) {
         continue;
       }
-      cityObjects = cityObjects.concat(tilesManager.pickCityObjectsByBatchTable(batchTableKey, batchTableValue));
+      cityObjects = cityObjects.concat(
+        tilesManager.pickCityObjectsByBatchTable(batchTableKey, batchTableValue)
+      );
     }
     return cityObjects;
   }

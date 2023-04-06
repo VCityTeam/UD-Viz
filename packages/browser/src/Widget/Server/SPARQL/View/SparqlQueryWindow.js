@@ -1,5 +1,5 @@
 import { SparqlEndpointResponseProvider } from '../Service/SparqlEndpointResponseProvider';
-import { Graph } from '../Model/Graph';
+import { D3GraphCanvas } from './D3GraphCanvas';
 import { Table } from '../Model/Table';
 import * as URI from '../Model/URI';
 import { JsonRenderer } from './JsonRenderer';
@@ -52,8 +52,8 @@ export class SparqlQueryWindow extends EventSender {
 
     /**
      * The Temporal Providers associated with each potential scenario
-     * @type {Array<TemporalProvider>} 
      *
+     * @type {Array<TemporalProvider>}
      */
     this.temporalProviders = temporalProviders;
 
@@ -67,9 +67,9 @@ export class SparqlQueryWindow extends EventSender {
     /**
      * Contains the D3 graph view to display RDF data.
      *
-     * @type {Graph}
+     * @type {D3GraphCanvas}
      */
-    this.graph = new Graph(this, configSparqlWidget);
+    this.d3Graph = new D3GraphCanvas(this, configSparqlWidget);
 
     /**
      * Contains the D3 table to display RDF data.
@@ -77,13 +77,6 @@ export class SparqlQueryWindow extends EventSender {
      * @type {Table}
      */
     this.table = new Table(this);
-
-    /**
-     * Contains the D3 table to display Workspace RDF data.
-     *
-     * @type {Table}
-     */
-    this.workspace = new Workspace(this, configSparqlWidget);
 
     /**
      * Store the queries of the SparqlQueryWindow from the config.
@@ -94,13 +87,14 @@ export class SparqlQueryWindow extends EventSender {
 
     /**
      * Gml_id linked to the cityObject
+     *
      * @type {string}
      */
     this.gml_id;
 
-    this.registerEvent(Graph.EVENT_NODE_CLICKED);
-    this.registerEvent(Graph.EVENT_NODE_MOUSEOVER);
-    this.registerEvent(Graph.EVENT_NODE_MOUSEOUT);
+    this.registerEvent(D3GraphCanvas.EVENT_NODE_CLICKED);
+    this.registerEvent(D3GraphCanvas.EVENT_NODE_MOUSEOVER);
+    this.registerEvent(D3GraphCanvas.EVENT_NODE_MOUSEOUT);
     this.registerEvent(Table.EVENT_CELL_CLICKED);
 
     /**
@@ -214,28 +208,6 @@ export class SparqlQueryWindow extends EventSender {
         getUriLocalname(cell_text)
       )
     );
-        
-    this.addEventListener(Workspace.EVENT_WORKSPACE_NODE_CLICKED, (index) => {
-      /* find the first scenario that contains the clicked node,
-       * find the temporal the geometry layer with the same name, and
-       * set the current time to the averaged timestamps linked to the node
-       */ 
-      console.debug(`workspace node clicked with localname ${getUriLocalname(this.workspace.getNodeByIndex(index).id)} and type ${getUriLocalname(this.workspace.getNodeByIndex(index).type)}`)
-
-      const scenarioLayer = this.workspace.getScenarioLayerByIndex(index, this.layerManager);
-      const scenarioTemporalProvider = this.temporalProviders.find( provider => {
-        return provider.tilesManager.layer == scenarioLayer;
-      });
-      console.debug(`found a scenarioLayer and a matching temporalProvider`);
-      console.debug(scenarioLayer);
-      console.debug(scenarioTemporalProvider);
-      
-      const timestamps = this.workspace.getBitemporalTimestampsByIndex(index);
-      const timestampAverage = (timestamps.validTo - timestamps.validFrom) / 2 + timestamps.validFrom;
-      console.debug(`timestamp average: ${timestampAverage}`);
-      scenarioTemporalProvider.currentTime = parseInt(timestampAverage);
-      scenarioTemporalProvider.changeVisibleTilesStates();
-    });
   }
 
   /**
@@ -249,8 +221,8 @@ export class SparqlQueryWindow extends EventSender {
     this.clearDataView();
     switch (view_type) {
       case 'graph':
-        this.graph.update(response);
-        this.dataView.append(this.graph.canvas);
+        this.d3Graph.update(response);
+        this.dataView.append(this.d3Graph.canvas);
         break;
       case 'json':
         this.jsonRenderer.renderjson.set_icons('▶', '▼');
@@ -264,10 +236,6 @@ export class SparqlQueryWindow extends EventSender {
         );
         this.dataView.style['height'] = '500px';
         this.dataView.style['overflow'] = 'scroll';
-        break;
-      case 'workspace':
-        this.workspace.update(response);
-        this.dataView.append(this.workspace.canvas);
         break;
       default:
         console.error('This result format is not supported: ' + view_type);
@@ -341,14 +309,39 @@ export class SparqlQueryWindow extends EventSender {
   }
 
   /**
-   * 
-   * @param {string} gml_id
-   * 
+   * Zoom the camera on a city object by its gml_id in a batch table
+   *
+   * @param {string} id an identifier of a city object that exists in a batch table
+   */
+  zoomOnCityObject(id) {
+    this.cityObjectProvider.selectCityObjectByBatchTable('gml_id', id);
+    const cityObject = this.layerManager.pickCityObjectByBatchTable(
+      'gml_id',
+      id
+    );
+    if (cityObject) {
+      focusCameraOn(
+        this.layerManager.view,
+        this.layerManager.view.controls,
+        cityObject.centroid,
+        {
+          verticalDistance: 200,
+          horizontalDistance: 200,
+        }
+      );
+    }
+  }
+
+  /**
+   *
+   * @param {string} id an identifier
    * @returns {Array<Array<string>>}
    */
-  getTransactionChain(gml_id){
-    this.gml_id = gml_id;
-    const result = this.sparqlProvider.querySparqlEndpointService(this.transactionChainQuery);
+  getTransactionChain(id) {
+    this.gml_id = id;
+    const result = this.sparqlProvider.querySparqlEndpointService(
+      this.transactionChainQuery
+    );
     return result;
   }
 

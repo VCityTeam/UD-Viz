@@ -16,7 +16,11 @@ export class SparqlEndpointService extends RequestService {
   constructor(configSparqlServer) {
     super();
 
-    if (!configSparqlServer || !configSparqlServer.url || !configSparqlServer.url_parameters) {
+    if (
+      !configSparqlServer ||
+      !configSparqlServer.url ||
+      !configSparqlServer.url_parameters
+    ) {
       console.log(configSparqlServer);
       throw 'The given "configSparqlServer" configuration is incorrect.';
     }
