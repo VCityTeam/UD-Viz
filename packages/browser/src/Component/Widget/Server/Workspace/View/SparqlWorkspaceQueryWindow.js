@@ -85,6 +85,7 @@ export class SparqlWorkspaceQueryWindow extends SparqlQueryWindow {
           scenarioLayer.visible = true;
           this.layerManager.notifyChange();
           
+          // Calculate the average timestamp of the clicked node
           const timestamps =
             this.d3Graph.data.getBitemporalTimestampsByIndex(index);
           const timestampAverage =
