@@ -13,19 +13,11 @@ export class LinkView {
   /**
    * Constructs the link view.
    *
-   * @param {CityObjectModule} cityObjectModule The city object module.
    * @param {LinkProvider} linkProvider The link service.
    * @param {import('itowns').PlanarView} itownsView The iTowns view.
    * @param {import('itowns').PlanarControls} cameraControls The planar camera controls
    */
-  constructor(cityObjectModule, linkProvider, itownsView, cameraControls) {
-    /**
-     * A reference to the city object window.
-     *
-     * @type {CityObjectWindow}
-     */
-    this.cityObjectView = cityObjectModule.view;
-
+  constructor(linkProvider, itownsView, cameraControls) {
     /**
      * The interface extensions for the document module.
      *
@@ -42,10 +34,6 @@ export class LinkView {
      *
      * @type {CityObjectLinkInterface}
      */
-    this.cityObjectInterface = new CityObjectLinkInterface(
-      this,
-      cityObjectModule,
-      linkProvider
-    );
+    this.cityObjectInterface = new CityObjectLinkInterface(this, linkProvider);
   }
 }

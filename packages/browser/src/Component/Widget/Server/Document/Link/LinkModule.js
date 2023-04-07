@@ -15,7 +15,6 @@ export class LinkModule {
    * Creates the link module.
    *
    * @param {DocumentProvider} documentProvider The document provider.
-   * @param {CityObjectModule} cityObjectModule The city objects module.
    * @param {RequestService} requestService The request service.
    * @param {import('itowns').PlanarView} itownsView The iTowns view.
    * @param {import('itowns').PlanarControls} cameraControls The planar camera controls.
@@ -25,7 +24,6 @@ export class LinkModule {
    */
   constructor(
     documentProvider,
-    cityObjectModule,
     requestService,
     itownsView,
     cameraControls,
@@ -43,21 +41,12 @@ export class LinkModule {
      *
      * @type {LinkProvider}
      */
-    this.provider = new LinkProvider(
-      documentProvider,
-      cityObjectModule.provider,
-      this.service
-    );
+    this.provider = new LinkProvider(documentProvider, this.service);
 
     /**
      * @todo this.view is not create after fetchLinks Promise is that a problem ?
      */
     this.provider.fetchLinks();
-    this.view = new LinkView(
-      cityObjectModule,
-      this.provider,
-      itownsView,
-      cameraControls
-    );
+    this.view = new LinkView(this.provider, itownsView, cameraControls);
   }
 }

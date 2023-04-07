@@ -2,13 +2,13 @@ import { SparqlEndpointResponseProvider } from '../Service/SparqlEndpointRespons
 import { Graph } from '../Model/Graph';
 import { Table } from '../Model/Table';
 import * as URI from '../Model/URI';
-import { LayerManager } from '../../../../Itowns/LayerManager/LayerManager';
-import { CityObjectProvider } from '../../../CityObjects/ViewModel/CityObjectProvider';
 import { JsonRenderer } from './JsonRenderer';
-import { focusCameraOn } from '../../../../Itowns/Component/Component';
+import { focusCameraOn } from '../../../../ItownsUtil';
 import { loadTextFile } from '../../../../FileUtil';
 import { EventSender } from '@ud-viz/shared';
 import { findChildByID } from '../../../../HTMLUtil';
+import * as itowns from 'itowns';
+import * as THREE from 'three';
 
 import './SparqlQueryWindow.css';
 
@@ -21,8 +21,7 @@ export class SparqlQueryWindow extends EventSender {
    * Creates a SPARQL query window.
    *
    * @param {SparqlEndpointResponseProvider} sparqlProvider The SPARQL Endpoint Response Provider
-   * @param {CityObjectProvider} cityObjectProvider The City Object Provider
-   * @param {LayerManager} layerManager The UD-Viz LayerManager.
+   * @param {itowns.PlanarView} itownsView view
    * @param {object} configSparqlWidget The sparqlModule view configuration.
    * @param {object} configSparqlWidget.queries Query configurations
    * @param {object} configSparqlWidget.queries.title The query title
@@ -32,12 +31,7 @@ export class SparqlQueryWindow extends EventSender {
    *                                              pairs. The keys of these pairs should correspond
    *                                              with the cases in the updateDataView() function.
    */
-  constructor(
-    sparqlProvider,
-    cityObjectProvider,
-    layerManager,
-    configSparqlWidget
-  ) {
+  constructor(sparqlProvider, itownsView, configSparqlWidget) {
     super();
 
     /** @type {HTMLElement} */
@@ -52,12 +46,8 @@ export class SparqlQueryWindow extends EventSender {
      */
     this.sparqlProvider = sparqlProvider;
 
-    /**
-     * The Extended City Object Provider
-     *
-     * @type {CityObjectProvider}
-     */
-    this.cityObjectProvider = cityObjectProvider;
+    /** @type {itowns.PlanarView} */
+    this.itownsView = itownsView;
 
     /**
      *A reference to the JsonRenderer class
@@ -65,13 +55,6 @@ export class SparqlQueryWindow extends EventSender {
      * @type {JsonRenderer}
      */
     this.jsonRenderer = new JsonRenderer();
-
-    /**
-     * The UD-Viz LayerManager.
-     *
-     * @type {LayerManager}
-     */
-    this.layerManager = layerManager;
 
     /**
      * Contains the D3 graph view to display RDF data.
@@ -146,45 +129,69 @@ export class SparqlQueryWindow extends EventSender {
         )
     );
 
-    this.addEventListener(Graph.EVENT_NODE_CLICKED, (node_text) => {
-      this.cityObjectProvider.selectCityObjectByBatchTable(
-        'gml_id',
-        URI.tokenizeURI(node_text).id
-      );
-      const cityObject = this.layerManager.pickCityObjectByBatchTable(
-        'gml_id',
-        URI.tokenizeURI(node_text).id
-      );
-      if (cityObject) {
-        focusCameraOn(
-          this.layerManager.view,
-          this.layerManager.view.controls,
-          cityObject.centroid,
-          {
-            verticalDistance: 200,
-            horizontalDistance: 200,
+    const fetchBatchElementWithNodeText = (node_text) => {
+      let result = null;
+      this.itownsView
+        .getLayers()
+        .filter((el) => el.isC3DTilesLayer)
+        .forEach((c3DTilesLayer) => {
+          // get the first one with this gml id
+          const array = c3DTilesLayer.batchElementsArray();
+          for (let index = 0; index < array.length; index++) {
+            const element = array[index];
+            if (
+              element.info.batchTable['gml_id'] == URI.tokenizeURI(node_text).id
+            ) {
+              result = element;
+              break;
+            }
           }
-        );
-      }
+        });
+
+      return result;
+    };
+
+    this.addEventListener(Graph.EVENT_NODE_CLICKED, (node_text) => {
+      const elementClicked = fetchBatchElementWithNodeText(node_text);
+
+      if (!elementClicked) return;
+
+      focusCameraOn(
+        this.itownsView,
+        this.itownsView.controls,
+        elementClicked.worldBox3.getCenter(new THREE.Vector3()),
+        {
+          verticalDistance: 200,
+          horizontalDistance: 200,
+        }
+      );
     });
 
-    this.addEventListener(Graph.EVENT_NODE_MOUSEOVER, (node_text) =>
-      this.cityObjectProvider.selectCityObjectByBatchTable(
-        'gml_id',
-        URI.tokenizeURI(node_text).id
-      )
+    this.addEventListener(Graph.EVENT_NODE_MOUSEOVER, (node_text) => {
+      console.warn('DEPRECATED cant apply style to ', node_text);
+      // if this imply some style it should be handle in template or layer should be able to have != styles ?
+    });
+
+    this.addEventListener(
+      Graph.EVENT_NODE_MOUSEOUT,
+      () => console.warn('DEPRECATED') // same reason as above
     );
 
-    this.addEventListener(Graph.EVENT_NODE_MOUSEOUT, () =>
-      this.cityObjectProvider.unselectCityObject()
-    );
+    this.addEventListener(Table.EVENT_CELL_CLICKED, (cell_text) => {
+      const elementClicked = fetchBatchElementWithNodeText(cell_text);
 
-    this.addEventListener(Table.EVENT_CELL_CLICKED, (cell_text) =>
-      this.cityObjectProvider.selectCityObjectByBatchTable(
-        'gml_id',
-        URI.tokenizeURI(cell_text).id
-      )
-    );
+      if (!elementClicked) return;
+
+      focusCameraOn(
+        this.itownsView,
+        this.itownsView.controls,
+        elementClicked.worldBox3.getCenter(new THREE.Vector3()),
+        {
+          verticalDistance: 200,
+          horizontalDistance: 200,
+        }
+      );
+    });
   }
 
   html() {
