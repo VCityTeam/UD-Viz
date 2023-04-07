@@ -147,14 +147,6 @@ export class Frame3DPlanar extends Frame3DBase {
   }
 
   /**
-   *
-   * @returns {LayerManager} - layer manager
-   */
-  getLayerManager() {
-    return this.layerManager;
-  }
-
-  /**
    * Resize Frame3D
    */
   onResize() {

@@ -23,10 +23,9 @@ export class LinkProvider extends EventSender {
    * Constructs the link provider.
    *
    * @param {DocumentProvider} documentProvider The document provider.
-   * @param {CityObjectProvider} cityObjectProvider The city object provider.
    * @param {LinkService} linkService The link service.
    */
-  constructor(documentProvider, cityObjectProvider, linkService) {
+  constructor(documentProvider, linkService) {
     super();
 
     /**
@@ -44,19 +43,11 @@ export class LinkProvider extends EventSender {
     this.documentProvider = documentProvider;
 
     /**
-     * The city object provider.
-     *
-     * @type {CityObjectProvider}
-     */
-    this.cityObjectProvider = cityObjectProvider;
-
-    /**
      * A filter for city objects based on their count of linked documents.
      *
      * @type {LinkCountFilter}
      */
     this.linkCountFilter = new LinkCountFilter(this);
-    this.cityObjectProvider.addFilter(this.linkCountFilter);
 
     /**
      * A filter for city objects based on wether they are linked with the
@@ -67,7 +58,6 @@ export class LinkProvider extends EventSender {
     this.linkedWithDisplayedDocFilter = new LinkedWithDisplayedDocumentFilter(
       this
     );
-    this.cityObjectProvider.addFilter(this.linkedWithDisplayedDocFilter);
 
     /**
      * The style for city objects linked with the displayed document.
@@ -90,7 +80,6 @@ export class LinkProvider extends EventSender {
     this.linkedWithFilteredDocsFilter = new LinkedWithFilteredDocumentsFilter(
       this
     );
-    this.cityObjectProvider.addFilter(this.linkedWithFilteredDocsFilter);
 
     // The following adds a filter for documents, based on wether they are
     // linked with the currently selected city object.
@@ -163,7 +152,6 @@ export class LinkProvider extends EventSender {
     // city object providers.
     this.registerEvent(DocumentProvider.EVENT_DISPLAYED_DOC_CHANGED);
     this.registerEvent(DocumentProvider.EVENT_FILTERED_DOCS_UPDATED);
-    this.registerEvent(CityObjectProvider.EVENT_CITY_OBJECT_SELECTED);
 
     this.documentProvider.addEventListener(
       DocumentProvider.EVENT_DISPLAYED_DOC_CHANGED,
@@ -173,11 +161,6 @@ export class LinkProvider extends EventSender {
     this.documentProvider.addEventListener(
       DocumentProvider.EVENT_FILTERED_DOCS_UPDATED,
       (docs) => this._onFilteredDocumentsUpdate(docs)
-    );
-
-    this.cityObjectProvider.addEventListener(
-      CityObjectProvider.EVENT_CITY_OBJECT_SELECTED,
-      (co) => this._onCityObjectSelection(co)
     );
   }
 
@@ -220,7 +203,6 @@ export class LinkProvider extends EventSender {
     if (this.shouldFilterLinkedDocuments) {
       this.documentProvider.refreshDocumentList();
     }
-    this.sendEvent(CityObjectProvider.EVENT_CITY_OBJECT_SELECTED, co);
   }
 
   /**
