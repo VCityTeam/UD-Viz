@@ -98,6 +98,14 @@ export class InputManager {
   }
 
   /**
+   * @param {string} key -
+   * @returns {boolean} - returns true if the key is a letter
+   */
+  isKeyALetter(key) {
+    return key && key.length == 1 && key.toLowerCase() != key.toUpperCase();
+  }
+
+  /**
    *
    * @param {boolean} pause - new inputmanager pause value
    */
@@ -111,9 +119,8 @@ export class InputManager {
    * @param {string[]} keys - ids of the key to listen to
    */
   listenKeys(keys) {
-    const _this = this;
-    keys.forEach(function (k) {
-      _this.keyMap[k] = false;
+    keys.forEach((k) => {
+      this.keyMap[k] = false;
     });
   }
 
@@ -135,9 +142,10 @@ export class InputManager {
    * @param {EventCallback} cb - callback called for this event
    */
   addKeyInput(key, eventID, cb) {
-    const _this = this;
-    const listener = function (event) {
-      if ((key == event.key || key == null) && !_this.pause) cb(event);
+    key = this.isKeyALetter(key) ? key.toLowerCase() : key;
+
+    const listener = (event) => {
+      if ((key == event.key || key == null) && !this.pause) cb(event);
     };
     window.addEventListener(eventID, listener);
     // Register to dispose it
@@ -157,25 +165,26 @@ export class InputManager {
    * @param {function():Command} cb - callback called
    */
   addKeyCommand(commandID, keys, cb) {
-    const _this = this;
     this.commandsBuffer[commandID] = false; // Avoid to stack multiple commands if two key of keys are pressed
-    keys.forEach(function (key) {
-      if (_this.keyCommands[key] != undefined) {
+    keys.forEach((key) => {
+      key = this.isKeyALetter(key) ? key.toLowerCase() : key;
+
+      if (this.keyCommands[key] != undefined) {
         console.error(key, ' is already assign');
         return;
       }
 
       // Init keymap
-      if (_this.keyMap[key] == undefined) _this.keyMap[key] = false;
+      if (this.keyMap[key] == undefined) this.keyMap[key] = false;
 
-      _this.keyCommands[key] = function () {
-        if (_this.commandsBuffer[commandID]) {
+      this.keyCommands[key] = () => {
+        if (this.commandsBuffer[commandID]) {
           // command have been already produce by another key associated
           return null;
         }
         const cmd = cb(); // The callback must return a command (don't know why jsdoc imply cmd is a function there ??)
         if (cmd) {
-          _this.commandsBuffer[commandID] = true;
+          this.commandsBuffer[commandID] = true;
           return cmd;
         }
         return null;
@@ -191,10 +200,9 @@ export class InputManager {
    */
   removeKeyCommand(commandID, keys) {
     delete this.commandsBuffer[commandID];
-    const _this = this;
-    keys.forEach(function (key) {
-      delete _this.keyCommands[key];
-      delete _this.keyMap[key];
+    keys.forEach((key) => {
+      delete this.keyCommands[key];
+      delete this.keyMap[key];
     });
   }
 
@@ -233,10 +241,8 @@ export class InputManager {
    * @param {EventCallback} cb - callback called for this event
    */
   addMouseInput(element, eventID, cb) {
-    const _this = this;
-
-    const listener = function (event) {
-      if (!_this.pause) {
+    const listener = (event) => {
+      if (!this.pause) {
         cb(event);
       }
     };
@@ -261,23 +267,30 @@ export class InputManager {
       this.dispose(); // was listening dispose old listener and start listening this element
     }
 
-    const _this = this;
     this.element = element;
 
     // Start listening key state
-    const keydown = function (event) {
-      if (_this.keyMap[event.key] == false) {
-        _this.keyMap[event.key] = true;
-        _this.keyMapKeyDown.push(event.key);
+    const keydown = (event) => {
+      const key = this.isKeyALetter(event.key)
+        ? event.key.toLowerCase()
+        : event.key;
+
+      if (this.keyMap[key] == false) {
+        this.keyMap[key] = true;
+        this.keyMapKeyDown.push(key);
       }
     };
     window.addEventListener('keydown', keydown);
     this.listeners.push({ element: window, listener: keydown, id: 'keydown' });
 
-    const keyup = function (event) {
-      if (_this.keyMap[event.key] == true) {
-        _this.keyMap[event.key] = false;
-        _this.keyMapKeyUp.push(event.key);
+    const keyup = (event) => {
+      const key = this.isKeyALetter(event.key)
+        ? event.key.toLowerCase()
+        : event.key;
+
+      if (this.keyMap[key] == true) {
+        this.keyMap[key] = false;
+        this.keyMapKeyUp.push(key);
       }
     };
     window.addEventListener('keyup', keyup);
@@ -300,12 +313,11 @@ export class InputManager {
       document.exitPointerLock || document.mozExitPointerLock;
 
     // Gesture require to enter the pointerLock mode are click mousemove keypress keyup
-    const _this = this;
-    const checkPointerLock = function () {
-      if (_this.pointerLock && _this.element) {
+    const checkPointerLock = () => {
+      if (this.pointerLock && this.element) {
         try {
           // Enter pointerLock
-          _this.element.requestPointerLock();
+          this.element.requestPointerLock();
         } catch (error) {
           console.error('cant request pointer lock');
         }
@@ -518,14 +530,12 @@ export class MouseState {
    * @returns {EventCallback} - Callback call for this event
    */
   addEvent(element, idEvent) {
-    const _this = this;
-    const listener = function (event) {
+    const listener = (event) => {
       if (idEvent === MOUSE_STATE_EVENTS.MOUSE_DOWN) {
-        _this.dragging = true;
-      } else if (idEvent === MOUSE_STATE_EVENTS.MOUSE_UP)
-        _this.dragging = false;
-      _this.mouseMap[idEvent] = true; // Is trigger
-      _this.mouseEvent[idEvent] = event;
+        this.dragging = true;
+      } else if (idEvent === MOUSE_STATE_EVENTS.MOUSE_UP) this.dragging = false;
+      this.mouseMap[idEvent] = true; // Is trigger
+      this.mouseEvent[idEvent] = event;
     };
     element.addEventListener(idEvent, listener);
     this.mouseMap[idEvent] = false;
