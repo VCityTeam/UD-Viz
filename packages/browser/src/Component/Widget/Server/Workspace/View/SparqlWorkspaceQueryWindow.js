@@ -17,37 +17,38 @@ export class SparqlWorkspaceQueryWindow extends SparqlQueryWindow {
    *
    * @param {SparqlEndpointResponseProvider} sparqlProvider The SPARQL Endpoint Response Provider
    * @param {CityObjectProvider} cityObjectProvider The City Object Provider
-   * @param {Array<TemporalProvider>} temporalProviders The Temporal Providers associated with each potential scenario
    * @param {LayerManager} layerManager The UD-Viz LayerManager.
    * @param {object} configSparqlWidget The sparqlModule view configuration.
    * @param {object} configSparqlWidget.queries Query configurations
    * @param {object} configSparqlWidget.queries.title The query title
    * @param {object} configSparqlWidget.queries.filepath The path to the file which contains the query text
    * @param {object} configSparqlWidget.queries.formats Configuration for which visualizations are allowed
-   *                                              with this query. Should be an object of key, value
-   *                                              pairs. The keys of these pairs should correspond
-   *                                              with the cases in the updateDataView() function.
+   *                                                    with this query. Should be an object of key, value
+   *                                                    pairs. The keys of these pairs should correspond
+   *                                                    with the cases in the updateDataView() function.
+   * @param {Array<TemporalProvider>} temporalProviders The Temporal Providers associated with each potential scenario
    */
   constructor(
     sparqlProvider,
     cityObjectProvider,
-    temporalProviders,
     layerManager,
-    configSparqlWidget
+    configSparqlWidget,
+    temporalProviders
   ) {
-    super(
-      sparqlProvider,
-      cityObjectProvider,
-      temporalProviders,
-      layerManager,
-      configSparqlWidget
-    );
+    super(sparqlProvider, cityObjectProvider, layerManager, configSparqlWidget);
     /**
      * Contains the D3 graph view to display Workspace RDF data.
      *
      * @type {D3WorkspaceCanvas}
      */
     this.d3Graph = new D3WorkspaceCanvas(this, configSparqlWidget);
+
+    /**
+     * The Temporal Providers associated with each potential scenario
+     *
+     * @type {Array<TemporalProvider>}
+     */
+    this.temporalProviders = temporalProviders;
   }
 
   /**
@@ -81,10 +82,10 @@ export class SparqlWorkspaceQueryWindow extends SparqlQueryWindow {
 
         // if a layer is found, make sure it is visible and hide all other layers
         if (scenarioLayer) {
-          this.layerManager.changeVisibility(false)
+          this.layerManager.changeVisibility(false);
           scenarioLayer.visible = true;
           this.layerManager.notifyChange();
-          
+
           // Calculate the average timestamp of the clicked node
           const timestamps =
             this.d3Graph.data.getBitemporalTimestampsByIndex(index);
@@ -95,7 +96,6 @@ export class SparqlWorkspaceQueryWindow extends SparqlQueryWindow {
           scenarioTemporalProvider.currentTime = parseInt(timestampAverage);
           scenarioTemporalProvider.changeVisibleTilesStates();
         }
-
       }
     });
   }

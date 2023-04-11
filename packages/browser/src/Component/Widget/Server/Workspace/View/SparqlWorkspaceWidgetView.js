@@ -12,24 +12,18 @@ export class SparqlWorkspaceWidgetView extends SparqlWidgetView {
    *
    * @param {SparqlEndpointResponseProvider} sparqlProvider The SPARQL Endpoint Response Provider
    * @param {CityObjectProvider} cityObjectProvider The City Object Provider
-   * @param {Array<TemporalProvider>} temporalProviders The Temporal Providers associated with each potential scenario
    * @param {LayerManager} layerManager The UD-Viz LayerManager.
    * @param {object} configSparqlWidget The sparqlModule view configuration.
+   * @param {Array<TemporalProvider>} temporalProviders The Temporal Providers associated with each potential scenario
    */
   constructor(
     sparqlProvider,
     cityObjectProvider,
-    temporalProviders,
     layerManager,
-    configSparqlWidget
+    configSparqlWidget,
+    temporalProviders
   ) {
-    super(
-      sparqlProvider,
-      cityObjectProvider,
-      temporalProviders,
-      layerManager,
-      configSparqlWidget
-    );
+    super(sparqlProvider, cityObjectProvider, layerManager, configSparqlWidget);
     /**
      * Contains a SparqlWorkspaceQueryWindow for capturing user input and displaying
      * query results.
@@ -39,9 +33,9 @@ export class SparqlWorkspaceWidgetView extends SparqlWidgetView {
     this.window = new SparqlWorkspaceQueryWindow(
       sparqlProvider,
       cityObjectProvider,
-      temporalProviders,
       layerManager,
-      configSparqlWidget
+      configSparqlWidget,
+      temporalProviders
     );
   }
 

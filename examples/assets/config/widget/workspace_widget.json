@@ -4,39 +4,18 @@
   "fontSize": 4,
   "queries": [
     {
-      "title": "Select a CityGML Building with ID: 'VILLEURBANNE_00012_23'",
+      "title": "Select the versionTransitions and versions",
       "formats": {
         "graph": "Graph"
       },
-      "filepath": "./assets/queries/buildingByIDQuery.rq"
+      "filepath": "./assets/queries/versions.rq"
     },
     {
-      "title": "Select an IFC Slab with ID: '2Q4QvRyEvCrefpeva98EMR'",
+      "title": "Select the transition between 2012 and 2015",
       "formats": {
         "graph": "Graph"
       },
-      "filepath": "./assets/queries/ifcSlabByIDQuery.rq"
-    },
-    {
-      "title": "Count how many IFC Slabs are in the graph",
-      "formats": {
-        "table": "Table"
-      },
-      "filepath": "./assets/queries/ifcSlabCountQuery.rq"
-    },
-    {
-      "title": "Select all IFC Slabs in the graph",
-      "formats": {
-        "graph": "Graph"
-      },
-      "filepath": "./assets/queries/ifcSlabQuery.rq"
-    },
-    {
-      "title": "Select several random features within the 2012 version of the city model",
-      "formats": {
-        "graph": "Graph"
-      },
-      "filepath": "./assets/queries/version.rq"
+      "filepath": "./assets/queries/versionTransition.rq"
     }
   ],
   "namespaceLabels": {

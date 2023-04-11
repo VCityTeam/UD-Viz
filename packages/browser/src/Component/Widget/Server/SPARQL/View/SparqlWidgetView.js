@@ -20,7 +20,6 @@ export class SparqlWidgetView extends WidgetView {
   constructor(
     sparqlProvider,
     cityObjectProvider,
-    temporalProviders,
     layerManager,
     configSparqlWidget
   ) {
@@ -35,7 +34,6 @@ export class SparqlWidgetView extends WidgetView {
     this.window = new SparqlQueryWindow(
       sparqlProvider,
       cityObjectProvider,
-      temporalProviders,
       layerManager,
       configSparqlWidget
     );

@@ -51,13 +51,6 @@ export class SparqlQueryWindow extends EventSender {
     this.itownsView = itownsView;
 
     /**
-     * The Temporal Providers associated with each potential scenario
-     *
-     * @type {Array<TemporalProvider>}
-     */
-    this.temporalProviders = temporalProviders;
-
-    /**
      *A reference to the JsonRenderer class
      *
      * @type {JsonRenderer}
@@ -139,7 +132,7 @@ export class SparqlQueryWindow extends EventSender {
     this.resetButton.onclick = () => {
       this.d3Graph.clearCanvas();
       this.d3Graph.data.clear();
-    }
+    };
 
     this.sparqlProvider.addEventListener(
       SparqlEndpointResponseProvider.EVENT_ENDPOINT_RESPONSE_UPDATED,
