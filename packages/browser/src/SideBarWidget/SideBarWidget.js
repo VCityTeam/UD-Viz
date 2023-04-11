@@ -715,7 +715,7 @@ export class SideBarWidget {
           '_sidebar_widget_menu_sidebar_img_selected'
         );
       } else {
-        this.panMenuSideBar.add('Layer Choice', this.slideShow.html());
+        this.panMenuSideBar.add('Slide Show', this.slideShow.html());
         sideBarButton.classList.add(
           '_sidebar_widget_menu_sidebar_img_selected'
         );
