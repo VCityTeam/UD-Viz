@@ -52,7 +52,7 @@ export class SlideShow {
     this.itownsView = itownsView;
 
     /**
-     * Root html of wlideshow view 
+     * Root html of slideshow view 
      *
       @type {HTMLElement} */
     this.rootHtml = null;
@@ -143,10 +143,10 @@ export class SlideShow {
   }
 
   removeListeners() {
-    window.removeEventListener(this.hidePlaneListener);
-    window.removeEventListener(this.hideUIListener);
-    window.removeEventListener(this.previousListener);
-    window.removeEventListener(this.nextListener);
+    window.removeEventListener('keydown', this.hidePlaneListener);
+    window.removeEventListener('keydown', this.hideUIListener);
+    window.removeEventListener('keydown', this.previousListener);
+    window.removeEventListener('keydown', this.nextListener);
 
     document.body.removeEventListener('drop', this.dropListener);
     document.body.removeEventListener('dragover', this.dragOverListener);
@@ -154,7 +154,7 @@ export class SlideShow {
 
   dispose() {
     this.rootHtml.remove();
-
+    this.rootHtml = null;
     this.stopLoopSlideShow();
     if (this.plane) {
       this.plane.removeFromParent();
@@ -593,7 +593,7 @@ export class SlideShow {
    */
   initInputListener() {
     this.hidePlaneListener = (event) => {
-      if (event.key != 'h') return;
+      if (event.key.toLowerCase() != 'h') return;
       if (!this.plane) return;
       this.plane.visible = !this.plane.visible;
       this.itownsView.notifyChange();
@@ -622,7 +622,7 @@ export class SlideShow {
     window.addEventListener('keydown', this.previousListener);
 
     this.hideUIListener = (event) => {
-      if (event.key != 's') return;
+      if (event.key.toLowerCase() != 's') return;
 
       if (this.rootHtml.style.display == 'none') {
         this.rootHtml.style.display = '';
