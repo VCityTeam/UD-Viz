@@ -329,6 +329,7 @@ export function updateMockUpObject(layerManager, areaSelected, quaternion) {
     );
 
     // Center geometryockUp on xy and put it at zero on z
+    geometryMockUp.applyQuaternion(quaternion);
     geometryMockUp.computeBoundingBox();
     const bbMockUp = geometryMockUp.boundingBox;
     const centerMockUp = bbMockUp.min.clone().lerp(bbMockUp.max, 0.5);
