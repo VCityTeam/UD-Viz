@@ -83,7 +83,6 @@ export class LegonizerWindow extends Window {
       inputElement.addEventListener('change', (event) => {
         const value = event.target.value;
         if (value) {
-          console.log('change');
           this.boxSelector.position.set(
             parseFloat(this.inputCoordXElement.value),
             parseFloat(this.inputCoordYElement.value),
@@ -102,9 +101,33 @@ export class LegonizerWindow extends Window {
       inputScaleElement.style.width = 'inherit';
       inputScaleElement.setAttribute('value', '0');
 
+
+      // Input Rotation
+      const inputRotationElement = document.createElement('input');
+      inputRotationElement.id = 'input_rotation_' + coordinatesString[i];
+      inputRotationElement.type = 'number';
+      inputRotationElement.style.width = 'inherit';
+      inputRotationElement.setAttribute('value', '0');
+
+      // Event Listener
+      inputRotationElement.addEventListener('change', (event) => {
+        const value = event.target.value;
+        if (value) {
+          this.boxSelector.rotation.set(
+            parseFloat(this.inputRotationXElement.value),
+            parseFloat(this.inputRotationYElement.value),
+            parseFloat(this.inputRotationZElement.value)
+            );
+            this.boxSelector.updateMatrixWorld();
+            this.transformCtrls.updateMatrixWorld();
+            this.frame3D.getItownsView().notifyChange();
+        }
+      });
+
       coordElement.appendChild(labelElement);
       coordElement.appendChild(inputElement);
       coordElement.appendChild(inputScaleElement);
+      coordElement.appendChild(inputRotationElement);
 
       inputVector.appendChild(coordElement);
     }
@@ -300,9 +323,14 @@ export class LegonizerWindow extends Window {
       this.inputCoordYElement.value = position.y;
       this.inputCoordZElement.value = position.z;
 
-      this.inputCoordScaleXElement.value = this.boxSelector.scale.x;
-      this.inputCoordScaleYElement.value = this.boxSelector.scale.y;
-      this.inputCoordScaleZElement.value = this.boxSelector.scale.z;
+      const rotation = this.boxSelector.rotation;
+      this.inputRotationXElement.value = rotation.x;
+      this.inputRotationYElement.value = rotation.y;
+      this.inputRotationZElement.value = rotation.z;
+
+      this.inputScaleXElement.value = this.boxSelector.scale.x;
+      this.inputScaleYElement.value = this.boxSelector.scale.y;
+      this.inputScaleZElement.value = this.boxSelector.scale.z;
 
       this.inputLegoScaleXElement.value = Math.abs(
         Math.trunc(this.boxSelector.scale.x / this.ratio / 32)
@@ -327,15 +355,20 @@ export class LegonizerWindow extends Window {
     const bufferBoxGeometry = this.boxSelector.geometry.clone();
     bufferBoxGeometry.applyMatrix4(this.boxSelector.matrixWorld);
     bufferBoxGeometry.computeBoundingBox();
+    
 
     const xPlates = parseInt(this.inputLegoScaleXElement.value);
     const yPlates = parseInt(this.inputLegoScaleYElement.value);
 
     const legoVisu = new LegoMockupVisualizer(this.frame3D);
-
+    // bufferBoxGeometry.boundingBox.applyMatrix4(this.boxSelector.matrixWorld);
+    // console.log(bufferBoxGeometry.boundingBox.min);
+    // bufferBoxGeometry.boundingBox.min.applyMatrix4(this.boxSelector.matrixWorld);
+    // console.log(bufferBoxGeometry.boundingBox.min);
     const dataSelected = updateMockUpObject(
       this.frame3D.getLayerManager(),
-      bufferBoxGeometry.boundingBox
+      bufferBoxGeometry.boundingBox,
+      this.boxSelector.quaternion
     );
     const heightmap = createHeightMapFromBufferGeometry(
       dataSelected.geometry,
@@ -546,16 +579,28 @@ export class LegonizerWindow extends Window {
     return `button_selection`;
   }
 
-  get inputCoordinateScaleXId() {
+  get inputScaleXId() {
     return `input_scale_x`;
   }
 
-  get inputCoordinateScaleYId() {
+  get inputScaleYId() {
     return `input_scale_y`;
   }
 
-  get inputCoordinateScaleZId() {
+  get inputScaleZId() {
     return `input_scale_z`;
+  }
+
+  get inputRotationXId() {
+    return `input_rotation_x`;
+  }
+
+  get inputRotationYId() {
+    return `input_rotation_y`;
+  }
+
+  get inputRotationZId() {
+    return `input_rotation_z`;
   }
 
   get inputLegoXId() {
@@ -590,16 +635,28 @@ export class LegonizerWindow extends Window {
     return document.getElementById(this.inputCoordinateZId);
   }
 
-  get inputCoordScaleXElement() {
-    return document.getElementById(this.inputCoordinateScaleXId);
+  get inputScaleXElement() {
+    return document.getElementById(this.inputScaleXId);
   }
 
-  get inputCoordScaleYElement() {
-    return document.getElementById(this.inputCoordinateScaleYId);
+  get inputScaleYElement() {
+    return document.getElementById(this.inputScaleYId);
   }
 
-  get inputCoordScaleZElement() {
-    return document.getElementById(this.inputCoordinateScaleZId);
+  get inputScaleZElement() {
+    return document.getElementById(this.inputScaleZId);
+  }
+
+  get inputRotationXElement() {
+    return document.getElementById(this.inputRotationXId);
+  }
+
+  get inputRotationYElement() {
+    return document.getElementById(this.inputRotationYId);
+  }
+
+  get inputRotationZElement() {
+    return document.getElementById(this.inputRotationZId);
   }
 
   get inputRatioElement() {

@@ -8,16 +8,16 @@ import { CityObjectID } from '../../Itowns/3DTiles/Model/CityObject'
 /**
  *
  * @param layerManager
- * @param areaSelected
+ * @param {THREE.Box3} areaSelected
  */
-export function updateMockUpObject(layerManager, areaSelected) {
+export function updateMockUpObject(layerManager, areaSelected, quaternion) {
   const area = areaSelected;
   let mockUpObject;
   if (area.min && area.max) {
-    // Update 3DTiles mock up object
-    // if (this.mockUpObject && this.mockUpObject.parent) {
-    //   this.mockUpObject.parent.remove(this.mockUpObject);
-    // }
+    // console.log(area);
+    // area.min.applyQuaternion(0.9689124217106447, 0, 0, 0.24740395925452294);
+    // area.max.applyQuaternion(0.9689124217106447, 0, 0, 0.24740395925452294);
+    // console.log(area);
 
     // Parse geometry intersected
     const materialsMockup = [];
@@ -349,15 +349,15 @@ export function updateMockUpObject(layerManager, areaSelected) {
 
 /**
  *
- * @param areaSelected
- * @param min
- * @param max
+ * @param {THREE.Box3} areaSelected
+ * @param {THREE.Vector3} min
+ * @param {THREE.Vector3} max
  */
 export function intersectArea(areaSelected, min, max) {
   const area = areaSelected;
 
   if (!area.min || !area.max) return false;
-
+  
   // TODO could be optimize if not compute at each intersect
   const minArea = new THREE.Vector2(
     Math.min(area.min.x, area.max.x),
