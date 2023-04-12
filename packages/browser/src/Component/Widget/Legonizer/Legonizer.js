@@ -2,7 +2,7 @@
 
 // Components
 import { Window } from '../Component/GUI/js/Window';
-import { checkParentChild } from '../../Component';
+import { checkParentChild, InputManager } from '../../Component';
 import * as THREE from 'three';
 import * as itowns from 'itowns';
 // Import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
@@ -13,7 +13,6 @@ import { LegoMockupVisualizer } from './LegoMockupVisualizer';
 import {
   createHeightMapFromBufferGeometry,
   generateCSVwithHeightMap,
-  transformBBToLegoPlates,
 } from 'legonizer';
 
 /**
@@ -24,6 +23,7 @@ import {
 export class LegonizerWindow extends Window {
   constructor(frame3D) {
     super('legonizer', 'Legonizer', false);
+    console.log('test');
 
     this.frame3D = frame3D;
 
@@ -38,6 +38,8 @@ export class LegonizerWindow extends Window {
     this.listeners = [];
 
     this.ratio = 3;
+
+    this.inputManager = new InputManager();
   }
 
   get innerContentHtml() {
@@ -221,8 +223,8 @@ export class LegonizerWindow extends Window {
         })
       );
 
-      object.position.x = this.frame3D.extent.center().x;
-      object.position.y = this.frame3D.extent.center().y;
+      object.position.x = this.frame3D.itownsView.tileLayer.extent.center().x;
+      object.position.y = this.frame3D.itownsView.tileLayer.extent.center().y;
       object.position.z = 200;
 
       object.updateMatrixWorld();
@@ -359,7 +361,7 @@ export class LegonizerWindow extends Window {
       const planarControl = new itowns.PlanarControls(frame3D.getItownsView());
 
       // Remove pointer lock
-      frame3D.getInputManager().setPointerLock(false);
+      this.inputManager.setPointerLock(false);
 
       // Enable itowns rendering
       frame3D.setIsRendering(true);
@@ -385,7 +387,6 @@ export class LegonizerWindow extends Window {
       frame3D.setIsRendering(false);
 
       // Add listeners
-      const manager = frame3D.getInputManager();
       const rootWelGL = frame3D.getRootWebGL();
 
       let isDragging = false;
@@ -449,7 +450,7 @@ export class LegonizerWindow extends Window {
 
         frame3D.getScene().add(selectAreaObject);
       };
-      manager.addMouseInput(rootWelGL, 'mousedown', dragStart);
+      this.inputManager.addMouseInput(rootWelGL, 'mousedown', dragStart);
 
       const dragging = (event) => {
         if (checkParentChild(event.target, frame3D.ui) || !isDragging) return; // Ui
@@ -457,7 +458,7 @@ export class LegonizerWindow extends Window {
         mouseCoordToWorldCoord(event, worldCoordCurrent);
         updateSelectAreaObject();
       };
-      manager.addMouseInput(rootWelGL, 'mousemove', dragging);
+      this.inputManager.addMouseInput(rootWelGL, 'mousemove', dragging);
 
       const dragEnd = () => {
         if (!isDragging) return; // Was not dragging
@@ -492,7 +493,7 @@ export class LegonizerWindow extends Window {
         this.legoPrevisualisation.updateMatrixWorld();
         frame3D.getItownsView().notifyChange(this.frame3D.getCamera());
       };
-      manager.addMouseInput(rootWelGL, 'mouseup', dragEnd);
+      this.inputManager.addMouseInput(rootWelGL, 'mouseup', dragEnd);
 
       // Record for further dispose
       this.listeners.push(dragStart);
@@ -503,7 +504,7 @@ export class LegonizerWindow extends Window {
 
   removeListeners() {
     // Remove listeners
-    const manager = this.frame3D.getInputManager();
+    const manager = this.inputManager;
     this.listeners.forEach((listener) => {
       manager.removeInputListener(listener);
     });
