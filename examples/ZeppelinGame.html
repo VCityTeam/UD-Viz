@@ -121,7 +121,8 @@
         }
       };
 
-      const ExternalGameContextManager = class extends udvizBrowser.ScriptBase {
+      const ExternalGameContextManager = class extends udvizBrowser.Game
+        .External.ScriptBase {
         init() {
           this.ui = document.createElement('div');
           this.ui.style.zIndex = 98; // le neuf et le 8
@@ -129,7 +130,7 @@
           this.updateUI();
 
           this.cameraManager = this.context.findExternalScriptWithID(
-            udvizBrowser.CameraManager.ID_SCRIPT
+            udvizBrowser.Game.External.ScriptTemplate.CameraManager.ID_SCRIPT
           );
 
           const zeppelin = this.context.object3D.getObjectByProperty(
@@ -144,9 +145,10 @@
             this.variables.camera_angle
           );
 
-          const commandController = new udvizBrowser.CommandController(
-            this.context.inputManager
-          );
+          const commandController =
+            new udvizBrowser.Game.External.ScriptTemplate.CommandController(
+              this.context.inputManager
+            );
 
           commandController.addNativeCommands(zeppelin.uuid);
         }
@@ -224,7 +226,8 @@
                   },
                   idScripts: [
                     ExternalGameContextManager.ID_SCRIPT,
-                    udvizBrowser.CameraManager.ID_SCRIPT,
+                    udvizBrowser.Game.External.ScriptTemplate.CameraManager
+                      .ID_SCRIPT,
                   ],
                 },
               },
@@ -235,7 +238,7 @@
               configs['frame3D_planars'][0]
             );
 
-            const game = new udvizBrowser.SinglePlanarProcess(
+            const game = new udvizBrowser.Game.External.SinglePlanarProcess(
               gameObject3D,
               frame3DPlanar,
               assetManager,
@@ -247,7 +250,7 @@
                   ZeppelinGameScript,
                 ],
                 externalGameScriptClass: [
-                  udvizBrowser.CameraManager,
+                  udvizBrowser.Game.External.ScriptTemplate.CameraManager,
                   ExternalGameContextManager,
                 ],
                 gameOrigin: {

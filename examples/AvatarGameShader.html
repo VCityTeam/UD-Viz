@@ -43,7 +43,8 @@
               parseInt(configs['extent_lyon'].north)
             );
 
-            const AvatarExternalGameScript = class extends udvizBrowser.ScriptBase {
+            const AvatarExternalGameScript = class extends udvizBrowser.Game
+              .External.ScriptBase {
               constructor(context, object3D, variables) {
                 super(context, object3D, variables);
 
@@ -96,7 +97,8 @@
                 if (!this.avatar) throw new Error('no avatar in context');
 
                 this.cameraManager = this.context.findExternalScriptWithID(
-                  udvizBrowser.CameraManager.ID_SCRIPT
+                  udvizBrowser.Game.External.ScriptTemplate.CameraManager
+                    .ID_SCRIPT
                 );
 
                 this.cameraManager.followObject3D(
@@ -146,7 +148,7 @@
 
                 const updateZ = () => {
                   const zAvatar =
-                    udvizBrowser.computeRelativeElevationFromGround(
+                    udvizBrowser.Game.External.ScriptTemplate.computeRelativeElevationFromGround(
                       this.avatar,
                       this.context.frame3D.itownsView.tileLayer,
                       this.variables.update_z_crs
@@ -211,7 +213,8 @@
                   },
                   idScripts: [
                     AvatarExternalGameScript.ID_SCRIPT,
-                    udvizBrowser.CameraManager.ID_SCRIPT,
+                    udvizBrowser.Game.External.ScriptTemplate.CameraManager
+                      .ID_SCRIPT,
                   ],
                 },
               },
@@ -231,7 +234,7 @@
               configs['frame3D_planars'][0]
             );
 
-            const game = new udvizBrowser.SinglePlanarProcess(
+            const game = new udvizBrowser.Game.External.SinglePlanarProcess(
               gameObject3D,
               frame3DPlanar,
               assetManager,
@@ -239,7 +242,7 @@
               {
                 externalGameScriptClass: [
                   AvatarExternalGameScript,
-                  udvizBrowser.CameraManager,
+                  udvizBrowser.Game.External.ScriptTemplate.CameraManager,
                 ],
                 gameOrigin: {
                   x: extent.center().x,

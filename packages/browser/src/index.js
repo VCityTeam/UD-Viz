@@ -1,10 +1,6 @@
 /** @file @ud-viz/browser API */
 
-// Template
-
-// export { SideBarWidget } from './SideBarWidget/SideBarWidget';
-
-// Template.Component
+export { SideBarWidget } from './SideBarWidget/SideBarWidget';
 
 export * from './Component/Component';
 

@@ -1,89 +1,64 @@
-import { $3DTemporalExtension } from './Model/3DTemporalExtension.js';
 import { $3DTemporalBatchTable } from './Model/3DTemporalBatchTable';
 import { $3DTemporalBoundingVolume } from './Model/3DTemporalBoundingVolume';
 import { $3DTemporalTileset } from './Model/3DTemporalTileset';
 import * as itownsWidget from 'itowns/widgets';
 import * as itowns from 'itowns';
-
-import { setup3DTilesLayer } from '../../ItownsUtil';
-
-/**
- * @typedef {object} TemporalOptions - options for initializing the temporal module.
- * @property {number} currentTime - Current year
- * @property {string} view - window type {@link EnumWindows}
- * @property {number} minTime - Minimum year
- * @property {number} maxTime - Maximum year
- * @property {number} timeStep - Step of the temporal slider
- * @property {Function} getAsynchronousData - DON'T USE should be removed, only use like a variable
- */
+import { createC3DTilesLayer } from '../../ItownsUtil';
 
 /**
- * Entrypoint of the temporal module (that can be instanciated in the demos)
+ *
+ * @param {object} extensionsConfig - config
+ * @returns {itowns.C3DTExtensions} - extensions
+ * @todo document how works extension what is define in config in model class where data is stored
+ * @todo what is the purpose of these json schema if they are not parse/read
  */
-export class TemporalModule {
-  /**
-   * Constructs a new temporal module.
-   *
-   * @param {itowns.PlanarView} itownsView - view
-   * @param {TemporalOptions} temporalOptions - options for initializing the temporal module
-   */
-  constructor(itownsView, temporalOptions) {
-    this.model = new $3DTemporalExtension();
-
-    // this.provider = new TemporalProvider(
-    //   this.model,
-    //   itownsView,
-    //   temporalOptions.currentTime
-    // );
-
-    // this.view = new TemporalView(this.provider, temporalOptions);
-    this.view = new TemporalView(itownsView, temporalOptions);
-  }
-
-  static create3DTilesTemporalExtension(extensionsConfig) {
-    const extensions = new itowns.C3DTExtensions();
-    for (let i = 0; i < extensionsConfig.length; i++) {
-      if (extensionsConfig[i] === '3DTILES_temporal') {
-        extensions.registerExtension('3DTILES_temporal', {
-          [itowns.C3DTilesTypes.batchtable]: $3DTemporalBatchTable,
-          [itowns.C3DTilesTypes.boundingVolume]: $3DTemporalBoundingVolume,
-          [itowns.C3DTilesTypes.tileset]: $3DTemporalTileset,
-        });
-      } else if (extensionsConfig[i] === '3DTILES_batch_table_hierarchy') {
-        extensions.registerExtension('3DTILES_batch_table_hierarchy', {
-          [itowns.C3DTilesTypes.batchtable]:
-            itowns.C3DTBatchTableHierarchyExtension,
-        });
-      } else {
-        console.warn(
-          'The 3D Tiles extension ' +
-            extensionsConfig[i] +
-            ' specified in 3D_tiles_layers is not supported ' +
-            'by @ud-viz/browser yet. Only 3DTILES_temporal and ' +
-            '3DTILES_batch_table_hierarchy are supported.'
-        );
-      }
-    }
-
-    return extensions;
-  }
-
-  static add3DTilesTemporalFromConfig(config, itownsView) {
-    // Positional arguments verification
-    if (!config) {
-      console.warn('no 3DTilesLayers config');
-      return null;
-    }
-
-    for (const layer of config) {
-      const extensions = this.create3DTilesTemporalExtension(
-        layer['extensions']
-      );
-      itowns.View.prototype.addLayer.call(
-        itownsView,
-        setup3DTilesLayer(layer, itownsView, extensions)
+function create3DTilesTemporalExtension(extensionsConfig) {
+  const extensions = new itowns.C3DTExtensions();
+  for (let i = 0; i < extensionsConfig.length; i++) {
+    if (extensionsConfig[i] === '3DTILES_temporal') {
+      extensions.registerExtension('3DTILES_temporal', {
+        [itowns.C3DTilesTypes.batchtable]: $3DTemporalBatchTable,
+        [itowns.C3DTilesTypes.boundingVolume]: $3DTemporalBoundingVolume,
+        [itowns.C3DTilesTypes.tileset]: $3DTemporalTileset,
+      });
+    } else if (extensionsConfig[i] === '3DTILES_batch_table_hierarchy') {
+      extensions.registerExtension('3DTILES_batch_table_hierarchy', {
+        [itowns.C3DTilesTypes.batchtable]:
+          itowns.C3DTBatchTableHierarchyExtension,
+      });
+    } else {
+      console.warn(
+        'The 3D Tiles extension ' +
+          extensionsConfig[i] +
+          ' specified in 3D_tiles_layers is not supported ' +
+          'by @ud-viz/browser yet. Only 3DTILES_temporal and ' +
+          '3DTILES_batch_table_hierarchy are supported.'
       );
     }
+  }
+
+  return extensions;
+}
+
+/**
+ *
+ * @param {object} config - cofig
+ * @param {itowns.View} itownsView - itowns view
+ * @todo document config needed difference with classic 3DTiles ?
+ */
+export function add3DTilesTemporalFromConfig(config, itownsView) {
+  // Positional arguments verification
+  if (!config) {
+    console.warn('no 3DTilesLayers config');
+    return;
+  }
+
+  for (const layer of config) {
+    const extensions = create3DTilesTemporalExtension(layer['extensions']);
+    itowns.View.prototype.addLayer.call(
+      itownsView,
+      createC3DTilesLayer(layer, itownsView, extensions)
+    );
   }
 }
 
@@ -92,7 +67,7 @@ const DEFAULT_OPTIONS = {
   width: '400px',
 };
 
-class TemporalView extends itownsWidget.Widget {
+export class DateSelector extends itownsWidget.Widget {
   constructor(itownsView, options) {
     super(itownsView, options, DEFAULT_OPTIONS);
 
@@ -234,36 +209,45 @@ class TemporalView extends itownsWidget.Widget {
 
             // handle demolition/creation which are not in batchTable/extension
             possibleDates.sort((a, b) => a - b);
-            c3DTilesLayer.batchElementsArray().forEach((bE) => {
-              const temporalExtension = bE.info.extensions['3DTILES_temporal'];
+            for (const [
+              // eslint-disable-next-line no-unused-vars
+              tileId,
+              tileBatchElements,
+            ] of c3DTilesLayer.tilesBatchElements) {
+              // eslint-disable-next-line no-unused-vars
+              for (const [batchId, batchElement] of tileBatchElements) {
+                const temporalExtension =
+                  batchElement.getInfo().extensions['3DTILES_temporal'];
 
-              for (let index = 0; index < possibleDates.length - 1; index++) {
-                const date = possibleDates[index];
-                const nextDate = possibleDates[index + 1];
+                for (let index = 0; index < possibleDates.length - 1; index++) {
+                  const date = possibleDates[index];
+                  const nextDate = possibleDates[index + 1];
 
-                if (temporalExtension.endDate == date) {
-                  // if no transaction next index should demolition (no modification)
-                  const featureDateID = temporalExtension.featureId + nextDate;
-                  if (!featureDateID2ColorOpacity.has(featureDateID)) {
-                    featureDateID2ColorOpacity.set(
-                      featureDateID,
-                      transactionType2ColorOpacity.demolition
-                    );
+                  if (temporalExtension.endDate == date) {
+                    // if no transaction next index should demolition (no modification)
+                    const featureDateID =
+                      temporalExtension.featureId + nextDate;
+                    if (!featureDateID2ColorOpacity.has(featureDateID)) {
+                      featureDateID2ColorOpacity.set(
+                        featureDateID,
+                        transactionType2ColorOpacity.demolition
+                      );
+                    }
                   }
-                }
 
-                if (temporalExtension.startDate == nextDate) {
-                  // if no transaction previous index should creation (no modification)
-                  const featureDateID = temporalExtension.featureId + date;
-                  if (!featureDateID2ColorOpacity.has(featureDateID)) {
-                    featureDateID2ColorOpacity.set(
-                      featureDateID,
-                      transactionType2ColorOpacity.creation
-                    );
+                  if (temporalExtension.startDate == nextDate) {
+                    // if no transaction previous index should creation (no modification)
+                    const featureDateID = temporalExtension.featureId + date;
+                    if (!featureDateID2ColorOpacity.has(featureDateID)) {
+                      featureDateID2ColorOpacity.set(
+                        featureDateID,
+                        transactionType2ColorOpacity.creation
+                      );
+                    }
                   }
                 }
               }
-            });
+            }
 
             // create ui
             const selectDates = document.createElement('select');
@@ -278,7 +262,7 @@ class TemporalView extends itownsWidget.Widget {
             const computeColorOpacity = (batchElement) => {
               const dateSelected = selectDates.selectedOptions[0].value;
               const temporalExtension =
-                batchElement.info.extensions['3DTILES_temporal'];
+                batchElement.getInfo().extensions['3DTILES_temporal'];
 
               if (
                 temporalExtension.startDate <= dateSelected &&

@@ -59,8 +59,10 @@
                 ExternalScript: {
                   variables: {},
                   idScripts: [
-                    udvizBrowser.DragAndDropAvatar.ID_SCRIPT,
-                    udvizBrowser.CameraManager.ID_SCRIPT,
+                    udvizBrowser.Game.External.ScriptTemplate.DragAndDropAvatar
+                      .ID_SCRIPT,
+                    udvizBrowser.Game.External.ScriptTemplate.CameraManager
+                      .ID_SCRIPT,
                   ],
                 },
               },
@@ -71,15 +73,15 @@
               configs['frame3D_planars'][2]
             );
 
-            const game = new udvizBrowser.SinglePlanarProcess(
+            const game = new udvizBrowser.Game.External.SinglePlanarProcess(
               gameObject3D,
               frame3DPlanar,
               assetManager,
               new udvizBrowser.InputManager(),
               {
                 externalGameScriptClass: [
-                  udvizBrowser.DragAndDropAvatar,
-                  udvizBrowser.CameraManager,
+                  udvizBrowser.Game.External.ScriptTemplate.DragAndDropAvatar,
+                  udvizBrowser.Game.External.ScriptTemplate.CameraManager,
                 ],
                 gameScriptClass: [
                   udvizBrowser.Shared.Game.ScriptTemplate.NativeCommandManager,

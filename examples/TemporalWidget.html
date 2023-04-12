@@ -54,18 +54,19 @@
             extent
           );
 
-          udvizBrowser.Widget.TemporalModule.add3DTilesTemporalFromConfig(
+          udvizBrowser.Widget.Temporal.add3DTilesTemporalFromConfig(
             configs['3DTiles_temporal'],
             frame3DPlanar.itownsView
           );
 
           // TEMPORAL MODULE
-          const temporalModule = new udvizBrowser.Widget.TemporalModule(
-            frame3DPlanar.itownsView,
-            configs['temporal']
-          );
+          const temporalDateSelector =
+            new udvizBrowser.Widget.Temporal.DateSelector(
+              frame3DPlanar.itownsView,
+              configs['temporal']
+            );
 
-          frame3DPlanar.appendToUI(temporalModule.view.domElement);
+          frame3DPlanar.appendToUI(temporalDateSelector.domElement);
         });
     </script>
   </body>

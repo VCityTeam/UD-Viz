@@ -43,25 +43,26 @@
 
             const socketIOWrapper = new udvizBrowser.SocketIOWrapper();
             socketIOWrapper.connectToServer().then(() => {
-              const multiGame = new udvizBrowser.MultiPlanarProcess(
-                socketIOWrapper,
-                extent,
-                assetManager,
-                new udvizBrowser.InputManager(),
-                {
-                  frame3DPlanarOptions: configs['frame3D_planars'][2],
-                  externalGameScriptClass: [
-                    udvizBrowser.CameraManager,
-                    udvizBrowser.Note,
-                  ],
-                  sceneConfig: configs['scene'],
-                  gameOrigin: {
-                    x: extent.center().x,
-                    y: extent.center().y,
-                    z: 300,
-                  },
-                }
-              );
+              const multiGame =
+                new udvizBrowser.Game.External.MultiPlanarProcess(
+                  socketIOWrapper,
+                  extent,
+                  assetManager,
+                  new udvizBrowser.InputManager(),
+                  {
+                    frame3DPlanarOptions: configs['frame3D_planars'][2],
+                    externalGameScriptClass: [
+                      udvizBrowser.Game.External.ScriptTemplate.CameraManager,
+                      udvizBrowser.Game.External.ScriptTemplate.Note,
+                    ],
+                    sceneConfig: configs['scene'],
+                    gameOrigin: {
+                      x: extent.center().x,
+                      y: extent.center().y,
+                      z: 300,
+                    },
+                  }
+                );
               multiGame.start();
               // /// ADD LAYERS
               udvizBrowser.add3DTilesLayers(
