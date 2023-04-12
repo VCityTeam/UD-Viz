@@ -135,15 +135,20 @@ export class SparqlQueryWindow extends EventSender {
         .getLayers()
         .filter((el) => el.isC3DTilesLayer)
         .forEach((c3DTilesLayer) => {
-          // get the first one with this gml id
-          const array = c3DTilesLayer.batchElementsArray();
-          for (let index = 0; index < array.length; index++) {
-            const element = array[index];
-            if (
-              element.info.batchTable['gml_id'] == URI.tokenizeURI(node_text).id
-            ) {
-              result = element;
-              break;
+          for (const [
+            // eslint-disable-next-line no-unused-vars
+            tileId,
+            tileBatchElements,
+          ] of c3DTilesLayer.tilesBatchElements) {
+            // eslint-disable-next-line no-unused-vars
+            for (const [batchId, batchElement] of tileBatchElements) {
+              if (
+                batchElement.getInfo().batchTable['gml_id'] ==
+                URI.tokenizeURI(node_text).id
+              ) {
+                result = batchElement;
+                break;
+              }
             }
           }
         });
@@ -159,7 +164,7 @@ export class SparqlQueryWindow extends EventSender {
       focusCameraOn(
         this.itownsView,
         this.itownsView.controls,
-        elementClicked.worldBox3.getCenter(new THREE.Vector3()),
+        elementClicked.computeWorldBox3().getCenter(new THREE.Vector3()),
         {
           verticalDistance: 200,
           horizontalDistance: 200,
@@ -185,7 +190,7 @@ export class SparqlQueryWindow extends EventSender {
       focusCameraOn(
         this.itownsView,
         this.itownsView.controls,
-        elementClicked.worldBox3.getCenter(new THREE.Vector3()),
+        elementClicked.computeWorldBox3().getCenter(new THREE.Vector3()),
         {
           verticalDistance: 200,
           horizontalDistance: 200,

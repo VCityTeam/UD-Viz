@@ -2,7 +2,8 @@ export { LayerChoice } from './LayerChoice/views/LayerChoice';
 
 export { CameraPositioner } from './CameraPositioner/CameraPositioner';
 
-export { TemporalModule } from './Temporal/TemporalModule';
+import * as Temporal from './Temporal/Temporal';
+export { Temporal };
 
 export { SlideShow } from './SlideShow/SlideShow';
 

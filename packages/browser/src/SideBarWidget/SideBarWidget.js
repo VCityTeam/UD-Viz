@@ -71,15 +71,6 @@ export class SideBarWidget {
     /** @type {Widget.Server.GeocodingView|null} */
     this.geocodingView = null;
 
-    /** @type {Widget.CityObjectProvider} */
-    this.cityObjectProvider = null;
-
-    /** @type {Widget.CityObjectModule} */
-    this.cityObjectModule = null;
-
-    /** @type {Widget.Debug3DTilesView} */
-    this.debug3DTilesView = null;
-
     /** @type {Widget.Server.Document.Core} */
     this.documentCore = null;
 
@@ -88,9 +79,6 @@ export class SideBarWidget {
 
     /** @type {Widget.CameraPositioner} */
     this.cameraPositioner = null;
-
-    /** @type {Widget.TemporalModule} */
-    this.temporalModule = null;
 
     /** @type {Widget.LayerChoice} */
     this.layerChoice = null;
@@ -128,11 +116,7 @@ export class SideBarWidget {
    */
   addLayers(configs) {
     if (configs.$3DTiles) {
-      add3DTilesLayers(
-        configs.$3DTiles,
-        this.frame3DPlanar.layerManager,
-        this.frame3DPlanar.itownsView
-      );
+      add3DTilesLayers(configs.$3DTiles, this.frame3DPlanar.itownsView);
     }
     if (configs.elevation) {
       addElevationLayer(
@@ -343,70 +327,7 @@ export class SideBarWidget {
     };
   }
 
-  addWidgetCityObject(configStyles, pathIcon) {
-    if (!this.cityObjectProvider) {
-      this.cityObjectProvider = new Widget.CityObjectProvider(
-        this.frame3DPlanar.layerManager,
-        configStyles
-      );
-    }
-
-    this.cityObjectModule = new Widget.CityObjectModule(
-      this.cityObjectProvider,
-      configStyles
-    );
-
-    const sideBarButton = document.createElement('img');
-    sideBarButton.src = pathIcon;
-    this.menuSideBar.appendChild(sideBarButton);
-
-    sideBarButton.onclick = () => {
-      if (this.cityObjectModule.view.html().parentElement) {
-        this.panMenuSideBar.remove(this.cityObjectModule.view.html());
-        this.cityObjectModule.view.dispose();
-        sideBarButton.classList.remove(
-          '_sidebar_widget_menu_sidebar_img_selected'
-        );
-      } else {
-        this.panMenuSideBar.add(
-          'CityObject',
-          this.cityObjectModule.view.html()
-        );
-        this.cityObjectModule.view.addListenerTo(this.frame3DPlanar.rootWebGL);
-        sideBarButton.classList.add(
-          '_sidebar_widget_menu_sidebar_img_selected'
-        );
-      }
-    };
-  }
-
-  addWidgetDebug3DTiles(pathIcon) {
-    this.debug3DTilesView = new Widget.Debug3DTilesView(
-      this.frame3DPlanar.layerManager
-    );
-
-    const sideBarButton = document.createElement('img');
-    sideBarButton.src = pathIcon;
-    this.menuSideBar.appendChild(sideBarButton);
-
-    sideBarButton.onclick = () => {
-      if (this.debug3DTilesView.html().parentElement) {
-        this.panMenuSideBar.remove(this.debug3DTilesView.html());
-        this.debug3DTilesView.dispose();
-        sideBarButton.classList.remove(
-          '_sidebar_widget_menu_sidebar_img_selected'
-        );
-      } else {
-        this.debug3DTilesView.addListenerTo(this.frame3DPlanar.rootWebGL);
-        this.panMenuSideBar.add('Debug 3D Tiles', this.debug3DTilesView.html());
-        sideBarButton.classList.add(
-          '_sidebar_widget_menu_sidebar_img_selected'
-        );
-      }
-    };
-  }
-
-  addWidgetDocument(configServer, configStyles, pathIcon) {
+  addWidgetDocument(configServer, pathIcon) {
     const rootDocumentHtml = document.createElement('div');
     const parentHtmlFeature = document.createElement('div');
 
@@ -509,31 +430,6 @@ export class SideBarWidget {
 
     this.documentCore.view.inspectorWindow.html().appendChild(commentButton);
 
-    // LINK MODULE
-    if (this.cityObjectModule) {
-      const documentLink = new Widget.Server.Document.Link(
-        this.documentCore.provider,
-        this.cityObjectModule, // module should be manipulated from this scope and not doing dark things inside link module
-        this.requestService,
-        this.frame3DPlanar.getItownsView(),
-        this.frame3DPlanar.getItownsView().controls,
-        configServer,
-        configStyles
-      );
-
-      this.documentCore.view.navigatorWindow.displayableFiltersContainer.appendChild(
-        documentLink.view.documentInterface.navigatorHtml()
-      );
-
-      this.documentCore.view.inspectorWindow
-        .html()
-        .appendChild(documentLink.view.documentInterface.inspectorHtml());
-    } else {
-      console.warn(
-        'You should add first a cityObject widget to benefit of the link feature'
-      );
-    }
-
     // PLUG WITH SIDEBAR BUTTON
     const sideBarButton = document.createElement('img');
     sideBarButton.src = pathIcon;
@@ -544,11 +440,6 @@ export class SideBarWidget {
         this.panMenuSideBar.remove(rootDocumentHtml);
         this.documentCore.view.navigatorWindow.dispose();
         this.documentCore.view.inspectorWindow.dispose();
-
-        if (!this.cityObjectModule.view.html().parentElement) {
-          // city object module is not open remove listener
-          this.cityObjectModule.view.removeListener();
-        }
 
         sideBarButton.classList.remove(
           '_sidebar_widget_menu_sidebar_img_selected'
@@ -568,18 +459,12 @@ export class SideBarWidget {
         sideBarButton.classList.add(
           '_sidebar_widget_menu_sidebar_img_selected'
         );
-
-        // so city object can be select by cityobject module
-        this.cityObjectModule.view.addListenerTo(this.frame3DPlanar.rootWebGL);
       }
     };
   }
 
   addWidgetGuidedTour(configServer, pathIcon) {
     if (!this.documentCore) {
-      /**
-       * @todo should we handle that ? same for link with cityobjectmodule
-       */
       console.warn('You should addWidgetDocument first');
       return;
     }
@@ -641,34 +526,8 @@ export class SideBarWidget {
     };
   }
 
-  addWidgetTemporal(configTemporal, pathIcon) {
-    this.temporalModule = new Widget.TemporalModule(
-      this.frame3DPlanar.getLayerManager().tilesManagers[0],
-      configTemporal
-    );
-
-    const sideBarButton = document.createElement('img');
-    sideBarButton.src = pathIcon;
-    this.menuSideBar.appendChild(sideBarButton);
-
-    sideBarButton.onclick = () => {
-      if (this.temporalModule.view.html().parentElement) {
-        this.panMenuSideBar.remove(this.temporalModule.view.html());
-        this.temporalModule.view.dispose();
-        sideBarButton.classList.remove(
-          '_sidebar_widget_menu_sidebar_img_selected'
-        );
-      } else {
-        this.panMenuSideBar.add('Temporal', this.temporalModule.view.html());
-        sideBarButton.classList.add(
-          '_sidebar_widget_menu_sidebar_img_selected'
-        );
-      }
-    };
-  }
-
   addWidgetLayerChoice(pathIcon) {
-    this.layerChoice = new Widget.LayerChoice(this.frame3DPlanar.layerManager);
+    this.layerChoice = new Widget.LayerChoice(this.frame3DPlanar.itownsView);
 
     const sideBarButton = document.createElement('img');
     sideBarButton.src = pathIcon;
@@ -721,17 +580,9 @@ export class SideBarWidget {
   }
 
   addWidgetSparql(configServer, configWidget, pathIcon) {
-    if (!this.cityObjectProvider) {
-      throw new Error(
-        'no city object provider you should add CityObject widget'
-      );
-      // same as link or guided tour
-    }
-
     this.sparqlQueryWindow = new Widget.Server.SparqlQueryWindow(
       new Widget.Server.SparqlEndpointResponseProvider(configServer),
-      this.cityObjectProvider,
-      this.frame3DPlanar.getLayerManager(),
+      this.frame3DPlanar.itownsView,
       configWidget
     );
 

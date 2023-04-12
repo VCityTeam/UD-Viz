@@ -15,7 +15,7 @@ const itowns = require('itowns');
  * @param {object} extensions - optional extensions
  * @returns {itowns.C3DTilesLayer} A 3D Tiles Layer
  */
-export function setup3DTilesLayer(layer, itownsView, extensions = null) {
+export function createC3DTilesLayer(layer, itownsView, extensions = null) {
   if (!layer['id'] || !layer['url']) {
     throw (
       'Your layer does not have url id properties or both. ' +
@@ -23,19 +23,6 @@ export function setup3DTilesLayer(layer, itownsView, extensions = null) {
     );
   }
 
-  let overrideMaterial = false;
-  let material = null;
-  if (layer['pc_size']) {
-    material = new THREE.PointsMaterial({
-      size: layer['pc_size'],
-      vertexColors: true,
-    });
-    overrideMaterial = true;
-  } else if (layer['color']) {
-    overrideMaterial = new THREE.MeshStandardMaterial({
-      color: new THREE.Color(parseInt(layer['color'])),
-    });
-  }
   /** @type {itowns.C3DTilesLayer} */
   const $3dTilesLayer = new itowns.C3DTilesLayer(
     layer['id'],
@@ -45,23 +32,9 @@ export function setup3DTilesLayer(layer, itownsView, extensions = null) {
         url: layer['url'],
       }),
       registeredExtensions: extensions,
-      overrideMaterials: overrideMaterial,
-      material: material,
     },
     itownsView
   );
-
-  // $3dTilesLayer.addEventListener(
-  //   itowns.C3DTilesLayer.EVENT_TILE_CONTENT_LOADED,
-  //   ({ tile }) => {
-  //     console.log('TILE LOADED');
-  //     tile.traverse((child) => {
-  //       if (child.geometry) {
-  //         console.log(child);
-  //       }
-  //     });
-  //   }
-  // );
 
   return $3dTilesLayer;
 }
@@ -71,20 +44,19 @@ export function setup3DTilesLayer(layer, itownsView, extensions = null) {
  *
  * @param {object} config3DTilesLayers An object containing 3D Tiles layers configs
  * @param {itowns.View} itownsView - the itowns view
- * @returns {Map<itowns.C3DTilesLayer>|null} a map of each 3d tiles layer, null if no config
  */
 export function add3DTilesLayers(config3DTilesLayers, itownsView) {
   // Positional arguments verification
   if (!config3DTilesLayers) {
     console.warn('no 3DTilesLayers config');
-    return null;
+    return;
   }
-  const layers = {};
   for (const layer of config3DTilesLayers) {
-    layers[layer.id] = setup3DTilesLayer(layer, itownsView);
-    itowns.View.prototype.addLayer.call(itownsView, layers[layer.id]);
+    itowns.View.prototype.addLayer.call(
+      itownsView,
+      createC3DTilesLayer(layer, itownsView)
+    );
   }
-  return layers;
 }
 
 /**

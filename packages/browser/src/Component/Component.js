@@ -19,7 +19,8 @@ export * from './Frame3D/Frame3D';
 
 export * from './GUI/GUI';
 
-export * from './Game/Game';
+import * as Game from './Game/Game';
+export { Game };
 
 import * as Widget from './Widget/Widget';
 export { Widget };

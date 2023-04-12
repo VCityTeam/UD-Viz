@@ -29,7 +29,8 @@
         }
       };
 
-      const AvatarExternalGameScript = class extends udvizBrowser.ScriptBase {
+      const AvatarExternalGameScript = class extends udvizBrowser.Game.External
+        .ScriptBase {
         init() {
           this.avatar = this.context.object3D.getObjectByProperty(
             'name',
@@ -37,7 +38,7 @@
           );
 
           this.cameraManager = this.context.findExternalScriptWithID(
-            udvizBrowser.CameraManager.ID_SCRIPT
+            udvizBrowser.Game.External.ScriptTemplate.CameraManager.ID_SCRIPT
           );
 
           this.cameraManager.followObject3D(
@@ -47,9 +48,10 @@
             this.variables.camera_angle
           );
 
-          const commandController = new udvizBrowser.CommandController(
-            this.context.inputManager
-          );
+          const commandController =
+            new udvizBrowser.Game.External.ScriptTemplate.CommandController(
+              this.context.inputManager
+            );
 
           commandController.addNativeCommands(this.avatar.uuid);
         }
@@ -62,7 +64,7 @@
               data: {
                 object3DUUID: this.avatar.uuid,
                 position: {
-                  z: udvizBrowser.computeRelativeElevationFromGround(
+                  z: udvizBrowser.Game.External.ScriptTemplate.computeRelativeElevationFromGround(
                     this.avatar,
                     this.context.frame3D.itownsView.tileLayer,
                     this.variables.update_z_crs
@@ -130,7 +132,8 @@
                   },
                   idScripts: [
                     AvatarExternalGameScript.ID_SCRIPT,
-                    udvizBrowser.CameraManager.ID_SCRIPT,
+                    udvizBrowser.Game.External.ScriptTemplate.CameraManager
+                      .ID_SCRIPT,
                   ],
                 },
               },
@@ -141,7 +144,7 @@
               configs['frame3D_planars'][0]
             );
 
-            const game = new udvizBrowser.SinglePlanarProcess(
+            const game = new udvizBrowser.Game.External.SinglePlanarProcess(
               gameObject3D,
               frame3DPlanar,
               assetManager,
@@ -153,7 +156,7 @@
                 ],
                 externalGameScriptClass: [
                   AvatarExternalGameScript,
-                  udvizBrowser.CameraManager,
+                  udvizBrowser.Game.External.ScriptTemplate.CameraManager,
                 ],
                 gameOrigin: {
                   x: extent.center().x,
