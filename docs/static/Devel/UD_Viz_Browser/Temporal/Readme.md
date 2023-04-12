@@ -12,7 +12,7 @@ the [documention can be found here](https://github.com/VCityTeam/UD-SV/3DTilesTe
 
 ## Design of the temporal module
 
-The entrypoint of the temporal module is [TemporalModule.js](../../../../../packages/browser/src/Component/Widget/Temporal/TemporalModule.js).
+The entrypoint of the temporal module is [Temporal.js](../../../../../packages/browser/src/Component/Widget/Temporal/Temporal.js).
 
 The module is designed following the MVVM pattern which is one of the preffered
 patterns to design UD-Viz modules (see [UD-Viz architecture notes](../../ArchitectureMVCTargetDesign.md)).
@@ -233,11 +233,11 @@ A [TemporalView calls](../../../../../packages/browser/src/Component/Widget/Temp
 * The TemporalView passes this refreshCallback to the [TemporalSliderWindow constructor](../../../../../packages/browser/src/Component/Widget/Temporal/View/TemporalView.js#L46) .
 * Eventually the callback is [invoked by the TemporalSliderWindow](../../../../../packages/browser/src/Component/Widget/Temporal/View/TemporalSliderWindow.js#L88) when e.g. the slider is acted upon the user.
 
-In order to get the proper slide-bar refresh, the [TemporalView::currentTimeUpdated(...)](../../../../../packages/browser/src/Component/Widget/Temporal/View/TemporalView.js#L25) callback function uses a [provider](../../../../../packages/browser/src/Component/Widget/Temporal/View/TemporalView.js#L18) (that is [handled over to the constructor](../../../../../packages/browser/src/Component/Widget/Temporal/TemporalModule.js#L29)) that triggers a [provider.changeVisibleTilesStates()](../../../../../packages/browser/src/Component/Widget/Temporal/View/TemporalView.js#L29).
+In order to get the proper slide-bar refresh, the [TemporalView::currentTimeUpdated(...)](../../../../../packages/browser/src/Component/Widget/Temporal/View/TemporalView.js#L25) callback function uses a [provider](../../../../../packages/browser/src/Component/Widget/Temporal/View/TemporalView.js#L18) (that is [handled over to the constructor](../../../../../packages/browser/src/Component/Widget/Temporal/Temporal.js#L29)) that triggers a [provider.changeVisibleTilesStates()](../../../../../packages/browser/src/Component/Widget/Temporal/View/TemporalView.js#L29).
 * In turn the [TemporalProvider::changeVisibleTilesStates() function](../../../../../packages/browser/src/Component/Widget/Temporal/ViewModel/TemporalProvider.js#L333) uses 
   * a [TileManager](../../../../../packages/browser/src/Component/Widget/Temporal/ViewModel/TemporalProvider.js#L334) ([provided to the constructor](../../../../../packages/browser/src/Component/Widget/Temporal/ViewModel/TemporalProvider.js#L29)) to retrieve the visible tiles,
-  * a [`$3DTemporalExtension` model](../../../../../packages/browser/src/Component/Widget/Temporal/TemporalModule.js#L21) (also [provided to the constructor](../../../../../packages/browser/src/Component/Widget/Temporal/ViewModel/TemporalProvider.js#L27))  
-* Both those `TileManager` and `model` are [provided to the TemporalProvider at instantiation](../../../../../packages/browser/src/Component/Widget/Temporal/TemporalModule.js#L24) and it is this instantiantion context that instantiates the [`$3DTemporalExtension` model](../../../../../packages/browser/src/Component/Widget/Temporal/TemporalModule.js#L21)
+  * a [`$3DTemporalExtension` model](../../../../../packages/browser/src/Component/Widget/Temporal/Temporal.js#L21) (also [provided to the constructor](../../../../../packages/browser/src/Component/Widget/Temporal/ViewModel/TemporalProvider.js#L27))  
+* Both those `TileManager` and `model` are [provided to the TemporalProvider at instantiation](../../../../../packages/browser/src/Component/Widget/Temporal/Temporal.js#L24) and it is this instantiantion context that instantiates the [`$3DTemporalExtension` model](../../../../../packages/browser/src/Component/Widget/Temporal/Temporal.js#L21)
 
 Now, [TemporalProvider::changeVisibleTilesStates() function](../../../../../packages/browser/src/Component/Widget/Temporal/ViewModel/TemporalProvider.js#L333) calls [TemporalProvider::computeTileState()](../../../../../packages/browser/src/Component/Widget/Temporal/ViewModel/TemporalProvider.js#L336) for each `tiles[i].tileId` that [is visible](../../../../../packages/browser/src/Component/Widget/Temporal/ViewModel/TemporalProvider.js#L334)
 [TemporalProvider::computeTileState()](../../../../../packages/browser/src/Component/Widget/Temporal/ViewModel/TemporalProvider.js#L336) 
