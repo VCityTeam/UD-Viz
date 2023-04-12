@@ -23,7 +23,6 @@ import {
 export class LegonizerWindow extends Window {
   constructor(frame3D) {
     super('legonizer', 'Legonizer', false);
-    console.log('test');
 
     this.frame3D = frame3D;
 
@@ -396,6 +395,7 @@ export class LegonizerWindow extends Window {
         color: 0x0000ff,
         opacity: 0.5,
         transparent: true,
+        alphaTest: 0.5,
       });
       const selectAreaObject = new THREE.Mesh(geometry, material);
       selectAreaObject.name = 'Select Area Menu Object';
