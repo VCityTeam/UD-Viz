@@ -33,8 +33,45 @@ export class SideBarWidget {
     /** @type {Frame3DPlanar} */
     this.frame3DPlanar = new Frame3DPlanar(extent, frame3DPlanarOptions);
 
+    // add pick to frame3DPlanar
+    let elementSelected = null;
+    this.frame3DPlanar.rootHtml.onclick = (event) => {
+      if (elementSelected) {
+        elementSelected.setUserData('selectedColor', null);
+        elementSelected = null;
+      }
+
+      const intersects = this.frame3DPlanar.itownsView.pickObjectsAt(
+        event,
+        0,
+        this.frame3DPlanar.itownsView
+          .getLayers()
+          .filter((el) => el.isC3DTilesLayer)
+      );
+
+      if (intersects.length) {
+        const elementClicked =
+          intersects[0].layer.getC3DTileFeatureFromIntersectsArray(intersects);
+        if (elementClicked) {
+          elementClicked.setUserData('selectedColor', 'blue');
+          elementSelected = elementClicked;
+        }
+      }
+    };
+
     /** @type {RequestService} */
     this.requestService = new RequestService();
+
+    /** @type {itowns.Style} */
+    this.c3DTilesStyle = new itowns.Style({
+      fill: {
+        color: (el) => {
+          return el.getUserData('selectedColor')
+            ? el.getUserData('selectedColor')
+            : 'white';
+        },
+      },
+    });
 
     // HTML ELEMENT NEEDED TO BE REFERENCED
 
@@ -117,6 +154,14 @@ export class SideBarWidget {
   addLayers(configs) {
     if (configs.$3DTiles) {
       add3DTilesLayers(configs.$3DTiles, this.frame3DPlanar.itownsView);
+
+      // add style to 3DTilesLayer
+      this.frame3DPlanar.itownsView
+        .getLayers()
+        .filter((el) => el.isC3DTilesLayer)
+        .forEach((layer) => {
+          layer.style = this.c3DTilesStyle;
+        });
     }
     if (configs.elevation) {
       addElevationLayer(

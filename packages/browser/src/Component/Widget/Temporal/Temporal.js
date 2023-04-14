@@ -99,7 +99,7 @@ export class DateSelector extends itownsWidget.Widget {
         // link select option to layer content
         selectOptionLayerContent.set(selectC3DTilesLayerOption, layerContent);
 
-        // wait for batch elements to load
+        // wait for C3DTileFeatures to load
         c3DTilesLayer.addEventListener(
           itowns.C3DTilesLayer.EVENT_TILE_CONTENT_LOADED,
           () => {
@@ -212,12 +212,12 @@ export class DateSelector extends itownsWidget.Widget {
             for (const [
               // eslint-disable-next-line no-unused-vars
               tileId,
-              tileBatchElements,
-            ] of c3DTilesLayer.tilesBatchElements) {
+              tileC3DTileFeatures,
+            ] of c3DTilesLayer.tilesC3DTileFeatures) {
               // eslint-disable-next-line no-unused-vars
-              for (const [batchId, batchElement] of tileBatchElements) {
+              for (const [batchId, c3DTileFeature] of tileC3DTileFeatures) {
                 const temporalExtension =
-                  batchElement.getInfo().extensions['3DTILES_temporal'];
+                  c3DTileFeature.getInfo().extensions['3DTILES_temporal'];
 
                 for (let index = 0; index < possibleDates.length - 1; index++) {
                   const date = possibleDates[index];
@@ -259,10 +259,10 @@ export class DateSelector extends itownsWidget.Widget {
               selectDates.add(optionDate);
             });
 
-            const computeColorOpacity = (batchElement) => {
+            const computeColorOpacity = (c3DTileFeature) => {
               const dateSelected = selectDates.selectedOptions[0].value;
               const temporalExtension =
-                batchElement.getInfo().extensions['3DTILES_temporal'];
+                c3DTileFeature.getInfo().extensions['3DTILES_temporal'];
 
               if (
                 temporalExtension.startDate <= dateSelected &&
