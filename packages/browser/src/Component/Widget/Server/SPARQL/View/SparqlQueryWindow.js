@@ -129,7 +129,7 @@ export class SparqlQueryWindow extends EventSender {
         )
     );
 
-    const fetchBatchElementWithNodeText = (node_text) => {
+    const fetchC3DTileFeatureWithNodeText = (node_text) => {
       let result = null;
       this.itownsView
         .getLayers()
@@ -138,15 +138,15 @@ export class SparqlQueryWindow extends EventSender {
           for (const [
             // eslint-disable-next-line no-unused-vars
             tileId,
-            tileBatchElements,
-          ] of c3DTilesLayer.tilesBatchElements) {
+            tileC3DTileFeatures,
+          ] of c3DTilesLayer.tilesC3DTileFeatures) {
             // eslint-disable-next-line no-unused-vars
-            for (const [batchId, batchElement] of tileBatchElements) {
+            for (const [batchId, c3DTileFeature] of tileC3DTileFeatures) {
               if (
-                batchElement.getInfo().batchTable['gml_id'] ==
+                c3DTileFeature.getInfo().batchTable['gml_id'] ==
                 URI.tokenizeURI(node_text).id
               ) {
-                result = batchElement;
+                result = c3DTileFeature;
                 break;
               }
             }
@@ -157,7 +157,7 @@ export class SparqlQueryWindow extends EventSender {
     };
 
     this.addEventListener(Graph.EVENT_NODE_CLICKED, (node_text) => {
-      const elementClicked = fetchBatchElementWithNodeText(node_text);
+      const elementClicked = fetchC3DTileFeatureWithNodeText(node_text);
 
       if (!elementClicked) return;
 
@@ -183,7 +183,7 @@ export class SparqlQueryWindow extends EventSender {
     );
 
     this.addEventListener(Table.EVENT_CELL_CLICKED, (cell_text) => {
-      const elementClicked = fetchBatchElementWithNodeText(cell_text);
+      const elementClicked = fetchC3DTileFeatureWithNodeText(cell_text);
 
       if (!elementClicked) return;
 
