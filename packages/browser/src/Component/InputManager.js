@@ -16,8 +16,10 @@ const Command = require('@ud-viz/shared').Command;
 export class InputManager {
   /**
    * Manage user inputs with a poll system (https://en.wikipedia.org/wiki/Polling_(computer_science))
+   *
+   * @param {boolean} [isCaseSensitive=false] true so that the inputs are case sensitive
    */
-  constructor() {
+  constructor(isCaseSensitive = true) {
     /**
      * register callback associated to an event + command id
      *
@@ -61,6 +63,13 @@ export class InputManager {
     this.keyCommands = {};
 
     /**
+     * true so that the inputs are case sensitive
+     *
+     * @type {boolean}
+     */
+    this.isCaseSensitive = isCaseSensitive;
+
+    /**
      * register listeners to dispose them
      *
       @type {Array<{element:HTMLElement,id:string,cb:EventCallback,listener:EventCallback}>} */
@@ -98,11 +107,23 @@ export class InputManager {
   }
 
   /**
-   * @param {string} key -
+   * @param {string} key - keyboard input
    * @returns {boolean} - returns true if the key is a letter
    */
   isKeyALetter(key) {
     return key && key.length == 1 && key.toLowerCase() != key.toUpperCase();
+  }
+
+  /**
+   * Converts a key to lowercase if case sensitivity is not required.
+   *
+   * @param {string} key - keyboard input
+   * @returns {string} the input key in lowercase if the `isCaseSensitive` is `false` and the input key is a letter. Returns the base key otherwise.
+   */
+  controlSensitivity(key) {
+    if (this.isCaseSensitive) return key;
+
+    return this.isKeyALetter(key) ? key.toLowerCase() : key;
   }
 
   /**
@@ -142,7 +163,7 @@ export class InputManager {
    * @param {EventCallback} cb - callback called for this event
    */
   addKeyInput(key, eventID, cb) {
-    key = this.isKeyALetter(key) ? key.toLowerCase() : key;
+    key = this.controlSensitivity(key);
 
     const listener = (event) => {
       if ((key == event.key || key == null) && !this.pause) cb(event);
@@ -167,7 +188,7 @@ export class InputManager {
   addKeyCommand(commandID, keys, cb) {
     this.commandsBuffer[commandID] = false; // Avoid to stack multiple commands if two key of keys are pressed
     keys.forEach((key) => {
-      key = this.isKeyALetter(key) ? key.toLowerCase() : key;
+      key = this.controlSensitivity(key);
 
       if (this.keyCommands[key] != undefined) {
         console.error(key, ' is already assign');
@@ -271,9 +292,7 @@ export class InputManager {
 
     // Start listening key state
     const keydown = (event) => {
-      const key = this.isKeyALetter(event.key)
-        ? event.key.toLowerCase()
-        : event.key;
+      const key = this.controlSensitivity(event.key);
 
       if (this.keyMap[key] == false) {
         this.keyMap[key] = true;
@@ -284,9 +303,7 @@ export class InputManager {
     this.listeners.push({ element: window, listener: keydown, id: 'keydown' });
 
     const keyup = (event) => {
-      const key = this.isKeyALetter(event.key)
-        ? event.key.toLowerCase()
-        : event.key;
+      const key = this.controlSensitivity(event.key);
 
       if (this.keyMap[key] == true) {
         this.keyMap[key] = false;
