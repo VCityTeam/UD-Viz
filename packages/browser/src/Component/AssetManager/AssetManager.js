@@ -42,8 +42,8 @@ export class AssetManager {
     /** @type {AssetManagerConfig} */
     this.conf = null;
 
-    /** @type {Object<string,string>} */
-    this.soundIDPath = {};
+    /** @type {Object<string,SoundsConfig>} */
+    this.sounds = {};
 
     /** @type {Object<string,RenderData>}*/
     this.renderData = {};
@@ -73,7 +73,7 @@ export class AssetManager {
    * @returns {Howl} - Used to control the sound
    */
   createSound(idSound, options = {}) {
-    const pathSound = this.soundIDPath[idSound];
+    const pathSound = this.sounds[idSound].path;
 
     if (!pathSound) console.error('no sound with id ', idSound);
     return new Howl({
@@ -199,7 +199,7 @@ export class AssetManager {
     }
 
     if (config.sounds) {
-      this.soundIDPath = this.conf.sounds;
+      this.sounds = this.conf.sounds;
     }
 
     return new Promise((resolve) => {
