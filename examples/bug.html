@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Billboard example</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./assets/css/default.css" />
+  </head>
+  <body>
+    <script src="../packages/browser/dist/RUN_MODE/bundle.js"></script>
+
+    <script type="text/javascript">
+      const inputManager = new udvizBrowser.InputManager(false); // <= no case sensitive
+      inputManager.addKeyInput('A', 'keydown', () => {
+        console.log('A cb has been triggered');
+      });
+      inputManager.addKeyInput('a', 'keydown', () => {
+        console.log('a cb has been triggered');
+      });
+    </script>
+  </body>
+</html>
