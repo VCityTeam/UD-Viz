@@ -101,7 +101,7 @@ export class DateSelector extends itownsWidget.Widget {
 
         // wait for C3DTileFeatures to load
         c3DTilesLayer.addEventListener(
-          itowns.C3DTilesLayer.EVENT_TILE_CONTENT_LOADED,
+          itowns.C3DTILES_LAYER_EVENTS.ON_TILE_CONTENT_LOADED,
           () => {
             // reset
             while (layerContent.firstChild) {
@@ -295,7 +295,7 @@ export class DateSelector extends itownsWidget.Widget {
             itownsView.notifyChange();
 
             selectDates.onchange = () => {
-              c3DTilesLayer.notifyStyleChange();
+              c3DTilesLayer.updateStyle();
               itownsView.notifyChange();
             };
           }

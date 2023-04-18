@@ -146,7 +146,10 @@ export class SparqlQueryWindow extends EventSender {
                 c3DTileFeature.getInfo().batchTable['gml_id'] ==
                 URI.tokenizeURI(node_text).id
               ) {
-                result = c3DTileFeature;
+                result = {
+                  feature: c3DTileFeature,
+                  layer: c3DTilesLayer,
+                };
                 break;
               }
             }
@@ -157,14 +160,16 @@ export class SparqlQueryWindow extends EventSender {
     };
 
     this.addEventListener(Graph.EVENT_NODE_CLICKED, (node_text) => {
-      const elementClicked = fetchC3DTileFeatureWithNodeText(node_text);
+      const clickedResult = fetchC3DTileFeatureWithNodeText(node_text);
 
-      if (!elementClicked) return;
+      if (!clickedResult) return;
 
       focusCameraOn(
         this.itownsView,
         this.itownsView.controls,
-        elementClicked.computeWorldBox3().getCenter(new THREE.Vector3()),
+        clickedResult.layer
+          .computeWorldBox3(clickedResult.feature)
+          .getCenter(new THREE.Vector3()),
         {
           verticalDistance: 200,
           horizontalDistance: 200,
@@ -172,25 +177,27 @@ export class SparqlQueryWindow extends EventSender {
       );
     });
 
-    this.addEventListener(Graph.EVENT_NODE_MOUSEOVER, (node_text) => {
-      console.warn('DEPRECATED cant apply style to ', node_text);
-      // if this imply some style it should be handle in template or layer should be able to have != styles ?
-    });
+    // this.addEventListener(Graph.EVENT_NODE_MOUSEOVER, (node_text) => {
+    //   console.warn('DEPRECATED cant apply style to ', node_text);
+    // if this imply some style it should be handle in template or layer should be able to have != styles ?
+    // });
 
-    this.addEventListener(
-      Graph.EVENT_NODE_MOUSEOUT,
-      () => console.warn('DEPRECATED') // same reason as above
-    );
+    // this.addEventListener(
+    //   Graph.EVENT_NODE_MOUSEOUT,
+    //   () => console.warn('DEPRECATED') // same reason as above
+    // );
 
     this.addEventListener(Table.EVENT_CELL_CLICKED, (cell_text) => {
-      const elementClicked = fetchC3DTileFeatureWithNodeText(cell_text);
+      const clickedResult = fetchC3DTileFeatureWithNodeText(cell_text);
 
-      if (!elementClicked) return;
+      if (!clickedResult) return;
 
       focusCameraOn(
         this.itownsView,
         this.itownsView.controls,
-        elementClicked.computeWorldBox3().getCenter(new THREE.Vector3()),
+        clickedResult.layer
+          .computeWorldBox3(clickedResult.feature)
+          .getCenter(new THREE.Vector3()),
         {
           verticalDistance: 200,
           horizontalDistance: 200,

@@ -33,12 +33,28 @@ export class SideBarWidget {
     /** @type {Frame3DPlanar} */
     this.frame3DPlanar = new Frame3DPlanar(extent, frame3DPlanarOptions);
 
+    /** @type {itowns.Style} */
+    this.c3DTilesStyle = new itowns.Style({
+      fill: {
+        color: (feature) => {
+          return feature.userData.selectedColor
+            ? feature.userData.selectedColor
+            : 'white';
+        },
+      },
+    });
+
     // add pick to frame3DPlanar
-    let elementSelected = null;
+    const contextSelection = {
+      feature: null,
+      layer: null,
+    };
     this.frame3DPlanar.rootHtml.onclick = (event) => {
-      if (elementSelected) {
-        elementSelected.setUserData('selectedColor', null);
-        elementSelected = null;
+      if (contextSelection.feature) {
+        contextSelection.feature.userData.selectedColor = null;
+        contextSelection.layer.updateStyle();
+        contextSelection.feature = null;
+        contextSelection.layer = null;
       }
 
       const intersects = this.frame3DPlanar.itownsView.pickObjectsAt(
@@ -53,25 +69,16 @@ export class SideBarWidget {
         const elementClicked =
           intersects[0].layer.getC3DTileFeatureFromIntersectsArray(intersects);
         if (elementClicked) {
-          elementClicked.setUserData('selectedColor', 'blue');
-          elementSelected = elementClicked;
+          elementClicked.userData.selectedColor = 'blue';
+          contextSelection.feature = elementClicked;
+          contextSelection.layer = intersects[0].layer;
+          contextSelection.layer.updateStyle();
         }
       }
     };
 
     /** @type {RequestService} */
     this.requestService = new RequestService();
-
-    /** @type {itowns.Style} */
-    this.c3DTilesStyle = new itowns.Style({
-      fill: {
-        color: (el) => {
-          return el.getUserData('selectedColor')
-            ? el.getUserData('selectedColor')
-            : 'white';
-        },
-      },
-    });
 
     // HTML ELEMENT NEEDED TO BE REFERENCED
 
@@ -734,6 +741,8 @@ class PanMenuSideBar {
   constructor() {
     this.rootHtml = document.createElement('div');
     this.rootHtml.classList.add('_sidebar_widget_pan_menu_sidebar');
+
+    this.rootHtml.onclick = (event) => event.stopImmediatePropagation();
 
     this.containers = [];
   }

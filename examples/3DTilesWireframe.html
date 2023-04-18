@@ -22,7 +22,7 @@
           // http://proj4js.org/
           // define a projection as a string and reference it that way
           // the definition of the projection should be in config TODO_ISSUE
-          udvizBrowser.itowns.proj4.defs(
+          udvizBrowser.proj4.default.defs(
             configs['extent_lyon'].crs,
             '+proj=lcc +lat_1=45.25 +lat_2=46.75' +
               ' +lat_0=46 +lon_0=3 +x_0=1700000 +y_0=5200000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs'
@@ -66,7 +66,7 @@
             .filter((el) => el.isC3DTilesLayer)
             .forEach((layer) => {
               layer.addEventListener(
-                udvizBrowser.itowns.C3DTilesLayer.EVENT_TILE_CONTENT_LOADED,
+                udvizBrowser.itowns.C3DTILES_LAYER_EVENTS.ON_TILE_CONTENT_LOADED,
                 ({ tileContent }) => {
                   udvizBrowser.THREEUtil.appendWireframeToObject3D(tileContent);
                 }
