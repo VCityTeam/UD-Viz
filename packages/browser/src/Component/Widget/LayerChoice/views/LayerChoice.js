@@ -188,30 +188,28 @@ export class LayerChoice {
           focusC3DTilesLayer(this.itownView, layers[i]);
         };
         item.appendChild(itemButton);
-      } else {
-        const itemDivOpacity = document.createElement('div');
-        itemDivOpacity.id = 'opacity_' + layers[i].id;
-
-        const itemRangeOpacity = document.createElement('input');
-        itemRangeOpacity.setAttribute('type', 'range');
-        itemRangeOpacity.min = 0;
-        itemRangeOpacity.max = 1;
-        itemRangeOpacity.step = 0.1;
-        itemRangeOpacity.value = layers[i].opacity;
-
-        itemRangeOpacity.onchange = (event) => {
-          // this is not working well check itowns bug ?
-          layers[i].opacity = event.srcElement.opacity;
-          this.itownView.notifyChange();
-        };
-
-        itemDivOpacity.appendChild(itemRangeOpacity);
-
-        const itemSpanOpacity = document.createElement('span');
-        itemSpanOpacity.innerText = ' Opacity';
-        itemDivOpacity.appendChild(itemSpanOpacity);
-        item.appendChild(itemDivOpacity);
       }
+      const itemDivOpacity = document.createElement('div');
+      itemDivOpacity.id = 'opacity_' + layers[i].id;
+
+      const itemRangeOpacity = document.createElement('input');
+      itemRangeOpacity.setAttribute('type', 'range');
+      itemRangeOpacity.min = 0;
+      itemRangeOpacity.max = 1;
+      itemRangeOpacity.step = 0.1;
+      itemRangeOpacity.value = layers[i].opacity;
+
+      itemRangeOpacity.onchange = () => {
+        layers[i].opacity = itemRangeOpacity.valueAsNumber;
+        this.itownView.notifyChange();
+      };
+
+      itemDivOpacity.appendChild(itemRangeOpacity);
+
+      const itemSpanOpacity = document.createElement('span');
+      itemSpanOpacity.innerText = ' Opacity';
+      itemDivOpacity.appendChild(itemSpanOpacity);
+      item.appendChild(itemDivOpacity);
 
       list.appendChild(item);
     }
