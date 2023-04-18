@@ -34,17 +34,6 @@ export class $3DTemporalTileset {
     this.temporalVersions = new $3DTemporalVersion(json.versions);
     /** @type {object} */
     this.versionTransitions = json.versionTransitions;
-
-    // Trapped by 3DTemporalExtension.js that stores this instance of
-    // $3DTemporalTileset
-    /**
-     * do not do this
-     */
-    window.dispatchEvent(
-      new CustomEvent($3DTemporalTileset.TEMPORAL_TILESET_LOADED, {
-        detail: { temporalTileset: this },
-      })
-    );
   }
 
   /**
@@ -69,15 +58,5 @@ export class $3DTemporalTileset {
       }
       this.transactions.push(parsedTransac);
     }
-  }
-
-  /**
-   * It returns a string that is the name of the event that is triggered when a temporal tileset is
-   * loaded
-   *
-   * @returns {string} A string.
-   */
-  static get TEMPORAL_TILESET_LOADED() {
-    return 'TEMPORAL_TILESET_LOADED';
   }
 }
