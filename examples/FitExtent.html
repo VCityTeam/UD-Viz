@@ -10,8 +10,7 @@
     <script src="../packages/browser/dist/RUN_MODE/bundle.js"></script>
 
     <script type="text/javascript">
-      udvizBrowser
-        .loadMultipleJSON(['./assets/config/extent_lyon.json'])
+      udvizBrowser.FileUtil.loadMultipleJSON(['./assets/config/extent_lyon.json'])
         .then((configs) => {
           // http://proj4js.org/
           // define a projection as a string and reference it that way
