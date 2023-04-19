@@ -57,8 +57,11 @@ export class Frame3DPlanar extends Frame3DBase {
     if (hasItownsControls) this.enableItownsViewControls(true);
 
     // fill parent class attributes create by the itownsView
+    /** @type {THREE.Scene} */
     this.scene = this.itownsView.scene;
+    /** @type {THREE.WebGLRenderer} */
     this.renderer = this.itownsView.mainLoop.gfxEngine.renderer;
+    /** @type {THREE.PerspectiveCamera} */
     this.camera = this.itownsView.camera.camera3D;
 
     /** @type {import('../THREEUtil').SceneConfig} */
