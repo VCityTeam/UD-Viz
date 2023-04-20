@@ -252,6 +252,44 @@ function eulerArrayFromURIComponent(uriComp) {
 }
 
 /**
+ * Take an array of string and check if it is in matrix4 format
+ *
+ * @param {Array<string>} subString - array of string
+ * @returns {boolean} - true if it is matrix4 format
+ */
+function checkIfSubStringIsMatrix4(subString) {
+  if (subString.length != 16) {
+    // Need 16 string
+    return false;
+  }
+
+  for (let index = 0; index < subString.length; index++) {
+    const element = subString[index];
+    if (!Type.isNumeric(element)) {
+      // All string should be numerics
+      return false;
+    }
+  }
+
+  return true;
+}
+
+/**
+ * Taking a string from the unpacking URI and splitting it into an array of strings.
+ *
+ * @param {string} uriComp - The string from the unpacking URI
+ * @returns {Array<string>} - returns the array of strings if it is in matrix4 format, otherwise returns null
+ */
+function matrix4ArrayFromURIComponent(uriComp) {
+  const subString = uriComp.split(',');
+
+  if (checkIfSubStringIsMatrix4(subString)) {
+    return subString;
+  }
+  return null;
+}
+
+/**
  * Convert an Object into a Int32Array
  *
  * @param {object} obj - object to convert
@@ -552,8 +590,10 @@ module.exports = {
   arrayEquals: arrayEquals,
   checkIfSubStringIsEuler: checkIfSubStringIsEuler,
   checkIfSubStringIsVector3: checkIfSubStringIsVector3,
+  checkIfSubStringIsMatrix4: checkIfSubStringIsMatrix4,
   vector3ArrayFromURIComponent: vector3ArrayFromURIComponent,
   eulerArrayFromURIComponent: eulerArrayFromURIComponent,
+  matrix4ArrayFromURIComponent: matrix4ArrayFromURIComponent,
   objectToInt32Array: objectToInt32Array,
   int32ArrayToObject: int32ArrayToObject,
   dataUriToBuffer: dataUriToBuffer,
