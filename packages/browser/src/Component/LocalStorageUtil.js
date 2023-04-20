@@ -13,19 +13,20 @@ const KEY = {
  * You want to use this only when there is just one camera during the lifecycle of your application
  *
  * @param {THREE.PerspectiveCamera} camera - camera to track
+ * @param {string} [key=KEY.CAMERA] - key of the item in the localStorage ud-viz has a default one but you can use yours to avoid collision with another ud-viz app
  * @returns {boolean} true if camera has been setted with localStorage
  */
-export function localStorageSetCamera(camera) {
+export function localStorageSetCamera(camera, key = KEY.CAMERA) {
   if (!camera) throw new Error('no camera to track');
 
   // listen the close tab event
   window.addEventListener('beforeunload', () => {
     camera.updateMatrixWorld();
-    localStorage.setItem(KEY.CAMERA, camera.matrixWorld.toArray().toString());
+    localStorage.setItem(key, camera.matrixWorld.toArray().toString());
   });
 
   // check if there was a previous camera matrix
-  const storedMatrixArrayString = localStorage.getItem(KEY.CAMERA);
+  const storedMatrixArrayString = localStorage.getItem(key);
 
   if (storedMatrixArrayString) {
     let error = false;
