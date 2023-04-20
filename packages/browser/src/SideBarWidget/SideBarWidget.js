@@ -12,6 +12,7 @@ import {
   Widget,
   Game,
   InputManager,
+  localStorageSetCamera,
 } from '../Component/Component';
 
 import * as Shared from '@ud-viz/shared';
@@ -32,6 +33,9 @@ export class SideBarWidget {
 
     /** @type {Frame3DPlanar} */
     this.frame3DPlanar = new Frame3DPlanar(extent, frame3DPlanarOptions);
+
+    // local storage tracking
+    localStorageSetCamera(this.frame3DPlanar.camera);
 
     /** @type {itowns.Style} */
     this.c3DTilesStyle = new itowns.Style({
