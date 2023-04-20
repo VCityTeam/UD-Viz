@@ -154,7 +154,6 @@ export class SlideShow {
 
   dispose() {
     this.rootHtml.remove();
-    this.rootHtml = null;
     this.stopLoopSlideShow();
     if (this.plane) {
       this.plane.removeFromParent();
