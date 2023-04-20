@@ -14,12 +14,16 @@ import {
   InputManager,
   localStorageSetCameraMatrix,
 } from '../Component/Component';
+import { Data } from '@ud-viz/shared';
+import * as THREE from 'three';
 
 import * as Shared from '@ud-viz/shared';
 
 import packageInfo from '../../package.json';
 
 import './SideBarWidget.css';
+
+const CAMERA_MATRIX_URL_KEY = 'camera_matrix';
 
 export class SideBarWidget {
   /**
@@ -34,8 +38,32 @@ export class SideBarWidget {
     /** @type {Frame3DPlanar} */
     this.frame3DPlanar = new Frame3DPlanar(extent, frame3DPlanarOptions);
 
-    // local storage tracking
-    localStorageSetCameraMatrix(this.frame3DPlanar.camera);
+    const setCameraMatrixFromURL = () => {
+      const paramsUrl = new URLSearchParams(window.location.search);
+      if (paramsUrl.has(CAMERA_MATRIX_URL_KEY)) {
+        const matrix4SubStrings = Data.matrix4ArrayFromURIComponent(
+          decodeURIComponent(paramsUrl.get(CAMERA_MATRIX_URL_KEY))
+        );
+        if (matrix4SubStrings) {
+          // compatible matrix4 uri
+          const cameraMatrix = new THREE.Matrix4().fromArray(
+            matrix4SubStrings.map((x) => parseFloat(x))
+          );
+          cameraMatrix.decompose(
+            this.frame3DPlanar.camera.position,
+            this.frame3DPlanar.camera.quaternion,
+            this.frame3DPlanar.camera.scale
+          );
+          return true;
+        }
+      }
+      return false;
+    };
+
+    if (!setCameraMatrixFromURL()) {
+      // local storage tracking
+      localStorageSetCameraMatrix(this.frame3DPlanar.camera);
+    }
 
     /** @type {itowns.Style} */
     this.c3DTilesStyle = new itowns.Style({
@@ -233,6 +261,26 @@ export class SideBarWidget {
       titleNavBar.classList.add('ud-viz-label');
       titleNavBar.innerHTML = 'UD-VIZ ' + packageInfo.version;
       this.menuSideBar.appendChild(titleNavBar);
+
+      // url camera matrix button
+      const urlCameraMatrixButton = document.createElement('button');
+      urlCameraMatrixButton.innerText = 'Link';
+      this.menuSideBar.appendChild(urlCameraMatrixButton);
+
+      urlCameraMatrixButton.onclick = () => {
+        const url = new URL(window.location.origin + window.location.pathname);
+
+        url.searchParams.append(
+          encodeURI(CAMERA_MATRIX_URL_KEY),
+          encodeURIComponent(
+            this.frame3DPlanar.camera.matrixWorld.toArray().toString()
+          )
+        );
+
+        // put it in clipboard
+        navigator.clipboard.writeText(url);
+        alert('Link copied !');
+      };
 
       // hr
       const hrElement = document.createElement('hr');
