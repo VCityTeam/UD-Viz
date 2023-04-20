@@ -58,6 +58,19 @@
         parent.style.width = 'fit-content';
         parent.appendChild(slideShow.html());
 
+        const hideUIListener = (event) => {
+          if (event.key.toLowerCase() != 's') return;
+
+          if (slideShow.html().style.display == 'none') {
+            slideShow.html().style.display = '';
+          } else {
+            slideShow.html().style.display = 'none';
+          }
+        };
+
+        /* Hide the roothtml without dispose the widget */
+        window.addEventListener('keydown', hideUIListener);
+
         frame3DPlanar.appendToUI(parent);
         slideShow.addListeners();
         frame3DPlanar.scene.add(slideShow.plane);

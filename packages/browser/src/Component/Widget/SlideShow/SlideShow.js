@@ -115,7 +115,6 @@ export class SlideShow {
     this.dragOverListener = null;
     this.nextListener = null;
     this.previousListener = null;
-    this.hideUIListener = null;
     this.hidePlaneListener = null;
 
     // Through this.callbacksHTMLEl and addEventListeners to HTMLElements in DOM (elements which created by Window class)
@@ -144,7 +143,6 @@ export class SlideShow {
 
   removeListeners() {
     window.removeEventListener('keydown', this.hidePlaneListener);
-    window.removeEventListener('keydown', this.hideUIListener);
     window.removeEventListener('keydown', this.previousListener);
     window.removeEventListener('keydown', this.nextListener);
 
@@ -619,19 +617,6 @@ export class SlideShow {
 
     // Change the previous slide
     window.addEventListener('keydown', this.previousListener);
-
-    this.hideUIListener = (event) => {
-      if (event.key.toLowerCase() != 's') return;
-
-      if (this.rootHtml.style.display == 'none') {
-        this.rootHtml.style.display = '';
-      } else {
-        this.rootHtml.style.display = 'none';
-      }
-    };
-
-    /* Hide the roothtml without dispose the widget */
-    window.addEventListener('keydown', this.hideUIListener);
   }
 
   nextSlide() {
