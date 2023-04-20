@@ -19,7 +19,7 @@ export class InputManager {
    *
    * @param {boolean} [isCaseSensitive=false] true so that the inputs are case sensitive
    */
-  constructor(isCaseSensitive = true) {
+  constructor(isCaseSensitive = false) {
     /**
      * register callback associated to an event + command id
      *
@@ -166,7 +166,8 @@ export class InputManager {
     key = this.controlSensitivity(key);
 
     const listener = (event) => {
-      if ((key == event.key || key == null) && !this.pause) cb(event);
+      const eventKey = this.controlSensitivity(event.key);
+      if ((key == eventKey || key == null) && !this.pause) cb(event);
     };
     window.addEventListener(eventID, listener);
     // Register to dispose it
