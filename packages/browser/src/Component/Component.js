@@ -15,6 +15,8 @@ export { RequestService } from './RequestService';
 
 export * from './ItownsUtil';
 
+export * from './LocalStorageUtil.js';
+
 export * from './Frame3D/Frame3D';
 
 export * from './GUI/GUI';
