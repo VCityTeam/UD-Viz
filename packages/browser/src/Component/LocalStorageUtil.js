@@ -16,7 +16,7 @@ const KEY = {
  * @param {string} [key=KEY.CAMERA] - key of the item in the localStorage ud-viz has a default one but you can use yours to avoid collision with another ud-viz app
  * @returns {boolean} true if camera has been setted with localStorage
  */
-export function localStorageSetCamera(camera, key = KEY.CAMERA) {
+export function localStorageSetCameraMatrix(camera, key = KEY.CAMERA) {
   if (!camera) throw new Error('no camera to track');
 
   // listen the close tab event
