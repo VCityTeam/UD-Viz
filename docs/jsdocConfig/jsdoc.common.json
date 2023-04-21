@@ -18,7 +18,7 @@
     }
   },
   "opts": {
-    "tutorials": "./docs/static",
+    "tutorials": "./docs/static/",
     "recurse": true,
     "template": "node_modules/clean-jsdoc-theme",
     "theme_opts": {
