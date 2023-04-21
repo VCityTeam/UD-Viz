@@ -75,6 +75,7 @@ export class SideBarWidget {
           contextSelection.layer.updateStyle();
         }
       }
+      this.frame3DPlanar.itownsView.notifyChange(); // need a redraw of the view
     };
 
     /** @type {RequestService} */
