@@ -136,10 +136,16 @@ class ThreadContext {
   }
 
   /**
+   * @callback PromiseListener
+   * @param {*} params
+   * @returns {Promise}
+   */
+
+  /**
    * Add a listener to parent thread message
    *
    * @param {string} eventID - event id
-   * @param {()=>Promise|undefined} promise - callback return a promise or nothing
+   * @param {PromiseListener|undefined} promise - callback return a promise or nothing
    */
   on(eventID, promise) {
     for (const event in Thread.EVENT) {
