@@ -39,10 +39,16 @@ export class MultiPlanarProcess {
      @type {SocketIOWrapper} */
     this.socketIOWrapper = socketIOWrapper;
 
-    /** @type {itowns.Extent} - buffer to rebuild a frame3Dplanar on demand */
+    /**
+     * buffer to rebuild a frame3Dplanar on demand
+     *
+     @type {itowns.Extent}*/
     this.extent = extent;
 
-    /** @type {Frame3DPlanarOption} - buffer to rebuild a frame3Dplanar on demand */
+    /** 
+     * buffer to rebuild a frame3Dplanar on demand 
+     *  
+     @type {Frame3DPlanarOption} */
     this.frame3DPlanarOptions = options.frame3DPlanarOptions || {};
 
     /** 
