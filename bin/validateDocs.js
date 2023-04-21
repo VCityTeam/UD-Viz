@@ -11,7 +11,7 @@ exec('npm run docs').then((result) => {
 
       if (count > 0) {
         console.log(count + ' ' + label);
-        process.exit(1); // these strings occurence should be fixed
+        throw new Error('jsdoc documentation generation'); // these strings occurence should be fixed
       }
     }
   };
