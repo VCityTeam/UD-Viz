@@ -26,3 +26,6 @@ jobs:
     - script:
         - npm run validate-links
       name: 'Markdown link checks'
+    - script:
+        - node ./bin/validateDocs.js
+      name: 'Documentation generation'
