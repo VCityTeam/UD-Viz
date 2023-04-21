@@ -99,11 +99,11 @@
       };
 
       createContainer('SideBarWidget');
+      createContainer('Frame3D');
       createContainer('Widget');
       createContainer('Game');
-      createContainer('Frame3D');
-      createContainer('THREEUtil');
       createContainer('GUI');
+      createContainer('THREEUtil');
 
       const addProjectElement = (name, idParent, href, title, srcImg) => {
         const newProject = document.createElement('a');
@@ -307,6 +307,14 @@
         './examples/Window.html',
         'This example illustrate the gui element window',
         './examples/assets/img/mosaic/Window.png'
+      );
+
+      addProjectElement(
+        '3DTiles Style',
+        'Frame3D',
+        './examples/C3DTilesLayerStyle.html',
+        'This example illustrate how to apply style on 3DTiles features',
+        './examples/assets/img/mosaic/C3DTilesLayerStyle.png'
       );
     </script>
   </body>
