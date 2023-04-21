@@ -3,7 +3,7 @@ const exec = require('child-process-promise').exec;
 exec('npm run docs').then((result) => {
   console.log(result.stderr);
 
-  const coutnStringOccurence = (regex, label) => {
+  const countStringOccurence = (regex, label) => {
     const countRegexResult = result.stderr.match(regex);
 
     if (countRegexResult) {
@@ -16,6 +16,6 @@ exec('npm run docs').then((result) => {
     }
   };
 
-  coutnStringOccurence(/WARNING/g, 'WARNING');
-  coutnStringOccurence(/ERROR/g, 'ERROR');
+  countStringOccurence(/WARNING/g, 'WARNING');
+  countStringOccurence(/ERROR/g, 'ERROR');
 });
