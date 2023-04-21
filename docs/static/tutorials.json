@@ -1,0 +1,28 @@
+{
+  "ContributeData": {
+    "title": "User"
+  },
+  "Dev": {
+    "title": "Getting started",
+    "children": {
+      "Developers": {},
+      "ud_viz_browser": {
+        "title": "@ud-viz/browser",
+        "children": {
+          "Widget": {},
+          "Temporal": {},
+          "SPARQL": {},
+          "LayerChoice": {},
+          "Geocoding": {},
+          "Document": {},
+          "Contribute": {}
+        }
+      },
+      "Contributing": {},
+      "ReleasePublish": {},
+      "Reproducibility": {},
+      "Definitions": {},
+      "ArchitectureMVCTargetDesign": {}
+    }
+  }
+}
