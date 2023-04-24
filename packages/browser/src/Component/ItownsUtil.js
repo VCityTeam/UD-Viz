@@ -36,6 +36,15 @@ export function createC3DTilesLayer(layer, itownsView, extensions = null) {
     itownsView
   );
 
+  if (layer['pc_size']) {
+    // this is a point cloud 3DTiles
+    $3dTilesLayer.material = new THREE.PointsMaterial({
+      size: layer['pc_size'],
+      vertexColors: true,
+    });
+    // .material is the overrideMaterial of a point cloud 3DTiles
+  }
+
   return $3dTilesLayer;
 }
 
