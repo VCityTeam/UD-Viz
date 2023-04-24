@@ -98,7 +98,6 @@ module.exports = function routine(gameScriptClass = {}) {
 
       if (applyUUID) {
         Promise.all(promises).then(() => {
-          console.log(objectMessage[Thread.KEY.TYPE], ' applied');
           const applyResolveMessage = {};
           applyResolveMessage[Thread.KEY.TYPE] = Thread.EVENT.APPLY_RESOLVE;
           applyResolveMessage[Thread.KEY.DATA] = applyUUID;

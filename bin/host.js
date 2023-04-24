@@ -42,6 +42,18 @@ app.use(
 app.use(
   stringReplace(
     {
+      SCRIPT_TAG_RELOAD:
+        runMode == 'debug' ? '<script src="/reload/reload.js"></script>' : '',
+    },
+    {
+      contentTypeFilterRegexp: /text\/html/,
+    }
+  )
+);
+
+app.use(
+  stringReplace(
+    {
       UDVIZ_VERSION: udvizVersion,
     },
     {
@@ -52,23 +64,17 @@ app.use(
 
 app.use(udvizNode.express.static('./'));
 
-const httpServer = http.createServer(app);
+const httpServer = app.listen(Constant.DEFAULT_PORT, (err) => {
+  if (err) {
+    console.error('Server does not start');
+    return;
+  }
+  console.log('Http server listening on port', Constant);
+});
 
 // build example thread bundle
 exec('npm run build-default-thread --prefix ./packages/node')
   .then(printExec)
-  .then(() =>
-    // reload package refresh browser tabs
-    reload(app).then(() => {
-      httpServer.listen(Constant.DEFAULT_PORT, (err) => {
-        if (err) {
-          console.error('Server does not start');
-          return;
-        }
-        console.log('Http server listening on port', Constant);
-      });
-    })
-  )
   .then(() => {
     // initialize a example game socket service
     const gameSocketService = new udvizNode.Game.SocketService(httpServer);
@@ -102,5 +108,6 @@ exec('npm run build-default-thread --prefix ./packages/node')
         if (process.send) {
           process.send(Constant.MESSAGE.READY);
         }
+        reload(app, { port: Constant.RELOAD_PORT });
       });
   });
