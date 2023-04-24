@@ -46,11 +46,11 @@ export class Element extends ExternalScriptBase {
       CameraManager.ID_SCRIPT
     );
     noteButton.onclick = () => {
-      this.context.frame3D.enableItownsViewControls(false);
+      this.context.frame3D.itownsView.controls.enabled = false;
       this.cameraManager
         .moveToBoundingBox(new THREE.Box3().setFromObject(this.object3D), 1500)
         .then(() => {
-          this.context.frame3D.enableItownsViewControls(true);
+          this.context.frame3D.itownsView.controls.enabled = true;
           this.context.frame3D.itownsView.notifyChange(
             this.context.frame3D.camera
           );

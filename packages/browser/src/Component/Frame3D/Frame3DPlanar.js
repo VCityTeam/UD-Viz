@@ -51,10 +51,13 @@ export class Frame3DPlanar extends Frame3DBase {
         tilt: tilt,
       },
       maxSubdivisionLevel: maxSubdivisionLevel,
-      noControls: true, // no controls to use the method enableItownsViewControls to handle params pass to PlanarControls
+      noControls: !hasItownsControls,
+      controls: {
+        handleCollision: false,
+        focusOnMouseOver: false,
+        focusOnMouseClick: false,
+      },
     });
-
-    if (hasItownsControls) this.enableItownsViewControls(true);
 
     // fill parent class attributes create by the itownsView
     /** @type {THREE.Scene} */
@@ -110,34 +113,6 @@ export class Frame3DPlanar extends Frame3DBase {
       this.itownsView.render = null;
     } else {
       this.itownsView.render = () => {};
-    }
-  }
-
-  /**
-   * Enable / disable PlanarControls
-   *
-   * @param {boolean} value - true enable / false disable
-   * @returns {void}
-   */
-  enableItownsViewControls(value) {
-    if (
-      (value && this.itownsView.controls) ||
-      (!value && !this.itownsView.controls)
-    ) {
-      console.log('no change to apply');
-      return;
-    }
-
-    if (value) {
-      // eslint-disable-next-line no-new
-      new itowns.PlanarControls(this.itownsView, {
-        handleCollision: false,
-        focusOnMouseOver: false,
-        focusOnMouseClick: false,
-      });
-    } else {
-      this.itownsView.controls.dispose();
-      this.itownsView.controls = null;
     }
   }
 

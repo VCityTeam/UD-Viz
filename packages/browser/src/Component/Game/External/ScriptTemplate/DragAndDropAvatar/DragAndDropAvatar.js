@@ -159,7 +159,7 @@ export class DragAndDropAvatar extends ExternalScriptBase {
 
     if (this.avatar) {
       // disable itowns controls
-      this.context.frame3D.enableItownsViewControls(false);
+      this.context.frame3D.itownsView.controls.enabled = false;
       this.dragAndDropElement.remove();
 
       // record where was the camera
@@ -206,7 +206,7 @@ export class DragAndDropAvatar extends ExternalScriptBase {
           if (!movementSucceed) throw new Error('camera manager error');
 
           this.appendToHtml(this.dragAndDropElement);
-          this.context.frame3D.enableItownsViewControls(true);
+          this.context.frame3D.itownsView.controls.enabled = true;
         });
     }
   }
