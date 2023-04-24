@@ -14,7 +14,7 @@
         './assets/config/extent_lyon.json',
         './assets/config/frame3D_planars.json',
         './assets/config/layer/3DTiles_point_cloud.json',
-        './assets/config/layer/base_maps.json'
+        './assets/config/layer/base_maps.json',
       ]).then((configs) => {
         // http://proj4js.org/
         // define a projection as a string and reference it that way
@@ -38,12 +38,6 @@
           configs['frame3D_planars'][3]
         );
 
-        udvizBrowser.THREEUtil.addLights(frame3DPlanar.getScene());
-        udvizBrowser.THREEUtil.initRenderer(
-          frame3DPlanar.getRenderer(),
-          new udvizBrowser.THREE.Color(0x6699cc)
-        );
-
         // ADD BASE MAP
         udvizBrowser.addBaseMapLayer(
           configs['base_maps'][0],
@@ -54,7 +48,6 @@
         // /// ADD LAYER
         udvizBrowser.add3DTilesLayers(
           configs['3DTiles_point_cloud'],
-          frame3DPlanar.layerManager,
           frame3DPlanar.itownsView
         );
       });
