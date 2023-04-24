@@ -5,7 +5,6 @@ const udvizVersion = require('../package.json').version;
 const { Game } = require('@ud-viz/shared');
 const exec = require('child-process-promise').exec;
 const Constant = require('./Constant');
-const http = require('http');
 const reload = require('reload');
 const {
   stringReplace,
