@@ -5,6 +5,8 @@ const udvizVersion = require('../package.json').version;
 const { Game } = require('@ud-viz/shared');
 const exec = require('child-process-promise').exec;
 const Constant = require('./Constant');
+const http = require('http');
+const reload = require('reload');
 const {
   stringReplace,
 } = require('string-replace-middleware/dist/string-replace-middleware.cjs.development.js'); // import a commonjs version of string replace
@@ -50,17 +52,23 @@ app.use(
 
 app.use(udvizNode.express.static('./'));
 
-const httpServer = app.listen(Constant.DEFAULT_PORT, (err) => {
-  if (err) {
-    console.error('Server does not start');
-    return;
-  }
-  console.log('Http server listening on port', Constant);
-});
+const httpServer = http.createServer(app);
 
 // build example thread bundle
 exec('npm run build-default-thread --prefix ./packages/node')
   .then(printExec)
+  .then(() =>
+    // reload package refresh browser tabs
+    reload(app).then(() => {
+      httpServer.listen(Constant.DEFAULT_PORT, (err) => {
+        if (err) {
+          console.error('Server does not start');
+          return;
+        }
+        console.log('Http server listening on port', Constant);
+      });
+    })
+  )
   .then(() => {
     // initialize a example game socket service
     const gameSocketService = new udvizNode.Game.SocketService(httpServer);
