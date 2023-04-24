@@ -9,15 +9,14 @@
   - [Getting started](#getting-started)
   - [Developers](#developers)
     - [Npm scripts](#npm-scripts)
-    - [Debugging](#debugging)
 
 ### Directory Hierarchy
 
 ```
 UD-Viz/packages/node
 ├── src                             # JS files composing the package
+|    ├── Game                       # Game socket service
 |    ├── Debug.js                   # Debugging routine for @ud-viz/* packages
-|    ├── ExpressAppWrapper.js       # Express app wrapper for @ud-viz/browser (dedicated back-end)
 |    ├── index.js                   # API description (webpack entry point)
 |    ├── Test.js                    # Module for testing @ud-viz/* packages.
 ├── package.json                    # Global npm project description
@@ -40,8 +39,3 @@ For pre-requisites see [here](https://github.com/VCityTeam/UD-Viz/blob/master/do
 | `npm run build-lib` | Create a [webpack](https://webpack.js.org/) bundle of the library |
 | `npm run build-default-thread` | Create a [webpack](https://webpack.js.org/) bundle of the default game thread |
 | `npm run build` | Run `npm run build-lib` and `npm run build-default-thread` |
-
-
-### Debugging
-
-To debug the [ExpressAppWrapper](../node/src/ExpressAppWrapper.js) back-end see [here](../../docs/static/Devel/Developers.md#debugging-the-examples)
