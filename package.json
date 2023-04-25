@@ -10,7 +10,7 @@
     "build-shared": "npm run build --prefix ./packages/shared",
     "build-browser": "npm run build --prefix ./packages/browser",
     "build-node": "npm run build --prefix ./packages/node",
-    "debug-examples": "cross-env NODE_ENV=development nodemon --trace-warnings --verbose --watch ./packages/shared/src --watch ./packages/browser/src --watch ./packages/node/src --watch ./index.html --watch ./examples --delay 2500ms ./bin/debugExamples.js -e js,css,html",
+    "debug-examples": "cross-env NODE_ENV=development nodemon --trace-warnings --verbose --watch ./packages/shared/src --watch ./packages/browser/src --watch ./packages/node/src --delay 2500ms ./bin/debugExamples.js -e js,css,html",
     "eslint": "eslint --ignore-path .gitignore \"packages/**/*.js\" \"examples/*.html\" ",
     "eslint-quiet": "eslint --quiet --ignore-path .gitignore \"packages/**/*.js\" \"examples/*.html\" ",
     "eslint-fix": "eslint --ignore-path .gitignore \"packages/**/*.js\" \"examples/*.html\"  --fix",
