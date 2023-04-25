@@ -6,9 +6,7 @@ const { Game } = require('@ud-viz/shared');
 const exec = require('child-process-promise').exec;
 const Constant = require('./Constant');
 const reload = require('reload');
-const {
-  stringReplace,
-} = require('string-replace-middleware/dist/string-replace-middleware.cjs.development.js'); // import a commonjs version of string replace
+const { stringReplace } = require('string-replace-middleware');
 
 /**
  * It prints the stdout and stderr of a result object
