@@ -27,8 +27,7 @@
     "gm": "^1.23.1",
     "pngjs": "^6.0.0",
     "puppeteer": "^19.4.1",
-    "socket.io": "^4.5.4",
-    "string-replace-middleware": "^1.0.2"
+    "socket.io": "^4.5.4"
   },
   "devDependencies": {
     "webpack-node-externals": "^2.5.2"
