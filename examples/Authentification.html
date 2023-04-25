@@ -11,19 +11,18 @@
 
     <script type="text/javascript">
       udvizBrowser.FileUtil.loadMultipleJSON([
-          './assets/config/server/spatial_multimedia_db_server.json',
-        ])
-        .then((configs) => {
-          const authenticationView =
-            new udvizBrowser.Widget.Server.AuthenticationView(
-              new udvizBrowser.Widget.Server.AuthenticationService(
-                new udvizBrowser.RequestService(),
-                configs['spatial_multimedia_db_server']
-              )
-            );
+        './assets/config/server/spatial_multimedia_db_server.json',
+      ]).then((configs) => {
+        const authenticationView =
+          new udvizBrowser.Widget.Server.AuthenticationView(
+            new udvizBrowser.Widget.Server.AuthenticationService(
+              new udvizBrowser.RequestService(),
+              configs['spatial_multimedia_db_server']
+            )
+          );
 
-          document.body.appendChild(authenticationView.html());
-        });
+        document.body.appendChild(authenticationView.html());
+      });
     </script>
     SCRIPT_TAG_RELOAD
   </body>

@@ -11,50 +11,49 @@
 
     <script type="text/javascript">
       udvizBrowser.FileUtil.loadMultipleJSON([
-          './assets/config/extent_lyon.json',
-          './assets/config/frame3D_planars.json',
-          './assets/config/layer/base_maps.json',
-        ])
-        .then((configs) => {
-          // http://proj4js.org/
-          // define a projection as a string and reference it that way
-          // the definition of the projection should be in config TODO_ISSUE
-          udvizBrowser.proj4.default.defs(
-            configs['extent_lyon'].crs,
-            '+proj=lcc +lat_1=45.25 +lat_2=46.75' +
-              ' +lat_0=46 +lon_0=3 +x_0=1700000 +y_0=5200000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs'
-          );
+        './assets/config/extent_lyon.json',
+        './assets/config/frame3D_planars.json',
+        './assets/config/layer/base_maps.json',
+      ]).then((configs) => {
+        // http://proj4js.org/
+        // define a projection as a string and reference it that way
+        // the definition of the projection should be in config TODO_ISSUE
+        udvizBrowser.proj4.default.defs(
+          configs['extent_lyon'].crs,
+          '+proj=lcc +lat_1=45.25 +lat_2=46.75' +
+            ' +lat_0=46 +lon_0=3 +x_0=1700000 +y_0=5200000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs'
+        );
 
-          const extent = new udvizBrowser.itowns.Extent(
-            configs['extent_lyon'].crs,
-            parseInt(configs['extent_lyon'].west),
-            parseInt(configs['extent_lyon'].east),
-            parseInt(configs['extent_lyon'].south),
-            parseInt(configs['extent_lyon'].north)
-          );
+        const extent = new udvizBrowser.itowns.Extent(
+          configs['extent_lyon'].crs,
+          parseInt(configs['extent_lyon'].west),
+          parseInt(configs['extent_lyon'].east),
+          parseInt(configs['extent_lyon'].south),
+          parseInt(configs['extent_lyon'].north)
+        );
 
-          const frame3DPlanar = new udvizBrowser.Frame3DPlanar(
-            extent,
-            configs['frame3D_planars'][2]
-          );
+        const frame3DPlanar = new udvizBrowser.Frame3DPlanar(
+          extent,
+          configs['frame3D_planars'][2]
+        );
 
-          udvizBrowser.addBaseMapLayer(
-            configs['base_maps'][0],
-            frame3DPlanar.itownsView,
-            extent
-          );
+        udvizBrowser.addBaseMapLayer(
+          configs['base_maps'][0],
+          frame3DPlanar.itownsView,
+          extent
+        );
 
-          // //// CAMERA POSITIONER
-          const cameraPosition = new udvizBrowser.Widget.CameraPositioner(
-            frame3DPlanar.getItownsView()
-          );
+        // //// CAMERA POSITIONER
+        const cameraPosition = new udvizBrowser.Widget.CameraPositioner(
+          frame3DPlanar.getItownsView()
+        );
 
-          const parent = document.createElement('div');
-          parent.style.backgroundColor = 'white';
-          parent.style.width = 'fit-content';
-          parent.appendChild(cameraPosition.html());
-          frame3DPlanar.appendToUI(parent);
-        });
+        const parent = document.createElement('div');
+        parent.style.backgroundColor = 'white';
+        parent.style.width = 'fit-content';
+        parent.appendChild(cameraPosition.html());
+        frame3DPlanar.appendToUI(parent);
+      });
     </script>
     SCRIPT_TAG_RELOAD
   </body>
