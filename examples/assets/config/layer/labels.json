@@ -1,39 +1,39 @@
 [
-    {
-        "id": "Mairies de la métropole de Lyon",
-        "url": "https://download.data.grandlyon.com/wfs/grandlyon?SERVICE=WFS&VERSION=2.0.0&request=GetFeature&typename=adr_voie_lieu.adrmairiepct_2_0_0&outputFormat=application/json;%20subtype=geojson&SRSNAME=EPSG:3946&startIndex=0",
-        "sourceType": "file",
-        "zoom": {
-            "min": 3
-        },
-        "style": {
-            "text": {
-                "field": "{nom}",
-                "color": "rgb(200,200,200)",
-                "size": 10,
-                "haloColor": "rgba(20,20,20, 0.8)",
-                "haloWidth": 3
-            }
-        }
+  {
+    "id": "Mairies de la métropole de Lyon",
+    "url": "https://download.data.grandlyon.com/wfs/grandlyon?SERVICE=WFS&VERSION=2.0.0&request=GetFeature&typename=adr_voie_lieu.adrmairiepct_2_0_0&outputFormat=application/json;%20subtype=geojson&SRSNAME=EPSG:3946&startIndex=0",
+    "sourceType": "file",
+    "zoom": {
+      "min": 3
     },
-    {
-        "url": "https://wxs.ign.fr/cartovecto/geoportail/wfs?",
-        "id": "Quartiers",
-        "sourceType": "wfs",
-        "version": "2.0.0",
-        "name": "BDCARTO_BDD_WLD_WGS84G:zone_habitat_mairie",
-        "format": "application/json",
-        "zoom": {
-            "min": 2
-        },
-        "style": {
-            "text": {
-                "field": "{toponyme}",
-                "color": "rgb(255,255,255)",
-                "size": 15,
-                "haloColor": "rgba(20,20,20, 0.8)",
-                "haloWidth": 3
-            }
-        }
+    "style": {
+      "text": {
+        "field": "{nom}",
+        "color": "rgb(200,200,200)",
+        "size": 10,
+        "haloColor": "rgba(20,20,20, 0.8)",
+        "haloWidth": 3
+      }
     }
+  },
+  {
+    "url": "https://wxs.ign.fr/cartovecto/geoportail/wfs?",
+    "id": "Quartiers",
+    "sourceType": "wfs",
+    "version": "2.0.0",
+    "name": "BDCARTO_BDD_WLD_WGS84G:zone_habitat_mairie",
+    "format": "application/json",
+    "zoom": {
+      "min": 2
+    },
+    "style": {
+      "text": {
+        "field": "{toponyme}",
+        "color": "rgb(255,255,255)",
+        "size": 15,
+        "haloColor": "rgba(20,20,20, 0.8)",
+        "haloWidth": 3
+      }
+    }
+  }
 ]

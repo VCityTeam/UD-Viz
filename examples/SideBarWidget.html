@@ -11,117 +11,116 @@
 
     <script type="text/javascript">
       udvizBrowser.FileUtil.loadMultipleJSON([
-          './assets/config/assetManager.json',
-          './assets/config/extent_lyon.json',
-          './assets/config/frame3D_planars.json',
-          './assets/config/server/spatial_multimedia_db_server.json',
-          './assets/config/server/geocoding_server.json',
-          './assets/config/server/sparql_server.json',
-          './assets/config/widget/temporal.json',
-          './assets/config/widget/slide_show.json',
-          './assets/config/widget/sparql_widget.json',
-          './assets/config/layer/3DTiles.json',
-          './assets/config/layer/base_maps.json',
-          './assets/config/layer/elevation.json',
-          './assets/config/layer/geoJSONs.json',
-          './assets/config/layer/labels.json',
-        ])
-        .then((configs) => {
-          // http://proj4js.org/
-          // define a projection as a string and reference it that way
-          // the definition of the projection should be in config TODO_ISSUE
-          udvizBrowser.proj4.default.defs(
-            configs['extent_lyon'].crs,
-            '+proj=lcc +lat_1=45.25 +lat_2=46.75' +
-              ' +lat_0=46 +lon_0=3 +x_0=1700000 +y_0=5200000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs'
-          );
+        './assets/config/assetManager.json',
+        './assets/config/extent_lyon.json',
+        './assets/config/frame3D_planars.json',
+        './assets/config/server/spatial_multimedia_db_server.json',
+        './assets/config/server/geocoding_server.json',
+        './assets/config/server/sparql_server.json',
+        './assets/config/widget/temporal.json',
+        './assets/config/widget/slide_show.json',
+        './assets/config/widget/sparql_widget.json',
+        './assets/config/layer/3DTiles.json',
+        './assets/config/layer/base_maps.json',
+        './assets/config/layer/elevation.json',
+        './assets/config/layer/geoJSONs.json',
+        './assets/config/layer/labels.json',
+      ]).then((configs) => {
+        // http://proj4js.org/
+        // define a projection as a string and reference it that way
+        // the definition of the projection should be in config TODO_ISSUE
+        udvizBrowser.proj4.default.defs(
+          configs['extent_lyon'].crs,
+          '+proj=lcc +lat_1=45.25 +lat_2=46.75' +
+            ' +lat_0=46 +lon_0=3 +x_0=1700000 +y_0=5200000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs'
+        );
 
-          const extent = new udvizBrowser.itowns.Extent(
-            configs['extent_lyon'].crs,
-            parseInt(configs['extent_lyon'].west),
-            parseInt(configs['extent_lyon'].east),
-            parseInt(configs['extent_lyon'].south),
-            parseInt(configs['extent_lyon'].north)
-          );
+        const extent = new udvizBrowser.itowns.Extent(
+          configs['extent_lyon'].crs,
+          parseInt(configs['extent_lyon'].west),
+          parseInt(configs['extent_lyon'].east),
+          parseInt(configs['extent_lyon'].south),
+          parseInt(configs['extent_lyon'].north)
+        );
 
-          const app = new udvizBrowser.SideBarWidget(
-            extent,
-            configs['frame3D_planars'][2]
-          );
+        const app = new udvizBrowser.SideBarWidget(
+          extent,
+          configs['frame3D_planars'][2]
+        );
 
-          app.addLayers({
-            $3DTiles: configs['3DTiles'],
-            elevation: configs['elevation'],
-            baseMap: configs['base_maps'][0],
-            labels: configs['labels'],
-            geoJSON: configs['geoJSONs'],
-          });
-
-          app.addLogos([
-            './assets/img/logo/logo-grand-lyon.png',
-            './assets/img/logo/logo-imu.png',
-            './assets/img/logo/logo-liris.png',
-            './assets/img/logo/logo-univ-lyon.png',
-          ]);
-
-          app.addWidgetAuthentication(
-            configs['spatial_multimedia_db_server'],
-            './assets/svg/user-solid.svg'
-          );
-
-          // ABOUT HTML
-          app.addCustomHtml(
-            './assets/svg/about.svg',
-            udvizBrowser.createUDVIZAbout(),
-            'About'
-          );
-
-          // HELP HTLM
-          app.addCustomHtml(
-            './assets/svg/help.svg',
-            udvizBrowser.createUDVIZHelp(),
-            'Help'
-          );
-
-          app.addWidgetGeocoding(
-            configs['geocoding_server'],
-            './assets/svg/geocoding.svg'
-          );
-
-          app.addWidgetDocument(
-            configs['spatial_multimedia_db_server'],
-            './assets/svg/documents.svg'
-          );
-
-          app.addWidgetGuidedTour(
-            configs['spatial_multimedia_db_server'],
-            './assets/svg/guidedTour.svg'
-          );
-
-          app.addWidgetCameraPositioner('./assets/svg/cameraPositioner.svg');
-
-          app.addWidgetLayerChoice('./assets/svg/layerChoice.svg');
-
-          app.addWidgetSlideShow(
-            configs['slide_show'],
-            './assets/svg/slideShow.svg'
-          );
-
-          app.addWidgetSparql(
-            configs['sparql_server'],
-            configs['sparql_widget'],
-            './assets/svg/sparqlModule.svg'
-          );
-
-          const assetManager = new udvizBrowser.AssetManager();
-          assetManager.loadFromConfig(configs['assetManager']).then(() => {
-            app.addDragAndDropAvatar(
-              './assets/svg/user-solid.svg',
-              assetManager,
-              'avatar'
-            );
-          });
+        app.addLayers({
+          $3DTiles: configs['3DTiles'],
+          elevation: configs['elevation'],
+          baseMap: configs['base_maps'][0],
+          labels: configs['labels'],
+          geoJSON: configs['geoJSONs'],
         });
+
+        app.addLogos([
+          './assets/img/logo/logo-grand-lyon.png',
+          './assets/img/logo/logo-imu.png',
+          './assets/img/logo/logo-liris.png',
+          './assets/img/logo/logo-univ-lyon.png',
+        ]);
+
+        app.addWidgetAuthentication(
+          configs['spatial_multimedia_db_server'],
+          './assets/svg/user-solid.svg'
+        );
+
+        // ABOUT HTML
+        app.addCustomHtml(
+          './assets/svg/about.svg',
+          udvizBrowser.createUDVIZAbout(),
+          'About'
+        );
+
+        // HELP HTLM
+        app.addCustomHtml(
+          './assets/svg/help.svg',
+          udvizBrowser.createUDVIZHelp(),
+          'Help'
+        );
+
+        app.addWidgetGeocoding(
+          configs['geocoding_server'],
+          './assets/svg/geocoding.svg'
+        );
+
+        app.addWidgetDocument(
+          configs['spatial_multimedia_db_server'],
+          './assets/svg/documents.svg'
+        );
+
+        app.addWidgetGuidedTour(
+          configs['spatial_multimedia_db_server'],
+          './assets/svg/guidedTour.svg'
+        );
+
+        app.addWidgetCameraPositioner('./assets/svg/cameraPositioner.svg');
+
+        app.addWidgetLayerChoice('./assets/svg/layerChoice.svg');
+
+        app.addWidgetSlideShow(
+          configs['slide_show'],
+          './assets/svg/slideShow.svg'
+        );
+
+        app.addWidgetSparql(
+          configs['sparql_server'],
+          configs['sparql_widget'],
+          './assets/svg/sparqlModule.svg'
+        );
+
+        const assetManager = new udvizBrowser.AssetManager();
+        assetManager.loadFromConfig(configs['assetManager']).then(() => {
+          app.addDragAndDropAvatar(
+            './assets/svg/user-solid.svg',
+            assetManager,
+            'avatar'
+          );
+        });
+      });
     </script>
     SCRIPT_TAG_RELOAD
   </body>
