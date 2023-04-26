@@ -66,7 +66,7 @@ const httpServer = app.listen(Constant.DEFAULT_PORT, (err) => {
     console.error('Server does not start');
     return;
   }
-  console.log('Http server listening on port', Constant);
+  console.log('Http server listening on port', Constant.DEFAULT_PORT);
 });
 
 // build example thread bundle
