@@ -2,10 +2,8 @@
   "ContributeData": {
     "title": "User"
   },
-  "Dev": {
-    "title": "Getting started",
+  "Developers": {
     "children": {
-      "Developers": {},
       "ud_viz_browser": {
         "title": "@ud-viz/browser",
         "children": {
