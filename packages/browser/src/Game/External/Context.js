@@ -11,7 +11,7 @@ import { Frame3DBase, Frame3DPlanar } from '../../Frame3D/Frame3D';
 export class Context {
   /**
    * @memberof udvizBrowser
-   * Handle {@link RenderController} + external script {@link Game.Component.ScriptController} + {@link AudioController}
+   * Handle rendering {@link RenderController}, inputs of user {@link InputManager}, audio {@link AudioController}, trigger {@link ExternalScriptBase} event
    * @param {Frame3DBase|Frame3DPlanar} frame3D - frame3D view of the game
    * @param {AssetManager} assetManager - asset manager {@link AssetManager}
    * @param {InputManager} inputManager - input manager {@link InputManager}

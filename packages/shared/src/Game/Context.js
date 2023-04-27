@@ -12,16 +12,10 @@ const THREE = require('three');
  * @param {*} params - params pass when event is dispatched
  */
 
-/**
- * `MODULE` Context
- *
- * @exports Context
- */
-
 /** @class */
 const Context = class {
   /**
-   * Handle Game collisions + {@link ScriptBase}
+   * Handle collisions, add/remove gameobject3D, process commands + trigger {@link ScriptBase} event
    *
    * @param {Object<string,import("./Context").ScriptBase>} gameScriptClass - map of class extended {@link ScriptBase}
    * @param {Object3D} object3D - root game object3D
