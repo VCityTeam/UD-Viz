@@ -4,6 +4,12 @@
   },
   "Developers": {
     "children": {
+      "ud_viz_node": {
+        "title": "@ud-viz/node",
+        "children": {
+          "game": {}
+        }
+      },
       "ud_viz_browser": {
         "title": "@ud-viz/browser",
         "children": {
