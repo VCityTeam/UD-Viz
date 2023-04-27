@@ -4,15 +4,29 @@
   },
   "Developers": {
     "children": {
+      "game": {
+        "title": "Game getting started"
+      },
       "ud_viz_node": {
         "title": "@ud-viz/node",
         "children": {
-          "game": {}
+          "node_game": {
+            "title": "Game"
+          }
+        }
+      },
+      "ud_viz_shared": {
+        "title": "@ud-viz/shared",
+        "children": {
+          "shared_game": {
+            "title": "Game"
+          }
         }
       },
       "ud_viz_browser": {
         "title": "@ud-viz/browser",
         "children": {
+          "browser_game": { "title": "Game" },
           "Widget": {},
           "Temporal": {},
           "SPARQL": {},
