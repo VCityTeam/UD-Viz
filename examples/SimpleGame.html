@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Simple Game example</title>
+
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./assets/css/default.css" />
+  </head>
+  <body>
+    <script src="../packages/browser/dist/RUN_MODE/bundle.js"></script>
+
+    <script>
+      // Define geographic extent: CRS, min/max X, min/max Y
+      const extent = new udvizBrowser.itowns.Extent(
+        'EPSG:4326',
+        1837816.94334,
+        1847692.32501,
+        5170036.4587,
+        5178412.82698
+      );
+
+      const frame3DPlanar = new udvizBrowser.Frame3DPlanar(extent, {
+        hasItownsControls: true,
+      });
+
+      const GameContextScript = class extends udvizBrowser.Shared.Game
+        .ScriptBase {
+        init() {
+          console.log('hello from game context');
+        }
+        static get ID_SCRIPT() {
+          return 'game_context_script';
+        }
+      };
+
+      const GameExternalContextScript = class extends udvizBrowser.Game.External
+        .ScriptBase {
+        init() {
+          console.log('hello from game external context ');
+        }
+        static get ID_SCRIPT() {
+          return 'game_external_context_script_id';
+        }
+      };
+
+      const gameObject3D = new udvizBrowser.Shared.Game.Object3D({
+        static: true,
+        components: {
+          GameScript: {
+            idScripts: [GameContextScript.ID_SCRIPT],
+          },
+          ExternalScript: {
+            idScripts: [GameExternalContextScript.ID_SCRIPT],
+          },
+        },
+      });
+
+      const game = new udvizBrowser.Game.External.SinglePlanarProcess(
+        gameObject3D,
+        frame3DPlanar,
+        new udvizBrowser.AssetManager(),
+        new udvizBrowser.InputManager(),
+        {
+          gameScriptClass: [GameContextScript],
+          externalGameScriptClass: [GameExternalContextScript],
+        }
+      );
+
+      game.start();
+    </script>
+
+    SCRIPT_TAG_RELOAD
+  </body>
+</html>
