@@ -3,13 +3,6 @@ const nodeExternals = require('webpack-node-externals');
 
 const mode = process.env.NODE_ENV;
 
-let entryPath;
-if (process.env.TYPE === 'lib') {
-  entryPath = path.resolve(__dirname, 'src/index.js');
-} else {
-  entryPath = path.resolve(__dirname, 'src/defaultGameThread.js');
-}
-
 let outputPath;
 if (mode === 'development') {
   outputPath = path.resolve(__dirname, 'dist/' + process.env.TYPE + '/debug');
@@ -22,7 +15,7 @@ module.exports = () => {
     target: 'node',
     mode: mode,
     externals: [nodeExternals()],
-    entry: entryPath,
+    entry: path.resolve(__dirname, 'src/index.js'),
     output: {
       path: outputPath,
       filename: process.env.TYPE + '.js',

@@ -36,6 +36,4 @@ For pre-requisites see [here](https://github.com/VCityTeam/UD-Viz/blob/master/do
 
 | Script          | Description                                                                                    |
 | --------------- | ---------------------------------------------------------------------------------------------- |
-| `npm run build-lib` | Create a [webpack](https://webpack.js.org/) bundle of the library |
-| `npm run build-default-thread` | Create a [webpack](https://webpack.js.org/) bundle of the default game thread |
-| `npm run build` | Run `npm run build-lib` and `npm run build-default-thread` |
+| `npm run build` | Create a [webpack](https://webpack.js.org/) bundle of the library |

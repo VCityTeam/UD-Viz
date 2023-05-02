@@ -25,8 +25,8 @@
     "docs-home": "cross-env PACKAGE=home jsdoc -c ./docs/jsdocConfig/jsdoc.js",
     "docs": "rm -rf ./docs/html && npm run docs-browser ; npm run docs-node ; npm run docs-shared ; npm run docs-home",
     "dev-docs": "nodemon --watch ./packages/shared/src --watch ./packages/browser/src --watch ./packages/node/src --delay 2500ms --exec npm run docs",
-    "host": "cross-env NODE_ENV=production node ./bin/host.js",
-    "start": "npm run build-browser && npm run host"
+    "examples-back-end": "cross-env NODE_ENV=production node ./bin/examplesBackEnd.js",
+    "start": "npm run build-browser && npm run examples-back-end"
   },
   "workspaces": [
     "packages/*"

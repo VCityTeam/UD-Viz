@@ -42,10 +42,10 @@ exec('npm run build-shared')
                 './packages/browser/bin/Test',
                 './packages/browser/dist/release/bundle.js'
               ).then(() => {
-                const fork = cp.fork(`${__dirname}/host.js`);
+                const fork = cp.fork(`${__dirname}/examplesBackEnd.js`);
                 fork.on('message', (message) => {
                   if (message == Constant.MESSAGE.READY) {
-                    console.log('Host is ready');
+                    console.log('Examples Back-end is ready');
                     // index.html
                     Test.html('.', Constant.DEFAULT_PORT).then(() => {
                       // examples/*.html

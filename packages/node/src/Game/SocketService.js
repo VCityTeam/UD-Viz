@@ -97,7 +97,7 @@ const SocketService = class {
     this.entryGameObject3DUUID = entryGameObject3DUUID || gameObjects3D[0].uuid;
 
     gameObjects3D.forEach((gameObject3D) => {
-      this.threads[gameObject3D.uuid] = new Thread(threadProcessPath);
+      this.threads[gameObject3D.uuid] = new Thread.Parent(threadProcessPath);
       promises.push(
         this.threads[gameObject3D.uuid].apply(Thread.EVENT.INIT, {
           gameObject3D: gameObject3D,
