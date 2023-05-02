@@ -164,7 +164,7 @@ const folderInBrowserPage = function (testFolderPath, pageTest) {
       if (files.length) {
         // launch a headless browser
         const browser = await puppeteer.launch({
-          headless: true,
+          headless: 'new',
           args: [
             '--disable-gpu',
             '--disable-dev-shm-usage',
