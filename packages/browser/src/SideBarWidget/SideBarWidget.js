@@ -262,26 +262,6 @@ export class SideBarWidget {
       titleNavBar.innerHTML = 'UD-VIZ ' + packageInfo.version;
       this.menuSideBar.appendChild(titleNavBar);
 
-      // url camera matrix button
-      const urlCameraMatrixButton = document.createElement('button');
-      urlCameraMatrixButton.innerText = 'Link';
-      this.menuSideBar.appendChild(urlCameraMatrixButton);
-
-      urlCameraMatrixButton.onclick = () => {
-        const url = new URL(window.location.origin + window.location.pathname);
-
-        url.searchParams.append(
-          encodeURI(CAMERA_MATRIX_URL_KEY),
-          encodeURIComponent(
-            this.frame3DPlanar.camera.matrixWorld.toArray().toString()
-          )
-        );
-
-        // put it in clipboard
-        navigator.clipboard.writeText(url);
-        alert('Link copied !');
-      };
-
       // hr
       const hrElement = document.createElement('hr');
       this.menuSideBar.appendChild(hrElement);
@@ -295,6 +275,29 @@ export class SideBarWidget {
     this.logoContainer = document.createElement('div');
     this.logoContainer.setAttribute('id', 'logo-container');
     this.frame3DPlanar.appendToUI(this.logoContainer);
+  }
+
+  addURLButton(pathIcon) {
+    // url camera matrix button
+    const urlCameraMatrixButton = document.createElement('img');
+    urlCameraMatrixButton.src = pathIcon;
+    urlCameraMatrixButton.title = 'Camera Position Url';
+    this.menuSideBar.appendChild(urlCameraMatrixButton);
+
+    urlCameraMatrixButton.onclick = () => {
+      const url = new URL(window.location.origin + window.location.pathname);
+
+      url.searchParams.append(
+        encodeURI(CAMERA_MATRIX_URL_KEY),
+        encodeURIComponent(
+          this.frame3DPlanar.camera.matrixWorld.toArray().toString()
+        )
+      );
+
+      // put it in clipboard
+      navigator.clipboard.writeText(url);
+      alert('Camera Position Url copied !');
+    };
   }
 
   // ADD METHOD WIDGET
