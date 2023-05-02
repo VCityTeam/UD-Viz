@@ -41,15 +41,6 @@
   cursor: pointer;
 }
 
-._sidebar_widget_menu_sidebar button {
-  width: calc(var(--sidebar-widget-sidebar-width) - 10px);
-  margin-left: 5px;
-}
-
-._sidebar_widget_menu_sidebar button:hover {
-  cursor: pointer;
-}
-
 ._sidebar_widget_menu_sidebar_img_selected {
   background-color: var(--sidebar-widget-color-two);
 }
