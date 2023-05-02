@@ -81,7 +81,7 @@ Each time origin/master branch is impacted by changes, Travis CI is triggered. I
 Jobs list :
 
 - `npm run assert-code`: Run linter, build bundles and run tests
-- `npm audit --audit-level=moderate`: Npm native command ([npm-audit](https://docs.npmjs.com/cli/v6/commands/npm-audit)) which check packages dependencies vulnerabilities.
+- `npm audit --audit-level=low`: Npm native command ([npm-audit](https://docs.npmjs.com/cli/v6/commands/npm-audit)) which check packages dependencies vulnerabilities.
 - `npm run validate-links`: Run this [script](../../../bin/remarkValidateLinks.js) which check if links are not broken.
 
 ## Contributing
