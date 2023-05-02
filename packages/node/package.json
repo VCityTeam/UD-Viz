@@ -4,9 +4,7 @@
   "description": "UD-Viz Node-side framework",
   "main": "src",
   "scripts": {
-    "build-lib": "cross-env TYPE=lib NODE_ENV=production webpack",
-    "build-default-thread": "cross-env TYPE=default_thread NODE_ENV=production webpack",
-    "build": "npm run build-lib && npm run build-default-thread"
+    "build": "cross-env NODE_ENV=production webpack"
   },
   "files": [
     "src"

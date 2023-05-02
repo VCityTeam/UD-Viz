@@ -14,15 +14,17 @@ const printExec = function (result) {
 
 exec('npm run build-debug --prefix ./packages/browser').then(printExec);
 
-const child = spawn('cross-env NODE_ENV=development node', ['./bin/host.js'], {
-  shell: true,
-});
+const child = spawn(
+  'cross-env NODE_ENV=development node',
+  ['./bin/examplesBackEnd.js'],
+  {
+    shell: true,
+  }
+);
 
 child.stdout.on('data', (data) => {
   console.log(`${data}`);
 });
 child.stderr.on('data', (data) => {
-  console.error('\x1b[31m', 'host' + ` ERROR :\n${data}`);
+  console.error('\x1b[31m', ` ERROR :\n${data}`);
 });
-
-// exec('cross-env NODE_ENV=development node ./bin/host.js').then(printExec);
