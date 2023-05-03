@@ -17,6 +17,7 @@ body {
 .widgets-3dtiles-layer-container * {
   padding-right: 5px;
   padding-left: 2px;
+  cursor: pointer;
 }
 
 .widgets-3dtiles-url-container {
