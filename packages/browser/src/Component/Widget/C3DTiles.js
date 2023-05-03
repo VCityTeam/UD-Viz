@@ -166,7 +166,7 @@ export class C3DTiles extends itownsWidget.Widget {
     labelLayerDomElement.innerText = layer.name;
     this.c3DTFeatureInfoContainer.appendChild(labelLayerDomElement);
 
-    // batchTable
+    // feature info
     this.c3DTFeatureInfoContainer.appendChild(
       createObjectDomElement(c3DTFeature.getInfo(), 'Feature info')
     );
