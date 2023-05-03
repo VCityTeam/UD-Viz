@@ -13,7 +13,7 @@
       udvizBrowser.FileUtil.loadMultipleJSON([
         './assets/config/extent_lyon.json',
         './assets/config/frame3D_planars.json',
-        './assets/config/layer/3DTiles.json',
+        './assets/config/layer/3DTiles.json'
       ]).then((configs) => {
         // http://proj4js.org/
         // define a projection as a string and reference it that way
@@ -43,6 +43,7 @@
           frame3DPlanar.itownsView
         );
 
+        const featuresElevation = 15;
         frame3DPlanar.itownsView
           .getLayers()
           .filter((el) => el.isC3DTilesLayer)
@@ -50,19 +51,76 @@
             layer.addEventListener(
               udvizBrowser.itowns.C3DTILES_LAYER_EVENTS.ON_TILE_CONTENT_LOADED,
               ({ tileContent }) => {
-                const tileId = tileContent.tileId;
-                const featureElevation = 0;
+                if (layer.tilesC3DTileFeatures.has(tileContent.tileId)) {
+                  for (const [
+                    // eslint-disable-next-line no-unused-vars
+                    batchId,
+                    c3DTFeature
+                  ] of layer.tilesC3DTileFeatures.get(tileContent.tileId)) {
+                    const worldBox3 = layer.computeWorldBox3(c3DTFeature);
 
-                if (layer.tilesC3DTileFeatures.has(tileId)) {
-                  const features = layer.tilesC3DTileFeatures.get(tileId);
-                  tileContent.traverse((child) => {
-                    if (child.geometry && child.geometry.attributes._BATCHID) {
-                      
-                      
-                      
-                      debugger;
-                    }
-                  });
+                    tileContent.traverse((child) => {
+                      if (
+                        child.geometry &&
+                        child.geometry.attributes._BATCHID
+                      ) {
+                        c3DTFeature.groups.forEach((group) => {
+                          const positionIndexStart = group.start * 3;
+                          const positionIndexCount =
+                            (group.start + group.count) * 3;
+
+                          for (
+                            let index = positionIndexStart;
+                            index < positionIndexCount;
+                            index += 3
+                          ) {
+                            // z
+                            child.geometry.attributes.position.array[
+                              index + 2
+                            ] -= worldBox3.min.z - featuresElevation; // translation
+                          }
+                        });
+                      }
+                    });
+                  }
+                }
+
+                // update tileContent boundingVolume
+                // take from => https://github.com/iTowns/itowns/blob/0bf309bf42ea53bd423fa7b0c4c97addcecac3ce/src/Process/3dTilesProcessing.js#L230
+                // maybe dynamic change on the boundingVolume could be contributed to itowns
+                if (tileContent.boundingVolume.region) {
+                  const offset = new udvizBrowser.THREE.Vector3(
+                    0,
+                    0,
+                    featuresElevation -
+                      tileContent.boundingVolume.region.box.min.z
+                  );
+                  tileContent.boundingVolume.box.region.translate(offset);
+                } else if (tileContent.boundingVolume.box) {
+                  const offset = new udvizBrowser.THREE.Vector3(
+                    0,
+                    0,
+                    featuresElevation - tileContent.boundingVolume.box.min.z
+                  );
+                  tileContent.boundingVolume.box.translate(offset);
+
+                  // add helper
+                  // const helper = new udvizBrowser.THREE.Box3Helper(
+                  //   new udvizBrowser.THREE.Box3()
+                  //     .copy(tileContent.boundingVolume.box)
+                  //     .applyMatrix4(tileContent.matrixWorld),
+                  //   0xffff00
+                  // );
+                  // helper.updateMatrixWorld();
+                  // frame3DPlanar.scene.add(helper);
+                } else if (tileContent.boundingVolume.sphere) {
+                  const offset = new udvizBrowser.THREE.Vector3(
+                    0,
+                    0,
+                    featuresElevation -
+                      tileContent.boundingVolume.sphere.center.z
+                  );
+                  tileContent.boundingVolume.sphere.center.add(offset);
                 }
               }
             );
