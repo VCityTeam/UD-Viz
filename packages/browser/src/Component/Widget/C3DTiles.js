@@ -125,8 +125,9 @@ export class C3DTiles extends itownsWidget.Widget {
    *
    * @param {itowns.C3DTFeature|null} c3DTFeature - feature to display info if null nothing is display
    * @param {itowns.C3DTilesLayer|null} layer - layer of the feature
+   * @param {number} [stepPadding=20] - number of pixels to pad left each indent of the info object displayed
    */
-  displayC3DTFeatureInfo(c3DTFeature = null, layer = null) {
+  displayC3DTFeatureInfo(c3DTFeature = null, layer = null, stepPadding = 20) {
     // clear
     while (this.c3DTFeatureInfoContainer.firstChild)
       this.c3DTFeatureInfoContainer.firstChild.remove();
@@ -135,11 +136,12 @@ export class C3DTiles extends itownsWidget.Widget {
 
     if (!c3DTFeature) return;
 
-    const createObjectDomElement = (object, label) => {
+    const createObjectDomElement = (object, label, indent = 0) => {
       const result = document.createElement('div');
 
       const labelDomElement = document.createElement('div');
       labelDomElement.innerText = label;
+      labelDomElement.style.paddingLeft = indent * stepPadding + 'px';
       result.appendChild(labelDomElement);
 
       if (!object) return result;
@@ -147,10 +149,11 @@ export class C3DTiles extends itownsWidget.Widget {
       for (const key in object) {
         const value = object[key];
         if (value instanceof Object) {
-          console.warning('not implemented');
+          result.appendChild(createObjectDomElement(value, key, indent + 1));
         } else {
           const content = document.createElement('div');
           content.innerText = key + ': ' + value;
+          content.style.paddingLeft = (indent + 1) * stepPadding + 'px';
           result.appendChild(content);
         }
       }
@@ -165,12 +168,7 @@ export class C3DTiles extends itownsWidget.Widget {
 
     // batchTable
     this.c3DTFeatureInfoContainer.appendChild(
-      createObjectDomElement(c3DTFeature.getInfo().batchTable, 'BatchTable')
-    );
-
-    // extension
-    this.c3DTFeatureInfoContainer.appendChild(
-      createObjectDomElement(c3DTFeature.getInfo().extension, 'Extension')
+      createObjectDomElement(c3DTFeature.getInfo(), 'Feature info')
     );
   }
 }
