@@ -1,6 +1,7 @@
 import * as itownsWidget from 'itowns/widgets';
 import * as itowns from 'itowns';
 import { createLabelInput } from '../HTMLUtil';
+import * as THREE from 'three';
 
 const DEFAULT_OPTIONS = {
   position: 'top-right', // should be deprecated https://github.com/iTowns/itowns/issues/2005
@@ -24,15 +25,19 @@ export class C3DTiles extends itownsWidget.Widget {
     this.domElement.onclick = (event) => event.stopImmediatePropagation();
 
     // add C3DTilesLayer from url
-    const urlDomElement = createLabelInput('Add from URL', 'text');
+    const urlObject = createLabelInput('url', 'text');
     if (options.urlContainerClassName)
-      urlDomElement.parent.classList.add(options.urlContainerClassName);
-    this.domElement.appendChild(urlDomElement.parent);
+      urlObject.parent.classList.add(options.urlContainerClassName);
+    this.domElement.appendChild(urlObject.parent);
+
+    // name of the 3DTiles requested
+    const name3DTilesObject = createLabelInput('name', 'text');
+    urlObject.parent.appendChild(name3DTilesObject.parent);
 
     // request tileset.json button
     const requestButton = document.createElement('button');
-    requestButton.innerText = 'Request';
-    urlDomElement.parent.appendChild(requestButton);
+    requestButton.innerText = 'Add 3DTiles From URL';
+    urlObject.parent.appendChild(requestButton);
 
     // layers container
     const layersContainer = document.createElement('div');
@@ -72,14 +77,14 @@ export class C3DTiles extends itownsWidget.Widget {
 
     requestButton.onclick = () => {
       // add layer
-      const url = urlDomElement.input.value;
+      const url = urlObject.input.value;
 
       try {
         const c3DTilesLayer = new itowns.C3DTilesLayer(
-          Math.random(), // todo
+          THREE.MathUtils.generateUUID(),
           {
             style: options.overrideStyle || null,
-            name: Math.random(),
+            name: name3DTilesObject.input.value,
             source: new itowns.C3DTilesSource({
               url: url,
             }),
