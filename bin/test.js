@@ -42,7 +42,7 @@ exec('npm run build-shared')
                 './packages/browser/bin/Test',
                 './packages/browser/dist/release/bundle.js'
               ).then(() => {
-                const fork = cp.fork(`${__dirname}/examplesBackEnd.js`);
+                const fork = cp.fork(`${__dirname}/backEndExamples.js`);
                 fork.on('message', (message) => {
                   if (message == Constant.MESSAGE.READY) {
                     console.log('Examples Back-end is ready');

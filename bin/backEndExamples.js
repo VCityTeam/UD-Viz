@@ -11,7 +11,7 @@ const { stringReplace } = require('string-replace-middleware');
 const NODE_ENV = process.env.NODE_ENV || 'development';
 const runMode = NODE_ENV === 'production' ? 'release' : 'debug';
 
-console.log('Examples server start on mode', runMode);
+console.log('Examples back-end start on mode', runMode);
 
 const app = new udvizNode.express();
 app.use(
@@ -82,7 +82,7 @@ gameSocketService
         },
       }),
     ],
-    './bin/examplesGameThreadChild.js'
+    './bin/gameThreadChildExamples.js'
   )
   .then(() => {
     console.log('Examples Game SocketService initialized');
