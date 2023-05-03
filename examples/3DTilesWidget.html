@@ -13,9 +13,7 @@
       udvizBrowser.FileUtil.loadMultipleJSON([
         './assets/config/extent_lyon.json',
         './assets/config/frame3D_planars.json',
-        './assets/config/layer/3DTiles.json',
-        './assets/config/layer/base_maps.json',
-        './assets/config/layer/elevation.json',
+        './assets/config/layer/3DTiles.json'
       ]).then((configs) => {
         // http://proj4js.org/
         // define a projection as a string and reference it that way
@@ -39,31 +37,99 @@
           configs['frame3D_planars'][2]
         );
 
-        // ADD BASE MAP
-        udvizBrowser.addBaseMapLayer(
-          configs['base_maps'][0],
+        const style = new udvizBrowser.itowns.Style({
+          fill: {
+            color: function (feature) {
+              return feature.userData.selectedColor
+                ? feature.userData.selectedColor
+                : 'white';
+            }
+          }
+        });
+
+        // create 3DTilesLayers
+        configs['3DTiles'].forEach((layerConfig) => {
+          const c3DTilesLayer = new udvizBrowser.itowns.C3DTilesLayer(
+            layerConfig['id'],
+            {
+              style: style,
+              name: layerConfig['id'],
+              source: new udvizBrowser.itowns.C3DTilesSource({
+                url: layerConfig['url']
+              })
+            },
+            frame3DPlanar.itownsView
+          );
+          udvizBrowser.itowns.View.prototype.addLayer.call(
+            frame3DPlanar.itownsView,
+            c3DTilesLayer
+          );
+        });
+
+        const widget = new udvizBrowser.Widget.C3DTiles(
           frame3DPlanar.itownsView,
-          extent
+          {
+            overrideStyle: style,
+            parentElement: frame3DPlanar.ui,
+            layerContainerClassName: 'widgets-3dtiles-layer-container',
+            c3DTFeatureInfoContainerClassName:
+              'widgets-3dtiles-feature-container',
+            urlContainerClassName: 'widgets-3dtiles-url-container'
+          }
         );
+        widget.domElement.setAttribute('id', 'widgets-3dtiles');
 
+        // add on click behavior
+        const contextSelection = {
+          feature: null,
+          layer: null
+        };
+        frame3DPlanar.rootHtml.onclick = (event) => {
+          if (contextSelection.feature) {
+            // reset feature userData
+            contextSelection.feature.userData.selectedColor = null;
+            // and update style of its layer
+            contextSelection.layer.updateStyle();
+            // reset context selection
+            contextSelection.feature = null;
+            contextSelection.layer = null;
+          }
 
-        // ADD LAYERS
-        udvizBrowser.add3DTilesLayers(
-          configs['3DTiles'],
-          frame3DPlanar.itownsView
-        );
+          // get intersects based on the click event
+          const intersects = frame3DPlanar.itownsView.pickObjectsAt(
+            event,
+            0,
+            frame3DPlanar.itownsView
+              .getLayers()
+              .filter((el) => el.isC3DTilesLayer)
+          );
 
-        frame3DPlanar.itownsView
-          .getLayers()
-          .filter((el) => el.isC3DTilesLayer)
-          .forEach((layer) => {
-            layer.addEventListener(
-              udvizBrowser.itowns.C3DTILES_LAYER_EVENTS.ON_TILE_CONTENT_LOADED,
-              ({ tileContent }) => {
-                udvizBrowser.THREEUtil.appendWireframeToObject3D(tileContent);
-              }
-            );
-          });
+          if (intersects.length) {
+            // get featureClicked
+            const featureClicked =
+              intersects[0].layer.getC3DTileFeatureFromIntersectsArray(
+                intersects
+              );
+            if (featureClicked) {
+              // write in userData the selectedColor
+              featureClicked.userData.selectedColor = 'red';
+              // and update its style layer
+              intersects[0].layer.updateStyle();
+
+              // set contextSelection
+              contextSelection.feature = featureClicked;
+              contextSelection.layer = intersects[0].layer;
+            }
+          }
+
+          // update widget displayed info
+          widget.displayC3DTFeatureInfo(
+            contextSelection.feature,
+            contextSelection.layer
+          );
+
+          frame3DPlanar.itownsView.notifyChange(); // need a redraw of the view
+        };
       });
     </script>
     SCRIPT_TAG_RELOAD
