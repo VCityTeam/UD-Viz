@@ -169,11 +169,15 @@ const Parent = class {
 /** Code below is used in the thread child */
 
 /**
+ * Run child process which can be summarize as so:
+ * Listen {@link EVENT} of the parent and wait the gameobject
+ * When gameobject is received launch a {@link Game.Context} and step it over time
+ * Resolve {@link Child} so an user can customize this process with its own event
  *
  * @param {Object<string,Function>} gameScriptClass - class needs by object3D
- * @returns {Promise} - a promise resolving when game context is initialized and returning thread context {@link Child}
+ * @returns {Promise} - a promise resolving when game context is initialized and returning {@link Child}
  */
-function childProcess(gameScriptClass = {}) {
+function runChildProcess(gameScriptClass = {}) {
   return new Promise((resolve) => {
     if (workerThreads.isMainThread) {
       throw new Error('Its not a worker');
@@ -273,7 +277,8 @@ function childProcess(gameScriptClass = {}) {
 }
 
 /**
- * @class class containing all information to manipulate a worker thread
+ * @class class containing parentPort and a gameContext of a child thread {@link Child}
+ * most of the time you want to use the method `on` to trigger event
  */
 class Child {
   /**
@@ -338,6 +343,7 @@ class Child {
 module.exports = {
   Parent: Parent,
   Child: Child,
-  childProcess: childProcess,
+  runChildProcess: runChildProcess,
   EVENT: EVENT,
+  KEY: KEY,
 };
