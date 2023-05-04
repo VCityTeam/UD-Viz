@@ -6,7 +6,7 @@ This document give an overview of how the game part works. Here are some differe
 
 The goal of this section is to learn how to set a simple game structure (you can see the final result [here](../../../examples/SimpleGame.html) to check where every code sample should be added):
 
-You can see [here](./todo) how to import @ud-viz/browser framework
+You can see [here](./ud_viz_browser/ud_viz_browser.md) how to import @ud-viz/browser framework
 
 **Create a scene**
 
