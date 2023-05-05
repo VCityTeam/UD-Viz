@@ -1,6 +1,6 @@
 # Game
 
-This document give an overview of how the game part works. Here are some differents implementations of the game part:
+This document gives an overview of how the game part works. Here are some different implementations of the game part:
 
 ## Creating a simple game
 
@@ -10,9 +10,9 @@ You can see [here](./ud_viz_browser/ud_viz_browser.md) how to import @ud-viz/bro
 
 **Create a scene**
 
-Initialize a `Frame3DPlanar` which create a [itowns PlanarView](http://www.itowns-project.org/itowns/docs/#api/View/PlanarView).
+Initialize a `Frame3DPlanar` which creates a [itowns](http://www.itowns-project.org/itowns/docs/#api/View/PlanarView) PlanarView](http://www.itowns-project.org/itowns/docs/#api/View/PlanarView).
 
-```js
+```js+
 // Define geographic extent: CRS, min/max X, min/max Y
 const extent = new udvizBrowser.itowns.Extent(
   'EPSG:4326',
@@ -30,7 +30,7 @@ const frame3DPlanar = new udvizBrowser.Frame3DPlanar(extent, {
 
 **Create a `udvizBrowser.Game.External.SinglePlanarProcess`**
 
-Initialize a `SinglePlanarProcess`, gameObject3D define your game model and `SinglePlanarProcess` is stepping your game over time.
+Initialize a `SinglePlanarProcess`, gameObject3D defines your game model and `SinglePlanarProcess` is stepping your game over time.
 
 ```js
 const gameObject3D = new udvizBrowser.Shared.Game.Object3D({
@@ -47,9 +47,9 @@ const game = new udvizBrowser.Game.External.SinglePlanarProcess(
 game.start();
 ```
 
-**Add two type of script to your `udvizBrowser.Shared.Game.Object3D`**
+**Add two types of script to your `udvizBrowser.Shared.Game.Object3D`**
 
-A game is composed of two context `udvizBrowser.Shared.Game.Context` (handle collisions, add/remove gameobject3D, process commands, trigger `udvizBrowser.Shared.Game.ScriptBase` event, ...) and `udvizBrowser.Game.External.Context` (handle rendering, inputs of user, audio, trigger `udvizBrowser.Game.External.ScriptBase` event, ...)
+A game is composed of two contexts `udvizBrowser.Shared.Game.Context` (handle collisions, add/remove gameobject3D, process commands, trigger `udvizBrowser.Shared.Game.ScriptBase` event, ...) and `udvizBrowser.Game.External.Context` (handle rendering, inputs of user, audio, trigger `udvizBrowser.Game.External.ScriptBase` event, ...)
 
 >The game part is divided into two context to handle a multiplayer game. Typically the game external context is running on the client side and the game context is running on the server side. In this example both context are running on the client side (ie your web browser) 
 
@@ -159,7 +159,7 @@ this.context.inputManager.addMouseCommand(
 );
 ```
 
-This send a command on the mouse click to `udvizBrowser.Shared.Game.Context`. Then in the `init` of `GameContextScript` add these lines:
+This sends a command on the mouse click to `udvizBrowser.Shared.Game.Context`. Then in the `init` of `GameContextScript` add these lines:
 
 ```js
 this.pause = false;
@@ -198,4 +198,4 @@ Multiplayer one:
 
 * [MultiPlanarProcess](../../../examples/MultiPlanarProcess.html)
 
-This example require same knowledge as singleplayer plus [@ud-viz/node game](./ud_viz_node/node_game.md)
+This example requires the same knowledge as singleplayer plus [@ud-viz/node game](./ud_viz_node/node_game.md)
