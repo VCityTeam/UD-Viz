@@ -10,6 +10,9 @@
   - [Developers](#developers)
     - [Npm scripts](#npm-scripts)
     - [Debugging](#debugging)
+  - [How to use it in your demo?](#how-to-use-it-in-your-demo)
+    - [With npm](#with-npm)
+    - [From a release bundle](#from-a-release-bundle)
 
 ### Directory Hierarchy
 
@@ -68,3 +71,32 @@ This runs a watched routine [debug.js](./bin/debug.js) with [nodemon](https://ww
 
 - Runs a `npm run build-debug`
 - May run `npm run test` (not by default).
+
+
+## How to use it in your demo?
+
+You can use it through npm (the preferred way) or download a bundle from our GitHub release page.
+
+### With npm
+
+In your demo:
+
+```bash
+npm install --save @ud-viz/browser
+```
+
+If you're using a module bundler (like [wepback](https://webpack.js.org/concepts/)), you can directly write `import * as udvizBrowser from '@ud-viz/browser'` in your code. See [import doc](https://developer.mozilla.org/fr/docs/Web/JavaScript/Reference/Statements/import). 
+
+> See https://github.com/VCityTeam/UD-Viz-template  
+
+
+### From a release bundle
+
+
+See our [release page](https://github.com/VCityTeam/UD-Viz/releases/). We highly recommend using the last release every time.
+
+
+> - This bundle also contains the dependencies
+> - First release bundle -> 3.1.0
+ 
+:warning: You can see a bundle-usage in [examples](../../../../examples/) but it's not from a **release bundle**, you can't copy paste directly, src attribute has to be changed in the script tag.
