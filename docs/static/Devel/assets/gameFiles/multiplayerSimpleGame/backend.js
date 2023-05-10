@@ -7,11 +7,7 @@ const path = require('path');
 const app = udvizNode.express();
 const port = 3000;
 
-app.get('/', function (req, res) {
-  res.sendFile(
-    path.resolve(__dirname, '../../examples/MultiplayerSimpleGame.html')
-  );
-});
+app.use(udvizNode.express.static(path.resolve(__dirname, '..')));
 
 const httpServer = app.listen(port, function () {
   console.log(`Example app listening on port ${port}!`);
@@ -34,5 +30,5 @@ const gameObject3D = new Game.Object3D({
 
 gameSocketService.loadGameThreads(
   [gameObject3D],
-  './bin/multiplayerSimpleGame/gameThreadChild.js'
+  path.resolve(__dirname, './gameThreadChild.js')
 );
