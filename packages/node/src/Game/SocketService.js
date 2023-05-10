@@ -99,13 +99,13 @@ const SocketService = class {
     gameObjects3D.forEach((gameObject3D) => {
       this.threads[gameObject3D.uuid] = new Thread.Parent(threadProcessPath);
       promises.push(
-        this.threads[gameObject3D.uuid].apply(Thread.EVENT.INIT, {
+        this.threads[gameObject3D.uuid].apply(Thread.MESSAGE_EVENT.INIT, {
           gameObject3D: gameObject3D,
         })
       );
 
       this.threads[gameObject3D.uuid].on(
-        Thread.EVENT.CURRENT_STATE,
+        Thread.MESSAGE_EVENT.CURRENT_STATE,
         (state) => {
           this.threads[gameObject3D.uuid].socketWrappers.forEach((sW) => {
             sW.sendState(state);
