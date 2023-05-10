@@ -76,7 +76,7 @@ const GameExternalContextScript = class extends udvizBrowser.Game.External
     console.log('hello from game external context ');
   }
   static get ID_SCRIPT() {
-    return 'game_external_context_script_id';
+    return 'game_external_context_script';
   }
 };
 
@@ -100,6 +100,7 @@ const game = new udvizBrowser.Game.External.SinglePlanarProcess(
   {
     gameScriptClass: [GameContextScript],
     externalGameScriptClass: [GameExternalContextScript],
+    gameOrigin: { x: extent.center().x, y: extent.center().y, z: 100}
   }
 );
 ```
@@ -121,7 +122,6 @@ setInterval(() => {
     },
   });
 
-  newGOCube.position.set(extentCenter.x, extentCenter.y, 100);
   const size = Math.random() * 200 + 50;
   newGOCube.scale.set(size, size, size);
   this.goCubes.push(newGOCube);
@@ -191,7 +191,30 @@ Now you have learned how to build a singleplayer simple game, let's see how to m
 
 ## Create a multiplayer simple game
 
+1 Create a backend
+import udviz node with require
+as before run an express app running a http server
+Final result backend [here](../../../bin/backEndExamples.js)
 
+import game part of shared
+create a socket service by passsing the http server
+load gameobject3D where gameobject3D is the same one as the previous example
+the both script are unknown 
+hard coded value of ids *to keep it simple*
+create another file gamethreadchild
+ok now you have to give the entry point to your thread
+the game script is the one running backend side copy paste it to your gamethread
+you have to give him the game script because he is going to run there
+replace udvizBrowser.Shared.Game by Game
+ouais backend okay
+
+front end
+create a new html file base on previous one
+delete game script
+delete gameobject 3D
+Replace singleprocess by multiprocess
+create a socket io wrapper + connect it
+run enjoy
 
 ## Examples
 
