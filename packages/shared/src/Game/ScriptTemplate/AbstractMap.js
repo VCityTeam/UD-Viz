@@ -95,4 +95,8 @@ module.exports = class AbstractMap extends ScriptBase {
     }
     return false;
   }
+
+  static get ID_SCRIPT() {
+    return 'abstract_map_id';
+  }
 };

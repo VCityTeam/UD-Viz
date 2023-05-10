@@ -7,17 +7,15 @@ const Script1 = class extends Shared.Game.ScriptBase {
     super(context, object3D, variables);
   }
 
-  tick() {
-    this.context.getCommands().forEach((cmd) => {
-      switch (cmd.getType()) {
-        case COMMAND_TYPE:
-          console.log(cmd);
-          process.exit(0);
-          break;
-        default:
-          throw new Error('cmd type');
-      }
-    });
+  onCommand(type, data) {
+    switch (type) {
+      case COMMAND_TYPE:
+        console.log(data);
+        process.exit(0);
+        break;
+      default:
+        throw new Error('cmd type');
+    }
   }
 
   static get ID_SCRIPT() {
