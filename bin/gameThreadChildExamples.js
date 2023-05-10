@@ -1,8 +1,6 @@
 const Shared = require('@ud-viz/shared');
-const { runChildProcess } = require('../packages/node/src/Game/Thread');
+const Thread = require('../packages/node/src/Game/Thread');
 const NoteGameManager = require('../packages/node/src/Game/ScriptTemplate/NoteGameManager');
 
-runChildProcess([
-  Shared.Game.ScriptTemplate.NativeCommandManager,
-  NoteGameManager,
-]);
+const child = new Thread.Child();
+child.run([Shared.Game.ScriptTemplate.NativeCommandManager, NoteGameManager]);
