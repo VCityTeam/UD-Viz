@@ -2,15 +2,21 @@
 
 This document gives an overview of how the game part works. Here are some different implementations of the game part:
 
-## Creating a simple game (Singleplayer)
+## Prerequisites
 
-The goal of this section is to learn how to set a simple game structure (you can see the final result [here](../../../examples/SimpleGame.html) to check where every code sample should be added):
+- Run a back-end in node.js with express. See [MDN DOC](https://developer.mozilla.org/en-US/docs/Learn/Server-side/Express_Nodejs/Introduction).
+- See [here](../../../packages/browser/Readme.md#how-to-use-it-in-your-demo) how to import @ud-viz/browser framework.
 
-You can see [here](./ud_viz_browser/ud_viz_browser.md) how to import @ud-viz/browser framework
+## Creating a singleplayer simple game 
+
+The goal of this section is to learn how to set a singleplayer simple game structure:
+
+You can see the final result of this tutorial [here](../../../examples/SingleplayerSimpleGame.html) to check where every code sample should be added (this example import @ud-viz/browser with bundle).
+
 
 **Create a scene**
 
-Initialize a `Frame3DPlanar` which creates a [itowns](http://www.itowns-project.org/itowns/docs/#api/View/PlanarView) PlanarView](http://www.itowns-project.org/itowns/docs/#api/View/PlanarView).
+Initialize a `Frame3DPlanar` which creates a [itowns PlanarView](http://www.itowns-project.org/itowns/docs/#api/View/PlanarView).
 
 ```js
 // Define geographic extent: CRS, min/max X, min/max Y
@@ -180,7 +186,11 @@ tick() {
   ...
 ```
 
-Now you have learned how to build a simple game (single-player), let's see how to modify it to make a multiplayer one. 
+Now you have learned how to build a singleplayer simple game, let's see how to modify it to make a multiplayer one. 
+
+
+## Create a multiplayer simple game
+
 
 
 ## Examples
