@@ -85,7 +85,7 @@ const SocketService = class {
   /**
    * Launch thread running game context simulation
    *
-   * @param {Game.Object3D} gameObjects3D - gameobject3D to simulate
+   * @param {Array<Game.Object3D>} gameObjects3D - array of gameobject3D to simulate
    * @param {string} threadProcessPath - path to the thread process
    * @param {string=} entryGameObject3DUUID - uuid of default gameobject to connect socket connected
    * @returns {Promise} - a promises resolving when all thread have been initialized
