@@ -8,6 +8,29 @@
   --sidebar-widget-sidebar-pan-max-width: 500px;
 }
 
+/*************************************** 3DTiles Loading*/
+._sidebar_widget_3DTiles_loading {
+  position: absolute;
+  top: 8%;
+  left: 50%;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  animation: rotate 7.3s linear infinite;
+  border: 6px solid;
+  border-style: dotted;
+  border-color: black;
+}
+
+@keyframes rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
 /********************************************* SIDE BAR*/
 
 ::-webkit-scrollbar {
