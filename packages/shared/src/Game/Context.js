@@ -94,14 +94,6 @@ const Context = class {
      * @type {number}
      */
     this.dt = 0;
-
-    /**
-     * buffer of commands to apply at the next step
-     *
-     * @type {Command[]}
-     */
-
-    this.commands = [];
   }
 
   /**
@@ -286,8 +278,6 @@ const Context = class {
         }
       }
     });
-
-    this.commands.length = 0; // Clear commands
   }
 
   /**
@@ -545,7 +535,10 @@ const Context = class {
    */
   onCommands(cmds) {
     cmds.forEach((cmd) => {
-      this.commands.push(cmd);
+      this.dispatchScriptEvent(this.object3D, Context.EVENT.ON_COMMAND, [
+        cmd.type,
+        cmd.data,
+      ]);
     });
   }
 
@@ -567,30 +560,6 @@ const Context = class {
     });
 
     return result;
-  }
-
-  /**
-   *
-   * @returns {Object3D} - context root object3D
-   */
-  getObject3D() {
-    return this.object3D;
-  }
-
-  /**
-   *
-   * @returns {number} - context delta time
-   */
-  getDt() {
-    return this.dt;
-  }
-
-  /**
-   *
-   * @returns {Command[]} - context buffer commands
-   */
-  getCommands() {
-    return this.commands;
   }
 
   /**
@@ -633,6 +602,7 @@ Context.EVENT = {
   ON_ENTER_COLLISION: 'onEnterCollision',
   IS_COLLIDING: 'isColliding',
   ON_LEAVE_COLLISION: 'onLeaveCollision',
+  ON_COMMAND: 'onCommand',
 };
 
 /**
@@ -704,6 +674,14 @@ const ScriptBase = class {
    */
   // eslint-disable-next-line no-unused-vars
   onLeaveCollision(object3D) {}
+  /**
+   * call when {@link Context} receive new command
+   *
+   * @param {string} type - type of the command
+   * @param {object} data - data of the command
+   */
+  // eslint-disable-next-line no-unused-vars
+  onCommand(type, data) {}
 
   static get ID_SCRIPT() {
     throw new Error('this is abstract class you should override ID_SCRIPT');

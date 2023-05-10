@@ -61,42 +61,36 @@ module.exports = class NoteGameManager extends Shared.Game.ScriptBase {
     );
   }
 
-  tick() {
-    this.context.commands.forEach((cmd) => {
-      if (
-        cmd.getType() == Shared.Game.ScriptTemplate.Constants.COMMAND.ADD_NOTE
-      ) {
-        const data = cmd.getData();
+  onCommand(type, data) {
+    if (type === Shared.Game.ScriptTemplate.Constants.COMMAND.ADD_NOTE) {
+      const socketObject3D = this.socketObjects3D[data.socketID];
 
-        const socketObject3D = this.socketObjects3D[data.socketID];
-
-        const note = new Shared.Game.Object3D({
-          name: 'Note',
-          static: true,
-          userData: {
-            isNote: true, // type this object
+      const note = new Shared.Game.Object3D({
+        name: 'Note',
+        static: true,
+        userData: {
+          isNote: true, // type this object
+        },
+        components: {
+          Render: {
+            idRenderData: 'sphere',
+            color: data.color,
           },
-          components: {
-            Render: {
-              idRenderData: 'sphere',
-              color: data.color,
-            },
-            ExternalScript: {
-              idScripts: [
-                Shared.Game.ScriptTemplate.Constants.ID_SCRIPT.NoteElement,
-              ],
-              variables: {
-                message: data.message,
-              },
+          ExternalScript: {
+            idScripts: [
+              Shared.Game.ScriptTemplate.Constants.ID_SCRIPT.NoteElement,
+            ],
+            variables: {
+              message: data.message,
             },
           },
-        });
-        note.position.copy(data.position);
-        note.scale.copy(data.scale);
+        },
+      });
+      note.position.copy(data.position);
+      note.scale.copy(data.scale);
 
-        socketObject3D.add(note);
-      }
-    });
+      socketObject3D.add(note);
+    }
   }
 
   static get ID_SCRIPT() {

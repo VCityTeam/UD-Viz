@@ -33,265 +33,250 @@ const NativeCommandManager = class extends ScriptBase {
     this.objectsMoving[Constants.COMMAND.MOVE_RIGHT_START] = [];
   }
 
+  init() {
+    /** @type {AbstractMap|null} */
+    this.map = this.context.findGameScriptWithID(AbstractMap.ID_SCRIPT);
+  }
+
+  onCommand(type, data) {
+    if (!data) return;
+
+    /** @type {Object3D} */
+    const updatedObject3D = this.context.object3D.getObjectByProperty(
+      'uuid',
+      data.object3DUUID
+    );
+
+    let externalScriptComponent = null;
+
+    if (updatedObject3D) {
+      externalScriptComponent = updatedObject3D.getComponent(Component.TYPE);
+    }
+
+    let indexObjectMoving = -1;
+
+    switch (type) {
+      case Constants.COMMAND.MOVE_FORWARD:
+        NativeCommandManager.moveForward(
+          updatedObject3D,
+          this.variables.speedTranslate * this.context.dt,
+          this.map,
+          data.withMap
+        );
+        break;
+      case Constants.COMMAND.MOVE_BACKWARD:
+        NativeCommandManager.moveBackward(
+          updatedObject3D,
+          this.variables.speedTranslate * this.context.dt,
+          this.map,
+          data.withMap
+        );
+        break;
+      case Constants.COMMAND.ROTATE_LEFT:
+        NativeCommandManager.rotate(
+          updatedObject3D,
+          new THREE.Vector3(0, 0, this.variables.speedRotate * this.context.dt)
+        );
+        break;
+      case Constants.COMMAND.ROTATE_RIGHT:
+        NativeCommandManager.rotate(
+          updatedObject3D,
+          new THREE.Vector3(0, 0, -this.variables.speedRotate * this.context.dt)
+        );
+        break;
+      case Constants.COMMAND.UPDATE_TRANSFORM:
+        if (!updatedObject3D) break; // updated object 3D is needed for this command
+
+        if (data.position) {
+          if (!isNaN(data.position.x)) {
+            updatedObject3D.position.x = data.position.x;
+            updatedObject3D.setOutdated(true);
+          }
+          if (!isNaN(data.position.y)) {
+            updatedObject3D.position.y = data.position.y;
+            updatedObject3D.setOutdated(true);
+          }
+          if (!isNaN(data.position.z)) {
+            updatedObject3D.position.z = data.position.z;
+            updatedObject3D.setOutdated(true);
+          }
+        }
+        if (data.scale) {
+          if (!isNaN(data.scale.x)) {
+            updatedObject3D.scale.x = data.scale.x;
+            updatedObject3D.setOutdated(true);
+          }
+          if (!isNaN(data.scale.y)) {
+            updatedObject3D.scale.y = data.scale.y;
+            updatedObject3D.setOutdated(true);
+          }
+          if (!isNaN(data.scale.z)) {
+            updatedObject3D.scale.z = data.scale.z;
+            updatedObject3D.setOutdated(true);
+          }
+        }
+        break;
+      case Constants.COMMAND.UPDATE_EXTERNALSCRIPT_VARIABLES:
+        if (externalScriptComponent) {
+          externalScriptComponent.getModel().variables[data.variableName] =
+            data.variableValue;
+          updatedObject3D.setOutdated(true);
+          // console.log(
+          //   'update ',
+          //   data.nameVariable,
+          //   ' set with ',
+          //   data.variableValue
+          // );
+        }
+        break;
+      case Constants.COMMAND.MOVE_FORWARD_START:
+        if (
+          !this.objectsMoving[Constants.COMMAND.MOVE_FORWARD_START].includes(
+            updatedObject3D
+          )
+        ) {
+          this.objectsMoving[Constants.COMMAND.MOVE_FORWARD_START].push(
+            updatedObject3D
+          );
+        }
+        break;
+      case Constants.COMMAND.MOVE_FORWARD_END:
+        indexObjectMoving =
+          this.objectsMoving[Constants.COMMAND.MOVE_FORWARD_START].indexOf(
+            updatedObject3D
+          );
+        if (indexObjectMoving >= 0)
+          this.objectsMoving[Constants.COMMAND.MOVE_FORWARD_START].splice(
+            indexObjectMoving,
+            1
+          );
+        break;
+      case Constants.COMMAND.MOVE_BACKWARD_START:
+        if (
+          !this.objectsMoving[Constants.COMMAND.MOVE_BACKWARD_START].includes(
+            updatedObject3D
+          )
+        ) {
+          this.objectsMoving[Constants.COMMAND.MOVE_BACKWARD_START].push(
+            updatedObject3D
+          );
+        }
+        break;
+      case Constants.COMMAND.MOVE_BACKWARD_END:
+        indexObjectMoving =
+          this.objectsMoving[Constants.COMMAND.MOVE_BACKWARD_START].indexOf(
+            updatedObject3D
+          );
+        if (indexObjectMoving >= 0)
+          this.objectsMoving[Constants.COMMAND.MOVE_BACKWARD_START].splice(
+            indexObjectMoving,
+            1
+          );
+        break;
+      case Constants.COMMAND.MOVE_LEFT_START:
+        if (
+          !this.objectsMoving[Constants.COMMAND.MOVE_LEFT_START].includes(
+            updatedObject3D
+          )
+        ) {
+          this.objectsMoving[Constants.COMMAND.MOVE_LEFT_START].push(
+            updatedObject3D
+          );
+        }
+        break;
+      case Constants.COMMAND.MOVE_LEFT_END:
+        indexObjectMoving =
+          this.objectsMoving[Constants.COMMAND.MOVE_LEFT_START].indexOf(
+            updatedObject3D
+          );
+        if (indexObjectMoving >= 0)
+          this.objectsMoving[Constants.COMMAND.MOVE_LEFT_START].splice(
+            indexObjectMoving,
+            1
+          );
+        break;
+      case Constants.COMMAND.MOVE_RIGHT_START:
+        if (
+          !this.objectsMoving[Constants.COMMAND.MOVE_RIGHT_START].includes(
+            updatedObject3D
+          )
+        ) {
+          this.objectsMoving[Constants.COMMAND.MOVE_RIGHT_START].push(
+            updatedObject3D
+          );
+        }
+        break;
+      case Constants.COMMAND.MOVE_RIGHT_END:
+        indexObjectMoving =
+          this.objectsMoving[Constants.COMMAND.MOVE_RIGHT_START].indexOf(
+            updatedObject3D
+          );
+        if (indexObjectMoving >= 0)
+          this.objectsMoving[Constants.COMMAND.MOVE_RIGHT_START].splice(
+            indexObjectMoving,
+            1
+          );
+        break;
+      case Constants.COMMAND.ROTATE:
+        if (data.vector) {
+          if (!isNaN(data.vector.x)) {
+            updatedObject3D.rotateX(
+              data.vector.x * this.context.dt * this.variables.speedRotate
+            );
+          }
+          if (!isNaN(data.vector.y)) {
+            updatedObject3D.rotateY(
+              data.vector.y * this.context.dt * this.variables.speedRotate
+            );
+          }
+          if (!isNaN(data.vector.z)) {
+            updatedObject3D.rotateZ(
+              data.vector.z * this.context.dt * this.variables.speedRotate
+            );
+          }
+          this.clampRotation(updatedObject3D);
+          updatedObject3D.setOutdated(true);
+        }
+        break;
+      case Constants.COMMAND.ADD_OBJECT3D:
+        this.context.addObject3D(new Object3D(data.object3D), data.parentUUID);
+        break;
+      case Constants.COMMAND.REMOVE_OBJECT3D:
+        this.context.removeObject3D(updatedObject3D.uuid);
+        break;
+      default:
+        break;
+    }
+  }
+
   tick() {
-    const map = this.context.findGameScriptWithID('Map');
-
-    this.context.commands.forEach((command) => {
-      if (!command.data) return;
-
-      /** @type {Object3D} */
-      const updatedObject3D = this.context.object3D.getObjectByProperty(
-        'uuid',
-        command.data.object3DUUID
-      );
-
-      let externalScriptComponent = null;
-
-      if (updatedObject3D) {
-        externalScriptComponent = updatedObject3D.getComponent(Component.TYPE);
-      }
-
-      let indexObjectMoving = -1;
-
-      switch (command.type) {
-        case Constants.COMMAND.MOVE_FORWARD:
-          NativeCommandManager.moveForward(
-            updatedObject3D,
-            this.variables.speedTranslate * this.context.dt,
-            map,
-            command.data.withMap
-          );
-          break;
-        case Constants.COMMAND.MOVE_BACKWARD:
-          NativeCommandManager.moveBackward(
-            updatedObject3D,
-            this.variables.speedTranslate * this.context.dt,
-            map,
-            command.data.withMap
-          );
-          break;
-        case Constants.COMMAND.ROTATE_LEFT:
-          NativeCommandManager.rotate(
-            updatedObject3D,
-            new THREE.Vector3(
-              0,
-              0,
-              this.variables.speedRotate * this.context.dt
-            )
-          );
-          break;
-        case Constants.COMMAND.ROTATE_RIGHT:
-          NativeCommandManager.rotate(
-            updatedObject3D,
-            new THREE.Vector3(
-              0,
-              0,
-              -this.variables.speedRotate * this.context.dt
-            )
-          );
-          break;
-        case Constants.COMMAND.UPDATE_TRANSFORM:
-          if (!updatedObject3D) break; // updated object 3D is needed for this command
-
-          if (command.data.position) {
-            if (!isNaN(command.data.position.x)) {
-              updatedObject3D.position.x = command.data.position.x;
-              updatedObject3D.setOutdated(true);
-            }
-            if (!isNaN(command.data.position.y)) {
-              updatedObject3D.position.y = command.data.position.y;
-              updatedObject3D.setOutdated(true);
-            }
-            if (!isNaN(command.data.position.z)) {
-              updatedObject3D.position.z = command.data.position.z;
-              updatedObject3D.setOutdated(true);
-            }
-          }
-          if (command.data.scale) {
-            if (!isNaN(command.data.scale.x)) {
-              updatedObject3D.scale.x = command.data.scale.x;
-              updatedObject3D.setOutdated(true);
-            }
-            if (!isNaN(command.data.scale.y)) {
-              updatedObject3D.scale.y = command.data.scale.y;
-              updatedObject3D.setOutdated(true);
-            }
-            if (!isNaN(command.data.scale.z)) {
-              updatedObject3D.scale.z = command.data.scale.z;
-              updatedObject3D.setOutdated(true);
-            }
-          }
-          break;
-        case Constants.COMMAND.UPDATE_EXTERNALSCRIPT_VARIABLES:
-          if (externalScriptComponent) {
-            externalScriptComponent.getModel().variables[
-              command.data.variableName
-            ] = command.data.variableValue;
-            updatedObject3D.setOutdated(true);
-            // console.log(
-            //   'update ',
-            //   command.data.nameVariable,
-            //   ' set with ',
-            //   command.data.variableValue
-            // );
-          }
-          break;
-        case Constants.COMMAND.MOVE_FORWARD_START:
-          if (
-            !this.objectsMoving[Constants.COMMAND.MOVE_FORWARD_START].includes(
-              updatedObject3D
-            )
-          ) {
-            this.objectsMoving[Constants.COMMAND.MOVE_FORWARD_START].push(
-              updatedObject3D
-            );
-          }
-          break;
-        case Constants.COMMAND.MOVE_FORWARD_END:
-          indexObjectMoving =
-            this.objectsMoving[Constants.COMMAND.MOVE_FORWARD_START].indexOf(
-              updatedObject3D
-            );
-          if (indexObjectMoving >= 0)
-            this.objectsMoving[Constants.COMMAND.MOVE_FORWARD_START].splice(
-              indexObjectMoving,
-              1
-            );
-          break;
-        case Constants.COMMAND.MOVE_BACKWARD_START:
-          if (
-            !this.objectsMoving[Constants.COMMAND.MOVE_BACKWARD_START].includes(
-              updatedObject3D
-            )
-          ) {
-            this.objectsMoving[Constants.COMMAND.MOVE_BACKWARD_START].push(
-              updatedObject3D
-            );
-          }
-          break;
-        case Constants.COMMAND.MOVE_BACKWARD_END:
-          indexObjectMoving =
-            this.objectsMoving[Constants.COMMAND.MOVE_BACKWARD_START].indexOf(
-              updatedObject3D
-            );
-          if (indexObjectMoving >= 0)
-            this.objectsMoving[Constants.COMMAND.MOVE_BACKWARD_START].splice(
-              indexObjectMoving,
-              1
-            );
-          break;
-        case Constants.COMMAND.MOVE_LEFT_START:
-          if (
-            !this.objectsMoving[Constants.COMMAND.MOVE_LEFT_START].includes(
-              updatedObject3D
-            )
-          ) {
-            this.objectsMoving[Constants.COMMAND.MOVE_LEFT_START].push(
-              updatedObject3D
-            );
-          }
-          break;
-        case Constants.COMMAND.MOVE_LEFT_END:
-          indexObjectMoving =
-            this.objectsMoving[Constants.COMMAND.MOVE_LEFT_START].indexOf(
-              updatedObject3D
-            );
-          if (indexObjectMoving >= 0)
-            this.objectsMoving[Constants.COMMAND.MOVE_LEFT_START].splice(
-              indexObjectMoving,
-              1
-            );
-          break;
-        case Constants.COMMAND.MOVE_RIGHT_START:
-          if (
-            !this.objectsMoving[Constants.COMMAND.MOVE_RIGHT_START].includes(
-              updatedObject3D
-            )
-          ) {
-            this.objectsMoving[Constants.COMMAND.MOVE_RIGHT_START].push(
-              updatedObject3D
-            );
-          }
-          break;
-        case Constants.COMMAND.MOVE_RIGHT_END:
-          indexObjectMoving =
-            this.objectsMoving[Constants.COMMAND.MOVE_RIGHT_START].indexOf(
-              updatedObject3D
-            );
-          if (indexObjectMoving >= 0)
-            this.objectsMoving[Constants.COMMAND.MOVE_RIGHT_START].splice(
-              indexObjectMoving,
-              1
-            );
-          break;
-        case Constants.COMMAND.ROTATE:
-          if (command.data.vector) {
-            if (!isNaN(command.data.vector.x)) {
-              updatedObject3D.rotateX(
-                command.data.vector.x *
-                  this.context.dt *
-                  this.variables.speedRotate
-              );
-            }
-            if (!isNaN(command.data.vector.y)) {
-              updatedObject3D.rotateY(
-                command.data.vector.y *
-                  this.context.dt *
-                  this.variables.speedRotate
-              );
-            }
-            if (!isNaN(command.data.vector.z)) {
-              updatedObject3D.rotateZ(
-                command.data.vector.z *
-                  this.context.dt *
-                  this.variables.speedRotate
-              );
-            }
-            this.clampRotation(updatedObject3D);
-            updatedObject3D.setOutdated(true);
-          }
-          break;
-        case Constants.COMMAND.ADD_OBJECT3D:
-          this.context.addObject3D(
-            new Object3D(command.data.object3D),
-            command.data.parentUUID
-          );
-          break;
-        case Constants.COMMAND.REMOVE_OBJECT3D:
-          this.context.removeObject3D(updatedObject3D.uuid);
-          break;
-        default:
-          break;
-      }
-    });
-
     // move objectsMoving
     this.objectsMoving[Constants.COMMAND.MOVE_FORWARD_START].forEach((o) => {
       NativeCommandManager.moveForward(
         o,
         this.variables.speedTranslate * this.context.dt,
-        map
+        this.map
       );
     });
     this.objectsMoving[Constants.COMMAND.MOVE_BACKWARD_START].forEach((o) => {
       NativeCommandManager.moveBackward(
         o,
         this.variables.speedTranslate * this.context.dt,
-        map
+        this.map
       );
     });
     this.objectsMoving[Constants.COMMAND.MOVE_LEFT_START].forEach((o) => {
       NativeCommandManager.moveLeft(
         o,
         this.variables.speedTranslate * this.context.dt,
-        map
+        this.map
       );
     });
     this.objectsMoving[Constants.COMMAND.MOVE_RIGHT_START].forEach((o) => {
       NativeCommandManager.moveRight(
         o,
         this.variables.speedTranslate * this.context.dt,
-        map
+        this.map
       );
     });
   }
