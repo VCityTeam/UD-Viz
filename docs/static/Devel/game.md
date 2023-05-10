@@ -2,7 +2,7 @@
 
 This document gives an overview of how the game part works. Here are some different implementations of the game part:
 
-## Creating a simple game
+## Creating a simple game (Singleplayer)
 
 The goal of this section is to learn how to set a simple game structure (you can see the final result [here](../../../examples/SimpleGame.html) to check where every code sample should be added):
 
@@ -12,7 +12,7 @@ You can see [here](./ud_viz_browser/ud_viz_browser.md) how to import @ud-viz/bro
 
 Initialize a `Frame3DPlanar` which creates a [itowns](http://www.itowns-project.org/itowns/docs/#api/View/PlanarView) PlanarView](http://www.itowns-project.org/itowns/docs/#api/View/PlanarView).
 
-```js+
+```js
 // Define geographic extent: CRS, min/max X, min/max Y
 const extent = new udvizBrowser.itowns.Extent(
   'EPSG:4326',
@@ -180,8 +180,8 @@ tick() {
   ...
 ```
 
-Now you have learned how to build a simple game. To go further you can find other game examples in the next section.
- 
+Now you have learned how to build a simple game (single-player), let's see how to modify it to make a multiplayer one. 
+
 
 ## Examples
 

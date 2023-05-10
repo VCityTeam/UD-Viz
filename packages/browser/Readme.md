@@ -85,7 +85,7 @@ In your demo:
 npm install --save @ud-viz/browser
 ```
 
-If you're using a module bundler (like [wepback](https://webpack.js.org/concepts/)), you can directly write `import * as udvizBrowser from '@ud-viz/browser'` in your code. See [import doc](https://developer.mozilla.org/fr/docs/Web/JavaScript/Reference/Statements/import). 
+If you're using a module bundler (like [webback](https://webpack.js.org/concepts/)), you can directly write `import * as udvizBrowser from '@ud-viz/browser'` in your code. See [import doc](https://developer.mozilla.org/fr/docs/Web/JavaScript/Reference/Statements/import). 
 
 > See https://github.com/VCityTeam/UD-Viz-template  
 
