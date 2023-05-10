@@ -70,6 +70,8 @@ const ShowRoom = class {
 
     // HTML ELEMENT NEEDED TO BE REFERENCED
 
+    this.c3DTilesLoadingDomElement = null;
+
     // CHILD UI
 
     /** @type {HTMLElement} */
@@ -136,18 +138,70 @@ const ShowRoom = class {
    */
   addLayers(configs) {
     if (configs.$3DTiles) {
-      udvizBrowser.add3DTilesLayers(
-        configs.$3DTiles,
-        this.frame3DPlanar.itownsView
-      );
+      configs.$3DTiles.forEach((layerConfig) => {
+        const c3DTilesLayer = new itowns.C3DTilesLayer(
+          layerConfig['id'],
+          {
+            style: this.c3DTilesStyle,
+            name: layerConfig['id'],
+            source: new itowns.C3DTilesSource({
+              url: layerConfig['url'],
+            }),
+          },
+          this.frame3DPlanar.itownsView
+        );
+        itowns.View.prototype.addLayer.call(
+          this.frame3DPlanar.itownsView,
+          c3DTilesLayer
+        );
 
-      // add style to 3DTilesLayer
-      this.frame3DPlanar.itownsView
-        .getLayers()
-        .filter((el) => el.isC3DTilesLayer)
-        .forEach((layer) => {
-          layer.style = this.c3DTilesStyle;
+        /** @type {Map<number, THREE.Mesh>} */
+        const currentLoadingBox = new Map();
+        const loadingBoxMaterial = new THREE.MeshBasicMaterial({
+          wireframe: true,
+          color: 'white',
         });
+
+        c3DTilesLayer.addEventListener(
+          itowns.C3DTILES_LAYER_EVENTS.ON_TILE_REQUESTED,
+          ({ metadata }) => {
+            if (metadata.tileId == undefined) throw new Error('no tile id');
+
+            const worldBox3 = metadata.boundingVolume.box.clone();
+
+            if (metadata.transform) worldBox3.applyMatrix4(metadata.transform);
+
+            const box3Object = new THREE.Mesh(
+              new THREE.BoxGeometry(),
+              loadingBoxMaterial
+            );
+            box3Object.scale.copy(worldBox3.max.clone().sub(worldBox3.min));
+            worldBox3.getCenter(box3Object.position);
+            box3Object.updateMatrixWorld();
+            this.frame3DPlanar.scene.add(box3Object);
+            this.frame3DPlanar.itownsView.notifyChange();
+
+            // bufferize
+            currentLoadingBox.set(metadata.tileId, box3Object);
+            this.c3DTilesLoadingDomElement.hidden = false;
+          }
+        );
+
+        c3DTilesLayer.addEventListener(
+          itowns.C3DTILES_LAYER_EVENTS.ON_TILE_CONTENT_LOADED,
+          ({ tileContent }) => {
+            if (currentLoadingBox.has(tileContent.tileId)) {
+              this.frame3DPlanar.scene.remove(
+                currentLoadingBox.get(tileContent.tileId)
+              );
+              currentLoadingBox.delete(tileContent.tileId);
+              this.c3DTilesLoadingDomElement.hidden =
+                currentLoadingBox.size == 0; // nothing more is loaded
+              this.frame3DPlanar.itownsView.notifyChange();
+            }
+          }
+        );
+      });
     }
     if (configs.elevation) {
       udvizBrowser.addElevationLayer(
@@ -217,7 +271,15 @@ const ShowRoom = class {
     // Logo container
     this.logoContainer = document.createElement('div');
     this.logoContainer.setAttribute('id', 'logo-container');
-    this.frame3DPlanar.domElementUI.appendChild(this.logoContainer);
+    this.frame3DPlanar.appendToUI(this.logoContainer);
+
+    // c3DTiles loading element
+    this.c3DTilesLoadingDomElement = document.createElement('div');
+    this.c3DTilesLoadingDomElement.classList.add(
+      '_sidebar_widget_3DTiles_loading'
+    );
+    this.frame3DPlanar.ui.appendChild(this.c3DTilesLoadingDomElement);
+    this.c3DTilesLoadingDomElement.hidden = true;
   }
 
   addURLButton(pathIcon) {
