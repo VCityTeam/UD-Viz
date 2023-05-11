@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>SPARQL Widget example</title>
+    <title>C3DTiles Editor example</title>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="./assets/css/examples.css" />
@@ -14,10 +14,10 @@
         .loadMultipleJSON([
           './assets/config/extent_lyon.json',
           './assets/config/frame3D_planars.json',
-          './assets/config/layer/doua_temporal.json',
-          './assets/config/widget/temporal.json',
-          './assets/config/widget/sparql_widget.json',
-          './assets/config/server/sparql_server.json'
+          './assets/config/layer/base_maps.json',
+          './assets/config/layer/geoJSONs.json',
+          './assets/config/layer/elevation.json',
+          './assets/config/layer/3DTiles.json'
         ])
         .then((configs) => {
           // http://proj4js.org/
@@ -37,35 +37,19 @@
             parseInt(configs['extent_lyon'].north)
           );
 
-          const frame3DPlanar = new udvizBrowser.Frame3DPlanar(
+          const app = new udvizBrowser.C3DTilesEditor(
             extent,
             configs['frame3D_planars'][2]
           );
 
-          // /// ADD LAYERS
-          udvizBrowser.Widget.Temporal.add3DTilesTemporalFromConfig(
-            configs['doua_temporal'],
-            frame3DPlanar.itownsView
-          );
-
-          // //// SPARQL MODULE
-          const sparqlWidget = new udvizBrowser.Widget.Server.SparqlQueryWindow(
-            new udvizBrowser.Widget.Server.SparqlEndpointResponseProvider(
-              configs['sparql_server']
-            ),
-            frame3DPlanar.itownsView,
-            configs['sparql_widget']
-          );
-          const parent = document.createElement('div');
-          parent.style.backgroundColor = 'gray';
-          parent.style.width = 'fit-content';
-          parent.style.position = 'relative';
-          parent.style.zIndex = 2;
-          parent.appendChild(sparqlWidget.html());
-
-          frame3DPlanar.appendToUI(parent);
+          app.addLayers({
+            $3DTiles: configs['3DTiles'],
+            elevation: configs['elevation'],
+            baseMap: configs['base_maps'][0],
+            labels: configs['labels'],
+            geoJSON: configs['geoJSONs']
+          });
         });
     </script>
-    SCRIPT_TAG_RELOAD
   </body>
 </html>

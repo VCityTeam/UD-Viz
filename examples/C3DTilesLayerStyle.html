@@ -10,111 +10,113 @@
     <script src="../packages/browser/dist/RUN_MODE/bundle.js"></script>
 
     <script type="text/javascript">
-      udvizBrowser.FileUtil.loadMultipleJSON([
-        './assets/config/extent_lyon.json',
-        './assets/config/frame3D_planars.json',
-        './assets/config/layer/3DTiles.json',
-      ]).then((configs) => {
-        // http://proj4js.org/
-        // define a projection as a string and reference it that way
-        // the definition of the projection should be in config TODO_ISSUE
-        udvizBrowser.proj4.default.defs(
-          configs['extent_lyon'].crs,
-          '+proj=lcc +lat_1=45.25 +lat_2=46.75' +
-            ' +lat_0=46 +lon_0=3 +x_0=1700000 +y_0=5200000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs'
-        );
-
-        const extent = new udvizBrowser.itowns.Extent(
-          configs['extent_lyon'].crs,
-          parseInt(configs['extent_lyon'].west),
-          parseInt(configs['extent_lyon'].east),
-          parseInt(configs['extent_lyon'].south),
-          parseInt(configs['extent_lyon'].north)
-        );
-
-        const frame3DPlanar = new udvizBrowser.Frame3DPlanar(
-          extent,
-          configs['frame3D_planars'][2]
-        );
-
-        udvizBrowser.add3DTilesLayers(
-          configs['3DTiles'],
-          frame3DPlanar.itownsView
-        );
-
-        const myStyle = new udvizBrowser.itowns.Style({
-          fill: {
-            color: function (feature) {
-              if (feature.userData.selectedColor)
-                return feature.userData.selectedColor;
-              if (feature.getInfo().batchTable.id % 13 == 0) return 'orange';
-              if (feature.getInfo().batchTable.id % 11 == 0) return 'brown';
-              if (feature.getInfo().batchTable.id % 7 == 0) return 'magenta';
-              if (feature.getInfo().batchTable.id % 5 == 0) return 'green';
-              if (feature.getInfo().batchTable.id % 3 == 0) return 'red';
-              if (feature.getInfo().batchTable.id % 2 == 0) return 'yellow';
-              return 'white';
-            },
-            opacity: function (feature) {
-              if (feature.batchId % 2 == 0) return 0.5;
-              return 1;
-            },
-          },
-        });
-
-        // apply style to layers
-        frame3DPlanar.itownsView
-          .getLayers()
-          .filter((el) => el.isC3DTilesLayer)
-          .forEach((layer) => {
-            layer.style = myStyle;
-          });
-
-        // userData styling example using a pick selection
-        const contextSelection = {
-          feature: null,
-          layer: null,
-        };
-        frame3DPlanar.rootHtml.onclick = (event) => {
-          if (contextSelection.feature) {
-            // reset feature userData
-            contextSelection.feature.userData.selectedColor = null;
-            // and update style of its layer
-            contextSelection.layer.updateStyle();
-            // reset context selection
-            contextSelection.feature = null;
-            contextSelection.layer = null;
-          }
-
-          // get intersects based on the click event
-          const intersects = frame3DPlanar.itownsView.pickObjectsAt(
-            event,
-            0,
-            frame3DPlanar.itownsView
-              .getLayers()
-              .filter((el) => el.isC3DTilesLayer)
+      udvizBrowser
+        .loadMultipleJSON([
+          './assets/config/extent_lyon.json',
+          './assets/config/frame3D_planars.json',
+          './assets/config/layer/3DTiles.json'
+        ])
+        .then((configs) => {
+          // http://proj4js.org/
+          // define a projection as a string and reference it that way
+          // the definition of the projection should be in config TODO_ISSUE
+          udvizBrowser.proj4.default.defs(
+            configs['extent_lyon'].crs,
+            '+proj=lcc +lat_1=45.25 +lat_2=46.75' +
+              ' +lat_0=46 +lon_0=3 +x_0=1700000 +y_0=5200000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs'
           );
 
-          if (intersects.length) {
-            // get featureClicked
-            const featureClicked =
-              intersects[0].layer.getC3DTileFeatureFromIntersectsArray(
-                intersects
-              );
-            if (featureClicked) {
-              // write in userData the selectedColor
-              featureClicked.userData.selectedColor = 'blue';
-              // and update its style layer
-              intersects[0].layer.updateStyle();
+          const extent = new udvizBrowser.itowns.Extent(
+            configs['extent_lyon'].crs,
+            parseInt(configs['extent_lyon'].west),
+            parseInt(configs['extent_lyon'].east),
+            parseInt(configs['extent_lyon'].south),
+            parseInt(configs['extent_lyon'].north)
+          );
 
-              // set contextSelection
-              contextSelection.feature = featureClicked;
-              contextSelection.layer = intersects[0].layer;
+          const frame3DPlanar = new udvizBrowser.Frame3DPlanar(
+            extent,
+            configs['frame3D_planars'][2]
+          );
+
+          udvizBrowser.add3DTilesLayers(
+            configs['3DTiles'],
+            frame3DPlanar.itownsView
+          );
+
+          const myStyle = new udvizBrowser.itowns.Style({
+            fill: {
+              color: function (feature) {
+                if (feature.userData.selectedColor)
+                  return feature.userData.selectedColor;
+                if (feature.getInfo().batchTable.id % 13 == 0) return 'orange';
+                if (feature.getInfo().batchTable.id % 11 == 0) return 'brown';
+                if (feature.getInfo().batchTable.id % 7 == 0) return 'magenta';
+                if (feature.getInfo().batchTable.id % 5 == 0) return 'green';
+                if (feature.getInfo().batchTable.id % 3 == 0) return 'red';
+                if (feature.getInfo().batchTable.id % 2 == 0) return 'yellow';
+                return 'white';
+              },
+              opacity: function (feature) {
+                if (feature.batchId % 2 == 0) return 0.5;
+                return 1;
+              }
             }
-          }
-          frame3DPlanar.itownsView.notifyChange(); // need a redraw of the view
-        };
-      });
+          });
+
+          // apply style to layers
+          frame3DPlanar.itownsView
+            .getLayers()
+            .filter((el) => el.isC3DTilesLayer)
+            .forEach((layer) => {
+              layer.style = myStyle;
+            });
+
+          // userData styling example using a pick selection
+          const contextSelection = {
+            feature: null,
+            layer: null
+          };
+          frame3DPlanar.rootHtml.onclick = (event) => {
+            if (contextSelection.feature) {
+              // reset feature userData
+              contextSelection.feature.userData.selectedColor = null;
+              // and update style of its layer
+              contextSelection.layer.updateStyle();
+              // reset context selection
+              contextSelection.feature = null;
+              contextSelection.layer = null;
+            }
+
+            // get intersects based on the click event
+            const intersects = frame3DPlanar.itownsView.pickObjectsAt(
+              event,
+              0,
+              frame3DPlanar.itownsView
+                .getLayers()
+                .filter((el) => el.isC3DTilesLayer)
+            );
+
+            if (intersects.length) {
+              // get featureClicked
+              const featureClicked =
+                intersects[0].layer.getC3DTileFeatureFromIntersectsArray(
+                  intersects
+                );
+              if (featureClicked) {
+                // write in userData the selectedColor
+                featureClicked.userData.selectedColor = 'blue';
+                // and update its style layer
+                intersects[0].layer.updateStyle();
+
+                // set contextSelection
+                contextSelection.feature = featureClicked;
+                contextSelection.layer = intersects[0].layer;
+              }
+            }
+            frame3DPlanar.itownsView.notifyChange(); // need a redraw of the view
+          };
+        });
     </script>
     SCRIPT_TAG_RELOAD
   </body>

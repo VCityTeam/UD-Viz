@@ -13,248 +13,250 @@
     <script type="text/javascript">
       const THREE = udvizBrowser.THREE;
 
-      udvizBrowser.FileUtil.loadMultipleJSON([
-        './assets/config/extent_lyon.json',
-        './assets/config/assetManager.json',
-        './assets/config/frame3D_planars.json',
-        './assets/config/layer/3DTiles.json',
-        './assets/config/layer/base_maps.json',
-        './assets/config/layer/elevation.json',
-        './assets/config/layer/geoJSONs.json',
-      ]).then((configs) => {
-        const assetManager = new udvizBrowser.AssetManager();
-        assetManager.loadFromConfig(configs['assetManager']).then(() => {
-          // http://proj4js.org/
-          // define a projection as a string and reference it that way
-          // the definition of the projection should be in config TODO_ISSUE
-          udvizBrowser.proj4.default.defs(
-            configs['extent_lyon'].crs,
-            '+proj=lcc +lat_1=45.25 +lat_2=46.75' +
-              ' +lat_0=46 +lon_0=3 +x_0=1700000 +y_0=5200000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs'
-          );
+      udvizBrowser
+        .loadMultipleJSON([
+          './assets/config/extent_lyon.json',
+          './assets/config/assetManager.json',
+          './assets/config/frame3D_planars.json',
+          './assets/config/layer/3DTiles.json',
+          './assets/config/layer/base_maps.json',
+          './assets/config/layer/elevation.json',
+          './assets/config/layer/geoJSONs.json'
+        ])
+        .then((configs) => {
+          const assetManager = new udvizBrowser.AssetManager();
+          assetManager.loadFromConfig(configs['assetManager']).then(() => {
+            // http://proj4js.org/
+            // define a projection as a string and reference it that way
+            // the definition of the projection should be in config TODO_ISSUE
+            udvizBrowser.proj4.default.defs(
+              configs['extent_lyon'].crs,
+              '+proj=lcc +lat_1=45.25 +lat_2=46.75' +
+                ' +lat_0=46 +lon_0=3 +x_0=1700000 +y_0=5200000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs'
+            );
 
-          const extent = new udvizBrowser.itowns.Extent(
-            configs['extent_lyon'].crs,
-            parseInt(configs['extent_lyon'].west),
-            parseInt(configs['extent_lyon'].east),
-            parseInt(configs['extent_lyon'].south),
-            parseInt(configs['extent_lyon'].north)
-          );
+            const extent = new udvizBrowser.itowns.Extent(
+              configs['extent_lyon'].crs,
+              parseInt(configs['extent_lyon'].west),
+              parseInt(configs['extent_lyon'].east),
+              parseInt(configs['extent_lyon'].south),
+              parseInt(configs['extent_lyon'].north)
+            );
 
-          const AvatarExternalGameScript = class extends udvizBrowser.Game
-            .External.ScriptBase {
-            constructor(context, object3D, variables) {
-              super(context, object3D, variables);
+            const AvatarExternalGameScript = class extends udvizBrowser.Game
+              .External.ScriptBase {
+              constructor(context, object3D, variables) {
+                super(context, object3D, variables);
 
-              this.avatar = null;
-              this.intersectionCube = null;
+                this.avatar = null;
+                this.intersectionCube = null;
 
-              // Raycaster for avoiding buildings collisions with avatar
-              this.raycaster = new THREE.Raycaster();
-            }
+                // Raycaster for avoiding buildings collisions with avatar
+                this.raycaster = new THREE.Raycaster();
+              }
 
-            addObjectToArray(array, idLayers) {
-              idLayers.forEach((element) => {
-                const layer =
-                  this.context.frame3D.itownsView.getLayerById(element);
-                if (layer) {
-                  array.push(layer.root);
-                }
-              });
-            }
+              addObjectToArray(array, idLayers) {
+                idLayers.forEach((element) => {
+                  const layer =
+                    this.context.frame3D.itownsView.getLayerById(element);
+                  if (layer) {
+                    array.push(layer.root);
+                  }
+                });
+              }
 
-            buildingsHit(origin, direction) {
-              const buildings = [];
-              this.addObjectToArray(buildings, [
-                'Lyon-1',
-                'Lyon-2',
-                'Lyon-3',
-                'Lyon-4',
-                'Lyon-5',
-                'Lyon-6',
-                'Lyon-7',
-                'Lyon-8',
-              ]);
+              buildingsHit(origin, direction) {
+                const buildings = [];
+                this.addObjectToArray(buildings, [
+                  'Lyon-1',
+                  'Lyon-2',
+                  'Lyon-3',
+                  'Lyon-4',
+                  'Lyon-5',
+                  'Lyon-6',
+                  'Lyon-7',
+                  'Lyon-8'
+                ]);
 
-              this.raycaster.ray.origin = origin;
-              this.raycaster.ray.direction = direction;
+                this.raycaster.ray.origin = origin;
+                this.raycaster.ray.direction = direction;
 
-              const intersections = this.raycaster.intersectObjects(
-                buildings,
-                true
-              );
-              if (intersections.length) return intersections[0];
-              return null;
-            }
-
-            init() {
-              this.avatar = this.context.object3D.getObjectByProperty(
-                'name',
-                'avatar'
-              );
-              if (!this.avatar) throw new Error('no avatar in context');
-
-              this.cameraManager = this.context.findExternalScriptWithID(
-                udvizBrowser.Game.External.ScriptTemplate.CameraManager
-                  .ID_SCRIPT
-              );
-
-              this.cameraManager.followObject3D(
-                this.avatar,
-                this.variables.camera_distance,
-                new udvizBrowser.THREE.Vector3(0, 0, 2),
-                this.variables.camera_angle
-              );
-
-              const scene = this.context.frame3D.getScene();
-              if (!this.context.frame3D.itownsView)
-                throw new Error('this script works with Frame3DPlanar');
-              const worldOrigin = this.context.object3D.position;
-
-              // Input manager of the game
-              const inputManager = this.context.inputManager;
-
-              // Intersection cube
-              const geometry = new THREE.BoxGeometry(1, 1, 1);
-              const material = new THREE.MeshBasicMaterial({
-                color: 0x00ff00,
-              });
-              this.intersectionCube = new THREE.Mesh(geometry, material);
-              scene.add(this.intersectionCube);
-
-              const translationSpeed = 0.03;
-              const speedRotate = 0.0006;
-
-              const checkCollisionFun = (direction) => {
-                const origin = this.avatar.position
-                  .clone()
-                  .add(worldOrigin)
-                  .add(new THREE.Vector3(0, 0, 1));
-                const intersection = this.buildingsHit(origin, direction);
-                const depth = intersection ? intersection.distance : Infinity;
-
-                if (depth != Infinity) {
-                  this.intersectionCube.visibility = true;
-                  this.intersectionCube.position.copy(intersection.point);
-                  this.intersectionCube.updateMatrixWorld();
-                } else {
-                  this.intersectionCube.visibility = false;
-                }
-
-                return translationSpeed * this.context.dt > depth;
-              };
-
-              const updateZ = () => {
-                const zAvatar =
-                  udvizBrowser.Game.External.ScriptTemplate.computeRelativeElevationFromGround(
-                    this.avatar,
-                    this.context.frame3D.itownsView.tileLayer,
-                    this.variables.update_z_crs
-                  );
-
-                if (!isNaN(zAvatar)) {
-                  this.avatar.position.z = zAvatar;
-                }
-              };
-              updateZ();
-
-              const Object3D = udvizBrowser.Shared.Game.Object3D;
-
-              // FORWARD
-              inputManager.addKeyCommand('move_forward', ['z'], () => {
-                // eslint-disable-next-line no-unused-vars
-                const dt = this.context.dt;
-                const direction = Object3D.computeForward(this.avatar);
-                if (checkCollisionFun(direction)) return;
-                this.avatar.position.add(
-                  direction.setLength(translationSpeed * this.context.dt)
+                const intersections = this.raycaster.intersectObjects(
+                  buildings,
+                  true
                 );
-                updateZ();
-              });
-              // BACKWARD
-              inputManager.addKeyCommand('move_backward', ['s'], () => {
-                // eslint-disable-next-line no-unused-vars
-                const dt = this.context.dt;
-                const direction = Object3D.computeBackward(this.avatar);
-                if (checkCollisionFun(direction)) return;
-                this.avatar.position.add(
-                  direction.setLength(translationSpeed * this.context.dt)
+                if (intersections.length) return intersections[0];
+                return null;
+              }
+
+              init() {
+                this.avatar = this.context.object3D.getObjectByProperty(
+                  'name',
+                  'avatar'
                 );
-                updateZ();
-              });
-              // LEFT
-              inputManager.addKeyCommand('rotate_left', ['q'], () => {
-                const dt = this.context.dt;
-                this.avatar.rotateZ(speedRotate * dt);
-              });
-              // RIGHT
-              inputManager.addKeyCommand('rotate_right', ['d'], () => {
-                const dt = this.context.dt;
-                this.avatar.rotateZ(-speedRotate * dt);
-              });
-            }
+                if (!this.avatar) throw new Error('no avatar in context');
 
-            static get ID_SCRIPT() {
-              return 'avatar_game_id';
-            }
-          };
-
-          const gameObject3D = new udvizBrowser.Shared.Game.Object3D({
-            name: 'GameManager',
-            static: true,
-            components: {
-              ExternalScript: {
-                variables: {
-                  update_z_crs: configs['extent_lyon'].crs,
-                  camera_distance: 5,
-                  camera_angle: 0,
-                },
-                idScripts: [
-                  AvatarExternalGameScript.ID_SCRIPT,
+                this.cameraManager = this.context.findExternalScriptWithID(
                   udvizBrowser.Game.External.ScriptTemplate.CameraManager
-                    .ID_SCRIPT,
-                ],
+                    .ID_SCRIPT
+                );
+
+                this.cameraManager.followObject3D(
+                  this.avatar,
+                  this.variables.camera_distance,
+                  new udvizBrowser.THREE.Vector3(0, 0, 2),
+                  this.variables.camera_angle
+                );
+
+                const scene = this.context.frame3D.getScene();
+                if (!this.context.frame3D.itownsView)
+                  throw new Error('this script works with Frame3DPlanar');
+                const worldOrigin = this.context.object3D.position;
+
+                // Input manager of the game
+                const inputManager = this.context.inputManager;
+
+                // Intersection cube
+                const geometry = new THREE.BoxGeometry(1, 1, 1);
+                const material = new THREE.MeshBasicMaterial({
+                  color: 0x00ff00
+                });
+                this.intersectionCube = new THREE.Mesh(geometry, material);
+                scene.add(this.intersectionCube);
+
+                const translationSpeed = 0.03;
+                const speedRotate = 0.0006;
+
+                const checkCollisionFun = (direction) => {
+                  const origin = this.avatar.position
+                    .clone()
+                    .add(worldOrigin)
+                    .add(new THREE.Vector3(0, 0, 1));
+                  const intersection = this.buildingsHit(origin, direction);
+                  const depth = intersection ? intersection.distance : Infinity;
+
+                  if (depth != Infinity) {
+                    this.intersectionCube.visibility = true;
+                    this.intersectionCube.position.copy(intersection.point);
+                    this.intersectionCube.updateMatrixWorld();
+                  } else {
+                    this.intersectionCube.visibility = false;
+                  }
+
+                  return translationSpeed * this.context.dt > depth;
+                };
+
+                const updateZ = () => {
+                  const zAvatar =
+                    udvizBrowser.Game.External.ScriptTemplate.computeRelativeElevationFromGround(
+                      this.avatar,
+                      this.context.frame3D.itownsView.tileLayer,
+                      this.variables.update_z_crs
+                    );
+
+                  if (!isNaN(zAvatar)) {
+                    this.avatar.position.z = zAvatar;
+                  }
+                };
+                updateZ();
+
+                const Object3D = udvizBrowser.Shared.Game.Object3D;
+
+                // FORWARD
+                inputManager.addKeyCommand('move_forward', ['z'], () => {
+                  // eslint-disable-next-line no-unused-vars
+                  const dt = this.context.dt;
+                  const direction = Object3D.computeForward(this.avatar);
+                  if (checkCollisionFun(direction)) return;
+                  this.avatar.position.add(
+                    direction.setLength(translationSpeed * this.context.dt)
+                  );
+                  updateZ();
+                });
+                // BACKWARD
+                inputManager.addKeyCommand('move_backward', ['s'], () => {
+                  // eslint-disable-next-line no-unused-vars
+                  const dt = this.context.dt;
+                  const direction = Object3D.computeBackward(this.avatar);
+                  if (checkCollisionFun(direction)) return;
+                  this.avatar.position.add(
+                    direction.setLength(translationSpeed * this.context.dt)
+                  );
+                  updateZ();
+                });
+                // LEFT
+                inputManager.addKeyCommand('rotate_left', ['q'], () => {
+                  const dt = this.context.dt;
+                  this.avatar.rotateZ(speedRotate * dt);
+                });
+                // RIGHT
+                inputManager.addKeyCommand('rotate_right', ['d'], () => {
+                  const dt = this.context.dt;
+                  this.avatar.rotateZ(-speedRotate * dt);
+                });
+              }
+
+              static get ID_SCRIPT() {
+                return 'avatar_game_id';
+              }
+            };
+
+            const gameObject3D = new udvizBrowser.Shared.Game.Object3D({
+              name: 'GameManager',
+              static: true,
+              components: {
+                ExternalScript: {
+                  variables: {
+                    update_z_crs: configs['extent_lyon'].crs,
+                    camera_distance: 5,
+                    camera_angle: 0
+                  },
+                  idScripts: [
+                    AvatarExternalGameScript.ID_SCRIPT,
+                    udvizBrowser.Game.External.ScriptTemplate.CameraManager
+                      .ID_SCRIPT
+                  ]
+                }
               },
-            },
-            children: [
+              children: [
+                {
+                  name: 'avatar',
+                  gameContextUpdate: false, // this object is not using the gamecontext (maybe create a template dedicate)
+                  components: {
+                    Render: { idRenderData: 'avatar' }
+                  }
+                }
+              ]
+            });
+
+            const frame3DPlanar = new udvizBrowser.Frame3DPlanar(
+              extent,
+              configs['frame3D_planars'][0]
+            );
+
+            const game = new udvizBrowser.Game.External.SinglePlanarProcess(
+              gameObject3D,
+              frame3DPlanar,
+              assetManager,
+              new udvizBrowser.InputManager(),
               {
-                name: 'avatar',
-                gameContextUpdate: false, // this object is not using the gamecontext (maybe create a template dedicate)
-                components: {
-                  Render: { idRenderData: 'avatar' },
-                },
-              },
-            ],
-          });
+                externalGameScriptClass: [
+                  AvatarExternalGameScript,
+                  udvizBrowser.Game.External.ScriptTemplate.CameraManager
+                ],
+                gameOrigin: {
+                  x: extent.center().x,
+                  y: extent.center().y,
+                  z: 300
+                }
+              }
+            );
 
-          const frame3DPlanar = new udvizBrowser.Frame3DPlanar(
-            extent,
-            configs['frame3D_planars'][0]
-          );
-
-          const game = new udvizBrowser.Game.External.SinglePlanarProcess(
-            gameObject3D,
-            frame3DPlanar,
-            assetManager,
-            new udvizBrowser.InputManager(),
-            {
-              externalGameScriptClass: [
-                AvatarExternalGameScript,
-                udvizBrowser.Game.External.ScriptTemplate.CameraManager,
-              ],
-              gameOrigin: {
-                x: extent.center().x,
-                y: extent.center().y,
-                z: 300,
-              },
-            }
-          );
-
-          game.start().then(() => {
-            // set custom render pass
-            const MYMAT = new THREE.ShaderMaterial({
-              uniforms: {},
-              vertexShader: `
+            game.start().then(() => {
+              // set custom render pass
+              const MYMAT = new THREE.ShaderMaterial({
+                uniforms: {},
+                vertexShader: `
              #define NORMAL
              varying vec3 vNormal;
              varying vec2 vHighPrecisionZW;
@@ -273,7 +275,7 @@
                vDistance /= 1000.;
              }
            `,
-              fragmentShader: `
+                fragmentShader: `
              #define NORMAL
              varying vec3 vNormal;
              varying vec2 vHighPrecisionZW;
@@ -291,17 +293,17 @@
                depth = clamp(depth, 0., 1.);
                gl_FragColor = vec4(packNormalToRGB( normal ), depth);
              }
-           `,
-            });
+           `
+              });
 
-            const MySobelOperatorShader = {
-              uniforms: {
-                tDiffuse: { value: null },
-                tDepth: { value: null },
-                resolution: new THREE.Uniform(new THREE.Vector2()),
-              },
+              const MySobelOperatorShader = {
+                uniforms: {
+                  tDiffuse: { value: null },
+                  tDepth: { value: null },
+                  resolution: new THREE.Uniform(new THREE.Vector2())
+                },
 
-              vertexShader: /* glsl */ `
+                vertexShader: /* glsl */ `
            varying vec2 vUv;
            void main() {
            	vUv = uv;
@@ -309,7 +311,7 @@
            }
            `,
 
-              fragmentShader: /* glsl */ `
+                fragmentShader: /* glsl */ `
              uniform sampler2D tDiffuse;
              uniform sampler2D tDepth;
              uniform vec2 resolution;
@@ -349,17 +351,17 @@
                // magnitute of the total gradient
                gl_FragColor = sqrt( ( valueGx * valueGx ) + ( valueGy * valueGy ) );
              }
-           `,
-            };
+           `
+              };
 
-            const MaskShader = {
-              uniforms: {
-                tDiffuse: { value: null },
-                tMask: { value: null },
-                resolution: new THREE.Uniform(new THREE.Vector2()),
-              },
+              const MaskShader = {
+                uniforms: {
+                  tDiffuse: { value: null },
+                  tMask: { value: null },
+                  resolution: new THREE.Uniform(new THREE.Vector2())
+                },
 
-              vertexShader: /* glsl */ `
+                vertexShader: /* glsl */ `
            varying vec2 vUv;
            void main() {
            	vUv = uv;
@@ -367,7 +369,7 @@
            }
            `,
 
-              fragmentShader: /* glsl */ `
+                fragmentShader: /* glsl */ `
            uniform sampler2D tDiffuse;
            uniform sampler2D tMask;
            uniform vec2 resolution;
@@ -386,107 +388,107 @@
                #include <premultiplied_alpha_fragment>
                #include <dithering_fragment>
            }
-           `,
-            };
+           `
+              };
 
-            // renderTarget for special effects
-            const renderTargetFX = new THREE.WebGLRenderTarget(0, 0, {
-              depthBuffer: true,
-              stencilBuffer: false,
-              format: THREE.RGBAFormat,
-              type: THREE.FloatType,
+              // renderTarget for special effects
+              const renderTargetFX = new THREE.WebGLRenderTarget(0, 0, {
+                depthBuffer: true,
+                stencilBuffer: false,
+                format: THREE.RGBAFormat,
+                type: THREE.FloatType
+              });
+
+              // create custom render pass
+              const renderer = game.frame3DPlanar.getRenderer();
+              const camera = game.frame3DPlanar.getCamera();
+              const scene = game.frame3DPlanar.getScene();
+
+              const edgeDetectionComposer = new udvizBrowser.EffectComposer(
+                renderer,
+                renderTargetFX
+              );
+              const normalsPass = new udvizBrowser.RenderPass(
+                scene,
+                camera,
+                MYMAT
+              );
+              edgeDetectionComposer.addPass(normalsPass);
+              const sobelPass = new udvizBrowser.ShaderPass(
+                MySobelOperatorShader
+              );
+
+              edgeDetectionComposer.addPass(sobelPass);
+              edgeDetectionComposer.renderToScreen = false;
+
+              const finalComposer = new udvizBrowser.EffectComposer(renderer);
+              const renderPass = new udvizBrowser.RenderPass(scene, camera);
+              finalComposer.addPass(renderPass);
+              const compositionPass = new udvizBrowser.ShaderPass(MaskShader);
+              compositionPass.uniforms.tMask.value = renderTargetFX.texture;
+              finalComposer.addPass(compositionPass);
+
+              // update variables on resize
+              const updateResize = function () {
+                const size = game.frame3DPlanar.getSize();
+                renderTargetFX.setSize(size.x, size.y);
+
+                sobelPass.uniforms.resolution.value = new THREE.Vector2(
+                  edgeDetectionComposer.writeBuffer.width,
+                  edgeDetectionComposer.writeBuffer.height
+                );
+                compositionPass.uniforms.resolution.value = new THREE.Vector2(
+                  finalComposer.writeBuffer.width,
+                  finalComposer.writeBuffer.height
+                );
+              };
+
+              // record in resize event
+              game.frame3DPlanar.on(
+                udvizBrowser.Frame3DBase.EVENT.RESIZE,
+                updateResize
+              );
+
+              // resize event to init
+              game.frame3DPlanar.onResize();
+
+              // define the custom render pass
+              const customRender = function () {
+                edgeDetectionComposer.reset(renderTargetFX);
+                finalComposer.reset();
+                edgeDetectionComposer.render();
+                finalComposer.render();
+              };
+
+              // set the custom render pass
+              game.frame3DPlanar.setRender(customRender);
             });
 
-            // create custom render pass
-            const renderer = game.frame3DPlanar.getRenderer();
-            const camera = game.frame3DPlanar.getCamera();
-            const scene = game.frame3DPlanar.getScene();
-
-            const edgeDetectionComposer = new udvizBrowser.EffectComposer(
-              renderer,
-              renderTargetFX
-            );
-            const normalsPass = new udvizBrowser.RenderPass(
-              scene,
-              camera,
-              MYMAT
-            );
-            edgeDetectionComposer.addPass(normalsPass);
-            const sobelPass = new udvizBrowser.ShaderPass(
-              MySobelOperatorShader
+            // /// ADD LAYERS
+            udvizBrowser.add3DTilesLayers(
+              configs['3DTiles'],
+              frame3DPlanar.itownsView
             );
 
-            edgeDetectionComposer.addPass(sobelPass);
-            edgeDetectionComposer.renderToScreen = false;
-
-            const finalComposer = new udvizBrowser.EffectComposer(renderer);
-            const renderPass = new udvizBrowser.RenderPass(scene, camera);
-            finalComposer.addPass(renderPass);
-            const compositionPass = new udvizBrowser.ShaderPass(MaskShader);
-            compositionPass.uniforms.tMask.value = renderTargetFX.texture;
-            finalComposer.addPass(compositionPass);
-
-            // update variables on resize
-            const updateResize = function () {
-              const size = game.frame3DPlanar.getSize();
-              renderTargetFX.setSize(size.x, size.y);
-
-              sobelPass.uniforms.resolution.value = new THREE.Vector2(
-                edgeDetectionComposer.writeBuffer.width,
-                edgeDetectionComposer.writeBuffer.height
-              );
-              compositionPass.uniforms.resolution.value = new THREE.Vector2(
-                finalComposer.writeBuffer.width,
-                finalComposer.writeBuffer.height
-              );
-            };
-
-            // record in resize event
-            game.frame3DPlanar.on(
-              udvizBrowser.Frame3DBase.EVENT.RESIZE,
-              updateResize
+            udvizBrowser.addBaseMapLayer(
+              configs['base_maps'][0],
+              frame3DPlanar.itownsView,
+              extent
             );
 
-            // resize event to init
-            game.frame3DPlanar.onResize();
+            udvizBrowser.addElevationLayer(
+              configs['elevation'],
+              frame3DPlanar.itownsView,
+              extent
+            );
 
-            // define the custom render pass
-            const customRender = function () {
-              edgeDetectionComposer.reset(renderTargetFX);
-              finalComposer.reset();
-              edgeDetectionComposer.render();
-              finalComposer.render();
-            };
-
-            // set the custom render pass
-            game.frame3DPlanar.setRender(customRender);
+            udvizBrowser.addGeoJsonLayers(
+              configs['geoJSONs'],
+              frame3DPlanar.itownsView,
+              extent
+            );
           });
-
-          // /// ADD LAYERS
-          udvizBrowser.add3DTilesLayers(
-            configs['3DTiles'],
-            frame3DPlanar.itownsView
-          );
-
-          udvizBrowser.addBaseMapLayer(
-            configs['base_maps'][0],
-            frame3DPlanar.itownsView,
-            extent
-          );
-
-          udvizBrowser.addElevationLayer(
-            configs['elevation'],
-            frame3DPlanar.itownsView,
-            extent
-          );
-
-          udvizBrowser.addGeoJsonLayers(
-            configs['geoJSONs'],
-            frame3DPlanar.itownsView,
-            extent
-          );
         });
-      });
     </script>
     SCRIPT_TAG_RELOAD
   </body>
