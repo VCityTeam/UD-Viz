@@ -138,6 +138,11 @@ const ShowRoom = class {
    */
   addLayers(configs) {
     if (configs.$3DTiles) {
+      /** @type {Map<string, THREE.Mesh>} */
+      const currentLoadingBox = new Map();
+
+      const loadingBoxId = (layer, tileId) => layer.id + tileId;
+
       configs.$3DTiles.forEach((layerConfig) => {
         const c3DTilesLayer = new itowns.C3DTilesLayer(
           layerConfig['id'],
@@ -155,8 +160,6 @@ const ShowRoom = class {
           c3DTilesLayer
         );
 
-        /** @type {Map<number, THREE.Mesh>} */
-        const currentLoadingBox = new Map();
         const loadingBoxMaterial = new THREE.MeshBasicMaterial({
           wireframe: true,
           color: 'white',
@@ -182,7 +185,10 @@ const ShowRoom = class {
             this.frame3DPlanar.itownsView.notifyChange();
 
             // bufferize
-            currentLoadingBox.set(metadata.tileId, box3Object);
+            currentLoadingBox.set(
+              loadingBoxId(c3DTilesLayer, metadata.tileId),
+              box3Object
+            );
             this.c3DTilesLoadingDomElement.hidden = false;
           }
         );
@@ -190,11 +196,19 @@ const ShowRoom = class {
         c3DTilesLayer.addEventListener(
           itowns.C3DTILES_LAYER_EVENTS.ON_TILE_CONTENT_LOADED,
           ({ tileContent }) => {
-            if (currentLoadingBox.has(tileContent.tileId)) {
+            if (
+              currentLoadingBox.has(
+                loadingBoxId(c3DTilesLayer, tileContent.tileId)
+              )
+            ) {
               this.frame3DPlanar.scene.remove(
-                currentLoadingBox.get(tileContent.tileId)
+                currentLoadingBox.get(
+                  loadingBoxId(c3DTilesLayer, tileContent.tileId)
+                )
               );
-              currentLoadingBox.delete(tileContent.tileId);
+              currentLoadingBox.delete(
+                loadingBoxId(c3DTilesLayer, tileContent.tileId)
+              );
               this.c3DTilesLoadingDomElement.hidden =
                 currentLoadingBox.size == 0; // nothing more is loaded
               this.frame3DPlanar.itownsView.notifyChange();
