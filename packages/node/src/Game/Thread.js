@@ -199,7 +199,7 @@ class Child {
    *
    * @param {Object<string,Function>} gameScriptClass - class needs by object3D
    */
-  run(gameScriptClass = {}) {
+  start(gameScriptClass = {}) {
     // buffer
     let commands = null;
 
