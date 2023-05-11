@@ -10,31 +10,33 @@
     <script src="../packages/browser/dist/RUN_MODE/bundle.js"></script>
 
     <script type="text/javascript">
-      udvizBrowser.FileUtil.loadMultipleJSON([
-        './assets/config/extent_world.json',
-        './assets/config/frame3D_planars.json',
-        './assets/config/layer/base_maps.json',
-      ]).then((configs) => {
-        const extent = new udvizBrowser.itowns.Extent(
-          configs['extent_world'].crs,
-          parseInt(configs['extent_world'].west),
-          parseInt(configs['extent_world'].east),
-          parseInt(configs['extent_world'].south),
-          parseInt(configs['extent_world'].north)
-        );
+      udvizBrowser
+        .loadMultipleJSON([
+          './assets/config/extent_world.json',
+          './assets/config/frame3D_planars.json',
+          './assets/config/layer/base_maps.json'
+        ])
+        .then((configs) => {
+          const extent = new udvizBrowser.itowns.Extent(
+            configs['extent_world'].crs,
+            parseInt(configs['extent_world'].west),
+            parseInt(configs['extent_world'].east),
+            parseInt(configs['extent_world'].south),
+            parseInt(configs['extent_world'].north)
+          );
 
-        const frame3DPlanar = new udvizBrowser.Frame3DPlanar(
-          extent,
-          configs['frame3D_planars'][1]
-        );
+          const frame3DPlanar = new udvizBrowser.Frame3DPlanar(
+            extent,
+            configs['frame3D_planars'][1]
+          );
 
-        // /// ADD LAYER
-        udvizBrowser.addBaseMapLayer(
-          configs['base_maps'][0],
-          frame3DPlanar.itownsView,
-          extent
-        );
-      });
+          // /// ADD LAYER
+          udvizBrowser.addBaseMapLayer(
+            configs['base_maps'][0],
+            frame3DPlanar.itownsView,
+            extent
+          );
+        });
     </script>
     SCRIPT_TAG_RELOAD
   </body>

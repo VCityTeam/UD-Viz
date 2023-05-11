@@ -7,7 +7,7 @@ export { InputManager } from './InputManager';
 import * as THREEUtil from './THREEUtil';
 export { THREEUtil };
 
-export { default as FileUtil } from './FileUtil.js';
+export * from './FileUtil.js';
 
 export * from './HTMLUtil.js';
 
