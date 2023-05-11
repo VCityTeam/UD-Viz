@@ -257,7 +257,7 @@ module.exports = {
         child.geometry &&
         child.geometry.isBufferGeometry &&
         !child.userData.isWireframe &&
-        !child.geometry.userData.hasWireframe
+        !child.userData.hasWireframe
       ) {
         // This bool avoid to create multiple wireframes for one geometry
         child.userData.hasWireframe = true;
@@ -305,7 +305,7 @@ module.exports = {
         child.geometry &&
         child.geometry.isBufferGeometry &&
         !child.userData.isWireframe &&
-        !child.geometry.userData.hasWireframe
+        !child.userData.hasWireframe
       ) {
         // This event can be triggered multiple times, even when the geometry is loaded.
         // This bool avoid to create multiple wireframes for one geometry
