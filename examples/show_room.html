@@ -6,8 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="./assets/css/examples.css" />
     <link rel="stylesheet" href="./assets/css/show_room.css" />
+    <link rel="stylesheet" href="./assets/css/loadingScreen.css" />
   </head>
   <body>
+    <script src="./assets/js/loadingScreen.js"></script>
     <script src="../packages/browser/dist/RUN_MODE/bundle.js"></script>
     <script src="./assets/js/ShowRoom.js"></script>
 
@@ -50,6 +52,11 @@
           configs['frame3D_planars'][2],
           'UDVIZ_VERSION'
         );
+
+        loadingScreen(app.frame3DPlanar.itownsView, [
+          'UD-VIZ',
+          'UDVIZ_VERSION'
+        ]);
 
         app.addLayers({
           $3DTiles: configs['3DTiles'],

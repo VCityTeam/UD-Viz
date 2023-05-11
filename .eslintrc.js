@@ -4,7 +4,7 @@ module.exports = {
     es2021: true,
     node: true,
   },
-  globals: { udvizBrowser: true, ShowRoom: true }, // udvizBrowser is the umd (universal module definition) of the @ud-viz/browser bundle
+  globals: { udvizBrowser: true, ShowRoom: true, loadingScreen: true }, // bundle umd name + scripts imported in examples
   extends: ['eslint:recommended', 'prettier', 'plugin:jsdoc/recommended'],
   plugins: ['prettier', 'jsdoc', 'html'],
   parserOptions: {

@@ -1,0 +1,46 @@
+:root {
+  --size-character: 100px;
+}
+
+.loading_screen {
+  background-color: black;
+  width: 100%;
+  height: 100%;
+  transition: all 1s;
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 100000;
+}
+
+.loading_screen_character {
+  color: gray;
+  height: var(--size-character); 
+  font-size: var(--size-character);
+  animation-name: characterAnimation;
+  animation-direction: alternate-reverse;
+  animation-duration: 1s;
+  animation-iteration-count: infinite;
+}
+
+@keyframes characterAnimation {
+  0% {
+    transform: translate(0%, 0%);
+    color: gray;
+  }
+  50% {
+    transform: translate(0%, -50%);
+  }
+  100% {
+    transform: translate(0%, 0%);
+    color: white;
+  }
+}
+
+.loading_screen_character_container {
+  display: flex;
+  top: 50%;
+  left: 50%;
+  position: absolute;
+  transform: translate(-50%, -50%);
+}
