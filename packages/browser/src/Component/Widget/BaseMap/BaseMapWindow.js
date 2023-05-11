@@ -11,16 +11,16 @@ export class BaseMap {
    * Manages multiple WMS sources used as Itowns ColoLayer for background
    *
    * @param {itowns.View} itownsView An ItownsView.
-   * @param {object} baseMapLayersConfig The baseMapLayersConfig config
+   * @param {Array<object>} baseMapLayersConfigs The baseMapLayersConfigs config
    * @param {itowns.Extent} appExtent The extent used to set up the layers
    */
-  constructor(itownsView, baseMapLayersConfig, appExtent) {
+  constructor(itownsView, baseMapLayersConfigs, appExtent) {
     /** @type {HTMLElement} */
     this.rootHtml = document.createElement('div');
     this.rootHtml.innerHTML = this.innerContentHtml;
 
     /** @type {object} */
-    this.baseMapLayersConfig = baseMapLayersConfig;
+    this.baseMapLayersConfigs = baseMapLayersConfigs;
 
     /** @type {itowns.View} */
     this.itownsView = itownsView;
@@ -52,18 +52,18 @@ export class BaseMap {
    */
   createLayers(appExtent) {
     let i = 0;
-    for (const layer of this.baseMapLayersConfig) {
-      layer.id = 'baseMapLayer_' + i;
+    for (const config of this.baseMapLayersConfigs) {
+      config.layer.id = 'baseMapLayer_' + i;
       const source = new itowns.WMSSource({
         extent: appExtent,
-        name: layer.name,
-        url: layer.url,
-        version: layer.version,
+        name: config.layer.name,
+        url: config.layer.url,
+        version: config.layer.version,
         crs: appExtent.crs,
         format: 'image/jpeg',
       });
       // Add a WMS imagery layer
-      const colorLayer = new itowns.ColorLayer(layer.id, {
+      const colorLayer = new itowns.ColorLayer(config.layer.id, {
         updateStrategy: {
           type: itowns.STRATEGY_DICHOTOMY,
           options: {},
@@ -73,7 +73,11 @@ export class BaseMap {
       });
       if (i != 0) colorLayer.visible = false;
       this.itownsView.addLayer(colorLayer);
-      itowns.ColorLayersOrdering.moveLayerToIndex(this.itownsView, layer.id, i);
+      itowns.ColorLayersOrdering.moveLayerToIndex(
+        this.itownsView,
+        config.layer.id,
+        i
+      );
       i++;
     }
   }
@@ -82,13 +86,13 @@ export class BaseMap {
    * It can either be an external URL or an image in the asset folder
    */
   displayLayersImage() {
-    for (const layer of this.baseMapLayersConfig) {
+    for (const config of this.baseMapLayersConfigs) {
       const new_img = document.createElement('img');
-      new_img.src = layer.image;
-      new_img.id = layer.id + '_img';
+      new_img.src = config.pathIcon;
+      new_img.id = config.layer.id + '_img';
       new_img.width = 250; // icon dimension are hardcoded
       new_img.height = 200;
-      new_img.onclick = () => this.changeVisibleLayer(layer.id);
+      new_img.onclick = () => this.changeVisibleLayer(config.layer.id);
       this.baseDivElement.appendChild(new_img);
     }
   }
@@ -99,8 +103,9 @@ export class BaseMap {
    * @param {string} layerID - the id of the layer to be displayed
    */
   changeVisibleLayer(layerID) {
-    for (const layer of this.baseMapLayersConfig) {
-      this.itownsView.getLayerById(layer.id).visible = layer.id == layerID;
+    for (const config of this.baseMapLayersConfigs) {
+      this.itownsView.getLayerById(config.layer.id).visible =
+        config.layer.id == layerID;
     }
     this.itownsView.notifyChange(this.itownsView.camera.camera3D);
   }

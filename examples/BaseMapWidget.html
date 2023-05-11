@@ -13,7 +13,7 @@
       udvizBrowser.FileUtil.loadMultipleJSON([
         './assets/config/extent_lyon.json',
         './assets/config/frame3D_planars.json',
-        './assets/config/layer/base_maps.json',
+        './assets/config/layer/base_maps.json'
       ]).then((configs) => {
         // http://proj4js.org/
         // define a projection as a string and reference it that way
@@ -40,7 +40,17 @@
         // //// BaseMap Widget
         const baseMap = new udvizBrowser.Widget.BaseMap(
           frame3DPlanar.getItownsView(),
-          configs['base_maps'], // here base_maps is a mix of widget config with image icon + usual layer config
+          [
+            {
+              layer: configs['base_maps'][0],
+              pathIcon: './assets/img/ign_ortho.png'
+            },
+            {
+              layer: configs['base_maps'][1],
+              pathIcon:
+                'https://download.data.grandlyon.com/catalogue/srv/fre//resources.get?uuid=7e0bab06-ff3b-453e-9b72-e16b8f08d926&fname=ortho2018_s.png'
+            }
+          ],
           extent
         );
 
