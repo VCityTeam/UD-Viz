@@ -1,4 +1,4 @@
-## Definitions
+## Definitions (within the UD-Viz context)
 
 - [Component](https://en.wikipedia.org/wiki/Component-based_software_engineering) everything thats is necessary to execute only one aspect of a desired functionality (see also [module](https://en.wikipedia.org/wiki/Modular_programming)).
 - Extension: a component depending on a [web service](https://github.com/VCityTeam/UD-Viz/blob/master/packages/browser/src/Component/Widget/Server/Geocoding/services/GeocodingService.js#L2) in order to be functionnal.
