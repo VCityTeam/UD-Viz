@@ -94,6 +94,12 @@ const Context = class {
      * @type {number}
      */
     this.dt = 0;
+
+    /** 
+     * commands buffer
+     *  
+     @type {Array<Command>} */
+    this.commands = [];
   }
 
   /**
@@ -172,6 +178,14 @@ const Context = class {
    */
   step(dt) {
     this.dt = dt;
+
+    this.commands.forEach((cmd) => {
+      this.dispatchScriptEvent(this.object3D, Context.EVENT.ON_COMMAND, [
+        cmd.type,
+        cmd.data,
+      ]);
+    });
+    this.commands.length = 0; // clear command
 
     this.dispatchScriptEvent(this.object3D, Context.EVENT.TICK);
 
@@ -534,12 +548,7 @@ const Context = class {
    * @param {Command[]} cmds - new commands to apply at the next step
    */
   onCommands(cmds) {
-    cmds.forEach((cmd) => {
-      this.dispatchScriptEvent(this.object3D, Context.EVENT.ON_COMMAND, [
-        cmd.type,
-        cmd.data,
-      ]);
-    });
+    this.commands.push(...cmds);
   }
 
   /**
