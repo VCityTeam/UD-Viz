@@ -1,0 +1,30 @@
+#widgets-3dtiles {
+  background-color: #313336bb;
+  width: fit-content;
+  color: white;
+}
+
+.widgets-3dtiles-layer-container {
+  display: flex;
+}
+
+.widgets-3dtiles-layer-container * {
+  padding-right: 5px;
+  padding-left: 2px;
+  cursor: pointer;
+}
+
+.widgets-3dtiles-url-container {
+  padding: 5px;
+  border: 1px solid;
+}
+
+.widgets-3dtiles-url-container input {
+  border-radius: 20px;
+  margin: 5px;
+}
+
+.widgets-3dtiles-feature-container {
+  border: 1px solid;
+  padding: 5px;
+}
