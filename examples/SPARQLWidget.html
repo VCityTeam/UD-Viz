@@ -57,6 +57,8 @@
         const parent = document.createElement('div');
         parent.style.backgroundColor = 'gray';
         parent.style.width = 'fit-content';
+        parent.style.position = 'relative';
+        parent.style.zIndex = 2;
         parent.appendChild(sparqlWidget.html());
 
         frame3DPlanar.appendToUI(parent);

@@ -22,6 +22,7 @@
 }
 
 ._sidebar_widget_menu_sidebar {
+  position: absolute;
   background-color: var(--sidebar_widget-color-one);
   width: var(--sidebar-widget-sidebar-width);
   height: 100%;
@@ -65,6 +66,7 @@
   transform: translate(-100%, 0%);
   transition: 0.5s;
   overflow-y: auto;
+  z-index: 2;
 }
 
 ._sidebar_widget_pan_menu_sidebar_container {

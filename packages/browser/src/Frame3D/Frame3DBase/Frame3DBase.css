@@ -1,21 +1,9 @@
 .css_Frame3DBase,
+.ui_Frame3DBase,
 .webGL_Frame3DBase {
   width: 100%;
   height: 100%;
   position: absolute;
   top: 0px;
   left: 0px;
-}
-
-.ui_Frame3DBase {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  top: 0;
-  left: 0;
-}
-
-.ui_Frame3DBase * {
-  position: relative;
-  z-index: 2;
 }

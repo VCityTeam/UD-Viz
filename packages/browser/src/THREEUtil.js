@@ -93,13 +93,13 @@ export function initScene(camera, renderer, scene, config, object3D) {
 /**
  * Texture encoding used to have the right color of the .glb model + have an alpha channel
  */
-const textureEncoding = THREE.SRGBColorSpace;
+const textureEncoding = THREE.sRGBEncoding;
 export { textureEncoding };
 
 /**
  *
- * @param paths
- * @param scene
+ * @param {Array<string>} paths - paths of cube texture order should be negX posX negY posY posZ negZ
+ * @param {THREE.Scene} scene - 3d scene
  */
 export function addCubeTexture(paths, scene) {
   const loader = new THREE.CubeTextureLoader();

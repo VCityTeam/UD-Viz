@@ -1,5 +1,6 @@
 .drag_and_drop_avatar {
   z-index: 2;
+  position: relative;
   background-color: #120fd3;
   color: cornsilk;
   border-radius: 5px;
@@ -13,5 +14,6 @@
 }
 
 .leave_avatar_mode {
+  position: relative;
   z-index: 2;
 }

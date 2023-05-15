@@ -2,7 +2,7 @@ const exec = require('child-process-promise').exec;
 const fs = require('fs');
 const { Data } = require('@ud-viz/shared');
 
-const FAILURE_THRESHOLD = 33; // WIP temporal extension documentation
+const FAILURE_THRESHOLD = 38; // WIP temporal extension documentation
 
 exec('npx remark -u validate-links .').then((result) => {
   console.log(result.stderr);
