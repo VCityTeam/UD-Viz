@@ -1,5 +1,5 @@
 import { Game, Command } from '@ud-viz/shared';
-import { InputManager } from '../../../../Component';
+import { InputManager } from '../../../../InputManager';
 
 /**
  * @typedef Mapping
