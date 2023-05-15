@@ -1,4 +1,6 @@
 #widgets-3dtiles {
+  position: relative;
+  z-index: 2;
   background-color: #313336bb;
   width: fit-content;
   color: white;

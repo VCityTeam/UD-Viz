@@ -78,6 +78,8 @@
         const parent = document.createElement('div');
         parent.style.backgroundColor = 'blue';
         parent.style.width = 'fit-content';
+        parent.style.position = 'absolute';
+        parent.style.zIndex = 2;
         parent.appendChild(guidedtourController.guidedTour.html());
 
         frame3DPlanar.appendToUI(parent);

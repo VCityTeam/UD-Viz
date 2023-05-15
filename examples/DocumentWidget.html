@@ -16,7 +16,7 @@
         './assets/config/server/spatial_multimedia_db_server.json',
         './assets/config/layer/3DTiles.json',
         './assets/config/layer/base_maps.json',
-        './assets/config/layer/elevation.json',
+        './assets/config/layer/elevation.json'
       ]).then((configs) => {
         // http://proj4js.org/
         // define a projection as a string and reference it that way
@@ -58,6 +58,13 @@
           extent
         );
 
+        // quick fix but css needs to be remove from documents view TODO ISSUE
+        const addToUI = (el) => {
+          frame3DPlanar.ui.appendChild(el);
+          el.style.position = 'relative';
+          el.style.zIndex = 2;
+        };
+
         // REQUEST SERVICE
         const requestService = new udvizBrowser.RequestService();
 
@@ -72,10 +79,11 @@
 
         const toggleAuthView = document.createElement('button');
         toggleAuthView.innerText = 'Show Authentification';
-        frame3DPlanar.appendToUI(toggleAuthView);
+        addToUI(toggleAuthView);
         toggleAuthView.onclick = () => {
           if (!authenticationView.html().parentElement) {
-            frame3DPlanar.appendToUI(authenticationView.html());
+            addToUI(authenticationView.html());
+            authenticationView.rootHtml.style.position = 'absolute';
           }
         };
 
@@ -90,7 +98,7 @@
         parentNavigator.style.backgroundColor = 'white';
         parentNavigator.appendChild(documentCore.view.navigatorWindow.html());
 
-        frame3DPlanar.appendToUI(parentNavigator);
+        addToUI(parentNavigator);
 
         const parentInspector = document.createElement('div');
         parentInspector.style.width = 'fit-content';
@@ -100,7 +108,7 @@
         parentInspector.style.backgroundColor = 'white';
         parentInspector.appendChild(documentCore.view.inspectorWindow.html());
 
-        frame3DPlanar.appendToUI(parentInspector);
+        addToUI(parentInspector);
 
         // DOCUMENTS VISUALIZER EXTENSION (to orient the document)
         const visualizerView =
@@ -113,7 +121,7 @@
         visualizeButton.innerText = 'Visualize';
         visualizeButton.onclick = async () => {
           await visualizerView.startTravelToDisplayedDocument();
-          frame3DPlanar.appendToUI(visualizerView.html());
+          addToUI(visualizerView.html());
         };
         documentCore.view.inspectorWindow.html().appendChild(visualizeButton);
 
@@ -122,7 +130,7 @@
         parentBottomRight.style.backgroundColor = 'white';
         parentBottomRight.style.bottom = '0px';
         parentBottomRight.style.right = '0px';
-        frame3DPlanar.appendToUI(parentBottomRight);
+        addToUI(parentBottomRight);
 
         // DOCUMENT CONTRIBUTE
 

@@ -1,52 +1,27 @@
-import * as itowns from 'itowns';
-import {
-  checkParentChild,
-  RequestService,
-  clearChildren,
-  Frame3DPlanar,
-  add3DTilesLayers,
-  addBaseMapLayer,
-  addElevationLayer,
-  addGeoJsonLayers,
-  addLabelLayers,
-  Widget,
-  Game,
-  InputManager,
-  localStorageSetCameraMatrix,
-} from '../Component/Component';
-import { Data } from '@ud-viz/shared';
-import * as THREE from 'three';
-
-import * as Shared from '@ud-viz/shared';
-
-import packageInfo from '../../package.json';
-
-import './SideBarWidget.css';
-
 const CAMERA_MATRIX_URL_KEY = 'camera_matrix';
 
-export class SideBarWidget {
-  /**
-   *
-   * @param {itowns.Extent} extent - itowns extent
-   * @param {import('../Component/Frame3D/Frame3DPlanar').Frame3DPlanarOption} frame3DPlanarOptions - frame 3D planar option
-   */
-  constructor(extent, frame3DPlanarOptions) {
-    /** @type {itowns.Extent} */
+// eslint-disable-next-line no-unused-vars
+const ShowRoom = class {
+  constructor(extent, frame3DPlanarOptions, version) {
+    /** @type {udvizBrowser.itowns.Extent} */
     this.extent = extent; // ref it to add layers then
 
-    /** @type {Frame3DPlanar} */
-    this.frame3DPlanar = new Frame3DPlanar(extent, frame3DPlanarOptions);
+    /** @type {udvizBrowser.Frame3DPlanar} */
+    this.frame3DPlanar = new udvizBrowser.Frame3DPlanar(
+      extent,
+      frame3DPlanarOptions
+    );
 
     const setCameraMatrixFromURL = () => {
       const paramsUrl = new URLSearchParams(window.location.search);
       if (paramsUrl.has(CAMERA_MATRIX_URL_KEY)) {
-        const matrix4SubStrings = Data.matrix4ArrayFromURIComponent(
-          decodeURIComponent(paramsUrl.get(CAMERA_MATRIX_URL_KEY))
-        );
+        const matrix4SubStrings =
+          udvizBrowser.Shared.Data.matrix4ArrayFromURIComponent(
+            decodeURIComponent(paramsUrl.get(CAMERA_MATRIX_URL_KEY))
+          );
         if (matrix4SubStrings) {
           // compatible matrix4 uri
-          const cameraMatrix = new THREE.Matrix4().fromArray(
+          const cameraMatrix = new udvizBrowser.THREE.Matrix4().fromArray(
             matrix4SubStrings.map((x) => parseFloat(x))
           );
           cameraMatrix.decompose(
@@ -62,11 +37,11 @@ export class SideBarWidget {
 
     if (!setCameraMatrixFromURL()) {
       // local storage tracking
-      localStorageSetCameraMatrix(this.frame3DPlanar.camera);
+      udvizBrowser.localStorageSetCameraMatrix(this.frame3DPlanar.camera);
     }
 
-    /** @type {itowns.Style} */
-    this.c3DTilesStyle = new itowns.Style({
+    /** @type {udvizBrowser.itowns.Style} */
+    this.c3DTilesStyle = new udvizBrowser.itowns.Style({
       fill: {
         color: (feature) => {
           return feature.userData.selectedColor
@@ -115,8 +90,8 @@ export class SideBarWidget {
       this.frame3DPlanar.itownsView.notifyChange(); // need a redraw of the view
     };
 
-    /** @type {RequestService} */
-    this.requestService = new RequestService();
+    /** @type {udvizBrowser.RequestService} */
+    this.requestService = new udvizBrowser.RequestService();
 
     // HTML ELEMENT NEEDED TO BE REFERENCED
 
@@ -147,35 +122,35 @@ export class SideBarWidget {
 
     // WIDGET (not all reference are used but can be that way for now)
 
-    /** @type {Widget.Server.AuthenticationView|null} */
+    /** @type {udvizBrowser.Widget.Server.AuthenticationView|null} */
     this.authenticationView = null;
 
-    /** @type {Widget.Server.GeocodingView|null} */
+    /** @type {udvizBrowser.Widget.Server.GeocodingView|null} */
     this.geocodingView = null;
 
-    /** @type {Widget.Server.Document.Core|null} */
+    /** @type {udvizBrowser.Widget.Server.Document.Core|null} */
     this.documentCore = null;
 
-    /** @type {Widget.Server.Document.GuidedTourController|null} */
+    /** @type {udvizBrowser.Widget.Server.Document.GuidedTourController|null} */
     this.guidedTourController = null;
 
-    /** @type {Widget.CameraPositioner|null} */
+    /** @type {udvizBrowser.Widget.CameraPositioner|null} */
     this.cameraPositioner = null;
 
-    /** @type {Widget.LayerChoice|null} */
+    /** @type {udvizBrowser.Widget.LayerChoice|null} */
     this.layerChoice = null;
 
-    /** @type {Widget.SlideShow|null} */
+    /** @type {udvizBrowser.Widget.SlideShow|null} */
     this.slideShow = null;
 
-    /** @type {Widget.Server.SparqlQueryWindow|null} */
+    /** @type {udvizBrowser.Widget.Server.SparqlQueryWindow|null} */
     this.sparqlQueryWindow = null;
 
-    /** @type {Widget.C3DTiles|null} */
+    /** @type {udvizBrowser.Widget.C3DTiles|null} */
     this.widgetC3DTiles = null;
 
     // INTIALIZE
-    this.initUI();
+    this.initUI(version);
   }
 
   /**
@@ -201,7 +176,10 @@ export class SideBarWidget {
    */
   addLayers(configs) {
     if (configs.$3DTiles) {
-      add3DTilesLayers(configs.$3DTiles, this.frame3DPlanar.itownsView);
+      udvizBrowser.add3DTilesLayers(
+        configs.$3DTiles,
+        this.frame3DPlanar.itownsView
+      );
 
       // add style to 3DTilesLayer
       this.frame3DPlanar.itownsView
@@ -212,28 +190,28 @@ export class SideBarWidget {
         });
     }
     if (configs.elevation) {
-      addElevationLayer(
+      udvizBrowser.addElevationLayer(
         configs.elevation,
         this.frame3DPlanar.itownsView,
         this.extent
       );
     }
     if (configs.baseMap) {
-      addBaseMapLayer(
+      udvizBrowser.addBaseMapLayer(
         configs.baseMap,
         this.frame3DPlanar.itownsView,
         this.extent
       );
     }
     if (configs.labels) {
-      addLabelLayers(
+      udvizBrowser.addLabelLayers(
         configs.labels,
         this.frame3DPlanar.itownsView,
         this.extent
       );
     }
     if (configs.geoJSON) {
-      addGeoJsonLayers(
+      udvizBrowser.addGeoJsonLayers(
         configs.geoJSON,
         this.frame3DPlanar.itownsView,
         this.extent
@@ -255,19 +233,16 @@ export class SideBarWidget {
     });
   }
 
-  /**
-   * Init default ui skeleton
-   */
-  initUI() {
+  initUI(version) {
     // Menu Side bar
     this.menuSideBar = document.createElement('div');
     this.menuSideBar.classList.add('_sidebar_widget_menu_sidebar');
-    this.frame3DPlanar.appendToUI(this.menuSideBar);
+    this.frame3DPlanar.appendToUI(this.menuSideBar, 3);
     {
       // title
       const titleNavBar = document.createElement('div');
       titleNavBar.classList.add('ud-viz-label');
-      titleNavBar.innerHTML = 'UD-VIZ ' + packageInfo.version;
+      titleNavBar.innerHTML = 'UD-VIZ ' + version;
       this.menuSideBar.appendChild(titleNavBar);
 
       // hr
@@ -390,8 +365,11 @@ export class SideBarWidget {
     initAuthenticationFrame();
 
     // create widget view
-    this.authenticationView = new Widget.Server.AuthenticationView(
-      new Widget.Server.AuthenticationService(this.requestService, configServer)
+    this.authenticationView = new udvizBrowser.Widget.Server.AuthenticationView(
+      new udvizBrowser.Widget.Server.AuthenticationService(
+        this.requestService,
+        configServer
+      )
     );
 
     // link button event
@@ -415,8 +393,8 @@ export class SideBarWidget {
   }
 
   addWidgetGeocoding(configServer, pathIcon) {
-    this.geocodingView = new Widget.Server.GeocodingView(
-      new Widget.Server.GeocodingService(
+    this.geocodingView = new udvizBrowser.Widget.Server.GeocodingView(
+      new udvizBrowser.Widget.Server.GeocodingService(
         this.requestService,
         this.extent,
         configServer
@@ -448,16 +426,17 @@ export class SideBarWidget {
     const parentHtmlFeature = document.createElement('div');
 
     // CORE
-    this.documentCore = new Widget.Server.Document.Core(
+    this.documentCore = new udvizBrowser.Widget.Server.Document.Core(
       this.requestService,
       configServer
     );
 
     // VISUALIZER
-    const visualizerView = new Widget.Server.Document.VisualizerView(
-      this.frame3DPlanar.getItownsView(),
-      this.documentCore.provider
-    );
+    const visualizerView =
+      new udvizBrowser.Widget.Server.Document.VisualizerView(
+        this.frame3DPlanar.getItownsView(),
+        this.documentCore.provider
+      );
 
     const visualizeButton = document.createElement('button');
     visualizeButton.innerHTML = 'Visualize';
@@ -469,21 +448,22 @@ export class SideBarWidget {
 
     // CONTRIBUTE
 
-    const documentContribute = new Widget.Server.Document.Contribute(
-      this.documentCore.provider,
-      visualizerView,
-      this.requestService,
-      this.frame3DPlanar.getItownsView(),
-      this.frame3DPlanar.getItownsView().controls,
-      configServer,
-      this.frame3DPlanar.ui
-    );
+    const documentContribute =
+      new udvizBrowser.Widget.Server.Document.Contribute(
+        this.documentCore.provider,
+        visualizerView,
+        this.requestService,
+        this.frame3DPlanar.getItownsView(),
+        this.frame3DPlanar.getItownsView().controls,
+        configServer,
+        this.frame3DPlanar.ui
+      );
 
     const updateButton = document.createElement('button');
     updateButton.innerHTML = 'Update';
     updateButton.onclick = async () => {
       await documentContribute.updateWindow.updateFromDisplayedDocument();
-      clearChildren(parentHtmlFeature);
+      udvizBrowser.clearChildren(parentHtmlFeature);
       parentHtmlFeature.appendChild(documentContribute.updateWindow.html());
     };
     this.documentCore.view.inspectorWindow.html().appendChild(updateButton);
@@ -510,7 +490,7 @@ export class SideBarWidget {
     const createDocumentButton = document.createElement('button');
     createDocumentButton.innerHTML = 'Create new document';
     createDocumentButton.onclick = () => {
-      clearChildren(parentHtmlFeature);
+      udvizBrowser.clearChildren(parentHtmlFeature);
       parentHtmlFeature.appendChild(documentContribute.creationWindow.html());
     };
     this.documentCore.view.navigatorWindow.documentListContainer.appendChild(
@@ -518,19 +498,20 @@ export class SideBarWidget {
     );
 
     // VALIDATION
-    const documentValidation = new Widget.Server.Document.Validation(
-      this.documentCore.provider,
-      this.requestService,
-      configServer,
-      this.documentCore.view.inspectorWindow.html()
-    );
+    const documentValidation =
+      new udvizBrowser.Widget.Server.Document.Validation(
+        this.documentCore.provider,
+        this.requestService,
+        configServer,
+        this.documentCore.view.inspectorWindow.html()
+      );
 
     this.documentCore.view.navigatorWindow.displayableFiltersContainer.appendChild(
       documentValidation.validationView.html()
     );
 
     // COMMENT
-    const documentComment = new Widget.Server.Document.Comment(
+    const documentComment = new udvizBrowser.Widget.Server.Document.Comment(
       this.documentCore.provider,
       this.requestService,
       configServer
@@ -539,7 +520,7 @@ export class SideBarWidget {
     const commentButton = document.createElement('button');
     commentButton.innerHTML = 'Comment';
     commentButton.onclick = async () => {
-      clearChildren(parentHtmlFeature);
+      udvizBrowser.clearChildren(parentHtmlFeature);
       await documentComment.commentsWindow.getComments();
       parentHtmlFeature.appendChild(documentComment.commentsWindow.html());
     };
@@ -562,8 +543,8 @@ export class SideBarWidget {
         );
       } else {
         // rebuild rootDocument
-        clearChildren(rootDocumentHtml);
-        clearChildren(parentHtmlFeature);
+        udvizBrowser.clearChildren(rootDocumentHtml);
+        udvizBrowser.clearChildren(parentHtmlFeature);
         rootDocumentHtml.appendChild(
           this.documentCore.view.navigatorWindow.html()
         );
@@ -585,11 +566,12 @@ export class SideBarWidget {
       return;
     }
 
-    this.guidedTourController = new Widget.Server.Document.GuidedTourController(
-      this.documentCore,
-      this.requestService,
-      configServer
-    );
+    this.guidedTourController =
+      new udvizBrowser.Widget.Server.Document.GuidedTourController(
+        this.documentCore,
+        this.requestService,
+        configServer
+      );
 
     const sideBarButton = document.createElement('img');
     sideBarButton.src = pathIcon;
@@ -615,7 +597,7 @@ export class SideBarWidget {
   }
 
   addWidgetCameraPositioner(pathIcon) {
-    this.cameraPositioner = new Widget.CameraPositioner(
+    this.cameraPositioner = new udvizBrowser.Widget.CameraPositioner(
       this.frame3DPlanar.itownsView
     );
 
@@ -643,7 +625,9 @@ export class SideBarWidget {
   }
 
   addWidgetLayerChoice(pathIcon) {
-    this.layerChoice = new Widget.LayerChoice(this.frame3DPlanar.itownsView);
+    this.layerChoice = new udvizBrowser.Widget.LayerChoice(
+      this.frame3DPlanar.itownsView
+    );
 
     const sideBarButton = document.createElement('img');
     sideBarButton.src = pathIcon;
@@ -666,7 +650,7 @@ export class SideBarWidget {
   }
 
   addWidgetSlideShow(configSlideShow, pathIcon) {
-    this.slideShow = new Widget.SlideShow(
+    this.slideShow = new udvizBrowser.Widget.SlideShow(
       this.frame3DPlanar.itownsView,
       configSlideShow,
       this.extent
@@ -696,8 +680,10 @@ export class SideBarWidget {
   }
 
   addWidgetSparql(configServer, configWidget, pathIcon) {
-    this.sparqlQueryWindow = new Widget.Server.SparqlQueryWindow(
-      new Widget.Server.SparqlEndpointResponseProvider(configServer),
+    this.sparqlQueryWindow = new udvizBrowser.Widget.Server.SparqlQueryWindow(
+      new udvizBrowser.Widget.Server.SparqlEndpointResponseProvider(
+        configServer
+      ),
       this.frame3DPlanar.itownsView,
       configWidget
     );
@@ -749,47 +735,52 @@ export class SideBarWidget {
     const rootHtml = document.createElement('div');
 
     // create a single planar process using drag and drop game template
-    const singleProcessPlanar = new Game.External.SinglePlanarProcess(
-      new Shared.Game.Object3D({
-        static: true,
-        components: {
-          GameScript: {
-            idScripts: [
-              Shared.Game.ScriptTemplate.DragAndDropAvatar.ID_SCRIPT,
-              Shared.Game.ScriptTemplate.NativeCommandManager.ID_SCRIPT,
-            ],
-            variables: {
-              idRenderDataAvatar: idRenderDataAvatar,
-              speedRotate: 0.0005,
+    const singleProcessPlanar =
+      new udvizBrowser.Game.External.SinglePlanarProcess(
+        new udvizBrowser.Shared.Game.Object3D({
+          static: true,
+          components: {
+            GameScript: {
+              idScripts: [
+                udvizBrowser.Shared.Game.ScriptTemplate.DragAndDropAvatar
+                  .ID_SCRIPT,
+                udvizBrowser.Shared.Game.ScriptTemplate.NativeCommandManager
+                  .ID_SCRIPT,
+              ],
+              variables: {
+                idRenderDataAvatar: idRenderDataAvatar,
+                speedRotate: 0.0005,
+              },
+            },
+            ExternalScript: {
+              idScripts: [
+                udvizBrowser.Game.External.ScriptTemplate.DragAndDropAvatar
+                  .ID_SCRIPT,
+                udvizBrowser.Game.External.ScriptTemplate.CameraManager
+                  .ID_SCRIPT,
+              ],
             },
           },
-          ExternalScript: {
-            idScripts: [
-              Game.External.ScriptTemplate.DragAndDropAvatar.ID_SCRIPT,
-              Game.External.ScriptTemplate.CameraManager.ID_SCRIPT,
-            ],
+        }),
+        this.frame3DPlanar,
+        assetManager,
+        new udvizBrowser.InputManager(),
+        {
+          gameScriptClass: [
+            udvizBrowser.Shared.Game.ScriptTemplate.DragAndDropAvatar,
+            udvizBrowser.Shared.Game.ScriptTemplate.NativeCommandManager,
+          ],
+          externalGameScriptClass: [
+            udvizBrowser.Game.External.ScriptTemplate.DragAndDropAvatar,
+            udvizBrowser.Game.External.ScriptTemplate.CameraManager,
+          ],
+          gameOrigin: {
+            x: this.extent.center().x,
+            y: this.extent.center().y,
+            z: 0,
           },
-        },
-      }),
-      this.frame3DPlanar,
-      assetManager,
-      new InputManager(),
-      {
-        gameScriptClass: [
-          Shared.Game.ScriptTemplate.DragAndDropAvatar,
-          Shared.Game.ScriptTemplate.NativeCommandManager,
-        ],
-        externalGameScriptClass: [
-          Game.External.ScriptTemplate.DragAndDropAvatar,
-          Game.External.ScriptTemplate.CameraManager,
-        ],
-        gameOrigin: {
-          x: this.extent.center().x,
-          y: this.extent.center().y,
-          z: 0,
-        },
-      }
-    );
+        }
+      );
 
     // tell to the drag and drop external script where to add its html
     singleProcessPlanar.externalGameContext.userData.dragAndDropAvatarRootHtml =
@@ -801,16 +792,19 @@ export class SideBarWidget {
   }
 
   addWidgetC3DTiles(pathIcon) {
-    this.widgetC3DTiles = new Widget.C3DTiles(this.frame3DPlanar.itownsView, {
-      overrideStyle: this.c3DTilesStyle,
-      parentElement: this.frame3DPlanar.ui, // some hack see => https://github.com/iTowns/itowns/discussions/2098
-    });
+    this.widgetC3DTiles = new udvizBrowser.Widget.C3DTiles(
+      this.frame3DPlanar.itownsView,
+      {
+        overrideStyle: this.c3DTilesStyle,
+        parentElement: this.frame3DPlanar.ui, // some hack see => https://github.com/iTowns/itowns/discussions/2098
+      }
+    );
 
     this.widgetC3DTiles.domElement.remove();
 
     this.addCustomHtml(pathIcon, this.widgetC3DTiles.domElement, '3DTiles');
   }
-}
+};
 
 class PanMenuSideBar {
   constructor() {
@@ -835,7 +829,7 @@ class PanMenuSideBar {
   remove(el) {
     for (let index = 0; index < this.containers.length; index++) {
       const container = this.containers[index];
-      if (checkParentChild(el, container)) {
+      if (udvizBrowser.checkParentChild(el, container)) {
         container.remove();
         el.remove();
         this.containers.splice(index, 1);

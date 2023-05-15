@@ -1,13 +1,15 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>SideBar Widget example</title>
+    <title>Application show room example</title>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="./assets/css/examples.css" />
+    <link rel="stylesheet" href="./assets/css/show_room.css" />
   </head>
   <body>
     <script src="../packages/browser/dist/RUN_MODE/bundle.js"></script>
+    <script src="./assets/js/ShowRoom.js"></script>
 
     <script type="text/javascript">
       udvizBrowser.FileUtil.loadMultipleJSON([
@@ -24,7 +26,7 @@
         './assets/config/layer/base_maps.json',
         './assets/config/layer/elevation.json',
         './assets/config/layer/geoJSONs.json',
-        './assets/config/layer/labels.json',
+        './assets/config/layer/labels.json'
       ]).then((configs) => {
         // http://proj4js.org/
         // define a projection as a string and reference it that way
@@ -43,9 +45,10 @@
           parseInt(configs['extent_lyon'].north)
         );
 
-        const app = new udvizBrowser.SideBarWidget(
+        const app = new ShowRoom(
           extent,
-          configs['frame3D_planars'][2]
+          configs['frame3D_planars'][2],
+          'UDVIZ_VERSION'
         );
 
         app.addLayers({
@@ -53,14 +56,14 @@
           elevation: configs['elevation'],
           baseMap: configs['base_maps'][0],
           labels: configs['labels'],
-          geoJSON: configs['geoJSONs'],
+          geoJSON: configs['geoJSONs']
         });
 
         app.addLogos([
           './assets/img/logo/logo-grand-lyon.png',
           './assets/img/logo/logo-imu.png',
           './assets/img/logo/logo-liris.png',
-          './assets/img/logo/logo-univ-lyon.png',
+          './assets/img/logo/logo-univ-lyon.png'
         ]);
 
         app.addWidgetAuthentication(
