@@ -107,6 +107,11 @@ export class SideBarWidget {
           contextSelection.layer.updateStyle();
         }
       }
+      if (this.widgetC3DTiles)
+        this.widgetC3DTiles.displayC3DTFeatureInfo(
+          contextSelection.feature,
+          contextSelection.layer
+        );
       this.frame3DPlanar.itownsView.notifyChange(); // need a redraw of the view
     };
 
@@ -148,23 +153,26 @@ export class SideBarWidget {
     /** @type {Widget.Server.GeocodingView|null} */
     this.geocodingView = null;
 
-    /** @type {Widget.Server.Document.Core} */
+    /** @type {Widget.Server.Document.Core|null} */
     this.documentCore = null;
 
-    /** @type {Widget.Server.Document.GuidedTourController} */
+    /** @type {Widget.Server.Document.GuidedTourController|null} */
     this.guidedTourController = null;
 
-    /** @type {Widget.CameraPositioner} */
+    /** @type {Widget.CameraPositioner|null} */
     this.cameraPositioner = null;
 
-    /** @type {Widget.LayerChoice} */
+    /** @type {Widget.LayerChoice|null} */
     this.layerChoice = null;
 
-    /** @type {Widget.SlideShow} */
+    /** @type {Widget.SlideShow|null} */
     this.slideShow = null;
 
-    /** @type {Widget.Server.SparqlQueryWindow} */
+    /** @type {Widget.Server.SparqlQueryWindow|null} */
     this.sparqlQueryWindow = null;
+
+    /** @type {Widget.C3DTiles|null} */
+    this.widgetC3DTiles = null;
 
     // INTIALIZE
     this.initUI();
@@ -790,6 +798,17 @@ export class SideBarWidget {
     singleProcessPlanar.start();
 
     this.addCustomHtml(pathIcon, rootHtml, 'Drag and drop avatar');
+  }
+
+  addWidgetC3DTiles(pathIcon) {
+    this.widgetC3DTiles = new Widget.C3DTiles(this.frame3DPlanar.itownsView, {
+      overrideStyle: this.c3DTilesStyle,
+      parentElement: this.frame3DPlanar.ui, // some hack see => https://github.com/iTowns/itowns/discussions/2098
+    });
+
+    this.widgetC3DTiles.domElement.remove();
+
+    this.addCustomHtml(pathIcon, this.widgetC3DTiles.domElement, '3DTiles');
   }
 }
 
