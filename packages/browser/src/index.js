@@ -1,8 +1,33 @@
 /** @file @ud-viz/browser API */
 
-export { SideBarWidget } from './SideBarWidget/SideBarWidget';
+export { SocketIOWrapper } from './SocketIOWrapper.js';
 
-export * from './Component/Component';
+export { InputManager } from './InputManager';
+
+import * as THREEUtil from './THREEUtil';
+export { THREEUtil };
+
+export { default as FileUtil } from './FileUtil.js';
+
+export * from './HTMLUtil.js';
+
+export { AssetManager, RenderData } from './AssetManager/AssetManager.js';
+
+export { RequestService } from './RequestService';
+
+export * from './ItownsUtil';
+
+export * from './LocalStorageUtil.js';
+
+export * from './Frame3D/Frame3D';
+
+export * from './GUI/GUI';
+
+import * as Game from './Game/Game';
+export { Game };
+
+import * as Widget from './Widget/Widget';
+export { Widget };
 
 /**
  * External packages => These packages should be peerDep to force user of @ud-viz/browser to npm i them
