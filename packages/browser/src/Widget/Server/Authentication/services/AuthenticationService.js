@@ -1,4 +1,4 @@
-import { RequestService } from '../../../../Component';
+import { RequestService } from '../../../../RequestService';
 
 /**
  *

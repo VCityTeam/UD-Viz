@@ -1,5 +1,7 @@
 const THREE = require('three');
-import { AssetManager, InputManager, THREEUtil } from '../../Component';
+import { AssetManager } from '../../AssetManager/AssetManager';
+import { InputManager } from '../../InputManager';
+import { bindLightTransform } from '../../THREEUtil';
 import { Game, Data, Command } from '@ud-viz/shared';
 import { RenderController } from './RenderController';
 import { AudioController } from './AudioController';
@@ -422,7 +424,7 @@ export class Context {
 
     // Update shadow
     if (newGO.length) {
-      THREEUtil.bindLightTransform(
+      bindLightTransform(
         this.frame3D.sceneConfig.sky.sun_position.offset,
         this.frame3D.sceneConfig.sky.sun_position.phi,
         this.frame3D.sceneConfig.sky.sun_position.theta,
