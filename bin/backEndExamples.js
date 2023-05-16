@@ -6,6 +6,9 @@ const { Game } = require('@ud-viz/shared');
 const Constant = require('./Constant');
 const reload = require('reload');
 const { stringReplace } = require('string-replace-middleware');
+const fs = require('fs');
+const path = require('path');
+const exec = require('child-process-promise').exec;
 
 // run an express app wrapper with a gamesocket service
 const NODE_ENV = process.env.NODE_ENV || 'development';
@@ -14,6 +17,32 @@ const runMode = NODE_ENV === 'production' ? 'release' : 'debug';
 console.log('Examples back-end start on mode', runMode);
 
 const app = new udvizNode.express();
+
+// if the backend is run in debug mode the json editor end point is activated
+if (runMode == 'debug') {
+  app.use(udvizNode.express.json()); // for application/json => fill req.body
+
+  app.post('/save_config_editor', function (req, res) {
+    try {
+      const relativeConfigPath = req.body.path.slice(1); // remove the `.` from path
+      const savedContent = req.body.content;
+
+      const absoluteConfigPath = path.resolve(
+        __dirname,
+        '../examples' + relativeConfigPath
+      );
+
+      // save file
+      fs.writeFileSync(absoluteConfigPath, JSON.stringify(savedContent));
+
+      // format file
+      exec('npx prettier ' + absoluteConfigPath + ' -w');
+    } catch (e) {
+      console.error(e);
+    }
+  });
+}
+
 app.use(
   stringReplace(
     {

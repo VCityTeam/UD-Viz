@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Application config editor example</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./assets/css/examples.css" />
+    <link rel="stylesheet" href="./assets/css/jsoneditor.min.css" />
+  </head>
+  <body>
+    <script src="../packages/browser/dist/RUN_MODE/bundle.js"></script>
+    <script src="./assets/js/jsoneditor/jsoneditor.min.js"></script>
+
+    <script type="text/javascript">
+      udvizBrowser.FileUtil.loadMultipleJSON([
+        './assets/config/extent_lyon.json',
+        './assets/config/frame3D_planars.json',
+        './assets/config/layer/base_maps.json',
+        './assets/config/layer/geoJSONs.json',
+        './assets/config/layer/elevation.json',
+        './assets/config/layer/3DTiles.json'
+      ]).then((configs) => {
+        // http://proj4js.org/
+        // define a projection as a string and reference it that way
+        // the definition of the projection should be in config TODO_ISSUE
+        udvizBrowser.proj4.default.defs(
+          configs['extent_lyon'].crs,
+          '+proj=lcc +lat_1=45.25 +lat_2=46.75' +
+            ' +lat_0=46 +lon_0=3 +x_0=1700000 +y_0=5200000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs'
+        );
+
+        const extent = new udvizBrowser.itowns.Extent(
+          configs['extent_lyon'].crs,
+          parseInt(configs['extent_lyon'].west),
+          parseInt(configs['extent_lyon'].east),
+          parseInt(configs['extent_lyon'].south),
+          parseInt(configs['extent_lyon'].north)
+        );
+
+        const frame3DPlanar = new udvizBrowser.Frame3DPlanar(
+          extent,
+          configs['frame3D_planars'][2]
+        );
+
+        udvizBrowser.localStorageSetCameraMatrix(frame3DPlanar.camera);
+
+        // /// ADD LAYERS
+
+        udvizBrowser.addBaseMapLayer(
+          configs['base_maps'][0],
+          frame3DPlanar.itownsView,
+          extent
+        );
+
+        udvizBrowser.addGeoJsonLayers(
+          configs['geoJSONs'],
+          frame3DPlanar.itownsView,
+          extent
+        );
+
+        udvizBrowser.add3DTilesLayers(
+          configs['3DTiles'],
+          frame3DPlanar.itownsView
+        );
+
+        udvizBrowser.addElevationLayer(
+          configs['elevation'],
+          frame3DPlanar.itownsView,
+          extent
+        );
+
+        // create the editor
+        const editor = new JSONEditor(frame3DPlanar.ui, {});
+        editor.frame.style.height = 'fit-content';
+        editor.frame.style.maxHeight = '50%';
+        editor.frame.style.overflowY = 'scroll';
+
+        // add a config selector
+        const configSelector = document.createElement('select');
+        frame3DPlanar.ui.appendChild(configSelector);
+        configSelector.style.zIndex = 2;
+
+        const nullOption = document.createElement('option');
+        nullOption.value = null;
+        nullOption.innerText = 'none';
+
+        configSelector.add(nullOption);
+
+        [
+          './assets/config/layer/3DTiles_point_cloud.json',
+          './assets/config/layer/3DTiles_temporal.json',
+          './assets/config/layer/3DTiles.json',
+          './assets/config/layer/base_maps.json',
+          './assets/config/layer/doua_temporal.json',
+          './assets/config/layer/elevation.json',
+          './assets/config/layer/geoJSONs.json',
+          './assets/config/layer/labels.json',
+          './assets/config/server/geocoding_server.json',
+          './assets/config/server/sparql_server.json',
+          './assets/config/server/spatial_multimedia_db_server.json',
+          './assets/config/widget/slide_show.json',
+          './assets/config/widget/sparql_widget.json',
+          './assets/config/widget/temporal.json',
+          './assets/config/assetManager.json',
+          './assets/config/extent_lyon.json',
+          './assets/config/extent_world.json',
+          './assets/config/frame3D_planars.json'
+        ].forEach((path) => {
+          const option = document.createElement('option');
+          option.value = path;
+          option.innerText =
+            udvizBrowser.FileUtil.computeFileNameFromPath(path);
+          configSelector.add(option);
+
+          configSelector.onchange = () => {
+            const pathSelected = configSelector.selectedOptions[0].value;
+            if (!path) return;
+            udvizBrowser.FileUtil.loadJSON(pathSelected).then((content) => {
+              editor.set(content);
+            });
+          };
+        });
+
+        // save app button
+        const saveButton = document.createElement('button');
+        saveButton.innerText = 'Save';
+        saveButton.style.zIndex = 2;
+        frame3DPlanar.ui.appendChild(saveButton);
+        saveButton.onclick = () => {
+          const pathSelected = configSelector.selectedOptions[0].value;
+          if (!pathSelected) return;
+
+          const xhr = new XMLHttpRequest();
+          xhr.open('POST', window.location.origin + '/save_config_editor');
+          xhr.setRequestHeader(
+            'Content-Type',
+            'application/json; charset=UTF-8'
+          );
+          const body = JSON.stringify({
+            path: pathSelected,
+            content: editor.get()
+          });
+          xhr.onload = () => {
+            if (xhr.readyState == 4 && xhr.status == 201) {
+              console.log(JSON.parse(xhr.responseText));
+            } else {
+              console.log(`Error: ${xhr.status}`);
+            }
+          };
+          xhr.send(body);
+        };
+      });
+    </script>
+    SCRIPT_TAG_RELOAD
+  </body>
+</html>

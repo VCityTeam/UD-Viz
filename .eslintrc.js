@@ -4,7 +4,7 @@ module.exports = {
     es2021: true,
     node: true,
   },
-  globals: { udvizBrowser: true }, // udvizBrowser is the umd (universal module definition) of the @ud-viz/browser bundle
+  globals: { udvizBrowser: true, JSONEditor: true }, // udvizBrowser is the umd (universal module definition) of the @ud-viz/browser bundle
   extends: ['eslint:recommended', 'prettier', 'plugin:jsdoc/recommended'],
   plugins: ['prettier', 'jsdoc', 'html'],
   parserOptions: {
