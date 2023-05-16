@@ -48,6 +48,7 @@
         frame3DPlanar.camera.rotation.set(0, 0, 0);
 
         // /// SLIDESHOW MODULE
+        // 3D Setup
         const slideShow = new udvizBrowser.Widget.SlideShow(
           frame3DPlanar.getItownsView(),
           configs['slide_show'],
@@ -57,6 +58,7 @@
         slideShow.addListeners();
         frame3DPlanar.scene.add(slideShow.plane);
 
+        // Add UI
         const parent = document.createElement('div');
         parent.style.backgroundColor = 'white';
         parent.style.width = 'fit-content';
