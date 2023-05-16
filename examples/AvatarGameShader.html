@@ -20,7 +20,7 @@
         './assets/config/layer/3DTiles.json',
         './assets/config/layer/base_maps.json',
         './assets/config/layer/elevation.json',
-        './assets/config/layer/geoJSONs.json',
+        './assets/config/layer/geoJSONs.json'
       ]).then((configs) => {
         const assetManager = new udvizBrowser.AssetManager();
         assetManager.loadFromConfig(configs['assetManager']).then(() => {
@@ -73,7 +73,7 @@
                 'Lyon-5',
                 'Lyon-6',
                 'Lyon-7',
-                'Lyon-8',
+                'Lyon-8'
               ]);
 
               this.raycaster.ray.origin = origin;
@@ -117,7 +117,7 @@
               // Intersection cube
               const geometry = new THREE.BoxGeometry(1, 1, 1);
               const material = new THREE.MeshBasicMaterial({
-                color: 0x00ff00,
+                color: 0x00ff00
               });
               this.intersectionCube = new THREE.Mesh(geometry, material);
               scene.add(this.intersectionCube);
@@ -207,24 +207,24 @@
                 variables: {
                   update_z_crs: configs['extent_lyon'].crs,
                   camera_distance: 5,
-                  camera_angle: 0,
+                  camera_angle: 0
                 },
                 idScripts: [
                   AvatarExternalGameScript.ID_SCRIPT,
                   udvizBrowser.Game.External.ScriptTemplate.CameraManager
-                    .ID_SCRIPT,
-                ],
-              },
+                    .ID_SCRIPT
+                ]
+              }
             },
             children: [
               {
                 name: 'avatar',
                 gameContextUpdate: false, // this object is not using the gamecontext (maybe create a template dedicate)
                 components: {
-                  Render: { idRenderData: 'avatar' },
-                },
-              },
-            ],
+                  Render: { idRenderData: 'avatar' }
+                }
+              }
+            ]
           });
 
           const frame3DPlanar = new udvizBrowser.Frame3DPlanar(
@@ -240,13 +240,13 @@
             {
               externalGameScriptClass: [
                 AvatarExternalGameScript,
-                udvizBrowser.Game.External.ScriptTemplate.CameraManager,
+                udvizBrowser.Game.External.ScriptTemplate.CameraManager
               ],
               gameOrigin: {
                 x: extent.center().x,
                 y: extent.center().y,
-                z: 300,
-              },
+                z: 300
+              }
             }
           );
 
@@ -291,14 +291,14 @@
                depth = clamp(depth, 0., 1.);
                gl_FragColor = vec4(packNormalToRGB( normal ), depth);
              }
-           `,
+           `
             });
 
             const MySobelOperatorShader = {
               uniforms: {
                 tDiffuse: { value: null },
                 tDepth: { value: null },
-                resolution: new THREE.Uniform(new THREE.Vector2()),
+                resolution: new THREE.Uniform(new THREE.Vector2())
               },
 
               vertexShader: /* glsl */ `
@@ -349,14 +349,14 @@
                // magnitute of the total gradient
                gl_FragColor = sqrt( ( valueGx * valueGx ) + ( valueGy * valueGy ) );
              }
-           `,
+           `
             };
 
             const MaskShader = {
               uniforms: {
                 tDiffuse: { value: null },
                 tMask: { value: null },
-                resolution: new THREE.Uniform(new THREE.Vector2()),
+                resolution: new THREE.Uniform(new THREE.Vector2())
               },
 
               vertexShader: /* glsl */ `
@@ -386,7 +386,7 @@
                #include <premultiplied_alpha_fragment>
                #include <dithering_fragment>
            }
-           `,
+           `
             };
 
             // renderTarget for special effects
@@ -394,7 +394,7 @@
               depthBuffer: true,
               stencilBuffer: false,
               format: THREE.RGBAFormat,
-              type: THREE.FloatType,
+              type: THREE.FloatType
             });
 
             // create custom render pass
@@ -488,6 +488,6 @@
         });
       });
     </script>
-    SCRIPT_TAG_RELOAD
+    DEBUG_CONTENT
   </body>
 </html>

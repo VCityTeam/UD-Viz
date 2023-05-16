@@ -13,7 +13,7 @@
       udvizBrowser.FileUtil.loadMultipleJSON([
         './assets/config/extent_lyon.json',
         './assets/config/frame3D_planars.json',
-        './assets/config/widget/slide_show.json',
+        './assets/config/widget/slide_show.json'
       ]).then((configs) => {
         // http://proj4js.org/
         // define a projection as a string and reference it that way
@@ -33,7 +33,7 @@
         );
 
         const frame3DPlanar = new udvizBrowser.Frame3DPlanar(extent, {
-          hasItownsControls: true,
+          hasItownsControls: true
         });
 
         const fitExtent = () => {
@@ -76,6 +76,6 @@
         frame3DPlanar.scene.add(slideShow.plane);
       });
     </script>
-    SCRIPT_TAG_RELOAD
+    DEBUG_CONTENT
   </body>
 </html>

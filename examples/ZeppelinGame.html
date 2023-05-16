@@ -21,7 +21,7 @@
             static: false, // => this Game.Object3D is going to move
             components: {
               GameScript: {
-                idScripts: [ZeppelinGameScript.ID_SCRIPT],
+                idScripts: [ZeppelinGameScript.ID_SCRIPT]
               },
               Render: { idRenderData: 'zeppelin' },
               Collider: {
@@ -29,11 +29,11 @@
                   {
                     type: 'Circle',
                     center: { x: 0, y: 0 },
-                    radius: 10,
-                  },
-                ],
-              },
-            },
+                    radius: 10
+                  }
+                ]
+              }
+            }
           });
 
           promises.push(this.context.addObject3D(this.zeppelinGO));
@@ -71,18 +71,18 @@
             components: {
               Render: {
                 idRenderData: 'sphere',
-                color: [Math.random(), Math.random(), Math.random(), 1],
+                color: [Math.random(), Math.random(), Math.random(), 1]
               },
               Collider: {
                 shapes: [
                   {
                     type: 'Circle',
                     center: { x: 0, y: 0 },
-                    radius: size / 2,
-                  },
-                ],
-              },
-            },
+                    radius: size / 2
+                  }
+                ]
+              }
+            }
           });
 
           result.position.set(x, y, size);
@@ -178,7 +178,7 @@
         './assets/config/layer/3DTiles.json',
         './assets/config/layer/base_maps.json',
         './assets/config/layer/elevation.json',
-        './assets/config/layer/geoJSONs.json',
+        './assets/config/layer/geoJSONs.json'
       ]).then((configs) => {
         const assetManager = new udvizBrowser.AssetManager();
         assetManager.loadFromConfig(configs['assetManager']).then(() => {
@@ -204,31 +204,31 @@
             static: true,
             components: {
               Audio: {
-                sounds: ['ballon_pop'],
+                sounds: ['ballon_pop']
               },
               GameScript: {
                 idScripts: [
                   GameContextManager.ID_SCRIPT,
                   udvizBrowser.Shared.Game.ScriptTemplate.NativeCommandManager
-                    .ID_SCRIPT,
+                    .ID_SCRIPT
                 ],
                 variables: {
-                  speedRotate: 0.0005,
-                },
+                  speedRotate: 0.0005
+                }
               },
               ExternalScript: {
                 variables: {
                   sphereCount: 0,
                   camera_distance: 60,
-                  camera_angle: 0.2,
+                  camera_angle: 0.2
                 },
                 idScripts: [
                   ExternalGameContextManager.ID_SCRIPT,
                   udvizBrowser.Game.External.ScriptTemplate.CameraManager
-                    .ID_SCRIPT,
-                ],
-              },
-            },
+                    .ID_SCRIPT
+                ]
+              }
+            }
           });
 
           const frame3DPlanar = new udvizBrowser.Frame3DPlanar(
@@ -245,17 +245,17 @@
               gameScriptClass: [
                 udvizBrowser.Shared.Game.ScriptTemplate.NativeCommandManager,
                 GameContextManager,
-                ZeppelinGameScript,
+                ZeppelinGameScript
               ],
               externalGameScriptClass: [
                 udvizBrowser.Game.External.ScriptTemplate.CameraManager,
-                ExternalGameContextManager,
+                ExternalGameContextManager
               ],
               gameOrigin: {
                 x: extent.center().x,
                 y: extent.center().y,
-                z: 300,
-              },
+                z: 300
+              }
             }
           );
 
@@ -287,6 +287,6 @@
         });
       });
     </script>
-    SCRIPT_TAG_RELOAD
+    DEBUG_CONTENT
   </body>
 </html>

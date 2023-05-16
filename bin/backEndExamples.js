@@ -43,10 +43,18 @@ if (runMode == 'debug') {
   });
 }
 
+// if this is runMode == debug some debug content is injected in .html see debugContent.html
+const debugContent = fs.readFileSync(
+  path.resolve(__dirname, './debugContent.html'),
+  {
+    encoding: 'utf-8',
+  }
+);
+
 app.use(
   stringReplace(
     {
-      RUN_MODE: runMode,
+      DEBUG_CONTENT: runMode == 'debug' ? debugContent : '',
     },
     {
       contentTypeFilterRegexp: /text\/html/,
@@ -57,8 +65,7 @@ app.use(
 app.use(
   stringReplace(
     {
-      SCRIPT_TAG_RELOAD:
-        runMode == 'debug' ? '<script src="/reload/reload.js"></script>' : '',
+      RUN_MODE: runMode,
     },
     {
       contentTypeFilterRegexp: /text\/html/,

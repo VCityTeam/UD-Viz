@@ -1,0 +1,90 @@
+<script src="/reload/reload.js"></script>
+<script src="./assets/js/jsoneditor/jsoneditor.min.js"></script>
+<link rel="stylesheet" href="./assets/css/jsoneditor.min.css" />
+
+<script>
+  const editorContainer = document.createElement('div');
+  editorContainer.style.zIndex = 200000000;
+  editorContainer.style.position = 'relative';
+  editorContainer.hidden = true;
+  document.body.appendChild(editorContainer);
+
+  window.addEventListener('keydown', (event) => {
+    if (event.key === 'e') editorContainer.hidden = !editorContainer.hidden;
+  });
+
+  // create the editor
+  const editor = new JSONEditor(editorContainer, {});
+  editor.frame.style.height = 'fit-content';
+  editor.frame.style.maxHeight = '50%';
+  editor.frame.style.overflowY = 'scroll';
+
+  // add a config selector
+  const configSelector = document.createElement('select');
+  editorContainer.appendChild(configSelector);
+
+  const nullOption = document.createElement('option');
+  nullOption.value = null;
+  nullOption.innerText = 'none';
+
+  configSelector.add(nullOption);
+
+  [
+    './assets/config/layer/3DTiles_point_cloud.json',
+    './assets/config/layer/3DTiles_temporal.json',
+    './assets/config/layer/3DTiles.json',
+    './assets/config/layer/base_maps.json',
+    './assets/config/layer/doua_temporal.json',
+    './assets/config/layer/elevation.json',
+    './assets/config/layer/geoJSONs.json',
+    './assets/config/layer/labels.json',
+    './assets/config/server/geocoding_server.json',
+    './assets/config/server/sparql_server.json',
+    './assets/config/server/spatial_multimedia_db_server.json',
+    './assets/config/widget/slide_show.json',
+    './assets/config/widget/sparql_widget.json',
+    './assets/config/widget/temporal.json',
+    './assets/config/assetManager.json',
+    './assets/config/extent_lyon.json',
+    './assets/config/extent_world.json',
+    './assets/config/frame3D_planars.json'
+  ].forEach((path) => {
+    const option = document.createElement('option');
+    option.value = path;
+    option.innerText = udvizBrowser.FileUtil.computeFileNameFromPath(path);
+    configSelector.add(option);
+
+    configSelector.onchange = () => {
+      const pathSelected = configSelector.selectedOptions[0].value;
+      if (!path) return;
+      udvizBrowser.FileUtil.loadJSON(pathSelected).then((content) => {
+        editor.set(content);
+      });
+    };
+  });
+
+  // save app button
+  const saveButton = document.createElement('button');
+  saveButton.innerText = 'Save';
+  editorContainer.appendChild(saveButton);
+  saveButton.onclick = () => {
+    const pathSelected = configSelector.selectedOptions[0].value;
+    if (!pathSelected) return;
+
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', window.location.origin + '/save_config_editor');
+    xhr.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
+    const body = JSON.stringify({
+      path: pathSelected,
+      content: editor.get()
+    });
+    xhr.onload = () => {
+      if (xhr.readyState == 4 && xhr.status == 201) {
+        console.log(JSON.parse(xhr.responseText));
+      } else {
+        console.log(`Error: ${xhr.status}`);
+      }
+    };
+    xhr.send(body);
+  };
+</script>

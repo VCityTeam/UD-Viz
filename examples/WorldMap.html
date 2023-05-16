@@ -13,7 +13,7 @@
       udvizBrowser.FileUtil.loadMultipleJSON([
         './assets/config/extent_world.json',
         './assets/config/frame3D_planars.json',
-        './assets/config/layer/base_maps.json',
+        './assets/config/layer/base_maps.json'
       ]).then((configs) => {
         const extent = new udvizBrowser.itowns.Extent(
           configs['extent_world'].crs,
@@ -36,6 +36,6 @@
         );
       });
     </script>
-    SCRIPT_TAG_RELOAD
+    DEBUG_CONTENT
   </body>
 </html>

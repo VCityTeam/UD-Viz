@@ -11,7 +11,7 @@
 
     <script type="text/javascript">
       udvizBrowser.FileUtil.loadMultipleJSON([
-        './assets/config/server/spatial_multimedia_db_server.json',
+        './assets/config/server/spatial_multimedia_db_server.json'
       ]).then((configs) => {
         const authenticationView =
           new udvizBrowser.Widget.Server.AuthenticationView(
@@ -24,6 +24,6 @@
         document.body.appendChild(authenticationView.html());
       });
     </script>
-    SCRIPT_TAG_RELOAD
+    DEBUG_CONTENT
   </body>
 </html>

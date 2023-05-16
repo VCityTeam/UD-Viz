@@ -18,7 +18,7 @@
         './assets/config/layer/3DTiles.json',
         './assets/config/layer/base_maps.json',
         './assets/config/layer/elevation.json',
-        './assets/config/layer/geoJSONs.json',
+        './assets/config/layer/geoJSONs.json'
       ]).then((configs) => {
         const assetManager = new udvizBrowser.AssetManager();
         assetManager.loadFromConfig(configs['assetManager']).then(() => {
@@ -50,14 +50,14 @@
                 frame3DPlanarOptions: configs['frame3D_planars'][2],
                 externalGameScriptClass: [
                   udvizBrowser.Game.External.ScriptTemplate.CameraManager,
-                  udvizBrowser.Game.External.ScriptTemplate.Note,
+                  udvizBrowser.Game.External.ScriptTemplate.Note
                 ],
                 sceneConfig: configs['scene'],
                 gameOrigin: {
                   x: extent.center().x,
                   y: extent.center().y,
-                  z: 300,
-                },
+                  z: 300
+                }
               }
             );
             multiGame.start();
@@ -88,6 +88,6 @@
         });
       });
     </script>
-    SCRIPT_TAG_RELOAD
+    DEBUG_CONTENT
   </body>
 </html>

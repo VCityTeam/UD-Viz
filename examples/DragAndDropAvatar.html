@@ -18,7 +18,7 @@
         './assets/config/layer/3DTiles.json',
         './assets/config/layer/base_maps.json',
         './assets/config/layer/elevation.json',
-        './assets/config/layer/geoJSONs.json',
+        './assets/config/layer/geoJSONs.json'
       ]).then((configs) => {
         const assetManager = new udvizBrowser.AssetManager();
         assetManager.loadFromConfig(configs['assetManager']).then(() => {
@@ -47,12 +47,12 @@
                   udvizBrowser.Shared.Game.ScriptTemplate.DragAndDropAvatar
                     .ID_SCRIPT,
                   udvizBrowser.Shared.Game.ScriptTemplate.NativeCommandManager
-                    .ID_SCRIPT,
+                    .ID_SCRIPT
                 ],
                 variables: {
                   idRenderDataAvatar: 'avatar', // render data your avatar should use
-                  speedRotate: 0.0005,
-                },
+                  speedRotate: 0.0005
+                }
               },
               ExternalScript: {
                 variables: {},
@@ -60,10 +60,10 @@
                   udvizBrowser.Game.External.ScriptTemplate.DragAndDropAvatar
                     .ID_SCRIPT,
                   udvizBrowser.Game.External.ScriptTemplate.CameraManager
-                    .ID_SCRIPT,
-                ],
-              },
-            },
+                    .ID_SCRIPT
+                ]
+              }
+            }
           });
 
           const frame3DPlanar = new udvizBrowser.Frame3DPlanar(
@@ -79,17 +79,17 @@
             {
               externalGameScriptClass: [
                 udvizBrowser.Game.External.ScriptTemplate.DragAndDropAvatar,
-                udvizBrowser.Game.External.ScriptTemplate.CameraManager,
+                udvizBrowser.Game.External.ScriptTemplate.CameraManager
               ],
               gameScriptClass: [
                 udvizBrowser.Shared.Game.ScriptTemplate.NativeCommandManager,
-                udvizBrowser.Shared.Game.ScriptTemplate.DragAndDropAvatar,
+                udvizBrowser.Shared.Game.ScriptTemplate.DragAndDropAvatar
               ],
               gameOrigin: {
                 x: extent.center().x,
                 y: extent.center().y,
-                z: 300,
-              },
+                z: 300
+              }
             }
           );
 
@@ -121,6 +121,6 @@
         });
       });
     </script>
-    SCRIPT_TAG_RELOAD
+    DEBUG_CONTENT
   </body>
 </html>

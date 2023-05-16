@@ -17,8 +17,8 @@
           this.avatar = new udvizBrowser.Shared.Game.Object3D({
             name: 'avatar',
             components: {
-              Render: { idRenderData: 'avatar' },
-            },
+              Render: { idRenderData: 'avatar' }
+            }
           });
 
           return this.context.addObject3D(this.avatar);
@@ -68,10 +68,10 @@
                     this.avatar,
                     this.context.frame3D.itownsView.tileLayer,
                     this.variables.update_z_crs
-                  ),
-                },
-              },
-            }),
+                  )
+                }
+              }
+            })
           ]);
         }
 
@@ -87,7 +87,7 @@
         './assets/config/layer/3DTiles.json',
         './assets/config/layer/base_maps.json',
         './assets/config/layer/elevation.json',
-        './assets/config/layer/geoJSONs.json',
+        './assets/config/layer/geoJSONs.json'
       ]).then((configs) => {
         const assetManager = new udvizBrowser.AssetManager();
         assetManager.loadFromConfig(configs['assetManager']).then(() => {
@@ -116,25 +116,25 @@
                 idScripts: [
                   AvatarGameScript.ID_SCRIPT,
                   udvizBrowser.Shared.Game.ScriptTemplate.NativeCommandManager
-                    .ID_SCRIPT,
+                    .ID_SCRIPT
                 ],
                 variables: {
-                  speedRotate: 0.0005,
-                },
+                  speedRotate: 0.0005
+                }
               },
               ExternalScript: {
                 variables: {
                   update_z_crs: configs['extent_lyon'].crs,
                   camera_distance: 5,
-                  camera_angle: 0,
+                  camera_angle: 0
                 },
                 idScripts: [
                   AvatarExternalGameScript.ID_SCRIPT,
                   udvizBrowser.Game.External.ScriptTemplate.CameraManager
-                    .ID_SCRIPT,
-                ],
-              },
-            },
+                    .ID_SCRIPT
+                ]
+              }
+            }
           });
 
           const frame3DPlanar = new udvizBrowser.Frame3DPlanar(
@@ -150,17 +150,17 @@
             {
               gameScriptClass: [
                 AvatarGameScript,
-                udvizBrowser.Shared.Game.ScriptTemplate.NativeCommandManager,
+                udvizBrowser.Shared.Game.ScriptTemplate.NativeCommandManager
               ],
               externalGameScriptClass: [
                 AvatarExternalGameScript,
-                udvizBrowser.Game.External.ScriptTemplate.CameraManager,
+                udvizBrowser.Game.External.ScriptTemplate.CameraManager
               ],
               gameOrigin: {
                 x: extent.center().x,
                 y: extent.center().y,
-                z: 300,
-              },
+                z: 300
+              }
             }
           );
 
@@ -192,6 +192,6 @@
         });
       });
     </script>
-    SCRIPT_TAG_RELOAD
+    DEBUG_CONTENT
   </body>
 </html>
