@@ -13,6 +13,9 @@
     "monospaceLinks": true,
     "search": true,
     "default": {
+      "staticFiles": {
+        "include": ["./docs/js"]
+      },
       "includeDate": true,
       "useLongnameInNav": false
     }
