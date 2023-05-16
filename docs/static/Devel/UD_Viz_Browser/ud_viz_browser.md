@@ -2,7 +2,7 @@ This is the entry points for @ud-viz/browser tutorials
 
 # Dependency graph overview
 
-<script src="./jsdoc-tuts-mermaid.js"></script>
+<!-- <script src="./jsdoc-tuts-mermaid.js"></script> -->
 
 ```mermaid
 flowchart LR
