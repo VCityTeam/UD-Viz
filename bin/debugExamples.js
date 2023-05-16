@@ -12,19 +12,21 @@ const printExec = function (result) {
   console.log('stderr: \n', result.stderr);
 };
 
-exec('npm run build-debug --prefix ./packages/browser').then(printExec);
+exec('npm run build-debug --prefix ./packages/browser')
+  .then(printExec)
+  .then(() => {
+    const child = spawn(
+      'cross-env NODE_ENV=development node',
+      ['./bin/backEndExamples.js'],
+      {
+        shell: true,
+      }
+    );
 
-const child = spawn(
-  'cross-env NODE_ENV=development node',
-  ['./bin/backEndExamples.js'],
-  {
-    shell: true,
-  }
-);
-
-child.stdout.on('data', (data) => {
-  console.log(`${data}`);
-});
-child.stderr.on('data', (data) => {
-  console.error('\x1b[31m', ` ERROR :\n${data}`);
-});
+    child.stdout.on('data', (data) => {
+      console.log(`${data}`);
+    });
+    child.stderr.on('data', (data) => {
+      console.error('\x1b[31m', ` ERROR :\n${data}`);
+    });
+  });
