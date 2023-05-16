@@ -25,7 +25,9 @@ import { findChildByID } from '../../HTMLUtil';
       "folder": "./assets/img/slide",
       "diapositives": ["11.jpeg", "12.jpeg", "13.jpeg"]
     }
-  ]
+  ],
+ "textureRotation": 0,
+ "durationLoopInSec":10
 }
  * @classdesc Slideshow Widget class
  */
@@ -35,7 +37,7 @@ export class SlideShow {
    *
    *
    * @param {import('itowns').PlanarView} itownsView - The itowns view.
-   * @param {object} configSlideShow - The configuration of the widget. need description
+   * @param {object} [configSlideShow] - The configuration of the widget. need description
    * @param {Array<object>} configSlideShow.slides - Array of slide Object
    * @param {string} configSlideShow.slides[].name - Name of a slideshow
    * @param {string} configSlideShow.slides[].folder - Path of the folder
@@ -45,7 +47,6 @@ export class SlideShow {
    * @param {import('itowns').Extent} extent - The extent of the widget.
    */
   constructor(itownsView, configSlideShow, extent) {
-    this.configSlideShow = configSlideShow || null;
     /** @type {import('itowns').Extent} */
     this.extent = extent;
     /** @type {import('itowns').PlanarView} */
@@ -82,32 +83,38 @@ export class SlideShow {
     this.plane = null;
 
     /**
-     * List of textures with data
-     *
-      @type {TextureFile[]} */
-    this.textureFiles = null;
-    this.currentTextureFile = null;
-
-    /**
      * if true the application update its view3D eachFrame
      *
       @type {boolean} */
     this.notifyValue = false;
 
     this.defaultTexture = null;
-    this.initDefaultTextureFile();
+    this.initDefaultTexture();
+
+    /**
+     * List of textures with data
+     *
+      @type {TextureFile[]} */
+    this.textureFiles = [this.createDefaultTextureFile(0)];
+
+    this.currentTextureFile = null;
+    this.currentTexture = null;
 
     this.intervalLoop = null;
     this.counterIntervalLoop = null;
-    this.durationLoopInSec = configSlideShow.durationLoopInSec || 10; // Take config value or 10s by default
-    this.textureRotation = configSlideShow.textureRotation || 0;
+
+    this.configSlideShow = configSlideShow || {};
+    this.slides = this.configSlideShow.slides;
+    this.durationLoopInSec = this.configSlideShow.durationLoopInSec || 10; // Take config value or 10s by default
+    this.textureRotation = this.configSlideShow.textureRotation || 0;
     this.textureRotation = (this.textureRotation * Math.PI) / 180.0;
-    this.currentTexture = null;
 
     this.initHtml();
 
-    if (this.configSlideShow) {
+    if (this.slides) {
       this.setSlideshowInConfig(0);
+    } else {
+      this.setTexture(0);
     }
 
     // listeners
@@ -178,8 +185,7 @@ export class SlideShow {
    */
   setSlideshowInConfig(slideIndex) {
     if (isNaN(slideIndex)) return;
-    const conf = this.configSlideShow;
-    const slide = conf[Object.keys(conf)[0]][slideIndex];
+    const slide = this.slides[slideIndex];
     const folder = slide.folder;
     const diapos = slide.diapositives;
     this.textureFiles = [];
@@ -336,8 +342,8 @@ export class SlideShow {
     body.addEventListener('dragover', this.dragover, false);
   }
 
-  /** Create a default texture and pu in `this.defaultTexture` */
-  initDefaultTextureFile() {
+  /** Create a default texture and put in `this.defaultTexture` */
+  initDefaultTexture() {
     const canvas = document.createElement('canvas');
     canvas.height = 512;
     canvas.width = 512;
@@ -536,10 +542,9 @@ export class SlideShow {
     slideSelect.appendChild(unsetOptionSlide);
     this.slideSelectID = slideSelect.id;
 
-    const conf = this.configSlideShow;
-    if (conf) {
-      for (let i = 0; i < conf[Object.keys(conf)[0]].length; i++) {
-        const element = conf[Object.keys(conf)[0]][i];
+    if (this.slides) {
+      for (let i = 0; i < this.slides.length; i++) {
+        const element = this.slides[i];
         const option = document.createElement('option');
         option.value = i;
         option.innerHTML = element.name;

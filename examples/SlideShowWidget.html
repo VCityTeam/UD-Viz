@@ -53,12 +53,18 @@
           configs['slide_show'],
           extent
         );
+
+        slideShow.addListeners();
+        frame3DPlanar.scene.add(slideShow.plane);
+
         const parent = document.createElement('div');
         parent.style.backgroundColor = 'white';
         parent.style.width = 'fit-content';
         parent.style.position = 'relative';
         parent.style.zIndex = 2;
         parent.appendChild(slideShow.html());
+
+        frame3DPlanar.appendToUI(parent);
 
         const hideUIListener = (event) => {
           if (event.key.toLowerCase() != 's') return;
@@ -72,10 +78,6 @@
 
         /* Hide the roothtml without dispose the widget */
         window.addEventListener('keydown', hideUIListener);
-
-        frame3DPlanar.appendToUI(parent);
-        slideShow.addListeners();
-        frame3DPlanar.scene.add(slideShow.plane);
       });
     </script>
     SCRIPT_TAG_RELOAD
