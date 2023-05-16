@@ -13,3 +13,5 @@ import * as Server from './Server/Server';
 export { Server };
 
 export { C3DTiles } from './C3DTiles';
+
+export { PlanarControls } from './PlanarControls';
