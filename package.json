@@ -14,7 +14,7 @@
     "eslint": "eslint --ignore-path .gitignore \"packages/**/*.js\" \"examples/*.html\" ",
     "eslint-quiet": "eslint --quiet --ignore-path .gitignore \"packages/**/*.js\" \"examples/*.html\" ",
     "eslint-fix": "eslint --ignore-path .gitignore \"packages/**/*.js\" \"examples/*.html\"  --fix",
-    "test": "cross-env NODE_ENV=production node ./bin/test.js",
+    "test": "cross-env NODE_ENV=production node ./test/index.js",
     "assert-code": "npm run eslint && npm run test",
     "validate-links": "node ./bin/remarkValidateLinks.js",
     "local-ci": "npm run assert-code && npm audit --audit-level=low && npm run validate-links",
