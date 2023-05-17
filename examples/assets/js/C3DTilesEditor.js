@@ -1,34 +1,23 @@
-import {
-  add3DTilesLayers,
-  addBaseMapLayer,
-  addElevationLayer,
-  addGeoJsonLayers,
-  addLabelLayers,
-  Frame3DPlanar,
-  downloadObjectAsJson,
-  readFileAsGltf,
-} from './Component/Component';
-import * as itowns from 'itowns';
-import * as THREE from 'three';
-import { TransformControls } from 'three/examples/jsm/controls/TransformControls';
-import { focusCameraOn } from './Component/ItownsUtil';
-
-export class C3DTilesEditor {
+// eslint-disable-next-line no-unused-vars
+const C3DTilesEditor = class {
   constructor(extent, frame3DPlanarOptions) {
-    /** @type {itowns.Extent} */
+    /** @type {udvizBrowser.itowns.Extent} */
     this.extent = extent; // ref it to add layers then
 
-    /** @type {Frame3DPlanar} */
-    this.frame3DPlanar = new Frame3DPlanar(extent, frame3DPlanarOptions);
+    /** @type {udvizBrowser.Frame3DPlanar} */
+    this.frame3DPlanar = new udvizBrowser.Frame3DPlanar(
+      extent,
+      frame3DPlanarOptions
+    );
 
-    /** @type {THREE.Object3D} */
+    /** @type {udvizBrowser.THREE.Object3D} */
     this.object3D = null;
 
-    /** @type {TransformControls} */
+    /** @type {udvizBrowser.TransformControls} */
     const elementToListen =
       this.frame3DPlanar.itownsView.mainLoop.gfxEngine.label2dRenderer
         .domElement;
-    this.transformControls = new TransformControls(
+    this.transformControls = new udvizBrowser.TransformControls(
       this.frame3DPlanar.camera,
       elementToListen
     );
@@ -40,7 +29,7 @@ export class C3DTilesEditor {
       this.frame3DPlanar.itownsView.notifyChange();
     });
     this.frame3DPlanar.itownsView.addFrameRequester(
-      itowns.MAIN_LOOP_EVENTS.AFTER_CAMERA_UPDATE,
+      udvizBrowser.itowns.MAIN_LOOP_EVENTS.AFTER_CAMERA_UPDATE,
       () => {
         this.transformControls.updateMatrixWorld();
       }
@@ -52,7 +41,7 @@ export class C3DTilesEditor {
     inputFile.setAttribute('accept', '.glb, .gltf');
     this.frame3DPlanar.ui.appendChild(inputFile);
     inputFile.onchange = async (e) => {
-      const gltf = await readFileAsGltf(e);
+      const gltf = await udvizBrowser.readFileAsGltf(e);
 
       if (this.object3D) {
         this.frame3DPlanar.scene.remove(this.object3D);
@@ -69,7 +58,7 @@ export class C3DTilesEditor {
       this.frame3DPlanar.scene.add(this.transformControls);
 
       // camera focus
-      focusCameraOn(
+      udvizBrowser.focusCameraOn(
         this.frame3DPlanar.itownsView,
         this.frame3DPlanar.itownsView.controls,
         this.object3D.position
@@ -108,7 +97,7 @@ export class C3DTilesEditor {
         scale: this.object3D.scale.toArray(),
       };
 
-      downloadObjectAsJson(result, this.object3D.name);
+      udvizBrowser.downloadObjectAsJson(result, this.object3D.name);
     };
   }
 
@@ -120,35 +109,38 @@ export class C3DTilesEditor {
    */
   addLayers(configs) {
     if (configs.$3DTiles) {
-      add3DTilesLayers(configs.$3DTiles, this.frame3DPlanar.itownsView);
+      udvizBrowser.add3DTilesLayers(
+        configs.$3DTiles,
+        this.frame3DPlanar.itownsView
+      );
     }
     if (configs.elevation) {
-      addElevationLayer(
+      udvizBrowser.addElevationLayer(
         configs.elevation,
         this.frame3DPlanar.itownsView,
         this.extent
       );
     }
     if (configs.baseMap) {
-      addBaseMapLayer(
+      udvizBrowser.addBaseMapLayer(
         configs.baseMap,
         this.frame3DPlanar.itownsView,
         this.extent
       );
     }
     if (configs.labels) {
-      addLabelLayers(
+      udvizBrowser.addLabelLayers(
         configs.labels,
         this.frame3DPlanar.itownsView,
         this.extent
       );
     }
     if (configs.geoJSON) {
-      addGeoJsonLayers(
+      udvizBrowser.addGeoJsonLayers(
         configs.geoJSON,
         this.frame3DPlanar.itownsView,
         this.extent
       );
     }
   }
-}
+};

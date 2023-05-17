@@ -8,6 +8,7 @@
   </head>
   <body>
     <script src="../packages/browser/dist/RUN_MODE/bundle.js"></script>
+    <script src="./assets/js/C3DTilesEditor.js"></script>
 
     <script type="text/javascript">
       udvizBrowser
@@ -37,10 +38,9 @@
             parseInt(configs['extent_lyon'].north)
           );
 
-          const app = new udvizBrowser.C3DTilesEditor(
-            extent,
-            configs['frame3D_planars'][2]
-          );
+          const app = new C3DTilesEditor(extent, configs['frame3D_planars'][2]);
+          app.frame3DPlanar.ui.style.zIndex = 2;
+          app.frame3DPlanar.ui.style.position = 'relative';
 
           app.addLayers({
             $3DTiles: configs['3DTiles'],
