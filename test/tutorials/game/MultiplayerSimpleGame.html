@@ -1,14 +1,13 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Multiplayer Simple Game example</title>
+    <title>Multiplayer Simple Game test</title>
 
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="./assets/css/default.css" />
   </head>
   <body>
-    <script src="./bundle/bundle.js"></script>
+    <script src="../../../packages/browser/dist/release/bundle.js"></script>
 
     <script>
       // Define geographic extent: CRS, min/max X, min/max Y
@@ -20,8 +19,9 @@
         5178412.82698
       );
 
+      // eslint-disable-next-line no-unused-vars
       const frame3DPlanar = new udvizBrowser.Frame3DPlanar(extent, {
-        hasItownsControls: true,
+        hasItownsControls: true
       });
 
       const GameExternalContextScript = class extends udvizBrowser.Game.External
@@ -34,7 +34,7 @@
             'click',
             () => {
               return new udvizBrowser.Shared.Command({
-                type: 'toggle_pause',
+                type: 'toggle_pause'
               });
             }
           );
@@ -52,7 +52,7 @@
         new udvizBrowser.InputManager(),
         {
           externalGameScriptClass: [GameExternalContextScript],
-          gameOrigin: { x: extent.center().x, y: extent.center().y, z: 100 },
+          gameOrigin: { x: extent.center().x, y: extent.center().y, z: 100 }
         }
       );
 
