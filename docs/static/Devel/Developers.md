@@ -52,7 +52,7 @@ consists in
 | `npm run eslint-fix`     | Run the linter and attempt to fix errors and warning automatically                                                                                                                                                                                                    |
 | `npm run test`           | Build the 3 packages and tests shared, browser scripts and examples html. Uses [this test script](../../../test/index.js)                                                                                                                                                      |
 | `npm run assert-code`    | Run `npm run eslint` and `npm run test`. Also ran by CI. See [here](#continuous-integration-travis-ci) for more information                                                                                                                                           |
-| `npm run validate-links`    | Run this [script](../../../bin/remarkValidateLinks.js) to detect dead links in markdown. Also ran by CI. See [here](#continuous-integration-travis-ci) for more information                                                                                                                                        |
+| `npm run validate-links`    | Run this [script](../../../test/remarkValidateLinks.js) to detect dead links in markdown. Also ran by CI. See [here](#continuous-integration-travis-ci) for more information                                                                                                                                        |
 | `npm run local-ci`    | Run CI on your local computer. See [here](#continuous-integration-travis-ci) for more information                                                                                                                                        |
 | `npm run pre-publish`    | Change version in all package.json ( eg `npm run pre-publish x.x.x` ). See [this script](../../../bin//prePublish.js)                                                                                                                                                         |
 | `npm run docs-shared`    | Generate the [JSDOC shared package documentation](../../jsdocConfig/jsdoc.shared.json)                                                                                                                                                                               |
@@ -82,8 +82,8 @@ Jobs list :
 
 - `npm run assert-code`: Run linter, build bundles and run tests
 - `npm audit --audit-level=low`: Npm native command ([npm-audit](https://docs.npmjs.com/cli/v6/commands/npm-audit)) which check packages dependencies vulnerabilities.
-- `npm run validate-links`: Run this [script](../../../bin/remarkValidateLinks.js) which check if links are not broken.
-- `node ./bin/validateDocs.js`: Run this [script](../../../bin/validateDocs.js) which check if documentation is generated without warning or error.
+- `npm run validate-links`: Run this [script](../../../test/remarkValidateLinks.js) which check if links are not broken.
+- `node ./bin/validateDocs.js`: Run this [script](../../../test/validateDocs.js) which check if documentation is generated without warning or error.
 
 ## Contributing
 
