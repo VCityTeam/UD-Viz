@@ -11,6 +11,7 @@ import {
 import * as itowns from 'itowns';
 import * as THREE from 'three';
 import { TransformControls } from 'three/examples/jsm/controls/TransformControls';
+import { focusCameraOn } from './Component/ItownsUtil';
 
 export class C3DTilesEditor {
   constructor(extent, frame3DPlanarOptions) {
@@ -31,7 +32,6 @@ export class C3DTilesEditor {
       this.frame3DPlanar.camera,
       elementToListen
     );
-    this.frame3DPlanar.scene.add(this.transformControls);
     this.transformControls.addEventListener('dragging-changed', (event) => {
       this.frame3DPlanar.itownsView.controls.enabled = !event.value;
     });
@@ -66,6 +66,14 @@ export class C3DTilesEditor {
 
       this.transformControls.attach(this.object3D);
       this.transformControls.updateMatrixWorld();
+      this.frame3DPlanar.scene.add(this.transformControls);
+
+      // camera focus
+      focusCameraOn(
+        this.frame3DPlanar.itownsView,
+        this.frame3DPlanar.itownsView.controls,
+        this.object3D.position
+      );
 
       this.frame3DPlanar.itownsView.notifyChange();
     };
