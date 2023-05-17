@@ -99,4 +99,4 @@ See our [release page](https://github.com/VCityTeam/UD-Viz/releases/). We highly
 > - This bundle also contains the dependencies
 > - First release bundle -> 3.1.0
  
-:warning: You can see a bundle-usage in [examples](../../../../examples/) but it's not from a **release bundle**, you can't copy paste directly, src attribute has to be changed in the script tag.
+:warning: You can see a bundle-usage in [examples](../../examples/) but it's not from a **release bundle**, you can't copy paste directly, src attribute has to be changed in the script tag.

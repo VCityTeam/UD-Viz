@@ -1,7 +1,9 @@
-const Constant = require('./Constant');
+const Constant = require('../bin/Constant');
 
 const exec = require('child-process-promise').exec;
 const Test = require('@ud-viz/node').Test;
+
+const path = require('path');
 
 const cp = require('node:child_process');
 
@@ -42,7 +44,9 @@ exec('npm run build-shared')
                 './packages/browser/bin/Test',
                 './packages/browser/dist/release/bundle.js'
               ).then(() => {
-                const fork = cp.fork(`${__dirname}/backEndExamples.js`);
+                const fork = cp.fork(
+                  path.resolve(__dirname, '../bin/backEndExamples.js')
+                );
                 fork.on('message', (message) => {
                   if (message == Constant.MESSAGE.READY) {
                     console.log('Examples Back-end is ready');

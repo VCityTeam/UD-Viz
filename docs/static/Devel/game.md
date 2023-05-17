@@ -11,7 +11,7 @@ This document gives an overview of how the game part works. Here are some differ
 
 The goal of this section is to learn how to set a singleplayer simple game structure:
 
-You can see the final result of this tutorial [here](../../../examples/SingleplayerSimpleGame.html) to check where every code sample should be added (this example import @ud-viz/browser with bundle).
+You can see the final result of this tutorial ?todo to check where every code sample should be added (this example import @ud-viz/browser with bundle).
 
 
 **Create a scene**
