@@ -29,7 +29,7 @@ const loadingScreen = function (view, labels) {
     const el = document.createElement('div');
     el.classList.add('loading_screen_character');
     if (character == spaceTag) {
-      el.style.width = '30px'; // <-- hard coded same reason below
+      el.style.width = '30px';
     } else {
       el.innerText = character;
     }
@@ -41,7 +41,11 @@ const loadingScreen = function (view, labels) {
     udvizBrowser.itowns.VIEW_EVENTS.LAYERS_INITIALIZED,
     () => {
       root.style.opacity = 0;
-      setTimeout(() => root.remove(), 1000); // <-- hard coded because root.style.transitionDuration is empty ??
+
+      const transitionDurationSec = parseFloat(
+        getComputedStyle(root).transitionDuration
+      );
+      setTimeout(() => root.remove(), transitionDurationSec * 1000);
     }
   );
 };
