@@ -1,14 +1,12 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Simpleplayer Simple Game example</title>
-
+    <title>Simpleplayer Simple Game test</title>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="./assets/css/default.css" />
   </head>
   <body>
-    <script src="../packages/browser/dist/RUN_MODE/bundle.js"></script>
+    <script src="../../../packages/browser/dist/release/bundle.js"></script>
 
     <script>
       // Define geographic extent: CRS, min/max X, min/max Y
@@ -21,7 +19,7 @@
       );
 
       const frame3DPlanar = new udvizBrowser.Frame3DPlanar(extent, {
-        hasItownsControls: true,
+        hasItownsControls: true
       });
 
       const GameContextScript = class extends udvizBrowser.Shared.Game
@@ -37,9 +35,9 @@
               components: {
                 Render: {
                   idRenderData: 'cube',
-                  color: [Math.random(), Math.random(), Math.random(), 1],
-                },
-              },
+                  color: [Math.random(), Math.random(), Math.random(), 1]
+                }
+              }
             });
 
             const size = Math.random() * 200 + 50;
@@ -82,7 +80,7 @@
             'click',
             () => {
               return new udvizBrowser.Shared.Command({
-                type: 'toggle_pause',
+                type: 'toggle_pause'
               });
             }
           );
@@ -96,12 +94,12 @@
         static: true,
         components: {
           GameScript: {
-            idScripts: [GameContextScript.ID_SCRIPT],
+            idScripts: [GameContextScript.ID_SCRIPT]
           },
           ExternalScript: {
-            idScripts: [GameExternalContextScript.ID_SCRIPT],
-          },
-        },
+            idScripts: [GameExternalContextScript.ID_SCRIPT]
+          }
+        }
       });
 
       const game = new udvizBrowser.Game.External.SinglePlanarProcess(
@@ -112,13 +110,11 @@
         {
           gameScriptClass: [GameContextScript],
           externalGameScriptClass: [GameExternalContextScript],
-          gameOrigin: { x: extent.center().x, y: extent.center().y, z: 100 },
+          gameOrigin: { x: extent.center().x, y: extent.center().y, z: 100 }
         }
       );
 
       game.start();
     </script>
-
-    SCRIPT_TAG_RELOAD
   </body>
 </html>
