@@ -13,7 +13,9 @@
       udvizBrowser.FileUtil.loadMultipleJSON([
         './assets/config/extent_lyon.json',
         './assets/config/frame3D_planars.json',
-        './assets/config/layer/3DTiles.json'
+        './assets/config/layer/base_maps.json',
+        './assets/config/layer/elevation.json',
+        './assets/config/layer/3DTiles.json',
       ]).then((configs) => {
         // http://proj4js.org/
         // define a projection as a string and reference it that way
@@ -23,6 +25,7 @@
           '+proj=lcc +lat_1=45.25 +lat_2=46.75' +
             ' +lat_0=46 +lon_0=3 +x_0=1700000 +y_0=5200000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs'
         );
+
 
         const extent = new udvizBrowser.itowns.Extent(
           configs['extent_lyon'].crs,
@@ -37,6 +40,21 @@
           configs['frame3D_planars'][2]
         );
 
+        // ADD BASE MAP
+        udvizBrowser.addBaseMapLayer(
+          configs['base_maps'][0],
+          frame3DPlanar.itownsView,
+          extent
+        );
+
+        // ADD ELEVATION LAYER
+        udvizBrowser.addElevationLayer(
+          configs['elevation'],
+          frame3DPlanar.itownsView,
+          extent
+        );
+
+
         // ADD LAYERS
         udvizBrowser.add3DTilesLayers(
           configs['3DTiles'],
@@ -44,6 +62,36 @@
         );
 
         const featuresElevation = 15;
+
+        const button = document.createElement('button');
+        button.innerHTML = 'Change visualization mode';
+        button.style.zIndex = 2;
+        button.style.cursor = 'pointer';
+        frame3DPlanar.appendToUI(button);
+
+        const changeVisualizationMode = () => {
+          frame3DPlanar.itownsView
+            .getLayers()
+            .filter((el) => el.isElevationLayer)
+            .forEach((layer) => {
+              layer.scale = layer.scale == 1 ? 0 : 1;
+            });
+
+          frame3DPlanar.itownsView
+            .getLayers()
+            .filter((el) => el.isC3DTilesLayer)
+            .forEach((layer) => {
+              // console.log(udvizBrowser.getTilesWithGeom(layer));
+              for(let tile of udvizBrowser.getTilesWithGeom(layer)){
+                console.log(tile);
+              };
+            });
+
+            frame3DPlanar.itownsView.notifyChange();    
+        };
+
+        button.onclick = changeVisualizationMode;
+
         frame3DPlanar.itownsView
           .getLayers()
           .filter((el) => el.isC3DTilesLayer)
@@ -55,7 +103,7 @@
                   for (const [
                     // eslint-disable-next-line no-unused-vars
                     batchId,
-                    c3DTFeature
+                    c3DTFeature,
                   ] of layer.tilesC3DTileFeatures.get(tileContent.tileId)) {
                     const worldBox3 = layer.computeWorldBox3(c3DTFeature);
 

@@ -415,3 +415,32 @@ export function focusC3DTilesLayer(itownsView, layer) {
     horizontalDistance: 200,
   });
 }
+
+/**
+ *
+ */
+export function getTilesWithGeom(C3DTilesLayer) {
+  let tilesWithGeom = [];
+  for (const tile of C3DTilesLayer.tileset.tiles) {
+    if (tile.content) 
+    {
+      let tilegeom = getTileByTileId(C3DTilesLayer, tile.tileId);
+      if(tilegeom) tilesWithGeom.push(tilegeom);
+    }
+  }
+  return tilesWithGeom;
+}
+
+/**
+ *
+ */
+export function getTileByTileId(c3DTilesLayer,tileId) {
+  let tile = null;
+  c3DTilesLayer.object3d.traverse((child) => {
+    if (child.tileId == tileId)
+    { 
+      tile = child;
+    }
+  });
+  return tile;
+}
