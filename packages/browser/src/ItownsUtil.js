@@ -417,28 +417,34 @@ export function focusC3DTilesLayer(itownsView, layer) {
 }
 
 /**
+ * Get tiles as THREE.Object3D of a C3DTilesLayer that have geometry loaded
  *
+ * @param {itowns.C3DTilesLayer} c3DTilesLayer - C3Tileslayer to get tiles from
+ * @returns {Array<THREE.object3d>} - tiles that have geometry
  */
-export function getTilesWithGeom(C3DTilesLayer) {
-  let tilesWithGeom = [];
-  for (const tile of C3DTilesLayer.tileset.tiles) {
-    if (tile.content) 
-    {
-      let tilegeom = getTileByTileId(C3DTilesLayer, tile.tileId);
-      if(tilegeom) tilesWithGeom.push(tilegeom);
+export function getTilesWithGeom(c3DTilesLayer) {
+  const tilesWithGeom = [];
+  for (const tile of c3DTilesLayer.tileset.tiles) {
+    if (tile.content) {
+      const tilegeom = getTileByTileId(c3DTilesLayer, tile.tileId);
+      if (tilegeom) tilesWithGeom.push(tilegeom);
     }
   }
   return tilesWithGeom;
 }
 
 /**
+ * Get a the THREE.Object3D of a tile in a C3DTilesLayer
  *
+ * @param {itowns.C3DTilesLayer} c3DTilesLayer - layer to focus
+ * @param {string} tileId - layer to focus
+* @returns {THREE.object3d} - the tile is it has been loaded 
+
  */
-export function getTileByTileId(c3DTilesLayer,tileId) {
+export function getTileByTileId(c3DTilesLayer, tileId) {
   let tile = null;
   c3DTilesLayer.object3d.traverse((child) => {
-    if (child.tileId == tileId)
-    { 
+    if (child.tileId == tileId) {
       tile = child;
     }
   });
