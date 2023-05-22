@@ -438,8 +438,7 @@ export function getTilesWithGeom(c3DTilesLayer) {
  *
  * @param {itowns.C3DTilesLayer} c3DTilesLayer - layer to focus
  * @param {string} tileId - layer to focus
-* @returns {THREE.object3d} - the tile is it has been loaded 
-
+ * @returns {THREE.object3d} - the tile is it has been loaded
  */
 export function getTileByTileId(c3DTilesLayer, tileId) {
   let tile = null;
