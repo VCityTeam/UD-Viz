@@ -37,6 +37,10 @@ const main = async function () {
     path.resolve(__dirname, '../bin/backEndExamples.js')
   );
 
+  backEndFork.on('error', () => {
+    throw new Error('backend examples error');
+  });
+
   const runExamples = () => {
     return new Promise((resolve) => {
       backEndFork.on('message', async (message) => {
@@ -59,6 +63,10 @@ const main = async function () {
   const gameBackEndFork = cp.fork(
     path.resolve(__dirname, './tutorials/game/multiplayerSimpleGame/backend.js')
   );
+
+  gameBackEndFork.on('error', () => {
+    throw new Error('backend game tutorial error');
+  });
 
   const runFrontEnd = () => {
     return new Promise((resolve) => {

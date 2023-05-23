@@ -1,4 +1,4 @@
-const { runChildProcess } = require('@ud-viz/node/src/Game/Thread');
+const { Child } = require('@ud-viz/node/src/Game/Thread');
 const { Game } = require('@ud-viz/shared/src');
 
 const GameContextScript = class extends Game.ScriptBase {
@@ -48,4 +48,5 @@ const GameContextScript = class extends Game.ScriptBase {
   }
 };
 
-runChildProcess([GameContextScript]);
+const child = new Child();
+child.start([GameContextScript]);
