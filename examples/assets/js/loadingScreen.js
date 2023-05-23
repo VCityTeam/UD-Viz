@@ -37,15 +37,22 @@ const loadingScreen = function (view, labels) {
     characterContainer.appendChild(el);
   });
 
+  const removeLoadingScreen = () => {
+    if (root.parentElement) {
+      root.style.opacity = 0;
+      root.addEventListener('transitionend', () => root.remove());
+    }
+    view.removeEventListener(
+      udvizBrowser.itowns.VIEW_EVENTS.LAYERS_INITIALIZED,
+      removeLoadingScreen
+    );
+  };
+
   view.addEventListener(
     udvizBrowser.itowns.VIEW_EVENTS.LAYERS_INITIALIZED,
-    () => {
-      root.style.opacity = 0;
-
-      const transitionDurationSec = parseFloat(
-        getComputedStyle(root).transitionDuration
-      );
-      setTimeout(() => root.remove(), transitionDurationSec * 1000);
-    }
+    removeLoadingScreen
   );
+
+  const timeout = 5000;
+  setTimeout(removeLoadingScreen, timeout);
 };
