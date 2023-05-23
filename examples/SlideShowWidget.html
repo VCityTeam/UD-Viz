@@ -26,29 +26,17 @@
               ' +lat_0=46 +lon_0=3 +x_0=1700000 +y_0=5200000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs'
           );
 
-        // /// SLIDESHOW MODULE
-        // 3D Setup
-        const slideShow = new udvizBrowser.Widget.SlideShow(
-          frame3DPlanar.getItownsView(),
-          configs['slide_show'],
-          extent
-        );
+          const extent = new udvizBrowser.itowns.Extent(
+            configs['extent_lyon'].crs,
+            parseInt(configs['extent_lyon'].west),
+            parseInt(configs['extent_lyon'].east),
+            parseInt(configs['extent_lyon'].south),
+            parseInt(configs['extent_lyon'].north)
+          );
 
-        slideShow.addListeners();
-        frame3DPlanar.scene.add(slideShow.plane);
-
-        // Add UI
-        const parent = document.createElement('div');
-        parent.style.backgroundColor = 'white';
-        parent.style.width = 'fit-content';
-        parent.style.position = 'relative';
-        parent.style.zIndex = 2;
-        parent.appendChild(slideShow.html());
-
-        frame3DPlanar.appendToUI(parent);
-
-        const hideUIListener = (event) => {
-          if (event.key.toLowerCase() != 's') return;
+          const frame3DPlanar = new udvizBrowser.Frame3DPlanar(extent, {
+            hasItownsControls: true
+          });
 
           const fitExtent = () => {
             udvizBrowser.THREEUtil.cameraFitRectangle(
@@ -61,9 +49,40 @@
           fitExtent();
           frame3DPlanar.camera.rotation.set(0, 0, 0);
 
-        /* Hide the roothtml without dispose the widget */
-        window.addEventListener('keydown', hideUIListener);
-      });
+          // /// SLIDESHOW MODULE
+          // 3D Setup
+          const slideShow = new udvizBrowser.Widget.SlideShow(
+            frame3DPlanar.getItownsView(),
+            configs['slide_show'],
+            extent
+          );
+
+          slideShow.addListeners();
+          frame3DPlanar.scene.add(slideShow.plane);
+
+          // Add UI
+          const parent = document.createElement('div');
+          parent.style.backgroundColor = 'white';
+          parent.style.width = 'fit-content';
+          parent.style.position = 'relative';
+          parent.style.zIndex = 2;
+          parent.appendChild(slideShow.html());
+
+          frame3DPlanar.appendToUI(parent);
+
+          const hideUIListener = (event) => {
+            if (event.key.toLowerCase() != 's') return;
+
+            if (slideShow.html().style.display == 'none') {
+              slideShow.html().style.display = '';
+            } else {
+              slideShow.html().style.display = 'none';
+            }
+          };
+
+          /* Hide the roothtml without dispose the widget */
+          window.addEventListener('keydown', hideUIListener);
+        });
     </script>
     SCRIPT_TAG_RELOAD
   </body>
