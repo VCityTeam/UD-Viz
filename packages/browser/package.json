@@ -1,6 +1,6 @@
 {
   "name": "@ud-viz/browser",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "description": "UD-Viz Browser-side framework for building iTowns/Three.js-based 3D geospatial urban data applications",
   "main": "src",
   "scripts": {
@@ -22,7 +22,7 @@
   },
   "homepage": "https://github.com/VCityTeam/UD-Viz/packages/browser",
   "dependencies": {
-    "@ud-viz/shared": "3.0.0",
+    "@ud-viz/shared": "3.1.0",
     "d3": "^7.0.1",
     "fetch-sparql-endpoint": "^2.3.1",
     "howler": "^2.2.3",

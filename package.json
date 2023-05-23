@@ -1,7 +1,7 @@
 {
   "name": "ud-viz-monorepo",
   "private": true,
-  "version": "3.0.0",
+  "version": "3.1.0",
   "description": "Urban Data VIsualiZation framework",
   "scripts": {
     "clean": "rm -f -r node_modules && rm -f package-lock.json && rm -f  -r ./packages/**/dist && rm -f  -r ./packages/**/node_modules",
