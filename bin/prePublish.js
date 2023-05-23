@@ -54,7 +54,7 @@ changeVersionPackageJSON('./packages/shared/package.json').then(() => {
           .then(printExec)
           .then(() => {
             exec(
-              'git log | grep -v ^commit | grep -v ^Author | grep -v ^Date | grep -vi merge | grep . | head -n 150 > ./docs/static/ChangelogDiff.txt'
+              'git log | grep -v ^commit | grep -v ^Author | grep -v ^Date | grep -vi merge | grep . | head -n 400 > ./docs/static/ChangelogDiff.txt'
             )
               .then(printExec)
               .then(() => {
