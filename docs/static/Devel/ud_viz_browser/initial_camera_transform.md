@@ -48,6 +48,6 @@ localStorageSetCameraMatrix(frame3DPlanar.camera);// <-- will set camera point o
 ```
 >Note: the first time you will run your webpage the camera point of view will be the one pass to the `Frame3DPlanar`
 
-## Use URL
+## Use URL (WIP)
 
 You can also use url to initialize default camera point of view (this is not an @ud-viz/browser feature though), but you can check this example doing it (todo mettre le lien vers show room vs todo en faire un util dans les src)
