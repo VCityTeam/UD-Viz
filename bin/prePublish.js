@@ -54,14 +54,12 @@ changeVersionPackageJSON('./packages/shared/package.json').then(() => {
           .then(printExec)
           .then(() => {
             exec(
-              'git log | grep -v ^commit | grep -v ^Author | grep -v ^Date | grep -vi merge | grep . | head -n 400 > ./docs/static/ChangelogDiff.txt'
-            )
-              .then(printExec)
-              .then(() => {
-                console.log(
-                  'PrePublish done, you have to update ./docs/static/Changelog.md with ./docs/static/ChangelogDiff.txt'
-                );
-              });
+              `git describe --tags --match v* --abbrev=0 | xargs -I tag sh -c 'git log tag..HEAD --pretty=format:%s > ./docs/static/ChangelogDiff.txt'`
+            ).then(() => {
+              console.log(
+                'PrePublish done, you have to update ./docs/static/Changelog.md with ./docs/static/ChangelogDiff.txt'
+              );
+            });
           });
       });
     });
