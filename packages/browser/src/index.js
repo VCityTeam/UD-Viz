@@ -9,6 +9,8 @@ export { THREEUtil };
 
 export * from './FileUtil.js';
 
+export * from './URLUtil.js';
+
 export * from './HTMLUtil.js';
 
 export { AssetManager, RenderData } from './AssetManager/AssetManager.js';
