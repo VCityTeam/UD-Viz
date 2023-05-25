@@ -1,4 +1,4 @@
-When creating a `Frame3DPlanar` you may want your camera to be placed at a specific point of view. In this tutorial we are going to see differents options available to achieve that.
+When creating a `Frame3DPlanar` you may want your camera to be placed at a specific point of view. In this tutorial we are going to see differents options available to achieve that. You may want to check [show room code](../../../../examples/assets/js/ShowRoom.js) which implements differents methods expose here.
 
 ## Configure `Frame3DPlanar`
 
@@ -48,6 +48,17 @@ localStorageSetCameraMatrix(frame3DPlanar.camera);// <-- will set camera point o
 ```
 >Note: the first time you will run your webpage the camera point of view will be the one pass to the `Frame3DPlanar`
 
-## Use URL (WIP)
+## Use [URL](https://developer.mozilla.org/en-US/docs/Web/API/URL)
 
-You can also use url to initialize default camera point of view (this is not an @ud-viz/browser feature though), but you can check this example doing it (todo mettre le lien vers show room vs todo en faire un util dans les src)
+You can also use url util function to initialize default camera point of view. In that case you should first produce an url with camera matrix encoded in it.
+
+```js
+const url = new URL(window.location.origin + window.location.pathname);
+appendCameraMatrixToURL(url, yourCamera);
+```
+
+then to initialize your camera with this url you would have to write something like that:
+
+```js
+const isCameraMatrixInitializedWithURL = URLSetCameraMatrix(yourCamera);
+```

@@ -1,5 +1,3 @@
-const CAMERA_MATRIX_URL_KEY = 'camera_matrix';
-
 // eslint-disable-next-line no-unused-vars
 const ShowRoom = class {
   constructor(extent, frame3DPlanarOptions, version) {
@@ -12,30 +10,7 @@ const ShowRoom = class {
       frame3DPlanarOptions
     );
 
-    const setCameraMatrixFromURL = () => {
-      const paramsUrl = new URLSearchParams(window.location.search);
-      if (paramsUrl.has(CAMERA_MATRIX_URL_KEY)) {
-        const matrix4SubStrings =
-          udvizBrowser.Shared.Data.matrix4ArrayFromURIComponent(
-            decodeURIComponent(paramsUrl.get(CAMERA_MATRIX_URL_KEY))
-          );
-        if (matrix4SubStrings) {
-          // compatible matrix4 uri
-          const cameraMatrix = new udvizBrowser.THREE.Matrix4().fromArray(
-            matrix4SubStrings.map((x) => parseFloat(x))
-          );
-          cameraMatrix.decompose(
-            this.frame3DPlanar.camera.position,
-            this.frame3DPlanar.camera.quaternion,
-            this.frame3DPlanar.camera.scale
-          );
-          return true;
-        }
-      }
-      return false;
-    };
-
-    if (!setCameraMatrixFromURL()) {
+    if (!udvizBrowser.URLSetCameraMatrix(this.frame3DPlanar.camera)) {
       // local storage tracking
       udvizBrowser.localStorageSetCameraMatrix(this.frame3DPlanar.camera);
     }
@@ -270,12 +245,7 @@ const ShowRoom = class {
     urlCameraMatrixButton.onclick = () => {
       const url = new URL(window.location.origin + window.location.pathname);
 
-      url.searchParams.append(
-        encodeURI(CAMERA_MATRIX_URL_KEY),
-        encodeURIComponent(
-          this.frame3DPlanar.camera.matrixWorld.toArray().toString()
-        )
-      );
+      udvizBrowser.appendCameraMatrixToURL(url, this.frame3DPlanar.camera);
 
       // put it in clipboard
       navigator.clipboard.writeText(url);
