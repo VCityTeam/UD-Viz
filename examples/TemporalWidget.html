@@ -12,7 +12,8 @@
     <script type="text/javascript">
       udvizBrowser
         .loadMultipleJSON([
-          './assets/config/extent_lyon.json',
+          './assets/config/extents.json',
+          './assets/config/crs.json',
           './assets/config/frame3D_planars.json',
           './assets/config/widget/temporal.json',
           './assets/config/layer/3DTiles_temporal.json',
@@ -20,21 +21,17 @@
           './assets/config/layer/elevation.json'
         ])
         .then((configs) => {
-          // http://proj4js.org/
-          // define a projection as a string and reference it that way
-          // the definition of the projection should be in config TODO_ISSUE
           udvizBrowser.proj4.default.defs(
-            configs['extent_lyon'].crs,
-            '+proj=lcc +lat_1=45.25 +lat_2=46.75' +
-              ' +lat_0=46 +lon_0=3 +x_0=1700000 +y_0=5200000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs'
+            configs['crs'][0].name,
+            configs['crs'][0].transform
           );
 
           const extent = new udvizBrowser.itowns.Extent(
-            configs['extent_lyon'].crs,
-            parseInt(configs['extent_lyon'].west),
-            parseInt(configs['extent_lyon'].east),
-            parseInt(configs['extent_lyon'].south),
-            parseInt(configs['extent_lyon'].north)
+            configs['crs'][0].name,
+            parseInt(configs['extents'][0].west),
+            parseInt(configs['extents'][0].east),
+            parseInt(configs['extents'][0].south),
+            parseInt(configs['extents'][0].north)
           );
 
           const frame3DPlanar = new udvizBrowser.Frame3DPlanar(
