@@ -12,17 +12,17 @@
     <script type="text/javascript">
       udvizBrowser
         .loadMultipleJSON([
-          './assets/config/extent_world.json',
+          './assets/config/extents.json',
           './assets/config/frame3D_planars.json',
           './assets/config/layer/base_maps.json'
         ])
         .then((configs) => {
           const extent = new udvizBrowser.itowns.Extent(
-            configs['extent_world'].crs,
-            parseInt(configs['extent_world'].west),
-            parseInt(configs['extent_world'].east),
-            parseInt(configs['extent_world'].south),
-            parseInt(configs['extent_world'].north)
+            'EPSG:3857',
+            parseInt(configs['extents'][1].west),
+            parseInt(configs['extents'][1].east),
+            parseInt(configs['extents'][1].south),
+            parseInt(configs['extents'][1].north)
           );
 
           const frame3DPlanar = new udvizBrowser.Frame3DPlanar(
