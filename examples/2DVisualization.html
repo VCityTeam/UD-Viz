@@ -59,55 +59,61 @@
           frame3DPlanar.itownsView
         );
 
-        let featuresElevation = 50;
-
         const button = document.createElement('button');
-        button.innerHTML = 'Change visualization mode to 2D';
+        button.innerHTML = 'Change visualization mode to 3D';
         button.style.zIndex = 2;
         button.style.position = 'relative';
         button.style.cursor = 'pointer';
         frame3DPlanar.appendToUI(button);
 
-        const changeVisualizationMode = () => {
-          const planarLayer = frame3DPlanar.itownsView.tileLayer;
-          const elevationLayer = frame3DPlanar.itownsView
-            .getLayers()
-            .filter((el) => el.isElevationLayer)[0];
+        const planarLayer = frame3DPlanar.itownsView.tileLayer;
+        const elevationLayer = frame3DPlanar.itownsView
+          .getLayers()
+          .filter((el) => el.isElevationLayer)[0];
 
-          elevationLayer.scale = elevationLayer.scale == 1 ? 0 : 1;
-          button.innerHTML = 'Change visualization mode to ' + (elevationLayer.scale == 1 ? "2D" : "3D");
+        elevationLayer.scale = 0;
 
+        const change3DTilesHeight = () => {
           frame3DPlanar.itownsView
             .getLayers()
             .filter((el) => el.isC3DTilesLayer)
             .forEach((layer) => {
-              for (const tileContent of udvizBrowser.getTilesWithGeom(layer)) {
-                if (layer.tilesC3DTileFeatures.has(tileContent.tileId)) {
+              layer.object3d.traverse((child) => {
+                if (
+                  !isNaN(child.tileId) &&
+                  child.tileId >= 0 &&
+                  child.tileId < layer.tileset.tiles.length &&
+                  layer.tilesC3DTileFeatures.has(child.tileId)
+                ) {
                   for (const [
                     // eslint-disable-next-line no-unused-vars
                     batchId,
                     c3DTFeature,
-                  ] of layer.tilesC3DTileFeatures.get(tileContent.tileId)) {
-                    const worldBox3 = layer.computeWorldBox3(c3DTFeature);
-                    tileContent.traverse((child) => {
+                  ] of layer.tilesC3DTileFeatures.get(child.tileId)) {
+                    child.traverse((child) => {
                       if (
                         child.geometry &&
                         child.geometry.attributes._BATCHID
                       ) {
+                        const worldBox3 = layer.computeWorldBox3(c3DTFeature);
+                        let featureElevation = worldBox3.min.z;
+
                         const c3DTFeaturePos = new udvizBrowser.THREE.Vector3()
                           .addVectors(worldBox3.max, worldBox3.min)
                           .divideScalar(2);
                         c3DTFeaturePos.z = worldBox3.min.z;
-                        if(elevationLayer.scale == 1)
-                        {
-                          featuresElevation = udvizBrowser.itowns.DEMUtils.getElevationValueAt(
-                            planarLayer,
-                            new udvizBrowser.itowns.Coordinates(configs['extent_lyon'].crs, c3DTFeaturePos),
-                            1 // PRECISE_READ_Z
-                          );
-                        }
-                        else
-                          featuresElevation  = elevationLayer.colorTextureElevationMinZ;
+                        if (elevationLayer.scale == 1) {
+                          featureElevation =
+                            udvizBrowser.itowns.DEMUtils.getElevationValueAt(
+                              planarLayer,
+                              new udvizBrowser.itowns.Coordinates(
+                                configs['extent_lyon'].crs,
+                                c3DTFeaturePos
+                              )
+                            );
+                        } else
+                          featureElevation =
+                            elevationLayer.colorTextureElevationMinZ;
                         c3DTFeature.groups.forEach((group) => {
                           const positionIndexStart = group.start * 3;
                           const positionIndexCount =
@@ -121,45 +127,48 @@
                             // z
                             child.geometry.attributes.position.array[
                               index + 2
-                            ] -= worldBox3.min.z - featuresElevation; // translation
+                            ] -= worldBox3.min.z - featureElevation; // translation
                           }
                           child.geometry.attributes.position.needsUpdate = true;
                         });
                       }
                     });
-                    if (tileContent.boundingVolume.region) {
-                      const offset = new udvizBrowser.THREE.Vector3(
-                        0,
-                        0,
-                        featuresElevation -
-                          tileContent.boundingVolume.region.box.min.z
-                      );
-                      tileContent.boundingVolume.box.region.translate(offset);
-                    } else if (tileContent.boundingVolume.box) {
-                      const offset = new udvizBrowser.THREE.Vector3(
-                        0,
-                        0,
-                        featuresElevation - tileContent.boundingVolume.box.min.z
-                      );
-                      tileContent.boundingVolume.box.translate(offset);
-                    } else if (tileContent.boundingVolume.sphere) {
-                      const offset = new udvizBrowser.THREE.Vector3(
-                        0,
-                        0,
-                        featuresElevation -
-                          tileContent.boundingVolume.sphere.center.z
-                      );
-                      tileContent.boundingVolume.sphere.center.add(offset);
-                    }
                   }
+                  child.traverse((el) => {
+                    if (el.geometry) {
+                      el.geometry.computeBoundingBox();
+                      child.boundingVolume.box = el.geometry.boundingBox;
+                    }
+                  });
                 }
-              }
+              });
             });
-
           frame3DPlanar.itownsView.notifyChange();
         };
 
+        const changeVisualizationMode = () => {
+          const elevationLayer = frame3DPlanar.itownsView
+            .getLayers()
+            .filter((el) => el.isElevationLayer)[0];
+
+          elevationLayer.scale = elevationLayer.scale == 1 ? 0 : 1;
+          button.innerHTML =
+            'Change visualization mode to ' +
+            (elevationLayer.scale == 1 ? '2D' : '3D');
+          change3DTilesHeight();
+        };
+
         button.onclick = changeVisualizationMode;
+
+        frame3DPlanar.itownsView
+          .getLayers()
+          .filter((el) => el.isC3DTilesLayer)
+          .forEach((layer) => {
+            layer.addEventListener(
+              udvizBrowser.itowns.C3DTILES_LAYER_EVENTS.ON_TILE_CONTENT_LOADED,
+              change3DTilesHeight
+            );
+          });
       });
     </script>
     SCRIPT_TAG_RELOAD
