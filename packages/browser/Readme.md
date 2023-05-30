@@ -5,7 +5,7 @@
 [@ud-viz/browser](https://npmjs.com/package/@ud-viz/browser) is a npm package based on [iTowns](https://github.com/itowns/itowns) for creating front-end web applications to visualize, analyze, and interact with geospatial 3D urban data. It also depends on [@ud-viz/shared](https://npmjs.com/package/@ud-viz/shared) package.
 
 - [@ud-viz/browser](#ud-vizbrowser)
-    - [Directory Hierarchy](#directory-hierarchy)
+  - [Directory Hierarchy](#directory-hierarchy)
   - [Getting started](#getting-started)
   - [Developers](#developers)
     - [Npm scripts](#npm-scripts)
@@ -20,7 +20,7 @@
 UD-Viz/packages/browser
 ├── bin                                           # Global NodeJS development
 ├── examples                                      # Application Examples (html files importing the bundle)
-├── src                                           # Package JS, CSS files 
+├── src                                           # Package JS, CSS files
 |    ├── AllWidget                                # UI template for ud-viz demo using widgets
 |    ├── Component                                # Components used to compose applications
 |    |    ├── AssetManager                        # Manage asset loading
@@ -48,7 +48,7 @@ See [here](https://github.com/VCityTeam/UD-Viz/blob/master/Readme.md#getting-sta
 
 ## Developers
 
-For pre-requisites see [here](https://github.com/VCityTeam/UD-Viz/blob/master/docs/static/Devel/Developers.md#pre-requisites).
+For pre-requisites see [here](https://github.com/VCityTeam/UD-Viz/blob/master/docs/static/Developers.md#pre-requisites).
 
 ### Npm scripts
 
@@ -72,7 +72,6 @@ This runs a watched routine [debug.js](./bin/debug.js) with [nodemon](https://ww
 - Runs a `npm run build-debug`
 - May run `npm run test` (not by default).
 
-
 ## How to use it in your demo?
 
 You can use it through npm (the preferred way) or download a bundle from our GitHub release page.
@@ -85,18 +84,15 @@ In your demo:
 npm install --save @ud-viz/browser
 ```
 
-If you're using a module bundler (like [webback](https://webpack.js.org/concepts/)), you can directly write `import * as udvizBrowser from '@ud-viz/browser'` in your code. See [import doc](https://developer.mozilla.org/fr/docs/Web/JavaScript/Reference/Statements/import). 
+If you're using a module bundler (like [webback](https://webpack.js.org/concepts/)), you can directly write `import * as udvizBrowser from '@ud-viz/browser'` in your code. See [import doc](https://developer.mozilla.org/fr/docs/Web/JavaScript/Reference/Statements/import).
 
-> See https://github.com/VCityTeam/UD-Viz-template  
-
+> See https://github.com/VCityTeam/UD-Viz-template
 
 ### From a release bundle
 
-
 See our [release page](https://github.com/VCityTeam/UD-Viz/releases/). We highly recommend using the last release every time.
-
 
 > - This bundle also contains the dependencies
 > - First release bundle -> 3.1.0
- 
+
 :warning: You can see a bundle-usage in [examples](../../examples/) but it's not from a **release bundle**, you can't copy paste directly, src attribute has to be changed in the script tag.

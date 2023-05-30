@@ -36,7 +36,7 @@ const frame3DPlanar = new Frame3DPlanar(extent, {
 });
 ```
 
-> Note: these values can be defined in code or in a [config file](../../../../examples/assets/config/frame3D_planars.json) as the ud-viz examples.
+> Note: these values can be defined in code or in a [config file](../../../examples/assets/config/frame3D_planars.json) as the ud-viz examples.
 
 ## Use [localStorage](https://developer.mozilla.org/fr/docs/Web/API/Window/localStorage)
 

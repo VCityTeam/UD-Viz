@@ -5,7 +5,7 @@ This document gives an overview of how the game part works. Here are some differ
 ## Prerequisites
 
 - Run a back-end in node.js with express. See [MDN DOC](https://developer.mozilla.org/en-US/docs/Learn/Server-side/Express_Nodejs/Introduction).
-- See [here](../../../packages/browser/Readme.md#how-to-use-it-in-your-demo) how to import @ud-viz/browser framework.
+- See [here](../../packages/browser/Readme.md#how-to-use-it-in-your-demo) how to import @ud-viz/browser framework.
 
 ## Creating a singleplayer simple game 
 
@@ -194,7 +194,7 @@ Now you have learned how to build a singleplayer simple game, let's see how to m
 1 Create a backend
 import udviz node with require
 as before run an express app running a http server
-Final result backend [here](../../../bin/backEnd.js)
+Final result backend WIP
 
 import game part of shared
 create a socket service by passsing the http server
@@ -220,15 +220,15 @@ run enjoy
 
 Singleplayer one: 
 
-* [ZeppelinGame](../../../examples/ZeppelinGame.html)
-* [AvatarGame](../../../examples/AvatarGame.html)
-* [DragAndDropAvatar](../../../examples/DragAndDropAvatar.html)
-* [AvatarGameShader](../../../examples/AvatarGameShader.html)
+* [ZeppelinGame](../../examples/ZeppelinGame.html)
+* [AvatarGame](../../examples/AvatarGame.html)
+* [DragAndDropAvatar](../../examples/DragAndDropAvatar.html)
+* [AvatarGameShader](../../examples/AvatarGameShader.html)
 
 These examples require some knowledge of [@ud-viz/shared game](./ud_viz_shared/shared_game.md) and [@ud-viz/browser game](./ud_viz_browser/browser_game.md)
 
 Multiplayer one:
 
-* [MultiPlanarProcess](../../../examples/MultiPlanarProcess.html)
+* [MultiPlanarProcess](../../examples/MultiPlanarProcess.html)
 
 This example requires the same knowledge as singleplayer plus [@ud-viz/node game](./ud_viz_node/node_game.md)

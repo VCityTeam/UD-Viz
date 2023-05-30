@@ -4,25 +4,24 @@
 [![CI status](https://travis-ci.com/VCityTeam/UD-Viz.svg?branch=master)](https://app.travis-ci.com/github/VCityTeam/UD-Viz)
 [![Documentation Status](https://readthedocs.org/projects/ansicolortags/badge/?version=latest)](http://vcityteam.github.io/UD-Viz/html/index.html)
 
-UD-Viz is a 3-package JavaScript framework for creating web applications for visualizing and interacting with geospatial 3D urban data. 
+UD-Viz is a 3-package JavaScript framework for creating web applications for visualizing and interacting with geospatial 3D urban data.
 
 [Online documentation](https://vcityteam.github.io/UD-Viz/html/index.html) &mdash;
-[Developers](./docs/static/Devel/Developers.md) &mdash;
+[Developers](./docs/static/Developers.md) &mdash;
 [License](./LICENSE.md) &mdash;
 [Getting Started](#getting-started)
 
-
 **Online demos**:
 
-* [Ud-Viz examples](https://ud-viz.vcityliris.data.alpha.grandlyon.com/)
-* [Flying campus](https://www.imuvirtuel.fr/): a multi-player demo using UD-Viz
+- [Ud-Viz examples](https://ud-viz.vcityliris.data.alpha.grandlyon.com/)
+- [Flying campus](https://www.imuvirtuel.fr/): a multi-player demo using UD-Viz
 
 **UD-Viz Packages:**
 
 - [@ud-viz/shared](./packages/shared)
 - [@ud-viz/browser](./packages/browser)
 - [@ud-viz/node](./packages/node)
- 
+
 ### Directory Hierarchy
 
 ```
