@@ -5,7 +5,7 @@
 [@ud-viz/shared](https://npmjs.com/package/@ud-viz/shared) is a npm package based on [Three.js](https://threejs.org/) including data processing and model plus a game engine.
 
 - [@ud-viz/shared](#ud-vizshared)
-    - [Directory Hierarchy](#directory-hierarchy)
+  - [Directory Hierarchy](#directory-hierarchy)
   - [Getting started](#getting-started)
   - [Developers](#developers)
     - [Npm scripts](#npm-scripts)
@@ -40,7 +40,7 @@ See [here](https://github.com/VCityTeam/UD-Viz/blob/master/Readme.md#getting-sta
 
 ## Developers
 
-For pre-requisites see [here](https://github.com/VCityTeam/UD-Viz/blob/master/docs/static/Devel/Developers.md#pre-requisites).
+For pre-requisites see [here](https://github.com/VCityTeam/UD-Viz/blob/master/docs/static/Developers.md#pre-requisites).
 
 ### Npm scripts
 
