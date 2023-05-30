@@ -5,6 +5,7 @@
   --sidebar-widget-color-four: white;
 
   --sidebar-widget-sidebar-width: 60px;
+  --sidebar-widget-sidebar-pan-max-width: 500px;
 }
 
 /********************************************* SIDE BAR*/
@@ -56,7 +57,7 @@
 
 /********************************************* PAN SIDEBAR*/
 ._sidebar_widget_pan_menu_sidebar {
-  width: 400px;
+  max-width: var(--sidebar-widget-sidebar-pan-max-width);
   position: absolute;
   background-color: var(--sidebar-widget-color-two);
   padding-left: var(--sidebar-widget-sidebar-width);
@@ -67,6 +68,10 @@
   transition: 0.5s;
   overflow-y: auto;
   z-index: 2;
+}
+
+._sidebar_widget_pan_menu_sidebar img {
+  max-width: var(--sidebar-widget-sidebar-pan-max-width);
 }
 
 ._sidebar_widget_pan_menu_sidebar_container {
