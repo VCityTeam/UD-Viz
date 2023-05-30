@@ -18,7 +18,7 @@
         ])
         .then((configs) => {
           const extent = new udvizBrowser.itowns.Extent(
-            'EPSG:3857',
+            configs['extents'][1].name,
             parseInt(configs['extents'][1].west),
             parseInt(configs['extents'][1].east),
             parseInt(configs['extents'][1].south),
