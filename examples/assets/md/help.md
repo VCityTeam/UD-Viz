@@ -202,3 +202,13 @@ Then you can select a slide in the list accessible here :
 ## Document validation process
 
 Under construction...
+
+## Camera key bindings:
+
+ * Left-Click: camera translation (drag)
+ * Right-Click: camera translation (pan)
+ * Ctrl + Left-Click: camera rotation (orbit)
+ * Spacebar / Wheel-Click: smart zoom
+ * Mouse Wheel: zoom in/out
+ * T: orient camera to a top view
+ * Y: move camera to start position

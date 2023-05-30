@@ -12,6 +12,7 @@
     <script src="./assets/js/loadingScreen.js"></script>
     <script src="../packages/browser/dist/RUN_MODE/bundle.js"></script>
     <script src="./assets/js/ShowRoom.js"></script>
+    <script src="./assets/js/libs/showdown.min.js"></script>
 
     <script type="text/javascript">
       udvizBrowser
@@ -79,19 +80,41 @@
 
           app.addURLButton('./assets/img/icons/link.png');
 
-          // ABOUT HTML
-          app.addCustomHtml(
-            './assets/svg/about.svg',
-            udvizBrowser.createUDVIZAbout(),
-            'About'
-          );
-
           // HELP HTLM
-          app.addCustomHtml(
-            './assets/svg/help.svg',
-            udvizBrowser.createUDVIZHelp(),
-            'Help'
-          );
+          const xhrHelpMarkdown = new XMLHttpRequest();
+          xhrHelpMarkdown.open('GET', './assets/md/help.md');
+          xhrHelpMarkdown.onload = () => {
+            if (
+              xhrHelpMarkdown.readyState == 4 &&
+              xhrHelpMarkdown.status >= 200 &&
+              xhrHelpMarkdown.status < 300
+            ) {
+              const docHtml = document.createElement('div');
+              docHtml.innerHTML = new showdown.Converter()
+                .makeHtml(xhrHelpMarkdown.responseText)
+                .replace(/..\/img\//g, './assets/img/');
+              app.addCustomHtml('./assets/svg/help.svg', docHtml, 'Help');
+            }
+          };
+          xhrHelpMarkdown.send();
+
+          // ABOUT HTLM
+          const xhrAboutMarkdown = new XMLHttpRequest();
+          xhrAboutMarkdown.open('GET', './assets/md/about.md');
+          xhrAboutMarkdown.onload = () => {
+            if (
+              xhrAboutMarkdown.readyState == 4 &&
+              xhrAboutMarkdown.status >= 200 &&
+              xhrAboutMarkdown.status < 300
+            ) {
+              const docHtml = document.createElement('div');
+              docHtml.innerHTML = new showdown.Converter()
+                .makeHtml(xhrAboutMarkdown.responseText)
+                .replace(/..\/img\//g, './assets/img/');
+              app.addCustomHtml('./assets/svg/about.svg', docHtml, 'About');
+            }
+          };
+          xhrAboutMarkdown.send();
 
           app.addWidgetGeocoding(
             configs['geocoding_server'],
