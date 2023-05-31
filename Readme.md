@@ -38,12 +38,12 @@ UD-Viz (repo)
 ├── .gitignore                # Files/folders ignored by Git
 ├── .prettierrc               # Formatting rules
 ├── travis.yml                # Continuous integration entrypoint
-├── favicon.ico               # Examples landing page icon
-├── index.html                # Examples landing page entrypoint
+├── favicon.ico               # Landing page icon
+├── index.html                # Landing page entrypoint
 ├── package-lock.json         # Latest npm package installation file
 ├── package.json              # Global npm project description
 ├── Readme.md                 # It's a me, Mario!
-├── style.css                 # Examples landing page style
+├── style.css                 # Landing page style
 ```
 
 ## Getting Started
@@ -67,13 +67,11 @@ cd UD-Viz
 npm install # resolve dependencies based on the package.json (and package-lock.json if it exists)
 ```
 
-### Run an example urban data web application
-
-To quickly build and locally host the examples landing page which links to several [UD-Viz example applications](./examples/).
+### How to run it locally?
 
 ```bash
 npm run start
 ```
 
-After running go to [localhost:8000](http://localhost:8000).
+After running go to [localhost:8000](http://localhost:8000) which links to [documentation](./docs/) and [examples](./examples/)
 
